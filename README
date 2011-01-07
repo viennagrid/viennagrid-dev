@@ -1,0 +1,88 @@
+************************************************
+****           ViennaCL Readme              ****
+************************************************
+
+Table of Contents
+------------------
+1. Requirements
+2. Installation
+3. Project Layout
+4. Authors and Contact
+A. License
+
+
+
+1. Requirements
+-----------------
+ViennaCL requires the following:
+ * A recent C++ compiler (e.g. gcc 4.x.x)
+ * For accessing GPUs: OpenCL (shared library and include files)
+ * For building some of the tutorials: uBLAS (shipped with the Boost libraries)
+
+
+2. Installation
+-----------------
+
+The first step is to extract the file:
+
+Unix-based OS:
+$> gunzip ViennaCL-1.0.4.tar.gz
+$> tar -xf ViennaCL-1.0.4.tar
+$> cd ViennaCL-1.0.4
+
+ViennaCL is a header-only library, therefore it is sufficient to copy the subfolder ViennaCL/ (holding the header files) into you project directory or your system include directory. For instructions on how to set the include paths correctly, please refer to the documentation of your compiler.
+
+For building the examples, proceed as follows:
+
+Unix-based clients:
+ * change to the build directory:
+   $> cd build
+ * call cmake
+   $> cmake ..
+ * Use 'make' to build all examples:
+   $> make
+   (alternatively, you can build them individually via 'make tut1', 'make tut2', etc.
+ * Start the tutorials (optional)
+   $> ./tut1
+   $> ./tut2
+   $> ./tut3
+   $> ./tut4
+   $> ./tut5
+
+
+3. Project Layout
+-----------------
+
+---- ViennaCL-1.X.X
+   |
+   |-- auxiliary/ : Auxiliary Files (i.e. the OpenCL source code tree and the converter for the header files)
+   | 
+   |-- viennacl/ : the library source code
+   | 
+   |-- doc/ - documentation (LaTeX and doxygen)
+   | 
+   |-- examples/ - tutorial and benchmarking applications
+        | 
+        |-- testdata/ - test data for the tutorials and benchmarks
+        | 
+        |-- benchmarks/ - A small benchmarking suite
+        |
+        |-- tutorial/ - Some tutorials explaining the usage of ViennaCL
+   | 
+   |-- tests/ - Automated test suite
+
+
+4. Authors and Contact
+------------------------
+
+Florian Rudolf ()
+Karl Rupp (rupp@iue.tuwien.ac.at    <--- primary contact)
+Josef Weinbub (weinbub@iue.tuwien.ac.at)
+
+ViennaCL was developed under the aegis of the 'Institute for Microelectronics' at the 'Vienna University of Technology'.
+
+
+A. License
+------------
+ViennaCL is distributed under the MIT (X11) License. See file LICENSE.
+

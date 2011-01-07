@@ -1,0 +1,37 @@
+
+
+Kompilieren (derweil):
+
+$> cd build
+$> source buildme
+
+Basic git usage:
+
+* Einchecken von Files:
+
+ - Zuerst auf aktuellen Stand bringen mit 'git pull'
+ - Schauen, welche Dateien geaendert worden sind:
+  'git status'
+ - Gegebenenfalls untracked files hinzufuegen:
+  'git add build/buildme' usw.
+ - Nocheinmal mit 'git status' checken, ob alles da.
+ - Alles in lokale Kopie einchecken:
+  'git commit -a'
+
+   -> edit mit 'i' in den insert modus schalten
+   -> text schreiben
+   -> ESC druecken
+   -> ':x' eingeben
+
+ - Oder: nur einzelne Datei einchecken
+  'git commit file1.cpp file2.cpp'
+ - Aenderungen an den Server schicken:
+  'git push' mit Passwort git360 
+ 
+ - git log ... Log-File abrufen
+
+
+* Holen neuer Files bzw. Aenderungen:
+
+ - 'git pull'
+
