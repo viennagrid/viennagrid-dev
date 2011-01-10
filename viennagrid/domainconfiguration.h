@@ -1,23 +1,24 @@
 /* =======================================================================
-   Copyright (c) 2010, Institute for Microelectronics, TU Vienna.
+   Copyright (c) 2010, Institute for Microelectronics, TU Wien
    http://www.iue.tuwien.ac.at
                              -----------------
-                     ViennaMesh - The Vienna Mesh Library
+                     ViennaGrid - The Vienna Grid Library
                              -----------------
 
    authors:    Karl Rupp                          rupp@iue.tuwien.ac.at
 
-   license:    MIT (X11), see file LICENSE in the ViennaMesh base directory
+   license:    MIT (X11), see file LICENSE in the ViennaGrid base directory
 ======================================================================= */
 
 /******* Provides sample domain configurations
 *******  A domain configuration is a container
          holding the (class) types of the topological elements ************/
 
-#ifndef VIENNAMESH_DOMAINCONFIGURATION_GUARD
-#define VIENNAMESH_DOMAINCONFIGURATION_GUARD
+#ifndef VIENNAGRID_DOMAINCONFIGURATION_GUARD
+#define VIENNAGRID_DOMAINCONFIGURATION_GUARD
 
-namespace viennamesh{
+namespace viennagrid
+{
 
   //metafunction for a proper segment-configuration:
   template <typename T>

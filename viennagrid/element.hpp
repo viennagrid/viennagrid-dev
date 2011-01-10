@@ -1,24 +1,24 @@
 /* =======================================================================
-   Copyright (c) 2010, Institute for Microelectronics, TU Vienna.
+   Copyright (c) 2010, Institute for Microelectronics, TU Wien
    http://www.iue.tuwien.ac.at
                              -----------------
-                     ViennaMesh - The Vienna Mesh Library
+                     ViennaGrid - The Vienna Grid Library
                              -----------------
 
    authors:    Karl Rupp                          rupp@iue.tuwien.ac.at
 
-   license:    MIT (X11), see file LICENSE in the ViennaMesh base directory
+   license:    MIT (X11), see file LICENSE in the ViennaGrid base directory
 ======================================================================= */
 
 
-#ifndef VIENNAMESH_ELEMENT_HPP
-#define VIENNAMESH_ELEMENT_HPP
+#ifndef VIENNAGRID_ELEMENT_HPP
+#define VIENNAGRID_ELEMENT_HPP
 
-#include "viennamesh/forwards.h"
-#include "viennamesh/iterators.h"
+#include "viennagrid/forwards.h"
+#include "viennagrid/iterators.h"
   
 
-namespace viennamesh
+namespace viennagrid
 {
   
   /************** Level 1: Elements contained by a higher-level element *******/

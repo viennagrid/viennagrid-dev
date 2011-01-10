@@ -2,249 +2,250 @@
    Copyright (c) 2010, Institute for Microelectronics, TU Vienna.
    http://www.iue.tuwien.ac.at
                              -----------------
-                     ViennaMesh - The Vienna Mesh Library
+                     ViennaGrid - The Vienna Grid Library
                              -----------------
 
    authors:    Karl Rupp                          rupp@iue.tuwien.ac.at
 
-   license:    MIT (X11), see file LICENSE in the ViennaMesh base directory
+   license:    MIT (X11), see file LICENSE in the ViennaGrid base directory
 ======================================================================= */
 
-#ifndef VIENNAMESH_IO_SGF_READER_GUARD
-#define VIENNAMESH_IO_SGF_READER_GUARD
+#ifndef VIENNAGRID_IO_SGF_READER_GUARD
+#define VIENNAGRID_IO_SGF_READER_GUARD
 
 
 #include <fstream>
 #include <iostream>
-#include "viennamesh/forwards.h"
-#include "viennamesh/boundary.hpp"
+#include "viennagrid/forwards.h"
+#include "viennagrid/boundary.hpp"
 
-namespace viennamesh
+namespace viennagrid
 {
-
-  struct sgf_reader
+  namespace io
   {
-    template <typename DomainType>
-    int operator()(DomainType & domain, std::string const & filename) const
+
+    struct sgf_reader
     {
-      typedef typename DomainType::Configuration                     DomainConfiguration;
+      template <typename DomainType>
+      int operator()(DomainType & domain, std::string const & filename) const
+      {
+        typedef typename DomainType::Configuration                     DomainConfiguration;
 
-      typedef typename DomainConfiguration::CoordType                 CoordType;
-      typedef typename DomainConfiguration::DimensionTag              DimensionTag;
-      typedef typename DomainConfiguration::CellTag                   CellTag;
-      typedef typename DomainConfiguration::BoundaryReadTag           BoundaryReadTag;
+        typedef typename DomainConfiguration::CoordType                 CoordType;
+        typedef typename DomainConfiguration::DimensionTag              DimensionTag;
+        typedef typename DomainConfiguration::CellTag                   CellTag;
 
-      typedef typename DomainTypes<DomainConfiguration>::PointType    Point;
-      typedef typename DomainTypes<DomainConfiguration>::VertexType   Vertex;
-      typedef typename DomainTypes<DomainConfiguration>::CellType     Cell;
-      typedef typename DomainTypes<DomainConfiguration>::SegmentType  Segment;
+        typedef typename DomainTypes<DomainConfiguration>::PointType    Point;
+        typedef typename DomainTypes<DomainConfiguration>::VertexType   Vertex;
+        typedef typename DomainTypes<DomainConfiguration>::CellType     Cell;
+        typedef typename DomainTypes<DomainConfiguration>::SegmentType  Segment;
 
-      typedef typename DomainTypes<DomainConfiguration>::VertexIterator      VertexIterator;
-      typedef typename DomainTypes<DomainConfiguration>::CellIterator        CellIterator;
+        typedef typename DomainTypes<DomainConfiguration>::VertexIterator      VertexIterator;
+        typedef typename DomainTypes<DomainConfiguration>::CellIterator        CellIterator;
 
-      std::ifstream reader(filename.c_str());
+        std::ifstream reader(filename.c_str());
 
-      Segment & segment = *(domain.begin());
+        Segment & segment = *(domain.begin());
 
-      std::cout << "Reading file " << filename << std::endl;
+        std::cout << "Reading file " << filename << std::endl;
 
-      if (!reader){
-        std::cerr << "Cannot open file " << filename << std::endl;
-        exit(0);
-        return EXIT_FAILURE;
-      }
-
-      try{
-        std::string token;
-        long node_num = 0;
-        long cell_num = 0;
-    
-        reader >> token;
-    
-        //Dimension:
-        if (token == "Dimension:"){
-          long file_dim = 0;
-          reader >> file_dim;
-          if (file_dim != DimensionTag::dim)
-          {
-            std::cout << "Dimension incorrect! Got " << file_dim << ", but expected " << DimensionTag::dim << ". Exiting..." << std::endl;  
-            exit(0);
-          }
-          else
-            std::cout << "Dimension ok" << std::endl;
-        } else
-          throw;
-    
-        //Vertices:
-        reader >> token;
-        if (token == "Nodes:" || token == "Vertices:")
-          reader >> node_num;
-        else{
-          std::cerr << "ERROR: Expected keyword 'Vertices:', but got " << token << std::endl;
-          throw;
+        if (!reader){
+          std::cerr << "Cannot open file " << filename << std::endl;
+          exit(0);
+          return EXIT_FAILURE;
         }
 
-        std::cout << "Reading " << node_num << " vertices... " << std::endl;  
-        //reserve the memory:
-        segment.template reserveVertices(node_num);
-        Vertex vertex;
-        long node_id;
-    
-        for (int i=0; i<node_num; i++)
-        {
-          CoordType coords[DimensionTag::dim];
-    
-          reader >> node_id;
-    
-          for (int j=0; j<DimensionTag::dim; j++)
-            reader >> coords[j];
-    
-          //insert node into segment:
-          //std::cout << std::endl << "Adding vertex: " << &vertex << std::endl;
-          vertex.getPoint().setCoordinates(coords);
-          vertex.setID(node_id);
-          segment.template add<0>(node_id, vertex);
-        }
-    
-        std::cout << "DONE" << std::endl;
-    
-        //Cells:
-        reader >> token;
-        if (token != "Cell-Type:")
-        {
-          std::cerr << "ERROR: Expected keyword 'Cell-Type:', but got " << token << std::endl;
-          throw;
-        }
-    
-        reader >> token;
-        if (token != "Simplex")
-        {
-          std::cerr << "ERROR: Cell-Type " << token << " not supported! You might fix this issue by recompilation." << std::endl;
-          throw;
-        }
-    
-        reader >> token;
-        if (token != "Cells:")
-        {
-          std::cerr << "ERROR: Expected keyword 'Cells:', but got " << token << std::endl;
-          throw;
-        }
-    
-        //std::cout << "Reading cell-num:" << std::endl;
-        reader >> cell_num;
-        //std::cout << "Reserve cells:" << std::endl;
-        segment.reserveCells(cell_num);
-        long cell_id;
-        //std::cout << "Creating cell:" << std::endl;
-        Cell cell;
-        //std::cout << "Filling cells:" << std::endl;
-    
-        for (int i=0; i<cell_num; ++i)
-        {
-          long vertex_num;
-          Vertex *vertices[TopologyLevel<CellTag, 0>::ElementNum];
-          reader >> cell_id;
-    
-          for (int j=0; j<TopologyLevel<CellTag, 0>::ElementNum; ++j)
-          {
-            reader >> vertex_num;
-            vertices[j] = segment.getVertexAddress(vertex_num);
-          }
-    
-          //std::cout << std::endl << "Adding cell: " << &cell << " at " << cell_id << std::endl;
-          cell.setVertices(&(vertices[0]));
-          cell.setID(cell_id);
-          segment.template add<CellTag::TopoLevel>(cell_id, cell);
-    
-          //progress info:
-          if (i % 50000 == 0)
-            std::cout << i << std::endl;
-    
-        }
-    
-        //segment.template begin<0>()->setCurrentSegment(segment);
-
-        std::cout << "Reading quantities..." << std::endl;
-    
-        //Quantities:
-        while (reader >> token){
-    
-          std::string quan_name;
-          long quan_num;
-          if (token != "Quantity")
-          {
-            std::cerr << "ERROR: Expected 'Quantity', but got " << token << std::endl;
-            throw;
-          }
-    
-          reader >> quan_name;
-          reader >> token;
-    
-          if (token != "on")
-          {
-            std::cerr << "ERROR: Expected 'on', but got " << token << std::endl;
-            throw;
-          }
-    
-          reader >> token;
-          reader >> quan_num;
-    
-          if (token == "Vertex:")
-          {
-            double quantity;
-            long vertexID;
-    
-            for (long i=0; i<quan_num; ++i)
-            {
-              reader >> vertexID;
-              reader >> quantity;
-              //special treatment for boundary values:
-  /*            if (quan_name == "bnd_value1")
-                segment.getVertexNC(vertexID).storeQuantity(0, quantity);
-              else if (quan_name == "bnd_value2")
-                segment.getVertexNC(vertexID).storeQuantity(1, quantity);
-              else if (quan_name == "bnd_value3")
-                segment.getVertexNC(vertexID).storeQuantity(2, quantity);
-              else
-                segment.getVertexNC(vertexID).storeQuantity(quan_name, quantity);*/
-            }
-          }
-          //else if (token == "Edge:")
-          //{
-    
-          //}
-          else if (token == "Cell:")
-          {
-            double quantity;
-            long cellID;
-    
-            for (long i=0; i<quan_num; ++i)
-            {
-              reader >> cellID;
-              reader >> quantity;
-              //segment.getCellNC(cellID).storeQuantity(quan_name, quantity);
-            }
-          }
-          else
-          {
-            std::cerr << "ERROR: Quantity type " << token << " not implemented (yet)." << std::endl;
-            throw;
-          } 
-          
-        } // while
-    
-      } catch (...) {
-        std::cerr << "Problems while reading file " << filename << std::endl;
-      }
-    
-      std::cout << "File-Reader finished!" << std::endl;  
+        try{
+          std::string token;
+          long node_num = 0;
+          long cell_num = 0;
       
-      return EXIT_SUCCESS;
-    } //operator()
-    
-  }; //class sgf_reader
-  
+          reader >> token;
+      
+          //Dimension:
+          if (token == "Dimension:"){
+            long file_dim = 0;
+            reader >> file_dim;
+            if (file_dim != DimensionTag::dim)
+            {
+              std::cout << "Dimension incorrect! Got " << file_dim << ", but expected " << DimensionTag::dim << ". Exiting..." << std::endl;  
+              exit(0);
+            }
+            else
+              std::cout << "Dimension ok" << std::endl;
+          } else
+            throw;
+      
+          //Vertices:
+          reader >> token;
+          if (token == "Nodes:" || token == "Vertices:")
+            reader >> node_num;
+          else{
+            std::cerr << "ERROR: Expected keyword 'Vertices:', but got " << token << std::endl;
+            throw;
+          }
 
-} //namespace
+          std::cout << "Reading " << node_num << " vertices... " << std::endl;  
+          //reserve the memory:
+          segment.template reserveVertices(node_num);
+          Vertex vertex;
+          long node_id;
+      
+          for (int i=0; i<node_num; i++)
+          {
+            CoordType coords[DimensionTag::dim];
+      
+            reader >> node_id;
+      
+            for (int j=0; j<DimensionTag::dim; j++)
+              reader >> coords[j];
+      
+            //insert node into segment:
+            //std::cout << std::endl << "Adding vertex: " << &vertex << std::endl;
+            vertex.getPoint().setCoordinates(coords);
+            vertex.setID(node_id);
+            segment.template add<0>(node_id, vertex);
+          }
+      
+          std::cout << "DONE" << std::endl;
+      
+          //Cells:
+          reader >> token;
+          if (token != "Cell-Type:")
+          {
+            std::cerr << "ERROR: Expected keyword 'Cell-Type:', but got " << token << std::endl;
+            throw;
+          }
+      
+          reader >> token;
+          if (token != "Simplex")
+          {
+            std::cerr << "ERROR: Cell-Type " << token << " not supported! You might fix this issue by recompilation." << std::endl;
+            throw;
+          }
+      
+          reader >> token;
+          if (token != "Cells:")
+          {
+            std::cerr << "ERROR: Expected keyword 'Cells:', but got " << token << std::endl;
+            throw;
+          }
+      
+          //std::cout << "Reading cell-num:" << std::endl;
+          reader >> cell_num;
+          //std::cout << "Reserve cells:" << std::endl;
+          segment.reserveCells(cell_num);
+          long cell_id;
+          //std::cout << "Creating cell:" << std::endl;
+          Cell cell;
+          //std::cout << "Filling cells:" << std::endl;
+      
+          for (int i=0; i<cell_num; ++i)
+          {
+            long vertex_num;
+            Vertex *vertices[TopologyLevel<CellTag, 0>::ElementNum];
+            reader >> cell_id;
+      
+            for (int j=0; j<TopologyLevel<CellTag, 0>::ElementNum; ++j)
+            {
+              reader >> vertex_num;
+              vertices[j] = segment.getVertexAddress(vertex_num);
+            }
+      
+            //std::cout << std::endl << "Adding cell: " << &cell << " at " << cell_id << std::endl;
+            cell.setVertices(&(vertices[0]));
+            cell.setID(cell_id);
+            segment.template add<CellTag::TopoLevel>(cell_id, cell);
+      
+            //progress info:
+            if (i % 50000 == 0)
+              std::cout << i << std::endl;
+      
+          }
+      
+          //segment.template begin<0>()->setCurrentSegment(segment);
+
+          std::cout << "Reading quantities..." << std::endl;
+      
+          //Quantities:
+          while (reader >> token){
+      
+            std::string quan_name;
+            long quan_num;
+            if (token != "Quantity")
+            {
+              std::cerr << "ERROR: Expected 'Quantity', but got " << token << std::endl;
+              throw;
+            }
+      
+            reader >> quan_name;
+            reader >> token;
+      
+            if (token != "on")
+            {
+              std::cerr << "ERROR: Expected 'on', but got " << token << std::endl;
+              throw;
+            }
+      
+            reader >> token;
+            reader >> quan_num;
+      
+            if (token == "Vertex:")
+            {
+              double quantity;
+              long vertexID;
+      
+              for (long i=0; i<quan_num; ++i)
+              {
+                reader >> vertexID;
+                reader >> quantity;
+                //special treatment for boundary values:
+    /*            if (quan_name == "bnd_value1")
+                  segment.getVertexNC(vertexID).storeQuantity(0, quantity);
+                else if (quan_name == "bnd_value2")
+                  segment.getVertexNC(vertexID).storeQuantity(1, quantity);
+                else if (quan_name == "bnd_value3")
+                  segment.getVertexNC(vertexID).storeQuantity(2, quantity);
+                else
+                  segment.getVertexNC(vertexID).storeQuantity(quan_name, quantity);*/
+              }
+            }
+            //else if (token == "Edge:")
+            //{
+      
+            //}
+            else if (token == "Cell:")
+            {
+              double quantity;
+              long cellID;
+      
+              for (long i=0; i<quan_num; ++i)
+              {
+                reader >> cellID;
+                reader >> quantity;
+                //segment.getCellNC(cellID).storeQuantity(quan_name, quantity);
+              }
+            }
+            else
+            {
+              std::cerr << "ERROR: Quantity type " << token << " not implemented (yet)." << std::endl;
+              throw;
+            } 
+            
+          } // while
+      
+        } catch (...) {
+          std::cerr << "Problems while reading file " << filename << std::endl;
+        }
+      
+        std::cout << "File-Reader finished!" << std::endl;  
+        
+        return EXIT_SUCCESS;
+      } //operator()
+      
+    }; //class sgf_reader
+  
+  } //namespace io
+} //namespace viennagrid
 
 #endif

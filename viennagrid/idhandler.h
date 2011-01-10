@@ -1,24 +1,25 @@
 /* =======================================================================
-   Copyright (c) 2010, Institute for Microelectronics, TU Vienna.
+   Copyright (c) 2010, Institute for Microelectronics, TU Wien
    http://www.iue.tuwien.ac.at
                              -----------------
-                     ViennaMesh - The Vienna Mesh Library
+                     ViennaGrid - The Vienna Grid Library
                              -----------------
 
    authors:    Karl Rupp                          rupp@iue.tuwien.ac.at
 
-   license:    MIT (X11), see file LICENSE in the ViennaMesh base directory
+   license:    MIT (X11), see file LICENSE in the ViennaGrid base directory
 ======================================================================= */
 
 
   /******************* ID Handling *******************************/
 
-#ifndef VIENNAMESH_IDHANDLER_GUARD
-#define VIENNAMESH_IDHANDLER_GUARD
+#ifndef VIENNAGRID_IDHANDLER_GUARD
+#define VIENNAGRID_IDHANDLER_GUARD
 
-#include "viennamesh/forwards.h"
+#include "viennagrid/forwards.h"
 
-namespace viennamesh{
+namespace viennagrid
+{
 
   struct NoID
   {

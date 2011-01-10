@@ -1,17 +1,17 @@
 /* =======================================================================
-   Copyright (c) 2010, Institute for Microelectronics, TU Vienna.
+   Copyright (c) 2010, Institute for Microelectronics, TU Wien
    http://www.iue.tuwien.ac.at
                              -----------------
-                     ViennaMesh - The Vienna Mesh Library
+                     ViennaGrid - The Vienna Grid Library
                              -----------------
 
    authors:    Karl Rupp                          rupp@iue.tuwien.ac.at
 
-   license:    MIT (X11), see file LICENSE in the ViennaMesh base directory
+   license:    MIT (X11), see file LICENSE in the ViennaGrid base directory
 ======================================================================= */
 
-#ifndef VIENNAMESH_DOMAIN_GUARD
-#define VIENNAMESH_DOMAIN_GUARD
+#ifndef VIENNAGRID_DOMAIN_GUARD
+#define VIENNAGRID_DOMAIN_GUARD
 
 
 #include <iostream>
@@ -21,15 +21,15 @@
 #include <map>
 #include <stack>
 #include <algorithm>
-#include "viennamesh/forwards.h"
-#include "viennamesh/celltags.h"  
-#include "viennamesh/point.hpp"
-//#include "viennamesh/celltags.h"
-#include "viennamesh/element.hpp"
-#include "viennamesh/segment.hpp"
+#include "viennagrid/forwards.h"
+#include "viennagrid/celltags.h"  
+#include "viennagrid/point.hpp"
+#include "viennagrid/element.hpp"
+#include "viennagrid/segment.hpp"
 
 
-namespace viennamesh{
+namespace viennagrid
+{
 
 
 /***************************** Domain Type ***********************/

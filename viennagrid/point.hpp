@@ -1,26 +1,26 @@
 /* =======================================================================
-   Copyright (c) 2010, Institute for Microelectronics, TU Vienna.
+   Copyright (c) 2010, Institute for Microelectronics, TU Wien
    http://www.iue.tuwien.ac.at
                              -----------------
-                     ViennaMesh - The Vienna Mesh Library
+                     ViennaGrid - The Vienna Grid Library
                              -----------------
 
    authors:    Karl Rupp                          rupp@iue.tuwien.ac.at
 
-   license:    MIT (X11), see file LICENSE in the ViennaMesh base directory
+   license:    MIT (X11), see file LICENSE in the ViennaGrid base directory
 ======================================================================= */
 
 
 /************** All the code for a generic Point-Object ********************/
 
 
-#ifndef VIENNAMESH_POINT_GUARD
-#define VIENNAMESH_POINT_GUARD
+#ifndef VIENNAGRID_POINT_GUARD
+#define VIENNAGRID_POINT_GUARD
 
 #include <math.h>
-#include "viennamesh/forwards.h"
+#include "viennagrid/forwards.h"
 
-namespace viennamesh
+namespace viennagrid
 {
 /***************************** Point Type ************************/
 

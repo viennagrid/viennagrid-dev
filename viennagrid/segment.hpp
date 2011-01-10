@@ -1,23 +1,23 @@
 /* =======================================================================
-   Copyright (c) 2010, Institute for Microelectronics, TU Vienna.
+   Copyright (c) 2010, Institute for Microelectronics, TU Wien
    http://www.iue.tuwien.ac.at
                              -----------------
-                     ViennaMesh - The Vienna Mesh Library
+                     ViennaGrid - The Vienna Grid Library
                              -----------------
 
    authors:    Karl Rupp                          rupp@iue.tuwien.ac.at
 
-   license:    MIT (X11), see file LICENSE in the ViennaMesh base directory
+   license:    MIT (X11), see file LICENSE in the ViennaGrid base directory
 ======================================================================= */
 
 
-#ifndef VIENNAMESH_SEGMENT_HPP
-#define VIENNAMESH_SEGMENT_HPP
+#ifndef VIENNAGRID_SEGMENT_HPP
+#define VIENNAGRID_SEGMENT_HPP
 
-#include "viennamesh/forwards.h"
-#include "viennamesh/element.hpp"
+#include "viennagrid/forwards.h"
+#include "viennagrid/element.hpp"
 
-namespace viennamesh
+namespace viennagrid
 {
   
   /////////////// Segment is a container for elements ////////////////

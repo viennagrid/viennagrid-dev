@@ -1,4 +1,4 @@
-PROJECT(ViennaMesh)
+PROJECT(ViennaGrid)
 
 cmake_minimum_required(VERSION 2.4)
 
@@ -20,17 +20,11 @@ IF(CMAKE_COMPILER_IS_GNUCXX)
    ADD_DEFINITIONS(-Wall -pedantic -O3)
 ENDIF(CMAKE_COMPILER_IS_GNUCXX)
 
-SET(CMAKE_CXX_FLAGS " -L/home/markus/work/she/ViennaMesh/gtsio2/dist/local/native -lgtsio2")
+#SET(CMAKE_CXX_FLAGS " -L../gtsio2/dist/local/native -lgtsio2")
+SET(CMAKE_CXX_FLAGS " -L. -lgtsio2")
 
 #list all source files here
-#ADD_EXECUTABLE(tut1 examples/tutorial/tut1.cpp)
-#ADD_EXECUTABLE(tut2 examples/tutorial/tut2.cpp)
-#ADD_EXECUTABLE(tut3 examples/tutorial/tut3.cpp)
-#ADD_EXECUTABLE(tut4 examples/tutorial/tut4.cpp)
-#ADD_EXECUTABLE(tut5 examples/tutorial/tut5.cpp)
-
-#ADD_EXECUTABLE(vectorbench examples/benchmarks/vector.cpp)
-#ADD_EXECUTABLE(sparsebench examples/benchmarks/sparse.cpp)
-ADD_EXECUTABLE(test1 applications/tests/test1.cpp)
+ADD_EXECUTABLE(test_io    applications/tests/test_io.cpp)
+ADD_EXECUTABLE(test_setup applications/tests/test_setup.cpp)
 
 

@@ -2,15 +2,15 @@
    Copyright (c) 2010, Institute for Microelectronics, TU Vienna.
    http://www.iue.tuwien.ac.at
                              -----------------
-                     ViennaMesh - The Vienna Mesh Library
+                     ViennaGrid - The Vienna Grid Library
                              -----------------
 
    authors:    Karl Rupp                          rupp@iue.tuwien.ac.at
                Peter Lagger                       peter.lagger@ieee.org
 
-   license:    MIT (X11), see file LICENSE in the ViennaMesh base directory
+   license:    MIT (X11), see file LICENSE in the ViennaGrid base directory
    
-   This is a test file for the ViennaMesh Library IO-System
+   This is a test file for the ViennaGrid Library IO-System
 ======================================================================= */
 
 //***********************************************
@@ -23,90 +23,59 @@
 //***********************************************
 // Define the input-file format
 //***********************************************
-//#define SGF
+#define SGF
 //#define VTK
-#define GTS
+//#define GTS
 
-#include "viennamesh/domain.hpp"
-#include "viennamesh/segment.hpp"
-#include "viennamesh/boundary.hpp"
-#include "viennamesh/io/sgf_reader.hpp"
-#include "viennamesh/io/sgf_writer.hpp"
-#include "viennamesh/io/vtk_reader.hpp"
-#include "viennamesh/io/vtk_writer.hpp"
-#include "viennamesh/io/opendx_writer.hpp"
-#include "viennamesh/io/gts_reader.hpp"
-#include "viennamesh/io/gts_writer.hpp"
+#include "viennagrid/domain.hpp"
+#include "viennagrid/segment.hpp"
+#include "viennagrid/boundary.hpp"
+#include "viennagrid/io/sgf_reader.hpp"
+#include "viennagrid/io/sgf_writer.hpp"
+#include "viennagrid/io/vtk_reader.hpp"
+#include "viennagrid/io/vtk_writer.hpp"
+#include "viennagrid/io/opendx_writer.hpp"
+//#include "viennagrid/io/gts_reader.hpp"
+//#include "viennagrid/io/gts_writer.hpp"
 
-using namespace std;
-using namespace viennamesh;
-
-struct NewDomainTesting
+struct TestDomainConfig
 {
   typedef double                                              CoordType;
   #ifdef THREEDIM
-  typedef ThreeDimensionsTag                                  DimensionTag;
-  typedef TetrahedronTag                                       CellTag;
+  typedef viennagrid::ThreeDimensionsTag                                  DimensionTag;
+  typedef viennagrid::TetrahedronTag                                      CellTag;
   #endif
   #ifdef TWODIM
-  typedef TwoDimensionsTag                                    DimensionTag;
-  typedef TriangleTag                                         CellTag;
+  typedef viennagrid::TwoDimensionsTag                                    DimensionTag;
+  typedef viennagrid::TriangleTag                                         CellTag;
   #endif
   #ifdef ONEDIM
-  typedef OneDimensionTag                                     DimensionTag;
-  typedef LineTag                                             CellTag;
+  typedef viennagrid::OneDimensionTag                                     DimensionTag;
+  typedef viennagrid::LineTag                                             CellTag;
   #endif
 
   //multigrid:
   //typedef FullMultigridTag                                  MultigridTag;
-  typedef NoMultigridTag                                      MultigridTag;
-
-
-  /**************************************************************/
-  /***********   handler for topological elements: **************/
-
-  //Read boundary from file?
-  //yes: use BoundaryKeyType<id>
-  //no:  use NoBoundaryRead
-  //typedef BoundaryKeyType<11>                                  BoundaryReadTag;
-  typedef NoBoundaryRead                                  BoundaryReadTag;
+  typedef viennagrid::NoMultigridTag                                      MultigridTag;
 };
-
-  //template <typename DomainConfiguration>
-//   struct Laplace_Config 
-//   {
-//     typedef ScalarTag                         ResultDimension;
-//     typedef TypeErasureTag                       BaseFunTreatmentTag;
-//     typedef NoBoundaryMappingTag              MappingTag;
-// 
-//     typedef QuadraticBasisfunctionTag            BasisfunctionTag;
-// 
-//     typedef MappingKeyType<0>                 MappingKey;
-//     typedef BoundaryKeyType<0>                BoundaryKey;
-// 
-//     typedef BoundaryKeyType<11>                BoundaryData;
-//     typedef BoundaryKeyType<12>                BoundaryData2;
-//     typedef BoundaryKeyType<13>                BoundaryData3;
-//   };
 
 
 void testNewDomain(std::string & infile, std::string & outfile)
 {
-  //typedef Laplace_Config                              FEMConfig;
 
-  typedef domain<NewDomainTesting>                    Domain;
-  typedef NewDomainTesting::DimensionTag              DimensionTag;
-  typedef DomainTypes<NewDomainTesting>::PointType    PointType;
-  typedef DomainTypes<NewDomainTesting>::VertexType   VertexType;
+  typedef viennagrid::domain<TestDomainConfig>        Domain;
+  //typedef viennagrid::TestDomainConfig::DimensionTag              DimensionTag;
+  typedef viennagrid::DomainTypes<TestDomainConfig>::PointType    PointType;
+  typedef viennagrid::DomainTypes<TestDomainConfig>::VertexType   VertexType;
 
-  typedef DomainTypes<NewDomainTesting>::FacetType    FacetType;
-  typedef DomainTypes<NewDomainTesting>::CellType     CellType;
-  typedef DomainTypes<NewDomainTesting>::SegmentType  Segment;
+  typedef viennagrid::DomainTypes<TestDomainConfig>::FacetType    FacetType;
+  typedef viennagrid::DomainTypes<TestDomainConfig>::CellType     CellType;
+  typedef viennagrid::DomainTypes<TestDomainConfig>::SegmentType  Segment;
 
-  typedef IteratorTypes<Segment, 0>::ResultType       VertexIterator;
-  typedef IteratorTypes<Segment, 1>::ResultType       EdgeIterator;
-  typedef IteratorTypes<Segment, NewDomainTesting::CellTag::TopoLevel-1>::ResultType       FacetIterator;
-  typedef IteratorTypes<Segment, NewDomainTesting::CellTag::TopoLevel>::ResultType       CellIterator;
+  typedef viennagrid::IteratorTypes<Segment, 0>::ResultType                                         VertexIterator;
+  typedef viennagrid::IteratorTypes<Segment, 1>::ResultType                                         EdgeIterator;
+  typedef viennagrid::IteratorTypes<Segment, TestDomainConfig::CellTag::TopoLevel-1>::ResultType    FacetIterator;
+  typedef viennagrid::IteratorTypes<Segment, TestDomainConfig::CellTag::TopoLevel>::ResultType      CellIterator;
 
   Domain domain;
   
@@ -213,17 +182,17 @@ void testNewDomain(std::string & infile, std::string & outfile)
   
   try{
     #ifdef SGF
-    sgf_reader my_sgf_reader;
+    viennagrid::io::sgf_reader my_sgf_reader;
     my_sgf_reader(domain, infile);
     #endif
     
     #ifdef GTS
-    gts_reader my_gts_reader;
+    viennagrid::io::gts_reader my_gts_reader;
     my_gts_reader(domain, infile);
     #endif
     
     #ifdef VTK
-    Vtk_reader my_vtk_reader;
+    viennagrid::io::Vtk_reader my_vtk_reader;
     my_vtk_reader.readDomain(domain, infile);
     #endif
   } catch (...){
@@ -231,25 +200,21 @@ void testNewDomain(std::string & infile, std::string & outfile)
 //   exit(EXIT_FAILURE);
   }
 
-  detectBoundary(seg);
+  viennagrid::detectBoundary(seg);
   
   //test writers:
-  sgf_writer my_sgf_writer;
+  viennagrid::io::sgf_writer my_sgf_writer;
   my_sgf_writer(domain, outfile + ".sgf");
    
-  Vtk_writer<Domain> my_vtk_writer;
+  viennagrid::io::Vtk_writer<Domain> my_vtk_writer;
   my_vtk_writer.writeDomain(domain, outfile + ".vtk");
    
-  gts_writer my_gts_writer;
-  my_gts_writer(domain, outfile);
+  //gts_writer my_gts_writer;
+  //my_gts_writer(domain, outfile);
   
-  opendx_writer my_dx_writer;
+  viennagrid::io::opendx_writer my_dx_writer;
   my_dx_writer(domain, outfile + ".odx");
   
-//  profiler_class<mysql_writer, std_timer> my_profiler;
-//  profiler_class<oracle_writer, bad_timer> my_profiler;
-//  profiler_class<xml_writer, high_precision_timer> my_profiler;
-
   std::cout << "*******************************" << std::endl;
   std::cout << "* Test finished successfully! *" << std::endl;
   std::cout << "*******************************" << std::endl;
@@ -262,10 +227,10 @@ int main()
   std::cout << "* Test started! *" << std::endl;
   std::cout << "*****************" << std::endl;
   
-  string path = "../applications/data/";
+  std::string path = "../applications/data/";
   
-  string infile = path + "in1d.gts";
-  string outfile = path + "out"; // without ending
+  std::string infile = path + "line8.sgf";
+  std::string outfile = path + "out"; // without ending
   
   testNewDomain(infile, outfile);
   return EXIT_SUCCESS;
