@@ -1,9 +1,12 @@
+cmake_minimum_required(VERSION 2.6)
+
 PROJECT(ViennaGrid)
 
-cmake_minimum_required(VERSION 2.4)
 
 #if you don't want the full compiler output, remove the following line
 SET(CMAKE_VERBOSE_MAKEFILE ON)
+
+SET(GTSIOLIBPATH ${PROJECT_SOURCE_DIR}+"/gtsio2/dist/local/native")
 
 #specify include and source directory
 INCLUDE_DIRECTORIES(".")
@@ -20,8 +23,8 @@ IF(CMAKE_COMPILER_IS_GNUCXX)
    ADD_DEFINITIONS(-Wall -pedantic -O3)
 ENDIF(CMAKE_COMPILER_IS_GNUCXX)
 
-#SET(CMAKE_CXX_FLAGS " -L../gtsio2/dist/local/native -lgtsio2")
-SET(CMAKE_CXX_FLAGS " -L. -lgtsio2")
+#SET(CMAKE_CXX_FLAGS " -L. -lgtsio2")
+LINK_DIRECTORIES(${GTSIOLIBPATH})
 
 #list all source files here
 ADD_EXECUTABLE(test_io    applications/tests/test_io.cpp)
