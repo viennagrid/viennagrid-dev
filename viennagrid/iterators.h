@@ -226,9 +226,9 @@ namespace viennagrid
   };
 
   template <typename ElementTag, unsigned long level>
-  struct ElementIteratorChecker< ElementTag, level, TopoLevelFullHandling>
+  struct ElementIteratorChecker< ElementTag, level, topology_levelFullHandling>
   {
-    enum{ ReturnValue = ElementTag::TopoLevel - level };
+    enum{ ReturnValue = ElementTag::topology_level - level };
   };
 
   template <typename Config, unsigned long level, typename HandlingTag = typename SegmentConfig<level>::HandlingTag>
@@ -238,14 +238,14 @@ namespace viennagrid
   };
 
   template <typename Config, unsigned long level>
-  struct SegmentIteratorChecker<Config, level, TopoLevelFullHandling>
+  struct SegmentIteratorChecker<Config, level, topology_levelFullHandling>
   {
-    enum{ ReturnValue = Config::CellTag::TopoLevel - level };
+    enum{ ReturnValue = Config::cell_tag::topology_level - level };
   };
 
   //for level = 0, there is also special treatment (vertices have vector-container)
   template <typename Config>
-  struct SegmentIteratorChecker<Config, 0, TopoLevelFullHandling >
+  struct SegmentIteratorChecker<Config, 0, topology_levelFullHandling >
   {
     enum{ ReturnValue = 0 };
   };
@@ -298,7 +298,7 @@ namespace viennagrid
   struct IteratorTypes< segment<T_Configuration>, level, false>
   {
     typedef element<T_Configuration,
-                     typename TopologyLevel<typename T_Configuration::CellTag, level>::ElementTag
+                     typename TopologyLevel<typename T_Configuration::cell_tag, level>::ElementTag
                     >                                                         LevelElementType;
 
     typedef osegit <LevelElementType,
@@ -311,7 +311,7 @@ namespace viennagrid
   struct IteratorTypes< segment<T_Configuration, level, HandlingTag, true, FullMultigridTag>, level, true>
   {
     typedef element<T_Configuration,
-                     typename T_Configuration::CellTag
+                     typename T_Configuration::cell_tag
                     >                                                         LevelElementType;
 
     typedef mgCellIt<LevelElementType,
@@ -323,7 +323,7 @@ namespace viennagrid
   struct IteratorTypes< segment<T_Configuration, level, HandlingTag, true, NoMultigridTag>, level, true>
   {
     typedef element<T_Configuration,
-                     typename T_Configuration::CellTag
+                     typename T_Configuration::cell_tag
                     >                                                         LevelElementType;
 
     typedef typename std::vector<LevelElementType >::iterator              ResultType;
@@ -334,7 +334,7 @@ namespace viennagrid
   struct IteratorTypes< segment<T_Configuration>, 0, true>
   {
     typedef element<T_Configuration,
-                     typename TopologyLevel<typename T_Configuration::CellTag, 0>::ElementTag
+                     typename TopologyLevel<typename T_Configuration::cell_tag, 0>::ElementTag
                     >                                                         LevelElementType;
 
     typedef typename std::vector<LevelElementType >::iterator              ResultType;

@@ -31,17 +31,17 @@ namespace viennagrid
       {
         typedef typename DomainType::Configuration                     DomainConfiguration;
 
-        typedef typename DomainConfiguration::CoordType                 CoordType;
-        typedef typename DomainConfiguration::DimensionTag              DimensionTag;
-        typedef typename DomainConfiguration::CellTag                   CellTag;
+        typedef typename DomainConfiguration::numeric_type                 CoordType;
+        typedef typename DomainConfiguration::dimension_tag              DimensionTag;
+        typedef typename DomainConfiguration::cell_tag                   CellTag;
 
-        typedef typename DomainTypes<DomainConfiguration>::PointType    Point;
-        typedef typename DomainTypes<DomainConfiguration>::VertexType   Vertex;
-        typedef typename DomainTypes<DomainConfiguration>::CellType     Cell;
-        typedef typename DomainTypes<DomainConfiguration>::SegmentType  Segment;
+        typedef typename DomainTypes<DomainConfiguration>::point_type    Point;
+        typedef typename DomainTypes<DomainConfiguration>::vertex_type   Vertex;
+        typedef typename DomainTypes<DomainConfiguration>::cell_type     Cell;
+        typedef typename DomainTypes<DomainConfiguration>::segment_type  Segment;
 
-        typedef typename DomainTypes<DomainConfiguration>::VertexIterator      VertexIterator;
-        typedef typename DomainTypes<DomainConfiguration>::CellIterator        CellIterator;
+        typedef typename DomainTypes<DomainConfiguration>::vertex_iterator      VertexIterator;
+        typedef typename DomainTypes<DomainConfiguration>::cell_iterator        CellIterator;
 
         std::ifstream reader(filename.c_str());
 
@@ -155,7 +155,7 @@ namespace viennagrid
             //std::cout << std::endl << "Adding cell: " << &cell << " at " << cell_id << std::endl;
             cell.setVertices(&(vertices[0]));
             cell.setID(cell_id);
-            segment.template add<CellTag::TopoLevel>(cell_id, cell);
+            segment.template add<CellTag::topology_level>(cell_id, cell);
       
             //progress info:
             if (i % 50000 == 0)

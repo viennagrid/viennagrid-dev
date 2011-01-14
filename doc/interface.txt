@@ -1,0 +1,52 @@
+
+///////// Interface ideas for ViennaGrid ////////////////
+
+
+
+//structured domain type:
+domain<ConfigClass> d = structured_domain<ConfigClass>(x_coords);
+domain<ConfigClass> d = structured_domain<ConfigClass>(x_coords, y_coords);
+domain<ConfigClass> d = structured_domain<ConfigClass>(x_coords, y_coords, z_coords);
+
+//unstructured domain type:
+domain<ConfigClass> d = unstructured_domain<ConfigClass>(file);
+
+//Domain configuration:
+struct ConfigClass
+{
+  //numeric type used for point coordinates and the like
+  typedef double                   numeric_type;
+
+  //Structured or unstructured
+  //Typical tags:
+  //  - structured_tag
+  //  - unstructured_tag
+  typedef SomeClass0               structure_tag;    
+  
+  
+  //Dimension of the underlying space (1, 2, 3, 4, ...)
+  //Typical tags:
+  //  - dim_tag<1>
+  //  - dim_tag<2>
+  //  - dim_tag<3>
+  typedef SomeClass1               dimension_tag;
+  
+  
+  //Cell type of the grid (triangle, quadrilaterals, tetrahedra, etc.)
+  //Evaluated only on unstructured grids, but always has to be defined
+  //Design decision: No hybrid grids, no prismatic grids (e.g. facets of different type)
+  //Typical tags:
+  //  - line_tag
+  //  - triangle_tag
+  //  - quadrilateral_tag
+  //  - tetrahedron_tag
+  //  - hexahedron_tag
+  typedef SomeClass2               cell_tag;                                                            
+  
+  
+  //Activate or deactivate multigrid capabilities:
+  //Typical tags:
+  //  - enable_multigrid_tag
+  //  - disable_multigrid_tag
+  typedef SomeClass3               multigrid_tag;    
+};

@@ -23,31 +23,31 @@ namespace viennagrid
   struct SegmentConfig
   {
     //default: No handling
-    typedef TopoLevelNoHandling    HandlingTag;
+    typedef topology_levelNoHandling    HandlingTag;
   };
 
   template <>
   struct SegmentConfig<0>
   {
-    typedef TopoLevelFullHandling    HandlingTag;
+    typedef topology_levelFullHandling    HandlingTag;
   };
 
   template <>
   struct SegmentConfig<1>
   {
-    typedef TopoLevelFullHandling    HandlingTag;
+    typedef topology_levelFullHandling    HandlingTag;
   };
 
   template <>
   struct SegmentConfig<2>
   {
-    typedef TopoLevelFullHandling    HandlingTag;
+    typedef topology_levelFullHandling    HandlingTag;
   };
 
   template <>
   struct SegmentConfig<3>
   {
-    typedef TopoLevelFullHandling    HandlingTag;
+    typedef topology_levelFullHandling    HandlingTag;
   };
 
 
@@ -56,47 +56,18 @@ namespace viennagrid
 
   struct PointTag
   {
-    static std::string getName() { return std::string("Point"); }
-    enum { TopoLevel = 0 };
+    enum { topology_level = 0 };
     typedef ProvideID             IDHandler;
 
-    static std::string getString() { return "Line"; }
-    static double getRefVolume() { return 1.0; }
-
-    //integration: arbitrary order
-    template <typename EXPR, typename Cell, typename Basisfun1, typename Basisfun2, typename IntegrationTag>
-    static double integrate(EXPR const & expr, Cell & cell, Basisfun1 const & bf1, Basisfun2 const & bf2, IntegrationTag)
-    {
-      typedef typename DomainTypes<typename Cell::Configuration>::PointType    PointType;
-
-      //std::cout << "Integrating!" << std::endl;
-      return expr(cell, bf1, bf2, PointType());
-    }
-
+    static std::string name() { return "Point"; }
   };
 
   struct LineTag
   {
-    static std::string getName() { return std::string("Line/Edge"); }
-    enum { TopoLevel = 1 };
+    enum { topology_level = 1 };
     typedef ProvideID             IDHandler;
 
-    //static double facetvolume[2];
-
-    static std::string getString() { return "Line"; }
-    static double getRefVolume() { return 1.0; }
-
-    template <typename PointType>
-    static PointType mapFacetToCellCoordinates( long facetnum)
-    {
-      switch (facetnum)
-      {
-        case 0:   return PointType(0.0); 
-        case 1:   return PointType(1.0); 
-        default:   return PointType(0.0); 
-      }
-    }
-
+    static std::string name() { return "Line"; }
 
     //refinement:
     template <typename VertexType, typename ChildrenList, typename SegmentType>
@@ -125,7 +96,7 @@ namespace viennagrid
       cellvertices[1] = newvertices[1];
       cell.setVertices(&(cellvertices[0]));
       cell.setID(cell_id);
-      children.push_back( seg.template add<CellTag::TopoLevel>(cell_id, cell) );
+      children.push_back( seg.template add<CellTag::topology_level>(cell_id, cell) );
       ++cell_id;
 
       //std::cout << "Cell 2..." << std::endl;
@@ -133,82 +104,36 @@ namespace viennagrid
       cellvertices[1] = newvertices[2];
       cell.setVertices(&(cellvertices[0]));
       cell.setID(cell_id);
-      children.push_back( seg.template add<CellTag::TopoLevel>(cell_id, cell) );
+      children.push_back( seg.template add<CellTag::topology_level>(cell_id, cell) );
       ++cell_id;
     }
 
   };
 
-  //static members:
-  //double LineTag::facetvolume[] = { 1.0, 1.0 };
-
-
   struct TriangleTag
   {
-    enum{ TopoLevel = 2 };
+    enum{ topology_level = 2 };
     typedef ProvideID             IDHandler;
 
-    static std::string getName() { return std::string("Triangle"); }
-    static double getRefVolume() { return 0.5; }
-
-
-      //length of edges of the reference triangle
-      //static double facetvolume[3];
-
-      //map facet-coordinate r to cell-coordinates (x,y)
-      template <typename PointType>
-      static PointType mapFacetToCellCoordinates( long facetnum, double r)
-      {
-        switch (facetnum)
-        {
-          case 0:   return PointType(r, 0.0); 
-          case 1:   return PointType(0.0, r); 
-          case 2:   return PointType(1.0 - r, r); 
-          default:   return PointType(0.0, 0.0, 0.0); 
-        }
-      }
-
+    static std::string name() { return "Triangle"; }
 
   };
-
-  //static members:
-  //double TriangleTag::facetvolume[] = { 1.0, 1.414213562373095049, 1.0 };
 
   ///////////////// TetrahedronTag /////////////////
 
   struct TetrahedronTag
   {
-    enum{ TopoLevel = 3 };
+    enum{ topology_level = 3 };
     typedef ProvideID             IDHandler;
 
-    static std::string getName() { return std::string("Tetrahedron"); }
-    static double getRefVolume() { return 1.0/6.0; }
-
-    //area of (triangle) facets of the reference tetrahedron
-    //static double facetvolume[4];
-
-    //map facet-coordinate r to cell-coordinates (x,y)
-    template <typename PointType>
-    static PointType mapFacetToCellCoordinates( long facetnum, double r, double s)
-    {
-      switch (facetnum)
-      {
-        case 0:   return PointType(r, s, 0.0); 
-        case 1:   return PointType(r, 0.0, s); 
-        case 2:   return PointType(0.0, r, s); 
-        case 3:   return PointType(1.0 - r - s, r , s); 
-        default:   return PointType(0.0, 0.0, 0.0);
-      }
-    }
-
-
+    static std::string name() { return "Tetrahedron"; }
   };
 
   //static members:
   //double TetrahedronTag::facetvolume[] = { 1.0, 2.449489742783178098, 1.0, 1.0 };
 
 
-  template <typename ElementTag_, long i = ElementTag_::TopoLevel>
+  template <typename ElementTag_, long i = ElementTag_::topology_level>
   struct TopologyLevel
   {
     //the default case is simultaneously a pathetic case:
@@ -218,7 +143,7 @@ namespace viennagrid
 
     typedef ElementTag_                  ElementTag;
     //compatibility with cell-on-cell-iterator
-    typedef TopoLevelFullHandling     HandlingTag;
+    typedef topology_levelFullHandling     HandlingTag;
   };
 
   //Point:
@@ -227,7 +152,7 @@ namespace viennagrid
   {
     typedef PointTag              ElementTag;
     typedef ProvideID             IDHandler;
-    typedef TopoLevelFullHandling     HandlingTag;
+    typedef topology_levelFullHandling     HandlingTag;
 
     enum{ ElementNum = 1 };     //1 vertex
   };
@@ -237,7 +162,7 @@ namespace viennagrid
   struct TopologyLevel<LineTag, 0>
   {
     typedef PointTag              ElementTag;
-    typedef TopoLevelFullHandling     HandlingTag;
+    typedef topology_levelFullHandling     HandlingTag;
 
     enum{ ElementNum = 2 };     //2 vertices
   };
@@ -247,7 +172,7 @@ namespace viennagrid
   struct TopologyLevel<TriangleTag, 0>
   {
     typedef PointTag                  ElementTag;
-    typedef TopoLevelFullHandling     HandlingTag;
+    typedef topology_levelFullHandling     HandlingTag;
 
     enum{ ElementNum = 3 };     //3 vertices
   };
@@ -256,7 +181,7 @@ namespace viennagrid
   struct TopologyLevel<TriangleTag, 1>
   {
     typedef LineTag                   ElementTag;
-    typedef TopoLevelFullHandling     HandlingTag;
+    typedef topology_levelFullHandling     HandlingTag;
 
     enum{ ElementNum = 3 };     //3 edges
 
@@ -290,7 +215,7 @@ namespace viennagrid
   struct TopologyLevel<TetrahedronTag, 0>
   {
     typedef PointTag             ElementTag;
-    typedef TopoLevelFullHandling     HandlingTag;
+    typedef topology_levelFullHandling     HandlingTag;
 
     enum{ ElementNum = 4 };     //4 vertices
   };
@@ -299,7 +224,7 @@ namespace viennagrid
   struct TopologyLevel<TetrahedronTag, 1>
   {
     typedef LineTag              ElementTag;
-    typedef TopoLevelFullHandling     HandlingTag;
+    typedef topology_levelFullHandling     HandlingTag;
 
     enum{ ElementNum = 6 };     //6 edges
 
@@ -347,7 +272,7 @@ namespace viennagrid
   struct TopologyLevel<TetrahedronTag, 2>
   {
     typedef TriangleTag          ElementTag;
-    typedef TopoLevelFullHandling     HandlingTag;
+    typedef topology_levelFullHandling     HandlingTag;
 
     enum{ ElementNum = 4 };     //4 facets
 

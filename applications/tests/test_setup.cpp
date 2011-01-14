@@ -29,23 +29,23 @@
 
 struct TestDomainConfig
 {
-  typedef double                                              CoordType;
+  typedef double                                 numeric_type;
   #ifdef THREEDIM
-  typedef viennagrid::ThreeDimensionsTag                                  DimensionTag;
-  typedef viennagrid::TetrahedronTag                                      CellTag;
+  typedef viennagrid::ThreeDimensionsTag         dimension_tag;
+  typedef viennagrid::TetrahedronTag             cell_tag;
   #endif
   #ifdef TWODIM
-  typedef viennagrid::TwoDimensionsTag                                    DimensionTag;
-  typedef viennagrid::TriangleTag                                         CellTag;
+  typedef viennagrid::TwoDimensionsTag           dimension_tag;
+  typedef viennagrid::TriangleTag                cell_tag;
   #endif
   #ifdef ONEDIM
-  typedef viennagrid::OneDimensionTag                                     DimensionTag;
-  typedef viennagrid::LineTag                                             CellTag;
+  typedef viennagrid::OneDimensionTag            dimension_tag;
+  typedef viennagrid::LineTag                    cell_tag;
   #endif
 
   //multigrid:
-  //typedef FullMultigridTag                                  MultigridTag;
-  typedef viennagrid::NoMultigridTag                                      MultigridTag;
+  typedef viennagrid::FullMultigridTag                       multigrid_tag;
+  //typedef viennagrid::NoMultigridTag             multigrid_tag;
 };
 
 
@@ -54,17 +54,17 @@ void testNewDomain(std::string & infile, std::string & outfile)
 
   typedef viennagrid::domain<TestDomainConfig>        Domain;
   //typedef viennagrid::TestDomainConfig::DimensionTag              DimensionTag;
-  typedef viennagrid::DomainTypes<TestDomainConfig>::PointType    PointType;
-  typedef viennagrid::DomainTypes<TestDomainConfig>::VertexType   VertexType;
+  typedef viennagrid::DomainTypes<TestDomainConfig>::point_type    PointType;
+  typedef viennagrid::DomainTypes<TestDomainConfig>::vertex_type   VertexType;
 
-  typedef viennagrid::DomainTypes<TestDomainConfig>::FacetType    FacetType;
-  typedef viennagrid::DomainTypes<TestDomainConfig>::CellType     CellType;
-  typedef viennagrid::DomainTypes<TestDomainConfig>::SegmentType  Segment;
+  typedef viennagrid::DomainTypes<TestDomainConfig>::facet_type    FacetType;
+  typedef viennagrid::DomainTypes<TestDomainConfig>::cell_type     CellType;
+  typedef viennagrid::DomainTypes<TestDomainConfig>::segment_type  Segment;
 
   typedef viennagrid::IteratorTypes<Segment, 0>::ResultType                                         VertexIterator;
   typedef viennagrid::IteratorTypes<Segment, 1>::ResultType                                         EdgeIterator;
-  typedef viennagrid::IteratorTypes<Segment, TestDomainConfig::CellTag::TopoLevel-1>::ResultType    FacetIterator;
-  typedef viennagrid::IteratorTypes<Segment, TestDomainConfig::CellTag::TopoLevel>::ResultType      CellIterator;
+  typedef viennagrid::IteratorTypes<Segment, TestDomainConfig::cell_tag::topology_level-1>::ResultType   FacetIterator;
+  typedef viennagrid::IteratorTypes<Segment, TestDomainConfig::cell_tag::topology_level>::ResultType     CellIterator;
 
   Domain domain;
   
@@ -109,14 +109,14 @@ void testNewDomain(std::string & infile, std::string & outfile)
   vertices[2] = seg.getVertexAddress(2);
   vertices[3] = seg.getVertexAddress(3);
   simplex.setVertices(vertices);
-  seg.add<TestDomainConfig::CellTag::TopoLevel>(0, simplex);
+  seg.add<TestDomainConfig::cell_tag::topology_level>(0, simplex);
 
   vertices[0] = seg.getVertexAddress(1);
   vertices[1] = seg.getVertexAddress(3);
   vertices[2] = seg.getVertexAddress(2);
   vertices[3] = seg.getVertexAddress(0);
   simplex.setVertices(vertices);
-  seg.add<TestDomainConfig::CellTag::TopoLevel>(1, simplex);
+  seg.add<TestDomainConfig::cell_tag::topology_level>(1, simplex);
   
   
   std::cout << "Vertices: " << std::endl;
@@ -132,14 +132,14 @@ void testNewDomain(std::string & infile, std::string & outfile)
       eit->print();
 
   std::cout << "Facets: " << std::endl;
-  for (FacetIterator fit = seg.begin<TestDomainConfig::CellTag::TopoLevel-1>();
-        fit != seg.end<TestDomainConfig::CellTag::TopoLevel-1>();
+  for (FacetIterator fit = seg.begin<TestDomainConfig::cell_tag::topology_level-1>();
+        fit != seg.end<TestDomainConfig::cell_tag::topology_level-1>();
         ++fit)
       fit->print();
 
   std::cout << "Cells: " << std::endl;
-  for (CellIterator cit = seg.begin<TestDomainConfig::CellTag::TopoLevel>();
-        cit != seg.end<TestDomainConfig::CellTag::TopoLevel>();
+  for (CellIterator cit = seg.begin<TestDomainConfig::cell_tag::topology_level>();
+        cit != seg.end<TestDomainConfig::cell_tag::topology_level>();
         ++cit)
       cit->print();
 

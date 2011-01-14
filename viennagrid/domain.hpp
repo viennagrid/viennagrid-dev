@@ -53,7 +53,7 @@ namespace viennagrid
 
   template <typename DomainConfiguration,
              long topolevel>
-  struct SegmentIDShifter <DomainConfiguration, topolevel, TopoLevelFullHandling, ProvideID>
+  struct SegmentIDShifter <DomainConfiguration, topolevel, topology_levelFullHandling, ProvideID>
   {
     //shift IDs:
     static void apply(typename DomainTypes<DomainConfiguration>::DomainType & domain)
@@ -77,14 +77,14 @@ namespace viennagrid
       }
 
       //continue iteration: (by using the default behaviour for this level. This makes termination of topolevel-loop easier: no code duplication)
-      SegmentIDShifter<DomainConfiguration, topolevel, TopoLevelNoHandling, NoID>::apply(domain);
+      SegmentIDShifter<DomainConfiguration, topolevel, topology_levelNoHandling, NoID>::apply(domain);
     }
 
   };
 
   //stop at vertex-level
   template <typename DomainConfiguration>
-  struct SegmentIDShifter<DomainConfiguration, 0, TopoLevelNoHandling, NoID>
+  struct SegmentIDShifter<DomainConfiguration, 0, topology_levelNoHandling, NoID>
   {
     static void apply(typename DomainTypes<DomainConfiguration>::DomainType & domain) {}
   };
@@ -126,7 +126,7 @@ namespace viennagrid
 //       void finishSegmentSetup()
 //       {
 //         //iterate over segments and set appropriate start-indices for each topology-level:
-//         SegmentIDShifter<T_Configuration, T_Configuration::CellTag::TopoLevel>::apply(*this);
+//         SegmentIDShifter<T_Configuration, T_Configuration::CellTag::topology_level>::apply(*this);
 //       }
 
       template <long topolevel>
@@ -155,38 +155,38 @@ namespace viennagrid
   template <typename Configuration>
   class DomainTypes
   {
-    enum { dim = Configuration::DimensionTag::dim };
+    enum { dim = Configuration::dimension_tag::dim };
 
 
   public:
-    typedef point_t< typename Configuration::CoordType,
-                      typename Configuration::DimensionTag >                       PointType;
+    typedef point_t< typename Configuration::numeric_type,
+                      typename Configuration::dimension_tag >                       point_type;
 
     typedef element< Configuration,
-                      typename TopologyLevel<typename Configuration::CellTag, 0>::ElementTag>       VertexType;
+                      typename TopologyLevel<typename Configuration::cell_tag, 0>::ElementTag>       vertex_type;
 
     typedef element< Configuration,
-                      typename TopologyLevel<typename Configuration::CellTag, 1>::ElementTag >      EdgeType;
+                      typename TopologyLevel<typename Configuration::cell_tag, 1>::ElementTag >      edge_type;
 
     typedef element< Configuration,
-                      typename TopologyLevel<typename Configuration::CellTag, dim-1>::ElementTag >  FacetType;
+                      typename TopologyLevel<typename Configuration::cell_tag, dim-1>::ElementTag >  facet_type;
 
     typedef element< Configuration,
-                      typename Configuration::CellTag >                       CellType;
+                      typename Configuration::cell_tag >                       cell_type;
 
-    typedef segment<Configuration>                                            SegmentType;
-    typedef domain<Configuration>                                             DomainType;
+    typedef segment<Configuration>                                            segment_type;
+    typedef domain<Configuration>                                             domain_type;
 
     //Iterators:
-    typedef typename IteratorTypes<SegmentType,0>::ResultType                    VertexIterator;
-    typedef typename IteratorTypes<SegmentType,1>::ResultType                    EdgeIterator;
-    typedef typename IteratorTypes<SegmentType,
-                                    Configuration::CellTag::TopoLevel-1>::ResultType  FacetIterator;
-    typedef typename IteratorTypes<SegmentType,
-                                    Configuration::CellTag::TopoLevel>::ResultType    CellIterator;
-    typedef typename domain<Configuration>::SegmentIterator                    SegmentIterator;
+    typedef typename IteratorTypes<segment_type, 0>::ResultType                    vertex_iterator;
+    typedef typename IteratorTypes<segment_type, 1>::ResultType                    edge_iterator;
+    typedef typename IteratorTypes<segment_type,
+                                    Configuration::cell_tag::topology_level-1>::ResultType  facet_iterator;
+    typedef typename IteratorTypes<segment_type,
+                                    Configuration::cell_tag::topology_level>::ResultType    cell_iterator;
+    typedef typename domain<Configuration>::SegmentIterator                    segment_iterator;
 
-    typedef typename IteratorTypes<CellType,0>::ResultType              VertexOnCellIterator;
+    typedef typename IteratorTypes<cell_type,0>::ResultType              VertexOnCellIterator;
 
   };
 

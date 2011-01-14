@@ -92,14 +92,14 @@ namespace viennagrid
 
 
   template <typename T_Configuration, unsigned long levelnum, typename MultigridTag>
-  class segment <T_Configuration, levelnum, TopoLevelFullHandling, false, MultigridTag> :
+  class segment <T_Configuration, levelnum, topology_levelFullHandling, false, MultigridTag> :
     public segment <T_Configuration, levelnum - 1>
   {
-    typedef TopologyLevel<typename T_Configuration::CellTag, levelnum>       LevelSpecs;
+    typedef TopologyLevel<typename T_Configuration::cell_tag, levelnum>       LevelSpecs;
     typedef segment <T_Configuration, levelnum - 1>      Base;
 
     typedef element<T_Configuration, typename LevelSpecs::ElementTag>      LevelElementType;
-    typedef TopologyLevel<typename T_Configuration::CellTag, 0>       VertexSpecs;
+    typedef TopologyLevel<typename T_Configuration::cell_tag, 0>       VertexSpecs;
 
     public:
 
@@ -107,7 +107,7 @@ namespace viennagrid
 
       template <long j>
       element<T_Configuration,
-              typename TopologyLevel<typename T_Configuration::CellTag, j>::ElementTag> *
+              typename TopologyLevel<typename T_Configuration::cell_tag, j>::ElementTag> *
       add(long pos, LevelElementType & elem, ElementOrientation * orientation, EqualType) {
 
         typedef typename std::map< ElementKey<LevelElementType>, LevelElementType >::iterator  ElementIterator;
@@ -158,7 +158,7 @@ namespace viennagrid
       
       template <long j, typename T>
       element<T_Configuration,
-              typename TopologyLevel<typename T_Configuration::CellTag, j>::ElementTag> *
+              typename TopologyLevel<typename T_Configuration::cell_tag, j>::ElementTag> *
       add(long pos, T & elem, ElementOrientation * orientation, LessType) {
         //std::cout << "operating on " << this << ": " << std::endl;
         //no handling: do nothing
@@ -167,7 +167,7 @@ namespace viennagrid
 
       template <long j, typename T>
       element<T_Configuration,
-              typename TopologyLevel<typename T_Configuration::CellTag, j>::ElementTag> *
+              typename TopologyLevel<typename T_Configuration::cell_tag, j>::ElementTag> *
       add(long pos, T & elem, ElementOrientation * orientation) {
         //std::cout << "operating on " << this << ": " << std::endl;
         //no handling: do nothing
@@ -237,10 +237,10 @@ namespace viennagrid
   };
 
   template <typename T_Configuration, unsigned long levelnum, typename MultigridTag>
-  class segment <T_Configuration, levelnum, TopoLevelNoHandling, false, MultigridTag> :
+  class segment <T_Configuration, levelnum, topology_levelNoHandling, false, MultigridTag> :
     public segment <T_Configuration, levelnum - 1>
   {
-    typedef TopologyLevel<typename T_Configuration::CellTag, levelnum>       LevelSpecs;
+    typedef TopologyLevel<typename T_Configuration::cell_tag, levelnum>       LevelSpecs;
     typedef segment <T_Configuration, levelnum - 1>      Base;
 
     typedef element<T_Configuration, typename LevelSpecs::ElementTag>      LevelElementType;
@@ -252,17 +252,17 @@ namespace viennagrid
       //Force compiler error: no implementation for add at this level
       template <long j>
       element<T_Configuration,
-              typename TopologyLevel<typename T_Configuration::CellTag, j>::ElementTag> *
+              typename TopologyLevel<typename T_Configuration::cell_tag, j>::ElementTag> *
       add(long pos, LevelElementType & elem, ElementOrientation * orientation, EqualType) {
 
-        typename TopologyLevel<typename T_Configuration::CellTag, j>::ERROR_NO_SEGMENT_HANDLING_AVAILABLE_FOR_THIS_ELEMENT_LEVEL   ErrorIndicator;
+        typename TopologyLevel<typename T_Configuration::cell_tag, j>::ERROR_NO_SEGMENT_HANDLING_AVAILABLE_FOR_THIS_ELEMENT_LEVEL   ErrorIndicator;
         //no handling: return Null-pointer
         return 0;
       }
       
       template <long j, typename T>
       element<T_Configuration,
-              typename TopologyLevel<typename T_Configuration::CellTag, j>::ElementTag> *
+              typename TopologyLevel<typename T_Configuration::cell_tag, j>::ElementTag> *
       add(long pos, T & elem, ElementOrientation * orientation, LessType) {
         //std::cout << "operating on " << this << ": " << std::endl;
         //no handling: do nothing
@@ -271,7 +271,7 @@ namespace viennagrid
 
       template <long j, typename T>
       element<T_Configuration,
-              typename TopologyLevel<typename T_Configuration::CellTag, j>::ElementTag> *
+              typename TopologyLevel<typename T_Configuration::cell_tag, j>::ElementTag> *
       add(long pos, T & elem, ElementOrientation * orientation) {
         //std::cout << "operating on " << this << ": " << std::endl;
         //no handling: do nothing
@@ -346,7 +346,7 @@ namespace viennagrid
   template <typename T_Configuration, typename HandlingTag>
   class segment <T_Configuration, 0uL, HandlingTag, true, NoMultigridTag>
   {
-    typedef typename DomainTypes<T_Configuration>::VertexType        LevelElementType;
+    typedef typename DomainTypes<T_Configuration>::vertex_type        LevelElementType;
     //typedef element<T_Configuration, typename VertexSpecs::ElementTag>   LevelElementType;
     typedef LevelElementType                                          VertexType;
 
@@ -435,15 +435,15 @@ namespace viennagrid
   //special treatment for cells
   template <typename T_Configuration, unsigned long levelnum, typename HandlingTag>
   class segment <T_Configuration, levelnum, HandlingTag, true, FullMultigridTag> :
-   public segment <T_Configuration, T_Configuration::CellTag::TopoLevel - 1>
+   public segment <T_Configuration, T_Configuration::cell_tag::topology_level - 1>
   {
-    typedef segment <T_Configuration, T_Configuration::CellTag::TopoLevel - 1>                                                         Base;
-    typedef TopologyLevel<typename T_Configuration::CellTag, 0>       VertexSpecs;
-    typedef typename DomainTypes<T_Configuration>::VertexType         VertexType;
-    typedef TopologyLevel<typename T_Configuration::CellTag,
-                            T_Configuration::CellTag::TopoLevel>             LevelSpecs;
+    typedef segment <T_Configuration, T_Configuration::cell_tag::topology_level - 1>                                                         Base;
+    typedef TopologyLevel<typename T_Configuration::cell_tag, 0>       VertexSpecs;
+    typedef typename DomainTypes<T_Configuration>::vertex_type         VertexType;
+    typedef TopologyLevel<typename T_Configuration::cell_tag,
+                            T_Configuration::cell_tag::topology_level>             LevelSpecs;
 
-    typedef typename DomainTypes<T_Configuration>::CellType            LevelElementType;
+    typedef typename DomainTypes<T_Configuration>::cell_type            LevelElementType;
 
     public:
       typedef T_Configuration                                       Configuration;
@@ -458,7 +458,7 @@ namespace viennagrid
 
       template <long j>
       element<T_Configuration,
-              typename TopologyLevel<typename T_Configuration::CellTag, j>::ElementTag> *
+              typename TopologyLevel<typename T_Configuration::cell_tag, j>::ElementTag> *
       add(long pos, LevelElementType & elem, ElementOrientation * orientation, EqualType)
       {
         elements[pos] = elem;
@@ -466,7 +466,7 @@ namespace viennagrid
 
         //init cell:
         insertedElement.setID(pos);
-        insertedElement.update_dt_dx();
+        //insertedElement.update_dt_dx();
         insertedElement.fill(*this);
 
         return &(insertedElement);
@@ -474,7 +474,7 @@ namespace viennagrid
 
       template <long j, typename T>
       element<T_Configuration,
-              typename TopologyLevel<typename T_Configuration::CellTag, j>::ElementTag> *
+              typename TopologyLevel<typename T_Configuration::cell_tag, j>::ElementTag> *
       add(long pos, T & elem, ElementOrientation * orientation, LessType) {
         //std::cout << "operating on " << this << ": " << std::endl;
         return Base::template add<j>(pos, elem, orientation);
@@ -482,7 +482,7 @@ namespace viennagrid
 
       template <long j, typename T>
       element<T_Configuration,
-              typename TopologyLevel<typename T_Configuration::CellTag, j>::ElementTag> *
+              typename TopologyLevel<typename T_Configuration::cell_tag, j>::ElementTag> *
       add(long pos, T & elem, ElementOrientation * orientation = 0 ) {
         //std::cout << "operating on " << this << ": " << std::endl;
         return add<j>(pos, elem, orientation, typename LevelDiscriminator<levelnum, j>::ResultType());
@@ -572,8 +572,8 @@ namespace viennagrid
                                     size<1>() << " vertices" << std::endl;
           child_seg->reserveVertices( Base::template size<0>() + 
                                       size<1>() );
-          std::cout << "Reserving memory for " << pow(2, T_Configuration::CellTag::TopoLevel) * elements.size() << " cells" << std::endl;
-          child_seg->reserveCells( pow(2, T_Configuration::CellTag::TopoLevel) * elements.size() );
+          std::cout << "Reserving memory for " << pow(2, T_Configuration::cell_tag::topology_level) * elements.size() << " cells" << std::endl;
+          child_seg->reserveCells( pow(2, T_Configuration::cell_tag::topology_level) * elements.size() );
 
 
           child_seg->enableMultigrid();
@@ -631,22 +631,22 @@ namespace viennagrid
   //special treatment for cells
   template <typename T_Configuration, unsigned long levelnum, typename HandlingTag>
   class segment <T_Configuration, levelnum, HandlingTag, true, NoMultigridTag> :
-   public segment <T_Configuration, T_Configuration::CellTag::TopoLevel - 1>
+   public segment <T_Configuration, T_Configuration::cell_tag::topology_level - 1>
   {
-    typedef segment <T_Configuration, T_Configuration::CellTag::TopoLevel - 1>                                                         Base;
-    typedef TopologyLevel<typename T_Configuration::CellTag, 0>       VertexSpecs;
-    typedef typename DomainTypes<T_Configuration>::VertexType         VertexType;
-    typedef TopologyLevel<typename T_Configuration::CellTag,
-                            T_Configuration::CellTag::TopoLevel>             LevelSpecs;
+    typedef segment <T_Configuration, T_Configuration::cell_tag::topology_level - 1>                                                         Base;
+    typedef TopologyLevel<typename T_Configuration::cell_tag, 0>       VertexSpecs;
+    typedef typename DomainTypes<T_Configuration>::vertex_type         VertexType;
+    typedef TopologyLevel<typename T_Configuration::cell_tag,
+                            T_Configuration::cell_tag::topology_level>             LevelSpecs;
 
-    typedef typename DomainTypes<T_Configuration>::CellType            LevelElementType;
+    typedef typename DomainTypes<T_Configuration>::cell_type            LevelElementType;
 
     public:
       typedef T_Configuration                                       Configuration;
 
       template <long j>
       element<T_Configuration,
-              typename TopologyLevel<typename T_Configuration::CellTag, j>::ElementTag> *
+              typename TopologyLevel<typename T_Configuration::cell_tag, j>::ElementTag> *
       add(long pos, LevelElementType & elem, ElementOrientation * orientation, EqualType)
       {
         elements[pos] = elem;
@@ -661,7 +661,7 @@ namespace viennagrid
 
       template <long j, typename T>
       element<T_Configuration,
-              typename TopologyLevel<typename T_Configuration::CellTag, j>::ElementTag> *
+              typename TopologyLevel<typename T_Configuration::cell_tag, j>::ElementTag> *
       add(long pos, T & elem, ElementOrientation * orientation, LessType) {
         //std::cout << "operating on " << this << ": " << std::endl;
         return Base::template add<j>(pos, elem, orientation);
@@ -669,7 +669,7 @@ namespace viennagrid
 
       template <long j, typename T>
       element<T_Configuration,
-              typename TopologyLevel<typename T_Configuration::CellTag, j>::ElementTag> *
+              typename TopologyLevel<typename T_Configuration::cell_tag, j>::ElementTag> *
       add(long pos, T & elem, ElementOrientation * orientation = 0 ) {
         //std::cout << "operating on " << this << ": " << std::endl;
         return add<j>(pos, elem, orientation, typename LevelDiscriminator<levelnum, j>::ResultType());

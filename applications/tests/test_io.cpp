@@ -40,23 +40,23 @@
 
 struct TestDomainConfig
 {
-  typedef double                                              CoordType;
+  typedef double                                 numeric_type;
   #ifdef THREEDIM
-  typedef viennagrid::ThreeDimensionsTag                                  DimensionTag;
-  typedef viennagrid::TetrahedronTag                                      CellTag;
+  typedef viennagrid::ThreeDimensionsTag         dimension_tag;
+  typedef viennagrid::TetrahedronTag             cell_tag;
   #endif
   #ifdef TWODIM
-  typedef viennagrid::TwoDimensionsTag                                    DimensionTag;
-  typedef viennagrid::TriangleTag                                         CellTag;
+  typedef viennagrid::TwoDimensionsTag           dimension_tag;
+  typedef viennagrid::TriangleTag                cell_tag;
   #endif
   #ifdef ONEDIM
-  typedef viennagrid::OneDimensionTag                                     DimensionTag;
-  typedef viennagrid::LineTag                                             CellTag;
+  typedef viennagrid::OneDimensionTag            dimension_tag;
+  typedef viennagrid::LineTag                    cell_tag;
   #endif
 
   //multigrid:
-  //typedef FullMultigridTag                                  MultigridTag;
-  typedef viennagrid::NoMultigridTag                                      MultigridTag;
+  //typedef FullMultigridTag                       multigrid_tag;
+  typedef viennagrid::NoMultigridTag             multigrid_tag;
 };
 
 
@@ -65,17 +65,17 @@ void testNewDomain(std::string & infile, std::string & outfile)
 
   typedef viennagrid::domain<TestDomainConfig>        Domain;
   //typedef viennagrid::TestDomainConfig::DimensionTag              DimensionTag;
-  typedef viennagrid::DomainTypes<TestDomainConfig>::PointType    PointType;
-  typedef viennagrid::DomainTypes<TestDomainConfig>::VertexType   VertexType;
+  typedef viennagrid::DomainTypes<TestDomainConfig>::point_type    PointType;
+  typedef viennagrid::DomainTypes<TestDomainConfig>::vertex_type   VertexType;
 
-  typedef viennagrid::DomainTypes<TestDomainConfig>::FacetType    FacetType;
-  typedef viennagrid::DomainTypes<TestDomainConfig>::CellType     CellType;
-  typedef viennagrid::DomainTypes<TestDomainConfig>::SegmentType  Segment;
+  typedef viennagrid::DomainTypes<TestDomainConfig>::facet_type    FacetType;
+  typedef viennagrid::DomainTypes<TestDomainConfig>::cell_type     CellType;
+  typedef viennagrid::DomainTypes<TestDomainConfig>::segment_type  Segment;
 
   typedef viennagrid::IteratorTypes<Segment, 0>::ResultType                                         VertexIterator;
   typedef viennagrid::IteratorTypes<Segment, 1>::ResultType                                         EdgeIterator;
-  typedef viennagrid::IteratorTypes<Segment, TestDomainConfig::CellTag::TopoLevel-1>::ResultType    FacetIterator;
-  typedef viennagrid::IteratorTypes<Segment, TestDomainConfig::CellTag::TopoLevel>::ResultType      CellIterator;
+  typedef viennagrid::IteratorTypes<Segment, TestDomainConfig::cell_tag::topology_level-1>::ResultType    FacetIterator;
+  typedef viennagrid::IteratorTypes<Segment, TestDomainConfig::cell_tag::topology_level>::ResultType      CellIterator;
 
   Domain domain;
   
@@ -119,6 +119,19 @@ void testNewDomain(std::string & infile, std::string & outfile)
   std::cout << "*******************************" << std::endl;
   std::cout << "* Test finished successfully! *" << std::endl;
   std::cout << "*******************************" << std::endl;
+
+  return;
+  
+  //compilation tests:
+  //viennagrid::io::gts_reader my_gts_reader;
+  //my_gts_reader(domain, infile);
+
+  //viennagrid::io::sgf_reader my_sgf_reader;
+  //my_sgf_reader(domain, infile);
+
+  //viennagrid::io::Vtk_reader<Domain> my_vtk_reader;
+  //my_vtk_reader.readDomain(domain, infile);
+  
 }
 
 

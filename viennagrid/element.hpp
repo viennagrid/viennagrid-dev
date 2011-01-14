@@ -16,7 +16,8 @@
 
 #include "viennagrid/forwards.h"
 #include "viennagrid/iterators.h"
-  
+
+#include <vector>
 
 namespace viennagrid
 {
@@ -65,12 +66,12 @@ namespace viennagrid
   class lower_level_holder  { };
 
   template <typename T_Configuration, typename ElementTag, unsigned long levelnum>
-  class lower_level_holder <T_Configuration, ElementTag, levelnum, TopoLevelFullHandling, false> :
+  class lower_level_holder <T_Configuration, ElementTag, levelnum, topology_levelFullHandling, false> :
     public lower_level_holder < T_Configuration, ElementTag, levelnum - 1>
   {
     //requirements:
     //array of pointers to elements of class 'levelnum' and a integer representing the orientation within the cell relative to the element it points to.
-    typedef typename DomainTypes<T_Configuration>::SegmentType        SegmentType;
+    typedef typename DomainTypes<T_Configuration>::segment_type        SegmentType;
     typedef TopologyLevel<ElementTag, levelnum>                         LevelSpecs;
     typedef TopologyLevel<typename LevelSpecs::ElementTag, 0>  VertexOnElementSpecs;
     typedef lower_level_holder < T_Configuration, ElementTag, levelnum - 1 >      Base;
@@ -193,12 +194,12 @@ namespace viennagrid
   };
 
   template <typename T_Configuration, typename ElementTag, unsigned long levelnum>
-  class lower_level_holder <T_Configuration, ElementTag, levelnum, TopoLevelNoHandling, false> :
+  class lower_level_holder <T_Configuration, ElementTag, levelnum, topology_levelNoHandling, false> :
     public lower_level_holder < T_Configuration, ElementTag, levelnum - 1 >
   {
     //requirements:
     //array of pointers to elements of class 'levelnum' and a integer representing the orientation within the cell relative to the element it points to.
-    typedef typename DomainTypes<T_Configuration>::SegmentType        SegmentType;
+    typedef typename DomainTypes<T_Configuration>::segment_type        SegmentType;
     typedef TopologyLevel<ElementTag, levelnum>                                LevelSpecs;
     typedef lower_level_holder < T_Configuration, ElementTag, levelnum - 1 >      Base;
 
@@ -294,11 +295,11 @@ namespace viennagrid
   class lower_level_holder <T_Configuration, ElementTag, 0, HandlingTag, true> 
   {
     //array of pointers to elements of class 'levelnum' and a integer representing the orientation within the cell relative to the element it points to.
-    typedef typename DomainTypes<T_Configuration>::SegmentType        SegmentType;
+    typedef typename DomainTypes<T_Configuration>::segment_type        SegmentType;
     typedef TopologyLevel<ElementTag, 0>                                LevelSpecs;
 
     typedef element<T_Configuration, typename LevelSpecs::ElementTag>  VertexType;
-    typedef typename DomainTypes<T_Configuration>::PointType        PointType;
+    typedef typename DomainTypes<T_Configuration>::point_type        PointType;
 
     typedef typename IteratorTypes< element<T_Configuration, ElementTag>, 0>::ResultType                                          VertexIterator;
 
@@ -358,15 +359,15 @@ namespace viennagrid
   };
 
   ////////////// LAYER 3: Multigrid capabilities //////////
-  template <typename T_Configuration, typename ElTag, typename MultigridTag = typename T_Configuration::MultigridTag>
+  template <typename T_Configuration, typename ElTag, typename MultigridTag = typename T_Configuration::multigrid_tag>
   class multigrid_layer
   {  };
 
   template <typename T_Configuration, typename ElTag>
   class multigrid_layer<T_Configuration, ElTag, FullMultigridTag> :
-    public lower_level_holder < T_Configuration, ElTag, ElTag::TopoLevel - 1>
+    public lower_level_holder < T_Configuration, ElTag, ElTag::topology_level - 1>
   {
-      typedef lower_level_holder < T_Configuration, ElTag, ElTag::TopoLevel - 1>                     Base;
+      typedef lower_level_holder < T_Configuration, ElTag, ElTag::topology_level - 1>                     Base;
       typedef element<T_Configuration, ElTag>                       ElementType;
 
     public:
@@ -396,9 +397,9 @@ namespace viennagrid
   //if no multigrid-handling is needed, no implementation is needed :-)
   template <typename T_Configuration, typename ElTag>
   class multigrid_layer<T_Configuration, ElTag, NoMultigridTag> :
-    public lower_level_holder < T_Configuration, ElTag, ElTag::TopoLevel - 1>
+    public lower_level_holder < T_Configuration, ElTag, ElTag::topology_level - 1>
   {
-      typedef lower_level_holder < T_Configuration, ElTag, ElTag::TopoLevel - 1>             Base;
+      typedef lower_level_holder < T_Configuration, ElTag, ElTag::topology_level - 1>             Base;
 
     public:
       multigrid_layer() : Base() {}
@@ -412,11 +413,11 @@ namespace viennagrid
       public multigrid_layer < T_Configuration, ElTag > ,
       public ElTag::IDHandler
   {
-      typedef typename T_Configuration::CoordType                   ScalarType;
+      typedef typename T_Configuration::numeric_type                   ScalarType;
       typedef multigrid_layer < T_Configuration, ElTag >              Base;
-      typedef typename DomainTypes<T_Configuration>::PointType      PointType;
-      typedef typename DomainTypes<T_Configuration>::SegmentType    SegmentType;
-      typedef typename DomainTypes<T_Configuration>::VertexType     VertexType;
+      typedef typename DomainTypes<T_Configuration>::point_type      PointType;
+      typedef typename DomainTypes<T_Configuration>::segment_type    SegmentType;
+      typedef typename DomainTypes<T_Configuration>::vertex_type     VertexType;
       typedef TopologyLevel<ElTag, 0>                                 VertexSpecs;
 
     public:
@@ -440,13 +441,13 @@ namespace viennagrid
       {
         for (long j = 0; j<indent; ++j)
           std::cout << "   ";
-        std::cout << "---- " << ElTag::getName() << " " << this << " ---------" << std::endl;
+        std::cout << "---- " << ElTag::name() << " " << this << " ---------" << std::endl;
         Base::print(indent + 1);
       }
 
       void print_short() const
       {
-        std::cout << "---- " << ElTag::getName() << " " << this << " ---------" << std::endl;
+        std::cout << "---- " << ElTag::name() << " " << this << " ---------" << std::endl;
         Base::print_short();
       }
 
@@ -520,7 +521,7 @@ namespace viennagrid
       typename IteratorTypes< element<T_Configuration, ElementTag>, j>::ResultType
       begin()
       { 
-        return begin<j>(typename LevelDiscriminator<ElementTag::TopoLevel, j>::ResultType());
+        return begin<j>(typename LevelDiscriminator<ElementTag::topology_level, j>::ResultType());
       }
 
 
@@ -538,7 +539,7 @@ namespace viennagrid
       typename IteratorTypes< element<T_Configuration, ElementTag>, j>::ResultType
       end()
       { 
-        return end<j>( typename LevelDiscriminator<ElementTag::TopoLevel, j>::ResultType() );
+        return end<j>( typename LevelDiscriminator<ElementTag::topology_level, j>::ResultType() );
       }
 
     private:
@@ -551,10 +552,10 @@ namespace viennagrid
   class element <T_Configuration, PointTag> :
     public PointTag::IDHandler
   {
-      typedef typename DomainTypes<T_Configuration>::PointType     PointType;
-      typedef typename T_Configuration::CoordType                  CoordType;
-      typedef typename DomainTypes<T_Configuration>::VertexType    VertexType;
-      typedef typename T_Configuration::CellTag                    CellTag;
+      typedef typename DomainTypes<T_Configuration>::point_type     PointType;
+      typedef typename T_Configuration::numeric_type               CoordType;
+      typedef typename DomainTypes<T_Configuration>::vertex_type    VertexType;
+      typedef typename T_Configuration::cell_tag                    CellTag;
 
     public:
       typedef T_Configuration                                       Configuration;
@@ -619,7 +620,7 @@ namespace viennagrid
 
       bool operator==(VertexType & v2)
       {
-        return compare(v2, TopologyLevel<typename T_Configuration::CellTag,0>::IDHandler() );
+        return compare(v2, TopologyLevel<typename T_Configuration::cell_tag,0>::IDHandler() );
       }
 
       bool isOnBoundary() const { return onBoundary; }

@@ -35,8 +35,8 @@ namespace viennagrid
   };
 
   //Topological Handling Tag
-  struct TopoLevelFullHandling {};
-  struct TopoLevelNoHandling {};
+  struct topology_levelFullHandling {};
+  struct topology_levelNoHandling {};
 
   //multigrid:
   struct FullMultigridTag {};
@@ -73,10 +73,10 @@ namespace viennagrid
 
   //Segment type: 
   template <typename T_Configuration,
-             unsigned long levelnum = T_Configuration::CellTag::TopoLevel,
+             unsigned long levelnum = T_Configuration::cell_tag::topology_level,
              typename HandlingTag = typename SegmentConfig<levelnum>::HandlingTag,
-             bool specialHandling = (levelnum == T_Configuration::CellTag::TopoLevel) || (levelnum == 0),
-             typename MultigridTag = typename T_Configuration::MultigridTag>
+             bool specialHandling = (levelnum == T_Configuration::cell_tag::topology_level) || (levelnum == 0),
+             typename MultigridTag = typename T_Configuration::multigrid_tag>
   class segment;
 
 

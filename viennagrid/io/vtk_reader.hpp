@@ -41,18 +41,17 @@ namespace viennagrid
     protected:
         typedef typename DomainType::Configuration                     DomainConfiguration;
 
-        typedef typename DomainConfiguration::CoordType                 CoordType;
-        typedef typename DomainConfiguration::DimensionTag              DimensionTag;
-        typedef typename DomainConfiguration::CellTag                   CellTag;
-        typedef typename DomainConfiguration::BoundaryReadTag           BoundaryReadTag;
+        typedef typename DomainConfiguration::numeric_type                 CoordType;
+        typedef typename DomainConfiguration::dimension_tag              DimensionTag;
+        typedef typename DomainConfiguration::cell_tag                   CellTag;
 
-        typedef typename DomainTypes<DomainConfiguration>::PointType    Point;
-        typedef typename DomainTypes<DomainConfiguration>::VertexType   Vertex;
-        typedef typename DomainTypes<DomainConfiguration>::CellType     Cell;
-        typedef typename DomainTypes<DomainConfiguration>::SegmentType  Segment;
+        typedef typename DomainTypes<DomainConfiguration>::point_type    Point;
+        typedef typename DomainTypes<DomainConfiguration>::vertex_type   Vertex;
+        typedef typename DomainTypes<DomainConfiguration>::cell_type     Cell;
+        typedef typename DomainTypes<DomainConfiguration>::segment_type  Segment;
 
-        typedef typename DomainTypes<DomainConfiguration>::VertexIterator      VertexIterator;
-        typedef typename DomainTypes<DomainConfiguration>::CellIterator        CellIterator;
+        typedef typename DomainTypes<DomainConfiguration>::vertex_iterator      VertexIterator;
+        typedef typename DomainTypes<DomainConfiguration>::cell_iterator        CellIterator;
 
         std::ifstream reader;
 
@@ -229,7 +228,7 @@ namespace viennagrid
         void readCells(Segment & segment, long cellNum, std::vector<long> const & cells, std::vector<long> const & offsets) const
         {
             //***************************************************
-            // building up the cells in ViennaMesh
+            // building up the cells in ViennaGrid
             // -------------------------------------------------
             // "cells"   ... contain the indices of the nodes
             // "offsets" ... contain the information about
@@ -273,7 +272,7 @@ namespace viennagrid
 
               cell.setVertices(&(vertices[0]));
               cell.setID(i);
-              segment.template add<CellTag::TopoLevel>(i, cell);
+              segment.template add<CellTag::topology_level>(i, cell);
             }
         }
 
