@@ -79,23 +79,6 @@ namespace viennagrid
              typename MultigridTag = typename T_Configuration::MultigridTag>
   class segment;
 
-  
-  /********* Boundary stuff *******************/
-
-  struct NoBoundaryRead {};                     //do not read boundary from file
-  
-  // Key type for boundary (c.f. MappingKeyType):
-  // Template parameter id is to enable several simultaneous boundaries on a domain/segment
-  template <long id>
-  struct BoundaryKeyType
-  {
-    //needed for compatibility with std::map
-    bool operator<(BoundaryKeyType const & bkt2) const
-    {
-      return false;     // a < b is false AND b < a is false, hence a == b
-    }
-  };
-
 
   /********* Other *******************/
 

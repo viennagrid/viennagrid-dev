@@ -1,5 +1,5 @@
 /* =======================================================================
-   Copyright (c) 2010, Institute for Microelectronics, TU Vienna.
+   Copyright (c) 2010, Institute for Microelectronics, TU Wien
    http://www.iue.tuwien.ac.at
                              -----------------
                      ViennaGrid - The Vienna Grid Library
@@ -16,8 +16,8 @@
 //***********************************************
 // Define the dimension
 //***********************************************
-//#define THREEDIM
-#define TWODIM
+#define THREEDIM
+//#define TWODIM
 
 //***********************************************
 // Define the input-file format
@@ -143,31 +143,6 @@ void testNewDomain(std::string & infile, std::string & outfile)
         ++cit)
       cit->print();
 
-
-  std::cout << "Vertices: " << std::endl;
-  for (VertexIterator vit = seg.begin<0>();
-        vit != seg.end<0>();
-        ++vit)
-      vit->print();
-
-  std::cout << "Edges: " << std::endl;
-  for (EdgeIterator eit = seg.begin<1>();
-        eit != seg.end<1>();
-        ++eit)
-      eit->print();
-
-  std::cout << "Facets: " << std::endl;
-  for (FacetIterator fit = seg.begin<TestDomainConfig::CellTag::TopoLevel-1>();
-        fit != seg.end<TestDomainConfig::CellTag::TopoLevel-1>();
-        ++fit)
-      fit->print();
-
-  std::cout << "Cells: " << std::endl;
-  for (CellIterator cit = seg.begin<TestDomainConfig::CellTag::TopoLevel>();
-        cit != seg.end<TestDomainConfig::CellTag::TopoLevel>();
-        ++cit)
-      cit->print();
-  
   
   
   std::cout << "*******************************" << std::endl;
