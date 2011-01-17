@@ -34,9 +34,9 @@ namespace viennagrid
       enum{ value = 1 };
   };
 
-  //Topological Handling Tag
-  struct topology_level_full_handling {};
-  struct topology_level_no_handling {};
+  //Tags for the handling of elements at different topological levels (see subcell_traits)
+  struct full_handling_tag {};
+  struct no_handling_tag {};
 
   //multigrid:
   struct full_multigrid_tag {};
@@ -83,23 +83,23 @@ namespace viennagrid
   /********* Other *******************/
 
   
-  struct LessType {};
-  struct EqualType {};
+  struct less_tag {};
+  struct equal_tag {};
 
   template <long i, long j, bool ilargerj = (i>j), bool iequalj = (i==j) >
-  struct LevelDiscriminator
+  struct level_discriminator
   {  };
 
   template <long i, long j>
-  struct LevelDiscriminator <i, j, false, true>
+  struct level_discriminator <i, j, false, true>
   {
-    typedef EqualType   result_type;
+    typedef equal_tag   result_type;
   };
 
   template <long i, long j>
-  struct LevelDiscriminator <i, j, true, false>
+  struct level_discriminator <i, j, true, false>
   {
-    typedef LessType    result_type;
+    typedef less_tag    result_type;
   };
 
 

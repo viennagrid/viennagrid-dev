@@ -24,6 +24,8 @@ namespace viennagrid
 {
   namespace io
   {
+    // translates element tags to VTK type identifiers
+    // see http://www.vtk.org/VTK/img/file-formats.pdf, Figure 2, for an overview
     template <typename ElementTag>
     struct ELEMENT_TAG_TO_VTK_TYPE
     {
@@ -31,9 +33,21 @@ namespace viennagrid
     };
 
     template <>
+    struct ELEMENT_TAG_TO_VTK_TYPE<hexahedron_tag>
+    {
+      enum{ ReturnValue = 12 };
+    };
+
+    template <>
     struct ELEMENT_TAG_TO_VTK_TYPE<tetrahedron_tag>
     {
       enum{ ReturnValue = 10 };
+    };
+    
+    template <>
+    struct ELEMENT_TAG_TO_VTK_TYPE<quadrilateral_tag>
+    {
+      enum{ ReturnValue = 9 };
     };
 
     template <>

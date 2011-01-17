@@ -19,14 +19,6 @@
 namespace viennagrid
 {
 
-  //Segment:
-  template <long level>
-  struct segment_traits
-  {
-    //default: Full handling
-    typedef topology_level_full_handling    handling_tag;
-  };
-
 
   //Cell Tags:
   struct null_tag {};
@@ -50,10 +42,10 @@ namespace viennagrid
     static std::string name() { return "Triangle"; }
   };
 
-  struct parallelogram_tag
+  struct quadrilateral_tag
   {
     enum{ topology_level = 2 };
-    static std::string name() { return "Parallelogram"; }
+    static std::string name() { return "Quadrilateral"; }
   };
   
   ///////////////// three-dimensional objects: /////////////////
@@ -64,10 +56,10 @@ namespace viennagrid
     static std::string name() { return "Tetrahedron"; }
   };
 
-  struct parallelepiped_tag
+  struct hexahedron_tag
   {
     enum{ topology_level = 3 };
-    static std::string name() { return "Parallelepiped"; }
+    static std::string name() { return "Hexahedron"; }
   };
   
   
@@ -97,17 +89,17 @@ namespace viennagrid
 
     enum{ ElementNum = 1 };     //1 cell
 
-    typedef ElementTag_                      element_tag;
+    typedef ElementTag_           element_tag;
     //compatibility with cell-on-cell-iterator
-    typedef topology_level_full_handling     handling_tag;
+    typedef full_handling_tag     handling_tag;
   };
 
   //Point:
   template <>
   struct subcell_traits<point_tag, 0>
   {
-    typedef point_tag                        element_tag;
-    typedef topology_level_full_handling     handling_tag;
+    typedef point_tag             element_tag;
+    typedef full_handling_tag     handling_tag;
 
     enum{ ElementNum = 1 };     //1 vertex
   };
@@ -116,8 +108,8 @@ namespace viennagrid
   template <>
   struct subcell_traits<line_tag, 0>
   {
-    typedef point_tag                        element_tag;
-    typedef topology_level_full_handling     handling_tag;
+    typedef point_tag             element_tag;
+    typedef full_handling_tag     handling_tag;
 
     enum{ ElementNum = 2 };     //2 vertices
   };
@@ -126,8 +118,8 @@ namespace viennagrid
   template <>
   struct subcell_traits<triangle_tag, 0>
   {
-    typedef point_tag                        element_tag;
-    typedef topology_level_full_handling     handling_tag;
+    typedef point_tag             element_tag;
+    typedef full_handling_tag     handling_tag;
 
     enum{ ElementNum = 3 };     //3 vertices
   };
@@ -135,8 +127,8 @@ namespace viennagrid
   template <>
   struct subcell_traits<triangle_tag, 1>
   {
-    typedef line_tag                         element_tag;
-    typedef topology_level_full_handling     handling_tag;
+    typedef line_tag              element_tag;
+    typedef full_handling_tag     handling_tag;
 
     enum{ ElementNum = 3 };     //3 edges
 
@@ -144,19 +136,19 @@ namespace viennagrid
   
   //parallelogram
   template <>
-  struct subcell_traits<parallelogram_tag, 0>
+  struct subcell_traits<quadrilateral_tag, 0>
   {
-    typedef point_tag                        element_tag;
-    typedef topology_level_full_handling     handling_tag;
+    typedef point_tag             element_tag;
+    typedef full_handling_tag     handling_tag;
 
     enum{ ElementNum = 4 };     //3 vertices
   };
 
   template <>
-  struct subcell_traits<parallelogram_tag, 1>
+  struct subcell_traits<quadrilateral_tag, 1>
   {
-    typedef line_tag                         element_tag;
-    typedef topology_level_full_handling     handling_tag;
+    typedef line_tag              element_tag;
+    typedef full_handling_tag     handling_tag;
 
     enum{ ElementNum = 4 };     //3 edges
 
@@ -167,8 +159,8 @@ namespace viennagrid
   template <>
   struct subcell_traits<tetrahedron_tag, 0>
   {
-    typedef point_tag                        element_tag;
-    typedef topology_level_full_handling     handling_tag;
+    typedef point_tag             element_tag;
+    typedef full_handling_tag     handling_tag;
 
     enum{ ElementNum = 4 };     //4 vertices
   };
@@ -176,8 +168,8 @@ namespace viennagrid
   template <>
   struct subcell_traits<tetrahedron_tag, 1>
   {
-    typedef line_tag                         element_tag;
-    typedef topology_level_full_handling     handling_tag;
+    typedef line_tag              element_tag;
+    typedef full_handling_tag     handling_tag;
 
     enum{ ElementNum = 6 };     //6 edges
   };
@@ -185,8 +177,8 @@ namespace viennagrid
   template <>
   struct subcell_traits<tetrahedron_tag, 2>
   {
-    typedef triangle_tag                     element_tag;
-    typedef topology_level_full_handling     handling_tag;
+    typedef triangle_tag          element_tag;
+    typedef full_handling_tag     handling_tag;
 
     enum{ ElementNum = 4 };     //4 facets
   };
@@ -194,28 +186,28 @@ namespace viennagrid
   
   //Parallelepiped:
   template <>
-  struct subcell_traits<parallelepiped_tag, 0>
+  struct subcell_traits<hexahedron_tag, 0>
   {
-    typedef point_tag                        element_tag;
-    typedef topology_level_full_handling     handling_tag;
+    typedef point_tag             element_tag;
+    typedef full_handling_tag     handling_tag;
 
     enum{ ElementNum = 8 };     //8 vertices
   };
 
   template <>
-  struct subcell_traits<parallelepiped_tag, 1>
+  struct subcell_traits<hexahedron_tag, 1>
   {
-    typedef line_tag                         element_tag;
-    typedef topology_level_full_handling     handling_tag;
+    typedef line_tag              element_tag;
+    typedef full_handling_tag     handling_tag;
 
     enum{ ElementNum = 12 };     //12 edges
   };
 
   template <>
-  struct subcell_traits<parallelepiped_tag, 2>
+  struct subcell_traits<hexahedron_tag, 2>
   {
-    typedef parallelogram_tag                element_tag;
-    typedef topology_level_full_handling     handling_tag;
+    typedef quadrilateral_tag     element_tag;
+    typedef full_handling_tag     handling_tag;
 
     enum{ ElementNum = 6 };     //6 facets
   };
@@ -255,7 +247,7 @@ namespace viennagrid
 
   //////// Parallelogram ////////
   template <>
-  struct subcell_filler<parallelogram_tag, 1>
+  struct subcell_filler<quadrilateral_tag, 1>
   {
     //fill edges:
     //
@@ -391,7 +383,7 @@ namespace viennagrid
   
   //////// Parallelepiped ////////
   template <>
-  struct subcell_filler<parallelepiped_tag, 1>
+  struct subcell_filler<hexahedron_tag, 1>
   {
     //fill edges:
     template <typename ElementType, typename Vertices, typename Orientations, typename Segment>
@@ -477,7 +469,7 @@ namespace viennagrid
   };
   
   template <>
-  struct subcell_filler<parallelepiped_tag, 2>
+  struct subcell_filler<hexahedron_tag, 2>
   {
     //fill facets:
     template <typename ElementType, typename Vertices, typename Orientations, typename Segment>

@@ -226,7 +226,7 @@ namespace viennagrid
   };
 
   template <typename ElementTag, unsigned long level>
-  struct ElementIteratorChecker< ElementTag, level, topology_level_full_handling>
+  struct ElementIteratorChecker< ElementTag, level, full_handling_tag>
   {
     enum{ ReturnValue = ElementTag::topology_level - level };
   };
@@ -238,14 +238,14 @@ namespace viennagrid
   };
 
   template <typename Config, unsigned long level>
-  struct SegmentIteratorChecker<Config, level, topology_level_full_handling>
+  struct SegmentIteratorChecker<Config, level, full_handling_tag>
   {
     enum{ ReturnValue = Config::cell_tag::topology_level - level };
   };
 
   //for level = 0, there is also special treatment (vertices have vector-container)
   template <typename Config>
-  struct SegmentIteratorChecker<Config, 0, topology_level_full_handling >
+  struct SegmentIteratorChecker<Config, 0, full_handling_tag >
   {
     enum{ ReturnValue = 0 };
   };

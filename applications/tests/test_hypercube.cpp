@@ -26,17 +26,19 @@
 #include "viennagrid/domain.hpp"
 #include "viennagrid/segment.hpp"
 #include "viennagrid/boundary.hpp"
+#include "viennagrid/io/vtk_writer.hpp"
+
 
 struct TestDomainConfig
 {
   typedef double                                  numeric_type;
   #ifdef THREEDIM
   typedef viennagrid::three_dimensions_tag        dimension_tag;
-  typedef viennagrid::parallelepiped_tag             cell_tag;
+  typedef viennagrid::hexahedron_tag              cell_tag;
   #endif
   #ifdef TWODIM
   typedef viennagrid::two_dimensions_tag          dimension_tag;
-  typedef viennagrid::parallelogram_tag                cell_tag;
+  typedef viennagrid::quadrilateral_tag           cell_tag;
   #endif
   #ifdef ONEDIM
   typedef viennagrid::one_dimension_tag           dimension_tag;
@@ -207,6 +209,8 @@ void testNewDomain(std::string & infile, std::string & outfile)
         ++cit)
       cit->print();
 
+  viennagrid::io::Vtk_writer<Domain> my_vtk_writer;
+  my_vtk_writer.writeDomain(domain, outfile + ".vtk");
   
   
   std::cout << "*******************************" << std::endl;

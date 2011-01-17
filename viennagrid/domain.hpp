@@ -53,7 +53,7 @@ namespace viennagrid
 
   template <typename DomainConfiguration,
              long topolevel>
-  struct SegmentIDShifter <DomainConfiguration, topolevel, topology_level_full_handling, ProvideID>
+  struct SegmentIDShifter <DomainConfiguration, topolevel, full_handling_tag, ProvideID>
   {
     //shift IDs:
     static void apply(typename DomainTypes<DomainConfiguration>::DomainType & domain)
@@ -77,14 +77,14 @@ namespace viennagrid
       }
 
       //continue iteration: (by using the default behaviour for this level. This makes termination of topolevel-loop easier: no code duplication)
-      SegmentIDShifter<DomainConfiguration, topolevel, topology_level_no_handling, NoID>::apply(domain);
+      SegmentIDShifter<DomainConfiguration, topolevel, no_handling_tag, NoID>::apply(domain);
     }
 
   };
 
   //stop at vertex-level
   template <typename DomainConfiguration>
-  struct SegmentIDShifter<DomainConfiguration, 0, topology_level_no_handling, NoID>
+  struct SegmentIDShifter<DomainConfiguration, 0, no_handling_tag, NoID>
   {
     static void apply(typename DomainTypes<DomainConfiguration>::DomainType & domain) {}
   };
