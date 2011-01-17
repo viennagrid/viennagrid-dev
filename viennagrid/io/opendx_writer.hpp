@@ -63,7 +63,7 @@ namespace viennagrid
       template <typename DomainType>
       int operator()(DomainType & domain, std::string const & filename, bool isVertexOriented = true)
       {
-        typedef typename DomainType::Configuration                     DomainConfiguration;
+        typedef typename DomainType::config_type                     DomainConfiguration;
       
         typedef typename DomainConfiguration::numeric_type                 CoordType;
         typedef typename DomainConfiguration::dimension_tag              DimensionTag;
@@ -79,7 +79,7 @@ namespace viennagrid
         typedef typename DomainTypes<DomainConfiguration>::cell_iterator        CellIterator;
         typedef typename DomainTypes<DomainConfiguration>::segment_iterator     SegmentIterator;
 
-        typedef typename DomainTypes<DomainConfiguration>::VertexOnCellIterator      VertexOnCellIterator;
+        typedef typename DomainTypes<DomainConfiguration>::vertex_on_cell_iterator      VertexOnCellIterator;
 
         typedef DXHelper<DimensionTag::value>  DXHelper;
       
@@ -129,7 +129,7 @@ namespace viennagrid
           //Segment & curSeg = segit->getRefinedSegment(level);
           Segment & curSeg = *segit;
 
-          cellnum += curSeg.template size<Cell::ElementTag::topology_level>();
+          cellnum += curSeg.template size<Cell::element_tag::topology_level>();
         }
         writer << "object \"grid_Line_One\" class array type int rank 1 shape " << (DimensionTag::value + 1) << " items " << cellnum << " data follows" << std::endl;
 
@@ -143,8 +143,8 @@ namespace viennagrid
           Segment & curSeg = *segit;
 
 
-          for (CellIterator cit = curSeg.template begin<Cell::ElementTag::topology_level>();
-              cit != curSeg.template end<Cell::ElementTag::topology_level>();
+          for (CellIterator cit = curSeg.template begin<Cell::element_tag::topology_level>();
+              cit != curSeg.template end<Cell::element_tag::topology_level>();
               ++cit)
           {
             Cell & cell = *cit;
@@ -209,8 +209,8 @@ namespace viennagrid
             //curSeg.template begin<0>()->setCurrentSegment(curSeg);
 
             //some quantity here
-            for (CellIterator cit = curSeg.template begin<Cell::ElementTag::topology_level>();
-                cit != curSeg.template end<Cell::ElementTag::topology_level>();
+            for (CellIterator cit = curSeg.template begin<Cell::element_tag::topology_level>();
+                cit != curSeg.template end<Cell::element_tag::topology_level>();
                 ++cit)
             {
               //Cell & cell = *cit;
@@ -234,10 +234,11 @@ namespace viennagrid
     }; // opendx_writer
 
     //obsolete:
+    /*
     template <typename FEMConfig, typename DomainType, typename Vector>
     void writeQuantityToDX(DomainType & domain, long level, Vector const & vec, std::string outfile, long component = 0)
     {
-      typedef typename DomainType::Configuration                     DomainConfiguration;
+      typedef typename DomainType::config_type                     DomainConfiguration;
     
       typedef typename DomainConfiguration::CoordType                 CoordType;
       typedef typename DomainConfiguration::DimensionTag              DimensionTag;
@@ -304,7 +305,7 @@ namespace viennagrid
       writeDomainDX(domain, level, outfile, keyString, true);
       std::cout << "DONE" << std::endl;
     
-    }
+    } */
 
   } //namespace io
 } //namespace viennagrid

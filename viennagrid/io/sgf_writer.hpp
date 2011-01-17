@@ -28,7 +28,7 @@ namespace viennagrid
       template <typename DomainType>
       int operator()(DomainType & domain, std::string const & filename)
       {
-        typedef typename DomainType::Configuration                     DomainConfiguration;
+        typedef typename DomainType::config_type                     DomainConfiguration;
       
         typedef typename DomainConfiguration::numeric_type                 CoordType;
         typedef typename DomainConfiguration::dimension_tag              DimensionTag;
@@ -42,7 +42,7 @@ namespace viennagrid
         typedef typename DomainTypes<DomainConfiguration>::vertex_iterator      VertexIterator;
         typedef typename DomainTypes<DomainConfiguration>::cell_iterator        CellIterator;
 
-        typedef typename DomainTypes<DomainConfiguration>::VertexOnCellIterator      VertexOnCellIterator;
+        typedef typename DomainTypes<DomainConfiguration>::vertex_on_cell_iterator      VertexOnCellIterator;
       
         std::ofstream writer(filename.c_str());
         

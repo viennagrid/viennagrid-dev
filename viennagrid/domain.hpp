@@ -37,10 +37,10 @@ namespace viennagrid
   //helper class: iterates over all segments on a particular topolevel, shifts the IDs and continues to next topolevel:
   template <typename DomainConfiguration,
               long topolevel,
-              typename LevelHandling = typename SegmentConfig<topolevel>::HandlingTag,
+              typename LevelHandling = typename segment_traits<topolevel>::handling_tag,
               typename IDHandling =
-                            typename TopologyLevel<typename DomainConfiguration::CellTag,
-                                                    topolevel>::ElementTag::IDHandler
+                            typename subcell_traits<typename DomainConfiguration::cell_tag,
+                                                    topolevel>::element_tag::id_handler
              >
   struct SegmentIDShifter
   {
@@ -96,14 +96,14 @@ namespace viennagrid
       typedef segment<T_Configuration>                            SegmentType;
 
     public:
-      typedef T_Configuration                                       Configuration;
+      typedef T_Configuration                                         config_type;
       typedef SegIt< SegmentType,
                       typename std::vector< SegmentType >::iterator
-                    >                                                 SegmentIterator;
+                    >                                                 segment_iterator;
 
       typedef ConstSegIt< SegmentType,
                       typename std::vector< SegmentType >::const_iterator
-                    >                                                 ConstSegmentIterator;
+                    >                                                 const_segment_iterator;
 
       SegmentType & add()
       {
@@ -111,16 +111,16 @@ namespace viennagrid
         return segments.back();
       }
 
-      ConstSegmentIterator begin(long level = 0) const
-      { return ConstSegmentIterator(segments.begin(), level); };
+      const_segment_iterator begin(long level = 0) const
+      { return const_segment_iterator(segments.begin(), level); };
 
-      ConstSegmentIterator end(long level = 0) const
-      { return ConstSegmentIterator(segments.end(), level); };
+      const_segment_iterator end(long level = 0) const
+      { return const_segment_iterator(segments.end(), level); };
 
-      SegmentIterator begin(long level = 0)
-      { return SegmentIterator(segments.begin(), level); };
-      SegmentIterator end(long level = 0)
-      { return SegmentIterator(segments.end(), level); };
+      segment_iterator begin(long level = 0)
+      { return segment_iterator(segments.begin(), level); };
+      segment_iterator end(long level = 0)
+      { return segment_iterator(segments.end(), level); };
 
 //       //assures the domain-wide uniqueness of IDs right after segment setup from files.
 //       void finishSegmentSetup()
@@ -133,7 +133,7 @@ namespace viennagrid
       long size()
       {
         long ret = 0;
-        for (SegmentIterator segit = begin();
+        for (segment_iterator segit = begin();
               segit != end();
               ++segit)
         {
@@ -157,19 +157,18 @@ namespace viennagrid
   {
     enum { dim = Configuration::dimension_tag::value };
 
-
   public:
     typedef point< typename Configuration::numeric_type,
                       typename Configuration::dimension_tag >                       point_type;
 
     typedef element< Configuration,
-                      typename TopologyLevel<typename Configuration::cell_tag, 0>::ElementTag>       vertex_type;
+                      typename subcell_traits<typename Configuration::cell_tag, 0>::element_tag>       vertex_type;
 
     typedef element< Configuration,
-                      typename TopologyLevel<typename Configuration::cell_tag, 1>::ElementTag >      edge_type;
+                      typename subcell_traits<typename Configuration::cell_tag, 1>::element_tag >      edge_type;
 
     typedef element< Configuration,
-                      typename TopologyLevel<typename Configuration::cell_tag, dim-1>::ElementTag >  facet_type;
+                      typename subcell_traits<typename Configuration::cell_tag, dim-1>::element_tag >  facet_type;
 
     typedef element< Configuration,
                       typename Configuration::cell_tag >                       cell_type;
@@ -178,16 +177,16 @@ namespace viennagrid
     typedef domain<Configuration>                                             domain_type;
 
     //Iterators:
-    typedef typename IteratorTypes<segment_type, 0>::ResultType                    vertex_iterator;
-    typedef typename IteratorTypes<segment_type, 1>::ResultType                    edge_iterator;
+    typedef typename IteratorTypes<segment_type, 0>::result_type                    vertex_iterator;
+    typedef typename IteratorTypes<segment_type, 1>::result_type                    edge_iterator;
     typedef typename IteratorTypes<segment_type,
-                                    Configuration::cell_tag::topology_level-1>::ResultType  facet_iterator;
+                                    Configuration::cell_tag::topology_level-1>::result_type  facet_iterator;
     typedef typename IteratorTypes<segment_type,
-                                    Configuration::cell_tag::topology_level>::ResultType    cell_iterator;
-    typedef typename domain<Configuration>::SegmentIterator                    segment_iterator;
+                                    Configuration::cell_tag::topology_level>::result_type    cell_iterator;
+    typedef typename domain<Configuration>::segment_iterator                    segment_iterator;
 
-    typedef typename IteratorTypes<cell_type,0>::ResultType              VertexOnCellIterator;
-
+    typedef typename IteratorTypes<cell_type, 0>::result_type              vertex_on_cell_iterator;
+    //TODO: Add more iterators here
   };
 
 }

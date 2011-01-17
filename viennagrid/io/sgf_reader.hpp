@@ -29,7 +29,7 @@ namespace viennagrid
       template <typename DomainType>
       int operator()(DomainType & domain, std::string const & filename) const
       {
-        typedef typename DomainType::Configuration                     DomainConfiguration;
+        typedef typename DomainType::config_type                     DomainConfiguration;
 
         typedef typename DomainConfiguration::numeric_type                 CoordType;
         typedef typename DomainConfiguration::dimension_tag              DimensionTag;
@@ -143,10 +143,10 @@ namespace viennagrid
           for (int i=0; i<cell_num; ++i)
           {
             long vertex_num;
-            Vertex *vertices[TopologyLevel<CellTag, 0>::ElementNum];
+            Vertex *vertices[subcell_traits<CellTag, 0>::ElementNum];
             reader >> cell_id;
       
-            for (int j=0; j<TopologyLevel<CellTag, 0>::ElementNum; ++j)
+            for (int j=0; j<subcell_traits<CellTag, 0>::ElementNum; ++j)
             {
               reader >> vertex_num;
               vertices[j] = segment.getVertexAddress(vertex_num);

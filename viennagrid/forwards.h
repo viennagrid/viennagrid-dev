@@ -69,12 +69,12 @@ namespace viennagrid
   class ElementKey;
 
   template <long level>
-  struct SegmentConfig;
+  struct segment_traits;
 
   //Segment type: 
   template <typename T_Configuration,
              unsigned long levelnum = T_Configuration::cell_tag::topology_level,
-             typename HandlingTag = typename SegmentConfig<levelnum>::HandlingTag,
+             typename HandlingTag = typename segment_traits<levelnum>::handling_tag,
              bool specialHandling = (levelnum == T_Configuration::cell_tag::topology_level) || (levelnum == 0),
              typename MultigridTag = typename T_Configuration::multigrid_tag>
   class segment;
@@ -93,13 +93,13 @@ namespace viennagrid
   template <long i, long j>
   struct LevelDiscriminator <i, j, false, true>
   {
-    typedef EqualType   ResultType;
+    typedef EqualType   result_type;
   };
 
   template <long i, long j>
   struct LevelDiscriminator <i, j, true, false>
   {
-    typedef LessType    ResultType;
+    typedef LessType    result_type;
   };
 
 

@@ -14,6 +14,8 @@
 #ifndef VIENNAGRID_SEGMENT_HPP
 #define VIENNAGRID_SEGMENT_HPP
 
+#include <map>
+
 #include "viennagrid/forwards.h"
 #include "viennagrid/element.hpp"
 
@@ -24,27 +26,28 @@ namespace viennagrid
 
   //helper: holds an ordered number of vertices
   //comparisons also take permutations into account
-  template <typename ElementType, typename IDHandler = typename point_tag::IDHandler>
+  template <typename ElementType,
+            typename IDHandler = typename cell_traits<point_tag>::id_handler>
   struct ElementKeyStorageType
   {
-    typedef ElementType *           ResultType;
+    typedef ElementType *           result_type;
   };
 
   template <typename ElementType>
   struct ElementKeyStorageType<ElementType, ProvideID>
   {
-    typedef long          ResultType;
+    typedef long          result_type;
   };
 
   template <typename ElementType>
   class ElementKey
   {
-      typedef typename ElementType::ElementTag            ElementTag;
-      typedef typename ElementKeyStorageType<ElementType>::ResultType  StorageType;
+      typedef typename ElementType::element_tag            ElementTag;
+      typedef typename ElementKeyStorageType<ElementType>::result_type  StorageType;
     public:
-      ElementKey( ElementType & el2) : vertexIDs(TopologyLevel<ElementTag, 0>::ElementNum)
+      ElementKey( ElementType & el2) : vertexIDs(subcell_traits<ElementTag, 0>::ElementNum)
       {
-        typedef typename IteratorTypes<ElementType, 0>::ResultType         VertexIterator;
+        typedef typename IteratorTypes<ElementType, 0>::result_type         VertexIterator;
         long i = 0;
         for (VertexIterator vit = el2.template begin<0>();
               vit != el2.template end<0>(); ++vit, ++i)
@@ -62,7 +65,7 @@ namespace viennagrid
 
       bool operator < (ElementKey const & epc2) const
       {
-        for (long i=0; i<TopologyLevel<ElementTag, 0>::ElementNum; ++i)
+        for (long i=0; i<subcell_traits<ElementTag, 0>::ElementNum; ++i)
         {
           if ( vertexIDs[i] > epc2.vertexIDs[i] )
             return false;
@@ -87,7 +90,7 @@ namespace viennagrid
 
 
   //Segment type:
-  template <typename T_Configuration, unsigned long levelnum, typename HandlingTag, bool specialHandling, typename MultigridTag>
+  template <typename T_Configuration, unsigned long levelnum, typename handling_tag, bool specialHandling, typename MultigridTag>
   class segment {};
 
 
@@ -95,11 +98,11 @@ namespace viennagrid
   class segment <T_Configuration, levelnum, topology_level_full_handling, false, MultigridTag> :
     public segment <T_Configuration, levelnum - 1>
   {
-    typedef TopologyLevel<typename T_Configuration::cell_tag, levelnum>       LevelSpecs;
+    typedef subcell_traits<typename T_Configuration::cell_tag, levelnum>       LevelSpecs;
     typedef segment <T_Configuration, levelnum - 1>      Base;
 
-    typedef element<T_Configuration, typename LevelSpecs::ElementTag>      LevelElementType;
-    typedef TopologyLevel<typename T_Configuration::cell_tag, 0>       VertexSpecs;
+    typedef element<T_Configuration, typename LevelSpecs::element_tag>      LevelElementType;
+    typedef subcell_traits<typename T_Configuration::cell_tag, 0>       VertexSpecs;
 
     public:
 
@@ -107,11 +110,11 @@ namespace viennagrid
 
       template <long j>
       element<T_Configuration,
-              typename TopologyLevel<typename T_Configuration::cell_tag, j>::ElementTag> *
+              typename subcell_traits<typename T_Configuration::cell_tag, j>::element_tag> *
       add(long pos, LevelElementType & elem, ElementOrientation * orientation, EqualType) {
 
         typedef typename std::map< ElementKey<LevelElementType>, LevelElementType >::iterator  ElementIterator;
-        typedef typename IteratorTypes<LevelElementType, 0>::ResultType      VertexOnElementIterator;
+        typedef typename IteratorTypes<LevelElementType, 0>::result_type      VertexOnElementIterator;
 
         ElementKey<LevelElementType> epc(elem);
         //check whether already inserted:
@@ -158,7 +161,7 @@ namespace viennagrid
       
       template <long j, typename T>
       element<T_Configuration,
-              typename TopologyLevel<typename T_Configuration::cell_tag, j>::ElementTag> *
+              typename subcell_traits<typename T_Configuration::cell_tag, j>::element_tag> *
       add(long pos, T & elem, ElementOrientation * orientation, LessType) {
         //std::cout << "operating on " << this << ": " << std::endl;
         //no handling: do nothing
@@ -167,11 +170,11 @@ namespace viennagrid
 
       template <long j, typename T>
       element<T_Configuration,
-              typename TopologyLevel<typename T_Configuration::cell_tag, j>::ElementTag> *
+              typename subcell_traits<typename T_Configuration::cell_tag, j>::element_tag> *
       add(long pos, T & elem, ElementOrientation * orientation) {
         //std::cout << "operating on " << this << ": " << std::endl;
         //no handling: do nothing
-        return add<j>(pos, elem, orientation, typename LevelDiscriminator<levelnum, j>::ResultType());
+        return add<j>(pos, elem, orientation, typename LevelDiscriminator<levelnum, j>::result_type());
       }
 
       template <long j>
@@ -181,55 +184,55 @@ namespace viennagrid
       template <long j>
       long size() const
       {
-        return size<j>( typename LevelDiscriminator<levelnum, j>::ResultType() );
+        return size<j>( typename LevelDiscriminator<levelnum, j>::result_type() );
       }
       //void addBoundaryVertex(long pos) { vertices[pos].setOnBoundary(); }
 
 
       //begin:
       template <long j>
-      typename IteratorTypes< segment<T_Configuration>, j>::ResultType
+      typename IteratorTypes< segment<T_Configuration>, j>::result_type
       begin(LessType)
       { 
         return Base::template begin<j>();
       }
 
       template <long j>
-      typename IteratorTypes< segment<T_Configuration>, j>::ResultType
+      typename IteratorTypes< segment<T_Configuration>, j>::result_type
       begin(EqualType)
       { 
-        typedef typename IteratorTypes< segment<T_Configuration>, j>::ResultType    IteratorType;
+        typedef typename IteratorTypes< segment<T_Configuration>, j>::result_type   IteratorType;
         return IteratorType(elements.begin());
       }
 
       template <long j>
-      typename IteratorTypes< segment<T_Configuration>, j>::ResultType
+      typename IteratorTypes< segment<T_Configuration>, j>::result_type
       begin()
       { 
-        return begin<j>( typename LevelDiscriminator<levelnum, j>::ResultType() );
+        return begin<j>( typename LevelDiscriminator<levelnum, j>::result_type() );
       }
 
       //end:
       template <long j>
-      typename IteratorTypes< segment<T_Configuration>, j>::ResultType
+      typename IteratorTypes< segment<T_Configuration>, j>::result_type
       end(LessType)
       { 
         return Base::template end<j>();
       }
 
       template <long j>
-      typename IteratorTypes< segment<T_Configuration>, j>::ResultType
+      typename IteratorTypes< segment<T_Configuration>, j>::result_type
       end(EqualType)
       { 
-        typedef typename IteratorTypes< segment<T_Configuration>, j>::ResultType    IteratorType;
+        typedef typename IteratorTypes< segment<T_Configuration>, j>::result_type    IteratorType;
         return IteratorType(elements.end());
       }
 
       template <long j>
-      typename IteratorTypes< segment<T_Configuration>, j>::ResultType
+      typename IteratorTypes< segment<T_Configuration>, j>::result_type
       end()
       { 
-        return end<j>( typename LevelDiscriminator<levelnum, j>::ResultType() );
+        return end<j>( typename LevelDiscriminator<levelnum, j>::result_type() );
       }
 
     private:
@@ -240,10 +243,10 @@ namespace viennagrid
   class segment <T_Configuration, levelnum, topology_level_no_handling, false, MultigridTag> :
     public segment <T_Configuration, levelnum - 1>
   {
-    typedef TopologyLevel<typename T_Configuration::cell_tag, levelnum>       LevelSpecs;
+    typedef subcell_traits<typename T_Configuration::cell_tag, levelnum>       LevelSpecs;
     typedef segment <T_Configuration, levelnum - 1>      Base;
 
-    typedef element<T_Configuration, typename LevelSpecs::ElementTag>      LevelElementType;
+    typedef element<T_Configuration, typename LevelSpecs::element_tag>      LevelElementType;
 
     public:
 
@@ -252,17 +255,17 @@ namespace viennagrid
       //Force compiler error: no implementation for add at this level
       template <long j>
       element<T_Configuration,
-              typename TopologyLevel<typename T_Configuration::cell_tag, j>::ElementTag> *
+              typename subcell_traits<typename T_Configuration::cell_tag, j>::element_tag> *
       add(long pos, LevelElementType & elem, ElementOrientation * orientation, EqualType) {
 
-        typename TopologyLevel<typename T_Configuration::cell_tag, j>::ERROR_NO_SEGMENT_HANDLING_AVAILABLE_FOR_THIS_ELEMENT_LEVEL   ErrorIndicator;
+        typename subcell_traits<typename T_Configuration::cell_tag, j>::ERROR_NO_SEGMENT_HANDLING_AVAILABLE_FOR_THIS_ELEMENT_LEVEL   ErrorIndicator;
         //no handling: return Null-pointer
         return 0;
       }
       
       template <long j, typename T>
       element<T_Configuration,
-              typename TopologyLevel<typename T_Configuration::cell_tag, j>::ElementTag> *
+              typename subcell_traits<typename T_Configuration::cell_tag, j>::element_tag> *
       add(long pos, T & elem, ElementOrientation * orientation, LessType) {
         //std::cout << "operating on " << this << ": " << std::endl;
         //no handling: do nothing
@@ -271,11 +274,11 @@ namespace viennagrid
 
       template <long j, typename T>
       element<T_Configuration,
-              typename TopologyLevel<typename T_Configuration::cell_tag, j>::ElementTag> *
+              typename subcell_traits<typename T_Configuration::cell_tag, j>::element_tag> *
       add(long pos, T & elem, ElementOrientation * orientation) {
         //std::cout << "operating on " << this << ": " << std::endl;
         //no handling: do nothing
-        return add<j>(pos, elem, orientation, typename LevelDiscriminator<levelnum, j>::ResultType());
+        return add<j>(pos, elem, orientation, typename LevelDiscriminator<levelnum, j>::result_type());
       }
 
       template <long j>
@@ -285,69 +288,23 @@ namespace viennagrid
       template <long j>
       long size() const
       {
-        return size<j>( typename LevelDiscriminator<levelnum, j>::ResultType() );
+        return size<j>( typename LevelDiscriminator<levelnum, j>::result_type() );
       }
       //void addBoundaryVertex(long pos) { vertices[pos].setOnBoundary(); }
-
-
-/*      //begin:
-      template <long j>
-      typename IteratorTypes< segment<T_Configuration>, j>::ResultType
-      begin(LessType)
-      { 
-        return Base::template begin<j>();
-      }
-
-      template <long j>
-      typename IteratorTypes< segment<T_Configuration>, j>::ResultType
-      begin(EqualType)
-      { 
-        //TODO: Use something like EmptyIterator here. What about emulation of this iterator?
-        return false;
-      }
-
-      template <long j>
-      typename IteratorTypes< segment<T_Configuration>, j>::ResultType
-      begin()
-      { 
-        return begin<j>( typename LevelDiscriminator<levelnum, j>::ResultType() );
-      }
-
-      //end:
-      template <long j>
-      typename IteratorTypes< segment<T_Configuration>, j>::ResultType
-      end(LessType)
-      { 
-        return Base::template end<j>();
-      }
-
-      template <long j>
-      typename IteratorTypes< segment<T_Configuration>, j>::ResultType
-      end(EqualType)
-      { 
-        return false;
-      }
-
-      template <long j>
-      typename IteratorTypes< segment<T_Configuration>, j>::ResultType
-      end()
-      { 
-        return end<j>( typename LevelDiscriminator<levelnum, j>::ResultType() );
-      }  */
 
   };
 
   //special treatment for vertices
-  template <typename T_Configuration, typename HandlingTag>
-  class segment <T_Configuration, 0uL, HandlingTag, true, full_multigrid_tag>
-    : public segment<T_Configuration, 0uL, HandlingTag, true, no_multigrid_tag>
+  template <typename T_Configuration, typename handling_tag>
+  class segment <T_Configuration, 0uL, handling_tag, true, full_multigrid_tag>
+    : public segment<T_Configuration, 0uL, handling_tag, true, no_multigrid_tag>
   {};
 
-  template <typename T_Configuration, typename HandlingTag>
-  class segment <T_Configuration, 0uL, HandlingTag, true, no_multigrid_tag>
+  template <typename T_Configuration, typename handling_tag>
+  class segment <T_Configuration, 0uL, handling_tag, true, no_multigrid_tag>
   {
     typedef typename DomainTypes<T_Configuration>::vertex_type        LevelElementType;
-    //typedef element<T_Configuration, typename VertexSpecs::ElementTag>   LevelElementType;
+    //typedef element<T_Configuration, typename VertexSpecs::element_tag>   LevelElementType;
     typedef LevelElementType                                          VertexType;
 
     public:
@@ -403,7 +360,7 @@ namespace viennagrid
 
       //begin:
       template <long j>
-      typename IteratorTypes< segment<T_Configuration>, j>::ResultType
+      typename IteratorTypes< segment<T_Configuration>, j>::result_type
       begin()
       { 
         return vertices.begin();
@@ -411,7 +368,7 @@ namespace viennagrid
 
       //end:
       template <long j>
-      typename IteratorTypes< segment<T_Configuration>, j>::ResultType
+      typename IteratorTypes< segment<T_Configuration>, j>::result_type
       end()
       { 
         return vertices.end();
@@ -433,14 +390,14 @@ namespace viennagrid
   };
 
   //special treatment for cells
-  template <typename T_Configuration, unsigned long levelnum, typename HandlingTag>
-  class segment <T_Configuration, levelnum, HandlingTag, true, full_multigrid_tag> :
+  template <typename T_Configuration, unsigned long levelnum, typename handling_tag>
+  class segment <T_Configuration, levelnum, handling_tag, true, full_multigrid_tag> :
    public segment <T_Configuration, T_Configuration::cell_tag::topology_level - 1>
   {
     typedef segment <T_Configuration, T_Configuration::cell_tag::topology_level - 1>                                                         Base;
-    typedef TopologyLevel<typename T_Configuration::cell_tag, 0>       VertexSpecs;
+    typedef subcell_traits<typename T_Configuration::cell_tag, 0>       VertexSpecs;
     typedef typename DomainTypes<T_Configuration>::vertex_type         VertexType;
-    typedef TopologyLevel<typename T_Configuration::cell_tag,
+    typedef subcell_traits<typename T_Configuration::cell_tag,
                             T_Configuration::cell_tag::topology_level>             LevelSpecs;
 
     typedef typename DomainTypes<T_Configuration>::cell_type            LevelElementType;
@@ -458,7 +415,7 @@ namespace viennagrid
 
       template <long j>
       element<T_Configuration,
-              typename TopologyLevel<typename T_Configuration::cell_tag, j>::ElementTag> *
+              typename subcell_traits<typename T_Configuration::cell_tag, j>::element_tag> *
       add(long pos, LevelElementType & elem, ElementOrientation * orientation, EqualType)
       {
         elements[pos] = elem;
@@ -474,7 +431,7 @@ namespace viennagrid
 
       template <long j, typename T>
       element<T_Configuration,
-              typename TopologyLevel<typename T_Configuration::cell_tag, j>::ElementTag> *
+              typename subcell_traits<typename T_Configuration::cell_tag, j>::element_tag> *
       add(long pos, T & elem, ElementOrientation * orientation, LessType) {
         //std::cout << "operating on " << this << ": " << std::endl;
         return Base::template add<j>(pos, elem, orientation);
@@ -482,10 +439,10 @@ namespace viennagrid
 
       template <long j, typename T>
       element<T_Configuration,
-              typename TopologyLevel<typename T_Configuration::cell_tag, j>::ElementTag> *
+              typename subcell_traits<typename T_Configuration::cell_tag, j>::element_tag> *
       add(long pos, T & elem, ElementOrientation * orientation = 0 ) {
         //std::cout << "operating on " << this << ": " << std::endl;
-        return add<j>(pos, elem, orientation, typename LevelDiscriminator<levelnum, j>::ResultType());
+        return add<j>(pos, elem, orientation, typename LevelDiscriminator<levelnum, j>::result_type());
       }
 
       template <long j>
@@ -495,7 +452,7 @@ namespace viennagrid
       template <long j>
       long size() const 
       {
-        return size<j>( typename LevelDiscriminator<levelnum, j>::ResultType() );
+        return size<j>( typename LevelDiscriminator<levelnum, j>::result_type() );
       }
       //void addBoundaryVertex(long pos) { vertices[pos].setOnBoundary(); }
 
@@ -506,48 +463,48 @@ namespace viennagrid
 
       //begin:
       template <long j>
-      typename IteratorTypes< segment<T_Configuration>, j>::ResultType
+      typename IteratorTypes< segment<T_Configuration>, j>::result_type
       begin(LessType, long refinement_level = 0)
       { 
         return Base::template begin<j>();
       }
 
       template <long j>
-      typename IteratorTypes< segment<T_Configuration>, j>::ResultType
+      typename IteratorTypes< segment<T_Configuration>, j>::result_type
       begin(EqualType, long refinement_level = 0)
       { 
-        typedef typename IteratorTypes< segment<T_Configuration>, j>::ResultType  LevelIterator;
+        typedef typename IteratorTypes< segment<T_Configuration>, j>::result_type  LevelIterator;
         return LevelIterator(elements.begin(), refinement_level);
       }
 
       template <long j>
-      typename IteratorTypes< segment<T_Configuration>, j>::ResultType
+      typename IteratorTypes< segment<T_Configuration>, j>::result_type
       begin(long refinement_level = 0)
       { 
-        return begin<j>( typename LevelDiscriminator<levelnum, j>::ResultType(), refinement_level );
+        return begin<j>( typename LevelDiscriminator<levelnum, j>::result_type(), refinement_level );
       }
 
       //end:
       template <long j>
-      typename IteratorTypes< segment<T_Configuration>, j>::ResultType
+      typename IteratorTypes< segment<T_Configuration>, j>::result_type
       end(LessType, long refinement_level = 0)
       { 
         return Base::template end<j>();
       }
 
       template <long j>
-      typename IteratorTypes< segment<T_Configuration>, j>::ResultType
+      typename IteratorTypes< segment<T_Configuration>, j>::result_type
       end(EqualType, long refinement_level = 0)
       { 
-        typedef typename IteratorTypes< segment<T_Configuration>, j>::ResultType  LevelIterator;
+        typedef typename IteratorTypes< segment<T_Configuration>, j>::result_type  LevelIterator;
         return LevelIterator(elements.end(), refinement_level);
       }
 
       template <long j>
-      typename IteratorTypes< segment<T_Configuration>, j>::ResultType
+      typename IteratorTypes< segment<T_Configuration>, j>::result_type
       end(long refinement_level = 0)
       { 
-        return end<j>( typename LevelDiscriminator<levelnum, j>::ResultType(), refinement_level );
+        return end<j>( typename LevelDiscriminator<levelnum, j>::result_type(), refinement_level );
       }
 
       //provide a child segment:
@@ -579,7 +536,7 @@ namespace viennagrid
           child_seg->enableMultigrid();
 
           //fill with vertices (to induce some sort of red-black-ordering):
-          typedef typename IteratorTypes<segment, 0>::ResultType      VertexIterator;
+          typedef typename IteratorTypes<segment, 0>::result_type      VertexIterator;
 
           long vertex_added = 0;
           for (VertexIterator vit = this->template begin<0>();
@@ -629,14 +586,14 @@ namespace viennagrid
   };
 
   //special treatment for cells
-  template <typename T_Configuration, unsigned long levelnum, typename HandlingTag>
-  class segment <T_Configuration, levelnum, HandlingTag, true, no_multigrid_tag> :
+  template <typename T_Configuration, unsigned long levelnum, typename handling_tag>
+  class segment <T_Configuration, levelnum, handling_tag, true, no_multigrid_tag> :
    public segment <T_Configuration, T_Configuration::cell_tag::topology_level - 1>
   {
     typedef segment <T_Configuration, T_Configuration::cell_tag::topology_level - 1>                                                         Base;
-    typedef TopologyLevel<typename T_Configuration::cell_tag, 0>       VertexSpecs;
+    typedef subcell_traits<typename T_Configuration::cell_tag, 0>       VertexSpecs;
     typedef typename DomainTypes<T_Configuration>::vertex_type         VertexType;
-    typedef TopologyLevel<typename T_Configuration::cell_tag,
+    typedef subcell_traits<typename T_Configuration::cell_tag,
                             T_Configuration::cell_tag::topology_level>             LevelSpecs;
 
     typedef typename DomainTypes<T_Configuration>::cell_type            LevelElementType;
@@ -646,7 +603,7 @@ namespace viennagrid
 
       template <long j>
       element<T_Configuration,
-              typename TopologyLevel<typename T_Configuration::cell_tag, j>::ElementTag> *
+              typename subcell_traits<typename T_Configuration::cell_tag, j>::element_tag> *
       add(long pos, LevelElementType & elem, ElementOrientation * orientation, EqualType)
       {
         elements[pos] = elem;
@@ -661,7 +618,7 @@ namespace viennagrid
 
       template <long j, typename T>
       element<T_Configuration,
-              typename TopologyLevel<typename T_Configuration::cell_tag, j>::ElementTag> *
+              typename subcell_traits<typename T_Configuration::cell_tag, j>::element_tag> *
       add(long pos, T & elem, ElementOrientation * orientation, LessType) {
         //std::cout << "operating on " << this << ": " << std::endl;
         return Base::template add<j>(pos, elem, orientation);
@@ -669,10 +626,10 @@ namespace viennagrid
 
       template <long j, typename T>
       element<T_Configuration,
-              typename TopologyLevel<typename T_Configuration::cell_tag, j>::ElementTag> *
+              typename subcell_traits<typename T_Configuration::cell_tag, j>::element_tag> *
       add(long pos, T & elem, ElementOrientation * orientation = 0 ) {
         //std::cout << "operating on " << this << ": " << std::endl;
-        return add<j>(pos, elem, orientation, typename LevelDiscriminator<levelnum, j>::ResultType());
+        return add<j>(pos, elem, orientation, typename LevelDiscriminator<levelnum, j>::result_type());
       }
 
       template <long j>
@@ -682,7 +639,7 @@ namespace viennagrid
       template <long j>
       long size() const
       {
-        return size<j>( typename LevelDiscriminator<levelnum, j>::ResultType() );
+        return size<j>( typename LevelDiscriminator<levelnum, j>::result_type() );
       }
       //void addBoundaryVertex(long pos) { vertices[pos].setOnBoundary(); }
 
@@ -693,48 +650,48 @@ namespace viennagrid
 
       //begin:
       template <long j>
-      typename IteratorTypes< segment<T_Configuration>, j>::ResultType
+      typename IteratorTypes< segment<T_Configuration>, j>::result_type
       begin(LessType, long refinement_level = 0)
       { 
         return Base::template begin<j>();
       }
 
       template <long j>
-      typename IteratorTypes< segment<T_Configuration>, j>::ResultType
+      typename IteratorTypes< segment<T_Configuration>, j>::result_type
       begin(EqualType, long refinement_level = 0)
       { 
-        typedef typename IteratorTypes< segment<T_Configuration>, j>::ResultType  LevelIterator;
+        typedef typename IteratorTypes< segment<T_Configuration>, j>::result_type  LevelIterator;
         return LevelIterator(elements.begin());
       }
 
       template <long j>
-      typename IteratorTypes< segment<T_Configuration>, j>::ResultType
+      typename IteratorTypes< segment<T_Configuration>, j>::result_type
       begin(long refinement_level = 0)
       { 
-        return begin<j>( typename LevelDiscriminator<levelnum, j>::ResultType(), refinement_level );
+        return begin<j>( typename LevelDiscriminator<levelnum, j>::result_type(), refinement_level );
       }
 
       //end:
       template <long j>
-      typename IteratorTypes< segment<T_Configuration>, j>::ResultType
+      typename IteratorTypes< segment<T_Configuration>, j>::result_type
       end(LessType, long refinement_level = 0)
       { 
         return Base::template end<j>();
       }
 
       template <long j>
-      typename IteratorTypes< segment<T_Configuration>, j>::ResultType
+      typename IteratorTypes< segment<T_Configuration>, j>::result_type
       end(EqualType, long refinement_level = 0)
       { 
-        typedef typename IteratorTypes< segment<T_Configuration>, j>::ResultType  LevelIterator;
+        typedef typename IteratorTypes< segment<T_Configuration>, j>::result_type  LevelIterator;
         return LevelIterator(elements.end());
       }
 
       template <long j>
-      typename IteratorTypes< segment<T_Configuration>, j>::ResultType
+      typename IteratorTypes< segment<T_Configuration>, j>::result_type
       end(long refinement_level = 0)
       { 
-        return end<j>( typename LevelDiscriminator<levelnum, j>::ResultType(), refinement_level );
+        return end<j>( typename LevelDiscriminator<levelnum, j>::result_type(), refinement_level );
       }
 
       segment & getRefinedSegment(long level) {  return *this;  };

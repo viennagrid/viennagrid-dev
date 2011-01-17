@@ -27,7 +27,7 @@ ENDIF(CMAKE_COMPILER_IS_GNUCXX)
 LINK_DIRECTORIES(${GTSIOLIBPATH})
 
 #list all source files here
-ADD_EXECUTABLE(test_io    applications/tests/test_io.cpp)
-ADD_EXECUTABLE(test_setup applications/tests/test_setup.cpp)
-
+ADD_EXECUTABLE(test_io          applications/tests/test_io.cpp)
+ADD_EXECUTABLE(test_simplex     applications/tests/test_simplex.cpp)
+ADD_EXECUTABLE(test_hypercube   applications/tests/test_hypercube.cpp)
 

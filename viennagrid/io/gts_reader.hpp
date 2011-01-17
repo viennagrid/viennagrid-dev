@@ -93,7 +93,7 @@ namespace viennagrid
       template <typename DomainType>
       void operator()(DomainType & domain, std::string const & filename) const
       {
-        typedef typename DomainType::Configuration                     DomainConfiguration;
+        typedef typename DomainType::config_type                     DomainConfiguration;
 
         typedef typename DomainConfiguration::numeric_type                 CoordType;
         typedef typename DomainConfiguration::dimension_tag              DimensionTag;
@@ -224,7 +224,7 @@ namespace viennagrid
             GTSObj* pObject = objList->get(i);
             pointsPerObj = pObject->getNumberOfPoints(); // number of points per obj. (f.e. 3 in 2 dimensions)
             
-            Vertex *vertices[TopologyLevel<CellTag, 0>::ElementNum]; // every cell is build up of
+            Vertex *vertices[subcell_traits<CellTag, 0>::ElementNum]; // every cell is build up of
                                                                     // several vertices
             
             cout << "#" << i << ": ";

@@ -39,7 +39,7 @@ namespace viennagrid
     class Vtk_reader
     {
     protected:
-        typedef typename DomainType::Configuration                     DomainConfiguration;
+        typedef typename DomainType::config_type                     DomainConfiguration;
 
         typedef typename DomainConfiguration::numeric_type                 CoordType;
         typedef typename DomainConfiguration::dimension_tag              DimensionTag;
@@ -258,7 +258,7 @@ namespace viennagrid
                 numVertices = offsets[i]-offsets[i-1];
               }
 
-              Vertex *vertices[numVertices];
+              std::vector<Vertex *> vertices(numVertices);
 
               std::cout << "offsetIdx: " << offsetIdx << ", numVertices: " << numVertices << std::endl;
 
