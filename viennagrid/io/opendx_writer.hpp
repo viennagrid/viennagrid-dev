@@ -81,7 +81,7 @@ namespace viennagrid
 
         typedef typename DomainTypes<DomainConfiguration>::VertexOnCellIterator      VertexOnCellIterator;
 
-        typedef DXHelper<DimensionTag::dim>  DXHelper;
+        typedef DXHelper<DimensionTag::value>  DXHelper;
       
         std::ofstream writer(filename.c_str());
       
@@ -97,7 +97,7 @@ namespace viennagrid
           pointnum += curSeg.template size<0>();
         }
       
-        writer << "object \"points\" class array type float rank 1 shape " << DimensionTag::dim << " items ";
+        writer << "object \"points\" class array type float rank 1 shape " << DimensionTag::value << " items ";
         writer << pointnum << " data follows" << std::endl;
       
         //Nodes:
@@ -113,7 +113,7 @@ namespace viennagrid
               vit != curSeg.template end<0>();
               ++vit)
           {
-            PointWriter<Point, DimensionTag::dim>::write(writer, vit->getPoint());
+            PointWriter<Point, DimensionTag::value>::write(writer, vit->getPoint());
             writer << std::endl;
           }
         }
@@ -131,7 +131,7 @@ namespace viennagrid
 
           cellnum += curSeg.template size<Cell::ElementTag::topology_level>();
         }
-        writer << "object \"grid_Line_One\" class array type int rank 1 shape " << (DimensionTag::dim + 1) << " items " << cellnum << " data follows" << std::endl;
+        writer << "object \"grid_Line_One\" class array type int rank 1 shape " << (DimensionTag::value + 1) << " items " << cellnum << " data follows" << std::endl;
 
         long id_offset = 0;
         for (SegmentIterator segit = domain.begin();

@@ -66,9 +66,9 @@ namespace viennagrid
           if (token == "Dimension:"){
             long file_dim = 0;
             reader >> file_dim;
-            if (file_dim != DimensionTag::dim)
+            if (file_dim != DimensionTag::value)
             {
-              std::cout << "Dimension incorrect! Got " << file_dim << ", but expected " << DimensionTag::dim << ". Exiting..." << std::endl;  
+              std::cout << "Dimension incorrect! Got " << file_dim << ", but expected " << DimensionTag::value << ". Exiting..." << std::endl;  
               exit(0);
             }
             else
@@ -93,11 +93,11 @@ namespace viennagrid
       
           for (int i=0; i<node_num; i++)
           {
-            CoordType coords[DimensionTag::dim];
+            CoordType coords[DimensionTag::value];
       
             reader >> node_id;
       
-            for (int j=0; j<DimensionTag::dim; j++)
+            for (int j=0; j<DimensionTag::value; j++)
               reader >> coords[j];
       
             //insert node into segment:

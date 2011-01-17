@@ -31,21 +31,21 @@ struct TestDomainConfig
 {
   typedef double                                 numeric_type;
   #ifdef THREEDIM
-  typedef viennagrid::ThreeDimensionsTag         dimension_tag;
-  typedef viennagrid::TetrahedronTag             cell_tag;
+  typedef viennagrid::three_dimensions_tag         dimension_tag;
+  typedef viennagrid::tetrahedron_tag             cell_tag;
   #endif
   #ifdef TWODIM
-  typedef viennagrid::TwoDimensionsTag           dimension_tag;
-  typedef viennagrid::TriangleTag                cell_tag;
+  typedef viennagrid::two_dimensions_tag           dimension_tag;
+  typedef viennagrid::triangle_tag                cell_tag;
   #endif
   #ifdef ONEDIM
-  typedef viennagrid::OneDimensionTag            dimension_tag;
-  typedef viennagrid::LineTag                    cell_tag;
+  typedef viennagrid::one_dimension_tag            dimension_tag;
+  typedef viennagrid::line_tag                    cell_tag;
   #endif
 
   //multigrid:
-  typedef viennagrid::FullMultigridTag                       multigrid_tag;
-  //typedef viennagrid::NoMultigridTag             multigrid_tag;
+  typedef viennagrid::full_multigrid_tag                       multigrid_tag;
+  //typedef viennagrid::no_multigrid_tag             multigrid_tag;
 };
 
 

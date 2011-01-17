@@ -35,28 +35,28 @@
 #include "viennagrid/io/vtk_reader.hpp"
 #include "viennagrid/io/vtk_writer.hpp"
 #include "viennagrid/io/opendx_writer.hpp"
-//#include "viennagrid/io/gts_reader.hpp"
-//#include "viennagrid/io/gts_writer.hpp"
+#include "viennagrid/io/gts_reader.hpp"
+#include "viennagrid/io/gts_writer.hpp"
 
 struct TestDomainConfig
 {
-  typedef double                                 numeric_type;
+  typedef double                                  numeric_type;
   #ifdef THREEDIM
-  typedef viennagrid::ThreeDimensionsTag         dimension_tag;
-  typedef viennagrid::TetrahedronTag             cell_tag;
+  typedef viennagrid::three_dimensions_tag        dimension_tag;
+  typedef viennagrid::tetrahedron_tag             cell_tag;
   #endif
   #ifdef TWODIM
-  typedef viennagrid::TwoDimensionsTag           dimension_tag;
-  typedef viennagrid::TriangleTag                cell_tag;
+  typedef viennagrid::two_dimensions_tag          dimension_tag;
+  typedef viennagrid::triangle_tag                cell_tag;
   #endif
   #ifdef ONEDIM
-  typedef viennagrid::OneDimensionTag            dimension_tag;
-  typedef viennagrid::LineTag                    cell_tag;
+  typedef viennagrid::one_dimension_tag           dimension_tag;
+  typedef viennagrid::line_tag                    cell_tag;
   #endif
 
   //multigrid:
-  //typedef FullMultigridTag                       multigrid_tag;
-  typedef viennagrid::NoMultigridTag             multigrid_tag;
+  //typedef viennagrid::full_multigrid_tag                       multigrid_tag;
+  typedef viennagrid::no_multigrid_tag             multigrid_tag;
 };
 
 
@@ -123,14 +123,14 @@ void testNewDomain(std::string & infile, std::string & outfile)
   return;
   
   //compilation tests:
-  //viennagrid::io::gts_reader my_gts_reader;
-  //my_gts_reader(domain, infile);
+  viennagrid::io::gts_reader my_gts_reader;
+  my_gts_reader(domain, infile);
 
-  //viennagrid::io::sgf_reader my_sgf_reader;
-  //my_sgf_reader(domain, infile);
+  viennagrid::io::sgf_reader my_sgf_reader;
+  my_sgf_reader(domain, infile);
 
-  //viennagrid::io::Vtk_reader<Domain> my_vtk_reader;
-  //my_vtk_reader.readDomain(domain, infile);
+  viennagrid::io::Vtk_reader<Domain> my_vtk_reader;
+  my_vtk_reader.readDomain(domain, infile);
   
 }
 

@@ -25,24 +25,22 @@ namespace viennagrid
 /***************************** Point Type ************************/
 
 
-//   template <typename T_Coord>
-//   class point_t<T_Coord, TwoDimensionsTag>;
-// 
-//   template <typename T_Coord>
-//   class point_t<T_Coord, ThreeDimensionsTag>;
-
   /********************* Class implementations: *****************************/
 
   //namespace {
 
     //forward declarations:
-    template <typename T_Coord, typename DimensionsTag>
-    class point_t;
+    template <typename NumericT,
+              typename DimTag>
+    class point;
 
 
     //Helper class for overloaded operators:
-    template <typename PointType, typename ScalarType = typename PointType::CoordType, typename CoordType = typename PointType::CoordType, int DIM = PointType::DimensionsTag::dim>
-    struct point_t_operator_helper
+    template <typename PointType,
+              typename ScalarType = typename PointType::numeric_type,
+              typename CoordType = typename PointType::numeric_type,
+              int DIM = PointType::dimension_tag::value>
+    struct point_operator_helper
     {
       static PointType multiply(const PointType & p1, const ScalarType scalar)
       {
@@ -127,7 +125,7 @@ namespace viennagrid
     //(probably unnecessary) specialisations
 
     template <typename PointType, typename ScalarType, typename CoordType>
-    struct point_t_operator_helper<PointType, ScalarType, CoordType, 2>
+    struct point_operator_helper<PointType, ScalarType, CoordType, 2>
     {
       static PointType multiply(const PointType & p1, const ScalarType scalar)
       {
@@ -195,8 +193,10 @@ namespace viennagrid
 
     };
 
-    template <typename PointType, typename ScalarType, typename CoordType>
-    struct point_t_operator_helper<PointType, ScalarType, CoordType, 3>
+    template <typename PointType,
+              typename ScalarType,
+              typename CoordType>
+    struct point_operator_helper<PointType, ScalarType, CoordType, 3>
     {
       static PointType multiply(const PointType & p1, const ScalarType scalar)
       {
@@ -275,147 +275,147 @@ namespace viennagrid
 
     //overloaded operators:
     template <typename T, typename DTag, typename ScalarType>
-    point_t<T, DTag> operator*(const point_t<T, DTag> & p1, ScalarType scalar)
+    point<T, DTag> operator*(const point<T, DTag> & p1, ScalarType scalar)
     {
-      return point_t_operator_helper<point_t<T, DTag>, ScalarType>::multiply(p1, scalar);
+      return point_operator_helper<point<T, DTag>, ScalarType>::multiply(p1, scalar);
     }
   
     template <typename T, typename DTag>
-    typename point_t<T, DTag>::CoordType operator*(const point_t<T, DTag> & p1, const point_t<T, DTag> & p2)
+    typename point<T, DTag>::CoordType operator*(const point<T, DTag> & p1, const point<T, DTag> & p2)
     {
-      return point_t_operator_helper<point_t<T, DTag> >::multiply(p1, p2);
+      return point_operator_helper<point<T, DTag> >::multiply(p1, p2);
     }
   
     template <typename T, typename DTag>
-    point_t<T, DTag> operator+(const point_t<T, DTag> & p1, const point_t<T, DTag> & p2)
+    point<T, DTag> operator+(const point<T, DTag> & p1, const point<T, DTag> & p2)
     {
-      return point_t_operator_helper<point_t<T, DTag> >::add(p1, p2);
+      return point_operator_helper<point<T, DTag> >::add(p1, p2);
     }
   
     template <typename T, typename DTag>
-    point_t<T, DTag> operator-(const point_t<T, DTag> & p1, const point_t<T, DTag> & p2)
+    point<T, DTag> operator-(const point<T, DTag> & p1, const point<T, DTag> & p2)
     {
-      return point_t_operator_helper<point_t<T, DTag> >::subtract(p1, p2);
+      return point_operator_helper<point<T, DTag> >::subtract(p1, p2);
     }
 
     template <typename T, typename DTag>
-    bool operator==(const point_t<T, DTag> & p1, const point_t<T, DTag> & p2)
+    bool operator==(const point<T, DTag> & p1, const point<T, DTag> & p2)
     {
-      return point_t_operator_helper<point_t<T, DTag> >::equal(p1, p2);
+      return point_operator_helper<point<T, DTag> >::equal(p1, p2);
     }
   
     template <typename T, typename DTag>
-    bool operator<(const point_t<T, DTag> & p1, const point_t<T, DTag> & p2)
+    bool operator<(const point<T, DTag> & p1, const point<T, DTag> & p2)
     {
-      return point_t_operator_helper<point_t<T, DTag> >::less(p1, p2);
+      return point_operator_helper<point<T, DTag> >::less(p1, p2);
     }
 
     template <typename T, typename DTag>
-    std::ostream& operator << (std::ostream& os, const point_t<T, DTag> & p)
+    std::ostream& operator << (std::ostream& os, const point<T, DTag> & p)
     {
-      point_t_operator_helper<point_t<T, DTag> >::print(os, p);
+      point_operator_helper<point<T, DTag> >::print(os, p);
       return os;
     }
 
-    template <typename T_Coord, typename DimTag>
-    class point_t_base
+    template <typename NumericT, typename DimTag>
+    class point_base
     {
       public:
-        typedef T_Coord CoordType;
-        typedef DimTag  DimensionsTag;
+        typedef NumericT numeric_type;
+        typedef DimTag  dimension_tag;
 
-        point_t_base() {};
+        point_base() {};
 
         //copy constructor:
-        point_t_base(const point_t_base & p2)
+        point_base(const point_base & p2)
         {
-          for (long i=0; i<DimensionsTag::dim; ++i)
+          for (long i=0; i<dimension_tag::value; ++i)
             coords_[i] = p2.coords_[i];
         }
 
-        void setCoordinates(CoordType *array){
-          for (int i=0; i<DimensionsTag::dim; ++i)
+        void setCoordinates(numeric_type *array){
+          for (int i=0; i<dimension_tag::value; ++i)
             coords_[i] = array[i];
         }
 
-        T_Coord getCoordinate(long i) const
+        numeric_type getCoordinate(long i) const
         { return coords_[i]; }
-        void setCoordinate(long i, T_Coord val) { coords_[i] = val; }
+        void setCoordinate(long i, numeric_type val) { coords_[i] = val; }
 
-        T_Coord get_x() const { return coords_[0]; };
+        numeric_type get_x() const { return coords_[0]; };
 
 
         //operators:
         template <typename PointType, typename ScalarType, typename CoordType, int DIM>
-        friend struct point_t_operator_helper;
+        friend struct point_operator_helper;
 
         template <typename T, typename DTag, typename ScalarType>
-        friend point_t<T, DTag> operator*(const point_t<T, DTag> &, ScalarType);
+        friend point<T, DTag> operator*(const point<T, DTag> &, ScalarType);
 
         template <typename T, typename DTag>
-        friend typename point_t<T, DTag>::CoordType operator*(const point_t<T, DTag> &, const point_t<T, DTag> &);
+        friend typename point<T, DTag>::numeric_type operator*(const point<T, DTag> &, const point<T, DTag> &);
   
         template <typename T, typename DTag>
-        friend point_t<T, DTag> operator+(const point_t<T, DTag> &, const point_t<T, DTag> &);
+        friend point<T, DTag> operator+(const point<T, DTag> &, const point<T, DTag> &);
         template <typename T, typename DTag>
-        friend point_t<T, DTag> operator-(const point_t<T, DTag> &, const point_t<T, DTag> &);
+        friend point<T, DTag> operator-(const point<T, DTag> &, const point<T, DTag> &);
 
         template <typename T, typename DTag>
-        friend bool operator==(const point_t<T, DTag> &, const point_t<T, DTag> &);
+        friend bool operator==(const point<T, DTag> &, const point<T, DTag> &);
 
         template <typename T, typename DTag>
-        friend bool operator< (const point_t<T, DTag> &, const point_t<T, DTag> &);
+        friend bool operator< (const point<T, DTag> &, const point<T, DTag> &);
   
         template <typename T, typename DTag>
-        friend std::ostream& operator<< (std::ostream &, const point_t<T, DTag> &);
+        friend std::ostream& operator<< (std::ostream &, const point<T, DTag> &);
 
-        point_t_base & operator+=(const point_t_base & p)
+        point_base & operator+=(const point_base & p)
         {
-          for (long i=0; i<DimensionsTag::dim; ++i)
+          for (long i=0; i<dimension_tag::value; ++i)
             coords_[i] += p.coords_[i];
           return *this;
         }
 
-        point_t_base & operator+=(T_Coord offset)
+        point_base & operator+=(numeric_type offset)
         {
-          for (long i=0; i<DimensionsTag::dim; ++i)
+          for (long i=0; i<dimension_tag::value; ++i)
             coords_[i] += offset;
           return *this;
         }
 
-        point_t_base & operator-=(const point_t_base & p)
+        point_base & operator-=(const point_base & p)
         {
-          for (long i=0; i<DimensionsTag::dim; ++i)
+          for (long i=0; i<dimension_tag::value; ++i)
             coords_[i] -= p.coords_[i];
           return *this;
         }
 
-        point_t_base & operator/=(T_Coord val)
+        point_base & operator/=(numeric_type val)
         {
-          for (long i=0; i<DimensionsTag::dim; ++i)
+          for (long i=0; i<dimension_tag::value; ++i)
             coords_[i] /= val;
           return *this;
         }
 
-        point_t_base & operator*=(T_Coord val)
+        point_base & operator*=(numeric_type val)
         {
-          for (long i=0; i<DimensionsTag::dim; ++i)
+          for (long i=0; i<dimension_tag::value; ++i)
             coords_[i] *= val;
           return *this;
         }
 
-        CoordType length() const
+        numeric_type length() const
         {
-          CoordType len = 0.0;
+          numeric_type len = 0.0;
 
-          for (long i=0; i<DimensionsTag::dim; ++i)
+          for (long i=0; i<dimension_tag::value; ++i)
             len += coords_[i] * coords_[i];
 
           return sqrt(len);
         }
 
       protected:
-        CoordType coords_[DimensionsTag::dim];
+        numeric_type coords_[dimension_tag::value];
 
     };
 
@@ -423,27 +423,27 @@ namespace viennagrid
 
 
   template <typename T_Coord, typename DimensionsTag>
-  class point_t //: public point_t_base<T_Coord, DimensionsTag>
+  class point //: public point_t_base<T_Coord, DimensionsTag>
   {  };
 
   template <typename T_Coord>
-  class point_t<T_Coord, OneDimensionTag> : public point_t_base<T_Coord, OneDimensionTag>
+  class point<T_Coord, one_dimension_tag> : public point_base<T_Coord, one_dimension_tag>
   {
-    typedef point_t_base<T_Coord, OneDimensionTag>       base;
+    typedef point_base<T_Coord, one_dimension_tag>       base;
 
     public:
 
-      point_t(T_Coord x = 0)
+      point(T_Coord x = 0)
       {
         base::coords_[0] = x;
       }
-      point_t(const point_t & p2): base(p2) {};
+      point(const point & p2): base(p2) {};
 
       T_Coord get_x() const { return base::coords_[0]; };
 
       void set_x(T_Coord value) { base::coords_[0] = value; };
 
-      point_t operator=(const point_t & p2)
+      point operator=(const point & p2)
       {
         base::coords_[0] = p2.coords_[0];
         return *this;
@@ -452,19 +452,19 @@ namespace viennagrid
   };
 
   template <typename T_Coord>
-  class point_t<T_Coord, TwoDimensionsTag> : public point_t_base<T_Coord, TwoDimensionsTag>
+  class point<T_Coord, two_dimensions_tag> : public point_base<T_Coord, two_dimensions_tag>
   {
-    typedef point_t_base<T_Coord, TwoDimensionsTag>       base;
+    typedef point_base<T_Coord, two_dimensions_tag>       base;
 
     public:
 
-      point_t(T_Coord x = 0, T_Coord y = 0, T_Coord dummy = 0)
+      point(T_Coord x = 0, T_Coord y = 0, T_Coord dummy = 0)
       {
         base::coords_[0] = x;
         base::coords_[1] = y;
       }
 
-      point_t(const point_t & p2): base(p2) {};
+      point(const point & p2): base(p2) {};
 
 
       T_Coord get_y() const { return base::coords_[1]; };
@@ -473,10 +473,10 @@ namespace viennagrid
       void set_y(T_Coord value) { base::coords_[1] = value; };
 
       template <typename T>
-      friend double spannedVolume(const point_t<T, TwoDimensionsTag> & p1,
-                                    const point_t<T, TwoDimensionsTag> & p2);
+      friend double spannedVolume(const point<T, two_dimensions_tag> & p1,
+                                    const point<T, two_dimensions_tag> & p2);
 
-      point_t operator=(const point_t & p2)
+      point operator=(const point & p2)
       {
         base::coords_[0] = p2.coords_[0];
         base::coords_[1] = p2.coords_[1];
@@ -487,20 +487,20 @@ namespace viennagrid
   };
 
   template <typename T_Coord>
-  class point_t<T_Coord, ThreeDimensionsTag> : public point_t_base<T_Coord, ThreeDimensionsTag>
+  class point<T_Coord, three_dimensions_tag> : public point_base<T_Coord, three_dimensions_tag>
   {
-    typedef point_t_base<T_Coord, ThreeDimensionsTag>       base;
+    typedef point_base<T_Coord, three_dimensions_tag>       base;
 
     public:
 
-      point_t(T_Coord x = 0, T_Coord y = 0, T_Coord z = 0)
+      point(T_Coord x = 0, T_Coord y = 0, T_Coord z = 0)
       {
         base::coords_[0] = x;
         base::coords_[1] = y;
         base::coords_[2] = z;
       };
 
-      point_t(const point_t & p2): base(p2) {};
+      point(const point & p2): base(p2) {};
 
       T_Coord get_y() const { return base::coords_[1]; };
       T_Coord get_z() const { return base::coords_[2]; };
@@ -509,7 +509,7 @@ namespace viennagrid
       void set_y(T_Coord value) { base::coords_[1] = value; };
       void set_z(T_Coord value) { base::coords_[2] = value; };
 
-      point_t operator=(const point_t & p2)
+      point operator=(const point & p2)
       {
         base::coords_[0] = p2.coords_[0];
         base::coords_[1] = p2.coords_[1];
@@ -518,10 +518,12 @@ namespace viennagrid
       };
 
       template <typename T>
-      friend double spannedVolume(const point_t<T, ThreeDimensionsTag> & p1,
-                                    const point_t<T, ThreeDimensionsTag> & p2);
+      friend double spannedVolume(const point<T, three_dimensions_tag> & p1,
+                                    const point<T, three_dimensions_tag> & p2);
       template <typename T>
-      friend double spannedVolume(const point_t<T, ThreeDimensionsTag> & p1, const point_t<T, ThreeDimensionsTag> & p2, const point_t<T, ThreeDimensionsTag> & p3);
+      friend double spannedVolume(const point<T, three_dimensions_tag> & p1,
+                                  const point<T, three_dimensions_tag> & p2,
+                                  const point<T, three_dimensions_tag> & p3);
 
 
   };
@@ -529,16 +531,16 @@ namespace viennagrid
   //calculates the volume of rhomboid induced by the vectors p1 and p2:
   // 'ordinary 2D'
   template <typename T>
-  double spannedVolume(const point_t<T, TwoDimensionsTag> & p1,
-                       const point_t<T, TwoDimensionsTag> & p2)
+  double spannedVolume(const point<T, two_dimensions_tag> & p1,
+                       const point<T, two_dimensions_tag> & p2)
   {
     return p1.coords_[0] * p2.coords_[1] - p1.coords_[1] * p2.coords_[0];
   }
 
   // '2D-object in 3D'
   template <typename T>
-  double spannedVolume(const point_t<T, ThreeDimensionsTag> & p1,
-                       const point_t<T, ThreeDimensionsTag> & p2)
+  double spannedVolume(const point<T, three_dimensions_tag> & p1,
+                       const point<T, three_dimensions_tag> & p2)
   {
     double c1 = p1.coords_[0] * p2.coords_[1] - p1.coords_[1] * p2.coords_[0];
     double c2 = - p1.coords_[0] * p2.coords_[2] + p1.coords_[2] * p2.coords_[0];
@@ -548,9 +550,9 @@ namespace viennagrid
   }
 
   template <typename T>
-  double spannedVolume(const point_t<T, ThreeDimensionsTag> & p1,
-                       const point_t<T, ThreeDimensionsTag> & p2,
-                       const point_t<T, ThreeDimensionsTag> & p3)
+  double spannedVolume(const point<T, three_dimensions_tag> & p1,
+                       const point<T, three_dimensions_tag> & p2,
+                       const point<T, three_dimensions_tag> & p3)
   {
     //return det|p1 p2 p3|
     return p1.coords_[0] * p2.coords_[1] * p3.coords_[2]

@@ -70,12 +70,12 @@ namespace viennagrid
             vit != segment.template end<0>();
             ++vit)
         {
-          PointWriter<Point, DimensionTag::dim>::write(writer, vit->getPoint());
+          PointWriter<Point, DimensionTag::value>::write(writer, vit->getPoint());
 
           // add 0's for less than three dimensions
-            if (DimensionTag::dim == 2)
+            if (DimensionTag::value == 2)
               writer << " " << 0;
-            if(DimensionTag::dim == 1)
+            if(DimensionTag::value == 1)
               writer << " " << 0 << " " << 0;
 
             writer << std::endl;

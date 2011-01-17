@@ -24,7 +24,7 @@ namespace viennagrid
 
   //helper: holds an ordered number of vertices
   //comparisons also take permutations into account
-  template <typename ElementType, typename IDHandler = typename PointTag::IDHandler>
+  template <typename ElementType, typename IDHandler = typename point_tag::IDHandler>
   struct ElementKeyStorageType
   {
     typedef ElementType *           ResultType;
@@ -92,7 +92,7 @@ namespace viennagrid
 
 
   template <typename T_Configuration, unsigned long levelnum, typename MultigridTag>
-  class segment <T_Configuration, levelnum, topology_levelFullHandling, false, MultigridTag> :
+  class segment <T_Configuration, levelnum, topology_level_full_handling, false, MultigridTag> :
     public segment <T_Configuration, levelnum - 1>
   {
     typedef TopologyLevel<typename T_Configuration::cell_tag, levelnum>       LevelSpecs;
@@ -237,7 +237,7 @@ namespace viennagrid
   };
 
   template <typename T_Configuration, unsigned long levelnum, typename MultigridTag>
-  class segment <T_Configuration, levelnum, topology_levelNoHandling, false, MultigridTag> :
+  class segment <T_Configuration, levelnum, topology_level_no_handling, false, MultigridTag> :
     public segment <T_Configuration, levelnum - 1>
   {
     typedef TopologyLevel<typename T_Configuration::cell_tag, levelnum>       LevelSpecs;
@@ -339,12 +339,12 @@ namespace viennagrid
 
   //special treatment for vertices
   template <typename T_Configuration, typename HandlingTag>
-  class segment <T_Configuration, 0uL, HandlingTag, true, FullMultigridTag>
-    : public segment<T_Configuration, 0uL, HandlingTag, true, NoMultigridTag>
+  class segment <T_Configuration, 0uL, HandlingTag, true, full_multigrid_tag>
+    : public segment<T_Configuration, 0uL, HandlingTag, true, no_multigrid_tag>
   {};
 
   template <typename T_Configuration, typename HandlingTag>
-  class segment <T_Configuration, 0uL, HandlingTag, true, NoMultigridTag>
+  class segment <T_Configuration, 0uL, HandlingTag, true, no_multigrid_tag>
   {
     typedef typename DomainTypes<T_Configuration>::vertex_type        LevelElementType;
     //typedef element<T_Configuration, typename VertexSpecs::ElementTag>   LevelElementType;
@@ -434,7 +434,7 @@ namespace viennagrid
 
   //special treatment for cells
   template <typename T_Configuration, unsigned long levelnum, typename HandlingTag>
-  class segment <T_Configuration, levelnum, HandlingTag, true, FullMultigridTag> :
+  class segment <T_Configuration, levelnum, HandlingTag, true, full_multigrid_tag> :
    public segment <T_Configuration, T_Configuration::cell_tag::topology_level - 1>
   {
     typedef segment <T_Configuration, T_Configuration::cell_tag::topology_level - 1>                                                         Base;
@@ -630,7 +630,7 @@ namespace viennagrid
 
   //special treatment for cells
   template <typename T_Configuration, unsigned long levelnum, typename HandlingTag>
-  class segment <T_Configuration, levelnum, HandlingTag, true, NoMultigridTag> :
+  class segment <T_Configuration, levelnum, HandlingTag, true, no_multigrid_tag> :
    public segment <T_Configuration, T_Configuration::cell_tag::topology_level - 1>
   {
     typedef segment <T_Configuration, T_Configuration::cell_tag::topology_level - 1>                                                         Base;

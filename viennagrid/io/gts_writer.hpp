@@ -16,6 +16,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <vector>
 #include "viennagrid/forwards.h"
 #include "viennagrid/io/helper.hpp"
 
@@ -44,7 +45,7 @@ namespace viennagrid
     // one dimension
     template<>
     struct gts_coords_getter<1> {
-      static vector<double> getCoords(point_t<double,OneDimensionTag>& p) {
+      static vector<double> getCoords(point<double,one_dimension_tag>& p) {
         vector<double> coords;
         coords.push_back(p.get_x());
         return coords;
@@ -54,7 +55,7 @@ namespace viennagrid
     // two dimensions
     template<>
     struct gts_coords_getter<2> {
-      static vector<double> getCoords(point_t<double,TwoDimensionsTag>& p) {
+      static vector<double> getCoords(point<double,two_dimensions_tag>& p) {
         vector<double> coords;
         coords.push_back(p.get_x());
         coords.push_back(p.get_y());
@@ -65,7 +66,7 @@ namespace viennagrid
     // three dimensions
     template<>
     struct gts_coords_getter<3> {
-      static vector<double> getCoords(point_t<double,ThreeDimensionsTag>& p) {
+      static vector<double> getCoords(point<double,three_dimensions_tag>& p) {
         vector<double> coords;
         coords.push_back(p.get_x());
         coords.push_back(p.get_y());
@@ -124,7 +125,7 @@ namespace viennagrid
         typedef typename DomainConfiguration::cell_tag                   CellTag;
         //typedef typename DomainConfiguration::BoundaryReadTag           BoundaryReadTag;
       
-        typedef typename DomainTypes<DomainConfiguration>::point_type    Point;
+        typedef typename DomainTypes<DomainConfiguration>::pointype    Point;
         typedef typename DomainTypes<DomainConfiguration>::vertex_type   Vertex;
         typedef typename DomainTypes<DomainConfiguration>::cell_type     Cell;
         typedef typename DomainTypes<DomainConfiguration>::segment_type     Segment;
@@ -134,8 +135,8 @@ namespace viennagrid
 
         typedef typename DomainTypes<DomainConfiguration>::VertexOnCellIterator      VertexOnCellIterator;
         
-        typedef typename gts_list_getter<DimensionTag::dim>::list_type       GTSObjList;
-        typedef typename gts_list_getter<DimensionTag::dim>::object_type     GTSObj;
+        typedef typename gts_list_getter<DimensionTag::value>::list_type       GTSObjList;
+        typedef typename gts_list_getter<DimensionTag::value>::object_type     GTSObj;
         
         try {
           Segment & segment = *(domain.begin());
@@ -144,13 +145,13 @@ namespace viennagrid
           GTSDevice*               pDevice = new GTSDevice();
           
           /* Set up the basic device properties */
-          pDevice->setDimension(DimensionTag::dim);
+          pDevice->setDimension(DimensionTag::value);
           pDevice->setComment("This file is auto-generated from ViennaMesh.");
           pDevice->setName("Device");
           pDevice->setVersion("0.8");    
 
           cout << "Start writing the vertices! (GTSWriter)" << endl;
-          cout << "Dimension: " << DimensionTag::dim << endl;
+          cout << "Dimension: " << DimensionTag::value << endl;
           
           //***************************************************************
           // Writing the vertices
@@ -167,7 +168,7 @@ namespace viennagrid
             cout << "Vertex Id: " << vertex.getID() << ", ";
             cout << vertex.getPoint() << endl;
 
-            pointCoords = gts_coords_getter<DimensionTag::dim>::getCoords(vertex.getPoint());
+            pointCoords = gts_coords_getter<DimensionTag::value>::getCoords(vertex.getPoint());
             
             pPointList->add(pointCoords);
           }
@@ -185,7 +186,7 @@ namespace viennagrid
           // GTS            line         face      polyhedron
           // ViennaMesh     cell         cell         cell
           //***********************************************************   
-          GTSObjList* pObjList = gts_list_getter<DimensionTag::dim>::newList(pDevice);
+          GTSObjList* pObjList = gts_list_getter<DimensionTag::value>::newList(pDevice);
           
           long pointID;
           
@@ -210,7 +211,7 @@ namespace viennagrid
               cout << "Point Id: " << pointID << " ";
             }
 
-            gts_point_adder<DimensionTag::dim, GTSObj>::addPoints(pObj, points);
+            gts_point_adder<DimensionTag::value, GTSObj>::addPoints(pObj, points);
             
             pObjList->add(pObj);
 

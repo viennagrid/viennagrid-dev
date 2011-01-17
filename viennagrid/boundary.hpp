@@ -85,7 +85,7 @@ namespace viennagrid
   };
 
   template <long topolevel>
-  struct UnsafeBoundaryDetector<topolevel, topology_levelNoHandling>
+  struct UnsafeBoundaryDetector<topolevel, topology_level_no_handling>
   {
     template <typename Segment>
     static void apply(Segment & seg)
@@ -96,7 +96,7 @@ namespace viennagrid
   };
 
   template <>
-  struct UnsafeBoundaryDetector<-1, topology_levelNoHandling>
+  struct UnsafeBoundaryDetector<-1, topology_level_no_handling>
   {
     template <typename Segment>
     static void apply(Segment & seg) {}
@@ -106,7 +106,7 @@ namespace viennagrid
   //after segment is read, boundary detection has to be done (implemented here)
   //must be called BEFORE Dirichlet or Neumann boundaries are set.
   template <typename Segment>
-  void detectBoundary_impl(Segment & seg, topology_levelNoHandling)
+  void detectBoundary_impl(Segment & seg, topology_level_no_handling)
   {
     //unsafe detection: issue warning:
     std::cout << "WARNING: Boundary detection is not reliable, since no facets are available!" << std::endl;
@@ -119,7 +119,7 @@ namespace viennagrid
   }
 
   template <typename Segment>
-  void detectBoundary_impl(Segment & seg, topology_levelFullHandling)
+  void detectBoundary_impl(Segment & seg, topology_level_full_handling)
   {
     typedef typename Segment::Configuration                         DomainConfiguration;
     typedef typename DomainConfiguration::cell_tag                   CellTag;

@@ -66,7 +66,7 @@ namespace viennagrid
   class lower_level_holder  { };
 
   template <typename T_Configuration, typename ElementTag, unsigned long levelnum>
-  class lower_level_holder <T_Configuration, ElementTag, levelnum, topology_levelFullHandling, false> :
+  class lower_level_holder <T_Configuration, ElementTag, levelnum, topology_level_full_handling, false> :
     public lower_level_holder < T_Configuration, ElementTag, levelnum - 1>
   {
     //requirements:
@@ -194,7 +194,7 @@ namespace viennagrid
   };
 
   template <typename T_Configuration, typename ElementTag, unsigned long levelnum>
-  class lower_level_holder <T_Configuration, ElementTag, levelnum, topology_levelNoHandling, false> :
+  class lower_level_holder <T_Configuration, ElementTag, levelnum, topology_level_no_handling, false> :
     public lower_level_holder < T_Configuration, ElementTag, levelnum - 1 >
   {
     //requirements:
@@ -364,7 +364,7 @@ namespace viennagrid
   {  };
 
   template <typename T_Configuration, typename ElTag>
-  class multigrid_layer<T_Configuration, ElTag, FullMultigridTag> :
+  class multigrid_layer<T_Configuration, ElTag, full_multigrid_tag> :
     public lower_level_holder < T_Configuration, ElTag, ElTag::topology_level - 1>
   {
       typedef lower_level_holder < T_Configuration, ElTag, ElTag::topology_level - 1>                     Base;
@@ -396,7 +396,7 @@ namespace viennagrid
 
   //if no multigrid-handling is needed, no implementation is needed :-)
   template <typename T_Configuration, typename ElTag>
-  class multigrid_layer<T_Configuration, ElTag, NoMultigridTag> :
+  class multigrid_layer<T_Configuration, ElTag, no_multigrid_tag> :
     public lower_level_holder < T_Configuration, ElTag, ElTag::topology_level - 1>
   {
       typedef lower_level_holder < T_Configuration, ElTag, ElTag::topology_level - 1>             Base;
@@ -549,8 +549,8 @@ namespace viennagrid
 
   //vertex-type needs separate treatment:
   template <typename T_Configuration>
-  class element <T_Configuration, PointTag> :
-    public PointTag::IDHandler
+  class element <T_Configuration, point_tag> :
+    public point_tag::IDHandler
   {
       typedef typename DomainTypes<T_Configuration>::point_type     PointType;
       typedef typename T_Configuration::numeric_type               CoordType;
@@ -559,8 +559,8 @@ namespace viennagrid
 
     public:
       typedef T_Configuration                                       Configuration;
-      typedef PointTag                                              ElementTag;
-      typedef typename PointTag::IDHandler                        IDHandler;
+      typedef point_tag                                              ElementTag;
+      typedef typename point_tag::IDHandler                        IDHandler;
 
       element ( ) : onBoundary(false) { };   //construction of "template" for this type
 
@@ -630,7 +630,7 @@ namespace viennagrid
 
       //Provide a cell-on-cell-iterator, which is just the "this"-pointer
       template <long j>
-      typename IteratorTypes< element<T_Configuration, PointTag>, j>::ResultType
+      typename IteratorTypes< element<T_Configuration, point_tag>, j>::ResultType
       begin()
       { 
         return this;
@@ -638,12 +638,12 @@ namespace viennagrid
 
 
       template <long j>
-      typename IteratorTypes< element<T_Configuration, PointTag>, j>::ResultType
+      typename IteratorTypes< element<T_Configuration, point_tag>, j>::ResultType
       end(EqualType)
       { return this + 1; }
 
       template <long j>
-      typename IteratorTypes< element<T_Configuration, PointTag>, j>::ResultType
+      typename IteratorTypes< element<T_Configuration, point_tag>, j>::ResultType
       end()
       { 
         return this + 1;

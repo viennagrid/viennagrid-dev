@@ -107,8 +107,8 @@ namespace viennagrid
         typedef typename DomainTypes<DomainConfiguration>::vertex_iterator      VertexIterator;
         typedef typename DomainTypes<DomainConfiguration>::cell_iterator        CellIterator;
   
-        typedef typename gts_list_getter<DimensionTag::dim>::list_type         GTSObjList;
-        typedef typename gts_list_getter<DimensionTag::dim>::object_type       GTSObj;
+        typedef typename gts_list_getter<DimensionTag::value>::list_type         GTSObjList;
+        typedef typename gts_list_getter<DimensionTag::value>::object_type       GTSObj;
         
         Segment & segment = *(domain.begin());
 
@@ -163,7 +163,7 @@ namespace viennagrid
           
           for(i = 0; i < lenPointList; i++)
           {
-            CoordType coords[DimensionTag::dim]; // coordinates of a vertex (viennamesh)
+            CoordType coords[DimensionTag::value]; // coordinates of a vertex (viennamesh)
             
             cout << "Point No. " << i << ": ";
             
@@ -202,7 +202,7 @@ namespace viennagrid
           // GTS            line         face      polyhedron
           // viennamesh     cell         cell         cell
           //***********************************************************   
-          GTSObjList* objList = gts_list_getter<DimensionTag::dim>::getList(pDevice);
+          GTSObjList* objList = gts_list_getter<DimensionTag::value>::getList(pDevice);
         
           cout << "List was read in!" << endl;
           
@@ -231,7 +231,7 @@ namespace viennagrid
             
             /* read out the points of an obj. (GTS) and copy it to the cell (viennamesh) */
             for(j = 0; j < pointsPerObj; j++) {
-              pointIdx = gts_point_getter<DimensionTag::dim,GTSObj>::getPointIdx(pObject,j);
+              pointIdx = gts_point_getter<DimensionTag::value,GTSObj>::getPointIdx(pObject,j);
               
               vertices[j] = segment.getVertexAddress(pointIdx);
               

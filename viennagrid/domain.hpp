@@ -53,7 +53,7 @@ namespace viennagrid
 
   template <typename DomainConfiguration,
              long topolevel>
-  struct SegmentIDShifter <DomainConfiguration, topolevel, topology_levelFullHandling, ProvideID>
+  struct SegmentIDShifter <DomainConfiguration, topolevel, topology_level_full_handling, ProvideID>
   {
     //shift IDs:
     static void apply(typename DomainTypes<DomainConfiguration>::DomainType & domain)
@@ -77,14 +77,14 @@ namespace viennagrid
       }
 
       //continue iteration: (by using the default behaviour for this level. This makes termination of topolevel-loop easier: no code duplication)
-      SegmentIDShifter<DomainConfiguration, topolevel, topology_levelNoHandling, NoID>::apply(domain);
+      SegmentIDShifter<DomainConfiguration, topolevel, topology_level_no_handling, NoID>::apply(domain);
     }
 
   };
 
   //stop at vertex-level
   template <typename DomainConfiguration>
-  struct SegmentIDShifter<DomainConfiguration, 0, topology_levelNoHandling, NoID>
+  struct SegmentIDShifter<DomainConfiguration, 0, topology_level_no_handling, NoID>
   {
     static void apply(typename DomainTypes<DomainConfiguration>::DomainType & domain) {}
   };
@@ -155,11 +155,11 @@ namespace viennagrid
   template <typename Configuration>
   class DomainTypes
   {
-    enum { dim = Configuration::dimension_tag::dim };
+    enum { dim = Configuration::dimension_tag::value };
 
 
   public:
-    typedef point_t< typename Configuration::numeric_type,
+    typedef point< typename Configuration::numeric_type,
                       typename Configuration::dimension_tag >                       point_type;
 
     typedef element< Configuration,

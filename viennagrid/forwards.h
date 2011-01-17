@@ -22,25 +22,25 @@ namespace viennagrid
   /********* Tags ***********************/
 
   //Dimension Tags:
-  struct ThreeDimensionsTag{
-      enum{ dim = 3 };
+  struct three_dimensions_tag{
+      enum{ value = 3 };
   };
   
-  struct TwoDimensionsTag{
-      enum{ dim = 2 };
+  struct two_dimensions_tag{
+      enum{ value = 2 };
   };
 
-  struct OneDimensionTag{
-      enum{ dim = 1 };
+  struct one_dimension_tag{
+      enum{ value = 1 };
   };
 
   //Topological Handling Tag
-  struct topology_levelFullHandling {};
-  struct topology_levelNoHandling {};
+  struct topology_level_full_handling {};
+  struct topology_level_no_handling {};
 
   //multigrid:
-  struct FullMultigridTag {};
-  struct NoMultigridTag {};
+  struct full_multigrid_tag {};
+  struct no_multigrid_tag {};
 
   //segment connection:
   template <long id>

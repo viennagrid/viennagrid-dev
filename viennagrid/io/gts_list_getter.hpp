@@ -8,7 +8,7 @@
    authors:    Karl Rupp                          rupp@iue.tuwien.ac.at
                Peter Lagger                       peter.lagger@ieee.org
 
-   license:    MIT (X11), see file LICENSE in the ViennaMesh base directory
+   license:    MIT (X11), see file LICENSE in the ViennaGrid base directory
 ======================================================================= */
 
 #ifndef VIENNAGRID_IO_GTS_LIST_GETTER_GUARD

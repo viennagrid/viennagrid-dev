@@ -31,19 +31,19 @@ namespace viennagrid
     };
 
     template <>
-    struct ELEMENT_TAG_TO_VTK_TYPE<TetrahedronTag>
+    struct ELEMENT_TAG_TO_VTK_TYPE<tetrahedron_tag>
     {
       enum{ ReturnValue = 10 };
     };
 
     template <>
-    struct ELEMENT_TAG_TO_VTK_TYPE<TriangleTag>
+    struct ELEMENT_TAG_TO_VTK_TYPE<triangle_tag>
     {
       enum{ ReturnValue = 5 };
     };
 
     template <>
-    struct ELEMENT_TAG_TO_VTK_TYPE<LineTag>
+    struct ELEMENT_TAG_TO_VTK_TYPE<line_tag>
     {
       enum{ ReturnValue = 3 };
     };

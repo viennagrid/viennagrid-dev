@@ -48,7 +48,7 @@ namespace viennagrid
         
         Segment & segment = *(domain.begin());
       
-        writer << "Dimension: " << DimensionTag::dim << std::endl;
+        writer << "Dimension: " << DimensionTag::value << std::endl;
         writer << "Vertices: " << segment.template size<0>() << std::endl;
       
         //segment.template begin<0>()->setCurrentSegment(segment);
@@ -60,7 +60,7 @@ namespace viennagrid
         {
           Vertex & vertex = *vit;
           writer << vertex.getID() << " ";
-          PointWriter<Point, DimensionTag::dim>::write(writer, vertex.getPoint());
+          PointWriter<Point, DimensionTag::value>::write(writer, vertex.getPoint());
           writer << std::endl;
         }
       

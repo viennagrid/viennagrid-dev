@@ -23,38 +23,38 @@ namespace viennagrid
   struct SegmentConfig
   {
     //default: No handling
-    typedef topology_levelNoHandling    HandlingTag;
+    typedef topology_level_no_handling    HandlingTag;
   };
 
   template <>
   struct SegmentConfig<0>
   {
-    typedef topology_levelFullHandling    HandlingTag;
+    typedef topology_level_full_handling    HandlingTag;
   };
 
   template <>
   struct SegmentConfig<1>
   {
-    typedef topology_levelFullHandling    HandlingTag;
+    typedef topology_level_full_handling    HandlingTag;
   };
 
   template <>
   struct SegmentConfig<2>
   {
-    typedef topology_levelFullHandling    HandlingTag;
+    typedef topology_level_full_handling    HandlingTag;
   };
 
   template <>
   struct SegmentConfig<3>
   {
-    typedef topology_levelFullHandling    HandlingTag;
+    typedef topology_level_full_handling    HandlingTag;
   };
 
 
   //Cell Tags:
-  struct NullTag {};
+  struct null_tag {};
 
-  struct PointTag
+  struct point_tag
   {
     enum { topology_level = 0 };
     typedef ProvideID             IDHandler;
@@ -62,7 +62,7 @@ namespace viennagrid
     static std::string name() { return "Point"; }
   };
 
-  struct LineTag
+  struct line_tag
   {
     enum { topology_level = 1 };
     typedef ProvideID             IDHandler;
@@ -110,7 +110,7 @@ namespace viennagrid
 
   };
 
-  struct TriangleTag
+  struct triangle_tag
   {
     enum{ topology_level = 2 };
     typedef ProvideID             IDHandler;
@@ -119,9 +119,9 @@ namespace viennagrid
 
   };
 
-  ///////////////// TetrahedronTag /////////////////
+  ///////////////// tetrahedron_tag /////////////////
 
-  struct TetrahedronTag
+  struct tetrahedron_tag
   {
     enum{ topology_level = 3 };
     typedef ProvideID             IDHandler;
@@ -130,9 +130,15 @@ namespace viennagrid
   };
 
   //static members:
-  //double TetrahedronTag::facetvolume[] = { 1.0, 2.449489742783178098, 1.0, 1.0 };
+  //double tetrahedron_tag::facetvolume[] = { 1.0, 2.449489742783178098, 1.0, 1.0 };
 
 
+  
+  
+  
+  
+  
+  
   template <typename ElementTag_, long i = ElementTag_::topology_level>
   struct TopologyLevel
   {
@@ -143,45 +149,45 @@ namespace viennagrid
 
     typedef ElementTag_                  ElementTag;
     //compatibility with cell-on-cell-iterator
-    typedef topology_levelFullHandling     HandlingTag;
+    typedef topology_level_full_handling     HandlingTag;
   };
 
   //Point:
   template <>
-  struct TopologyLevel<PointTag, 0>
+  struct TopologyLevel<point_tag, 0>
   {
-    typedef PointTag              ElementTag;
+    typedef point_tag              ElementTag;
     typedef ProvideID             IDHandler;
-    typedef topology_levelFullHandling     HandlingTag;
+    typedef topology_level_full_handling     HandlingTag;
 
     enum{ ElementNum = 1 };     //1 vertex
   };
 
   //Line:
   template <>
-  struct TopologyLevel<LineTag, 0>
+  struct TopologyLevel<line_tag, 0>
   {
-    typedef PointTag              ElementTag;
-    typedef topology_levelFullHandling     HandlingTag;
+    typedef point_tag              ElementTag;
+    typedef topology_level_full_handling     HandlingTag;
 
     enum{ ElementNum = 2 };     //2 vertices
   };
 
   //Triangle:
   template <>
-  struct TopologyLevel<TriangleTag, 0>
+  struct TopologyLevel<triangle_tag, 0>
   {
-    typedef PointTag                  ElementTag;
-    typedef topology_levelFullHandling     HandlingTag;
+    typedef point_tag                  ElementTag;
+    typedef topology_level_full_handling     HandlingTag;
 
     enum{ ElementNum = 3 };     //3 vertices
   };
 
   template <>
-  struct TopologyLevel<TriangleTag, 1>
+  struct TopologyLevel<triangle_tag, 1>
   {
-    typedef LineTag                   ElementTag;
-    typedef topology_levelFullHandling     HandlingTag;
+    typedef line_tag                   ElementTag;
+    typedef topology_level_full_handling     HandlingTag;
 
     enum{ ElementNum = 3 };     //3 edges
 
@@ -212,19 +218,19 @@ namespace viennagrid
 
   //Tetrahedron:
   template <>
-  struct TopologyLevel<TetrahedronTag, 0>
+  struct TopologyLevel<tetrahedron_tag, 0>
   {
-    typedef PointTag             ElementTag;
-    typedef topology_levelFullHandling     HandlingTag;
+    typedef point_tag             ElementTag;
+    typedef topology_level_full_handling     HandlingTag;
 
     enum{ ElementNum = 4 };     //4 vertices
   };
 
   template <>
-  struct TopologyLevel<TetrahedronTag, 1>
+  struct TopologyLevel<tetrahedron_tag, 1>
   {
-    typedef LineTag              ElementTag;
-    typedef topology_levelFullHandling     HandlingTag;
+    typedef line_tag              ElementTag;
+    typedef topology_level_full_handling     HandlingTag;
 
     enum{ ElementNum = 6 };     //6 edges
 
@@ -269,10 +275,10 @@ namespace viennagrid
   };
 
   template <>
-  struct TopologyLevel<TetrahedronTag, 2>
+  struct TopologyLevel<tetrahedron_tag, 2>
   {
-    typedef TriangleTag          ElementTag;
-    typedef topology_levelFullHandling     HandlingTag;
+    typedef triangle_tag          ElementTag;
+    typedef topology_level_full_handling     HandlingTag;
 
     enum{ ElementNum = 4 };     //4 facets
 

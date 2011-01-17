@@ -70,16 +70,15 @@ namespace viennagrid
 
         void openVTKFile(std::string const & filename)
         {
-            std::ifstream local_reader(filename.c_str());
-            if(!local_reader)
+            this->reader.open(filename.c_str());
+            if(!this->reader)
             {
               std::cerr << "Error open file!" << std::endl;
               throw;
             }
-            this->reader = local_reader;
         }
 
-        void checkNextToken(std::string const & expectedToken) const
+        void checkNextToken(std::string const & expectedToken)
         {
           std::string token;
           this->reader >> token;
@@ -89,7 +88,7 @@ namespace viennagrid
           }
         }
 
-        long getNumberOfNodes() const
+        long getNumberOfNodes()
         {
           std::string token;
 
@@ -112,7 +111,7 @@ namespace viennagrid
           return atoi(token.c_str());
         }
 
-        long getNumberOfCells() const
+        long getNumberOfCells()
         {
           std::string token;
 
@@ -137,7 +136,7 @@ namespace viennagrid
           return atoi(token.c_str());
         }
 
-        long getNumberOfComponents() const
+        long getNumberOfComponents()
         {
           std::string token;
 
@@ -160,14 +159,14 @@ namespace viennagrid
           return atoi(token.c_str());
         }
 
-        void readNodeCoordinates(Segment & segment, long nodeNum, long numberOfComponents) const
+        void readNodeCoordinates(Segment & segment, long nodeNum, long numberOfComponents)
         {
           Vertex vertex;
           double nodeCoord;
 
           for(long i = 0; i < nodeNum; i++)
           {
-            CoordType vmCoords[DimensionTag::dim];
+            CoordType vmCoords[DimensionTag::value];
 
             std::cout << "Vertex#" << i << ": ";
 
@@ -187,7 +186,7 @@ namespace viennagrid
           }
         }
 
-        void readNodeIndices(std::vector<long> & cells) const
+        void readNodeIndices(std::vector<long> & cells)
         {
           long cellNode = 0;
           std::string token;
@@ -204,7 +203,7 @@ namespace viennagrid
           //cout << "#: " << cellNode << endl;
         }
 
-        void readOffsets(std::vector<long> & offsets) const
+        void readOffsets(std::vector<long> & offsets)
         {
             //****************************************************************************
             // read in the offsets: describe the affiliation of the nodes to the cells
@@ -225,7 +224,7 @@ namespace viennagrid
             }
         }
 
-        void readCells(Segment & segment, long cellNum, std::vector<long> const & cells, std::vector<long> const & offsets) const
+        void readCells(Segment & segment, long cellNum, std::vector<long> const & cells, std::vector<long> const & offsets)
         {
             //***************************************************
             // building up the cells in ViennaGrid
@@ -248,10 +247,13 @@ namespace viennagrid
               // in the "cells"-vector and calculate the
               // number of vertices belonging to the i-th cell
               //*************************************************
-              if(i == 0) {
+              if(i == 0)
+              {
                 offsetIdx = 0;
                 numVertices = offsets[i];
-              } else {
+              }
+              else
+              {
                 offsetIdx = offsets[i-1];
                 numVertices = offsets[i]-offsets[i-1];
               }
@@ -290,7 +292,7 @@ namespace viennagrid
         try
         {
           checkFilename(filename);
-          openVTKFile(filename.c_str());
+          openVTKFile(filename);
 
           Segment & segment = *(domain.begin());
 
@@ -363,7 +365,7 @@ namespace viennagrid
           checkNextToken("</UnstructuredGrid>");
           checkNextToken("</VTKFile>");
 
-          readCells(segment, cellNum, cells);
+          readCells(segment, cellNum, cells, offsets);
 
         }
         catch (...) {
