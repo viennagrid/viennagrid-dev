@@ -2,14 +2,45 @@
 ///////// Interface ideas for ViennaGrid ////////////////
 
 
-
 //structured domain type:
-domain<ConfigClass> d = structured_domain<ConfigClass>(x_coords);
-domain<ConfigClass> d = structured_domain<ConfigClass>(x_coords, y_coords);
-domain<ConfigClass> d = structured_domain<ConfigClass>(x_coords, y_coords, z_coords);
+domain<ConfigClass> d = structured_domain(x_coords);
+domain<ConfigClass> d = structured_domain(x_coords, y_coords);
+domain<ConfigClass> d = structured_domain(x_coords, y_coords, z_coords);
 
 //unstructured domain type:
-domain<ConfigClass> d = unstructured_domain<ConfigClass>(file);
+domain<ConfigClass> d = unstructured_domain(file);
+
+
+//iteration over all elements of a particular topological level:
+segment.begin<level>();          //iteration over all elements on the segment
+segment.end<level>();
+domain.begin<level>();           //iteration over all elements on the whole domain
+domain.end<level>();
+
+
+//iteration over subelements (i.e. of lower topological level):
+element.begin<level>();
+element.end<level>();
+//in particular:
+element.begin<0>(); element.end<0>();    //iteration over vertices of that element
+
+
+//iteration over elements of higher topological level:
+segment.begin<level>(element);   //all neighboring elements in that segment
+segment.end<level>(element);   
+domain.begin<level>(element);    //all neighboring elements in the domain (not considering segment boundaries)
+domain.end<level>(element);
+//in particular:
+segment.begin<cell_level>(element);       //iteration over all cells that are adjacent to the element.
+
+
+//refinement:
+// - refinement_info_tag:   The tag holding the refinement markers in ViennaData
+// - refinement_method:     Which refinement strategy to use (refine uniformly, refine only tagged elements, always refine longest edge, etc.) 
+refine(domain, refinement_info_tag(), refinement_method());         
+
+
+
 
 //Domain configuration:
 struct ConfigClass
@@ -34,7 +65,7 @@ struct ConfigClass
   
   //Cell type of the grid (triangle, quadrilaterals, tetrahedra, etc.)
   //Evaluated only on unstructured grids, but always has to be defined
-  //Design decision: No hybrid grids, no prismatic grids (e.g. facets of different type)
+  //Design decision: No hybrid grids so far, no prismatic grids (e.g. facets of different type)
   //Typical tags:
   //  - line_tag
   //  - triangle_tag
