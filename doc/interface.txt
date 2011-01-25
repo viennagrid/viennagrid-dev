@@ -1,37 +1,84 @@
 
 ///////// Interface ideas for ViennaGrid ////////////////
 
+domain<ConfigClass> d;
 
 //structured domain type:
-domain<ConfigClass> d = structured_domain(x_coords);
-domain<ConfigClass> d = structured_domain(x_coords, y_coords);
-domain<ConfigClass> d = structured_domain(x_coords, y_coords, z_coords);
+//domain<ConfigClass> d = setup_domain(reader(file));
+//domain<ConfigClass> d = setup_domain(reader(pipe));
+//domain<ConfigClass> d = setup_domain(x_coords);
+//domain<ConfigClass> d = setup_domain(x_coords, y_coords);
+//domain<ConfigClass> d = setup_domain(x_coords, y_coords, z_coords);
+
+read(domain, inputstream);
 
 //unstructured domain type:
-domain<ConfigClass> d = unstructured_domain(file);
+//domain<ConfigClass> d = setup_domain(file);
 
 
-//iteration over all elements of a particular topological level:
-segment.begin<level>();          //iteration over all elements on the segment
-segment.end<level>();
-domain.begin<level>();           //iteration over all elements on the whole domain
-domain.end<level>();
+
+//iteration over all [sub/sup]-elements of a particular topological level of an element:
+
+//elements of a segment or domain
+ContainerType elements = range<dim>(segment);    //or range<dim>(domain);
+ContainerType elements = collect<dim>(segment);    //or collect<dim>(domain);
+ContainerType elements = collection<dim>(segment);    //or collection<dim>(domain);
+ContainerType elements = view<dim>(segment);    //or view<dim>(domain);
+for (IteratorType it = elements.begin();
+     it != elements.end();
+     ++it)
+     ...
+
+
+//lower level (boundary operation):
+ContainerType sub_elements = collection<dim>(element);    //collect<dim>(element, segment);   or collect<dim>(element, domain); for compatibility
+for (IteratorType it = sub_elements.begin();
+     it != sub_elements.end();
+     ++it)
+     ...
+
+//co-boundary operation:
+ContainerType sup_elements = collection<dim>(element, segment);     //or collect<dim>(element, domain);
+for (IteratorType it = sup_elements.begin();
+     it != sup_elements.end();
+     ++it)
+     ...
+
+
+
+
+
+
+// [OLD STUFF] iteration over all elements of a particular topological level:
+//segment.begin<n>();          //iteration over all elements on the segment
+//segment.end<level>();
+//domain.begin<level>();           //iteration over all elements on the whole domain
+//domain.end<level>();
+//domain.seg_begin();             //iterate over segments
+//domain.seg_end();
+
+
+
+
 
 
 //iteration over subelements (i.e. of lower topological level):
-element.begin<level>();
-element.end<level>();
+//cit->
+//element.begin<level>();
+//element.end<level>();
 //in particular:
-element.begin<0>(); element.end<0>();    //iteration over vertices of that element
+//element.begin<0>(); element.end<0>();    //iteration over vertices of that element
 
 
 //iteration over elements of higher topological level:
-segment.begin<level>(element);   //all neighboring elements in that segment
-segment.end<level>(element);   
-domain.begin<level>(element);    //all neighboring elements in the domain (not considering segment boundaries)
-domain.end<level>(element);
+//segment.begin<level>(element);   //all neighboring elements in that segment
+//vertex.begin<DIMT>(segment);
+
+//segment.end<level>(element);   
+//domain.begin<level>(element);    //all neighboring elements in the domain (not considering segment boundaries)
+//domain.end<level>(element);
 //in particular:
-segment.begin<cell_level>(element);       //iteration over all cells that are adjacent to the element.
+//segment.begin<cell_level>(element);       //iteration over all cells that are adjacent to the element.
 
 
 //refinement:
