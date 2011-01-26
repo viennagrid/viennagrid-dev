@@ -1,9 +1,10 @@
 #!/bin/bash
 
 rm *.*~
+rm doc/*.*~
 rm viennagrid/*.*~
 rm viennagrid/io/*.*~
-#rm viennagrid/util/*.*~
+rm viennagrid/old/*.*~
 rm applications/tutorials/*.*~
 rm applications/benchmarks/*.*~
 rm applications/tests/*.*~

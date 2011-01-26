@@ -15,13 +15,14 @@
 #define VIENNAGRID_ELEMENT_HPP
 
 #include "viennagrid/forwards.h"
-#include "viennagrid/celltags.h"
-#include "viennagrid/iterators.h"
+#include "viennagrid/celltags.hpp"
+#include "viennagrid/iterators.hpp"
 
 #include <vector>
 
 namespace viennagrid
 {
+  
   
   /************** Level 1: Elements contained by a higher-level element *******/
 
@@ -80,18 +81,19 @@ namespace viennagrid
     typedef element<T_Configuration, typename LevelSpecs::element_tag>  LevelElementType;
 
     protected:
-      void fill_level(SegmentType & seg)
+      template <typename DomainType>
+      void fill_level(DomainType & dom)
       {
         //fill lower level first:
-        Base::fill_level(seg);
+        Base::fill_level(dom);
 
-        for (long i=0; i<LevelSpecs::ElementNum; ++i)
-          orientations_[i].resize(VertexOnElementSpecs::ElementNum);
+        for (long i=0; i<LevelSpecs::num_elements; ++i)
+          orientations_[i].resize(VertexOnElementSpecs::num_elements);
 
         subcell_filler<ElementTag, levelnum>::fill(&(elements_[0]),
                                                    &(Base::vertices_[0]),
                                                    &(orientations_[0]),
-                                                   seg);
+                                                   dom);
       }
 
       void print(long indent = 0) const
@@ -100,7 +102,7 @@ namespace viennagrid
           std::cout << "   ";
         std::cout << "* Level " << levelnum << ": (FullHandling)" << std::endl;
 
-        for (long i=0; i<LevelSpecs::ElementNum; ++i)
+        for (long i=0; i<LevelSpecs::num_elements; ++i)
         {
           std::cout << "Permutation (local to global) for element to come:" << std::endl;
           orientations_[i].print();
@@ -115,7 +117,7 @@ namespace viennagrid
 
       lower_level_holder( const lower_level_holder & llh) : Base (llh)
       {
-        for (long i=0; i < LevelSpecs::ElementNum; ++i)
+        for (long i=0; i < LevelSpecs::num_elements; ++i)
           elements_[i] = llh.elements_[i];
       }
 
@@ -156,7 +158,7 @@ namespace viennagrid
       end(equal_tag)
       { 
         typedef typename IteratorTypes< element<T_Configuration, ElementTag>, j>::result_type   LevelIterator;
-        return LevelIterator(elements_ + LevelSpecs::ElementNum);
+        return LevelIterator(elements_ + LevelSpecs::num_elements);
       }
 
       template <long j>
@@ -189,8 +191,8 @@ namespace viennagrid
       }
 
     private: 
-      LevelElementType * elements_[LevelSpecs::ElementNum];
-      ElementOrientation orientations_[LevelSpecs::ElementNum];
+      LevelElementType * elements_[LevelSpecs::num_elements];
+      ElementOrientation orientations_[LevelSpecs::num_elements];
   };
 
   template <typename T_Configuration, typename ElementTag, unsigned long levelnum>
@@ -206,10 +208,11 @@ namespace viennagrid
     typedef element<T_Configuration, typename LevelSpecs::element_tag>  LevelElementType;
 
     protected:
-      void fill_level(SegmentType & seg)
+      template <typename DomainType>
+      void fill_level(DomainType & dom)
       {
         //fill lower topological levels only:
-        Base::fill_level(seg);
+        Base::fill_level(dom);
 
 /*
         facets_[0] = seg.addFacet(Base::vertices_[0], Base::vertices_[1], Base::vertices_[3]);
@@ -248,7 +251,7 @@ namespace viennagrid
         typedef typename IteratorTypes< element<T_Configuration, ElementTag>, j>::result_type
           LevelIterator;
 
-        LevelElementType * elements_[LevelSpecs::ElementNum];
+        LevelElementType * elements_[LevelSpecs::num_elements];
         //TODO: Set up elements here (via CellTag)
         return LevelIterator(elements_);
       }
@@ -276,9 +279,9 @@ namespace viennagrid
           typename IteratorTypes< element<T_Configuration, ElementTag>, j>::result_type
             LevelIterator;
 
-        LevelElementType * elements_[LevelSpecs::ElementNum];
+        LevelElementType * elements_[LevelSpecs::num_elements];
         //TODO: Set up endpoint here (via CellTag)
-        return LevelIterator(elements_ + LevelSpecs::ElementNum);
+        return LevelIterator(elements_ + LevelSpecs::num_elements);
       }
 
       template <long j>
@@ -305,7 +308,8 @@ namespace viennagrid
 
     protected:
       //end recursion:
-      void fill_level(SegmentType & seg) {};
+      template <typename DomainType>
+      void fill_level(DomainType & dom) {}
 
       void print(long indent = 0) const
       {
@@ -313,7 +317,7 @@ namespace viennagrid
           std::cout << "   ";
         std::cout << "* Level " << 0 << ": " << std::endl;
 
-        for (long i = 0; i<LevelSpecs::ElementNum; ++i)
+        for (long i = 0; i<LevelSpecs::num_elements; ++i)
         {
           for (long j = 0; j<=indent; ++j)
             std::cout << "   ";
@@ -325,7 +329,7 @@ namespace viennagrid
       {
         std::cout << "* Vertices: " << std::endl;
 
-        for (long i = 0; i<LevelSpecs::ElementNum; ++i)
+        for (long i = 0; i<LevelSpecs::num_elements; ++i)
         {
           std::cout << "Vertex " << i << " (" << vertices_[i] << "): "; vertices_[i]->print();
         }
@@ -336,7 +340,7 @@ namespace viennagrid
 
       lower_level_holder( const lower_level_holder & llh)
       {
-        for (long i=0; i < LevelSpecs::ElementNum; ++i)
+        for (long i=0; i < LevelSpecs::num_elements; ++i)
           vertices_[i] = llh.vertices_[i];
       }
 
@@ -348,10 +352,10 @@ namespace viennagrid
       VertexIterator begin() { return VertexIterator(vertices_); }
 
       template <long j>
-      VertexIterator end()   { return VertexIterator(vertices_ + LevelSpecs::ElementNum); }
+      VertexIterator end()   { return VertexIterator(vertices_ + LevelSpecs::num_elements); }
 
     protected:
-      VertexType * vertices_[LevelSpecs::ElementNum];
+      VertexType * vertices_[LevelSpecs::num_elements];
   };
 
   ////////////// LAYER 3: Multigrid capabilities //////////
@@ -413,7 +417,6 @@ namespace viennagrid
       typedef typename T_Configuration::numeric_type                   ScalarType;
       typedef multigrid_layer < T_Configuration, ElTag >               Base;
       typedef typename DomainTypes<T_Configuration>::point_type        PointType;
-      typedef typename DomainTypes<T_Configuration>::segment_type      SegmentType;
       typedef typename DomainTypes<T_Configuration>::vertex_type       VertexType;
       typedef subcell_traits<ElTag, 0>                                 VertexSpecs;
 
@@ -429,9 +432,10 @@ namespace viennagrid
         this->setID(e2.getID());
       };
 
-      void fill(SegmentType & seg)
+      template <typename DomainType>
+      void fill(DomainType & dom)
       {
-        Base::fill_level(seg);
+        Base::fill_level(dom);
       }
 
       void print(long indent = 0) const
@@ -452,7 +456,7 @@ namespace viennagrid
 
       void setVertices(VertexType **vertices)
       {
-        for(int i=0; i<VertexSpecs::ElementNum; i++)
+        for(int i=0; i<VertexSpecs::num_elements; i++)
         {
           Base::vertices_[i] = vertices[i];
           //std::cout << i << " ";
@@ -463,11 +467,11 @@ namespace viennagrid
       /*PointType getMidPoint() const
       {
         PointType retPoint;
-        for(int i=0; i<VertexSpecs::ElementNum; i++)
+        for(int i=0; i<VertexSpecs::num_elements; i++)
         {
           retPoint += Base::vertices_[i]->getPoint();
         }
-        retPoint /= VertexSpecs::ElementNum;
+        retPoint /= VertexSpecs::num_elements;
         return retPoint;
       }*/
 
@@ -477,9 +481,9 @@ namespace viennagrid
         //simple algorithm that checks each vertex for a matching vertex in c2
         //For a small number of vertices this is not too bad.
         bool found = false;
-        for (int i=0; i<subcell_traits<ElementTag,0>::ElementNum; ++i)
+        for (int i=0; i<subcell_traits<ElementTag,0>::num_elements; ++i)
         {
-          for (int j=0; j<subcell_traits<ElementTag,0>::ElementNum; ++j)
+          for (int j=0; j<subcell_traits<ElementTag,0>::num_elements; ++j)
           {
             if (Base::vertices_[i] == c2.vertices_[j])
             {

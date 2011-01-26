@@ -14,10 +14,12 @@
 #define VIENNAGRID_FORWARDS_GUARD
 
 #include <iostream>
-#include "viennagrid/idhandler.h"
+#include "viennagrid/idhandler.hpp"
 
 namespace viennagrid
 {
+  
+  typedef unsigned long       dim_type;
   
   /********* Tags ***********************/
 
@@ -66,20 +68,18 @@ namespace viennagrid
   struct element;
 
   template <typename ElementType>
-  class ElementKey;
+  class element_key;
 
-  template <long level>
+  template <dim_type level>
   struct segment_traits;
 
   //Segment type: 
-  template <typename T_Configuration,
-             unsigned long levelnum = T_Configuration::cell_tag::topology_level,
-             typename HandlingTag = typename segment_traits<levelnum>::handling_tag,
-             bool specialHandling = (levelnum == T_Configuration::cell_tag::topology_level) || (levelnum == 0),
-             typename MultigridTag = typename T_Configuration::multigrid_tag>
+  template <typename Conf>
   class segment;
 
-
+  template <typename CONF>
+  class domain;
+  
   /********* Other *******************/
 
   
@@ -102,7 +102,20 @@ namespace viennagrid
     typedef less_tag    result_type;
   };
 
+  template <typename T, dim_type dim>
+  class vector_container;
 
+  namespace result_of
+  {
+    template <typename T>
+    struct iterator;
+    
+    template <typename T>
+    struct config
+    {
+      typedef typename T::config_type     type; 
+    };
+  }
 
 } 
 #endif

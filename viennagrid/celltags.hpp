@@ -14,7 +14,6 @@
 #define VIENNAGRID_CELLTAGS_GUARD
 
 #include "viennagrid/forwards.h"
-#include <../ViennaSHE/external/CL/cl_platform.h>
 
 namespace viennagrid
 {
@@ -87,7 +86,7 @@ namespace viennagrid
     //the default case is simultaneously a pathetic case:
     //cell-handling within the cell
 
-    enum{ ElementNum = 1 };     //1 cell
+    enum{ num_elements = 1 };     //1 cell
 
     typedef ElementTag_           element_tag;
     //compatibility with cell-on-cell-iterator
@@ -101,7 +100,7 @@ namespace viennagrid
     typedef point_tag             element_tag;
     typedef full_handling_tag     handling_tag;
 
-    enum{ ElementNum = 1 };     //1 vertex
+    enum{ num_elements = 1 };     //1 vertex
   };
 
   //Line:
@@ -111,7 +110,7 @@ namespace viennagrid
     typedef point_tag             element_tag;
     typedef full_handling_tag     handling_tag;
 
-    enum{ ElementNum = 2 };     //2 vertices
+    enum{ num_elements = 2 };     //2 vertices
   };
 
   //Triangle:
@@ -121,7 +120,7 @@ namespace viennagrid
     typedef point_tag             element_tag;
     typedef full_handling_tag     handling_tag;
 
-    enum{ ElementNum = 3 };     //3 vertices
+    enum{ num_elements = 3 };     //3 vertices
   };
 
   template <>
@@ -130,7 +129,7 @@ namespace viennagrid
     typedef line_tag              element_tag;
     typedef full_handling_tag     handling_tag;
 
-    enum{ ElementNum = 3 };     //3 edges
+    enum{ num_elements = 3 };     //3 edges
 
   };
   
@@ -141,7 +140,7 @@ namespace viennagrid
     typedef point_tag             element_tag;
     typedef full_handling_tag     handling_tag;
 
-    enum{ ElementNum = 4 };     //3 vertices
+    enum{ num_elements = 4 };     //3 vertices
   };
 
   template <>
@@ -150,7 +149,7 @@ namespace viennagrid
     typedef line_tag              element_tag;
     typedef full_handling_tag     handling_tag;
 
-    enum{ ElementNum = 4 };     //3 edges
+    enum{ num_elements = 4 };     //3 edges
 
   };
 
@@ -162,7 +161,7 @@ namespace viennagrid
     typedef point_tag             element_tag;
     typedef full_handling_tag     handling_tag;
 
-    enum{ ElementNum = 4 };     //4 vertices
+    enum{ num_elements = 4 };     //4 vertices
   };
 
   template <>
@@ -171,7 +170,7 @@ namespace viennagrid
     typedef line_tag              element_tag;
     typedef full_handling_tag     handling_tag;
 
-    enum{ ElementNum = 6 };     //6 edges
+    enum{ num_elements = 6 };     //6 edges
   };
 
   template <>
@@ -180,7 +179,7 @@ namespace viennagrid
     typedef triangle_tag          element_tag;
     typedef full_handling_tag     handling_tag;
 
-    enum{ ElementNum = 4 };     //4 facets
+    enum{ num_elements = 4 };     //4 facets
   };
 
   
@@ -191,7 +190,7 @@ namespace viennagrid
     typedef point_tag             element_tag;
     typedef full_handling_tag     handling_tag;
 
-    enum{ ElementNum = 8 };     //8 vertices
+    enum{ num_elements = 8 };     //8 vertices
   };
 
   template <>
@@ -200,7 +199,7 @@ namespace viennagrid
     typedef line_tag              element_tag;
     typedef full_handling_tag     handling_tag;
 
-    enum{ ElementNum = 12 };     //12 edges
+    enum{ num_elements = 12 };     //12 edges
   };
 
   template <>
@@ -209,8 +208,49 @@ namespace viennagrid
     typedef quadrilateral_tag     element_tag;
     typedef full_handling_tag     handling_tag;
 
-    enum{ ElementNum = 6 };     //6 facets
+    enum{ num_elements = 6 };     //6 facets
   };
+  
+  
+  
+  //result_of layer:
+  namespace result_of
+  {
+    template <typename T, dim_type dim = T::element_tag::topology_level>
+    struct element_tag
+    {
+      typedef typename subcell_traits<typename T::element_tag,
+                                      dim>::element_tag           type; 
+    };
+    
+    
+    template <typename T>
+    struct element_tag<T, T::element_tag::topology_level>
+    {
+      typedef typename T::element_tag    type; 
+    };
+    
+    
+    template <typename T, dim_type dim = T::element_tag::topology_level>
+    struct handling_tag
+    {
+      typedef typename subcell_traits<T, dim>::handling_tag    type; 
+    };
+    
+    template <typename T>
+    struct handling_tag<T, T::element_tag::topology_level>
+    {
+      typedef full_handling_tag    type; 
+    };
+
+    template <typename T>
+    struct handling_tag<T, 0>
+    {
+      typedef full_handling_tag    type; 
+    };
+    
+  }
+  
   
   ///////////////////////////////// Filler for subcell elements ///////////////////////////////////
   
@@ -231,17 +271,17 @@ namespace viennagrid
       edgevertices[0] = vertices[0];
       edgevertices[1] = vertices[1];
       edge.setVertices(edgevertices);
-      elements[0] = seg.template add<1>(0, edge, orientations);
+      elements[0] = seg.add(edge, orientations);
 
       edgevertices[0] = vertices[0];
       edgevertices[1] = vertices[2];
       edge.setVertices(edgevertices);
-      elements[1] = seg.template add<1>(0, edge, orientations + 1 );
+      elements[1] = seg.add(edge, orientations + 1 );
 
       edgevertices[0] = vertices[1];
       edgevertices[1] = vertices[2];
       edge.setVertices(edgevertices);
-      elements[2] = seg.template add<1>(0, edge, orientations + 2 );
+      elements[2] = seg.add(edge, orientations + 2 );
     }
   };
 
@@ -306,32 +346,32 @@ namespace viennagrid
       edgevertices[0] = vertices[0];
       edgevertices[1] = vertices[1];
       edge.setVertices(edgevertices);
-      elements[0] = seg.template add<1>(0, edge, orientations);
+      elements[0] = seg.add(edge, orientations);
 
       edgevertices[0] = vertices[0];
       edgevertices[1] = vertices[2];
       edge.setVertices(edgevertices);
-      elements[1] = seg.template add<1>(0, edge, orientations + 1);
+      elements[1] = seg.add(edge, orientations + 1);
 
       edgevertices[0] = vertices[0];
       edgevertices[1] = vertices[3];
       edge.setVertices(edgevertices);
-      elements[2] = seg.template add<1>(0, edge, orientations + 2);
+      elements[2] = seg.add(edge, orientations + 2);
 
       edgevertices[0] = vertices[1];
       edgevertices[1] = vertices[2];
       edge.setVertices(edgevertices);
-      elements[3] = seg.template add<1>(0, edge, orientations + 3);
+      elements[3] = seg.add(edge, orientations + 3);
 
       edgevertices[0] = vertices[1];
       edgevertices[1] = vertices[3];
       edge.setVertices(edgevertices);
-      elements[4] = seg.template add<1>(0, edge, orientations + 4);
+      elements[4] = seg.add(edge, orientations + 4);
 
       edgevertices[0] = vertices[2];
       edgevertices[1] = vertices[3];
       edge.setVertices(edgevertices);
-      elements[5] = seg.template add<1>(0, edge, orientations + 5);
+      elements[5] = seg.add(edge, orientations + 5);
     }
   };
   
@@ -351,7 +391,7 @@ namespace viennagrid
       facetvertices[1] = vertices[1];
       facetvertices[2] = vertices[2];
       facet.setVertices(facetvertices);
-      elements[0] = seg.template add<2>(0, facet, orientations );
+      elements[0] = seg.add(facet, orientations );
       //this new facet must be initialized too:
       elements[0]->fill(seg);
 
@@ -359,21 +399,21 @@ namespace viennagrid
       facetvertices[1] = vertices[1];
       facetvertices[2] = vertices[3];
       facet.setVertices(facetvertices);
-      elements[1] = seg.template add<2>(0, facet, orientations + 1 );
+      elements[1] = seg.add(facet, orientations + 1 );
       elements[1]->fill(seg);
 
       facetvertices[0] = vertices[0];
       facetvertices[1] = vertices[2];
       facetvertices[2] = vertices[3];
       facet.setVertices(facetvertices);
-      elements[2] = seg.template add<2>(0, facet, orientations + 2 );
+      elements[2] = seg.add(facet, orientations + 2 );
       elements[2]->fill(seg);
 
       facetvertices[0] = vertices[1];
       facetvertices[1] = vertices[2];
       facetvertices[2] = vertices[3];
       facet.setVertices(facetvertices);
-      elements[3] = seg.template add<2>(0, facet, orientations + 3 );
+      elements[3] = seg.add(facet, orientations + 3 );
       elements[3]->fill(seg);
 
     }
@@ -409,62 +449,62 @@ namespace viennagrid
       edgevertices[0] = vertices[0];
       edgevertices[1] = vertices[1];
       edge.setVertices(edgevertices);
-      elements[0] = seg.template add<1>(0, edge, orientations);
+      elements[0] = seg.add(edge, orientations);
 
       edgevertices[0] = vertices[1];
       edgevertices[1] = vertices[2];
       edge.setVertices(edgevertices);
-      elements[1] = seg.template add<1>(0, edge, orientations + 1);
+      elements[1] = seg.add(edge, orientations + 1);
 
       edgevertices[0] = vertices[2];
       edgevertices[1] = vertices[3];
       edge.setVertices(edgevertices);
-      elements[2] = seg.template add<1>(0, edge, orientations + 2);
+      elements[2] = seg.add(edge, orientations + 2);
 
       edgevertices[0] = vertices[3];
       edgevertices[1] = vertices[0];
       edge.setVertices(edgevertices);
-      elements[3] = seg.template add<1>(0, edge, orientations + 3);
+      elements[3] = seg.add(edge, orientations + 3);
 
       edgevertices[0] = vertices[0];
       edgevertices[1] = vertices[4];
       edge.setVertices(edgevertices);
-      elements[4] = seg.template add<1>(0, edge, orientations + 4);
+      elements[4] = seg.add(edge, orientations + 4);
 
       edgevertices[0] = vertices[1];
       edgevertices[1] = vertices[5];
       edge.setVertices(edgevertices);
-      elements[5] = seg.template add<1>(0, edge, orientations + 5);
+      elements[5] = seg.add(edge, orientations + 5);
       
       edgevertices[0] = vertices[2];
       edgevertices[1] = vertices[6];
       edge.setVertices(edgevertices);
-      elements[6] = seg.template add<1>(0, edge, orientations + 6);
+      elements[6] = seg.add(edge, orientations + 6);
       
       edgevertices[0] = vertices[3];
       edgevertices[1] = vertices[7];
       edge.setVertices(edgevertices);
-      elements[7] = seg.template add<1>(0, edge, orientations + 7);
+      elements[7] = seg.add(edge, orientations + 7);
       
       edgevertices[0] = vertices[4];
       edgevertices[1] = vertices[5];
       edge.setVertices(edgevertices);
-      elements[8] = seg.template add<1>(0, edge, orientations + 8);
+      elements[8] = seg.add(edge, orientations + 8);
       
       edgevertices[0] = vertices[5];
       edgevertices[1] = vertices[6];
       edge.setVertices(edgevertices);
-      elements[9] = seg.template add<1>(0, edge, orientations + 9);
+      elements[9] = seg.add(edge, orientations + 9);
       
       edgevertices[0] = vertices[6];
       edgevertices[1] = vertices[7];
       edge.setVertices(edgevertices);
-      elements[10] = seg.template add<1>(0, edge, orientations + 10);
+      elements[10] = seg.add(edge, orientations + 10);
       
       edgevertices[0] = vertices[7];
       edgevertices[1] = vertices[4];
       edge.setVertices(edgevertices);
-      elements[11] = seg.template add<1>(0, edge, orientations + 11);
+      elements[11] = seg.add(edge, orientations + 11);
     }
   };
   
@@ -498,7 +538,7 @@ namespace viennagrid
       facetvertices[2] = vertices[2];
       facetvertices[3] = vertices[1];
       facet.setVertices(facetvertices);
-      elements[0] = seg.template add<2>(0, facet, orientations );
+      elements[0] = seg.add(facet, orientations );
       elements[0]->fill(seg);
 
       facetvertices[0] = vertices[0];
@@ -506,7 +546,7 @@ namespace viennagrid
       facetvertices[2] = vertices[5];
       facetvertices[3] = vertices[4];
       facet.setVertices(facetvertices);
-      elements[1] = seg.template add<2>(0, facet, orientations + 1);
+      elements[1] = seg.add(facet, orientations + 1);
       elements[1]->fill(seg);
 
       facetvertices[0] = vertices[1];
@@ -514,7 +554,7 @@ namespace viennagrid
       facetvertices[2] = vertices[6];
       facetvertices[3] = vertices[5];
       facet.setVertices(facetvertices);
-      elements[2] = seg.template add<2>(0, facet, orientations + 2);
+      elements[2] = seg.add(facet, orientations + 2);
       elements[2]->fill(seg);
 
       facetvertices[0] = vertices[2];
@@ -522,7 +562,7 @@ namespace viennagrid
       facetvertices[2] = vertices[7];
       facetvertices[3] = vertices[6];
       facet.setVertices(facetvertices);
-      elements[3] = seg.template add<2>(0, facet, orientations + 3);
+      elements[3] = seg.add(facet, orientations + 3);
       elements[3]->fill(seg);
 
       facetvertices[0] = vertices[3];
@@ -530,7 +570,7 @@ namespace viennagrid
       facetvertices[2] = vertices[4];
       facetvertices[3] = vertices[7];
       facet.setVertices(facetvertices);
-      elements[4] = seg.template add<2>(0, facet, orientations + 4);
+      elements[4] = seg.add(facet, orientations + 4);
       elements[4]->fill(seg);
 
       facetvertices[0] = vertices[4];
@@ -538,7 +578,7 @@ namespace viennagrid
       facetvertices[2] = vertices[6];
       facetvertices[3] = vertices[7];
       facet.setVertices(facetvertices);
-      elements[5] = seg.template add<2>(0, facet, orientations + 5);
+      elements[5] = seg.add(facet, orientations + 5);
       elements[5]->fill(seg);
       
     }

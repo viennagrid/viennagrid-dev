@@ -14,6 +14,11 @@
 #ifndef VIENNAGRID_ITERATORS_HPP
 #define VIENNAGRID_ITERATORS_HPP
 
+#include <vector>
+#include <list>
+#include <map>
+#include <stack>
+
 #include "viennagrid/forwards.h"
 
 namespace viennagrid
@@ -268,6 +273,11 @@ namespace viennagrid
     enum{ ReturnValue = SegmentIteratorChecker<Config, level>::ReturnValue };
   };
 
+  template <typename Config, unsigned long level>
+  struct IteratorChecker< domain<Config>, level>
+  {
+    enum{ ReturnValue = 1 };
+  };
   
   
   
@@ -307,10 +317,11 @@ namespace viennagrid
                     >                                                         LevelElementType;
 
     typedef osegit <LevelElementType,
-                     typename std::map< ElementKey<LevelElementType>, LevelElementType >::iterator
+                     typename std::map< element_key<LevelElementType>, LevelElementType >::iterator
                     >                                             result_type;
   };
 
+  /*
   //segment at top level may have a multigrid-iterator:
   template <typename T_Configuration, typename handling_tag, unsigned long level>
   struct IteratorTypes< segment<T_Configuration, level, handling_tag, true, full_multigrid_tag>, level, true>
@@ -344,7 +355,169 @@ namespace viennagrid
 
     typedef typename std::vector<LevelElementType >::iterator              result_type;
   };
+  */
+  
+  
+  template <typename ConfigType, bool dummy>
+  struct IteratorTypes< domain<ConfigType>, 0, dummy>
+  {
+    typedef element< ConfigType,
+                     typename subcell_traits<typename ConfigType::cell_tag, 0>::element_tag
+                    >                                                         element_type;
+                    
+    typedef typename std::vector<element_type>::iterator             iterator;
+    typedef typename std::vector<element_type>::const_iterator       const_iterator;
+  };
+  
+  
+  
+  
+  //////////////////// brand new containers: /////////////////////
+  
+  
+  //proxy class:
+  template <typename T>
+  class const_ncell_proxy
+  {
+    public:
+      const_ncell_proxy(T const & t_) : t(t_) {}
+      
+      T const & get() const { return t; }
+    
+    private:
+      T const & t;
+  };
+  
+  template <typename T>
+  class ncell_proxy
+  {
+    public:
+      ncell_proxy(T & t_) : t(t_) {}
+      
+      T & get() const { return t; }
+    
+    private:
+      T & t;
+  };
+  
+  
+  //interface function for container creation:
+  template <dim_type dim, typename DomainConfig>
+  const_ncell_proxy< domain<DomainConfig> >
+  ncells(domain<DomainConfig> const & d)
+  {
+    return const_ncell_proxy< domain<DomainConfig> >(d);
+  }
+  
+  template <dim_type dim, typename DomainConfig>
+  ncell_proxy< domain<DomainConfig> >
+  ncells(domain<DomainConfig> & d)
+  {
+    return ncell_proxy< domain<DomainConfig> >(d);
+  }
 
+
+  //container for iteration over a STL vector
+  template <typename T, dim_type dim>
+  class vector_container
+  {
+      typedef element< typename T::config_type,
+                       typename subcell_traits<typename T::config_type::cell_tag, dim>::element_tag
+                     >                                                         element_type;
+                    
+      typedef std::vector< element_type >     container_type;
+    
+    public: 
+      typedef typename container_type::iterator   iterator;
+      
+      vector_container(ncell_proxy<T> const & p) : cont_(p.get().template container<dim>()) {}
+      
+      vector_container & operator=(ncell_proxy<T> p)
+      { 
+        cont_ = p.get().vertex_container();
+        return *this;
+      }
+      
+      iterator begin() const { return cont_->begin(); }
+      iterator end()   const { return cont_->end(); }
+      
+    private:
+      container_type * cont_;
+  };
+  
+  
+  
+  
+  
+  template <typename T, dim_type dim>
+  class const_vector_container
+  {
+      typedef element< typename T::config_type,
+                       typename subcell_traits<typename T::config_type::cell_tag, dim>::element_tag
+                     >                                                         element_type;
+                    
+      typedef std::vector< element_type >     container_type;
+    
+    public: 
+      typedef typename container_type::const_iterator   iterator;
+      
+      const_vector_container(const_ncell_proxy<T> const & p) : cont_(p.get().template container<dim>()) {}
+      
+      const_vector_container & operator=(const_ncell_proxy<T> const & p)
+      { 
+        cont_ = p.get().vertex_container();
+        return *this;
+      }
+      
+      iterator begin() const { return cont_->begin(); }
+      iterator end()   const { return cont_->end(); }
+      
+    private:
+      const container_type * cont_;
+  };
+  
+  
+  template <typename DomainType, 
+            dim_type dim>  //topological level
+  struct const_container_types
+  {
+    typedef typename const_vector_container<DomainType, dim>::iterator   iterator;
+    
+    typedef const_vector_container<DomainType, dim>       result_type;
+  };
+
+  //metafunction for return type:
+  namespace result_of
+  {
+    
+    template <typename T, dim_type dim>
+    struct iterator<vector_container<T, dim> >
+    {
+      typedef typename vector_container<T, dim>::iterator     type;
+    };
+    
+    template <typename T, dim_type dim>
+    struct iterator<const_vector_container<T, dim> >
+    {
+      typedef typename const_vector_container<T, dim>::iterator     type;
+    };
+    
+    template <typename T, 
+              dim_type dim>  //topological level
+    struct ncell_container
+    {
+      typedef vector_container<T, dim>       type;
+    };
+
+    template <typename T, 
+              dim_type dim>  //topological level
+    struct const_ncell_container
+    {
+      typedef const_vector_container<T, dim>       type;
+    };
+    
+  }
+  
 } //namespace
 #endif
 

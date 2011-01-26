@@ -22,9 +22,10 @@
 #include <stack>
 #include <algorithm>
 #include "viennagrid/forwards.h"
-#include "viennagrid/celltags.h"  
+#include "viennagrid/celltags.hpp"  
 #include "viennagrid/point.hpp"
 #include "viennagrid/element.hpp"
+#include "viennagrid/element_key.hpp"
 #include "viennagrid/segment.hpp"
 
 
@@ -34,119 +35,298 @@ namespace viennagrid
 
 /***************************** Domain Type ***********************/
 
-  //helper class: iterates over all segments on a particular topolevel, shifts the IDs and continues to next topolevel:
-  template <typename DomainConfiguration,
-              long topolevel,
-              typename LevelHandling = typename segment_traits<topolevel>::handling_tag,
-              typename IDHandling =
-                            typename subcell_traits<typename DomainConfiguration::cell_tag,
-                                                    topolevel>::element_tag::id_handler
-             >
-  struct SegmentIDShifter
+  namespace result_of
   {
-    //default case: continue iteration:
-    static void apply(typename DomainTypes<DomainConfiguration>::DomainType & domain)
+    template <typename T,
+              dim_type dim,
+              dim_type cell_level = T::element_tag::topology_level>
+    struct subcell_container
     {
-      SegmentIDShifter<DomainConfiguration, topolevel-1>::apply(domain);
-    }
-  };
+      typedef typename result_of::element_tag<T, dim>::type    element_tag;
+      typedef typename result_of::config<T>::type              config_type;
+      typedef element<config_type, element_tag >            element_type;
+      
+      typedef std::map< element_key<element_type>, element_type >      type;
+    };
 
-  template <typename DomainConfiguration,
-             long topolevel>
-  struct SegmentIDShifter <DomainConfiguration, topolevel, full_handling_tag, ProvideID>
-  {
-    //shift IDs:
-    static void apply(typename DomainTypes<DomainConfiguration>::DomainType & domain)
+    //at point level:
+    template <typename T, dim_type cell_level>
+    struct subcell_container <T, 0, cell_level>
     {
-      typedef typename DomainTypes<DomainConfiguration>::SegmentIterator  SegmentIterator;
-      typedef typename DomainTypes<DomainConfiguration>::SegmentType      SegmentType;
-      typedef typename IteratorTypes<SegmentType, topolevel>::ResultType  LevelIterator;
+      typedef typename result_of::element_tag<T, 0>::type    element_tag;
+      typedef typename result_of::config<T>::type              config_type;
+      typedef element<config_type, element_tag >            element_type;
+      
+      typedef std::vector< element_type >      type;
+    };
 
-      long id_offset = 0;
-      for (SegmentIterator segit = domain.getSegmentBegin();
-            segit != domain.getSegmentEnd();
-            ++segit)
-      {
-        for (LevelIterator lit = segit->template begin<topolevel>();
-              lit != segit->template end<topolevel>();
-              ++lit)
-        {
-          lit->setID(lit->getID() + id_offset);
-        }
-        id_offset += segit->template getElementNum<topolevel>();
-      }
+    //at cell level:
+    template <typename T, dim_type cell_level>
+    struct subcell_container <T, cell_level, cell_level>
+    {
+      typedef typename result_of::element_tag<T, T::element_tag::topology_level>::type    element_tag;
+      typedef typename result_of::config<T>::type              config_type;
+      typedef element<config_type, element_tag >            element_type;
+      
+      typedef std::vector< element_type >      type;
+    };
+    
+  }
 
-      //continue iteration: (by using the default behaviour for this level. This makes termination of topolevel-loop easier: no code duplication)
-      SegmentIDShifter<DomainConfiguration, topolevel, no_handling_tag, NoID>::apply(domain);
-    }
 
-  };
-
-  //stop at vertex-level
-  template <typename DomainConfiguration>
-  struct SegmentIDShifter<DomainConfiguration, 0, no_handling_tag, NoID>
+  template <typename Config, // config class
+            dim_type dim,  // dimension of the elements covered here
+            bool is_cell = false,                   // whether this layer holds the cells (i.e. highest topological element)
+            typename STOR = full_handling_tag       //Storage scheme: Full storage, or ignore layer
+           >
+  class domain_layers  : public domain_layers<Config, dim-1>
   {
-    static void apply(typename DomainTypes<DomainConfiguration>::DomainType & domain) {}
-  };
-
-
-  template <typename T_Configuration>
-  class domain
-  {
-      typedef segment<T_Configuration>                            SegmentType;
-
+      //typedef typename result_of::element_tag<typename Config::cell_tag, dim>::type    element_tag;
+      typedef typename subcell_traits<typename Config::cell_tag, dim>::element_tag    element_tag;
+      typedef element<Config, element_tag >                                              element_type;
+      typedef element<Config, typename Config::cell_tag>                                   cell_type;
+      typedef typename result_of::subcell_container<cell_type, dim>::type           container_type;
+      typedef domain_layers<Config, dim-1>                                               base_type;
+    
     public:
-      typedef T_Configuration                                         config_type;
-      typedef SegIt< SegmentType,
-                      typename std::vector< SegmentType >::iterator
-                    >                                                 segment_iterator;
-
-      typedef ConstSegIt< SegmentType,
-                      typename std::vector< SegmentType >::const_iterator
-                    >                                                 const_segment_iterator;
-
-      SegmentType & add()
+      
+      using base_type::add;
+      
+      /*
+      element_type * add(element_type & e)
       {
-        segments.push_back( SegmentType() );
-        return segments.back();
-      }
+        e.setID(elements.size());
+        elements.push_back(e);
+        elements.back().fill(*this);
+        return &(elements.back());
+      } */
 
-      const_segment_iterator begin(long level = 0) const
-      { return const_segment_iterator(segments.begin(), level); };
+      element_type *
+      add(element_type & elem, ElementOrientation * orientation) {
 
-      const_segment_iterator end(long level = 0) const
-      { return const_segment_iterator(segments.end(), level); };
+        typedef typename std::map< element_key<element_type>, element_type >::iterator  ElementIterator;
+        typedef typename IteratorTypes<element_type, 0>::result_type      VertexOnElementIterator;
 
-      segment_iterator begin(long level = 0)
-      { return segment_iterator(segments.begin(), level); };
-      segment_iterator end(long level = 0)
-      { return segment_iterator(segments.end(), level); };
+        element_key<element_type> epc(elem);
+        //check whether already inserted:
+        ElementIterator elit = elements.find(epc);
+        //std::cout << "Candidate: "; elem.print_short();
 
-//       //assures the domain-wide uniqueness of IDs right after segment setup from files.
-//       void finishSegmentSetup()
-//       {
-//         //iterate over segments and set appropriate start-indices for each topology-level:
-//         SegmentIDShifter<T_Configuration, T_Configuration::CellTag::topology_level>::apply(*this);
-//       }
-
-      template <long topolevel>
-      long size()
-      {
-        long ret = 0;
-        for (segment_iterator segit = begin();
-              segit != end();
-              ++segit)
+        if (elit == elements.end())
         {
-          ret += segit->template size<topolevel>();
+          //provide ID for element:
+          elem.setID(elements.size());
+
+          //std::cout << "ACCEPTED " << std::endl;
+
+          //set default orientation:
+          orientation->setDefaultOrientation();
+
+          std::pair<element_key<element_type>, element_type> p(epc, elem);
+          return &((elements.insert(p).first)->second);
         }
-        return ret;
+
+        //std::cout << "REJECTED" << std::endl;
+        long i=0; long j=0;
+        //set orientation:
+        for (VertexOnElementIterator voeit = elem.template begin<0>();
+              voeit != elem.template end<0>();
+              ++voeit, ++i)
+        {
+            for (VertexOnElementIterator voeit2 = (elit->second).template begin<0>();
+                  voeit2 != (elit->second).template end<0>();
+                  ++voeit2, ++j)
+            {
+              if (voeit->getID() == voeit2->getID())
+              {
+                //orientation->setPermutation(i,j);   //local (elem) to global (elit->second)
+                orientation->setPermutation(j,i);   //global (elit->second) to local (elem)
+                break;
+              }
+            }
+            j=0;
+        }
+
+        return &(elit->second);
       }
 
-    private:
-      std::vector< SegmentType > segments;
 
+      ///////////////////// container retrieval /////////////////////////
+
+      //non-const:
+      template <dim_type dim_container>
+      typename result_of::subcell_container<element_type, dim_container>::type * 
+      container() { return container<dim_container>(typename level_discriminator<dim, dim_container>::result_type()); }
+      
+      template <dim_type dim_container>
+      typename result_of::subcell_container<element_type, dim_container>::type * 
+      container(equal_tag) { return &elements; }
+
+      template <dim_type dim_container>
+      typename result_of::subcell_container<element_type, dim_container>::type * 
+      container(less_tag) { return base_type::template container<dim_container>(); }
+
+      //const:
+      template <dim_type dim_container>
+      const typename result_of::subcell_container<element_type, dim_container>::type * 
+      container() const { return container<dim_container>(typename level_discriminator<dim, dim_container>::result_type()); }
+      
+      template <dim_type dim_container>
+      const typename result_of::subcell_container<element_type, dim_container>::type * 
+      container(equal_tag) const { return &elements; }
+
+      template <dim_type dim_container>
+      const typename result_of::subcell_container<element_type, dim_container>::type * 
+      container(less_tag) const { return base_type::template container<dim_container>(); }
+      
+      
+      ////////////////////// size ////////////////////////
+      template <dim_type j>
+      size_t size(less_tag) const { return base_type::template size<j>(); }
+      template <dim_type j>
+      size_t size(equal_tag) const { return elements.size(); }
+      template <dim_type j>
+      size_t size() const
+      {
+        return size<j>( typename level_discriminator<dim, j>::result_type() );
+      }
+      
+      
+    private:
+      container_type    elements;        //container of elements
+  };
+  
+  template <typename Config,
+            dim_type dim,
+            typename STOR >
+  class domain_layers<Config, dim, true, STOR> : public domain_layers<Config, dim-1, false, STOR>
+  {
+      //typedef typename result_of::element_tag<typename Config::cell_tag, 0>::type   element_tag;
+      typedef element<Config, typename Config::cell_tag >                                         element_type;
+      typedef typename result_of::subcell_container<element_type, Config::cell_tag::topology_level>::type                container_type;
+      typedef domain_layers<Config, dim-1>                                               base_type;
+    
+    public:
+      typedef Config    config_type;
+
+      void reserve_cells(size_t num) { elements.reserve(num); }
+      
+      
+      using base_type::add;
+      
+      element_type * add(element_type & e)
+      {
+        elements.push_back(e);
+        elements.back().setID(elements.size());
+        elements.back().fill(*this);
+        return &(elements.back());
+      }
+      
+      //non-const:
+      template <dim_type dim_container>
+      typename result_of::subcell_container<element_type, dim_container>::type * 
+      container() { return container<dim_container>(typename level_discriminator<dim, dim_container>::result_type()); }
+      
+      template <dim_type dim_container>
+      typename result_of::subcell_container<element_type, dim_container>::type * 
+      container(equal_tag) { return &elements; }
+
+      template <dim_type dim_container>
+      typename result_of::subcell_container<element_type, dim_container>::type * 
+      container(less_tag) { return base_type::template container<dim_container>(); }
+
+      //const:
+      template <dim_type dim_container>
+      const typename result_of::subcell_container<element_type, dim_container>::type * 
+      container() const { return container<dim_container>(typename level_discriminator<dim, dim_container>::result_type()); }
+      
+      template <dim_type dim_container>
+      const typename result_of::subcell_container<element_type, dim_container>::type * 
+      container(equal_tag) const { return &elements; }
+
+      template <dim_type dim_container>
+      const typename result_of::subcell_container<element_type, dim_container>::type * 
+      container(less_tag) const { return base_type::template container<dim_container>(); }
+      
+      ////////////////////// size ////////////////////////
+      template <dim_type j>
+      size_t size(less_tag) const { return base_type::template size<j>(); }
+      template <dim_type j>
+      size_t size(equal_tag) const { return elements.size(); }
+      template <dim_type j>
+      size_t size() const
+      {
+        return size<j>( typename level_discriminator<dim, j>::result_type() );
+      }
+      
+      
+    private:
+      container_type    elements;        //container of elements
+  };
+  
+  
+  
+  //terminate recursion at point level:
+  template <typename Config,
+            bool is_cell,
+            typename STOR >
+  class domain_layers<Config, 0, is_cell, STOR>
+  {
+      //typedef typename result_of::element_tag<typename Config::cell_tag, 0>::type   element_tag;
+      typedef element<Config, point_tag >                                           element_type;
+      typedef element<Config, typename Config::cell_tag >                             cell_type;
+      typedef typename result_of::subcell_container<cell_type, 0>::type           container_type;
+    
+    public:
+      typedef Config    config_type;
+      
+      void reserve_vertices(size_t num) { elements.reserve(num); }
+      
+      element_type * add(element_type & e)
+      {
+        e.setID(elements.size());
+        elements.push_back(e);
+        return &(elements.back());
+      }
+      
+      element_type & vertex(size_t id) { return elements[id]; }
+      
+      template <dim_type dim>
+      container_type * container() { return &elements; }
+      template <dim_type dim>
+      const container_type * container() const { return &elements; }
+      
+      ////////////////////// size ////////////////////////
+      template <dim_type j>
+      size_t size(equal_tag) const { return elements.size(); }
+      template <dim_type j>
+      size_t size() const
+      {
+        return size<j>( typename level_discriminator<0, j>::result_type() );
+      }
+      
+      
+    private:
+      container_type    elements;        //container of elements
   };
 
+  
+  
+  
+
+  template <typename Config>
+  class domain : public domain_layers<Config,
+                                      Config::cell_tag::topology_level,
+                                      true>  //we start with cells
+  {
+      typedef domain_layers<Config, Config::cell_tag::topology_level, true>           base_type;
+    
+    public:
+      using base_type::add;
+    
+    private:
+      //store segments here
+  };
 
 
   // Container for all types in a domain for access by other domain elements (classes)
@@ -177,15 +357,16 @@ namespace viennagrid
     typedef domain<Configuration>                                             domain_type;
 
     //Iterators:
+    /*
     typedef typename IteratorTypes<segment_type, 0>::result_type                    vertex_iterator;
     typedef typename IteratorTypes<segment_type, 1>::result_type                    edge_iterator;
     typedef typename IteratorTypes<segment_type,
                                     Configuration::cell_tag::topology_level-1>::result_type  facet_iterator;
     typedef typename IteratorTypes<segment_type,
                                     Configuration::cell_tag::topology_level>::result_type    cell_iterator;
-    typedef typename domain<Configuration>::segment_iterator                    segment_iterator;
+    //typedef typename domain<Configuration>::segment_iterator                    segment_iterator;
 
-    typedef typename IteratorTypes<cell_type, 0>::result_type              vertex_on_cell_iterator;
+    typedef typename IteratorTypes<cell_type, 0>::result_type              vertex_on_cell_iterator;*/
     //TODO: Add more iterators here
   };
 
