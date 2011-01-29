@@ -105,7 +105,7 @@ namespace viennagrid
       add(element_type & elem, ElementOrientation * orientation) {
 
         typedef typename std::map< element_key<element_type>, element_type >::iterator  ElementIterator;
-        typedef typename IteratorTypes<element_type, 0>::result_type      VertexOnElementIterator;
+        typedef typename result_of::iterator<element_type, 0>::type      VertexOnElementIterator;
 
         element_key<element_type> epc(elem);
         //check whether already inserted:

@@ -110,7 +110,7 @@ namespace viennagrid
 
   namespace result_of
   {
-    template <typename T>
+    template <typename T, dim_type dim = 0>
     struct iterator;
     
     template <typename T>
@@ -123,6 +123,11 @@ namespace viennagrid
               dim_type dim,
               dim_type cell_level = T::element_tag::topology_level>
     struct subcell_container;
+    
+    template <typename T, 
+              dim_type dim>  //topological level
+    struct ncell_container;
+    
     
     template <typename Config,
               dim_type dim,

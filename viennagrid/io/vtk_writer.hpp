@@ -61,7 +61,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::iterator<CellContainer>::type                                  CellIterator;
 
 
-      typedef typename viennagrid::IteratorTypes<CellType, 0>::result_type      VertexOnCellIterator;
+      typedef typename viennagrid::result_of::iterator<CellType, 0>::type      VertexOnCellIterator;
 
       void writeHeader(std::ofstream & writer)
       {

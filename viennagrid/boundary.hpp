@@ -33,7 +33,7 @@ namespace viennagrid
     template <typename FacetIterator>
     static void apply(FacetIterator & fit)
     {
-      typedef typename IteratorTypes<Facet, topolevel>::ResultType    ElementOnFacetIterator;
+      typedef typename result_of::iterator<Facet, topolevel>::type    ElementOnFacetIterator;
 
       for (ElementOnFacetIterator eofit = fit->template begin<topolevel>();
             eofit != fit->template end<topolevel>();
@@ -68,7 +68,7 @@ namespace viennagrid
     template <typename Segment>
     static void apply(Segment & seg)
     {
-      typedef typename IteratorTypes<Segment, topolevel>::result_type    LevelIterator;
+      typedef typename result_of::iterator<Segment, topolevel>::type    LevelIterator;
 
       std::cout << "Boundary detection on level " << topolevel << std::endl;
       for (LevelIterator lit = seg.template begin<topolevel>();
@@ -132,7 +132,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::ncell_container<Segment, CellTag::topology_level>::type     CellContainer;
       typedef typename viennagrid::result_of::iterator<CellContainer>::type                                  CellIterator;
 
-    typedef typename IteratorTypes<CellType, CellTag::topology_level-1>::result_type  FacetOnCellIterator;
+    typedef typename result_of::iterator<CellType, CellTag::topology_level-1>::type  FacetOnCellIterator;
 
     //iterate over all cells, over facets there and tag them:
     CellContainer cells = viennagrid::ncells<CellTag::topology_level>(seg);

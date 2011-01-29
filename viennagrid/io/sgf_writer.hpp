@@ -34,7 +34,7 @@ namespace viennagrid
         typedef typename DomainConfiguration::dimension_tag              DimensionTag;
         typedef typename DomainConfiguration::cell_tag                   CellTag;
       
-      typedef typename result_of::point_type<DomainConfiguration>::type                              PointType;
+        typedef typename result_of::point_type<DomainConfiguration>::type                              PointType;
         typedef typename result_of::ncell_type<DomainConfiguration, 0>::type                           VertexType;
         typedef typename result_of::ncell_type<DomainConfiguration, CellTag::topology_level>::type     CellType;
         //typedef typename DomainTypes<DomainConfiguration>::segment_type     Segment;
@@ -51,7 +51,7 @@ namespace viennagrid
         typedef typename viennagrid::result_of::ncell_container<DomainType, CellTag::topology_level>::type     CellContainer;
         typedef typename viennagrid::result_of::iterator<CellContainer>::type                                  CellIterator;
 
-      typedef typename viennagrid::IteratorTypes<CellType, 0>::result_type      VertexOnCellIterator;
+        typedef typename viennagrid::result_of::iterator<CellType, 0>::type      VertexOnCellIterator;
       
         std::ofstream writer(filename.c_str());
         

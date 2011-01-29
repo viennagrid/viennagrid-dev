@@ -122,23 +122,23 @@ namespace viennagrid
 
       //provide iterators:
       template <long j>
-      typename IteratorTypes< element<T_Configuration, ElementTag>, j>::result_type
+      typename result_of::iterator< element<T_Configuration, ElementTag>, j>::type
       begin(less_tag)
       { 
         return Base::template begin<j>();
       }
 
       template <long j>
-      typename IteratorTypes< element<T_Configuration, ElementTag>, j>::result_type
+      typename result_of::iterator< element<T_Configuration, ElementTag>, j>::type
       begin(equal_tag)
       { 
-        typedef typename IteratorTypes< element<T_Configuration, ElementTag>, j>::result_type
+        typedef typename result_of::iterator< element<T_Configuration, ElementTag>, j>::type
             LevelIterator;
         return LevelIterator(elements_);
       }
 
       template <long j>
-      typename IteratorTypes< element<T_Configuration, ElementTag>, j>::result_type
+      typename result_of::iterator< element<T_Configuration, ElementTag>, j>::type
       begin()
       { 
         return begin<j>( typename level_discriminator<levelnum, j>::result_type() );
@@ -146,22 +146,22 @@ namespace viennagrid
 
 
       template <long j>
-      typename IteratorTypes< element<T_Configuration, ElementTag>, j>::result_type
+      typename result_of::iterator< element<T_Configuration, ElementTag>, j>::type
       end(less_tag)
       { 
         return Base::template end<j>();
       }
 
       template <long j>
-      typename IteratorTypes< element<T_Configuration, ElementTag>, j>::result_type
+      typename result_of::iterator< element<T_Configuration, ElementTag>, j>::type
       end(equal_tag)
       { 
-        typedef typename IteratorTypes< element<T_Configuration, ElementTag>, j>::result_type   LevelIterator;
+        typedef typename result_of::iterator< element<T_Configuration, ElementTag>, j>::type   LevelIterator;
         return LevelIterator(elements_ + LevelSpecs::num_elements);
       }
 
       template <long j>
-      typename IteratorTypes< element<T_Configuration, ElementTag>, j>::result_type
+      typename result_of::iterator< element<T_Configuration, ElementTag>, j>::type
       end()
       { 
         return end<j>( typename level_discriminator<levelnum, j>::result_type() );
@@ -237,17 +237,17 @@ namespace viennagrid
 
       //provide iterators:
       template <long j>
-      typename IteratorTypes< element<T_Configuration, ElementTag>, j>::result_type
+      typename result_of::iterator< element<T_Configuration, ElementTag>, j>::type
       begin(less_tag)
       { 
         return Base::template begin<j>();
       }
 
       template <long j>
-      typename IteratorTypes< element<T_Configuration, ElementTag>, j>::result_type
+      typename result_of::iterator< element<T_Configuration, ElementTag>, j>::type
       begin(equal_tag)
       { 
-        typedef typename IteratorTypes< element<T_Configuration, ElementTag>, j>::result_type
+        typedef typename result_of::iterator< element<T_Configuration, ElementTag>, j>::type
           LevelIterator;
 
         LevelElementType * elements_[LevelSpecs::num_elements];
@@ -256,7 +256,7 @@ namespace viennagrid
       }
 
       template <long j>
-      typename IteratorTypes< element<T_Configuration, ElementTag>, j>::result_type
+      typename result_of::iterator< element<T_Configuration, ElementTag>, j>::type
       begin()
       { 
         return begin<j>( typename level_discriminator<levelnum, j>::result_type() );
@@ -264,18 +264,18 @@ namespace viennagrid
 
 
       template <long j>
-      typename IteratorTypes< element<T_Configuration, ElementTag>, j>::result_type
+      typename result_of::iterator< element<T_Configuration, ElementTag>, j>::type
       end(less_tag)
       { 
         return Base::template end<j>();
       }
 
       template <long j>
-      typename IteratorTypes< element<T_Configuration, ElementTag>, j>::result_type
+      typename result_of::iterator< element<T_Configuration, ElementTag>, j>::type
       end(equal_tag)
       { 
         typedef
-          typename IteratorTypes< element<T_Configuration, ElementTag>, j>::result_type
+          typename result_of::iterator< element<T_Configuration, ElementTag>, j>::type
             LevelIterator;
 
         LevelElementType * elements_[LevelSpecs::num_elements];
@@ -284,7 +284,7 @@ namespace viennagrid
       }
 
       template <long j>
-      typename IteratorTypes< element<T_Configuration, ElementTag>, j>::result_type
+      typename result_of::iterator< element<T_Configuration, ElementTag>, j>::type
       end()
       { 
         return end<j>( typename level_discriminator<levelnum, j>::result_type() );
@@ -303,7 +303,7 @@ namespace viennagrid
     typedef element<T_Configuration, typename LevelSpecs::element_tag>         VertexType;
     typedef typename result_of::point_type<T_Configuration>::type              PointType;
 
-    typedef typename IteratorTypes< element<T_Configuration, ElementTag>, 0>::result_type         VertexIterator;
+    typedef typename result_of::iterator< element<T_Configuration, ElementTag>, 0>::type         VertexIterator;
 
     protected:
       //end recursion:
@@ -509,17 +509,17 @@ namespace viennagrid
 
       //Provide a cell-on-cell-iterator, which is just the "this"-pointer
       template <long j>
-      typename IteratorTypes< element<T_Configuration, element_tag>, j>::result_type
+      typename result_of::iterator< element<T_Configuration, element_tag>, j>::type
       begin(less_tag)
       { return Base::template begin<j>(); }
 
       template <long j>
-      typename IteratorTypes< element<T_Configuration, element_tag>, j>::result_type
+      typename result_of::iterator< element<T_Configuration, element_tag>, j>::type
       begin(equal_tag)
       { return this; }
 
       template <long j>
-      typename IteratorTypes< element<T_Configuration, element_tag>, j>::result_type
+      typename result_of::iterator< element<T_Configuration, element_tag>, j>::type
       begin()
       { 
         return begin<j>(typename level_discriminator<element_tag::topology_level, j>::result_type());
@@ -527,17 +527,17 @@ namespace viennagrid
 
 
       template <long j>
-      typename IteratorTypes< element<T_Configuration, element_tag>, j>::result_type
+      typename result_of::iterator< element<T_Configuration, element_tag>, j>::type
       end(less_tag)
       { return Base::template end<j>(); }
 
       template <long j>
-      typename IteratorTypes< element<T_Configuration, element_tag>, j>::result_type
+      typename result_of::iterator< element<T_Configuration, element_tag>, j>::type
       end(equal_tag)
       { return this + 1; }
 
       template <long j>
-      typename IteratorTypes< element<T_Configuration, element_tag>, j>::result_type
+      typename result_of::iterator< element<T_Configuration, element_tag>, j>::type
       end()
       { 
         return end<j>( typename level_discriminator<element_tag::topology_level, j>::result_type() );
@@ -626,7 +626,7 @@ namespace viennagrid
 
       //Provide a cell-on-cell-iterator, which is just the "this"-pointer
       template <long j>
-      typename IteratorTypes< element<T_Configuration, point_tag>, j>::result_type
+      typename result_of::iterator< element<T_Configuration, point_tag>, j>::type
       begin()
       { 
         return this;
@@ -634,12 +634,12 @@ namespace viennagrid
 
 
       template <long j>
-      typename IteratorTypes< element<T_Configuration, point_tag>, j>::result_type
+      typename result_of::iterator< element<T_Configuration, point_tag>, j>::type
       end(equal_tag)
       { return this + 1; }
 
       template <long j>
-      typename IteratorTypes< element<T_Configuration, point_tag>, j>::result_type
+      typename result_of::iterator< element<T_Configuration, point_tag>, j>::type
       end()
       { 
         return this + 1;

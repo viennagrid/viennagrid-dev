@@ -51,7 +51,7 @@ namespace viennagrid
     public:
       element_key( ElementType & el2) : vertexIDs(subcell_traits<ElementTag, 0>::num_elements)
       {
-        typedef typename IteratorTypes<ElementType, 0>::result_type         VertexIterator;
+        typedef typename result_of::iterator<ElementType, 0>::type         VertexIterator;
         long i = 0;
         for (VertexIterator vit = el2.template begin<0>();
               vit != el2.template end<0>(); ++vit, ++i)
