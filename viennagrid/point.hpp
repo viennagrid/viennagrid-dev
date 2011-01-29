@@ -29,10 +29,6 @@ namespace viennagrid
 
   //namespace {
 
-    //forward declarations:
-    template <typename NumericT,
-              typename DimTag>
-    class point;
 
 
     //Helper class for overloaded operators:

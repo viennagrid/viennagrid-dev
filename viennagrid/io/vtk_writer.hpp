@@ -42,9 +42,9 @@ namespace viennagrid
       typedef typename DomainConfiguration::dimension_tag              DimensionTag;
       typedef typename DomainConfiguration::cell_tag                   CellTag;
 
-      typedef typename DomainTypes<DomainConfiguration>::point_type    Point;
-      typedef typename DomainTypes<DomainConfiguration>::vertex_type   Vertex;
-      typedef typename DomainTypes<DomainConfiguration>::cell_type     Cell;
+      typedef typename result_of::point_type<DomainConfiguration>::type                              PointType;
+      typedef typename result_of::ncell_type<DomainConfiguration, 0>::type                           VertexType;
+      typedef typename result_of::ncell_type<DomainConfiguration, CellTag::topology_level>::type     CellType;
 
       //typedef typename DomainTypes<DomainConfiguration>::segment_type  Segment;
       
@@ -61,7 +61,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::iterator<CellContainer>::type                                  CellIterator;
 
 
-      typedef typename DomainTypes<DomainConfiguration>::vertex_on_cell_iterator      VertexOnCellIterator;
+      typedef typename viennagrid::IteratorTypes<CellType, 0>::result_type      VertexOnCellIterator;
 
       void writeHeader(std::ofstream & writer)
       {
@@ -81,7 +81,7 @@ namespace viennagrid
             vit != vertices.end();
             ++vit)
         {
-          PointWriter<Point, DimensionTag::value>::write(writer, vit->getPoint());
+          PointWriter<DimensionTag::value>::write(writer, vit->getPoint());
 
           // add 0's for less than three dimensions
             if (DimensionTag::value == 2)
@@ -101,12 +101,12 @@ namespace viennagrid
       {
         writer << "   <Cells> " << std::endl;
         writer << "    <DataArray type=\"Int32\" Name=\"connectivity\" format=\"ascii\">" << std::endl;
-        CellContainer cells = viennagrid::ncells<Cell::element_tag::topology_level>(segment);
+        CellContainer cells = viennagrid::ncells<CellTag::topology_level>(segment);
         for (CellIterator cit = cells.begin();
             cit != cells.end();
             ++cit)
         {
-            Cell & cell = *cit;
+            CellType & cell = *cit;
             for (VertexOnCellIterator vocit = cell.template begin<0>();
                 vocit != cell.template end<0>();
                 ++vocit)
@@ -120,17 +120,17 @@ namespace viennagrid
 
           writer << "    <DataArray type=\"Int32\" Name=\"offsets\" format=\"ascii\">" << std::endl;
           for (size_t offsets = 1;
-               offsets <= segment.template size<Cell::element_tag::topology_level>();
+               offsets <= segment.template size<CellTag::topology_level>();
                ++offsets)
           {
-            writer << ( offsets * viennagrid::subcell_traits<typename Cell::element_tag, 0>::num_elements) << " ";
+            writer << ( offsets * viennagrid::subcell_traits<CellTag, 0>::num_elements) << " ";
           }
           writer << std::endl;
           writer << "    </DataArray>" << std::endl;
 
           writer << "    <DataArray type=\"UInt8\" Name=\"types\" format=\"ascii\">" << std::endl;
           for (size_t offsets = 1;
-                offsets <= segment.template size<Cell::element_tag::topology_level>();
+                offsets <= segment.template size<CellTag::topology_level>();
                 ++offsets)
           {
             writer << ELEMENT_TAG_TO_VTK_TYPE<CellTag>::ReturnValue << " ";
@@ -191,7 +191,7 @@ namespace viennagrid
           writer << "  <Piece NumberOfPoints=\""
                 << domain.template size<0>()
                 << "\" NumberOfCells=\""
-                << domain.template size<Cell::element_tag::topology_level>()
+                << domain.template size<CellTag::topology_level>()
                 << "\">" << std::endl;
 
 

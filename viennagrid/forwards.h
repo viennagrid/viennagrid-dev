@@ -59,12 +59,10 @@ namespace viennagrid
   
   /********* Forward definitions of main classes *******************/
 
-  //forward declaration of DomainTypes:
-  template <typename Configuration>
-  struct DomainTypes;
-
-  template <typename Domain>
-  struct DomainTraits;
+  //forward declarations:
+  template <typename NumericT,
+            typename DimTag>
+  class point;
 
   template <typename T_Configuration, typename ElementTag>
   struct element;
@@ -120,14 +118,24 @@ namespace viennagrid
     {
       typedef typename T::config_type     type; 
     };
-  }
 
-  namespace result_of
-  {
     template <typename T,
               dim_type dim,
               dim_type cell_level = T::element_tag::topology_level>
     struct subcell_container;
+    
+    template <typename Config,
+              dim_type dim,
+              dim_type cell_level = Config::cell_tag::topology_level>
+    struct ncell_type;
+    
+    template <typename Config>
+    struct point_type
+    {
+      typedef point<typename Config::numeric_type, typename Config::dimension_tag>   type;
+    };
+    
+    
   }
 
 

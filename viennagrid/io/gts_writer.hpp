@@ -120,21 +120,24 @@ namespace viennagrid
         typedef typename DomainConfiguration::cell_tag                   CellTag;
         //typedef typename DomainConfiguration::BoundaryReadTag           BoundaryReadTag;
       
-        typedef typename DomainTypes<DomainConfiguration>::pointype    Point;
-        typedef typename DomainTypes<DomainConfiguration>::vertex_type   Vertex;
-        typedef typename DomainTypes<DomainConfiguration>::cell_type     Cell;
-        typedef typename DomainTypes<DomainConfiguration>::segment_type     Segment;
+        typedef typename result_of::point_type<DomainConfiguration>::type                              PointType;
+        typedef typename result_of::ncell_type<DomainConfiguration, 0>::type                           VertexType;
+        typedef typename result_of::ncell_type<DomainConfiguration, CellTag::topology_level>::type     CellType;
+        //typedef typename DomainTypes<DomainConfiguration>::segment_type     Segment;
       
-        typedef typename DomainTypes<DomainConfiguration>::vertex_iterator      VertexIterator;
-        typedef typename DomainTypes<DomainConfiguration>::cell_iterator        CellIterator;
+        typedef typename viennagrid::result_of::ncell_container<DomainType, 0>::type   VertexContainer;
+        typedef typename viennagrid::result_of::iterator<VertexContainer>::type        VertexIterator;
+        
+        typedef typename viennagrid::result_of::ncell_container<DomainType, CellTag::topology_level>::type     CellContainer;
+        typedef typename viennagrid::result_of::iterator<CellContainer>::type                                  CellIterator;
 
-        typedef typename DomainTypes<DomainConfiguration>::vertex_on_cell_iterator      VertexOnCellIterator;
+        typedef typename viennagrid::IteratorTypes<CellType, 0>::result_type      VertexOnCellIterator;
         
         typedef typename gts_list_getter<DimensionTag::value>::list_type       GTSObjList;
         typedef typename gts_list_getter<DimensionTag::value>::object_type     GTSObj;
         
         try {
-          Segment & segment = *(domain.begin());
+          //Segment & segment = *(domain.begin());
             
           GTSIO::DeviceFileWriter* pWriter = new GTSIO::DeviceFileWriter();
           GTSDevice*               pDevice = new GTSDevice();
@@ -153,11 +156,12 @@ namespace viennagrid
           //***************************************************************
           GTSPointList* pPointList = pDevice->NewGTSPointList("Vertices");
           
-          for (VertexIterator vit = segment.template begin<0>();
-              vit != segment.template end<0>();
+          VertexContainer vertices = viennagrid::ncells<0>(domain);
+          for (VertexIterator vit = vertices.begin();
+              vit != vertices.end();
               ++vit)
           {
-            Vertex & vertex = *vit;
+            VertexType & vertex = *vit;
             std::vector<double> pointCoords;
             
             std::cout << "Vertex Id: " << vertex.getID() << ", ";
@@ -168,8 +172,8 @@ namespace viennagrid
             pPointList->add(pointCoords);
           }
             
-          cout << "End writing the vertices!" << endl;
-          cout << "Start writing the cells!" << endl;
+          std::cout << "End writing the vertices!" << std::endl;
+          std::cout << "Start writing the cells!" << std::endl;
             
           //***********************************************************
           // Writing the cells
@@ -186,11 +190,12 @@ namespace viennagrid
           long pointID;
           
           //segment.template size<CellTag::topology_level>();
-          for (CellIterator cit = segment.template begin<CellTag::topology_level>();
-              cit != segment.template end<CellTag::topology_level>();
+          CellContainer cells = viennagrid::ncells<CellTag::topology_level>(domain);
+          for (CellIterator cit = cells.begin();
+              cit != cells.end();
               ++cit)
           {
-            Cell & cell = *cit;
+            CellType & cell = *cit;
             GTSObj* pObj = new GTSObj();
             std::vector<int> points;
             

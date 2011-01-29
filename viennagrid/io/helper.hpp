@@ -24,31 +24,34 @@ namespace viennagrid
 {
   namespace io
   {
-    template <typename PointType, int dim>
+    template <int dim>
     struct PointWriter
     {};
 
-    template <typename PointType>
-    struct PointWriter<PointType, 1>
+    template <>
+    struct PointWriter<1>
     {
+      template <typename PointType>
       static void write(std::ofstream & writer, PointType & point)
       {
         writer << point.get_x();
       }
     };
     
-    template <typename PointType>
-    struct PointWriter<PointType, 2>
+    template <>
+    struct PointWriter<2>
     {
+      template <typename PointType>
       static void write(std::ofstream & writer, PointType & point)
       {
         writer << point.get_x() << " " << point.get_y();
       }
     };
     
-    template <typename PointType>
-    struct PointWriter<PointType, 3>
+    template <>
+    struct PointWriter<3>
     {
+      template <typename PointType>
       static void write(std::ofstream & writer, PointType & point)
       {
         writer << point.get_x() << " " << point.get_y() << " " << point.get_z();

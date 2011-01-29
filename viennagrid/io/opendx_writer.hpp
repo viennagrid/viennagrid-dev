@@ -69,11 +69,11 @@ namespace viennagrid
         typedef typename DomainConfiguration::dimension_tag              DimensionTag;
         typedef typename DomainConfiguration::cell_tag                   CellTag;
       
-        typedef typename DomainTypes<DomainConfiguration>::point_type    Point;
-        typedef typename DomainTypes<DomainConfiguration>::vertex_type   Vertex;
-        typedef typename DomainTypes<DomainConfiguration>::cell_type     Cell;
+        typedef typename result_of::point_type<DomainConfiguration>::type                              PointType;
+        typedef typename result_of::ncell_type<DomainConfiguration, 0>::type                           VertexType;
+        typedef typename result_of::ncell_type<DomainConfiguration, CellTag::topology_level>::type     CellType;
 
-        typedef typename DomainTypes<DomainConfiguration>::segment_type  Segment;
+        //typedef typename DomainTypes<DomainConfiguration>::segment_type  Segment;
       
         typedef typename viennagrid::result_of::ncell_container<DomainType, 0>::type   VertexContainer;
         typedef typename viennagrid::result_of::iterator<VertexContainer>::type        VertexIterator;
@@ -87,7 +87,7 @@ namespace viennagrid
         typedef typename viennagrid::result_of::ncell_container<DomainType, CellTag::topology_level>::type     CellContainer;
         typedef typename viennagrid::result_of::iterator<CellContainer>::type                                  CellIterator;
 
-        typedef typename DomainTypes<DomainConfiguration>::vertex_on_cell_iterator      VertexOnCellIterator;
+        typedef typename viennagrid::IteratorTypes<CellType, 0>::result_type      VertexOnCellIterator;
 
         typedef DXHelper<DimensionTag::value>  DXHelper;
       
@@ -104,7 +104,7 @@ namespace viennagrid
             vit != vertices.end();
             ++vit)
         {
-          PointWriter<Point, DimensionTag::value>::write(writer, vit->getPoint());
+          PointWriter<DimensionTag::value>::write(writer, vit->getPoint());
           writer << std::endl;
         }
         writer << std::endl;
@@ -118,12 +118,12 @@ namespace viennagrid
             cit != cells.end();
             ++cit)
         {
-          Cell & cell = *cit;
+          CellType & cell = *cit;
           for (VertexOnCellIterator vocit = cell.template begin<0>();
               vocit != cell.template end<0>();
               ++vocit)
           {
-            Vertex & vertex = *vocit;
+            VertexType & vertex = *vocit;
             writer << vertex.getID() << " ";
           }
           writer << std::endl;

@@ -54,14 +54,14 @@ struct TestDomainConfig
 void testNewDomain(std::string & infile, std::string & outfile)
 {
 
-  typedef viennagrid::domain<TestDomainConfig>        Domain;
-  //typedef viennagrid::TestDomainConfig::DimensionTag              DimensionTag;
-  typedef viennagrid::DomainTypes<TestDomainConfig>::point_type    PointType;
-  typedef viennagrid::DomainTypes<TestDomainConfig>::vertex_type   VertexType;
-
-  typedef viennagrid::DomainTypes<TestDomainConfig>::facet_type    FacetType;
-  typedef viennagrid::DomainTypes<TestDomainConfig>::cell_type     CellType;
-  typedef viennagrid::DomainTypes<TestDomainConfig>::segment_type  Segment;
+  typedef viennagrid::domain<TestDomainConfig>                               Domain;
+  typedef TestDomainConfig::cell_tag                                         CellTag;
+  //typedef viennagrid::TestDomainConfig::DimensionTag                       DimensionTag;
+  typedef viennagrid::result_of::point_type<TestDomainConfig>::type          PointType;
+  typedef viennagrid::result_of::ncell_type<TestDomainConfig, 0>::type       VertexType;
+  typedef viennagrid::result_of::ncell_type<TestDomainConfig,
+                                            CellTag::topology_level>::type   CellType;
+  //typedef viennagrid::DomainTypes<TestDomainConfig>::segment_type          Segment;
 
   Domain domain;
   CellType hypercube0;
@@ -148,7 +148,7 @@ void testNewDomain(std::string & infile, std::string & outfile)
   VertexType v4(p4, 4);
   VertexType v5(p5, 5);
 
-  seg.reserveVertices(6);
+  domain.reserve_vertices(6);
   std::cout << "Adding vertices to segment:" << std::endl;
   domain.add(v0);
   domain.add(v1);

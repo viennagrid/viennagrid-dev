@@ -328,47 +328,28 @@ namespace viennagrid
       //store segments here
   };
 
-
-  // Container for all types in a domain for access by other domain elements (classes)
-  // This makes it easier to extend types later on: Just change the type definitions here.
-  // All template parameters must be deriveable from 'Configuration'
-  template <typename Configuration>
-  class DomainTypes
+  namespace result_of
   {
-    enum { dim = Configuration::dimension_tag::value };
-
-  public:
-    typedef point< typename Configuration::numeric_type,
-                      typename Configuration::dimension_tag >                       point_type;
-
-    typedef element< Configuration,
-                      typename subcell_traits<typename Configuration::cell_tag, 0>::element_tag>       vertex_type;
-
-    typedef element< Configuration,
-                      typename subcell_traits<typename Configuration::cell_tag, 1>::element_tag >      edge_type;
-
-    typedef element< Configuration,
-                      typename subcell_traits<typename Configuration::cell_tag, dim-1>::element_tag >  facet_type;
-
-    typedef element< Configuration,
-                      typename Configuration::cell_tag >                       cell_type;
-
-    typedef segment<Configuration>                                            segment_type;
-    typedef domain<Configuration>                                             domain_type;
-
-    //Iterators:
-    /*
-    typedef typename IteratorTypes<segment_type, 0>::result_type                    vertex_iterator;
-    typedef typename IteratorTypes<segment_type, 1>::result_type                    edge_iterator;
-    typedef typename IteratorTypes<segment_type,
-                                    Configuration::cell_tag::topology_level-1>::result_type  facet_iterator;
-    typedef typename IteratorTypes<segment_type,
-                                    Configuration::cell_tag::topology_level>::result_type    cell_iterator;
-    //typedef typename domain<Configuration>::segment_iterator                    segment_iterator;
-    */
-    typedef typename IteratorTypes<cell_type, 0>::result_type              vertex_on_cell_iterator;
-    //TODO: Add more iterators here
-  };
-
+    template <typename Config,
+              dim_type dim,
+              dim_type cell_level /* see forwards.h for default type */>
+    struct ncell_type
+    {
+      typedef element<Config, 
+                      typename subcell_traits<typename Config::cell_tag,
+                                              dim>::element_tag
+                      > type;
+    };
+    
+    template <typename Config,
+              dim_type cell_level>
+    struct ncell_type <Config, cell_level, cell_level>
+    {
+      typedef element<Config, 
+                      typename Config::cell_tag>       type;
+    };
+    
+  }
+  
 }
 #endif

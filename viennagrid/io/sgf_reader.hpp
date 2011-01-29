@@ -35,9 +35,9 @@ namespace viennagrid
         typedef typename DomainConfiguration::dimension_tag              DimensionTag;
         typedef typename DomainConfiguration::cell_tag                   CellTag;
 
-        typedef typename DomainTypes<DomainConfiguration>::point_type    Point;
-        typedef typename DomainTypes<DomainConfiguration>::vertex_type   Vertex;
-        typedef typename DomainTypes<DomainConfiguration>::cell_type     Cell;
+        typedef typename result_of::point_type<DomainConfiguration>::type                              PointType;
+        typedef typename result_of::ncell_type<DomainConfiguration, 0>::type                           VertexType;
+        typedef typename result_of::ncell_type<DomainConfiguration, CellTag::topology_level>::type     CellType;
         //typedef typename DomainTypes<DomainConfiguration>::segment_type  Segment;
 
         typedef typename viennagrid::result_of::ncell_container<DomainType, 0>::type   VertexContainer;
@@ -97,7 +97,7 @@ namespace viennagrid
           std::cout << "Reading " << node_num << " vertices... " << std::endl;  
           //reserve the memory:
           domain.reserve_vertices(node_num);
-          Vertex vertex;
+          VertexType vertex;
           long node_id;
       
           for (int i=0; i<node_num; i++)
@@ -146,13 +146,13 @@ namespace viennagrid
           domain.reserve_cells(cell_num);
           long cell_id;
           //std::cout << "Creating cell:" << std::endl;
-          Cell cell;
+          CellType cell;
           //std::cout << "Filling cells:" << std::endl;
       
           for (int i=0; i<cell_num; ++i)
           {
             long vertex_num;
-            Vertex *vertices[subcell_traits<CellTag, 0>::num_elements];
+            VertexType *vertices[subcell_traits<CellTag, 0>::num_elements];
             reader >> cell_id;
       
             for (int j=0; j<subcell_traits<CellTag, 0>::num_elements; ++j)

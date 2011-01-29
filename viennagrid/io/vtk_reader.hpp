@@ -45,9 +45,9 @@ namespace viennagrid
         typedef typename DomainConfiguration::dimension_tag              DimensionTag;
         typedef typename DomainConfiguration::cell_tag                   CellTag;
 
-        typedef typename DomainTypes<DomainConfiguration>::point_type    Point;
-        typedef typename DomainTypes<DomainConfiguration>::vertex_type   Vertex;
-        typedef typename DomainTypes<DomainConfiguration>::cell_type     Cell;
+      typedef typename result_of::point_type<DomainConfiguration>::type                              PointType;
+        typedef typename result_of::ncell_type<DomainConfiguration, 0>::type                           VertexType;
+        typedef typename result_of::ncell_type<DomainConfiguration, CellTag::topology_level>::type     CellType;
         //typedef typename DomainTypes<DomainConfiguration>::segment_type  Segment;
 
         typedef typename viennagrid::result_of::ncell_container<DomainType, 0>::type   VertexContainer;
@@ -171,7 +171,7 @@ namespace viennagrid
         template <typename Segment>
         void readNodeCoordinates(Segment & segment, long nodeNum, long numberOfComponents)
         {
-          Vertex vertex;
+          VertexType vertex;
           double nodeCoord;
 
           for(long i = 0; i < nodeNum; i++)
@@ -245,7 +245,7 @@ namespace viennagrid
             //               the affiliation of the nodes
             //               to the cells
             //***************************************************
-            Cell cell;
+            CellType cell;
             long numVertices = 0;
             long offsetIdx = 0;
 
@@ -269,7 +269,7 @@ namespace viennagrid
                 numVertices = offsets[i]-offsets[i-1];
               }
 
-              std::vector<Vertex *> vertices(numVertices);
+              std::vector<VertexType *> vertices(numVertices);
 
               std::cout << "offsetIdx: " << offsetIdx << ", numVertices: " << numVertices << std::endl;
 

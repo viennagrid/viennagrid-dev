@@ -94,10 +94,10 @@ namespace viennagrid
         typedef typename DomainConfiguration::dimension_tag              DimensionTag;
         typedef typename DomainConfiguration::cell_tag                   CellTag;
 
-        typedef typename DomainTypes<DomainConfiguration>::point_type    Point;
-        typedef typename DomainTypes<DomainConfiguration>::vertex_type   Vertex;
-        typedef typename DomainTypes<DomainConfiguration>::cell_type     Cell;
-        typedef typename DomainTypes<DomainConfiguration>::segment_type  Segment;
+        typedef typename result_of::point_type<DomainConfiguration>::type                              PointType;
+        typedef typename result_of::ncell_type<DomainConfiguration, 0>::type                           VertexType;
+        typedef typename result_of::ncell_type<DomainConfiguration, CellTag::topology_level>::type     CellType;
+        //typedef typename DomainTypes<DomainConfiguration>::segment_type  Segment;
 
         typedef typename viennagrid::result_of::ncell_container<DomainType, 0>::type   VertexContainer;
         typedef typename viennagrid::result_of::iterator<VertexContainer>::type        VertexIterator;
@@ -160,7 +160,7 @@ namespace viennagrid
           
           //reserve the memory:
           domain.reserve_vertices(lenPointList);
-          Vertex vertex;
+          VertexType vertex;
           
           std::cout << "# Vertices: " << lenPointList << std::endl;
           
@@ -219,7 +219,7 @@ namespace viennagrid
           lenObjList = objList->size();
           
           domain.reserve_cells(lenObjList);
-          Cell cell;
+          CellType cell;
               
           std::cout << "No. of faces: " << lenObjList << std::endl;
           
@@ -227,7 +227,7 @@ namespace viennagrid
             GTSObj* pObject = objList->get(i);
             pointsPerObj = pObject->getNumberOfPoints(); // number of points per obj. (f.e. 3 in 2 dimensions)
             
-            Vertex *vertices[subcell_traits<CellTag, 0>::num_elements]; // every cell is build up of
+            VertexType *vertices[subcell_traits<CellTag, 0>::num_elements]; // every cell is build up of
                                                                     // several vertices
             
             std::cout << "#" << i << ": ";

@@ -121,19 +121,23 @@ namespace viennagrid
   template <typename Segment>
   void detectBoundary_impl(Segment & seg, full_handling_tag)
   {
-    typedef typename Segment::Configuration                         DomainConfiguration;
+    typedef typename Segment::config_type                         DomainConfiguration;
     typedef typename DomainConfiguration::cell_tag                   CellTag;
-    typedef typename DomainTypes<DomainConfiguration>::facet_type    Facet;
-    typedef typename DomainTypes<DomainConfiguration>::cell_type     Cell;
+    typedef typename viennagrid::result_of::ncell_type<DomainConfiguration, CellTag::topology_level-1>::type   FacetType;
+    typedef typename viennagrid::result_of::ncell_type<DomainConfiguration, CellTag::topology_level>::type     CellType;
 
-    typedef typename IteratorTypes<Segment, CellTag::topology_level-1>::result_type    FacetIterator;
-    typedef typename IteratorTypes<Segment, CellTag::topology_level>::result_type      CellIterator;
+    typedef typename viennagrid::result_of::ncell_container<Segment, CellTag::topology_level-1>::type   FacetContainer;
+    typedef typename viennagrid::result_of::iterator<FacetContainer>::type                                 FacetIterator;
+      
+      typedef typename viennagrid::result_of::ncell_container<Segment, CellTag::topology_level>::type     CellContainer;
+      typedef typename viennagrid::result_of::iterator<CellContainer>::type                                  CellIterator;
 
-    typedef typename IteratorTypes<Cell, CellTag::topology_level-1>::result_type  FacetOnCellIterator;
+    typedef typename IteratorTypes<CellType, CellTag::topology_level-1>::result_type  FacetOnCellIterator;
 
     //iterate over all cells, over facets there and tag them:
-    for (CellIterator cit = seg.template begin<CellTag::topology_level>();
-          cit != seg.template end<CellTag::topology_level>();
+    CellContainer cells = viennagrid::ncells<CellTag::topology_level>(seg);
+    for (CellIterator cit = cells.begin();
+          cit != cells.end();
           ++cit)
     {
       for (FacetOnCellIterator focit = cit->template begin<CellTag::topology_level-1>();
@@ -146,16 +150,18 @@ namespace viennagrid
         //fit->print();
       }
     }
+    
     //iterate over all facets again and tag all lower level topological elements on facets that belong to the boundary:
-    for (FacetIterator fit = seg.template begin<CellTag::topology_level-1>();
-          fit != seg.template end<CellTag::topology_level-1>();
+    FacetContainer facets = viennagrid::ncells<CellTag::topology_level-1>(seg);
+    for (FacetIterator fit = facets.begin();
+          fit != facets.end();
           ++fit)
     {
       //if (fit->isOnBoundary())  //TODO:replace by boundary flag from ViennaData
       if(true)
       {
         //fit->print();
-        BoundarySetter<Facet, CellTag::topology_level-2>::apply(fit);
+        BoundarySetter<FacetType, CellTag::topology_level-2>::apply(fit);
       }
     }
   }
@@ -163,7 +169,7 @@ namespace viennagrid
   template <typename SegmentType>
   void detectBoundary(SegmentType & seg)
   {
-    typedef typename SegmentType::Configuration::cell_tag                   CellTag;
+    typedef typename SegmentType::config_type::cell_tag                   CellTag;
     typedef typename subcell_traits<CellTag, CellTag::topology_level-1>::handling_tag  HandlingTag;
     detectBoundary_impl(seg, HandlingTag());
   }

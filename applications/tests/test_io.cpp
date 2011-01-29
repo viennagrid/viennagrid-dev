@@ -67,12 +67,11 @@ void testNewDomain(std::string & infile, std::string & outfile)
   typedef TestDomainConfig::cell_tag                  CellTag;
   
   //typedef viennagrid::TestDomainConfig::DimensionTag              DimensionTag;
-  typedef viennagrid::DomainTypes<TestDomainConfig>::point_type    PointType;
-  typedef viennagrid::DomainTypes<TestDomainConfig>::vertex_type   VertexType;
-
-  typedef viennagrid::DomainTypes<TestDomainConfig>::facet_type    FacetType;
-  typedef viennagrid::DomainTypes<TestDomainConfig>::cell_type     CellType;
-  typedef viennagrid::DomainTypes<TestDomainConfig>::segment_type  Segment;
+  typedef viennagrid::result_of::point_type<TestDomainConfig>::type          PointType;
+  typedef viennagrid::result_of::ncell_type<TestDomainConfig, 0>::type       VertexType;
+  typedef viennagrid::result_of::ncell_type<TestDomainConfig,
+                                            CellTag::topology_level>::type   CellType;
+  //typedef viennagrid::DomainTypes<TestDomainConfig>::segment_type  Segment;
 
   typedef viennagrid::result_of::ncell_container<Domain, 0>::type   VertexContainer;
   typedef viennagrid::result_of::iterator<VertexContainer>::type        VertexIterator;
@@ -110,7 +109,7 @@ void testNewDomain(std::string & infile, std::string & outfile)
 //   exit(EXIT_FAILURE);
   }
 
-  //viennagrid::detectBoundary(seg);
+  viennagrid::detectBoundary(domain);
   
   //test writers:
   viennagrid::io::sgf_writer my_sgf_writer;
@@ -119,8 +118,8 @@ void testNewDomain(std::string & infile, std::string & outfile)
   viennagrid::io::Vtk_writer<Domain> my_vtk_writer;
   my_vtk_writer.writeDomain(domain, outfile + ".vtk");
    
-  //gts_writer my_gts_writer;
-  //my_gts_writer(domain, outfile);
+  //viennagrid::io::gts_writer my_gts_writer;
+  //my_gts_writer(domain, outfile + ".gts");
   
   viennagrid::io::opendx_writer my_dx_writer;
   my_dx_writer(domain, outfile + ".odx");

@@ -73,7 +73,6 @@ namespace viennagrid
   {
     //requirements:
     //array of pointers to elements of class 'levelnum' and a integer representing the orientation within the cell relative to the element it points to.
-    typedef typename DomainTypes<T_Configuration>::segment_type        SegmentType;
     typedef subcell_traits<ElementTag, levelnum>                         LevelSpecs;
     typedef subcell_traits<typename LevelSpecs::element_tag, 0>  VertexOnElementSpecs;
     typedef lower_level_holder < T_Configuration, ElementTag, levelnum - 1 >      Base;
@@ -201,7 +200,7 @@ namespace viennagrid
   {
     //requirements:
     //array of pointers to elements of class 'levelnum' and a integer representing the orientation within the cell relative to the element it points to.
-    typedef typename DomainTypes<T_Configuration>::segment_type        SegmentType;
+    //typedef typename DomainTypes<T_Configuration>::segment_type        SegmentType;
     typedef subcell_traits<ElementTag, levelnum>                                LevelSpecs;
     typedef lower_level_holder < T_Configuration, ElementTag, levelnum - 1 >      Base;
 
@@ -298,11 +297,11 @@ namespace viennagrid
   class lower_level_holder <T_Configuration, ElementTag, 0, handling_tag, true> 
   {
     //array of pointers to elements of class 'levelnum' and a integer representing the orientation within the cell relative to the element it points to.
-    typedef typename DomainTypes<T_Configuration>::segment_type               SegmentType;
+    //typedef typename DomainTypes<T_Configuration>::segment_type               SegmentType;
     typedef subcell_traits<ElementTag, 0>                                      LevelSpecs;
 
     typedef element<T_Configuration, typename LevelSpecs::element_tag>         VertexType;
-    typedef typename DomainTypes<T_Configuration>::point_type                 PointType;
+    typedef typename result_of::point_type<T_Configuration>::type              PointType;
 
     typedef typename IteratorTypes< element<T_Configuration, ElementTag>, 0>::result_type         VertexIterator;
 
@@ -417,8 +416,8 @@ namespace viennagrid
   {
       typedef typename T_Configuration::numeric_type                   ScalarType;
       typedef multigrid_layer < T_Configuration, ElTag >               Base;
-      typedef typename DomainTypes<T_Configuration>::point_type        PointType;
-      typedef typename DomainTypes<T_Configuration>::vertex_type       VertexType;
+      typedef typename result_of::point_type<T_Configuration>::type              PointType;
+      typedef typename result_of::ncell_type<T_Configuration, 0>::type       VertexType;
       typedef subcell_traits<ElTag, 0>                                 VertexSpecs;
 
     public:
@@ -554,10 +553,10 @@ namespace viennagrid
   class element <T_Configuration, point_tag> :
     public cell_traits<point_tag>::id_handler
   {
-      typedef typename DomainTypes<T_Configuration>::point_type     PointType;
-      typedef typename T_Configuration::numeric_type                CoordType;
-      typedef typename DomainTypes<T_Configuration>::vertex_type    VertexType;
-      typedef typename T_Configuration::cell_tag                    CellTag;
+      typedef typename result_of::point_type<T_Configuration>::type          PointType;
+      typedef typename T_Configuration::numeric_type                         CoordType;
+      typedef typename result_of::ncell_type<T_Configuration, 0>::type       VertexType;
+      typedef typename T_Configuration::cell_tag                             CellTag;
 
     public:
       typedef T_Configuration                                       config_type;
