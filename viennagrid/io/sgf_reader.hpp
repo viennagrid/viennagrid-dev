@@ -38,14 +38,23 @@ namespace viennagrid
         typedef typename DomainTypes<DomainConfiguration>::point_type    Point;
         typedef typename DomainTypes<DomainConfiguration>::vertex_type   Vertex;
         typedef typename DomainTypes<DomainConfiguration>::cell_type     Cell;
-        typedef typename DomainTypes<DomainConfiguration>::segment_type  Segment;
+        //typedef typename DomainTypes<DomainConfiguration>::segment_type  Segment;
 
-        typedef typename DomainTypes<DomainConfiguration>::vertex_iterator      VertexIterator;
-        typedef typename DomainTypes<DomainConfiguration>::cell_iterator        CellIterator;
+        typedef typename viennagrid::result_of::ncell_container<DomainType, 0>::type   VertexContainer;
+        typedef typename viennagrid::result_of::iterator<VertexContainer>::type        VertexIterator;
+            
+        typedef typename viennagrid::result_of::ncell_container<DomainType, 1>::type   EdgeContainer;
+        typedef typename viennagrid::result_of::iterator<EdgeContainer>::type          EdgeIterator;
+
+        typedef typename viennagrid::result_of::ncell_container<DomainType, CellTag::topology_level-1>::type   FacetContainer;
+        typedef typename viennagrid::result_of::iterator<FacetContainer>::type                                 FacetIterator;
+
+        typedef typename viennagrid::result_of::ncell_container<DomainType, CellTag::topology_level>::type     CellContainer;
+        typedef typename viennagrid::result_of::iterator<CellContainer>::type                                  CellIterator;
 
         std::ifstream reader(filename.c_str());
 
-        Segment & segment = *(domain.begin());
+        //Segment & segment = *(domain.begin());
 
         std::cout << "Reading file " << filename << std::endl;
 
@@ -87,7 +96,7 @@ namespace viennagrid
 
           std::cout << "Reading " << node_num << " vertices... " << std::endl;  
           //reserve the memory:
-          segment.template reserveVertices(node_num);
+          domain.reserve_vertices(node_num);
           Vertex vertex;
           long node_id;
       
@@ -104,7 +113,7 @@ namespace viennagrid
             //std::cout << std::endl << "Adding vertex: " << &vertex << std::endl;
             vertex.getPoint().setCoordinates(coords);
             vertex.setID(node_id);
-            segment.template add<0>(node_id, vertex);
+            domain.add(vertex);
           }
       
           std::cout << "DONE" << std::endl;
@@ -134,7 +143,7 @@ namespace viennagrid
           //std::cout << "Reading cell-num:" << std::endl;
           reader >> cell_num;
           //std::cout << "Reserve cells:" << std::endl;
-          segment.reserveCells(cell_num);
+          domain.reserve_cells(cell_num);
           long cell_id;
           //std::cout << "Creating cell:" << std::endl;
           Cell cell;
@@ -143,19 +152,19 @@ namespace viennagrid
           for (int i=0; i<cell_num; ++i)
           {
             long vertex_num;
-            Vertex *vertices[subcell_traits<CellTag, 0>::ElementNum];
+            Vertex *vertices[subcell_traits<CellTag, 0>::num_elements];
             reader >> cell_id;
       
-            for (int j=0; j<subcell_traits<CellTag, 0>::ElementNum; ++j)
+            for (int j=0; j<subcell_traits<CellTag, 0>::num_elements; ++j)
             {
               reader >> vertex_num;
-              vertices[j] = segment.getVertexAddress(vertex_num);
+              vertices[j] = &(domain.vertex(vertex_num));
             }
       
             //std::cout << std::endl << "Adding cell: " << &cell << " at " << cell_id << std::endl;
             cell.setVertices(&(vertices[0]));
             cell.setID(cell_id);
-            segment.template add<CellTag::topology_level>(cell_id, cell);
+            domain.add(cell);
       
             //progress info:
             if (i % 50000 == 0)

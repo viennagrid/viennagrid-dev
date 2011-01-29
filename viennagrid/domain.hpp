@@ -39,7 +39,7 @@ namespace viennagrid
   {
     template <typename T,
               dim_type dim,
-              dim_type cell_level = T::element_tag::topology_level>
+              dim_type cell_level /* see forwards.h for default argument */>
     struct subcell_container
     {
       typedef typename result_of::element_tag<T, dim>::type    element_tag;
@@ -155,28 +155,28 @@ namespace viennagrid
 
       //non-const:
       template <dim_type dim_container>
-      typename result_of::subcell_container<element_type, dim_container>::type * 
+      typename result_of::subcell_container<cell_type, dim_container>::type * 
       container() { return container<dim_container>(typename level_discriminator<dim, dim_container>::result_type()); }
       
       template <dim_type dim_container>
-      typename result_of::subcell_container<element_type, dim_container>::type * 
+      typename result_of::subcell_container<cell_type, dim_container>::type * 
       container(equal_tag) { return &elements; }
 
       template <dim_type dim_container>
-      typename result_of::subcell_container<element_type, dim_container>::type * 
+      typename result_of::subcell_container<cell_type, dim_container>::type * 
       container(less_tag) { return base_type::template container<dim_container>(); }
 
       //const:
       template <dim_type dim_container>
-      const typename result_of::subcell_container<element_type, dim_container>::type * 
+      const typename result_of::subcell_container<cell_type, dim_container>::type * 
       container() const { return container<dim_container>(typename level_discriminator<dim, dim_container>::result_type()); }
       
       template <dim_type dim_container>
-      const typename result_of::subcell_container<element_type, dim_container>::type * 
+      const typename result_of::subcell_container<cell_type, dim_container>::type * 
       container(equal_tag) const { return &elements; }
 
       template <dim_type dim_container>
-      const typename result_of::subcell_container<element_type, dim_container>::type * 
+      const typename result_of::subcell_container<cell_type, dim_container>::type * 
       container(less_tag) const { return base_type::template container<dim_container>(); }
       
       
@@ -196,6 +196,8 @@ namespace viennagrid
       container_type    elements;        //container of elements
   };
   
+  
+  // special handling for cells:
   template <typename Config,
             dim_type dim,
             typename STOR >
@@ -264,9 +266,7 @@ namespace viennagrid
       container_type    elements;        //container of elements
   };
   
-  
-  
-  //terminate recursion at point level:
+  //terminate recursion at vertex level:
   template <typename Config,
             bool is_cell,
             typename STOR >
@@ -365,8 +365,8 @@ namespace viennagrid
     typedef typename IteratorTypes<segment_type,
                                     Configuration::cell_tag::topology_level>::result_type    cell_iterator;
     //typedef typename domain<Configuration>::segment_iterator                    segment_iterator;
-
-    typedef typename IteratorTypes<cell_type, 0>::result_type              vertex_on_cell_iterator;*/
+    */
+    typedef typename IteratorTypes<cell_type, 0>::result_type              vertex_on_cell_iterator;
     //TODO: Add more iterators here
   };
 

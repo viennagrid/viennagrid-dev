@@ -38,7 +38,7 @@ namespace viennagrid
     template <typename DomainType>
     class Vtk_reader
     {
-    protected:
+      protected:
         typedef typename DomainType::config_type                     DomainConfiguration;
 
         typedef typename DomainConfiguration::numeric_type                 CoordType;
@@ -48,10 +48,19 @@ namespace viennagrid
         typedef typename DomainTypes<DomainConfiguration>::point_type    Point;
         typedef typename DomainTypes<DomainConfiguration>::vertex_type   Vertex;
         typedef typename DomainTypes<DomainConfiguration>::cell_type     Cell;
-        typedef typename DomainTypes<DomainConfiguration>::segment_type  Segment;
+        //typedef typename DomainTypes<DomainConfiguration>::segment_type  Segment;
 
-        typedef typename DomainTypes<DomainConfiguration>::vertex_iterator      VertexIterator;
-        typedef typename DomainTypes<DomainConfiguration>::cell_iterator        CellIterator;
+        typedef typename viennagrid::result_of::ncell_container<DomainType, 0>::type   VertexContainer;
+        typedef typename viennagrid::result_of::iterator<VertexContainer>::type        VertexIterator;
+            
+        typedef typename viennagrid::result_of::ncell_container<DomainType, 1>::type   EdgeContainer;
+        typedef typename viennagrid::result_of::iterator<EdgeContainer>::type          EdgeIterator;
+
+        typedef typename viennagrid::result_of::ncell_container<DomainType, CellTag::topology_level-1>::type   FacetContainer;
+        typedef typename viennagrid::result_of::iterator<FacetContainer>::type                                 FacetIterator;
+
+        typedef typename viennagrid::result_of::ncell_container<DomainType, CellTag::topology_level>::type     CellContainer;
+        typedef typename viennagrid::result_of::iterator<CellContainer>::type                                  CellIterator;
 
         std::ifstream reader;
 
@@ -159,6 +168,7 @@ namespace viennagrid
           return atoi(token.c_str());
         }
 
+        template <typename Segment>
         void readNodeCoordinates(Segment & segment, long nodeNum, long numberOfComponents)
         {
           Vertex vertex;
@@ -182,7 +192,7 @@ namespace viennagrid
             //insert node into segment:
             vertex.getPoint().setCoordinates(vmCoords);
             vertex.setID(i);
-            segment.template add<0>(i, vertex);
+            segment.add(vertex);
           }
         }
 
@@ -224,6 +234,7 @@ namespace viennagrid
             }
         }
 
+        template <typename Segment>
         void readCells(Segment & segment, long cellNum, std::vector<long> const & cells, std::vector<long> const & offsets)
         {
             //***************************************************
@@ -238,7 +249,7 @@ namespace viennagrid
             long numVertices = 0;
             long offsetIdx = 0;
 
-            segment.reserveCells(cellNum);
+            segment.reserve_cells(cellNum);
 
             for (long i = 0; i < cellNum; i++)
             {
@@ -268,13 +279,13 @@ namespace viennagrid
               //****************************************************
               for (long j = 0; j < numVertices; j++)
               {
-                vertices[j] = segment.getVertexAddress(cells[j + offsetIdx]);
+                vertices[j] = &(segment.vertex(cells[j + offsetIdx]));
                 std::cout << "j+offsetidx: " << j+offsetIdx << std::endl;
               }
 
               cell.setVertices(&(vertices[0]));
               cell.setID(i);
-              segment.template add<CellTag::topology_level>(i, cell);
+              segment.add(cell);
             }
         }
 
@@ -294,7 +305,7 @@ namespace viennagrid
           checkFilename(filename);
           openVTKFile(filename);
 
-          Segment & segment = *(domain.begin());
+          //Segment & segment = *(domain.begin());
 
           std::cout << "Reading vtk-file " << filename << std::endl;
 
@@ -315,7 +326,7 @@ namespace viennagrid
           checkNextToken("<Piece");
           
           nodeNum = getNumberOfNodes();
-          segment.template reserveVertices(nodeNum);
+          domain.reserve_vertices(nodeNum);
           std::cout << "#Nodes: " << nodeNum << std::endl;
 
           cellNum = getNumberOfCells();
@@ -332,7 +343,7 @@ namespace viennagrid
           checkNextToken("format=\"ascii\">");
           
           // Read in the coordinates of the nodes
-          readNodeCoordinates(segment, nodeNum, numberOfComponents);
+          readNodeCoordinates(domain, nodeNum, numberOfComponents);
           
           checkNextToken("</DataArray>");
           checkNextToken("</Points>");
@@ -365,7 +376,7 @@ namespace viennagrid
           checkNextToken("</UnstructuredGrid>");
           checkNextToken("</VTKFile>");
 
-          readCells(segment, cellNum, cells, offsets);
+          readCells(domain, cellNum, cells, offsets);
 
         }
         catch (...) {

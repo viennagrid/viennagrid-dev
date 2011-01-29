@@ -14,6 +14,8 @@
 #define VIENNAGRID_FORWARDS_GUARD
 
 #include <iostream>
+#include <vector>
+#include <map>
 #include "viennagrid/idhandler.hpp"
 
 namespace viennagrid
@@ -103,7 +105,10 @@ namespace viennagrid
   };
 
   template <typename T, dim_type dim>
-  class vector_container;
+  class ncell_container;
+
+  template <typename T, dim_type dim>
+  class const_ncell_container;
 
   namespace result_of
   {
@@ -116,6 +121,17 @@ namespace viennagrid
       typedef typename T::config_type     type; 
     };
   }
+
+  namespace result_of
+  {
+    template <typename T,
+              dim_type dim,
+              dim_type cell_level = T::element_tag::topology_level>
+    struct subcell_container;
+  }
+
+
+
 
 } 
 #endif

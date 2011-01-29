@@ -11,12 +11,20 @@
 ======================================================================= */
 
 
-#ifndef VIENNAGRID_ITERATORS_HPP
-#define VIENNAGRID_ITERATORS_HPP
+#ifndef VIENNAGRID_SEGMENT_ITERATORS_HPP
+#define VIENNAGRID_SEGMENT_ITERATORS_HPP
 
-#include "viennagrid/element_iterators.hpp"
-#include "viennagrid/segment_iterators.hpp"
-#include "viennagrid/domain_iterators.hpp"
+#include <vector>
+#include <list>
+#include <map>
+#include <stack>
 
+#include "viennagrid/forwards.h"
+
+namespace viennagrid
+{
+   //TODO
+  
+} //namespace
 #endif
 

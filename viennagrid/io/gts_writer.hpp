@@ -19,16 +19,11 @@
 #include <vector>
 #include "viennagrid/forwards.h"
 #include "viennagrid/io/helper.hpp"
-
-#include "gtsio2/UtilityLibs/gtsio2/src/include/gtsio2.h"
-#include <X11/Intrinsic.h>
 #include "viennagrid/io/gts_list_getter.hpp"
 #include "viennagrid/point.hpp"
 
-using namespace GTSIO::Data;
-using namespace GTSIO::Reader;
-using namespace GTSIO::Reader::CRV;
-using namespace GTSIO;
+#include "gtsio2/UtilityLibs/gtsio2/src/include/gtsio2.h"
+
 
 namespace viennagrid
 {
@@ -45,8 +40,8 @@ namespace viennagrid
     // one dimension
     template<>
     struct gts_coords_getter<1> {
-      static vector<double> getCoords(point<double,one_dimension_tag>& p) {
-        vector<double> coords;
+      static std::vector<double> getCoords(point<double,one_dimension_tag>& p) {
+        std::vector<double> coords;
         coords.push_back(p.get_x());
         return coords;
       }
@@ -55,8 +50,8 @@ namespace viennagrid
     // two dimensions
     template<>
     struct gts_coords_getter<2> {
-      static vector<double> getCoords(point<double,two_dimensions_tag>& p) {
-        vector<double> coords;
+      static std::vector<double> getCoords(point<double,two_dimensions_tag>& p) {
+        std::vector<double> coords;
         coords.push_back(p.get_x());
         coords.push_back(p.get_y());
         return coords;
@@ -66,8 +61,8 @@ namespace viennagrid
     // three dimensions
     template<>
     struct gts_coords_getter<3> {
-      static vector<double> getCoords(point<double,three_dimensions_tag>& p) {
-        vector<double> coords;
+      static std::vector<double> getCoords(point<double,three_dimensions_tag>& p) {
+        std::vector<double> coords;
         coords.push_back(p.get_x());
         coords.push_back(p.get_y());
         coords.push_back(p.get_z());
@@ -89,7 +84,7 @@ namespace viennagrid
     // one dimension
     template<typename obj>
     struct gts_point_adder<1, obj> {
-      static void addPoints(obj* pO, vector<int> points) {
+      static void addPoints(obj* pO, std::vector<int> points) {
         pO->Init(points[0], points[1]);
       }
     };
@@ -97,7 +92,7 @@ namespace viennagrid
     // two dimensions
     template<typename obj>
     struct gts_point_adder<2, obj> {
-      static void addPoints(obj* pO, vector<int> points) {
+      static void addPoints(obj* pO, std::vector<int> points) {
         pO->Init(points);
       }
     };
@@ -105,7 +100,7 @@ namespace viennagrid
     // three dimensions
     template<typename obj>
     struct gts_point_adder<3, obj> {
-      static void addPoints(obj* pO, vector<int> points) {
+      static void addPoints(obj* pO, std::vector<int> points) {
         pO->Init(points);
       }
     };
@@ -150,8 +145,8 @@ namespace viennagrid
           pDevice->setName("Device");
           pDevice->setVersion("0.8");    
 
-          cout << "Start writing the vertices! (GTSWriter)" << endl;
-          cout << "Dimension: " << DimensionTag::value << endl;
+          std::cout << "Start writing the vertices! (GTSWriter)" << std::endl;
+          std::cout << "Dimension: " << DimensionTag::value << std::endl;
           
           //***************************************************************
           // Writing the vertices
@@ -163,10 +158,10 @@ namespace viennagrid
               ++vit)
           {
             Vertex & vertex = *vit;
-            vector<double> pointCoords;
+            std::vector<double> pointCoords;
             
-            cout << "Vertex Id: " << vertex.getID() << ", ";
-            cout << vertex.getPoint() << endl;
+            std::cout << "Vertex Id: " << vertex.getID() << ", ";
+            std::cout << vertex.getPoint() << std::endl;
 
             pointCoords = gts_coords_getter<DimensionTag::value>::getCoords(vertex.getPoint());
             
@@ -197,9 +192,9 @@ namespace viennagrid
           {
             Cell & cell = *cit;
             GTSObj* pObj = new GTSObj();
-            vector<int> points;
+            std::vector<int> points;
             
-            cout << "Cell Id: " << cell.getID() << ":" << endl;
+            std::cout << "Cell Id: " << cell.getID() << ":" << std::endl;
 
             for (VertexOnCellIterator vocit = cell.template begin<0>();
               vocit != cell.template end<0>();
@@ -208,21 +203,21 @@ namespace viennagrid
               pointID = vocit->getID();
               points.push_back(pointID);
               
-              cout << "Point Id: " << pointID << " ";
+              std::cout << "Point Id: " << pointID << " ";
             }
 
             gts_point_adder<DimensionTag::value, GTSObj>::addPoints(pObj, points);
             
             pObjList->add(pObj);
 
-            cout << "Address: " << pObj << endl;
-            cout << endl;
+            std::cout << "Address: " << pObj << std::endl;
+            std::cout << std::endl;
           }
           
           // defines that the obj-list (lines, faces, polyhedrons) is build up of points (vertices)
           pObjList->setParentList(pPointList);
             
-          cout << "End writing the cells!" << endl;     
+          std::cout << "End writing the cells!" << std::endl;     
             
           pWriter->WriteDeviceToFile("gts", filename.c_str(), pDevice);
           

@@ -64,6 +64,8 @@ void testNewDomain(std::string & infile, std::string & outfile)
 {
 
   typedef viennagrid::domain<TestDomainConfig>        Domain;
+  typedef TestDomainConfig::cell_tag                  CellTag;
+  
   //typedef viennagrid::TestDomainConfig::DimensionTag              DimensionTag;
   typedef viennagrid::DomainTypes<TestDomainConfig>::point_type    PointType;
   typedef viennagrid::DomainTypes<TestDomainConfig>::vertex_type   VertexType;
@@ -72,14 +74,21 @@ void testNewDomain(std::string & infile, std::string & outfile)
   typedef viennagrid::DomainTypes<TestDomainConfig>::cell_type     CellType;
   typedef viennagrid::DomainTypes<TestDomainConfig>::segment_type  Segment;
 
-  typedef viennagrid::IteratorTypes<Segment, 0>::result_type                                         VertexIterator;
-  typedef viennagrid::IteratorTypes<Segment, 1>::result_type                                         EdgeIterator;
-  typedef viennagrid::IteratorTypes<Segment, TestDomainConfig::cell_tag::topology_level-1>::result_type    FacetIterator;
-  typedef viennagrid::IteratorTypes<Segment, TestDomainConfig::cell_tag::topology_level>::result_type      CellIterator;
+  typedef viennagrid::result_of::ncell_container<Domain, 0>::type   VertexContainer;
+  typedef viennagrid::result_of::iterator<VertexContainer>::type        VertexIterator;
+      
+  typedef viennagrid::result_of::ncell_container<Domain, 1>::type   EdgeContainer;
+  typedef viennagrid::result_of::iterator<EdgeContainer>::type          EdgeIterator;
+
+  typedef viennagrid::result_of::ncell_container<Domain, CellTag::topology_level-1>::type   FacetContainer;
+  typedef viennagrid::result_of::iterator<FacetContainer>::type                                 FacetIterator;
+
+  typedef viennagrid::result_of::ncell_container<Domain, CellTag::topology_level>::type     CellContainer;
+  typedef viennagrid::result_of::iterator<CellContainer>::type                                  CellIterator;
 
   Domain domain;
   
-   Segment & seg = domain.add();
+   //Segment & seg = domain.add();
   
   try{
     #ifdef SGF
@@ -101,7 +110,7 @@ void testNewDomain(std::string & infile, std::string & outfile)
 //   exit(EXIT_FAILURE);
   }
 
-  viennagrid::detectBoundary(seg);
+  //viennagrid::detectBoundary(seg);
   
   //test writers:
   viennagrid::io::sgf_writer my_sgf_writer;

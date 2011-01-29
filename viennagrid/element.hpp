@@ -363,6 +363,7 @@ namespace viennagrid
   class multigrid_layer
   {  };
 
+  /*
   template <typename T_Configuration, typename ElTag>
   class multigrid_layer<T_Configuration, ElTag, full_multigrid_tag> :
     public lower_level_holder < T_Configuration, ElTag, ElTag::topology_level - 1>
@@ -392,7 +393,7 @@ namespace viennagrid
     private:
       //pointers to children:
       std::list<ElementType *>  children;
-  };
+  }; */
 
   //if no multigrid-handling is needed, no implementation is needed :-)
   template <typename T_Configuration, typename ElTag>

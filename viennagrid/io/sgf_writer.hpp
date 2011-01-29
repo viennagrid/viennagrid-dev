@@ -39,23 +39,33 @@ namespace viennagrid
         typedef typename DomainTypes<DomainConfiguration>::cell_type     Cell;
         typedef typename DomainTypes<DomainConfiguration>::segment_type     Segment;
       
-        typedef typename DomainTypes<DomainConfiguration>::vertex_iterator      VertexIterator;
-        typedef typename DomainTypes<DomainConfiguration>::cell_iterator        CellIterator;
+        typedef typename viennagrid::result_of::ncell_container<DomainType, 0>::type   VertexContainer;
+        typedef typename viennagrid::result_of::iterator<VertexContainer>::type        VertexIterator;
+            
+        typedef typename viennagrid::result_of::ncell_container<DomainType, 1>::type   EdgeContainer;
+        typedef typename viennagrid::result_of::iterator<EdgeContainer>::type          EdgeIterator;
+
+        typedef typename viennagrid::result_of::ncell_container<DomainType, CellTag::topology_level-1>::type   FacetContainer;
+        typedef typename viennagrid::result_of::iterator<FacetContainer>::type                                 FacetIterator;
+
+        typedef typename viennagrid::result_of::ncell_container<DomainType, CellTag::topology_level>::type     CellContainer;
+        typedef typename viennagrid::result_of::iterator<CellContainer>::type                                  CellIterator;
 
         typedef typename DomainTypes<DomainConfiguration>::vertex_on_cell_iterator      VertexOnCellIterator;
       
         std::ofstream writer(filename.c_str());
         
-        Segment & segment = *(domain.begin());
+        //Segment & segment = *(domain.begin());
       
         writer << "Dimension: " << DimensionTag::value << std::endl;
-        writer << "Vertices: " << segment.template size<0>() << std::endl;
+        writer << "Vertices: " << domain.template size<0>() << std::endl;
       
         //segment.template begin<0>()->setCurrentSegment(segment);
 
         //Nodes:
-        for (VertexIterator vit = segment.template begin<0>();
-            vit != segment.template end<0>();
+        VertexContainer vertices = viennagrid::ncells<0>(domain);
+        for (VertexIterator vit = vertices.begin();
+            vit != vertices.end();
             ++vit)
         {
           Vertex & vertex = *vit;
@@ -66,10 +76,11 @@ namespace viennagrid
       
         //Cells:
         writer << "Cell-Type: Simplex" << std::endl;
-        writer << "Cells: " << segment.template size<CellTag::topology_level>() << std::endl;
+        writer << "Cells: " << domain.template size<CellTag::topology_level>() << std::endl;
       
-        for (CellIterator cit = segment.template begin<CellTag::topology_level>();
-            cit != segment.template end<CellTag::topology_level>();
+        CellContainer cells = viennagrid::ncells<CellTag::topology_level>(domain);
+        for (CellIterator cit = cells.begin();
+            cit != cells.end();
             ++cit)
         {
           Cell & cell = *cit;

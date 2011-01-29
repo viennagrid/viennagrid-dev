@@ -63,14 +63,7 @@ void testNewDomain(std::string & infile, std::string & outfile)
   typedef viennagrid::DomainTypes<TestDomainConfig>::cell_type     CellType;
   typedef viennagrid::DomainTypes<TestDomainConfig>::segment_type  Segment;
 
-  typedef viennagrid::IteratorTypes<Segment, 0>::result_type                                         VertexIterator;
-  typedef viennagrid::IteratorTypes<Segment, 1>::result_type                                         EdgeIterator;
-  typedef viennagrid::IteratorTypes<Segment, TestDomainConfig::cell_tag::topology_level-1>::result_type   FacetIterator;
-  typedef viennagrid::IteratorTypes<Segment, TestDomainConfig::cell_tag::topology_level>::result_type     CellIterator;
-
   Domain domain;
-  Segment & seg = domain.add();
-  seg.reserveCells(2);
   CellType hypercube0;
   CellType hypercube1;
 
@@ -102,41 +95,41 @@ void testNewDomain(std::string & infile, std::string & outfile)
   VertexType v10(p10, 10);
   VertexType v11(p11, 11);
 
-  seg.reserveVertices(12);
+  domain.reserve_vertices(12);
   std::cout << "Adding vertices to segment:" << std::endl;
-  seg.add<0>(0, v0);
-  seg.add<0>(1, v1);
-  seg.add<0>(2, v2);
-  seg.add<0>(3, v3);
-  seg.add<0>(4, v4);
-  seg.add<0>(5, v5);
-  seg.add<0>(6, v6);
-  seg.add<0>(7, v7);
-  seg.add<0>(8, v8);
-  seg.add<0>(9, v9);
-  seg.add<0>(10, v10);
-  seg.add<0>(11, v11);
+  domain.add(v0);
+  domain.add(v1);
+  domain.add(v2);
+  domain.add(v3);
+  domain.add(v4);
+  domain.add(v5);
+  domain.add(v6);
+  domain.add(v7);
+  domain.add(v8);
+  domain.add(v9);
+  domain.add(v10);
+  domain.add(v11);
   
   VertexType * vertices0[8];
   VertexType * vertices1[8];
   
-  vertices0[0] = seg.getVertexAddress(0);
-  vertices0[1] = seg.getVertexAddress(1);
-  vertices0[2] = seg.getVertexAddress(2);
-  vertices0[3] = seg.getVertexAddress(3);
-  vertices0[4] = seg.getVertexAddress(4);
-  vertices0[5] = seg.getVertexAddress(5);
-  vertices0[6] = seg.getVertexAddress(6);
-  vertices0[7] = seg.getVertexAddress(7);
+  vertices0[0] = &(domain.vertex(0));
+  vertices0[1] = &(domain.vertex(1));
+  vertices0[2] = &(domain.vertex(2));
+  vertices0[3] = &(domain.vertex(3));
+  vertices0[4] = &(domain.vertex(4));
+  vertices0[5] = &(domain.vertex(5));
+  vertices0[6] = &(domain.vertex(6));
+  vertices0[7] = &(domain.vertex(7));
 
-  vertices1[0] = seg.getVertexAddress(1);
-  vertices1[1] = seg.getVertexAddress(8);
-  vertices1[2] = seg.getVertexAddress(9);
-  vertices1[3] = seg.getVertexAddress(2);
-  vertices1[4] = seg.getVertexAddress(5);
-  vertices1[5] = seg.getVertexAddress(10);
-  vertices1[6] = seg.getVertexAddress(11);
-  vertices1[7] = seg.getVertexAddress(6);
+  vertices1[0] = &(domain.vertex(1));
+  vertices1[1] = &(domain.vertex(8));
+  vertices1[2] = &(domain.vertex(9));
+  vertices1[3] = &(domain.vertex(2));
+  vertices1[4] = &(domain.vertex(5));
+  vertices1[5] = &(domain.vertex(10));
+  vertices1[6] = &(domain.vertex(11));
+  vertices1[7] = &(domain.vertex(6));
   
 #else
   
@@ -157,55 +150,68 @@ void testNewDomain(std::string & infile, std::string & outfile)
 
   seg.reserveVertices(6);
   std::cout << "Adding vertices to segment:" << std::endl;
-  seg.add<0>(0, v0);
-  seg.add<0>(1, v1);
-  seg.add<0>(2, v2);
-  seg.add<0>(3, v3);
-  seg.add<0>(4, v4);
-  seg.add<0>(5, v5);
+  domain.add(v0);
+  domain.add(v1);
+  domain.add(v2);
+  domain.add(v3);
+  domain.add(v4);
+  domain.add(v5);
   
   VertexType * vertices0[4];
   VertexType * vertices1[4];
   
-  vertices0[0] = seg.getVertexAddress(0);
-  vertices0[1] = seg.getVertexAddress(1);
-  vertices0[2] = seg.getVertexAddress(4);
-  vertices0[3] = seg.getVertexAddress(5);
+  vertices0[0] = &(domain.vertex(0));
+  vertices0[1] = &(domain.vertex(1));
+  vertices0[2] = &(domain.vertex(4));
+  vertices0[3] = &(domain.vertex(5));
 
-  vertices1[0] = seg.getVertexAddress(1);
-  vertices1[1] = seg.getVertexAddress(2);
-  vertices1[2] = seg.getVertexAddress(3);
-  vertices1[3] = seg.getVertexAddress(4);
+  vertices1[0] = &(domain.vertex(1));
+  vertices1[1] = &(domain.vertex(2));
+  vertices1[2] = &(domain.vertex(3));
+  vertices1[3] = &(domain.vertex(4));
   
 #endif
   
+  domain.reserve_cells(2);
   hypercube0.setVertices(vertices0);
-  seg.add<TestDomainConfig::cell_tag::topology_level>(0, hypercube0);
+  domain.add(hypercube0);
   
   hypercube1.setVertices(vertices1);  
-  seg.add<TestDomainConfig::cell_tag::topology_level>(1, hypercube1);
+  domain.add(hypercube1);
   
   std::cout << "Vertices: " << std::endl;
-  for (VertexIterator vit = seg.begin<0>();
-        vit != seg.end<0>();
+  typedef viennagrid::result_of::ncell_container<Domain, 0>::type   VertexContainer;
+  typedef viennagrid::result_of::iterator<VertexContainer>::type    VertexIterator;
+  VertexContainer vertices = viennagrid::ncells<0>(domain);
+  for (VertexIterator vit = vertices.begin();
+        vit != vertices.end();
         ++vit)
       vit->print();
   
   std::cout << "Edges: " << std::endl;
-  for (EdgeIterator eit = seg.begin<1>();
-        eit != seg.end<1>();
+  typedef viennagrid::result_of::ncell_container<Domain, 1>::type   EdgeContainer;
+  typedef viennagrid::result_of::iterator<EdgeContainer>::type      EdgeIterator;
+  EdgeContainer edges = viennagrid::ncells<1>(domain);
+  for (EdgeIterator eit = edges.begin();
+        eit != edges.end();
         ++eit)
       eit->print();
 
   std::cout << "Facets: " << std::endl;
-  for (FacetIterator fit = seg.begin<TestDomainConfig::cell_tag::topology_level-1>();
-        fit != seg.end<TestDomainConfig::cell_tag::topology_level-1>();
+  typedef viennagrid::result_of::ncell_container<Domain, TestDomainConfig::cell_tag::topology_level-1>::type   FacetContainer;
+  typedef viennagrid::result_of::iterator<FacetContainer>::type                                                FacetIterator;
+  FacetContainer facets = viennagrid::ncells<TestDomainConfig::cell_tag::topology_level-1>(domain);
+  for (FacetIterator fit = facets.begin();
+        fit != facets.end();
         ++fit)
       fit->print();
 
   std::cout << "Cells: " << std::endl;
-  for (CellIterator cit = seg.begin<TestDomainConfig::cell_tag::topology_level>();
-        cit != seg.end<TestDomainConfig::cell_tag::topology_level>();
+  typedef viennagrid::result_of::ncell_container<Domain, TestDomainConfig::cell_tag::topology_level>::type   CellContainer;
+  typedef viennagrid::result_of::iterator<CellContainer>::type                                               CellIterator;
+  CellContainer cells = viennagrid::ncells<TestDomainConfig::cell_tag::topology_level>(domain);
+  for (CellIterator cit = cells.begin();
+        cit != cells.end();
         ++cit)
       cit->print();
 

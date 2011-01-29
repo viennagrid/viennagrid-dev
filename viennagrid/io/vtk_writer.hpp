@@ -46,11 +46,20 @@ namespace viennagrid
       typedef typename DomainTypes<DomainConfiguration>::vertex_type   Vertex;
       typedef typename DomainTypes<DomainConfiguration>::cell_type     Cell;
 
-      typedef typename DomainTypes<DomainConfiguration>::segment_type  Segment;
+      //typedef typename DomainTypes<DomainConfiguration>::segment_type  Segment;
+      
+      typedef typename viennagrid::result_of::ncell_container<DomainType, 0>::type   VertexContainer;
+      typedef typename viennagrid::result_of::iterator<VertexContainer>::type        VertexIterator;
+          
+      typedef typename viennagrid::result_of::ncell_container<DomainType, 1>::type   EdgeContainer;
+      typedef typename viennagrid::result_of::iterator<EdgeContainer>::type          EdgeIterator;
 
-      typedef typename DomainTypes<DomainConfiguration>::vertex_iterator      VertexIterator;
-      typedef typename DomainTypes<DomainConfiguration>::cell_iterator        CellIterator;
-      typedef typename DomainTypes<DomainConfiguration>::segment_iterator     SegmentIterator;
+      typedef typename viennagrid::result_of::ncell_container<DomainType, CellTag::topology_level-1>::type   FacetContainer;
+      typedef typename viennagrid::result_of::iterator<FacetContainer>::type                                 FacetIterator;
+
+      typedef typename viennagrid::result_of::ncell_container<DomainType, CellTag::topology_level>::type     CellContainer;
+      typedef typename viennagrid::result_of::iterator<CellContainer>::type                                  CellIterator;
+
 
       typedef typename DomainTypes<DomainConfiguration>::vertex_on_cell_iterator      VertexOnCellIterator;
 
@@ -61,13 +70,15 @@ namespace viennagrid
         writer << " <UnstructuredGrid>" << std::endl;
       }
 
+      template <typename Segment>
       void writePoints(Segment & segment, std::ofstream & writer)
       {
         writer << "   <Points>" << std::endl;
         writer << "    <DataArray type=\"Float32\" NumberOfComponents=\"3\" format=\"ascii\">" << std::endl;
 
-        for (VertexIterator vit = segment.template begin<0>();
-            vit != segment.template end<0>();
+        VertexContainer vertices = viennagrid::ncells<0>(segment);
+        for (VertexIterator vit = vertices.begin();
+            vit != vertices.end();
             ++vit)
         {
           PointWriter<Point, DimensionTag::value>::write(writer, vit->getPoint());
@@ -85,12 +96,14 @@ namespace viennagrid
         writer << "   </Points> " << std::endl;
       } //writePoints()
 
+      template <typename Segment>
       void writeCells(Segment & segment, std::ofstream & writer)
       {
         writer << "   <Cells> " << std::endl;
         writer << "    <DataArray type=\"Int32\" Name=\"connectivity\" format=\"ascii\">" << std::endl;
-        for (CellIterator cit = segment.template begin<Cell::element_tag::topology_level>();
-            cit != segment.template end<Cell::element_tag::topology_level>();
+        CellContainer cells = viennagrid::ncells<Cell::element_tag::topology_level>(segment);
+        for (CellIterator cit = cells.begin();
+            cit != cells.end();
             ++cit)
         {
             Cell & cell = *cit;
@@ -106,17 +119,17 @@ namespace viennagrid
           writer << "    </DataArray>" << std::endl;
 
           writer << "    <DataArray type=\"Int32\" Name=\"offsets\" format=\"ascii\">" << std::endl;
-          for (long offsets = 1;
-                offsets <= segment.template size<Cell::element_tag::topology_level>();
-                ++offsets)
+          for (size_t offsets = 1;
+               offsets <= segment.template size<Cell::element_tag::topology_level>();
+               ++offsets)
           {
-            writer << ( offsets * subcell_traits<typename Cell::element_tag, 0>::ElementNum) << " ";
+            writer << ( offsets * viennagrid::subcell_traits<typename Cell::element_tag, 0>::num_elements) << " ";
           }
           writer << std::endl;
           writer << "    </DataArray>" << std::endl;
 
           writer << "    <DataArray type=\"UInt8\" Name=\"types\" format=\"ascii\">" << std::endl;
-          for (long offsets = 1;
+          for (size_t offsets = 1;
                 offsets <= segment.template size<Cell::element_tag::topology_level>();
                 ++offsets)
           {
@@ -128,7 +141,7 @@ namespace viennagrid
       }
 
       // TODO [MB] deprecated retrieveQuantity<double>(keyname);
-      template< typename KeyType >
+      template <typename Segment, typename KeyType >
       void writePointData(Segment & segment, KeyType & keyname, std::ofstream & writer)
       {
         writer << "   <PointData Scalars=\"scalars\">" << std::endl;
@@ -169,26 +182,27 @@ namespace viennagrid
 
         writeHeader(writer);
 
-        for (SegmentIterator segit = domain.begin(); segit != domain.end(); ++segit)
-        {
+        //TODO Add iteration over segments again
+        //for (SegmentIterator segit = domain.begin(); segit != domain.end(); ++segit)
+        //{
           std::cout << "Writing segment" << std::endl;
-          Segment & curSeg = *segit;
+          //Segment & curSeg = *segit;
 
           writer << "  <Piece NumberOfPoints=\""
-                << curSeg.template size<0>()
+                << domain.template size<0>()
                 << "\" NumberOfCells=\""
-                << curSeg.template size<Cell::element_tag::topology_level>()
+                << domain.template size<Cell::element_tag::topology_level>()
                 << "\">" << std::endl;
 
 
-          writePoints(curSeg, writer);
+          writePoints(domain, writer);
 
           //writePointData(curSeg, writer);
 
-          writeCells(curSeg, writer);
+          writeCells(domain, writer);
 
           writer << "  </Piece>" << std::endl;
-        }
+        //}
         
         writeFooter(writer);
 

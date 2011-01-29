@@ -28,11 +28,6 @@
 
 #include "gtsio2/UtilityLibs/gtsio2/src/include/gtsio2.h"
 
-using namespace GTSIO::Data;
-using namespace GTSIO::Reader;
-using namespace GTSIO::Reader::CRV;
-using namespace GTSIO;
-
 namespace viennagrid
 {
   namespace io
@@ -104,13 +99,21 @@ namespace viennagrid
         typedef typename DomainTypes<DomainConfiguration>::cell_type     Cell;
         typedef typename DomainTypes<DomainConfiguration>::segment_type  Segment;
 
-        typedef typename DomainTypes<DomainConfiguration>::vertex_iterator      VertexIterator;
-        typedef typename DomainTypes<DomainConfiguration>::cell_iterator        CellIterator;
+        typedef typename viennagrid::result_of::ncell_container<DomainType, 0>::type   VertexContainer;
+        typedef typename viennagrid::result_of::iterator<VertexContainer>::type        VertexIterator;
+            
+        typedef typename viennagrid::result_of::ncell_container<DomainType, 1>::type   EdgeContainer;
+        typedef typename viennagrid::result_of::iterator<EdgeContainer>::type          EdgeIterator;
+
+        typedef typename viennagrid::result_of::ncell_container<DomainType, CellTag::topology_level-1>::type   FacetContainer;
+        typedef typename viennagrid::result_of::iterator<FacetContainer>::type                                 FacetIterator;
+
+        typedef typename viennagrid::result_of::ncell_container<DomainType, CellTag::topology_level>::type     CellContainer;
+        typedef typename viennagrid::result_of::iterator<CellContainer>::type                                  CellIterator;
   
         typedef typename gts_list_getter<DimensionTag::value>::list_type         GTSObjList;
         typedef typename gts_list_getter<DimensionTag::value>::object_type       GTSObj;
         
-        Segment & segment = *(domain.begin());
 
         std::cout << "Reading file " << filename << std::endl;
         
@@ -121,24 +124,24 @@ namespace viennagrid
           pReader->loadDeviceFromFile(filename.c_str(), pDevice);
         } 
         catch (GTSIO::GtsioException ex) {
-            cerr << ex.toString() << endl << endl;
+          std::cerr << ex.toString() << std::endl << std::endl;
         }
-        catch (exception stdEx) {
-          cerr << stdEx.what() << endl << endl;
+        catch (std::exception stdEx) {
+          std::cerr << stdEx.what() << std::endl << std::endl;
         }
         
         try
         {
           if (pDevice == NULL) {
-            cerr << "ERROR: Can't show device info!" << endl;
+            std::cerr << "ERROR: Can't show device info!" << std::endl;
             throw;
           }
           
-          cout << "File-Name: " << filename << endl;
-          cout << "Device-Name: " << pDevice->getName() << endl;
-          cout << "Dimension: " << pDevice->getDimension() << endl;
+          std::cout << "File-Name: " << filename << std::endl;
+          std::cout << "Device-Name: " << pDevice->getName() << std::endl;
+          std::cout << "Dimension: " << pDevice->getDimension() << std::endl;
           
-          cout << "Start reading the vertices!" << endl;
+          std::cout << "Start reading the vertices!" << std::endl;
           
           //*********************************************************
           // Reading in the vertices (points)
@@ -156,16 +159,16 @@ namespace viennagrid
           lenPointList = pDevice->getGTSPointList("Vertices")->size();
           
           //reserve the memory:
-          segment.template reserveVertices(lenPointList);
+          domain.reserve_vertices(lenPointList);
           Vertex vertex;
           
-          cout << "# Vertices: " << lenPointList << endl;
+          std::cout << "# Vertices: " << lenPointList << std::endl;
           
           for(i = 0; i < lenPointList; i++)
           {
             CoordType coords[DimensionTag::value]; // coordinates of a vertex (viennamesh)
             
-            cout << "Point No. " << i << ": ";
+            std::cout << "Point No. " << i << ": ";
             
             pointList->get(i,pointCoords);
             pointDim = pointCoords.size();
@@ -173,8 +176,8 @@ namespace viennagrid
             /* copy the coordinates from GTS to viennamesh */
             for(j = 0; j < pointDim; j++)
             {
-              cout.precision(3);
-              cout << pointCoords[j] << " ";
+              std::cout.precision(3);
+              std::cout << pointCoords[j] << " ";
               
               coords[j] = pointCoords[j];
             }
@@ -182,15 +185,15 @@ namespace viennagrid
             //insert node into segment:
             vertex.getPoint().setCoordinates(coords);
             vertex.setID(i);
-            segment.template add<0>(i, vertex);
+            domain.add(vertex);
             
             pointCoords.clear();
-            cout << endl;
+            std::cout << std::endl;
           }
           
-          cout << "Reading the vertices finished!" << endl;
+          std::cout << "Reading the vertices finished!" << std::endl;
           
-          cout << "Start reading the cells!" << endl;
+          std::cout << "Start reading the cells!" << std::endl;
               
           //***********************************************************
           // Reading in the cells
@@ -204,49 +207,49 @@ namespace viennagrid
           //***********************************************************   
           GTSObjList* objList = gts_list_getter<DimensionTag::value>::getList(pDevice);
         
-          cout << "List was read in!" << endl;
+          std::cout << "List was read in!" << std::endl;
           
           long lenObjList = 0;  // number of objects (lines, faces, polyhedrons) 
                                 // defined in the .gts-file
           long pointsPerObj   = 0; // number of points per object
           long pointIdx    = 0; // index of a point in the 'pointList'
           
-          cout << "Address Device: " << pDevice << ", Address List: " << objList << endl;
+          std::cout << "Address Device: " << pDevice << ", Address List: " << objList << std::endl;
           
           lenObjList = objList->size();
           
-          segment.reserveCells(lenObjList);
+          domain.reserve_cells(lenObjList);
           Cell cell;
               
-          cout << "No. of faces: " << lenObjList << endl;
+          std::cout << "No. of faces: " << lenObjList << std::endl;
           
           for(i = 0; i < lenObjList; i++) {
             GTSObj* pObject = objList->get(i);
             pointsPerObj = pObject->getNumberOfPoints(); // number of points per obj. (f.e. 3 in 2 dimensions)
             
-            Vertex *vertices[subcell_traits<CellTag, 0>::ElementNum]; // every cell is build up of
+            Vertex *vertices[subcell_traits<CellTag, 0>::num_elements]; // every cell is build up of
                                                                     // several vertices
             
-            cout << "#" << i << ": ";
+            std::cout << "#" << i << ": ";
             
             /* read out the points of an obj. (GTS) and copy it to the cell (viennamesh) */
             for(j = 0; j < pointsPerObj; j++) {
               pointIdx = gts_point_getter<DimensionTag::value,GTSObj>::getPointIdx(pObject,j);
               
-              vertices[j] = segment.getVertexAddress(pointIdx);
+              vertices[j] = &(domain.vertex(pointIdx));
               
-              cout << pointIdx << " ";
+              std::cout << pointIdx << " ";
             }
             
             /* add the cell */
             cell.setVertices(&(vertices[0]));
             cell.setID(i);
-            segment.template add<CellTag::topology_level>(i, cell);
+            domain.add(cell);
             
-            cout << endl;
+            std::cout << std::endl;
           }
           
-          cout << "Reading the cells finished!" << endl;
+          std::cout << "Reading the cells finished!" << std::endl;
         } catch (...) {
           std::cerr << "Problems while reading file " << filename << std::endl;
         }

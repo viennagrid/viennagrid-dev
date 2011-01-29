@@ -30,5 +30,4 @@ LINK_DIRECTORIES(${GTSIOLIBPATH})
 ADD_EXECUTABLE(test_io          applications/tests/test_io.cpp)
 ADD_EXECUTABLE(test_simplex     applications/tests/test_simplex.cpp)
 ADD_EXECUTABLE(test_hypercube   applications/tests/test_hypercube.cpp)
-ADD_EXECUTABLE(test_domain      applications/tests/test_domain.cpp)
 

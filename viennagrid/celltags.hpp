@@ -308,22 +308,22 @@ namespace viennagrid
       edgevertices[0] = vertices[0];
       edgevertices[1] = vertices[1];
       edge.setVertices(edgevertices);
-      elements[0] = seg.template add<1>(0, edge, orientations);
+      elements[0] = seg.add(edge, orientations);
 
       edgevertices[0] = vertices[1];
       edgevertices[1] = vertices[2];
       edge.setVertices(edgevertices);
-      elements[1] = seg.template add<1>(0, edge, orientations + 1 );
+      elements[1] = seg.add(edge, orientations + 1 );
 
       edgevertices[0] = vertices[2];
       edgevertices[1] = vertices[3];
       edge.setVertices(edgevertices);
-      elements[2] = seg.template add<1>(0, edge, orientations + 2 );
+      elements[2] = seg.add(edge, orientations + 2 );
 
       edgevertices[0] = vertices[3];
       edgevertices[1] = vertices[0];
       edge.setVertices(edgevertices);
-      elements[3] = seg.template add<1>(0, edge, orientations + 3 );
+      elements[3] = seg.add(edge, orientations + 3 );
       
     }
   };
