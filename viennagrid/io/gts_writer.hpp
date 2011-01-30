@@ -131,7 +131,8 @@ namespace viennagrid
         typedef typename viennagrid::result_of::ncell_container<DomainType, CellTag::topology_level>::type     CellContainer;
         typedef typename viennagrid::result_of::iterator<CellContainer>::type                                  CellIterator;
 
-        typedef typename viennagrid::result_of::iterator<CellType, 0>::type      VertexOnCellIterator;
+        typedef typename viennagrid::result_of::ncell_container<CellType, 0>::type      VertexOnCellContainer;
+        typedef typename viennagrid::result_of::iterator<VertexOnCellContainer>::type   VertexOnCellIterator;
         
         typedef typename gts_list_getter<DimensionTag::value>::list_type       GTSObjList;
         typedef typename gts_list_getter<DimensionTag::value>::object_type     GTSObj;
@@ -201,8 +202,9 @@ namespace viennagrid
             
             std::cout << "Cell Id: " << cell.getID() << ":" << std::endl;
 
-            for (VertexOnCellIterator vocit = cell.template begin<0>();
-              vocit != cell.template end<0>();
+            VertexOnCellContainer vertices_for_cell = viennagrid::ncells<0>(*cit);
+            for (VertexOnCellIterator vocit = vertices_for_cell.begin();
+              vocit != vertices_for_cell.end();
               ++vocit)
             {	  
               pointID = vocit->getID();

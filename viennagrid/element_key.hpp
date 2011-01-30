@@ -51,10 +51,13 @@ namespace viennagrid
     public:
       element_key( ElementType & el2) : vertexIDs(subcell_traits<ElementTag, 0>::num_elements)
       {
-        typedef typename result_of::iterator<ElementType, 0>::type         VertexIterator;
+        typedef typename result_of::ncell_container<ElementType, 0>::type   VertexContainer;
+        typedef typename result_of::iterator<ElementType, 0>::type          VertexIterator;
         long i = 0;
-        for (VertexIterator vit = el2.template begin<0>();
-              vit != el2.template end<0>(); ++vit, ++i)
+        VertexContainer vertices_el2 = ncells<0>(el2);
+        for (VertexIterator vit = vertices_el2.begin();
+             vit != vertices_el2.end();
+             ++vit, ++i)
           vertexIDs[i] = vit->getID();
         //sort it:
         std::sort(vertexIDs.begin(), vertexIDs.end());

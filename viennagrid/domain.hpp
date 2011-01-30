@@ -37,36 +37,30 @@ namespace viennagrid
 
   namespace result_of
   {
-    template <typename T,
+    template <typename config_type,
               dim_type dim,
               dim_type cell_level /* see forwards.h for default argument */>
-    struct subcell_container
+    struct element_container< domain<config_type>, dim, cell_level >
     {
-      typedef typename result_of::element_tag<T, dim>::type    element_tag;
-      typedef typename result_of::config<T>::type              config_type;
-      typedef element<config_type, element_tag >            element_type;
+      typedef typename result_of::ncell_type<config_type, dim>::type            element_type;
       
       typedef std::map< element_key<element_type>, element_type >      type;
     };
 
     //at point level:
-    template <typename T, dim_type cell_level>
-    struct subcell_container <T, 0, cell_level>
+    template <typename config_type, dim_type cell_level>
+    struct element_container< domain<config_type>, 0, cell_level>
     {
-      typedef typename result_of::element_tag<T, 0>::type    element_tag;
-      typedef typename result_of::config<T>::type              config_type;
-      typedef element<config_type, element_tag >            element_type;
+      typedef typename result_of::ncell_type<config_type, 0>::type              element_type;
       
       typedef std::vector< element_type >      type;
     };
 
     //at cell level:
-    template <typename T, dim_type cell_level>
-    struct subcell_container <T, cell_level, cell_level>
+    template <typename config_type, dim_type cell_level>
+    struct element_container< domain<config_type>, cell_level, cell_level>
     {
-      typedef typename result_of::element_tag<T, T::element_tag::topology_level>::type    element_tag;
-      typedef typename result_of::config<T>::type              config_type;
-      typedef element<config_type, element_tag >            element_type;
+      typedef typename result_of::ncell_type<config_type, cell_level>::type     element_type;
       
       typedef std::vector< element_type >      type;
     };
@@ -82,13 +76,15 @@ namespace viennagrid
   class domain_layers  : public domain_layers<Config, dim-1>
   {
       //typedef typename result_of::element_tag<typename Config::cell_tag, dim>::type    element_tag;
+      typedef domain<Config>                                                          domain_type;
       typedef typename subcell_traits<typename Config::cell_tag, dim>::element_tag    element_tag;
       typedef element<Config, element_tag >                                              element_type;
       typedef element<Config, typename Config::cell_tag>                                   cell_type;
-      typedef typename result_of::subcell_container<cell_type, dim>::type           container_type;
+      typedef typename result_of::element_container<domain_type, dim, Config::cell_tag::topology_level>::type           container_type;
       typedef domain_layers<Config, dim-1>                                               base_type;
     
     public:
+      typedef Config                                    config_type;
       
       using base_type::add;
       
@@ -105,7 +101,9 @@ namespace viennagrid
       add(element_type & elem, ElementOrientation * orientation) {
 
         typedef typename std::map< element_key<element_type>, element_type >::iterator  ElementIterator;
-        typedef typename result_of::iterator<element_type, 0>::type      VertexOnElementIterator;
+        
+        typedef typename result_of::ncell_container<element_type, 0>::type  VertexOnElementContainer;
+        typedef typename result_of::iterator<element_type, 0>::type         VertexOnElementIterator;
 
         element_key<element_type> epc(elem);
         //check whether already inserted:
@@ -128,13 +126,18 @@ namespace viennagrid
 
         //std::cout << "REJECTED" << std::endl;
         long i=0; long j=0;
+        
+        
         //set orientation:
-        for (VertexOnElementIterator voeit = elem.template begin<0>();
-              voeit != elem.template end<0>();
+        VertexOnElementContainer vertices_on_element = ncells<0>(elem);
+        for (VertexOnElementIterator voeit = vertices_on_element.begin();
+              voeit != vertices_on_element.end();
               ++voeit, ++i)
         {
-            for (VertexOnElementIterator voeit2 = (elit->second).template begin<0>();
-                  voeit2 != (elit->second).template end<0>();
+            
+            VertexOnElementContainer vertices_on_element_2 = ncells<0>(elit->second);
+            for (VertexOnElementIterator voeit2 = vertices_on_element_2.begin();
+                  voeit2 != vertices_on_element_2.end();
                   ++voeit2, ++j)
             {
               if (voeit->getID() == voeit2->getID())
@@ -155,28 +158,28 @@ namespace viennagrid
 
       //non-const:
       template <dim_type dim_container>
-      typename result_of::subcell_container<cell_type, dim_container>::type * 
+      typename result_of::element_container<domain_type, dim_container, Config::cell_tag::topology_level>::type * 
       container() { return container<dim_container>(typename level_discriminator<dim, dim_container>::result_type()); }
       
       template <dim_type dim_container>
-      typename result_of::subcell_container<cell_type, dim_container>::type * 
+      typename result_of::element_container<domain_type, dim_container, Config::cell_tag::topology_level>::type * 
       container(equal_tag) { return &elements; }
 
       template <dim_type dim_container>
-      typename result_of::subcell_container<cell_type, dim_container>::type * 
+      typename result_of::element_container<domain_type, dim_container, Config::cell_tag::topology_level>::type * 
       container(less_tag) { return base_type::template container<dim_container>(); }
 
       //const:
       template <dim_type dim_container>
-      const typename result_of::subcell_container<cell_type, dim_container>::type * 
+      const typename result_of::element_container<domain_type, dim_container, Config::cell_tag::topology_level>::type * 
       container() const { return container<dim_container>(typename level_discriminator<dim, dim_container>::result_type()); }
       
       template <dim_type dim_container>
-      const typename result_of::subcell_container<cell_type, dim_container>::type * 
+      const typename result_of::element_container<domain_type, dim_container, Config::cell_tag::topology_level>::type * 
       container(equal_tag) const { return &elements; }
 
       template <dim_type dim_container>
-      const typename result_of::subcell_container<cell_type, dim_container>::type * 
+      const typename result_of::element_container<domain_type, dim_container, Config::cell_tag::topology_level>::type * 
       container(less_tag) const { return base_type::template container<dim_container>(); }
       
       
@@ -204,8 +207,11 @@ namespace viennagrid
   class domain_layers<Config, dim, true, STOR> : public domain_layers<Config, dim-1, false, STOR>
   {
       //typedef typename result_of::element_tag<typename Config::cell_tag, 0>::type   element_tag;
+      typedef domain<Config>                                                          domain_type;
       typedef element<Config, typename Config::cell_tag >                                         element_type;
-      typedef typename result_of::subcell_container<element_type, Config::cell_tag::topology_level>::type                container_type;
+      typedef typename result_of::element_container<domain_type,
+                                                    Config::cell_tag::topology_level,
+                                                    Config::cell_tag::topology_level>::type                container_type;
       typedef domain_layers<Config, dim-1>                                               base_type;
     
     public:
@@ -226,28 +232,28 @@ namespace viennagrid
       
       //non-const:
       template <dim_type dim_container>
-      typename result_of::subcell_container<element_type, dim_container>::type * 
+      typename result_of::element_container<domain_type, dim_container, Config::cell_tag::topology_level>::type * 
       container() { return container<dim_container>(typename level_discriminator<dim, dim_container>::result_type()); }
       
       template <dim_type dim_container>
-      typename result_of::subcell_container<element_type, dim_container>::type * 
+      typename result_of::element_container<domain_type, dim_container, Config::cell_tag::topology_level>::type * 
       container(equal_tag) { return &elements; }
 
       template <dim_type dim_container>
-      typename result_of::subcell_container<element_type, dim_container>::type * 
+      typename result_of::element_container<domain_type, dim_container, Config::cell_tag::topology_level>::type * 
       container(less_tag) { return base_type::template container<dim_container>(); }
 
       //const:
       template <dim_type dim_container>
-      const typename result_of::subcell_container<element_type, dim_container>::type * 
+      const typename result_of::element_container<domain_type, dim_container, Config::cell_tag::topology_level>::type * 
       container() const { return container<dim_container>(typename level_discriminator<dim, dim_container>::result_type()); }
       
       template <dim_type dim_container>
-      const typename result_of::subcell_container<element_type, dim_container>::type * 
+      const typename result_of::element_container<domain_type, dim_container, Config::cell_tag::topology_level>::type * 
       container(equal_tag) const { return &elements; }
 
       template <dim_type dim_container>
-      const typename result_of::subcell_container<element_type, dim_container>::type * 
+      const typename result_of::element_container<domain_type, dim_container, Config::cell_tag::topology_level>::type * 
       container(less_tag) const { return base_type::template container<dim_container>(); }
       
       ////////////////////// size ////////////////////////
@@ -273,9 +279,13 @@ namespace viennagrid
   class domain_layers<Config, 0, is_cell, STOR>
   {
       //typedef typename result_of::element_tag<typename Config::cell_tag, 0>::type   element_tag;
-      typedef element<Config, point_tag >                                           element_type;
+      typedef domain<Config>                                                          domain_type;
+      typedef element<Config, point_tag >                                             element_type;
       typedef element<Config, typename Config::cell_tag >                             cell_type;
-      typedef typename result_of::subcell_container<cell_type, 0>::type           container_type;
+      typedef typename result_of::element_container<domain_type,
+                                                    0,
+                                                    Config::cell_tag::topology_level
+                                                    >::type                            container_type;
     
     public:
       typedef Config    config_type;
@@ -322,6 +332,8 @@ namespace viennagrid
       typedef domain_layers<Config, Config::cell_tag::topology_level, true>           base_type;
     
     public:
+      typedef Config                                    config_type;
+      
       using base_type::add;
     
     private:
@@ -330,6 +342,7 @@ namespace viennagrid
 
   namespace result_of
   {
+    
     template <typename Config,
               dim_type dim,
               dim_type cell_level /* see forwards.h for default type */>

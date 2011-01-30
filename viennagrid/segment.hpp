@@ -153,7 +153,8 @@ namespace viennagrid
       
       void add(cell_type & e)
       {
-        elements.push_back(&(*e.template begin<0>()));        
+        //elements.push_back(&(*e.template begin<0>()));
+        //TODO: Fill segments with vertices, avoid duplicates!
       }
       
       template <dim_type dim>

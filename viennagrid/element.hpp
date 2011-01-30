@@ -120,52 +120,33 @@ namespace viennagrid
           elements_[i] = llh.elements_[i];
       }
 
-      //provide iterators:
+      /////////////////// access container: ////////////////////
       template <long j>
-      typename result_of::iterator< element<T_Configuration, ElementTag>, j>::type
-      begin(less_tag)
+      typename result_of::element_container< element<T_Configuration, ElementTag>, j, T_Configuration::cell_tag::topology_level>::type
+      container(less_tag)
       { 
-        return Base::template begin<j>();
+        return Base::template container<j>();
       }
 
       template <long j>
-      typename result_of::iterator< element<T_Configuration, ElementTag>, j>::type
-      begin(equal_tag)
+      typename result_of::element_container< element<T_Configuration, ElementTag>, j, T_Configuration::cell_tag::topology_level>::type
+      container(equal_tag)
       { 
-        typedef typename result_of::iterator< element<T_Configuration, ElementTag>, j>::type
-            LevelIterator;
-        return LevelIterator(elements_);
+        return &(elements_[0]);
       }
 
       template <long j>
-      typename result_of::iterator< element<T_Configuration, ElementTag>, j>::type
-      begin()
+      typename result_of::element_container< element<T_Configuration, ElementTag>, j, T_Configuration::cell_tag::topology_level>::type
+      container()
       { 
-        return begin<j>( typename level_discriminator<levelnum, j>::result_type() );
+        return container<j>( typename level_discriminator<levelnum, j>::result_type() );
       }
-
-
-      template <long j>
-      typename result_of::iterator< element<T_Configuration, ElementTag>, j>::type
-      end(less_tag)
-      { 
-        return Base::template end<j>();
-      }
-
-      template <long j>
-      typename result_of::iterator< element<T_Configuration, ElementTag>, j>::type
-      end(equal_tag)
-      { 
-        typedef typename result_of::iterator< element<T_Configuration, ElementTag>, j>::type   LevelIterator;
-        return LevelIterator(elements_ + LevelSpecs::num_elements);
-      }
-
-      template <long j>
-      typename result_of::iterator< element<T_Configuration, ElementTag>, j>::type
-      end()
-      { 
-        return end<j>( typename level_discriminator<levelnum, j>::result_type() );
-      }
+      
+      
+      
+      
+      
+      
 
       //orientation:
       template <long j>
@@ -234,61 +215,22 @@ namespace viennagrid
       lower_level_holder( ) {};
 
       lower_level_holder( const lower_level_holder & llh) : Base (llh) {}
-
-      //provide iterators:
+      
+      //////////////////// container ///////////////////////
       template <long j>
-      typename result_of::iterator< element<T_Configuration, ElementTag>, j>::type
-      begin(less_tag)
+      typename result_of::element_container< element<T_Configuration, ElementTag>, j, T_Configuration::cell_tag::topology_level>::type
+      container(less_tag)
       { 
-        return Base::template begin<j>();
+        return Base::template container<j>();
       }
 
       template <long j>
-      typename result_of::iterator< element<T_Configuration, ElementTag>, j>::type
-      begin(equal_tag)
+      typename result_of::element_container< element<T_Configuration, ElementTag>, j, T_Configuration::cell_tag::topology_level>::type
+      container()
       { 
-        typedef typename result_of::iterator< element<T_Configuration, ElementTag>, j>::type
-          LevelIterator;
-
-        LevelElementType * elements_[LevelSpecs::num_elements];
-        //TODO: Set up elements here (via CellTag)
-        return LevelIterator(elements_);
+        return container<j>( typename level_discriminator<levelnum, j>::result_type() );
       }
-
-      template <long j>
-      typename result_of::iterator< element<T_Configuration, ElementTag>, j>::type
-      begin()
-      { 
-        return begin<j>( typename level_discriminator<levelnum, j>::result_type() );
-      }
-
-
-      template <long j>
-      typename result_of::iterator< element<T_Configuration, ElementTag>, j>::type
-      end(less_tag)
-      { 
-        return Base::template end<j>();
-      }
-
-      template <long j>
-      typename result_of::iterator< element<T_Configuration, ElementTag>, j>::type
-      end(equal_tag)
-      { 
-        typedef
-          typename result_of::iterator< element<T_Configuration, ElementTag>, j>::type
-            LevelIterator;
-
-        LevelElementType * elements_[LevelSpecs::num_elements];
-        //TODO: Set up endpoint here (via CellTag)
-        return LevelIterator(elements_ + LevelSpecs::num_elements);
-      }
-
-      template <long j>
-      typename result_of::iterator< element<T_Configuration, ElementTag>, j>::type
-      end()
-      { 
-        return end<j>( typename level_discriminator<levelnum, j>::result_type() );
-      }
+      
   };
 
 
@@ -345,13 +287,14 @@ namespace viennagrid
 
       PointType const & getPoint(long index) const { return (vertices_[index])->getPoint(); }
 
-      //provides level iterators
-      //Note: There is no level_discriminator-thingy done here, because partly it is already protected by higher levels.
+      //container access:
       template <long j>
-      VertexIterator begin() { return VertexIterator(vertices_); }
-
-      template <long j>
-      VertexIterator end()   { return VertexIterator(vertices_ + LevelSpecs::num_elements); }
+      typename result_of::element_container< element<T_Configuration, ElementTag>, j, T_Configuration::cell_tag::topology_level>::type
+      container()
+      { 
+        return &(vertices_[0]);
+      }
+      
 
     protected:
       VertexType * vertices_[LevelSpecs::num_elements];
@@ -502,46 +445,21 @@ namespace viennagrid
         return true;
       } //operator== */
 
-      //bool isOnBoundary() const { return onBoundary; }
-
-      //toggles boundary flag. Boundary detection is done using facet iteration: Facets that belong to one cell only belong to the boundary. All lower level elements on that facet also lie on the boundary!
-      //void toggleOnBoundary() { onBoundary = !onBoundary; }
-
-      //Provide a cell-on-cell-iterator, which is just the "this"-pointer
+      ///////////////////// container ////////////////////
       template <long j>
-      typename result_of::iterator< element<T_Configuration, element_tag>, j>::type
-      begin(less_tag)
-      { return Base::template begin<j>(); }
-
-      template <long j>
-      typename result_of::iterator< element<T_Configuration, element_tag>, j>::type
-      begin(equal_tag)
-      { return this; }
-
-      template <long j>
-      typename result_of::iterator< element<T_Configuration, element_tag>, j>::type
-      begin()
+      typename result_of::element_container< element<T_Configuration, element_tag>, j, T_Configuration::cell_tag::topology_level>::type
+      container(less_tag)
       { 
-        return begin<j>(typename level_discriminator<element_tag::topology_level, j>::result_type());
+        return Base::template container<j>();
       }
 
-
       template <long j>
-      typename result_of::iterator< element<T_Configuration, element_tag>, j>::type
-      end(less_tag)
-      { return Base::template end<j>(); }
-
-      template <long j>
-      typename result_of::iterator< element<T_Configuration, element_tag>, j>::type
-      end(equal_tag)
-      { return this + 1; }
-
-      template <long j>
-      typename result_of::iterator< element<T_Configuration, element_tag>, j>::type
-      end()
+      typename result_of::element_container< element<T_Configuration, element_tag>, j, T_Configuration::cell_tag::topology_level>::type
+      container()
       { 
-        return end<j>( typename level_discriminator<element_tag::topology_level, j>::result_type() );
+        return container<j>(less_tag());
       }
+
 
     private:
       bool onBoundary;
@@ -623,29 +541,6 @@ namespace viennagrid
       //{
       //  return compare(v2, subcell_traits<typename T_Configuration::cell_tag,0>::id_handler() );
       //}
-
-      //Provide a cell-on-cell-iterator, which is just the "this"-pointer
-      template <long j>
-      typename result_of::iterator< element<T_Configuration, point_tag>, j>::type
-      begin()
-      { 
-        return this;
-      }
-
-
-      template <long j>
-      typename result_of::iterator< element<T_Configuration, point_tag>, j>::type
-      end(equal_tag)
-      { return this + 1; }
-
-      template <long j>
-      typename result_of::iterator< element<T_Configuration, point_tag>, j>::type
-      end()
-      { 
-        return this + 1;
-      }
-
-
     private:
       PointType point_;
   };

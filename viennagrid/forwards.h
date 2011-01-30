@@ -102,12 +102,38 @@ namespace viennagrid
     typedef less_tag    result_type;
   };
 
-  template <typename T, dim_type dim>
+  template <typename host_element, dim_type dim>
   class ncell_container;
 
-  template <typename T, dim_type dim>
+  template <typename host_element, dim_type dim>
   class const_ncell_container;
 
+  //proxy classes for iterator/container retrieval:
+  template <typename T>
+  class const_ncell_proxy
+  {
+    public:
+      const_ncell_proxy(T const & t_) : t(t_) {}
+      
+      T const & get() const { return t; }
+    
+    private:
+      T const & t;
+  };
+  
+  template <typename T>
+  class ncell_proxy
+  {
+    public:
+      ncell_proxy(T & t_) : t(t_) {}
+      
+      T & get() const { return t; }
+    
+    private:
+      T & t;
+  };
+  
+  
   namespace result_of
   {
     template <typename T, dim_type dim = 0>
@@ -118,11 +144,12 @@ namespace viennagrid
     {
       typedef typename T::config_type     type; 
     };
+    
 
-    template <typename T,
+    template <typename T,   //type of host (domain, segment, other element)
               dim_type dim,
-              dim_type cell_level = T::element_tag::topology_level>
-    struct subcell_container;
+              dim_type cell_level = config<T>::type::cell_tag::topology_level>
+    struct element_container;
     
     template <typename T, 
               dim_type dim>  //topological level

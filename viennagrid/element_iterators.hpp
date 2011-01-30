@@ -20,6 +20,7 @@
 #include <stack>
 
 #include "viennagrid/forwards.h"
+#include "viennagrid/domain_iterators.hpp"
 
 namespace viennagrid
 {
@@ -112,7 +113,23 @@ namespace viennagrid
     enum{ ReturnValue = ElementIteratorChecker<ElementTag, level>::ReturnValue };
   };
 
+
   
+   //interface function for container creation:
+  template <dim_type dim, typename Config, typename ElementTag>
+  const_ncell_proxy< element<Config, ElementTag> >
+  ncells(element<Config, ElementTag> const & d)
+  {
+    return const_ncell_proxy< element<Config, ElementTag> >(d);
+  }
+  
+  template <dim_type dim, typename Config, typename ElementTag>
+  ncell_proxy< element<Config, ElementTag> >
+  ncells(element<Config, ElementTag> & d)
+  {
+    return ncell_proxy< element<Config, ElementTag> >(d);
+  }
+
   template <typename config_type, typename element_tag, dim_type dim>
   class ncell_container < element<config_type, element_tag>, dim>
   {
@@ -123,7 +140,7 @@ namespace viennagrid
       typedef element<config_type, element_tag>                                host_type;
                      
       //typedef std::vector< element_type >     container_type;
-      typedef element_type **   container_type;
+      typedef typename result_of::element_container<host_type, dim, config_type::cell_tag::topology_level>::type      container_type;
     
     public: 
       //typedef typename container_type::iterator   iterator;
@@ -131,38 +148,38 @@ namespace viennagrid
                                    element_type //the subcell type
                                  >                                          iterator;
       
-      //
-      // TODO
-      //     
-                                 
-                                 
-      /*ncell_container(ncell_proxy<T> const & p) : cont_(p.get().template container<dim>()) {}
+      ncell_container(ncell_proxy< element<config_type, element_tag> > const & p) : cont_(p.get().template container<dim>()) {}
       
-      ncell_container & operator=(ncell_proxy<T> p)
+      ncell_container & operator=(ncell_proxy< element<config_type, element_tag> > p)
       { 
-        cont_ = p.get().vertex_container();
+        cont_ = p.get().template container<dim>();
         return *this;
       }
       
-      iterator begin() const { return cont_->begin(); }
-      iterator end()   const { return cont_->end(); }*/
+      iterator begin() const { return iterator(cont_); }
+      iterator end()   const { return iterator(cont_ + subcell_traits<element_tag, dim>::num_elements); }
       
     private:
       container_type cont_;
   };
   
   
+  
+  
+  
+  
   namespace result_of
   {
-    //Type factory for all domain iterators
-    /*template <typename ContainerElement,
-              unsigned long level,
-              bool special = (IteratorChecker<ContainerElement, level>::ReturnValue <= 0 )>
-    struct IteratorTypes
+    template <typename Config, typename ElementTag,
+              dim_type dim,
+              dim_type cell_level /* see forwards.h for default argument */>
+    struct element_container< element<Config, ElementTag>, dim, cell_level >
     {
-      typedef typename ContainerElement::ERROR_ITERATOR_LEVEL_NOT_VALID   result_type;
-    };*/
-
+      typedef typename result_of::ncell_type<Config, dim>::type            element_type;
+      
+      typedef element_type **      type;
+    };
+    
     //Iterator types for elements
     template <typename config_type, typename element_tag, dim_type dim>
     struct iterator< element<config_type, element_tag>,
@@ -176,14 +193,6 @@ namespace viennagrid
       typedef typename viennagrid::ncell_container < element<config_type, element_tag>, dim>::iterator    type;                           
     };
 
-    /*
-    //cell-on-cell-iterator is just a plain pointer:
-    template <typename T_Configuration, typename ElementTag, unsigned long level>
-    struct IteratorTypes< element<T_Configuration, ElementTag>, level, true>
-    {
-      typedef element<T_Configuration, ElementTag>*                         result_type;
-    };
-    */
 
   }
   

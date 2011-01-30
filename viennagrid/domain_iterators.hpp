@@ -55,13 +55,14 @@ namespace viennagrid
             dim_type cell_level = Config::cell_tag::topology_level>
   struct domain_iterators
   {
+    typedef domain<Config>                        domain_type;
     typedef element<Config,
                     typename Config::cell_tag>    cell_type;
       typedef element< Config,
                        typename subcell_traits<typename Config::cell_tag, dim>::element_tag
                      >                                                         element_type;
                     
-    typedef typename result_of::subcell_container<cell_type, dim>::type   container_type;
+    typedef typename result_of::element_container<domain_type, dim>::type   container_type;
     
     typedef domain_subcell_iterator<element_type,
                                     typename container_type::iterator>   iterator;
@@ -73,10 +74,11 @@ namespace viennagrid
   template <typename Config, dim_type cell_level>
   struct domain_iterators< Config, 0, cell_level>
   {
+    typedef domain<Config>                        domain_type;
     typedef element<Config,
                     typename Config::cell_tag>    cell_type;
                     
-    typedef typename result_of::subcell_container<cell_type, 0>::type   container_type;
+    typedef typename result_of::element_container<domain_type, 0>::type   container_type;
     
     typedef typename container_type::iterator          iterator;
     typedef typename container_type::const_iterator    const_iterator;
@@ -86,10 +88,11 @@ namespace viennagrid
   template <typename Config, dim_type cell_level>
   struct domain_iterators< Config, cell_level, cell_level>
   {
+    typedef domain<Config>                        domain_type;
     typedef element<Config,
                     typename Config::cell_tag>    cell_type;
                     
-    typedef typename result_of::subcell_container<cell_type,
+    typedef typename result_of::element_container<domain_type,
                                                   Config::cell_tag::topology_level>::type   container_type;
     
     typedef typename container_type::iterator          iterator;
@@ -101,30 +104,6 @@ namespace viennagrid
   //////////////////// brand new containers: /////////////////////
   
   
-  //proxy class:
-  template <typename T>
-  class const_ncell_proxy
-  {
-    public:
-      const_ncell_proxy(T const & t_) : t(t_) {}
-      
-      T const & get() const { return t; }
-    
-    private:
-      T const & t;
-  };
-  
-  template <typename T>
-  class ncell_proxy
-  {
-    public:
-      ncell_proxy(T & t_) : t(t_) {}
-      
-      T & get() const { return t; }
-    
-    private:
-      T & t;
-  };
   
   
   //interface function for container creation:
@@ -147,6 +126,7 @@ namespace viennagrid
   template <typename config_type, dim_type dim>
   class ncell_container < domain<config_type>, dim >
   {
+      typedef domain<config_type>                        domain_type;
       typedef element< config_type,
                        typename subcell_traits<typename config_type::cell_tag, dim>::element_tag
                      >                                                         element_type;
@@ -156,7 +136,7 @@ namespace viennagrid
                      >                                                         cell_type;
                      
       //typedef std::vector< element_type >     container_type;
-      typedef typename result_of::subcell_container<cell_type, dim>::type   container_type;
+      typedef typename result_of::element_container<domain_type, dim>::type   container_type;
     
     public: 
       //typedef typename container_type::iterator   iterator;
@@ -166,7 +146,7 @@ namespace viennagrid
       
       ncell_container & operator=(ncell_proxy< domain<config_type> > p)
       { 
-        cont_ = p.get().vertex_container();
+        cont_ = p.get().template container<dim>();
         return *this;
       }
       
@@ -184,6 +164,7 @@ namespace viennagrid
   template <typename config_type, dim_type dim>
   class const_ncell_container < domain<config_type>, dim >
   {
+      typedef domain<config_type>                        domain_type;
       typedef element< config_type,
                        typename subcell_traits<typename config_type::cell_tag, dim>::element_tag
                      >                                                         element_type;
@@ -193,7 +174,7 @@ namespace viennagrid
                      >                                                         cell_type;
                      
       //typedef std::vector< element_type >     container_type;
-      typedef typename result_of::subcell_container<cell_type, dim>::type      container_type;
+      typedef typename result_of::element_container<domain_type, dim>::type      container_type;
     
     public: 
       //typedef typename container_type::const_iterator   iterator;
@@ -203,7 +184,7 @@ namespace viennagrid
       
       const_ncell_container & operator=(const_ncell_proxy< domain<config_type> > const & p)
       { 
-        cont_ = p.get().vertex_container();
+        cont_ = p.get().template container<dim>();
         return *this;
       }
       

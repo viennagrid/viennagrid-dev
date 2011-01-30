@@ -95,6 +95,7 @@ void testNewDomain(std::string & infile, std::string & outfile)
   //typedef viennagrid::TestDomainConfig::DimensionTag              DimensionTag;
   typedef viennagrid::result_of::point_type<TestDomainConfig>::type          PointType;
   typedef viennagrid::result_of::ncell_type<TestDomainConfig, 0>::type       VertexType;
+  typedef viennagrid::result_of::ncell_type<TestDomainConfig, 1>::type       EdgeType;
   typedef viennagrid::result_of::ncell_type<TestDomainConfig,
                                             CellTag::topology_level>::type   CellType;
 
@@ -147,10 +148,25 @@ void testNewDomain(std::string & infile, std::string & outfile)
   SegmentType seg;
   seg.add(simplex);
   
-  std::cout << seg.size<0>() << std::endl;
-  std::cout << seg.size<1>() << std::endl;
-  std::cout << seg.size<2>() << std::endl;
-  std::cout << seg.size<3>() << std::endl;
+  std::cout << "Vertices in Segment: " << seg.size<0>() << std::endl;
+  std::cout << "Edges in Segment: "    << seg.size<1>() << std::endl;
+  std::cout << "Facets in Segment: "   << seg.size<CellTag::topology_level-1>() << std::endl;
+  std::cout << "Cells in Segment: "    << seg.size<CellTag::topology_level>() << std::endl;
+  
+/*  
+  typedef viennagrid::result_of::ncell_container<Domain, 1>::type  EdgeContainer;
+  EdgeContainer edges = viennagrid::ncells<1>(domain);
+  
+  edges.begin()->print();
+  
+  typedef viennagrid::result_of::ncell_container<EdgeType, 0>::type  VertexOnEdgeContainer;
+  VertexOnEdgeContainer vertices_on_edge = viennagrid::ncells<0>(*(edges.begin()));
+  
+  for (viennagrid::result_of::iterator<VertexOnEdgeContainer>::type voe_it = vertices_on_edge.begin();
+       voe_it != vertices_on_edge.end();
+       ++voe_it)
+       voe_it->print();
+  */
   
   std::cout << "Printing vertices in domain:" << std::endl;
   print_elements<0>(domain);
@@ -163,61 +179,6 @@ void testNewDomain(std::string & infile, std::string & outfile)
 
   std::cout << "Printing cells in domain:" << std::endl;
   print_elements<Domain::config_type::cell_tag::topology_level>(domain);
-  
-  
-/*  
-  seg.reserveVertices(4);
-  seg.add<0>(0, v0);
-  seg.add<0>(1, v1);
-  seg.add<0>(2, v2);
-  seg.add<0>(3, v3);
-
-  seg.reserveCells(2);
-
-  CellType simplex;
-  
-  VertexType * vertices[4];
-
-  vertices[0] = seg.getVertexAddress(0);
-  vertices[1] = seg.getVertexAddress(1);
-  vertices[2] = seg.getVertexAddress(2);
-  vertices[3] = seg.getVertexAddress(3);
-  simplex.setVertices(vertices);
-  seg.add<TestDomainConfig::cell_tag::topology_level>(0, simplex);
-
-  vertices[0] = seg.getVertexAddress(1);
-  vertices[1] = seg.getVertexAddress(3);
-  vertices[2] = seg.getVertexAddress(2);
-  vertices[3] = seg.getVertexAddress(0);
-  simplex.setVertices(vertices);
-  seg.add<TestDomainConfig::cell_tag::topology_level>(1, simplex);
-  
-  
-  std::cout << "Vertices: " << std::endl;
-  for (VertexIterator vit = seg.begin<0>();
-        vit != seg.end<0>();
-        ++vit)
-      vit->print();
-
-  std::cout << "Edges: " << std::endl;
-  for (EdgeIterator eit = seg.begin<1>();
-        eit != seg.end<1>();
-        ++eit)
-      eit->print();
-
-  std::cout << "Facets: " << std::endl;
-  for (FacetIterator fit = seg.begin<TestDomainConfig::cell_tag::topology_level-1>();
-        fit != seg.end<TestDomainConfig::cell_tag::topology_level-1>();
-        ++fit)
-      fit->print();
-
-  std::cout << "Cells: " << std::endl;
-  for (CellIterator cit = seg.begin<TestDomainConfig::cell_tag::topology_level>();
-        cit != seg.end<TestDomainConfig::cell_tag::topology_level>();
-        ++cit)
-      cit->print();
-  
-*/
   
   std::cout << "*******************************" << std::endl;
   std::cout << "* Test finished successfully! *" << std::endl;

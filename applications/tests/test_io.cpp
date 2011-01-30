@@ -17,8 +17,8 @@
 // Define the dimension
 //***********************************************
 //#define THREEDIM
-//#define TWODIM
-#define ONEDIM
+#define TWODIM
+//#define ONEDIM
 
 //***********************************************
 // Define the input-file format
@@ -116,7 +116,7 @@ void testNewDomain(std::string & infile, std::string & outfile)
   my_sgf_writer(domain, outfile + ".sgf");
    
   viennagrid::io::Vtk_writer<Domain> my_vtk_writer;
-  my_vtk_writer.writeDomain(domain, outfile + ".vtk");
+  my_vtk_writer.writeDomain(domain, outfile + ".vtu");
    
   //viennagrid::io::gts_writer my_gts_writer;
   //my_gts_writer(domain, outfile + ".gts");
@@ -151,7 +151,15 @@ int main()
   
   std::string path = "../applications/data/";
   
+  #ifdef THREEDIM
+  std::string infile = path + "cube384.sgf";
+  #endif
+  #ifdef TWODIM
+  std::string infile = path + "square128.sgf";
+  #endif
+  #ifdef ONEDIM
   std::string infile = path + "line8.sgf";
+  #endif
   std::string outfile = path + "out"; // without ending
   
   testNewDomain(infile, outfile);
