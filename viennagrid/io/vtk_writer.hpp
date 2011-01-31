@@ -20,6 +20,7 @@
 #include "viennagrid/forwards.h"
 #include "viennagrid/io/helper.hpp"
 #include "viennagrid/io/vtk_tags.hpp"
+#include "viennadata/interface.hpp"
 
 namespace viennagrid
 {
@@ -142,20 +143,19 @@ namespace viennagrid
           writer << "   </Cells>" << std::endl;
       }
 
-      // TODO [MB] deprecated retrieveQuantity<double>(keyname);
       template <typename Segment, typename KeyType >
-      void writePointData(Segment & segment, KeyType & keyname, std::ofstream & writer)
+      void writePointData(Segment & segment, KeyType const & keyname, std::ofstream & writer)
       {
         writer << "   <PointData Scalars=\"scalars\">" << std::endl;
         writer << "    <DataArray type=\"Float32\" Name=\"result\" format=\"ascii\">" << std::endl;
-        for (VertexIterator vit = segment.template getLevelIteratorBegin<0>();
-            vit != segment.template getLevelIteratorEnd<0>();
+        
+        VertexContainer vertices = viennagrid::ncells<0>(segment);
+        for (VertexIterator vit = vertices.begin();
+            vit != vertices.end();
             ++vit)
         {
-          double val = 0.0;
-          // TODO [MB] DEPRECATED ... ref is ViennaData
-          //double val = vit->template retrieveQuantity<double>(keyname);
-          writer << val << " ";
+          //TODO: User provided key instead of hard-coded string
+          writer << viennadata::access<std::string, double>("vtk_data")(*vit) << " ";
         }
         writer << std::endl;
         writer << "    </DataArray>" << std::endl;
@@ -199,7 +199,8 @@ namespace viennagrid
 
           writePoints(domain, writer);
 
-          //writePointData(curSeg, writer);
+          //TODO User-provided key instead of hard-coded string
+          writePointData(domain, std::string("vtk_data"), writer);
 
           writeCells(domain, writer);
 

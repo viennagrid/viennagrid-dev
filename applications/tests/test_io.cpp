@@ -16,8 +16,8 @@
 //***********************************************
 // Define the dimension
 //***********************************************
-//#define THREEDIM
-#define TWODIM
+#define THREEDIM
+//#define TWODIM
 //#define ONEDIM
 
 //***********************************************
@@ -110,6 +110,17 @@ void testNewDomain(std::string & infile, std::string & outfile)
   }
 
   viennagrid::detectBoundary(domain);
+  
+  
+  //write some dummy data:
+  VertexContainer vertices = viennagrid::ncells<0>(domain);
+  for (VertexIterator vit = vertices.begin();
+      vit != vertices.end();
+      ++vit)
+  {
+    viennadata::access<std::string, double>("vtk_data")(*vit) = vit->getPoint().get_x();
+  }
+  
   
   //test writers:
   viennagrid::io::sgf_writer my_sgf_writer;

@@ -10,6 +10,8 @@ SET(GTSIOLIBPATH ${PROJECT_SOURCE_DIR}+"/gtsio2/dist/local/native")
 
 #specify include and source directory
 INCLUDE_DIRECTORIES(".")
+INCLUDE_DIRECTORIES("../ViennaData")      #ViennaData
+
 
 #add definitions, compiler switches, etc.
 IF(DEFINED CMAKE_BUILD_TYPE)
