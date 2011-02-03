@@ -153,21 +153,6 @@ void testNewDomain(std::string & infile, std::string & outfile)
   std::cout << "Facets in Segment: "   << seg.size<CellTag::topology_level-1>() << std::endl;
   std::cout << "Cells in Segment: "    << seg.size<CellTag::topology_level>() << std::endl;
   
-/*  
-  typedef viennagrid::result_of::ncell_container<Domain, 1>::type  EdgeContainer;
-  EdgeContainer edges = viennagrid::ncells<1>(domain);
-  
-  edges.begin()->print();
-  
-  typedef viennagrid::result_of::ncell_container<EdgeType, 0>::type  VertexOnEdgeContainer;
-  VertexOnEdgeContainer vertices_on_edge = viennagrid::ncells<0>(*(edges.begin()));
-  
-  for (viennagrid::result_of::iterator<VertexOnEdgeContainer>::type voe_it = vertices_on_edge.begin();
-       voe_it != vertices_on_edge.end();
-       ++voe_it)
-       voe_it->print();
-  */
-  
   std::cout << "Printing vertices in domain:" << std::endl;
   print_elements<0>(domain);
 
@@ -179,6 +164,21 @@ void testNewDomain(std::string & infile, std::string & outfile)
 
   std::cout << "Printing cells in domain:" << std::endl;
   print_elements<Domain::config_type::cell_tag::topology_level>(domain);
+  
+  //Test for const-iterators:
+  std::cout << "Test for const iterator: " << std::endl;
+  typedef viennagrid::result_of::const_ncell_container<Domain, 1>::type  EdgeContainer;
+  EdgeContainer edges = viennagrid::ncells<1>(domain);
+  
+  edges.begin()->print();
+  
+  typedef viennagrid::result_of::const_ncell_container<EdgeType, 0>::type  VertexOnEdgeContainer;
+  VertexOnEdgeContainer vertices_on_edge = viennagrid::ncells<0>(*(edges.begin()));
+  
+  for (viennagrid::result_of::iterator<VertexOnEdgeContainer>::type voe_it = vertices_on_edge.begin();
+       voe_it != vertices_on_edge.end();
+       ++voe_it)
+       voe_it->print();
   
   std::cout << "*******************************" << std::endl;
   std::cout << "* Test finished successfully! *" << std::endl;

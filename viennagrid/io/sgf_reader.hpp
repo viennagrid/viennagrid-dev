@@ -56,7 +56,7 @@ namespace viennagrid
 
         //Segment & segment = *(domain.begin());
 
-        std::cout << "Reading file " << filename << std::endl;
+        std::cout << "* sgf_reader::operator(): Reading file " << filename << std::endl;
 
         if (!reader){
           std::cerr << "Cannot open file " << filename << std::endl;
@@ -80,8 +80,8 @@ namespace viennagrid
               std::cout << "Dimension incorrect! Got " << file_dim << ", but expected " << DimensionTag::value << ". Exiting..." << std::endl;  
               exit(0);
             }
-            else
-              std::cout << "Dimension ok" << std::endl;
+            //else
+            //  std::cout << "Dimension ok" << std::endl;
           } else
             throw;
       
@@ -94,7 +94,7 @@ namespace viennagrid
             throw;
           }
 
-          std::cout << "Reading " << node_num << " vertices... " << std::endl;  
+          //std::cout << "Reading " << node_num << " vertices... " << std::endl;  
           //reserve the memory:
           domain.reserve_vertices(node_num);
           VertexType vertex;
@@ -116,7 +116,7 @@ namespace viennagrid
             domain.add(vertex);
           }
       
-          std::cout << "DONE" << std::endl;
+          //std::cout << "DONE" << std::endl;
       
           //Cells:
           reader >> token;
@@ -167,14 +167,14 @@ namespace viennagrid
             domain.add(cell);
       
             //progress info:
-            if (i % 50000 == 0)
-              std::cout << i << std::endl;
+            if (i % 50000 == 0 && i > 0)
+              std::cout << "* sgf_reader::operator(): " << i << " out of " << cell_num << " cells read." << std::endl;
       
           }
       
           //segment.template begin<0>()->setCurrentSegment(segment);
 
-          std::cout << "Reading quantities..." << std::endl;
+          //std::cout << "Reading quantities..." << std::endl;
       
           //Quantities:
           while (reader >> token){
@@ -247,7 +247,7 @@ namespace viennagrid
           std::cerr << "Problems while reading file " << filename << std::endl;
         }
       
-        std::cout << "File-Reader finished!" << std::endl;  
+        //std::cout << "File-Reader finished!" << std::endl;  
         
         return EXIT_SUCCESS;
       } //operator()

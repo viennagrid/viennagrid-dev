@@ -106,14 +106,8 @@ namespace viennagrid
   
   
   
-  //interface function for container creation:
-  template <dim_type dim, typename DomainConfig>
-  const_ncell_proxy< domain<DomainConfig> >
-  ncells(domain<DomainConfig> const & d)
-  {
-    return const_ncell_proxy< domain<DomainConfig> >(d);
-  }
-  
+  // interface function for container creation,
+  // non-const:
   template <dim_type dim, typename DomainConfig>
   ncell_proxy< domain<DomainConfig> >
   ncells(domain<DomainConfig> & d)
@@ -124,7 +118,7 @@ namespace viennagrid
 
   //container for iteration over a STL vector
   template <typename config_type, dim_type dim>
-  class ncell_container < domain<config_type>, dim >
+  class ncell_container < domain<config_type>, dim, false >
   {
       typedef domain<config_type>                        domain_type;
       typedef element< config_type,
@@ -158,11 +152,16 @@ namespace viennagrid
   };
   
   
-  
-  
+  //const container:  
+  template <dim_type dim, typename DomainConfig>
+  const_ncell_proxy< domain<DomainConfig> >
+  ncells(domain<DomainConfig> const & d)
+  {
+    return const_ncell_proxy< domain<DomainConfig> >(d);
+  }
   
   template <typename config_type, dim_type dim>
-  class const_ncell_container < domain<config_type>, dim >
+  class const_ncell_container < domain<config_type>, dim, false >
   {
       typedef domain<config_type>                        domain_type;
       typedef element< config_type,
@@ -181,7 +180,9 @@ namespace viennagrid
       typedef typename domain_iterators<config_type, dim>::const_iterator   iterator;
       
       const_ncell_container(const_ncell_proxy< domain<config_type> > const & p) : cont_(p.get().template container<dim>()) {}
-      
+
+      const_ncell_container(ncell_proxy< domain<config_type> > const & p) : cont_(p.get().template container<dim>()) {}
+
       const_ncell_container & operator=(const_ncell_proxy< domain<config_type> > const & p)
       { 
         cont_ = p.get().template container<dim>();
@@ -196,29 +197,29 @@ namespace viennagrid
   };
   
   
-  template <typename DomainType, 
-            dim_type dim>  //topological level
-  struct const_container_types
-  {
-    typedef typename const_ncell_container<DomainType, dim>::iterator   iterator;
-    
-    typedef const_ncell_container<DomainType, dim>       result_type;
-  };
+//   template <typename DomainType, 
+//             dim_type dim>  //topological level
+//   struct const_container_types
+//   {
+//     typedef typename const_ncell_container<DomainType, dim>::iterator   iterator;
+//     
+//     typedef const_ncell_container<DomainType, dim>       result_type;
+//   };
 
   //metafunction for return type:
   namespace result_of
   {
     
-    template <typename T, dim_type dim>
-    struct iterator<viennagrid::ncell_container<T, dim>, 0>
+    template <typename T, dim_type dim, bool is_coboundary>
+    struct iterator<viennagrid::ncell_container<T, dim, is_coboundary>, 0>
     {
-      typedef typename viennagrid::ncell_container<T, dim>::iterator     type;
+      typedef typename viennagrid::ncell_container<T, dim, is_coboundary>::iterator     type;
     };
     
-    template <typename T, dim_type dim>
-    struct iterator<viennagrid::const_ncell_container<T, dim>, 0>
+    template <typename T, dim_type dim, bool is_coboundary>
+    struct iterator<viennagrid::const_ncell_container<T, dim, is_coboundary>, 0>
     {
-      typedef typename viennagrid::const_ncell_container<T, dim>::iterator     type;
+      typedef typename viennagrid::const_ncell_container<T, dim, is_coboundary>::iterator     type;
     };
     
     template <typename T, 

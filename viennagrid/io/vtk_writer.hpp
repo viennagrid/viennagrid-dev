@@ -49,20 +49,20 @@ namespace viennagrid
 
       //typedef typename DomainTypes<DomainConfiguration>::segment_type  Segment;
       
-      typedef typename viennagrid::result_of::ncell_container<DomainType, 0>::type   VertexContainer;
+      typedef typename viennagrid::result_of::const_ncell_container<DomainType, 0>::type   VertexContainer;
       typedef typename viennagrid::result_of::iterator<VertexContainer>::type        VertexIterator;
           
-      typedef typename viennagrid::result_of::ncell_container<DomainType, 1>::type   EdgeContainer;
+      typedef typename viennagrid::result_of::const_ncell_container<DomainType, 1>::type   EdgeContainer;
       typedef typename viennagrid::result_of::iterator<EdgeContainer>::type          EdgeIterator;
 
-      typedef typename viennagrid::result_of::ncell_container<DomainType, CellTag::topology_level-1>::type   FacetContainer;
+      typedef typename viennagrid::result_of::const_ncell_container<DomainType, CellTag::topology_level-1>::type   FacetContainer;
       typedef typename viennagrid::result_of::iterator<FacetContainer>::type                                 FacetIterator;
 
-      typedef typename viennagrid::result_of::ncell_container<DomainType, CellTag::topology_level>::type     CellContainer;
+      typedef typename viennagrid::result_of::const_ncell_container<DomainType, CellTag::topology_level>::type     CellContainer;
       typedef typename viennagrid::result_of::iterator<CellContainer>::type                                  CellIterator;
 
 
-      typedef typename viennagrid::result_of::ncell_container<CellType, 0>::type      VertexOnCellContainer;
+      typedef typename viennagrid::result_of::const_ncell_container<CellType, 0>::type      VertexOnCellContainer;
       typedef typename viennagrid::result_of::iterator<VertexOnCellContainer>::type   VertexOnCellIterator;
       //typedef typename viennagrid::result_of::iterator<CellType, 0>::type      VertexOnCellIterator;
 
@@ -74,7 +74,7 @@ namespace viennagrid
       }
 
       template <typename Segment>
-      void writePoints(Segment & segment, std::ofstream & writer)
+      void writePoints(Segment const & segment, std::ofstream & writer)
       {
         writer << "   <Points>" << std::endl;
         writer << "    <DataArray type=\"Float32\" NumberOfComponents=\"3\" format=\"ascii\">" << std::endl;
@@ -100,7 +100,7 @@ namespace viennagrid
       } //writePoints()
 
       template <typename Segment>
-      void writeCells(Segment & segment, std::ofstream & writer)
+      void writeCells(Segment const & segment, std::ofstream & writer)
       {
         writer << "   <Cells> " << std::endl;
         writer << "    <DataArray type=\"Int32\" Name=\"connectivity\" format=\"ascii\">" << std::endl;
@@ -144,7 +144,7 @@ namespace viennagrid
       }
 
       template <typename Segment, typename KeyType >
-      void writePointData(Segment & segment, KeyType const & keyname, std::ofstream & writer)
+      void writePointData(Segment const & segment, KeyType const & keyname, std::ofstream & writer)
       {
         writer << "   <PointData Scalars=\"scalars\">" << std::endl;
         writer << "    <DataArray type=\"Float32\" Name=\"result\" format=\"ascii\">" << std::endl;
@@ -173,12 +173,12 @@ namespace viennagrid
       Vtk_writer() { };
       ~Vtk_writer() { };
 
-      int writeDomain(DomainType & domain, std::string const & filename)
+      int writeDomain(DomainType const & domain, std::string const & filename)
       {
         return this->operator()(domain, filename);
       }
 
-      int operator()(DomainType & domain, std::string const & filename)
+      int operator()(DomainType const & domain, std::string const & filename)
       {
         std::ofstream writer(filename.c_str());
 
@@ -187,7 +187,7 @@ namespace viennagrid
         //TODO Add iteration over segments again
         //for (SegmentIterator segit = domain.begin(); segit != domain.end(); ++segit)
         //{
-          std::cout << "Writing segment" << std::endl;
+          //std::cout << "Writing segment" << std::endl;
           //Segment & curSeg = *segit;
 
           writer << "  <Piece NumberOfPoints=\""
@@ -221,81 +221,6 @@ namespace viennagrid
   }
 
 
-  #if USE_WRITEQUANVTK
-    //obsolete for the moment
-    template <typename FEMConfig, typename DomainType, typename Vector>
-    void writeQuantityToVTK(DomainType & domain, long level, Vector const & vec, std::string outfile, long component = 0)
-    {
-      typedef typename DomainType::Configuration                     DomainConfiguration;
-    
-      typedef typename DomainConfiguration::CoordType                 CoordType;
-      typedef typename DomainConfiguration::DimensionTag              DimensionTag;
-      typedef typename DomainConfiguration::CellTag                   CellTag;
-      typedef typename DomainConfiguration::BoundaryReadTag           BoundaryReadTag;
-    
-      typedef typename DomainTypes<DomainConfiguration>::PointType    Point;
-      typedef typename DomainTypes<DomainConfiguration>::VertexType   Vertex;
-      typedef typename DomainTypes<DomainConfiguration>::CellType     Cell;
-
-      typedef typename DomainTypes<DomainConfiguration>::SegmentType  Segment;
-    
-      typedef typename DomainTypes<DomainConfiguration>::VertexIterator      VertexIterator;
-      typedef typename DomainTypes<DomainConfiguration>::CellIterator        CellIterator;
-      typedef typename DomainTypes<DomainConfiguration>::SegmentIterator     SegmentIterator;
-
-      typedef typename DomainTypes<DomainConfiguration>::VertexOnCellIterator      VertexOnCellIterator;
-
-      typedef typename FEMConfig::MappingKey                             MappingKey;
-      typedef typename FEMConfig::BoundaryKey                             BoundaryKey;
-      typedef typename FEMConfig::BoundaryData                            BoundaryData;
-      typedef typename FEMConfig::BoundaryData2                           BoundaryData2;
-      typedef typename FEMConfig::BoundaryData3                           BoundaryData3;
-    
-      long dim = FEMConfig::ResultDimension::dim;
-      std::string keyString = "result";
-
-      for (SegmentIterator segit = domain.getSegmentBegin();
-            segit != domain.getSegmentEnd();
-            ++segit)
-      {
-        //testing only:
-        Segment & curSeg = segit->getRefinedSegment(level);
-        //Segment & curSeg = *segit;
-
-        curSeg.template getLevelIteratorBegin<0>()->setCurrentSegment(curSeg);
-        curSeg.template getLevelIteratorBegin<0>()
-                ->template reserveQuantity<double>(keyString);
-      
-        for (VertexIterator vit = curSeg.template getLevelIteratorBegin<0>();
-              vit != curSeg.template getLevelIteratorEnd<0>();
-              ++vit)
-        {
-          if (vit->template retrieveQuantity<bool>( BoundaryKey()))
-          {
-            double bndval = 0;
-            //terribe runtime-selection: (however, boundary vertices usually sparse)
-            if (component == 0)
-              bndval = (*vit).template retrieveQuantity<double>( BoundaryData() );
-            else if (component == 1)
-              bndval = (*vit).template retrieveQuantity<double>( BoundaryData2() );
-            else if (component == 2)
-              bndval = (*vit).template retrieveQuantity<double>( BoundaryData3() );
-      
-            (*vit).template storeQuantity<double>( keyString, bndval );
-          }
-          else
-          {
-            long index = (*vit).template retrieveQuantity<long>( MappingKey() );
-            (*vit).template storeQuantity<double>( keyString, vec(dim * index + component) );
-          }
-        }
-      }  
-
-      writeDomainVTK(domain, level, outfile, keyString);
-      std::cout << "DONE" << std::endl;
-    
-    }
-  #endif
   } //namespace io
 } //namespace viennagrid
 

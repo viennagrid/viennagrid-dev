@@ -102,11 +102,30 @@ namespace viennagrid
     typedef less_tag    result_type;
   };
 
-  template <typename host_element, dim_type dim>
+  template <typename host_element,
+            dim_type dim,
+            bool is_coboundary = false>
   class ncell_container;
 
-  template <typename host_element, dim_type dim>
+  template <typename host_element,
+            dim_type dim,
+            bool is_coboundary = false>
   class const_ncell_container;
+  
+  template <typename T, long dim> //topological dimension of the elements over which to iterate
+  class coboundary_key
+  {
+    public:
+      coboundary_key(T & t_) : t(&t_) {}
+      
+      //for compatibility with std::map
+      bool operator<(coboundary_key const & other) const
+      {
+        return t < other.t;
+      }
+    private:
+      T * t;
+  };
 
   //proxy classes for iterator/container retrieval:
   template <typename T>
@@ -170,8 +189,5 @@ namespace viennagrid
     
   }
 
-
-
-
-} 
+}
 #endif
