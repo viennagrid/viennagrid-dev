@@ -33,4 +33,5 @@ ADD_EXECUTABLE(test_io          examples/tests/test_io.cpp)
 ADD_EXECUTABLE(test_simplex     examples/tests/test_simplex.cpp)
 ADD_EXECUTABLE(test_hypercube   examples/tests/test_hypercube.cpp)
 ADD_EXECUTABLE(test_coboundary  examples/tests/test_coboundary.cpp)
+ADD_EXECUTABLE(test_domain      examples/tests/test_domain.cpp)
 

@@ -27,7 +27,7 @@
 #include "viennagrid/element.hpp"
 #include "viennagrid/element_key.hpp"
 #include "viennagrid/segment.hpp"
-
+#include "viennagrid/domain_configs.hpp"
 
 namespace viennagrid
 {
