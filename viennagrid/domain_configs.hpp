@@ -14,34 +14,46 @@
 #ifndef VIENNAGRID_DOMAIN_CONFIGS_HPP
 #define VIENNAGRID_DOMAIN_CONFIGS_HPP
 
+#include "viennagrid/celltags.hpp"
+
 namespace viennagrid
 {
-namespace config
-{
-struct u22
-{
-  typedef double                                numeric_type;
-  typedef viennagrid::two_dimensions_tag        dimension_tag;
-  typedef viennagrid::triangle_tag              cell_tag;
-  typedef viennagrid::no_multigrid_tag          multigrid_tag;
-};
+  namespace config
+  {
+    //2d geometry:
+    struct triangular_2d
+    {
+      typedef double                                numeric_type;
+      typedef viennagrid::two_dimensions_tag        dimension_tag;
+      typedef viennagrid::triangle_tag              cell_tag;
+      typedef viennagrid::no_multigrid_tag          multigrid_tag;
+    };
 
-struct u32
-{
-  typedef double                                numeric_type;
-  typedef viennagrid::three_dimensions_tag      dimension_tag;
-  typedef viennagrid::triangle_tag              cell_tag;
-  typedef viennagrid::no_multigrid_tag          multigrid_tag;
-};
+    struct quadrilateral_2d
+    {
+      typedef double                                numeric_type;
+      typedef viennagrid::two_dimensions_tag        dimension_tag;
+      typedef viennagrid::quadrilateral_tag         cell_tag;
+      typedef viennagrid::no_multigrid_tag          multigrid_tag;
+    };
+    
+    //3d geometry:
+    struct triangular_3d
+    {
+      typedef double                                numeric_type;
+      typedef viennagrid::three_dimensions_tag      dimension_tag;
+      typedef viennagrid::triangle_tag              cell_tag;
+      typedef viennagrid::no_multigrid_tag          multigrid_tag;
+    };
 
-struct u33
-{
-  typedef double                                numeric_type;
-  typedef viennagrid::three_dimensions_tag      dimension_tag;
-  typedef viennagrid::tetrahedron_tag           cell_tag;
-  typedef viennagrid::no_multigrid_tag          multigrid_tag;
-};
-}
+    struct tetrahedral_3d
+    {
+      typedef double                                numeric_type;
+      typedef viennagrid::three_dimensions_tag      dimension_tag;
+      typedef viennagrid::tetrahedron_tag           cell_tag;
+      typedef viennagrid::no_multigrid_tag          multigrid_tag;
+    };
+  }
 }
 
 

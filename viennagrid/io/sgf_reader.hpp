@@ -127,7 +127,7 @@ namespace viennagrid
           }
       
           reader >> token;
-          if (token != "Simplex")
+          if (token != "Simplex" && token != "Ortho")
           {
             std::cerr << "ERROR: Cell-Type " << token << " not supported! You might fix this issue by recompilation." << std::endl;
             throw;
@@ -172,8 +172,6 @@ namespace viennagrid
       
           }
       
-          //segment.template begin<0>()->setCurrentSegment(segment);
-
           //std::cout << "Reading quantities..." << std::endl;
       
           //Quantities:
