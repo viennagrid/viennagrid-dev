@@ -81,8 +81,8 @@ void testNewDomain(std::string & infile, std::string & outfile)
   typedef viennagrid::result_of::ncell_container<Domain, CellTag::topology_level>::type     CellContainer;
   typedef viennagrid::result_of::iterator<CellContainer>::type                              CellIterator;
   
-  typedef typename viennagrid::result_of::ncell_container<EdgeType, 0>::type       VertexOnEdgeContainer;
-  typedef typename viennagrid::result_of::iterator<VertexOnEdgeContainer>::type    VertexOnEdgeIterator;
+  typedef viennagrid::result_of::ncell_container<EdgeType, 0>::type       VertexOnEdgeContainer;
+  typedef viennagrid::result_of::iterator<VertexOnEdgeContainer>::type    VertexOnEdgeIterator;
   
   Domain domain;
 
