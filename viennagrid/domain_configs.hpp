@@ -21,6 +21,14 @@ namespace viennagrid
   namespace config
   {
     //2d geometry:
+    struct line_2d
+    {
+      typedef double                                numeric_type;
+      typedef viennagrid::two_dimensions_tag        dimension_tag;
+      typedef viennagrid::line_tag                  cell_tag;
+      typedef viennagrid::no_multigrid_tag          multigrid_tag;
+    };
+
     struct triangular_2d
     {
       typedef double                                numeric_type;
