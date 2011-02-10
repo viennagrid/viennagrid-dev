@@ -16,8 +16,8 @@
 //***********************************************
 // Define the dimension
 //***********************************************
-#define THREEDIM
-//#define TWODIM
+//#define THREEDIM
+#define TWODIM
 
 //***********************************************
 // Define the input-file format
@@ -39,7 +39,7 @@ struct TestDomainConfig
   #endif
   #ifdef TWODIM
   typedef viennagrid::two_dimensions_tag          dimension_tag;
-  typedef viennagrid::triangle_tag                cell_tag;
+  typedef viennagrid::line_tag                cell_tag;
   #endif
   #ifdef ONEDIM
   typedef viennagrid::one_dimension_tag           dimension_tag;

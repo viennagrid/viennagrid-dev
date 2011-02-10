@@ -22,10 +22,13 @@ int main()
   std::cout << "* Test started! *" << std::endl;
   std::cout << "*****************" << std::endl;
   
+  typedef viennagrid::domain<viennagrid::config::line_2d>             domain_21u_type;
   typedef viennagrid::domain<viennagrid::config::triangular_2d>       domain_22u_type;
   typedef viennagrid::domain<viennagrid::config::triangular_3d>       domain_32u_type;
   typedef viennagrid::domain<viennagrid::config::tetrahedral_3d>       domain_33u_type;
 
+  std::cout << "* instantiating 21u domain.. " << std::endl;
+  domain_21u_type domain_21u;
   std::cout << "* instantiating 22u domain.. " << std::endl;
   domain_22u_type domain_22u;
   std::cout << "* instantiating 32u domain.. " << std::endl;

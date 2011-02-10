@@ -6,8 +6,6 @@ PROJECT(ViennaGrid)
 #if you don't want the full compiler output, remove the following line
 SET(CMAKE_VERBOSE_MAKEFILE ON)
 
-SET(GTSIOLIBPATH ${PROJECT_SOURCE_DIR}+"/gtsio2/dist/local/native")
-
 #specify include and source directory
 INCLUDE_DIRECTORIES(".")
 INCLUDE_DIRECTORIES("../ViennaData")      #ViennaData
@@ -24,9 +22,6 @@ IF(CMAKE_COMPILER_IS_GNUCXX)
    #ADD_DEFINITIONS(-Wall -O0 -g)
    ADD_DEFINITIONS(-Wall -pedantic -O3)
 ENDIF(CMAKE_COMPILER_IS_GNUCXX)
-
-#SET(CMAKE_CXX_FLAGS " -L. -lgtsio2")
-LINK_DIRECTORIES(${GTSIOLIBPATH})
 
 #list all source files here
 ADD_EXECUTABLE(test_io          examples/tests/test_io.cpp)
