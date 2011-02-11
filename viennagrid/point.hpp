@@ -328,7 +328,7 @@ namespace viennagrid
           for (long i=0; i<dimension_tag::value; ++i)
             coords_[i] = p2.coords_[i];
         }
-
+        
         void setCoordinates(numeric_type *array){
           for (int i=0; i<dimension_tag::value; ++i)
             coords_[i] = array[i];
@@ -365,6 +365,9 @@ namespace viennagrid
         template <typename T, typename DTag>
         friend std::ostream& operator<< (std::ostream &, const point<T, DTag> &);
 
+        numeric_type & operator[](long i) 
+        { return coords_[i]; }
+        
         point_base & operator+=(const point_base & p)
         {
           for (long i=0; i<dimension_tag::value; ++i)
