@@ -368,6 +368,9 @@ namespace viennagrid
         numeric_type & operator[](long i) 
         { return coords_[i]; }
         
+        numeric_type const& operator[](long i) const
+        { return coords_[i]; }        
+        
         point_base & operator+=(const point_base & p)
         {
           for (long i=0; i<dimension_tag::value; ++i)
