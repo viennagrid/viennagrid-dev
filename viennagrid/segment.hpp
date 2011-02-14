@@ -19,7 +19,6 @@
 #include "viennagrid/forwards.h"
 #include "viennagrid/element.hpp"
 #include "viennagrid/element_key.hpp"
-#include <../ViennaCL/dev/CL/cl_platform.h>
 
 namespace viennagrid
 {
