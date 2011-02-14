@@ -74,10 +74,10 @@ namespace viennagrid
   struct segment_traits;
 
   //Segment type: 
-  template <typename Conf>
-  class segment;
+  template <typename ConfigType>
+  class segment_t;
 
-  template <typename CONF>
+  template <typename ConfigType>
   class domain;
   
   /********* Other *******************/

@@ -58,7 +58,7 @@ void testNewDomain(std::string & infile, std::string & outfile)
 
   typedef viennagrid::domain<TestDomainConfig>        Domain;
   typedef TestDomainConfig::cell_tag                                         CellTag;
-  typedef viennagrid::segment<TestDomainConfig>       SegmentType;
+  typedef viennagrid::segment_t<TestDomainConfig>       SegmentType;
   
   //typedef viennagrid::TestDomainConfig::DimensionTag              DimensionTag;
   typedef viennagrid::result_of::point_type<TestDomainConfig>::type          PointType;

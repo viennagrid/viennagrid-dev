@@ -224,8 +224,11 @@ namespace viennagrid
       
       element_type * add(element_type & e)
       {
+        assert(elements.capacity() > elements.size() && "Not enough memory for cells reserved!");
+        
         elements.push_back(e);
         elements.back().setID(elements.size());
+        //std::cout << "Filling cell for domain " << this << std::endl;
         elements.back().fill(*this);
         return &(elements.back());
       }
@@ -294,6 +297,7 @@ namespace viennagrid
       
       element_type * add(element_type & e)
       {
+        assert(elements.capacity() > elements.size() && "Not enough memory for vertices reserved!");
         e.setID(elements.size());
         elements.push_back(e);
         return &(elements.back());
@@ -330,14 +334,33 @@ namespace viennagrid
                                       true>  //we start with cells
   {
       typedef domain_layers<Config, Config::cell_tag::topology_level, true>           base_type;
+      typedef segment_t<Config>                                                         segment_type;
     
     public:
       typedef Config                                    config_type;
       
       using base_type::add;
+      
+      void create_segments(size_t num)
+      {
+        assert(segments.size() == 0 || "Segments in domain already created!");
+        segments.resize(num);
+        
+        for (size_t i=0; i<segments.size(); ++i)
+          segments[i].set_domain(*this);
+      }
+      
+      segment_type & segment(size_t seg_index)
+      {
+        assert(seg_index < segments.size() || "Segment index out of bounds!");
+        return segments[seg_index];
+      }
+    
+      const std::vector< segment_type > * segment_container() { return & segments; }
     
     private:
       //store segments here
+      std::vector< segment_type > segments;      
   };
 
   namespace result_of
