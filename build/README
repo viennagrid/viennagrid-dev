@@ -1,7 +1,0 @@
-This is the build directory.
-
-Change to this folder and call
-$> cmake ..
-$> make
-
-to build the sources.

@@ -129,6 +129,9 @@ namespace viennagrid
         return size<j>( typename level_discriminator<dim, j>::result_type() );
       }
     
+      cell_type cells(size_t i) { return *(elements[i]); }
+      cell_type cells(size_t i) const { return *(elements[i]); }      
+      
     private:
       container_type elements;
   };
