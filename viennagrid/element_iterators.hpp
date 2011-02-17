@@ -67,7 +67,7 @@ namespace viennagrid
       const ElementType * operator->() const { return *pp_; }
 
       const_on_element_iterator & operator++() { ++pp_; return *this; }
-      const_on_element_iterator & operator++(int) { const_on_element_iterator tmp = *this; ++*this; return tmp; }
+      const_on_element_iterator   operator++(int) { const_on_element_iterator tmp = *this; ++*this; return tmp; }
 
       bool operator==(const const_on_element_iterator& i) const { return pp_ == i.pp_; }
       bool operator!=(const const_on_element_iterator& i) const { return pp_ != i.pp_; }
