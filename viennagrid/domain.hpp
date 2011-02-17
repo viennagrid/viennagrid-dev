@@ -351,13 +351,19 @@ namespace viennagrid
         for (size_t i=0; i<segments.size(); ++i)
           segments[i].set_domain(*this);
       }
-      
+
+      segment_type const& segment(size_t seg_index) const
+      {
+        assert(seg_index < segments.size() || "Segment index out of bounds!");
+        return segments[seg_index];
+      }
+
       segment_type & segment(size_t seg_index)
       {
         assert(seg_index < segments.size() || "Segment index out of bounds!");
         return segments[seg_index];
       }
-    
+
       const std::vector< segment_type > * segment_container() const { return & segments; }
       const std::vector< segment_type > * segment_container()       { return & segments; }      
     
