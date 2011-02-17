@@ -35,6 +35,15 @@ namespace viennagrid
       
       typedef std::vector< element_type * >      type;
     };
+
+    //at cell level
+    template <typename config_type, dim_type cell_level>
+    struct element_container< segment_t<config_type>, 0, cell_level>
+    {
+      typedef typename result_of::ncell_type<config_type, 0>::type     element_type;
+      
+      typedef std::set< element_type * >      type;
+    };
     
   }
 
@@ -69,23 +78,31 @@ namespace viennagrid
   template <typename Config,
             dim_type dim,
             typename handling_tag>
-  class segment_layers : //public segment_layers<Config, dim - 1, handling_tag>
-                         public segment_domain_holder<Config>
+  class segment_layers : public segment_layers<Config, 0, handling_tag>
+                         //public segment_layers<Config, dim - 1, handling_tag>
+                         //public segment_domain_holder<Config>
   {
       typedef typename subcell_traits<typename Config::cell_tag, dim>::element_tag       element_tag;
       typedef element<Config, element_tag >                                              element_type;
+      typedef typename subcell_traits<typename Config::cell_tag, 0>::element_tag         vertex_tag;
+      typedef element<Config, vertex_tag >                                               vertex_type;
       typedef element<Config, typename Config::cell_tag>                                 cell_type;
       typedef typename result_of::element_container< segment_t<Config>, Config::cell_tag::topology_level, dim>::type      container_type;
       //typedef segment_layers<Conf, dim - 1, handling_tag>                              base_type;
-      typedef segment_domain_holder<Config>                                              base_type;
+      typedef segment_layers<Config, 0, handling_tag>                                    base_type;
       
     public:
       
-      void add(cell_type & e)
+      void add(cell_type & cell)
       {
         //add cell to domain and keep pointer in segment
         //std::cout << "Adding cell to domain and to segment" << std::endl;
-        elements.push_back(base_type::domain_->add(e));
+        elements.push_back(base_type::domain_->add(cell));
+        
+        //add vertices to segment: (note that the ncells<0>() is not available here)
+        vertex_type ** cell_vertices = cell.template container<0>();
+        for (long i=0; i<subcell_traits<typename Config::cell_tag, 0>::num_elements; ++i)
+          base_type::add(*(cell_vertices[i]));
       }
       
       
@@ -93,34 +110,34 @@ namespace viennagrid
 
       //non-const:
       template <dim_type dim_container>
-      typename result_of::element_container< segment_t<Config>, element_tag::topology_level, dim_container>::type * 
+      typename result_of::element_container< segment_t<Config>, dim_container, element_tag::topology_level>::type * 
       container() { return container<dim_container>(typename level_discriminator<dim, dim_container>::result_type()); }
       
       template <dim_type dim_container>
-      typename result_of::element_container< segment_t<Config>, element_tag::topology_level, dim_container>::type * 
+      typename result_of::element_container< segment_t<Config>, dim_container, element_tag::topology_level>::type * 
       container(equal_tag) { return &elements; }
 
       template <dim_type dim_container>
-      typename result_of::element_container< segment_t<Config>, element_tag::topology_level, dim_container>::type * 
+      typename result_of::element_container< segment_t<Config>, dim_container, element_tag::topology_level>::type * 
       container(less_tag) { return base_type::template container<dim_container>(); }
 
       //const:
       template <dim_type dim_container>
-      const typename result_of::element_container< segment_t<Config>, element_tag::topology_level, dim_container>::type * 
+      const typename result_of::element_container< segment_t<Config>, dim_container, element_tag::topology_level>::type * 
       container() const { return container<dim_container>(typename level_discriminator<dim, dim_container>::result_type()); }
       
       template <dim_type dim_container>
-      const typename result_of::element_container< segment_t<Config>, element_tag::topology_level, dim_container>::type * 
+      const typename result_of::element_container< segment_t<Config>, dim_container, element_tag::topology_level>::type * 
       container(equal_tag) const { return &elements; }
 
       template <dim_type dim_container>
-      const typename result_of::element_container< segment_t<Config>, element_tag::topology_level, dim_container>::type * 
+      const typename result_of::element_container< segment_t<Config>, dim_container, element_tag::topology_level>::type * 
       container(less_tag) const { return base_type::template container<dim_container>(); }
       
       
       ////////////////////// size ////////////////////////
-      //template <dim_type j>
-      //size_t size(less_tag) const { return base_type::template size<j>(); }
+      template <dim_type j>
+      size_t size(less_tag) const { return base_type::template size<j>(); }
       template <dim_type j>
       size_t size(equal_tag) const { return elements.size(); }
       template <dim_type j>
@@ -136,31 +153,30 @@ namespace viennagrid
       container_type elements;
   };
   
-  //vertex level (currently disabled)
-  /*
-  template <typename Conf, typename handling_tag>
-  class segment_layers<Conf, 0, handling_tag> : public segment_domain_holder<Conf>
+  //vertex level:
+  template <typename Config, typename handling_tag>
+  class segment_layers<Config, 0, handling_tag> : public segment_domain_holder<Config>
   {
-      typedef typename subcell_traits<typename Conf::cell_tag, 0>::element_tag         element_tag;
-      typedef element<Conf, element_tag >                                              element_type;
-      typedef element<Conf, typename Conf::cell_tag>                                   cell_type;
-      typedef typename result_of::segment_subcell_container<cell_type, 0>::type        container_type;
-      typedef segment_domain_holder<Conf>                                              base_type;
+      typedef typename Config::cell_tag                                 CellTag;
+      typedef typename subcell_traits<CellTag, 0>::element_tag          VertexTag;
+      typedef element<Config, VertexTag >                               VertexType;
+      typedef typename result_of::element_container< segment_t<Config>, 
+                                                     0,
+                                                     CellTag::topology_level>::type           ContainerType;
       
     public:
       
-      //void add(element_type & e)
-      //{
-        //add to segment:
-      //  elements.push_back(&e);
-        
-        // TODO: If vertex is not in domain, also add to domain:
-        //base_type::domain_.add(e);
-      //}
+      void add(VertexType & e)
+      {
+        elements.insert(&e);
+      }
       
       template <dim_type dim>
-      const container_type * container() const { return &elements; }
-      
+      const ContainerType * container() const { return &elements; }
+
+      template <dim_type dim>
+      ContainerType * container() { return &elements; }
+
       ////////////////////// size ////////////////////////
       template <dim_type j>
       size_t size(equal_tag) const { return elements.size(); }
@@ -172,8 +188,8 @@ namespace viennagrid
       }
       
     private:
-      container_type    elements;        //container of elements
-  }; */
+      ContainerType    elements;        //container of elements
+  };
   
   
   //Segment type:

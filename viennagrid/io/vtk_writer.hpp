@@ -18,6 +18,7 @@
 #include <fstream>
 #include <iostream>
 #include "viennagrid/forwards.h"
+#include "viennagrid/iterators.hpp"
 #include "viennagrid/io/helper.hpp"
 #include "viennagrid/io/vtk_tags.hpp"
 #include "viennadata/interface.hpp"
@@ -26,11 +27,33 @@ namespace viennagrid
 {
   namespace io
   {
-
+    //
+    // helper: get id from a vertex relative to the segment or the domain:
+    //
+    struct vtk_get_id
+    {
+      template <typename VertexType, typename T>
+      static long apply(VertexType const & v, T const & seg)
+      {
+        //obtain local segment numbering from ViennaData:
+        return viennadata::access<segment_mapping_key<T>, long>(seg)(v);
+      }
+      
+      //special handling for domain:
+      template <typename VertexType, typename ConfigType>
+      static long apply(VertexType const & v, viennagrid::domain<ConfigType> const & dom)
+      {
+        return v.getID();
+      }
+      
+    };
+    
+    
+    
     /////////////////// VTK export ////////////////////////////
 
     //helper: translate element tags to VTK-element types
-    // (see: http://www.vtk.org/pdf/file-formats.pdf , page 9)
+    // (see: http://www.vtk.org/VTK/img/file-formats.pdf, page 9)
 
     template < typename DomainType >
     class Vtk_writer
@@ -47,24 +70,6 @@ namespace viennagrid
       typedef typename result_of::ncell_type<DomainConfiguration, 0>::type                           VertexType;
       typedef typename result_of::ncell_type<DomainConfiguration, CellTag::topology_level>::type     CellType;
 
-      //typedef typename DomainTypes<DomainConfiguration>::segment_type  Segment;
-      
-      typedef typename viennagrid::result_of::const_ncell_container<DomainType, 0>::type   VertexContainer;
-      typedef typename viennagrid::result_of::iterator<VertexContainer>::type        VertexIterator;
-          
-      typedef typename viennagrid::result_of::const_ncell_container<DomainType, 1>::type   EdgeContainer;
-      typedef typename viennagrid::result_of::iterator<EdgeContainer>::type          EdgeIterator;
-
-      typedef typename viennagrid::result_of::const_ncell_container<DomainType, CellTag::topology_level-1>::type   FacetContainer;
-      typedef typename viennagrid::result_of::iterator<FacetContainer>::type                                 FacetIterator;
-
-      typedef typename viennagrid::result_of::const_ncell_container<DomainType, CellTag::topology_level>::type     CellContainer;
-      typedef typename viennagrid::result_of::iterator<CellContainer>::type                                  CellIterator;
-
-
-      typedef typename viennagrid::result_of::const_ncell_container<CellType, 0>::type      VertexOnCellContainer;
-      typedef typename viennagrid::result_of::iterator<VertexOnCellContainer>::type   VertexOnCellIterator;
-      //typedef typename viennagrid::result_of::iterator<CellType, 0>::type      VertexOnCellIterator;
 
       void writeHeader(std::ofstream & writer)
       {
@@ -73,9 +78,12 @@ namespace viennagrid
         writer << " <UnstructuredGrid>" << std::endl;
       }
 
-      template <typename Segment>
-      void writePoints(Segment const & segment, std::ofstream & writer)
+      template <typename SegmentType>
+      void writePoints(SegmentType const & segment, std::ofstream & writer)
       {
+        typedef typename viennagrid::result_of::const_ncell_container<SegmentType, 0>::type   VertexContainer;
+        typedef typename viennagrid::result_of::iterator<VertexContainer>::type               VertexIterator;
+        
         writer << "   <Points>" << std::endl;
         writer << "    <DataArray type=\"Float32\" NumberOfComponents=\"3\" format=\"ascii\">" << std::endl;
 
@@ -99,9 +107,15 @@ namespace viennagrid
         writer << "   </Points> " << std::endl;
       } //writePoints()
 
-      template <typename Segment>
-      void writeCells(Segment const & segment, std::ofstream & writer)
+      template <typename SegmentType>
+      void writeCells(SegmentType const & segment, std::ofstream & writer)
       {
+        typedef typename viennagrid::result_of::const_ncell_container<SegmentType, CellTag::topology_level>::type     CellContainer;
+        typedef typename viennagrid::result_of::iterator<CellContainer>::type                                         CellIterator;
+
+        typedef typename viennagrid::result_of::const_ncell_container<CellType, 0>::type      VertexOnCellContainer;
+        typedef typename viennagrid::result_of::iterator<VertexOnCellContainer>::type         VertexOnCellIterator;
+        
         writer << "   <Cells> " << std::endl;
         writer << "    <DataArray type=\"Int32\" Name=\"connectivity\" format=\"ascii\">" << std::endl;
         CellContainer cells = viennagrid::ncells<CellTag::topology_level>(segment);
@@ -114,7 +128,7 @@ namespace viennagrid
                 vocit != vertices_on_cell.end();
                 ++vocit)
             {
-              writer << vocit->getID() << " ";
+              writer << vtk_get_id::apply(*vocit, segment) << " ";
             }
             writer << std::endl;
           }
@@ -143,9 +157,12 @@ namespace viennagrid
           writer << "   </Cells>" << std::endl;
       }
 
-      template <typename Segment, typename KeyType >
-      void writePointData(Segment const & segment, KeyType const & keyname, std::ofstream & writer)
+      template <typename SegmentType, typename KeyType >
+      void writePointData(SegmentType const & segment, KeyType const & keyname, std::ofstream & writer)
       {
+        typedef typename viennagrid::result_of::const_ncell_container<SegmentType, 0>::type   VertexContainer;
+        typedef typename viennagrid::result_of::iterator<VertexContainer>::type               VertexIterator;
+        
         writer << "   <PointData Scalars=\"scalars\">" << std::endl;
         writer << "    <DataArray type=\"Float32\" Name=\"result\" format=\"ascii\">" << std::endl;
         
@@ -185,11 +202,48 @@ namespace viennagrid
         writeHeader(writer);
 
         //TODO Add iteration over segments again
-        //for (SegmentIterator segit = domain.begin(); segit != domain.end(); ++segit)
-        //{
-          //std::cout << "Writing segment" << std::endl;
-          //Segment & curSeg = *segit;
+        long segment_num = domain.segment_size();
+        if (segment_num > 0)
+        {
+          for (long i = 0; i<segment_num; ++i)
+          {
+            typedef typename DomainType::segment_type                                             SegmentType;
+            typedef typename viennagrid::result_of::const_ncell_container<SegmentType, 0>::type   VertexContainer;
+            typedef typename viennagrid::result_of::iterator<VertexContainer>::type               VertexIterator;
+            //std::cout << "Writing segment" << std::endl;
+            //Segment & curSeg = *segit;
 
+            SegmentType const & seg = domain.segment(i);
+            
+            //setting local segment numbering on vertices:
+            long current_id = 0;
+            VertexContainer vertices = viennagrid::ncells<0>(seg);
+            for (VertexIterator vit = vertices.begin();
+                vit != vertices.end();
+                ++vit)
+            {
+              viennadata::access<segment_mapping_key<SegmentType>, long>(seg)(*vit) = current_id++;
+            }
+
+            writer << "  <Piece NumberOfPoints=\""
+                  << seg.template size<0>()
+                  << "\" NumberOfCells=\""
+                  << seg.template size<CellTag::topology_level>()
+                  << "\">" << std::endl;
+
+
+            writePoints(seg, writer);
+
+            //TODO User-provided key instead of hard-coded string
+            writePointData(seg, std::string("vtk_data"), writer);
+
+            writeCells(seg, writer);
+
+            writer << "  </Piece>" << std::endl;
+          }
+        }
+        else
+        {
           writer << "  <Piece NumberOfPoints=\""
                 << domain.template size<0>()
                 << "\" NumberOfCells=\""
@@ -205,7 +259,7 @@ namespace viennagrid
           writeCells(domain, writer);
 
           writer << "  </Piece>" << std::endl;
-        //}
+        }
         
         writeFooter(writer);
 

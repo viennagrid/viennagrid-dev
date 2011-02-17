@@ -127,6 +127,23 @@ namespace viennagrid
       T * t;
   };
 
+  template <typename SegmentType>
+  class segment_mapping_key
+  {
+    public:
+      segment_mapping_key(SegmentType const & seg) : pSeg(&seg) {}
+      
+      //for compatibility with std::map
+      bool operator<(segment_mapping_key const & other) const
+      {
+        return pSeg < other.pSeg;
+      }
+      
+    private:
+      SegmentType const * pSeg;
+  };
+  
+  
   //proxy classes for iterator/container retrieval:
   template <typename T>
   class const_ncell_proxy

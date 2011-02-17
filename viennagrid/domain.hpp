@@ -336,10 +336,10 @@ namespace viennagrid
                                       true>  //we start with cells
   {
       typedef domain_layers<Config, Config::cell_tag::topology_level, true>           base_type;
-      typedef segment_t<Config>                                                         segment_type;
     
     public:
       typedef Config                                    config_type;
+      typedef segment_t<Config>                                                       segment_type;
       
       using base_type::add;
       
@@ -366,6 +366,8 @@ namespace viennagrid
 
       const std::vector< segment_type > * segment_container() const { return & segments; }
       const std::vector< segment_type > * segment_container()       { return & segments; }      
+      
+      size_t segment_size() const { return segments.size(); }
     
     private:
       //store segments here

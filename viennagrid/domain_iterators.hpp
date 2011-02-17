@@ -147,6 +147,8 @@ namespace viennagrid
       iterator begin() const { return cont_->begin(); }
       iterator end()   const { return cont_->end(); }
       
+      size_t size() const { return cont_->size(); }
+      
     private:
       container_type * cont_;
   };
@@ -191,6 +193,8 @@ namespace viennagrid
       
       iterator begin() const { return cont_->begin(); }
       iterator end()   const { return cont_->end(); }
+      
+      size_t size() const { return cont_->size(); }
       
     private:
       const container_type * cont_;

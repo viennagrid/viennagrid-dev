@@ -24,6 +24,8 @@
 #include "viennagrid/domain_configs.hpp"
 //#include "viennagrid/segment.hpp"
 //#include "viennagrid/boundary.hpp"
+#include "viennagrid/io/vtk_writer.hpp"
+
 
 template <viennagrid::dim_type dim, 
           typename SegmentT>
@@ -143,12 +145,18 @@ void test(viennagrid::config::tetrahedral_3d)
   domain.segment(1).add(simplex);
   
   
-  //std::cout << "Vertices in Segment: " << seg.size<0>() << std::endl;
+  std::cout << "Vertices in Segment 0: " << domain.segment(0).size<0>() << std::endl;
+  std::cout << "Vertices in Segment 1: " << domain.segment(1).size<0>() << std::endl;
   //std::cout << "Edges in Segment: "    << seg.size<1>() << std::endl;
   //std::cout << "Facets in Segment: "   << seg.size<CellTag::topology_level-1>() << std::endl;
   std::cout << "Cells in Segment 0: "    << domain.segment(0).size<CellTag::topology_level>() << std::endl;
   std::cout << "Cells in Segment 1: "    << domain.segment(1).size<CellTag::topology_level>() << std::endl;
   
+  std::cout << "Printing vertices in segment 0:" << std::endl;
+  print_elements<0>(domain.segment(0));
+
+  std::cout << "Printing vertices in segment 1:" << std::endl;
+  print_elements<0>(domain.segment(1));
   
   std::cout << "Printing cells in segment 0:" << std::endl;
   print_elements<Domain::config_type::cell_tag::topology_level>(domain.segment(0));
@@ -156,6 +164,8 @@ void test(viennagrid::config::tetrahedral_3d)
   std::cout << "Printing cells in segment 1:" << std::endl;
   print_elements<Domain::config_type::cell_tag::topology_level>(domain.segment(1));
   
+  viennagrid::io::Vtk_writer<Domain> my_vtk_writer;
+  my_vtk_writer.writeDomain(domain, "multi-segment-3d.vtu");
   
   std::cout << "*******************************" << std::endl;
   std::cout << "* Test finished successfully! *" << std::endl;
@@ -241,12 +251,18 @@ void test(viennagrid::config::triangular_2d)
   domain.segment(1).add(simplex);
   
   
-  //std::cout << "Vertices in Segment: " << seg.size<0>() << std::endl;
+  std::cout << "Vertices in Segment 0: " << domain.segment(0).size<0>() << std::endl;
+  std::cout << "Vertices in Segment 1: " << domain.segment(1).size<0>() << std::endl;
   //std::cout << "Edges in Segment: "    << seg.size<1>() << std::endl;
   //std::cout << "Facets in Segment: "   << seg.size<CellTag::topology_level-1>() << std::endl;
   std::cout << "Cells in Segment 0: "    << domain.segment(0).size<CellTag::topology_level>() << std::endl;
   std::cout << "Cells in Segment 1: "    << domain.segment(1).size<CellTag::topology_level>() << std::endl;
   
+  std::cout << "Printing vertices in segment 0:" << std::endl;
+  print_elements<0>(domain.segment(0));
+
+  std::cout << "Printing vertices in segment 1:" << std::endl;
+  print_elements<0>(domain.segment(1));
   
   std::cout << "Printing cells in segment 0:" << std::endl;
   print_elements<Domain::config_type::cell_tag::topology_level>(domain.segment(0));
@@ -254,6 +270,8 @@ void test(viennagrid::config::triangular_2d)
   std::cout << "Printing cells in segment 1:" << std::endl;
   print_elements<Domain::config_type::cell_tag::topology_level>(domain.segment(1));
   
+  viennagrid::io::Vtk_writer<Domain> my_vtk_writer;
+  my_vtk_writer.writeDomain(domain, "multi-segment-3d.vtu");
   
   std::cout << "*******************************" << std::endl;
   std::cout << "* Test finished successfully! *" << std::endl;
