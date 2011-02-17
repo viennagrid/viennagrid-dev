@@ -16,6 +16,7 @@
 #define VIENNAGRID_IO_VTK_WRITER_GUARD
 
 #include <fstream>
+#include <sstream>
 #include <iostream>
 #include "viennagrid/forwards.h"
 #include "viennagrid/iterators.hpp"
@@ -197,16 +198,43 @@ namespace viennagrid
 
       int operator()(DomainType const & domain, std::string const & filename)
       {
-        std::ofstream writer(filename.c_str());
 
-        writeHeader(writer);
-
-        //TODO Add iteration over segments again
         long segment_num = domain.segment_size();
         if (segment_num > 0)
         {
+          //
+          // Step 1: Write meta information
+          //
+          {
+            std::stringstream ss;
+            ss << filename << "_main.pvd";
+            std::ofstream writer(ss.str().c_str());
+            
+            writer << "<?xml version=\"1.0\"?>" << std::endl;
+            writer << "<VTKFile type=\"Collection\" version=\"0.1\" byte_order=\"LittleEndian\" compressor=\"vtkZLibDataCompressor\">" << std::endl;
+            writer << "<Collection>" << std::endl;
+            
+            
+            for (long i = 0; i<segment_num; ++i)
+              writer << "    <DataSet part=\"" << i << "\" file=\"" << filename << "_" << i << ".vtu\" name=\"Segment_" << i << "\"/>" << std::endl;
+              
+              
+            writer << "  </Collection>" << std::endl;
+            writer << "</VTKFile>" << std::endl;
+            writer.close();
+          }
+          
+          
+          //
+          // Step 2: Write segments to individual files
+          //
           for (long i = 0; i<segment_num; ++i)
           {
+            std::stringstream ss;
+            ss << filename << "_" << i << ".vtu";
+            std::ofstream writer(ss.str().c_str());
+            writeHeader(writer);
+            
             typedef typename DomainType::segment_type                                             SegmentType;
             typedef typename viennagrid::result_of::const_ncell_container<SegmentType, 0>::type   VertexContainer;
             typedef typename viennagrid::result_of::iterator<VertexContainer>::type               VertexIterator;
@@ -240,10 +268,17 @@ namespace viennagrid
             writeCells(seg, writer);
 
             writer << "  </Piece>" << std::endl;
+            writeFooter(writer);
+            writer.close();
           }
         }
         else
         {
+          std::stringstream ss;
+          ss << filename << ".vtu";
+          std::ofstream writer(ss.str().c_str());
+          writeHeader(writer);
+          
           writer << "  <Piece NumberOfPoints=\""
                 << domain.template size<0>()
                 << "\" NumberOfCells=\""
@@ -259,10 +294,10 @@ namespace viennagrid
           writeCells(domain, writer);
 
           writer << "  </Piece>" << std::endl;
+          writeFooter(writer);
+
         }
         
-        writeFooter(writer);
-
         return EXIT_SUCCESS;
       }
 

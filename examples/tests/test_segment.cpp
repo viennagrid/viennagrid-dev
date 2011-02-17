@@ -165,7 +165,7 @@ void test(viennagrid::config::tetrahedral_3d)
   print_elements<Domain::config_type::cell_tag::topology_level>(domain.segment(1));
   
   viennagrid::io::Vtk_writer<Domain> my_vtk_writer;
-  my_vtk_writer.writeDomain(domain, "multi-segment-3d.vtu");
+  my_vtk_writer.writeDomain(domain, "multi-segment");
   
   std::cout << "*******************************" << std::endl;
   std::cout << "* Test finished successfully! *" << std::endl;
@@ -271,7 +271,7 @@ void test(viennagrid::config::triangular_2d)
   print_elements<Domain::config_type::cell_tag::topology_level>(domain.segment(1));
   
   viennagrid::io::Vtk_writer<Domain> my_vtk_writer;
-  my_vtk_writer.writeDomain(domain, "multi-segment-3d.vtu");
+  my_vtk_writer.writeDomain(domain, "multi-segment");
   
   std::cout << "*******************************" << std::endl;
   std::cout << "* Test finished successfully! *" << std::endl;
