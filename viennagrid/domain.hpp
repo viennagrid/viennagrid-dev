@@ -358,7 +358,8 @@ namespace viennagrid
         return segments[seg_index];
       }
     
-      const std::vector< segment_type > * segment_container() { return & segments; }
+      const std::vector< segment_type > * segment_container() const { return & segments; }
+      const std::vector< segment_type > * segment_container()       { return & segments; }      
     
     private:
       //store segments here
