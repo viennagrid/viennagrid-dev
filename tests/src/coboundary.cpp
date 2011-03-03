@@ -91,13 +91,13 @@ void testNewDomain(std::string & infile, std::string & outfile)
   {
     viennagrid::io::sgf_reader my_sgf_reader;
 #ifdef THREEDIM
-    my_sgf_reader(domain, "../examples/data/cube6.sgf");
+    my_sgf_reader(domain, "../../examples/data/cube6.sgf");
 #endif
 #ifdef TWODIM
-    my_sgf_reader(domain, "../examples/data/square8.sgf");
+    my_sgf_reader(domain, "../../examples/data/square8.sgf");
 #endif
 #ifdef ONEDIM
-    my_sgf_reader(domain, "../examples/data/line8.sgf");
+    my_sgf_reader(domain, "../../examples/data/line8.sgf");
 #endif
   }
   catch (...)

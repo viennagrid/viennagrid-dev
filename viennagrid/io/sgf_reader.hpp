@@ -60,7 +60,7 @@ namespace viennagrid
 
         if (!reader){
           std::cerr << "Cannot open file " << filename << std::endl;
-          exit(0);
+          throw "Cannot open file";
           return EXIT_FAILURE;
         }
 
