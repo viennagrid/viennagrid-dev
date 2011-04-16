@@ -24,7 +24,7 @@
 #include "viennagrid/domain_iterators.hpp"
 #include "viennagrid/celltags.hpp"
 
-#include "viennadata/interface.hpp"
+#include "viennadata/api.hpp"
 
 namespace viennagrid
 {

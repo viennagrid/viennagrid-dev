@@ -22,7 +22,7 @@
 #include "viennagrid/iterators.hpp"
 #include "viennagrid/io/helper.hpp"
 #include "viennagrid/io/vtk_tags.hpp"
-#include "viennadata/interface.hpp"
+#include "viennadata/api.hpp"
 
 namespace viennagrid
 {
