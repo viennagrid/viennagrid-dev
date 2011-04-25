@@ -212,7 +212,7 @@ namespace viennagrid
             geometry_container.push_back(vmCoords);
             
             // make sure that the point won't be added again ..
-            global_geometry_uniquer[vmCoords] == true;
+            global_geometry_uniquer[vmCoords] = true;
           }
           // if the point has already been added ..
           else
