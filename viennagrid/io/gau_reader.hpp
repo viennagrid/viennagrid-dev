@@ -28,7 +28,7 @@
 
 #include "boost/lexical_cast.hpp"
 
-#define IODEBUG
+//#define IODEBUG
 
 namespace viennagrid
 {
@@ -219,7 +219,7 @@ namespace io
             while(1)
             { 
                reader >> token;  
-               std::cout << "token: " << token << std::endl;
+               //std::cout << "token: " << token << std::endl;
                if (token != "Quantity:") 
                {
                   segment_name = token;
@@ -230,7 +230,7 @@ namespace io
                   break;
                }
                reader >> token;  
-               std::cout << "quantity type: " << token << std::endl;
+               //std::cout << "quantity type: " << token << std::endl;
                // *********  vertex quantities
 
                if (token == "vertex")
@@ -417,7 +417,7 @@ namespace io
                   } 
                }
                else if (token == "sheaf_cell")
-               {  std::cout << "processing a sheaf cell .. " << std::endl;
+               {  
                   long number_quan;
                   std::string quan_name;
                   reader >> number_quan;    
