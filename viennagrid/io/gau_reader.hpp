@@ -474,6 +474,7 @@ namespace io
                domain.segment(sit->first).add(*cit);            
             }
          }
+         return 0;
       }
    };
 

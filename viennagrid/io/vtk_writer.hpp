@@ -303,8 +303,10 @@ namespace viennagrid
 
     };
 
-  template < typename DomainType > int exportVTK(DomainType domain, std::string const & filename)
+  template < typename DomainType > 
+  int exportVTK(DomainType const& domain, std::string const & filename)
   {
+ 
     Vtk_writer<DomainType> vtk_writer;
     return vtk_writer.writeDomain(domain, filename);
   }
