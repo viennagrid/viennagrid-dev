@@ -18,6 +18,7 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include "viennagrid/domain.hpp"
 #include "viennagrid/forwards.h"
 #include "viennagrid/iterators.hpp"
 #include "viennagrid/io/helper.hpp"
