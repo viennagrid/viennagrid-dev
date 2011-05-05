@@ -17,7 +17,6 @@
 #include <fstream>
 #include <iostream>
 #include "viennagrid/forwards.h"
-#include "viennagrid/boundary.hpp"
 
 namespace viennagrid
 {

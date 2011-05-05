@@ -10,13 +10,22 @@
    license:    MIT (X11), see file LICENSE in the ViennaGrid base directory
 ======================================================================= */
 
+#ifndef VIENNAGRID_TOPOLOGY_POINT_HPP
+#define VIENNAGRID_TOPOLOGY_POINT_HPP
 
-#ifndef VIENNAGRID_ITERATORS_HPP
-#define VIENNAGRID_ITERATORS_HPP
+#include "viennagrid/forwards.h"
 
-#include "viennagrid/detail/element_iterators.hpp"
-#include "viennagrid/detail/segment_iterators.hpp"
-#include "viennagrid/detail/domain_iterators.hpp"
+namespace viennagrid
+{
+
+  struct point_tag
+  {
+    enum { topology_level = 0 };
+    static std::string name() { return "Point"; }
+  };
+
+  //no need to have a separate subcell_traits specialization here -> covered by default case
+  
+}
 
 #endif
-

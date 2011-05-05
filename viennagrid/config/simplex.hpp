@@ -11,10 +11,11 @@
 ======================================================================= */
 
 
-#ifndef VIENNAGRID_DOMAIN_CONFIGS_HPP
-#define VIENNAGRID_DOMAIN_CONFIGS_HPP
+#ifndef VIENNAGRID_CONFIG_SIMPLEX_HPP
+#define VIENNAGRID_CONFIG_SIMPLEX_HPP
 
-#include "viennagrid/celltags.hpp"
+#include "viennagrid/topology/triangle.hpp"
+#include "viennagrid/topology/tetrahedron.hpp"
 
 namespace viennagrid
 {
@@ -26,7 +27,6 @@ namespace viennagrid
       typedef double                                numeric_type;
       typedef viennagrid::two_dimensions_tag        dimension_tag;
       typedef viennagrid::line_tag                  cell_tag;
-      typedef viennagrid::no_multigrid_tag          multigrid_tag;
     };
 
     struct triangular_2d
@@ -34,24 +34,13 @@ namespace viennagrid
       typedef double                                numeric_type;
       typedef viennagrid::two_dimensions_tag        dimension_tag;
       typedef viennagrid::triangle_tag              cell_tag;
-      typedef viennagrid::no_multigrid_tag          multigrid_tag;
-    };
-
-    struct quadrilateral_2d
-    {
-      typedef double                                numeric_type;
-      typedef viennagrid::two_dimensions_tag        dimension_tag;
-      typedef viennagrid::quadrilateral_tag         cell_tag;
-      typedef viennagrid::no_multigrid_tag          multigrid_tag;
     };
     
-    //3d geometry:
     struct triangular_3d
     {
       typedef double                                numeric_type;
       typedef viennagrid::three_dimensions_tag      dimension_tag;
       typedef viennagrid::triangle_tag              cell_tag;
-      typedef viennagrid::no_multigrid_tag          multigrid_tag;
     };
 
     struct tetrahedral_3d
@@ -59,7 +48,6 @@ namespace viennagrid
       typedef double                                numeric_type;
       typedef viennagrid::three_dimensions_tag      dimension_tag;
       typedef viennagrid::tetrahedron_tag           cell_tag;
-      typedef viennagrid::no_multigrid_tag          multigrid_tag;
     };
   }
 }

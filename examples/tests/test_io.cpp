@@ -29,7 +29,7 @@
 
 #include "viennagrid/domain.hpp"
 #include "viennagrid/segment.hpp"
-#include "viennagrid/boundary.hpp"
+#include "viennagrid/algorithm/boundary.hpp"
 #include "viennagrid/io/sgf_reader.hpp"
 #include "viennagrid/io/sgf_writer.hpp"
 #include "viennagrid/io/vtk_reader.hpp"
@@ -53,10 +53,6 @@ struct TestDomainConfig
   typedef viennagrid::one_dimension_tag           dimension_tag;
   typedef viennagrid::line_tag                    cell_tag;
   #endif
-
-  //multigrid:
-  //typedef viennagrid::full_multigrid_tag                       multigrid_tag;
-  typedef viennagrid::no_multigrid_tag             multigrid_tag;
 };
 
 
@@ -101,7 +97,7 @@ void testNewDomain(std::string & infile, std::string & outfile)
     #endif
     
     #ifdef VTK
-    viennagrid::io::Vtk_reader my_vtk_reader;
+    viennagrid::io::vtk_reader my_vtk_reader;
     my_vtk_reader.readDomain(domain, infile);
     #endif
   } catch (...){
@@ -126,7 +122,7 @@ void testNewDomain(std::string & infile, std::string & outfile)
   viennagrid::io::sgf_writer my_sgf_writer;
   my_sgf_writer(domain, outfile + ".sgf");
    
-  viennagrid::io::Vtk_writer<Domain> my_vtk_writer;
+  viennagrid::io::vtk_writer<Domain> my_vtk_writer;
   my_vtk_writer.writeDomain(domain, outfile + ".vtu");
    
   //viennagrid::io::gts_writer my_gts_writer;
@@ -148,7 +144,7 @@ void testNewDomain(std::string & infile, std::string & outfile)
   viennagrid::io::sgf_reader my_sgf_reader;
   my_sgf_reader(domain, infile);
 
-  viennagrid::io::Vtk_reader<Domain> my_vtk_reader;
+  viennagrid::io::vtk_reader<Domain> my_vtk_reader;
   my_vtk_reader.readDomain(domain, infile);
   
 }

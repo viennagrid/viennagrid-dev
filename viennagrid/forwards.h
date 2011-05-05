@@ -42,10 +42,6 @@ namespace viennagrid
   struct full_handling_tag {};
   struct no_handling_tag {};
 
-  //multigrid:
-  struct full_multigrid_tag {};
-  struct no_multigrid_tag {};
-
   //segment connection:
   template <long id>
   struct SegmentConnectionKey
@@ -169,6 +165,33 @@ namespace viennagrid
       T & t;
   };
   
+
+  //leftover stuff from celltags.hpp:
+  struct null_tag {};
+  
+  // cell_traits can be specialized by library users in order to use 'NoID' instead of 'ProvideID' 
+  template <typename CellTag>
+  struct cell_traits
+  {
+    typedef ProvideID     id_handler;
+  };
+  
+  template <typename ElementTag_, 
+            long level = ElementTag_::topology_level>
+  struct subcell_traits
+  {
+    //the default case is simultaneously a pathetic case:
+    //cell-handling within the cell
+
+    enum{ num_elements = 1 };     //1 cell
+
+    typedef ElementTag_           element_tag;
+    //compatibility with cell-on-cell-iterator
+    typedef full_handling_tag     handling_tag;
+  };
+
+  template <typename CellType, long level>
+  struct subcell_filler {};
   
   namespace result_of
   {
@@ -204,7 +227,44 @@ namespace viennagrid
     };
     
     
+    template <typename T, dim_type dim = T::element_tag::topology_level>
+    struct element_tag
+    {
+      typedef typename subcell_traits<typename T::element_tag,
+                                      dim>::element_tag           type; 
+    };
+    
+    
+    template <typename T>
+    struct element_tag<T, T::element_tag::topology_level>
+    {
+      typedef typename T::element_tag    type; 
+    };
+    
+    
+    template <typename T, dim_type dim = T::element_tag::topology_level>
+    struct handling_tag
+    {
+      typedef typename subcell_traits<T, dim>::handling_tag    type; 
+    };
+    
+    //cell level always uses full handling
+    template <typename T>
+    struct handling_tag<T, T::element_tag::topology_level>
+    {
+      typedef full_handling_tag    type; 
+    };
+
+    //vertex level always uses full handling
+    template <typename T>
+    struct handling_tag<T, 0>
+    {
+      typedef full_handling_tag    type; 
+    };
+    
   }
+  
+  
 
 }
 #endif

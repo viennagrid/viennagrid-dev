@@ -21,8 +21,8 @@
 #include <assert.h>
 
 #include "viennagrid/forwards.h"
-#include "viennagrid/domain_iterators.hpp"
-#include "viennagrid/celltags.hpp"
+#include "viennagrid/detail/domain_iterators.hpp"
+//#include "viennagrid/topology/celltags.hpp"
 
 #include "viennadata/api.hpp"
 

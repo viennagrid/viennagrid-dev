@@ -15,7 +15,8 @@
 #define VIENNAGRID_ELEMENT_HPP
 
 #include "viennagrid/forwards.h"
-#include "viennagrid/celltags.hpp"
+//#include "viennagrid/topology/celltags.hpp"
+#include "viennagrid/topology/point.hpp"
 #include "viennagrid/iterators.hpp"
 
 #include <vector>
@@ -351,76 +352,27 @@ namespace viennagrid
       VertexType * vertices_[LevelSpecs::num_elements];
   };
 
-  ////////////// LAYER 3: Multigrid capabilities //////////
-  template <typename T_Configuration, typename ElTag, typename MultigridTag = typename T_Configuration::multigrid_tag>
-  class multigrid_layer
-  {  };
 
-  /*
-  template <typename T_Configuration, typename ElTag>
-  class multigrid_layer<T_Configuration, ElTag, full_multigrid_tag> :
-    public lower_level_holder < T_Configuration, ElTag, ElTag::topology_level - 1>
-  {
-      typedef lower_level_holder < T_Configuration, ElTag, ElTag::topology_level - 1>                     Base;
-      typedef element<T_Configuration, ElTag>                       ElementType;
-
-    public:
-      //typedef typename std::list<ElementType *>::iterator         ChildIterator;
-      typedef childit< element<T_Configuration, ElTag> >            ChildIterator;
-
-      multigrid_layer() : Base() {}
-      multigrid_layer(const multigrid_layer & mgl) : Base(mgl) {}
-
-      ChildIterator getChildrenBegin() { return ChildIterator(children.begin()); }
-      ChildIterator getChildrenEnd() { return ChildIterator(children.end()); }
-
-      long child_num() { return children.size(); }
-
-      template <typename SegmentType>
-      void refine_uniformly(long & cell_id, SegmentType & seg)
-      {
-        //delegate work to ElementTag:
-        ElTag::refine_uniformly( &(Base::vertices_[0]), children, cell_id, seg);
-      }
-
-    private:
-      //pointers to children:
-      std::list<ElementType *>  children;
-  }; */
-
-  //if no multigrid-handling is needed, no implementation is needed :-)
-  template <typename T_Configuration, typename ElTag>
-  class multigrid_layer<T_Configuration, ElTag, no_multigrid_tag> :
-    public lower_level_holder < T_Configuration, ElTag, ElTag::topology_level - 1>
-  {
-      typedef lower_level_holder < T_Configuration, ElTag, ElTag::topology_level - 1>             Base;
-
-    public:
-      multigrid_layer() : Base() {}
-      multigrid_layer(const multigrid_layer & mgl) : Base(mgl) {}
-
-  };
-
-  ////////////// LAYER 4: Top Level configuration //////////
+  //////////////  Top Level configuration //////////
   template <typename T_Configuration,
-            typename ElTag>
+            typename ElementTag>
   class element :
-      public multigrid_layer < T_Configuration, ElTag > ,
-      public cell_traits<ElTag>::id_handler
+      public lower_level_holder < T_Configuration, ElementTag, ElementTag::topology_level - 1>,
+      public cell_traits<ElementTag>::id_handler
   {
       typedef typename T_Configuration::numeric_type                   ScalarType;
-      typedef multigrid_layer < T_Configuration, ElTag >               Base;
-      typedef typename result_of::point_type<T_Configuration>::type              PointType;
-      typedef typename result_of::ncell_type<T_Configuration, 0>::type       VertexType;
-      typedef subcell_traits<ElTag, 0>                                 VertexSpecs;
+      typedef lower_level_holder < T_Configuration, ElementTag, ElementTag::topology_level - 1>             Base;
+      typedef typename result_of::point_type<T_Configuration>::type         PointType;
+      typedef typename result_of::ncell_type<T_Configuration, 0>::type      VertexType;
+      typedef subcell_traits<ElementTag, 0>                                 VertexSpecs;
 
     public:
       typedef T_Configuration                                       config_type;
-      typedef ElTag                                                 element_tag;
+      typedef ElementTag                                            element_tag;
 
-      element ( ) : onBoundary(false) {};   //construction of "template" for this type
+      element ( ) {};   //construction of "template" for this type
 
-      element (const element & e2) : Base(e2), onBoundary(e2.onBoundary)
+      element (const element & e2) : Base(e2)
       {
         //std::cout << "Copy constructor Element " << this << std::endl;
         this->setID(e2.getID());
@@ -436,13 +388,13 @@ namespace viennagrid
       {
         for (long j = 0; j<indent; ++j)
           std::cout << "   ";
-        std::cout << "---- " << ElTag::name() << " " << this << " ---------" << std::endl;
+        std::cout << "---- " << ElementTag::name() << " " << this << " ---------" << std::endl;
         Base::print(indent + 1);
       }
 
       void print_short() const
       {
-        std::cout << "---- " << ElTag::name() << " " << this << " ---------" << std::endl;
+        std::cout << "---- " << ElementTag::name() << " " << this << " ---------" << std::endl;
         Base::print_short();
       }
 
@@ -457,18 +409,6 @@ namespace viennagrid
         }
         //std::cout << std::endl;
       }
-
-      /*PointType getMidPoint() const
-      {
-        PointType retPoint;
-        for(int i=0; i<VertexSpecs::num_elements; i++)
-        {
-          retPoint += Base::vertices_[i]->getPoint();
-        }
-        retPoint /= VertexSpecs::num_elements;
-        return retPoint;
-      }*/
-
 
       /*bool operator==(element & c2)
       {
@@ -528,10 +468,6 @@ namespace viennagrid
       { 
         return container<j>(less_tag());
       }
-
-
-    private:
-      bool onBoundary;
 
   };
 

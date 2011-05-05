@@ -1,5 +1,5 @@
 /* =======================================================================
-   Copyright (c) 2010, Institute for Microelectronics, TU Vienna.
+   Copyright (c) 2011, Institute for Microelectronics, TU Vienna.
    http://www.iue.tuwien.ac.at
                              -----------------
                      ViennaGrid - The Vienna Grid Library
@@ -18,6 +18,7 @@
 #include <fstream>
 #include <iostream>
 #include "viennagrid/io/helper.hpp"
+#include "viennagrid/topology/all.hpp"
 #include "viennagrid/forwards.h"
 
 namespace viennagrid

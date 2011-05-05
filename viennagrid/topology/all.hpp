@@ -10,13 +10,18 @@
    license:    MIT (X11), see file LICENSE in the ViennaGrid base directory
 ======================================================================= */
 
+#ifndef VIENNAGRID_TOPOLOGY_ALL_HPP
+#define VIENNAGRID_TOPOLOGY_ALL_HPP
 
-#ifndef VIENNAGRID_ITERATORS_HPP
-#define VIENNAGRID_ITERATORS_HPP
+//one-dimensional:
+#include "viennagrid/topology/line.hpp"
 
-#include "viennagrid/detail/element_iterators.hpp"
-#include "viennagrid/detail/segment_iterators.hpp"
-#include "viennagrid/detail/domain_iterators.hpp"
+//two-dimensional:
+#include "viennagrid/topology/triangle.hpp"
+#include "viennagrid/topology/quadrilateral.hpp"
+
+//three-dimensional:
+#include "viennagrid/topology/tetrahedron.hpp"
+#include "viennagrid/topology/hexahedron.hpp"
 
 #endif
-

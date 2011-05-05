@@ -17,6 +17,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <cctype>
 #include <string>
 #include "viennagrid/forwards.h"
 
@@ -81,6 +82,7 @@ namespace viennagrid
         return numberFlag;
       }
     };
+    
   } //namespace io
 } //namespace  viennagrid
 

@@ -1,12 +1,12 @@
 /* =======================================================================
-   Copyright (c) 2010, Institute for Microelectronics, TU Vienna.
+   Copyright (c) 2011, Institute for Microelectronics, TU Vienna.
    http://www.iue.tuwien.ac.at
                              -----------------
                      ViennaGrid - The Vienna Grid Library
                              -----------------
 
    authors:    Karl Rupp                          rupp@iue.tuwien.ac.at
-   authors:    Markus Bina                        bina@iue.tuwien.ac.at
+               Markus Bina                        bina@iue.tuwien.ac.at
 
    license:    MIT (X11), see file LICENSE in the ViennaGrid base directory
 ======================================================================= */
@@ -58,7 +58,7 @@ namespace viennagrid
     // (see: http://www.vtk.org/VTK/img/file-formats.pdf, page 9)
 
     template < typename DomainType >
-    class Vtk_writer
+    class vtk_writer
     {
       protected:
 
@@ -189,8 +189,8 @@ namespace viennagrid
 
     public:
 
-      Vtk_writer() { };
-      ~Vtk_writer() { };
+      vtk_writer() { };
+      ~vtk_writer() { };
 
       int writeDomain(DomainType const & domain, std::string const & filename)
       {
@@ -304,14 +304,13 @@ namespace viennagrid
 
     };
 
-  template < typename DomainType > 
-  int exportVTK(DomainType const& domain, std::string const & filename)
-  {
+    template < typename DomainType > 
+    int export_vtk(DomainType const& domain, std::string const & filename)
+    {
  
-    Vtk_writer<DomainType> vtk_writer;
-    return vtk_writer.writeDomain(domain, filename);
-  }
-
+      vtk_writer<DomainType> vtk_writer;
+      return vtk_writer.writeDomain(domain, filename);
+    }
 
   } //namespace io
 } //namespace viennagrid

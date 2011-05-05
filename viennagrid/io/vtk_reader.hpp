@@ -39,7 +39,7 @@ namespace viennagrid
   {
     
     template <typename DomainType>
-    class Vtk_reader
+    class vtk_reader
     {
     protected:
       typedef typename DomainType::config_type                     DomainConfiguration;
@@ -409,12 +409,12 @@ namespace viennagrid
 
 
     public:
-      Vtk_reader() 
+      vtk_reader() 
       { 
         local_geometry_index = 0;
         global_geometry_index = 0;        
       };
-      ~Vtk_reader() { };
+      ~vtk_reader() { };
 
       int readDomain(DomainType & domain, std::string const & filename)
       {
@@ -468,9 +468,9 @@ namespace viennagrid
     }; //class vtk_reader
 
     template < typename DomainType > 
-    int importVTK(DomainType & domain, std::string const & filename)
+    int import_vtk(DomainType & domain, std::string const & filename)
     {
-      Vtk_reader<DomainType> vtk_reader;
+      vtk_reader<DomainType> vtk_reader;
       return vtk_reader.readDomain(domain, filename);
     }
 

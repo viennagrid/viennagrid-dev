@@ -14,7 +14,8 @@
 ======================================================================= */
 
 #include "viennagrid/domain.hpp"
-
+#include "viennagrid/config/others.hpp"
+#include "viennagrid/config/simplex.hpp"
 
 int main()
 {

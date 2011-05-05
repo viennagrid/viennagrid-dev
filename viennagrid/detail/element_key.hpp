@@ -19,6 +19,7 @@
 
 #include "viennagrid/forwards.h"
 #include "viennagrid/element.hpp"
+#include "viennagrid/topology/point.hpp"
 
 namespace viennagrid
 {

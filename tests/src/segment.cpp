@@ -21,7 +21,7 @@
 #include "viennagrid/element.hpp"
 #include "viennagrid/point.hpp"
 #include "viennagrid/domain.hpp"
-#include "viennagrid/domain_configs.hpp"
+#include "viennagrid/config/simplex.hpp"
 //#include "viennagrid/segment.hpp"
 //#include "viennagrid/boundary.hpp"
 #include "viennagrid/io/vtk_writer.hpp"
@@ -164,7 +164,7 @@ void test(viennagrid::config::tetrahedral_3d)
   std::cout << "Printing cells in segment 1:" << std::endl;
   print_elements<Domain::config_type::cell_tag::topology_level>(domain.segment(1));
   
-  viennagrid::io::Vtk_writer<Domain> my_vtk_writer;
+  viennagrid::io::vtk_writer<Domain> my_vtk_writer;
   my_vtk_writer.writeDomain(domain, "multi-segment");
   
   std::cout << "*******************************" << std::endl;
@@ -270,7 +270,7 @@ void test(viennagrid::config::triangular_2d)
   std::cout << "Printing cells in segment 1:" << std::endl;
   print_elements<Domain::config_type::cell_tag::topology_level>(domain.segment(1));
   
-  viennagrid::io::Vtk_writer<Domain> my_vtk_writer;
+  viennagrid::io::vtk_writer<Domain> my_vtk_writer;
   my_vtk_writer.writeDomain(domain, "multi-segment");
   
   std::cout << "*******************************" << std::endl;
