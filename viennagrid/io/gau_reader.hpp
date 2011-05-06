@@ -125,7 +125,9 @@ namespace io
          #ifdef IODEBUG
             std::cout << "  id: " << i << " : " << coords[0] << " " << coords[1] << " " << coords[2] << std::endl;
          #endif
-            vertex.getPoint().setCoordinates(coords);
+            vertex.getPoint()[0] = coords[0];
+            vertex.getPoint()[1] = coords[1];
+            vertex.getPoint()[2] = coords[2];            
             vertex.setID(i);
             domain.add(vertex);
          }
