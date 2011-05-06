@@ -308,6 +308,12 @@ namespace viennagrid
    struct one_tag {};
    struct two_tag {};
    struct inf_tag {};
-
+   
+   // norm tags/types for: algorithm/cell_normals.hpp
+   struct seg_cell_normal_tag {};
+   struct seg_cell_normal_data {
+      typedef viennagrid::point<double, 3>         point_type;
+      typedef std::map<std::size_t, point_type>    type;
+   };
 }
 #endif

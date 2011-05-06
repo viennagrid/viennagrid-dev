@@ -181,6 +181,37 @@ namespace viennagrid
         writer << "   </PointData>"  << std::endl;
       } //writePointData
 
+      template <typename SegmentType>
+      void writeCellData(SegmentType const & segment, std::ofstream & writer, std::size_t seg_id = 0)
+      {
+        typedef typename viennagrid::result_of::const_ncell_container<SegmentType, CellTag::topology_level>::type     CellContainer;
+        typedef typename viennagrid::result_of::iterator<CellContainer>::type                                         CellIterator;
+        
+        writer << "   <CellData Normals=\"cell_normals\">" << std::endl;
+        writer << "    <DataArray type=\"Float32\" Name=\"cell_normals\" NumberOfComponents=\"3\" format=\"ascii\">" << std::endl;
+
+        CellContainer cells = viennagrid::ncells<CellTag::topology_level>(segment);
+        for (CellIterator cit = cells.begin();
+            cit != cells.end();
+            ++cit)
+        {
+//           std::cout << "vtk writer - cell data - seg: " << seg_id << " :: " << viennadata::access<
+//                        viennagrid::seg_cell_normal_tag,         // key-type
+//                        viennagrid::seg_cell_normal_data::type   // data-type
+//                     >()(*cit)[seg_id] << std::endl;
+           
+           
+           
+         writer <<   viennadata::access<
+                        viennagrid::seg_cell_normal_tag,         // key-type
+                        viennagrid::seg_cell_normal_data::type   // data-type
+                     >()(*cit)[seg_id] 
+         << std::endl;
+        }
+        writer << "    </DataArray>" << std::endl;
+        writer << "   </CellData>"  << std::endl;
+      } //writeCellData
+
       void writeFooter(std::ofstream & writer)
       {
         writer << " </UnstructuredGrid>" << std::endl;
@@ -267,6 +298,9 @@ namespace viennagrid
             writePointData(seg, std::string("vtk_data"), writer);
 
             writeCells(seg, writer);
+            // TODO make this optional
+            // TODO extract a specific cell data
+            writeCellData(seg, writer, i);
 
             writer << "  </Piece>" << std::endl;
             writeFooter(writer);
@@ -293,6 +327,10 @@ namespace viennagrid
           writePointData(domain, std::string("vtk_data"), writer);
 
           writeCells(domain, writer);
+          
+          // TODO make this optional
+          // TODO extract a specific cell data
+          writeCellData(domain, writer);
 
           writer << "  </Piece>" << std::endl;
           writeFooter(writer);
