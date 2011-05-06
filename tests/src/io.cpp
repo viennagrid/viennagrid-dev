@@ -115,7 +115,7 @@ void testNewDomain(std::string & infile, std::string & outfile)
       vit != vertices.end();
       ++vit)
   {
-    viennadata::access<std::string, double>("vtk_data")(*vit) = vit->getPoint().get_x();
+    viennadata::access<std::string, double>("vtk_data")(*vit) = vit->getPoint()[0];
   }
   
   

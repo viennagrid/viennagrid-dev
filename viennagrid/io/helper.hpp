@@ -35,7 +35,7 @@ namespace viennagrid
       template <typename PointType>
       static void write(std::ofstream & writer, PointType & point)
       {
-        writer << point.get_x();
+        writer << point[0];
       }
     };
     
@@ -45,7 +45,7 @@ namespace viennagrid
       template <typename PointType>
       static void write(std::ofstream & writer, PointType & point)
       {
-        writer << point.get_x() << " " << point.get_y();
+        writer << point[0] << " " << point[1];
       }
     };
     
@@ -55,7 +55,7 @@ namespace viennagrid
       template <typename PointType>
       static void write(std::ofstream & writer, PointType & point)
       {
-        writer << point.get_x() << " " << point.get_y() << " " << point.get_z();
+        writer << point[0] << " " << point[1] << " " << point[2];
       }
     };
     

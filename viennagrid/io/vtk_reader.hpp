@@ -441,7 +441,8 @@ namespace viennagrid
               it != geometry_container.end(); it++)
           {
             VertexType vertex;
-            vertex.getPoint().setCoordinates(*it);
+            for (dim_type i=0; i<vertex.getPoint().size(); ++i)
+              vertex.getPoint()[i] = *it[i];
             vertex.setID(index);
             domain.add(vertex);            
             index++;
