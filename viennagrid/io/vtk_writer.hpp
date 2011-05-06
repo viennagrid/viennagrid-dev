@@ -23,6 +23,7 @@
 #include "viennagrid/iterators.hpp"
 #include "viennagrid/io/helper.hpp"
 #include "viennagrid/io/vtk_tags.hpp"
+//#include "viennagrid/algorithm/cell_normals.hpp"
 #include "viennadata/api.hpp"
 
 namespace viennagrid
@@ -300,7 +301,7 @@ namespace viennagrid
             writeCells(seg, writer);
             // TODO make this optional
             // TODO extract a specific cell data
-            writeCellData(seg, writer, i);
+            //writeCellData(seg, writer, i);
 
             writer << "  </Piece>" << std::endl;
             writeFooter(writer);
@@ -330,7 +331,7 @@ namespace viennagrid
           
           // TODO make this optional
           // TODO extract a specific cell data
-          writeCellData(domain, writer);
+          //writeCellData(domain, writer);
 
           writer << "  </Piece>" << std::endl;
           writeFooter(writer);
