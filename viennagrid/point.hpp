@@ -319,6 +319,7 @@ namespace viennagrid
       public:
         typedef NumericT numeric_type;
         typedef DimTag  dimension_tag;
+        typedef numeric_type value_type;
 
         point_base() {};
 

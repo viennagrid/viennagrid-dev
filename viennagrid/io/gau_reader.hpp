@@ -24,7 +24,7 @@
 
 #include "viennagrid/domain.hpp"
 #include "viennagrid/forwards.h"
-#include "viennagrid/boundary.hpp"
+#include "viennagrid/algorithm/boundary.hpp"
 
 #include "boost/lexical_cast.hpp"
 
@@ -169,7 +169,7 @@ namespace io
             for (std::size_t nu=0; nu < cell_size; ++nu)
             {
                global_cell_size++;
-               VertexType *vertices[viennagrid::subcell_traits<CellTag, 0>::num_elements];        
+               VertexType *vertices[viennagrid::traits::subcell_desc<CellTag, 0>::num_elements];        
 
                if (dimension_topology== 1)
                {

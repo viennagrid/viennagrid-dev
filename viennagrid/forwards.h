@@ -289,7 +289,10 @@ namespace viennagrid
     
   }
   
-  
+   // norm tags for: algorithm/norm.hpp
+   struct one_tag {};
+   struct two_tag {};
+   struct inf_tag {};
 
 }
 #endif
