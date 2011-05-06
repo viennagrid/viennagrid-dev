@@ -82,9 +82,9 @@ namespace viennagrid
                          //public segment_layers<Config, dim - 1, handling_tag>
                          //public segment_domain_holder<Config>
   {
-      typedef typename subcell_traits<typename Config::cell_tag, dim>::element_tag       element_tag;
-      typedef element<Config, element_tag >                                              element_type;
-      typedef typename subcell_traits<typename Config::cell_tag, 0>::element_tag         vertex_tag;
+      typedef typename traits::subcell_desc<typename Config::cell_tag, dim>::element_tag     element_tag;
+      typedef element<Config, element_tag >                                                  element_type;
+      typedef typename traits::subcell_desc<typename Config::cell_tag, 0>::element_tag       vertex_tag;
       typedef element<Config, vertex_tag >                                               vertex_type;
       typedef element<Config, typename Config::cell_tag>                                 cell_type;
       typedef typename result_of::element_container< segment_t<Config>, Config::cell_tag::topology_level, dim>::type      container_type;
@@ -101,7 +101,7 @@ namespace viennagrid
         
         //add vertices to segment: (note that the ncells<0>() is not available here)
         vertex_type ** cell_vertices = cell.template container<0>();
-        for (long i=0; i<subcell_traits<typename Config::cell_tag, 0>::num_elements; ++i)
+        for (long i=0; i<traits::subcell_desc<typename Config::cell_tag, 0>::num_elements; ++i)
           base_type::add(*(cell_vertices[i]));
       }
       
@@ -158,7 +158,7 @@ namespace viennagrid
   class segment_layers<Config, 0, handling_tag> : public segment_domain_holder<Config>
   {
       typedef typename Config::cell_tag                                 CellTag;
-      typedef typename subcell_traits<CellTag, 0>::element_tag          VertexTag;
+      typedef typename traits::subcell_desc<CellTag, 0>::element_tag    VertexTag;
       typedef element<Config, VertexTag >                               VertexType;
       typedef typename result_of::element_container< segment_t<Config>, 
                                                      0,

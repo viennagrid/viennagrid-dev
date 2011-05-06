@@ -20,12 +20,6 @@ namespace viennagrid
 {
 
 
-  template <typename FEMConfig, typename Segment, typename KEY, typename VALUE>
-  void clearBoundary(Segment & seg)
-  {
-
-  }
-
   //helper struct for setting boundary flag of lower level elements of a facet
   template <typename Facet, long topolevel>
   struct BoundarySetter
@@ -174,7 +168,7 @@ namespace viennagrid
   void detectBoundary(SegmentType & seg)
   {
     typedef typename SegmentType::config_type::cell_tag                   CellTag;
-    typedef typename subcell_traits<CellTag, CellTag::topology_level-1>::handling_tag  HandlingTag;
+    typedef typename traits::subcell_desc<CellTag, CellTag::topology_level-1>::handling_tag  HandlingTag;
     detectBoundary_impl(seg, HandlingTag());
   }
 

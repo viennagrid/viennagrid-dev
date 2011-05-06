@@ -29,125 +29,127 @@ namespace viennagrid
   };
 
 
-
-  //Tetrahedron:
-  template <>
-  struct subcell_traits<tetrahedron_tag, 0>
+  namespace traits
   {
-    typedef point_tag             element_tag;
-    typedef full_handling_tag     handling_tag;
 
-    enum{ num_elements = 4 };     //4 vertices
-  };
+    //Tetrahedron:
+    template <>
+    struct subcell_desc<tetrahedron_tag, 0>
+    {
+      typedef point_tag             element_tag;
+      typedef full_handling_tag     handling_tag;
 
-  template <>
-  struct subcell_traits<tetrahedron_tag, 1>
-  {
-    typedef line_tag              element_tag;
-    typedef full_handling_tag     handling_tag;
+      enum{ num_elements = 4 };     //4 vertices
+    };
 
-    enum{ num_elements = 6 };     //6 edges
-  };
+    template <>
+    struct subcell_desc<tetrahedron_tag, 1>
+    {
+      typedef line_tag              element_tag;
+      typedef full_handling_tag     handling_tag;
 
-  template <>
-  struct subcell_traits<tetrahedron_tag, 2>
-  {
-    typedef triangle_tag          element_tag;
-    typedef full_handling_tag     handling_tag;
+      enum{ num_elements = 6 };     //6 edges
+    };
 
-    enum{ num_elements = 4 };     //4 facets
-  };
+    template <>
+    struct subcell_desc<tetrahedron_tag, 2>
+    {
+      typedef triangle_tag          element_tag;
+      typedef full_handling_tag     handling_tag;
 
-  
+      enum{ num_elements = 4 };     //4 facets
+    };
     
-  //////// Tetrahedron ////////
-  template <>
-  struct subcell_filler<tetrahedron_tag, 1>
-  {
-    //fill edges:
-    template <typename ElementType, typename Vertices, typename Orientations, typename Segment>
-    static void fill(ElementType ** elements, Vertices ** vertices, Orientations * orientations, Segment & seg)
+    //////// Tetrahedron ////////
+    template <>
+    struct subcell_filler<tetrahedron_tag, 1>
     {
-      Vertices * edgevertices[2];
-      ElementType edge;
+      //fill edges:
+      template <typename ElementType, typename Vertices, typename Orientations, typename Segment>
+      static void fill(ElementType ** elements, Vertices ** vertices, Orientations * orientations, Segment & seg)
+      {
+        Vertices * edgevertices[2];
+        ElementType edge;
 
-      //fill edges according to orientation and ordering induced by k-tuple-metafunction:
-      edgevertices[0] = vertices[0];
-      edgevertices[1] = vertices[1];
-      edge.setVertices(edgevertices);
-      elements[0] = seg.add(edge, orientations);
+        //fill edges according to orientation and ordering induced by k-tuple-metafunction:
+        edgevertices[0] = vertices[0];
+        edgevertices[1] = vertices[1];
+        edge.setVertices(edgevertices);
+        elements[0] = seg.add(edge, orientations);
 
-      edgevertices[0] = vertices[0];
-      edgevertices[1] = vertices[2];
-      edge.setVertices(edgevertices);
-      elements[1] = seg.add(edge, orientations + 1);
+        edgevertices[0] = vertices[0];
+        edgevertices[1] = vertices[2];
+        edge.setVertices(edgevertices);
+        elements[1] = seg.add(edge, orientations + 1);
 
-      edgevertices[0] = vertices[0];
-      edgevertices[1] = vertices[3];
-      edge.setVertices(edgevertices);
-      elements[2] = seg.add(edge, orientations + 2);
+        edgevertices[0] = vertices[0];
+        edgevertices[1] = vertices[3];
+        edge.setVertices(edgevertices);
+        elements[2] = seg.add(edge, orientations + 2);
 
-      edgevertices[0] = vertices[1];
-      edgevertices[1] = vertices[2];
-      edge.setVertices(edgevertices);
-      elements[3] = seg.add(edge, orientations + 3);
+        edgevertices[0] = vertices[1];
+        edgevertices[1] = vertices[2];
+        edge.setVertices(edgevertices);
+        elements[3] = seg.add(edge, orientations + 3);
 
-      edgevertices[0] = vertices[1];
-      edgevertices[1] = vertices[3];
-      edge.setVertices(edgevertices);
-      elements[4] = seg.add(edge, orientations + 4);
+        edgevertices[0] = vertices[1];
+        edgevertices[1] = vertices[3];
+        edge.setVertices(edgevertices);
+        elements[4] = seg.add(edge, orientations + 4);
 
-      edgevertices[0] = vertices[2];
-      edgevertices[1] = vertices[3];
-      edge.setVertices(edgevertices);
-      elements[5] = seg.add(edge, orientations + 5);
-    }
-  };
+        edgevertices[0] = vertices[2];
+        edgevertices[1] = vertices[3];
+        edge.setVertices(edgevertices);
+        elements[5] = seg.add(edge, orientations + 5);
+      }
+    };
+    
+    template <>
+    struct subcell_filler<tetrahedron_tag, 2>
+    {
+      //fill facets:
+      template <typename ElementType, typename Vertices, typename Orientations, typename Segment>
+      static void fill(ElementType ** elements, Vertices ** vertices, Orientations * orientations, Segment & seg)
+      {
+        Vertices * facetvertices[3];
+        ElementType facet;
+
+        //fill edges according to orientation and ordering induced by k-tuple-metafunction:
+
+        facetvertices[0] = vertices[0];
+        facetvertices[1] = vertices[1];
+        facetvertices[2] = vertices[2];
+        facet.setVertices(facetvertices);
+        elements[0] = seg.add(facet, orientations );
+        //this new facet must be initialized too:
+        elements[0]->fill(seg);
+
+        facetvertices[0] = vertices[0];
+        facetvertices[1] = vertices[1];
+        facetvertices[2] = vertices[3];
+        facet.setVertices(facetvertices);
+        elements[1] = seg.add(facet, orientations + 1 );
+        elements[1]->fill(seg);
+
+        facetvertices[0] = vertices[0];
+        facetvertices[1] = vertices[2];
+        facetvertices[2] = vertices[3];
+        facet.setVertices(facetvertices);
+        elements[2] = seg.add(facet, orientations + 2 );
+        elements[2]->fill(seg);
+
+        facetvertices[0] = vertices[1];
+        facetvertices[1] = vertices[2];
+        facetvertices[2] = vertices[3];
+        facet.setVertices(facetvertices);
+        elements[3] = seg.add(facet, orientations + 3 );
+        elements[3]->fill(seg);
+
+      }
+    };
+
+  } //traits
   
-  template <>
-  struct subcell_filler<tetrahedron_tag, 2>
-  {
-    //fill facets:
-    template <typename ElementType, typename Vertices, typename Orientations, typename Segment>
-    static void fill(ElementType ** elements, Vertices ** vertices, Orientations * orientations, Segment & seg)
-    {
-      Vertices * facetvertices[3];
-      ElementType facet;
-
-      //fill edges according to orientation and ordering induced by k-tuple-metafunction:
-
-      facetvertices[0] = vertices[0];
-      facetvertices[1] = vertices[1];
-      facetvertices[2] = vertices[2];
-      facet.setVertices(facetvertices);
-      elements[0] = seg.add(facet, orientations );
-      //this new facet must be initialized too:
-      elements[0]->fill(seg);
-
-      facetvertices[0] = vertices[0];
-      facetvertices[1] = vertices[1];
-      facetvertices[2] = vertices[3];
-      facet.setVertices(facetvertices);
-      elements[1] = seg.add(facet, orientations + 1 );
-      elements[1]->fill(seg);
-
-      facetvertices[0] = vertices[0];
-      facetvertices[1] = vertices[2];
-      facetvertices[2] = vertices[3];
-      facet.setVertices(facetvertices);
-      elements[2] = seg.add(facet, orientations + 2 );
-      elements[2]->fill(seg);
-
-      facetvertices[0] = vertices[1];
-      facetvertices[1] = vertices[2];
-      facetvertices[2] = vertices[3];
-      facet.setVertices(facetvertices);
-      elements[3] = seg.add(facet, orientations + 3 );
-      elements[3]->fill(seg);
-
-    }
-  };
-
   
   
 }

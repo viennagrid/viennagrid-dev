@@ -16,7 +16,6 @@
 #include <iostream>
 #include <vector>
 #include <map>
-#include "viennagrid/idhandler.hpp"
 
 namespace viennagrid
 {
@@ -166,32 +165,58 @@ namespace viennagrid
   };
   
 
-  //leftover stuff from celltags.hpp:
-  struct null_tag {};
+  //ID handling:
   
-  // cell_traits can be specialized by library users in order to use 'NoID' instead of 'ProvideID' 
-  template <typename CellTag>
-  struct cell_traits
+  class NoID
   {
-    typedef ProvideID     id_handler;
-  };
-  
-  template <typename ElementTag_, 
-            long level = ElementTag_::topology_level>
-  struct subcell_traits
-  {
-    //the default case is simultaneously a pathetic case:
-    //cell-handling within the cell
+    //for compatibility:
+    void setID(long id) { };
+    const NoID * getID() const { return this; };
 
-    enum{ num_elements = 1 };     //1 cell
-
-    typedef ElementTag_           element_tag;
-    //compatibility with cell-on-cell-iterator
-    typedef full_handling_tag     handling_tag;
   };
 
-  template <typename CellType, long level>
-  struct subcell_filler {};
+  class ProvideID
+  {
+    public:
+      ProvideID() : id_(-1) {};
+
+      long getID() const { return id_; };
+      void setID(long id) { id_ = id; };
+
+    protected:
+      long id_;
+  };
+  
+  
+  namespace traits
+  {
+    // cell_traits can be specialized by library users in order to use 'NoID' instead of 'ProvideID' 
+    template <typename ElementTag>
+    struct element_id
+    {
+      typedef ProvideID     id_handler;
+    };
+    
+    template <typename ElementTag, 
+              long level = ElementTag::topology_level>
+    struct subcell_desc
+    {
+      //the default case is simultaneously a pathetic case:
+      //cell-handling within the cell
+
+      enum{ num_elements = 1 };     //1 cell
+
+      typedef ElementTag            element_tag;
+      //compatibility with cell-on-cell-iterator
+      typedef full_handling_tag     handling_tag;
+    };
+
+    template <typename CellType, long level>
+    struct subcell_filler {};
+    
+  }
+  
+  
   
   namespace result_of
   {
@@ -230,8 +255,8 @@ namespace viennagrid
     template <typename T, dim_type dim = T::element_tag::topology_level>
     struct element_tag
     {
-      typedef typename subcell_traits<typename T::element_tag,
-                                      dim>::element_tag           type; 
+      typedef typename viennagrid::traits::subcell_desc<typename T::element_tag,
+                                                        dim>::element_tag           type; 
     };
     
     
@@ -245,7 +270,7 @@ namespace viennagrid
     template <typename T, dim_type dim = T::element_tag::topology_level>
     struct handling_tag
     {
-      typedef typename subcell_traits<T, dim>::handling_tag    type; 
+      typedef typename viennagrid::traits::subcell_desc<T, dim>::handling_tag    type; 
     };
     
     //cell level always uses full handling

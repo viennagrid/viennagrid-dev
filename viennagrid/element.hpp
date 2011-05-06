@@ -18,353 +18,26 @@
 //#include "viennagrid/topology/celltags.hpp"
 #include "viennagrid/topology/point.hpp"
 #include "viennagrid/iterators.hpp"
+#include "viennagrid/detail/element_orientation.hpp"
+#include "viennagrid/detail/lower_level_holder.hpp"
 
 #include <vector>
 
 namespace viennagrid
 {
   
-  
-  /************** Level 1: Elements contained by a higher-level element *******/
-
-  //local vertex numbering is in general different from global vertex numbering for lower-level topological elements
-  //this permutator maps local numbers to global numbers
-  //alternative implementation: vertexnum as template parameter
-  class ElementOrientation
-  {
-    public:
-      ElementOrientation() : permutator_(1) {};    //for std::vector-compatibility
-
-      ElementOrientation(short vertexnum) : permutator_(vertexnum) {}
-
-      void setDefaultOrientation()
-      {
-        for (unsigned short i=0; i<permutator_.size(); ++i)
-          permutator_[i] = i;
-      };
-
-      short operator()(short in) const { return permutator_[in]; }
-
-      void setPermutation(short index, short mappedTo) { permutator_[index] = mappedTo; };
-      void resize(short vertexnum) { permutator_.resize(vertexnum); }
-
-      void print() const
-      {
-        for (unsigned short i=0; i<permutator_.size(); ++i)
-        {
-          std::cout << i << "->" << permutator_[i] << ",";
-        }
-        std::cout << std::endl;
-      }
-
-    private:
-      std::vector<short> permutator_;
-  };
-
-  template <typename T_Configuration,
-              typename ElementTag,
-              unsigned long levelnum,
-              typename handling_tag = typename subcell_traits<ElementTag,levelnum>::handling_tag,
-              bool LevelNull = (levelnum == 0)>
-  class lower_level_holder  { };
-
-  template <typename T_Configuration, typename ElementTag, unsigned long levelnum>
-  class lower_level_holder <T_Configuration, ElementTag, levelnum, full_handling_tag, false> :
-    public lower_level_holder < T_Configuration, ElementTag, levelnum - 1>
-  {
-    //requirements:
-    //array of pointers to elements of class 'levelnum' and a integer representing the orientation within the cell relative to the element it points to.
-    typedef subcell_traits<ElementTag, levelnum>                         LevelSpecs;
-    typedef subcell_traits<typename LevelSpecs::element_tag, 0>  VertexOnElementSpecs;
-    typedef lower_level_holder < T_Configuration, ElementTag, levelnum - 1 >      Base;
-
-    typedef element<T_Configuration, typename LevelSpecs::element_tag>  LevelElementType;
-
-    protected:
-      template <typename DomainType>
-      void fill_level(DomainType & dom)
-      {
-        //fill lower level first:
-        Base::fill_level(dom);
-
-        for (long i=0; i<LevelSpecs::num_elements; ++i)
-          orientations_[i].resize(VertexOnElementSpecs::num_elements);
-
-        subcell_filler<ElementTag, levelnum>::fill(&(elements_[0]),
-                                                   &(Base::vertices_[0]),
-                                                   &(orientations_[0]),
-                                                   dom);
-      }
-
-      void print(long indent = 0) const
-      {
-        for (long j = 0; j<indent; ++j)
-          std::cout << "   ";
-        std::cout << "* Level " << levelnum << ": (FullHandling)" << std::endl;
-
-        for (long i=0; i<LevelSpecs::num_elements; ++i)
-        {
-          std::cout << "Permutation (local to global) for element to come:" << std::endl;
-          orientations_[i].print();
-          elements_[i]->print(indent + 1);
-        }
-        Base::print(indent);
-      }
-
-    public:
-
-      lower_level_holder( ) {};
-
-      lower_level_holder( const lower_level_holder & llh) : Base (llh)
-      {
-        for (long i=0; i < LevelSpecs::num_elements; ++i)
-          elements_[i] = llh.elements_[i];
-      }
-
-      /////////////////// access container: ////////////////////
-      
-      //non-const:
-      template <long j>
-      typename result_of::element_container< element<T_Configuration, ElementTag>, j, T_Configuration::cell_tag::topology_level>::type *
-      container(less_tag)
-      { 
-        return Base::template container<j>();
-      }
-
-      template <long j>
-      typename result_of::element_container< element<T_Configuration, ElementTag>, j, T_Configuration::cell_tag::topology_level>::type *
-      container(equal_tag)
-      { 
-        return &(elements_[0]);
-      }
-
-      template <long j>
-      typename result_of::element_container< element<T_Configuration, ElementTag>, j, T_Configuration::cell_tag::topology_level>::type *
-      container()
-      { 
-        return container<j>( typename level_discriminator<levelnum, j>::result_type() );
-      }
-      
-      //const:
-      template <long j>
-      const typename result_of::element_container< element<T_Configuration, ElementTag>, j, T_Configuration::cell_tag::topology_level>::type *
-      container(less_tag) const
-      { 
-        return Base::template container<j>();
-      }
-
-      template <long j>
-      const typename result_of::element_container< element<T_Configuration, ElementTag>, j, T_Configuration::cell_tag::topology_level>::type *
-      container(equal_tag) const
-      { 
-        return &(elements_[0]);
-      }
-
-      template <long j>
-      const typename result_of::element_container< element<T_Configuration, ElementTag>, j, T_Configuration::cell_tag::topology_level>::type *
-      container() const
-      { 
-        return container<j>( typename level_discriminator<levelnum, j>::result_type() );
-      }
-      
-      
-      
-      
-      
-
-      ////////////////// orientation: ////////////////////
-      template <long j>
-      ElementOrientation const &
-      getLevelOrientation(long index, less_tag)
-      { 
-        return Base::template getLevelOrientation<j>(index);
-      }
-
-      template <long j>
-      ElementOrientation const &
-      getLevelOrientation(long index, equal_tag) 
-      { 
-        return orientations_[index];
-      }
-
-      template <long j>
-      ElementOrientation const &
-      getLevelOrientation(long index)
-      { 
-        return getLevelOrientation<j>( index, typename level_discriminator<levelnum, j>::result_type() );
-      }
-
-    private: 
-      LevelElementType * elements_[LevelSpecs::num_elements];
-      ElementOrientation orientations_[LevelSpecs::num_elements];
-  };
-
-  template <typename T_Configuration, typename ElementTag, unsigned long levelnum>
-  class lower_level_holder <T_Configuration, ElementTag, levelnum, no_handling_tag, false> :
-    public lower_level_holder < T_Configuration, ElementTag, levelnum - 1 >
-  {
-    //requirements:
-    //array of pointers to elements of class 'levelnum' and a integer representing the orientation within the cell relative to the element it points to.
-    //typedef typename DomainTypes<T_Configuration>::segment_type        SegmentType;
-    typedef subcell_traits<ElementTag, levelnum>                                LevelSpecs;
-    typedef lower_level_holder < T_Configuration, ElementTag, levelnum - 1 >      Base;
-
-    typedef element<T_Configuration, typename LevelSpecs::element_tag>  LevelElementType;
-
-    protected:
-      template <typename DomainType>
-      void fill_level(DomainType & dom)
-      {
-        //fill lower topological levels only:
-        Base::fill_level(dom);
-
-/*
-        facets_[0] = seg.addFacet(Base::vertices_[0], Base::vertices_[1], Base::vertices_[3]);
-        facets_[0].first->fillEdges(seg);
-              ...... and so on .........
-*/
-      }
-
-      void print(long indent = 0) const
-      {
-        for (long j = 0; j<indent; ++j)
-          std::cout << "   ";
-        std::cout << "* Level " << levelnum << ": (NoHandling)" << std::endl;
-
-        Base::print(indent);
-      }
-
-    public:
-
-      lower_level_holder( ) {};
-
-      lower_level_holder( const lower_level_holder & llh) : Base (llh) {}
-      
-      //////////////////// container ///////////////////////
-      
-      //non-const:
-      template <long j>
-      typename result_of::element_container< element<T_Configuration, ElementTag>, j, T_Configuration::cell_tag::topology_level>::type *
-      container(less_tag)
-      { 
-        return Base::template container<j>();
-      }
-
-      template <long j>
-      typename result_of::element_container< element<T_Configuration, ElementTag>, j, T_Configuration::cell_tag::topology_level>::type *
-      container()
-      { 
-        return container<j>( typename level_discriminator<levelnum, j>::result_type() );
-      }
-
-
-      //const:
-      template <long j>
-      const typename result_of::element_container< element<T_Configuration, ElementTag>, j, T_Configuration::cell_tag::topology_level>::type *
-      container(less_tag) const
-      { 
-        return Base::template container<j>();
-      }
-
-      template <long j>
-      const typename result_of::element_container< element<T_Configuration, ElementTag>, j, T_Configuration::cell_tag::topology_level>::type *
-      container() const
-      { 
-        return container<j>( typename level_discriminator<levelnum, j>::result_type() );
-      }
-
-  };
-
-
-  //at level 0, i.e. vertex level, recursion ends:
-  template <typename T_Configuration, typename ElementTag, typename handling_tag>
-  class lower_level_holder <T_Configuration, ElementTag, 0, handling_tag, true> 
-  {
-    //array of pointers to elements of class 'levelnum' and a integer representing the orientation within the cell relative to the element it points to.
-    //typedef typename DomainTypes<T_Configuration>::segment_type               SegmentType;
-    typedef subcell_traits<ElementTag, 0>                                      LevelSpecs;
-
-    typedef element<T_Configuration, typename LevelSpecs::element_tag>         VertexType;
-    typedef typename result_of::point_type<T_Configuration>::type              PointType;
-
-    typedef typename result_of::iterator< element<T_Configuration, ElementTag>, 0>::type         VertexIterator;
-
-    protected:
-      //end recursion:
-      template <typename DomainType>
-      void fill_level(DomainType & dom) {}
-
-      void print(long indent = 0) const
-      {
-        for (long i = 0; i<indent; ++i)
-          std::cout << "   ";
-        std::cout << "* Level " << 0 << ": " << std::endl;
-
-        for (long i = 0; i<LevelSpecs::num_elements; ++i)
-        {
-          for (long j = 0; j<=indent; ++j)
-            std::cout << "   ";
-          vertices_[i]->print();
-        }
-      }
-
-      void print_short() const
-      {
-        std::cout << "* Vertices: " << std::endl;
-
-        for (long i = 0; i<LevelSpecs::num_elements; ++i)
-        {
-          std::cout << "Vertex " << i << " (" << vertices_[i] << "): "; vertices_[i]->print();
-        }
-      }
-
-    public:
-      lower_level_holder() {};
-
-      lower_level_holder( const lower_level_holder & llh)
-      {
-        for (long i=0; i < LevelSpecs::num_elements; ++i)
-          vertices_[i] = llh.vertices_[i];
-      }
-
-      PointType const & getPoint(long index) const { return (vertices_[index])->getPoint(); }
-
-      ////////////////// container access: /////////////////////////
-      
-      //non-const:
-      template <long j>
-      typename result_of::element_container< element<T_Configuration, ElementTag>, j, T_Configuration::cell_tag::topology_level>::type *
-      container()
-      { 
-        return &(vertices_[0]);
-      }
-
-      //const:
-      template <long j>
-      const typename result_of::element_container< element<T_Configuration, ElementTag>, j, T_Configuration::cell_tag::topology_level>::type *
-      container() const
-      { 
-        return &(vertices_[0]);
-      }
-
-
-    protected:
-      VertexType * vertices_[LevelSpecs::num_elements];
-  };
-
-
   //////////////  Top Level configuration //////////
   template <typename T_Configuration,
             typename ElementTag>
   class element :
       public lower_level_holder < T_Configuration, ElementTag, ElementTag::topology_level - 1>,
-      public cell_traits<ElementTag>::id_handler
+      public traits::element_id<ElementTag>::id_handler
   {
       typedef typename T_Configuration::numeric_type                   ScalarType;
       typedef lower_level_holder < T_Configuration, ElementTag, ElementTag::topology_level - 1>             Base;
       typedef typename result_of::point_type<T_Configuration>::type         PointType;
       typedef typename result_of::ncell_type<T_Configuration, 0>::type      VertexType;
-      typedef subcell_traits<ElementTag, 0>                                 VertexSpecs;
+      typedef traits::subcell_desc<ElementTag, 0>                                 VertexSpecs;
 
     public:
       typedef T_Configuration                                       config_type;
@@ -474,7 +147,7 @@ namespace viennagrid
   //vertex-type needs separate treatment:
   template <typename T_Configuration>
   class element <T_Configuration, point_tag> :
-    public cell_traits<point_tag>::id_handler
+    public traits::element_id<point_tag>::id_handler
   {
       typedef typename result_of::point_type<T_Configuration>::type          PointType;
       typedef typename T_Configuration::numeric_type                         CoordType;
@@ -484,7 +157,7 @@ namespace viennagrid
     public:
       typedef T_Configuration                                       config_type;
       typedef point_tag                                             element_tag;
-      typedef typename cell_traits<point_tag>::id_handler           id_handler;
+      typedef typename traits::element_id<point_tag>::id_handler           id_handler;
 
       element() { };
 

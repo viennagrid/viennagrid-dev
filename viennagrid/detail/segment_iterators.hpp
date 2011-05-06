@@ -108,7 +108,7 @@ namespace viennagrid
   {
       typedef segment_t<config_type>                        segment_type;
       typedef element< config_type,
-                       typename subcell_traits<typename config_type::cell_tag, dim>::element_tag
+                       typename traits::subcell_desc<typename config_type::cell_tag, dim>::element_tag
                      >                                                         element_type;
                      
       typedef element< config_type,
@@ -155,7 +155,7 @@ namespace viennagrid
   {
       typedef segment_t<config_type>                        segment_type;
       typedef element< config_type,
-                       typename subcell_traits<typename config_type::cell_tag, dim>::element_tag
+                       typename traits::subcell_desc<typename config_type::cell_tag, dim>::element_tag
                      >                                                         element_type;
 
       typedef element< config_type,

@@ -77,11 +77,13 @@ namespace viennagrid
   {
       //typedef typename result_of::element_tag<typename Config::cell_tag, dim>::type    element_tag;
       typedef domain<Config>                                                          domain_type;
-      typedef typename subcell_traits<typename Config::cell_tag, dim>::element_tag    element_tag;
+      typedef typename traits::subcell_desc<typename Config::cell_tag, dim>::element_tag    element_tag;
+      typedef traits::subcell_desc<element_tag, 0>                                       VertexOnElementSpecs;
       typedef element<Config, element_tag >                                              element_type;
       typedef element<Config, typename Config::cell_tag>                                   cell_type;
       typedef typename result_of::element_container<domain_type, dim, Config::cell_tag::topology_level>::type           container_type;
       typedef domain_layers<Config, dim-1>                                               base_type;
+      typedef element_orientation<VertexOnElementSpecs::num_elements>                    ElementOrientationType;
     
     public:
       typedef Config                                    config_type;
@@ -98,7 +100,7 @@ namespace viennagrid
       } */
 
       element_type *
-      add(element_type & elem, ElementOrientation * orientation) {
+      add(element_type & elem, ElementOrientationType * orientation) {
 
         typedef typename std::map< element_key<element_type>, element_type >::iterator  ElementIterator;
         
@@ -383,8 +385,8 @@ namespace viennagrid
     struct ncell_type
     {
       typedef element<Config, 
-                      typename subcell_traits<typename Config::cell_tag,
-                                              dim>::element_tag
+                      typename traits::subcell_desc<typename Config::cell_tag,
+                                                    dim>::element_tag
                       > type;
     };
     

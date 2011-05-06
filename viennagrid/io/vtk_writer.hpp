@@ -142,7 +142,7 @@ namespace viennagrid
                offsets <= segment.template size<CellTag::topology_level>();
                ++offsets)
           {
-            writer << ( offsets * viennagrid::subcell_traits<CellTag, 0>::num_elements) << " ";
+            writer << ( offsets * viennagrid::traits::subcell_desc<CellTag, 0>::num_elements) << " ";
           }
           writer << std::endl;
           writer << "    </DataArray>" << std::endl;

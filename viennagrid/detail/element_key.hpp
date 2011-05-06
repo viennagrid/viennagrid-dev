@@ -29,7 +29,7 @@ namespace viennagrid
   //helper: holds an ordered number of vertices
   //comparisons also take permutations into account
   template <typename ElementType,
-            typename IDHandler = typename cell_traits<point_tag>::id_handler>
+            typename IDHandler = typename traits::element_id<point_tag>::id_handler>
   struct ElementKeyStorageType
   {
     typedef ElementType *           result_type;
@@ -50,7 +50,7 @@ namespace viennagrid
       typedef typename ElementType::element_tag            ElementTag;
       typedef typename ElementKeyStorageType<ElementType>::result_type  StorageType;
     public:
-      element_key( ElementType & el2) : vertexIDs(subcell_traits<ElementTag, 0>::num_elements)
+      element_key( ElementType & el2) : vertexIDs(traits::subcell_desc<ElementTag, 0>::num_elements)
       {
         typedef typename result_of::ncell_container<ElementType, 0>::type   VertexContainer;
         typedef typename result_of::iterator<ElementType, 0>::type          VertexIterator;
@@ -73,7 +73,7 @@ namespace viennagrid
 
       bool operator < (element_key const & epc2) const
       {
-        for (long i=0; i<subcell_traits<ElementTag, 0>::num_elements; ++i)
+        for (long i=0; i<traits::subcell_desc<ElementTag, 0>::num_elements; ++i)
         {
           if ( vertexIDs[i] > epc2.vertexIDs[i] )
             return false;

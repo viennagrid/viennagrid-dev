@@ -59,13 +59,13 @@ namespace viennagrid
     typedef element<Config,
                     typename Config::cell_tag>    cell_type;
       typedef element< Config,
-                       typename subcell_traits<typename Config::cell_tag, dim>::element_tag
+                       typename traits::subcell_desc<typename Config::cell_tag, dim>::element_tag
                      >                                                         element_type;
                     
-    typedef typename result_of::element_container<domain_type, dim>::type   container_type;
+    typedef typename result_of::element_container<domain_type, dim>::type      container_type;
     
     typedef domain_subcell_iterator<element_type,
-                                    typename container_type::iterator>   iterator;
+                                    typename container_type::iterator>         iterator;
     typedef domain_subcell_iterator<const element_type,
                                     typename container_type::const_iterator>   const_iterator;
   };
@@ -122,7 +122,7 @@ namespace viennagrid
   {
       typedef domain<config_type>                        domain_type;
       typedef element< config_type,
-                       typename subcell_traits<typename config_type::cell_tag, dim>::element_tag
+                       typename traits::subcell_desc<typename config_type::cell_tag, dim>::element_tag
                      >                                                         element_type;
                      
       typedef element< config_type,
@@ -130,7 +130,7 @@ namespace viennagrid
                      >                                                         cell_type;
                      
       //typedef std::vector< element_type >     container_type;
-      typedef typename result_of::element_container<domain_type, dim>::type   container_type;
+      typedef typename result_of::element_container<domain_type, dim>::type    container_type;
     
     public: 
       //typedef typename container_type::iterator   iterator;
@@ -167,7 +167,7 @@ namespace viennagrid
   {
       typedef domain<config_type>                        domain_type;
       typedef element< config_type,
-                       typename subcell_traits<typename config_type::cell_tag, dim>::element_tag
+                       typename traits::subcell_desc<typename config_type::cell_tag, dim>::element_tag
                      >                                                         element_type;
 
       typedef element< config_type,

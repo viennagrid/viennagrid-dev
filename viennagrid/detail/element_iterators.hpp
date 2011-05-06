@@ -113,10 +113,10 @@ namespace viennagrid
   //Check availability of iterators:
   template <typename ElementTag,
             dim_type level,
-            typename handling_tag = typename subcell_traits<ElementTag, level>::handling_tag>
+            typename handling_tag = typename traits::subcell_desc<ElementTag, level>::handling_tag>
   struct ElementIteratorChecker
   {
-    enum{ ReturnValue = subcell_traits<ElementTag, level>::ERROR_ITERATOR_NOT_PROVIDED_AT_THIS_LEVEL };
+    enum{ ReturnValue = traits::subcell_desc<ElementTag, level>::ERROR_ITERATOR_NOT_PROVIDED_AT_THIS_LEVEL };
   };
 
   template <typename ElementTag,
@@ -158,7 +158,7 @@ namespace viennagrid
   class ncell_container < element<config_type, element_tag>, dim, false>
   {
       typedef element< config_type,
-                       typename subcell_traits<element_tag, dim>::element_tag
+                       typename traits::subcell_desc<element_tag, dim>::element_tag
                      >                                                         element_type;
                      
       typedef element<config_type, element_tag>                                host_type;
@@ -189,7 +189,7 @@ namespace viennagrid
       iterator end()   const
       {
         assert(cont_ != NULL);
-        return iterator(cont_ + subcell_traits<element_tag, dim>::num_elements);
+        return iterator(cont_ + traits::subcell_desc<element_tag, dim>::num_elements);
       }
       
     private:
@@ -211,7 +211,7 @@ namespace viennagrid
   class const_ncell_container < element<config_type, element_tag>, dim, false>
   {
       typedef element< config_type,
-                       typename subcell_traits<element_tag, dim>::element_tag
+                       typename traits::subcell_desc<element_tag, dim>::element_tag
                      >                                                         element_type;
                      
       typedef element<config_type, element_tag>                                host_type;
@@ -249,7 +249,7 @@ namespace viennagrid
       iterator end() const
       { 
         assert(cont_ != NULL);
-        return iterator(cont_ + subcell_traits<element_tag, dim>::num_elements);
+        return iterator(cont_ + traits::subcell_desc<element_tag, dim>::num_elements);
       }
       
     private:
@@ -327,7 +327,7 @@ namespace viennagrid
   class ncell_container < element<config_type, element_tag>, dim, true>
   {
       typedef element< config_type,
-                       typename subcell_traits<typename config_type::cell_tag,
+                       typename traits::subcell_desc<typename config_type::cell_tag,
                                                dim>::element_tag
                      >                                                         element_type;
                      
@@ -426,8 +426,8 @@ namespace viennagrid
   class const_ncell_container < element<config_type, element_tag>, dim, true>
   {
       typedef element< config_type,
-                       typename subcell_traits<typename config_type::cell_tag,
-                                               dim>::element_tag
+                       typename traits::subcell_desc<typename config_type::cell_tag,
+                                                     dim>::element_tag
                      >                                                         element_type;
                      
       typedef element<config_type, element_tag>                                host_type;

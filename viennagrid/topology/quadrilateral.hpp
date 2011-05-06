@@ -26,72 +26,74 @@ namespace viennagrid
     static std::string name() { return "Quadrilateral"; }
   };
   
+  namespace traits
+  {
   
-  //parallelogram
-  template <>
-  struct subcell_traits<quadrilateral_tag, 0>
-  {
-    typedef point_tag             element_tag;
-    typedef full_handling_tag     handling_tag;
-
-    enum{ num_elements = 4 };     //3 vertices
-  };
-
-  template <>
-  struct subcell_traits<quadrilateral_tag, 1>
-  {
-    typedef line_tag              element_tag;
-    typedef full_handling_tag     handling_tag;
-
-    enum{ num_elements = 4 };     //3 edges
-
-  };
-
-
-
-  //////// Parallelogram ////////
-  template <>
-  struct subcell_filler<quadrilateral_tag, 1>
-  {
-    //fill edges:
-    //
-    // Reference orientation: (v... vertices, e...edges)
-    //        e2
-    // v3 --------- v2
-    //    |       |
-    // e3 |       | e1
-    //    |       |
-    // v0 --------- v1
-    //        e0
-    template <typename ElementType, typename Vertices, typename Orientations, typename Segment>
-    static void fill(ElementType ** elements, Vertices ** vertices, Orientations * orientations, Segment & seg)
+    //parallelogram
+    template <>
+    struct subcell_desc<quadrilateral_tag, 0>
     {
-      Vertices * edgevertices[2];
-      ElementType edge;
+      typedef point_tag             element_tag;
+      typedef full_handling_tag     handling_tag;
 
-      edgevertices[0] = vertices[0];
-      edgevertices[1] = vertices[1];
-      edge.setVertices(edgevertices);
-      elements[0] = seg.add(edge, orientations);
+      enum{ num_elements = 4 };     //3 vertices
+    };
 
-      edgevertices[0] = vertices[1];
-      edgevertices[1] = vertices[2];
-      edge.setVertices(edgevertices);
-      elements[1] = seg.add(edge, orientations + 1 );
+    template <>
+    struct subcell_desc<quadrilateral_tag, 1>
+    {
+      typedef line_tag              element_tag;
+      typedef full_handling_tag     handling_tag;
 
-      edgevertices[0] = vertices[2];
-      edgevertices[1] = vertices[3];
-      edge.setVertices(edgevertices);
-      elements[2] = seg.add(edge, orientations + 2 );
+      enum{ num_elements = 4 };     //3 edges
 
-      edgevertices[0] = vertices[3];
-      edgevertices[1] = vertices[0];
-      edge.setVertices(edgevertices);
-      elements[3] = seg.add(edge, orientations + 3 );
-      
-    }
-  };
-    
+    };
+
+
+
+    //////// Parallelogram ////////
+    template <>
+    struct subcell_filler<quadrilateral_tag, 1>
+    {
+      //fill edges:
+      //
+      // Reference orientation: (v... vertices, e...edges)
+      //        e2
+      // v3 --------- v2
+      //    |       |
+      // e3 |       | e1
+      //    |       |
+      // v0 --------- v1
+      //        e0
+      template <typename ElementType, typename Vertices, typename Orientations, typename Segment>
+      static void fill(ElementType ** elements, Vertices ** vertices, Orientations * orientations, Segment & seg)
+      {
+        Vertices * edgevertices[2];
+        ElementType edge;
+
+        edgevertices[0] = vertices[0];
+        edgevertices[1] = vertices[1];
+        edge.setVertices(edgevertices);
+        elements[0] = seg.add(edge, orientations);
+
+        edgevertices[0] = vertices[1];
+        edgevertices[1] = vertices[2];
+        edge.setVertices(edgevertices);
+        elements[1] = seg.add(edge, orientations + 1 );
+
+        edgevertices[0] = vertices[2];
+        edgevertices[1] = vertices[3];
+        edge.setVertices(edgevertices);
+        elements[2] = seg.add(edge, orientations + 2 );
+
+        edgevertices[0] = vertices[3];
+        edgevertices[1] = vertices[0];
+        edge.setVertices(edgevertices);
+        elements[3] = seg.add(edge, orientations + 3 );
+        
+      }
+    };
+  }
     
 }
 

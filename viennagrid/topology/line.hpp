@@ -26,17 +26,20 @@ namespace viennagrid
   };
 
 
-  //Line:
-  template <>
-  struct subcell_traits<line_tag, 0>
+  namespace traits
   {
-    typedef point_tag             element_tag;
-    typedef full_handling_tag     handling_tag;
 
-    enum{ num_elements = 2 };     //2 vertices
-  };
+    //Line:
+    template <>
+    struct subcell_desc<line_tag, 0>
+    {
+      typedef point_tag             element_tag;
+      typedef full_handling_tag     handling_tag;
 
-  
+      enum{ num_elements = 2 };     //2 vertices
+    };
+
+  }  
   
   
 }

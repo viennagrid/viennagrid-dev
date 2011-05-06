@@ -151,10 +151,10 @@ namespace viennagrid
           for (int i=0; i<cell_num; ++i)
           {
             long vertex_num;
-            VertexType *vertices[subcell_traits<CellTag, 0>::num_elements];
+            VertexType *vertices[traits::subcell_desc<CellTag, 0>::num_elements];
             reader >> cell_id;
       
-            for (int j=0; j<subcell_traits<CellTag, 0>::num_elements; ++j)
+            for (int j=0; j<traits::subcell_desc<CellTag, 0>::num_elements; ++j)
             {
               reader >> vertex_num;
               vertices[j] = &(domain.vertex(vertex_num));
