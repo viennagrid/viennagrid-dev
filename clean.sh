@@ -10,7 +10,7 @@ rm viennagrid/detail/*.*~
 rm viennagrid/config/*.*~
 rm viennagrid/traits/*.*~
 rm viennagrid/topology/*.*~
-rm examples/tutorials/*.*~
+rm examples/tutorial/*.*~
 rm examples/benchmarks/*.*~
 rm examples/tests/*.*~
 rm examples/data/*.*~

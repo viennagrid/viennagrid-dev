@@ -98,12 +98,21 @@ namespace viennagrid
       //
       // operators:
       //
+      
+      //with point:
       point operator+(point const & other) const
       {
         point ret;
         for (dim_type i=0; i<d; ++i)
           ret[i] = coords[i] + other[i];
         return ret;
+      }
+
+      point & operator+=(point const & other)
+      {
+        for (dim_type i=0; i<d; ++i)
+          coords[i] += other[i];
+        return *this;
       }
 
       point operator-(point const & other) const
@@ -114,6 +123,15 @@ namespace viennagrid
         return ret;
       }
       
+      point & operator-=(point const & other)
+      {
+        for (dim_type i=0; i<d; ++i)
+          coords[i] -= other[i];
+        return *this;
+      }
+      
+      
+      //with CoordType
       point & operator*=(CoordType factor)
       {
         for (dim_type i=0; i<d; ++i)
@@ -149,14 +167,14 @@ namespace viennagrid
   };
 
   
-    template <typename CoordType, dim_type d, typename CoordinateSystem>
-    std::ostream& operator << (std::ostream& os, point<CoordType, d, CoordinateSystem> const & p)
-    {
-      for (dim_type i=0; i<d; ++i)
-        os << p[i] << ", ";
-      os << std::endl;
-      return os;
-    }
+  template <typename CoordType, dim_type d, typename CoordinateSystem>
+  std::ostream& operator << (std::ostream & os, point<CoordType, d, CoordinateSystem> const & p)
+  {
+    for (dim_type i=0; i<d; ++i)
+      os << p[i] << ", ";
+    os << std::endl;
+    return os;
+  }
   
   
 }

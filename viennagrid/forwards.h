@@ -24,7 +24,9 @@ namespace viennagrid
   
   /********* Tags ***********************/
   
-  struct cartesian_cs {};
+  struct cartesian_cs {}; //Cartesian coordinate system
+  struct polar_cs {};     //Polar coordinate system (r, phi)
+  struct sherical_cs {};  //Spherical coordinate system (r, theta, phi)
 
   //Dimension Tags:
   struct three_dimensions_tag{
@@ -39,7 +41,7 @@ namespace viennagrid
       enum{ value = 1 };
   };
 
-  //Tags for the handling of elements at different topological levels (see subcell_traits)
+  //Tags for the handling of elements at different topological levels (see traits::subcell_desc)
   struct full_handling_tag {};
   struct no_handling_tag {};
 
@@ -55,6 +57,13 @@ namespace viennagrid
 
   
   /********* Forward definitions of main classes *******************/
+  
+  class line_tag;
+  class hexahedron_tag;
+  class point_tag;
+  class quadrilateral_tag;
+  class tetrahedron_tag;
+  class triangle_tag;
 
   //forward declarations:
   /*template <typename NumericT,
