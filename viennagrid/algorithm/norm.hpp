@@ -14,6 +14,7 @@
 #ifndef VIENNAGRID_NORM_GUARD
 #define VIENNAGRID_NORM_GUARD
 
+#include <cmath>
 #include "viennagrid/forwards.h"
 
 namespace viennagrid {
@@ -41,8 +42,8 @@ struct norm_impl<viennagrid::one_tag>
    typename VectorT::value_type operator()(VectorT const& vector)
    {
       typename VectorT::value_type result(0);
-      for(std::size_t i = 0; i < VectorT::dimension_tag::value; i++)       // TODO replace with generic size
-         result += std::abs(vector[i]);
+      for(std::size_t i = 0; i < traits::size<VectorT>::value; i++)       // TODO replace with generic size
+         result += std::fabs(vector[i]);
       return result;
    }
 };
@@ -54,7 +55,7 @@ struct norm_impl<viennagrid::two_tag>
    typename VectorT::value_type operator()(VectorT const& vector)
    {
       typename VectorT::value_type result(0);
-      for(std::size_t i = 0; i < VectorT::dimension_tag::value; i++)       // TODO replace with generic size
+      for(std::size_t i = 0; i < traits::size<VectorT>::value; i++)       // TODO replace with generic size
          result += vector[i]*vector[i];
       return std::sqrt(result);   
    }
@@ -67,10 +68,10 @@ struct norm_impl<viennagrid::inf_tag>
    typename VectorT::value_type operator()(VectorT const& vector)
    {
       typename VectorT::value_type result(0);
-      for(std::size_t i = 0; i < VectorT::dimension_tag::value; i++)       // TODO replace with generic size
+      for(std::size_t i = 0; i < traits::size<VectorT>::value; i++)       // TODO replace with generic size
       {
-         if(std::abs(vector[i]) > result)
-            result = std::abs(vector[i]);
+         if(std::fabs(vector[i]) > result)
+            result = std::fabs(vector[i]);
       }
       return result;
    }

@@ -11,12 +11,12 @@
    license:    MIT (X11), see file LICENSE in the ViennaGrid base directory
 ======================================================================= */
 
-#ifndef VIENNAGRID_CELLNORMALS_GUARD
-#define VIENNAGRID_CELLNORMALS_GUARD
+#ifndef VIENNAGRID_ALGORITHM_CELLNORMALS_GUARD
+#define VIENNAGRID_ALGORITHM_CELLNORMALS_GUARD
 
 #include "viennagrid/forwards.h"
 #include "viennagrid/point.hpp"
-#include "viennagrid/algorithm/ex_prod.hpp"
+#include "viennagrid/algorithm/cross_prod.hpp"
 #include "viennagrid/algorithm/norm.hpp"
 #include "viennadata/api.hpp"
 
@@ -99,7 +99,7 @@ struct assignCellNormals_impl <3, viennagrid::triangle_tag>
             
             // compute the normal vector on this plane
             //
-            PointType normal_vector = viennagrid::ex(vec1,vec2);            
+            PointType normal_vector = viennagrid::cross_prod(vec1,vec2);            
             
             // compute the magnitude of the normal vector
             //

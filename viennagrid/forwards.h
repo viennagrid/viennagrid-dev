@@ -23,6 +23,8 @@ namespace viennagrid
   typedef unsigned long       dim_type;
   
   /********* Tags ***********************/
+  
+  struct cartesian_cs {};
 
   //Dimension Tags:
   struct three_dimensions_tag{
@@ -55,10 +57,13 @@ namespace viennagrid
   /********* Forward definitions of main classes *******************/
 
   //forward declarations:
-  template <typename NumericT,
+  /*template <typename NumericT,
             typename DimTag>
-  class point;
+  class point; */
 
+  template <typename CoordType, dim_type d, typename CoordinateSystem = cartesian_cs>
+  class point;
+  
   template <typename T_Configuration, typename ElementTag>
   struct element;
 
@@ -248,7 +253,8 @@ namespace viennagrid
     template <typename Config>
     struct point_type
     {
-      typedef point<typename Config::numeric_type, typename Config::dimension_tag>   type;
+      //typedef point<typename Config::numeric_type, typename Config::dimension_tag>   type;
+      typedef point<typename Config::numeric_type, Config::dimension_tag::value>   type;
     };
     
     

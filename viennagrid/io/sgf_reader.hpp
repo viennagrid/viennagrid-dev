@@ -101,16 +101,16 @@ namespace viennagrid
       
           for (int i=0; i<node_num; i++)
           {
-            CoordType coords[DimensionTag::value];
+            //CoordType coords[DimensionTag::value];
       
             reader >> node_id;
       
             for (int j=0; j<DimensionTag::value; j++)
-              reader >> coords[j];
+              reader >> vertex.getPoint()[j];
       
             //insert node into segment:
             //std::cout << std::endl << "Adding vertex: " << &vertex << std::endl;
-            vertex.getPoint().setCoordinates(coords);
+            //vertex.getPoint().setCoordinates(coords);
             vertex.setID(node_id);
             domain.add(vertex);
           }
