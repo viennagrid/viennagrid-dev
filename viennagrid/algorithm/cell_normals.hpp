@@ -20,33 +20,13 @@
 #include "viennagrid/algorithm/norm.hpp"
 #include "viennadata/api.hpp"
 
-// -----------------------------------------------------------------------------
-// 
-// prepare viennadata specific stuff
-//
-namespace viennagrid {
-   namespace tag {
-      struct seg_cell_normal    {};
-   }
 
-   namespace data {
-      struct seg_cell_normal {
-         typedef viennagrid::point<double, viennagrid::three_dimensions_tag>         point_type;
-         typedef std::map<std::size_t, point_type>    type;
-      };
-   }
-} // end namespace viennagrid
-
-namespace viennadata {
-  namespace config {
-    template <>
-    struct key_dispatch<viennagrid::tag::seg_cell_normal>
-    {
+namespace viennadata { namespace config {
+   template <>
+   struct key_dispatch<viennagrid::seg_cell_normal_tag> {
       typedef type_key_dispatch_tag    tag;
-    };    
-  }
-}
-
+   };    
+}}
 
 namespace viennagrid {
 // -----------------------------------------------------------------------------
@@ -133,8 +113,8 @@ struct assignCellNormals_impl <3, viennagrid::triangle_tag>
             // current cell
             // 
             viennadata::access<
-               viennagrid::tag::seg_cell_normal,         // key-type
-               viennagrid::data::seg_cell_normal::type   // data-type
+               viennagrid::seg_cell_normal_tag,         // key-type
+               viennagrid::seg_cell_normal_data::type   // data-type
             >()(*cit)[si]= normal_vector;
          }
       }
