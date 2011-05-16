@@ -21,6 +21,7 @@
 #include "viennagrid/element.hpp"
 #include "viennagrid/point.hpp"
 #include "viennagrid/domain.hpp"
+#include "viennagrid/segment.hpp"
 #include "viennagrid/config/simplex.hpp"
 //#include "viennagrid/segment.hpp"
 //#include "viennagrid/boundary.hpp"
@@ -59,6 +60,65 @@ void print_elements(SegmentT & seg)
     const_it->print_short();
   }
 }
+
+template <viennagrid::dim_type dim_lower,  //lower dimensional elements
+          viennagrid::dim_type dim_higher,  //coboundary for higher dimensional elements
+          typename SegmentT>
+void print_coelements(SegmentT & seg)
+{
+  typedef typename SegmentT::config_type    ConfigType;
+  
+  std::cout << "-- non-const --" << std::endl;
+  typedef typename viennagrid::result_of::ncell_container<SegmentT, dim_lower>::type  ContainerT;
+  typedef typename viennagrid::result_of::iterator<ContainerT>::type           ContainerTIterator;
+  typedef typename viennagrid::result_of::ncell_type<ConfigType, dim_lower>::type      LowerElementType;
+
+  typedef typename viennagrid::result_of::ncell_container<LowerElementType, dim_higher>::type  ContainerTHigher;
+  typedef typename viennagrid::result_of::iterator<ContainerTHigher>::type           ContainerTHigherIterator;
+  
+  ContainerT elements = viennagrid::ncells<dim_lower>(seg);
+  for (ContainerTIterator it = elements.begin();
+       it != elements.end();
+       ++it)
+  {
+    std::cout << "Lower level element: " << std::endl;
+    it->print_short();
+    
+    std::cout << "Adjacent higher level elements: " << std::endl;
+    ContainerTHigher elements2 = viennagrid::ncells<dim_higher>(*it, seg);
+    for (ContainerTHigherIterator it2 = elements2.begin();
+                                  it2 != elements2.end();
+                                ++it2)
+         it2->print_short();
+    //std::cout << *it << std::endl; 
+  }
+  
+  SegmentT const & const_seg = seg;
+
+  std::cout << "-- const --" << std::endl;
+  typedef typename viennagrid::result_of::const_ncell_container<SegmentT, dim_lower>::type   ConstContainerT;
+  typedef typename viennagrid::result_of::iterator<ConstContainerT>::type             ConstContainerTIterator;
+
+  typedef typename viennagrid::result_of::const_ncell_container<LowerElementType, dim_higher>::type  ConstContainerTHigher;
+  typedef typename viennagrid::result_of::iterator<ConstContainerTHigher>::type           ConstContainerTHigherIterator;
+  
+  ConstContainerT const_elements = viennagrid::ncells<dim_lower>(const_seg);
+  for (ConstContainerTIterator const_it = const_elements.begin();
+       const_it != const_elements.end();
+       ++const_it)
+  {
+    std::cout << "Lower level element: " << std::endl;
+    const_it->print_short();
+    
+    std::cout << "Adjacent higher level elements: " << std::endl;
+    ConstContainerTHigher const_elements2 = viennagrid::ncells<dim_higher>(*const_it, seg);
+    for (ConstContainerTHigherIterator const_it2 = const_elements2.begin();
+                                       const_it2 != const_elements2.end();
+                                     ++const_it2)
+         const_it2->print_short();
+  }
+}
+
 
 
 //test for 3d case:
@@ -265,12 +325,27 @@ void test(viennagrid::config::triangular_2d)
 
   std::cout << "Printing vertices in segment 1:" << std::endl;
   print_elements<0>(domain.segment(1));
-  
+
+  std::cout << "Printing edges in segment 0:" << std::endl;
+  print_elements<1>(domain.segment(0));
+
+  std::cout << "Printing edges in segment 1:" << std::endl;
+  print_elements<1>(domain.segment(1));
+
   std::cout << "Printing cells in segment 0:" << std::endl;
   print_elements<Domain::config_type::cell_tag::topology_level>(domain.segment(0));
 
   std::cout << "Printing cells in segment 1:" << std::endl;
   print_elements<Domain::config_type::cell_tag::topology_level>(domain.segment(1));
+  
+  std::cout << "Printing co-boundary for vertices in segment 0:" << std::endl;
+  print_coelements<0, 1>(domain.segment(0));
+  
+  std::cout << "Printing co-boundary for vertices in segment 1:" << std::endl;
+  print_coelements<0, 1>(domain.segment(1));
+
+  std::cout << "Printing co-boundary for vertices in segment 0:" << std::endl;
+  print_coelements<0, 1>(domain.segment(0));
   
   viennagrid::io::vtk_writer<Domain> my_vtk_writer;
   my_vtk_writer.writeDomain(domain, "multi-segment");
@@ -292,6 +367,6 @@ int main()
   std::string outfile = path + "out"; // without ending
   
   test(viennagrid::config::triangular_2d());
-  test(viennagrid::config::tetrahedral_3d());
+  //test(viennagrid::config::tetrahedral_3d());
   return EXIT_SUCCESS;
 }

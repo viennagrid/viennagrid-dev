@@ -20,6 +20,7 @@
 #include <stack>
 
 #include "viennagrid/forwards.h"
+#include "viennagrid/detail/element_iterators.hpp"
 #include "viennagrid/segment.hpp"
 
 namespace viennagrid

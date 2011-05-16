@@ -322,6 +322,15 @@ namespace viennagrid
                         domain<Config> >(e, d);
   }
 
+  template <dim_type dim, typename Config, typename ElementTag>
+  cobnd_proxy< element<Config, ElementTag>,
+               segment_t<Config> >
+  ncells(element<Config, ElementTag> & e, segment_t<Config> & d)
+  {
+    return cobnd_proxy< element<Config, ElementTag>,
+                        segment_t<Config> >(e, d);
+  }
+
   template <typename config_type, typename element_tag,
             dim_type dim>
   class ncell_container < element<config_type, element_tag>, dim, true>
@@ -419,6 +428,15 @@ namespace viennagrid
   {
     return const_cobnd_proxy< element<Config, ElementTag>,
                               domain<Config> >(e, d);
+  }
+
+  template <dim_type dim, typename Config, typename ElementTag>
+  const_cobnd_proxy< element<Config, ElementTag>,
+                     segment_t<Config> >
+  ncells(element<Config, ElementTag> const & e, segment_t<Config> & seg)
+  {
+    return const_cobnd_proxy< element<Config, ElementTag>,
+                              segment_t<Config> >(e, seg);
   }
 
   template <typename config_type, typename element_tag,
