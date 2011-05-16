@@ -53,6 +53,77 @@ namespace viennagrid
     
     
     
+    //
+    // type erasure
+    //
+    template <typename ElementType,   //either cell type or vertex type
+              typename DataType>      //typically long, float or double
+    class vtk_data_accessor_interface
+    {
+      public: 
+        virtual DataType operator()(ElementType const & cell) const = 0;
+        
+        virtual vtk_data_accessor_interface<ElementType, DataType> * clone() const = 0;
+    };
+
+    
+    
+    //
+    // Use case 1: Access data for all elements
+    //
+    template <typename ElementType, typename KeyType, typename DataType>
+    class vtk_data_accessor_global : public vtk_data_accessor_interface<ElementType, DataType>
+    {
+      typedef vtk_data_accessor_global<ElementType, KeyType, DataType>    self_type;
+      
+      public:
+        vtk_data_accessor_global(KeyType const & k) : key_(k) {}
+        vtk_data_accessor_global() {}
+
+        DataType operator()(ElementType const & element) const
+        {
+          return viennadata::access<KeyType, DataType>(key_)(element);
+        }
+        
+        vtk_data_accessor_interface<ElementType, DataType> * clone() const { return new self_type(key_); }
+        
+      private:
+        KeyType key_;
+    };
+    
+    
+
+    
+    template <typename CellType, typename DataType>
+    class vtk_data_accessor_wrapper
+    {
+      public:
+        template <typename T>
+        vtk_data_accessor_wrapper(T const * t) : functor_(t) {}
+        
+        vtk_data_accessor_wrapper() {}
+        
+        vtk_data_accessor_wrapper & operator=(vtk_data_accessor_wrapper & other)
+        {
+          functor_ = other.functor_;
+          return *this;
+        }
+        
+        DataType operator()(CellType const & cell) const
+        {
+          return functor_->operator()(cell); 
+        }
+        
+        vtk_data_accessor_interface<CellType, DataType> * clone() const { return functor_->clone(); }
+
+      private:
+        std::auto_ptr< const vtk_data_accessor_interface<CellType, DataType> > functor_;
+    };
+      
+      
+    
+    
+    
     /////////////////// VTK export ////////////////////////////
 
     //helper: translate element tags to VTK-element types
