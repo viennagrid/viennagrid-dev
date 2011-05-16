@@ -144,6 +144,8 @@ void test(viennagrid::config::tetrahedral_3d)
   simplex.setVertices(vertices);
   domain.segment(1).add(simplex);
   
+  std::cout << "ID of segment 0: " << domain.segment(0).id() << std::endl;
+  std::cout << "ID of segment 1: " << domain.segment(1).id() << std::endl;
   
   std::cout << "Vertices in Segment 0: " << domain.segment(0).size<0>() << std::endl;
   std::cout << "Vertices in Segment 1: " << domain.segment(1).size<0>() << std::endl;

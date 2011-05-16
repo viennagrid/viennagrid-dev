@@ -69,6 +69,17 @@ namespace viennagrid
     public:
       void set_domain(domain_type & d) { domain_ = &d; }
       
+      size_t id() const 
+      {
+        for (size_t i=0; i<domain_->segment_size(); ++i)
+        {
+          if (this == &(domain_->segment(i)))
+            return i;
+        }
+        
+        return domain_->segment_size();
+      }
+      
     protected:
       domain_type * domain_;
   };
