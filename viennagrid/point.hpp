@@ -171,8 +171,7 @@ namespace viennagrid
   std::ostream& operator << (std::ostream & os, point<CoordType, d, CoordinateSystem> const & p)
   {
     for (dim_type i=0; i<d; ++i)
-      os << p[i] << ", ";
-    os << std::endl;
+      os << p[i] << " ";
     return os;
   }
   
