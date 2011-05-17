@@ -38,6 +38,8 @@
 //#include "viennagrid/io/gts_reader.hpp"
 //#include "viennagrid/io/gts_writer.hpp"
 
+#include "viennagrid/algorithm/cell_normals.hpp"
+
 struct TestDomainConfig
 {
   typedef double                                  numeric_type;
@@ -123,6 +125,13 @@ void testNewDomain(std::string & infile, std::string & outfile)
   my_sgf_writer(domain, outfile + ".sgf");
    
   viennagrid::io::vtk_writer<Domain> my_vtk_writer;
+  //my_vtk_writer.add_point_data_scalar<std::string, double>("vtk_data", "my_result");
+  my_vtk_writer.add_point_data_scalar(viennagrid::io::io_data_accessor_global<VertexType, std::string, double>("vtk_data"),
+                                      "my_result");
+  my_vtk_writer.add_cell_data_normal(viennagrid::io::io_data_accessor_segment_based<CellType, 
+                                                                                    viennagrid::seg_cell_normal_tag,
+                                                                                    viennagrid::seg_cell_normal_data::type>(viennagrid::seg_cell_normal_tag()),
+                                      "cell_normals");
   my_vtk_writer.writeDomain(domain, outfile + ".vtu");
    
   //viennagrid::io::gts_writer my_gts_writer;
