@@ -11,8 +11,8 @@
    license:    To be discussed, see file LICENSE in the ViennaSHE base directory
 ======================================================================= */
 
-#ifndef VIENNAGRID_ALGORITHM_CIRCUMCENTER_HPP
-#define VIENNAGRID_ALGORITHM_CIRCUMCENTER_HPP
+#ifndef VIENNAGRID_ALGORITHM_CENTROID_HPP
+#define VIENNAGRID_ALGORITHM_CENTROID_HPP
 
 #include <iostream>
 #include <sstream>
@@ -55,15 +55,15 @@ namespace viennagrid
         p0 += vocit->getPoint();
       }
       
-      p0 /= viennagrid::subcell_traits<ElementTag, 0>::num_elements;
+      p0 /= viennagrid::traits::subcell_desc<ElementTag, 0>::num_elements;
       
       return p0;
     }
 
     //tetrahedron can reuse the algorithm defined for a triangle
-    template <typename CellType>
+    template <typename ElementType>
     typename viennagrid::result_of::point_type<typename ElementType::config_type>::type
-    centroid(CellType const & cell, viennagrid::tetrahedron_tag)
+    centroid(ElementType const & cell, viennagrid::tetrahedron_tag)
     {
       return centroid(cell, viennagrid::triangle_tag());
     }
@@ -90,9 +90,9 @@ namespace viennagrid
 
 
     //a line can reuse the algorithm defined for a triangle
-    template <typename CellType>
+    template <typename ElementType>
     typename viennagrid::result_of::point_type<typename ElementType::config_type>::type
-    centroid(CellType const & cell, viennagrid::line_tag)
+    centroid(ElementType const & cell, viennagrid::line_tag)
     {
       return centroid(cell, viennagrid::triangle_tag());
     }
