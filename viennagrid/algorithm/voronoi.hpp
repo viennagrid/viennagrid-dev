@@ -100,7 +100,7 @@ namespace viennagrid
           {
             double contribution = spanned_volume(circ_center, edge_midpoint, voeit->getPoint());
             edge_contribution += contribution;
-            viennadata::access<BoxVolumeKey, double>()(*voeit) += spanned_volume(circ_center, edge_midpoint, voeit->getPoint());
+            viennadata::access<BoxVolumeKey, double>()(*voeit) += contribution;
           }
           viennadata::access<BoxVolumeKey, double>()(*eocit) += edge_contribution;
         } //for edges on cells

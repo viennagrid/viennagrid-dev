@@ -23,7 +23,8 @@
 //***********************************************
 // Define the input-file format
 //***********************************************
-#define SGF
+//#define SGF
+#define NETGEN
 //#define VTK
 //#define GTS
 
@@ -31,6 +32,7 @@
 #include "viennagrid/segment.hpp"
 #include "viennagrid/algorithm/boundary.hpp"
 #include "viennagrid/io/sgf_reader.hpp"
+#include "viennagrid/io/netgen_reader.hpp"
 #include "viennagrid/io/sgf_writer.hpp"
 #include "viennagrid/io/vtk_reader.hpp"
 #include "viennagrid/io/vtk_writer.hpp"
@@ -91,6 +93,11 @@ void testNewDomain(std::string & infile, std::string & outfile)
     #ifdef SGF
     viennagrid::io::sgf_reader my_sgf_reader;
     my_sgf_reader(domain, infile);
+    #endif
+
+    #ifdef NETGEN
+    viennagrid::io::netgen_reader my_netgen_reader;
+    my_netgen_reader(domain, infile);
     #endif
     
     #ifdef GTS
@@ -168,10 +175,10 @@ int main()
   std::string path = "../examples/data/";
   
   #ifdef THREEDIM
-  std::string infile = path + "cube384.sgf";
+  std::string infile = path + "sshape3d.mesh";
   #endif
   #ifdef TWODIM
-  std::string infile = path + "square128.sgf";
+  std::string infile = path + "sshape2d.mesh";
   #endif
   #ifdef ONEDIM
   std::string infile = path + "line8.sgf";
