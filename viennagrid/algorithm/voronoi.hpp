@@ -190,15 +190,22 @@ namespace viennagrid
             viennadata::access<EdgeLenKey, double>()(*eocit) = spanned_volume(v0, v1);
             
             // interface contribution:
+            /*std::cout << cell_center << ", " << facet_center << ", " << edge_midpoint << std::endl;
+            std::cout << "Interface contrib: " << spanned_volume(cell_center, facet_center, edge_midpoint) << std::endl;*/
             viennadata::access<InterfaceAreaKey, double>()(*eocit) += spanned_volume(cell_center, facet_center, edge_midpoint);
             
             //box volume contribution:
+            double edge_contribution = 0;
             for (VertexOnEdgeIterator voeit  = vertices_on_edge.begin();
                                       voeit != vertices_on_edge.end();
                                     ++voeit)
             {
-              viennadata::access<BoxVolumeKey, double>()(*voeit) += spanned_volume(cell_center, facet_center, edge_midpoint, voeit->getPoint());
+              double contribution = spanned_volume(cell_center, facet_center, edge_midpoint, voeit->getPoint());
+              edge_contribution += contribution;
+              viennadata::access<BoxVolumeKey, double>()(*voeit) += contribution;
+              
             }
+            viennadata::access<BoxVolumeKey, double>()(*eocit) += edge_contribution;
           } //for edges on facet
 
         } //for facets on cell

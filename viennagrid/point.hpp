@@ -146,7 +146,7 @@ namespace viennagrid
         return *this;
       }
 
-      point operator*(CoordType factor)
+      point operator*(CoordType factor) const
       {
         point ret;
         for (dim_type i=0; i<d; ++i)
@@ -154,7 +154,7 @@ namespace viennagrid
         return ret;
       }
 
-      point operator/(CoordType factor)
+      point operator/(CoordType factor) const
       {
         point ret;
         for (dim_type i=0; i<d; ++i)
