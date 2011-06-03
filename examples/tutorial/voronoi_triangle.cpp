@@ -184,7 +184,39 @@ void output_voronoi_info(DeviceType const & d)
   
 }
 
+    
+//
+// Test for Voronoi correctness: Volume of cells must equal volume of boxes
+//
+template <typename DomainType>
+void voronoi_volume_test(DomainType const & d)
+{
+  typedef typename DomainType::config_type           Config;
+  typedef typename Config::cell_tag                  CellTag;
+  typedef typename viennagrid::result_of::point_type<Config>::type                            PointType;
+  typedef typename viennagrid::result_of::ncell_type<Config, 0>::type                         VertexType;
+  typedef typename viennagrid::result_of::ncell_type<Config, 1>::type                         EdgeType;
+  typedef typename viennagrid::result_of::ncell_type<Config, 2>::type                         FacetType;
+  typedef typename viennagrid::result_of::ncell_type<Config, CellTag::topology_level>::type   CellType;
+  
+  typedef typename viennagrid::result_of::const_ncell_container<DomainType, CellTag::topology_level>::type    CellContainer;
+  typedef typename viennagrid::result_of::iterator<CellContainer>::type                                       CellIterator;
+  
+  typedef typename viennagrid::result_of::const_ncell_container<DomainType, 0>::type                          VertexContainer;
+  typedef typename viennagrid::result_of::iterator<VertexContainer>::type                                     VertexIterator;
+  
+  
+  double boxed_volume = 0;
+  VertexContainer vertices = viennagrid::ncells<0>(d);
+  for (VertexIterator vit  = vertices.begin();
+                      vit != vertices.end();
+                    ++vit)
+  {
+    boxed_volume += viennadata::access<box_volume_key, double>()(*vit);
+  }
 
+  std::cout << "Volume due to boxes: " << boxed_volume << std::endl;
+}
 
 
 int main(int argc, char *argv[])
@@ -212,6 +244,8 @@ int main(int argc, char *argv[])
   std::cout << "Area of first cell: " << viennagrid::spanned_volume(device.vertex(0).getPoint(),
                                                                     device.vertex(1).getPoint(),
                                                                     device.vertex(8).getPoint()) << std::endl;
+                                                                    
+  voronoi_volume_test(device);  
 
   //write to vtk:
   viennagrid::io::vtk_writer<DeviceType> my_vtk_writer;

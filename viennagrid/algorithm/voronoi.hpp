@@ -1,14 +1,13 @@
 /* =======================================================================
-   Copyright (c) 2010, 2011, Institute for Microelectronics, TU Wien
+   Copyright (c) 2010, Institute for Microelectronics, TU Wien
    http://www.iue.tuwien.ac.at
                              -----------------
-       ViennaSHE - The Vienna Spherical Harmonics Expansion Simulator
+                     ViennaGrid - The Vienna Grid Library
                              -----------------
 
    authors:    Karl Rupp                          rupp@iue.tuwien.ac.at
-               Markus Bina                        bina@iue.tuwien.ac.at
 
-   license:    To be discussed, see file LICENSE in the ViennaSHE base directory
+   license:    MIT (X11), see file LICENSE in the ViennaGrid base directory
 ======================================================================= */
 
 #ifndef VIENNAGRID_ALGORITHM_VORONOI_HPP
@@ -41,8 +40,9 @@ namespace viennagrid
               typename InterfaceAreaKey,
               typename BoxVolumeKey,
               typename DomainType>
-    void write_voronoi_info(DomainType const & domain, viennagrid::triangle_tag)
+    void write_voronoi_info(DomainType const & domain, viennagrid::quadrilateral_tag)
     {
+      std::cout << "Warning: Voronoi info for quadrilaterals is only correct when having rectangles only." << std::endl;
       typedef typename DomainType::config_type           Config;
       typedef typename Config::cell_tag                  CellTag;
       typedef typename viennagrid::result_of::point_type<Config>::type                            PointType;
@@ -114,16 +114,108 @@ namespace viennagrid
               typename InterfaceAreaKey,
               typename BoxVolumeKey,
               typename DomainType>
-    void write_voronoi_info(DomainType const & domain, viennagrid::quadrilateral_tag)
+    void write_voronoi_info(DomainType const & domain, viennagrid::triangle_tag)
     {
-      std::cout << "Warning: Voronoi info for quadrilaterals is only correct when having rectangles only." << std::endl;
-      write_voronoi_info<EdgeLenKey, InterfaceAreaKey, BoxVolumeKey>(domain, viennagrid::triangle_tag());
+      typedef typename DomainType::config_type           Config;
+      typedef typename Config::cell_tag                  CellTag;
+      typedef typename viennagrid::result_of::point_type<Config>::type                            PointType;
+      typedef typename viennagrid::result_of::ncell_type<Config, 0>::type                         VertexType;
+      typedef typename viennagrid::result_of::ncell_type<Config, 1>::type                         EdgeType;
+      typedef typename viennagrid::result_of::ncell_type<Config, CellTag::topology_level>::type   CellType;
+      
+      typedef typename viennagrid::result_of::const_ncell_container<DomainType, CellTag::topology_level>::type    CellContainer;
+      typedef typename viennagrid::result_of::iterator<CellContainer>::type                                       CellIterator;
+
+      typedef typename viennagrid::result_of::const_ncell_container<DomainType, 1>::type                          EdgeContainer;
+      typedef typename viennagrid::result_of::iterator<EdgeContainer>::type                                       EdgeIterator;
+      
+      typedef typename viennagrid::result_of::const_ncell_container<CellType, 1>::type                            EdgeOnCellContainer;
+      typedef typename viennagrid::result_of::iterator<EdgeOnCellContainer>::type                                 EdgeOnCellIterator;
+      
+      typedef typename viennagrid::result_of::const_ncell_container<EdgeType, 0>::type                            VertexOnEdgeContainer;
+      typedef typename viennagrid::result_of::iterator<VertexOnEdgeContainer>::type                               VertexOnEdgeIterator;
+
+      //
+      // Phase 1: Compute circumcenter of cells and store them on each of the edges (avoids coboundary operations)
+      //
+      
+      CellContainer cells = viennagrid::ncells<CellTag::topology_level>(domain);
+      for (CellIterator cit  = cells.begin();
+                        cit != cells.end();
+                      ++cit)
+      {
+        PointType circ_center = circumcenter(*cit);
+        
+        // store circumcenter on edges
+        EdgeOnCellContainer edges_on_cell = viennagrid::ncells<1>(*cit);
+        for (EdgeOnCellIterator eocit  = edges_on_cell.begin();
+                                eocit != edges_on_cell.end();
+                              ++eocit)
+        {
+          viennadata::access<InterfaceAreaKey, std::vector<PointType> >()(*eocit).push_back(circ_center);
+        } //for edges on cells
+        
+      } //for cells
+
+
+      //
+      // Phase 2: Compute edge lengths, interface areas and box volumes from the information stored on edges:
+      //
+      EdgeContainer edges = viennagrid::ncells<1>(domain);
+      for (EdgeIterator eit  = edges.begin();
+                        eit != edges.end();
+                      ++eit)
+      {
+        
+        //get vertices of edge:
+        VertexOnEdgeContainer vertices_on_edge = viennagrid::ncells<0>(*eit);
+        VertexOnEdgeIterator voeit = vertices_on_edge.begin();
+        
+        VertexType const & v0 = *voeit;
+        ++voeit;
+        VertexType const & v1 = *voeit;
+        
+        PointType const & p0 = v0.getPoint();
+        PointType const & p1 = v1.getPoint();
+
+        double edge_length = spanned_volume(p0, p1);
+        viennadata::access<EdgeLenKey, double>()(*eit) = edge_length;
+        
+        {
+          std::vector<PointType> & circ_centers = viennadata::access<InterfaceAreaKey, std::vector<PointType> >()(*eit);
+          
+          double interface_area = -42.0;
+          if (circ_centers.size() == 1)  //edge is located on the domain boundary
+          {
+            interface_area = spanned_volume(circ_centers[0], circumcenter(*eit));
+            std::cout << "Edge on interface " << interface_area << std::endl;
+          }
+          else if (circ_centers.size() == 2)
+          {
+            interface_area = spanned_volume(circ_centers[0], circ_centers[1]);
+            std::cout << "Edge on interior " << interface_area << std::endl;
+          }
+          else
+          {
+            throw "More than two circum centers for an edge in two dimensions!"; 
+          }
+          
+          viennadata::access<InterfaceAreaKey, double>()(*eit) = interface_area;
+          double volume_contribution = interface_area * edge_length / 4.0;
+          viennadata::access<BoxVolumeKey, double>()(*eit) = volume_contribution;
+          viennadata::access<BoxVolumeKey, double>()(v0) += volume_contribution;
+          viennadata::access<BoxVolumeKey, double>()(v1) += volume_contribution;
+        }
+        
+        //delete circ_centers:
+        viennadata::erase<InterfaceAreaKey, std::vector<PointType> >()(*eit);
+      }
+
     }
 
 
     //
     // Voronoi information in three dimensions
-    // Note by [KR]: In principle one can implement a general Voronoi algorithm for N dimensional simplex-domains based on recursively iterating over elements of a cell. However, we won't need more than three dimensions by now...
     //
 
     template <typename EdgeLenKey,
@@ -132,6 +224,53 @@ namespace viennagrid
               typename DomainType>
     void write_voronoi_info(DomainType const & domain, viennagrid::tetrahedron_tag)
     {
+      typedef typename DomainType::config_type           Config;
+      typedef typename Config::cell_tag                  CellTag;
+      typedef typename viennagrid::result_of::point_type<Config>::type                            PointType;
+      typedef typename viennagrid::result_of::ncell_type<Config, 0>::type                         VertexType;
+      typedef typename viennagrid::result_of::ncell_type<Config, 1>::type                         EdgeType;
+      typedef typename viennagrid::result_of::ncell_type<Config, 2>::type                         FacetType;
+      typedef typename viennagrid::result_of::ncell_type<Config, CellTag::topology_level>::type   CellType;
+      
+      typedef typename viennagrid::result_of::const_ncell_container<DomainType, CellTag::topology_level>::type    CellContainer;
+      typedef typename viennagrid::result_of::iterator<CellContainer>::type                                       CellIterator;
+
+      typedef typename viennagrid::result_of::const_ncell_container<CellType, 2>::type                            FacetOnCellContainer;
+      typedef typename viennagrid::result_of::iterator<FacetOnCellContainer>::type                                FacetOnCellIterator;
+
+      typedef typename viennagrid::result_of::const_ncell_container<FacetType, 1>::type                           EdgeOnFacetContainer;
+      typedef typename viennagrid::result_of::iterator<EdgeOnFacetContainer>::type                                EdgeOnFacetIterator;
+      
+      typedef typename viennagrid::result_of::const_ncell_container<EdgeType, 0>::type                            VertexOnEdgeContainer;
+      typedef typename viennagrid::result_of::iterator<VertexOnEdgeContainer>::type                               VertexOnEdgeIterator;
+
+      //
+      // Algorithm: Needs update...
+      //
+      
+      CellContainer cells = viennagrid::ncells<CellTag::topology_level>(domain);
+      for (CellIterator cit  = cells.begin();
+                        cit != cells.end();
+                      ++cit)
+      {
+        PointType cell_center = circumcenter(*cit);
+
+        //do something...
+        assert("This is not yet implemented!");
+
+      } //for cells
+      
+    } //write_voronoi_info(triangle_tag)
+
+
+
+    template <typename EdgeLenKey,
+              typename InterfaceAreaKey,
+              typename BoxVolumeKey,
+              typename DomainType>
+    void write_voronoi_info(DomainType const & domain, viennagrid::hexahedron_tag)
+    {
+      std::cout << "Warning: Voronoi info for hexahedron is only correct when having regular cuboids only." << std::endl;
       typedef typename DomainType::config_type           Config;
       typedef typename Config::cell_tag                  CellTag;
       typedef typename viennagrid::result_of::point_type<Config>::type                            PointType;
@@ -212,18 +351,6 @@ namespace viennagrid
 
       } //for cells
       
-    } //write_voronoi_info(triangle_tag)
-
-
-
-    template <typename EdgeLenKey,
-              typename InterfaceAreaKey,
-              typename BoxVolumeKey,
-              typename DomainType>
-    void write_voronoi_info(DomainType const & domain, viennagrid::hexahedron_tag)
-    {
-      std::cout << "Warning: Voronoi info for hexahedron is only correct when having regular cuboids only." << std::endl;
-      write_voronoi_info<EdgeLenKey, InterfaceAreaKey, BoxVolumeKey>(domain, viennagrid::tetrahedron_tag());
     }
 
 
@@ -239,6 +366,7 @@ namespace viennagrid
     {
       write_voronoi_info<EdgeLenKey, InterfaceAreaKey, BoxVolumeKey, DomainType>(domain, typename DomainType::config_type::cell_tag());
     }
+    
     
 } //namespace viennagrid
 #endif
