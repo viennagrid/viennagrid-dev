@@ -188,12 +188,12 @@ namespace viennagrid
           if (circ_centers.size() == 1)  //edge is located on the domain boundary
           {
             interface_area = spanned_volume(circ_centers[0], circumcenter(*eit));
-            std::cout << "Edge on interface " << interface_area << std::endl;
+            //std::cout << "Edge on interface " << interface_area << std::endl;
           }
           else if (circ_centers.size() == 2)
           {
             interface_area = spanned_volume(circ_centers[0], circ_centers[1]);
-            std::cout << "Edge on interior " << interface_area << std::endl;
+            //std::cout << "Edge on interior " << interface_area << std::endl;
           }
           else
           {
@@ -202,7 +202,7 @@ namespace viennagrid
           
           viennadata::access<InterfaceAreaKey, double>()(*eit) = interface_area;
           double volume_contribution = interface_area * edge_length / 4.0;
-          viennadata::access<BoxVolumeKey, double>()(*eit) = volume_contribution;
+          viennadata::access<BoxVolumeKey, double>()(*eit) = 2.0 * volume_contribution; //volume contribution of both box volumes associated with the edge
           viennadata::access<BoxVolumeKey, double>()(v0) += volume_contribution;
           viennadata::access<BoxVolumeKey, double>()(v1) += volume_contribution;
         }
@@ -235,7 +235,13 @@ namespace viennagrid
       typedef typename viennagrid::result_of::const_ncell_container<DomainType, CellTag::topology_level>::type    CellContainer;
       typedef typename viennagrid::result_of::iterator<CellContainer>::type                                       CellIterator;
 
-      typedef typename viennagrid::result_of::const_ncell_container<CellType, 2>::type                            FacetOnCellContainer;
+      typedef typename viennagrid::result_of::const_ncell_container<DomainType, CellTag::topology_level-1>::type  FacetContainer;
+      typedef typename viennagrid::result_of::iterator<FacetContainer>::type                                      FacetIterator;
+      
+      typedef typename viennagrid::result_of::const_ncell_container<DomainType, 1>::type                          EdgeContainer;
+      typedef typename viennagrid::result_of::iterator<EdgeContainer>::type                                       EdgeIterator;
+      
+      typedef typename viennagrid::result_of::const_ncell_container<CellType, CellTag::topology_level-1>::type    FacetOnCellContainer;
       typedef typename viennagrid::result_of::iterator<FacetOnCellContainer>::type                                FacetOnCellIterator;
 
       typedef typename viennagrid::result_of::const_ncell_container<FacetType, 1>::type                           EdgeOnFacetContainer;
@@ -245,7 +251,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::iterator<VertexOnEdgeContainer>::type                               VertexOnEdgeIterator;
 
       //
-      // Algorithm: Needs update...
+      // Step one: Write circumcenters to facets
       //
       
       CellContainer cells = viennagrid::ncells<CellTag::topology_level>(domain);
@@ -253,14 +259,113 @@ namespace viennagrid
                         cit != cells.end();
                       ++cit)
       {
-        PointType cell_center = circumcenter(*cit);
-
-        //do something...
-        assert("This is not yet implemented!");
+        PointType circ_center = circumcenter(*cit);
+        
+        FacetOnCellContainer facets_on_cell = viennagrid::ncells<CellTag::topology_level-1>(*cit);
+        for (FacetOnCellIterator focit  = facets_on_cell.begin();
+                                focit != facets_on_cell.end();
+                              ++focit)
+        {
+          viennadata::access<InterfaceAreaKey, std::vector<PointType> >()(*focit).push_back(circ_center);
+        } //for edges on cells
 
       } //for cells
-      
-    } //write_voronoi_info(triangle_tag)
+
+
+      //
+      // Step two: Write lines connecting circumcenters to edges
+      //
+      FacetContainer facets = viennagrid::ncells<CellTag::topology_level-1>(domain);
+      for (FacetIterator fit  = facets.begin();
+                         fit != facets.end();
+                       ++fit)
+      {
+        std::vector<PointType> & circ_centers = viennadata::access<InterfaceAreaKey, std::vector<PointType> >()(*fit);
+        
+        EdgeOnFacetContainer edges_on_facet = viennagrid::ncells<1>(*fit);
+        for (EdgeOnFacetIterator eofit  = edges_on_facet.begin();
+                                eofit != edges_on_facet.end();
+                              ++eofit)
+        {
+          viennadata::access<InterfaceAreaKey, std::vector<PointType> >()(*eofit).push_back(circ_centers[0]);
+          
+          if (circ_centers.size() == 1)
+          {
+            //std::cout << "Circumcenter fit: " << circumcenter(*fit) << std::endl;
+            viennadata::access<InterfaceAreaKey,
+                               std::vector<std::pair<PointType, PointType> > >()(*eofit).push_back(std::make_pair(circ_centers[0],
+                                                                                                                  circumcenter(*fit)));
+            viennadata::access<InterfaceAreaKey,
+                               std::vector<std::pair<PointType, PointType> > >()(*eofit).push_back(std::make_pair(circumcenter(*eofit),
+                                                                                                                  circumcenter(*fit)));
+          }
+          else if (circ_centers.size() == 2)
+            viennadata::access<InterfaceAreaKey,
+                               std::vector<std::pair<PointType, PointType> > >()(*eofit).push_back(std::make_pair(circ_centers[0],
+                                                                                                                  circ_centers[1]));
+          else
+          {
+            throw "More than two circumcenters for a facet in three dimensions!"; 
+          }
+            
+        } //for edges on cells
+      }
+
+
+      //
+      // Step three: Compute Voronoi information:
+      //
+      EdgeContainer edges = viennagrid::ncells<1>(domain);
+      for (EdgeIterator eit  = edges.begin();
+                        eit != edges.end();
+                      ++eit)
+      {
+        //eit->print_short();
+        
+        //get vertices of edge:
+        VertexOnEdgeContainer vertices_on_edge = viennagrid::ncells<0>(*eit);
+        VertexOnEdgeIterator voeit = vertices_on_edge.begin();
+        
+        VertexType const & v0 = *voeit;
+        ++voeit;
+        VertexType const & v1 = *voeit;
+        
+        PointType const & p0 = v0.getPoint();
+        PointType const & p1 = v1.getPoint();
+
+        //write edge length
+        double edge_length = spanned_volume(p0, p1);
+        viennadata::access<EdgeLenKey, double>()(*eit) = edge_length;
+        
+        std::vector<std::pair<PointType, PointType> > & interface_segments =
+          viennadata::access<InterfaceAreaKey, std::vector<std::pair<PointType, PointType> > >()(*eit);
+
+        //determine inner point of convex interface polygon:
+        PointType inner_point = (interface_segments[0].first + interface_segments[0].second) / 2.0;
+        for (size_t i=1; i<interface_segments.size(); ++i)
+        {
+          inner_point += (interface_segments[i].first + interface_segments[i].second) / 2.0;
+        }
+        inner_point /= interface_segments.size();
+        //std::cout << "Inner point: " << inner_point << std::endl;
+        
+        //compute interface area
+        double interface_area = 0.0;
+        for (size_t i=0; i<interface_segments.size(); ++i)
+        {
+          //std::cout << "Interface line segment: " << interface_segments[i].first << " to " << interface_segments[i].second << std::endl;
+          interface_area += spanned_volume(interface_segments[i].first, interface_segments[i].second, inner_point);
+        }
+        //std::cout << "Interface area: " << interface_area << std::endl;
+        viennadata::access<InterfaceAreaKey, double>()(*eit) = interface_area;
+        double volume_contribution = interface_area * edge_length / 6.0;
+        //std::cout << "Volume contribution: " << volume_contribution << std::endl;
+        viennadata::access<BoxVolumeKey, double>()(*eit) = 2.0 * volume_contribution; //volume contribution of both box volumes associated with the edge
+        viennadata::access<BoxVolumeKey, double>()(v0) += volume_contribution;
+        viennadata::access<BoxVolumeKey, double>()(v1) += volume_contribution;
+      }
+
+    } //write_voronoi_info(tetrahedron_tag)
 
 
 

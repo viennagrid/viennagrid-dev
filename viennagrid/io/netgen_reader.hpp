@@ -91,6 +91,8 @@ namespace viennagrid
       
           //std::cout << "DONE" << std::endl;
       
+          domain.create_segments(1);
+      
           //
           // Read cells:
           //
@@ -116,7 +118,7 @@ namespace viennagrid
             //std::cout << std::endl << "Adding cell: " << &cell << " at " << cell_id << std::endl;
             cell.setVertices(&(vertices[0]));
             cell.setID(i);
-            domain.add(cell);
+            domain.segment(0).add(cell);
       
             //progress info:
             if (i % 50000 == 0 && i > 0)

@@ -19,11 +19,12 @@
 
 #include "viennagrid/domain.hpp"
 #include "viennagrid/io/sgf_reader.hpp"
+#include "viennagrid/io/netgen_reader.hpp"
 #include "viennagrid/io/vtk_writer.hpp"
 #include "viennagrid/iterators.hpp"
 #include "viennagrid/config/simplex.hpp"
 #include "viennagrid/algorithm/voronoi.hpp"
-
+#include "viennagrid/algorithm/circumcenter.hpp"
 
 
 struct edge_len_key {};              //edge lengths
@@ -55,9 +56,8 @@ namespace viennadata
 }
 
 
-
 //
-// Generate a ring of six triangles:
+// Generate a single tetrahedron
 //
 template <typename DeviceType>
 void setup_device(DeviceType & device)
@@ -73,42 +73,31 @@ void setup_device(DeviceType & device)
   // Step 1: Set up vertices:
   //
   VertexType vertex;
-  device.reserve_vertices(9);
+  device.reserve_vertices(5);
 
   vertex.getPoint()[0] = 0;   // #0
   vertex.getPoint()[1] = 0;
+  vertex.getPoint()[2] = 0;
   device.add(vertex);
   
-  vertex.getPoint()[0] = 2;   // #1
+  vertex.getPoint()[0] = 1;   // #1
+  vertex.getPoint()[1] = 0;
+  vertex.getPoint()[2] = 0;
+  device.add(vertex);
+
+  vertex.getPoint()[0] = 0;   // #2
   vertex.getPoint()[1] = 1;
+  vertex.getPoint()[2] = 0;
   device.add(vertex);
 
-  vertex.getPoint()[0] = 1;   // #2
-  vertex.getPoint()[1] = 2;
-  device.add(vertex);
-
-  vertex.getPoint()[0] = -1;   // #3
-  vertex.getPoint()[1] =  2;
+  vertex.getPoint()[0] = 0;   // #3
+  vertex.getPoint()[1] = 0;
+  vertex.getPoint()[2] = 1;
   device.add(vertex);
   
-  vertex.getPoint()[0] = -2;   // #4
-  vertex.getPoint()[1] =  1;
-  device.add(vertex);
-  
-  vertex.getPoint()[0] = -2;   // #5
-  vertex.getPoint()[1] = -1;
-  device.add(vertex);
-  
-  vertex.getPoint()[0] = -1;   // #6
-  vertex.getPoint()[1] = -2;
-  device.add(vertex);
-  
-  vertex.getPoint()[0] =  1;   // #7
-  vertex.getPoint()[1] = -2;
-  device.add(vertex);
-  
-  vertex.getPoint()[0] =  2;   // #8
-  vertex.getPoint()[1] = -1;
+  vertex.getPoint()[0] = 1;   // #4
+  vertex.getPoint()[1] = 0;
+  vertex.getPoint()[2] = 1;
   device.add(vertex);
   
   
@@ -117,24 +106,22 @@ void setup_device(DeviceType & device)
   //
   
   CellType cell;
-  VertexType *vertices[3];
-  device.reserve_cells(8);
+  VertexType *vertices[4];
+  device.reserve_cells(2);
   
-  vertices[0] = &(device.vertex(8));
+  vertices[0] = &(device.vertex(0));
   vertices[1] = &(device.vertex(1));
-  vertices[2] = &(device.vertex(0));
+  vertices[2] = &(device.vertex(2));
+  vertices[3] = &(device.vertex(3));
   cell.setVertices(vertices);
   device.add(cell);
-
-  for (size_t i=1; i<8; ++i)
-  {
-    vertices[0] = &(device.vertex(i));
-    vertices[1] = &(device.vertex(i+1));
-    vertices[2] = &(device.vertex(0));
-    cell.setVertices(vertices);
-    device.add(cell);
-  }
-
+  
+  vertices[0] = &(device.vertex(3));
+  vertices[1] = &(device.vertex(1));
+  vertices[2] = &(device.vertex(2));
+  vertices[3] = &(device.vertex(4));
+  cell.setVertices(vertices);
+  device.add(cell);
   
 }
 
@@ -184,7 +171,7 @@ void output_voronoi_info(DeviceType const & d)
   
 }
 
-    
+
 //
 // Test for Voronoi correctness: Volume of cells must equal volume of boxes
 //
@@ -221,35 +208,45 @@ void voronoi_volume_test(DomainType const & d)
 
 int main(int argc, char *argv[])
 {
-  typedef viennagrid::config::triangular_2d           Config;
-  typedef viennagrid::domain<Config>   DeviceType;
+  typedef viennagrid::config::tetrahedral_3d          Config;
+  typedef viennagrid::domain<Config>                  DomainType;
   
   std::cout << "* main(): Creating device..." << std::endl;
-  DeviceType device;
+  DomainType my_domain;
   
   //create device:
-  setup_device(device);
+  //setup_device(my_domain);
+  try
+  {
+    viennagrid::io::netgen_reader my_netgen_reader;
+    my_netgen_reader(my_domain, "../examples/data/cube48.mesh");
+  }
+  catch (...)
+  {
+    std::cerr << "File-Reader failed. Aborting program..." << std::endl;
+    return EXIT_FAILURE;
+  }
+  
   
   //set up dual grid info:
-  viennagrid::write_voronoi_info<edge_len_key, edge_interface_area_key, box_volume_key>(device);
+  viennagrid::write_voronoi_info<edge_len_key,
+                                 edge_interface_area_key,
+                                 box_volume_key>(my_domain);
   
   //output results:
-  output_voronoi_info(device);
+  output_voronoi_info(my_domain);
   
   
   std::cout << std::endl;
-  device.cells(0).print_short();
+  my_domain.cells(0).print_short();
   std::cout << std::endl;
-  std::cout << "Circumcenter of first cell: " << viennagrid::circumcenter(device.cells(0)) << std::endl;
-  std::cout << "Area of first cell: " << viennagrid::spanned_volume(device.vertex(0).getPoint(),
-                                                                    device.vertex(1).getPoint(),
-                                                                    device.vertex(8).getPoint()) << std::endl;
-                                                                    
-  voronoi_volume_test(device);  
+  std::cout << "Circumcenter of first cell: " << viennagrid::circumcenter(my_domain.cells(0)) << std::endl;
 
+  voronoi_volume_test(my_domain);  
+  
   //write to vtk:
-  viennagrid::io::vtk_writer<DeviceType> my_vtk_writer;
-  my_vtk_writer.writeDomain(device, "voronoi");
+  viennagrid::io::vtk_writer<DomainType> my_vtk_writer;
+  my_vtk_writer.writeDomain(my_domain, "voronoi");
   
 }
 

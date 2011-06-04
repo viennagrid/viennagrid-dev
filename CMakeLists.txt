@@ -34,3 +34,4 @@ ADD_EXECUTABLE(test_point       examples/tests/test_point.cpp)
 
 ADD_EXECUTABLE(voronoi_rect      examples/tutorial/voronoi_rect.cpp)
 ADD_EXECUTABLE(voronoi_triangle  examples/tutorial/voronoi_triangle.cpp)
+ADD_EXECUTABLE(voronoi_tet       examples/tutorial/voronoi_tet.cpp)
