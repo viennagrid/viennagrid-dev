@@ -305,6 +305,8 @@ namespace viennagrid
                                                                                                                   circ_centers[1]));
           else
           {
+            std::cerr << "circ_centers.size() = " << circ_centers.size() << std::endl;
+            std::cerr << "*fit: "; fit->print_short();
             throw "More than two circumcenters for a facet in three dimensions!"; 
           }
             
