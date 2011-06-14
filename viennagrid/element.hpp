@@ -176,6 +176,7 @@ namespace viennagrid
       element & operator=(const element & other)
       {
         point_ = other.point_;
+        this->setID(other.id_);                
         return *this;
       }
 
