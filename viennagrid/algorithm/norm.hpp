@@ -16,6 +16,7 @@
 
 #include <cmath>
 #include "viennagrid/forwards.h"
+#include "viennagrid/traits/point.hpp"
 
 namespace viennagrid {
 
