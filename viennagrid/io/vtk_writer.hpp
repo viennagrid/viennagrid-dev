@@ -455,6 +455,14 @@ namespace viennagrid
         //
         // Add cell data normals:
         //
+        template <typename KeyType, typename DataType>
+        void add_cell_data_normal(KeyType const & key, std::string name)
+        {
+          io_data_accessor_wrapper<CellType> wrapper(new io_data_accessor_global<CellType, KeyType, DataType>(key));
+          cell_data_normal.push_back(wrapper);
+          cell_data_normal_names.push_back(name);
+        }        
+        
         template <typename T>
         void add_cell_data_normal(T const & accessor, std::string name)
         {
