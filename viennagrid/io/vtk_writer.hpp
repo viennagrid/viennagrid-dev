@@ -141,7 +141,7 @@ namespace viennagrid
         }
         
         std::string operator()(ElementType const & element, size_t segment_id = 0) const
-        {
+        {   
           return functor_->operator()(element, segment_id); 
         }
         
@@ -308,9 +308,13 @@ namespace viennagrid
                   cit != cells.end();
                   ++cit)
               {
-                 viennagrid::io::PointWriter<3>::write(writer, cell_data_normal[i](*cit, seg_id));
-                 writer << std::endl;
-                //writer << cell_data_normal[i](*cit, seg_id) << std::endl;
+                 //std::cout << "josef: " << cell_data_normal[i](*cit, seg_id) << std::endl;
+                 //std::cout << cell_data_normal[i](*cit, seg_id) << std::endl;
+                 //viennagrid::io::PointWriter<3>::write(writer, cell_data_normal[i](*cit, seg_id));
+                 //viennautils::print()(cell_data_normal[i](*cit, seg_id), writer);
+                 //viennautils::dumptype(cell_data_normal[i](*cit, seg_id));
+                 //writer << std::endl;
+                 writer << cell_data_normal[i](*cit, seg_id) << std::endl;
               }
             }
             writer << "    </DataArray>" << std::endl;
@@ -460,7 +464,7 @@ namespace viennagrid
         template <typename KeyType, typename DataType>
         void add_cell_data_normal(KeyType const & key, std::string name)
         {
-          io_data_accessor_wrapper<CellType> wrapper(new io_data_accessor_global<CellType, KeyType, DataType>(key));
+          io_data_accessor_wrapper<CellType> wrapper(new io_data_accessor_segment_based<CellType, KeyType, DataType>(key));
           cell_data_normal.push_back(wrapper);
           cell_data_normal_names.push_back(name);
         }        
