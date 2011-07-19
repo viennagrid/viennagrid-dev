@@ -33,6 +33,12 @@ namespace viennagrid
     struct PointWriter<1>
     {
       template <typename PointType>
+      static void write(std::ofstream & writer, PointType const& point)
+      {
+        writer << point[0];
+      }    
+    
+      template <typename PointType>
       static void write(std::ofstream & writer, PointType & point)
       {
         writer << point[0];
@@ -43,6 +49,12 @@ namespace viennagrid
     struct PointWriter<2>
     {
       template <typename PointType>
+      static void write(std::ofstream & writer, PointType const& point)
+      {
+        writer << point[0] << " " << point[1];
+      }    
+    
+      template <typename PointType>
       static void write(std::ofstream & writer, PointType & point)
       {
         writer << point[0] << " " << point[1];
@@ -52,6 +64,12 @@ namespace viennagrid
     template <>
     struct PointWriter<3>
     {
+      template <typename PointType>
+      static void write(std::ofstream & writer, PointType const& point)
+      {
+        writer << point[0] << " " << point[1] << " " << point[2];
+      }
+
       template <typename PointType>
       static void write(std::ofstream & writer, PointType & point)
       {

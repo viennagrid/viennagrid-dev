@@ -308,7 +308,9 @@ namespace viennagrid
                   cit != cells.end();
                   ++cit)
               {
-                writer << cell_data_normal[i](*cit, seg_id) << std::endl;
+                 viennagrid::io::PointWriter<3>::write(writer, cell_data_normal[i](*cit, seg_id));
+                 writer << std::endl;
+                //writer << cell_data_normal[i](*cit, seg_id) << std::endl;
               }
             }
             writer << "    </DataArray>" << std::endl;
