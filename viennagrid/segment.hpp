@@ -15,6 +15,7 @@
 #define VIENNAGRID_SEGMENT_HPP
 
 #include <map>
+#include <set>
 
 #include "viennagrid/forwards.h"
 #include "viennagrid/element.hpp"

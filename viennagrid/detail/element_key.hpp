@@ -16,6 +16,7 @@
 
 #include <map>
 #include <iostream>
+#include <algorithm>
 
 #include "viennagrid/forwards.h"
 #include "viennagrid/element.hpp"
