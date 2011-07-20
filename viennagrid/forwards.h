@@ -178,6 +178,9 @@ namespace viennagrid
       T & t;
   };
   
+  template <dim_type dim, typename Config, typename ElementTag>
+  ncell_proxy< element<Config, ElementTag> >
+  ncells(element<Config, ElementTag> & d);
 
   //ID handling:
   

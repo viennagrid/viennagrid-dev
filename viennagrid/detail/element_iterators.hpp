@@ -22,6 +22,7 @@
 
 #include "viennagrid/forwards.h"
 #include "viennagrid/detail/domain_iterators.hpp"
+#include "viennagrid/detail/segment_iterators.hpp"
 //#include "viennagrid/topology/celltags.hpp"
 
 #include "viennadata/api.hpp"
