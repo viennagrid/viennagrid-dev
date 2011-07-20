@@ -275,11 +275,11 @@ namespace viennagrid
     };
     
     
-    template <typename T>
-    struct element_tag<T, T::element_tag::topology_level>
-    {
-      typedef typename T::element_tag    type; 
-    };
+ //   template <typename T>
+ //   struct element_tag<T, T::element_tag::topology_level>
+ //   {
+ //     typedef typename T::element_tag    type; 
+ //   };
     
     
     template <typename T, dim_type dim = T::element_tag::topology_level>
@@ -288,12 +288,12 @@ namespace viennagrid
       typedef typename viennagrid::traits::subcell_desc<T, dim>::handling_tag    type; 
     };
     
-    //cell level always uses full handling
-    template <typename T>
-    struct handling_tag<T, T::element_tag::topology_level>
-    {
-      typedef full_handling_tag    type; 
-    };
+//    //cell level always uses full handling
+//    template <typename T>
+//    struct handling_tag<T, T::element_tag::topology_level>
+//    {
+//      typedef full_handling_tag    type; 
+//    };
 
     //vertex level always uses full handling
     template <typename T>

@@ -10,6 +10,9 @@ SET(CMAKE_VERBOSE_MAKEFILE ON)
 INCLUDE_DIRECTORIES(".")
 INCLUDE_DIRECTORIES("../ViennaData")      #ViennaData
 
+IF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+   INCLUDE_DIRECTORIES("/opt/local/include") 
+ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 
 #add definitions, compiler switches, etc.
 IF(DEFINED CMAKE_BUILD_TYPE)
