@@ -31,7 +31,7 @@
 #include "viennagrid/topology/triangle.hpp"
 //#include "viennagrid/segment.hpp"
 //#include "viennagrid/boundary.hpp"
-#include "viennagrid/io/sgf_reader.hpp"
+#include "viennagrid/io/netgen_reader.hpp"
 
 struct TestDomainConfig
 {
@@ -52,7 +52,7 @@ struct TestDomainConfig
 };
 
 
-void testNewDomain(std::string & infile, std::string & outfile)
+void testNewDomain()
 {
 
   typedef viennagrid::domain<TestDomainConfig>        Domain;
@@ -88,15 +88,15 @@ void testNewDomain(std::string & infile, std::string & outfile)
   //read from file:
   try
   {
-    viennagrid::io::sgf_reader my_sgf_reader;
+    viennagrid::io::netgen_reader my_netgen_reader;
 #ifdef THREEDIM
-    my_sgf_reader(domain, "../examples/data/cube6.sgf");
+    my_netgen_reader(domain, "../examples/data/cube6.mesh");
 #endif
 #ifdef TWODIM
-    my_sgf_reader(domain, "../examples/data/square8.sgf");
+    my_netgen_reader(domain, "../examples/data/square8.mesh");
 #endif
 #ifdef ONEDIM
-    my_sgf_reader(domain, "../examples/data/line8.sgf");
+    my_netgen_reader(domain, "../examples/data/line8.mesh");
 #endif
   }
   catch (...)
@@ -169,11 +169,6 @@ int main()
   std::cout << "* Test started! *" << std::endl;
   std::cout << "*****************" << std::endl;
   
-  std::string path = "../applications/data/";
-  
-  std::string infile = path + "line8.sgf";
-  std::string outfile = path + "out"; // without ending
-  
-  testNewDomain(infile, outfile);
+  testNewDomain();
   return EXIT_SUCCESS;
 }

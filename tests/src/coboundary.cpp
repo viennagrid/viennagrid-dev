@@ -30,7 +30,7 @@
 #include "viennagrid/config/simplex.hpp"
 //#include "viennagrid/segment.hpp"
 //#include "viennagrid/boundary.hpp"
-#include "viennagrid/io/sgf_reader.hpp"
+#include "viennagrid/io/netgen_reader.hpp"
 
 struct TestDomainConfig
 {
@@ -86,15 +86,15 @@ void testNewDomain(std::string & infile, std::string & outfile)
   //read from file:
   try
   {
-    viennagrid::io::sgf_reader my_sgf_reader;
+    viennagrid::io::netgen_reader my_netgen_reader;
 #ifdef THREEDIM
-    my_sgf_reader(domain, "../../examples/data/cube6.sgf");
+    my_netgen_reader(domain, "../../examples/data/cube6.sgf");
 #endif
 #ifdef TWODIM
-    my_sgf_reader(domain, "../../examples/data/square8.sgf");
+    my_netgen_reader(domain, "../../examples/data/square8.sgf");
 #endif
 #ifdef ONEDIM
-    my_sgf_reader(domain, "../../examples/data/line8.sgf");
+    my_netgen_reader(domain, "../../examples/data/line8.sgf");
 #endif
   }
   catch (...)

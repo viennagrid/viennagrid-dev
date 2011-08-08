@@ -47,7 +47,7 @@ struct TestDomainConfig
 };
 
 
-void testNewDomain(std::string & infile, std::string & outfile)
+void testNewDomain(std::string & outfile)
 {
 
   typedef viennagrid::domain<TestDomainConfig>                               Domain;
@@ -229,9 +229,8 @@ int main()
   
   std::string path = "../applications/data/";
   
-  std::string infile = path + "line8.sgf";
   std::string outfile = path + "out"; // without ending
   
-  testNewDomain(infile, outfile);
+  testNewDomain(outfile);
   return EXIT_SUCCESS;
 }

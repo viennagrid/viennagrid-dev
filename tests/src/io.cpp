@@ -31,13 +31,12 @@
 #include "viennagrid/segment.hpp"
 #include "viennagrid/algorithm/boundary.hpp"
 #include "viennagrid/config/simplex.hpp"
-#include "viennagrid/io/sgf_reader.hpp"
-#include "viennagrid/io/sgf_writer.hpp"
 #include "viennagrid/io/vtk_reader.hpp"
 #include "viennagrid/io/vtk_writer.hpp"
 #include "viennagrid/io/opendx_writer.hpp"
 //#include "viennagrid/io/gts_reader.hpp"
 //#include "viennagrid/io/gts_writer.hpp"
+#include "viennagrid/io/netgen_reader.hpp"
 
 struct TestDomainConfig
 {
@@ -88,8 +87,8 @@ void testNewDomain(std::string & infile, std::string & outfile)
   
   try{
     #ifdef SGF
-    viennagrid::io::sgf_reader my_sgf_reader;
-    my_sgf_reader(domain, infile);
+    viennagrid::io::netgen_reader my_netgen_reader;
+    my_netgen_reader(domain, infile);
     #endif
     
     #ifdef GTS
@@ -120,8 +119,6 @@ void testNewDomain(std::string & infile, std::string & outfile)
   
   
   //test writers:
-  viennagrid::io::sgf_writer my_sgf_writer;
-  my_sgf_writer(domain, outfile + ".sgf");
    
   viennagrid::io::vtk_writer<Domain> my_vtk_writer;
   my_vtk_writer.writeDomain(domain, outfile + ".vtu");
@@ -141,9 +138,6 @@ void testNewDomain(std::string & infile, std::string & outfile)
   //compilation tests:
 //  viennagrid::io::gts_reader my_gts_reader;
 //  my_gts_reader(domain, infile);
-
-  viennagrid::io::sgf_reader my_sgf_reader;
-  my_sgf_reader(domain, infile);
 
   viennagrid::io::vtk_reader<Domain> my_vtk_reader;
   my_vtk_reader.readDomain(domain, infile);

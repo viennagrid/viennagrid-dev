@@ -16,17 +16,18 @@
 #include <iostream>
 #include <vector>
 #include <map>
+#include <cstddef>
 
 namespace viennagrid
 {
   
-  typedef unsigned long       dim_type;
+  typedef std::size_t       dim_type;
   
   /********* Tags ***********************/
   
-  struct cartesian_cs {}; //Cartesian coordinate system
-  struct polar_cs {};     //Polar coordinate system (r, phi)
-  struct sherical_cs {};  //Spherical coordinate system (r, theta, phi)
+  struct cartesian_cs;    //Cartesian coordinate system
+  struct polar_cs;        //Polar coordinate system (r, phi)
+  struct spherical_cs;    //Spherical coordinate system (r, theta, phi)
 
   //Dimension Tags:
   struct three_dimensions_tag{

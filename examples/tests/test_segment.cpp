@@ -227,7 +227,7 @@ void test(viennagrid::config::tetrahedral_3d)
   print_elements<Domain::config_type::cell_tag::topology_level>(domain.segment(1));
   
   viennagrid::io::vtk_writer<Domain> my_vtk_writer;
-  my_vtk_writer.writeDomain(domain, "multi-segment");
+  my_vtk_writer.writeDomain(domain, "multi-segment-3d");
   
   std::cout << "*******************************" << std::endl;
   std::cout << "* Test finished successfully! *" << std::endl;
@@ -348,7 +348,7 @@ void test(viennagrid::config::triangular_2d)
   print_coelements<0, 1>(domain.segment(0));
   
   viennagrid::io::vtk_writer<Domain> my_vtk_writer;
-  my_vtk_writer.writeDomain(domain, "multi-segment");
+  my_vtk_writer.writeDomain(domain, "multi-segment-2d");
   
   std::cout << "*******************************" << std::endl;
   std::cout << "* Test finished successfully! *" << std::endl;
@@ -361,12 +361,7 @@ int main()
   std::cout << "* Test started! *" << std::endl;
   std::cout << "*****************" << std::endl;
   
-  std::string path = "../applications/data/";
-  
-  std::string infile = path + "line8.sgf";
-  std::string outfile = path + "out"; // without ending
-  
   test(viennagrid::config::triangular_2d());
-  //test(viennagrid::config::tetrahedral_3d());
+  test(viennagrid::config::tetrahedral_3d());
   return EXIT_SUCCESS;
 }

@@ -82,7 +82,7 @@ void print_elements(DomainT & domain)
 }
 
 
-void testNewDomain(std::string & infile, std::string & outfile)
+void testNewDomain()
 {
 
   typedef viennagrid::domain<TestDomainConfig>        Domain;
@@ -188,11 +188,6 @@ int main()
   std::cout << "* Test started! *" << std::endl;
   std::cout << "*****************" << std::endl;
   
-  std::string path = "../applications/data/";
-  
-  std::string infile = path + "line8.sgf";
-  std::string outfile = path + "out"; // without ending
-  
-  testNewDomain(infile, outfile);
+  testNewDomain();
   return EXIT_SUCCESS;
 }

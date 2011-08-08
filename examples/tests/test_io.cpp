@@ -31,9 +31,7 @@
 #include "viennagrid/domain.hpp"
 #include "viennagrid/segment.hpp"
 #include "viennagrid/algorithm/boundary.hpp"
-#include "viennagrid/io/sgf_reader.hpp"
 #include "viennagrid/io/netgen_reader.hpp"
-#include "viennagrid/io/sgf_writer.hpp"
 #include "viennagrid/io/vtk_reader.hpp"
 #include "viennagrid/io/vtk_writer.hpp"
 #include "viennagrid/io/opendx_writer.hpp"
@@ -90,11 +88,6 @@ void testNewDomain(std::string & infile, std::string & outfile)
    //Segment & seg = domain.add();
   
   try{
-    #ifdef SGF
-    viennagrid::io::sgf_reader my_sgf_reader;
-    my_sgf_reader(domain, infile);
-    #endif
-
     #ifdef NETGEN
     viennagrid::io::netgen_reader my_netgen_reader;
     my_netgen_reader(domain, infile);
@@ -128,9 +121,6 @@ void testNewDomain(std::string & infile, std::string & outfile)
   
   
   //test writers:
-  viennagrid::io::sgf_writer my_sgf_writer;
-  my_sgf_writer(domain, outfile + ".sgf");
-   
   viennagrid::io::vtk_writer<Domain> my_vtk_writer;
   //my_vtk_writer.add_point_data_scalar<std::string, double>("vtk_data", "my_result");
   my_vtk_writer.add_point_data_scalar(viennagrid::io::io_data_accessor_global<VertexType, std::string, double>("vtk_data"),
@@ -157,9 +147,6 @@ void testNewDomain(std::string & infile, std::string & outfile)
 //  viennagrid::io::gts_reader my_gts_reader;
 //  my_gts_reader(domain, infile);
 
-  viennagrid::io::sgf_reader my_sgf_reader;
-  my_sgf_reader(domain, infile);
-
   viennagrid::io::vtk_reader<Domain> my_vtk_reader;
   my_vtk_reader.readDomain(domain, infile);
   
@@ -181,7 +168,7 @@ int main()
   std::string infile = path + "sshape2d.mesh";
   #endif
   #ifdef ONEDIM
-  std::string infile = path + "line8.sgf";
+  std::string infile = path + "line8.mesh";
   #endif
   std::string outfile = path + "out"; // without ending
   
