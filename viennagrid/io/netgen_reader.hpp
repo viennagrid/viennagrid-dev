@@ -107,7 +107,7 @@ namespace viennagrid
             long vertex_num;
             VertexType *vertices[traits::subcell_desc<CellTag, 0>::num_elements];
 
-            long segment_index;
+            size_t segment_index;
             reader >> segment_index;
       
             for (int j=0; j<traits::subcell_desc<CellTag, 0>::num_elements; ++j)
@@ -119,7 +119,7 @@ namespace viennagrid
             //std::cout << std::endl << "Adding cell: " << &cell << " at " << cell_id << std::endl;
             cell.setVertices(&(vertices[0]));
             cell.setID(i);
-            assert(domain.segment_size() > segment_index && "Segment index in input file out of bounds!");
+            assert(domain.segment_size() >= segment_index && "Segment index in input file out of bounds!");
             domain.segment(segment_index - 1).add(cell);  //note that Netgen uses a 1-based indexing scheme, while ViennaGrid uses a zero-based one
       
             //progress info:

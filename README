@@ -1,5 +1,5 @@
 ************************************************
-****           ViennaCL Readme              ****
+****          ViennaGrid Readme             ****
 ************************************************
 
 Table of Contents
@@ -14,10 +14,7 @@ A. License
 
 1. Requirements
 -----------------
-ViennaCL requires the following:
- * A recent C++ compiler (e.g. gcc 4.x.x)
- * For accessing GPUs: OpenCL (shared library and include files)
- * For building some of the tutorials: uBLAS (shipped with the Boost libraries)
+ViennaGrid requires only a not too dated C++ compiler (e.g. gcc 4.x.x), the C++ Standard Template Library and ViennaData. For building the examples, CMake can be used.
 
 
 2. Installation
@@ -26,13 +23,13 @@ ViennaCL requires the following:
 The first step is to extract the file:
 
 Unix-based OS:
-$> gunzip ViennaCL-1.0.4.tar.gz
-$> tar -xf ViennaCL-1.0.4.tar
-$> cd ViennaCL-1.0.4
+$> gunzip ViennaGrid-1.0.0.tar.gz
+$> tar -xf ViennaGrid-1.0.0.tar
+$> cd ViennaGrid-1.0.0
 
-ViennaCL is a header-only library, therefore it is sufficient to copy the subfolder ViennaCL/ (holding the header files) into you project directory or your system include directory. For instructions on how to set the include paths correctly, please refer to the documentation of your compiler.
+ViennaGrid is a header-only library, therefore it is sufficient to copy the subfolder viennagrid/ (holding the header files) into your project directory or your system include directory. For instructions on how to set the include paths correctly, please refer to the documentation of your compiler.
 
-For building the examples, proceed as follows:
+For building and running the examples, proceed as follows:
 
 Unix-based clients:
  * change to the build directory:
@@ -41,23 +38,19 @@ Unix-based clients:
    $> cmake ..
  * Use 'make' to build all examples:
    $> make
-   (alternatively, you can build them individually via 'make tut1', 'make tut2', etc.
- * Start the tutorials (optional)
-   $> ./tut1
-   $> ./tut2
-   $> ./tut3
-   $> ./tut4
-   $> ./tut5
+   (alternatively, you can build them individually via 'make example1', 'make example2', etc.
+ * Execute them via
+   $> ./example1
+   $> ./example2
+   etc.
 
 
 3. Project Layout
 -----------------
 
----- ViennaCL-1.X.X
+---- ViennaGrid-1.X.X
    |
    |-- auxiliary/ : Auxiliary Files (i.e. the OpenCL source code tree and the converter for the header files)
-   | 
-   |-- viennacl/ : the library source code
    | 
    |-- doc/ - documentation (LaTeX and doxygen)
    | 
@@ -67,22 +60,22 @@ Unix-based clients:
         | 
         |-- benchmarks/ - A small benchmarking suite
         |
-        |-- tutorial/ - Some tutorials explaining the usage of ViennaCL
+        |-- tutorial/ - Some tutorials explaining the usage of ViennaGrid
    | 
    |-- tests/ - Automated test suite
+   | 
+   |-- viennagrid/ : the library source code
 
 
 4. Authors and Contact
 ------------------------
 
-Florian Rudolf ()
-Karl Rupp (rupp@iue.tuwien.ac.at    <--- primary contact)
-Josef Weinbub (weinbub@iue.tuwien.ac.at)
+Karl Rupp (rupp@iue.tuwien.ac.at)
 
-ViennaCL was developed under the aegis of the 'Institute for Microelectronics' at the 'Vienna University of Technology'.
+ViennaGrid was developed under the aegis of the 'Institute for Microelectronics' and the 'Institute for Analysis and Scientific Computing' at the 'Vienna University of Technology'.
 
 
 A. License
 ------------
-ViennaCL is distributed under the MIT (X11) License. See file LICENSE.
+ViennaGrid is distributed under the MIT (X11) License. See file LICENSE.
 
