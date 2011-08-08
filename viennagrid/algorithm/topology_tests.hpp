@@ -75,7 +75,7 @@ struct duplicates
             }
             else // the edge is already present ..
             {
-               std::cout << cell << std::endl;
+               //std::cout << cell << std::endl;
                duplicates_cnt++;
             }
          }      
