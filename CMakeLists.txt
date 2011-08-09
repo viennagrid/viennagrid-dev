@@ -34,6 +34,7 @@ ADD_EXECUTABLE(test_coboundary  examples/tests/test_coboundary.cpp)
 ADD_EXECUTABLE(test_domain      examples/tests/test_domain.cpp)
 ADD_EXECUTABLE(test_segment     examples/tests/test_segment.cpp)
 ADD_EXECUTABLE(test_point       examples/tests/test_point.cpp)
+ADD_EXECUTABLE(test_refinement       examples/tests/test_refinement.cpp)
 
 ADD_EXECUTABLE(voronoi_rect      examples/tutorial/voronoi_rect.cpp)
 ADD_EXECUTABLE(voronoi_triangle  examples/tutorial/voronoi_triangle.cpp)

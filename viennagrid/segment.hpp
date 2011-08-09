@@ -34,7 +34,7 @@ namespace viennagrid
     {
       typedef typename result_of::ncell_type<config_type, cell_level>::type     element_type;
       
-      typedef std::vector< element_type * >      type;
+      typedef std::deque< element_type * >      type;
     };
 
     //at vertex level

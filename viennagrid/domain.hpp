@@ -16,6 +16,7 @@
 
 #include <iostream>
 #include <vector>
+#include <deque>
 #include <list>
 #include <set>
 #include <map>
@@ -27,6 +28,7 @@
 #include "viennagrid/element.hpp"
 #include "viennagrid/detail/element_key.hpp"
 #include "viennagrid/segment.hpp"
+#include "viennagrid/traits/container.hpp"
 //#include "viennagrid/config/domain_configs.hpp"
 
 namespace viennagrid
@@ -53,7 +55,8 @@ namespace viennagrid
     {
       typedef typename result_of::ncell_type<config_type, 0>::type              element_type;
       
-      typedef std::vector< element_type >      type;
+      //typedef std::vector< element_type >      type;
+      typedef std::deque< element_type >      type;
     };
 
     //at cell level:
@@ -62,7 +65,8 @@ namespace viennagrid
     {
       typedef typename result_of::ncell_type<config_type, cell_level>::type     element_type;
       
-      typedef std::vector< element_type >      type;
+      //typedef std::vector< element_type >      type;
+      typedef std::deque< element_type >      type;
     };
     
   }
@@ -218,15 +222,18 @@ namespace viennagrid
     
     public:
       typedef Config    config_type;
+      typedef std::size_t   size_type;
 
-      void reserve_cells(size_t num) { elements.reserve(num); }
-      
+      void reserve_cells(size_type num) 
+      {
+        viennagrid::traits::reserve(elements, num); 
+      }
       
       using base_type::add;
       
       element_type * add(element_type & e)
       {
-        assert(elements.capacity() > elements.size() && "Not enough memory for cells reserved!");
+        assert(viennagrid::traits::capacity(elements) > elements.size() && "Not enough memory for cells reserved!");
         
         elements.push_back(e);
         elements.back().setID(elements.size());
@@ -263,17 +270,17 @@ namespace viennagrid
       
       ////////////////////// size ////////////////////////
       template <dim_type j>
-      size_t size(less_tag) const { return base_type::template size<j>(); }
+      size_type size(less_tag) const { return base_type::template size<j>(); }
       template <dim_type j>
-      size_t size(equal_tag) const { return elements.size(); }
+      size_type size(equal_tag) const { return elements.size(); }
       template <dim_type j>
-      size_t size() const
+      size_type size() const
       {
         return size<j>( typename level_discriminator<dim, j>::result_type() );
       }
       
-      element_type cells(size_t i) { return elements[i]; }
-      element_type cells(size_t i) const { return elements[i]; }      
+      element_type cells(size_type i) { return elements[i]; }
+      element_type cells(size_type i) const { return elements[i]; }      
       
     private:
       container_type    elements;        //container of elements
@@ -296,18 +303,28 @@ namespace viennagrid
     
     public:
       typedef Config    config_type;
+      typedef std::size_t size_type;
       
-      void reserve_vertices(size_t num) { elements.reserve(num); }
-      
-      element_type * add(element_type & e)
+      void reserve_vertices(size_type num) 
       {
-        assert(elements.capacity() > elements.size() && "Not enough memory for vertices reserved!");
-        e.setID(elements.size());
+        viennagrid::traits::reserve(elements, num);
+      }
+      
+      element_type * add(element_type const & e)
+      {
+        assert(viennagrid::traits::capacity(elements) > elements.size() && "Not enough memory for vertices reserved!");
+        //element_type temp(e);
+        //temp.setID(elements.size());
         elements.push_back(e);
+        elements.back().setID(elements.size()-1);
         return &(elements.back());
       }
       
-      element_type & vertex(size_t id) { return elements[id]; }
+      element_type & vertex(size_type id) 
+      {
+        assert(id < elements.size() && "Vertex index out of bounds!");
+        return elements[id]; 
+      }
       
       template <dim_type dim>
       container_type * container() { return &elements; }
@@ -316,9 +333,9 @@ namespace viennagrid
       
       ////////////////////// size ////////////////////////
       template <dim_type j>
-      size_t size(equal_tag) const { return elements.size(); }
+      size_type size(equal_tag) const { return elements.size(); }
       template <dim_type j>
-      size_t size() const
+      size_type size() const
       {
         return size<j>( typename level_discriminator<0, j>::result_type() );
       }
@@ -338,14 +355,23 @@ namespace viennagrid
                                       true>  //we start with cells
   {
       typedef domain_layers<Config, Config::cell_tag::topology_level, true>           base_type;
+      typedef domain<Config>                                                          self_type;
     
     public:
       typedef Config                                    config_type;
-      typedef segment_t<Config>                                                       segment_type;
+      typedef std::size_t                               size_type;
+      typedef segment_t<Config>                         segment_type;
       
       using base_type::add;
       
-      void create_segments(size_t num)
+      template <typename OtherDomainType, typename RefinementTag>
+      self_type & operator=(refinement_proxy<OtherDomainType, RefinementTag> const & proxy)
+      {
+        refine_impl(proxy.get(), *this, proxy.tag());
+        return *this;
+      }
+      
+      void create_segments(size_type num)
       {
         assert(segments.size() == 0 || "Segments in domain already created!");
         segments.resize(num);
@@ -354,13 +380,13 @@ namespace viennagrid
           segments[i].set_domain(*this);
       }
 
-      segment_type const& segment(size_t seg_index) const
+      segment_type const& segment(size_type seg_index) const
       {
         assert(seg_index < segments.size() || "Segment index out of bounds!");
         return segments[seg_index];
       }
 
-      segment_type & segment(size_t seg_index)
+      segment_type & segment(size_type seg_index)
       {
         assert(seg_index < segments.size() || "Segment index out of bounds!");
         return segments[seg_index];
@@ -369,7 +395,7 @@ namespace viennagrid
       const std::vector< segment_type > * segment_container() const { return & segments; }
       const std::vector< segment_type > * segment_container()       { return & segments; }      
       
-      size_t segment_size() const { return segments.size(); }
+      size_type segment_size() const { return segments.size(); }
     
     private:
       //store segments here

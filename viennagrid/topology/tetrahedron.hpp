@@ -17,6 +17,8 @@
 #include "viennagrid/topology/point.hpp"
 #include "viennagrid/topology/line.hpp"
 #include "viennagrid/topology/triangle.hpp"
+#include "viennadata/api.hpp"
+#include "viennagrid/algorithm/norm.hpp"
 
 namespace viennagrid
 {
@@ -151,6 +153,199 @@ namespace viennagrid
   } //traits
   
   
+  
+  //
+  // Uniform refinement of a tetrahedron: Split the cell into 8 tets
+  //
+  template <>
+  struct element_refinement<tetrahedron_tag>
+  {
+    template <typename CellType, typename DomainTypeOut>
+    static void apply(CellType const & cell_in, DomainTypeOut & segment_out)
+    {
+      typedef typename CellType::config_type        ConfigTypeIn;
+      typedef typename viennagrid::result_of::const_ncell_container<CellType, 0>::type            VertexOnCellContainer;
+      typedef typename viennagrid::result_of::iterator<VertexOnCellContainer>::type         VertexOnCellIterator;            
+      typedef typename viennagrid::result_of::const_ncell_container<CellType, 1>::type            EdgeOnCellContainer;
+      typedef typename viennagrid::result_of::iterator<EdgeOnCellContainer>::type           EdgeOnCellIterator;            
+      
+      typedef typename viennagrid::result_of::ncell_type<ConfigTypeIn, 0>::type             VertexType;
+
+      VertexType * vertices[traits::subcell_desc<tetrahedron_tag, 0>::num_elements
+                            + traits::subcell_desc<tetrahedron_tag, 1>::num_elements];
+      
+      //
+      // Step 1: Get vertices on the new domain
+      //
+      
+      //grab existing vertices:
+      VertexOnCellContainer vertices_on_cell = viennagrid::ncells<0>(cell_in);
+      VertexOnCellIterator vocit = vertices_on_cell.begin();
+      vertices[0] = &(segment_out.get_domain().vertex(vocit->getID())); ++vocit;
+      vertices[1] = &(segment_out.get_domain().vertex(vocit->getID())); ++vocit;
+      vertices[2] = &(segment_out.get_domain().vertex(vocit->getID())); ++vocit;
+      vertices[3] = &(segment_out.get_domain().vertex(vocit->getID()));
+
+      //add vertices from edge
+      EdgeOnCellContainer edges_on_cell = viennagrid::ncells<1>(cell_in);
+      EdgeOnCellIterator eocit = edges_on_cell.begin();
+      vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(*eocit))); ++eocit;
+      vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(*eocit))); ++eocit;
+      vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(*eocit))); ++eocit;
+      vertices[7] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(*eocit))); ++eocit;
+      vertices[8] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(*eocit))); ++eocit;
+      vertices[9] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(*eocit)));
+      
+      //
+      // Step 2: Add new cells to new domain:
+      //
+      CellType new_cell;
+      VertexType * cellvertices[traits::subcell_desc<tetrahedron_tag, 0>::num_elements];
+      
+      //0-4-5-6:
+      cellvertices[0] = vertices[0];
+      cellvertices[1] = vertices[4];
+      cellvertices[2] = vertices[5];
+      cellvertices[3] = vertices[6];
+      new_cell.setVertices(cellvertices);
+      segment_out.add(new_cell);
+
+      //1-7-4-8:
+      cellvertices[0] = vertices[1];
+      cellvertices[1] = vertices[7];
+      cellvertices[2] = vertices[4];
+      cellvertices[3] = vertices[8];
+      new_cell.setVertices(cellvertices);
+      segment_out.add(new_cell);
+
+      //2-5-7-9:
+      cellvertices[0] = vertices[2];
+      cellvertices[1] = vertices[5];
+      cellvertices[2] = vertices[7];
+      cellvertices[3] = vertices[9];
+      new_cell.setVertices(cellvertices);
+      segment_out.add(new_cell);
+
+      //3-8-6-9:
+      cellvertices[0] = vertices[3];
+      cellvertices[1] = vertices[8];
+      cellvertices[2] = vertices[6];
+      cellvertices[3] = vertices[9];
+      new_cell.setVertices(cellvertices);
+      segment_out.add(new_cell);
+      
+      double diag58 = viennagrid::norm(vertices[5]->getPoint() - vertices[8]->getPoint());
+      double diag67 = viennagrid::norm(vertices[6]->getPoint() - vertices[7]->getPoint());
+      double diag49 = viennagrid::norm(vertices[4]->getPoint() - vertices[9]->getPoint());
+      
+      if ( (diag58 <= diag67) && (diag58 <= diag49) )  //diag58 is shortest: keep it, split others
+      {
+        //4-8-5-6:
+        cellvertices[0] = vertices[4];
+        cellvertices[1] = vertices[8];
+        cellvertices[2] = vertices[5];
+        cellvertices[3] = vertices[6];
+        new_cell.setVertices(cellvertices);
+        segment_out.add(new_cell);
+        
+        //4-8-7-5:
+        cellvertices[0] = vertices[4];
+        cellvertices[1] = vertices[8];
+        cellvertices[2] = vertices[7];
+        cellvertices[3] = vertices[5];
+        new_cell.setVertices(cellvertices);
+        segment_out.add(new_cell);
+
+        //7-8-9-5:
+        cellvertices[0] = vertices[7];
+        cellvertices[1] = vertices[8];
+        cellvertices[2] = vertices[9];
+        cellvertices[3] = vertices[5];
+        new_cell.setVertices(cellvertices);
+        segment_out.add(new_cell);
+
+        //8-6-9-5:
+        cellvertices[0] = vertices[8];
+        cellvertices[1] = vertices[6];
+        cellvertices[2] = vertices[9];
+        cellvertices[3] = vertices[5];
+        new_cell.setVertices(cellvertices);
+        segment_out.add(new_cell);
+      }
+      else if ( (diag67 <= diag58) && (diag67 <= diag49) ) //diag67 is shortest: keep it, split others
+      {
+        //4-7-6-8:
+        cellvertices[0] = vertices[4];
+        cellvertices[1] = vertices[7];
+        cellvertices[2] = vertices[6];
+        cellvertices[3] = vertices[8];
+        new_cell.setVertices(cellvertices);
+        segment_out.add(new_cell);
+        
+        //4-7-5-6:
+        cellvertices[0] = vertices[4];
+        cellvertices[1] = vertices[7];
+        cellvertices[2] = vertices[5];
+        cellvertices[3] = vertices[6];
+        new_cell.setVertices(cellvertices);
+        segment_out.add(new_cell);
+
+        //7-9-6-8:
+        cellvertices[0] = vertices[7];
+        cellvertices[1] = vertices[9];
+        cellvertices[2] = vertices[6];
+        cellvertices[3] = vertices[8];
+        new_cell.setVertices(cellvertices);
+        segment_out.add(new_cell);
+
+        //7-9-5-6:
+        cellvertices[0] = vertices[7];
+        cellvertices[1] = vertices[9];
+        cellvertices[2] = vertices[5];
+        cellvertices[3] = vertices[6];
+        new_cell.setVertices(cellvertices);
+        segment_out.add(new_cell);
+      }
+      else //keep shortest diagonal diag49
+      {
+        //4-9-6-8:
+        cellvertices[0] = vertices[4];
+        cellvertices[1] = vertices[9];
+        cellvertices[2] = vertices[6];
+        cellvertices[3] = vertices[8];
+        new_cell.setVertices(cellvertices);
+        segment_out.add(new_cell);
+        
+        //4-9-5-6:
+        cellvertices[0] = vertices[4];
+        cellvertices[1] = vertices[9];
+        cellvertices[2] = vertices[5];
+        cellvertices[3] = vertices[6];
+        new_cell.setVertices(cellvertices);
+        segment_out.add(new_cell);
+
+        //4-7-9-8:
+        cellvertices[0] = vertices[4];
+        cellvertices[1] = vertices[7];
+        cellvertices[2] = vertices[9];
+        cellvertices[3] = vertices[8];
+        new_cell.setVertices(cellvertices);
+        segment_out.add(new_cell);
+
+        //4-7-5-9:
+        cellvertices[0] = vertices[4];
+        cellvertices[1] = vertices[7];
+        cellvertices[2] = vertices[5];
+        cellvertices[3] = vertices[9];
+        new_cell.setVertices(cellvertices);
+        segment_out.add(new_cell);
+      }
+      
+    } //apply()
+    
+  };
+  
+    
   
 }
 

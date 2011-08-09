@@ -319,5 +319,28 @@ namespace viennagrid
       typedef viennagrid::point<double, 3>         point_type;
       typedef std::map<std::size_t, point_type>    type;
    };
+   
+   
+  // 
+  //refinement
+  //
+   
+  template <typename T>
+  struct element_refinement;
+   
+  struct refinement_key
+  {
+    bool operator<(refinement_key const & other) const
+    {
+      return false;     // a < b is false AND b < a is false, hence a == b
+    }
+  };
+   
+  template <typename DomainType, typename RefinementTag>
+  class refinement_proxy;
+   
+  struct uniform_refinement_tag {};
+  
+  
 }
 #endif
