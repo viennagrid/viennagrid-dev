@@ -101,10 +101,29 @@ void testNewDomain(std::string & infile, std::string & outfile)
 //   exit(EXIT_FAILURE);
   }
 
+
+  //Testing: Tag some cells with centroid at x \in [2,3]:
+  CellContainer cells = viennagrid::ncells<CellTag::topology_level>(domain);
+  for (CellIterator cit  = cells.begin();
+                    cit != cells.end();
+                  ++cit)
+  {
+    PointType centroid = viennagrid::centroid(*cit);
+    
+    if ( (centroid[0] > 2.0) 
+        && (centroid[0] < 3.0) )
+    {
+      viennadata::access<viennagrid::refinement_key, bool>(viennagrid::refinement_key())(*cit) = true;
+    }
+  }
+
+
+
+
+
   Domain refined_domain;
   
-  std::cout << "Refining domain..." << std::endl;
-  refined_domain = viennagrid::refine(domain, viennagrid::uniform_refinement_tag());
+  refined_domain = viennagrid::refine(domain, viennagrid::adaptive_refinement_tag());
 
 
 

@@ -340,7 +340,7 @@ namespace viennagrid
   class refinement_proxy;
    
   struct uniform_refinement_tag {};
-  
+  struct adaptive_refinement_tag {};
   
 }
 #endif

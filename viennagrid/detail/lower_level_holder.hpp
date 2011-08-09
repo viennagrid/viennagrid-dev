@@ -83,7 +83,11 @@ namespace viennagrid
 
     public:
 
-      lower_level_holder( ) {};
+      lower_level_holder( ) 
+      {
+        for (long i=0; i < LevelSpecs::num_elements; ++i)
+          elements_[i] = NULL;
+      };
 
       lower_level_holder( const lower_level_holder & llh) : Base (llh)
       {
