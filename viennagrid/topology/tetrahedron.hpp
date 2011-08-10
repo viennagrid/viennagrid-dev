@@ -155,7 +155,8 @@ namespace viennagrid
   
   
   //
-  // Refinement of a tetrahedron
+  // Refinement of a tetrahedron: A LOT of spaghetti-code to follow. 
+  // Unfortunately, combinatorics forces us to consider that many cases of refinement.
   //
   template <>
   struct element_refinement<tetrahedron_tag>
@@ -313,6 +314,9 @@ namespace viennagrid
     }    
 
 
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
     //
     // Refinement of a tetrahedron, bisecting two edges
     //
@@ -391,7 +395,6 @@ namespace viennagrid
      *       /  .         \ /
      *     0 ----- 4 ------ 1
      * 
-     * 
      */
     template <typename CellType, typename DomainTypeOut, typename VertexType>
     static void apply2_2(CellType const & cell_in, 
@@ -401,16 +404,34 @@ namespace viennagrid
     {
       CellType new_cell;
       VertexType * cellvertices[traits::subcell_desc<tetrahedron_tag, 0>::num_elements];
-      
-      //TODO
-      //cell containing vertex 0:
-      /*cellvertices[0] = vertices[];
-      cellvertices[1] = vertices[];
-      cellvertices[2] = vertices[];
-      cellvertices[3] = vertices[];
-      new_cell.setVertices(cellvertices);
-      segment_out.add(new_cell);*/
 
+      cellvertices[0] = vertices[4];
+      cellvertices[1] = vertices[1];
+      cellvertices[2] = vertices[2];
+      cellvertices[3] = vertices[5];
+      new_cell.setVertices(cellvertices);
+      segment_out.add(new_cell);
+      
+      cellvertices[0] = vertices[4];
+      cellvertices[1] = vertices[1];
+      cellvertices[2] = vertices[5];
+      cellvertices[3] = vertices[3];
+      new_cell.setVertices(cellvertices);
+      segment_out.add(new_cell);
+      
+      cellvertices[0] = vertices[0];
+      cellvertices[1] = vertices[4];
+      cellvertices[2] = vertices[2];
+      cellvertices[3] = vertices[5];
+      new_cell.setVertices(cellvertices);
+      segment_out.add(new_cell);
+      
+      cellvertices[0] = vertices[0];
+      cellvertices[1] = vertices[4];
+      cellvertices[2] = vertices[5];
+      cellvertices[3] = vertices[3];
+      new_cell.setVertices(cellvertices);
+      segment_out.add(new_cell);
     }
 
     // Reorders the tetrahedron 
@@ -453,27 +474,26 @@ namespace viennagrid
       EdgeType const & e4 = *eocit; ++eocit;
       EdgeType const & e5 = *eocit;
       
-      /* TODO
       //with e0
       if (viennadata::access<refinement_key, bool>(refinement_key())(e0) == true)
       {
         if (viennadata::access<refinement_key, bool>(refinement_key())(e1) == true)
         {
-          ordered_vertices[0] = vertices[];
-          ordered_vertices[1] = vertices[];
-          ordered_vertices[2] = vertices[];
-          ordered_vertices[3] = vertices[];
-          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)));
-          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)));
+          ordered_vertices[0] = vertices[2];
+          ordered_vertices[1] = vertices[0];
+          ordered_vertices[2] = vertices[1];
+          ordered_vertices[3] = vertices[3];
+          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)));
+          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)));
           
           apply2_1(cell_in, segment_out, ordered_vertices);
         }
         else if (viennadata::access<refinement_key, bool>(refinement_key())(e2) == true)
         {
-          ordered_vertices[0] = vertices[];
-          ordered_vertices[1] = vertices[];
-          ordered_vertices[2] = vertices[];
-          ordered_vertices[3] = vertices[];
+          ordered_vertices[0] = vertices[1];
+          ordered_vertices[1] = vertices[0];
+          ordered_vertices[2] = vertices[3];
+          ordered_vertices[3] = vertices[2];
           ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)));
           ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)));
           
@@ -481,10 +501,10 @@ namespace viennagrid
         }
         else if (viennadata::access<refinement_key, bool>(refinement_key())(e3) == true) 
         {
-          ordered_vertices[0] = vertices[];
-          ordered_vertices[1] = vertices[];
-          ordered_vertices[2] = vertices[];
-          ordered_vertices[3] = vertices[];
+          ordered_vertices[0] = vertices[0];
+          ordered_vertices[1] = vertices[1];
+          ordered_vertices[2] = vertices[2];
+          ordered_vertices[3] = vertices[3];
           ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)));
           ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)));
           
@@ -492,21 +512,21 @@ namespace viennagrid
         }
         else if (viennadata::access<refinement_key, bool>(refinement_key())(e4) == true) 
         {
-          ordered_vertices[0] = vertices[];
-          ordered_vertices[1] = vertices[];
-          ordered_vertices[2] = vertices[];
-          ordered_vertices[3] = vertices[];
-          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)));
-          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)));
+          ordered_vertices[0] = vertices[3];
+          ordered_vertices[1] = vertices[1];
+          ordered_vertices[2] = vertices[0];
+          ordered_vertices[3] = vertices[2];
+          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)));
+          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)));
           
           apply2_1(cell_in, segment_out, ordered_vertices);
         }
         else if (viennadata::access<refinement_key, bool>(refinement_key())(e5) == true) 
         {
-          ordered_vertices[0] = vertices[];
-          ordered_vertices[1] = vertices[];
-          ordered_vertices[2] = vertices[];
-          ordered_vertices[3] = vertices[];
+          ordered_vertices[0] = vertices[0];
+          ordered_vertices[1] = vertices[1];
+          ordered_vertices[2] = vertices[2];
+          ordered_vertices[3] = vertices[3];
           ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)));
           ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)));
           
@@ -521,32 +541,32 @@ namespace viennagrid
       {
         if (viennadata::access<refinement_key, bool>(refinement_key())(e2) == true)
         {
-          ordered_vertices[0] = vertices[];
-          ordered_vertices[1] = vertices[];
-          ordered_vertices[2] = vertices[];
-          ordered_vertices[3] = vertices[];
-          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)));
-          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)));
+          ordered_vertices[0] = vertices[3];
+          ordered_vertices[1] = vertices[0];
+          ordered_vertices[2] = vertices[2];
+          ordered_vertices[3] = vertices[1];
+          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)));
+          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)));
           
           apply2_1(cell_in, segment_out, ordered_vertices);
         }
         else if (viennadata::access<refinement_key, bool>(refinement_key())(e3) == true) 
         {
-          ordered_vertices[0] = vertices[];
-          ordered_vertices[1] = vertices[];
-          ordered_vertices[2] = vertices[];
-          ordered_vertices[3] = vertices[];
-          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)));
-          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)));
+          ordered_vertices[0] = vertices[1];
+          ordered_vertices[1] = vertices[2];
+          ordered_vertices[2] = vertices[0];
+          ordered_vertices[3] = vertices[3];
+          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)));
+          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)));
           
           apply2_1(cell_in, segment_out, ordered_vertices);
         }
         else if (viennadata::access<refinement_key, bool>(refinement_key())(e4) == true) 
         {
-          ordered_vertices[0] = vertices[];
-          ordered_vertices[1] = vertices[];
-          ordered_vertices[2] = vertices[];
-          ordered_vertices[3] = vertices[];
+          ordered_vertices[0] = vertices[2];
+          ordered_vertices[1] = vertices[0];
+          ordered_vertices[2] = vertices[1];
+          ordered_vertices[3] = vertices[3];
           ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)));
           ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)));
           
@@ -554,10 +574,10 @@ namespace viennagrid
         }
         else if (viennadata::access<refinement_key, bool>(refinement_key())(e5) == true) 
         {
-          ordered_vertices[0] = vertices[];
-          ordered_vertices[1] = vertices[];
-          ordered_vertices[2] = vertices[];
-          ordered_vertices[3] = vertices[];
+          ordered_vertices[0] = vertices[0];
+          ordered_vertices[1] = vertices[2];
+          ordered_vertices[2] = vertices[3];
+          ordered_vertices[3] = vertices[1];
           ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)));
           ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)));
           
@@ -572,10 +592,10 @@ namespace viennagrid
       {
         if (viennadata::access<refinement_key, bool>(refinement_key())(e3) == true) 
         {
-          ordered_vertices[0] = vertices[];
-          ordered_vertices[1] = vertices[];
-          ordered_vertices[2] = vertices[];
-          ordered_vertices[3] = vertices[];
+          ordered_vertices[0] = vertices[3];
+          ordered_vertices[1] = vertices[0];
+          ordered_vertices[2] = vertices[2];
+          ordered_vertices[3] = vertices[1];
           ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)));
           ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)));
           
@@ -583,10 +603,10 @@ namespace viennagrid
         }
         else if (viennadata::access<refinement_key, bool>(refinement_key())(e4) == true) 
         {
-          ordered_vertices[0] = vertices[];
-          ordered_vertices[1] = vertices[];
-          ordered_vertices[2] = vertices[];
-          ordered_vertices[3] = vertices[];
+          ordered_vertices[0] = vertices[0];
+          ordered_vertices[1] = vertices[3];
+          ordered_vertices[2] = vertices[1];
+          ordered_vertices[3] = vertices[2];
           ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)));
           ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)));
           
@@ -594,12 +614,12 @@ namespace viennagrid
         }
         else if (viennadata::access<refinement_key, bool>(refinement_key())(e5) == true) 
         {
-          ordered_vertices[0] = vertices[];
-          ordered_vertices[1] = vertices[];
-          ordered_vertices[2] = vertices[];
-          ordered_vertices[3] = vertices[];
-          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)));
-          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)));
+          ordered_vertices[0] = vertices[2];
+          ordered_vertices[1] = vertices[3];
+          ordered_vertices[2] = vertices[0];
+          ordered_vertices[3] = vertices[1];
+          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)));
+          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)));
           
           apply2_1(cell_in, segment_out, ordered_vertices);
         }
@@ -612,10 +632,10 @@ namespace viennagrid
       {
         if (viennadata::access<refinement_key, bool>(refinement_key())(e4) == true) 
         {
-          ordered_vertices[0] = vertices[];
-          ordered_vertices[1] = vertices[];
-          ordered_vertices[2] = vertices[];
-          ordered_vertices[3] = vertices[];
+          ordered_vertices[0] = vertices[2];
+          ordered_vertices[1] = vertices[1];
+          ordered_vertices[2] = vertices[3];
+          ordered_vertices[3] = vertices[0];
           ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)));
           ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)));
           
@@ -623,12 +643,12 @@ namespace viennagrid
         }
         else if (viennadata::access<refinement_key, bool>(refinement_key())(e5) == true) 
         {
-          ordered_vertices[0] = vertices[];
-          ordered_vertices[1] = vertices[];
-          ordered_vertices[2] = vertices[];
-          ordered_vertices[3] = vertices[];
-          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)));
-          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)));
+          ordered_vertices[0] = vertices[3];
+          ordered_vertices[1] = vertices[2];
+          ordered_vertices[2] = vertices[1];
+          ordered_vertices[3] = vertices[0];
+          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)));
+          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)));
           
           apply2_1(cell_in, segment_out, ordered_vertices);
         }
@@ -641,10 +661,10 @@ namespace viennagrid
       {
         if (viennadata::access<refinement_key, bool>(refinement_key())(e5) == true) 
         {
-          ordered_vertices[0] = vertices[];
-          ordered_vertices[1] = vertices[];
-          ordered_vertices[2] = vertices[];
-          ordered_vertices[3] = vertices[];
+          ordered_vertices[0] = vertices[1];
+          ordered_vertices[1] = vertices[3];
+          ordered_vertices[2] = vertices[2];
+          ordered_vertices[3] = vertices[0];
           ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)));
           ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)));
           
@@ -659,8 +679,493 @@ namespace viennagrid
       {
         assert(false && "Logic error: No edge for refinement found!"); 
       }
-      */
     }    
+
+
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+    //
+    // Refinement of a tetrahedron, bisecting three edges
+    //
+    
+    // Case 1: The three edges have a common vertex. Orientation: (dots are in the background)
+    /*
+     *            3 ----------- 2
+     *          /   \       .  /
+     *         /      6 .     5
+     *        /     .   \    /
+     *       /  .         \ /
+     *     0 ----- 4 ------ 1
+     * 
+     * 
+     */
+    template <typename CellType, typename DomainTypeOut, typename VertexType>
+    static void apply3_1(CellType const & cell_in, 
+                         DomainTypeOut & segment_out,
+                         VertexType const * vertices
+                        )
+    {
+      CellType new_cell;
+      VertexType * cellvertices[traits::subcell_desc<tetrahedron_tag, 0>::num_elements];
+
+      cellvertices[0] = vertices[4];
+      cellvertices[1] = vertices[1];
+      cellvertices[2] = vertices[5];
+      cellvertices[3] = vertices[6];
+      new_cell.setVertices(cellvertices);
+      segment_out.add(new_cell);
+      
+      double diag01_len = viennagrid::norm(vertices[0]->getPoint() - vertices[1]->getPoint());
+      double diag12_len = viennagrid::norm(vertices[2]->getPoint() - vertices[1]->getPoint());
+      double diag13_len = viennagrid::norm(vertices[3]->getPoint() - vertices[1]->getPoint());
+
+      // Strategy: The two longest edges of the common vertex are split 'twice',
+      //           i.e. two new edges start from the center of the two longest edges
+      if (diag01_len > diag12_len) //split edge 01 again, introduce line 42
+      {
+        if (diag13_len > diag12_len) //split edge 13 again, introduce lines 06 and 62
+        {
+          cellvertices[0] = vertices[0];
+          cellvertices[1] = vertices[4];
+          cellvertices[2] = vertices[5];
+          cellvertices[3] = vertices[6];
+          new_cell.setVertices(cellvertices);
+          segment_out.add(new_cell);
+          
+          cellvertices[0] = vertices[0];
+          cellvertices[1] = vertices[6];
+          cellvertices[2] = vertices[2];
+          cellvertices[3] = vertices[3];
+          new_cell.setVertices(cellvertices);
+          segment_out.add(new_cell);
+          
+          cellvertices[0] = vertices[4];
+          cellvertices[1] = vertices[5];
+          cellvertices[2] = vertices[2];
+          cellvertices[3] = vertices[6];
+          new_cell.setVertices(cellvertices);
+          segment_out.add(new_cell);
+        }
+        else //split edge 12 again, introduce lines 43 and 53
+        {
+          cellvertices[0] = vertices[0];
+          cellvertices[1] = vertices[4];
+          cellvertices[2] = vertices[2];
+          cellvertices[3] = vertices[3];
+          new_cell.setVertices(cellvertices);
+          segment_out.add(new_cell);
+          
+          cellvertices[0] = vertices[4];
+          cellvertices[1] = vertices[5];
+          cellvertices[2] = vertices[2];
+          cellvertices[3] = vertices[3];
+          new_cell.setVertices(cellvertices);
+          segment_out.add(new_cell);
+          
+          cellvertices[0] = vertices[4];
+          cellvertices[1] = vertices[6];
+          cellvertices[2] = vertices[5];
+          cellvertices[3] = vertices[3];
+          new_cell.setVertices(cellvertices);
+          segment_out.add(new_cell);
+        }
+      }
+      else //split edge 12, introduce line 05
+      {
+        if (diag13_len > diag01_len) //split edge 13 again, introduce lines 60 and 62
+        {
+          cellvertices[0] = vertices[0];
+          cellvertices[1] = vertices[4];
+          cellvertices[2] = vertices[5];
+          cellvertices[3] = vertices[6];
+          new_cell.setVertices(cellvertices);
+          segment_out.add(new_cell);
+          
+          cellvertices[0] = vertices[0];
+          cellvertices[1] = vertices[6];
+          cellvertices[2] = vertices[5];
+          cellvertices[3] = vertices[2];
+          new_cell.setVertices(cellvertices);
+          segment_out.add(new_cell);
+          
+          cellvertices[0] = vertices[0];
+          cellvertices[1] = vertices[6];
+          cellvertices[2] = vertices[2];
+          cellvertices[3] = vertices[3];
+          new_cell.setVertices(cellvertices);
+          segment_out.add(new_cell);
+        }
+        else //split edge 01 again, introduce lines 43 and 53
+        {
+          cellvertices[0] = vertices[0];
+          cellvertices[1] = vertices[4];
+          cellvertices[2] = vertices[5];
+          cellvertices[3] = vertices[3];
+          new_cell.setVertices(cellvertices);
+          segment_out.add(new_cell);
+          
+          cellvertices[0] = vertices[4];
+          cellvertices[1] = vertices[5];
+          cellvertices[2] = vertices[3];
+          cellvertices[3] = vertices[6];
+          new_cell.setVertices(cellvertices);
+          segment_out.add(new_cell);
+          
+          cellvertices[0] = vertices[0];
+          cellvertices[1] = vertices[5];
+          cellvertices[2] = vertices[2];
+          cellvertices[3] = vertices[3];
+          new_cell.setVertices(cellvertices);
+          segment_out.add(new_cell);
+        }
+      }
+      
+    }
+
+
+    // Case 2: The three edges don't have any common vertex. Orientation: (dots are in the background)
+    /*
+     *            3 ----------- 2
+     *          /   \       .  /
+     *         /      \ .     5
+     *        /     6   \    /
+     *       /  .         \ /
+     *     0 ----- 4 ------ 1
+     * 
+     * 
+     */
+    template <typename CellType, typename DomainTypeOut, typename VertexType>
+    static void apply3_2(CellType const & cell_in, 
+                         DomainTypeOut & segment_out,
+                         VertexType const * vertices
+                        )
+    {
+      CellType new_cell;
+      VertexType * cellvertices[traits::subcell_desc<tetrahedron_tag, 0>::num_elements];
+
+      cellvertices[0] = vertices[0];
+      cellvertices[1] = vertices[4];
+      cellvertices[2] = vertices[6];
+      cellvertices[3] = vertices[3];
+      new_cell.setVertices(cellvertices);
+      segment_out.add(new_cell);
+      
+      cellvertices[0] = vertices[4];
+      cellvertices[1] = vertices[5];
+      cellvertices[2] = vertices[6];
+      cellvertices[3] = vertices[3];
+      new_cell.setVertices(cellvertices);
+      segment_out.add(new_cell);
+      
+      cellvertices[0] = vertices[4];
+      cellvertices[1] = vertices[1];
+      cellvertices[2] = vertices[5];
+      cellvertices[3] = vertices[3];
+      new_cell.setVertices(cellvertices);
+      segment_out.add(new_cell);
+      
+      cellvertices[0] = vertices[6];
+      cellvertices[1] = vertices[5];
+      cellvertices[2] = vertices[2];
+      cellvertices[3] = vertices[3];
+      new_cell.setVertices(cellvertices);
+      segment_out.add(new_cell);
+      
+    }
+
+
+    // Case 3: The three edges don't have any common vertex. Orientation: (dots are in the background)
+    /*
+     *            3 ----------- 2
+     *          /   \       .  /
+     *         6      \ .     5
+     *        /     .   \    /
+     *       /  .         \ /
+     *     0 ----- 4 ------ 1
+     * 
+     * 
+     */
+    template <typename CellType, typename DomainTypeOut, typename VertexType>
+    static void apply3_3(CellType const & cell_in, 
+                         DomainTypeOut & segment_out,
+                         VertexType const * vertices
+                        )
+    {
+      CellType new_cell;
+      VertexType * cellvertices[traits::subcell_desc<tetrahedron_tag, 0>::num_elements];
+
+      double diag01_len = viennagrid::norm(vertices[0]->getPoint() - vertices[1]->getPoint());
+      double diag12_len = viennagrid::norm(vertices[1]->getPoint() - vertices[2]->getPoint());
+      double diag03_len = viennagrid::norm(vertices[0]->getPoint() - vertices[3]->getPoint());
+
+      // Strategy: The two longest edges of the common vertex are split 'twice',
+      //           i.e. two new edges start from the center of the two longest edges
+      if (diag01_len > diag03_len) //split edge 01 again, introduce line 43
+      {
+        cellvertices[0] = vertices[4];
+        cellvertices[1] = vertices[1];
+        cellvertices[2] = vertices[5];
+        cellvertices[3] = vertices[3];
+        new_cell.setVertices(cellvertices);
+        segment_out.add(new_cell);
+          
+        if (diag01_len > diag12_len) //split edge 01 again, introduce line 42
+        {
+          cellvertices[0] = vertices[0];
+          cellvertices[1] = vertices[4];
+          cellvertices[2] = vertices[2];
+          cellvertices[3] = vertices[3];
+          new_cell.setVertices(cellvertices);
+          segment_out.add(new_cell);
+          
+          cellvertices[0] = vertices[6];
+          cellvertices[1] = vertices[4];
+          cellvertices[2] = vertices[2];
+          cellvertices[3] = vertices[3];
+          new_cell.setVertices(cellvertices);
+          segment_out.add(new_cell);
+          
+          cellvertices[0] = vertices[4];
+          cellvertices[1] = vertices[5];
+          cellvertices[2] = vertices[2];
+          cellvertices[3] = vertices[3];
+          new_cell.setVertices(cellvertices);
+          segment_out.add(new_cell);
+        }
+        else //split edge 12 again, introduce line 50
+        {
+          cellvertices[0] = vertices[0];
+          cellvertices[1] = vertices[4];
+          cellvertices[2] = vertices[5];
+          cellvertices[3] = vertices[6];
+          new_cell.setVertices(cellvertices);
+          segment_out.add(new_cell);
+          
+          cellvertices[0] = vertices[0];
+          cellvertices[1] = vertices[5];
+          cellvertices[2] = vertices[2];
+          cellvertices[3] = vertices[6];
+          new_cell.setVertices(cellvertices);
+          segment_out.add(new_cell);
+          
+          cellvertices[0] = vertices[6];
+          cellvertices[1] = vertices[5];
+          cellvertices[2] = vertices[2];
+          cellvertices[3] = vertices[3];
+          new_cell.setVertices(cellvertices);
+          segment_out.add(new_cell);
+        }
+      }
+      else  //split edge 03 again, introduce line 61
+      {
+        cellvertices[0] = vertices[4];
+        cellvertices[1] = vertices[1];
+        cellvertices[2] = vertices[5];
+        cellvertices[3] = vertices[6];
+        new_cell.setVertices(cellvertices);
+        segment_out.add(new_cell);
+          
+        cellvertices[0] = vertices[6];
+        cellvertices[1] = vertices[1];
+        cellvertices[2] = vertices[5];
+        cellvertices[3] = vertices[3];
+        new_cell.setVertices(cellvertices);
+        segment_out.add(new_cell);
+          
+        if (diag01_len > diag12_len) //split edge 01 again, introduce line 42
+        {
+          cellvertices[0] = vertices[0];
+          cellvertices[1] = vertices[4];
+          cellvertices[2] = vertices[2];
+          cellvertices[3] = vertices[6];
+          new_cell.setVertices(cellvertices);
+          segment_out.add(new_cell);
+          
+          cellvertices[0] = vertices[6];
+          cellvertices[1] = vertices[4];
+          cellvertices[2] = vertices[2];
+          cellvertices[3] = vertices[3];
+          new_cell.setVertices(cellvertices);
+          segment_out.add(new_cell);
+        }
+        else //split edge 12 again, introduce line 50
+        {
+          cellvertices[0] = vertices[0];
+          cellvertices[1] = vertices[4];
+          cellvertices[2] = vertices[5];
+          cellvertices[3] = vertices[6];
+          new_cell.setVertices(cellvertices);
+          segment_out.add(new_cell);
+          
+          cellvertices[0] = vertices[0];
+          cellvertices[1] = vertices[5];
+          cellvertices[2] = vertices[2];
+          cellvertices[3] = vertices[6];
+          new_cell.setVertices(cellvertices);
+          segment_out.add(new_cell);
+        }
+      }
+      
+    }
+
+    // Case 4: The three edges don't have any common vertex. Orientation: (dots are in the background)
+    /*
+     *            3 ----6------ 2
+     *          /   \       .  /
+     *         /      \ .     5
+     *        /     .   \    /
+     *       /  .         \ /
+     *     0 ----- 4 ------ 1
+     * 
+     * 
+     */
+    template <typename CellType, typename DomainTypeOut, typename VertexType>
+    static void apply3_4(CellType const & cell_in, 
+                         DomainTypeOut & segment_out,
+                         VertexType const * vertices
+                        )
+    {
+      CellType new_cell;
+      VertexType * cellvertices[traits::subcell_desc<tetrahedron_tag, 0>::num_elements];
+
+      double diag01_len = viennagrid::norm(vertices[0]->getPoint() - vertices[1]->getPoint());
+      double diag12_len = viennagrid::norm(vertices[1]->getPoint() - vertices[2]->getPoint());
+      double diag23_len = viennagrid::norm(vertices[2]->getPoint() - vertices[3]->getPoint());
+
+      // Strategy: The two longest edges of the common vertex are split 'twice',
+      //           i.e. two new edges start from the center of the two longest edges
+      if (diag01_len > diag12_len) //split edge 01 again, introduce line 42
+      {
+        cellvertices[0] = vertices[0];
+        cellvertices[1] = vertices[4];
+        cellvertices[2] = vertices[2];
+        cellvertices[3] = vertices[6];
+        new_cell.setVertices(cellvertices);
+        segment_out.add(new_cell);
+      
+        cellvertices[0] = vertices[0];
+        cellvertices[1] = vertices[4];
+        cellvertices[2] = vertices[6];
+        cellvertices[3] = vertices[3];
+        new_cell.setVertices(cellvertices);
+        segment_out.add(new_cell);
+        
+        cellvertices[0] = vertices[4];
+        cellvertices[1] = vertices[5];
+        cellvertices[2] = vertices[2];
+        cellvertices[3] = vertices[6];
+        new_cell.setVertices(cellvertices);
+        segment_out.add(new_cell);
+          
+        if (diag12_len > diag23_len) //split edge 12 again, introduce line 53
+        {
+          cellvertices[0] = vertices[4];
+          cellvertices[1] = vertices[1];
+          cellvertices[2] = vertices[5];
+          cellvertices[3] = vertices[3];
+          new_cell.setVertices(cellvertices);
+          segment_out.add(new_cell);
+          
+          cellvertices[0] = vertices[4];
+          cellvertices[1] = vertices[5];
+          cellvertices[2] = vertices[6];
+          cellvertices[3] = vertices[3];
+          new_cell.setVertices(cellvertices);
+          segment_out.add(new_cell);
+        }
+        else //split edge 23 again, introduce line 61
+        {
+          cellvertices[0] = vertices[4];
+          cellvertices[1] = vertices[1];
+          cellvertices[2] = vertices[6];
+          cellvertices[3] = vertices[3];
+          new_cell.setVertices(cellvertices);
+          segment_out.add(new_cell);
+          
+          cellvertices[0] = vertices[4];
+          cellvertices[1] = vertices[1];
+          cellvertices[2] = vertices[5];
+          cellvertices[3] = vertices[6];
+          new_cell.setVertices(cellvertices);
+          segment_out.add(new_cell);
+        }
+      }
+      else //split edge 12, introduce line 50
+      {
+        if (diag12_len > diag23_len) //split edge 12 again, introduce line 53
+        {
+          cellvertices[0] = vertices[0];
+          cellvertices[1] = vertices[4];
+          cellvertices[2] = vertices[5];
+          cellvertices[3] = vertices[3];
+          new_cell.setVertices(cellvertices);
+          segment_out.add(new_cell);
+          
+          cellvertices[0] = vertices[0];
+          cellvertices[1] = vertices[5];
+          cellvertices[2] = vertices[6];
+          cellvertices[3] = vertices[3];
+          new_cell.setVertices(cellvertices);
+          segment_out.add(new_cell);
+          
+          cellvertices[0] = vertices[0];
+          cellvertices[1] = vertices[5];
+          cellvertices[2] = vertices[2];
+          cellvertices[3] = vertices[6];
+          new_cell.setVertices(cellvertices);
+          segment_out.add(new_cell);
+            
+          cellvertices[0] = vertices[4];
+          cellvertices[1] = vertices[1];
+          cellvertices[2] = vertices[5];
+          cellvertices[3] = vertices[3];
+          new_cell.setVertices(cellvertices);
+          segment_out.add(new_cell);
+        }
+        else //split edge 23 again, introduce line 61
+        {
+          cellvertices[0] = vertices[0];
+          cellvertices[1] = vertices[4];
+          cellvertices[2] = vertices[5];
+          cellvertices[3] = vertices[6];
+          new_cell.setVertices(cellvertices);
+          segment_out.add(new_cell);
+          
+          cellvertices[0] = vertices[0];
+          cellvertices[1] = vertices[4];
+          cellvertices[2] = vertices[6];
+          cellvertices[3] = vertices[3];
+          new_cell.setVertices(cellvertices);
+          segment_out.add(new_cell);
+          
+          cellvertices[0] = vertices[0];
+          cellvertices[1] = vertices[5];
+          cellvertices[2] = vertices[2];
+          cellvertices[3] = vertices[6];
+          new_cell.setVertices(cellvertices);
+          segment_out.add(new_cell);
+          
+          cellvertices[0] = vertices[4];
+          cellvertices[1] = vertices[1];
+          cellvertices[2] = vertices[5];
+          cellvertices[3] = vertices[6];
+          new_cell.setVertices(cellvertices);
+          segment_out.add(new_cell);
+          
+          cellvertices[0] = vertices[4];
+          cellvertices[1] = vertices[1];
+          cellvertices[2] = vertices[6];
+          cellvertices[3] = vertices[3];
+          new_cell.setVertices(cellvertices);
+          segment_out.add(new_cell);          
+        }
+      }
+      
+    }
+
+
 
     //
     // Refinement of a tetrahedron, bisecting three edges
@@ -668,17 +1173,1476 @@ namespace viennagrid
     template <typename CellType, typename DomainTypeOut>
     static void apply3(CellType const & cell_in, DomainTypeOut & segment_out)
     {
-      assert(false && "Not yet implemented!");
-    }    
+      typedef typename CellType::config_type        ConfigTypeIn;
+      typedef typename viennagrid::result_of::const_ncell_container<CellType, 0>::type            VertexOnCellContainer;
+      typedef typename viennagrid::result_of::iterator<VertexOnCellContainer>::type         VertexOnCellIterator;            
+      typedef typename viennagrid::result_of::const_ncell_container<CellType, 1>::type            EdgeOnCellContainer;
+      typedef typename viennagrid::result_of::iterator<EdgeOnCellContainer>::type           EdgeOnCellIterator;            
+      
+      typedef typename viennagrid::result_of::ncell_type<ConfigTypeIn, 0>::type             VertexType;
+      typedef typename viennagrid::result_of::ncell_type<ConfigTypeIn, 1>::type             EdgeType;
+
+      VertexType * vertices[traits::subcell_desc<tetrahedron_tag, 0>::num_elements];
+      
+      //
+      // Step 1: Get vertices from input cell
+      //
+      VertexOnCellContainer vertices_on_cell = viennagrid::ncells<0>(cell_in);
+      VertexOnCellIterator vocit = vertices_on_cell.begin();
+      vertices[0] = &(segment_out.get_domain().vertex(vocit->getID())); ++vocit;
+      vertices[1] = &(segment_out.get_domain().vertex(vocit->getID())); ++vocit;
+      vertices[2] = &(segment_out.get_domain().vertex(vocit->getID())); ++vocit;
+      vertices[3] = &(segment_out.get_domain().vertex(vocit->getID()));
+      
+
+      //
+      // Step 2: Bring vertices in correct order
+      //
+      VertexType * ordered_vertices[traits::subcell_desc<tetrahedron_tag, 0>::num_elements + 3];
+      EdgeOnCellContainer edges_on_cell = viennagrid::ncells<1>(cell_in);
+      std::size_t offset = 0;
+      EdgeOnCellIterator eocit = edges_on_cell.begin();
+      EdgeType const & e0 = *eocit; ++eocit;
+      EdgeType const & e1 = *eocit; ++eocit;
+      EdgeType const & e2 = *eocit; ++eocit;
+      EdgeType const & e3 = *eocit; ++eocit;
+      EdgeType const & e4 = *eocit; ++eocit;
+      EdgeType const & e5 = *eocit;
+      
+      //with e0
+      if (viennadata::access<refinement_key, bool>(refinement_key())(e0) == true)
+      {
+        if (viennadata::access<refinement_key, bool>(refinement_key())(e1) == true)
+        {
+          ordered_vertices[0] = vertices[2];
+          ordered_vertices[1] = vertices[0];
+          ordered_vertices[2] = vertices[1];
+          ordered_vertices[3] = vertices[3];
+          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)));
+          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)));
+          
+          if (viennadata::access<refinement_key, bool>(refinement_key())(e2) == true)
+          {
+            ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)));
+            apply3_1(cell_in, segment_out, ordered_vertices);
+          }
+          else if (viennadata::access<refinement_key, bool>(refinement_key())(e3) == true)
+          {
+            ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)));
+            apply3_2(cell_in, segment_out, ordered_vertices);
+          }
+          else if (viennadata::access<refinement_key, bool>(refinement_key())(e4) == true)
+          {
+            ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)));
+            apply3_4(cell_in, segment_out, ordered_vertices);
+          }
+          else if (viennadata::access<refinement_key, bool>(refinement_key())(e5) == true)
+          {
+            ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)));
+            apply3_3(cell_in, segment_out, ordered_vertices);
+          }
+          else
+          {
+            assert(false && "Logic error: No edge for refinement found!"); 
+          }
+        }
+        else if (viennadata::access<refinement_key, bool>(refinement_key())(e2) == true)
+        {
+          ordered_vertices[0] = vertices[1];
+          ordered_vertices[1] = vertices[0];
+          ordered_vertices[2] = vertices[3];
+          ordered_vertices[3] = vertices[2];
+          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)));
+          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)));
+          
+          if (viennadata::access<refinement_key, bool>(refinement_key())(e3) == true)
+          {
+            ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)));
+            apply3_3(cell_in, segment_out, ordered_vertices);
+          }
+          else if (viennadata::access<refinement_key, bool>(refinement_key())(e4) == true)
+          {
+            ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)));
+            apply3_2(cell_in, segment_out, ordered_vertices);
+          }
+          else if (viennadata::access<refinement_key, bool>(refinement_key())(e5) == true)
+          {
+            ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)));
+            apply3_4(cell_in, segment_out, ordered_vertices);
+          }
+          else
+          {
+            assert(false && "Logic error: No edge for refinement found!"); 
+          }
+        }
+        else if (viennadata::access<refinement_key, bool>(refinement_key())(e3) == true)
+        {
+          ordered_vertices[0] = vertices[0];
+          ordered_vertices[1] = vertices[1];
+          ordered_vertices[2] = vertices[2];
+          ordered_vertices[3] = vertices[3];
+          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)));
+          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)));
+          
+          if (viennadata::access<refinement_key, bool>(refinement_key())(e4) == true)
+          {
+            ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)));
+            apply3_1(cell_in, segment_out, ordered_vertices);
+          }
+          else if (viennadata::access<refinement_key, bool>(refinement_key())(e5) == true)
+          {
+            ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)));
+            apply3_4(cell_in, segment_out, ordered_vertices);
+          }
+          else
+          {
+            assert(false && "Logic error: No edge for refinement found!"); 
+          }
+        }
+        else if (viennadata::access<refinement_key, bool>(refinement_key())(e4) == true)
+        {
+          ordered_vertices[0] = vertices[3];
+          ordered_vertices[1] = vertices[1];
+          ordered_vertices[2] = vertices[0];
+          ordered_vertices[3] = vertices[2];
+          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)));
+          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)));
+          
+          if (viennadata::access<refinement_key, bool>(refinement_key())(e5) == true)
+          {
+            ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)));
+            apply3_3(cell_in, segment_out, ordered_vertices);
+          }
+          else
+          {
+            assert(false && "Logic error: No edge for refinement found!"); 
+          }
+        }
+        else //no second edge
+        {
+          assert(false && "Logic error: No edge for refinement found!"); 
+        }
+      } 
+      else if (viennadata::access<refinement_key, bool>(refinement_key())(e1) == true)
+      {
+        if (viennadata::access<refinement_key, bool>(refinement_key())(e2) == true)
+        {
+          ordered_vertices[0] = vertices[3];
+          ordered_vertices[1] = vertices[0];
+          ordered_vertices[2] = vertices[2];
+          ordered_vertices[3] = vertices[1];
+          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)));
+          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)));
+          
+          if (viennadata::access<refinement_key, bool>(refinement_key())(e3) == true)
+          {
+            ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)));
+            apply3_4(cell_in, segment_out, ordered_vertices);
+          }
+          else if (viennadata::access<refinement_key, bool>(refinement_key())(e4) == true)
+          {
+            ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)));
+            apply3_3(cell_in, segment_out, ordered_vertices);
+          }
+          else if (viennadata::access<refinement_key, bool>(refinement_key())(e5) == true)
+          {
+            ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)));
+            apply3_2(cell_in, segment_out, ordered_vertices);
+          }
+          else
+          {
+            assert(false && "Logic error: No edge for refinement found!"); 
+          }
+        }
+        else if (viennadata::access<refinement_key, bool>(refinement_key())(e3) == true)
+        {
+          ordered_vertices[0] = vertices[1];
+          ordered_vertices[1] = vertices[2];
+          ordered_vertices[2] = vertices[0];
+          ordered_vertices[3] = vertices[3];
+          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)));
+          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)));
+          
+          if (viennadata::access<refinement_key, bool>(refinement_key())(e4) == true)
+          {
+            ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)));
+            apply3_3(cell_in, segment_out, ordered_vertices);
+          }
+          else if (viennadata::access<refinement_key, bool>(refinement_key())(e5) == true)
+          {
+            ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)));
+            apply3_1(cell_in, segment_out, ordered_vertices);
+          }
+          else
+          {
+            assert(false && "Logic error: No edge for refinement found!"); 
+          }
+        }
+        else if (viennadata::access<refinement_key, bool>(refinement_key())(e4) == true)
+        {
+          if (viennadata::access<refinement_key, bool>(refinement_key())(e5) == true)
+          {
+            //make edges 4 and 5 the references
+            ordered_vertices[0] = vertices[1];
+            ordered_vertices[1] = vertices[3];
+            ordered_vertices[2] = vertices[2];
+            ordered_vertices[3] = vertices[0];
+            ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)));
+            ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)));
+            ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)));
+            
+            apply3_4(cell_in, segment_out, ordered_vertices);
+          }
+          else
+          {
+            assert(false && "Logic error: No edge for refinement found!"); 
+          }
+        }
+        else //no second edge
+        {
+          assert(false && "Logic error: No edge for refinement found!"); 
+        }
+      }
+      else if (viennadata::access<refinement_key, bool>(refinement_key())(e2) == true)
+      {
+        if (viennadata::access<refinement_key, bool>(refinement_key())(e3) == true)
+        {
+          //NOTE: edges 2 and 3 don't have a common vertex, therefore 'base facet' is chosen depending on the third edge
+          
+          if (viennadata::access<refinement_key, bool>(refinement_key())(e4) == true)
+          {
+            // take edges 2 and 4 as reference
+            ordered_vertices[0] = vertices[0];
+            ordered_vertices[1] = vertices[3];
+            ordered_vertices[2] = vertices[1];
+            ordered_vertices[3] = vertices[2];
+            ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)));
+            ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)));
+            ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)));
+            
+            apply3_4(cell_in, segment_out, ordered_vertices);
+          }
+          else if (viennadata::access<refinement_key, bool>(refinement_key())(e5) == true)
+          {
+            // take edges 5 and 3 as reference
+            ordered_vertices[0] = vertices[3];
+            ordered_vertices[1] = vertices[2];
+            ordered_vertices[2] = vertices[1];
+            ordered_vertices[3] = vertices[0];
+            ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)));
+            ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)));
+            ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)));
+            
+            apply3_3(cell_in, segment_out, ordered_vertices);
+          }
+          else
+          {
+            assert(false && "Logic error: No edge for refinement found!"); 
+          }
+        }
+        else if (viennadata::access<refinement_key, bool>(refinement_key())(e4) == true)
+        {
+          ordered_vertices[0] = vertices[0];
+          ordered_vertices[1] = vertices[3];
+          ordered_vertices[2] = vertices[1];
+          ordered_vertices[3] = vertices[2];
+          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)));
+          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)));
+          
+          if (viennadata::access<refinement_key, bool>(refinement_key())(e5) == true)
+          {
+            ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)));
+            apply3_1(cell_in, segment_out, ordered_vertices);
+          }
+          else
+          {
+            assert(false && "Logic error: No edge for refinement found!"); 
+          }
+        }
+        else //no second edge
+        {
+          assert(false && "Logic error: No edge for refinement found!"); 
+        }
+      }
+      else if (viennadata::access<refinement_key, bool>(refinement_key())(e3) == true)
+      {
+        if (viennadata::access<refinement_key, bool>(refinement_key())(e4) == true)
+        {
+          ordered_vertices[0] = vertices[2];
+          ordered_vertices[1] = vertices[1];
+          ordered_vertices[2] = vertices[3];
+          ordered_vertices[3] = vertices[0];
+          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)));
+          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)));
+          
+          if (viennadata::access<refinement_key, bool>(refinement_key())(e5) == true)
+          {
+            ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)));
+            apply3_2(cell_in, segment_out, ordered_vertices);
+          }
+          else
+          {
+            assert(false && "Logic error: No edge for refinement found!"); 
+          }
+        }
+        else //no second edge
+        {
+          assert(false && "Logic error: No edge for refinement found!"); 
+        }
+      }
+      else //no first edge found
+      {
+        assert(false && "Logic error: No edge for refinement found!"); 
+      }
+      
+    } //apply3()
+
+
+
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 
     //
     // Refinement of a tetrahedron, bisecting four edges
     //
+    
+    
+    // Case 1: The two edges have a common vertex. Orientation: (dots are in the background)
+    /*
+     *            3 -----6----- 2
+     *          /   \      .   /
+     *         7      \ .     /
+     *        /     4   5    /
+     *       /  .         \ /
+     *     0 ------------- 1
+     * 
+     * 
+     */
+    template <typename CellType, typename DomainTypeOut, typename VertexType>
+    static void apply4_1(CellType const & cell_in, 
+                         DomainTypeOut & segment_out,
+                         VertexType const * vertices
+                        )
+    {
+      CellType new_cell;
+      VertexType * cellvertices[traits::subcell_desc<tetrahedron_tag, 0>::num_elements];
+
+      double diag03_len = viennagrid::norm(vertices[0]->getPoint() - vertices[3]->getPoint());
+      double diag13_len = viennagrid::norm(vertices[1]->getPoint() - vertices[3]->getPoint());
+      double diag23_len = viennagrid::norm(vertices[2]->getPoint() - vertices[3]->getPoint());
+
+      if (diag03_len > diag13_len) //split edge 03, introduce line 71
+      {
+        cellvertices[0] = vertices[0];
+        cellvertices[1] = vertices[1];
+        cellvertices[2] = vertices[4];
+        cellvertices[3] = vertices[7];
+        new_cell.setVertices(cellvertices);
+        segment_out.add(new_cell);
+          
+        cellvertices[0] = vertices[7];
+        cellvertices[1] = vertices[5];
+        cellvertices[2] = vertices[6];
+        cellvertices[3] = vertices[3];
+        new_cell.setVertices(cellvertices);
+        segment_out.add(new_cell);
+        
+        if (diag13_len > diag23_len) //split edge 13, introduce line 52
+        {
+          cellvertices[0] = vertices[7];
+          cellvertices[1] = vertices[1];
+          cellvertices[2] = vertices[4];
+          cellvertices[3] = vertices[5];
+          new_cell.setVertices(cellvertices);
+          segment_out.add(new_cell);
+
+          cellvertices[0] = vertices[7];
+          cellvertices[1] = vertices[5];
+          cellvertices[2] = vertices[4];
+          cellvertices[3] = vertices[6];
+          new_cell.setVertices(cellvertices);
+          segment_out.add(new_cell);
+          
+          cellvertices[0] = vertices[1];
+          cellvertices[1] = vertices[2];
+          cellvertices[2] = vertices[4];
+          cellvertices[3] = vertices[5];
+          new_cell.setVertices(cellvertices);
+          segment_out.add(new_cell);
+          
+          cellvertices[0] = vertices[4];
+          cellvertices[1] = vertices[5];
+          cellvertices[2] = vertices[2];
+          cellvertices[3] = vertices[6];
+          new_cell.setVertices(cellvertices);
+          segment_out.add(new_cell);
+        }
+        else //split edge 23, introduce line 61
+        {
+          cellvertices[0] = vertices[7];
+          cellvertices[1] = vertices[1];
+          cellvertices[2] = vertices[6];
+          cellvertices[3] = vertices[5];
+          new_cell.setVertices(cellvertices);
+          segment_out.add(new_cell);
+          
+          cellvertices[0] = vertices[7];
+          cellvertices[1] = vertices[1];
+          cellvertices[2] = vertices[4];
+          cellvertices[3] = vertices[6];
+          new_cell.setVertices(cellvertices);
+          segment_out.add(new_cell);
+
+          cellvertices[0] = vertices[1];
+          cellvertices[1] = vertices[2];
+          cellvertices[2] = vertices[4];
+          cellvertices[3] = vertices[6];
+          new_cell.setVertices(cellvertices);
+          segment_out.add(new_cell);
+        }
+      }
+      else //split edge 13, introduce line 50
+      {
+        cellvertices[0] = vertices[0];
+        cellvertices[1] = vertices[1];
+        cellvertices[2] = vertices[4];
+        cellvertices[3] = vertices[5];
+        new_cell.setVertices(cellvertices);
+        segment_out.add(new_cell);
+          
+        cellvertices[0] = vertices[0];
+        cellvertices[1] = vertices[5];
+        cellvertices[2] = vertices[4];
+        cellvertices[3] = vertices[7];
+        new_cell.setVertices(cellvertices);
+        segment_out.add(new_cell);
+
+        cellvertices[0] = vertices[7];
+        cellvertices[1] = vertices[5];
+        cellvertices[2] = vertices[6];
+        cellvertices[3] = vertices[3];
+        new_cell.setVertices(cellvertices);
+        segment_out.add(new_cell);
+        
+        cellvertices[0] = vertices[7];
+        cellvertices[1] = vertices[5];
+        cellvertices[2] = vertices[4];
+        cellvertices[3] = vertices[6];
+        new_cell.setVertices(cellvertices);
+        segment_out.add(new_cell);
+
+        if (diag13_len > diag23_len) //split edge 13 again, introduce line 52
+        {
+          cellvertices[0] = vertices[1];
+          cellvertices[1] = vertices[2];
+          cellvertices[2] = vertices[4];
+          cellvertices[3] = vertices[5];
+          new_cell.setVertices(cellvertices);
+          segment_out.add(new_cell);
+          
+          cellvertices[0] = vertices[4];
+          cellvertices[1] = vertices[5];
+          cellvertices[2] = vertices[2];
+          cellvertices[3] = vertices[6];
+          new_cell.setVertices(cellvertices);
+          segment_out.add(new_cell);
+        }
+        else //split edge 23, introduce line 61
+        {
+          cellvertices[0] = vertices[5];
+          cellvertices[1] = vertices[1];
+          cellvertices[2] = vertices[4];
+          cellvertices[3] = vertices[6];
+          new_cell.setVertices(cellvertices);
+          segment_out.add(new_cell);
+
+          cellvertices[0] = vertices[4];
+          cellvertices[1] = vertices[1];
+          cellvertices[2] = vertices[2];
+          cellvertices[3] = vertices[6];
+          new_cell.setVertices(cellvertices);
+          segment_out.add(new_cell);
+        }
+      }
+      
+    }
+    
+    // Case 2: The two edges don't have any common vertex. Orientation: (dots are in the background)
+    /*
+     *            3 ----------- 2
+     *          /   \      .   /
+     *         6      \ .     4
+     *        /     5   7    /
+     *       /  .         \ /
+     *     0 ------------- 1
+     * 
+     * 
+     */
+    template <typename CellType, typename DomainTypeOut, typename VertexType>
+    static void apply4_2(CellType const & cell_in, 
+                         DomainTypeOut & segment_out,
+                         VertexType const * vertices
+                        )
+    {
+      CellType new_cell;
+      VertexType * cellvertices[traits::subcell_desc<tetrahedron_tag, 0>::num_elements];
+
+      double diag02_len = viennagrid::norm(vertices[0]->getPoint() - vertices[2]->getPoint());
+      double diag03_len = viennagrid::norm(vertices[0]->getPoint() - vertices[3]->getPoint());
+      double diag12_len = viennagrid::norm(vertices[1]->getPoint() - vertices[2]->getPoint());
+      double diag13_len = viennagrid::norm(vertices[1]->getPoint() - vertices[3]->getPoint());
+
+      if (diag03_len > diag13_len) //split edge 03, introduce line 61
+      {
+        if (diag13_len > diag12_len) //split edge 13, introduce line 72
+        {
+          if (diag02_len > diag03_len) //split edge 02, introduce line 53
+          {
+            if (diag02_len > diag12_len) //split edge 02, introduce line 51
+            {
+              cellvertices[0] = vertices[0];
+              cellvertices[1] = vertices[1];
+              cellvertices[2] = vertices[5];
+              cellvertices[3] = vertices[6];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[6];
+              cellvertices[1] = vertices[1];
+              cellvertices[2] = vertices[5];
+              cellvertices[3] = vertices[7];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[1];
+              cellvertices[1] = vertices[4];
+              cellvertices[2] = vertices[5];
+              cellvertices[3] = vertices[7];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[4];
+              cellvertices[1] = vertices[2];
+              cellvertices[2] = vertices[5];
+              cellvertices[3] = vertices[7];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[6];
+              cellvertices[1] = vertices[7];
+              cellvertices[2] = vertices[5];
+              cellvertices[3] = vertices[3];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[7];
+              cellvertices[1] = vertices[2];
+              cellvertices[2] = vertices[5];
+              cellvertices[3] = vertices[3];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+            }
+            else //split edge 12, introduce line 40
+            {
+              assert( false && "Logic error: diag02 < diag12 not possible here!");
+            }
+          }
+          else //split edge 03, introduce line 62
+          {
+            if (diag02_len > diag12_len) //split edge 02, introduce line 51
+            {
+              cellvertices[0] = vertices[0];
+              cellvertices[1] = vertices[1];
+              cellvertices[2] = vertices[5];
+              cellvertices[3] = vertices[6];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[1];
+              cellvertices[1] = vertices[4];
+              cellvertices[2] = vertices[5];
+              cellvertices[3] = vertices[6];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[1];
+              cellvertices[1] = vertices[4];
+              cellvertices[2] = vertices[6];
+              cellvertices[3] = vertices[7];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[7];
+              cellvertices[1] = vertices[4];
+              cellvertices[2] = vertices[5];
+              cellvertices[3] = vertices[2];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[4];
+              cellvertices[1] = vertices[2];
+              cellvertices[2] = vertices[5];
+              cellvertices[3] = vertices[6];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[6];
+              cellvertices[1] = vertices[7];
+              cellvertices[2] = vertices[2];
+              cellvertices[3] = vertices[3];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+            }
+            else //split edge 12, introduce line 40
+            {
+              cellvertices[0] = vertices[0];
+              cellvertices[1] = vertices[1];
+              cellvertices[2] = vertices[4];
+              cellvertices[3] = vertices[6];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[0];
+              cellvertices[1] = vertices[4];
+              cellvertices[2] = vertices[5];
+              cellvertices[3] = vertices[6];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[6];
+              cellvertices[1] = vertices[1];
+              cellvertices[2] = vertices[4];
+              cellvertices[3] = vertices[7];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[6];
+              cellvertices[1] = vertices[7];
+              cellvertices[2] = vertices[4];
+              cellvertices[3] = vertices[2];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[6];
+              cellvertices[1] = vertices[4];
+              cellvertices[2] = vertices[5];
+              cellvertices[3] = vertices[2];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[6];
+              cellvertices[1] = vertices[7];
+              cellvertices[2] = vertices[2];
+              cellvertices[3] = vertices[3];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+            }
+          }
+        }
+        else //split edge 12, introduce line 43
+        {
+          if (diag02_len > diag03_len) //split edge 02, introduce line 53
+          {
+            if (diag02_len > diag12_len) //split edge 02, introduce line 51
+            {
+              cellvertices[0] = vertices[0];
+              cellvertices[1] = vertices[1];
+              cellvertices[2] = vertices[5];
+              cellvertices[3] = vertices[6];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[6];
+              cellvertices[1] = vertices[1];
+              cellvertices[2] = vertices[5];
+              cellvertices[3] = vertices[7];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[1];
+              cellvertices[1] = vertices[4];
+              cellvertices[2] = vertices[5];
+              cellvertices[3] = vertices[7];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[5];
+              cellvertices[1] = vertices[4];
+              cellvertices[2] = vertices[2];
+              cellvertices[3] = vertices[3];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[5];
+              cellvertices[1] = vertices[7];
+              cellvertices[2] = vertices[4];
+              cellvertices[3] = vertices[3];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[6];
+              cellvertices[1] = vertices[7];
+              cellvertices[2] = vertices[5];
+              cellvertices[3] = vertices[3];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+            }
+            else //split edge 12, introduce line 40
+            {
+              cellvertices[0] = vertices[0];
+              cellvertices[1] = vertices[1];
+              cellvertices[2] = vertices[4];
+              cellvertices[3] = vertices[7];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[6];
+              cellvertices[1] = vertices[1];
+              cellvertices[2] = vertices[4];
+              cellvertices[3] = vertices[7];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[6];
+              cellvertices[1] = vertices[7];
+              cellvertices[2] = vertices[4];
+              cellvertices[3] = vertices[3];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[6];
+              cellvertices[1] = vertices[4];
+              cellvertices[2] = vertices[5];
+              cellvertices[3] = vertices[3];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[0];
+              cellvertices[1] = vertices[4];
+              cellvertices[2] = vertices[5];
+              cellvertices[3] = vertices[6];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[5];
+              cellvertices[1] = vertices[4];
+              cellvertices[2] = vertices[2];
+              cellvertices[3] = vertices[3];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+            }
+          }
+          else //split edge 03, introduce line 62
+          {
+            if (diag02_len > diag12_len) //split edge 02, introduce line 51
+            {
+              cellvertices[0] = vertices[0];
+              cellvertices[1] = vertices[1];
+              cellvertices[2] = vertices[5];
+              cellvertices[3] = vertices[6];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[1];
+              cellvertices[1] = vertices[4];
+              cellvertices[2] = vertices[5];
+              cellvertices[3] = vertices[6];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[1];
+              cellvertices[1] = vertices[4];
+              cellvertices[2] = vertices[6];
+              cellvertices[3] = vertices[7];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[7];
+              cellvertices[1] = vertices[4];
+              cellvertices[2] = vertices[6];
+              cellvertices[3] = vertices[3];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[4];
+              cellvertices[1] = vertices[2];
+              cellvertices[2] = vertices[5];
+              cellvertices[3] = vertices[6];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[6];
+              cellvertices[1] = vertices[4];
+              cellvertices[2] = vertices[2];
+              cellvertices[3] = vertices[3];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+            }
+            else //split edge 12, introduce line 40
+            {
+              cellvertices[0] = vertices[0];
+              cellvertices[1] = vertices[1];
+              cellvertices[2] = vertices[4];
+              cellvertices[3] = vertices[6];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[6];
+              cellvertices[1] = vertices[1];
+              cellvertices[2] = vertices[4];
+              cellvertices[3] = vertices[7];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[6];
+              cellvertices[1] = vertices[7];
+              cellvertices[2] = vertices[4];
+              cellvertices[3] = vertices[3];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[0];
+              cellvertices[1] = vertices[4];
+              cellvertices[2] = vertices[5];
+              cellvertices[3] = vertices[6];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[5];
+              cellvertices[1] = vertices[4];
+              cellvertices[2] = vertices[2];
+              cellvertices[3] = vertices[6];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[6];
+              cellvertices[1] = vertices[4];
+              cellvertices[2] = vertices[2];
+              cellvertices[3] = vertices[3];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+            }
+          }
+        }
+      }
+      else //split edge 13, introduce line 70
+      {
+        if (diag13_len > diag12_len) //split edge 13, introduce line 72
+        {
+          if (diag02_len > diag03_len) //split edge 02, introduce line 53
+          {
+            if (diag02_len > diag12_len) //split edge 02, introduce line 51
+            {
+              cellvertices[0] = vertices[0];
+              cellvertices[1] = vertices[1];
+              cellvertices[2] = vertices[5];
+              cellvertices[3] = vertices[7];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[0];
+              cellvertices[1] = vertices[7];
+              cellvertices[2] = vertices[5];
+              cellvertices[3] = vertices[6];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[1];
+              cellvertices[1] = vertices[4];
+              cellvertices[2] = vertices[5];
+              cellvertices[3] = vertices[7];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[5];
+              cellvertices[1] = vertices[4];
+              cellvertices[2] = vertices[2];
+              cellvertices[3] = vertices[7];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[5];
+              cellvertices[1] = vertices[7];
+              cellvertices[2] = vertices[2];
+              cellvertices[3] = vertices[3];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[6];
+              cellvertices[1] = vertices[7];
+              cellvertices[2] = vertices[5];
+              cellvertices[3] = vertices[3];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+            }
+            else //split edge 12, introduce line 40
+            {
+              cellvertices[0] = vertices[0];
+              cellvertices[1] = vertices[1];
+              cellvertices[2] = vertices[4];
+              cellvertices[3] = vertices[7];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[0];
+              cellvertices[1] = vertices[4];
+              cellvertices[2] = vertices[5];
+              cellvertices[3] = vertices[7];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[0];
+              cellvertices[1] = vertices[7];
+              cellvertices[2] = vertices[5];
+              cellvertices[3] = vertices[6];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[6];
+              cellvertices[1] = vertices[7];
+              cellvertices[2] = vertices[5];
+              cellvertices[3] = vertices[3];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[5];
+              cellvertices[1] = vertices[4];
+              cellvertices[2] = vertices[2];
+              cellvertices[3] = vertices[7];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[5];
+              cellvertices[1] = vertices[7];
+              cellvertices[2] = vertices[2];
+              cellvertices[3] = vertices[3];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+            }
+          }
+          else //split edge 03, introduce line 62
+          {
+            if (diag02_len > diag12_len) //split edge 02, introduce line 51
+            {
+              cellvertices[0] = vertices[0];
+              cellvertices[1] = vertices[1];
+              cellvertices[2] = vertices[5];
+              cellvertices[3] = vertices[7];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[1];
+              cellvertices[1] = vertices[4];
+              cellvertices[2] = vertices[5];
+              cellvertices[3] = vertices[7];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[0];
+              cellvertices[1] = vertices[7];
+              cellvertices[2] = vertices[5];
+              cellvertices[3] = vertices[6];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[4];
+              cellvertices[1] = vertices[2];
+              cellvertices[2] = vertices[5];
+              cellvertices[3] = vertices[7];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[7];
+              cellvertices[1] = vertices[2];
+              cellvertices[2] = vertices[5];
+              cellvertices[3] = vertices[6];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[7];
+              cellvertices[1] = vertices[2];
+              cellvertices[2] = vertices[6];
+              cellvertices[3] = vertices[3];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+            }
+            else //split edge 12, introduce line 40
+            {
+              cellvertices[0] = vertices[0];
+              cellvertices[1] = vertices[1];
+              cellvertices[2] = vertices[4];
+              cellvertices[3] = vertices[7];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[0];
+              cellvertices[1] = vertices[7];
+              cellvertices[2] = vertices[4];
+              cellvertices[3] = vertices[6];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[0];
+              cellvertices[1] = vertices[4];
+              cellvertices[2] = vertices[5];
+              cellvertices[3] = vertices[6];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[6];
+              cellvertices[1] = vertices[7];
+              cellvertices[2] = vertices[4];
+              cellvertices[3] = vertices[2];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[6];
+              cellvertices[1] = vertices[4];
+              cellvertices[2] = vertices[5];
+              cellvertices[3] = vertices[2];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[6];
+              cellvertices[1] = vertices[4];
+              cellvertices[2] = vertices[2];
+              cellvertices[3] = vertices[3];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+            }
+          }
+        }
+        else //split edge 12, introduce line 43
+        {
+          if (diag02_len > diag03_len) //split edge 02, introduce line 53
+          {
+            if (diag02_len > diag12_len) //split edge 02, introduce line 51
+            {
+              cellvertices[0] = vertices[0];
+              cellvertices[1] = vertices[1];
+              cellvertices[2] = vertices[5];
+              cellvertices[3] = vertices[7];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[0];
+              cellvertices[1] = vertices[7];
+              cellvertices[2] = vertices[5];
+              cellvertices[3] = vertices[6];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[6];
+              cellvertices[1] = vertices[7];
+              cellvertices[2] = vertices[5];
+              cellvertices[3] = vertices[3];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[1];
+              cellvertices[1] = vertices[4];
+              cellvertices[2] = vertices[5];
+              cellvertices[3] = vertices[7];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[7];
+              cellvertices[1] = vertices[4];
+              cellvertices[2] = vertices[5];
+              cellvertices[3] = vertices[3];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[4];
+              cellvertices[1] = vertices[2];
+              cellvertices[2] = vertices[5];
+              cellvertices[3] = vertices[3];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+            }
+            else //split edge 12, introduce line 40
+            {
+              cellvertices[0] = vertices[0];
+              cellvertices[1] = vertices[1];
+              cellvertices[2] = vertices[4];
+              cellvertices[3] = vertices[7];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[0];
+              cellvertices[1] = vertices[4];
+              cellvertices[2] = vertices[5];
+              cellvertices[3] = vertices[7];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[0];
+              cellvertices[1] = vertices[7];
+              cellvertices[2] = vertices[5];
+              cellvertices[3] = vertices[6];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[6];
+              cellvertices[1] = vertices[7];
+              cellvertices[2] = vertices[5];
+              cellvertices[3] = vertices[3];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[7];
+              cellvertices[1] = vertices[4];
+              cellvertices[2] = vertices[5];
+              cellvertices[3] = vertices[3];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[4];
+              cellvertices[1] = vertices[2];
+              cellvertices[2] = vertices[5];
+              cellvertices[3] = vertices[3];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+            }
+          }
+          else //split edge 03, introduce line 62
+          {
+            if (diag02_len > diag12_len) //split edge 02, introduce line 51
+            {
+              //we have diag12_len > diag13_len > diag03_len > diag02_len alreday, hence this case is bogus!
+              assert( false && "Logic error: diag02 > diag12 not possible here!");
+            }
+            else //split edge 12, introduce line 40
+            {
+              cellvertices[0] = vertices[0];
+              cellvertices[1] = vertices[1];
+              cellvertices[2] = vertices[4];
+              cellvertices[3] = vertices[7];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[0];
+              cellvertices[1] = vertices[7];
+              cellvertices[2] = vertices[4];
+              cellvertices[3] = vertices[6];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[0];
+              cellvertices[1] = vertices[4];
+              cellvertices[2] = vertices[5];
+              cellvertices[3] = vertices[6];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[6];
+              cellvertices[1] = vertices[7];
+              cellvertices[2] = vertices[4];
+              cellvertices[3] = vertices[3];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[6];
+              cellvertices[1] = vertices[4];
+              cellvertices[2] = vertices[2];
+              cellvertices[3] = vertices[3];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+
+              cellvertices[0] = vertices[5];
+              cellvertices[1] = vertices[4];
+              cellvertices[2] = vertices[2];
+              cellvertices[3] = vertices[6];
+              new_cell.setVertices(cellvertices);
+              segment_out.add(new_cell);
+            }
+          }
+        }
+      }
+    }
+    
     template <typename CellType, typename DomainTypeOut>
     static void apply4(CellType const & cell_in, DomainTypeOut & segment_out)
     {
-      assert(false && "Not yet implemented!");
+      typedef typename CellType::config_type        ConfigTypeIn;
+      typedef typename viennagrid::result_of::const_ncell_container<CellType, 0>::type            VertexOnCellContainer;
+      typedef typename viennagrid::result_of::iterator<VertexOnCellContainer>::type         VertexOnCellIterator;            
+      typedef typename viennagrid::result_of::const_ncell_container<CellType, 1>::type            EdgeOnCellContainer;
+      typedef typename viennagrid::result_of::iterator<EdgeOnCellContainer>::type           EdgeOnCellIterator;            
+      
+      typedef typename viennagrid::result_of::ncell_type<ConfigTypeIn, 0>::type             VertexType;
+      typedef typename viennagrid::result_of::ncell_type<ConfigTypeIn, 1>::type             EdgeType;
+
+      VertexType * vertices[traits::subcell_desc<tetrahedron_tag, 0>::num_elements];
+      
+      //
+      // Step 1: Get vertices from input cell
+      //
+      VertexOnCellContainer vertices_on_cell = viennagrid::ncells<0>(cell_in);
+      VertexOnCellIterator vocit = vertices_on_cell.begin();
+      vertices[0] = &(segment_out.get_domain().vertex(vocit->getID())); ++vocit;
+      vertices[1] = &(segment_out.get_domain().vertex(vocit->getID())); ++vocit;
+      vertices[2] = &(segment_out.get_domain().vertex(vocit->getID())); ++vocit;
+      vertices[3] = &(segment_out.get_domain().vertex(vocit->getID()));
+      
+
+      //
+      // Step 2: Bring vertices in correct order, such that refined edge is on {0,1}-edge
+      //
+      VertexType * ordered_vertices[traits::subcell_desc<tetrahedron_tag, 0>::num_elements + 4];
+      EdgeOnCellContainer edges_on_cell = viennagrid::ncells<1>(cell_in);
+      std::size_t offset = 0;
+      EdgeOnCellIterator eocit = edges_on_cell.begin();
+      EdgeType const & e0 = *eocit; ++eocit;
+      EdgeType const & e1 = *eocit; ++eocit;
+      EdgeType const & e2 = *eocit; ++eocit;
+      EdgeType const & e3 = *eocit; ++eocit;
+      EdgeType const & e4 = *eocit; ++eocit;
+      EdgeType const & e5 = *eocit;
+      
+      //with e0
+      if (viennadata::access<refinement_key, bool>(refinement_key())(e0) == false)
+      {
+        if (viennadata::access<refinement_key, bool>(refinement_key())(e1) == false)
+        {
+          ordered_vertices[0] = vertices[2];
+          ordered_vertices[1] = vertices[0];
+          ordered_vertices[2] = vertices[1];
+          ordered_vertices[3] = vertices[3];
+          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)));
+          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)));
+          ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)));
+          ordered_vertices[7] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)));
+          
+          apply4_1(cell_in, segment_out, ordered_vertices);
+        }
+        else if (viennadata::access<refinement_key, bool>(refinement_key())(e2) == false)
+        {
+          ordered_vertices[0] = vertices[1];
+          ordered_vertices[1] = vertices[0];
+          ordered_vertices[2] = vertices[3];
+          ordered_vertices[3] = vertices[2];
+          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)));
+          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)));
+          ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)));
+          ordered_vertices[7] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)));
+          
+          apply4_1(cell_in, segment_out, ordered_vertices);
+        }
+        else if (viennadata::access<refinement_key, bool>(refinement_key())(e3) == false) 
+        {
+          ordered_vertices[0] = vertices[0];
+          ordered_vertices[1] = vertices[1];
+          ordered_vertices[2] = vertices[2];
+          ordered_vertices[3] = vertices[3];
+          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)));
+          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)));
+          ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)));
+          ordered_vertices[7] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)));
+          
+          apply4_1(cell_in, segment_out, ordered_vertices);
+        }
+        else if (viennadata::access<refinement_key, bool>(refinement_key())(e4) == false) 
+        {
+          ordered_vertices[0] = vertices[3];
+          ordered_vertices[1] = vertices[1];
+          ordered_vertices[2] = vertices[0];
+          ordered_vertices[3] = vertices[2];
+          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)));
+          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)));
+          ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)));
+          ordered_vertices[7] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)));
+          
+          apply4_1(cell_in, segment_out, ordered_vertices);
+        }
+        else if (viennadata::access<refinement_key, bool>(refinement_key())(e5) == false) 
+        {
+          ordered_vertices[0] = vertices[0];
+          ordered_vertices[1] = vertices[1];
+          ordered_vertices[2] = vertices[2];
+          ordered_vertices[3] = vertices[3];
+          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)));
+          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)));
+          ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)));
+          ordered_vertices[7] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)));
+          
+          apply4_2(cell_in, segment_out, ordered_vertices);
+        }
+        else
+        {
+          assert(false && "Logic error: No edge for refinement found!"); 
+        }
+      }
+      else if (viennadata::access<refinement_key, bool>(refinement_key())(e1) == false)
+      {
+        if (viennadata::access<refinement_key, bool>(refinement_key())(e2) == false)
+        {
+          ordered_vertices[0] = vertices[];
+          ordered_vertices[1] = vertices[];
+          ordered_vertices[2] = vertices[];
+          ordered_vertices[3] = vertices[];
+          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e)));
+          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e)));
+          ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e)));
+          ordered_vertices[7] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e)));
+          
+          apply4_X(cell_in, segment_out, ordered_vertices);
+        }
+        else if (viennadata::access<refinement_key, bool>(refinement_key())(e3) == false) 
+        {
+          ordered_vertices[0] = vertices[];
+          ordered_vertices[1] = vertices[];
+          ordered_vertices[2] = vertices[];
+          ordered_vertices[3] = vertices[];
+          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e)));
+          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e)));
+          ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e)));
+          ordered_vertices[7] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e)));
+          
+          apply4_X(cell_in, segment_out, ordered_vertices);
+        }
+        else if (viennadata::access<refinement_key, bool>(refinement_key())(e4) == false) 
+        {
+          ordered_vertices[0] = vertices[];
+          ordered_vertices[1] = vertices[];
+          ordered_vertices[2] = vertices[];
+          ordered_vertices[3] = vertices[];
+          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e)));
+          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e)));
+          ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e)));
+          ordered_vertices[7] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e)));
+          
+          apply4_X(cell_in, segment_out, ordered_vertices);
+        }
+        else if (viennadata::access<refinement_key, bool>(refinement_key())(e5) == false) 
+        {
+          ordered_vertices[0] = vertices[];
+          ordered_vertices[1] = vertices[];
+          ordered_vertices[2] = vertices[];
+          ordered_vertices[3] = vertices[];
+          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e)));
+          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e)));
+          ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e)));
+          ordered_vertices[7] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e)));
+          
+          apply4_X(cell_in, segment_out, ordered_vertices);
+        }
+        else
+        {
+          assert(false && "Logic error: No edge for refinement found!"); 
+        }
+      }
+      else if (viennadata::access<refinement_key, bool>(refinement_key())(e2) == false)
+      {
+        if (viennadata::access<refinement_key, bool>(refinement_key())(e3) == false) 
+        {
+          ordered_vertices[0] = vertices[];
+          ordered_vertices[1] = vertices[];
+          ordered_vertices[2] = vertices[];
+          ordered_vertices[3] = vertices[];
+          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e)));
+          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e)));
+          ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e)));
+          ordered_vertices[7] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e)));
+          
+          apply4_X(cell_in, segment_out, ordered_vertices);
+        }
+        else if (viennadata::access<refinement_key, bool>(refinement_key())(e4) == false) 
+        {
+          ordered_vertices[0] = vertices[];
+          ordered_vertices[1] = vertices[];
+          ordered_vertices[2] = vertices[];
+          ordered_vertices[3] = vertices[];
+          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e)));
+          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e)));
+          ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e)));
+          ordered_vertices[7] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e)));
+          
+          apply4_X(cell_in, segment_out, ordered_vertices);
+        }
+        else if (viennadata::access<refinement_key, bool>(refinement_key())(e5) == false) 
+        {
+          ordered_vertices[0] = vertices[];
+          ordered_vertices[1] = vertices[];
+          ordered_vertices[2] = vertices[];
+          ordered_vertices[3] = vertices[];
+          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e)));
+          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e)));
+          ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e)));
+          ordered_vertices[7] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e)));
+          
+          apply4_X(cell_in, segment_out, ordered_vertices);
+        }
+        else
+        {
+          assert(false && "Logic error: No edge for refinement found!"); 
+        }
+      }
+      else if (viennadata::access<refinement_key, bool>(refinement_key())(e3) == false)
+      {
+        if (viennadata::access<refinement_key, bool>(refinement_key())(e4) == false) 
+        {
+          ordered_vertices[0] = vertices[];
+          ordered_vertices[1] = vertices[];
+          ordered_vertices[2] = vertices[];
+          ordered_vertices[3] = vertices[];
+          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e)));
+          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e)));
+          ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e)));
+          ordered_vertices[7] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e)));
+          
+          apply4_X(cell_in, segment_out, ordered_vertices);
+        }
+        else if (viennadata::access<refinement_key, bool>(refinement_key())(e5) == false) 
+        {
+          ordered_vertices[0] = vertices[];
+          ordered_vertices[1] = vertices[];
+          ordered_vertices[2] = vertices[];
+          ordered_vertices[3] = vertices[];
+          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e)));
+          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e)));
+          ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e)));
+          ordered_vertices[7] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e)));
+          
+          apply4_X(cell_in, segment_out, ordered_vertices);
+        }
+        else
+        {
+          assert(false && "Logic error: No edge for refinement found!"); 
+        }
+      }
+      else if (viennadata::access<refinement_key, bool>(refinement_key())(e4) == false)
+      {
+        if (viennadata::access<refinement_key, bool>(refinement_key())(e5) == false) 
+        {
+          ordered_vertices[0] = vertices[];
+          ordered_vertices[1] = vertices[];
+          ordered_vertices[2] = vertices[];
+          ordered_vertices[3] = vertices[];
+          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e)));
+          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e)));
+          ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e)));
+          ordered_vertices[7] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e)));
+          
+          apply4_X(cell_in, segment_out, ordered_vertices);
+        }
+        else
+        {
+          assert(false && "Logic error: No edge for refinement found!"); 
+        }
+      }
+      else
+      {
+        assert(false && "Logic error: No edge for refinement found!"); 
+      }
     }    
+
+
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
     
     //
@@ -689,6 +2653,11 @@ namespace viennagrid
     {
       assert(false && "Not yet implemented!");
     }    
+
+
+
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 

@@ -1,0 +1,76 @@
+
+    // Case 1: The three edges have a common vertex. Orientation: (dots are in the background)
+    /*
+     *            3 ----------- 2
+     *          /   \       .  /
+     *         /      6 .     5
+     *        /     .   \    /
+     *       /  .         \ /
+     *     0 ----- 4 ------ 1
+     * 
+     */
+    static void apply3_1(CellType const & cell_in, 
+
+    // Case 2: The three edges don't have any common vertex. Orientation: (dots are in the background)
+    /*
+     *            3 ----------- 2
+     *          /   \       .  /
+     *         /      \ .     5
+     *        /     6   \    /
+     *       /  .         \ /
+     *     0 ----- 4 ------ 1
+     * 
+     */
+    static void apply3_2(CellType const & cell_in, 
+
+    // Case 3: The three edges don't have any common vertex. Orientation: (dots are in the background)
+    /*
+     *            3 ----------- 2
+     *          /   \       .  /
+     *         6      \ .     5
+     *        /     .   \    /
+     *       /  .         \ /
+     *     0 ----- 4 ------ 1
+     * 
+     */
+    static void apply3_3(CellType const & cell_in, 
+
+    // Case 4: The three edges don't have any common vertex. Orientation: (dots are in the background)
+    /*
+     *            3 ----6------ 2
+     *          /   \       .  /
+     *         /      \ .     5
+     *        /     .   \    /
+     *       /  .         \ /
+     *     0 ----- 4 ------ 1
+     * 
+     */
+    static void apply3_4(CellType const & cell_in, 
+
+
+
+    // Case 1: The two edges have a common vertex. Orientation: (dots are in the background)
+    /*
+     *            3 -----6----- 2
+     *          /   \      .   /
+     *         7      \ .     /
+     *        /     4   5    /
+     *       /  .         \ /
+     *     0 ------------- 1
+     * 
+     * 
+     */
+
+
+    // Case 2: The two edges don't have any common vertex. Orientation: (dots are in the background)
+    /*
+     *            3 ----------- 2
+     *          /   \      .   /
+     *         6      \ .     4
+     *        /     5   7    /
+     *       /  .         \ /
+     *     0 ------------- 1
+     * 
+     * 
+     */
+
