@@ -16,8 +16,8 @@
 //***********************************************
 // Define the dimension
 //***********************************************
-//#define THREEDIM
-#define TWODIM
+#define THREEDIM
+//#define TWODIM
 //#define ONEDIM
 
 //***********************************************
@@ -110,27 +110,48 @@ void testNewDomain(std::string & infile, std::string & outfile)
   {
     PointType centroid = viennagrid::centroid(*cit);
     
-    if ( (centroid[0] > 2.0) 
-        && (centroid[0] < 3.0) )
+    if ( (centroid[0] >= 2.0) 
+        && (centroid[0] <= 3.0)
+        && (centroid[1] >= 0.0) 
+        && (centroid[1] <= 1.0))
     {
       viennadata::access<viennagrid::refinement_key, bool>(viennagrid::refinement_key())(*cit) = true;
     }
   }
 
-
-
-
-
   Domain refined_domain;
-  
   refined_domain = viennagrid::refine(domain, viennagrid::adaptive_refinement_tag());
 
+  //
+  // Second pass:
+  //
+  CellContainer cells_refined = viennagrid::ncells<CellTag::topology_level>(refined_domain);
+  for (CellIterator cit  = cells_refined.begin();
+                    cit != cells_refined.end();
+                  ++cit)
+  {
+    PointType centroid = viennagrid::centroid(*cit);
+    
+    if ( (centroid[0] >= 2.0) 
+        && (centroid[0] <= 3.0)
+        && (centroid[1] >= 0.0) 
+        && (centroid[1] <= 1.0))
+    {
+      viennadata::access<viennagrid::refinement_key, bool>(viennagrid::refinement_key())(*cit) = true;
+    }
+  }
 
+  Domain double_refined_domain;
+  double_refined_domain = viennagrid::refine(refined_domain, viennagrid::adaptive_refinement_tag());
+
+  
 
   //test writers:
+  std::cout << "Writing domains..." << std::endl;
   viennagrid::io::vtk_writer<Domain> my_vtk_writer;
   my_vtk_writer.writeDomain(domain, outfile + ".vtu");
   my_vtk_writer.writeDomain(refined_domain, outfile + "_refined.vtu");
+  my_vtk_writer.writeDomain(double_refined_domain, outfile + "_double_refined.vtu");
 
   std::cout << "*******************************" << std::endl;
   std::cout << "* Test finished successfully! *" << std::endl;
@@ -150,7 +171,7 @@ int main()
   std::string path = "../examples/data/";
   
   #ifdef THREEDIM
-  std::string infile = path + "sshape3d.mesh";
+  std::string infile = path + "sshape3d-pimped.mesh";
   #endif
   #ifdef TWODIM
   std::string infile = path + "sshape2d.mesh";
