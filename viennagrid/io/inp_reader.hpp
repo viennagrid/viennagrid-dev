@@ -103,8 +103,8 @@ namespace io
 
          std::map<std::size_t, std::size_t>  index_map;
       
-         domain.reserve_vertices(point_map.size());
-         
+         //domain.reserve_vertices(point_map.size());
+
          typedef typename std::map<std::size_t, PointT>::iterator    point_iter_type;
          for(point_iter_type iter = point_map.begin(); iter != point_map.end(); iter++)
          {
@@ -112,25 +112,25 @@ namespace io
             vertex.getPoint()[0] = iter->second[0];
             vertex.getPoint()[1] = iter->second[1];
             vertex.getPoint()[2] = iter->second[2];
-            domain.add(vertex);            
-            index_map[iter->first] = vertex.getID();
+            index_map[iter->first] = domain.add(vertex)->getID();
+            //std::cout << iter->first << " - " << vertex.getID() << std::endl;
             //std::cout << vertex.getID() << std::endl;
          }
          
          domain.create_segments(seg_cell.size());         
          //std::cout << "seg size: " << seg_cell.size() << std::endl;
-         std::size_t cellsize(0);
+//         std::size_t cellsize(0);
          typedef typename std::map<std::size_t, CellComplexT>::iterator seg_iter_type;
-         for(seg_iter_type si = seg_cell.begin(); si != seg_cell.end(); si++)
-         {
-            cellsize += si->second.size();
-         }
+//         for(seg_iter_type si = seg_cell.begin(); si != seg_cell.end(); si++)
+//         {
+//            cellsize += si->second.size();
+//         }
          //std::cout << "cellsize: " << cellsize << std::endl;
-         domain.reserve_cells(cellsize);
+         //domain.reserve_cells(cellsize);
          
          static const std::size_t CELLSIZE = viennagrid::traits::subcell_desc<cell_tag, 0>::num_elements;         
 
-
+         //std::cout << "transferring topology .. " << std::endl;
          for(seg_iter_type si = seg_cell.begin(); si != seg_cell.end(); si++)
          {
             typedef typename CellComplexT::iterator   cell_iter_type;
@@ -139,9 +139,17 @@ namespace io
                vertex_type *vertices[CELLSIZE];                    
                for(std::size_t i = 0; i < CELLSIZE; i++)
                {
+                  //std::cout << (*cit)[i] << " - " << index_map[(*cit)[i]] << std::endl;
+//                  if( index_map.find((*cit)[i]) != index_map.end() )
+//                  {
+//                     std::cout << "found" << std::endl;
+//                  }
+//                  else std::cout << "not found" << std::endl;
+
                   //std::cout << domain.vertex( index_map[(*cit)[i]] ).getPoint() << std::endl; 
                   vertices[i] = &(domain.vertex( index_map[(*cit)[i]] ));               
                }
+               //exit(0);
                cell_type cell;
                cell.setVertices(vertices);               
                //std::cout << "si: " << si->first << std::endl;
