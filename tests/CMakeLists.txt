@@ -31,7 +31,7 @@ ENDIF(BUILD_TESTING)
 
 #-----------------------------------------------------------------------------
 # add the source files which should be tested without the trailing *.cpp
-SET(PROGS coboundary domain hypercube io segment simplex)
+SET(PROGS coboundary domain hypercube io segment simplex refinement refinement2)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------

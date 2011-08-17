@@ -154,6 +154,51 @@ namespace viennagrid
   
   
   
+  /** @brief Compares the lines (v1_1, v1_2) and (v2_1, v2_2) and returns true if the first is longer. 
+   * 
+   * Ensures that the result is the same no matter in which order the parameters are passed. 
+   * If the two lines have equal length, the line with the larger vertex IDs involved is considered as longer.
+   */
+  template <typename VertexType>
+  bool stable_line_is_longer(VertexType const * v1_1, VertexType const * v1_2,  
+                             VertexType const * v2_1, VertexType const * v2_2)
+  {
+    typedef typename VertexType::config_type::numeric_type       ScalarType;
+    
+    VertexType const * v1_1_ptr = (v1_1->getID() < v1_2->getID()) ? v1_1 : v1_2; //v1_1 carries smaller ID
+    VertexType const * v1_2_ptr = (v1_1->getID() < v1_2->getID()) ? v1_2 : v1_1; //v1_2 carries larger ID
+    
+    VertexType const * v2_1_ptr = (v2_1->getID() < v2_2->getID()) ? v2_1 : v2_2; //v2_1 carries smaller ID
+    VertexType const * v2_2_ptr = (v2_1->getID() < v2_2->getID()) ? v2_2 : v2_1; //v2_2 carries larger ID
+    
+    ScalarType line1 = viennagrid::norm(v1_1->getPoint() - v1_2->getPoint());
+    ScalarType line2 = viennagrid::norm(v2_1->getPoint() - v2_2->getPoint());
+    
+    if (line1 > line2)
+    {
+      return true;
+    }
+    else if (line1 == line2)
+    {
+      //compare IDs:
+      if (v1_1_ptr->getID() > v2_1_ptr->getID())
+      {
+        return true;
+      }
+      else if (v1_1_ptr->getID() == v2_1_ptr->getID())
+      {
+        if (v1_2_ptr->getID() > v2_2_ptr->getID())
+          return true;
+        else if (v1_2_ptr->getID() == v2_2_ptr->getID())
+          return false; //identical lines are compared!
+      }
+    }
+
+    return false;
+  }
+  
+  
+  
   //
   // Refinement of a tetrahedron: A LOT of spaghetti-code to follow. 
   // Unfortunately, combinatorics forces us to consider that many cases of refinement.
@@ -168,6 +213,7 @@ namespace viennagrid
     template <typename CellType, typename DomainTypeOut>
     static void apply0(CellType const & cell_in, DomainTypeOut & segment_out)
     {
+      //std::cout << "tetrahedron::apply0()" << std::endl;
       typedef typename CellType::config_type        ConfigTypeIn;
       typedef typename viennagrid::result_of::const_ncell_container<CellType, 0>::type            VertexOnCellContainer;
       typedef typename viennagrid::result_of::iterator<VertexOnCellContainer>::type         VertexOnCellIterator;            
@@ -209,6 +255,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::ncell_type<ConfigTypeIn, 1>::type             EdgeType;
 
       VertexType * vertices[traits::subcell_desc<tetrahedron_tag, 0>::num_elements];
+      //std::cout << "apply1()" << std::endl;
       
       //
       // Step 1: Get vertices from input cell
@@ -292,7 +339,7 @@ namespace viennagrid
       // Step 3: Write new cells to domain_out
       //
       CellType new_cell;
-      VertexType * cellvertices[traits::subcell_desc<triangle_tag, 0>::num_elements];
+      VertexType * cellvertices[traits::subcell_desc<tetrahedron_tag, 0>::num_elements];
       
       //cell containing vertex 0:
       cellvertices[0] = ordered_vertices[0];
@@ -347,11 +394,18 @@ namespace viennagrid
       new_cell.setVertices(cellvertices);
       segment_out.add(new_cell);
       
-      double diag01_len = viennagrid::norm(vertices[0]->getPoint() - vertices[1]->getPoint());
-      double diag12_len = viennagrid::norm(vertices[2]->getPoint() - vertices[1]->getPoint());
+      //double diag01_len = viennagrid::norm(vertices[0]->getPoint() - vertices[1]->getPoint());
+      //double diag12_len = viennagrid::norm(vertices[2]->getPoint() - vertices[1]->getPoint());
 
-      if (diag01_len > diag12_len) //split edge 01, introduce line 42
+      //if (diag01_len > diag12_len) //split edge 01, introduce line 42
+      if (stable_line_is_longer(vertices[0], vertices[1],
+                                vertices[2], vertices[1])) //split edge 01, introduce line 42
       {
+        /*std::cout << "Norm " << vertices[0]->getID() << vertices[1]->getID() << ": " 
+                             << viennagrid::norm(vertices[0]->getPoint() - vertices[1]->getPoint()) << std::endl;
+        std::cout << "Norm " << vertices[2]->getID() << vertices[1]->getID() << ": " 
+                             << viennagrid::norm(vertices[2]->getPoint() - vertices[1]->getPoint()) << std::endl;
+        std::cout << "Splitting " << vertices[0]->getID() << vertices[1]->getID() << std::endl;*/
         cellvertices[0] = vertices[0];
         cellvertices[1] = vertices[4];
         cellvertices[2] = vertices[2];
@@ -368,6 +422,11 @@ namespace viennagrid
       }
       else //split edge 12, introduce line 05
       {
+        /*std::cout << "Norm " << vertices[0]->getID() << vertices[1]->getID() << ": " 
+                             << viennagrid::norm(vertices[0]->getPoint() - vertices[1]->getPoint()) << std::endl;
+        std::cout << "Norm " << vertices[2]->getID() << vertices[1]->getID() << ": " 
+                             << viennagrid::norm(vertices[2]->getPoint() - vertices[1]->getPoint()) << std::endl;
+        std::cout << "Splitting " << vertices[2]->getID() << vertices[1]->getID() << std::endl;*/
         cellvertices[0] = vertices[0];
         cellvertices[1] = vertices[4];
         cellvertices[2] = vertices[5];
@@ -447,6 +506,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::ncell_type<ConfigTypeIn, 1>::type             EdgeType;
 
       VertexType * vertices[traits::subcell_desc<tetrahedron_tag, 0>::num_elements];
+      //std::cout << "apply2()" << std::endl;
       
       //
       // Step 1: Get vertices from input cell
@@ -715,108 +775,198 @@ namespace viennagrid
       new_cell.setVertices(cellvertices);
       segment_out.add(new_cell);
       
-      double diag01_len = viennagrid::norm(vertices[0]->getPoint() - vertices[1]->getPoint());
-      double diag12_len = viennagrid::norm(vertices[2]->getPoint() - vertices[1]->getPoint());
-      double diag13_len = viennagrid::norm(vertices[3]->getPoint() - vertices[1]->getPoint());
+      //double diag01_len = viennagrid::norm(vertices[0]->getPoint() - vertices[1]->getPoint());
+      //double diag12_len = viennagrid::norm(vertices[2]->getPoint() - vertices[1]->getPoint());
+      //double diag13_len = viennagrid::norm(vertices[3]->getPoint() - vertices[1]->getPoint());
 
       // Strategy: The two longest edges of the common vertex are split 'twice',
       //           i.e. two new edges start from the center of the two longest edges
-      if (diag01_len > diag12_len) //split edge 01 again, introduce line 42
+      //if (diag01_len > diag12_len) //split edge 01 again, introduce line 42
+      if (stable_line_is_longer(vertices[0], vertices[1],
+                                vertices[1], vertices[2])) //split edge 01 again, introduce line 42
       {
-        if (diag13_len > diag12_len) //split edge 13 again, introduce lines 06 and 62
+        /*std::cout << "Norm " << vertices[0]->getID() << vertices[1]->getID() << ": " 
+                             << viennagrid::norm(vertices[0]->getPoint() - vertices[1]->getPoint()) << std::endl;
+        std::cout << "Norm " << vertices[2]->getID() << vertices[1]->getID() << ": " 
+                             << viennagrid::norm(vertices[2]->getPoint() - vertices[1]->getPoint()) << std::endl;
+        std::cout << "Splitting " << vertices[0]->getID() << vertices[1]->getID() << std::endl;*/
+        //if (diag13_len > diag12_len) //split edge 13 again, introduce line 62
+        if (stable_line_is_longer(vertices[1], vertices[3],
+                                  vertices[1], vertices[2])) //split edge 13 again, introduce line 62
         {
-          cellvertices[0] = vertices[0];
-          cellvertices[1] = vertices[4];
-          cellvertices[2] = vertices[5];
-          cellvertices[3] = vertices[6];
-          new_cell.setVertices(cellvertices);
-          segment_out.add(new_cell);
+          /*std::cout << "Norm " << vertices[1]->getID() << vertices[3]->getID() << ": " 
+                                << viennagrid::norm(vertices[1]->getPoint() - vertices[3]->getPoint()) << std::endl;
+          std::cout << "Norm " << vertices[2]->getID() << vertices[1]->getID() << ": " 
+                                << viennagrid::norm(vertices[2]->getPoint() - vertices[1]->getPoint()) << std::endl;
+          std::cout << "Splitting " << vertices[1]->getID() << vertices[3]->getID() << std::endl; */
           
-          cellvertices[0] = vertices[0];
-          cellvertices[1] = vertices[6];
-          cellvertices[2] = vertices[2];
-          cellvertices[3] = vertices[3];
-          new_cell.setVertices(cellvertices);
-          segment_out.add(new_cell);
-          
-          cellvertices[0] = vertices[4];
-          cellvertices[1] = vertices[5];
-          cellvertices[2] = vertices[2];
-          cellvertices[3] = vertices[6];
-          new_cell.setVertices(cellvertices);
-          segment_out.add(new_cell);
+          if (stable_line_is_longer(vertices[1], vertices[3],
+                                    vertices[0], vertices[1])) //split edge 13 again, introduce line 60
+          {
+            cellvertices[0] = vertices[0];
+            cellvertices[1] = vertices[6];
+            cellvertices[2] = vertices[2];
+            cellvertices[3] = vertices[3];
+            new_cell.setVertices(cellvertices);
+            segment_out.add(new_cell);
+            
+            cellvertices[0] = vertices[0];
+            cellvertices[1] = vertices[4];
+            cellvertices[2] = vertices[2];
+            cellvertices[3] = vertices[6];
+            new_cell.setVertices(cellvertices);
+            segment_out.add(new_cell);
+            
+            cellvertices[0] = vertices[4];
+            cellvertices[1] = vertices[5];
+            cellvertices[2] = vertices[2];
+            cellvertices[3] = vertices[6];
+            new_cell.setVertices(cellvertices);
+            segment_out.add(new_cell);
+          }
+          else  //split edge 01 again, introduce line 43
+          {
+            //std::cout << "apply_3_1_1" << std::endl;
+            cellvertices[0] = vertices[0];
+            cellvertices[1] = vertices[4];
+            cellvertices[2] = vertices[2];
+            cellvertices[3] = vertices[3];
+            new_cell.setVertices(cellvertices);
+            segment_out.add(new_cell);
+            
+            cellvertices[0] = vertices[3];
+            cellvertices[1] = vertices[4];
+            cellvertices[2] = vertices[2];
+            cellvertices[3] = vertices[6];
+            new_cell.setVertices(cellvertices);
+            segment_out.add(new_cell);
+            
+            cellvertices[0] = vertices[4];
+            cellvertices[1] = vertices[5];
+            cellvertices[2] = vertices[2];
+            cellvertices[3] = vertices[6];
+            new_cell.setVertices(cellvertices);
+            segment_out.add(new_cell);
+          }
         }
         else //split edge 12 again, introduce lines 43 and 53
         {
-          cellvertices[0] = vertices[0];
-          cellvertices[1] = vertices[4];
-          cellvertices[2] = vertices[2];
-          cellvertices[3] = vertices[3];
-          new_cell.setVertices(cellvertices);
-          segment_out.add(new_cell);
-          
-          cellvertices[0] = vertices[4];
-          cellvertices[1] = vertices[5];
-          cellvertices[2] = vertices[2];
-          cellvertices[3] = vertices[3];
-          new_cell.setVertices(cellvertices);
-          segment_out.add(new_cell);
-          
-          cellvertices[0] = vertices[4];
-          cellvertices[1] = vertices[6];
-          cellvertices[2] = vertices[5];
-          cellvertices[3] = vertices[3];
-          new_cell.setVertices(cellvertices);
-          segment_out.add(new_cell);
+          if (stable_line_is_longer(vertices[1], vertices[3],
+                                    vertices[0], vertices[1])) //split edge 13 again, introduce line 60
+          {
+            assert(false && "diag13_len > diag01_len impossible!");
+          }
+          else  //split edge 01 again, introduce line 43
+          {
+            //std::cout << "apply_3_1_2" << std::endl;
+            cellvertices[0] = vertices[0];
+            cellvertices[1] = vertices[4];
+            cellvertices[2] = vertices[2];
+            cellvertices[3] = vertices[3];
+            new_cell.setVertices(cellvertices);
+            segment_out.add(new_cell);
+            
+            cellvertices[0] = vertices[4];
+            cellvertices[1] = vertices[5];
+            cellvertices[2] = vertices[2];
+            cellvertices[3] = vertices[3];
+            new_cell.setVertices(cellvertices);
+            segment_out.add(new_cell);
+            
+            cellvertices[0] = vertices[4];
+            cellvertices[1] = vertices[6];
+            cellvertices[2] = vertices[5];
+            cellvertices[3] = vertices[3];
+            new_cell.setVertices(cellvertices);
+            segment_out.add(new_cell);
+          }
         }
       }
       else //split edge 12, introduce line 05
       {
-        if (diag13_len > diag01_len) //split edge 13 again, introduce lines 60 and 62
+        if (stable_line_is_longer(vertices[1], vertices[3],
+                                  vertices[1], vertices[2])) //split edge 13 again, introduce line 62
         {
-          cellvertices[0] = vertices[0];
-          cellvertices[1] = vertices[4];
-          cellvertices[2] = vertices[5];
-          cellvertices[3] = vertices[6];
-          new_cell.setVertices(cellvertices);
-          segment_out.add(new_cell);
-          
-          cellvertices[0] = vertices[0];
-          cellvertices[1] = vertices[6];
-          cellvertices[2] = vertices[5];
-          cellvertices[3] = vertices[2];
-          new_cell.setVertices(cellvertices);
-          segment_out.add(new_cell);
-          
-          cellvertices[0] = vertices[0];
-          cellvertices[1] = vertices[6];
-          cellvertices[2] = vertices[2];
-          cellvertices[3] = vertices[3];
-          new_cell.setVertices(cellvertices);
-          segment_out.add(new_cell);
+          if (stable_line_is_longer(vertices[1], vertices[3],
+                                    vertices[0], vertices[1])) //split edge 13 again, introduce line 60
+          {
+            //std::cout << "apply_3_1_3" << std::endl;
+            cellvertices[0] = vertices[0];
+            cellvertices[1] = vertices[4];
+            cellvertices[2] = vertices[5];
+            cellvertices[3] = vertices[6];
+            new_cell.setVertices(cellvertices);
+            segment_out.add(new_cell);
+            
+            cellvertices[0] = vertices[0];
+            cellvertices[1] = vertices[6];
+            cellvertices[2] = vertices[5];
+            cellvertices[3] = vertices[2];
+            new_cell.setVertices(cellvertices);
+            segment_out.add(new_cell);
+            
+            cellvertices[0] = vertices[0];
+            cellvertices[1] = vertices[6];
+            cellvertices[2] = vertices[2];
+            cellvertices[3] = vertices[3];
+            new_cell.setVertices(cellvertices);
+            segment_out.add(new_cell);
+          }
+          else  //split edge 01 again, introduce line 43
+          {
+            assert(false && "diag13_len > diag01_len impossible!");
+          }
         }
-        else //split edge 01 again, introduce lines 43 and 53
+        else //split edge 12 again, introduce line 53
         {
-          cellvertices[0] = vertices[0];
-          cellvertices[1] = vertices[4];
-          cellvertices[2] = vertices[5];
-          cellvertices[3] = vertices[3];
-          new_cell.setVertices(cellvertices);
-          segment_out.add(new_cell);
-          
-          cellvertices[0] = vertices[4];
-          cellvertices[1] = vertices[5];
-          cellvertices[2] = vertices[3];
-          cellvertices[3] = vertices[6];
-          new_cell.setVertices(cellvertices);
-          segment_out.add(new_cell);
-          
-          cellvertices[0] = vertices[0];
-          cellvertices[1] = vertices[5];
-          cellvertices[2] = vertices[2];
-          cellvertices[3] = vertices[3];
-          new_cell.setVertices(cellvertices);
-          segment_out.add(new_cell);
+          if (stable_line_is_longer(vertices[1], vertices[3],
+                                    vertices[0], vertices[1])) //split edge 13 again, introduce line 60
+          {
+            cellvertices[0] = vertices[0];
+            cellvertices[1] = vertices[4];
+            cellvertices[2] = vertices[5];
+            cellvertices[3] = vertices[6];
+            new_cell.setVertices(cellvertices);
+            segment_out.add(new_cell);
+            
+            cellvertices[0] = vertices[0];
+            cellvertices[1] = vertices[6];
+            cellvertices[2] = vertices[5];
+            cellvertices[3] = vertices[3];
+            new_cell.setVertices(cellvertices);
+            segment_out.add(new_cell);
+            
+            cellvertices[0] = vertices[0];
+            cellvertices[1] = vertices[5];
+            cellvertices[2] = vertices[2];
+            cellvertices[3] = vertices[3];
+            new_cell.setVertices(cellvertices);
+            segment_out.add(new_cell);
+          }
+          else  //split edge 01 again, introduce line 43
+          {
+            //std::cout << "apply_3_1_4" << std::endl;
+            cellvertices[0] = vertices[0];
+            cellvertices[1] = vertices[4];
+            cellvertices[2] = vertices[5];
+            cellvertices[3] = vertices[3];
+            new_cell.setVertices(cellvertices);
+            segment_out.add(new_cell);
+            
+            cellvertices[0] = vertices[4];
+            cellvertices[1] = vertices[5];
+            cellvertices[2] = vertices[3];
+            cellvertices[3] = vertices[6];
+            new_cell.setVertices(cellvertices);
+            segment_out.add(new_cell);
+            
+            cellvertices[0] = vertices[0];
+            cellvertices[1] = vertices[5];
+            cellvertices[2] = vertices[2];
+            cellvertices[3] = vertices[3];
+            new_cell.setVertices(cellvertices);
+            segment_out.add(new_cell);
+          }
         }
       }
       
@@ -843,6 +993,8 @@ namespace viennagrid
       CellType new_cell;
       VertexType * cellvertices[traits::subcell_desc<tetrahedron_tag, 0>::num_elements];
 
+      //std::cout << "apply_3_2" << std::endl;
+      
       cellvertices[0] = vertices[0];
       cellvertices[1] = vertices[4];
       cellvertices[2] = vertices[6];
@@ -891,16 +1043,19 @@ namespace viennagrid
                          VertexType ** vertices
                         )
     {
+      //std::cout << "Found!" << std::endl;
       CellType new_cell;
       VertexType * cellvertices[traits::subcell_desc<tetrahedron_tag, 0>::num_elements];
 
-      double diag01_len = viennagrid::norm(vertices[0]->getPoint() - vertices[1]->getPoint());
-      double diag12_len = viennagrid::norm(vertices[1]->getPoint() - vertices[2]->getPoint());
-      double diag03_len = viennagrid::norm(vertices[0]->getPoint() - vertices[3]->getPoint());
+      //double diag01_len = viennagrid::norm(vertices[0]->getPoint() - vertices[1]->getPoint());
+      //double diag12_len = viennagrid::norm(vertices[1]->getPoint() - vertices[2]->getPoint());
+      //double diag03_len = viennagrid::norm(vertices[0]->getPoint() - vertices[3]->getPoint());
 
       // Strategy: The two longest edges of the common vertex are split 'twice',
       //           i.e. two new edges start from the center of the two longest edges
-      if (diag01_len > diag03_len) //split edge 01 again, introduce line 43
+      //if (diag01_len > diag03_len) //split edge 01 again, introduce line 43
+      if (stable_line_is_longer(vertices[0], vertices[1],
+                                vertices[0], vertices[3])) //split edge 01 again, introduce line 43
       {
         cellvertices[0] = vertices[4];
         cellvertices[1] = vertices[1];
@@ -909,12 +1064,15 @@ namespace viennagrid
         new_cell.setVertices(cellvertices);
         segment_out.add(new_cell);
           
-        if (diag01_len > diag12_len) //split edge 01 again, introduce line 42
+        //if (diag01_len > diag12_len) //split edge 01 again, introduce line 42
+        if (stable_line_is_longer(vertices[0], vertices[1],
+                                  vertices[1], vertices[2])) //split edge 01 again, introduce line 42
         {
+          //std::cout << "apply_3_3_1" << std::endl;
           cellvertices[0] = vertices[0];
           cellvertices[1] = vertices[4];
           cellvertices[2] = vertices[2];
-          cellvertices[3] = vertices[3];
+          cellvertices[3] = vertices[6];
           new_cell.setVertices(cellvertices);
           segment_out.add(new_cell);
           
@@ -934,6 +1092,7 @@ namespace viennagrid
         }
         else //split edge 12 again, introduce line 50
         {
+          //std::cout << "apply_3_3_2" << std::endl;
           cellvertices[0] = vertices[0];
           cellvertices[1] = vertices[4];
           cellvertices[2] = vertices[5];
@@ -945,6 +1104,13 @@ namespace viennagrid
           cellvertices[1] = vertices[5];
           cellvertices[2] = vertices[2];
           cellvertices[3] = vertices[6];
+          new_cell.setVertices(cellvertices);
+          segment_out.add(new_cell);
+          
+          cellvertices[0] = vertices[6];
+          cellvertices[1] = vertices[4];
+          cellvertices[2] = vertices[5];
+          cellvertices[3] = vertices[3];
           new_cell.setVertices(cellvertices);
           segment_out.add(new_cell);
           
@@ -972,8 +1138,18 @@ namespace viennagrid
         new_cell.setVertices(cellvertices);
         segment_out.add(new_cell);
           
-        if (diag01_len > diag12_len) //split edge 01 again, introduce line 42
+        cellvertices[0] = vertices[6];
+        cellvertices[1] = vertices[5];
+        cellvertices[2] = vertices[2];
+        cellvertices[3] = vertices[3];
+        new_cell.setVertices(cellvertices);
+        segment_out.add(new_cell);
+          
+        //if (diag01_len > diag12_len) //split edge 01 again, introduce line 42
+        if (stable_line_is_longer(vertices[0], vertices[1],
+                                  vertices[1], vertices[2])) //split edge 01 again, introduce line 42
         {
+          //std::cout << "apply_3_3_3" << std::endl;
           cellvertices[0] = vertices[0];
           cellvertices[1] = vertices[4];
           cellvertices[2] = vertices[2];
@@ -983,13 +1159,14 @@ namespace viennagrid
           
           cellvertices[0] = vertices[6];
           cellvertices[1] = vertices[4];
-          cellvertices[2] = vertices[2];
-          cellvertices[3] = vertices[3];
+          cellvertices[2] = vertices[5];
+          cellvertices[3] = vertices[2];
           new_cell.setVertices(cellvertices);
           segment_out.add(new_cell);
         }
         else //split edge 12 again, introduce line 50
         {
+          //std::cout << "apply_3_3_4" << std::endl;
           cellvertices[0] = vertices[0];
           cellvertices[1] = vertices[4];
           cellvertices[2] = vertices[5];
@@ -1028,13 +1205,15 @@ namespace viennagrid
       CellType new_cell;
       VertexType * cellvertices[traits::subcell_desc<tetrahedron_tag, 0>::num_elements];
 
-      double diag01_len = viennagrid::norm(vertices[0]->getPoint() - vertices[1]->getPoint());
-      double diag12_len = viennagrid::norm(vertices[1]->getPoint() - vertices[2]->getPoint());
-      double diag23_len = viennagrid::norm(vertices[2]->getPoint() - vertices[3]->getPoint());
+      //double diag01_len = viennagrid::norm(vertices[0]->getPoint() - vertices[1]->getPoint());
+      //double diag12_len = viennagrid::norm(vertices[1]->getPoint() - vertices[2]->getPoint());
+      //double diag23_len = viennagrid::norm(vertices[2]->getPoint() - vertices[3]->getPoint());
 
       // Strategy: The two longest edges of the common vertex are split 'twice',
       //           i.e. two new edges start from the center of the two longest edges
-      if (diag01_len > diag12_len) //split edge 01 again, introduce line 42
+      //if (diag01_len > diag12_len) //split edge 01 again, introduce line 42
+      if (stable_line_is_longer(vertices[0], vertices[1],
+                                vertices[1], vertices[2])) //split edge 01 again, introduce line 42
       {
         cellvertices[0] = vertices[0];
         cellvertices[1] = vertices[4];
@@ -1057,8 +1236,11 @@ namespace viennagrid
         new_cell.setVertices(cellvertices);
         segment_out.add(new_cell);
           
-        if (diag12_len > diag23_len) //split edge 12 again, introduce line 53
+        //if (diag12_len > diag23_len) //split edge 12 again, introduce line 53
+        if (stable_line_is_longer(vertices[1], vertices[2],
+                                  vertices[2], vertices[3])) //split edge 12 again, introduce line 53
         {
+          //std::cout << "apply_3_4_1" << std::endl;
           cellvertices[0] = vertices[4];
           cellvertices[1] = vertices[1];
           cellvertices[2] = vertices[5];
@@ -1075,6 +1257,7 @@ namespace viennagrid
         }
         else //split edge 23 again, introduce line 61
         {
+          //std::cout << "apply_3_4_2" << std::endl;
           cellvertices[0] = vertices[4];
           cellvertices[1] = vertices[1];
           cellvertices[2] = vertices[6];
@@ -1092,8 +1275,11 @@ namespace viennagrid
       }
       else //split edge 12, introduce line 50
       {
-        if (diag12_len > diag23_len) //split edge 12 again, introduce line 53
+        //if (diag12_len > diag23_len) //split edge 12 again, introduce line 53
+        if (stable_line_is_longer(vertices[1], vertices[2],
+                                  vertices[2], vertices[3])) //split edge 12 again, introduce line 53
         {
+          //std::cout << "apply_3_4_3" << std::endl;
           cellvertices[0] = vertices[0];
           cellvertices[1] = vertices[4];
           cellvertices[2] = vertices[5];
@@ -1124,6 +1310,7 @@ namespace viennagrid
         }
         else //split edge 23 again, introduce line 61
         {
+          //std::cout << "apply_3_4_4" << std::endl;
           cellvertices[0] = vertices[0];
           cellvertices[1] = vertices[4];
           cellvertices[2] = vertices[5];
@@ -1181,6 +1368,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::ncell_type<ConfigTypeIn, 1>::type             EdgeType;
 
       VertexType * vertices[traits::subcell_desc<tetrahedron_tag, 0>::num_elements];
+      //std::cout << "apply3()" << std::endl;
       
       //
       // Step 1: Get vertices from input cell
@@ -1526,11 +1714,13 @@ namespace viennagrid
       CellType new_cell;
       VertexType * cellvertices[traits::subcell_desc<tetrahedron_tag, 0>::num_elements];
 
-      double diag03_len = viennagrid::norm(vertices[0]->getPoint() - vertices[3]->getPoint());
-      double diag13_len = viennagrid::norm(vertices[1]->getPoint() - vertices[3]->getPoint());
-      double diag23_len = viennagrid::norm(vertices[2]->getPoint() - vertices[3]->getPoint());
+      //double diag03_len = viennagrid::norm(vertices[0]->getPoint() - vertices[3]->getPoint());
+      //double diag13_len = viennagrid::norm(vertices[1]->getPoint() - vertices[3]->getPoint());
+      //double diag23_len = viennagrid::norm(vertices[2]->getPoint() - vertices[3]->getPoint());
 
-      if (diag03_len > diag13_len) //split edge 03, introduce line 71
+      //if (diag03_len > diag13_len) //split edge 03, introduce line 71
+      if (stable_line_is_longer(vertices[0], vertices[3],
+                                vertices[1], vertices[3])) //split edge 03, introduce line 71
       {
         cellvertices[0] = vertices[0];
         cellvertices[1] = vertices[1];
@@ -1546,8 +1736,11 @@ namespace viennagrid
         new_cell.setVertices(cellvertices);
         segment_out.add(new_cell);
         
-        if (diag13_len > diag23_len) //split edge 13, introduce line 52
+        //if (diag13_len > diag23_len) //split edge 13, introduce line 52
+        if (stable_line_is_longer(vertices[1], vertices[3],
+                                  vertices[2], vertices[3])) //split edge 13, introduce line 52
         {
+          //std::cout << "apply_4_1_1" << std::endl;
           cellvertices[0] = vertices[7];
           cellvertices[1] = vertices[1];
           cellvertices[2] = vertices[4];
@@ -1578,6 +1771,7 @@ namespace viennagrid
         }
         else //split edge 23, introduce line 61
         {
+          //std::cout << "apply_4_1_2" << std::endl;
           cellvertices[0] = vertices[7];
           cellvertices[1] = vertices[1];
           cellvertices[2] = vertices[6];
@@ -1630,8 +1824,11 @@ namespace viennagrid
         new_cell.setVertices(cellvertices);
         segment_out.add(new_cell);
 
-        if (diag13_len > diag23_len) //split edge 13 again, introduce line 52
+        //if (diag13_len > diag23_len) //split edge 13 again, introduce line 52
+        if (stable_line_is_longer(vertices[1], vertices[3],
+                                  vertices[2], vertices[3])) //split edge 13 again, introduce line 52
         {
+          //std::cout << "apply_4_1_3" << std::endl;
           cellvertices[0] = vertices[1];
           cellvertices[1] = vertices[2];
           cellvertices[2] = vertices[4];
@@ -1648,6 +1845,7 @@ namespace viennagrid
         }
         else //split edge 23, introduce line 61
         {
+          //std::cout << "apply_4_1_4" << std::endl;
           cellvertices[0] = vertices[5];
           cellvertices[1] = vertices[1];
           cellvertices[2] = vertices[4];
@@ -1686,19 +1884,29 @@ namespace viennagrid
       CellType new_cell;
       VertexType * cellvertices[traits::subcell_desc<tetrahedron_tag, 0>::num_elements];
 
-      double diag02_len = viennagrid::norm(vertices[0]->getPoint() - vertices[2]->getPoint());
-      double diag03_len = viennagrid::norm(vertices[0]->getPoint() - vertices[3]->getPoint());
-      double diag12_len = viennagrid::norm(vertices[1]->getPoint() - vertices[2]->getPoint());
-      double diag13_len = viennagrid::norm(vertices[1]->getPoint() - vertices[3]->getPoint());
+      //double diag02_len = viennagrid::norm(vertices[0]->getPoint() - vertices[2]->getPoint());
+      //double diag03_len = viennagrid::norm(vertices[0]->getPoint() - vertices[3]->getPoint());
+      //double diag12_len = viennagrid::norm(vertices[1]->getPoint() - vertices[2]->getPoint());
+      //double diag13_len = viennagrid::norm(vertices[1]->getPoint() - vertices[3]->getPoint());
 
-      if (diag03_len > diag13_len) //split edge 03, introduce line 61
+      //if (diag03_len > diag13_len) //split edge 03, introduce line 61
+      if (stable_line_is_longer(vertices[0], vertices[3],
+                                vertices[1], vertices[3])) //split edge 03, introduce line 61
       {
-        if (diag13_len > diag12_len) //split edge 13, introduce line 72
+        //std::cout << "split!" << std::endl;
+        //if (diag13_len > diag12_len) //split edge 13, introduce line 72
+        if (stable_line_is_longer(vertices[1], vertices[3],
+                                  vertices[1], vertices[2])) //split edge 13, introduce line 72
         {
-          if (diag02_len > diag03_len) //split edge 02, introduce line 53
+          //if (diag02_len > diag03_len) //split edge 02, introduce line 53
+          if (stable_line_is_longer(vertices[0], vertices[2],
+                                    vertices[0], vertices[3])) //split edge 02, introduce line 53
           {
-            if (diag02_len > diag12_len) //split edge 02, introduce line 51
+            //if (diag02_len > diag12_len) //split edge 02, introduce line 51
+            if (stable_line_is_longer(vertices[0], vertices[2],
+                                      vertices[1], vertices[2])) //split edge 02, introduce line 51
             {
+              //std::cout << "apply_4_2_1_" << std::endl;
               cellvertices[0] = vertices[0];
               cellvertices[1] = vertices[1];
               cellvertices[2] = vertices[5];
@@ -1748,8 +1956,13 @@ namespace viennagrid
           }
           else //split edge 03, introduce line 62
           {
-            if (diag02_len > diag12_len) //split edge 02, introduce line 51
+            //std::cout << "split!" << std::endl;
+            //if (diag02_len > diag12_len) //split edge 02, introduce line 51
+            if (stable_line_is_longer(vertices[0], vertices[2],
+                                      vertices[1], vertices[2])) //split edge 02, introduce line 51
             {
+              //std::cout << "split!" << std::endl;
+              //std::cout << "apply_4_2_2" << std::endl;
               cellvertices[0] = vertices[0];
               cellvertices[1] = vertices[1];
               cellvertices[2] = vertices[5];
@@ -1773,7 +1986,7 @@ namespace viennagrid
 
               cellvertices[0] = vertices[7];
               cellvertices[1] = vertices[4];
-              cellvertices[2] = vertices[5];
+              cellvertices[2] = vertices[6];
               cellvertices[3] = vertices[2];
               new_cell.setVertices(cellvertices);
               segment_out.add(new_cell);
@@ -1791,9 +2004,11 @@ namespace viennagrid
               cellvertices[3] = vertices[3];
               new_cell.setVertices(cellvertices);
               segment_out.add(new_cell);
+              //std::cout << "done!" << std::endl;
             }
             else //split edge 12, introduce line 40
             {
+              //std::cout << "apply_4_2_3" << std::endl;
               cellvertices[0] = vertices[0];
               cellvertices[1] = vertices[1];
               cellvertices[2] = vertices[4];
@@ -1840,10 +2055,15 @@ namespace viennagrid
         }
         else //split edge 12, introduce line 43
         {
-          if (diag02_len > diag03_len) //split edge 02, introduce line 53
+          //if (diag02_len > diag03_len) //split edge 02, introduce line 53
+          if (stable_line_is_longer(vertices[0], vertices[2],
+                                    vertices[0], vertices[3])) //split edge 02, introduce line 53
           {
-            if (diag02_len > diag12_len) //split edge 02, introduce line 51
+            //if (diag02_len > diag12_len) //split edge 02, introduce line 51
+            if (stable_line_is_longer(vertices[0], vertices[2],
+                                      vertices[1], vertices[2])) //split edge 02, introduce line 51
             {
+              //std::cout << "apply_4_2_4" << std::endl;
               cellvertices[0] = vertices[0];
               cellvertices[1] = vertices[1];
               cellvertices[2] = vertices[5];
@@ -1888,10 +2108,11 @@ namespace viennagrid
             }
             else //split edge 12, introduce line 40
             {
+              //std::cout << "apply_4_2_5" << std::endl;
               cellvertices[0] = vertices[0];
               cellvertices[1] = vertices[1];
               cellvertices[2] = vertices[4];
-              cellvertices[3] = vertices[7];
+              cellvertices[3] = vertices[6];
               new_cell.setVertices(cellvertices);
               segment_out.add(new_cell);
 
@@ -1933,8 +2154,11 @@ namespace viennagrid
           }
           else //split edge 03, introduce line 62
           {
-            if (diag02_len > diag12_len) //split edge 02, introduce line 51
+            //if (diag02_len > diag12_len) //split edge 02, introduce line 51
+            if (stable_line_is_longer(vertices[0], vertices[2],
+                                      vertices[1], vertices[2])) //split edge 02, introduce line 51
             {
+              //std::cout << "apply_4_2_6" << std::endl;
               cellvertices[0] = vertices[0];
               cellvertices[1] = vertices[1];
               cellvertices[2] = vertices[5];
@@ -1979,6 +2203,7 @@ namespace viennagrid
             }
             else //split edge 12, introduce line 40
             {
+              //std::cout << "apply_4_2_7" << std::endl;
               cellvertices[0] = vertices[0];
               cellvertices[1] = vertices[1];
               cellvertices[2] = vertices[4];
@@ -2026,12 +2251,19 @@ namespace viennagrid
       }
       else //split edge 13, introduce line 70
       {
-        if (diag13_len > diag12_len) //split edge 13, introduce line 72
+        //if (diag13_len > diag12_len) //split edge 13, introduce line 72
+        if (stable_line_is_longer(vertices[1], vertices[3],
+                                  vertices[1], vertices[2])) //split edge 13, introduce line 72
         {
-          if (diag02_len > diag03_len) //split edge 02, introduce line 53
+          //if (diag02_len > diag03_len) //split edge 02, introduce line 53
+          if (stable_line_is_longer(vertices[0], vertices[2],
+                                    vertices[0], vertices[3])) //split edge 02, introduce line 53
           {
-            if (diag02_len > diag12_len) //split edge 02, introduce line 51
+            //if (diag02_len > diag12_len) //split edge 02, introduce line 51
+            if (stable_line_is_longer(vertices[0], vertices[2],
+                                      vertices[1], vertices[2])) //split edge 02, introduce line 51
             {
+              //std::cout << "apply_4_2_8" << std::endl;
               cellvertices[0] = vertices[0];
               cellvertices[1] = vertices[1];
               cellvertices[2] = vertices[5];
@@ -2076,6 +2308,7 @@ namespace viennagrid
             }
             else //split edge 12, introduce line 40
             {
+              //std::cout << "apply_4_2_9" << std::endl;
               cellvertices[0] = vertices[0];
               cellvertices[1] = vertices[1];
               cellvertices[2] = vertices[4];
@@ -2121,8 +2354,11 @@ namespace viennagrid
           }
           else //split edge 03, introduce line 62
           {
-            if (diag02_len > diag12_len) //split edge 02, introduce line 51
+            //if (diag02_len > diag12_len) //split edge 02, introduce line 51
+            if (stable_line_is_longer(vertices[0], vertices[2],
+                                      vertices[1], vertices[2])) //split edge 02, introduce line 51
             {
+              //std::cout << "apply_4_2_10" << std::endl;
               cellvertices[0] = vertices[0];
               cellvertices[1] = vertices[1];
               cellvertices[2] = vertices[5];
@@ -2167,6 +2403,7 @@ namespace viennagrid
             }
             else //split edge 12, introduce line 40
             {
+              //std::cout << "apply_4_2_11" << std::endl;
               cellvertices[0] = vertices[0];
               cellvertices[1] = vertices[1];
               cellvertices[2] = vertices[4];
@@ -2203,7 +2440,7 @@ namespace viennagrid
               segment_out.add(new_cell);
 
               cellvertices[0] = vertices[6];
-              cellvertices[1] = vertices[4];
+              cellvertices[1] = vertices[7];
               cellvertices[2] = vertices[2];
               cellvertices[3] = vertices[3];
               new_cell.setVertices(cellvertices);
@@ -2213,10 +2450,15 @@ namespace viennagrid
         }
         else //split edge 12, introduce line 43
         {
-          if (diag02_len > diag03_len) //split edge 02, introduce line 53
+          //if (diag02_len > diag03_len) //split edge 02, introduce line 53
+          if (stable_line_is_longer(vertices[0], vertices[2],
+                                    vertices[0], vertices[3])) //split edge 02, introduce line 53
           {
-            if (diag02_len > diag12_len) //split edge 02, introduce line 51
+            //if (diag02_len > diag12_len) //split edge 02, introduce line 51
+            if (stable_line_is_longer(vertices[0], vertices[2],
+                                      vertices[1], vertices[2])) //split edge 02, introduce line 51
             {
+              //std::cout << "apply_4_2_12" << std::endl;
               cellvertices[0] = vertices[0];
               cellvertices[1] = vertices[1];
               cellvertices[2] = vertices[5];
@@ -2261,6 +2503,7 @@ namespace viennagrid
             }
             else //split edge 12, introduce line 40
             {
+              //std::cout << "apply_4_2_13" << std::endl;
               cellvertices[0] = vertices[0];
               cellvertices[1] = vertices[1];
               cellvertices[2] = vertices[4];
@@ -2306,13 +2549,16 @@ namespace viennagrid
           }
           else //split edge 03, introduce line 62
           {
-            if (diag02_len > diag12_len) //split edge 02, introduce line 51
+            //if (diag02_len > diag12_len) //split edge 02, introduce line 51
+            if (stable_line_is_longer(vertices[0], vertices[2],
+                                      vertices[1], vertices[2])) //split edge 02, introduce line 51
             {
               //we have diag12_len > diag13_len > diag03_len > diag02_len alreday, hence this case is bogus!
               assert( false && "Logic error: diag02 > diag12 not possible here!");
             }
             else //split edge 12, introduce line 40
             {
+              //std::cout << "apply_4_2_14" << std::endl;
               cellvertices[0] = vertices[0];
               cellvertices[1] = vertices[1];
               cellvertices[2] = vertices[4];
@@ -2373,6 +2619,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::ncell_type<ConfigTypeIn, 1>::type             EdgeType;
 
       VertexType * vertices[traits::subcell_desc<tetrahedron_tag, 0>::num_elements];
+      //std::cout << "apply4()" << std::endl;
       
       //
       // Step 1: Get vertices from input cell
@@ -2679,12 +2926,14 @@ namespace viennagrid
       new_cell.setVertices(cellvertices);
       segment_out.add(new_cell);
       
-      double diag02_len = viennagrid::norm(vertices[0]->getPoint() - vertices[2]->getPoint());
-      double diag03_len = viennagrid::norm(vertices[0]->getPoint() - vertices[3]->getPoint());
-      double diag12_len = viennagrid::norm(vertices[1]->getPoint() - vertices[2]->getPoint());
-      double diag13_len = viennagrid::norm(vertices[1]->getPoint() - vertices[3]->getPoint());
+      //double diag02_len = viennagrid::norm(vertices[0]->getPoint() - vertices[2]->getPoint());
+      //double diag03_len = viennagrid::norm(vertices[0]->getPoint() - vertices[3]->getPoint());
+      //double diag12_len = viennagrid::norm(vertices[1]->getPoint() - vertices[2]->getPoint());
+      //double diag13_len = viennagrid::norm(vertices[1]->getPoint() - vertices[3]->getPoint());
 
-      if (diag03_len > diag13_len) //split edge 03, introduce line 61
+      //if (diag03_len > diag13_len) //split edge 03, introduce line 61
+      if (stable_line_is_longer(vertices[0], vertices[3],
+                                vertices[1], vertices[3])) //split edge 03, introduce line 61
       {
         cellvertices[0] = vertices[6];
         cellvertices[1] = vertices[4];
@@ -2707,7 +2956,9 @@ namespace viennagrid
         new_cell.setVertices(cellvertices);
         segment_out.add(new_cell);
         
-        if (diag02_len > diag12_len) //split edge 02, introduce line 51
+        //if (diag02_len > diag12_len) //split edge 02, introduce line 51
+        if (stable_line_is_longer(vertices[0], vertices[2],
+                                  vertices[1], vertices[2])) //split edge 02, introduce line 51
         {
           cellvertices[0] = vertices[0];
           cellvertices[1] = vertices[1];
@@ -2742,7 +2993,9 @@ namespace viennagrid
       }
       else  //split edge 13, introduce line 70
       {
-        if (diag02_len > diag12_len) //split edge 02, introduce line 51
+        //if (diag02_len > diag12_len) //split edge 02, introduce line 51
+        if (stable_line_is_longer(vertices[0], vertices[2],
+                                  vertices[1], vertices[2])) //split edge 02, introduce line 51
         {
           cellvertices[0] = vertices[0];
           cellvertices[1] = vertices[1];
@@ -2768,14 +3021,14 @@ namespace viennagrid
           cellvertices[0] = vertices[7];
           cellvertices[1] = vertices[4];
           cellvertices[2] = vertices[5];
-          cellvertices[3] = vertices[3];
+          cellvertices[3] = vertices[8];
           new_cell.setVertices(cellvertices);
           segment_out.add(new_cell);
           
           cellvertices[0] = vertices[6];
           cellvertices[1] = vertices[7];
           cellvertices[2] = vertices[5];
-          cellvertices[3] = vertices[3];
+          cellvertices[3] = vertices[8];
           new_cell.setVertices(cellvertices);
           segment_out.add(new_cell);
         }
@@ -2832,6 +3085,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::ncell_type<ConfigTypeIn, 1>::type             EdgeType;
 
       VertexType * vertices[traits::subcell_desc<tetrahedron_tag, 0>::num_elements];
+      //std::cout << "apply5()" << std::endl;
       
       //
       // Step 1: Get vertices from input cell
@@ -2970,6 +3224,7 @@ namespace viennagrid
 
       VertexType * vertices[traits::subcell_desc<tetrahedron_tag, 0>::num_elements
                             + traits::subcell_desc<tetrahedron_tag, 1>::num_elements];
+      //std::cout << "apply6()" << std::endl;
       
       //
       // Step 1: Get vertices on the new domain
@@ -3150,6 +3405,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::const_ncell_container<CellType, 1>::type            EdgeOnCellContainer;
       typedef typename viennagrid::result_of::iterator<EdgeOnCellContainer>::type                 EdgeOnCellIterator;            
       
+      //std::cout << "tetrahedron_tag::apply()" << std::endl;
       std::size_t edges_to_refine = 0;
       EdgeOnCellContainer edges_on_cell = viennagrid::ncells<1>(cell_in);
       for (EdgeOnCellIterator eocit = edges_on_cell.begin();

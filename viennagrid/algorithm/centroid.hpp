@@ -20,6 +20,7 @@
 #include <stdexcept>
 
 #include "viennagrid/forwards.h"
+#include "viennagrid/topology/all.hpp"
 
 /** @file centroid.hpp
     @brief Computes the centroid (center of mass) for different cell types

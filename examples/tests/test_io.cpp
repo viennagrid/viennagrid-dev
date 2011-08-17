@@ -84,6 +84,7 @@ void testNewDomain(std::string & infile, std::string & outfile)
   typedef viennagrid::result_of::iterator<CellContainer>::type                                  CellIterator;
 
   Domain domain;
+  //domain.create_segments(1);
   
    //Segment & seg = domain.add();
   
@@ -99,7 +100,7 @@ void testNewDomain(std::string & infile, std::string & outfile)
     #endif
     
     #ifdef VTK
-    viennagrid::io::vtk_reader my_vtk_reader;
+    viennagrid::io::vtk_reader<Domain> my_vtk_reader;
     my_vtk_reader.readDomain(domain, infile);
     #endif
   } catch (...){
@@ -121,6 +122,7 @@ void testNewDomain(std::string & infile, std::string & outfile)
   
   
   //test writers:
+  std::cout << "Writing to vtk file " << outfile << ".vtu" << std::endl;
   viennagrid::io::vtk_writer<Domain> my_vtk_writer;
   //my_vtk_writer.add_point_data_scalar<std::string, double>("vtk_data", "my_result");
   my_vtk_writer.add_point_data_scalar(viennagrid::io::io_data_accessor_global<VertexType, std::string, double>("vtk_data"),
@@ -163,6 +165,7 @@ int main()
   
   #ifdef THREEDIM
   std::string infile = path + "sshape3d.mesh";
+  //std::string infile = path + "in_main.pvd";
   #endif
   #ifdef TWODIM
   std::string infile = path + "sshape2d.mesh";
