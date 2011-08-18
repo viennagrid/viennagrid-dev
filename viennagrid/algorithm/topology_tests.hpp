@@ -35,9 +35,9 @@ struct duplicates
       typedef typename DomainT::segment_type                                                    SegmentType;
       typedef typename DomainT::config_type                                                     DomainConfiguration;      
       typedef typename viennagrid::result_of::ncell_type<DomainConfiguration, TopoLevel>::type  NCellType;            
-      typedef typename viennagrid::result_of::ncell_container<SegmentType, TopoLevel>::type     NCellContainer;      
+      typedef typename viennagrid::result_of::ncell_range<SegmentType, TopoLevel>::type     NCellContainer;      
       typedef typename viennagrid::result_of::iterator<NCellContainer>::type                    NCellIterator;         
-      typedef typename viennagrid::result_of::ncell_container<NCellType, 0>::type               VertexOnNCellContainer;
+      typedef typename viennagrid::result_of::ncell_range<NCellType, 0>::type               VertexOnNCellContainer;
       typedef typename viennagrid::result_of::iterator<VertexOnNCellContainer>::type            VertexOnNCellIterator;   
 
       static const int CELLSIZE = TopoLevel + 1; // holds only for simplex topology ..
@@ -61,7 +61,7 @@ struct duplicates
             VertexOnNCellContainer vertices = viennagrid::ncells<0>(*cit);
             for (VertexOnNCellIterator vocit = vertices.begin(); vocit != vertices.end(); ++vocit)
             {        
-               cell[i++] = vocit->getID();
+               cell[i++] = vocit->id();
             }
 
             // sort the edge indices in ascending order
@@ -96,7 +96,7 @@ struct duplicates <0>
    {
       typedef typename DomainT::segment_type                                                    SegmentType;
       typedef typename DomainT::config_type                                                     DomainConfiguration;      
-      typedef typename viennagrid::result_of::ncell_container<SegmentType, 0>::type             NCellContainer;      
+      typedef typename viennagrid::result_of::ncell_range<SegmentType, 0>::type             NCellContainer;      
       typedef typename viennagrid::result_of::iterator<NCellContainer>::type                    NCellIterator;         
 
       std::size_t duplicates_cnt = 0;
@@ -113,9 +113,9 @@ struct duplicates <0>
          for (NCellIterator cit = cells.begin(); cit != cells.end(); ++cit)
          {
             // check for uniqueness
-            if( !uniquer[cit->getID()] )
+            if( !uniquer[cit->id()] )
             {
-               uniquer[cit->getID()] = true;
+               uniquer[cit->id()] = true;
             }
             else // the edge is already present ..
             {
@@ -150,9 +150,9 @@ struct nonmanifolds_impl
       static const int FACEDIM = DIMT-1;
       
       typedef typename viennagrid::result_of::ncell_type<DomainConfiguration, FACEDIM>::type    FaceType;            
-      typedef typename viennagrid::result_of::ncell_container<SegmentType, FACEDIM>::type       FaceContainer;      
+      typedef typename viennagrid::result_of::ncell_range<SegmentType, FACEDIM>::type       FaceContainer;      
       typedef typename viennagrid::result_of::iterator<FaceContainer>::type                     FaceIterator;            
-      typedef typename viennagrid::result_of::ncell_container<FaceType, DIMT>::type             CellOnFaceContainer;
+      typedef typename viennagrid::result_of::ncell_range<FaceType, DIMT>::type             CellOnFaceContainer;
       typedef typename viennagrid::result_of::iterator<CellOnFaceContainer>::type               CellOnFaceIterator;            
       
       result_type cnt = 0;
@@ -198,9 +198,9 @@ struct nonmanifolds_impl <2, 3>
       static const int FACEDIM = DIMT-1;
       
       typedef typename viennagrid::result_of::ncell_type<DomainConfiguration, FACEDIM>::type    FaceType;            
-      typedef typename viennagrid::result_of::ncell_container<SegmentType, FACEDIM>::type       FaceContainer;      
+      typedef typename viennagrid::result_of::ncell_range<SegmentType, FACEDIM>::type       FaceContainer;      
       typedef typename viennagrid::result_of::iterator<FaceContainer>::type                     FaceIterator;            
-      typedef typename viennagrid::result_of::ncell_container<FaceType, DIMT>::type             CellOnFaceContainer;
+      typedef typename viennagrid::result_of::ncell_range<FaceType, DIMT>::type             CellOnFaceContainer;
       typedef typename viennagrid::result_of::iterator<CellOnFaceContainer>::type               CellOnFaceIterator;            
       
       result_type cnt = 0;
