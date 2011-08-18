@@ -31,7 +31,7 @@ namespace viennagrid
   };
 
 
-  namespace traits
+  namespace topology
   {
 
     //Tetrahedron:
@@ -165,11 +165,11 @@ namespace viennagrid
   {
     typedef typename VertexType::config_type::numeric_type       ScalarType;
     
-    VertexType const * v1_1_ptr = (v1_1->getID() < v1_2->getID()) ? v1_1 : v1_2; //v1_1 carries smaller ID
-    VertexType const * v1_2_ptr = (v1_1->getID() < v1_2->getID()) ? v1_2 : v1_1; //v1_2 carries larger ID
+    VertexType const * v1_1_ptr = (v1_1->id() < v1_2->id()) ? v1_1 : v1_2; //v1_1 carries smaller ID
+    VertexType const * v1_2_ptr = (v1_1->id() < v1_2->id()) ? v1_2 : v1_1; //v1_2 carries larger ID
     
-    VertexType const * v2_1_ptr = (v2_1->getID() < v2_2->getID()) ? v2_1 : v2_2; //v2_1 carries smaller ID
-    VertexType const * v2_2_ptr = (v2_1->getID() < v2_2->getID()) ? v2_2 : v2_1; //v2_2 carries larger ID
+    VertexType const * v2_1_ptr = (v2_1->id() < v2_2->id()) ? v2_1 : v2_2; //v2_1 carries smaller ID
+    VertexType const * v2_2_ptr = (v2_1->id() < v2_2->id()) ? v2_2 : v2_1; //v2_2 carries larger ID
     
     ScalarType line1 = viennagrid::norm(v1_1->getPoint() - v1_2->getPoint());
     ScalarType line2 = viennagrid::norm(v2_1->getPoint() - v2_2->getPoint());
@@ -181,15 +181,15 @@ namespace viennagrid
     else if (line1 == line2)
     {
       //compare IDs:
-      if (v1_1_ptr->getID() > v2_1_ptr->getID())
+      if (v1_1_ptr->id() > v2_1_ptr->id())
       {
         return true;
       }
-      else if (v1_1_ptr->getID() == v2_1_ptr->getID())
+      else if (v1_1_ptr->id() == v2_1_ptr->id())
       {
-        if (v1_2_ptr->getID() > v2_2_ptr->getID())
+        if (v1_2_ptr->id() > v2_2_ptr->id())
           return true;
-        else if (v1_2_ptr->getID() == v2_2_ptr->getID())
+        else if (v1_2_ptr->id() == v2_2_ptr->id())
           return false; //identical lines are compared!
       }
     }
@@ -215,22 +215,22 @@ namespace viennagrid
     {
       //std::cout << "tetrahedron::apply0()" << std::endl;
       typedef typename CellType::config_type        ConfigTypeIn;
-      typedef typename viennagrid::result_of::const_ncell_container<CellType, 0>::type            VertexOnCellContainer;
+      typedef typename viennagrid::result_of::const_ncell_range<CellType, 0>::type            VertexOnCellContainer;
       typedef typename viennagrid::result_of::iterator<VertexOnCellContainer>::type         VertexOnCellIterator;            
-      typedef typename viennagrid::result_of::const_ncell_container<CellType, 1>::type            EdgeOnCellContainer;
+      typedef typename viennagrid::result_of::const_ncell_range<CellType, 1>::type            EdgeOnCellContainer;
       typedef typename viennagrid::result_of::iterator<EdgeOnCellContainer>::type           EdgeOnCellIterator;            
       
       typedef typename viennagrid::result_of::ncell_type<ConfigTypeIn, 0>::type             VertexType;
 
-      VertexType * vertices[traits::subcell_desc<tetrahedron_tag, 0>::num_elements];
+      VertexType * vertices[topology::subcell_desc<tetrahedron_tag, 0>::num_elements];
       
       // Step 1: grab existing vertices:
       VertexOnCellContainer vertices_on_cell = viennagrid::ncells<0>(cell_in);
       VertexOnCellIterator vocit = vertices_on_cell.begin();
-      vertices[0] = &(segment_out.get_domain().vertex(vocit->getID())); ++vocit;
-      vertices[1] = &(segment_out.get_domain().vertex(vocit->getID())); ++vocit;
-      vertices[2] = &(segment_out.get_domain().vertex(vocit->getID())); ++vocit;
-      vertices[3] = &(segment_out.get_domain().vertex(vocit->getID()));
+      vertices[0] = &(segment_out.get_domain().vertex(vocit->id())); ++vocit;
+      vertices[1] = &(segment_out.get_domain().vertex(vocit->id())); ++vocit;
+      vertices[2] = &(segment_out.get_domain().vertex(vocit->id())); ++vocit;
+      vertices[3] = &(segment_out.get_domain().vertex(vocit->id()));
 
       // Step 2: Add new cells to new domain:
       CellType new_cell;
@@ -246,15 +246,15 @@ namespace viennagrid
     static void apply1(CellType const & cell_in, DomainTypeOut & segment_out)
     {
       typedef typename CellType::config_type        ConfigTypeIn;
-      typedef typename viennagrid::result_of::const_ncell_container<CellType, 0>::type            VertexOnCellContainer;
+      typedef typename viennagrid::result_of::const_ncell_range<CellType, 0>::type            VertexOnCellContainer;
       typedef typename viennagrid::result_of::iterator<VertexOnCellContainer>::type         VertexOnCellIterator;            
-      typedef typename viennagrid::result_of::const_ncell_container<CellType, 1>::type            EdgeOnCellContainer;
+      typedef typename viennagrid::result_of::const_ncell_range<CellType, 1>::type            EdgeOnCellContainer;
       typedef typename viennagrid::result_of::iterator<EdgeOnCellContainer>::type           EdgeOnCellIterator;            
       
       typedef typename viennagrid::result_of::ncell_type<ConfigTypeIn, 0>::type             VertexType;
       typedef typename viennagrid::result_of::ncell_type<ConfigTypeIn, 1>::type             EdgeType;
 
-      VertexType * vertices[traits::subcell_desc<tetrahedron_tag, 0>::num_elements];
+      VertexType * vertices[topology::subcell_desc<tetrahedron_tag, 0>::num_elements];
       //std::cout << "apply1()" << std::endl;
       
       //
@@ -262,16 +262,16 @@ namespace viennagrid
       //
       VertexOnCellContainer vertices_on_cell = viennagrid::ncells<0>(cell_in);
       VertexOnCellIterator vocit = vertices_on_cell.begin();
-      vertices[0] = &(segment_out.get_domain().vertex(vocit->getID())); ++vocit;
-      vertices[1] = &(segment_out.get_domain().vertex(vocit->getID())); ++vocit;
-      vertices[2] = &(segment_out.get_domain().vertex(vocit->getID())); ++vocit;
-      vertices[3] = &(segment_out.get_domain().vertex(vocit->getID()));
+      vertices[0] = &(segment_out.get_domain().vertex(vocit->id())); ++vocit;
+      vertices[1] = &(segment_out.get_domain().vertex(vocit->id())); ++vocit;
+      vertices[2] = &(segment_out.get_domain().vertex(vocit->id())); ++vocit;
+      vertices[3] = &(segment_out.get_domain().vertex(vocit->id()));
       
 
       //
       // Step 2: Bring vertices in correct order, such that refined edge is on {0,1}-edge
       //
-      VertexType * ordered_vertices[traits::subcell_desc<tetrahedron_tag, 0>::num_elements + 1];
+      VertexType * ordered_vertices[topology::subcell_desc<tetrahedron_tag, 0>::num_elements + 1];
       EdgeOnCellContainer edges_on_cell = viennagrid::ncells<1>(cell_in);
       EdgeOnCellIterator eocit = edges_on_cell.begin();
       EdgeType const & e0 = *eocit; ++eocit;
@@ -339,7 +339,7 @@ namespace viennagrid
       // Step 3: Write new cells to domain_out
       //
       CellType new_cell;
-      VertexType * cellvertices[traits::subcell_desc<tetrahedron_tag, 0>::num_elements];
+      VertexType * cellvertices[topology::subcell_desc<tetrahedron_tag, 0>::num_elements];
       
       //cell containing vertex 0:
       cellvertices[0] = ordered_vertices[0];
@@ -385,7 +385,7 @@ namespace viennagrid
                         )
     {
       CellType new_cell;
-      VertexType * cellvertices[traits::subcell_desc<tetrahedron_tag, 0>::num_elements];
+      VertexType * cellvertices[topology::subcell_desc<tetrahedron_tag, 0>::num_elements];
 
       cellvertices[0] = vertices[4];
       cellvertices[1] = vertices[1];
@@ -401,11 +401,11 @@ namespace viennagrid
       if (stable_line_is_longer(vertices[0], vertices[1],
                                 vertices[2], vertices[1])) //split edge 01, introduce line 42
       {
-        /*std::cout << "Norm " << vertices[0]->getID() << vertices[1]->getID() << ": " 
+        /*std::cout << "Norm " << vertices[0]->id() << vertices[1]->id() << ": " 
                              << viennagrid::norm(vertices[0]->getPoint() - vertices[1]->getPoint()) << std::endl;
-        std::cout << "Norm " << vertices[2]->getID() << vertices[1]->getID() << ": " 
+        std::cout << "Norm " << vertices[2]->id() << vertices[1]->id() << ": " 
                              << viennagrid::norm(vertices[2]->getPoint() - vertices[1]->getPoint()) << std::endl;
-        std::cout << "Splitting " << vertices[0]->getID() << vertices[1]->getID() << std::endl;*/
+        std::cout << "Splitting " << vertices[0]->id() << vertices[1]->id() << std::endl;*/
         cellvertices[0] = vertices[0];
         cellvertices[1] = vertices[4];
         cellvertices[2] = vertices[2];
@@ -422,11 +422,11 @@ namespace viennagrid
       }
       else //split edge 12, introduce line 05
       {
-        /*std::cout << "Norm " << vertices[0]->getID() << vertices[1]->getID() << ": " 
+        /*std::cout << "Norm " << vertices[0]->id() << vertices[1]->id() << ": " 
                              << viennagrid::norm(vertices[0]->getPoint() - vertices[1]->getPoint()) << std::endl;
-        std::cout << "Norm " << vertices[2]->getID() << vertices[1]->getID() << ": " 
+        std::cout << "Norm " << vertices[2]->id() << vertices[1]->id() << ": " 
                              << viennagrid::norm(vertices[2]->getPoint() - vertices[1]->getPoint()) << std::endl;
-        std::cout << "Splitting " << vertices[2]->getID() << vertices[1]->getID() << std::endl;*/
+        std::cout << "Splitting " << vertices[2]->id() << vertices[1]->id() << std::endl;*/
         cellvertices[0] = vertices[0];
         cellvertices[1] = vertices[4];
         cellvertices[2] = vertices[5];
@@ -461,7 +461,7 @@ namespace viennagrid
                         )
     {
       CellType new_cell;
-      VertexType * cellvertices[traits::subcell_desc<tetrahedron_tag, 0>::num_elements];
+      VertexType * cellvertices[topology::subcell_desc<tetrahedron_tag, 0>::num_elements];
 
       cellvertices[0] = vertices[4];
       cellvertices[1] = vertices[1];
@@ -497,15 +497,15 @@ namespace viennagrid
     static void apply2(CellType const & cell_in, DomainTypeOut & segment_out)
     {
       typedef typename CellType::config_type        ConfigTypeIn;
-      typedef typename viennagrid::result_of::const_ncell_container<CellType, 0>::type            VertexOnCellContainer;
+      typedef typename viennagrid::result_of::const_ncell_range<CellType, 0>::type            VertexOnCellContainer;
       typedef typename viennagrid::result_of::iterator<VertexOnCellContainer>::type         VertexOnCellIterator;            
-      typedef typename viennagrid::result_of::const_ncell_container<CellType, 1>::type            EdgeOnCellContainer;
+      typedef typename viennagrid::result_of::const_ncell_range<CellType, 1>::type            EdgeOnCellContainer;
       typedef typename viennagrid::result_of::iterator<EdgeOnCellContainer>::type           EdgeOnCellIterator;            
       
       typedef typename viennagrid::result_of::ncell_type<ConfigTypeIn, 0>::type             VertexType;
       typedef typename viennagrid::result_of::ncell_type<ConfigTypeIn, 1>::type             EdgeType;
 
-      VertexType * vertices[traits::subcell_desc<tetrahedron_tag, 0>::num_elements];
+      VertexType * vertices[topology::subcell_desc<tetrahedron_tag, 0>::num_elements];
       //std::cout << "apply2()" << std::endl;
       
       //
@@ -513,16 +513,16 @@ namespace viennagrid
       //
       VertexOnCellContainer vertices_on_cell = viennagrid::ncells<0>(cell_in);
       VertexOnCellIterator vocit = vertices_on_cell.begin();
-      vertices[0] = &(segment_out.get_domain().vertex(vocit->getID())); ++vocit;
-      vertices[1] = &(segment_out.get_domain().vertex(vocit->getID())); ++vocit;
-      vertices[2] = &(segment_out.get_domain().vertex(vocit->getID())); ++vocit;
-      vertices[3] = &(segment_out.get_domain().vertex(vocit->getID()));
+      vertices[0] = &(segment_out.get_domain().vertex(vocit->id())); ++vocit;
+      vertices[1] = &(segment_out.get_domain().vertex(vocit->id())); ++vocit;
+      vertices[2] = &(segment_out.get_domain().vertex(vocit->id())); ++vocit;
+      vertices[3] = &(segment_out.get_domain().vertex(vocit->id()));
       
 
       //
       // Step 2: Bring vertices in correct order, such that refined edge is on {0,1}-edge
       //
-      VertexType * ordered_vertices[traits::subcell_desc<tetrahedron_tag, 0>::num_elements + 2];
+      VertexType * ordered_vertices[topology::subcell_desc<tetrahedron_tag, 0>::num_elements + 2];
       EdgeOnCellContainer edges_on_cell = viennagrid::ncells<1>(cell_in);
       EdgeOnCellIterator eocit = edges_on_cell.begin();
       EdgeType const & e0 = *eocit; ++eocit;
@@ -766,7 +766,7 @@ namespace viennagrid
                         )
     {
       CellType new_cell;
-      VertexType * cellvertices[traits::subcell_desc<tetrahedron_tag, 0>::num_elements];
+      VertexType * cellvertices[topology::subcell_desc<tetrahedron_tag, 0>::num_elements];
 
       cellvertices[0] = vertices[4];
       cellvertices[1] = vertices[1];
@@ -785,20 +785,20 @@ namespace viennagrid
       if (stable_line_is_longer(vertices[0], vertices[1],
                                 vertices[1], vertices[2])) //split edge 01 again, introduce line 42
       {
-        /*std::cout << "Norm " << vertices[0]->getID() << vertices[1]->getID() << ": " 
+        /*std::cout << "Norm " << vertices[0]->id() << vertices[1]->id() << ": " 
                              << viennagrid::norm(vertices[0]->getPoint() - vertices[1]->getPoint()) << std::endl;
-        std::cout << "Norm " << vertices[2]->getID() << vertices[1]->getID() << ": " 
+        std::cout << "Norm " << vertices[2]->id() << vertices[1]->id() << ": " 
                              << viennagrid::norm(vertices[2]->getPoint() - vertices[1]->getPoint()) << std::endl;
-        std::cout << "Splitting " << vertices[0]->getID() << vertices[1]->getID() << std::endl;*/
+        std::cout << "Splitting " << vertices[0]->id() << vertices[1]->id() << std::endl;*/
         //if (diag13_len > diag12_len) //split edge 13 again, introduce line 62
         if (stable_line_is_longer(vertices[1], vertices[3],
                                   vertices[1], vertices[2])) //split edge 13 again, introduce line 62
         {
-          /*std::cout << "Norm " << vertices[1]->getID() << vertices[3]->getID() << ": " 
+          /*std::cout << "Norm " << vertices[1]->id() << vertices[3]->id() << ": " 
                                 << viennagrid::norm(vertices[1]->getPoint() - vertices[3]->getPoint()) << std::endl;
-          std::cout << "Norm " << vertices[2]->getID() << vertices[1]->getID() << ": " 
+          std::cout << "Norm " << vertices[2]->id() << vertices[1]->id() << ": " 
                                 << viennagrid::norm(vertices[2]->getPoint() - vertices[1]->getPoint()) << std::endl;
-          std::cout << "Splitting " << vertices[1]->getID() << vertices[3]->getID() << std::endl; */
+          std::cout << "Splitting " << vertices[1]->id() << vertices[3]->id() << std::endl; */
           
           if (stable_line_is_longer(vertices[1], vertices[3],
                                     vertices[0], vertices[1])) //split edge 13 again, introduce line 60
@@ -991,7 +991,7 @@ namespace viennagrid
                         )
     {
       CellType new_cell;
-      VertexType * cellvertices[traits::subcell_desc<tetrahedron_tag, 0>::num_elements];
+      VertexType * cellvertices[topology::subcell_desc<tetrahedron_tag, 0>::num_elements];
 
       //std::cout << "apply_3_2" << std::endl;
       
@@ -1045,7 +1045,7 @@ namespace viennagrid
     {
       //std::cout << "Found!" << std::endl;
       CellType new_cell;
-      VertexType * cellvertices[traits::subcell_desc<tetrahedron_tag, 0>::num_elements];
+      VertexType * cellvertices[topology::subcell_desc<tetrahedron_tag, 0>::num_elements];
 
       //double diag01_len = viennagrid::norm(vertices[0]->getPoint() - vertices[1]->getPoint());
       //double diag12_len = viennagrid::norm(vertices[1]->getPoint() - vertices[2]->getPoint());
@@ -1203,7 +1203,7 @@ namespace viennagrid
                         )
     {
       CellType new_cell;
-      VertexType * cellvertices[traits::subcell_desc<tetrahedron_tag, 0>::num_elements];
+      VertexType * cellvertices[topology::subcell_desc<tetrahedron_tag, 0>::num_elements];
 
       //double diag01_len = viennagrid::norm(vertices[0]->getPoint() - vertices[1]->getPoint());
       //double diag12_len = viennagrid::norm(vertices[1]->getPoint() - vertices[2]->getPoint());
@@ -1359,15 +1359,15 @@ namespace viennagrid
     static void apply3(CellType const & cell_in, DomainTypeOut & segment_out)
     {
       typedef typename CellType::config_type        ConfigTypeIn;
-      typedef typename viennagrid::result_of::const_ncell_container<CellType, 0>::type            VertexOnCellContainer;
+      typedef typename viennagrid::result_of::const_ncell_range<CellType, 0>::type            VertexOnCellContainer;
       typedef typename viennagrid::result_of::iterator<VertexOnCellContainer>::type         VertexOnCellIterator;            
-      typedef typename viennagrid::result_of::const_ncell_container<CellType, 1>::type            EdgeOnCellContainer;
+      typedef typename viennagrid::result_of::const_ncell_range<CellType, 1>::type            EdgeOnCellContainer;
       typedef typename viennagrid::result_of::iterator<EdgeOnCellContainer>::type           EdgeOnCellIterator;            
       
       typedef typename viennagrid::result_of::ncell_type<ConfigTypeIn, 0>::type             VertexType;
       typedef typename viennagrid::result_of::ncell_type<ConfigTypeIn, 1>::type             EdgeType;
 
-      VertexType * vertices[traits::subcell_desc<tetrahedron_tag, 0>::num_elements];
+      VertexType * vertices[topology::subcell_desc<tetrahedron_tag, 0>::num_elements];
       //std::cout << "apply3()" << std::endl;
       
       //
@@ -1375,16 +1375,16 @@ namespace viennagrid
       //
       VertexOnCellContainer vertices_on_cell = viennagrid::ncells<0>(cell_in);
       VertexOnCellIterator vocit = vertices_on_cell.begin();
-      vertices[0] = &(segment_out.get_domain().vertex(vocit->getID())); ++vocit;
-      vertices[1] = &(segment_out.get_domain().vertex(vocit->getID())); ++vocit;
-      vertices[2] = &(segment_out.get_domain().vertex(vocit->getID())); ++vocit;
-      vertices[3] = &(segment_out.get_domain().vertex(vocit->getID()));
+      vertices[0] = &(segment_out.get_domain().vertex(vocit->id())); ++vocit;
+      vertices[1] = &(segment_out.get_domain().vertex(vocit->id())); ++vocit;
+      vertices[2] = &(segment_out.get_domain().vertex(vocit->id())); ++vocit;
+      vertices[3] = &(segment_out.get_domain().vertex(vocit->id()));
       
 
       //
       // Step 2: Bring vertices in correct order
       //
-      VertexType * ordered_vertices[traits::subcell_desc<tetrahedron_tag, 0>::num_elements + 3];
+      VertexType * ordered_vertices[topology::subcell_desc<tetrahedron_tag, 0>::num_elements + 3];
       EdgeOnCellContainer edges_on_cell = viennagrid::ncells<1>(cell_in);
       EdgeOnCellIterator eocit = edges_on_cell.begin();
       EdgeType const & e0 = *eocit; ++eocit;
@@ -1712,7 +1712,7 @@ namespace viennagrid
                         )
     {
       CellType new_cell;
-      VertexType * cellvertices[traits::subcell_desc<tetrahedron_tag, 0>::num_elements];
+      VertexType * cellvertices[topology::subcell_desc<tetrahedron_tag, 0>::num_elements];
 
       //double diag03_len = viennagrid::norm(vertices[0]->getPoint() - vertices[3]->getPoint());
       //double diag13_len = viennagrid::norm(vertices[1]->getPoint() - vertices[3]->getPoint());
@@ -1882,7 +1882,7 @@ namespace viennagrid
                         )
     {
       CellType new_cell;
-      VertexType * cellvertices[traits::subcell_desc<tetrahedron_tag, 0>::num_elements];
+      VertexType * cellvertices[topology::subcell_desc<tetrahedron_tag, 0>::num_elements];
 
       //double diag02_len = viennagrid::norm(vertices[0]->getPoint() - vertices[2]->getPoint());
       //double diag03_len = viennagrid::norm(vertices[0]->getPoint() - vertices[3]->getPoint());
@@ -2610,15 +2610,15 @@ namespace viennagrid
     static void apply4(CellType const & cell_in, DomainTypeOut & segment_out)
     {
       typedef typename CellType::config_type        ConfigTypeIn;
-      typedef typename viennagrid::result_of::const_ncell_container<CellType, 0>::type            VertexOnCellContainer;
+      typedef typename viennagrid::result_of::const_ncell_range<CellType, 0>::type            VertexOnCellContainer;
       typedef typename viennagrid::result_of::iterator<VertexOnCellContainer>::type         VertexOnCellIterator;            
-      typedef typename viennagrid::result_of::const_ncell_container<CellType, 1>::type            EdgeOnCellContainer;
+      typedef typename viennagrid::result_of::const_ncell_range<CellType, 1>::type            EdgeOnCellContainer;
       typedef typename viennagrid::result_of::iterator<EdgeOnCellContainer>::type           EdgeOnCellIterator;            
       
       typedef typename viennagrid::result_of::ncell_type<ConfigTypeIn, 0>::type             VertexType;
       typedef typename viennagrid::result_of::ncell_type<ConfigTypeIn, 1>::type             EdgeType;
 
-      VertexType * vertices[traits::subcell_desc<tetrahedron_tag, 0>::num_elements];
+      VertexType * vertices[topology::subcell_desc<tetrahedron_tag, 0>::num_elements];
       //std::cout << "apply4()" << std::endl;
       
       //
@@ -2626,16 +2626,16 @@ namespace viennagrid
       //
       VertexOnCellContainer vertices_on_cell = viennagrid::ncells<0>(cell_in);
       VertexOnCellIterator vocit = vertices_on_cell.begin();
-      vertices[0] = &(segment_out.get_domain().vertex(vocit->getID())); ++vocit;
-      vertices[1] = &(segment_out.get_domain().vertex(vocit->getID())); ++vocit;
-      vertices[2] = &(segment_out.get_domain().vertex(vocit->getID())); ++vocit;
-      vertices[3] = &(segment_out.get_domain().vertex(vocit->getID()));
+      vertices[0] = &(segment_out.get_domain().vertex(vocit->id())); ++vocit;
+      vertices[1] = &(segment_out.get_domain().vertex(vocit->id())); ++vocit;
+      vertices[2] = &(segment_out.get_domain().vertex(vocit->id())); ++vocit;
+      vertices[3] = &(segment_out.get_domain().vertex(vocit->id()));
       
 
       //
       // Step 2: Bring vertices in correct order, such that refined edge is on {0,1}-edge
       //
-      VertexType * ordered_vertices[traits::subcell_desc<tetrahedron_tag, 0>::num_elements + 4];
+      VertexType * ordered_vertices[topology::subcell_desc<tetrahedron_tag, 0>::num_elements + 4];
       EdgeOnCellContainer edges_on_cell = viennagrid::ncells<1>(cell_in);
       EdgeOnCellIterator eocit = edges_on_cell.begin();
       EdgeType const & e0 = *eocit; ++eocit;
@@ -2910,7 +2910,7 @@ namespace viennagrid
                         )
     {
       CellType new_cell;
-      VertexType * cellvertices[traits::subcell_desc<tetrahedron_tag, 0>::num_elements];
+      VertexType * cellvertices[topology::subcell_desc<tetrahedron_tag, 0>::num_elements];
 
       cellvertices[0] = vertices[6];
       cellvertices[1] = vertices[7];
@@ -3076,15 +3076,15 @@ namespace viennagrid
     static void apply5(CellType const & cell_in, DomainTypeOut & segment_out)
     {
       typedef typename CellType::config_type        ConfigTypeIn;
-      typedef typename viennagrid::result_of::const_ncell_container<CellType, 0>::type            VertexOnCellContainer;
+      typedef typename viennagrid::result_of::const_ncell_range<CellType, 0>::type            VertexOnCellContainer;
       typedef typename viennagrid::result_of::iterator<VertexOnCellContainer>::type         VertexOnCellIterator;            
-      typedef typename viennagrid::result_of::const_ncell_container<CellType, 1>::type            EdgeOnCellContainer;
+      typedef typename viennagrid::result_of::const_ncell_range<CellType, 1>::type            EdgeOnCellContainer;
       typedef typename viennagrid::result_of::iterator<EdgeOnCellContainer>::type           EdgeOnCellIterator;            
       
       typedef typename viennagrid::result_of::ncell_type<ConfigTypeIn, 0>::type             VertexType;
       typedef typename viennagrid::result_of::ncell_type<ConfigTypeIn, 1>::type             EdgeType;
 
-      VertexType * vertices[traits::subcell_desc<tetrahedron_tag, 0>::num_elements];
+      VertexType * vertices[topology::subcell_desc<tetrahedron_tag, 0>::num_elements];
       //std::cout << "apply5()" << std::endl;
       
       //
@@ -3092,16 +3092,16 @@ namespace viennagrid
       //
       VertexOnCellContainer vertices_on_cell = viennagrid::ncells<0>(cell_in);
       VertexOnCellIterator vocit = vertices_on_cell.begin();
-      vertices[0] = &(segment_out.get_domain().vertex(vocit->getID())); ++vocit;
-      vertices[1] = &(segment_out.get_domain().vertex(vocit->getID())); ++vocit;
-      vertices[2] = &(segment_out.get_domain().vertex(vocit->getID())); ++vocit;
-      vertices[3] = &(segment_out.get_domain().vertex(vocit->getID()));
+      vertices[0] = &(segment_out.get_domain().vertex(vocit->id())); ++vocit;
+      vertices[1] = &(segment_out.get_domain().vertex(vocit->id())); ++vocit;
+      vertices[2] = &(segment_out.get_domain().vertex(vocit->id())); ++vocit;
+      vertices[3] = &(segment_out.get_domain().vertex(vocit->id()));
       
 
       //
       // Step 2: Bring vertices in correct order, such that refined edge is on {0,1}-edge
       //
-      VertexType * ordered_vertices[traits::subcell_desc<tetrahedron_tag, 0>::num_elements + 5];
+      VertexType * ordered_vertices[topology::subcell_desc<tetrahedron_tag, 0>::num_elements + 5];
       EdgeOnCellContainer edges_on_cell = viennagrid::ncells<1>(cell_in);
       EdgeOnCellIterator eocit = edges_on_cell.begin();
       EdgeType const & e0 = *eocit; ++eocit;
@@ -3215,15 +3215,15 @@ namespace viennagrid
     static void apply6(CellType const & cell_in, DomainTypeOut & segment_out)
     {
       typedef typename CellType::config_type        ConfigTypeIn;
-      typedef typename viennagrid::result_of::const_ncell_container<CellType, 0>::type            VertexOnCellContainer;
+      typedef typename viennagrid::result_of::const_ncell_range<CellType, 0>::type            VertexOnCellContainer;
       typedef typename viennagrid::result_of::iterator<VertexOnCellContainer>::type         VertexOnCellIterator;            
-      typedef typename viennagrid::result_of::const_ncell_container<CellType, 1>::type            EdgeOnCellContainer;
+      typedef typename viennagrid::result_of::const_ncell_range<CellType, 1>::type            EdgeOnCellContainer;
       typedef typename viennagrid::result_of::iterator<EdgeOnCellContainer>::type           EdgeOnCellIterator;            
       
       typedef typename viennagrid::result_of::ncell_type<ConfigTypeIn, 0>::type             VertexType;
 
-      VertexType * vertices[traits::subcell_desc<tetrahedron_tag, 0>::num_elements
-                            + traits::subcell_desc<tetrahedron_tag, 1>::num_elements];
+      VertexType * vertices[topology::subcell_desc<tetrahedron_tag, 0>::num_elements
+                            + topology::subcell_desc<tetrahedron_tag, 1>::num_elements];
       //std::cout << "apply6()" << std::endl;
       
       //
@@ -3233,10 +3233,10 @@ namespace viennagrid
       //grab existing vertices:
       VertexOnCellContainer vertices_on_cell = viennagrid::ncells<0>(cell_in);
       VertexOnCellIterator vocit = vertices_on_cell.begin();
-      vertices[0] = &(segment_out.get_domain().vertex(vocit->getID())); ++vocit;
-      vertices[1] = &(segment_out.get_domain().vertex(vocit->getID())); ++vocit;
-      vertices[2] = &(segment_out.get_domain().vertex(vocit->getID())); ++vocit;
-      vertices[3] = &(segment_out.get_domain().vertex(vocit->getID()));
+      vertices[0] = &(segment_out.get_domain().vertex(vocit->id())); ++vocit;
+      vertices[1] = &(segment_out.get_domain().vertex(vocit->id())); ++vocit;
+      vertices[2] = &(segment_out.get_domain().vertex(vocit->id())); ++vocit;
+      vertices[3] = &(segment_out.get_domain().vertex(vocit->id()));
 
       //add vertices from edge
       EdgeOnCellContainer edges_on_cell = viennagrid::ncells<1>(cell_in);
@@ -3252,7 +3252,7 @@ namespace viennagrid
       // Step 2: Add new cells to new domain:
       //
       CellType new_cell;
-      VertexType * cellvertices[traits::subcell_desc<tetrahedron_tag, 0>::num_elements];
+      VertexType * cellvertices[topology::subcell_desc<tetrahedron_tag, 0>::num_elements];
       
       //0-4-5-6:
       cellvertices[0] = vertices[0];
@@ -3402,7 +3402,7 @@ namespace viennagrid
     template <typename CellType, typename DomainTypeOut>
     static void apply(CellType const & cell_in, DomainTypeOut & segment_out)
     {
-      typedef typename viennagrid::result_of::const_ncell_container<CellType, 1>::type            EdgeOnCellContainer;
+      typedef typename viennagrid::result_of::const_ncell_range<CellType, 1>::type            EdgeOnCellContainer;
       typedef typename viennagrid::result_of::iterator<EdgeOnCellContainer>::type                 EdgeOnCellIterator;            
       
       //std::cout << "tetrahedron_tag::apply()" << std::endl;

@@ -27,7 +27,7 @@ namespace viennagrid
   };
   
 
-  namespace traits
+  namespace topology
   {
 
     template <>

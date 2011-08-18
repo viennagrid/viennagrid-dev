@@ -81,8 +81,8 @@ namespace viennagrid
   {
       //typedef typename result_of::element_tag<typename Config::cell_tag, dim>::type    element_tag;
       typedef domain<Config>                                                          domain_type;
-      typedef typename traits::subcell_desc<typename Config::cell_tag, dim>::element_tag    element_tag;
-      typedef traits::subcell_desc<element_tag, 0>                                       VertexOnElementSpecs;
+      typedef typename topology::subcell_desc<typename Config::cell_tag, dim>::element_tag    element_tag;
+      typedef topology::subcell_desc<element_tag, 0>                                       VertexOnElementSpecs;
       typedef element<Config, element_tag >                                              element_type;
       typedef element<Config, typename Config::cell_tag>                                   cell_type;
       typedef typename result_of::element_container<domain_type, dim, Config::cell_tag::topology_level>::type           container_type;
@@ -97,7 +97,7 @@ namespace viennagrid
       /*
       element_type * add(element_type & e)
       {
-        e.setID(elements.size());
+        e.id(elements.size());
         elements.push_back(e);
         elements.back().fill(*this);
         return &(elements.back());
@@ -108,7 +108,7 @@ namespace viennagrid
 
         typedef typename std::map< element_key<element_type>, element_type >::iterator  ElementIterator;
         
-        typedef typename result_of::ncell_container<element_type, 0>::type  VertexOnElementContainer;
+        typedef typename result_of::ncell_range<element_type, 0>::type      VertexOnElementRange;
         typedef typename result_of::iterator<element_type, 0>::type         VertexOnElementIterator;
 
         element_key<element_type> epc(elem);
@@ -119,7 +119,7 @@ namespace viennagrid
         if (elit == elements.end())
         {
           //provide ID for element:
-          elem.setID(elements.size());
+          elem.id(elements.size());
 
           //std::cout << "ACCEPTED " << std::endl;
 
@@ -135,18 +135,18 @@ namespace viennagrid
         
         
         //set orientation:
-        VertexOnElementContainer vertices_on_element = ncells<0>(elem);
+        VertexOnElementRange vertices_on_element = ncells<0>(elem);
         for (VertexOnElementIterator voeit = vertices_on_element.begin();
               voeit != vertices_on_element.end();
               ++voeit, ++i)
         {
             
-            VertexOnElementContainer vertices_on_element_2 = ncells<0>(elit->second);
+            VertexOnElementRange vertices_on_element_2 = ncells<0>(elit->second);
             for (VertexOnElementIterator voeit2 = vertices_on_element_2.begin();
                   voeit2 != vertices_on_element_2.end();
                   ++voeit2, ++j)
             {
-              if (voeit->getID() == voeit2->getID())
+              if (voeit->id() == voeit2->id())
               {
                 //orientation->setPermutation(i,j);   //local (elem) to global (elit->second)
                 orientation->setPermutation(j,i);   //global (elit->second) to local (elem)
@@ -236,7 +236,7 @@ namespace viennagrid
         assert(viennagrid::traits::capacity(elements) > elements.size() && "Not enough memory for cells reserved!");
         
         elements.push_back(e);
-        elements.back().setID(elements.size());
+        elements.back().id(elements.size());
         //std::cout << "Filling cell for domain " << this << std::endl;
         elements.back().fill(*this);
         return &(elements.back());
@@ -314,9 +314,9 @@ namespace viennagrid
       {
         assert(viennagrid::traits::capacity(elements) > elements.size() && "Not enough memory for vertices reserved!");
         //element_type temp(e);
-        //temp.setID(elements.size());
+        //temp.id(elements.size());
         elements.push_back(e);
-        elements.back().setID(elements.size()-1);
+        elements.back().id(elements.size()-1);
         return &(elements.back());
       }
       
@@ -377,7 +377,9 @@ namespace viennagrid
         segments.resize(num);
         
         for (size_t i=0; i<segments.size(); ++i)
+        {
           segments[i].set_domain(*this);
+        }
       }
 
       segment_type const& segment(size_type seg_index) const
@@ -411,7 +413,7 @@ namespace viennagrid
     struct ncell_type
     {
       typedef element<Config, 
-                      typename traits::subcell_desc<typename Config::cell_tag,
+                      typename topology::subcell_desc<typename Config::cell_tag,
                                                     dim>::element_tag
                       > type;
     };

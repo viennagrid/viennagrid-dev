@@ -66,19 +66,19 @@ void testNewDomain(std::string & infile, std::string & outfile)
   typedef viennagrid::result_of::ncell_type<TestDomainConfig,
                                             CellTag::topology_level>::type   CellType;
                                             
-  typedef viennagrid::result_of::ncell_container<Domain, 0>::type   VertexContainer;
+  typedef viennagrid::result_of::ncell_range<Domain, 0>::type   VertexContainer;
   typedef viennagrid::result_of::iterator<VertexContainer>::type    VertexIterator;
                                             
-  typedef viennagrid::result_of::ncell_container<Domain, 1>::type   EdgeContainer;
+  typedef viennagrid::result_of::ncell_range<Domain, 1>::type   EdgeContainer;
   typedef viennagrid::result_of::iterator<EdgeContainer>::type      EdgeIterator;
 
-  typedef viennagrid::result_of::ncell_container<Domain, CellTag::topology_level-1>::type   FacetContainer;
+  typedef viennagrid::result_of::ncell_range<Domain, CellTag::topology_level-1>::type   FacetContainer;
   typedef viennagrid::result_of::iterator<FacetContainer>::type                             FacetIterator;
 
-  typedef viennagrid::result_of::ncell_container<Domain, CellTag::topology_level>::type     CellContainer;
+  typedef viennagrid::result_of::ncell_range<Domain, CellTag::topology_level>::type     CellContainer;
   typedef viennagrid::result_of::iterator<CellContainer>::type                              CellIterator;
   
-  typedef viennagrid::result_of::ncell_container<EdgeType, 0>::type       VertexOnEdgeContainer;
+  typedef viennagrid::result_of::ncell_range<EdgeType, 0>::type       VertexOnEdgeContainer;
   typedef viennagrid::result_of::iterator<VertexOnEdgeContainer>::type    VertexOnEdgeIterator;
   
   Domain domain;
@@ -115,7 +115,7 @@ void testNewDomain(std::string & infile, std::string & outfile)
        ++vit)
   {
     vit->print_short();
-    typedef viennagrid::result_of::ncell_container<VertexType, 1>::type      EdgeOnVertexContainer;
+    typedef viennagrid::result_of::ncell_range<VertexType, 1>::type      EdgeOnVertexContainer;
     typedef viennagrid::result_of::iterator<EdgeOnVertexContainer>::type     EdgeOnVertexIterator;
     
     EdgeOnVertexContainer edges = viennagrid::ncells<1>(*vit, domain);
@@ -141,7 +141,7 @@ void testNewDomain(std::string & infile, std::string & outfile)
        ++fit)
   {
     fit->print_short();
-    typedef viennagrid::result_of::const_ncell_container<FacetType, CellTag::topology_level>::type   CellOnFacetContainer;
+    typedef viennagrid::result_of::const_ncell_range<FacetType, CellTag::topology_level>::type   CellOnFacetContainer;
     typedef viennagrid::result_of::iterator<CellOnFacetContainer>::type     CellOnFacetIterator;
     
     CellOnFacetContainer cells;

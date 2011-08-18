@@ -69,16 +69,16 @@ void testNewDomain(std::string & infile, std::string & outfile)
                                             CellTag::topology_level>::type   CellType;
   //typedef viennagrid::DomainTypes<TestDomainConfig>::segment_type  Segment;
 
-  typedef viennagrid::result_of::ncell_container<Domain, 0>::type   VertexContainer;
+  typedef viennagrid::result_of::ncell_range<Domain, 0>::type   VertexContainer;
   typedef viennagrid::result_of::iterator<VertexContainer>::type        VertexIterator;
       
-  typedef viennagrid::result_of::ncell_container<Domain, 1>::type   EdgeContainer;
+  typedef viennagrid::result_of::ncell_range<Domain, 1>::type   EdgeContainer;
   typedef viennagrid::result_of::iterator<EdgeContainer>::type          EdgeIterator;
 
-  typedef viennagrid::result_of::ncell_container<Domain, CellTag::topology_level-1>::type   FacetContainer;
+  typedef viennagrid::result_of::ncell_range<Domain, CellTag::topology_level-1>::type   FacetContainer;
   typedef viennagrid::result_of::iterator<FacetContainer>::type                                 FacetIterator;
 
-  typedef viennagrid::result_of::ncell_container<Domain, CellTag::topology_level>::type     CellContainer;
+  typedef viennagrid::result_of::ncell_range<Domain, CellTag::topology_level>::type     CellContainer;
   typedef viennagrid::result_of::iterator<CellContainer>::type                                  CellIterator;
 
   Domain domain;

@@ -112,9 +112,9 @@ namespace io
             vertex.getPoint()[0] = iter->second[0];
             vertex.getPoint()[1] = iter->second[1];
             vertex.getPoint()[2] = iter->second[2];
-            index_map[iter->first] = domain.add(vertex)->getID();
-            //std::cout << iter->first << " - " << vertex.getID() << std::endl;
-            //std::cout << vertex.getID() << std::endl;
+            index_map[iter->first] = domain.add(vertex)->id();
+            //std::cout << iter->first << " - " << vertex.id() << std::endl;
+            //std::cout << vertex.id() << std::endl;
          }
          
          domain.create_segments(seg_cell.size());         
@@ -128,7 +128,7 @@ namespace io
          //std::cout << "cellsize: " << cellsize << std::endl;
          //domain.reserve_cells(cellsize);
          
-         static const std::size_t CELLSIZE = viennagrid::traits::subcell_desc<cell_tag, 0>::num_elements;         
+         static const std::size_t CELLSIZE = viennagrid::topology::subcell_desc<cell_tag, 0>::num_elements;         
 
          //std::cout << "transferring topology .. " << std::endl;
          for(seg_iter_type si = seg_cell.begin(); si != seg_cell.end(); si++)

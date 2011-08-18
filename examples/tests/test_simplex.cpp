@@ -55,7 +55,7 @@ void print_elements(DomainT & domain)
   DomainT const & const_domain = domain;
 
   std::cout << "-- non-const --" << std::endl;
-  typedef typename viennagrid::result_of::ncell_container<DomainT, dim>::type  ContainerT;
+  typedef typename viennagrid::result_of::ncell_range<DomainT, dim>::type  ContainerT;
   typedef typename viennagrid::result_of::iterator<ContainerT>::type           ContainerTIterator;
   
   ContainerT elements = viennagrid::ncells<dim>(domain);
@@ -68,7 +68,7 @@ void print_elements(DomainT & domain)
   }
   
   std::cout << "-- const --" << std::endl;
-  typedef typename viennagrid::result_of::const_ncell_container<DomainT, dim>::type   ConstContainerT;
+  typedef typename viennagrid::result_of::const_ncell_range<DomainT, dim>::type   ConstContainerT;
   typedef typename viennagrid::result_of::iterator<ConstContainerT>::type             ConstContainerTIterator;
   
   ConstContainerT const_elements = viennagrid::ncells<dim>(const_domain);
@@ -164,12 +164,12 @@ void testNewDomain()
   
   //Test for const-iterators:
   std::cout << "Test for const iterator: " << std::endl;
-  typedef viennagrid::result_of::const_ncell_container<Domain, 1>::type  EdgeContainer;
+  typedef viennagrid::result_of::const_ncell_range<Domain, 1>::type  EdgeContainer;
   EdgeContainer edges = viennagrid::ncells<1>(domain);
   
   edges.begin()->print();
   
-  typedef viennagrid::result_of::const_ncell_container<EdgeType, 0>::type  VertexOnEdgeContainer;
+  typedef viennagrid::result_of::const_ncell_range<EdgeType, 0>::type  VertexOnEdgeContainer;
   VertexOnEdgeContainer vertices_on_edge = viennagrid::ncells<0>(*(edges.begin()));
   
   for (viennagrid::result_of::iterator<VertexOnEdgeContainer>::type voe_it = vertices_on_edge.begin();

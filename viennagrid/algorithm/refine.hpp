@@ -34,11 +34,11 @@ namespace viennagrid
     typedef typename viennagrid::result_of::ncell_type<ConfigTypeIn, 1>::type                                      EdgeType;
     typedef typename viennagrid::result_of::ncell_type<ConfigTypeIn, CellTagIn::topology_level>::type              CellType;
     
-    typedef typename viennagrid::result_of::const_ncell_container<DomainTypeIn, CellTagIn::topology_level>::type   CellContainer;          
+    typedef typename viennagrid::result_of::const_ncell_range<DomainTypeIn, CellTagIn::topology_level>::type   CellContainer;          
     typedef typename viennagrid::result_of::iterator<CellContainer>::type                                          CellIterator;         
-    typedef typename viennagrid::result_of::const_ncell_container<CellType, 1>::type                               EdgeOnCellContainer;
+    typedef typename viennagrid::result_of::const_ncell_range<CellType, 1>::type                               EdgeOnCellContainer;
     typedef typename viennagrid::result_of::iterator<EdgeOnCellContainer>::type                                    EdgeOnCellIterator;            
-    typedef typename viennagrid::result_of::const_ncell_container<EdgeType, 0>::type                               VertexOnEdgeContainer;
+    typedef typename viennagrid::result_of::const_ncell_range<EdgeType, 0>::type                               VertexOnEdgeContainer;
     typedef typename viennagrid::result_of::iterator<VertexOnEdgeContainer>::type                                  VertexOnEdgeIterator;            
     
     
@@ -119,9 +119,9 @@ namespace viennagrid
     typedef typename ConfigTypeIn::cell_tag           CellTagIn;   
     typedef typename viennagrid::result_of::ncell_type<ConfigTypeIn, CellTagIn::topology_level>::type              CellType;
     
-    typedef typename viennagrid::result_of::const_ncell_container<DomainTypeIn, CellTagIn::topology_level>::type   CellContainer;          
+    typedef typename viennagrid::result_of::const_ncell_range<DomainTypeIn, CellTagIn::topology_level>::type   CellContainer;          
     typedef typename viennagrid::result_of::iterator<CellContainer>::type                                          CellIterator;         
-    typedef typename viennagrid::result_of::const_ncell_container<CellType, 1>::type                               EdgeOnCellContainer;
+    typedef typename viennagrid::result_of::const_ncell_range<CellType, 1>::type                               EdgeOnCellContainer;
     typedef typename viennagrid::result_of::iterator<EdgeOnCellContainer>::type                                    EdgeOnCellIterator;            
     
     std::size_t cells_for_refinement = 0;
@@ -167,15 +167,15 @@ namespace viennagrid
     typedef typename viennagrid::result_of::ncell_type<ConfigTypeIn, 1>::type                                      EdgeType;
     typedef typename viennagrid::result_of::ncell_type<ConfigTypeIn, CellTagIn::topology_level>::type              CellType;
     
-    typedef typename viennagrid::result_of::const_ncell_container<DomainTypeIn, 0>::type                           VertexContainer;          
+    typedef typename viennagrid::result_of::const_ncell_range<DomainTypeIn, 0>::type                           VertexContainer;          
     typedef typename viennagrid::result_of::iterator<VertexContainer>::type                                        VertexIterator;         
-    typedef typename viennagrid::result_of::const_ncell_container<DomainTypeIn, 1>::type                           EdgeContainer;          
+    typedef typename viennagrid::result_of::const_ncell_range<DomainTypeIn, 1>::type                           EdgeContainer;          
     typedef typename viennagrid::result_of::iterator<EdgeContainer>::type                                          EdgeIterator;         
-    typedef typename viennagrid::result_of::const_ncell_container<SegmentTypeIn, CellTagIn::topology_level>::type  CellContainer;          
+    typedef typename viennagrid::result_of::const_ncell_range<SegmentTypeIn, CellTagIn::topology_level>::type  CellContainer;          
     typedef typename viennagrid::result_of::iterator<CellContainer>::type                                          CellIterator;         
-    typedef typename viennagrid::result_of::const_ncell_container<CellType, 0>::type                               VertexOnCellContainer;
+    typedef typename viennagrid::result_of::const_ncell_range<CellType, 0>::type                               VertexOnCellContainer;
     typedef typename viennagrid::result_of::iterator<VertexOnCellContainer>::type                                  VertexOnCellIterator;            
-    typedef typename viennagrid::result_of::const_ncell_container<EdgeType, 0>::type                               VertexOnEdgeContainer;
+    typedef typename viennagrid::result_of::const_ncell_range<EdgeType, 0>::type                               VertexOnEdgeContainer;
     typedef typename viennagrid::result_of::iterator<VertexOnEdgeContainer>::type                                  VertexOnEdgeIterator;            
 
 
@@ -222,7 +222,7 @@ namespace viennagrid
         //double r = ((double)rand()/(double)RAND_MAX);
         //v.getPoint() = v1.getPoint() * r + v2.getPoint() * (1.0 - r);  //debug value
         
-        v.setID(num_vertices);
+        v.id(num_vertices);
         domain_out.add(v);
         viennadata::access<refinement_key, std::size_t>(refinement_key())(*eit) = num_vertices;
         ++num_vertices;
@@ -269,15 +269,15 @@ namespace viennagrid
     typedef typename viennagrid::result_of::ncell_type<ConfigTypeIn, 1>::type                                      EdgeType;
     typedef typename viennagrid::result_of::ncell_type<ConfigTypeIn, CellTagIn::topology_level>::type              CellType;
     
-    typedef typename viennagrid::result_of::const_ncell_container<DomainTypeIn, 0>::type                           VertexContainer;          
+    typedef typename viennagrid::result_of::const_ncell_range<DomainTypeIn, 0>::type                           VertexContainer;          
     typedef typename viennagrid::result_of::iterator<VertexContainer>::type                                        VertexIterator;         
-    typedef typename viennagrid::result_of::const_ncell_container<DomainTypeIn, 1>::type                           EdgeContainer;          
+    typedef typename viennagrid::result_of::const_ncell_range<DomainTypeIn, 1>::type                           EdgeContainer;          
     typedef typename viennagrid::result_of::iterator<EdgeContainer>::type                                          EdgeIterator;         
-    typedef typename viennagrid::result_of::const_ncell_container<SegmentTypeIn, CellTagIn::topology_level>::type  CellContainer;          
+    typedef typename viennagrid::result_of::const_ncell_range<SegmentTypeIn, CellTagIn::topology_level>::type  CellContainer;          
     typedef typename viennagrid::result_of::iterator<CellContainer>::type                                          CellIterator;         
-    typedef typename viennagrid::result_of::const_ncell_container<EdgeType, 0>::type                               VertexOnEdgeContainer;
+    typedef typename viennagrid::result_of::const_ncell_range<EdgeType, 0>::type                               VertexOnEdgeContainer;
     typedef typename viennagrid::result_of::iterator<VertexOnEdgeContainer>::type                                  VertexOnEdgeIterator;            
-    typedef typename viennagrid::result_of::const_ncell_container<CellType, 0>::type                               VertexOnCellContainer;
+    typedef typename viennagrid::result_of::const_ncell_range<CellType, 0>::type                               VertexOnCellContainer;
     typedef typename viennagrid::result_of::iterator<VertexOnCellContainer>::type                                  VertexOnCellIterator;            
     
     std::cout << "Refining domain uniformly..." << std::endl;
@@ -314,7 +314,7 @@ namespace viennagrid
       //double r=((double)rand()/(double)RAND_MAX);
       //v.getPoint() = v1.getPoint() * r + v2.getPoint() * (1.0 - r);  //debug value
       
-      v.setID(num_vertices);
+      v.id(num_vertices);
       domain_out.add(v);
       viennadata::access<refinement_key, std::size_t>(refinement_key())(*eit) = num_vertices;
       viennadata::access<refinement_key, bool>(refinement_key())(*eit) = true;

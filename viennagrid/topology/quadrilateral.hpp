@@ -26,7 +26,7 @@ namespace viennagrid
     static std::string name() { return "Quadrilateral"; }
   };
   
-  namespace traits
+  namespace topology
   {
   
     //parallelogram

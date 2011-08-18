@@ -114,10 +114,10 @@ namespace viennagrid
   //Check availability of iterators:
   template <typename ElementTag,
             dim_type level,
-            typename handling_tag = typename traits::subcell_desc<ElementTag, level>::handling_tag>
+            typename handling_tag = typename topology::subcell_desc<ElementTag, level>::handling_tag>
   struct ElementIteratorChecker
   {
-    enum{ ReturnValue = traits::subcell_desc<ElementTag, level>::ERROR_ITERATOR_NOT_PROVIDED_AT_THIS_LEVEL };
+    enum{ ReturnValue = topology::subcell_desc<ElementTag, level>::ERROR_ITERATOR_NOT_PROVIDED_AT_THIS_LEVEL };
   };
 
   template <typename ElementTag,
@@ -156,10 +156,10 @@ namespace viennagrid
   }
 
   template <typename config_type, typename element_tag, dim_type dim>
-  class ncell_container < element<config_type, element_tag>, dim, false>
+  class ncell_range < element<config_type, element_tag>, dim, false>
   {
       typedef element< config_type,
-                       typename traits::subcell_desc<element_tag, dim>::element_tag
+                       typename topology::subcell_desc<element_tag, dim>::element_tag
                      >                                                         element_type;
                      
       typedef element<config_type, element_tag>                                host_type;
@@ -171,11 +171,11 @@ namespace viennagrid
       //typedef typename container_type::iterator   iterator;
       typedef on_element_iterator< element_type >                              iterator;
       
-      ncell_container() : cont_(NULL) {};
+      ncell_range() : cont_(NULL) {};
       
-      ncell_container(ncell_proxy< element<config_type, element_tag> > const & p) : cont_(p.get().template container<dim>()) {}
+      ncell_range(ncell_proxy< element<config_type, element_tag> > const & p) : cont_(p.get().template container<dim>()) {}
       
-      ncell_container & operator=(ncell_proxy< element<config_type, element_tag> > p)
+      ncell_range & operator=(ncell_proxy< element<config_type, element_tag> > p)
       { 
         cont_ = p.get().template container<dim>();
         return *this;
@@ -190,7 +190,7 @@ namespace viennagrid
       iterator end()   const
       {
         assert(cont_ != NULL);
-        return iterator(cont_ + traits::subcell_desc<element_tag, dim>::num_elements);
+        return iterator(cont_ + topology::subcell_desc<element_tag, dim>::num_elements);
       }
       
     private:
@@ -209,10 +209,10 @@ namespace viennagrid
   }
   
   template <typename config_type, typename element_tag, dim_type dim>
-  class const_ncell_container < element<config_type, element_tag>, dim, false>
+  class const_ncell_range < element<config_type, element_tag>, dim, false>
   {
       typedef element< config_type,
-                       typename traits::subcell_desc<element_tag, dim>::element_tag
+                       typename topology::subcell_desc<element_tag, dim>::element_tag
                      >                                                         element_type;
                      
       typedef element<config_type, element_tag>                                host_type;
@@ -223,19 +223,19 @@ namespace viennagrid
     public: 
       //typedef typename container_type::iterator   iterator;
       typedef const_on_element_iterator< element_type >                         iterator;
-      const_ncell_container() : cont_(NULL) {};
+      const_ncell_range() : cont_(NULL) {};
       
-      const_ncell_container(const_ncell_proxy< element<config_type, element_tag> > const & p) : cont_(p.get().template container<dim>()) {}
+      const_ncell_range(const_ncell_proxy< element<config_type, element_tag> > const & p) : cont_(p.get().template container<dim>()) {}
 
-      const_ncell_container(ncell_proxy< element<config_type, element_tag> > const & p) : cont_(p.get().template container<dim>()) {}
+      const_ncell_range(ncell_proxy< element<config_type, element_tag> > const & p) : cont_(p.get().template container<dim>()) {}
 
-      const_ncell_container & operator=(const_ncell_proxy< element<config_type, element_tag> > p)
+      const_ncell_range & operator=(const_ncell_proxy< element<config_type, element_tag> > p)
       { 
         cont_ = p.get().template container<dim>();
         return *this;
       }
 
-      const_ncell_container & operator=(ncell_proxy< element<config_type, element_tag> > p)
+      const_ncell_range & operator=(ncell_proxy< element<config_type, element_tag> > p)
       { 
         cont_ = p.get().template container<dim>();
         return *this;
@@ -250,7 +250,7 @@ namespace viennagrid
       iterator end() const
       { 
         assert(cont_ != NULL);
-        return iterator(cont_ + traits::subcell_desc<element_tag, dim>::num_elements);
+        return iterator(cont_ + topology::subcell_desc<element_tag, dim>::num_elements);
       }
       
     private:
@@ -277,10 +277,10 @@ namespace viennagrid
     typedef typename result_of::ncell_type<Config, dim_start>::type    LowerElementType;
     typedef typename result_of::ncell_type<Config, dim_iter>::type     HigherElementType;
     
-    typedef typename result_of::ncell_container<EnclosingType, dim_iter>::type      HigherElementContainer;
+    typedef typename result_of::ncell_range<EnclosingType, dim_iter>::type      HigherElementContainer;
     typedef typename result_of::iterator<HigherElementContainer>::type                    HigherElementIterator;
     
-    typedef typename result_of::ncell_container<HigherElementType, dim_start>::type  LowerOnHigherContainer;
+    typedef typename result_of::ncell_range<HigherElementType, dim_start>::type  LowerOnHigherContainer;
     typedef typename result_of::iterator<LowerOnHigherContainer>::type                     LowerOnHigherIterator;
     
     
@@ -334,10 +334,10 @@ namespace viennagrid
 
   template <typename config_type, typename element_tag,
             dim_type dim>
-  class ncell_container < element<config_type, element_tag>, dim, true>
+  class ncell_range < element<config_type, element_tag>, dim, true>
   {
       typedef element< config_type,
-                       typename traits::subcell_desc<typename config_type::cell_tag,
+                       typename topology::subcell_desc<typename config_type::cell_tag,
                                                dim>::element_tag
                      >                                                         element_type;
                      
@@ -349,17 +349,17 @@ namespace viennagrid
       //typedef typename container_type::iterator   iterator;
       typedef on_element_iterator<element_type>                                iterator;
       
-      ncell_container() : cont_(NULL) {};
+      ncell_range() : cont_(NULL) {};
       
       template <typename EnclosingType> //either domain or segment
-      ncell_container(cobnd_proxy< element<config_type, element_tag>,
+      ncell_range(cobnd_proxy< element<config_type, element_tag>,
                                    EnclosingType> const & p)
       {
         init(p);
       }
       
       template <typename EnclosingType> //either domain or segment
-      ncell_container & operator=(cobnd_proxy< element<config_type, element_tag>,
+      ncell_range & operator=(cobnd_proxy< element<config_type, element_tag>,
                                                EnclosingType> const & p)
       { 
         init(p);
@@ -442,10 +442,10 @@ namespace viennagrid
 
   template <typename config_type, typename element_tag,
             dim_type dim>
-  class const_ncell_container < element<config_type, element_tag>, dim, true>
+  class const_ncell_range < element<config_type, element_tag>, dim, true>
   {
       typedef element< config_type,
-                       typename traits::subcell_desc<typename config_type::cell_tag,
+                       typename topology::subcell_desc<typename config_type::cell_tag,
                                                      dim>::element_tag
                      >                                                         element_type;
                      
@@ -457,10 +457,10 @@ namespace viennagrid
       //typedef typename container_type::iterator   iterator;
       typedef const_on_element_iterator<element_type>                                iterator;
 
-      const_ncell_container() {};
+      const_ncell_range() {};
       
       template <typename EnclosingType> //either domain or segment
-      const_ncell_container(cobnd_proxy< element<config_type, element_tag>,
+      const_ncell_range(cobnd_proxy< element<config_type, element_tag>,
                                          EnclosingType> const & p) 
       {
         const_cobnd_proxy< element<config_type, element_tag>,
@@ -469,7 +469,7 @@ namespace viennagrid
       }
 
       template <typename EnclosingType> //either domain or segment
-      const_ncell_container(const_cobnd_proxy< element<config_type, element_tag>,
+      const_ncell_range(const_cobnd_proxy< element<config_type, element_tag>,
                                                EnclosingType> const & p)
       {
         init(p);
@@ -479,7 +479,7 @@ namespace viennagrid
 
 
       template <typename EnclosingType> //either domain or segment
-      const_ncell_container & operator=(cobnd_proxy< element<config_type, element_tag>,
+      const_ncell_range & operator=(cobnd_proxy< element<config_type, element_tag>,
                                                      EnclosingType> const & p)
       { 
         const_cobnd_proxy< element<config_type, element_tag>,
@@ -489,7 +489,7 @@ namespace viennagrid
       }
 
       template <typename EnclosingType> //either domain or segment
-      const_ncell_container & operator=(const_cobnd_proxy< element<config_type, element_tag>,
+      const_ncell_range & operator=(const_cobnd_proxy< element<config_type, element_tag>,
                                                            EnclosingType> const & p)
       { 
         init(p);
@@ -550,9 +550,9 @@ namespace viennagrid
   {
     template <typename Config, typename ElementTag,
               dim_type dim>  //topological level
-    struct ncell_container < element<Config, ElementTag>, dim >
+    struct ncell_range < element<Config, ElementTag>, dim >
     {
-      typedef viennagrid::ncell_container<element<Config, ElementTag>,
+      typedef viennagrid::ncell_range<element<Config, ElementTag>,
                                           dim,
                                           (ElementTag::topology_level < dim)> 
                                                    type;
@@ -560,9 +560,9 @@ namespace viennagrid
     
     template <typename Config, typename ElementTag,
               dim_type dim>  //topological level
-    struct const_ncell_container < element<Config, ElementTag>, dim >
+    struct const_ncell_range < element<Config, ElementTag>, dim >
     {
-      typedef viennagrid::const_ncell_container<element<Config, ElementTag>,
+      typedef viennagrid::const_ncell_range<element<Config, ElementTag>,
                                                 dim,
                                                 (ElementTag::topology_level < dim)> 
                                                    type;
@@ -589,7 +589,7 @@ namespace viennagrid
                                            typename subcell_traits<ElementTag, level>::element_tag> 
                                  > type; */
                                  
-      typedef typename viennagrid::ncell_container < element<config_type, element_tag>, dim>::iterator    type;                           
+      typedef typename viennagrid::ncell_range < element<config_type, element_tag>, dim>::iterator    type;                           
     };
 
 

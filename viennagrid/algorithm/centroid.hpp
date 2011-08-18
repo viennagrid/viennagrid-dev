@@ -1,14 +1,13 @@
 /* =======================================================================
-   Copyright (c) 2010, 2011, Institute for Microelectronics, TU Wien
+   Copyright (c) 2010, Institute for Microelectronics, TU Wien
    http://www.iue.tuwien.ac.at
                              -----------------
-       ViennaSHE - The Vienna Spherical Harmonics Expansion Simulator
+                     ViennaGrid - The Vienna Grid Library
                              -----------------
 
    authors:    Karl Rupp                          rupp@iue.tuwien.ac.at
-               Markus Bina                        bina@iue.tuwien.ac.at
 
-   license:    To be discussed, see file LICENSE in the ViennaSHE base directory
+   license:    MIT (X11), see file LICENSE in the ViennaGrid base directory
 ======================================================================= */
 
 #ifndef VIENNAGRID_ALGORITHM_CENTROID_HPP
@@ -43,7 +42,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::ncell_type<Config, 0>::type                         VertexType;
       typedef typename viennagrid::result_of::ncell_type<Config, 1>::type                         EdgeType;
       
-      typedef typename viennagrid::result_of::const_ncell_container<ElementType, 0>::type         VertexOnCellContainer;
+      typedef typename viennagrid::result_of::const_ncell_range<ElementType, 0>::type         VertexOnCellContainer;
       typedef typename viennagrid::result_of::iterator<VertexOnCellContainer>::type            VertexOnCellIterator;
       
       PointType p0(0.0, 0.0);
@@ -56,7 +55,7 @@ namespace viennagrid
         p0 += vocit->getPoint();
       }
       
-      p0 /= viennagrid::traits::subcell_desc<ElementTag, 0>::num_elements;
+      p0 /= viennagrid::topology::subcell_desc<ElementTag, 0>::num_elements;
       
       return p0;
     }

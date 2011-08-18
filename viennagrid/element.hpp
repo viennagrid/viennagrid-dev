@@ -37,7 +37,7 @@ namespace viennagrid
       typedef lower_level_holder < T_Configuration, ElementTag, ElementTag::topology_level - 1>             Base;
       typedef typename result_of::point_type<T_Configuration>::type         PointType;
       typedef typename result_of::ncell_type<T_Configuration, 0>::type      VertexType;
-      typedef traits::subcell_desc<ElementTag, 0>                                 VertexSpecs;
+      typedef topology::subcell_desc<ElementTag, 0>                                 VertexSpecs;
 
     public:
       typedef T_Configuration                                       config_type;
@@ -48,7 +48,7 @@ namespace viennagrid
       element (const element & e2) : Base(e2)
       {
         //std::cout << "Copy constructor Element " << this << std::endl;
-        this->setID(e2.getID());
+        this->id(e2.id());
       };
 
       template <typename DomainType>
@@ -163,20 +163,20 @@ namespace viennagrid
 
       element(PointType const & p, long id = -1) : point_(p)
       {
-        this->setID(id);
+        this->id(id);
       };
 
       element(const element & e2)
       {
         //std::cout << "Copy constructor Element (Vertex) " << this << std::endl;
         point_ = e2.point_;
-        this->setID(e2.id_);
+        this->id(e2.id_);
       }
 
       element & operator=(const element & other)
       {
         point_ = other.point_;
-        this->setID(other.id_);                
+        this->id(other.id_);                
         return *this;
       }
 
@@ -187,13 +187,13 @@ namespace viennagrid
       {
         for (long j = 0; j<indent; ++j)
           std::cout << "   ";
-        std::cout << "Vertex (" << this << ") " << this->getID() << ": ";
+        std::cout << "Vertex (" << this << ") " << this->id() << ": ";
         std::cout << point_ << std::endl;
       }
 
       void print_short() const
       {
-        std::cout << "Vertex (" << this << ") " << this->getID() << ": ";
+        std::cout << "Vertex (" << this << ") " << this->id() << ": ";
         std::cout << point_ << std::endl;
       }
 

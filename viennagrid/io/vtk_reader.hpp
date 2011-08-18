@@ -53,16 +53,16 @@ namespace viennagrid
       typedef typename result_of::ncell_type<DomainConfiguration, CellTag::topology_level>::type     CellType;
       //typedef typename DomainTypes<DomainConfiguration>::segment_type  Segment;
 
-      typedef typename viennagrid::result_of::ncell_container<DomainType, 0>::type   VertexContainer;
+      typedef typename viennagrid::result_of::ncell_range<DomainType, 0>::type   VertexContainer;
       typedef typename viennagrid::result_of::iterator<VertexContainer>::type        VertexIterator;
           
-      typedef typename viennagrid::result_of::ncell_container<DomainType, 1>::type   EdgeContainer;
+      typedef typename viennagrid::result_of::ncell_range<DomainType, 1>::type   EdgeContainer;
       typedef typename viennagrid::result_of::iterator<EdgeContainer>::type          EdgeIterator;
 
-      typedef typename viennagrid::result_of::ncell_container<DomainType, CellTag::topology_level-1>::type   FacetContainer;
+      typedef typename viennagrid::result_of::ncell_range<DomainType, CellTag::topology_level-1>::type   FacetContainer;
       typedef typename viennagrid::result_of::iterator<FacetContainer>::type                                 FacetIterator;
 
-      typedef typename viennagrid::result_of::ncell_container<DomainType, CellTag::topology_level>::type     CellContainer;
+      typedef typename viennagrid::result_of::ncell_range<DomainType, CellTag::topology_level>::type     CellContainer;
       typedef typename viennagrid::result_of::iterator<CellContainer>::type                                  CellIterator;
 
       std::ifstream                        reader;
@@ -311,7 +311,7 @@ namespace viennagrid
             }
 
             cell.setVertices(&(vertices[0]));
-            cell.setID(i);
+            cell.id(i);
             segment.add(cell);
           }
       }
@@ -443,7 +443,7 @@ namespace viennagrid
             VertexType vertex;
             for (dim_type i=0; i<vertex.getPoint().size(); ++i)
               vertex.getPoint()[i] = *it[i];
-            vertex.setID(index);
+            vertex.id(index);
             domain.add(vertex);            
             index++;
           }

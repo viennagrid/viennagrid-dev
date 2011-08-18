@@ -34,7 +34,7 @@ void print_elements(SegmentT & seg)
   SegmentT const & const_seg = seg;
 
   std::cout << "-- non-const --" << std::endl;
-  typedef typename viennagrid::result_of::ncell_container<SegmentT, dim>::type  ContainerT;
+  typedef typename viennagrid::result_of::ncell_range<SegmentT, dim>::type  ContainerT;
   typedef typename viennagrid::result_of::iterator<ContainerT>::type           ContainerTIterator;
   
   ContainerT elements = viennagrid::ncells<dim>(seg);
@@ -47,7 +47,7 @@ void print_elements(SegmentT & seg)
   }
   
   std::cout << "-- const --" << std::endl;
-  typedef typename viennagrid::result_of::const_ncell_container<SegmentT, dim>::type   ConstContainerT;
+  typedef typename viennagrid::result_of::const_ncell_range<SegmentT, dim>::type   ConstContainerT;
   typedef typename viennagrid::result_of::iterator<ConstContainerT>::type             ConstContainerTIterator;
   
   ConstContainerT const_elements = viennagrid::ncells<dim>(const_seg);

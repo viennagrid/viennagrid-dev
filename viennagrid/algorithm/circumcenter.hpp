@@ -1,14 +1,13 @@
 /* =======================================================================
-   Copyright (c) 2010, 2011, Institute for Microelectronics, TU Wien
+   Copyright (c) 2010, Institute for Microelectronics, TU Wien
    http://www.iue.tuwien.ac.at
                              -----------------
-       ViennaSHE - The Vienna Spherical Harmonics Expansion Simulator
+                     ViennaGrid - The Vienna Grid Library
                              -----------------
 
    authors:    Karl Rupp                          rupp@iue.tuwien.ac.at
-               Markus Bina                        bina@iue.tuwien.ac.at
 
-   license:    To be discussed, see file LICENSE in the ViennaSHE base directory
+   license:    MIT (X11), see file LICENSE in the ViennaGrid base directory
 ======================================================================= */
 
 #ifndef VIENNAGRID_ALGORITHM_CIRCUMCENTER_HPP
@@ -42,7 +41,7 @@ namespace viennagrid
       typedef typename ElementType::config_type             Config;
       typedef typename viennagrid::result_of::point_type<Config>::type                            PointType;
       
-      typedef typename viennagrid::result_of::const_ncell_container<ElementType, 0>::type         VertexOnCellContainer;
+      typedef typename viennagrid::result_of::const_ncell_range<ElementType, 0>::type         VertexOnCellContainer;
       typedef typename viennagrid::result_of::iterator<VertexOnCellContainer>::type            VertexOnCellIterator;
 
       VertexOnCellContainer vertices = viennagrid::ncells<0>(cell);
@@ -71,7 +70,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::ncell_type<Config, 0>::type                         VertexType;
       typedef typename viennagrid::result_of::ncell_type<Config, 1>::type                         EdgeType;
       
-      typedef typename viennagrid::result_of::const_ncell_container<ElementType, 0>::type         VertexOnCellContainer;
+      typedef typename viennagrid::result_of::const_ncell_range<ElementType, 0>::type         VertexOnCellContainer;
       typedef typename viennagrid::result_of::iterator<VertexOnCellContainer>::type            VertexOnCellIterator;
 
       VertexOnCellContainer vertices = viennagrid::ncells<0>(cell);
@@ -103,7 +102,7 @@ namespace viennagrid
 
 
     //
-    // TODO: This works for rectangles only, but not for general quadrilateral
+    // TODO: This works for rectangles only, but not for general quadrilaterals
     //
     template <typename CellType>
     typename viennagrid::result_of::point_type<typename CellType::config_type>::type
@@ -115,7 +114,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::ncell_type<Config, 0>::type                         VertexType;
       typedef typename viennagrid::result_of::ncell_type<Config, 1>::type                         EdgeType;
       
-      typedef typename viennagrid::result_of::const_ncell_container<CellType, 0>::type         VertexOnCellContainer;
+      typedef typename viennagrid::result_of::const_ncell_range<CellType, 0>::type         VertexOnCellContainer;
       typedef typename viennagrid::result_of::iterator<VertexOnCellContainer>::type      VertexOnCellIterator;
 
       PointType p0(0.0, 0.0);
@@ -128,7 +127,7 @@ namespace viennagrid
         p0 += vocit->getPoint();
       }
       
-      p0 /= viennagrid::traits::subcell_desc<CellTag, 0>::num_elements;
+      p0 /= viennagrid::topology::subcell_desc<CellTag, 0>::num_elements;
       
       return p0;
     }
@@ -148,7 +147,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::ncell_type<Config, 0>::type                         VertexType;
       typedef typename viennagrid::result_of::ncell_type<Config, 1>::type                         EdgeType;
       
-      typedef typename viennagrid::result_of::const_ncell_container<ElementType, 0>::type         VertexOnCellContainer;
+      typedef typename viennagrid::result_of::const_ncell_range<ElementType, 0>::type         VertexOnCellContainer;
       typedef typename viennagrid::result_of::iterator<VertexOnCellContainer>::type            VertexOnCellIterator;
 
       VertexOnCellContainer vertices = viennagrid::ncells<0>(cell);
@@ -184,7 +183,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::ncell_type<Config, 0>::type                         VertexType;
       typedef typename viennagrid::result_of::ncell_type<Config, 1>::type                         EdgeType;
       
-      typedef typename viennagrid::result_of::const_ncell_container<ElementType, 0>::type         VertexOnCellContainer;
+      typedef typename viennagrid::result_of::const_ncell_range<ElementType, 0>::type         VertexOnCellContainer;
       typedef typename viennagrid::result_of::iterator<VertexOnCellContainer>::type            VertexOnCellIterator;
 
       VertexOnCellContainer vertices = viennagrid::ncells<0>(cell);

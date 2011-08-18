@@ -57,14 +57,14 @@ struct assignCellNormals_impl <3, viennagrid::triangle_tag>
 
       typedef typename DomainT::segment_type                                                                      SegmentType; 
       typedef typename viennagrid::result_of::ncell_type<DomainConfiguration, CellTag::topology_level>::type      CellType;
-      typedef typename viennagrid::result_of::ncell_container<SegmentType, CellTag::topology_level>::type         CellContainer;          
+      typedef typename viennagrid::result_of::ncell_range<SegmentType, CellTag::topology_level>::type         CellContainer;          
       typedef typename viennagrid::result_of::iterator<CellContainer>::type                                       CellIterator;         
-      typedef typename viennagrid::result_of::ncell_container<CellType, 0>::type                                  VertexOnCellContainer;
+      typedef typename viennagrid::result_of::ncell_range<CellType, 0>::type                                  VertexOnCellContainer;
       typedef typename viennagrid::result_of::iterator<VertexOnCellContainer>::type                               VertexOnCellIterator;            
       
       typedef typename viennagrid::result_of::point_type<DomainConfiguration>::type                               PointType;
       
-      static const int CELLSIZE = viennagrid::traits::subcell_desc<CellTag, 0>::num_elements;
+      static const int CELLSIZE = viennagrid::topology::subcell_desc<CellTag, 0>::num_elements;
 
       std::vector<PointType>     cell_points(CELLSIZE);
       

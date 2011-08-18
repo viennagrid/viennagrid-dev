@@ -159,10 +159,10 @@ void output_voronoi_info(DeviceType const & d)
   typedef typename viennagrid::result_of::ncell_type<Config, 1>::type                         EdgeType;
   typedef typename viennagrid::result_of::ncell_type<Config, CellTag::topology_level>::type   CellType;
   
-  typedef typename viennagrid::result_of::const_ncell_container<DeviceType, 0>::type    VertexContainer;
+  typedef typename viennagrid::result_of::const_ncell_range<DeviceType, 0>::type    VertexContainer;
   typedef typename viennagrid::result_of::iterator<VertexContainer>::type         VertexIterator;
   
-  typedef typename viennagrid::result_of::const_ncell_container<DeviceType, 1>::type    EdgeContainer;
+  typedef typename viennagrid::result_of::const_ncell_range<DeviceType, 1>::type    EdgeContainer;
   typedef typename viennagrid::result_of::iterator<EdgeContainer>::type           EdgeIterator;
   
   long counter = 0;

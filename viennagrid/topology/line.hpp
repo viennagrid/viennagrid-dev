@@ -26,7 +26,7 @@ namespace viennagrid
   };
 
 
-  namespace traits
+  namespace topology
   {
 
     //Line:

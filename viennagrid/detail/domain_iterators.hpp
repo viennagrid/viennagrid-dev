@@ -59,7 +59,7 @@ namespace viennagrid
     typedef element<Config,
                     typename Config::cell_tag>    cell_type;
       typedef element< Config,
-                       typename traits::subcell_desc<typename Config::cell_tag, dim>::element_tag
+                       typename topology::subcell_desc<typename Config::cell_tag, dim>::element_tag
                      >                                                         element_type;
                     
     typedef typename result_of::element_container<domain_type, dim>::type      container_type;
@@ -118,11 +118,11 @@ namespace viennagrid
 
   //container for iteration over a STL vector
   template <typename config_type, dim_type dim>
-  class ncell_container < domain<config_type>, dim, false >
+  class ncell_range < domain<config_type>, dim, false >
   {
       typedef domain<config_type>                        domain_type;
       typedef element< config_type,
-                       typename traits::subcell_desc<typename config_type::cell_tag, dim>::element_tag
+                       typename topology::subcell_desc<typename config_type::cell_tag, dim>::element_tag
                      >                                                         element_type;
                      
       typedef element< config_type,
@@ -136,9 +136,9 @@ namespace viennagrid
       //typedef typename container_type::iterator   iterator;
       typedef typename domain_iterators<config_type, dim>::iterator   iterator;
       
-      ncell_container(ncell_proxy< domain<config_type> > const & p) : cont_(p.get().template container<dim>()) {}
+      ncell_range(ncell_proxy< domain<config_type> > const & p) : cont_(p.get().template container<dim>()) {}
       
-      ncell_container & operator=(ncell_proxy< domain<config_type> > p)
+      ncell_range & operator=(ncell_proxy< domain<config_type> > p)
       { 
         cont_ = p.get().template container<dim>();
         return *this;
@@ -163,11 +163,11 @@ namespace viennagrid
   }
   
   template <typename config_type, dim_type dim>
-  class const_ncell_container < domain<config_type>, dim, false >
+  class const_ncell_range < domain<config_type>, dim, false >
   {
       typedef domain<config_type>                        domain_type;
       typedef element< config_type,
-                       typename traits::subcell_desc<typename config_type::cell_tag, dim>::element_tag
+                       typename topology::subcell_desc<typename config_type::cell_tag, dim>::element_tag
                      >                                                         element_type;
 
       typedef element< config_type,
@@ -181,11 +181,11 @@ namespace viennagrid
       //typedef typename container_type::const_iterator   iterator;
       typedef typename domain_iterators<config_type, dim>::const_iterator   iterator;
       
-      const_ncell_container(const_ncell_proxy< domain<config_type> > const & p) : cont_(p.get().template container<dim>()) {}
+      const_ncell_range(const_ncell_proxy< domain<config_type> > const & p) : cont_(p.get().template container<dim>()) {}
 
-      const_ncell_container(ncell_proxy< domain<config_type> > const & p) : cont_(p.get().template container<dim>()) {}
+      const_ncell_range(ncell_proxy< domain<config_type> > const & p) : cont_(p.get().template container<dim>()) {}
 
-      const_ncell_container & operator=(const_ncell_proxy< domain<config_type> > const & p)
+      const_ncell_range & operator=(const_ncell_proxy< domain<config_type> > const & p)
       { 
         cont_ = p.get().template container<dim>();
         return *this;
@@ -201,43 +201,34 @@ namespace viennagrid
   };
   
   
-//   template <typename DomainType, 
-//             dim_type dim>  //topological level
-//   struct const_container_types
-//   {
-//     typedef typename const_ncell_container<DomainType, dim>::iterator   iterator;
-//     
-//     typedef const_ncell_container<DomainType, dim>       result_type;
-//   };
-
   //metafunction for return type:
   namespace result_of
   {
     
     template <typename T, dim_type dim, bool is_coboundary>
-    struct iterator<viennagrid::ncell_container<T, dim, is_coboundary>, 0>
+    struct iterator<viennagrid::ncell_range<T, dim, is_coboundary>, 0>
     {
-      typedef typename viennagrid::ncell_container<T, dim, is_coboundary>::iterator     type;
+      typedef typename viennagrid::ncell_range<T, dim, is_coboundary>::iterator     type;
     };
     
     template <typename T, dim_type dim, bool is_coboundary>
-    struct iterator<viennagrid::const_ncell_container<T, dim, is_coboundary>, 0>
+    struct iterator<viennagrid::const_ncell_range<T, dim, is_coboundary>, 0>
     {
-      typedef typename viennagrid::const_ncell_container<T, dim, is_coboundary>::iterator     type;
+      typedef typename viennagrid::const_ncell_range<T, dim, is_coboundary>::iterator     type;
     };
     
     template <typename T, 
               dim_type dim>  //topological level
-    struct ncell_container
+    struct ncell_range
     {
-      typedef viennagrid::ncell_container<T, dim>       type;
+      typedef viennagrid::ncell_range<T, dim>       type;
     };
 
     template <typename T, 
               dim_type dim>  //topological level
-    struct const_ncell_container
+    struct const_ncell_range
     {
-      typedef viennagrid::const_ncell_container<T, dim>       type;
+      typedef viennagrid::const_ncell_range<T, dim>       type;
     };
     
   }

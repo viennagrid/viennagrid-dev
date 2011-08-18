@@ -42,7 +42,7 @@ namespace viennagrid
       enum{ value = 1 };
   };
 
-  //Tags for the handling of elements at different topological levels (see traits::subcell_desc)
+  //Tags for the handling of elements at different topological levels (see topology::subcell_desc)
   struct full_handling_tag {};
   struct no_handling_tag {};
 
@@ -115,12 +115,12 @@ namespace viennagrid
   template <typename host_element,
             dim_type dim,
             bool is_coboundary = false>
-  class ncell_container;
+  class ncell_range;
 
   template <typename host_element,
             dim_type dim,
             bool is_coboundary = false>
-  class const_ncell_container;
+  class const_ncell_range;
   
   template <typename T, long dim> //topological dimension of the elements over which to iterate
   class coboundary_key
@@ -185,21 +185,21 @@ namespace viennagrid
 
   //ID handling:
   
-  class NoID
+  class pointer_id
   {
     //for compatibility:
-    void setID(long id) { };
-    const NoID * getID() const { return this; };
+    void id(long id) { };
+    const pointer_id * id() const { return this; };
 
   };
 
-  class ProvideID
+  class integral_id
   {
     public:
-      ProvideID() : id_(-1) {};
+      integral_id() : id_(-1) {};
 
-      long getID() const { return id_; };
-      void setID(long id) { id_ = id; };
+      long id() const { return id_; };
+      void id(long new_id) { id_ = new_id; };
 
     protected:
       long id_;
@@ -212,9 +212,12 @@ namespace viennagrid
     template <typename ElementTag>
     struct element_id
     {
-      typedef ProvideID     id_handler;
+      typedef integral_id     id_handler;
     };
+  }
     
+  namespace topology
+  {
     template <typename ElementTag, 
               long level = ElementTag::topology_level>
     struct subcell_desc
@@ -255,7 +258,7 @@ namespace viennagrid
     
     template <typename T, 
               dim_type dim>  //topological level
-    struct ncell_container;
+    struct ncell_range;
     
     
     template <typename Config,
@@ -274,7 +277,7 @@ namespace viennagrid
     template <typename T, dim_type dim = T::element_tag::topology_level>
     struct element_tag
     {
-      typedef typename viennagrid::traits::subcell_desc<typename T::element_tag,
+      typedef typename viennagrid::topology::subcell_desc<typename T::element_tag,
                                                         dim>::element_tag           type; 
     };
     
@@ -289,7 +292,7 @@ namespace viennagrid
     template <typename T, dim_type dim = T::element_tag::topology_level>
     struct handling_tag
     {
-      typedef typename viennagrid::traits::subcell_desc<T, dim>::handling_tag    type; 
+      typedef typename viennagrid::topology::subcell_desc<T, dim>::handling_tag    type; 
     };
     
 //    //cell level always uses full handling

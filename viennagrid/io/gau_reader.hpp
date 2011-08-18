@@ -48,16 +48,16 @@ namespace io
       typedef typename result_of::ncell_type<DomainConfiguration, CellTag::topology_level>::type     CellType;
       //typedef typename DomainTypes<DomainConfiguration>::segment_type  Segment;
 
-      typedef typename viennagrid::result_of::ncell_container<DomainType, 0>::type   VertexContainer;
+      typedef typename viennagrid::result_of::ncell_range<DomainType, 0>::type   VertexContainer;
       typedef typename viennagrid::result_of::iterator<VertexContainer>::type        VertexIterator;
          
-      typedef typename viennagrid::result_of::ncell_container<DomainType, 1>::type   EdgeContainer;
+      typedef typename viennagrid::result_of::ncell_range<DomainType, 1>::type   EdgeContainer;
       typedef typename viennagrid::result_of::iterator<EdgeContainer>::type          EdgeIterator;
 
-      typedef typename viennagrid::result_of::ncell_container<DomainType, CellTag::topology_level-1>::type   FacetContainer;
+      typedef typename viennagrid::result_of::ncell_range<DomainType, CellTag::topology_level-1>::type   FacetContainer;
       typedef typename viennagrid::result_of::iterator<FacetContainer>::type                                 FacetIterator;
 
-      typedef typename viennagrid::result_of::ncell_container<DomainType, CellTag::topology_level>::type     CellContainer;
+      typedef typename viennagrid::result_of::ncell_range<DomainType, CellTag::topology_level>::type     CellContainer;
       typedef typename viennagrid::result_of::iterator<CellContainer>::type                                  CellIterator;
 
 
@@ -128,7 +128,7 @@ namespace io
             vertex.getPoint()[0] = coords[0];
             vertex.getPoint()[1] = coords[1];
             vertex.getPoint()[2] = coords[2];            
-            vertex.setID(i);
+            vertex.id(i);
             domain.add(vertex);
          }
 
@@ -171,7 +171,7 @@ namespace io
             for (std::size_t nu=0; nu < cell_size; ++nu)
             {
                global_cell_size++;
-               VertexType *vertices[viennagrid::traits::subcell_desc<CellTag, 0>::num_elements];        
+               VertexType *vertices[viennagrid::topology::subcell_desc<CellTag, 0>::num_elements];        
 
                if (dimension_topology== 1)
                {

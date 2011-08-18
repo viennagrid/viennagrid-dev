@@ -37,7 +37,7 @@ namespace viennagrid
   };
 
   template <typename ElementType>
-  struct ElementKeyStorageType<ElementType, ProvideID>
+  struct ElementKeyStorageType<ElementType, integral_id>
   {
     typedef long          result_type;
   };
@@ -51,16 +51,16 @@ namespace viennagrid
       typedef typename ElementType::element_tag            ElementTag;
       typedef typename ElementKeyStorageType<ElementType>::result_type  StorageType;
     public:
-      element_key( ElementType & el2) : vertexIDs(traits::subcell_desc<ElementTag, 0>::num_elements)
+      element_key( ElementType & el2) : vertexIDs(topology::subcell_desc<ElementTag, 0>::num_elements)
       {
-        typedef typename result_of::ncell_container<ElementType, 0>::type   VertexContainer;
+        typedef typename result_of::ncell_range<ElementType, 0>::type       VertexRange;
         typedef typename result_of::iterator<ElementType, 0>::type          VertexIterator;
         long i = 0;
-        VertexContainer vertices_el2 = ncells<0>(el2);
+        VertexRange vertices_el2 = ncells<0>(el2);
         for (VertexIterator vit = vertices_el2.begin();
              vit != vertices_el2.end();
              ++vit, ++i)
-          vertexIDs[i] = vit->getID();
+          vertexIDs[i] = vit->id();
         //sort it:
         std::sort(vertexIDs.begin(), vertexIDs.end());
       }
@@ -74,7 +74,7 @@ namespace viennagrid
 
       bool operator < (element_key const & epc2) const
       {
-        for (long i=0; i<traits::subcell_desc<ElementTag, 0>::num_elements; ++i)
+        for (long i=0; i<topology::subcell_desc<ElementTag, 0>::num_elements; ++i)
         {
           if ( vertexIDs[i] > epc2.vertexIDs[i] )
             return false;

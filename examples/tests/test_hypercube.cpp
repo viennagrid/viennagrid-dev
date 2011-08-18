@@ -176,7 +176,7 @@ void testNewDomain(std::string & outfile)
   domain.add(hypercube1);
   
   std::cout << "Vertices: " << std::endl;
-  typedef viennagrid::result_of::ncell_container<Domain, 0>::type   VertexContainer;
+  typedef viennagrid::result_of::ncell_range<Domain, 0>::type   VertexContainer;
   typedef viennagrid::result_of::iterator<VertexContainer>::type    VertexIterator;
   VertexContainer vertices = viennagrid::ncells<0>(domain);
   for (VertexIterator vit = vertices.begin();
@@ -185,7 +185,7 @@ void testNewDomain(std::string & outfile)
       vit->print();
   
   std::cout << "Edges: " << std::endl;
-  typedef viennagrid::result_of::ncell_container<Domain, 1>::type   EdgeContainer;
+  typedef viennagrid::result_of::ncell_range<Domain, 1>::type   EdgeContainer;
   typedef viennagrid::result_of::iterator<EdgeContainer>::type      EdgeIterator;
   EdgeContainer edges = viennagrid::ncells<1>(domain);
   for (EdgeIterator eit = edges.begin();
@@ -194,7 +194,7 @@ void testNewDomain(std::string & outfile)
       eit->print();
 
   std::cout << "Facets: " << std::endl;
-  typedef viennagrid::result_of::ncell_container<Domain, TestDomainConfig::cell_tag::topology_level-1>::type   FacetContainer;
+  typedef viennagrid::result_of::ncell_range<Domain, TestDomainConfig::cell_tag::topology_level-1>::type   FacetContainer;
   typedef viennagrid::result_of::iterator<FacetContainer>::type                                                FacetIterator;
   FacetContainer facets = viennagrid::ncells<TestDomainConfig::cell_tag::topology_level-1>(domain);
   for (FacetIterator fit = facets.begin();
@@ -203,7 +203,7 @@ void testNewDomain(std::string & outfile)
       fit->print();
 
   std::cout << "Cells: " << std::endl;
-  typedef viennagrid::result_of::ncell_container<Domain, TestDomainConfig::cell_tag::topology_level>::type   CellContainer;
+  typedef viennagrid::result_of::ncell_range<Domain, TestDomainConfig::cell_tag::topology_level>::type   CellContainer;
   typedef viennagrid::result_of::iterator<CellContainer>::type                                               CellIterator;
   CellContainer cells = viennagrid::ncells<TestDomainConfig::cell_tag::topology_level>(domain);
   for (CellIterator cit = cells.begin();

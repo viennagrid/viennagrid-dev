@@ -27,7 +27,7 @@ namespace viennagrid
     template <typename FacetIterator>
     static void apply(FacetIterator & fit)
     {
-      typedef typename viennagrid::result_of::ncell_container<Facet, topolevel>::type    ElementOnFacetContainer;
+      typedef typename viennagrid::result_of::ncell_range<Facet, topolevel>::type    ElementOnFacetContainer;
       typedef typename result_of::iterator<ElementOnFacetContainer>::type                ElementOnFacetIterator;
 
       ElementOnFacetContainer eof_container = ncells<topolevel>(*fit);
@@ -122,13 +122,13 @@ namespace viennagrid
     typedef typename viennagrid::result_of::ncell_type<DomainConfiguration, CellTag::topology_level-1>::type   FacetType;
     typedef typename viennagrid::result_of::ncell_type<DomainConfiguration, CellTag::topology_level>::type     CellType;
 
-    typedef typename viennagrid::result_of::ncell_container<Segment, CellTag::topology_level-1>::type      FacetContainer;
+    typedef typename viennagrid::result_of::ncell_range<Segment, CellTag::topology_level-1>::type      FacetContainer;
     typedef typename viennagrid::result_of::iterator<FacetContainer>::type                                 FacetIterator;
       
-    typedef typename viennagrid::result_of::ncell_container<Segment, CellTag::topology_level>::type        CellContainer;
+    typedef typename viennagrid::result_of::ncell_range<Segment, CellTag::topology_level>::type        CellContainer;
     typedef typename viennagrid::result_of::iterator<CellContainer>::type                                  CellIterator;
 
-    typedef typename viennagrid::result_of::ncell_container<CellType, CellTag::topology_level-1>::type     FacetOnCellContainer;
+    typedef typename viennagrid::result_of::ncell_range<CellType, CellTag::topology_level-1>::type     FacetOnCellContainer;
     typedef typename viennagrid::result_of::iterator<FacetOnCellContainer>::type                           FacetOnCellIterator;
 
     //iterate over all cells, over facets there and tag them:
@@ -168,7 +168,7 @@ namespace viennagrid
   void detectBoundary(SegmentType & seg)
   {
     typedef typename SegmentType::config_type::cell_tag                   CellTag;
-    typedef typename traits::subcell_desc<CellTag, CellTag::topology_level-1>::handling_tag  HandlingTag;
+    typedef typename topology::subcell_desc<CellTag, CellTag::topology_level-1>::handling_tag  HandlingTag;
     detectBoundary_impl(seg, HandlingTag());
   }
 

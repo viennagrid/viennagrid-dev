@@ -35,7 +35,7 @@ void print_elements(SegmentT & seg)
   SegmentT const & const_seg = seg;
 
   std::cout << "-- non-const --" << std::endl;
-  typedef typename viennagrid::result_of::ncell_container<SegmentT, dim>::type  ContainerT;
+  typedef typename viennagrid::result_of::ncell_range<SegmentT, dim>::type  ContainerT;
   typedef typename viennagrid::result_of::iterator<ContainerT>::type           ContainerTIterator;
   
   ContainerT elements = viennagrid::ncells<dim>(seg);
@@ -48,7 +48,7 @@ void print_elements(SegmentT & seg)
   }
   
   std::cout << "-- const --" << std::endl;
-  typedef typename viennagrid::result_of::const_ncell_container<SegmentT, dim>::type   ConstContainerT;
+  typedef typename viennagrid::result_of::const_ncell_range<SegmentT, dim>::type   ConstContainerT;
   typedef typename viennagrid::result_of::iterator<ConstContainerT>::type             ConstContainerTIterator;
   
   ConstContainerT const_elements = viennagrid::ncells<dim>(const_seg);
@@ -69,11 +69,11 @@ void print_coelements(SegmentT & seg)
   typedef typename SegmentT::config_type    ConfigType;
   
   std::cout << "-- non-const --" << std::endl;
-  typedef typename viennagrid::result_of::ncell_container<SegmentT, dim_lower>::type  ContainerT;
+  typedef typename viennagrid::result_of::ncell_range<SegmentT, dim_lower>::type  ContainerT;
   typedef typename viennagrid::result_of::iterator<ContainerT>::type           ContainerTIterator;
   typedef typename viennagrid::result_of::ncell_type<ConfigType, dim_lower>::type      LowerElementType;
 
-  typedef typename viennagrid::result_of::ncell_container<LowerElementType, dim_higher>::type  ContainerTHigher;
+  typedef typename viennagrid::result_of::ncell_range<LowerElementType, dim_higher>::type  ContainerTHigher;
   typedef typename viennagrid::result_of::iterator<ContainerTHigher>::type           ContainerTHigherIterator;
   
   ContainerT elements = viennagrid::ncells<dim_lower>(seg);
@@ -96,10 +96,10 @@ void print_coelements(SegmentT & seg)
   SegmentT const & const_seg = seg;
 
   std::cout << "-- const --" << std::endl;
-  typedef typename viennagrid::result_of::const_ncell_container<SegmentT, dim_lower>::type   ConstContainerT;
+  typedef typename viennagrid::result_of::const_ncell_range<SegmentT, dim_lower>::type   ConstContainerT;
   typedef typename viennagrid::result_of::iterator<ConstContainerT>::type             ConstContainerTIterator;
 
-  typedef typename viennagrid::result_of::const_ncell_container<LowerElementType, dim_higher>::type  ConstContainerTHigher;
+  typedef typename viennagrid::result_of::const_ncell_range<LowerElementType, dim_higher>::type  ConstContainerTHigher;
   typedef typename viennagrid::result_of::iterator<ConstContainerTHigher>::type           ConstContainerTHigherIterator;
   
   ConstContainerT const_elements = viennagrid::ncells<dim_lower>(const_seg);

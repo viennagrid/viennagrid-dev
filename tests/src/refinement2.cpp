@@ -31,13 +31,13 @@ int test(DomainType & domain_in)
   typedef typename viennagrid::result_of::ncell_type<ConfigType,
                                             CellTag::topology_level>::type      CellType;
 
-  typedef typename viennagrid::result_of::ncell_container<DomainType, 0>::type  VertexContainer;
+  typedef typename viennagrid::result_of::ncell_range<DomainType, 0>::type  VertexContainer;
   typedef typename viennagrid::result_of::iterator<VertexContainer>::type       VertexIterator;
     
-  typedef typename viennagrid::result_of::ncell_container<CellType, 1>::type    EdgeOnCellContainer;
+  typedef typename viennagrid::result_of::ncell_range<CellType, 1>::type    EdgeOnCellContainer;
   typedef typename viennagrid::result_of::iterator<EdgeOnCellContainer>::type     EdgeOnCellIterator;
 
-  typedef typename viennagrid::result_of::ncell_container<DomainType, CellTag::topology_level>::type  CellContainer;
+  typedef typename viennagrid::result_of::ncell_range<DomainType, CellTag::topology_level>::type  CellContainer;
   typedef typename viennagrid::result_of::iterator<CellContainer>::type         CellIterator;
   
   CellContainer cells = viennagrid::ncells<CellTag::topology_level>(domain_in);

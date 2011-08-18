@@ -105,11 +105,11 @@ namespace viennagrid
 
   //container for iteration over a STL vector
   template <typename config_type, dim_type dim>
-  class ncell_container < segment_t<config_type>, dim, false >
+  class ncell_range < segment_t<config_type>, dim, false >
   {
       typedef segment_t<config_type>                        segment_type;
       typedef element< config_type,
-                       typename traits::subcell_desc<typename config_type::cell_tag, dim>::element_tag
+                       typename topology::subcell_desc<typename config_type::cell_tag, dim>::element_tag
                      >                                                         element_type;
                      
       typedef element< config_type,
@@ -123,9 +123,9 @@ namespace viennagrid
       //typedef typename container_type::iterator   iterator;
       typedef on_segment_iterator< typename container_type::iterator, element_type >   iterator;
       
-      ncell_container(ncell_proxy< segment_t<config_type> > const & p) : cont_(p.get().template container<dim>()) {}
+      ncell_range(ncell_proxy< segment_t<config_type> > const & p) : cont_(p.get().template container<dim>()) {}
       
-      ncell_container & operator=(ncell_proxy< segment_t<config_type> > p)
+      ncell_range & operator=(ncell_proxy< segment_t<config_type> > p)
       { 
         cont_ = p.get().template container<dim>();
         return *this;
@@ -152,11 +152,11 @@ namespace viennagrid
   }
   
   template <typename config_type, dim_type dim>
-  class const_ncell_container < segment_t<config_type>, dim, false >
+  class const_ncell_range < segment_t<config_type>, dim, false >
   {
       typedef segment_t<config_type>                        segment_type;
       typedef element< config_type,
-                       typename traits::subcell_desc<typename config_type::cell_tag, dim>::element_tag
+                       typename topology::subcell_desc<typename config_type::cell_tag, dim>::element_tag
                      >                                                         element_type;
 
       typedef element< config_type,
@@ -170,11 +170,11 @@ namespace viennagrid
       //typedef typename container_type::const_iterator   iterator;
       typedef on_segment_iterator< typename container_type::const_iterator, const element_type >   iterator;
       
-      const_ncell_container(const_ncell_proxy< segment_type > const & p) : cont_(p.get().template container<dim>()) {}
+      const_ncell_range(const_ncell_proxy< segment_type > const & p) : cont_(p.get().template container<dim>()) {}
 
-      const_ncell_container(ncell_proxy< segment_type > const & p) : cont_(p.get().template container<dim>()) {}
+      const_ncell_range(ncell_proxy< segment_type > const & p) : cont_(p.get().template container<dim>()) {}
 
-      const_ncell_container & operator=(const_ncell_proxy< segment_type > const & p)
+      const_ncell_range & operator=(const_ncell_proxy< segment_type > const & p)
       { 
         cont_ = p.get().template container<dim>();
         return *this;

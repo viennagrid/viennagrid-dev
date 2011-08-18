@@ -46,7 +46,7 @@ namespace viennagrid
       template <typename VertexType, typename ConfigType>
       static long apply(VertexType const & v, viennagrid::domain<ConfigType> const & dom)
       {
-        return v.getID();
+        return v.id();
       }
       
     };
@@ -186,7 +186,7 @@ namespace viennagrid
         template <typename SegmentType>
         void writePoints(SegmentType const & segment, std::ofstream & writer)
         {
-          typedef typename viennagrid::result_of::const_ncell_container<SegmentType, 0>::type   VertexContainer;
+          typedef typename viennagrid::result_of::const_ncell_range<SegmentType, 0>::type   VertexContainer;
           typedef typename viennagrid::result_of::iterator<VertexContainer>::type               VertexIterator;
           
           writer << "   <Points>" << std::endl;
@@ -215,10 +215,10 @@ namespace viennagrid
         template <typename SegmentType>
         void writeCells(SegmentType const & segment, std::ofstream & writer)
         {
-          typedef typename viennagrid::result_of::const_ncell_container<SegmentType, CellTag::topology_level>::type     CellContainer;
+          typedef typename viennagrid::result_of::const_ncell_range<SegmentType, CellTag::topology_level>::type     CellContainer;
           typedef typename viennagrid::result_of::iterator<CellContainer>::type                                         CellIterator;
 
-          typedef typename viennagrid::result_of::const_ncell_container<CellType, 0>::type      VertexOnCellContainer;
+          typedef typename viennagrid::result_of::const_ncell_range<CellType, 0>::type      VertexOnCellContainer;
           typedef typename viennagrid::result_of::iterator<VertexOnCellContainer>::type         VertexOnCellIterator;
           
           writer << "   <Cells> " << std::endl;
@@ -245,7 +245,7 @@ namespace viennagrid
                 offsets <= segment.template size<CellTag::topology_level>();
                 ++offsets)
             {
-              writer << ( offsets * viennagrid::traits::subcell_desc<CellTag, 0>::num_elements) << " ";
+              writer << ( offsets * viennagrid::topology::subcell_desc<CellTag, 0>::num_elements) << " ";
             }
             writer << std::endl;
             writer << "    </DataArray>" << std::endl;
@@ -265,7 +265,7 @@ namespace viennagrid
         template <typename SegmentType>
         void writePointDataScalar(SegmentType const & segment, std::ofstream & writer)
         {
-          typedef typename viennagrid::result_of::const_ncell_container<SegmentType, 0>::type   VertexContainer;
+          typedef typename viennagrid::result_of::const_ncell_range<SegmentType, 0>::type   VertexContainer;
           typedef typename viennagrid::result_of::iterator<VertexContainer>::type               VertexIterator;
           
           if (point_data_scalar.size() > 0)
@@ -292,7 +292,7 @@ namespace viennagrid
         template <typename SegmentType>
         void writeCellDataNormals(SegmentType const & segment, std::ofstream & writer, std::size_t seg_id = 0)
         {
-          typedef typename viennagrid::result_of::const_ncell_container<SegmentType, CellTag::topology_level>::type     CellContainer;
+          typedef typename viennagrid::result_of::const_ncell_range<SegmentType, CellTag::topology_level>::type     CellContainer;
           typedef typename viennagrid::result_of::iterator<CellContainer>::type                                         CellIterator;
           
           if (cell_data_normal.size() > 0)
@@ -375,7 +375,7 @@ namespace viennagrid
               writeHeader(writer);
               
               typedef typename DomainType::segment_type                                             SegmentType;
-              typedef typename viennagrid::result_of::const_ncell_container<SegmentType, 0>::type   VertexContainer;
+              typedef typename viennagrid::result_of::const_ncell_range<SegmentType, 0>::type   VertexContainer;
               typedef typename viennagrid::result_of::iterator<VertexContainer>::type               VertexIterator;
               //std::cout << "Writing segment" << std::endl;
               //Segment & curSeg = *segit;

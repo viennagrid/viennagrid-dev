@@ -39,16 +39,16 @@ namespace viennagrid
         typedef typename result_of::ncell_type<DomainConfiguration, CellTag::topology_level>::type     CellType;
         //typedef typename DomainTypes<DomainConfiguration>::segment_type  Segment;
 
-        typedef typename viennagrid::result_of::ncell_container<DomainType, 0>::type   VertexContainer;
+        typedef typename viennagrid::result_of::ncell_range<DomainType, 0>::type   VertexContainer;
         typedef typename viennagrid::result_of::iterator<VertexContainer>::type        VertexIterator;
             
-        typedef typename viennagrid::result_of::ncell_container<DomainType, 1>::type   EdgeContainer;
+        typedef typename viennagrid::result_of::ncell_range<DomainType, 1>::type   EdgeContainer;
         typedef typename viennagrid::result_of::iterator<EdgeContainer>::type          EdgeIterator;
 
-        typedef typename viennagrid::result_of::ncell_container<DomainType, CellTag::topology_level-1>::type   FacetContainer;
+        typedef typename viennagrid::result_of::ncell_range<DomainType, CellTag::topology_level-1>::type   FacetContainer;
         typedef typename viennagrid::result_of::iterator<FacetContainer>::type                                 FacetIterator;
 
-        typedef typename viennagrid::result_of::ncell_container<DomainType, CellTag::topology_level>::type     CellContainer;
+        typedef typename viennagrid::result_of::ncell_range<DomainType, CellTag::topology_level>::type     CellContainer;
         typedef typename viennagrid::result_of::iterator<CellContainer>::type                                  CellIterator;
 
         std::ifstream reader(filename.c_str());
@@ -85,7 +85,7 @@ namespace viennagrid
             for (int j=0; j<DimensionTag::value; j++)
               reader >> vertex.getPoint()[j];
       
-            vertex.setID(i);
+            vertex.id(i);
             domain.add(vertex);
           }
       
@@ -105,12 +105,12 @@ namespace viennagrid
           for (int i=0; i<cell_num; ++i)
           {
             long vertex_num;
-            VertexType *vertices[traits::subcell_desc<CellTag, 0>::num_elements];
+            VertexType *vertices[topology::subcell_desc<CellTag, 0>::num_elements];
 
             size_t segment_index;
             reader >> segment_index;
       
-            for (int j=0; j<traits::subcell_desc<CellTag, 0>::num_elements; ++j)
+            for (int j=0; j<topology::subcell_desc<CellTag, 0>::num_elements; ++j)
             {
               reader >> vertex_num;
               vertices[j] = &(domain.vertex(vertex_num - 1));  //Note that Netgen uses vertex indices with base 1
@@ -118,7 +118,7 @@ namespace viennagrid
       
             //std::cout << std::endl << "Adding cell: " << &cell << " at " << cell_id << std::endl;
             cell.setVertices(&(vertices[0]));
-            cell.setID(i);
+            cell.id(i);
             assert(domain.segment_size() >= segment_index && "Segment index in input file out of bounds!");
             domain.segment(segment_index - 1).add(cell);  //note that Netgen uses a 1-based indexing scheme, while ViennaGrid uses a zero-based one
       
