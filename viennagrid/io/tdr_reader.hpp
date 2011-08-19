@@ -140,13 +140,7 @@ struct tdr_reader
       return 0;
    }
    
-template < typename DomainType > 
-int importTDR(DomainType & domain, std::string const & filename)
-{          
-   viennagrid::io::tdr_reader reader(filename);
-   return reader(domain);
-}     
-   
+  
 private:
 
    struct dataset_t 
@@ -446,7 +440,12 @@ private:
 	std::map<std::string,region_t>   region;
 };
 
-
+template < typename DomainType > 
+int importTDR(DomainType & domain, std::string const & filename)
+{          
+   viennagrid::io::tdr_reader reader(filename);
+   return reader(domain);
+}     
 
 } // end namespace io
 } // end namespace viennagrid
