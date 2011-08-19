@@ -147,7 +147,8 @@ void testNewDomain()
     typedef viennagrid::result_of::iterator<CellOnFacetContainer>::type     CellOnFacetIterator;
     
     CellOnFacetContainer cells;
-    cells = viennagrid::ncells<CellTag::topology_level>(*fit, domain);
+    //cells = viennagrid::ncells<CellTag::topology_level>(*fit, domain);
+    cells = viennagrid::ncells(*fit, domain);
     for (CellOnFacetIterator eovit = cells.begin();
          eovit != cells.end();
          ++eovit)

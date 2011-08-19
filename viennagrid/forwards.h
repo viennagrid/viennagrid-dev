@@ -126,7 +126,7 @@ namespace viennagrid
   class coboundary_key
   {
     public:
-      coboundary_key(T & t_) : t(&t_) {}
+      coboundary_key(T const & t_) : t(&t_) {}
       
       //for compatibility with std::map
       bool operator<(coboundary_key const & other) const
@@ -134,7 +134,7 @@ namespace viennagrid
         return t < other.t;
       }
     private:
-      T * t;
+      T const * t;
   };
 
   template <typename SegmentType>
@@ -179,9 +179,9 @@ namespace viennagrid
       T & t;
   };
   
-  template <dim_type dim, typename Config, typename ElementTag>
-  ncell_proxy< element<Config, ElementTag> >
-  ncells(element<Config, ElementTag> & d);
+  //template <dim_type dim, typename Config, typename ElementTag>
+  //ncell_proxy< element<Config, ElementTag> >
+  //ncells(element<Config, ElementTag> & d);
 
   //ID handling:
   

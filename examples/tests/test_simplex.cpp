@@ -164,18 +164,37 @@ void testNewDomain()
   
   //Test for const-iterators:
   std::cout << "Test for const iterator: " << std::endl;
-  typedef viennagrid::result_of::const_ncell_range<Domain, 1>::type  EdgeContainer;
+  typedef viennagrid::result_of::ncell_range<Domain, 1>::type  EdgeContainer;
   EdgeContainer edges = viennagrid::ncells<1>(domain);
   
   edges.begin()->print();
   
   typedef viennagrid::result_of::const_ncell_range<EdgeType, 0>::type  VertexOnEdgeContainer;
-  VertexOnEdgeContainer vertices_on_edge = viennagrid::ncells<0>(*(edges.begin()));
+  VertexOnEdgeContainer vertices_on_edge = viennagrid::ncells(*(edges.begin()));
   
   for (viennagrid::result_of::iterator<VertexOnEdgeContainer>::type voe_it = vertices_on_edge.begin();
        voe_it != vertices_on_edge.end();
        ++voe_it)
        voe_it->print();
+  
+  for (viennagrid::result_of::iterator<VertexOnEdgeContainer>::type voe_it = viennagrid::ncells<0>(*(edges.begin())).begin();
+       voe_it != viennagrid::ncells<0>(*(edges.begin())).end();
+       ++voe_it)
+       voe_it->print();
+  
+
+  
+  std::cout << "Accessing range using operator[]: ";
+  vertices_on_edge[0].print();
+  vertices_on_edge[1].print();
+
+  std::cout << "Accessing range using operator[] on range object (boundary-operation): ";
+  viennagrid::ncells<0>(*(edges.begin()))[0].print();
+  viennagrid::ncells<0>(*(edges.begin()))[1].print();
+
+  std::cout << "Accessing range using operator[] on range object (co-boundary-operation): ";
+  viennagrid::ncells<2>(*(edges.begin()), domain)[0].print();
+  //viennagrid::ncells<2>(*(edges.begin()), domain)[1].print();
   
   std::cout << "*******************************" << std::endl;
   std::cout << "* Test finished successfully! *" << std::endl;
