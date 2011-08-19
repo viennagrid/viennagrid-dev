@@ -1,0 +1,140 @@
+\chapter{Installation}
+
+This chapter shows how {\ViennaGrid} can be integrated into a project and how
+the examples are built. The necessary steps are outlined for several different
+platforms, but we could not check every possible combination of hardware,
+operating system, and compiler. If you experience any trouble, please write to
+the mailing list at \\
+\begin{center}
+\texttt{viennagrid-support$@$lists.sourceforge.net} 
+\end{center}
+
+
+% -----------------------------------------------------------------------------
+% -----------------------------------------------------------------------------
+\section{Dependencies}
+% -----------------------------------------------------------------------------
+% -----------------------------------------------------------------------------
+\label{dependencies}
+
+\begin{itemize}
+ \item A recent C++ compiler (e.g.~{\GCC} version 4.2.x or above and Visual C++
+2008 are known to work)
+ \item {\ViennaData} \cite{ViennaData}. To make {\ViennaGrid} self-contained, a copy of the {\ViennaData} sources are available in the \lstinline|external/| folder.
+ \item {\CMake}~\cite{cmake} as build system (optional, but recommended
+for building the examples)
+\end{itemize}
+
+
+\section{Generic Installation of ViennaGrid} \label{sec:viennagrid-installation}
+Since {\ViennaGrid} is a header-only library, it is sufficient to copy the 
+\lstinline|viennagrid/| folder either into your project folder or to your global system
+include path. If you do not have {\ViennaData} installed, proceed in the same way for the respective source folder \lstinline|external/viennadata/|. 
+
+On Unix based systems, the global system include path is usually \lstinline|/usr/include/| or \lstinline|/usr/local/include/|.
+On Windows, the situation strongly depends on your development environment. We
+advise to consult the documentation of the compiler on how to set the include
+path correctly. With Visual Studio 9.0 this is usually something like
+\texttt{C:$\setminus$Program Files$\setminus$Microsoft Visual Studio
+9.0$\setminus$VC$\setminus$include}
+and can be set in \texttt{Tools -> Options -> Projects and Solutions ->
+VC++-\-Directories}. 
+
+
+% -----------------------------------------------------------------------------
+% -----------------------------------------------------------------------------
+\section{Building the Examples and Tutorials}
+% -----------------------------------------------------------------------------
+% -----------------------------------------------------------------------------
+For building the examples, we suppose that {\CMake} is properly set up
+on your system. The other dependencies are listed in
+Tab.~\ref{tab:tutorial-dependencies}.
+
+\begin{table}[tb]
+\begin{center}
+\begin{tabular}{l|p{8.5cm}}
+File & Purpose\\
+\hline
+\texttt{tutorial/access.cpp}    & Shows the use of \lstinline|access| \\
+\texttt{benchmarks/sparse-custom.cpp}  & Benchmarks for a sparse storage scheme with custom object identification \\
+\end{tabular}
+\caption{Overview of the sample applications in the \texttt{examples/} folder}
+\label{tab:tutorial-dependencies}
+\end{center}
+\end{table}
+
+\subsection{Linux}
+To build the examples, open a terminal and change to:
+
+\begin{lstlisting}
+ $> cd /your-ViennaGrid-path/build/
+\end{lstlisting}
+Execute
+\begin{lstlisting}
+ $> cmake ..
+\end{lstlisting}
+to obtain a Makefile and type
+\begin{lstlisting}
+ $> make 
+\end{lstlisting}
+to build the examples. If desired, one can build each example separately instead:
+\begin{lstlisting}
+ $> make access            #builds the access tutorial
+ $> make dense             #builds dense storage benchmark
+\end{lstlisting}
+
+\TIP{Speed up the building process by using multiple concurrent jobs, e.g. \keyword{make -j4}.}
+
+\subsection{Mac OS X}
+\label{apple}
+The tools mentioned in Section \ref{dependencies} are available on 
+Macintosh platforms too. 
+For the {\GCC} compiler the Xcode~\cite{xcode} package has to be installed.
+To install {\CMake}, external portation tools such as
+Fink~\cite{fink}, DarwinPorts~\cite{darwinports}, 
+or MacPorts~\cite{macports} have to be used. 
+
+The build process of {\ViennaGrid} is similar to Linux.
+
+\subsection{Windows}
+In the following the procedure is outlined for \texttt{Visual Studio}: Assuming
+that {\CMake} is already installed, Visual Studio solution
+and project files can be created using {\CMake}:
+\begin{itemize}
+\item Open the {\CMake} GUI.
+\item Set the {\ViennaGrid} base directory as source directory.
+\item Set the \texttt{build/} directory as build directory.
+\item Click on 'Configure' and select the appropriate generator
+(e.g.~\texttt{Visual Studio 9 2008})
+\item Click on 'Generate' (you may need to click on 'Configure' one more time
+before you can click on 'Generate')
+\item The project files can now be found in the {\ViennaGrid} build directory,
+where they can be opened and compiled with Visual Studio (provided that the
+include and library paths are set correctly, see
+Sec.~\ref{sec:viennagrid-installation}).
+\end{itemize}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

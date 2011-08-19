@@ -27,10 +27,10 @@ namespace viennagrid
     template <typename FacetIterator>
     static void apply(FacetIterator & fit)
     {
-      typedef typename viennagrid::result_of::ncell_range<Facet, topolevel>::type    ElementOnFacetContainer;
-      typedef typename result_of::iterator<ElementOnFacetContainer>::type                ElementOnFacetIterator;
+      typedef typename viennagrid::result_of::ncell_range<Facet, topolevel>::type    ElementOnFacetRange;
+      typedef typename result_of::iterator<ElementOnFacetRange>::type                ElementOnFacetIterator;
 
-      ElementOnFacetContainer eof_container = ncells<topolevel>(*fit);
+      ElementOnFacetRange eof_container = ncells<topolevel>(*fit);
       for (ElementOnFacetIterator eofit = eof_container.begin();
             eofit != eof_container.end();
             ++eofit)
@@ -122,22 +122,22 @@ namespace viennagrid
     typedef typename viennagrid::result_of::ncell_type<DomainConfiguration, CellTag::topology_level-1>::type   FacetType;
     typedef typename viennagrid::result_of::ncell_type<DomainConfiguration, CellTag::topology_level>::type     CellType;
 
-    typedef typename viennagrid::result_of::ncell_range<Segment, CellTag::topology_level-1>::type      FacetContainer;
-    typedef typename viennagrid::result_of::iterator<FacetContainer>::type                                 FacetIterator;
+    typedef typename viennagrid::result_of::ncell_range<Segment, CellTag::topology_level-1>::type      FacetRange;
+    typedef typename viennagrid::result_of::iterator<FacetRange>::type                                 FacetIterator;
       
-    typedef typename viennagrid::result_of::ncell_range<Segment, CellTag::topology_level>::type        CellContainer;
-    typedef typename viennagrid::result_of::iterator<CellContainer>::type                                  CellIterator;
+    typedef typename viennagrid::result_of::ncell_range<Segment, CellTag::topology_level>::type        CellRange;
+    typedef typename viennagrid::result_of::iterator<CellRange>::type                                  CellIterator;
 
-    typedef typename viennagrid::result_of::ncell_range<CellType, CellTag::topology_level-1>::type     FacetOnCellContainer;
-    typedef typename viennagrid::result_of::iterator<FacetOnCellContainer>::type                           FacetOnCellIterator;
+    typedef typename viennagrid::result_of::ncell_range<CellType, CellTag::topology_level-1>::type     FacetOnCellRange;
+    typedef typename viennagrid::result_of::iterator<FacetOnCellRange>::type                           FacetOnCellIterator;
 
     //iterate over all cells, over facets there and tag them:
-    CellContainer cells = viennagrid::ncells<CellTag::topology_level>(seg);
+    CellRange cells = viennagrid::ncells<CellTag::topology_level>(seg);
     for (CellIterator cit = cells.begin();
           cit != cells.end();
           ++cit)
     {
-      FacetOnCellContainer facets_on_cell = ncells<CellTag::topology_level-1>(*cit);
+      FacetOnCellRange facets_on_cell = ncells<CellTag::topology_level-1>(*cit);
       for (FacetOnCellIterator focit = facets_on_cell.begin();
             focit != facets_on_cell.end();
             ++focit)
@@ -150,7 +150,7 @@ namespace viennagrid
     }
     
     //iterate over all facets again and tag all lower level topological elements on facets that belong to the boundary:
-    FacetContainer facets = viennagrid::ncells<CellTag::topology_level-1>(seg);
+    FacetRange facets = viennagrid::ncells<CellTag::topology_level-1>(seg);
     for (FacetIterator fit = facets.begin();
           fit != facets.end();
           ++fit)

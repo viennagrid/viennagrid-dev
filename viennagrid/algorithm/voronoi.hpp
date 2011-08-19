@@ -50,20 +50,20 @@ namespace viennagrid
       typedef typename viennagrid::result_of::ncell_type<Config, 1>::type                         EdgeType;
       typedef typename viennagrid::result_of::ncell_type<Config, CellTag::topology_level>::type   CellType;
       
-      typedef typename viennagrid::result_of::const_ncell_range<DomainType, CellTag::topology_level>::type    CellContainer;
-      typedef typename viennagrid::result_of::iterator<CellContainer>::type                                       CellIterator;
+      typedef typename viennagrid::result_of::const_ncell_range<DomainType, CellTag::topology_level>::type    CellRange;
+      typedef typename viennagrid::result_of::iterator<CellRange>::type                                       CellIterator;
 
-      typedef typename viennagrid::result_of::const_ncell_range<CellType, 1>::type                            EdgeOnCellContainer;
-      typedef typename viennagrid::result_of::iterator<EdgeOnCellContainer>::type                                 EdgeOnCellIterator;
+      typedef typename viennagrid::result_of::const_ncell_range<CellType, 1>::type                            EdgeOnCellRange;
+      typedef typename viennagrid::result_of::iterator<EdgeOnCellRange>::type                                 EdgeOnCellIterator;
       
-      typedef typename viennagrid::result_of::const_ncell_range<EdgeType, 0>::type                            VertexOnEdgeContainer;
-      typedef typename viennagrid::result_of::iterator<VertexOnEdgeContainer>::type                               VertexOnEdgeIterator;
+      typedef typename viennagrid::result_of::const_ncell_range<EdgeType, 0>::type                            VertexOnEdgeRange;
+      typedef typename viennagrid::result_of::iterator<VertexOnEdgeRange>::type                               VertexOnEdgeIterator;
 
       //
       // Algorithm: Iterate over all cells, compute circumcenter and add interface area to edge, box volume to vertex.
       //
       
-      CellContainer cells = viennagrid::ncells<CellTag::topology_level>(domain);
+      CellRange cells = viennagrid::ncells<CellTag::topology_level>(domain);
       for (CellIterator cit  = cells.begin();
                         cit != cells.end();
                       ++cit)
@@ -71,7 +71,7 @@ namespace viennagrid
         PointType circ_center = circumcenter(*cit);
         
         //iterate over edges:
-        EdgeOnCellContainer edges_on_cell = viennagrid::ncells<1>(*cit);
+        EdgeOnCellRange edges_on_cell = viennagrid::ncells<1>(*cit);
         for (EdgeOnCellIterator eocit  = edges_on_cell.begin();
                                 eocit != edges_on_cell.end();
                               ++eocit)
@@ -79,7 +79,7 @@ namespace viennagrid
           PointType edge_midpoint = circumcenter(*eocit);
           
           //compute edge length:
-          VertexOnEdgeContainer vertices_on_edge = viennagrid::ncells<0>(*eocit);
+          VertexOnEdgeRange vertices_on_edge = viennagrid::ncells<0>(*eocit);
           VertexOnEdgeIterator voeit = vertices_on_edge.begin();
           
           PointType const & v0 = voeit->getPoint();
@@ -123,23 +123,23 @@ namespace viennagrid
       typedef typename viennagrid::result_of::ncell_type<Config, 1>::type                         EdgeType;
       typedef typename viennagrid::result_of::ncell_type<Config, CellTag::topology_level>::type   CellType;
       
-      typedef typename viennagrid::result_of::const_ncell_range<DomainType, CellTag::topology_level>::type    CellContainer;
-      typedef typename viennagrid::result_of::iterator<CellContainer>::type                                       CellIterator;
+      typedef typename viennagrid::result_of::const_ncell_range<DomainType, CellTag::topology_level>::type    CellRange;
+      typedef typename viennagrid::result_of::iterator<CellRange>::type                                       CellIterator;
 
-      typedef typename viennagrid::result_of::const_ncell_range<DomainType, 1>::type                          EdgeContainer;
-      typedef typename viennagrid::result_of::iterator<EdgeContainer>::type                                       EdgeIterator;
+      typedef typename viennagrid::result_of::const_ncell_range<DomainType, 1>::type                          EdgeRange;
+      typedef typename viennagrid::result_of::iterator<EdgeRange>::type                                       EdgeIterator;
       
-      typedef typename viennagrid::result_of::const_ncell_range<CellType, 1>::type                            EdgeOnCellContainer;
-      typedef typename viennagrid::result_of::iterator<EdgeOnCellContainer>::type                                 EdgeOnCellIterator;
+      typedef typename viennagrid::result_of::const_ncell_range<CellType, 1>::type                            EdgeOnCellRange;
+      typedef typename viennagrid::result_of::iterator<EdgeOnCellRange>::type                                 EdgeOnCellIterator;
       
-      typedef typename viennagrid::result_of::const_ncell_range<EdgeType, 0>::type                            VertexOnEdgeContainer;
-      typedef typename viennagrid::result_of::iterator<VertexOnEdgeContainer>::type                               VertexOnEdgeIterator;
+      typedef typename viennagrid::result_of::const_ncell_range<EdgeType, 0>::type                            VertexOnEdgeRange;
+      typedef typename viennagrid::result_of::iterator<VertexOnEdgeRange>::type                               VertexOnEdgeIterator;
 
       //
       // Phase 1: Compute circumcenter of cells and store them on each of the edges (avoids coboundary operations)
       //
       
-      CellContainer cells = viennagrid::ncells<CellTag::topology_level>(domain);
+      CellRange cells = viennagrid::ncells<CellTag::topology_level>(domain);
       for (CellIterator cit  = cells.begin();
                         cit != cells.end();
                       ++cit)
@@ -147,7 +147,7 @@ namespace viennagrid
         PointType circ_center = circumcenter(*cit);
         
         // store circumcenter on edges
-        EdgeOnCellContainer edges_on_cell = viennagrid::ncells<1>(*cit);
+        EdgeOnCellRange edges_on_cell = viennagrid::ncells<1>(*cit);
         for (EdgeOnCellIterator eocit  = edges_on_cell.begin();
                                 eocit != edges_on_cell.end();
                               ++eocit)
@@ -161,14 +161,14 @@ namespace viennagrid
       //
       // Phase 2: Compute edge lengths, interface areas and box volumes from the information stored on edges:
       //
-      EdgeContainer edges = viennagrid::ncells<1>(domain);
+      EdgeRange edges = viennagrid::ncells<1>(domain);
       for (EdgeIterator eit  = edges.begin();
                         eit != edges.end();
                       ++eit)
       {
         
         //get vertices of edge:
-        VertexOnEdgeContainer vertices_on_edge = viennagrid::ncells<0>(*eit);
+        VertexOnEdgeRange vertices_on_edge = viennagrid::ncells<0>(*eit);
         VertexOnEdgeIterator voeit = vertices_on_edge.begin();
         
         VertexType const & v0 = *voeit;
@@ -232,36 +232,36 @@ namespace viennagrid
       typedef typename viennagrid::result_of::ncell_type<Config, 2>::type                         FacetType;
       typedef typename viennagrid::result_of::ncell_type<Config, CellTag::topology_level>::type   CellType;
       
-      typedef typename viennagrid::result_of::const_ncell_range<DomainType, CellTag::topology_level>::type    CellContainer;
-      typedef typename viennagrid::result_of::iterator<CellContainer>::type                                       CellIterator;
+      typedef typename viennagrid::result_of::const_ncell_range<DomainType, CellTag::topology_level>::type    CellRange;
+      typedef typename viennagrid::result_of::iterator<CellRange>::type                                       CellIterator;
 
-      typedef typename viennagrid::result_of::const_ncell_range<DomainType, CellTag::topology_level-1>::type  FacetContainer;
-      typedef typename viennagrid::result_of::iterator<FacetContainer>::type                                      FacetIterator;
+      typedef typename viennagrid::result_of::const_ncell_range<DomainType, CellTag::topology_level-1>::type  FacetRange;
+      typedef typename viennagrid::result_of::iterator<FacetRange>::type                                      FacetIterator;
       
-      typedef typename viennagrid::result_of::const_ncell_range<DomainType, 1>::type                          EdgeContainer;
-      typedef typename viennagrid::result_of::iterator<EdgeContainer>::type                                       EdgeIterator;
+      typedef typename viennagrid::result_of::const_ncell_range<DomainType, 1>::type                          EdgeRange;
+      typedef typename viennagrid::result_of::iterator<EdgeRange>::type                                       EdgeIterator;
       
-      typedef typename viennagrid::result_of::const_ncell_range<CellType, CellTag::topology_level-1>::type    FacetOnCellContainer;
-      typedef typename viennagrid::result_of::iterator<FacetOnCellContainer>::type                                FacetOnCellIterator;
+      typedef typename viennagrid::result_of::const_ncell_range<CellType, CellTag::topology_level-1>::type    FacetOnCellRange;
+      typedef typename viennagrid::result_of::iterator<FacetOnCellRange>::type                                FacetOnCellIterator;
 
-      typedef typename viennagrid::result_of::const_ncell_range<FacetType, 1>::type                           EdgeOnFacetContainer;
-      typedef typename viennagrid::result_of::iterator<EdgeOnFacetContainer>::type                                EdgeOnFacetIterator;
+      typedef typename viennagrid::result_of::const_ncell_range<FacetType, 1>::type                           EdgeOnFacetRange;
+      typedef typename viennagrid::result_of::iterator<EdgeOnFacetRange>::type                                EdgeOnFacetIterator;
       
-      typedef typename viennagrid::result_of::const_ncell_range<EdgeType, 0>::type                            VertexOnEdgeContainer;
-      typedef typename viennagrid::result_of::iterator<VertexOnEdgeContainer>::type                               VertexOnEdgeIterator;
+      typedef typename viennagrid::result_of::const_ncell_range<EdgeType, 0>::type                            VertexOnEdgeRange;
+      typedef typename viennagrid::result_of::iterator<VertexOnEdgeRange>::type                               VertexOnEdgeIterator;
 
       //
       // Step one: Write circumcenters to facets
       //
       
-      CellContainer cells = viennagrid::ncells<CellTag::topology_level>(domain);
+      CellRange cells = viennagrid::ncells<CellTag::topology_level>(domain);
       for (CellIterator cit  = cells.begin();
                         cit != cells.end();
                       ++cit)
       {
         PointType circ_center = circumcenter(*cit);
         
-        FacetOnCellContainer facets_on_cell = viennagrid::ncells<CellTag::topology_level-1>(*cit);
+        FacetOnCellRange facets_on_cell = viennagrid::ncells<CellTag::topology_level-1>(*cit);
         for (FacetOnCellIterator focit  = facets_on_cell.begin();
                                 focit != facets_on_cell.end();
                               ++focit)
@@ -275,14 +275,14 @@ namespace viennagrid
       //
       // Step two: Write lines connecting circumcenters to edges
       //
-      FacetContainer facets = viennagrid::ncells<CellTag::topology_level-1>(domain);
+      FacetRange facets = viennagrid::ncells<CellTag::topology_level-1>(domain);
       for (FacetIterator fit  = facets.begin();
                          fit != facets.end();
                        ++fit)
       {
         std::vector<PointType> & circ_centers = viennadata::access<InterfaceAreaKey, std::vector<PointType> >()(*fit);
         
-        EdgeOnFacetContainer edges_on_facet = viennagrid::ncells<1>(*fit);
+        EdgeOnFacetRange edges_on_facet = viennagrid::ncells<1>(*fit);
         for (EdgeOnFacetIterator eofit  = edges_on_facet.begin();
                                 eofit != edges_on_facet.end();
                               ++eofit)
@@ -317,7 +317,7 @@ namespace viennagrid
       //
       // Step three: Compute Voronoi information:
       //
-      EdgeContainer edges = viennagrid::ncells<1>(domain);
+      EdgeRange edges = viennagrid::ncells<1>(domain);
       for (EdgeIterator eit  = edges.begin();
                         eit != edges.end();
                       ++eit)
@@ -325,7 +325,7 @@ namespace viennagrid
         //eit->print_short();
         
         //get vertices of edge:
-        VertexOnEdgeContainer vertices_on_edge = viennagrid::ncells<0>(*eit);
+        VertexOnEdgeRange vertices_on_edge = viennagrid::ncells<0>(*eit);
         VertexOnEdgeIterator voeit = vertices_on_edge.begin();
         
         VertexType const & v0 = *voeit;
@@ -386,30 +386,30 @@ namespace viennagrid
       typedef typename viennagrid::result_of::ncell_type<Config, 2>::type                         FacetType;
       typedef typename viennagrid::result_of::ncell_type<Config, CellTag::topology_level>::type   CellType;
       
-      typedef typename viennagrid::result_of::const_ncell_range<DomainType, CellTag::topology_level>::type    CellContainer;
-      typedef typename viennagrid::result_of::iterator<CellContainer>::type                                       CellIterator;
+      typedef typename viennagrid::result_of::const_ncell_range<DomainType, CellTag::topology_level>::type    CellRange;
+      typedef typename viennagrid::result_of::iterator<CellRange>::type                                       CellIterator;
 
-      typedef typename viennagrid::result_of::const_ncell_range<CellType, 2>::type                            FacetOnCellContainer;
-      typedef typename viennagrid::result_of::iterator<FacetOnCellContainer>::type                                FacetOnCellIterator;
+      typedef typename viennagrid::result_of::const_ncell_range<CellType, 2>::type                            FacetOnCellRange;
+      typedef typename viennagrid::result_of::iterator<FacetOnCellRange>::type                                FacetOnCellIterator;
 
-      typedef typename viennagrid::result_of::const_ncell_range<FacetType, 1>::type                           EdgeOnFacetContainer;
-      typedef typename viennagrid::result_of::iterator<EdgeOnFacetContainer>::type                                EdgeOnFacetIterator;
+      typedef typename viennagrid::result_of::const_ncell_range<FacetType, 1>::type                           EdgeOnFacetRange;
+      typedef typename viennagrid::result_of::iterator<EdgeOnFacetRange>::type                                EdgeOnFacetIterator;
       
-      typedef typename viennagrid::result_of::const_ncell_range<EdgeType, 0>::type                            VertexOnEdgeContainer;
-      typedef typename viennagrid::result_of::iterator<VertexOnEdgeContainer>::type                               VertexOnEdgeIterator;
+      typedef typename viennagrid::result_of::const_ncell_range<EdgeType, 0>::type                            VertexOnEdgeRange;
+      typedef typename viennagrid::result_of::iterator<VertexOnEdgeRange>::type                               VertexOnEdgeIterator;
 
       //
       // Algorithm: Iterate over all cells, compute circumcenter and add interface area to edge, box volume to vertex.
       //
       
-      CellContainer cells = viennagrid::ncells<CellTag::topology_level>(domain);
+      CellRange cells = viennagrid::ncells<CellTag::topology_level>(domain);
       for (CellIterator cit  = cells.begin();
                         cit != cells.end();
                       ++cit)
       {
         PointType cell_center = circumcenter(*cit);
 
-        FacetOnCellContainer facets_on_cell = viennagrid::ncells<2>(*cit);
+        FacetOnCellRange facets_on_cell = viennagrid::ncells<2>(*cit);
         for (FacetOnCellIterator focit  = facets_on_cell.begin();
                                 focit != facets_on_cell.end();
                               ++focit)
@@ -417,7 +417,7 @@ namespace viennagrid
           PointType facet_center = circumcenter(*focit);
           
           //iterate over edges:
-          EdgeOnFacetContainer edges_on_facet = viennagrid::ncells<1>(*focit);
+          EdgeOnFacetRange edges_on_facet = viennagrid::ncells<1>(*focit);
           for (EdgeOnFacetIterator eocit  = edges_on_facet.begin();
                                   eocit != edges_on_facet.end();
                                 ++eocit)
@@ -425,7 +425,7 @@ namespace viennagrid
             PointType edge_midpoint = viennagrid::circumcenter(*eocit);
             
             //compute edge length:
-            VertexOnEdgeContainer vertices_on_edge = viennagrid::ncells<0>(*eocit);
+            VertexOnEdgeRange vertices_on_edge = viennagrid::ncells<0>(*eocit);
             VertexOnEdgeIterator voeit = vertices_on_edge.begin();
             
             PointType const & v0 = voeit->getPoint();

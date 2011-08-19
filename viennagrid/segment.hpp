@@ -183,7 +183,7 @@ namespace viennagrid
       typedef element<Config, typename Config::cell_tag>                CellType;
       typedef typename result_of::element_container< segment_t<Config>, 
                                                      0,
-                                                     CellTag::topology_level>::type           ContainerType;
+                                                     CellTag::topology_level>::type           RangeType;
       
     public:
       
@@ -197,10 +197,10 @@ namespace viennagrid
        
       
       template <dim_type dim>
-      const ContainerType * container() const { return &elements; }
+      const RangeType * container() const { return &elements; }
 
       template <dim_type dim>
-      ContainerType * container() { return &elements; }
+      RangeType * container() { return &elements; }
 
       ////////////////////// size ////////////////////////
       template <dim_type j>
@@ -213,7 +213,7 @@ namespace viennagrid
       }
       
     private:
-      ContainerType    elements;        //container of elements
+      RangeType    elements;        //container of elements
   };
 
   

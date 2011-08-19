@@ -57,10 +57,10 @@ struct assignCellNormals_impl <3, viennagrid::triangle_tag>
 
       typedef typename DomainT::segment_type                                                                      SegmentType; 
       typedef typename viennagrid::result_of::ncell_type<DomainConfiguration, CellTag::topology_level>::type      CellType;
-      typedef typename viennagrid::result_of::ncell_range<SegmentType, CellTag::topology_level>::type         CellContainer;          
-      typedef typename viennagrid::result_of::iterator<CellContainer>::type                                       CellIterator;         
-      typedef typename viennagrid::result_of::ncell_range<CellType, 0>::type                                  VertexOnCellContainer;
-      typedef typename viennagrid::result_of::iterator<VertexOnCellContainer>::type                               VertexOnCellIterator;            
+      typedef typename viennagrid::result_of::ncell_range<SegmentType, CellTag::topology_level>::type         CellRange;          
+      typedef typename viennagrid::result_of::iterator<CellRange>::type                                       CellIterator;         
+      typedef typename viennagrid::result_of::ncell_range<CellType, 0>::type                                  VertexOnCellRange;
+      typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type                               VertexOnCellIterator;            
       
       typedef typename viennagrid::result_of::point_type<DomainConfiguration>::type                               PointType;
       
@@ -76,14 +76,14 @@ struct assignCellNormals_impl <3, viennagrid::triangle_tag>
 
          // traverse the cells of this segment
          //
-         CellContainer cells = viennagrid::ncells<CellTag::topology_level>(seg);
+         CellRange cells = viennagrid::ncells<CellTag::topology_level>(seg);
          
          for (CellIterator cit = cells.begin(); cit != cells.end(); ++cit)
          {
             // get the cell points
             //
             std::size_t vi = 0;       
-            VertexOnCellContainer vertices_for_cell = viennagrid::ncells<0>(*cit);
+            VertexOnCellRange vertices_for_cell = viennagrid::ncells<0>(*cit);
             for (VertexOnCellIterator vocit = vertices_for_cell.begin();
                 vocit != vertices_for_cell.end();
                 ++vocit)

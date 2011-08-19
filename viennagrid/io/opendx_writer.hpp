@@ -75,20 +75,20 @@ namespace viennagrid
 
         //typedef typename DomainTypes<DomainConfiguration>::segment_type  Segment;
       
-        typedef typename viennagrid::result_of::ncell_range<DomainType, 0>::type   VertexContainer;
-        typedef typename viennagrid::result_of::iterator<VertexContainer>::type        VertexIterator;
+        typedef typename viennagrid::result_of::ncell_range<DomainType, 0>::type   VertexRange;
+        typedef typename viennagrid::result_of::iterator<VertexRange>::type        VertexIterator;
             
-        typedef typename viennagrid::result_of::ncell_range<DomainType, 1>::type   EdgeContainer;
-        typedef typename viennagrid::result_of::iterator<EdgeContainer>::type          EdgeIterator;
+        typedef typename viennagrid::result_of::ncell_range<DomainType, 1>::type   EdgeRange;
+        typedef typename viennagrid::result_of::iterator<EdgeRange>::type          EdgeIterator;
 
-        typedef typename viennagrid::result_of::ncell_range<DomainType, CellTag::topology_level-1>::type   FacetContainer;
-        typedef typename viennagrid::result_of::iterator<FacetContainer>::type                                 FacetIterator;
+        typedef typename viennagrid::result_of::ncell_range<DomainType, CellTag::topology_level-1>::type   FacetRange;
+        typedef typename viennagrid::result_of::iterator<FacetRange>::type                                 FacetIterator;
 
-        typedef typename viennagrid::result_of::ncell_range<DomainType, CellTag::topology_level>::type     CellContainer;
-        typedef typename viennagrid::result_of::iterator<CellContainer>::type                                  CellIterator;
+        typedef typename viennagrid::result_of::ncell_range<DomainType, CellTag::topology_level>::type     CellRange;
+        typedef typename viennagrid::result_of::iterator<CellRange>::type                                  CellIterator;
 
-        typedef typename viennagrid::result_of::ncell_range<CellType, 0>::type      VertexOnCellContainer;
-        typedef typename viennagrid::result_of::iterator<VertexOnCellContainer>::type   VertexOnCellIterator;
+        typedef typename viennagrid::result_of::ncell_range<CellType, 0>::type      VertexOnCellRange;
+        typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type   VertexOnCellIterator;
 
         typedef DXHelper<DimensionTag::value>  DXHelper;
       
@@ -100,7 +100,7 @@ namespace viennagrid
         writer << pointnum << " data follows" << std::endl;
       
         //Nodes:
-        VertexContainer vertices = viennagrid::ncells<0>(domain);
+        VertexRange vertices = viennagrid::ncells<0>(domain);
         for (VertexIterator vit = vertices.begin();
             vit != vertices.end();
             ++vit)
@@ -114,12 +114,12 @@ namespace viennagrid
         long cellnum = domain.template size<CellTag::topology_level>();
         writer << "object \"grid_Line_One\" class array type int rank 1 shape " << (DimensionTag::value + 1) << " items " << cellnum << " data follows" << std::endl;
 
-        CellContainer cells = viennagrid::ncells<CellTag::topology_level>(domain);
+        CellRange cells = viennagrid::ncells<CellTag::topology_level>(domain);
         for (CellIterator cit = cells.begin();
             cit != cells.end();
             ++cit)
         {
-          VertexOnCellContainer vertices_for_cell = viennagrid::ncells<0>(*cit);
+          VertexOnCellRange vertices_for_cell = viennagrid::ncells<0>(*cit);
           for (VertexOnCellIterator vocit = vertices_for_cell.begin();
               vocit != vertices_for_cell.end();
               ++vocit)

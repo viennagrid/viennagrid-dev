@@ -31,7 +31,7 @@ namespace viennagrid
 {
 
 
-  //ContainerElement-Type prevents abuse, for example:
+  //RangeElement-Type prevents abuse, for example:
   //A vertex-on-facet-iterator is not equal to a vertex-on-cell-iterator!
   template <typename ElementType>
   class on_element_iterator : public std::iterator < std::forward_iterator_tag, ElementType >
@@ -267,7 +267,7 @@ namespace viennagrid
   //helper meta function for selecting const/non-const containers:
   template <dim_type dim_start,
             dim_type dim_iter,
-            typename ContainerType,
+            typename RangeType,
             typename KeyType,
             typename EnclosingType>
   void init_coboundary(KeyType const & key,
@@ -277,24 +277,24 @@ namespace viennagrid
     typedef typename result_of::ncell_type<Config, dim_start>::type    LowerElementType;
     typedef typename result_of::ncell_type<Config, dim_iter>::type     HigherElementType;
     
-    typedef typename result_of::ncell_range<EnclosingType, dim_iter>::type      HigherElementContainer;
-    typedef typename result_of::iterator<HigherElementContainer>::type                    HigherElementIterator;
+    typedef typename result_of::ncell_range<EnclosingType, dim_iter>::type      HigherElementRange;
+    typedef typename result_of::iterator<HigherElementRange>::type                    HigherElementIterator;
     
-    typedef typename result_of::ncell_range<HigherElementType, dim_start>::type  LowerOnHigherContainer;
-    typedef typename result_of::iterator<LowerOnHigherContainer>::type                     LowerOnHigherIterator;
+    typedef typename result_of::ncell_range<HigherElementType, dim_start>::type  LowerOnHigherRange;
+    typedef typename result_of::iterator<LowerOnHigherRange>::type                     LowerOnHigherIterator;
     
     
-    HigherElementContainer higher_container = ncells<dim_iter>(domain);
+    HigherElementRange higher_container = ncells<dim_iter>(domain);
     for (HigherElementIterator hit = higher_container.begin();
          hit != higher_container.end();
          ++hit)
     {
-      LowerOnHigherContainer lower_container = ncells<dim_start>(*hit);
+      LowerOnHigherRange lower_container = ncells<dim_start>(*hit);
       for (LowerOnHigherIterator low = lower_container.begin();
            low != lower_container.end();
            ++low)
       {
-        viennadata::access<KeyType, ContainerType>(key)(*low).push_back(&(*hit));
+        viennadata::access<KeyType, RangeType>(key)(*low).push_back(&(*hit));
       }
     }
   }

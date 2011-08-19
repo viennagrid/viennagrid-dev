@@ -1,7 +1,8 @@
 #!/bin/bash
 
-rm *.*~
+rm *~
 rm doc/*.*~
+rm doc/manual/*.*~
 rm viennagrid/*.*~
 rm viennagrid/io/*.*~
 rm viennagrid/old/*.*~

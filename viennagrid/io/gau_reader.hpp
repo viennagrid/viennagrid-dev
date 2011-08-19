@@ -48,17 +48,17 @@ namespace io
       typedef typename result_of::ncell_type<DomainConfiguration, CellTag::topology_level>::type     CellType;
       //typedef typename DomainTypes<DomainConfiguration>::segment_type  Segment;
 
-      typedef typename viennagrid::result_of::ncell_range<DomainType, 0>::type   VertexContainer;
-      typedef typename viennagrid::result_of::iterator<VertexContainer>::type        VertexIterator;
+      typedef typename viennagrid::result_of::ncell_range<DomainType, 0>::type   VertexRange;
+      typedef typename viennagrid::result_of::iterator<VertexRange>::type        VertexIterator;
          
-      typedef typename viennagrid::result_of::ncell_range<DomainType, 1>::type   EdgeContainer;
-      typedef typename viennagrid::result_of::iterator<EdgeContainer>::type          EdgeIterator;
+      typedef typename viennagrid::result_of::ncell_range<DomainType, 1>::type   EdgeRange;
+      typedef typename viennagrid::result_of::iterator<EdgeRange>::type          EdgeIterator;
 
-      typedef typename viennagrid::result_of::ncell_range<DomainType, CellTag::topology_level-1>::type   FacetContainer;
-      typedef typename viennagrid::result_of::iterator<FacetContainer>::type                                 FacetIterator;
+      typedef typename viennagrid::result_of::ncell_range<DomainType, CellTag::topology_level-1>::type   FacetRange;
+      typedef typename viennagrid::result_of::iterator<FacetRange>::type                                 FacetIterator;
 
-      typedef typename viennagrid::result_of::ncell_range<DomainType, CellTag::topology_level>::type     CellContainer;
-      typedef typename viennagrid::result_of::iterator<CellContainer>::type                                  CellIterator;
+      typedef typename viennagrid::result_of::ncell_range<DomainType, CellTag::topology_level>::type     CellRange;
+      typedef typename viennagrid::result_of::iterator<CellRange>::type                                  CellIterator;
 
 
       int operator()(DomainType & domain, std::string const & filename) const

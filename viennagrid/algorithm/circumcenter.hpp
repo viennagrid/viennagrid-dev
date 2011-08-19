@@ -41,10 +41,10 @@ namespace viennagrid
       typedef typename ElementType::config_type             Config;
       typedef typename viennagrid::result_of::point_type<Config>::type                            PointType;
       
-      typedef typename viennagrid::result_of::const_ncell_range<ElementType, 0>::type         VertexOnCellContainer;
-      typedef typename viennagrid::result_of::iterator<VertexOnCellContainer>::type            VertexOnCellIterator;
+      typedef typename viennagrid::result_of::const_ncell_range<ElementType, 0>::type         VertexOnCellRange;
+      typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type            VertexOnCellIterator;
 
-      VertexOnCellContainer vertices = viennagrid::ncells<0>(cell);
+      VertexOnCellRange vertices = viennagrid::ncells<0>(cell);
       VertexOnCellIterator vocit = vertices.begin();
       
       PointType const & A = vocit->getPoint(); ++vocit;
@@ -70,10 +70,10 @@ namespace viennagrid
       typedef typename viennagrid::result_of::ncell_type<Config, 0>::type                         VertexType;
       typedef typename viennagrid::result_of::ncell_type<Config, 1>::type                         EdgeType;
       
-      typedef typename viennagrid::result_of::const_ncell_range<ElementType, 0>::type         VertexOnCellContainer;
-      typedef typename viennagrid::result_of::iterator<VertexOnCellContainer>::type            VertexOnCellIterator;
+      typedef typename viennagrid::result_of::const_ncell_range<ElementType, 0>::type         VertexOnCellRange;
+      typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type            VertexOnCellIterator;
 
-      VertexOnCellContainer vertices = viennagrid::ncells<0>(cell);
+      VertexOnCellRange vertices = viennagrid::ncells<0>(cell);
       VertexOnCellIterator vocit = vertices.begin();
       
       PointType const & A = vocit->getPoint(); ++vocit;
@@ -114,12 +114,12 @@ namespace viennagrid
       typedef typename viennagrid::result_of::ncell_type<Config, 0>::type                         VertexType;
       typedef typename viennagrid::result_of::ncell_type<Config, 1>::type                         EdgeType;
       
-      typedef typename viennagrid::result_of::const_ncell_range<CellType, 0>::type         VertexOnCellContainer;
-      typedef typename viennagrid::result_of::iterator<VertexOnCellContainer>::type      VertexOnCellIterator;
+      typedef typename viennagrid::result_of::const_ncell_range<CellType, 0>::type         VertexOnCellRange;
+      typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type      VertexOnCellIterator;
 
       PointType p0(0.0, 0.0);
       
-      VertexOnCellContainer vertices = viennagrid::ncells<0>(cell);
+      VertexOnCellRange vertices = viennagrid::ncells<0>(cell);
       for (VertexOnCellIterator vocit = vertices.begin();
            vocit != vertices.end();
            ++vocit)
@@ -147,10 +147,10 @@ namespace viennagrid
       typedef typename viennagrid::result_of::ncell_type<Config, 0>::type                         VertexType;
       typedef typename viennagrid::result_of::ncell_type<Config, 1>::type                         EdgeType;
       
-      typedef typename viennagrid::result_of::const_ncell_range<ElementType, 0>::type         VertexOnCellContainer;
-      typedef typename viennagrid::result_of::iterator<VertexOnCellContainer>::type            VertexOnCellIterator;
+      typedef typename viennagrid::result_of::const_ncell_range<ElementType, 0>::type         VertexOnCellRange;
+      typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type            VertexOnCellIterator;
 
-      VertexOnCellContainer vertices = viennagrid::ncells<0>(cell);
+      VertexOnCellRange vertices = viennagrid::ncells<0>(cell);
       VertexOnCellIterator vocit = vertices.begin();
       
       PointType const & A = vocit->getPoint(); ++vocit;
@@ -183,10 +183,10 @@ namespace viennagrid
       typedef typename viennagrid::result_of::ncell_type<Config, 0>::type                         VertexType;
       typedef typename viennagrid::result_of::ncell_type<Config, 1>::type                         EdgeType;
       
-      typedef typename viennagrid::result_of::const_ncell_range<ElementType, 0>::type         VertexOnCellContainer;
-      typedef typename viennagrid::result_of::iterator<VertexOnCellContainer>::type            VertexOnCellIterator;
+      typedef typename viennagrid::result_of::const_ncell_range<ElementType, 0>::type         VertexOnCellRange;
+      typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type            VertexOnCellIterator;
 
-      VertexOnCellContainer vertices = viennagrid::ncells<0>(cell);
+      VertexOnCellRange vertices = viennagrid::ncells<0>(cell);
       VertexOnCellIterator vocit = vertices.begin();
       
       PointType const & O = vocit->getPoint(); ++vocit;
