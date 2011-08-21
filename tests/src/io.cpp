@@ -1,16 +1,18 @@
 /* =======================================================================
-   Copyright (c) 2010, Institute for Microelectronics, TU Wien.
-   http://www.iue.tuwien.ac.at
-                             -----------------
+   Copyright (c) 2011, Institute for Microelectronics,
+                       Institute for Analysis and Scientific Computing,
+                       TU Wien.
+
+                            -----------------
                      ViennaGrid - The Vienna Grid Library
-                             -----------------
+                            -----------------
 
-   authors:    Karl Rupp                          rupp@iue.tuwien.ac.at
-               Peter Lagger                       peter.lagger@ieee.org
+   Authors:      Karl Rupp                           rupp@iue.tuwien.ac.at
+                 Josef Weinbub                    weinbub@iue.tuwien.ac.at
+               
+   (A list of additional contributors can be found in the PDF manual)
 
-   license:    MIT (X11), see file LICENSE in the ViennaGrid base directory
-   
-   This is a test file for the ViennaGrid Library IO-System
+   License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
 //***********************************************
@@ -100,7 +102,8 @@ void testNewDomain(std::string & infile, std::string & outfile)
     viennagrid::io::vtk_reader my_vtk_reader;
     my_vtk_reader.readDomain(domain, infile);
     #endif
-  } catch (...){
+  } catch (std::exception const & ex){
+    std::cerr << ex.what() << std::endl;
      std::cerr << "File-Reader failed. Aborting program..." << std::endl;
 //   exit(EXIT_FAILURE);
   }
@@ -151,16 +154,16 @@ int main()
   std::cout << "* Test started! *" << std::endl;
   std::cout << "*****************" << std::endl;
   
-  std::string path = "../examples/data/";
+  std::string path = "../../examples/data/";
   
   #ifdef THREEDIM
-  std::string infile = path + "cube384.sgf";
+  std::string infile = path + "cube384.mesh";
   #endif
   #ifdef TWODIM
-  std::string infile = path + "square128.sgf";
+  std::string infile = path + "square128.mesh";
   #endif
   #ifdef ONEDIM
-  std::string infile = path + "line8.sgf";
+  std::string infile = path + "line8.mesh";
   #endif
   std::string outfile = path + "out"; // without ending
   

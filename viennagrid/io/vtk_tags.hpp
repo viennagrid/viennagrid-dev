@@ -1,14 +1,18 @@
 /* =======================================================================
-   Copyright (c) 2011, Institute for Microelectronics, TU Vienna.
-   http://www.iue.tuwien.ac.at
-                             -----------------
+   Copyright (c) 2011, Institute for Microelectronics,
+                       Institute for Analysis and Scientific Computing,
+                       TU Wien.
+
+                            -----------------
                      ViennaGrid - The Vienna Grid Library
-                             -----------------
+                            -----------------
 
-   authors:    Karl Rupp                          rupp@iue.tuwien.ac.at
-               Peter Lagger                       peter.lagger@ieee.org
+   Authors:      Karl Rupp                           rupp@iue.tuwien.ac.at
+                 Josef Weinbub                    weinbub@iue.tuwien.ac.at
+               
+   (A list of additional contributors can be found in the PDF manual)
 
-   license:    MIT (X11), see file LICENSE in the ViennaGrid base directory
+   License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
 

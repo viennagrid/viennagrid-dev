@@ -1,13 +1,18 @@
 /* =======================================================================
-   Copyright (c) 2010, Institute for Microelectronics, TU Vienna.
-   http://www.iue.tuwien.ac.at
-                             -----------------
+   Copyright (c) 2011, Institute for Microelectronics,
+                       Institute for Analysis and Scientific Computing,
+                       TU Wien.
+
+                            -----------------
                      ViennaGrid - The Vienna Grid Library
-                             -----------------
+                            -----------------
 
-   authors:    Karl Rupp                          rupp@iue.tuwien.ac.at
+   Authors:      Karl Rupp                           rupp@iue.tuwien.ac.at
+                 Josef Weinbub                    weinbub@iue.tuwien.ac.at
+               
+   (A list of additional contributors can be found in the PDF manual)
 
-   license:    MIT (X11), see file LICENSE in the ViennaGrid base directory
+   License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
 #ifndef VIENNAGRID_IO_OPENDX_WRITER_GUARD
@@ -16,6 +21,7 @@
 #include <fstream>
 #include <iostream>
 #include "viennagrid/forwards.h"
+#include "viennagrid/io/helper.hpp"
 
 namespace viennagrid
 {
@@ -93,6 +99,12 @@ namespace viennagrid
         typedef DXHelper<DimensionTag::value>  DXHelper;
       
         std::ofstream writer(filename.c_str());
+        if (!writer.is_open())
+        {
+          throw cannot_open_file_exception(filename);
+          return EXIT_FAILURE;
+        }
+        
       
         long pointnum = domain.template size<CellTag::topology_level>();
       

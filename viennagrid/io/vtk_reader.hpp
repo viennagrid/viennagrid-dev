@@ -1,20 +1,23 @@
 /* =======================================================================
-   Copyright (c) 2010, Institute for Microelectronics, TU Vienna.
-   http://www.iue.tuwien.ac.at
-                             -----------------
+   Copyright (c) 2011, Institute for Microelectronics,
+                       Institute for Analysis and Scientific Computing,
+                       TU Wien.
+
+                            -----------------
                      ViennaGrid - The Vienna Grid Library
-                             -----------------
+                            -----------------
 
-   authors:    Karl Rupp                          rupp@iue.tuwien.ac.at
-               Peter Lagger                       peter.lagger@ieee.org
+   Authors:      Karl Rupp                           rupp@iue.tuwien.ac.at
+                 Josef Weinbub                    weinbub@iue.tuwien.ac.at
+               
+   (A list of additional contributors can be found in the PDF manual)
 
-   license:    MIT (X11), see file LICENSE in the ViennaGrid base directory
-   
+   License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
 
-#ifndef VIENNAMESH_IO_VTK_READER_GUARD
-#define VIENNAMESH_IO_VTK_READER_GUARD
+#ifndef VIENNAGRID_IO_VTK_READER_HPP
+#define VIENNAGRID_IO_VTK_READER_HPP
 
 /** @file vtk_reader.hpp
  *  @brief    This is a very simple vtk-reader implementation. There's only a part of the vtk-standard implemented.
@@ -83,8 +86,7 @@ namespace viennagrid
           this->reader.open(filename.c_str());
           if(!this->reader)
           {
-            std::cerr << "Error open file!" << std::endl;
-            throw;
+            throw cannot_open_file_exception(filename);
           }
       }
       

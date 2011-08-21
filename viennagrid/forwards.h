@@ -1,13 +1,18 @@
 /* =======================================================================
-   Copyright (c) 2010, Institute for Microelectronics, TU Wien
-   http://www.iue.tuwien.ac.at
-                             -----------------
+   Copyright (c) 2011, Institute for Microelectronics,
+                       Institute for Analysis and Scientific Computing,
+                       TU Wien.
+
+                            -----------------
                      ViennaGrid - The Vienna Grid Library
-                             -----------------
+                            -----------------
 
-   authors:    Karl Rupp                          rupp@iue.tuwien.ac.at
+   Authors:      Karl Rupp                           rupp@iue.tuwien.ac.at
+                 Josef Weinbub                    weinbub@iue.tuwien.ac.at
+               
+   (A list of additional contributors can be found in the PDF manual)
 
-   license:    MIT (X11), see file LICENSE in the ViennaGrid base directory
+   License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
 #ifndef VIENNAGRID_FORWARDS_GUARD
@@ -16,7 +21,21 @@
 #include <iostream>
 #include <vector>
 #include <map>
-#include <cstddef>
+#include <cstddef>     //for std::size_t
+#include <cstdlib>     //for EXIT_SUCCESS and EXIT_FAILURE
+
+
+//Debug levels:
+//VIENNAGRID_DEBUG_ALL          Output every little piece of debug information
+//VIENNAGRID_DEBUG_IO           Debug IO operations
+//VIENNAGRID_DEBUG_REFINEMENT   Debug refinement algorithms
+//VIENNAGRID_DEBUG_STATUS       Print status messages to std::cout (very little debug info)
+
+#ifdef VIENNAGRID_DEBUG_ALL
+  #define VIENNAGRID_DEBUG_IO
+  #define VIENNAGRID_DEBUG_REFINEMENT
+  #define VIENNAGRID_DEBUG_STATUS
+#endif
 
 namespace viennagrid
 {

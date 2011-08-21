@@ -1,22 +1,25 @@
 /* =======================================================================
-   Copyright (c) 2010, Institute for Microelectronics, TU Wien
-   http://www.iue.tuwien.ac.at
-                             -----------------
+   Copyright (c) 2011, Institute for Microelectronics,
+                       Institute for Analysis and Scientific Computing,
+                       TU Wien.
+
+                            -----------------
                      ViennaGrid - The Vienna Grid Library
-                             -----------------
+                            -----------------
 
-   authors:    Karl Rupp                          rupp@iue.tuwien.ac.at
+   Authors:      Karl Rupp                           rupp@iue.tuwien.ac.at
+                 Josef Weinbub                    weinbub@iue.tuwien.ac.at
+               
+   (A list of additional contributors can be found in the PDF manual)
 
-   license:    MIT (X11), see file LICENSE in the ViennaGrid base directory
-   
-   This is a test file for the ViennaGrid Library IO-System
+   License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
 //***********************************************
 // Define the dimension
 //***********************************************
-//#define THREEDIM
-#define TWODIM
+#define THREEDIM
+//#define TWODIM
 //#define ONEDIM
 
 //***********************************************
@@ -88,17 +91,18 @@ void testNewDomain(std::string & infile, std::string & outfile)
   {
     viennagrid::io::netgen_reader my_netgen_reader;
 #ifdef THREEDIM
-    my_netgen_reader(domain, "../../examples/data/cube6.sgf");
+    my_netgen_reader(domain, "../../examples/data/cube6.mesh");
 #endif
 #ifdef TWODIM
-    my_netgen_reader(domain, "../../examples/data/square8.sgf");
+    my_netgen_reader(domain, "../../examples/data/square8.mesh");
 #endif
 #ifdef ONEDIM
-    my_netgen_reader(domain, "../../examples/data/line8.sgf");
+    my_netgen_reader(domain, "../../examples/data/line8.mesh");
 #endif
   }
-  catch (...)
+  catch (std::exception const & ex)
   {
+    std::cout << ex.what() << std::endl;
     std::cerr << "File-Reader failed. Aborting program..." << std::endl;
     exit(EXIT_FAILURE);
   }

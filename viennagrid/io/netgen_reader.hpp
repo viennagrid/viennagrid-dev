@@ -1,13 +1,18 @@
 /* =======================================================================
-   Copyright (c) 2010, Institute for Microelectronics, TU Vienna.
-   http://www.iue.tuwien.ac.at
-                             -----------------
+   Copyright (c) 2011, Institute for Microelectronics,
+                       Institute for Analysis and Scientific Computing,
+                       TU Wien.
+
+                            -----------------
                      ViennaGrid - The Vienna Grid Library
-                             -----------------
+                            -----------------
 
-   authors:    Karl Rupp                          rupp@iue.tuwien.ac.at
+   Authors:      Karl Rupp                           rupp@iue.tuwien.ac.at
+                 Josef Weinbub                    weinbub@iue.tuwien.ac.at
+               
+   (A list of additional contributors can be found in the PDF manual)
 
-   license:    MIT (X11), see file LICENSE in the ViennaGrid base directory
+   License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
 #ifndef VIENNAGRID_IO_NETGEN_READER_GUARD
@@ -16,7 +21,9 @@
 
 #include <fstream>
 #include <iostream>
+#include <assert.h>
 #include "viennagrid/forwards.h"
+#include "viennagrid/io/helper.hpp"
 
 namespace viennagrid
 {
@@ -55,84 +62,95 @@ namespace viennagrid
 
         //Segment & segment = *(domain.begin());
 
+        #if defined VIENNAGRID_DEBUG_STATUS || defined VIENNAGRID_DEBUG_IO
         std::cout << "* netgen_reader::operator(): Reading file " << filename << std::endl;
+        #endif
 
-        if (!reader){
-          std::cerr << "Cannot open file " << filename << std::endl;
-          throw "Cannot open file";
+        if (!reader)
+        {
+          throw cannot_open_file_exception(filename);
           return EXIT_FAILURE;
         }
 
-        try{
-          std::string token;
-          long node_num = 0;
-          long cell_num = 0;
+        std::string token;
+        long node_num = 0;
+        long cell_num = 0;
       
+        if (!reader.good())
+          throw bad_file_format_exception(filename, "File is empty.");
+        
+        //
+        // Read vertices:
+        //
+        reader >> node_num;
+        assert(node_num > 0);
+        
+        //std::cout << "Reading " << node_num << " vertices... " << std::endl;  
+        //reserve the memory:
+        domain.reserve_vertices(node_num);
+        VertexType vertex;
+    
+        for (int i=0; i<node_num; i++)
+        {
+          if (!reader.good())
+            throw bad_file_format_exception(filename, "EOF encountered while reading vertices.");
           
-          //
-          // Read vertices:
-          //
-          reader >> node_num;
-
-          //std::cout << "Reading " << node_num << " vertices... " << std::endl;  
-          //reserve the memory:
-          domain.reserve_vertices(node_num);
-          VertexType vertex;
-      
-          for (int i=0; i<node_num; i++)
-          {
-      
-            for (int j=0; j<DimensionTag::value; j++)
-              reader >> vertex.getPoint()[j];
-      
-            vertex.id(i);
-            domain.add(vertex);
-          }
-      
-          //std::cout << "DONE" << std::endl;
-      
-          if (domain.segment_size() == 0)
-            domain.create_segments(1);
-      
-          //
-          // Read cells:
-          //
-          reader >> cell_num;
-          domain.reserve_cells(cell_num);
-          CellType cell;
-          //std::cout << "Filling cells:" << std::endl;
-      
-          for (int i=0; i<cell_num; ++i)
-          {
-            long vertex_num;
-            VertexType *vertices[topology::subcell_desc<CellTag, 0>::num_elements];
-
-            size_t segment_index;
-            reader >> segment_index;
-      
-            for (int j=0; j<topology::subcell_desc<CellTag, 0>::num_elements; ++j)
-            {
-              reader >> vertex_num;
-              vertices[j] = &(domain.vertex(vertex_num - 1));  //Note that Netgen uses vertex indices with base 1
-            }
-      
-            //std::cout << std::endl << "Adding cell: " << &cell << " at " << cell_id << std::endl;
-            cell.setVertices(&(vertices[0]));
-            cell.id(i);
-            assert(domain.segment_size() >= segment_index && "Segment index in input file out of bounds!");
-            domain.segment(segment_index - 1).add(cell);  //note that Netgen uses a 1-based indexing scheme, while ViennaGrid uses a zero-based one
-      
-            //progress info:
-            if (i % 50000 == 0 && i > 0)
-              std::cout << "* netgen_reader::operator(): " << i << " out of " << cell_num << " cells read." << std::endl;
-          }
-      
-      
-        } catch (...) {
-          std::cerr << "Problems while reading file " << filename << std::endl;
+          for (int j=0; j<DimensionTag::value; j++)
+            reader >> vertex.getPoint()[j];
+          
+          vertex.id(i);
+          domain.add(vertex);
         }
-      
-        //std::cout << "File-Reader finished!" << std::endl;  
+    
+        //std::cout << "DONE" << std::endl;
+    
+        if (domain.segment_size() == 0)
+          domain.create_segments(1);
+
+        if (!reader.good())
+          throw bad_file_format_exception(filename, "EOF encountered when reading number of cells.");
+          
+
+        //
+        // Read cells:
+        //
+        reader >> cell_num;
+        domain.reserve_cells(cell_num);
+        CellType cell;
+        //std::cout << "Filling " << cell_num << " cells:" << std::endl;
+    
+        for (int i=0; i<cell_num; ++i)
+        {
+          long vertex_num;
+          VertexType *vertices[topology::subcell_desc<CellTag, 0>::num_elements];
+
+          if (!reader.good())
+            throw bad_file_format_exception(filename, "EOF encountered while reading cells (segment index expected).");
+          
+          size_t segment_index;
+          reader >> segment_index;
+    
+          for (int j=0; j<topology::subcell_desc<CellTag, 0>::num_elements; ++j)
+          {
+            if (!reader.good())
+              throw bad_file_format_exception(filename, "EOF encountered while reading cells (vertex ID expected).");
+            
+            reader >> vertex_num;
+            vertices[j] = &(domain.vertex(vertex_num - 1));  //Note that Netgen uses vertex indices with base 1
+          }
+    
+          //std::cout << std::endl << "Adding cell: " << &cell << " at " << cell_id << std::endl;
+          cell.setVertices(&(vertices[0]));
+          cell.id(i);
+          assert(domain.segment_size() >= segment_index && "Segment index in input file out of bounds!");
+          domain.segment(segment_index - 1).add(cell);  //note that Netgen uses a 1-based indexing scheme, while ViennaGrid uses a zero-based one
+    
+          //progress info:
+          //if (i % 50000 == 0 && i > 0)
+          //  std::cout << "* netgen_reader::operator(): " << i << " out of " << cell_num << " cells read." << std::endl;
+        }
+        
+        //std::cout << "All done!" << std::endl;
         
         return EXIT_SUCCESS;
       } //operator()

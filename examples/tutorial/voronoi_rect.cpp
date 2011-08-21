@@ -1,14 +1,18 @@
 /* =======================================================================
-   Copyright (c) 2010, 2011, Institute for Microelectronics, TU Wien
-   http://www.iue.tuwien.ac.at
-                             -----------------
-       ViennaSHE - The Vienna Spherical Harmonics Expansion Simulator
-                             -----------------
+   Copyright (c) 2011, Institute for Microelectronics,
+                       Institute for Analysis and Scientific Computing,
+                       TU Wien.
 
-   authors:    Karl Rupp                          rupp@iue.tuwien.ac.at
-               Markus Bina                        bina@iue.tuwien.ac.at
+                            -----------------
+                     ViennaGrid - The Vienna Grid Library
+                            -----------------
 
-   license:    To be discussed, see file LICENSE in the ViennaSHE base directory
+   Authors:      Karl Rupp                           rupp@iue.tuwien.ac.at
+                 Josef Weinbub                    weinbub@iue.tuwien.ac.at
+               
+   (A list of additional contributors can be found in the PDF manual)
+
+   License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
 #include <iostream>

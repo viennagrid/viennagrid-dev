@@ -1,14 +1,18 @@
 /* =======================================================================
-   Copyright (c) 2011, Institute for Microelectronics, TU Vienna.
-   http://www.iue.tuwien.ac.at
-                             -----------------
+   Copyright (c) 2011, Institute for Microelectronics,
+                       Institute for Analysis and Scientific Computing,
+                       TU Wien.
+
+                            -----------------
                      ViennaGrid - The Vienna Grid Library
-                             -----------------
+                            -----------------
 
-   authors:    Karl Rupp                          rupp@iue.tuwien.ac.at
-               Markus Bina                        bina@iue.tuwien.ac.at
+   Authors:      Karl Rupp                           rupp@iue.tuwien.ac.at
+                 Josef Weinbub                    weinbub@iue.tuwien.ac.at
+               
+   (A list of additional contributors can be found in the PDF manual)
 
-   license:    MIT (X11), see file LICENSE in the ViennaGrid base directory
+   License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
 
@@ -348,6 +352,11 @@ namespace viennagrid
               std::stringstream ss;
               ss << filename << "_main.pvd";
               std::ofstream writer(ss.str().c_str());
+
+              if (!writer){
+                throw cannot_open_file_exception(filename);
+                return EXIT_FAILURE;
+              }
               
               writer << "<?xml version=\"1.0\"?>" << std::endl;
               writer << "<VTKFile type=\"Collection\" version=\"0.1\" byte_order=\"LittleEndian\" compressor=\"vtkZLibDataCompressor\">" << std::endl;
@@ -373,6 +382,12 @@ namespace viennagrid
               ss << filename << "_" << i << ".vtu";
               std::ofstream writer(ss.str().c_str());
               writeHeader(writer);
+
+              if (!writer)
+              {
+                throw cannot_open_file_exception(ss.str());
+                return EXIT_FAILURE;
+              }
               
               typedef typename DomainType::segment_type                                             SegmentType;
               typedef typename viennagrid::result_of::const_ncell_range<SegmentType, 0>::type   VertexRange;

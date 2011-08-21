@@ -1,14 +1,18 @@
 /* =======================================================================
-   Copyright (c) 2010, Institute for Microelectronics, TU Vienna.
-   http://www.iue.tuwien.ac.at
-                             -----------------
+   Copyright (c) 2011, Institute for Microelectronics,
+                       Institute for Analysis and Scientific Computing,
+                       TU Wien.
+
+                            -----------------
                      ViennaGrid - The Vienna Grid Library
-                             -----------------
+                            -----------------
 
-   authors:    Karl Rupp                          rupp@iue.tuwien.ac.at
-               Peter Lagger                       peter.lagger@ieee.org
+   Authors:      Karl Rupp                           rupp@iue.tuwien.ac.at
+                 Josef Weinbub                    weinbub@iue.tuwien.ac.at
+               
+   (A list of additional contributors can be found in the PDF manual)
 
-   license:    MIT (X11), see file LICENSE in the ViennaGrid base directory
+   License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
 
@@ -16,6 +20,7 @@
 #define VIENNAGRID_IO_HELPER_GUARD
 
 #include <fstream>
+#include <sstream>
 #include <iostream>
 #include <cctype>
 #include <string>
@@ -100,6 +105,51 @@ namespace viennagrid
         return numberFlag;
       }
     };
+    
+    
+    
+    
+    
+    //
+    // IO Exception
+    //
+    class cannot_open_file_exception : public std::exception
+    {
+      public:
+        virtual const char* what() const throw()
+        {
+          std::stringstream ss;
+          ss << "* ViennaGrid: Cannot open file " << filename_ << "!";
+          return ss.str().c_str();
+        }
+        
+        cannot_open_file_exception(std::string file) : filename_(file) {};
+        
+        virtual ~cannot_open_file_exception() throw() {};
+      
+      private:
+        std::string filename_;
+    };
+    
+    class bad_file_format_exception : public std::exception
+    {
+      public:
+        virtual const char* what() const throw()
+        {
+          std::stringstream ss;
+          ss << "* ViennaGrid: Bad file format in file " << filename_ << ": " << message_;
+          return ss.str().c_str();
+        }
+        
+        bad_file_format_exception(std::string file, std::string message) : filename_(file), message_(message) {};
+        
+        virtual ~bad_file_format_exception() throw() {};
+      
+      private:
+        std::string filename_;
+        std::string message_;
+    };
+    
     
   } //namespace io
 } //namespace  viennagrid
