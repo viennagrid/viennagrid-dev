@@ -34,10 +34,8 @@ ENDIF(CMAKE_COMPILER_IS_GNUCXX)
 
 #list all source files here
 ADD_EXECUTABLE(test_io          examples/tests/test_io.cpp)
-ADD_EXECUTABLE(test_simplex     examples/tests/test_simplex.cpp)
 ADD_EXECUTABLE(test_hypercube   examples/tests/test_hypercube.cpp)
 ADD_EXECUTABLE(test_coboundary  examples/tests/test_coboundary.cpp)
-ADD_EXECUTABLE(test_domain      examples/tests/test_domain.cpp)
 ADD_EXECUTABLE(test_segment     examples/tests/test_segment.cpp)
 ADD_EXECUTABLE(test_point       examples/tests/test_point.cpp)
 ADD_EXECUTABLE(test_refinement  examples/tests/test_refinement.cpp)

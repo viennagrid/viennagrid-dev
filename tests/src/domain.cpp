@@ -16,6 +16,7 @@
 ======================================================================= */
 
 #include "viennagrid/domain.hpp"
+#include "viennagrid/config/others.hpp"
 #include "viennagrid/config/simplex.hpp"
 
 
@@ -25,19 +26,30 @@ int main()
   std::cout << "* Test started! *" << std::endl;
   std::cout << "*****************" << std::endl;
   
-  typedef viennagrid::domain<viennagrid::config::line_2d>             domain_21u_type;
-  typedef viennagrid::domain<viennagrid::config::triangular_2d>       domain_22u_type;
-  typedef viennagrid::domain<viennagrid::config::triangular_3d>       domain_32u_type;
-  typedef viennagrid::domain<viennagrid::config::tetrahedral_3d>       domain_33u_type;
+  std::cout << " ------ Part 1: Simplex domains ------- " << std::endl;
+  
+  std::cout << "* instantiating simplex 21u domain.. " << std::endl;
+  viennagrid::domain<viennagrid::config::line_2d>        domain_simplex_21u;
+  std::cout << "* instantiating simplex 22u domain.. " << std::endl;
+  viennagrid::domain<viennagrid::config::triangular_2d>  domain_simplex_22u;
+  std::cout << "* instantiating simplex 32u domain.. " << std::endl;
+  viennagrid::domain<viennagrid::config::triangular_3d>  domain_simplex_32u;
+  std::cout << "* instantiating simplex 33u domain.. " << std::endl;
+  viennagrid::domain<viennagrid::config::tetrahedral_3d> domain_simplex_33u;
 
-  std::cout << "* instantiating 21u domain.. " << std::endl;
-  domain_21u_type domain_21u;
-  std::cout << "* instantiating 22u domain.. " << std::endl;
-  domain_22u_type domain_22u;
-  std::cout << "* instantiating 32u domain.. " << std::endl;
-  domain_32u_type domain_32u;
-  std::cout << "* instantiating 33u domain.. " << std::endl;
-  domain_33u_type domain_33u;
+  
+  std::cout << " ------ Part 2: Non-simplex domains ------- " << std::endl;
 
+  std::cout << "* instantiating quadrilateral 22u domain.. " << std::endl;
+  viennagrid::domain<viennagrid::config::quadrilateral_2d> domain_22u;
+  std::cout << "* instantiating quadrilateral 32u domain.. " << std::endl;
+  viennagrid::domain<viennagrid::config::quadrilateral_3d> domain_32u;
+  std::cout << "* instantiating hexagonal 33u domain.. " << std::endl;
+  viennagrid::domain<viennagrid::config::hexahedron_3d> domain_33u;
+  
+  std::cout << "*******************************" << std::endl;
+  std::cout << "* Test finished successfully! *" << std::endl;
+  std::cout << "*******************************" << std::endl;
+  
   return EXIT_SUCCESS;
 }

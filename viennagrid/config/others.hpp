@@ -32,6 +32,13 @@ namespace viennagrid
       typedef viennagrid::two_dimensions_tag        dimension_tag;
       typedef viennagrid::quadrilateral_tag         cell_tag;
     };
+
+    struct quadrilateral_3d
+    {
+      typedef double                                numeric_type;
+      typedef viennagrid::three_dimensions_tag      dimension_tag;
+      typedef viennagrid::quadrilateral_tag         cell_tag;
+    };
     
     struct hexahedron_3d
     {
