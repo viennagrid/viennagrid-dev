@@ -40,8 +40,8 @@ namespace viennagrid
   {
       typedef typename T_Configuration::numeric_type                   ScalarType;
       typedef lower_level_holder < T_Configuration, ElementTag, ElementTag::topology_level - 1>             Base;
-      typedef typename result_of::point_type<T_Configuration>::type         PointType;
-      typedef typename result_of::ncell_type<T_Configuration, 0>::type      VertexType;
+      typedef typename result_of::point<T_Configuration>::type         PointType;
+      typedef typename result_of::ncell<T_Configuration, 0>::type      VertexType;
       typedef topology::subcell_desc<ElementTag, 0>                                 VertexSpecs;
 
     public:
@@ -154,9 +154,9 @@ namespace viennagrid
   class element <T_Configuration, point_tag> :
     public traits::element_id<point_tag>::id_handler
   {
-      typedef typename result_of::point_type<T_Configuration>::type          PointType;
+      typedef typename result_of::point<T_Configuration>::type          PointType;
       typedef typename T_Configuration::numeric_type                         CoordType;
-      typedef typename result_of::ncell_type<T_Configuration, 0>::type       VertexType;
+      typedef typename result_of::ncell<T_Configuration, 0>::type       VertexType;
       typedef typename T_Configuration::cell_tag                             CellTag;
 
     public:

@@ -72,8 +72,8 @@ namespace viennagrid
       #endif
           typedef typename DomainT::config_type                                            domain_config_type;
           typedef typename domain_config_type::cell_tag                                    cell_tag;      
-          typedef typename viennagrid::result_of::ncell_type<domain_config_type, 0>::type  vertex_type; 
-          typedef typename viennagrid::result_of::ncell_type<domain_config_type, cell_tag::topology_level>::type     cell_type;            
+          typedef typename viennagrid::result_of::ncell<domain_config_type, 0>::type  vertex_type; 
+          typedef typename viennagrid::result_of::ncell<domain_config_type, cell_tag::topology_level>::type     cell_type;            
           static const std::size_t CELLSIZE = viennagrid::topology::subcell_desc<cell_tag, 0>::num_elements;         
       
           // transfer geometry

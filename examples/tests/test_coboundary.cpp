@@ -63,12 +63,12 @@ void testNewDomain()
   typedef viennagrid::segment_t<TestDomainConfig>       SegmentType;
   
   //typedef viennagrid::TestDomainConfig::DimensionTag              DimensionTag;
-  typedef viennagrid::result_of::point_type<TestDomainConfig>::type          PointType;
-  typedef viennagrid::result_of::ncell_type<TestDomainConfig, 0>::type       VertexType;
-  typedef viennagrid::result_of::ncell_type<TestDomainConfig, 1>::type       EdgeType;
-  typedef viennagrid::result_of::ncell_type<TestDomainConfig,
+  typedef viennagrid::result_of::point<TestDomainConfig>::type          PointType;
+  typedef viennagrid::result_of::ncell<TestDomainConfig, 0>::type       VertexType;
+  typedef viennagrid::result_of::ncell<TestDomainConfig, 1>::type       EdgeType;
+  typedef viennagrid::result_of::ncell<TestDomainConfig,
                                             CellTag::topology_level-1>::type FacetType;
-  typedef viennagrid::result_of::ncell_type<TestDomainConfig,
+  typedef viennagrid::result_of::ncell<TestDomainConfig,
                                             CellTag::topology_level>::type   CellType;
                                             
   typedef viennagrid::result_of::ncell_range<Domain, 0>::type   VertexContainer;

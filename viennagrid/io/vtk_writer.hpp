@@ -175,9 +175,9 @@ namespace viennagrid
         typedef typename DomainConfiguration::dimension_tag              DimensionTag;
         typedef typename DomainConfiguration::cell_tag                   CellTag;
 
-        typedef typename result_of::point_type<DomainConfiguration>::type                              PointType;
-        typedef typename result_of::ncell_type<DomainConfiguration, 0>::type                           VertexType;
-        typedef typename result_of::ncell_type<DomainConfiguration, CellTag::topology_level>::type     CellType;
+        typedef typename result_of::point<DomainConfiguration>::type                              PointType;
+        typedef typename result_of::ncell<DomainConfiguration, 0>::type                           VertexType;
+        typedef typename result_of::ncell<DomainConfiguration, CellTag::topology_level>::type     CellType;
 
 
         void writeHeader(std::ofstream & writer)

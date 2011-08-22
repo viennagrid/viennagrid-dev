@@ -34,9 +34,9 @@ namespace viennagrid
     typedef domain<ConfigTypeIn>                      DomainTypeIn;
     typedef typename ConfigTypeIn::cell_tag           CellTagIn;   
     
-    typedef typename viennagrid::result_of::ncell_type<ConfigTypeIn, 0>::type                                      VertexType;
-    typedef typename viennagrid::result_of::ncell_type<ConfigTypeIn, 1>::type                                      EdgeType;
-    typedef typename viennagrid::result_of::ncell_type<ConfigTypeIn, CellTagIn::topology_level>::type              CellType;
+    typedef typename viennagrid::result_of::ncell<ConfigTypeIn, 0>::type                                      VertexType;
+    typedef typename viennagrid::result_of::ncell<ConfigTypeIn, 1>::type                                      EdgeType;
+    typedef typename viennagrid::result_of::ncell<ConfigTypeIn, CellTagIn::topology_level>::type              CellType;
     
     typedef typename viennagrid::result_of::const_ncell_range<DomainTypeIn, CellTagIn::topology_level>::type   CellRange;          
     typedef typename viennagrid::result_of::iterator<CellRange>::type                                          CellIterator;         
@@ -121,7 +121,7 @@ namespace viennagrid
   {
     typedef domain<ConfigTypeIn>                      DomainTypeIn;
     typedef typename ConfigTypeIn::cell_tag           CellTagIn;   
-    typedef typename viennagrid::result_of::ncell_type<ConfigTypeIn, CellTagIn::topology_level>::type              CellType;
+    typedef typename viennagrid::result_of::ncell<ConfigTypeIn, CellTagIn::topology_level>::type              CellType;
     
     typedef typename viennagrid::result_of::const_ncell_range<DomainTypeIn, CellTagIn::topology_level>::type   CellRange;          
     typedef typename viennagrid::result_of::iterator<CellRange>::type                                          CellIterator;         
@@ -166,10 +166,10 @@ namespace viennagrid
     typedef typename ConfigTypeIn::numeric_type       NumericType;
 
     typedef typename DomainTypeIn::segment_type                                                                    SegmentTypeIn; 
-    typedef typename viennagrid::result_of::point_type<ConfigTypeIn>::type                                         PointType;
-    typedef typename viennagrid::result_of::ncell_type<ConfigTypeIn, 0>::type                                      VertexType;
-    typedef typename viennagrid::result_of::ncell_type<ConfigTypeIn, 1>::type                                      EdgeType;
-    typedef typename viennagrid::result_of::ncell_type<ConfigTypeIn, CellTagIn::topology_level>::type              CellType;
+    typedef typename viennagrid::result_of::point<ConfigTypeIn>::type                                         PointType;
+    typedef typename viennagrid::result_of::ncell<ConfigTypeIn, 0>::type                                      VertexType;
+    typedef typename viennagrid::result_of::ncell<ConfigTypeIn, 1>::type                                      EdgeType;
+    typedef typename viennagrid::result_of::ncell<ConfigTypeIn, CellTagIn::topology_level>::type              CellType;
     
     typedef typename viennagrid::result_of::const_ncell_range<DomainTypeIn, 0>::type                           VertexRange;          
     typedef typename viennagrid::result_of::iterator<VertexRange>::type                                        VertexIterator;         
@@ -268,10 +268,10 @@ namespace viennagrid
     typedef typename ConfigTypeIn::numeric_type       NumericType;
 
     typedef typename DomainTypeIn::segment_type                                                                    SegmentTypeIn; 
-    typedef typename viennagrid::result_of::point_type<ConfigTypeIn>::type                                         PointType;
-    typedef typename viennagrid::result_of::ncell_type<ConfigTypeIn, 0>::type                                      VertexType;
-    typedef typename viennagrid::result_of::ncell_type<ConfigTypeIn, 1>::type                                      EdgeType;
-    typedef typename viennagrid::result_of::ncell_type<ConfigTypeIn, CellTagIn::topology_level>::type              CellType;
+    typedef typename viennagrid::result_of::point<ConfigTypeIn>::type                                         PointType;
+    typedef typename viennagrid::result_of::ncell<ConfigTypeIn, 0>::type                                      VertexType;
+    typedef typename viennagrid::result_of::ncell<ConfigTypeIn, 1>::type                                      EdgeType;
+    typedef typename viennagrid::result_of::ncell<ConfigTypeIn, CellTagIn::topology_level>::type              CellType;
     
     typedef typename viennagrid::result_of::const_ncell_range<DomainTypeIn, 0>::type                           VertexRange;          
     typedef typename viennagrid::result_of::iterator<VertexRange>::type                                        VertexIterator;         

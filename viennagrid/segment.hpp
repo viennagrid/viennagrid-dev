@@ -37,7 +37,7 @@ namespace viennagrid
     template <typename config_type, dim_type cell_level>
     struct element_container< segment_t<config_type>, cell_level, cell_level>
     {
-      typedef typename result_of::ncell_type<config_type, cell_level>::type     element_type;
+      typedef typename result_of::ncell<config_type, cell_level>::type     element_type;
       
       typedef std::deque< element_type * >      type;
     };
@@ -46,7 +46,7 @@ namespace viennagrid
     template <typename config_type, dim_type cell_level>
     struct element_container< segment_t<config_type>, 0, cell_level>
     {
-      typedef typename result_of::ncell_type<config_type, 0>::type     element_type;
+      typedef typename result_of::ncell<config_type, 0>::type     element_type;
       
       typedef std::set< element_type * >      type;
     };
@@ -55,7 +55,7 @@ namespace viennagrid
     template <typename config_type, dim_type dim, dim_type cell_level>
     struct element_container< segment_t<config_type>, dim, cell_level>
     {
-      typedef typename result_of::ncell_type<config_type, dim>::type     element_type;
+      typedef typename result_of::ncell<config_type, dim>::type     element_type;
       
       typedef std::set< element_type * >      type;
     };

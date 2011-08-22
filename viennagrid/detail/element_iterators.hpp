@@ -329,8 +329,8 @@ namespace viennagrid
                        EnclosingType const & domain)
   {
     typedef typename EnclosingType::config_type         Config;
-    typedef typename result_of::ncell_type<Config, dim_start>::type    LowerElementType;
-    typedef typename result_of::ncell_type<Config, dim_iter>::type     HigherElementType;
+    typedef typename result_of::ncell<Config, dim_start>::type    LowerElementType;
+    typedef typename result_of::ncell<Config, dim_iter>::type     HigherElementType;
     
     typedef typename result_of::const_ncell_range<EnclosingType, dim_iter>::type      HigherElementRange;
     typedef typename result_of::iterator<HigherElementRange>::type                    HigherElementIterator;
@@ -721,7 +721,7 @@ namespace viennagrid
               dim_type cell_level /* see forwards.h for default argument */>
     struct element_container< element<Config, ElementTag>, dim, cell_level >
     {
-      typedef typename result_of::ncell_type<Config, dim>::type            element_type;
+      typedef typename result_of::ncell<Config, dim>::type            element_type;
       
       typedef element_type *      type;
     };

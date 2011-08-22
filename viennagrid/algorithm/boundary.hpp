@@ -124,8 +124,8 @@ namespace viennagrid
   {
     typedef typename Segment::config_type                         DomainConfiguration;
     typedef typename DomainConfiguration::cell_tag                   CellTag;
-    typedef typename viennagrid::result_of::ncell_type<DomainConfiguration, CellTag::topology_level-1>::type   FacetType;
-    typedef typename viennagrid::result_of::ncell_type<DomainConfiguration, CellTag::topology_level>::type     CellType;
+    typedef typename viennagrid::result_of::ncell<DomainConfiguration, CellTag::topology_level-1>::type   FacetType;
+    typedef typename viennagrid::result_of::ncell<DomainConfiguration, CellTag::topology_level>::type     CellType;
 
     typedef typename viennagrid::result_of::ncell_range<Segment, CellTag::topology_level-1>::type      FacetRange;
     typedef typename viennagrid::result_of::iterator<FacetRange>::type                                 FacetIterator;

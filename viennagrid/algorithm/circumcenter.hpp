@@ -40,11 +40,11 @@ namespace viennagrid
     // Calculation of circumcenter for a line
     //
     template <typename ElementType, typename DimensionTag>
-    typename viennagrid::result_of::point_type<typename ElementType::config_type>::type
+    typename viennagrid::result_of::point<typename ElementType::config_type>::type
     circumcenter(ElementType const & cell, viennagrid::line_tag, DimensionTag)
     {
       typedef typename ElementType::config_type             Config;
-      typedef typename viennagrid::result_of::point_type<Config>::type                            PointType;
+      typedef typename viennagrid::result_of::point<Config>::type                            PointType;
       
       typedef typename viennagrid::result_of::const_ncell_range<ElementType, 0>::type         VertexOnCellRange;
       typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type            VertexOnCellIterator;
@@ -66,14 +66,14 @@ namespace viennagrid
     // Calculation of circumcenter taken from Wikipedia (better reference required...)
     //
     template <typename ElementType>
-    typename viennagrid::result_of::point_type<typename ElementType::config_type>::type
+    typename viennagrid::result_of::point<typename ElementType::config_type>::type
     circumcenter(ElementType const & cell, viennagrid::triangle_tag, viennagrid::two_dimensions_tag)
     {
       typedef typename ElementType::config_type             Config;
       typedef typename Config::cell_tag                  CellTag;
-      typedef typename viennagrid::result_of::point_type<Config>::type                            PointType;
-      typedef typename viennagrid::result_of::ncell_type<Config, 0>::type                         VertexType;
-      typedef typename viennagrid::result_of::ncell_type<Config, 1>::type                         EdgeType;
+      typedef typename viennagrid::result_of::point<Config>::type                            PointType;
+      typedef typename viennagrid::result_of::ncell<Config, 0>::type                         VertexType;
+      typedef typename viennagrid::result_of::ncell<Config, 1>::type                         EdgeType;
       
       typedef typename viennagrid::result_of::const_ncell_range<ElementType, 0>::type         VertexOnCellRange;
       typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type            VertexOnCellIterator;
@@ -110,14 +110,14 @@ namespace viennagrid
     // TODO: This works for rectangles only, but not for general quadrilaterals
     //
     template <typename CellType>
-    typename viennagrid::result_of::point_type<typename CellType::config_type>::type
+    typename viennagrid::result_of::point<typename CellType::config_type>::type
     circumcenter(CellType const & cell, viennagrid::quadrilateral_tag, viennagrid::two_dimensions_tag)
     {
       typedef typename CellType::config_type             Config;
       typedef typename Config::cell_tag                  CellTag;
-      typedef typename viennagrid::result_of::point_type<Config>::type                            PointType;
-      typedef typename viennagrid::result_of::ncell_type<Config, 0>::type                         VertexType;
-      typedef typename viennagrid::result_of::ncell_type<Config, 1>::type                         EdgeType;
+      typedef typename viennagrid::result_of::point<Config>::type                            PointType;
+      typedef typename viennagrid::result_of::ncell<Config, 0>::type                         VertexType;
+      typedef typename viennagrid::result_of::ncell<Config, 1>::type                         EdgeType;
       
       typedef typename viennagrid::result_of::const_ncell_range<CellType, 0>::type         VertexOnCellRange;
       typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type      VertexOnCellIterator;
@@ -143,14 +143,14 @@ namespace viennagrid
     // Calculation of circumcenter taken from Wikipedia (better reference required...)
     //
     template <typename ElementType>
-    typename viennagrid::result_of::point_type<typename ElementType::config_type>::type
+    typename viennagrid::result_of::point<typename ElementType::config_type>::type
     circumcenter(ElementType const & cell, viennagrid::triangle_tag, viennagrid::three_dimensions_tag)
     {
       typedef typename ElementType::config_type             Config;
       typedef typename Config::cell_tag                  CellTag;
-      typedef typename viennagrid::result_of::point_type<Config>::type                            PointType;
-      typedef typename viennagrid::result_of::ncell_type<Config, 0>::type                         VertexType;
-      typedef typename viennagrid::result_of::ncell_type<Config, 1>::type                         EdgeType;
+      typedef typename viennagrid::result_of::point<Config>::type                            PointType;
+      typedef typename viennagrid::result_of::ncell<Config, 0>::type                         VertexType;
+      typedef typename viennagrid::result_of::ncell<Config, 1>::type                         EdgeType;
       
       typedef typename viennagrid::result_of::const_ncell_range<ElementType, 0>::type         VertexOnCellRange;
       typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type            VertexOnCellIterator;
@@ -179,14 +179,14 @@ namespace viennagrid
     // Calculation of circumcenter taken from Wikipedia (better reference required...)
     //
     template <typename ElementType>
-    typename viennagrid::result_of::point_type<typename ElementType::config_type>::type
+    typename viennagrid::result_of::point<typename ElementType::config_type>::type
     circumcenter(ElementType const & cell, viennagrid::tetrahedron_tag, viennagrid::three_dimensions_tag)
     {
       typedef typename ElementType::config_type             Config;
       typedef typename Config::cell_tag                  CellTag;
-      typedef typename viennagrid::result_of::point_type<Config>::type                            PointType;
-      typedef typename viennagrid::result_of::ncell_type<Config, 0>::type                         VertexType;
-      typedef typename viennagrid::result_of::ncell_type<Config, 1>::type                         EdgeType;
+      typedef typename viennagrid::result_of::point<Config>::type                            PointType;
+      typedef typename viennagrid::result_of::ncell<Config, 0>::type                         VertexType;
+      typedef typename viennagrid::result_of::ncell<Config, 1>::type                         EdgeType;
       
       typedef typename viennagrid::result_of::const_ncell_range<ElementType, 0>::type         VertexOnCellRange;
       typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type            VertexOnCellIterator;
@@ -218,7 +218,7 @@ namespace viennagrid
 
 
     template <typename CellType>
-    typename viennagrid::result_of::point_type<typename CellType::config_type>::type
+    typename viennagrid::result_of::point<typename CellType::config_type>::type
     circumcenter(CellType const & cell)
     {
       return circumcenter(cell, typename CellType::element_tag(), typename CellType::config_type::dimension_tag());

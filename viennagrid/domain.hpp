@@ -49,7 +49,7 @@ namespace viennagrid
               dim_type cell_level /* see forwards.h for default argument */>
     struct element_container< domain<config_type>, dim, cell_level >
     {
-      typedef typename result_of::ncell_type<config_type, dim>::type            element_type;
+      typedef typename result_of::ncell<config_type, dim>::type            element_type;
       
       typedef std::map< element_key<element_type>, element_type >      type;
     };
@@ -58,7 +58,7 @@ namespace viennagrid
     template <typename config_type, dim_type cell_level>
     struct element_container< domain<config_type>, 0, cell_level>
     {
-      typedef typename result_of::ncell_type<config_type, 0>::type              element_type;
+      typedef typename result_of::ncell<config_type, 0>::type              element_type;
       
       //typedef std::vector< element_type >      type;
       typedef std::deque< element_type >      type;
@@ -68,7 +68,7 @@ namespace viennagrid
     template <typename config_type, dim_type cell_level>
     struct element_container< domain<config_type>, cell_level, cell_level>
     {
-      typedef typename result_of::ncell_type<config_type, cell_level>::type     element_type;
+      typedef typename result_of::ncell<config_type, cell_level>::type     element_type;
       
       //typedef std::vector< element_type >      type;
       typedef std::deque< element_type >      type;
@@ -409,29 +409,5 @@ namespace viennagrid
       std::vector< segment_type > segments;      
   };
 
-  namespace result_of
-  {
-    
-    template <typename Config,
-              dim_type dim,
-              dim_type cell_level /* see forwards.h for default type */>
-    struct ncell_type
-    {
-      typedef element<Config, 
-                      typename topology::subcell_desc<typename Config::cell_tag,
-                                                    dim>::element_tag
-                      > type;
-    };
-    
-    template <typename Config,
-              dim_type cell_level>
-    struct ncell_type <Config, cell_level, cell_level>
-    {
-      typedef element<Config, 
-                      typename Config::cell_tag>       type;
-    };
-    
-  }
-  
 }
 #endif

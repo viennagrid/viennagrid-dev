@@ -106,8 +106,8 @@ namespace io
          typedef typename DomainType::config_type                                            domain_config_type;
          typedef typename domain_config_type::cell_tag                                       cell_tag;
          typedef typename domain_config_type::numeric_type                                   coord_type;      
-         typedef typename viennagrid::result_of::ncell_type<domain_config_type, 0>::type     vertex_type;         
-         typedef typename viennagrid::result_of::ncell_type<domain_config_type, cell_tag::topology_level>::type     cell_type;         
+         typedef typename viennagrid::result_of::ncell<domain_config_type, 0>::type     vertex_type;         
+         typedef typename viennagrid::result_of::ncell<domain_config_type, cell_tag::topology_level>::type     cell_type;         
 
          std::map<std::size_t, std::size_t>  index_map;
       

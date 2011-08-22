@@ -67,8 +67,8 @@ void setup_device(DeviceType & device)
   typedef typename DeviceType::config_type           Config;
   typedef typename Config::cell_tag                  CellTag;
   
-  typedef typename viennagrid::result_of::ncell_type<Config, 0>::type                         VertexType;
-  typedef typename viennagrid::result_of::ncell_type<Config, CellTag::topology_level>::type   CellType;
+  typedef typename viennagrid::result_of::ncell<Config, 0>::type                         VertexType;
+  typedef typename viennagrid::result_of::ncell<Config, CellTag::topology_level>::type   CellType;
   
   
   //
@@ -158,10 +158,10 @@ void output_voronoi_info(DeviceType const & d)
 {
   typedef typename DeviceType::config_type           Config;
   typedef typename Config::cell_tag                  CellTag;
-  typedef typename viennagrid::result_of::point_type<Config>::type                            PointType;
-  typedef typename viennagrid::result_of::ncell_type<Config, 0>::type                         VertexType;
-  typedef typename viennagrid::result_of::ncell_type<Config, 1>::type                         EdgeType;
-  typedef typename viennagrid::result_of::ncell_type<Config, CellTag::topology_level>::type   CellType;
+  typedef typename viennagrid::result_of::point<Config>::type                            PointType;
+  typedef typename viennagrid::result_of::ncell<Config, 0>::type                         VertexType;
+  typedef typename viennagrid::result_of::ncell<Config, 1>::type                         EdgeType;
+  typedef typename viennagrid::result_of::ncell<Config, CellTag::topology_level>::type   CellType;
   
   typedef typename viennagrid::result_of::const_ncell_range<DeviceType, 0>::type    VertexContainer;
   typedef typename viennagrid::result_of::iterator<VertexContainer>::type         VertexIterator;

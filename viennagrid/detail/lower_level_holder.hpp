@@ -264,7 +264,7 @@ namespace viennagrid
     typedef topology::subcell_desc<ElementTag, 0>                                      LevelSpecs;
 
     typedef element<T_Configuration, typename LevelSpecs::element_tag>         VertexType;
-    typedef typename result_of::point_type<T_Configuration>::type              PointType;
+    typedef typename result_of::point<T_Configuration>::type              PointType;
 
     typedef typename result_of::iterator< element<T_Configuration, ElementTag>, 0>::type         VertexIterator;
 

@@ -1,4 +1,67 @@
 
 \chapter*{Introduction}   \addcontentsline{toc}{chapter}{Introduction} \label{intro}
 
-Here we introduce \ViennaGrid.
+The tessellation of surfaces and solids into complexes of small elements such as triangles, quadrilaterals, tetrahedra or hexahedra is one of the major
+ingredients for many computational algorithms. Applications range from rendering, most notably in computer games, to computational science, in particular for the numerical solution of partial differential equations on complex domains for the study of physical phenomena. These various areas lead to a broad range of different requirements on a mesh library, which certainly cannot be fulfilled by a single, predetermined datastructure. Unlike other mesh libraries, {\ViennaGrid} provides the abililty to easily adjust the internal representation of meshes, while providing a uniform interface for the storage and access of data on mesh elements as well as STL-compatible iteration over such elements.
+
+As example, let us consider the basic building block of triangular meshes, namely a triangle: A triangle consists of three vertices and three edges. The three vertices fully define the shape of the triangle, the edges can be derived from vertices if a common reference orientation of the triangles is provided. Depending on the underlying algorithm, edges of the triangle may or may not be of interest:
+\begin{itemize}
+ \item Let us first consider a class \lstinline|triangle|, holding the three vertices only. A triangular mesh is then some array or list of \lstinline|triangle|s and an algorithm \texttt{algo1} that works on vertices on a per-cell basis can be executed efficiently. However, let us assume that some other algorithm \texttt{algo2} needs to access all vertices of the mesh in a per-mesh basis (so that a vertex which is member of two triangles is accessed only once). For vertices stored per triangle, this would result in a lot of book-keeping and would slow the algorithm down.
+
+ \item It is therefore of advantage to store all vertices of a mesh globally, as well as all \lstinline|triangle|s. This time, the triangles hold references (pointers) to vertices defining its shape only. This way, both \texttt{algo1} and \texttt{algo2} work efficiently.
+
+ \item Suppose another algorithm \texttt{algo3} needs access to edges on a per-mesh basis. Although access to edges on a per-cell basis can easily be realised from the vertex references stored on each triangle, a mesh-wide iteration over geometrically distinct edges would require again a lot of book-keeping, slowing down \texttt{algo3} considerably. 
+\end{itemize}
+The situation for tetrahedral meshes is even more complicated, because additional orientation issues of shared facets come into play.
+
+\begin{figure}[bt]
+ \centering
+\mbox{
+\subfigure[Store vertices locally, do not store edges.]{ 
+ \includegraphics[scale=0.9]{figures/storage-vloc-cglob}
+\label{subfig:storage-vloc-cglob}
+} \hspace{1cm}
+\subfigure[Store vertices globally, do not store edges.]{
+ \includegraphics[scale=0.9]{figures/storage-vglob-cglob}
+\label{subfig:storage-vglob-cglob}
+} } \vspace{0.5cm} \\
+\mbox{
+\subfigure[Store vertices globally, store edges locally.]{
+ \includegraphics[scale=0.9]{figures/storage-vglob-eloc-cglob}
+\label{subfig:storage-vglob-eloc-cglob}
+}\hspace{1cm}
+\subfigure[Store vertices globally, store edges globally.]{
+ \includegraphics[scale=0.9]{figures/storage-vglob-eglob-cglob}
+\label{subfig:storage-vglob-eglob-cglob}
+} }
+ \caption{Several storage schemes for a triangle and the underlying triangular mesh.}
+ \label{fig:storage-schemes-triangle}
+\end{figure}
+
+The aim of {\ViennaGrid} is to be highly customizable such that all three algorithms outlined above can be supported with an optimal data layout. In particular, {\ViennaGrid} allows to conveniently specify the storage of elements both in a local (element-wise) as well as in a global (mesh-wise) manner. The configuration of the data storage layout is explained in Chapter \ref{chap:domainconfig}, and the basic steps required to fill a mesh with cells is explained in Chapter \ref{chap:domainsetup}.
+
+In addition to a high flexibility with respect to the underlying data structures, {\ViennaGrid} provides STL-compatible iterators and access to sub-elements of a mesh, cf.~Chapter \ref{chap:iterators}. This allows to write generic code that is a-priori independent of the underlying spatial dimension. In particular, this allows a single implementation for algorithms that then operate in multiple dimensions, using different mesh types (triangular, hexahedral, etc.).
+
+A typical requirement on a meshing library is mesh refinement. {\ViennaGrid} provides both uniform and adaptive refinement algorithms, cf.~Chapter \ref{chap:refinement}. This is in particular of interest for computational science, where singularities near corners need to be resolved sufficiently well.
+
+
+There are of course other free software libraries having functional overlap with {\ViennaGrid}. We give a brief discussion of the pros and cons of selected libraries in the following. This should allow potential users of our library to get a better feeling of what to expect and what not to expect from {\ViennaGrid}. We have carefully checked the documentation of each project, but clearly cannot guarantee that all information is fully accurate.
+\begin{itemize}
+  \item \textbf{CGAL} \cite{CGAL}: The focus of the Computational Geometry Algorithms Library (\texttt{CGAL}) is on geometrical algorithms such as the computation of convex hulls of point sets. It offers a mesh generation facility and provides iterators over cell vertices. However, the storage of quantities and the convenient traversal of mesh elements is not provided.
+
+  \item \textbf{DUNE} \cite{DUNE}: \texttt{DUNE} follows a similar approach for the generic representation of meshes. It provides support for conforming and non-conforming grids, as well as support for parallel and distributed meshes. However, unlike {\ViennaGrid}, we could not find any mechanism providing a convenient means to store data on mesh elements (users are essentially required to handle their data themselves), and for the customization about the internal storage of mesh elements.
+
+  \item \textbf{GrAL} \cite{GrAL}: The Grid Algorithms library (\texttt{GrAL}) provides mesh data structured and algorithms operating on them. A number of principles used in {\ViennaGrid} such as $n$-\textit{cells} already show up in \texttt{GrAL} as $k$-\textit{Elements}. The library does not provide any facility to store data on mesh elements. Mesh refinement is also not provided.
+
+  \item \textbf{libmesh} \cite{libmesh}: The \texttt{libmesh} library is not only a mesh library, but also a framework for numerical simulations. Since {\ViennaGrid} is designed to be as general as possible without prematurely restricting to a particular application, we only compare the parts in \texttt{libmesh} related to mesh handling. \texttt{libmesh} supports one-, two- and three-dimensional meshes and also allows to generate meshes for simple domains. Iterations over elements of a mesh are carried out in a runtime manner, thus causing potential overhead. One of the strengths of \texttt{libmesh} is the support for mesh refinement and parallel computations. Support for user-defined data on mesh elements is also provided.
+
+  \item \textbf{OpenMesh} \cite{OpenMesh}: \texttt{OpenMesh} provides a generic datastructure for representing and manipulating polygonal meshes. The main goals are flexibility, efficiency and easy-to-use. Similar to {\ViennaGrid}, generic programming paradigms are used. \texttt{OpenMesh} allows to store custom data of arbitrary type on mesh elements, but it seems to rely on potentially slow string comparisons at run-time to retrieve the data. Moreover, \texttt{OpenMesh} is specifically designed for surface (i.e.~non-volumetric) meshes, and thus only the concepts of vertices, edges and faces are used.
+
+  \item \textbf{trimesh2} \cite{trimesh2}: \texttt{trimesh2} is a C++ library that is particularly designed for triangular meshes in 3D only. It explicitly targets efficiency, possibly at the expense of some generality. We could not find further information for a comparison with {\ViennaGrid} from the documentation provided.
+
+  \item \textbf{VCGlib} \cite{VCGlib}: \texttt{VCGlib} processes triangular and tetrahedral meshes. Similar to \texttt{OpenMesh}, \texttt{VCGlib} uses the concepts of vertices, edges and faces only, so the processing of volume meshes is hampered. Again similar to \texttt{OpenMesh}, the provided facility to store data on mesh elements relies on potentially slow string comparisons.
+\end{itemize}
+
+
+
+

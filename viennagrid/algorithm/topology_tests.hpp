@@ -38,7 +38,7 @@ struct duplicates
    {
       typedef typename DomainT::segment_type                                                    SegmentType;
       typedef typename DomainT::config_type                                                     DomainConfiguration;      
-      typedef typename viennagrid::result_of::ncell_type<DomainConfiguration, TopoLevel>::type  NCellType;            
+      typedef typename viennagrid::result_of::ncell<DomainConfiguration, TopoLevel>::type  NCellType;            
       typedef typename viennagrid::result_of::ncell_range<SegmentType, TopoLevel>::type     NCellRange;      
       typedef typename viennagrid::result_of::iterator<NCellRange>::type                    NCellIterator;         
       typedef typename viennagrid::result_of::ncell_range<NCellType, 0>::type               VertexOnNCellRange;
@@ -153,7 +153,7 @@ struct nonmanifolds_impl
       static const int DIMT    = DomainConfiguration::cell_tag::topology_level;
       static const int FACEDIM = DIMT-1;
       
-      typedef typename viennagrid::result_of::ncell_type<DomainConfiguration, FACEDIM>::type    FaceType;            
+      typedef typename viennagrid::result_of::ncell<DomainConfiguration, FACEDIM>::type    FaceType;            
       typedef typename viennagrid::result_of::ncell_range<SegmentType, FACEDIM>::type       FaceRange;      
       typedef typename viennagrid::result_of::iterator<FaceRange>::type                     FaceIterator;            
       typedef typename viennagrid::result_of::ncell_range<FaceType, DIMT>::type             CellOnFaceRange;
@@ -201,7 +201,7 @@ struct nonmanifolds_impl <2, 3>
       static const int DIMT    = DomainConfiguration::cell_tag::topology_level;
       static const int FACEDIM = DIMT-1;
       
-      typedef typename viennagrid::result_of::ncell_type<DomainConfiguration, FACEDIM>::type    FaceType;            
+      typedef typename viennagrid::result_of::ncell<DomainConfiguration, FACEDIM>::type    FaceType;            
       typedef typename viennagrid::result_of::ncell_range<SegmentType, FACEDIM>::type       FaceRange;      
       typedef typename viennagrid::result_of::iterator<FaceRange>::type                     FaceIterator;            
       typedef typename viennagrid::result_of::ncell_range<FaceType, DIMT>::type             CellOnFaceRange;

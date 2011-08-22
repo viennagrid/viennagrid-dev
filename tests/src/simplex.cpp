@@ -60,10 +60,10 @@ void setup_domain(viennagrid::domain<viennagrid::config::triangular_2d> & d)
   typedef viennagrid::config::triangular_2d                           ConfigType;
   typedef ConfigType::cell_tag                                         CellTag;
   
-  typedef viennagrid::result_of::point_type<ConfigType>::type          PointType;
-  typedef viennagrid::result_of::ncell_type<ConfigType, 0>::type       VertexType;
+  typedef viennagrid::result_of::point<ConfigType>::type          PointType;
+  typedef viennagrid::result_of::ncell<ConfigType, 0>::type       VertexType;
   
-  typedef viennagrid::result_of::ncell_type<ConfigType,
+  typedef viennagrid::result_of::ncell<ConfigType,
                                             CellTag::topology_level>::type   CellType;
   
   PointType p0(0.0, 0.0, 0.0);
@@ -104,10 +104,10 @@ void setup_domain(viennagrid::domain<viennagrid::config::triangular_3d> & d)
   typedef viennagrid::config::triangular_3d                            ConfigType;
   typedef ConfigType::cell_tag                                         CellTag;
   
-  typedef viennagrid::result_of::point_type<ConfigType>::type          PointType;
-  typedef viennagrid::result_of::ncell_type<ConfigType, 0>::type       VertexType;
+  typedef viennagrid::result_of::point<ConfigType>::type          PointType;
+  typedef viennagrid::result_of::ncell<ConfigType, 0>::type       VertexType;
   
-  typedef viennagrid::result_of::ncell_type<ConfigType,
+  typedef viennagrid::result_of::ncell<ConfigType,
                                             CellTag::topology_level>::type   CellType;
 
   PointType p0(0.0, 0.0, 0.0);
@@ -148,10 +148,10 @@ void setup_domain(viennagrid::domain<viennagrid::config::tetrahedral_3d> & d)
   typedef viennagrid::config::tetrahedral_3d                           ConfigType;
   typedef ConfigType::cell_tag                                         CellTag;
   
-  typedef viennagrid::result_of::point_type<ConfigType>::type          PointType;
-  typedef viennagrid::result_of::ncell_type<ConfigType, 0>::type       VertexType;
+  typedef viennagrid::result_of::point<ConfigType>::type          PointType;
+  typedef viennagrid::result_of::ncell<ConfigType, 0>::type       VertexType;
   
-  typedef viennagrid::result_of::ncell_type<ConfigType,
+  typedef viennagrid::result_of::ncell<ConfigType,
                                             CellTag::topology_level>::type   CellType;
                                             
   PointType p0(0.0, 0.0, 0.0);
@@ -197,10 +197,10 @@ void test()
   typedef typename ConfigType::cell_tag           CellTag;
   typedef viennagrid::segment_t<ConfigType>       SegmentType;
   
-  typedef typename viennagrid::result_of::point_type<ConfigType>::type          PointType;
-  typedef typename viennagrid::result_of::ncell_type<ConfigType, 0>::type       VertexType;
-  typedef typename viennagrid::result_of::ncell_type<ConfigType, 1>::type       EdgeType;
-  typedef typename viennagrid::result_of::ncell_type<ConfigType,
+  typedef typename viennagrid::result_of::point<ConfigType>::type          PointType;
+  typedef typename viennagrid::result_of::ncell<ConfigType, 0>::type       VertexType;
+  typedef typename viennagrid::result_of::ncell<ConfigType, 1>::type       EdgeType;
+  typedef typename viennagrid::result_of::ncell<ConfigType,
                                                      CellTag::topology_level>::type   CellType;
 
   Domain domain;

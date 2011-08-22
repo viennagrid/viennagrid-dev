@@ -50,10 +50,10 @@ namespace viennagrid
       std::cout << "Warning: Voronoi info for quadrilaterals is only correct when having rectangles only." << std::endl;
       typedef typename DomainType::config_type           Config;
       typedef typename Config::cell_tag                  CellTag;
-      typedef typename viennagrid::result_of::point_type<Config>::type                            PointType;
-      typedef typename viennagrid::result_of::ncell_type<Config, 0>::type                         VertexType;
-      typedef typename viennagrid::result_of::ncell_type<Config, 1>::type                         EdgeType;
-      typedef typename viennagrid::result_of::ncell_type<Config, CellTag::topology_level>::type   CellType;
+      typedef typename viennagrid::result_of::point<Config>::type                            PointType;
+      typedef typename viennagrid::result_of::ncell<Config, 0>::type                         VertexType;
+      typedef typename viennagrid::result_of::ncell<Config, 1>::type                         EdgeType;
+      typedef typename viennagrid::result_of::ncell<Config, CellTag::topology_level>::type   CellType;
       
       typedef typename viennagrid::result_of::const_ncell_range<DomainType, CellTag::topology_level>::type    CellRange;
       typedef typename viennagrid::result_of::iterator<CellRange>::type                                       CellIterator;
@@ -123,10 +123,10 @@ namespace viennagrid
     {
       typedef typename DomainType::config_type           Config;
       typedef typename Config::cell_tag                  CellTag;
-      typedef typename viennagrid::result_of::point_type<Config>::type                            PointType;
-      typedef typename viennagrid::result_of::ncell_type<Config, 0>::type                         VertexType;
-      typedef typename viennagrid::result_of::ncell_type<Config, 1>::type                         EdgeType;
-      typedef typename viennagrid::result_of::ncell_type<Config, CellTag::topology_level>::type   CellType;
+      typedef typename viennagrid::result_of::point<Config>::type                            PointType;
+      typedef typename viennagrid::result_of::ncell<Config, 0>::type                         VertexType;
+      typedef typename viennagrid::result_of::ncell<Config, 1>::type                         EdgeType;
+      typedef typename viennagrid::result_of::ncell<Config, CellTag::topology_level>::type   CellType;
       
       typedef typename viennagrid::result_of::const_ncell_range<DomainType, CellTag::topology_level>::type    CellRange;
       typedef typename viennagrid::result_of::iterator<CellRange>::type                                       CellIterator;
@@ -231,11 +231,11 @@ namespace viennagrid
     {
       typedef typename DomainType::config_type           Config;
       typedef typename Config::cell_tag                  CellTag;
-      typedef typename viennagrid::result_of::point_type<Config>::type                            PointType;
-      typedef typename viennagrid::result_of::ncell_type<Config, 0>::type                         VertexType;
-      typedef typename viennagrid::result_of::ncell_type<Config, 1>::type                         EdgeType;
-      typedef typename viennagrid::result_of::ncell_type<Config, 2>::type                         FacetType;
-      typedef typename viennagrid::result_of::ncell_type<Config, CellTag::topology_level>::type   CellType;
+      typedef typename viennagrid::result_of::point<Config>::type                            PointType;
+      typedef typename viennagrid::result_of::ncell<Config, 0>::type                         VertexType;
+      typedef typename viennagrid::result_of::ncell<Config, 1>::type                         EdgeType;
+      typedef typename viennagrid::result_of::ncell<Config, 2>::type                         FacetType;
+      typedef typename viennagrid::result_of::ncell<Config, CellTag::topology_level>::type   CellType;
       
       typedef typename viennagrid::result_of::const_ncell_range<DomainType, CellTag::topology_level>::type    CellRange;
       typedef typename viennagrid::result_of::iterator<CellRange>::type                                       CellIterator;
@@ -385,11 +385,11 @@ namespace viennagrid
       std::cout << "Warning: Voronoi info for hexahedron is only correct when having regular cuboids only." << std::endl;
       typedef typename DomainType::config_type           Config;
       typedef typename Config::cell_tag                  CellTag;
-      typedef typename viennagrid::result_of::point_type<Config>::type                            PointType;
-      typedef typename viennagrid::result_of::ncell_type<Config, 0>::type                         VertexType;
-      typedef typename viennagrid::result_of::ncell_type<Config, 1>::type                         EdgeType;
-      typedef typename viennagrid::result_of::ncell_type<Config, 2>::type                         FacetType;
-      typedef typename viennagrid::result_of::ncell_type<Config, CellTag::topology_level>::type   CellType;
+      typedef typename viennagrid::result_of::point<Config>::type                            PointType;
+      typedef typename viennagrid::result_of::ncell<Config, 0>::type                         VertexType;
+      typedef typename viennagrid::result_of::ncell<Config, 1>::type                         EdgeType;
+      typedef typename viennagrid::result_of::ncell<Config, 2>::type                         FacetType;
+      typedef typename viennagrid::result_of::ncell<Config, CellTag::topology_level>::type   CellType;
       
       typedef typename viennagrid::result_of::const_ncell_range<DomainType, CellTag::topology_level>::type    CellRange;
       typedef typename viennagrid::result_of::iterator<CellRange>::type                                       CellIterator;

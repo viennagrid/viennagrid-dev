@@ -61,7 +61,7 @@ template <typename CellType>
 double volume(CellType & cell)
 {
   typedef typename CellType::config_type      ConfigType;
-  typedef typename viennagrid::result_of::ncell_type<ConfigType, 0>::type       VertexType;
+  typedef typename viennagrid::result_of::ncell<ConfigType, 0>::type       VertexType;
   typedef typename viennagrid::result_of::ncell_range<CellType, 0>::type       VertexOnCellContainer;
   typedef typename viennagrid::result_of::iterator<VertexOnCellContainer>::type    VertexOnCellIterator;
   
@@ -80,7 +80,7 @@ template <typename CellType>
 double volume_triangle(CellType & cell)
 {
   typedef typename CellType::config_type      ConfigType;
-  typedef typename viennagrid::result_of::ncell_type<ConfigType, 0>::type       VertexType;
+  typedef typename viennagrid::result_of::ncell<ConfigType, 0>::type       VertexType;
   typedef typename viennagrid::result_of::ncell_range<CellType, 0>::type       VertexOnCellContainer;
   typedef typename viennagrid::result_of::iterator<VertexOnCellContainer>::type    VertexOnCellIterator;
   
@@ -125,9 +125,9 @@ double domain_surface(DomainType & domain)
 {
   typedef typename DomainType::config_type      ConfigType;
   typedef typename ConfigType::cell_tag                  CellTag;
-  typedef typename viennagrid::result_of::ncell_type<ConfigType,
+  typedef typename viennagrid::result_of::ncell<ConfigType,
                                             CellTag::topology_level-1>::type      FacetType;
-  typedef typename viennagrid::result_of::ncell_type<ConfigType,
+  typedef typename viennagrid::result_of::ncell<ConfigType,
                                             CellTag::topology_level>::type        CellType;
 
   typedef typename viennagrid::result_of::ncell_range<DomainType, CellTag::topology_level>::type  CellContainer;
@@ -177,9 +177,9 @@ void testNewDomain(std::string & infile, std::string & outfile)
   typedef TestDomainConfig::cell_tag                  CellTag;
   
   //typedef viennagrid::TestDomainConfig::DimensionTag              DimensionTag;
-  typedef viennagrid::result_of::point_type<TestDomainConfig>::type          PointType;
-  typedef viennagrid::result_of::ncell_type<TestDomainConfig, 0>::type       VertexType;
-  typedef viennagrid::result_of::ncell_type<TestDomainConfig,
+  typedef viennagrid::result_of::point<TestDomainConfig>::type          PointType;
+  typedef viennagrid::result_of::ncell<TestDomainConfig, 0>::type       VertexType;
+  typedef viennagrid::result_of::ncell<TestDomainConfig,
                                             CellTag::topology_level>::type   CellType;
   //typedef viennagrid::DomainTypes<TestDomainConfig>::segment_type  Segment;
 

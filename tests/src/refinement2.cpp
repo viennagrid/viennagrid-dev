@@ -27,10 +27,10 @@ int test(DomainType & domain_in)
   typedef typename ConfigType::cell_tag                  CellTag;
   typedef typename viennagrid::segment_t<ConfigType>     SegmentType;
   
-  typedef typename viennagrid::result_of::point_type<ConfigType>::type          PointType;
-  typedef typename viennagrid::result_of::ncell_type<ConfigType, 0>::type       VertexType;
-  typedef typename viennagrid::result_of::ncell_type<ConfigType, 1>::type       EdgeType;
-  typedef typename viennagrid::result_of::ncell_type<ConfigType,
+  typedef typename viennagrid::result_of::point<ConfigType>::type          PointType;
+  typedef typename viennagrid::result_of::ncell<ConfigType, 0>::type       VertexType;
+  typedef typename viennagrid::result_of::ncell<ConfigType, 1>::type       EdgeType;
+  typedef typename viennagrid::result_of::ncell<ConfigType,
                                             CellTag::topology_level>::type      CellType;
 
   typedef typename viennagrid::result_of::ncell_range<DomainType, 0>::type  VertexContainer;
@@ -321,9 +321,9 @@ void fill_domain(DomainType & domain,
   typedef viennagrid::segment_t<ConfigType>     SegmentType;
   typedef typename ConfigType::cell_tag         CellTag;
 
-  typedef typename viennagrid::result_of::point_type<ConfigType>::type          PointType;
-  typedef typename viennagrid::result_of::ncell_type<ConfigType, 0>::type       VertexType;
-  typedef typename viennagrid::result_of::ncell_type<ConfigType,
+  typedef typename viennagrid::result_of::point<ConfigType>::type          PointType;
+  typedef typename viennagrid::result_of::ncell<ConfigType, 0>::type       VertexType;
+  typedef typename viennagrid::result_of::ncell<ConfigType,
                                                      CellTag::topology_level>::type   CellType;
   
   domain.create_segments(1);

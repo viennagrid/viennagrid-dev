@@ -32,7 +32,7 @@ template <typename CellType>
 double volume(CellType & cell)
 {
   typedef typename CellType::config_type      ConfigType;
-  typedef typename viennagrid::result_of::ncell_type<ConfigType, 0>::type       VertexType;
+  typedef typename viennagrid::result_of::ncell<ConfigType, 0>::type       VertexType;
   typedef typename viennagrid::result_of::ncell_range<CellType, 0>::type       VertexOnCellContainer;
   typedef typename viennagrid::result_of::iterator<VertexOnCellContainer>::type    VertexOnCellIterator;
   
@@ -51,7 +51,7 @@ template <typename CellType>
 double volume_triangle(CellType & cell)
 {
   typedef typename CellType::config_type      ConfigType;
-  typedef typename viennagrid::result_of::ncell_type<ConfigType, 0>::type       VertexType;
+  typedef typename viennagrid::result_of::ncell<ConfigType, 0>::type       VertexType;
   typedef typename viennagrid::result_of::ncell_range<CellType, 0>::type       VertexOnCellContainer;
   typedef typename viennagrid::result_of::iterator<VertexOnCellContainer>::type    VertexOnCellIterator;
   
@@ -70,7 +70,7 @@ template <typename CellType>
 void clear_refinement_tag(CellType & cell)
 {
   typedef typename CellType::config_type      ConfigType;
-  typedef typename viennagrid::result_of::ncell_type<ConfigType, 0>::type       VertexType;
+  typedef typename viennagrid::result_of::ncell<ConfigType, 0>::type       VertexType;
   typedef typename viennagrid::result_of::ncell_range<CellType, 1>::type       EdgeOnCellContainer;
   typedef typename viennagrid::result_of::iterator<EdgeOnCellContainer>::type    EdgeOnCellIterator;
   
@@ -90,7 +90,7 @@ template <typename CellType>
 void print_refinement_edges(CellType & cell)
 {
   typedef typename CellType::config_type      ConfigType;
-  typedef typename viennagrid::result_of::ncell_type<ConfigType, 0>::type       VertexType;
+  typedef typename viennagrid::result_of::ncell<ConfigType, 0>::type       VertexType;
   typedef typename viennagrid::result_of::ncell_range<CellType, 1>::type       EdgeOnCellContainer;
   typedef typename viennagrid::result_of::iterator<EdgeOnCellContainer>::type    EdgeOnCellIterator;
   
@@ -135,9 +135,9 @@ double domain_surface(DomainType & domain)
 {
   typedef typename DomainType::config_type      ConfigType;
   typedef typename ConfigType::cell_tag                  CellTag;
-  typedef typename viennagrid::result_of::ncell_type<ConfigType,
+  typedef typename viennagrid::result_of::ncell<ConfigType,
                                             CellTag::topology_level-1>::type      FacetType;
-  typedef typename viennagrid::result_of::ncell_type<ConfigType,
+  typedef typename viennagrid::result_of::ncell<ConfigType,
                                             CellTag::topology_level>::type        CellType;
 
   typedef typename viennagrid::result_of::ncell_range<DomainType, CellTag::topology_level>::type  CellContainer;
@@ -184,9 +184,9 @@ int facet_check(DomainType & domain)
 {
   typedef typename DomainType::config_type      ConfigType;
   typedef typename ConfigType::cell_tag                  CellTag;
-  typedef typename viennagrid::result_of::ncell_type<ConfigType,
+  typedef typename viennagrid::result_of::ncell<ConfigType,
                                             CellTag::topology_level-1>::type      FacetType;
-  typedef typename viennagrid::result_of::ncell_type<ConfigType,
+  typedef typename viennagrid::result_of::ncell<ConfigType,
                                             CellTag::topology_level>::type        CellType;
 
   typedef typename viennagrid::result_of::ncell_range<DomainType, CellTag::topology_level-1>::type  FacetContainer;
@@ -256,9 +256,9 @@ int surface_check(DomainType & domain_old, DomainType & domain_new)
 {
   typedef typename DomainType::config_type      ConfigType;
   typedef typename ConfigType::cell_tag                  CellTag;
-  typedef typename viennagrid::result_of::ncell_type<ConfigType,
+  typedef typename viennagrid::result_of::ncell<ConfigType,
                                             CellTag::topology_level-1>::type      FacetType;
-  typedef typename viennagrid::result_of::ncell_type<ConfigType,
+  typedef typename viennagrid::result_of::ncell<ConfigType,
                                             CellTag::topology_level>::type        CellType;
 
   typedef typename viennagrid::result_of::ncell_range<DomainType, CellTag::topology_level-1>::type  FacetContainer;

@@ -283,13 +283,28 @@ namespace viennagrid
     template <typename Config,
               dim_type dim,
               dim_type cell_level = Config::cell_tag::topology_level>
-    struct ncell_type;
+    struct ncell
+    {
+      typedef element<Config, 
+                      typename topology::subcell_desc<typename Config::cell_tag,
+                                                    dim>::element_tag
+                      > type;
+    };
+    
+    template <typename Config,
+              dim_type cell_level>
+    struct ncell <Config, cell_level, cell_level>
+    {
+      typedef element<Config, 
+                      typename Config::cell_tag>       type;
+    };
+    
     
     template <typename Config>
-    struct point_type
+    struct point
     {
       //typedef point<typename Config::numeric_type, typename Config::dimension_tag>   type;
-      typedef point<typename Config::numeric_type, Config::dimension_tag::value>   type;
+      typedef viennagrid::point<typename Config::numeric_type, Config::dimension_tag::value>   type;
     };
     
     

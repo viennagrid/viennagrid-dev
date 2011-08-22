@@ -38,14 +38,14 @@ namespace viennagrid
     // Calculation of circumcenter taken from Wikipedia (better reference required...)
     //
     template <typename ElementType>
-    typename viennagrid::result_of::point_type<typename ElementType::config_type>::type
+    typename viennagrid::result_of::point<typename ElementType::config_type>::type
     centroid(ElementType const & cell, viennagrid::triangle_tag)
     {
       typedef typename ElementType::config_type             Config;
       typedef typename ElementType::element_tag             ElementTag;
-      typedef typename viennagrid::result_of::point_type<Config>::type                            PointType;
-      typedef typename viennagrid::result_of::ncell_type<Config, 0>::type                         VertexType;
-      typedef typename viennagrid::result_of::ncell_type<Config, 1>::type                         EdgeType;
+      typedef typename viennagrid::result_of::point<Config>::type                            PointType;
+      typedef typename viennagrid::result_of::ncell<Config, 0>::type                         VertexType;
+      typedef typename viennagrid::result_of::ncell<Config, 1>::type                         EdgeType;
       
       typedef typename viennagrid::result_of::const_ncell_range<ElementType, 0>::type         VertexOnCellRange;
       typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type            VertexOnCellIterator;
@@ -67,7 +67,7 @@ namespace viennagrid
 
     //tetrahedron can reuse the algorithm defined for a triangle
     template <typename ElementType>
-    typename viennagrid::result_of::point_type<typename ElementType::config_type>::type
+    typename viennagrid::result_of::point<typename ElementType::config_type>::type
     centroid(ElementType const & cell, viennagrid::tetrahedron_tag)
     {
       return centroid(cell, viennagrid::triangle_tag());
@@ -77,7 +77,7 @@ namespace viennagrid
     // TODO: This works for rectangles only, but not for general quadrilateral
     //
     template <typename ElementType>
-    typename viennagrid::result_of::point_type<typename ElementType::config_type>::type
+    typename viennagrid::result_of::point<typename ElementType::config_type>::type
     centroid(ElementType const & cell, viennagrid::quadrilateral_tag)
     {
       return centroid(cell, viennagrid::triangle_tag());
@@ -87,7 +87,7 @@ namespace viennagrid
     // TODO: This works for cuboids only, but not for general hexahedra
     //
     template <typename ElementType>
-    typename viennagrid::result_of::point_type<typename ElementType::config_type>::type
+    typename viennagrid::result_of::point<typename ElementType::config_type>::type
     centroid(ElementType const & cell, viennagrid::hexahedron_tag)
     {
       return centroid(cell, viennagrid::triangle_tag());
@@ -96,7 +96,7 @@ namespace viennagrid
 
     //a line can reuse the algorithm defined for a triangle
     template <typename ElementType>
-    typename viennagrid::result_of::point_type<typename ElementType::config_type>::type
+    typename viennagrid::result_of::point<typename ElementType::config_type>::type
     centroid(ElementType const & cell, viennagrid::line_tag)
     {
       return centroid(cell, viennagrid::triangle_tag());
@@ -106,7 +106,7 @@ namespace viennagrid
     // The public interface function
     //
     template <typename CellType>
-    typename viennagrid::result_of::point_type<typename CellType::config_type>::type
+    typename viennagrid::result_of::point<typename CellType::config_type>::type
     centroid(CellType const & cell)
     {
       return centroid(cell, typename CellType::element_tag());

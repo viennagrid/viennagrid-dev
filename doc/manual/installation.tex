@@ -20,7 +20,7 @@ the mailing list at \\
 \begin{itemize}
  \item A recent C++ compiler (e.g.~{\GCC} version 4.2.x or above and Visual C++
 2008 are known to work)
- \item {\ViennaData} \cite{ViennaData}. To make {\ViennaGrid} self-contained, a copy of the {\ViennaData} sources are available in the \lstinline|external/| folder.
+ \item {\ViennaData} \cite{ViennaData}. To make {\ViennaGrid} self-contained, a copy of the {\ViennaData} sources is available in the \lstinline|external/| folder.
  \item {\CMake}~\cite{cmake} as build system (optional, but recommended
 for building the examples)
 \end{itemize}
@@ -28,10 +28,10 @@ for building the examples)
 
 \section{Generic Installation of ViennaGrid} \label{sec:viennagrid-installation}
 Since {\ViennaGrid} is a header-only library, it is sufficient to copy the 
-\lstinline|viennagrid/| folder either into your project folder or to your global system
+\lstinline|viennagrid/| source folder either into your project folder or to your global system
 include path. If you do not have {\ViennaData} installed, proceed in the same way for the respective source folder \lstinline|external/viennadata/|. 
 
-On Unix based systems, the global system include path is usually \lstinline|/usr/include/| or \lstinline|/usr/local/include/|.
+On Unix-like operating systems, the global system include path is usually \lstinline|/usr/include/| or \lstinline|/usr/local/include/|.
 On Windows, the situation strongly depends on your development environment. We
 advise to consult the documentation of the compiler on how to set the include
 path correctly. With Visual Studio 9.0 this is usually something like
@@ -47,7 +47,7 @@ VC++-\-Directories}.
 % -----------------------------------------------------------------------------
 % -----------------------------------------------------------------------------
 For building the examples, we suppose that {\CMake} is properly set up
-on your system. The other dependencies are listed in
+on your system. The various examples in their purpose are listed in
 Tab.~\ref{tab:tutorial-dependencies}.
 
 \begin{table}[tb]

@@ -110,7 +110,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::const_ncell_range<CellType, 1>::type            EdgeOnCellRange;
       typedef typename viennagrid::result_of::iterator<EdgeOnCellRange>::type           EdgeOnCellIterator;            
       
-      typedef typename viennagrid::result_of::ncell_type<ConfigTypeIn, 0>::type             VertexType;
+      typedef typename viennagrid::result_of::ncell<ConfigTypeIn, 0>::type             VertexType;
 
       VertexType * vertices[topology::subcell_desc<triangle_tag, 0>::num_elements];
       
@@ -157,8 +157,8 @@ namespace viennagrid
       typedef typename viennagrid::result_of::const_ncell_range<CellType, 1>::type            EdgeOnCellRange;
       typedef typename viennagrid::result_of::iterator<EdgeOnCellRange>::type           EdgeOnCellIterator;            
       
-      typedef typename viennagrid::result_of::ncell_type<ConfigTypeIn, 0>::type             VertexType;
-      typedef typename viennagrid::result_of::ncell_type<ConfigTypeIn, 1>::type             EdgeType;
+      typedef typename viennagrid::result_of::ncell<ConfigTypeIn, 0>::type             VertexType;
+      typedef typename viennagrid::result_of::ncell<ConfigTypeIn, 1>::type             EdgeType;
 
       VertexType * vertices[topology::subcell_desc<triangle_tag, 0>::num_elements + 1];
       
@@ -240,8 +240,8 @@ namespace viennagrid
       typedef typename viennagrid::result_of::const_ncell_range<CellType, 1>::type            EdgeOnCellRange;
       typedef typename viennagrid::result_of::iterator<EdgeOnCellRange>::type           EdgeOnCellIterator;            
       
-      typedef typename viennagrid::result_of::ncell_type<ConfigTypeIn, 0>::type             VertexType;
-      typedef typename viennagrid::result_of::ncell_type<ConfigTypeIn, 1>::type             EdgeType;
+      typedef typename viennagrid::result_of::ncell<ConfigTypeIn, 0>::type             VertexType;
+      typedef typename viennagrid::result_of::ncell<ConfigTypeIn, 1>::type             EdgeType;
 
       VertexType * vertices[topology::subcell_desc<triangle_tag, 0>::num_elements + 2];
       
@@ -362,7 +362,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::const_ncell_range<CellType, 1>::type            EdgeOnCellRange;
       typedef typename viennagrid::result_of::iterator<EdgeOnCellRange>::type           EdgeOnCellIterator;            
       
-      typedef typename viennagrid::result_of::ncell_type<ConfigTypeIn, 0>::type             VertexType;
+      typedef typename viennagrid::result_of::ncell<ConfigTypeIn, 0>::type             VertexType;
 
       VertexType * vertices[topology::subcell_desc<triangle_tag, 0>::num_elements
                             + topology::subcell_desc<triangle_tag, 1>::num_elements];
