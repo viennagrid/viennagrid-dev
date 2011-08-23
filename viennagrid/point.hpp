@@ -101,6 +101,53 @@ namespace viennagrid
   };
 
   //
+  // convenience function for conversion to cartesian coordinates
+  //
+  namespace result_of
+  {
+    template <typename PointType,
+              typename CSystem>
+    struct cartesian_point
+    {
+      typedef viennagrid::point<typename traits::value_type<PointType>::type,
+                                PointType::dim,
+                                viennagrid::cartesian_cs>                    type;
+    };
+    
+    /*template <typename PointType>
+    struct cartesian_point<PointType, viennagrid::cartesian_cs>
+    {
+      typedef PointType         type;
+    };*/
+
+  }
+  
+  
+  template <typename PointType, typename CoordinateSystem>
+  typename result_of::cartesian_point<PointType, 
+                                      typename traits::coordinate_system<PointType>::type
+                                     >::type
+  to_cartesian_impl(PointType const & p, CoordinateSystem const &)
+  {
+    typedef typename result_of::cartesian_point<PointType, 
+                                                typename traits::coordinate_system<PointType>::type
+                                               >::type CartesianPointType;
+    
+    return coordinate_converter<PointType, CartesianPointType>()(p);
+  }
+
+  //public interface
+  template <typename PointType>
+  typename result_of::cartesian_point<PointType, 
+                                      typename traits::coordinate_system<PointType>::type
+                                     >::type
+  to_cartesian(PointType const & p)
+  {
+    return to_cartesian_impl(p, typename traits::coordinate_system<PointType>::type());
+  }
+  
+
+  //
   // conversion from polar coordinate system
   //
   template <typename FromPointType, 
@@ -235,6 +282,20 @@ namespace viennagrid
     }
   };
   
+  /*template <typename PointType>
+  PointType const &
+  to_cartesian_impl(PointType const & p, cartesian_cs)
+  {
+    return p;
+  }
+
+  template <typename PointType>
+  PointType &
+  to_cartesian_impl(PointType & p, cartesian_cs)
+  {
+    return p;
+  }*/
+
   
   
   /** @brief Common base for all non-cartesian coordinate systems */

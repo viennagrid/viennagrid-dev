@@ -20,57 +20,93 @@
 
 #include "viennagrid/forwards.h"
 #include "viennagrid/traits/point.hpp"
+#include "viennagrid/point.hpp"
 
 namespace viennagrid 
 {
 
-  template <typename PointType,
-            dim_type dim = traits::dimension<PointType>::value,
-            typename CoordinateSystem = typename traits::coordinate_system<PointType>::type>
-  struct inner_prod_impl;
-
-  template <typename PointType>
-  struct inner_prod_impl<PointType, 1, cartesian_cs>
+  namespace detail
   {
-    typedef typename traits::value_type<PointType>::type    value_type;
+    template <typename PointType,
+              dim_type dim = traits::dimension<PointType>::value>
+    struct inner_prod_impl;
 
-    static value_type apply(PointType const & p1,
-                            PointType const & p2)
+    //
+    // 1d
+    // 
+    template <typename PointType>
+    struct inner_prod_impl<PointType, 1>
     {
-      return p1[0] * p2[0];
-    }
-  };
-  
-  template <typename PointType>
-  struct inner_prod_impl<PointType, 2, cartesian_cs>
-  {
-    typedef typename traits::value_type<PointType>::type    value_type;
+      typedef typename traits::value_type<PointType>::type    value_type;
 
-    static value_type apply(PointType const & p1,
-                            PointType const & p2)
+      template <typename PointType2>
+      static value_type apply(PointType const & p1,
+                              PointType2 const & p2)
+      {
+        return p1[0] * p2[0];
+      }
+    };
+    
+    //
+    // 2d
+    // 
+    template <typename PointType>
+    struct inner_prod_impl<PointType, 2>
     {
-      return p1[0] * p2[0] + p1[1] * p2[1];
-    }
-  };
-  
-  template <typename PointType>
-  struct inner_prod_impl<PointType, 3, cartesian_cs>
-  {
-    typedef typename traits::value_type<PointType>::type    value_type;
+      typedef typename traits::value_type<PointType>::type    value_type;
 
-    static value_type apply(PointType const & p1,
-                            PointType const & p2)
+      template <typename PointType2>
+      static value_type apply(PointType const & p1,
+                              PointType2 const & p2)
+      {
+        return p1[0] * p2[0] + p1[1] * p2[1];
+      }
+    };
+    
+    //
+    // 3d
+    // 
+    template <typename PointType>
+    struct inner_prod_impl<PointType, 3>
     {
-      return p1[0] * p2[0] + p1[1] * p2[1] + p1[2] * p2[2];
-    }
-  };
-  
-  
-  template<typename PointType>
-  typename traits::value_type<PointType>::type
-  inner_prod(PointType const& v1, PointType const& v2)
+      typedef typename traits::value_type<PointType>::type    value_type;
+
+      template <typename PointType2>
+      static value_type apply(PointType const & p1,
+                              PointType2 const & p2)
+      {
+        return p1[0] * p2[0] + p1[1] * p2[1] + p1[2] * p2[2];
+      }
+    };
+  }
+
+  template<typename PointType1, typename PointType2, typename CSystem1, typename CSystem2>
+  typename traits::value_type<PointType1>::type
+  inner_prod_impl(PointType1 const & p1, PointType2 const & p2, CSystem1 const &, CSystem2 const &)
   {
-    return inner_prod_impl<PointType>::apply(v1, v2);
+    typedef typename traits::value_type<PointType1>::type    value_type;
+    typedef typename result_of::cartesian_point<PointType1 const &,
+                                                typename traits::coordinate_system<PointType1>::type
+                                               >::type   CartesianPoint1;
+    
+    return detail::inner_prod_impl<CartesianPoint1>::apply(to_cartesian(p1), to_cartesian(p2));
+  }
+
+  template<typename PointType1, typename PointType2>
+  typename traits::value_type<PointType1>::type
+  inner_prod_impl(PointType1 const & p1, PointType2 const & p2, cartesian_cs, cartesian_cs)
+  {
+    return detail::inner_prod_impl<PointType1>::apply(p1, p2);
+  }
+
+  template<typename PointType1, typename PointType2>
+  typename traits::value_type<PointType1>::type
+  inner_prod(PointType1 const & p1, PointType2 const & p2)
+  {
+    return inner_prod_impl(p1,
+                           p2, 
+                           typename traits::coordinate_system<PointType1>::type(),
+                           typename traits::coordinate_system<PointType2>::type());
   }
 
 } 
