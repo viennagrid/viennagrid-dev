@@ -153,14 +153,14 @@ namespace viennagrid
       struct dataset_t 
       {
         std::string          name, quantity, unit;
-        int                  nvalues;
+        std::size_t          nvalues;
         double               conversion_factor;
         std::vector<double>  values;
       };  
       
       struct region_t 
       {
-        int                              regnr,nelements,npointidx;
+        std::size_t                      regnr,nelements,npointidx;
         std::string                      name,material;
         std::vector<std::vector<std::size_t> >   elements;
         std::map<std::string,dataset_t>  dataset;
@@ -194,19 +194,33 @@ namespace viennagrid
         H5::Attribute a=g.openAttribute(name);
         if (a.getTypeClass()!=H5T_INTEGER)
         {
-          std::cerr << "wrong class in atrribute" << std::endl;
+           std::cerr << "wrong class in atrribute" << std::endl;
           throw;
         }
         a.read(a.getDataType(),&i);
         return i;
       }   
       
+      double read_double(const H5::H5Object &g, const std::string name)
+      {
+         double i;
+         H5::Attribute a=g.openAttribute(name);
+         //if (a.getTypeClass()!=H5T_DOUBLE)
+         if (a.getTypeClass()!=H5T_FLOAT)
+         {
+            std::cerr << "wrong class in atrribute" << std::endl;
+            throw;
+         }         
+         a.read(a.getDataType(),&i);
+         return i;
+      }      
+      
       std::string read_string(H5::H5Object const& g, std::string const& name)
       {
         H5::Attribute a=g.openAttribute(name);
         if (a.getTypeClass()!=H5T_STRING)
         {
-          std::cerr << "wrong class in atrribute" << std::endl;
+           std::cerr << "wrong class in atrribute" << std::endl;
           throw;
         }
           
@@ -299,8 +313,106 @@ namespace viennagrid
          #ifdef VIENNAGRID_DEBUG_IO
             std::cout << "Attribute: " << a << std::endl;
          #endif
-//            read_dataset(state.openGroup(a));
+            read_dataset(state.openGroup(a));
          }
+      }      
+      
+      void read_dataset(const H5::Group &dataset)
+      {
+         std::string name = read_string(dataset,"name");
+         if (name.find("Stress")!=name.npos)
+            return;
+
+         std::string quantity = read_string(dataset,"quantity");
+         int regnr   = read_int(dataset,"region");
+         int nvalues = read_int(dataset,"number of values");
+         double conversion_factor = read_double(dataset,"conversion factor");
+         if (read_int(dataset,"location type")!=0)
+         {
+            std::cerr << "Dataset " << name << " location type not 0" << std::endl;
+            throw;      
+         }                  
+         if (read_int(dataset,"structure type") != 0)
+         {
+            std::cerr << "Dataset " << name << " structure type not 0" << std::endl;
+            throw;      
+         }                  
+         if (read_int(dataset,"value type") != 2)
+         {
+            std::cerr << "Dataset " << name << " value type not 2" << std::endl;
+            throw;      
+         }                  
+      #ifdef VIENNAGRID_DEBUG_IO
+         std::cout << "Dataset: " << name << " " << nvalues << std::endl;
+      #endif
+         // In this dataset we have a group 
+         // tag_group_0???
+         // units: take only the unit name
+         // Dataset values: the actual values
+
+         std::string unit;
+         int n=dataset.getNumObjs(),i;
+         for (i=0; i<n; i++)   
+         {
+         #ifdef VIENNAGRID_DEBUG_IO
+            std::cout << dataset.getObjnameByIdx(i) << std::endl;
+         #endif
+            if (dataset.getObjnameByIdx(i)=="unit")
+            {
+               const H5::Group &u=dataset.openGroup("unit");
+               unit=read_string(u,"name");
+               break;
+            }
+         }
+         if (i==n)
+         {
+            unit=read_string(dataset,"unit:name");
+         }
+
+         region_t &region=find_region(regnr);
+         region.dataset[name].name=name;
+         region.dataset[name].quantity=quantity;
+         region.dataset[name].nvalues=nvalues;
+         region.dataset[name].conversion_factor=conversion_factor;
+         region.dataset[name].unit=unit;
+
+         read_values(region.dataset[name],dataset.openDataSet("values"));
+      }      
+      
+      region_t &find_region(std::size_t regnr)
+      {
+         for (std::map<std::string,region_t>::iterator R=region.begin(); R!=region.end(); R++)
+            if (R->second.regnr==regnr)
+               return R->second;
+               
+         std::cerr << "region " << regnr << " not found" << std::endl;
+         throw;      
+      }      
+      
+      void read_values(dataset_t &dataset,const H5::DataSet &values)
+      {
+         const H5::DataSpace &dataspace = values.getSpace();
+         int rank = dataspace.getSimpleExtentNdims();
+         hsize_t dims[10];
+         int ndims = dataspace.getSimpleExtentDims( dims, NULL);
+      #ifdef VIENNAGRID_DEBUG_IO         
+         std::cout << "dataspace: " << rank << " " << ndims << " " << dims[0] << "," << dims[1] << std::endl;
+         std::cout << "nvalues: " << dataset.nvalues << std::endl;
+      #endif
+         if (dataset.nvalues != dims[0] || ndims!=1)
+         {
+            std::cerr << "Dataset " << dataset.name << " should have " << dataset.nvalues 
+                      << " values, but has " << dims[0] << " with dimension " << ndims << std::endl;
+            throw;               
+         }
+
+         // [JW] switched to dynamic memory alloc
+         //double v[dims[0]];
+         double *v;
+         v = (double *)malloc( dims[0] * sizeof(double) );
+         values.read( v, H5::PredType::NATIVE_DOUBLE);
+         dataset.values.insert(dataset.values.end(),&v[0],&v[dims[0]]);
+         free(v);
       }      
       
       void read_transformation(const H5::Group &trans)
