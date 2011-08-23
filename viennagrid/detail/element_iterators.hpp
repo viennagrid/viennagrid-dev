@@ -452,7 +452,7 @@ namespace viennagrid
       ncell_range(element<config_type, element_tag> const & e,
                   EnclosingType const & d) 
       {
-        std::cout << "Using non-const!" << std::endl;
+        //std::cout << "Using non-const!" << std::endl;
         init(e, d);
       }
       
@@ -570,7 +570,7 @@ namespace viennagrid
       const_ncell_range(element<config_type, element_tag> const & e,
                         EnclosingType const & d) 
       {
-        std::cout << "Using const!" << std::endl;
+        //std::cout << "Using const!" << std::endl;
         init(e, d);
       }
 
