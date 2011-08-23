@@ -36,7 +36,7 @@
 // [JW][TIP] for debugging purposes use the h5dump utility to dump a hdf5 file
 //
 
-//#define VIENNAGRID_DEBUG_IO
+#define VIENNAGRID_DEBUG_IO
 
 namespace viennagrid
 {
@@ -210,13 +210,14 @@ namespace viennagrid
           throw;
         }
           
-          char buf[a.getDataType().getSize()+1];
-          //char *buf;
-          //buf = (char *)malloc( (a.getDataType().getSize()+1) * sizeof(char) );
+        // [JW] switched to dynamic array
+        //char buf[a.getDataType().getSize()+1];
+        char *buf;
+        buf = (char *)malloc( (a.getDataType().getSize()+1) * sizeof(char) );
         a.read(a.getDataType(),buf);
         buf[a.getDataType().getSize()]='\0';
-          std::string bufstr(buf);
-          //free(buf);
+        std::string bufstr(buf);
+        free(buf);
         return bufstr;
       }   
       
@@ -262,9 +263,45 @@ namespace viennagrid
         const H5::DataSet &vert=geometry.openDataSet("vertex");
         read_vertex(vert);
         
-        // [JC] What do the Units???
-        //read_attribs0(geometry.openGroup("state_0"));
+        read_attribs0(geometry.openGroup("state_0"));
       }
+      
+      void read_attribs0(const H5::Group &state)
+      {
+         int i;
+         ndatasets=read_int(state,"number of datasets");
+      #ifdef VIENNAGRID_DEBUG_IO         
+         std::cout << "ndatasets: " << ndatasets << std::endl;
+      #endif
+         i=read_int(state,"number of plots");
+         if (i!=0)
+         {
+            std::cerr << "number of plots not equal 0" << std::endl;
+            throw;      
+         }         
+         i=read_int(state,"number of string streams");
+         if (i!=0)
+         {
+            std::cerr << "number of string-streams not equal 0" << std::endl;
+            throw;      
+         }         
+         i=read_int(state,"number of xy plots");
+         if (i!=0)
+         {
+            std::cerr << "number of xy-plots not equal 0" << std::endl;
+            throw;      
+         }         
+
+         for (std::size_t i=0; i<ndatasets; i++)
+         {
+            char a[100];
+            sprintf(a,"dataset_%ld",i);
+         #ifdef VIENNAGRID_DEBUG_IO
+            std::cout << "Attribute: " << a << std::endl;
+         #endif
+//            read_dataset(state.openGroup(a));
+         }
+      }      
       
       void read_transformation(const H5::Group &trans)
       {
@@ -300,13 +337,13 @@ namespace viennagrid
         if (dim>2)
           mtype2.insertMember( "z", HOFFSET(coord2_t, x[2]), H5::PredType::NATIVE_DOUBLE);
           
-          // [JC] Read two fields x and y from s2 dataset. Fields in the file
-          // are found by their names "x_name" and "y_name".
-          //
-          coord2_t s2[dims[0]];
-          //coord2_t *s2;
-          //s2 = (coord2_t *)malloc( dims[0] * sizeof(coord2_t) );
-          vert.read( s2, mtype2 );
+         // [JC] Read two fields x and y from s2 dataset. Fields in the file
+         // are found by their names "x_name" and "y_name".
+         //
+         //coord2_t s2[dims[0]];   // [JW] switched to dynamic memory alloc
+         coord2_t *s2;
+         s2 = (coord2_t *)malloc( dims[0] * sizeof(coord2_t) );
+         vert.read( s2, mtype2 );
 
         for (std::size_t i=0; i<dims[0]; i++)
         {
@@ -319,7 +356,7 @@ namespace viennagrid
             // [JW] dump the geometry information
             //std::cout << s2[i].x[0] << " " << s2[i].x[1] << " " << s2[i].x[2] << std::endl;
         }
-        //free(s2);
+        free(s2);
       }  
       
       void read_elements(region_t &region, const H5::DataSet &elem)
@@ -346,9 +383,10 @@ namespace viennagrid
           throw;      
           }
 
-          //int *el;
-          //el = (int *)malloc( dims[0] * sizeof(int) );
-        int el[dims[0]];
+         // [JW] switched to dynamic memory alloc
+        //int el[dims[0]];
+        int *el;
+        el = (int *)malloc( dims[0] * sizeof(int) );
         elem.read( el, H5::PredType::NATIVE_INT);
 
         std::size_t elct=0;
@@ -371,7 +409,7 @@ namespace viennagrid
                 throw;      
           }
         }
-          //free(el);
+        free(el);
       }  
       
       void read_region(const int regnr, const H5::Group &reg)
