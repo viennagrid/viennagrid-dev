@@ -282,7 +282,7 @@ namespace viennagrid
     }
   };
   
-  /*template <typename PointType>
+  template <typename PointType>
   PointType const &
   to_cartesian_impl(PointType const & p, cartesian_cs)
   {
@@ -294,7 +294,7 @@ namespace viennagrid
   to_cartesian_impl(PointType & p, cartesian_cs)
   {
     return p;
-  }*/
+  }
 
   
   
