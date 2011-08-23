@@ -277,7 +277,8 @@ namespace viennagrid
         const H5::DataSet &vert=geometry.openDataSet("vertex");
         read_vertex(vert);
         
-        read_attribs0(geometry.openGroup("state_0"));
+        // [JW] deactivated, as this has to be outsourced from ViennaGrid
+        //read_attribs0(geometry.openGroup("state_0"));
       }
       
       void read_attribs0(const H5::Group &state)
