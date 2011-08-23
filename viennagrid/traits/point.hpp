@@ -19,7 +19,6 @@
 #define VIENNAGRID_TRAITS_POINT_HPP
 
 #include "viennagrid/forwards.h"
-#include "viennagrid/point.hpp"
 
 namespace viennagrid 
 {
@@ -43,7 +42,11 @@ namespace viennagrid
     //  Coordinate system retrieval
     //
     template <typename PointType>
-    struct coordinate_system;
+    struct coordinate_system
+    {
+      //by default, we don't know anything about the point type, so let's complain at compile time
+      typedef typename PointType::ERROR_UNKNOWN_COORDINATE_SYSTEM_FOR_POINT_TYPE    type;
+    };
     
     template <typename CoordType, viennagrid::dim_type d, typename CoordinateSystem>
     struct coordinate_system< point<CoordType, d, CoordinateSystem> >

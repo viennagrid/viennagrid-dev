@@ -47,6 +47,7 @@ namespace viennagrid
   struct cartesian_cs;    //Cartesian coordinate system
   struct polar_cs;        //Polar coordinate system (r, phi)
   struct spherical_cs;    //Spherical coordinate system (r, theta, phi)
+  struct cylindrical_cs;  //Cylindrical coordinate system (rho, theta, z)
 
   //Dimension Tags:
   struct three_dimensions_tag{

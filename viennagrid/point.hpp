@@ -22,16 +22,168 @@
 #ifndef VIENNAGRID_POINT_HPP
 #define VIENNAGRID_POINT_HPP
 
-#include <math.h>
+#include <cmath>
 #include <assert.h>
 #include <stdexcept>
 #include <cstddef>
 #include <sstream>
 
 #include "viennagrid/forwards.h"
+#include "viennagrid/traits/point.hpp"
 
 namespace viennagrid
 {
+  
+  template <dim_type d>
+  struct dim_dispatcher;
+  
+  //conversion facility:
+  template <typename FromPointType, 
+            typename ToPointType,
+            typename FromCoordinateSystem = typename traits::coordinate_system<FromPointType>::type,
+            typename ToCoordinateSystem = typename traits::coordinate_system<ToPointType>::type 
+           >
+  class coordinate_converter
+  {
+    public:
+      ToPointType operator()(FromPointType const & p_in)
+      {
+        typedef typename FromPointType::ERROR_COORDINATE_SYSTEM_UNKNOWN   type;
+      }
+  };
+  
+  
+  //
+  // conversion from Cartesian coordinate system
+  //
+  template <typename FromPointType, 
+            typename ToPointType>
+  class coordinate_converter<FromPointType, ToPointType, cartesian_cs, polar_cs>
+  {
+    public:
+      ToPointType operator()(FromPointType const & p_in)
+      {
+        ToPointType ret;
+        ret[0] = sqrt(p_in[0] * p_in[0] + p_in[1] * p_in[1]);
+        ret[1] = atan2(p_in[1], p_in[0]);
+        return ret;
+      }
+  };
+  
+  template <typename FromPointType, 
+            typename ToPointType>
+  class coordinate_converter<FromPointType, ToPointType, cartesian_cs, spherical_cs>
+  {
+    public:
+      ToPointType operator()(FromPointType const & p_in)
+      {
+        ToPointType ret;
+        ret[0] = sqrt(p_in[0] * p_in[0] + p_in[1] * p_in[1] + p_in[2] * p_in[2]);
+        ret[1] = (ret[0] != 0) ? acos(p_in[2] / ret[0]) : 0;
+        ret[2] = atan2(p_in[1], p_in[0]);
+        return ret;
+      }
+  };
+  
+  template <typename FromPointType, 
+            typename ToPointType>
+  class coordinate_converter<FromPointType, ToPointType, cartesian_cs, cylindrical_cs>
+  {
+    public:
+      ToPointType operator()(FromPointType const & p_in)
+      {
+        ToPointType ret;
+        ret[0] = sqrt(p_in[0] * p_in[0] + p_in[1] * p_in[1]);
+        ret[1] = atan2(p_in[1], p_in[0]);
+        ret[2] = p_in[2];
+        return ret;
+      }
+  };
+
+  //
+  // conversion from polar coordinate system
+  //
+  template <typename FromPointType, 
+            typename ToPointType>
+  class coordinate_converter<FromPointType, ToPointType, polar_cs, cartesian_cs>
+  {
+    public:
+      ToPointType operator()(FromPointType const & p_in)
+      {
+        ToPointType ret;
+        ret[0] = p_in[0] * cos(p_in[1]);
+        ret[1] = p_in[0] * sin(p_in[1]);
+        return ret;
+      }
+  };
+  
+
+  //
+  // conversion from spherical coordinate system (r, theta, phi)
+  //
+  template <typename FromPointType, 
+            typename ToPointType>
+  class coordinate_converter<FromPointType, ToPointType, spherical_cs, cartesian_cs>
+  {
+    public:
+      ToPointType operator()(FromPointType const & p_in)
+      {
+        ToPointType ret;
+        ret[0] = p_in[0] * sin(p_in[1]) * cos(p_in[2]);
+        ret[1] = p_in[0] * sin(p_in[1]) * sin(p_in[2]);
+        ret[2] = p_in[0] * cos(p_in[1]);
+        return ret;
+      }
+  };
+
+  template <typename FromPointType, 
+            typename ToPointType>
+  class coordinate_converter<FromPointType, ToPointType, spherical_cs, cylindrical_cs>
+  {
+    public:
+      ToPointType operator()(FromPointType const & p_in)
+      {
+        ToPointType ret;
+        ret[0] = p_in[0] * sin(p_in[1]);                 //rho
+        ret[1] = p_in[2];                                //phi
+        ret[2] = p_in[0] * cos(p_in[1]);                 //z
+        return ret;
+      }
+  };
+
+  
+  //
+  // conversion from spherical cylindrical system (rho, phi, z)
+  //
+  template <typename FromPointType, 
+            typename ToPointType>
+  class coordinate_converter<FromPointType, ToPointType, cylindrical_cs, cartesian_cs>
+  {
+    public:
+      ToPointType operator()(FromPointType const & p_in)
+      {
+        ToPointType ret;
+        ret[0] = p_in[0] * cos(p_in[1]);
+        ret[1] = p_in[0] * sin(p_in[1]);
+        ret[2] = p_in[2];
+        return ret;
+      }
+  };
+
+  template <typename FromPointType, 
+            typename ToPointType>
+  class coordinate_converter<FromPointType, ToPointType, cylindrical_cs, spherical_cs>
+  {
+    public:
+      ToPointType operator()(FromPointType const & p_in)
+      {
+        ToPointType ret;
+        ret[0] = sqrt(p_in[0] * p_in[0] + p_in[2] * p_in[2]);
+        ret[1] = (ret[0] != 0) ? asin(p_in[2] / ret[0]) : 0;
+        ret[2] = p_in[1];
+        return ret;
+      }
+  };
   
   /********************* CoordinateSystem *****************/
   
@@ -84,7 +236,95 @@ namespace viennagrid
   };
   
   
-  // Polar and spherical coordinate system not yet supported
+  
+  /** @brief Common base for all non-cartesian coordinate systems */
+  template <typename CSystem>
+  struct cs_base
+  {
+    /** @brief Returns the point p1 + p2 for a polar coordinate system */
+    template <typename PointType>
+    static PointType add(PointType const & p1, PointType const & p2)
+    {
+      typedef point<typename PointType::value_type, PointType::dim, cartesian_cs>      CartesianPointType;
+      
+      assert(p1.size() == p2.size());
+      
+      coordinate_converter<PointType, CartesianPointType, CSystem, cartesian_cs>  cs_to_cartesian;
+      coordinate_converter<CartesianPointType, PointType, cartesian_cs, CSystem>  cartesian_to_cs;
+      
+      CartesianPointType cs1 = cs_to_cartesian(p1);
+      CartesianPointType cs2 = cs_to_cartesian(p2);
+      CartesianPointType cs_ret = cartesian_cs::add(cs1, cs2);
+      PointType ret = cartesian_to_cs(cs_ret);
+      
+      return ret;
+    }
+
+    /** @brief Implementation of p1 += p2 for a polar coordinate system */
+    template <typename PointType>
+    static void inplace_add(PointType & p1, PointType const & p2)
+    {
+      typedef point<typename PointType::value_type, PointType::dim, cartesian_cs>      CartesianPointType;
+      
+      assert(p1.size() == p2.size());
+      
+      coordinate_converter<PointType, CartesianPointType, CSystem, cartesian_cs>  cs_to_cartesian;
+      coordinate_converter<CartesianPointType, PointType, cartesian_cs, CSystem>  cartesian_to_cs;
+      
+      CartesianPointType cs1 = cs_to_cartesian(p1);
+      CartesianPointType cs2 = cs_to_cartesian(p2);
+      cartesian_cs::inplace_add(cs1, cs2);
+      p1 = cartesian_to_cs(cs1);
+    }
+
+    /** @brief Returns the point p1 - p2 for a polar coordinate system */
+    template <typename PointType>
+    static PointType subtract(PointType const & p1, PointType const & p2)
+    {
+      typedef point<typename PointType::value_type, PointType::dim, cartesian_cs>      CartesianPointType;
+      
+      assert(p1.size() == p2.size());
+      
+      coordinate_converter<PointType, CartesianPointType, CSystem, cartesian_cs>  cs_to_cartesian;
+      coordinate_converter<CartesianPointType, PointType, cartesian_cs, CSystem>  cartesian_to_cs;
+      
+      CartesianPointType cs1 = cs_to_cartesian(p1);
+      CartesianPointType cs2 = cs_to_cartesian(p2);
+      CartesianPointType cs_ret = cartesian_cs::subtract(cs1, cs2);
+      PointType ret = cartesian_to_cs(cs_ret);
+      
+      return ret;
+    }
+
+    /** @brief Implementation of p1 -= p2 for a polar coordinate system */
+    template <typename PointType>
+    static void inplace_subtract(PointType & p1, PointType const & p2)
+    {
+      typedef point<typename PointType::value_type, PointType::dim, cartesian_cs>      CartesianPointType;
+      
+      assert(p1.size() == p2.size());
+      
+      coordinate_converter<PointType, CartesianPointType, CSystem, cartesian_cs>  cs_to_cartesian;
+      coordinate_converter<CartesianPointType, PointType, cartesian_cs, CSystem>  cartesian_to_cs;
+      
+      CartesianPointType cs1 = cs_to_cartesian(p1);
+      CartesianPointType cs2 = cs_to_cartesian(p2);
+      cartesian_cs::inplace_subtract(cs1, cs2);
+      p1 = cartesian_to_cs(cs1);
+    }
+  };
+  
+  /** @brief Provides the basic operations in a polar coordinate system (r, phi) */
+  struct polar_cs : public cs_base<polar_cs> {};
+  
+  
+  
+  /** @brief Provides the basic operations in a spherical coordinate system (r, theta, phi) with theta denoting the elevation angle. */
+  struct spherical_cs : public cs_base<spherical_cs> {};
+
+  /** @brief Provides the basic operations in a cylindrical coordinate system (rho, theta, z) */
+  struct cylindrical_cs : public cs_base<cylindrical_cs> {};
+  
   
   
   
@@ -156,6 +396,8 @@ namespace viennagrid
       typedef CoordType       value_type;
       typedef std::size_t     size_type;
       
+      enum { dim = d };
+      
       point() 
       {
         point_filler<CoordType, d>::apply(coords, 0, 0, 0);  //make sure that there is no bogus in the coords-array
@@ -164,6 +406,29 @@ namespace viennagrid
       point(CoordType x, CoordType y = 0, CoordType z = 0)
       {
         point_filler<CoordType, d>::apply(coords, x, y, z);
+      }
+      
+      template <typename CoordType2, typename CoordinateSystem2>
+      point(point<CoordType2, d, CoordinateSystem2> const & p2)
+      {
+        //std::cout << "Copy CTOR!" << std::endl;
+        *this = coordinate_converter<point<CoordType2, d, CoordinateSystem2>, point>()(p2);
+      }
+      
+      point & operator=(point const & p2)
+      {
+        for (size_type i=0; i<d; ++i)
+          coords[i] = p2.coords[i];
+        return *this;
+      }
+      
+      
+      template <typename CoordType2, typename CoordinateSystem2>
+      point & operator=(point<CoordType2, d, CoordinateSystem2> const & p2)
+      {
+        //std::cout << "Assignment operator!" << std::endl;
+        *this = coordinate_converter<point<CoordType2, d, CoordinateSystem2>, point>()(p2);
+        return *this;
       }
       
       CoordType & operator[](dim_type index) 
@@ -261,6 +526,20 @@ namespace viennagrid
   };
 
   
+  template <typename CoordType, dim_type d, typename CoordinateSystem>
+  point<CoordType, d, CoordinateSystem>
+  operator*(double val, point<CoordType, d, CoordinateSystem> const & p)
+  {
+    return p * val;
+  }
+
+/*  template <typename CoordType, dim_type d, typename CoordinateSystem>
+  point<CoordType, d, CoordinateSystem>
+  operator*(CoordType val, point<CoordType, d, CoordinateSystem> const & p)
+  {
+    return p * val;
+  }*/
+
   template <typename CoordType, dim_type d, typename CoordinateSystem>
   std::ostream& operator << (std::ostream & os, point<CoordType, d, CoordinateSystem> const & p)
   {

@@ -28,6 +28,18 @@ namespace viennagrid
             dim_type dim = traits::dimension<PointType>::value,
             typename CoordinateSystem = typename traits::coordinate_system<PointType>::type>
   struct inner_prod_impl;
+
+  template <typename PointType>
+  struct inner_prod_impl<PointType, 1, cartesian_cs>
+  {
+    typedef typename traits::value_type<PointType>::type    value_type;
+
+    static value_type apply(PointType const & p1,
+                            PointType const & p2)
+    {
+      return p1[0] * p2[0];
+    }
+  };
   
   template <typename PointType>
   struct inner_prod_impl<PointType, 2, cartesian_cs>
