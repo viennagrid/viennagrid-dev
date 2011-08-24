@@ -166,6 +166,10 @@ void test(viennagrid::config::tetrahedral_3d)
   std::cout << "Printing cells in segment 1:" << std::endl;
   print_elements<Domain::config_type::cell_tag::topology_level>(domain.segment(1));
   
+  std::cout << "Test for direct operator[] access: " << std::endl;
+  //viennagrid::ncells<0>(domain.segment(0))[0].print_short();
+  viennagrid::ncells<3>(domain.segment(0))[0].print_short();
+  
   viennagrid::io::vtk_writer<Domain> my_vtk_writer;
   my_vtk_writer.writeDomain(domain, "multi-segment");
   
@@ -271,6 +275,10 @@ void test(viennagrid::config::triangular_2d)
 
   std::cout << "Printing cells in segment 1:" << std::endl;
   print_elements<Domain::config_type::cell_tag::topology_level>(domain.segment(1));
+
+  std::cout << "Test for direct operator[] access: " << std::endl;
+//  viennagrid::ncells<0>(domain.segment(0))[0].print_short();
+  viennagrid::ncells<2>(domain.segment(0))[0].print_short();
   
   viennagrid::io::vtk_writer<Domain> my_vtk_writer;
   my_vtk_writer.writeDomain(domain, "multi-segment");

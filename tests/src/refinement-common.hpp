@@ -26,9 +26,10 @@
 #include "viennagrid/config/simplex.hpp"
 #include "viennagrid/algorithm/refine.hpp"
 #include "viennagrid/algorithm/spanned_volume.hpp"
+#include "viennagrid/algorithm/volume.hpp"
 
 // Helper: Compute volume of tetrahedron
-template <typename CellType>
+/*template <typename CellType>
 double volume(CellType & cell)
 {
   typedef typename CellType::config_type      ConfigType;
@@ -63,7 +64,7 @@ double volume_triangle(CellType & cell)
   VertexType & v2 = *vit; ++vit;
   
   return spanned_volume(v0.getPoint(), v1.getPoint(), v2.getPoint());
-}
+}*/
 
 // Helper: Remove all refinement tags on a cell
 template <typename CellType>
@@ -104,7 +105,7 @@ void print_refinement_edges(CellType & cell)
   }
 }
 
-
+/*
 template <typename DomainType>
 double domain_volume(DomainType & domain)
 {
@@ -128,7 +129,7 @@ double domain_volume(DomainType & domain)
   }
   
   return new_volume;
-}
+} */
 
 template <typename DomainType>
 double domain_surface(DomainType & domain)
@@ -171,7 +172,7 @@ double domain_surface(DomainType & domain)
   {
     if (cfmit->second == 1)
     {
-      domain_surface += volume_triangle(*(cfmit->first));
+      domain_surface += viennagrid::volume(*(cfmit->first));
     }
   }
   
@@ -304,8 +305,8 @@ int surface_check(DomainType & domain_old, DomainType & domain_new)
 template <typename DomainType>
 int volume_check(DomainType & domain_old, DomainType & domain_new)
 {
-  double old_volume = domain_volume(domain_old);
-  double new_volume = domain_volume(domain_new);
+  double old_volume = viennagrid::volume(domain_old);
+  double new_volume = viennagrid::volume(domain_new);
   
   if ( (new_volume < 0.9999 * old_volume)
       || (new_volume > 1.0001 * old_volume) )

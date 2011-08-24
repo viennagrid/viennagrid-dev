@@ -57,7 +57,7 @@ void test(std::string & infile, std::string & outfile)
   }
 
 
-  double input_domain_volume = domain_volume(domain);
+  double input_domain_volume = viennagrid::volume(domain);
   double input_domain_surface = domain_surface(domain);
   
   std::cout << "Volume of input domain: " << input_domain_volume << std::endl;
@@ -83,10 +83,10 @@ void test(std::string & infile, std::string & outfile)
   Domain refined_domain;
   refined_domain = viennagrid::refine(domain, viennagrid::adaptive_refinement_tag());
 
-  std::cout << "Volume of refined domain: " << domain_volume(refined_domain) << std::endl;
+  std::cout << "Volume of refined domain: " << viennagrid::volume(refined_domain) << std::endl;
   std::cout << "Surface of refined domain: " << domain_surface(refined_domain) << std::endl;
   
-  if ( fabs(domain_volume(refined_domain) - input_domain_volume) / input_domain_volume > 1e-3 )
+  if ( fabs(viennagrid::volume(refined_domain) - input_domain_volume) / input_domain_volume > 1e-3 )
   {
     std::cerr << "Error in check: Domain volumes mismatch!" << std::endl;
     exit(EXIT_FAILURE);
@@ -120,10 +120,10 @@ void test(std::string & infile, std::string & outfile)
   Domain double_refined_domain;
   double_refined_domain = viennagrid::refine(refined_domain, viennagrid::adaptive_refinement_tag());
 
-  std::cout << "Volume of double refined domain: " << domain_volume(double_refined_domain) << std::endl;
+  std::cout << "Volume of double refined domain: " << viennagrid::volume(double_refined_domain) << std::endl;
   std::cout << "Surface of double refined domain: " << domain_surface(double_refined_domain) << std::endl;
   
-  if ( fabs(domain_volume(double_refined_domain) - input_domain_volume) / input_domain_volume > 1e-3 )
+  if ( fabs(viennagrid::volume(double_refined_domain) - input_domain_volume) / input_domain_volume > 1e-3 )
   {
     std::cerr << "Error in check: Domain volumes mismatch!" << std::endl;
     exit(EXIT_FAILURE);

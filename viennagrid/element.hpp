@@ -187,6 +187,10 @@ namespace viennagrid
 
       PointType & getPoint() { return point_; }
       PointType const & getPoint() const { return point_; }
+      
+      //convenience access to coordinates of the vertex:
+      CoordType & operator[](std::size_t i) { return point_[i]; }
+      CoordType const & operator[](std::size_t i) const { return point_[i]; }
 
       void print(long indent = 0) const
       {

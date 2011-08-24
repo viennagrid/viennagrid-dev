@@ -139,7 +139,7 @@ void testNewDomain(std::string & infile, std::string & outfile)
   std::cout << "*" << std::endl;
   std::cout << "* Test 2: Iteration over all cells adjacent to each facet" << std::endl;
   std::cout << "*" << std::endl;
-  FacetContainer facets = viennagrid::ncells<0>(domain);
+  FacetContainer facets = viennagrid::ncells<CellTag::topology_level-1>(domain);
   for (FacetIterator fit = facets.begin();
        fit != facets.end();
        ++fit)

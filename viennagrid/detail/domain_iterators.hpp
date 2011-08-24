@@ -23,6 +23,7 @@
 #include <list>
 #include <map>
 #include <stack>
+#include <assert.h>
 
 #include "viennagrid/forwards.h"
 
@@ -108,19 +109,29 @@ namespace viennagrid
   
   //////////////////// brand new containers: /////////////////////
   
-  
+  template <typename ContainerType>
+  struct assert_bracket_operator_access
+  {
+    // The user tried to do something like ncells<1>(domain)[0] to access the edge with ID 0 in the domain.
+    // However, edges are configured not to carry IDs at all, therefore throw an error.
+    typedef typename ContainerType::ERROR_BRACKET_OPERATOR_ACCESS_IMPOSSIBLE_AT_THIS_DOMAIN_LEVEL___USE_ITERATORS   type;
+  };
+
+  template <typename ElementType>
+  struct assert_bracket_operator_access< std::vector<ElementType> >
+  {
+    typedef void   type;
+  };
+
+  template <typename ElementType>
+  struct assert_bracket_operator_access< std::deque<ElementType> >
+  {
+    typedef void   type;
+  };
   
   
   // interface function for container creation,
   // non-const:
-  template <dim_type dim, typename DomainConfig>
-  ncell_proxy< domain<DomainConfig> >
-  ncells(domain<DomainConfig> & d)
-  {
-    return ncell_proxy< domain<DomainConfig> >(d);
-  }
-
-
   //container for iteration over a STL vector
   template <typename config_type, dim_type dim>
   class ncell_range < domain<config_type>, dim, false >
@@ -141,8 +152,12 @@ namespace viennagrid
       //typedef typename container_type::iterator   iterator;
       typedef typename domain_iterators<config_type, dim>::iterator   iterator;
       
+      ncell_range() : cont_(NULL) {};
+      
       ncell_range(ncell_proxy< domain<config_type> > const & p) : cont_(p.get().template container<dim>()) {}
       
+      ncell_range(domain<config_type> & d) : cont_(d.template container<dim>()) {}
+
       ncell_range & operator=(ncell_proxy< domain<config_type> > p)
       { 
         cont_ = p.get().template container<dim>();
@@ -152,21 +167,47 @@ namespace viennagrid
       iterator begin() const { return cont_->begin(); }
       iterator end()   const { return cont_->end(); }
       
-      size_t size() const { return cont_->size(); }
+      std::size_t size() const { return cont_->size(); }
+
+      element_type & operator[](std::size_t index)
+      {
+        typedef typename assert_bracket_operator_access<container_type>::type  asserted_type;
+        assert(index < size());
+        return (*cont_)[index]; 
+      }
+
+      element_type const & operator[](std::size_t index) const 
+      {
+        typedef typename assert_bracket_operator_access<container_type>::type  asserted_type;
+        assert(index < size());
+        return (*cont_)[index]; 
+      }
       
+      template <typename DomainType, dim_type dim2, bool b2>
+      friend class const_ncell_range;
+
     private:
       container_type * cont_;
   };
   
-  
-  //const container:  
   template <dim_type dim, typename DomainConfig>
-  const_ncell_proxy< domain<DomainConfig> >
-  ncells(domain<DomainConfig> const & d)
+  ncell_range<domain<DomainConfig>, dim>
+  ncells(domain<DomainConfig> & d)
   {
-    return const_ncell_proxy< domain<DomainConfig> >(d);
+    return ncell_range<domain<DomainConfig>, dim>(d);
   }
   
+  template <typename DomainConfig>
+  ncell_proxy< domain<DomainConfig> >
+  ncells(domain<DomainConfig> & d)
+  {
+    return ncell_proxy< domain<DomainConfig> >(d);
+  }
+
+
+  //
+  //const container:  
+  //
   template <typename config_type, dim_type dim>
   class const_ncell_range < domain<config_type>, dim, false >
   {
@@ -186,9 +227,15 @@ namespace viennagrid
       //typedef typename container_type::const_iterator   iterator;
       typedef typename domain_iterators<config_type, dim>::const_iterator   iterator;
       
+      const_ncell_range() : cont_(NULL) {};
+      
       const_ncell_range(const_ncell_proxy< domain<config_type> > const & p) : cont_(p.get().template container<dim>()) {}
 
       const_ncell_range(ncell_proxy< domain<config_type> > const & p) : cont_(p.get().template container<dim>()) {}
+
+      const_ncell_range(domain<config_type> const & d) : cont_(d.template container<dim>()) {}
+
+      const_ncell_range(ncell_range< domain<config_type>, dim > const & other) : cont_(other.cont_) {}
 
       const_ncell_range & operator=(const_ncell_proxy< domain<config_type> > const & p)
       { 
@@ -196,8 +243,27 @@ namespace viennagrid
         return *this;
       }
       
+      const_ncell_range & operator=(ncell_proxy< domain<config_type> > p)
+      { 
+        cont_ = p.get().template container<dim>();
+        return *this;
+      }
+      
+      const_ncell_range & operator=(ncell_range< domain<config_type>, dim > const & other)
+      { 
+        cont_ = other.cont_;
+        return *this;
+      }
+      
       iterator begin() const { return cont_->begin(); }
       iterator end()   const { return cont_->end(); }
+      
+      element_type const & operator[](std::size_t index) const 
+      {
+        typedef typename assert_bracket_operator_access<container_type>::type  asserted_type;
+        assert(index < size());
+        return (*cont_)[index]; 
+      }
       
       size_t size() const { return cont_->size(); }
       
@@ -205,6 +271,20 @@ namespace viennagrid
       const container_type * cont_;
   };
   
+  template <dim_type dim, typename DomainConfig>
+  const_ncell_range< domain<DomainConfig>, dim>
+  ncells(domain<DomainConfig> const & d)
+  {
+    return const_ncell_range< domain<DomainConfig>, dim>(d);
+  }
+  
+  template <typename DomainConfig>
+  const_ncell_proxy< domain<DomainConfig> >
+  ncells(domain<DomainConfig> const & d)
+  {
+    return const_ncell_proxy< domain<DomainConfig> >(d);
+  }
+
   
   //metafunction for return type:
   namespace result_of

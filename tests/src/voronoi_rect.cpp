@@ -20,43 +20,9 @@
 #include <sys/time.h>
 #include <vector>
 
-
-#include "viennagrid/domain.hpp"
-#include "viennagrid/io/vtk_writer.hpp"
-#include "viennagrid/iterators.hpp"
-#include "viennagrid/algorithm/voronoi.hpp"
 #include "viennagrid/config/others.hpp"
-
-
-
-struct edge_len_key {};              //edge lengths
-struct box_volume_key {};            //box volume associated with an edge or vertex
-struct edge_interface_area_key {};   //box volume associated with an edge
-
-namespace viennadata
-{
-  namespace config
-  {
-    template <>
-    struct key_dispatch<edge_len_key>
-    {
-      typedef type_key_dispatch_tag    tag;
-    };
-
-    template <>
-    struct key_dispatch<box_volume_key>
-    {
-      typedef type_key_dispatch_tag    tag;
-    };
-    
-    template <>
-    struct key_dispatch<edge_interface_area_key>
-    {
-      typedef type_key_dispatch_tag    tag;
-    };
-  }
-}
-
+#include "voronoi_common.hpp"
+#include "refinement-common.hpp"
 
 //
 // Generate four rectangles
@@ -153,53 +119,6 @@ void setup_device(DeviceType & device)
 }
 
 
-template <typename DeviceType>
-void output_voronoi_info(DeviceType const & d)
-{
-  typedef typename DeviceType::config_type           Config;
-  typedef typename Config::cell_tag                  CellTag;
-  typedef typename viennagrid::result_of::point<Config>::type                            PointType;
-  typedef typename viennagrid::result_of::ncell<Config, 0>::type                         VertexType;
-  typedef typename viennagrid::result_of::ncell<Config, 1>::type                         EdgeType;
-  typedef typename viennagrid::result_of::ncell<Config, CellTag::topology_level>::type   CellType;
-  
-  typedef typename viennagrid::result_of::const_ncell_range<DeviceType, 0>::type    VertexContainer;
-  typedef typename viennagrid::result_of::iterator<VertexContainer>::type         VertexIterator;
-  
-  typedef typename viennagrid::result_of::const_ncell_range<DeviceType, 1>::type    EdgeContainer;
-  typedef typename viennagrid::result_of::iterator<EdgeContainer>::type           EdgeIterator;
-  
-  long counter = 0;
-  
-  std::cout << "-" << std::endl;
-  std::cout << "- Vertex Information: " << std::endl;
-  std::cout << "-" << std::endl;
-  VertexContainer vertices = viennagrid::ncells<0>(d);
-  for (VertexIterator vit  = vertices.begin();
-                      vit != vertices.end();
-                    ++vit)
-  {
-    std::cout << "Vertex " << counter++ << ": " << viennadata::access<box_volume_key, double>()(*vit) << std::endl;
-  }
-  
-  std::cout << "-" << std::endl;
-  std::cout << "- Edge Information: " << std::endl;
-  std::cout << "-" << std::endl;
-  counter = 0;
-  EdgeContainer edges = viennagrid::ncells<1>(d);
-  for (EdgeIterator eit  = edges.begin();
-                    eit != edges.end();
-                  ++eit)
-  {
-    eit->print_short();
-    std::cout << "Length: "    << viennadata::access<edge_len_key, double>()(*eit)            << std::endl;
-    std::cout << "Interface: " << viennadata::access<edge_interface_area_key, double>()(*eit) << std::endl;
-    std::cout << "midpoint: " << viennagrid::circumcenter(*eit) << std::endl;
-  }
-  
-}
-
-
 
 
 int main(int argc, char *argv[])
@@ -220,16 +139,33 @@ int main(int argc, char *argv[])
   output_voronoi_info(device);
   
   std::cout << std::endl;
-  device.cells(0).print_short();
+  viennagrid::ncells<2>(device)[0].print_short();
   std::cout << std::endl;
-  std::cout << "Circumcenter of cell #0: " << viennagrid::circumcenter(device.cells(0)) << std::endl;
-  std::cout << "Circumcenter of cell #1: " << viennagrid::circumcenter(device.cells(1)) << std::endl;
-  std::cout << "Circumcenter of cell #2: " << viennagrid::circumcenter(device.cells(2)) << std::endl;
-  std::cout << "Circumcenter of cell #3: " << viennagrid::circumcenter(device.cells(3)) << std::endl;
-                                                                         
+  std::cout << "Circumcenter of cell #0: " << viennagrid::circumcenter(viennagrid::ncells<2>(device)[0]) << std::endl;
+  std::cout << "Circumcenter of cell #1: " << viennagrid::circumcenter(viennagrid::ncells<2>(device)[1]) << std::endl;
+  std::cout << "Circumcenter of cell #2: " << viennagrid::circumcenter(viennagrid::ncells<2>(device)[2]) << std::endl;
+  std::cout << "Circumcenter of cell #3: " << viennagrid::circumcenter(viennagrid::ncells<2>(device)[3]) << std::endl;
+  
+  double voronoi_vol = voronoi_volume(device);  
+  double domain_vol = viennagrid::volume(device);  
+  
+  if ( fabs(voronoi_vol - domain_vol) / domain_vol > 1e-10 )
+  {
+    std::cerr << "Mismatch of volumes: " << voronoi_vol << " vs " << domain_vol << std::endl;
+    return EXIT_FAILURE;
+  }
+  else
+    std::cout << "Volume check passed: " << voronoi_vol << " vs " << domain_vol << std::endl;
+  
+  
   //write to vtk:
   viennagrid::io::vtk_writer<DeviceType> my_vtk_writer;
-  my_vtk_writer.writeDomain(device, "voronoi");
+  my_vtk_writer.writeDomain(device, "voronoi_rect");
   
+  std::cout << "*******************************" << std::endl;
+  std::cout << "* Test finished successfully! *" << std::endl;
+  std::cout << "*******************************" << std::endl;
+  
+  return EXIT_SUCCESS;  
 }
 
