@@ -21,82 +21,108 @@
 #include <cmath>
 #include "viennagrid/forwards.h"
 #include "viennagrid/traits/point.hpp"
+#include "viennagrid/point.hpp"
 
-namespace viennagrid {
-
-
-// -----------------------------------------------------------------------------
-//
-// norm algorithm specialization hierarchy
-//
-template<typename Tag> 
-struct norm_impl 
+namespace viennagrid 
 {
-   template<typename VectorT>
-   typename VectorT::value_type operator()(VectorT const& vector)
-   {
-      std::cerr << "ViennaGrid - Norm Error - this error type is not implemented" << std::endl;
-      return 0.0;
-   }
-};
+  
+  namespace detail
+  {
 
-template<>
-struct norm_impl<viennagrid::one_tag>
-{
-   template<typename VectorT>
-   typename VectorT::value_type operator()(VectorT const& vector)
-   {
-      typename VectorT::value_type result(0);
-      for(std::size_t i = 0; i < traits::size<VectorT>::value; i++)       // TODO replace with generic size
-         result += std::fabs(vector[i]);
-      return result;
-   }
-};
-
-template<>
-struct norm_impl<viennagrid::two_tag>
-{
-   template<typename VectorT>
-   typename VectorT::value_type operator()(VectorT const& vector)
-   {
-      typename VectorT::value_type result(0);
-      for(std::size_t i = 0; i < traits::size<VectorT>::value; i++)       // TODO replace with generic size
-         result += vector[i]*vector[i];
-      return std::sqrt(result);   
-   }
-};
-
-template<>
-struct norm_impl<viennagrid::inf_tag>
-{
-   template<typename VectorT>
-   typename VectorT::value_type operator()(VectorT const& vector)
-   {
-      typename VectorT::value_type result(0);
-      for(std::size_t i = 0; i < traits::size<VectorT>::value; i++)       // TODO replace with generic size
+    // -----------------------------------------------------------------------------
+    //
+    // norm algorithm specialization hierarchy
+    //
+    template<typename Tag> 
+    struct norm_impl 
+    {
+      template<typename PointType>
+      typename traits::value_type<PointType>::type operator()(PointType const& p)
       {
-         if(std::fabs(vector[i]) > result)
-            result = std::fabs(vector[i]);
+          std::cerr << "ViennaGrid - Norm Error - this error type is not implemented" << std::endl;
+          return 0.0;
       }
-      return result;
-   }
-};
+    };
 
-// -----------------------------------------------------------------------------
-//
-// norm algorithm generic interface functions
-//
-template<typename VectorT, typename Tag>
-typename VectorT::value_type  norm(VectorT const& vector, Tag const& tag)
-{
-   return norm_impl<Tag>()(vector);
-}
+    template<>
+    struct norm_impl<viennagrid::one_tag>
+    {
+      template<typename PointType>
+      typename traits::value_type<PointType>::type operator()(PointType const& p)
+      {
+          typename traits::value_type<PointType>::type result(0);
+          for(std::size_t i = 0; i < traits::dynamic_size(p); i++)
+            result += std::fabs(p[i]);
+          return result;
+      }
+    };
 
-template<typename VectorT>
-typename VectorT::value_type  norm(VectorT const& vector)
-{
-   return norm_impl<viennagrid::two_tag>()(vector);
-}
+    template<>
+    struct norm_impl<viennagrid::two_tag>
+    {
+      template<typename PointType>
+      typename traits::value_type<PointType>::type operator()(PointType const& p)
+      {
+          typename traits::value_type<PointType>::type result(0);
+          for(std::size_t i = 0; i < traits::dynamic_size(p); i++)
+            result += p[i]*p[i];
+          return std::sqrt(result);   
+      }
+    };
+
+    template<>
+    struct norm_impl<viennagrid::inf_tag>
+    {
+      template<typename PointType>
+      typename traits::value_type<PointType>::type operator()(PointType const& p)
+      {
+          typename traits::value_type<PointType>::type result(0);
+          for(std::size_t i = 0; i < traits::dynamic_size(p); i++)
+          {
+            if(std::fabs(p[i]) > result)
+                result = std::fabs(p[i]);
+          }
+          return result;
+      }
+    };
+    
+  } //namespace detail
+
+  template<typename NormTag, typename PointType, typename CSystem>
+  typename traits::value_type<PointType>::type
+  norm_impl(PointType const & p, CSystem const &)
+  {
+    typedef typename traits::value_type<PointType>::type    value_type;
+    typedef typename result_of::cartesian_point<PointType>::type   CartesianPoint1;
+    
+    return detail::norm_impl<NormTag>()(to_cartesian(p));
+  }
+
+  template<typename NormTag, typename PointType1>
+  typename traits::value_type<PointType1>::type
+  norm_impl(PointType1 const & p, cartesian_cs)
+  {
+    return detail::norm_impl<NormTag>()(p);
+  }
+
+
+  // -----------------------------------------------------------------------------
+  //
+  // norm algorithm generic interface functions
+  //
+  template<typename PointType, typename Tag>
+  typename traits::value_type<PointType>::type
+  norm(PointType const & p, Tag const& tag)
+  {
+    return norm_impl<Tag>(p, typename traits::coordinate_system<PointType>::type());
+  }
+
+  template<typename PointType>
+  typename traits::value_type<PointType>::type
+  norm(PointType const & p)
+  {
+    return norm_impl<viennagrid::two_tag>(p, typename traits::coordinate_system<PointType>::type());
+  }
 
 } 
 

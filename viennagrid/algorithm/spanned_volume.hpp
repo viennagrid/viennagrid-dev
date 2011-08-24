@@ -32,13 +32,14 @@
 namespace viennagrid
 {
 
+  namespace detail
+  {
     template <typename PointType,
-              typename CoordinateSystem = typename traits::coordinate_system<PointType>::type,
               dim_type dim = traits::dimension<PointType>::value>
     struct spanned_volume_impl;
     
     template <typename PointType>
-    struct spanned_volume_impl<PointType, cartesian_cs, 1>
+    struct spanned_volume_impl<PointType, 1>
     {
       typedef typename traits::value_type<PointType>::type    value_type;
 
@@ -51,7 +52,7 @@ namespace viennagrid
 
     //in 2d:
     template <typename PointType>
-    struct spanned_volume_impl<PointType, cartesian_cs, 2>
+    struct spanned_volume_impl<PointType, 2>
     {
       typedef typename traits::value_type<PointType>::type    value_type;
       
@@ -77,7 +78,7 @@ namespace viennagrid
     
 
     template <typename PointType>
-    struct spanned_volume_impl<PointType, cartesian_cs, 3>
+    struct spanned_volume_impl<PointType, 3>
     {
       typedef typename traits::value_type<PointType>::type    value_type;
       
@@ -115,65 +116,148 @@ namespace viennagrid
       }
 
     };
+  } //namespace detail  
     
     
-    template <typename PointType>
-    typename traits::value_type<PointType>::type 
-    spanned_volume(PointType const & p1, PointType const & p2)
-    {
-      return spanned_volume_impl<PointType>::apply(p1, p2);
-                             
-    }
+  //
+  // Mixed coordinate systems:
+  //
+  template<typename PointType1, typename PointType2, typename CSystem1, typename CSystem2>
+  typename traits::value_type<PointType1>::type
+  spanned_volume_impl(PointType1 const & p1,
+                      PointType2 const & p2,
+                      CSystem1 const &,
+                      CSystem2 const &)
+  {
+    typedef typename traits::value_type<PointType1>::type    value_type;
+    typedef typename result_of::cartesian_point<PointType1>::type   CartesianPoint1;
     
-    
-    template <typename PointType>
-    typename traits::value_type<PointType>::type 
-    spanned_volume(PointType const & p1, PointType const & p2, PointType const & p3)
-    {
-      return spanned_volume_impl<PointType>::apply(p1, p2, p3);
-                             
-    }
-    
-    
-    template <typename PointType>
-    typename traits::value_type<PointType>::type 
-    spanned_volume(PointType const & p1, PointType const & p2, PointType const & p3, PointType const & p4)
-    {
-      return spanned_volume_impl<PointType>::apply(p1, p2, p3, p4);
-                             
-    }
-    
-    
-    
-    
-    
-/*    
+    return detail::spanned_volume_impl<CartesianPoint1>::apply(to_cartesian(p1), to_cartesian(p2));
+  }
 
-    // '2D-object in 3D'
-    template <typename T>
-    double spannedVolume(const point<T, three_dimensions_tag> & p1,
-                        const point<T, three_dimensions_tag> & p2)
-    {
-      double c1 = p1.coords_[0] * p2.coords_[1] - p1.coords_[1] * p2.coords_[0];
-      double c2 = - p1.coords_[0] * p2.coords_[2] + p1.coords_[2] * p2.coords_[0];
-      double c3 = p1.coords_[1] * p2.coords_[2] - p1.coords_[2] * p2.coords_[1];
+  template<typename PointType1, typename PointType2, typename PointType3,
+           typename CSystem1, typename CSystem2, typename CSystem3>
+  typename traits::value_type<PointType1>::type
+  spanned_volume_impl(PointType1 const & p1,
+                      PointType2 const & p2,
+                      PointType3 const & p3,
+                      CSystem1 const &,
+                      CSystem2 const &,
+                      CSystem3 const &)
+  {
+    typedef typename traits::value_type<PointType1>::type    value_type;
+    typedef typename result_of::cartesian_point<PointType1>::type   CartesianPoint1;
+    
+    return detail::spanned_volume_impl<CartesianPoint1>::apply(to_cartesian(p1), to_cartesian(p2), to_cartesian(p3));
+  }
 
-      return sqrt( c1 * c1 + c2 * c2 + c3 * c3 );
-    }
+  template<typename PointType1, typename PointType2, typename PointType3, typename PointType4,
+           typename CSystem1, typename CSystem2, typename CSystem3, typename CSystem4>
+  typename traits::value_type<PointType1>::type
+  spanned_volume_impl(PointType1 const & p1,
+                      PointType2 const & p2,
+                      PointType3 const & p3,
+                      PointType4 const & p4,
+                      CSystem1 const &,
+                      CSystem2 const &,
+                      CSystem3 const &,
+                      CSystem4 const &)
+  {
+    typedef typename traits::value_type<PointType1>::type    value_type;
+    typedef typename result_of::cartesian_point<PointType1>::type   CartesianPoint1;
+    
+    return detail::spanned_volume_impl<CartesianPoint1>::apply(to_cartesian(p1), to_cartesian(p2), to_cartesian(p3), to_cartesian(p4));
+  }
 
-    template <typename T>
-    double spannedVolume(const point<T, three_dimensions_tag> & p1,
-                        const point<T, three_dimensions_tag> & p2,
-                        const point<T, three_dimensions_tag> & p3)
-    {
-      //return det|p1 p2 p3|
-      return p1.coords_[0] * p2.coords_[1] * p3.coords_[2]
-            + p2.coords_[0] * p3.coords_[1] * p1.coords_[2]
-            + p3.coords_[0] * p1.coords_[1] * p2.coords_[2]
-            - p1.coords_[2] * p2.coords_[1] * p3.coords_[0]
-            - p2.coords_[2] * p3.coords_[1] * p1.coords_[0]
-            - p3.coords_[2] * p1.coords_[1] * p2.coords_[0];
-    }
-*/
+  //
+  // All Cartesian:
+  //
+  template<typename PointType1, typename PointType2>
+  typename traits::value_type<PointType1>::type
+  spanned_volume_impl(PointType1 const & p1,
+                      PointType2 const & p2,
+                      cartesian_cs,
+                      cartesian_cs)
+  {
+    return detail::spanned_volume_impl<PointType1>::apply(p1, p2);
+  }
+
+  template <typename PointType1, typename PointType2, typename PointType3>
+  typename traits::value_type<PointType1>::type
+  spanned_volume_impl(PointType1 const & p1,
+                      PointType2 const & p2,
+                      PointType3 const & p3,
+                      cartesian_cs,
+                      cartesian_cs,
+                      cartesian_cs)
+  {
+    return detail::spanned_volume_impl<PointType1>::apply(p1, p2, p3);
+  }
+
+  template <typename PointType1, typename PointType2, typename PointType3, typename PointType4>
+  typename traits::value_type<PointType1>::type
+  spanned_volume_impl(PointType1 const & p1,
+                      PointType2 const & p2,
+                      PointType3 const & p3,
+                      PointType4 const & p4,
+                      cartesian_cs,
+                      cartesian_cs,
+                      cartesian_cs,
+                      cartesian_cs)
+  {
+    return detail::spanned_volume_impl<PointType1>::apply(p1, p2, p3, p4);
+  }
+
+    
+
+  //
+  // public interface
+  //
+  template <typename PointType1, typename PointType2>
+  typename traits::value_type<PointType1>::type 
+  spanned_volume(PointType1 const & p1, PointType2 const & p2)
+  {
+    return spanned_volume_impl(p1,
+                               p2,
+                               typename traits::coordinate_system<PointType1>::type(),
+                               typename traits::coordinate_system<PointType2>::type());                            
+  }
+  
+  
+  template <typename PointType1, typename PointType2, typename PointType3>
+  typename traits::value_type<PointType1>::type 
+  spanned_volume(PointType1 const & p1, PointType2 const & p2, PointType3 const & p3)
+  {
+    return spanned_volume_impl(p1,
+                               p2,
+                               p3,
+                               typename traits::coordinate_system<PointType1>::type(),
+                               typename traits::coordinate_system<PointType2>::type(),
+                               typename traits::coordinate_system<PointType3>::type()
+                              );
+                            
+  }
+  
+  
+  template <typename PointType1, typename PointType2, typename PointType3, typename PointType4>
+  typename traits::value_type<PointType1>::type 
+  spanned_volume(PointType1 const & p1,
+                  PointType2 const & p2,
+                  PointType3 const & p3,
+                  PointType4 const & p4)
+  {
+    return spanned_volume_impl(p1,
+                               p2,
+                               p3,
+                               p4,
+                               typename traits::coordinate_system<PointType1>::type(),
+                               typename traits::coordinate_system<PointType2>::type(),
+                               typename traits::coordinate_system<PointType3>::type(),
+                               typename traits::coordinate_system<PointType4>::type()
+                              );
+  }
+  
+    
+    
 }
 #endif

@@ -20,63 +20,80 @@
 
 #include "viennagrid/forwards.h"
 #include "viennagrid/traits/point.hpp"
+#include "viennagrid/point.hpp"
 
 namespace viennagrid
 {
 
-  
-  template <typename PointType,
-            dim_type dim = traits::dimension<PointType>::value,
-            typename CoordinateSystem = typename traits::coordinate_system<PointType>::type>
-  struct cross_prod_impl;
-  
-  
-  /*
-  template<typename VectorT>
-  VectorT cross_prod_impl(VectorT const& v1, VectorT const& v2)
+  namespace detail
   {
-    return VectorT(v1[1]*v2[2]-v1[2]*v2[1], 
-                    v1[2]*v2[0]-v1[0]*v2[2],
-                    v1[0]*v2[1]-v1[1]*v2[0]);
+    template <typename PointType,
+              dim_type dim = traits::dimension<PointType>::value>
+    struct cross_prod_impl;
+    
+    
+    //for compatibility in 1d:
+    template <typename PointType>
+    struct cross_prod_impl<PointType, 1>
+    {
+      static PointType apply(PointType const & p1,
+                            PointType const & p2)
+      {
+        return PointType(0);
+      }
+    };
+    
+    //for compatibility in 2d:
+    template <typename PointType>
+    struct cross_prod_impl<PointType, 2>
+    {
+      static PointType apply(PointType const & p1,
+                            PointType const & p2)
+      {
+        return PointType(0,0);
+      }
+    };
+    
+    template <typename PointType>
+    struct cross_prod_impl<PointType, 3>
+    {
+      static PointType apply(PointType const & p1,
+                            PointType const & p2)
+      {
+        return PointType(p1[1]*p2[2]-p1[2]*p2[1], 
+                        p1[2]*p2[0]-p1[0]*p2[2],
+                        p1[0]*p2[1]-p1[1]*p2[0]);
+      }
+    };
+  }
+  
+  
+  template<typename PointType1, typename PointType2, typename CSystem1, typename CSystem2>
+  PointType1
+  cross_prod_impl(PointType1 const & p1, PointType2 const & p2, CSystem1 const &, CSystem2 const &)
+  {
+    typedef typename traits::value_type<PointType1>::type    value_type;
+    typedef typename result_of::cartesian_point<PointType1>::type   CartesianPoint1;
+    
+    return detail::cross_prod_impl<CartesianPoint1>::apply(to_cartesian(p1), to_cartesian(p2));
   }
 
-  template<typename VectorT>
-  VectorT cross_prod(VectorT const& v1, VectorT const& v2)
+  template<typename PointType1, typename PointType2>
+  PointType1
+  cross_prod_impl(PointType1 const & p1, PointType2 const & p2, cartesian_cs, cartesian_cs)
   {
-    return VectorT(v1[1]*v2[2]-v1[2]*v2[1], 
-                    v1[2]*v2[0]-v1[0]*v2[2],
-                    v1[0]*v2[1]-v1[1]*v2[0]);
-  } */
+    return detail::cross_prod_impl<PointType1>::apply(p1, p2);
+  }
 
-  //for compatibility in 2d:
-  template <typename PointType>
-  struct cross_prod_impl<PointType, 2, cartesian_cs>
-  {
-    static PointType apply(PointType const & p1,
-                           PointType const & p2)
-    {
-      return PointType(0,0);
-    }
-  };
   
-  template <typename PointType>
-  struct cross_prod_impl<PointType, 3, cartesian_cs>
+  template<typename PointType1, typename PointType2>
+  PointType1
+  cross_prod(PointType1 const& v1, PointType2 const& v2)
   {
-    static PointType apply(PointType const & p1,
-                           PointType const & p2)
-    {
-      return PointType(p1[1]*p2[2]-p1[2]*p2[1], 
-                       p1[2]*p2[0]-p1[0]*p2[2],
-                       p1[0]*p2[1]-p1[1]*p2[0]);
-    }
-  };
-  
-  
-  template<typename PointType>
-  PointType
-  cross_prod(PointType const& v1, PointType const& v2)
-  {
-    return cross_prod_impl<PointType>::apply(v1, v2);
+    return cross_prod_impl(v1,
+                           v2,
+                           typename traits::coordinate_system<PointType1>::type(),
+                           typename traits::coordinate_system<PointType2>::type());
   }
 
 } 

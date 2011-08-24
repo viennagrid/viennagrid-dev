@@ -47,8 +47,9 @@ bool fuzzy_equal(double a, double b)
   return false;
 }
 
-template <typename PointType>
-bool fuzzy_equal(PointType const & a, PointType const & b)
+template <typename CoordType, viennagrid::dim_type d>
+bool fuzzy_equal(viennagrid::point<CoordType, d, viennagrid::cartesian_cs> const & a,
+                 viennagrid::point<CoordType, d, viennagrid::cartesian_cs> const & b)
 {
   for (std::size_t i=0; i<a.size(); ++i)
   {
@@ -62,12 +63,107 @@ bool fuzzy_equal(PointType const & a, PointType const & b)
 template <typename PointType, typename PointType2>
 bool fuzzy_equal(PointType const & a, PointType2 const & b)
 {
-  bool ret = fuzzy_equal(a, viennagrid::coordinate_converter<PointType2, PointType>()(b));
+  bool ret = fuzzy_equal(viennagrid::to_cartesian(a),
+                         viennagrid::to_cartesian(b)
+                        );
   if (!ret)
     std::cerr << "Vectors: " << a << "; " << b << std::endl;
   return ret;
 }
 
+
+template <typename PointType1, typename PointType2>
+void test_operations(PointType1 const & c0, PointType1 const & c1, PointType1 const & c2, PointType1 const & c3,
+                     PointType2 const & p0, PointType2 const & p1, PointType2 const & p2, PointType2 const & p3)
+{
+  
+  std::cout << "Basic operations: ";
+  if ( !fuzzy_equal(c0+c1, p0+p1)
+       || !fuzzy_equal(c1+c2, p1+p2)
+       || !fuzzy_equal(c2-c1, p2-p1)
+      || !fuzzy_equal(c3 + 2.0 * c1, p3 + 2.0 * p1) 
+     )
+    exit(EXIT_FAILURE);
+  if ( !fuzzy_equal(p0+p1, c0+c1)
+       || !fuzzy_equal(p1+p2, c1+c2)
+       || !fuzzy_equal(p2-p1, c2-c1)
+       || !fuzzy_equal(p3 + 2.0 * p1, c3 + 2.0 * c1) )
+    exit(EXIT_FAILURE);
+  if ( !fuzzy_equal(p0+c1, p0+c1)
+       || !fuzzy_equal(p1+c2, p1+c2)
+       || !fuzzy_equal(p2-c1, p2-c1)
+       || !fuzzy_equal(p3 + 2.0 * c1, p3 + 2.0 * c1) )
+    exit(EXIT_FAILURE);
+  std::cout << "[PASSED]" << std::endl;
+  
+  std::cout << "Testing inner products: ";  
+  if ( !fuzzy_equal(viennagrid::inner_prod(c1, c0), viennagrid::inner_prod(p1, p0))
+       || !fuzzy_equal(viennagrid::inner_prod(c2, c1), viennagrid::inner_prod(p2, p1))
+       || !fuzzy_equal(viennagrid::inner_prod(c3, c0), viennagrid::inner_prod(p3, p0))
+       || !fuzzy_equal(viennagrid::inner_prod(c1, c3), viennagrid::inner_prod(p1, p3)) 
+     )
+    exit(EXIT_FAILURE);
+  if ( !fuzzy_equal(viennagrid::inner_prod(c1, p0), viennagrid::inner_prod(c1, p0))
+       || !fuzzy_equal(viennagrid::inner_prod(c2, p1), viennagrid::inner_prod(c2, p1))
+       || !fuzzy_equal(viennagrid::inner_prod(c3, p0), viennagrid::inner_prod(c3, p0))
+       || !fuzzy_equal(viennagrid::inner_prod(c1, p3), viennagrid::inner_prod(c1, p3)) )
+    exit(EXIT_FAILURE);
+  std::cout << "[PASSED]" << std::endl;
+  
+  
+  
+  std::cout << "Testing cross products: ";  
+  if ( !fuzzy_equal(viennagrid::cross_prod(c1, c0), viennagrid::cross_prod(p1, p0))
+       || !fuzzy_equal(viennagrid::cross_prod(c2, c1), viennagrid::cross_prod(p2, p1))
+       || !fuzzy_equal(viennagrid::cross_prod(c3, c0), viennagrid::cross_prod(p3, p0))
+       || !fuzzy_equal(viennagrid::cross_prod(c1, c3), viennagrid::cross_prod(p1, p3)) 
+     )
+    exit(EXIT_FAILURE);
+  if ( !fuzzy_equal(viennagrid::cross_prod(c1, p0), viennagrid::cross_prod(c1, p0))
+       || !fuzzy_equal(viennagrid::cross_prod(c2, p1), viennagrid::cross_prod(c2, p1))
+       || !fuzzy_equal(viennagrid::cross_prod(c3, p0), viennagrid::cross_prod(c3, p0))
+       || !fuzzy_equal(viennagrid::cross_prod(c1, p3), viennagrid::cross_prod(c1, p3)) )
+    exit(EXIT_FAILURE);
+  std::cout << "[PASSED]" << std::endl;
+  
+  std::cout << "Testing norms: ";  
+  if ( !fuzzy_equal(viennagrid::norm(c0, viennagrid::one_tag()), viennagrid::norm(p0, viennagrid::one_tag()))
+       || !fuzzy_equal(viennagrid::norm(c1, viennagrid::one_tag()), viennagrid::norm(p1, viennagrid::one_tag()))
+       || !fuzzy_equal(viennagrid::norm(c2, viennagrid::one_tag()), viennagrid::norm(p2, viennagrid::one_tag()))
+       || !fuzzy_equal(viennagrid::norm(c3, viennagrid::one_tag()), viennagrid::norm(p3, viennagrid::one_tag()))
+     )
+    exit(EXIT_FAILURE);
+  if ( !fuzzy_equal(viennagrid::norm(c0, viennagrid::two_tag()), viennagrid::norm(p0, viennagrid::two_tag()))
+       || !fuzzy_equal(viennagrid::norm(c1, viennagrid::two_tag()), viennagrid::norm(p1, viennagrid::two_tag()))
+       || !fuzzy_equal(viennagrid::norm(c2, viennagrid::two_tag()), viennagrid::norm(p2, viennagrid::two_tag()))
+       || !fuzzy_equal(viennagrid::norm(c3, viennagrid::two_tag()), viennagrid::norm(p3, viennagrid::two_tag()))
+     )
+    exit(EXIT_FAILURE);
+  if ( !fuzzy_equal(viennagrid::norm(c0, viennagrid::inf_tag()), viennagrid::norm(p0, viennagrid::inf_tag()))
+       || !fuzzy_equal(viennagrid::norm(c1, viennagrid::inf_tag()), viennagrid::norm(p1, viennagrid::inf_tag()))
+       || !fuzzy_equal(viennagrid::norm(c2, viennagrid::inf_tag()), viennagrid::norm(p2, viennagrid::inf_tag()))
+       || !fuzzy_equal(viennagrid::norm(c3, viennagrid::inf_tag()), viennagrid::norm(p3, viennagrid::inf_tag()))
+     )
+    exit(EXIT_FAILURE);
+  if ( !fuzzy_equal(viennagrid::norm(3.1415*c3, viennagrid::two_tag()), viennagrid::norm(3.1415*p3, viennagrid::two_tag()))
+       || !fuzzy_equal(viennagrid::norm(c1, viennagrid::one_tag()), viennagrid::norm(p1, viennagrid::one_tag()))
+       || !fuzzy_equal(viennagrid::norm(c2+p1, viennagrid::two_tag()), viennagrid::norm(p2+c1, viennagrid::two_tag()))
+       || !fuzzy_equal(viennagrid::norm(c3-c2, viennagrid::inf_tag()), viennagrid::norm(p3-p2, viennagrid::inf_tag()))
+     )
+    exit(EXIT_FAILURE);
+  std::cout << "[PASSED]" << std::endl;
+  
+  
+  
+  std::cout << "Testing spanned volume: ";  
+  if ( !fuzzy_equal(viennagrid::spanned_volume(c0, c1), viennagrid::spanned_volume(p0, p1))
+       || !fuzzy_equal(viennagrid::spanned_volume(c1, c2), viennagrid::spanned_volume(p1, p2))
+       || !fuzzy_equal(viennagrid::spanned_volume(c2, p3), viennagrid::spanned_volume(p2, c3))
+       || !fuzzy_equal(viennagrid::spanned_volume(c3, p0), viennagrid::spanned_volume(p3, c0))
+     )
+    exit(EXIT_FAILURE);
+  std::cout << "[PASSED]" << std::endl;
+}
 
 
 
@@ -118,29 +214,30 @@ void test_1d()
   std::cout << "[PASSED]" << std::endl;
 }
 
+template <typename CSystem1, typename CSystem2>
 void test_2d()
 {
-  typedef viennagrid::point<double, 2, viennagrid::cartesian_cs>   CartesianPoint;
-  typedef viennagrid::point<double, 2, viennagrid::polar_cs>       PolarPoint;
+  typedef viennagrid::point<double, 2, CSystem1>   PointType1;
+  typedef viennagrid::point<double, 2, CSystem2>   PointType2;
   
-  CartesianPoint c0(0, 0);
-  CartesianPoint c1(1, 0);
-  CartesianPoint c2(0, 1);
-  CartesianPoint c3(1, 1);
+  PointType1 c0(0, 0);
+  PointType1 c1(1, 0);
+  PointType1 c2(0, 1);
+  PointType1 c3(1, 1);
 
-  PolarPoint p0 = c0;
-  PolarPoint p1;
+  PointType2 p0 = c0;
+  PointType2 p1;
   p1 = c1;
-  PolarPoint p2(c2);
-  PolarPoint p3(1, 1);
+  PointType2 p2(c2);
+  PointType2 p3(1, 1);
   p3 = c3;
   
   //convert to cartesian:
-  CartesianPoint c4 = p0;
-  CartesianPoint c5;
+  PointType1 c4 = p0;
+  PointType1 c5;
   c5 = p1;
-  CartesianPoint c6(p2);
-  CartesianPoint c7(1, 1);
+  PointType1 c6(p2);
+  PointType1 c7(1, 1);
   c7 = p3;
   
   std::cout << "Printing points: " << std::endl;
@@ -175,75 +272,95 @@ void test_2d()
        || !fuzzy_equal(c3, p3) )
     exit(EXIT_FAILURE);
   
-  std::cout << std::endl;
-  std::cout << "Basic operations: " << std::endl;
-  if ( !fuzzy_equal(c0+c1, p0+p1)
-       || !fuzzy_equal(c1+c2, p1+p2)
-       || !fuzzy_equal(c2-c1, p2-p1)
-       || !fuzzy_equal(c3 + 2.0 * c1, p3 + 2.0 * p1) )
-    exit(EXIT_FAILURE);
+  test_operations(c0, c1, c2, c3,
+                  p0, p1, p2, p3);
   
-  if ( !fuzzy_equal(p0+p1, c0+c1)
-       || !fuzzy_equal(p1+p2, c1+c2)
-       || !fuzzy_equal(p2-p1, c2-c1)
-       || !fuzzy_equal(p3 + 2.0 * p1, c3 + 2.0 * c1) )
-    exit(EXIT_FAILURE);
-  if ( !fuzzy_equal(p0+c1, p0+c1)
-       || !fuzzy_equal(p1+c2, p1+c2)
-       || !fuzzy_equal(p2-c1, p2-c1)
-       || !fuzzy_equal(p3 + 2.0 * c1, p3 + 2.0 * c1) )
-    exit(EXIT_FAILURE);
-  std::cout << "[PASSED]" << std::endl;
-  
-  std::cout << "Testing inner products: " << std::endl;  
-  std::cout << c1 << " vs " << p1 << std::endl;
-  std::cout << viennagrid::to_cartesian(c3) << " vs " << viennagrid::to_cartesian(p3) << std::endl;
-  if ( !fuzzy_equal(viennagrid::inner_prod(c1, c0), viennagrid::inner_prod(p1, p0))
-       || !fuzzy_equal(viennagrid::inner_prod(c2, c1), viennagrid::inner_prod(p2, p1))
-       || !fuzzy_equal(viennagrid::inner_prod(c3, c0), viennagrid::inner_prod(p3, p0))
-       || !fuzzy_equal(viennagrid::inner_prod(c1, c3), viennagrid::inner_prod(p1, p3)) 
+  std::cout << "Testing spanned volume (part 2): ";  
+  if ( !fuzzy_equal(viennagrid::spanned_volume(c0, c1, c2), viennagrid::spanned_volume(p0, p1, p2))
+       || !fuzzy_equal(viennagrid::spanned_volume(c1, c2, p3), viennagrid::spanned_volume(p1, p2, c3))
+       || !fuzzy_equal(viennagrid::spanned_volume(c2, p3, p0), viennagrid::spanned_volume(p2, c3, c0))
+       || !fuzzy_equal(viennagrid::spanned_volume(p3, c0, p1), viennagrid::spanned_volume(c3, p0, c1))
      )
     exit(EXIT_FAILURE);
-  std::cout << "Passed first part" << std::endl;
-  if ( !fuzzy_equal(viennagrid::inner_prod(c1, p0), viennagrid::inner_prod(c1, p0))
-       || !fuzzy_equal(viennagrid::inner_prod(c2, p1), viennagrid::inner_prod(c2, p1))
-       || !fuzzy_equal(viennagrid::inner_prod(c3, p0), viennagrid::inner_prod(c3, p0))
-       || !fuzzy_equal(viennagrid::inner_prod(c1, p3), viennagrid::inner_prod(c1, p3)) )
-    exit(EXIT_FAILURE);
-  
   std::cout << "[PASSED]" << std::endl;
-  
-  
-  
-  std::cout << std::endl;
-  std::cout << "c1 x c2 = " << viennagrid::cross_prod(c1, c2) << std::endl;
-  std::cout << "c2 x c1 = " << viennagrid::cross_prod(c2, c1) << std::endl;
-  std::cout << "c2 x c3 = " << viennagrid::cross_prod(c2, c3) << std::endl;
-  std::cout << "c3 x c2 = " << viennagrid::cross_prod(c3, c2) << std::endl;
-  std::cout << std::endl;
-  std::cout << "||c0|| = " << viennagrid::norm(c0) << std::endl;
-  std::cout << "||c1|| = " << viennagrid::norm(c1) << std::endl;
-  std::cout << "||c2|| = " << viennagrid::norm(c2) << std::endl;
-  std::cout << "||c3|| = " << viennagrid::norm(c3) << std::endl;
-  std::cout << "||c1 - c0|| = " << viennagrid::norm(c1 - c0) << std::endl;
-  std::cout << "||c2 - c0|| = " << viennagrid::norm(c2 - c0) << std::endl;
-  std::cout << "||c3 - c0|| = " << viennagrid::norm(c3 - c0) << std::endl;
-  
-  
-  std::cout << "Spanned Volume: " << std::endl;
-  std::cout << "vol(c1, c2) = " << viennagrid::spanned_volume(c1, c2) << std::endl;
-  std::cout << "vol(c2, c1) = " << viennagrid::spanned_volume(c2, c1) << std::endl;
-  std::cout << "vol(c0, c1, c2) = " << viennagrid::spanned_volume(c0, c1, c2) << std::endl;
-  std::cout << "vol(c1, c2, c3) = " << viennagrid::spanned_volume(c1, c2, c3) << std::endl;
   
 }
 
-
+template <typename CSystem1, typename CSystem2>
 void test_3d()
 {
-  typedef viennagrid::point<double, 3, viennagrid::cartesian_cs>    CartesianPoint;
-  typedef viennagrid::point<double, 3, viennagrid::spherical_cs>    SphericalPoint;
-  typedef viennagrid::point<double, 3, viennagrid::cylindrical_cs>  CylindricalPoint;
+  typedef viennagrid::point<double, 3, CSystem1>    PointType1;
+  typedef viennagrid::point<double, 3, CSystem2>    PointType2;
+  
+  PointType1 c0(0, 0, 0);
+  PointType1 c1(1, 0, 1);
+  PointType1 c2(0, 1, 0);
+  PointType1 c3(1, 1, 1);
+
+  PointType2 p0 = c0;
+  PointType2 p1;
+  p1 = c1;
+  PointType2 p2(c2);
+  PointType2 p3(1, 1, 0);
+  p3 = c3;
+  
+  //convert to cartesian:
+  PointType1 c4 = p0;
+  PointType1 c5;
+  c5 = p1;
+  PointType1 c6(p2);
+  PointType1 c7(1, 1);
+  c7 = p3;
+  
+  std::cout << "Printing points: " << std::endl;
+  std::cout << "c0: " << c0 << std::endl;
+  std::cout << "c1: " << c1 << std::endl;
+  std::cout << "c2: " << c2 << std::endl;
+  std::cout << "c3: " << c3 << std::endl;
+  std::cout << "c4: " << c4 << std::endl;
+  std::cout << "c5: " << c5 << std::endl;
+  std::cout << "c6: " << c6 << std::endl;
+  std::cout << "c7: " << c7 << std::endl;
+  std::cout << "p0: " << p0 << std::endl;
+  std::cout << "p1: " << p1 << std::endl;
+  std::cout << "p2: " << p2 << std::endl;
+  std::cout << "p3: " << p3 << std::endl;
+
+  if ( !fuzzy_equal(c0, c4)
+       || !fuzzy_equal(c1, c5)
+       || !fuzzy_equal(c2, c6)
+       || !fuzzy_equal(c3, c7) )
+    exit(EXIT_FAILURE);
+
+  if ( !fuzzy_equal(p0, c4)
+       || !fuzzy_equal(p1, c5)
+       || !fuzzy_equal(p2, c6)
+       || !fuzzy_equal(p3, c7) )
+    exit(EXIT_FAILURE);
+
+  if ( !fuzzy_equal(c0, p0)
+       || !fuzzy_equal(c1, p1)
+       || !fuzzy_equal(c2, p2)
+       || !fuzzy_equal(c3, p3) )
+    exit(EXIT_FAILURE);
+
+  test_operations(c0, c1, c2, c3,
+                  p0, p1, p2, p3);
+  
+  std::cout << "Testing spanned volume (part 2): ";  
+  if ( !fuzzy_equal(viennagrid::spanned_volume(c0, c1, c2), viennagrid::spanned_volume(p0, p1, p2))
+       || !fuzzy_equal(viennagrid::spanned_volume(c1, c2, p3), viennagrid::spanned_volume(p1, p2, c3))
+       || !fuzzy_equal(viennagrid::spanned_volume(c2, p3, p0), viennagrid::spanned_volume(p2, c3, c0))
+       || !fuzzy_equal(viennagrid::spanned_volume(p3, c0, p1), viennagrid::spanned_volume(c3, p0, c1))
+     )
+    exit(EXIT_FAILURE);
+  if ( !fuzzy_equal(viennagrid::spanned_volume(c0, c1, c2, c3), viennagrid::spanned_volume(p0, p1, p2, p3))
+       || !fuzzy_equal(viennagrid::spanned_volume(c0, c1, c2, p3), viennagrid::spanned_volume(p0, p1, p2, c3))
+       || !fuzzy_equal(viennagrid::spanned_volume(c0, c1, p2, p3), viennagrid::spanned_volume(p0, p1, c2, c3))
+       || !fuzzy_equal(viennagrid::spanned_volume(c0, p1, c2, c3), viennagrid::spanned_volume(p0, c1, p2, p3))
+     )
+    exit(EXIT_FAILURE);
+  std::cout << "[PASSED]" << std::endl;
   
   
 }
@@ -260,10 +377,15 @@ int main()
   test_1d();
   std::cout << std::endl;
   std::cout << " --- Testing two dimensions: --- " << std::endl;
-  test_2d();
+  test_2d<viennagrid::cartesian_cs, viennagrid::polar_cs>();
   std::cout << std::endl;
   std::cout << " --- Testing three dimensions: --- " << std::endl;
-  test_3d();
+  std::cout << "   * Cartesian with Spherical *" << std::endl;
+  test_3d<viennagrid::cartesian_cs, viennagrid::spherical_cs>();
+  std::cout << "   * Cartesian with Cylindrical *" << std::endl;
+  test_3d<viennagrid::cartesian_cs, viennagrid::cylindrical_cs>();
+  std::cout << "   * Spherical with Cylindrical *" << std::endl;
+  test_3d<viennagrid::spherical_cs, viennagrid::cylindrical_cs>();
   std::cout << std::endl;
   
   std::cout << "*******************************" << std::endl;

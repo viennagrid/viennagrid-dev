@@ -59,14 +59,20 @@ namespace viennagrid
     //  Size retrieval
     //
     template <typename PointType>
-    struct size;
+    struct static_size;
 
     template <typename CoordType, viennagrid::dim_type d, typename CoordinateSystem>
-    struct size< point<CoordType, d, CoordinateSystem> >
+    struct static_size< point<CoordType, d, CoordinateSystem> >
     {
       enum { value = d };
     };
 
+    template <typename PointType>
+    std::size_t dynamic_size(PointType const & p)
+    {
+      return p.size();
+    }
+    
     
     //
     //  Value Type retrieval
