@@ -29,6 +29,9 @@
 #include <vector>
 #include <map>
 
+#include "viennagrid/forwards.h"
+#include "viennagrid/domain.hpp"
+
 // HDF includes
 #include "H5Cpp.h"
 
@@ -36,7 +39,7 @@
 // [JW][TIP] for debugging purposes use the h5dump utility to dump a hdf5 file
 //
 
-#define VIENNAGRID_DEBUG_IO
+//#define VIENNAGRID_DEBUG_IO
 
 namespace viennagrid
 {
@@ -45,6 +48,25 @@ namespace viennagrid
 
     struct tdr_reader
     {
+      struct dataset_t 
+      {
+        std::string          name, quantity, unit;
+        std::size_t          nvalues;
+        double               conversion_factor;
+        std::vector<double>  values;
+      };  
+      
+      struct region_t 
+      {
+        std::size_t                              regnr,nelements,npointidx;
+        std::string                              name,material;
+        std::vector<std::vector<std::size_t> >   elements;
+        std::map<std::string,dataset_t>          dataset;
+      };    
+    
+      typedef std::map<std::string, dataset_t>     dataset_cont_type;
+      typedef std::map<std::string,region_t>       region_cont_type;
+    
       tdr_reader(std::string const& filename) 
       {
           using namespace H5;
@@ -65,7 +87,7 @@ namespace viennagrid
       // to a viennagrid::domain
       //
       template <typename DomainT>
-      int operator()(DomainT & domain) const
+      int operator()(DomainT & domain) 
       {
       #ifdef VIENNAGRID_DEBUG_IO
           std::cout << "transferring to viennagrid domain .. " << std::endl;
@@ -91,7 +113,7 @@ namespace viennagrid
             vertex.getPoint()[0] = geometry_space[index];
             vertex.getPoint()[1] = geometry_space[index+1];
             vertex.getPoint()[2] = geometry_space[index+2];
-            domain.add(vertex);
+            index_map[i] = domain.add(vertex)->id();
           }
           
           // transfer topology
@@ -110,14 +132,15 @@ namespace viennagrid
             std::cout << "    region-name:     " << rit->second.name << 
                         "  material: " << rit->second.material << std::endl;    
       #endif      
-            // special treatment for a contact region
-            //
-            if(rit->second.material == "Contact")
-            {
-            }
+////            // special treatment for a contact region
+////            //
+////            if(rit->second.material == "Contact")
+////            {
+
+////            }
             // the general case of a segment/material region
             //
-            else
+            if(rit->second.material != "Contact")
             {
               vertex_type *vertices[CELLSIZE];
               
@@ -148,23 +171,17 @@ namespace viennagrid
       }
       
       
-    private:
-
-      struct dataset_t 
+      region_cont_type& acc_region()
       {
-        std::string          name, quantity, unit;
-        std::size_t          nvalues;
-        double               conversion_factor;
-        std::vector<double>  values;
-      };  
+         return region;
+      }
       
-      struct region_t 
+      std::size_t map_indices(std::size_t const& i)
       {
-        std::size_t                      regnr,nelements,npointidx;
-        std::string                      name,material;
-        std::vector<std::vector<std::size_t> >   elements;
-        std::map<std::string,dataset_t>  dataset;
-      };
+         return index_map[i];
+      }
+      
+    private:
 
       typedef struct coord2_t 
       {
@@ -277,8 +294,7 @@ namespace viennagrid
         const H5::DataSet &vert=geometry.openDataSet("vertex");
         read_vertex(vert);
         
-        // [JW] deactivated, as this has to be outsourced from ViennaGrid
-        //read_attribs0(geometry.openGroup("state_0"));
+        read_attribs0(geometry.openGroup("state_0"));
       }
       
       void read_attribs0(const H5::Group &state)
@@ -393,10 +409,10 @@ namespace viennagrid
       void read_values(dataset_t &dataset,const H5::DataSet &values)
       {
          const H5::DataSpace &dataspace = values.getSpace();
-         int rank = dataspace.getSimpleExtentNdims();
          hsize_t dims[10];
          int ndims = dataspace.getSimpleExtentDims( dims, NULL);
       #ifdef VIENNAGRID_DEBUG_IO         
+         int rank = dataspace.getSimpleExtentNdims();
          std::cout << "dataspace: " << rank << " " << ndims << " " << dims[0] << "," << dims[1] << std::endl;
          std::cout << "nvalues: " << dataset.nvalues << std::endl;
       #endif
@@ -426,11 +442,12 @@ namespace viennagrid
       
       void read_vertex(const H5::DataSet &vert)
       {
-        const H5::DataSpace &dataspace = vert.getSpace();
-        int rank = dataspace.getSimpleExtentNdims();
+        int ndims;
         hsize_t dims[2];
-        int ndims = dataspace.getSimpleExtentDims( dims, NULL);
+        const H5::DataSpace &dataspace = vert.getSpace();
+        ndims = dataspace.getSimpleExtentDims( dims, NULL);
       #ifdef VIENNAGRID_DEBUG_IO
+        int rank = dataspace.getSimpleExtentNdims();
         std::cout << "dataspace: " << rank << " " << ndims << " " << dims[0] << "," << dims[1] << std::endl;
         std::cout << "nvertices: " << nvertices << std::endl;
       #endif
@@ -595,7 +612,8 @@ namespace viennagrid
       std::size_t nvertices,nregions,ndatasets,nstates, segment_counter, contact_counter;
       double trans_matrix[9],trans_move[3];
       std::vector<double> geometry_space;  
-      std::map<std::string,region_t>   region;
+      region_cont_type   region;
+      std::map<std::size_t, std::size_t>  index_map;
     };
 
     template < typename DomainType > 
