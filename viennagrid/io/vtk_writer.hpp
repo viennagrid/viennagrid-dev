@@ -114,6 +114,7 @@ namespace viennagrid
         std::string operator()(ElementType const & element, size_t segment_id) const
         {
           std::stringstream ss;
+          std::cout << "Accessing segment " << segment_id << std::endl;
           ss << viennadata::access<KeyType, DataType>(key_)(element)[segment_id];
           return ss.str();
         }
@@ -426,8 +427,8 @@ namespace viennagrid
                  //writer << std::endl;
                  writer << cell_data_normal[i](*cit, seg_id) << std::endl;
               }
+              writer << "    </DataArray>" << std::endl;
             }
-            writer << "    </DataArray>" << std::endl;
           }
         } //writeCellData
 
@@ -532,10 +533,10 @@ namespace viennagrid
                   writer << "Normals=\"" << point_data_normal_names[0] << "\" ";
                 writer << ">" << std::endl;
               }
-              writePointDataScalar(seg, writer);
-              writePointDataVector(seg, writer);
-              writePointDataNormal(seg, writer);
-              writer << "   </PointData>";
+              writePointDataScalar(seg, writer, i);
+              writePointDataVector(seg, writer, i);
+              writePointDataNormal(seg, writer, i);
+              writer << "   </PointData>" << std::endl;
 
               writeCells(seg, writer);
               if (cell_data_scalar.size() + cell_data_vector.size() + cell_data_normal.size() > 0)
@@ -552,7 +553,7 @@ namespace viennagrid
               writeCellDataScalar(seg, writer, i);
               writeCellDataVector(seg, writer, i);
               writeCellDataNormals(seg, writer, i);
-              writer << "   </CellData>";
+              writer << "   </CellData>" << std::endl;
 
               writer << "  </Piece>" << std::endl;
               writeFooter(writer);
@@ -574,11 +575,39 @@ namespace viennagrid
 
 
             writePoints(domain, writer);
+            
+            if (point_data_scalar.size() + point_data_vector.size() + point_data_normal.size() > 0)
+            {
+              writer << "   <PointData ";
+              if (point_data_scalar.size() > 0)
+                writer << "Scalars=\"" << point_data_scalar_names[0] << "\" ";
+              if (point_data_vector.size() > 0)
+                writer << "Vectors=\"" << point_data_vector_names[0] << "\" ";
+              if (point_data_normal.size() > 0)
+                writer << "Normals=\"" << point_data_normal_names[0] << "\" ";
+              writer << ">" << std::endl;
+            }
             writePointDataScalar(domain, writer);
+            writePointDataVector(domain, writer);
+            writePointDataNormal(domain, writer);
+            writer << "   </PointData>" << std::endl;
 
             writeCells(domain, writer);
+            if (cell_data_scalar.size() + cell_data_vector.size() + cell_data_normal.size() > 0)
+            {
+              writer << "   <CellData ";
+              if (cell_data_scalar.size() > 0)
+                writer << "Scalars=\"" << cell_data_scalar_names[0] << "\" ";
+              if (cell_data_vector.size() > 0)
+                writer << "Vectors=\"" << cell_data_vector_names[0] << "\" ";
+              if (cell_data_normal.size() > 0)
+                writer << "Normals=\"" << cell_data_normal_names[0] << "\" ";
+              writer << ">" << std::endl;
+            }
             writeCellDataScalar(domain, writer);
+            writeCellDataVector(domain, writer);
             writeCellDataNormals(domain, writer);
+            writer << "   </CellData>" << std::endl;
 
             writer << "  </Piece>" << std::endl;
             writeFooter(writer);

@@ -43,7 +43,7 @@ class my_vector
 
 std::ostream & operator << (std::ostream & os, my_vector<3> const & v)
 {
-  os << "1 2 " << v.get() << std::endl;
+  os << "1 2 " << v.get();
   return os;
 }
 
@@ -64,7 +64,7 @@ class my_normal
 std::ostream & operator << (std::ostream & os, my_normal<3> const & v)
 {
   double normalization = sqrt(v.get() * v.get() + 5.0);
-  os << v.get() / normalization << " " << 1.0/normalization << " " << 2.0/normalization << std::endl;
+  os << v.get() / normalization << " " << 1.0/normalization << " " << 2.0/normalization;
   return os;
 }
 
@@ -97,7 +97,7 @@ void test(std::string & infile, std::string & outfile)
 
   
   Domain domain;
-  domain.create_segments(9);
+  domain.create_segments(2);
   
    //Segment & seg = domain.add();
   
@@ -156,14 +156,18 @@ void test(std::string & infile, std::string & outfile)
                                                  
   for (std::size_t i=0; i<domain.segment_size(); ++i)
   {
+    std::cout << "Writing segment " << i << std::endl;
     SegmentVertexContainer vertices = viennagrid::ncells<0>(domain.segment(i));
     for (SegmentVertexIterator vit = vertices.begin();
         vit != vertices.end();
         ++vit)
     {
-      viennadata::access<std::string, std::map<std::size_t, double> >("vtk_data")(*vit)[i] = i;
-      viennadata::access<std::string, std::map<std::size_t, my_vector<3> > >("vtk_data")(*vit)[i] = my_vector<3>(i);
-      viennadata::access<std::string, std::map<std::size_t, my_normal<3> > >("vtk_data")(*vit)[i] = my_normal<3>(i);
+      viennadata::access<std::string, 
+                         std::map<std::size_t, double> >("vtk_data")(*vit)[i] = i+1;
+      viennadata::access<std::string,
+                         std::map<std::size_t, my_vector<3> > >("vtk_data")(*vit)[i] = my_vector<3>(i);
+      viennadata::access<std::string,
+                         std::map<std::size_t, my_normal<3> > >("vtk_data")(*vit)[i] = my_normal<3>(i);
     }
     
     SegmentCellContainer cells = viennagrid::ncells(domain.segment(i));
@@ -171,9 +175,12 @@ void test(std::string & infile, std::string & outfile)
                       cit != cells.end();
                     ++cit)
     {
-      viennadata::access<std::string, std::map<std::size_t, double> >("vtk_data")(*cit)[i] = viennagrid::circumcenter(*cit)[0] + i;
-      viennadata::access<std::string, std::map<std::size_t, my_vector<3> > >("vtk_data")(*cit)[i] = my_vector<3>(i);
-      viennadata::access<std::string, std::map<std::size_t, my_normal<3> > >("vtk_data")(*cit)[i] = my_normal<3>(i);
+      viennadata::access<std::string,
+                         std::map<std::size_t, double> >("vtk_data")(*cit)[i] = viennagrid::circumcenter(*cit)[0] + i;
+      viennadata::access<std::string,
+                         std::map<std::size_t, my_vector<3> > >("vtk_data")(*cit)[i] = my_vector<3>(i);
+      viennadata::access<std::string,
+                         std::map<std::size_t, my_normal<3> > >("vtk_data")(*cit)[i] = my_normal<3>(i);
     }
   }
                                                  
@@ -213,7 +220,7 @@ int main()
   
   std::string path = "../../examples/data/";
   
-  std::string infile = path + "trigate6302.mesh";
+  std::string infile = path + "twocubes.mesh";
   std::string outfile = "vtk_writer"; // without ending
   
   std::cout << "Running VTK writer on tetrahedron domain... " << std::endl;
