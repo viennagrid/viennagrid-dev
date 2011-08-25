@@ -21,6 +21,7 @@
 
 #include <map>
 #include <set>
+#include <deque>
 
 #include "viennagrid/forwards.h"
 #include "viennagrid/element.hpp"

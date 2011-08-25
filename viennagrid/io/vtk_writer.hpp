@@ -100,7 +100,7 @@ namespace viennagrid
     
     
     //
-    // Use case 1: Access data for all elements
+    // Use case 2: Access data based on segments.
     //
     template <typename ElementType, typename KeyType, typename DataType>
     class io_data_accessor_segment_based : public io_data_accessor_interface<ElementType>
@@ -266,15 +266,15 @@ namespace viennagrid
             writer << "   </Cells>" << std::endl;
         }
 
+        // Write scalar point data:
         template <typename SegmentType>
-        void writePointDataScalar(SegmentType const & segment, std::ofstream & writer)
+        void writePointDataScalar(SegmentType const & segment, std::ofstream & writer, std::size_t seg_id = 0)
         {
           typedef typename viennagrid::result_of::const_ncell_range<SegmentType, 0>::type   VertexRange;
           typedef typename viennagrid::result_of::iterator<VertexRange>::type               VertexIterator;
           
           if (point_data_scalar.size() > 0)
           {
-            writer << "   <PointData Scalars=\"scalars\">" << std::endl;
             for (size_t i=0; i<point_data_scalar.size(); ++i)
             {
               writer << "    <DataArray type=\"Float32\" Name=\"" << point_data_scalar_names[i] << "\" format=\"ascii\">" << std::endl;
@@ -284,33 +284,139 @@ namespace viennagrid
                   vit != vertices.end();
                   ++vit)
               {
-                writer << point_data_scalar[i](*vit, 0) << " ";
+                writer << point_data_scalar[i](*vit, seg_id) << " ";
               }
               writer << std::endl;
               writer << "    </DataArray>" << std::endl;
             }
-            writer << "   </PointData>"  << std::endl;
           }
-        } //writePointData
+        } //writePointDataScalar
+
+        // Write vector point data:
+        template <typename SegmentType>
+        void writePointDataVector(SegmentType const & segment, std::ofstream & writer, std::size_t seg_id = 0)
+        {
+          typedef typename viennagrid::result_of::const_ncell_range<SegmentType, 0>::type   VertexRange;
+          typedef typename viennagrid::result_of::iterator<VertexRange>::type               VertexIterator;
+          
+          if (point_data_vector.size() > 0)
+          {
+            for (size_t i=0; i<point_data_scalar.size(); ++i)
+            {
+              writer << "    <DataArray type=\"Float32\" Name=\"" << point_data_vector_names[i] << "\" NumberOfComponents=\"3\" format=\"ascii\">" << std::endl;
+              
+              VertexRange vertices = viennagrid::ncells<0>(segment);
+              for (VertexIterator vit = vertices.begin();
+                  vit != vertices.end();
+                  ++vit)
+              {
+                writer << point_data_vector[i](*vit, seg_id) << " ";
+              }
+              writer << std::endl;
+              writer << "    </DataArray>" << std::endl;
+            }
+          }
+        } //writePointDataScalar
+
+        // Write normal point data:
+        template <typename SegmentType>
+        void writePointDataNormal(SegmentType const & segment, std::ofstream & writer, std::size_t seg_id = 0)
+        {
+          typedef typename viennagrid::result_of::const_ncell_range<SegmentType, 0>::type   VertexRange;
+          typedef typename viennagrid::result_of::iterator<VertexRange>::type               VertexIterator;
+          
+          if (point_data_normal.size() > 0)
+          {
+            for (size_t i=0; i<point_data_scalar.size(); ++i)
+            {
+              writer << "    <DataArray type=\"Float32\" Name=\"" << point_data_normal_names[i] << "\" NumberOfComponents=\"3\" format=\"ascii\">" << std::endl;
+              
+              VertexRange vertices = viennagrid::ncells<0>(segment);
+              for (VertexIterator vit = vertices.begin();
+                  vit != vertices.end();
+                  ++vit)
+              {
+                writer << point_data_normal[i](*vit, seg_id) << " ";
+              }
+              writer << std::endl;
+              writer << "    </DataArray>" << std::endl;
+            }
+          }
+        } //writePointDataScalar
+
+
+
+        ///////////////// cells /////////////////////
+
+        //
+        template <typename SegmentType>
+        void writeCellDataScalar(SegmentType const & segment, std::ofstream & writer, std::size_t seg_id = 0)
+        {
+          typedef typename viennagrid::result_of::const_ncell_range<SegmentType, CellTag::topology_level>::type   CellRange;
+          typedef typename viennagrid::result_of::iterator<CellRange>::type               CellIterator;
+          
+          if (cell_data_scalar.size() > 0)
+          {
+            for (size_t i=0; i<cell_data_scalar.size(); ++i)
+            {
+              writer << "    <DataArray type=\"Float32\" Name=\"" << cell_data_scalar_names[i] << "\" format=\"ascii\">" << std::endl;
+              
+              CellRange cells = viennagrid::ncells(segment);
+              for (CellIterator cit  = cells.begin();
+                                cit != cells.end();
+                              ++cit)
+              {
+                writer << cell_data_scalar[i](*cit, seg_id) << " ";
+              }
+              writer << std::endl;
+              writer << "    </DataArray>" << std::endl;
+            }
+          }
+        } //writeCellDataScalar
 
         template <typename SegmentType>
-        void writeCellDataNormals(SegmentType const & segment, std::ofstream & writer, std::size_t seg_id = 0)
+        void writeCellDataVector(SegmentType const & segment, std::ofstream & writer, std::size_t seg_id = 0)
+        {
+          typedef typename viennagrid::result_of::const_ncell_range<SegmentType, CellTag::topology_level>::type   CellRange;
+          typedef typename viennagrid::result_of::iterator<CellRange>::type               CellIterator;
+          
+          if (cell_data_vector.size() > 0)
+          {
+            for (size_t i=0; i<cell_data_vector.size(); ++i)
+            {
+              writer << "    <DataArray type=\"Float32\" Name=\"" << cell_data_vector_names[i] << "\" NumberOfComponents=\"3\" format=\"ascii\">" << std::endl;
+              
+              CellRange cells = viennagrid::ncells(segment);
+              for (CellIterator cit  = cells.begin();
+                                cit != cells.end();
+                              ++cit)
+              {
+                writer << cell_data_vector[i](*cit, seg_id) << " ";
+              }
+              writer << std::endl;
+              writer << "    </DataArray>" << std::endl;
+            }
+          }
+        } //writeCellDataVector
+
+        template <typename SegmentType>
+        void writeCellDataNormals(SegmentType const & segment,
+                                  std::ofstream & writer,
+                                  std::size_t seg_id = 0)
         {
           typedef typename viennagrid::result_of::const_ncell_range<SegmentType, CellTag::topology_level>::type     CellRange;
           typedef typename viennagrid::result_of::iterator<CellRange>::type                                         CellIterator;
           
           if (cell_data_normal.size() > 0)
           {
-            writer << "   <CellData Normals=\"cell_normals\">" << std::endl;
-            
             for (size_t i=0; i<cell_data_normal.size(); ++i)
             {
               writer << "    <DataArray type=\"Float32\" Name=\"" << cell_data_normal_names[i] << "\" NumberOfComponents=\"3\" format=\"ascii\">" << std::endl;
 
               CellRange cells = viennagrid::ncells<CellTag::topology_level>(segment);
-              for (CellIterator cit = cells.begin();
-                  cit != cells.end();
-                  ++cit)
+              for (CellIterator cit  = cells.begin();
+                                cit != cells.end();
+                              ++cit)
               {
                  //std::cout << "josef: " << cell_data_normal[i](*cit, seg_id) << std::endl;
                  //std::cout << cell_data_normal[i](*cit, seg_id) << std::endl;
@@ -322,7 +428,6 @@ namespace viennagrid
               }
             }
             writer << "    </DataArray>" << std::endl;
-            writer << "   </CellData>"  << std::endl;
           }
         } //writeCellData
 
@@ -415,10 +520,39 @@ namespace viennagrid
 
 
               writePoints(seg, writer);
+              
+              if (point_data_scalar.size() + point_data_vector.size() + point_data_normal.size() > 0)
+              {
+                writer << "   <PointData ";
+                if (point_data_scalar.size() > 0)
+                  writer << "Scalars=\"" << point_data_scalar_names[0] << "\" ";
+                if (point_data_vector.size() > 0)
+                  writer << "Vectors=\"" << point_data_vector_names[0] << "\" ";
+                if (point_data_normal.size() > 0)
+                  writer << "Normals=\"" << point_data_normal_names[0] << "\" ";
+                writer << ">" << std::endl;
+              }
               writePointDataScalar(seg, writer);
+              writePointDataVector(seg, writer);
+              writePointDataNormal(seg, writer);
+              writer << "   </PointData>";
 
               writeCells(seg, writer);
+              if (cell_data_scalar.size() + cell_data_vector.size() + cell_data_normal.size() > 0)
+              {
+                writer << "   <CellData ";
+                if (cell_data_scalar.size() > 0)
+                  writer << "Scalars=\"" << cell_data_scalar_names[0] << "\" ";
+                if (cell_data_vector.size() > 0)
+                  writer << "Vectors=\"" << cell_data_vector_names[0] << "\" ";
+                if (cell_data_normal.size() > 0)
+                  writer << "Normals=\"" << cell_data_normal_names[0] << "\" ";
+                writer << ">" << std::endl;
+              }
+              writeCellDataScalar(seg, writer, i);
+              writeCellDataVector(seg, writer, i);
               writeCellDataNormals(seg, writer, i);
+              writer << "   </CellData>";
 
               writer << "  </Piece>" << std::endl;
               writeFooter(writer);
@@ -443,6 +577,7 @@ namespace viennagrid
             writePointDataScalar(domain, writer);
 
             writeCells(domain, writer);
+            writeCellDataScalar(domain, writer);
             writeCellDataNormals(domain, writer);
 
             writer << "  </Piece>" << std::endl;
@@ -455,7 +590,7 @@ namespace viennagrid
         
         
         //
-        // Add point data writer:
+        // Add scalar point data:
         //
         template <typename KeyType, typename DataType>
         void add_point_data_scalar(KeyType const & key, std::string name)
@@ -474,12 +609,97 @@ namespace viennagrid
         }
 
         //
+        // Add vector point data:
+        //
+        template <typename KeyType, typename DataType>
+        void add_point_data_vector(KeyType const & key, std::string name)
+        {
+          io_data_accessor_wrapper<VertexType> wrapper(new io_data_accessor_global<VertexType, KeyType, DataType>(key));
+          point_data_vector.push_back(wrapper);
+          point_data_vector_names.push_back(name);
+        }
+
+        template <typename T>
+        void add_point_data_vector(T const & accessor, std::string name)
+        {
+          io_data_accessor_wrapper<VertexType> wrapper(accessor.clone());
+          point_data_vector.push_back(wrapper);
+          point_data_vector_names.push_back(name);
+        }
+
+        //
+        // Add point data normals:
+        //
+        template <typename KeyType, typename DataType>
+        void add_point_data_normal(KeyType const & key, std::string name)
+        {
+          io_data_accessor_wrapper<VertexType> wrapper(new io_data_accessor_global<VertexType, KeyType, DataType>(key));
+          point_data_normal.push_back(wrapper);
+          point_data_normal_names.push_back(name);
+        }
+
+        template <typename T>
+        void add_point_data_normal(T const & accessor, std::string name)
+        {
+          io_data_accessor_wrapper<VertexType> wrapper(accessor.clone());
+          point_data_normal.push_back(wrapper);
+          point_data_normal_names.push_back(name);
+        }
+
+
+
+
+
+
+
+
+
+        //
+        // Add scalar cell data:
+        //
+        template <typename KeyType, typename DataType>
+        void add_cell_data_scalar(KeyType const & key, std::string name)
+        {
+          io_data_accessor_wrapper<CellType> wrapper(new io_data_accessor_global<CellType, KeyType, DataType>(key));
+          cell_data_scalar.push_back(wrapper);
+          cell_data_scalar_names.push_back(name);
+        }
+
+        template <typename T>
+        void add_cell_data_scalar(T const & accessor, std::string name)
+        {
+          io_data_accessor_wrapper<CellType> wrapper(accessor.clone());
+          cell_data_scalar.push_back(wrapper);
+          cell_data_scalar_names.push_back(name);
+        }
+
+        //
+        // Add vector cell data:
+        //
+        template <typename KeyType, typename DataType>
+        void add_cell_data_vector(KeyType const & key, std::string name)
+        {
+          io_data_accessor_wrapper<CellType> wrapper(new io_data_accessor_global<CellType, KeyType, DataType>(key));
+          cell_data_vector.push_back(wrapper);
+          cell_data_vector_names.push_back(name);
+        }        
+        
+        template <typename T>
+        void add_cell_data_vector(T const & accessor, std::string name)
+        {
+          io_data_accessor_wrapper<CellType> wrapper(accessor.clone());
+          cell_data_vector.push_back(wrapper);
+          cell_data_vector_names.push_back(name);
+        }
+
+
+        //
         // Add cell data normals:
         //
         template <typename KeyType, typename DataType>
         void add_cell_data_normal(KeyType const & key, std::string name)
         {
-          io_data_accessor_wrapper<CellType> wrapper(new io_data_accessor_segment_based<CellType, KeyType, DataType>(key));
+          io_data_accessor_wrapper<CellType> wrapper(new io_data_accessor_global<CellType, KeyType, DataType>(key));
           cell_data_normal.push_back(wrapper);
           cell_data_normal_names.push_back(name);
         }        
@@ -495,6 +715,12 @@ namespace viennagrid
       private:
         std::vector< io_data_accessor_wrapper<VertexType> >    point_data_scalar;
         std::vector< std::string >                             point_data_scalar_names;
+        
+        std::vector< io_data_accessor_wrapper<VertexType> >    point_data_vector;
+        std::vector< std::string >                             point_data_vector_names;
+        
+        std::vector< io_data_accessor_wrapper<VertexType> >    point_data_normal;
+        std::vector< std::string >                             point_data_normal_names;
         
         std::vector< io_data_accessor_wrapper<CellType> >      cell_data_scalar;
         std::vector< std::string >                             cell_data_scalar_names;
