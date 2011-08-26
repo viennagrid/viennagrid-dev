@@ -96,7 +96,9 @@ namespace viennagrid
           typedef typename domain_config_type::cell_tag                                    cell_tag;      
           typedef typename viennagrid::result_of::ncell<domain_config_type, 0>::type  vertex_type; 
           typedef typename viennagrid::result_of::ncell<domain_config_type, cell_tag::topology_level>::type     cell_type;            
+
           static const std::size_t CELLSIZE = viennagrid::topology::subcell_desc<cell_tag, 0>::num_elements;         
+          static const std::size_t DIMG     = domain_config_type::dimension_tag::value;      
       
           // transfer geometry
           //    note: point vectors are linearly stored, x1 y1 z1 x2 y2 z2 ...
@@ -109,10 +111,14 @@ namespace viennagrid
           for (std::size_t i=0; i<geometry_space.size(); i++)
           {
             // 3 is the offset due to three-dimensional geometry space
-            index = i * 3; 
-            vertex.getPoint()[0] = geometry_space[index];
-            vertex.getPoint()[1] = geometry_space[index+1];
-            vertex.getPoint()[2] = geometry_space[index+2];
+            index = i * DIMG; 
+            
+            for(std::size_t d = 0; d < DIMG; d++)
+               vertex.getPoint()[d] = geometry_space[index+d];
+
+//            vertex.getPoint()[0] = geometry_space[index];
+//            vertex.getPoint()[1] = geometry_space[index+1];
+//            vertex.getPoint()[2] = geometry_space[index+2];
             index_map[i] = domain.add(vertex)->id();
           }
           
@@ -148,12 +154,15 @@ namespace viennagrid
               for (std::vector<std::vector<std::size_t> >::const_iterator cit = elements.begin(); 
                   cit != elements.end(); cit++)
               {
-                std::vector<std::size_t> const& tempcell = *cit;
+                  std::vector<std::size_t> const& tempcell = *cit;
                 
-                  vertices[0] = &(domain.vertex(tempcell[0]));
-                  vertices[1] = &(domain.vertex(tempcell[1])); 
-                  vertices[2] = &(domain.vertex(tempcell[2])); 
-                  vertices[3] = &(domain.vertex(tempcell[3]));                                               
+                  for(std::size_t d = 0; d < CELLSIZE; d++)
+                     vertices[d] = &(domain.vertex(tempcell[d]));
+
+//                  vertices[0] = &(domain.vertex(tempcell[0]));
+//                  vertices[1] = &(domain.vertex(tempcell[1])); 
+//                  vertices[2] = &(domain.vertex(tempcell[2])); 
+//                  vertices[3] = &(domain.vertex(tempcell[3]));                                               
                 
                   cell_type cell;
                   cell.setVertices(vertices);             
@@ -179,6 +188,18 @@ namespace viennagrid
       std::size_t map_indices(std::size_t const& i)
       {
          return index_map[i];
+      }
+      
+      int dim_geom()
+      {
+         return dim;
+      }
+      
+      inline void clear()
+      {
+         geometry_space.clear();
+         index_map.clear();
+         region.clear();
       }
       
     private:
@@ -611,8 +632,8 @@ namespace viennagrid
       int dim;
       std::size_t nvertices,nregions,ndatasets,nstates, segment_counter, contact_counter;
       double trans_matrix[9],trans_move[3];
-      std::vector<double> geometry_space;  
-      region_cont_type   region;
+      std::vector<double>                 geometry_space;  
+      region_cont_type                    region;
       std::map<std::size_t, std::size_t>  index_map;
     };
 
