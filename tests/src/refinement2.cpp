@@ -326,8 +326,8 @@ void fill_domain(DomainType & domain,
   typedef typename viennagrid::result_of::ncell<ConfigType,
                                                      CellTag::topology_level>::type   CellType;
   
-  domain.create_segments(1);
-  SegmentType & seg = domain.segment(0);
+  domain.segments().resize(1);
+  SegmentType & seg = domain.segments()[0];
   
   std::vector<PointType> points(5);
   PointType & p0 = points[0];

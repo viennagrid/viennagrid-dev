@@ -48,9 +48,9 @@ struct duplicates
 
       std::size_t duplicates_cnt = 0;
       
-      for (std::size_t si = 0; si < domain.segment_size(); ++si)
+      for (std::size_t si = 0; si < domain.segments().size(); ++si)
       {
-         SegmentType & seg = domain.segment(si);
+         SegmentType & seg = domain.segments()[si];
          
          std::size_t cell_cnt; 
 
@@ -105,9 +105,9 @@ struct duplicates <0>
 
       std::size_t duplicates_cnt = 0;
       
-      for (std::size_t si = 0; si < domain.segment_size(); ++si)
+      for (std::size_t si = 0; si < domain.segments().size(); ++si)
       {
-         SegmentType & seg = domain.segment(si);
+         SegmentType & seg = domain.segments()[si];
          
          std::size_t cell_cnt; 
 
@@ -209,9 +209,9 @@ struct nonmanifolds_impl <2, 3>
       
       result_type cnt = 0;
       
-      for (std::size_t si = 0; si < domain.segment_size(); ++si)
+      for (std::size_t si = 0; si < domain.segments().size(); ++si)
       {
-         SegmentType & seg = domain.segment(si);
+         SegmentType & seg = domain.segments()[si];
          
          std::size_t cell_cnt;
          

@@ -35,16 +35,15 @@ namespace viennagrid
       template <typename DomainType>
       int operator()(DomainType & domain, std::string const & filename) const
       {
-        typedef typename DomainType::config_type                     DomainConfiguration;
+        typedef typename DomainType::config_type                         ConfigType;
 
-        typedef typename DomainConfiguration::numeric_type                 CoordType;
-        typedef typename DomainConfiguration::dimension_tag              DimensionTag;
-        typedef typename DomainConfiguration::cell_tag                   CellTag;
+        typedef typename ConfigType::numeric_type                        CoordType;
+        typedef typename ConfigType::dimension_tag                       DimensionTag;
+        typedef typename ConfigType::cell_tag                            CellTag;
 
-        typedef typename result_of::point<DomainConfiguration>::type                              PointType;
-        typedef typename result_of::ncell<DomainConfiguration, 0>::type                           VertexType;
-        typedef typename result_of::ncell<DomainConfiguration, CellTag::topology_level>::type     CellType;
-        //typedef typename DomainTypes<DomainConfiguration>::segment_type  Segment;
+        typedef typename result_of::point<ConfigType>::type                              PointType;
+        typedef typename result_of::ncell<ConfigType, 0>::type                           VertexType;
+        typedef typename result_of::ncell<ConfigType, CellTag::topology_level>::type     CellType;
 
         typedef typename viennagrid::result_of::ncell_range<DomainType, 0>::type   VertexRange;
         typedef typename viennagrid::result_of::iterator<VertexRange>::type        VertexIterator;
@@ -57,10 +56,13 @@ namespace viennagrid
 
         typedef typename viennagrid::result_of::ncell_range<DomainType, CellTag::topology_level>::type     CellRange;
         typedef typename viennagrid::result_of::iterator<CellRange>::type                                  CellIterator;
-
+        
         std::ifstream reader(filename.c_str());
+        
+        typedef typename DomainType::segment_container      SegmentContainer;
 
         //Segment & segment = *(domain.begin());
+        SegmentContainer & segments = domain.segments();
 
         #if defined VIENNAGRID_DEBUG_STATUS || defined VIENNAGRID_DEBUG_IO
         std::cout << "* netgen_reader::operator(): Reading file " << filename << std::endl;
@@ -103,10 +105,6 @@ namespace viennagrid
         }
     
         //std::cout << "DONE" << std::endl;
-    
-        if (domain.segment_size() == 0)
-          domain.create_segments(1);
-
         if (!reader.good())
           throw bad_file_format_exception(filename, "EOF encountered when reading number of cells.");
           
@@ -142,8 +140,10 @@ namespace viennagrid
           //std::cout << std::endl << "Adding cell: " << &cell << " at " << cell_id << std::endl;
           cell.setVertices(&(vertices[0]));
           cell.id(i);
-          assert(domain.segment_size() >= segment_index && "Segment index in input file out of bounds!");
-          domain.segment(segment_index - 1).add(cell);  //note that Netgen uses a 1-based indexing scheme, while ViennaGrid uses a zero-based one
+          if (segments.size() < segment_index) //not that segment_index is 1-based
+            segments.resize(segment_index);
+          
+          segments[segment_index - 1].add(cell);  //note that Netgen uses a 1-based indexing scheme, while ViennaGrid uses a zero-based one
     
           //progress info:
           //if (i % 50000 == 0 && i > 0)

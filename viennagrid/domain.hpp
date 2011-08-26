@@ -75,6 +75,60 @@ namespace viennagrid
     };
     
   }
+  
+  
+  
+  template <typename DomainType, typename SegmentType>
+  class domain_segment_container
+  {
+      typedef std::deque<SegmentType>     container_type;
+    
+    public:
+      typedef typename container_type::iterator           iterator;
+      typedef typename container_type::const_iterator     const_iterator;
+      typedef typename container_type::value_type         value_type;
+      typedef typename container_type::reference          reference;
+      typedef typename container_type::const_reference    const_reference;
+      typedef typename container_type::difference_type    difference_type;
+      typedef typename container_type::pointer            pointer;
+      typedef typename container_type::size_type          size_type;
+      
+      domain_segment_container(DomainType * d) : domain_ptr(d) {}
+      
+      SegmentType & operator[](std::size_t i) { return segments_[i]; }
+      SegmentType const & operator[](std::size_t i) const { return segments_[i]; }
+      
+      SegmentType & at(std::size_t i) { return segments_.at(i); }
+      SegmentType const & at(std::size_t i) const { return segments_.at(i); }
+      
+      std::size_t size() const { return segments_.size(); }
+      std::size_t max_size() const { return segments_.max_size(); }
+      bool empty() const { return segments_.empty(); }
+      
+      void resize(std::size_t n)
+      {
+        std::size_t old_size = segments_.size();
+        segments_.resize(n);
+        for (std::size_t i=old_size; i<n; ++i)
+          segments_[i].set_domain(*domain_ptr);
+      }
+      
+      iterator begin() { return segments_.begin(); }
+      const_iterator begin() const { return segments_.begin(); }
+      
+      iterator end() { return segments_.end(); }
+      const_iterator end() const { return segments_.end(); }
+
+      void swap(domain_segment_container & other)
+      {
+        assert(domain_ptr == other.domain_ptr);
+        segments_.swap(other.segments_);
+      }
+    private:
+      container_type segments_;
+      DomainType * domain_ptr;
+  };
+  
 
 
   template <typename Config, // config class
@@ -367,6 +421,10 @@ namespace viennagrid
       typedef std::size_t                               size_type;
       typedef segment_t<Config>                         segment_type;
       
+      typedef domain_segment_container<self_type, segment_type>    segment_container;
+      
+      domain() : segments_(this) {}
+      
       using base_type::add;
       
       template <typename OtherDomainType, typename RefinementTag>
@@ -376,7 +434,8 @@ namespace viennagrid
         return *this;
       }
       
-      void create_segments(size_type num)
+      /*
+      void segment_resize(size_type num)
       {
         assert(segments.size() == 0 || "Segments in domain already created!");
         segments.resize(num);
@@ -402,12 +461,30 @@ namespace viennagrid
       const std::vector< segment_type > * segment_container() const { return & segments; }
       const std::vector< segment_type > * segment_container()       { return & segments; }      
       
-      size_type segment_size() const { return segments.size(); }
+      size_type segment_size() const { return segments.size(); } */
+      
+      segment_container & segments() { return segments_; }
+      segment_container const & segments() const { return segments_; }
     
     private:
       //store segments here
-      std::vector< segment_type > segments;      
+      segment_container segments_;
   };
 
+  
+  template <typename ConfigType>
+  typename domain<ConfigType>::segment_container &
+  segments(domain<ConfigType> & domain)
+  {
+    return domain.segments(); 
+  }
+  
+  template <typename ConfigType>
+  typename domain<ConfigType>::segment_container const &
+  segments(domain<ConfigType> const & domain)
+  {
+    return domain.segments(); 
+  }
+  
 }
 #endif

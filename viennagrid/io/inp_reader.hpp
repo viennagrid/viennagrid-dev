@@ -125,7 +125,7 @@ namespace io
             //std::cout << vertex.id() << std::endl;
          }
          
-         domain.create_segments(seg_cell.size());         
+         domain.segments().resize(seg_cell.size());         
          //std::cout << "seg size: " << seg_cell.size() << std::endl;
 //         std::size_t cellsize(0);
          typedef typename std::map<std::size_t, CellComplexT>::iterator seg_iter_type;
@@ -162,7 +162,7 @@ namespace io
                cell.setVertices(vertices);               
                //std::cout << "si: " << si->first << std::endl;
                
-               domain.segment((si->first)).add(cell);            
+               domain.segments()[si->first].add(cell);            
             }
          }
          

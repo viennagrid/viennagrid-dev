@@ -74,9 +74,9 @@ struct assignCellNormals_impl <3, viennagrid::triangle_tag>
       
       // traverse the segments
       //
-      for (std::size_t si = 0; si < domain.segment_size(); ++si)
+      for (std::size_t si = 0; si < domain.segments().size(); ++si)
       {
-         SegmentType & seg = domain.segment(si);
+         SegmentType & seg = domain.segments()[si];
 
          // traverse the cells of this segment
          //

@@ -110,7 +110,7 @@ void test(viennagrid::config::tetrahedral_3d)
   vertices[6] = domain.add(v6); std::cout << vertices[6] << std::endl;
   
   std::cout << "Creating segments..." << std::endl;
-  domain.create_segments(2);
+  domain.segments().resize(2);
 
   std::cout << "Adding cells to segments..." << std::endl;
   CellType simplex;
@@ -122,14 +122,14 @@ void test(viennagrid::config::tetrahedral_3d)
   vertices[2] = &(domain.vertex(6));
   vertices[3] = &(domain.vertex(3));
   simplex.setVertices(vertices);
-  domain.segment(0).add(simplex);
+  domain.segments()[0].add(simplex);
   
   vertices[0] = &(domain.vertex(1));
   vertices[1] = &(domain.vertex(6));
   vertices[2] = &(domain.vertex(3));
   vertices[3] = &(domain.vertex(4));
   simplex.setVertices(vertices);
-  domain.segment(0).add(simplex);
+  domain.segments()[0].add(simplex);
 
   std::cout << "Filling segment 1..." << std::endl;
   vertices[0] = &(domain.vertex(1));
@@ -137,45 +137,41 @@ void test(viennagrid::config::tetrahedral_3d)
   vertices[2] = &(domain.vertex(6));
   vertices[3] = &(domain.vertex(4));
   simplex.setVertices(vertices);
-  domain.segment(1).add(simplex);
+  domain.segments()[1].add(simplex);
   
   vertices[0] = &(domain.vertex(2));
   vertices[1] = &(domain.vertex(6));
   vertices[2] = &(domain.vertex(4));
   vertices[3] = &(domain.vertex(5));
   simplex.setVertices(vertices);
-  domain.segment(1).add(simplex);
+  domain.segments()[1].add(simplex);
   
   
-  std::cout << "Vertices in Segment 0: " << domain.segment(0).size<0>() << std::endl;
-  std::cout << "Vertices in Segment 1: " << domain.segment(1).size<0>() << std::endl;
+  std::cout << "Vertices in Segment 0: " << domain.segments()[0].size<0>() << std::endl;
+  std::cout << "Vertices in Segment 1: " << domain.segments()[1].size<0>() << std::endl;
   //std::cout << "Edges in Segment: "    << seg.size<1>() << std::endl;
   //std::cout << "Facets in Segment: "   << seg.size<CellTag::topology_level-1>() << std::endl;
-  std::cout << "Cells in Segment 0: "    << domain.segment(0).size<CellTag::topology_level>() << std::endl;
-  std::cout << "Cells in Segment 1: "    << domain.segment(1).size<CellTag::topology_level>() << std::endl;
+  std::cout << "Cells in Segment 0: "    << domain.segments()[0].size<CellTag::topology_level>() << std::endl;
+  std::cout << "Cells in Segment 1: "    << domain.segments()[1].size<CellTag::topology_level>() << std::endl;
   
   std::cout << "Printing vertices in segment 0:" << std::endl;
-  print_elements<0>(domain.segment(0));
+  print_elements<0>(domain.segments()[0]);
 
   std::cout << "Printing vertices in segment 1:" << std::endl;
-  print_elements<0>(domain.segment(1));
+  print_elements<0>(domain.segments()[1]);
   
   std::cout << "Printing cells in segment 0:" << std::endl;
-  print_elements<Domain::config_type::cell_tag::topology_level>(domain.segment(0));
+  print_elements<Domain::config_type::cell_tag::topology_level>(domain.segments()[0]);
 
   std::cout << "Printing cells in segment 1:" << std::endl;
-  print_elements<Domain::config_type::cell_tag::topology_level>(domain.segment(1));
+  print_elements<Domain::config_type::cell_tag::topology_level>(domain.segments()[1]);
   
   std::cout << "Test for direct operator[] access: " << std::endl;
-  //viennagrid::ncells<0>(domain.segment(0))[0].print_short();
-  viennagrid::ncells<3>(domain.segment(0))[0].print_short();
+  //viennagrid::ncells<0>(domain.segments()[0])[0].print_short();
+  viennagrid::ncells<3>(domain.segments()[0])[0].print_short();
   
   viennagrid::io::vtk_writer<Domain> my_vtk_writer;
   my_vtk_writer.writeDomain(domain, "multi-segment");
-  
-  std::cout << "*******************************" << std::endl;
-  std::cout << "* Test finished successfully! *" << std::endl;
-  std::cout << "*******************************" << std::endl;
 }
 
 
@@ -224,7 +220,7 @@ void test(viennagrid::config::triangular_2d)
   vertices[5] = domain.add(v5); std::cout << vertices[5] << std::endl;
   
   std::cout << "Creating segments..." << std::endl;
-  domain.create_segments(2);
+  domain.segments().resize(2);
 
   std::cout << "Adding cells to segments..." << std::endl;
   CellType simplex;
@@ -235,57 +231,54 @@ void test(viennagrid::config::triangular_2d)
   vertices[1] = &(domain.vertex(1));
   vertices[2] = &(domain.vertex(3));
   simplex.setVertices(vertices);
-  domain.segment(0).add(simplex);
+  domain.segments()[0].add(simplex);
   
   vertices[0] = &(domain.vertex(1));
   vertices[1] = &(domain.vertex(4));
   vertices[2] = &(domain.vertex(3));
   simplex.setVertices(vertices);
-  domain.segment(0).add(simplex);
+  domain.segments()[0].add(simplex);
 
   std::cout << "Filling segment 1..." << std::endl;
   vertices[0] = &(domain.vertex(1));
   vertices[1] = &(domain.vertex(2));
   vertices[2] = &(domain.vertex(4));
   simplex.setVertices(vertices);
-  domain.segment(1).add(simplex);
+  domain.segments()[1].add(simplex);
   
   vertices[0] = &(domain.vertex(2));
   vertices[1] = &(domain.vertex(5));
   vertices[2] = &(domain.vertex(4));
   simplex.setVertices(vertices);
-  domain.segment(1).add(simplex);
+  domain.segments()[1].add(simplex);
   
   
-  std::cout << "Vertices in Segment 0: " << domain.segment(0).size<0>() << std::endl;
-  std::cout << "Vertices in Segment 1: " << domain.segment(1).size<0>() << std::endl;
+  std::cout << "Vertices in Segment 0: " << domain.segments()[0].size<0>() << std::endl;
+  std::cout << "Vertices in Segment 1: " << domain.segments()[1].size<0>() << std::endl;
   //std::cout << "Edges in Segment: "    << seg.size<1>() << std::endl;
   //std::cout << "Facets in Segment: "   << seg.size<CellTag::topology_level-1>() << std::endl;
-  std::cout << "Cells in Segment 0: "    << domain.segment(0).size<CellTag::topology_level>() << std::endl;
-  std::cout << "Cells in Segment 1: "    << domain.segment(1).size<CellTag::topology_level>() << std::endl;
+  std::cout << "Cells in Segment 0: "    << domain.segments()[0].size<CellTag::topology_level>() << std::endl;
+  std::cout << "Cells in Segment 1: "    << domain.segments()[1].size<CellTag::topology_level>() << std::endl;
   
   std::cout << "Printing vertices in segment 0:" << std::endl;
-  print_elements<0>(domain.segment(0));
+  print_elements<0>(domain.segments()[0]);
 
   std::cout << "Printing vertices in segment 1:" << std::endl;
-  print_elements<0>(domain.segment(1));
+  print_elements<0>(domain.segments()[1]);
   
   std::cout << "Printing cells in segment 0:" << std::endl;
-  print_elements<Domain::config_type::cell_tag::topology_level>(domain.segment(0));
+  print_elements<Domain::config_type::cell_tag::topology_level>(domain.segments()[0]);
 
   std::cout << "Printing cells in segment 1:" << std::endl;
-  print_elements<Domain::config_type::cell_tag::topology_level>(domain.segment(1));
+  print_elements<Domain::config_type::cell_tag::topology_level>(domain.segments()[1]);
 
   std::cout << "Test for direct operator[] access: " << std::endl;
-//  viennagrid::ncells<0>(domain.segment(0))[0].print_short();
-  viennagrid::ncells<2>(domain.segment(0))[0].print_short();
+//  viennagrid::ncells<0>(domain.segments()[0])[0].print_short();
+  viennagrid::ncells<2>(domain.segments()[0])[0].print_short();
   
   viennagrid::io::vtk_writer<Domain> my_vtk_writer;
   my_vtk_writer.writeDomain(domain, "multi-segment");
   
-  std::cout << "*******************************" << std::endl;
-  std::cout << "* Test finished successfully! *" << std::endl;
-  std::cout << "*******************************" << std::endl;
 }
 
 int main()
@@ -294,12 +287,13 @@ int main()
   std::cout << "* Test started! *" << std::endl;
   std::cout << "*****************" << std::endl;
   
-  std::string path = "../applications/data/";
-  
-  std::string infile = path + "line8.sgf";
-  std::string outfile = path + "out"; // without ending
-  
+  std::cout << "--- Testing with triangular_2d ---" << std::endl;
   test(viennagrid::config::triangular_2d());
+  std::cout << "--- Testing with tetrahedral_3d ---" << std::endl;
   test(viennagrid::config::tetrahedral_3d());
+  
+  std::cout << "*******************************" << std::endl;
+  std::cout << "* Test finished successfully! *" << std::endl;
+  std::cout << "*******************************" << std::endl;
   return EXIT_SUCCESS;
 }

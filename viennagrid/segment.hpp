@@ -90,13 +90,14 @@ namespace viennagrid
 
       size_t id() const 
       {
-        for (size_t i=0; i<domain_->segment_size(); ++i)
+        for (size_t i=0; i<domain_->segments().size(); ++i)
         {
-          if (this == &(domain_->segment(i)))
+          if (this == &(domain_->segments()[i]))
             return i;
         }
         
-        return domain_->segment_size();
+        assert(false && "Segment ID cannot be found!");
+        return domain_->segments().size();
       }
       
     protected:

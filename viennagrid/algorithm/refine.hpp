@@ -237,16 +237,16 @@ namespace viennagrid
     //
     // Step 4: Now write new cells to new domain
     //
-    domain_out.create_segments(domain_in.segment_size());
-    for (std::size_t i=0; i<domain_in.segment_size(); ++i)
+    domain_out.segments().resize(domain_in.segments().size());
+    for (std::size_t i=0; i<domain_in.segments().size(); ++i)
     {
       //std::cout << "Working on segment " << i << std::endl;
-      CellRange cells = viennagrid::ncells<CellTagIn::topology_level>(domain_in.segment(i));
+      CellRange cells = viennagrid::ncells<CellTagIn::topology_level>(domain_in.segments()[i]);
       for (CellIterator cit  = cells.begin();
                         cit != cells.end();
                       ++cit)
       {
-        element_refinement<CellTagIn>::apply(*cit, domain_out.segment(i));
+        element_refinement<CellTagIn>::apply(*cit, domain_out.segments()[i]);
       }
     }
 

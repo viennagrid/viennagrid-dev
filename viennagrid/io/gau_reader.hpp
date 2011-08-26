@@ -149,7 +149,7 @@ namespace io
       #ifdef IODEBUG
          std::cout << "seg size: " << segment_size << std::endl;
       #endif
-         domain.create_segments(segment_size);
+         domain.segments().resize(segment_size);
 
          // this container will temporarily store the cells per segment.
          // first we'll read everything into this container, so that we know
@@ -481,7 +481,7 @@ namespace io
             for(typename cell_cont_type::iterator cit = sit->second.begin();
                 cit != sit->second.end(); cit++)
             {
-               domain.segment(sit->first).add(*cit);            
+               domain.segments()[sit->first].add(*cit);            
             }
          }
          return 0;
