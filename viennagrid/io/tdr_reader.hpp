@@ -129,7 +129,7 @@ namespace viennagrid
           std::cout << "  segments: " << segment_counter << std::endl;
           std::cout << "  contacts: " << contact_counter << std::endl;
       #endif
-          domain.create_segments(segment_counter); 
+          domain.segments().resize(segment_counter);
           std::size_t seg_cnt = 0;
           for (std::map<std::string,region_t>::const_iterator rit = region.begin();  
               rit != region.end(); rit++)
@@ -166,7 +166,7 @@ namespace viennagrid
                 
                   cell_type cell;
                   cell.setVertices(vertices);             
-                  domain.segment(seg_cnt).add(cell);
+                  domain.segments()[seg_cnt].add(cell);
               }
               
               seg_cnt++;
