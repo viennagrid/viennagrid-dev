@@ -532,11 +532,11 @@ namespace viennagrid
                 if (point_data_normal.size() > 0)
                   writer << "Normals=\"" << point_data_normal_names[0] << "\" ";
                 writer << ">" << std::endl;
+                writePointDataScalar(seg, writer, i);
+                writePointDataVector(seg, writer, i);
+                writePointDataNormal(seg, writer, i);
+                writer << "   </PointData>" << std::endl;
               }
-              writePointDataScalar(seg, writer, i);
-              writePointDataVector(seg, writer, i);
-              writePointDataNormal(seg, writer, i);
-              writer << "   </PointData>" << std::endl;
 
               writeCells(seg, writer);
               if (cell_data_scalar.size() + cell_data_vector.size() + cell_data_normal.size() > 0)
@@ -549,11 +549,11 @@ namespace viennagrid
                 if (cell_data_normal.size() > 0)
                   writer << "Normals=\"" << cell_data_normal_names[0] << "\" ";
                 writer << ">" << std::endl;
+                writeCellDataScalar(seg, writer, i);
+                writeCellDataVector(seg, writer, i);
+                writeCellDataNormals(seg, writer, i);
+                writer << "   </CellData>" << std::endl;
               }
-              writeCellDataScalar(seg, writer, i);
-              writeCellDataVector(seg, writer, i);
-              writeCellDataNormals(seg, writer, i);
-              writer << "   </CellData>" << std::endl;
 
               writer << "  </Piece>" << std::endl;
               writeFooter(writer);
