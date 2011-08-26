@@ -232,10 +232,10 @@ namespace viennagrid
       // Step 1: grab existing vertices:
       VertexOnCellRange vertices_on_cell = viennagrid::ncells<0>(cell_in);
       VertexOnCellIterator vocit = vertices_on_cell.begin();
-      vertices[0] = &(segment_out.get_domain().vertex(vocit->id())); ++vocit;
-      vertices[1] = &(segment_out.get_domain().vertex(vocit->id())); ++vocit;
-      vertices[2] = &(segment_out.get_domain().vertex(vocit->id())); ++vocit;
-      vertices[3] = &(segment_out.get_domain().vertex(vocit->id()));
+      vertices[0] = &(viennagrid::ncells<0>(segment_out.get_domain())[vocit->id()]); ++vocit;
+      vertices[1] = &(viennagrid::ncells<0>(segment_out.get_domain())[vocit->id()]); ++vocit;
+      vertices[2] = &(viennagrid::ncells<0>(segment_out.get_domain())[vocit->id()]); ++vocit;
+      vertices[3] = &(viennagrid::ncells<0>(segment_out.get_domain())[vocit->id()]);
 
       // Step 2: Add new cells to new domain:
       CellType new_cell;
@@ -267,10 +267,10 @@ namespace viennagrid
       //
       VertexOnCellRange vertices_on_cell = viennagrid::ncells<0>(cell_in);
       VertexOnCellIterator vocit = vertices_on_cell.begin();
-      vertices[0] = &(segment_out.get_domain().vertex(vocit->id())); ++vocit;
-      vertices[1] = &(segment_out.get_domain().vertex(vocit->id())); ++vocit;
-      vertices[2] = &(segment_out.get_domain().vertex(vocit->id())); ++vocit;
-      vertices[3] = &(segment_out.get_domain().vertex(vocit->id()));
+      vertices[0] = &(viennagrid::ncells<0>(segment_out.get_domain())[vocit->id()]); ++vocit;
+      vertices[1] = &(viennagrid::ncells<0>(segment_out.get_domain())[vocit->id()]); ++vocit;
+      vertices[2] = &(viennagrid::ncells<0>(segment_out.get_domain())[vocit->id()]); ++vocit;
+      vertices[3] = &(viennagrid::ncells<0>(segment_out.get_domain())[vocit->id()]);
       
 
       //
@@ -292,7 +292,7 @@ namespace viennagrid
         ordered_vertices[1] = vertices[1];
         ordered_vertices[2] = vertices[2];
         ordered_vertices[3] = vertices[3];
-        ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)));
+        ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)]);
       }
       else if (viennadata::access<refinement_key, bool>(refinement_key())(e1) == true)
       {
@@ -300,7 +300,7 @@ namespace viennagrid
         ordered_vertices[1] = vertices[0];
         ordered_vertices[2] = vertices[1];
         ordered_vertices[3] = vertices[3];
-        ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)));
+        ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)]);
       }
       else if (viennadata::access<refinement_key, bool>(refinement_key())(e2) == true)
       {
@@ -308,7 +308,7 @@ namespace viennagrid
         ordered_vertices[1] = vertices[3];
         ordered_vertices[2] = vertices[1];
         ordered_vertices[3] = vertices[2];
-        ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)));
+        ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
       }
       else if (viennadata::access<refinement_key, bool>(refinement_key())(e3) == true)
       {
@@ -316,7 +316,7 @@ namespace viennagrid
         ordered_vertices[1] = vertices[2];
         ordered_vertices[2] = vertices[0];
         ordered_vertices[3] = vertices[3];
-        ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)));
+        ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)]);
       }
       else if (viennadata::access<refinement_key, bool>(refinement_key())(e4) == true)
       {
@@ -324,7 +324,7 @@ namespace viennagrid
         ordered_vertices[1] = vertices[1];
         ordered_vertices[2] = vertices[0];
         ordered_vertices[3] = vertices[2];
-        ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)));
+        ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
       }
       else if (viennadata::access<refinement_key, bool>(refinement_key())(e5) == true)
       {
@@ -332,7 +332,7 @@ namespace viennagrid
         ordered_vertices[1] = vertices[2];
         ordered_vertices[2] = vertices[1];
         ordered_vertices[3] = vertices[0];
-        ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)));
+        ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
       }
       else
       {
@@ -518,10 +518,10 @@ namespace viennagrid
       //
       VertexOnCellRange vertices_on_cell = viennagrid::ncells<0>(cell_in);
       VertexOnCellIterator vocit = vertices_on_cell.begin();
-      vertices[0] = &(segment_out.get_domain().vertex(vocit->id())); ++vocit;
-      vertices[1] = &(segment_out.get_domain().vertex(vocit->id())); ++vocit;
-      vertices[2] = &(segment_out.get_domain().vertex(vocit->id())); ++vocit;
-      vertices[3] = &(segment_out.get_domain().vertex(vocit->id()));
+      vertices[0] = &(viennagrid::ncells<0>(segment_out.get_domain())[vocit->id()]); ++vocit;
+      vertices[1] = &(viennagrid::ncells<0>(segment_out.get_domain())[vocit->id()]); ++vocit;
+      vertices[2] = &(viennagrid::ncells<0>(segment_out.get_domain())[vocit->id()]); ++vocit;
+      vertices[3] = &(viennagrid::ncells<0>(segment_out.get_domain())[vocit->id()]);
       
 
       //
@@ -546,8 +546,8 @@ namespace viennagrid
           ordered_vertices[1] = vertices[0];
           ordered_vertices[2] = vertices[1];
           ordered_vertices[3] = vertices[3];
-          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)));
-          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)));
+          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)]);
+          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)]);
           
           apply2_1(cell_in, segment_out, ordered_vertices);
         }
@@ -557,8 +557,8 @@ namespace viennagrid
           ordered_vertices[1] = vertices[0];
           ordered_vertices[2] = vertices[3];
           ordered_vertices[3] = vertices[2];
-          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)));
-          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)));
+          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)]);
+          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
           
           apply2_1(cell_in, segment_out, ordered_vertices);
         }
@@ -568,8 +568,8 @@ namespace viennagrid
           ordered_vertices[1] = vertices[1];
           ordered_vertices[2] = vertices[2];
           ordered_vertices[3] = vertices[3];
-          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)));
-          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)));
+          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)]);
+          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)]);
           
           apply2_1(cell_in, segment_out, ordered_vertices);
         }
@@ -579,8 +579,8 @@ namespace viennagrid
           ordered_vertices[1] = vertices[1];
           ordered_vertices[2] = vertices[0];
           ordered_vertices[3] = vertices[2];
-          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)));
-          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)));
+          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
+          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)]);
           
           apply2_1(cell_in, segment_out, ordered_vertices);
         }
@@ -590,8 +590,8 @@ namespace viennagrid
           ordered_vertices[1] = vertices[1];
           ordered_vertices[2] = vertices[2];
           ordered_vertices[3] = vertices[3];
-          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)));
-          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)));
+          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)]);
+          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
           
           apply2_2(cell_in, segment_out, ordered_vertices);
         }
@@ -608,8 +608,8 @@ namespace viennagrid
           ordered_vertices[1] = vertices[0];
           ordered_vertices[2] = vertices[2];
           ordered_vertices[3] = vertices[1];
-          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)));
-          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)));
+          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
+          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)]);
           
           apply2_1(cell_in, segment_out, ordered_vertices);
         }
@@ -619,8 +619,8 @@ namespace viennagrid
           ordered_vertices[1] = vertices[2];
           ordered_vertices[2] = vertices[0];
           ordered_vertices[3] = vertices[3];
-          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)));
-          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)));
+          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)]);
+          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)]);
           
           apply2_1(cell_in, segment_out, ordered_vertices);
         }
@@ -630,8 +630,8 @@ namespace viennagrid
           ordered_vertices[1] = vertices[0];
           ordered_vertices[2] = vertices[1];
           ordered_vertices[3] = vertices[3];
-          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)));
-          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)));
+          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)]);
+          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
           
           apply2_2(cell_in, segment_out, ordered_vertices);
         }
@@ -641,8 +641,8 @@ namespace viennagrid
           ordered_vertices[1] = vertices[2];
           ordered_vertices[2] = vertices[3];
           ordered_vertices[3] = vertices[1];
-          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)));
-          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)));
+          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)]);
+          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
           
           apply2_1(cell_in, segment_out, ordered_vertices);
         }
@@ -659,8 +659,8 @@ namespace viennagrid
           ordered_vertices[1] = vertices[0];
           ordered_vertices[2] = vertices[2];
           ordered_vertices[3] = vertices[1];
-          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)));
-          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)));
+          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
+          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)]);
           
           apply2_2(cell_in, segment_out, ordered_vertices);
         }
@@ -670,8 +670,8 @@ namespace viennagrid
           ordered_vertices[1] = vertices[3];
           ordered_vertices[2] = vertices[1];
           ordered_vertices[3] = vertices[2];
-          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)));
-          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)));
+          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
+          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
           
           apply2_1(cell_in, segment_out, ordered_vertices);
         }
@@ -681,8 +681,8 @@ namespace viennagrid
           ordered_vertices[1] = vertices[3];
           ordered_vertices[2] = vertices[0];
           ordered_vertices[3] = vertices[1];
-          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)));
-          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)));
+          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
+          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
           
           apply2_1(cell_in, segment_out, ordered_vertices);
         }
@@ -699,8 +699,8 @@ namespace viennagrid
           ordered_vertices[1] = vertices[1];
           ordered_vertices[2] = vertices[3];
           ordered_vertices[3] = vertices[0];
-          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)));
-          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)));
+          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)]);
+          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
           
           apply2_1(cell_in, segment_out, ordered_vertices);
         }
@@ -710,8 +710,8 @@ namespace viennagrid
           ordered_vertices[1] = vertices[2];
           ordered_vertices[2] = vertices[1];
           ordered_vertices[3] = vertices[0];
-          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)));
-          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)));
+          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
+          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)]);
           
           apply2_1(cell_in, segment_out, ordered_vertices);
         }
@@ -728,8 +728,8 @@ namespace viennagrid
           ordered_vertices[1] = vertices[3];
           ordered_vertices[2] = vertices[2];
           ordered_vertices[3] = vertices[0];
-          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)));
-          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)));
+          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
+          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
           
           apply2_1(cell_in, segment_out, ordered_vertices);
         }
@@ -1380,10 +1380,10 @@ namespace viennagrid
       //
       VertexOnCellRange vertices_on_cell = viennagrid::ncells<0>(cell_in);
       VertexOnCellIterator vocit = vertices_on_cell.begin();
-      vertices[0] = &(segment_out.get_domain().vertex(vocit->id())); ++vocit;
-      vertices[1] = &(segment_out.get_domain().vertex(vocit->id())); ++vocit;
-      vertices[2] = &(segment_out.get_domain().vertex(vocit->id())); ++vocit;
-      vertices[3] = &(segment_out.get_domain().vertex(vocit->id()));
+      vertices[0] = &(viennagrid::ncells<0>(segment_out.get_domain())[vocit->id()]); ++vocit;
+      vertices[1] = &(viennagrid::ncells<0>(segment_out.get_domain())[vocit->id()]); ++vocit;
+      vertices[2] = &(viennagrid::ncells<0>(segment_out.get_domain())[vocit->id()]); ++vocit;
+      vertices[3] = &(viennagrid::ncells<0>(segment_out.get_domain())[vocit->id()]);
       
 
       //
@@ -1408,27 +1408,27 @@ namespace viennagrid
           ordered_vertices[1] = vertices[0];
           ordered_vertices[2] = vertices[1];
           ordered_vertices[3] = vertices[3];
-          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)));
-          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)));
+          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)]);
+          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)]);
           
           if (viennadata::access<refinement_key, bool>(refinement_key())(e2) == true)
           {
-            ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)));
+            ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
             apply3_1(cell_in, segment_out, ordered_vertices);
           }
           else if (viennadata::access<refinement_key, bool>(refinement_key())(e3) == true)
           {
-            ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)));
+            ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)]);
             apply3_2(cell_in, segment_out, ordered_vertices);
           }
           else if (viennadata::access<refinement_key, bool>(refinement_key())(e4) == true)
           {
-            ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)));
+            ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
             apply3_4(cell_in, segment_out, ordered_vertices);
           }
           else if (viennadata::access<refinement_key, bool>(refinement_key())(e5) == true)
           {
-            ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)));
+            ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
             apply3_3(cell_in, segment_out, ordered_vertices);
           }
           else
@@ -1442,22 +1442,22 @@ namespace viennagrid
           ordered_vertices[1] = vertices[0];
           ordered_vertices[2] = vertices[3];
           ordered_vertices[3] = vertices[2];
-          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)));
-          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)));
+          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)]);
+          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
           
           if (viennadata::access<refinement_key, bool>(refinement_key())(e3) == true)
           {
-            ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)));
+            ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)]);
             apply3_3(cell_in, segment_out, ordered_vertices);
           }
           else if (viennadata::access<refinement_key, bool>(refinement_key())(e4) == true)
           {
-            ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)));
+            ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
             apply3_2(cell_in, segment_out, ordered_vertices);
           }
           else if (viennadata::access<refinement_key, bool>(refinement_key())(e5) == true)
           {
-            ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)));
+            ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
             apply3_4(cell_in, segment_out, ordered_vertices);
           }
           else
@@ -1471,17 +1471,17 @@ namespace viennagrid
           ordered_vertices[1] = vertices[1];
           ordered_vertices[2] = vertices[2];
           ordered_vertices[3] = vertices[3];
-          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)));
-          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)));
+          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)]);
+          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)]);
           
           if (viennadata::access<refinement_key, bool>(refinement_key())(e4) == true)
           {
-            ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)));
+            ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
             apply3_1(cell_in, segment_out, ordered_vertices);
           }
           else if (viennadata::access<refinement_key, bool>(refinement_key())(e5) == true)
           {
-            ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)));
+            ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
             apply3_4(cell_in, segment_out, ordered_vertices);
           }
           else
@@ -1495,12 +1495,12 @@ namespace viennagrid
           ordered_vertices[1] = vertices[1];
           ordered_vertices[2] = vertices[0];
           ordered_vertices[3] = vertices[2];
-          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)));
-          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)));
+          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
+          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)]);
           
           if (viennadata::access<refinement_key, bool>(refinement_key())(e5) == true)
           {
-            ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)));
+            ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
             apply3_3(cell_in, segment_out, ordered_vertices);
           }
           else
@@ -1521,22 +1521,22 @@ namespace viennagrid
           ordered_vertices[1] = vertices[0];
           ordered_vertices[2] = vertices[2];
           ordered_vertices[3] = vertices[1];
-          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)));
-          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)));
+          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
+          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)]);
           
           if (viennadata::access<refinement_key, bool>(refinement_key())(e3) == true)
           {
-            ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)));
+            ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)]);
             apply3_4(cell_in, segment_out, ordered_vertices);
           }
           else if (viennadata::access<refinement_key, bool>(refinement_key())(e4) == true)
           {
-            ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)));
+            ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
             apply3_3(cell_in, segment_out, ordered_vertices);
           }
           else if (viennadata::access<refinement_key, bool>(refinement_key())(e5) == true)
           {
-            ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)));
+            ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
             apply3_2(cell_in, segment_out, ordered_vertices);
           }
           else
@@ -1550,17 +1550,17 @@ namespace viennagrid
           ordered_vertices[1] = vertices[2];
           ordered_vertices[2] = vertices[0];
           ordered_vertices[3] = vertices[3];
-          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)));
-          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)));
+          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)]);
+          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)]);
           
           if (viennadata::access<refinement_key, bool>(refinement_key())(e4) == true)
           {
-            ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)));
+            ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
             apply3_3(cell_in, segment_out, ordered_vertices);
           }
           else if (viennadata::access<refinement_key, bool>(refinement_key())(e5) == true)
           {
-            ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)));
+            ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
             apply3_1(cell_in, segment_out, ordered_vertices);
           }
           else
@@ -1577,9 +1577,9 @@ namespace viennagrid
             ordered_vertices[1] = vertices[3];
             ordered_vertices[2] = vertices[2];
             ordered_vertices[3] = vertices[0];
-            ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)));
-            ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)));
-            ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)));
+            ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
+            ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
+            ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)]);
             
             apply3_4(cell_in, segment_out, ordered_vertices);
           }
@@ -1606,9 +1606,9 @@ namespace viennagrid
             ordered_vertices[1] = vertices[3];
             ordered_vertices[2] = vertices[1];
             ordered_vertices[3] = vertices[2];
-            ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)));
-            ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)));
-            ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)));
+            ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
+            ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
+            ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)]);
             
             apply3_4(cell_in, segment_out, ordered_vertices);
           }
@@ -1619,9 +1619,9 @@ namespace viennagrid
             ordered_vertices[1] = vertices[2];
             ordered_vertices[2] = vertices[1];
             ordered_vertices[3] = vertices[0];
-            ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)));
-            ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)));
-            ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)));
+            ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
+            ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)]);
+            ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
             
             apply3_3(cell_in, segment_out, ordered_vertices);
           }
@@ -1636,12 +1636,12 @@ namespace viennagrid
           ordered_vertices[1] = vertices[3];
           ordered_vertices[2] = vertices[1];
           ordered_vertices[3] = vertices[2];
-          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)));
-          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)));
+          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
+          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
           
           if (viennadata::access<refinement_key, bool>(refinement_key())(e5) == true)
           {
-            ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)));
+            ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
             apply3_1(cell_in, segment_out, ordered_vertices);
           }
           else
@@ -1662,12 +1662,12 @@ namespace viennagrid
           ordered_vertices[1] = vertices[1];
           ordered_vertices[2] = vertices[3];
           ordered_vertices[3] = vertices[0];
-          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)));
-          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)));
+          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)]);
+          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
           
           if (viennadata::access<refinement_key, bool>(refinement_key())(e5) == true)
           {
-            ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)));
+            ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
             apply3_2(cell_in, segment_out, ordered_vertices);
           }
           else
@@ -2631,10 +2631,10 @@ namespace viennagrid
       //
       VertexOnCellRange vertices_on_cell = viennagrid::ncells<0>(cell_in);
       VertexOnCellIterator vocit = vertices_on_cell.begin();
-      vertices[0] = &(segment_out.get_domain().vertex(vocit->id())); ++vocit;
-      vertices[1] = &(segment_out.get_domain().vertex(vocit->id())); ++vocit;
-      vertices[2] = &(segment_out.get_domain().vertex(vocit->id())); ++vocit;
-      vertices[3] = &(segment_out.get_domain().vertex(vocit->id()));
+      vertices[0] = &(viennagrid::ncells<0>(segment_out.get_domain())[vocit->id()]); ++vocit;
+      vertices[1] = &(viennagrid::ncells<0>(segment_out.get_domain())[vocit->id()]); ++vocit;
+      vertices[2] = &(viennagrid::ncells<0>(segment_out.get_domain())[vocit->id()]); ++vocit;
+      vertices[3] = &(viennagrid::ncells<0>(segment_out.get_domain())[vocit->id()]);
       
 
       //
@@ -2659,10 +2659,10 @@ namespace viennagrid
           ordered_vertices[1] = vertices[0];
           ordered_vertices[2] = vertices[1];
           ordered_vertices[3] = vertices[3];
-          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)));
-          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)));
-          ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)));
-          ordered_vertices[7] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)));
+          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)]);
+          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
+          ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
+          ordered_vertices[7] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
           
           apply4_1(cell_in, segment_out, ordered_vertices);
         }
@@ -2672,10 +2672,10 @@ namespace viennagrid
           ordered_vertices[1] = vertices[0];
           ordered_vertices[2] = vertices[3];
           ordered_vertices[3] = vertices[2];
-          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)));
-          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)));
-          ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)));
-          ordered_vertices[7] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)));
+          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
+          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)]);
+          ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
+          ordered_vertices[7] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)]);
           
           apply4_1(cell_in, segment_out, ordered_vertices);
         }
@@ -2685,10 +2685,10 @@ namespace viennagrid
           ordered_vertices[1] = vertices[1];
           ordered_vertices[2] = vertices[2];
           ordered_vertices[3] = vertices[3];
-          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)));
-          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)));
-          ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)));
-          ordered_vertices[7] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)));
+          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)]);
+          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
+          ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
+          ordered_vertices[7] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
           
           apply4_1(cell_in, segment_out, ordered_vertices);
         }
@@ -2698,10 +2698,10 @@ namespace viennagrid
           ordered_vertices[1] = vertices[1];
           ordered_vertices[2] = vertices[0];
           ordered_vertices[3] = vertices[2];
-          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)));
-          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)));
-          ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)));
-          ordered_vertices[7] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)));
+          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
+          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)]);
+          ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)]);
+          ordered_vertices[7] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
           
           apply4_1(cell_in, segment_out, ordered_vertices);
         }
@@ -2711,10 +2711,10 @@ namespace viennagrid
           ordered_vertices[1] = vertices[1];
           ordered_vertices[2] = vertices[2];
           ordered_vertices[3] = vertices[3];
-          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)));
-          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)));
-          ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)));
-          ordered_vertices[7] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)));
+          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)]);
+          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)]);
+          ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
+          ordered_vertices[7] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
           
           apply4_2(cell_in, segment_out, ordered_vertices);
         }
@@ -2731,10 +2731,10 @@ namespace viennagrid
           ordered_vertices[1] = vertices[0];
           ordered_vertices[2] = vertices[2];
           ordered_vertices[3] = vertices[1];
-          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)));
-          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)));
-          ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)));
-          ordered_vertices[7] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)));
+          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
+          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)]);
+          ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)]);
+          ordered_vertices[7] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
           
           apply4_1(cell_in, segment_out, ordered_vertices);
         }
@@ -2744,10 +2744,10 @@ namespace viennagrid
           ordered_vertices[1] = vertices[2];
           ordered_vertices[2] = vertices[0];
           ordered_vertices[3] = vertices[3];
-          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)));
-          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)));
-          ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)));
-          ordered_vertices[7] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)));
+          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)]);
+          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
+          ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
+          ordered_vertices[7] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
           
           apply4_1(cell_in, segment_out, ordered_vertices);
         }
@@ -2757,10 +2757,10 @@ namespace viennagrid
           ordered_vertices[1] = vertices[0];
           ordered_vertices[2] = vertices[1];
           ordered_vertices[3] = vertices[3];
-          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)));
-          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)));
-          ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)));
-          ordered_vertices[7] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)));
+          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)]);
+          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)]);
+          ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
+          ordered_vertices[7] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
           
           apply4_2(cell_in, segment_out, ordered_vertices);
         }
@@ -2770,10 +2770,10 @@ namespace viennagrid
           ordered_vertices[1] = vertices[2];
           ordered_vertices[2] = vertices[3];
           ordered_vertices[3] = vertices[1];
-          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)));
-          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)));
-          ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)));
-          ordered_vertices[7] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)));
+          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
+          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)]);
+          ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
+          ordered_vertices[7] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)]);
           
           apply4_1(cell_in, segment_out, ordered_vertices);
         }
@@ -2790,10 +2790,10 @@ namespace viennagrid
           ordered_vertices[1] = vertices[0];
           ordered_vertices[2] = vertices[2];
           ordered_vertices[3] = vertices[1];
-          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)));
-          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)));
-          ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)));
-          ordered_vertices[7] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)));
+          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)]);
+          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
+          ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
+          ordered_vertices[7] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)]);
           
           apply4_2(cell_in, segment_out, ordered_vertices);
         }
@@ -2803,10 +2803,10 @@ namespace viennagrid
           ordered_vertices[1] = vertices[3];
           ordered_vertices[2] = vertices[1];
           ordered_vertices[3] = vertices[2];
-          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)));
-          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)));
-          ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)));
-          ordered_vertices[7] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)));
+          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)]);
+          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
+          ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)]);
+          ordered_vertices[7] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)]);
           
           apply4_1(cell_in, segment_out, ordered_vertices);
         }
@@ -2816,10 +2816,10 @@ namespace viennagrid
           ordered_vertices[1] = vertices[3];
           ordered_vertices[2] = vertices[0];
           ordered_vertices[3] = vertices[1];
-          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)));
-          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)));
-          ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)));
-          ordered_vertices[7] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)));
+          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)]);
+          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
+          ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)]);
+          ordered_vertices[7] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)]);
           
           apply4_1(cell_in, segment_out, ordered_vertices);
         }
@@ -2836,10 +2836,10 @@ namespace viennagrid
           ordered_vertices[1] = vertices[1];
           ordered_vertices[2] = vertices[3];
           ordered_vertices[3] = vertices[0];
-          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)));
-          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)));
-          ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)));
-          ordered_vertices[7] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)));
+          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
+          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)]);
+          ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
+          ordered_vertices[7] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)]);
           
           apply4_1(cell_in, segment_out, ordered_vertices);
         }
@@ -2849,10 +2849,10 @@ namespace viennagrid
           ordered_vertices[1] = vertices[2];
           ordered_vertices[2] = vertices[1];
           ordered_vertices[3] = vertices[0];
-          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)));
-          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)));
-          ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)));
-          ordered_vertices[7] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)));
+          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
+          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)]);
+          ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)]);
+          ordered_vertices[7] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
           
           apply4_1(cell_in, segment_out, ordered_vertices);
         }
@@ -2869,10 +2869,10 @@ namespace viennagrid
           ordered_vertices[1] = vertices[3];
           ordered_vertices[2] = vertices[2];
           ordered_vertices[3] = vertices[0];
-          ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)));
-          ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)));
-          ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)));
-          ordered_vertices[7] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)));
+          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)]);
+          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
+          ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)]);
+          ordered_vertices[7] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)]);
           
           apply4_1(cell_in, segment_out, ordered_vertices);
         }
@@ -3097,10 +3097,10 @@ namespace viennagrid
       //
       VertexOnCellRange vertices_on_cell = viennagrid::ncells<0>(cell_in);
       VertexOnCellIterator vocit = vertices_on_cell.begin();
-      vertices[0] = &(segment_out.get_domain().vertex(vocit->id())); ++vocit;
-      vertices[1] = &(segment_out.get_domain().vertex(vocit->id())); ++vocit;
-      vertices[2] = &(segment_out.get_domain().vertex(vocit->id())); ++vocit;
-      vertices[3] = &(segment_out.get_domain().vertex(vocit->id()));
+      vertices[0] = &(viennagrid::ncells<0>(segment_out.get_domain())[vocit->id()]); ++vocit;
+      vertices[1] = &(viennagrid::ncells<0>(segment_out.get_domain())[vocit->id()]); ++vocit;
+      vertices[2] = &(viennagrid::ncells<0>(segment_out.get_domain())[vocit->id()]); ++vocit;
+      vertices[3] = &(viennagrid::ncells<0>(segment_out.get_domain())[vocit->id()]);
       
 
       //
@@ -3122,11 +3122,11 @@ namespace viennagrid
         ordered_vertices[1] = vertices[1];
         ordered_vertices[2] = vertices[2];
         ordered_vertices[3] = vertices[3];
-        ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)));
-        ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)));
-        ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)));
-        ordered_vertices[7] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)));
-        ordered_vertices[8] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)));
+        ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)]);
+        ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)]);
+        ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
+        ordered_vertices[7] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
+        ordered_vertices[8] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
         
         apply5_1(cell_in, segment_out, ordered_vertices);
       }
@@ -3136,11 +3136,11 @@ namespace viennagrid
         ordered_vertices[1] = vertices[0];
         ordered_vertices[2] = vertices[1];
         ordered_vertices[3] = vertices[3];
-        ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)));
-        ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)));
-        ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)));
-        ordered_vertices[7] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)));
-        ordered_vertices[8] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)));
+        ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)]);
+        ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)]);
+        ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
+        ordered_vertices[7] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
+        ordered_vertices[8] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
         
         apply5_1(cell_in, segment_out, ordered_vertices);
       }
@@ -3150,11 +3150,11 @@ namespace viennagrid
         ordered_vertices[1] = vertices[3];
         ordered_vertices[2] = vertices[1];
         ordered_vertices[3] = vertices[2];
-        ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)));
-        ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)));
-        ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)));
-        ordered_vertices[7] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)));
-        ordered_vertices[8] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)));
+        ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
+        ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)]);
+        ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)]);
+        ordered_vertices[7] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
+        ordered_vertices[8] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)]);
         
         apply5_1(cell_in, segment_out, ordered_vertices);
       }
@@ -3164,11 +3164,11 @@ namespace viennagrid
         ordered_vertices[1] = vertices[2];
         ordered_vertices[2] = vertices[0];
         ordered_vertices[3] = vertices[3];
-        ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)));
-        ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)));
-        ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)));
-        ordered_vertices[7] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)));
-        ordered_vertices[8] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)));
+        ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)]);
+        ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)]);
+        ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
+        ordered_vertices[7] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
+        ordered_vertices[8] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
         
         apply5_1(cell_in, segment_out, ordered_vertices);
       }
@@ -3178,11 +3178,11 @@ namespace viennagrid
         ordered_vertices[1] = vertices[3];
         ordered_vertices[2] = vertices[2];
         ordered_vertices[3] = vertices[0];
-        ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)));
-        ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)));
-        ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)));
-        ordered_vertices[7] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)));
-        ordered_vertices[8] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)));
+        ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
+        ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)]);
+        ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)]);
+        ordered_vertices[7] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
+        ordered_vertices[8] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)]);
         
         apply5_1(cell_in, segment_out, ordered_vertices);
       }
@@ -3192,11 +3192,11 @@ namespace viennagrid
         ordered_vertices[1] = vertices[2];
         ordered_vertices[2] = vertices[1];
         ordered_vertices[3] = vertices[0];
-        ordered_vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)));
-        ordered_vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)));
-        ordered_vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)));
-        ordered_vertices[7] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)));
-        ordered_vertices[8] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)));
+        ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)]);
+        ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
+        ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
+        ordered_vertices[7] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)]);
+        ordered_vertices[8] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)]);
         
         apply5_1(cell_in, segment_out, ordered_vertices);
       }
@@ -3238,20 +3238,20 @@ namespace viennagrid
       //grab existing vertices:
       VertexOnCellRange vertices_on_cell = viennagrid::ncells<0>(cell_in);
       VertexOnCellIterator vocit = vertices_on_cell.begin();
-      vertices[0] = &(segment_out.get_domain().vertex(vocit->id())); ++vocit;
-      vertices[1] = &(segment_out.get_domain().vertex(vocit->id())); ++vocit;
-      vertices[2] = &(segment_out.get_domain().vertex(vocit->id())); ++vocit;
-      vertices[3] = &(segment_out.get_domain().vertex(vocit->id()));
+      vertices[0] = &(viennagrid::ncells<0>(segment_out.get_domain())[vocit->id()]); ++vocit;
+      vertices[1] = &(viennagrid::ncells<0>(segment_out.get_domain())[vocit->id()]); ++vocit;
+      vertices[2] = &(viennagrid::ncells<0>(segment_out.get_domain())[vocit->id()]); ++vocit;
+      vertices[3] = &(viennagrid::ncells<0>(segment_out.get_domain())[vocit->id()]);
 
       //add vertices from edge
       EdgeOnCellRange edges_on_cell = viennagrid::ncells<1>(cell_in);
       EdgeOnCellIterator eocit = edges_on_cell.begin();
-      vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(*eocit))); ++eocit;
-      vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(*eocit))); ++eocit;
-      vertices[6] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(*eocit))); ++eocit;
-      vertices[7] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(*eocit))); ++eocit;
-      vertices[8] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(*eocit))); ++eocit;
-      vertices[9] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(*eocit)));
+      vertices[4] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(*eocit)]); ++eocit;
+      vertices[5] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(*eocit)]); ++eocit;
+      vertices[6] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(*eocit)]); ++eocit;
+      vertices[7] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(*eocit)]); ++eocit;
+      vertices[8] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(*eocit)]); ++eocit;
+      vertices[9] = &(viennagrid::ncells<0>(segment_out.get_domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(*eocit)]);
       
       //
       // Step 2: Add new cells to new domain:

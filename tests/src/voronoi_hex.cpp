@@ -75,47 +75,47 @@ void add_cellplane(DomainType & device, CellType & cell, std::size_t offset)
 
   VertexType *vertices[8];
   
-  vertices[0] = &(device.vertex(0 + offset));
-  vertices[1] = &(device.vertex(8 + offset));
-  vertices[2] = &(device.vertex(1 + offset));
-  vertices[3] = &(device.vertex(2 + offset));
-  vertices[4] = &(device.vertex(9 + offset));
-  vertices[5] = &(device.vertex(17 + offset));
-  vertices[6] = &(device.vertex(10 + offset));
-  vertices[7] = &(device.vertex(11 + offset));
+  vertices[0] = &(viennagrid::ncells<0>(device)[0 + offset]);
+  vertices[1] = &(viennagrid::ncells<0>(device)[8 + offset]);
+  vertices[2] = &(viennagrid::ncells<0>(device)[1 + offset]);
+  vertices[3] = &(viennagrid::ncells<0>(device)[2 + offset]);
+  vertices[4] = &(viennagrid::ncells<0>(device)[9 + offset]);
+  vertices[5] = &(viennagrid::ncells<0>(device)[17 + offset]);
+  vertices[6] = &(viennagrid::ncells<0>(device)[10 + offset]);
+  vertices[7] = &(viennagrid::ncells<0>(device)[11 + offset]);
   cell.setVertices(vertices);
   device.add(cell);
 
-  vertices[0] = &(device.vertex(0 + offset));
-  vertices[1] = &(device.vertex(2 + offset));
-  vertices[2] = &(device.vertex(3 + offset));
-  vertices[3] = &(device.vertex(4 + offset));
-  vertices[4] = &(device.vertex(9 + offset));
-  vertices[5] = &(device.vertex(11 + offset));
-  vertices[6] = &(device.vertex(12 + offset));
-  vertices[7] = &(device.vertex(13 + offset));
+  vertices[0] = &(viennagrid::ncells<0>(device)[0 + offset]);
+  vertices[1] = &(viennagrid::ncells<0>(device)[2 + offset]);
+  vertices[2] = &(viennagrid::ncells<0>(device)[3 + offset]);
+  vertices[3] = &(viennagrid::ncells<0>(device)[4 + offset]);
+  vertices[4] = &(viennagrid::ncells<0>(device)[9 + offset]);
+  vertices[5] = &(viennagrid::ncells<0>(device)[11 + offset]);
+  vertices[6] = &(viennagrid::ncells<0>(device)[12 + offset]);
+  vertices[7] = &(viennagrid::ncells<0>(device)[13 + offset]);
   cell.setVertices(vertices);
   device.add(cell);
 
-  vertices[0] = &(device.vertex(0 + offset));
-  vertices[1] = &(device.vertex(4 + offset));
-  vertices[2] = &(device.vertex(5 + offset));
-  vertices[3] = &(device.vertex(6 + offset));
-  vertices[4] = &(device.vertex(9 + offset));
-  vertices[5] = &(device.vertex(13 + offset));
-  vertices[6] = &(device.vertex(14 + offset));
-  vertices[7] = &(device.vertex(15 + offset));
+  vertices[0] = &(viennagrid::ncells<0>(device)[0 + offset]);
+  vertices[1] = &(viennagrid::ncells<0>(device)[4 + offset]);
+  vertices[2] = &(viennagrid::ncells<0>(device)[5 + offset]);
+  vertices[3] = &(viennagrid::ncells<0>(device)[6 + offset]);
+  vertices[4] = &(viennagrid::ncells<0>(device)[9 + offset]);
+  vertices[5] = &(viennagrid::ncells<0>(device)[13 + offset]);
+  vertices[6] = &(viennagrid::ncells<0>(device)[14 + offset]);
+  vertices[7] = &(viennagrid::ncells<0>(device)[15 + offset]);
   cell.setVertices(vertices);
   device.add(cell);
 
-  vertices[0] = &(device.vertex(0 + offset));
-  vertices[1] = &(device.vertex(6 + offset));
-  vertices[2] = &(device.vertex(7 + offset));
-  vertices[3] = &(device.vertex(8 + offset));
-  vertices[4] = &(device.vertex(9 + offset));
-  vertices[5] = &(device.vertex(15 + offset));
-  vertices[6] = &(device.vertex(16 + offset));
-  vertices[7] = &(device.vertex(17 + offset));
+  vertices[0] = &(viennagrid::ncells<0>(device)[0 + offset]);
+  vertices[1] = &(viennagrid::ncells<0>(device)[6 + offset]);
+  vertices[2] = &(viennagrid::ncells<0>(device)[7 + offset]);
+  vertices[3] = &(viennagrid::ncells<0>(device)[8 + offset]);
+  vertices[4] = &(viennagrid::ncells<0>(device)[9 + offset]);
+  vertices[5] = &(viennagrid::ncells<0>(device)[15 + offset]);
+  vertices[6] = &(viennagrid::ncells<0>(device)[16 + offset]);
+  vertices[7] = &(viennagrid::ncells<0>(device)[17 + offset]);
   cell.setVertices(vertices);
   device.add(cell);
 }
@@ -137,7 +137,6 @@ void setup_device(DeviceType & device)
   // Step 1: Set up vertices:
   //
   VertexType vertex;
-  device.reserve_vertices(27);
 
   vertex[2] = 0.0;
   add_plane(device, vertex);
@@ -151,7 +150,6 @@ void setup_device(DeviceType & device)
   //
   
   CellType cell;
-  device.reserve_cells(8);
   add_cellplane(device, cell, 0);
   add_cellplane(device, cell, 9);
 }

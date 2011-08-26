@@ -91,9 +91,9 @@ void setup_domain(viennagrid::domain<viennagrid::config::triangular_2d> & d)
   simplex.setVertices(vertices);
   d.add(simplex);
   
-  vertices[0] = &(d.vertex(1));
-  vertices[1] = &(d.vertex(3));
-  vertices[2] = &(d.vertex(2));
+  vertices[0] = &(viennagrid::ncells<0>(d)[1]);
+  vertices[1] = &(viennagrid::ncells<0>(d)[3]);
+  vertices[2] = &(viennagrid::ncells<0>(d)[2]);
   simplex.setVertices(vertices);
   d.add(simplex);
   
@@ -135,9 +135,9 @@ void setup_domain(viennagrid::domain<viennagrid::config::triangular_3d> & d)
   simplex.setVertices(vertices);
   d.add(simplex);
   
-  vertices[0] = &(d.vertex(1));
-  vertices[1] = &(d.vertex(3));
-  vertices[2] = &(d.vertex(2));
+  vertices[0] = &(viennagrid::ncells<0>(d)[1]);
+  vertices[1] = &(viennagrid::ncells<0>(d)[3]);
+  vertices[2] = &(viennagrid::ncells<0>(d)[2]);
   simplex.setVertices(vertices);
   d.add(simplex);
 
@@ -179,10 +179,10 @@ void setup_domain(viennagrid::domain<viennagrid::config::tetrahedral_3d> & d)
   simplex.setVertices(vertices);
   d.add(simplex);
   
-  vertices[0] = &(d.vertex(1));
-  vertices[1] = &(d.vertex(3));
-  vertices[2] = &(d.vertex(2));
-  vertices[3] = &(d.vertex(0));
+  vertices[0] = &(viennagrid::ncells<0>(d)[1]);
+  vertices[1] = &(viennagrid::ncells<0>(d)[3]);
+  vertices[2] = &(viennagrid::ncells<0>(d)[2]);
+  vertices[3] = &(viennagrid::ncells<0>(d)[0]);
   simplex.setVertices(vertices);
   d.add(simplex);
                                             

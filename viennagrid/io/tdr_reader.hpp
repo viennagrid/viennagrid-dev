@@ -157,7 +157,7 @@ namespace viennagrid
                   std::vector<std::size_t> const& tempcell = *cit;
                 
                   for(std::size_t d = 0; d < CELLSIZE; d++)
-                     vertices[d] = &(domain.vertex(tempcell[d]));
+                     vertices[d] = &(viennagrid::ncells<0>(domain)[tempcell[d]]);
 
 //                  vertices[0] = &(domain.vertex(tempcell[0]));
 //                  vertices[1] = &(domain.vertex(tempcell[1])); 

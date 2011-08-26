@@ -283,10 +283,10 @@ namespace viennagrid
       typedef Config    config_type;
       typedef std::size_t   size_type;
 
-      void reserve_cells(size_type num) 
-      {
-        viennagrid::traits::reserve(elements, num); 
-      }
+      //void reserve_cells(size_type num) 
+      //{
+      //  viennagrid::traits::reserve(elements, num); 
+      //}
       
       using base_type::add;
       
@@ -338,8 +338,8 @@ namespace viennagrid
         return size<j>( typename level_discriminator<dim, j>::result_type() );
       }
       
-      element_type cells(size_type i) { return elements[i]; }
-      element_type cells(size_type i) const { return elements[i]; }      
+      //element_type cells(size_type i) { return elements[i]; }
+      //element_type cells(size_type i) const { return elements[i]; }      
       
     private:
       container_type    elements;        //container of elements
@@ -364,10 +364,10 @@ namespace viennagrid
       typedef Config    config_type;
       typedef std::size_t size_type;
       
-      void reserve_vertices(size_type num) 
-      {
-        viennagrid::traits::reserve(elements, num);
-      }
+      //void reserve_vertices(size_type num) 
+      //{
+      //  viennagrid::traits::reserve(elements, num);
+      //}
       
       element_type * add(element_type const & e)
       {
@@ -379,11 +379,11 @@ namespace viennagrid
         return &(elements.back());
       }
       
-      element_type & vertex(size_type id) 
-      {
-        assert(id < elements.size() && "Vertex index out of bounds!");
-        return elements[id]; 
-      }
+      //element_type & vertex(size_type id) 
+      //{
+      //  assert(id < elements.size() && "Vertex index out of bounds!");
+      //  return elements[id]; 
+      //}
       
       template <dim_type dim>
       container_type * container() { return &elements; }
@@ -434,40 +434,10 @@ namespace viennagrid
         return *this;
       }
       
-      /*
-      void segment_resize(size_type num)
-      {
-        assert(segments.size() == 0 || "Segments in domain already created!");
-        segments.resize(num);
-        
-        for (size_t i=0; i<segments.size(); ++i)
-        {
-          segments[i].set_domain(*this);
-        }
-      }
-
-      segment_type const& segment(size_type seg_index) const
-      {
-        assert(seg_index < segments.size() || "Segment index out of bounds!");
-        return segments[seg_index];
-      }
-
-      segment_type & segment(size_type seg_index)
-      {
-        assert(seg_index < segments.size() || "Segment index out of bounds!");
-        return segments[seg_index];
-      }
-
-      const std::vector< segment_type > * segment_container() const { return & segments; }
-      const std::vector< segment_type > * segment_container()       { return & segments; }      
-      
-      size_type segment_size() const { return segments.size(); } */
-      
       segment_container & segments() { return segments_; }
       segment_container const & segments() const { return segments_; }
     
     private:
-      //store segments here
       segment_container segments_;
   };
 

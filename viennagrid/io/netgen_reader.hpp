@@ -24,6 +24,7 @@
 #include <assert.h>
 #include "viennagrid/forwards.h"
 #include "viennagrid/io/helper.hpp"
+#include "viennagrid/iterators.hpp"
 
 namespace viennagrid
 {
@@ -88,8 +89,7 @@ namespace viennagrid
         assert(node_num > 0);
         
         //std::cout << "Reading " << node_num << " vertices... " << std::endl;  
-        //reserve the memory:
-        domain.reserve_vertices(node_num);
+
         VertexType vertex;
     
         for (int i=0; i<node_num; i++)
@@ -113,7 +113,7 @@ namespace viennagrid
         // Read cells:
         //
         reader >> cell_num;
-        domain.reserve_cells(cell_num);
+        //domain.reserve_cells(cell_num);
         CellType cell;
         //std::cout << "Filling " << cell_num << " cells:" << std::endl;
     
@@ -134,7 +134,7 @@ namespace viennagrid
               throw bad_file_format_exception(filename, "EOF encountered while reading cells (vertex ID expected).");
             
             reader >> vertex_num;
-            vertices[j] = &(domain.vertex(vertex_num - 1));  //Note that Netgen uses vertex indices with base 1
+            vertices[j] = &(viennagrid::ncells<0>(domain)[vertex_num - 1]);  //Note that Netgen uses vertex indices with base 1
           }
     
           //std::cout << std::endl << "Adding cell: " << &cell << " at " << cell_id << std::endl;

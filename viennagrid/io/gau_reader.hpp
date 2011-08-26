@@ -119,8 +119,6 @@ namespace io
          std::cout << "geometry size: " << point_size << std::endl;
       #endif
 
-         domain.reserve_vertices(point_size);
-
          for (std::size_t i = 0; i < point_size; i++)
          {
             CoordType coords[DimensionTag::value];
@@ -186,8 +184,8 @@ namespace io
                   std::size_t ind[2];
                   reader >> trash >> ind[0] >> ind[1];
                   
-                  vertices[0] = &(domain.vertex(ind[0]));               
-                  vertices[1] = &(domain.vertex(ind[1]));
+                  vertices[0] = &(viennagrid::ncells<0>(domain)[ ind[0] ]);               
+                  vertices[1] = &(viennagrid::ncells<0>(domain)[ ind[1] ]);
                #ifdef IODEBUG
                   std::cout << "  id: " << " : " << ind[0] << " " << ind[1] << std::endl;
                #endif
@@ -196,9 +194,9 @@ namespace io
                {
                   std::size_t ind[3];
                   reader >> trash >> ind[0] >> ind[1] >> ind[2];
-                  vertices[0] = &(domain.vertex(ind[0]));               
-                  vertices[1] = &(domain.vertex(ind[1]));
-                  vertices[2] = &(domain.vertex(ind[2]));
+                  vertices[0] = &(viennagrid::ncells<0>(domain)[ ind[0] ]);               
+                  vertices[1] = &(viennagrid::ncells<0>(domain)[ ind[1] ]);
+                  vertices[2] = &(viennagrid::ncells<0>(domain)[ ind[2] ]);
                #ifdef IODEBUG
                   std::cout << "  id: " << " : " << ind[0] << " " << ind[1] << " " << ind[2] << std::endl;
                #endif
@@ -207,10 +205,10 @@ namespace io
                {
                   std::size_t ind[4];
                   reader >> trash >> ind[0] >> ind[1] >> ind[2] >> ind[3];
-                  vertices[0] = &(domain.vertex(ind[0]));               
-                  vertices[1] = &(domain.vertex(ind[1]));
-                  vertices[2] = &(domain.vertex(ind[2]));
-                  vertices[3] = &(domain.vertex(ind[3]));
+                  vertices[0] = &(viennagrid::ncells<0>(domain)[ ind[0] ]);               
+                  vertices[1] = &(viennagrid::ncells<0>(domain)[ ind[1] ]);
+                  vertices[2] = &(viennagrid::ncells<0>(domain)[ ind[2] ]);
+                  vertices[3] = &(viennagrid::ncells<0>(domain)[ ind[3] ]);
                #ifdef IODEBUG
                   std::cout << "  id: " << " : " << ind[0] << " " << ind[1] << " " << ind[2] << " " << ind[3] << std::endl;
                #endif
@@ -473,7 +471,7 @@ namespace io
          // now that all segments and cells have been read, and due to that 
          // we are aware of how many cells in total there are, 
          // we can actually create the cells within the input domain
-         domain.reserve_cells(global_cell_size);
+         //domain.reserve_cells(global_cell_size);    //[KR] not needed any longer
 
          for(typename segment_cell_map_type::iterator sit = segment_cell_map.begin();
              sit != segment_cell_map.end(); sit++)

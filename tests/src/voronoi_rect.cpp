@@ -41,7 +41,6 @@ void setup_device(DeviceType & device)
   // Step 1: Set up vertices:
   //
   VertexType vertex;
-  device.reserve_vertices(9);
 
   vertex.getPoint()[0] = 0;   // #0
   vertex.getPoint()[1] = 0;
@@ -86,33 +85,32 @@ void setup_device(DeviceType & device)
   
   CellType cell;
   VertexType *vertices[4];
-  device.reserve_cells(4);
   
-  vertices[0] = &(device.vertex(0));
-  vertices[1] = &(device.vertex(8));
-  vertices[2] = &(device.vertex(1));
-  vertices[3] = &(device.vertex(2));
+  vertices[0] = &(viennagrid::ncells<0>(device)[0]);
+  vertices[1] = &(viennagrid::ncells<0>(device)[8]);
+  vertices[2] = &(viennagrid::ncells<0>(device)[1]);
+  vertices[3] = &(viennagrid::ncells<0>(device)[2]);
   cell.setVertices(vertices);
   device.add(cell);
 
-  vertices[0] = &(device.vertex(0));
-  vertices[1] = &(device.vertex(2));
-  vertices[2] = &(device.vertex(3));
-  vertices[3] = &(device.vertex(4));
+  vertices[0] = &(viennagrid::ncells<0>(device)[0]);
+  vertices[1] = &(viennagrid::ncells<0>(device)[2]);
+  vertices[2] = &(viennagrid::ncells<0>(device)[3]);
+  vertices[3] = &(viennagrid::ncells<0>(device)[4]);
   cell.setVertices(vertices);
   device.add(cell);
 
-  vertices[0] = &(device.vertex(0));
-  vertices[1] = &(device.vertex(4));
-  vertices[2] = &(device.vertex(5));
-  vertices[3] = &(device.vertex(6));
+  vertices[0] = &(viennagrid::ncells<0>(device)[0]);
+  vertices[1] = &(viennagrid::ncells<0>(device)[4]);
+  vertices[2] = &(viennagrid::ncells<0>(device)[5]);
+  vertices[3] = &(viennagrid::ncells<0>(device)[6]);
   cell.setVertices(vertices);
   device.add(cell);
 
-  vertices[0] = &(device.vertex(0));
-  vertices[1] = &(device.vertex(6));
-  vertices[2] = &(device.vertex(7));
-  vertices[3] = &(device.vertex(8));
+  vertices[0] = &(viennagrid::ncells<0>(device)[0]);
+  vertices[1] = &(viennagrid::ncells<0>(device)[6]);
+  vertices[2] = &(viennagrid::ncells<0>(device)[7]);
+  vertices[3] = &(viennagrid::ncells<0>(device)[8]);
   cell.setVertices(vertices);
   device.add(cell);
 

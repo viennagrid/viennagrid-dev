@@ -278,7 +278,7 @@ namespace viennagrid
           long numVertices = 0;
           long offsetIdx = 0;
 
-          segment.reserve_cells(cellNum);
+          //segment.reserve_cells(cellNum);
 
           for (long i = 0; i < cellNum; i++)
           {
@@ -308,7 +308,7 @@ namespace viennagrid
             //****************************************************
             for (long j = 0; j < numVertices; j++)
             {
-              vertices[j] = &(segment.vertex(cells[j + offsetIdx]));
+              vertices[j] = &(viennagrid::ncells<0>(segment)[cells[j + offsetIdx]]);
               //std::cout << "j+offsetidx: " << j+offsetIdx << std::endl;
             }
 
@@ -437,7 +437,7 @@ namespace viennagrid
           
           // transfer the geometry information from the temporary container 
           // to the viennagrid datastructure
-          domain.reserve_vertices(geometry_container.size());
+          //domain.reserve_vertices(geometry_container.size());
           std::size_t index = 0;
           for(geometry_iterator_type it = geometry_container.begin();
               it != geometry_container.end(); it++)

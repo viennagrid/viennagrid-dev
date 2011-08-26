@@ -76,7 +76,7 @@ namespace viennagrid
         Base::print_short();
       }
 
-      VertexType & getVertex(int pos) const { return *(Base::vertices_[pos]); }
+      //VertexType & getVertex(int pos) const { return *(Base::vertices_[pos]); }
 
       void setVertices(VertexType **vertices)
       {

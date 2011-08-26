@@ -93,7 +93,6 @@ void testNewDomain(std::string & infile, std::string & outfile)
   VertexType v10(p10, 10);
   VertexType v11(p11, 11);
 
-  domain.reserve_vertices(12);
   std::cout << "Adding vertices to segment:" << std::endl;
   domain.add(v0);
   domain.add(v1);
@@ -111,23 +110,23 @@ void testNewDomain(std::string & infile, std::string & outfile)
   VertexType * vertices0[8];
   VertexType * vertices1[8];
   
-  vertices0[0] = &(domain.vertex(0));
-  vertices0[1] = &(domain.vertex(1));
-  vertices0[2] = &(domain.vertex(2));
-  vertices0[3] = &(domain.vertex(3));
-  vertices0[4] = &(domain.vertex(4));
-  vertices0[5] = &(domain.vertex(5));
-  vertices0[6] = &(domain.vertex(6));
-  vertices0[7] = &(domain.vertex(7));
+  vertices0[0] = &(viennagrid::ncells<0>(domain)[0]);
+  vertices0[1] = &(viennagrid::ncells<0>(domain)[1]);
+  vertices0[2] = &(viennagrid::ncells<0>(domain)[2]);
+  vertices0[3] = &(viennagrid::ncells<0>(domain)[3]);
+  vertices0[4] = &(viennagrid::ncells<0>(domain)[4]);
+  vertices0[5] = &(viennagrid::ncells<0>(domain)[5]);
+  vertices0[6] = &(viennagrid::ncells<0>(domain)[6]);
+  vertices0[7] = &(viennagrid::ncells<0>(domain)[7]);
 
-  vertices1[0] = &(domain.vertex(1));
-  vertices1[1] = &(domain.vertex(8));
-  vertices1[2] = &(domain.vertex(9));
-  vertices1[3] = &(domain.vertex(2));
-  vertices1[4] = &(domain.vertex(5));
-  vertices1[5] = &(domain.vertex(10));
-  vertices1[6] = &(domain.vertex(11));
-  vertices1[7] = &(domain.vertex(6));
+  vertices1[0] = &(viennagrid::ncells<0>(domain)[1]);
+  vertices1[1] = &(viennagrid::ncells<0>(domain)[8]);
+  vertices1[2] = &(viennagrid::ncells<0>(domain)[9]);
+  vertices1[3] = &(viennagrid::ncells<0>(domain)[2]);
+  vertices1[4] = &(viennagrid::ncells<0>(domain)[5]);
+  vertices1[5] = &(viennagrid::ncells<0>(domain)[10]);
+  vertices1[6] = &(viennagrid::ncells<0>(domain)[11]);
+  vertices1[7] = &(viennagrid::ncells<0>(domain)[6]);
   
 #else
   
@@ -146,7 +145,6 @@ void testNewDomain(std::string & infile, std::string & outfile)
   VertexType v4(p4, 4);
   VertexType v5(p5, 5);
 
-  domain.reserve_vertices(6);
   std::cout << "Adding vertices to segment:" << std::endl;
   domain.add(v0);
   domain.add(v1);
@@ -158,19 +156,18 @@ void testNewDomain(std::string & infile, std::string & outfile)
   VertexType * vertices0[4];
   VertexType * vertices1[4];
   
-  vertices0[0] = &(domain.vertex(0));
-  vertices0[1] = &(domain.vertex(1));
-  vertices0[2] = &(domain.vertex(4));
-  vertices0[3] = &(domain.vertex(5));
+  vertices0[0] = &(viennagrid::ncells<0>(domain)[0]);
+  vertices0[1] = &(viennagrid::ncells<0>(domain)[1]);
+  vertices0[2] = &(viennagrid::ncells<0>(domain)[4]);
+  vertices0[3] = &(viennagrid::ncells<0>(domain)[5]);
 
-  vertices1[0] = &(domain.vertex(1));
-  vertices1[1] = &(domain.vertex(2));
-  vertices1[2] = &(domain.vertex(3));
-  vertices1[3] = &(domain.vertex(4));
+  vertices1[0] = &(viennagrid::ncells<0>(domain)[1]);
+  vertices1[1] = &(viennagrid::ncells<0>(domain)[2]);
+  vertices1[2] = &(viennagrid::ncells<0>(domain)[3]);
+  vertices1[3] = &(viennagrid::ncells<0>(domain)[4]);
   
 #endif
   
-  domain.reserve_cells(2);
   hypercube0.setVertices(vertices0);
   domain.add(hypercube0);
   

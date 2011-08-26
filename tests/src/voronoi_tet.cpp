@@ -138,7 +138,7 @@ int main(int argc, char *argv[])
   std::cout << std::endl;
   viennagrid::ncells<3>(my_domain)[0].print_short();
   std::cout << std::endl;
-  std::cout << "Circumcenter of first cell: " << viennagrid::circumcenter(my_domain.cells(0)) << std::endl;
+  std::cout << "Circumcenter of first cell: " << viennagrid::circumcenter(viennagrid::ncells<3>(my_domain)[0]) << std::endl;
 
   double voronoi_vol = voronoi_volume(my_domain);
   double domain_vol = viennagrid::volume(my_domain);  

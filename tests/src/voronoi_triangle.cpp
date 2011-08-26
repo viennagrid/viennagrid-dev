@@ -40,7 +40,6 @@ void setup_device(DeviceType & device)
   // Step 1: Set up vertices:
   //
   VertexType vertex;
-  device.reserve_vertices(9);
 
   vertex.getPoint()[0] = 0;   // #0
   vertex.getPoint()[1] = 0;
@@ -85,19 +84,18 @@ void setup_device(DeviceType & device)
   
   CellType cell;
   VertexType *vertices[3];
-  device.reserve_cells(8);
   
-  vertices[0] = &(device.vertex(8));
-  vertices[1] = &(device.vertex(1));
-  vertices[2] = &(device.vertex(0));
+  vertices[0] = &(viennagrid::ncells<0>(device)[8]);
+  vertices[1] = &(viennagrid::ncells<0>(device)[1]);
+  vertices[2] = &(viennagrid::ncells<0>(device)[0]);
   cell.setVertices(vertices);
   device.add(cell);
 
   for (size_t i=1; i<8; ++i)
   {
-    vertices[0] = &(device.vertex(i));
-    vertices[1] = &(device.vertex(i+1));
-    vertices[2] = &(device.vertex(0));
+    vertices[0] = &(viennagrid::ncells<0>(device)[i]);
+    vertices[1] = &(viennagrid::ncells<0>(device)[i+1]);
+    vertices[2] = &(viennagrid::ncells<0>(device)[0]);
     cell.setVertices(vertices);
     device.add(cell);
   }
@@ -126,10 +124,10 @@ int main(int argc, char *argv[])
   std::cout << std::endl;
   viennagrid::ncells<2>(device)[0].print_short();
   std::cout << std::endl;
-  std::cout << "Circumcenter of first cell: " << viennagrid::circumcenter(device.cells(0)) << std::endl;
-  std::cout << "Area of first cell: " << viennagrid::spanned_volume(device.vertex(0).getPoint(),
-                                                                    device.vertex(1).getPoint(),
-                                                                    device.vertex(8).getPoint()) << std::endl;
+  std::cout << "Circumcenter of first cell: " << viennagrid::circumcenter(viennagrid::ncells<2>(device)[0]) << std::endl;
+  std::cout << "Area of first cell: " << viennagrid::spanned_volume(viennagrid::ncells<0>(device)[0].getPoint(),
+                                                                    viennagrid::ncells<0>(device)[1].getPoint(),
+                                                                    viennagrid::ncells<0>(device)[8].getPoint()) << std::endl;
 
   double voronoi_vol = voronoi_volume(device);  
   double domain_vol = viennagrid::volume(device);  

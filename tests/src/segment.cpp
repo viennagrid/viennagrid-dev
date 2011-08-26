@@ -100,7 +100,6 @@ void test(viennagrid::config::tetrahedral_3d)
   VertexType * vertices[7];
   
   std::cout << "Adding vertices to domain..." << std::endl;
-  domain.reserve_vertices(7);
   vertices[0] = domain.add(v0); std::cout << vertices[0] << std::endl;
   vertices[1] = domain.add(v1); std::cout << vertices[1] << std::endl;
   vertices[2] = domain.add(v2); std::cout << vertices[2] << std::endl;
@@ -114,35 +113,34 @@ void test(viennagrid::config::tetrahedral_3d)
 
   std::cout << "Adding cells to segments..." << std::endl;
   CellType simplex;
-  domain.reserve_cells(4);
   
   std::cout << "Filling segment 0..." << std::endl;
-  vertices[0] = &(domain.vertex(0));
-  vertices[1] = &(domain.vertex(1));
-  vertices[2] = &(domain.vertex(6));
-  vertices[3] = &(domain.vertex(3));
+  vertices[0] = &(viennagrid::ncells<0>(domain)[0]);
+  vertices[1] = &(viennagrid::ncells<0>(domain)[1]);
+  vertices[2] = &(viennagrid::ncells<0>(domain)[6]);
+  vertices[3] = &(viennagrid::ncells<0>(domain)[3]);
   simplex.setVertices(vertices);
   domain.segments()[0].add(simplex);
   
-  vertices[0] = &(domain.vertex(1));
-  vertices[1] = &(domain.vertex(6));
-  vertices[2] = &(domain.vertex(3));
-  vertices[3] = &(domain.vertex(4));
+  vertices[0] = &(viennagrid::ncells<0>(domain)[1]);
+  vertices[1] = &(viennagrid::ncells<0>(domain)[6]);
+  vertices[2] = &(viennagrid::ncells<0>(domain)[3]);
+  vertices[3] = &(viennagrid::ncells<0>(domain)[4]);
   simplex.setVertices(vertices);
   domain.segments()[0].add(simplex);
 
   std::cout << "Filling segment 1..." << std::endl;
-  vertices[0] = &(domain.vertex(1));
-  vertices[1] = &(domain.vertex(2));
-  vertices[2] = &(domain.vertex(6));
-  vertices[3] = &(domain.vertex(4));
+  vertices[0] = &(viennagrid::ncells<0>(domain)[1]);
+  vertices[1] = &(viennagrid::ncells<0>(domain)[2]);
+  vertices[2] = &(viennagrid::ncells<0>(domain)[6]);
+  vertices[3] = &(viennagrid::ncells<0>(domain)[4]);
   simplex.setVertices(vertices);
   domain.segments()[1].add(simplex);
   
-  vertices[0] = &(domain.vertex(2));
-  vertices[1] = &(domain.vertex(6));
-  vertices[2] = &(domain.vertex(4));
-  vertices[3] = &(domain.vertex(5));
+  vertices[0] = &(viennagrid::ncells<0>(domain)[2]);
+  vertices[1] = &(viennagrid::ncells<0>(domain)[6]);
+  vertices[2] = &(viennagrid::ncells<0>(domain)[4]);
+  vertices[3] = &(viennagrid::ncells<0>(domain)[5]);
   simplex.setVertices(vertices);
   domain.segments()[1].add(simplex);
   
@@ -211,7 +209,6 @@ void test(viennagrid::config::triangular_2d)
   VertexType * vertices[6];
   
   std::cout << "Adding vertices to domain..." << std::endl;
-  domain.reserve_vertices(6);
   vertices[0] = domain.add(v0); std::cout << vertices[0] << std::endl;
   vertices[1] = domain.add(v1); std::cout << vertices[1] << std::endl;
   vertices[2] = domain.add(v2); std::cout << vertices[2] << std::endl;
@@ -224,31 +221,30 @@ void test(viennagrid::config::triangular_2d)
 
   std::cout << "Adding cells to segments..." << std::endl;
   CellType simplex;
-  domain.reserve_cells(4);
   
   std::cout << "Filling segment 0..." << std::endl;
-  vertices[0] = &(domain.vertex(0));
-  vertices[1] = &(domain.vertex(1));
-  vertices[2] = &(domain.vertex(3));
+  vertices[0] = &(viennagrid::ncells<0>(domain)[0]);
+  vertices[1] = &(viennagrid::ncells<0>(domain)[1]);
+  vertices[2] = &(viennagrid::ncells<0>(domain)[3]);
   simplex.setVertices(vertices);
   domain.segments()[0].add(simplex);
   
-  vertices[0] = &(domain.vertex(1));
-  vertices[1] = &(domain.vertex(4));
-  vertices[2] = &(domain.vertex(3));
+  vertices[0] = &(viennagrid::ncells<0>(domain)[1]);
+  vertices[1] = &(viennagrid::ncells<0>(domain)[4]);
+  vertices[2] = &(viennagrid::ncells<0>(domain)[3]);
   simplex.setVertices(vertices);
   domain.segments()[0].add(simplex);
 
   std::cout << "Filling segment 1..." << std::endl;
-  vertices[0] = &(domain.vertex(1));
-  vertices[1] = &(domain.vertex(2));
-  vertices[2] = &(domain.vertex(4));
+  vertices[0] = &(viennagrid::ncells<0>(domain)[1]);
+  vertices[1] = &(viennagrid::ncells<0>(domain)[2]);
+  vertices[2] = &(viennagrid::ncells<0>(domain)[4]);
   simplex.setVertices(vertices);
   domain.segments()[1].add(simplex);
   
-  vertices[0] = &(domain.vertex(2));
-  vertices[1] = &(domain.vertex(5));
-  vertices[2] = &(domain.vertex(4));
+  vertices[0] = &(viennagrid::ncells<0>(domain)[2]);
+  vertices[1] = &(viennagrid::ncells<0>(domain)[5]);
+  vertices[2] = &(viennagrid::ncells<0>(domain)[4]);
   simplex.setVertices(vertices);
   domain.segments()[1].add(simplex);
   

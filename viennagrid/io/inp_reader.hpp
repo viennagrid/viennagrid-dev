@@ -155,7 +155,7 @@ namespace io
 //                  else std::cout << "not found" << std::endl;
 
                   //std::cout << domain.vertex( index_map[(*cit)[i]] ).getPoint() << std::endl; 
-                  vertices[i] = &(domain.vertex( index_map[(*cit)[i]] ));               
+                  vertices[i] = &(viennagrid::ncells<0>(domain)[ index_map[(*cit)[i]] ]);               
                }
                //exit(0);
                cell_type cell;
