@@ -52,8 +52,8 @@ namespace viennagrid
       VertexOnCellRange vertices = viennagrid::ncells<0>(cell);
       VertexOnCellIterator vocit = vertices.begin();
       
-      PointType const & A = vocit->getPoint(); ++vocit;
-      PointType const & B = vocit->getPoint(); 
+      PointType const & A = vocit->point(); ++vocit;
+      PointType const & B = vocit->point(); 
       
       PointType ret = A + B;
       ret /= 2.0;
@@ -81,9 +81,9 @@ namespace viennagrid
       VertexOnCellRange vertices = viennagrid::ncells<0>(cell);
       VertexOnCellIterator vocit = vertices.begin();
       
-      PointType const & A = vocit->getPoint(); ++vocit;
-      PointType const & B = vocit->getPoint(); ++vocit;
-      PointType const & C = vocit->getPoint();
+      PointType const & A = vocit->point(); ++vocit;
+      PointType const & B = vocit->point(); ++vocit;
+      PointType const & C = vocit->point();
       
       PointType circ_cent;
       
@@ -129,7 +129,7 @@ namespace viennagrid
            vocit != vertices.end();
            ++vocit)
       {
-        p0 += vocit->getPoint();
+        p0 += vocit->point();
       }
       
       p0 /= viennagrid::topology::subcell_desc<CellTag, 0>::num_elements;
@@ -158,9 +158,9 @@ namespace viennagrid
       VertexOnCellRange vertices = viennagrid::ncells<0>(cell);
       VertexOnCellIterator vocit = vertices.begin();
       
-      PointType const & A = vocit->getPoint(); ++vocit;
-      PointType const & B = vocit->getPoint(); ++vocit;
-      PointType const & C = vocit->getPoint();
+      PointType const & A = vocit->point(); ++vocit;
+      PointType const & B = vocit->point(); ++vocit;
+      PointType const & C = vocit->point();
       
       double denominator = 2.0 * viennagrid::inner_prod(viennagrid::cross_prod(A-B, B-C), viennagrid::cross_prod(A-B, B-C));
       
@@ -198,7 +198,7 @@ namespace viennagrid
            vocit != vertices.end();
            ++vocit)
       {
-        p0 += vocit->getPoint();
+        p0 += vocit->point();
       }
       
       p0 /= viennagrid::topology::subcell_desc<ElementTag, 0>::num_elements;
@@ -226,10 +226,10 @@ namespace viennagrid
       VertexOnCellRange vertices = viennagrid::ncells<0>(cell);
       VertexOnCellIterator vocit = vertices.begin();
       
-      PointType const & O = vocit->getPoint(); ++vocit;
-      PointType const & A = vocit->getPoint() - O; ++vocit;
-      PointType const & B = vocit->getPoint() - O; ++vocit;
-      PointType const & C = vocit->getPoint() - O;
+      PointType const & O = vocit->point(); ++vocit;
+      PointType const & A = vocit->point() - O; ++vocit;
+      PointType const & B = vocit->point() - O; ++vocit;
+      PointType const & C = vocit->point() - O;
       
       PointType circ_cent = (cross_prod(A, B) * viennagrid::inner_prod(C, C)
                              + cross_prod(C, A) * viennagrid::inner_prod(B, B)
@@ -270,7 +270,7 @@ namespace viennagrid
            vocit != vertices.end();
            ++vocit)
       {
-        p0 += vocit->getPoint();
+        p0 += vocit->point();
       }
       
       p0 /= viennagrid::topology::subcell_desc<CellTag, 0>::num_elements;

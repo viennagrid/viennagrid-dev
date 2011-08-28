@@ -33,81 +33,10 @@
 #include "refinement-common.hpp"
 
 
-//
-// Generate a single tetrahedron
-//
-template <typename DeviceType>
-void setup_device(DeviceType & device)
-{
-  typedef typename DeviceType::config_type           Config;
-  typedef typename Config::cell_tag                  CellTag;
-  
-  typedef typename viennagrid::result_of::ncell<Config, 0>::type                         VertexType;
-  typedef typename viennagrid::result_of::ncell<Config, CellTag::topology_level>::type   CellType;
-  
-  
-  //
-  // Step 1: Set up vertices:
-  //
-  VertexType vertex;
-  device.reserve_vertices(5);
-
-  vertex.getPoint()[0] = 0;   // #0
-  vertex.getPoint()[1] = 0;
-  vertex.getPoint()[2] = 0;
-  device.add(vertex);
-  
-  vertex.getPoint()[0] = 1;   // #1
-  vertex.getPoint()[1] = 0;
-  vertex.getPoint()[2] = 0;
-  device.add(vertex);
-
-  vertex.getPoint()[0] = 0;   // #2
-  vertex.getPoint()[1] = 1;
-  vertex.getPoint()[2] = 0;
-  device.add(vertex);
-
-  vertex.getPoint()[0] = 0;   // #3
-  vertex.getPoint()[1] = 0;
-  vertex.getPoint()[2] = 1;
-  device.add(vertex);
-  
-  vertex.getPoint()[0] = 1;   // #4
-  vertex.getPoint()[1] = 0;
-  vertex.getPoint()[2] = 1;
-  device.add(vertex);
-  
-  
-  //
-  // Step 2: Set up cells:
-  //
-  
-  CellType cell;
-  VertexType *vertices[4];
-  device.reserve_cells(2);
-  
-  vertices[0] = &(device.vertex(0));
-  vertices[1] = &(device.vertex(1));
-  vertices[2] = &(device.vertex(2));
-  vertices[3] = &(device.vertex(3));
-  cell.setVertices(vertices);
-  device.add(cell);
-  
-  vertices[0] = &(device.vertex(3));
-  vertices[1] = &(device.vertex(1));
-  vertices[2] = &(device.vertex(2));
-  vertices[3] = &(device.vertex(4));
-  cell.setVertices(vertices);
-  device.add(cell);
-  
-}
-
-
-
 int main(int argc, char *argv[])
 {
   typedef viennagrid::config::tetrahedral_3d          Config;
-  typedef viennagrid::domain<Config>                  DomainType;
+  typedef viennagrid::result_of::domain<Config>::type                  DomainType;
   
   std::cout << "* main(): Creating device..." << std::endl;
   DomainType my_domain;
@@ -136,7 +65,7 @@ int main(int argc, char *argv[])
   
   
   std::cout << std::endl;
-  viennagrid::ncells<3>(my_domain)[0].print_short();
+  std::cout << viennagrid::ncells<3>(my_domain)[0] << std::endl;
   std::cout << std::endl;
   std::cout << "Circumcenter of first cell: " << viennagrid::circumcenter(viennagrid::ncells<3>(my_domain)[0]) << std::endl;
 
@@ -153,7 +82,7 @@ int main(int argc, char *argv[])
   
   //write to vtk:
   viennagrid::io::vtk_writer<DomainType> my_vtk_writer;
-  my_vtk_writer.writeDomain(my_domain, "voronoi_tet");
+  my_vtk_writer(my_domain, "voronoi_tet");
   
   std::cout << "*******************************" << std::endl;
   std::cout << "* Test finished successfully! *" << std::endl;

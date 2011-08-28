@@ -131,11 +131,11 @@ namespace io
          #ifdef IODEBUG
             std::cout << "  id: " << i << " : " << coords[0] << " " << coords[1] << " " << coords[2] << std::endl;
          #endif
-            vertex.getPoint()[0] = coords[0];
-            vertex.getPoint()[1] = coords[1];
-            vertex.getPoint()[2] = coords[2];            
+            vertex.point()[0] = coords[0];
+            vertex.point()[1] = coords[1];
+            vertex.point()[2] = coords[2];            
             vertex.id(i);
-            domain.add(vertex);
+            domain.push_back(vertex);
          }
 
          // ############################ topology #########################
@@ -214,7 +214,7 @@ namespace io
                #endif
                }
                CellType cell;
-               cell.setVertices(vertices);
+               cell.vertices(vertices);
                segment_cell_map[segment_cnt].push_back(cell);
             }
 
@@ -479,7 +479,7 @@ namespace io
             for(typename cell_cont_type::iterator cit = sit->second.begin();
                 cit != sit->second.end(); cit++)
             {
-               domain.segments()[sit->first].add(*cit);            
+               domain.segments()[sit->first].push_back(*cit);            
             }
          }
          return 0;

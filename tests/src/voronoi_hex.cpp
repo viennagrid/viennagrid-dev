@@ -28,41 +28,41 @@ template <typename DomainType, typename VertexType>
 void add_plane(DomainType & device, VertexType & vertex)
 {
   //
-  vertex.getPoint()[0] = 0;   // #0
-  vertex.getPoint()[1] = 0;
-  device.add(vertex);
+  vertex.point()[0] = 0;   // #0
+  vertex.point()[1] = 0;
+  device.push_back(vertex);
   
-  vertex.getPoint()[0] = 2;   // #1
-  vertex.getPoint()[1] = 0;
-  device.add(vertex);
+  vertex.point()[0] = 2;   // #1
+  vertex.point()[1] = 0;
+  device.push_back(vertex);
 
-  vertex.getPoint()[0] = 1;   // #2
-  vertex.getPoint()[1] = 1;
-  device.add(vertex);
+  vertex.point()[0] = 1;   // #2
+  vertex.point()[1] = 1;
+  device.push_back(vertex);
 
-  vertex.getPoint()[0] = 0;   // #3
-  vertex.getPoint()[1] = 2;
-  device.add(vertex);
+  vertex.point()[0] = 0;   // #3
+  vertex.point()[1] = 2;
+  device.push_back(vertex);
   
-  vertex.getPoint()[0] = -1;   // #4
-  vertex.getPoint()[1] = 1;
-  device.add(vertex);
+  vertex.point()[0] = -1;   // #4
+  vertex.point()[1] = 1;
+  device.push_back(vertex);
   
-  vertex.getPoint()[0] = -2;   // #5
-  vertex.getPoint()[1] = 0;
-  device.add(vertex);
+  vertex.point()[0] = -2;   // #5
+  vertex.point()[1] = 0;
+  device.push_back(vertex);
   
-  vertex.getPoint()[0] = -1;   // #6
-  vertex.getPoint()[1] = -1;
-  device.add(vertex);
+  vertex.point()[0] = -1;   // #6
+  vertex.point()[1] = -1;
+  device.push_back(vertex);
   
-  vertex.getPoint()[0] = 0;   // #7
-  vertex.getPoint()[1] = -2;
-  device.add(vertex);
+  vertex.point()[0] = 0;   // #7
+  vertex.point()[1] = -2;
+  device.push_back(vertex);
   
-  vertex.getPoint()[0] = 1;   // #8
-  vertex.getPoint()[1] = -1;
-  device.add(vertex);
+  vertex.point()[0] = 1;   // #8
+  vertex.point()[1] = -1;
+  device.push_back(vertex);
   
 }
 
@@ -83,8 +83,8 @@ void add_cellplane(DomainType & device, CellType & cell, std::size_t offset)
   vertices[5] = &(viennagrid::ncells<0>(device)[17 + offset]);
   vertices[6] = &(viennagrid::ncells<0>(device)[10 + offset]);
   vertices[7] = &(viennagrid::ncells<0>(device)[11 + offset]);
-  cell.setVertices(vertices);
-  device.add(cell);
+  cell.vertices(vertices);
+  device.push_back(cell);
 
   vertices[0] = &(viennagrid::ncells<0>(device)[0 + offset]);
   vertices[1] = &(viennagrid::ncells<0>(device)[2 + offset]);
@@ -94,8 +94,8 @@ void add_cellplane(DomainType & device, CellType & cell, std::size_t offset)
   vertices[5] = &(viennagrid::ncells<0>(device)[11 + offset]);
   vertices[6] = &(viennagrid::ncells<0>(device)[12 + offset]);
   vertices[7] = &(viennagrid::ncells<0>(device)[13 + offset]);
-  cell.setVertices(vertices);
-  device.add(cell);
+  cell.vertices(vertices);
+  device.push_back(cell);
 
   vertices[0] = &(viennagrid::ncells<0>(device)[0 + offset]);
   vertices[1] = &(viennagrid::ncells<0>(device)[4 + offset]);
@@ -105,8 +105,8 @@ void add_cellplane(DomainType & device, CellType & cell, std::size_t offset)
   vertices[5] = &(viennagrid::ncells<0>(device)[13 + offset]);
   vertices[6] = &(viennagrid::ncells<0>(device)[14 + offset]);
   vertices[7] = &(viennagrid::ncells<0>(device)[15 + offset]);
-  cell.setVertices(vertices);
-  device.add(cell);
+  cell.vertices(vertices);
+  device.push_back(cell);
 
   vertices[0] = &(viennagrid::ncells<0>(device)[0 + offset]);
   vertices[1] = &(viennagrid::ncells<0>(device)[6 + offset]);
@@ -116,8 +116,8 @@ void add_cellplane(DomainType & device, CellType & cell, std::size_t offset)
   vertices[5] = &(viennagrid::ncells<0>(device)[15 + offset]);
   vertices[6] = &(viennagrid::ncells<0>(device)[16 + offset]);
   vertices[7] = &(viennagrid::ncells<0>(device)[17 + offset]);
-  cell.setVertices(vertices);
-  device.add(cell);
+  cell.vertices(vertices);
+  device.push_back(cell);
 }
 
 //
@@ -160,7 +160,7 @@ void setup_device(DeviceType & device)
 int main(int argc, char *argv[])
 {
   typedef viennagrid::config::hexahedron_3d           Config;
-  typedef viennagrid::domain<Config>   DeviceType;
+  typedef viennagrid::result_of::domain<Config>::type   DeviceType;
   
   std::cout << "* main(): Creating device..." << std::endl;
   DeviceType device;
@@ -209,7 +209,7 @@ int main(int argc, char *argv[])
   
   //write to vtk:
   viennagrid::io::vtk_writer<DeviceType> my_vtk_writer;
-  my_vtk_writer.writeDomain(device, "voronoi_hex");
+  my_vtk_writer(device, "voronoi_hex");
   
   std::cout << "*******************************" << std::endl;
   std::cout << "* Test finished successfully! *" << std::endl;

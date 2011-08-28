@@ -56,7 +56,7 @@ struct TestDomainConfig
 void testNewDomain(std::string & infile, std::string & outfile)
 {
 
-  typedef viennagrid::domain<TestDomainConfig>        Domain;
+  typedef viennagrid::result_of::domain<TestDomainConfig>::type        Domain;
   typedef TestDomainConfig::cell_tag                                         CellTag;
   typedef viennagrid::segment_t<TestDomainConfig>       SegmentType;
   
@@ -118,7 +118,7 @@ void testNewDomain(std::string & infile, std::string & outfile)
        vit != vertices.end();
        ++vit)
   {
-    vit->print_short();
+    std::cout << *vit << std::endl;
     typedef viennagrid::result_of::ncell_range<VertexType, 1>::type      EdgeOnVertexContainer;
     typedef viennagrid::result_of::iterator<EdgeOnVertexContainer>::type     EdgeOnVertexIterator;
     
@@ -127,7 +127,7 @@ void testNewDomain(std::string & infile, std::string & outfile)
          eovit != edges.end();
          ++eovit)
     {
-      eovit->print_short();
+      std::cout << *eovit << std::endl;
     }
     std::cout << std::endl;
     std::cout << std::endl;
@@ -144,7 +144,7 @@ void testNewDomain(std::string & infile, std::string & outfile)
        fit != facets.end();
        ++fit)
   {
-    fit->print_short();
+    std::cout << *fit << std::endl;
     typedef viennagrid::result_of::const_ncell_range<FacetType, CellTag::topology_level>::type   CellOnFacetContainer;
     typedef viennagrid::result_of::iterator<CellOnFacetContainer>::type     CellOnFacetIterator;
     
@@ -154,7 +154,7 @@ void testNewDomain(std::string & infile, std::string & outfile)
          eovit != cells.end();
          ++eovit)
     {
-      eovit->print_short();
+      std::cout << *eovit << std::endl;
     }
     std::cout << std::endl;
     std::cout << std::endl;

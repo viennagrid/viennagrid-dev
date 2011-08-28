@@ -57,7 +57,7 @@ namespace viennagrid
            vocit != vertices.end();
            ++vocit)
       {
-        p0 += vocit->getPoint();
+        p0 += vocit->point();
       }
       
       p0 /= viennagrid::topology::subcell_desc<ElementTag, 0>::num_elements;

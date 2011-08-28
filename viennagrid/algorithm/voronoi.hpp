@@ -87,9 +87,9 @@ namespace viennagrid
           VertexOnEdgeRange vertices_on_edge = viennagrid::ncells<0>(*eocit);
           VertexOnEdgeIterator voeit = vertices_on_edge.begin();
           
-          PointType const & v0 = voeit->getPoint();
+          PointType const & v0 = voeit->point();
           ++voeit;
-          PointType const & v1 = voeit->getPoint();
+          PointType const & v1 = voeit->point();
 
           //edge length:
           viennadata::access<EdgeLenKey, double>()(*eocit) = spanned_volume(v0, v1);
@@ -103,7 +103,7 @@ namespace viennagrid
                                     voeit != vertices_on_edge.end();
                                   ++voeit)
           {
-            double contribution = spanned_volume(circ_center, edge_midpoint, voeit->getPoint());
+            double contribution = spanned_volume(circ_center, edge_midpoint, voeit->point());
             edge_contribution += contribution;
             viennadata::access<BoxVolumeKey, double>()(*voeit) += contribution;
           }
@@ -180,8 +180,8 @@ namespace viennagrid
         ++voeit;
         VertexType const & v1 = *voeit;
         
-        PointType const & p0 = v0.getPoint();
-        PointType const & p1 = v1.getPoint();
+        PointType const & p0 = v0.point();
+        PointType const & p1 = v1.point();
 
         double edge_length = spanned_volume(p0, p1);
         viennadata::access<EdgeLenKey, double>()(*eit) = edge_length;
@@ -311,7 +311,7 @@ namespace viennagrid
           else
           {
             std::cerr << "circ_centers.size() = " << circ_centers.size() << std::endl;
-            std::cerr << "*fit: "; fit->print_short();
+            std::cerr << "*fit: " << *fit << std::endl;
             throw "More than two circumcenters for a facet in three dimensions!"; 
           }
             
@@ -337,8 +337,8 @@ namespace viennagrid
         ++voeit;
         VertexType const & v1 = *voeit;
         
-        PointType const & p0 = v0.getPoint();
-        PointType const & p1 = v1.getPoint();
+        PointType const & p0 = v0.point();
+        PointType const & p1 = v1.point();
 
         //write edge length
         double edge_length = spanned_volume(p0, p1);
@@ -433,9 +433,9 @@ namespace viennagrid
             VertexOnEdgeRange vertices_on_edge = viennagrid::ncells<0>(*eocit);
             VertexOnEdgeIterator voeit = vertices_on_edge.begin();
             
-            PointType const & v0 = voeit->getPoint();
+            PointType const & v0 = voeit->point();
             ++voeit;
-            PointType const & v1 = voeit->getPoint();
+            PointType const & v1 = voeit->point();
 
             //edge length:
             viennadata::access<EdgeLenKey, double>()(*eocit) = spanned_volume(v0, v1);
@@ -451,7 +451,7 @@ namespace viennagrid
                                       voeit != vertices_on_edge.end();
                                     ++voeit)
             {
-              double contribution = spanned_volume(cell_center, facet_center, edge_midpoint, voeit->getPoint());
+              double contribution = spanned_volume(cell_center, facet_center, edge_midpoint, voeit->point());
               edge_contribution += contribution;
               viennadata::access<BoxVolumeKey, double>()(*voeit) += contribution;
             }

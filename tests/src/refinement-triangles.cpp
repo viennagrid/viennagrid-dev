@@ -155,10 +155,10 @@ int main()
   
   std::string path = "../../examples/data/";
   
-  std::string infile = path + "sshape3d-pimped.mesh";
-  std::string outfile = "out"; // without ending
+  std::string infile = path + "sshape2d.mesh";
+  std::string outfile = "out_sshape2d"; // without ending
   
-  test<viennagrid::config::tetrahedral_3d>(infile, outfile);
+  test<viennagrid::config::triangular_2d>(infile, outfile);
   
   std::cout << "*******************************" << std::endl;
   std::cout << "* Test finished successfully! *" << std::endl;

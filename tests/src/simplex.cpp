@@ -36,8 +36,8 @@ void print_elements(DomainT & domain)
        it != elements.end();
        ++it)
   {
-    //std::cout << *it << std::endl; 
-    it->print();
+    std::cout << *it << std::endl; 
+    //it->print();
   }
   
   std::cout << "-- const --" << std::endl;
@@ -49,13 +49,13 @@ void print_elements(DomainT & domain)
        const_it != const_elements.end();
        ++const_it)
   {
-    //std::cout << *it << std::endl; 
-    const_it->print();
+    std::cout << *const_it << std::endl; 
+    //const_it->print();
   }
 }
 
 
-void setup_domain(viennagrid::domain<viennagrid::config::triangular_2d> & d)
+void setup_domain(viennagrid::domain_t<viennagrid::config::triangular_2d> & d)
 {
   typedef viennagrid::config::triangular_2d                           ConfigType;
   typedef ConfigType::cell_tag                                         CellTag;
@@ -80,26 +80,26 @@ void setup_domain(viennagrid::domain<viennagrid::config::triangular_2d> & d)
   VertexType * vertices[4];
   
   std::cout << "Adding vertices to domain..." << std::endl;
-  vertices[0] = d.add(v0); std::cout << vertices[0] << std::endl;
-  vertices[1] = d.add(v1); std::cout << vertices[1] << std::endl;
-  vertices[2] = d.add(v2); std::cout << vertices[2] << std::endl;
-  vertices[3] = d.add(v3); std::cout << vertices[3] << std::endl;
+  vertices[0] = d.push_back(v0); std::cout << vertices[0] << std::endl;
+  vertices[1] = d.push_back(v1); std::cout << vertices[1] << std::endl;
+  vertices[2] = d.push_back(v2); std::cout << vertices[2] << std::endl;
+  vertices[3] = d.push_back(v3); std::cout << vertices[3] << std::endl;
 
   std::cout << "Adding cells to domain..." << std::endl;
   CellType simplex;
   
-  simplex.setVertices(vertices);
-  d.add(simplex);
+  simplex.vertices(vertices);
+  d.push_back(simplex);
   
   vertices[0] = &(viennagrid::ncells<0>(d)[1]);
   vertices[1] = &(viennagrid::ncells<0>(d)[3]);
   vertices[2] = &(viennagrid::ncells<0>(d)[2]);
-  simplex.setVertices(vertices);
-  d.add(simplex);
+  simplex.vertices(vertices);
+  d.push_back(simplex);
   
 }
 
-void setup_domain(viennagrid::domain<viennagrid::config::triangular_3d> & d)
+void setup_domain(viennagrid::domain_t<viennagrid::config::triangular_3d> & d)
 {
   typedef viennagrid::config::triangular_3d                            ConfigType;
   typedef ConfigType::cell_tag                                         CellTag;
@@ -124,26 +124,26 @@ void setup_domain(viennagrid::domain<viennagrid::config::triangular_3d> & d)
   VertexType * vertices[4];
   
   std::cout << "Adding vertices to domain..." << std::endl;
-  vertices[0] = d.add(v0); std::cout << vertices[0] << std::endl;
-  vertices[1] = d.add(v1); std::cout << vertices[1] << std::endl;
-  vertices[2] = d.add(v2); std::cout << vertices[2] << std::endl;
-  vertices[3] = d.add(v3); std::cout << vertices[3] << std::endl;
+  vertices[0] = d.push_back(v0); std::cout << vertices[0] << std::endl;
+  vertices[1] = d.push_back(v1); std::cout << vertices[1] << std::endl;
+  vertices[2] = d.push_back(v2); std::cout << vertices[2] << std::endl;
+  vertices[3] = d.push_back(v3); std::cout << vertices[3] << std::endl;
 
   std::cout << "Adding cells to domain..." << std::endl;
   CellType simplex;
   
-  simplex.setVertices(vertices);
-  d.add(simplex);
+  simplex.vertices(vertices);
+  d.push_back(simplex);
   
   vertices[0] = &(viennagrid::ncells<0>(d)[1]);
   vertices[1] = &(viennagrid::ncells<0>(d)[3]);
   vertices[2] = &(viennagrid::ncells<0>(d)[2]);
-  simplex.setVertices(vertices);
-  d.add(simplex);
+  simplex.vertices(vertices);
+  d.push_back(simplex);
 
 }
 
-void setup_domain(viennagrid::domain<viennagrid::config::tetrahedral_3d> & d)
+void setup_domain(viennagrid::domain_t<viennagrid::config::tetrahedral_3d> & d)
 {
   typedef viennagrid::config::tetrahedral_3d                           ConfigType;
   typedef ConfigType::cell_tag                                         CellTag;
@@ -168,23 +168,23 @@ void setup_domain(viennagrid::domain<viennagrid::config::tetrahedral_3d> & d)
   VertexType * vertices[4];
   
   std::cout << "Adding vertices to domain..." << std::endl;
-  vertices[0] = d.add(v0); std::cout << vertices[0] << std::endl;
-  vertices[1] = d.add(v1); std::cout << vertices[1] << std::endl;
-  vertices[2] = d.add(v2); std::cout << vertices[2] << std::endl;
-  vertices[3] = d.add(v3); std::cout << vertices[3] << std::endl;
+  vertices[0] = d.push_back(v0); std::cout << vertices[0] << std::endl;
+  vertices[1] = d.push_back(v1); std::cout << vertices[1] << std::endl;
+  vertices[2] = d.push_back(v2); std::cout << vertices[2] << std::endl;
+  vertices[3] = d.push_back(v3); std::cout << vertices[3] << std::endl;
 
   std::cout << "Adding cells to domain..." << std::endl;
   CellType simplex;
   
-  simplex.setVertices(vertices);
-  d.add(simplex);
+  simplex.vertices(vertices);
+  d.push_back(simplex);
   
   vertices[0] = &(viennagrid::ncells<0>(d)[1]);
   vertices[1] = &(viennagrid::ncells<0>(d)[3]);
   vertices[2] = &(viennagrid::ncells<0>(d)[2]);
   vertices[3] = &(viennagrid::ncells<0>(d)[0]);
-  simplex.setVertices(vertices);
-  d.add(simplex);
+  simplex.vertices(vertices);
+  d.push_back(simplex);
                                             
 }
 
@@ -193,7 +193,7 @@ void setup_domain(viennagrid::domain<viennagrid::config::tetrahedral_3d> & d)
 template <typename ConfigType>
 void test()
 {
-  typedef viennagrid::domain<ConfigType>          Domain;
+  typedef typename viennagrid::result_of::domain<ConfigType>::type          Domain;
   typedef typename ConfigType::cell_tag           CellTag;
   typedef viennagrid::segment_t<ConfigType>       SegmentType;
   
@@ -233,7 +233,8 @@ void test()
   typedef typename viennagrid::result_of::const_ncell_range<Domain, 1>::type  EdgeContainer;
   EdgeContainer edges = viennagrid::ncells<1>(domain);
   
-  edges.begin()->print();
+  //edges.begin()->print();
+  std::cout << *(edges.begin()) << std::endl;
   
   typedef typename viennagrid::result_of::const_ncell_range<EdgeType, 0>::type  VertexOnEdgeContainer;
   VertexOnEdgeContainer vertices_on_edge = viennagrid::ncells<0>(*(edges.begin()));
@@ -241,7 +242,7 @@ void test()
   for (typename viennagrid::result_of::iterator<VertexOnEdgeContainer>::type voe_it = vertices_on_edge.begin();
        voe_it != vertices_on_edge.end();
        ++voe_it)
-       voe_it->print();
+       std::cout << *voe_it << std::endl;
   
 }
 

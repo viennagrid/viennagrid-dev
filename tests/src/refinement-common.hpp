@@ -28,43 +28,6 @@
 #include "viennagrid/algorithm/spanned_volume.hpp"
 #include "viennagrid/algorithm/volume.hpp"
 
-// Helper: Compute volume of tetrahedron
-/*template <typename CellType>
-double volume(CellType & cell)
-{
-  typedef typename CellType::config_type      ConfigType;
-  typedef typename viennagrid::result_of::ncell<ConfigType, 0>::type       VertexType;
-  typedef typename viennagrid::result_of::ncell_range<CellType, 0>::type       VertexOnCellContainer;
-  typedef typename viennagrid::result_of::iterator<VertexOnCellContainer>::type    VertexOnCellIterator;
-  
-  VertexOnCellContainer vertices = viennagrid::ncells<0>(cell);
-  VertexOnCellIterator vit = vertices.begin();
-  
-  VertexType & v0 = *vit; ++vit;
-  VertexType & v1 = *vit; ++vit;
-  VertexType & v2 = *vit; ++vit;
-  VertexType & v3 = *vit; ++vit;
-  
-  return spanned_volume(v0.getPoint(), v1.getPoint(), v2.getPoint(), v3.getPoint());
-}
-
-template <typename CellType>
-double volume_triangle(CellType & cell)
-{
-  typedef typename CellType::config_type      ConfigType;
-  typedef typename viennagrid::result_of::ncell<ConfigType, 0>::type       VertexType;
-  typedef typename viennagrid::result_of::ncell_range<CellType, 0>::type       VertexOnCellContainer;
-  typedef typename viennagrid::result_of::iterator<VertexOnCellContainer>::type    VertexOnCellIterator;
-  
-  VertexOnCellContainer vertices = viennagrid::ncells<0>(cell);
-  VertexOnCellIterator vit = vertices.begin();
-  
-  VertexType & v0 = *vit; ++vit;
-  VertexType & v1 = *vit; ++vit;
-  VertexType & v2 = *vit; ++vit;
-  
-  return spanned_volume(v0.getPoint(), v1.getPoint(), v2.getPoint());
-}*/
 
 // Helper: Remove all refinement tags on a cell
 template <typename CellType>
@@ -101,35 +64,11 @@ void print_refinement_edges(CellType & cell)
                        ++eocit)
   {
     if (viennadata::access<viennagrid::refinement_key, bool>(viennagrid::refinement_key())(*eocit) == true)
-      eocit->print_short();
+      std::cout << *eocit << std::endl;
+      //eocit->print_short();
   }
 }
 
-/*
-template <typename DomainType>
-double domain_volume(DomainType & domain)
-{
-  typedef typename DomainType::config_type      ConfigType;
-  typedef typename ConfigType::cell_tag                  CellTag;
-  
-  typedef typename viennagrid::result_of::ncell_range<DomainType, CellTag::topology_level>::type  CellContainer;
-  typedef typename viennagrid::result_of::iterator<CellContainer>::type         CellIterator;
-  
-  double new_volume = 0;
-  CellContainer new_cells = viennagrid::ncells<CellTag::topology_level>(domain);
-  for (CellIterator new_cit = new_cells.begin();
-                    new_cit != new_cells.end();
-                  ++new_cit)
-  {
-    //std::cout << "adding up!" << std::endl;
-    double cell_volume = volume(*new_cit);
-    assert(cell_volume > 0);
-    new_volume += cell_volume;
-    //new_cit->print_short();
-  }
-  
-  return new_volume;
-} */
 
 template <typename DomainType>
 double domain_surface(DomainType & domain)
@@ -224,7 +163,7 @@ int facet_check(DomainType & domain)
     if (cfmit->second > 2)
     {
       std::cerr << "Topology problem for facet: " << std::endl;
-      cfmit->first->print_short();
+      std::cout << *(cfmit->first) << std::endl;
       
       CellContainer cells = viennagrid::ncells<CellTag::topology_level>(domain);
       for (CellIterator cit = cells.begin();
@@ -232,7 +171,7 @@ int facet_check(DomainType & domain)
                       ++cit)
       {
         std::cout << "Cell: ";
-        cit->print_short();
+        std::cout << *cit << std::endl;
       }
       
       FacetContainer facets = viennagrid::ncells<CellTag::topology_level-1>(domain);
@@ -241,7 +180,7 @@ int facet_check(DomainType & domain)
                       ++fit)
       {
         std::cout << "Facet: ";
-        fit->print_short();
+        std::cout << *fit << std::endl;
       }
       
       return EXIT_FAILURE;
@@ -281,7 +220,7 @@ int surface_check(DomainType & domain_old, DomainType & domain_new)
                     ++cit)
     {
       std::cout << "Cell: ";
-      cit->print_short();
+      std::cout << *cit << std::endl;
     }
     
     FacetContainer facets = viennagrid::ncells<CellTag::topology_level-1>(domain_new);
@@ -290,7 +229,7 @@ int surface_check(DomainType & domain_old, DomainType & domain_new)
                      ++fit)
     {
       std::cout << "Facet: ";
-      fit->print_short();
+      std::cout << *fit << std::endl;
     }
     
     std::cerr << "Surface check failed!" << std::endl;

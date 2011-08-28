@@ -52,7 +52,7 @@ struct TestDomainConfig
 void testNewDomain(std::string & infile, std::string & outfile)
 {
 
-  typedef viennagrid::domain<TestDomainConfig>                               Domain;
+  typedef viennagrid::result_of::domain<TestDomainConfig>::type              Domain;
   typedef TestDomainConfig::cell_tag                                         CellTag;
   //typedef viennagrid::TestDomainConfig::DimensionTag                       DimensionTag;
   typedef viennagrid::result_of::point<TestDomainConfig>::type          PointType;
@@ -94,18 +94,18 @@ void testNewDomain(std::string & infile, std::string & outfile)
   VertexType v11(p11, 11);
 
   std::cout << "Adding vertices to segment:" << std::endl;
-  domain.add(v0);
-  domain.add(v1);
-  domain.add(v2);
-  domain.add(v3);
-  domain.add(v4);
-  domain.add(v5);
-  domain.add(v6);
-  domain.add(v7);
-  domain.add(v8);
-  domain.add(v9);
-  domain.add(v10);
-  domain.add(v11);
+  domain.push_back(v0);
+  domain.push_back(v1);
+  domain.push_back(v2);
+  domain.push_back(v3);
+  domain.push_back(v4);
+  domain.push_back(v5);
+  domain.push_back(v6);
+  domain.push_back(v7);
+  domain.push_back(v8);
+  domain.push_back(v9);
+  domain.push_back(v10);
+  domain.push_back(v11);
   
   VertexType * vertices0[8];
   VertexType * vertices1[8];
@@ -146,12 +146,12 @@ void testNewDomain(std::string & infile, std::string & outfile)
   VertexType v5(p5, 5);
 
   std::cout << "Adding vertices to segment:" << std::endl;
-  domain.add(v0);
-  domain.add(v1);
-  domain.add(v2);
-  domain.add(v3);
-  domain.add(v4);
-  domain.add(v5);
+  domain.push_back(v0);
+  domain.push_back(v1);
+  domain.push_back(v2);
+  domain.push_back(v3);
+  domain.push_back(v4);
+  domain.push_back(v5);
   
   VertexType * vertices0[4];
   VertexType * vertices1[4];
@@ -168,11 +168,11 @@ void testNewDomain(std::string & infile, std::string & outfile)
   
 #endif
   
-  hypercube0.setVertices(vertices0);
-  domain.add(hypercube0);
+  hypercube0.vertices(vertices0);
+  domain.push_back(hypercube0);
   
-  hypercube1.setVertices(vertices1);  
-  domain.add(hypercube1);
+  hypercube1.vertices(vertices1);  
+  domain.push_back(hypercube1);
   
   std::cout << "Vertices: " << std::endl;
   typedef viennagrid::result_of::ncell_range<Domain, 0>::type   VertexContainer;
@@ -181,7 +181,7 @@ void testNewDomain(std::string & infile, std::string & outfile)
   for (VertexIterator vit = vertices.begin();
         vit != vertices.end();
         ++vit)
-      vit->print();
+      std::cout << *vit << std::endl;
   
   std::cout << "Edges: " << std::endl;
   typedef viennagrid::result_of::ncell_range<Domain, 1>::type   EdgeContainer;
@@ -190,7 +190,7 @@ void testNewDomain(std::string & infile, std::string & outfile)
   for (EdgeIterator eit = edges.begin();
         eit != edges.end();
         ++eit)
-      eit->print();
+      std::cout << *eit << std::endl;
 
   std::cout << "Facets: " << std::endl;
   typedef viennagrid::result_of::ncell_range<Domain, TestDomainConfig::cell_tag::topology_level-1>::type   FacetContainer;
@@ -199,7 +199,7 @@ void testNewDomain(std::string & infile, std::string & outfile)
   for (FacetIterator fit = facets.begin();
         fit != facets.end();
         ++fit)
-      fit->print();
+      std::cout << *fit << std::endl;
 
   std::cout << "Cells: " << std::endl;
   typedef viennagrid::result_of::ncell_range<Domain, TestDomainConfig::cell_tag::topology_level>::type   CellContainer;
@@ -208,10 +208,10 @@ void testNewDomain(std::string & infile, std::string & outfile)
   for (CellIterator cit = cells.begin();
         cit != cells.end();
         ++cit)
-      cit->print();
+      std::cout << *cit << std::endl;
 
   viennagrid::io::vtk_writer<Domain> my_vtk_writer;
-  my_vtk_writer.writeDomain(domain, outfile + ".vtk");
+  my_vtk_writer(domain, outfile + ".vtk");
   
   
   std::cout << "*******************************" << std::endl;

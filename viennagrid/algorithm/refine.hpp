@@ -19,6 +19,7 @@
 #define VIENNAGRID_ALGORITHM_REFINE_HPP
 
 #include "viennagrid/forwards.h"
+#include "viennagrid/domain.hpp"
 #include "viennagrid/algorithm/centroid.hpp"
 #include "viennagrid/algorithm/norm.hpp"
 #include "viennadata/api.hpp"
@@ -29,9 +30,9 @@ namespace viennagrid
   // If any edge is refined in a cell, then the longest edge is refined as well
   //
   template <typename ConfigTypeIn>
-  void ensure_longest_edge_refinement(domain<ConfigTypeIn> const & domain_in)
+  void ensure_longest_edge_refinement(domain_t<ConfigTypeIn> const & domain_in)
   {
-    typedef domain<ConfigTypeIn>                      DomainTypeIn;
+    typedef typename viennagrid::result_of::domain<ConfigTypeIn>::type                      DomainTypeIn;
     typedef typename ConfigTypeIn::cell_tag           CellTagIn;   
     
     typedef typename viennagrid::result_of::ncell<ConfigTypeIn, 0>::type                                      VertexType;
@@ -93,7 +94,7 @@ namespace viennagrid
             VertexType const & v0 = *voeit; ++voeit;
             VertexType const & v1 = *voeit;
             
-            double len = viennagrid::norm(v0.getPoint() - v1.getPoint());
+            double len = viennagrid::norm(v0.point() - v1.point());
             if (len > longest_edge_len)
             {
               longest_edge_len = len;
@@ -117,9 +118,9 @@ namespace viennagrid
   
   
   template <typename ConfigTypeIn>
-  void cell_refinement_to_edge_refinement(domain<ConfigTypeIn> const & domain_in)
+  void cell_refinement_to_edge_refinement(domain_t<ConfigTypeIn> const & domain_in)
   {
-    typedef domain<ConfigTypeIn>                      DomainTypeIn;
+    typedef typename viennagrid::result_of::domain<ConfigTypeIn>::type                      DomainTypeIn;
     typedef typename ConfigTypeIn::cell_tag           CellTagIn;   
     typedef typename viennagrid::result_of::ncell<ConfigTypeIn, CellTagIn::topology_level>::type              CellType;
     
@@ -157,11 +158,11 @@ namespace viennagrid
   // Uniform refinement
   //
   template <typename ConfigTypeIn, typename ConfigTypeOut>
-  void refine_impl(domain<ConfigTypeIn> const & domain_in,
-                   domain<ConfigTypeOut> & domain_out,
+  void refine_impl(domain_t<ConfigTypeIn> const & domain_in,
+                   domain_t<ConfigTypeOut> & domain_out,
                    adaptive_refinement_tag)
   {
-    typedef domain<ConfigTypeIn>                      DomainTypeIn;
+    typedef domain_t<ConfigTypeIn>                      DomainTypeIn;
     typedef typename ConfigTypeIn::cell_tag           CellTagIn;   
     typedef typename ConfigTypeIn::numeric_type       NumericType;
 
@@ -201,7 +202,7 @@ namespace viennagrid
                         vit != vertices.end();
                       ++vit)
     {
-      domain_out.add(*vit);
+      domain_out.push_back(*vit);
       ++num_vertices;
     }
 
@@ -216,7 +217,7 @@ namespace viennagrid
       if (viennadata::access<refinement_key, bool>(refinement_key())(*eit) == true)
       {
         VertexType v;
-        v.getPoint() = viennagrid::centroid(*eit);  //production value
+        v.point() = viennagrid::centroid(*eit);  //production value
         
         //Testing: Don't use midpoint:
         //VertexOnEdgeRange vertices_on_edge = viennagrid::ncells<1>(*eit);
@@ -227,7 +228,7 @@ namespace viennagrid
         //v.getPoint() = v1.getPoint() * r + v2.getPoint() * (1.0 - r);  //debug value
         
         v.id(num_vertices);
-        domain_out.add(v);
+        domain_out.push_back(v);
         viennadata::access<refinement_key, std::size_t>(refinement_key())(*eit) = num_vertices;
         ++num_vertices;
       }
@@ -259,11 +260,11 @@ namespace viennagrid
   // Uniform refinement
   //
   template <typename ConfigTypeIn, typename ConfigTypeOut>
-  void refine_impl(domain<ConfigTypeIn> const & domain_in,
-                   domain<ConfigTypeOut> & domain_out,
+  void refine_impl(domain_t<ConfigTypeIn> const & domain_in,
+                   domain_t<ConfigTypeOut> & domain_out,
                    uniform_refinement_tag)
   {
-    typedef domain<ConfigTypeIn>                      DomainTypeIn;
+    typedef domain_t<ConfigTypeIn>                    DomainTypeIn;
     typedef typename ConfigTypeIn::cell_tag           CellTagIn;   
     typedef typename ConfigTypeIn::numeric_type       NumericType;
 
@@ -370,10 +371,10 @@ namespace viennagrid
   
   
   template <typename ConfigTypeIn, typename RefinementTag>
-  refinement_proxy< domain<ConfigTypeIn>, RefinementTag >
-  refine(domain<ConfigTypeIn> const & domain_in, RefinementTag const & tag)
+  refinement_proxy< domain_t<ConfigTypeIn>, RefinementTag >
+  refine(domain_t<ConfigTypeIn> const & domain_in, RefinementTag const & tag)
   {
-    return refinement_proxy< domain<ConfigTypeIn>, RefinementTag >(domain_in, tag);
+    return refinement_proxy< domain_t<ConfigTypeIn>, RefinementTag >(domain_in, tag);
   }
   
 

@@ -114,12 +114,12 @@ namespace viennagrid
             index = i * DIMG; 
             
             for(std::size_t d = 0; d < DIMG; d++)
-               vertex.getPoint()[d] = geometry_space[index+d];
+               vertex.point()[d] = geometry_space[index+d];
 
-//            vertex.getPoint()[0] = geometry_space[index];
-//            vertex.getPoint()[1] = geometry_space[index+1];
-//            vertex.getPoint()[2] = geometry_space[index+2];
-            index_map[i] = domain.add(vertex)->id();
+//            vertex.point()[0] = geometry_space[index];
+//            vertex.point()[1] = geometry_space[index+1];
+//            vertex.point()[2] = geometry_space[index+2];
+            index_map[i] = domain.push_back(vertex)->id();
           }
           
           // transfer topology
@@ -165,8 +165,8 @@ namespace viennagrid
 //                  vertices[3] = &(domain.vertex(tempcell[3]));                                               
                 
                   cell_type cell;
-                  cell.setVertices(vertices);             
-                  domain.segments()[seg_cnt].add(cell);
+                  cell.vertices(vertices);             
+                  domain.segments()[seg_cnt].push_back(cell);
               }
               
               seg_cnt++;

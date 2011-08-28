@@ -73,7 +73,7 @@ template <typename ConfigType>
 void test(std::string & infile, std::string & outfile)
 {
 
-  typedef viennagrid::domain<ConfigType>           Domain;
+  typedef typename viennagrid::result_of::domain<ConfigType>::type           Domain;
   typedef typename ConfigType::cell_tag            CellTag;
   typedef viennagrid::segment_t<ConfigType>        Segment;
   
@@ -117,7 +117,7 @@ void test(std::string & infile, std::string & outfile)
       vit != vertices.end();
       ++vit)
   {
-    viennadata::access<std::string, double>("vtk_data")(*vit) = vit->getPoint()[0];
+    viennadata::access<std::string, double>("vtk_data")(*vit) = vit->point()[0];
     viennadata::access<std::string, my_vector<3> >("vtk_data")(*vit) = my_vector<3>();
     viennadata::access<std::string, my_normal<3> >("vtk_data")(*vit) = my_normal<3>();
   }

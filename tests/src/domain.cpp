@@ -29,23 +29,23 @@ int main()
   std::cout << " ------ Part 1: Simplex domains ------- " << std::endl;
   
   std::cout << "* instantiating simplex 21u domain.. " << std::endl;
-  viennagrid::domain<viennagrid::config::line_2d>        domain_simplex_21u;
+  viennagrid::result_of::domain<viennagrid::config::line_2d>::type        domain_simplex_21u;
   std::cout << "* instantiating simplex 22u domain.. " << std::endl;
-  viennagrid::domain<viennagrid::config::triangular_2d>  domain_simplex_22u;
+  viennagrid::result_of::domain<viennagrid::config::triangular_2d>::type  domain_simplex_22u;
   std::cout << "* instantiating simplex 32u domain.. " << std::endl;
-  viennagrid::domain<viennagrid::config::triangular_3d>  domain_simplex_32u;
+  viennagrid::result_of::domain<viennagrid::config::triangular_3d>::type  domain_simplex_32u;
   std::cout << "* instantiating simplex 33u domain.. " << std::endl;
-  viennagrid::domain<viennagrid::config::tetrahedral_3d> domain_simplex_33u;
+  viennagrid::result_of::domain<viennagrid::config::tetrahedral_3d>::type domain_simplex_33u;
 
   
   std::cout << " ------ Part 2: Non-simplex domains ------- " << std::endl;
 
   std::cout << "* instantiating quadrilateral 22u domain.. " << std::endl;
-  viennagrid::domain<viennagrid::config::quadrilateral_2d> domain_22u;
+  viennagrid::result_of::domain<viennagrid::config::quadrilateral_2d>::type domain_22u;
   std::cout << "* instantiating quadrilateral 32u domain.. " << std::endl;
-  viennagrid::domain<viennagrid::config::quadrilateral_3d> domain_32u;
+  viennagrid::result_of::domain<viennagrid::config::quadrilateral_3d>::type domain_32u;
   std::cout << "* instantiating hexagonal 33u domain.. " << std::endl;
-  viennagrid::domain<viennagrid::config::hexahedron_3d> domain_33u;
+  viennagrid::result_of::domain<viennagrid::config::hexahedron_3d>::type domain_33u;
   
   std::cout << "*******************************" << std::endl;
   std::cout << "* Test finished successfully! *" << std::endl;

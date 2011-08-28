@@ -52,7 +52,7 @@ namespace viennagrid
     typedef topology::subcell_desc<typename LevelSpecs::element_tag, 0>  VertexOnElementSpecs;
     typedef lower_level_holder < T_Configuration, ElementTag, levelnum - 1 >      Base;
 
-    typedef element<T_Configuration, typename LevelSpecs::element_tag>  LevelElementType;
+    typedef element_t<T_Configuration, typename LevelSpecs::element_tag>  LevelElementType;
     typedef element_orientation<VertexOnElementSpecs::num_elements>     ElementOrientationType;
 
     protected:
@@ -69,21 +69,6 @@ namespace viennagrid
                                                            &(Base::vertices_[0]),
                                                            &(orientations_[0]),
                                                            dom);
-      }
-
-      void print(long indent = 0) const
-      {
-        for (long j = 0; j<indent; ++j)
-          std::cout << "   ";
-        std::cout << "* Level " << levelnum << ": (FullHandling)" << std::endl;
-
-        for (long i=0; i<LevelSpecs::num_elements; ++i)
-        {
-          std::cout << "Permutation (local to global) for element to come:" << std::endl;
-          orientations_[i].print();
-          elements_[i]->print(indent + 1);
-        }
-        Base::print(indent);
       }
 
     public:
@@ -104,21 +89,21 @@ namespace viennagrid
       
       //non-const:
       template <long j>
-      typename result_of::element_container< element<T_Configuration, ElementTag>, j, T_Configuration::cell_tag::topology_level>::type *
+      typename result_of::element_container< element_t<T_Configuration, ElementTag>, j, T_Configuration::cell_tag::topology_level>::type *
       container(less_tag)
       { 
         return Base::template container<j>();
       }
 
       template <long j>
-      typename result_of::element_container< element<T_Configuration, ElementTag>, j, T_Configuration::cell_tag::topology_level>::type *
+      typename result_of::element_container< element_t<T_Configuration, ElementTag>, j, T_Configuration::cell_tag::topology_level>::type *
       container(equal_tag)
       { 
         return &(elements_[0]);
       }
 
       template <long j>
-      typename result_of::element_container< element<T_Configuration, ElementTag>, j, T_Configuration::cell_tag::topology_level>::type *
+      typename result_of::element_container< element_t<T_Configuration, ElementTag>, j, T_Configuration::cell_tag::topology_level>::type *
       container()
       { 
         return container<j>( typename level_discriminator<levelnum, j>::result_type() );
@@ -126,28 +111,25 @@ namespace viennagrid
       
       //const:
       template <long j>
-      const typename result_of::element_container< element<T_Configuration, ElementTag>, j, T_Configuration::cell_tag::topology_level>::type *
+      const typename result_of::element_container< element_t<T_Configuration, ElementTag>, j, T_Configuration::cell_tag::topology_level>::type *
       container(less_tag) const
       { 
         return Base::template container<j>();
       }
 
       template <long j>
-      const typename result_of::element_container< element<T_Configuration, ElementTag>, j, T_Configuration::cell_tag::topology_level>::type *
+      const typename result_of::element_container< element_t<T_Configuration, ElementTag>, j, T_Configuration::cell_tag::topology_level>::type *
       container(equal_tag) const
       { 
         return &(elements_[0]);
       }
 
       template <long j>
-      const typename result_of::element_container< element<T_Configuration, ElementTag>, j, T_Configuration::cell_tag::topology_level>::type *
+      const typename result_of::element_container< element_t<T_Configuration, ElementTag>, j, T_Configuration::cell_tag::topology_level>::type *
       container() const
       { 
         return container<j>( typename level_discriminator<levelnum, j>::result_type() );
       }
-      
-      
-      
       
       
 
@@ -188,7 +170,7 @@ namespace viennagrid
     typedef topology::subcell_desc<ElementTag, levelnum>                                LevelSpecs;
     typedef lower_level_holder < T_Configuration, ElementTag, levelnum - 1 >      Base;
 
-    typedef element<T_Configuration, typename LevelSpecs::element_tag>  LevelElementType;
+    typedef element_t<T_Configuration, typename LevelSpecs::element_tag>  LevelElementType;
 
     protected:
       template <typename DomainType>
@@ -196,21 +178,6 @@ namespace viennagrid
       {
         //fill lower topological levels only:
         Base::fill_level(dom);
-
-/*
-        facets_[0] = seg.addFacet(Base::vertices_[0], Base::vertices_[1], Base::vertices_[3]);
-        facets_[0].first->fillEdges(seg);
-              ...... and so on .........
-*/
-      }
-
-      void print(long indent = 0) const
-      {
-        for (long j = 0; j<indent; ++j)
-          std::cout << "   ";
-        std::cout << "* Level " << levelnum << ": (NoHandling)" << std::endl;
-
-        Base::print(indent);
       }
 
     public:
@@ -223,14 +190,14 @@ namespace viennagrid
       
       //non-const:
       template <long j>
-      typename result_of::element_container< element<T_Configuration, ElementTag>, j, T_Configuration::cell_tag::topology_level>::type *
+      typename result_of::element_container< element_t<T_Configuration, ElementTag>, j, T_Configuration::cell_tag::topology_level>::type *
       container(less_tag)
       { 
         return Base::template container<j>();
       }
 
       template <long j>
-      typename result_of::element_container< element<T_Configuration, ElementTag>, j, T_Configuration::cell_tag::topology_level>::type *
+      typename result_of::element_container< element_t<T_Configuration, ElementTag>, j, T_Configuration::cell_tag::topology_level>::type *
       container()
       { 
         return container<j>( typename level_discriminator<levelnum, j>::result_type() );
@@ -239,14 +206,14 @@ namespace viennagrid
 
       //const:
       template <long j>
-      const typename result_of::element_container< element<T_Configuration, ElementTag>, j, T_Configuration::cell_tag::topology_level>::type *
+      const typename result_of::element_container< element_t<T_Configuration, ElementTag>, j, T_Configuration::cell_tag::topology_level>::type *
       container(less_tag) const
       { 
         return Base::template container<j>();
       }
 
       template <long j>
-      const typename result_of::element_container< element<T_Configuration, ElementTag>, j, T_Configuration::cell_tag::topology_level>::type *
+      const typename result_of::element_container< element_t<T_Configuration, ElementTag>, j, T_Configuration::cell_tag::topology_level>::type *
       container() const
       { 
         return container<j>( typename level_discriminator<levelnum, j>::result_type() );
@@ -263,39 +230,15 @@ namespace viennagrid
     //typedef typename DomainTypes<T_Configuration>::segment_type               SegmentType;
     typedef topology::subcell_desc<ElementTag, 0>                                      LevelSpecs;
 
-    typedef element<T_Configuration, typename LevelSpecs::element_tag>         VertexType;
+    typedef element_t<T_Configuration, typename LevelSpecs::element_tag>         VertexType;
     typedef typename result_of::point<T_Configuration>::type              PointType;
 
-    typedef typename result_of::iterator< element<T_Configuration, ElementTag>, 0>::type         VertexIterator;
+    typedef typename result_of::iterator< element_t<T_Configuration, ElementTag>, 0>::type         VertexIterator;
 
     protected:
       //end recursion:
       template <typename DomainType>
       void fill_level(DomainType & dom) {}
-
-      void print(long indent = 0) const
-      {
-        for (long i = 0; i<indent; ++i)
-          std::cout << "   ";
-        std::cout << "* Level " << 0 << ": " << std::endl;
-
-        for (long i = 0; i<LevelSpecs::num_elements; ++i)
-        {
-          for (long j = 0; j<=indent; ++j)
-            std::cout << "   ";
-          vertices_[i]->print();
-        }
-      }
-
-      void print_short() const
-      {
-        std::cout << "* Vertices: " << std::endl;
-
-        for (long i = 0; i<LevelSpecs::num_elements; ++i)
-        {
-          std::cout << "Vertex " << i << " (" << vertices_[i] << "): "; vertices_[i]->print();
-        }
-      }
 
     public:
       lower_level_holder() {};
@@ -306,13 +249,11 @@ namespace viennagrid
           vertices_[i] = llh.vertices_[i];
       }
 
-      PointType const & getPoint(long index) const { return (vertices_[index])->getPoint(); }
-
       ////////////////// container access: /////////////////////////
       
       //non-const:
       template <long j>
-      typename result_of::element_container< element<T_Configuration, ElementTag>, j, T_Configuration::cell_tag::topology_level>::type *
+      typename result_of::element_container< element_t<T_Configuration, ElementTag>, j, T_Configuration::cell_tag::topology_level>::type *
       container()
       { 
         return &(vertices_[0]);
@@ -320,7 +261,7 @@ namespace viennagrid
 
       //const:
       template <long j>
-      const typename result_of::element_container< element<T_Configuration, ElementTag>, j, T_Configuration::cell_tag::topology_level>::type *
+      const typename result_of::element_container< element_t<T_Configuration, ElementTag>, j, T_Configuration::cell_tag::topology_level>::type *
       container() const
       { 
         return &(vertices_[0]);

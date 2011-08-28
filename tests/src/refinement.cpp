@@ -54,7 +54,7 @@ int test(DomainType & domain_in)
   //
   
   std::cout << "Cell under test: " << std::endl;
-  cell.print_short();
+  std::cout << cell << std::endl;
   
   //1 edge:
   std::cout << "Testing refinement with one tagged edge: ";
@@ -563,16 +563,16 @@ void fill_domain(DomainType & domain, PointFiller const & filler)
   VertexType * vertices[4];
   
   //std::cout << "Adding vertices to domain..." << std::endl;
-  vertices[0] = domain.add(v0);
-  vertices[1] = domain.add(v1);
-  vertices[2] = domain.add(v2);
-  vertices[3] = domain.add(v3);
+  vertices[0] = domain.push_back(v0);
+  vertices[1] = domain.push_back(v1);
+  vertices[2] = domain.push_back(v2);
+  vertices[3] = domain.push_back(v3);
 
   //std::cout << "Adding cells to domain..." << std::endl;
   CellType simplex;
   
-  simplex.setVertices(vertices);
-  seg.add(simplex);
+  simplex.vertices(vertices);
+  seg.push_back(simplex);
 }
 
 
@@ -582,7 +582,7 @@ struct domain_tester
   static int apply()
   {
     typedef viennagrid::config::tetrahedral_3d    ConfigType;
-    typedef viennagrid::domain<ConfigType>        Domain;
+    typedef typename viennagrid::result_of::domain<ConfigType>::type        Domain;
    
     std::cout << std::endl;
     std::cout << "Testing domain " << A << "..." << std::endl;

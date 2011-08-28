@@ -98,10 +98,10 @@ namespace viennagrid
             throw bad_file_format_exception(filename, "EOF encountered while reading vertices.");
           
           for (int j=0; j<DimensionTag::value; j++)
-            reader >> vertex.getPoint()[j];
+            reader >> vertex.point()[j];
           
           vertex.id(i);
-          domain.add(vertex);
+          domain.push_back(vertex);
         }
     
         //std::cout << "DONE" << std::endl;
@@ -138,12 +138,12 @@ namespace viennagrid
           }
     
           //std::cout << std::endl << "Adding cell: " << &cell << " at " << cell_id << std::endl;
-          cell.setVertices(&(vertices[0]));
+          cell.vertices(&(vertices[0]));
           cell.id(i);
           if (segments.size() < segment_index) //not that segment_index is 1-based
             segments.resize(segment_index);
           
-          segments[segment_index - 1].add(cell);  //note that Netgen uses a 1-based indexing scheme, while ViennaGrid uses a zero-based one
+          segments[segment_index - 1].push_back(cell);  //note that Netgen uses a 1-based indexing scheme, while ViennaGrid uses a zero-based one
     
           //progress info:
           //if (i % 50000 == 0 && i > 0)

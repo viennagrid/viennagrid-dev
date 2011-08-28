@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
 {
    std::string filename = argv[1];
 
-   typedef viennagrid::domain<viennagrid::config::tetrahedral_3d>    domain_type;
+   typedef viennagrid::result_of::domain<viennagrid::config::tetrahedral_3d>::type    domain_type;
    domain_type domain;
 
    viennagrid::io::tdr_reader    reader(filename);

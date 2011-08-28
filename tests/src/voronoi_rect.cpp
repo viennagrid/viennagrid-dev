@@ -42,41 +42,41 @@ void setup_device(DeviceType & device)
   //
   VertexType vertex;
 
-  vertex.getPoint()[0] = 0;   // #0
-  vertex.getPoint()[1] = 0;
-  device.add(vertex);
+  vertex.point()[0] = 0;   // #0
+  vertex.point()[1] = 0;
+  device.push_back(vertex);
   
-  vertex.getPoint()[0] = 2;   // #1
-  vertex.getPoint()[1] = 0;
-  device.add(vertex);
+  vertex.point()[0] = 2;   // #1
+  vertex.point()[1] = 0;
+  device.push_back(vertex);
 
-  vertex.getPoint()[0] = 1;   // #2
-  vertex.getPoint()[1] = 1;
-  device.add(vertex);
+  vertex.point()[0] = 1;   // #2
+  vertex.point()[1] = 1;
+  device.push_back(vertex);
 
-  vertex.getPoint()[0] = 0;   // #3
-  vertex.getPoint()[1] = 2;
-  device.add(vertex);
+  vertex.point()[0] = 0;   // #3
+  vertex.point()[1] = 2;
+  device.push_back(vertex);
   
-  vertex.getPoint()[0] = -1;   // #4
-  vertex.getPoint()[1] = 1;
-  device.add(vertex);
+  vertex.point()[0] = -1;   // #4
+  vertex.point()[1] = 1;
+  device.push_back(vertex);
   
-  vertex.getPoint()[0] = -2;   // #5
-  vertex.getPoint()[1] = 0;
-  device.add(vertex);
+  vertex.point()[0] = -2;   // #5
+  vertex.point()[1] = 0;
+  device.push_back(vertex);
   
-  vertex.getPoint()[0] = -1;   // #6
-  vertex.getPoint()[1] = -1;
-  device.add(vertex);
+  vertex.point()[0] = -1;   // #6
+  vertex.point()[1] = -1;
+  device.push_back(vertex);
   
-  vertex.getPoint()[0] = 0;   // #7
-  vertex.getPoint()[1] = -2;
-  device.add(vertex);
+  vertex.point()[0] = 0;   // #7
+  vertex.point()[1] = -2;
+  device.push_back(vertex);
   
-  vertex.getPoint()[0] = 1;   // #8
-  vertex.getPoint()[1] = -1;
-  device.add(vertex);
+  vertex.point()[0] = 1;   // #8
+  vertex.point()[1] = -1;
+  device.push_back(vertex);
   
   
   //
@@ -90,29 +90,29 @@ void setup_device(DeviceType & device)
   vertices[1] = &(viennagrid::ncells<0>(device)[8]);
   vertices[2] = &(viennagrid::ncells<0>(device)[1]);
   vertices[3] = &(viennagrid::ncells<0>(device)[2]);
-  cell.setVertices(vertices);
-  device.add(cell);
+  cell.vertices(vertices);
+  device.push_back(cell);
 
   vertices[0] = &(viennagrid::ncells<0>(device)[0]);
   vertices[1] = &(viennagrid::ncells<0>(device)[2]);
   vertices[2] = &(viennagrid::ncells<0>(device)[3]);
   vertices[3] = &(viennagrid::ncells<0>(device)[4]);
-  cell.setVertices(vertices);
-  device.add(cell);
+  cell.vertices(vertices);
+  device.push_back(cell);
 
   vertices[0] = &(viennagrid::ncells<0>(device)[0]);
   vertices[1] = &(viennagrid::ncells<0>(device)[4]);
   vertices[2] = &(viennagrid::ncells<0>(device)[5]);
   vertices[3] = &(viennagrid::ncells<0>(device)[6]);
-  cell.setVertices(vertices);
-  device.add(cell);
+  cell.vertices(vertices);
+  device.push_back(cell);
 
   vertices[0] = &(viennagrid::ncells<0>(device)[0]);
   vertices[1] = &(viennagrid::ncells<0>(device)[6]);
   vertices[2] = &(viennagrid::ncells<0>(device)[7]);
   vertices[3] = &(viennagrid::ncells<0>(device)[8]);
-  cell.setVertices(vertices);
-  device.add(cell);
+  cell.vertices(vertices);
+  device.push_back(cell);
 
 }
 
@@ -122,7 +122,7 @@ void setup_device(DeviceType & device)
 int main(int argc, char *argv[])
 {
   typedef viennagrid::config::quadrilateral_2d           Config;
-  typedef viennagrid::domain<Config>   DeviceType;
+  typedef viennagrid::result_of::domain<Config>::type   DeviceType;
   
   std::cout << "* main(): Creating device..." << std::endl;
   DeviceType device;
@@ -137,7 +137,7 @@ int main(int argc, char *argv[])
   output_voronoi_info(device);
   
   std::cout << std::endl;
-  viennagrid::ncells<2>(device)[0].print_short();
+  std::cout << viennagrid::ncells<2>(device)[0] << std::endl;
   std::cout << std::endl;
   std::cout << "Circumcenter of cell #0: " << viennagrid::circumcenter(viennagrid::ncells<2>(device)[0]) << std::endl;
   std::cout << "Circumcenter of cell #1: " << viennagrid::circumcenter(viennagrid::ncells<2>(device)[1]) << std::endl;
@@ -158,7 +158,7 @@ int main(int argc, char *argv[])
   
   //write to vtk:
   viennagrid::io::vtk_writer<DeviceType> my_vtk_writer;
-  my_vtk_writer.writeDomain(device, "voronoi_rect");
+  my_vtk_writer(device, "voronoi_rect");
   
   std::cout << "*******************************" << std::endl;
   std::cout << "* Test finished successfully! *" << std::endl;

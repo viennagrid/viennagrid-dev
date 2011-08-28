@@ -117,10 +117,10 @@ namespace io
          for(point_iter_type iter = point_map.begin(); iter != point_map.end(); iter++)
          {
             vertex_type    vertex;
-            vertex.getPoint()[0] = iter->second[0];
-            vertex.getPoint()[1] = iter->second[1];
-            vertex.getPoint()[2] = iter->second[2];
-            index_map[iter->first] = domain.add(vertex)->id();
+            vertex.point()[0] = iter->second[0];
+            vertex.point()[1] = iter->second[1];
+            vertex.point()[2] = iter->second[2];
+            index_map[iter->first] = domain.push_back(vertex)->id();
             //std::cout << iter->first << " - " << vertex.id() << std::endl;
             //std::cout << vertex.id() << std::endl;
          }
@@ -154,15 +154,15 @@ namespace io
 //                  }
 //                  else std::cout << "not found" << std::endl;
 
-                  //std::cout << domain.vertex( index_map[(*cit)[i]] ).getPoint() << std::endl; 
+                  //std::cout << domain.vertex( index_map[(*cit)[i]] ).point() << std::endl; 
                   vertices[i] = &(viennagrid::ncells<0>(domain)[ index_map[(*cit)[i]] ]);               
                }
                //exit(0);
                cell_type cell;
-               cell.setVertices(vertices);               
+               cell.vertices(vertices);               
                //std::cout << "si: " << si->first << std::endl;
                
-               domain.segments()[si->first].add(cell);            
+               domain.segments()[si->first].push_back(cell);            
             }
          }
          

@@ -94,7 +94,7 @@ void output_voronoi_info(DeviceType const & d)
                     eit != edges.end();
                   ++eit)
   {
-    eit->print_short();
+    std::cout << *eit << std::endl;
     std::cout << "Length: "    << viennadata::access<edge_len_key, double>()(*eit)            << std::endl;
     std::cout << "Interface: " << viennadata::access<edge_interface_area_key, double>()(*eit) << std::endl;
   }

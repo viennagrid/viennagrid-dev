@@ -61,7 +61,7 @@ struct TestDomainConfig
 void testNewDomain(std::string & infile, std::string & outfile)
 {
 
-  typedef viennagrid::domain<TestDomainConfig>        Domain;
+  typedef viennagrid::result_of::domain<TestDomainConfig>::type        Domain;
   typedef TestDomainConfig::cell_tag                  CellTag;
   
   //typedef viennagrid::TestDomainConfig::DimensionTag              DimensionTag;
@@ -117,14 +117,14 @@ void testNewDomain(std::string & infile, std::string & outfile)
       vit != vertices.end();
       ++vit)
   {
-    viennadata::access<std::string, double>("vtk_data")(*vit) = vit->getPoint()[0];
+    viennadata::access<std::string, double>("vtk_data")(*vit) = vit->point()[0];
   }
   
   
   //test writers:
    
   viennagrid::io::vtk_writer<Domain> my_vtk_writer;
-  my_vtk_writer.writeDomain(domain, outfile + ".vtu");
+  my_vtk_writer(domain, outfile + ".vtu");
    
   //viennagrid::io::gts_writer my_gts_writer;
   //my_gts_writer(domain, outfile + ".gts");
@@ -143,7 +143,7 @@ void testNewDomain(std::string & infile, std::string & outfile)
 //  my_gts_reader(domain, infile);
 
   viennagrid::io::vtk_reader<Domain> my_vtk_reader;
-  my_vtk_reader.readDomain(domain, infile);
+  my_vtk_reader(domain, infile);
   
 }
 

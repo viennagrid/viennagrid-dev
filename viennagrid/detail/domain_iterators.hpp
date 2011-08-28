@@ -61,10 +61,10 @@ namespace viennagrid
             dim_type cell_level = Config::cell_tag::topology_level>
   struct domain_iterators
   {
-    typedef domain<Config>                        domain_type;
-    typedef element<Config,
+    typedef domain_t<Config>                        domain_type;
+    typedef element_t<Config,
                     typename Config::cell_tag>    cell_type;
-      typedef element< Config,
+    typedef element_t< Config,
                        typename topology::subcell_desc<typename Config::cell_tag, dim>::element_tag
                      >                                                         element_type;
                     
@@ -80,9 +80,9 @@ namespace viennagrid
   template <typename Config, dim_type cell_level>
   struct domain_iterators< Config, 0, cell_level>
   {
-    typedef domain<Config>                        domain_type;
-    typedef element<Config,
-                    typename Config::cell_tag>    cell_type;
+    typedef domain_t<Config>                        domain_type;
+    typedef element_t<Config,
+                      typename Config::cell_tag>    cell_type;
                     
     typedef typename result_of::element_container<domain_type, 0>::type   container_type;
     
@@ -94,8 +94,8 @@ namespace viennagrid
   template <typename Config, dim_type cell_level>
   struct domain_iterators< Config, cell_level, cell_level>
   {
-    typedef domain<Config>                        domain_type;
-    typedef element<Config,
+    typedef domain_t<Config>                        domain_type;
+    typedef element_t<Config,
                     typename Config::cell_tag>    cell_type;
                     
     typedef typename result_of::element_container<domain_type,
@@ -134,14 +134,14 @@ namespace viennagrid
   // non-const:
   //container for iteration over a STL vector
   template <typename config_type, dim_type dim>
-  class ncell_range < domain<config_type>, dim, false >
+  class ncell_range < domain_t<config_type>, dim, false >
   {
-      typedef domain<config_type>                        domain_type;
-      typedef element< config_type,
+      typedef domain_t<config_type>                        domain_type;
+      typedef element_t< config_type,
                        typename topology::subcell_desc<typename config_type::cell_tag, dim>::element_tag
                      >                                                         element_type;
                      
-      typedef element< config_type,
+      typedef element_t< config_type,
                        typename config_type::cell_tag
                      >                                                         cell_type;
                      
@@ -154,11 +154,11 @@ namespace viennagrid
       
       ncell_range() : cont_(NULL) {};
       
-      ncell_range(ncell_proxy< domain<config_type> > const & p) : cont_(p.get().template container<dim>()) {}
+      ncell_range(ncell_proxy<domain_type> const & p) : cont_(p.get().template container<dim>()) {}
       
-      ncell_range(domain<config_type> & d) : cont_(d.template container<dim>()) {}
+      ncell_range(domain_type & d) : cont_(d.template container<dim>()) {}
 
-      ncell_range & operator=(ncell_proxy< domain<config_type> > p)
+      ncell_range & operator=(ncell_proxy<domain_type> p)
       { 
         cont_ = p.get().template container<dim>();
         return *this;
@@ -191,17 +191,17 @@ namespace viennagrid
   };
   
   template <dim_type dim, typename DomainConfig>
-  ncell_range<domain<DomainConfig>, dim>
-  ncells(domain<DomainConfig> & d)
+  ncell_range<domain_t<DomainConfig>, dim>
+  ncells(domain_t<DomainConfig> & d)
   {
-    return ncell_range<domain<DomainConfig>, dim>(d);
+    return ncell_range<domain_t<DomainConfig>, dim>(d);
   }
   
   template <typename DomainConfig>
-  ncell_proxy< domain<DomainConfig> >
-  ncells(domain<DomainConfig> & d)
+  ncell_proxy< domain_t<DomainConfig> >
+  ncells(domain_t<DomainConfig> & d)
   {
-    return ncell_proxy< domain<DomainConfig> >(d);
+    return ncell_proxy< domain_t<DomainConfig> >(d);
   }
 
 
@@ -209,14 +209,14 @@ namespace viennagrid
   //const container:  
   //
   template <typename config_type, dim_type dim>
-  class const_ncell_range < domain<config_type>, dim, false >
+  class const_ncell_range < domain_t<config_type>, dim, false >
   {
-      typedef domain<config_type>                        domain_type;
-      typedef element< config_type,
+      typedef domain_t<config_type>                        domain_type;
+      typedef element_t< config_type,
                        typename topology::subcell_desc<typename config_type::cell_tag, dim>::element_tag
                      >                                                         element_type;
 
-      typedef element< config_type,
+      typedef element_t< config_type,
                        typename config_type::cell_tag
                      >                                                         cell_type;
                      
@@ -229,27 +229,27 @@ namespace viennagrid
       
       const_ncell_range() : cont_(NULL) {};
       
-      const_ncell_range(const_ncell_proxy< domain<config_type> > const & p) : cont_(p.get().template container<dim>()) {}
+      const_ncell_range(const_ncell_proxy<domain_type> const & p) : cont_(p.get().template container<dim>()) {}
 
-      const_ncell_range(ncell_proxy< domain<config_type> > const & p) : cont_(p.get().template container<dim>()) {}
+      const_ncell_range(ncell_proxy<domain_type> const & p) : cont_(p.get().template container<dim>()) {}
 
-      const_ncell_range(domain<config_type> const & d) : cont_(d.template container<dim>()) {}
+      const_ncell_range(domain_type const & d) : cont_(d.template container<dim>()) {}
 
-      const_ncell_range(ncell_range< domain<config_type>, dim > const & other) : cont_(other.cont_) {}
+      const_ncell_range(ncell_range<domain_type, dim > const & other) : cont_(other.cont_) {}
 
-      const_ncell_range & operator=(const_ncell_proxy< domain<config_type> > const & p)
+      const_ncell_range & operator=(const_ncell_proxy<domain_type> const & p)
       { 
         cont_ = p.get().template container<dim>();
         return *this;
       }
       
-      const_ncell_range & operator=(ncell_proxy< domain<config_type> > p)
+      const_ncell_range & operator=(ncell_proxy<domain_type> p)
       { 
         cont_ = p.get().template container<dim>();
         return *this;
       }
       
-      const_ncell_range & operator=(ncell_range< domain<config_type>, dim > const & other)
+      const_ncell_range & operator=(ncell_range<domain_type, dim > const & other)
       { 
         cont_ = other.cont_;
         return *this;
@@ -272,17 +272,17 @@ namespace viennagrid
   };
   
   template <dim_type dim, typename DomainConfig>
-  const_ncell_range< domain<DomainConfig>, dim>
-  ncells(domain<DomainConfig> const & d)
+  const_ncell_range< domain_t<DomainConfig>, dim>
+  ncells(domain_t<DomainConfig> const & d)
   {
-    return const_ncell_range< domain<DomainConfig>, dim>(d);
+    return const_ncell_range< domain_t<DomainConfig>, dim>(d);
   }
   
   template <typename DomainConfig>
-  const_ncell_proxy< domain<DomainConfig> >
-  ncells(domain<DomainConfig> const & d)
+  const_ncell_proxy< domain_t<DomainConfig> >
+  ncells(domain_t<DomainConfig> const & d)
   {
-    return const_ncell_proxy< domain<DomainConfig> >(d);
+    return const_ncell_proxy< domain_t<DomainConfig> >(d);
   }
 
   

@@ -72,18 +72,18 @@ namespace viennagrid
 
         edgevertices[0] = vertices[0];
         edgevertices[1] = vertices[1];
-        edge.setVertices(edgevertices);
-        elements[0] = seg.add(edge, orientations);
+        edge.vertices(edgevertices);
+        elements[0] = seg.push_back(edge, orientations);
 
         edgevertices[0] = vertices[0];
         edgevertices[1] = vertices[2];
-        edge.setVertices(edgevertices);
-        elements[1] = seg.add(edge, orientations + 1 );
+        edge.vertices(edgevertices);
+        elements[1] = seg.push_back(edge, orientations + 1 );
 
         edgevertices[0] = vertices[1];
         edgevertices[1] = vertices[2];
-        edge.setVertices(edgevertices);
-        elements[2] = seg.add(edge, orientations + 2 );
+        edge.vertices(edgevertices);
+        elements[2] = seg.push_back(edge, orientations + 2 );
       }
     };
 
@@ -121,9 +121,9 @@ namespace viennagrid
       //grab existing vertices:
       VertexOnCellRange vertices_on_cell = viennagrid::ncells<0>(cell_in);
       VertexOnCellIterator vocit = vertices_on_cell.begin();
-      vertices[0] = &(segment_out.get_domain().vertex(vocit->id())); ++vocit;
-      vertices[1] = &(segment_out.get_domain().vertex(vocit->id())); ++vocit;
-      vertices[2] = &(segment_out.get_domain().vertex(vocit->id()));
+      vertices[0] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]); ++vocit;
+      vertices[1] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]); ++vocit;
+      vertices[2] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]);
 
       //
       // Step 2: Add new cells to new domain:
@@ -135,8 +135,8 @@ namespace viennagrid
       cellvertices[0] = vertices[0];
       cellvertices[1] = vertices[1];
       cellvertices[2] = vertices[2];
-      new_cell.setVertices(cellvertices);
-      segment_out.add(new_cell);
+      new_cell.vertices(cellvertices);
+      segment_out.push_back(new_cell);
 
     } //apply0()
     
@@ -169,9 +169,9 @@ namespace viennagrid
       //grab existing vertices:
       VertexOnCellRange vertices_on_cell = viennagrid::ncells<0>(cell_in);
       VertexOnCellIterator vocit = vertices_on_cell.begin();
-      vertices[0] = &(segment_out.get_domain().vertex(vocit->id())); ++vocit;
-      vertices[1] = &(segment_out.get_domain().vertex(vocit->id())); ++vocit;
-      vertices[2] = &(segment_out.get_domain().vertex(vocit->id()));
+      vertices[0] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]); ++vocit;
+      vertices[1] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]); ++vocit;
+      vertices[2] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]);
 
       //add vertices from edge
       EdgeOnCellRange edges_on_cell = viennagrid::ncells<1>(cell_in);
@@ -183,17 +183,17 @@ namespace viennagrid
       
       if ( (viennadata::access<refinement_key, bool>(refinement_key())(e0) == true) )
       {
-        vertices[3] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)));
+        vertices[3] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)]);
         offset = 0;
       }
       else if ( (viennadata::access<refinement_key, bool>(refinement_key())(e1) == true) )
       {
-        vertices[3] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)));
+        vertices[3] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)]);
         offset = 2;
       }
       else if ( (viennadata::access<refinement_key, bool>(refinement_key())(e2) == true) )
       {
-        vertices[3] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)));
+        vertices[3] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
         offset = 1;
       }
       else
@@ -211,15 +211,15 @@ namespace viennagrid
       cellvertices[0] = vertices[(offset + 0) % topology::subcell_desc<triangle_tag, 0>::num_elements];
       cellvertices[1] = vertices[3];
       cellvertices[2] = vertices[(offset + 2) % topology::subcell_desc<triangle_tag, 0>::num_elements];
-      new_cell.setVertices(cellvertices);
-      segment_out.add(new_cell);
+      new_cell.vertices(cellvertices);
+      segment_out.push_back(new_cell);
 
       //3-1-2:
       cellvertices[0] = vertices[3];
       cellvertices[1] = vertices[(offset + 1) % topology::subcell_desc<triangle_tag, 0>::num_elements];
       cellvertices[2] = vertices[(offset + 2) % topology::subcell_desc<triangle_tag, 0>::num_elements];
-      new_cell.setVertices(cellvertices);
-      segment_out.add(new_cell);
+      new_cell.vertices(cellvertices);
+      segment_out.push_back(new_cell);
     } //apply1()
     
 
@@ -252,9 +252,9 @@ namespace viennagrid
       //grab existing vertices:
       VertexOnCellRange vertices_on_cell = viennagrid::ncells<0>(cell_in);
       VertexOnCellIterator vocit = vertices_on_cell.begin();
-      vertices[0] = &(segment_out.get_domain().vertex(vocit->id())); ++vocit;
-      vertices[1] = &(segment_out.get_domain().vertex(vocit->id())); ++vocit;
-      vertices[2] = &(segment_out.get_domain().vertex(vocit->id()));
+      vertices[0] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]); ++vocit;
+      vertices[1] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]); ++vocit;
+      vertices[2] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]);
 
       //Find rotation offset such that first two edges are to be refined
       EdgeOnCellRange edges_on_cell = viennagrid::ncells<1>(cell_in);
@@ -268,22 +268,22 @@ namespace viennagrid
       if ( (viennadata::access<refinement_key, bool>(refinement_key())(e0) == true)
            && (viennadata::access<refinement_key, bool>(refinement_key())(e1) == true) )
       {
-        vertices[3] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)));
-        vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)));
+        vertices[3] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)]);
+        vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)]);
         offset = 2;
       }
       else if ( (viennadata::access<refinement_key, bool>(refinement_key())(e0) == true)
            && (viennadata::access<refinement_key, bool>(refinement_key())(e2) == true) )
       {
-        vertices[3] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)));
-        vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)));
+        vertices[3] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)]);
+        vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
         offset = 0;
       }
       else if ( (viennadata::access<refinement_key, bool>(refinement_key())(e1) == true)
            && (viennadata::access<refinement_key, bool>(refinement_key())(e2) == true) )
       {
-        vertices[3] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)));
-        vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)));
+        vertices[3] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
+        vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)]);
         offset = 1;
       }
       else
@@ -301,15 +301,15 @@ namespace viennagrid
       cellvertices[0] = vertices[3];
       cellvertices[1] = vertices[(offset + 1) % topology::subcell_desc<triangle_tag, 0>::num_elements];
       cellvertices[2] = vertices[4];
-      new_cell.setVertices(cellvertices);
-      segment_out.add(new_cell);
+      new_cell.vertices(cellvertices);
+      segment_out.push_back(new_cell);
 
       //split second-longest edge
       VertexType & v0 = *(vertices[(offset + 0) % topology::subcell_desc<triangle_tag, 0>::num_elements]);
       VertexType & v1 = *(vertices[(offset + 1) % topology::subcell_desc<triangle_tag, 0>::num_elements]);
       VertexType & v2 = *(vertices[(offset + 2) % topology::subcell_desc<triangle_tag, 0>::num_elements]);
-      double len_edge1 = viennagrid::norm(v1.getPoint() - v0.getPoint());
-      double len_edge2 = viennagrid::norm(v2.getPoint() - v1.getPoint());
+      double len_edge1 = viennagrid::norm(v1.point() - v0.point());
+      double len_edge2 = viennagrid::norm(v2.point() - v1.point());
       
       if (len_edge1 > len_edge2) //split edge [v0, v1] again
       {
@@ -317,15 +317,15 @@ namespace viennagrid
         cellvertices[0] = vertices[(offset + 0) % topology::subcell_desc<triangle_tag, 0>::num_elements];
         cellvertices[1] = vertices[3];
         cellvertices[2] = vertices[(offset + 2) % topology::subcell_desc<triangle_tag, 0>::num_elements];
-        new_cell.setVertices(cellvertices);
-        segment_out.add(new_cell);
+        new_cell.vertices(cellvertices);
+        segment_out.push_back(new_cell);
 
         //2-3-4:
         cellvertices[0] = vertices[(offset + 2) % topology::subcell_desc<triangle_tag, 0>::num_elements];
         cellvertices[1] = vertices[3];
         cellvertices[2] = vertices[4];
-        new_cell.setVertices(cellvertices);
-        segment_out.add(new_cell);
+        new_cell.vertices(cellvertices);
+        segment_out.push_back(new_cell);
       }
       else //split edge [v1, v2]
       {
@@ -333,15 +333,15 @@ namespace viennagrid
         cellvertices[0] = vertices[(offset + 0) % topology::subcell_desc<triangle_tag, 0>::num_elements];
         cellvertices[1] = vertices[3];
         cellvertices[2] = vertices[4];
-        new_cell.setVertices(cellvertices);
-        segment_out.add(new_cell);
+        new_cell.vertices(cellvertices);
+        segment_out.push_back(new_cell);
 
         //0-4-2:
         cellvertices[0] = vertices[(offset + 0) % topology::subcell_desc<triangle_tag, 0>::num_elements];
         cellvertices[1] = vertices[4];
         cellvertices[2] = vertices[(offset + 2) % topology::subcell_desc<triangle_tag, 0>::num_elements];
-        new_cell.setVertices(cellvertices);
-        segment_out.add(new_cell);
+        new_cell.vertices(cellvertices);
+        segment_out.push_back(new_cell);
       }
       
       
@@ -374,16 +374,16 @@ namespace viennagrid
       //grab existing vertices:
       VertexOnCellRange vertices_on_cell = viennagrid::ncells<0>(cell_in);
       VertexOnCellIterator vocit = vertices_on_cell.begin();
-      vertices[0] = &(segment_out.get_domain().vertex(vocit->id())); ++vocit;
-      vertices[1] = &(segment_out.get_domain().vertex(vocit->id())); ++vocit;
-      vertices[2] = &(segment_out.get_domain().vertex(vocit->id()));
+      vertices[0] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]); ++vocit;
+      vertices[1] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]); ++vocit;
+      vertices[2] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]);
 
       //add vertices from edge
       EdgeOnCellRange edges_on_cell = viennagrid::ncells<1>(cell_in);
       EdgeOnCellIterator eocit = edges_on_cell.begin();
-      vertices[3] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(*eocit))); ++eocit;
-      vertices[4] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(*eocit))); ++eocit;
-      vertices[5] = &(segment_out.get_domain().vertex(viennadata::access<refinement_key, std::size_t>(refinement_key())(*eocit)));
+      vertices[3] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(*eocit)]); ++eocit;
+      vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(*eocit)]); ++eocit;
+      vertices[5] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(*eocit)]);
       
       //
       // Step 2: Add new cells to new domain:
@@ -395,29 +395,29 @@ namespace viennagrid
       cellvertices[0] = vertices[0];
       cellvertices[1] = vertices[3];
       cellvertices[2] = vertices[4];
-      new_cell.setVertices(cellvertices);
-      segment_out.add(new_cell);
+      new_cell.vertices(cellvertices);
+      segment_out.push_back(new_cell);
 
       //3-1-5:
       cellvertices[0] = vertices[3];
       cellvertices[1] = vertices[1];
       cellvertices[2] = vertices[5];
-      new_cell.setVertices(cellvertices);
-      segment_out.add(new_cell);
+      new_cell.vertices(cellvertices);
+      segment_out.push_back(new_cell);
 
       //4-5-2:
       cellvertices[0] = vertices[4];
       cellvertices[1] = vertices[5];
       cellvertices[2] = vertices[2];
-      new_cell.setVertices(cellvertices);
-      segment_out.add(new_cell);
+      new_cell.vertices(cellvertices);
+      segment_out.push_back(new_cell);
 
       //4-3-5:
       cellvertices[0] = vertices[4];
       cellvertices[1] = vertices[3];
       cellvertices[2] = vertices[5];
-      new_cell.setVertices(cellvertices);
-      segment_out.add(new_cell);
+      new_cell.vertices(cellvertices);
+      segment_out.push_back(new_cell);
       
     } //apply3()
 

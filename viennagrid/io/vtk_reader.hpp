@@ -51,7 +51,7 @@ namespace viennagrid
       typedef typename DomainConfiguration::dimension_tag              DimensionTag;
       typedef typename DomainConfiguration::cell_tag                   CellTag;
 
-    typedef typename result_of::point<DomainConfiguration>::type                              PointType;
+      typedef typename result_of::point<DomainConfiguration>::type                              PointType;
       typedef typename result_of::ncell<DomainConfiguration, 0>::type                           VertexType;
       typedef typename result_of::ncell<DomainConfiguration, CellTag::topology_level>::type     CellType;
       //typedef typename DomainTypes<DomainConfiguration>::segment_type  Segment;
@@ -312,9 +312,9 @@ namespace viennagrid
               //std::cout << "j+offsetidx: " << j+offsetIdx << std::endl;
             }
 
-            cell.setVertices(&(vertices[0]));
+            cell.vertices(&(vertices[0]));
             cell.id(i);
-            segment.add(cell);
+            segment.push_back(cell);
           }
       }
      
@@ -418,11 +418,6 @@ namespace viennagrid
       };
       ~vtk_reader() { };
 
-      int readDomain(DomainType & domain, std::string const & filename)
-      {
-        return this->operator()(domain, filename);
-      }
-
       int operator()(DomainType & domain, std::string const & filename)
       {
         std::string::size_type pos  = filename.rfind(".")+1;
@@ -443,10 +438,10 @@ namespace viennagrid
               it != geometry_container.end(); it++)
           {
             VertexType vertex;
-            for (dim_type i=0; i<vertex.getPoint().size(); ++i)
-              vertex.getPoint()[i] = *it[i];
+            for (dim_type i=0; i<vertex.size(); ++i)
+              vertex[i] = *it[i];
             vertex.id(index);
-            domain.add(vertex);            
+            domain.push_back(vertex);            
             index++;
           }
           
@@ -474,7 +469,7 @@ namespace viennagrid
     int import_vtk(DomainType & domain, std::string const & filename)
     {
       vtk_reader<DomainType> vtk_reader;
-      return vtk_reader.readDomain(domain, filename);
+      return vtk_reader(domain, filename);
     }
 
   } //namespace io

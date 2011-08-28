@@ -34,7 +34,7 @@ namespace viennagrid
   //////////////  Top Level configuration //////////
   template <typename T_Configuration,
             typename ElementTag>
-  class element :
+  class element_t :
       public lower_level_holder < T_Configuration, ElementTag, ElementTag::topology_level - 1>,
       public traits::element_id<ElementTag>::id_handler
   {
@@ -48,9 +48,9 @@ namespace viennagrid
       typedef T_Configuration                                       config_type;
       typedef ElementTag                                            element_tag;
 
-      element ( ) {};   //construction of "template" for this type
+      element_t ( ) {};   //construction of "template" for this type
 
-      element (const element & e2) : Base(e2)
+      element_t (const element_t & e2) : Base(e2)
       {
         //std::cout << "Copy constructor Element " << this << std::endl;
         this->id(e2.id());
@@ -62,70 +62,28 @@ namespace viennagrid
         Base::fill_level(dom);
       }
 
-      void print(long indent = 0) const
-      {
-        for (long j = 0; j<indent; ++j)
-          std::cout << "   ";
-        std::cout << "---- " << ElementTag::name() << " " << this << " ---------" << std::endl;
-        Base::print(indent + 1);
-      }
-
-      void print_short() const
-      {
-        std::cout << "---- " << ElementTag::name() << " " << this << " ---------" << std::endl;
-        Base::print_short();
-      }
-
-      //VertexType & getVertex(int pos) const { return *(Base::vertices_[pos]); }
-
-      void setVertices(VertexType **vertices)
+      void vertices(VertexType **vertices_)
       {
         for(int i=0; i<VertexSpecs::num_elements; i++)
         {
-          Base::vertices_[i] = vertices[i];
+          Base::vertices_[i] = vertices_[i];
           //std::cout << i << " ";
         }
         //std::cout << std::endl;
       }
 
-      /*bool operator==(element & c2)
-      {
-        //simple algorithm that checks each vertex for a matching vertex in c2
-        //For a small number of vertices this is not too bad.
-        bool found = false;
-        for (int i=0; i<subcell_traits<ElementTag,0>::num_elements; ++i)
-        {
-          for (int j=0; j<subcell_traits<ElementTag,0>::num_elements; ++j)
-          {
-            if (Base::vertices_[i] == c2.vertices_[j])
-            {
-              found = true;
-              break;
-            }
-          }
-          if (found){
-            found = false;
-            continue;
-          }
-          //not found:
-          return false;
-        }
-        //all vertices found:
-        return true;
-      } //operator== */
-
       ///////////////////// container ////////////////////
       
       //non-const:
       template <long j>
-      typename result_of::element_container< element<T_Configuration, element_tag>, j, T_Configuration::cell_tag::topology_level>::type *
+      typename result_of::element_container< element_t<T_Configuration, element_tag>, j, T_Configuration::cell_tag::topology_level>::type *
       container(less_tag)
       { 
         return Base::template container<j>();
       }
 
       template <long j>
-      typename result_of::element_container< element<T_Configuration, element_tag>, j, T_Configuration::cell_tag::topology_level>::type *
+      typename result_of::element_container< element_t<T_Configuration, element_tag>, j, T_Configuration::cell_tag::topology_level>::type *
       container()
       { 
         return container<j>(less_tag());
@@ -134,14 +92,14 @@ namespace viennagrid
 
       //const
       template <long j>
-      const typename result_of::element_container< element<T_Configuration, element_tag>, j, T_Configuration::cell_tag::topology_level>::type *
+      const typename result_of::element_container< element_t<T_Configuration, element_tag>, j, T_Configuration::cell_tag::topology_level>::type *
       container(less_tag) const
       { 
         return Base::template container<j>();
       }
 
       template <long j>
-      const typename result_of::element_container< element<T_Configuration, element_tag>, j, T_Configuration::cell_tag::topology_level>::type *
+      const typename result_of::element_container< element_t<T_Configuration, element_tag>, j, T_Configuration::cell_tag::topology_level>::type *
       container() const
       { 
         return container<j>(less_tag());
@@ -149,9 +107,28 @@ namespace viennagrid
 
   };
 
+  template <typename ConfigType, typename ElementTag>
+  std::ostream & operator<<(std::ostream & os, element_t<ConfigType, ElementTag> const & el)
+  {
+    typedef element_t<ConfigType, ElementTag>                ElementType;
+    typedef typename viennagrid::result_of::const_ncell_range<ElementType, 0>::type    VertexRange;
+    typedef typename viennagrid::result_of::iterator<VertexRange>::type          VertexIterator;
+    
+    os << "-- element<" << ElementTag::topology_level << "> " << el.id() << " --" << std::endl;
+    VertexRange vertices = viennagrid::ncells(el);
+    for (VertexIterator vit  = vertices.begin();
+                        vit != vertices.end();
+                      ++vit)
+      os << " " << vit->point() << std::endl;
+    
+    return os;
+  }
+
+  
+  
   //vertex-type needs separate treatment:
   template <typename T_Configuration>
-  class element <T_Configuration, point_tag> :
+  class element_t <T_Configuration, point_tag> :
     public traits::element_id<point_tag>::id_handler
   {
       typedef typename result_of::point<T_Configuration>::type          PointType;
@@ -164,76 +141,53 @@ namespace viennagrid
       typedef point_tag                                             element_tag;
       typedef typename traits::element_id<point_tag>::id_handler           id_handler;
 
-      element() { };
+      element_t() { };
 
-      element(PointType const & p, long id = -1) : point_(p)
+      element_t(PointType const & p, long id = -1) : point_(p)
       {
         this->id(id);
       };
 
-      element(const element & e2)
+      element_t(const element_t & e2)
       {
         //std::cout << "Copy constructor Element (Vertex) " << this << std::endl;
         point_ = e2.point_;
         this->id(e2.id_);
       }
 
-      element & operator=(const element & other)
+      element_t & operator=(const element_t & other)
       {
         point_ = other.point_;
         this->id(other.id_);                
         return *this;
       }
 
-      PointType & getPoint() { return point_; }
-      PointType const & getPoint() const { return point_; }
+      PointType & point() { return point_; }
+      PointType const & point() const { return point_; }
       
       //convenience access to coordinates of the vertex:
       CoordType & operator[](std::size_t i) { return point_[i]; }
       CoordType const & operator[](std::size_t i) const { return point_[i]; }
+      
+      std::size_t size() const { return point_.size(); }
 
-      void print(long indent = 0) const
-      {
-        for (long j = 0; j<indent; ++j)
-          std::cout << "   ";
-        std::cout << "Vertex (" << this << ") " << this->id() << ": ";
-        std::cout << point_ << std::endl;
-      }
+      bool operator<(const element_t e2) const { return point_ < e2.point_; }
+      bool operator>(const element_t e2) const { return point_ > e2.point_; }
 
-      void print_short() const
-      {
-        std::cout << "Vertex (" << this << ") " << this->id() << ": ";
-        std::cout << point_ << std::endl;
-      }
-
-      void printAddress() const{
-        std::cout << this << std::endl;
-      }
-
-      //compare function for operator== (depends on ID-Handling!)
-      //bool compare(VertexType & v2, NoID &)
-      //{
-      //  return v2.point_ == point_;
-      //}
-
-      //bool compare(VertexType & v2, ProvideID &)
-      //{
-      //  return v2.id_ == this->id_;
-      //}
-
-      bool operator<(const element e2) const { return point_ < e2.point_; }
-
-      //PointType getMidPoint() { return getPoint(); }
-
-      //bool operator==(VertexType & v2)
-      //{
-      //  return compare(v2, subcell_traits<typename T_Configuration::cell_tag,0>::id_handler() );
-      //}
     private:
       PointType point_;
   };
 
+  template <typename ConfigType>
+  std::ostream & operator<<(std::ostream & os, element_t<ConfigType, point_tag> const & el)
+  {
+    os << "-- element<0> " << el.id() << " --" << std::endl;
+    os << " " << el.point() << std::endl;
+    
+    return os;
+  }
 
+  
 }
 
 

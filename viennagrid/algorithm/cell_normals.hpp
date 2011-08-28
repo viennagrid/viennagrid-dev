@@ -92,7 +92,7 @@ struct assignCellNormals_impl <3, viennagrid::triangle_tag>
                 vocit != vertices_for_cell.end();
                 ++vocit)
             {
-               cell_points[vi++] = vocit->getPoint();
+               cell_points[vi++] = vocit->point();
             }
             
             // setup two vectors which represent the cell plane

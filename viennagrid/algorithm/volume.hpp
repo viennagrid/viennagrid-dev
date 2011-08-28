@@ -46,8 +46,8 @@ namespace viennagrid
       typedef typename viennagrid::result_of::point<ConfigType>::type                 PointType;
       typedef typename viennagrid::result_of::const_ncell_range<ElementType, 0>::type       VertexOnCellContainer;
       
-      PointType const & p0 = ncells<0>(cell)[0].getPoint();
-      PointType const & p1 = ncells<0>(cell)[1].getPoint();
+      PointType const & p0 = ncells<0>(cell)[0].point();
+      PointType const & p1 = ncells<0>(cell)[1].point();
       
       return norm(p0 - p1);
     }
@@ -61,9 +61,9 @@ namespace viennagrid
       typedef typename viennagrid::result_of::point<ConfigType>::type                 PointType;
       typedef typename viennagrid::result_of::const_ncell_range<ElementType, 0>::type       VertexOnCellContainer;
       
-      PointType const & p0 = ncells<0>(cell)[0].getPoint();
-      PointType const & p1 = ncells<0>(cell)[1].getPoint();
-      PointType const & p2 = ncells<0>(cell)[2].getPoint();
+      PointType const & p0 = ncells<0>(cell)[0].point();
+      PointType const & p1 = ncells<0>(cell)[1].point();
+      PointType const & p2 = ncells<0>(cell)[2].point();
       
       return spanned_volume(p0, p1, p2);
     }
@@ -76,10 +76,10 @@ namespace viennagrid
       typedef typename viennagrid::result_of::point<ConfigType>::type                 PointType;
       typedef typename viennagrid::result_of::const_ncell_range<ElementType, 0>::type       VertexOnCellContainer;
       
-      PointType const & p0 = ncells<0>(cell)[0].getPoint();
-      PointType const & p1 = ncells<0>(cell)[1].getPoint();
-      PointType const & p2 = ncells<0>(cell)[2].getPoint();
-      PointType const & p3 = ncells<0>(cell)[3].getPoint();
+      PointType const & p0 = ncells<0>(cell)[0].point();
+      PointType const & p1 = ncells<0>(cell)[1].point();
+      PointType const & p2 = ncells<0>(cell)[2].point();
+      PointType const & p3 = ncells<0>(cell)[3].point();
       
       return spanned_volume(p0, p1, p3) + spanned_volume(p1, p2, p3); //sum up the two triangular parts
     }
@@ -93,10 +93,10 @@ namespace viennagrid
       typedef typename viennagrid::result_of::point<ConfigType>::type                 PointType;
       typedef typename viennagrid::result_of::const_ncell_range<ElementType, 0>::type       VertexOnCellContainer;
       
-      PointType const & p0 = ncells<0>(cell)[0].getPoint();
-      PointType const & p1 = ncells<0>(cell)[1].getPoint();
-      PointType const & p2 = ncells<0>(cell)[2].getPoint();
-      PointType const & p3 = ncells<0>(cell)[3].getPoint();
+      PointType const & p0 = ncells<0>(cell)[0].point();
+      PointType const & p1 = ncells<0>(cell)[1].point();
+      PointType const & p2 = ncells<0>(cell)[2].point();
+      PointType const & p3 = ncells<0>(cell)[3].point();
       
       return spanned_volume(p0, p1, p2, p3);
     }
@@ -110,14 +110,14 @@ namespace viennagrid
       typedef typename viennagrid::result_of::point<ConfigType>::type                 PointType;
       typedef typename viennagrid::result_of::const_ncell_range<ElementType, 0>::type       VertexOnCellContainer;
       
-      PointType const & p0 = ncells<0>(cell)[0].getPoint();
-      PointType const & p1 = ncells<0>(cell)[1].getPoint();
-      PointType const & p2 = ncells<0>(cell)[2].getPoint();
-      PointType const & p3 = ncells<0>(cell)[3].getPoint();
-      PointType const & p4 = ncells<0>(cell)[4].getPoint();
-      PointType const & p5 = ncells<0>(cell)[5].getPoint();
-      PointType const & p6 = ncells<0>(cell)[6].getPoint();
-      PointType const & p7 = ncells<0>(cell)[7].getPoint();
+      PointType const & p0 = ncells<0>(cell)[0].point();
+      PointType const & p1 = ncells<0>(cell)[1].point();
+      PointType const & p2 = ncells<0>(cell)[2].point();
+      PointType const & p3 = ncells<0>(cell)[3].point();
+      PointType const & p4 = ncells<0>(cell)[4].point();
+      PointType const & p5 = ncells<0>(cell)[5].point();
+      PointType const & p6 = ncells<0>(cell)[6].point();
+      PointType const & p7 = ncells<0>(cell)[7].point();
       
       //decompose hexahedron into six tetrahedra
       return spanned_volume(p0, p1, p3, p4)
@@ -164,7 +164,7 @@ namespace viennagrid
     //special case: domain
     template <typename ConfigType>
     typename ConfigType::numeric_type
-    volume(domain<ConfigType> const & d)
+    volume(domain_t<ConfigType> const & d)
     {
       return volume_domainsegment(d);
     }    

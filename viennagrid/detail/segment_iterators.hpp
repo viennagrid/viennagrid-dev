@@ -87,7 +87,7 @@ namespace viennagrid
   struct segment_iterators< Config, cell_level, cell_level>
   {
     typedef segment_t<Config>                     segment_type;
-    typedef element<Config,
+    typedef element_t<Config,
                     typename Config::cell_tag>    cell_type;
                     
     typedef typename result_of::element_container<segment_type,
@@ -107,11 +107,11 @@ namespace viennagrid
   class ncell_range < segment_t<config_type>, dim, false >
   {
       typedef segment_t<config_type>                        segment_type;
-      typedef element< config_type,
+      typedef element_t< config_type,
                        typename topology::subcell_desc<typename config_type::cell_tag, dim>::element_tag
                      >                                                         element_type;
                      
-      typedef element< config_type,
+      typedef element_t< config_type,
                        typename config_type::cell_tag
                      >                                                         cell_type;
                      
@@ -124,12 +124,12 @@ namespace viennagrid
       
       ncell_range() : cont_(NULL) {};
       
-      ncell_range(ncell_proxy< segment_t<config_type> > const & p) : cont_(p.get().template container<dim>()) {}
+      ncell_range(ncell_proxy<segment_type> const & p) : cont_(p.get().template container<dim>()) {}
       
-      ncell_range(segment_t<config_type> & d) : cont_(d.template container<dim>()) {}
+      ncell_range(segment_type & d) : cont_(d.template container<dim>()) {}
       
       
-      ncell_range & operator=(ncell_proxy< segment_t<config_type> > p)
+      ncell_range & operator=(ncell_proxy<segment_type> p)
       { 
         cont_ = p.get().template container<dim>();
         return *this;
@@ -186,11 +186,11 @@ namespace viennagrid
   class const_ncell_range < segment_t<config_type>, dim, false >
   {
       typedef segment_t<config_type>                        segment_type;
-      typedef element< config_type,
+      typedef element_t< config_type,
                        typename topology::subcell_desc<typename config_type::cell_tag, dim>::element_tag
                      >                                                         element_type;
 
-      typedef element< config_type,
+      typedef element_t< config_type,
                        typename config_type::cell_tag
                      >                                                         cell_type;
                      
@@ -207,9 +207,9 @@ namespace viennagrid
 
       const_ncell_range(ncell_proxy< segment_type > const & p) : cont_(p.get().template container<dim>()) {}
 
-      const_ncell_range(segment_t<config_type> const & d) : cont_(d.template container<dim>()) {}
+      const_ncell_range(segment_type const & d) : cont_(d.template container<dim>()) {}
 
-      const_ncell_range(ncell_range< segment_t<config_type>, dim > const & other) : cont_(other.cont_) {}
+      const_ncell_range(ncell_range<segment_type, dim > const & other) : cont_(other.cont_) {}
 
 
       const_ncell_range & operator=(const_ncell_proxy< segment_type > const & p)

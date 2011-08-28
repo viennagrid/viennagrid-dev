@@ -95,7 +95,7 @@ namespace viennagrid
   class point;
   
   template <typename T_Configuration, typename ElementTag>
-  struct element;
+  struct element_t;
 
   template <typename ElementType>
   class element_key;
@@ -108,7 +108,7 @@ namespace viennagrid
   class segment_t;
 
   template <typename ConfigType>
-  class domain;
+  class domain_t;
   
   /********* Other *******************/
 
@@ -286,18 +286,18 @@ namespace viennagrid
               dim_type cell_level = Config::cell_tag::topology_level>
     struct ncell
     {
-      typedef element<Config, 
-                      typename topology::subcell_desc<typename Config::cell_tag,
-                                                    dim>::element_tag
-                      > type;
+      typedef element_t<Config, 
+                        typename topology::subcell_desc<typename Config::cell_tag,
+                                                        dim>::element_tag
+                       > type;
     };
     
     template <typename Config,
               dim_type cell_level>
     struct ncell <Config, cell_level, cell_level>
     {
-      typedef element<Config, 
-                      typename Config::cell_tag>       type;
+      typedef element_t<Config, 
+                        typename Config::cell_tag>       type;
     };
     
     

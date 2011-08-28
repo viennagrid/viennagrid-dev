@@ -106,7 +106,7 @@ namespace viennagrid
         }
         
       
-        long pointnum = domain.template size<CellTag::topology_level>();
+        long pointnum = viennagrid::ncells<0>(domain).size();
       
         writer << "object \"points\" class array type float rank 1 shape " << DimensionTag::value << " items ";
         writer << pointnum << " data follows" << std::endl;
@@ -117,13 +117,13 @@ namespace viennagrid
             vit != vertices.end();
             ++vit)
         {
-          PointWriter<DimensionTag::value>::write(writer, vit->getPoint());
+          PointWriter<DimensionTag::value>::write(writer, vit->point());
           writer << std::endl;
         }
         writer << std::endl;
 
         //Cells:
-        long cellnum = domain.template size<CellTag::topology_level>();
+        long cellnum = viennagrid::ncells<CellTag::topology_level>(domain).size();
         writer << "object \"grid_Line_One\" class array type int rank 1 shape " << (DimensionTag::value + 1) << " items " << cellnum << " data follows" << std::endl;
 
         CellRange cells = viennagrid::ncells<CellTag::topology_level>(domain);

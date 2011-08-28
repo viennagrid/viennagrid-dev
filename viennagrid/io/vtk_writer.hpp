@@ -48,7 +48,7 @@ namespace viennagrid
       
       //special handling for domain:
       template <typename VertexType, typename ConfigType>
-      static long apply(VertexType const & v, viennagrid::domain<ConfigType> const & dom)
+      static long apply(VertexType const & v, viennagrid::domain_t<ConfigType> const & dom)
       {
         return v.id();
       }
@@ -202,7 +202,7 @@ namespace viennagrid
               vit != vertices.end();
               ++vit)
           {
-            PointWriter<DimensionTag::value>::write(writer, vit->getPoint());
+            PointWriter<DimensionTag::value>::write(writer, vit->point());
 
             // add 0's for less than three dimensions
               if (DimensionTag::value == 2)
@@ -246,9 +246,9 @@ namespace viennagrid
             writer << "    </DataArray>" << std::endl;
 
             writer << "    <DataArray type=\"Int32\" Name=\"offsets\" format=\"ascii\">" << std::endl;
-            for (size_t offsets = 1;
-                offsets <= segment.template size<CellTag::topology_level>();
-                ++offsets)
+            for (std::size_t offsets = 1;
+                 offsets <= viennagrid::ncells<CellTag::topology_level>(segment).size();
+                 ++offsets)
             {
               writer << ( offsets * viennagrid::topology::subcell_desc<CellTag, 0>::num_elements) << " ";
             }
@@ -256,8 +256,8 @@ namespace viennagrid
             writer << "    </DataArray>" << std::endl;
 
             writer << "    <DataArray type=\"UInt8\" Name=\"types\" format=\"ascii\">" << std::endl;
-            for (size_t offsets = 1;
-                  offsets <= segment.template size<CellTag::topology_level>();
+            for (std::size_t offsets = 1;
+                  offsets <= viennagrid::ncells<CellTag::topology_level>(segment).size();
                   ++offsets)
             {
               writer << ELEMENT_TAG_TO_VTK_TYPE<CellTag>::ReturnValue << " ";
@@ -440,11 +440,6 @@ namespace viennagrid
 
       public:
 
-        int writeDomain(DomainType const & domain, std::string const & filename)
-        {
-          return this->operator()(domain, filename);
-        }
-
         int operator()(DomainType const & domain, std::string const & filename)
         {
 
@@ -514,9 +509,9 @@ namespace viennagrid
               }
 
               writer << "  <Piece NumberOfPoints=\""
-                    << seg.template size<0>()
+                    << viennagrid::ncells<0>(seg).size()
                     << "\" NumberOfCells=\""
-                    << seg.template size<CellTag::topology_level>()
+                    << viennagrid::ncells<CellTag::topology_level>(seg).size()
                     << "\">" << std::endl;
 
 
@@ -568,10 +563,10 @@ namespace viennagrid
             writeHeader(writer);
             
             writer << "  <Piece NumberOfPoints=\""
-                  << domain.template size<0>()
-                  << "\" NumberOfCells=\""
-                  << domain.template size<CellTag::topology_level>()
-                  << "\">" << std::endl;
+                   << viennagrid::ncells<0>(domain).size()
+                   << "\" NumberOfCells=\""
+                   << viennagrid::ncells<CellTag::topology_level>(domain).size()
+                   << "\">" << std::endl;
 
 
             writePoints(domain, writer);
@@ -712,7 +707,7 @@ namespace viennagrid
     int export_vtk(DomainType const& domain, std::string const & filename)
     {
       vtk_writer<DomainType> vtk_writer;
-      return vtk_writer.writeDomain(domain, filename);
+      return vtk_writer(domain, filename);
     }
 
 
