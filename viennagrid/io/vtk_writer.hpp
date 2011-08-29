@@ -26,7 +26,8 @@
 #include "viennagrid/forwards.h"
 #include "viennagrid/iterators.hpp"
 #include "viennagrid/io/helper.hpp"
-#include "viennagrid/io/vtk_tags.hpp"
+#include "viennagrid/io/vtk_common.hpp"
+#include "viennagrid/io/data_accessor.hpp"
 //#include "viennagrid/algorithm/cell_normals.hpp"
 #include "viennadata/api.hpp"
 
@@ -34,128 +35,6 @@ namespace viennagrid
 {
   namespace io
   {
-    //
-    // helper: get id from a vertex relative to the segment or the domain:
-    //
-    struct vtk_get_id
-    {
-      template <typename VertexType, typename T>
-      static long apply(VertexType const & v, T const & seg)
-      {
-        //obtain local segment numbering from ViennaData:
-        return viennadata::access<segment_mapping_key<T>, long>(seg)(v);
-      }
-      
-      //special handling for domain:
-      template <typename VertexType, typename ConfigType>
-      static long apply(VertexType const & v, viennagrid::domain_t<ConfigType> const & dom)
-      {
-        return v.id();
-      }
-      
-    };
-    
-    
-    
-    //
-    // type erasure
-    //
-    template <typename ElementType>      //either cell type or vertex type
-    class data_accessor_interface
-    {
-      public: 
-        virtual std::string operator()(ElementType const & element, size_t segment_id) const = 0;
-        
-        virtual bool active_on_segment(size_t i) const { return true; }
-        
-        virtual data_accessor_interface<ElementType> * clone() const = 0;
-    };
-
-    
-    
-    //
-    // Use case 1: Access data for all elements
-    //
-    template <typename ElementType, typename KeyType, typename DataType>
-    class global_data_accessor : public data_accessor_interface<ElementType>
-    {
-      typedef global_data_accessor<ElementType, KeyType, DataType>    self_type;
-      
-      public:
-        global_data_accessor(KeyType const & k) : key_(k) {}
-        //vtk_data_accessor_global() {}
-
-        std::string operator()(ElementType const & element, size_t segment_id) const
-        {
-          std::stringstream ss;
-          ss << viennadata::access<KeyType, DataType>(key_)(element);
-          return ss.str();
-        }
-        
-        data_accessor_interface<ElementType> * clone() const { return new self_type(key_); }
-        
-      private:
-        KeyType key_;
-    };
-    
-    
-    //
-    // Use case 2: Access data based on segments.
-    //
-    template <typename ElementType, typename KeyType, typename DataType>
-    class segment_based_data_accessor : public data_accessor_interface<ElementType>
-    {
-      typedef segment_based_data_accessor<ElementType, KeyType, DataType>    self_type;
-      
-      public:
-        segment_based_data_accessor(KeyType const & k) : key_(k) {}
-        //vtk_data_accessor_global() {}
-
-        std::string operator()(ElementType const & element, size_t segment_id) const
-        {
-          std::stringstream ss;
-          ss << viennadata::access<KeyType, DataType>(key_)(element)[segment_id];
-          return ss.str();
-        }
-        
-        data_accessor_interface<ElementType> * clone() const { return new self_type(key_); }
-        
-      private:
-        KeyType key_;
-    };
-
-    //
-    // The final wrapper class for any IO implementations
-    //
-    template <typename ElementType>
-    class data_accessor_wrapper
-    {
-      public:
-        template <typename T>
-        data_accessor_wrapper(T const * t) : functor_(t) {}
-        
-        data_accessor_wrapper() {}
-
-        data_accessor_wrapper(const data_accessor_wrapper & other) : functor_(other.clone()) {}
-
-        data_accessor_wrapper & operator=(data_accessor_wrapper & other)
-        {
-          functor_ = other.functor_;
-          return *this;
-        }
-        
-        std::string operator()(ElementType const & element, size_t segment_id = 0) const
-        {   
-          return functor_->operator()(element, segment_id); 
-        }
-        
-        data_accessor_interface<ElementType> * clone() const { return functor_->clone(); }
-
-      private:
-        std::auto_ptr< const data_accessor_interface<ElementType> > functor_;
-    };
-    
-    
     
     /////////////////// VTK export ////////////////////////////
 

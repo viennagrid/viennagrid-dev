@@ -30,42 +30,19 @@
 #include "viennagrid/config/others.hpp"
 #include "viennagrid/io/vtk_writer.hpp"
 
-
-struct TestDomainConfig
+template <typename DomainType>
+void setup(DomainType & domain, viennagrid::hexahedron_tag)
 {
-  typedef double                                  numeric_type;
-  #ifdef THREEDIM
-  typedef viennagrid::three_dimensions_tag        dimension_tag;
-  typedef viennagrid::hexahedron_tag              cell_tag;
-  #endif
-  #ifdef TWODIM
-  typedef viennagrid::two_dimensions_tag          dimension_tag;
-  typedef viennagrid::quadrilateral_tag           cell_tag;
-  #endif
-  #ifdef ONEDIM
-  typedef viennagrid::one_dimension_tag           dimension_tag;
-  typedef viennagrid::line_tag                    cell_tag;
-  #endif
-};
-
-
-void testNewDomain(std::string & infile, std::string & outfile)
-{
-
-  typedef viennagrid::result_of::domain<TestDomainConfig>::type              Domain;
-  typedef TestDomainConfig::cell_tag                                         CellTag;
-  //typedef viennagrid::TestDomainConfig::DimensionTag                       DimensionTag;
-  typedef viennagrid::result_of::point<TestDomainConfig>::type          PointType;
-  typedef viennagrid::result_of::ncell<TestDomainConfig, 0>::type       VertexType;
-  typedef viennagrid::result_of::ncell<TestDomainConfig,
-                                            CellTag::topology_level>::type   CellType;
-  //typedef viennagrid::DomainTypes<TestDomainConfig>::segment_type          Segment;
-
-  Domain domain;
+  typedef typename DomainType::config_type                                 ConfigType;
+  typedef typename ConfigType::cell_tag                                    CellTag;
+  typedef typename viennagrid::result_of::point<ConfigType>::type          PointType;
+  typedef typename viennagrid::result_of::ncell<ConfigType, 0>::type       VertexType;
+  typedef typename viennagrid::result_of::ncell<ConfigType,
+                                                CellTag::topology_level>::type   CellType;
+  
   CellType hypercube0;
   CellType hypercube1;
-
-#ifdef THREEDIM
+  
   PointType p0(0.0, 0.0, 0.0);
   PointType p1(1.0, 0.0, 0.0);
   PointType p2(1.0, 1.0, 0.0);
@@ -92,7 +69,7 @@ void testNewDomain(std::string & infile, std::string & outfile)
   VertexType v9(p9, 9);
   VertexType v10(p10, 10);
   VertexType v11(p11, 11);
-
+  
   std::cout << "Adding vertices to segment:" << std::endl;
   domain.push_back(v0);
   domain.push_back(v1);
@@ -127,8 +104,27 @@ void testNewDomain(std::string & infile, std::string & outfile)
   vertices1[5] = &(viennagrid::ncells<0>(domain)[10]);
   vertices1[6] = &(viennagrid::ncells<0>(domain)[11]);
   vertices1[7] = &(viennagrid::ncells<0>(domain)[6]);
+ 
+  hypercube0.vertices(vertices0);
+  domain.push_back(hypercube0);
   
-#else
+  hypercube1.vertices(vertices1);  
+  domain.push_back(hypercube1);
+  
+}
+
+template <typename DomainType>
+void setup(DomainType & domain, viennagrid::quadrilateral_tag)
+{
+  typedef typename DomainType::config_type                                 ConfigType;
+  typedef typename ConfigType::cell_tag                                    CellTag;
+  typedef typename viennagrid::result_of::point<ConfigType>::type          PointType;
+  typedef typename viennagrid::result_of::ncell<ConfigType, 0>::type       VertexType;
+  typedef typename viennagrid::result_of::ncell<ConfigType,
+                                                CellTag::topology_level>::type   CellType;
+
+  CellType hypercube0;
+  CellType hypercube1;
   
   PointType p0(0.0, 0.0);
   PointType p1(1.0, 0.0);
@@ -166,17 +162,43 @@ void testNewDomain(std::string & infile, std::string & outfile)
   vertices1[2] = &(viennagrid::ncells<0>(domain)[3]);
   vertices1[3] = &(viennagrid::ncells<0>(domain)[4]);
   
-#endif
-  
   hypercube0.vertices(vertices0);
   domain.push_back(hypercube0);
   
   hypercube1.vertices(vertices1);  
   domain.push_back(hypercube1);
   
+}
+
+
+template <typename ConfigType>
+void test(std::string outfile)
+{
+
+  typedef typename viennagrid::result_of::domain<ConfigType>::type              Domain;
+  typedef typename ConfigType::cell_tag                                         CellTag;
+  typedef typename viennagrid::result_of::point<ConfigType>::type          PointType;
+  typedef typename viennagrid::result_of::ncell<ConfigType, 0>::type       VertexType;
+  typedef typename viennagrid::result_of::ncell<ConfigType,
+                                                CellTag::topology_level>::type   CellType;
+
+  typedef typename viennagrid::result_of::ncell_range<Domain, 0>::type       VertexContainer;
+  typedef typename viennagrid::result_of::iterator<VertexContainer>::type    VertexIterator;
+  
+  typedef typename viennagrid::result_of::ncell_range<Domain, 1>::type       EdgeContainer;
+  typedef typename viennagrid::result_of::iterator<EdgeContainer>::type      EdgeIterator;
+  
+  typedef typename viennagrid::result_of::ncell_range<Domain, CellTag::topology_level-1>::type   FacetContainer;
+  typedef typename viennagrid::result_of::iterator<FacetContainer>::type                         FacetIterator;
+  
+  typedef typename viennagrid::result_of::ncell_range<Domain, CellTag::topology_level>::type   CellContainer;
+  typedef typename viennagrid::result_of::iterator<CellContainer>::type                        CellIterator;
+  
+  Domain domain;
+
+  setup(domain, CellTag());  
+  
   std::cout << "Vertices: " << std::endl;
-  typedef viennagrid::result_of::ncell_range<Domain, 0>::type   VertexContainer;
-  typedef viennagrid::result_of::iterator<VertexContainer>::type    VertexIterator;
   VertexContainer vertices = viennagrid::ncells<0>(domain);
   for (VertexIterator vit = vertices.begin();
         vit != vertices.end();
@@ -184,8 +206,6 @@ void testNewDomain(std::string & infile, std::string & outfile)
       std::cout << *vit << std::endl;
   
   std::cout << "Edges: " << std::endl;
-  typedef viennagrid::result_of::ncell_range<Domain, 1>::type   EdgeContainer;
-  typedef viennagrid::result_of::iterator<EdgeContainer>::type      EdgeIterator;
   EdgeContainer edges = viennagrid::ncells<1>(domain);
   for (EdgeIterator eit = edges.begin();
         eit != edges.end();
@@ -193,30 +213,22 @@ void testNewDomain(std::string & infile, std::string & outfile)
       std::cout << *eit << std::endl;
 
   std::cout << "Facets: " << std::endl;
-  typedef viennagrid::result_of::ncell_range<Domain, TestDomainConfig::cell_tag::topology_level-1>::type   FacetContainer;
-  typedef viennagrid::result_of::iterator<FacetContainer>::type                                                FacetIterator;
-  FacetContainer facets = viennagrid::ncells<TestDomainConfig::cell_tag::topology_level-1>(domain);
+  FacetContainer facets = viennagrid::ncells(domain);
   for (FacetIterator fit = facets.begin();
         fit != facets.end();
         ++fit)
       std::cout << *fit << std::endl;
 
   std::cout << "Cells: " << std::endl;
-  typedef viennagrid::result_of::ncell_range<Domain, TestDomainConfig::cell_tag::topology_level>::type   CellContainer;
-  typedef viennagrid::result_of::iterator<CellContainer>::type                                               CellIterator;
-  CellContainer cells = viennagrid::ncells<TestDomainConfig::cell_tag::topology_level>(domain);
+  CellContainer cells = viennagrid::ncells(domain);
   for (CellIterator cit = cells.begin();
         cit != cells.end();
         ++cit)
       std::cout << *cit << std::endl;
 
   viennagrid::io::vtk_writer<Domain> my_vtk_writer;
-  my_vtk_writer(domain, outfile + ".vtk");
+  my_vtk_writer(domain, outfile + ".vtu");
   
-  
-  std::cout << "*******************************" << std::endl;
-  std::cout << "* Test finished successfully! *" << std::endl;
-  std::cout << "*******************************" << std::endl;
 }
 
 
@@ -226,11 +238,11 @@ int main()
   std::cout << "* Test started! *" << std::endl;
   std::cout << "*****************" << std::endl;
   
-  std::string path = "../applications/data/";
+  test<viennagrid::config::quadrilateral_2d>("hypercube_2d");
+  test<viennagrid::config::hexahedron_3d>("hypercube_3d");
   
-  std::string infile = path + "line8.sgf";
-  std::string outfile = path + "out"; // without ending
-  
-  testNewDomain(infile, outfile);
+  std::cout << "*******************************" << std::endl;
+  std::cout << "* Test finished successfully! *" << std::endl;
+  std::cout << "*******************************" << std::endl;
   return EXIT_SUCCESS;
 }

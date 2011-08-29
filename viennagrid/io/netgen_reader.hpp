@@ -88,7 +88,9 @@ namespace viennagrid
         reader >> node_num;
         assert(node_num > 0);
         
-        //std::cout << "Reading " << node_num << " vertices... " << std::endl;  
+        #if defined VIENNAGRID_DEBUG_STATUS || defined VIENNAGRID_DEBUG_IO
+        std::cout << "* netgen_reader::operator(): Reading " << node_num << " vertices... " << std::endl;  
+        #endif
 
         VertexType vertex;
     
@@ -114,6 +116,11 @@ namespace viennagrid
         //
         reader >> cell_num;
         //domain.reserve_cells(cell_num);
+        
+        #if defined VIENNAGRID_DEBUG_STATUS || defined VIENNAGRID_DEBUG_IO
+        std::cout << "* netgen_reader::operator(): Reading " << cell_num << " cells... " << std::endl;  
+        #endif
+        
         CellType cell;
         //std::cout << "Filling " << cell_num << " cells:" << std::endl;
     

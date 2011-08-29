@@ -26,11 +26,13 @@
 #include <fstream>
 #include <iostream>
 #include <vector>
+#include <string>
+#include <algorithm>
 
 #include "boost/unordered_map.hpp"
 
 #include "viennagrid/forwards.h"
-#include "viennagrid/io/vtk_tags.hpp"
+#include "viennagrid/io/vtk_common.hpp"
 #include "stdio.h"
 #include "helper.hpp"
 
@@ -40,6 +42,18 @@ namespace viennagrid
 {
   namespace io
   {
+    
+    namespace
+    {
+      //functor for conversion to lowercase (avoid ::tolower())
+      char to_lower(char c)
+      {
+        if(c <= 'Z' && c >= 'A')
+          return c - ('Z'-'z');
+        return c;
+      } 
+    }
+    
     
     template <typename DomainType>
     class vtk_reader
@@ -95,12 +109,52 @@ namespace viennagrid
         reader.close();
       }
      
+      bool lowercase_compare(std::string const & s1, std::string const & s2)
+      {
+        std::string s1_lower = s1;
+        std::transform(s1.begin(), s1.end(), s1_lower.begin(), to_lower);
+
+        std::string s2_lower = s2;
+        std::transform(s2.begin(), s2.end(), s2_lower.begin(), to_lower);
+
+        return s1_lower == s2_lower;
+      }
+     
       void checkNextToken(std::string const & expectedToken)
       {
         std::string token;
-        this->reader >> token;
-        if(token != expectedToken) {
-          std::cerr << "Expected \"" << expectedToken << "\", but got \"" << token << "\"" << std::endl;
+        reader >> token;
+
+        if ( !lowercase_compare(token, expectedToken) )
+        {
+          std::cerr << "* vtk_reader::operator(): Expected \"" << expectedToken << "\", but got \"" << token << "\"" << std::endl;
+          throw;
+        }
+      }
+
+      void goToToken(std::string const & expectedToken)
+      {
+
+        std::string expectedTokenLower = expectedToken;
+        std::transform(expectedTokenLower.begin(), expectedTokenLower.end(), expectedTokenLower.begin(), to_lower);
+        
+        bool done = false;
+        
+        while (!done && reader.good())
+        {
+          //read token and convert to lower-case
+          std::string token;
+          reader >> token;
+          std::string tokenLower = token;
+          std::transform(tokenLower.begin(), tokenLower.end(), tokenLower.begin(), to_lower);
+          
+          if(tokenLower == expectedTokenLower) 
+            done = true;
+        }
+        
+        if (!reader.good())
+        {
+          std::cerr << "* vtk_reader::operator(): Reached EOF while waiting for \"" << expectedToken << "\"" << std::endl;
           throw;
         }
       }
@@ -262,6 +316,15 @@ namespace viennagrid
             this->reader >> token;
           }
       }
+      
+      template <typename Segment>
+      void readPointData(Segment & segment)
+      {
+        //TODO: Implement it :-)
+        
+        goToToken("</PointData>");
+      }
+      
 
       template <typename Segment>
       void readCells(Segment & segment, long cellNum, std::vector<long> const & cells, std::vector<long> const & offsets)
@@ -318,6 +381,14 @@ namespace viennagrid
           }
       }
      
+      template <typename Segment>
+      void readCellData(Segment & segment)
+      {
+        //TODO: Implement it :-)
+        
+        goToToken("</CellData>");
+      }
+     
       void process_vtu(DomainType & domain, std::string const & filename, int segment_id = 0)
       {
         try
@@ -366,7 +437,27 @@ namespace viennagrid
           
           checkNextToken("</DataArray>");
           checkNextToken("</Points>");
-          checkNextToken("<Cells>");
+
+          //read point data if available
+          {
+            std::string token;
+            reader >> token;
+            if (lowercase_compare(token, "<PointData"))
+            {
+              readPointData(domain);
+              checkNextToken("<Cells>");
+            }
+            else if (lowercase_compare(token, "<Cells>"))
+            {
+              //okay 
+            }
+            else
+            {
+              std::cerr << "* vtk_reader::operator(): Expected \"<PointData\" or \"<Cells>\", but got \"" << token << "\"" << std::endl;
+              throw;
+            }
+          }
+          
           checkNextToken("<DataArray");
           checkNextToken("type=\"Int32\"");
           checkNextToken("Name=\"connectivity\"");
@@ -391,7 +482,27 @@ namespace viennagrid
           readOffsets(offsets);
 
           checkNextToken("</Cells>");
-          checkNextToken("</Piece>");
+          
+          //read cell data if available
+          {
+            std::string token;
+            reader >> token;
+            if (lowercase_compare(token, "<CellData"))
+            {
+              readCellData(domain);
+              checkNextToken("</Piece>");
+            }
+            else if (lowercase_compare(token, "</Piece>"))
+            {
+              //okay 
+            }
+            else
+            {
+              std::cerr << "* vtk_reader::operator(): Expected \"<CellData\" or \"</Piece>\", but got \"" << token << "\"" << std::endl;
+              throw;
+            }
+          }
+          
           checkNextToken("</UnstructuredGrid>");
           checkNextToken("</VTKFile>");
 
@@ -406,7 +517,7 @@ namespace viennagrid
 
       void process_pvd(DomainType & domain, std::string const & filename)
       {
-      
+        assert(false && "not implemented!");
       }
 
 
@@ -416,7 +527,6 @@ namespace viennagrid
         local_geometry_index = 0;
         global_geometry_index = 0;        
       };
-      ~vtk_reader() { };
 
       int operator()(DomainType & domain, std::string const & filename)
       {
@@ -447,8 +557,7 @@ namespace viennagrid
           
           
         }
-        else
-        if(extension == "pvd")
+        else if(extension == "pvd")
         {
           process_pvd(domain, filename);
         }

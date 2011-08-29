@@ -28,8 +28,12 @@ int main()
   
   std::cout << " ------ Part 1: Simplex domains ------- " << std::endl;
   
+  std::cout << "* instantiating simplex 11u domain.. " << std::endl;
+  viennagrid::result_of::domain<viennagrid::config::line_1d>::type        domain_simplex_11u;
   std::cout << "* instantiating simplex 21u domain.. " << std::endl;
   viennagrid::result_of::domain<viennagrid::config::line_2d>::type        domain_simplex_21u;
+  std::cout << "* instantiating simplex 22u domain.. " << std::endl;
+  viennagrid::result_of::domain<viennagrid::config::line_3d>::type        domain_simplex_31u;
   std::cout << "* instantiating simplex 22u domain.. " << std::endl;
   viennagrid::result_of::domain<viennagrid::config::triangular_2d>::type  domain_simplex_22u;
   std::cout << "* instantiating simplex 32u domain.. " << std::endl;

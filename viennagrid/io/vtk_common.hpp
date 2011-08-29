@@ -16,8 +16,8 @@
 ======================================================================= */
 
 
-#ifndef VIENNAGRID_IO_VTK_TAGS_GUARD
-#define VIENNAGRID_IO_VTK_TAGS_GUARD
+#ifndef VIENNAGRID_IO_VTK_COMMON_HPP
+#define VIENNAGRID_IO_VTK_COMMON_HPP
 
 #include <fstream>
 #include <iostream>
@@ -66,6 +66,33 @@ namespace viennagrid
     {
       enum{ ReturnValue = 3 };
     };
+    
+    
+    
+    //
+    // helper: get id from a vertex relative to the segment or the domain:
+    //
+    struct vtk_get_id
+    {
+      template <typename VertexType, typename T>
+      static long apply(VertexType const & v, T const & seg)
+      {
+        //obtain local segment numbering from ViennaData:
+        return viennadata::access<segment_mapping_key<T>, long>(seg)(v);
+      }
+      
+      //special handling for domain:
+      template <typename VertexType, typename ConfigType>
+      static long apply(VertexType const & v, viennagrid::domain_t<ConfigType> const & dom)
+      {
+        return v.id();
+      }
+      
+    };
+    
+    
+    
+    
   } //namespace io
 } //namespace viennagrid
 

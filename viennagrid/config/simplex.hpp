@@ -26,6 +26,14 @@ namespace viennagrid
 {
   namespace config
   {
+    //1d geometry:
+    struct line_1d
+    {
+      typedef double                                numeric_type;
+      typedef viennagrid::one_dimension_tag         dimension_tag;
+      typedef viennagrid::line_tag                  cell_tag;
+    };
+    
     //2d geometry:
     struct line_2d
     {
@@ -41,6 +49,14 @@ namespace viennagrid
       typedef viennagrid::triangle_tag              cell_tag;
     };
     
+    //3d geometry:
+    struct line_3d
+    {
+      typedef double                                numeric_type;
+      typedef viennagrid::three_dimensions_tag      dimension_tag;
+      typedef viennagrid::line_tag                  cell_tag;
+    };
+
     struct triangular_3d
     {
       typedef double                                numeric_type;
