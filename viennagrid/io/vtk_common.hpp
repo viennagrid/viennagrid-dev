@@ -40,31 +40,31 @@ namespace viennagrid
     template <>
     struct ELEMENT_TAG_TO_VTK_TYPE<hexahedron_tag>
     {
-      enum{ ReturnValue = 12 };
+      enum{ value = 12 };
     };
 
     template <>
     struct ELEMENT_TAG_TO_VTK_TYPE<tetrahedron_tag>
     {
-      enum{ ReturnValue = 10 };
+      enum{ value = 10 };
     };
     
     template <>
     struct ELEMENT_TAG_TO_VTK_TYPE<quadrilateral_tag>
     {
-      enum{ ReturnValue = 9 };
+      enum{ value = 9 };
     };
 
     template <>
     struct ELEMENT_TAG_TO_VTK_TYPE<triangle_tag>
     {
-      enum{ ReturnValue = 5 };
+      enum{ value = 5 };
     };
 
     template <>
     struct ELEMENT_TAG_TO_VTK_TYPE<line_tag>
     {
-      enum{ ReturnValue = 3 };
+      enum{ value = 3 };
     };
     
     

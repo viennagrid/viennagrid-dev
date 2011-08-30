@@ -508,7 +508,14 @@ namespace viennagrid
         //std::cout << "Copy CTOR!" << std::endl;
         *this = coordinate_converter<point<CoordType2, d, CoordinateSystem2>, point>()(p2);
       }
-      
+
+      //explicit copy CTOR
+      point(point const & other)
+      {
+        for (size_type i=0; i<d; ++i)
+          coords[i] = other.coords[i];
+      }
+
       point & operator=(point const & p2)
       {
         for (size_type i=0; i<d; ++i)

@@ -45,6 +45,20 @@ namespace viennagrid
     }
 
 
+    //
+    //  Reserve memory in a container
+    //
+    template <typename T>
+    void resize(T & t, std::size_t new_size)
+    {
+      //by default, no need to do anything.
+    }
+    
+    template <typename T, typename A>
+    void resize(std::vector<T, A> & vec, std::size_t new_size)
+    {
+      vec.resize(new_size);
+    }
 
     //
     //  Capacity
@@ -60,6 +74,7 @@ namespace viennagrid
     {
       return vec.capacity();
     }
+
 
   }
 } 

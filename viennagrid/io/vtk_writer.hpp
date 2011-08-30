@@ -139,7 +139,7 @@ namespace viennagrid
                   offsets <= viennagrid::ncells<CellTag::topology_level>(segment).size();
                   ++offsets)
             {
-              writer << ELEMENT_TAG_TO_VTK_TYPE<CellTag>::ReturnValue << " ";
+              writer << ELEMENT_TAG_TO_VTK_TYPE<CellTag>::value << " ";
             }
             writer << std::endl;
             writer << "    </DataArray>" << std::endl;
@@ -181,7 +181,7 @@ namespace viennagrid
           
           if (vertex_data_vector.size() > 0)
           {
-            for (size_t i=0; i<vertex_data_scalar.size(); ++i)
+            for (size_t i=0; i<vertex_data_vector.size(); ++i)
             {
               writer << "    <DataArray type=\"Float32\" Name=\"" << vertex_data_vector_names[i] << "\" NumberOfComponents=\"3\" format=\"ascii\">" << std::endl;
               
@@ -207,7 +207,7 @@ namespace viennagrid
           
           if (vertex_data_normal.size() > 0)
           {
-            for (size_t i=0; i<vertex_data_scalar.size(); ++i)
+            for (size_t i=0; i<vertex_data_normal.size(); ++i)
             {
               writer << "    <DataArray type=\"Float32\" Name=\"" << vertex_data_normal_names[i] << "\" NumberOfComponents=\"3\" format=\"ascii\">" << std::endl;
               
@@ -604,7 +604,7 @@ namespace viennagrid
       typedef typename DomainType::config_type                             DomainConfiguration;
       typedef typename result_of::ncell<DomainConfiguration, 0>::type      VertexType;
       
-      data_accessor_wrapper<VertexType> wrapper(new global_data_accessor<VertexType, KeyType, DataType>(key));
+      data_accessor_wrapper<VertexType> wrapper(new global_scalar_data_accessor<VertexType, KeyType, DataType>(key));
       writer.add_scalar_data_on_vertices(wrapper, quantity_name);
       return writer;
     }
@@ -617,7 +617,7 @@ namespace viennagrid
       typedef typename DomainType::config_type                             DomainConfiguration;
       typedef typename result_of::ncell<DomainConfiguration, 0>::type      VertexType;
       
-      data_accessor_wrapper<VertexType> wrapper(new segment_based_data_accessor<VertexType, KeyType, DataType>(key));
+      data_accessor_wrapper<VertexType> wrapper(new segment_scalar_data_accessor<VertexType, KeyType, DataType>(key));
       writer.add_scalar_data_on_vertices(wrapper, quantity_name);
       return writer;
     }
@@ -631,7 +631,7 @@ namespace viennagrid
       typedef typename DomainType::config_type                             DomainConfiguration;
       typedef typename result_of::ncell<DomainConfiguration, 0>::type      VertexType;
       
-      data_accessor_wrapper<VertexType> wrapper(new global_data_accessor<VertexType, KeyType, DataType>(key));
+      data_accessor_wrapper<VertexType> wrapper(new global_vector_data_accessor<VertexType, KeyType, DataType>(key));
       writer.add_vector_data_on_vertices(wrapper, quantity_name);
       return writer;
     }
@@ -644,7 +644,7 @@ namespace viennagrid
       typedef typename DomainType::config_type                             DomainConfiguration;
       typedef typename result_of::ncell<DomainConfiguration, 0>::type      VertexType;
       
-      data_accessor_wrapper<VertexType> wrapper(new segment_based_data_accessor<VertexType, KeyType, DataType>(key));
+      data_accessor_wrapper<VertexType> wrapper(new segment_vector_data_accessor<VertexType, KeyType, DataType>(key));
       writer.add_vector_data_on_vertices(wrapper, quantity_name);
       return writer;
     }
@@ -659,7 +659,7 @@ namespace viennagrid
       typedef typename DomainType::config_type                             DomainConfiguration;
       typedef typename result_of::ncell<DomainConfiguration, 0>::type      VertexType;
       
-      data_accessor_wrapper<VertexType> wrapper(new global_data_accessor<VertexType, KeyType, DataType>(key));
+      data_accessor_wrapper<VertexType> wrapper(new global_vector_data_accessor<VertexType, KeyType, DataType>(key));
       writer.add_normal_data_on_vertices(wrapper, quantity_name);
       return writer;
     }
@@ -672,7 +672,7 @@ namespace viennagrid
       typedef typename DomainType::config_type                             DomainConfiguration;
       typedef typename result_of::ncell<DomainConfiguration, 0>::type      VertexType;
       
-      data_accessor_wrapper<VertexType> wrapper(new segment_based_data_accessor<VertexType, KeyType, DataType>(key));
+      data_accessor_wrapper<VertexType> wrapper(new segment_vector_data_accessor<VertexType, KeyType, DataType>(key));
       writer.add_normal_data_on_vertices(wrapper, quantity_name);
       return writer;
     }
@@ -691,7 +691,7 @@ namespace viennagrid
       typedef typename DomainConfiguration::cell_tag                   CellTag;
       typedef typename result_of::ncell<DomainConfiguration, CellTag::topology_level>::type     CellType;
       
-      data_accessor_wrapper<CellType> wrapper(new global_data_accessor<CellType, KeyType, DataType>(key));
+      data_accessor_wrapper<CellType> wrapper(new global_scalar_data_accessor<CellType, KeyType, DataType>(key));
       writer.add_scalar_data_on_cells(wrapper, quantity_name);
       return writer;
     }
@@ -705,7 +705,7 @@ namespace viennagrid
       typedef typename DomainConfiguration::cell_tag                   CellTag;
       typedef typename result_of::ncell<DomainConfiguration, CellTag::topology_level>::type     CellType;
       
-      data_accessor_wrapper<CellType> wrapper(new segment_based_data_accessor<CellType, KeyType, DataType>(key));
+      data_accessor_wrapper<CellType> wrapper(new segment_scalar_data_accessor<CellType, KeyType, DataType>(key));
       writer.add_scalar_data_on_cells(wrapper, quantity_name);
       return writer;
     }
@@ -720,7 +720,7 @@ namespace viennagrid
       typedef typename DomainConfiguration::cell_tag                   CellTag;
       typedef typename result_of::ncell<DomainConfiguration, CellTag::topology_level>::type     CellType;
       
-      data_accessor_wrapper<CellType> wrapper(new global_data_accessor<CellType, KeyType, DataType>(key));
+      data_accessor_wrapper<CellType> wrapper(new global_vector_data_accessor<CellType, KeyType, DataType>(key));
       writer.add_vector_data_on_cells(wrapper, quantity_name);
       return writer;
     }
@@ -734,7 +734,7 @@ namespace viennagrid
       typedef typename DomainConfiguration::cell_tag                   CellTag;
       typedef typename result_of::ncell<DomainConfiguration, CellTag::topology_level>::type     CellType;
       
-      data_accessor_wrapper<CellType> wrapper(new segment_based_data_accessor<CellType, KeyType, DataType>(key));
+      data_accessor_wrapper<CellType> wrapper(new segment_vector_data_accessor<CellType, KeyType, DataType>(key));
       writer.add_vector_data_on_cells(wrapper, quantity_name);
       return writer;
     }
@@ -749,7 +749,7 @@ namespace viennagrid
       typedef typename DomainConfiguration::cell_tag                   CellTag;
       typedef typename result_of::ncell<DomainConfiguration, CellTag::topology_level>::type     CellType;
       
-      data_accessor_wrapper<CellType> wrapper(new global_data_accessor<CellType, KeyType, DataType>(key));
+      data_accessor_wrapper<CellType> wrapper(new global_vector_data_accessor<CellType, KeyType, DataType>(key));
       writer.add_normal_data_on_cells(wrapper, quantity_name);
       return writer;
     }
@@ -763,7 +763,7 @@ namespace viennagrid
       typedef typename DomainConfiguration::cell_tag                   CellTag;
       typedef typename result_of::ncell<DomainConfiguration, CellTag::topology_level>::type     CellType;
       
-      data_accessor_wrapper<CellType> wrapper(new segment_based_data_accessor<CellType, KeyType, DataType>(key));
+      data_accessor_wrapper<CellType> wrapper(new segment_vector_data_accessor<CellType, KeyType, DataType>(key));
       writer.add_normal_data_on_cells(wrapper, quantity_name);
       return writer;
     }

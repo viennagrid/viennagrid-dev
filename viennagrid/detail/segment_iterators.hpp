@@ -142,9 +142,14 @@ namespace viennagrid
 
       element_type & operator[](std::size_t index)
       {
-        typedef typename assert_bracket_operator_access<container_type>::type  asserted_type;
+        //typedef typename assert_bracket_operator_access<container_type>::type  asserted_type;
         assert(index < size());
-        return *((*cont_)[index]); 
+        typename container_type::iterator it = cont_->begin();
+        for (std::size_t i=0; i<index; ++i)
+          ++it;
+        
+        //return *((*cont_)[index]); 
+        return **it; 
       }
 
       element_type const & operator[](std::size_t index) const 

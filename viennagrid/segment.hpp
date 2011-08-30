@@ -31,6 +31,18 @@ namespace viennagrid
 {
   
   /////////////// Segment is a container for elements ////////////////
+  
+  namespace detail
+  {
+    struct id_ptr_compare
+    {
+      template <typename ElementType>
+      bool operator()(ElementType * e1, ElementType * e2) const
+      {
+        return e1->id() < e2->id();
+      }
+    };
+  }
 
   namespace result_of
   {
@@ -49,7 +61,7 @@ namespace viennagrid
     {
       typedef typename result_of::ncell<config_type, 0>::type     element_type;
       
-      typedef std::set< element_type * >      type;
+      typedef std::set< element_type *, viennagrid::detail::id_ptr_compare >      type; //note that with the use of deque, pointer comparison does not induce a valid ordering!
     };
 
     //at any other level:
