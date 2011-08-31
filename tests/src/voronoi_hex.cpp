@@ -159,7 +159,7 @@ void setup_device(DeviceType & device)
 
 int main(int argc, char *argv[])
 {
-  typedef viennagrid::config::hexahedron_3d           Config;
+  typedef viennagrid::config::hexahedral_3d           Config;
   typedef viennagrid::result_of::domain<Config>::type   DeviceType;
   
   std::cout << "* main(): Creating device..." << std::endl;

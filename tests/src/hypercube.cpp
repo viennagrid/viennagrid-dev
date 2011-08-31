@@ -15,16 +15,6 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
-//***********************************************
-// Define the dimension
-//***********************************************
-#define THREEDIM
-//#define TWODIM
-
-//***********************************************
-// Define the input-file format
-//***********************************************
-
 #include "viennagrid/domain.hpp"
 #include "viennagrid/segment.hpp"
 #include "viennagrid/config/others.hpp"
@@ -239,7 +229,7 @@ int main()
   std::cout << "*****************" << std::endl;
   
   test<viennagrid::config::quadrilateral_2d>("hypercube_2d");
-  test<viennagrid::config::hexahedron_3d>("hypercube_3d");
+  test<viennagrid::config::hexahedral_3d>("hypercube_3d");
   
   std::cout << "*******************************" << std::endl;
   std::cout << "* Test finished successfully! *" << std::endl;

@@ -49,7 +49,7 @@ int main()
   std::cout << "* instantiating quadrilateral 32u domain.. " << std::endl;
   viennagrid::result_of::domain<viennagrid::config::quadrilateral_3d>::type domain_32u;
   std::cout << "* instantiating hexagonal 33u domain.. " << std::endl;
-  viennagrid::result_of::domain<viennagrid::config::hexahedron_3d>::type domain_33u;
+  viennagrid::result_of::domain<viennagrid::config::hexahedral_3d>::type domain_33u;
   
   std::cout << "*******************************" << std::endl;
   std::cout << "* Test finished successfully! *" << std::endl;
