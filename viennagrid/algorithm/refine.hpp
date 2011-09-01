@@ -296,7 +296,7 @@ namespace viennagrid
                         vit != vertices.end();
                       ++vit)
     {
-      domain_out.add(*vit);
+      domain_out.push_back(*vit);
       ++num_vertices;
     }
 
@@ -309,7 +309,7 @@ namespace viennagrid
                     ++eit)
     {
       VertexType v;
-      v.getPoint() = viennagrid::centroid(*eit);  //production value
+      v.point() = viennagrid::centroid(*eit);  //production value
 
       //Testing: Don't use midpoint:
       //VertexOnEdgeRange vertices_on_edge = viennagrid::ncells<1>(*eit);
@@ -320,7 +320,7 @@ namespace viennagrid
       //v.getPoint() = v1.getPoint() * r + v2.getPoint() * (1.0 - r);  //debug value
       
       v.id(num_vertices);
-      domain_out.add(v);
+      domain_out.push_back(v);
       viennadata::access<refinement_key, std::size_t>(refinement_key())(*eit) = num_vertices;
       viennadata::access<refinement_key, bool>(refinement_key())(*eit) = true;
       ++num_vertices;
@@ -330,17 +330,17 @@ namespace viennagrid
     //
     // Step 3: Now write new cells to new domain
     //
-    domain_out.create_segments(domain_in.segment_size());
-    for (std::size_t i=0; i<domain_in.segment_size(); ++i)
+    domain_out.segments().resize(domain_in.segments().size());
+    for (std::size_t i=0; i<domain_in.segments().size(); ++i)
     {
       std::cout << "Working on segment " << i << std::endl;
       std::size_t counter = 0;
-      CellRange cells = viennagrid::ncells<CellTagIn::topology_level>(domain_in.segment(i));
+      CellRange cells = viennagrid::ncells<CellTagIn::topology_level>(domain_in.segments()[i]);
       for (CellIterator cit  = cells.begin();
                         cit != cells.end();
                       ++cit)
       {
-        element_refinement<CellTagIn>::apply(*cit, domain_out.segment(i));
+        element_refinement<CellTagIn>::apply(*cit, domain_out.segments()[i]);
         ++counter;
       }
       std::cout << "Refined cells in segment: " << counter << std::endl;

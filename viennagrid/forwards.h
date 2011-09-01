@@ -157,6 +157,10 @@ namespace viennagrid
       T const * t;
   };
 
+  template <typename T>
+  class boundary_key;
+
+  
   template <typename SegmentType>
   class segment_mapping_key
   {

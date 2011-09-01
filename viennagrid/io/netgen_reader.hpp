@@ -138,13 +138,13 @@ namespace viennagrid
           for (int j=0; j<topology::subcell_desc<CellTag, 0>::num_elements; ++j)
           {
             if (!reader.good())
-              throw bad_file_format_exception(filename, "EOF encountered while reading cells (vertex ID expected).");
+              throw bad_file_format_exception(filename, "EOF encountered while reading cells (cell ID expected).");
             
             reader >> vertex_num;
             vertices[j] = &(viennagrid::ncells<0>(domain)[vertex_num - 1]);  //Note that Netgen uses vertex indices with base 1
           }
     
-          //std::cout << std::endl << "Adding cell: " << &cell << " at " << cell_id << std::endl;
+          //std::cout << std::endl << "Adding cell: " << &cell << " at " << i << std::endl;
           cell.vertices(&(vertices[0]));
           cell.id(i);
           if (segments.size() < segment_index) //not that segment_index is 1-based
@@ -157,7 +157,7 @@ namespace viennagrid
           //  std::cout << "* netgen_reader::operator(): " << i << " out of " << cell_num << " cells read." << std::endl;
         }
         
-        //std::cout << "All done!" << std::endl;
+        std::cout << "All done!" << std::endl;
         
         return EXIT_SUCCESS;
       } //operator()

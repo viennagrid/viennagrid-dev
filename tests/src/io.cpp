@@ -73,8 +73,6 @@ void test(ReaderType & my_reader, std::string const & infile, std::string const 
      exit(EXIT_FAILURE);
   }
 
-  viennagrid::detectBoundary(domain);
-  
   
   //write some dummy data:
   VertexContainer vertices = viennagrid::ncells<0>(domain);

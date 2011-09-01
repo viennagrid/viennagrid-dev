@@ -70,8 +70,6 @@ void test(ReaderType & my_reader, std::string const & infile)
      exit(EXIT_FAILURE);
   }
 
-  viennagrid::detectBoundary(domain);
-  
   std::cout << "Volume of domain: " << viennagrid::volume(domain) << std::endl;
   std::cout << "Surface of domain: " << viennagrid::surface(domain) << std::endl;
   

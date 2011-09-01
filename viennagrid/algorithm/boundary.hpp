@@ -15,125 +15,131 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
-#ifndef VIENNAGRID_BOUNDARY_GUARD
-#define VIENNAGRID_BOUNDARY_GUARD
+#ifndef VIENNAGRID_ALGORITHM_BOUNDARY_HPP
+#define VIENNAGRID_ALGORITHM_BOUNDARY_HPP
 
 #include <vector>
 #include "viennagrid/forwards.h"
+#include "viennagrid/detail/element_iterators.hpp"
+#include "viennagrid/detail/domain_iterators.hpp"
 
 namespace viennagrid
 {
 
+  template <typename T>
+  class boundary_key
+  {
+    typedef typename T::ERROR_BOUNDARY_KEY_MUST_BE_USED_WITH_DOMAIN_OR_SEGMENT   error_type;
+  };
+  
+  template <typename ConfigType, typename ElementTag>
+  class boundary_key<element_t<ConfigType, ElementTag> >
+  {
+      typedef element_t<ConfigType, ElementTag>  element_type;
+    
+    public:
+      boundary_key(element_type const & e) : e_(&e) {}
+      
+      //for compatibility with std::map
+      bool operator<(boundary_key const & other) const
+      {
+        return e_ < other.e_;
+      }
+    private:
+      element_type const * e_;
+  };
+  
+  
+  template <typename ConfigType>
+  class boundary_key< segment_t<ConfigType> >
+  {
+    public:
+      boundary_key(std::size_t seg_id) : seg_id_(seg_id) {}
+      
+      //for compatibility with std::map
+      bool operator<(boundary_key const & other) const
+      {
+        return seg_id_ < other.seg_id_;
+      }
+    private:
+      std::size_t seg_id_;
+  };
+  
+  template <typename ConfigType>
+  class boundary_key< domain_t<ConfigType> > {};
+  
+}
+
+namespace viennadata
+{
+  namespace config
+  {
+    template <typename ConfigType>
+    struct key_dispatch<viennagrid::boundary_key< viennagrid::domain_t<ConfigType> > >
+    {
+      typedef type_key_dispatch_tag    tag;
+    };
+  }
+}
+  
+namespace viennagrid
+{
 
   //helper struct for setting boundary flag of lower level elements of a facet
-  template <typename Facet, long topolevel>
-  struct BoundarySetter
+  template <long topology_level>
+  struct boundary_setter
   {
-    template <typename FacetIterator>
-    static void apply(FacetIterator & fit)
+    template <typename FacetType, typename KeyType>
+    static void apply(FacetType const & facet, KeyType const & key)
     {
-      typedef typename viennagrid::result_of::ncell_range<Facet, topolevel>::type    ElementOnFacetRange;
-      typedef typename result_of::iterator<ElementOnFacetRange>::type                ElementOnFacetIterator;
+      typedef typename viennagrid::result_of::const_ncell_range<FacetType, topology_level>::type    ElementOnFacetRange;
+      typedef typename result_of::iterator<ElementOnFacetRange>::type                    ElementOnFacetIterator;
 
-      ElementOnFacetRange eof_container = ncells<topolevel>(*fit);
+      ElementOnFacetRange eof_container = ncells<topology_level>(facet);
       for (ElementOnFacetIterator eofit = eof_container.begin();
             eofit != eof_container.end();
             ++eofit)
       {
-        //tag all elements:
-        //if ( !(eofit->isOnBoundary()) )
-        //  eofit->toggleOnBoundary();
-
-        //std::cout << "Boundary element tagged: "; eofit->print();
+        viennadata::access<KeyType, bool>(key)(*eofit) = true;
       }
 
       //proceed to lower level:
-      BoundarySetter<Facet, topolevel-1>::apply(fit);
+      boundary_setter<topology_level - 1>::apply(facet, key);
     }
   };
 
   //end recursion of topolevel = -1
-  template <typename Facet>
-  struct BoundarySetter<Facet, -1>
-  {
-    template <typename FacetIterator>
-    static void apply(FacetIterator & fit)
-    {
-    }
-  };
-
-
-  template <long topolevel, typename topology_levelHandling>
-  struct UnsafeBoundaryDetector
-  {
-    template <typename Segment>
-    static void apply(Segment & seg)
-    {
-      typedef typename result_of::iterator<Segment, topolevel>::type    LevelIterator;
-
-      std::cout << "Boundary detection on level " << topolevel << std::endl;
-      for (LevelIterator lit = seg.template begin<topolevel>();
-            lit != seg.template end<topolevel>();
-            ++lit)
-      {
-        if (!lit->isOnBoundary())
-          lit->toggleOnBoundary();
-      }
-
-      UnsafeBoundaryDetector<topolevel-1,
-                             typename segment_traits<topolevel-1>::handling_tag>::apply(seg);
-    }
-  };
-
-  template <long topolevel>
-  struct UnsafeBoundaryDetector<topolevel, no_handling_tag>
-  {
-    template <typename Segment>
-    static void apply(Segment & seg)
-    {
-      UnsafeBoundaryDetector<topolevel-1,
-                             typename segment_traits<topolevel-1>::handling_tag>::apply(seg);
-    }
-  };
-
   template <>
-  struct UnsafeBoundaryDetector<-1, no_handling_tag>
+  struct boundary_setter< -1 >
   {
-    template <typename Segment>
-    static void apply(Segment & seg) {}
+    template <typename FacetType, typename KeyType>
+    static void apply(FacetType const & facet, KeyType const & key)
+    {
+    }
   };
 
 
-  //after segment is read, boundary detection has to be done (implemented here)
-  //must be called BEFORE Dirichlet or Neumann boundaries are set.
-  template <typename Segment>
-  void detectBoundary_impl(Segment & seg, no_handling_tag)
+  template <typename DomainSegmentType, typename KeyType>
+  void detectBoundary_impl(DomainSegmentType const & seg, KeyType const & key, no_handling_tag)
   {
-    //unsafe detection: issue warning:
-    std::cout << "WARNING: Boundary detection is not reliable, since no facets are available!" << std::endl;
-
-    //set all elements to boundary:
-    UnsafeBoundaryDetector<Segment::Configuration::cell_tag::topology_level - 2,
-                           typename segment_traits<Segment::Configuration::cell_tag::topology_level - 2>::handling_tag
-                          >::apply(seg);
-
+    typedef typename DomainSegmentType::ERROR_CANNOT_DETECT_BOUNDARY_BECAUSE_FACETS_ARE_DISABLED        error_type;
   }
 
-  template <typename Segment>
-  void detectBoundary_impl(Segment & seg, full_handling_tag)
+  template <typename DomainSegmentType, typename KeyType>
+  void detect_boundary_impl(DomainSegmentType const & seg, KeyType const & key, full_handling_tag)
   {
-    typedef typename Segment::config_type                         DomainConfiguration;
-    typedef typename DomainConfiguration::cell_tag                   CellTag;
-    typedef typename viennagrid::result_of::ncell<DomainConfiguration, CellTag::topology_level-1>::type   FacetType;
-    typedef typename viennagrid::result_of::ncell<DomainConfiguration, CellTag::topology_level>::type     CellType;
+    typedef typename DomainSegmentType::config_type                            ConfigType;
+    typedef typename ConfigType::cell_tag                                      CellTag;
+    typedef typename viennagrid::result_of::ncell<ConfigType, CellTag::topology_level-1>::type   FacetType;
+    typedef typename viennagrid::result_of::ncell<ConfigType, CellTag::topology_level>::type     CellType;
 
-    typedef typename viennagrid::result_of::ncell_range<Segment, CellTag::topology_level-1>::type      FacetRange;
-    typedef typename viennagrid::result_of::iterator<FacetRange>::type                                 FacetIterator;
+    typedef typename viennagrid::result_of::const_ncell_range<DomainSegmentType, CellTag::topology_level-1>::type      FacetRange;
+    typedef typename viennagrid::result_of::iterator<FacetRange>::type                                           FacetIterator;
       
-    typedef typename viennagrid::result_of::ncell_range<Segment, CellTag::topology_level>::type        CellRange;
-    typedef typename viennagrid::result_of::iterator<CellRange>::type                                  CellIterator;
+    typedef typename viennagrid::result_of::const_ncell_range<DomainSegmentType, CellTag::topology_level>::type        CellRange;
+    typedef typename viennagrid::result_of::iterator<CellRange>::type                                            CellIterator;
 
-    typedef typename viennagrid::result_of::ncell_range<CellType, CellTag::topology_level-1>::type     FacetOnCellRange;
+    typedef typename viennagrid::result_of::const_ncell_range<CellType, CellTag::topology_level-1>::type     FacetOnCellRange;
     typedef typename viennagrid::result_of::iterator<FacetOnCellRange>::type                           FacetOnCellIterator;
 
     //iterate over all cells, over facets there and tag them:
@@ -147,10 +153,18 @@ namespace viennagrid
             focit != facets_on_cell.end();
             ++focit)
       {
-        //focit->toggleOnBoundary(); //TODO:Replace by boundary flag from ViennaData
-        
-        //std::cout << "Toggling boundary on facet" << std::endl;
-        //fit->print();
+        bool * data_ptr = viennadata::find<KeyType, bool>(key)(*focit);
+        if (data_ptr == NULL)  //Facet has not yet been tagged
+        {
+          viennadata::access<KeyType, bool>(key)(*focit) = true;
+        }
+        else
+        {
+          if (*data_ptr == false)          //mind densely stored data
+            *data_ptr = true;
+          else          
+            viennadata::erase<KeyType, bool>(key)(*focit);
+        }        
       }
     }
     
@@ -160,21 +174,53 @@ namespace viennagrid
           fit != facets.end();
           ++fit)
     {
-      //if (fit->isOnBoundary())  //TODO:replace by boundary flag from ViennaData
-      if(true)
+      if (viennadata::find<KeyType, bool>(key)(*fit) != NULL)
       {
-        //fit->print();
-        BoundarySetter<FacetType, CellTag::topology_level-2>::apply(fit);
+        boundary_setter<CellTag::topology_level-2>::apply(*fit, key);
       }
     }
   }
 
-  template <typename SegmentType>
-  void detectBoundary(SegmentType & seg)
+
+
+  //
+  // public interface functions:
+  //
+
+  template <typename DomainSegmentType, typename KeyType>
+  void detect_boundary(DomainSegmentType const & segment, KeyType const & key)
   {
-    typedef typename SegmentType::config_type::cell_tag                   CellTag;
+    typedef typename DomainSegmentType::config_type::cell_tag                   CellTag;
     typedef typename topology::subcell_desc<CellTag, CellTag::topology_level-1>::handling_tag  HandlingTag;
-    detectBoundary_impl(seg, HandlingTag());
+    
+    if (viennadata::access<KeyType, bool>(key)(segment) == false)
+    {
+      detect_boundary_impl(segment, key, HandlingTag());
+      viennadata::access<KeyType, bool>(key)(segment) = true;
+    }
+  }
+
+
+
+  template <typename ConfigType, typename ElementTag>
+  bool on_boundary(element_t<ConfigType, ElementTag> const & el,
+                   domain_t<ConfigType> const & domain)
+  {
+    typedef boundary_key<domain_t<ConfigType> >    BoundaryKey;
+    
+    detect_boundary(domain, BoundaryKey());
+    return viennadata::find<BoundaryKey, bool>()(el) != NULL;
+  }
+
+  template <typename ConfigType, typename ElementTag>
+  bool on_boundary(element_t<ConfigType, ElementTag> const & el,
+                   segment_t<ConfigType> const & segment)
+  {
+    typedef boundary_key<segment_t<ConfigType> >    BoundaryKey;
+    
+    BoundaryKey key(segment.id());
+    detect_boundary(segment, key);
+    return viennadata::find<BoundaryKey, bool>(key)(el) != NULL;
   }
 
 }
