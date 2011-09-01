@@ -15,7 +15,6 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
-#define VIENNAGRID_DEBUG_IO
 
 #include "viennagrid/forwards.h"
 #include "viennagrid/element.hpp"
@@ -29,7 +28,7 @@
 #include "viennagrid/algorithm/volume.hpp"
 
 template <typename ConfigType, typename ReaderType>
-void test(ReaderType & my_reader, std::string const & infile)
+void test(ReaderType & my_reader, std::string const & infile, double reference_surface)
 {
 
   typedef typename viennagrid::result_of::domain<ConfigType>::type        Domain;
@@ -122,6 +121,12 @@ void test(ReaderType & my_reader, std::string const & infile)
   }
 
   std::cout << "Volume of surface elements: " << surface << std::endl;
+  
+  if ( fabs(reference_surface - surface) / reference_surface > 1e-6 )
+  {
+    std::cout << "Surface area incorrect! Should: " << reference_surface << ", is: " << surface << std::endl;
+    exit(EXIT_FAILURE);
+  }
 }
 
 int main()
@@ -138,19 +143,19 @@ int main()
   viennagrid::io::netgen_reader my_netgen_reader;
   
   std::cout << "*********** triangular, 2d ***********" << std::endl;
-  test<viennagrid::config::triangular_2d>(my_netgen_reader, path + "square8.mesh");
+  test<viennagrid::config::triangular_2d>(my_netgen_reader, path + "square8.mesh", 4);
   
-  /*std::cout << "*********** tetrahedral, 3d ***********" << std::endl;
-  test<viennagrid::config::tetrahedral_3d>(my_netgen_reader, path + "cube48.mesh");
+  std::cout << "*********** tetrahedral, 3d ***********" << std::endl;
+  test<viennagrid::config::tetrahedral_3d>(my_netgen_reader, path + "cube48.mesh", 6);
 
   
   std::cout << "*********** quadrilateral, 2d ***********" << std::endl;
   viennagrid::io::vtk_reader<Domain2d>  vtk_reader_2d;
-  test<viennagrid::config::quadrilateral_2d>(vtk_reader_2d, path + "quadrilateral2.vtu");
+  test<viennagrid::config::quadrilateral_2d>(vtk_reader_2d, path + "quadrilateral2.vtu", 6);
   
   std::cout << "*********** hexahedral, 3d ***********" << std::endl;
   viennagrid::io::vtk_reader<Domain3d>  vtk_reader_3d;
-  test<viennagrid::config::hexahedral_3d>(vtk_reader_3d, path + "hexahedron2.vtu");*/
+  test<viennagrid::config::hexahedral_3d>(vtk_reader_3d, path + "hexahedron2.vtu", 10);
   
   std::cout << "*******************************" << std::endl;
   std::cout << "* Test finished successfully! *" << std::endl;

@@ -209,7 +209,11 @@ namespace viennagrid
     typedef boundary_key<domain_t<ConfigType> >    BoundaryKey;
     
     detect_boundary(domain, BoundaryKey());
-    return viennadata::find<BoundaryKey, bool>()(el) != NULL;
+    if (viennadata::find<BoundaryKey, bool>()(el) != NULL)
+    {
+      return viennadata::access<BoundaryKey, bool>()(el);
+    }
+    return false;
   }
 
   template <typename ConfigType, typename ElementTag>
@@ -220,7 +224,12 @@ namespace viennagrid
     
     BoundaryKey key(segment.id());
     detect_boundary(segment, key);
-    return viennadata::find<BoundaryKey, bool>(key)(el) != NULL;
+    
+    if (viennadata::find<BoundaryKey, bool>(key)(el) != NULL)
+    {
+      return viennadata::access<BoundaryKey, bool>(key)(el);
+    }
+    return false;
   }
 
 }

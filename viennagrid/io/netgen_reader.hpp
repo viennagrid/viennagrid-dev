@@ -132,7 +132,7 @@ namespace viennagrid
           if (!reader.good())
             throw bad_file_format_exception(filename, "EOF encountered while reading cells (segment index expected).");
           
-          size_t segment_index;
+          std::size_t segment_index;
           reader >> segment_index;
     
           for (int j=0; j<topology::subcell_desc<CellTag, 0>::num_elements; ++j)
@@ -157,7 +157,7 @@ namespace viennagrid
           //  std::cout << "* netgen_reader::operator(): " << i << " out of " << cell_num << " cells read." << std::endl;
         }
         
-        std::cout << "All done!" << std::endl;
+        //std::cout << "All done!" << std::endl;
         
         return EXIT_SUCCESS;
       } //operator()
