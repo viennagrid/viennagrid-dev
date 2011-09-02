@@ -24,11 +24,11 @@
 #include "viennagrid/config/others.hpp"
 #include "viennagrid/io/netgen_reader.hpp"
 #include "viennagrid/io/vtk_reader.hpp"
-#include "viennagrid/algorithm/boundary.hpp"
+#include "viennagrid/algorithm/interface.hpp"
 #include "viennagrid/algorithm/volume.hpp"
 
 template <typename ConfigType, typename ReaderType>
-void test(ReaderType & my_reader, std::string const & infile, double reference_surface)
+void test(ReaderType & my_reader, std::string const & infile)
 {
 
   typedef typename viennagrid::result_of::domain<ConfigType>::type        Domain;
@@ -72,9 +72,13 @@ void test(ReaderType & my_reader, std::string const & infile, double reference_s
     exit(EXIT_FAILURE);
   }
 
+  assert(domain.segments().size() > 1 && "Not enough segments!");
+  
+  SegmentType const & seg1 = domain.segments()[0];
+  SegmentType const & seg2 = domain.segments()[1];
 
   //
-  // Test 1: Iterate over all cells of each facet:
+  // Test 1: Iterate over all interface facets:
   //
   std::cout << "*" << std::endl;
   std::cout << "* Test 1: Iteration over all facets on the boundary:" << std::endl;
@@ -85,42 +89,54 @@ void test(ReaderType & my_reader, std::string const & infile, double reference_s
        fit != facets.end();
        ++fit)
   {
-    if (viennagrid::is_boundary(*fit, domain))
+    if (viennagrid::is_interface(*fit, seg1, seg2))
     {
       std::cout << *fit << std::endl;
       surface += viennagrid::volume(*fit);
     }
   }
 
-  std::cout << "Volume of surface elements: " << surface << std::endl;
+  std::cout << "Volume of interface elements: " << surface << std::endl;
   
-  if ( fabs(reference_surface - surface) / reference_surface > 1e-6 )
+  /*if ( fabs(reference_surface - surface) / reference_surface > 1e-6 )
   {
     std::cout << "Surface area incorrect! Should: " << reference_surface << ", is: " << surface << std::endl;
     exit(EXIT_FAILURE);
-  }
+  }*/
   
   //
-  // Test 2: Print all vertices on the boundary:
+  // Test 2: Print all vertices on the interface:
   //
   std::cout << "*" << std::endl;
-  std::cout << "* Test 2: Iteration over all vertices on the boundary" << std::endl;
+  std::cout << "* Test 2: Iteration over all vertices on the interface" << std::endl;
   std::cout << "*" << std::endl;
+  bool vertices_found = false;
   VertexContainer vertices = viennagrid::ncells<0>(domain);
   for (VertexIterator vit = vertices.begin();
        vit != vertices.end();
        ++vit)
   {
-    if (viennagrid::is_boundary(*vit, domain))
+    if (viennagrid::is_interface(*vit, seg1, seg2))
+    {
+      assert(vit->point()[0] == 0.5 && "Invalid point detected on interface!");
       std::cout << *vit << std::endl;
+      vertices_found = true;
+    }
   }
   
+  if (!vertices_found)
+  {
+    std::cerr << "ERROR: No vertices found!" << std::endl;
+    exit(EXIT_FAILURE);
+  }
 }
 
 int main()
 {
-  typedef viennagrid::result_of::domain<viennagrid::config::quadrilateral_2d>::type        Domain2d;
-  typedef viennagrid::result_of::domain<viennagrid::config::hexahedral_3d>::type       Domain3d;
+  typedef viennagrid::result_of::domain<viennagrid::config::triangular_2d>::type        DomainTri;
+  typedef viennagrid::result_of::domain<viennagrid::config::tetrahedral_3d>::type       DomainTet;
+  typedef viennagrid::result_of::domain<viennagrid::config::quadrilateral_2d>::type        DomainQuad;
+  typedef viennagrid::result_of::domain<viennagrid::config::hexahedral_3d>::type       DomainHex;
   
   std::cout << "*****************" << std::endl;
   std::cout << "* Test started! *" << std::endl;
@@ -128,22 +144,22 @@ int main()
   
   std::string path = "../../examples/data/";
   
-  viennagrid::io::netgen_reader my_netgen_reader;
-  
   std::cout << "*********** triangular, 2d ***********" << std::endl;
-  test<viennagrid::config::triangular_2d>(my_netgen_reader, path + "square8.mesh", 4);
+  viennagrid::io::vtk_reader<DomainTri>  vtk_reader_tri;
+  test<viennagrid::config::triangular_2d>(vtk_reader_tri, path + "multi_segment_tri_main.pvd");
   
   std::cout << "*********** tetrahedral, 3d ***********" << std::endl;
-  test<viennagrid::config::tetrahedral_3d>(my_netgen_reader, path + "cube48.mesh", 6);
+  viennagrid::io::vtk_reader<DomainTet>  vtk_reader_tet;
+  test<viennagrid::config::tetrahedral_3d>(vtk_reader_tet, path + "multi_segment_tet_main.pvd");
 
   
   std::cout << "*********** quadrilateral, 2d ***********" << std::endl;
-  viennagrid::io::vtk_reader<Domain2d>  vtk_reader_2d;
-  test<viennagrid::config::quadrilateral_2d>(vtk_reader_2d, path + "quadrilateral2.vtu", 6);
+  viennagrid::io::vtk_reader<DomainQuad>  vtk_reader_quad;
+  test<viennagrid::config::quadrilateral_2d>(vtk_reader_quad, path + "multi_segment_quad_main.pvd");
   
   std::cout << "*********** hexahedral, 3d ***********" << std::endl;
-  viennagrid::io::vtk_reader<Domain3d>  vtk_reader_3d;
-  test<viennagrid::config::hexahedral_3d>(vtk_reader_3d, path + "hexahedron2.vtu", 10);
+  viennagrid::io::vtk_reader<DomainHex>  vtk_reader_hex;
+  test<viennagrid::config::hexahedral_3d>(vtk_reader_hex, path + "multi_segment_hex_main.pvd");
   
   std::cout << "*******************************" << std::endl;
   std::cout << "* Test finished successfully! *" << std::endl;

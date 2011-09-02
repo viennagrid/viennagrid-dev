@@ -120,7 +120,7 @@ namespace viennagrid
 
 
   template <typename DomainSegmentType, typename KeyType>
-  void detectBoundary_impl(DomainSegmentType const & seg, KeyType const & key, no_handling_tag)
+  void detect_boundary_impl(DomainSegmentType const & seg, KeyType const & key, no_handling_tag)
   {
     typedef typename DomainSegmentType::ERROR_CANNOT_DETECT_BOUNDARY_BECAUSE_FACETS_ARE_DISABLED        error_type;
   }
@@ -176,7 +176,8 @@ namespace viennagrid
     {
       if (viennadata::find<KeyType, bool>(key)(*fit) != NULL)
       {
-        boundary_setter<CellTag::topology_level-2>::apply(*fit, key);
+        if (viennadata::access<KeyType, bool>(key)(*fit) == true)
+          boundary_setter<CellTag::topology_level-2>::apply(*fit, key);
       }
     }
   }
@@ -203,7 +204,7 @@ namespace viennagrid
 
 
   template <typename ConfigType, typename ElementTag>
-  bool on_boundary(element_t<ConfigType, ElementTag> const & el,
+  bool is_boundary(element_t<ConfigType, ElementTag> const & el,
                    domain_t<ConfigType> const & domain)
   {
     typedef boundary_key<domain_t<ConfigType> >    BoundaryKey;
@@ -217,7 +218,7 @@ namespace viennagrid
   }
 
   template <typename ConfigType, typename ElementTag>
-  bool on_boundary(element_t<ConfigType, ElementTag> const & el,
+  bool is_boundary(element_t<ConfigType, ElementTag> const & el,
                    segment_t<ConfigType> const & segment)
   {
     typedef boundary_key<segment_t<ConfigType> >    BoundaryKey;

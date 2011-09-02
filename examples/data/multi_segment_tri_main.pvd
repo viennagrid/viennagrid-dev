@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<VTKFile type="Collection" version="0.1" byte_order="LittleEndian" compressor="vtkZLibDataCompressor">
+<Collection>
+    <DataSet part="0" file="multi_segment_tri_0.vtu" name="Segment_0"/>
+    <DataSet part="1" file="multi_segment_tri_1.vtu" name="Segment_1"/>
+  </Collection>
+</VTKFile>

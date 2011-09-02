@@ -332,6 +332,14 @@ namespace viennagrid
               std::stringstream ss;
               ss << filename << "_main.pvd";
               std::ofstream writer(ss.str().c_str());
+              
+              std::string short_filename = filename;
+              std::string::size_type pos = filename.rfind("/");
+              if (pos == std::string::npos)
+                pos = filename.rfind("\\");   //A tribute to Windows
+
+              if (pos != std::string::npos)
+                short_filename = filename.substr(pos+1, filename.size());
 
               if (!writer){
                 throw cannot_open_file_exception(filename);
@@ -344,7 +352,7 @@ namespace viennagrid
               
               
               for (long i = 0; i<segment_num; ++i)
-                writer << "    <DataSet part=\"" << i << "\" file=\"" << filename << "_" << i << ".vtu\" name=\"Segment_" << i << "\"/>" << std::endl;
+                writer << "    <DataSet part=\"" << i << "\" file=\"" << short_filename << "_" << i << ".vtu\" name=\"Segment_" << i << "\"/>" << std::endl;
                 
                 
               writer << "  </Collection>" << std::endl;

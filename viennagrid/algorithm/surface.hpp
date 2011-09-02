@@ -25,6 +25,7 @@
 
 #include "viennagrid/forwards.h"
 #include "viennagrid/algorithm/volume.hpp"
+#include "viennagrid/algorithm/boundary.hpp"
 
 /** @file surface.hpp
     @brief Computes the surface of different cell types as well as domains and segments
@@ -33,15 +34,7 @@
 
 namespace viennagrid
 {
-    
-    //TODO: REPLACE BY SOMETHING FUNCTIONAL!
-    template <typename T, typename U>
-    bool on_boundary(T const & t, U const & u)
-    {
-      return false;
-    }
-  
-  
+
 
     //
     template <typename ContainerType>
@@ -61,7 +54,7 @@ namespace viennagrid
                          fit != facets.end();
                        ++fit)
       {
-        if (on_boundary(*fit, d))
+        if (is_boundary(*fit, d))
           result += viennagrid::volume(*fit);
       }
       return result;

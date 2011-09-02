@@ -160,6 +160,7 @@ namespace viennagrid
   template <typename T>
   class boundary_key;
 
+  class interface_key;
   
   template <typename SegmentType>
   class segment_mapping_key

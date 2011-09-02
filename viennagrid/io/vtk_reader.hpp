@@ -32,6 +32,7 @@
 #include <algorithm>
 
 #include "viennagrid/forwards.h"
+#include "viennagrid/point.hpp"
 #include "viennagrid/io/vtk_common.hpp"
 #include "viennagrid/io/data_accessor.hpp"
 #include "viennagrid/io/helper.hpp"
@@ -51,21 +52,6 @@ namespace viennagrid
         return c;
       } 
       
-      struct point_less
-      {
-        template <typename PointType>
-        bool operator()(PointType const & p1, PointType const & p2) const
-        {
-          for (std::size_t i=0; i<p1.size(); ++i)
-          {
-            if (p1[i] < p2[i])
-              return true;
-            else if (p1[i] > p2[i])
-              return false;
-          }
-          return false;
-        }
-      };
     }
     
     
@@ -954,6 +940,15 @@ namespace viennagrid
       {
         std::deque<std::string> filenames;
         
+        //extract path from .pvd file:
+        std::string::size_type pos = filename.rfind("/");
+        std::string path_to_pvd;
+        if (pos == std::string::npos)
+          pos = filename.rfind("\\"); //a tribute to Windows... ;-)
+        
+        if (pos != std::string::npos)
+          path_to_pvd = filename.substr(0, pos + 1);
+        
         openFile(filename);
         
         //
@@ -995,9 +990,9 @@ namespace viennagrid
         for (std::size_t i=0; i<filenames.size(); ++i)
         {
           #if defined VIENNAGRID_DEBUG_ALL || defined VIENNAGRID_DEBUG_IO
-          std::cout << "Parsing file " << filenames[i] << std::endl;
+          std::cout << "Parsing file " << path_to_pvd + filenames[i] << std::endl;
           #endif
-          parse_vtu_segment(filenames[i], i);
+          parse_vtu_segment(path_to_pvd + filenames[i], i);
         }
         
       }

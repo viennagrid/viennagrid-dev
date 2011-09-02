@@ -654,6 +654,24 @@ namespace viennagrid
     return os;
   }
   
-  
+  //
+  //
+  //
+  struct point_less
+  {
+    template <typename PointType>
+    bool operator()(PointType const & p1, PointType const & p2) const
+    {
+      for (std::size_t i=0; i<p1.size(); ++i)
+      {
+        if (p1[i] < p2[i])
+          return true;
+        else if (p1[i] > p2[i])
+          return false;
+      }
+      return false;
+    }
+  };
+
 }
 #endif
