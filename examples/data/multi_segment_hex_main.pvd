@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
-<VTKFile type="Collection" version="0.1" byte_order="LittleEndian" compressor="vtkZLibDataCompressor">
+<VTKFile type="Collection" version="0.1">
 <Collection>
-    <DataSet part="0" file="multi_segment_hex_0.vtu" name="Segment_0"/>
-    <DataSet part="1" file="multi_segment_hex_1.vtu" name="Segment_1"/>
+    <DataSet part="0" name="Segment_0" file="multi_segment_hex_0.vtu" />
+    <DataSet file="multi_segment_hex_1.vtu" name="Segment_1" part="1"/>
   </Collection>
 </VTKFile>

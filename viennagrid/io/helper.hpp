@@ -137,11 +137,15 @@ namespace viennagrid
         virtual const char* what() const throw()
         {
           std::stringstream ss;
-          ss << "* ViennaGrid: Bad file format in file " << filename_ << ": " << message_;
+          if (filename_.size() > 0)
+            ss << "* ViennaGrid: Bad file format in file " << filename_ << ": " << message_;
+          else
+            ss << "* ViennaGrid: Bad file format: " << message_;
           return ss.str().c_str();
         }
         
         bad_file_format_exception(std::string file, std::string message) : filename_(file), message_(message) {};
+        bad_file_format_exception(std::string message) : filename_(), message_(message) {};
         
         virtual ~bad_file_format_exception() throw() {};
       

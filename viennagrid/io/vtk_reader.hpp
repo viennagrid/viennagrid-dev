@@ -36,24 +36,12 @@
 #include "viennagrid/io/vtk_common.hpp"
 #include "viennagrid/io/data_accessor.hpp"
 #include "viennagrid/io/helper.hpp"
+#include "viennagrid/io/xml_tag.hpp"
 
 namespace viennagrid
 {
   namespace io
   {
-    
-    namespace
-    {
-      //functor for conversion to lowercase (avoid ::tolower())
-      char to_lower(char c)
-      {
-        if(c <= 'Z' && c >= 'A')
-          return c - ('Z'-'z');
-        return c;
-      } 
-      
-    }
-    
     
     template <typename DomainType>
     class vtk_reader
@@ -113,10 +101,10 @@ namespace viennagrid
       bool lowercase_compare(std::string const & s1, std::string const & s2)
       {
         std::string s1_lower = s1;
-        std::transform(s1.begin(), s1.end(), s1_lower.begin(), to_lower);
+        std::transform(s1.begin(), s1.end(), s1_lower.begin(), char_to_lower);
 
         std::string s2_lower = s2;
-        std::transform(s2.begin(), s2.end(), s2_lower.begin(), to_lower);
+        std::transform(s2.begin(), s2.end(), s2_lower.begin(), char_to_lower);
 
         return s1_lower == s2_lower;
       }
@@ -135,105 +123,6 @@ namespace viennagrid
         }
       }
 
-      void goToToken(std::string const & expectedToken)
-      {
-
-        std::string expectedTokenLower = expectedToken;
-        std::transform(expectedTokenLower.begin(), expectedTokenLower.end(), expectedTokenLower.begin(), to_lower);
-        
-        bool done = false;
-        
-        while (!done && reader.good())
-        {
-          //read token and convert to lower-case
-          std::string token;
-          reader >> token;
-          std::string tokenLower = token;
-          std::transform(tokenLower.begin(), tokenLower.end(), tokenLower.begin(), to_lower);
-          
-          if(tokenLower == expectedTokenLower) 
-            done = true;
-        }
-        
-        if (!reader.good())
-        {
-          std::stringstream ss;
-          ss << "* vtk_reader::operator(): Reached EOF while waiting for \"" << expectedToken << "\"";
-          std::cerr << ss.str() << std::endl;
-          throw bad_file_format_exception("", ss.str());
-        }
-      }
-
-      long getNumberOfNodes()
-      {
-        std::string token;
-
-        this->reader >> token;
-
-        //std::cout << "Number of Nodes: " << token << ", " << token.substr(0,16) << std::endl;
-
-        long lastIdx = token.size()-1;
-
-        if(token.substr(0,16) != "NumberOfPoints=\"" || token.substr(lastIdx,lastIdx) != "\"")
-        {
-          std::cerr << "Expected \"NumberOfPoints=\"...\"\", but got " << token << std::endl;
-          throw bad_file_format_exception("", "Expected \"NumberOfPoints='...'\"");
-        }
-
-        token.replace(0,16,"");
-        lastIdx = token.size()-1;
-        token.replace(lastIdx,lastIdx,"");
-
-        return atoi(token.c_str());
-      }
-
-      long getNumberOfCells()
-      {
-        std::string token;
-
-        reader >> token;
-
-        //std::cout << "Number of Cells: " << token << ", " << token.substr(0,15) << std::endl;
-
-        long lastIdx = token.size() - 1;
-
-        //std::cout << "Test" << std::endl;
-
-        if(token.substr(0,15) != "NumberOfCells=\"" || token.substr(lastIdx-1,lastIdx) != "\">")
-        {
-          std::cerr << "Expected \"NumberOfCells=\"...\"\", but got " << token << std::endl;
-          throw bad_file_format_exception("", "Expected \"NumberOfCells='...'\"");
-        }
-
-        token.replace(0,15,"");
-        lastIdx =token.size()-1;
-        token.replace(lastIdx-1,lastIdx,"");
-
-        return atoi(token.c_str());
-      }
-
-      long getNumberOfComponents()
-      {
-        std::string token;
-
-        this->reader >> token;
-
-        //std::cout << "NumberOfComponents: " << token << ", " << token.substr(0,15) << std::endl;
-
-        long lastIdx = token.size()-1;
-
-        if(token.substr(0,20) != "NumberOfComponents=\"" || token.substr(lastIdx,lastIdx) != "\"")
-        {
-          std::cerr << "Expected \"NumberOfComponents=\"...\"\", but got " << token << std::endl;
-          throw;
-        }
-
-        token.replace(0,20,"");
-        lastIdx =token.size()-1;
-        token.replace(lastIdx,lastIdx,"");
-
-        return atoi(token.c_str());
-      }
 
       void readNodeCoordinates(long nodeNum, long numberOfComponents, std::size_t seg_id)
       {
@@ -338,156 +227,55 @@ namespace viennagrid
       {
         std::string token;
         reader >> token;
-        std::transform(token.begin(), token.end(), token.begin(), to_lower);
         
-        while (token != "</dataarray>")
+        while (to_lower(token) != "</dataarray>")
         {
           container.push_back( atof(token.c_str()) );
           reader >> token;
-          std::transform(token.begin(), token.end(), token.begin(), to_lower);
         }
       }
       
       template <typename ContainerType>
-      void readDataArray(size_t seg_id, ContainerType & scalar_data, ContainerType & vector_data)
+      void readPointCellData(size_t seg_id, ContainerType & scalar_data, ContainerType & vector_data)
       {
-        checkNextToken("type=\"Float32\"");
-        
         std::string name;
         std::size_t components = 1;
-        std::string token;
-        reader >> token;
         
-        if (token.substr(0, 4) == "name" || token.substr(0, 4) == "Name")
+        xml_tag<> tag;
+        
+        tag.parse(reader);
+        
+        while (tag.name() == "dataarray")
         {
-          name = token.substr(6, token.size()-7);
-        }
-        else
-        {
-          throw bad_file_format_exception("", "Name of quantity in <DataArray> tag expected!");
-        }
+          tag.check_attribute("name", "");
+          name = tag.get_value("name");
 
-        reader >> token;
-        if (token.substr(0, 18) == "NumberOfComponents")
-        {
-          components = atoi(token.substr(20, token.size()-21).c_str());
+          if (tag.has_attribute("numberofcomponents"))
+            components = atoi(tag.get_value("numberofcomponents").c_str());
           
-          checkNextToken("format=\"ascii\">");
-        }
-        else if (token.substr(token.size()-1, 1) == ">")
-        {
-          //OK, continue below
-        }
-        else
-        {
-          throw bad_file_format_exception("", "Name of quantity in <DataArray> tag expected!");
-        }
-        
-        //now read data:
-        if (components == 1)
-        {
-          scalar_data[seg_id].push_back( std::make_pair(name, std::deque<double>()) );
-          readData(scalar_data[seg_id].back().second);
-        }
-        else if (components == 3)
-        {
-          vector_data[seg_id].push_back( std::make_pair(name, std::deque<double>()) );
-          readData(vector_data[seg_id].back().second);
-        }
-        else
-        {
-          throw bad_file_format_exception("", "Number of components for data invalid!");
-        }
-      }
-
-      void readPointData(size_t seg_id)
-      {
-        std::string token;
-        reader >> token;
-        
-        //go to end of XML tag:
-        bool tag_still_open = true;
-        while (tag_still_open)
-        {
-          if (token[token.size()-1] == '>')
-            tag_still_open = false;
-          reader >> token;
-        }
-        
-        while (token != "</PointData>" && token != "</pointdata>")
-        {
-          readDataArray(seg_id, local_scalar_vertex_data, local_vector_vertex_data);
-          reader >> token;
-        }
-      }
-      
-      void readCellData(size_t seg_id)
-      {
-        std::string token;
-        reader >> token;
-        
-        //go to end of XML tag:
-        bool tag_still_open = true;
-        while (tag_still_open)
-        {
-          if (token[token.size()-1] == '>')
-            tag_still_open = false;
-          reader >> token;
-        }
-        
-        while (token != "</CellData>" && token != "</celldata>")
-        {
-          readDataArray(seg_id, local_scalar_cell_data, local_vector_cell_data);
-          reader >> token;
-        }
-      }
-     
-      void readSegments(std::deque<std::string> & filenames)
-      {
-        std::string token;
-        reader >> token;
-        std::size_t seg_id = 0;
-
-        while(token != "</Collection>")
-        {
-          std::string tokenLower = token;
-          std::transform(token.begin(), token.end(), tokenLower.begin(), to_lower);
-
-          if (tokenLower.substr(0, 6) == "part=\"")
+          //now read data:
+          if (components == 1)
           {
-            if (token.at(7) == '"')
-            {
-              assert( token[6] >= '0' && token[6] <= '9' && "Invalid segment ID specified!");
-              seg_id = token[6] - '0';
-            }
-            else if (token.at(8) == '"')
-            {
-              std::string seg_id_string = token.substr(6,2);
-              seg_id = atoi(seg_id_string.c_str());
-            }
-            else
-            {
-              throw bad_file_format_exception("", "Number of segments is above 99. The parser is not able to handle this!");
-            }
+            scalar_data[seg_id].push_back( std::make_pair(name, std::deque<double>()) );
+            readData(scalar_data[seg_id].back().second);
           }
-          
-          if (tokenLower.substr(0, 6) == "file=\"")
+          else if (components == 3)
           {
-            if (seg_id != filenames.size())
-              throw bad_file_format_exception("", "Number of segments in .pvd file is not in sequence, starting from 0!");
-              
-            filenames.push_back(token.substr(6, token.size()-7));
+            vector_data[seg_id].push_back( std::make_pair(name, std::deque<double>()) );
+            readData(vector_data[seg_id].back().second);
           }
-  
-          if (!reader)
-            break;
+          else
+            throw bad_file_format_exception("", "Number of components for data invalid!");
           
-          reader >> token;
-        } //while
+          tag.parse(reader);
+        }
+
+
+        if (tag.name() != "/pointdata" && tag.name() != "/celldata")
+            throw bad_file_format_exception("", "XML Parse error: Expected </PointData> or </CellData>!");
         
-      } //readSegments
-      
-      
+      }
+
       /////////////////////////// Routines for pushing everything to domain ///////////////
 
       void setupVertices(DomainType & domain)
@@ -815,102 +603,78 @@ namespace viennagrid
           long nodeNum = 0;
           long numberOfComponents = 0;           
                       
-          checkNextToken("<?xml");
-          checkNextToken("version=\"1.0\"?>");
-          checkNextToken("<VTKFile");
-          checkNextToken("type=\"UnstructuredGrid\"");
-          checkNextToken("version=\"0.1\"");
-          checkNextToken("byte_order=\"LittleEndian\">");
-          checkNextToken("<UnstructuredGrid>");
-          checkNextToken("<Piece");
+          xml_tag<> tag;
           
-          nodeNum = getNumberOfNodes();
-          //std::cout << "#Nodes: " << nodeNum << std::endl;
+          tag.parse(reader);
+          if (tag.name() != "?xml" && tag.name() != "?xml?")
+            throw bad_file_format_exception(filename, "Parse error: No opening ?xml tag!");
 
-          local_cell_num[seg_id] = getNumberOfCells();
-          //std::cout << "#Cells: " << cellNum << std::endl;
-          
-          checkNextToken("<Points>");
-          checkNextToken("<DataArray");
-          checkNextToken("type=\"Float32\"");
+          tag.parse_and_check_name(reader, "vtkfile", filename);
+          tag.parse_and_check_name(reader, "unstructuredgrid", filename);
 
-          numberOfComponents = getNumberOfComponents();
-          
-          //std::cout << "Dimensions: " << numberOfComponents << std::endl;
+          tag.parse_and_check_name(reader, "piece", filename);
 
-          checkNextToken("format=\"ascii\">");
+          tag.check_attribute("numberofpoints", filename);
+            
+          nodeNum = atoi(tag.get_value("numberofpoints").c_str());
+          std::cout << "#Nodes: " << nodeNum << std::endl;
+
+          tag.check_attribute("numberofcells", filename);
           
-          // Read in the coordinates of the nodes
+          local_cell_num[seg_id] = atoi(tag.get_value("numberofcells").c_str());
+          std::cout << "#Cells: " << local_cell_num[seg_id] << std::endl;
+          
+          tag.parse_and_check_name(reader, "points", filename);
+          
+          tag.parse_and_check_name(reader, "dataarray", filename);
+          tag.check_attribute("numberofcomponents", filename);
+          
+          numberOfComponents = atoi(tag.get_value("numberofcomponents").c_str());
           readNodeCoordinates(nodeNum, numberOfComponents, seg_id);
           
-          checkNextToken("</DataArray>");
-          checkNextToken("</Points>");
+          tag.parse_and_check_name(reader, "/dataarray", filename);
+          tag.parse_and_check_name(reader, "/points", filename);
 
-          //read point data if available
+          tag.parse(reader);
+          if (tag.name() == "pointdata")
           {
-            std::string token;
-            reader >> token;
-            if (lowercase_compare(token, "<PointData"))
-            {
-              //std::cout << "Reading point data..." << std::endl;
-              readPointData(seg_id);
-              checkNextToken("<Cells>");
-            }
-            else if (lowercase_compare(token, "<Cells>"))
-            {
-              //okay, continue below
-            }
-            else
-            {
-              std::cerr << "* vtk_reader::operator(): Expected \"<PointData\" or \"<Cells>\", but got \"" << token << "\"" << std::endl;
-              throw;
-            }
+            readPointCellData(seg_id, local_scalar_vertex_data, local_vector_vertex_data);
+            tag.parse(reader);
           }
           
-          checkNextToken("<DataArray");
-          checkNextToken("type=\"Int32\"");
-          checkNextToken("Name=\"connectivity\"");
-          checkNextToken("format=\"ascii\">");
-          readCellIndices(seg_id);
-
-          checkNextToken("<DataArray");
-          checkNextToken("type=\"Int32\"");
-          checkNextToken("Name=\"offsets\"");
-          checkNextToken("format=\"ascii\">");
-          readOffsets(seg_id);
+          if (tag.name() != "cells")
+            throw bad_file_format_exception(filename, "Parse error: Expected Cells tag!");
           
-          
-          checkNextToken("<DataArray");
-          checkNextToken("type=\"UInt8\"");
-          checkNextToken("Name=\"types\"");
-          checkNextToken("format=\"ascii\">");
-          readTypes();
-
-          checkNextToken("</Cells>");
-          
-          //read cell data if available
+          for (std::size_t i=0; i<3; ++i)
           {
-            std::string token;
-            reader >> token;
-            if (lowercase_compare(token, "<CellData"))
-            {
-              //std::cout << "Reading cell data..." << std::endl;
-              readCellData(seg_id);
-              checkNextToken("</Piece>");
-            }
-            else if (lowercase_compare(token, "</Piece>"))
-            {
-              //okay, continue below
-            }
+            tag.parse_and_check_name(reader, "dataarray", filename);
+            tag.check_attribute("name", filename);
+            
+            if (tag.get_value("name") == "connectivity")
+              readCellIndices(seg_id);
+            else if (tag.get_value("name") == "offsets")
+              readOffsets(seg_id);
+            else if (tag.get_value("name") == "types")
+              readTypes();
             else
-            {
-              std::cerr << "* vtk_reader::operator(): Expected \"<CellData\" or \"</Piece>\", but got \"" << token << "\"" << std::endl;
-              throw;
-            }
+              throw bad_file_format_exception(filename, "Parse error: <DataArray> is not named 'connectivity', 'offsets' or 'types'!");
+          }
+
+          tag.parse_and_check_name(reader, "/cells", filename);
+          
+          tag.parse(reader);
+          if (tag.name() == "celldata")
+          {
+            readPointCellData(seg_id, local_scalar_cell_data, local_vector_cell_data);
+            tag.parse(reader);
           }
           
-          checkNextToken("</UnstructuredGrid>");
-          checkNextToken("</VTKFile>");
+          
+          if (tag.name() != "/piece")
+            throw bad_file_format_exception(filename, "Parse error: Expected </Piece> tag!");
+          
+          tag.parse_and_check_name(reader, "/unstructuredgrid", filename);
+          tag.parse_and_check_name(reader, "/vtkfile", filename);
 
           closeFile();          
         }
@@ -954,19 +718,56 @@ namespace viennagrid
         //
         // Step 1: Get segments from pvd file:
         //
-        checkNextToken("<?xml");
-        checkNextToken("version=\"1.0\"?>");
-        checkNextToken("<VTKFile");
-        checkNextToken("type=\"Collection\"");
-        checkNextToken("version=\"0.1\"");
-        checkNextToken("byte_order=\"LittleEndian\"");
-        checkNextToken("compressor=\"vtkZLibDataCompressor\">");
-        checkNextToken("<Collection>");
+        xml_tag<> tag;
         
-        readSegments(filenames);
+        tag.parse(reader);
+        if (tag.name() != "?xml" && tag.name() != "?xml?")
+          throw bad_file_format_exception(filename, "Parse error: No opening <?xml?> tag!");
+
+        tag.parse(reader);
+        if (tag.name() != "vtkfile")
+          throw bad_file_format_exception(filename, "Parse error: VTKFile tag expected!");
         
-        checkNextToken("</VTKFile>");
+        if (!tag.has_attribute("type"))
+          throw bad_file_format_exception(filename, "Parse error: VTKFile tag has no attribute 'type'!");
         
+        if (to_lower(tag.get_value("type")) != "collection")
+          throw bad_file_format_exception(filename, "Parse error: Type-attribute of VTKFile tag is not 'Collection'!");
+        
+        //checkNextToken("<Collection>");
+        tag.parse(reader);
+        if (tag.name() != "collection")
+          throw bad_file_format_exception(filename, "Parse error: Collection tag expected!");
+        
+        long seg_index = 0;
+        while (reader.good())
+        {
+          tag.parse(reader);
+          
+          if (tag.name() == "/collection")
+            break;
+          
+          if (tag.name() != "dataset")
+            throw bad_file_format_exception(filename, "Parse error: DataSet tag expected!");
+          
+          if (tag.has_attribute("part"))
+          {
+            if (atoi(tag.get_value("part").c_str()) != seg_index)
+              throw bad_file_format_exception(filename, "Parser limitation: Segments must be provided with increasing index!");
+          }
+          
+          if (!tag.has_attribute("file"))
+            throw bad_file_format_exception(filename, "Parse error: DataSet tag has no file attribute!");
+          
+          filenames.push_back(tag.get_value("file"));
+          
+          ++seg_index;
+        }
+
+        tag.parse(reader);
+        if (tag.name() != "/vtkfile")
+          throw bad_file_format_exception(filename, "Parse error: Closing VTKFile tag expected!");
+
         closeFile();
         
         assert(filenames.size() > 0 && "No segments in pvd-file specified!");
