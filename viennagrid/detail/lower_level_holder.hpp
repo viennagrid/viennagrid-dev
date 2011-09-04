@@ -22,7 +22,6 @@
 #include <iostream>
 
 #include "viennagrid/forwards.h"
-//#include "viennagrid/topology/celltags.hpp"
 #include "viennagrid/topology/point.hpp"
 #include "viennagrid/iterators.hpp"
 #include "viennagrid/detail/element_orientation.hpp"
@@ -38,7 +37,7 @@ namespace viennagrid
   template <typename T_Configuration,
               typename ElementTag,
               unsigned long levelnum,
-              typename handling_tag = typename topology::subcell_desc<ElementTag,levelnum>::handling_tag,
+              typename handling_tag = typename result_of::subelement_handling<ElementTag,levelnum>::type,
               bool LevelNull = (levelnum == 0)>
   class lower_level_holder  { };
 
@@ -89,21 +88,21 @@ namespace viennagrid
       
       //non-const:
       template <long j>
-      typename result_of::element_container< element_t<T_Configuration, ElementTag>, j, T_Configuration::cell_tag::topology_level>::type *
+      typename result_of::element_container< element_t<T_Configuration, ElementTag>, j, ElementTag::topology_level>::type *
       container(less_tag)
       { 
         return Base::template container<j>();
       }
 
       template <long j>
-      typename result_of::element_container< element_t<T_Configuration, ElementTag>, j, T_Configuration::cell_tag::topology_level>::type *
+      typename result_of::element_container< element_t<T_Configuration, ElementTag>, j, ElementTag::topology_level>::type *
       container(equal_tag)
       { 
         return &(elements_[0]);
       }
 
       template <long j>
-      typename result_of::element_container< element_t<T_Configuration, ElementTag>, j, T_Configuration::cell_tag::topology_level>::type *
+      typename result_of::element_container< element_t<T_Configuration, ElementTag>, j, ElementTag::topology_level>::type *
       container()
       { 
         return container<j>( typename level_discriminator<levelnum, j>::result_type() );
@@ -111,21 +110,21 @@ namespace viennagrid
       
       //const:
       template <long j>
-      const typename result_of::element_container< element_t<T_Configuration, ElementTag>, j, T_Configuration::cell_tag::topology_level>::type *
+      const typename result_of::element_container< element_t<T_Configuration, ElementTag>, j, ElementTag::topology_level>::type *
       container(less_tag) const
       { 
         return Base::template container<j>();
       }
 
       template <long j>
-      const typename result_of::element_container< element_t<T_Configuration, ElementTag>, j, T_Configuration::cell_tag::topology_level>::type *
+      const typename result_of::element_container< element_t<T_Configuration, ElementTag>, j, ElementTag::topology_level>::type *
       container(equal_tag) const
       { 
         return &(elements_[0]);
       }
 
       template <long j>
-      const typename result_of::element_container< element_t<T_Configuration, ElementTag>, j, T_Configuration::cell_tag::topology_level>::type *
+      const typename result_of::element_container< element_t<T_Configuration, ElementTag>, j, ElementTag::topology_level>::type *
       container() const
       { 
         return container<j>( typename level_discriminator<levelnum, j>::result_type() );
@@ -136,23 +135,23 @@ namespace viennagrid
       ////////////////// orientation: ////////////////////
       template <long j>
       ElementOrientationType const &
-      getLevelOrientation(long index, less_tag)
+      local_to_global_orientation(long index, less_tag)
       { 
-        return Base::template getLevelOrientation<j>(index);
+        return Base::template local_to_global_orientation<j>(index);
       }
 
       template <long j>
       ElementOrientationType const &
-      getLevelOrientation(long index, equal_tag) 
+      local_to_global_orientation(long index, equal_tag) 
       { 
         return orientations_[index];
       }
 
       template <long j>
       ElementOrientationType const &
-      getLevelOrientation(long index)
+      local_to_global_orientation(long index)
       { 
-        return getLevelOrientation<j>( index, typename level_discriminator<levelnum, j>::result_type() );
+        return local_to_global_orientation<j>( index, typename level_discriminator<levelnum, j>::result_type() );
       }
 
     private: 
@@ -190,14 +189,22 @@ namespace viennagrid
       
       //non-const:
       template <long j>
-      typename result_of::element_container< element_t<T_Configuration, ElementTag>, j, T_Configuration::cell_tag::topology_level>::type *
+      typename result_of::element_container< element_t<T_Configuration, ElementTag>, j, ElementTag::topology_level>::type *
       container(less_tag)
       { 
         return Base::template container<j>();
       }
 
       template <long j>
-      typename result_of::element_container< element_t<T_Configuration, ElementTag>, j, T_Configuration::cell_tag::topology_level>::type *
+      typename result_of::element_container< element_t<T_Configuration, ElementTag>, j, ElementTag::topology_level>::type *
+      container(equal_tag)
+      { 
+        typedef typename result_of::subelement_handling<ElementTag, levelnum>::ERROR_HANDLING_OF_ELEMENTS_AT_THIS_TOPOLOGICAL_LEVEL_NOT_PROVIDED   error_type;
+        return NULL;
+      }
+
+      template <long j>
+      typename result_of::element_container< element_t<T_Configuration, ElementTag>, j, ElementTag::topology_level>::type *
       container()
       { 
         return container<j>( typename level_discriminator<levelnum, j>::result_type() );
@@ -206,14 +213,22 @@ namespace viennagrid
 
       //const:
       template <long j>
-      const typename result_of::element_container< element_t<T_Configuration, ElementTag>, j, T_Configuration::cell_tag::topology_level>::type *
+      const typename result_of::element_container< element_t<T_Configuration, ElementTag>, j, ElementTag::topology_level>::type *
       container(less_tag) const
       { 
         return Base::template container<j>();
       }
 
       template <long j>
-      const typename result_of::element_container< element_t<T_Configuration, ElementTag>, j, T_Configuration::cell_tag::topology_level>::type *
+      const typename result_of::element_container< element_t<T_Configuration, ElementTag>, j, ElementTag::topology_level>::type *
+      container(equal_tag) const
+      { 
+        typedef typename result_of::subelement_handling<ElementTag, levelnum>::ERROR_HANDLING_OF_ELEMENTS_AT_THIS_TOPOLOGICAL_LEVEL_NOT_PROVIDED   error_type;
+        return NULL;
+      }
+      
+      template <long j>
+      const typename result_of::element_container< element_t<T_Configuration, ElementTag>, j, ElementTag::topology_level>::type *
       container() const
       { 
         return container<j>( typename level_discriminator<levelnum, j>::result_type() );
@@ -253,7 +268,7 @@ namespace viennagrid
       
       //non-const:
       template <long j>
-      typename result_of::element_container< element_t<T_Configuration, ElementTag>, j, T_Configuration::cell_tag::topology_level>::type *
+      typename result_of::element_container< element_t<T_Configuration, ElementTag>, j, ElementTag::topology_level>::type *
       container()
       { 
         return &(vertices_[0]);
@@ -261,7 +276,7 @@ namespace viennagrid
 
       //const:
       template <long j>
-      const typename result_of::element_container< element_t<T_Configuration, ElementTag>, j, T_Configuration::cell_tag::topology_level>::type *
+      const typename result_of::element_container< element_t<T_Configuration, ElementTag>, j, ElementTag::topology_level>::type *
       container() const
       { 
         return &(vertices_[0]);

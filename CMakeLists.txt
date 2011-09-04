@@ -11,14 +11,11 @@ INCLUDE_DIRECTORIES(".")
 INCLUDE_DIRECTORIES("../ViennaData")      #ViennaData
 
 #look for HDF5
-find_package(HDF5 COMPONENTS CXX)
-IF(HDF5_FOUND)
-   INCLUDE_DIRECTORIES(${HDF5_INCLUDE_DIRS})
-ENDIF(HDF5_FOUND)
+#find_package(HDF5 COMPONENTS CXX)
+#IF(HDF5_FOUND)
+#   INCLUDE_DIRECTORIES(${HDF5_INCLUDE_DIRS})
+#ENDIF(HDF5_FOUND)
 
-IF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-   INCLUDE_DIRECTORIES("/opt/local/include") 
-ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 
 #add definitions, compiler switches, etc.
 IF(DEFINED CMAKE_BUILD_TYPE)
@@ -33,9 +30,10 @@ IF(CMAKE_COMPILER_IS_GNUCXX)
 ENDIF(CMAKE_COMPILER_IS_GNUCXX)
 
 #list all source files here
-IF(HDF5_FOUND)
-   ADD_EXECUTABLE(test_tdr         examples/tests/test_tdr.cpp)
-   TARGET_LINK_LIBRARIES(test_tdr  ${HDF5_LIBRARIES})
-ENDIF(HDF5_FOUND)
+#IF(HDF5_FOUND)
+#   ADD_EXECUTABLE(test_tdr         examples/tests/test_tdr.cpp)
+#   TARGET_LINK_LIBRARIES(test_tdr  ${HDF5_LIBRARIES})
+#ENDIF(HDF5_FOUND)
 
 
+ADD_EXECUTABLE(slim_domain         examples/tutorial/slim_domain.cpp)

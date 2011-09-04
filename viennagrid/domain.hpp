@@ -91,7 +91,8 @@ namespace viennagrid
   template <typename Config>
   class domain_t : public detail::domain_layers<Config,
                                                 Config::cell_tag::topology_level,
-                                                true>  //we start with cells
+                                                true,
+                                                full_handling_tag>  //we start with cells
   {
       typedef detail::domain_layers<Config, Config::cell_tag::topology_level, true>           base_type;
       typedef domain_t<Config>                                                          self_type;

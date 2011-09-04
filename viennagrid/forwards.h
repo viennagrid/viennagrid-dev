@@ -275,7 +275,25 @@ namespace viennagrid
       typedef typename T::config_type     type; 
     };
     
+    template <typename ConfigType>
+    struct config< domain_t<ConfigType> >
+    {
+      typedef ConfigType     type; 
+    };
 
+    template <typename ConfigType>
+    struct config< segment_t<ConfigType> >
+    {
+      typedef ConfigType     type; 
+    };
+
+    template <typename ConfigType, typename ElementTag>
+    struct config< element_t<ConfigType, ElementTag> >
+    {
+      typedef ConfigType     type; 
+    };
+
+    
     template <typename T,   //type of host (domain, segment, other element)
               dim_type dim,
               dim_type cell_level = config<T>::type::cell_tag::topology_level>
@@ -322,31 +340,41 @@ namespace viennagrid
     };
     
     
- //   template <typename T>
- //   struct element_tag<T, T::element_tag::topology_level>
- //   {
- //     typedef typename T::element_tag    type; 
- //   };
     
-    
-    template <typename T, dim_type dim = T::element_tag::topology_level>
-    struct handling_tag
+    template <typename T, dim_type dim>
+    struct subelement_handling
     {
-      typedef typename viennagrid::topology::subcell_desc<T, dim>::handling_tag    type; 
+      typedef full_handling_tag    type;  //TODO: Think about whether this is a good choice...
     };
     
-//    //cell level always uses full handling
-//    template <typename T>
-//    struct handling_tag<T, T::element_tag::topology_level>
-//    {
-//      typedef full_handling_tag    type; 
-//    };
-
-    //vertex level always uses full handling
+    // Vertex level always uses full handling (it is the defining entity of an element).
+    // Even though the full_handling_tag is covered by the default overload, make this specialization explicit such that the user cannot accidentally modify it.
     template <typename T>
-    struct handling_tag<T, 0>
+    struct subelement_handling<T, 0>
     {
       typedef full_handling_tag    type; 
+    };
+
+    //for domains
+    template <typename T, dim_type dim>
+    struct subelement_handling< domain_t<T>, dim>
+    {
+      typedef full_handling_tag    type;  //TODO: Think about whether this is a good choice...
+    };
+    
+    // Vertex level always uses full handling (it is the defining entity of an element).
+    // Even though the full_handling_tag is covered by the default overload, make this specialization explicit such that the user cannot accidentally modify it.
+    template <typename T>
+    struct subelement_handling< domain_t<T>, 0>
+    {
+      typedef full_handling_tag    type; 
+    };
+
+    //for segments:
+    template <typename T, dim_type dim>
+    struct subelement_handling< segment_t<T>, dim>
+    {
+      typedef typename subelement_handling<typename T::cell_tag, dim>::type    type;  //TODO: Think about whether this is a good choice...
     };
     
   }

@@ -44,7 +44,6 @@ namespace viennagrid
     struct subcell_desc<tetrahedron_tag, 0>
     {
       typedef point_tag             element_tag;
-      typedef full_handling_tag     handling_tag;
 
       enum{ num_elements = 4 };     //4 vertices
     };
@@ -53,7 +52,6 @@ namespace viennagrid
     struct subcell_desc<tetrahedron_tag, 1>
     {
       typedef line_tag              element_tag;
-      typedef full_handling_tag     handling_tag;
 
       enum{ num_elements = 6 };     //6 edges
     };
@@ -62,7 +60,6 @@ namespace viennagrid
     struct subcell_desc<tetrahedron_tag, 2>
     {
       typedef triangle_tag          element_tag;
-      typedef full_handling_tag     handling_tag;
 
       enum{ num_elements = 4 };     //4 facets
     };

@@ -49,8 +49,11 @@ namespace viennagrid
   struct interface_setter
   {
     template <typename FacetType, typename KeyType>
-    static void apply(FacetType const & facet, KeyType const & key)
+    static void apply(FacetType const & facet, KeyType const & key, full_handling_tag)
     {
+      typedef typename FacetType::config_type        ConfigType;
+      typedef typename ConfigType::cell_tag          CellTag;
+      
       typedef typename viennagrid::result_of::const_ncell_range<FacetType, topology_level>::type    ElementOnFacetRange;
       typedef typename result_of::iterator<ElementOnFacetRange>::type                    ElementOnFacetIterator;
 
@@ -63,16 +66,27 @@ namespace viennagrid
       }
 
       //proceed to lower level:
-      interface_setter<topology_level - 1>::apply(facet, key);
+      interface_setter<topology_level - 1>::apply(facet, key, typename viennagrid::result_of::subelement_handling<CellTag, topology_level-1>::type());
     }
+    
+    template <typename FacetType, typename KeyType>
+    static void apply(FacetType const & facet, KeyType const & key, no_handling_tag)
+    {
+      typedef typename FacetType::config_type        ConfigType;
+      typedef typename ConfigType::cell_tag          CellTag;
+      
+      //proceed to lower level:
+      interface_setter<topology_level - 1>::apply(facet, key, typename viennagrid::result_of::subelement_handling<CellTag, topology_level-1>::type());
+    }
+    
   };
 
   //end recursion of topolevel = -1
   template <>
   struct interface_setter< -1 >
   {
-    template <typename FacetType, typename KeyType>
-    static void apply(FacetType const & facet, KeyType const & key)
+    template <typename FacetType, typename KeyType, typename HandlingTag>
+    static void apply(FacetType const & facet, KeyType const & key, HandlingTag)
     {
     }
   };
@@ -122,7 +136,7 @@ namespace viennagrid
                              KeyType const & key,
                              no_handling_tag)
   {
-    typedef typename SegmentType::ERROR_CANNOT_DETECT_BOUNDARY_BECAUSE_FACETS_ARE_DISABLED        error_type;
+    typedef typename SegmentType::ERROR_CANNOT_DETECT_INTERFACE_BECAUSE_FACETS_ARE_DISABLED        error_type;
   }
 
   //
@@ -190,7 +204,10 @@ namespace viennagrid
       if (viennadata::find<KeyType, bool>(key)(*fit) != NULL)
       {
         if (viennadata::access<KeyType, bool>(key)(*fit) == true)
-          interface_setter<CellTag::topology_level-2>::apply(*fit, key);
+          interface_setter<CellTag::topology_level-2>::apply(*fit,
+                                                             key,
+                                                             typename viennagrid::result_of::subelement_handling<CellTag, CellTag::topology_level-2>::type()
+                                                            );
       }
     }
   }
@@ -206,8 +223,10 @@ namespace viennagrid
                         SegmentType const & seg2,
                         KeyType const & key)
   {
-    typedef typename SegmentType::config_type::cell_tag                   CellTag;
-    typedef typename topology::subcell_desc<CellTag, CellTag::topology_level-1>::handling_tag  HandlingTag;
+    typedef typename SegmentType::config_type               ConfigType;
+    typedef typename ConfigType::cell_tag                   CellTag;
+    typedef typename result_of::subelement_handling<CellTag,
+                                                    CellTag::topology_level-1>::type  HandlingTag;
     
     if (viennadata::access<KeyType, bool>(key)(seg1) == false)
     {

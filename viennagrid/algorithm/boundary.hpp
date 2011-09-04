@@ -20,6 +20,7 @@
 
 #include <vector>
 #include "viennagrid/forwards.h"
+#include "viennagrid/domain.hpp"
 #include "viennagrid/detail/element_iterators.hpp"
 #include "viennagrid/detail/domain_iterators.hpp"
 
@@ -90,8 +91,11 @@ namespace viennagrid
   struct boundary_setter
   {
     template <typename FacetType, typename KeyType>
-    static void apply(FacetType const & facet, KeyType const & key)
+    static void apply(FacetType const & facet, KeyType const & key, full_handling_tag)
     {
+      typedef typename FacetType::config_type        ConfigType;
+      typedef typename ConfigType::cell_tag          CellTag;
+      
       typedef typename viennagrid::result_of::const_ncell_range<FacetType, topology_level>::type    ElementOnFacetRange;
       typedef typename result_of::iterator<ElementOnFacetRange>::type                    ElementOnFacetIterator;
 
@@ -104,16 +108,33 @@ namespace viennagrid
       }
 
       //proceed to lower level:
-      boundary_setter<topology_level - 1>::apply(facet, key);
+      boundary_setter<topology_level - 1>::apply(facet,
+                                                 key,
+                                                 typename viennagrid::result_of::subelement_handling<CellTag, topology_level-1>::type()
+                                                );
     }
+    
+    template <typename FacetType, typename KeyType>
+    static void apply(FacetType const & facet, KeyType const & key, no_handling_tag)
+    {
+      typedef typename FacetType::config_type        ConfigType;
+      typedef typename ConfigType::cell_tag          CellTag;
+      
+      //no elements handled at this level, thus proceed to lower level:
+      boundary_setter<topology_level - 1>::apply(facet,
+                                                 key,
+                                                 typename viennagrid::result_of::subelement_handling<CellTag, topology_level-1>::type()
+                                                );
+    }
+    
   };
 
   //end recursion of topolevel = -1
   template <>
   struct boundary_setter< -1 >
   {
-    template <typename FacetType, typename KeyType>
-    static void apply(FacetType const & facet, KeyType const & key)
+    template <typename FacetType, typename KeyType, typename HandlingTag>
+    static void apply(FacetType const & facet, KeyType const & key, HandlingTag)
     {
     }
   };
@@ -177,7 +198,10 @@ namespace viennagrid
       if (viennadata::find<KeyType, bool>(key)(*fit) != NULL)
       {
         if (viennadata::access<KeyType, bool>(key)(*fit) == true)
-          boundary_setter<CellTag::topology_level-2>::apply(*fit, key);
+          boundary_setter<CellTag::topology_level-2>::apply(*fit,
+                                                            key,
+                                                            typename viennagrid::result_of::subelement_handling<CellTag, CellTag::topology_level-2>::type()
+                                                           );
       }
     }
   }
@@ -191,8 +215,11 @@ namespace viennagrid
   template <typename DomainSegmentType, typename KeyType>
   void detect_boundary(DomainSegmentType const & segment, KeyType const & key)
   {
-    typedef typename DomainSegmentType::config_type::cell_tag                   CellTag;
-    typedef typename topology::subcell_desc<CellTag, CellTag::topology_level-1>::handling_tag  HandlingTag;
+    typedef typename DomainSegmentType::config_type            ConfigType;
+    typedef typename ConfigType::cell_tag                   CellTag;
+    typedef typename result_of::domain<ConfigType>::type                        DomainType;
+    typedef typename result_of::subelement_handling<DomainType,
+                                                    CellTag::topology_level-1>::type  HandlingTag;
     
     if (viennadata::access<KeyType, bool>(key)(segment) == false)
     {

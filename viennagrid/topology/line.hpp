@@ -39,7 +39,6 @@ namespace viennagrid
     struct subcell_desc<line_tag, 0>
     {
       typedef point_tag             element_tag;
-      typedef full_handling_tag     handling_tag;
 
       enum{ num_elements = 2 };     //2 vertices
     };

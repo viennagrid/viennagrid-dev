@@ -97,9 +97,10 @@ namespace viennagrid
     template <typename Config, // config class
               dim_type dim,  // dimension of the elements covered here
               bool is_cell = false,                   // whether this layer holds the cells (i.e. highest topological element)
-              typename STOR = full_handling_tag       //Storage scheme: Full storage, or ignore layer
+              typename STOR = typename viennagrid::result_of::subelement_handling<domain_t<Config>, dim>::type       //Storage scheme: Full storage, or ignore layer
             >
-    class domain_layers  : public domain_layers<Config, dim-1>
+    class domain_layers  : public domain_layers<Config,
+                                                dim-1>
     {
         //typedef typename result_of::element_tag<typename Config::cell_tag, dim>::type    element_tag;
         typedef domain_t<Config>                                                          domain_type;
@@ -108,7 +109,8 @@ namespace viennagrid
         typedef element_t<Config, element_tag >                                              element_type;
         typedef element_t<Config, typename Config::cell_tag>                                   cell_type;
         typedef typename result_of::element_container<domain_type, dim, Config::cell_tag::topology_level>::type           container_type;
-        typedef domain_layers<Config, dim-1>                                               base_type;
+        typedef domain_layers<Config,
+                              dim-1>                                               base_type;
         typedef element_orientation<VertexOnElementSpecs::num_elements>                    ElementOrientationType;
       
       public:
@@ -204,13 +206,64 @@ namespace viennagrid
       private:
         container_type    elements;        //container of elements
     };
+
     
+    template <typename Config,
+              dim_type dim>
+    class domain_layers<Config, dim, false, no_handling_tag>  : public domain_layers<Config,
+                                                                                     dim-1>
+    {
+        //typedef typename result_of::element_tag<typename Config::cell_tag, dim>::type    element_tag;
+        typedef typename Config::cell_tag                                                 CellTag;
+        typedef domain_t<Config>                                                          domain_type;
+        typedef domain_layers<Config,
+                              dim-1>        base_type;
+      
+      public:
+
+        ///////////////////// container retrieval /////////////////////////
+
+        //non-const:
+        template <dim_type dim_container>
+        typename result_of::element_container<domain_type, dim_container, CellTag::topology_level>::type * 
+        container() { return container<dim_container>(typename level_discriminator<dim, dim_container>::result_type()); }
+        
+        template <dim_type dim_container>
+        typename result_of::element_container<domain_type, dim_container, CellTag::topology_level>::type * 
+        container(equal_tag)
+        {
+          typedef typename result_of::subelement_handling<domain_type, dim>::ERROR_HANDLING_OF_ELEMENTS_AT_THIS_TOPOLOGICAL_LEVEL_NOT_PROVIDED   error_type;
+          return NULL;
+        }
+
+        template <dim_type dim_container>
+        typename result_of::element_container<domain_type, dim_container, CellTag::topology_level>::type * 
+        container(less_tag) { return base_type::template container<dim_container>(); }
+
+        //const:
+        template <dim_type dim_container>
+        const typename result_of::element_container<domain_type, dim_container, CellTag::topology_level>::type * 
+        container() const { return container<dim_container>(typename level_discriminator<dim, dim_container>::result_type()); }
+        
+        template <dim_type dim_container>
+        const typename result_of::element_container<domain_type, dim_container, CellTag::topology_level>::type * 
+        container(equal_tag) const
+        {
+          typedef typename result_of::subelement_handling<domain_type, dim>::ERROR_HANDLING_OF_ELEMENTS_AT_THIS_TOPOLOGICAL_LEVEL_NOT_PROVIDED   error_type;
+          return NULL;
+        }
+
+        template <dim_type dim_container>
+        const typename result_of::element_container<domain_type, dim_container, Config::cell_tag::topology_level>::type * 
+        container(less_tag) const { return base_type::template container<dim_container>(); }
+    };
+     
     
     // special handling for cells:
     template <typename Config,
-              dim_type dim,
-              typename STOR >
-    class domain_layers<Config, dim, true, STOR> : public domain_layers<Config, dim-1, false, STOR>
+              dim_type dim>
+    class domain_layers<Config, dim, true, full_handling_tag> : public domain_layers<Config,
+                                                                                     dim-1>
     {
         //typedef typename result_of::element_tag<typename Config::cell_tag, 0>::type   element_tag;
         typedef domain_t<Config>                                                          domain_type;
@@ -218,7 +271,8 @@ namespace viennagrid
         typedef typename result_of::element_container<domain_type,
                                                       Config::cell_tag::topology_level,
                                                       Config::cell_tag::topology_level>::type                container_type;
-        typedef domain_layers<Config, dim-1>                                               base_type;
+        typedef domain_layers<Config,
+                              dim-1>                                               base_type;
       
       public:
         typedef Config    config_type;
