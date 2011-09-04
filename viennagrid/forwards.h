@@ -351,6 +351,31 @@ namespace viennagrid
     
   }
   
+  // providing forwards for the ncells function
+  template <dim_type dim, typename DomainConfig>
+  ncell_range<domain_t<DomainConfig>, dim>
+  ncells(domain_t<DomainConfig> & d);
+
+  template <typename DomainConfig>
+  ncell_proxy< domain_t<DomainConfig> >
+  ncells(domain_t<DomainConfig> & d);
+
+  template <dim_type dim, typename DomainConfig>
+  ncell_range<segment_t<DomainConfig>, dim>
+  ncells(segment_t<DomainConfig> & d);
+
+  template <typename DomainConfig>
+  ncell_proxy< segment_t<DomainConfig> >
+  ncells(segment_t<DomainConfig> & d);
+
+  template <dim_type dim, typename Config, typename ElementTag>
+  typename result_of::ncell_range< element_t<Config, ElementTag>, dim>::type
+  ncells(element_t<Config, ElementTag> & d);
+  
+  template <typename Config, typename ElementTag>
+  ncell_proxy< element_t<Config, ElementTag> >
+  ncells(element_t<Config, ElementTag> & d);
+
    // norm tags for: algorithm/norm.hpp
    struct one_tag {};
    struct two_tag {};
