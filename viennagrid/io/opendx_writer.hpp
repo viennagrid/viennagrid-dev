@@ -67,7 +67,7 @@ namespace viennagrid
     struct opendx_writer
     {
       template <typename DomainType>
-      int operator()(DomainType & domain, std::string const & filename, bool isVertexOriented = true)
+      int operator()(DomainType const & domain, std::string const & filename, bool isVertexOriented = true)
       {
         typedef typename DomainType::config_type                     DomainConfiguration;
       
@@ -81,19 +81,19 @@ namespace viennagrid
 
         //typedef typename DomainTypes<DomainConfiguration>::segment_type  Segment;
       
-        typedef typename viennagrid::result_of::ncell_range<DomainType, 0>::type   VertexRange;
+        typedef typename viennagrid::result_of::const_ncell_range<DomainType, 0>::type   VertexRange;
         typedef typename viennagrid::result_of::iterator<VertexRange>::type        VertexIterator;
             
-        typedef typename viennagrid::result_of::ncell_range<DomainType, 1>::type   EdgeRange;
+        typedef typename viennagrid::result_of::const_ncell_range<DomainType, 1>::type   EdgeRange;
         typedef typename viennagrid::result_of::iterator<EdgeRange>::type          EdgeIterator;
 
-        typedef typename viennagrid::result_of::ncell_range<DomainType, CellTag::topology_level-1>::type   FacetRange;
+        typedef typename viennagrid::result_of::const_ncell_range<DomainType, CellTag::topology_level-1>::type   FacetRange;
         typedef typename viennagrid::result_of::iterator<FacetRange>::type                                 FacetIterator;
 
-        typedef typename viennagrid::result_of::ncell_range<DomainType, CellTag::topology_level>::type     CellRange;
+        typedef typename viennagrid::result_of::const_ncell_range<DomainType, CellTag::topology_level>::type     CellRange;
         typedef typename viennagrid::result_of::iterator<CellRange>::type                                  CellIterator;
 
-        typedef typename viennagrid::result_of::ncell_range<CellType, 0>::type      VertexOnCellRange;
+        typedef typename viennagrid::result_of::const_ncell_range<CellType, 0>::type      VertexOnCellRange;
         typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type   VertexOnCellIterator;
 
         typedef DXHelper<DimensionTag::value>  DXHelper;
@@ -136,7 +136,7 @@ namespace viennagrid
               vocit != vertices_for_cell.end();
               ++vocit)
           {
-            VertexType & vertex = *vocit;
+            VertexType const & vertex = *vocit;
             writer << vertex.id() << " ";
           }
           writer << std::endl;
