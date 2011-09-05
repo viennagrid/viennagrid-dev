@@ -1,3 +1,6 @@
+#ifndef VIENNAGRID_TOPOLOGY_QUADRILATERAL_HPP
+#define VIENNAGRID_TOPOLOGY_QUADRILATERAL_HPP
+
 /* =======================================================================
    Copyright (c) 2011, Institute for Microelectronics,
                        Institute for Analysis and Scientific Computing,
@@ -14,9 +17,6 @@
 
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
-
-#ifndef VIENNAGRID_TOPOLOGY_QUADRILATERAL_HPP
-#define VIENNAGRID_TOPOLOGY_QUADRILATERAL_HPP
 
 #include "viennagrid/forwards.h"
 #include "viennagrid/topology/point.hpp"
@@ -36,7 +36,7 @@ namespace viennagrid
   
     //parallelogram
     template <>
-    struct subcell_desc<quadrilateral_tag, 0>
+    struct subelements<quadrilateral_tag, 0>
     {
       typedef point_tag             element_tag;
 
@@ -44,7 +44,7 @@ namespace viennagrid
     };
 
     template <>
-    struct subcell_desc<quadrilateral_tag, 1>
+    struct subelements<quadrilateral_tag, 1>
     {
       typedef line_tag              element_tag;
 
@@ -56,7 +56,7 @@ namespace viennagrid
 
     //////// Parallelogram ////////
     template <>
-    struct subcell_filler<quadrilateral_tag, 1>
+    struct subelement_filler<quadrilateral_tag, 1>
     {
       //fill edges:
       //

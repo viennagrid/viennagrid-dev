@@ -1,3 +1,6 @@
+#ifndef VIENNAGRID_ALGORITHM_CIRCUMCENTER_HPP
+#define VIENNAGRID_ALGORITHM_CIRCUMCENTER_HPP
+
 /* =======================================================================
    Copyright (c) 2011, Institute for Microelectronics,
                        Institute for Analysis and Scientific Computing,
@@ -14,9 +17,6 @@
 
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
-
-#ifndef VIENNAGRID_ALGORITHM_CIRCUMCENTER_HPP
-#define VIENNAGRID_ALGORITHM_CIRCUMCENTER_HPP
 
 #include <iostream>
 #include <sstream>
@@ -35,6 +35,14 @@
 
 namespace viennagrid
 {
+  
+    template <typename ElementType, typename ElementTag, typename DimensionTag>
+    typename viennagrid::result_of::point<typename ElementType::config_type>::type
+    circumcenter(ElementType const & cell, ElementTag const &, DimensionTag const &)
+    {
+      typedef typename ElementType::ERROR_COMPUTATION_OF_CIRCUMCENTER_NOT_IMPLEMENTED   error_type;
+      return typename viennagrid::result_of::point<typename ElementType::config_type>::type();
+    }
     
     //
     // Calculation of circumcenter for a line
@@ -47,13 +55,11 @@ namespace viennagrid
       typedef typename viennagrid::result_of::point<Config>::type                            PointType;
       
       typedef typename viennagrid::result_of::const_ncell_range<ElementType, 0>::type         VertexOnCellRange;
-      typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type            VertexOnCellIterator;
 
       VertexOnCellRange vertices = viennagrid::ncells<0>(cell);
-      VertexOnCellIterator vocit = vertices.begin();
       
-      PointType const & A = vocit->point(); ++vocit;
-      PointType const & B = vocit->point(); 
+      PointType const & A = vertices[0].point();
+      PointType const & B = vertices[1].point();
       
       PointType ret = A + B;
       ret /= 2.0;
@@ -76,14 +82,12 @@ namespace viennagrid
       typedef typename viennagrid::result_of::ncell<Config, 1>::type                         EdgeType;
       
       typedef typename viennagrid::result_of::const_ncell_range<ElementType, 0>::type         VertexOnCellRange;
-      typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type            VertexOnCellIterator;
 
       VertexOnCellRange vertices = viennagrid::ncells<0>(cell);
-      VertexOnCellIterator vocit = vertices.begin();
       
-      PointType const & A = vocit->point(); ++vocit;
-      PointType const & B = vocit->point(); ++vocit;
-      PointType const & C = vocit->point();
+      PointType const & A = vertices[0].point();
+      PointType const & B = vertices[1].point();
+      PointType const & C = vertices[2].point();
       
       PointType circ_cent;
       
@@ -132,7 +136,7 @@ namespace viennagrid
         p0 += vocit->point();
       }
       
-      p0 /= viennagrid::topology::subcell_desc<CellTag, 0>::num_elements;
+      p0 /= viennagrid::topology::subelements<CellTag, 0>::num_elements;
       
       return p0;
     }
@@ -153,14 +157,12 @@ namespace viennagrid
       typedef typename viennagrid::result_of::ncell<Config, 1>::type                         EdgeType;
       
       typedef typename viennagrid::result_of::const_ncell_range<ElementType, 0>::type         VertexOnCellRange;
-      typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type            VertexOnCellIterator;
 
       VertexOnCellRange vertices = viennagrid::ncells<0>(cell);
-      VertexOnCellIterator vocit = vertices.begin();
       
-      PointType const & A = vocit->point(); ++vocit;
-      PointType const & B = vocit->point(); ++vocit;
-      PointType const & C = vocit->point();
+      PointType const & A = vertices[0].point();
+      PointType const & B = vertices[1].point();
+      PointType const & C = vertices[2].point();
       
       double denominator = 2.0 * viennagrid::inner_prod(viennagrid::cross_prod(A-B, B-C), viennagrid::cross_prod(A-B, B-C));
       
@@ -176,7 +178,7 @@ namespace viennagrid
 
 
     //
-    // TODO: This works for rectangles only, but not for general quadrilaterals
+    // Note: This works for rectangles only, but not for general quadrilaterals
     //
     template <typename CellType>
     typename viennagrid::result_of::point<typename CellType::config_type>::type
@@ -201,7 +203,7 @@ namespace viennagrid
         p0 += vocit->point();
       }
       
-      p0 /= viennagrid::topology::subcell_desc<ElementTag, 0>::num_elements;
+      p0 /= viennagrid::topology::subelements<ElementTag, 0>::num_elements;
       
       return p0;
     }
@@ -248,7 +250,7 @@ namespace viennagrid
     }
 
     //
-    // TODO: This works for rectangles only, but not for general quadrilaterals
+    // Note: This works for rectangles only, but not for general quadrilaterals
     //
     template <typename CellType>
     typename viennagrid::result_of::point<typename CellType::config_type>::type
@@ -273,7 +275,7 @@ namespace viennagrid
         p0 += vocit->point();
       }
       
-      p0 /= viennagrid::topology::subcell_desc<CellTag, 0>::num_elements;
+      p0 /= viennagrid::topology::subelements<CellTag, 0>::num_elements;
       
       return p0;
     }

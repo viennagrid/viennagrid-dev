@@ -79,7 +79,12 @@ int main()
 
   typedef viennagrid::result_of::ncell_range<Domain, 0>::type           VertexRange;
   typedef viennagrid::result_of::iterator<VertexRange>::type        VertexIterator;
-                                            
+
+  std::cout << " ---------------------------------------------------------- " << std::endl;
+  std::cout << " -- ViennaGrid tutorial: Domain without storage of edges -- " << std::endl;
+  std::cout << " ---------------------------------------------------------- " << std::endl;
+  std::cout << std::endl;
+  
   Domain domain;
   
   //

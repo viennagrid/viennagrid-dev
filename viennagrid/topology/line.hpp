@@ -1,3 +1,6 @@
+#ifndef VIENNAGRID_TOPOLOGY_LINE_HPP
+#define VIENNAGRID_TOPOLOGY_LINE_HPP
+
 /* =======================================================================
    Copyright (c) 2011, Institute for Microelectronics,
                        Institute for Analysis and Scientific Computing,
@@ -14,9 +17,6 @@
 
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
-
-#ifndef VIENNAGRID_TOPOLOGY_LINE_HPP
-#define VIENNAGRID_TOPOLOGY_LINE_HPP
 
 #include "viennagrid/forwards.h"
 #include "viennagrid/topology/point.hpp"
@@ -36,7 +36,7 @@ namespace viennagrid
 
     //Line:
     template <>
-    struct subcell_desc<line_tag, 0>
+    struct subelements<line_tag, 0>
     {
       typedef point_tag             element_tag;
 

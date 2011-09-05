@@ -1,3 +1,6 @@
+#ifndef VIENNAGRID_TOPOLOGY_ALL_HPP
+#define VIENNAGRID_TOPOLOGY_ALL_HPP
+
 /* =======================================================================
    Copyright (c) 2011, Institute for Microelectronics,
                        Institute for Analysis and Scientific Computing,
@@ -14,9 +17,6 @@
 
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
-
-#ifndef VIENNAGRID_TOPOLOGY_ALL_HPP
-#define VIENNAGRID_TOPOLOGY_ALL_HPP
 
 //one-dimensional:
 #include "viennagrid/topology/line.hpp"

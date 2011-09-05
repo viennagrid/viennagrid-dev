@@ -1,3 +1,6 @@
+#ifndef VIENNAGRID_ALGORITHM_INTERFACE_HPP
+#define VIENNAGRID_ALGORITHM_INTERFACE_HPP
+
 /* =======================================================================
    Copyright (c) 2011, Institute for Microelectronics,
                        Institute for Analysis and Scientific Computing,
@@ -14,9 +17,6 @@
 
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
-
-#ifndef VIENNAGRID_ALGORITHM_INTERFACE_HPP
-#define VIENNAGRID_ALGORITHM_INTERFACE_HPP
 
 #include <vector>
 #include "viennagrid/forwards.h"
@@ -66,7 +66,9 @@ namespace viennagrid
       }
 
       //proceed to lower level:
-      interface_setter<topology_level - 1>::apply(facet, key, typename viennagrid::result_of::subelement_handling<CellTag, topology_level-1>::type());
+      interface_setter<topology_level-1>::apply(facet,
+                                                key,
+                                                typename viennagrid::result_of::subelement_handling<CellTag, topology_level-1>::type());
     }
     
     template <typename FacetType, typename KeyType>
@@ -76,7 +78,9 @@ namespace viennagrid
       typedef typename ConfigType::cell_tag          CellTag;
       
       //proceed to lower level:
-      interface_setter<topology_level - 1>::apply(facet, key, typename viennagrid::result_of::subelement_handling<CellTag, topology_level-1>::type());
+      interface_setter<topology_level-1>::apply(facet,
+                                                key,
+                                                typename viennagrid::result_of::subelement_handling<CellTag, topology_level-1>::type());
     }
     
   };
@@ -86,49 +90,8 @@ namespace viennagrid
   struct interface_setter< -1 >
   {
     template <typename FacetType, typename KeyType, typename HandlingTag>
-    static void apply(FacetType const & facet, KeyType const & key, HandlingTag)
-    {
-    }
+    static void apply(FacetType const & facet, KeyType const & key, HandlingTag) {}
   };
-
-  
-  //
-  // A point comparison that is stable with respect to round-off errors.
-  // Can be further improved by using tolerances for each coordinate component separately
-  // Needs some more tweaks for non-Cartesian coordinates
-  //
-  /*
-  template <typename NumericType = double>
-  class fuzzy_point_less
-  {
-    public:
-      fuzzy_point_less(NumericType tol_abs = 1e-10,
-                       NumericType tol_rel = 1e-12) : tol_abs_(tol_abs), tol_rel_(tol_rel) {}
-      
-      template <typename PointType>
-      bool operator()(PointType const & p1, PointType const & p2) const
-      {
-        assert(p1.size() == p2.size() && "Points must have the same size!");
-        
-        for (std::size_t i=0; i<p1.size(); ++i)
-        {
-          if (fabs(p1[i]) < tol_abs_) && fabs(p2[i]) < tol_abs_)  //use absolute tolerance (coordinates are close to zero:
-            continue;   //coordinates are equal up to round-off errors near zero
-          
-          NumericType rel_diff = (p1[i] - p2[i]) / std::max(std::fabs(p1[i]), std::fabs(p2[i]));
-          if ( rel_diff < -tol_rel_)
-            return true;
-          else if ( rel_diff  > tol_rel_)
-            return false;
-        }
-        return false;
-      }
-      
-    private:
-      NumericType tol_rel_;
-      NumericType tol_abs_;
-  };*/
-  
 
   template <typename SegmentType, typename KeyType>
   void detect_interface_impl(SegmentType const & seg1,
@@ -159,13 +122,6 @@ namespace viennagrid
     
     typedef typename ConfigType::numeric_type         numeric_type;
 
-    // Get an estimate for the segment length scale from the distance of two random vertices:
-    // (If the domain is in the size of nanometer (10^-9), a fixed absolute tolerance of 10^{-10} would lead to wrong results.
-    //  Similarly, if the domain is in the size of lightyears, a fixed absolute tolerance of 10^{-10} is again useless...)
-    //double abs_tol = viennagrid::norm( viennagrid::ncells<0>(seg1)[0].point() - viennagrid::ncells<0>(seg1)[1].point() ) * 1e-8;
-    //std::map<PointType,
-    //         FacetType const *,
-    //         fuzzy_point_less<double> > facet_centroids_seg1( fuzzy_point_less<double>(abs_tol) );
     std::set<FacetType const *>  facets_ptrs_seg1;
     
     //
@@ -189,9 +145,7 @@ namespace viennagrid
           ++fit)
     {
       if (facets_ptrs_seg1.find( &(*fit) ) != facets_ptrs_seg1.end())
-      {
         viennadata::access<KeyType, bool>(key)(*fit) = true;
-      }
     }
     
     //
@@ -251,9 +205,8 @@ namespace viennagrid
     detect_interface(seg1, seg2, key);
     
     if (viennadata::find<InterfaceKey, bool>(key)(el) != NULL)
-    {
       return viennadata::access<InterfaceKey, bool>(key)(el);
-    }
+
     return false;
   }
 

@@ -10,13 +10,6 @@ SET(CMAKE_VERBOSE_MAKEFILE ON)
 INCLUDE_DIRECTORIES(".")
 INCLUDE_DIRECTORIES("../ViennaData")      #ViennaData
 
-#look for HDF5
-#find_package(HDF5 COMPONENTS CXX)
-#IF(HDF5_FOUND)
-#   INCLUDE_DIRECTORIES(${HDF5_INCLUDE_DIRS})
-#ENDIF(HDF5_FOUND)
-
-
 #add definitions, compiler switches, etc.
 IF(DEFINED CMAKE_BUILD_TYPE)
  SET (CMAKE_BUILD_TYPE ${CMAKE_BUILD_TYPE})
@@ -29,11 +22,8 @@ IF(CMAKE_COMPILER_IS_GNUCXX)
    #ADD_DEFINITIONS(-Wall -pedantic -O3)
 ENDIF(CMAKE_COMPILER_IS_GNUCXX)
 
-#list all source files here
-#IF(HDF5_FOUND)
-#   ADD_EXECUTABLE(test_tdr         examples/tests/test_tdr.cpp)
-#   TARGET_LINK_LIBRARIES(test_tdr  ${HDF5_LIBRARIES})
-#ENDIF(HDF5_FOUND)
-
-
+ADD_EXECUTABLE(algorithms          examples/tutorial/algorithms.cpp)
+ADD_EXECUTABLE(finite_volumes      examples/tutorial/finite_volumes.cpp)
+ADD_EXECUTABLE(iterators           examples/tutorial/iterators.cpp)
+ADD_EXECUTABLE(multi_segment       examples/tutorial/multi_segment.cpp)
 ADD_EXECUTABLE(slim_domain         examples/tutorial/slim_domain.cpp)

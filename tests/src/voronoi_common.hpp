@@ -25,36 +25,8 @@
 #include "viennagrid/iterators.hpp"
 #include "viennagrid/config/simplex.hpp"
 #include "viennagrid/algorithm/voronoi.hpp"
+#include "viennagrid/algorithm/volume.hpp"
 
-
-
-struct edge_len_key {};              //edge lengths
-struct box_volume_key {};            //box volume associated with an edge or vertex
-struct edge_interface_area_key {};   //box volume associated with an edge
-
-namespace viennadata
-{
-  namespace config
-  {
-    template <>
-    struct key_dispatch<edge_len_key>
-    {
-      typedef type_key_dispatch_tag    tag;
-    };
-
-    template <>
-    struct key_dispatch<box_volume_key>
-    {
-      typedef type_key_dispatch_tag    tag;
-    };
-    
-    template <>
-    struct key_dispatch<edge_interface_area_key>
-    {
-      typedef type_key_dispatch_tag    tag;
-    };
-  }
-}
 
 template <typename DeviceType>
 void output_voronoi_info(DeviceType const & d)
@@ -74,6 +46,9 @@ void output_voronoi_info(DeviceType const & d)
   
   long counter = 0;
   
+  viennagrid::voronoi_interface_area_key interface_key;
+  viennagrid::voronoi_box_volume_key box_volume_key;
+  
   std::cout << "-" << std::endl;
   std::cout << "- Vertex box volume information: " << std::endl;
   std::cout << "-" << std::endl;
@@ -82,7 +57,7 @@ void output_voronoi_info(DeviceType const & d)
                       vit != vertices.end();
                     ++vit)
   {
-    std::cout << "Vertex " << counter++ << ": " << viennadata::access<box_volume_key, double>()(*vit) << std::endl;
+    std::cout << "Vertex " << counter++ << ": " << viennadata::access<viennagrid::voronoi_box_volume_key, double>(box_volume_key)(*vit) << std::endl;
   }
   
   std::cout << "-" << std::endl;
@@ -95,8 +70,8 @@ void output_voronoi_info(DeviceType const & d)
                   ++eit)
   {
     std::cout << *eit << std::endl;
-    std::cout << "Length: "    << viennadata::access<edge_len_key, double>()(*eit)            << std::endl;
-    std::cout << "Interface: " << viennadata::access<edge_interface_area_key, double>()(*eit) << std::endl;
+    std::cout << "Length: "    << viennagrid::volume(*eit)            << std::endl;
+    std::cout << "Interface: " << viennadata::access<viennagrid::voronoi_interface_area_key, double>(interface_key)(*eit) << std::endl;
   }
   
 }
@@ -122,6 +97,7 @@ double voronoi_volume(DomainType const & d)
   typedef typename viennagrid::result_of::const_ncell_range<DomainType, 0>::type                          VertexContainer;
   typedef typename viennagrid::result_of::iterator<VertexContainer>::type                                     VertexIterator;
   
+  viennagrid::voronoi_box_volume_key box_volume_key;
   
   double boxed_volume = 0;
   VertexContainer vertices = viennagrid::ncells<0>(d);
@@ -129,7 +105,7 @@ double voronoi_volume(DomainType const & d)
                       vit != vertices.end();
                     ++vit)
   {
-    boxed_volume += viennadata::access<box_volume_key, double>()(*vit);
+    boxed_volume += viennadata::access<viennagrid::voronoi_box_volume_key, double>(box_volume_key)(*vit);
   }
 
   return boxed_volume;

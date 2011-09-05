@@ -1,3 +1,6 @@
+#ifndef VIENNAGRID_ALGORITHM_CENTROID_HPP
+#define VIENNAGRID_ALGORITHM_CENTROID_HPP
+
 /* =======================================================================
    Copyright (c) 2011, Institute for Microelectronics,
                        Institute for Analysis and Scientific Computing,
@@ -15,9 +18,6 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
-#ifndef VIENNAGRID_ALGORITHM_CENTROID_HPP
-#define VIENNAGRID_ALGORITHM_CENTROID_HPP
-
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -25,6 +25,7 @@
 
 #include "viennagrid/forwards.h"
 #include "viennagrid/topology/all.hpp"
+#include "viennagrid/algorithm/volume.hpp"    //for domain/segment centroid
 
 /** @file centroid.hpp
     @brief Computes the centroid (center of mass) for different cell types
@@ -33,9 +34,10 @@
 
 namespace viennagrid
 {
-    
+  namespace detail
+  {
     //
-    // Calculation of circumcenter taken from Wikipedia (better reference required...)
+    // Calculation of centroid
     //
     template <typename ElementType>
     typename viennagrid::result_of::point<typename ElementType::config_type>::type
@@ -60,7 +62,7 @@ namespace viennagrid
         p0 += vocit->point();
       }
       
-      p0 /= viennagrid::topology::subcell_desc<ElementTag, 0>::num_elements;
+      p0 /= viennagrid::topology::subelements<ElementTag, 0>::num_elements;
       
       return p0;
     }
@@ -74,7 +76,7 @@ namespace viennagrid
     }
 
     //
-    // TODO: This works for rectangles only, but not for general quadrilateral
+    // Note: This works for rectangles only, but not for general quadrilateral
     //
     template <typename ElementType>
     typename viennagrid::result_of::point<typename ElementType::config_type>::type
@@ -84,7 +86,7 @@ namespace viennagrid
     }
 
     //
-    // TODO: This works for cuboids only, but not for general hexahedra
+    // Note: This works for cuboids only, but not for general hexahedra
     //
     template <typename ElementType>
     typename viennagrid::result_of::point<typename ElementType::config_type>::type
@@ -102,15 +104,62 @@ namespace viennagrid
       return centroid(cell, viennagrid::triangle_tag());
     }
 
-    //
-    // The public interface function
-    //
-    template <typename CellType>
-    typename viennagrid::result_of::point<typename CellType::config_type>::type
-    centroid(CellType const & cell)
+
+    template <typename DomainSegmentType>
+    typename viennagrid::result_of::point<typename DomainSegmentType::config_type>::type
+    centroid_domseg(DomainSegmentType const & domseg)
     {
-      return centroid(cell, typename CellType::element_tag());
+      typedef typename DomainSegmentType::config_type                                      ConfigType;
+      typedef typename ConfigType::cell_tag                                                CellTag;
+      
+      typedef typename viennagrid::result_of::point<ConfigType>::type                      PointType;
+      typedef typename viennagrid::result_of::ncell<ConfigType, 0>::type                   VertexType;
+      typedef typename viennagrid::result_of::ncell<ConfigType, 1>::type                   EdgeType;
+      
+      typedef typename viennagrid::result_of::const_ncell_range<DomainSegmentType,
+                                                                CellTag::topology_level>::type  CellRange;
+      typedef typename viennagrid::result_of::iterator<CellRange>::type                         CellIterator;
+      
+      PointType result = 0;
+      double volume = 0;
+      
+      CellRange cells = viennagrid::ncells(domseg);
+      for (CellIterator cit = cells.begin(); cit != cells.end(); ++cit)
+      {
+        double vol_cell = viennagrid::volume(*cit);
+        result += vol_cell * centroid(*cit);
+        volume += vol_cell;
+      }
+      
+      return result / volume;
     }
     
+  } //namespace detail
+
+
+  //
+  // The public interface functions
+  //
+  template <typename CellType>
+  typename viennagrid::result_of::point<typename CellType::config_type>::type
+  centroid(CellType const & cell)
+  {
+    return detail::centroid(cell, typename CellType::element_tag());
+  }
+
+  template <typename ConfigType>
+  typename viennagrid::result_of::point<ConfigType>::type
+  centroid(domain_t<ConfigType> const & domain)
+  {
+    return detail::centroid_domseg(domain);
+  }
+
+  template <typename ConfigType>
+  typename viennagrid::result_of::point<ConfigType>::type
+  centroid(segment_t<ConfigType> const & segment)
+  {
+    return detail::centroid_domseg(segment);
+  }
+
 } //namespace viennashe
 #endif

@@ -1,3 +1,6 @@
+#ifndef VIENNAGRID_SEGMENT_HPP
+#define VIENNAGRID_SEGMENT_HPP
+
 /* =======================================================================
    Copyright (c) 2011, Institute for Microelectronics,
                        Institute for Analysis and Scientific Computing,
@@ -15,9 +18,6 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
-
-#ifndef VIENNAGRID_SEGMENT_HPP
-#define VIENNAGRID_SEGMENT_HPP
 
 #include <map>
 #include <set>

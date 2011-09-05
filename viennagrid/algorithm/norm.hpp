@@ -1,3 +1,6 @@
+#ifndef VIENNAGRID_ALGORITHM_NORM_GUARD
+#define VIENNAGRID_ALGORITHM_NORM_GUARD
+
 /* =======================================================================
    Copyright (c) 2011, Institute for Microelectronics,
                        Institute for Analysis and Scientific Computing,
@@ -14,9 +17,6 @@
 
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
-
-#ifndef VIENNAGRID_NORM_GUARD
-#define VIENNAGRID_NORM_GUARD
 
 #include <cmath>
 #include "viennagrid/forwards.h"
@@ -122,6 +122,29 @@ namespace viennagrid
   norm(PointType const & p)
   {
     return norm_impl<viennagrid::two_tag>(p, typename traits::coordinate_system<PointType>::type());
+  }
+
+
+  //convenience shortcuts:
+  template<typename PointType>
+  typename traits::value_type<PointType>::type
+  norm_1(PointType const & p)
+  {
+    return norm_impl<viennagrid::one_tag>(p, typename traits::coordinate_system<PointType>::type());
+  }
+
+  template<typename PointType>
+  typename traits::value_type<PointType>::type
+  norm_2(PointType const & p)
+  {
+    return norm_impl<viennagrid::two_tag>(p, typename traits::coordinate_system<PointType>::type());
+  }
+
+  template<typename PointType>
+  typename traits::value_type<PointType>::type
+  norm_inf(PointType const & p)
+  {
+    return norm_impl<viennagrid::inf_tag>(p, typename traits::coordinate_system<PointType>::type());
   }
 
 } 

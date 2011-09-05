@@ -1,3 +1,6 @@
+#ifndef VIENNAGRID_ALGORITHM_SURFACE_HPP
+#define VIENNAGRID_ALGORITHM_SURFACE_HPP
+
 /* =======================================================================
    Copyright (c) 2011, Institute for Microelectronics,
                        Institute for Analysis and Scientific Computing,
@@ -15,9 +18,6 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
-#ifndef VIENNAGRID_ALGORITHM_SURFACE_HPP
-#define VIENNAGRID_ALGORITHM_SURFACE_HPP
-
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -34,8 +34,8 @@
 
 namespace viennagrid
 {
-
-
+  namespace detail
+  {
     //
     template <typename ContainerType>
     typename ContainerType::config_type::numeric_type
@@ -59,47 +59,50 @@ namespace viennagrid
       }
       return result;
     }
-
-    //
-    // The public interface functions
-    //
-    template <typename ElementType>
-    typename ElementType::config_type::numeric_type
-    surface(ElementType const & element)
+  } //namespace detail
+  
+  
+  
+  //
+  // The public interface functions
+  //
+  template <typename ElementType>
+  typename ElementType::config_type::numeric_type
+  surface(ElementType const & element)
+  {
+    typedef typename ElementType::config_type                   ConfigType;
+    typedef typename viennagrid::result_of::const_ncell_range<ElementType, ElementType::element_tag::topology_level-1>::type   ElementBoundaryRange;
+    typedef typename viennagrid::result_of::iterator<ElementBoundaryRange>::type       ElementBoundaryIterator;
+    
+    typedef typename ElementType::config_type::numeric_type value_type;
+    
+    value_type result = 0;
+    
+    ElementBoundaryRange boundary = viennagrid::ncells(element);
+    for (ElementBoundaryIterator ebit = boundary.begin();
+                                  ebit != boundary.end();
+                                ++ebit)
     {
-      typedef typename ElementType::config_type                   ConfigType;
-      typedef typename viennagrid::result_of::const_ncell_range<ElementType, ElementType::element_tag::topology_level-1>::type   ElementBoundaryRange;
-      typedef typename viennagrid::result_of::iterator<ElementBoundaryRange>::type       ElementBoundaryIterator;
-      
-      typedef typename ElementType::config_type::numeric_type value_type;
-      
-      value_type result = 0;
-      
-      ElementBoundaryRange boundary = viennagrid::ncells(element);
-      for (ElementBoundaryIterator ebit = boundary.begin();
-                                   ebit != boundary.end();
-                                 ++ebit)
-      {
-        result += viennagrid::volume(*ebit);
-      }
-      
-      return result;
+      result += viennagrid::volume(*ebit);
     }
     
-    //special case: domain
-    template <typename ConfigType>
-    typename ConfigType::numeric_type
-    surface(domain_t<ConfigType> const & d)
-    {
-      return surface_domainsegment(d);
-    }    
-    //special case: segment
-    template <typename ConfigType>
-    typename ConfigType::numeric_type
-    surface(segment_t<ConfigType> const & d)
-    {
-      return surface_domainsegment(d);
-    }
+    return result;
+  }
+  
+  //special case: domain
+  template <typename ConfigType>
+  typename ConfigType::numeric_type
+  surface(domain_t<ConfigType> const & d)
+  {
+    return detail::surface_domainsegment(d);
+  }    
+  //special case: segment
+  template <typename ConfigType>
+  typename ConfigType::numeric_type
+  surface(segment_t<ConfigType> const & d)
+  {
+    return detail::surface_domainsegment(d);
+  }
     
 } //namespace viennagrid
 #endif

@@ -1,3 +1,6 @@
+#ifndef VIENNAGRID_IO_VTK_WRITER_GUARD
+#define VIENNAGRID_IO_VTK_WRITER_GUARD
+
 /* =======================================================================
    Copyright (c) 2011, Institute for Microelectronics,
                        Institute for Analysis and Scientific Computing,
@@ -15,9 +18,6 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
-
-#ifndef VIENNAGRID_IO_VTK_WRITER_GUARD
-#define VIENNAGRID_IO_VTK_WRITER_GUARD
 
 #include <fstream>
 #include <sstream>
@@ -129,7 +129,7 @@ namespace viennagrid
                  offsets <= viennagrid::ncells<CellTag::topology_level>(segment).size();
                  ++offsets)
             {
-              writer << ( offsets * viennagrid::topology::subcell_desc<CellTag, 0>::num_elements) << " ";
+              writer << ( offsets * viennagrid::topology::subelements<CellTag, 0>::num_elements) << " ";
             }
             writer << std::endl;
             writer << "    </DataArray>" << std::endl;

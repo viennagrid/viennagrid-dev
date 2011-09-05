@@ -1,3 +1,6 @@
+#ifndef VIENNAGRID_IO_NETGEN_READER_GUARD
+#define VIENNAGRID_IO_NETGEN_READER_GUARD
+
 /* =======================================================================
    Copyright (c) 2011, Institute for Microelectronics,
                        Institute for Analysis and Scientific Computing,
@@ -14,9 +17,6 @@
 
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
-
-#ifndef VIENNAGRID_IO_NETGEN_READER_GUARD
-#define VIENNAGRID_IO_NETGEN_READER_GUARD
 
 
 #include <fstream>
@@ -127,7 +127,7 @@ namespace viennagrid
         for (int i=0; i<cell_num; ++i)
         {
           long vertex_num;
-          VertexType *vertices[topology::subcell_desc<CellTag, 0>::num_elements];
+          VertexType *vertices[topology::subelements<CellTag, 0>::num_elements];
 
           if (!reader.good())
             throw bad_file_format_exception(filename, "EOF encountered while reading cells (segment index expected).");
@@ -135,7 +135,7 @@ namespace viennagrid
           std::size_t segment_index;
           reader >> segment_index;
     
-          for (int j=0; j<topology::subcell_desc<CellTag, 0>::num_elements; ++j)
+          for (int j=0; j<topology::subelements<CellTag, 0>::num_elements; ++j)
           {
             if (!reader.good())
               throw bad_file_format_exception(filename, "EOF encountered while reading cells (cell ID expected).");

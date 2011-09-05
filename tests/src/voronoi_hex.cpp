@@ -168,8 +168,11 @@ int main(int argc, char *argv[])
   //create device:
   setup_device(device);
   
+  viennagrid::voronoi_interface_area_key interface_key;
+  viennagrid::voronoi_box_volume_key box_volume_key;
+  
   //set up dual grid info:
-  viennagrid::write_voronoi_info<edge_len_key, edge_interface_area_key, box_volume_key>(device);
+  viennagrid::apply_voronoi(device, interface_key, box_volume_key);
                                       
   //output results:
   output_voronoi_info(device);
@@ -196,9 +199,8 @@ int main(int argc, char *argv[])
   else
     std::cout << "Volume check passed: " << voronoi_vol << " vs " << domain_vol << std::endl;
   
-  
   //check dual box volume of vertex 9: must be 2
-  double volume9 = viennadata::access<box_volume_key, double>()(viennagrid::ncells<0>(device)[9]);
+  double volume9 = viennadata::access<viennagrid::voronoi_box_volume_key, double>(box_volume_key)(viennagrid::ncells<0>(device)[9]);
   if ( fabs(volume9 - 2.0) > 1e-10 )
   {
     std::cerr << "Incorrect dual box volume at vertex #9: " << volume9 << std::endl;

@@ -1,3 +1,6 @@
+#ifndef VIENNAGRID_CONFIG_HEXAHEDRON_HPP
+#define VIENNAGRID_CONFIG_HEXAHEDRON_HPP
+
 /* =======================================================================
    Copyright (c) 2011, Institute for Microelectronics,
                        Institute for Analysis and Scientific Computing,
@@ -14,9 +17,6 @@
 
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
-
-#ifndef VIENNAGRID_CONFIG_HEXAHEDRON_HPP
-#define VIENNAGRID_CONFIG_HEXAHEDRON_HPP
 
 #include "viennagrid/forwards.h"
 #include "viennagrid/topology/line.hpp"
@@ -36,7 +36,7 @@ namespace viennagrid
   {
 
     template <>
-    struct subcell_desc<hexahedron_tag, 0>
+    struct subelements<hexahedron_tag, 0>
     {
       typedef point_tag             element_tag;
 
@@ -44,7 +44,7 @@ namespace viennagrid
     };
 
     template <>
-    struct subcell_desc<hexahedron_tag, 1>
+    struct subelements<hexahedron_tag, 1>
     {
       typedef line_tag              element_tag;
 
@@ -52,7 +52,7 @@ namespace viennagrid
     };
 
     template <>
-    struct subcell_desc<hexahedron_tag, 2>
+    struct subelements<hexahedron_tag, 2>
     {
       typedef quadrilateral_tag     element_tag;
 
@@ -64,7 +64,7 @@ namespace viennagrid
     
 
     template <>
-    struct subcell_filler<hexahedron_tag, 1>
+    struct subelement_filler<hexahedron_tag, 1>
     {
       //fill edges:
       template <typename ElementType, typename Vertices, typename Orientations, typename Segment>
@@ -150,7 +150,7 @@ namespace viennagrid
     };
     
     template <>
-    struct subcell_filler<hexahedron_tag, 2>
+    struct subelement_filler<hexahedron_tag, 2>
     {
       //fill facets:
       template <typename ElementType, typename Vertices, typename Orientations, typename Segment>
@@ -225,7 +225,7 @@ namespace viennagrid
       }
     };
     
-  } //traits
+  } //topology
 }
 
 #endif

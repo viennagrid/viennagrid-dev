@@ -1,3 +1,6 @@
+#ifndef VIENNAGRID_CONFIG_OTHERS_HPP
+#define VIENNAGRID_CONFIG_OTHERS_HPP
+
 /* =======================================================================
    Copyright (c) 2011, Institute for Microelectronics,
                        Institute for Analysis and Scientific Computing,
@@ -15,9 +18,6 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
-
-#ifndef VIENNAGRID_CONFIG_OTHERS_HPP
-#define VIENNAGRID_CONFIG_OTHERS_HPP
 
 #include "viennagrid/topology/quadrilateral.hpp"
 #include "viennagrid/topology/hexahedron.hpp"

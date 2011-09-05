@@ -1,3 +1,6 @@
+#ifndef VIENNAGRID_ALGORITHM_SPANNED_VOLUME_HPP
+#define VIENNAGRID_ALGORITHM_SPANNED_VOLUME_HPP
+
 /* =======================================================================
    Copyright (c) 2011, Institute for Microelectronics,
                        Institute for Analysis and Scientific Computing,
@@ -16,11 +19,6 @@
 ======================================================================= */
 
 
-/************** All the code for a generic Point-Object ********************/
-
-
-#ifndef VIENNAGRID_POINT_GUARD
-#define VIENNAGRID_POINT_GUARD
 
 #include <math.h>
 #include "viennagrid/forwards.h"

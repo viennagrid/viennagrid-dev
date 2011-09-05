@@ -1,3 +1,6 @@
+#ifndef VIENNAGRID_SEGMENT_ITERATORS_HPP
+#define VIENNAGRID_SEGMENT_ITERATORS_HPP
+
 /* =======================================================================
    Copyright (c) 2011, Institute for Microelectronics,
                        Institute for Analysis and Scientific Computing,
@@ -15,9 +18,6 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
-
-#ifndef VIENNAGRID_SEGMENT_ITERATORS_HPP
-#define VIENNAGRID_SEGMENT_ITERATORS_HPP
 
 #include <vector>
 #include <list>
@@ -108,7 +108,7 @@ namespace viennagrid
   {
       typedef segment_t<config_type>                        segment_type;
       typedef element_t< config_type,
-                       typename topology::subcell_desc<typename config_type::cell_tag, dim>::element_tag
+                       typename topology::subelements<typename config_type::cell_tag, dim>::element_tag
                      >                                                         element_type;
                      
       typedef element_t< config_type,
@@ -187,7 +187,7 @@ namespace viennagrid
   {
       typedef segment_t<config_type>                        segment_type;
       typedef element_t< config_type,
-                       typename topology::subcell_desc<typename config_type::cell_tag, dim>::element_tag
+                       typename topology::subelements<typename config_type::cell_tag, dim>::element_tag
                      >                                                         element_type;
 
       typedef element_t< config_type,

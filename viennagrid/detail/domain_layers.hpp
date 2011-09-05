@@ -1,3 +1,6 @@
+#ifndef VIENNAGRID_DETAIL_DOMAIN_LAYERS_HPP
+#define VIENNAGRID_DETAIL_DOMAIN_LAYERS_HPP
+
 /* =======================================================================
    Copyright (c) 2011, Institute for Microelectronics,
                        Institute for Analysis and Scientific Computing,
@@ -14,9 +17,6 @@
 
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
-
-#ifndef VIENNAGRID_DETAIL_DOMAIN_LAYERS_HPP
-#define VIENNAGRID_DETAIL_DOMAIN_LAYERS_HPP
 
 
 #include <iostream>
@@ -104,8 +104,8 @@ namespace viennagrid
     {
         //typedef typename result_of::element_tag<typename Config::cell_tag, dim>::type    element_tag;
         typedef domain_t<Config>                                                          domain_type;
-        typedef typename topology::subcell_desc<typename Config::cell_tag, dim>::element_tag    element_tag;
-        typedef topology::subcell_desc<element_tag, 0>                                       VertexOnElementSpecs;
+        typedef typename topology::subelements<typename Config::cell_tag, dim>::element_tag    element_tag;
+        typedef topology::subelements<element_tag, 0>                                       VertexOnElementSpecs;
         typedef element_t<Config, element_tag >                                              element_type;
         typedef element_t<Config, typename Config::cell_tag>                                   cell_type;
         typedef typename result_of::element_container<domain_type, dim, Config::cell_tag::topology_level>::type           container_type;

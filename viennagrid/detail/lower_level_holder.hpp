@@ -1,3 +1,6 @@
+#ifndef VIENNAGRID_DETAIL_LOWER_LEVEL_HOLDER_HPP
+#define VIENNAGRID_DETAIL_LOWER_LEVEL_HOLDER_HPP
+
 /* =======================================================================
    Copyright (c) 2011, Institute for Microelectronics,
                        Institute for Analysis and Scientific Computing,
@@ -15,9 +18,6 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
-
-#ifndef VIENNAGRID_DETAIL_LOWER_LEVEL_HOLDER_HPP
-#define VIENNAGRID_DETAIL_LOWER_LEVEL_HOLDER_HPP
 
 #include <iostream>
 
@@ -47,8 +47,8 @@ namespace viennagrid
   {
     //requirements:
     //array of pointers to elements of class 'levelnum' and a integer representing the orientation within the cell relative to the element it points to.
-    typedef topology::subcell_desc<ElementTag, levelnum>                         LevelSpecs;
-    typedef topology::subcell_desc<typename LevelSpecs::element_tag, 0>  VertexOnElementSpecs;
+    typedef topology::subelements<ElementTag, levelnum>                         LevelSpecs;
+    typedef topology::subelements<typename LevelSpecs::element_tag, 0>  VertexOnElementSpecs;
     typedef lower_level_holder < T_Configuration, ElementTag, levelnum - 1 >      Base;
 
     typedef element_t<T_Configuration, typename LevelSpecs::element_tag>  LevelElementType;
@@ -64,7 +64,7 @@ namespace viennagrid
         //for (long i=0; i<LevelSpecs::num_elements; ++i)
         //  orientations_[i].resize(VertexOnElementSpecs::num_elements);
 
-        topology::subcell_filler<ElementTag, levelnum>::fill(&(elements_[0]),
+        topology::subelement_filler<ElementTag, levelnum>::fill(&(elements_[0]),
                                                            &(Base::vertices_[0]),
                                                            &(orientations_[0]),
                                                            dom);
@@ -166,7 +166,7 @@ namespace viennagrid
     //requirements:
     //array of pointers to elements of class 'levelnum' and a integer representing the orientation within the cell relative to the element it points to.
     //typedef typename DomainTypes<T_Configuration>::segment_type        SegmentType;
-    typedef topology::subcell_desc<ElementTag, levelnum>                                LevelSpecs;
+    typedef topology::subelements<ElementTag, levelnum>                                LevelSpecs;
     typedef lower_level_holder < T_Configuration, ElementTag, levelnum - 1 >      Base;
 
     typedef element_t<T_Configuration, typename LevelSpecs::element_tag>  LevelElementType;
@@ -243,7 +243,7 @@ namespace viennagrid
   {
     //array of pointers to elements of class 'levelnum' and a integer representing the orientation within the cell relative to the element it points to.
     //typedef typename DomainTypes<T_Configuration>::segment_type               SegmentType;
-    typedef topology::subcell_desc<ElementTag, 0>                                      LevelSpecs;
+    typedef topology::subelements<ElementTag, 0>                                      LevelSpecs;
 
     typedef element_t<T_Configuration, typename LevelSpecs::element_tag>         VertexType;
     typedef typename result_of::point<T_Configuration>::type              PointType;

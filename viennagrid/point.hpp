@@ -1,3 +1,6 @@
+#ifndef VIENNAGRID_POINT_HPP
+#define VIENNAGRID_POINT_HPP
+
 /* =======================================================================
    Copyright (c) 2011, Institute for Microelectronics,
                        Institute for Analysis and Scientific Computing,
@@ -15,12 +18,6 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
-
-/************** All the code for a generic Point-Object ********************/
-
-
-#ifndef VIENNAGRID_POINT_HPP
-#define VIENNAGRID_POINT_HPP
 
 #include <cmath>
 #include <assert.h>

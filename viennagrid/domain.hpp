@@ -1,3 +1,6 @@
+#ifndef VIENNAGRID_DOMAIN_HPP
+#define VIENNAGRID_DOMAIN_HPP
+
 /* =======================================================================
    Copyright (c) 2011, Institute for Microelectronics,
                        Institute for Analysis and Scientific Computing,
@@ -14,9 +17,6 @@
 
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
-
-#ifndef VIENNAGRID_DOMAIN_GUARD
-#define VIENNAGRID_DOMAIN_GUARD
 
 
 #include <iostream>
@@ -105,13 +105,19 @@ namespace viennagrid
       typedef detail::domain_segment_container<self_type, segment_type>    segment_container;
       
       domain_t() : segments_(this) {}
-      
+
+      template <typename OtherDomainType, typename RefinementTag>
+      domain_t(refinement_proxy<OtherDomainType, RefinementTag> const & proxy) : segments_(this)
+      {
+        detail::refine_impl(proxy.get(), *this, proxy.tag());
+      }
+
       using base_type::push_back;
       
       template <typename OtherDomainType, typename RefinementTag>
       self_type & operator=(refinement_proxy<OtherDomainType, RefinementTag> const & proxy)
       {
-        refine_impl(proxy.get(), *this, proxy.tag());
+        detail::refine_impl(proxy.get(), *this, proxy.tag());
         return *this;
       }
       

@@ -1,3 +1,6 @@
+#ifndef VIENNAGRID_TOPOLOGY_POINT_HPP
+#define VIENNAGRID_TOPOLOGY_POINT_HPP
+
 /* =======================================================================
    Copyright (c) 2011, Institute for Microelectronics,
                        Institute for Analysis and Scientific Computing,
@@ -15,9 +18,6 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
-#ifndef VIENNAGRID_TOPOLOGY_POINT_HPP
-#define VIENNAGRID_TOPOLOGY_POINT_HPP
-
 #include "viennagrid/forwards.h"
 
 namespace viennagrid
@@ -29,7 +29,7 @@ namespace viennagrid
     static std::string name() { return "Point"; }
   };
 
-  //no need to have a separate subcell_traits specialization here -> covered by default case
+  //no need to have a separate subelements specialization here -> covered by default case
   
 }
 

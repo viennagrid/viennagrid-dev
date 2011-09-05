@@ -1,3 +1,6 @@
+#ifndef VIENNAGRID_ALGORITHM_VOLUME_HPP
+#define VIENNAGRID_ALGORITHM_VOLUME_HPP
+
 /* =======================================================================
    Copyright (c) 2011, Institute for Microelectronics,
                        Institute for Analysis and Scientific Computing,
@@ -14,9 +17,6 @@
 
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
-
-#ifndef VIENNAGRID_ALGORITHM_VOLUME_HPP
-#define VIENNAGRID_ALGORITHM_VOLUME_HPP
 
 #include <iostream>
 #include <sstream>
@@ -35,8 +35,8 @@
 
 namespace viennagrid
 {
-    
-
+  namespace detail
+  {
     //topologically one-dimensional elements
     template <typename ElementType>
     typename ElementType::config_type::numeric_type
@@ -150,31 +150,32 @@ namespace viennagrid
       }
       return new_volume;
     }
-
-    //
-    // The public interface functions
-    //
-    template <typename ElementType>
-    typename ElementType::config_type::numeric_type
-    volume(ElementType const & cell)
-    {
-      return volume_impl(cell, typename ElementType::element_tag());
-    }
-    
-    //special case: domain
-    template <typename ConfigType>
-    typename ConfigType::numeric_type
-    volume(domain_t<ConfigType> const & d)
-    {
-      return volume_domainsegment(d);
-    }    
-    //special case: segment
-    template <typename ConfigType>
-    typename ConfigType::numeric_type
-    volume(segment_t<ConfigType> const & d)
-    {
-      return volume_domainsegment(d);
-    }
-    
+  } //namespace detail
+  
+  //
+  // The public interface functions
+  //
+  template <typename ElementType>
+  typename ElementType::config_type::numeric_type
+  volume(ElementType const & cell)
+  {
+    return detail::volume_impl(cell, typename ElementType::element_tag());
+  }
+  
+  //special case: domain
+  template <typename ConfigType>
+  typename ConfigType::numeric_type
+  volume(domain_t<ConfigType> const & d)
+  {
+    return detail::volume_domainsegment(d);
+  }    
+  //special case: segment
+  template <typename ConfigType>
+  typename ConfigType::numeric_type
+  volume(segment_t<ConfigType> const & d)
+  {
+    return detail::volume_domainsegment(d);
+  }
+  
 } //namespace viennashe
 #endif

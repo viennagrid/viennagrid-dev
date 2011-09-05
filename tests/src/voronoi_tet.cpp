@@ -54,11 +54,8 @@ int main(int argc, char *argv[])
     return EXIT_FAILURE;
   }
   
-  
   //set up dual grid info:
-  viennagrid::write_voronoi_info<edge_len_key,
-                                 edge_interface_area_key,
-                                 box_volume_key>(my_domain);
+  viennagrid::apply_voronoi(my_domain);
   
   //output results:
   output_voronoi_info(my_domain);

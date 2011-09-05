@@ -1,3 +1,6 @@
+#ifndef VIENNAGRID_DETAIL_SEGMENT_LAYERS_HPP
+#define VIENNAGRID_DETAIL_SEGMENT_LAYERS_HPP
+
 /* =======================================================================
    Copyright (c) 2011, Institute for Microelectronics,
                        Institute for Analysis and Scientific Computing,
@@ -15,9 +18,6 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
-
-#ifndef VIENNAGRID_DETAIL_SEGMENT_LAYERS_HPP
-#define VIENNAGRID_DETAIL_SEGMENT_LAYERS_HPP
 
 #include <map>
 #include <set>
@@ -83,9 +83,9 @@ namespace viennagrid
                           //public segment_domain_holder<Config>
     {
         typedef typename Config::cell_tag                                      CellTag;
-        typedef typename viennagrid::topology::subcell_desc<CellTag, dim>::element_tag     ElementTag;
+        typedef typename viennagrid::topology::subelements<CellTag, dim>::element_tag     ElementTag;
         typedef viennagrid::element_t<Config, ElementTag >                                 LevelElementType;
-        typedef typename viennagrid::topology::subcell_desc<CellTag, 0>::element_tag       VertexTag; 
+        typedef typename viennagrid::topology::subelements<CellTag, 0>::element_tag       VertexTag; 
         typedef viennagrid::element_t<Config, VertexTag >                                  VertexType;
         typedef viennagrid::element_t<Config, typename Config::cell_tag>                   CellType;
         typedef typename viennagrid::result_of::element_container< segment_t<Config>,
@@ -102,7 +102,7 @@ namespace viennagrid
         {
           //add vertices to segment: (note that the ncells<0>() is not available here)
           LevelElementType ** level_elements = cell.template container<dim>();
-          for (long i=0; i<topology::subcell_desc<typename Config::cell_tag, dim>::num_elements; ++i)
+          for (long i=0; i<topology::subelements<typename Config::cell_tag, dim>::num_elements; ++i)
             elements.insert(level_elements[i]);
           
           base_type::fill(cell);
@@ -151,9 +151,9 @@ namespace viennagrid
                                                 >
     {
         typedef typename Config::cell_tag                                      CellTag;
-        typedef typename viennagrid::topology::subcell_desc<CellTag, dim>::element_tag     ElementTag;
+        typedef typename viennagrid::topology::subelements<CellTag, dim>::element_tag     ElementTag;
         typedef viennagrid::element_t<Config, ElementTag >                                 LevelElementType;
-        typedef typename viennagrid::topology::subcell_desc<CellTag, 0>::element_tag       VertexTag; 
+        typedef typename viennagrid::topology::subelements<CellTag, 0>::element_tag       VertexTag; 
         typedef viennagrid::element_t<Config, VertexTag >                                  VertexType;
         typedef viennagrid::element_t<Config, typename Config::cell_tag>                   CellType;
         typedef typename viennagrid::result_of::element_container< segment_t<Config>,
@@ -215,7 +215,7 @@ namespace viennagrid
     class segment_layers<Config, 0, handling_tag> : public segment_domain_holder<Config>
     {
         typedef typename Config::cell_tag                                 CellTag;
-        typedef typename viennagrid::topology::subcell_desc<CellTag, 0>::element_tag    VertexTag;
+        typedef typename viennagrid::topology::subelements<CellTag, 0>::element_tag    VertexTag;
         typedef viennagrid::element_t<Config, VertexTag >                               VertexType;
         typedef viennagrid::element_t<Config, typename Config::cell_tag>                CellType;
         typedef typename result_of::element_container< segment_t<Config>, 
@@ -227,7 +227,7 @@ namespace viennagrid
         {
           //add vertices to segment: (note that the ncells<0>() is not available here)
           VertexType ** cell_vertices = cell.template container<0>();
-          for (long i=0; i<viennagrid::topology::subcell_desc<typename Config::cell_tag, 0>::num_elements; ++i)
+          for (long i=0; i<viennagrid::topology::subelements<typename Config::cell_tag, 0>::num_elements; ++i)
             elements.insert(cell_vertices[i]);
         }
         
@@ -251,9 +251,9 @@ namespace viennagrid
                                                     >
     {
         typedef typename Config::cell_tag                                                        CellTag;
-        typedef typename viennagrid::topology::subcell_desc<typename Config::cell_tag, dim>::element_tag     ElementTag;
+        typedef typename viennagrid::topology::subelements<typename Config::cell_tag, dim>::element_tag     ElementTag;
         typedef viennagrid::element_t<Config, ElementTag >                                                  ElementType;
-        typedef typename viennagrid::topology::subcell_desc<typename Config::cell_tag, 0>::element_tag       VertexTag;
+        typedef typename viennagrid::topology::subelements<typename Config::cell_tag, 0>::element_tag       VertexTag;
         typedef viennagrid::element_t<Config, VertexTag >                                               VertexType;
         typedef viennagrid::element_t<Config, typename Config::cell_tag>                                 CellType;
         typedef typename viennagrid::result_of::element_container< segment_t<Config>, dim>::type      container_type;

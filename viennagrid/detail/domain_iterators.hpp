@@ -1,3 +1,6 @@
+#ifndef VIENNAGRID_DOMAIN_ITERATORS_HPP
+#define VIENNAGRID_DOMAIN_ITERATORS_HPP
+
 /* =======================================================================
    Copyright (c) 2011, Institute for Microelectronics,
                        Institute for Analysis and Scientific Computing,
@@ -15,9 +18,6 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
-
-#ifndef VIENNAGRID_DOMAIN_ITERATORS_HPP
-#define VIENNAGRID_DOMAIN_ITERATORS_HPP
 
 #include <vector>
 #include <list>
@@ -65,7 +65,7 @@ namespace viennagrid
     typedef element_t<Config,
                     typename Config::cell_tag>    cell_type;
     typedef element_t< Config,
-                       typename topology::subcell_desc<typename Config::cell_tag, dim>::element_tag
+                       typename topology::subelements<typename Config::cell_tag, dim>::element_tag
                      >                                                         element_type;
                     
     typedef typename result_of::element_container<domain_type, dim>::type      container_type;
@@ -107,8 +107,6 @@ namespace viennagrid
 
   
   
-  //////////////////// brand new containers: /////////////////////
-  
   template <typename ContainerType>
   struct assert_bracket_operator_access
   {
@@ -138,7 +136,7 @@ namespace viennagrid
   {
       typedef domain_t<config_type>                        domain_type;
       typedef element_t< config_type,
-                       typename topology::subcell_desc<typename config_type::cell_tag, dim>::element_tag
+                       typename topology::subelements<typename config_type::cell_tag, dim>::element_tag
                      >                                                         element_type;
                      
       typedef element_t< config_type,
@@ -213,7 +211,7 @@ namespace viennagrid
   {
       typedef domain_t<config_type>                        domain_type;
       typedef element_t< config_type,
-                       typename topology::subcell_desc<typename config_type::cell_tag, dim>::element_tag
+                       typename topology::subelements<typename config_type::cell_tag, dim>::element_tag
                      >                                                         element_type;
 
       typedef element_t< config_type,

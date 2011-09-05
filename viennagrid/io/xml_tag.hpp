@@ -1,3 +1,6 @@
+#ifndef VIENNAGRID_IO_XML_TAG_HPP
+#define VIENNAGRID_IO_XML_TAG_HPP
+
 /* =======================================================================
    Copyright (c) 2011, Institute for Microelectronics,
                        Institute for Analysis and Scientific Computing,
@@ -15,9 +18,6 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
-
-#ifndef VIENNAGRID_IO_XML_TAG_HPP
-#define VIENNAGRID_IO_XML_TAG_HPP
 
 /** @file xml_tag.hpp
  *  @brief    A very simple parser for individual XML tags. Eases vtk_reader a bit.
@@ -88,7 +88,9 @@ namespace viennagrid
           //strip whitespace or closing tag at the end
           name_.resize(name_.size()-1);
           
+          #ifdef VIENNAGRID_DEBUG_IO
           std::cout << name_ << std::endl;
+          #endif
           
           if (c == '>') //we are all done
             return;
@@ -141,7 +143,9 @@ namespace viennagrid
               if (pos == std::string::npos || pos == 0)
                 throw bad_file_format_exception("filename", "Internal XML parse error: XML attribute string not terminated.");
               
+              #ifdef VIENNAGRID_DEBUG_IO
               std::cout << name << ":" << value.substr(0, pos) << std::endl;
+              #endif
               attributes_.push_back(std::make_pair(name, value.substr(0, pos)));
               
               token.clear();

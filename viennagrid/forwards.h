@@ -1,3 +1,6 @@
+#ifndef VIENNAGRID_FORWARDS_H
+#define VIENNAGRID_FORWARDS_H
+
 /* =======================================================================
    Copyright (c) 2011, Institute for Microelectronics,
                        Institute for Analysis and Scientific Computing,
@@ -15,15 +18,13 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
-#ifndef VIENNAGRID_FORWARDS_GUARD
-#define VIENNAGRID_FORWARDS_GUARD
-
 #include <iostream>
 #include <vector>
 #include <map>
 #include <cstddef>     //for std::size_t
 #include <cstdlib>     //for EXIT_SUCCESS and EXIT_FAILURE
 
+#include "viennadata/api.hpp"
 
 //Debug levels:
 //VIENNAGRID_DEBUG_ALL          Output every little piece of debug information
@@ -245,7 +246,7 @@ namespace viennagrid
   {
     template <typename ElementTag, 
               long level = ElementTag::topology_level>
-    struct subcell_desc
+    struct subelements
     {
       //the default case is simultaneously a pathetic case:
       //cell-handling within the cell
@@ -253,12 +254,10 @@ namespace viennagrid
       enum{ num_elements = 1 };     //1 cell
 
       typedef ElementTag            element_tag;
-      //compatibility with cell-on-cell-iterator
-      typedef full_handling_tag     handling_tag;
     };
 
     template <typename CellType, long level>
-    struct subcell_filler {};
+    struct subelement_filler {};
     
   }
   
@@ -310,8 +309,8 @@ namespace viennagrid
     struct ncell
     {
       typedef element_t<Config, 
-                        typename topology::subcell_desc<typename Config::cell_tag,
-                                                        dim>::element_tag
+                        typename topology::subelements<typename Config::cell_tag,
+                                                       dim>::element_tag
                        > type;
     };
     
@@ -335,8 +334,8 @@ namespace viennagrid
     template <typename T, dim_type dim = T::element_tag::topology_level>
     struct element_tag
     {
-      typedef typename viennagrid::topology::subcell_desc<typename T::element_tag,
-                                                        dim>::element_tag           type; 
+      typedef typename viennagrid::topology::subelements<typename T::element_tag,
+                                                         dim>::element_tag           type; 
     };
     
     
@@ -424,13 +423,7 @@ namespace viennagrid
   template <typename T>
   struct element_refinement;
    
-  struct refinement_key
-  {
-    bool operator<(refinement_key const & other) const
-    {
-      return false;     // a < b is false AND b < a is false, hence a == b
-    }
-  };
+  struct refinement_key {};
    
   template <typename DomainType, typename RefinementTag>
   class refinement_proxy;
@@ -438,6 +431,48 @@ namespace viennagrid
   struct uniform_refinement_tag {};
   struct adaptive_refinement_tag {};
   
+  namespace detail
+  {
+    template <typename ConfigTypeIn, typename ConfigTypeOut>
+    void refine_impl(domain_t<ConfigTypeIn> const & domain_in,
+                    domain_t<ConfigTypeOut> & domain_out,
+                    uniform_refinement_tag);
+    
+    template <typename ConfigTypeIn, typename ConfigTypeOut>
+    void refine_impl(domain_t<ConfigTypeIn> const & domain_in,
+                    domain_t<ConfigTypeOut> & domain_out,
+                    adaptive_refinement_tag);    
+  }
   
+  //
+  // Voronoi information:
+  //
+  struct voronoi_interface_area_key {};   //interface area associated with an edge
+  struct voronoi_box_volume_key {};       //box volume associated with an edge or vertex
 }
+
+namespace viennadata
+{
+  namespace config
+  {
+    template <>
+    struct key_dispatch<viennagrid::refinement_key>
+    {
+      typedef type_key_dispatch_tag    tag;
+    };    
+    
+    template <>
+    struct key_dispatch<viennagrid::voronoi_interface_area_key>
+    {
+      typedef type_key_dispatch_tag    tag;
+    };
+    
+    template <>
+    struct key_dispatch<viennagrid::voronoi_box_volume_key>
+    {
+      typedef type_key_dispatch_tag    tag;
+    };
+  }
+}
+
 #endif

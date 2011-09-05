@@ -1,3 +1,6 @@
+#ifndef VIENNAGRID_ELEMENT_HPP
+#define VIENNAGRID_ELEMENT_HPP
+
 /* =======================================================================
    Copyright (c) 2011, Institute for Microelectronics,
                        Institute for Analysis and Scientific Computing,
@@ -15,9 +18,6 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
-
-#ifndef VIENNAGRID_ELEMENT_HPP
-#define VIENNAGRID_ELEMENT_HPP
 
 #include "viennagrid/forwards.h"
 //#include "viennagrid/topology/celltags.hpp"
@@ -42,7 +42,7 @@ namespace viennagrid
       typedef lower_level_holder < T_Configuration, ElementTag, ElementTag::topology_level - 1>             Base;
       typedef typename result_of::point<T_Configuration>::type         PointType;
       typedef typename result_of::ncell<T_Configuration, 0>::type      VertexType;
-      typedef topology::subcell_desc<ElementTag, 0>                                 VertexSpecs;
+      typedef topology::subelements<ElementTag, 0>                                 VertexSpecs;
 
     public:
       typedef T_Configuration                                       config_type;
@@ -114,12 +114,12 @@ namespace viennagrid
     typedef typename viennagrid::result_of::const_ncell_range<ElementType, 0>::type    VertexRange;
     typedef typename viennagrid::result_of::iterator<VertexRange>::type          VertexIterator;
     
-    os << "-- element<" << ElementTag::topology_level << "> " << el.id() << " --" << std::endl;
+    os << "-- element<" << ElementTag::topology_level << "> " << el.id() << " --";
     VertexRange vertices = viennagrid::ncells(el);
     for (VertexIterator vit  = vertices.begin();
                         vit != vertices.end();
                       ++vit)
-      os << " " << vit->point() << std::endl;
+      os << std::endl << " " << vit->point();
     
     return os;
   }
@@ -182,7 +182,7 @@ namespace viennagrid
   std::ostream & operator<<(std::ostream & os, element_t<ConfigType, point_tag> const & el)
   {
     os << "-- element<0> " << el.id() << " --" << std::endl;
-    os << " " << el.point() << std::endl;
+    os << " " << el.point();
     
     return os;
   }

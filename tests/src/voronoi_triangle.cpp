@@ -114,8 +114,11 @@ int main(int argc, char *argv[])
   //create device:
   setup_device(device);
   
+  viennagrid::voronoi_interface_area_key interface_key;
+  viennagrid::voronoi_box_volume_key box_volume_key;
+  
   //set up dual grid info:
-  viennagrid::write_voronoi_info<edge_len_key, edge_interface_area_key, box_volume_key>(device);
+  viennagrid::apply_voronoi(device, interface_key, box_volume_key);
   
   //output results:
   output_voronoi_info(device);

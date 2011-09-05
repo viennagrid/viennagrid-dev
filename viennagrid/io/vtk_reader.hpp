@@ -1,3 +1,6 @@
+#ifndef VIENNAGRID_IO_VTK_READER_HPP
+#define VIENNAGRID_IO_VTK_READER_HPP
+
 /* =======================================================================
    Copyright (c) 2011, Institute for Microelectronics,
                        Institute for Analysis and Scientific Computing,
@@ -16,11 +19,8 @@
 ======================================================================= */
 
 
-#ifndef VIENNAGRID_IO_VTK_READER_HPP
-#define VIENNAGRID_IO_VTK_READER_HPP
-
 /** @file vtk_reader.hpp
- *  @brief    This is a very simple vtk-reader implementation. There's only a part of the vtk-standard implemented.
+ *  @brief    This is a simple vtk-reader implementation. Refer to the vtk-standard (cf. http://www.vtk.org/pdf/file-formats.pdf) and make sure the same order of XML tags is preserved.
  */
 
 #include <fstream>
@@ -617,12 +617,16 @@ namespace viennagrid
           tag.check_attribute("numberofpoints", filename);
             
           nodeNum = atoi(tag.get_value("numberofpoints").c_str());
+          #ifdef VIENNAGRID_DEBUG_IO
           std::cout << "#Nodes: " << nodeNum << std::endl;
+          #endif
 
           tag.check_attribute("numberofcells", filename);
           
           local_cell_num[seg_id] = atoi(tag.get_value("numberofcells").c_str());
+          #ifdef VIENNAGRID_DEBUG_IO
           std::cout << "#Cells: " << local_cell_num[seg_id] << std::endl;
+          #endif
           
           tag.parse_and_check_name(reader, "points", filename);
           

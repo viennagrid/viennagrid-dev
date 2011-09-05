@@ -1,3 +1,6 @@
+#ifndef VIENNAGRID_ALGORITHM_INNERPROD_HPP
+#define VIENNAGRID_ALGORITHM_INNERPROD_HPP
+
 /* =======================================================================
    Copyright (c) 2011, Institute for Microelectronics,
                        Institute for Analysis and Scientific Computing,
@@ -14,9 +17,6 @@
 
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
-
-#ifndef VIENNAGRID_ALGORITHM_INNERPROD_HPP
-#define VIENNAGRID_ALGORITHM_INNERPROD_HPP
 
 #include "viennagrid/forwards.h"
 #include "viennagrid/traits/point.hpp"
