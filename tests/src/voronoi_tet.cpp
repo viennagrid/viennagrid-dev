@@ -16,8 +16,6 @@
 ======================================================================= */
 
 #include <iostream>
-#include <cstdlib>
-#include <sys/time.h>
 #include <vector>
 
 
@@ -40,13 +38,19 @@ int main(int argc, char *argv[])
   
   std::cout << "* main(): Creating device..." << std::endl;
   DomainType my_domain;
+
+  #ifdef _MSC_VER      //Visual Studio builds in a subfolder
+  std::string path = "../../../examples/data/";
+  #else
+  std::string path = "../../examples/data/";
+  #endif
+  
   
   //create device:
-  //setup_device(my_domain);
   try
   {
     viennagrid::io::netgen_reader my_netgen_reader;
-    my_netgen_reader(my_domain, "../../examples/data/cube48.mesh");
+    my_netgen_reader(my_domain, path + "cube48.mesh");
   }
   catch (...)
   {

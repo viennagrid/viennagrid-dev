@@ -23,6 +23,8 @@ IF(CMAKE_COMPILER_IS_GNUCXX)
 ENDIF(CMAKE_COMPILER_IS_GNUCXX)
 
 ADD_EXECUTABLE(algorithms          examples/tutorial/algorithms.cpp)
+ADD_EXECUTABLE(domain_setup        examples/tutorial/domain_setup.cpp)
+ADD_EXECUTABLE(domain_setup2        examples/tutorial/domain_setup2.cpp)
 ADD_EXECUTABLE(finite_volumes      examples/tutorial/finite_volumes.cpp)
 ADD_EXECUTABLE(io                  examples/tutorial/io.cpp)
 ADD_EXECUTABLE(iterators           examples/tutorial/iterators.cpp)

@@ -56,16 +56,20 @@ int main()
   typedef viennagrid::result_of::ncell_range<FacetType, CellTag::topology_level>::type     CellOnFacetRange;
   typedef viennagrid::result_of::iterator<CellOnFacetRange>::type                          CellOnFacetIterator;
   
-  std::cout << " ------------------------------------------------ " << std::endl;
-  std::cout << " -- ViennaGrid tutorial: Multi-segment domains -- " << std::endl;
-  std::cout << " ------------------------------------------------ " << std::endl;
+  std::cout << "------------------------------------------------" << std::endl;
+  std::cout << "-- ViennaGrid tutorial: Multi-segment domains --" << std::endl;
+  std::cout << "------------------------------------------------" << std::endl;
   std::cout << std::endl;
   
   DomainHex domain;
 
   //read a multi-segment mesh using the VTK reader:
   viennagrid::io::vtk_reader<DomainHex>  reader;
+  #ifdef _MSC_VER      //Visual Studio builds in a subfolder
+  std::string path = "../../examples/data/";
+  #else
   std::string path = "../examples/data/";
+  #endif
   reader(domain, path + "multi_segment_hex_main.pvd");
 
   // Obtain references to the two segments.

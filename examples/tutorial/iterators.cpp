@@ -31,7 +31,7 @@
 int main()
 {
   typedef viennagrid::config::tetrahedral_3d                      ConfigType;  //use this for a 3d example
-  //typedef viennagrid::config::triangular_2d                       ConfigType;  //use this for a 2d example
+  //typedef viennagrid::config::triangular_2d                       ConfigType;  //use this for a 2d example (also change filename below!)
   typedef viennagrid::result_of::domain<ConfigType>::type         DomainType;
   typedef ConfigType::cell_tag                           CellTag;
 
@@ -43,15 +43,15 @@ int main()
   typedef viennagrid::result_of::ncell<ConfigType, CellTag::topology_level-1>::type  FacetType;
   typedef viennagrid::result_of::ncell<ConfigType, CellTag::topology_level>::type    CellType;
 
-  std::cout << " -------------------------------------------------- " << std::endl;
-  std::cout << " -- ViennaGrid tutorial: Iteration over elements -- " << std::endl;
-  std::cout << " -------------------------------------------------- " << std::endl;
+  std::cout << "--------------------------------------------------" << std::endl;
+  std::cout << "-- ViennaGrid tutorial: Iteration over elements --" << std::endl;
+  std::cout << "-------------------------------------------------- " << std::endl;
   std::cout << std::endl;
   
   DomainType domain;
   viennagrid::io::netgen_reader reader;
   reader(domain, "../examples/data/cube48.mesh"); //use this for a 3d example
-  //reader(domain, "../examples/data/square32.mesh"); //use this for a 2d example
+  //reader(domain, "../examples/data/square32.mesh"); //use this for a 2d example (also change ConfigType defined above!)
   
 
   

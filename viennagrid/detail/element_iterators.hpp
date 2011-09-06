@@ -27,8 +27,7 @@
 
 #include "viennagrid/forwards.h"
 #include "viennagrid/detail/domain_iterators.hpp"
-#include "viennagrid/detail/segment_iterators.hpp"
-//#include "viennagrid/topology/celltags.hpp"
+//#include "viennagrid/detail/segment_iterators.hpp"
 
 #include "viennadata/api.hpp"
 
@@ -689,13 +688,20 @@ namespace viennagrid
   
   namespace result_of
   {
+    template <dim_type a, dim_type b>
+    struct is_smaller
+    {
+      enum { value = (a < b) }; 
+    };
+    
     template <typename Config, typename ElementTag,
               dim_type dim>  //topological level
     struct ncell_range < element_t<Config, ElementTag>, dim >
     {
       typedef viennagrid::ncell_range<element_t<Config, ElementTag>,
                                           dim,
-                                          (ElementTag::topology_level < dim)> 
+                                          is_smaller<ElementTag::topology_level, dim>::value
+                                      > 
                                                    type;
     };
     
@@ -704,8 +710,9 @@ namespace viennagrid
     struct const_ncell_range < element_t<Config, ElementTag>, dim >
     {
       typedef viennagrid::const_ncell_range<element_t<Config, ElementTag>,
-                                                dim,
-                                                (ElementTag::topology_level < dim)> 
+                                             dim,
+                                             is_smaller<ElementTag::topology_level, dim>::value
+                                           > 
                                                    type;
     };
     

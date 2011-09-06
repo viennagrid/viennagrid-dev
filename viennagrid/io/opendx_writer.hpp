@@ -22,6 +22,7 @@
 #include <iostream>
 #include "viennagrid/forwards.h"
 #include "viennagrid/io/helper.hpp"
+#include "viennagrid/io/data_accessor.hpp"
 
 namespace viennagrid
 {
@@ -64,138 +65,189 @@ namespace viennagrid
       { return "attribute \"element type\" string \"tetrahedra\" "; }
     };
     
-    struct opendx_writer
+    template <typename DomainType>
+    class opendx_writer
     {
-      template <typename DomainType>
-      int operator()(DomainType const & domain, std::string const & filename, bool isVertexOriented = true)
-      {
-        typedef typename DomainType::config_type                     DomainConfiguration;
-      
-        typedef typename DomainConfiguration::numeric_type                 CoordType;
+        typedef typename DomainType::config_type                         DomainConfiguration;
+
+        typedef typename DomainConfiguration::numeric_type               CoordType;
         typedef typename DomainConfiguration::dimension_tag              DimensionTag;
         typedef typename DomainConfiguration::cell_tag                   CellTag;
-      
+
         typedef typename result_of::point<DomainConfiguration>::type                              PointType;
         typedef typename result_of::ncell<DomainConfiguration, 0>::type                           VertexType;
         typedef typename result_of::ncell<DomainConfiguration, CellTag::topology_level>::type     CellType;
 
-        //typedef typename DomainTypes<DomainConfiguration>::segment_type  Segment;
-      
         typedef typename viennagrid::result_of::const_ncell_range<DomainType, 0>::type   VertexRange;
-        typedef typename viennagrid::result_of::iterator<VertexRange>::type        VertexIterator;
-            
-        typedef typename viennagrid::result_of::const_ncell_range<DomainType, 1>::type   EdgeRange;
-        typedef typename viennagrid::result_of::iterator<EdgeRange>::type          EdgeIterator;
-
-        typedef typename viennagrid::result_of::const_ncell_range<DomainType, CellTag::topology_level-1>::type   FacetRange;
-        typedef typename viennagrid::result_of::iterator<FacetRange>::type                                 FacetIterator;
-
-        typedef typename viennagrid::result_of::const_ncell_range<DomainType, CellTag::topology_level>::type     CellRange;
-        typedef typename viennagrid::result_of::iterator<CellRange>::type                                  CellIterator;
-
-        typedef typename viennagrid::result_of::const_ncell_range<CellType, 0>::type      VertexOnCellRange;
-        typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type   VertexOnCellIterator;
-
-        typedef DXHelper<DimensionTag::value>  DXHelper;
-      
-        std::ofstream writer(filename.c_str());
-        if (!writer.is_open())
-        {
-          throw cannot_open_file_exception(filename);
-          return EXIT_FAILURE;
-        }
+        typedef typename viennagrid::result_of::iterator<VertexRange>::type              VertexIterator;
         
-      
-        long pointnum = viennagrid::ncells<0>(domain).size();
-      
-        writer << "object \"points\" class array type float rank 1 shape " << DimensionTag::value << " items ";
-        writer << pointnum << " data follows" << std::endl;
-      
-        //Nodes:
-        VertexRange vertices = viennagrid::ncells<0>(domain);
-        for (VertexIterator vit = vertices.begin();
-            vit != vertices.end();
-            ++vit)
+        typedef typename viennagrid::result_of::const_ncell_range<DomainType, CellTag::topology_level>::type     CellRange;
+        typedef typename viennagrid::result_of::iterator<CellRange>::type                                        CellIterator;
+        
+        typedef typename viennagrid::result_of::const_ncell_range<CellType, 0>::type      VertexOnCellRange;
+        typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type         VertexOnCellIterator;
+        
+        
+      public:
+        int operator()(DomainType const & domain, std::string const & filename)
         {
-          PointWriter<DimensionTag::value>::write(writer, vit->point());
-          writer << std::endl;
-        }
-        writer << std::endl;
-
-        //Cells:
-        long cellnum = viennagrid::ncells<CellTag::topology_level>(domain).size();
-        writer << "object \"grid_Line_One\" class array type int rank 1 shape " << (DimensionTag::value + 1) << " items " << cellnum << " data follows" << std::endl;
-
-        CellRange cells = viennagrid::ncells<CellTag::topology_level>(domain);
-        for (CellIterator cit = cells.begin();
-            cit != cells.end();
-            ++cit)
-        {
-          VertexOnCellRange vertices_for_cell = viennagrid::ncells<0>(*cit);
-          for (VertexOnCellIterator vocit = vertices_for_cell.begin();
-              vocit != vertices_for_cell.end();
-              ++vocit)
+          typedef DXHelper<DimensionTag::value>  DXHelper;
+        
+          std::ofstream writer(filename.c_str());
+          if (!writer.is_open())
           {
-            VertexType const & vertex = *vocit;
-            writer << vertex.id() << " ";
+            throw cannot_open_file_exception(filename);
+            return EXIT_FAILURE;
           }
-          writer << std::endl;
-        }
-      
-        writer << DXHelper::getAttributes() << std::endl;
-        writer << "attribute \"ref\" string \"positions\" " << std::endl;
-        writer << std::endl;
-      
-        //set output-format:
-        writer.flags(std::ios::fixed);
-        writer.precision(5);
-      
-        //write quantity:
-        if (isVertexOriented)
-        {
-          writer << "object \"VisData\" class array items " << pointnum << " data follows" << std::endl;
-          //some quantity here
-          
-          //curSeg.template begin<0>()->setCurrentSegment(curSeg);
+        
+          std::size_t pointnum = viennagrid::ncells<0>(domain).size();
+        
+          writer << "object \"points\" class array type float rank 1 shape " << DimensionTag::value << " items ";
+          writer << pointnum << " data follows" << std::endl;
+        
+          //Nodes:
+          VertexRange vertices = viennagrid::ncells<0>(domain);
           for (VertexIterator vit = vertices.begin();
               vit != vertices.end();
               ++vit)
           {
-            //Vertex & vertex = *vit;
-            double val = 1.0;//vertex.template retrieveQuantity<double>(keyname);
-            writer << DXfixer(val);
+            PointWriter<DimensionTag::value>::write(writer, vit->point());
             writer << std::endl;
           }
+          writer << std::endl;
 
-          writer << "attribute \"dep\" string \"positions\"" << std::endl;
-        }
-        else
-        {
-          writer << "object \"VisData\" class array items " << cellnum << " data follows" << std::endl;
+          //Cells:
+          std::size_t cellnum = viennagrid::ncells<CellTag::topology_level>(domain).size();
+          writer << "object \"grid_Line_One\" class array type int rank 1 shape " << (DimensionTag::value + 1) << " items " << cellnum << " data follows" << std::endl;
 
-          //some quantity here
+          CellRange cells = viennagrid::ncells<CellTag::topology_level>(domain);
           for (CellIterator cit = cells.begin();
               cit != cells.end();
               ++cit)
           {
-            //Cell & cell = *cit;
-            //writer << DXfixer(cell.template retrieveQuantity<double>(keyname));
-            writer << DXfixer(1.0);
+            VertexOnCellRange vertices_for_cell = viennagrid::ncells<0>(*cit);
+            for (VertexOnCellIterator vocit = vertices_for_cell.begin();
+                vocit != vertices_for_cell.end();
+                ++vocit)
+            {
+              VertexType const & vertex = *vocit;
+              writer << vertex.id() << " ";
+            }
             writer << std::endl;
           }
-          writer << "attribute \"dep\" string \"connections\"" << std::endl;
-        }
-      
-        writer << std::endl;
-        writer << "object \"AttPotential\" class field " << std::endl;
-        writer << "component \"data\" \"VisData\" " << std::endl;
-        writer << "component \"positions\" \"points\"" << std::endl;
-        writer << "component \"connections\" \"grid_Line_One\"" << std::endl;
-      
-        return EXIT_SUCCESS;
-      } // operator()
+        
+          writer << DXHelper::getAttributes() << std::endl;
+          writer << "attribute \"ref\" string \"positions\" " << std::endl;
+          writer << std::endl;
+        
+          //set output-format:
+          writer.flags(std::ios::fixed);
+          writer.precision(5);
+        
+          //write quantity:
+          if (vertex_data_scalar.size() > 0)
+          {
+            writer << "object \"VisData\" class array items " << pointnum << " data follows" << std::endl;
+            //some quantity here
+            
+            for (VertexIterator vit = vertices.begin();
+                vit != vertices.end();
+                ++vit)
+            {
+              std::string value = vertex_data_scalar[0](*vit);
+              writer << DXfixer(atof(value.c_str()));
+              writer << std::endl;
+            }
 
+            writer << "attribute \"dep\" string \"positions\"" << std::endl;
+          }
+          else if (cell_data_scalar.size() > 0)
+          {
+            writer << "object \"VisData\" class array items " << cellnum << " data follows" << std::endl;
+
+            //some quantity here
+            for (CellIterator cit = cells.begin();
+                cit != cells.end();
+                ++cit)
+            {
+              std::string value = cell_data_scalar[0](*cit);
+              writer << DXfixer(atof(value.c_str()));
+              writer << std::endl;
+            }
+            writer << "attribute \"dep\" string \"connections\"" << std::endl;
+          }
+        
+          writer << std::endl;
+          writer << "object \"AttPotential\" class field " << std::endl;
+          writer << "component \"data\" \"VisData\" " << std::endl;
+          writer << "component \"positions\" \"points\"" << std::endl;
+          writer << "component \"connections\" \"grid_Line_One\"" << std::endl;
+        
+          return EXIT_SUCCESS;
+          
+        } // operator()
+
+        template <typename T>
+        void add_scalar_data_on_vertices(T const & accessor, std::string name)
+        {
+          data_accessor_wrapper<VertexType> wrapper(accessor.clone());
+          if (vertex_data_scalar.size() > 0)
+            std::cout << "* ViennaGrid: Warning: OpenDX vertex data " << name 
+                      << " will be ignored, because other data is already available!" << std::endl;
+          vertex_data_scalar.push_back(wrapper);
+        }
+        
+        template <typename T>
+        void add_scalar_data_on_cells(T const & accessor, std::string name)
+        {
+          data_accessor_wrapper<CellType> wrapper(accessor.clone());
+          
+          if (cell_data_scalar.size() > 0)
+            std::cout << "* ViennaGrid: Warning: OpenDX cell data " << name 
+                      << " will be ignored, because other cell data is already available!" << std::endl;
+                      
+          if (vertex_data_scalar.size() > 0)
+            std::cout << "* ViennaGrid: Warning: OpenDX cell data " << name 
+                      << " will be ignored, because other vertex data is already available!" << std::endl;
+                      
+          cell_data_scalar.push_back(wrapper);
+        }
+        
+
+      private:
+        std::vector< data_accessor_wrapper<VertexType> >    vertex_data_scalar;
+        std::vector< data_accessor_wrapper<CellType> >      cell_data_scalar;
+        
     }; // opendx_writer
+
+
+    template <typename KeyType, typename DataType, typename DomainType>
+    opendx_writer<DomainType> & add_scalar_data_on_vertices(opendx_writer<DomainType> & writer,
+                                                            KeyType const & key,
+                                                            std::string quantity_name)
+    {
+      typedef typename DomainType::config_type                             DomainConfiguration;
+      typedef typename result_of::ncell<DomainConfiguration, 0>::type      VertexType;
+      
+      data_accessor_wrapper<VertexType> wrapper(new global_scalar_data_accessor<VertexType, KeyType, DataType>(key));
+      writer.add_scalar_data_on_vertices(wrapper, quantity_name);
+      return writer;
+    }
+    
+    template <typename KeyType, typename DataType, typename DomainType>
+    opendx_writer<DomainType> & add_scalar_data_on_cells(opendx_writer<DomainType> & writer,
+                                                         KeyType const & key,
+                                                         std::string quantity_name)
+    {
+      typedef typename DomainType::config_type                         DomainConfiguration;
+      typedef typename DomainConfiguration::cell_tag                   CellTag;
+      typedef typename result_of::ncell<DomainConfiguration, CellTag::topology_level>::type     CellType;
+      
+      data_accessor_wrapper<CellType> wrapper(new global_scalar_data_accessor<CellType, KeyType, DataType>(key));
+      writer.add_scalar_data_on_cells(wrapper, quantity_name);
+      return writer;
+    }
+    
 
   } //namespace io
 } //namespace viennagrid

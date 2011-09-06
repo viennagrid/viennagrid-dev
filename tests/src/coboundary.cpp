@@ -134,12 +134,18 @@ int main()
   std::cout << "* Test started! *" << std::endl;
   std::cout << "*****************" << std::endl;
   
+  #ifdef _MSC_VER      //Visual Studio builds in a subfolder
+  std::string path = "../../../examples/data/";
+  #else
+  std::string path = "../../examples/data/";
+  #endif
+  
   std::cout << "Testing 1d..." << std::endl;
-  test<viennagrid::config::line_1d>("../../examples/data/line8.mesh");
+  test<viennagrid::config::line_1d>(path + "line8.mesh");
   std::cout << "Testing 2d..." << std::endl;
-  test<viennagrid::config::triangular_2d>("../../examples/data/square32.mesh");
+  test<viennagrid::config::triangular_2d>(path + "square32.mesh");
   std::cout << "Testing 3d..." << std::endl;
-  test<viennagrid::config::tetrahedral_3d>("../../examples/data/cube48.mesh");
+  test<viennagrid::config::tetrahedral_3d>(path + "cube48.mesh");
   
   std::cout << "*******************************" << std::endl;
   std::cout << "* Test finished successfully! *" << std::endl;

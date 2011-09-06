@@ -93,7 +93,12 @@ int main()
   std::cout << "* Test started! *" << std::endl;
   std::cout << "*****************" << std::endl;
   
+  #ifdef _MSC_VER      //Visual Studio builds in a subfolder
+  std::string path = "../../../examples/data/";
+  #else
   std::string path = "../../examples/data/";
+  #endif
+  
   
   viennagrid::io::netgen_reader my_netgen_reader;
   

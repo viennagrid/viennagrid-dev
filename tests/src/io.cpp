@@ -147,7 +147,7 @@ void test(ReaderType & my_reader, std::string const & infile, std::string const 
   
   my_vtk_writer(domain, outfile + ".vtu");
    
-  viennagrid::io::opendx_writer my_dx_writer;
+  viennagrid::io::opendx_writer<Domain> my_dx_writer;
   my_dx_writer(domain, outfile + ".odx");
 }
 
@@ -161,7 +161,12 @@ int main()
   std::cout << "* Test started! *" << std::endl;
   std::cout << "*****************" << std::endl;
   
+  #ifdef _MSC_VER      //Visual Studio builds in a subfolder
+  std::string path = "../../../examples/data/";
+  #else
   std::string path = "../../examples/data/";
+  #endif
+  
   
   //Stage 1: Read from Netgen files, write to VTK
   viennagrid::io::netgen_reader my_netgen_reader;

@@ -54,9 +54,9 @@ int main()
   typedef viennagrid::result_of::ncell_range<Domain, 0>::type                          VertexRange;
   typedef viennagrid::result_of::ncell_range<Domain, CellTag::topology_level>::type    CellRange;
                       
-  std::cout << " ------------------------------------------------------------ " << std::endl;
-  std::cout << " -- ViennaGrid tutorial: Algorithms on points and elements -- " << std::endl;
-  std::cout << " ------------------------------------------------------------ " << std::endl;
+  std::cout << "------------------------------------------------------------ " << std::endl;
+  std::cout << "-- ViennaGrid tutorial: Algorithms on points and elements -- " << std::endl;
+  std::cout << "------------------------------------------------------------ " << std::endl;
   std::cout << std::endl;
   
   Domain domain;
@@ -67,7 +67,11 @@ int main()
   try
   {
     viennagrid::io::netgen_reader reader;
+    #ifdef _MSC_VER      //Visual Studio builds in a subfolder
+    reader(domain, "../../examples/data/cube48.mesh");
+    #else
     reader(domain, "../examples/data/cube48.mesh");
+    #endif
   }
   catch (std::exception & e)
   {

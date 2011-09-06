@@ -22,6 +22,8 @@
 #include <vector>
 #include <iostream>
 
+#include "viennagrid/forwards.h"
+
 namespace viennagrid
 {
   
@@ -31,13 +33,13 @@ namespace viennagrid
   //local vertex numbering is in general different from global vertex numbering for lower-level topological elements
   //this permutator maps local numbers to global numbers
   //alternative implementation: vertexnum as template parameter
-  template <size_t num_vertices>
+  template <dim_type num_vertices>
   class element_orientation
   {
     public:
       void setDefaultOrientation()
       {
-        for (size_t i=0; i<num_vertices; ++i)
+        for (dim_type i=0; i<num_vertices; ++i)
           permutator_[i] = i;
       };
 
@@ -47,7 +49,7 @@ namespace viennagrid
 
       void print() const
       {
-        for (size_t i=0; i<num_vertices; ++i)
+        for (dim_type i=0; i<num_vertices; ++i)
         {
           std::cout << i << "->" << permutator_[i] << ",";
         }
@@ -55,10 +57,11 @@ namespace viennagrid
       }
 
     private:
-      short permutator_[num_vertices];
+      dim_type permutator_[num_vertices];
   };
 
 }
 
 
 #endif
+

@@ -19,6 +19,7 @@
 #include "viennagrid/segment.hpp"
 #include "viennagrid/algorithm/boundary.hpp"
 #include "viennagrid/algorithm/centroid.hpp"
+#include "viennagrid/algorithm/circumcenter.hpp"
 #include "viennagrid/config/simplex.hpp"
 #include "viennagrid/io/vtk_reader.hpp"
 #include "viennagrid/io/vtk_writer.hpp"
@@ -34,7 +35,12 @@ void read_netgen(DomainType & domain)
 {
   
   viennagrid::io::netgen_reader my_netgen_reader;
-  std::string filename = "../examples/data/cube48.mesh";
+  #ifdef _MSC_VER      //Visual Studio builds in a subfolder
+  std::string path = "../../examples/data/";
+  #else
+  std::string path = "../examples/data/";
+  #endif
+  std::string filename = path + "cube48.mesh";
   my_netgen_reader(domain, filename);
   
   //
@@ -52,8 +58,17 @@ void read_netgen(DomainType & domain)
 template <typename DomainType>
 void write_opendx(DomainType const & domain)
 {
-  viennagrid::io::opendx_writer my_dx_writer;
-  my_dx_writer(domain, "tutorial_io.odx");
+  // Instantiate writer object:
+  viennagrid::io::opendx_writer<DomainType> my_dx_writer;
+  
+  // Add scalar vertex data: Note that only the first data is used.
+  viennagrid::io::add_scalar_data_on_vertices<std::string, double>(my_dx_writer, "vtk_data", "data_double");
+  
+  // Add scalar cell data: Note that only the first data is used and that no other vertex data must be present!
+  //viennagrid::io::add_scalar_data_on_cells<std::string, double>(my_dx_writer, "vtk_data", "cell_data_double");
+  
+  
+  my_dx_writer(domain, "tutorial_io.out");
 }
 
 
@@ -106,14 +121,38 @@ void read_vtk(DomainType & domain)
   //
   // Step 4: Trigger filereader:
   //
-  std::string filename = "../examples/data/multi_segment_tet_main.pvd";
-  reader(domain, filename);
+  #ifdef _MSC_VER      //Visual Studio builds in a subfolder
+  std::string path = "../../examples/data/";
+  #else
+  std::string path = "../examples/data/";
+  #endif
+  reader(domain, path + "tets_with_data_main.pvd");
   
   
   //
-  // Step 5: Get and print all names read:
+  // Step 5: Get and print all names read from vtk file(s):
   //
-  //TODO: Output all data names read from file
+  
+  std::cout << "--- Data read from VTK file: ---" << std::endl;
+  std::cout << "* Scalar data on vertices: " << std::endl;
+  for (size_t i=0; i<reader.get_scalar_data_on_vertices().size(); ++i)
+    std::cout << "Segment " << reader.get_scalar_data_on_vertices()[i].first << ": "
+              << reader.get_scalar_data_on_vertices()[i].second << std::endl;
+              
+  std::cout << "* Vector data on vertices: " << std::endl;
+  for (size_t i=0; i<reader.get_vector_data_on_vertices().size(); ++i)
+    std::cout << "Segment " << reader.get_vector_data_on_vertices()[i].first << ": " 
+              << reader.get_vector_data_on_vertices()[i].second << std::endl;
+              
+  std::cout << "* Scalar data on cells: " << std::endl;
+  for (size_t i=0; i<reader.get_scalar_data_on_cells().size(); ++i)
+    std::cout << "Segment " << reader.get_scalar_data_on_cells()[i].first << ": " 
+              << reader.get_scalar_data_on_cells()[i].second << std::endl;
+              
+  std::cout << "* Vector data on cells: " << std::endl;
+  for (size_t i=0; i<reader.get_vector_data_on_cells().size(); ++i)
+    std::cout << "Segment " << reader.get_vector_data_on_cells()[i].first << ": "
+              << reader.get_vector_data_on_cells()[i].second << std::endl;
 }
 
 
@@ -123,7 +162,7 @@ void read_vtk(DomainType & domain)
 // Write the mesh to VTK File format (XML)
 //
 template <typename DomainType>
-void write_vtk(DomainType const & domain)
+void write_vtk(DomainType & domain)
 {
   //
   // Step 1: Instantiate a writer object:
@@ -174,15 +213,47 @@ void write_vtk(DomainType const & domain)
 }
 
 
+template <typename DomainType>
+void write_data(DomainType & domain)
+{
+  typedef typename DomainType::config_type         ConfigType;
+  typedef typename ConfigType::cell_tag            CellTag;
+  
+  typedef typename viennagrid::result_of::ncell_range<DomainType, 0>::type           VertexContainer;
+  typedef typename viennagrid::result_of::iterator<VertexContainer>::type        VertexIterator;
+
+  typedef typename viennagrid::result_of::ncell_range<DomainType, CellTag::topology_level>::type     CellContainer;
+  typedef typename viennagrid::result_of::iterator<CellContainer>::type                          CellIterator;
+  
+
+  //write x-component to each vertex
+  VertexContainer vertices = viennagrid::ncells<0>(domain);
+  for (VertexIterator vit = vertices.begin();
+      vit != vertices.end();
+      ++vit)
+  {
+    viennadata::access<std::string, double>("vtk_data")(*vit) = vit->point()[0];
+  }
+  
+  //write x-component of circumcenter to each cell
+  CellContainer cells = viennagrid::ncells(domain);
+  for (CellIterator cit = cells.begin();
+                    cit != cells.end();
+                  ++cit)
+  {
+    viennadata::access<std::string, double>("vtk_data")(*cit) = viennagrid::circumcenter(*cit)[0];
+  }
+}
+
 int main()
 {
   typedef viennagrid::config::tetrahedral_3d     ConfigType;
   typedef viennagrid::result_of::domain<ConfigType>::type        Domain;
   typedef viennagrid::result_of::segment<ConfigType>::type       SegmentType;
 
-  std::cout << " ---------------------------------------- " << std::endl;
-  std::cout << " -- ViennaGrid tutorial: IO operations -- " << std::endl;
-  std::cout << " ---------------------------------------- " << std::endl;
+  std::cout << "----------------------------------------" << std::endl;
+  std::cout << "-- ViennaGrid tutorial: IO operations --" << std::endl;
+  std::cout << "----------------------------------------" << std::endl;
   std::cout << std::endl;
   
   Domain domain;
@@ -192,9 +263,12 @@ int main()
   //
   read_netgen(domain);
   
+  //write a bit of data to domain:
+  write_data(domain);
   
   //
   // Use-case 2: Write to OpenDX
+  //
   write_opendx(domain);
   
   

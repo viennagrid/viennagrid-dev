@@ -80,12 +80,12 @@ namespace viennagrid
   
   /********* Forward definitions of main classes *******************/
   
-  class line_tag;
-  class hexahedron_tag;
-  class point_tag;
-  class quadrilateral_tag;
-  class tetrahedron_tag;
-  class triangle_tag;
+  struct line_tag;
+  struct hexahedron_tag;
+  struct point_tag;
+  struct quadrilateral_tag;
+  struct tetrahedron_tag;
+  struct triangle_tag;
 
   //forward declarations:
   /*template <typename NumericT,
@@ -96,13 +96,10 @@ namespace viennagrid
   class point;
   
   template <typename T_Configuration, typename ElementTag>
-  struct element_t;
+  class element_t;
 
   template <typename ElementType>
   class element_key;
-
-  template <dim_type level>
-  struct segment_traits;
 
   //Segment type: 
   template <typename ConfigType>
@@ -214,7 +211,7 @@ namespace viennagrid
   class pointer_id
   {
     //for compatibility:
-    void id(long id) { };
+    void id(long) { };
     const pointer_id * id() const { return this; };
 
   };

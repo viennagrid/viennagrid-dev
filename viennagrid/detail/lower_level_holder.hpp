@@ -22,8 +22,8 @@
 #include <iostream>
 
 #include "viennagrid/forwards.h"
-#include "viennagrid/topology/point.hpp"
-#include "viennagrid/iterators.hpp"
+//#include "viennagrid/topology/point.hpp"
+//#include "viennagrid/iterators.hpp"
 #include "viennagrid/detail/element_orientation.hpp"
 
 #include <vector>
@@ -293,3 +293,4 @@ namespace viennagrid
 
 
 #endif
+

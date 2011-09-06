@@ -235,8 +235,12 @@ namespace viennagrid
         }
       }
       
-      template <typename ContainerType>
-      void readPointCellData(size_t seg_id, ContainerType & scalar_data, ContainerType & vector_data)
+      template <typename ContainerType, typename NameContainerType>
+      void readPointCellData(size_t seg_id,
+                             ContainerType & scalar_data,
+                             ContainerType & vector_data,
+                             NameContainerType & data_names_scalar,
+                             NameContainerType & data_names_vector)
       {
         std::string name;
         std::size_t components = 1;
@@ -256,11 +260,13 @@ namespace viennagrid
           //now read data:
           if (components == 1)
           {
+            data_names_scalar.push_back(std::make_pair(seg_id, name));
             scalar_data[seg_id].push_back( std::make_pair(name, std::deque<double>()) );
             readData(scalar_data[seg_id].back().second);
           }
           else if (components == 3)
           {
+            data_names_vector.push_back(std::make_pair(seg_id, name));
             vector_data[seg_id].push_back( std::make_pair(name, std::deque<double>()) );
             readData(vector_data[seg_id].back().second);
           }
@@ -642,7 +648,8 @@ namespace viennagrid
           tag.parse(reader);
           if (tag.name() == "pointdata")
           {
-            readPointCellData(seg_id, local_scalar_vertex_data, local_vector_vertex_data);
+            readPointCellData(seg_id, local_scalar_vertex_data, local_vector_vertex_data,
+                                      vertex_data_scalar_read, vertex_data_vector_read);
             tag.parse(reader);
           }
           
@@ -669,7 +676,8 @@ namespace viennagrid
           tag.parse(reader);
           if (tag.name() == "celldata")
           {
-            readPointCellData(seg_id, local_scalar_cell_data, local_vector_cell_data);
+            readPointCellData(seg_id, local_scalar_cell_data, local_vector_cell_data,
+                                      cell_data_scalar_read, cell_data_vector_read);
             tag.parse(reader);
           }
           
@@ -949,6 +957,13 @@ namespace viennagrid
           cell_data_normal_names.push_back(name);
         }
 
+        // Extract data read from file:
+        std::vector<std::pair<std::size_t, std::string> > const & get_scalar_data_on_vertices() const { return vertex_data_scalar_read; }
+        std::vector<std::pair<std::size_t, std::string> > const & get_vector_data_on_vertices() const { return vertex_data_vector_read; }
+
+        std::vector<std::pair<std::size_t, std::string> > const & get_scalar_data_on_cells() const { return cell_data_scalar_read; }
+        std::vector<std::pair<std::size_t, std::string> > const & get_vector_data_on_cells() const { return cell_data_vector_read; }
+
       private:
         std::vector< data_accessor_wrapper<VertexType> >    vertex_data_scalar;
         std::vector< std::string >                          vertex_data_scalar_names;
@@ -968,7 +983,12 @@ namespace viennagrid
         std::vector< data_accessor_wrapper<CellType> >      cell_data_normal;
         std::vector< std::string >                          cell_data_normal_names;
         
-      
+        // Quantities read:
+        std::vector<std::pair<std::size_t, std::string> >         vertex_data_scalar_read;
+        std::vector<std::pair<std::size_t, std::string> >         vertex_data_vector_read;
+
+        std::vector<std::pair<std::size_t, std::string> >         cell_data_scalar_read;
+        std::vector<std::pair<std::size_t, std::string> >         cell_data_vector_read;
     }; //class vtk_reader
 
     template < typename DomainType > 

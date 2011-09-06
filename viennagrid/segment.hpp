@@ -24,7 +24,9 @@
 #include <deque>
 
 #include "viennagrid/forwards.h"
+#include "viennagrid/domain.hpp"   //segment does not make any sense without domain
 #include "viennagrid/detail/segment_layers.hpp"
+#include "viennagrid/detail/segment_iterators.hpp"
 
 
 namespace viennagrid

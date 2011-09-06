@@ -80,9 +80,9 @@ int main()
   typedef viennagrid::result_of::ncell_range<Domain, 0>::type           VertexRange;
   typedef viennagrid::result_of::iterator<VertexRange>::type        VertexIterator;
 
-  std::cout << " ---------------------------------------------------------- " << std::endl;
-  std::cout << " -- ViennaGrid tutorial: Domain without storage of edges -- " << std::endl;
-  std::cout << " ---------------------------------------------------------- " << std::endl;
+  std::cout << "----------------------------------------------------------" << std::endl;
+  std::cout << "-- ViennaGrid tutorial: Domain without storage of edges --" << std::endl;
+  std::cout << "----------------------------------------------------------" << std::endl;
   std::cout << std::endl;
   
   Domain domain;
@@ -91,7 +91,12 @@ int main()
   // Read domain from Netgen file
   //
   viennagrid::io::netgen_reader reader;
-  reader(domain, "../examples/data/cube48.mesh");
+  #ifdef _MSC_VER      //Visual Studio builds in a subfolder
+  std::string path = "../../examples/data/";
+  #else
+  std::string path = "../examples/data/";
+  #endif
+  reader(domain, path + "cube48.mesh");
   
   //
   // Iterate over vertices:

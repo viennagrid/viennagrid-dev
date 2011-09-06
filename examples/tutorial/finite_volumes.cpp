@@ -147,15 +147,20 @@ int main()
   //typedef viennagrid::config::triangular_2d                       ConfigType;  //use this for a 2d example
   typedef viennagrid::result_of::domain<ConfigType>::type         Domain;
   
-  std::cout << " ---------------------------------------------------------- " << std::endl;
-  std::cout << " -- ViennaGrid tutorial: Finite Volumes using ViennaGrid -- " << std::endl;
-  std::cout << " ---------------------------------------------------------- " << std::endl;
+  std::cout << "----------------------------------------------------------" << std::endl;
+  std::cout << "-- ViennaGrid tutorial: Finite Volumes using ViennaGrid --" << std::endl;
+  std::cout << "----------------------------------------------------------" << std::endl;
   std::cout << std::endl;
   
   Domain domain;
   viennagrid::io::netgen_reader reader;
-  reader(domain, "../examples/data/cube48.mesh"); //use this for a 3d example
-  //reader(domain, "../examples/data/square32.mesh"); //use this for a 2d example
+  #ifdef _MSC_VER      //Visual Studio builds in a subfolder
+  std::string path = "../../examples/data/";
+  #else
+  std::string path = "../examples/data/";
+  #endif
+  reader(domain, path + "cube48.mesh"); //use this for a 3d example
+  //reader(domain, path + "square32.mesh"); //use this for a 2d example
   
   sparse_matrix<double> system_matrix;
   std::vector<double> load_vector;

@@ -444,7 +444,7 @@ namespace viennagrid
   template <typename CoordType>
   struct point_filler<CoordType, 1>
   {
-    static void apply(CoordType * coords, CoordType x, CoordType y, CoordType z)
+    static void apply(CoordType * coords, CoordType x, CoordType, CoordType)
     {
       coords[0] = x;
     }
@@ -453,7 +453,7 @@ namespace viennagrid
   template <typename CoordType>
   struct point_filler<CoordType, 2>
   {
-    static void apply(CoordType * coords, CoordType x, CoordType y, CoordType z)
+    static void apply(CoordType * coords, CoordType x, CoordType y, CoordType)
     {
       coords[0] = x;
       coords[1] = y;

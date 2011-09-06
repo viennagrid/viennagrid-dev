@@ -16,8 +16,6 @@
 ======================================================================= */
 
 #include <iostream>
-#include <cstdlib>
-#include <sys/time.h>
 #include <vector>
 
 #include "viennagrid/config/others.hpp"

@@ -28,12 +28,12 @@
 #include <stack>
 #include <algorithm>
 #include "viennagrid/forwards.h"
-//#include "viennagrid/topology/celltags.hpp"  
-#include "viennagrid/point.hpp"
-#include "viennagrid/element.hpp"
-#include "viennagrid/detail/element_key.hpp"
-#include "viennagrid/segment.hpp"
+//#include "viennagrid/point.hpp"
+//#include "viennagrid/element.hpp"
+//#include "viennagrid/detail/element_key.hpp"
+//#include "viennagrid/segment.hpp"
 #include "viennagrid/traits/container.hpp"
+#include "viennagrid/detail/domain_iterators.hpp"
 #include "viennagrid/detail/domain_layers.hpp"
 //#include "viennagrid/config/domain_configs.hpp"
 

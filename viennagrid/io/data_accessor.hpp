@@ -50,6 +50,8 @@ namespace viennagrid
         //virtual bool active_on_segment(size_t i) const { return true; }
         
         virtual data_accessor_interface<ElementType> * clone() const = 0;
+        
+        virtual ~data_accessor_interface() {};
     };
 
     
@@ -75,7 +77,7 @@ namespace viennagrid
         
         void operator()(ElementType const & element, std::size_t segment_id, std::size_t k, double value) const
         {
-          viennadata::access<KeyType, DataType>(key_)(element) = value;
+          viennadata::access<KeyType, DataType>(key_)(element) = static_cast<DataType>(value);
         }
         
         data_accessor_interface<ElementType> * clone() const { return new self_type(key_); }

@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<VTKFile type="UnstructuredGrid" version="0.1" byte_order="LittleEndian">
+ <UnstructuredGrid>
+  <Piece NumberOfPoints="17" NumberOfCells="24">
+   <Points>
+    <DataArray type="Float32" NumberOfComponents="3" format="ascii">
+0.5 0 0
+1 0 0
+0.5 0 1
+1 0 1
+0.5 1 0
+1 1 0
+0.5 1 1
+1 1 1
+0.5 0.508696 0
+1 1 0.502291
+0.5 1 0.483138
+0.5 0.477383 1
+1 0.491304 1
+1 0.491304 0
+0.5 0 0.501602
+1 0 0.548138
+0.738393 0.560877 0.430877
+
+    </DataArray>
+   </Points> 
+   <PointData Scalars="point_scalar1_global">
+    <DataArray type="Float32" Name="data_double" format="ascii">
+0.5 1 0.5 1 0.5 1 0.5 1 0.5 1 0.5 0.5 1 1 0.5 1 0.738393 
+    </DataArray>
+   </PointData>
+   <Cells> 
+    <DataArray type="Int32" Name="connectivity" format="ascii">
+5 16 9 13 
+14 1 15 13 
+14 8 0 13 
+11 9 12 6 
+16 13 12 9 
+15 16 12 11 
+16 12 11 9 
+5 10 8 4 
+12 7 6 9 
+10 14 16 8 
+8 14 16 13 
+11 9 6 10 
+15 3 2 11 
+12 3 15 11 
+15 16 11 14 
+5 16 13 8 
+1 14 0 13 
+15 16 14 13 
+15 16 13 12 
+5 16 8 10 
+14 15 2 11 
+5 16 10 9 
+16 11 10 9 
+16 10 11 14 
+
+    </DataArray>
+    <DataArray type="Int32" Name="offsets" format="ascii">
+4 8 12 16 20 24 28 32 36 40 44 48 52 56 60 64 68 72 76 80 84 88 92 96 
+    </DataArray>
+    <DataArray type="UInt8" Name="types" format="ascii">
+10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 
+    </DataArray>
+   </Cells>
+   <CellData Scalars="cell_scalar1_global" >
+    <DataArray type="Float32" Name="data_double" format="ascii">
+0.986399 0.773343 0.741455 0.742918 1.33092 0.755708 0.741178 0.75 0.75 0.112328 0.739375 0.740467 0.75 0.756646 0.731355 0.758545 0.75 0.778727 1.33034 0.66461 0.728972 0.759254 0.737966 0.112403 
+    </DataArray>
+   </CellData>
+  </Piece>
+ </UnstructuredGrid>
+</VTKFile>

@@ -20,10 +20,10 @@
 
 
 #include "viennagrid/forwards.h"
-//#include "viennagrid/topology/celltags.hpp"
-#include "viennagrid/topology/point.hpp"
-#include "viennagrid/iterators.hpp"
-#include "viennagrid/detail/element_orientation.hpp"
+//#include "viennagrid/topology/point.hpp"
+//#include "viennagrid/iterators.hpp"
+//#include "viennagrid/detail/element_orientation.hpp"
+#include "viennagrid/detail/element_iterators.hpp"
 #include "viennagrid/detail/lower_level_holder.hpp"
 
 #include <vector>

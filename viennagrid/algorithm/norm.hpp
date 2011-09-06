@@ -112,7 +112,7 @@ namespace viennagrid
   //
   template<typename PointType, typename Tag>
   typename traits::value_type<PointType>::type
-  norm(PointType const & p, Tag const& tag)
+  norm(PointType const & p, Tag)
   {
     return norm_impl<Tag>(p, typename traits::coordinate_system<PointType>::type());
   }
