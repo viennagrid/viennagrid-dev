@@ -28,7 +28,7 @@ namespace viennagrid
   namespace detail
   {
     template <typename PointType,
-              dim_type dim = traits::dimension<PointType>::value>
+              long dim = traits::dimension<PointType>::value>
     struct cross_prod_impl;
     
     

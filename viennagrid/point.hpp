@@ -31,7 +31,7 @@
 namespace viennagrid
 {
   
-  template <dim_type d>
+  template <long d>
   struct dim_dispatcher;
   
   //conversion facility:
@@ -234,7 +234,8 @@ namespace viennagrid
       assert(p1.size() == p2.size());
       
       PointType ret;
-      for (dim_type i=0; i<ret.size(); ++i)
+      typedef typename PointType::size_type      size_type;
+      for (size_type i=0; i<ret.size(); ++i)
         ret[i] = p1[i] + p2[i];
       return ret;
     }
@@ -245,7 +246,8 @@ namespace viennagrid
     {
       assert(p1.size() == p2.size());
       
-      for (dim_type i=0; i<p1.size(); ++i)
+      typedef typename PointType::size_type      size_type;
+      for (size_type i=0; i<p1.size(); ++i)
         p1[i] += p2[i];
     }
 
@@ -253,10 +255,11 @@ namespace viennagrid
     template <typename PointType>
     static PointType subtract(PointType const & p1, PointType const & p2)
     {
+      typedef typename PointType::size_type      size_type;
       assert(p1.size() == p2.size());
       
       PointType ret;
-      for (dim_type i=0; i<ret.size(); ++i)
+      for (size_type i=0; i<ret.size(); ++i)
         ret[i] = p1[i] - p2[i];
       return ret;
     }
@@ -265,9 +268,10 @@ namespace viennagrid
     template <typename PointType>
     static void inplace_subtract(PointType & p1, PointType const & p2)
     {
+      typedef typename PointType::size_type      size_type;
       assert(p1.size() == p2.size());
       
-      for (dim_type i=0; i<p1.size(); ++i)
+      for (size_type i=0; i<p1.size(); ++i)
         p1[i] -= p2[i];
     }
     
@@ -275,7 +279,8 @@ namespace viennagrid
     template <typename PointType>
     static PointType & inplace_stretch(PointType & p1, typename traits::value_type<PointType>::type factor)
     {
-      for (dim_type i=0; i<p1.size(); ++i)
+      typedef typename PointType::size_type      size_type;
+      for (size_type i=0; i<p1.size(); ++i)
         p1[i] *= factor;
       return p1;
     }
@@ -424,7 +429,7 @@ namespace viennagrid
   class point_index_out_of_bounds_exception : public std::exception
   {
     public:
-      point_index_out_of_bounds_exception(std::size_t i) {};
+      point_index_out_of_bounds_exception(std::size_t i) : i_(i) {};
       
       virtual const char* what() const throw()
       {
@@ -438,7 +443,7 @@ namespace viennagrid
   };
   
 
-  template <typename CoordType, dim_type d>
+  template <typename CoordType, long d>
   struct point_filler;
   
   template <typename CoordType>
@@ -480,12 +485,12 @@ namespace viennagrid
    * @tparam CoordinateSystem   The underlying coordinate system of the point. 
    * 
    */
-  template <typename CoordType, dim_type d, typename CoordinateSystem>
+  template <typename CoordType, long d, typename CoordinateSystem>
   class point
   {
     public:
       typedef CoordType       value_type;
-      typedef std::size_t     size_type;
+      typedef dim_type     size_type;
       
       enum { dim = d };
       
@@ -509,13 +514,13 @@ namespace viennagrid
       //explicit copy CTOR
       point(point const & other)
       {
-        for (size_type i=0; i<d; ++i)
+        for (size_type i=0; i<size_type(d); ++i)
           coords[i] = other.coords[i];
       }
 
       point & operator=(point const & p2)
       {
-        for (size_type i=0; i<d; ++i)
+        for (size_type i=0; i<size_type(d); ++i)
           coords[i] = p2.coords[i];
         return *this;
       }
@@ -529,19 +534,19 @@ namespace viennagrid
         return *this;
       }
       
-      CoordType & operator[](dim_type index) 
+      CoordType & operator[](size_type index) 
       {
         assert(index < d);
         return coords[index]; 
       }
       
-      CoordType const & operator[](dim_type index) const
+      CoordType const & operator[](size_type index) const
       {
         assert(index < d);
         return coords[index]; 
       }
       
-      CoordType at(dim_type index)
+      CoordType at(size_type index)
       {
         if (index < 0 || index >= d)
           throw point_index_out_of_bounds_exception(index);
@@ -549,7 +554,7 @@ namespace viennagrid
         return coords[index];
       }
 
-      CoordType const & at(dim_type index) const
+      CoordType const & at(size_type index) const
       {
         if (index < 0 || index >= d)
           throw point_index_out_of_bounds_exception(index);
@@ -558,7 +563,7 @@ namespace viennagrid
       }
       
       /** @brief Returns the geometric dimension of the point */
-      dim_type size() const { return d; }
+      size_type size() const { return d; }
       
       //
       // operators:
@@ -592,7 +597,7 @@ namespace viennagrid
       point & operator*=(CoordType factor)
       {
         CoordinateSystem::inplace_stretch(*this, factor);
-        //for (dim_type i=0; i<d; ++i)
+        //for (size_type i=0; i<d; ++i)
         //  coords[i] *= factor;
         return *this;
       }
@@ -600,7 +605,7 @@ namespace viennagrid
       point & operator/=(CoordType factor)
       {
         CoordinateSystem::inplace_stretch(*this, 1.0 / factor);
-        //for (dim_type i=0; i<d; ++i)
+        //for (size_type i=0; i<d; ++i)
         //  coords[i] /= factor;
         return *this;
       }
@@ -609,7 +614,7 @@ namespace viennagrid
       {
         point ret(*this);
         return CoordinateSystem::inplace_stretch(ret, factor);
-        //for (dim_type i=0; i<d; ++i)
+        //for (size_type i=0; i<d; ++i)
         //  ret[i] = coords[i] * factor;
         //return ret;
       }
@@ -619,7 +624,7 @@ namespace viennagrid
         point ret(*this);
         return CoordinateSystem::inplace_stretch(ret, 1.0 / factor);
         //point ret;
-        //for (dim_type i=0; i<d; ++i)
+        //for (size_type i=0; i<d; ++i)
         //  ret[i] = coords[i] / factor;
         //return ret;
       }
@@ -629,24 +634,25 @@ namespace viennagrid
   };
 
   
-  template <typename CoordType, dim_type d, typename CoordinateSystem>
+  template <typename CoordType, long d, typename CoordinateSystem>
   point<CoordType, d, CoordinateSystem>
   operator*(double val, point<CoordType, d, CoordinateSystem> const & p)
   {
     return p * val;
   }
 
-/*  template <typename CoordType, dim_type d, typename CoordinateSystem>
+/*  template <typename CoordType, long d, typename CoordinateSystem>
   point<CoordType, d, CoordinateSystem>
   operator*(CoordType val, point<CoordType, d, CoordinateSystem> const & p)
   {
     return p * val;
   }*/
 
-  template <typename CoordType, dim_type d, typename CoordinateSystem>
+  template <typename CoordType, long d, typename CoordinateSystem>
   std::ostream& operator << (std::ostream & os, point<CoordType, d, CoordinateSystem> const & p)
   {
-    for (dim_type i=0; i<d; ++i)
+    typedef typename point<CoordType, d, CoordinateSystem>::size_type      size_type;
+    for (size_type i=0; i<static_cast<size_type>(d); ++i)
       os << p[i] << " ";
     return os;
   }

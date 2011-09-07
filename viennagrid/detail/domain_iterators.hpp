@@ -57,8 +57,8 @@ namespace viennagrid
   ///////////////  Iterator construction for iterations over whole domain ////////////////
   //generic case:
   template <typename Config,
-            dim_type dim,
-            dim_type cell_level = Config::cell_tag::topology_level>
+            long dim,
+            long cell_level = Config::cell_tag::topology_level>
   struct domain_iterators
   {
     typedef domain_t<Config>                        domain_type;
@@ -77,7 +77,7 @@ namespace viennagrid
   };
 
   //special case: vertices:
-  template <typename Config, dim_type cell_level>
+  template <typename Config, long cell_level>
   struct domain_iterators< Config, 0, cell_level>
   {
     typedef domain_t<Config>                        domain_type;
@@ -91,7 +91,7 @@ namespace viennagrid
   };
 
   //special case: cells:
-  template <typename Config, dim_type cell_level>
+  template <typename Config, long cell_level>
   struct domain_iterators< Config, cell_level, cell_level>
   {
     typedef domain_t<Config>                        domain_type;
@@ -131,7 +131,7 @@ namespace viennagrid
   // interface function for container creation,
   // non-const:
   //container for iteration over a STL vector
-  template <typename config_type, dim_type dim>
+  template <typename config_type, long dim>
   class ncell_range < domain_t<config_type>, dim, false >
   {
       typedef domain_t<config_type>                        domain_type;
@@ -181,14 +181,14 @@ namespace viennagrid
         return (*cont_)[index]; 
       }
       
-      template <typename DomainType, dim_type dim2, bool b2>
+      template <typename DomainType, long dim2, bool b2>
       friend class const_ncell_range;
 
     private:
       container_type * cont_;
   };
   
-  template <dim_type dim, typename DomainConfig>
+  template <long dim, typename DomainConfig>
   ncell_range<domain_t<DomainConfig>, dim>
   ncells(domain_t<DomainConfig> & d)
   {
@@ -206,7 +206,7 @@ namespace viennagrid
   //
   //const container:  
   //
-  template <typename config_type, dim_type dim>
+  template <typename config_type, long dim>
   class const_ncell_range < domain_t<config_type>, dim, false >
   {
       typedef domain_t<config_type>                        domain_type;
@@ -269,7 +269,7 @@ namespace viennagrid
       const container_type * cont_;
   };
   
-  template <dim_type dim, typename DomainConfig>
+  template <long dim, typename DomainConfig>
   const_ncell_range< domain_t<DomainConfig>, dim>
   ncells(domain_t<DomainConfig> const & d)
   {
@@ -288,27 +288,27 @@ namespace viennagrid
   namespace result_of
   {
     
-    template <typename T, dim_type dim, bool is_coboundary>
+    template <typename T, long dim, bool is_coboundary>
     struct iterator<viennagrid::ncell_range<T, dim, is_coboundary>, 0>
     {
       typedef typename viennagrid::ncell_range<T, dim, is_coboundary>::iterator     type;
     };
     
-    template <typename T, dim_type dim, bool is_coboundary>
+    template <typename T, long dim, bool is_coboundary>
     struct iterator<viennagrid::const_ncell_range<T, dim, is_coboundary>, 0>
     {
       typedef typename viennagrid::const_ncell_range<T, dim, is_coboundary>::iterator     type;
     };
     
     template <typename T, 
-              dim_type dim>  //topological level
+              long dim>  //topological level
     struct ncell_range
     {
       typedef viennagrid::ncell_range<T, dim>       type;
     };
 
     template <typename T, 
-              dim_type dim>  //topological level
+              long dim>  //topological level
     struct const_ncell_range
     {
       typedef viennagrid::const_ncell_range<T, dim>       type;

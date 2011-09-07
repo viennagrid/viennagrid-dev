@@ -132,7 +132,7 @@ namespace viennagrid
 
   //Check availability of iterators:
   template <typename ElementTag,
-            dim_type level,
+            long level,
             typename handling_tag = typename topology::subelements<ElementTag, level>::handling_tag>
   struct ElementIteratorChecker
   {
@@ -140,7 +140,7 @@ namespace viennagrid
   };
 
   template <typename ElementTag,
-            dim_type level>
+            long level>
   struct ElementIteratorChecker< ElementTag, level, full_handling_tag>
   {
     enum{ ReturnValue = ElementTag::topology_level - level };
@@ -148,7 +148,7 @@ namespace viennagrid
 
 
   template <typename ElementType,
-            dim_type level>
+            long level>
   struct IteratorChecker
   {
     enum{ ReturnValue = ElementType::ERROR_ELEMENT_TYPE_INVALID };
@@ -156,7 +156,7 @@ namespace viennagrid
 
   template <typename Config,
             typename ElementTag,
-            dim_type level>
+            long level>
   struct IteratorChecker< element_t<Config, ElementTag>, level>
   {
     enum{ ReturnValue = ElementIteratorChecker<ElementTag, level>::ReturnValue };
@@ -167,7 +167,7 @@ namespace viennagrid
   //interface function for container creation:
   
   // non-const:
-  template <typename config_type, typename element_tag, dim_type dim>
+  template <typename config_type, typename element_tag, long dim>
   class ncell_range < element_t<config_type, element_tag>, dim, false>
   {
       typedef element_t< config_type,
@@ -219,7 +219,7 @@ namespace viennagrid
       container_type * cont_;
   };
   
-  template <dim_type dim, typename Config, typename ElementTag>
+  template <long dim, typename Config, typename ElementTag>
   typename result_of::ncell_range< element_t<Config, ElementTag>, dim>::type
   ncells(element_t<Config, ElementTag> & d)
   {
@@ -237,7 +237,7 @@ namespace viennagrid
   //
   // const container:
   //
-  template <typename config_type, typename element_tag, dim_type dim>
+  template <typename config_type, typename element_tag, long dim>
   class const_ncell_range < element_t<config_type, element_tag>, dim, false>
   {
       typedef element_t< config_type,
@@ -297,7 +297,7 @@ namespace viennagrid
       const container_type * cont_;
   };
   
-  template <dim_type dim, typename Config, typename ElementTag>
+  template <long dim, typename Config, typename ElementTag>
   typename result_of::const_ncell_range< element_t<Config, ElementTag>, dim>::type
   ncells(element_t<Config, ElementTag> const & d)
   {
@@ -319,8 +319,8 @@ namespace viennagrid
   ////////////////   co-boundaries: /////////////////////////
   
   //helper meta function for selecting const/non-const containers:
-  template <dim_type dim_start,
-            dim_type dim_iter,
+  template <long dim_start,
+            long dim_iter,
             typename RangeType,
             typename KeyType,
             typename EnclosingType>
@@ -368,7 +368,7 @@ namespace viennagrid
       U & u;
   };
   
-  template <dim_type dim, typename Config, typename ElementTag>
+  template <long dim, typename Config, typename ElementTag>
   ncell_range < element_t<Config, ElementTag>, dim, true>
   ncells(element_t<Config, ElementTag> & e, domain_t<Config> & d)
   {
@@ -395,7 +395,7 @@ namespace viennagrid
 
 
 
-  template <dim_type dim, typename Config, typename ElementTag>
+  template <long dim, typename Config, typename ElementTag>
   ncell_range < element_t<Config, ElementTag>, dim, true>
   ncells(element_t<Config, ElementTag> & e, segment_t<Config> & seg)
   {
@@ -422,7 +422,7 @@ namespace viennagrid
   }
 
   template <typename config_type, typename element_tag,
-            dim_type dim>
+            long dim>
   class ncell_range < element_t<config_type, element_tag>, dim, true>
   {
       typedef element_t< config_type,
@@ -481,7 +481,7 @@ namespace viennagrid
       
       std::size_t size() const { return num_elements; }
       
-      template <typename element_type, dim_type dim2, bool b2>
+      template <typename element_type, long dim2, bool b2>
       friend class const_ncell_range;
       
     private:
@@ -531,7 +531,7 @@ namespace viennagrid
   };
   
   template <typename config_type, typename element_tag,
-            dim_type dim>
+            long dim>
   class const_ncell_range < element_t<config_type, element_tag>, dim, true>
   {
       typedef element_t< config_type,
@@ -644,7 +644,7 @@ namespace viennagrid
   };
   
   
-  template <dim_type dim, typename Config, typename ElementTag>
+  template <long dim, typename Config, typename ElementTag>
   const_ncell_range < element_t<Config, ElementTag>, dim, true>
   ncells(element_t<Config, ElementTag> const & e, domain_t<Config> const & d)
   {
@@ -662,7 +662,7 @@ namespace viennagrid
 
 
 
-  template <dim_type dim, typename Config, typename ElementTag>
+  template <long dim, typename Config, typename ElementTag>
   const_ncell_range < element_t<Config, ElementTag>, dim, true>
   ncells(element_t<Config, ElementTag> const & e, segment_t<Config> const & seg)
   {
@@ -688,14 +688,14 @@ namespace viennagrid
   
   namespace result_of
   {
-    template <dim_type a, dim_type b>
+    template <long a, long b>
     struct is_smaller
     {
       enum { value = (a < b) }; 
     };
     
     template <typename Config, typename ElementTag,
-              dim_type dim>  //topological level
+              long dim>  //topological level
     struct ncell_range < element_t<Config, ElementTag>, dim >
     {
       typedef viennagrid::ncell_range<element_t<Config, ElementTag>,
@@ -706,7 +706,7 @@ namespace viennagrid
     };
     
     template <typename Config, typename ElementTag,
-              dim_type dim>  //topological level
+              long dim>  //topological level
     struct const_ncell_range < element_t<Config, ElementTag>, dim >
     {
       typedef viennagrid::const_ncell_range<element_t<Config, ElementTag>,
@@ -718,8 +718,8 @@ namespace viennagrid
     
     
     template <typename Config, typename ElementTag,
-              dim_type dim,
-              dim_type cell_level /* see forwards.h for default argument */>
+              long dim,
+              long cell_level /* see forwards.h for default argument */>
     struct element_container< element_t<Config, ElementTag>, dim, cell_level >
     {
       typedef typename result_of::ncell<Config, dim>::type            element_type;
@@ -728,7 +728,7 @@ namespace viennagrid
     };
     
     //Iterator types for elements
-    template <typename config_type, typename element_tag, dim_type dim>
+    template <typename config_type, typename element_tag, long dim>
     struct iterator< element_t<config_type, element_tag>,
                      dim>
     {

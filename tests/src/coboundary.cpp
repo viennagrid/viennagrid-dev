@@ -17,6 +17,11 @@
 
 //NOTE: This test does not check run-time output at the moment and rather serves as compilation test.
 
+#ifdef _MSC_VER      //Visual Studio complains about potentially dangerous things, which are perfectly legal in our context
+  #pragma warning( disable : 4355 )     //use of this in member initializer list
+  #pragma warning( disable : 4503 )     //truncated name decoration
+#endif
+
 
 #include "viennagrid/forwards.h"
 #include "viennagrid/element.hpp"
@@ -134,11 +139,7 @@ int main()
   std::cout << "* Test started! *" << std::endl;
   std::cout << "*****************" << std::endl;
   
-  #ifdef _MSC_VER      //Visual Studio builds in a subfolder
-  std::string path = "../../../examples/data/";
-  #else
   std::string path = "../../examples/data/";
-  #endif
   
   std::cout << "Testing 1d..." << std::endl;
   test<viennagrid::config::line_1d>(path + "line8.mesh");

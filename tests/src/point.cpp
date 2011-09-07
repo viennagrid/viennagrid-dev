@@ -15,6 +15,10 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
+#ifdef _MSC_VER      //Visual Studio complains about potentially dangerous things, which are perfectly legal in our context
+  #pragma warning( disable : 4355 )
+#endif
+
 #include <stdlib.h>
 
 
@@ -47,7 +51,7 @@ bool fuzzy_equal(double a, double b)
   return false;
 }
 
-template <typename CoordType, viennagrid::dim_type d>
+template <typename CoordType, long d>
 bool fuzzy_equal(viennagrid::point<CoordType, d, viennagrid::cartesian_cs> const & a,
                  viennagrid::point<CoordType, d, viennagrid::cartesian_cs> const & b)
 {
@@ -272,6 +276,7 @@ void test_2d()
        || !fuzzy_equal(c3, p3) )
     exit(EXIT_FAILURE);
   
+  std::cout << "Testing operations... " << std::endl;
   test_operations(c0, c1, c2, c3,
                   p0, p1, p2, p3);
   

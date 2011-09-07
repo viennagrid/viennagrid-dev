@@ -93,7 +93,7 @@ namespace viennagrid
 
 
     template <typename Config, // config class
-              dim_type dim,  // dimension of the elements covered here
+              long dim,  // dimension of the elements covered here
               bool is_cell = false,                   // whether this layer holds the cells (i.e. highest topological element)
               typename STOR = typename viennagrid::result_of::subelement_handling<domain_t<Config>, dim>::type       //Storage scheme: Full storage, or ignore layer
             >
@@ -144,7 +144,7 @@ namespace viennagrid
           }
 
           //std::cout << "REJECTED" << std::endl;
-          long i=0; long j=0;
+          dim_type i=0; dim_type j=0;
           
           
           //set orientation:
@@ -176,28 +176,28 @@ namespace viennagrid
         ///////////////////// container retrieval /////////////////////////
 
         //non-const:
-        template <dim_type dim_container>
+        template <long dim_container>
         typename result_of::element_container<domain_type, dim_container, Config::cell_tag::topology_level>::type * 
         container() { return container<dim_container>(typename level_discriminator<dim, dim_container>::result_type()); }
         
-        template <dim_type dim_container>
+        template <long dim_container>
         typename result_of::element_container<domain_type, dim_container, Config::cell_tag::topology_level>::type * 
         container(equal_tag) { return &elements; }
 
-        template <dim_type dim_container>
+        template <long dim_container>
         typename result_of::element_container<domain_type, dim_container, Config::cell_tag::topology_level>::type * 
         container(less_tag) { return base_type::template container<dim_container>(); }
 
         //const:
-        template <dim_type dim_container>
+        template <long dim_container>
         const typename result_of::element_container<domain_type, dim_container, Config::cell_tag::topology_level>::type * 
         container() const { return container<dim_container>(typename level_discriminator<dim, dim_container>::result_type()); }
         
-        template <dim_type dim_container>
+        template <long dim_container>
         const typename result_of::element_container<domain_type, dim_container, Config::cell_tag::topology_level>::type * 
         container(equal_tag) const { return &elements; }
 
-        template <dim_type dim_container>
+        template <long dim_container>
         const typename result_of::element_container<domain_type, dim_container, Config::cell_tag::topology_level>::type * 
         container(less_tag) const { return base_type::template container<dim_container>(); }
         
@@ -207,7 +207,7 @@ namespace viennagrid
 
     
     template <typename Config,
-              dim_type dim>
+              long dim>
     class domain_layers<Config, dim, false, no_handling_tag>  : public domain_layers<Config,
                                                                                      dim-1>
     {
@@ -222,11 +222,11 @@ namespace viennagrid
         ///////////////////// container retrieval /////////////////////////
 
         //non-const:
-        template <dim_type dim_container>
+        template <long dim_container>
         typename result_of::element_container<domain_type, dim_container, CellTag::topology_level>::type * 
         container() { return container<dim_container>(typename level_discriminator<dim, dim_container>::result_type()); }
         
-        template <dim_type dim_container>
+        template <long dim_container>
         typename result_of::element_container<domain_type, dim_container, CellTag::topology_level>::type * 
         container(equal_tag)
         {
@@ -234,16 +234,16 @@ namespace viennagrid
           return NULL;
         }
 
-        template <dim_type dim_container>
+        template <long dim_container>
         typename result_of::element_container<domain_type, dim_container, CellTag::topology_level>::type * 
         container(less_tag) { return base_type::template container<dim_container>(); }
 
         //const:
-        template <dim_type dim_container>
+        template <long dim_container>
         const typename result_of::element_container<domain_type, dim_container, CellTag::topology_level>::type * 
         container() const { return container<dim_container>(typename level_discriminator<dim, dim_container>::result_type()); }
         
-        template <dim_type dim_container>
+        template <long dim_container>
         const typename result_of::element_container<domain_type, dim_container, CellTag::topology_level>::type * 
         container(equal_tag) const
         {
@@ -251,7 +251,7 @@ namespace viennagrid
           return NULL;
         }
 
-        template <dim_type dim_container>
+        template <long dim_container>
         const typename result_of::element_container<domain_type, dim_container, Config::cell_tag::topology_level>::type * 
         container(less_tag) const { return base_type::template container<dim_container>(); }
     };
@@ -259,7 +259,7 @@ namespace viennagrid
     
     // special handling for cells:
     template <typename Config,
-              dim_type dim>
+              long dim>
     class domain_layers<Config, dim, true, full_handling_tag> : public domain_layers<Config,
                                                                                      dim-1>
     {
@@ -290,28 +290,28 @@ namespace viennagrid
         }
         
         //non-const:
-        template <dim_type dim_container>
+        template <long dim_container>
         typename result_of::element_container<domain_type, dim_container, Config::cell_tag::topology_level>::type * 
         container() { return container<dim_container>(typename level_discriminator<dim, dim_container>::result_type()); }
         
-        template <dim_type dim_container>
+        template <long dim_container>
         typename result_of::element_container<domain_type, dim_container, Config::cell_tag::topology_level>::type * 
         container(equal_tag) { return &elements; }
 
-        template <dim_type dim_container>
+        template <long dim_container>
         typename result_of::element_container<domain_type, dim_container, Config::cell_tag::topology_level>::type * 
         container(less_tag) { return base_type::template container<dim_container>(); }
 
         //const:
-        template <dim_type dim_container>
+        template <long dim_container>
         const typename result_of::element_container<domain_type, dim_container, Config::cell_tag::topology_level>::type * 
         container() const { return container<dim_container>(typename level_discriminator<dim, dim_container>::result_type()); }
         
-        template <dim_type dim_container>
+        template <long dim_container>
         const typename result_of::element_container<domain_type, dim_container, Config::cell_tag::topology_level>::type * 
         container(equal_tag) const { return &elements; }
 
-        template <dim_type dim_container>
+        template <long dim_container>
         const typename result_of::element_container<domain_type, dim_container, Config::cell_tag::topology_level>::type * 
         container(less_tag) const { return base_type::template container<dim_container>(); }
         
@@ -348,9 +348,9 @@ namespace viennagrid
           return &(elements.back());
         }
         
-        template <dim_type dim>
+        template <long dim>
         container_type * container() { return &elements; }
-        template <dim_type dim>
+        template <long dim>
         const container_type * container() const { return &elements; }
         
       private:

@@ -15,6 +15,11 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
+#ifdef _MSC_VER      //Visual Studio complains about potentially dangerous things, which are perfectly legal in our context
+  #pragma warning( disable : 4355 )     //use of this in member initializer list
+  #pragma warning( disable : 4503 )     //truncated name decoration
+#endif
+
 
 #include "viennagrid/forwards.h"
 #include "viennagrid/element.hpp"

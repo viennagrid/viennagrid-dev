@@ -15,6 +15,10 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
+#ifdef _MSC_VER      //Visual Studio complains about potentially dangerous things, which are perfectly legal in our context
+  #pragma warning( disable : 4355 )
+#endif
+
 #include <iostream>
 #include <vector>
 
@@ -39,12 +43,7 @@ int main(int argc, char *argv[])
   std::cout << "* main(): Creating device..." << std::endl;
   DomainType my_domain;
 
-  #ifdef _MSC_VER      //Visual Studio builds in a subfolder
-  std::string path = "../../../examples/data/";
-  #else
   std::string path = "../../examples/data/";
-  #endif
-  
   
   //create device:
   try

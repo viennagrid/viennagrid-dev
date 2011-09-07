@@ -77,13 +77,13 @@ namespace viennagrid
   
   //generic segment iterator
   template <typename Config,
-            dim_type dim,
-            dim_type cell_level = Config::cell_tag::topology_level>
+            long dim,
+            long cell_level = Config::cell_tag::topology_level>
   struct segment_iterators;
   
   
   //special case: cells:
-  template <typename Config, dim_type cell_level>
+  template <typename Config, long cell_level>
   struct segment_iterators< Config, cell_level, cell_level>
   {
     typedef segment_t<Config>                     segment_type;
@@ -103,7 +103,7 @@ namespace viennagrid
   // non-const:
 
   //container for iteration over a STL vector
-  template <typename config_type, dim_type dim>
+  template <typename config_type, long dim>
   class ncell_range < segment_t<config_type>, dim, false >
   {
       typedef segment_t<config_type>                        segment_type;
@@ -154,14 +154,14 @@ namespace viennagrid
         return *((*cont_)[index]); 
       }
 
-      template <typename DomainType, dim_type dim2, bool b2>
+      template <typename DomainType, long dim2, bool b2>
       friend class const_ncell_range;
 
     private:
       container_type * cont_;
   };
   
-  template <dim_type dim, typename DomainConfig>
+  template <long dim, typename DomainConfig>
   ncell_range<segment_t<DomainConfig>, dim>
   ncells(segment_t<DomainConfig> & d)
   {
@@ -182,7 +182,7 @@ namespace viennagrid
   
   
   
-  template <typename config_type, dim_type dim>
+  template <typename config_type, long dim>
   class const_ncell_range < segment_t<config_type>, dim, false >
   {
       typedef segment_t<config_type>                        segment_type;
@@ -241,7 +241,7 @@ namespace viennagrid
       const container_type * cont_;
   };
   
-  template <dim_type dim, typename DomainConfig>
+  template <long dim, typename DomainConfig>
   const_ncell_range< segment_t<DomainConfig>, dim>
   ncells(segment_t<DomainConfig> const & d)
   {

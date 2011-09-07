@@ -46,8 +46,8 @@ namespace viennagrid
   namespace result_of
   {
     template <typename ConfigType,
-              dim_type dim,
-              dim_type cell_level /* see forwards.h for default argument */>
+              long dim,
+              long cell_level /* see forwards.h for default argument */>
     struct element_container< domain_t<ConfigType>, dim, cell_level >
     {
       typedef typename result_of::ncell<ConfigType, dim>::type            element_type;
@@ -56,7 +56,7 @@ namespace viennagrid
     };
 
     //at point level:
-    template <typename ConfigType, dim_type cell_level>
+    template <typename ConfigType, long cell_level>
     struct element_container< domain_t<ConfigType>, 0, cell_level>
     {
       typedef typename result_of::ncell<ConfigType, 0>::type              element_type;
@@ -66,7 +66,7 @@ namespace viennagrid
     };
 
     //at cell level:
-    template <typename ConfigType, dim_type cell_level>
+    template <typename ConfigType, long cell_level>
     struct element_container< domain_t<ConfigType>, cell_level, cell_level>
     {
       typedef typename result_of::ncell<ConfigType, cell_level>::type     element_type;
@@ -104,6 +104,7 @@ namespace viennagrid
       
       typedef detail::domain_segment_container<self_type, segment_type>    segment_container;
       
+      //Note: Visual Studio complains about the use of 'this'. However, we just need the address, so this is perfectly safe.
       domain_t() : segments_(this) {}
 
       template <typename OtherDomainType, typename RefinementTag>

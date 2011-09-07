@@ -16,6 +16,10 @@
 ======================================================================= */
 //#define VIENNAGRID_DEBUG_IO
 
+#ifdef _MSC_VER      //Visual Studio complains about potentially dangerous things, which are perfectly legal in our context
+  #pragma warning( disable : 4355 )
+#endif
+
 #include "viennagrid/domain.hpp"
 #include "viennagrid/segment.hpp"
 #include "viennagrid/algorithm/boundary.hpp"
@@ -161,12 +165,7 @@ int main()
   std::cout << "* Test started! *" << std::endl;
   std::cout << "*****************" << std::endl;
   
-  #ifdef _MSC_VER      //Visual Studio builds in a subfolder
-  std::string path = "../../../examples/data/";
-  #else
   std::string path = "../../examples/data/";
-  #endif
-  
   
   //Stage 1: Read from Netgen files, write to VTK
   viennagrid::io::netgen_reader my_netgen_reader;

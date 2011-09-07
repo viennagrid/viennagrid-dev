@@ -194,9 +194,9 @@ namespace viennagrid
 
         data_accessor_wrapper(const data_accessor_wrapper & other) : functor_(other.clone()) {}
 
-        data_accessor_wrapper & operator=(data_accessor_wrapper & other)
+        data_accessor_wrapper & operator=(data_accessor_wrapper const & other)
         {
-          functor_ = other.functor_;
+          functor_ = std::auto_ptr< const data_accessor_interface<ElementType> >(other.clone());
           return *this;
         }
         

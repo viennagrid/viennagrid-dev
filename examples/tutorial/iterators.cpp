@@ -15,6 +15,12 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
+#ifdef _MSC_VER      //Visual Studio complains about potentially dangerous things, which are perfectly legal in our context
+  #pragma warning( disable : 4355 )     //use of this in member initializer list
+  #pragma warning( disable : 4503 )     //truncated name decoration
+#endif
+
+
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -49,9 +55,29 @@ int main()
   std::cout << std::endl;
   
   DomainType domain;
-  viennagrid::io::netgen_reader reader;
-  reader(domain, "../examples/data/cube48.mesh"); //use this for a 3d example
-  //reader(domain, "../examples/data/square32.mesh"); //use this for a 2d example (also change ConfigType defined above!)
+  
+  
+  //
+  // Read domain from Netgen file
+  //
+  try
+  {
+    viennagrid::io::netgen_reader reader;
+    #ifdef _MSC_VER      //Visual Studio builds in a subfolder
+    std::string path = "../../examples/data/";
+    #else
+    std::string path = "../examples/data/";
+    #endif
+    reader(domain, path + "cube48.mesh"); //use this for a 3d example
+    //reader(domain, path + "square32.mesh"); //use this for a 2d example (also change ConfigType defined above!)
+  }
+  catch (std::exception & e)
+  {
+    std::cout << "Error reading Netgen mesh file: " << std::endl;
+    std::cout << e.what() << std::endl;
+    return EXIT_FAILURE;
+  }
+  
   
 
   

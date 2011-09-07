@@ -33,23 +33,23 @@ namespace viennagrid
   //local vertex numbering is in general different from global vertex numbering for lower-level topological elements
   //this permutator maps local numbers to global numbers
   //alternative implementation: vertexnum as template parameter
-  template <dim_type num_vertices>
+  template <long num_vertices>
   class element_orientation
   {
     public:
       void setDefaultOrientation()
       {
-        for (dim_type i=0; i<num_vertices; ++i)
+        for (dim_type i=0; i<static_cast<dim_type>(num_vertices); ++i)
           permutator_[i] = i;
       };
 
-      short operator()(short in) const { return permutator_[in]; }
+      dim_type operator()(dim_type in) const { return permutator_[in]; }
 
-      void setPermutation(short index, short mappedTo) { permutator_[index] = mappedTo; };
+      void setPermutation(dim_type index, dim_type mappedTo) { permutator_[index] = mappedTo; };
 
       void print() const
       {
-        for (dim_type i=0; i<num_vertices; ++i)
+        for (dim_type i=0; i<static_cast<dim_type>(num_vertices); ++i)
         {
           std::cout << i << "->" << permutator_[i] << ",";
         }

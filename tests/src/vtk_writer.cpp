@@ -15,7 +15,9 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
-//#define VIENNAGRID_DEBUG_IO
+#ifdef _MSC_VER      //Visual Studio complains about potentially dangerous things, which are perfectly legal in our context
+  #pragma warning( disable : 4355 )
+#endif
 
 #include <iostream>
 #include <ostream>
@@ -253,12 +255,7 @@ int main()
   std::cout << "* Test started! *" << std::endl;
   std::cout << "*****************" << std::endl;
   
-  #ifdef _MSC_VER      //Visual Studio builds in a subfolder
-  std::string path = "../../../examples/data/";
-  #else
   std::string path = "../../examples/data/";
-  #endif
-  
   
   std::string infile = path + "twocubes.mesh";
   std::string outfile = "vtk_writer"; // without ending

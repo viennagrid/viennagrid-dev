@@ -92,7 +92,7 @@ namespace viennagrid
             typename DimTag>
   class point; */
 
-  template <typename CoordType, dim_type d, typename CoordinateSystem = cartesian_cs>
+  template <typename CoordType, long d, typename CoordinateSystem = cartesian_cs>
   class point;
   
   template <typename T_Configuration, typename ElementTag>
@@ -131,12 +131,12 @@ namespace viennagrid
   };
 
   template <typename host_element,
-            dim_type dim,
+            long dim,
             bool is_coboundary = false>
   class ncell_range;
 
   template <typename host_element,
-            dim_type dim,
+            long dim,
             bool is_coboundary = false>
   class const_ncell_range;
   
@@ -202,7 +202,7 @@ namespace viennagrid
       T & t;
   };
   
-  //template <dim_type dim, typename Config, typename ElementTag>
+  //template <long dim, typename Config, typename ElementTag>
   //ncell_proxy< element<Config, ElementTag> >
   //ncells(element<Config, ElementTag> & d);
 
@@ -262,7 +262,7 @@ namespace viennagrid
   
   namespace result_of
   {
-    template <typename T, dim_type dim = 0>
+    template <typename T, long dim = 0>
     struct iterator;
     
     template <typename T>
@@ -291,18 +291,18 @@ namespace viennagrid
 
     
     template <typename T,   //type of host (domain, segment, other element)
-              dim_type dim,
-              dim_type cell_level = config<T>::type::cell_tag::topology_level>
+              long dim,
+              long cell_level = config<T>::type::cell_tag::topology_level>
     struct element_container;
     
     template <typename T, 
-              dim_type dim>  //topological level
+              long dim>  //topological level
     struct ncell_range;
     
     
     template <typename Config,
-              dim_type dim,
-              dim_type cell_level = Config::cell_tag::topology_level>
+              long dim,
+              long cell_level = Config::cell_tag::topology_level>
     struct ncell
     {
       typedef element_t<Config, 
@@ -312,7 +312,7 @@ namespace viennagrid
     };
     
     template <typename Config,
-              dim_type cell_level>
+              long cell_level>
     struct ncell <Config, cell_level, cell_level>
     {
       typedef element_t<Config, 
@@ -328,7 +328,7 @@ namespace viennagrid
     };
     
     
-    template <typename T, dim_type dim = T::element_tag::topology_level>
+    template <typename T, long dim = T::element_tag::topology_level>
     struct element_tag
     {
       typedef typename viennagrid::topology::subelements<typename T::element_tag,
@@ -337,10 +337,10 @@ namespace viennagrid
     
     
     
-    template <typename T, dim_type dim>
+    template <typename T, long dim>
     struct subelement_handling
     {
-      typedef full_handling_tag    type;  //TODO: Think about whether this is a good choice...
+      typedef full_handling_tag    type;
     };
     
     // Vertex level always uses full handling (it is the defining entity of an element).
@@ -350,12 +350,14 @@ namespace viennagrid
     {
       typedef full_handling_tag    type; 
     };
+    
+    
 
     //for domains
-    template <typename T, dim_type dim>
+    template <typename T, long dim>
     struct subelement_handling< domain_t<T>, dim>
     {
-      typedef full_handling_tag    type;  //TODO: Think about whether this is a good choice...
+      typedef full_handling_tag    type;
     };
     
     // Vertex level always uses full handling (it is the defining entity of an element).
@@ -366,17 +368,24 @@ namespace viennagrid
       typedef full_handling_tag    type; 
     };
 
+    
     //for segments:
-    template <typename T, dim_type dim>
+    template <typename T, long dim>
     struct subelement_handling< segment_t<T>, dim>
     {
-      typedef typename subelement_handling<typename T::cell_tag, dim>::type    type;  //TODO: Think about whether this is a good choice...
+      typedef typename subelement_handling<typename T::cell_tag, dim>::type    type;
+    };
+
+    template <typename T>
+    struct subelement_handling< segment_t<T>, 0>  //avoid ambiguities
+    {
+      typedef typename subelement_handling<typename T::cell_tag, 0>::type    type;
     };
     
   }
   
   // providing forwards for the ncells function
-  template <dim_type dim, typename DomainConfig>
+  template <long dim, typename DomainConfig>
   ncell_range<domain_t<DomainConfig>, dim>
   ncells(domain_t<DomainConfig> & d);
 
@@ -384,7 +393,7 @@ namespace viennagrid
   ncell_proxy< domain_t<DomainConfig> >
   ncells(domain_t<DomainConfig> & d);
 
-  template <dim_type dim, typename DomainConfig>
+  template <long dim, typename DomainConfig>
   ncell_range<segment_t<DomainConfig>, dim>
   ncells(segment_t<DomainConfig> & d);
 
@@ -392,7 +401,7 @@ namespace viennagrid
   ncell_proxy< segment_t<DomainConfig> >
   ncells(segment_t<DomainConfig> & d);
 
-  template <dim_type dim, typename Config, typename ElementTag>
+  template <long dim, typename Config, typename ElementTag>
   typename result_of::ncell_range< element_t<Config, ElementTag>, dim>::type
   ncells(element_t<Config, ElementTag> & d);
   

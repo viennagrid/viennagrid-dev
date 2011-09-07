@@ -70,16 +70,42 @@ namespace viennagrid
         domain_type * domain_;
     };
     
+    template <typename Config,
+              long dim>
+    class segment_layers_full;
+
+    template <typename Config,
+              long dim>
+    class segment_layers_empty;
+    
     
     template <typename Config,
-              dim_type dim,
-              typename handling_tag>
-    class segment_layers : //public segment_layers<Config, 0, handling_tag>
-                          public segment_layers<Config,
-                                                dim - 1, 
-                                                typename result_of::subelement_handling<typename Config::cell_tag,
-                                                                                        dim-1>::type
-                                                >
+              long dim,
+              typename handling_tag = typename result_of::subelement_handling<segment_t<Config>, dim>::type
+              >
+    struct next_segment_layer_selector
+    {
+      typedef segment_layers_full<Config, dim>    type;
+    };
+    
+    template <typename Config, long dim>
+    struct next_segment_layer_selector<Config, dim, no_handling_tag>
+    {
+      typedef segment_layers_empty<Config, dim>   type;
+    };
+    
+    template <typename Config, typename handling_tag>
+    struct next_segment_layer_selector<Config, 0, handling_tag>
+    {
+      typedef segment_layers_full<Config, 0>    type;
+    };
+    
+    
+    //full handling:
+    template <typename Config,
+              long dim>
+    class segment_layers_full : //public segment_layers<Config, 0, handling_tag>
+                          public next_segment_layer_selector<Config, dim-1>::type
                           //public segment_domain_holder<Config>
     {
         typedef typename Config::cell_tag                                      CellTag;
@@ -90,11 +116,7 @@ namespace viennagrid
         typedef viennagrid::element_t<Config, typename Config::cell_tag>                   CellType;
         typedef typename viennagrid::result_of::element_container< segment_t<Config>,
                                                       dim>::type                   container_type;
-        typedef segment_layers<Config,
-                              dim - 1,
-                              typename viennagrid::result_of::subelement_handling<typename Config::cell_tag,
-                                                                                  dim-1>::type
-                              >                  base_type;
+        typedef typename next_segment_layer_selector<Config, dim-1>::type                  base_type;
         
       public:
         
@@ -111,28 +133,28 @@ namespace viennagrid
         ///////////////////// container retrieval /////////////////////////
 
         //non-const:
-        template <dim_type dim_container>
+        template <long dim_container>
         typename viennagrid::result_of::element_container< segment_t<Config>, dim_container>::type * 
         container() { return container<dim_container>(typename level_discriminator<dim, dim_container>::result_type()); }
         
-        template <dim_type dim_container>
+        template <long dim_container>
         typename viennagrid::result_of::element_container< segment_t<Config>, dim_container>::type * 
         container(equal_tag) { return &elements; }
 
-        template <dim_type dim_container>
+        template <long dim_container>
         typename viennagrid::result_of::element_container< segment_t<Config>, dim_container>::type * 
         container(less_tag) { return base_type::template container<dim_container>(); }
 
         //const:
-        template <dim_type dim_container>
+        template <long dim_container>
         const typename viennagrid::result_of::element_container< segment_t<Config>, dim_container>::type * 
         container() const { return container<dim_container>(typename level_discriminator<dim, dim_container>::result_type()); }
         
-        template <dim_type dim_container>
+        template <long dim_container>
         const typename viennagrid::result_of::element_container< segment_t<Config>, dim_container>::type * 
         container(equal_tag) const { return &elements; }
 
-        template <dim_type dim_container>
+        template <long dim_container>
         const typename viennagrid::result_of::element_container< segment_t<Config>, dim_container>::type * 
         container(less_tag) const { return base_type::template container<dim_container>(); }
         
@@ -141,78 +163,10 @@ namespace viennagrid
         container_type elements;
     };
 
-    //specialization: no handling of elements by cells on that level. Therefore, don't handle it within segments as well.
-    template <typename Config,
-              dim_type dim>
-    class segment_layers<Config, dim, no_handling_tag> :
-                          public segment_layers<Config,
-                                                dim - 1,
-                                                typename viennagrid::result_of::subelement_handling<typename Config::cell_tag, dim-1>::type
-                                                >
-    {
-        typedef typename Config::cell_tag                                      CellTag;
-        typedef typename viennagrid::topology::subelements<CellTag, dim>::element_tag     ElementTag;
-        typedef viennagrid::element_t<Config, ElementTag >                                 LevelElementType;
-        typedef typename viennagrid::topology::subelements<CellTag, 0>::element_tag       VertexTag; 
-        typedef viennagrid::element_t<Config, VertexTag >                                  VertexType;
-        typedef viennagrid::element_t<Config, typename Config::cell_tag>                   CellType;
-        typedef typename viennagrid::result_of::element_container< segment_t<Config>,
-                                                      dim>::type                   container_type;
-        typedef segment_layers<Config,
-                              dim - 1,
-                              typename viennagrid::result_of::subelement_handling<CellTag,
-                                                                                  dim-1>::type
-                              >                                                base_type;
-        
-      public:
-        
-        void fill(CellType & cell)
-        {
-          //nothing to do here. Just forward to lower level:
-          base_type::fill(cell);
-        }
-        
-        ///////////////////// container retrieval /////////////////////////
-
-        //non-const:
-        template <dim_type dim_container>
-        typename result_of::element_container< segment_t<Config>, dim_container>::type * 
-        container() { return container<dim_container>(typename level_discriminator<dim, dim_container>::result_type()); }
-        
-        template <dim_type dim_container>
-        typename result_of::element_container< segment_t<Config>, dim_container>::type * 
-        container(equal_tag)
-        { 
-          typedef typename result_of::subelement_handling<CellTag, dim>::ERROR_HANDLING_OF_ELEMENTS_AT_THIS_TOPOLOGICAL_LEVEL_NOT_PROVIDED   error_type;
-          return NULL; 
-        }
-
-        template <dim_type dim_container>
-        typename result_of::element_container< segment_t<Config>, dim_container>::type * 
-        container(less_tag) { return base_type::template container<dim_container>(); }
-
-        //const:
-        template <dim_type dim_container>
-        const typename result_of::element_container< segment_t<Config>, dim_container>::type * 
-        container() const { return container<dim_container>(typename level_discriminator<dim, dim_container>::result_type()); }
-        
-        template <dim_type dim_container>
-        const typename result_of::element_container< segment_t<Config>, dim_container>::type * 
-        container(equal_tag) const
-        { 
-          typedef typename result_of::subelement_handling<CellTag, dim>::ERROR_HANDLING_OF_ELEMENTS_AT_THIS_TOPOLOGICAL_LEVEL_NOT_PROVIDED   error_type;
-          return NULL; 
-        }
-
-        template <dim_type dim_container>
-        const typename result_of::element_container< segment_t<Config>, dim_container>::type * 
-        container(less_tag) const { return base_type::template container<dim_container>(); }
-        
-    };
     
     //vertex level:
-    template <typename Config, typename handling_tag>
-    class segment_layers<Config, 0, handling_tag> : public segment_domain_holder<Config>
+    template <typename Config>
+    class segment_layers_full<Config, 0> : public segment_domain_holder<Config>
     {
         typedef typename Config::cell_tag                                 CellTag;
         typedef typename viennagrid::topology::subelements<CellTag, 0>::element_tag    VertexTag;
@@ -232,10 +186,10 @@ namespace viennagrid
         }
         
         
-        template <dim_type dim>
+        template <long dim>
         const ContainerType * container() const { return &elements; }
 
-        template <dim_type dim>
+        template <long dim>
         ContainerType * container() { return &elements; }
 
       private:
@@ -243,12 +197,71 @@ namespace viennagrid
     };
 
     
+    //no handling of elements by cells on that level. Therefore, don't handle it within segments as well.
     template <typename Config,
-              dim_type dim>
-    class segment_layers_top : public segment_layers<Config,
-                                                    dim - 1,
-                                                    typename result_of::subelement_handling<typename Config::cell_tag, dim-1>::type
-                                                    >
+              long dim>
+    class segment_layers_empty : public next_segment_layer_selector<Config, dim-1>::type
+    {
+        typedef typename Config::cell_tag                                      CellTag;
+        typedef typename viennagrid::topology::subelements<CellTag, dim>::element_tag     ElementTag;
+        typedef viennagrid::element_t<Config, ElementTag >                                 LevelElementType;
+        typedef typename viennagrid::topology::subelements<CellTag, 0>::element_tag       VertexTag; 
+        typedef viennagrid::element_t<Config, VertexTag >                                  VertexType;
+        typedef viennagrid::element_t<Config, typename Config::cell_tag>                   CellType;
+        typedef typename viennagrid::result_of::element_container< segment_t<Config>,
+                                                      dim>::type                   container_type;
+        typedef typename next_segment_layer_selector<Config, dim-1>::type          base_type;
+        
+      public:
+        
+        void fill(CellType & cell)
+        {
+          //nothing to do here. Just forward to lower level:
+          base_type::fill(cell);
+        }
+        
+        ///////////////////// container retrieval /////////////////////////
+
+        //non-const:
+        template <long dim_container>
+        typename result_of::element_container< segment_t<Config>, dim_container>::type * 
+        container() { return container<dim_container>(typename level_discriminator<dim, dim_container>::result_type()); }
+        
+        template <long dim_container>
+        typename result_of::element_container< segment_t<Config>, dim_container>::type * 
+        container(equal_tag)
+        { 
+          typedef typename result_of::subelement_handling<CellTag, dim>::ERROR_HANDLING_OF_ELEMENTS_AT_THIS_TOPOLOGICAL_LEVEL_NOT_PROVIDED   error_type;
+          return NULL; 
+        }
+
+        template <long dim_container>
+        typename result_of::element_container< segment_t<Config>, dim_container>::type * 
+        container(less_tag) { return base_type::template container<dim_container>(); }
+
+        //const:
+        template <long dim_container>
+        const typename result_of::element_container< segment_t<Config>, dim_container>::type * 
+        container() const { return container<dim_container>(typename level_discriminator<dim, dim_container>::result_type()); }
+        
+        template <long dim_container>
+        const typename result_of::element_container< segment_t<Config>, dim_container>::type * 
+        container(equal_tag) const
+        { 
+          typedef typename result_of::subelement_handling<CellTag, dim>::ERROR_HANDLING_OF_ELEMENTS_AT_THIS_TOPOLOGICAL_LEVEL_NOT_PROVIDED   error_type;
+          return NULL; 
+        }
+
+        template <long dim_container>
+        const typename result_of::element_container< segment_t<Config>, dim_container>::type * 
+        container(less_tag) const { return base_type::template container<dim_container>(); }
+        
+    };
+
+    
+    template <typename Config,
+              long dim>
+    class segment_layers_top : public next_segment_layer_selector<Config, dim-1>::type
     {
         typedef typename Config::cell_tag                                                        CellTag;
         typedef typename viennagrid::topology::subelements<typename Config::cell_tag, dim>::element_tag     ElementTag;
@@ -257,11 +270,7 @@ namespace viennagrid
         typedef viennagrid::element_t<Config, VertexTag >                                               VertexType;
         typedef viennagrid::element_t<Config, typename Config::cell_tag>                                 CellType;
         typedef typename viennagrid::result_of::element_container< segment_t<Config>, dim>::type      container_type;
-        typedef segment_layers<Config,
-                              dim - 1,
-                              typename viennagrid::result_of::subelement_handling<typename Config::cell_tag,
-                                                                                  dim-1>::type
-                              >                                                              base_type;
+        typedef typename next_segment_layer_selector<Config, dim-1>::type                             base_type;
         
       public:
         
@@ -278,28 +287,28 @@ namespace viennagrid
         ///////////////////// container retrieval /////////////////////////
 
         //non-const:
-        template <dim_type dim_container>
+        template <long dim_container>
         typename viennagrid::result_of::element_container< segment_t<Config>, dim_container>::type * 
         container() { return container<dim_container>(typename level_discriminator<dim, dim_container>::result_type()); }
         
-        template <dim_type dim_container>
+        template <long dim_container>
         typename viennagrid::result_of::element_container< segment_t<Config>, dim_container>::type * 
         container(equal_tag) { return &elements; }
 
-        template <dim_type dim_container>
+        template <long dim_container>
         typename viennagrid::result_of::element_container< segment_t<Config>, dim_container>::type * 
         container(less_tag) { return base_type::template container<dim_container>(); }
 
         //const:
-        template <dim_type dim_container>
+        template <long dim_container>
         const typename viennagrid::result_of::element_container< segment_t<Config>, dim_container>::type * 
         container() const { return container<dim_container>(typename level_discriminator<dim, dim_container>::result_type()); }
         
-        template <dim_type dim_container>
+        template <long dim_container>
         const typename viennagrid::result_of::element_container< segment_t<Config>, dim_container>::type * 
         container(equal_tag) const { return &elements; }
 
-        template <dim_type dim_container>
+        template <long dim_container>
         const typename viennagrid::result_of::element_container< segment_t<Config>, dim_container>::type * 
         container(less_tag) const { return base_type::template container<dim_container>(); }
         
@@ -314,7 +323,7 @@ namespace viennagrid
   namespace result_of
   {
     //at cell level
-    template <typename config_type, dim_type cell_level>
+    template <typename config_type, long cell_level>
     struct element_container< segment_t<config_type>, cell_level, cell_level>
     {
       typedef typename viennagrid::result_of::ncell<config_type, cell_level>::type     element_type;
@@ -323,7 +332,7 @@ namespace viennagrid
     };
 
     //at vertex level
-    template <typename config_type, dim_type cell_level>
+    template <typename config_type, long cell_level>
     struct element_container< segment_t<config_type>, 0, cell_level>
     {
       typedef typename viennagrid::result_of::ncell<config_type, 0>::type     element_type;
@@ -332,7 +341,7 @@ namespace viennagrid
     };
 
     //at any other level:
-    template <typename config_type, dim_type dim, dim_type cell_level>
+    template <typename config_type, long dim, long cell_level>
     struct element_container< segment_t<config_type>, dim, cell_level>
     {
       typedef typename viennagrid::result_of::ncell<config_type, dim>::type     element_type;

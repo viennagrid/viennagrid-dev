@@ -16,7 +16,10 @@ ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 
 #add definitions, compiler switches, etc.
 #ADD_DEFINITIONS(-Wall -pedantic -O3)
-ADD_DEFINITIONS(-Wall -pedantic -O0 -g)
+IF(CMAKE_COMPILER_IS_GNUCXX)
+   ADD_DEFINITIONS(-Wall -pedantic -O0 -g)
+   #ADD_DEFINITIONS(-Wall -pedantic -O3)
+ENDIF(CMAKE_COMPILER_IS_GNUCXX)
 
 
 #-----------------------------------------------------------------------------

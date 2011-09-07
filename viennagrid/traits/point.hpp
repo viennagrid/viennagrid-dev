@@ -31,7 +31,7 @@ namespace viennagrid
     template <typename PointType>
     struct dimension;
     
-    template <typename CoordType, viennagrid::dim_type d, typename CoordinateSystem>
+    template <typename CoordType, long d, typename CoordinateSystem>
     struct dimension< point<CoordType, d, CoordinateSystem> >
     {
       enum { value = d };
@@ -48,7 +48,7 @@ namespace viennagrid
       typedef typename PointType::ERROR_UNKNOWN_COORDINATE_SYSTEM_FOR_POINT_TYPE    type;
     };
     
-    template <typename CoordType, viennagrid::dim_type d, typename CoordinateSystem>
+    template <typename CoordType, long d, typename CoordinateSystem>
     struct coordinate_system< point<CoordType, d, CoordinateSystem> >
     {
       typedef CoordinateSystem    type;
@@ -61,7 +61,7 @@ namespace viennagrid
     template <typename PointType>
     struct static_size;
 
-    template <typename CoordType, viennagrid::dim_type d, typename CoordinateSystem>
+    template <typename CoordType, long d, typename CoordinateSystem>
     struct static_size< point<CoordType, d, CoordinateSystem> >
     {
       enum { value = d };
@@ -80,7 +80,7 @@ namespace viennagrid
     template <typename PointType>
     struct value_type;
 
-    template <typename CoordType, viennagrid::dim_type d, typename CoordinateSystem>
+    template <typename CoordType, long d, typename CoordinateSystem>
     struct value_type< point<CoordType, d, CoordinateSystem> >
     {
       typedef CoordType    type;
