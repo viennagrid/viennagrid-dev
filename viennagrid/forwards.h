@@ -88,12 +88,8 @@ namespace viennagrid
   struct triangle_tag;
 
   //forward declarations:
-  /*template <typename NumericT,
-            typename DimTag>
-  class point; */
-
   template <typename CoordType, long d, typename CoordinateSystem = cartesian_cs>
-  class point;
+  class point_t;
   
   template <typename T_Configuration, typename ElementTag>
   class element_t;
@@ -323,8 +319,7 @@ namespace viennagrid
     template <typename Config>
     struct point
     {
-      //typedef point<typename Config::numeric_type, typename Config::dimension_tag>   type;
-      typedef viennagrid::point<typename Config::numeric_type, Config::dimension_tag::value>   type;
+      typedef viennagrid::point_t<typename Config::numeric_type, Config::dimension_tag::value>   type;
     };
     
     
@@ -417,7 +412,7 @@ namespace viennagrid
    // norm tags/types for: algorithm/cell_normals.hpp
    struct seg_cell_normal_tag {};
    struct seg_cell_normal_data {
-      typedef viennagrid::point<double, 3>         point_type;
+      typedef viennagrid::point_t<double, 3>         point_type;
       typedef std::map<std::size_t, point_type>    type;
    };
    

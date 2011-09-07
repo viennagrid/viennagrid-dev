@@ -105,13 +105,13 @@ namespace viennagrid
     template <typename PointType>
     struct cartesian_point
     {
-      typedef viennagrid::point<typename traits::value_type<PointType>::type,
+      typedef viennagrid::point_t<typename traits::value_type<PointType>::type,
                                 PointType::dim,
                                 viennagrid::cartesian_cs>                    type;
     };
     
     /*template <typename PointType>
-    struct cartesian_point<PointType, viennagrid::cartesian_cs>
+    struct cartesian_point_t<PointType, viennagrid::cartesian_cs>
     {
       typedef PointType         type;
     };*/
@@ -311,7 +311,7 @@ namespace viennagrid
     template <typename PointType>
     static PointType add(PointType const & p1, PointType const & p2)
     {
-      typedef point<typename PointType::value_type, PointType::dim, cartesian_cs>      CartesianPointType;
+      typedef point_t<typename PointType::value_type, PointType::dim, cartesian_cs>      CartesianPointType;
       
       assert(p1.size() == p2.size());
       
@@ -330,7 +330,7 @@ namespace viennagrid
     template <typename PointType>
     static void inplace_add(PointType & p1, PointType const & p2)
     {
-      typedef point<typename PointType::value_type, PointType::dim, cartesian_cs>      CartesianPointType;
+      typedef point_t<typename PointType::value_type, PointType::dim, cartesian_cs>      CartesianPointType;
       
       assert(p1.size() == p2.size());
       
@@ -347,7 +347,7 @@ namespace viennagrid
     template <typename PointType>
     static PointType subtract(PointType const & p1, PointType const & p2)
     {
-      typedef point<typename PointType::value_type, PointType::dim, cartesian_cs>      CartesianPointType;
+      typedef point_t<typename PointType::value_type, PointType::dim, cartesian_cs>      CartesianPointType;
       
       assert(p1.size() == p2.size());
       
@@ -366,7 +366,7 @@ namespace viennagrid
     template <typename PointType>
     static void inplace_subtract(PointType & p1, PointType const & p2)
     {
-      typedef point<typename PointType::value_type, PointType::dim, cartesian_cs>      CartesianPointType;
+      typedef point_t<typename PointType::value_type, PointType::dim, cartesian_cs>      CartesianPointType;
       
       assert(p1.size() == p2.size());
       
@@ -409,7 +409,7 @@ namespace viennagrid
     template <typename PointType>
     static PointType & inplace_stretch(PointType & p1, typename traits::value_type<PointType>::type factor)
     {
-      typedef point<typename PointType::value_type, PointType::dim, cartesian_cs>      CartesianPointType;
+      typedef point_t<typename PointType::value_type, PointType::dim, cartesian_cs>      CartesianPointType;
       
       coordinate_converter<PointType, CartesianPointType, cylindrical_cs, cartesian_cs>  cs_to_cartesian;
       coordinate_converter<CartesianPointType, PointType, cartesian_cs, cylindrical_cs>  cartesian_to_cs;
@@ -486,7 +486,7 @@ namespace viennagrid
    * 
    */
   template <typename CoordType, long d, typename CoordinateSystem>
-  class point
+  class point_t
   {
     public:
       typedef CoordType       value_type;
@@ -494,31 +494,31 @@ namespace viennagrid
       
       enum { dim = d };
       
-      point() 
+      point_t() 
       {
         point_filler<CoordType, d>::apply(coords, 0, 0, 0);  //make sure that there is no bogus in the coords-array
       }
       
-      point(CoordType x, CoordType y = 0, CoordType z = 0)
+      point_t(CoordType x, CoordType y = 0, CoordType z = 0)
       {
         point_filler<CoordType, d>::apply(coords, x, y, z);
       }
       
       template <typename CoordType2, typename CoordinateSystem2>
-      point(point<CoordType2, d, CoordinateSystem2> const & p2)
+      point_t(point_t<CoordType2, d, CoordinateSystem2> const & p2)
       {
         //std::cout << "Copy CTOR!" << std::endl;
-        *this = coordinate_converter<point<CoordType2, d, CoordinateSystem2>, point>()(p2);
+        *this = coordinate_converter<point_t<CoordType2, d, CoordinateSystem2>, point_t>()(p2);
       }
 
       //explicit copy CTOR
-      point(point const & other)
+      point_t(point_t const & other)
       {
         for (size_type i=0; i<size_type(d); ++i)
           coords[i] = other.coords[i];
       }
 
-      point & operator=(point const & p2)
+      point_t & operator=(point_t const & p2)
       {
         for (size_type i=0; i<size_type(d); ++i)
           coords[i] = p2.coords[i];
@@ -527,10 +527,10 @@ namespace viennagrid
       
       
       template <typename CoordType2, typename CoordinateSystem2>
-      point & operator=(point<CoordType2, d, CoordinateSystem2> const & p2)
+      point_t & operator=(point_t<CoordType2, d, CoordinateSystem2> const & p2)
       {
         //std::cout << "Assignment operator!" << std::endl;
-        *this = coordinate_converter<point<CoordType2, d, CoordinateSystem2>, point>()(p2);
+        *this = coordinate_converter<point_t<CoordType2, d, CoordinateSystem2>, point_t>()(p2);
         return *this;
       }
       
@@ -570,23 +570,23 @@ namespace viennagrid
       //
       
       //with point:
-      point operator+(point const & other) const
+      point_t operator+(point_t const & other) const
       {
         return CoordinateSystem::add(*this, other);
       }
 
-      point & operator+=(point const & other)
+      point_t & operator+=(point_t const & other)
       {
         CoordinateSystem::inplace_add(*this, other);
         return *this;
       }
 
-      point operator-(point const & other) const
+      point_t operator-(point_t const & other) const
       {
         return CoordinateSystem::subtract(*this, other);
       }
       
-      point & operator-=(point const & other)
+      point_t & operator-=(point_t const & other)
       {
         CoordinateSystem::inplace_subtract(*this, other);
         return *this;
@@ -594,7 +594,7 @@ namespace viennagrid
       
       
       //with CoordType
-      point & operator*=(CoordType factor)
+      point_t & operator*=(CoordType factor)
       {
         CoordinateSystem::inplace_stretch(*this, factor);
         //for (size_type i=0; i<d; ++i)
@@ -602,7 +602,7 @@ namespace viennagrid
         return *this;
       }
       
-      point & operator/=(CoordType factor)
+      point_t & operator/=(CoordType factor)
       {
         CoordinateSystem::inplace_stretch(*this, 1.0 / factor);
         //for (size_type i=0; i<d; ++i)
@@ -610,20 +610,20 @@ namespace viennagrid
         return *this;
       }
 
-      point operator*(CoordType factor) const
+      point_t operator*(CoordType factor) const
       {
-        point ret(*this);
+        point_t ret(*this);
         return CoordinateSystem::inplace_stretch(ret, factor);
         //for (size_type i=0; i<d; ++i)
         //  ret[i] = coords[i] * factor;
         //return ret;
       }
 
-      point operator/(CoordType factor) const
+      point_t operator/(CoordType factor) const
       {
-        point ret(*this);
+        point_t ret(*this);
         return CoordinateSystem::inplace_stretch(ret, 1.0 / factor);
-        //point ret;
+        //point_t ret;
         //for (size_type i=0; i<d; ++i)
         //  ret[i] = coords[i] / factor;
         //return ret;
@@ -635,23 +635,23 @@ namespace viennagrid
 
   
   template <typename CoordType, long d, typename CoordinateSystem>
-  point<CoordType, d, CoordinateSystem>
-  operator*(double val, point<CoordType, d, CoordinateSystem> const & p)
+  point_t<CoordType, d, CoordinateSystem>
+  operator*(double val, point_t<CoordType, d, CoordinateSystem> const & p)
   {
     return p * val;
   }
 
 /*  template <typename CoordType, long d, typename CoordinateSystem>
-  point<CoordType, d, CoordinateSystem>
-  operator*(CoordType val, point<CoordType, d, CoordinateSystem> const & p)
+  point_t<CoordType, d, CoordinateSystem>
+  operator*(CoordType val, point_t<CoordType, d, CoordinateSystem> const & p)
   {
     return p * val;
   }*/
 
   template <typename CoordType, long d, typename CoordinateSystem>
-  std::ostream& operator << (std::ostream & os, point<CoordType, d, CoordinateSystem> const & p)
+  std::ostream& operator << (std::ostream & os, point_t<CoordType, d, CoordinateSystem> const & p)
   {
-    typedef typename point<CoordType, d, CoordinateSystem>::size_type      size_type;
+    typedef typename point_t<CoordType, d, CoordinateSystem>::size_type      size_type;
     for (size_type i=0; i<static_cast<size_type>(d); ++i)
       os << p[i] << " ";
     return os;

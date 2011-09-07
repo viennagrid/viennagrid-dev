@@ -19,8 +19,8 @@ the mailing list at \\
 
 \begin{itemize}
  \item A recent C++ compiler (e.g.~{\GCC} version 4.2.x or above and Visual C++
-2008 are known to work)
- \item {\ViennaData} \cite{ViennaData}. To make {\ViennaGrid} self-contained, a copy of the {\ViennaData} sources is available in the \lstinline|external/| folder.
+2005 or above are known to work)
+ \item {\ViennaData}~\cite{ViennaData}, version 1.0.1 or above. To make {\ViennaGrid} self-contained, a copy of the {\ViennaData} sources is available in the \lstinline|viennagrid/| folder.
  \item {\CMake}~\cite{cmake} as build system (optional, but recommended
 for building the examples)
 \end{itemize}
@@ -29,7 +29,7 @@ for building the examples)
 \section{Generic Installation of ViennaGrid} \label{sec:viennagrid-installation}
 Since {\ViennaGrid} is a header-only library, it is sufficient to copy the 
 \lstinline|viennagrid/| source folder either into your project folder or to your global system
-include path. If you do not have {\ViennaData} installed, proceed in the same way for the respective source folder \lstinline|external/viennadata/|. 
+include path. If you do not have {\ViennaData} installed, proceed in the same way for the respective source folder \lstinline|viennadata/|. 
 
 On Unix-like operating systems, the global system include path is usually \lstinline|/usr/include/| or \lstinline|/usr/local/include/|.
 On Windows, the situation strongly depends on your development environment. We
@@ -52,11 +52,17 @@ Tab.~\ref{tab:tutorial-dependencies}.
 
 \begin{table}[tb]
 \begin{center}
-\begin{tabular}{l|p{8.5cm}}
+\begin{tabular}{l|p{9.3cm}}
 File & Purpose\\
 \hline
-\texttt{tutorial/access.cpp}    & Shows the use of \lstinline|access| \\
-\texttt{benchmarks/sparse-custom.cpp}  & Benchmarks for a sparse storage scheme with custom object identification \\
+\texttt{tutorial/algorithms.cpp}      & Demonstrates the algorithms provided, cf.~Chapter \ref{chap:algorithms} \\
+\texttt{tutorial/domain\_setup.cpp}   & Fill a domain with cells, cf.~Chapter \ref{chap:domainsetup} \\
+\texttt{tutorial/finite\_volumes.cpp} & Generic implementation of the finite volume method (assembly) \\
+\texttt{tutorial/io.cpp}              & Explains input-output operations, cf.~Chapter \ref{chap:io} \\
+\texttt{tutorial/iterators.cpp}       & Shows how the domain and segments can be traversed, cf.~Chapter \ref{chap:iterators} \\
+\texttt{tutorial/multi\_segment.cpp}  & Explains multi-segment capabilities, cf.~Chapter \ref{chap:domainsetup} \\
+\texttt{tutorial/slim\_domain.cpp}    & Customizes ViennaGrid such that no edges are stored, cf.~Chapter \ref{chap:domainconfig} \\
+%\texttt{benchmarks/sparse-custom.cpp  & Benchmarks for a sparse storage scheme with custom object identification \\
 \end{tabular}
 \caption{Overview of the sample applications in the \texttt{examples/} folder}
 \label{tab:tutorial-dependencies}
@@ -79,8 +85,8 @@ to obtain a Makefile and type
 \end{lstlisting}
 to build the examples. If desired, one can build each example separately instead:
 \begin{lstlisting}
- $> make access            #builds the access tutorial
- $> make dense             #builds dense storage benchmark
+ $> make algorithms     #builds the algorithms tutorial
+ $> make io             #builds the io tutorial
 \end{lstlisting}
 
 \TIP{Speed up the building process by using multiple concurrent jobs, e.g. \keyword{make -j4}.}
@@ -98,7 +104,7 @@ The build process of {\ViennaGrid} is similar to Linux.
 
 \subsection{Windows}
 In the following the procedure is outlined for \texttt{Visual Studio}: Assuming
-that {\CMake} is already installed, Visual Studio solution
+that {\CMake} is already installed, \texttt{Visual Studio} solution
 and project files can be created using {\CMake}:
 \begin{itemize}
 \item Open the {\CMake} GUI.
@@ -114,7 +120,7 @@ include and library paths are set correctly, see
 Sec.~\ref{sec:viennagrid-installation}).
 \end{itemize}
 
-
+Note that the examples should be executed from the \texttt{build/Debug} and \texttt{build/Release} folder respectively in order to access the correct input files.
 
 
 
