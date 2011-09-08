@@ -78,7 +78,7 @@ namespace viennagrid
   //generic segment iterator
   template <typename Config,
             long dim,
-            long cell_level = Config::cell_tag::topology_level>
+            long cell_level = Config::cell_tag::dim>
   struct segment_iterators;
   
   
@@ -91,7 +91,7 @@ namespace viennagrid
                     typename Config::cell_tag>    cell_type;
                     
     typedef typename result_of::element_container<segment_type,
-                                                  Config::cell_tag::topology_level>::type   container_type;
+                                                  Config::cell_tag::dim>::type   container_type;
     
     typedef typename container_type::iterator          iterator;
     typedef typename container_type::const_iterator    const_iterator;
@@ -108,7 +108,7 @@ namespace viennagrid
   {
       typedef segment_t<config_type>                        segment_type;
       typedef element_t< config_type,
-                       typename topology::subelements<typename config_type::cell_tag, dim>::element_tag
+                       typename topology::subelements<typename config_type::cell_tag, dim>::tag
                      >                                                         element_type;
                      
       typedef element_t< config_type,
@@ -187,7 +187,7 @@ namespace viennagrid
   {
       typedef segment_t<config_type>                        segment_type;
       typedef element_t< config_type,
-                       typename topology::subelements<typename config_type::cell_tag, dim>::element_tag
+                       typename topology::subelements<typename config_type::cell_tag, dim>::tag
                      >                                                         element_type;
 
       typedef element_t< config_type,

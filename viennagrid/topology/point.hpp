@@ -25,7 +25,7 @@ namespace viennagrid
 
   struct point_tag
   {
-    enum { topology_level = 0 };
+    enum { dim = 0 };
     static std::string name() { return "Point"; }
   };
 

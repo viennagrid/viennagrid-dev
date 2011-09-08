@@ -27,7 +27,7 @@ namespace viennagrid
 
   struct hexahedron_tag
   {
-    enum{ topology_level = 3 };
+    enum{ dim = 3 };
     static std::string name() { return "Hexahedron"; }
   };
   
@@ -38,25 +38,25 @@ namespace viennagrid
     template <>
     struct subelements<hexahedron_tag, 0>
     {
-      typedef point_tag             element_tag;
+      typedef point_tag             tag;
 
-      enum{ num_elements = 8 };     //8 vertices
+      enum{ num = 8 };     //8 vertices
     };
 
     template <>
     struct subelements<hexahedron_tag, 1>
     {
-      typedef line_tag              element_tag;
+      typedef line_tag              tag;
 
-      enum{ num_elements = 12 };     //12 edges
+      enum{ num = 12 };     //12 edges
     };
 
     template <>
     struct subelements<hexahedron_tag, 2>
     {
-      typedef quadrilateral_tag     element_tag;
+      typedef quadrilateral_tag     tag;
 
-      enum{ num_elements = 6 };     //6 facets
+      enum{ num = 6 };     //6 facets
     };
     
     

@@ -71,9 +71,9 @@ int main()
   typedef viennagrid::result_of::point<ConfigType>::type          PointType;
   typedef viennagrid::result_of::ncell<ConfigType, 0>::type       VertexType;
   typedef viennagrid::result_of::ncell<ConfigType,
-                                       CellTag::topology_level>::type   CellType;
+                                       CellTag::dim>::type   CellType;
 
-  typedef viennagrid::result_of::ncell_range<Segment, CellTag::topology_level>::type    CellRange;
+  typedef viennagrid::result_of::ncell_range<Segment, CellTag::dim>::type    CellRange;
   typedef viennagrid::result_of::iterator<CellRange>::type                             CellIterator;
 
   std::cout << "-------------------------------------------------------------- " << std::endl;

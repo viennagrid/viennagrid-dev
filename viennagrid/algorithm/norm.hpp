@@ -98,9 +98,9 @@ namespace viennagrid
     return detail::norm_impl<NormTag>()(to_cartesian(p));
   }
 
-  template<typename NormTag, typename PointType1>
+  template<typename NormTag, typename PointType1, long d>
   typename traits::value_type<PointType1>::type
-  norm_impl(PointType1 const & p, cartesian_cs)
+  norm_impl(PointType1 const & p, cartesian_cs<d>)
   {
     return detail::norm_impl<NormTag>()(p);
   }

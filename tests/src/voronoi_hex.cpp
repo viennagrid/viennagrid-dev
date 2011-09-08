@@ -132,7 +132,7 @@ void setup_device(DeviceType & device)
   typedef typename Config::cell_tag                  CellTag;
   
   typedef typename viennagrid::result_of::ncell<Config, 0>::type                         VertexType;
-  typedef typename viennagrid::result_of::ncell<Config, CellTag::topology_level>::type   CellType;
+  typedef typename viennagrid::result_of::ncell<Config, CellTag::dim>::type   CellType;
   
   
   //

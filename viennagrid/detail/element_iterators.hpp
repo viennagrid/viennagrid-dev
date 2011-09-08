@@ -143,7 +143,7 @@ namespace viennagrid
             long level>
   struct ElementIteratorChecker< ElementTag, level, full_handling_tag>
   {
-    enum{ ReturnValue = ElementTag::topology_level - level };
+    enum{ ReturnValue = ElementTag::dim - level };
   };
 
 
@@ -167,17 +167,17 @@ namespace viennagrid
   //interface function for container creation:
   
   // non-const:
-  template <typename config_type, typename element_tag, long dim>
-  class ncell_range < element_t<config_type, element_tag>, dim, false>
+  template <typename config_type, typename tag, long dim>
+  class ncell_range < element_t<config_type, tag>, dim, false>
   {
       typedef element_t< config_type,
-                       typename topology::subelements<element_tag, dim>::element_tag
+                       typename topology::subelements<tag, dim>::tag
                      >                                                         element_type;
                      
-      typedef element_t<config_type, element_tag>                                host_type;
+      typedef element_t<config_type, tag>                                host_type;
                      
       //typedef std::vector< element_type >     container_type;
-      typedef typename result_of::element_container<host_type, dim, config_type::cell_tag::topology_level>::type      container_type;
+      typedef typename result_of::element_container<host_type, dim, config_type::cell_tag::dim>::type      container_type;
     
     public: 
       //typedef typename container_type::iterator   iterator;
@@ -204,7 +204,7 @@ namespace viennagrid
       iterator end()   const
       {
         assert(cont_ != NULL);
-        return iterator(cont_ + topology::subelements<element_tag, dim>::num_elements);
+        return iterator(cont_ + topology::subelements<tag, dim>::num);
       }
       
       element_type & operator[](std::size_t index) const 
@@ -213,7 +213,7 @@ namespace viennagrid
         return *(cont_[index]); 
       }
       
-      std::size_t size() const { return topology::subelements<element_tag, dim>::num_elements; }
+      std::size_t size() const { return topology::subelements<tag, dim>::num; }
       
     private:
       container_type * cont_;
@@ -237,17 +237,17 @@ namespace viennagrid
   //
   // const container:
   //
-  template <typename config_type, typename element_tag, long dim>
-  class const_ncell_range < element_t<config_type, element_tag>, dim, false>
+  template <typename config_type, typename tag, long dim>
+  class const_ncell_range < element_t<config_type, tag>, dim, false>
   {
       typedef element_t< config_type,
-                       typename topology::subelements<element_tag, dim>::element_tag
+                       typename topology::subelements<tag, dim>::tag
                      >                                                         element_type;
                      
-      typedef element_t<config_type, element_tag>                                host_type;
+      typedef element_t<config_type, tag>                                host_type;
                      
       //typedef std::vector< element_type >     container_type;
-      typedef typename result_of::element_container<host_type, dim, config_type::cell_tag::topology_level>::type      container_type;
+      typedef typename result_of::element_container<host_type, dim, config_type::cell_tag::dim>::type      container_type;
     
     public: 
       //typedef typename container_type::iterator   iterator;
@@ -282,7 +282,7 @@ namespace viennagrid
       iterator end() const
       { 
         assert(cont_ != NULL);
-        return iterator(cont_ + topology::subelements<element_tag, dim>::num_elements);
+        return iterator(cont_ + topology::subelements<tag, dim>::num);
       }
       
       element_type const & operator[](std::size_t index) const 
@@ -291,7 +291,7 @@ namespace viennagrid
         return *(cont_[index]); 
       }
       
-      std::size_t size() const { return topology::subelements<element_tag, dim>::num_elements; }
+      std::size_t size() const { return topology::subelements<tag, dim>::num; }
       
     private:
       const container_type * cont_;
@@ -421,16 +421,16 @@ namespace viennagrid
                         segment_t<Config> >(e, seg);
   }
 
-  template <typename config_type, typename element_tag,
+  template <typename config_type, typename tag,
             long dim>
-  class ncell_range < element_t<config_type, element_tag>, dim, true>
+  class ncell_range < element_t<config_type, tag>, dim, true>
   {
       typedef element_t< config_type,
                        typename topology::subelements<typename config_type::cell_tag,
-                                               dim>::element_tag
+                                               dim>::tag
                      >                                                         element_type;
                      
-      typedef element_t<config_type, element_tag>                              host_type;
+      typedef element_t<config_type, tag>                              host_type;
       typedef std::vector<element_type *>                                      viennadata_container_type;
       typedef element_type *                                                   container_type;
     
@@ -470,7 +470,7 @@ namespace viennagrid
       iterator end()   const
       {
         assert(cont_ != NULL);
-        return iterator(cont_ + num_elements);
+        return iterator(cont_ + num);
       }
 
       element_type & operator[](std::size_t index) const 
@@ -479,7 +479,7 @@ namespace viennagrid
         return *(cont_[index]); 
       }
       
-      std::size_t size() const { return num_elements; }
+      std::size_t size() const { return num; }
       
       template <typename element_type, long dim2, bool b2>
       friend class const_ncell_range;
@@ -488,7 +488,7 @@ namespace viennagrid
       template <typename EnclosingType>
       void init(host_type const & e,
                 EnclosingType const & d)
-      //void init(cobnd_proxy< element<config_type, element_tag>,
+      //void init(cobnd_proxy< element<config_type, tag>,
       //                       EnclosingType> const & p)
       {
         typedef coboundary_key<EnclosingType, dim>   CoBoundaryKey;
@@ -499,7 +499,7 @@ namespace viennagrid
         if (viennadata::find<CoBoundaryKey,
                              viennadata_container_type >(key)(e) == NULL)
         {
-           init_coboundary< element_tag::topology_level,
+           init_coboundary< tag::dim,
                             dim,
                             viennadata_container_type>(key, d);
         }
@@ -507,11 +507,11 @@ namespace viennagrid
         viennadata_container_type & temp = viennadata::access<CoBoundaryKey,
                                                               viennadata_container_type>(key)(e);
         cont_ = &(temp[0]);
-        num_elements = temp.size();
+        num = temp.size();
       }
       
       container_type * cont_;
-      size_t num_elements;
+      size_t num;
   };
   
   
@@ -530,16 +530,16 @@ namespace viennagrid
       U const & u;
   };
   
-  template <typename config_type, typename element_tag,
+  template <typename config_type, typename tag,
             long dim>
-  class const_ncell_range < element_t<config_type, element_tag>, dim, true>
+  class const_ncell_range < element_t<config_type, tag>, dim, true>
   {
       typedef element_t< config_type,
                        typename topology::subelements<typename config_type::cell_tag,
-                                                     dim>::element_tag
+                                                     dim>::tag
                      >                                                         element_type;
                      
-      typedef element_t<config_type, element_tag>                                host_type;
+      typedef element_t<config_type, tag>                                host_type;
       typedef std::vector<element_type *>                                      viennadata_container_type;
       typedef element_type *                                                   container_type;
     
@@ -588,7 +588,7 @@ namespace viennagrid
       const_ncell_range & operator=(ncell_range<host_type, dim, true > const & other)
       { 
         cont_ = other.cont_;
-        num_elements = other.num_elements;
+        num = other.num;
         return *this;
       }
 
@@ -601,7 +601,7 @@ namespace viennagrid
       iterator end()   const
       {
         assert(cont_ != NULL);
-        return iterator(cont_ + num_elements);
+        return iterator(cont_ + num);
       }
       
       element_type const & operator[](std::size_t index) const 
@@ -610,14 +610,14 @@ namespace viennagrid
         return *(cont_[index]); 
       }
       
-      std::size_t size() const { return num_elements; }
+      std::size_t size() const { return num; }
       
     private:
       
       template <typename EnclosingType>
       void init(host_type const & e,
                 EnclosingType const & d)
-      //void init(const_cobnd_proxy< element<config_type, element_tag>,
+      //void init(const_cobnd_proxy< element<config_type, tag>,
       //                                         EnclosingType> const & p)
       {
         typedef coboundary_key<EnclosingType, dim>   CoBoundaryKey;
@@ -628,7 +628,7 @@ namespace viennagrid
         if (viennadata::find<CoBoundaryKey,
                              viennadata_container_type >(key)(e) == NULL)
         {
-           init_coboundary< element_tag::topology_level,
+           init_coboundary< tag::dim,
                             dim,
                             viennadata_container_type>(key, d);
         }
@@ -636,11 +636,11 @@ namespace viennagrid
         viennadata_container_type & temp = viennadata::access<CoBoundaryKey,
                                                               viennadata_container_type>(key)(e);
         cont_ = &(temp[0]);
-        num_elements = temp.size();
+        num = temp.size();
       }
       
       const container_type * cont_;
-      size_t num_elements;
+      size_t num;
   };
   
   
@@ -700,7 +700,7 @@ namespace viennagrid
     {
       typedef viennagrid::ncell_range<element_t<Config, ElementTag>,
                                           dim,
-                                          is_smaller<ElementTag::topology_level, dim>::value
+                                          is_smaller<ElementTag::dim, dim>::value
                                       > 
                                                    type;
     };
@@ -711,7 +711,7 @@ namespace viennagrid
     {
       typedef viennagrid::const_ncell_range<element_t<Config, ElementTag>,
                                              dim,
-                                             is_smaller<ElementTag::topology_level, dim>::value
+                                             is_smaller<ElementTag::dim, dim>::value
                                            > 
                                                    type;
     };
@@ -728,16 +728,16 @@ namespace viennagrid
     };
     
     //Iterator types for elements
-    template <typename config_type, typename element_tag, long dim>
-    struct iterator< element_t<config_type, element_tag>,
+    template <typename config_type, typename tag, long dim>
+    struct iterator< element_t<config_type, tag>,
                      dim>
     {
       /*typedef on_element_iterator< element<Config, ElementTag>, //the host element type
                                    element<Config, //the subcell type
-                                           typename subcell_traits<ElementTag, level>::element_tag> 
+                                           typename subcell_traits<ElementTag, level>::tag> 
                                  > type; */
                                  
-      typedef typename viennagrid::ncell_range < element_t<config_type, element_tag>, dim>::iterator    type;                           
+      typedef typename viennagrid::ncell_range < element_t<config_type, tag>, dim>::iterator    type;                           
     };
 
 

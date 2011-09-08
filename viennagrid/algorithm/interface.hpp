@@ -45,7 +45,7 @@ namespace viennagrid
 
 
   //helper struct for setting interface flag of lower level elements of a facet
-  template <long topology_level>
+  template <long dim>
   struct interface_setter
   {
     template <typename FacetType, typename KeyType>
@@ -54,10 +54,10 @@ namespace viennagrid
       typedef typename FacetType::config_type        ConfigType;
       typedef typename ConfigType::cell_tag          CellTag;
       
-      typedef typename viennagrid::result_of::const_ncell_range<FacetType, topology_level>::type    ElementOnFacetRange;
+      typedef typename viennagrid::result_of::const_ncell_range<FacetType, dim>::type    ElementOnFacetRange;
       typedef typename result_of::iterator<ElementOnFacetRange>::type                    ElementOnFacetIterator;
 
-      ElementOnFacetRange eof_container = ncells<topology_level>(facet);
+      ElementOnFacetRange eof_container = ncells<dim>(facet);
       for (ElementOnFacetIterator eofit = eof_container.begin();
             eofit != eof_container.end();
             ++eofit)
@@ -66,9 +66,9 @@ namespace viennagrid
       }
 
       //proceed to lower level:
-      interface_setter<topology_level-1>::apply(facet,
+      interface_setter<dim-1>::apply(facet,
                                                 key,
-                                                typename viennagrid::result_of::subelement_handling<CellTag, topology_level-1>::type());
+                                                typename viennagrid::result_of::subelement_handling<ConfigType, CellTag, dim-1>::type());
     }
     
     template <typename FacetType, typename KeyType>
@@ -78,9 +78,9 @@ namespace viennagrid
       typedef typename ConfigType::cell_tag          CellTag;
       
       //proceed to lower level:
-      interface_setter<topology_level-1>::apply(facet,
+      interface_setter<dim-1>::apply(facet,
                                                 key,
-                                                typename viennagrid::result_of::subelement_handling<CellTag, topology_level-1>::type());
+                                                typename viennagrid::result_of::subelement_handling<ConfigType, CellTag, dim-1>::type());
     }
     
   };
@@ -114,10 +114,10 @@ namespace viennagrid
     typedef typename SegmentType::config_type                                  ConfigType;
     typedef typename ConfigType::cell_tag                                      CellTag;
     typedef typename viennagrid::result_of::point<ConfigType>::type                              PointType;
-    typedef typename viennagrid::result_of::ncell<ConfigType, CellTag::topology_level-1>::type   FacetType;
-    typedef typename viennagrid::result_of::ncell<ConfigType, CellTag::topology_level>::type     CellType;
+    typedef typename viennagrid::result_of::ncell<ConfigType, CellTag::dim-1>::type   FacetType;
+    typedef typename viennagrid::result_of::ncell<ConfigType, CellTag::dim>::type     CellType;
 
-    typedef typename viennagrid::result_of::const_ncell_range<SegmentType, CellTag::topology_level-1>::type      FacetRange;
+    typedef typename viennagrid::result_of::const_ncell_range<SegmentType, CellTag::dim-1>::type      FacetRange;
     typedef typename viennagrid::result_of::iterator<FacetRange>::type                                           FacetIterator;
     
     typedef typename ConfigType::numeric_type         numeric_type;
@@ -127,7 +127,7 @@ namespace viennagrid
     //
     // Step 1: Write facets of segment 1 to a map:
     //
-    FacetRange facets_seg1 = viennagrid::ncells<CellTag::topology_level-1>(seg1);
+    FacetRange facets_seg1 = viennagrid::ncells<CellTag::dim-1>(seg1);
     for (FacetIterator fit = facets_seg1.begin();
           fit != facets_seg1.end();
           ++fit)
@@ -139,7 +139,7 @@ namespace viennagrid
     //
     // Step 2: Compare facet in segment 2 with those stored in the map
     //
-    FacetRange facets_seg2 = viennagrid::ncells<CellTag::topology_level-1>(seg2);
+    FacetRange facets_seg2 = viennagrid::ncells<CellTag::dim-1>(seg2);
     for (FacetIterator fit = facets_seg2.begin();
           fit != facets_seg2.end();
           ++fit)
@@ -158,9 +158,9 @@ namespace viennagrid
       if (viennadata::find<KeyType, bool>(key)(*fit) != NULL)
       {
         if (viennadata::access<KeyType, bool>(key)(*fit) == true)
-          interface_setter<CellTag::topology_level-2>::apply(*fit,
+          interface_setter<CellTag::dim-2>::apply(*fit,
                                                              key,
-                                                             typename viennagrid::result_of::subelement_handling<CellTag, CellTag::topology_level-2>::type()
+                                                             typename viennagrid::result_of::subelement_handling<ConfigType, CellTag, CellTag::dim-2>::type()
                                                             );
       }
     }
@@ -179,8 +179,8 @@ namespace viennagrid
   {
     typedef typename SegmentType::config_type               ConfigType;
     typedef typename ConfigType::cell_tag                   CellTag;
-    typedef typename result_of::subelement_handling<CellTag,
-                                                    CellTag::topology_level-1>::type  HandlingTag;
+    typedef typename result_of::subelement_handling<ConfigType, CellTag,
+                                                    CellTag::dim-1>::type  HandlingTag;
     
     if (viennadata::access<KeyType, bool>(key)(seg1) == false)
     {

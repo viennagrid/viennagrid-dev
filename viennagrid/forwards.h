@@ -45,24 +45,20 @@ namespace viennagrid
   
   /********* Tags ***********************/
   
+  template <long d>
   struct cartesian_cs;    //Cartesian coordinate system
+  
   struct polar_cs;        //Polar coordinate system (r, phi)
   struct spherical_cs;    //Spherical coordinate system (r, theta, phi)
   struct cylindrical_cs;  //Cylindrical coordinate system (rho, theta, z)
 
-  //Dimension Tags:
-  struct three_dimensions_tag{
-      enum{ value = 3 };
+  //Dimension Tag: (for tag dispatching)
+  template <long d>
+  struct dimension_tag
+  {
+      enum{ value = d };
   };
   
-  struct two_dimensions_tag{
-      enum{ value = 2 };
-  };
-
-  struct one_dimension_tag{
-      enum{ value = 1 };
-  };
-
   //Tags for the handling of elements at different topological levels (see topology::subcell_desc)
   struct full_handling_tag {};
   struct no_handling_tag {};
@@ -80,15 +76,15 @@ namespace viennagrid
   
   /********* Forward definitions of main classes *******************/
   
-  struct line_tag;
-  struct hexahedron_tag;
   struct point_tag;
+  struct line_tag;
+  struct triangle_tag;
   struct quadrilateral_tag;
   struct tetrahedron_tag;
-  struct triangle_tag;
+  struct hexahedron_tag;
 
   //forward declarations:
-  template <typename CoordType, long d, typename CoordinateSystem = cartesian_cs>
+  template <typename CoordType, typename CoordinateSystem>
   class point_t;
   
   template <typename T_Configuration, typename ElementTag>
@@ -238,7 +234,7 @@ namespace viennagrid
   namespace topology
   {
     template <typename ElementTag, 
-              long level = ElementTag::topology_level>
+              long level = ElementTag::dim>
     struct subelements
     {
       //the default case is simultaneously a pathetic case:
@@ -246,7 +242,7 @@ namespace viennagrid
 
       enum{ num_elements = 1 };     //1 cell
 
-      typedef ElementTag            element_tag;
+      typedef ElementTag            tag;
     };
 
     template <typename CellType, long level>
@@ -288,7 +284,7 @@ namespace viennagrid
     
     template <typename T,   //type of host (domain, segment, other element)
               long dim,
-              long cell_level = config<T>::type::cell_tag::topology_level>
+              long cell_level = config<T>::type::cell_tag::dim>
     struct element_container;
     
     template <typename T, 
@@ -298,12 +294,12 @@ namespace viennagrid
     
     template <typename Config,
               long dim,
-              long cell_level = Config::cell_tag::topology_level>
+              long cell_level = Config::cell_tag::dim>
     struct ncell
     {
       typedef element_t<Config, 
                         typename topology::subelements<typename Config::cell_tag,
-                                                       dim>::element_tag
+                                                       dim>::tag
                        > type;
     };
     
@@ -319,20 +315,20 @@ namespace viennagrid
     template <typename Config>
     struct point
     {
-      typedef viennagrid::point_t<typename Config::numeric_type, Config::dimension_tag::value>   type;
+      typedef viennagrid::point_t<typename Config::numeric_type, typename Config::coordinate_system_tag>   type;
     };
     
     
-    template <typename T, long dim = T::element_tag::topology_level>
-    struct element_tag
+    template <typename T, long dim = T::tag::dim>
+    struct tag
     {
-      typedef typename viennagrid::topology::subelements<typename T::element_tag,
-                                                         dim>::element_tag           type; 
+      typedef typename viennagrid::topology::subelements<typename T::tag,
+                                                         dim>::tag           type; 
     };
     
     
     
-    template <typename T, long dim>
+    template <typename ConfigType, typename T, long dim>
     struct subelement_handling
     {
       typedef full_handling_tag    type;
@@ -340,8 +336,8 @@ namespace viennagrid
     
     // Vertex level always uses full handling (it is the defining entity of an element).
     // Even though the full_handling_tag is covered by the default overload, make this specialization explicit such that the user cannot accidentally modify it.
-    template <typename T>
-    struct subelement_handling<T, 0>
+    template <typename ConfigType, typename T>
+    struct subelement_handling<ConfigType, T, 0>
     {
       typedef full_handling_tag    type; 
     };
@@ -349,32 +345,32 @@ namespace viennagrid
     
 
     //for domains
-    template <typename T, long dim>
-    struct subelement_handling< domain_t<T>, dim>
+    template <typename ConfigType, long dim>
+    struct subelement_handling<ConfigType, domain_t<ConfigType>, dim>
     {
       typedef full_handling_tag    type;
     };
     
     // Vertex level always uses full handling (it is the defining entity of an element).
     // Even though the full_handling_tag is covered by the default overload, make this specialization explicit such that the user cannot accidentally modify it.
-    template <typename T>
-    struct subelement_handling< domain_t<T>, 0>
+    template <typename ConfigType>
+    struct subelement_handling<ConfigType, domain_t<ConfigType>, 0>
     {
       typedef full_handling_tag    type; 
     };
 
     
     //for segments:
-    template <typename T, long dim>
-    struct subelement_handling< segment_t<T>, dim>
+    template <typename ConfigType, long dim>
+    struct subelement_handling<ConfigType, segment_t<ConfigType>, dim>
     {
-      typedef typename subelement_handling<typename T::cell_tag, dim>::type    type;
+      typedef typename subelement_handling<ConfigType, typename ConfigType::cell_tag, dim>::type    type;
     };
 
-    template <typename T>
-    struct subelement_handling< segment_t<T>, 0>  //avoid ambiguities
+    template <typename ConfigType>
+    struct subelement_handling<ConfigType, segment_t<ConfigType>, 0>  //avoid ambiguities
     {
-      typedef typename subelement_handling<typename T::cell_tag, 0>::type    type;
+      typedef typename subelement_handling<ConfigType, typename ConfigType::cell_tag, 0>::type    type;
     };
     
   }
@@ -412,7 +408,7 @@ namespace viennagrid
    // norm tags/types for: algorithm/cell_normals.hpp
    struct seg_cell_normal_tag {};
    struct seg_cell_normal_data {
-      typedef viennagrid::point_t<double, 3>         point_type;
+      typedef viennagrid::point_t<double, cartesian_cs<3> >         point_type;
       typedef std::map<std::size_t, point_type>    type;
    };
    
@@ -475,5 +471,62 @@ namespace viennadata
     };
   }
 }
+
+////// storage scheme for cells ////////
+
+// Define convenience macros for changing the storage scheme in ViennaGrid:
+#define VIENNAGRID_DISABLE_BOUNDARY_NCELL(arg_CONFIG, arg_TAG, arg_DIM) \
+ namespace viennagrid { namespace result_of { \
+    template <> \
+    struct subelement_handling<arg_CONFIG, arg_TAG, arg_DIM> { \
+      typedef no_handling_tag    type; \
+    }; \
+ } }
+
+#define VIENNAGRID_ENABLE_BOUNDARY_NCELL(arg_CONFIG, arg_TAG, arg_DIM) \
+ namespace viennagrid { namespace result_of { \
+    template <> \
+    struct subelement_handling<arg_CONFIG, arg_TAG, arg_DIM> { \
+      typedef full_handling_tag    type; \
+    }; \
+ } }
+
+#define VIENNAGRID_GLOBAL_DISABLE_BOUNDARY_NCELL(arg_TAG, arg_DIM) \
+ namespace viennagrid { namespace result_of { \
+    template <typename ConfigType> \
+    struct subelement_handling<ConfigType, arg_TAG, arg_DIM> { \
+      typedef no_handling_tag    type; \
+    }; \
+ } }
+
+//note that VIENNAGRID_GLOBAL_ENABLE_BOUNDARY_NCELL(arg_TAG, arg_DIM)  does not make sense, since the default is full_handling already.
+
+////// storage scheme for domain ////////
+
+#define VIENNAGRID_DISABLE_DOMAIN_NCELL(arg_CONFIG, arg_DIM) \
+ namespace viennagrid { namespace result_of { \
+    template <> \
+    struct subelement_handling<arg_CONFIG, domain_t<arg_CONFIG>, arg_DIM> { \
+      typedef no_handling_tag    type; \
+    }; \
+ } }
+
+#define VIENNAGRID_ENABLE_DOMAIN_NCELL(arg_CONFIG, arg_DIM) \
+ namespace viennagrid { namespace result_of { \
+    template <> \
+    struct subelement_handling<arg_CONFIG, domain_t<arg_CONFIG>, arg_DIM> { \
+      typedef full_handling_tag    type; \
+    }; \
+ } }
+
+#define VIENNAGRID_GLOBAL_DISABLE_DOMAIN_NCELL(arg_DIM) \
+ namespace viennagrid { namespace result_of { \
+    template <typename ConfigType> \
+    struct subelement_handling<ConfigType, domain_t<ConfigType>, arg_DIM> { \
+      typedef no_handling_tag    type; \
+    }; \
+ } }
+
+
 
 #endif

@@ -69,7 +69,7 @@ void assemble(DomainType & domain,
   typedef typename Config::cell_tag                  CellTag;
   typedef typename viennagrid::result_of::ncell<Config, 0>::type                         VertexType;
   typedef typename viennagrid::result_of::ncell<Config, 1>::type                         EdgeType;
-  typedef typename viennagrid::result_of::ncell<Config, CellTag::topology_level>::type   CellType;
+  typedef typename viennagrid::result_of::ncell<Config, CellTag::dim>::type   CellType;
   
   typedef typename viennagrid::result_of::ncell_range<DomainType, 0>::type     VertexContainer;
   typedef typename viennagrid::result_of::iterator<VertexContainer>::type          VertexIterator;

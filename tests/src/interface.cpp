@@ -42,9 +42,9 @@ void test(ReaderType & my_reader, std::string const & infile)
   typedef typename viennagrid::result_of::ncell<ConfigType, 0>::type       VertexType;
   typedef typename viennagrid::result_of::ncell<ConfigType, 1>::type       EdgeType;
   typedef typename viennagrid::result_of::ncell<ConfigType,
-                                                CellTag::topology_level-1>::type FacetType;
+                                                CellTag::dim-1>::type FacetType;
   typedef typename viennagrid::result_of::ncell<ConfigType,
-                                                CellTag::topology_level>::type   CellType;
+                                                CellTag::dim>::type   CellType;
                                             
   typedef typename viennagrid::result_of::ncell_range<Domain, 0>::type       VertexContainer;
   typedef typename viennagrid::result_of::iterator<VertexContainer>::type    VertexIterator;
@@ -52,10 +52,10 @@ void test(ReaderType & my_reader, std::string const & infile)
   typedef typename viennagrid::result_of::ncell_range<Domain, 1>::type       EdgeContainer;
   typedef typename viennagrid::result_of::iterator<EdgeContainer>::type      EdgeIterator;
 
-  typedef typename viennagrid::result_of::ncell_range<Domain, CellTag::topology_level-1>::type   FacetContainer;
+  typedef typename viennagrid::result_of::ncell_range<Domain, CellTag::dim-1>::type   FacetContainer;
   typedef typename viennagrid::result_of::iterator<FacetContainer>::type                         FacetIterator;
 
-  typedef typename viennagrid::result_of::ncell_range<Domain, CellTag::topology_level>::type     CellContainer;
+  typedef typename viennagrid::result_of::ncell_range<Domain, CellTag::dim>::type     CellContainer;
   typedef typename viennagrid::result_of::iterator<CellContainer>::type                          CellIterator;
   
   typedef typename viennagrid::result_of::ncell_range<EdgeType, 0>::type           VertexOnEdgeContainer;
@@ -87,7 +87,7 @@ void test(ReaderType & my_reader, std::string const & infile)
   std::cout << "* Test 1: Iteration over all facets on the boundary:" << std::endl;
   std::cout << "*" << std::endl;
   double surface = 0;
-  FacetContainer facets = viennagrid::ncells<CellTag::topology_level-1>(domain);
+  FacetContainer facets = viennagrid::ncells<CellTag::dim-1>(domain);
   for (FacetIterator fit = facets.begin();
        fit != facets.end();
        ++fit)

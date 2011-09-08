@@ -90,9 +90,9 @@ namespace viennagrid
     return detail::inner_prod_impl<CartesianPoint1>::apply(to_cartesian(p1), to_cartesian(p2));
   }
 
-  template<typename PointType1, typename PointType2>
+  template<typename PointType1, typename PointType2, long d>
   typename traits::value_type<PointType1>::type
-  inner_prod_impl(PointType1 const & p1, PointType2 const & p2, cartesian_cs, cartesian_cs)
+  inner_prod_impl(PointType1 const & p1, PointType2 const & p2, cartesian_cs<d>, cartesian_cs<d>)
   {
     return detail::inner_prod_impl<PointType1>::apply(p1, p2);
   }

@@ -54,10 +54,10 @@ int main()
   typedef viennagrid::result_of::ncell<ConfigType, 0>::type       VertexType;
   typedef viennagrid::result_of::ncell<ConfigType, 1>::type       EdgeType;
   typedef viennagrid::result_of::ncell<ConfigType,
-                                       CellTag::topology_level>::type   CellType;
+                                       CellTag::dim>::type   CellType;
 
   typedef viennagrid::result_of::ncell_range<Domain, 0>::type                          VertexRange;
-  typedef viennagrid::result_of::ncell_range<Domain, CellTag::topology_level>::type    CellRange;
+  typedef viennagrid::result_of::ncell_range<Domain, CellTag::dim>::type    CellRange;
                       
   std::cout << "------------------------------------------------------------ " << std::endl;
   std::cout << "-- ViennaGrid tutorial: Algorithms on points and elements -- " << std::endl;
@@ -120,7 +120,7 @@ int main()
   //
   
   // Extract first cell from domain:
-  CellType const & cell = viennagrid::ncells<CellTag::topology_level>(domain)[0];
+  CellType const & cell = viennagrid::ncells<CellTag::dim>(domain)[0];
   
   std::cout << "cell: " << std::endl << cell << std::endl;
   
@@ -158,7 +158,7 @@ int main()
   
   //
   // Adaptive refinement: Tag first three cells in domain for refinement
-  CellRange cells = viennagrid::ncells<CellTag::topology_level>(domain);
+  CellRange cells = viennagrid::ncells<CellTag::dim>(domain);
   viennadata::access<viennagrid::refinement_key, bool>()(cells[0]) = true;
   viennadata::access<viennagrid::refinement_key, bool>()(cells[1]) = true;
   viennadata::access<viennagrid::refinement_key, bool>()(cells[2]) = true;

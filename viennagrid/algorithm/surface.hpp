@@ -44,7 +44,7 @@ namespace viennagrid
       typedef ContainerType                                      DomainType;
       typedef typename ContainerType::config_type::cell_tag      CellTag;
       
-      typedef typename viennagrid::result_of::const_ncell_range<DomainType, CellTag::topology_level-1>::type  FacetRange;
+      typedef typename viennagrid::result_of::const_ncell_range<DomainType, CellTag::dim-1>::type  FacetRange;
       typedef typename viennagrid::result_of::iterator<FacetRange>::type         FacetIterator;
       
       typename ContainerType::config_type::numeric_type result = 0;
@@ -71,7 +71,7 @@ namespace viennagrid
   surface(ElementType const & element)
   {
     typedef typename ElementType::config_type                   ConfigType;
-    typedef typename viennagrid::result_of::const_ncell_range<ElementType, ElementType::element_tag::topology_level-1>::type   ElementBoundaryRange;
+    typedef typename viennagrid::result_of::const_ncell_range<ElementType, ElementType::tag::dim-1>::type   ElementBoundaryRange;
     typedef typename viennagrid::result_of::iterator<ElementBoundaryRange>::type       ElementBoundaryIterator;
     
     typedef typename ElementType::config_type::numeric_type value_type;

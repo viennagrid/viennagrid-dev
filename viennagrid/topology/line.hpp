@@ -26,7 +26,7 @@ namespace viennagrid
 
   struct line_tag
   {
-    enum { topology_level = 1 };
+    enum { dim = 1 };
     static std::string name() { return "Line"; }
   };
 
@@ -38,9 +38,9 @@ namespace viennagrid
     template <>
     struct subelements<line_tag, 0>
     {
-      typedef point_tag             element_tag;
+      typedef point_tag             tag;
 
-      enum{ num_elements = 2 };     //2 vertices
+      enum{ num = 2 };     //2 vertices
     };
 
   }  

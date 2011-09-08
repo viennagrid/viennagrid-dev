@@ -27,7 +27,7 @@ namespace viennagrid
 
   struct quadrilateral_tag
   {
-    enum{ topology_level = 2 };
+    enum{ dim = 2 };
     static std::string name() { return "Quadrilateral"; }
   };
   
@@ -38,17 +38,17 @@ namespace viennagrid
     template <>
     struct subelements<quadrilateral_tag, 0>
     {
-      typedef point_tag             element_tag;
+      typedef point_tag             tag;
 
-      enum{ num_elements = 4 };     //3 vertices
+      enum{ num = 4 };     //3 vertices
     };
 
     template <>
     struct subelements<quadrilateral_tag, 1>
     {
-      typedef line_tag              element_tag;
+      typedef line_tag              tag;
 
-      enum{ num_elements = 4 };     //3 edges
+      enum{ num = 4 };     //3 edges
 
     };
 

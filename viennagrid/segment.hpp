@@ -35,9 +35,9 @@ namespace viennagrid
   
   //Segment type: set up using recursive inheritance, similar to domain_t and element_t
   template <typename Conf>
-  class segment_t : public detail::segment_layers_top<Conf, Conf::cell_tag::topology_level>
+  class segment_t : public detail::segment_layers_top<Conf, Conf::cell_tag::dim>
   {
-    typedef detail::segment_layers_top<Conf, Conf::cell_tag::topology_level>     base_type;
+    typedef detail::segment_layers_top<Conf, Conf::cell_tag::dim>     base_type;
     
     public:
       typedef Conf                config_type;

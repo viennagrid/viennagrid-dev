@@ -29,7 +29,7 @@ namespace viennagrid
 
   struct triangle_tag
   {
-    enum{ topology_level = 2 };
+    enum{ dim = 2 };
     static std::string name() { return "Triangle"; }
   };
 
@@ -40,17 +40,17 @@ namespace viennagrid
     template <>
     struct subelements<triangle_tag, 0>
     {
-      typedef point_tag             element_tag;
+      typedef point_tag             tag;
 
-      enum{ num_elements = 3 };     //3 vertices
+      enum{ num = 3 };     //3 vertices
     };
 
     template <>
     struct subelements<triangle_tag, 1>
     {
-      typedef line_tag              element_tag;
+      typedef line_tag              tag;
 
-      enum{ num_elements = 3 };     //3 edges
+      enum{ num = 3 };     //3 edges
 
     };
   
@@ -110,7 +110,7 @@ namespace viennagrid
       
       typedef typename viennagrid::result_of::ncell<ConfigTypeIn, 0>::type             VertexType;
 
-      VertexType * vertices[topology::subelements<triangle_tag, 0>::num_elements];
+      VertexType * vertices[topology::subelements<triangle_tag, 0>::num];
       
       //
       // Step 1: Get vertices on the new domain
@@ -127,7 +127,7 @@ namespace viennagrid
       // Step 2: Add new cells to new domain:
       //
       CellType new_cell;
-      VertexType * cellvertices[topology::subelements<triangle_tag, 0>::num_elements];
+      VertexType * cellvertices[topology::subelements<triangle_tag, 0>::num];
       
       //0-3-2:
       cellvertices[0] = vertices[0];
@@ -158,7 +158,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::ncell<ConfigTypeIn, 0>::type             VertexType;
       typedef typename viennagrid::result_of::ncell<ConfigTypeIn, 1>::type             EdgeType;
 
-      VertexType * vertices[topology::subelements<triangle_tag, 0>::num_elements + 1];
+      VertexType * vertices[topology::subelements<triangle_tag, 0>::num + 1];
       
       //
       // Step 1: Get vertices on the new domain
@@ -203,19 +203,19 @@ namespace viennagrid
       // Step 2: Add new cells to new domain:
       //
       CellType new_cell;
-      VertexType * cellvertices[topology::subelements<triangle_tag, 0>::num_elements];
+      VertexType * cellvertices[topology::subelements<triangle_tag, 0>::num];
       
       //0-3-2:
-      cellvertices[0] = vertices[(offset + 0) % topology::subelements<triangle_tag, 0>::num_elements];
+      cellvertices[0] = vertices[(offset + 0) % topology::subelements<triangle_tag, 0>::num];
       cellvertices[1] = vertices[3];
-      cellvertices[2] = vertices[(offset + 2) % topology::subelements<triangle_tag, 0>::num_elements];
+      cellvertices[2] = vertices[(offset + 2) % topology::subelements<triangle_tag, 0>::num];
       new_cell.vertices(cellvertices);
       segment_out.push_back(new_cell);
 
       //3-1-2:
       cellvertices[0] = vertices[3];
-      cellvertices[1] = vertices[(offset + 1) % topology::subelements<triangle_tag, 0>::num_elements];
-      cellvertices[2] = vertices[(offset + 2) % topology::subelements<triangle_tag, 0>::num_elements];
+      cellvertices[1] = vertices[(offset + 1) % topology::subelements<triangle_tag, 0>::num];
+      cellvertices[2] = vertices[(offset + 2) % topology::subelements<triangle_tag, 0>::num];
       new_cell.vertices(cellvertices);
       segment_out.push_back(new_cell);
     } //apply1()
@@ -241,7 +241,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::ncell<ConfigTypeIn, 0>::type             VertexType;
       typedef typename viennagrid::result_of::ncell<ConfigTypeIn, 1>::type             EdgeType;
 
-      VertexType * vertices[topology::subelements<triangle_tag, 0>::num_elements + 2];
+      VertexType * vertices[topology::subelements<triangle_tag, 0>::num + 2];
       
       //
       // Step 1: Get vertices on the new domain
@@ -293,33 +293,33 @@ namespace viennagrid
       // Step 2: Add new cells to new domain:
       //
       CellType new_cell;
-      VertexType * cellvertices[topology::subelements<triangle_tag, 0>::num_elements];
+      VertexType * cellvertices[topology::subelements<triangle_tag, 0>::num];
       
       //3-1-4:
       cellvertices[0] = vertices[3];
-      cellvertices[1] = vertices[(offset + 1) % topology::subelements<triangle_tag, 0>::num_elements];
+      cellvertices[1] = vertices[(offset + 1) % topology::subelements<triangle_tag, 0>::num];
       cellvertices[2] = vertices[4];
       new_cell.vertices(cellvertices);
       segment_out.push_back(new_cell);
 
       //split second-longest edge
-      VertexType & v0 = *(vertices[(offset + 0) % topology::subelements<triangle_tag, 0>::num_elements]);
-      VertexType & v1 = *(vertices[(offset + 1) % topology::subelements<triangle_tag, 0>::num_elements]);
-      VertexType & v2 = *(vertices[(offset + 2) % topology::subelements<triangle_tag, 0>::num_elements]);
+      VertexType & v0 = *(vertices[(offset + 0) % topology::subelements<triangle_tag, 0>::num]);
+      VertexType & v1 = *(vertices[(offset + 1) % topology::subelements<triangle_tag, 0>::num]);
+      VertexType & v2 = *(vertices[(offset + 2) % topology::subelements<triangle_tag, 0>::num]);
       double len_edge1 = viennagrid::norm(v1.point() - v0.point());
       double len_edge2 = viennagrid::norm(v2.point() - v1.point());
       
       if (len_edge1 > len_edge2) //split edge [v0, v1] again
       {
         //0-3-2:
-        cellvertices[0] = vertices[(offset + 0) % topology::subelements<triangle_tag, 0>::num_elements];
+        cellvertices[0] = vertices[(offset + 0) % topology::subelements<triangle_tag, 0>::num];
         cellvertices[1] = vertices[3];
-        cellvertices[2] = vertices[(offset + 2) % topology::subelements<triangle_tag, 0>::num_elements];
+        cellvertices[2] = vertices[(offset + 2) % topology::subelements<triangle_tag, 0>::num];
         new_cell.vertices(cellvertices);
         segment_out.push_back(new_cell);
 
         //2-3-4:
-        cellvertices[0] = vertices[(offset + 2) % topology::subelements<triangle_tag, 0>::num_elements];
+        cellvertices[0] = vertices[(offset + 2) % topology::subelements<triangle_tag, 0>::num];
         cellvertices[1] = vertices[3];
         cellvertices[2] = vertices[4];
         new_cell.vertices(cellvertices);
@@ -328,16 +328,16 @@ namespace viennagrid
       else //split edge [v1, v2]
       {
         //0-3-4:
-        cellvertices[0] = vertices[(offset + 0) % topology::subelements<triangle_tag, 0>::num_elements];
+        cellvertices[0] = vertices[(offset + 0) % topology::subelements<triangle_tag, 0>::num];
         cellvertices[1] = vertices[3];
         cellvertices[2] = vertices[4];
         new_cell.vertices(cellvertices);
         segment_out.push_back(new_cell);
 
         //0-4-2:
-        cellvertices[0] = vertices[(offset + 0) % topology::subelements<triangle_tag, 0>::num_elements];
+        cellvertices[0] = vertices[(offset + 0) % topology::subelements<triangle_tag, 0>::num];
         cellvertices[1] = vertices[4];
-        cellvertices[2] = vertices[(offset + 2) % topology::subelements<triangle_tag, 0>::num_elements];
+        cellvertices[2] = vertices[(offset + 2) % topology::subelements<triangle_tag, 0>::num];
         new_cell.vertices(cellvertices);
         segment_out.push_back(new_cell);
       }
@@ -362,8 +362,8 @@ namespace viennagrid
       
       typedef typename viennagrid::result_of::ncell<ConfigTypeIn, 0>::type             VertexType;
 
-      VertexType * vertices[topology::subelements<triangle_tag, 0>::num_elements
-                            + topology::subelements<triangle_tag, 1>::num_elements];
+      VertexType * vertices[topology::subelements<triangle_tag, 0>::num
+                            + topology::subelements<triangle_tag, 1>::num];
       
       //
       // Step 1: Get vertices on the new domain
@@ -387,7 +387,7 @@ namespace viennagrid
       // Step 2: Add new cells to new domain:
       //
       CellType new_cell;
-      VertexType * cellvertices[topology::subelements<triangle_tag, 0>::num_elements];
+      VertexType * cellvertices[topology::subelements<triangle_tag, 0>::num];
       
       //0-3-4:
       cellvertices[0] = vertices[0];

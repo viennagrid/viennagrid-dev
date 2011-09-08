@@ -135,18 +135,18 @@ void test(std::string & infile, std::string & outfile)
   typedef typename viennagrid::result_of::point<ConfigType>::type          PointType;
   typedef typename viennagrid::result_of::ncell<ConfigType, 0>::type       VertexType;
   typedef typename viennagrid::result_of::ncell<ConfigType,
-                                       CellTag::topology_level>::type   CellType;
+                                       CellTag::dim>::type   CellType;
 
   typedef typename viennagrid::result_of::ncell_range<Domain, 0>::type           VertexContainer;
   typedef typename viennagrid::result_of::iterator<VertexContainer>::type        VertexIterator;
 
-  typedef typename viennagrid::result_of::ncell_range<Domain, CellTag::topology_level>::type     CellContainer;
+  typedef typename viennagrid::result_of::ncell_range<Domain, CellTag::dim>::type     CellContainer;
   typedef typename viennagrid::result_of::iterator<CellContainer>::type                          CellIterator;
 
   typedef typename viennagrid::result_of::ncell_range<Segment, 0>::type                 SegmentVertexContainer;
   typedef typename viennagrid::result_of::iterator<SegmentVertexContainer>::type        SegmentVertexIterator;
 
-  typedef typename viennagrid::result_of::ncell_range<Segment, CellTag::topology_level>::type     SegmentCellContainer;
+  typedef typename viennagrid::result_of::ncell_range<Segment, CellTag::dim>::type     SegmentCellContainer;
   typedef typename viennagrid::result_of::iterator<SegmentCellContainer>::type                    SegmentCellIterator;
 
   

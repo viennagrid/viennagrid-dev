@@ -68,7 +68,7 @@ void setup_domain(viennagrid::domain_t<viennagrid::config::triangular_2d> & d)
   typedef viennagrid::result_of::ncell<ConfigType, 0>::type       VertexType;
   
   typedef viennagrid::result_of::ncell<ConfigType,
-                                            CellTag::topology_level>::type   CellType;
+                                            CellTag::dim>::type   CellType;
   
   PointType p0(0.0, 0.0, 0.0);
   PointType p1(1.0, 0.0, 0.0);
@@ -112,7 +112,7 @@ void setup_domain(viennagrid::domain_t<viennagrid::config::triangular_3d> & d)
   typedef viennagrid::result_of::ncell<ConfigType, 0>::type       VertexType;
   
   typedef viennagrid::result_of::ncell<ConfigType,
-                                            CellTag::topology_level>::type   CellType;
+                                            CellTag::dim>::type   CellType;
 
   PointType p0(0.0, 0.0, 0.0);
   PointType p1(1.0, 0.0, 0.0);
@@ -156,7 +156,7 @@ void setup_domain(viennagrid::domain_t<viennagrid::config::tetrahedral_3d> & d)
   typedef viennagrid::result_of::ncell<ConfigType, 0>::type       VertexType;
   
   typedef viennagrid::result_of::ncell<ConfigType,
-                                            CellTag::topology_level>::type   CellType;
+                                            CellTag::dim>::type   CellType;
                                             
   PointType p0(0.0, 0.0, 0.0);
   PointType p1(1.0, 0.0, 0.0);
@@ -205,7 +205,7 @@ void test()
   typedef typename viennagrid::result_of::ncell<ConfigType, 0>::type       VertexType;
   typedef typename viennagrid::result_of::ncell<ConfigType, 1>::type       EdgeType;
   typedef typename viennagrid::result_of::ncell<ConfigType,
-                                                     CellTag::topology_level>::type   CellType;
+                                                     CellTag::dim>::type   CellType;
 
   Domain domain;
   
@@ -217,8 +217,8 @@ void test()
   
   //std::cout << "Vertices in Segment: " << seg.size<0>() << std::endl;
   //std::cout << "Edges in Segment: "    << seg.size<1>() << std::endl;
-  //std::cout << "Facets in Segment: "   << seg.size<CellTag::topology_level-1>() << std::endl;
-  //std::cout << "Cells in Segment: "    << seg.size<CellTag::topology_level>() << std::endl;
+  //std::cout << "Facets in Segment: "   << seg.size<CellTag::dim-1>() << std::endl;
+  //std::cout << "Cells in Segment: "    << seg.size<CellTag::dim>() << std::endl;
   
   std::cout << "Printing vertices in domain:" << std::endl;
   print_elements<0>(domain);
@@ -227,10 +227,10 @@ void test()
   print_elements<1>(domain);
 
   std::cout << "Printing facets in domain:" << std::endl;
-  print_elements<Domain::config_type::cell_tag::topology_level-1>(domain);
+  print_elements<Domain::config_type::cell_tag::dim-1>(domain);
 
   std::cout << "Printing cells in domain:" << std::endl;
-  print_elements<Domain::config_type::cell_tag::topology_level>(domain);
+  print_elements<Domain::config_type::cell_tag::dim>(domain);
   
   //Test for const-iterators:
   std::cout << "Test for const iterator: " << std::endl;

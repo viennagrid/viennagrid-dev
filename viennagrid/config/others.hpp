@@ -29,21 +29,21 @@ namespace viennagrid
     struct quadrilateral_2d
     {
       typedef double                                numeric_type;
-      typedef viennagrid::two_dimensions_tag        dimension_tag;
+      typedef viennagrid::cartesian_cs<2>           coordinate_system_tag;
       typedef viennagrid::quadrilateral_tag         cell_tag;
     };
 
     struct quadrilateral_3d
     {
       typedef double                                numeric_type;
-      typedef viennagrid::three_dimensions_tag      dimension_tag;
+      typedef viennagrid::cartesian_cs<3>           coordinate_system_tag;
       typedef viennagrid::quadrilateral_tag         cell_tag;
     };
     
     struct hexahedral_3d
     {
       typedef double                                numeric_type;
-      typedef viennagrid::three_dimensions_tag      dimension_tag;
+      typedef viennagrid::cartesian_cs<3>           coordinate_system_tag;
       typedef viennagrid::hexahedron_tag            cell_tag;
     };
   }

@@ -46,8 +46,8 @@ int main()
   //
   typedef viennagrid::result_of::ncell<ConfigType, 0>::type                          VertexType;
   typedef viennagrid::result_of::ncell<ConfigType, 1>::type                          EdgeType;
-  typedef viennagrid::result_of::ncell<ConfigType, CellTag::topology_level-1>::type  FacetType;
-  typedef viennagrid::result_of::ncell<ConfigType, CellTag::topology_level>::type    CellType;
+  typedef viennagrid::result_of::ncell<ConfigType, CellTag::dim-1>::type  FacetType;
+  typedef viennagrid::result_of::ncell<ConfigType, CellTag::dim>::type    CellType;
 
   std::cout << "--------------------------------------------------" << std::endl;
   std::cout << "-- ViennaGrid tutorial: Iteration over elements --" << std::endl;
@@ -100,10 +100,10 @@ int main()
   typedef viennagrid::result_of::ncell_range<DomainType, 1>::type     EdgeRange;
   typedef viennagrid::result_of::iterator<EdgeRange>::type            EdgeIterator;
 
-  typedef viennagrid::result_of::ncell_range<DomainType, CellTag::topology_level-1>::type     FacetRange;
+  typedef viennagrid::result_of::ncell_range<DomainType, CellTag::dim-1>::type     FacetRange;
   typedef viennagrid::result_of::iterator<FacetRange>::type                                   FacetIterator;
   
-  typedef viennagrid::result_of::ncell_range<DomainType, CellTag::topology_level>::type       CellRange;
+  typedef viennagrid::result_of::ncell_range<DomainType, CellTag::dim>::type       CellRange;
   typedef viennagrid::result_of::iterator<CellRange>::type                                    CellIterator;
   
   
@@ -142,7 +142,7 @@ int main()
   // However, this does not work for all domain storage configurations. Cells and vertices will always work.
   //
   std::size_t accumulated_ids = 0;
-  CellRange cells = viennagrid::ncells<CellTag::topology_level>(domain);
+  CellRange cells = viennagrid::ncells<CellTag::dim>(domain);
   for (std::size_t i=0; i<cells.size(); ++i)
   {
     accumulated_ids = cells[i].id();
@@ -171,7 +171,7 @@ int main()
   typedef viennagrid::result_of::ncell_range<FacetType, 1>::type                EdgeOnFacetRange;
   typedef viennagrid::result_of::iterator<EdgeOnFacetRange>::type               EdgeOnFacetIterator;
   
-  typedef viennagrid::result_of::ncell_range<CellType, CellTag::topology_level-1>::type   FacetOnCellRange;
+  typedef viennagrid::result_of::ncell_range<CellType, CellTag::dim-1>::type   FacetOnCellRange;
   typedef viennagrid::result_of::iterator<FacetOnCellRange>::type                         FacetOnCellIterator;
 
   std::size_t vertices_visited = 0;
@@ -209,7 +209,7 @@ int main()
   typedef viennagrid::result_of::ncell_range<VertexType, 1>::type                EdgeOnVertexRange;
   typedef viennagrid::result_of::iterator<EdgeOnVertexRange>::type               EdgeOnVertexIterator;
   
-  typedef viennagrid::result_of::ncell_range<EdgeType, CellTag::topology_level>::type   CellOnEdgeRange;
+  typedef viennagrid::result_of::ncell_range<EdgeType, CellTag::dim>::type   CellOnEdgeRange;
   typedef viennagrid::result_of::iterator<CellOnEdgeRange>::type                        CellOnEdgeIterator;
   
   

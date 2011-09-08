@@ -39,9 +39,9 @@ namespace viennagrid
       
       typedef typename viennagrid::result_of::ncell<ConfigTypeIn, 0>::type                                      VertexType;
       typedef typename viennagrid::result_of::ncell<ConfigTypeIn, 1>::type                                      EdgeType;
-      typedef typename viennagrid::result_of::ncell<ConfigTypeIn, CellTagIn::topology_level>::type              CellType;
+      typedef typename viennagrid::result_of::ncell<ConfigTypeIn, CellTagIn::dim>::type              CellType;
       
-      typedef typename viennagrid::result_of::const_ncell_range<DomainTypeIn, CellTagIn::topology_level>::type   CellRange;          
+      typedef typename viennagrid::result_of::const_ncell_range<DomainTypeIn, CellTagIn::dim>::type   CellRange;          
       typedef typename viennagrid::result_of::iterator<CellRange>::type                                          CellIterator;         
       typedef typename viennagrid::result_of::const_ncell_range<CellType, 1>::type                               EdgeOnCellRange;
       typedef typename viennagrid::result_of::iterator<EdgeOnCellRange>::type                                    EdgeOnCellIterator;            
@@ -58,7 +58,7 @@ namespace viennagrid
         //std::cout << "Longest edge bisection, run " << ++iter_cnt << std::endl;
         
       
-        CellRange cells = viennagrid::ncells<CellTagIn::topology_level>(domain_in);
+        CellRange cells = viennagrid::ncells<CellTagIn::dim>(domain_in);
         for (CellIterator cit  = cells.begin();
                           cit != cells.end();
                         ++cit)
@@ -124,15 +124,15 @@ namespace viennagrid
     {
       typedef typename viennagrid::result_of::domain<ConfigTypeIn>::type                      DomainTypeIn;
       typedef typename ConfigTypeIn::cell_tag           CellTagIn;   
-      typedef typename viennagrid::result_of::ncell<ConfigTypeIn, CellTagIn::topology_level>::type              CellType;
+      typedef typename viennagrid::result_of::ncell<ConfigTypeIn, CellTagIn::dim>::type              CellType;
       
-      typedef typename viennagrid::result_of::const_ncell_range<DomainTypeIn, CellTagIn::topology_level>::type   CellRange;          
+      typedef typename viennagrid::result_of::const_ncell_range<DomainTypeIn, CellTagIn::dim>::type   CellRange;          
       typedef typename viennagrid::result_of::iterator<CellRange>::type                                          CellIterator;         
       typedef typename viennagrid::result_of::const_ncell_range<CellType, 1>::type                               EdgeOnCellRange;
       typedef typename viennagrid::result_of::iterator<EdgeOnCellRange>::type                                    EdgeOnCellIterator;            
       
       std::size_t cells_for_refinement = 0;
-      CellRange cells = viennagrid::ncells<CellTagIn::topology_level>(domain_in);
+      CellRange cells = viennagrid::ncells<CellTagIn::dim>(domain_in);
       for (CellIterator cit  = cells.begin();
                         cit != cells.end();
                       ++cit)
@@ -172,13 +172,13 @@ namespace viennagrid
       typedef typename viennagrid::result_of::point<ConfigTypeIn>::type                                         PointType;
       typedef typename viennagrid::result_of::ncell<ConfigTypeIn, 0>::type                                      VertexType;
       typedef typename viennagrid::result_of::ncell<ConfigTypeIn, 1>::type                                      EdgeType;
-      typedef typename viennagrid::result_of::ncell<ConfigTypeIn, CellTagIn::topology_level>::type              CellType;
+      typedef typename viennagrid::result_of::ncell<ConfigTypeIn, CellTagIn::dim>::type              CellType;
       
       typedef typename viennagrid::result_of::const_ncell_range<DomainTypeIn, 0>::type                           VertexRange;          
       typedef typename viennagrid::result_of::iterator<VertexRange>::type                                        VertexIterator;         
       typedef typename viennagrid::result_of::const_ncell_range<DomainTypeIn, 1>::type                           EdgeRange;          
       typedef typename viennagrid::result_of::iterator<EdgeRange>::type                                          EdgeIterator;         
-      typedef typename viennagrid::result_of::const_ncell_range<SegmentTypeIn, CellTagIn::topology_level>::type  CellRange;          
+      typedef typename viennagrid::result_of::const_ncell_range<SegmentTypeIn, CellTagIn::dim>::type  CellRange;          
       typedef typename viennagrid::result_of::iterator<CellRange>::type                                          CellIterator;         
       typedef typename viennagrid::result_of::const_ncell_range<CellType, 0>::type                               VertexOnCellRange;
       typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type                                  VertexOnCellIterator;            
@@ -232,7 +232,7 @@ namespace viennagrid
       for (std::size_t i=0; i<domain_in.segments().size(); ++i)
       {
         //std::cout << "Working on segment " << i << std::endl;
-        CellRange cells = viennagrid::ncells<CellTagIn::topology_level>(domain_in.segments()[i]);
+        CellRange cells = viennagrid::ncells<CellTagIn::dim>(domain_in.segments()[i]);
         for (CellIterator cit  = cells.begin();
                           cit != cells.end();
                         ++cit)
@@ -271,13 +271,13 @@ namespace viennagrid
       typedef typename viennagrid::result_of::point<ConfigTypeIn>::type                                         PointType;
       typedef typename viennagrid::result_of::ncell<ConfigTypeIn, 0>::type                                      VertexType;
       typedef typename viennagrid::result_of::ncell<ConfigTypeIn, 1>::type                                      EdgeType;
-      typedef typename viennagrid::result_of::ncell<ConfigTypeIn, CellTagIn::topology_level>::type              CellType;
+      typedef typename viennagrid::result_of::ncell<ConfigTypeIn, CellTagIn::dim>::type              CellType;
       
       typedef typename viennagrid::result_of::const_ncell_range<DomainTypeIn, 0>::type                           VertexRange;          
       typedef typename viennagrid::result_of::iterator<VertexRange>::type                                        VertexIterator;         
       typedef typename viennagrid::result_of::const_ncell_range<DomainTypeIn, 1>::type                           EdgeRange;          
       typedef typename viennagrid::result_of::iterator<EdgeRange>::type                                          EdgeIterator;         
-      typedef typename viennagrid::result_of::const_ncell_range<SegmentTypeIn, CellTagIn::topology_level>::type  CellRange;          
+      typedef typename viennagrid::result_of::const_ncell_range<SegmentTypeIn, CellTagIn::dim>::type  CellRange;          
       typedef typename viennagrid::result_of::iterator<CellRange>::type                                          CellIterator;         
       typedef typename viennagrid::result_of::const_ncell_range<EdgeType, 0>::type                               VertexOnEdgeRange;
       typedef typename viennagrid::result_of::iterator<VertexOnEdgeRange>::type                                  VertexOnEdgeIterator;            
@@ -324,7 +324,7 @@ namespace viennagrid
       {
         //std::cout << "Working on segment " << i << std::endl;
         std::size_t counter = 0;
-        CellRange cells = viennagrid::ncells<CellTagIn::topology_level>(domain_in.segments()[i]);
+        CellRange cells = viennagrid::ncells<CellTagIn::dim>(domain_in.segments()[i]);
         for (CellIterator cit  = cells.begin();
                           cit != cells.end();
                         ++cit)

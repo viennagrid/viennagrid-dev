@@ -51,12 +51,12 @@ namespace viennagrid
         typedef typename DomainType::config_type                         DomainConfiguration;
 
         typedef typename DomainConfiguration::numeric_type               CoordType;
-        typedef typename DomainConfiguration::dimension_tag              DimensionTag;
+        typedef typename DomainConfiguration::coordinate_system_tag      CoordinateSystemTag;
         typedef typename DomainConfiguration::cell_tag                   CellTag;
 
         typedef typename result_of::point<DomainConfiguration>::type                              PointType;
         typedef typename result_of::ncell<DomainConfiguration, 0>::type                           VertexType;
-        typedef typename result_of::ncell<DomainConfiguration, CellTag::topology_level>::type     CellType;
+        typedef typename result_of::ncell<DomainConfiguration, CellTag::dim>::type     CellType;
 
       protected:
 
@@ -81,12 +81,12 @@ namespace viennagrid
               vit != vertices.end();
               ++vit)
           {
-            PointWriter<DimensionTag::value>::write(writer, vit->point());
+            PointWriter<CoordinateSystemTag::dim>::write(writer, vit->point());
 
             // add 0's for less than three dimensions
-              if (DimensionTag::value == 2)
+              if (CoordinateSystemTag::dim == 2)
                 writer << " " << 0;
-              if(DimensionTag::value == 1)
+              if(CoordinateSystemTag::dim == 1)
                 writer << " " << 0 << " " << 0;
 
               writer << std::endl;
@@ -99,7 +99,7 @@ namespace viennagrid
         template <typename SegmentType>
         void writeCells(SegmentType const & segment, std::ofstream & writer)
         {
-          typedef typename viennagrid::result_of::const_ncell_range<SegmentType, CellTag::topology_level>::type     CellRange;
+          typedef typename viennagrid::result_of::const_ncell_range<SegmentType, CellTag::dim>::type     CellRange;
           typedef typename viennagrid::result_of::iterator<CellRange>::type                                         CellIterator;
 
           typedef typename viennagrid::result_of::const_ncell_range<CellType, 0>::type      VertexOnCellRange;
@@ -107,7 +107,7 @@ namespace viennagrid
           
           writer << "   <Cells> " << std::endl;
           writer << "    <DataArray type=\"Int32\" Name=\"connectivity\" format=\"ascii\">" << std::endl;
-          CellRange cells = viennagrid::ncells<CellTag::topology_level>(segment);
+          CellRange cells = viennagrid::ncells<CellTag::dim>(segment);
           for (CellIterator cit = cells.begin();
               cit != cells.end();
               ++cit)
@@ -126,17 +126,17 @@ namespace viennagrid
 
             writer << "    <DataArray type=\"Int32\" Name=\"offsets\" format=\"ascii\">" << std::endl;
             for (std::size_t offsets = 1;
-                 offsets <= viennagrid::ncells<CellTag::topology_level>(segment).size();
+                 offsets <= viennagrid::ncells<CellTag::dim>(segment).size();
                  ++offsets)
             {
-              writer << ( offsets * viennagrid::topology::subelements<CellTag, 0>::num_elements) << " ";
+              writer << ( offsets * viennagrid::topology::subelements<CellTag, 0>::num) << " ";
             }
             writer << std::endl;
             writer << "    </DataArray>" << std::endl;
 
             writer << "    <DataArray type=\"UInt8\" Name=\"types\" format=\"ascii\">" << std::endl;
             for (std::size_t offsets = 1;
-                  offsets <= viennagrid::ncells<CellTag::topology_level>(segment).size();
+                  offsets <= viennagrid::ncells<CellTag::dim>(segment).size();
                   ++offsets)
             {
               writer << ELEMENT_TAG_TO_VTK_TYPE<CellTag>::value << " ";
@@ -232,7 +232,7 @@ namespace viennagrid
         template <typename SegmentType>
         void writeCellDataScalar(SegmentType const & segment, std::ofstream & writer, std::size_t seg_id = 0)
         {
-          typedef typename viennagrid::result_of::const_ncell_range<SegmentType, CellTag::topology_level>::type   CellRange;
+          typedef typename viennagrid::result_of::const_ncell_range<SegmentType, CellTag::dim>::type   CellRange;
           typedef typename viennagrid::result_of::iterator<CellRange>::type               CellIterator;
           
           if (cell_data_scalar.size() > 0)
@@ -257,7 +257,7 @@ namespace viennagrid
         template <typename SegmentType>
         void writeCellDataVector(SegmentType const & segment, std::ofstream & writer, std::size_t seg_id = 0)
         {
-          typedef typename viennagrid::result_of::const_ncell_range<SegmentType, CellTag::topology_level>::type   CellRange;
+          typedef typename viennagrid::result_of::const_ncell_range<SegmentType, CellTag::dim>::type   CellRange;
           typedef typename viennagrid::result_of::iterator<CellRange>::type               CellIterator;
           
           if (cell_data_vector.size() > 0)
@@ -284,7 +284,7 @@ namespace viennagrid
                                   std::ofstream & writer,
                                   std::size_t seg_id = 0)
         {
-          typedef typename viennagrid::result_of::const_ncell_range<SegmentType, CellTag::topology_level>::type     CellRange;
+          typedef typename viennagrid::result_of::const_ncell_range<SegmentType, CellTag::dim>::type     CellRange;
           typedef typename viennagrid::result_of::iterator<CellRange>::type                                         CellIterator;
           
           if (cell_data_normal.size() > 0)
@@ -293,7 +293,7 @@ namespace viennagrid
             {
               writer << "    <DataArray type=\"Float32\" Name=\"" << cell_data_normal_names[i] << "\" NumberOfComponents=\"3\" format=\"ascii\">" << std::endl;
 
-              CellRange cells = viennagrid::ncells<CellTag::topology_level>(segment);
+              CellRange cells = viennagrid::ncells<CellTag::dim>(segment);
               for (CellIterator cit  = cells.begin();
                                 cit != cells.end();
                               ++cit)
@@ -398,7 +398,7 @@ namespace viennagrid
               writer << "  <Piece NumberOfPoints=\""
                     << viennagrid::ncells<0>(seg).size()
                     << "\" NumberOfCells=\""
-                    << viennagrid::ncells<CellTag::topology_level>(seg).size()
+                    << viennagrid::ncells<CellTag::dim>(seg).size()
                     << "\">" << std::endl;
 
 
@@ -452,7 +452,7 @@ namespace viennagrid
             writer << "  <Piece NumberOfPoints=\""
                    << viennagrid::ncells<0>(domain).size()
                    << "\" NumberOfCells=\""
-                   << viennagrid::ncells<CellTag::topology_level>(domain).size()
+                   << viennagrid::ncells<CellTag::dim>(domain).size()
                    << "\">" << std::endl;
 
 
@@ -697,7 +697,7 @@ namespace viennagrid
     {
       typedef typename DomainType::config_type                         DomainConfiguration;
       typedef typename DomainConfiguration::cell_tag                   CellTag;
-      typedef typename result_of::ncell<DomainConfiguration, CellTag::topology_level>::type     CellType;
+      typedef typename result_of::ncell<DomainConfiguration, CellTag::dim>::type     CellType;
       
       data_accessor_wrapper<CellType> wrapper(new global_scalar_data_accessor<CellType, KeyType, DataType>(key));
       writer.add_scalar_data_on_cells(wrapper, quantity_name);
@@ -711,7 +711,7 @@ namespace viennagrid
     {
       typedef typename DomainType::config_type                         DomainConfiguration;
       typedef typename DomainConfiguration::cell_tag                   CellTag;
-      typedef typename result_of::ncell<DomainConfiguration, CellTag::topology_level>::type     CellType;
+      typedef typename result_of::ncell<DomainConfiguration, CellTag::dim>::type     CellType;
       
       data_accessor_wrapper<CellType> wrapper(new segment_scalar_data_accessor<CellType, KeyType, DataType>(key));
       writer.add_scalar_data_on_cells(wrapper, quantity_name);
@@ -726,7 +726,7 @@ namespace viennagrid
     {
       typedef typename DomainType::config_type                         DomainConfiguration;
       typedef typename DomainConfiguration::cell_tag                   CellTag;
-      typedef typename result_of::ncell<DomainConfiguration, CellTag::topology_level>::type     CellType;
+      typedef typename result_of::ncell<DomainConfiguration, CellTag::dim>::type     CellType;
       
       data_accessor_wrapper<CellType> wrapper(new global_vector_data_accessor<CellType, KeyType, DataType>(key));
       writer.add_vector_data_on_cells(wrapper, quantity_name);
@@ -740,7 +740,7 @@ namespace viennagrid
     {
       typedef typename DomainType::config_type                         DomainConfiguration;
       typedef typename DomainConfiguration::cell_tag                   CellTag;
-      typedef typename result_of::ncell<DomainConfiguration, CellTag::topology_level>::type     CellType;
+      typedef typename result_of::ncell<DomainConfiguration, CellTag::dim>::type     CellType;
       
       data_accessor_wrapper<CellType> wrapper(new segment_vector_data_accessor<CellType, KeyType, DataType>(key));
       writer.add_vector_data_on_cells(wrapper, quantity_name);
@@ -755,7 +755,7 @@ namespace viennagrid
     {
       typedef typename DomainType::config_type                         DomainConfiguration;
       typedef typename DomainConfiguration::cell_tag                   CellTag;
-      typedef typename result_of::ncell<DomainConfiguration, CellTag::topology_level>::type     CellType;
+      typedef typename result_of::ncell<DomainConfiguration, CellTag::dim>::type     CellType;
       
       data_accessor_wrapper<CellType> wrapper(new global_vector_data_accessor<CellType, KeyType, DataType>(key));
       writer.add_normal_data_on_cells(wrapper, quantity_name);
@@ -769,7 +769,7 @@ namespace viennagrid
     {
       typedef typename DomainType::config_type                         DomainConfiguration;
       typedef typename DomainConfiguration::cell_tag                   CellTag;
-      typedef typename result_of::ncell<DomainConfiguration, CellTag::topology_level>::type     CellType;
+      typedef typename result_of::ncell<DomainConfiguration, CellTag::dim>::type     CellType;
       
       data_accessor_wrapper<CellType> wrapper(new segment_vector_data_accessor<CellType, KeyType, DataType>(key));
       writer.add_normal_data_on_cells(wrapper, quantity_name);

@@ -32,7 +32,7 @@ void setup(DomainType & domain, viennagrid::hexahedron_tag)
   typedef typename viennagrid::result_of::point<ConfigType>::type          PointType;
   typedef typename viennagrid::result_of::ncell<ConfigType, 0>::type       VertexType;
   typedef typename viennagrid::result_of::ncell<ConfigType,
-                                                CellTag::topology_level>::type   CellType;
+                                                CellTag::dim>::type   CellType;
   
   CellType hypercube0;
   CellType hypercube1;
@@ -115,7 +115,7 @@ void setup(DomainType & domain, viennagrid::quadrilateral_tag)
   typedef typename viennagrid::result_of::point<ConfigType>::type          PointType;
   typedef typename viennagrid::result_of::ncell<ConfigType, 0>::type       VertexType;
   typedef typename viennagrid::result_of::ncell<ConfigType,
-                                                CellTag::topology_level>::type   CellType;
+                                                CellTag::dim>::type   CellType;
 
   CellType hypercube0;
   CellType hypercube1;
@@ -174,7 +174,7 @@ void test(std::string outfile)
   typedef typename viennagrid::result_of::point<ConfigType>::type          PointType;
   typedef typename viennagrid::result_of::ncell<ConfigType, 0>::type       VertexType;
   typedef typename viennagrid::result_of::ncell<ConfigType,
-                                                CellTag::topology_level>::type   CellType;
+                                                CellTag::dim>::type   CellType;
 
   typedef typename viennagrid::result_of::ncell_range<Domain, 0>::type       VertexContainer;
   typedef typename viennagrid::result_of::iterator<VertexContainer>::type    VertexIterator;
@@ -182,10 +182,10 @@ void test(std::string outfile)
   typedef typename viennagrid::result_of::ncell_range<Domain, 1>::type       EdgeContainer;
   typedef typename viennagrid::result_of::iterator<EdgeContainer>::type      EdgeIterator;
   
-  typedef typename viennagrid::result_of::ncell_range<Domain, CellTag::topology_level-1>::type   FacetContainer;
+  typedef typename viennagrid::result_of::ncell_range<Domain, CellTag::dim-1>::type   FacetContainer;
   typedef typename viennagrid::result_of::iterator<FacetContainer>::type                         FacetIterator;
   
-  typedef typename viennagrid::result_of::ncell_range<Domain, CellTag::topology_level>::type   CellContainer;
+  typedef typename viennagrid::result_of::ncell_range<Domain, CellTag::dim>::type   CellContainer;
   typedef typename viennagrid::result_of::iterator<CellContainer>::type                        CellIterator;
   
   Domain domain;

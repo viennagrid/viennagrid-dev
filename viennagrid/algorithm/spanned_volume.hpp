@@ -170,38 +170,38 @@ namespace viennagrid
   //
   // All Cartesian:
   //
-  template<typename PointType1, typename PointType2>
+  template<typename PointType1, typename PointType2, long d>
   typename traits::value_type<PointType1>::type
   spanned_volume_impl(PointType1 const & p1,
                       PointType2 const & p2,
-                      cartesian_cs,
-                      cartesian_cs)
+                      cartesian_cs<d>,
+                      cartesian_cs<d>)
   {
     return detail::spanned_volume_impl<PointType1>::apply(p1, p2);
   }
 
-  template <typename PointType1, typename PointType2, typename PointType3>
+  template <typename PointType1, typename PointType2, typename PointType3, long d>
   typename traits::value_type<PointType1>::type
   spanned_volume_impl(PointType1 const & p1,
                       PointType2 const & p2,
                       PointType3 const & p3,
-                      cartesian_cs,
-                      cartesian_cs,
-                      cartesian_cs)
+                      cartesian_cs<d>,
+                      cartesian_cs<d>,
+                      cartesian_cs<d>)
   {
     return detail::spanned_volume_impl<PointType1>::apply(p1, p2, p3);
   }
 
-  template <typename PointType1, typename PointType2, typename PointType3, typename PointType4>
+  template <typename PointType1, typename PointType2, typename PointType3, typename PointType4, long d>
   typename traits::value_type<PointType1>::type
   spanned_volume_impl(PointType1 const & p1,
                       PointType2 const & p2,
                       PointType3 const & p3,
                       PointType4 const & p4,
-                      cartesian_cs,
-                      cartesian_cs,
-                      cartesian_cs,
-                      cartesian_cs)
+                      cartesian_cs<d>,
+                      cartesian_cs<d>,
+                      cartesian_cs<d>,
+                      cartesian_cs<d>)
   {
     return detail::spanned_volume_impl<PointType1>::apply(p1, p2, p3, p4);
   }

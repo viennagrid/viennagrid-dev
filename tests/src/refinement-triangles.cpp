@@ -35,7 +35,7 @@ void test(std::string & infile, std::string & outfile)
   typedef typename viennagrid::result_of::ncell<ConfigType, 0>::type       VertexType;
   typedef typename viennagrid::result_of::ncell<ConfigType, 1>::type       EdgeType;
   typedef typename viennagrid::result_of::ncell<ConfigType,
-                                                CellTag::topology_level>::type   CellType;
+                                                CellTag::dim>::type   CellType;
 
 
   typedef typename viennagrid::result_of::ncell_range<Domain, 0>::type           VertexContainer;
@@ -44,10 +44,10 @@ void test(std::string & infile, std::string & outfile)
   typedef typename viennagrid::result_of::ncell_range<Domain, 1>::type           EdgeContainer;
   typedef typename viennagrid::result_of::iterator<EdgeContainer>::type          EdgeIterator;
 
-  typedef typename viennagrid::result_of::ncell_range<Domain, CellTag::topology_level-1>::type   FacetContainer;
+  typedef typename viennagrid::result_of::ncell_range<Domain, CellTag::dim-1>::type   FacetContainer;
   typedef typename viennagrid::result_of::iterator<FacetContainer>::type                         FacetIterator;
 
-  typedef typename viennagrid::result_of::ncell_range<Domain, CellTag::topology_level>::type     CellContainer;
+  typedef typename viennagrid::result_of::ncell_range<Domain, CellTag::dim>::type     CellContainer;
   typedef typename viennagrid::result_of::iterator<CellContainer>::type                          CellIterator;
 
   Domain domain;
@@ -68,7 +68,7 @@ void test(std::string & infile, std::string & outfile)
   std::cout << "Surface of input domain: " << input_domain_surface << std::endl;
 
   //Testing: Tag some cells with centroid at x \in [2,3]:
-  CellContainer cells = viennagrid::ncells<CellTag::topology_level>(domain);
+  CellContainer cells = viennagrid::ncells<CellTag::dim>(domain);
   for (CellIterator cit  = cells.begin();
                     cit != cells.end();
                   ++cit)
@@ -105,7 +105,7 @@ void test(std::string & infile, std::string & outfile)
   //
   // Second pass:
   //
-  CellContainer cells_refined = viennagrid::ncells<CellTag::topology_level>(refined_domain);
+  CellContainer cells_refined = viennagrid::ncells<CellTag::dim>(refined_domain);
   for (CellIterator cit  = cells_refined.begin();
                     cit != cells_refined.end();
                   ++cit)

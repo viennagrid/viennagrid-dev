@@ -48,17 +48,17 @@ int main()
   typedef viennagrid::result_of::ncell<ConfigType, 0>::type       VertexType;
   typedef viennagrid::result_of::ncell<ConfigType, 1>::type       EdgeType;
   typedef viennagrid::result_of::ncell<ConfigType,
-                                       CellTag::topology_level-1>::type FacetType;
+                                       CellTag::dim-1>::type FacetType;
   typedef viennagrid::result_of::ncell<ConfigType,
-                                       CellTag::topology_level>::type   CellType;
+                                       CellTag::dim>::type   CellType;
                                             
   typedef viennagrid::result_of::ncell_range<Domain, 0>::type       VertexRange;
   typedef viennagrid::result_of::iterator<VertexRange>::type        VertexIterator;
                                             
-  typedef viennagrid::result_of::ncell_range<Domain, CellTag::topology_level-1>::type      FacetRange;
+  typedef viennagrid::result_of::ncell_range<Domain, CellTag::dim-1>::type      FacetRange;
   typedef viennagrid::result_of::iterator<FacetRange>::type                                FacetIterator;
   
-  typedef viennagrid::result_of::ncell_range<FacetType, CellTag::topology_level>::type     CellOnFacetRange;
+  typedef viennagrid::result_of::ncell_range<FacetType, CellTag::dim>::type     CellOnFacetRange;
   typedef viennagrid::result_of::iterator<CellOnFacetRange>::type                          CellOnFacetIterator;
   
   std::cout << "------------------------------------------------" << std::endl;
@@ -86,7 +86,7 @@ int main()
   // In the same way, one may also traverse interface vertices, etc.
   std::cout << "Facets of the full domain:" << std::endl;
   FacetType * interface_facet = NULL;
-  FacetRange facets = viennagrid::ncells<CellTag::topology_level-1>(domain);
+  FacetRange facets = viennagrid::ncells<CellTag::dim-1>(domain);
   for (FacetIterator fit = facets.begin(); fit != facets.end(); ++fit)
   {
     if (viennagrid::is_interface(*fit, seg1, seg2))  //three arguments: The element and the two interfacing segments

@@ -71,17 +71,17 @@ namespace viennagrid
         typedef typename DomainType::config_type                         DomainConfiguration;
 
         typedef typename DomainConfiguration::numeric_type               CoordType;
-        typedef typename DomainConfiguration::dimension_tag              DimensionTag;
+        typedef typename DomainConfiguration::coordinate_system_tag      CoordinateSystemTag;
         typedef typename DomainConfiguration::cell_tag                   CellTag;
 
         typedef typename result_of::point<DomainConfiguration>::type                              PointType;
         typedef typename result_of::ncell<DomainConfiguration, 0>::type                           VertexType;
-        typedef typename result_of::ncell<DomainConfiguration, CellTag::topology_level>::type     CellType;
+        typedef typename result_of::ncell<DomainConfiguration, CellTag::dim>::type     CellType;
 
         typedef typename viennagrid::result_of::const_ncell_range<DomainType, 0>::type   VertexRange;
         typedef typename viennagrid::result_of::iterator<VertexRange>::type              VertexIterator;
         
-        typedef typename viennagrid::result_of::const_ncell_range<DomainType, CellTag::topology_level>::type     CellRange;
+        typedef typename viennagrid::result_of::const_ncell_range<DomainType, CellTag::dim>::type     CellRange;
         typedef typename viennagrid::result_of::iterator<CellRange>::type                                        CellIterator;
         
         typedef typename viennagrid::result_of::const_ncell_range<CellType, 0>::type      VertexOnCellRange;
@@ -91,7 +91,7 @@ namespace viennagrid
       public:
         int operator()(DomainType const & domain, std::string const & filename)
         {
-          typedef DXHelper<DimensionTag::value>  DXHelper;
+          typedef DXHelper<CoordinateSystemTag::dim>  DXHelper;
         
           std::ofstream writer(filename.c_str());
           if (!writer.is_open())
@@ -102,7 +102,7 @@ namespace viennagrid
         
           std::size_t pointnum = viennagrid::ncells<0>(domain).size();
         
-          writer << "object \"points\" class array type float rank 1 shape " << DimensionTag::value << " items ";
+          writer << "object \"points\" class array type float rank 1 shape " << CoordinateSystemTag::dim << " items ";
           writer << pointnum << " data follows" << std::endl;
         
           //Nodes:
@@ -111,16 +111,16 @@ namespace viennagrid
               vit != vertices.end();
               ++vit)
           {
-            PointWriter<DimensionTag::value>::write(writer, vit->point());
+            PointWriter<CoordinateSystemTag::dim>::write(writer, vit->point());
             writer << std::endl;
           }
           writer << std::endl;
 
           //Cells:
-          std::size_t cellnum = viennagrid::ncells<CellTag::topology_level>(domain).size();
-          writer << "object \"grid_Line_One\" class array type int rank 1 shape " << (DimensionTag::value + 1) << " items " << cellnum << " data follows" << std::endl;
+          std::size_t cellnum = viennagrid::ncells<CellTag::dim>(domain).size();
+          writer << "object \"grid_Line_One\" class array type int rank 1 shape " << (CoordinateSystemTag::dim + 1) << " items " << cellnum << " data follows" << std::endl;
 
-          CellRange cells = viennagrid::ncells<CellTag::topology_level>(domain);
+          CellRange cells = viennagrid::ncells<CellTag::dim>(domain);
           for (CellIterator cit = cells.begin();
               cit != cells.end();
               ++cit)
@@ -241,7 +241,7 @@ namespace viennagrid
     {
       typedef typename DomainType::config_type                         DomainConfiguration;
       typedef typename DomainConfiguration::cell_tag                   CellTag;
-      typedef typename result_of::ncell<DomainConfiguration, CellTag::topology_level>::type     CellType;
+      typedef typename result_of::ncell<DomainConfiguration, CellTag::dim>::type     CellType;
       
       data_accessor_wrapper<CellType> wrapper(new global_scalar_data_accessor<CellType, KeyType, DataType>(key));
       writer.add_scalar_data_on_cells(wrapper, quantity_name);

@@ -27,44 +27,51 @@
 #include "viennagrid/algorithm/boundary.hpp"
 
 //
-// Configure ViennaGrid not to store anything other than vertices on cells
+// Disable edges for a tetrahedron (but not its triangular facets):
+// Only valid for domains using the configuration class viennagrid::config::tetrahedral_3d
+//
+VIENNAGRID_DISABLE_BOUNDARY_NCELL(viennagrid::config::tetrahedral_3d, viennagrid::tetrahedron_tag, 1)
+
+//
+// Disable edges for all triangles for all possible domain types
+// (no matter whether it is a cell or the boundary of a higher-dimensional simplex)
+//
+VIENNAGRID_GLOBAL_DISABLE_BOUNDARY_NCELL(viennagrid::triangle_tag, 1)
+
+//
+// Disable triangular facets of a tetrahedron for all possible domain types
+//
+VIENNAGRID_GLOBAL_DISABLE_BOUNDARY_NCELL(tetrahedron_tag, 2)
+
+/*
+//
+// For documentation purposes, the three macros above result in the following code:
+// (this allows you to inject your own custom meta-functions if desired)
 //
 namespace viennagrid
 {
   namespace result_of
   {
-    //disable edges on tetrahedrons:
     template <>
-    struct subelement_handling< viennagrid::tetrahedron_tag, 1>
+    struct subelement_handling<viennagrid::config::tetrahedral_3d, viennagrid::tetrahedron_tag, 1>
     {
       typedef no_handling_tag    type;
     };
 
-    template <>
-    struct subelement_handling< viennagrid::triangle_tag, 1>
+    template <typename ConfigType>
+    struct subelement_handling<ConfigType,  viennagrid::triangle_tag, 1>
     {
       typedef no_handling_tag    type;
     };
     
-    
-    template <typename T>
-    struct subelement_handling< viennagrid::domain_t<T>, 1>
+    template <typename ConfigType>
+    struct subelement_handling<ConfigType,  viennagrid::tetrahedron_tag, 2>
     {
       typedef no_handling_tag    type;
     };
-    
-    //disable faces:
-    /*
-    template <>
-    struct handling_tag< viennagrid::tetrahedron_tag, 2>
-    {
-      typedef no_handling_tag    type;
-    };
-    */
-    
   }  
 }
-
+*/
 
 
 
@@ -80,10 +87,13 @@ int main()
   typedef viennagrid::result_of::ncell<ConfigType, 0>::type       VertexType;
   
   typedef viennagrid::result_of::ncell<ConfigType,
-                                       CellTag::topology_level>::type   CellType;
+                                       CellTag::dim>::type   CellType;
 
-  typedef viennagrid::result_of::ncell_range<Domain, 0>::type           VertexRange;
+  typedef viennagrid::result_of::ncell_range<Domain, 0>::type       VertexRange;
   typedef viennagrid::result_of::iterator<VertexRange>::type        VertexIterator;
+  typedef viennagrid::result_of::ncell<ConfigType, 1>::type         EdgeType;
+  typedef viennagrid::result_of::ncell<ConfigType, 2>::type         FacetType;
+  typedef viennagrid::result_of::ncell<ConfigType, 3>::type         CellType;
 
   std::cout << "----------------------------------------------------------" << std::endl;
   std::cout << "-- ViennaGrid tutorial: Domain without storage of edges --" << std::endl;
@@ -101,25 +111,35 @@ int main()
   #else
   std::string path = "../examples/data/";
   #endif
-  reader(domain, path + "cube48.mesh");
-  
-  //
-  // Iterate over vertices:
-  //
-  std::size_t num_elements = 0;
-  VertexRange vertices = viennagrid::ncells(domain);
-  for (VertexIterator vit = vertices.begin();
-                      vit != vertices.end();
-                    ++vit)
-  {
-    if (viennagrid::is_boundary(*vit, domain))
-    {
-      std::cout << *vit << std::endl;
-      ++num_elements;
-    }
-  }
-  std::cout << "Elements on boundary: " << num_elements << " out of " << vertices.size() << " total." << std::endl;
+  reader(domain, path + "cube384.mesh");
 
+  //
+  // Print a summary of memory consumption:
+  //
+  std::cout << "Memory for vertices: " 
+            << (viennagrid::ncells<0>(domain).size() * sizeof(VertexType)) / 1024.0 << " KB"
+            << " for " << viennagrid::ncells<0>(domain).size() << " elements ("
+            << sizeof(VertexType) << " Bytes each)" << std::endl;
+  std::cout << "Memory for edges: " 
+            << (viennagrid::ncells<1>(domain).size() * sizeof(EdgeType)) / 1024.0 << " KB"
+            << " for " << viennagrid::ncells<1>(domain).size() << " elements ("
+            << sizeof(EdgeType) << " Bytes each)" << std::endl;
+  std::cout << "Memory for facets: " 
+            << (viennagrid::ncells<2>(domain).size() * sizeof(FacetType)) / 1024.0 << " KB"
+            << " for " << viennagrid::ncells<2>(domain).size() << " elements ("
+            << sizeof(FacetType) << " Bytes each)" << std::endl;
+  std::cout << "Memory for cells: " 
+            << (viennagrid::ncells<3>(domain).size() * sizeof(CellType)) / 1024.0 << " KB"
+            << " for " << viennagrid::ncells<3>(domain).size() << " elements ("
+            << sizeof(CellType) << " Bytes each)" << std::endl;
+  std::cout << std::endl;
+
+  std::cout << "Total memory required: "
+            << (viennagrid::ncells<0>(domain).size() * sizeof(VertexType)) / 1024.0
+             + (viennagrid::ncells<1>(domain).size() * sizeof(EdgeType)) / 1024.0
+             + (viennagrid::ncells<2>(domain).size() * sizeof(FacetType)) / 1024.0
+             + (viennagrid::ncells<3>(domain).size() * sizeof(CellType)) / 1024.0 << " KB" << std::endl;
+  
   std::cout << "-----------------------------------------------" << std::endl;
   std::cout << " \\o/    Tutorial finished successfully!    \\o/ " << std::endl;
   std::cout << "-----------------------------------------------" << std::endl;

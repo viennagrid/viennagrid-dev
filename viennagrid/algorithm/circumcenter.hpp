@@ -73,7 +73,7 @@ namespace viennagrid
     //
     template <typename ElementType>
     typename viennagrid::result_of::point<typename ElementType::config_type>::type
-    circumcenter(ElementType const & cell, viennagrid::triangle_tag, viennagrid::two_dimensions_tag)
+    circumcenter(ElementType const & cell, viennagrid::triangle_tag, viennagrid::dimension_tag<2>)
     {
       typedef typename ElementType::config_type             Config;
       typedef typename Config::cell_tag                  CellTag;
@@ -115,7 +115,7 @@ namespace viennagrid
     //
     template <typename CellType>
     typename viennagrid::result_of::point<typename CellType::config_type>::type
-    circumcenter(CellType const & cell, viennagrid::quadrilateral_tag, viennagrid::two_dimensions_tag)
+    circumcenter(CellType const & cell, viennagrid::quadrilateral_tag, viennagrid::dimension_tag<2>)
     {
       typedef typename CellType::config_type             Config;
       typedef typename Config::cell_tag                  CellTag;
@@ -136,7 +136,7 @@ namespace viennagrid
         p0 += vocit->point();
       }
       
-      p0 /= viennagrid::topology::subelements<CellTag, 0>::num_elements;
+      p0 /= viennagrid::topology::subelements<CellTag, 0>::num;
       
       return p0;
     }
@@ -148,7 +148,7 @@ namespace viennagrid
     //
     template <typename ElementType>
     typename viennagrid::result_of::point<typename ElementType::config_type>::type
-    circumcenter(ElementType const & cell, viennagrid::triangle_tag, viennagrid::three_dimensions_tag)
+    circumcenter(ElementType const & cell, viennagrid::triangle_tag, viennagrid::dimension_tag<3>)
     {
       typedef typename ElementType::config_type             Config;
       typedef typename Config::cell_tag                  CellTag;
@@ -182,10 +182,10 @@ namespace viennagrid
     //
     template <typename CellType>
     typename viennagrid::result_of::point<typename CellType::config_type>::type
-    circumcenter(CellType const & cell, viennagrid::quadrilateral_tag, viennagrid::three_dimensions_tag)
+    circumcenter(CellType const & cell, viennagrid::quadrilateral_tag, viennagrid::dimension_tag<3>)
     {
       typedef typename CellType::config_type             Config;
-      typedef typename CellType::element_tag             ElementTag;
+      typedef typename CellType::tag             ElementTag;
       typedef typename viennagrid::result_of::point<Config>::type                            PointType;
       typedef typename viennagrid::result_of::ncell<Config, 0>::type                         VertexType;
       typedef typename viennagrid::result_of::ncell<Config, 1>::type                         EdgeType;
@@ -203,7 +203,7 @@ namespace viennagrid
         p0 += vocit->point();
       }
       
-      p0 /= viennagrid::topology::subelements<ElementTag, 0>::num_elements;
+      p0 /= viennagrid::topology::subelements<ElementTag, 0>::num;
       
       return p0;
     }
@@ -214,7 +214,7 @@ namespace viennagrid
     //
     template <typename ElementType>
     typename viennagrid::result_of::point<typename ElementType::config_type>::type
-    circumcenter(ElementType const & cell, viennagrid::tetrahedron_tag, viennagrid::three_dimensions_tag)
+    circumcenter(ElementType const & cell, viennagrid::tetrahedron_tag, viennagrid::dimension_tag<3>)
     {
       typedef typename ElementType::config_type             Config;
       typedef typename Config::cell_tag                  CellTag;
@@ -254,7 +254,7 @@ namespace viennagrid
     //
     template <typename CellType>
     typename viennagrid::result_of::point<typename CellType::config_type>::type
-    circumcenter(CellType const & cell, viennagrid::hexahedron_tag, viennagrid::three_dimensions_tag)
+    circumcenter(CellType const & cell, viennagrid::hexahedron_tag, viennagrid::dimension_tag<3>)
     {
       typedef typename CellType::config_type             Config;
       typedef typename Config::cell_tag                  CellTag;
@@ -275,7 +275,7 @@ namespace viennagrid
         p0 += vocit->point();
       }
       
-      p0 /= viennagrid::topology::subelements<CellTag, 0>::num_elements;
+      p0 /= viennagrid::topology::subelements<CellTag, 0>::num;
       
       return p0;
     }
@@ -286,7 +286,9 @@ namespace viennagrid
     typename viennagrid::result_of::point<typename CellType::config_type>::type
     circumcenter(CellType const & cell)
     {
-      return circumcenter(cell, typename CellType::element_tag(), typename CellType::config_type::dimension_tag());
+      return circumcenter(cell,
+                          typename CellType::tag(),
+                          viennagrid::dimension_tag<CellType::config_type::coordinate_system_tag::dim>());
     }
     
 } //namespace viennashe

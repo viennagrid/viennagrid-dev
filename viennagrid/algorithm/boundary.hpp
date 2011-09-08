@@ -87,7 +87,7 @@ namespace viennagrid
 {
 
   //helper struct for setting boundary flag of lower level elements of a facet
-  template <long topology_level>
+  template <long dim>
   struct boundary_setter
   {
     template <typename FacetType, typename KeyType>
@@ -96,10 +96,10 @@ namespace viennagrid
       typedef typename FacetType::config_type        ConfigType;
       typedef typename ConfigType::cell_tag          CellTag;
       
-      typedef typename viennagrid::result_of::const_ncell_range<FacetType, topology_level>::type    ElementOnFacetRange;
+      typedef typename viennagrid::result_of::const_ncell_range<FacetType, dim>::type    ElementOnFacetRange;
       typedef typename result_of::iterator<ElementOnFacetRange>::type                    ElementOnFacetIterator;
 
-      ElementOnFacetRange eof_container = ncells<topology_level>(facet);
+      ElementOnFacetRange eof_container = ncells<dim>(facet);
       for (ElementOnFacetIterator eofit = eof_container.begin();
             eofit != eof_container.end();
             ++eofit)
@@ -108,9 +108,9 @@ namespace viennagrid
       }
 
       //proceed to lower level:
-      boundary_setter<topology_level - 1>::apply(facet,
+      boundary_setter<dim - 1>::apply(facet,
                                                  key,
-                                                 typename viennagrid::result_of::subelement_handling<CellTag, topology_level-1>::type()
+                                                 typename viennagrid::result_of::subelement_handling<ConfigType, CellTag, dim-1>::type()
                                                 );
     }
     
@@ -121,9 +121,9 @@ namespace viennagrid
       typedef typename ConfigType::cell_tag          CellTag;
       
       //no elements handled at this level, thus proceed to lower level:
-      boundary_setter<topology_level - 1>::apply(facet,
+      boundary_setter<dim - 1>::apply(facet,
                                                  key,
-                                                 typename viennagrid::result_of::subelement_handling<CellTag, topology_level-1>::type()
+                                                 typename viennagrid::result_of::subelement_handling<ConfigType, CellTag, dim-1>::type()
                                                 );
     }
     
@@ -151,25 +151,25 @@ namespace viennagrid
   {
     typedef typename DomainSegmentType::config_type                            ConfigType;
     typedef typename ConfigType::cell_tag                                      CellTag;
-    typedef typename viennagrid::result_of::ncell<ConfigType, CellTag::topology_level-1>::type   FacetType;
-    typedef typename viennagrid::result_of::ncell<ConfigType, CellTag::topology_level>::type     CellType;
+    typedef typename viennagrid::result_of::ncell<ConfigType, CellTag::dim-1>::type   FacetType;
+    typedef typename viennagrid::result_of::ncell<ConfigType, CellTag::dim>::type     CellType;
 
-    typedef typename viennagrid::result_of::const_ncell_range<DomainSegmentType, CellTag::topology_level-1>::type      FacetRange;
+    typedef typename viennagrid::result_of::const_ncell_range<DomainSegmentType, CellTag::dim-1>::type      FacetRange;
     typedef typename viennagrid::result_of::iterator<FacetRange>::type                                           FacetIterator;
       
-    typedef typename viennagrid::result_of::const_ncell_range<DomainSegmentType, CellTag::topology_level>::type        CellRange;
+    typedef typename viennagrid::result_of::const_ncell_range<DomainSegmentType, CellTag::dim>::type        CellRange;
     typedef typename viennagrid::result_of::iterator<CellRange>::type                                            CellIterator;
 
-    typedef typename viennagrid::result_of::const_ncell_range<CellType, CellTag::topology_level-1>::type     FacetOnCellRange;
+    typedef typename viennagrid::result_of::const_ncell_range<CellType, CellTag::dim-1>::type     FacetOnCellRange;
     typedef typename viennagrid::result_of::iterator<FacetOnCellRange>::type                           FacetOnCellIterator;
 
     //iterate over all cells, over facets there and tag them:
-    CellRange cells = viennagrid::ncells<CellTag::topology_level>(seg);
+    CellRange cells = viennagrid::ncells<CellTag::dim>(seg);
     for (CellIterator cit = cells.begin();
           cit != cells.end();
           ++cit)
     {
-      FacetOnCellRange facets_on_cell = ncells<CellTag::topology_level-1>(*cit);
+      FacetOnCellRange facets_on_cell = ncells<CellTag::dim-1>(*cit);
       for (FacetOnCellIterator focit = facets_on_cell.begin();
             focit != facets_on_cell.end();
             ++focit)
@@ -190,7 +190,7 @@ namespace viennagrid
     }
     
     //iterate over all facets again and tag all lower level topological elements on facets that belong to the boundary:
-    FacetRange facets = viennagrid::ncells<CellTag::topology_level-1>(seg);
+    FacetRange facets = viennagrid::ncells<CellTag::dim-1>(seg);
     for (FacetIterator fit = facets.begin();
           fit != facets.end();
           ++fit)
@@ -198,9 +198,9 @@ namespace viennagrid
       if (viennadata::find<KeyType, bool>(key)(*fit) != NULL)
       {
         if (viennadata::access<KeyType, bool>(key)(*fit) == true)
-          boundary_setter<CellTag::topology_level-2>::apply(*fit,
+          boundary_setter<CellTag::dim-2>::apply(*fit,
                                                             key,
-                                                            typename viennagrid::result_of::subelement_handling<CellTag, CellTag::topology_level-2>::type()
+                                                            typename viennagrid::result_of::subelement_handling<ConfigType, CellTag, CellTag::dim-2>::type()
                                                            );
       }
     }
@@ -218,8 +218,8 @@ namespace viennagrid
     typedef typename DomainSegmentType::config_type            ConfigType;
     typedef typename ConfigType::cell_tag                   CellTag;
     typedef typename result_of::domain<ConfigType>::type                        DomainType;
-    typedef typename result_of::subelement_handling<DomainType,
-                                                    CellTag::topology_level-1>::type  HandlingTag;
+    typedef typename result_of::subelement_handling<ConfigType, DomainType,
+                                                    CellTag::dim-1>::type  HandlingTag;
     
     if (viennadata::access<KeyType, bool>(key)(segment) == false)
     {

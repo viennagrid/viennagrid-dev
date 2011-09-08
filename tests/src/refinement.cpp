@@ -33,7 +33,7 @@ int test(DomainType & domain_in)
   typedef typename viennagrid::result_of::ncell<ConfigType, 0>::type       VertexType;
   typedef typename viennagrid::result_of::ncell<ConfigType, 1>::type       EdgeType;
   typedef typename viennagrid::result_of::ncell<ConfigType,
-                                            CellTag::topology_level>::type      CellType;
+                                            CellTag::dim>::type      CellType;
 
   typedef typename viennagrid::result_of::ncell_range<DomainType, 0>::type  VertexContainer;
   typedef typename viennagrid::result_of::iterator<VertexContainer>::type       VertexIterator;
@@ -41,10 +41,10 @@ int test(DomainType & domain_in)
   typedef typename viennagrid::result_of::ncell_range<CellType, 1>::type    EdgeOnCellContainer;
   typedef typename viennagrid::result_of::iterator<EdgeOnCellContainer>::type     EdgeOnCellIterator;
 
-  typedef typename viennagrid::result_of::ncell_range<DomainType, CellTag::topology_level>::type  CellContainer;
+  typedef typename viennagrid::result_of::ncell_range<DomainType, CellTag::dim>::type  CellContainer;
   typedef typename viennagrid::result_of::iterator<CellContainer>::type         CellIterator;
   
-  CellContainer cells = viennagrid::ncells<CellTag::topology_level>(domain_in);
+  CellContainer cells = viennagrid::ncells<CellTag::dim>(domain_in);
   CellIterator cit = cells.begin();
   
   CellType & cell = *cit;
@@ -550,7 +550,7 @@ void fill_domain(DomainType & domain, PointFiller const & filler)
   typedef typename viennagrid::result_of::point<ConfigType>::type          PointType;
   typedef typename viennagrid::result_of::ncell<ConfigType, 0>::type       VertexType;
   typedef typename viennagrid::result_of::ncell<ConfigType,
-                                                     CellTag::topology_level>::type   CellType;
+                                                     CellTag::dim>::type   CellType;
   
   domain.segments().resize(1);
   SegmentType & seg = domain.segments()[0];

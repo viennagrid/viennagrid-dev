@@ -81,7 +81,7 @@ void test(viennagrid::config::tetrahedral_3d)
   typedef viennagrid::result_of::ncell<ConfigType, 0>::type       VertexType;
   typedef viennagrid::result_of::ncell<ConfigType, 1>::type       EdgeType;
   typedef viennagrid::result_of::ncell<ConfigType,
-                                                     CellTag::topology_level>::type   CellType;
+                                                     CellTag::dim>::type   CellType;
 
   Domain domain;
   
@@ -154,8 +154,8 @@ void test(viennagrid::config::tetrahedral_3d)
   std::cout << "Vertices in Segment 1: " << viennagrid::ncells<0>(domain.segments()[1]).size() << std::endl;
   std::cout << "Edges in Segment 0: "    << viennagrid::ncells<1>(domain.segments()[0]).size() << std::endl;
   std::cout << "Edges in Segment 1: "    << viennagrid::ncells<1>(domain.segments()[1]).size() << std::endl;
-  std::cout << "Cells in Segment 0: "    << viennagrid::ncells<CellTag::topology_level>(domain.segments()[0]).size() << std::endl;
-  std::cout << "Cells in Segment 1: "    << viennagrid::ncells<CellTag::topology_level>(domain.segments()[1]).size() << std::endl;
+  std::cout << "Cells in Segment 0: "    << viennagrid::ncells<CellTag::dim>(domain.segments()[0]).size() << std::endl;
+  std::cout << "Cells in Segment 1: "    << viennagrid::ncells<CellTag::dim>(domain.segments()[1]).size() << std::endl;
   
   std::cout << "Printing vertices in segment 0:" << std::endl;
   print_elements<0>(domain.segments()[0]);
@@ -164,10 +164,10 @@ void test(viennagrid::config::tetrahedral_3d)
   print_elements<0>(domain.segments()[1]);
   
   std::cout << "Printing cells in segment 0:" << std::endl;
-  print_elements<Domain::config_type::cell_tag::topology_level>(domain.segments()[0]);
+  print_elements<Domain::config_type::cell_tag::dim>(domain.segments()[0]);
 
   std::cout << "Printing cells in segment 1:" << std::endl;
-  print_elements<Domain::config_type::cell_tag::topology_level>(domain.segments()[1]);
+  print_elements<Domain::config_type::cell_tag::dim>(domain.segments()[1]);
   
   std::cout << "Test for direct operator[] access: " << std::endl;
   //viennagrid::ncells<0>(domain.segments()[0])[0].print_short();
@@ -190,7 +190,7 @@ void test(viennagrid::config::hexahedral_3d)
   typedef viennagrid::result_of::ncell<ConfigType, 0>::type       VertexType;
   typedef viennagrid::result_of::ncell<ConfigType, 1>::type       EdgeType;
   typedef viennagrid::result_of::ncell<ConfigType,
-                                                     CellTag::topology_level>::type   CellType;
+                                                     CellTag::dim>::type   CellType;
 
   Domain domain;
   
@@ -272,8 +272,8 @@ void test(viennagrid::config::hexahedral_3d)
   std::cout << "Vertices in Segment 1: " << viennagrid::ncells<0>(domain.segments()[1]).size() << std::endl;
   std::cout << "Edges in Segment 0: "    << viennagrid::ncells<1>(domain.segments()[0]).size() << std::endl;
   std::cout << "Edges in Segment 1: "    << viennagrid::ncells<1>(domain.segments()[1]).size() << std::endl;
-  std::cout << "Cells in Segment 0: "    << viennagrid::ncells<CellTag::topology_level>(domain.segments()[0]).size() << std::endl;
-  std::cout << "Cells in Segment 1: "    << viennagrid::ncells<CellTag::topology_level>(domain.segments()[1]).size() << std::endl;
+  std::cout << "Cells in Segment 0: "    << viennagrid::ncells<CellTag::dim>(domain.segments()[0]).size() << std::endl;
+  std::cout << "Cells in Segment 1: "    << viennagrid::ncells<CellTag::dim>(domain.segments()[1]).size() << std::endl;
   
   std::cout << "Printing vertices in segment 0:" << std::endl;
   print_elements<0>(domain.segments()[0]);
@@ -282,10 +282,10 @@ void test(viennagrid::config::hexahedral_3d)
   print_elements<0>(domain.segments()[1]);
   
   std::cout << "Printing cells in segment 0:" << std::endl;
-  print_elements<Domain::config_type::cell_tag::topology_level>(domain.segments()[0]);
+  print_elements<Domain::config_type::cell_tag::dim>(domain.segments()[0]);
 
   std::cout << "Printing cells in segment 1:" << std::endl;
-  print_elements<Domain::config_type::cell_tag::topology_level>(domain.segments()[1]);
+  print_elements<Domain::config_type::cell_tag::dim>(domain.segments()[1]);
   
   std::cout << "Test for direct operator[] access: " << std::endl;
   //viennagrid::ncells<0>(domain.segments()[0])[0].print_short();
@@ -309,7 +309,7 @@ void test(viennagrid::config::triangular_2d)
   typedef viennagrid::result_of::ncell<ConfigType, 0>::type       VertexType;
   typedef viennagrid::result_of::ncell<ConfigType, 1>::type       EdgeType;
   typedef viennagrid::result_of::ncell<ConfigType,
-                                                     CellTag::topology_level>::type   CellType;
+                                                     CellTag::dim>::type   CellType;
 
   Domain domain;
   
@@ -375,8 +375,8 @@ void test(viennagrid::config::triangular_2d)
   std::cout << "Vertices in Segment 1: " << viennagrid::ncells<0>(domain.segments()[1]).size() << std::endl;
   std::cout << "Edges in Segment 0: "    << viennagrid::ncells<1>(domain.segments()[0]).size() << std::endl;
   std::cout << "Edges in Segment 1: "    << viennagrid::ncells<1>(domain.segments()[1]).size() << std::endl;
-  std::cout << "Cells in Segment 0: "    << viennagrid::ncells<CellTag::topology_level>(domain.segments()[0]).size() << std::endl;
-  std::cout << "Cells in Segment 1: "    << viennagrid::ncells<CellTag::topology_level>(domain.segments()[1]).size() << std::endl;
+  std::cout << "Cells in Segment 0: "    << viennagrid::ncells<CellTag::dim>(domain.segments()[0]).size() << std::endl;
+  std::cout << "Cells in Segment 1: "    << viennagrid::ncells<CellTag::dim>(domain.segments()[1]).size() << std::endl;
   
   std::cout << "Printing vertices in segment 0:" << std::endl;
   print_elements<0>(domain.segments()[0]);
@@ -385,10 +385,10 @@ void test(viennagrid::config::triangular_2d)
   print_elements<0>(domain.segments()[1]);
   
   std::cout << "Printing cells in segment 0:" << std::endl;
-  print_elements<Domain::config_type::cell_tag::topology_level>(domain.segments()[0]);
+  print_elements<Domain::config_type::cell_tag::dim>(domain.segments()[0]);
 
   std::cout << "Printing cells in segment 1:" << std::endl;
-  print_elements<Domain::config_type::cell_tag::topology_level>(domain.segments()[1]);
+  print_elements<Domain::config_type::cell_tag::dim>(domain.segments()[1]);
 
   std::cout << "Test for direct operator[] access: " << std::endl;
 //  viennagrid::ncells<0>(domain.segments()[0])[0].print_short();
@@ -412,7 +412,7 @@ void test(viennagrid::config::quadrilateral_2d)
   typedef viennagrid::result_of::ncell<ConfigType, 0>::type       VertexType;
   typedef viennagrid::result_of::ncell<ConfigType, 1>::type       EdgeType;
   typedef viennagrid::result_of::ncell<ConfigType,
-                                                     CellTag::topology_level>::type   CellType;
+                                                     CellTag::dim>::type   CellType;
 
   Domain domain;
   
@@ -468,8 +468,8 @@ void test(viennagrid::config::quadrilateral_2d)
   std::cout << "Vertices in Segment 1: " << viennagrid::ncells<0>(domain.segments()[1]).size() << std::endl;
   std::cout << "Edges in Segment 0: "    << viennagrid::ncells<1>(domain.segments()[0]).size() << std::endl;
   std::cout << "Edges in Segment 1: "    << viennagrid::ncells<1>(domain.segments()[1]).size() << std::endl;
-  std::cout << "Cells in Segment 0: "    << viennagrid::ncells<CellTag::topology_level>(domain.segments()[0]).size() << std::endl;
-  std::cout << "Cells in Segment 1: "    << viennagrid::ncells<CellTag::topology_level>(domain.segments()[1]).size() << std::endl;
+  std::cout << "Cells in Segment 0: "    << viennagrid::ncells<CellTag::dim>(domain.segments()[0]).size() << std::endl;
+  std::cout << "Cells in Segment 1: "    << viennagrid::ncells<CellTag::dim>(domain.segments()[1]).size() << std::endl;
   
   std::cout << "Printing vertices in segment 0:" << std::endl;
   print_elements<0>(domain.segments()[0]);
@@ -478,10 +478,10 @@ void test(viennagrid::config::quadrilateral_2d)
   print_elements<0>(domain.segments()[1]);
   
   std::cout << "Printing cells in segment 0:" << std::endl;
-  print_elements<Domain::config_type::cell_tag::topology_level>(domain.segments()[0]);
+  print_elements<Domain::config_type::cell_tag::dim>(domain.segments()[0]);
 
   std::cout << "Printing cells in segment 1:" << std::endl;
-  print_elements<Domain::config_type::cell_tag::topology_level>(domain.segments()[1]);
+  print_elements<Domain::config_type::cell_tag::dim>(domain.segments()[1]);
 
   std::cout << "Test for direct operator[] access: " << std::endl;
 //  viennagrid::ncells<0>(domain.segments()[0])[0].print_short();

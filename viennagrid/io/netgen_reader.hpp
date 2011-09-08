@@ -39,12 +39,12 @@ namespace viennagrid
         typedef typename DomainType::config_type                         ConfigType;
 
         typedef typename ConfigType::numeric_type                        CoordType;
-        typedef typename ConfigType::dimension_tag                       DimensionTag;
+        typedef typename ConfigType::coordinate_system_tag               CoordinateSystemTag;
         typedef typename ConfigType::cell_tag                            CellTag;
 
         typedef typename result_of::point<ConfigType>::type                              PointType;
         typedef typename result_of::ncell<ConfigType, 0>::type                           VertexType;
-        typedef typename result_of::ncell<ConfigType, CellTag::topology_level>::type     CellType;
+        typedef typename result_of::ncell<ConfigType, CellTag::dim>::type     CellType;
 
         typedef typename viennagrid::result_of::ncell_range<DomainType, 0>::type   VertexRange;
         typedef typename viennagrid::result_of::iterator<VertexRange>::type        VertexIterator;
@@ -52,10 +52,10 @@ namespace viennagrid
         typedef typename viennagrid::result_of::ncell_range<DomainType, 1>::type   EdgeRange;
         typedef typename viennagrid::result_of::iterator<EdgeRange>::type          EdgeIterator;
 
-        typedef typename viennagrid::result_of::ncell_range<DomainType, CellTag::topology_level-1>::type   FacetRange;
+        typedef typename viennagrid::result_of::ncell_range<DomainType, CellTag::dim-1>::type   FacetRange;
         typedef typename viennagrid::result_of::iterator<FacetRange>::type                                 FacetIterator;
 
-        typedef typename viennagrid::result_of::ncell_range<DomainType, CellTag::topology_level>::type     CellRange;
+        typedef typename viennagrid::result_of::ncell_range<DomainType, CellTag::dim>::type     CellRange;
         typedef typename viennagrid::result_of::iterator<CellRange>::type                                  CellIterator;
         
         std::ifstream reader(filename.c_str());
@@ -99,7 +99,7 @@ namespace viennagrid
           if (!reader.good())
             throw bad_file_format_exception(filename, "EOF encountered while reading vertices.");
           
-          for (int j=0; j<DimensionTag::value; j++)
+          for (int j=0; j<CoordinateSystemTag::dim; j++)
             reader >> vertex.point()[j];
           
           vertex.id(i);
@@ -127,7 +127,7 @@ namespace viennagrid
         for (int i=0; i<cell_num; ++i)
         {
           long vertex_num;
-          VertexType *vertices[topology::subelements<CellTag, 0>::num_elements];
+          VertexType *vertices[topology::subelements<CellTag, 0>::num];
 
           if (!reader.good())
             throw bad_file_format_exception(filename, "EOF encountered while reading cells (segment index expected).");
@@ -135,7 +135,7 @@ namespace viennagrid
           std::size_t segment_index;
           reader >> segment_index;
     
-          for (int j=0; j<topology::subelements<CellTag, 0>::num_elements; ++j)
+          for (int j=0; j<topology::subelements<CellTag, 0>::num; ++j)
           {
             if (!reader.good())
               throw bad_file_format_exception(filename, "EOF encountered while reading cells (cell ID expected).");

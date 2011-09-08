@@ -58,14 +58,14 @@ namespace viennagrid
   //generic case:
   template <typename Config,
             long dim,
-            long cell_level = Config::cell_tag::topology_level>
+            long cell_level = Config::cell_tag::dim>
   struct domain_iterators
   {
     typedef domain_t<Config>                        domain_type;
     typedef element_t<Config,
                     typename Config::cell_tag>    cell_type;
     typedef element_t< Config,
-                       typename topology::subelements<typename Config::cell_tag, dim>::element_tag
+                       typename topology::subelements<typename Config::cell_tag, dim>::tag
                      >                                                         element_type;
                     
     typedef typename result_of::element_container<domain_type, dim>::type      container_type;
@@ -99,7 +99,7 @@ namespace viennagrid
                     typename Config::cell_tag>    cell_type;
                     
     typedef typename result_of::element_container<domain_type,
-                                                  Config::cell_tag::topology_level>::type   container_type;
+                                                  Config::cell_tag::dim>::type   container_type;
     
     typedef typename container_type::iterator          iterator;
     typedef typename container_type::const_iterator    const_iterator;
@@ -136,7 +136,7 @@ namespace viennagrid
   {
       typedef domain_t<config_type>                        domain_type;
       typedef element_t< config_type,
-                       typename topology::subelements<typename config_type::cell_tag, dim>::element_tag
+                       typename topology::subelements<typename config_type::cell_tag, dim>::tag
                      >                                                         element_type;
                      
       typedef element_t< config_type,
@@ -211,7 +211,7 @@ namespace viennagrid
   {
       typedef domain_t<config_type>                        domain_type;
       typedef element_t< config_type,
-                       typename topology::subelements<typename config_type::cell_tag, dim>::element_tag
+                       typename topology::subelements<typename config_type::cell_tag, dim>::tag
                      >                                                         element_type;
 
       typedef element_t< config_type,

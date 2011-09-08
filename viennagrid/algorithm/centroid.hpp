@@ -44,7 +44,7 @@ namespace viennagrid
     centroid(ElementType const & cell, viennagrid::triangle_tag)
     {
       typedef typename ElementType::config_type             Config;
-      typedef typename ElementType::element_tag             ElementTag;
+      typedef typename ElementType::tag             ElementTag;
       typedef typename viennagrid::result_of::point<Config>::type                            PointType;
       typedef typename viennagrid::result_of::ncell<Config, 0>::type                         VertexType;
       typedef typename viennagrid::result_of::ncell<Config, 1>::type                         EdgeType;
@@ -62,7 +62,7 @@ namespace viennagrid
         p0 += vocit->point();
       }
       
-      p0 /= viennagrid::topology::subelements<ElementTag, 0>::num_elements;
+      p0 /= viennagrid::topology::subelements<ElementTag, 0>::num;
       
       return p0;
     }
@@ -117,7 +117,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::ncell<ConfigType, 1>::type                   EdgeType;
       
       typedef typename viennagrid::result_of::const_ncell_range<DomainSegmentType,
-                                                                CellTag::topology_level>::type  CellRange;
+                                                                CellTag::dim>::type  CellRange;
       typedef typename viennagrid::result_of::iterator<CellRange>::type                         CellIterator;
       
       PointType result = 0;
@@ -144,7 +144,7 @@ namespace viennagrid
   typename viennagrid::result_of::point<typename CellType::config_type>::type
   centroid(CellType const & cell)
   {
-    return detail::centroid(cell, typename CellType::element_tag());
+    return detail::centroid(cell, typename CellType::tag());
   }
 
   template <typename ConfigType>

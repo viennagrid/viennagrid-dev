@@ -50,12 +50,12 @@ namespace viennagrid
       typedef typename DomainType::config_type                     DomainConfiguration;
 
       typedef typename DomainConfiguration::numeric_type                 CoordType;
-      typedef typename DomainConfiguration::dimension_tag              DimensionTag;
+      typedef typename DomainConfiguration::coordinate_system_tag      CoordinateSystemTag;
       typedef typename DomainConfiguration::cell_tag                   CellTag;
 
       typedef typename result_of::point<DomainConfiguration>::type                              PointType;
       typedef typename result_of::ncell<DomainConfiguration, 0>::type                           VertexType;
-      typedef typename result_of::ncell<DomainConfiguration, CellTag::topology_level>::type     CellType;
+      typedef typename result_of::ncell<DomainConfiguration, CellTag::dim>::type     CellType;
       //typedef typename DomainTypes<DomainConfiguration>::segment_type  Segment;
 
       typedef typename viennagrid::result_of::ncell_range<DomainType, 0>::type   VertexRange;
@@ -64,10 +64,10 @@ namespace viennagrid
       typedef typename viennagrid::result_of::ncell_range<DomainType, 1>::type   EdgeRange;
       typedef typename viennagrid::result_of::iterator<EdgeRange>::type          EdgeIterator;
 
-      typedef typename viennagrid::result_of::ncell_range<DomainType, CellTag::topology_level-1>::type   FacetRange;
+      typedef typename viennagrid::result_of::ncell_range<DomainType, CellTag::dim-1>::type   FacetRange;
       typedef typename viennagrid::result_of::iterator<FacetRange>::type                                 FacetIterator;
 
-      typedef typename viennagrid::result_of::ncell_range<DomainType, CellTag::topology_level>::type     CellRange;
+      typedef typename viennagrid::result_of::ncell_range<DomainType, CellTag::dim>::type     CellRange;
       typedef typename viennagrid::result_of::iterator<CellRange>::type                                  CellIterator;
 
       std::ifstream                                 reader;
@@ -136,7 +136,7 @@ namespace viennagrid
           for(long j = 0; j < numberOfComponents; j++)
           {
             reader >> nodeCoord;
-            if (j < DimensionTag::value)
+            if (j < CoordinateSystemTag::dim)
               p[j] = nodeCoord;
             //std::cout << nodeCoord << " ";
           }
@@ -516,7 +516,7 @@ namespace viennagrid
             #endif
             for (std::size_t i=0; i<container.second.size(); ++i)
             {
-              CellType const & cell = viennagrid::ncells<DimensionTag::value>(domain.segments()[seg_id])[i];
+              CellType const & cell = viennagrid::ncells<CoordinateSystemTag::dim>(domain.segments()[seg_id])[i];
               cell_data_scalar[data_accessor_index](cell, seg_id, 0, (container.second)[i]);
             }
           }
@@ -526,10 +526,10 @@ namespace viennagrid
             std::cout << "* vtk_reader::operator(): Reading vector quantity " 
                       << container.first << " using data_accessor to cells." << std::endl;
             #endif
-            assert( 3 * viennagrid::ncells<DimensionTag::value>(domain.segments()[seg_id]).size() == container.second.size());
+            assert( 3 * viennagrid::ncells<CoordinateSystemTag::dim>(domain.segments()[seg_id]).size() == container.second.size());
             for (std::size_t i=0; i<container.second.size() / 3; ++i)
             {
-              CellType const & cell = viennagrid::ncells<DimensionTag::value>(domain.segments()[seg_id])[i];
+              CellType const & cell = viennagrid::ncells<CoordinateSystemTag::dim>(domain.segments()[seg_id])[i];
               cell_data_vector[data_accessor_index](cell, seg_id, 0, (container.second)[3*i]);
               cell_data_vector[data_accessor_index](cell, seg_id, 1, (container.second)[3*i+1]);
               cell_data_vector[data_accessor_index](cell, seg_id, 2, (container.second)[3*i+2]);
@@ -546,7 +546,7 @@ namespace viennagrid
             #endif
             for (std::size_t i=0; i<container.second.size(); ++i)
             {
-              CellType const & cell = viennagrid::ncells<DimensionTag::value>(domain.segments()[seg_id])[i];
+              CellType const & cell = viennagrid::ncells<CoordinateSystemTag::dim>(domain.segments()[seg_id])[i];
               viennadata::access<std::string,
                                  double>(container.first)(cell) = (container.second)[i];
             }
@@ -557,10 +557,10 @@ namespace viennagrid
             std::cout << "* vtk_reader::operator(): Reading vector quantity "
                       << container.first << " using viennadata to cells." << std::endl;
             #endif
-            assert( 3 * viennagrid::ncells<DimensionTag::value>(domain.segments()[seg_id]).size() == container.second.size());
+            assert( 3 * viennagrid::ncells<CoordinateSystemTag::dim>(domain.segments()[seg_id]).size() == container.second.size());
             for (std::size_t i=0; i<container.second.size() / 3; ++i)
             {
-              CellType const & cell = viennagrid::ncells<DimensionTag::value>(domain.segments()[seg_id])[i];
+              CellType const & cell = viennagrid::ncells<CoordinateSystemTag::dim>(domain.segments()[seg_id])[i];
               viennadata::access<std::string, std::vector<double> >(container.first)(cell).resize(3);
               viennadata::access<std::string,
                                  std::vector<double> >(container.first)(cell)[0] = (container.second)[3*i];
@@ -1100,7 +1100,7 @@ namespace viennagrid
     {
       typedef typename DomainType::config_type                         DomainConfiguration;
       typedef typename DomainConfiguration::cell_tag                   CellTag;
-      typedef typename result_of::ncell<DomainConfiguration, CellTag::topology_level>::type     CellType;
+      typedef typename result_of::ncell<DomainConfiguration, CellTag::dim>::type     CellType;
       
       data_accessor_wrapper<CellType> wrapper(new global_scalar_data_accessor<CellType, KeyType, DataType>(key));
       reader.add_scalar_data_on_cells(wrapper, quantity_name);
@@ -1114,7 +1114,7 @@ namespace viennagrid
     {
       typedef typename DomainType::config_type                         DomainConfiguration;
       typedef typename DomainConfiguration::cell_tag                   CellTag;
-      typedef typename result_of::ncell<DomainConfiguration, CellTag::topology_level>::type     CellType;
+      typedef typename result_of::ncell<DomainConfiguration, CellTag::dim>::type     CellType;
       
       data_accessor_wrapper<CellType> wrapper(new segment_scalar_data_accessor<CellType, KeyType, DataType>(key));
       reader.add_scalar_data_on_cells(wrapper, quantity_name);
@@ -1129,7 +1129,7 @@ namespace viennagrid
     {
       typedef typename DomainType::config_type                         DomainConfiguration;
       typedef typename DomainConfiguration::cell_tag                   CellTag;
-      typedef typename result_of::ncell<DomainConfiguration, CellTag::topology_level>::type     CellType;
+      typedef typename result_of::ncell<DomainConfiguration, CellTag::dim>::type     CellType;
       
       data_accessor_wrapper<CellType> wrapper(new global_vector_data_accessor<CellType, KeyType, DataType>(key));
       reader.add_vector_data_on_cells(wrapper, quantity_name);
@@ -1143,7 +1143,7 @@ namespace viennagrid
     {
       typedef typename DomainType::config_type                         DomainConfiguration;
       typedef typename DomainConfiguration::cell_tag                   CellTag;
-      typedef typename result_of::ncell<DomainConfiguration, CellTag::topology_level>::type     CellType;
+      typedef typename result_of::ncell<DomainConfiguration, CellTag::dim>::type     CellType;
       
       data_accessor_wrapper<CellType> wrapper(new segment_vector_data_accessor<CellType, KeyType, DataType>(key));
       reader.add_vector_data_on_cells(wrapper, quantity_name);
@@ -1158,7 +1158,7 @@ namespace viennagrid
     {
       typedef typename DomainType::config_type                         DomainConfiguration;
       typedef typename DomainConfiguration::cell_tag                   CellTag;
-      typedef typename result_of::ncell<DomainConfiguration, CellTag::topology_level>::type     CellType;
+      typedef typename result_of::ncell<DomainConfiguration, CellTag::dim>::type     CellType;
       
       data_accessor_wrapper<CellType> wrapper(new global_vector_data_accessor<CellType, KeyType, DataType>(key));
       reader.add_vector_data_on_cells(wrapper, quantity_name);
@@ -1172,7 +1172,7 @@ namespace viennagrid
     {
       typedef typename DomainType::config_type                         DomainConfiguration;
       typedef typename DomainConfiguration::cell_tag                   CellTag;
-      typedef typename result_of::ncell<DomainConfiguration, CellTag::topology_level>::type     CellType;
+      typedef typename result_of::ncell<DomainConfiguration, CellTag::dim>::type     CellType;
       
       data_accessor_wrapper<CellType> wrapper(new segment_vector_data_accessor<CellType, KeyType, DataType>(key));
       reader.add_vector_data_on_cells(wrapper, quantity_name);

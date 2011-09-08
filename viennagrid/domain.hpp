@@ -90,11 +90,11 @@ namespace viennagrid
 
   template <typename Config>
   class domain_t : public detail::domain_layers<Config,
-                                                Config::cell_tag::topology_level,
+                                                Config::cell_tag::dim,
                                                 true,
                                                 full_handling_tag>  //we start with cells
   {
-      typedef detail::domain_layers<Config, Config::cell_tag::topology_level, true>           base_type;
+      typedef detail::domain_layers<Config, Config::cell_tag::dim, true>           base_type;
       typedef domain_t<Config>                                                          self_type;
     
     public:

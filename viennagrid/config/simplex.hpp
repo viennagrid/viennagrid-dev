@@ -30,7 +30,7 @@ namespace viennagrid
     struct line_1d
     {
       typedef double                                numeric_type;
-      typedef viennagrid::one_dimension_tag         dimension_tag;
+      typedef viennagrid::cartesian_cs<1>           coordinate_system_tag;
       typedef viennagrid::line_tag                  cell_tag;
     };
     
@@ -38,14 +38,14 @@ namespace viennagrid
     struct line_2d
     {
       typedef double                                numeric_type;
-      typedef viennagrid::two_dimensions_tag        dimension_tag;
+      typedef viennagrid::cartesian_cs<2>           coordinate_system_tag;
       typedef viennagrid::line_tag                  cell_tag;
     };
 
     struct triangular_2d
     {
       typedef double                                numeric_type;
-      typedef viennagrid::two_dimensions_tag        dimension_tag;
+      typedef viennagrid::cartesian_cs<2>           coordinate_system_tag;
       typedef viennagrid::triangle_tag              cell_tag;
     };
     
@@ -53,21 +53,21 @@ namespace viennagrid
     struct line_3d
     {
       typedef double                                numeric_type;
-      typedef viennagrid::three_dimensions_tag      dimension_tag;
+      typedef viennagrid::cartesian_cs<3>           coordinate_system_tag;
       typedef viennagrid::line_tag                  cell_tag;
     };
 
     struct triangular_3d
     {
       typedef double                                numeric_type;
-      typedef viennagrid::three_dimensions_tag      dimension_tag;
+      typedef viennagrid::cartesian_cs<3>           coordinate_system_tag;
       typedef viennagrid::triangle_tag              cell_tag;
     };
 
     struct tetrahedral_3d
     {
       typedef double                                numeric_type;
-      typedef viennagrid::three_dimensions_tag      dimension_tag;
+      typedef viennagrid::cartesian_cs<3>           coordinate_system_tag;
       typedef viennagrid::tetrahedron_tag           cell_tag;
     };
   }

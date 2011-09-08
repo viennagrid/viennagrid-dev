@@ -52,8 +52,8 @@ bool fuzzy_equal(double a, double b)
 }
 
 template <typename CoordType, long d>
-bool fuzzy_equal(viennagrid::point<CoordType, d, viennagrid::cartesian_cs> const & a,
-                 viennagrid::point<CoordType, d, viennagrid::cartesian_cs> const & b)
+bool fuzzy_equal(viennagrid::point_t<CoordType, viennagrid::cartesian_cs<d> > const & a,
+                 viennagrid::point_t<CoordType, viennagrid::cartesian_cs<d> > const & b)
 {
   for (std::size_t i=0; i<a.size(); ++i)
   {
@@ -173,7 +173,7 @@ void test_operations(PointType1 const & c0, PointType1 const & c1, PointType1 co
 
 void test_1d()
 {
-  typedef viennagrid::point<double, 1, viennagrid::cartesian_cs>   CartesianPoint;
+  typedef viennagrid::point_t<double, viennagrid::cartesian_cs<1> >   CartesianPoint;
   
   CartesianPoint c0(0);
   CartesianPoint c1(0.5);
@@ -221,8 +221,8 @@ void test_1d()
 template <typename CSystem1, typename CSystem2>
 void test_2d()
 {
-  typedef viennagrid::point<double, 2, CSystem1>   PointType1;
-  typedef viennagrid::point<double, 2, CSystem2>   PointType2;
+  typedef viennagrid::point_t<double, CSystem1>   PointType1;
+  typedef viennagrid::point_t<double, CSystem2>   PointType2;
   
   PointType1 c0(0, 0);
   PointType1 c1(1, 0);
@@ -294,8 +294,8 @@ void test_2d()
 template <typename CSystem1, typename CSystem2>
 void test_3d()
 {
-  typedef viennagrid::point<double, 3, CSystem1>    PointType1;
-  typedef viennagrid::point<double, 3, CSystem2>    PointType2;
+  typedef viennagrid::point_t<double, CSystem1>    PointType1;
+  typedef viennagrid::point_t<double, CSystem2>    PointType2;
   
   PointType1 c0(0, 0, 0);
   PointType1 c1(1, 0, 1);
@@ -382,13 +382,13 @@ int main()
   test_1d();
   std::cout << std::endl;
   std::cout << " --- Testing two dimensions: --- " << std::endl;
-  test_2d<viennagrid::cartesian_cs, viennagrid::polar_cs>();
+  test_2d<viennagrid::cartesian_cs<2>, viennagrid::polar_cs>();
   std::cout << std::endl;
   std::cout << " --- Testing three dimensions: --- " << std::endl;
   std::cout << "   * Cartesian with Spherical *" << std::endl;
-  test_3d<viennagrid::cartesian_cs, viennagrid::spherical_cs>();
+  test_3d<viennagrid::cartesian_cs<3>, viennagrid::spherical_cs>();
   std::cout << "   * Cartesian with Cylindrical *" << std::endl;
-  test_3d<viennagrid::cartesian_cs, viennagrid::cylindrical_cs>();
+  test_3d<viennagrid::cartesian_cs<3>, viennagrid::cylindrical_cs>();
   std::cout << "   * Spherical with Cylindrical *" << std::endl;
   test_3d<viennagrid::spherical_cs, viennagrid::cylindrical_cs>();
   std::cout << std::endl;

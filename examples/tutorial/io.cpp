@@ -227,7 +227,7 @@ void write_data(DomainType & domain)
   typedef typename viennagrid::result_of::ncell_range<DomainType, 0>::type           VertexContainer;
   typedef typename viennagrid::result_of::iterator<VertexContainer>::type        VertexIterator;
 
-  typedef typename viennagrid::result_of::ncell_range<DomainType, CellTag::topology_level>::type     CellContainer;
+  typedef typename viennagrid::result_of::ncell_range<DomainType, CellTag::dim>::type     CellContainer;
   typedef typename viennagrid::result_of::iterator<CellContainer>::type                          CellIterator;
   
 

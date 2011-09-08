@@ -137,11 +137,11 @@ namespace viennagrid
       typedef ContainerType                                      DomainType;
       typedef typename ContainerType::config_type::cell_tag      CellTag;
       
-      typedef typename viennagrid::result_of::const_ncell_range<DomainType, CellTag::topology_level>::type  CellContainer;
+      typedef typename viennagrid::result_of::const_ncell_range<DomainType, CellTag::dim>::type  CellContainer;
       typedef typename viennagrid::result_of::iterator<CellContainer>::type         CellIterator;
       
       typename ContainerType::config_type::numeric_type new_volume = 0;
-      CellContainer new_cells = viennagrid::ncells<CellTag::topology_level>(d);
+      CellContainer new_cells = viennagrid::ncells<CellTag::dim>(d);
       for (CellIterator new_cit = new_cells.begin();
                         new_cit != new_cells.end();
                       ++new_cit)
@@ -159,7 +159,7 @@ namespace viennagrid
   typename ElementType::config_type::numeric_type
   volume(ElementType const & cell)
   {
-    return detail::volume_impl(cell, typename ElementType::element_tag());
+    return detail::volume_impl(cell, typename ElementType::tag());
   }
   
   //special case: domain

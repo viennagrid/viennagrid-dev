@@ -35,18 +35,18 @@ namespace viennagrid
   template <typename T_Configuration,
             typename ElementTag>
   class element_t :
-      public lower_level_holder < T_Configuration, ElementTag, ElementTag::topology_level - 1>,
+      public lower_level_holder < T_Configuration, ElementTag, ElementTag::dim - 1>,
       public traits::element_id<ElementTag>::id_handler
   {
       typedef typename T_Configuration::numeric_type                   ScalarType;
-      typedef lower_level_holder < T_Configuration, ElementTag, ElementTag::topology_level - 1>             Base;
+      typedef lower_level_holder < T_Configuration, ElementTag, ElementTag::dim - 1>             Base;
       typedef typename result_of::point<T_Configuration>::type         PointType;
       typedef typename result_of::ncell<T_Configuration, 0>::type      VertexType;
       typedef topology::subelements<ElementTag, 0>                                 VertexSpecs;
 
     public:
       typedef T_Configuration                                       config_type;
-      typedef ElementTag                                            element_tag;
+      typedef ElementTag                                            tag;
 
       element_t ( ) {};   //construction of "template" for this type
 
@@ -64,7 +64,7 @@ namespace viennagrid
 
       void vertices(VertexType **vertices_)
       {
-        for(int i=0; i<VertexSpecs::num_elements; i++)
+        for(int i=0; i<VertexSpecs::num; i++)
         {
           Base::vertices_[i] = vertices_[i];
           //std::cout << i << " ";
@@ -76,14 +76,14 @@ namespace viennagrid
       
       //non-const:
       template <long j>
-      typename result_of::element_container< element_t<T_Configuration, element_tag>, j, T_Configuration::cell_tag::topology_level>::type *
+      typename result_of::element_container< element_t<T_Configuration, tag>, j, T_Configuration::cell_tag::dim>::type *
       container(less_tag)
       { 
         return Base::template container<j>();
       }
 
       template <long j>
-      typename result_of::element_container< element_t<T_Configuration, element_tag>, j, T_Configuration::cell_tag::topology_level>::type *
+      typename result_of::element_container< element_t<T_Configuration, tag>, j, T_Configuration::cell_tag::dim>::type *
       container()
       { 
         return container<j>(less_tag());
@@ -92,14 +92,14 @@ namespace viennagrid
 
       //const
       template <long j>
-      const typename result_of::element_container< element_t<T_Configuration, element_tag>, j, T_Configuration::cell_tag::topology_level>::type *
+      const typename result_of::element_container< element_t<T_Configuration,tag>, j, T_Configuration::cell_tag::dim>::type *
       container(less_tag) const
       { 
         return Base::template container<j>();
       }
 
       template <long j>
-      const typename result_of::element_container< element_t<T_Configuration, element_tag>, j, T_Configuration::cell_tag::topology_level>::type *
+      const typename result_of::element_container< element_t<T_Configuration, tag>, j, T_Configuration::cell_tag::dim>::type *
       container() const
       { 
         return container<j>(less_tag());
@@ -114,7 +114,7 @@ namespace viennagrid
     typedef typename viennagrid::result_of::const_ncell_range<ElementType, 0>::type    VertexRange;
     typedef typename viennagrid::result_of::iterator<VertexRange>::type          VertexIterator;
     
-    os << "-- element<" << ElementTag::topology_level << "> " << el.id() << " --";
+    os << "-- element<" << ElementTag::dim << "> " << el.id() << " --";
     VertexRange vertices = viennagrid::ncells(el);
     for (VertexIterator vit  = vertices.begin();
                         vit != vertices.end();
@@ -138,8 +138,8 @@ namespace viennagrid
 
     public:
       typedef T_Configuration                                       config_type;
-      typedef point_tag                                             element_tag;
-      typedef typename traits::element_id<point_tag>::id_handler           id_handler;
+      typedef point_tag                                             tag;
+      typedef typename traits::element_id<point_tag>::id_handler    id_handler;
 
       element_t() { };
 
