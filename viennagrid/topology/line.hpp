@@ -24,7 +24,8 @@
 namespace viennagrid
 {
 
-  struct line_tag
+  template <>
+  struct simplex_tag<1>
   {
     enum { dim = 1 };
     static std::string name() { return "Line"; }
@@ -36,7 +37,7 @@ namespace viennagrid
 
     //Line:
     template <>
-    struct subelements<line_tag, 0>
+    struct subelements<simplex_tag<1>, 0>
     {
       typedef point_tag             tag;
 
@@ -45,7 +46,30 @@ namespace viennagrid
 
   }  
   
-  
+
+  //for compatibility: allow hypercube<1> to be used as line_tag as well:
+  template <>
+  struct hypercube_tag<1>
+  {
+    enum { dim = 1 };
+    static std::string name() { return "Line"; }
+  };
+
+
+  namespace topology
+  {
+
+    //Line:
+    template <>
+    struct subelements<hypercube_tag<1>, 0>
+    {
+      typedef point_tag             tag;
+
+      enum{ num = 2 };     //2 vertices
+    };
+
+  }  
+
 }
 
 #endif

@@ -30,7 +30,6 @@
 #include "viennagrid/io/opendx_writer.hpp"
 #include "viennagrid/io/netgen_reader.hpp"
 
-
 void print(std::vector<std::string> const & vec)
 {
   for (std::size_t i=0; i<vec.size(); ++i)
@@ -79,10 +78,11 @@ void test(ReaderType & my_reader, std::string const & infile, std::string const 
 
   
   //write some dummy data:
+  long vertex_id = 0;
   VertexContainer vertices = viennagrid::ncells<0>(domain);
   for (VertexIterator vit = vertices.begin();
       vit != vertices.end();
-      ++vit)
+      ++vit, ++vertex_id)
   {
     if (run_check)
     {
@@ -91,7 +91,7 @@ void test(ReaderType & my_reader, std::string const & infile, std::string const 
       std::vector<double> data_point = viennadata::access<std::string, std::vector<double> >("vtk_data_2")(*vit);
       
       assert( fabs(data_double - vit->point()[0]) < 1e-4 && "Vertex check failed: data_double!");
-      assert( (data_long == vit->id()) && "Vertex check failed: data_long!");
+      assert( (data_long == vertex_id) && "Vertex check failed: data_long!");
       assert( fabs(data_point[0] - (*vit)[0]) < 1e-4 
              && fabs(data_point[1] - (*vit)[1]) < 1e-4
              && "Vertex check failed: data_point!");
@@ -99,7 +99,7 @@ void test(ReaderType & my_reader, std::string const & infile, std::string const 
     else
     {
       viennadata::access<std::string, double>("vtk_data")(*vit) = vit->point()[0];
-      viennadata::access<std::string, long>("vtk_data")(*vit) = vit->id();
+      viennadata::access<std::string, long>("vtk_data")(*vit) = vertex_id;
       
       viennadata::access<std::string, std::vector<double> >("vtk_data")(*vit).resize(3);
       viennadata::access<std::string, std::vector<double> >("vtk_data")(*vit)[0] =(*vit)[0];
@@ -107,10 +107,11 @@ void test(ReaderType & my_reader, std::string const & infile, std::string const 
     }
   }
 
+  long cell_index = 0;
   CellRange cells = viennagrid::ncells(domain);
   for (CellIterator cit = cells.begin();
                     cit != cells.end();
-                   ++cit)
+                   ++cit, ++cell_index)
   {
     if (run_check)
     {
@@ -119,7 +120,7 @@ void test(ReaderType & my_reader, std::string const & infile, std::string const 
       std::vector<double> data_point = viennadata::access<std::string, std::vector<double> >("vtk_data_2")(*cit);
       
       assert( fabs(data_double - viennagrid::centroid(*cit)[0]) < 1e-4 && "Cell check failed: data_double!");
-      assert( (data_long == cit->id()) && "Cell check failed: data_long!");
+      assert( (data_long == cell_index) && "Cell check failed: data_long!");
       assert( fabs(data_point[0] - viennagrid::centroid(*cit)[0]) < 1e-4 
              && fabs(data_point[1] - viennagrid::centroid(*cit)[1]) < 1e-4
              && "Cell check failed: data_point!");
@@ -127,7 +128,7 @@ void test(ReaderType & my_reader, std::string const & infile, std::string const 
     else
     {
       viennadata::access<std::string, double>("vtk_data")(*cit) = viennagrid::centroid(*cit)[0];
-      viennadata::access<std::string, long>("vtk_data")(*cit) = cit->id();
+      viennadata::access<std::string, long>("vtk_data")(*cit) = cell_index;
       
       viennadata::access<std::string, std::vector<double> >("vtk_data")(*cit).resize(3);
       viennadata::access<std::string, std::vector<double> >("vtk_data")(*cit)[0] = viennagrid::centroid(*cit)[0];

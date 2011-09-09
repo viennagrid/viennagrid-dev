@@ -34,15 +34,16 @@ namespace viennagrid
 
   //helper: holds an ordered number of vertices
   //comparisons also take permutations into account
-  template <typename ElementType,
-            typename IDHandler = typename traits::element_id<point_tag>::id_handler>
+  template <typename ConfigType, 
+            typename ElementType,
+            typename IDHandler = typename result_of::element_id_handler<ConfigType, point_tag>::type>
   struct ElementKeyStorageType
   {
     typedef ElementType *           result_type;
   };
 
-  template <typename ElementType>
-  struct ElementKeyStorageType<ElementType, integral_id>
+  template <typename ConfigType, typename ElementType>
+  struct ElementKeyStorageType<ConfigType, ElementType, integral_id>
   {
     typedef long          result_type;
   };
@@ -50,11 +51,11 @@ namespace viennagrid
   
   
   /** @brief A key type that uniquely identifies an element by its vertices */
-  template <typename ElementType>
+  template <typename ConfigType, typename ElementType>
   class element_key
   {
       typedef typename ElementType::tag            ElementTag;
-      typedef typename ElementKeyStorageType<ElementType>::result_type  StorageType;
+      typedef typename ElementKeyStorageType<ConfigType, ElementType>::result_type  StorageType;
     public:
       element_key( ElementType & el2) : vertexIDs(topology::subelements<ElementTag, 0>::num)
       {
@@ -65,7 +66,7 @@ namespace viennagrid
         for (VertexIterator vit = vertices_el2.begin();
              vit != vertices_el2.end();
              ++vit, ++i)
-          vertexIDs[i] = vit->id();
+          vertexIDs[i] = static_cast<StorageType>(vit->id());
         //sort it:
         std::sort(vertexIDs.begin(), vertexIDs.end());
       }

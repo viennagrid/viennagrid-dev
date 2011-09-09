@@ -27,7 +27,8 @@
 namespace viennagrid
 {
 
-  struct triangle_tag
+  template <>
+  struct simplex_tag<2>
   {
     enum{ dim = 2 };
     static std::string name() { return "Triangle"; }
@@ -48,7 +49,7 @@ namespace viennagrid
     template <>
     struct subelements<triangle_tag, 1>
     {
-      typedef line_tag              tag;
+      typedef simplex_tag<1>              tag;
 
       enum{ num = 3 };     //3 edges
 

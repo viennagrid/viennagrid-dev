@@ -141,13 +141,14 @@ int main()
   // Even though not recommended, it is also possible to iterate through the elements using operator[]:
   // However, this does not work for all domain storage configurations. Cells and vertices will always work.
   //
-  std::size_t accumulated_ids = 0;
+  std::size_t num_cells = 0;
   CellRange cells = viennagrid::ncells<CellTag::dim>(domain);
   for (std::size_t i=0; i<cells.size(); ++i)
   {
-    accumulated_ids = cells[i].id();
+    ++num_cells;
   }
-  std::cout << "Accumulated cell IDs: " << accumulated_ids << std::endl;
+  std::cout << "Number of cells traversed: " << num_cells << std::endl;
+  std::cout << "Number of cells in domain: " << viennagrid::ncells<CellTag::dim>(domain).size() << std::endl;
   
   //
   // In the same manner, iteration over all facets can be carried out using one of the three methods presented above

@@ -31,25 +31,47 @@
 namespace viennagrid
 {
   
+  //
+  // Orientation of boundary elements: Local to global indices:
+  //
+  template <typename ConfigType,
+            typename ElementTag,
+            unsigned long dim
+            //typename handling_tag = typename result_of::subelement_orientation<ConfigType, ElementTag, dim>::type
+           >
+  class boundary_ncell_orienter
+  {
+    public:
+      
+    protected:
+  };
+  
+  
+  
+  
   
   /************** Level 1: Elements contained by a higher-level element *******/
 
   template <typename ConfigType,
               typename ElementTag,
-              unsigned long levelnum,
-              typename handling_tag = typename result_of::subelement_handling<ConfigType, ElementTag,levelnum>::type,
-              bool LevelNull = (levelnum == 0)>
-  class lower_level_holder  { };
+              unsigned long dim,
+              typename handling_tag = typename result_of::subelement_handling<ConfigType, ElementTag,dim>::type,
+              bool LevelNull = (dim == 0)>
+  class boundary_ncell_holder  { };
 
-  template <typename ConfigType, typename ElementTag, unsigned long levelnum>
-  class lower_level_holder <ConfigType, ElementTag, levelnum, full_handling_tag, false> :
-    public lower_level_holder <ConfigType, ElementTag, levelnum - 1>
+  
+  //
+  // Full storage of boundary cell:
+  //
+  template <typename ConfigType, typename ElementTag, unsigned long dim>
+  class boundary_ncell_holder <ConfigType, ElementTag, dim, full_handling_tag, false> :
+    public boundary_ncell_holder <ConfigType, ElementTag, dim - 1>
   {
     //requirements:
-    //array of pointers to elements of class 'levelnum' and a integer representing the orientation within the cell relative to the element it points to.
-    typedef topology::subelements<ElementTag, levelnum>                         LevelSpecs;
+    //array of pointers to elements of class 'dim' and a integer representing the orientation within the cell relative to the element it points to.
+    typedef topology::subelements<ElementTag, dim>                         LevelSpecs;
     typedef topology::subelements<typename LevelSpecs::tag, 0>  VertexOnElementSpecs;
-    typedef lower_level_holder <ConfigType, ElementTag, levelnum - 1 >      Base;
+    typedef boundary_ncell_holder <ConfigType, ElementTag, dim - 1 >      Base;
 
     typedef element_t<ConfigType, typename LevelSpecs::tag>  LevelElementType;
     typedef element_orientation<VertexOnElementSpecs::num>     ElementOrientationType;
@@ -64,7 +86,7 @@ namespace viennagrid
         //for (long i=0; i<LevelSpecs::num; ++i)
         //  orientations_[i].resize(VertexOnElementSpecs::num);
 
-        topology::subelement_filler<ElementTag, levelnum>::fill(&(elements_[0]),
+        topology::subelement_filler<ElementTag, dim>::fill(&(elements_[0]),
                                                            &(Base::vertices_[0]),
                                                            &(orientations_[0]),
                                                            dom);
@@ -72,13 +94,13 @@ namespace viennagrid
 
     public:
 
-      lower_level_holder( ) 
+      boundary_ncell_holder( ) 
       {
         for (long i=0; i < LevelSpecs::num; ++i)
           elements_[i] = NULL;
       };
 
-      lower_level_holder( const lower_level_holder & llh) : Base (llh)
+      boundary_ncell_holder( const boundary_ncell_holder & llh) : Base (llh)
       {
         for (long i=0; i < LevelSpecs::num; ++i)
           elements_[i] = llh.elements_[i];
@@ -105,7 +127,7 @@ namespace viennagrid
       typename result_of::element_container< element_t<ConfigType, ElementTag>, j, ElementTag::dim>::type *
       container()
       { 
-        return container<j>( typename level_discriminator<levelnum, j>::result_type() );
+        return container<j>( typename level_discriminator<dim, j>::result_type() );
       }
       
       //const:
@@ -127,7 +149,7 @@ namespace viennagrid
       const typename result_of::element_container< element_t<ConfigType, ElementTag>, j, ElementTag::dim>::type *
       container() const
       { 
-        return container<j>( typename level_discriminator<levelnum, j>::result_type() );
+        return container<j>( typename level_discriminator<dim, j>::result_type() );
       }
       
       
@@ -151,7 +173,7 @@ namespace viennagrid
       ElementOrientationType const &
       local_to_global_orientation(long index)
       { 
-        return local_to_global_orientation<j>( index, typename level_discriminator<levelnum, j>::result_type() );
+        return local_to_global_orientation<j>( index, typename level_discriminator<dim, j>::result_type() );
       }
 
     private: 
@@ -159,15 +181,19 @@ namespace viennagrid
       ElementOrientationType orientations_[LevelSpecs::num];
   };
 
-  template <typename ConfigType, typename ElementTag, unsigned long levelnum>
-  class lower_level_holder <ConfigType, ElementTag, levelnum, no_handling_tag, false> :
-    public lower_level_holder < ConfigType, ElementTag, levelnum - 1 >
+  
+  //
+  // No storage of boundary elements:
+  //
+  template <typename ConfigType, typename ElementTag, unsigned long dim>
+  class boundary_ncell_holder <ConfigType, ElementTag, dim, no_handling_tag, false> :
+    public boundary_ncell_holder < ConfigType, ElementTag, dim - 1 >
   {
     //requirements:
-    //array of pointers to elements of class 'levelnum' and a integer representing the orientation within the cell relative to the element it points to.
+    //array of pointers to elements of class 'dim' and a integer representing the orientation within the cell relative to the element it points to.
     //typedef typename DomainTypes<ConfigType>::segment_type        SegmentType;
-    typedef topology::subelements<ElementTag, levelnum>                                LevelSpecs;
-    typedef lower_level_holder < ConfigType, ElementTag, levelnum - 1 >      Base;
+    typedef topology::subelements<ElementTag, dim>                                LevelSpecs;
+    typedef boundary_ncell_holder < ConfigType, ElementTag, dim - 1 >      Base;
 
     typedef element_t<ConfigType, typename LevelSpecs::tag>  LevelElementType;
 
@@ -181,9 +207,9 @@ namespace viennagrid
 
     public:
 
-      lower_level_holder( ) {};
+      boundary_ncell_holder( ) {};
 
-      lower_level_holder( const lower_level_holder & llh) : Base (llh) {}
+      boundary_ncell_holder( const boundary_ncell_holder & llh) : Base (llh) {}
       
       //////////////////// container ///////////////////////
       
@@ -199,7 +225,7 @@ namespace viennagrid
       typename result_of::element_container< element_t<ConfigType, ElementTag>, j, ElementTag::dim>::type *
       container(equal_tag)
       { 
-        typedef typename result_of::subelement_handling<ConfigType, ElementTag, levelnum>::ERROR_HANDLING_OF_ELEMENTS_AT_THIS_TOPOLOGICAL_LEVEL_NOT_PROVIDED   error_type;
+        typedef typename result_of::subelement_handling<ConfigType, ElementTag, dim>::ERROR_HANDLING_OF_ELEMENTS_AT_THIS_TOPOLOGICAL_LEVEL_NOT_PROVIDED   error_type;
         return NULL;
       }
 
@@ -207,7 +233,7 @@ namespace viennagrid
       typename result_of::element_container< element_t<ConfigType, ElementTag>, j, ElementTag::dim>::type *
       container()
       { 
-        return container<j>( typename level_discriminator<levelnum, j>::result_type() );
+        return container<j>( typename level_discriminator<dim, j>::result_type() );
       }
 
 
@@ -223,7 +249,7 @@ namespace viennagrid
       const typename result_of::element_container< element_t<ConfigType, ElementTag>, j, ElementTag::dim>::type *
       container(equal_tag) const
       { 
-        typedef typename result_of::subelement_handling<ConfigType, ElementTag, levelnum>::ERROR_HANDLING_OF_ELEMENTS_AT_THIS_TOPOLOGICAL_LEVEL_NOT_PROVIDED   error_type;
+        typedef typename result_of::subelement_handling<ConfigType, ElementTag, dim>::ERROR_HANDLING_OF_ELEMENTS_AT_THIS_TOPOLOGICAL_LEVEL_NOT_PROVIDED   error_type;
         return NULL;
       }
       
@@ -231,7 +257,7 @@ namespace viennagrid
       const typename result_of::element_container< element_t<ConfigType, ElementTag>, j, ElementTag::dim>::type *
       container() const
       { 
-        return container<j>( typename level_discriminator<levelnum, j>::result_type() );
+        return container<j>( typename level_discriminator<dim, j>::result_type() );
       }
 
   };
@@ -239,9 +265,9 @@ namespace viennagrid
 
   //at level 0, i.e. vertex level, recursion ends:
   template <typename ConfigType, typename ElementTag, typename handling_tag>
-  class lower_level_holder <ConfigType, ElementTag, 0, handling_tag, true> 
+  class boundary_ncell_holder <ConfigType, ElementTag, 0, handling_tag, true> 
   {
-    //array of pointers to elements of class 'levelnum' and a integer representing the orientation within the cell relative to the element it points to.
+    //array of pointers to elements of class 'dim' and a integer representing the orientation within the cell relative to the element it points to.
     //typedef typename DomainTypes<ConfigType>::segment_type               SegmentType;
     typedef topology::subelements<ElementTag, 0>                                      LevelSpecs;
 
@@ -256,9 +282,9 @@ namespace viennagrid
       void fill_level(DomainType & dom) {}
 
     public:
-      lower_level_holder() {};
+      boundary_ncell_holder() {};
 
-      lower_level_holder( const lower_level_holder & llh)
+      boundary_ncell_holder( const boundary_ncell_holder & llh)
       {
         for (long i=0; i < LevelSpecs::num; ++i)
           vertices_[i] = llh.vertices_[i];

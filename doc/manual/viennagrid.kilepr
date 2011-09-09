@@ -4,7 +4,7 @@ img_extIsRegExp=false
 img_extensions=.eps .jpg .jpeg .png .pdf .ps .fig .gif
 kileprversion=2
 kileversion=2.0.85
-lastDocument=entities.tex
+lastDocument=domainconfig.tex
 masterDocument=
 name=viennagrid
 pkg_extIsRegExp=false
@@ -230,10 +230,10 @@ order=-1
 
 [item:domainconfig.tex]
 archive=true
-column=16
+column=2
 encoding=UTF-8
 highlight=LaTeX
-line=0
+line=194
 mode=LaTeX
 open=true
 order=5
@@ -250,10 +250,10 @@ order=6
 
 [item:entities.tex]
 archive=true
-column=16
+column=0
 encoding=UTF-8
 highlight=LaTeX
-line=134
+line=85
 mode=LaTeX
 open=true
 order=8
@@ -350,13 +350,13 @@ order=9
 
 [item:viennagrid.bib]
 archive=true
-column=33
+column=12
 encoding=UTF-8
 highlight=BibTeX
-line=8
+line=81
 mode=BibTeX
-open=false
-order=2
+open=true
+order=10
 
 [item:viennagrid.kilepr]
 archive=true
@@ -370,10 +370,10 @@ order=-1
 
 [item:viennagrid.tex]
 archive=true
-column=0
+column=32
 encoding=UTF-8
 highlight=LaTeX
-line=88
+line=69
 mode=LaTeX
 open=true
 order=0
@@ -403,16 +403,16 @@ CursorColumn=0
 CursorLine=0
 
 [view-settings,view=0,item:domainconfig.tex]
-CursorColumn=16
-CursorLine=0
+CursorColumn=2
+CursorLine=194
 
 [view-settings,view=0,item:domainsetup.tex]
 CursorColumn=0
 CursorLine=2
 
 [view-settings,view=0,item:entities.tex]
-CursorColumn=16
-CursorLine=134
+CursorColumn=0
+CursorLine=85
 
 [view-settings,view=0,item:installation.tex]
 CursorColumn=46
@@ -447,9 +447,9 @@ CursorColumn=0
 CursorLine=0
 
 [view-settings,view=0,item:viennagrid.bib]
-CursorColumn=33
-CursorLine=8
+CursorColumn=12
+CursorLine=81
 
 [view-settings,view=0,item:viennagrid.tex]
-CursorColumn=0
-CursorLine=88
+CursorColumn=32
+CursorLine=69

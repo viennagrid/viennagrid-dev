@@ -25,7 +25,8 @@
 namespace viennagrid
 {
 
-  struct quadrilateral_tag
+  template <>
+  struct hypercube_tag<2>
   {
     enum{ dim = 2 };
     static std::string name() { return "Quadrilateral"; }
@@ -46,7 +47,7 @@ namespace viennagrid
     template <>
     struct subelements<quadrilateral_tag, 1>
     {
-      typedef line_tag              tag;
+      typedef hypercube_tag<1>       tag;
 
       enum{ num = 4 };     //3 edges
 

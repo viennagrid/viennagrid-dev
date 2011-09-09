@@ -25,7 +25,8 @@
 namespace viennagrid
 {
 
-  struct hexahedron_tag
+  template <>
+  struct hypercube_tag<3>
   {
     enum{ dim = 3 };
     static std::string name() { return "Hexahedron"; }
@@ -46,7 +47,7 @@ namespace viennagrid
     template <>
     struct subelements<hexahedron_tag, 1>
     {
-      typedef line_tag              tag;
+      typedef hypercube_tag<1>              tag;
 
       enum{ num = 12 };     //12 edges
     };

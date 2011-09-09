@@ -52,7 +52,7 @@ namespace viennagrid
     {
       typedef typename result_of::ncell<ConfigType, dim>::type            element_type;
       
-      typedef std::map< element_key<element_type>, element_type >      type;
+      typedef std::map< element_key<ConfigType, element_type>, element_type >      type;
     };
 
     //at point level:

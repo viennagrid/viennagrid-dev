@@ -40,7 +40,7 @@ namespace viennagrid
     //topologically one-dimensional elements
     template <typename ElementType>
     typename ElementType::config_type::numeric_type
-    volume_impl(ElementType const & cell, viennagrid::line_tag)
+    volume_impl(ElementType const & cell, viennagrid::simplex_tag<1>)
     {
       typedef typename ElementType::config_type      ConfigType;
       typedef typename viennagrid::result_of::point<ConfigType>::type                 PointType;
@@ -50,6 +50,13 @@ namespace viennagrid
       PointType const & p1 = ncells<0>(cell)[1].point();
       
       return norm(p0 - p1);
+    }
+    
+    template <typename ElementType>
+    typename ElementType::config_type::numeric_type
+    volume_impl(ElementType const & cell, viennagrid::hypercube_tag<1>)
+    {
+      return volume_impl(cell, viennagrid::simplex_tag<1>());
     }
 
     //topologically two-dimensional elements

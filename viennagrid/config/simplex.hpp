@@ -31,7 +31,7 @@ namespace viennagrid
     {
       typedef double                                numeric_type;
       typedef viennagrid::cartesian_cs<1>           coordinate_system_tag;
-      typedef viennagrid::line_tag                  cell_tag;
+      typedef viennagrid::simplex_tag<1>            cell_tag;
     };
     
     //2d geometry:
@@ -39,7 +39,7 @@ namespace viennagrid
     {
       typedef double                                numeric_type;
       typedef viennagrid::cartesian_cs<2>           coordinate_system_tag;
-      typedef viennagrid::line_tag                  cell_tag;
+      typedef viennagrid::simplex_tag<1>            cell_tag;
     };
 
     struct triangular_2d
@@ -54,7 +54,7 @@ namespace viennagrid
     {
       typedef double                                numeric_type;
       typedef viennagrid::cartesian_cs<3>           coordinate_system_tag;
-      typedef viennagrid::line_tag                  cell_tag;
+      typedef viennagrid::simplex_tag<1>            cell_tag;
     };
 
     struct triangular_3d

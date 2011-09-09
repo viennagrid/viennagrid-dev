@@ -24,7 +24,7 @@
 //#include "viennagrid/iterators.hpp"
 //#include "viennagrid/detail/element_orientation.hpp"
 #include "viennagrid/detail/element_iterators.hpp"
-#include "viennagrid/detail/lower_level_holder.hpp"
+#include "viennagrid/detail/boundary_ncell_holder.hpp"
 
 #include <vector>
 
@@ -32,21 +32,22 @@ namespace viennagrid
 {
   
   //////////////  Top Level configuration //////////
-  template <typename T_Configuration,
+  template <typename ConfigType,
             typename ElementTag>
   class element_t :
-      public lower_level_holder < T_Configuration, ElementTag, ElementTag::dim - 1>,
-      public traits::element_id<ElementTag>::id_handler
+      public boundary_ncell_holder < ConfigType, ElementTag, ElementTag::dim - 1>,
+      public result_of::element_id_handler<ConfigType, ElementTag>::type
   {
-      typedef typename T_Configuration::numeric_type                   ScalarType;
-      typedef lower_level_holder < T_Configuration, ElementTag, ElementTag::dim - 1>             Base;
-      typedef typename result_of::point<T_Configuration>::type         PointType;
-      typedef typename result_of::ncell<T_Configuration, 0>::type      VertexType;
+      typedef typename ConfigType::numeric_type                   ScalarType;
+      typedef boundary_ncell_holder < ConfigType, ElementTag, ElementTag::dim - 1>             Base;
+      typedef typename result_of::point<ConfigType>::type         PointType;
+      typedef typename result_of::ncell<ConfigType, 0>::type      VertexType;
       typedef topology::subelements<ElementTag, 0>                                 VertexSpecs;
 
     public:
-      typedef T_Configuration                                       config_type;
-      typedef ElementTag                                            tag;
+      typedef ConfigType                                       config_type;
+      typedef ElementTag                                       tag;
+      typedef typename result_of::element_id_handler<ConfigType, point_tag>::type::id_type    id_type;
 
       element_t ( ) {};   //construction of "template" for this type
 
@@ -76,14 +77,14 @@ namespace viennagrid
       
       //non-const:
       template <long j>
-      typename result_of::element_container< element_t<T_Configuration, tag>, j, T_Configuration::cell_tag::dim>::type *
+      typename result_of::element_container< element_t<ConfigType, tag>, j, ConfigType::cell_tag::dim>::type *
       container(less_tag)
       { 
         return Base::template container<j>();
       }
 
       template <long j>
-      typename result_of::element_container< element_t<T_Configuration, tag>, j, T_Configuration::cell_tag::dim>::type *
+      typename result_of::element_container< element_t<ConfigType, tag>, j, ConfigType::cell_tag::dim>::type *
       container()
       { 
         return container<j>(less_tag());
@@ -92,14 +93,14 @@ namespace viennagrid
 
       //const
       template <long j>
-      const typename result_of::element_container< element_t<T_Configuration,tag>, j, T_Configuration::cell_tag::dim>::type *
+      const typename result_of::element_container< element_t<ConfigType,tag>, j, ConfigType::cell_tag::dim>::type *
       container(less_tag) const
       { 
         return Base::template container<j>();
       }
 
       template <long j>
-      const typename result_of::element_container< element_t<T_Configuration, tag>, j, T_Configuration::cell_tag::dim>::type *
+      const typename result_of::element_container< element_t<ConfigType, tag>, j, ConfigType::cell_tag::dim>::type *
       container() const
       { 
         return container<j>(less_tag());
@@ -114,7 +115,7 @@ namespace viennagrid
     typedef typename viennagrid::result_of::const_ncell_range<ElementType, 0>::type    VertexRange;
     typedef typename viennagrid::result_of::iterator<VertexRange>::type          VertexIterator;
     
-    os << "-- element<" << ElementTag::dim << "> " << el.id() << " --";
+    os << "-- " << ElementTag::name() << ", ID: " << el.id() << " --";
     VertexRange vertices = viennagrid::ncells(el);
     for (VertexIterator vit  = vertices.begin();
                         vit != vertices.end();
@@ -127,19 +128,19 @@ namespace viennagrid
   
   
   //vertex-type needs separate treatment:
-  template <typename T_Configuration>
-  class element_t <T_Configuration, point_tag> :
-    public traits::element_id<point_tag>::id_handler
+  template <typename ConfigType>
+  class element_t <ConfigType, point_tag> :
+    public result_of::element_id_handler<ConfigType, point_tag>::type
   {
-      typedef typename result_of::point<T_Configuration>::type          PointType;
-      typedef typename T_Configuration::numeric_type                         CoordType;
-      typedef typename result_of::ncell<T_Configuration, 0>::type       VertexType;
-      typedef typename T_Configuration::cell_tag                             CellTag;
+      typedef typename result_of::point<ConfigType>::type          PointType;
+      typedef typename ConfigType::numeric_type                    CoordType;
+      typedef typename result_of::ncell<ConfigType, 0>::type       VertexType;
+      typedef typename ConfigType::cell_tag                        CellTag;
 
     public:
-      typedef T_Configuration                                       config_type;
-      typedef point_tag                                             tag;
-      typedef typename traits::element_id<point_tag>::id_handler    id_handler;
+      typedef ConfigType                                       config_type;
+      typedef point_tag                                        tag;
+      typedef typename result_of::element_id_handler<ConfigType, point_tag>::type::id_type    id_type;
 
       element_t() { };
 
@@ -152,13 +153,13 @@ namespace viennagrid
       {
         //std::cout << "Copy constructor Element (Vertex) " << this << std::endl;
         point_ = e2.point_;
-        this->id(e2.id_);
+        this->id(e2.id());
       }
 
       element_t & operator=(const element_t & other)
       {
         point_ = other.point_;
-        this->id(other.id_);                
+        this->id(other.id());                
         return *this;
       }
 
@@ -181,7 +182,7 @@ namespace viennagrid
   template <typename ConfigType>
   std::ostream & operator<<(std::ostream & os, element_t<ConfigType, point_tag> const & el)
   {
-    os << "-- element<0> " << el.id() << " --" << std::endl;
+    os << "-- Vertex, ID: " << el.id() << " --" << std::endl;
     os << " " << el.point();
     
     return os;

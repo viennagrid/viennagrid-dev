@@ -77,20 +77,32 @@ namespace viennagrid
   /********* Forward definitions of main classes *******************/
   
   struct point_tag;
-  struct line_tag;
-  struct triangle_tag;
-  struct quadrilateral_tag;
-  struct tetrahedron_tag;
-  struct hexahedron_tag;
+
+  // Simplex family:
+  template <long dim>
+  struct simplex_tag;
+  
+  //typedef simplex_tag<1>    line_tag;
+  typedef simplex_tag<2>    triangle_tag;
+  typedef simplex_tag<3>    tetrahedron_tag;
+  
+  // Hypercube family:
+  template <long dim>
+  struct hypercube_tag;
+
+  //typedef hypercube_tag<1>    line_tag;
+  typedef hypercube_tag<2>  quadrilateral_tag;
+  typedef hypercube_tag<3>  hexahedron_tag;
+
 
   //forward declarations:
   template <typename CoordType, typename CoordinateSystem>
   class point_t;
   
-  template <typename T_Configuration, typename ElementTag>
+  template <typename ConfigType, typename ElementTag>
   class element_t;
 
-  template <typename ElementType>
+  template <typename ConfigType, typename ElementType>
   class element_key;
 
   //Segment type: 
@@ -199,18 +211,23 @@ namespace viennagrid
   //ncells(element<Config, ElementTag> & d);
 
   //ID handling:
-  
   class pointer_id
   {
-    //for compatibility:
-    void id(long) { };
-    const pointer_id * id() const { return this; };
-
+    public:
+      typedef pointer_id *  id_type;
+      
+      //for compatibility:
+      void id(const pointer_id *) { };
+      void id(long) { };
+      const pointer_id * id() const { return this; };
+      pointer_id * id() { return this; };
   };
 
   class integral_id
   {
     public:
+      typedef long   id_type;
+      
       integral_id() : id_(-1) {};
 
       long id() const { return id_; };
@@ -220,17 +237,6 @@ namespace viennagrid
       long id_;
   };
   
-  
-  namespace traits
-  {
-    // cell_traits can be specialized by library users in order to use 'NoID' instead of 'ProvideID' 
-    template <typename ElementTag>
-    struct element_id
-    {
-      typedef integral_id     id_handler;
-    };
-  }
-    
   namespace topology
   {
     template <typename ElementTag, 
@@ -254,6 +260,19 @@ namespace viennagrid
   
   namespace result_of
   {
+    template <typename ConfigType, typename ElementTag>
+    struct element_id_handler
+    {
+      typedef pointer_id     type;
+    };
+
+    template <typename ConfigType>
+    struct element_id_handler<ConfigType, viennagrid::point_tag>  //vertices must carry a numeric ID in order to do some IO stuff
+    {
+      typedef integral_id     type;
+      //typedef pointer_id     type;
+    };
+
     template <typename T, long dim = 0>
     struct iterator;
     
@@ -317,15 +336,6 @@ namespace viennagrid
     {
       typedef viennagrid::point_t<typename Config::numeric_type, typename Config::coordinate_system_tag>   type;
     };
-    
-    
-    template <typename T, long dim = T::tag::dim>
-    struct tag
-    {
-      typedef typename viennagrid::topology::subelements<typename T::tag,
-                                                         dim>::tag           type; 
-    };
-    
     
     
     template <typename ConfigType, typename T, long dim>

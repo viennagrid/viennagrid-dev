@@ -96,18 +96,20 @@ namespace viennagrid
           writer << "   </Points> " << std::endl;
         } //writePoints()
 
-        template <typename SegmentType>
-        void writeCells(SegmentType const & segment, std::ofstream & writer)
+        template <typename DomainSegmentType>
+        void writeCells(DomainSegmentType const & domseg, std::ofstream & writer)
         {
-          typedef typename viennagrid::result_of::const_ncell_range<SegmentType, CellTag::dim>::type     CellRange;
+          typedef typename viennagrid::result_of::const_ncell_range<DomainSegmentType, CellTag::dim>::type     CellRange;
           typedef typename viennagrid::result_of::iterator<CellRange>::type                                         CellIterator;
 
           typedef typename viennagrid::result_of::const_ncell_range<CellType, 0>::type      VertexOnCellRange;
           typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type         VertexOnCellIterator;
           
+          vtk_vertex_id_repository<DomainSegmentType>  vertex_ids(domseg);
+          
           writer << "   <Cells> " << std::endl;
           writer << "    <DataArray type=\"Int32\" Name=\"connectivity\" format=\"ascii\">" << std::endl;
-          CellRange cells = viennagrid::ncells<CellTag::dim>(segment);
+          CellRange cells = viennagrid::ncells<CellTag::dim>(domseg);
           for (CellIterator cit = cells.begin();
               cit != cells.end();
               ++cit)
@@ -117,7 +119,7 @@ namespace viennagrid
                   vocit != vertices_on_cell.end();
                   ++vocit)
               {
-                writer << vtk_get_id::apply(*vocit, segment) << " ";
+                writer << vertex_ids(*vocit, domseg) << " ";
               }
               writer << std::endl;
             }
@@ -126,7 +128,7 @@ namespace viennagrid
 
             writer << "    <DataArray type=\"Int32\" Name=\"offsets\" format=\"ascii\">" << std::endl;
             for (std::size_t offsets = 1;
-                 offsets <= viennagrid::ncells<CellTag::dim>(segment).size();
+                 offsets <= viennagrid::ncells<CellTag::dim>(domseg).size();
                  ++offsets)
             {
               writer << ( offsets * viennagrid::topology::subelements<CellTag, 0>::num) << " ";
@@ -136,7 +138,7 @@ namespace viennagrid
 
             writer << "    <DataArray type=\"UInt8\" Name=\"types\" format=\"ascii\">" << std::endl;
             for (std::size_t offsets = 1;
-                  offsets <= viennagrid::ncells<CellTag::dim>(segment).size();
+                  offsets <= viennagrid::ncells<CellTag::dim>(domseg).size();
                   ++offsets)
             {
               writer << ELEMENT_TAG_TO_VTK_TYPE<CellTag>::value << " ";

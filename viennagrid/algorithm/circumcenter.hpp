@@ -49,7 +49,7 @@ namespace viennagrid
     //
     template <typename ElementType, typename DimensionTag>
     typename viennagrid::result_of::point<typename ElementType::config_type>::type
-    circumcenter(ElementType const & cell, viennagrid::line_tag, DimensionTag)
+    circumcenter(ElementType const & cell, viennagrid::simplex_tag<1>, DimensionTag)
     {
       typedef typename ElementType::config_type             Config;
       typedef typename viennagrid::result_of::point<Config>::type                            PointType;
@@ -66,7 +66,13 @@ namespace viennagrid
       
       return ret;
     }
-  
+
+    template <typename ElementType, typename DimensionTag>
+    typename viennagrid::result_of::point<typename ElementType::config_type>::type
+    circumcenter(ElementType const & cell, viennagrid::hypercube_tag<1>, DimensionTag)
+    {
+      return circumcenter(cell, viennagrid::simplex_tag<1>(), DimensionTag());
+    }
   
     //
     // Calculation of circumcenter taken from Wikipedia (better reference required...)

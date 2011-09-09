@@ -110,6 +110,7 @@ namespace viennagrid
         typedef domain_layers<Config,
                               dim-1>                                               base_type;
         typedef element_orientation<VertexOnElementSpecs::num>                    ElementOrientationType;
+        typedef element_key<Config, element_type>                                 ElementKeyType;
       
       public:
         typedef Config                                    config_type;
@@ -119,12 +120,12 @@ namespace viennagrid
         element_type *
         push_back(element_type & elem, ElementOrientationType * orientation) {
 
-          typedef typename std::map< element_key<element_type>, element_type >::iterator  ElementIterator;
+          typedef typename std::map< element_key<Config, element_type>, element_type >::iterator  ElementIterator;
           
           typedef typename result_of::ncell_range<element_type, 0>::type      VertexOnElementRange;
           typedef typename result_of::iterator<element_type, 0>::type         VertexOnElementIterator;
 
-          element_key<element_type> epc(elem);
+          ElementKeyType epc(elem);
           //check whether already inserted:
           ElementIterator elit = elements.find(epc);
           //std::cout << "Candidate: "; elem.print_short();
@@ -139,7 +140,7 @@ namespace viennagrid
             //set default orientation:
             orientation->setDefaultOrientation();
 
-            std::pair<element_key<element_type>, element_type> p(epc, elem);
+            std::pair<ElementKeyType, element_type> p(epc, elem);
             return &((elements.insert(p).first)->second);
           }
 

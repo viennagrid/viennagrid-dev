@@ -29,6 +29,25 @@ namespace viennagrid
   namespace detail
   {
     //
+    // Refinement requies vertex IDs. Make sure they are available.
+    //
+    template <typename DomainType,
+              typename VertexIDHandler = typename viennagrid::result_of::element_id_handler<typename DomainType::config_type,
+                                                                                            viennagrid::point_tag>::type>
+    struct refinement_vertex_id_requirement
+    {
+      typedef long        type;
+    };
+    
+    template <typename DomainType>
+    struct refinement_vertex_id_requirement< DomainType, pointer_id>
+    {
+      typedef typename DomainType::ERROR_VERTEX_IDs_FOR_REFINEMENT_REQUIRED   type;
+    };
+    
+    
+    
+    //
     // If any edge is refined in a cell, then the longest edge is refined as well
     //
     template <typename ConfigTypeIn>
@@ -185,6 +204,8 @@ namespace viennagrid
       typedef typename viennagrid::result_of::const_ncell_range<EdgeType, 0>::type                               VertexOnEdgeRange;
       typedef typename viennagrid::result_of::iterator<VertexOnEdgeRange>::type                                  VertexOnEdgeIterator;            
 
+      typedef typename detail::refinement_vertex_id_requirement<domain_t<ConfigTypeIn> >::type   checked_type;
+      
       //
       // Step 1: Write tags from cells to edges:
       //
@@ -284,6 +305,8 @@ namespace viennagrid
       typedef typename viennagrid::result_of::const_ncell_range<CellType, 0>::type                               VertexOnCellRange;
       typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type                                  VertexOnCellIterator;            
       
+      typedef typename detail::refinement_vertex_id_requirement<domain_t<ConfigTypeIn> >::type   checked_type;
+      
       //
       // Step 1: Write old vertices to new domain
       //
@@ -345,7 +368,6 @@ namespace viennagrid
       }
     }
     
-    
   } //namespace detail
   
   
@@ -373,6 +395,7 @@ namespace viennagrid
   refinement_proxy< domain_t<ConfigTypeIn>, RefinementTag >
   refine(domain_t<ConfigTypeIn> const & domain_in, RefinementTag const & tag)
   {
+    typedef typename detail::refinement_vertex_id_requirement<domain_t<ConfigTypeIn> >::type   checked_type;
     return refinement_proxy< domain_t<ConfigTypeIn>, RefinementTag >(domain_in, tag);
   }
   
@@ -381,6 +404,7 @@ namespace viennagrid
   refinement_proxy< domain_t<ConfigTypeIn>, uniform_refinement_tag >
   refine_uniformly(domain_t<ConfigTypeIn> const & domain_in)
   {
+    typedef typename detail::refinement_vertex_id_requirement<domain_t<ConfigTypeIn> >::type   checked_type;
     return refinement_proxy< domain_t<ConfigTypeIn>, uniform_refinement_tag >(domain_in, uniform_refinement_tag());
   }
   
@@ -388,6 +412,7 @@ namespace viennagrid
   refinement_proxy< domain_t<ConfigTypeIn>, adaptive_refinement_tag >
   refine_adaptively(domain_t<ConfigTypeIn> const & domain_in)
   {
+    typedef typename detail::refinement_vertex_id_requirement<domain_t<ConfigTypeIn> >::type   checked_type;
     return refinement_proxy< domain_t<ConfigTypeIn>, adaptive_refinement_tag >(domain_in, adaptive_refinement_tag());
   }
   

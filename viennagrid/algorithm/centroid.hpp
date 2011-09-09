@@ -99,7 +99,14 @@ namespace viennagrid
     //a line can reuse the algorithm defined for a triangle
     template <typename ElementType>
     typename viennagrid::result_of::point<typename ElementType::config_type>::type
-    centroid(ElementType const & cell, viennagrid::line_tag)
+    centroid(ElementType const & cell, viennagrid::simplex_tag<1>)
+    {
+      return centroid(cell, viennagrid::triangle_tag());
+    }
+
+    template <typename ElementType>
+    typename viennagrid::result_of::point<typename ElementType::config_type>::type
+    centroid(ElementType const & cell, viennagrid::hypercube_tag<1>)
     {
       return centroid(cell, viennagrid::triangle_tag());
     }
