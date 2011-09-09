@@ -108,13 +108,13 @@ As an example, linear finite elements need information about the cells and the v
   \hline
   Vertices & 4913 & 24 & 115 KB \\
   \hline
-  Edges   & 31024 & 24 & 727 KB \\
+  Edges   & 31024 & 16 & 485 KB \\
   \hline
   Facets  & 50688 & 48 & 2376 KB \\
   \hline
   Cells   & 24576 & 112 & 2688 KB \\
   \hline
-  \textbf{Total}  &       &     &  \textbf{5906 KB} \\
+  \textbf{Total}  &       &     &  \textbf{5664 KB} \\
   \hline
  \end{tabular}
  \caption{Minimum memory consumption for a tetrahedral mesh of the unit cube where all $n$-cells are stored explicitly and boundary information on each $n$-cell is stored. Vertices use \lstinline|double|-precision coordinates and elements are linked with pointers sized eight bytes each.}
@@ -146,7 +146,10 @@ As shown in Tab.~\ref{tab:full-domain-memory} and Tab.~\ref{tab:slim-domain-memo
 
 \NOTE{Note that in {\ViennaGrid} a cell always stores pointers to its vertices. Similarly, the domain always stores the cells and vertices.}
 
-{\ViennaGrid} can be customized to switch seamlessly between the different storage models.
+{\ViennaGrid} can be customized to switch seamlessly between the different storage models, as will be shown in the following subsections.
+
+\subsection{Boundary $n$-Cells} \label{subsec:boundary-ncells-storage}
+
 This can be achieved in two ways:
 \begin{itemize}
  \item \textbf{Method 1}: Use the provided macros. The storage of elements can be customized either for a particular configuration class, or globally for all domain configuration classes. To disable the storage of edges (i.e.~$1$-cells) inside a tetrahedron for a domain with configuration class \lstinline|MyConfig|, the line
@@ -185,12 +188,12 @@ namespace viennagrid { namespace result_of {
 \end{lstlisting}
 The third macro explained for method 1 results in the same code as the first macro, with the exception that \lstinline|no_handling_tag| is replaced with \lstinline|full_handling_tag|.
 
-Finally, we wish to point at a potential pitfall when disabling $n$-cells that are neither $0$-cells, $N-1$-cells nor $N$-cells: As example, we consider the case of disabling edges for a tetrahedron. Using only the line
+Finally, we wish to point at a potential pitfall when disabling $n$-cells that are neither $0$-cells, $N-1$-cells nor $N$-cells: As example, we consider the case of disabling edges for a tetrahedron. Using the line
   \begin{lstlisting}
 VIENNAGRID_DISABLE_BOUNDARY_NCELL(MyConfig,
                                   viennagrid::tetrahedron_tag, 1)
   \end{lstlisting}
-disables the edges for the tetrahedron, but still edges are pushed and stored inside the domain because the triangular facets of the tetrahedron store pointers to their edges. Thus, to completely disable the storage of any edges, one also has to disable the storage of edges for triangles. As a check, one should verify that the number of edges stored inside a domain \lstinline|my_domain| and obtained by 
+only disables the edges for the tetrahedron, but still edges are pushed and stored inside the domain because the triangular facets of the tetrahedron store pointers to their edges. Thus, to completely disable the storage of any edges, one also has to disable the storage of edges for triangles. As a check, one should verify that the number of edges stored inside a domain \lstinline|my_domain| and obtained by 
  \begin{lstlisting}
   viennagrid::ncells<1>(my_domain).size()
  \end{lstlisting}
@@ -198,6 +201,99 @@ is zero.
 
 \TIP{Have a look at \texttt{examples/tutorial/slim\_domain.cpp} and selectively enable or disable the storage of elements to see the impact on total memory consumption. Note that the bytes per object may differ from Tab.~\ref{tab:full-domain-memory} and Tab.~\ref{tab:slim-domain-memory} depending on the use of local-to-global-orienters and the eventual use of integral IDs.}
 
+\subsection{Local Orientations}
+\begin{figure}[tb]
+\centering
+ \includegraphics[width=0.65\textwidth]{figures/interface-tets.eps}
+ \caption{Boundary $n$-cells have different orientations with respect to different cells.}
+ \label{fig:orientation-boundary-ncells}
+\end{figure}
+
+In cases where $n$-cells store boundary $k$-cells, $k<n$, it may be required to know the orientation of the globally (i.e.~in the domain) stored $k$-cell with respect to the local reference orientation of the $n$-cell. The common facet of the two tetrahedra in Fig.~\ref{fig:orientation-boundary-ncells} may be stored globally using the sequence of vertex indices $[1, 2, 3]$. Inside the tetrahedron $[0, 1, 2, 3]$ the facet again possesses the orientation $[1, 2, 3]$, thus matching the global orientation. However, within the tetrahedron $[4, 2, 1, 3]$ the facet has the local orientation $[2, 1, 3]$ (refer to the Appendix for an overview of reference orientations). For applications such as high-order finite elements, such a local orientation with respect to the cell is required.
+
+
+By default, {\ViennaGrid} stores the local orientation of each boundary $k$-cell inside the hosting $n$-cell. In order to disable the storage of these local orientations for scenarios where the local orientation is not needed, there are again two methods provided:
+\begin{itemize}
+ \item \textbf{Method 1}: Using the macros provided. To disable the storage of local orientations of edges (i.e.~$1$-cells) inside a tetrahedron for a domain with configuration class \lstinline|MyConfig|, the line
+\begin{lstlisting}
+VIENNAGRID_DISABLE_BOUNDARY_NCELL_ORIENTATION(MyConfig,
+                           viennagrid::tetrahedron_tag, 1) 
+\end{lstlisting}
+is sufficient. The second argument denotes the hosting $n$-cell tag, while the third argument denotes the topological dimension $k$ of the boundary $k$-cells.
+
+Similar as in the previous section, one can disable the storage of local orientations globally for all configuration classes by
+\begin{lstlisting}
+VIENNAGRID_GLOBAL_DISABLE_BOUNDARY_NCELL_ORIENTATION(
+                              viennagrid::tetrahedron_tag, 1) 
+\end{lstlisting}
+To selectively enable the storage of local orientation in a globally disabled setting, the macro \lstinline|VIENNAGRID_ENABLE_BOUNDARY_NCELL_ORIENTATION| can be used in the same way as \lstinline|VIENNAGRID_DISABLE_BOUNDARY_NCELL_ORIENTATION|.
+Again, it is recommended to define the macros in the source file containing \lstinline|main()| after the inclusion of the {\ViennaGrid} header files.
+
+ \item \textbf{Method 2}: Instead of using the macros, one can instead manually adjust the meta-function \lstinline|subelement_orientation|. The first macro of method 1 expands to
+ \begin{lstlisting}
+namespace viennagrid { namespace result_of {
+  template <>
+  struct subelement_orientation<MyConfig,
+                                viennagrid::tetrahedron_tag, 1>
+  {
+    typedef no_handling_tag    type;
+  };
+}  }
+ \end{lstlisting}
+Using the type \lstinline|full_handling_tag| instead of \lstinline|no_handling_tag| enables the storage of local orientations.
+\end{itemize}
+
+\TIP{If the storage of boundary $k$-cells is disabled (cf.~Sec.~\ref{subsec:boundary-ncells-storage}), there are automatically no local orientations for boundary $k$-cells stored. The local orientations do not need to be disabled explicitly in this case.}
+
+\subsection{$n$-Cell IDs}
+It is often convenient to have enumerated $n$-cells within a domain such that every $n$-cell is aware of its index inside the random access container it resides in. This allows for some algorithms to use fast random-accesses with $\LandauO(1)$ costs rather than searching trees with $\LandauO(\log N)$ costs or linked lists with $\LandauO(N)$ costs, where $N$ here denotes the number of $n$-cells inside the domain. Conversely, if $\LandauO(\log N)$ access times are acceptable, then the memory for storing the container index (which we refer to in the following as \emph{$n$-cell ID}) is wasted. To accomodate for these two scenarios, {\ViennaGrid} allows to selectively enable or disable the storage of $n$-cell IDs. By default, $n$-cell IDs are stored, since they have negligible impact on the total memory consumption as soon as other boundary $k$-cells are stored for an $n$-cell.
+
+As for the storage of boundary $k$-cells and local orientations, there are two possibilities for customizing the storage of IDs:
+\begin{itemize}
+ \item \textbf{Method 1}: Using the provided macros. To disable the storage of IDs for tetrahedrons inside a domain with configuration \lstinline|MyConfig|, the line
+ \begin{lstlisting}
+VIENNAGRID_DISABLE_NCELL_ID(viennagrid::config::tetrahedral_3d,
+                            viennagrid::tetrahedron_tag)
+ \end{lstlisting}
+ is sufficient. The second argument denotes the element tag for which the storage of IDs should be disabled.
+
+ To globally disable the storage of IDs for tetrahedrons, use
+ \begin{lstlisting}
+VIENNAGRID_GLOBAL_DISABLE_NCELL_ID(viennagrid::tetrahedron_tag)
+ \end{lstlisting}
+ To selectively enable the storage of IDs for certain configuration classes in a globally disabled setting, one can use
+ \begin{lstlisting}
+VIENNAGRID_ENABLE_NCELL_ID(viennagrid::config::tetrahedral_3d,
+                           viennagrid::tetrahedron_tag)
+ \end{lstlisting}
+
+ \item \textbf{Method 2}:
+The macros from the first method expand to
+\begin{lstlisting}
+ template <>
+ struct element_id_handler<MyConfig, viennagrid::tetrahedron_tag>
+ {
+   typedef pointer_id    type;
+ };
+\end{lstlisting}
+for the configuration class \lstinline|MyConfig|, and to
+\begin{lstlisting}
+    template <typename ConfigType>
+    struct element_id_handler<ConfigType, viennagrid::tetrahedron_tag>
+    {
+      typedef pointer_id    type;
+    };
+\end{lstlisting}
+for globally disabling the storage of IDs. To selectively enable IDs, \lstinline|integral_id| should be used instead of \lstinline|pointer_id|.
+
+
+\end{itemize}
+
+
+
+\TIP{Have a look at \texttt{examples/tutorial/slim\_domain.cpp} and selectively enable or disable the storage of elements to see the impact on total memory consumption. Note that the bytes per object may differ from Tab.~\ref{tab:full-domain-memory} and Tab.~\ref{tab:slim-domain-memory} depending on the use of local orientations and integral IDs.}
+
+\NOTE{Disabling $n$-cell IDs eliminates the possibility to store and access data for the respective $n$-cells with $\LandauO(1)$ costs, see Chapter [MISSING].}
 
 \end{itemize}
 

@@ -82,7 +82,7 @@ namespace viennagrid
   template <long dim>
   struct simplex_tag;
   
-  //typedef simplex_tag<1>    line_tag;
+  typedef simplex_tag<1>    line_tag;
   typedef simplex_tag<2>    triangle_tag;
   typedef simplex_tag<3>    tetrahedron_tag;
   
@@ -260,17 +260,10 @@ namespace viennagrid
   
   namespace result_of
   {
-    template <typename ConfigType, typename ElementTag>
+    template <typename ConfigType, typename ElementTag>    //by default, every element is equipped with an ID
     struct element_id_handler
     {
-      typedef pointer_id     type;
-    };
-
-    template <typename ConfigType>
-    struct element_id_handler<ConfigType, viennagrid::point_tag>  //vertices must carry a numeric ID in order to do some IO stuff
-    {
       typedef integral_id     type;
-      //typedef pointer_id     type;
     };
 
     template <typename T, long dim = 0>
@@ -336,6 +329,15 @@ namespace viennagrid
     {
       typedef viennagrid::point_t<typename Config::numeric_type, typename Config::coordinate_system_tag>   type;
     };
+    
+
+    // Metafunction for local-to-global-orienters: By default, store orienters
+    template <typename ConfigType, typename T, long dim>
+    struct subelement_orientation
+    {
+      typedef full_handling_tag    type;
+    };
+    
     
     
     template <typename ConfigType, typename T, long dim>
@@ -484,7 +486,9 @@ namespace viennadata
 
 ////// storage scheme for cells ////////
 
+//
 // Define convenience macros for changing the storage scheme in ViennaGrid:
+//
 #define VIENNAGRID_DISABLE_BOUNDARY_NCELL(arg_CONFIG, arg_TAG, arg_DIM) \
  namespace viennagrid { namespace result_of { \
     template <> \
@@ -511,7 +515,64 @@ namespace viennadata
 
 //note that VIENNAGRID_GLOBAL_ENABLE_BOUNDARY_NCELL(arg_TAG, arg_DIM)  does not make sense, since the default is full_handling already.
 
+//
+// Same for orientation
+//
+#define VIENNAGRID_DISABLE_BOUNDARY_NCELL_ORIENTATION(arg_CONFIG, arg_TAG, arg_DIM) \
+ namespace viennagrid { namespace result_of { \
+    template <> \
+    struct subelement_orientation<arg_CONFIG, arg_TAG, arg_DIM> { \
+      typedef no_handling_tag    type; \
+    }; \
+ } }
+
+#define VIENNAGRID_ENABLE_BOUNDARY_NCELL_ORIENTATION(arg_CONFIG, arg_TAG, arg_DIM) \
+ namespace viennagrid { namespace result_of { \
+    template <> \
+    struct subelement_orientation<arg_CONFIG, arg_TAG, arg_DIM> { \
+      typedef full_handling_tag    type; \
+    }; \
+ } }
+
+#define VIENNAGRID_GLOBAL_DISABLE_BOUNDARY_NCELL_ORIENTATION(arg_TAG, arg_DIM) \
+ namespace viennagrid { namespace result_of { \
+    template <typename ConfigType> \
+    struct subelement_orientation<ConfigType, arg_TAG, arg_DIM> { \
+      typedef no_handling_tag    type; \
+    }; \
+ } }
+
+//
+// ID for elements:
+//
+#define VIENNAGRID_DISABLE_NCELL_ID(arg_CONFIG, arg_TAG) \
+ namespace viennagrid { namespace result_of { \
+    template <> \
+    struct element_id_handler<arg_CONFIG, arg_TAG> { \
+      typedef pointer_id    type; \
+    }; \
+ } }
+
+#define VIENNAGRID_ENABLE_NCELL_ID(arg_CONFIG, arg_TAG) \
+ namespace viennagrid { namespace result_of { \
+    template <> \
+    struct element_id_handler<arg_CONFIG, arg_TAG> { \
+      typedef integral_id    type; \
+    }; \
+ } }
+ 
+#define VIENNAGRID_GLOBAL_DISABLE_NCELL_ID(arg_TAG) \
+ namespace viennagrid { namespace result_of { \
+    template <typename ConfigType> \
+    struct element_id_handler<ConfigType, arg_TAG> { \
+      typedef pointer_id    type; \
+    }; \
+ } }
+
+
+//
 ////// storage scheme for domain ////////
+//
 
 #define VIENNAGRID_DISABLE_DOMAIN_NCELL(arg_CONFIG, arg_DIM) \
  namespace viennagrid { namespace result_of { \

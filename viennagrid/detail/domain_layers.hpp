@@ -138,7 +138,8 @@ namespace viennagrid
             //std::cout << "ACCEPTED " << std::endl;
 
             //set default orientation:
-            orientation->setDefaultOrientation();
+            if (orientation != NULL)
+              orientation->setDefaultOrientation();
 
             std::pair<ElementKeyType, element_type> p(epc, elem);
             return &((elements.insert(p).first)->second);
@@ -162,8 +163,8 @@ namespace viennagrid
               {
                 if (voeit->id() == voeit2->id())
                 {
-                  //orientation->setPermutation(i,j);   //local (elem) to global (elit->second)
-                  orientation->setPermutation(j,i);   //global (elit->second) to local (elem)
+                  if (orientation != NULL)
+                    orientation->setPermutation(j,i);   //global (elit->second) to local (elem)
                   break;
                 }
               }
@@ -176,31 +177,15 @@ namespace viennagrid
 
         ///////////////////// container retrieval /////////////////////////
 
+        using base_type::container;
+
         //non-const:
-        template <long dim_container>
-        typename result_of::element_container<domain_type, dim_container, Config::cell_tag::dim>::type * 
-        container() { return container<dim_container>(typename level_discriminator<dim, dim_container>::result_type()); }
+        container_type * 
+        container(dimension_tag<dim>) { return &elements; }
         
-        template <long dim_container>
-        typename result_of::element_container<domain_type, dim_container, Config::cell_tag::dim>::type * 
-        container(equal_tag) { return &elements; }
-
-        template <long dim_container>
-        typename result_of::element_container<domain_type, dim_container, Config::cell_tag::dim>::type * 
-        container(less_tag) { return base_type::template container<dim_container>(); }
-
         //const:
-        template <long dim_container>
-        const typename result_of::element_container<domain_type, dim_container, Config::cell_tag::dim>::type * 
-        container() const { return container<dim_container>(typename level_discriminator<dim, dim_container>::result_type()); }
-        
-        template <long dim_container>
-        const typename result_of::element_container<domain_type, dim_container, Config::cell_tag::dim>::type * 
-        container(equal_tag) const { return &elements; }
-
-        template <long dim_container>
-        const typename result_of::element_container<domain_type, dim_container, Config::cell_tag::dim>::type * 
-        container(less_tag) const { return base_type::template container<dim_container>(); }
+        const container_type * 
+        container(dimension_tag<dim>) const { return &elements; }
         
       private:
         container_type    elements;        //container of elements
@@ -209,52 +194,40 @@ namespace viennagrid
     
     template <typename Config,
               long dim>
-    class domain_layers<Config, dim, false, no_handling_tag>  : public domain_layers<Config,
-                                                                                     dim-1>
+    class domain_layers<Config, dim, false, no_handling_tag> : public domain_layers<Config, dim-1>
     {
         //typedef typename result_of::tag<typename Config::cell_tag, dim>::type    tag;
         typedef typename Config::cell_tag                                                 CellTag;
         typedef domain_t<Config>                                                          domain_type;
-        typedef domain_layers<Config,
-                              dim-1>        base_type;
+        typedef domain_layers<Config, dim-1>        base_type;
+        typedef typename result_of::element_container<domain_type, dim, Config::cell_tag::dim>::type           container_type;
       
       public:
 
         ///////////////////// container retrieval /////////////////////////
+        using base_type::container;
 
         //non-const:
-        template <long dim_container>
-        typename result_of::element_container<domain_type, dim_container, CellTag::dim>::type * 
-        container() { return container<dim_container>(typename level_discriminator<dim, dim_container>::result_type()); }
-        
-        template <long dim_container>
-        typename result_of::element_container<domain_type, dim_container, CellTag::dim>::type * 
-        container(equal_tag)
+        container_type * 
+        container(dimension_tag<dim>)
         {
-          typedef typename result_of::subelement_handling<Config, domain_type, dim>::ERROR_HANDLING_OF_ELEMENTS_AT_THIS_TOPOLOGICAL_LEVEL_NOT_PROVIDED   error_type;
+          typedef typename result_of::subelement_handling<Config,
+                                                          domain_type,
+                                                          dim
+                                                         >::ERROR_HANDLING_OF_ELEMENTS_AT_THIS_TOPOLOGICAL_LEVEL_NOT_PROVIDED   error_type;
           return NULL;
         }
-
-        template <long dim_container>
-        typename result_of::element_container<domain_type, dim_container, CellTag::dim>::type * 
-        container(less_tag) { return base_type::template container<dim_container>(); }
 
         //const:
-        template <long dim_container>
-        const typename result_of::element_container<domain_type, dim_container, CellTag::dim>::type * 
-        container() const { return container<dim_container>(typename level_discriminator<dim, dim_container>::result_type()); }
-        
-        template <long dim_container>
-        const typename result_of::element_container<domain_type, dim_container, CellTag::dim>::type * 
-        container(equal_tag) const
+        const container_type * 
+        container(dimension_tag<dim>) const
         {
-          typedef typename result_of::subelement_handling<Config, domain_type, dim>::ERROR_HANDLING_OF_ELEMENTS_AT_THIS_TOPOLOGICAL_LEVEL_NOT_PROVIDED   error_type;
+          typedef typename result_of::subelement_handling<Config,
+                                                          domain_type,
+                                                          dim
+                                                         >::ERROR_HANDLING_OF_ELEMENTS_AT_THIS_TOPOLOGICAL_LEVEL_NOT_PROVIDED   error_type;
           return NULL;
         }
-
-        template <long dim_container>
-        const typename result_of::element_container<domain_type, dim_container, Config::cell_tag::dim>::type * 
-        container(less_tag) const { return base_type::template container<dim_container>(); }
     };
      
     
@@ -290,31 +263,15 @@ namespace viennagrid
           return &(elements.back());
         }
         
+        using base_type::container;
+
         //non-const:
-        template <long dim_container>
-        typename result_of::element_container<domain_type, dim_container, Config::cell_tag::dim>::type * 
-        container() { return container<dim_container>(typename level_discriminator<dim, dim_container>::result_type()); }
+        container_type * 
+        container(dimension_tag<dim>) { return &elements; }
         
-        template <long dim_container>
-        typename result_of::element_container<domain_type, dim_container, Config::cell_tag::dim>::type * 
-        container(equal_tag) { return &elements; }
-
-        template <long dim_container>
-        typename result_of::element_container<domain_type, dim_container, Config::cell_tag::dim>::type * 
-        container(less_tag) { return base_type::template container<dim_container>(); }
-
         //const:
-        template <long dim_container>
-        const typename result_of::element_container<domain_type, dim_container, Config::cell_tag::dim>::type * 
-        container() const { return container<dim_container>(typename level_discriminator<dim, dim_container>::result_type()); }
-        
-        template <long dim_container>
-        const typename result_of::element_container<domain_type, dim_container, Config::cell_tag::dim>::type * 
-        container(equal_tag) const { return &elements; }
-
-        template <long dim_container>
-        const typename result_of::element_container<domain_type, dim_container, Config::cell_tag::dim>::type * 
-        container(less_tag) const { return base_type::template container<dim_container>(); }
+        const container_type * 
+        container(dimension_tag<dim>) const { return &elements; }
         
       private:
         container_type    elements;        //container of elements
@@ -349,10 +306,14 @@ namespace viennagrid
           return &(elements.back());
         }
         
-        template <long dim>
-        container_type * container() { return &elements; }
-        template <long dim>
-        const container_type * container() const { return &elements; }
+
+        //non-const:
+        container_type * 
+        container(dimension_tag<0>) { return &elements; }
+        
+        //const:
+        const container_type * 
+        container(dimension_tag<0>) const { return &elements; }
         
       private:
         container_type    elements;        //container of elements

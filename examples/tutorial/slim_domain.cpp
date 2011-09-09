@@ -30,22 +30,38 @@
 // Disable edges for a tetrahedron (but not its triangular facets):
 // Only valid for domains using the configuration class viennagrid::config::tetrahedral_3d
 //
-VIENNAGRID_DISABLE_BOUNDARY_NCELL(viennagrid::config::tetrahedral_3d, viennagrid::tetrahedron_tag, 1)
+VIENNAGRID_DISABLE_BOUNDARY_NCELL(viennagrid::config::tetrahedral_3d, viennagrid::tetrahedron_tag, 1)   //disable completely
+VIENNAGRID_DISABLE_BOUNDARY_NCELL_ORIENTATION(viennagrid::config::tetrahedral_3d, viennagrid::tetrahedron_tag, 1)  //disable global-to-local orientation mapper only
 
 //
 // Disable edges for all triangles for all possible domain types
 // (no matter whether it is a cell or the boundary of a higher-dimensional simplex)
 //
-VIENNAGRID_GLOBAL_DISABLE_BOUNDARY_NCELL(viennagrid::triangle_tag, 1)
+VIENNAGRID_GLOBAL_DISABLE_BOUNDARY_NCELL(viennagrid::triangle_tag, 1)  //disable completely
+VIENNAGRID_GLOBAL_DISABLE_BOUNDARY_NCELL_ORIENTATION(viennagrid::triangle_tag, 1) //disable global-to-local orientation mapper only
 
 //
 // Disable triangular facets of a tetrahedron for all possible domain types
 //
-VIENNAGRID_GLOBAL_DISABLE_BOUNDARY_NCELL(tetrahedron_tag, 2)
+VIENNAGRID_GLOBAL_DISABLE_BOUNDARY_NCELL(tetrahedron_tag, 2)  //disable completely
+VIENNAGRID_GLOBAL_DISABLE_BOUNDARY_NCELL_ORIENTATION(tetrahedron_tag, 2)  //disable global-to-local orientation mapper only
+
+
+
+//
+// Handling of IDs:
+//
+VIENNAGRID_DISABLE_NCELL_ID(viennagrid::config::tetrahedral_3d, viennagrid::tetrahedron_tag)
+VIENNAGRID_GLOBAL_DISABLE_NCELL_ID(viennagrid::triangle_tag)
+VIENNAGRID_GLOBAL_DISABLE_NCELL_ID(viennagrid::line_tag)
+VIENNAGRID_DISABLE_NCELL_ID(viennagrid::config::tetrahedral_3d, viennagrid::point_tag)
+
+
+
 
 /*
 //
-// For documentation purposes, the three macros above result in the following code:
+// For documentation purposes, the six macros above result in the following code:
 // (this allows you to inject your own custom meta-functions if desired)
 //
 namespace viennagrid
@@ -58,17 +74,66 @@ namespace viennagrid
       typedef no_handling_tag    type;
     };
 
+    template <>
+    struct subelement_orientation<viennagrid::config::tetrahedral_3d, viennagrid::tetrahedron_tag, 1>
+    {
+      typedef no_handling_tag    type;
+    };
+    
+    //-----------------------
+    
     template <typename ConfigType>
     struct subelement_handling<ConfigType,  viennagrid::triangle_tag, 1>
     {
       typedef no_handling_tag    type;
     };
+
+    template <typename ConfigType>
+    struct subelement_orientation<ConfigType,  viennagrid::triangle_tag, 1>
+    {
+      typedef no_handling_tag    type;
+    };
+    
+    //-----------------------
     
     template <typename ConfigType>
     struct subelement_handling<ConfigType,  viennagrid::tetrahedron_tag, 2>
     {
       typedef no_handling_tag    type;
     };
+    
+    template <typename ConfigType>
+    struct subelement_orientation<ConfigType,  viennagrid::tetrahedron_tag, 2>
+    {
+      typedef no_handling_tag    type;
+    };
+    
+    //-----------------------
+    
+    template <>
+    struct element_id_handler<viennagrid::config::tetrahedral_3d,  viennagrid::triangle_tag>
+    {
+      typedef pointer_id    type;
+    };
+
+    template <typename ConfigType>
+    struct element_id_handler<ConfigType,  viennagrid::triangle_tag>
+    {
+      typedef pointer_id    type;
+    };
+    
+    template <typename ConfigType>
+    struct subelement_orientation<ConfigType,  viennagrid::line_tag>
+    {
+      typedef pointer_id    type;
+    };
+
+    template <>
+    struct element_id_handler<viennagrid::config::tetrahedral_3d,  viennagrid::point_tag>
+    {
+      typedef pointer_id    type;
+    };
+    
   }  
 }
 */

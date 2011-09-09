@@ -31,40 +31,22 @@
 namespace viennagrid
 {
   
-  //
-  // Orientation of boundary elements: Local to global indices:
-  //
-  template <typename ConfigType,
-            typename ElementTag,
-            unsigned long dim
-            //typename handling_tag = typename result_of::subelement_orientation<ConfigType, ElementTag, dim>::type
-           >
-  class boundary_ncell_orienter
-  {
-    public:
-      
-    protected:
-  };
-  
-  
-  
-  
-  
   /************** Level 1: Elements contained by a higher-level element *******/
 
   template <typename ConfigType,
               typename ElementTag,
               unsigned long dim,
-              typename handling_tag = typename result_of::subelement_handling<ConfigType, ElementTag,dim>::type,
+              typename handling_tag = typename result_of::subelement_handling<ConfigType, ElementTag, dim>::type,
+              typename orienter_tag = typename result_of::subelement_orientation<ConfigType, ElementTag, dim>::type,
               bool LevelNull = (dim == 0)>
   class boundary_ncell_holder  { };
 
   
   //
-  // Full storage of boundary cell:
+  // Full storage of boundary cell, including orientation
   //
   template <typename ConfigType, typename ElementTag, unsigned long dim>
-  class boundary_ncell_holder <ConfigType, ElementTag, dim, full_handling_tag, false> :
+  class boundary_ncell_holder <ConfigType, ElementTag, dim, full_handling_tag, full_handling_tag, false> :
     public boundary_ncell_holder <ConfigType, ElementTag, dim - 1>
   {
     //requirements:
@@ -75,6 +57,7 @@ namespace viennagrid
 
     typedef element_t<ConfigType, typename LevelSpecs::tag>  LevelElementType;
     typedef element_orientation<VertexOnElementSpecs::num>     ElementOrientationType;
+    typedef typename result_of::element_container<element_t<ConfigType, ElementTag>, dim, ElementTag::dim>::type      container_type;
 
     protected:
       template <typename DomainType>
@@ -107,51 +90,23 @@ namespace viennagrid
       }
 
       /////////////////// access container: ////////////////////
-      
-      //non-const:
-      template <long j>
-      typename result_of::element_container< element_t<ConfigType, ElementTag>, j, ElementTag::dim>::type *
-      container(less_tag)
-      { 
-        return Base::template container<j>();
-      }
 
-      template <long j>
-      typename result_of::element_container< element_t<ConfigType, ElementTag>, j, ElementTag::dim>::type *
-      container(equal_tag)
+      using Base::container;
+
+      //non-const:
+      container_type *
+      container(dimension_tag<dim>)
       { 
         return &(elements_[0]);
-      }
-
-      template <long j>
-      typename result_of::element_container< element_t<ConfigType, ElementTag>, j, ElementTag::dim>::type *
-      container()
-      { 
-        return container<j>( typename level_discriminator<dim, j>::result_type() );
       }
       
       //const:
-      template <long j>
-      const typename result_of::element_container< element_t<ConfigType, ElementTag>, j, ElementTag::dim>::type *
-      container(less_tag) const
-      { 
-        return Base::template container<j>();
-      }
-
-      template <long j>
-      const typename result_of::element_container< element_t<ConfigType, ElementTag>, j, ElementTag::dim>::type *
-      container(equal_tag) const
+      
+      const container_type *
+      container(dimension_tag<dim>) const
       { 
         return &(elements_[0]);
       }
-
-      template <long j>
-      const typename result_of::element_container< element_t<ConfigType, ElementTag>, j, ElementTag::dim>::type *
-      container() const
-      { 
-        return container<j>( typename level_discriminator<dim, j>::result_type() );
-      }
-      
       
 
       ////////////////// orientation: ////////////////////
@@ -177,16 +132,87 @@ namespace viennagrid
       }
 
     private: 
-      LevelElementType * elements_[LevelSpecs::num];
+      container_type elements_[LevelSpecs::num];
       ElementOrientationType orientations_[LevelSpecs::num];
   };
 
   
+  
+  
+  //
+  // Full storage of boundary cell, but no orientation
+  //
+  template <typename ConfigType, typename ElementTag, unsigned long dim>
+  class boundary_ncell_holder <ConfigType, ElementTag, dim, full_handling_tag, no_handling_tag, false> :
+    public boundary_ncell_holder <ConfigType, ElementTag, dim - 1>
+  {
+    //requirements:
+    //array of pointers to elements of class 'dim' and a integer representing the orientation within the cell relative to the element it points to.
+    typedef topology::subelements<ElementTag, dim>                         LevelSpecs;
+    typedef topology::subelements<typename LevelSpecs::tag, 0>  VertexOnElementSpecs;
+    typedef boundary_ncell_holder <ConfigType, ElementTag, dim - 1 >      Base;
+
+    typedef element_t<ConfigType, typename LevelSpecs::tag>  LevelElementType;
+    typedef element_orientation<VertexOnElementSpecs::num>     ElementOrientationType;
+    typedef typename result_of::element_container<element_t<ConfigType, ElementTag>, dim, ElementTag::dim>::type      container_type;
+
+    protected:
+      template <typename DomainType>
+      void fill_level(DomainType & dom)
+      {
+        typedef ElementOrientationType *    OrientationPointer;
+        //fill lower level first:
+        Base::fill_level(dom);
+
+        topology::subelement_filler<ElementTag, dim>::fill(&(elements_[0]),
+                                                           &(Base::vertices_[0]),
+                                                           OrientationPointer(NULL),
+                                                           dom);
+      }
+
+    public:
+
+      boundary_ncell_holder( ) 
+      {
+        for (long i=0; i < LevelSpecs::num; ++i)
+          elements_[i] = NULL;
+      };
+
+      boundary_ncell_holder( const boundary_ncell_holder & llh) : Base (llh)
+      {
+        for (long i=0; i < LevelSpecs::num; ++i)
+          elements_[i] = llh.elements_[i];
+      }
+
+      /////////////////// access container: ////////////////////
+
+      using Base::container;
+
+      //non-const:
+      container_type *
+      container(dimension_tag<dim>)
+      { 
+        return &(elements_[0]);
+      }
+      
+      //const:
+      const container_type *
+      container(dimension_tag<dim>) const
+      { 
+        return &(elements_[0]);
+      }
+
+    private: 
+      container_type elements_[LevelSpecs::num];
+  };
+
+  
+  
   //
   // No storage of boundary elements:
   //
-  template <typename ConfigType, typename ElementTag, unsigned long dim>
-  class boundary_ncell_holder <ConfigType, ElementTag, dim, no_handling_tag, false> :
+  template <typename ConfigType, typename ElementTag, unsigned long dim, typename orienter_tag>
+  class boundary_ncell_holder <ConfigType, ElementTag, dim, no_handling_tag, orienter_tag, false> :
     public boundary_ncell_holder < ConfigType, ElementTag, dim - 1 >
   {
     //requirements:
@@ -211,61 +237,13 @@ namespace viennagrid
 
       boundary_ncell_holder( const boundary_ncell_holder & llh) : Base (llh) {}
       
-      //////////////////// container ///////////////////////
-      
-      //non-const:
-      template <long j>
-      typename result_of::element_container< element_t<ConfigType, ElementTag>, j, ElementTag::dim>::type *
-      container(less_tag)
-      { 
-        return Base::template container<j>();
-      }
-
-      template <long j>
-      typename result_of::element_container< element_t<ConfigType, ElementTag>, j, ElementTag::dim>::type *
-      container(equal_tag)
-      { 
-        typedef typename result_of::subelement_handling<ConfigType, ElementTag, dim>::ERROR_HANDLING_OF_ELEMENTS_AT_THIS_TOPOLOGICAL_LEVEL_NOT_PROVIDED   error_type;
-        return NULL;
-      }
-
-      template <long j>
-      typename result_of::element_container< element_t<ConfigType, ElementTag>, j, ElementTag::dim>::type *
-      container()
-      { 
-        return container<j>( typename level_discriminator<dim, j>::result_type() );
-      }
-
-
-      //const:
-      template <long j>
-      const typename result_of::element_container< element_t<ConfigType, ElementTag>, j, ElementTag::dim>::type *
-      container(less_tag) const
-      { 
-        return Base::template container<j>();
-      }
-
-      template <long j>
-      const typename result_of::element_container< element_t<ConfigType, ElementTag>, j, ElementTag::dim>::type *
-      container(equal_tag) const
-      { 
-        typedef typename result_of::subelement_handling<ConfigType, ElementTag, dim>::ERROR_HANDLING_OF_ELEMENTS_AT_THIS_TOPOLOGICAL_LEVEL_NOT_PROVIDED   error_type;
-        return NULL;
-      }
-      
-      template <long j>
-      const typename result_of::element_container< element_t<ConfigType, ElementTag>, j, ElementTag::dim>::type *
-      container() const
-      { 
-        return container<j>( typename level_discriminator<dim, j>::result_type() );
-      }
 
   };
 
 
   //at level 0, i.e. vertex level, recursion ends:
-  template <typename ConfigType, typename ElementTag, typename handling_tag>
-  class boundary_ncell_holder <ConfigType, ElementTag, 0, handling_tag, true> 
+  template <typename ConfigType, typename ElementTag, typename handling_tag, typename orienter_tag>
+  class boundary_ncell_holder <ConfigType, ElementTag, 0, handling_tag, orienter_tag, true> 
   {
     //array of pointers to elements of class 'dim' and a integer representing the orientation within the cell relative to the element it points to.
     //typedef typename DomainTypes<ConfigType>::segment_type               SegmentType;
@@ -293,17 +271,15 @@ namespace viennagrid
       ////////////////// container access: /////////////////////////
       
       //non-const:
-      template <long j>
-      typename result_of::element_container< element_t<ConfigType, ElementTag>, j, ElementTag::dim>::type *
-      container()
+      VertexType * *
+      container(dimension_tag<0>)
       { 
         return &(vertices_[0]);
       }
 
       //const:
-      template <long j>
-      const typename result_of::element_container< element_t<ConfigType, ElementTag>, j, ElementTag::dim>::type *
-      container() const
+      VertexType * const *
+      container(dimension_tag<0>) const
       { 
         return &(vertices_[0]);
       }

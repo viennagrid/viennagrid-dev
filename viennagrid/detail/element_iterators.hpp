@@ -185,13 +185,13 @@ namespace viennagrid
       
       ncell_range() : cont_(NULL) {};
       
-      ncell_range(ncell_proxy<host_type> const & p) : cont_(p.get().template container<dim>()) {}
+      ncell_range(ncell_proxy<host_type> const & p) : cont_(p.get().container(dimension_tag<dim>())) {}
       
-      ncell_range(host_type & e) : cont_(e.template container<dim>()) {}
+      ncell_range(host_type & e) : cont_(e.container(dimension_tag<dim>())) {}
       
       ncell_range & operator=(ncell_proxy<host_type> p)
       { 
-        cont_ = p.get().template container<dim>();
+        cont_ = p.get().container(dimension_tag<dim>());
         return *this;
       }
       
@@ -254,22 +254,22 @@ namespace viennagrid
       typedef const_on_element_iterator< element_type >                         iterator;
       const_ncell_range() : cont_(NULL) {};
       
-      const_ncell_range(const_ncell_proxy<host_type> const & p) : cont_(p.get().template container<dim>()) {}
+      const_ncell_range(const_ncell_proxy<host_type> const & p) : cont_(p.get().container(dimension_tag<dim>())) {}
 
-      const_ncell_range(ncell_proxy<host_type> const & p) : cont_(p.get().template container<dim>()) {}
+      const_ncell_range(ncell_proxy<host_type> const & p) : cont_(p.get().container(dimension_tag<dim>())) {}
 
-      const_ncell_range(host_type const & e) : cont_(e.template container<dim>()) {}
+      const_ncell_range(host_type const & e) : cont_(e.container(dimension_tag<dim>())) {}
 
 
       const_ncell_range & operator=(const_ncell_proxy<host_type> p)
       { 
-        cont_ = p.get().template container<dim>();
+        cont_ = p.get().container(dimension_tag<dim>());
         return *this;
       }
 
       const_ncell_range & operator=(ncell_proxy<host_type> p)
       { 
-        cont_ = p.get().template container<dim>();
+        cont_ = p.get().container(dimension_tag<dim>());
         return *this;
       }
 

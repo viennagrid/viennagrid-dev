@@ -72,17 +72,17 @@ namespace viennagrid
         edgevertices[0] = vertices[0];
         edgevertices[1] = vertices[1];
         edge.vertices(edgevertices);
-        elements[0] = seg.push_back(edge, orientations);
+        elements[0] = seg.push_back(edge, (orientations == NULL) ? NULL : orientations);
 
         edgevertices[0] = vertices[0];
         edgevertices[1] = vertices[2];
         edge.vertices(edgevertices);
-        elements[1] = seg.push_back(edge, orientations + 1 );
+        elements[1] = seg.push_back(edge, (orientations == NULL) ? NULL : orientations + 1 );
 
         edgevertices[0] = vertices[1];
         edgevertices[1] = vertices[2];
         edge.vertices(edgevertices);
-        elements[2] = seg.push_back(edge, orientations + 2 );
+        elements[2] = seg.push_back(edge, (orientations == NULL) ? NULL : orientations + 2 );
       }
     };
 

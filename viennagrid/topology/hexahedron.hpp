@@ -96,57 +96,57 @@ namespace viennagrid
         edgevertices[0] = vertices[1];
         edgevertices[1] = vertices[2];
         edge.vertices(edgevertices);
-        elements[1] = seg.push_back(edge, orientations + 1);
+        elements[1] = seg.push_back(edge, (orientations == NULL) ? NULL : orientations + 1);
 
         edgevertices[0] = vertices[2];
         edgevertices[1] = vertices[3];
         edge.vertices(edgevertices);
-        elements[2] = seg.push_back(edge, orientations + 2);
+        elements[2] = seg.push_back(edge, (orientations == NULL) ? NULL : orientations + 2);
 
         edgevertices[0] = vertices[3];
         edgevertices[1] = vertices[0];
         edge.vertices(edgevertices);
-        elements[3] = seg.push_back(edge, orientations + 3);
+        elements[3] = seg.push_back(edge, (orientations == NULL) ? NULL : orientations + 3);
 
         edgevertices[0] = vertices[0];
         edgevertices[1] = vertices[4];
         edge.vertices(edgevertices);
-        elements[4] = seg.push_back(edge, orientations + 4);
+        elements[4] = seg.push_back(edge, (orientations == NULL) ? NULL : orientations + 4);
 
         edgevertices[0] = vertices[1];
         edgevertices[1] = vertices[5];
         edge.vertices(edgevertices);
-        elements[5] = seg.push_back(edge, orientations + 5);
+        elements[5] = seg.push_back(edge, (orientations == NULL) ? NULL : orientations + 5);
         
         edgevertices[0] = vertices[2];
         edgevertices[1] = vertices[6];
         edge.vertices(edgevertices);
-        elements[6] = seg.push_back(edge, orientations + 6);
+        elements[6] = seg.push_back(edge, (orientations == NULL) ? NULL : orientations + 6);
         
         edgevertices[0] = vertices[3];
         edgevertices[1] = vertices[7];
         edge.vertices(edgevertices);
-        elements[7] = seg.push_back(edge, orientations + 7);
+        elements[7] = seg.push_back(edge, (orientations == NULL) ? NULL : orientations + 7);
         
         edgevertices[0] = vertices[4];
         edgevertices[1] = vertices[5];
         edge.vertices(edgevertices);
-        elements[8] = seg.push_back(edge, orientations + 8);
+        elements[8] = seg.push_back(edge, (orientations == NULL) ? NULL : orientations + 8);
         
         edgevertices[0] = vertices[5];
         edgevertices[1] = vertices[6];
         edge.vertices(edgevertices);
-        elements[9] = seg.push_back(edge, orientations + 9);
+        elements[9] = seg.push_back(edge, (orientations == NULL) ? NULL : orientations + 9);
         
         edgevertices[0] = vertices[6];
         edgevertices[1] = vertices[7];
         edge.vertices(edgevertices);
-        elements[10] = seg.push_back(edge, orientations + 10);
+        elements[10] = seg.push_back(edge, (orientations == NULL) ? NULL : orientations + 10);
         
         edgevertices[0] = vertices[7];
         edgevertices[1] = vertices[4];
         edge.vertices(edgevertices);
-        elements[11] = seg.push_back(edge, orientations + 11);
+        elements[11] = seg.push_back(edge, (orientations == NULL) ? NULL : orientations + 11);
       }
     };
     
@@ -180,7 +180,7 @@ namespace viennagrid
         facetvertices[2] = vertices[2];
         facetvertices[3] = vertices[1];
         facet.vertices(facetvertices);
-        elements[0] = seg.push_back(facet, orientations );
+        elements[0] = seg.push_back(facet, (orientations == NULL) ? NULL : orientations );
         elements[0]->fill(seg);
 
         facetvertices[0] = vertices[0];
@@ -188,7 +188,7 @@ namespace viennagrid
         facetvertices[2] = vertices[5];
         facetvertices[3] = vertices[4];
         facet.vertices(facetvertices);
-        elements[1] = seg.push_back(facet, orientations + 1);
+        elements[1] = seg.push_back(facet, (orientations == NULL) ? NULL : orientations + 1);
         elements[1]->fill(seg);
 
         facetvertices[0] = vertices[1];
@@ -196,7 +196,7 @@ namespace viennagrid
         facetvertices[2] = vertices[6];
         facetvertices[3] = vertices[5];
         facet.vertices(facetvertices);
-        elements[2] = seg.push_back(facet, orientations + 2);
+        elements[2] = seg.push_back(facet, (orientations == NULL) ? NULL : orientations + 2);
         elements[2]->fill(seg);
 
         facetvertices[0] = vertices[2];
@@ -204,7 +204,7 @@ namespace viennagrid
         facetvertices[2] = vertices[7];
         facetvertices[3] = vertices[6];
         facet.vertices(facetvertices);
-        elements[3] = seg.push_back(facet, orientations + 3);
+        elements[3] = seg.push_back(facet, (orientations == NULL) ? NULL : orientations + 3);
         elements[3]->fill(seg);
 
         facetvertices[0] = vertices[3];
@@ -212,7 +212,7 @@ namespace viennagrid
         facetvertices[2] = vertices[4];
         facetvertices[3] = vertices[7];
         facet.vertices(facetvertices);
-        elements[4] = seg.push_back(facet, orientations + 4);
+        elements[4] = seg.push_back(facet, (orientations == NULL) ? NULL : orientations + 4);
         elements[4]->fill(seg);
 
         facetvertices[0] = vertices[4];
@@ -220,7 +220,7 @@ namespace viennagrid
         facetvertices[2] = vertices[6];
         facetvertices[3] = vertices[7];
         facet.vertices(facetvertices);
-        elements[5] = seg.push_back(facet, orientations + 5);
+        elements[5] = seg.push_back(facet, (orientations == NULL) ? NULL : orientations + 5);
         elements[5]->fill(seg);
         
       }

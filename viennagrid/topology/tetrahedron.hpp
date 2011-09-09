@@ -79,32 +79,32 @@ namespace viennagrid
         edgevertices[0] = vertices[0];
         edgevertices[1] = vertices[1];
         edge.vertices(edgevertices);
-        elements[0] = seg.push_back(edge, orientations);
+        elements[0] = seg.push_back(edge, (orientations == NULL) ? NULL : orientations);
 
         edgevertices[0] = vertices[0];
         edgevertices[1] = vertices[2];
         edge.vertices(edgevertices);
-        elements[1] = seg.push_back(edge, orientations + 1);
+        elements[1] = seg.push_back(edge, (orientations == NULL) ? NULL : orientations + 1);
 
         edgevertices[0] = vertices[0];
         edgevertices[1] = vertices[3];
         edge.vertices(edgevertices);
-        elements[2] = seg.push_back(edge, orientations + 2);
+        elements[2] = seg.push_back(edge, (orientations == NULL) ? NULL : orientations + 2);
 
         edgevertices[0] = vertices[1];
         edgevertices[1] = vertices[2];
         edge.vertices(edgevertices);
-        elements[3] = seg.push_back(edge, orientations + 3);
+        elements[3] = seg.push_back(edge, (orientations == NULL) ? NULL : orientations + 3);
 
         edgevertices[0] = vertices[1];
         edgevertices[1] = vertices[3];
         edge.vertices(edgevertices);
-        elements[4] = seg.push_back(edge, orientations + 4);
+        elements[4] = seg.push_back(edge, (orientations == NULL) ? NULL : orientations + 4);
 
         edgevertices[0] = vertices[2];
         edgevertices[1] = vertices[3];
         edge.vertices(edgevertices);
-        elements[5] = seg.push_back(edge, orientations + 5);
+        elements[5] = seg.push_back(edge, (orientations == NULL) ? NULL : orientations + 5);
       }
     };
     
@@ -132,21 +132,21 @@ namespace viennagrid
         facetvertices[1] = vertices[1];
         facetvertices[2] = vertices[3];
         facet.vertices(facetvertices);
-        elements[1] = seg.push_back(facet, orientations + 1 );
+        elements[1] = seg.push_back(facet, (orientations == NULL) ? NULL : orientations + 1 );
         elements[1]->fill(seg);
 
         facetvertices[0] = vertices[0];
         facetvertices[1] = vertices[2];
         facetvertices[2] = vertices[3];
         facet.vertices(facetvertices);
-        elements[2] = seg.push_back(facet, orientations + 2 );
+        elements[2] = seg.push_back(facet, (orientations == NULL) ? NULL : orientations + 2 );
         elements[2]->fill(seg);
 
         facetvertices[0] = vertices[1];
         facetvertices[1] = vertices[2];
         facetvertices[2] = vertices[3];
         facet.vertices(facetvertices);
-        elements[3] = seg.push_back(facet, orientations + 3 );
+        elements[3] = seg.push_back(facet, (orientations == NULL) ? NULL : orientations + 3 );
         elements[3]->fill(seg);
 
       }

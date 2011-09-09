@@ -73,39 +73,6 @@ namespace viennagrid
         //std::cout << std::endl;
       }
 
-      ///////////////////// container ////////////////////
-      
-      //non-const:
-      template <long j>
-      typename result_of::element_container< element_t<ConfigType, tag>, j, ConfigType::cell_tag::dim>::type *
-      container(less_tag)
-      { 
-        return Base::template container<j>();
-      }
-
-      template <long j>
-      typename result_of::element_container< element_t<ConfigType, tag>, j, ConfigType::cell_tag::dim>::type *
-      container()
-      { 
-        return container<j>(less_tag());
-      }
-
-
-      //const
-      template <long j>
-      const typename result_of::element_container< element_t<ConfigType,tag>, j, ConfigType::cell_tag::dim>::type *
-      container(less_tag) const
-      { 
-        return Base::template container<j>();
-      }
-
-      template <long j>
-      const typename result_of::element_container< element_t<ConfigType, tag>, j, ConfigType::cell_tag::dim>::type *
-      container() const
-      { 
-        return container<j>(less_tag());
-      }
-
   };
 
   template <typename ConfigType, typename ElementTag>
