@@ -101,10 +101,10 @@ namespace viennagrid
       bool lowercase_compare(std::string const & s1, std::string const & s2)
       {
         std::string s1_lower = s1;
-        std::transform(s1.begin(), s1.end(), s1_lower.begin(), char_to_lower);
+        std::transform(s1.begin(), s1.end(), s1_lower.begin(), char_to_lower<>());
 
         std::string s2_lower = s2;
-        std::transform(s2.begin(), s2.end(), s2_lower.begin(), char_to_lower);
+        std::transform(s2.begin(), s2.end(), s2_lower.begin(), char_to_lower<>());
 
         return s1_lower == s2_lower;
       }
@@ -228,7 +228,7 @@ namespace viennagrid
         std::string token;
         reader >> token;
         
-        while (to_lower(token) != "</dataarray>")
+        while (string_to_lower(token) != "</dataarray>")
         {
           container.push_back( atof(token.c_str()) );
           reader >> token;
@@ -743,7 +743,7 @@ namespace viennagrid
         if (!tag.has_attribute("type"))
           throw bad_file_format_exception(filename, "Parse error: VTKFile tag has no attribute 'type'!");
         
-        if (to_lower(tag.get_value("type")) != "collection")
+        if (string_to_lower(tag.get_value("type")) != "collection")
           throw bad_file_format_exception(filename, "Parse error: Type-attribute of VTKFile tag is not 'Collection'!");
         
         //checkNextToken("<Collection>");

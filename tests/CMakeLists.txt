@@ -47,3 +47,9 @@ FOREACH(PROG ${PROGS})
    ADD_test(${PROG} ${PROG})
 ENDFOREACH(PROG)
 #-----------------------------------------------------------------------------
+
+ADD_EXECUTABLE(external_linkage  ../src/external_1.cpp
+                                 ../src/external_2.cpp)
+ADD_test(external_linkage external_linkage)
+
+

@@ -40,12 +40,12 @@ namespace viennagrid
       void setDefaultOrientation()
       {
         for (dim_type i=0; i<static_cast<dim_type>(num_vertices); ++i)
-          permutator_[i] = i;
+          permutator_[i] = static_cast<unsigned char>(i);
       };
 
-      dim_type operator()(dim_type in) const { return permutator_[in]; }
+      dim_type operator()(dim_type in) const { return static_cast<unsigned char>(permutator_[in]); }
 
-      void setPermutation(dim_type index, dim_type mappedTo) { permutator_[index] = mappedTo; };
+      void setPermutation(dim_type index, dim_type mappedTo) { permutator_[index] = static_cast<unsigned char>(mappedTo); };
 
       void print() const
       {
@@ -57,7 +57,7 @@ namespace viennagrid
       }
 
     private:
-      dim_type permutator_[num_vertices];
+      unsigned char permutator_[num_vertices];  //assuming less than 256 vertices is reasonable (no need to waste memory...)
   };
 
 }

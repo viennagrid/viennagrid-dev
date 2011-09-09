@@ -33,7 +33,8 @@ namespace viennagrid
     
     
     // Fix for data-explorer-bug: if floating-values occur, no integers (i.e. only zeros after decimal point) allowed
-    double DXfixer(double value)
+    template <typename FloatingPointType>
+    FloatingPointType DXfixer(FloatingPointType value)
     {
       if (value * 10000 == static_cast<long>(value * 10000))
         return value + 0.00001;

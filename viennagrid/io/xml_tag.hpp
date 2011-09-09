@@ -30,29 +30,30 @@
 #include <string>
 
 
+#include "viennagrid/io/helper.hpp"
+
 namespace viennagrid
 {
   namespace io
   {
     
     //functor for conversion to lowercase (avoid ::tolower())
-    char char_to_lower(char c)
+    template <long dummy = 0>
+    struct char_to_lower
     {
-      if(c <= 'Z' && c >= 'A')
-        return c - ('Z'-'z');
-      return c;
-    } 
+      char operator()(char c) const
+      {
+        if(c <= 'Z' && c >= 'A')
+          return c - ('Z'-'z');
+        return c;
+      } 
+    };
     
-    char to_lower(char c)
-    {
-      return char_to_lower(c);
-    }
-    
-    std::string to_lower(std::string const & s)
+    template <typename StringType>                    //Note: Using artifically a template argument t
+    StringType string_to_lower(StringType const & s)
     {
       std::string ret = s;
-      std::transform(ret.begin(), ret.end(), ret.begin(), char_to_lower);
-      //std::transform(s2.begin(), s2.end(), s2_lower.begin(), to_lower);
+      std::transform(ret.begin(), ret.end(), ret.begin(), char_to_lower<0>());
       
       return ret;
     }
@@ -161,7 +162,7 @@ namespace viennagrid
         void check_name(std::string const & expected_name,
                         std::string const & filename = std::string())
         {
-          if (name_ != to_lower(expected_name))
+          if (name_ != string_to_lower(expected_name))
           {
             std::stringstream ss;
             ss << "XML Parse error: " << expected_name << " expected, but got " << name_ << std::endl;
