@@ -36,8 +36,8 @@ namespace viennagrid
   template <typename ConfigType,
               typename ElementTag,
               unsigned long dim,
-              typename handling_tag = typename result_of::subelement_handling<ConfigType, ElementTag, dim>::type,
-              typename orienter_tag = typename result_of::subelement_orientation<ConfigType, ElementTag, dim>::type,
+              typename handling_tag = typename result_of::bndcell_handling<ConfigType, ElementTag, dim>::type,
+              typename orienter_tag = typename result_of::bndcell_orientation<ConfigType, ElementTag, dim>::type,
               bool LevelNull = (dim == 0)>
   class boundary_ncell_holder  { };
 
@@ -51,8 +51,8 @@ namespace viennagrid
   {
     //requirements:
     //array of pointers to elements of class 'dim' and a integer representing the orientation within the cell relative to the element it points to.
-    typedef topology::subelements<ElementTag, dim>                         LevelSpecs;
-    typedef topology::subelements<typename LevelSpecs::tag, 0>  VertexOnElementSpecs;
+    typedef topology::bndcells<ElementTag, dim>                         LevelSpecs;
+    typedef topology::bndcells<typename LevelSpecs::tag, 0>  VertexOnElementSpecs;
     typedef boundary_ncell_holder <ConfigType, ElementTag, dim - 1 >      Base;
 
     typedef element_t<ConfigType, typename LevelSpecs::tag>  LevelElementType;
@@ -69,7 +69,7 @@ namespace viennagrid
         //for (long i=0; i<LevelSpecs::num; ++i)
         //  orientations_[i].resize(VertexOnElementSpecs::num);
 
-        topology::subelement_filler<ElementTag, dim>::fill(&(elements_[0]),
+        topology::bndcell_filler<ElementTag, dim>::fill(&(elements_[0]),
                                                            &(Base::vertices_[0]),
                                                            &(orientations_[0]),
                                                            dom);
@@ -148,8 +148,8 @@ namespace viennagrid
   {
     //requirements:
     //array of pointers to elements of class 'dim' and a integer representing the orientation within the cell relative to the element it points to.
-    typedef topology::subelements<ElementTag, dim>                         LevelSpecs;
-    typedef topology::subelements<typename LevelSpecs::tag, 0>  VertexOnElementSpecs;
+    typedef topology::bndcells<ElementTag, dim>                         LevelSpecs;
+    typedef topology::bndcells<typename LevelSpecs::tag, 0>  VertexOnElementSpecs;
     typedef boundary_ncell_holder <ConfigType, ElementTag, dim - 1 >      Base;
 
     typedef element_t<ConfigType, typename LevelSpecs::tag>  LevelElementType;
@@ -164,7 +164,7 @@ namespace viennagrid
         //fill lower level first:
         Base::fill_level(dom);
 
-        topology::subelement_filler<ElementTag, dim>::fill(&(elements_[0]),
+        topology::bndcell_filler<ElementTag, dim>::fill(&(elements_[0]),
                                                            &(Base::vertices_[0]),
                                                            OrientationPointer(NULL),
                                                            dom);
@@ -218,7 +218,7 @@ namespace viennagrid
     //requirements:
     //array of pointers to elements of class 'dim' and a integer representing the orientation within the cell relative to the element it points to.
     //typedef typename DomainTypes<ConfigType>::segment_type        SegmentType;
-    typedef topology::subelements<ElementTag, dim>                                LevelSpecs;
+    typedef topology::bndcells<ElementTag, dim>                                LevelSpecs;
     typedef boundary_ncell_holder < ConfigType, ElementTag, dim - 1 >      Base;
 
     typedef element_t<ConfigType, typename LevelSpecs::tag>  LevelElementType;
@@ -247,7 +247,7 @@ namespace viennagrid
   {
     //array of pointers to elements of class 'dim' and a integer representing the orientation within the cell relative to the element it points to.
     //typedef typename DomainTypes<ConfigType>::segment_type               SegmentType;
-    typedef topology::subelements<ElementTag, 0>                                      LevelSpecs;
+    typedef topology::bndcells<ElementTag, 0>                                      LevelSpecs;
 
     typedef element_t<ConfigType, typename LevelSpecs::tag>         VertexType;
     typedef typename result_of::point<ConfigType>::type              PointType;

@@ -60,6 +60,17 @@ namespace viennagrid
       vec.resize(new_size);
     }
 
+
+    //
+    //  Size of a container
+    //
+    template <typename T>
+    std::size_t size(T & t)
+    {
+      //by default, a member function .size() is expected:
+      return t.size();
+    }
+    
     //
     //  Capacity
     //

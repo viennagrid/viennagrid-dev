@@ -37,7 +37,7 @@ namespace viennagrid
 
     //Line:
     template <>
-    struct subelements<simplex_tag<1>, 0>
+    struct bndcells<simplex_tag<1>, 0>
     {
       typedef point_tag             tag;
 
@@ -61,7 +61,7 @@ namespace viennagrid
 
     //Line:
     template <>
-    struct subelements<hypercube_tag<1>, 0>
+    struct bndcells<hypercube_tag<1>, 0>
     {
       typedef point_tag             tag;
 

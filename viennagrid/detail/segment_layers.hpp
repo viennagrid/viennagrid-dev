@@ -81,7 +81,7 @@ namespace viennagrid
     
     template <typename Config,
               long dim,
-              typename handling_tag = typename result_of::subelement_handling<Config, segment_t<Config>, dim>::type
+              typename handling_tag = typename result_of::bndcell_handling<Config, segment_t<Config>, dim>::type
               >
     struct next_segment_layer_selector
     {
@@ -109,9 +109,9 @@ namespace viennagrid
                           //public segment_domain_holder<Config>
     {
         typedef typename Config::cell_tag                                      CellTag;
-        typedef typename viennagrid::topology::subelements<CellTag, dim>::tag     ElementTag;
+        typedef typename viennagrid::topology::bndcells<CellTag, dim>::tag     ElementTag;
         typedef viennagrid::element_t<Config, ElementTag >                                 LevelElementType;
-        typedef typename viennagrid::topology::subelements<CellTag, 0>::tag       VertexTag; 
+        typedef typename viennagrid::topology::bndcells<CellTag, 0>::tag       VertexTag; 
         typedef viennagrid::element_t<Config, VertexTag >                                  VertexType;
         typedef viennagrid::element_t<Config, typename Config::cell_tag>                   CellType;
         typedef typename viennagrid::result_of::element_container< segment_t<Config>,
@@ -124,7 +124,7 @@ namespace viennagrid
         {
           //add vertices to segment: (note that the ncells<0>() is not available here)
           LevelElementType ** level_elements = cell.container(dimension_tag<dim>());
-          for (long i=0; i<topology::subelements<typename Config::cell_tag, dim>::num; ++i)
+          for (long i=0; i<topology::bndcells<typename Config::cell_tag, dim>::num; ++i)
             elements.insert(level_elements[i]);
           
           base_type::fill(cell);
@@ -153,7 +153,7 @@ namespace viennagrid
     class segment_layers_full<Config, 0> : public segment_domain_holder<Config>
     {
         typedef typename Config::cell_tag                                 CellTag;
-        typedef typename viennagrid::topology::subelements<CellTag, 0>::tag    VertexTag;
+        typedef typename viennagrid::topology::bndcells<CellTag, 0>::tag    VertexTag;
         typedef viennagrid::element_t<Config, VertexTag >                               VertexType;
         typedef viennagrid::element_t<Config, typename Config::cell_tag>                CellType;
         typedef typename result_of::element_container< segment_t<Config>, 
@@ -165,7 +165,7 @@ namespace viennagrid
         {
           //add vertices to segment: (note that the ncells<0>() is not available here)
           VertexType ** cell_vertices = cell.container(dimension_tag<0>());
-          for (long i=0; i<viennagrid::topology::subelements<typename Config::cell_tag, 0>::num; ++i)
+          for (long i=0; i<viennagrid::topology::bndcells<typename Config::cell_tag, 0>::num; ++i)
             elements.insert(cell_vertices[i]);
         }
         
@@ -183,9 +183,9 @@ namespace viennagrid
     class segment_layers_empty : public next_segment_layer_selector<Config, dim-1>::type
     {
         typedef typename Config::cell_tag                                      CellTag;
-        typedef typename viennagrid::topology::subelements<CellTag, dim>::tag     ElementTag;
+        typedef typename viennagrid::topology::bndcells<CellTag, dim>::tag     ElementTag;
         typedef viennagrid::element_t<Config, ElementTag >                                 LevelElementType;
-        typedef typename viennagrid::topology::subelements<CellTag, 0>::tag       VertexTag; 
+        typedef typename viennagrid::topology::bndcells<CellTag, 0>::tag       VertexTag; 
         typedef viennagrid::element_t<Config, VertexTag >                                  VertexType;
         typedef viennagrid::element_t<Config, typename Config::cell_tag>                   CellType;
         typedef typename viennagrid::result_of::element_container< segment_t<Config>,
@@ -208,7 +208,7 @@ namespace viennagrid
         container_type * 
         container(dimension_tag<dim>)
         { 
-          typedef typename result_of::subelement_handling<Config,
+          typedef typename result_of::bndcell_handling<Config,
                                                           CellTag,
                                                           dim
                                                          >::ERROR_HANDLING_OF_ELEMENTS_AT_THIS_TOPOLOGICAL_LEVEL_NOT_PROVIDED   error_type;
@@ -219,7 +219,7 @@ namespace viennagrid
         const container_type * 
         container(dimension_tag<dim>) const
         { 
-          typedef typename result_of::subelement_handling<Config, 
+          typedef typename result_of::bndcell_handling<Config, 
                                                           CellTag,
                                                           dim
                                                          >::ERROR_HANDLING_OF_ELEMENTS_AT_THIS_TOPOLOGICAL_LEVEL_NOT_PROVIDED  error_type;
@@ -234,9 +234,9 @@ namespace viennagrid
     class segment_layers_top : public next_segment_layer_selector<Config, dim-1>::type
     {
         typedef typename Config::cell_tag                                                        CellTag;
-        typedef typename viennagrid::topology::subelements<typename Config::cell_tag, dim>::tag     ElementTag;
+        typedef typename viennagrid::topology::bndcells<typename Config::cell_tag, dim>::tag     ElementTag;
         typedef viennagrid::element_t<Config, ElementTag >                                                  ElementType;
-        typedef typename viennagrid::topology::subelements<typename Config::cell_tag, 0>::tag       VertexTag;
+        typedef typename viennagrid::topology::bndcells<typename Config::cell_tag, 0>::tag       VertexTag;
         typedef viennagrid::element_t<Config, VertexTag >                                               VertexType;
         typedef viennagrid::element_t<Config, typename Config::cell_tag>                                 CellType;
         typedef typename viennagrid::result_of::element_container< segment_t<Config>, dim>::type      container_type;
@@ -291,7 +291,9 @@ namespace viennagrid
     {
       typedef typename viennagrid::result_of::ncell<config_type, 0>::type     element_type;
       
-      typedef std::set< element_type *, viennagrid::detail::id_ptr_compare >      type; //note that with the use of deque, pointer comparison does not induce a valid ordering!
+      // Note that with the use of deque, pointer comparison does not induce a valid ordering!
+      // This is a problem when trying to write mesh files (vertices are not printed in order)
+      typedef std::set< element_type *, viennagrid::detail::id_ptr_compare >      type;
     };
 
     //at any other level:

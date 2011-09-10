@@ -1,0 +1,36 @@
+
+\chapter*{Versioning}  \addcontentsline{toc}{chapter}{Versioning}
+
+Each release of {\ViennaGrid} carries a three-fold version number, given by\\
+\begin{center}
+ \texttt{ViennaGrid X.Y.Z} . \\
+\end{center}
+For users migrating from an older release of {\ViennaGrid} to a newer one, the
+following guidelines apply:
+\begin{itemize}
+ \item \texttt{X} is the \emph{major version number}, starting with \texttt{1}.
+A change in the major version number is not necessarily API-compatible with any
+versions of {\ViennaGrid} carrying a different major version number. In particular,
+end users of {\ViennaGrid} have to expect considerable code changes when changing
+between different major versions of {\ViennaGrid}.
+
+ \item \texttt{Y} denotes the \emph{minor version number}, restarting with zero
+whenever the major version number changes. The minor version number is
+incremented whenever significant functionality is added to {\ViennaGrid}.
+The API of an older release of {\ViennaGrid} with smaller minor version number
+(but same major version number) is \emph{essentially} compatible to the new
+version, hence end users of {\ViennaGrid} usually do not have to alter their
+application code. There may be small adjustments in the public API,
+which will be extensively documented in the change logs and require
+at most very little changes in the application code. 
+
+ \item \texttt{Z} is the \emph{revision number}. If either the major or the
+minor version number changes, the revision number is reset to zero. The public APIs of releases of
+{\ViennaGrid}, which only differ in their revision number, are compatible.
+Typically, the revision number is increased whenever bugfixes are applied,
+performance and/or memory footprint is improved, or some extra, not overly significant functionality is
+added.
+\end{itemize}
+
+\TIP{Always try to use the latest version of {\ViennaGrid} before submitting bug
+reports!}

@@ -90,22 +90,15 @@ int main()
   Segment seg1 = domain.segments()[1];
   
   //
-  // Step 2: Create the vertices and add them to the domain:
+  // Step 2: Add vertices to the domain. 
+  //         Note that vertices with IDs are enumerated in the order they are pushed to the domain.
   //
-  VertexType v0(PointType(0,0));
-  VertexType v1(PointType(1,0));
-  VertexType v2(PointType(2,0));
-  VertexType v3(PointType(2,1));
-  VertexType v4(PointType(1,1));
-  VertexType v5(PointType(0,1));
-  
-  //Note that vertex IDs are assigned in the order the vertices are pushed to the domain, base 0.
-  domain.push_back(v0);  
-  domain.push_back(v1);
-  domain.push_back(v2);
-  domain.push_back(v3);
-  domain.push_back(v4);
-  domain.push_back(v5);
+  domain.push_back(PointType(0,0));
+  domain.push_back(PointType(1,0));
+  domain.push_back(PointType(2,0));
+  domain.push_back(PointType(2,1));
+  domain.push_back(PointType(1,1));
+  domain.push_back(PointType(0,1));
   
   //
   // Step 3: Fill the two segments with cells. 
@@ -157,8 +150,8 @@ int main()
   
   std::cout << "Cells in segment 1:" << std::endl;
   CellRange cells_seg1 = viennagrid::ncells(seg1);
-  for (CellIterator cit1 = cells_seg0.begin();
-                    cit1 != cells_seg0.end();
+  for (CellIterator cit1 = cells_seg1.begin();
+                    cit1 != cells_seg1.end();
                   ++cit1)
   {
     std::cout << *cit1 << std::endl;

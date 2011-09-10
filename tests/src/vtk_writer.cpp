@@ -50,6 +50,8 @@ class my_vector
       return val[i];      
     }
 
+    std::size_t size() const { return 3; }
+    
   private:
     double val[3];
 };
@@ -82,6 +84,8 @@ class my_normal
         return val[i] / norm;
       return val[i];
     }
+    
+    std::size_t size() const { return 3; }
     
   private:
     double val[3];

@@ -42,7 +42,7 @@ namespace viennagrid
       typedef boundary_ncell_holder < ConfigType, ElementTag, ElementTag::dim - 1>             Base;
       typedef typename result_of::point<ConfigType>::type         PointType;
       typedef typename result_of::ncell<ConfigType, 0>::type      VertexType;
-      typedef topology::subelements<ElementTag, 0>                                 VertexSpecs;
+      typedef topology::bndcells<ElementTag, 0>                                 VertexSpecs;
 
     public:
       typedef ConfigType                                       config_type;
@@ -87,7 +87,7 @@ namespace viennagrid
     for (VertexIterator vit  = vertices.begin();
                         vit != vertices.end();
                       ++vit)
-      os << std::endl << " " << vit->point();
+      os << std::endl << "  " << *vit;
     
     return os;
   }
@@ -123,6 +123,9 @@ namespace viennagrid
         this->id(e2.id());
       }
 
+      //clean up any data associated with the element if it is destroyed:
+      ~element_t() { viennadata::erase<viennadata::all, viennadata::all>()(*this); }
+
       element_t & operator=(const element_t & other)
       {
         point_ = other.point_;
@@ -149,8 +152,7 @@ namespace viennagrid
   template <typename ConfigType>
   std::ostream & operator<<(std::ostream & os, element_t<ConfigType, point_tag> const & el)
   {
-    os << "-- Vertex, ID: " << el.id() << " --" << std::endl;
-    os << " " << el.point();
+    os << "-- Vertex, ID: " << el.id() << "; Point: " << el.point();
     
     return os;
   }

@@ -113,6 +113,9 @@ namespace viennagrid
         detail::refine_impl(proxy.get(), *this, proxy.tag());
       }
 
+      //clean up any data associated with the domain if it is destroyed:
+      ~domain_t() { viennadata::erase<viennadata::all, viennadata::all>()(*this); }
+
       using base_type::push_back;
       
       template <typename OtherDomainType, typename RefinementTag>

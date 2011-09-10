@@ -95,15 +95,15 @@ namespace viennagrid
     template <typename Config, // config class
               long dim,  // dimension of the elements covered here
               bool is_cell = false,                   // whether this layer holds the cells (i.e. highest topological element)
-              typename STOR = typename viennagrid::result_of::subelement_handling<Config, domain_t<Config>, dim>::type       //Storage scheme: Full storage, or ignore layer
+              typename STOR = typename viennagrid::result_of::bndcell_handling<Config, domain_t<Config>, dim>::type       //Storage scheme: Full storage, or ignore layer
             >
     class domain_layers  : public domain_layers<Config,
                                                 dim-1>
     {
         //typedef typename result_of::tag<typename Config::cell_tag, dim>::type    tag;
         typedef domain_t<Config>                                                          domain_type;
-        typedef typename topology::subelements<typename Config::cell_tag, dim>::tag    tag;
-        typedef topology::subelements<tag, 0>                                       VertexOnElementSpecs;
+        typedef typename topology::bndcells<typename Config::cell_tag, dim>::tag    tag;
+        typedef topology::bndcells<tag, 0>                                       VertexOnElementSpecs;
         typedef element_t<Config, tag >                                              element_type;
         typedef element_t<Config, typename Config::cell_tag>                                   cell_type;
         typedef typename result_of::element_container<domain_type, dim, Config::cell_tag::dim>::type           container_type;
@@ -211,7 +211,7 @@ namespace viennagrid
         container_type * 
         container(dimension_tag<dim>)
         {
-          typedef typename result_of::subelement_handling<Config,
+          typedef typename result_of::bndcell_handling<Config,
                                                           domain_type,
                                                           dim
                                                          >::ERROR_HANDLING_OF_ELEMENTS_AT_THIS_TOPOLOGICAL_LEVEL_NOT_PROVIDED   error_type;
@@ -222,7 +222,7 @@ namespace viennagrid
         const container_type * 
         container(dimension_tag<dim>) const
         {
-          typedef typename result_of::subelement_handling<Config,
+          typedef typename result_of::bndcell_handling<Config,
                                                           domain_type,
                                                           dim
                                                          >::ERROR_HANDLING_OF_ELEMENTS_AT_THIS_TOPOLOGICAL_LEVEL_NOT_PROVIDED   error_type;
@@ -257,7 +257,7 @@ namespace viennagrid
           assert(viennagrid::traits::capacity(elements) > elements.size() && "Not enough memory for cells reserved!");
           
           elements.push_back(e);
-          elements.back().id(elements.size());
+          elements.back().id(elements.size()-1);
           //std::cout << "Filling cell for domain " << this << std::endl;
           elements.back().fill(*this);
           return &(elements.back());
@@ -284,6 +284,7 @@ namespace viennagrid
     class domain_layers<Config, 0, is_cell, STOR>
     {
         //typedef typename result_of::tag<typename Config::cell_tag, 0>::type   tag;
+        typedef typename result_of::point<Config>::type                                   PointType;
         typedef domain_t<Config>                                                          domain_type;
         typedef element_t<Config, point_tag >                                             element_type;
         typedef element_t<Config, typename Config::cell_tag >                             cell_type;
@@ -306,6 +307,11 @@ namespace viennagrid
           return &(elements.back());
         }
         
+        element_type * push_back(PointType const & p)
+        {
+          element_type temp_vertex(p);
+          return push_back(temp_vertex);
+        }
 
         //non-const:
         container_type * 

@@ -57,7 +57,7 @@ namespace viennagrid
       typedef typename ElementType::tag            ElementTag;
       typedef typename ElementKeyStorageType<ConfigType, ElementType>::result_type  StorageType;
     public:
-      element_key( ElementType & el2) : vertexIDs(topology::subelements<ElementTag, 0>::num)
+      element_key( ElementType & el2) : vertexIDs(topology::bndcells<ElementTag, 0>::num)
       {
         typedef typename result_of::ncell_range<ElementType, 0>::type       VertexRange;
         typedef typename result_of::iterator<ElementType, 0>::type          VertexIterator;
@@ -80,7 +80,7 @@ namespace viennagrid
 
       bool operator < (element_key const & epc2) const
       {
-        for (long i=0; i<topology::subelements<ElementTag, 0>::num; ++i)
+        for (long i=0; i<topology::bndcells<ElementTag, 0>::num; ++i)
         {
           if ( vertexIDs[i] > epc2.vertexIDs[i] )
             return false;

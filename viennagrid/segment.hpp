@@ -41,6 +41,9 @@ namespace viennagrid
     
     public:
       typedef Conf                config_type;
+
+      //clean up any data associated with the segment if it is destroyed:
+      ~segment_t() { viennadata::erase<viennadata::all, viennadata::all>()(*this); }
       
       using base_type::push_back;
 

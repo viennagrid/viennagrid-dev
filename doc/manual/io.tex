@@ -1,2 +1,35 @@
 \chapter{IO} \label{chap:io}
+Due to the high number of vertices and cells in typical meshes,
+a manual setup of a domain in code is soon inefficient. Therefore,
+the geometric locations as well as topological connections are typically stored in mesh files.
+
+Unfortunately, the number of different mesh formats seems to grow in a rather uncontrolled manner.
+Thus, as soon as a reader for a particular mesh file format is implemented, two new formats have emerged.
+In order not to give birth to another mesh file format, {\ViennaGrid} does not bring its own file format. 
+Instead, the library mainly relies on the XML-based VTK file format \cite{VTK,VTKfileformat}.
+
+\TIP{Let us know about your favorite file format(s)!
+ Send an email to our mailinglist: \texttt{viennagrid-support$@$lists.sourceforge.net}.
+ It increases the chances of having a reader and/or writer included in the next {\ViennaGrid} release.}
+
+
+
+
+\section{Readers}
+
+\TIP{File reader contributions are always welcome!}
+
+ \subsection{Netgen}
+
+ \subsection{VTK}
+
+
+
+\section{Writers}
+
+\TIP{File writer contributions are always welcome!}
+
+ \subsection{OpenDX}
+
+ \subsection{VTK}
 

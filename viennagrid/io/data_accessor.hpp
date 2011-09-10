@@ -100,8 +100,14 @@ namespace viennagrid
           std::stringstream ss;
           viennagrid::traits::resize(viennadata::access<KeyType, DataType>(key_)(element), 3);
           ss << viennadata::access<KeyType, DataType>(key_)(element)[0] << " ";
-          ss << viennadata::access<KeyType, DataType>(key_)(element)[1] << " ";
-          ss << viennadata::access<KeyType, DataType>(key_)(element)[2];
+          if (viennagrid::traits::size(viennadata::access<KeyType, DataType>(key_)(element)) > 1)
+            ss << viennadata::access<KeyType, DataType>(key_)(element)[1] << " ";
+          else
+            ss << "0 ";
+          if (viennagrid::traits::size(viennadata::access<KeyType, DataType>(key_)(element)) > 2)
+            ss << viennadata::access<KeyType, DataType>(key_)(element)[2] << " ";
+          else
+            ss << "0 ";
           return ss.str();
         }
         

@@ -142,7 +142,7 @@ namespace viennagrid
         p0 += vocit->point();
       }
       
-      p0 /= viennagrid::topology::subelements<CellTag, 0>::num;
+      p0 /= viennagrid::topology::bndcells<CellTag, 0>::num;
       
       return p0;
     }
@@ -209,7 +209,7 @@ namespace viennagrid
         p0 += vocit->point();
       }
       
-      p0 /= viennagrid::topology::subelements<ElementTag, 0>::num;
+      p0 /= viennagrid::topology::bndcells<ElementTag, 0>::num;
       
       return p0;
     }
@@ -281,7 +281,7 @@ namespace viennagrid
         p0 += vocit->point();
       }
       
-      p0 /= viennagrid::topology::subelements<CellTag, 0>::num;
+      p0 /= viennagrid::topology::bndcells<CellTag, 0>::num;
       
       return p0;
     }

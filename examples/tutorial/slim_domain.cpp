@@ -69,13 +69,13 @@ namespace viennagrid
   namespace result_of
   {
     template <>
-    struct subelement_handling<viennagrid::config::tetrahedral_3d, viennagrid::tetrahedron_tag, 1>
+    struct bndcell_handling<viennagrid::config::tetrahedral_3d, viennagrid::tetrahedron_tag, 1>
     {
       typedef no_handling_tag    type;
     };
 
     template <>
-    struct subelement_orientation<viennagrid::config::tetrahedral_3d, viennagrid::tetrahedron_tag, 1>
+    struct bndcell_orientation<viennagrid::config::tetrahedral_3d, viennagrid::tetrahedron_tag, 1>
     {
       typedef no_handling_tag    type;
     };
@@ -83,13 +83,13 @@ namespace viennagrid
     //-----------------------
     
     template <typename ConfigType>
-    struct subelement_handling<ConfigType,  viennagrid::triangle_tag, 1>
+    struct bndcell_handling<ConfigType,  viennagrid::triangle_tag, 1>
     {
       typedef no_handling_tag    type;
     };
 
     template <typename ConfigType>
-    struct subelement_orientation<ConfigType,  viennagrid::triangle_tag, 1>
+    struct bndcell_orientation<ConfigType,  viennagrid::triangle_tag, 1>
     {
       typedef no_handling_tag    type;
     };
@@ -97,13 +97,13 @@ namespace viennagrid
     //-----------------------
     
     template <typename ConfigType>
-    struct subelement_handling<ConfigType,  viennagrid::tetrahedron_tag, 2>
+    struct bndcell_handling<ConfigType,  viennagrid::tetrahedron_tag, 2>
     {
       typedef no_handling_tag    type;
     };
     
     template <typename ConfigType>
-    struct subelement_orientation<ConfigType,  viennagrid::tetrahedron_tag, 2>
+    struct bndcell_orientation<ConfigType,  viennagrid::tetrahedron_tag, 2>
     {
       typedef no_handling_tag    type;
     };
@@ -123,7 +123,7 @@ namespace viennagrid
     };
     
     template <typename ConfigType>
-    struct subelement_orientation<ConfigType,  viennagrid::line_tag>
+    struct bndcell_orientation<ConfigType,  viennagrid::line_tag>
     {
       typedef pointer_id    type;
     };

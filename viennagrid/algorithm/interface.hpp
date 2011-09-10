@@ -68,7 +68,7 @@ namespace viennagrid
       //proceed to lower level:
       interface_setter<dim-1>::apply(facet,
                                                 key,
-                                                typename viennagrid::result_of::subelement_handling<ConfigType, CellTag, dim-1>::type());
+                                                typename viennagrid::result_of::bndcell_handling<ConfigType, CellTag, dim-1>::type());
     }
     
     template <typename FacetType, typename KeyType>
@@ -80,7 +80,7 @@ namespace viennagrid
       //proceed to lower level:
       interface_setter<dim-1>::apply(facet,
                                                 key,
-                                                typename viennagrid::result_of::subelement_handling<ConfigType, CellTag, dim-1>::type());
+                                                typename viennagrid::result_of::bndcell_handling<ConfigType, CellTag, dim-1>::type());
     }
     
   };
@@ -160,7 +160,7 @@ namespace viennagrid
         if (viennadata::access<KeyType, bool>(key)(*fit) == true)
           interface_setter<CellTag::dim-2>::apply(*fit,
                                                              key,
-                                                             typename viennagrid::result_of::subelement_handling<ConfigType, CellTag, CellTag::dim-2>::type()
+                                                             typename viennagrid::result_of::bndcell_handling<ConfigType, CellTag, CellTag::dim-2>::type()
                                                             );
       }
     }
@@ -179,7 +179,7 @@ namespace viennagrid
   {
     typedef typename SegmentType::config_type               ConfigType;
     typedef typename ConfigType::cell_tag                   CellTag;
-    typedef typename result_of::subelement_handling<ConfigType, CellTag,
+    typedef typename result_of::bndcell_handling<ConfigType, CellTag,
                                                     CellTag::dim-1>::type  HandlingTag;
     
     if (viennadata::access<KeyType, bool>(key)(seg1) == false)

@@ -131,7 +131,7 @@ namespace viennagrid
                  offsets <= viennagrid::ncells<CellTag::dim>(domseg).size();
                  ++offsets)
             {
-              writer << ( offsets * viennagrid::topology::subelements<CellTag, 0>::num) << " ";
+              writer << ( offsets * viennagrid::topology::bndcells<CellTag, 0>::num) << " ";
             }
             writer << std::endl;
             writer << "    </DataArray>" << std::endl;

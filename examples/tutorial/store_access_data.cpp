@@ -50,7 +50,8 @@ namespace viennadata
 
 
 template <typename DomainType>
-void exec_for_domain(DomainType const & domain,
+void exec_for_domain(DomainType & domain,
+                     std::string const & infile,
                      std::string const & outfile)
 {
   //
@@ -69,6 +70,20 @@ void exec_for_domain(DomainType const & domain,
   typedef typename viennagrid::result_of::const_ncell_range<DomainType, CellTag::dim>::type    CellRange;
   typedef typename viennagrid::result_of::iterator<CellRange>::type                      CellIterator;
 
+  //
+  // First, read the domain from a Netgen file
+  //
+  try
+  {
+    viennagrid::io::netgen_reader my_netgen_reader;
+    my_netgen_reader(domain, infile);
+  }
+  catch (std::exception const & ex)
+  {
+     std::cerr << ex.what() << std::endl;
+     std::cerr << "File-Reader failed. Aborting program..." << std::endl;
+     exit(EXIT_FAILURE);
+  }
   
   //
   // First example: Iterate over vertices and store data on them: 
@@ -98,7 +113,7 @@ void exec_for_domain(DomainType const & domain,
 
 
   //
-  // Second example: Iterate over
+  // Second example: Iterate over cells and store some data:
   //
   CellRange cells = viennagrid::ncells(domain);
   for (CellIterator cit = cells.begin();
@@ -129,18 +144,23 @@ void exec_for_domain(DomainType const & domain,
   //
 
   //
-  // Write the data to VTK:
+  // Write the data to VTK file (can be visualized with e.g. Paraview)
+  // More information on the VTK writer can be found in examples/tutorial/io.cpp
   //
   viennagrid::io::vtk_writer<DomainType> my_vtk_writer;
+  
+  // Vertex data
   viennagrid::io::add_scalar_data_on_vertices<std::string, double>(my_vtk_writer, "my_data", "my_data");
   viennagrid::io::add_scalar_data_on_vertices<my_key,      double>(my_vtk_writer, my_key(), "my_key");
-  viennagrid::io::add_vector_data_on_vertices<long,     PointType>(my_vtk_writer, 42, "42");
+  viennagrid::io::add_vector_data_on_vertices<long,     PointType>(my_vtk_writer, 42, "42"); //Note that z-component is automatically padded with zeros for the 2d case.
   
-  viennagrid::io::add_scalar_data_on_cells<std::string,    double>(my_vtk_writer, "my_data", "my_data");
-  viennagrid::io::add_vector_data_on_cells<std::string, PointType>(my_vtk_writer, "my_data", "my_data");
+  // Cell data (note that Paraview crashes if the same name for vertex and scalar data is used)
+  // Note that z-component of vector-valued data is automatically padded with zeros for the 2d case.
+  viennagrid::io::add_scalar_data_on_cells<std::string,    double>(my_vtk_writer, "my_data", "my_scalar_data");
+  viennagrid::io::add_vector_data_on_cells<std::string, PointType>(my_vtk_writer, "my_data", "my_vector_data");
   viennagrid::io::add_vector_data_on_cells<my_key,      PointType>(my_vtk_writer, my_key(), "my_key");
   
-  my_vtk_writer(domain, outfile + ".vtu");
+  my_vtk_writer(domain, outfile);
    
 }
 
@@ -157,48 +177,33 @@ int main()
   
   std::string path = "../examples/data/";
   
-  //Stage 1: Read from Netgen files, write to VTK
-  viennagrid::io::netgen_reader my_netgen_reader;
+  // ---------------------------------------------------------------
   
   //
   // Run tutorial for a 2D domain:
   //  
-  /*
   Domain2d domain_2d;
   
-  try
-  {
-    my_netgen_reader(domain_2d, path + "square32.mesh");
-  }
-  catch (std::exception const & ex)
-  {
-     std::cerr << ex.what() << std::endl;
-     std::cerr << "File-Reader failed. Aborting program..." << std::endl;
-     exit(EXIT_FAILURE);
-  }
-  exec_for_domain(domain_2d, "stored_data_2d");
-  std::cout << "Two-dimensional domain attached with data and written to stored_data_2d_main.pvd" << std::endl;
-  std::cout << std::endl;*/
+  // store some data on the domain and write the result to VTK files:
+  exec_for_domain(domain_2d, path + "square32.mesh", "stored_data_2d");
   
+  std::cout << "Two-dimensional domain attached with data and written to stored_data_2d_main.pvd" << std::endl;
+  std::cout << std::endl;
+  
+  // ---------------------------------------------------------------
   
   //
-  // Run tutorial for a 3D domain:
+  // Run tutorial for a 3D domain. Note the use of the same code as for the 2d case!
   //  
   Domain3d domain_3d;
   
-  try
-  {
-    my_netgen_reader(domain_3d, path + "cube48.mesh");
-  }
-  catch (std::exception const & ex)
-  {
-     std::cerr << ex.what() << std::endl;
-     std::cerr << "File-Reader failed. Aborting program..." << std::endl;
-     exit(EXIT_FAILURE);
-  }
-  exec_for_domain(domain_3d, "stored_data_3d");
+  // store some data on the domain and write the result to VTK files:
+  exec_for_domain(domain_3d, path + "cube48.mesh", "stored_data_3d");
+  
   std::cout << "Three-dimensional domain attached with data and written to stored_data_3d_main.pvd" << std::endl;
   std::cout << std::endl;
+
+  // ---------------------------------------------------------------
   
   std::cout << "-----------------------------------------------" << std::endl;
   std::cout << " \\o/    Tutorial finished successfully!    \\o/ " << std::endl;

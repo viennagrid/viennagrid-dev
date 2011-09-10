@@ -37,7 +37,7 @@ namespace viennagrid
   
     //parallelogram
     template <>
-    struct subelements<quadrilateral_tag, 0>
+    struct bndcells<quadrilateral_tag, 0>
     {
       typedef point_tag             tag;
 
@@ -45,7 +45,7 @@ namespace viennagrid
     };
 
     template <>
-    struct subelements<quadrilateral_tag, 1>
+    struct bndcells<quadrilateral_tag, 1>
     {
       typedef hypercube_tag<1>       tag;
 
@@ -57,7 +57,7 @@ namespace viennagrid
 
     //////// Parallelogram ////////
     template <>
-    struct subelement_filler<quadrilateral_tag, 1>
+    struct bndcell_filler<quadrilateral_tag, 1>
     {
       //fill edges:
       //

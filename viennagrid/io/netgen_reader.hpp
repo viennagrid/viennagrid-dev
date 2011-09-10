@@ -127,7 +127,7 @@ namespace viennagrid
         for (int i=0; i<cell_num; ++i)
         {
           long vertex_num;
-          VertexType *vertices[topology::subelements<CellTag, 0>::num];
+          VertexType *vertices[topology::bndcells<CellTag, 0>::num];
 
           if (!reader.good())
             throw bad_file_format_exception(filename, "EOF encountered while reading cells (segment index expected).");
@@ -135,7 +135,7 @@ namespace viennagrid
           std::size_t segment_index;
           reader >> segment_index;
     
-          for (int j=0; j<topology::subelements<CellTag, 0>::num; ++j)
+          for (int j=0; j<topology::bndcells<CellTag, 0>::num; ++j)
           {
             if (!reader.good())
               throw bad_file_format_exception(filename, "EOF encountered while reading cells (cell ID expected).");

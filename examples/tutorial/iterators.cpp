@@ -82,7 +82,7 @@ int main()
 
   
   //
-  ////////////////     Section 1: Iteration over elements of smaller topological level      ////////////////////////
+  ////////////////     Section 1: Iteration over n-cells in the domain/segment      ////////////////////////
   //
   
   //
@@ -101,10 +101,10 @@ int main()
   typedef viennagrid::result_of::iterator<EdgeRange>::type            EdgeIterator;
 
   typedef viennagrid::result_of::ncell_range<DomainType, CellTag::dim-1>::type     FacetRange;
-  typedef viennagrid::result_of::iterator<FacetRange>::type                                   FacetIterator;
+  typedef viennagrid::result_of::iterator<FacetRange>::type                        FacetIterator;
   
   typedef viennagrid::result_of::ncell_range<DomainType, CellTag::dim>::type       CellRange;
-  typedef viennagrid::result_of::iterator<CellRange>::type                                    CellIterator;
+  typedef viennagrid::result_of::iterator<CellRange>::type                         CellIterator;
   
   
   //
@@ -158,7 +158,7 @@ int main()
   
   
   //
-  ////////////////     Section 2: Iteration over elements of smaller topological level      ////////////////////////
+  ////////////////     Section 2: Iteration over boundary cells of smaller topological level      ////////////////////////
   //
   
   
@@ -166,14 +166,14 @@ int main()
   // Define some on-element ranges and iterators in the same way.
   // Mind the first template argument of ncell_range<>, which is the enclosing element.
   //
-  typedef viennagrid::result_of::ncell_range<FacetType, 0>::type                 VertexOnFacetRange;
-  typedef viennagrid::result_of::iterator<VertexOnFacetRange>::type              VertexOnFacetIterator;
+  typedef viennagrid::result_of::ncell_range<FacetType, 0>::type                VertexOnFacetRange;
+  typedef viennagrid::result_of::iterator<VertexOnFacetRange>::type             VertexOnFacetIterator;
   
   typedef viennagrid::result_of::ncell_range<FacetType, 1>::type                EdgeOnFacetRange;
   typedef viennagrid::result_of::iterator<EdgeOnFacetRange>::type               EdgeOnFacetIterator;
   
-  typedef viennagrid::result_of::ncell_range<CellType, CellTag::dim-1>::type   FacetOnCellRange;
-  typedef viennagrid::result_of::iterator<FacetOnCellRange>::type                         FacetOnCellIterator;
+  typedef viennagrid::result_of::ncell_range<CellType, CellTag::dim-1>::type    FacetOnCellRange;
+  typedef viennagrid::result_of::iterator<FacetOnCellRange>::type               FacetOnCellIterator;
 
   std::size_t vertices_visited = 0;
   for (CellIterator cit = cells.begin(); cit != cells.end(); ++cit) //iterate over all cells
@@ -199,7 +199,7 @@ int main()
   
   
   //
-  ////////////////     Section 3: Iteration over elements of higher topological level      ////////////////////////
+  ////////////////     Section 3: Iteration over elements of larger topological level      ////////////////////////
   //
 
   //

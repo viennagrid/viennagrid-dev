@@ -62,7 +62,7 @@ namespace viennagrid
         p0 += vocit->point();
       }
       
-      p0 /= viennagrid::topology::subelements<ElementTag, 0>::num;
+      p0 /= viennagrid::topology::bndcells<ElementTag, 0>::num;
       
       return p0;
     }

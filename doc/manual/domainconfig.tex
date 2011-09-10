@@ -174,13 +174,13 @@ VIENNAGRID_ENABLE_BOUNDARY_NCELL(MyConfig,
 \begin{lstlisting}
 namespace viennagrid { namespace result_of {
     template <>
-    struct subelement_handling<MyConfig,
+    struct bndcell_handling<MyConfig,
                                viennagrid::tetrahedron_tag, 1>{
       typedef no_handling_tag    type;
     };
 
     template <typename ConfigType>
-    struct subelement_handling<ConfigType,
+    struct bndcell_handling<ConfigType,
                                viennagrid::tetrahedron_tag, 1>{
       typedef no_handling_tag    type;
     };
@@ -201,7 +201,7 @@ is zero.
 
 \TIP{Have a look at \texttt{examples/tutorial/slim\_domain.cpp} and selectively enable or disable the storage of elements to see the impact on total memory consumption. Note that the bytes per object may differ from Tab.~\ref{tab:full-domain-memory} and Tab.~\ref{tab:slim-domain-memory} depending on the use of local-to-global-orienters and the eventual use of integral IDs.}
 
-\subsection{Local Orientations}
+\subsection{Local Orientations} \label{subsec:customize-local-orientations}
 \begin{figure}[tb]
 \centering
  \includegraphics[width=0.65\textwidth]{figures/interface-tets.eps}
@@ -229,11 +229,11 @@ VIENNAGRID_GLOBAL_DISABLE_BOUNDARY_NCELL_ORIENTATION(
 To selectively enable the storage of local orientation in a globally disabled setting, the macro \lstinline|VIENNAGRID_ENABLE_BOUNDARY_NCELL_ORIENTATION| can be used in the same way as \lstinline|VIENNAGRID_DISABLE_BOUNDARY_NCELL_ORIENTATION|.
 Again, it is recommended to define the macros in the source file containing \lstinline|main()| after the inclusion of the {\ViennaGrid} header files.
 
- \item \textbf{Method 2}: Instead of using the macros, one can instead manually adjust the meta-function \lstinline|subelement_orientation|. The first macro of method 1 expands to
+ \item \textbf{Method 2}: Instead of using the macros, one can instead manually adjust the meta-function \lstinline|bndcell_orientation|. The first macro of method 1 expands to
  \begin{lstlisting}
 namespace viennagrid { namespace result_of {
   template <>
-  struct subelement_orientation<MyConfig,
+  struct bndcell_orientation<MyConfig,
                                 viennagrid::tetrahedron_tag, 1>
   {
     typedef no_handling_tag    type;
@@ -245,7 +245,7 @@ Using the type \lstinline|full_handling_tag| instead of \lstinline|no_handling_t
 
 \TIP{If the storage of boundary $k$-cells is disabled (cf.~Sec.~\ref{subsec:boundary-ncells-storage}), there are automatically no local orientations for boundary $k$-cells stored. The local orientations do not need to be disabled explicitly in this case.}
 
-\subsection{$n$-Cell IDs}
+\subsection{$n$-Cell IDs} \label{subsec:ncell-ids}
 It is often convenient to have enumerated $n$-cells within a domain such that every $n$-cell is aware of its index inside the random access container it resides in. This allows for some algorithms to use fast random-accesses with $\LandauO(1)$ costs rather than searching trees with $\LandauO(\log N)$ costs or linked lists with $\LandauO(N)$ costs, where $N$ here denotes the number of $n$-cells inside the domain. Conversely, if $\LandauO(\log N)$ access times are acceptable, then the memory for storing the container index (which we refer to in the following as \emph{$n$-cell ID}) is wasted. To accomodate for these two scenarios, {\ViennaGrid} allows to selectively enable or disable the storage of $n$-cell IDs. By default, $n$-cell IDs are stored, since they have negligible impact on the total memory consumption as soon as other boundary $k$-cells are stored for an $n$-cell.
 
 As for the storage of boundary $k$-cells and local orientations, there are two possibilities for customizing the storage of IDs:

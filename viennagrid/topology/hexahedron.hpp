@@ -37,7 +37,7 @@ namespace viennagrid
   {
 
     template <>
-    struct subelements<hexahedron_tag, 0>
+    struct bndcells<hexahedron_tag, 0>
     {
       typedef point_tag             tag;
 
@@ -45,7 +45,7 @@ namespace viennagrid
     };
 
     template <>
-    struct subelements<hexahedron_tag, 1>
+    struct bndcells<hexahedron_tag, 1>
     {
       typedef hypercube_tag<1>              tag;
 
@@ -53,7 +53,7 @@ namespace viennagrid
     };
 
     template <>
-    struct subelements<hexahedron_tag, 2>
+    struct bndcells<hexahedron_tag, 2>
     {
       typedef quadrilateral_tag     tag;
 
@@ -65,7 +65,7 @@ namespace viennagrid
     
 
     template <>
-    struct subelement_filler<hexahedron_tag, 1>
+    struct bndcell_filler<hexahedron_tag, 1>
     {
       //fill edges:
       template <typename ElementType, typename Vertices, typename Orientations, typename Segment>
@@ -151,7 +151,7 @@ namespace viennagrid
     };
     
     template <>
-    struct subelement_filler<hexahedron_tag, 2>
+    struct bndcell_filler<hexahedron_tag, 2>
     {
       //fill facets:
       template <typename ElementType, typename Vertices, typename Orientations, typename Segment>

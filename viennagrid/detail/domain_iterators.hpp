@@ -65,7 +65,7 @@ namespace viennagrid
     typedef element_t<Config,
                     typename Config::cell_tag>    cell_type;
     typedef element_t< Config,
-                       typename topology::subelements<typename Config::cell_tag, dim>::tag
+                       typename topology::bndcells<typename Config::cell_tag, dim>::tag
                      >                                                         element_type;
                     
     typedef typename result_of::element_container<domain_type, dim>::type      container_type;
@@ -136,7 +136,7 @@ namespace viennagrid
   {
       typedef domain_t<config_type>                        domain_type;
       typedef element_t< config_type,
-                       typename topology::subelements<typename config_type::cell_tag, dim>::tag
+                       typename topology::bndcells<typename config_type::cell_tag, dim>::tag
                      >                                                         element_type;
                      
       typedef element_t< config_type,
@@ -211,7 +211,7 @@ namespace viennagrid
   {
       typedef domain_t<config_type>                        domain_type;
       typedef element_t< config_type,
-                       typename topology::subelements<typename config_type::cell_tag, dim>::tag
+                       typename topology::bndcells<typename config_type::cell_tag, dim>::tag
                      >                                                         element_type;
 
       typedef element_t< config_type,
