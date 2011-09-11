@@ -181,7 +181,7 @@ namespace viennagrid
     template <typename ConfigTypeIn, typename ConfigTypeOut>
     void refine_impl(domain_t<ConfigTypeIn> const & domain_in,
                     domain_t<ConfigTypeOut> & domain_out,
-                    adaptive_refinement_tag)
+                    local_refinement_tag)
     {
       typedef domain_t<ConfigTypeIn>                      DomainTypeIn;
       typedef typename ConfigTypeIn::cell_tag           CellTagIn;   
@@ -409,11 +409,11 @@ namespace viennagrid
   }
   
   template <typename ConfigTypeIn>
-  refinement_proxy< domain_t<ConfigTypeIn>, adaptive_refinement_tag >
+  refinement_proxy< domain_t<ConfigTypeIn>, local_refinement_tag >
   refine_adaptively(domain_t<ConfigTypeIn> const & domain_in)
   {
     typedef typename detail::refinement_vertex_id_requirement<domain_t<ConfigTypeIn> >::type   checked_type;
-    return refinement_proxy< domain_t<ConfigTypeIn>, adaptive_refinement_tag >(domain_in, adaptive_refinement_tag());
+    return refinement_proxy< domain_t<ConfigTypeIn>, local_refinement_tag >(domain_in, local_refinement_tag());
   }
   
 } 

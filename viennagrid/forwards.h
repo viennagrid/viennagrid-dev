@@ -438,7 +438,7 @@ namespace viennagrid
   class refinement_proxy;
    
   struct uniform_refinement_tag {};
-  struct adaptive_refinement_tag {};
+  struct local_refinement_tag {};
   
   namespace detail
   {
@@ -450,7 +450,7 @@ namespace viennagrid
     template <typename ConfigTypeIn, typename ConfigTypeOut>
     void refine_impl(domain_t<ConfigTypeIn> const & domain_in,
                     domain_t<ConfigTypeOut> & domain_out,
-                    adaptive_refinement_tag);    
+                    local_refinement_tag);    
   }
   
   //

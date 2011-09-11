@@ -4,7 +4,7 @@ img_extIsRegExp=false
 img_extensions=.eps .jpg .jpeg .png .pdf .ps .fig .gif
 kileprversion=2
 kileversion=2.0.85
-lastDocument=iterators.tex
+lastDocument=viennagrid.tex
 masterDocument=
 name=viennagrid
 pkg_extIsRegExp=false
@@ -186,10 +186,10 @@ ReadWrite=true
 
 [item:algorithms.tex]
 archive=true
-column=0
+column=98
 encoding=UTF-8
 highlight=LaTeX
-line=21
+line=205
 mode=LaTeX
 open=true
 order=1
@@ -232,7 +232,7 @@ highlight=LaTeX
 line=11
 mode=LaTeX
 open=true
-order=6
+order=5
 
 [item:design-decisions.tex]
 archive=true
@@ -241,7 +241,7 @@ encoding=UTF-8
 highlight=LaTeX
 line=0
 mode=LaTeX
-open=true
+open=false
 order=7
 
 [item:domainconfig.tex]
@@ -259,10 +259,10 @@ archive=true
 column=0
 encoding=UTF-8
 highlight=LaTeX
-line=5
+line=18
 mode=LaTeX
-open=false
-order=5
+open=true
+order=6
 
 [item:entities.tex]
 archive=true
@@ -326,12 +326,12 @@ order=2
 
 [item:iterators.tex]
 archive=true
-column=126
+column=0
 encoding=UTF-8
 highlight=LaTeX
-line=119
+line=216
 mode=LaTeX
-open=true
+open=false
 order=4
 
 [item:keywords.tex]
@@ -361,7 +361,7 @@ encoding=UTF-8
 highlight=LaTeX
 line=0
 mode=LaTeX
-open=true
+open=false
 order=8
 
 [item:setup.tex]
@@ -392,7 +392,7 @@ highlight=BibTeX
 line=87
 mode=BibTeX
 open=true
-order=5
+order=4
 
 [item:viennagrid.kilepr]
 archive=true
@@ -406,7 +406,7 @@ order=-1
 
 [item:viennagrid.tex]
 archive=true
-column=23
+column=21
 encoding=UTF-8
 highlight=LaTeX
 line=103
@@ -415,8 +415,8 @@ open=true
 order=0
 
 [view-settings,view=0,item:algorithms.tex]
-CursorColumn=0
-CursorLine=21
+CursorColumn=98
+CursorLine=205
 
 [view-settings,view=0,item:changelogs.tex]
 CursorColumn=0
@@ -444,7 +444,7 @@ CursorLine=235
 
 [view-settings,view=0,item:domainsetup.tex]
 CursorColumn=0
-CursorLine=5
+CursorLine=18
 
 [view-settings,view=0,item:entities.tex]
 CursorColumn=0
@@ -467,8 +467,8 @@ CursorColumn=20
 CursorLine=21
 
 [view-settings,view=0,item:iterators.tex]
-CursorColumn=126
-CursorLine=119
+CursorColumn=0
+CursorLine=216
 
 [view-settings,view=0,item:keywords.tex]
 CursorColumn=0
@@ -495,5 +495,5 @@ CursorColumn=40
 CursorLine=87
 
 [view-settings,view=0,item:viennagrid.tex]
-CursorColumn=23
+CursorColumn=21
 CursorLine=103

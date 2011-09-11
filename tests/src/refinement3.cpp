@@ -84,7 +84,7 @@ void test(std::string & infile, std::string & outfile)
   }
 
   Domain refined_domain;
-  refined_domain = viennagrid::refine(domain, viennagrid::adaptive_refinement_tag());
+  refined_domain = viennagrid::refine(domain, viennagrid::local_refinement_tag());
 
   std::cout << "Volume of refined domain: " << viennagrid::volume(refined_domain) << std::endl;
   std::cout << "Surface of refined domain: " << domain_surface(refined_domain) << std::endl;
@@ -121,7 +121,7 @@ void test(std::string & infile, std::string & outfile)
   }
 
   Domain double_refined_domain;
-  double_refined_domain = viennagrid::refine(refined_domain, viennagrid::adaptive_refinement_tag());
+  double_refined_domain = viennagrid::refine(refined_domain, viennagrid::local_refinement_tag());
 
   std::cout << "Volume of double refined domain: " << viennagrid::volume(double_refined_domain) << std::endl;
   std::cout << "Surface of double refined domain: " << domain_surface(double_refined_domain) << std::endl;

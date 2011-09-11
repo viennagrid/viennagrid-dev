@@ -70,7 +70,7 @@ int test(DomainType & domain_in)
     viennadata::access<viennagrid::refinement_key, bool>(viennagrid::refinement_key())(*eocit1) = true;
     
     DomainType domain_refined;
-    domain_refined = viennagrid::refine(domain_in, viennagrid::adaptive_refinement_tag());
+    domain_refined = viennagrid::refine(domain_in, viennagrid::local_refinement_tag());
     
     if (sanity_check(domain_in, domain_refined) == EXIT_FAILURE)
     {
@@ -96,7 +96,7 @@ int test(DomainType & domain_in)
       viennadata::access<viennagrid::refinement_key, bool>(viennagrid::refinement_key())(*eocit2) = true;
       
       DomainType domain_refined;
-      domain_refined = viennagrid::refine(domain_in, viennagrid::adaptive_refinement_tag());
+      domain_refined = viennagrid::refine(domain_in, viennagrid::local_refinement_tag());
 
       if (sanity_check(domain_in, domain_refined) == EXIT_FAILURE)
       {
@@ -127,7 +127,7 @@ int test(DomainType & domain_in)
         viennadata::access<viennagrid::refinement_key, bool>(viennagrid::refinement_key())(*eocit3) = true;
         
         DomainType domain_refined;
-        domain_refined = viennagrid::refine(domain_in, viennagrid::adaptive_refinement_tag());
+        domain_refined = viennagrid::refine(domain_in, viennagrid::local_refinement_tag());
         
         if (sanity_check(domain_in, domain_refined) == EXIT_FAILURE)
         {
@@ -164,7 +164,7 @@ int test(DomainType & domain_in)
           viennadata::access<viennagrid::refinement_key, bool>(viennagrid::refinement_key())(*eocit4) = true;
           
           DomainType domain_refined;
-          domain_refined = viennagrid::refine(domain_in, viennagrid::adaptive_refinement_tag());
+          domain_refined = viennagrid::refine(domain_in, viennagrid::local_refinement_tag());
           
           if (sanity_check(domain_in, domain_refined) == EXIT_FAILURE)
           {
@@ -207,7 +207,7 @@ int test(DomainType & domain_in)
             viennadata::access<viennagrid::refinement_key, bool>(viennagrid::refinement_key())(*eocit5) = true;
             
             DomainType domain_refined;
-            domain_refined = viennagrid::refine(domain_in, viennagrid::adaptive_refinement_tag());
+            domain_refined = viennagrid::refine(domain_in, viennagrid::local_refinement_tag());
             
             if (sanity_check(domain_in, domain_refined) == EXIT_FAILURE)
             {
@@ -232,7 +232,7 @@ int test(DomainType & domain_in)
   
   {
     DomainType domain_refined;
-    domain_refined = viennagrid::refine(domain_in, viennagrid::adaptive_refinement_tag());
+    domain_refined = viennagrid::refine(domain_in, viennagrid::local_refinement_tag());
     
     if (sanity_check(domain_in, domain_refined) == EXIT_FAILURE)
     {

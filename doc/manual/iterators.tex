@@ -134,12 +134,89 @@ or
 \end{lstlisting}
 The use of the latter is again discouraged for reasons of possible non-negligible repeated setup costs of the ranges involved.
 
-\NOTE{In {\ViennaGridversion}, an iteration over all $k$-cells of an $n$-cell is not possible if the storage of boundary $k$-cells is disabled for $n$-cells, cf.~Section \ref{subsec:boundary-ncells-storage}. This restriction is expected to be relaxed in future versions of {\ViennaGrid}.}
+\NOTE{In {\ViennaGridversion}, an iteration over all $k$-cells of an $n$-cell is not possible if the storage of boundary $k$-cells is disabled for $n$-cells, cf.~Section \ref{subsec:boundary-ncells-storage}.
+ This restriction is expected to be relaxed in future versions of {\ViennaGrid}.}
+
+
+%TODO: Explain local orientation retrieval
 
 
 \section{Coboundary $k$-Cells of $n$-Cells}
+A frequent demand of mesh-based algorithms is to iterate over so-called \emph{coboundary $k$-cells} of an $n$-cell $T_n$, where $k > n$.
+The coboundary $k$-cells of an $n$-cell $T_n$ are given by all $k$-cells of a set $\Omega$, where one of the boundary $n$-cells is $T_n$.
+For example, the coboundary edges ($1$-cells) of a vertex ($0$-cell) $T_0$ are all edges where one of the two vertices is $T_0$.
+
+In contrast to boundary $k$-cells , the number of coboundary $k$-cells of an $n$-cell from the family of simplices or hypercubes is not known at compile time.
+Another difference to the case of boundary $k$-cells is that the number of coboundary $k$-cells depends on the set $\Omega$ under consideration.
+Considering the interface edge/facet connecting vertices $1$ and $4$ in the sample domain from Fig.~\ref{fig:sampledomain}, the coboundary $2$-cells within the domain are given by the triangles $1$ and $2$.
+However, within segment $0$, the set of coboundary $2$-cells is given by the triangle $1$ only, while within segment $1$ the set of coboundary $2$-cells consists of triangle $2$ only.
+Thus, the use of segments can substantially simplify the formulation of algorithms that act on a subregion of the domain only.
+
+The necessary range types are obtained using the same pattern as in the two previous sections.
+Assuming that a vertex type \lstinline|VertexType| is already defined, the range of coboundary edges as well as the iterator are obtained
+using the \lstinline|ncell_range| and \lstinline|iterator| metafunctions in the \lstinline|viennagrid| namespace:
+\begin{lstlisting}
+ //non-const:
+ typedef result_of::ncell_range<VertexType, 1>::type   EdgeOnVertexRange;
+ typedef result_of::iterator<EdgeOnVertexRange>::type  EdgeOnVertexIterator;
+\end{lstlisting}
+Again, the first argument to \lstinline|ncell_range| is the reference element for the iteration, and the second argument is the topological dimension of the elements in the range.
+A range of \lstinline|const|-edges is again obtained using the \lstinline|const_ncell_range| metafunction instead of \lstinline|ncell_range|.
+Moreover, it shall be noted that an additional \lstinline|typename| keyword is required inside template functions and template classes.
+
+To set up the range object, the \lstinline|ncells| function from the \lstinline|viennagrid| namespace is used again. Unlike in the previous sections, it requires two arguments
+for setting up a coboundary range: The first argument is the reference element, and the second argument refers to the enclosing container of $k$-cells and must be either a domain or a segment.
+The range holding all edges in the \lstinline|domain| that share a common vertex \lstinline|v| is thus set up as
+\begin{lstlisting}
+ EdgeOnVertexRange edges_on_v = viennagrid::ncells<1>(v, domain);
+\end{lstlisting}
+where the template parameter $1$ is again optional.
+If the range should hold only the coboundary edges from a segment \lstinline|seg|, the above code line has to be modified to
+\begin{lstlisting}
+ EdgeOnVertexRange edges_on_v = viennagrid::ncells<1>(v, seg);
+\end{lstlisting}
+An iteration over all edges is then possible in the usual STL-type manner. For example, all coboundary edges of $v$ in the range are printed using the code:
+\begin{lstlisting}
+ for (EdgeOnVertexIterator eovit = edges_on_v.begin();
+                           eovit != edges_on_v.end();
+                         ++eovit)
+ {
+   std::cout << *eovit << std::endl;
+ }
+\end{lstlisting}
+One may also use a shorter form that does not set up the range explicitly:
+\begin{lstlisting}
+ for (EdgeOnVertexIterator eovit = viennagrid::ncells<1>(v, domain).begin();
+                           eovit != viennagrid::ncells<1>(v, domain).end();
+                         ++eovit)
+ {
+   std::cout << *eovit << std::endl;
+ }
+\end{lstlisting}
+Here, the template parameter $1$ for the \lstinline|ncells| function must not be omitted.
+
+Random access, i.e.~\lstinline|operator[]| is available for all topological levels. Thus, the loop above may also be written as
+\begin{lstlisting}
+  for (std::size_t i=0; i<edges_on_v.size(); ++i)
+  {
+    std::cout << edges_on_v[i] << std::endl;
+  }
+\end{lstlisting}
+or 
+\begin{lstlisting}
+  for (std::size_t i=0; i<viennagrid::ncells<1>(v, domain).size(); ++i)
+  {
+    std::cout << viennagrid::ncells<1>(v, domain)[i] << std::endl;
+  }
+\end{lstlisting}
+where the latter form is not recommended for reasons of overheads involved in setting up the tempoarary ranges.
+
+Finally, it should be noted that coboundary information is not natively available in the domain datastructure. If and only if for the first time
+the coboundary $k$-cells of an $n$-cell, $k>n$, are requested, an iteration over all $k$-cells of the domain or segment with nested $n$-cell boundary iteration is carried out to collect the topological information.
+This results in extra memory requirements and additional computational costs, hence we suggest to use boundary iterations over coboundary iterations whenever possible.
 
 
+\TIP{Prefer the use of boundary iterations ($k < n$) over coboundary iterations ($k>n$) to minimize memory footprint.}
 
 
 

@@ -162,12 +162,12 @@ int main()
   viennadata::access<viennagrid::refinement_key, bool>()(cells[0]) = true;
   viennadata::access<viennagrid::refinement_key, bool>()(cells[1]) = true;
   viennadata::access<viennagrid::refinement_key, bool>()(cells[2]) = true;
-  Domain adaptively_refined_domain = viennagrid::refine(domain, viennagrid::adaptive_refinement_tag());
+  Domain adaptively_refined_domain = viennagrid::refine(domain, viennagrid::local_refinement_tag());
   //Domain adaptively_refined_domain = viennagrid::refine_adaptively(domain);  //equivalent to previous line
   
   viennagrid::io::vtk_writer<Domain> writer;
   writer(uniformly_refined_domain, "uniform_refinement");
-  writer(adaptively_refined_domain, "adaptive_refinement");
+  writer(adaptively_refined_domain, "local_refinement");
   
   
   //
