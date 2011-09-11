@@ -4,7 +4,7 @@ img_extIsRegExp=false
 img_extensions=.eps .jpg .jpeg .png .pdf .ps .fig .gif
 kileprversion=2
 kileversion=2.0.85
-lastDocument=viennagrid.bib
+lastDocument=iterators.tex
 masterDocument=
 name=viennagrid
 pkg_extIsRegExp=false
@@ -123,9 +123,9 @@ ReadWrite=true
 [document-settings,item:iterators.tex]
 Bookmarks=
 Encoding=UTF-8
-Highlighting=None
+Highlighting=LaTeX
 Indentation Mode=
-Mode=Normal
+Mode=LaTeX
 ReadWrite=true
 
 [document-settings,item:keywords.tex]
@@ -144,7 +144,23 @@ Indentation Mode=
 Mode=LaTeX
 ReadWrite=true
 
+[document-settings,item:orientations.tex]
+Bookmarks=
+Encoding=UTF-8
+Highlighting=LaTeX
+Indentation Mode=
+Mode=LaTeX
+ReadWrite=true
+
 [document-settings,item:setup.tex]
+Bookmarks=
+Encoding=UTF-8
+Highlighting=LaTeX
+Indentation Mode=
+Mode=LaTeX
+ReadWrite=true
+
+[document-settings,item:versioning.tex]
 Bookmarks=
 Encoding=UTF-8
 Highlighting=LaTeX
@@ -170,10 +186,10 @@ ReadWrite=true
 
 [item:algorithms.tex]
 archive=true
-column=43
+column=0
 encoding=UTF-8
 highlight=LaTeX
-line=0
+line=21
 mode=LaTeX
 open=true
 order=1
@@ -210,12 +226,12 @@ order=3
 
 [item:data.tex]
 archive=true
-column=24
+column=0
 encoding=UTF-8
 highlight=LaTeX
-line=2
+line=11
 mode=LaTeX
-open=false
+open=true
 order=6
 
 [item:design-decisions.tex]
@@ -225,15 +241,15 @@ encoding=UTF-8
 highlight=LaTeX
 line=0
 mode=LaTeX
-open=false
-order=-1
+open=true
+order=7
 
 [item:domainconfig.tex]
 archive=true
-column=149
+column=16
 encoding=UTF-8
 highlight=LaTeX
-line=293
+line=235
 mode=LaTeX
 open=false
 order=5
@@ -243,9 +259,9 @@ archive=true
 column=0
 encoding=UTF-8
 highlight=LaTeX
-line=2
+line=5
 mode=LaTeX
-open=true
+open=false
 order=5
 
 [item:entities.tex]
@@ -255,7 +271,7 @@ encoding=UTF-8
 highlight=LaTeX
 line=9
 mode=LaTeX
-open=true
+open=false
 order=7
 
 [item:figures/entities.eps]
@@ -270,51 +286,51 @@ order=-1
 
 [item:installation.tex]
 archive=true
-column=46
+column=52
 encoding=UTF-8
 highlight=LaTeX
-line=122
+line=8
 mode=LaTeX
 open=false
 order=-1
 
 [item:internals.tex]
 archive=true
-column=0
+column=34
 encoding=UTF-8
 highlight=LaTeX
-line=0
+line=8
 mode=LaTeX
 open=true
 order=3
 
 [item:introduction.tex]
 archive=true
-column=395
+column=300
 encoding=UTF-8
 highlight=LaTeX
-line=40
+line=44
 mode=LaTeX
 open=false
 order=1
 
 [item:io.tex]
 archive=true
-column=27
+column=20
 encoding=UTF-8
 highlight=LaTeX
-line=0
+line=21
 mode=LaTeX
 open=true
 order=2
 
 [item:iterators.tex]
 archive=true
-column=0
+column=126
 encoding=UTF-8
-highlight=None
-line=0
-mode=Normal
+highlight=LaTeX
+line=119
+mode=LaTeX
 open=true
 order=4
 
@@ -325,7 +341,7 @@ encoding=UTF-8
 highlight=LaTeX
 line=0
 mode=LaTeX
-open=true
+open=false
 order=6
 
 [item:license.tex]
@@ -338,7 +354,7 @@ mode=LaTeX
 open=false
 order=-1
 
-[item:setup.tex]
+[item:orientations.tex]
 archive=true
 column=0
 encoding=UTF-8
@@ -348,15 +364,35 @@ mode=LaTeX
 open=true
 order=8
 
+[item:setup.tex]
+archive=true
+column=0
+encoding=UTF-8
+highlight=LaTeX
+line=0
+mode=LaTeX
+open=false
+order=8
+
+[item:versioning.tex]
+archive=true
+column=63
+encoding=UTF-8
+highlight=LaTeX
+line=28
+mode=LaTeX
+open=false
+order=-1
+
 [item:viennagrid.bib]
 archive=true
-column=12
+column=40
 encoding=UTF-8
 highlight=BibTeX
-line=81
+line=87
 mode=BibTeX
 open=true
-order=9
+order=5
 
 [item:viennagrid.kilepr]
 archive=true
@@ -370,17 +406,17 @@ order=-1
 
 [item:viennagrid.tex]
 archive=true
-column=14
+column=23
 encoding=UTF-8
 highlight=LaTeX
-line=99
+line=103
 mode=LaTeX
 open=true
 order=0
 
 [view-settings,view=0,item:algorithms.tex]
-CursorColumn=43
-CursorLine=0
+CursorColumn=0
+CursorLine=21
 
 [view-settings,view=0,item:changelogs.tex]
 CursorColumn=0
@@ -395,44 +431,44 @@ CursorColumn=16
 CursorLine=5
 
 [view-settings,view=0,item:data.tex]
-CursorColumn=24
-CursorLine=2
+CursorColumn=0
+CursorLine=11
 
 [view-settings,view=0,item:design-decisions.tex]
 CursorColumn=0
 CursorLine=0
 
 [view-settings,view=0,item:domainconfig.tex]
-CursorColumn=149
-CursorLine=293
+CursorColumn=16
+CursorLine=235
 
 [view-settings,view=0,item:domainsetup.tex]
 CursorColumn=0
-CursorLine=2
+CursorLine=5
 
 [view-settings,view=0,item:entities.tex]
 CursorColumn=0
 CursorLine=9
 
 [view-settings,view=0,item:installation.tex]
-CursorColumn=46
-CursorLine=122
+CursorColumn=52
+CursorLine=8
 
 [view-settings,view=0,item:internals.tex]
-CursorColumn=0
-CursorLine=0
+CursorColumn=34
+CursorLine=8
 
 [view-settings,view=0,item:introduction.tex]
-CursorColumn=395
-CursorLine=40
+CursorColumn=300
+CursorLine=44
 
 [view-settings,view=0,item:io.tex]
-CursorColumn=27
-CursorLine=0
+CursorColumn=20
+CursorLine=21
 
 [view-settings,view=0,item:iterators.tex]
-CursorColumn=0
-CursorLine=0
+CursorColumn=126
+CursorLine=119
 
 [view-settings,view=0,item:keywords.tex]
 CursorColumn=0
@@ -442,14 +478,22 @@ CursorLine=0
 CursorColumn=102
 CursorLine=3
 
+[view-settings,view=0,item:orientations.tex]
+CursorColumn=0
+CursorLine=0
+
 [view-settings,view=0,item:setup.tex]
 CursorColumn=0
 CursorLine=0
 
+[view-settings,view=0,item:versioning.tex]
+CursorColumn=63
+CursorLine=28
+
 [view-settings,view=0,item:viennagrid.bib]
-CursorColumn=12
-CursorLine=81
+CursorColumn=40
+CursorLine=87
 
 [view-settings,view=0,item:viennagrid.tex]
-CursorColumn=14
-CursorLine=99
+CursorColumn=23
+CursorLine=103
