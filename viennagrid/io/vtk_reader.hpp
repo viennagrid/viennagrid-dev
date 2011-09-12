@@ -1180,6 +1180,21 @@ namespace viennagrid
     }
 
 
+    template <typename ReaderType>
+    std::vector<std::pair<std::size_t, std::string> > const & 
+    get_scalar_data_on_vertices(ReaderType const & reader) { return reader.get_scalar_data_on_vertices(); }
+    
+    template <typename ReaderType>
+    std::vector<std::pair<std::size_t, std::string> > const & 
+    get_vector_data_on_vertices(ReaderType const & reader) { return reader.get_vector_data_on_vertices(); }
+
+    template <typename ReaderType>
+    std::vector<std::pair<std::size_t, std::string> > const & 
+    get_scalar_data_on_cells(ReaderType const & reader) { return reader.get_scalar_data_on_cells(); }
+    
+    template <typename ReaderType>
+    std::vector<std::pair<std::size_t, std::string> > const & 
+    get_vector_data_on_cells(ReaderType const & reader) { return reader.get_vector_data_on_cells(); }
 
 
 

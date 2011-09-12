@@ -1,35 +1,225 @@
 \chapter{IO} \label{chap:io}
+This chapter deals with the typical input and output operations: Reading a mesh from a file, and writing a mesh to a file.
+In order not to give birth to another mesh file format, {\ViennaGrid} does not bring its own file format. 
+Instead, the library mainly relies on the XML-based VTK \cite{VTK} file format \cite{VTKfileformat}.
+
+\TIP{A tutorial code can be found in \texttt{examples/tutorial/io.cpp}.}
+
+\TIP{Let us know about your favorite file format(s)!
+ Send an email to our mailinglist: \texttt{viennagrid-support$@$lists.sourceforge.net}.
+ It increases the chances of having a suitable reader and/or writer included in the next {\ViennaGrid} release.}
+
+
+\section{Readers}
 Due to the high number of vertices and cells in typical meshes,
 a manual setup of a domain in code is soon inefficient. Therefore,
 the geometric locations as well as topological connections are typically stored in mesh files.
 
-Unfortunately, the number of different mesh formats seems to grow in a rather uncontrolled manner.
-Thus, as soon as a reader for a particular mesh file format is implemented, two new formats have emerged.
-In order not to give birth to another mesh file format, {\ViennaGrid} does not bring its own file format. 
-Instead, the library mainly relies on the XML-based VTK file format \cite{VTK,VTKfileformat}.
-
-\TIP{Let us know about your favorite file format(s)!
- Send an email to our mailinglist: \texttt{viennagrid-support$@$lists.sourceforge.net}.
- It increases the chances of having a reader and/or writer included in the next {\ViennaGrid} release.}
-
-
-
-
-\section{Readers}
+Currently, {\ViennaGrid} supports only two file formats natively. However, readers for other file formats
+can be easily added by the user when following the explanations for domain setup in Chapter \ref{chap:domainsetup}.
+A different approach is to convert other file formats to one of the formats detailed in the following.
 
 \TIP{File reader contributions are always welcome!}
 
  \subsection{Netgen}
+ The \texttt{.mesh}-files provided with \texttt{Netgen} \cite{netgen} can be imported directly.
+ These files are obtained from \texttt{Netgen} from the \texttt{File->Export Mesh...} menu item. Note that only triangular and tetrahedral meshes are supported.
+
+ To read a mesh from a \texttt{.mesh} file with name \lstinline|filename| to a \lstinline|domain|, the lines
+ \begin{lstlisting}
+    viennagrid::io::netgen_reader my_netgen_reader;
+    my_netgen_reader(domain, filename);
+ \end{lstlisting}
+ should be used. Note that the reader might throw an \lstinline|std::exception| if the file cannot be opened or if there is a parser error.
+
+ The fileformat is pretty simple: The first number refers to the number of vertices in the domain, then the coordinates of the vertices follow. After that, the number of cells in the domain is specified. Then, each cell is specified by the index of the segment and the indices of its vertices, each using index base $1$.
+ For example, the \texttt{.mesh}-file for the sample domain in Fig.~\ref{fig:sampledomain} is:
+ \begin{verbatim}
+  6
+  0 0
+  1 0
+  2 0
+  2 1
+  1 1
+  0 1
+  4
+  1 1 2 6
+  1 2 5 6
+  2 2 3 5
+  2 3 4 5
+ \end{verbatim}
 
  \subsection{VTK}
+ The VTK file format is extensively documented \cite{VTKfileformat} and allows to store mesh quantities as well.
+ The simplest way of reading a VTK file \lstinline|my_mesh.vtu| is similar to the \texttt{Netgen} reader:
+ \begin{lstlisting}
+ viennagrid::io::vtk_reader<DomainType>  my_vtk_reader;
+ my_vtk_reader(domain, "my_mesh.vtu");
+ \end{lstlisting}
+ Note that the domain type is required as template argument for the reader class.
+
+ {\ViennaGrid} supports single-segmented \lstinline|.vtu| files consisting of one \lstinline|<piece>|.
+ Note that {\ViennaGrid} always reads a single-segmented mesh to its first segment.
+
+ For multi-segment meshes, the Paraview \cite{paraview} data file format \lstinline|.pvd| can be used, which is a XML wrapper holding information about the individual segments in \lstinline|.vtu| files only. Vertices that show up in multiple segments are automatically fused. Example meshes can be found in \texttt{examples/data/}.
 
 
+ The VTK format allows to store scalar-valued and vector-valued data sets, which are identified by their names, on vertices and cells.
+ These data sets are directly transferred to the {\ViennaGrid} domain using {\ViennaData} as described in Chapter \ref{chap:data}.
+ By default, data is stored using the data name string as key of type \lstinline|std::string|.
+ Scalar-valued data is stored as \lstinline|double|, while vector-valued data is stored as \lstinline|std::vector<double>|.
+ For example, a scalar quantity \texttt{potential} on a vertex \lstinline|v| can be accessed and further manipulated using
+ \begin{lstlisting}
+  viennadata::access<std::string, double>("potential")(v)
+ \end{lstlisting}
+
+ For efficiency reasons, one may want to have data stored using either a different key, key type or data type.
+ This can be achieved using the following free functions in Tab.~\ref{tab:customizing-io} to set up the reader object accordingly.
+
+ \begin{table}[tb]
+ \begin{center}
+  \begin{tabular}{|l|l|}
+   \hline
+   Function name & Data description \\
+   \hline
+   \lstinline|add_scalar_data_on_vertices| & scalar-valued, vertex-based \\
+   \lstinline|add_vector_data_on_vertices| & vector-valued, vertex-based \\
+   \lstinline|add_normal_data_on_vertices| & vector-valued, vertex-based \\
+   \hline
+   \lstinline|add_scalar_data_on_vertices| & scalar-valued, cell-based \\
+   \lstinline|add_vector_data_on_vertices| & vector-valued, cell-based \\
+   \lstinline|add_normal_data_on_vertices| & vector-valued, cell-based \\
+   \hline
+  \end{tabular}
+ \end{center}
+ \caption{Free functions in namespace \lstinline|viennagrid::io| for customizing reader and writer objects. Note that \lstinline|normal|-data refers to \lstinline|vector|-data that is normalized to unit length. The three parameters to each of these functions is the reader object, the {\ViennaData} key and the VTK data name.}
+ \label{tab:customizing-io}
+ \end{table}
+ 
+
+
+
+ A list of all names identifying data read from the file can be obtained the functions
+ \begin{center}
+  \begin{tabular}{|l|l|}
+   \hline
+   Function name & Data description \\
+   \hline
+   \lstinline|get_scalar_data_on_vertices| & scalar-valued, vertex-based \\
+   \lstinline|get_vector_data_on_vertices| & vector-valued, vertex-based \\
+   \hline
+   \lstinline|get_scalar_data_on_vertices| & scalar-valued, cell-based \\
+   \lstinline|get_vector_data_on_vertices| & vector-valued, cell-based \\
+   \hline
+  \end{tabular}
+ \end{center}
+ Note that 
+
+ For example, to store scalar-valued vertex-data with name \texttt{potential} in the VTK file \lstinline|"my_mesh.vtu"| to the domain using a key \lstinline|42| of type long, and process all other data in the default way, the reader has to be invoked as:
+ \begin{lstlisting}
+ viennagrid::io::vtk_reader<DomainType>      my_vtk_reader;
+ viennagrid::io::add_scalar_data_on_vertices<long,          // key type
+                                             double>        // data type
+                                            (my_vtk_reader, // reader
+                                             42,            // key
+                                             "potential");  // VTK name
+ my_vtk_reader(domain, "my_mesh.vtu");
+ \end{lstlisting}
+ The list of all scalar vertex data sets read is then printed together with the respective segment index as
+ \begin{lstlisting}
+using namespace viennagrid::io;
+for (size_t i=0; i<get_scalar_data_on_vertices(reader).size(); ++i)
+  std::cout << "Segment " << get_scalar_data_on_vertices(reader)[i].first 
+            << ": "
+            << get_scalar_data_on_vertices(reader)[i].second << std::endl;
+ \end{lstlisting}
+ 
 
 \section{Writers}
+Since {\ViennaGrid} does not provide any visualization capabilities, the recommended procedure for visualization is 
+to write to one of the file formats discussed below and use one of the free visualization suites for that purpose.
 
 \TIP{File writer contributions are always welcome!}
 
  \subsection{OpenDX}
+ {\OpenDX} \cite{opendx} is an open source visualization software package based on IBM's Visualization Data Explorer.
+ The writer supports either one vertex-based or one cell-based scalar quantity to be written to an {\OpenDX} file.
+
+ The simplest way to write a \lstinline|domain| of type \lstinline|DomainType| to a file \lstinline|"my_mesh.out"| is
+ \begin{lstlisting}
+  viennagrid::io::opendx_writer<DomainType> my_dx_writer;
+  my_dx_writer(domain, "my_mesh.out");
+ \end{lstlisting}
+ To write quantities stored on the domain, the free functions from Tab.~\ref{tab:customizing-io} are used.
+ For example, to visualize a scalar vertex-quantity of type \lstinline|double| stored on the domain using a key \lstinline|"potential"| of type \lstinline|std::string| (cf.~Chapter \ref{chap:data}), the previous snippet is modified to
+ \begin{lstlisting}
+ using viennagrid::io;
+ opendx_writer<DomainType> my_dx_writer;
+ add_scalar_data_on_vertices<std::string,  // key type
+                             double>       // data type
+                            (my_dx_writer, // writer
+                             "potential",  // key
+                             "some_name"); // ignored
+ my_dx_writer(domain, "my_mesh.out");
+ \end{lstlisting}
+ Note that the data name provided as third argument is ignored for the {\OpenDX} writer.
+
+ \NOTE{{\ViennaGrid} can write only one scalar quantity to an \texttt{OpenDX} file!}
 
  \subsection{VTK}
+ A number of free visualization tools such as Paraview \cite{paraview} are available for the visualization of VTK files.
+ The simplest way for writing to a VTK file is 
+ \begin{lstlisting}
+  viennagrid::io::vtk_writer<DomainType> my_vtk_writer;
+  my_vtk_writer(domain, "outfile");
+ \end{lstlisting}
+ If the domain does not contain segments, the file \lstinline|"outfile.vtu"| is written. If there are segments in the domain,
+ each segment is written to a separate file, leading to \lstinline|"outfile_0.vtu"|, \lstinline|"outfile_1.vtu"|, etc. In addition,
+ a Paraview data file \lstinline|"outfile_main.pvd"| is written, which links all the segments and should thus be used for visualization.
 
+ To write quantities stored on the domain to the VTK file(s), the free functions from Tab.~\ref{tab:customizing-io} are used.
+ For example, to visualize a vector-valued cell-quantity of type \lstinline|std::vector<double>| stored on the domain using a key \lstinline|"stress"| of type \lstinline|std::string| (cf.~Chapter \ref{chap:data}), the previous snippet is modified to
+ \begin{lstlisting}
+ using viennagrid::io;
+ vtk_writer<DomainType> my_vtk_writer;
+ add_scalar_data_on_vertices<std::string,          // key type
+                             std::vector<double> > // data type
+                            (my_vtk_writer,        // writer
+                             "stress",             // key
+                             "vtk_name");          // VTK name
+  my_vtk_writer(domain, "outfile");
+ \end{lstlisting}
+ In this way, the quantity is written to all segments and values at the interface coincide.
+
+ If discontinuities at the interfaces should be allowed, vertex data may also be written per segment.
+ This can be achieved using the free functions
+ \begin{center}
+  \begin{tabular}{|l|l|}
+   \hline
+   Function name & Data description \\
+   \hline
+   \lstinline|add_scalar_data_on_vertices_per_segment| & scalar-valued, vertex-based \\
+   \lstinline|add_vector_data_on_vertices_per_segment| & vector-valued, vertex-based \\
+   \lstinline|add_normal_data_on_vertices_per_segment| & vector-valued, vertex-based \\
+   \hline
+  \end{tabular}
+ \end{center}
+ in namespace \lstinline|viennagrid::io|,
+ which work in the same way as the free functions in Tab.~\ref{tab:customizing-io}.
+ The data type needs to provide \lstinline|operator[]|, where the argument is the segment index.
+ 
+ As closing example, a quantity \lstinline|"jump"| with type \lstinline|double| is stored on the vertices
+ using the {\ViennaData} data type \lstinline|std::map<std::size_t, double>|. 
+ For a vertex \lstinline|v| at the interface of segments with indices $0$ and $1$, the values \lstinline|1.0| for the segment with index $1$ and \lstinline|2.0| for the segment with index $2$ are stored:
+ \begin{lstlisting}
+  typedef std::map<std::size_t, double>  DataType;
+  viennadata::access<std::string, DataType>("jump")(v)[0] = 1.0;   // seg0
+  viennadata::access<std::string, DataType>("jump")(v)[1] = 2.0;   // seg1
+ \end{lstlisting}
+ The quantity is added to the VTK writer as
+ \begin{lstlisting}
+add_scalar_data_on_vertices_per_segment<std::string, DataType>
+                                   (my_vtk_writer, "jump", "segment_data");
+ \end{lstlisting}
+
+\TIP{A tutorial code using a VTK writer for discontinuous data at segment boundaries can be found in \texttt{examples/tutorial/multi-segment.cpp}.}

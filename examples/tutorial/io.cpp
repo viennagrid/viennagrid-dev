@@ -140,24 +140,24 @@ void read_vtk(DomainType & domain)
   
   std::cout << "--- Data read from VTK file: ---" << std::endl;
   std::cout << "* Scalar data on vertices: " << std::endl;
-  for (size_t i=0; i<reader.get_scalar_data_on_vertices().size(); ++i)
-    std::cout << "Segment " << reader.get_scalar_data_on_vertices()[i].first << ": "
-              << reader.get_scalar_data_on_vertices()[i].second << std::endl;
+  for (size_t i=0; i<viennagrid::io::get_scalar_data_on_vertices(reader).size(); ++i)
+    std::cout << "Segment " << viennagrid::io::get_scalar_data_on_vertices(reader)[i].first << ": "
+              << viennagrid::io::get_scalar_data_on_vertices(reader)[i].second << std::endl;
               
   std::cout << "* Vector data on vertices: " << std::endl;
-  for (size_t i=0; i<reader.get_vector_data_on_vertices().size(); ++i)
-    std::cout << "Segment " << reader.get_vector_data_on_vertices()[i].first << ": " 
-              << reader.get_vector_data_on_vertices()[i].second << std::endl;
+  for (size_t i=0; i<viennagrid::io::get_vector_data_on_vertices(reader).size(); ++i)
+    std::cout << "Segment " << viennagrid::io::get_vector_data_on_vertices(reader)[i].first << ": " 
+              << viennagrid::io::get_vector_data_on_vertices(reader)[i].second << std::endl;
               
   std::cout << "* Scalar data on cells: " << std::endl;
-  for (size_t i=0; i<reader.get_scalar_data_on_cells().size(); ++i)
-    std::cout << "Segment " << reader.get_scalar_data_on_cells()[i].first << ": " 
-              << reader.get_scalar_data_on_cells()[i].second << std::endl;
+  for (size_t i=0; i<viennagrid::io::get_scalar_data_on_cells(reader).size(); ++i)
+    std::cout << "Segment " << viennagrid::io::get_scalar_data_on_cells(reader)[i].first << ": " 
+              << viennagrid::io::get_scalar_data_on_cells(reader)[i].second << std::endl;
               
   std::cout << "* Vector data on cells: " << std::endl;
-  for (size_t i=0; i<reader.get_vector_data_on_cells().size(); ++i)
-    std::cout << "Segment " << reader.get_vector_data_on_cells()[i].first << ": "
-              << reader.get_vector_data_on_cells()[i].second << std::endl;
+  for (size_t i=0; i<viennagrid::io::get_vector_data_on_cells(reader).size(); ++i)
+    std::cout << "Segment " << viennagrid::io::get_vector_data_on_cells(reader)[i].first << ": "
+              << viennagrid::io::get_vector_data_on_cells(reader)[i].second << std::endl;
 }
 
 

@@ -1,13 +1,72 @@
 \chapter{Data Storage and Retrieval} \label{chap:data}
+One of the central operations whenever dealing with meshes is the storage and the retrieval of data.
+A common approach is to model vertices, edges and the like as separate classes and add data members to them.
+{\ViennaGrid} does not follow this approach for two reasons:
+\begin{enumerate}
+ \item \textbf{Reusability}: As soon as a data member is added to any of these classes, the class is refined towards a particular use case. For example, adding a color data member to a triangle class reduces reusability for e.g.~Finite Element methods considerably.
+ \item \textbf{Flexibility}: Whenever a data member needs to be added for a particular functionality, one has to carefully extend the existing class layout. Moreover, it is somewhere between hard to impossible to 'just add a data member for the moment' in a productive environment.
+ \item \textbf{Efficiency}: A data member that is never used obviously wastes memory. For large numbers of object it might be even advisable to use special containers for data that is relevant for a tiny fraction of all objects only (e.g.~domain boundary flags). Apart from reduced memory footprint, the possibly tighter grouping of data allows for better CPU caching. 
+\end{enumerate}
+{\ViennaGrid} relies on {\ViennaData} \cite{ViennaData} for the storage of data associated with topological objects.
+For full details on the capabilities of {\ViennaData}, please refer to the {\ViennaData} manual.
+For the sake of completeness, a brief overview of the basic usage of {\ViennaData} for {\ViennaGrid} is given in the following.
 
-Explain ViennaData here.
+\TIP{A tutorial code can be found in \texttt{examples/tutorial/store\_access\_data.cpp}.}
 
+\section{Handling Data}
+{\ViennaData} can be seen in a simplified view as something that behaves like a \lstinline|std::map<KeyType, DataType>| for each object for which data should be stored or retrieved. For a \lstinline|key| object of type \lstinline|KeyType|, \lstinline|data| of type \lstinline|DataType| is stored on an object \lstinline|obj| as
+\begin{lstlisting}
+ viennadata::access<KeyType, DataType>(key)(obj) = data;
+\end{lstlisting}
+At some later stage, the data can be conveniently retrieved from the object as
+\begin{lstlisting}
+ DataType my_data = viennadata::access<KeyType, DataType>(key)(obj);
+\end{lstlisting}
+One may also erase data stored for the object using
+\begin{lstlisting}
+ viennadata::erase<KeyType, DataType>(key)(obj);
+\end{lstlisting}
 
-\subsection{Storing and Accessing Data}
+\section{Customizations of the Internal Storage Scheme}
+It can readily be seen that the free function \lstinline|access()| function mimics the template arguments of a \lstinline|std::map<KeyType, DataType>| and takes the key as argument. In fact, the default internal storage scheme of {\ViennaData} for objects of type \lstinline|ObjectType| is 
+\begin{lstlisting}
+ std::map<ObjectType const *,
+          std::map<KeyType, DataType> >
+\end{lstlisting}
+which is generated for each triple of \lstinline|KeyType|, \lstinline|DataType| and \lstinline|ObjectType| by the compiler.
+Since the tree-based structure is well suited for data that is stored for a small fraction of the total number of objects of the same type, we call it a \emph{sparse} data storage scheme. However, such a nested map is not a good datastructure in many cases and can thus be customized in a rather transparent manner.
 
+For objects that provide integral IDs ranging from $0$ to some number $N$, a storage scheme of the form
+\begin{lstlisting}
+ std::vector< std::map<KeyType, DataType> >
+\end{lstlisting}
+for each \lstinline|ObjectType| is more appropriate. Since memory for all objects of the same type is used then, we refer to this scheme as a \emph{dense} data storage scheme. This can be obtained by first using (mind the VIENNAGRID prefix!)
+\begin{lstlisting}
+ VIENNAGRID_ENABLE_ID_BASED_DATA_ACCESS_FOR_ELEMENT()
+\end{lstlisting}
+which configures {\ViennaData} to use the integral ID of the element. 
+Second, dense storage can then be selectively enabled using one of the macros
+\begin{lstlisting}
+ VIENNADATA_ENABLE_DENSE_DATA_STORAGE_FOR_*
+\end{lstlisting}
+where the star refers to \lstinline|KEY|, \lstinline|DATA|, \lstinline|OBJECT| or a mixture of these. For details consult the {\ViennaData} manual.
 
+\NOTE{In order to use a dense storage scheme, the storage of IDs for the particular $n$-cells must not be disabled, cf.~Section \ref{subsec:ncell-ids}!}
 
-\subsection{Customizations of the Internal Storage Scheme}
+Moreover, the \lstinline|std::map<KeyType, DataType>| type may be too costly due to key comparisons. For example, the comparison of the strings \lstinline|"rather_long_string_1"| and \lstinline|"rather_long_string_2"| is not suitable for high-performance environment. In such cases, {\ViennaData}
+can be configured to dispatch based on the key type only, but not based on runtime information. Using the macro
+\begin{lstlisting}
+ VIENNADATA_ENABLE_TYPE_BASED_KEY_DISPATCH(my_key)
+\end{lstlisting}
+configures {\ViennaData} to use a type-based dispatch for a key class type \lstinline|my_key|. In this case, the internal data container of {\ViennaData}
+changes to either
+\begin{lstlisting}
+ std::map<ObjectIDType, DataType>
+\end{lstlisting}
+with \lstinline|ObjectIDType| being either a pointer or an integral ID, or
+\begin{lstlisting}
+ std::vector< DataType >
+\end{lstlisting}
+Therefore, {\ViennaData} can be configured with a high granularity in order to accomodate for the individual data access patterns and data densities.
 
-
-
+\TIP{For additional features such as default data types as well as \lstinline|move()| and \lstinline|copy()| functions, consult the {\ViennaData} manual.}

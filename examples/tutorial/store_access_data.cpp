@@ -31,20 +31,15 @@
 
 struct my_key {};
 
-namespace viennadata
-{
-  namespace config
-  {
-    //
-    // The following specialization sets a compile-time key dispatch for the 'MyKey' type
-    //
-    template <>
-    struct key_dispatch<my_key>
-    {
-      typedef type_key_dispatch_tag    tag;
-    };
-  }
-}
+//
+// Enable dense storage for keys of type my_key and double data:
+//
+VIENNADATA_ENABLE_DENSE_DATA_STORAGE_FOR_KEY_DATA(my_key, double)
+
+//
+// Enable type-based dispatch for my_key:
+//
+VIENNADATA_ENABLE_TYPE_BASED_KEY_DISPATCH(my_key)
 
 
 

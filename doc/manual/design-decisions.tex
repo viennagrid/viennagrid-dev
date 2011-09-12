@@ -1,13 +1,91 @@
 \chapter{Design Decisions} \label{chap:design}
+In this chapter the various aspects that have lead to {\ViennaGrid} in the present form are documented.
+The discussion focuses on key design decisions mostly affecting usability and convenience for the library user,
+rather than discussing programming details invisible to the library user. Since the design decisions also reflect
+the history of {\ViennaGrid} and the individual preferences of the authors to a certain degree, a more vital language is chosen in the following.
 
  \section{Iterators}
- Why \lstinline|viennagrid::ncells<>| and so much STL-like.
+ Consider the iteration over all vertices of a \lstinline|domain|. Clearly, the choice
+ \begin{lstlisting}
+ for (VertexIterator vit = domain.begin(); vit != domain.end(); ++vit) {}
+ \end{lstlisting}
+ is not sufficiently flexible in order to allow for an iteration over edges.
+ Nevertheless, the STL-like setup and retrieval of iterators is appealing.
+
+ Since hard-coding function names is not an option for an parametrized traversal,
+ the next choice is to add a template parameter to the \lstinline|begin| and \lstinline|end| member functions:
+ \begin{lstlisting}
+ for (VertexIterator vit  = domain.begin<0>();
+                     vit != domain.end<0>();
+                   ++vit) {}
+ \end{lstlisting}
+ This concept would be sufficiently flexible to allow for an iteration over edges, facets, etc.~in a unified way.
+ In fact, this approach is also chosen by DUNE \cite{DUNE} and was also used in an early prototype of {\ViennaGrid}.
+ However, there is one pecularity with this approach when it comes to template functions, for which the syntax needs to be adjusted to
+ \begin{lstlisting}
+ for (VertexIterator vit  = domain.template begin<0>();
+                     vit != domain.template end<0>();
+                   ++vit) {}
+ \end{lstlisting}
+ Apart from the fact that the \lstinline|template| keyword for member functions is probably unknown to a wide audience, 
+ weird compiler messages are issued if the keyword is forgotten. Since usability and easy-to-use is one of the design goals of {\ViennaGrid},
+ we kept searching for better ways with respect to our measures.
+
+ Clearly, a run-time dispatched iterator retrieval in the spirit of 
+ \begin{lstlisting}
+ for (VertexIterator vit  = domain.begin(0);
+                     vit != domain.end(0);
+                   ++vit) {}
+ \end{lstlisting}
+ will sacrifice efficiency especially for loops with a small number of iterations, which is not an option for high-performance environments. 
+
+ Having high-performance environments in mind, one must not forget about the advantage of index-based for loops such as 
+ \begin{lstlisting}
+ for (std::size_t i=0; i<3; ++i) { ... }
+ \end{lstlisting}
+ for the iteration over e.g.~the vertices of a triangle.
+ The advantage here stems from the fact that the compiler is able to unroll the loop, which is much harder with iterators.
+ Consequently, we looked out for a unified way of both iterator-based traversal as well as an index-based traversal.
+
+ In order to stick with a simple iterator-based loop of the form
+ \begin{lstlisting}
+ for (VertexIterator vit  = something.begin();
+                     vit != something.end();
+                   ++vit) {}
+ \end{lstlisting}
+ where \lstinline|something| is some proxy-object for the vertices in the domain, one finally ends up with the current \lstinline|viennagrid::ncells<>| approach.
+ Writing the loop in the form
+ \begin{lstlisting}
+ for (VertexIterator vit  = ncells<0>(domain).begin();
+                     vit != ncells<0>(domain).end();
+                   ++vit) {}
+ \end{lstlisting}
+ readily expresses the intention of iterating over $0$-cells and does not suffer from the problems related to the \lstinline|template| keyword.
+ Thanks to the rich overloading rule-set for free functions, an extension to \lstinline|ncells<0>(segment)| or \lstinline|ncells<0>(cell)| is immediate.
+ 
+ In retrospective, the ranges returned by \lstinline|ncells<>()| would have come up with coboundary iterators anyway, since one then has to pass the enclosing cell complex anyway.
 
  \section{Default Behavior}
- Why {\ViennaGrid} is 'fat' (high memory) and 'slow' (data access) by default.
+ A delicate question for a highly configurable library such as {\ViennaGrid} is the question of the default behavior. 
+ We decided to provide the full functionality by default, even if the price to pay is a possibly slow execution at first instance.
+
+ Our decision is based on mostly psychological reasoning as follows: If {\ViennaGrid} were tuned for low memory consumption and high speed by default, then a substantial set of functionality would be unavailable by default and causing compilation errors for users that just want to try a particular feature of {\ViennaGrid}. 
+ It is unlikely that these users will continue to use {\ViennaGrid} if they are not able to compile a simple application without digging through the manual and searching for the correct configuration. On the contrary, if the desired feature works essentially out of the box and is fast enough, users don't even have to care about the further configuration of {\ViennaGrid}. However, if additional speed is required, there are plenty of configuration options available, each potentially leading to higher speed or lower memory footprint and thus resulting in a feeling of success. 
+
+ The bottomline of all this is that we consider it more enjoyable to tune a slower default configuration for maximum speed than to fight with compiler error messages and being forced to work through the manual. We hope that our decision indeed reflects the preferences of our users.
+
 
  \section{Segments}
- Not full-fledged views yet...
+ Operating on a subset $\Omega_i$ of a domain $\Omega$ is a common demand. This could be well achieved by what is known as a \emph{view}, i.e.~a selection of elements from a domain. However, a view typically possesses a considerably shorter lifetime compared to the domain, thus it is hard to store any data for the view itself.
+ For this reason, segments in {\ViennaGrid} are part of the domain itself, so they usually have a comparable lifetime.
+ In particular, meta information can be stored on a segment during the domain setup stage already.
+
+ Another restriction of segments in {\ViennaGrid} is that a cell can be member of at most one segment.
+ This restriction is based on an implementation detail and might be removed in future releases.
 
  \section{The Use of ViennaData}
- Outsourcing to an external library is a gem here :-)
+ Even though the manual of {\ViennaData} as well as Chapter \ref{chap:data} give a number of reasons why data not inherent to the entity modelled by the class should not be stored as a class member, it should be noted that {\ViennaData} and {\ViennaGrid} were fused in a single library in the very beginning. 
+ However, it turned out that what is now {\ViennaData} was independent of any mesh-related information, thus the functionality was moved to a stand-alone library.
+ Splitting the complexity involved in storing data for an object on the one hand, and mesh handling on the other hand soon turned out to be beneficial for both libraries, since the reduced complexity in each of them allowed for a clearer view on the core functionalities.
+
+

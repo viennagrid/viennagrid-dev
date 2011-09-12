@@ -33,7 +33,7 @@
 #include "viennagrid/algorithm/volume.hpp"
 #include "viennagrid/algorithm/surface.hpp"
 #include "viennagrid/algorithm/voronoi.hpp"
-
+#include "viennagrid/io/vtk_writer.hpp"
 
 int main()
 {
@@ -56,10 +56,13 @@ int main()
   typedef viennagrid::result_of::iterator<VertexRange>::type        VertexIterator;
                                             
   typedef viennagrid::result_of::ncell_range<Domain, CellTag::dim-1>::type      FacetRange;
-  typedef viennagrid::result_of::iterator<FacetRange>::type                                FacetIterator;
+  typedef viennagrid::result_of::iterator<FacetRange>::type                     FacetIterator;
   
   typedef viennagrid::result_of::ncell_range<FacetType, CellTag::dim>::type     CellOnFacetRange;
-  typedef viennagrid::result_of::iterator<CellOnFacetRange>::type                          CellOnFacetIterator;
+  typedef viennagrid::result_of::iterator<CellOnFacetRange>::type               CellOnFacetIterator;
+
+  typedef viennagrid::result_of::ncell_range<SegmentType, 0>::type              VertexOnSegmentRange;
+  typedef viennagrid::result_of::iterator<VertexOnSegmentRange>::type           VertexOnSegmentIterator;
   
   std::cout << "------------------------------------------------" << std::endl;
   std::cout << "-- ViennaGrid tutorial: Multi-segment domains --" << std::endl;
@@ -131,6 +134,35 @@ int main()
   std::string volume_key_seg2 = "box";
   viennagrid::apply_voronoi(seg1);
   viennagrid::apply_voronoi(seg2, interface_key_seg2, volume_key_seg2);
+
+  
+  //
+  // Finally, iterate over the vertices of the domain and write segment-based vertex data:
+  // As data container std::map<std::size_t, double> is used, where the key is used for the segment index 
+  VertexOnSegmentRange vertices_seg1 = viennagrid::ncells(seg1);
+  for (VertexOnSegmentIterator vosit = vertices_seg1.begin();
+                             vosit != vertices_seg1.end();
+                           ++vosit)
+  {
+    viennadata::access<std::string, std::map<std::size_t, double> >("segment_data")(*vosit)[0] = 1.0;
+  }
+  
+  VertexOnSegmentRange vertices_seg2 = viennagrid::ncells(seg2);
+  for (VertexOnSegmentIterator vosit = vertices_seg2.begin();
+                             vosit != vertices_seg2.end();
+                           ++vosit)
+  {
+    viennadata::access<std::string, std::map<std::size_t, double> >("segment_data")(*vosit)[1] = 2.0;
+  }
+  
+  viennagrid::io::vtk_writer<Domain> my_vtk_writer;
+  viennagrid::io::add_scalar_data_on_vertices_per_segment<std::string, 
+                                                          std::map<std::size_t, double> >
+                                                         (my_vtk_writer,
+                                                          "segment_data",
+                                                          "segment_data");
+  my_vtk_writer(domain, "multi_segment");                                                       
+  
   
   std::cout << "-----------------------------------------------" << std::endl;
   std::cout << " \\o/    Tutorial finished successfully!    \\o/ " << std::endl;
