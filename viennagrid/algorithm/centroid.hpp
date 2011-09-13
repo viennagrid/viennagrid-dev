@@ -111,6 +111,16 @@ namespace viennagrid
       return centroid(cell, viennagrid::triangle_tag());
     }
 
+    //a point is degenerate and returns its location
+    template <typename ElementType>
+    typename viennagrid::result_of::point<typename ElementType::config_type>::type
+    centroid(ElementType const & cell, viennagrid::point_tag)
+    {
+      return cell.point();
+    }
+
+
+
 
     template <typename DomainSegmentType>
     typename viennagrid::result_of::point<typename DomainSegmentType::config_type>::type
@@ -168,5 +178,5 @@ namespace viennagrid
     return detail::centroid_domseg(segment);
   }
 
-} //namespace viennashe
+} //namespace viennagrid
 #endif

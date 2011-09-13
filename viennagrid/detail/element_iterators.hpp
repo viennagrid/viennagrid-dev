@@ -680,12 +680,25 @@ namespace viennagrid
 
   
   
+  //
+  // local vertex orientation:
+  //
+  template <typename ConfigType, typename Tag1, typename Tag2>
+  typename result_of::ncell<ConfigType, 0>::type
+  local_vertex(element_t<ConfigType, Tag1> const & host_ncell,
+               element_t<ConfigType, Tag2> const & bnd_kcell,
+               std::size_t index)
+  {
+    //std::cout << host_ncell.global_to_local_orientation(bnd_kcell, index) << std::endl;
+    return viennagrid::ncells<0>(bnd_kcell)[host_ncell.global_to_local_orientation(bnd_kcell, index)];
+  }
   
   
   
   
-  
-  
+  //
+  // Generic layer using metafunctions:
+  //
   namespace result_of
   {
     template <long a, long b>

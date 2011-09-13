@@ -62,10 +62,10 @@ namespace viennagrid
       //fill edges:
       //
       // Reference orientation: (v... vertices, e...edges)
-      //        e2
-      // v3 --------- v2
+      //        e3
+      // v2 --------- v3
       //    |       |
-      // e3 |       | e1
+      // e1 |       | e2
       //    |       |
       // v0 --------- v1
       //        e0
@@ -80,18 +80,18 @@ namespace viennagrid
         edge.vertices(edgevertices);
         elements[0] = seg.push_back(edge, (orientations == NULL) ? NULL : orientations);
 
-        edgevertices[0] = vertices[1];
+        edgevertices[0] = vertices[0];
         edgevertices[1] = vertices[2];
         edge.vertices(edgevertices);
         elements[1] = seg.push_back(edge, (orientations == NULL) ? NULL : orientations + 1 );
 
-        edgevertices[0] = vertices[2];
+        edgevertices[0] = vertices[1];
         edgevertices[1] = vertices[3];
         edge.vertices(edgevertices);
         elements[2] = seg.push_back(edge, (orientations == NULL) ? NULL : orientations + 2 );
 
-        edgevertices[0] = vertices[3];
-        edgevertices[1] = vertices[0];
+        edgevertices[0] = vertices[2];
+        edgevertices[1] = vertices[3];
         edge.vertices(edgevertices);
         elements[3] = seg.push_back(edge, (orientations == NULL) ? NULL : orientations + 3 );
         

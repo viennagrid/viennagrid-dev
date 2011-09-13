@@ -337,9 +337,11 @@ namespace viennagrid
             // read out the node indices form the "cells"-vector
             // and add the cells to the "vertices"-array
             //****************************************************
+            vtk_to_viennagrid_orientations<CellTag> reorderer;
             for (long j = 0; j < numVertices; j++)
             {
-              std::size_t local_index = local_cell_vertices[seg_id][j + offsetIdx];
+              long reordered_j = reorderer(j);
+              std::size_t local_index = local_cell_vertices[seg_id][reordered_j + offsetIdx];
               std::size_t global_vertex_index = local_to_global_map[seg_id][local_index];
               vertices[j] = &(viennagrid::ncells<0>(domain)[global_vertex_index]);
               //std::cout << "j+offsetidx: " << j+offsetIdx << std::endl;

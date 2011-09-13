@@ -68,8 +68,8 @@ int main()
     #else
     std::string path = "../examples/data/";
     #endif
-    reader(domain, path + "cube48.mesh"); //use this for a 3d example
-    //reader(domain, path + "square32.mesh"); //use this for a 2d example (also change ConfigType defined above!)
+    reader(domain, path + "cube6.mesh"); //use this for a 3d example
+    //reader(domain, path + "square8.mesh"); //use this for a 2d example (also change ConfigType defined above!)
   }
   catch (std::exception & e)
   {
@@ -178,24 +178,34 @@ int main()
   std::size_t vertices_visited = 0;
   for (CellIterator cit = cells.begin(); cit != cells.end(); ++cit) //iterate over all cells
   {
-    //The facets of the cell are obtained by passing the cell as parameter to the ncell() function
+    std::cout << *cit << std::endl;
+    
+    //
+    // The facets of the cell are obtained by passing the cell as parameter to the ncell() function
+    //
     FacetOnCellRange facets_on_cells = viennagrid::ncells(*cit);
     for (FacetOnCellIterator focit = facets_on_cells.begin();
                              focit != facets_on_cells.end();
                            ++focit)
     {
-      //Finally, iterate over all vertices of the facet:
+      // Iterate over all vertices of the facet:
+      std::cout << "Vertices in global orientation: " << std::endl;
       for (VertexOnFacetIterator vofit = viennagrid::ncells<0>(*focit).begin();
                                  vofit != viennagrid::ncells<0>(*focit).end();
                                ++vofit)
       {
-        ++vertices_visited;
+        std::cout << *vofit << std::endl;
       }
+
+      // Same again, but using the orientation imposed by the cell
+      std::cout << "Vertices in local orientation: " << std::endl;
+      for (std::size_t i=0; i<viennagrid::ncells<0>(*focit).size(); ++i)
+        std::cout << viennagrid::local_vertex(*cit, *focit, i) << std::endl;
     }
+    
+    std::cout << std::endl << "---------------" << std::endl << std::endl;
   }
-  std::cout << "Number of vertices visited: " << vertices_visited << std::endl;
-  
-  
+
   
   
   //

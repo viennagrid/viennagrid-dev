@@ -76,15 +76,15 @@ namespace viennagrid
 
         //fill edges according to reference orientation (use monospaced font for Full-HD ascii-art):
         //
-        //              e10
-        //    v7-----------------v6
-        // e11 /|             e9/|
+        //              e11
+        //    v6-----------------v7
+        // e9  /|            e10/|
         //    / |   e8      v5 / |
-        // v4------------------  |e6
-        //   |  |e7           |  |
-        // e4|  |______e2_____|__|
-        //   |  /v3         e5| /  v2
-        //   | /e3            |/ e1
+        // v4------------------  |e7
+        //   |  |e6           |  |
+        // e2|  |______e5_____|__|
+        //   |  /v2         e4| /  v3
+        //   | /e1            |/ e3
         // v0 ----------------  v1
         //           e0 
         //
@@ -93,33 +93,33 @@ namespace viennagrid
         edge.vertices(edgevertices);
         elements[0] = seg.push_back(edge, orientations);
 
-        edgevertices[0] = vertices[1];
+        edgevertices[0] = vertices[0];
         edgevertices[1] = vertices[2];
         edge.vertices(edgevertices);
         elements[1] = seg.push_back(edge, (orientations == NULL) ? NULL : orientations + 1);
 
-        edgevertices[0] = vertices[2];
-        edgevertices[1] = vertices[3];
-        edge.vertices(edgevertices);
-        elements[2] = seg.push_back(edge, (orientations == NULL) ? NULL : orientations + 2);
-
-        edgevertices[0] = vertices[3];
-        edgevertices[1] = vertices[0];
-        edge.vertices(edgevertices);
-        elements[3] = seg.push_back(edge, (orientations == NULL) ? NULL : orientations + 3);
-
         edgevertices[0] = vertices[0];
         edgevertices[1] = vertices[4];
         edge.vertices(edgevertices);
-        elements[4] = seg.push_back(edge, (orientations == NULL) ? NULL : orientations + 4);
+        elements[2] = seg.push_back(edge, (orientations == NULL) ? NULL : orientations + 2);
+
+        edgevertices[0] = vertices[1];
+        edgevertices[1] = vertices[3];
+        edge.vertices(edgevertices);
+        elements[3] = seg.push_back(edge, (orientations == NULL) ? NULL : orientations + 3);
 
         edgevertices[0] = vertices[1];
         edgevertices[1] = vertices[5];
         edge.vertices(edgevertices);
+        elements[4] = seg.push_back(edge, (orientations == NULL) ? NULL : orientations + 4);
+
+        edgevertices[0] = vertices[2];
+        edgevertices[1] = vertices[3];
+        edge.vertices(edgevertices);
         elements[5] = seg.push_back(edge, (orientations == NULL) ? NULL : orientations + 5);
         
         edgevertices[0] = vertices[2];
-        edgevertices[1] = vertices[6];
+        edgevertices[1] = vertices[5];
         edge.vertices(edgevertices);
         elements[6] = seg.push_back(edge, (orientations == NULL) ? NULL : orientations + 6);
         
@@ -133,18 +133,18 @@ namespace viennagrid
         edge.vertices(edgevertices);
         elements[8] = seg.push_back(edge, (orientations == NULL) ? NULL : orientations + 8);
         
-        edgevertices[0] = vertices[5];
+        edgevertices[0] = vertices[4];
         edgevertices[1] = vertices[6];
         edge.vertices(edgevertices);
         elements[9] = seg.push_back(edge, (orientations == NULL) ? NULL : orientations + 9);
         
-        edgevertices[0] = vertices[6];
+        edgevertices[0] = vertices[5];
         edgevertices[1] = vertices[7];
         edge.vertices(edgevertices);
         elements[10] = seg.push_back(edge, (orientations == NULL) ? NULL : orientations + 10);
         
-        edgevertices[0] = vertices[7];
-        edgevertices[1] = vertices[4];
+        edgevertices[0] = vertices[6];
+        edgevertices[1] = vertices[7];
         edge.vertices(edgevertices);
         elements[11] = seg.push_back(edge, (orientations == NULL) ? NULL : orientations + 11);
       }
@@ -163,53 +163,53 @@ namespace viennagrid
         //fill edges according to reference orientation (use monospaced font for Full-HD ascii-art):
         //
         //              
-        //    v7-----------------v6
+        //    v6-----------------v7
         //     /|      f5       /|
         //    / |           v5 / |
         // v4------------------  |
-        //   |f4|  (f3-back)  |f2|
+        //   |f2|  (f4-back)  |f3|
         //   |  |_____________|__|
-        //   |  /v3   f1      | /  v2
+        //   |  /v2   f1      | /  v3
         //   | /              |/ 
         // v0 ----------------  v1
         //       (f0-bottom)
         //
         // orientation is such that facet normals point out of the cell
         facetvertices[0] = vertices[0];
-        facetvertices[1] = vertices[3];
+        facetvertices[1] = vertices[1];
         facetvertices[2] = vertices[2];
-        facetvertices[3] = vertices[1];
+        facetvertices[3] = vertices[3];
         facet.vertices(facetvertices);
         elements[0] = seg.push_back(facet, (orientations == NULL) ? NULL : orientations );
         elements[0]->fill(seg);
 
         facetvertices[0] = vertices[0];
         facetvertices[1] = vertices[1];
-        facetvertices[2] = vertices[5];
-        facetvertices[3] = vertices[4];
+        facetvertices[2] = vertices[4];
+        facetvertices[3] = vertices[5];
         facet.vertices(facetvertices);
         elements[1] = seg.push_back(facet, (orientations == NULL) ? NULL : orientations + 1);
         elements[1]->fill(seg);
 
-        facetvertices[0] = vertices[1];
+        facetvertices[0] = vertices[0];
         facetvertices[1] = vertices[2];
-        facetvertices[2] = vertices[6];
-        facetvertices[3] = vertices[5];
+        facetvertices[2] = vertices[4];
+        facetvertices[3] = vertices[6];
         facet.vertices(facetvertices);
         elements[2] = seg.push_back(facet, (orientations == NULL) ? NULL : orientations + 2);
         elements[2]->fill(seg);
 
-        facetvertices[0] = vertices[2];
+        facetvertices[0] = vertices[1];
         facetvertices[1] = vertices[3];
-        facetvertices[2] = vertices[7];
-        facetvertices[3] = vertices[6];
+        facetvertices[2] = vertices[5];
+        facetvertices[3] = vertices[7];
         facet.vertices(facetvertices);
         elements[3] = seg.push_back(facet, (orientations == NULL) ? NULL : orientations + 3);
         elements[3]->fill(seg);
 
-        facetvertices[0] = vertices[3];
-        facetvertices[1] = vertices[0];
-        facetvertices[2] = vertices[4];
+        facetvertices[0] = vertices[2];
+        facetvertices[1] = vertices[3];
+        facetvertices[2] = vertices[6];
         facetvertices[3] = vertices[7];
         facet.vertices(facetvertices);
         elements[4] = seg.push_back(facet, (orientations == NULL) ? NULL : orientations + 4);

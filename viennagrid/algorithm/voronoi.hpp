@@ -39,6 +39,59 @@ namespace viennagrid
 {
   namespace detail
   {
+    //
+    // Voronoi information in two (topological) dimensions
+    //
+    template <typename DomainType,
+              typename InterfaceAreaKey,
+              typename BoxVolumeKey>
+    void write_voronoi_info(DomainType const & domain,
+                            InterfaceAreaKey const & interface_key,
+                            BoxVolumeKey const & box_volume_key,
+                            viennagrid::simplex_tag<1>)
+    {
+      typedef typename DomainType::config_type           Config;
+      typedef typename Config::cell_tag                  CellTag;
+      
+      typedef typename viennagrid::result_of::point<Config>::type                            PointType;
+      typedef typename viennagrid::result_of::ncell<Config, 0>::type                         VertexType;
+      typedef typename viennagrid::result_of::ncell<Config, CellTag::dim>::type              CellType;
+      
+      typedef typename viennagrid::result_of::const_ncell_range<DomainType, CellTag::dim>::type    CellRange;
+      typedef typename viennagrid::result_of::iterator<CellRange>::type                            CellIterator;
+      
+      
+      typedef typename viennagrid::result_of::const_ncell_range<CellType, 0>::type           VertexOnCellRange;
+      typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type              VertexOnCellIterator;
+      
+      CellRange cells = viennagrid::ncells<CellTag::dim>(domain);
+      for (CellIterator cit  = cells.begin();
+                        cit != cells.end();
+                      ++cit)
+      {
+        viennadata::access<InterfaceAreaKey, double>(interface_key)(*cit) = 1;
+        viennadata::access<BoxVolumeKey, double>(box_volume_key)(*cit) += volume(*cit) / 2.0;
+        
+        VertexOnCellRange vertices_on_cell = viennagrid::ncells<0>(*cit);
+        for (VertexOnCellIterator vocit  = vertices_on_cell.begin();
+                                  vocit != vertices_on_cell.end();
+                                ++vocit)
+        {
+          viennadata::access<BoxVolumeKey, double>(box_volume_key)(*vocit) += volume(*cit) / 2.0;
+        }
+      }
+    }
+    
+    template <typename DomainType,
+              typename InterfaceAreaKey,
+              typename BoxVolumeKey>
+    void write_voronoi_info(DomainType const & domain,
+                            InterfaceAreaKey const & interface_key,
+                            BoxVolumeKey const & box_volume_key,
+                            viennagrid::hypercube_tag<1>)
+    {
+      write_voronoi_info(domain, interface_key, box_volume_key, viennagrid::simplex_tag<1>());
+    }
     
     //
     // Voronoi information in two (topological) dimensions

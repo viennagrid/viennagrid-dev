@@ -50,54 +50,40 @@ void setup(DomainType & domain, viennagrid::hexahedron_tag)
   PointType p10(2.0, 0.0, 1.0);
   PointType p11(2.0, 1.0, 1.0);
   
-  //upgrade to vertex:
-  VertexType v0(p0, 0);
-  VertexType v1(p1, 1);
-  VertexType v2(p2, 2);
-  VertexType v3(p3, 3);
-  VertexType v4(p4, 4);
-  VertexType v5(p5, 5);
-  VertexType v6(p6, 6);
-  VertexType v7(p7, 7);
-  VertexType v8(p8, 8);
-  VertexType v9(p9, 9);
-  VertexType v10(p10, 10);
-  VertexType v11(p11, 11);
-  
   std::cout << "Adding vertices to segment:" << std::endl;
-  domain.push_back(v0);
-  domain.push_back(v1);
-  domain.push_back(v2);
-  domain.push_back(v3);
-  domain.push_back(v4);
-  domain.push_back(v5);
-  domain.push_back(v6);
-  domain.push_back(v7);
-  domain.push_back(v8);
-  domain.push_back(v9);
-  domain.push_back(v10);
-  domain.push_back(v11);
+  domain.push_back(p0);
+  domain.push_back(p1);
+  domain.push_back(p2);
+  domain.push_back(p3);
+  domain.push_back(p4);
+  domain.push_back(p5);
+  domain.push_back(p6);
+  domain.push_back(p7);
+  domain.push_back(p8);
+  domain.push_back(p9);
+  domain.push_back(p10);
+  domain.push_back(p11);
   
   VertexType * vertices0[8];
   VertexType * vertices1[8];
   
   vertices0[0] = &(viennagrid::ncells<0>(domain)[0]);
   vertices0[1] = &(viennagrid::ncells<0>(domain)[1]);
-  vertices0[2] = &(viennagrid::ncells<0>(domain)[2]);
-  vertices0[3] = &(viennagrid::ncells<0>(domain)[3]);
+  vertices0[2] = &(viennagrid::ncells<0>(domain)[3]);
+  vertices0[3] = &(viennagrid::ncells<0>(domain)[2]);
   vertices0[4] = &(viennagrid::ncells<0>(domain)[4]);
   vertices0[5] = &(viennagrid::ncells<0>(domain)[5]);
-  vertices0[6] = &(viennagrid::ncells<0>(domain)[6]);
-  vertices0[7] = &(viennagrid::ncells<0>(domain)[7]);
+  vertices0[6] = &(viennagrid::ncells<0>(domain)[7]);
+  vertices0[7] = &(viennagrid::ncells<0>(domain)[6]);
 
   vertices1[0] = &(viennagrid::ncells<0>(domain)[1]);
   vertices1[1] = &(viennagrid::ncells<0>(domain)[8]);
-  vertices1[2] = &(viennagrid::ncells<0>(domain)[9]);
-  vertices1[3] = &(viennagrid::ncells<0>(domain)[2]);
+  vertices1[2] = &(viennagrid::ncells<0>(domain)[2]);
+  vertices1[3] = &(viennagrid::ncells<0>(domain)[9]);
   vertices1[4] = &(viennagrid::ncells<0>(domain)[5]);
   vertices1[5] = &(viennagrid::ncells<0>(domain)[10]);
-  vertices1[6] = &(viennagrid::ncells<0>(domain)[11]);
-  vertices1[7] = &(viennagrid::ncells<0>(domain)[6]);
+  vertices1[6] = &(viennagrid::ncells<0>(domain)[6]);
+  vertices1[7] = &(viennagrid::ncells<0>(domain)[11]);
  
   hypercube0.vertices(vertices0);
   domain.push_back(hypercube0);
@@ -127,34 +113,26 @@ void setup(DomainType & domain, viennagrid::quadrilateral_tag)
   PointType p4(1.0, 1.0);
   PointType p5(0.0, 1.0);
   
-  //upgrade to vertex:
-  VertexType v0(p0, 0);
-  VertexType v1(p1, 1);
-  VertexType v2(p2, 2);
-  VertexType v3(p3, 3);
-  VertexType v4(p4, 4);
-  VertexType v5(p5, 5);
-
   std::cout << "Adding vertices to segment:" << std::endl;
-  domain.push_back(v0);
-  domain.push_back(v1);
-  domain.push_back(v2);
-  domain.push_back(v3);
-  domain.push_back(v4);
-  domain.push_back(v5);
+  domain.push_back(p0);
+  domain.push_back(p1);
+  domain.push_back(p2);
+  domain.push_back(p3);
+  domain.push_back(p4);
+  domain.push_back(p5);
   
   VertexType * vertices0[4];
   VertexType * vertices1[4];
   
   vertices0[0] = &(viennagrid::ncells<0>(domain)[0]);
   vertices0[1] = &(viennagrid::ncells<0>(domain)[1]);
-  vertices0[2] = &(viennagrid::ncells<0>(domain)[4]);
-  vertices0[3] = &(viennagrid::ncells<0>(domain)[5]);
+  vertices0[2] = &(viennagrid::ncells<0>(domain)[5]);
+  vertices0[3] = &(viennagrid::ncells<0>(domain)[4]);
 
   vertices1[0] = &(viennagrid::ncells<0>(domain)[1]);
   vertices1[1] = &(viennagrid::ncells<0>(domain)[2]);
-  vertices1[2] = &(viennagrid::ncells<0>(domain)[3]);
-  vertices1[3] = &(viennagrid::ncells<0>(domain)[4]);
+  vertices1[2] = &(viennagrid::ncells<0>(domain)[4]);
+  vertices1[3] = &(viennagrid::ncells<0>(domain)[3]);
   
   hypercube0.vertices(vertices0);
   domain.push_back(hypercube0);
@@ -221,7 +199,7 @@ void test(std::string outfile)
       std::cout << *cit << std::endl;
 
   viennagrid::io::vtk_writer<Domain> my_vtk_writer;
-  my_vtk_writer(domain, outfile + ".vtu");
+  my_vtk_writer(domain, outfile);
   
 }
 

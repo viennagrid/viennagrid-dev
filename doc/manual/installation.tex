@@ -20,7 +20,7 @@ the mailing list at \\
 \begin{itemize}
  \item A recent C++ compiler (e.g.~{\GCC} version 4.2.x or above and Visual C++
 2005 or above are known to work)
- \item {\ViennaData}~\cite{ViennaData}, version 1.0.1 or above. To make {\ViennaGrid} self-contained, a copy of the {\ViennaData} sources is available in the \lstinline|viennagrid/| folder.
+ \item {\ViennaData}~\cite{ViennaData}, version 1.0.1 or above. To make {\ViennaGrid} self-contained, a copy of the {\ViennaData} sources is available in the \lstinline|viennadata/| folder.
  \item {\CMake}~\cite{cmake} as build system (optional, but recommended
 for building the examples)
 \end{itemize}
@@ -47,7 +47,7 @@ VC++-\-Directories}.
 % -----------------------------------------------------------------------------
 % -----------------------------------------------------------------------------
 For building the examples, we suppose that {\CMake} is properly set up
-on your system. The various examples in their purpose are listed in
+on your system. The various examples and their purpose are listed in
 Tab.~\ref{tab:tutorial-dependencies}.
 
 \begin{table}[tb]
@@ -62,7 +62,7 @@ File & Purpose\\
 \texttt{tutorial/iterators.cpp}       & Shows how the domain and segments can be traversed, cf.~Chapter \ref{chap:iterators} \\
 \texttt{tutorial/multi\_segment.cpp}  & Explains multi-segment capabilities, cf.~Chapter \ref{chap:domainsetup} \\
 \texttt{tutorial/slim\_domain.cpp}    & Customizes ViennaGrid such that no edges are stored, cf.~Chapter \ref{chap:domainconfig} \\
-%\texttt{benchmarks/sparse-custom.cpp  & Benchmarks for a sparse storage scheme with custom object identification \\
+\texttt{tutorial/store\_access\_data.cpp}  & Shows how {\ViennaData} is used for storing quantities, cf.~Chapter \ref{chap:data} \\
 \end{tabular}
 \caption{Overview of the sample applications in the \texttt{examples/} folder}
 \label{tab:tutorial-dependencies}
@@ -86,7 +86,6 @@ to obtain a Makefile and type
 to build the examples. If desired, one can build each example separately instead:
 \begin{lstlisting}
  $> make algorithms     #builds the algorithms tutorial
- $> make io             #builds the io tutorial
 \end{lstlisting}
 
 \TIP{Speed up the building process by using multiple concurrent jobs, e.g. \keyword{make -j4}.}

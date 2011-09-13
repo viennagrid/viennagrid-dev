@@ -1,5 +1,5 @@
 \chapter{Algorithms} \label{chap:algorithms}
-The iterations and accessors described in the previous Chapter allow for a plethora of algorithms.
+The iterations and data accessors described in the previous Chapters allow for a plethora of algorithms.
 Most of them make use of basic functionalities such as the inner product of vectors, or the volume of a $n$-cell.
 {\ViennaGrid} ships with a number of such basic tools, which are listed in Tab.~\ref{tab:algorithms} and discussed in the following.
 
@@ -54,8 +54,7 @@ The point type in {\ViennaGrid} should be seen in this context mostly as a vecto
   PointType p1(0, 1, 0);
   std::cout << viennagrid::cross_prod(p1, p2) << std::endl; //0 0 1
  \end{lstlisting}
-
- \TIP{If the two vectors are given in different coordinate systems, the result vector will have the same coordinate system as the first argument.}
+ If the two vectors are given in different coordinate systems, the result vector will have the same coordinate system as the first argument.
   
 
   \subsection{Inner Products}
@@ -69,9 +68,8 @@ is available with the function \lstinline|inner_prod()|. The following code calc
   PointType p1(0, 1, 0);
   std::cout << viennagrid::inner_prod(p1, p2) << std::endl;  //0
  \end{lstlisting}
+ If the two vectors are given in different coordinate systems, the result vector will have the same coordinate system as the first argument.
  
- \TIP{\lstinline|inner_prod()| can also handle input vectors given in different coordinate systems!}
-
   \subsection{Vector Norms}
  Currently, $p$-norms of the form
   \begin{align}
@@ -110,26 +108,26 @@ which are equivalent to
 In this section, algorithms defined for geometric objects with additional structure are discussed. Additional algorithms are likely to be introduced in future releases.
  
   \subsection{Centroid}
-  The centroid of a $n$-cell object $ncell$ in Cartesian coordinates is obtained as
+  The centroid of a $n$-cell object \lstinline|cell_n| in Cartesian coordinates is obtained as
   \begin{lstlisting}
-   PointType p = viennagrid::centroid(ncell);
+   PointType p = viennagrid::centroid(cell_n);
   \end{lstlisting}
   and works for arbitrary topological and geometrical dimensions.
 
   \subsection{Circumcenter}
-  The circumcenter of a $n$-simplex $ncell$ is obtained in Cartesian coordinates as
+  The circumcenter of a $n$-simplex \lstinline|cell_n| is obtained in Cartesian coordinates as
   \begin{lstlisting}
-   PointType p = viennagrid::circumcenter(ncell);
+   PointType p = viennagrid::circumcenter(cell_n);
   \end{lstlisting}
-  The computation is restricted to values $n \leq 3$. For reasons of uniformity, also $n$-hypercubes can be passed, for which the circumcenter of an embedded $n$-simplex is computed.
+  The computation is restricted to values $n \leq 3$. For reasons of uniformity, also $n$-hypercubes can be passed, for which the circumcenter of an embedded $n$-simplex is computed. This leads to valid results and makes sense only for certain regular hypercubes.
   Thus, the user has to ensure that the $n$-hypercube actually has a circum-$n$-sphere. This is e.g.~the case for structured tensor-grids.
 
  \NOTE{There is no warning or error issued if a $n$-hypercube passed to \lstinline|circumcenter()| does not have a circumcenter.}
 
   \subsection{Surface}
-  The surface of a $n$-cell is defined as the sum of the volumes of its $n-1$ boundary cells. Therefore, in order to make the calling code
+  The surface of a $n$-cell \lstinline|cell_n| is defined as the sum of the volumes of its $n-1$ boundary cells. Therefore, in order to make the calling code
   \begin{lstlisting}
-   NumericType surf = viennagrid::surface(ncell);
+   NumericType surf = viennagrid::surface(cell_n);
   \end{lstlisting}
   valid, the storage of $n-1$-cells at the boundary of $n$-cells must not be disabled, cf.~Section \ref{subsec:boundary-ncells-storage}.
   Currently, \lstinline|surface()| is restricted to $n$-cells with $n \leq 4$.
@@ -137,18 +135,18 @@ In this section, algorithms defined for geometric objects with additional struct
   \NOTE{In order to use \lstinline|surface()| for a $n$-cell $T_n$, make sure that boundary $n-1$-cells are not disabled, cf.~Section \ref{subsec:boundary-ncells-storage}.}
 
   \subsection{Volume}
-  The $n$-dimensional volume of a $n$-cell is returned by
+  The $n$-dimensional volume of a $n$-cell \lstinline|cell_n| is returned by
   \begin{lstlisting}
-   NumericType vol = viennagrid::volume(ncell);
+   NumericType vol = viennagrid::volume(cell_n);
   \end{lstlisting}
-  and currently restricted to $n \leq 3$.
+  and currently restricted to $n \leq 3$. No restrictions with respect to the storage of boundary $k$-cells of the $n$-cell apply.
 
 
 \section{Domain/Segment-Based}
-Algorithms that act on a collection of cells are now considered. These collections are given in {\ViennaGrid} either as the whole domain, or as segments.
+Algorithms acting on a collection of cells are now considered. These collections are given in {\ViennaGrid} either as the whole domain, or as segments.
 
  \subsection{Boundary}
- Whether or not a $n$-cell object \lstinline|ncell| is located on the boundary, depends on the collection of elements considered.
+ Whether or not a $n$-cell object \lstinline|ncell| is located on the boundary depends on the collection of elements considered.
  For example, consider the edge/facet $[1,4]$ in the triangular sample mesh in Fig.~\ref{fig:sampledomain}, which we will refer to as \lstinline|f|.
  It is in the interior of the whole \lstinline|domain|, while it is also at the boundary of the two segments \lstinline|seg0| and \lstinline|seg1|.
  A sample code snippet reflecting this is given by
@@ -157,24 +155,24 @@ Algorithms that act on a collection of cells are now considered. These collectio
   std::cout << viennagrid::is_boundary(f, seg0)   << std::endl; //true;
   std::cout << viennagrid::is_boundary(f, seg1)   << std::endl; //true;
  \end{lstlisting}
- Note that \lstinline|is_boundary()| requires some setup at the first time it is called.
+ Note that \lstinline|is_boundary()| induces some additional setup costs at the first time the function is called. However, subsequent calls are accelerated and will usually compensate for the setup costs.
 
  \NOTE{\lstinline|is_boundary| requires that facets are stored within cells. Therefore, make sure not to disable the handling of facets, cf.~Section \ref{subsec:boundary-ncells-storage}. }
  
 
  \subsection{Interface}
-  Similar to the detection of boundary facets, facets on the interface between two segments are frequently of particular interest. 
-  A facet \lstinline|f| can be checked for being on the interface of two segments \lstinline|seg0| and \lstinline|seg1| using
+  Similar to the detection of boundary facets, $n$-cells on the interface between two segments are frequently of particular interest. 
+  A $n$-cell \lstinline|cell_n| can be checked for being on the interface of two segments \lstinline|seg0| and \lstinline|seg1| using
  \begin{lstlisting}
-  std::cout << viennagrid::is_interface(f, seg0, seg1) << std::endl;
+  std::cout << viennagrid::is_interface(cell_n, seg0, seg1) << std::endl;
  \end{lstlisting}
- Note that \lstinline|is_interface()| requires some setup at the first time it is called.
+ Note that \lstinline|is_interface()| induces some setup costs the first time it is called for a pair of segments.
 
  \NOTE{\lstinline|is_interface()| requires that facets are stored within cells. Therefore, make sure not to disable the handling of facets, cf.~Section \ref{subsec:boundary-ncells-storage}. }
 
 
  \subsection{Refinement}
- {\ViennaGridversion} allows a uniform or local refinement of simplicial domains. The refinement of hypercuboidal domains is scheduled for future releases.
+ {\ViennaGridversion} allows a uniform and a local refinement of simplicial domains. The refinement of hypercuboidal domains is scheduled for future releases.
 It has to be noted that the resulting refined mesh is written to a new domain, thus there are no multigrid/multilevel capabilities provided yet.
 
  To refine a \lstinline|domain| uniformly, the line
@@ -186,7 +184,7 @@ It has to be noted that the resulting refined mesh is written to a new domain, t
  \begin{lstlisting}
  DomainType refined_domain = viennagrid::refine_uniformly(domain);
  \end{lstlisting}
- is sufficient. Note that the refinement algorithms in {\ViennaGrid} act on domains, not on individual segments. However, segment information is preserved.
+ is sufficient. Note that the refinement algorithms in {\ViennaGrid} act on domains, not on individual segments. Segment information is preserved upon refinement.
  It has to be emphasized that no expensive temporary domain is created for the refinement process thanks to the use of a proxy object.
 
  The local refinement of a mesh requires that the respective cells or edges for refinement are tagged. This refinement information is applied to the domain using {\ViennaData}, cf.~Chapter \ref{chap:data}.
@@ -231,7 +229,7 @@ It has to be noted that the resulting refined mesh is written to a new domain, t
  \psfrag{j}{$j$}
  \psfrag{Aij}{$A_{[i,j]}$}
  \psfrag{Vij}{$V_{[i,j]}$}
- \includegraphics[width=0.95\textwidth]{figures/voronoi.eps}
+ \includegraphics[width=0.9\textwidth]{figures/voronoi.eps}
  \caption{Schematic of a Delaunay mesh with its dual Voronoi diagram, where the box containing vertex $j$ is highlighted.
     The function \lstinline|voronoi()| computes and stores the Voronoi volume $V_{[i,j]}$ and the interface area $A_{[i,j]}$ associated with each edge $[i,j]$.
     The total box volume associated with each vertex is also stored on the vertex.}
@@ -266,8 +264,7 @@ viennadata::access<std::string, double>("voronoi_interface")(edge); //A_ij
 viennadata::access<std::string, double>("voronoi_volume")(edge);    //V_ij
 viennadata::access<std::string, double>("voronoi_volume")(vertex);  //V_i
  \end{lstlisting}
-
- \TIP{Voronoi information can also be computed for segments only.}
+Voronoi information can also be computed for segments only.
 
  \NOTE{Be aware the values on interface edges and vertices will be overwritten when using the same keys for interfacing segments!}
 

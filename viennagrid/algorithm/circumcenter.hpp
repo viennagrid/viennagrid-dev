@@ -35,13 +35,23 @@
 
 namespace viennagrid
 {
-  
+  namespace detail
+  {
     template <typename ElementType, typename ElementTag, typename DimensionTag>
     typename viennagrid::result_of::point<typename ElementType::config_type>::type
     circumcenter(ElementType const & cell, ElementTag const &, DimensionTag const &)
     {
       typedef typename ElementType::ERROR_COMPUTATION_OF_CIRCUMCENTER_NOT_IMPLEMENTED   error_type;
       return typename viennagrid::result_of::point<typename ElementType::config_type>::type();
+    }
+    
+    
+    //a point is degenerate and returns its location
+    template <typename ElementType>
+    typename viennagrid::result_of::point<typename ElementType::config_type>::type
+    circumcenter(ElementType const & cell, viennagrid::point_tag)
+    {
+      return cell.point();
     }
     
     //
@@ -286,16 +296,17 @@ namespace viennagrid
       return p0;
     }
 
+  } //namespace detail
 
 
-    template <typename CellType>
-    typename viennagrid::result_of::point<typename CellType::config_type>::type
-    circumcenter(CellType const & cell)
-    {
-      return circumcenter(cell,
-                          typename CellType::tag(),
-                          viennagrid::dimension_tag<CellType::config_type::coordinate_system_tag::dim>());
-    }
+  template <typename CellType>
+  typename viennagrid::result_of::point<typename CellType::config_type>::type
+  circumcenter(CellType const & cell)
+  {
+    return detail::circumcenter(cell,
+                        typename CellType::tag(),
+                        viennagrid::dimension_tag<CellType::config_type::coordinate_system_tag::dim>());
+  }
     
-} //namespace viennashe
+} //namespace viennagrid
 #endif

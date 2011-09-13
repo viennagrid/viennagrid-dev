@@ -598,6 +598,39 @@ namespace viennadata
     }; \
  } }
 
+//
+//////////// Enable ID for ncells
+//
+#define VIENNAGRID_ENABLE_NCELL_ID_FOR_DATA(arg_CONFIG, arg_CELLTAG) \
+namespace viennadata { namespace config { \
+    template <> struct object_identifier<viennagrid::element_t<arg_CONFIG, arg_CELLTAG> >  { \
+      typedef object_provided_id    tag; \
+      typedef size_t                id_type; \
+      static size_t get(viennagrid::element_t<arg_CONFIG, arg_CELLTAG> const & obj) { return obj.id(); } \
+    };  }  }
 
+#define VIENNAGRID_ENABLE_ALL_NCELL_ID_FOR_DATA(arg_CONFIG) \
+namespace viennadata { namespace config { \
+    template <typename CellTag> struct object_identifier<viennagrid::element_t<arg_CONFIG, CellTag> >  { \
+      typedef object_provided_id    tag; \
+      typedef size_t                id_type; \
+      static size_t get(viennagrid::element_t<arg_CONFIG, CellTag> const & obj) { return obj.id(); } \
+    };  }  }
+
+#define VIENNAGRID_GLOBAL_ENABLE_NCELL_ID_FOR_DATA(arg_CELLTAG) \
+namespace viennadata { namespace config { \
+    template <typename ConfigType> struct object_identifier<viennagrid::element_t<ConfigType, arg_CELLTAG> >  { \
+      typedef object_provided_id    tag; \
+      typedef size_t                id_type; \
+      static size_t get(viennagrid::element_t<ConfigType, arg_CELLTAG> const & obj) { return obj.id(); } \
+    };  }  }
+
+#define VIENNAGRID_GLOBAL_ENABLE_ALL_NCELL_ID_FOR_DATA() \
+namespace viennadata { namespace config { \
+    template <typename ConfigType, typename CellTag> struct object_identifier<viennagrid::element_t<ConfigType, CellTag> >  { \
+      typedef object_provided_id    tag; \
+      typedef size_t                id_type; \
+      static size_t get(viennagrid::element_t<ConfigType, CellTag> const & obj) { return obj.id(); } \
+    };  }  }
 
 #endif

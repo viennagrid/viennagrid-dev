@@ -90,29 +90,29 @@ void setup_device(DeviceType & device)
   
   vertices[0] = &(viennagrid::ncells<0>(device)[0]);
   vertices[1] = &(viennagrid::ncells<0>(device)[8]);
-  vertices[2] = &(viennagrid::ncells<0>(device)[1]);
-  vertices[3] = &(viennagrid::ncells<0>(device)[2]);
+  vertices[2] = &(viennagrid::ncells<0>(device)[2]);
+  vertices[3] = &(viennagrid::ncells<0>(device)[1]);
   cell.vertices(vertices);
   device.push_back(cell);
 
   vertices[0] = &(viennagrid::ncells<0>(device)[0]);
   vertices[1] = &(viennagrid::ncells<0>(device)[2]);
-  vertices[2] = &(viennagrid::ncells<0>(device)[3]);
-  vertices[3] = &(viennagrid::ncells<0>(device)[4]);
+  vertices[2] = &(viennagrid::ncells<0>(device)[4]);
+  vertices[3] = &(viennagrid::ncells<0>(device)[3]);
   cell.vertices(vertices);
   device.push_back(cell);
 
   vertices[0] = &(viennagrid::ncells<0>(device)[0]);
   vertices[1] = &(viennagrid::ncells<0>(device)[4]);
-  vertices[2] = &(viennagrid::ncells<0>(device)[5]);
-  vertices[3] = &(viennagrid::ncells<0>(device)[6]);
+  vertices[2] = &(viennagrid::ncells<0>(device)[6]);
+  vertices[3] = &(viennagrid::ncells<0>(device)[5]);
   cell.vertices(vertices);
   device.push_back(cell);
 
   vertices[0] = &(viennagrid::ncells<0>(device)[0]);
   vertices[1] = &(viennagrid::ncells<0>(device)[6]);
-  vertices[2] = &(viennagrid::ncells<0>(device)[7]);
-  vertices[3] = &(viennagrid::ncells<0>(device)[8]);
+  vertices[2] = &(viennagrid::ncells<0>(device)[8]);
+  vertices[3] = &(viennagrid::ncells<0>(device)[7]);
   cell.vertices(vertices);
   device.push_back(cell);
 

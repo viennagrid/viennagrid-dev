@@ -132,6 +132,10 @@ int main()
   std::string path = "../../examples/data/";
   
   viennagrid::io::netgen_reader my_netgen_reader;
+
+  std::cout << "*********** line, 1d ***********" << std::endl;
+  test<viennagrid::config::line_1d>(my_netgen_reader, path + "line8.mesh", 2);
+  
   
   std::cout << "*********** triangular, 2d ***********" << std::endl;
   test<viennagrid::config::triangular_2d>(my_netgen_reader, path + "square8.mesh", 4);

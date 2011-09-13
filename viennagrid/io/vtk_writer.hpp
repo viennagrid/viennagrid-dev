@@ -114,13 +114,26 @@ namespace viennagrid
               cit != cells.end();
               ++cit)
           {
+              //step 1: Write vertex indices in ViennaGrid orientation to array:
+              std::vector<VertexType const *> viennagrid_vertices(viennagrid::topology::bndcells<CellTag, 0>::num);
               VertexOnCellRange vertices_on_cell = viennagrid::ncells<0>(*cit);
+              std::size_t j = 0;
               for (VertexOnCellIterator vocit = vertices_on_cell.begin();
                   vocit != vertices_on_cell.end();
-                  ++vocit)
+                  ++vocit, ++j)
               {
-                writer << vertex_ids(*vocit, domseg) << " ";
+                viennagrid_vertices[j] = &(*vocit);
               }
+              
+              //Step 2: Write the transformed connectivities:
+              viennagrid_to_vtk_orientations<CellTag> reorderer;
+              for (std::size_t i=0; i<viennagrid_vertices.size(); ++i)
+              {
+                writer << vertex_ids(*(viennagrid_vertices[reorderer(static_cast<long>(i))]), //convert between different orientations used within VTK and ViennaGrid
+                                     domseg) << " ";
+              }
+                
+              
               writer << std::endl;
             }
             writer << std::endl;

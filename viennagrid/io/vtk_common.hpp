@@ -73,7 +73,78 @@ namespace viennagrid
       enum{ value = 3 };
     };
     
+    //
+    // Tranformations of reference orientations:
+    //
+    template <typename CellTag>
+    struct vtk_to_viennagrid_orientations
+    {
+      long operator()(long j) const { return j; }  //default case: do nothing
+    };
+
+    template <typename CellTag>
+    struct viennagrid_to_vtk_orientations
+    {
+      long operator()(long j) const { return j; }  //default case: do nothing
+    };
+
+    // for quadrilaterals:
+    template <>
+    struct vtk_to_viennagrid_orientations<quadrilateral_tag>
+    {
+      long operator()(long j) const
+      {
+        switch (j)
+        {
+          case 2: return 3;
+          case 3: return 2;
+          default: return j;
+        }
+        return j;
+      }
+    };
     
+    template <>
+    struct viennagrid_to_vtk_orientations<quadrilateral_tag>
+    {
+      long operator()(long j) const
+      {
+        return vtk_to_viennagrid_orientations<quadrilateral_tag>()(j);
+      }
+    };
+
+    // for hexahedra:
+    template <>
+    struct vtk_to_viennagrid_orientations<hexahedron_tag>
+    {
+      long operator()(long j) const
+      {
+        switch (j)
+        {
+          case 2: return 3;
+          case 3: return 2;
+          case 6: return 7;
+          case 7: return 6;
+          default: return j;
+        }
+        return j;
+      }
+    };
+
+    template <>
+    struct viennagrid_to_vtk_orientations<hexahedron_tag>
+    {
+      long operator()(long j) const
+      {
+        return vtk_to_viennagrid_orientations<hexahedron_tag>()(j);
+      }
+    };
+
+
+
+
+
+
     template <typename DomainSegmentType,
               typename IDHandler = typename viennagrid::result_of::element_id_handler<typename DomainSegmentType::config_type,
                                                                                       viennagrid::point_tag>::type
@@ -141,30 +212,7 @@ namespace viennagrid
         std::map<VertexType const *, long>  ptr_to_global_id;
     };
     
-    //
-    // helper: get id from a vertex relative to the segment or the domain:
-    //
-    /*
-    struct vtk_get_id
-    {
-      template <typename VertexType, typename T>
-      static long apply(VertexType const & v, T const & seg)
-      {
-        //obtain local segment numbering from ViennaData:
-        return viennadata::access<segment_mapping_key<T>, long>(seg)(v);
-      }
-      
-      //special handling for domain:
-      template <typename VertexType, typename ConfigType>
-      static long apply(VertexType const & v, viennagrid::domain_t<ConfigType> const & dom)
-      {
-        return v.id();
-      }
-      
-    };
-    */
-    
-    
+
     
   } //namespace io
 } //namespace viennagrid

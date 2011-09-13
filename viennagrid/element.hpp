@@ -24,7 +24,7 @@
 //#include "viennagrid/iterators.hpp"
 //#include "viennagrid/detail/element_orientation.hpp"
 #include "viennagrid/detail/element_iterators.hpp"
-#include "viennagrid/detail/boundary_ncell_holder.hpp"
+#include "viennagrid/detail/boundary_ncell_layer.hpp"
 
 #include <vector>
 
@@ -35,11 +35,11 @@ namespace viennagrid
   template <typename ConfigType,
             typename ElementTag>
   class element_t :
-      public boundary_ncell_holder < ConfigType, ElementTag, ElementTag::dim - 1>,
+      public boundary_ncell_layer < ConfigType, ElementTag, ElementTag::dim - 1>,
       public result_of::element_id_handler<ConfigType, ElementTag>::type
   {
       typedef typename ConfigType::numeric_type                   ScalarType;
-      typedef boundary_ncell_holder < ConfigType, ElementTag, ElementTag::dim - 1>             Base;
+      typedef boundary_ncell_layer < ConfigType, ElementTag, ElementTag::dim - 1>             Base;
       typedef typename result_of::point<ConfigType>::type         PointType;
       typedef typename result_of::ncell<ConfigType, 0>::type      VertexType;
       typedef topology::bndcells<ElementTag, 0>                                 VertexSpecs;

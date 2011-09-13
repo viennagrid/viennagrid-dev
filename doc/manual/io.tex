@@ -1,4 +1,4 @@
-\chapter{IO} \label{chap:io}
+\chapter{Input/Output} \label{chap:io}
 This chapter deals with the typical input and output operations: Reading a mesh from a file, and writing a mesh to a file.
 In order not to give birth to another mesh file format, {\ViennaGrid} does not bring its own file format. 
 Instead, the library mainly relies on the XML-based VTK \cite{VTK} file format \cite{VTKfileformat}.
@@ -19,7 +19,7 @@ Currently, {\ViennaGrid} supports only two file formats natively. However, reade
 can be easily added by the user when following the explanations for domain setup in Chapter \ref{chap:domainsetup}.
 A different approach is to convert other file formats to one of the formats detailed in the following.
 
-\TIP{File reader contributions are always welcome!}
+%\TIP{File reader contributions are always welcome!}
 
  \subsection{Netgen}
  The \texttt{.mesh}-files provided with \texttt{Netgen} \cite{netgen} can be imported directly.
@@ -27,12 +27,12 @@ A different approach is to convert other file formats to one of the formats deta
 
  To read a mesh from a \texttt{.mesh} file with name \lstinline|filename| to a \lstinline|domain|, the lines
  \begin{lstlisting}
-    viennagrid::io::netgen_reader my_netgen_reader;
-    my_netgen_reader(domain, filename);
+ viennagrid::io::netgen_reader my_netgen_reader;
+ my_netgen_reader(domain, filename);
  \end{lstlisting}
  should be used. Note that the reader might throw an \lstinline|std::exception| if the file cannot be opened or if there is a parser error.
 
- The fileformat is pretty simple: The first number refers to the number of vertices in the domain, then the coordinates of the vertices follow. After that, the number of cells in the domain is specified. Then, each cell is specified by the index of the segment and the indices of its vertices, each using index base $1$.
+ The fileformat is simplistic: The first number refers to the number of vertices in the domain, then the coordinates of the vertices follow. After that, the number of cells in the domain is specified. Then, each cell is specified by the index of the segment and the indices of its vertices, each using index base $1$.
  For example, the \texttt{.mesh}-file for the sample domain in Fig.~\ref{fig:sampledomain} is:
  \begin{verbatim}
   6
@@ -59,7 +59,7 @@ A different approach is to convert other file formats to one of the formats deta
  Note that the domain type is required as template argument for the reader class.
 
  {\ViennaGrid} supports single-segmented \lstinline|.vtu| files consisting of one \lstinline|<piece>|.
- Note that {\ViennaGrid} always reads a single-segmented mesh to its first segment.
+ and always reads a single-segmented mesh to its first segment. If a segment does not already exist on the domain, one is created.
 
  For multi-segment meshes, the Paraview \cite{paraview} data file format \lstinline|.pvd| can be used, which is a XML wrapper holding information about the individual segments in \lstinline|.vtu| files only. Vertices that show up in multiple segments are automatically fused. Example meshes can be found in \texttt{examples/data/}.
 
@@ -113,9 +113,7 @@ A different approach is to convert other file formats to one of the formats deta
    \hline
   \end{tabular}
  \end{center}
- Note that 
-
- For example, to store scalar-valued vertex-data with name \texttt{potential} in the VTK file \lstinline|"my_mesh.vtu"| to the domain using a key \lstinline|42| of type long, and process all other data in the default way, the reader has to be invoked as:
+  For example, to store scalar-valued vertex-data with name \texttt{potential} in a VTK file with name \lstinline|"my_mesh.vtu"| to the domain using a key \lstinline|42| of type \lstinline|long|, and process all other data in the default way, the reader has to be invoked as:
  \begin{lstlisting}
  viennagrid::io::vtk_reader<DomainType>      my_vtk_reader;
  viennagrid::io::add_scalar_data_on_vertices<long,          // key type
@@ -168,7 +166,7 @@ to write to one of the file formats discussed below and use one of the free visu
 
  \subsection{VTK}
  A number of free visualization tools such as Paraview \cite{paraview} are available for the visualization of VTK files.
- The simplest way for writing to a VTK file is 
+ The simplest way of writing to a VTK file is 
  \begin{lstlisting}
   viennagrid::io::vtk_writer<DomainType> my_vtk_writer;
   my_vtk_writer(domain, "outfile");

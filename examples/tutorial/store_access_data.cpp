@@ -32,9 +32,23 @@
 struct my_key {};
 
 //
-// Enable dense storage for keys of type my_key and double data:
+// Configure ViennaData to use the n-cell IDs for storing the data:
+// (Mind the VIENNAGRID prefix here!)
+//
+VIENNAGRID_ENABLE_ALL_NCELL_ID_FOR_DATA(viennagrid::config::triangular_2d)
+VIENNAGRID_GLOBAL_ENABLE_NCELL_ID_FOR_DATA(viennagrid::point_tag)
+VIENNAGRID_ENABLE_NCELL_ID_FOR_DATA(viennagrid::config::triangular_2d, viennagrid::point_tag)   //resolve template ambiguity from the two cases above
+
+// for demonstration purposes, enable the use of ncell IDs globally for all configuration an n-cell types:
+VIENNAGRID_GLOBAL_ENABLE_ALL_NCELL_ID_FOR_DATA()
+ 
+
+//
+// Now as the use of IDs is enabled, enable dense storage for keys of type my_key and double data:
 //
 VIENNADATA_ENABLE_DENSE_DATA_STORAGE_FOR_KEY_DATA(my_key, double)
+
+
 
 //
 // Enable type-based dispatch for my_key:

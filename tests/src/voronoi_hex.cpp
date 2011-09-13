@@ -79,45 +79,45 @@ void add_cellplane(DomainType & device, CellType & cell, std::size_t offset)
   
   vertices[0] = &(viennagrid::ncells<0>(device)[0 + offset]);
   vertices[1] = &(viennagrid::ncells<0>(device)[8 + offset]);
-  vertices[2] = &(viennagrid::ncells<0>(device)[1 + offset]);
-  vertices[3] = &(viennagrid::ncells<0>(device)[2 + offset]);
+  vertices[2] = &(viennagrid::ncells<0>(device)[2 + offset]);
+  vertices[3] = &(viennagrid::ncells<0>(device)[1 + offset]);
   vertices[4] = &(viennagrid::ncells<0>(device)[9 + offset]);
   vertices[5] = &(viennagrid::ncells<0>(device)[17 + offset]);
-  vertices[6] = &(viennagrid::ncells<0>(device)[10 + offset]);
-  vertices[7] = &(viennagrid::ncells<0>(device)[11 + offset]);
+  vertices[6] = &(viennagrid::ncells<0>(device)[11 + offset]);
+  vertices[7] = &(viennagrid::ncells<0>(device)[10 + offset]);
   cell.vertices(vertices);
   device.push_back(cell);
 
   vertices[0] = &(viennagrid::ncells<0>(device)[0 + offset]);
   vertices[1] = &(viennagrid::ncells<0>(device)[2 + offset]);
-  vertices[2] = &(viennagrid::ncells<0>(device)[3 + offset]);
-  vertices[3] = &(viennagrid::ncells<0>(device)[4 + offset]);
+  vertices[2] = &(viennagrid::ncells<0>(device)[4 + offset]);
+  vertices[3] = &(viennagrid::ncells<0>(device)[3 + offset]);
   vertices[4] = &(viennagrid::ncells<0>(device)[9 + offset]);
   vertices[5] = &(viennagrid::ncells<0>(device)[11 + offset]);
-  vertices[6] = &(viennagrid::ncells<0>(device)[12 + offset]);
-  vertices[7] = &(viennagrid::ncells<0>(device)[13 + offset]);
+  vertices[6] = &(viennagrid::ncells<0>(device)[13 + offset]);
+  vertices[7] = &(viennagrid::ncells<0>(device)[12 + offset]);
   cell.vertices(vertices);
   device.push_back(cell);
 
   vertices[0] = &(viennagrid::ncells<0>(device)[0 + offset]);
   vertices[1] = &(viennagrid::ncells<0>(device)[4 + offset]);
-  vertices[2] = &(viennagrid::ncells<0>(device)[5 + offset]);
-  vertices[3] = &(viennagrid::ncells<0>(device)[6 + offset]);
+  vertices[2] = &(viennagrid::ncells<0>(device)[6 + offset]);
+  vertices[3] = &(viennagrid::ncells<0>(device)[5 + offset]);
   vertices[4] = &(viennagrid::ncells<0>(device)[9 + offset]);
   vertices[5] = &(viennagrid::ncells<0>(device)[13 + offset]);
-  vertices[6] = &(viennagrid::ncells<0>(device)[14 + offset]);
-  vertices[7] = &(viennagrid::ncells<0>(device)[15 + offset]);
+  vertices[6] = &(viennagrid::ncells<0>(device)[15 + offset]);
+  vertices[7] = &(viennagrid::ncells<0>(device)[14 + offset]);
   cell.vertices(vertices);
   device.push_back(cell);
 
   vertices[0] = &(viennagrid::ncells<0>(device)[0 + offset]);
   vertices[1] = &(viennagrid::ncells<0>(device)[6 + offset]);
-  vertices[2] = &(viennagrid::ncells<0>(device)[7 + offset]);
-  vertices[3] = &(viennagrid::ncells<0>(device)[8 + offset]);
+  vertices[2] = &(viennagrid::ncells<0>(device)[8 + offset]);
+  vertices[3] = &(viennagrid::ncells<0>(device)[7 + offset]);
   vertices[4] = &(viennagrid::ncells<0>(device)[9 + offset]);
   vertices[5] = &(viennagrid::ncells<0>(device)[15 + offset]);
-  vertices[6] = &(viennagrid::ncells<0>(device)[16 + offset]);
-  vertices[7] = &(viennagrid::ncells<0>(device)[17 + offset]);
+  vertices[6] = &(viennagrid::ncells<0>(device)[17 + offset]);
+  vertices[7] = &(viennagrid::ncells<0>(device)[16 + offset]);
   cell.vertices(vertices);
   device.push_back(cell);
 }

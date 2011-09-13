@@ -1,5 +1,5 @@
 \chapter{The Main Entities} \label{chap:entities}
-In the following, the main entities of ViennaGrid are explained. The nomenclature essentially follows the convention from topology and can also be found in other mesh libraries. Note that the purpose of this manual is not to give exact definitions from the field of geometry or topology, but rather to establish the link between abstract concepts and their representation in code within {\ViennaGrid}.
+In the following, the main entities of ViennaGrid are explained. The nomenclature essentially follows the convention from topology and can partly be found in other mesh libraries. Note that the purpose of this manual is not to give exact definitions from the field of geometry or topology, but rather to establish the link between abstract concepts and their representation in code within {\ViennaGrid}.
 
 \begin{figure}[tb]
 \centering
@@ -10,12 +10,8 @@ In the following, the main entities of ViennaGrid are explained. The nomenclatur
 
 
 \section{Points (Geometrical Objects)}
-The underlying space in {\ViennaGrid} is the $n$-dimensional Euclidian space $\mathbb{E}^k$, which we identify with the real coordinate space $\mathbb{R}^k$ in the following.
-A \emph{point} refers to an element $\vector x$ in $\mathbb{R}^k$ and does not carry any topological information. On the other hand, a point equivalently refers to the vector from the origin pointing to $\vector x$.
-
-
-%%%%%%%%% Figure here explaining coordinate systems %%%%%%%%%%%%%%%
-
+The underlying space in {\ViennaGrid} is the $m$-dimensional Euclidian space $\mathbb{E}^m$, which we identify with the real coordinate space $\mathbb{R}^m$ in the following.
+A \emph{point} refers to an element $\vector x$ in $\mathbb{R}^m$ and does not carry any topological information. On the other hand, a point equivalently refers to the vector from the origin pointing to $\vector x$.
 
 Given a configuration class \lstinline|Config| for {\ViennaGrid} (cf.~Chap.~\ref{chap:domainconfig}), a point is defined and manipulated as follows:
 \begin{lstlisting}
@@ -35,7 +31,7 @@ Given a configuration class \lstinline|Config| for {\ViennaGrid} (cf.~Chap.~\ref
  std::cout << p1 - 2.0 * p3 << std::endl;
  std::cout << "x-coordinate of p1: " << p1[0] << std::endl;
 \end{lstlisting}
-Points are manipulated using the operators \lstinline|+, -, *, /, +=, -=, *=| and \lstinline|/=| in the usual manner. \lstinline|operator[]| grants access to the individual coordinate entries.
+The operators \lstinline|+, -, *, /, +=, -=, *=| and \lstinline|/=| can be used in the usual mnemonic manner. \lstinline|operator[]| grants access to the individual coordinate entries.
 
 Aside from the standard Cartesian coordinates, {\ViennaGrid} can also handle polar, spherical and cylindrical coordinate systems.
 This is typically defined globally within the configuration class \lstinline|Config| for the whole domain, and the meta-function in the previous snippet creates the correct point type. However, if no global configuration class is available, the point types can be obtained as
@@ -54,6 +50,8 @@ Conversions between the coordinate systems are carried out implicitly:
 \end{lstlisting}
 An explicit conversion to the Cartesian coordinate system is provided by the free function \lstinline|to_cartesian()|.
 
+\TIP{For details on the coordinate systems, refer to the reference documentation in \texttt{doc/doxygen/}.}
+
 Since all coordinate systems refer to a common underlying Euclidian space, the operator overloads remain valid even if operands are given in different coordinate systems. In such a case, the coordinate system of the resulting point is given by the coordinate system of the left hand side operand:
 \begin{lstlisting}
  CylindricalPoint3d p1(1, 1, 5);
@@ -68,19 +66,18 @@ Since all coordinate systems refer to a common underlying Euclidian space, the o
 \end{lstlisting}
 For additional algorithms acting on points, e.g.~\lstinline|norm()| for computing the norm/length of a vector, please refer to Chapter \ref{chap:algorithms}.
 
-
 \TIP{ViennaGrid is not restricted to one, two or three geometric dimensions! Cartesian coordinate systems for arbitrary dimensions are available.}
 
-\section{Elements (Topological Objects)}
+\section{$n$-Cells (Topological Objects)} \label{sec:ncells}
 While the point type defines the underlying geometry, elements define the topological connections among distinguished points. Each of these distinguished points is called a \emph{vertex} and describes the corners or intersection of geometric shapes. Vertices are often also referred to as the \emph{nodes} of a mesh.
 
 An \emph{edge} is a line segment joining two vertices. Note that this is a topological characterization -- the underlying geometric space can have arbitrary dimension.
 
-A \emph{cell} is an element of maximum topological dimension $N$ within the set of elements considered. The topological dimension of cells can be smaller than the underlying geometric space, which is for example the case in triangular surface meshes. Note that the nomenclature used among scientists is not entirely consistent: Some refer to topologically three-dimensional objects as cells, which is not the case here. 
+A \emph{cell} is an element of maximum topological dimension $N$ within the set of elements considered. The topological dimension of cells can be smaller than the underlying geometric space, which is for example the case in triangular surface meshes in three dimensions. Note that the nomenclature used among scientists is not entirely consistent: Some refer to topologically three-dimensional objects independent from the topological dimension of the full mesh as cells, which is not the case here. 
 
 The surface of a cell consists of \emph{facets}, which are objects of topological dimension $N-1$. Some authors prefer the name \emph{face}, which is by other authors used to refer to objects of topological dimension two. Again, the definition of a facet refers in {\ViennaGrid} to topological dimension $N-1$.
 
-\begin{table}[tb]
+\begin{table}[b]
  \centering 
  \renewcommand{\arraystretch}{1.3}
 \begin{tabular}{|l|l|l|l|l|}
@@ -99,7 +96,7 @@ The surface of a cell consists of \emph{facets}, which are objects of topologica
 
 A brief overview of the corresponding meanings of vertices, edges, facets and cells is given in Tab.~\ref{tab:vertex-edge-facet-cell}. Note that edges have higher topological dimension than facets in the one-dimensional case, while they coincide in two dimensions. Refer also to Fig.~\ref{fig:entities}.
 
-For a parametric description of these objects it is more appropriate to switch \textbf{$n$-cells}, which are objects of topological dimension $n$. The terms \emph{vertex}, \emph{edge}, \emph{facet} and \emph{cell} thus refer to $0$-cell, $1$-cell, $N-1$-cell and $N$-cell respectively. The maximum topological dimension $N$ is in {\ViennaGrid} considered to be a parameter available at compile time, which allows to pick the correct $n$-cell type for the algorithms provided. More details can be found in Chapters \ref{chap:iterators} and \ref{chap:algorithms}.
+For a parametric description of these objects it is more appropriate to switch \textbf{$n$-cells}, which are objects of topological dimension $n$. The terms \emph{vertex}, \emph{edge}, \emph{facet} and \emph{cell} thus refer to $0$-cell, $1$-cell, $N-1$-cell and $N$-cell respectively. The maximum topological dimension $N$ is in {\ViennaGrid} considered to be a parameter available at compile time, which allows to pick the correct $n$-cell type for the algorithms provided. Note that one can still use a run time dispatch at the cost of increased compilation times if the dimension of the domain is only available at run time. More details can be found in Chapters \ref{chap:iterators} and \ref{chap:algorithms}.
 
 
 \section{Domain}

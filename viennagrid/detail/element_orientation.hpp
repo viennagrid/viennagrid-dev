@@ -43,7 +43,7 @@ namespace viennagrid
           permutator_[i] = static_cast<unsigned char>(i);
       };
 
-      dim_type operator()(dim_type in) const { return static_cast<unsigned char>(permutator_[in]); }
+      dim_type operator()(dim_type in) const { return static_cast<dim_type>(permutator_[in]); }
 
       void setPermutation(dim_type index, dim_type mappedTo) { permutator_[index] = static_cast<unsigned char>(mappedTo); };
 

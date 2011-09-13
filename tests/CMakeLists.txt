@@ -37,7 +37,7 @@ ENDIF(BUILD_TESTING)
 SET(PROGS boundary coboundary domain hypercube interface io point
           refinement refinement2 refinement3 refinement-triangles
           segment simplex surface
-          voronoi_hex voronoi_rect voronoi_tet voronoi_triangle
+          voronoi_hex voronoi_rect voronoi_tet voronoi_triangle voronoi_line
           vtk_writer)
 #-----------------------------------------------------------------------------
 

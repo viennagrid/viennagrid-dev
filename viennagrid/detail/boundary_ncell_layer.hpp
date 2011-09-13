@@ -39,21 +39,21 @@ namespace viennagrid
               typename handling_tag = typename result_of::bndcell_handling<ConfigType, ElementTag, dim>::type,
               typename orienter_tag = typename result_of::bndcell_orientation<ConfigType, ElementTag, dim>::type,
               bool LevelNull = (dim == 0)>
-  class boundary_ncell_holder  { };
+  class boundary_ncell_layer  { };
 
   
   //
   // Full storage of boundary cell, including orientation
   //
   template <typename ConfigType, typename ElementTag, unsigned long dim>
-  class boundary_ncell_holder <ConfigType, ElementTag, dim, full_handling_tag, full_handling_tag, false> :
-    public boundary_ncell_holder <ConfigType, ElementTag, dim - 1>
+  class boundary_ncell_layer <ConfigType, ElementTag, dim, full_handling_tag, full_handling_tag, false> :
+    public boundary_ncell_layer <ConfigType, ElementTag, dim - 1>
   {
     //requirements:
     //array of pointers to elements of class 'dim' and a integer representing the orientation within the cell relative to the element it points to.
     typedef topology::bndcells<ElementTag, dim>                         LevelSpecs;
     typedef topology::bndcells<typename LevelSpecs::tag, 0>  VertexOnElementSpecs;
-    typedef boundary_ncell_holder <ConfigType, ElementTag, dim - 1 >      Base;
+    typedef boundary_ncell_layer <ConfigType, ElementTag, dim - 1 >      Base;
 
     typedef element_t<ConfigType, typename LevelSpecs::tag>  LevelElementType;
     typedef element_orientation<VertexOnElementSpecs::num>     ElementOrientationType;
@@ -77,13 +77,13 @@ namespace viennagrid
 
     public:
 
-      boundary_ncell_holder( ) 
+      boundary_ncell_layer( ) 
       {
         for (long i=0; i < LevelSpecs::num; ++i)
           elements_[i] = NULL;
       };
 
-      boundary_ncell_holder( const boundary_ncell_holder & llh) : Base (llh)
+      boundary_ncell_layer( const boundary_ncell_layer & llh) : Base (llh)
       {
         for (long i=0; i < LevelSpecs::num; ++i)
           elements_[i] = llh.elements_[i];
@@ -110,25 +110,15 @@ namespace viennagrid
       
 
       ////////////////// orientation: ////////////////////
-      template <long j>
-      ElementOrientationType const &
-      local_to_global_orientation(long index, less_tag)
+      std::size_t global_to_local_orientation(LevelElementType const & el, long index) const
       { 
-        return Base::template local_to_global_orientation<j>(index);
-      }
-
-      template <long j>
-      ElementOrientationType const &
-      local_to_global_orientation(long index, equal_tag) 
-      { 
-        return orientations_[index];
-      }
-
-      template <long j>
-      ElementOrientationType const &
-      local_to_global_orientation(long index)
-      { 
-        return local_to_global_orientation<j>( index, typename level_discriminator<dim, j>::result_type() );
+        for (std::size_t i=0; i<LevelSpecs::num; ++i)
+        {
+          if (elements_[i] == &el)
+            return orientations_[i](index);
+        }
+        assert(false && "Provided k-cell is not a boundary element of the hosting n-cell!");
+        return index;
       }
 
     private: 
@@ -143,14 +133,14 @@ namespace viennagrid
   // Full storage of boundary cell, but no orientation
   //
   template <typename ConfigType, typename ElementTag, unsigned long dim>
-  class boundary_ncell_holder <ConfigType, ElementTag, dim, full_handling_tag, no_handling_tag, false> :
-    public boundary_ncell_holder <ConfigType, ElementTag, dim - 1>
+  class boundary_ncell_layer <ConfigType, ElementTag, dim, full_handling_tag, no_handling_tag, false> :
+    public boundary_ncell_layer <ConfigType, ElementTag, dim - 1>
   {
     //requirements:
     //array of pointers to elements of class 'dim' and a integer representing the orientation within the cell relative to the element it points to.
     typedef topology::bndcells<ElementTag, dim>                         LevelSpecs;
     typedef topology::bndcells<typename LevelSpecs::tag, 0>  VertexOnElementSpecs;
-    typedef boundary_ncell_holder <ConfigType, ElementTag, dim - 1 >      Base;
+    typedef boundary_ncell_layer <ConfigType, ElementTag, dim - 1 >      Base;
 
     typedef element_t<ConfigType, typename LevelSpecs::tag>  LevelElementType;
     typedef element_orientation<VertexOnElementSpecs::num>     ElementOrientationType;
@@ -172,13 +162,13 @@ namespace viennagrid
 
     public:
 
-      boundary_ncell_holder( ) 
+      boundary_ncell_layer( ) 
       {
         for (long i=0; i < LevelSpecs::num; ++i)
           elements_[i] = NULL;
       };
 
-      boundary_ncell_holder( const boundary_ncell_holder & llh) : Base (llh)
+      boundary_ncell_layer( const boundary_ncell_layer & llh) : Base (llh)
       {
         for (long i=0; i < LevelSpecs::num; ++i)
           elements_[i] = llh.elements_[i];
@@ -212,14 +202,14 @@ namespace viennagrid
   // No storage of boundary elements:
   //
   template <typename ConfigType, typename ElementTag, unsigned long dim, typename orienter_tag>
-  class boundary_ncell_holder <ConfigType, ElementTag, dim, no_handling_tag, orienter_tag, false> :
-    public boundary_ncell_holder < ConfigType, ElementTag, dim - 1 >
+  class boundary_ncell_layer <ConfigType, ElementTag, dim, no_handling_tag, orienter_tag, false> :
+    public boundary_ncell_layer < ConfigType, ElementTag, dim - 1 >
   {
     //requirements:
     //array of pointers to elements of class 'dim' and a integer representing the orientation within the cell relative to the element it points to.
     //typedef typename DomainTypes<ConfigType>::segment_type        SegmentType;
     typedef topology::bndcells<ElementTag, dim>                                LevelSpecs;
-    typedef boundary_ncell_holder < ConfigType, ElementTag, dim - 1 >      Base;
+    typedef boundary_ncell_layer < ConfigType, ElementTag, dim - 1 >      Base;
 
     typedef element_t<ConfigType, typename LevelSpecs::tag>  LevelElementType;
 
@@ -233,9 +223,9 @@ namespace viennagrid
 
     public:
 
-      boundary_ncell_holder( ) {};
+      boundary_ncell_layer( ) {};
 
-      boundary_ncell_holder( const boundary_ncell_holder & llh) : Base (llh) {}
+      boundary_ncell_layer( const boundary_ncell_layer & llh) : Base (llh) {}
       
 
   };
@@ -243,7 +233,7 @@ namespace viennagrid
 
   //at level 0, i.e. vertex level, recursion ends:
   template <typename ConfigType, typename ElementTag, typename handling_tag, typename orienter_tag>
-  class boundary_ncell_holder <ConfigType, ElementTag, 0, handling_tag, orienter_tag, true> 
+  class boundary_ncell_layer <ConfigType, ElementTag, 0, handling_tag, orienter_tag, true> 
   {
     //array of pointers to elements of class 'dim' and a integer representing the orientation within the cell relative to the element it points to.
     //typedef typename DomainTypes<ConfigType>::segment_type               SegmentType;
@@ -260,9 +250,9 @@ namespace viennagrid
       void fill_level(DomainType & dom) {}
 
     public:
-      boundary_ncell_holder() {};
+      boundary_ncell_layer() {};
 
-      boundary_ncell_holder( const boundary_ncell_holder & llh)
+      boundary_ncell_layer( const boundary_ncell_layer & llh)
       {
         for (long i=0; i < LevelSpecs::num; ++i)
           vertices_[i] = llh.vertices_[i];

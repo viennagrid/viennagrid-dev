@@ -164,7 +164,8 @@ namespace viennagrid
                 if (voeit->id() == voeit2->id())
                 {
                   if (orientation != NULL)
-                    orientation->setPermutation(j,i);   //global (elit->second) to local (elem)
+                    orientation->setPermutation(i,j);   //local (elem) to global (elit->second)
+                    //orientation->setPermutation(j,i);   //global (elit->second) to local (elem)
                   break;
                 }
               }

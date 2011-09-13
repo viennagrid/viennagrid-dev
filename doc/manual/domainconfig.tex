@@ -4,7 +4,7 @@ A domain and all its topological elements as well as the underlying geometric sp
 The setup of such a configuration class is explained in detail in Section \ref{sec:config-class}.
 
 Even though mathematically all $n$-cells of a domain are well defined and available on paper, it may not make sense to store explicit representations of these elements in memory.
-For example, a particular algorithm may not required the storage of edges and/or facets of a domain, thus keeping them in memory can be a considerable waste of resources.
+As discussed in the Introduction, a particular algorithm may not require the storage of edges and/or facets of a domain, thus keeping these elements in memory can be a considerable waste of resources.
 Section \ref{sec:customizing-storage} explains how the underlying storage scheme of {\ViennaGrid} can be adjusted to the library user's requirements and to be as memory-efficient as possible.
 
 
@@ -52,23 +52,28 @@ More details on the types are given in the following:
    \end{tabular}
    \end{center}
  It should be noted that \lstinline|simplex<1>| and \lstinline|hypercube<1>| both refer to a line segment. Typical examples from these families for common values of $n$ are as follows:
-   \begin{center}
-   \begin{tabular}{|l|l|}
-    \hline
-    \lstinline|simplex<2>|     &  Triangle \\
-    \hline
-    \lstinline|simplex<3>|     &  Tetrahedron \\
-    \hline
-    \lstinline|hypercube<2>|   &  Quadrilateral \\
-    \hline
-    \lstinline|hypercube<3>|   &  Hexahedron \\
-    \hline
-   \end{tabular}
-   \end{center}
- The reference orientations of these cells can be found in the Appendix.
+\begin{center}
+ \begin{tabular}{|l|c|c|}
+  \hline
+          & {\ViennaGrid} tag type   & Convenience \lstinline|typedef| \\
+  \hline
+  Vertex  & \lstinline|point_tag|    &  - \\
+  \hline
+  Line    & \lstinline|simplex_tag<1>|   & \lstinline|line_tag| \\
+  Line    & \lstinline|hypercube_tag<1>| & - \\
+  \hline 
+  Triangle & \lstinline|simplex_tag<2>|  & \lstinline|triangle_tag| \\
+  Quadrilateral & \lstinline|hypercube_tag<2>| & \lstinline|quadrilateral_tag| \\
+  \hline
+  Tetrahedron & \lstinline|simplex_tag<3>| & \lstinline|tetrahedron_tag| \\
+  Hexahedron & \lstinline|hypercube_tag<3>| & \lstinline|hexahedron_tag| \\
+  \hline
+ \end{tabular}
+\end{center}
+ The reference orientations of these cells can be found in Appendix \ref{chap:orientations}.
 \end{itemize}
 
-All geometric and topological types are then derived from the configuration class. To this end, {\ViennaGrid} provides
+All geometric and topological types inside the domain are then derived from the configuration class. To this end, {\ViennaGrid} provides
 a number of metafunctions that reside in namespace \lstinline|viennagrid::result_of|. The naming follows the conventions in the Boost libraries \cite{boost}.
 For a configuration class \lstinline|Config|, the respective types are obtained as follows:
 \begin{lstlisting}
@@ -79,11 +84,11 @@ For a configuration class \lstinline|Config|, the respective types are obtained 
  typedef result_of::ncell<Config, 0>::type   VertexType;
  typedef result_of::ncell<Config, 1>::type   EdgeType;
 \end{lstlisting}
-In particular, the type of any $n$-cell is obtained as
+In particular, the type of any $n$-cell in the domain is obtained as
 \begin{lstlisting}
  typedef result_of::ncell<Config, n>::type   ElementType;
 \end{lstlisting}
-where $n$ has to be replaced with the respective value. This allows to formulate algorithms such as domain boundary detection in a very general manner and can be used for recursively iterating through the $n$-cells of different dimension. In order to obtain the types of cells and facets, one should use the topological dimension from the cell tag:
+where $n$ has to be replaced with the respective value. This allows to formulate algorithms such as a domain boundary detection in a very general manner and can be used for recursively iterating through the $n$-cells of different dimension. In order to obtain the types of cells and facets, one should use the topological dimension from the cell tag:
 \begin{lstlisting}
  typedef Config::cell_tag                                CellTag;
  typedef result_of::ncell<Config, CellTag::dim-1>::type  FacetType;
@@ -142,15 +147,15 @@ As an example, linear finite elements need information about the cells and the v
  \label{tab:slim-domain-memory}
 \end{table}
 
-As shown in Tab.~\ref{tab:full-domain-memory} and Tab.~\ref{tab:slim-domain-memory}, storing facets and edges explicitly increases the total memory consumption by a factor of more then six. In cases where additional maps for the mapping from local to global $n$-cell orientations are stored together with the topological boundary information, the difference in memory consumption is above one order of magnitude.
-
-\NOTE{Note that in {\ViennaGrid} a cell always stores pointers to its vertices. Similarly, the domain always stores the cells and vertices.}
+As shown in Tab.~\ref{tab:full-domain-memory} and Tab.~\ref{tab:slim-domain-memory}, storing facets and edges explicitly increases the total memory consumption by a factor of more than six. In cases where additional maps for the mapping from local to global $n$-cell orientations are stored together with the topological boundary information, the difference in memory consumption is even higher.
 
 {\ViennaGrid} can be customized to switch seamlessly between the different storage models, as will be shown in the following subsections.
 
+\NOTE{Note that in {\ViennaGrid} a cell always stores pointers to its vertices. Similarly, the domain always stores the cells and vertices.}
+
 \subsection{Boundary $n$-Cells} \label{subsec:boundary-ncells-storage}
 
-This can be achieved in two ways:
+Disabling the storage of boundary $n$-cells can be achieved in two ways:
 \begin{itemize}
  \item \textbf{Method 1}: Use the provided macros. The storage of elements can be customized either for a particular configuration class, or globally for all domain configuration classes. To disable the storage of edges (i.e.~$1$-cells) inside a tetrahedron for a domain with configuration class \lstinline|MyConfig|, the line
   \begin{lstlisting}
@@ -168,32 +173,32 @@ VIENNAGRID_GLOBAL_DISABLE_BOUNDARY_NCELL(viennagrid::tetrahedron_tag,
 VIENNAGRID_ENABLE_BOUNDARY_NCELL(MyConfig,
                                  viennagrid::tetrahedron_tag, 1)
   \end{lstlisting}
- to enable the storage of edges inside a tetrahedron.
+ to enable the storage of edges inside a tetrahedron for a configuration class \lstinline|MyConfig|.
 
  \item \textbf{Method 2}: The macros above are shortcuts for class specializations. The first two macros expand to the following code:
 \begin{lstlisting}
 namespace viennagrid { namespace result_of {
     template <>
     struct bndcell_handling<MyConfig,
-                               viennagrid::tetrahedron_tag, 1>{
+                            viennagrid::tetrahedron_tag, 1>{
       typedef no_handling_tag    type;
     };
 
     template <typename ConfigType>
     struct bndcell_handling<ConfigType,
-                               viennagrid::tetrahedron_tag, 1>{
+                            viennagrid::tetrahedron_tag, 1>{
       typedef no_handling_tag    type;
     };
 } }
 \end{lstlisting}
 The third macro explained for method 1 results in the same code as the first macro, with the exception that \lstinline|no_handling_tag| is replaced with \lstinline|full_handling_tag|.
 
-Finally, we wish to point at a potential pitfall when disabling $n$-cells that are neither $0$-cells, $N-1$-cells nor $N$-cells: As example, we consider the case of disabling edges for a tetrahedron. Using the line
+Finally, we wish to point at a potential pitfall when disabling $n$-cells that are neither $0$-cells, $N-1$-cells, nor $N$-cells: Consider the case of disabling edges for a tetrahedron. Using the line
   \begin{lstlisting}
 VIENNAGRID_DISABLE_BOUNDARY_NCELL(MyConfig,
                                   viennagrid::tetrahedron_tag, 1)
   \end{lstlisting}
-only disables the edges for the tetrahedron, but still edges are pushed and stored inside the domain because the triangular facets of the tetrahedron store pointers to their edges. Thus, to completely disable the storage of any edges, one also has to disable the storage of edges for triangles. As a check, one should verify that the number of edges stored inside a domain \lstinline|my_domain| and obtained by 
+only disables the edges for the tetrahedron, but still edges are pushed and stored inside the domain, because the triangular facets of the tetrahedron store pointers to their edges. Thus, to completely disable the storage of any edges, one also has to disable the storage of edges for triangles. As a check, one should verify that the number of edges stored inside a domain \lstinline|my_domain| and obtained by 
  \begin{lstlisting}
   viennagrid::ncells<1>(my_domain).size()
  \end{lstlisting}
@@ -212,7 +217,7 @@ is zero.
 In cases where $n$-cells store boundary $k$-cells, $k<n$, it may be required to know the orientation of the globally (i.e.~in the domain) stored $k$-cell with respect to the local reference orientation of the $n$-cell. The common facet of the two tetrahedra in Fig.~\ref{fig:orientation-boundary-ncells} may be stored globally using the sequence of vertex indices $[1, 2, 3]$. Inside the tetrahedron $[0, 1, 2, 3]$ the facet again possesses the orientation $[1, 2, 3]$, thus matching the global orientation. However, within the tetrahedron $[4, 2, 1, 3]$ the facet has the local orientation $[2, 1, 3]$ (refer to the Appendix for an overview of reference orientations). For applications such as high-order finite elements, such a local orientation with respect to the cell is required.
 
 
-By default, {\ViennaGrid} stores the local orientation of each boundary $k$-cell inside the hosting $n$-cell. In order to disable the storage of these local orientations for scenarios where the local orientation is not needed, there are again two methods provided:
+By default, {\ViennaGrid} stores the local orientation of each boundary $k$-cell inside the hosting $n$-cell, where one byte per vertex of each $k$-cell is consumed. In order to disable the storage of these local orientations for scenarios where the local orientation is not needed, there are again two methods provided:
 \begin{itemize}
  \item \textbf{Method 1}: Using the macros provided. To disable the storage of local orientations of edges (i.e.~$1$-cells) inside a tetrahedron for a domain with configuration class \lstinline|MyConfig|, the line
 \begin{lstlisting}
@@ -221,15 +226,15 @@ VIENNAGRID_DISABLE_BOUNDARY_NCELL_ORIENTATION(MyConfig,
 \end{lstlisting}
 is sufficient. The second argument denotes the hosting $n$-cell tag, while the third argument denotes the topological dimension $k$ of the boundary $k$-cells.
 
-Similar as in the previous section, one can disable the storage of local orientations globally for all configuration classes by
+Similar to the previous section, one can disable the storage of local orientations globally for all configuration classes by
 \begin{lstlisting}
 VIENNAGRID_GLOBAL_DISABLE_BOUNDARY_NCELL_ORIENTATION(
                               viennagrid::tetrahedron_tag, 1) 
 \end{lstlisting}
-To selectively enable the storage of local orientation in a globally disabled setting, the macro \lstinline|VIENNAGRID_ENABLE_BOUNDARY_NCELL_ORIENTATION| can be used in the same way as \lstinline|VIENNAGRID_DISABLE_BOUNDARY_NCELL_ORIENTATION|.
+To selectively enable the storage of local orientations in a globally disabled setting, the macro \lstinline|VIENNAGRID_ENABLE_BOUNDARY_NCELL_ORIENTATION| can be used in the same way as \lstinline|VIENNAGRID_DISABLE_BOUNDARY_NCELL_ORIENTATION|.
 Again, it is recommended to define the macros in the source file containing \lstinline|main()| after the inclusion of the {\ViennaGrid} header files.
 
- \item \textbf{Method 2}: Instead of using the macros, one can instead manually adjust the meta-function \lstinline|bndcell_orientation|. The first macro of method 1 expands to
+ \item \textbf{Method 2}: Instead of using the macros, one may manually adjust the meta-function \lstinline|bndcell_orientation|. The first macro of method 1 expands to
  \begin{lstlisting}
 namespace viennagrid { namespace result_of {
   template <>
@@ -270,19 +275,15 @@ VIENNAGRID_ENABLE_NCELL_ID(viennagrid::config::tetrahedral_3d,
  \item \textbf{Method 2}:
 The macros from the first method expand to
 \begin{lstlisting}
- template <>
- struct element_id_handler<MyConfig, viennagrid::tetrahedron_tag>
- {
-   typedef pointer_id    type;
- };
+template <>
+struct element_id_handler<MyConfig, viennagrid::tetrahedron_tag>
+{  typedef pointer_id    type;  };
 \end{lstlisting}
 for the configuration class \lstinline|MyConfig|, and to
 \begin{lstlisting}
-    template <typename ConfigType>
-    struct element_id_handler<ConfigType, viennagrid::tetrahedron_tag>
-    {
-      typedef pointer_id    type;
-    };
+template <typename ConfigType>
+struct element_id_handler<ConfigType, viennagrid::tetrahedron_tag>
+{  typedef pointer_id    type;  };
 \end{lstlisting}
 for globally disabling the storage of IDs. To selectively enable IDs, \lstinline|integral_id| should be used instead of \lstinline|pointer_id|.
 
@@ -293,7 +294,7 @@ for globally disabling the storage of IDs. To selectively enable IDs, \lstinline
 
 \TIP{Have a look at \texttt{examples/tutorial/slim\_domain.cpp} and selectively enable or disable the storage of elements, local orientations and IDs to see the impact on total memory consumption. Note that the bytes per object may differ from Tab.~\ref{tab:full-domain-memory} and Tab.~\ref{tab:slim-domain-memory} depending on the use of local orientations and integral IDs.}
 
-\NOTE{Disabling $n$-cell IDs eliminates the possibility to store and access data for the respective $n$-cells with $\LandauO(1)$ costs, see Chapter [MISSING].}
+\NOTE{Disabling $n$-cell IDs eliminates the possibility to store and access data for the respective $n$-cells with $\LandauO(1)$ costs, see Chapter \ref{chap:data}.}
 
 \end{itemize}
 

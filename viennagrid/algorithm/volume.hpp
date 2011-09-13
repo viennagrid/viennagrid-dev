@@ -37,6 +37,15 @@ namespace viennagrid
 {
   namespace detail
   {
+    
+    //topologically zero-dimensional elements
+    template <typename ElementType>
+    typename ElementType::config_type::numeric_type
+    volume_impl(ElementType const & cell, viennagrid::point_tag)
+    {
+      return typename ElementType::config_type::numeric_type(1);
+    }
+    
     //topologically one-dimensional elements
     template <typename ElementType>
     typename ElementType::config_type::numeric_type
@@ -184,5 +193,5 @@ namespace viennagrid
     return detail::volume_domainsegment(d);
   }
   
-} //namespace viennashe
+} //namespace viennagrid
 #endif

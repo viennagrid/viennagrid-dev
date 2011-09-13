@@ -1,10 +1,10 @@
 \chapter{Data Storage and Retrieval} \label{chap:data}
 One of the central operations whenever dealing with meshes is the storage and the retrieval of data.
 A common approach is to model vertices, edges and the like as separate classes and add data members to them.
-{\ViennaGrid} does not follow this approach for two reasons:
+{\ViennaGrid} does not follow this approach for three reasons:
 \begin{enumerate}
  \item \textbf{Reusability}: As soon as a data member is added to any of these classes, the class is refined towards a particular use case. For example, adding a color data member to a triangle class reduces reusability for e.g.~Finite Element methods considerably.
- \item \textbf{Flexibility}: Whenever a data member needs to be added for a particular functionality, one has to carefully extend the existing class layout. Moreover, it is somewhere between hard to impossible to 'just add a data member for the moment' in a productive environment.
+ \item \textbf{Flexibility}: Whenever a data member needs to be added for a particular functionality, one has to carefully extend the existing class layout. Moreover, it is somewhere between hard to impossible to 'just add a data member for the moment' in a productive environment. Moreover, the class needs to be adjusted if the data type changes.
  \item \textbf{Efficiency}: A data member that is never used obviously wastes memory. For large numbers of object it might be even advisable to use special containers for data that is relevant for a tiny fraction of all objects only (e.g.~domain boundary flags). Apart from reduced memory footprint, the possibly tighter grouping of data allows for better CPU caching. 
 \end{enumerate}
 {\ViennaGrid} relies on {\ViennaData} \cite{ViennaData} for the storage of data associated with topological objects.
@@ -40,11 +40,14 @@ For objects that provide integral IDs ranging from $0$ to some number $N$, a sto
 \begin{lstlisting}
  std::vector< std::map<KeyType, DataType> >
 \end{lstlisting}
-for each \lstinline|ObjectType| is more appropriate. Since memory for all objects of the same type is used then, we refer to this scheme as a \emph{dense} data storage scheme. This can be obtained by first using (mind the VIENNAGRID prefix!)
+for each \lstinline|ObjectType| is more appropriate. Since memory for all objects of the same type is used then, we refer to this scheme as a \emph{dense} data storage scheme. It can be enabled by first using one of the macros (mind the VIENNAGRID prefix!)
 \begin{lstlisting}
- VIENNAGRID_ENABLE_ID_BASED_DATA_ACCESS_FOR_ELEMENT()
+VIENNAGRID_ENABLE_NCELL_ID_FOR_DATA(A, B)     //config A, n-cell-tag B
+VIENNAGRID_ENABLE_ALL_NCELL_ID_FOR_DATA(A)    //all n-cells with config A
+VIENNAGRID_GLOBAL_ENABLE_NCELL_ID_FOR_DATA(B) //all configs, n-cell-tag B
+VIENNAGRID_GLOBAL_ENABLE_ALL_NCELL_ID_FOR_DATA() //all configs, all n-cells
 \end{lstlisting}
-which configures {\ViennaData} to use the integral ID of the element. 
+with \lstinline|A| and \lstinline|B| denoting the configuration class and the $n$-cell tag respectively. This configures {\ViennaData} to use the integral ID of the element. 
 Second, dense storage can then be selectively enabled using one of the macros
 \begin{lstlisting}
  VIENNADATA_ENABLE_DENSE_DATA_STORAGE_FOR_*
@@ -53,7 +56,7 @@ where the star refers to \lstinline|KEY|, \lstinline|DATA|, \lstinline|OBJECT| o
 
 \NOTE{In order to use a dense storage scheme, the storage of IDs for the particular $n$-cells must not be disabled, cf.~Section \ref{subsec:ncell-ids}!}
 
-Moreover, the \lstinline|std::map<KeyType, DataType>| type may be too costly due to key comparisons. For example, the comparison of the strings \lstinline|"rather_long_string_1"| and \lstinline|"rather_long_string_2"| is not suitable for high-performance environment. In such cases, {\ViennaData}
+Moreover, the \lstinline|std::map<KeyType, DataType>| type may be too costly due to key comparisons. For example, it is immediately clear that a repeated comparison of the two strings \lstinline|"rather_long_string_1"| and \lstinline|"rather_long_string_2"| is not suitable for high-performance environments. In such cases, {\ViennaData}
 can be configured to dispatch based on the key type only, but not based on runtime information. Using the macro
 \begin{lstlisting}
  VIENNADATA_ENABLE_TYPE_BASED_KEY_DISPATCH(my_key)
@@ -63,7 +66,7 @@ changes to either
 \begin{lstlisting}
  std::map<ObjectIDType, DataType>
 \end{lstlisting}
-with \lstinline|ObjectIDType| being either a pointer or an integral ID, or
+with \lstinline|ObjectIDType| being either a pointer or an integral ID, or using a key type based dispatch to
 \begin{lstlisting}
  std::vector< DataType >
 \end{lstlisting}
