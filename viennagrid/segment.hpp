@@ -40,9 +40,10 @@ namespace viennagrid
     typedef detail::segment_layers_top<Conf, Conf::cell_tag::dim>     base_type;
     
     public:
+      /** @brief Provide access to the configuration class */
       typedef Conf                config_type;
 
-      //clean up any data associated with the segment if it is destroyed:
+      /** @brief Destructor. Cleans up any data associated with the segment if it is destroyed */
       ~segment_t() { viennadata::erase<viennadata::all, viennadata::all>()(*this); }
       
       using base_type::push_back;

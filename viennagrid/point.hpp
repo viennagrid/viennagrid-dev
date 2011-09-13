@@ -34,7 +34,11 @@ namespace viennagrid
   template <long d>
   struct dim_dispatcher;
   
-  //conversion facility:
+  /** @brief A conversion facility for transformations between coordinate systems 
+   * 
+   * @tparam FromPointType   The source point type
+   * @tparam ToPointType     The destination point type
+   */
   template <typename FromPointType, 
             typename ToPointType,
             typename FromCoordinateSystem = typename traits::coordinate_system<FromPointType>::type,
@@ -43,6 +47,7 @@ namespace viennagrid
   class coordinate_converter
   {
     public:
+      /** @brief By default, conversion is unknown, thus an error is forced when calling the functor */
       ToPointType operator()(FromPointType const & p_in)
       {
         typedef typename FromPointType::ERROR_COORDINATE_SYSTEM_UNKNOWN   type;
@@ -50,9 +55,7 @@ namespace viennagrid
   };
   
   
-  //
-  // conversion from Cartesian coordinate system
-  //
+  /** @brief A functor for the transformation from two-dimensional Cartesian coordinates to polar coodinates */
   template <typename FromPointType, 
             typename ToPointType>
   class coordinate_converter<FromPointType, ToPointType, cartesian_cs<2>, polar_cs>
@@ -67,6 +70,7 @@ namespace viennagrid
       }
   };
   
+  /** @brief A functor for the transformation from three-dimensional Cartesian coordinates to spherical coodinates */
   template <typename FromPointType, 
             typename ToPointType>
   class coordinate_converter<FromPointType, ToPointType, cartesian_cs<3>, spherical_cs>
@@ -82,6 +86,7 @@ namespace viennagrid
       }
   };
   
+  /** @brief A functor for the transformation from three-dimensional Cartesian coordinates to cylindrical coodinates */
   template <typename FromPointType, 
             typename ToPointType>
   class coordinate_converter<FromPointType, ToPointType, cartesian_cs<3>, cylindrical_cs>
@@ -97,11 +102,9 @@ namespace viennagrid
       }
   };
 
-  //
-  // convenience function for conversion to cartesian coordinates
-  //
   namespace result_of
   {
+    /** @brief Convenience metafunction for the conversion to Cartesian coordinates */
     template <typename PointType>
     struct cartesian_point
     {
@@ -109,16 +112,10 @@ namespace viennagrid
                                   viennagrid::cartesian_cs<viennagrid::traits::static_size<PointType>::value>
                                  >                    type;
     };
-    
-    /*template <typename PointType>
-    struct cartesian_point_t<PointType, viennagrid::cartesian_cs>
-    {
-      typedef PointType         type;
-    };*/
 
   }
   
-  
+  /** @brief Helper function for the conversion to Cartesian coordinates. Should not be called directly. Use to_cartesian() instead. */
   template <typename PointType, typename CoordinateSystem>
   typename result_of::cartesian_point<PointType>::type
   to_cartesian_impl(PointType const & p, CoordinateSystem const &)
@@ -129,6 +126,9 @@ namespace viennagrid
   }
 
   //public interface
+  /** @brief Convenience function for converting a point to Cartesian coordinates.
+   * 
+   * @tparam PointType   A point type for which the traits::coordinate_system<> metafunction can deduce the coordinate system */
   template <typename PointType>
   typename result_of::cartesian_point<PointType>::type
   to_cartesian(PointType const & p)
@@ -137,9 +137,7 @@ namespace viennagrid
   }
   
 
-  //
-  // conversion from polar coordinate system
-  //
+  /** @brief A functor for the transformation from polar coordinates to two-dimensional Cartesian coordinates. */
   template <typename FromPointType, 
             typename ToPointType>
   class coordinate_converter<FromPointType, ToPointType, polar_cs, cartesian_cs<2> >
@@ -155,9 +153,7 @@ namespace viennagrid
   };
   
 
-  //
-  // conversion from spherical coordinate system (r, theta, phi)
-  //
+  /** @brief A functor for the transformation from spherical coodinates to three-dimensional Cartesian coordinates. */
   template <typename FromPointType, 
             typename ToPointType>
   class coordinate_converter<FromPointType, ToPointType, spherical_cs, cartesian_cs<3> >
@@ -173,6 +169,7 @@ namespace viennagrid
       }
   };
 
+  /** @brief A functor for the transformation from spherical coodinates to cylindrical coordinates. */
   template <typename FromPointType, 
             typename ToPointType>
   class coordinate_converter<FromPointType, ToPointType, spherical_cs, cylindrical_cs>
@@ -189,9 +186,7 @@ namespace viennagrid
   };
 
   
-  //
-  // conversion from spherical cylindrical system (rho, phi, z)
-  //
+  /** @brief A functor for the transformation from cylindrical coodinates to three-dimensional Cartesian coordinates. */
   template <typename FromPointType, 
             typename ToPointType>
   class coordinate_converter<FromPointType, ToPointType, cylindrical_cs, cartesian_cs<3> >
@@ -207,6 +202,7 @@ namespace viennagrid
       }
   };
 
+  /** @brief A functor for the transformation from cylindrical coordinates to spherical coodinates. */
   template <typename FromPointType, 
             typename ToPointType>
   class coordinate_converter<FromPointType, ToPointType, cylindrical_cs, spherical_cs>
@@ -290,6 +286,7 @@ namespace viennagrid
     
   };
   
+  /** @brief Helper function for the transformation of any point to Cartesian coordinates. Should not be called directly - use to_cartesian() instead. */
   template <typename PointType, long d>
   PointType const &
   to_cartesian_impl(PointType const & p, cartesian_cs<d>)
@@ -297,6 +294,7 @@ namespace viennagrid
     return p;
   }
 
+  /** @brief Helper function for the transformation of any point to Cartesian coordinates. Should not be called directly - use to_cartesian() instead. */
   template <typename PointType, long d>
   PointType &
   to_cartesian_impl(PointType & p, cartesian_cs<d>)
@@ -457,6 +455,7 @@ namespace viennagrid
   
   /***************************** Point Type ************************/
   
+  /** @brief An exception class for invalid point indices */
   class point_index_out_of_bounds_exception : public std::exception
   {
     public:
@@ -474,9 +473,21 @@ namespace viennagrid
   };
   
 
+  /** @brief A helper class for filling point coordinates with values. */
   template <typename CoordType, long d>
-  struct point_filler;
+  struct point_filler
+  {
+    static void apply(CoordType * coords, CoordType x, CoordType y, CoordType z)
+    {
+      coords[0] = x;
+      coords[1] = y;
+      coords[2] = z;
+      for (long i=3; i<d; ++i)
+        coords[i] = 0;
+    }
+  };
   
+  /** @brief A helper class for filling point coordinates with values. Specialization for one dimension */
   template <typename CoordType>
   struct point_filler<CoordType, 1>
   {
@@ -486,6 +497,7 @@ namespace viennagrid
     }
   };
   
+  /** @brief A helper class for filling point coordinates with values. Specialization for two dimensions */
   template <typename CoordType>
   struct point_filler<CoordType, 2>
   {
@@ -496,6 +508,7 @@ namespace viennagrid
     }
   };
   
+  /** @brief A helper class for filling point coordinates with values. Specialization for three dimensions */
   template <typename CoordType>
   struct point_filler<CoordType, 3>
   {
@@ -520,21 +533,27 @@ namespace viennagrid
   class point_t
   {
     public:
+      /** @brief Publish the underlying numberic type of coordinates */
       typedef CoordType       value_type;
+      /** @brief STL-compatible typedef for the value returned by size() */
       typedef dim_type        size_type;
       
+      /** @brief Publish the geometric dimension of the point */
       enum { dim = CoordinateSystem::dim };
       
+      /** @brief Default constructor. Sets all entries to zero */
       point_t() 
       {
         point_filler<CoordType, dim>::apply(coords, 0, 0, 0);  //make sure that there is no bogus in the coords-array
       }
       
+      /** @brief Convenience constructor, initializing the point components with values */
       point_t(CoordType x, CoordType y = 0, CoordType z = 0)
       {
         point_filler<CoordType, dim>::apply(coords, x, y, z);
       }
       
+      /** @brief Constructor taking a point given in a different coordinate system */
       template <typename CoordType2, typename CoordinateSystem2>
       point_t(point_t<CoordType2, CoordinateSystem2> const & p2)
       {
@@ -543,12 +562,14 @@ namespace viennagrid
       }
 
       //explicit copy CTOR
+      /** @brief Copy constructor. Copies the entries. */
       point_t(point_t const & other)
       {
         for (size_type i=0; i<size_type(dim); ++i)
           coords[i] = other.coords[i];
       }
 
+      /** @brief Assignment operator for a point with the same coordinate system */
       point_t & operator=(point_t const & p2)
       {
         for (size_type i=0; i<size_type(dim); ++i)
@@ -557,6 +578,7 @@ namespace viennagrid
       }
       
       
+      /** @brief Assignment operator for a point given in a different coordinate system */
       template <typename CoordType2, typename CoordinateSystem2>
       point_t & operator=(point_t<CoordType2, CoordinateSystem2> const & p2)
       {
@@ -565,18 +587,21 @@ namespace viennagrid
         return *this;
       }
       
+      /** @brief Read/Write access to the coordinate at position 'index' */
       CoordType & operator[](size_type index) 
       {
         assert(index < dim);
         return coords[index]; 
       }
       
+      /** @brief Read access to the coordinate at position 'index' */
       CoordType const & operator[](size_type index) const
       {
         assert(index < dim);
         return coords[index]; 
       }
       
+      /** @brief STL-type checked read/write access to the coordinate at position 'index'. Throws an exception if 'index' is invalid. */
       CoordType at(size_type index)
       {
         if (index < 0 || index >= dim)
@@ -585,6 +610,7 @@ namespace viennagrid
         return coords[index];
       }
 
+      /** @brief STL-type checked read access to the coordinate at position 'index'. Throws an exception if 'index' is invalid. */
       CoordType const & at(size_type index) const
       {
         if (index < 0 || index >= dim)
@@ -601,22 +627,26 @@ namespace viennagrid
       //
       
       //with point:
+      /** @brief Convenience overload for the addition of points. */
       point_t operator+(point_t const & other) const
       {
         return CoordinateSystem::add(*this, other);
       }
 
+      /** @brief Convenience overload for the inplace addition of points. */
       point_t & operator+=(point_t const & other)
       {
         CoordinateSystem::inplace_add(*this, other);
         return *this;
       }
 
+      /** @brief Convenience overload for the subtraction of points. */
       point_t operator-(point_t const & other) const
       {
         return CoordinateSystem::subtract(*this, other);
       }
       
+      /** @brief Convenience overload for the inplace subtraction of points. */
       point_t & operator-=(point_t const & other)
       {
         CoordinateSystem::inplace_subtract(*this, other);
@@ -625,6 +655,7 @@ namespace viennagrid
       
       
       //with CoordType
+      /** @brief Convenience overload for stretching the vector given by the point. The vector is stretched in the Euclidian space - thus coordinates are transformed appropriately if required */
       point_t & operator*=(CoordType factor)
       {
         CoordinateSystem::inplace_stretch(*this, factor);
@@ -633,6 +664,7 @@ namespace viennagrid
         return *this;
       }
       
+      /** @brief Convenience overload for stretching the vector given by the point. The vector is stretched in the Euclidian space - thus coordinates are transformed appropriately if required */
       point_t & operator/=(CoordType factor)
       {
         CoordinateSystem::inplace_stretch(*this, 1.0 / factor);
@@ -641,6 +673,7 @@ namespace viennagrid
         return *this;
       }
 
+      /** @brief Convenience overload for stretching the vector given by the point. The vector is stretched in the Euclidian space - thus coordinates are transformed appropriately if required */
       point_t operator*(CoordType factor) const
       {
         point_t ret(*this);
@@ -650,6 +683,7 @@ namespace viennagrid
         //return ret;
       }
 
+      /** @brief Convenience overload for stretching the vector given by the point. The vector is stretched in the Euclidian space - thus coordinates are transformed appropriately if required */
       point_t operator/(CoordType factor) const
       {
         point_t ret(*this);
@@ -664,7 +698,7 @@ namespace viennagrid
       CoordType coords[dim];
   };
 
-  
+  /** @brief Overload for stretching a vector from the left. */
   template <typename CoordType, typename CoordinateSystem>
   point_t<CoordType, CoordinateSystem>
   operator*(double val, point_t<CoordType, CoordinateSystem> const & p)
@@ -679,6 +713,7 @@ namespace viennagrid
     return p * val;
   }*/
 
+  /** @brief Overload of the output stream operator. Allows simple printing to screen or streaming to file */
   template <typename CoordType, typename CoordinateSystem>
   std::ostream& operator << (std::ostream & os, point_t<CoordType, CoordinateSystem> const & p)
   {
@@ -688,9 +723,8 @@ namespace viennagrid
     return os;
   }
   
-  //
-  //
-  //
+
+/** @brief This class provides a less-than comparison for points. Entries are checked for inequality, starting from the first and continuing only in the case of equality. */
   struct point_less
   {
     template <typename PointType>

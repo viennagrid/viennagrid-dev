@@ -26,6 +26,7 @@ namespace viennagrid
 {
   namespace config
   {
+    /** @brief Predefined configuration class for two-dimensional hypercube cells (quadrilaterals) in a 2d geometry using Cartesian coordinates. */
     struct quadrilateral_2d
     {
       typedef double                                numeric_type;
@@ -33,6 +34,7 @@ namespace viennagrid
       typedef viennagrid::quadrilateral_tag         cell_tag;
     };
 
+    /** @brief Predefined configuration class for two-dimensional hypercube cells (quadrilaterals) in a 3d geometry using Cartesian coordinates. */
     struct quadrilateral_3d
     {
       typedef double                                numeric_type;
@@ -40,6 +42,7 @@ namespace viennagrid
       typedef viennagrid::quadrilateral_tag         cell_tag;
     };
     
+    /** @brief Predefined configuration class for three-dimensional hypercube cells (hexahedra) in a 3d geometry using Cartesian coordinates. */
     struct hexahedral_3d
     {
       typedef double                                numeric_type;

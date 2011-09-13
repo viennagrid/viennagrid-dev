@@ -25,12 +25,11 @@ namespace viennagrid
   
   namespace traits
   {
-    //
-    //  Dimension retrieval
-    //
+    /** @brief  Returns the geometric dimension of a point */
     template <typename PointType>
     struct dimension;
     
+    /** @brief  Returns the geometric dimension of a point. Specialization for a ViennaGrid point */
     template <typename CoordType, typename CoordinateSystem>
     struct dimension< point_t<CoordType, CoordinateSystem> >
     {
@@ -38,9 +37,7 @@ namespace viennagrid
     };
 
     
-    //
-    //  Coordinate system retrieval
-    //
+    /** @brief Returns the coordinate system of a point. Must be specialized for a user-provided point type */
     template <typename PointType>
     struct coordinate_system
     {
@@ -48,6 +45,7 @@ namespace viennagrid
       typedef typename PointType::ERROR_UNKNOWN_COORDINATE_SYSTEM_FOR_POINT_TYPE    type;
     };
     
+    /** @brief Returns the coordinate system of a point. Specialization for a ViennaGrid point. */
     template <typename CoordType, typename CoordinateSystem>
     struct coordinate_system< point_t<CoordType, CoordinateSystem> >
     {
@@ -55,18 +53,18 @@ namespace viennagrid
     };
 
     
-    //
-    //  Size retrieval
-    //
+    /** @brief Returns the static (compile time) size of a point */
     template <typename PointType>
     struct static_size;
 
+    /** @brief Returns the static (compile time) size of a point. Specialization for a ViennaGrid point. */
     template <typename CoordType, typename CoordinateSystem>
     struct static_size< point_t<CoordType, CoordinateSystem> >
     {
       enum { value = CoordinateSystem::dim };
     };
 
+    /** @brief Returns the dynamic (run time) size of a point. Assumes a .size() member. Other cases must be provided with overloads */
     template <typename PointType>
     std::size_t dynamic_size(PointType const & p)
     {
@@ -74,12 +72,11 @@ namespace viennagrid
     }
     
     
-    //
-    //  Value Type retrieval
-    //
+    /** @brief  Value Type retrieval for a point. Returns the numeric type of each coordinate entry */
     template <typename PointType>
     struct value_type;
 
+    /** @brief  Value Type retrieval for a point. Returns the numeric type of each coordinate entry. Specialization for a ViennaGrid point. */
     template <typename CoordType, typename CoordinateSystem>
     struct value_type< point_t<CoordType, CoordinateSystem> >
     {

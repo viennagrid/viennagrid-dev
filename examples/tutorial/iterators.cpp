@@ -175,7 +175,6 @@ int main()
   typedef viennagrid::result_of::ncell_range<CellType, CellTag::dim-1>::type    FacetOnCellRange;
   typedef viennagrid::result_of::iterator<FacetOnCellRange>::type               FacetOnCellIterator;
 
-  std::size_t vertices_visited = 0;
   for (CellIterator cit = cells.begin(); cit != cells.end(); ++cit) //iterate over all cells
   {
     std::cout << *cit << std::endl;

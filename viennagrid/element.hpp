@@ -20,9 +20,6 @@
 
 
 #include "viennagrid/forwards.h"
-//#include "viennagrid/topology/point.hpp"
-//#include "viennagrid/iterators.hpp"
-//#include "viennagrid/detail/element_orientation.hpp"
 #include "viennagrid/detail/element_iterators.hpp"
 #include "viennagrid/detail/boundary_ncell_layer.hpp"
 
@@ -32,6 +29,11 @@ namespace viennagrid
 {
   
   //////////////  Top Level configuration //////////
+  /** @brief The main n-cell class. Assembled by recursive inheritance
+   * 
+   * @tparam ConfigType    Configuration class
+   * @tparam ElementTag    A tag denoting the particular topological shape of the n-cell
+   */
   template <typename ConfigType,
             typename ElementTag>
   class element_t :
@@ -45,8 +47,11 @@ namespace viennagrid
       typedef topology::bndcells<ElementTag, 0>                                 VertexSpecs;
 
     public:
+      /** @brief Publish the configuration class */
       typedef ConfigType                                       config_type;
+      /** @brief Tag of the n-cell */
       typedef ElementTag                                       tag;
+      /** @brief Publish ID handling class for dispatches */
       typedef typename result_of::element_id_handler<ConfigType, point_tag>::type::id_type    id_type;
 
       element_t ( ) {};   //construction of "template" for this type
@@ -57,12 +62,14 @@ namespace viennagrid
         this->id(e2.id());
       };
 
+      /** @brief Callback function used for filling the domain */
       template <typename DomainType>
       void fill(DomainType & dom)
       {
         Base::fill_level(dom);
       }
 
+      /** @brief Set the vertices defining the n-cell */
       void vertices(VertexType **vertices_)
       {
         for(int i=0; i<VertexSpecs::num; i++)
@@ -75,6 +82,7 @@ namespace viennagrid
 
   };
 
+  /** @brief Overload for the output streaming operator */
   template <typename ConfigType, typename ElementTag>
   std::ostream & operator<<(std::ostream & os, element_t<ConfigType, ElementTag> const & el)
   {
@@ -95,6 +103,7 @@ namespace viennagrid
   
   
   //vertex-type needs separate treatment:
+  /** @brief Specialization of the main n-cell class for vertices. Does not need to do any recursive inheritance here. */
   template <typename ConfigType>
   class element_t <ConfigType, point_tag> :
     public result_of::element_id_handler<ConfigType, point_tag>::type
@@ -133,22 +142,30 @@ namespace viennagrid
         return *this;
       }
 
+      /** @brief Provide access to the geometrical point object defining the location of the vertex in space */
       PointType & point() { return point_; }
+      /** @brief Provide access to the geometrical point object defining the location of the vertex in space. const-version. */
       PointType const & point() const { return point_; }
       
       //convenience access to coordinates of the vertex:
+      /** @brief Convenience access to the coordinates of the point */
       CoordType & operator[](std::size_t i) { return point_[i]; }
+      /** @brief Convenience access to the coordinates of the point. const-version*/
       CoordType const & operator[](std::size_t i) const { return point_[i]; }
       
+      /** @brief Convenience forward for obtaining the geometrical dimension of the underlying Euclidian space. */
       std::size_t size() const { return point_.size(); }
 
+      /** @brief Convenience less-than comparison function, forwarding to the point */
       bool operator<(const element_t e2) const { return point_ < e2.point_; }
+      /** @brief Convenience greater-than comparison function, forwarding to the point */
       bool operator>(const element_t e2) const { return point_ > e2.point_; }
 
     private:
       PointType point_;
   };
 
+  /** @brief Overload for the output streaming operator for the vertex type */
   template <typename ConfigType>
   std::ostream & operator<<(std::ostream & os, element_t<ConfigType, point_tag> const & el)
   {

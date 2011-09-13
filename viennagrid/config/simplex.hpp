@@ -26,7 +26,7 @@ namespace viennagrid
 {
   namespace config
   {
-    //1d geometry:
+    /** @brief Predefined configuration class for one-dimensional simplex cells (lines) in a 1d geometry using Cartesian coordinates. */
     struct line_1d
     {
       typedef double                                numeric_type;
@@ -34,7 +34,8 @@ namespace viennagrid
       typedef viennagrid::simplex_tag<1>            cell_tag;
     };
     
-    //2d geometry:
+
+    /** @brief Predefined configuration class for one-dimensional simplex cells (lines) in a 2d geometry using Cartesian coordinates. */
     struct line_2d
     {
       typedef double                                numeric_type;
@@ -42,6 +43,7 @@ namespace viennagrid
       typedef viennagrid::simplex_tag<1>            cell_tag;
     };
 
+    /** @brief Predefined configuration class for two-dimensional simplex cells (triangles) in a 2d geometry using Cartesian coordinates. */
     struct triangular_2d
     {
       typedef double                                numeric_type;
@@ -50,6 +52,7 @@ namespace viennagrid
     };
     
     //3d geometry:
+    /** @brief Predefined configuration class for one-dimensional simplex cells (lines) in a 3d geometry using Cartesian coordinates. */
     struct line_3d
     {
       typedef double                                numeric_type;
@@ -57,6 +60,7 @@ namespace viennagrid
       typedef viennagrid::simplex_tag<1>            cell_tag;
     };
 
+    /** @brief Predefined configuration class for two-dimensional simplex cells (triangles) in a 3d geometry using Cartesian coordinates. */
     struct triangular_3d
     {
       typedef double                                numeric_type;
@@ -64,6 +68,7 @@ namespace viennagrid
       typedef viennagrid::triangle_tag              cell_tag;
     };
 
+    /** @brief Predefined configuration class for three-dimensional simplex cells (tetrahedra) in a 3d geometry using Cartesian coordinates. */
     struct tetrahedral_3d
     {
       typedef double                                numeric_type;
