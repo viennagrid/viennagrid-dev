@@ -78,8 +78,11 @@ namespace viennagrid
 }
 
 // Configure ViennaData to use a type-based dispatch on the domain
+
+/** @brief Customizations of keys for ViennaData */
 namespace viennadata
 {
+  /** @brief Customizations of keys for ViennaData */
   namespace config
   {
     template <typename ConfigType>

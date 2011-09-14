@@ -11,6 +11,9 @@ Table of Contents
 A. License
 
 
+(for detailed informations, have a look into the doc/ folder containing a PDF manual and doxygen-created reference documentation)
+
+
 
 1. Requirements
 -----------------
@@ -40,8 +43,8 @@ Unix-based clients:
    $> make
    (alternatively, you can build them individually via 'make example1', 'make example2', etc.
  * Execute them via
-   $> ./example1
-   $> ./example2
+   $> ./algorithms
+   $> ./iterators
    etc.
 
 
@@ -50,27 +53,26 @@ Unix-based clients:
 
 ---- ViennaGrid-1.X.X
    |
-   |-- auxiliary/ : Auxiliary Files (i.e. the OpenCL source code tree and the converter for the header files)
+   |-- build/ - Build folder for the examples
    | 
-   |-- doc/ - documentation (LaTeX and doxygen)
+   |-- doc/ - Documentation (LaTeX and doxygen)
    | 
-   |-- examples/ - tutorial and benchmarking applications
+   |-- examples/ - Tutorial and benchmarking applications
         | 
-        |-- testdata/ - test data for the tutorials and benchmarks
+        |-- data/ - Test meshes for the tutorials
         | 
-        |-- benchmarks/ - A small benchmarking suite
-        |
         |-- tutorial/ - Some tutorials explaining the usage of ViennaGrid
    | 
    |-- tests/ - Automated test suite
    | 
-   |-- viennagrid/ : the library source code
+   |-- viennagrid/ - The library source code
 
 
 4. Authors and Contact
 ------------------------
 
 Karl Rupp (rupp@iue.tuwien.ac.at)
+Josef Weinbub (weinbub@iue.tuwien.ac.at)
 
 ViennaGrid was developed under the aegis of the 'Institute for Microelectronics' and the 'Institute for Analysis and Scientific Computing' at the 'Vienna University of Technology'.
 

@@ -1,5 +1,5 @@
 \chapter{The Main Entities} \label{chap:entities}
-In the following, the main entities of ViennaGrid are explained. The nomenclature essentially follows the convention from topology and can partly be found in other mesh libraries. Note that the purpose of this manual is not to give exact definitions from the field of geometry or topology, but rather to establish the link between abstract concepts and their representation in code within {\ViennaGrid}.
+In the following, the main entities of ViennaGrid are explained. The nomenclature essentially follows the convention from topology and can partly be found in other mesh libraries. Note that the purpose of this manual is not to give exact definitions from the field of geometry or topology, but rather to establish the link between abstract concepts and their representation in code within {\ViennaGrid}. First, geometrical objects are discussed, then topological objects and finally complexes of topological objects.
 
 \begin{figure}[tb]
 \centering
@@ -10,7 +10,7 @@ In the following, the main entities of ViennaGrid are explained. The nomenclatur
 
 
 \section{Points (Geometrical Objects)}
-The underlying space in {\ViennaGrid} is the $m$-dimensional Euclidian space $\mathbb{E}^m$, which we identify with the real coordinate space $\mathbb{R}^m$ in the following.
+The underlying space in {\ViennaGrid} is the $m$-dimensional Euclidian space $\mathbb{E}^m$, which is identified with the real coordinate space $\mathbb{R}^m$ in the following.
 A \emph{point} refers to an element $\vector x$ in $\mathbb{R}^m$ and does not carry any topological information. On the other hand, a point equivalently refers to the vector from the origin pointing to $\vector x$.
 
 Given a configuration class \lstinline|Config| for {\ViennaGrid} (cf.~Chap.~\ref{chap:domainconfig}), a point is defined and manipulated as follows:
@@ -20,7 +20,8 @@ Given a configuration class \lstinline|Config| for {\ViennaGrid} (cf.~Chap.~\ref
  // obtain the point type from a meta-function
  typedef result_of::point<Config>::type    PointType;
  // For a three-dimensional Cartesian space (double precision),
- // the type of the point is returned as point_t<double, 3>
+ // the type of the point is returned as
+ // point_t<double, cartesian_cs<3> >
 
  // Instantiate two points:
  PointType p1(0, 1, 2);
@@ -31,7 +32,7 @@ Given a configuration class \lstinline|Config| for {\ViennaGrid} (cf.~Chap.~\ref
  std::cout << p1 - 2.0 * p3 << std::endl;
  std::cout << "x-coordinate of p1: " << p1[0] << std::endl;
 \end{lstlisting}
-The operators \lstinline|+, -, *, /, +=, -=, *=| and \lstinline|/=| can be used in the usual mnemonic manner. \lstinline|operator[]| grants access to the individual coordinate entries.
+The operators \lstinline|+, -, *, /, +=, -=, *=| and \lstinline|/=| can be used in the usual mnemonic manner. \lstinline|operator[]| grants access to the individual coordinate entries and allows for a direct manipulation.
 
 Aside from the standard Cartesian coordinates, {\ViennaGrid} can also handle polar, spherical and cylindrical coordinate systems.
 This is typically defined globally within the configuration class \lstinline|Config| for the whole domain, and the meta-function in the previous snippet creates the correct point type. However, if no global configuration class is available, the point types can be obtained as
@@ -43,12 +44,12 @@ This is typically defined globally within the configuration class \lstinline|Con
  typedef point<double, 3, spherical_cs>     SphericalPoint3d;
  typedef point<double, 3, cylindrical_cs>   CylindricalPoint3d;
 \end{lstlisting}
-Conversions between the coordinate systems are carried out implicitly:
+Conversions between the coordinate systems are carried out implicitly whenever a point is assigned to a point with a different coordinate system:
 \begin{lstlisting}
  CylindricalPoint3d p1(1, 1, 5);
  CartesianPoint3d p2 = p1; //implicit conversion
 \end{lstlisting}
-An explicit conversion to the Cartesian coordinate system is provided by the free function \lstinline|to_cartesian()|.
+An explicit conversion to the Cartesian coordinate system is provided by the free function \lstinline|to_cartesian()|, which allows for the implementation of generic algorithms based on Cartesian coordinate systems without tedious dispatches based on the coordinate systems involved.
 
 \TIP{For details on the coordinate systems, refer to the reference documentation in \texttt{doc/doxygen/}.}
 
@@ -109,10 +110,10 @@ It should be noted that {\ViennaGrid} allows the use of conforming and non-confo
 \begin{figure}[tb]
 \centering 
    \subfigure[Conforming cell complex.]{
-\includegraphics[width=0.35\textwidth]{figures/conforming.eps}
-} \hspace*{1cm}
+\includegraphics[width=0.23\textwidth]{figures/conforming.eps}
+} \hspace*{2cm}
    \subfigure[Non-conforming cell complex.]{ \label{subfig:non-conforming}
-\includegraphics[width=0.35\textwidth]{figures/non-conforming}
+\includegraphics[width=0.23\textwidth]{figures/non-conforming}
  }
  \caption{Illustration of conforming and non-conforming cell complexes. The vertex in the center of \subref{subfig:non-conforming} intersects an edge in the interior, violating the conformity criterion.}
  \label{fig:conformity}
@@ -130,7 +131,6 @@ The instantiation of a {\ViennaGrid} domain object requires a configuration clas
 
  DomainType domain; //create the domain object
 \end{lstlisting}
-
 
 \section{Segment}
 A \emph{segment} $\Omega_i$ refers to a subset of the $N$-cells in a domain $\Omega$. In addition, a segment may or may not have explicit knowledge of the boundary $n$-cells of its $N$-cells. Unlike a domain, a segment is not a container for its elements. Instead, only references (pointers) to the elements in the domain are stored. In common C++ language, a \emph{segment} represents a so-called \emph{view} on the domain.

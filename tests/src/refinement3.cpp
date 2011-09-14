@@ -159,7 +159,7 @@ int main()
   
   std::string path = "../../examples/data/";
   
-  std::string infile = path + "sshape3d-pimped.mesh";
+  std::string infile = path + "interconnect3d.mesh";
   std::string outfile = "out"; // without ending
   
   test<viennagrid::config::tetrahedral_3d>(infile, outfile);

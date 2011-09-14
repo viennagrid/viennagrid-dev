@@ -51,6 +51,7 @@
     @brief Contains forward declarations and definition of small classes that must be defined at an early stage
 */
 
+/** @brief The main ViennaGrid namespace. Most functionality resides in this namespace */
 namespace viennagrid
 {
   /** @brief A global size_type equivalent for use throughout ViennaData. */
@@ -237,6 +238,7 @@ namespace viennagrid
       long id_;
   };
   
+  /** @brief Namespace for definition and handling of the individual topological elements (triangles, hexahedra, etc.) */
   namespace topology
   {
     
@@ -270,7 +272,7 @@ namespace viennagrid
   }
   
   
-  
+  /** @brief The metafunction layer. Provides type generators that derive the respective type from the domain configuration */
   namespace result_of
   {
     /** @brief Metafunction that returns the ID handling class of an n-cell */
@@ -500,6 +502,7 @@ namespace viennagrid
   /** @brief A tag denoting local refinement */
   struct local_refinement_tag {};
   
+  /** @brief The namespace holding the implementations of domains, segments and ncells as well as some algorithm implementations. Not of interest for library users */
   namespace detail
   {
     template <typename ConfigTypeIn, typename ConfigTypeOut>
@@ -522,6 +525,7 @@ namespace viennagrid
   struct voronoi_box_volume_key {}; 
 }
 
+/*
 namespace viennadata
 {
   namespace config
@@ -545,6 +549,12 @@ namespace viennadata
     };
   }
 }
+*/
+
+// tell ViennaData to use a type-based key dispatch for the refinement and the voronoi keys
+VIENNADATA_ENABLE_TYPE_BASED_KEY_DISPATCH(viennagrid::refinement_key)
+VIENNADATA_ENABLE_TYPE_BASED_KEY_DISPATCH(viennagrid::voronoi_interface_area_key)
+VIENNADATA_ENABLE_TYPE_BASED_KEY_DISPATCH(viennagrid::voronoi_box_volume_key)
 
 ////// storage scheme for cells ////////
 

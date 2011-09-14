@@ -7,6 +7,7 @@ Things todo/verify for a release
 * Delete clean.sh in project root folder
 * Delete KDevelop files in project root folder
 * Delete all files in build/ except README
+* Delete doc/manual/fig folder
 * Verify correct version number in PDF Manual and Doxygen
 * Delete this file
 * Perform a few some test runs on different machines

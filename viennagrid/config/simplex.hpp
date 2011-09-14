@@ -28,6 +28,7 @@
 
 namespace viennagrid
 {
+  /** @brief Provides a number of predefined configuration classes, which cover the most frequent use cases. */
   namespace config
   {
     /** @brief Predefined configuration class for one-dimensional simplex cells (lines) in a 1d geometry using Cartesian coordinates. */

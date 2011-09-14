@@ -75,16 +75,12 @@ If the range is either a vertex range of a domain, or a cell range of a domain o
 \begin{lstlisting}
  NCellRange elements = viennagrid::ncells<n>(domain);
  for (std::size_t i=0; i<elements.size(); ++i)
- { 
-   do_something(elements[i]);
- }
+ { do_something(elements[i]); }
 \end{lstlisting}
 It is also possible to use the range only implicitly:
 \begin{lstlisting}
  for (std::size_t i=0; i<viennagrid::ncells<n>(domain).size(); ++i)
- {
-   do_something(viennagrid::ncells<n>(domain)[i]);
- }
+ { do_something(viennagrid::ncells<n>(domain)[i]); }
 \end{lstlisting}
 where $n$ has to be replaced with the topological dimension of vertices and cells respectively. However, since the repeated construction of the range object can have non-negligible setup costs, the latter code is not recommended.
 
@@ -101,12 +97,13 @@ As in the previous section, the range and iterator types are obtained from the \
 \begin{lstlisting}
  //non-const:
  typedef viennagrid::result_of::ncell_range<CellType, 1>::type    EdgeOnCellRange;
- typedef result_of::iterator<EdgeOnCellRange>::type          EdgeOnCellIterator;
+ typedef result_of::iterator<EdgeOnCellRange>::type    EdgeOnCellIterator;
 \end{lstlisting}
 The \lstinline|const|-version is again obtained by using \lstinline|const_ncell_range| instead of \lstinline|ncell_range|.
 Mind that the first argument of \lstinline|ncell_range| denotes the enclosing entity (the cell) and the second argument denotes the topological dimension ($1$ for an edge), and thus preserves the structure already used for the type retrieval for iterations on the domain.
 
-Iteration is then carried out in the same manner as for a domain, with \lstinline|cell| taking the role of the \lstinline|domain| in the previous chapter:
+Iteration is then carried out in the same manner as for a domain, with \lstinline|cell| taking the role of the \lstinline|domain| in the previous chapter.
+The following snippet print all edges of a \lstinline|cell|:
 \begin{lstlisting}
  //Note: ... = viennagrid::ncells(cell); will also work in the next line
  EdgeOnCellRange edges_on_cell = viennagrid::ncells<1>(cell);
@@ -115,7 +112,6 @@ Iteration is then carried out in the same manner as for a domain, with \lstinlin
                        ++eocit)
  {  std::cout << *eocit << std::endl; } 
 \end{lstlisting}
-will print all edges of the \lstinline|cell|.
 
 For all topological dimensions, an index-based iteration is possible provided that the storage of the respective boundary $k$-cells has not been disabled. The previous code snippet can thus also be written as
 \begin{lstlisting}
@@ -185,18 +181,14 @@ An iteration over all edges is then possible in the usual STL-type manner. For e
  for (EdgeOnVertexIterator eovit = edges_on_v.begin();
                            eovit != edges_on_v.end();
                          ++eovit)
- {
-   std::cout << *eovit << std::endl;
- }
+ { std::cout << *eovit << std::endl; }
 \end{lstlisting}
 One may also use a shorter form that does not set up the range explicitly:
 \begin{lstlisting}
  for (EdgeOnVertexIterator eovit = viennagrid::ncells<1>(v,domain).begin();
                            eovit != viennagrid::ncells<1>(v,domain).end();
                          ++eovit)
- {
-   std::cout << *eovit << std::endl;
- }
+ { std::cout << *eovit << std::endl; }
 \end{lstlisting}
 Here, the template parameter $1$ for the \lstinline|ncells| function must not be omitted.
 

@@ -186,13 +186,13 @@ ReadWrite=true
 
 [item:algorithms.tex]
 archive=true
-column=27
+column=34
 encoding=UTF-8
 highlight=LaTeX
-line=231
+line=0
 mode=LaTeX
 open=true
-order=5
+order=2
 
 [item:changelogs.tex]
 archive=true
@@ -209,10 +209,10 @@ archive=true
 column=11
 encoding=UTF-8
 highlight=LaTeX
-line=23
+line=24
 mode=LaTeX
-open=false
-order=2
+open=true
+order=0
 
 [item:cover.tex]
 archive=true
@@ -241,18 +241,18 @@ encoding=UTF-8
 highlight=LaTeX
 line=81
 mode=LaTeX
-open=true
+open=false
 order=3
 
 [item:domainconfig.tex]
 archive=true
-column=163
+column=27
 encoding=UTF-8
 highlight=LaTeX
-line=296
+line=229
 mode=LaTeX
-open=false
-order=5
+open=true
+order=3
 
 [item:domainsetup.tex]
 archive=true
@@ -266,13 +266,13 @@ order=6
 
 [item:entities.tex]
 archive=true
-column=0
+column=27
 encoding=UTF-8
 highlight=LaTeX
-line=100
+line=115
 mode=LaTeX
-open=false
-order=7
+open=true
+order=6
 
 [item:figures/entities.eps]
 archive=true
@@ -301,38 +301,38 @@ encoding=UTF-8
 highlight=LaTeX
 line=78
 mode=LaTeX
-open=true
+open=false
 order=4
 
 [item:introduction.tex]
 archive=true
-column=13
+column=65
 encoding=UTF-8
 highlight=LaTeX
-line=26
+line=43
 mode=LaTeX
-open=false
+open=true
 order=1
 
 [item:io.tex]
 archive=true
-column=20
+column=1
 encoding=UTF-8
 highlight=LaTeX
-line=168
+line=139
 mode=LaTeX
 open=true
-order=6
+order=4
 
 [item:iterators.tex]
 archive=true
-column=60
+column=37
 encoding=UTF-8
 highlight=LaTeX
-line=194
+line=190
 mode=LaTeX
-open=false
-order=4
+open=true
+order=5
 
 [item:keywords.tex]
 archive=true
@@ -356,13 +356,13 @@ order=-1
 
 [item:orientations.tex]
 archive=true
-column=87
+column=27
 encoding=UTF-8
 highlight=LaTeX
-line=4
+line=58
 mode=LaTeX
 open=true
-order=2
+order=7
 
 [item:setup.tex]
 archive=true
@@ -391,7 +391,7 @@ encoding=UTF-8
 highlight=BibTeX
 line=108
 mode=BibTeX
-open=true
+open=false
 order=1
 
 [item:viennagrid.kilepr]
@@ -409,14 +409,14 @@ archive=true
 column=0
 encoding=UTF-8
 highlight=LaTeX
-line=94
+line=126
 mode=LaTeX
-open=true
+open=false
 order=0
 
 [view-settings,view=0,item:algorithms.tex]
-CursorColumn=27
-CursorLine=231
+CursorColumn=34
+CursorLine=0
 
 [view-settings,view=0,item:changelogs.tex]
 CursorColumn=21
@@ -424,7 +424,7 @@ CursorLine=1
 
 [view-settings,view=0,item:contributors.tex]
 CursorColumn=11
-CursorLine=23
+CursorLine=24
 
 [view-settings,view=0,item:cover.tex]
 CursorColumn=16
@@ -439,16 +439,16 @@ CursorColumn=123
 CursorLine=81
 
 [view-settings,view=0,item:domainconfig.tex]
-CursorColumn=163
-CursorLine=296
+CursorColumn=27
+CursorLine=229
 
 [view-settings,view=0,item:domainsetup.tex]
 CursorColumn=68
 CursorLine=143
 
 [view-settings,view=0,item:entities.tex]
-CursorColumn=0
-CursorLine=100
+CursorColumn=27
+CursorLine=115
 
 [view-settings,view=0,item:installation.tex]
 CursorColumn=0
@@ -459,16 +459,16 @@ CursorColumn=106
 CursorLine=78
 
 [view-settings,view=0,item:introduction.tex]
-CursorColumn=13
-CursorLine=26
+CursorColumn=65
+CursorLine=43
 
 [view-settings,view=0,item:io.tex]
-CursorColumn=20
-CursorLine=168
+CursorColumn=1
+CursorLine=139
 
 [view-settings,view=0,item:iterators.tex]
-CursorColumn=60
-CursorLine=194
+CursorColumn=37
+CursorLine=190
 
 [view-settings,view=0,item:keywords.tex]
 CursorColumn=0
@@ -479,8 +479,8 @@ CursorColumn=18
 CursorLine=1
 
 [view-settings,view=0,item:orientations.tex]
-CursorColumn=87
-CursorLine=4
+CursorColumn=27
+CursorLine=58
 
 [view-settings,view=0,item:setup.tex]
 CursorColumn=0
@@ -496,4 +496,4 @@ CursorLine=108
 
 [view-settings,view=0,item:viennagrid.tex]
 CursorColumn=0
-CursorLine=94
+CursorLine=126

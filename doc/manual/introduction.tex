@@ -41,9 +41,9 @@ One of the strengths of {\ViennaGrid} is the generic facility provided for stori
 
 A typical requirement for a meshing library is mesh refinement. This is in particular of interest for computational science, where singularities near corners need to be resolved sufficiently well. {\ViennaGrid} provides both uniform and adaptive refinement algorithms, cf.~Chapter \ref{chap:algorithms}, where also other geometric algorithms such as Voronoi information is covered.
 
-IO facilities are discussed in Chapter \ref{chap:io}, then library internals are discussed in Chapter \ref{chap:internals} and and design decisions in Chapter \ref{chap:design}.
+Input/Output facilities are discussed in Chapter \ref{chap:io}. Some of the library internals are discussed in Chapter \ref{chap:internals} and design decisions are outlined in Chapter \ref{chap:design}.
 
-There are of course other free software libraries having functional overlap with {\ViennaGrid}. We give a brief discussion of the pros and cons of selected libraries in the following. This should allow potential users of our library to get a better feeling of what to expect and what not to expect from {\ViennaGrid}. We have carefully checked the documentation of each project, but clearly cannot guarantee that all information is fully accurate.
+There are of course a number of other free software libraries having functional overlap with {\ViennaGrid}. We give a brief discussion of the pros and cons of selected libraries in the following. This should allow potential users of our library to get a better feeling of what to expect and what not to expect from {\ViennaGrid}. We have carefully checked the documentation of each project, but clearly cannot guarantee that all information is fully accurate.
 \begin{itemize}
   \item \textbf{CGAL} \cite{CGAL}: The focus of the Computational Geometry Algorithms Library (\texttt{CGAL}) is on geometrical algorithms such as the computation of convex hulls of point sets. It offers a mesh generation facility and provides iterators over cell vertices. However, the storage of quantities and the convenient traversal of mesh elements is not provided.
 

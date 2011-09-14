@@ -95,10 +95,28 @@ where $n$ has to be replaced with the respective value. This allows to formulate
  typedef result_of::ncell<Config, CellTag::dim>::type    CellType;
 \end{lstlisting}
 
-
 \TIP{Please note that in template classes and template functions one needs to add an extra \lstinline|typename| after each \lstinline|typedef| keyword in the code snippets above.}
 
-
+{\ViennaGrid} ships with a number of default configurations, which can directly be used without the need for setting up a separate config class:
+\begin{center}
+ \begin{tabular}{|l|l|}
+  \hline
+   Class Name           & Description \\
+  \hline
+   \lstinline|line_1d|  & one-dimensional mesh \\
+   \lstinline|line_2d|  & mesh of lines in 2d \\
+   \lstinline|line_3d|  & mesh of lines in 3d \\
+   \lstinline|triangular_2d| & triangular mesh in 2d \\
+   \lstinline|triangular_3d| & triangular mesh in 3d \\
+   \lstinline|tetrahedral_3d| & tetrahedral mesh in 2d \\
+   \lstinline|quadrilateral_2d| & quadrilateral mesh in 2d \\
+   \lstinline|quadrilateral_3d| & quadrilateral mesh in 3d \\
+   \lstinline|hexahedral_3d| & hexahedral mesh in 2d \\
+  \hline
+ \end{tabular}
+\end{center}
+The classes reside in namespace \lstinline|viennagrid::config| and in the files \lstinline|simplex.hpp| and \lstinline|others.hpp| (for non-simplex meshes) in the \lstinline|viennagrid/config| folder.
+Each of these configurations uses a numeric type \lstinline|double| and a Cartesian coordinate system.
 
 \section{Customizing Storage of $n$-Cells} \label{sec:customizing-storage}
 One of the outstanding features of {\ViennaGrid} over other libraries related to grid handling is the possibility to customize the internal storage of elements. By default, all $n$-cells of a domain are stored explicitly inside the domain. In addition, each $n$-cell stores links to its boundary $k$-cells, with $k<n$. While this overhead is not a concern for topologically one-dimensional meshes and moderate for topologically two-dimensional meshes, it can be a considerable issue for dimensions three and above. 
@@ -155,7 +173,7 @@ As shown in Tab.~\ref{tab:full-domain-memory} and Tab.~\ref{tab:slim-domain-memo
 
 \subsection{Boundary $n$-Cells} \label{subsec:boundary-ncells-storage}
 
-Disabling the storage of boundary $n$-cells can be achieved in two ways:
+Disabling the storage of boundary $n$-cells can be achieved in two ways, which are equivalent on a source-code level, but differ with respect to convenience:
 \begin{itemize}
  \item \textbf{Method 1}: Use the provided macros. The storage of elements can be customized either for a particular configuration class, or globally for all domain configuration classes. To disable the storage of edges (i.e.~$1$-cells) inside a tetrahedron for a domain with configuration class \lstinline|MyConfig|, the line
   \begin{lstlisting}
@@ -168,7 +186,7 @@ right after the {\ViennaGrid}-includes in the source file containing \lstinline|
 VIENNAGRID_GLOBAL_DISABLE_BOUNDARY_NCELL(viennagrid::tetrahedron_tag,
                                          1)
   \end{lstlisting}
- should be used. If one wishes to selectively enable the handling of boundary cells within a globally disabled environment, one can use e.g.
+ should be used. If one wishes to selectively enable the handling of boundary cells within a globally disabled storage of boundary $n$-cells, one can use e.g.
   \begin{lstlisting}
 VIENNAGRID_ENABLE_BOUNDARY_NCELL(MyConfig,
                                  viennagrid::tetrahedron_tag, 1)
@@ -209,7 +227,7 @@ is zero.
 \subsection{Local Orientations} \label{subsec:customize-local-orientations}
 \begin{figure}[tb]
 \centering
- \includegraphics[width=0.65\textwidth]{figures/interface-tets.eps}
+ \includegraphics[width=0.5\textwidth]{figures/interface-tets.eps}
  \caption{Boundary $n$-cells have different orientations with respect to different cells.}
  \label{fig:orientation-boundary-ncells}
 \end{figure}
@@ -222,7 +240,7 @@ By default, {\ViennaGrid} stores the local orientation of each boundary $k$-cell
  \item \textbf{Method 1}: Using the macros provided. To disable the storage of local orientations of edges (i.e.~$1$-cells) inside a tetrahedron for a domain with configuration class \lstinline|MyConfig|, the line
 \begin{lstlisting}
 VIENNAGRID_DISABLE_BOUNDARY_NCELL_ORIENTATION(MyConfig,
-                           viennagrid::tetrahedron_tag, 1) 
+                              viennagrid::tetrahedron_tag, 1) 
 \end{lstlisting}
 is sufficient. The second argument denotes the hosting $n$-cell tag, while the third argument denotes the topological dimension $k$ of the boundary $k$-cells.
 
@@ -239,10 +257,8 @@ Again, it is recommended to define the macros in the source file containing \lst
 namespace viennagrid { namespace result_of {
   template <>
   struct bndcell_orientation<MyConfig,
-                                viennagrid::tetrahedron_tag, 1>
-  {
-    typedef no_handling_tag    type;
-  };
+                             viennagrid::tetrahedron_tag, 1>
+  {  typedef no_handling_tag    type;  };
 }  }
  \end{lstlisting}
 Using the type \lstinline|full_handling_tag| instead of \lstinline|no_handling_tag| enables the storage of local orientations.
