@@ -18,6 +18,9 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
+/** @file iterators.hpp
+    @brief Convenience include for all iterators
+*/
 
 #include "viennagrid/detail/element_iterators.hpp"
 #include "viennagrid/detail/segment_iterators.hpp"

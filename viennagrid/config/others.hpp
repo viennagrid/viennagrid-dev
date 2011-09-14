@@ -22,6 +22,11 @@
 #include "viennagrid/topology/quadrilateral.hpp"
 #include "viennagrid/topology/hexahedron.hpp"
 
+/** @file others.hpp
+    @brief Provides default configuration classes for hypercube domains
+*/
+
+
 namespace viennagrid
 {
   namespace config

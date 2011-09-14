@@ -24,13 +24,15 @@
 #include "viennagrid/algorithm/norm.hpp"
 #include "viennadata/api.hpp"
 
+/** @file refine.hpp
+    @brief Provides the routines for a refinement of a domain
+*/
+
 namespace viennagrid 
 {
   namespace detail
   {
-    //
-    // Refinement requies vertex IDs. Make sure they are available.
-    //
+    /** @brief Refinement requies vertex IDs. This class makes sure that they are available. */
     template <typename DomainType,
               typename VertexIDHandler = typename viennagrid::result_of::element_id_handler<typename DomainType::config_type,
                                                                                             viennagrid::point_tag>::type>
@@ -47,9 +49,7 @@ namespace viennagrid
     
     
     
-    //
-    // If any edge is refined in a cell, then the longest edge is refined as well
-    //
+    /** @brief Ensures refinement fo the longest edge. If any edge is refined in a cell, then the longest edge is refined as well. */
     template <typename ConfigTypeIn>
     void ensure_longest_edge_refinement(domain_t<ConfigTypeIn> const & domain_in)
     {
@@ -137,7 +137,7 @@ namespace viennagrid
       } //while
     } //ensure_longest_edge_refinement
     
-    
+    /** @brief Transfers tags for refinement from the cell to edges */
     template <typename ConfigTypeIn>
     void cell_refinement_to_edge_refinement(domain_t<ConfigTypeIn> const & domain_in)
     {
@@ -175,9 +175,7 @@ namespace viennagrid
     
     
 
-    //
-    // Adaptive refinement
-    //
+    /** @brief Implementation of adaptive refinement. Responsible for all the book-keeping */
     template <typename ConfigTypeIn, typename ConfigTypeOut>
     void refine_impl(domain_t<ConfigTypeIn> const & domain_in,
                     domain_t<ConfigTypeOut> & domain_out,
@@ -276,9 +274,7 @@ namespace viennagrid
     
     
     
-    //
-    // Uniform refinement
-    //
+    /** @brief Implementation of uniform refinement. Responsible for all the book-keeping. */
     template <typename ConfigTypeIn, typename ConfigTypeOut>
     void refine_impl(domain_t<ConfigTypeIn> const & domain_in,
                     domain_t<ConfigTypeOut> & domain_out,
@@ -370,7 +366,7 @@ namespace viennagrid
     
   } //namespace detail
   
-  
+  /** @brief A proxy class that is used to allow ' refined_domain = refine(domain); ' without temporary. */
   template <typename DomainType, typename RefinementTag>
   class refinement_proxy
   {
@@ -391,6 +387,7 @@ namespace viennagrid
   };
   
   
+  /** @brief Public interface for refinement of a domain. If local refinement is desired, cells or edges needs to be tagged using ViennaData with refinement_key.*/
   template <typename ConfigTypeIn, typename RefinementTag>
   refinement_proxy< domain_t<ConfigTypeIn>, RefinementTag >
   refine(domain_t<ConfigTypeIn> const & domain_in, RefinementTag const & tag)
@@ -399,7 +396,7 @@ namespace viennagrid
     return refinement_proxy< domain_t<ConfigTypeIn>, RefinementTag >(domain_in, tag);
   }
   
-
+  /** @brief Convenience overload for uniform refinement of a domain.  */
   template <typename ConfigTypeIn>
   refinement_proxy< domain_t<ConfigTypeIn>, uniform_refinement_tag >
   refine_uniformly(domain_t<ConfigTypeIn> const & domain_in)
@@ -408,9 +405,10 @@ namespace viennagrid
     return refinement_proxy< domain_t<ConfigTypeIn>, uniform_refinement_tag >(domain_in, uniform_refinement_tag());
   }
   
+  /** @brief Convenience overload for adaptive refinement of a domain. Cells or edges needs to be tagged using ViennaData with refinement_key. */
   template <typename ConfigTypeIn>
   refinement_proxy< domain_t<ConfigTypeIn>, local_refinement_tag >
-  refine_adaptively(domain_t<ConfigTypeIn> const & domain_in)
+  refine_locally(domain_t<ConfigTypeIn> const & domain_in)
   {
     typedef typename detail::refinement_vertex_id_requirement<domain_t<ConfigTypeIn> >::type   checked_type;
     return refinement_proxy< domain_t<ConfigTypeIn>, local_refinement_tag >(domain_in, local_refinement_tag());

@@ -24,15 +24,20 @@
 #include "viennagrid/detail/element_iterators.hpp"
 #include "viennagrid/detail/domain_iterators.hpp"
 
+/** @file boundary.hpp
+    @brief Provides the detection and check for boundary n-cells.
+*/
+
 namespace viennagrid
 {
-
+  /** @brief A key type for storing boundary information on n-cells, segments and domains */
   template <typename T>
   class boundary_key
   {
-    typedef typename T::ERROR_BOUNDARY_KEY_MUST_BE_USED_WITH_DOMAIN_OR_SEGMENT   error_type;
+    typedef typename T::ERROR_BOUNDARY_KEY_MUST_BE_USED_WITH_NCELL_OR_DOMAIN_OR_SEGMENT   error_type;
   };
   
+  /** @brief Specialization for n-cells */
   template <typename ConfigType, typename ElementTag>
   class boundary_key<element_t<ConfigType, ElementTag> >
   {
@@ -41,7 +46,7 @@ namespace viennagrid
     public:
       boundary_key(element_type const & e) : e_(&e) {}
       
-      //for compatibility with std::map
+      /** @brief Provide less-than operator for compatibility with std::map */
       bool operator<(boundary_key const & other) const
       {
         return e_ < other.e_;
@@ -50,14 +55,14 @@ namespace viennagrid
       element_type const * e_;
   };
   
-  
+  /** @brief Specialization for segments */
   template <typename ConfigType>
   class boundary_key< segment_t<ConfigType> >
   {
     public:
       boundary_key(std::size_t seg_id) : seg_id_(seg_id) {}
       
-      //for compatibility with std::map
+      /** @brief Provide less-than operator for compatibility with std::map */
       bool operator<(boundary_key const & other) const
       {
         return seg_id_ < other.seg_id_;
@@ -66,11 +71,13 @@ namespace viennagrid
       std::size_t seg_id_;
   };
   
+  /** @brief Specialization for domains */
   template <typename ConfigType>
   class boundary_key< domain_t<ConfigType> > {};
   
 }
 
+// Configure ViennaData to use a type-based dispatch on the domain
 namespace viennadata
 {
   namespace config
@@ -86,10 +93,14 @@ namespace viennadata
 namespace viennagrid
 {
 
-  //helper struct for setting boundary flag of lower level elements of a facet
+  /** @brief Helper struct for setting boundary flag of lower level elements of a facet
+   * 
+   * @tparam dim    Topological dimension the boundary setter is acting on
+   */
   template <long dim>
   struct boundary_setter
   {
+    /** @brief The static actor for the case that boundary k-cells for this level are available on the n-cell */
     template <typename FacetType, typename KeyType>
     static void apply(FacetType const & facet, KeyType const & key, full_handling_tag)
     {
@@ -114,6 +125,7 @@ namespace viennagrid
                                                 );
     }
     
+    /** @brief The static actor for the case that no boundary k-cells for this level are available on the n-cell */
     template <typename FacetType, typename KeyType>
     static void apply(FacetType const & facet, KeyType const & key, no_handling_tag)
     {
@@ -130,6 +142,7 @@ namespace viennagrid
   };
 
   //end recursion of topolevel = -1
+  /** @brief Ends the recursion below the vertex level */
   template <>
   struct boundary_setter< -1 >
   {
@@ -139,13 +152,14 @@ namespace viennagrid
     }
   };
 
-
+  /** @brief Implementation of boundary detection for the case no facets are available. Issues a hopefully useful compiler error. */
   template <typename DomainSegmentType, typename KeyType>
   void detect_boundary_impl(DomainSegmentType const & seg, KeyType const & key, no_handling_tag)
   {
     typedef typename DomainSegmentType::ERROR_CANNOT_DETECT_BOUNDARY_BECAUSE_FACETS_ARE_DISABLED        error_type;
   }
 
+  /** @brief Implementation of boundary detection. Should not be called by library users. */
   template <typename DomainSegmentType, typename KeyType>
   void detect_boundary_impl(DomainSegmentType const & seg, KeyType const & key, full_handling_tag)
   {
@@ -208,10 +222,13 @@ namespace viennagrid
 
 
 
-  //
-  // public interface functions:
-  //
-
+  /** @brief Public interface functions for boundary detection. No need to call it explicitly, since it is called by is_boundary().
+   * 
+   * @tparam DomainSegmentType    Either a segment or a domain type
+   * @tparam KeyType              Type of the key used with ViennaData.
+   * @param segment               Either a segment or a domain object
+   * @param key                   The key object for ViennaData
+   */
   template <typename DomainSegmentType, typename KeyType>
   void detect_boundary(DomainSegmentType const & segment, KeyType const & key)
   {
@@ -229,7 +246,11 @@ namespace viennagrid
   }
 
 
-
+  /** @brief Returns true if a n-cell is located on the boundary of the domain 
+   *
+   * @param el      The n-cell
+   * @param domain  The ViennaGrid domain
+   */
   template <typename ConfigType, typename ElementTag>
   bool is_boundary(element_t<ConfigType, ElementTag> const & el,
                    domain_t<ConfigType> const & domain)
@@ -244,6 +265,11 @@ namespace viennagrid
     return false;
   }
 
+  /** @brief Returns true if a n-cell is located on the boundary of a segment
+   *
+   * @param el      The n-cell
+   * @param segment A segment of a domain
+   */
   template <typename ConfigType, typename ElementTag>
   bool is_boundary(element_t<ConfigType, ElementTag> const & el,
                    segment_t<ConfigType> const & segment)

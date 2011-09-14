@@ -23,6 +23,9 @@
 #include <limits>
 #include "viennagrid/forwards.h"
 
+/** @file container.hpp
+    @brief Provides a generic layer for container operations.
+*/
 
 namespace viennagrid 
 {

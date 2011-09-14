@@ -38,7 +38,7 @@ namespace viennagrid
   namespace detail
   {
     
-    //topologically zero-dimensional elements
+    /** @brief Computes the volume of topologically zero-dimensional elements (vertices). Degenerate case, returns 1 */
     template <typename ElementType>
     typename ElementType::config_type::numeric_type
     volume_impl(ElementType const & cell, viennagrid::point_tag)
@@ -46,7 +46,7 @@ namespace viennagrid
       return typename ElementType::config_type::numeric_type(1);
     }
     
-    //topologically one-dimensional elements
+    /** @brief Computes the volume of topologically one-dimensional elements (lines, 1-simplex).*/
     template <typename ElementType>
     typename ElementType::config_type::numeric_type
     volume_impl(ElementType const & cell, viennagrid::simplex_tag<1>)
@@ -61,6 +61,7 @@ namespace viennagrid
       return norm(p0 - p1);
     }
     
+    /** @brief Computes the volume of topologically one-dimensional elements (lines, 1-hypercube).*/
     template <typename ElementType>
     typename ElementType::config_type::numeric_type
     volume_impl(ElementType const & cell, viennagrid::hypercube_tag<1>)
@@ -69,6 +70,7 @@ namespace viennagrid
     }
 
     //topologically two-dimensional elements
+    /** @brief Computes the two-dimensional volume of a triangle.*/
     template <typename ElementType>
     typename ElementType::config_type::numeric_type
     volume_impl(ElementType const & cell, viennagrid::triangle_tag)
@@ -84,6 +86,7 @@ namespace viennagrid
       return spanned_volume(p0, p1, p2);
     }
 
+    /** @brief Computes the two-dimensional volume of a quadrilateral.*/
     template <typename ElementType>
     typename ElementType::config_type::numeric_type
     volume_impl(ElementType const & cell, viennagrid::quadrilateral_tag)
@@ -101,6 +104,7 @@ namespace viennagrid
     }
 
     //topologically three-dimensional elements
+    /** @brief Computes the three-dimensional volume of a tetrahedron.*/
     template <typename ElementType>
     typename ElementType::config_type::numeric_type
     volume_impl(ElementType const & cell, viennagrid::tetrahedron_tag)
@@ -118,6 +122,7 @@ namespace viennagrid
     }
 
 
+    /** @brief Computes the three-dimensional volume of a hexahedron.*/
     template <typename ElementType>
     typename ElementType::config_type::numeric_type
     volume_impl(ElementType const & cell, viennagrid::hexahedron_tag)
@@ -146,6 +151,7 @@ namespace viennagrid
     
 
     //
+    /** @brief Dispatched function for computing the volume of a domain or segment.*/
     template <typename ContainerType>
     typename ContainerType::config_type::numeric_type
     volume_domainsegment(ContainerType const & d)
@@ -171,6 +177,7 @@ namespace viennagrid
   //
   // The public interface functions
   //
+  /** @brief Returns the n-dimensional volume of a n-cell */
   template <typename ElementType>
   typename ElementType::config_type::numeric_type
   volume(ElementType const & cell)
@@ -179,13 +186,16 @@ namespace viennagrid
   }
   
   //special case: domain
+  /** @brief Returns the N-dimensional volume of a domain, where the cell type has topological dimension N. */
   template <typename ConfigType>
   typename ConfigType::numeric_type
   volume(domain_t<ConfigType> const & d)
   {
     return detail::volume_domainsegment(d);
   }    
+  
   //special case: segment
+  /** @brief Returns the N-dimensional volume of a segment, where the cell type has topological dimension N. */
   template <typename ConfigType>
   typename ConfigType::numeric_type
   volume(segment_t<ConfigType> const & d)

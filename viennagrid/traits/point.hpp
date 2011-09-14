@@ -20,6 +20,10 @@
 
 #include "viennagrid/forwards.h"
 
+/** @file viennagrid/traits/point.hpp
+    @brief Provides a generic layer for point operations
+*/
+
 namespace viennagrid 
 {
   

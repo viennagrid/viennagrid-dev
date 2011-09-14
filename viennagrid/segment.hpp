@@ -28,6 +28,9 @@
 #include "viennagrid/detail/segment_layers.hpp"
 #include "viennagrid/detail/segment_iterators.hpp"
 
+/** @file segment.hpp
+    @brief Provides the segment type to be used for partitioning the domain
+*/
 
 namespace viennagrid
 {

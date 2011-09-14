@@ -25,6 +25,10 @@
 
 #include <vector>
 
+/** @file element.hpp
+    @brief Provides the main n-cell type
+*/
+
 namespace viennagrid
 {
   

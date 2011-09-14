@@ -26,14 +26,20 @@
 #include "viennagrid/algorithm/centroid.hpp"
 #include "viennagrid/algorithm/boundary.hpp"
 
+/** @file interface.hpp
+    @brief Provides the detection and check for boundary n-cells at the interface of two segments.
+*/
+
+
 namespace viennagrid
 {
-
+  /** @brief A key used for ViennaData in order to store interface information */
   class interface_key
   {
     public:
       interface_key(std::size_t id1, std::size_t id2) : id_(id1, id2) {}
       
+      /** @brief For compatibility with std::map<> */
       bool operator<(interface_key const & other) const
       {
         return id_ < other.id_;
@@ -44,7 +50,7 @@ namespace viennagrid
   };
 
 
-  //helper struct for setting interface flag of lower level elements of a facet
+  /** @brief Helper struct for setting interface flag of boundary k-cells of a facet */
   template <long dim>
   struct interface_setter
   {
@@ -85,7 +91,8 @@ namespace viennagrid
     
   };
 
-  //end recursion of topolevel = -1
+  //end recursion of topological dimension = -1
+  /** @brief Specialization that stops recursion below the vertex level */
   template <>
   struct interface_setter< -1 >
   {
@@ -93,6 +100,7 @@ namespace viennagrid
     static void apply(FacetType const & facet, KeyType const & key, HandlingTag) {}
   };
 
+  /** @brief A guard that forces a compile time error if no facets are available (i.e. disabled). */
   template <typename SegmentType, typename KeyType>
   void detect_interface_impl(SegmentType const & seg1,
                              SegmentType const & seg2,
@@ -102,9 +110,12 @@ namespace viennagrid
     typedef typename SegmentType::ERROR_CANNOT_DETECT_INTERFACE_BECAUSE_FACETS_ARE_DISABLED        error_type;
   }
 
-  //
-  // Interface facet detection with complexity O(N log(N)), where N is the number of facets in both segments.
-  //
+  /** @brief Implementation of interface facet detection with complexity O(N log(N)), where N is the number of facets in both segments.
+   * 
+   * @param seg1     The first segment
+   * @param seg2     The second segment
+   * @param key      Key object for use with ViennaData.
+   */
   template <typename SegmentType, typename KeyType>
   void detect_interface_impl(SegmentType const & seg1,
                              SegmentType const & seg2,
@@ -168,10 +179,12 @@ namespace viennagrid
 
 
 
-  //
-  // public interface functions:
-  //
-
+  /** @brief Public interface function for the detection of interface n-cells between two segments. No need to call this function explicitly, since it is called by is_interface()
+   * 
+   * @param seg1  The first segment
+   * @param seg2  The second segment
+   * @param key   The key object for ViennaData
+   */
   template <typename SegmentType, typename KeyType>
   void detect_interface(SegmentType const & seg1,
                         SegmentType const & seg2,
@@ -190,7 +203,12 @@ namespace viennagrid
     }
   }
 
-
+  /** @brief Returns true if the n-cell is located at the interface between two segments
+   * 
+   * @param el    The n-cell under test
+   * @param seg1  The first segment
+   * @param seg2  The sevond segment
+   */
   template <typename ConfigType, typename ElementTag>
   bool is_interface(element_t<ConfigType, ElementTag> const & el,
                     segment_t<ConfigType> const & seg1,

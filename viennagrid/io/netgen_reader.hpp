@@ -26,13 +26,23 @@
 #include "viennagrid/io/helper.hpp"
 #include "viennagrid/iterators.hpp"
 
+/** @file netgen_reader.hpp
+    @brief Provides a reader for Netgen files
+*/
+
 namespace viennagrid
 {
   namespace io
   {
 
+    /** @brief Reader for Netgen files obtained from the 'Export mesh...' menu item. Tested with Netgen version 4.9.12. */
     struct netgen_reader
     {
+      /** @brief The functor interface triggering the read operation.
+       * 
+       * @param domain    A ViennaGrid domain
+       * @param filename  Name of the file
+       */
       template <typename DomainType>
       int operator()(DomainType & domain, std::string const & filename) const
       {

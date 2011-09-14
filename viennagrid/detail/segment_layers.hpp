@@ -27,6 +27,10 @@
 #include "viennagrid/element.hpp"
 #include "viennagrid/detail/element_key.hpp"
 
+/** @file segment_layers.hpp
+    @brief Provides the topological layers for segments
+*/
+
 namespace viennagrid
 {
 
@@ -34,6 +38,7 @@ namespace viennagrid
   
   namespace detail
   {
+    /** @brief Helper class for comparing the ID of n-cells, for which only the pointers are available. Used as comparison in std::map */
     struct id_ptr_compare
     {
       template <typename ElementType>
@@ -43,7 +48,7 @@ namespace viennagrid
       }
     };
     
-    // holds a reference to the domain the segment belongs to
+    /** @brief Class that holds a reference to the domain the segment belongs to */
     template <typename Conf>
     class segment_domain_holder
     {
@@ -78,7 +83,7 @@ namespace viennagrid
               long dim>
     class segment_layers_empty;
     
-    
+    /** @brief Helper class that returns the next class type for recursive inheritance. Was introduced due to Visual Studio compilation problems of the first approach */
     template <typename Config,
               long dim,
               typename handling_tag = typename result_of::bndcell_handling<Config, segment_t<Config>, dim>::type
@@ -101,7 +106,7 @@ namespace viennagrid
     };
     
     
-    //full handling:
+    /** @brief Full handling of a particular topological dimension of a segment */
     template <typename Config,
               long dim>
     class segment_layers_full : //public segment_layers<Config, 0, handling_tag>
@@ -149,6 +154,7 @@ namespace viennagrid
 
     
     //vertex level:
+    /** @brief Specialization of full handling at vertex level. Terminates recursion. */
     template <typename Config>
     class segment_layers_full<Config, 0> : public segment_domain_holder<Config>
     {
@@ -177,7 +183,7 @@ namespace viennagrid
     };
 
     
-    //no handling of elements by cells on that level. Therefore, don't handle it within segments as well.
+    /** @brief No handling of elements by cells on that level. Therefore, don't handle it within segments as well. Uses recursive inheritance */
     template <typename Config,
               long dim>
     class segment_layers_empty : public next_segment_layer_selector<Config, dim-1>::type
@@ -228,7 +234,7 @@ namespace viennagrid
 
     };
 
-    
+    /** @brief Handler for cells in a segment. Since cells are the defining entity of segments, this requires special treatment */
     template <typename Config,
               long dim>
     class segment_layers_top : public next_segment_layer_selector<Config, dim-1>::type
@@ -277,6 +283,7 @@ namespace viennagrid
   namespace result_of
   {
     //at cell level
+    /** @brief Metafunction returning the internal storage scheme of a segment at cell level */
     template <typename config_type, long cell_level>
     struct element_container< segment_t<config_type>, cell_level, cell_level>
     {
@@ -286,6 +293,7 @@ namespace viennagrid
     };
 
     //at vertex level
+    /** @brief Metafunction returning the internal storage scheme of a segment at vertex level */
     template <typename config_type, long cell_level>
     struct element_container< segment_t<config_type>, 0, cell_level>
     {
@@ -297,6 +305,7 @@ namespace viennagrid
     };
 
     //at any other level:
+    /** @brief Metafunction returning the internal storage scheme of a segment at non-vertex and non-cell level */
     template <typename config_type, long dim, long cell_level>
     struct element_container< segment_t<config_type>, dim, cell_level>
     {
@@ -305,6 +314,7 @@ namespace viennagrid
       typedef std::set< element_type * >      type;
     };
     
+    /** @brief Metafunction for returning the type of a segment derived from the configuration class */
     template <typename ConfigType>
     struct segment
     {

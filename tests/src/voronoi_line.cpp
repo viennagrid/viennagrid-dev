@@ -36,6 +36,7 @@ void setup_device(DeviceType & device)
   typedef typename DeviceType::config_type           Config;
   typedef typename Config::cell_tag                  CellTag;
   
+  typedef typename viennagrid::result_of::point<Config>::type                            PointType;
   typedef typename viennagrid::result_of::ncell<Config, 0>::type                         VertexType;
   typedef typename viennagrid::result_of::ncell<Config, CellTag::dim>::type   CellType;
   
@@ -43,80 +44,39 @@ void setup_device(DeviceType & device)
   //
   // Step 1: Set up vertices:
   //
-  VertexType vertex;
-
-  vertex.point()[0] = 0;   // #0
-  vertex.point()[1] = 0;
-  device.push_back(vertex);
-  
-  vertex.point()[0] = 2;   // #1
-  vertex.point()[1] = 0;
-  device.push_back(vertex);
-
-  vertex.point()[0] = 1;   // #2
-  vertex.point()[1] = 1;
-  device.push_back(vertex);
-
-  vertex.point()[0] = 0;   // #3
-  vertex.point()[1] = 2;
-  device.push_back(vertex);
-  
-  vertex.point()[0] = -1;   // #4
-  vertex.point()[1] = 1;
-  device.push_back(vertex);
-  
-  vertex.point()[0] = -2;   // #5
-  vertex.point()[1] = 0;
-  device.push_back(vertex);
-  
-  vertex.point()[0] = -1;   // #6
-  vertex.point()[1] = -1;
-  device.push_back(vertex);
-  
-  vertex.point()[0] = 0;   // #7
-  vertex.point()[1] = -2;
-  device.push_back(vertex);
-  
-  vertex.point()[0] = 1;   // #8
-  vertex.point()[1] = -1;
-  device.push_back(vertex);
-  
+  device.push_back(PointType(0));       // #0
+  device.push_back(PointType(0.25));    // #1
+  device.push_back(PointType(0.5));     // #2
+  device.push_back(PointType(0.75));    // #3
+  device.push_back(PointType(1.0));     // #4
   
   //
   // Step 2: Set up cells:
   //
   
   CellType cell;
-  VertexType *vertices[4];
+  VertexType *vertices[2];
   
   vertices[0] = &(viennagrid::ncells<0>(device)[0]);
-  vertices[1] = &(viennagrid::ncells<0>(device)[8]);
-  vertices[2] = &(viennagrid::ncells<0>(device)[2]);
-  vertices[3] = &(viennagrid::ncells<0>(device)[1]);
+  vertices[1] = &(viennagrid::ncells<0>(device)[1]);
   cell.vertices(vertices);
   device.push_back(cell);
 
-  vertices[0] = &(viennagrid::ncells<0>(device)[0]);
+  vertices[0] = &(viennagrid::ncells<0>(device)[1]);
   vertices[1] = &(viennagrid::ncells<0>(device)[2]);
-  vertices[2] = &(viennagrid::ncells<0>(device)[4]);
-  vertices[3] = &(viennagrid::ncells<0>(device)[3]);
   cell.vertices(vertices);
   device.push_back(cell);
 
-  vertices[0] = &(viennagrid::ncells<0>(device)[0]);
+  vertices[0] = &(viennagrid::ncells<0>(device)[2]);
+  vertices[1] = &(viennagrid::ncells<0>(device)[3]);
+  cell.vertices(vertices);
+  device.push_back(cell);
+
+  vertices[0] = &(viennagrid::ncells<0>(device)[3]);
   vertices[1] = &(viennagrid::ncells<0>(device)[4]);
-  vertices[2] = &(viennagrid::ncells<0>(device)[6]);
-  vertices[3] = &(viennagrid::ncells<0>(device)[5]);
   cell.vertices(vertices);
   device.push_back(cell);
-
-  vertices[0] = &(viennagrid::ncells<0>(device)[0]);
-  vertices[1] = &(viennagrid::ncells<0>(device)[6]);
-  vertices[2] = &(viennagrid::ncells<0>(device)[8]);
-  vertices[3] = &(viennagrid::ncells<0>(device)[7]);
-  cell.vertices(vertices);
-  device.push_back(cell);
-
+  
 }
 
 
@@ -124,7 +84,7 @@ void setup_device(DeviceType & device)
 
 int main(int argc, char *argv[])
 {
-  typedef viennagrid::config::quadrilateral_2d           Config;
+  typedef viennagrid::config::line_1d                   Config;
   typedef viennagrid::result_of::domain<Config>::type   DeviceType;
   
   std::cout << "* main(): Creating device..." << std::endl;
@@ -143,12 +103,17 @@ int main(int argc, char *argv[])
   output_voronoi_info(device);
   
   std::cout << std::endl;
-  std::cout << viennagrid::ncells<2>(device)[0] << std::endl;
+  std::cout << viennagrid::ncells<1>(device)[0] << std::endl;
   std::cout << std::endl;
-  std::cout << "Circumcenter of cell #0: " << viennagrid::circumcenter(viennagrid::ncells<2>(device)[0]) << std::endl;
-  std::cout << "Circumcenter of cell #1: " << viennagrid::circumcenter(viennagrid::ncells<2>(device)[1]) << std::endl;
-  std::cout << "Circumcenter of cell #2: " << viennagrid::circumcenter(viennagrid::ncells<2>(device)[2]) << std::endl;
-  std::cout << "Circumcenter of cell #3: " << viennagrid::circumcenter(viennagrid::ncells<2>(device)[3]) << std::endl;
+  std::cout << "Circumcenter of cell #0: " << viennagrid::circumcenter(viennagrid::ncells<1>(device)[0]) << std::endl;
+  std::cout << "Circumcenter of cell #1: " << viennagrid::circumcenter(viennagrid::ncells<1>(device)[1]) << std::endl;
+  std::cout << "Circumcenter of cell #2: " << viennagrid::circumcenter(viennagrid::ncells<1>(device)[2]) << std::endl;
+  std::cout << "Circumcenter of cell #3: " << viennagrid::circumcenter(viennagrid::ncells<1>(device)[3]) << std::endl;
+  std::cout << "-----------------------" << std::endl;
+  std::cout << "Centroid of cell #0: " << viennagrid::centroid(viennagrid::ncells<1>(device)[0]) << std::endl;
+  std::cout << "Centroid of cell #1: " << viennagrid::centroid(viennagrid::ncells<1>(device)[1]) << std::endl;
+  std::cout << "Centroid of cell #2: " << viennagrid::centroid(viennagrid::ncells<1>(device)[2]) << std::endl;
+  std::cout << "Centroid of cell #3: " << viennagrid::centroid(viennagrid::ncells<1>(device)[3]) << std::endl;
   
   double voronoi_vol = voronoi_volume(device);  
   double domain_vol = viennagrid::volume(device);  
@@ -164,7 +129,7 @@ int main(int argc, char *argv[])
   
   //write to vtk:
   viennagrid::io::vtk_writer<DeviceType> my_vtk_writer;
-  my_vtk_writer(device, "voronoi_rect");
+  my_vtk_writer(device, "voronoi_line");
   
   std::cout << "*******************************" << std::endl;
   std::cout << "* Test finished successfully! *" << std::endl;

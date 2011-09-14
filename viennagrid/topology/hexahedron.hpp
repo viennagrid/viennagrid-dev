@@ -22,9 +22,14 @@
 #include "viennagrid/topology/line.hpp"
 #include "viennagrid/topology/quadrilateral.hpp"
 
+/** @file hexahedron.hpp
+    @brief Provides the topological definition of a hexahedron
+*/
+
 namespace viennagrid
 {
 
+  /** @brief A hypercube of dimension 3, aka. hexahedron */
   template <>
   struct hypercube_tag<3>
   {
@@ -36,6 +41,7 @@ namespace viennagrid
   namespace topology
   {
 
+    /** @brief Topological description of the boundary 0-cells of a hexahedron */
     template <>
     struct bndcells<hexahedron_tag, 0>
     {
@@ -44,6 +50,7 @@ namespace viennagrid
       enum{ num = 8 };     //8 vertices
     };
 
+    /** @brief Topological description of the boundary 1-cells of a hexahedron */
     template <>
     struct bndcells<hexahedron_tag, 1>
     {
@@ -52,6 +59,7 @@ namespace viennagrid
       enum{ num = 12 };     //12 edges
     };
 
+    /** @brief Topological description of the boundary 2-cells of a hexahedron */
     template <>
     struct bndcells<hexahedron_tag, 2>
     {
@@ -63,7 +71,7 @@ namespace viennagrid
     
     
     
-
+    /** @brief Fills a segment or a domain with the edges of a hexahedron */
     template <>
     struct bndcell_filler<hexahedron_tag, 1>
     {
@@ -150,6 +158,7 @@ namespace viennagrid
       }
     };
     
+    /** @brief Fills a segment or a domain with the facets of a hexahedron */
     template <>
     struct bndcell_filler<hexahedron_tag, 2>
     {

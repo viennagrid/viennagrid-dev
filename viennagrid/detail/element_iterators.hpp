@@ -31,6 +31,10 @@
 
 #include "viennadata/api.hpp"
 
+/** @file element_iterators.hpp
+    @brief Provides the iterators and ranges for n-cells
+*/
+
 namespace viennagrid
 {
 
@@ -39,6 +43,7 @@ namespace viennagrid
 
   //RangeElement-Type prevents abuse, for example:
   //A vertex-on-facet-iterator is not equal to a vertex-on-cell-iterator!
+  /** @brief Iterator class for iterating over a range of elements given by a container of pointers */
   template <typename ElementType>
   class on_element_iterator : public std::iterator < std::forward_iterator_tag, ElementType >
   {
@@ -68,6 +73,7 @@ namespace viennagrid
   };
 
   //const-version of above:
+  /** @brief Iterator class for const iteration over a range of elements given by a container of pointers */
   template <typename ElementType>
   class const_on_element_iterator : public std::iterator < std::forward_iterator_tag, ElementType >
   {
@@ -99,38 +105,12 @@ namespace viennagrid
       ElementPtr const * pp_;
   };
   
-  //with copy:
-  template <typename Type, long edgenum>
-  class ocit_with_copy
-  {
-    public:
-      ocit_with_copy(Type *pp, long startindex) : current(startindex)
-      {
-        //std::cout << "ocit_with_copy constructor" << std::endl;
-        for (long i=0; i<edgenum; ++i)
-          pp_[i] = pp[i];
-      }
-
-      Type & operator*() const { return *(pp_[current].first); }
-      Type* operator->() const { return pp_[current].first; }
-
-      ocit_with_copy & operator++() { ++current; return *this; }
-      ocit_with_copy & operator++(int) { ocit_with_copy tmp = *this; ++*this; return tmp; }
-
-      bool operator==(const ocit_with_copy& i) const { return current == i.current; }
-      bool operator!=(const ocit_with_copy& i) const { return current != i.current; }
-
-    private:
-      Type pp_[edgenum];
-      long current;
-  };
-
-
   
   /////////////// Iterator Types retrieval /////////
 
 
   //Check availability of iterators:
+  /** @brief A helper class that checks whether a certain iterator is available */
   template <typename ElementTag,
             long level,
             typename handling_tag = typename topology::bndcells<ElementTag, level>::handling_tag>
@@ -139,6 +119,7 @@ namespace viennagrid
     enum{ ReturnValue = topology::bndcells<ElementTag, level>::ERROR_ITERATOR_NOT_PROVIDED_AT_THIS_LEVEL };
   };
 
+  /** @brief Specialization for an available iterator */
   template <typename ElementTag,
             long level>
   struct ElementIteratorChecker< ElementTag, level, full_handling_tag>
@@ -147,6 +128,7 @@ namespace viennagrid
   };
 
 
+  /** @brief Class that checks the validity of the requested iterator */
   template <typename ElementType,
             long level>
   struct IteratorChecker
@@ -154,6 +136,7 @@ namespace viennagrid
     enum{ ReturnValue = ElementType::ERROR_ELEMENT_TYPE_INVALID };
   };
 
+  /** @brief Class that checks the validity of the requested iterator */
   template <typename Config,
             typename ElementTag,
             long level>
@@ -164,9 +147,13 @@ namespace viennagrid
 
 
   
-  //interface function for container creation:
-  
   // non-const:
+  /** @brief The main non-const range object for iteration or direct access of boundary k-cells of a n-cell
+   * 
+   * @tparam config_type       Configuration class
+   * @tparam tag               Tag identifying the n-cell
+   * @tparam dim               Topological dimension of the requested k-cells
+   */
   template <typename config_type, typename tag, long dim>
   class ncell_range < element_t<config_type, tag>, dim, false>
   {
@@ -207,18 +194,22 @@ namespace viennagrid
         return iterator(cont_ + topology::bndcells<tag, dim>::num);
       }
       
+      /** @brief Provide direct random-access to boundary cells */
       element_type & operator[](std::size_t index) const 
       {
         assert(index < size());
         return *(cont_[index]); 
       }
       
+      /** @brief Returns the number of k-cells */
       std::size_t size() const { return topology::bndcells<tag, dim>::num; }
       
     private:
       container_type * cont_;
   };
   
+  
+  /** @brief Main function for range retrieval. Specialization for iteration over k-cells of a n-cell */
   template <long dim, typename Config, typename ElementTag>
   typename result_of::ncell_range< element_t<Config, ElementTag>, dim>::type
   ncells(element_t<Config, ElementTag> & d)
@@ -226,6 +217,11 @@ namespace viennagrid
     return typename result_of::ncell_range< element_t<Config, ElementTag>, dim>::type(d);
   }
   
+  /** @brief Main function for range retrieval. Specialization for iteration over k-cells of a n-cell. Returns only a proxy that must be assigned to a range object.
+   *
+   * Allows to omit the topological dimension if this is clear from the range type, e.g.
+   *  VertexRange vertices = ncells(facet);
+   */
   template <typename Config, typename ElementTag>
   ncell_proxy< element_t<Config, ElementTag> >
   ncells(element_t<Config, ElementTag> & d)
@@ -237,6 +233,12 @@ namespace viennagrid
   //
   // const container:
   //
+  /** @brief The main const range object for iteration or direct access of boundary k-cells of a n-cell
+   * 
+   * @tparam config_type       Configuration class
+   * @tparam tag               Tag identifying the n-cell
+   * @tparam dim               Topological dimension of the requested k-cells
+   */
   template <typename config_type, typename tag, long dim>
   class const_ncell_range < element_t<config_type, tag>, dim, false>
   {
@@ -297,6 +299,7 @@ namespace viennagrid
       const container_type * cont_;
   };
   
+  /** @brief Main function for const range retrieval. Specialization for iteration over k-cells of a n-cell */
   template <long dim, typename Config, typename ElementTag>
   typename result_of::const_ncell_range< element_t<Config, ElementTag>, dim>::type
   ncells(element_t<Config, ElementTag> const & d)
@@ -304,6 +307,11 @@ namespace viennagrid
     return typename result_of::const_ncell_range< element_t<Config, ElementTag>, dim>::type(d);
   }
   
+  /** @brief Main function for const range retrieval. Specialization for iteration over k-cells of a n-cell. Returns only a proxy that must be assigned to a range object.
+   *
+   * Allows to omit the topological dimension if this is clear from the range type, e.g.
+   *  VertexRange vertices = ncells(facet);
+   */
   template <typename Config, typename ElementTag>
   const_ncell_proxy< element_t<Config, ElementTag> >
   ncells(element_t<Config, ElementTag> const & d)
@@ -319,6 +327,7 @@ namespace viennagrid
   ////////////////   co-boundaries: /////////////////////////
   
   //helper meta function for selecting const/non-const containers:
+  /** @brief A helper function that sets up the co-boundary information */
   template <long dim_start,
             long dim_iter,
             typename RangeType,
@@ -354,6 +363,7 @@ namespace viennagrid
   }
   
   // non-const:
+  /** @brief A proxy object for cheaper setup of range objects using the ncells<>() function */
   template <typename T, typename U>
   class cobnd_proxy
   {
@@ -368,6 +378,7 @@ namespace viennagrid
       U & u;
   };
   
+  /** @brief Returns the co-boundary range of topological dimension k for a n-cell, k>n */
   template <long dim, typename Config, typename ElementTag>
   ncell_range < element_t<Config, ElementTag>, dim, true>
   ncells(element_t<Config, ElementTag> & e, domain_t<Config> & d)
@@ -381,7 +392,7 @@ namespace viennagrid
    * EdgeOnVertexRange edges = ncells(vertex, domain);
    * 
    * @param e  The element over which neighbors to iterate
-   * @param d  The segment in which the neighbors must be located
+   * @param d  The domain in which the neighbors must be located
    * @return   A proxy object
    */
   template <typename Config, typename ElementTag>
@@ -394,7 +405,15 @@ namespace viennagrid
   }
 
 
-
+  /** @brief Returns a proxy object for the iteration over the neighbor elements within a segment. Non-const version.
+   * 
+   * The typical use of this function is as shortcut for the initialization of a Range, e.g.
+   * EdgeOnVertexRange edges = ncells(vertex, segment);
+   * 
+   * @param e  The element over which neighbors to iterate
+   * @param seg  The segment in which the neighbors must be located
+   * @return   A proxy object
+   */
   template <long dim, typename Config, typename ElementTag>
   ncell_range < element_t<Config, ElementTag>, dim, true>
   ncells(element_t<Config, ElementTag> & e, segment_t<Config> & seg)
@@ -421,6 +440,13 @@ namespace viennagrid
                         segment_t<Config> >(e, seg);
   }
 
+
+  /** @brief The range class for non-const iteration and access of coboundary k-cells of a n-cell, k>n 
+   * 
+   * @tparam config_type       Configuration class
+   * @tparam tag               Tag identifying the n-cell
+   * @tparam dim               Topological dimension of the requested k-cells
+   */
   template <typename config_type, typename tag,
             long dim>
   class ncell_range < element_t<config_type, tag>, dim, true>
@@ -516,6 +542,7 @@ namespace viennagrid
   
   
   // const:
+  /** @brief A proxy object for cheaper setup of range objects using the ncells<>() function */
   template <typename T, typename U>
   class const_cobnd_proxy
   {
@@ -530,6 +557,12 @@ namespace viennagrid
       U const & u;
   };
   
+  /** @brief The range class for const iteration and access of coboundary k-cells of a n-cell, k>n 
+   * 
+   * @tparam config_type       Configuration class
+   * @tparam tag               Tag identifying the n-cell
+   * @tparam dim               Topological dimension of the requested k-cells
+   */
   template <typename config_type, typename tag,
             long dim>
   class const_ncell_range < element_t<config_type, tag>, dim, true>
@@ -644,6 +677,15 @@ namespace viennagrid
   };
   
   
+  /** @brief Returns a proxy object for the iteration over the neighbor elements within a domain. Non-const version.
+   * 
+   * The typical use of this function is as shortcut for the initialization of a Range, e.g.
+   * EdgeOnVertexRange edges = ncells(vertex, segment);
+   * 
+   * @param e    The element over which neighbors to iterate
+   * @param d    The domain in which the neighbors must be located
+   * @return     A proxy object
+   */
   template <long dim, typename Config, typename ElementTag>
   const_ncell_range < element_t<Config, ElementTag>, dim, true>
   ncells(element_t<Config, ElementTag> const & e, domain_t<Config> const & d)
@@ -651,6 +693,15 @@ namespace viennagrid
     return const_ncell_range < element_t<Config, ElementTag>, dim, true>(e, d);
   }
 
+  /** @brief Returns a proxy object for the iteration over the neighbor elements within a domain. Const version.
+   * 
+   * The typical use of this function is as shortcut for the initialization of a Range, e.g.
+   * EdgeOnVertexRange edges = ncells(vertex, segment);
+   * 
+   * @param e    The element over which neighbors to iterate
+   * @param d    The domain in which the neighbors must be located
+   * @return     A proxy object
+   */
   template <typename Config, typename ElementTag>
   const_cobnd_proxy< element_t<Config, ElementTag>,
                      domain_t<Config> >
@@ -662,6 +713,15 @@ namespace viennagrid
 
 
 
+  /** @brief Returns a proxy object for the iteration over the neighbor elements within a segment. Non-const version.
+   * 
+   * The typical use of this function is as shortcut for the initialization of a Range, e.g.
+   * EdgeOnVertexRange edges = ncells(vertex, segment);
+   * 
+   * @param e    The element over which neighbors to iterate
+   * @param seg  The segment in which the neighbors must be located
+   * @return     A proxy object
+   */
   template <long dim, typename Config, typename ElementTag>
   const_ncell_range < element_t<Config, ElementTag>, dim, true>
   ncells(element_t<Config, ElementTag> const & e, segment_t<Config> const & seg)
@@ -669,6 +729,15 @@ namespace viennagrid
     return const_ncell_range < element_t<Config, ElementTag>, dim, true>(e, seg);
   }
 
+  /** @brief Returns a proxy object for the iteration over the neighbor elements within a segment. Const version.
+   * 
+   * The typical use of this function is as shortcut for the initialization of a Range, e.g.
+   * EdgeOnVertexRange edges = ncells(vertex, segment);
+   * 
+   * @param e    The element over which neighbors to iterate
+   * @param seg  The segment in which the neighbors must be located
+   * @return     A proxy object
+   */
   template <typename Config, typename ElementTag>
   const_cobnd_proxy< element_t<Config, ElementTag>,
                      segment_t<Config> >
@@ -683,6 +752,12 @@ namespace viennagrid
   //
   // local vertex orientation:
   //
+  /** @brief Returns the index-th vertices of a boundary k-cell in the orientation induced by the hosting n-cell 
+   * 
+   * @param host_ncell     The hosting n-cell
+   * @param bnd_kcell      The boundary k-cell
+   * @param index          Index for the i-th vertex
+   */
   template <typename ConfigType, typename Tag1, typename Tag2>
   typename result_of::ncell<ConfigType, 0>::type
   local_vertex(element_t<ConfigType, Tag1> const & host_ncell,
@@ -701,12 +776,14 @@ namespace viennagrid
   //
   namespace result_of
   {
+    /** @brief Helper function for less-than comparison at compile time. */
     template <long a, long b>
     struct is_smaller
     {
       enum { value = (a < b) }; 
     };
     
+    /** @brief Range type retrieval for boundary and coboundary iteration */
     template <typename Config, typename ElementTag,
               long dim>  //topological level
     struct ncell_range < element_t<Config, ElementTag>, dim >
@@ -718,6 +795,7 @@ namespace viennagrid
                                                    type;
     };
     
+    /** @brief Const Range type retrieval for boundary and coboundary iteration */
     template <typename Config, typename ElementTag,
               long dim>  //topological level
     struct const_ncell_range < element_t<Config, ElementTag>, dim >
@@ -729,7 +807,7 @@ namespace viennagrid
                                                    type;
     };
     
-    
+    /** @brief Returns the internal storage type of ranges for boundary k-cells */
     template <typename Config, typename ElementTag,
               long dim,
               long cell_level /* see forwards.h for default argument */>
@@ -741,6 +819,7 @@ namespace viennagrid
     };
     
     //Iterator types for elements
+    /** @brief Returns the iterator for iteration over a range */
     template <typename config_type, typename tag, long dim>
     struct iterator< element_t<config_type, tag>,
                      dim>

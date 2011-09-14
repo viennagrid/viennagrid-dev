@@ -31,6 +31,10 @@
 //#include "viennagrid/algorithm/cell_normals.hpp"
 #include "viennadata/api.hpp"
 
+/** @file vtk_writer.hpp
+    @brief Provides a writer to VTK files
+*/
+
 namespace viennagrid
 {
   namespace io
@@ -41,6 +45,10 @@ namespace viennagrid
     //helper: translate element tags to VTK-element types
     // (see: http://www.vtk.org/VTK/img/file-formats.pdf, page 9)
 
+    /** @brief Main VTK writer class. Writes a domain or a segment to a file
+     *
+     * @tparam DomainType    Type of the ViennaGrid domain. Must not be a segment! 
+     */
     template < typename DomainType >
     class vtk_writer
     {
@@ -60,6 +68,7 @@ namespace viennagrid
 
       protected:
 
+        /** @brief Writes the XML file header */
         void writeHeader(std::ofstream & writer)
         {
           writer << "<?xml version=\"1.0\"?>" << std::endl;
@@ -67,6 +76,7 @@ namespace viennagrid
           writer << " <UnstructuredGrid>" << std::endl;
         }
 
+        /** @brief Writes the vertices in the domain */
         template <typename SegmentType>
         void writePoints(SegmentType const & segment, std::ofstream & writer)
         {
@@ -96,6 +106,7 @@ namespace viennagrid
           writer << "   </Points> " << std::endl;
         } //writePoints()
 
+        /** @brief Writes the cells to the domain */
         template <typename DomainSegmentType>
         void writeCells(DomainSegmentType const & domseg, std::ofstream & writer)
         {
@@ -161,7 +172,7 @@ namespace viennagrid
             writer << "   </Cells>" << std::endl;
         }
 
-        // Write scalar point data:
+        /** @brief Writes scalar-valued data defined on vertices (points) to file */
         template <typename SegmentType>
         void writePointDataScalar(SegmentType const & segment, std::ofstream & writer, std::size_t seg_id = 0)
         {
@@ -187,7 +198,7 @@ namespace viennagrid
           }
         } //writePointDataScalar
 
-        // Write vector point data:
+        /** @brief Writes vector-valued data defined on vertices (points) to file */
         template <typename SegmentType>
         void writePointDataVector(SegmentType const & segment, std::ofstream & writer, std::size_t seg_id = 0)
         {
@@ -214,6 +225,7 @@ namespace viennagrid
         } //writePointDataScalar
 
         // Write normal point data:
+        /** @brief Writes vector-valued data (normals) defined on vertices (points) to file */
         template <typename SegmentType>
         void writePointDataNormal(SegmentType const & segment, std::ofstream & writer, std::size_t seg_id = 0)
         {
@@ -243,7 +255,7 @@ namespace viennagrid
 
         ///////////////// cells /////////////////////
 
-        //
+        /** @brief Writes scalar-valued data defined on cells to file */
         template <typename SegmentType>
         void writeCellDataScalar(SegmentType const & segment, std::ofstream & writer, std::size_t seg_id = 0)
         {
@@ -269,6 +281,7 @@ namespace viennagrid
           }
         } //writeCellDataScalar
 
+        /** @brief Writes vector-valued data defined on cells to file */
         template <typename SegmentType>
         void writeCellDataVector(SegmentType const & segment, std::ofstream & writer, std::size_t seg_id = 0)
         {
@@ -294,6 +307,7 @@ namespace viennagrid
           }
         } //writeCellDataVector
 
+        /** @brief Writes vector-valued data (normals) defined on cells to file */
         template <typename SegmentType>
         void writeCellDataNormals(SegmentType const & segment,
                                   std::ofstream & writer,
@@ -326,6 +340,7 @@ namespace viennagrid
           }
         } //writeCellData
 
+        /** @brief Writes the XML footer */
         void writeFooter(std::ofstream & writer)
         {
           writer << " </UnstructuredGrid>" << std::endl;
@@ -334,6 +349,11 @@ namespace viennagrid
 
       public:
 
+        /** @brief Triggers the write process to a XML file. Make sure that all data to be written to the file is already passed to the writer
+         * 
+         * @param domain     The ViennaGrid domain. Must not be a segment!
+         * @param filename   The file to write to         
+         */
         int operator()(DomainType const & domain, std::string const & filename)
         {
 
@@ -515,9 +535,12 @@ namespace viennagrid
         }
         
         
-        //
-        // Add scalar data for vertices:
-        //
+        /** @brief Specify scalar-valued data for vertices to the writer. Prefer the free function add_scalar_data_on_vertices() 
+         *
+         * @tparam T       Anything that can be wrapped by a data_accessor_wrapper
+         * @param  accessor The quantity accessor
+         * @param  name    The quantity name that should appear in the VTK file
+         */
         template <typename T>
         void add_scalar_data_on_vertices(T const & accessor, std::string name)
         {
@@ -526,10 +549,12 @@ namespace viennagrid
           vertex_data_scalar_names.push_back(name);
         }
 
-        //
-        // Add vector data for verteix:
-        //
-
+        /** @brief Specify vector-valued data for vertices to the writer. Prefer the free function add_vector_data_on_vertices() 
+         *
+         * @tparam T       Anything that can be wrapped by a data_accessor_wrapper
+         * @param  accessor The quantity accessor
+         * @param  name    The quantity name that should appear in the VTK file
+         */
         template <typename T>
         void add_vector_data_on_vertices(T const & accessor, std::string name)
         {
@@ -538,9 +563,12 @@ namespace viennagrid
           vertex_data_vector_names.push_back(name);
         }
 
-        //
-        // Add point data normals:
-        //
+        /** @brief Specify vector-valued data (normals) for vertices to the writer. Prefer the free function add_normal_data_on_vertices() 
+         *
+         * @tparam T       Anything that can be wrapped by a data_accessor_wrapper
+         * @param  accessor The quantity accessor
+         * @param  name    The quantity name that should appear in the VTK file
+         */
         template <typename T>
         void add_normal_data_on_vertices(T const & accessor, std::string name)
         {
@@ -550,9 +578,12 @@ namespace viennagrid
         }
 
 
-        //
-        // Add scalar cell data:
-        //
+        /** @brief Specify scalar-valued data for cells to the writer. Prefer the free function add_scalar_data_on_cells() 
+         *
+         * @tparam T       Anything that can be wrapped by a data_accessor_wrapper
+         * @param  accessor The quantity accessor
+         * @param  name    The quantity name that should appear in the VTK file
+         */
         template <typename T>
         void add_scalar_data_on_cells(T const & accessor, std::string name)
         {
@@ -561,9 +592,12 @@ namespace viennagrid
           cell_data_scalar_names.push_back(name);
         }
 
-        //
-        // Add vector cell data:
-        //
+        /** @brief Specify vector-valued data for cells to the writer. Prefer the free function add_vector_data_on_cells() 
+         *
+         * @tparam T       Anything that can be wrapped by a data_accessor_wrapper
+         * @param  accessor The quantity accessor
+         * @param  name    The quantity name that should appear in the VTK file
+         */
         template <typename T>
         void add_vector_data_on_cells(T const & accessor, std::string name)
         {
@@ -573,9 +607,12 @@ namespace viennagrid
         }
 
 
-        //
-        // Add cell data normals:
-        //
+        /** @brief Specify vector-valued data (normals) for cells to the writer. Prefer the free function add_normal_data_on_cells() 
+         *
+         * @tparam T       Anything that can be wrapped by a data_accessor_wrapper
+         * @param  accessor The quantity accessor
+         * @param  name    The quantity name that should appear in the VTK file
+         */
         template <typename T>
         void add_normal_data_on_cells(T const & accessor, std::string name)
         {
@@ -605,6 +642,7 @@ namespace viennagrid
         
     };
 
+    /** @brief Convenience function that exports a domain to file directly. Does not export quantities */
     template < typename DomainType > 
     int export_vtk(DomainType const& domain, std::string const & filename)
     {
@@ -618,7 +656,15 @@ namespace viennagrid
     // Convenience functions for adding vertex-based data
     //    
     
-    // scalar data
+    /** @brief Registers scalar-valued data on vertices at the XML writer. 
+      *
+      * @tparam KeyType     Type of the key used with ViennaData
+      * @tparam DataType    Type of the data as used with ViennaData
+      * @tparam DomainType  The ViennaGrid domain type
+      * @param  writer      The XML writer object for which the data should be registered
+      * @param  key         The key object for ViennaData
+      * @param  quantity_name        The quantity name that should appear in the VTK file
+      */
     template <typename KeyType, typename DataType, typename DomainType>
     vtk_writer<DomainType> & add_scalar_data_on_vertices(vtk_writer<DomainType> & writer,
                                                          KeyType const & key,
@@ -632,6 +678,15 @@ namespace viennagrid
       return writer;
     }
 
+    /** @brief Registers scalar-valued data on vertices at the XML writer. Data is segment based and might be discontinuous at segment boundaries.
+      *
+      * @tparam KeyType     Type of the key used with ViennaData
+      * @tparam DataType    Type of the data as used with ViennaData
+      * @tparam DomainType  The ViennaGrid domain type
+      * @param  writer      The XML writer object for which the data should be registered
+      * @param  key         The key object for ViennaData
+      * @param  quantity_name        The quantity name that should appear in the VTK file
+      */
     template <typename KeyType, typename DataType, typename DomainType>
     vtk_writer<DomainType> & add_scalar_data_on_vertices_per_segment(vtk_writer<DomainType> & writer,
                                                                      KeyType const & key,
@@ -645,7 +700,15 @@ namespace viennagrid
       return writer;
     }
 
-    // vector data
+    /** @brief Registers vector-valued data on vertices at the XML writer. 
+      *
+      * @tparam KeyType     Type of the key used with ViennaData
+      * @tparam DataType    Type of the data as used with ViennaData
+      * @tparam DomainType  The ViennaGrid domain type
+      * @param  writer      The XML writer object for which the data should be registered
+      * @param  key         The key object for ViennaData
+      * @param  quantity_name        The quantity name that should appear in the VTK file
+      */
     template <typename KeyType, typename DataType, typename DomainType>
     vtk_writer<DomainType> & add_vector_data_on_vertices(vtk_writer<DomainType> & writer,
                                                          KeyType const & key,
@@ -659,6 +722,15 @@ namespace viennagrid
       return writer;
     }
 
+    /** @brief Registers vector-valued data on vertices at the XML writer. Data is segment based and might be discontinuous at segment boundaries.
+      *
+      * @tparam KeyType     Type of the key used with ViennaData
+      * @tparam DataType    Type of the data as used with ViennaData
+      * @tparam DomainType  The ViennaGrid domain type
+      * @param  writer      The XML writer object for which the data should be registered
+      * @param  key         The key object for ViennaData
+      * @param  quantity_name        The quantity name that should appear in the VTK file
+      */
     template <typename KeyType, typename DataType, typename DomainType>
     vtk_writer<DomainType> & add_vector_data_on_vertices_per_segment(vtk_writer<DomainType> & writer,
                                                                      KeyType const & key,
@@ -673,7 +745,15 @@ namespace viennagrid
     }
 
 
-    // bnormal data
+    /** @brief Registers vector-valued data (normals) on vertices at the XML writer. 
+      *
+      * @tparam KeyType     Type of the key used with ViennaData
+      * @tparam DataType    Type of the data as used with ViennaData
+      * @tparam DomainType  The ViennaGrid domain type
+      * @param  writer      The XML writer object for which the data should be registered
+      * @param  key         The key object for ViennaData
+      * @param  quantity_name        The quantity name that should appear in the VTK file
+      */
     template <typename KeyType, typename DataType, typename DomainType>
     vtk_writer<DomainType> & add_normal_data_on_vertices(vtk_writer<DomainType> & writer,
                                                          KeyType const & key,
@@ -687,6 +767,15 @@ namespace viennagrid
       return writer;
     }
 
+    /** @brief Registers vector-valued data (normals) on vertices at the XML writer. Data is segment based and might be discontinuous at segment boundaries.
+      *
+      * @tparam KeyType     Type of the key used with ViennaData
+      * @tparam DataType    Type of the data as used with ViennaData
+      * @tparam DomainType  The ViennaGrid domain type
+      * @param  writer      The XML writer object for which the data should be registered
+      * @param  key         The key object for ViennaData
+      * @param  quantity_name        The quantity name that should appear in the VTK file
+      */
     template <typename KeyType, typename DataType, typename DomainType>
     vtk_writer<DomainType> & add_normal_data_on_vertices_per_segment(vtk_writer<DomainType> & writer,
                                                                      KeyType const & key,
@@ -700,11 +789,23 @@ namespace viennagrid
       return writer;
     }
 
+
+
     //
     // Convenience functions for adding cell-based data
     //
-    
-    // scalar data
+
+
+
+    /** @brief Registers scalar-valued data on cells at the XML writer. 
+      *
+      * @tparam KeyType     Type of the key used with ViennaData
+      * @tparam DataType    Type of the data as used with ViennaData
+      * @tparam DomainType  The ViennaGrid domain type
+      * @param  writer      The XML writer object for which the data should be registered
+      * @param  key         The key object for ViennaData
+      * @param  quantity_name        The quantity name that should appear in the VTK file
+      */
     template <typename KeyType, typename DataType, typename DomainType>
     vtk_writer<DomainType> & add_scalar_data_on_cells(vtk_writer<DomainType> & writer,
                                                       KeyType const & key,
@@ -719,6 +820,15 @@ namespace viennagrid
       return writer;
     }
 
+    /** @brief Registers scalar-valued data on cells at the XML writer. Data is segment based and might be discontinuous at segment boundaries.
+      *
+      * @tparam KeyType     Type of the key used with ViennaData
+      * @tparam DataType    Type of the data as used with ViennaData
+      * @tparam DomainType  The ViennaGrid domain type
+      * @param  writer      The XML writer object for which the data should be registered
+      * @param  key         The key object for ViennaData
+      * @param  quantity_name        The quantity name that should appear in the VTK file
+      */
     template <typename KeyType, typename DataType, typename DomainType>
     vtk_writer<DomainType> & add_scalar_data_on_cells_per_segment(vtk_writer<DomainType> & writer,
                                                                   KeyType const & key,
@@ -734,6 +844,15 @@ namespace viennagrid
     }
 
     // vector data
+    /** @brief Registers vector-valued data on cells at the XML writer. 
+      *
+      * @tparam KeyType     Type of the key used with ViennaData
+      * @tparam DataType    Type of the data as used with ViennaData
+      * @tparam DomainType  The ViennaGrid domain type
+      * @param  writer      The XML writer object for which the data should be registered
+      * @param  key         The key object for ViennaData
+      * @param  quantity_name        The quantity name that should appear in the VTK file
+      */
     template <typename KeyType, typename DataType, typename DomainType>
     vtk_writer<DomainType> & add_vector_data_on_cells(vtk_writer<DomainType> & writer,
                                                       KeyType const & key,
@@ -748,6 +867,15 @@ namespace viennagrid
       return writer;
     }
 
+    /** @brief Registers vector-valued data on cells at the XML writer. Data is segment based and might be discontinuous at segment boundaries.
+      *
+      * @tparam KeyType     Type of the key used with ViennaData
+      * @tparam DataType    Type of the data as used with ViennaData
+      * @tparam DomainType  The ViennaGrid domain type
+      * @param  writer      The XML writer object for which the data should be registered
+      * @param  key         The key object for ViennaData
+      * @param  quantity_name        The quantity name that should appear in the VTK file
+      */
     template <typename KeyType, typename DataType, typename DomainType>
     vtk_writer<DomainType> & add_vector_data_on_cells_per_segment(vtk_writer<DomainType> & writer,
                                                                   KeyType const & key,
@@ -763,6 +891,15 @@ namespace viennagrid
     }
 
     // cell data
+    /** @brief Registers vector-valued data (normals) on cells at the XML writer. 
+      *
+      * @tparam KeyType     Type of the key used with ViennaData
+      * @tparam DataType    Type of the data as used with ViennaData
+      * @tparam DomainType  The ViennaGrid domain type
+      * @param  writer      The XML writer object for which the data should be registered
+      * @param  key         The key object for ViennaData
+      * @param  quantity_name        The quantity name that should appear in the VTK file
+      */
     template <typename KeyType, typename DataType, typename DomainType>
     vtk_writer<DomainType> & add_normal_data_on_cells(vtk_writer<DomainType> & writer,
                                                       KeyType const & key,
@@ -777,6 +914,15 @@ namespace viennagrid
       return writer;
     }
 
+    /** @brief Registers vector-valued data (normals) on cells at the XML writer. Data is segment based and might be discontinuous at segment boundaries.
+      *
+      * @tparam KeyType     Type of the key used with ViennaData
+      * @tparam DataType    Type of the data as used with ViennaData
+      * @tparam DomainType  The ViennaGrid domain type
+      * @param  writer      The XML writer object for which the data should be registered
+      * @param  key         The key object for ViennaData
+      * @param  quantity_name        The quantity name that should appear in the VTK file
+      */
     template <typename KeyType, typename DataType, typename DomainType>
     vtk_writer<DomainType> & add_normal_data_on_cells_per_segment(vtk_writer<DomainType> & writer,
                                                                   KeyType const & key,

@@ -24,15 +24,22 @@
 
 #include "viennagrid/forwards.h"
 
+/** @file element_orientation.hpp
+    @brief Provides an orienter for boundary k-cells of a n-cell
+*/
+
 namespace viennagrid
 {
   
   
   /************** Level 1: Elements contained by a higher-level element *******/
 
-  //local vertex numbering is in general different from global vertex numbering for lower-level topological elements
-  //this permutator maps local numbers to global numbers
-  //alternative implementation: vertexnum as template parameter
+  /** @brief A permutator for mapping local orientations to global vertices of a boundary k-cell 
+   * 
+   * Local vertex numbering is in general different from global vertex numbering for lower-level topological elements
+   * this permutator maps local numbers to global numbers
+   * alternative implementation: vertexnum as template parameter
+   */
   template <long num_vertices>
   class element_orientation
   {

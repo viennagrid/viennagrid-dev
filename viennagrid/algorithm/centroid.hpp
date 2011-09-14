@@ -39,6 +39,7 @@ namespace viennagrid
     //
     // Calculation of centroid
     //
+    /** @brief Implementation of the calculation of a centroid for a triangle */
     template <typename ElementType>
     typename viennagrid::result_of::point<typename ElementType::config_type>::type
     centroid(ElementType const & cell, viennagrid::triangle_tag)
@@ -68,6 +69,7 @@ namespace viennagrid
     }
 
     //tetrahedron can reuse the algorithm defined for a triangle
+    /** @brief Implementation of the calculation of a centroid for a tetrahedron */
     template <typename ElementType>
     typename viennagrid::result_of::point<typename ElementType::config_type>::type
     centroid(ElementType const & cell, viennagrid::tetrahedron_tag)
@@ -78,6 +80,7 @@ namespace viennagrid
     //
     // Note: This works for rectangles only, but not for general quadrilateral
     //
+    /** @brief Implementation of the calculation of a centroid for a quadrilateral */
     template <typename ElementType>
     typename viennagrid::result_of::point<typename ElementType::config_type>::type
     centroid(ElementType const & cell, viennagrid::quadrilateral_tag)
@@ -88,6 +91,7 @@ namespace viennagrid
     //
     // Note: This works for cuboids only, but not for general hexahedra
     //
+    /** @brief Implementation of the calculation of a centroid for a hexahedron */
     template <typename ElementType>
     typename viennagrid::result_of::point<typename ElementType::config_type>::type
     centroid(ElementType const & cell, viennagrid::hexahedron_tag)
@@ -97,6 +101,7 @@ namespace viennagrid
 
 
     //a line can reuse the algorithm defined for a triangle
+    /** @brief Implementation of the calculation of a centroid for a line (1-simplex) */
     template <typename ElementType>
     typename viennagrid::result_of::point<typename ElementType::config_type>::type
     centroid(ElementType const & cell, viennagrid::simplex_tag<1>)
@@ -104,6 +109,7 @@ namespace viennagrid
       return centroid(cell, viennagrid::triangle_tag());
     }
 
+    /** @brief Implementation of the calculation of a centroid for a line (1-hypercube) */
     template <typename ElementType>
     typename viennagrid::result_of::point<typename ElementType::config_type>::type
     centroid(ElementType const & cell, viennagrid::hypercube_tag<1>)
@@ -112,6 +118,7 @@ namespace viennagrid
     }
 
     //a point is degenerate and returns its location
+    /** @brief Implementation of the calculation of a centroid for a point */
     template <typename ElementType>
     typename viennagrid::result_of::point<typename ElementType::config_type>::type
     centroid(ElementType const & cell, viennagrid::point_tag)
@@ -154,9 +161,10 @@ namespace viennagrid
   } //namespace detail
 
 
-  //
-  // The public interface functions
-  //
+  /** @brief The public interface function for the computation of a centroid
+   * 
+   * @param cell    The n-cell for which the centroid should be computed
+   */
   template <typename CellType>
   typename viennagrid::result_of::point<typename CellType::config_type>::type
   centroid(CellType const & cell)
@@ -164,6 +172,10 @@ namespace viennagrid
     return detail::centroid(cell, typename CellType::tag());
   }
 
+  /** @brief The public interface function for the computation of the centroid of a domain
+   * 
+   * @param domain    The domain object
+   */
   template <typename ConfigType>
   typename viennagrid::result_of::point<ConfigType>::type
   centroid(domain_t<ConfigType> const & domain)
@@ -171,6 +183,10 @@ namespace viennagrid
     return detail::centroid_domseg(domain);
   }
 
+  /** @brief The public interface function for the computation of the centroid of a segment
+   * 
+   * @param segment    The segment object
+   */
   template <typename ConfigType>
   typename viennagrid::result_of::point<ConfigType>::type
   centroid(segment_t<ConfigType> const & segment)

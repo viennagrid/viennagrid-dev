@@ -31,16 +31,20 @@
 //#include "viennagrid/algorithm/cell_normals.hpp"
 #include "viennadata/api.hpp"
 
+/** @file data_accessor.hpp
+    @brief Generic wrapper for access to quantities using ViennaData.
+*/
+
 namespace viennagrid
 {
   namespace io
   {
     
-    
-    //
-    // type erasure
-    //
-    template <typename ElementType>      //either cell type or vertex type
+    /** @brief The interface for all data accessor wrappers. Uses type erasure to wrap the templated wrappers into a single container
+     *
+     * @tparam ElementType    Type of the n-cell for which the quantity should be accessed.
+     */
+    template <typename ElementType>
     class data_accessor_interface
     {
       public: 
@@ -56,9 +60,12 @@ namespace viennagrid
 
     
     
-    //
-    // Use case 1: Access data for all elements
-    //
+    /** @brief Wrapper: Access scalar-valued data for all elements in the domain
+     * 
+     * @tparam ElementType    The ViennaGrid n-cell type
+     * @tparam KeyType        The ViennaData key type
+     * @tparam DataType       The ViennaData data (value) type
+     */
     template <typename ElementType, typename KeyType, typename DataType>
     class global_scalar_data_accessor : public data_accessor_interface<ElementType>
     {
@@ -86,6 +93,12 @@ namespace viennagrid
         KeyType key_;
     };
 
+    /** @brief Wrapper: Access vector-valued data for all elements in the domain
+     * 
+     * @tparam ElementType    The ViennaGrid n-cell type
+     * @tparam KeyType        The ViennaData key type
+     * @tparam DataType       The ViennaData data (value) type
+     */
     template <typename ElementType, typename KeyType, typename DataType>
     class global_vector_data_accessor : public data_accessor_interface<ElementType>
     {
@@ -124,9 +137,12 @@ namespace viennagrid
     };
 
     
-    //
-    // Use case 2: Access data based on segments.
-    //
+    /** @brief Wrapper: Access scalar-valued data for elements per segment
+     * 
+     * @tparam ElementType    The ViennaGrid n-cell type
+     * @tparam KeyType        The ViennaData key type
+     * @tparam DataType       The ViennaData data (value) type. Must provide operator[] taking the segment ID.
+     */
     template <typename ElementType, typename KeyType, typename DataType>
     class segment_scalar_data_accessor : public data_accessor_interface<ElementType>
     {
@@ -154,6 +170,12 @@ namespace viennagrid
         KeyType key_;
     };
 
+    /** @brief Wrapper: Access vector-valued data for elements per segment
+     * 
+     * @tparam ElementType    The ViennaGrid n-cell type
+     * @tparam KeyType        The ViennaData key type
+     * @tparam DataType       The ViennaData data (value) type. Must provide operator[] taking the segment ID.
+     */
     template <typename ElementType, typename KeyType, typename DataType>
     class segment_vector_data_accessor : public data_accessor_interface<ElementType>
     {
@@ -186,9 +208,10 @@ namespace viennagrid
         KeyType key_;
     };
     
-    //
-    // The final wrapper class for any IO implementations
-    //
+    /** @brief The final wrapper class for IO implementations. Provides a uniform type for all quantity types on a n-cell.
+     * 
+     * @tparam ElementType   Type of the n-cell
+     */
     template <typename ElementType>
     class data_accessor_wrapper
     {

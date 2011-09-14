@@ -28,6 +28,10 @@
 #include "viennagrid/forwards.h"
 #include "viennagrid/traits/point.hpp"
 
+/** @file viennagrid/point.hpp
+    @brief Defines and implements the geometric point type and coordinate systems.
+*/
+
 namespace viennagrid
 {
   

@@ -28,11 +28,25 @@
 
 #include <vector>
 
+/** @file boundary_ncell_layer.hpp
+    @brief Provides the topological layers for n-cells
+*/
+
+
 namespace viennagrid
 {
   
   /************** Level 1: Elements contained by a higher-level element *******/
 
+  /** @brief A class holding all information about boundary k-cells of a n-cell
+   * 
+   * @tparam ConfigType       The configuration class
+   * @tparam ElementTag       The n-cell tag
+   * @tparam dim              Topological dimension k of the boundary k-cells
+   * @tparam handling_tag     Whether or not to store references to boundary k-cells
+   * @tparam orienter_tag     Whether or not to store orientations of k-cells with respect to the n-cell
+   * @tparam LevelNull        Helper parameter to avoid ambiguities at vertex level.
+   */
   template <typename ConfigType,
               typename ElementTag,
               unsigned long dim,
@@ -45,6 +59,7 @@ namespace viennagrid
   //
   // Full storage of boundary cell, including orientation
   //
+  /** @brief Implementation of full storage of k-cells including orientations */
   template <typename ConfigType, typename ElementTag, unsigned long dim>
   class boundary_ncell_layer <ConfigType, ElementTag, dim, full_handling_tag, full_handling_tag, false> :
     public boundary_ncell_layer <ConfigType, ElementTag, dim - 1>
@@ -132,6 +147,7 @@ namespace viennagrid
   //
   // Full storage of boundary cell, but no orientation
   //
+  /** @brief Implementation of boundary k-cell storage without orientation */
   template <typename ConfigType, typename ElementTag, unsigned long dim>
   class boundary_ncell_layer <ConfigType, ElementTag, dim, full_handling_tag, no_handling_tag, false> :
     public boundary_ncell_layer <ConfigType, ElementTag, dim - 1>
@@ -201,6 +217,7 @@ namespace viennagrid
   //
   // No storage of boundary elements:
   //
+  /** @brief Implementation of the case that boundary k-cells are not stored at all */
   template <typename ConfigType, typename ElementTag, unsigned long dim, typename orienter_tag>
   class boundary_ncell_layer <ConfigType, ElementTag, dim, no_handling_tag, orienter_tag, false> :
     public boundary_ncell_layer < ConfigType, ElementTag, dim - 1 >
@@ -232,6 +249,7 @@ namespace viennagrid
 
 
   //at level 0, i.e. vertex level, recursion ends:
+  /** @brief Specialization for the vertex level. Recursion ends here */
   template <typename ConfigType, typename ElementTag, typename handling_tag, typename orienter_tag>
   class boundary_ncell_layer <ConfigType, ElementTag, 0, handling_tag, orienter_tag, true> 
   {

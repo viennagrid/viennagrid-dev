@@ -29,9 +29,13 @@
 #include "viennagrid/detail/element_iterators.hpp"
 #include "viennagrid/segment.hpp"
 
+/** @file segment_iterators.hpp
+    @brief Provides the iterators and ranges for segments
+*/
+
 namespace viennagrid
 {
-  
+  /** @brief Iterator for non-const iteration over n-cells of a segment */
   template <typename IteratorType, typename ElementType>
   class on_segment_iterator : public std::iterator < std::forward_iterator_tag, ElementType >
   {
@@ -53,6 +57,7 @@ namespace viennagrid
       IteratorType iter_;
   };
   
+  /** @brief Iterator for const iteration over n-cells of a segment */
   template <typename IteratorType, typename ElementType>
   class const_on_segment_iterator : public std::iterator < std::forward_iterator_tag, ElementType >
   {
@@ -83,6 +88,7 @@ namespace viennagrid
   
   
   //special case: cells:
+  /** @brief Segment iterator type retrieval for cells */
   template <typename Config, long cell_level>
   struct segment_iterators< Config, cell_level, cell_level>
   {
@@ -103,6 +109,7 @@ namespace viennagrid
   // non-const:
 
   //container for iteration over a STL vector
+  /** @brief Main range class (non-const). Specialization for use with iteration or access to k-cells of a segment */
   template <typename config_type, long dim>
   class ncell_range < segment_t<config_type>, dim, false >
   {
@@ -161,6 +168,7 @@ namespace viennagrid
       container_type * cont_;
   };
   
+  /** @brief Main function for range retrieval. Specialization for iteration over n-cells of a segment */
   template <long dim, typename DomainConfig>
   ncell_range<segment_t<DomainConfig>, dim>
   ncells(segment_t<DomainConfig> & d)
@@ -168,6 +176,11 @@ namespace viennagrid
     return ncell_range< segment_t<DomainConfig>, dim>(d);
   }
   
+  /** @brief Main function for range retrieval. Specialization for iteration over n-cells of a segment. Returns only a proxy that must be assigned to a range object.
+   *
+   * Allows to omit the topological dimension if this is clear from the range type, e.g.
+   *  VertexRange vertices = ncells(segment);
+   */
   template <typename DomainConfig>
   ncell_proxy< segment_t<DomainConfig> >
   ncells(segment_t<DomainConfig> & d)
@@ -181,7 +194,7 @@ namespace viennagrid
   //
   
   
-  
+  /** @brief Main const-range class. Specialization for use with const iteration or const access to k-cells of a segment */
   template <typename config_type, long dim>
   class const_ncell_range < segment_t<config_type>, dim, false >
   {
@@ -241,6 +254,7 @@ namespace viennagrid
       const container_type * cont_;
   };
   
+  /** @brief Main function for range retrieval. Specialization for iteration over n-cells of a segment */
   template <long dim, typename DomainConfig>
   const_ncell_range< segment_t<DomainConfig>, dim>
   ncells(segment_t<DomainConfig> const & d)
@@ -248,6 +262,11 @@ namespace viennagrid
     return const_ncell_range< segment_t<DomainConfig>, dim>(d);
   }
   
+  /** @brief Main function for const-range retrieval. Specialization for iteration over n-cells of a segment. Returns only a proxy that must be assigned to a range object.
+   *
+   * Allows to omit the topological dimension if this is clear from the range type, e.g.
+   *  VertexRange vertices = ncells(segment);
+   */
   template <typename DomainConfig>
   const_ncell_proxy< segment_t<DomainConfig> >
   ncells(segment_t<DomainConfig> const & d)

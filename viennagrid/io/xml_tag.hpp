@@ -37,7 +37,10 @@ namespace viennagrid
   namespace io
   {
     
-    //functor for conversion to lowercase (avoid ::tolower())
+    /** @brief Functor for conversion to lowercase (avoids ::tolower()) 
+     *
+     * @tparam dummy    A dummy template argument to disable external linkage of the function (for 'header-only' reasons)
+     */
     template <long dummy = 0>
     struct char_to_lower
     {
@@ -49,6 +52,10 @@ namespace viennagrid
       } 
     };
     
+    /** @brief Helper function for converting a string to lowercase.
+     * 
+     * @tparam String    More a dummy template argument to disable external linkage of the function (for 'header-only' reasons)
+     */
     template <typename StringType>                    //Note: Using artifically a template argument t
     StringType string_to_lower(StringType const & s)
     {
@@ -58,7 +65,10 @@ namespace viennagrid
       return ret;
     }
   
-    
+    /** @brief Helper class that parses a XML tag
+     * 
+     * @tparam dummy   A dummy parameter to control the linkage of the class     
+     */
     template <typename dummy = bool> 
     class xml_tag
     {
@@ -67,6 +77,7 @@ namespace viennagrid
       
       public:
         
+        /** @brief Triggers the parsing of a XML tag */
         template <typename InputStream>
         void parse(InputStream & reader)
         {
@@ -159,6 +170,7 @@ namespace viennagrid
           reader.setf(std::ios_base::skipws);
         }
 
+        /** @brief Makes sure that the parsed XML tag has a certain name. Throws an bad_file_format_exception if not the case */
         void check_name(std::string const & expected_name,
                         std::string const & filename = std::string())
         {
@@ -170,6 +182,7 @@ namespace viennagrid
           }
         }
 
+        /** @brief Convenience overload for parsing a XML tag and checking the tag name */
         template <typename InputStream>
         void parse_and_check_name(InputStream & reader,
                                   std::string const & expected_name,
@@ -179,8 +192,10 @@ namespace viennagrid
           check_name(expected_name, filename);
         }
         
+        /** @brief Returns the XML tag name */
         std::string name() const { return name_; }
         
+        /** @brief Returns true if the XML tag has a certain attribute */
         bool has_attribute(std::string const & attrib_name) const
         {
           for (typename AttributeContainer::const_iterator it  = attributes_.begin();
@@ -193,6 +208,7 @@ namespace viennagrid
           return false;
         }
 
+        /** @brief Makes sure that the XML tag has a certain attribute. If not, a bad_file_format_exception is thrown */
         void check_attribute(std::string const & attrib_name,
                              std::string const & filename) const
         {
@@ -204,6 +220,7 @@ namespace viennagrid
           }
         }        
         
+        /** @brief Returns the value of a certain attribute */
         std::string get_value(std::string const & attrib_name) const
         {
           for (typename AttributeContainer::const_iterator it  = attributes_.begin();
@@ -216,6 +233,7 @@ namespace viennagrid
           return "";
         }
         
+        /** @brief Clears all internal data */
         void clear()
         {
           name_ = std::string();
@@ -223,6 +241,7 @@ namespace viennagrid
         }
       private:
         
+        /** @brief transforms a character to lower-case */
         char make_lower(char c) const
         {
           if(c <= 'Z' && c >= 'A')

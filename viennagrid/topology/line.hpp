@@ -21,9 +21,13 @@
 #include "viennagrid/forwards.h"
 #include "viennagrid/topology/point.hpp"
 
+/** @file line.hpp
+    @brief Provides the topological definition of a line
+*/
+
 namespace viennagrid
 {
-
+  /** @brief Topological description of a 1-cell (line). Same as hypercube_tag<1>. */
   template <>
   struct simplex_tag<1>
   {
@@ -36,6 +40,7 @@ namespace viennagrid
   {
 
     //Line:
+    /** @brief Topological description of the 0-cells of a line */
     template <>
     struct bndcells<simplex_tag<1>, 0>
     {
@@ -48,6 +53,7 @@ namespace viennagrid
   
 
   //for compatibility: allow hypercube<1> to be used as line_tag as well:
+  /** @brief Topological description of a 1-cell (line). Same as simplex_tag<1>. */
   template <>
   struct hypercube_tag<1>
   {
@@ -60,6 +66,7 @@ namespace viennagrid
   {
 
     //Line:
+    /** @brief Topological description of the 0-cells of a line */
     template <>
     struct bndcells<hypercube_tag<1>, 0>
     {

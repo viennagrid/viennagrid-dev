@@ -27,13 +27,16 @@
 #include "viennagrid/element.hpp"
 #include "viennagrid/topology/point.hpp"
 
+/** @file element_key.hpp
+    @brief Provides a key that uniquely identifies n-cells
+*/
+
 namespace viennagrid
 {
   
   /////////////// Segment is a container for elements ////////////////
 
-  //helper: holds an ordered number of vertices
-  //comparisons also take permutations into account
+  /** @brief Internal helper class: holds an ordered number of vertices. Comparisons also take permutations into account.  */
   template <typename ConfigType, 
             typename ElementType,
             typename IDHandler = typename result_of::element_id_handler<ConfigType, point_tag>::type>

@@ -26,10 +26,15 @@
 #include <string>
 #include "viennagrid/forwards.h"
 
+/** @file helper.hpp
+    @brief Various helpers for I/O operations
+*/
+
 namespace viennagrid
 {
   namespace io
   {
+    /** @brief Helper class for writing points to file. Aids as a generic layer for point types that don't have operator<< overloaded in a suitable way */
     template <int dim>
     struct PointWriter
     {};
@@ -82,6 +87,7 @@ namespace viennagrid
       }
     };
     
+    /** @brief Checks for a string being a number */
     struct strChecker
     {
       //******************************************
@@ -110,9 +116,7 @@ namespace viennagrid
     
     
     
-    //
-    // IO Exception
-    //
+    /** @brief Provides an exception for the case a file cannot be opened */
     class cannot_open_file_exception : public std::exception
     {
       public:
@@ -131,6 +135,7 @@ namespace viennagrid
         std::string filename_;
     };
     
+    /** @brief Provides an exception for the case a parser problem occurs */
     class bad_file_format_exception : public std::exception
     {
       public:
@@ -144,7 +149,9 @@ namespace viennagrid
           return ss.str().c_str();
         }
         
+        /** @brief Constructor taking the file name and a custom parser-specific message to be issued */
         bad_file_format_exception(std::string file, std::string message) : filename_(file), message_(message) {};
+        /** @brief Constructor taking a custom parser-specific message to be issued */
         bad_file_format_exception(std::string message) : filename_(), message_(message) {};
         
         virtual ~bad_file_format_exception() throw() {};

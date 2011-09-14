@@ -36,7 +36,7 @@ namespace viennagrid
 {
   namespace detail
   {
-    //
+    /** @brief Implementation for the calculation of the surface of a domain or segment */
     template <typename ContainerType>
     typename ContainerType::config_type::numeric_type
     surface_domainsegment(ContainerType const & d)
@@ -66,6 +66,7 @@ namespace viennagrid
   //
   // The public interface functions
   //
+  /** @brief Returns the surface of a n-cell */
   template <typename ElementType>
   typename ElementType::config_type::numeric_type
   surface(ElementType const & element)
@@ -90,13 +91,16 @@ namespace viennagrid
   }
   
   //special case: domain
+  /** @brief Returns the surface of a domain */
   template <typename ConfigType>
   typename ConfigType::numeric_type
   surface(domain_t<ConfigType> const & d)
   {
     return detail::surface_domainsegment(d);
   }    
+  
   //special case: segment
+  /** @brief Returns the surface of a segment */
   template <typename ConfigType>
   typename ConfigType::numeric_type
   surface(segment_t<ConfigType> const & d)

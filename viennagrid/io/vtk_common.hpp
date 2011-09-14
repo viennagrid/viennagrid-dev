@@ -25,70 +25,89 @@
 #include "viennagrid/topology/all.hpp"
 #include "viennagrid/forwards.h"
 
+/** @file vtk_common.hpp
+    @brief Provides common things for VTK reader and writer
+*/
+
 namespace viennagrid
 {
   namespace io
   {
-    // translates element tags to VTK type identifiers
-    // see http://www.vtk.org/VTK/img/file-formats.pdf, Figure 2, for an overview
+    /** @brief Translates element tags to VTK type identifiers
+     * 
+     * see http://www.vtk.org/VTK/img/file-formats.pdf, Figure 2, for an overview
+     * 
+     * @tparam ElementTag    The tag identifying the n-cell type
+     */
     template <typename ElementTag>
     struct ELEMENT_TAG_TO_VTK_TYPE
     {
       enum{ ReturnValue = ElementTag::ERROR_ELEMENT_TYPE_NOT_SUPPORTED };
     };
 
+    /** @brief Specialization for a hexahedron */
     template <>
     struct ELEMENT_TAG_TO_VTK_TYPE<hexahedron_tag>
     {
       enum{ value = 12 };
     };
 
+    /** @brief Specialization for a tetrahedron */
     template <>
     struct ELEMENT_TAG_TO_VTK_TYPE<tetrahedron_tag>
     {
       enum{ value = 10 };
     };
     
+    /** @brief Specialization for a quadrilateral */
     template <>
     struct ELEMENT_TAG_TO_VTK_TYPE<quadrilateral_tag>
     {
       enum{ value = 9 };
     };
 
+    /** @brief Specialization for a triangle */
     template <>
     struct ELEMENT_TAG_TO_VTK_TYPE<triangle_tag>
     {
       enum{ value = 5 };
     };
 
+    /** @brief Specialization for a line (one-dimensional hypercube) */
     template <>
     struct ELEMENT_TAG_TO_VTK_TYPE<hypercube_tag<1> >
     {
       enum{ value = 3 };
     };
     
+    /** @brief Specialization for a line (one-dimensional simplex) */
     template <>
     struct ELEMENT_TAG_TO_VTK_TYPE<simplex_tag<1> >
     {
       enum{ value = 3 };
     };
     
-    //
-    // Tranformations of reference orientations:
-    //
+    /** @brief Tranformations of reference orientations from VTK to ViennaGrid
+     * 
+     * While nothing needs to be done for simplices, hypercubes are oriented differently.
+     */
     template <typename CellTag>
     struct vtk_to_viennagrid_orientations
     {
       long operator()(long j) const { return j; }  //default case: do nothing
     };
 
+    /** @brief Tranformations of reference orientations from ViennaGrid to VTK
+     * 
+     * While nothing needs to be done for simplices, hypercubes are oriented differently.
+     */
     template <typename CellTag>
     struct viennagrid_to_vtk_orientations
     {
       long operator()(long j) const { return j; }  //default case: do nothing
     };
 
-    // for quadrilaterals:
+    /** @brief Specialization for quadrilaterals: Switch vertices 2 and 3 */
     template <>
     struct vtk_to_viennagrid_orientations<quadrilateral_tag>
     {
@@ -104,6 +123,7 @@ namespace viennagrid
       }
     };
     
+    /** @brief Specialization for quadrilaterals: Switch vertices 2 and 3 */
     template <>
     struct viennagrid_to_vtk_orientations<quadrilateral_tag>
     {
@@ -114,6 +134,7 @@ namespace viennagrid
     };
 
     // for hexahedra:
+    /** @brief Specialization for hexahedra: Switch vertices (2, 3) and (6, 7) */
     template <>
     struct vtk_to_viennagrid_orientations<hexahedron_tag>
     {
@@ -131,6 +152,7 @@ namespace viennagrid
       }
     };
 
+    /** @brief Specialization for hexahedra: Switch vertices (2, 3) and (6, 7) */
     template <>
     struct viennagrid_to_vtk_orientations<hexahedron_tag>
     {
@@ -144,7 +166,11 @@ namespace viennagrid
 
 
 
-
+    /** @brief A utility class managing the vertex ID in the domain. This is trivial if the vertices provide an ID, but a little tricky if vertex objects don't provide integral IDs.
+     * 
+     * @tparam DomainSegmentType   Type of either a domain or a segment
+     * @tparam IDHandler           The ID handling class used for dispatching.
+     */
     template <typename DomainSegmentType,
               typename IDHandler = typename viennagrid::result_of::element_id_handler<typename DomainSegmentType::config_type,
                                                                                       viennagrid::point_tag>::type
@@ -158,13 +184,14 @@ namespace viennagrid
       public:
         vtk_vertex_id_repository(SegmentType const & seg) {}
       
+        /** @brief Returns the ID of the the vertex with respect to the segment */
         long operator()(VertexType const & v, SegmentType const & seg) const
         {
           return viennadata::access<segment_mapping_key<SegmentType>, long>(seg)(v);
         }
     };
     
-    // The simple case: Vertices know their global IDs:
+    /** @brief Specialization for a domain. The simple case: Vertices know their global IDs. */
     template <typename ConfigType>
     class vtk_vertex_id_repository< viennagrid::domain_t<ConfigType>, viennagrid::integral_id >
     {
@@ -174,13 +201,14 @@ namespace viennagrid
       public:
         vtk_vertex_id_repository(DomainType const & seg) {}
       
+        /** @brief Returns the global ID of the vertex */
         long operator()(VertexType const & v, DomainType const & seg) const
         {
           return v.id();
         }
     };
 
-    // The tough case: Vertices don't know their global IDs. Set up a map first:
+    /** @brief Specialization for a domain. The tough case: Vertices don't know their global IDs. Set up a map first. */
     template <typename ConfigType>
     class vtk_vertex_id_repository< viennagrid::domain_t<ConfigType>, viennagrid::pointer_id >
     {
@@ -203,6 +231,7 @@ namespace viennagrid
           }
         }
       
+        /** @brief Returns the global ID of the vertex */
         long operator()(VertexType const & v, DomainType const &)
         {
           return ptr_to_global_id[&v];

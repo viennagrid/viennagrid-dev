@@ -18,6 +18,15 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
+/**
+ @mainpage Source Code Documentation for ViennaGrid 1.0.0
+
+ This is the source code documentation of ViennaGrid. Detailed information about the functions in ViennaGrid can be found here.
+ 
+ For a general overview over the types and functionality provided by ViennaGrid, please refer to the file doc/viennagrid.pdf
+
+*/
+
 #include <iostream>
 #include <vector>
 #include <map>
@@ -37,6 +46,10 @@
   #define VIENNAGRID_DEBUG_REFINEMENT
   #define VIENNAGRID_DEBUG_STATUS
 #endif
+
+/** @file forwards.h
+    @brief Contains forward declarations and definition of small classes that must be defined at an early stage
+*/
 
 namespace viennagrid
 {

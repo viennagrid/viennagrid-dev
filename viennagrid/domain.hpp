@@ -32,6 +32,10 @@
 #include "viennagrid/detail/domain_iterators.hpp"
 #include "viennagrid/detail/domain_layers.hpp"
 
+/** @file domain.hpp
+    @brief Provides the main domain type
+*/
+
 namespace viennagrid
 {
 

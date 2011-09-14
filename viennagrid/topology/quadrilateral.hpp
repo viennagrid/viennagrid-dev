@@ -22,9 +22,13 @@
 #include "viennagrid/topology/point.hpp"
 #include "viennagrid/topology/line.hpp"
 
+/** @file quadrilateral.hpp
+    @brief Provides the topological definition of a quadrilateral
+*/
+
 namespace viennagrid
 {
-
+  /** @brief Topological description of a quadrilateral.*/
   template <>
   struct hypercube_tag<2>
   {
@@ -35,7 +39,7 @@ namespace viennagrid
   namespace topology
   {
   
-    //parallelogram
+    /** @brief Topological description of the boundary 0-cells of a quadrilateral */
     template <>
     struct bndcells<quadrilateral_tag, 0>
     {
@@ -44,6 +48,7 @@ namespace viennagrid
       enum{ num = 4 };     //3 vertices
     };
 
+    /** @brief Topological description of the boundary 1-cells of a quadrilateral */
     template <>
     struct bndcells<quadrilateral_tag, 1>
     {
@@ -56,6 +61,7 @@ namespace viennagrid
 
 
     //////// Parallelogram ////////
+    /** @brief Fills a segment or a domain with the edges/facets of a quadrilateral */
     template <>
     struct bndcell_filler<quadrilateral_tag, 1>
     {

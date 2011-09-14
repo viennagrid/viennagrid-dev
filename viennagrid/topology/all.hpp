@@ -18,6 +18,10 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
+/** @file all.hpp
+    @brief Convenience header file for all topological objects
+*/
+
 //one-dimensional:
 #include "viennagrid/topology/line.hpp"
 

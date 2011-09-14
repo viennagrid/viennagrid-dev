@@ -34,11 +34,15 @@
 #include "viennagrid/segment.hpp"
 #include "viennagrid/traits/container.hpp"
 
+/** @file domain_layers.hpp
+    @brief Provides the topological layers for the domain
+*/
+
 namespace viennagrid
 {
   namespace detail
   {
-  
+    /** @brief Class responsible for holding the segments inside a domain */
     template <typename DomainType, typename SegmentType>
     class domain_segment_container
     {
@@ -91,7 +95,13 @@ namespace viennagrid
     };
   
 
-
+    /** @brief Class holding all n-cells of a particular topological dimension n. Uses recursive inheritance similar to n-cells themselves 
+     * 
+     * @tparam Config           Configuration class
+     * @tparam dim              Topological dimension n of the layer
+     * @tparam is_cell          Helper flag for resolving ambiguities at cell level
+     * @tparam STOR             The storage scheme used for this layer
+     */
     template <typename Config, // config class
               long dim,  // dimension of the elements covered here
               bool is_cell = false,                   // whether this layer holds the cells (i.e. highest topological element)
@@ -117,6 +127,11 @@ namespace viennagrid
         
         using base_type::push_back;
         
+        /** @brief Adds a n-cell to the domain. 
+         * 
+         * @param elem          The n-cell to be added
+         * @param orientation   Pointer to a permutation array
+         */
         element_type *
         push_back(element_type & elem, ElementOrientationType * orientation) {
 
@@ -192,7 +207,7 @@ namespace viennagrid
         container_type    elements;        //container of elements
     };
 
-    
+    /** @brief Specialization of a domin layer without the storage of n-cells. */
     template <typename Config,
               long dim>
     class domain_layers<Config, dim, false, no_handling_tag> : public domain_layers<Config, dim-1>
@@ -233,6 +248,7 @@ namespace viennagrid
      
     
     // special handling for cells:
+    /** @brief Specialization for the cell level */
     template <typename Config,
               long dim>
     class domain_layers<Config, dim, true, full_handling_tag> : public domain_layers<Config,
@@ -279,6 +295,7 @@ namespace viennagrid
     };
     
     //terminate recursion at vertex level:
+    /** @brief Specialization for the vertex level. Terminates the recursive inheritance */
     template <typename Config,
               bool is_cell,
               typename STOR >

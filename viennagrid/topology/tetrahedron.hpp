@@ -25,9 +25,14 @@
 #include "viennadata/api.hpp"
 #include "viennagrid/algorithm/norm.hpp"
 
+/** @file tetrahedron.hpp
+    @brief Provides the topological definition of a tetrahedron
+*/
+
 namespace viennagrid
 {
 
+  /** @brief Topological description of a tetrahedron.*/
   template <>
   struct simplex_tag<3>
   {
@@ -40,6 +45,7 @@ namespace viennagrid
   {
 
     //Tetrahedron:
+    /** @brief Topological description of the boundary 0-cells of a tetrahedron */
     template <>
     struct bndcells<tetrahedron_tag, 0>
     {
@@ -48,6 +54,7 @@ namespace viennagrid
       enum{ num = 4 };     //4 vertices
     };
 
+    /** @brief Topological description of the boundary 1-cells of a tetrahedron */
     template <>
     struct bndcells<tetrahedron_tag, 1>
     {
@@ -56,6 +63,7 @@ namespace viennagrid
       enum{ num = 6 };     //6 edges
     };
 
+    /** @brief Topological description of the boundary 2-cells of a tetrahedron */
     template <>
     struct bndcells<tetrahedron_tag, 2>
     {
@@ -65,6 +73,7 @@ namespace viennagrid
     };
     
     //////// Tetrahedron ////////
+    /** @brief Fills a segment or a domain with the edges of a tetrahedron */
     template <>
     struct bndcell_filler<tetrahedron_tag, 1>
     {
@@ -108,6 +117,7 @@ namespace viennagrid
       }
     };
     
+    /** @brief Fills a segment or a domain with the edges/facets of a tetrahedron */
     template <>
     struct bndcell_filler<tetrahedron_tag, 2>
     {
@@ -201,17 +211,16 @@ namespace viennagrid
   
   
   
-  //
-  // Refinement of a tetrahedron: A LOT of spaghetti-code to follow. 
-  // Unfortunately, combinatorics forces us to consider that many cases of refinement.
-  //
+  /** @brief Class specialization for the refinement of a tetrahedron: A LOT of spaghetti-code to follow. 
+   * 
+   * 
+   * Unfortunately, combinatorics (or a lack of talent?) forces us to consider that many cases of refinement.
+   */
   template <>
   struct element_refinement<tetrahedron_tag>
   {
 
-    //
-    // Not refining a tetrahedron at all
-    //
+    /** @brief Not refining a tetrahedron at all */
     template <typename CellType, typename DomainTypeOut>
     static void apply0(CellType const & cell_in, DomainTypeOut & segment_out)
     {
@@ -241,9 +250,7 @@ namespace viennagrid
 
     }    
 
-    //
-    // Refinement of a tetrahedron, bisecting one edge
-    //
+    /** @brief Refinement of a tetrahedron, bisecting one edge */
     template <typename CellType, typename DomainTypeOut>
     static void apply1(CellType const & cell_in, DomainTypeOut & segment_out)
     {
@@ -369,8 +376,10 @@ namespace viennagrid
     // Refinement of a tetrahedron, bisecting two edges
     //
     
-    // Case 1: The two edges have a common vertex. Orientation: (dots are in the background)
-    /*
+    /** @brief Refinement of a tetrahedron, bisecting two edges. Case 1: The two edges have a common vertex.
+     *
+     * Orientation: (dots are in the background)
+     *
      *            3 ----------- 2
      *          /   \      .   /
      *         /      \ .     5
@@ -446,8 +455,11 @@ namespace viennagrid
       
     }
 
-    // Case 2: The two edges don't have any common vertex. Orientation: (dots are in the background)
-    /*
+    /** @brief Refinement of a tetrahedron, bisecting two edges.  Case 2: The two edges don't have any common vertex.
+     *
+     *
+     * Orientation: (dots are in the background)
+     *
      *            3 -----5----- 2
      *          /   \      .   /
      *         /      \ .     /
@@ -494,7 +506,9 @@ namespace viennagrid
       segment_out.push_back(new_cell);
     }
 
-    // Reorders the tetrahedron 
+    /** @brief Entry function for the refinement of a tetrahedron by bisection of two edges. Reorders the tetrahedron to reduce complexity.
+     * 
+     */
     template <typename CellType, typename DomainTypeOut>
     static void apply2(CellType const & cell_in, DomainTypeOut & segment_out)
     {
@@ -746,12 +760,10 @@ namespace viennagrid
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-    //
-    // Refinement of a tetrahedron, bisecting three edges
-    //
-    
-    // Case 1: The three edges have a common vertex. Orientation: (dots are in the background)
-    /*
+    /** @brief Refinement of a tetrahedron, bisecting three edges.  Case 1: The three edges have a common vertex. 
+     * 
+     * Orientation: (dots are in the background)
+     *
      *            3 ----------- 2
      *          /   \       .  /
      *         /      6 .     5
@@ -975,8 +987,11 @@ namespace viennagrid
     }
 
 
-    // Case 2: The three edges don't have any common vertex. Orientation: (dots are in the background)
-    /*
+    /** @brief Refinement of a tetrahedron, bisecting three edges.  Case 2: The three edges don't have any common vertex.
+     *
+     *
+     * Orientation: (dots are in the background)
+     *
      *            3 ----------- 2
      *          /   \       .  /
      *         /      \ .     5
@@ -1028,8 +1043,10 @@ namespace viennagrid
     }
 
 
-    // Case 3: The three edges don't have any common vertex. Orientation: (dots are in the background)
-    /*
+    /** @brief Refinement of a tetrahedron, bisecting three edges. Case 3: The three edges don't have any common vertex.
+     *
+     * Orientation: (dots are in the background)
+     *
      *            3 ----------- 2
      *          /   \       .  /
      *         6      \ .     5
@@ -1187,8 +1204,10 @@ namespace viennagrid
       
     }
 
-    // Case 4: The three edges don't have any common vertex. Orientation: (dots are in the background)
-    /*
+    /** @brief Refinement of a tetrahedron, bisecting three edges. Case 4: The three edges don't have any common vertex.
+     *
+     * Orientation: (dots are in the background)
+     *
      *            3 ----6------ 2
      *          /   \       .  /
      *         /      \ .     5
@@ -1354,9 +1373,7 @@ namespace viennagrid
 
 
 
-    //
-    // Refinement of a tetrahedron, bisecting three edges
-    //
+    /** @brief Entry function for refinement of a tetrahedron with three edges for bisection. */
     template <typename CellType, typename DomainTypeOut>
     static void apply3(CellType const & cell_in, DomainTypeOut & segment_out)
     {
@@ -1689,15 +1706,10 @@ namespace viennagrid
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-
-    //
-    // Refinement of a tetrahedron, bisecting four edges
-    //
-    
-    
-    // Case 1: The two edges have a common vertex. Orientation: (dots are in the background)
-    /*
+    /** @brief Refinement of a tetrahedron, bisecting four edges. Case 1: The two edges have a common vertex.
+     *
+     * Orientation: (dots are in the background)
+     *
      *            3 -----6----- 2
      *          /   \      .   /
      *         7      \ .     /
@@ -1866,8 +1878,11 @@ namespace viennagrid
       
     }
     
-    // Case 2: The two edges don't have any common vertex. Orientation: (dots are in the background)
-    /*
+    /** @brief Refinement of a tetrahedron, bisecting four edges. Case 2: The two edges don't have any common vertex.
+     *
+     *
+     * Orientation: (dots are in the background)
+     *
      *            3 ----------- 2
      *          /   \      .   /
      *         6      \ .     4
@@ -2608,6 +2623,8 @@ namespace viennagrid
       }
     }
     
+    
+    /** @brief Entry function for a refinement of a tetrahedron by a bisection of four edges. Reorders vertices to reduce complexity. */
     template <typename CellType, typename DomainTypeOut>
     static void apply4(CellType const & cell_in, DomainTypeOut & segment_out)
     {
@@ -2888,14 +2905,11 @@ namespace viennagrid
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
     
-    //
-    // Refinement of a tetrahedron, bisecting five edges
-    //
-    
-    // Case 1 (no other cases): Only edge 01 is not refined. Orientation: (dots are in the background)
-    /*
+    /** @brief Refinement of a tetrahedron, bisecting five edges. Case 1 (no other cases): Only edge 01 is not refined.
+     *
+     * Orientation: (dots are in the background)
+     *
      *            3 -----8----- 2
      *          /   \      .   /
      *         6      \ .     /
@@ -2928,10 +2942,6 @@ namespace viennagrid
       new_cell.vertices(cellvertices);
       segment_out.push_back(new_cell);
       
-      //double diag02_len = viennagrid::norm(vertices[0]->point() - vertices[2]->point());
-      //double diag03_len = viennagrid::norm(vertices[0]->point() - vertices[3]->point());
-      //double diag12_len = viennagrid::norm(vertices[1]->point() - vertices[2]->point());
-      //double diag13_len = viennagrid::norm(vertices[1]->point() - vertices[3]->point());
 
       //if (diag03_len > diag13_len) //split edge 03, introduce line 61
       if (stable_line_is_longer(vertices[0], vertices[3],
@@ -3074,6 +3084,7 @@ namespace viennagrid
       }
     }
     
+    /** @brief Entry function for the refinement of a tetrahedron bisecting five edges. Reorders vertices to reduce complexity */
     template <typename CellType, typename DomainTypeOut>
     static void apply5(CellType const & cell_in, DomainTypeOut & segment_out)
     {
@@ -3210,9 +3221,7 @@ namespace viennagrid
 
 
 
-    //
-    // Refinement of a tetrahedron, bisecting six edges: Split the cell into 8 tets
-    //
+    /** @brief Refinement of a tetrahedron, bisecting six edges: Split the cell into 8 tets */
     template <typename CellType, typename DomainTypeOut>
     static void apply6(CellType const & cell_in, DomainTypeOut & segment_out)
     {
@@ -3399,8 +3408,11 @@ namespace viennagrid
     
     
     //
-    // public interface function
-    //
+    /** @brief Public entry function for the refinement of a tetrahedron.
+     * 
+     * @param cell_in       The tetrahedron to be refined
+     * @param segment_out   The domain or segment the refined tetrahedra are written to
+     */
     template <typename CellType, typename DomainTypeOut>
     static void apply(CellType const & cell_in, DomainTypeOut & segment_out)
     {

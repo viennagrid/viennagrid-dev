@@ -43,6 +43,10 @@ namespace viennagrid
   namespace io
   {
     
+    /** @brief A VTK reader class that allows to read meshes from XML-based VTK files as defined in http://www.vtk.org/pdf/file-formats.pdf
+     * 
+     * @tparam DomainType   The type of the domain to be read. Must not be a segment type!
+     */
     template <typename DomainType>
     class vtk_reader
     {
@@ -84,6 +88,7 @@ namespace viennagrid
       std::deque<std::deque<std::pair<std::string, std::deque<double> > > >  local_scalar_cell_data;
       std::deque<std::deque<std::pair<std::string, std::deque<double> > > >  local_vector_cell_data;
       
+      /** @brief Opens a file */
       void openFile(std::string const & filename)
       {
         reader.open(filename.c_str());
@@ -93,11 +98,13 @@ namespace viennagrid
         }
       }
       
+      /** @brief Closes a file */
       void closeFile()
       {
         reader.close();
       }
      
+     /** @brief compares the lower-case representation of two strings */
       bool lowercase_compare(std::string const & s1, std::string const & s2)
       {
         std::string s1_lower = s1;
@@ -109,6 +116,7 @@ namespace viennagrid
         return s1_lower == s2_lower;
       }
      
+      /** @brief Make sure that the next token is given by 'expectedToken'. Throws a bad_file_format_exception if this is not the case */
       void checkNextToken(std::string const & expectedToken)
       {
         std::string token;
@@ -123,7 +131,7 @@ namespace viennagrid
         }
       }
 
-
+      /** @brief Reads the coordinates of the points/vertices in the domain */
       void readNodeCoordinates(long nodeNum, long numberOfComponents, std::size_t seg_id)
       {
         double nodeCoord;
@@ -158,7 +166,7 @@ namespace viennagrid
         }
       }
 
-      //read the vertex indices of the cells
+      /** @brief Reads the vertex indices of the cells inside the domain */
       void readCellIndices(std::size_t seg_id)
       {
         long cellNode = 0;
@@ -176,6 +184,7 @@ namespace viennagrid
         }
       }
 
+      /** @brief Read the cell offsets for the vertex indices */
       void readOffsets(std::size_t seg_id)
       {
           //****************************************************************************
@@ -199,6 +208,7 @@ namespace viennagrid
           }
       }
 
+      /** @brief Read the types of each cell. */
       void readTypes()
       {
           //****************************************************************************
@@ -222,7 +232,7 @@ namespace viennagrid
           }
       }
       
-      
+      /** @brief Read data and push it to a container. Helper function. */
       void readData(std::deque<double> & container)
       {
         std::string token;
@@ -235,6 +245,7 @@ namespace viennagrid
         }
       }
       
+      /** @brief Read point or cell data and fill the respective data containers */
       template <typename ContainerType, typename NameContainerType>
       void readPointCellData(size_t seg_id,
                              ContainerType & scalar_data,
@@ -284,6 +295,7 @@ namespace viennagrid
 
       /////////////////////////// Routines for pushing everything to domain ///////////////
 
+      /** @brief Pushes the vertices read to the domain */
       void setupVertices(DomainType & domain)
       {
         for (std::size_t i=0; i<global_points_2.size(); ++i)
@@ -294,7 +306,7 @@ namespace viennagrid
         }
       }
       
-      
+      /** @brief Pushes the cells read to the domain. Preserves segment information. */
       void setupCells(DomainType & domain, std::size_t seg_id)
       {
           //***************************************************
@@ -353,6 +365,7 @@ namespace viennagrid
           }
       }
       
+      /** @brief Writes data for vertices to the ViennaGrid domain using ViennaData */
       template <typename ContainerType>
       void setupDataVertex(DomainType & domain, std::size_t seg_id, ContainerType const & container, std::size_t num_components)
       {
@@ -466,6 +479,7 @@ namespace viennagrid
           
       }
 
+      /** @brief Writes data for cells to the ViennaGrid domain using ViennaData */
       template <typename ContainerType>
       void setupDataCell(DomainType & domain, std::size_t seg_id, ContainerType const & container, std::size_t num_components)
       {
@@ -576,6 +590,7 @@ namespace viennagrid
           
       }
 
+      /** @brief Writes all data read from files to the domain */
       void setupData(DomainType & domain, std::size_t seg_id)
       {
         for (size_t i=0; i<local_scalar_vertex_data[seg_id].size(); ++i)
@@ -601,6 +616,7 @@ namespace viennagrid
 
       }
      
+      /** @brief Parses a .vtu file referring to a segment of the domain */
       void parse_vtu_segment(std::string filename, std::size_t seg_id)
       {
 
@@ -699,6 +715,7 @@ namespace viennagrid
         
       }
      
+      /** @brief Processes a .vtu file that represents a full domain */
       void process_vtu(std::string const & filename)
       {
         local_cell_num.resize(1);
@@ -714,6 +731,7 @@ namespace viennagrid
         parse_vtu_segment(filename, 0);        
       }
 
+      /** @brief Processes a .pvd file containing the links to the segments stored in individual .vtu files */
       void process_pvd(std::string const & filename)
       {
         std::deque<std::string> filenames;
@@ -815,6 +833,11 @@ namespace viennagrid
 
     public:
 
+      /** @brief Triggers the read process.
+       * 
+       * @param domain    The ViennaGrid domain
+       * @param filename  Name of the file containing the mesh. Either .pvd (multi-segment) or .vtu (single segment)
+       */
       int operator()(DomainType & domain, std::string const & filename)
       {
         std::string::size_type pos  = filename.rfind(".")+1;
@@ -851,7 +874,7 @@ namespace viennagrid
         return EXIT_SUCCESS;
       } //operator()
       
-      
+      /** @brief Returns the data names of all scalar vertex data read */
       std::vector<std::string> scalar_vertex_data_names(std::size_t segment_id) const 
       {
         std::vector<std::string> ret;
@@ -861,6 +884,7 @@ namespace viennagrid
         return ret;
       }
 
+      /** @brief Returns the data names of all vector vertex data read */
       std::vector<std::string> vector_vertex_data_names(std::size_t segment_id) const 
       {
         std::vector<std::string> ret;
@@ -870,6 +894,7 @@ namespace viennagrid
         return ret;
       }
 
+      /** @brief Returns the data names of all scalar cell data read */
       std::vector<std::string> scalar_cell_data_names(std::size_t segment_id) const 
       {
         std::vector<std::string> ret;
@@ -879,6 +904,7 @@ namespace viennagrid
         return ret;
       }
 
+      /** @brief Returns the data names of all vector cell data read */
       std::vector<std::string> vector_cell_data_names(std::size_t segment_id) const 
       {
         std::vector<std::string> ret;
@@ -890,9 +916,12 @@ namespace viennagrid
 
       ///////////////////// data handling ///////////////////////
 
-        //
-        // Add scalar data for vertices:
-        //
+        /** @brief Specify a special handling of scalar-valued data for vertices. Prefer the free function add_vector_data_on_vertices() 
+         *
+         * @tparam T       Anything that can be wrapped by a data_accessor_wrapper
+         * @param  accessor The quantity accessor
+         * @param  name    The quantity name that should appear in the VTK file
+         */
         template <typename T>
         void add_scalar_data_on_vertices(T const & accessor, std::string name)
         {
@@ -901,10 +930,12 @@ namespace viennagrid
           vertex_data_scalar_names.push_back(name);
         }
 
-        //
-        // Add vector data for verteix:
-        //
-
+        /** @brief Specify a special handling of vector-valued data for vertices. Prefer the free function add_vector_data_on_vertices() 
+         *
+         * @tparam T       Anything that can be wrapped by a data_accessor_wrapper
+         * @param  accessor The quantity accessor
+         * @param  name    The quantity name that should appear in the VTK file
+         */
         template <typename T>
         void add_vector_data_on_vertices(T const & accessor, std::string name)
         {
@@ -913,9 +944,12 @@ namespace viennagrid
           vertex_data_vector_names.push_back(name);
         }
 
-        //
-        // Add point data normals:
-        //
+        /** @brief Specify a special handling of vector-valued (normal) data for vertices. Prefer the free function add_normal_data_on_vertices() 
+         *
+         * @tparam T       Anything that can be wrapped by a data_accessor_wrapper
+         * @param  accessor The quantity accessor
+         * @param  name    The quantity name that should appear in the VTK file
+         */
         template <typename T>
         void add_normal_data_on_vertices(T const & accessor, std::string name)
         {
@@ -925,9 +959,12 @@ namespace viennagrid
         }
 
 
-        //
-        // Add scalar cell data:
-        //
+        /** @brief Specify a special handling of scalar-valued data for cells. Prefer the free function add_scalar_data_on_cells() 
+         *
+         * @tparam T       Anything that can be wrapped by a data_accessor_wrapper
+         * @param  accessor The quantity accessor
+         * @param  name    The quantity name that should appear in the VTK file
+         */
         template <typename T>
         void add_scalar_data_on_cells(T const & accessor, std::string name)
         {
@@ -936,9 +973,12 @@ namespace viennagrid
           cell_data_scalar_names.push_back(name);
         }
 
-        //
-        // Add vector cell data:
-        //
+        /** @brief Specify a special handling of vector-valued data for cells. Prefer the free function add_vector_data_on_cells() 
+         *
+         * @tparam T       Anything that can be wrapped by a data_accessor_wrapper
+         * @param  accessor The quantity accessor
+         * @param  name    The quantity name that should appear in the VTK file
+         */
         template <typename T>
         void add_vector_data_on_cells(T const & accessor, std::string name)
         {
@@ -948,9 +988,12 @@ namespace viennagrid
         }
 
 
-        //
-        // Add cell data normals:
-        //
+        /** @brief Specify a special handling of vector-valued data (normals) for cells. Prefer the free function add_normal_data_on_cells() 
+         *
+         * @tparam T       Anything that can be wrapped by a data_accessor_wrapper
+         * @param  accessor The quantity accessor
+         * @param  name    The quantity name that should appear in the VTK file
+         */
         template <typename T>
         void add_normal_data_on_cells(T const & accessor, std::string name)
         {
@@ -959,12 +1002,32 @@ namespace viennagrid
           cell_data_normal_names.push_back(name);
         }
 
-        // Extract data read from file:
-        std::vector<std::pair<std::size_t, std::string> > const & get_scalar_data_on_vertices() const { return vertex_data_scalar_read; }
-        std::vector<std::pair<std::size_t, std::string> > const & get_vector_data_on_vertices() const { return vertex_data_vector_read; }
 
-        std::vector<std::pair<std::size_t, std::string> > const & get_scalar_data_on_cells() const { return cell_data_scalar_read; }
-        std::vector<std::pair<std::size_t, std::string> > const & get_vector_data_on_cells() const { return cell_data_vector_read; }
+        // Extract data read from file:
+        
+        /** @brief Returns the names of all scalar-valued data read for vertices */
+        std::vector<std::pair<std::size_t, std::string> > const & get_scalar_data_on_vertices() const
+        {
+          return vertex_data_scalar_read;
+        }
+        
+        /** @brief Returns the names of all vector-valued data read for vertices */
+        std::vector<std::pair<std::size_t, std::string> > const & get_vector_data_on_vertices() const
+        {
+          return vertex_data_vector_read;
+        }
+
+        /** @brief Returns the names of all scalar-valued data read for cells */
+        std::vector<std::pair<std::size_t, std::string> > const & get_scalar_data_on_cells() const
+        { 
+          return cell_data_scalar_read;
+        }
+        
+        /** @brief Returns the names of all vector-valued data read for cells */
+        std::vector<std::pair<std::size_t, std::string> > const & get_vector_data_on_cells() const
+        {
+          return cell_data_vector_read;
+        }
 
       private:
         std::vector< data_accessor_wrapper<VertexType> >    vertex_data_scalar;
@@ -993,6 +1056,8 @@ namespace viennagrid
         std::vector<std::pair<std::size_t, std::string> >         cell_data_vector_read;
     }; //class vtk_reader
 
+
+    /** @brief Convenience function for importing a mesh using a single line of code. */
     template < typename DomainType > 
     int import_vtk(DomainType & domain, std::string const & filename)
     {
@@ -1009,6 +1074,15 @@ namespace viennagrid
     //    
     
     // scalar data
+    /** @brief Registers scalar-valued data on vertices for special treatment by the VTK reader.
+      *
+      * @tparam KeyType     Type of the key used with ViennaData
+      * @tparam DataType    Type of the data as used with ViennaData
+      * @tparam DomainType  The ViennaGrid domain type
+      * @param  reader      The XML reader object for which the data should be registered
+      * @param  key         The key object for ViennaData
+      * @param  quantity_name     The quantity name given in the VTK file
+      */
     template <typename KeyType, typename DataType, typename DomainType>
     vtk_reader<DomainType> & add_scalar_data_on_vertices(vtk_reader<DomainType> & reader,
                                                          KeyType const & key,
@@ -1022,6 +1096,15 @@ namespace viennagrid
       return reader;
     }
 
+    /** @brief Registers scalar-valued data on vertices for special treatment by the VTK reader. Operates on a per-segment basis.
+      *
+      * @tparam KeyType     Type of the key used with ViennaData
+      * @tparam DataType    Type of the data as used with ViennaData
+      * @tparam DomainType  The ViennaGrid domain type
+      * @param  reader      The XML reader object for which the data should be registered
+      * @param  key         The key object for ViennaData
+      * @param  quantity_name     The quantity name given in the VTK file
+      */
     template <typename KeyType, typename DataType, typename DomainType>
     vtk_reader<DomainType> & add_scalar_data_on_vertices_per_segment(vtk_reader<DomainType> & reader,
                                                                      KeyType const & key,
@@ -1036,6 +1119,15 @@ namespace viennagrid
     }
 
     // vector data
+    /** @brief Registers vector-valued data on vertices for special treatment by the VTK reader.
+      *
+      * @tparam KeyType     Type of the key used with ViennaData
+      * @tparam DataType    Type of the data as used with ViennaData
+      * @tparam DomainType  The ViennaGrid domain type
+      * @param  reader      The XML reader object for which the data should be registered
+      * @param  key         The key object for ViennaData
+      * @param  quantity_name     The quantity name given in the VTK file
+      */
     template <typename KeyType, typename DataType, typename DomainType>
     vtk_reader<DomainType> & add_vector_data_on_vertices(vtk_reader<DomainType> & reader,
                                                          KeyType const & key,
@@ -1049,6 +1141,15 @@ namespace viennagrid
       return reader;
     }
 
+    /** @brief Registers vector-valued data on vertices for special treatment by the VTK reader. Operates on a per-segment basis.
+      *
+      * @tparam KeyType     Type of the key used with ViennaData
+      * @tparam DataType    Type of the data as used with ViennaData
+      * @tparam DomainType  The ViennaGrid domain type
+      * @param  reader      The XML reader object for which the data should be registered
+      * @param  key         The key object for ViennaData
+      * @param  quantity_name     The quantity name given in the VTK file
+      */
     template <typename KeyType, typename DataType, typename DomainType>
     vtk_reader<DomainType> & add_vector_data_on_vertices_per_segment(vtk_reader<DomainType> & reader,
                                                                      KeyType const & key,
@@ -1064,6 +1165,15 @@ namespace viennagrid
 
 
     // normal data
+    /** @brief Registers vector-valued data (normals) on vertices for special treatment by the VTK reader. Equivalent to add_vector_data_on_vertices()
+      *
+      * @tparam KeyType     Type of the key used with ViennaData
+      * @tparam DataType    Type of the data as used with ViennaData
+      * @tparam DomainType  The ViennaGrid domain type
+      * @param  reader      The XML reader object for which the data should be registered
+      * @param  key         The key object for ViennaData
+      * @param  quantity_name     The quantity name given in the VTK file
+      */
     template <typename KeyType, typename DataType, typename DomainType>
     vtk_reader<DomainType> & add_normal_data_on_vertices(vtk_reader<DomainType> & reader,
                                                          KeyType const & key,
@@ -1077,6 +1187,15 @@ namespace viennagrid
       return reader;
     }
 
+    /** @brief Registers vector-valued data (normals) on vertices for special treatment by the VTK reader. Operates on a per-segment basis and is equivalent to add_vector_data_on_vertices_per_segment()
+      *
+      * @tparam KeyType     Type of the key used with ViennaData
+      * @tparam DataType    Type of the data as used with ViennaData
+      * @tparam DomainType  The ViennaGrid domain type
+      * @param  reader      The XML reader object for which the data should be registered
+      * @param  key         The key object for ViennaData
+      * @param  quantity_name     The quantity name given in the VTK file
+      */
     template <typename KeyType, typename DataType, typename DomainType>
     vtk_reader<DomainType> & add_normal_data_on_vertices_per_segment(vtk_reader<DomainType> & reader,
                                                                      KeyType const & key,
@@ -1090,11 +1209,25 @@ namespace viennagrid
       return reader;
     }
 
+
+
+
     //
     // Convenience functions for adding cell-based data
     //
-    
+
+
+
     // scalar data
+    /** @brief Registers scalar-valued data on cells for special treatment by the VTK reader.
+      *
+      * @tparam KeyType     Type of the key used with ViennaData
+      * @tparam DataType    Type of the data as used with ViennaData
+      * @tparam DomainType  The ViennaGrid domain type
+      * @param  reader      The XML reader object for which the data should be registered
+      * @param  key         The key object for ViennaData
+      * @param  quantity_name     The quantity name given in the VTK file
+      */
     template <typename KeyType, typename DataType, typename DomainType>
     vtk_reader<DomainType> & add_scalar_data_on_cells(vtk_reader<DomainType> & reader,
                                                       KeyType const & key,
@@ -1109,6 +1242,15 @@ namespace viennagrid
       return reader;
     }
 
+    /** @brief Registers scalar-valued data on cells for special treatment by the VTK reader. Operates on a per-segment basis.
+      *
+      * @tparam KeyType     Type of the key used with ViennaData
+      * @tparam DataType    Type of the data as used with ViennaData
+      * @tparam DomainType  The ViennaGrid domain type
+      * @param  reader      The XML reader object for which the data should be registered
+      * @param  key         The key object for ViennaData
+      * @param  quantity_name     The quantity name given in the VTK file
+      */
     template <typename KeyType, typename DataType, typename DomainType>
     vtk_reader<DomainType> & add_scalar_data_on_cells_per_segment(vtk_reader<DomainType> & reader,
                                                                   KeyType const & key,
@@ -1124,6 +1266,15 @@ namespace viennagrid
     }
 
     // vector data
+    /** @brief Registers vector-valued data on cells for special treatment by the VTK reader.
+      *
+      * @tparam KeyType     Type of the key used with ViennaData
+      * @tparam DataType    Type of the data as used with ViennaData
+      * @tparam DomainType  The ViennaGrid domain type
+      * @param  reader      The XML reader object for which the data should be registered
+      * @param  key         The key object for ViennaData
+      * @param  quantity_name     The quantity name given in the VTK file
+      */
     template <typename KeyType, typename DataType, typename DomainType>
     vtk_reader<DomainType> & add_vector_data_on_cells(vtk_reader<DomainType> & reader,
                                                       KeyType const & key,
@@ -1138,6 +1289,15 @@ namespace viennagrid
       return reader;
     }
 
+    /** @brief Registers vector-valued data on cells for special treatment by the VTK reader. Operates on a per-segment basis.
+      *
+      * @tparam KeyType     Type of the key used with ViennaData
+      * @tparam DataType    Type of the data as used with ViennaData
+      * @tparam DomainType  The ViennaGrid domain type
+      * @param  reader      The XML reader object for which the data should be registered
+      * @param  key         The key object for ViennaData
+      * @param  quantity_name     The quantity name given in the VTK file
+      */
     template <typename KeyType, typename DataType, typename DomainType>
     vtk_reader<DomainType> & add_vector_data_on_cells_per_segment(vtk_reader<DomainType> & reader,
                                                                   KeyType const & key,
@@ -1153,6 +1313,15 @@ namespace viennagrid
     }
 
     // cell data
+    /** @brief Registers vector-valued data (normals) on cells for special treatment by the VTK reader.
+      *
+      * @tparam KeyType     Type of the key used with ViennaData
+      * @tparam DataType    Type of the data as used with ViennaData
+      * @tparam DomainType  The ViennaGrid domain type
+      * @param  reader      The XML reader object for which the data should be registered
+      * @param  key         The key object for ViennaData
+      * @param  quantity_name     The quantity name given in the VTK file
+      */
     template <typename KeyType, typename DataType, typename DomainType>
     vtk_reader<DomainType> & add_normal_data_on_cells(vtk_reader<DomainType> & reader,
                                                       KeyType const & key,
@@ -1167,6 +1336,15 @@ namespace viennagrid
       return reader;
     }
 
+    /** @brief Registers vector-valued data (normals) on cells for special treatment by the VTK reader. Operates on a per-segment basis.
+      *
+      * @tparam KeyType     Type of the key used with ViennaData
+      * @tparam DataType    Type of the data as used with ViennaData
+      * @tparam DomainType  The ViennaGrid domain type
+      * @param  reader      The XML reader object for which the data should be registered
+      * @param  key         The key object for ViennaData
+      * @param  quantity_name     The quantity name given in the VTK file
+      */
     template <typename KeyType, typename DataType, typename DomainType>
     vtk_reader<DomainType> & add_normal_data_on_cells_per_segment(vtk_reader<DomainType> & reader,
                                                                   KeyType const & key,
@@ -1181,25 +1359,25 @@ namespace viennagrid
       return reader;
     }
 
-
+    /** @brief Returns the names of all scalar-valued data read for vertices */
     template <typename ReaderType>
     std::vector<std::pair<std::size_t, std::string> > const & 
     get_scalar_data_on_vertices(ReaderType const & reader) { return reader.get_scalar_data_on_vertices(); }
     
+    /** @brief Returns the names of all vector-valued data read for vertices */
     template <typename ReaderType>
     std::vector<std::pair<std::size_t, std::string> > const & 
     get_vector_data_on_vertices(ReaderType const & reader) { return reader.get_vector_data_on_vertices(); }
 
+    /** @brief Returns the names of all scalar-valued data read for cells */
     template <typename ReaderType>
     std::vector<std::pair<std::size_t, std::string> > const & 
     get_scalar_data_on_cells(ReaderType const & reader) { return reader.get_scalar_data_on_cells(); }
     
+    /** @brief Returns the names of all vector-valued data read for cells */
     template <typename ReaderType>
     std::vector<std::pair<std::size_t, std::string> > const & 
     get_vector_data_on_cells(ReaderType const & reader) { return reader.get_vector_data_on_cells(); }
-
-
-
 
 
   } //namespace io

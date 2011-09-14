@@ -27,12 +27,17 @@
 
 #include "viennagrid/forwards.h"
 
+/** @file domain_iterators.hpp
+    @brief Provides the iterators and ranges for the domain
+*/
+
 namespace viennagrid
 {
 
 
-  // iterator over all subcells (not vertex or cell type) on the segment
+  // iterator over all subcells (not vertex or cell type) on the domain
   // transforms the map-like storage on the domain
+  /** @brief Iterator over non-vertices and non-cells on a domain */
   template <typename ElementType, typename MapIterator>
   class domain_subcell_iterator : public std::iterator < std::forward_iterator_tag, ElementType >
   {
@@ -56,6 +61,7 @@ namespace viennagrid
 
   ///////////////  Iterator construction for iterations over whole domain ////////////////
   //generic case:
+  /** @brief Helper for iterator construction for iteration over the whole domain */
   template <typename Config,
             long dim,
             long cell_level = Config::cell_tag::dim>
@@ -77,6 +83,7 @@ namespace viennagrid
   };
 
   //special case: vertices:
+  /** @brief Helper for iterator construction for vertex iteration over the whole domain */
   template <typename Config, long cell_level>
   struct domain_iterators< Config, 0, cell_level>
   {
@@ -91,6 +98,7 @@ namespace viennagrid
   };
 
   //special case: cells:
+  /** @brief Helper for iterator construction for cell iteration over the whole domain */
   template <typename Config, long cell_level>
   struct domain_iterators< Config, cell_level, cell_level>
   {
@@ -107,6 +115,7 @@ namespace viennagrid
 
   
   
+  /** @brief A guard that ensures that operator[] access is possible. Throws a verbose compile time error if access is not possible. */
   template <typename ContainerType>
   struct assert_bracket_operator_access
   {
@@ -115,12 +124,14 @@ namespace viennagrid
     typedef typename ContainerType::ERROR_BRACKET_OPERATOR_ACCESS_IMPOSSIBLE_AT_THIS_DOMAIN_LEVEL___USE_ITERATORS   type;
   };
 
+  /** @brief Specialization: Allow operator[] if the underlying container is a std::vector<> */
   template <typename ElementType>
   struct assert_bracket_operator_access< std::vector<ElementType> >
   {
     typedef void   type;
   };
 
+  /** @brief Specialization: Allow operator[] if the underlying container is a std::deque<> */
   template <typename ElementType>
   struct assert_bracket_operator_access< std::deque<ElementType> >
   {
@@ -131,6 +142,7 @@ namespace viennagrid
   // interface function for container creation,
   // non-const:
   //container for iteration over a STL vector
+  /** @brief Main range class. Specialization for use with iteration or access to k-cells on the domain */
   template <typename config_type, long dim>
   class ncell_range < domain_t<config_type>, dim, false >
   {
@@ -188,6 +200,7 @@ namespace viennagrid
       container_type * cont_;
   };
   
+  /** @brief Main function for range retrieval. Specialization for iteration over k-cells on the domain */
   template <long dim, typename DomainConfig>
   ncell_range<domain_t<DomainConfig>, dim>
   ncells(domain_t<DomainConfig> & d)
@@ -195,6 +208,11 @@ namespace viennagrid
     return ncell_range<domain_t<DomainConfig>, dim>(d);
   }
   
+  /** @brief Main function for range retrieval. Specialization for iteration over k-cells on the domain. Returns only a proxy that must be assigned to a range object.
+   *
+   * Allows to omit the topological dimension if this is clear from the range type, e.g.
+   *  VertexRange vertices = ncells(domain);
+   */
   template <typename DomainConfig>
   ncell_proxy< domain_t<DomainConfig> >
   ncells(domain_t<DomainConfig> & d)
@@ -206,6 +224,7 @@ namespace viennagrid
   //
   //const container:  
   //
+  /** @brief Main const-range class. Specialization for use with const-iteration or access to k-cells on the domain */
   template <typename config_type, long dim>
   class const_ncell_range < domain_t<config_type>, dim, false >
   {
@@ -269,6 +288,7 @@ namespace viennagrid
       const container_type * cont_;
   };
   
+  /** @brief Main function for const range retrieval. Specialization for iteration over k-cells on the domain */
   template <long dim, typename DomainConfig>
   const_ncell_range< domain_t<DomainConfig>, dim>
   ncells(domain_t<DomainConfig> const & d)
@@ -276,6 +296,11 @@ namespace viennagrid
     return const_ncell_range< domain_t<DomainConfig>, dim>(d);
   }
   
+  /** @brief Main function for const range retrieval. Specialization for iteration over k-cells on the domain. Returns only a proxy that must be assigned to a range object.
+   *
+   * Allows to omit the topological dimension if this is clear from the range type, e.g.
+   *  VertexRange vertices = ncells(domain);
+   */
   template <typename DomainConfig>
   const_ncell_proxy< domain_t<DomainConfig> >
   ncells(domain_t<DomainConfig> const & d)
@@ -287,19 +312,24 @@ namespace viennagrid
   //metafunction for return type:
   namespace result_of
   {
-    
+    /** @brief Specialization of the iterator metafunction for returning the correct iterator from a range */
     template <typename T, long dim, bool is_coboundary>
     struct iterator<viennagrid::ncell_range<T, dim, is_coboundary>, 0>
     {
       typedef typename viennagrid::ncell_range<T, dim, is_coboundary>::iterator     type;
     };
     
+    /** @brief Specialization of the iterator metafunction for returning the correct iterator from a const range */
     template <typename T, long dim, bool is_coboundary>
     struct iterator<viennagrid::const_ncell_range<T, dim, is_coboundary>, 0>
     {
       typedef typename viennagrid::const_ncell_range<T, dim, is_coboundary>::iterator     type;
     };
     
+    /** @brief Meta function for returning a range of n-cells.
+     * 
+     * @tparam T       The enclosing complex (domain, segment or a n-cell of higher dimension)
+     * @tparam dim     The topological dimension of the n-cells in the range */
     template <typename T, 
               long dim>  //topological level
     struct ncell_range
@@ -307,6 +337,10 @@ namespace viennagrid
       typedef viennagrid::ncell_range<T, dim>       type;
     };
 
+    /** @brief Meta function for returning a const-range of n-cells.
+     * 
+     * @tparam T       The enclosing complex (domain, segment or a n-cell of higher dimension)
+     * @tparam dim     The topological dimension of the n-cells in the range */
     template <typename T, 
               long dim>  //topological level
     struct const_ncell_range

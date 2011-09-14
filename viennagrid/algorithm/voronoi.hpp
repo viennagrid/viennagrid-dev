@@ -39,9 +39,7 @@ namespace viennagrid
 {
   namespace detail
   {
-    //
-    // Voronoi information in two (topological) dimensions
-    //
+    /** @brief Implementation of the computation of Voronoi quantities for a one-dimensional domain (line, 1-simplex) */
     template <typename DomainType,
               typename InterfaceAreaKey,
               typename BoxVolumeKey>
@@ -82,6 +80,7 @@ namespace viennagrid
       }
     }
     
+    /** @brief Implementation of the computation of Voronoi quantities for a one-dimensional domain (line, 1-hypercube) */
     template <typename DomainType,
               typename InterfaceAreaKey,
               typename BoxVolumeKey>
@@ -96,6 +95,7 @@ namespace viennagrid
     //
     // Voronoi information in two (topological) dimensions
     //
+    /** @brief Implementation of the computation of Voronoi quantities for a quadrilateral domain */
     template <typename DomainType,
               typename InterfaceAreaKey,
               typename BoxVolumeKey>
@@ -162,6 +162,7 @@ namespace viennagrid
     } //write_voronoi_info(triangle_tag)
 
 
+    /** @brief Implementation of the computation of Voronoi quantities for a triangular domain */
     template <typename DomainType,
               typename InterfaceAreaKey,
               typename BoxVolumeKey>
@@ -250,6 +251,7 @@ namespace viennagrid
     // Voronoi information in three dimensions
     //
 
+    /** @brief Implementation of the computation of Voronoi quantities for a tetrahedral domain */
     template <typename DomainType,
               typename InterfaceAreaKey,
               typename BoxVolumeKey>
@@ -400,6 +402,7 @@ namespace viennagrid
 
 
 
+    /** @brief Implementation of the computation of Voronoi quantities for a hexahedral domain */
     template <typename DomainType,
               typename InterfaceAreaKey,
               typename BoxVolumeKey>
@@ -483,6 +486,13 @@ namespace viennagrid
   //
   // The public interface
   //
+  
+  /** @brief Writes Voronoi information to the domain or segment using the provided keys
+   * 
+   * @param domain              A ViennaGrid domain or segment
+   * @param interface_area_key  The ViennaData key used for storing the interface area on edges
+   * @param box_volume_key      The ViennaData key used for storing the box volumes on edges and vertices
+   */
   template <typename DomainType,
             typename InterfaceAreaKey,
             typename BoxVolumeKey>
@@ -496,6 +506,7 @@ namespace viennagrid
                                typename DomainType::config_type::cell_tag());
   }
     
+  /** @brief Convenience overload for storing Voronoi information on a domain or segment. Uses the default keys for interface areas and box volumes. */
   template <typename DomainType>
   void apply_voronoi(DomainType const & domain)
   {

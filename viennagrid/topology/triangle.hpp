@@ -24,9 +24,14 @@
 #include "viennagrid/detail/element_iterators.hpp"
 #include "viennagrid/algorithm/norm.hpp"
 
+/** @file triangle.hpp
+    @brief Provides the topological definition of a triangle
+*/
+
 namespace viennagrid
 {
 
+  /** @brief Topological description of a triangle.*/
   template <>
   struct simplex_tag<2>
   {
@@ -37,7 +42,7 @@ namespace viennagrid
   
   namespace topology
   {
-    //Triangle:
+    /** @brief Topological description of the boundary 0-cells (vertices) of a triangle */
     template <>
     struct bndcells<triangle_tag, 0>
     {
@@ -46,6 +51,7 @@ namespace viennagrid
       enum{ num = 3 };     //3 vertices
     };
 
+    /** @brief Topological description of the boundary 1-cells (edges) of a triangle */
     template <>
     struct bndcells<triangle_tag, 1>
     {
@@ -58,7 +64,7 @@ namespace viennagrid
     ///////////////////////////////// Filler for subcell elements ///////////////////////////////////
     
 
-    //////// Triangle ////////
+    /** @brief Fills a segment or a domain with the edges of a triangle */
     template <>
     struct bndcell_filler<triangle_tag, 1>
     {
@@ -90,16 +96,12 @@ namespace viennagrid
   
   
   
-  //
-  // Uniform refinement of a triangle: Split the cell into 8 tets
-  //
+  /** @brief Specialization of the refinement class for a triangle */
   template <>
   struct element_refinement<triangle_tag>
   {
     
-    /*
-     * No refinement. Just put same cell into new domain.
-     */
+    /** @brief No refinement. Just put same cell into new domain. */
     template <typename CellType, typename DomainTypeOut>
     static void apply0(CellType const & cell_in, DomainTypeOut & segment_out)
     {
@@ -140,13 +142,15 @@ namespace viennagrid
     } //apply0()
     
     
-    /* Refinement for one edge to be bisected. Orientation of vertices (established by rotating the triangle appropriately)
-    *
-    *           2
-    *         /   \ 
-    *        /     \ 
-    *       0 - 3 - 1
-    */
+    /** @brief Refinement for one edge to be bisected.
+     *
+     * Orientation of vertices (established by rotating the triangle appropriately)
+     *
+     *           2
+     *         /   \ 
+     *        /     \ 
+     *       0 - 3 - 1
+     */
     template <typename CellType, typename DomainTypeOut>
     static void apply1(CellType const & cell_in, DomainTypeOut & segment_out)
     {
@@ -222,7 +226,9 @@ namespace viennagrid
     } //apply1()
     
 
-    /* Refinement for one edge to be bisected. Orientation of vertices:  (established by rotating the triangle appropriately)
+    /** @brief Refinement for one edge to be bisected.
+     *
+     * Orientation of vertices:  (established by rotating the triangle appropriately)
      *
      *            2
      *          /   \
@@ -349,9 +355,7 @@ namespace viennagrid
 
 
     
-    //
-    // Refinement for three refined edges
-    //
+    /** @brief Refinement of a triangle with three edges to be refined (uniform refinement) */
     template <typename CellType, typename DomainTypeOut>
     static void apply3(CellType const & cell_in, DomainTypeOut & segment_out)
     {
@@ -421,6 +425,11 @@ namespace viennagrid
     } //apply3()
 
 
+    /** @brief Public entry function for the refinement of a triangle.
+     * 
+     * @param cell_in       The triangle to be refined
+     * @param segment_out   The domain or segment the refined triangles are written to
+     */
     template <typename CellType, typename DomainTypeOut>
     static void apply(CellType const & cell_in, DomainTypeOut & segment_out)
     {

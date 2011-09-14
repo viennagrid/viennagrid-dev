@@ -24,6 +24,10 @@
 #include "viennagrid/io/helper.hpp"
 #include "viennagrid/io/data_accessor.hpp"
 
+/** @file opendx_writer.hpp
+    @brief Provides a writer for OpenDX files
+*/
+
 namespace viennagrid
 {
   namespace io
@@ -32,7 +36,12 @@ namespace viennagrid
     /////////////////// OpenDX export ////////////////////////////
     
     
-    // Fix for data-explorer-bug: if floating-values occur, no integers (i.e. only zeros after decimal point) allowed
+    /** @brief Fix for a OpenDX bug: if floating-values occur, no integers (i.e. only zeros after decimal point) are allowed
+     * 
+     * As a remedy, we add a value of 1e-5. Better to have a small error in the visualization instead of a crashed OpenDX...
+     * 
+     * @tparam FloatingPointType  Dummy template argument to disable external linkage. Almost always float or double.
+     */
     template <typename FloatingPointType>
     FloatingPointType DXfixer(FloatingPointType value)
     {
@@ -42,6 +51,7 @@ namespace viennagrid
       return value;
     }
 
+    /** @brief A helper class returning dimension-dependent attribute strings. */
     template <int DIM>
     struct DXHelper {};
 
@@ -66,6 +76,10 @@ namespace viennagrid
       { return "attribute \"element type\" string \"tetrahedra\" "; }
     };
     
+    /** @brief The OpenDX writer object. Does not support segments - always the full domain is written.
+     * 
+     * @tparam DomainType   The ViennaGrid domain.
+     */
     template <typename DomainType>
     class opendx_writer
     {
@@ -90,6 +104,11 @@ namespace viennagrid
         
         
       public:
+        /** @brief Triggers the writing of the domain to a file 
+         *
+         * @param domain    A ViennaGrid domain
+         * @param filename  Name of the file
+         */
         int operator()(DomainType const & domain, std::string const & filename)
         {
           typedef DXHelper<CoordinateSystemTag::dim>  DXHelper;
@@ -188,6 +207,7 @@ namespace viennagrid
           
         } // operator()
 
+        /** @brief Adds scalar data on vertices for writing to the OpenDX file. Only one quantity at a time is supported! */
         template <typename T>
         void add_scalar_data_on_vertices(T const & accessor, std::string name)
         {
@@ -198,6 +218,7 @@ namespace viennagrid
           vertex_data_scalar.push_back(wrapper);
         }
         
+        /** @brief Adds scalar data on cells for writing to the OpenDX file. Note that vertex data has precedence. Only one quantity at a time is supported! */
         template <typename T>
         void add_scalar_data_on_cells(T const & accessor, std::string name)
         {
@@ -222,6 +243,15 @@ namespace viennagrid
     }; // opendx_writer
 
 
+    /** @brief Registers scalar-valued data on vertices at the OpenDX writer. At most one data set is allowed.
+      *
+      * @tparam KeyType     Type of the key used with ViennaData
+      * @tparam DataType    Type of the data as used with ViennaData
+      * @tparam DomainType  The ViennaGrid domain type
+      * @param  writer      The OpenDX writer object for which the data should be registered
+      * @param  key         The key object for ViennaData
+      * @param  quantity_name        Ignored. Only used for a homogeneous interface with VTK reader/writer.
+      */
     template <typename KeyType, typename DataType, typename DomainType>
     opendx_writer<DomainType> & add_scalar_data_on_vertices(opendx_writer<DomainType> & writer,
                                                             KeyType const & key,
@@ -235,6 +265,15 @@ namespace viennagrid
       return writer;
     }
     
+    /** @brief Registers scalar-valued data on cells at the OpenDX writer. Note that vertex data has precedence. At most one data set is allowed.
+      *
+      * @tparam KeyType     Type of the key used with ViennaData
+      * @tparam DataType    Type of the data as used with ViennaData
+      * @tparam DomainType  The ViennaGrid domain type
+      * @param  writer      The OpenDX writer object for which the data should be registered
+      * @param  key         The key object for ViennaData
+      * @param  quantity_name        Ignored. Only used for a homogeneous interface with VTK reader/writer.
+      */
     template <typename KeyType, typename DataType, typename DomainType>
     opendx_writer<DomainType> & add_scalar_data_on_cells(opendx_writer<DomainType> & writer,
                                                          KeyType const & key,

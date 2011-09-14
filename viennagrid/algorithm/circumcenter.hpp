@@ -29,14 +29,15 @@
 
 #include "viennadata/api.hpp"
 
-/** @file voronoi.hpp
-    @brief Computes the Voronoi information for a Delaunay triangulation.
+/** @file circumcenter.hpp
+    @brief Computes the circumcenter of n-cells.
 */
 
 namespace viennagrid
 {
   namespace detail
   {
+    /** @brief Throws a compile time error if the n-cell type is not supported. */
     template <typename ElementType, typename ElementTag, typename DimensionTag>
     typename viennagrid::result_of::point<typename ElementType::config_type>::type
     circumcenter(ElementType const & cell, ElementTag const &, DimensionTag const &)
@@ -47,6 +48,7 @@ namespace viennagrid
     
     
     //a point is degenerate and returns its location
+    /** @brief Implementation of the calculation of a circumcenter for a point (degenerate case) */
     template <typename ElementType>
     typename viennagrid::result_of::point<typename ElementType::config_type>::type
     circumcenter(ElementType const & cell, viennagrid::point_tag)
@@ -57,6 +59,7 @@ namespace viennagrid
     //
     // Calculation of circumcenter for a line
     //
+    /** @brief Implementation of the calculation of a circumcenter for a line (1-simplex) */
     template <typename ElementType, typename DimensionTag>
     typename viennagrid::result_of::point<typename ElementType::config_type>::type
     circumcenter(ElementType const & cell, viennagrid::simplex_tag<1>, DimensionTag)
@@ -77,6 +80,7 @@ namespace viennagrid
       return ret;
     }
 
+    /** @brief Implementation of the calculation of a circumcenter for a line (1-hypercube) */
     template <typename ElementType, typename DimensionTag>
     typename viennagrid::result_of::point<typename ElementType::config_type>::type
     circumcenter(ElementType const & cell, viennagrid::hypercube_tag<1>, DimensionTag)
@@ -87,6 +91,7 @@ namespace viennagrid
     //
     // Calculation of circumcenter taken from Wikipedia (better reference required...)
     //
+    /** @brief Implementation of the calculation of a circumcenter for a triangle in two dimensions */
     template <typename ElementType>
     typename viennagrid::result_of::point<typename ElementType::config_type>::type
     circumcenter(ElementType const & cell, viennagrid::triangle_tag, viennagrid::dimension_tag<2>)
@@ -129,6 +134,7 @@ namespace viennagrid
     //
     // TODO: This works for rectangles only, but not for general quadrilaterals
     //
+    /** @brief Implementation of the calculation of a circumcenter for a quadrilateral in two dimensions. Mind that the user has to ensure that the quadrilateral actually has a circumcenter! */
     template <typename CellType>
     typename viennagrid::result_of::point<typename CellType::config_type>::type
     circumcenter(CellType const & cell, viennagrid::quadrilateral_tag, viennagrid::dimension_tag<2>)
@@ -162,6 +168,7 @@ namespace viennagrid
     //
     // Calculation of circumcenter taken from Wikipedia (better reference required...)
     //
+    /** @brief Implementation of the calculation of a circumcenter for a triangle in three dimensions */
     template <typename ElementType>
     typename viennagrid::result_of::point<typename ElementType::config_type>::type
     circumcenter(ElementType const & cell, viennagrid::triangle_tag, viennagrid::dimension_tag<3>)
@@ -196,6 +203,7 @@ namespace viennagrid
     //
     // Note: This works for rectangles only, but not for general quadrilaterals
     //
+    /** @brief Implementation of the calculation of a circumcenter for a quadrilateral in three dimensions. Mind that the user has to ensure that the quadrilateral actually has a circumcenter! */
     template <typename CellType>
     typename viennagrid::result_of::point<typename CellType::config_type>::type
     circumcenter(CellType const & cell, viennagrid::quadrilateral_tag, viennagrid::dimension_tag<3>)
@@ -228,6 +236,7 @@ namespace viennagrid
     //
     // Calculation of circumcenter taken from Wikipedia (better reference required...)
     //
+    /** @brief Implementation of the calculation of a circumcenter for a tetrahedron in three dimensions */
     template <typename ElementType>
     typename viennagrid::result_of::point<typename ElementType::config_type>::type
     circumcenter(ElementType const & cell, viennagrid::tetrahedron_tag, viennagrid::dimension_tag<3>)
@@ -268,6 +277,7 @@ namespace viennagrid
     //
     // Note: This works for rectangles only, but not for general quadrilaterals
     //
+    /** @brief Implementation of the calculation of a circumcenter for a hexahedron in three dimensions.  Mind that the user has to ensure that the quadrilateral actually has a circumcenter! */
     template <typename CellType>
     typename viennagrid::result_of::point<typename CellType::config_type>::type
     circumcenter(CellType const & cell, viennagrid::hexahedron_tag, viennagrid::dimension_tag<3>)
@@ -298,7 +308,10 @@ namespace viennagrid
 
   } //namespace detail
 
-
+  /** @brief The public interface function for the calculation of the circumcenter.
+   * 
+   * @param cell   The n-cell for which the circumcenter should be computed
+   */
   template <typename CellType>
   typename viennagrid::result_of::point<typename CellType::config_type>::type
   circumcenter(CellType const & cell)

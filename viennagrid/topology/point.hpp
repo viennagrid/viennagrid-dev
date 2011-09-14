@@ -20,9 +20,14 @@
 
 #include "viennagrid/forwards.h"
 
+/** @file viennagrid/topology/point.hpp
+    @brief Provides the topological definition of a point (vertex)
+*/
+
 namespace viennagrid
 {
 
+  /** @brief Topological description of a 0-cell (vertex). */
   struct point_tag
   {
     enum { dim = 0 };

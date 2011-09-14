@@ -22,6 +22,10 @@
 #include "viennagrid/traits/point.hpp"
 #include "viennagrid/point.hpp"
 
+/** @file inner_prod.hpp
+    @brief Computes the inner product of vectors
+*/
+
 namespace viennagrid 
 {
 
@@ -34,6 +38,7 @@ namespace viennagrid
     //
     // 1d
     // 
+    /** @brief Implementation of the inner product in one dimension */
     template <typename PointType>
     struct inner_prod_impl<PointType, 1>
     {
@@ -50,6 +55,7 @@ namespace viennagrid
     //
     // 2d
     // 
+    /** @brief Implementation of the inner product in two dimensions */
     template <typename PointType>
     struct inner_prod_impl<PointType, 2>
     {
@@ -66,6 +72,7 @@ namespace viennagrid
     //
     // 3d
     // 
+    /** @brief Implementation of the inner product in three dimensions */
     template <typename PointType>
     struct inner_prod_impl<PointType, 3>
     {
@@ -80,6 +87,7 @@ namespace viennagrid
     };
   }
 
+  /** @brief Dispatched inner product function having full information about the coordinate systems. Transforms to Cartesian coordinates and forwards the calculation to the worker */
   template<typename PointType1, typename PointType2, typename CSystem1, typename CSystem2>
   typename traits::value_type<PointType1>::type
   inner_prod_impl(PointType1 const & p1, PointType2 const & p2, CSystem1 const &, CSystem2 const &)
@@ -90,6 +98,7 @@ namespace viennagrid
     return detail::inner_prod_impl<CartesianPoint1>::apply(to_cartesian(p1), to_cartesian(p2));
   }
 
+  /** @brief Dispatched inner product function having full information about the coordinate systems. Vectors/Points are in a Cartesian coordinate system already, thus no transformation required. */
   template<typename PointType1, typename PointType2, long d>
   typename traits::value_type<PointType1>::type
   inner_prod_impl(PointType1 const & p1, PointType2 const & p2, cartesian_cs<d>, cartesian_cs<d>)
@@ -97,6 +106,11 @@ namespace viennagrid
     return detail::inner_prod_impl<PointType1>::apply(p1, p2);
   }
 
+  /** @brief Returns the inner product of two vectors, which can be given in different coordinate systems 
+   * 
+   * @param p1   First vector
+   * @param p2   Second vector
+   */
   template<typename PointType1, typename PointType2>
   typename traits::value_type<PointType1>::type
   inner_prod(PointType1 const & p1, PointType2 const & p2)
