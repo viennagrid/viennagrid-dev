@@ -26,6 +26,7 @@
 #include "viennagrid/forwards.h"
 #include "viennagrid/algorithm/spanned_volume.hpp"
 #include "viennagrid/algorithm/cross_prod.hpp"
+#include "viennagrid/topology/all.hpp"
 
 #include "viennadata/api.hpp"
 
