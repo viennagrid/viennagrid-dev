@@ -235,7 +235,7 @@ namespace viennagrid
       void id(long new_id) { id_ = new_id; };
 
     protected:
-      long id_;
+      id_type id_;
   };
   
   /** @brief Namespace for definition and handling of the individual topological elements (triangles, hexahedra, etc.) */
