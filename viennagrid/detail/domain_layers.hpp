@@ -31,6 +31,7 @@
 #include "viennagrid/point.hpp"
 #include "viennagrid/element.hpp"
 #include "viennagrid/detail/element_key.hpp"
+#include "viennagrid/detail/element_orientation.hpp"
 #include "viennagrid/segment.hpp"
 #include "viennagrid/traits/container.hpp"
 
