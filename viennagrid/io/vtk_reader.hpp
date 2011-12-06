@@ -217,16 +217,18 @@ namespace viennagrid
           //****************************************************************************
 
           std::string token;
+#ifndef NDEBUG
           long type = 0;
+#endif
           reader >> token;
 
           while(token != "</DataArray>")
           {
             assert( strChecker::myIsNumber(token) && "Cell type is not a number!" );
-            
+#ifndef NDEBUG            
             type = atoi(token.c_str());
             assert(type == ELEMENT_TAG_TO_VTK_TYPE<CellTag>::value && "Error in VTK reader: Type mismatch!");
-
+#endif
             //std::cout << "Vertex#: " << offset << std::endl;
             reader >> token;
           }
