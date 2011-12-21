@@ -19,6 +19,7 @@
 #include "viennagrid/config/others.hpp"
 #include "viennagrid/config/simplex.hpp"
 #include "viennagrid/io/netgen_reader.hpp"
+#include "viennagrid/io/vtk_writer.hpp"
 #include "viennagrid/io/serialization.hpp"
 
 int main()
@@ -63,6 +64,10 @@ int main()
   if (world.rank() == 0) world.send(1, DOMAIN_TAG, domainserial);
   else                   world.recv(0, DOMAIN_TAG, domainserial);     
   */
+  
+  // the actual viennagrid domain object can be accessed via the functor
+  viennagrid::io::vtk_writer<Domain>  vtk;         
+  vtk(domainserial(), "serialized_domain");
   
   std::cout << "*******************************" << std::endl;
   std::cout << "* Test finished successfully! *" << std::endl;
