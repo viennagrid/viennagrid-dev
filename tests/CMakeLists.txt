@@ -38,7 +38,7 @@ SET(PROGS boundary coboundary domain hypercube interface io point
           refinement refinement2 refinement3 refinement-triangles
           segment simplex surface
           voronoi_hex voronoi_rect voronoi_tet voronoi_triangle voronoi_line
-          vtk_writer)
+          vtk_writer serialization)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
@@ -52,4 +52,4 @@ ADD_EXECUTABLE(external_linkage  ../src/external_1.cpp
                                  ../src/external_2.cpp)
 ADD_test(external_linkage external_linkage)
 
-
+TARGET_LINK_LIBRARIES(serialization       boost_serialization)
