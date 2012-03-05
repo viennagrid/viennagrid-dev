@@ -44,6 +44,8 @@ void output_voronoi_info(DeviceType const & d)
   typedef typename viennagrid::result_of::const_ncell_range<DeviceType, 1>::type    EdgeContainer;
   typedef typename viennagrid::result_of::iterator<EdgeContainer>::type           EdgeIterator;
   
+  typedef std::vector< std::pair<CellType const *, double> >      CellContributionType;
+  
   long counter = 0;
   
   viennagrid::voronoi_interface_area_key interface_key;
@@ -58,6 +60,11 @@ void output_voronoi_info(DeviceType const & d)
                     ++vit)
   {
     std::cout << "Vertex " << counter++ << ": " << viennadata::access<viennagrid::voronoi_box_volume_key, double>(box_volume_key)(*vit) << std::endl;
+
+    CellContributionType const & contrib = viennadata::access<viennagrid::voronoi_box_volume_key, CellContributionType>(box_volume_key)(*vit);
+    
+    for (std::size_t i=0; i<contrib.size(); ++i)
+      std::cout << "From cell " << contrib[i].first << ": " << contrib[i].second << std::endl;
   }
   
   std::cout << "-" << std::endl;
@@ -72,6 +79,11 @@ void output_voronoi_info(DeviceType const & d)
     std::cout << *eit << std::endl;
     std::cout << "Length: "    << viennagrid::volume(*eit)            << std::endl;
     std::cout << "Interface: " << viennadata::access<viennagrid::voronoi_interface_area_key, double>(interface_key)(*eit) << std::endl;
+    
+    CellContributionType const & contrib = viennadata::access<viennagrid::voronoi_interface_area_key, CellContributionType>(interface_key)(*eit);
+    
+    for (std::size_t i=0; i<contrib.size(); ++i)
+      std::cout << "From cell " << contrib[i].first << ": " << contrib[i].second << std::endl;
   }
   
 }
