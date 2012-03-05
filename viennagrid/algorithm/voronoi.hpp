@@ -120,6 +120,8 @@ namespace viennagrid
       
       typedef typename viennagrid::result_of::const_ncell_range<EdgeType, 0>::type                            VertexOnEdgeRange;
       typedef typename viennagrid::result_of::iterator<VertexOnEdgeRange>::type                               VertexOnEdgeIterator;
+      
+      typedef std::vector< std::pair<CellType const *, double> >      CellContributionType;
 
       //
       // Algorithm: Iterate over all cells, compute circumcenter and add interface area to edge, box volume to vertex.
@@ -141,7 +143,10 @@ namespace viennagrid
           PointType edge_midpoint = circumcenter(*eocit);
 
           // interface contribution:
-          viennadata::access<InterfaceAreaKey, double>(interface_key)(*eocit) += spanned_volume(circ_center, edge_midpoint);
+          double interface_contribution = spanned_volume(circ_center, edge_midpoint);
+          viennadata::access<InterfaceAreaKey, double>(interface_key)(*eocit) += interface_contribution;
+          viennadata::access<InterfaceAreaKey, CellContributionType>(interface_key)(*eocit).push_back( std::make_pair( &(*cit), interface_contribution) );
+
           
           //box volume contribution:
           double edge_contribution = 0;
@@ -153,8 +158,10 @@ namespace viennagrid
             double contribution = spanned_volume(circ_center, edge_midpoint, voeit->point());
             edge_contribution += contribution;
             viennadata::access<BoxVolumeKey, double>(box_volume_key)(*voeit) += contribution;
+            viennadata::access<BoxVolumeKey, CellContributionType>(box_volume_key)(*voeit).push_back( std::make_pair( &(*cit), contribution) );
           }
           viennadata::access<BoxVolumeKey, double>(box_volume_key)(*eocit) += edge_contribution;
+          viennadata::access<BoxVolumeKey, CellContributionType>(box_volume_key)(*eocit).push_back( std::make_pair( &(*cit), edge_contribution) );
         } //for edges on cells
         
       } //for cells
