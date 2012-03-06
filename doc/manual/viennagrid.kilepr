@@ -191,7 +191,7 @@ encoding=UTF-8
 highlight=LaTeX
 line=0
 mode=LaTeX
-open=true
+open=false
 order=2
 
 [item:changelogs.tex]
@@ -211,7 +211,7 @@ encoding=UTF-8
 highlight=LaTeX
 line=24
 mode=LaTeX
-open=true
+open=false
 order=0
 
 [item:cover.tex]
@@ -251,7 +251,7 @@ encoding=UTF-8
 highlight=LaTeX
 line=229
 mode=LaTeX
-open=true
+open=false
 order=3
 
 [item:domainsetup.tex]
@@ -271,7 +271,7 @@ encoding=UTF-8
 highlight=LaTeX
 line=115
 mode=LaTeX
-open=true
+open=false
 order=6
 
 [item:figures/entities.eps]
@@ -311,7 +311,7 @@ encoding=UTF-8
 highlight=LaTeX
 line=43
 mode=LaTeX
-open=true
+open=false
 order=1
 
 [item:io.tex]
@@ -321,7 +321,7 @@ encoding=UTF-8
 highlight=LaTeX
 line=139
 mode=LaTeX
-open=true
+open=false
 order=4
 
 [item:iterators.tex]
@@ -331,7 +331,7 @@ encoding=UTF-8
 highlight=LaTeX
 line=190
 mode=LaTeX
-open=true
+open=false
 order=5
 
 [item:keywords.tex]
@@ -362,7 +362,7 @@ highlight=LaTeX
 line=58
 mode=LaTeX
 open=true
-order=7
+order=0
 
 [item:setup.tex]
 archive=true

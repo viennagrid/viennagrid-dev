@@ -111,18 +111,42 @@ namespace viennagrid
       typedef typename viennagrid::result_of::ncell<Config, 0>::type                         VertexType;
       typedef typename viennagrid::result_of::ncell<Config, 1>::type                         EdgeType;
       typedef typename viennagrid::result_of::ncell<Config, CellTag::dim>::type   CellType;
+
+      typedef typename viennagrid::result_of::const_ncell_range<DomainType, 0>::type               VertexRange;
+      typedef typename viennagrid::result_of::iterator<VertexRange>::type                          VertexIterator;
+      
+      typedef typename viennagrid::result_of::const_ncell_range<DomainType, 1>::type               EdgeRange;
+      typedef typename viennagrid::result_of::iterator<EdgeRange>::type                            EdgeIterator;
       
       typedef typename viennagrid::result_of::const_ncell_range<DomainType, CellTag::dim>::type    CellRange;
-      typedef typename viennagrid::result_of::iterator<CellRange>::type                                       CellIterator;
+      typedef typename viennagrid::result_of::iterator<CellRange>::type                            CellIterator;
 
-      typedef typename viennagrid::result_of::const_ncell_range<CellType, 1>::type                            EdgeOnCellRange;
-      typedef typename viennagrid::result_of::iterator<EdgeOnCellRange>::type                                 EdgeOnCellIterator;
+      typedef typename viennagrid::result_of::const_ncell_range<CellType, 1>::type                 EdgeOnCellRange;
+      typedef typename viennagrid::result_of::iterator<EdgeOnCellRange>::type                      EdgeOnCellIterator;
       
-      typedef typename viennagrid::result_of::const_ncell_range<EdgeType, 0>::type                            VertexOnEdgeRange;
-      typedef typename viennagrid::result_of::iterator<VertexOnEdgeRange>::type                               VertexOnEdgeIterator;
+      typedef typename viennagrid::result_of::const_ncell_range<EdgeType, 0>::type                 VertexOnEdgeRange;
+      typedef typename viennagrid::result_of::iterator<VertexOnEdgeRange>::type                    VertexOnEdgeIterator;
       
       typedef std::vector< std::pair<CellType const *, double> >      CellContributionType;
 
+      // Ensure that everything is clean:
+      VertexRange vertices = viennagrid::ncells<0>(domain);
+      for (VertexIterator vit  = vertices.begin();
+                          vit != vertices.end();
+                        ++vit)
+      {
+        viennadata::access<BoxVolumeKey, CellContributionType>(box_volume_key)(*vit).clear();
+      }
+      
+      EdgeRange edges = viennagrid::ncells<1>(domain);
+      for (EdgeIterator eit  = edges.begin();
+                        eit != edges.end();
+                      ++eit)
+      {
+        viennadata::access<InterfaceAreaKey, CellContributionType>(interface_key)(*eit).clear();
+        viennadata::access<BoxVolumeKey, CellContributionType>(box_volume_key)(*eit).clear();
+      }
+      
       //
       // Algorithm: Iterate over all cells, compute circumcenter and add interface area to edge, box volume to vertex.
       //
