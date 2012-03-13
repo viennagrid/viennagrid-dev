@@ -123,3 +123,82 @@ double voronoi_volume(DomainType const & d)
   return boxed_volume;
 }
 
+
+
+//
+// Test for Voronoi correctness: Volume of cells must equal volume of boxes
+//
+template <typename DomainType>
+double voronoi_volume_vertex_detailed(DomainType const & d)
+{
+  typedef typename DomainType::config_type           Config;
+  typedef typename Config::cell_tag                  CellTag;
+  typedef typename viennagrid::result_of::point<Config>::type                            PointType;
+  typedef typename viennagrid::result_of::ncell<Config, 0>::type                         VertexType;
+  typedef typename viennagrid::result_of::ncell<Config, 1>::type                         EdgeType;
+  typedef typename viennagrid::result_of::ncell<Config, 2>::type                         FacetType;
+  typedef typename viennagrid::result_of::ncell<Config, CellTag::dim>::type   CellType;
+  
+  typedef typename viennagrid::result_of::const_ncell_range<DomainType, CellTag::dim>::type    CellContainer;
+  typedef typename viennagrid::result_of::iterator<CellContainer>::type                                       CellIterator;
+  
+  typedef typename viennagrid::result_of::const_ncell_range<DomainType, 0>::type                          VertexContainer;
+  typedef typename viennagrid::result_of::iterator<VertexContainer>::type                                     VertexIterator;
+  
+  typedef typename viennagrid::result_of::voronoi_cell_contribution<CellType>::type      CellContributionType;
+  
+  viennagrid::voronoi_box_volume_key box_volume_key;
+  
+  double boxed_volume = 0;
+  VertexContainer vertices = viennagrid::ncells<0>(d);
+  for (VertexIterator vit  = vertices.begin();
+                      vit != vertices.end();
+                    ++vit)
+  {
+    CellContributionType const & contributions = viennadata::access<viennagrid::voronoi_box_volume_key, CellContributionType>(box_volume_key)(*vit);
+    for (std::size_t i=0; i<contributions.size(); ++i)
+    {
+      boxed_volume += contributions[i].second;
+    }
+  }
+
+  return boxed_volume;
+}
+
+
+template <typename DomainType>
+double voronoi_volume_edge_detailed(DomainType const & d)
+{
+  typedef typename DomainType::config_type           Config;
+  typedef typename Config::cell_tag                  CellTag;
+  typedef typename viennagrid::result_of::point<Config>::type                            PointType;
+  typedef typename viennagrid::result_of::ncell<Config, 0>::type                         VertexType;
+  typedef typename viennagrid::result_of::ncell<Config, 1>::type                         EdgeType;
+  typedef typename viennagrid::result_of::ncell<Config, 2>::type                         FacetType;
+  typedef typename viennagrid::result_of::ncell<Config, CellTag::dim>::type   CellType;
+  
+  typedef typename viennagrid::result_of::const_ncell_range<DomainType, CellTag::dim>::type    CellContainer;
+  typedef typename viennagrid::result_of::iterator<CellContainer>::type                        CellIterator;
+  
+  typedef typename viennagrid::result_of::const_ncell_range<DomainType, 1>::type               EdgeContainer;
+  typedef typename viennagrid::result_of::iterator<EdgeContainer>::type                        EdgeIterator;
+  
+  typedef typename viennagrid::result_of::voronoi_cell_contribution<CellType>::type      CellContributionType;
+  
+  viennagrid::voronoi_box_volume_key box_volume_key;
+  
+  double boxed_volume = 0;
+  EdgeContainer edges = viennagrid::ncells<1>(d);
+  for (EdgeIterator eit  = edges.begin();
+                    eit != edges.end();
+                  ++eit)
+  {
+    CellContributionType const & contributions = viennadata::access<viennagrid::voronoi_box_volume_key, CellContributionType>(box_volume_key)(*eit);
+    for (std::size_t i=0; i<contributions.size(); ++i)
+    {
+      boxed_volume += contributions[i].second;
+    }
+  }
+
+  return boxed_volume;
+}
