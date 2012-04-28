@@ -95,7 +95,7 @@ namespace viennagrid
     typedef typename viennagrid::result_of::iterator<VertexRange>::type          VertexIterator;
     
     os << "-- " << ElementTag::name() << ", ID: " << el.id() << " --";
-    VertexRange vertices = viennagrid::ncells(el);
+    VertexRange vertices = viennagrid::ncells<0>(el);
     for (VertexIterator vit  = vertices.begin();
                         vit != vertices.end();
                       ++vit)

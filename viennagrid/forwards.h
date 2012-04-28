@@ -323,6 +323,10 @@ namespace viennagrid
               long dim>  //topological level
     struct ncell_range;
     
+    template <typename T, 
+              long dim>  //topological level
+    struct const_ncell_range;
+    
     
     /** @brief Metafunction for the type retrieval of n-cells
      * 
@@ -464,7 +468,33 @@ namespace viennagrid
   template <typename Config, typename ElementTag>
   ncell_proxy< element_t<Config, ElementTag> >
   ncells(element_t<Config, ElementTag> & d);
+  
+  //same for const:  
+  template <long dim, typename DomainConfig>
+  const_ncell_range<domain_t<DomainConfig>, dim>
+  ncells(domain_t<DomainConfig> const & d);
 
+  template <typename DomainConfig>
+  const_ncell_proxy< domain_t<DomainConfig> >
+  ncells(domain_t<DomainConfig> const & d);
+
+  template <long dim, typename DomainConfig>
+  const_ncell_range<segment_t<DomainConfig>, dim>
+  ncells(segment_t<DomainConfig> const & d);
+
+  template <typename DomainConfig>
+  const_ncell_proxy< segment_t<DomainConfig> >
+  ncells(segment_t<DomainConfig> const & d);
+
+  template <long dim, typename Config, typename ElementTag>
+  typename result_of::const_ncell_range< element_t<Config, ElementTag>, dim>::type
+  ncells(element_t<Config, ElementTag> const & d);
+  
+  template <typename Config, typename ElementTag>
+  const_ncell_proxy< element_t<Config, ElementTag> >
+  ncells(element_t<Config, ElementTag> const & d);
+
+  
    // norm tags for: algorithm/norm.hpp
   /** @brief Tag for denoting the 1-norm */
   struct one_tag {};

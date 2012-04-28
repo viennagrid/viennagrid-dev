@@ -58,7 +58,7 @@ namespace viennagrid
     template <long dim_src, long dim_dest,
               typename DomSeg, typename AccessorSrc, typename SetterDest,
               typename Averager, typename FilterSrc, typename FilterDest>
-    void quantity_transfer(DomSeg const & domseg, AccessorSrc const & accessor_src, SetterDest const & setter_dest,
+    void quantity_transfer(DomSeg const & domseg, AccessorSrc const & accessor_src, SetterDest & setter_dest,
                            Averager const & averager, FilterSrc const & filter_src, FilterDest const & filter_dest,
                            boundary_quantity_transfer_tag)
     {
@@ -110,7 +110,7 @@ namespace viennagrid
     template <long dim_src, long dim_dest,
               typename DomSeg, typename AccessorSrc, typename SetterDest,
               typename Averager, typename FilterSrc, typename FilterDest>
-    void quantity_transfer(DomSeg const & domseg, AccessorSrc const & accessor_src, SetterDest const & setter_dest,
+    void quantity_transfer(DomSeg const & domseg, AccessorSrc const & accessor_src, SetterDest & setter_dest,
                            Averager const & averager, FilterSrc const & filter_src, FilterDest const & filter_dest,
                            coboundary_quantity_transfer_tag)
     {
@@ -167,7 +167,7 @@ namespace viennagrid
   template <long dim_src, long dim_dest,
             typename DomSeg, typename AccessorSrc, typename SetterDest,
             typename Averager, typename FilterSrc, typename FilterDest>
-  void quantity_transfer(DomSeg const & domseg, AccessorSrc const & accessor_src, SetterDest const & setter_dest,
+  void quantity_transfer(DomSeg const & domseg, AccessorSrc const & accessor_src, SetterDest & setter_dest,
                          Averager const & averager, FilterSrc const & filter_src, FilterDest const & filter_dest)
   {
     detail::quantity_transfer<dim_src, dim_dest>(domseg, accessor_src, setter_dest,
