@@ -72,7 +72,9 @@ namespace viennagrid
         typedef typename viennagrid::result_of::const_ncell_range<SourceNCellType, dim_dest>::type  DestOnSrcContainer;
         typedef typename viennagrid::result_of::iterator<DestOnSrcContainer>::type                  DestOnSrcIterator;
         
-        typedef std::map<DestNCellType const *, std::vector<double> >                     DestinationValueMap;  //Think about adding customization options for std::vector<double>
+        typedef typename AccessorSrc::value_type              value_type;
+        
+        typedef std::map<DestNCellType const *, std::vector<value_type> >                     DestinationValueMap;  //Think about adding customization options for std::vector<double>
 
         SourceContainer source_cells = viennagrid::ncells<dim_src>(domseg);
 
@@ -83,9 +85,9 @@ namespace viennagrid
         for (SourceIterator sit = source_cells.begin();
                             sit != source_cells.end(); ++sit)
         {
-          if ( filter_src(*sit) )   //assumption: lattice temperature outside semiconductor is not relevant for simulation
+          if ( filter_src(*sit) )
           {
-            DestOnSrcContainer dest_on_src = viennagrid::ncells<0>(*sit);
+            DestOnSrcContainer dest_on_src = viennagrid::ncells<dim_dest>(*sit);
             for (DestOnSrcIterator dosit  = dest_on_src.begin();
                                     dosit != dest_on_src.end();
                                   ++dosit)
@@ -118,15 +120,15 @@ namespace viennagrid
         typedef typename viennagrid::result_of::ncell<Config, dim_src>::type              SourceNCellType;
         typedef typename viennagrid::result_of::ncell<Config, dim_dest>::type             DestNCellType;
 
-        typedef typename viennagrid::result_of::const_ncell_range<DomSeg, dim_src>::type  DestContainer;
+        typedef typename viennagrid::result_of::const_ncell_range<DomSeg, dim_dest>::type DestContainer;
         typedef typename viennagrid::result_of::iterator<DestContainer>::type             DestIterator;
 
-        typedef typename viennagrid::result_of::const_ncell_range<DestNCellType, dim_dest>::type  SrcOnDestContainer;
-        typedef typename viennagrid::result_of::iterator<SrcOnDestContainer>::type                SrcOnDestIterator;
+        typedef typename viennagrid::result_of::const_ncell_range<DestNCellType, dim_src>::type  SrcOnDestContainer;
+        typedef typename viennagrid::result_of::iterator<SrcOnDestContainer>::type               SrcOnDestIterator;
         
         DestContainer dest_cells = viennagrid::ncells<dim_dest>(domseg);
 
-        // Iterate over all dest cells, push values from source cell to container, then compute final value
+        // Iterate over all dest n-cells, push values from source cell to container, then compute final value
         for (DestIterator dit = dest_cells.begin(); dit != dest_cells.end(); ++dit)
         {
           if ( filter_dest(*dit) )   //assumption: lattice temperature outside semiconductor is not relevant for simulation
@@ -134,7 +136,7 @@ namespace viennagrid
             std::vector<double> destination_value_container;
             
             // Push all values from adjacent source cells to the container
-            SrcOnDestContainer src_on_dest = viennagrid::ncells<0>(*dit);
+            SrcOnDestContainer src_on_dest = viennagrid::ncells<dim_src>(*dit);
             for (SrcOnDestIterator sodit  = src_on_dest.begin();
                                     sodit != src_on_dest.end();
                                   ++sodit)
@@ -174,6 +176,7 @@ namespace viennagrid
                                                  averager, filter_src, filter_dest,
                                                  typename detail::quantity_transfer_dispatcher<dim_src, dim_dest>::type());
   }
+  
 }
 
 #endif
