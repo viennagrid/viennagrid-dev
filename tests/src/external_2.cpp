@@ -37,6 +37,7 @@
 #include "viennagrid/algorithm/centroid.hpp"
 #include "viennagrid/algorithm/circumcenter.hpp"
 #include "viennagrid/algorithm/cross_prod.hpp"
+#include "viennagrid/algorithm/distance.hpp"
 #include "viennagrid/algorithm/inner_prod.hpp"
 #include "viennagrid/algorithm/interface.hpp"
 #include "viennagrid/algorithm/norm.hpp"
