@@ -34,7 +34,9 @@ ENDIF(BUILD_TESTING)
 
 #-----------------------------------------------------------------------------
 # add the source files which should be tested without the trailing *.cpp
-SET(PROGS boundary coboundary domain hypercube interface io point
+SET(PROGS boundary coboundary 
+          distance_1d distance_2d
+          domain hypercube interface io point
           refinement refinement2 refinement3 refinement-triangles
           segment simplex surface
           voronoi_hex voronoi_rect voronoi_tet voronoi_triangle voronoi_line

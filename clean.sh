@@ -15,3 +15,5 @@ rm examples/tutorial/*.*~
 rm examples/benchmarks/*.*~
 rm examples/tests/*.*~
 rm examples/data/*.*~
+rm tests/*.*~
+rm tests/src/*.*~
