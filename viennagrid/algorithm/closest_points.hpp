@@ -97,6 +97,45 @@ namespace viennagrid
                                                point_pair_with_shortest_distance(pair_3, pair_4));
     }
     
+    template <typename CoordType, typename CoordinateSystem>
+    std::pair<point_t<CoordType, CoordinateSystem>,
+              point_t<CoordType, CoordinateSystem> > const &
+    point_pair_with_shortest_distance( std::pair<point_t<CoordType, CoordinateSystem>,
+                                                 point_t<CoordType, CoordinateSystem> > const & pair_1,
+                                       std::pair<point_t<CoordType, CoordinateSystem>,
+                                                 point_t<CoordType, CoordinateSystem> > const & pair_2,
+                                       std::pair<point_t<CoordType, CoordinateSystem>,
+                                                 point_t<CoordType, CoordinateSystem> > const & pair_3,
+                                       std::pair<point_t<CoordType, CoordinateSystem>,
+                                                 point_t<CoordType, CoordinateSystem> > const & pair_4,
+                                       std::pair<point_t<CoordType, CoordinateSystem>,
+                                                 point_t<CoordType, CoordinateSystem> > const & pair_5)
+    {
+      // Note: Recursive use of point_pair_with_shortest_distance() has a bit of overhead. Feel free to improve this
+      return point_pair_with_shortest_distance(point_pair_with_shortest_distance(pair_1, pair_2, pair_3),
+                                               point_pair_with_shortest_distance(pair_4, pair_5));
+    }
+    
+    template <typename CoordType, typename CoordinateSystem>
+    std::pair<point_t<CoordType, CoordinateSystem>,
+              point_t<CoordType, CoordinateSystem> > const &
+    point_pair_with_shortest_distance( std::pair<point_t<CoordType, CoordinateSystem>,
+                                                 point_t<CoordType, CoordinateSystem> > const & pair_1,
+                                       std::pair<point_t<CoordType, CoordinateSystem>,
+                                                 point_t<CoordType, CoordinateSystem> > const & pair_2,
+                                       std::pair<point_t<CoordType, CoordinateSystem>,
+                                                 point_t<CoordType, CoordinateSystem> > const & pair_3,
+                                       std::pair<point_t<CoordType, CoordinateSystem>,
+                                                 point_t<CoordType, CoordinateSystem> > const & pair_4,
+                                       std::pair<point_t<CoordType, CoordinateSystem>,
+                                                 point_t<CoordType, CoordinateSystem> > const & pair_5,
+                                       std::pair<point_t<CoordType, CoordinateSystem>,
+                                                 point_t<CoordType, CoordinateSystem> > const & pair_6)
+    {
+      // Note: Recursive use of point_pair_with_shortest_distance() has a bit of overhead. Feel free to improve this
+      return point_pair_with_shortest_distance(point_pair_with_shortest_distance(pair_1, pair_2, pair_3),
+                                               point_pair_with_shortest_distance(pair_4, pair_5, pair_6));
+    }
     
     
     //
@@ -464,8 +503,181 @@ namespace viennagrid
     {
       return closest_points_impl(v.point(), el);
     }
+
+    
+    
+    //
+    // Distance between point and tetrahedron
+    //
+    
+    // Implementation: Supposed to work for arbitrary geometric dimensions
+    // Projects p onto the plane spanned by the triangle, then computes the shortest distance in the plane and uses Pythagoras for the full distance
+    template <typename CoordType, typename CoordinateSystem>
+    std::pair<point_t<CoordType, CoordinateSystem>,
+              point_t<CoordType, CoordinateSystem> >
+    closest_points_point_tetrahedron(point_t<CoordType, CoordinateSystem> const & p,
+                                     point_t<CoordType, CoordinateSystem> const & v0,
+                                     point_t<CoordType, CoordinateSystem> const & v1,
+                                     point_t<CoordType, CoordinateSystem> const & v2,
+                                     point_t<CoordType, CoordinateSystem> const & v3)
+    {
+      typedef point_t<CoordType, CoordinateSystem>  PointType;
+
+      // write T(s) =  v0 + r * (v1 - v0) + s * (v2 - v0) + t * (v3 - v1), {r,s,t} \in [0,1], r+s+t < 1 for the tetrahedron T
+      //            =: v0 + r * u0 + s * u1 + t * u2
+      //
+      // Projection p' of p is given by the solution of the system
+      //
+      //  <u0, u0> * r + <u1, u0> * s + <u2, u0> * t = <u, u0>
+      //  <u0, u1> * r + <u1, u1> * s + <u2, u1> * t = <u, u1>
+      //  <u0, u2> * r + <u1, u2> * s + <u2, u2> * t = <u, u2>
+      //
+      // where u = p - v0. This is a 3x3-system that is directly inverted using Cramer's rule.
+      //
+      
+      PointType u0 = v1 - v0;
+      PointType u1 = v2 - v0;
+      PointType u2 = v3 - v0;
+      PointType u  = p  - v0;
+      
+      CoordType a_00 = viennagrid::inner_prod(u0, u0);
+      CoordType a_01 = viennagrid::inner_prod(u1, u0);
+      CoordType a_02 = viennagrid::inner_prod(u2, u0);
+
+      CoordType a_10 = a_01;
+      CoordType a_11 = viennagrid::inner_prod(u1, u1);
+      CoordType a_12 = viennagrid::inner_prod(u2, u1);
+
+      CoordType a_20 = a_02;
+      CoordType a_21 = a_12;
+      CoordType a_22 = viennagrid::inner_prod(u2, u2);
+      
+      CoordType u_in_u0 = viennagrid::inner_prod(u, u0);
+      CoordType u_in_u1 = viennagrid::inner_prod(u, u1);
+      CoordType u_in_u2 = viennagrid::inner_prod(u, u2);
+      
+      CoordType det_A =  a_00 * a_11 * a_22 + a_01 * a_12 * a_20 + a_02 * a_10 * a_21
+                       - a_20 * a_11 * a_02 - a_21 * a_12 * a_00 - a_22 * a_10 * a_01;
+                              
+      if (det_A < 1e-6 * std::sqrt(a_00 * a_11 * a_22)) //tetrahedron is VERY thin:
+      {
+        std::cerr << "ViennaGrid: Warning: Strongly degenerated tetrahedron detected: " << std::endl
+                  << "vertex 0: " << v0 << std::endl
+                  << "vertex 1: " << v1 << std::endl
+                  << "vertex 2: " << v2 << std::endl
+                  << "vertex 3: " << v3 << std::endl;
+      }
+
+      //     | <u, u0>   a_01   a_02  |
+      // r = | <u, u1>   a_11   a_12  |  / det_A  and similarly for s and t
+      //     | <u, u2>   a_21   a_22  |
+      CoordType r = (  u_in_u0 * a_11 * a_22 + a_01 * a_12 * u_in_u2 + a_02 * u_in_u1 * a_21
+                     - u_in_u2 * a_11 * a_02 - a_21 * a_12 * u_in_u0 - a_22 * u_in_u1 * a_01 ) / det_A;
+      CoordType s = (  a_00 * u_in_u1 * a_22 + u_in_u0 * a_12 * a_20 + a_02 * a_10 * u_in_u2
+                     - a_20 * u_in_u1 * a_02 - u_in_u2 * a_12 * a_00 - a_22 * a_10 * u_in_u0 ) / det_A;
+      CoordType t = (  a_00 * a_11 * u_in_u2 + a_01 * u_in_u1 * a_20 + u_in_u0 * a_10 * a_21
+                     - a_20 * a_11 * u_in_u0 - a_21 * u_in_u1 * a_00 - u_in_u2 * a_10 * a_01 ) / det_A;
+      
+      PointType p_prime = v0 + r * u0 + s * u1 + t * u2;  //projection of p onto triangular plane
+
+      // nonzero distance is encountered only if p_prime is outside the triangle
+      if (    (r < 0 || r > 1)
+           || (s < 0 || s > 1)
+           || (t < 0 || t > 1)
+           || (r + s + t > 1) )     //p_prime is outside the triangle
+      {
+        // safe mode: Compute distances to all edges. Can be optimized further by using information from s, t, etc.
+        return point_pair_with_shortest_distance(std::make_pair(p, closest_points_point_triangle(p_prime, v0, v1, v2).second),
+                                                 std::make_pair(p, closest_points_point_triangle(p_prime, v0, v1, v3).second),
+                                                 std::make_pair(p, closest_points_point_triangle(p_prime, v0, v2, v3).second),
+                                                 std::make_pair(p, closest_points_point_triangle(p_prime, v1, v2, v3).second));
+      }
+      
+      return std::make_pair(p, p_prime);
+    }
     
 
+    //convenience overload: point 
+    template <typename CoordType, typename CoordinateSystem, typename ConfigType>
+    std::pair<point_t<CoordType, CoordinateSystem>,
+              point_t<CoordType, CoordinateSystem> >
+    closest_points_impl(point_t<CoordType, CoordinateSystem> const & p,
+                        element_t<ConfigType, simplex_tag<3> > const & el)
+    {
+      return closest_points_point_tetrahedron(p, 
+                                              viennagrid::ncells<0>(el)[0].point(),
+                                              viennagrid::ncells<0>(el)[1].point(),
+                                              viennagrid::ncells<0>(el)[2].point(),
+                                              viennagrid::ncells<0>(el)[3].point());
+    }
+
+    //convenience overload: vertex 
+    template <typename ConfigType>
+    std::pair<typename result_of::point<ConfigType>::type,
+              typename result_of::point<ConfigType>::type>
+    closest_points_impl(element_t<ConfigType, point_tag> const & v,
+                        element_t<ConfigType, simplex_tag<3> > const & el)
+    {
+      return closest_points_impl(v.point(), el);
+    }
+    
+    
+    
+    //
+    // Distance between point and hexahedron (using decomposition into six tetrahedra)
+    //
+
+    //convenience overload: point 
+    template <typename CoordType, typename CoordinateSystem, typename ConfigType>
+    std::pair<point_t<CoordType, CoordinateSystem>,
+              point_t<CoordType, CoordinateSystem> >
+    closest_points_impl(point_t<CoordType, CoordinateSystem> const & p,
+                        element_t<ConfigType, hypercube_tag<3> > const & el)
+    {
+      return point_pair_with_shortest_distance(closest_points_point_tetrahedron(p, 
+                                                                                viennagrid::ncells<0>(el)[0].point(),
+                                                                                viennagrid::ncells<0>(el)[1].point(),
+                                                                                viennagrid::ncells<0>(el)[3].point(),
+                                                                                viennagrid::ncells<0>(el)[7].point()),
+                                               closest_points_point_tetrahedron(p, 
+                                                                                viennagrid::ncells<0>(el)[0].point(),
+                                                                                viennagrid::ncells<0>(el)[1].point(),
+                                                                                viennagrid::ncells<0>(el)[7].point(),
+                                                                                viennagrid::ncells<0>(el)[5].point()),
+                                               closest_points_point_tetrahedron(p, 
+                                                                                viennagrid::ncells<0>(el)[0].point(),
+                                                                                viennagrid::ncells<0>(el)[2].point(),
+                                                                                viennagrid::ncells<0>(el)[6].point(),
+                                                                                viennagrid::ncells<0>(el)[7].point()),
+                                               closest_points_point_tetrahedron(p, 
+                                                                                viennagrid::ncells<0>(el)[0].point(),
+                                                                                viennagrid::ncells<0>(el)[3].point(),
+                                                                                viennagrid::ncells<0>(el)[2].point(),
+                                                                                viennagrid::ncells<0>(el)[7].point()),
+                                               closest_points_point_tetrahedron(p, 
+                                                                                viennagrid::ncells<0>(el)[0].point(),
+                                                                                viennagrid::ncells<0>(el)[5].point(),
+                                                                                viennagrid::ncells<0>(el)[7].point(),
+                                                                                viennagrid::ncells<0>(el)[4].point()),
+                                               closest_points_point_tetrahedron(p, 
+                                                                                viennagrid::ncells<0>(el)[0].point(),
+                                                                                viennagrid::ncells<0>(el)[6].point(),
+                                                                                viennagrid::ncells<0>(el)[4].point(),
+                                                                                viennagrid::ncells<0>(el)[7].point())
+                                              );
+    }
+
+    //convenience overload: vertex 
+    template <typename ConfigType>
+    std::pair<typename result_of::point<ConfigType>::type,
+              typename result_of::point<ConfigType>::type>
+    closest_points_impl(element_t<ConfigType, point_tag> const & v,
+                        element_t<ConfigType, hypercube_tag<3> > const & el)
+    {
+      return closest_points_impl(v.point(), el);
+    }
+    
+    
     
     template <typename T>
     struct topological_id

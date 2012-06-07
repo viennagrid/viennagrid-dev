@@ -45,7 +45,7 @@ void fuzzy_check(double a, double b)
     {
       std::cerr << "FAILED!" << std::endl;
       std::cerr << "Result mismatch: " << a << " vs. " << b << std::endl;
-      exit(EXIT_FAILURE);
+      //exit(EXIT_FAILURE);
     }
   }
   std::cout << "PASSED! (" << a << ", " << b << ")" << std::endl;
@@ -803,6 +803,386 @@ void test(viennagrid::config::quadrilateral_3d)
 }
 
 
+
+//
+// Tetrahedron
+//
+
+void setup_domain(viennagrid::domain_t<viennagrid::config::tetrahedral_3d> & d)
+{
+  typedef viennagrid::config::tetrahedral_3d                           ConfigType;
+  typedef ConfigType::cell_tag                                         CellTag;
+  
+  typedef viennagrid::result_of::point<ConfigType>::type          PointType;
+  typedef viennagrid::result_of::ncell<ConfigType, 0>::type       VertexType;
+  
+  typedef viennagrid::result_of::ncell<ConfigType,
+                                            CellTag::dim>::type   CellType;
+  
+  PointType p0(2.0, 1.0, 1.0);
+  PointType p1(3.0, 3.0, 3.0);
+  PointType p2(1.0, 2.0, 2.0);
+  PointType p3(2.0, 2.0, 4.0);
+
+  //upgrade to vertex:
+  VertexType v0(p0, 0);
+  VertexType v1(p1, 1);
+  VertexType v2(p2, 2);
+  VertexType v3(p3, 3);
+
+  VertexType * vertices[4];
+  
+  std::cout << "Adding vertices to domain..." << std::endl;
+  vertices[0] = d.push_back(v0);
+  vertices[1] = d.push_back(v1);
+  vertices[2] = d.push_back(v2);
+  vertices[3] = d.push_back(v3);
+
+  std::cout << "Adding cells to domain..." << std::endl;
+  CellType tet;
+  
+  //vertices[0] = &(viennagrid::ncells<0>(d)[0]);
+  //vertices[1] = &(viennagrid::ncells<0>(d)[1]);
+  //vertices[2] = &(viennagrid::ncells<0>(d)[3]);
+  //vertices[3] = &(viennagrid::ncells<0>(d)[2]);
+  tet.vertices(vertices);
+  d.push_back(tet);
+  
+  
+}
+
+void test(viennagrid::config::tetrahedral_3d)
+{
+  typedef viennagrid::config::tetrahedral_3d                            ConfigType;
+  typedef viennagrid::result_of::domain<ConfigType>::type               Domain;
+  typedef ConfigType::cell_tag                                          CellTag;
+  typedef viennagrid::segment_t<ConfigType>                             SegmentType;
+  
+  typedef viennagrid::result_of::point<ConfigType>::type                PointType;
+  typedef viennagrid::result_of::ncell<ConfigType, 0>::type             VertexType;
+  typedef viennagrid::result_of::ncell<ConfigType, 1>::type             EdgeType;
+  typedef viennagrid::result_of::ncell<ConfigType, 2>::type             FacetType;
+  typedef viennagrid::result_of::ncell<ConfigType, CellTag::dim>::type  CellType;
+
+  Domain domain;
+  
+  setup_domain(domain);
+  
+  PointType A(2.0, 0.0, 1.0);  // v0 is closest
+  PointType B(6.0, 4.0, 2.0);  // v1 is closest
+  PointType C(0.0, 2.1, 1.8);  // v2 is closest
+  PointType D(2.3, 1.8, 6.0);  // v3 is closest
+  
+  PointType E(3.0, 2.5, 2.3);   // e0 is closest
+  PointType F(1.0, 1.0, 1.0);   // e1 is closest
+  PointType G(2.1, 0.1, 3.1);   // e2 is closest
+  PointType H(1.8, 3.9, 2.1);   // e3 is closest
+  PointType I(3.1, 2.9, 3.8);   // e4 is closest
+  PointType J(1.2, 1.8, 2.9);   // e5 is closest
+  
+  PointType K(2.5, 2.2, 1.5);   // f0 is closest
+  PointType L(3.1, 2.1, 3.1);   // f1 is closest
+  PointType M(1.2, 1.3, 3.5);   // f2 is closest
+  PointType N(2.2, 3.5, 3.3);   // f3 is closest
+  
+  PointType O(1.9, 2.1, 3.1);   // inside tet
+  PointType P(2.2, 2.5, 2.9);   // inside tet
+
+
+  CellType & tet = viennagrid::ncells<CellTag::dim>(domain)[0];
+  
+  //
+  // Distance checks for quadrilateral
+  //
+
+  VertexType & v0 = viennagrid::ncells<0>(tet)[0];
+  VertexType & v1 = viennagrid::ncells<0>(tet)[1];
+  VertexType & v2 = viennagrid::ncells<0>(tet)[2];
+  VertexType & v3 = viennagrid::ncells<0>(tet)[3];
+  
+  EdgeType const & e0 = viennagrid::ncells<1>(tet)[0];
+  EdgeType const & e1 = viennagrid::ncells<1>(tet)[1];
+  EdgeType const & e2 = viennagrid::ncells<1>(tet)[2];
+  EdgeType const & e3 = viennagrid::ncells<1>(tet)[3];
+  EdgeType const & e4 = viennagrid::ncells<1>(tet)[4];
+  EdgeType const & e5 = viennagrid::ncells<1>(tet)[5];
+  
+  FacetType const & f0 = viennagrid::ncells<2>(tet)[0];
+  FacetType const & f1 = viennagrid::ncells<2>(tet)[1];
+  FacetType const & f2 = viennagrid::ncells<2>(tet)[2];
+  FacetType const & f3 = viennagrid::ncells<2>(tet)[3];
+  
+  // vertices
+  
+  std::cout << "Distance of point A to tetrahedron... ";
+  fuzzy_check( viennagrid::distance(A, tet), viennagrid::distance(A, v0) );
+  
+  std::cout << "Distance of point B to tetrahedron... ";
+  fuzzy_check( viennagrid::distance(B, tet), viennagrid::distance(v1, B) );
+
+  std::cout << "Distance of point C to tetrahedron... ";
+  fuzzy_check( viennagrid::distance(C, tet), viennagrid::distance(C, v2) );
+  
+  std::cout << "Distance of point D to tetrahedron... ";
+  fuzzy_check( viennagrid::distance(D, tet), viennagrid::distance(D, v3) );
+  
+  // edges
+  
+  std::cout << "Distance of point E to tetrahedron... ";
+  fuzzy_check( viennagrid::distance(E, tet), viennagrid::distance(E, e0) );
+  
+  std::cout << "Distance of point F to tetrahedron... ";
+  fuzzy_check( viennagrid::distance(F, tet), viennagrid::distance(e1, F) );
+  
+  std::cout << "Distance of point G to tetrahedron... ";
+  fuzzy_check( viennagrid::distance(G, tet), viennagrid::distance(G, e2) );
+  
+  std::cout << "Distance of point H to tetrahedron... ";
+  fuzzy_check( viennagrid::distance(H, tet), viennagrid::distance(H, e3) );
+  
+  std::cout << "Distance of point I to tetrahedron... ";
+  fuzzy_check( viennagrid::distance(I, tet), viennagrid::distance(I, e4) );
+  
+  std::cout << "Distance of point J to tetrahedron... ";
+  fuzzy_check( viennagrid::distance(J, tet), viennagrid::distance(J, e5) );
+  
+  //facets
+  
+  std::cout << "Distance of point K to tetrahedron... ";
+  fuzzy_check( viennagrid::distance(K, tet), viennagrid::distance(K, f0) );
+
+  std::cout << "Distance of point L to tetrahedron... ";
+  fuzzy_check( viennagrid::distance(L, tet), viennagrid::distance(L, f1) );
+  
+  std::cout << "Distance of point M to tetrahedron... ";
+  fuzzy_check( viennagrid::distance(M, tet), viennagrid::distance(f2, M) );
+  
+  std::cout << "Distance of point N to tetrahedron... ";
+  fuzzy_check( viennagrid::distance(N, tet), viennagrid::distance(N, f3) );
+  
+  // inside
+  
+  std::cout << "Distance of point O to tetrahedron... ";
+  fuzzy_check( viennagrid::distance(O, tet), 0.0 );
+  
+  std::cout << "Distance of point P to tetrahedron... ";
+  fuzzy_check( viennagrid::distance(P, tet), 0.0 );
+  
+}
+
+
+
+
+
+
+
+//
+// Quadrilateral
+//
+
+void setup_domain(viennagrid::domain_t<viennagrid::config::hexahedral_3d> & d)
+{
+  typedef viennagrid::config::hexahedral_3d                            ConfigType;
+  typedef ConfigType::cell_tag                                         CellTag;
+  
+  typedef viennagrid::result_of::point<ConfigType>::type          PointType;
+  typedef viennagrid::result_of::ncell<ConfigType, 0>::type       VertexType;
+  
+  typedef viennagrid::result_of::ncell<ConfigType,
+                                            CellTag::dim>::type   CellType;
+  
+  PointType p0(1.0, 1.0, 1.0);
+  PointType p1(2.0, 0.9, 0.5);
+  PointType p2(0.9, 2.1, 0.8);
+  PointType p3(2.1, 2.0, 0.9);
+
+  PointType p4(0.9, 0.9, 2.1);
+  PointType p5(2.1, 1.0, 2.3);
+  PointType p6(1.0, 2.0, 2.2);
+  PointType p7(2.0, 2.1, 2.0);
+  
+  //upgrade to vertex:
+  VertexType v0(p0, 0);
+  VertexType v1(p1, 1);
+  VertexType v2(p2, 2);
+  VertexType v3(p3, 3);
+
+  VertexType v4(p4, 4);
+  VertexType v5(p5, 5);
+  VertexType v6(p6, 6);
+  VertexType v7(p7, 7);
+  
+  VertexType * vertices[8];
+  
+  std::cout << "Adding vertices to domain..." << std::endl;
+  vertices[0] = d.push_back(v0);
+  vertices[1] = d.push_back(v1);
+  vertices[2] = d.push_back(v2);
+  vertices[3] = d.push_back(v3);
+
+  vertices[4] = d.push_back(v4);
+  vertices[5] = d.push_back(v5);
+  vertices[6] = d.push_back(v6);
+  vertices[7] = d.push_back(v7);
+  
+  std::cout << "Adding cells to domain..." << std::endl;
+  CellType hex;
+  
+  hex.vertices(vertices);
+  d.push_back(hex);
+  
+  
+}
+
+void test(viennagrid::config::hexahedral_3d)
+{
+  typedef viennagrid::config::hexahedral_3d                          ConfigType;
+  typedef viennagrid::result_of::domain<ConfigType>::type               Domain;
+  typedef ConfigType::cell_tag                                          CellTag;
+  typedef viennagrid::segment_t<ConfigType>                             SegmentType;
+  
+  typedef viennagrid::result_of::point<ConfigType>::type                PointType;
+  typedef viennagrid::result_of::ncell<ConfigType, 0>::type             VertexType;
+  typedef viennagrid::result_of::ncell<ConfigType, 1>::type             EdgeType;
+  typedef viennagrid::result_of::ncell<ConfigType, CellTag::dim>::type  CellType;
+
+  Domain domain;
+  
+  setup_domain(domain);
+  
+/*  PointType A(0, 0, 0);
+  PointType B(1, 0, 2);
+  PointType C(2, 0, 3);
+  PointType D(3, 0, 4);
+  PointType E(4, 0, 1);
+  
+  PointType F(0, 1, 1);
+  PointType G(1, 1, 2);
+  PointType H(3, 1, 1);
+  PointType I(4, 1, 0);
+  
+  PointType J(0, 2, 4);
+  PointType K(2, 2, 1);
+  PointType K2(2, 2, 2);
+  PointType L(5, 2, 2);
+
+  PointType M(5, 3, 2);
+  
+  PointType N(0, 4, 1);
+  PointType O(1, 4, 2);
+  PointType P(4, 4, 3);
+
+  PointType Q(2, 5, 2);
+  PointType R(3, 5, 1); */
+
+  CellType & hex = viennagrid::ncells<CellTag::dim>(domain)[0];
+
+  std::cout << "Checking a bunch of points in interior for distance 0... ";
+  for (std::size_t i=0; i<=10; ++i)
+  {
+    for (std::size_t j=0; j<=10; ++j)
+    {
+      for (std::size_t k=0; k<=10; ++k)
+      {
+        PointType p(1.0 + i / 10.0, 1.0 + j / 10.0, 1.0 + k / 10.0);
+        fuzzy_check( viennagrid::distance(p, hex), 0.0 );
+      }
+    }
+  }
+  
+  //
+  // Distance checks for hexahedral
+  //
+  
+  // To come...
+
+/*  VertexType & v0 = viennagrid::ncells<0>(quad)[0];
+  VertexType & v1 = viennagrid::ncells<0>(quad)[1];
+  VertexType & v2 = viennagrid::ncells<0>(quad)[2];
+  VertexType & v3 = viennagrid::ncells<0>(quad)[3];
+  
+  EdgeType const & e0 = viennagrid::ncells<1>(quad)[0];
+  EdgeType const & e1 = viennagrid::ncells<1>(quad)[1];
+  EdgeType const & e2 = viennagrid::ncells<1>(quad)[2];
+  EdgeType const & e3 = viennagrid::ncells<1>(quad)[3];
+  
+  EdgeType e_diag;
+  VertexType * diag_vertices[2];
+  diag_vertices[0] = &v1;
+  diag_vertices[1] = &v2;
+  e_diag.vertices(diag_vertices);
+
+  
+  std::cout << "Distance of point A to quadrilateral... ";
+  fuzzy_check( viennagrid::distance(A, quad), viennagrid::distance(A, e1) );
+  
+  std::cout << "Distance of point B to quadrilateral... ";
+  fuzzy_check( viennagrid::distance(B, quad), viennagrid::distance(e1, B) );
+
+  std::cout << "Distance of point C to quadrilateral... ";
+  fuzzy_check( viennagrid::distance(C, quad), viennagrid::distance(v0, C) );
+  
+  std::cout << "Distance of point D to quadrilateral... ";
+  fuzzy_check( viennagrid::distance(D, quad), viennagrid::distance(D, e0) );
+  
+  std::cout << "Distance of point E to quadrilateral... ";
+  fuzzy_check( viennagrid::distance(E, quad), viennagrid::distance(E, e0) );
+  
+  std::cout << "Distance of point F to quadrilateral... ";
+  fuzzy_check( viennagrid::distance(F, quad), viennagrid::distance(F, e1) );
+  
+  std::cout << "Distance of point G to quadrilateral... ";
+  fuzzy_check( viennagrid::distance(G, quad), viennagrid::distance(G, e1) );
+  
+  std::cout << "Distance of point H to quadrilateral... ";
+  fuzzy_check( viennagrid::distance(H, quad), viennagrid::distance(H, e0) );
+  
+  std::cout << "Distance of point I to quadrilateral... ";
+  fuzzy_check( viennagrid::distance(I, quad), viennagrid::distance(I, e0) );
+  
+  std::cout << "Distance of point J to quadrilateral... ";
+  //fuzzy_check( viennagrid::distance(J, quad), height_for_tetrahedron(v0.point(), v1.point(), v2.point(), J) );
+  fuzzy_check( viennagrid::distance(J, quad), viennagrid::distance(J, e3) );
+  //fuzzy_check( viennagrid::distance(J, quad), height_for_tetrahedron(v0.point(), v1.point(), v2.point(), J) );
+  
+  std::cout << "Distance of point K to quadrilateral... ";
+  fuzzy_check( viennagrid::distance(K, quad), 0.0 );
+
+  std::cout << "Distance of point K2 to quadrilateral... ";
+  fuzzy_check( viennagrid::distance(quad, K2), height_for_tetrahedron(v1.point(), v3.point(), v2.point(), K2) );
+  
+  std::cout << "Distance of point L to quadrilateral... ";
+  fuzzy_check( viennagrid::distance(L, quad), viennagrid::distance(L, e2) );
+  
+  std::cout << "Distance of point M to quadrilateral... ";
+  fuzzy_check( viennagrid::distance(M, quad), viennagrid::distance(M, e2) );
+  
+  std::cout << "Distance of point N to quadrilateral... ";
+  fuzzy_check( viennagrid::distance(N, quad), viennagrid::distance(N, e3) );
+  
+  std::cout << "Distance of point O to quadrilateral... ";
+  fuzzy_check( viennagrid::distance(O, quad), viennagrid::distance(O, e3) );
+  
+  std::cout << "Distance of point P to quadrilateral... ";
+  fuzzy_check( viennagrid::distance(P, quad), viennagrid::distance(P, v3) );
+  
+  std::cout << "Distance of point Q to quadrilateral... ";
+  fuzzy_check( viennagrid::distance(Q, quad), viennagrid::distance(Q, e3) );
+  
+  std::cout << "Distance of point R to quadrilateral... ";
+  fuzzy_check( viennagrid::distance(R, quad), height_for_tetrahedron(v1.point(), v3.point(), v2.point(), R) );
+  */
+}
+
+
+
+
+
+
+
+
+
+
 int main()
 {
   std::cout << "*****************" << std::endl;
@@ -818,11 +1198,11 @@ int main()
   std::cout << "==== Testing quadrilateral mesh in 3D ====" << std::endl;
   test(viennagrid::config::quadrilateral_3d());
   
-/*  std::cout << "==== Testing tetrahedral mesh in 3D ====" << std::endl;
+  std::cout << "==== Testing tetrahedral mesh in 3D ====" << std::endl;
   test(viennagrid::config::tetrahedral_3d());
   
   std::cout << "==== Testing hexahedral mesh in 3D ====" << std::endl;
-  test(viennagrid::config::hexahedral_3d());*/
+  test(viennagrid::config::hexahedral_3d());
   
   std::cout << "*******************************" << std::endl;
   std::cout << "* Test finished successfully! *" << std::endl;
