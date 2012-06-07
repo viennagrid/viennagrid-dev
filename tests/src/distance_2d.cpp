@@ -454,7 +454,7 @@ void test(viennagrid::config::triangular_2d)
   fuzzy_check( viennagrid::distance(Q, t0), std::sqrt(5.0) );
   
   std::cout << "Distance of point R to triangle t0... ";
-  fuzzy_check( viennagrid::distance(R, t0), 2.0 );
+  fuzzy_check( viennagrid::distance(t0, R), 2.0 );
   
   std::cout << std::endl;
 
@@ -666,7 +666,7 @@ void test(viennagrid::config::quadrilateral_2d)
   fuzzy_check( viennagrid::distance(Q, quad), std::sqrt(5.0) );
   
   std::cout << "Distance of point R to quadrilateral... ";
-  fuzzy_check( viennagrid::distance(R, quad), 2.0 );
+  fuzzy_check( viennagrid::distance(quad, R), 2.0 );
   
 }
 

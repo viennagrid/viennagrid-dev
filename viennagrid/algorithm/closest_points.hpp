@@ -387,9 +387,9 @@ namespace viennagrid
            || (s + t > 1) )     //p_prime is outside the triangle
       {
         // safe mode: Compute distances to all edges. Can be optimized further by using information from s, t, etc.
-        return point_pair_with_shortest_distance(closest_points_point_line(p_prime, v0, v1),
-                                                 closest_points_point_line(p_prime, v0, v2),
-                                                 closest_points_point_line(p_prime, v1, v2));
+        return point_pair_with_shortest_distance(std::make_pair(p, closest_points_point_line(p_prime, v0, v1).second),
+                                                 std::make_pair(p, closest_points_point_line(p_prime, v0, v2).second),
+                                                 std::make_pair(p, closest_points_point_line(p_prime, v1, v2).second));
       }
       
       return std::make_pair(p, p_prime);
@@ -465,8 +465,70 @@ namespace viennagrid
       return closest_points_impl(v.point(), el);
     }
     
-    
 
+    
+    template <typename T>
+    struct topological_id
+    {
+        //by default, typename is unknown, thus force error by not defining 'value'
+    };
+    
+    template <typename CoordType, typename CoordinateSystem>
+    struct topological_id< point_t<CoordType, CoordinateSystem> >
+    {
+      enum { value = 1 };
+    };
+
+    
+    template <typename ConfigType, long dim>
+    struct topological_id< element_t<ConfigType, simplex_tag<dim> > >
+    {
+      enum { value = 10000 + dim }; //10.000 dimensions are certainly far from being ever instantiated
+    };
+    
+    template <typename ConfigType, long dim>
+    struct topological_id< element_t<ConfigType, hypercube_tag<dim> > >
+    {
+      enum { value = 20000 + dim };
+    };
+    
+    template <typename ConfigType>
+    struct topological_id< segment_t<ConfigType> >
+    {
+      enum { value = 100000 };
+    };
+    
+    template <typename ConfigType>
+    struct topological_id< domain_t<ConfigType> >
+    {
+      enum { value = 100001 };
+    };
+    
+    
+    
+    template <typename T, typename U>
+    struct topologically_sorted
+    {
+      enum { value = (topological_id<T>::value - topological_id<U>::value <= 0) ? true : false };
+    };
+    
+    
+    template <typename T,
+              typename U,
+              bool correct_order = topologically_sorted<T, U>::value >
+    struct ascending_topological_order
+    {
+      static T const & first(T const & t, U const & u) { return t; }
+      static U const & second(T const & t, U const & u) { return u; }
+    };
+    
+    template <typename T,
+              typename U>
+    struct ascending_topological_order<T, U, false>
+    {
+      static U const & first(T const & t, U const & u) { return u; }
+      static T const & second(T const & t, U const & u) { return t; }
+    };
     
   } //namespace detail
   
@@ -477,9 +539,11 @@ namespace viennagrid
   template <typename ElementType1, typename ElementType2>
   std::pair<typename result_of::point<ElementType1>::type,
             typename result_of::point<ElementType1>::type>
-  closest_points(ElementType1 const & el1, ElementType2 const & el2)
+  closest_points(ElementType1 const & el1,
+                 ElementType2 const & el2)
   {
-    return detail::closest_points_impl(el1, el2);
+    return detail::closest_points_impl(detail::ascending_topological_order<ElementType1, ElementType2>::first(el1, el2),
+                                       detail::ascending_topological_order<ElementType1, ElementType2>::second(el1, el2));
   }
   
 
