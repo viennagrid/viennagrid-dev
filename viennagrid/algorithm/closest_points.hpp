@@ -676,8 +676,259 @@ namespace viennagrid
     {
       return closest_points_impl(v.point(), el);
     }
+
+    //
+    /////////////////////// closest_points_on_boundary ////////////////////
+    //
+    
+    //
+    // Closest points between points (trivial)
+    //
+    
+    // Closest points between two points (overloads for vertices follow):
+    template <typename CoordType, typename CoordinateSystem>
+    std::pair<point_t<CoordType, CoordinateSystem>,
+              point_t<CoordType, CoordinateSystem> >
+    closest_points_on_boundary_impl(point_t<CoordType, CoordinateSystem> const & p1,
+                                    point_t<CoordType, CoordinateSystem> const & p2)
+    {
+      return std::make_pair(p1, p2);
+    }
+
+    template <typename CoordType, typename CoordinateSystem, typename ConfigType>
+    std::pair<point_t<CoordType, CoordinateSystem>,
+              point_t<CoordType, CoordinateSystem> >
+    closest_points_on_boundary_impl(point_t<CoordType, CoordinateSystem> const & p1,
+                                    element_t<ConfigType, point_tag> const & v2)
+    {
+      return std::make_pair(p1, v2.point());
+    }
+
+    template <typename ConfigType, typename CoordType, typename CoordinateSystem>
+    std::pair<point_t<CoordType, CoordinateSystem>,
+              point_t<CoordType, CoordinateSystem> >
+    closest_points_on_boundary_impl(element_t<ConfigType, point_tag> const & v1,
+                                    point_t<CoordType, CoordinateSystem> const & p2)
+    {
+      return std::make_pair(v1.point(), p2);
+    }
+    
+    // Closest points between vertices:
+    template <typename ConfigType>
+    std::pair<typename result_of::point<ConfigType>::type,
+              typename result_of::point<ConfigType>::type>
+    closest_points_on_boundary_impl(element_t<ConfigType, point_tag> const & v1,
+                                    element_t<ConfigType, point_tag> const & v2)
+    {
+      return std::make_pair(v1.point(), v2.point());
+    }
+
+    
+    ////////////////// Distance from point to container ////////////////////
+    
+    /** @tparam ContainerType   Any topological object (ncell, segment, domain) */
+    template <long facet_dim, typename ConfigType, typename CoordType, typename CoordinateSystem, typename ContainerType>
+    std::pair<point_t<CoordType, CoordinateSystem>,
+              point_t<CoordType, CoordinateSystem> >
+    closest_points_on_boundary_point_to_any(point_t<CoordType, CoordinateSystem> const & v,
+                                            ContainerType const & cont)
+    {
+      typedef std::pair<point_t<CoordType, CoordinateSystem>,
+                        point_t<CoordType, CoordinateSystem> >       PairType;
+                        
+      typedef typename viennagrid::result_of::const_ncell_range<ContainerType,
+                                                                facet_dim>::type           FacetRange;
+      typedef typename viennagrid::result_of::iterator<FacetRange>::type                  FacetIterator;
+      
+      PairType closest_pair;
+      double shortest_distance = std::numeric_limits<double>::max();
+      
+      FacetRange facets = viennagrid::ncells(cont);
+      for (FacetIterator fit = facets.begin();
+                         fit != facets.end();
+                       ++fit)
+      {
+        PairType p = closest_points_impl(v, *fit);
+        double cur_norm = norm_2(p.first, p.second);
+        if (cur_norm < shortest_distance)
+        {
+          closest_pair = p;
+          shortest_distance = cur_norm;
+        }
+      }
+      
+      return closest_pair;
+    }
+
     
     
+    template <typename ConfigType, typename CoordType, typename CoordinateSystem, typename ElementTag>
+    std::pair<typename result_of::point<ConfigType>::type,
+              typename result_of::point<ConfigType>::type>
+    closest_points_on_boundary_impl(point_t<CoordType, CoordinateSystem> const & v,
+                                    element_t<ConfigType, ElementTag> const & el)
+    {
+      return closest_points_on_boundary_point_to_any<ElementTag::dim-1>(v, el);
+    }
+    
+    template <typename ConfigType, typename CoordType, typename CoordinateSystem>
+    std::pair<typename result_of::point<ConfigType>::type,
+              typename result_of::point<ConfigType>::type>
+    closest_points_on_boundary_impl(point_t<CoordType, CoordinateSystem> const & v,
+                                    segment_t<ConfigType> const & seg)
+    {
+      return closest_points_on_boundary_point_to_any<ConfigType::cell_tag::dim-1>(v, seg);
+    }
+
+        template <typename ConfigType, typename CoordType, typename CoordinateSystem>
+    std::pair<typename result_of::point<ConfigType>::type,
+              typename result_of::point<ConfigType>::type>
+    closest_points_on_boundary_impl(point_t<CoordType, CoordinateSystem> const & v,
+                                    domain_t<ConfigType> const & dom)
+    {
+      return closest_points_on_boundary_point_to_any<ConfigType::cell_tag::dim-1>(v, dom);
+    }
+ 
+    
+    
+    template <typename ConfigType, typename ElementTag>
+    std::pair<typename result_of::point<ConfigType>::type,
+              typename result_of::point<ConfigType>::type>
+    closest_points_on_boundary_impl(element_t<ConfigType, point_tag> const & v,
+                                    element_t<ConfigType, ElementTag> const & el)
+    {
+      return closest_points_on_boundary_impl(v.point(), el);
+    }
+
+    template <typename ConfigType>
+    std::pair<typename result_of::point<ConfigType>::type,
+              typename result_of::point<ConfigType>::type>
+    closest_points_on_boundary_impl(element_t<ConfigType, point_tag> const & v,
+                                    segment_t<ConfigType> const & seg)
+    {
+      return closest_points_on_boundary_impl(v.point(), seg);
+    }
+
+        template <typename ConfigType>
+    std::pair<typename result_of::point<ConfigType>::type,
+              typename result_of::point<ConfigType>::type>
+    closest_points_on_boundary_impl(element_t<ConfigType, point_tag> const & v,
+                                    domain_t<ConfigType> const & dom)
+    {
+      return closest_points_on_boundary_impl(v.point(), dom);
+    }
+
+    
+    ////////// Distance from Container to Container /////////////////////
+    
+    template <long facet_dim1, long facet_dim2, typename ContainerType1, typename ContainerType2>
+    std::pair<typename result_of::point<typename ContainerType1::config_type>::type,
+              typename result_of::point<typename ContainerType2::config_type>::type>
+    closest_points_on_boundary_generic(ContainerType1 const & el1,
+                                       ContainerType2 const & el2)
+    {
+      typedef std::pair<typename result_of::point<typename ContainerType1::config_type>::type,
+                        typename result_of::point<typename ContainerType2::config_type>::type>       PairType;
+                        
+      typedef typename viennagrid::result_of::const_ncell_range<ContainerType1,
+                                                                facet_dim1>::type           FacetRange1;
+      typedef typename viennagrid::result_of::iterator<FacetRange1>::type                   FacetIterator1;
+
+      typedef typename viennagrid::result_of::const_ncell_range<ContainerType2,
+                                                                facet_dim2>::type           FacetRange2;
+      typedef typename viennagrid::result_of::iterator<FacetRange2>::type                   FacetIterator2;
+      
+      PairType closest_pair;
+      double shortest_distance = std::numeric_limits<double>::max();
+
+      
+      FacetRange1 facets1 = viennagrid::ncells(el1);
+      FacetRange2 facets2 = viennagrid::ncells(el2);
+      
+      for (FacetIterator1 fit1 = facets1.begin();
+                          fit1 != facets1.end();
+                        ++fit1)
+      {
+        for (FacetIterator2 fit2 = facets2.begin();
+                            fit2 != facets2.end();
+                          ++fit2)
+        {
+          PairType p = closest_points_impl(*fit1, *fit2);
+          double cur_norm = norm_2(p.first, p.second);
+          if (cur_norm < shortest_distance)
+          {
+            closest_pair = p;
+            shortest_distance = cur_norm;
+          }
+        }
+      }
+      
+      return closest_pair;
+    }
+
+    
+    template <typename ConfigType, typename ElementTag1, typename ElementTag2>
+    std::pair<typename result_of::point<ConfigType>::type,
+              typename result_of::point<ConfigType>::type>
+    closest_points_on_boundary_impl(element_t<ConfigType, ElementTag1> const & el1,
+                                    element_t<ConfigType, ElementTag2> const & el2)
+    {
+      return closest_points_on_boundary_generic<ElementTag1::dim-1, ElementTag2::dim-1>(el1, el2);
+    }
+    
+    template <typename ConfigType, typename ElementTag1>
+    std::pair<typename result_of::point<ConfigType>::type,
+              typename result_of::point<ConfigType>::type>
+    closest_points_on_boundary_impl(element_t<ConfigType, ElementTag1> const & el1,
+                                    segment_t<ConfigType> const & seg)
+    {
+      return closest_points_on_boundary_generic<ElementTag1::dim-1, ConfigType::cell_tag::dim-1>(el1, seg);
+    }
+
+    template <typename ConfigType, typename ElementTag1>
+    std::pair<typename result_of::point<ConfigType>::type,
+              typename result_of::point<ConfigType>::type>
+    closest_points_on_boundary_impl(element_t<ConfigType, ElementTag1> const & el1,
+                                    domain_t<ConfigType> const & dom)
+    {
+      return closest_points_on_boundary_generic<ElementTag1::dim-1, ConfigType::cell_tag::dim-1>(el1, dom);
+    }
+
+    
+    
+    template <typename ConfigType>
+    std::pair<typename result_of::point<ConfigType>::type,
+              typename result_of::point<ConfigType>::type>
+    closest_points_on_boundary_impl(segment_t<ConfigType> const & seg1,
+                                    segment_t<ConfigType> const & seg2)
+    {
+      return closest_points_on_boundary_generic<ConfigType::cell_tag::dim-1, ConfigType::cell_tag::dim-1>(seg1, seg2);
+    }
+
+    template <typename ConfigType>
+    std::pair<typename result_of::point<ConfigType>::type,
+              typename result_of::point<ConfigType>::type>
+    closest_points_on_boundary_impl(segment_t<ConfigType> const & seg1,
+                                    domain_t<ConfigType> const & dom)
+    {
+      return closest_points_on_boundary_generic<ConfigType::cell_tag::dim-1, ConfigType::cell_tag::dim-1>(seg1, dom);
+    }
+    
+    
+    template <typename ConfigType>
+    std::pair<typename result_of::point<ConfigType>::type,
+              typename result_of::point<ConfigType>::type>
+    closest_points_on_boundary_impl(domain_t<ConfigType> const & dom1,
+                                    domain_t<ConfigType> const & dom2)
+    {
+      return closest_points_on_boundary_generic<ConfigType::cell_tag::dim-1, ConfigType::cell_tag::dim-1>(dom1, dom2);
+    }
+
+    
+    
+    
+    
+    //////////////////////////// other helpers ////////////////////////
     
     template <typename T>
     struct topological_id
@@ -759,6 +1010,16 @@ namespace viennagrid
   }
   
 
+  /** @brief Returns the distance between n-cells */
+  template <typename ElementType1, typename ElementType2>
+  std::pair<typename result_of::point<ElementType1>::type,
+            typename result_of::point<ElementType1>::type>
+  closest_points_on_boundary(ElementType1 const & el1,
+                             ElementType2 const & el2)
+  {
+    return detail::closest_points_on_boundary_impl(detail::ascending_topological_order<ElementType1, ElementType2>::first(el1, el2),
+                                                   detail::ascending_topological_order<ElementType1, ElementType2>::second(el1, el2));
+  }
   
 } //namespace viennagrid
 #endif
