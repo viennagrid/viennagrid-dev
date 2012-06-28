@@ -289,6 +289,32 @@ namespace viennagrid
     return false;
   }
 
+  /** @brief Returns true if the k-cell provided as first argument is on the boundary of the n-cell provided as second argument
+   *
+   * @param el      The n-cell
+   * @param segment A segment of a domain
+   */
+  template <typename ConfigType, typename ElementTag1, typename ElementTag2>
+  bool is_boundary(element_t<ConfigType, ElementTag1> const & el1,
+                   element_t<ConfigType, ElementTag2> const & el2)
+  {
+
+    typedef typename viennagrid::result_of::const_ncell_range<element_t<ConfigType, ElementTag2>,
+                                                              ElementTag1::dim>::type   BoundaryRange;
+    typedef typename viennagrid::result_of::iterator<BoundaryRange>::type               BoundaryIterator;
+        
+    BoundaryRange bnd_cells = viennagrid::ncells(el2);
+    for (BoundaryIterator bit = bnd_cells.begin();
+                          bit != bnd_cells.end();
+                        ++bit)
+    {
+      if (&(*bit) == &el1)
+        return true;
+    }
+    
+    return false;
+  }
+  
 }
 
 #endif

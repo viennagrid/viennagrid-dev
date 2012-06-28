@@ -29,6 +29,7 @@
 #include "viennagrid/topology/all.hpp"
 #include "viennagrid/algorithm/norm.hpp"
 #include "viennagrid/algorithm/inner_prod.hpp"
+#include "viennagrid/algorithm/boundary.hpp"
 
 /** @file closest_points.hpp
     @brief Routines for computing the two points of two different objects being closest to each other.
@@ -727,7 +728,7 @@ namespace viennagrid
     ////////////////// Distance from point to container ////////////////////
     
     /** @tparam ContainerType   Any topological object (ncell, segment, domain) */
-    template <long facet_dim, typename ConfigType, typename CoordType, typename CoordinateSystem, typename ContainerType>
+    template <long facet_dim, typename CoordType, typename CoordinateSystem, typename ContainerType>
     std::pair<point_t<CoordType, CoordinateSystem>,
               point_t<CoordType, CoordinateSystem> >
     closest_points_on_boundary_point_to_any(point_t<CoordType, CoordinateSystem> const & v,
@@ -748,8 +749,11 @@ namespace viennagrid
                          fit != facets.end();
                        ++fit)
       {
+        if (!is_boundary(*fit, cont))
+          continue;
+        
         PairType p = closest_points_impl(v, *fit);
-        double cur_norm = norm_2(p.first, p.second);
+        double cur_norm = norm_2(p.first - p.second);
         if (cur_norm < shortest_distance)
         {
           closest_pair = p;
@@ -849,12 +853,18 @@ namespace viennagrid
                           fit1 != facets1.end();
                         ++fit1)
       {
+        if (!is_boundary(*fit1, el1))
+          continue;
+        
         for (FacetIterator2 fit2 = facets2.begin();
                             fit2 != facets2.end();
                           ++fit2)
         {
+          if (!is_boundary(*fit2, el2))
+            continue;
+          
           PairType p = closest_points_impl(*fit1, *fit2);
-          double cur_norm = norm_2(p.first, p.second);
+          double cur_norm = norm_2(p.first - p.second);
           if (cur_norm < shortest_distance)
           {
             closest_pair = p;

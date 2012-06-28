@@ -375,6 +375,20 @@ namespace viennagrid
       typedef viennagrid::point_t<typename Config::numeric_type, typename Config::coordinate_system_tag>   type;
     };
     
+    /** @brief Convenience overload for retrieving the point type from a segment */
+    template <typename Config>
+    struct point< segment_t<Config> >
+    {
+      typedef viennagrid::point_t<typename Config::numeric_type, typename Config::coordinate_system_tag>   type;
+    };
+    
+    /** @brief Convenience overload for retrieving the point type from a domain */
+    template <typename Config>
+    struct point< domain_t<Config> >
+    {
+      typedef viennagrid::point_t<typename Config::numeric_type, typename Config::coordinate_system_tag>   type;
+    };
+    
     
     
     /** @brief Metafunction returning the numeric type from the domain config */
@@ -391,14 +405,27 @@ namespace viennagrid
       typedef CoordType   type;
     };
     
-    /** @brief Convenience overload for retrieving the numeric type (value_type) from the points of an element */
+    /** @brief Convenience overload for retrieving the numeric type (value_type) from an element */
     template <typename Config, typename ElementTag>
     struct numeric< element_t<Config, ElementTag> >
     {
       typedef typename Config::numeric_type   type;
     };
 
-    
+    /** @brief Convenience overload for retrieving the numeric type (value_type) from a segment */
+    template <typename Config>
+    struct numeric< segment_t<Config> >
+    {
+      typedef typename Config::numeric_type   type;
+    };
+
+    /** @brief Convenience overload for retrieving the numeric type (value_type) from a domain */
+    template <typename Config>
+    struct numeric< domain_t<Config> >
+    {
+      typedef typename Config::numeric_type   type;
+    };
+
     
     /** @brief Metafunction for local-to-global-orienters: By default, orienters are stored on n-cells
      * 

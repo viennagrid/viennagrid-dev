@@ -143,7 +143,7 @@ namespace viennagrid
     boundary_distance_impl(ElementType1 const & el1,
                            ElementType2 const & el2)
     {
-      typedef typename result_of::point<ElementType1>::type   PointType;
+      typedef typename result_of::point<ElementType1>::type      PointType;
       
       std::pair<PointType, PointType> points = closest_points_on_boundary(el1, el2);
       
