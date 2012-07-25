@@ -28,6 +28,7 @@
 #include <boost/serialization/utility.hpp>
 #include <boost/serialization/list.hpp>
 #include <boost/serialization/assume_abstract.hpp>
+#include <boost/shared_ptr.hpp>
 
 namespace viennagrid
 {
@@ -40,6 +41,7 @@ namespace viennagrid
     template<typename DomainT>
     struct domain_serializer
     {
+      typedef boost::shared_ptr<DomainT>                                                     DomainSPT;
     private: 
       typedef typename DomainT::config_type                                                  ConfigType;
       typedef typename DomainT::segment_type                                                 SegmentType;   
@@ -65,9 +67,9 @@ namespace viennagrid
         // -----------------------------------------------
         // the geometry is read and transmitted 
         //
-        std::size_t point_size = viennagrid::ncells<0>(domain).size();
+        std::size_t point_size = viennagrid::ncells<0>(*domainsp).size();
         ar & point_size;
-        VertexRange vertices = viennagrid::ncells<0>(domain);
+        VertexRange vertices = viennagrid::ncells<0>(*domainsp);
         for (VertexIterator vit = vertices.begin();
              vit != vertices.end(); ++vit)
         {
@@ -78,7 +80,7 @@ namespace viennagrid
         // -----------------------------------------------
         // the segment size is read and transmitted 
         //
-        std::size_t segment_size = domain.segments().size();
+        std::size_t segment_size = (*domainsp).segments().size();
         ar & segment_size;
         // -----------------------------------------------
 
@@ -87,7 +89,7 @@ namespace viennagrid
         //
         for (std::size_t si = 0; si < segment_size; si++)
         {
-          SegmentType & seg = domain.segments()[si];
+          SegmentType & seg = (*domainsp).segments()[si];
           CellRange cells = viennagrid::ncells<CellTag::dim>(seg);
 
           std::size_t cell_size = viennagrid::ncells<CellTag::dim>(seg).size();         
@@ -125,7 +127,7 @@ namespace viennagrid
           VertexType vertex;
           for(int d = 0; d < DIMG; d++)
             ar & vertex.point()[d];
-          domain.push_back(vertex);            
+          (*domainsp).push_back(vertex);            
         }
         // -----------------------------------------------
 
@@ -134,7 +136,7 @@ namespace viennagrid
         //      
         std::size_t segment_size;
         ar & segment_size;
-        domain.segments().resize(segment_size);
+        (*domainsp).segments().resize(segment_size);
         // -----------------------------------------------        
         
         // -----------------------------------------------
@@ -142,7 +144,7 @@ namespace viennagrid
         //      
         for (std::size_t si = 0; si < segment_size; si++)
         {
-          SegmentType & seg = domain.segments()[si];
+          SegmentType & seg = (*domainsp).segments()[si];
           std::size_t cell_size;
           ar & cell_size;         
           for(std::size_t ci = 0; ci < cell_size; ci++)
@@ -153,7 +155,7 @@ namespace viennagrid
             {
               std::size_t id;
               ar & id;
-              vertices[j] = &(viennagrid::ncells<0>(domain)[id]);  
+              vertices[j] = &(viennagrid::ncells<0>(*domainsp)[id]);  
             }
             CellType cell;
             cell.vertices(vertices);
@@ -170,14 +172,22 @@ namespace viennagrid
       BOOST_SERIALIZATION_SPLIT_MEMBER()
       // -----------------------------------------------      
     public:
-      /** @brief The constructor expects a domain object and sets the state */           
-      domain_serializer(DomainT& domain) : domain(domain) {}
-       
-      /** @brief The functor returns a reference to the domain state*/              
-      DomainT& operator()() { return domain; }
+      /** @brief The default constructor*/           
+      domain_serializer() {}
 
-      /** @brief The state holds a reference to the domain */       
-      DomainT& domain;
+      /** @brief The constructor expects a shared pointer on a domain object and sets the state */           
+      domain_serializer(DomainSPT& domainsp) : domainsp(domainsp) {}
+       
+      /** @brief The load function enables to associate a domain with the serialzer after 
+      a serializer object has been constructed. */
+      void load(DomainSPT & other) { domainsp = other;  }
+      
+      /** @brief The functor returns a reference to the domain state*/              
+      DomainT& operator()() { return *domainsp; }
+
+      /** @brief The state holds a shared pointer to the domain */       
+      boost::shared_ptr<DomainT>  domainsp;
+      //DomainT& domain;
     };
 
   } //namespace io

@@ -32,14 +32,22 @@ int main()
   // 
   typedef viennagrid::config::triangular_2d                          Config;  
   typedef viennagrid::result_of::domain<Config>::type                Domain;  
+  typedef viennagrid::io::domain_serializer<Domain>                  DomainSerializer;
+  typedef boost::shared_ptr<Domain>                                  DomainSP;
 
-  Domain domain;
-  viennagrid::io::netgen_reader my_reader;
-  my_reader(domain, "../../examples/data/square32.mesh");
-  
-  // define a serialization object and pass the domain to the constructor 
+  // setup a shared pointer on a domain
   //
-  viennagrid::io::domain_serializer<Domain>  domainserial(domain);
+  DomainSP          domainsp(new Domain);
+  
+  // create a serializer object and load it with the domain pointer
+  //
+  DomainSerializer  domain_serial;
+  domain_serial.load( domainsp );
+
+  // access the domain object by calling the functor
+  //
+  viennagrid::io::netgen_reader my_reader;
+  my_reader(domain_serial(), "../../examples/data/square32.mesh");
   
   // the domainserial object is now a Boost Serialization conform serializable
   // object, for example, one can ..
@@ -48,26 +56,26 @@ int main()
   {
   std::ofstream ofs("domainfile.txt");
   boost::archive::text_oarchive oa(ofs);
-  oa << domainserial;
+  oa << domain_serial;
   }
 
   // .. use boost archive to dump it to std::cout
   {
   boost::archive::text_oarchive oa(std::cout);
-  oa << domainserial;
+  oa << domain_serial;
   }
 
   // .. trasmit it via boost::mpi's send
   // note: this example is not active, as it would require linking 
   // against the (boost)mpi libraries and the execution via mpirun ...
   /*
-  if (world.rank() == 0) world.send(1, DOMAIN_TAG, domainserial);
-  else                   world.recv(0, DOMAIN_TAG, domainserial);     
+  if (world.rank() == 0) world.send(1, DOMAIN_TAG, domain_serial);
+  else                   world.recv(0, DOMAIN_TAG, domain_serial);     
   */
   
   // the actual viennagrid domain object can be accessed via the functor
   viennagrid::io::vtk_writer<Domain>  vtk;         
-  vtk(domainserial(), "serialized_domain");
+  vtk(domain_serial(), "serialized_domain");
   
   std::cout << "*******************************" << std::endl;
   std::cout << "* Test finished successfully! *" << std::endl;
