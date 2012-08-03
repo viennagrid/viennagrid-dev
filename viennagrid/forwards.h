@@ -19,7 +19,7 @@
 ======================================================================= */
 
 /**
- @mainpage Source Code Documentation for ViennaGrid 1.0.0
+ @mainpage Source Code Documentation for ViennaGrid 1.0.1
 
  This is the source code documentation of ViennaGrid. Detailed information about the functions in ViennaGrid can be found here.
  

@@ -28,7 +28,7 @@ One may also erase data stored for the object using
 \end{lstlisting}
 
 \section{Customizations of the Internal Storage Scheme}
-It can readily be seen that the free function \lstinline|access()| function mimics the template arguments of a \lstinline|std::map<KeyType, DataType>| and takes the key as argument. In fact, the default internal storage scheme of {\ViennaData} for objects of type \lstinline|ObjectType| is 
+It can readily be seen that the free function \lstinline|access()| mimics the template arguments of a \lstinline|std::map<KeyType, DataType>| and takes the key as argument. In fact, the default internal storage scheme of {\ViennaData} for objects of type \lstinline|ObjectType| is 
 \begin{lstlisting}
  std::map<ObjectType const *,
           std::map<KeyType, DataType> >
