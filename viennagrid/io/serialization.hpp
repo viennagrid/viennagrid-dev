@@ -173,7 +173,7 @@ namespace viennagrid
       // -----------------------------------------------      
     public:
       /** @brief The default constructor*/           
-      domain_serializer() {}
+      domain_serializer() : domainsp(new DomainT) {}
 
       /** @brief The constructor expects a shared pointer on a domain object and sets the state */           
       domain_serializer(DomainSPT& domainsp) : domainsp(domainsp) {}
