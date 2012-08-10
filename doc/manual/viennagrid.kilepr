@@ -3,8 +3,8 @@ def_graphic_ext=eps
 img_extIsRegExp=false
 img_extensions=.eps .jpg .jpeg .png .pdf .ps .fig .gif
 kileprversion=2
-kileversion=2.0.85
-lastDocument=orientations.tex
+kileversion=2.1.0
+lastDocument=viennagrid.bib
 masterDocument=
 name=viennagrid
 pkg_extIsRegExp=false
@@ -35,6 +35,8 @@ ReadWrite=true
 [document-settings,item:contributors.tex]
 Bookmarks=
 Encoding=UTF-8
+FoldedColumns=
+FoldedLines=
 Highlighting=LaTeX
 Indentation Mode=
 Mode=LaTeX
@@ -43,6 +45,8 @@ ReadWrite=true
 [document-settings,item:cover.tex]
 Bookmarks=
 Encoding=UTF-8
+FoldedColumns=
+FoldedLines=
 Highlighting=LaTeX
 Indentation Mode=
 Mode=LaTeX
@@ -147,6 +151,8 @@ ReadWrite=true
 [document-settings,item:orientations.tex]
 Bookmarks=
 Encoding=UTF-8
+FoldedColumns=
+FoldedLines=
 Highlighting=LaTeX
 Indentation Mode=
 Mode=LaTeX
@@ -171,6 +177,8 @@ ReadWrite=true
 [document-settings,item:viennagrid.bib]
 Bookmarks=
 Encoding=UTF-8
+FoldedColumns=
+FoldedLines=
 Highlighting=BibTeX
 Indentation Mode=
 Mode=BibTeX
@@ -206,13 +214,13 @@ order=1
 
 [item:contributors.tex]
 archive=true
-column=11
+column=32
 encoding=UTF-8
 highlight=LaTeX
-line=24
+line=4
 mode=LaTeX
-open=false
-order=0
+open=true
+order=2
 
 [item:cover.tex]
 archive=true
@@ -221,8 +229,8 @@ encoding=UTF-8
 highlight=LaTeX
 line=5
 mode=LaTeX
-open=false
-order=3
+open=true
+order=1
 
 [item:data.tex]
 archive=true
@@ -391,8 +399,8 @@ encoding=UTF-8
 highlight=BibTeX
 line=108
 mode=BibTeX
-open=false
-order=1
+open=true
+order=3
 
 [item:viennagrid.kilepr]
 archive=true
@@ -423,12 +431,16 @@ CursorColumn=21
 CursorLine=1
 
 [view-settings,view=0,item:contributors.tex]
-CursorColumn=11
-CursorLine=24
+CursorColumn=32
+CursorLine=4
+JumpList=
+ViMarks=
 
 [view-settings,view=0,item:cover.tex]
 CursorColumn=16
 CursorLine=5
+JumpList=
+ViMarks=
 
 [view-settings,view=0,item:data.tex]
 CursorColumn=109
@@ -481,6 +493,8 @@ CursorLine=1
 [view-settings,view=0,item:orientations.tex]
 CursorColumn=27
 CursorLine=58
+JumpList=
+ViMarks=
 
 [view-settings,view=0,item:setup.tex]
 CursorColumn=0
@@ -493,6 +507,8 @@ CursorLine=1
 [view-settings,view=0,item:viennagrid.bib]
 CursorColumn=32
 CursorLine=108
+JumpList=
+ViMarks=
 
 [view-settings,view=0,item:viennagrid.tex]
 CursorColumn=0
