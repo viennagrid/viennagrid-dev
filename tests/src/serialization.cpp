@@ -65,7 +65,7 @@ int main()
   oa << domain_serial;
   }
 
-  // .. trasmit it via boost::mpi's send
+  // .. transmit it via boost::mpi's send
   // note: this example is not active, as it would require linking 
   // against the (boost)mpi libraries and the execution via mpirun ...
   /*
@@ -73,9 +73,10 @@ int main()
   else                   world.recv(0, DOMAIN_TAG, domain_serial);     
   */
   
-  // the actual viennagrid domain object can be accessed via the functor
+  // the actual viennagrid domain object can be accessed via the functor interface
   viennagrid::io::vtk_writer<Domain>  vtk;         
-  vtk(domain_serial(), "serialized_domain");
+  vtk(domain_serial(), //extract the domain from the serializer
+      "serialized_domain");
   
   std::cout << "*******************************" << std::endl;
   std::cout << "* Test finished successfully! *" << std::endl;

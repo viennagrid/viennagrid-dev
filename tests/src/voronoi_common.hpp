@@ -202,3 +202,38 @@ double voronoi_volume_edge_detailed(DomainType const & d)
 
   return boxed_volume;
 }
+
+template <typename DomainType>
+void voronoi_volume_check(DomainType const & device)
+{
+  double voronoi_vol = voronoi_volume(device);  
+  double voronoi_vol_vertices = voronoi_volume_vertex_detailed(device);  
+  double voronoi_vol_edges = voronoi_volume_edge_detailed(device);  
+  double domain_vol = viennagrid::volume(device);  
+  
+  if ( fabs(voronoi_vol - domain_vol) / domain_vol > 1e-10 )
+  {
+    std::cerr << "Mismatch of volumes: " << voronoi_vol << " vs " << domain_vol << std::endl;
+    exit(EXIT_FAILURE);
+  }
+  else
+    std::cout << "Volume check passed: " << voronoi_vol << " vs " << domain_vol << std::endl;
+
+  if ( fabs(voronoi_vol_vertices - domain_vol) / domain_vol > 1e-10 )
+  {
+    std::cerr << "Mismatch of volumes (detailed, vertex): " << voronoi_vol_vertices << " vs " << domain_vol << std::endl;
+    exit(EXIT_FAILURE);
+  }
+  else
+    std::cout << "Detailed vertices volume check passed: " << voronoi_vol_vertices << " vs " << domain_vol << std::endl;
+
+  if ( fabs(voronoi_vol_edges - domain_vol) / domain_vol > 1e-10 )
+  {
+    std::cerr << "Mismatch of volumes (detailed, edge): " << voronoi_vol_edges << " vs " << domain_vol << std::endl;
+    exit(EXIT_FAILURE);
+  }
+  else
+    std::cout << "Detailed edge volume check passed: " << voronoi_vol_vertices << " vs " << domain_vol << std::endl;
+
+}
+

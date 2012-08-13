@@ -70,16 +70,8 @@ int main(int argc, char *argv[])
   std::cout << std::endl;
   std::cout << "Circumcenter of first cell: " << viennagrid::circumcenter(viennagrid::ncells<3>(my_domain)[0]) << std::endl;
 
-  double voronoi_vol = voronoi_volume(my_domain);
-  double domain_vol = viennagrid::volume(my_domain);  
-  
-  if ( fabs(voronoi_vol - domain_vol) / domain_vol > 1e-10 )
-  {
-    std::cerr << "Mismatch of volumes: " << voronoi_vol << " vs " << domain_vol << std::endl;
-    return EXIT_FAILURE;
-  }
-  else
-    std::cout << "Volume check passed: " << voronoi_vol << " vs " << domain_vol << std::endl;
+  // Check Voronoi volumes:
+  voronoi_volume_check(my_domain);
   
   //write to vtk:
   viennagrid::io::vtk_writer<DomainType> my_vtk_writer;
