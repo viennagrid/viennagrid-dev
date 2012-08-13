@@ -2,9 +2,9 @@
 #define VIENNAGRID_ELEMENT_KEY_HPP
 
 /* =======================================================================
-   Copyright (c) 2011, Institute for Microelectronics,
-                       Institute for Analysis and Scientific Computing,
-                       TU Wien.
+   Copyright (c) 2011-2012, Institute for Microelectronics,
+                            Institute for Analysis and Scientific Computing,
+                            TU Wien.
 
                             -----------------
                      ViennaGrid - The Vienna Grid Library
