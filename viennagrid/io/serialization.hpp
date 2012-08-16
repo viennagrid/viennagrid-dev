@@ -127,7 +127,7 @@ namespace viennagrid
           VertexType vertex;
           for(int d = 0; d < DIMG; d++)
             ar & vertex.point()[d];
-          (*domainsp).push_back(vertex);            
+          (*domainsp).push_back(vertex);
         }
         // -----------------------------------------------
 
@@ -180,13 +180,17 @@ namespace viennagrid
        
       /** @brief The load function enables to associate a domain with the serialzer after 
       a serializer object has been constructed. */
-      void load(DomainSPT & other) { domainsp = other;  }
+      inline void load(DomainSPT other) { domainsp = other;  }
+      
+      /** @brief The get function enables to retrieve the domain pointer
+      */
+      inline DomainSPT get() { return domainsp; }
       
       /** @brief The functor returns a reference to the domain state*/              
       DomainT& operator()() { return *domainsp; }
-
+      
       /** @brief The state holds a shared pointer to the domain */       
-      boost::shared_ptr<DomainT>  domainsp;
+      DomainSPT  domainsp;
       //DomainT& domain;
     };
 
