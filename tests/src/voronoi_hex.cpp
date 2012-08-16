@@ -191,16 +191,8 @@ int main(int argc, char *argv[])
   std::cout << "Circumcenter of cell #7: " << viennagrid::circumcenter(viennagrid::ncells<3>(device)[7]) << std::endl;
   std::cout << std::endl;
   
-  double voronoi_vol = voronoi_volume(device);  
-  double domain_vol = viennagrid::volume(device);  
-  
-  if ( fabs(voronoi_vol - domain_vol) / domain_vol > 1e-10 )
-  {
-    std::cerr << "Mismatch of volumes: " << voronoi_vol << " vs " << domain_vol << std::endl;
-    return EXIT_FAILURE;
-  }
-  else
-    std::cout << "Volume check passed: " << voronoi_vol << " vs " << domain_vol << std::endl;
+  // Check Voronoi volumes:
+  voronoi_volume_check(device);
   
   //check dual box volume of vertex 9: must be 2
   double volume9 = viennadata::access<viennagrid::voronoi_box_volume_key, double>(box_volume_key)(viennagrid::ncells<0>(device)[9]);

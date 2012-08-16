@@ -26,9 +26,12 @@ ViennaGrid requires only a not too dated C++ compiler (e.g. gcc 4.x.x), the C++ 
 The first step is to extract the file:
 
 Unix-based OS:
-$> gunzip ViennaGrid-1.0.0.tar.gz
-$> tar -xf ViennaGrid-1.0.0.tar
-$> cd ViennaGrid-1.0.0
+$> gunzip ViennaGrid-1.x.y.tar.gz
+$> tar -xf ViennaGrid-1.x.y.tar
+$> cd ViennaGrid-1.x.y
+
+Windows:
+Extract the file using your favorite compressor/decompressor, e.g. 7-zip.
 
 ViennaGrid is a header-only library, therefore it is sufficient to copy the subfolder viennagrid/ (holding the header files) into your project directory or your system include directory. For instructions on how to set the include paths correctly, please refer to the documentation of your compiler.
 
@@ -47,6 +50,16 @@ Unix-based clients:
    $> ./iterators
    etc.
 
+ Windows:
+ * Open the CMake GUI
+ * Set the source code location ('Where is the source code:') to the extracted ViennaCL-1.x.x folder
+ * Set the build folder ('Where to build the binaries:') to the subfolder build/ in the ViennaCL-1.x.x folder
+ * Click on 'Configure' and select your Compiler
+ * Click on 'Configure' again
+ * Click on 'Generate'
+ * Navigate to the build/ folder, open the generated project files with your favorite IDE, and build them
+ * Run the examples either directly from your IDE or via the terminal by navigating to the build folder and calling the executables directly
+
 
 3. Project Layout
 -----------------
@@ -63,7 +76,7 @@ Unix-based clients:
         | 
         |-- tutorial/ - Some tutorials explaining the usage of ViennaGrid
    | 
-   |-- tests/ - Automated test suite
+   |-- tests/ - Automated test suite (Unix-based systems only, requires Boost libraries)
    | 
    |-- viennagrid/ - The library source code
 

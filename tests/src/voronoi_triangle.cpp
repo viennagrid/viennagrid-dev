@@ -149,37 +149,9 @@ int main(int argc, char *argv[])
                                                                     viennagrid::ncells<0>(device)[1].point(),
                                                                     viennagrid::ncells<0>(device)[8].point()) << std::endl;
 
-  double voronoi_vol = voronoi_volume(device);  
-  double voronoi_vol_vertices = voronoi_volume_vertex_detailed(device);  
-  double voronoi_vol_edges = voronoi_volume_edge_detailed(device);  
-  double domain_vol = viennagrid::volume(device);  
-  
-  if ( fabs(voronoi_vol - domain_vol) / domain_vol > 1e-10 )
-  {
-    std::cerr << "Mismatch of volumes: " << voronoi_vol << " vs " << domain_vol << std::endl;
-    //return EXIT_FAILURE;
-  }
-  else
-    std::cout << "Volume check passed: " << voronoi_vol << " vs " << domain_vol << std::endl;
+  // Check Voronoi volumes:
+  voronoi_volume_check(device);
 
-  if ( fabs(voronoi_vol_vertices - domain_vol) / domain_vol > 1e-10 )
-  {
-    std::cerr << "Mismatch of volumes (detailed, vertex): " << voronoi_vol_vertices << " vs " << domain_vol << std::endl;
-    //return EXIT_FAILURE;
-  }
-  else
-    std::cout << "Detailed vertices volume check passed: " << voronoi_vol_vertices << " vs " << domain_vol << std::endl;
-
-  if ( fabs(voronoi_vol_edges - domain_vol) / domain_vol > 1e-10 )
-  {
-    std::cerr << "Mismatch of volumes (detailed, edge): " << voronoi_vol_edges << " vs " << domain_vol << std::endl;
-    //return EXIT_FAILURE;
-  }
-  else
-    std::cout << "Detailed edge volume check passed: " << voronoi_vol_vertices << " vs " << domain_vol << std::endl;
-
-  
-  
   std::cout << "*******************************" << std::endl;
   std::cout << "* Test finished successfully! *" << std::endl;
   std::cout << "*******************************" << std::endl;
