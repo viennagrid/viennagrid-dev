@@ -26,12 +26,6 @@
 //#include "viennagrid/iterators.hpp"
 #include "viennagrid/detail/element_orientation.hpp"
 
-#include <vector>
-
-/** @file boundary_ncell_layer.hpp
-    @brief Provides the topological layers for n-cells
-*/
-
 
 namespace viennagrid
 {
@@ -54,11 +48,14 @@ namespace viennagrid
               typename orienter_tag = typename result_of::bndcell_orientation<ConfigType, ElementTag, dim>::type,
               bool LevelNull = (dim == 0)>
   class boundary_ncell_layer  { };
-
+  
+  
   
   //
   // Full storage of boundary cell, including orientation
   //
+
+  
   /** @brief Implementation of full storage of k-cells including orientations */
   template <typename ConfigType, typename ElementTag, unsigned long dim>
   class boundary_ncell_layer <ConfigType, ElementTag, dim, full_handling_tag, full_handling_tag, false> :
@@ -72,7 +69,15 @@ namespace viennagrid
 
     typedef element_t<ConfigType, typename LevelSpecs::tag>  LevelElementType;
     typedef element_orientation<VertexOnElementSpecs::num>     ElementOrientationType;
-    typedef typename result_of::element_container<element_t<ConfigType, ElementTag>, dim, ElementTag::dim>::type      container_type;
+    
+    typedef typename topology::bndcells<ElementTag, dim>::layout_tag layout_tag;
+    static const long array_size = topology::bndcells<ElementTag, dim>::num;
+    typedef typename result_of::ncell<ConfigType, dim>::type            element_type;
+    
+    typedef typename result_of::container<element_type *, layout_tag, array_size>::type      element_container_type;
+    typedef typename result_of::container<ElementOrientationType, layout_tag, array_size>::type      orientation_container_type;
+    
+    typedef typename result_of::ncell<ConfigType, 0>::type      VertexType;
 
     protected:
       template <typename DomainType>
@@ -84,9 +89,9 @@ namespace viennagrid
         //for (long i=0; i<LevelSpecs::num; ++i)
         //  orientations_[i].resize(VertexOnElementSpecs::num);
 
-        topology::bndcell_filler<ElementTag, dim>::fill(&(elements_[0]),
-                                                           &(Base::vertices_[0]),
-                                                           &(orientations_[0]),
+        topology::bndcell_filler<ElementTag, dim>::fill(elements_,
+                                                           Base::vertices_,
+                                                           orientations_,
                                                            dom);
       }
 
@@ -94,33 +99,28 @@ namespace viennagrid
 
       boundary_ncell_layer( ) 
       {
-        for (long i=0; i < LevelSpecs::num; ++i)
-          elements_[i] = NULL;
+          std::fill( elements_.begin(), elements_.end(), static_cast<element_type *>(NULL) );
       };
 
-      boundary_ncell_layer( const boundary_ncell_layer & llh) : Base (llh)
-      {
-        for (long i=0; i < LevelSpecs::num; ++i)
-          elements_[i] = llh.elements_[i];
-      }
+      boundary_ncell_layer( const boundary_ncell_layer & llh) : Base (llh), elements_(llh.elements_), orientations_(llh.orientations_) {}
 
       /////////////////// access container: ////////////////////
 
       using Base::container;
 
       //non-const:
-      container_type *
+      element_container_type *
       container(dimension_tag<dim>)
       { 
-        return &(elements_[0]);
+        return &elements_;
       }
       
       //const:
       
-      const container_type *
+      const element_container_type *
       container(dimension_tag<dim>) const
       { 
-        return &(elements_[0]);
+        return &elements_;
       }
       
 
@@ -135,10 +135,15 @@ namespace viennagrid
         assert(false && "Provided k-cell is not a boundary element of the hosting n-cell!");
         return index;
       }
+      
+      void fill_vertices(VertexType ** vertices_, size_t num)
+      {
+            Base::fill_vertices(vertices_, num);
+      }
 
     private: 
-      container_type elements_[LevelSpecs::num];
-      ElementOrientationType orientations_[LevelSpecs::num];
+      element_container_type elements_;
+      orientation_container_type orientations_;
   };
 
   
@@ -160,7 +165,14 @@ namespace viennagrid
 
     typedef element_t<ConfigType, typename LevelSpecs::tag>  LevelElementType;
     typedef element_orientation<VertexOnElementSpecs::num>     ElementOrientationType;
-    typedef typename result_of::element_container<element_t<ConfigType, ElementTag>, dim, ElementTag::dim>::type      container_type;
+    
+    typedef typename topology::bndcells<ElementTag, dim>::layout_tag layout_tag;
+    static const long array_size = topology::bndcells<ElementTag, dim>::num;
+    typedef typename result_of::ncell<ConfigType, dim>::type            element_type;
+    
+    typedef typename result_of::container<element_type *, layout_tag, array_size>::type      element_container_type;
+    
+    typedef typename result_of::ncell<ConfigType, 0>::type      VertexType;
 
     protected:
       template <typename DomainType>
@@ -170,9 +182,8 @@ namespace viennagrid
         //fill lower level first:
         Base::fill_level(dom);
 
-        topology::bndcell_filler<ElementTag, dim>::fill(&(elements_[0]),
-                                                           &(Base::vertices_[0]),
-                                                           OrientationPointer(NULL),
+        topology::bndcell_filler<ElementTag, dim>::fill(elements_,
+                                                           Base::vertices_,
                                                            dom);
       }
 
@@ -180,36 +191,36 @@ namespace viennagrid
 
       boundary_ncell_layer( ) 
       {
-        for (long i=0; i < LevelSpecs::num; ++i)
-          elements_[i] = NULL;
-      };
-
-      boundary_ncell_layer( const boundary_ncell_layer & llh) : Base (llh)
-      {
-        for (long i=0; i < LevelSpecs::num; ++i)
-          elements_[i] = llh.elements_[i];
+          std::fill( elements_.begin(), elements_.end(), static_cast<element_type *>(NULL) );
       }
+
+      boundary_ncell_layer( const boundary_ncell_layer & llh) : Base (llh), elements_(llh.elements) {}
 
       /////////////////// access container: ////////////////////
 
       using Base::container;
 
       //non-const:
-      container_type *
+      element_container_type *
       container(dimension_tag<dim>)
       { 
-        return &(elements_[0]);
+        return &elements_;
       }
       
       //const:
-      const container_type *
+      const element_container_type *
       container(dimension_tag<dim>) const
       { 
-        return &(elements_[0]);
+        return &elements_;
+      }
+      
+      void fill_vertices(VertexType ** vertices_, size_t num)
+      {
+            Base::fill_vertices(vertices_, num);
       }
 
     private: 
-      container_type elements_[LevelSpecs::num];
+      element_container_type elements_;//[LevelSpecs::num];
   };
 
   
@@ -229,6 +240,8 @@ namespace viennagrid
     typedef boundary_ncell_layer < ConfigType, ElementTag, dim - 1 >      Base;
 
     typedef element_t<ConfigType, typename LevelSpecs::tag>  LevelElementType;
+    
+    typedef typename result_of::ncell<ConfigType, 0>::type      VertexType;
 
     protected:
       template <typename DomainType>
@@ -236,6 +249,11 @@ namespace viennagrid
       {
         //fill lower topological levels only:
         Base::fill_level(dom);
+      }
+      
+      void fill_vertices(VertexType ** vertices_, size_t num)
+      {
+            Base::fill_vertices(vertices_, num);
       }
 
     public:
@@ -262,6 +280,12 @@ namespace viennagrid
 
     typedef typename result_of::iterator< element_t<ConfigType, ElementTag>, 0>::type         VertexIterator;
 
+    typedef typename topology::bndcells<ElementTag, 0>::layout_tag layout_tag;
+    static const long array_size = topology::bndcells<ElementTag, 0>::num;
+    typedef typename result_of::ncell<ConfigType, 0>::type            element_type;
+    
+    typedef typename result_of::container<element_type *, layout_tag, array_size>::type      element_container_type;
+    
     protected:
       //end recursion:
       template <typename DomainType>
@@ -270,36 +294,40 @@ namespace viennagrid
     public:
       boundary_ncell_layer() {};
 
-      boundary_ncell_layer( const boundary_ncell_layer & llh)
-      {
-        for (long i=0; i < LevelSpecs::num; ++i)
-          vertices_[i] = llh.vertices_[i];
-      }
+      boundary_ncell_layer( const boundary_ncell_layer & llh) : vertices_(llh.vertices_) {}
 
       ////////////////// container access: /////////////////////////
       
       //non-const:
-      VertexType * *
+      element_container_type *
       container(dimension_tag<0>)
       { 
-        return &(vertices_[0]);
+        return &vertices_;
       }
 
       //const:
-      VertexType * const *
+      const element_container_type *
       container(dimension_tag<0>) const
       { 
-        return &(vertices_[0]);
+        return &vertices_;
+      }
+      
+      void fill_vertices(VertexType ** vertices_in, size_t num)
+      {
+            assert( num <= LevelSpecs::num );
+            vertices_.resize(num);
+            std::copy( vertices_in, vertices_in + num, vertices_.begin() );
       }
 
 
     protected:
-      VertexType * vertices_[LevelSpecs::num];
+      element_container_type vertices_;
   };
 
-
+  
 
 }
+
 
 
 #endif
