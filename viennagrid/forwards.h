@@ -34,6 +34,7 @@
 #include <cstdlib>     //for EXIT_SUCCESS and EXIT_FAILURE
 
 #include "viennadata/api.hpp"
+#include "viennagrid/utils/static_array.hpp"
 
 //Debug levels:
 //VIENNAGRID_DEBUG_ALL          Output every little piece of debug information
@@ -238,10 +239,15 @@ namespace viennagrid
       id_type id_;
   };
   
+    struct static_layout_tag;
+    struct dynamic_layout_tag;
+
+
+    
+    
   /** @brief Namespace for definition and handling of the individual topological elements (triangles, hexahedra, etc.) */
   namespace topology
   {
-    
     /** @brief Holds the topological information about boundary cells for a n-cell
      * 
      * @tparam ElementTag   Identifier for the n-cell
@@ -313,6 +319,21 @@ namespace viennagrid
       typedef ConfigType     type; 
     };
 
+    
+    template <typename element_type, typename layout_tag, long num>
+    struct container;
+    
+    template <typename element_type, long num>
+    struct container<element_type, static_layout_tag, num>
+    {
+        typedef utils::static_array<element_type, num> type;
+    };
+    
+    template <typename element_type, long num>
+    struct container<element_type, dynamic_layout_tag, num>
+    {
+        typedef std::vector<element_type> type;
+    };
     
     template <typename T,   //type of host (domain, segment, other element)
               long dim,
