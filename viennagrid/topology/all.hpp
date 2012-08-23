@@ -29,6 +29,8 @@
 #include "viennagrid/topology/triangle.hpp"
 #include "viennagrid/topology/quadrilateral.hpp"
 
+#include "viennagrid/topology/polygon.hpp"
+
 //three-dimensional:
 #include "viennagrid/topology/tetrahedron.hpp"
 #include "viennagrid/topology/hexahedron.hpp"
