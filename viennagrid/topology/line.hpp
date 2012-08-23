@@ -46,6 +46,7 @@ namespace viennagrid
     {
       typedef point_tag             tag;
 
+      typedef static_layout_tag     layout_tag;
       enum{ num = 2 };     //2 vertices
     };
 
