@@ -21,6 +21,7 @@
 
 #include "viennagrid/topology/quadrilateral.hpp"
 #include "viennagrid/topology/hexahedron.hpp"
+#include "viennagrid/topology/polygon.hpp"
 
 /** @file others.hpp
     @brief Provides default configuration classes for hypercube domains
@@ -37,6 +38,14 @@ namespace viennagrid
       typedef double                                numeric_type;
       typedef viennagrid::cartesian_cs<2>           coordinate_system_tag;
       typedef viennagrid::quadrilateral_tag         cell_tag;
+    };
+    
+    /** @brief Predefined configuration class for two-dimensional polygon cells in a 2d geometry using Cartesian coordinates. */
+    struct polygon_2d
+    {
+      typedef double                                numeric_type;
+      typedef viennagrid::cartesian_cs<2>           coordinate_system_tag;
+      typedef viennagrid::polygon_tag               cell_tag;
     };
 
     /** @brief Predefined configuration class for two-dimensional hypercube cells (quadrilaterals) in a 3d geometry using Cartesian coordinates. */
