@@ -74,16 +74,10 @@ namespace viennagrid
       }
 
       /** @brief Set the vertices defining the n-cell */
-      void vertices(VertexType **vertices_)
+      void vertices(VertexType ** vertices_, size_t num = VertexSpecs::num)
       {
-        for(int i=0; i<VertexSpecs::num; i++)
-        {
-          Base::vertices_[i] = vertices_[i];
-          //std::cout << i << " ";
-        }
-        //std::cout << std::endl;
+            Base::fill_vertices(vertices_, num);
       }
-
   };
 
   /** @brief Overload for the output streaming operator */
