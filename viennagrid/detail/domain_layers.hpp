@@ -270,7 +270,7 @@ namespace viennagrid
 
         using base_type::push_back;
         
-        element_type * push_back(element_type & e)
+        element_type * push_back(const element_type & e)
         {
           assert(viennagrid::traits::capacity(elements) > elements.size() && "Not enough memory for cells reserved!");
           
