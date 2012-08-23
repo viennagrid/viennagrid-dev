@@ -128,9 +128,11 @@ namespace viennagrid
         void fill(CellType & cell)
         {
           //add vertices to segment: (note that the ncells<0>() is not available here)
-          LevelElementType ** level_elements = cell.container(dimension_tag<dim>());
+          typedef typename result_of::element_container< CellType, dim >::type container_type;
+          container_type * level_elements = cell.container(dimension_tag<dim>());
+          
           for (long i=0; i<topology::bndcells<typename Config::cell_tag, dim>::num; ++i)
-            elements.insert(level_elements[i]);
+            elements.insert( (*level_elements)[i] );
           
           base_type::fill(cell);
         }
@@ -170,9 +172,12 @@ namespace viennagrid
         void fill(CellType & cell)
         {
           //add vertices to segment: (note that the ncells<0>() is not available here)
-          VertexType ** cell_vertices = cell.container(dimension_tag<0>());
+          typedef typename result_of::element_container< CellType, 0 >::type container_type;
+          container_type * cell_vertices = cell.container(dimension_tag<0>());
+
           for (long i=0; i<viennagrid::topology::bndcells<typename Config::cell_tag, 0>::num; ++i)
-            elements.insert(cell_vertices[i]);
+            elements.insert( (*cell_vertices)[i] );
+            
         }
         
         ContainerType * container(dimension_tag<0>) { return &elements; }
