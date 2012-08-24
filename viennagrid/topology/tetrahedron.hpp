@@ -51,6 +51,7 @@ namespace viennagrid
     {
       typedef point_tag             tag;
 
+      typedef static_layout_tag     layout_tag;
       enum{ num = 4 };     //4 vertices
     };
 
@@ -60,6 +61,7 @@ namespace viennagrid
     {
       typedef simplex_tag<1>              tag;
 
+      typedef static_layout_tag     layout_tag;
       enum{ num = 6 };     //6 edges
     };
 
@@ -69,6 +71,7 @@ namespace viennagrid
     {
       typedef triangle_tag          tag;
 
+      typedef static_layout_tag     layout_tag;
       enum{ num = 4 };     //4 facets
     };
     
@@ -77,44 +80,84 @@ namespace viennagrid
     template <>
     struct bndcell_filler<tetrahedron_tag, 1>
     {
-      //fill edges:
-      template <typename ElementType, typename Vertices, typename Orientations, typename Segment>
-      static void fill(ElementType ** elements, Vertices ** vertices, Orientations * orientations, Segment & seg)
+      template <typename ElementContainerType, typename VertexContainerType, typename OrientatationContainerType, typename Segment>
+      static void fill(ElementContainerType & elements, const VertexContainerType & vertices, OrientatationContainerType & orientations, Segment & seg)
       {
-        Vertices * edgevertices[2];
-        ElementType edge;
-
+        typename VertexContainerType::value_type edgevertices[2];
+        typename utils::remove_pointer<typename ElementContainerType::value_type>::type edge;
+        
+        
         //fill edges according to orientation and ordering induced by k-tuple-metafunction:
         edgevertices[0] = vertices[0];
         edgevertices[1] = vertices[1];
         edge.vertices(edgevertices);
-        elements[0] = seg.push_back(edge, (orientations == NULL) ? NULL : orientations);
+        elements[0] = seg.push_back(edge, &orientations[0]);
 
         edgevertices[0] = vertices[0];
         edgevertices[1] = vertices[2];
         edge.vertices(edgevertices);
-        elements[1] = seg.push_back(edge, (orientations == NULL) ? NULL : orientations + 1);
+        elements[1] = seg.push_back(edge, &orientations[1]);
 
         edgevertices[0] = vertices[0];
         edgevertices[1] = vertices[3];
         edge.vertices(edgevertices);
-        elements[2] = seg.push_back(edge, (orientations == NULL) ? NULL : orientations + 2);
+        elements[2] = seg.push_back(edge, &orientations[2]);
 
         edgevertices[0] = vertices[1];
         edgevertices[1] = vertices[2];
         edge.vertices(edgevertices);
-        elements[3] = seg.push_back(edge, (orientations == NULL) ? NULL : orientations + 3);
+        elements[3] = seg.push_back(edge, &orientations[3]);
 
         edgevertices[0] = vertices[1];
         edgevertices[1] = vertices[3];
         edge.vertices(edgevertices);
-        elements[4] = seg.push_back(edge, (orientations == NULL) ? NULL : orientations + 4);
+        elements[4] = seg.push_back(edge, &orientations[4]);
 
         edgevertices[0] = vertices[2];
         edgevertices[1] = vertices[3];
         edge.vertices(edgevertices);
-        elements[5] = seg.push_back(edge, (orientations == NULL) ? NULL : orientations + 5);
+        elements[5] = seg.push_back(edge, &orientations[5]);
       }
+        
+      template <typename ElementContainerType, typename VertexContainerType, typename Segment>
+      static void fill(ElementContainerType & elements, const VertexContainerType & vertices, Segment & seg)
+      {
+        typename VertexContainerType::value_type edgevertices[2];
+        typename utils::remove_pointer<typename ElementContainerType::value_type>::type edge;
+        
+        
+        //fill edges according to orientation and ordering induced by k-tuple-metafunction:
+        edgevertices[0] = vertices[0];
+        edgevertices[1] = vertices[1];
+        edge.vertices(edgevertices);
+        elements[0] = seg.push_back(edge, NULL);
+
+        edgevertices[0] = vertices[0];
+        edgevertices[1] = vertices[2];
+        edge.vertices(edgevertices);
+        elements[1] = seg.push_back(edge, NULL);
+
+        edgevertices[0] = vertices[0];
+        edgevertices[1] = vertices[3];
+        edge.vertices(edgevertices);
+        elements[2] = seg.push_back(edge, NULL);
+
+        edgevertices[0] = vertices[1];
+        edgevertices[1] = vertices[2];
+        edge.vertices(edgevertices);
+        elements[3] = seg.push_back(edge, NULL);
+
+        edgevertices[0] = vertices[1];
+        edgevertices[1] = vertices[3];
+        edge.vertices(edgevertices);
+        elements[4] = seg.push_back(edge, NULL);
+
+        edgevertices[0] = vertices[2];
+        edgevertices[1] = vertices[3];
+        edge.vertices(edgevertices);
+        elements[5] = seg.push_back(edge, NULL);
+      }
+
     };
     
     /** @brief Fills a segment or a domain with the edges/facets of a tetrahedron */
@@ -122,11 +165,11 @@ namespace viennagrid
     struct bndcell_filler<tetrahedron_tag, 2>
     {
       //fill facets:
-      template <typename ElementType, typename Vertices, typename Orientations, typename Segment>
-      static void fill(ElementType ** elements, Vertices ** vertices, Orientations * orientations, Segment & seg)
+      template <typename ElementContainerType, typename VertexContainerType, typename OrientatationContainerType, typename Segment>
+      static void fill(ElementContainerType & elements, const VertexContainerType & vertices, OrientatationContainerType & orientations, Segment & seg)
       {
-        Vertices * facetvertices[3];
-        ElementType facet;
+        typename VertexContainerType::value_type facetvertices[3];
+        typename utils::remove_pointer<typename ElementContainerType::value_type>::type facet;
 
         //fill edges according to orientation and ordering induced by k-tuple-metafunction:
 
@@ -134,7 +177,7 @@ namespace viennagrid
         facetvertices[1] = vertices[1];
         facetvertices[2] = vertices[2];
         facet.vertices(facetvertices);
-        elements[0] = seg.push_back(facet, orientations );
+        elements[0] = seg.push_back(facet, &orientations[0]);
         //this new facet must be initialized too:
         elements[0]->fill(seg);
 
@@ -142,24 +185,63 @@ namespace viennagrid
         facetvertices[1] = vertices[1];
         facetvertices[2] = vertices[3];
         facet.vertices(facetvertices);
-        elements[1] = seg.push_back(facet, (orientations == NULL) ? NULL : orientations + 1 );
+        elements[1] = seg.push_back(facet, &orientations[1]);
         elements[1]->fill(seg);
 
         facetvertices[0] = vertices[0];
         facetvertices[1] = vertices[2];
         facetvertices[2] = vertices[3];
         facet.vertices(facetvertices);
-        elements[2] = seg.push_back(facet, (orientations == NULL) ? NULL : orientations + 2 );
+        elements[2] = seg.push_back(facet, &orientations[2]);
         elements[2]->fill(seg);
 
         facetvertices[0] = vertices[1];
         facetvertices[1] = vertices[2];
         facetvertices[2] = vertices[3];
         facet.vertices(facetvertices);
-        elements[3] = seg.push_back(facet, (orientations == NULL) ? NULL : orientations + 3 );
+        elements[3] = seg.push_back(facet, &orientations[3]);
         elements[3]->fill(seg);
-
       }
+        
+        
+      template <typename ElementContainerType, typename VertexContainerType, typename Segment>
+      static void fill(ElementContainerType & elements, const VertexContainerType & vertices, Segment & seg)
+      {
+        typename VertexContainerType::value_type facetvertices[3];
+        typename utils::remove_pointer<typename ElementContainerType::value_type>::type facet;
+
+        //fill edges according to orientation and ordering induced by k-tuple-metafunction:
+
+        facetvertices[0] = vertices[0];
+        facetvertices[1] = vertices[1];
+        facetvertices[2] = vertices[2];
+        facet.vertices(facetvertices);
+        elements[0] = seg.push_back(facet, NULL);
+        //this new facet must be initialized too:
+        elements[0]->fill(seg);
+
+        facetvertices[0] = vertices[0];
+        facetvertices[1] = vertices[1];
+        facetvertices[2] = vertices[3];
+        facet.vertices(facetvertices);
+        elements[1] = seg.push_back(facet, NULL);
+        elements[1]->fill(seg);
+
+        facetvertices[0] = vertices[0];
+        facetvertices[1] = vertices[2];
+        facetvertices[2] = vertices[3];
+        facet.vertices(facetvertices);
+        elements[2] = seg.push_back(facet, NULL);
+        elements[2]->fill(seg);
+
+        facetvertices[0] = vertices[1];
+        facetvertices[1] = vertices[2];
+        facetvertices[2] = vertices[3];
+        facet.vertices(facetvertices);
+        elements[3] = seg.push_back(facet, NULL);
+        elements[3]->fill(seg);
+      }
+        
     };
 
   } //topology
