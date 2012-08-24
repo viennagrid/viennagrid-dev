@@ -45,7 +45,8 @@ namespace viennagrid
     {
       typedef point_tag             tag;
 
-      enum{ num = 4 };     //3 vertices
+      typedef static_layout_tag     layout_tag;
+      enum{ num = 4 };     //4 vertices
     };
 
     /** @brief Topological description of the boundary 1-cells of a quadrilateral */
@@ -54,8 +55,8 @@ namespace viennagrid
     {
       typedef hypercube_tag<1>       tag;
 
-      enum{ num = 4 };     //3 edges
-
+      typedef static_layout_tag     layout_tag;
+      enum{ num = 4 };     //4 edges
     };
 
 
@@ -75,32 +76,61 @@ namespace viennagrid
       //    |       |
       // v0 --------- v1
       //        e0
-      template <typename ElementType, typename Vertices, typename Orientations, typename Segment>
-      static void fill(ElementType ** elements, Vertices ** vertices, Orientations * orientations, Segment & seg)
+      
+      
+      template <typename ElementContainerType, typename VertexContainerType, typename OrientatationContainerType, typename Segment>
+      static void fill(ElementContainerType & elements, const VertexContainerType & vertices, OrientatationContainerType & orientations, Segment & seg)
       {
-        Vertices * edgevertices[2];
-        ElementType edge;
-
+        typename VertexContainerType::value_type edgevertices[2];
+        typename utils::remove_pointer<typename ElementContainerType::value_type>::type edge;
+        
         edgevertices[0] = vertices[0];
         edgevertices[1] = vertices[1];
         edge.vertices(edgevertices);
-        elements[0] = seg.push_back(edge, (orientations == NULL) ? NULL : orientations);
+        elements[0] = seg.push_back(edge, &orientations[0]);
 
         edgevertices[0] = vertices[0];
         edgevertices[1] = vertices[2];
         edge.vertices(edgevertices);
-        elements[1] = seg.push_back(edge, (orientations == NULL) ? NULL : orientations + 1 );
+        elements[1] = seg.push_back(edge, &orientations[1]);
 
         edgevertices[0] = vertices[1];
         edgevertices[1] = vertices[3];
         edge.vertices(edgevertices);
-        elements[2] = seg.push_back(edge, (orientations == NULL) ? NULL : orientations + 2 );
+        elements[2] = seg.push_back(edge, &orientations[2]);
 
         edgevertices[0] = vertices[2];
         edgevertices[1] = vertices[3];
         edge.vertices(edgevertices);
-        elements[3] = seg.push_back(edge, (orientations == NULL) ? NULL : orientations + 3 );
+        elements[3] = seg.push_back(edge, &orientations[3]);
+
+    }
+      
+      template <typename ElementContainerType, typename VertexContainerType, typename Segment>
+      static void fill(ElementContainerType & elements, const VertexContainerType & vertices, Segment & seg)
+      {
+        typename VertexContainerType::value_type edgevertices[2];
+        typename utils::remove_pointer<typename ElementContainerType::value_type>::type edge;
         
+        edgevertices[0] = vertices[0];
+        edgevertices[1] = vertices[1];
+        edge.vertices(edgevertices);
+        elements[0] = seg.push_back(edge, NULL);
+
+        edgevertices[0] = vertices[0];
+        edgevertices[1] = vertices[2];
+        edge.vertices(edgevertices);
+        elements[1] = seg.push_back(edge, NULL);
+
+        edgevertices[0] = vertices[1];
+        edgevertices[1] = vertices[3];
+        edge.vertices(edgevertices);
+        elements[2] = seg.push_back(edge, NULL);
+
+        edgevertices[0] = vertices[2];
+        edgevertices[1] = vertices[3];
+        edge.vertices(edgevertices);
+        elements[3] = seg.push_back(edge, NULL);
       }
     };
   }
