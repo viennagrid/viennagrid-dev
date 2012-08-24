@@ -295,7 +295,7 @@ namespace viennagrid
       element_type const & operator[](std::size_t index) const 
       {
         assert(index < size());
-        return *(cont_[index]); 
+        return *(*cont_)[index];
       }
       
       std::size_t size() const { return topology::bndcells<tag, dim>::num; }
@@ -462,11 +462,9 @@ namespace viennagrid
                      >                                                         element_type;
                      
       typedef element_t<config_type, tag>                              host_type;
-      typedef std::vector<element_type *>                                      viennadata_container_type;
-      typedef element_type *                                                   container_type;
+      typedef std::vector<element_type *>                                                   container_type;
     
     public: 
-      //typedef typename container_type::iterator   iterator;
       typedef on_element_iterator<element_type, container_type>                                iterator;
       
       ncell_range() : cont_(NULL) {};
@@ -495,22 +493,22 @@ namespace viennagrid
       iterator begin() const
       {
         assert(cont_ != NULL);
-        return iterator(cont_);
+        return iterator(cont_->begin());
       }
       
       iterator end()   const
       {
         assert(cont_ != NULL);
-        return iterator(cont_ + num);
+        return iterator(cont_->end());
       }
 
       element_type & operator[](std::size_t index) const 
       {
         assert(index < size());
-        return *(cont_[index]); 
+        return *(*cont_)[index];
       }
       
-      std::size_t size() const { return num; }
+      std::size_t size() const { return cont_->size(); }
       
       template <typename element_type, long dim2, bool b2>
       friend class const_ncell_range;
@@ -528,21 +526,18 @@ namespace viennagrid
         
         //initialize co-boundary if needed
         if (viennadata::find<CoBoundaryKey,
-                             viennadata_container_type >(key)(e) == NULL)
+                             container_type >(key)(e) == NULL)
         {
            init_coboundary< tag::dim,
                             dim,
-                            viennadata_container_type>(key, d);
+                            container_type>(key, d);
         }
         
-        viennadata_container_type & temp = viennadata::access<CoBoundaryKey,
-                                                              viennadata_container_type>(key)(e);
-        cont_ = &(temp[0]);
-        num = temp.size();
+        cont_ = &viennadata::access<CoBoundaryKey,
+                                    container_type>(key)(e);
       }
       
       container_type * cont_;
-      size_t num;
   };
   
   
@@ -578,11 +573,9 @@ namespace viennagrid
                      >                                                         element_type;
                      
       typedef element_t<config_type, tag>                                host_type;
-      typedef std::vector<element_type *>                                      viennadata_container_type;
-      typedef element_type *                                                   container_type;
+      typedef std::vector<element_type *>                                                   container_type;
     
     public: 
-      //typedef typename container_type::iterator   iterator;
       typedef const_on_element_iterator<element_type, container_type>                                iterator;
 
       const_ncell_range() {};
@@ -626,29 +619,28 @@ namespace viennagrid
       const_ncell_range & operator=(ncell_range<host_type, dim, true > const & other)
       { 
         cont_ = other.cont_;
-        num = other.num;
         return *this;
       }
 
       iterator begin() const
       {
         assert(cont_ != NULL);
-        return iterator(cont_);
+        return iterator(cont_->begin());
       }
       
       iterator end()   const
       {
         assert(cont_ != NULL);
-        return iterator(cont_ + num);
+        return iterator(cont_->end());
       }
       
       element_type const & operator[](std::size_t index) const 
       {
         assert(index < size());
-        return *(cont_[index]); 
+        return *(*cont_)[index]; 
       }
       
-      std::size_t size() const { return num; }
+      std::size_t size() const { return cont_->size(); }
       
     private:
       
@@ -664,21 +656,18 @@ namespace viennagrid
         
         //initialize co-boundary if needed
         if (viennadata::find<CoBoundaryKey,
-                             viennadata_container_type >(key)(e) == NULL)
+                             container_type >(key)(e) == NULL)
         {
            init_coboundary< tag::dim,
                             dim,
-                            viennadata_container_type>(key, d);
+                            container_type>(key, d);
         }
         
-        viennadata_container_type & temp = viennadata::access<CoBoundaryKey,
-                                                              viennadata_container_type>(key)(e);
-        cont_ = &(temp[0]);
-        num = temp.size();
+        cont_ = &viennadata::access<CoBoundaryKey,
+                                    container_type>(key)(e);
       }
       
       const container_type * cont_;
-      size_t num;
   };
   
   
