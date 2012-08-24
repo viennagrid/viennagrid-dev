@@ -18,8 +18,6 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
-#include <boost/type_traits.hpp>
-
 #include "viennagrid/forwards.h"
 #include "viennagrid/topology/point.hpp"
 #include "viennagrid/topology/line.hpp"
@@ -75,8 +73,7 @@ namespace viennagrid
       static void fill(ElementContainerType & elements, const VertexContainerType & vertices, OrientatationContainerType & orientations, Segment & seg)
       {
         typename VertexContainerType::value_type edgevertices[2];
-        //typename ElementContainerType::value_type edge;
-        typename boost::remove_pointer<typename ElementContainerType::value_type>::type edge;
+        typename utils::remove_pointer<typename ElementContainerType::value_type>::type edge;
         
         edgevertices[0] = vertices[0];
         edgevertices[1] = vertices[1];
@@ -98,8 +95,7 @@ namespace viennagrid
       static void fill(ElementContainerType & elements, const VertexContainerType & vertices, Segment & seg)
       {
         typename VertexContainerType::value_type edgevertices[2];
-        //typename ElementContainerType::value_type edge;
-        typename boost::remove_pointer<typename ElementContainerType::value_type>::type edge;
+        typename utils::remove_pointer<typename ElementContainerType::value_type>::type edge;
         
         edgevertices[0] = vertices[0];
         edgevertices[1] = vertices[1];
