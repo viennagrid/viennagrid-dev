@@ -35,6 +35,7 @@
 
 #include "viennadata/api.hpp"
 #include "viennagrid/utils/static_array.hpp"
+#include "viennagrid/utils/remove_pointer.hpp"
 
 //Debug levels:
 //VIENNAGRID_DEBUG_ALL          Output every little piece of debug information
