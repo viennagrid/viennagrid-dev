@@ -57,7 +57,7 @@ namespace viennagrid
       {
           typename traits::value_type<PointType>::type result(0);
           for(std::size_t i = 0; i < traits::dynamic_size(p); i++)
-            result += std::fabs(p[i]);
+            result += std::abs(p[i]);
           return result;
       }
     };
@@ -86,8 +86,8 @@ namespace viennagrid
           typename traits::value_type<PointType>::type result(0);
           for(std::size_t i = 0; i < traits::dynamic_size(p); i++)
           {
-            if(std::fabs(p[i]) > result)
-                result = std::fabs(p[i]);
+            if(std::abs(p[i]) > result)
+                result = std::abs(p[i]);
           }
           return result;
       }
