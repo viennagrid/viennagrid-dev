@@ -102,6 +102,39 @@ namespace viennagrid
       
       return spanned_volume(p0, p1, p3) + spanned_volume(p1, p2, p3); //sum up the two triangular parts
     }
+    
+    
+    /** @brief Computes the two-dimensional volume of a polygon.*/
+    template <typename ElementType>
+    typename ElementType::config_type::numeric_type
+    volume_impl(ElementType const & cell, viennagrid::polygon_tag)
+    {
+      typedef typename ElementType::config_type      ConfigType;
+      typedef typename ElementType::config_type::numeric_type NumericType;
+      typedef typename viennagrid::result_of::point<ConfigType>::type                 PointType;
+      typedef typename viennagrid::result_of::const_ncell_range<ElementType, 0>::type       VertexOnCellContainer;
+      typedef typename viennagrid::result_of::iterator<VertexOnCellContainer>::type       VertexOnCellIterator;
+      
+      
+      VertexOnCellContainer range = viennagrid::ncells<0>( cell );
+      if (range.size() < 3) return 0;
+      VertexOnCellIterator it1 = range.begin();
+      VertexOnCellIterator it2 = it1; ++it2;
+      
+      PointType origin = it1->point();
+      
+      NumericType volume = 0;
+      
+      for (; it2 != range.end(); ++it1, ++it2)
+          volume += signed_spanned_volume(origin, it1->point(), it2->point());
+      
+
+      it1 = range.end(); --it1;
+      volume += signed_spanned_volume( origin, it1->point(), range.begin()->point());
+      
+      return std::abs(volume);
+    }
+    
 
     //topologically three-dimensional elements
     /** @brief Computes the three-dimensional volume of a tetrahedron.*/
