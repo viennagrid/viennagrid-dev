@@ -265,7 +265,7 @@ namespace viennagrid
                   PointType3 const & p3,
                   PointType4 const & p4)
   {
-    return signed_signed_spanned_volume_impl(p1,
+    return signed_spanned_volume_impl(p1,
                                p2,
                                p3,
                                p4,
