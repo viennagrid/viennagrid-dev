@@ -23,6 +23,8 @@
 #include "viennagrid/detail/element_iterators.hpp"
 #include "viennagrid/detail/boundary_ncell_layer.hpp"
 
+#include "viennagrid/Typelist.h"
+
 #include <vector>
 
 /** @file element.hpp
@@ -49,8 +51,12 @@ namespace viennagrid
       typedef typename result_of::point<ConfigType>::type         PointType;
       typedef typename result_of::ncell<ConfigType, 0>::type      VertexType;
       typedef topology::bndcells<ElementTag, 0>                                 VertexSpecs;
+      
+      
 
     public:
+      typedef Loki::Typelist<element_t, typename Base::required_elements> required_elements;
+        
       /** @brief Publish the configuration class */
       typedef ConfigType                                       config_type;
       /** @brief Tag of the n-cell */
@@ -74,10 +80,16 @@ namespace viennagrid
       }
 
       /** @brief Set the vertices defining the n-cell */
-      void vertices(VertexType ** vertices_, size_t num = VertexSpecs::num)
+      void vertices(VertexType **vertices_, std::size_t num = VertexSpecs::num)
       {
-            Base::fill_vertices(vertices_, num);
+        for(int i=0; i<VertexSpecs::num; i++)
+        {
+          Base::vertices_[i] = vertices_[i];
+          //std::cout << i << " ";
+        }
+        //std::cout << std::endl;
       }
+
   };
 
   /** @brief Overload for the output streaming operator */
@@ -132,6 +144,9 @@ namespace viennagrid
 
       //clean up any data associated with the element if it is destroyed:
       ~element_t() { viennadata::erase<viennadata::all, viennadata::all>()(*this); }
+      
+      template <typename DomainType>
+      void fill(DomainType & dom) {}
 
       element_t & operator=(const element_t & other)
       {

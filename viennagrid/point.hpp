@@ -31,7 +31,7 @@
 /** @file viennagrid/point.hpp
     @brief Defines and implements the geometric point type and coordinate systems.
 */
- 
+
 namespace viennagrid
 {
   

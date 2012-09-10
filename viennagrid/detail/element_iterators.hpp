@@ -27,9 +27,7 @@
 
 #include "viennagrid/forwards.h"
 #include "viennagrid/detail/domain_iterators.hpp"
-#include "viennagrid/detail/segment_iterators.hpp"
-
-#include "viennagrid/utils/static_array.hpp"
+//#include "viennagrid/detail/segment_iterators.hpp"
 
 #include "viennadata/api.hpp"
 
@@ -40,19 +38,17 @@
 namespace viennagrid
 {
 
-  template <typename ElementType, typename Container>
+  template <typename ElementType>
   class const_on_element_iterator;
 
   //RangeElement-Type prevents abuse, for example:
   //A vertex-on-facet-iterator is not equal to a vertex-on-cell-iterator!
   /** @brief Iterator class for iterating over a range of elements given by a container of pointers */
-  template <typename ElementType, typename Container>
+  template <typename ElementType>
   class on_element_iterator : public std::iterator < std::forward_iterator_tag, ElementType >
   {
-      typedef typename Container::iterator base_iterator;
-      
     public:
-      on_element_iterator(base_iterator pp) : pp_(pp) {}
+      on_element_iterator(ElementType **pp) : pp_(pp) {}
 
       ElementType & operator*() const { return **pp_; }
       ElementType * operator->() const { return *pp_; }
@@ -60,35 +56,32 @@ namespace viennagrid
       on_element_iterator & operator++() { ++pp_; return *this; }
       on_element_iterator operator++(int) { on_element_iterator tmp = *this; ++*this; return tmp; }
 
-      on_element_iterator & operator--() { --pp_; return *this; }
-      on_element_iterator operator--(int) { on_element_iterator tmp = *this; --*this; return tmp; }
-      
       bool operator==(const on_element_iterator& i) const { return pp_ == i.pp_; }
-      bool operator==(const const_on_element_iterator<ElementType, Container> & i) const { return pp_ == i.pp_; }
+      bool operator==(const const_on_element_iterator<ElementType> & i) const { return pp_ == i.pp_; }
       
       bool operator!=(const on_element_iterator& i) const { return pp_ != i.pp_; }
-      bool operator!=(const const_on_element_iterator<ElementType, Container> & i) const { return pp_ != i.pp_; }
+      bool operator!=(const const_on_element_iterator<ElementType> & i) const { return pp_ != i.pp_; }
 
       //support for element-orientation-retrieval:
 //       long operator-(const ocit & o2) const { return pp_ - o2.pp_; }
 
-      template <typename ElementType2, typename Container2>
+      template <typename ElementType2>
       friend class const_on_element_iterator; //so that a const_on_element iterator can be initialized from an on_element_iterator
 
     private:
-      base_iterator pp_;
+      ElementType **pp_;
   };
 
   //const-version of above:
   /** @brief Iterator class for const iteration over a range of elements given by a container of pointers */
-  template <typename ElementType, typename Container>
+  template <typename ElementType>
   class const_on_element_iterator : public std::iterator < std::forward_iterator_tag, ElementType >
   {
-      typedef typename Container::const_iterator base_iterator;
+      typedef ElementType *   ElementPtr;
     
     public:
-      const_on_element_iterator(base_iterator pp) : pp_(pp) {}
-      const_on_element_iterator(on_element_iterator<ElementType, Container> const & oei) : pp_(oei.pp_) {}
+      const_on_element_iterator(ElementPtr const * pp) : pp_(pp) {}
+      const_on_element_iterator(on_element_iterator<ElementType> const & oei) : pp_(oei.pp_) {}
 
       const ElementType & operator*() const { return **pp_; }
       const ElementType * operator->() const { return *pp_; }
@@ -96,23 +89,20 @@ namespace viennagrid
       const_on_element_iterator & operator++() { ++pp_; return *this; }
       const_on_element_iterator   operator++(int) { const_on_element_iterator tmp = *this; ++*this; return tmp; }
 
-      const_on_element_iterator & operator--() { --pp_; return *this; }
-      const_on_element_iterator   operator--(int) { const_on_element_iterator tmp = *this; --*this; return tmp; }
-      
       bool operator==(const const_on_element_iterator& i) const { return pp_ == i.pp_; }
-      bool operator==(const on_element_iterator<ElementType, Container> & i) const { return pp_ == i.pp_; }
+      bool operator==(const on_element_iterator<ElementType> & i) const { return pp_ == i.pp_; }
       
       bool operator!=(const const_on_element_iterator& i) const { return pp_ != i.pp_; }
-      bool operator!=(const on_element_iterator<ElementType, Container> & i) const { return pp_ != i.pp_; }
+      bool operator!=(const on_element_iterator<ElementType> & i) const { return pp_ != i.pp_; }
 
-      template <typename ElementType2, typename Container2>
+      template <typename ElementType2>
       friend class on_element_iterator; //so that a on_element iterator can be compared with a const_on_element_iterator
 
       //support for element-orientation-retrieval:
 //       long operator-(const ocit & o2) const { return pp_ - o2.pp_; }
 
     private:
-      base_iterator pp_;
+      ElementPtr const * pp_;
   };
   
   
@@ -178,8 +168,7 @@ namespace viennagrid
     
     public: 
       //typedef typename container_type::iterator   iterator;
-      typedef on_element_iterator< element_type, container_type >                              iterator;
-      //typedef typename container_type::iterator iterator;
+      typedef on_element_iterator< element_type >                              iterator;
       
       ncell_range() : cont_(NULL) {};
       
@@ -196,21 +185,20 @@ namespace viennagrid
       iterator begin() const
       { 
         assert(cont_ != NULL);
-        return iterator( cont_->begin() );
+        return iterator(&(cont_[0]));
       }
       
       iterator end()   const
       {
         assert(cont_ != NULL);
-        return iterator( cont_->end() );
+        return iterator(cont_ + topology::bndcells<tag, dim>::num);
       }
-
       
       /** @brief Provide direct random-access to boundary cells */
       element_type & operator[](std::size_t index) const 
       {
         assert(index < size());
-        return *(*cont_)[index];
+        return *(cont_[index]); 
       }
       
       /** @brief Returns the number of k-cells */
@@ -265,7 +253,7 @@ namespace viennagrid
     
     public: 
       //typedef typename container_type::iterator   iterator;
-      typedef const_on_element_iterator< element_type, container_type >                         iterator;
+      typedef const_on_element_iterator< element_type >                         iterator;
       const_ncell_range() : cont_(NULL) {};
       
       const_ncell_range(const_ncell_proxy<host_type> const & p) : cont_(p.get().container(dimension_tag<dim>())) {}
@@ -290,19 +278,19 @@ namespace viennagrid
       iterator begin() const
       {
         assert(cont_ != NULL);
-        return iterator( cont_->begin() );
+        return iterator(cont_);
       }
       
       iterator end() const
       { 
         assert(cont_ != NULL);
-        return iterator( cont_->end() );
+        return iterator(cont_ + topology::bndcells<tag, dim>::num);
       }
       
       element_type const & operator[](std::size_t index) const 
       {
         assert(index < size());
-        return *(*cont_)[index];
+        return *(cont_[index]); 
       }
       
       std::size_t size() const { return topology::bndcells<tag, dim>::num; }
@@ -469,10 +457,12 @@ namespace viennagrid
                      >                                                         element_type;
                      
       typedef element_t<config_type, tag>                              host_type;
-      typedef std::vector<element_type *>                                                   container_type;
+      typedef std::vector<element_type *>                                      viennadata_container_type;
+      typedef element_type *                                                   container_type;
     
     public: 
-      typedef on_element_iterator<element_type, container_type>                                iterator;
+      //typedef typename container_type::iterator   iterator;
+      typedef on_element_iterator<element_type>                                iterator;
       
       ncell_range() : cont_(NULL) {};
       
@@ -500,22 +490,22 @@ namespace viennagrid
       iterator begin() const
       {
         assert(cont_ != NULL);
-        return iterator(cont_->begin());
+        return iterator(cont_);
       }
       
       iterator end()   const
       {
         assert(cont_ != NULL);
-        return iterator(cont_->end());
+        return iterator(cont_ + num);
       }
 
       element_type & operator[](std::size_t index) const 
       {
         assert(index < size());
-        return *(*cont_)[index];
+        return *(cont_[index]); 
       }
       
-      std::size_t size() const { return cont_->size(); }
+      std::size_t size() const { return num; }
       
       template <typename element_type, long dim2, bool b2>
       friend class const_ncell_range;
@@ -533,18 +523,21 @@ namespace viennagrid
         
         //initialize co-boundary if needed
         if (viennadata::find<CoBoundaryKey,
-                             container_type >(key)(e) == NULL)
+                             viennadata_container_type >(key)(e) == NULL)
         {
            init_coboundary< tag::dim,
                             dim,
-                            container_type>(key, d);
+                            viennadata_container_type>(key, d);
         }
         
-        cont_ = &viennadata::access<CoBoundaryKey,
-                                    container_type>(key)(e);
+        viennadata_container_type & temp = viennadata::access<CoBoundaryKey,
+                                                              viennadata_container_type>(key)(e);
+        cont_ = &(temp[0]);
+        num = temp.size();
       }
       
       container_type * cont_;
+      size_t num;
   };
   
   
@@ -580,10 +573,12 @@ namespace viennagrid
                      >                                                         element_type;
                      
       typedef element_t<config_type, tag>                                host_type;
-      typedef std::vector<element_type *>                                                   container_type;
+      typedef std::vector<element_type *>                                      viennadata_container_type;
+      typedef element_type *                                                   container_type;
     
     public: 
-      typedef const_on_element_iterator<element_type, container_type>                                iterator;
+      //typedef typename container_type::iterator   iterator;
+      typedef const_on_element_iterator<element_type>                                iterator;
 
       const_ncell_range() {};
       
@@ -626,28 +621,29 @@ namespace viennagrid
       const_ncell_range & operator=(ncell_range<host_type, dim, true > const & other)
       { 
         cont_ = other.cont_;
+        num = other.num;
         return *this;
       }
 
       iterator begin() const
       {
         assert(cont_ != NULL);
-        return iterator(cont_->begin());
+        return iterator(cont_);
       }
       
       iterator end()   const
       {
         assert(cont_ != NULL);
-        return iterator(cont_->end());
+        return iterator(cont_ + num);
       }
       
       element_type const & operator[](std::size_t index) const 
       {
         assert(index < size());
-        return *(*cont_)[index]; 
+        return *(cont_[index]); 
       }
       
-      std::size_t size() const { return cont_->size(); }
+      std::size_t size() const { return num; }
       
     private:
       
@@ -663,18 +659,21 @@ namespace viennagrid
         
         //initialize co-boundary if needed
         if (viennadata::find<CoBoundaryKey,
-                             container_type >(key)(e) == NULL)
+                             viennadata_container_type >(key)(e) == NULL)
         {
            init_coboundary< tag::dim,
                             dim,
-                            container_type>(key, d);
+                            viennadata_container_type>(key, d);
         }
         
-        cont_ = &viennadata::access<CoBoundaryKey,
-                                    container_type>(key)(e);
+        viennadata_container_type & temp = viennadata::access<CoBoundaryKey,
+                                                              viennadata_container_type>(key)(e);
+        cont_ = &(temp[0]);
+        num = temp.size();
       }
       
       const container_type * cont_;
+      size_t num;
   };
   
   
@@ -808,19 +807,15 @@ namespace viennagrid
                                                    type;
     };
     
-    
     /** @brief Returns the internal storage type of ranges for boundary k-cells */
-    template <typename config, typename element_tag,
+    template <typename Config, typename ElementTag,
               long dim,
               long cell_level /* see forwards.h for default argument */>
-    struct element_container< element_t<config, element_tag>, dim, cell_level >
+    struct element_container< element_t<Config, ElementTag>, dim, cell_level >
     {
-      typedef typename result_of::ncell<config, dim>::type            element_type;
-      typedef typename topology::bndcells<element_tag, dim>::layout_tag layout_tag;
-      const static long num = topology::bndcells<element_tag, dim>::num;
+      typedef typename result_of::ncell<Config, dim>::type            element_type;
       
-      //typedef element_type *      type;
-      typedef typename container<element_type*, layout_tag, num>::type type;
+      typedef element_type *      type;
     };
     
     //Iterator types for elements
