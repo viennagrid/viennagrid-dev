@@ -4,6 +4,7 @@
 
 namespace viennameta
 {
+    // basic operations
     template<typename type1, typename type2>
     struct _equal
     {
@@ -16,22 +17,47 @@ namespace viennameta
         static const bool value = true;
     };
     
+    template<typename type1, typename type2>
+    struct _not_equal
+    {
+        static const bool value = !_equal<type1, type2>::value;
+    };
+    
     template<bool condition, typename type1, typename type2>
     struct _if
     {
-        typedef type1 result;
+        typedef type1 type;
     };
     
     template<typename type1, typename type2>
     struct _if<false, type1, type2>
     {
-        typedef type2 result;
+        typedef type2 type;
     };
+    
+    template<typename _type>
+    struct _identity
+    {
+        typedef _type type;
+    };
+    
+    
+    // error generator
+    template<typename _type, bool error>
+    struct _identity_errcheck
+    {
+        typedef _type type;
+    };
+
+    template<typename _type>
+    struct _identity_errcheck<_type, false>
+    {};
 
     
     // an empty type
     class null_type {};
     
+    // some special types
     class out_of_range {};
     class not_found {};
     
