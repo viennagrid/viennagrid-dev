@@ -1,36 +1,7 @@
 #include <iostream>
-#include <cstdlib>
 
 #include "viennagrid/meta/typelist.hpp"
-
-
-
-
-template<typename type1, typename type2>
-void test_type()
-{
-    
-    bool is_the_same = viennameta::_equal<type1, type2>::value;
-        
-    std::cout << " " << std::boolalpha << is_the_same << std::endl;
-    
-    if (!is_the_same) exit(-1);
-    
-}
-
-
-template<int value1, int value2>
-void test_value()
-{
-    
-    bool is_the_same = value1 == value2;
-        
-    std::cout << " " << std::boolalpha << is_the_same << std::endl;
-    
-    if (!is_the_same) exit(-1);
-    
-}
-
+#include "tests.hpp"
 
 int main()
 {
@@ -67,21 +38,21 @@ int main()
     >();
     
     
-    // find
-    std::cout << "find" << std::endl;
+    // index_of
+    std::cout << "index_of" << std::endl;
     
     test_value<
-        viennameta::typelist::result_of::find< VIENNAMETA_MAKE_TYPELIST_5(int, char, float, double, unsigned short), float >::value,
+        viennameta::typelist::result_of::index_of< VIENNAMETA_MAKE_TYPELIST_5(int, char, float, double, unsigned short), float >::value,
         2
     >();
 
     test_value<
-        viennameta::typelist::result_of::find< VIENNAMETA_MAKE_TYPELIST_5(int, char, float, double, unsigned short), unsigned short >::value,
+        viennameta::typelist::result_of::index_of< VIENNAMETA_MAKE_TYPELIST_5(int, char, float, double, unsigned short), unsigned short >::value,
         4
     >();
     
     test_value<
-        viennameta::typelist::result_of::find< VIENNAMETA_MAKE_TYPELIST_5(int, char, float, double, unsigned short), unsigned char >::value,
+        viennameta::typelist::result_of::index_of< VIENNAMETA_MAKE_TYPELIST_5(int, char, float, double, unsigned short), unsigned char >::value,
         -1
     >();
 
