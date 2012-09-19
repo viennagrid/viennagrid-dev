@@ -58,26 +58,26 @@ namespace viennameta
             
             
             
-            // find first type
-            template <typename typelist, typename to_find> struct find;
+            // returns the index of the first type in the typelist
+            template <typename typelist, typename to_find> struct index_of;
             
             template <typename to_find>
-            struct find<null_type, to_find>
+            struct index_of<null_type, to_find>
             {
                 enum { value = -1 };
             };
             
             template <typename to_find, typename tail>
-            struct find<typelist_t<to_find, tail>, to_find>
+            struct index_of<typelist_t<to_find, tail>, to_find>
             {
                 enum { value = 0 };
             };
             
             template <typename head, typename tail, typename to_find>
-            struct find<typelist_t<head, tail>, to_find>
+            struct index_of<typelist_t<head, tail>, to_find>
             {
             private:
-                enum { temp = find<tail, to_find>::value };
+                enum { temp = index_of<tail, to_find>::value };
             public:
                 enum { value = (temp == -1 ? -1 : 1 + temp) };
             };
