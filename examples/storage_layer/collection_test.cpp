@@ -8,27 +8,20 @@ using std::cout;
 using std::endl;
 
 
-#include "viennagrid/Typelist.h"
-#include "viennagrid/collection.hpp"
+#include "viennagrid/storage/collection.hpp"
 
-
-struct is_even
-{
-    template<typename type>
-    bool operator()(type t) { return t % 2 == 0; } 
-};
 
 int main()
 {
-    typedef LOKI_TYPELIST_3(std::vector<int>, std::deque<float>, std::deque<int>) config;
+    typedef VIENNAMETA_MAKE_TYPELIST_4(int, float, int, std::vector<int>) config;
 
-    viennagrid::collection::result_of<config>::type collection;
-    
-    viennagrid::collection::container_of<viennagrid::collection::result_of<config>::type, int>::type & c = viennagrid::collection::get<int>( collection );
-    c.push_back(10);
-    
-    cout << viennagrid::collection::get<float>( collection ).size() << endl;
-    cout << viennagrid::collection::get<int>( collection ).size() << endl;
+    typedef viennagrid::storage::result_of::collection<config>::type my_collection_type;
+    my_collection_type my_collection;
+
+    // accessing the objects stored in the collection
+    int & the_int = viennagrid::storage::collection::get<int>( my_collection );
+    float & the_float = viennagrid::storage::collection::get<float>( my_collection );
+    viennagrid::storage::collection::get< std::vector<int> >( my_collection ).resize(10);
 
     
  	return 0;

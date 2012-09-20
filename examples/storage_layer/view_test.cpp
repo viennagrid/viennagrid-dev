@@ -11,8 +11,7 @@ using std::endl;
 
 
 
-#include "viennagrid/Typelist.h"
-#include "viennagrid/view.hpp"
+#include "viennagrid/storage/view.hpp"
 
 
 
@@ -36,7 +35,7 @@ int main()
     std::copy( container.begin(), container.end(), std::ostream_iterator<int>(cout, " ") );
     cout << "\n\n";
     
-    typedef viennagrid::view::result_of< std::vector, std::deque<int> >::type my_view_type;
+    typedef viennagrid::storage::result_of::view< std::deque<int>, viennagrid::storage::std_deque_tag >::type my_view_type;
     my_view_type my_view(container);
     
     cout << "Creating all view of container" << endl;
@@ -48,7 +47,7 @@ int main()
     cout << "\n\n";
 
     
-    my_view.push_back( 25 );
+    my_view.insert( 25 );
     
     cout << "Pushing one element to all view" << endl;
     cout << "container        : ";
@@ -70,7 +69,7 @@ int main()
     cout << "\n\n";
     
     
-    typedef viennagrid::view::result_of< std::vector, my_view_type >::type my_view_view_type;
+    typedef viennagrid::storage::result_of::view< my_view_type, viennagrid::storage::std_vector_tag >::type my_view_view_type;
     my_view_view_type my_view_view(my_view, is_even());
     
     cout << "Creating view of all view (only even elements)" << endl;
@@ -85,7 +84,7 @@ int main()
     cout << "\n\n";
     
     
-    my_view_view.push_back(42);
+    my_view_view.insert(42);
     
     cout << "Pushing one element to the view of all view" << endl;
     cout << "container        : ";
