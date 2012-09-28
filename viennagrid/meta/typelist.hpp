@@ -289,10 +289,56 @@ namespace viennameta
             {
                 typedef typelist_t<head, typename replace_all<tail, to_replace, replaced>::type> type;
             };
+            
+            
+            
+            // returns only those types which are in both typelists
+            template<typename typelist1, typename typelist2>
+            struct intersection {};
+            
+           template<>
+            struct intersection<null_type, null_type>
+            {
+                typedef null_type type;
+            };
+            
+            template<typename head1, typename tail1>
+            struct intersection<typelist_t<head1, tail1>, null_type>
+            {
+                typedef null_type type;
+            };
+            
+            template<typename head2, typename tail2>
+            struct intersection<null_type, typelist_t<head2, tail2> >
+            {
+                typedef null_type type;
+            };
+            
+            template<typename head1, typename tail1, typename head2, typename tail2>
+            struct intersection< typelist_t<head1, tail1>, typelist_t<head2, tail2> >
+            {
+                typedef typelist_t<head1, tail1> typelist1;
+                typedef typelist_t<head2, tail2> typelist2;
+                
+                enum { search_result = index_of< typelist2, head1 >::value }; 
+                
+                typedef typename _if<
+                    (search_result >= 0),
+                    typename erase_at<typelist2, search_result>::type,
+                    typelist2
+                >::type new_typelist2;
+                
+                typedef typename _if<
+                    (search_result >= 0),
+                    typelist_t<head1, typename intersection<tail1, new_typelist2>::type >,
+                    typename intersection<tail1, new_typelist2>::type
+                >::type type;
+            };
+            
+            
         }
     }   
 }
 
 
 #endif // end file guardian
-
