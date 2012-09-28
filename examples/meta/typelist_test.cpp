@@ -221,6 +221,51 @@ int main()
        VIENNAMETA_MAKE_TYPELIST_3(int,float,int)
     >();
     
+    
+    
+    
+    // intersection
+    std::cout << "replace_all" << std::endl;
+    
+    test_type<
+        viennameta::typelist::result_of::intersection<
+            VIENNAMETA_MAKE_TYPELIST_3(int,float,int),
+            VIENNAMETA_MAKE_TYPELIST_3(int,float,int)
+        >::type,
+        VIENNAMETA_MAKE_TYPELIST_3(int,float,int)
+    >();
+    
+    test_type<
+        viennameta::typelist::result_of::intersection<
+            VIENNAMETA_MAKE_TYPELIST_3(int,float,double),
+            VIENNAMETA_MAKE_TYPELIST_3(double,char,short)
+        >::type,
+        VIENNAMETA_MAKE_TYPELIST_1(double)
+    >();
+    
+    test_type<
+        viennameta::typelist::result_of::intersection<
+            VIENNAMETA_MAKE_TYPELIST_3(int,float,int),
+            VIENNAMETA_MAKE_TYPELIST_3(double,char,short)
+        >::type,
+        viennameta::null_type
+    >();
 
+    test_type<
+        viennameta::typelist::result_of::intersection<
+            VIENNAMETA_MAKE_TYPELIST_3(int,float,int),
+            viennameta::null_type
+        >::type,
+        viennameta::null_type
+    >();
+    
+    test_type<
+        viennameta::typelist::result_of::intersection<
+            viennameta::null_type,
+            VIENNAMETA_MAKE_TYPELIST_3(double,char,short)
+        >::type,
+        viennameta::null_type
+    >();
+    
     return 0;
 }
