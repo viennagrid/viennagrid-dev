@@ -1,5 +1,5 @@
-#ifndef VIENNAGRID_COLLECTION_HPP
-#define VIENNAGRID_COLLECTION_HPP
+#ifndef VIENNAGRID_STORAGE_COLLECTION_HPP
+#define VIENNAGRID_STORAGE_COLLECTION_HPP
 
 #include "viennagrid/meta/utils.hpp"
 #include "viennagrid/meta/typelist.hpp"
@@ -44,7 +44,6 @@ namespace viennagrid
         {
         public:            
             void get();
-            void push_back();
         };
         
         
