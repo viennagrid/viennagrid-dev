@@ -74,6 +74,17 @@ namespace viennameta
     // a tag wrapper
     template<typename foo>
     class tag {};
+    
+    
+    // a true functor
+    struct true_predicate
+    {
+        template<typename type>
+        bool operator()(const type & t)
+        {
+            return true;
+        }
+    };
 }
 
 
