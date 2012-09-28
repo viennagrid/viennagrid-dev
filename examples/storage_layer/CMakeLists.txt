@@ -52,5 +52,6 @@ MESSAGE( STATUS "CMAKE_CXX_FLAGS_RELASEG        " ${CMAKE_CXX_FLAGS_RELEASE} )
 
 add_executable(collection_test collection_test.cpp)
 add_executable(container_collection_test container_collection_test.cpp)
-add_executable(view_test view_test.cpp)
+add_executable(container_collection_test_2 container_collection_test_2.cpp)
+#add_executable(view_test view_test.cpp)
 #add_executable(element_test element_test.cpp)
