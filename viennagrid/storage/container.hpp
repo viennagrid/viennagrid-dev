@@ -1,10 +1,12 @@
-#ifndef VIENNAGRID_CONTAINER_HPP
-#define VIENNAGRID_CONTAINER_HPP
+#ifndef VIENNAGRID_STORAGE_CONTAINER_HPP
+#define VIENNAGRID_STORAGE_CONTAINER_HPP
 
 #include <vector>
 #include <deque>
 #include <list>
 #include <set>
+
+#include "viennagrid/meta/utils.hpp"
 
 namespace viennagrid
 {
@@ -22,8 +24,7 @@ namespace viennagrid
         namespace result_of
         {
             template<typename element_type, typename container_tag>
-            struct container_from_tag
-            {};
+            struct container_from_tag;
             
             template<typename element_type>
             struct container_from_tag<element_type, std_vector_tag>
@@ -50,10 +51,8 @@ namespace viennagrid
             };
         }
         
-        
         namespace container
         {
-            
             template<typename container_type>
             typename container_type::iterator insert( container_type & container, const typename container_type::value_type & element  )
             {
@@ -66,7 +65,6 @@ namespace viennagrid
             {
                 return container.insert( element ).first;
             }
-            
         }
     
     }
