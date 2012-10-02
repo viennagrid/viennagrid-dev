@@ -1,6 +1,6 @@
 #ifndef VIENNAGRID_FORWARDS_H
 #define VIENNAGRID_FORWARDS_H
-
+ 
 /* =======================================================================
    Copyright (c) 2011-2012, Institute for Microelectronics,
                             Institute for Analysis and Scientific Computing,
