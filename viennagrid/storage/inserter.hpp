@@ -62,7 +62,7 @@ namespace viennagrid
             {}
             
             template<typename value_type>
-            typename viennagrid::storage::result_of::container_of<physical_container_collection_type, value_type>::type::iterator insert( const value_type & element )
+            typename viennagrid::storage::result_of::container_of<physical_container_collection_type, value_type>::type::iterator operator()( const value_type & element )
             {
                 return physical_insert( element, *this );
             }
@@ -89,7 +89,8 @@ namespace viennagrid
                         viennameta::null_type
                     >::value)
                 {
-                    viennagrid::storage::container_collection::get< value_type >( base_inserter::collection ).insert( *it );
+                    //viennagrid::storage::container_collection::get< value_type >( base_inserter::collection ).insert( *it );
+                    viennagrid::storage::container_collection::insert_or_ignore( base_inserter::collection, *it );
                 }
                 
                 base::reference_insert( it );
@@ -105,7 +106,7 @@ namespace viennagrid
             }
             
             template<typename value_type>
-            typename viennagrid::storage::result_of::container_of<physical_container_collection_type, value_type>::type::iterator insert( const value_type & element )
+            typename viennagrid::storage::result_of::container_of<physical_container_collection_type, value_type>::type::iterator operator()( const value_type & element )
             {
                 return physical_insert( element, *this );
             }

@@ -117,6 +117,30 @@ namespace viennagrid
       }
     };
     
+    
+    
+    template<typename bnd_cell_type>
+    struct bndcell_generator<tetrahedron_tag, 1, bnd_cell_type>
+    {
+        
+        template<typename element_type, typename inserter_type>
+        void create_bnd_cells(element_type & tetrahedron, inserter_type & inserter)
+        {
+            typedef typename element_type::VertexType VertexType;
+            typedef typename bnd_cell_type::VertexReferenceType VertexReferenceType;
+            
+            VertexReferenceType edgevertices[2];
+            bnd_cell_type edge;
+            
+            edgevertices[0] = element_type.vertices(0);
+            edgevertices[1] = element_type.vertices(1);
+            edge.vertices(edgevertices);
+            tetrahedron.set_element( inserter(edge), edge, 0 );
+        }
+        
+    };
+    
+    
     /** @brief Fills a segment or a domain with the edges/facets of a tetrahedron */
     template <>
     struct bndcell_filler<tetrahedron_tag, 2>

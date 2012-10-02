@@ -37,7 +37,7 @@ namespace viennagrid
         
         
         template <typename container_typelist>
-        std::ostream & operator<<(std::ostream & os, const container_collection_t<container_typelist> & container_collection)
+        std::ostream & operator<<(std::ostream & os, const collection_t<container_typelist> & container_collection)
         {
             container_output_functor f(os);
             

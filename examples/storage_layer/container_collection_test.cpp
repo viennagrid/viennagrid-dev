@@ -75,11 +75,11 @@ int main()
     typedef viennagrid::storage::result_of::recursive_inserter<collection_type>::type inserter_type;
     inserter_type inserter(collection);
     
-    inserter.insert( 'c' );
-    inserter.insert( 10 );
-    inserter.insert( 35 );
-    inserter.insert( 35.0 );
-    inserter.insert( 35.4f );
+    inserter( 'c' );
+    inserter( 10 );
+    inserter( 35 );
+    inserter( 35.0 );
+    inserter( 35.4f );
     
     cout << "collection" << endl;
     cout << collection << endl;
@@ -107,7 +107,7 @@ int main()
     
     
     
-    typedef collection_type::container_typelist view_config;
+    typedef viennagrid::storage::container_collection::result_of::container_typelist<collection_type>::type view_config;
     typedef VIENNAMETA_MAKE_TYPEMAP_2( viennagrid::storage::default_tag, viennagrid::storage::view_tag<viennagrid::storage::std_deque_tag>,
                                        float, viennagrid::storage::view_tag<viennagrid::storage::std_vector_tag> ) view_container_config;
                                        
@@ -128,7 +128,7 @@ int main()
     view_inserter_type view_inserter(view_collection, inserter);
 
     
-    view_inserter.insert( 42 );
+    view_inserter( 42 );
     
     cout << "After insert 42" << endl;
     
@@ -139,7 +139,7 @@ int main()
     cout << view_collection << endl;
     
     
-    typedef view_collection_type::container_typelist view_config2;
+    typedef viennagrid::storage::container_collection::result_of::container_typelist<view_collection_type>::type view_config2;
     typedef VIENNAMETA_MAKE_TYPEMAP_2( viennagrid::storage::default_tag, viennagrid::storage::view_tag<viennagrid::storage::std_set_tag>,
                                        float, viennagrid::storage::view_tag<viennagrid::storage::std_deque_tag> ) view_container2_config;
                                        
@@ -159,7 +159,7 @@ int main()
     view_inserter2_type view_inserter2(view_collection2, view_inserter);
 
 
-    view_inserter2.insert( 20.0 );
+    view_inserter2( 20.0 );
     
     cout << "After insert 20.0" << endl;
     
@@ -180,7 +180,7 @@ int main()
     view_inserter3_type view_inserter3(view_collection2, inserter);
 
 
-    view_inserter3.insert( 4.2f );
+    view_inserter3( 4.2f );
     
     cout << "After insert 4.2f" << endl;
     

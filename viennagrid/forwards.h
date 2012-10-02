@@ -268,6 +268,9 @@ namespace viennagrid
      */
     template <typename ElementTag, long k>
     struct bndcell_filler {};
+
+    template <typename element_tag, long k, typename bnd_cell_type>
+    struct bndcell_generator {};
     
   }
   

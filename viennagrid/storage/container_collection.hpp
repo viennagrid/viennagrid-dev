@@ -7,6 +7,7 @@
 #include "viennagrid/storage/container.hpp"
 #include "viennagrid/storage/collection.hpp"
 #include "viennagrid/storage/view.hpp"
+#include "viennagrid/storage/range.hpp"
 
 namespace viennagrid
 {
@@ -19,7 +20,7 @@ namespace viennagrid
             namespace result_of
             {
                 template<typename value_type, typename container_config>
-                struct container
+                struct container_from_value_using_container_config
                 {
                     typedef typename viennameta::typemap::result_of::find<container_config, value_type>::type search_result;
                     typedef typename viennameta::typemap::result_of::find<container_config, viennagrid::storage::default_tag>::type default_container;
@@ -35,56 +36,67 @@ namespace viennagrid
                 
                 
                 template<typename element_list, typename container_config>
-                struct container_list {};
+                struct container_list_from_value_typelist_using_container_config {};
                 
                 template<typename container_config>
-                struct container_list<viennameta::null_type, container_config>
+                struct container_list_from_value_typelist_using_container_config<viennameta::null_type, container_config>
                 {
                     typedef viennameta::null_type type;
                 };
                 
                 template<typename head, typename tail, typename container_config>
-                struct container_list<viennameta::typelist_t<head, tail>, container_config>
+                struct container_list_from_value_typelist_using_container_config<viennameta::typelist_t<head, tail>, container_config>
                 {
                     typedef viennameta::typelist_t<
-                        typename container<head, container_config>::type,
-                        typename container_list<tail, container_config>::type
+                        typename container_from_value_using_container_config<head, container_config>::type,
+                        typename container_list_from_value_typelist_using_container_config<tail, container_config>::type
                     > type;
                 };
                 
-                
-                
-                
+
                 template<typename container_typelist>
-                struct value_typelist {};
+                struct value_typelist_from_container_typelist {};
                 
                 template<>
-                struct value_typelist<viennameta::null_type>
+                struct value_typelist_from_container_typelist<viennameta::null_type>
                 {
                     typedef viennameta::null_type type;
                 };
                 
                 template<typename head, typename tail>
-                struct value_typelist< viennameta::typelist_t<head, tail> >
+                struct value_typelist_from_container_typelist< viennameta::typelist_t<head, tail> >
                 {
-                    typedef viennameta::typelist_t< typename head::value_type, typename value_typelist<tail>::type > type;
+                    typedef viennameta::typelist_t< typename head::value_type, typename value_typelist_from_container_typelist<tail>::type > type;
                 };
+                
+                
+                
+                template<typename container_collection_type>
+                struct container_typelist {};
+                
+                template<typename _container_typelist>
+                struct container_typelist< collection_t<_container_typelist> >
+                { typedef _container_typelist type; };
+                
+                template<typename _container_typelist>
+                struct container_typelist< const collection_t<_container_typelist> >
+                { typedef _container_typelist type; };
+                
+                
+                template<typename container_collection_type>
+                struct value_typelist {};
+                
+                template<typename _container_typelist>
+                struct value_typelist< collection_t<_container_typelist> >
+                { typedef typename value_typelist_from_container_typelist<_container_typelist>::type type; };
+                
+                template<typename _container_typelist>
+                struct value_typelist< const collection_t<_container_typelist> >
+                { typedef typename value_typelist_from_container_typelist<_container_typelist>::type type; };
                                 
             } // namespace result_of
             
         } // namespace container_collection
-
-
-        template<typename _container_typelist>
-        class container_collection_t : public collection_t<_container_typelist>
-        {
-        public:
-            
-            typedef typename viennagrid::storage::container_collection::result_of::value_typelist<_container_typelist>::type value_typelist;
-            typedef _container_typelist container_typelist;
-                        
-        private:
-        };
         
         
         namespace result_of
@@ -96,7 +108,7 @@ namespace viennagrid
             template<typename element_type>
             struct container_of<viennameta::null_type, element_type>
             {
-                typedef viennameta::null_type type;
+                typedef viennameta::not_found type;
             };
             
             template<typename head, typename tail, typename element_type>
@@ -110,7 +122,7 @@ namespace viennagrid
             };
             
             template<typename container_typelist, typename element_type>
-            struct container_of< container_collection_t< container_typelist >, element_type >
+            struct container_of< collection_t< container_typelist >, element_type >
             {
                 typedef typename container_of<container_typelist, element_type>::type type;
             };
@@ -120,13 +132,13 @@ namespace viennagrid
             struct common_values;
             
             template<typename container_typelist_1, typename container_typelist_2>
-            struct common_values< container_collection_t<container_typelist_1>, container_collection_t<container_typelist_2> >
+            struct common_values< collection_t<container_typelist_1>, collection_t<container_typelist_2> >
             {
-                typedef container_collection_t<container_typelist_1> from_container_collection_type; 
-                typedef container_collection_t<container_typelist_2> to_container_collection_type;
-                
-                typedef typename from_container_collection_type::value_typelist from_container_collection_value_typelist;
-                typedef typename to_container_collection_type::value_typelist to_container_collection_value_typelist;
+                typedef collection_t<container_typelist_1> from_container_collection_type; 
+                typedef collection_t<container_typelist_2> to_container_collection_type;
+                                
+                typedef typename viennagrid::storage::container_collection::result_of::value_typelist<from_container_collection_type>::type from_container_collection_value_typelist;
+                typedef typename viennagrid::storage::container_collection::result_of::value_typelist<to_container_collection_type>::type to_container_collection_value_typelist;
                 
                 typedef typename viennameta::typelist::result_of::intersection<
                     from_container_collection_value_typelist,
@@ -157,24 +169,48 @@ namespace viennagrid
                 return collection.get( viennameta::tag<container_type>() );                
             }
             
-//             template<typename element_type, typename container_collection>
-//             element_type & insert( container_collection & collection, const element_type & element)
-//             {
-//                 typedef typename viennagrid::storage::result_of::container_of< container_collection, element_type>::type container_type;
-//                 typename container_type::iterator inserted_element = viennagrid::storage::container::insert(
-//                     collection.get( viennameta::tag<container_type>() ),
-//                     element);
-//                 
-//                 viennagrid::storage::container_collection_element::insert_callback( *inserted_element, collection );
-//                 return inserted_element;
-//             }
-//             
-//             template<typename container_collection, typename iterator_type>
-//             iterator_type erase( container_collection & collection, iterator_type it)
-//             {
-//                 return get<typename iterator_type::value_type>(collection).erase(it);
-//             }
             
+            
+            template<typename container_collection_type, typename element_type, typename search_result>
+            struct insert_or_ignore_helper
+            {
+                typedef typename viennagrid::storage::result_of::container_of< container_collection_type, element_type>::type container_type;
+                
+                static void insert_or_ignore( container_collection_type & collection, const element_type & element )
+                {
+                    viennagrid::storage::container::insert(collection.get( viennameta::tag<container_type>() ), element);
+                }
+                
+                static void insert_or_ignore( container_collection_type & collection, element_type & element )
+                {
+                    viennagrid::storage::container::insert(collection.get( viennameta::tag<container_type>() ), element);
+                }
+            };
+            
+            template<typename container_collection_type, typename element_type>
+            struct insert_or_ignore_helper<container_collection_type, element_type, viennameta::not_found>
+            {
+                static void insert_or_ignore( container_collection_type & collection, const element_type & element ) {}
+                
+                static void insert_or_ignore( container_collection_type & collection, element_type & element ) {}
+            };
+
+            
+            template<typename container_collection_type, typename element_type>
+            void insert_or_ignore( container_collection_type & collection, const element_type & element)
+            {
+                typedef typename viennagrid::storage::result_of::container_of< container_collection_type, element_type>::type container_type;
+                insert_or_ignore_helper<container_collection_type, element_type, container_type>::insert_or_ignore(collection, element);
+            }
+            
+            template<typename container_collection_type, typename element_type>
+            void insert_or_ignore( container_collection_type & collection, element_type & element)
+            {
+                typedef typename viennagrid::storage::result_of::container_of< container_collection_type, element_type>::type container_type;
+                insert_or_ignore_helper<container_collection_type, element_type, container_type>::insert_or_ignore(collection, element);
+            }
+            
+
         } // namespace container_collection
         
 
@@ -185,7 +221,12 @@ namespace viennagrid
             template<typename value_typelist, typename container_config>
             struct container_collection
             {
-                typedef container_collection_t< typename viennagrid::storage::container_collection::result_of::container_list<value_typelist, container_config>::type > type;
+                typedef collection_t<
+                    typename viennagrid::storage::container_collection::result_of::container_list_from_value_typelist_using_container_config<
+                        value_typelist,
+                        container_config
+                    >::type
+                > type;
             };
         }
         

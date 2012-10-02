@@ -28,7 +28,7 @@
 
 #include <vector>
 
-#include "viennagrid/Typelist.h"
+#include "viennagrid/meta/typelist.hpp"
 
 /** @file boundary_ncell_layer.hpp
     @brief Provides the topological layers for n-cells
@@ -94,10 +94,23 @@ namespace viennagrid
                                                            &(orientations_[0]),
                                                            dom);
       }
+      
+      
+      template<typename inserter_type>
+      void create_bnd_cells(inserter_type & inserter)
+      {
+          Base::create_bnd_cells(inserter);
+          //topology::bndcell_filler<ElementTag, dim>::template create_bnd_cells(*this, inserter, typename viennagrid::result_of::ncell<ConfigType, dim>::type() );
+          topology::bndcell_generator<ElementTag, dim, typename viennagrid::result_of::ncell<ConfigType, dim>::type>::create_bnd_cells(*this, inserter );
+      }
 
     public:
         
-        typedef Loki::Typelist< typename result_of::ncell<ConfigType, dim>::type, typename Base::required_elements > required_elements;
+        //typedef Loki::Typelist< typename result_of::ncell<ConfigType, dim>::type, typename Base::required_elements > required_elements;
+        
+        typedef typename result_of::ncell<ConfigType, 0>::type      VertexType;
+        typedef VertexType * VertexReferenceType;
+        typedef typename viennameta::typelist::result_of::push_back< typename Base::required_types, typename result_of::ncell<ConfigType, dim>::type >::type required_types;
 
       boundary_ncell_layer( ) 
       {
@@ -132,6 +145,11 @@ namespace viennagrid
         return &(elements_[0]);
       }
       
+      using Base::set_element;
+      void set_element(const container_type & to_insert, container_type & inserted, unsigned int pos)
+      {
+         elements_[pos] = inserted;
+      }
 
       ////////////////// orientation: ////////////////////
       std::size_t global_to_local_orientation(LevelElementType const & el, long index) const
@@ -186,10 +204,22 @@ namespace viennagrid
                                                            OrientationPointer(NULL),
                                                            dom);
       }
+      
+      template<typename inserter_type>
+      void create_bnd_cells(inserter_type & inserter)
+      {
+          Base::create_bnd_cells(inserter);
+          //topology::bndcell_filler<ElementTag, dim>::template create_bnd_cells(*this, inserter, typename viennagrid::result_of::ncell<ConfigType, dim>::type());
+          topology::bndcell_generator<ElementTag, dim, typename viennagrid::result_of::ncell<ConfigType, dim>::type>::create_bnd_cells(*this, inserter );
+      }
 
     public:
         
-        typedef Loki::Typelist< typename result_of::ncell<ConfigType, dim>::type, typename Base::required_elements > required_elements;
+        //typedef Loki::Typelist< typename result_of::ncell<ConfigType, dim>::type, typename Base::required_elements > required_elements;
+        
+        typedef typename result_of::ncell<ConfigType, 0>::type      VertexType;
+        typedef VertexType * VertexReferenceType;
+        typedef typename viennameta::typelist::result_of::push_back< typename Base::required_types, typename result_of::ncell<ConfigType, dim>::type >::type required_types;
 
       boundary_ncell_layer( ) 
       {
@@ -219,6 +249,12 @@ namespace viennagrid
       container(dimension_tag<dim>) const
       { 
         return &(elements_[0]);
+      }
+      
+      using Base::set_element;
+      void set_element(const container_type & to_insert, container_type & inserted, unsigned int pos)
+      {
+         elements_[pos] = inserted;
       }
 
     private: 
@@ -250,9 +286,19 @@ namespace viennagrid
         //fill lower topological levels only:
         Base::fill_level(dom);
       }
+      
+      template<typename inserter_type>
+      void create_bnd_cells(inserter_type & inserter)
+      {
+          Base::create_bnd_cells(inserter);
+      }
+      
+      using Base::set_element;
 
     public:
         
+    typedef typename result_of::ncell<ConfigType, 0>::type      VertexType;
+    typedef VertexType * VertexReferenceType;
     typedef typename Base::required_elements required_elements;
 
       boundary_ncell_layer( ) {};
@@ -272,7 +318,7 @@ namespace viennagrid
     //typedef typename DomainTypes<ConfigType>::segment_type               SegmentType;
     typedef topology::bndcells<ElementTag, 0>                                      LevelSpecs;
 
-    typedef element_t<ConfigType, typename LevelSpecs::tag>         VertexType;
+    
     typedef typename result_of::point<ConfigType>::type              PointType;
 
     typedef typename result_of::iterator< element_t<ConfigType, ElementTag>, 0>::type         VertexIterator;
@@ -281,10 +327,20 @@ namespace viennagrid
       //end recursion:
       template <typename DomainType>
       void fill_level(DomainType & dom) {}
+      
+      template<typename inserter_type>
+      void create_bnd_cells(inserter_type & inserter) {}
+      
+      void set_element(const VertexType & to_insert, VertexType & inserted, unsigned int pos)
+      {
+         elements_[pos] = inserted;
+      }
 
     public:
         
-        typedef Loki::Typelist<VertexType, Loki::NullType> required_elements;
+        typedef element_t<ConfigType, typename LevelSpecs::tag>         VertexType;
+        typedef VertexType * VertexReferenceType;
+        typedef VIENNAMETA_MAKE_TYPELIST_1( VertexType ) required_types;
         
       boundary_ncell_layer() {};
 
@@ -295,6 +351,8 @@ namespace viennagrid
       }
 
       ////////////////// container access: /////////////////////////
+      
+      VertexType * vertices( unsigned int pos ) { return vertices_[pos]; }
       
       //non-const:
       VertexType * *

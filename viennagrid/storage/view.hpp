@@ -2,7 +2,8 @@
 #define VIENNAGRID_STORAGE_VIEW_HPP
 
 #include "container.hpp"
-
+#include "viennagrid/meta/typemap.hpp"
+#include "viennagrid/meta/typemap_macros.hpp"
 
 namespace viennagrid
 {
@@ -17,22 +18,24 @@ namespace viennagrid
         
         
         
-        
-        template<typename base_container_type, typename view_container_tag, typename view_reference_tag>
-        struct view_container
-        {};
-        
-        template<typename base_container_type, typename view_container_tag>
-        struct view_container<base_container_type, view_container_tag, pointer_reference_tag>
+        namespace view
         {
-            typedef typename viennagrid::storage::result_of::container_from_tag<typename base_container_type::pointer, view_container_tag>::type type;
-        };
-        
-        template<typename base_container_type, typename view_container_tag>
-        struct view_container<base_container_type, view_container_tag, iterator_reference_tag>
-        {
-            typedef typename viennagrid::storage::result_of::container_from_tag<typename base_container_type::iterator, view_container_tag>::type type;
-        };
+            template<typename base_container_type, typename view_container_tag, typename view_reference_tag>
+            struct view_container
+            {};
+            
+            template<typename base_container_type, typename view_container_tag>
+            struct view_container<base_container_type, view_container_tag, pointer_reference_tag>
+            {
+                typedef typename viennagrid::storage::result_of::container_from_tag<typename base_container_type::pointer, view_container_tag>::type type;
+            };
+            
+            template<typename base_container_type, typename view_container_tag>
+            struct view_container<base_container_type, view_container_tag, iterator_reference_tag>
+            {
+                typedef typename viennagrid::storage::result_of::container_from_tag<typename base_container_type::iterator, view_container_tag>::type type;
+            };
+        }
         
         
         
@@ -40,9 +43,7 @@ namespace viennagrid
         template<typename base_container_type, typename view_container_tag = std_deque_tag, typename view_reference_tag = pointer_reference_tag>
         class view_t
         {
-            //typedef typename viennagrid::storage::result_of::container_from_tag<typename base_container_type::pointer, view_container_tag>::type view_container_type;
-            
-            typedef typename view_container<base_container_type, view_container_tag, view_reference_tag>::type view_container_type;
+            typedef typename view::view_container<base_container_type, view_container_tag, view_reference_tag>::type view_container_type;
             
         public:
             
@@ -121,10 +122,7 @@ namespace viennagrid
             
             iterator insert(value_type & element)
             {
-                return viennagrid::storage::container::insert(
-                    container,
-                    &element
-                );
+                return viennagrid::storage::container::insert(container, &element);
             }
             
             
@@ -159,6 +157,13 @@ namespace viennagrid
             typedef _view_container_tag view_container_tag;
             typedef _view_reference_tag view_reference_tag;
         };
+        
+        
+        namespace view
+        {
+            typedef VIENNAMETA_MAKE_TYPEMAP_1( viennagrid::storage::default_tag, viennagrid::storage::view_tag<viennagrid::storage::std_deque_tag>) default_view_config;
+        }
+        
 
         namespace result_of
         {

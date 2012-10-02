@@ -23,7 +23,7 @@
 #include "viennagrid/detail/element_iterators.hpp"
 #include "viennagrid/detail/boundary_ncell_layer.hpp"
 
-#include "viennagrid/Typelist.h"
+#include "viennagrid/meta/typelist.hpp"
 
 #include <vector>
 
@@ -49,13 +49,15 @@ namespace viennagrid
       typedef typename ConfigType::numeric_type                   ScalarType;
       typedef boundary_ncell_layer < ConfigType, ElementTag, ElementTag::dim - 1>             Base;
       typedef typename result_of::point<ConfigType>::type         PointType;
-      typedef typename result_of::ncell<ConfigType, 0>::type      VertexType;
+      //typedef typename result_of::ncell<ConfigType, 0>::type      VertexType;
       typedef topology::bndcells<ElementTag, 0>                                 VertexSpecs;
       
       
 
     public:
-      typedef Loki::Typelist<element_t, typename Base::required_elements> required_elements;
+        
+      typedef typename result_of::ncell<ConfigType, 0>::type      VertexType;
+      typedef typename viennameta::typelist::result_of::push_back< typename Base::required_types, element_t >::type required_types;
         
       /** @brief Publish the configuration class */
       typedef ConfigType                                       config_type;
@@ -89,6 +91,12 @@ namespace viennagrid
         }
         //std::cout << std::endl;
       }
+      
+    template<typename inserter_type>
+    void insert_callback( inserter_type & inserter )
+    {
+        Base::create_bnd_cells(inserter);
+    }
 
   };
 
@@ -147,6 +155,10 @@ namespace viennagrid
       
       template <typename DomainType>
       void fill(DomainType & dom) {}
+      
+    template<typename inserter_type>
+    void insert_callback( inserter_type & inserter )
+    {}
 
       element_t & operator=(const element_t & other)
       {

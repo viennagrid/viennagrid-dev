@@ -76,15 +76,15 @@ struct triangle
         
         l.vertices[0] = vertices[0];
         l.vertices[1] = vertices[1];
-        lines[0] = &* inserter.insert(l);
+        lines[0] = &* inserter(l);
         
         l.vertices[0] = vertices[1];
         l.vertices[1] = vertices[2];
-        lines[1] = &* inserter.insert(l);
+        lines[1] = &* inserter(l);
 
         l.vertices[0] = vertices[2];
         l.vertices[1] = vertices[0];
-        lines[2] = &* inserter.insert(l);
+        lines[2] = &* inserter(l);
     }
     
     line_type * lines[3];
@@ -128,38 +128,45 @@ int main()
     
     triangle_type t;
     
-    t.vertices[0] = &* inserter.insert( vertex_type(0.0, 0.0) );
-    t.vertices[1] = &* inserter.insert( vertex_type(1.0, 0.0) );
-    t.vertices[2] = &* inserter.insert( vertex_type(0.0, 1.0) );
+    t.vertices[0] = &* inserter( vertex_type(0.0, 0.0) );
+    t.vertices[1] = &* inserter( vertex_type(1.0, 0.0) );
+    t.vertices[2] = &* inserter( vertex_type(0.0, 1.0) );
     
-    inserter.insert( t );
+    inserter( t );
     
     cout << "collection" << endl;
     cout << collection << endl;
     
     
     
-//     typedef viennagrid::storage::result_of::container_collection<
-//         viennameta::typelist::result_of::erase_at<collection_type::container_typelist, 1>::type,
-//         collection_type::container_typelist,
-//         viennagrid::storage::container_collection::default_container_config
-//     >::type view_collection_type;
-//     
-//     view_collection_type view_collection;
-//     viennagrid::storage::container_collection::reference(collection, view_collection);
-//     
-//     cout << "view_collection" << endl;
-//     cout << view_collection << endl;
-// 
-//     
-//     typedef viennagrid::storage::result_of::recursive_inserter<view_collection_type, inserter_type>::type view_inserter_type;
-//     view_inserter_type view_inserter(view_collection, inserter);
-//     
-//     t.vertices[0] = &* inserter.insert( vertex_type(0.0, 0.0) );
-//     t.vertices[1] = &* inserter.insert( vertex_type(1.0, 0.0) );
-//     t.vertices[2] = &* inserter.insert( vertex_type(0.0, 1.0) );
-//     
-//     inserter.insert( t );
+    typedef viennagrid::storage::result_of::container_collection<
+        viennameta::typelist::result_of::erase_at<viennagrid::storage::container_collection::result_of::container_typelist<collection_type>::type, 1>::type,
+        viennagrid::storage::view::default_view_config
+    >::type view_collection_type;
+    
+    view_collection_type view_collection;
+    viennagrid::storage::container_collection::reference(collection, view_collection);
+    
+    cout << "view_collection" << endl;
+    cout << view_collection << endl;
+
+    
+    typedef viennagrid::storage::result_of::recursive_inserter<view_collection_type, inserter_type>::type view_inserter_type;
+    view_inserter_type view_inserter(view_collection, inserter);
+    
+    t.vertices[0] = &* view_inserter( vertex_type(5.0, 0.0) );
+    t.vertices[1] = &* view_inserter( vertex_type(7.0, 5.0) );
+    t.vertices[2] = &* view_inserter( vertex_type(0.0, 7.0) );
+    
+    view_inserter( t );
+    
+    cout << "After Inser" << endl;
+    
+    cout << "collection" << endl;
+    cout << collection << endl;
+    
+    cout << "view_collection" << endl;
+    cout << view_collection << endl;
     
 
     return 0;

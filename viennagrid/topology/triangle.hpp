@@ -63,6 +63,8 @@ namespace viennagrid
   
     ///////////////////////////////// Filler for subcell elements ///////////////////////////////////
     
+    
+  
 
     /** @brief Fills a segment or a domain with the edges of a triangle */
     template <>
@@ -90,7 +92,73 @@ namespace viennagrid
         edge.vertices(edgevertices);
         elements[2] = seg.push_back(edge);//, (orientations == NULL) ? NULL : orientations + 2 );
       }
+      
+      
+      
+      
+      
+      template<typename bnd_element_type, typename inserter_type, typename element_type>
+      static void create_bnd_cells(element_type & triangle, inserter_type & inserter, bnd_element_type)
+      {
+        typedef typename element_type::VertexType VertexType;
+        
+          
+        VertexType * edgevertices[2];
+        bnd_element_type edge;
+
+        edgevertices[0] = triangle.container(dimension_tag<0>())[0];
+        edgevertices[1] = triangle.container(dimension_tag<0>())[1];
+        edge.vertices(edgevertices);
+        triangle.container(dimension_tag<1>())[0] = &* inserter(edge);//, (orientations == NULL) ? NULL : orientations);
+
+        edgevertices[0] = triangle.container(dimension_tag<0>())[0];
+        edgevertices[1] = triangle.container(dimension_tag<0>())[2];
+        edge.vertices(edgevertices);
+        triangle.container(dimension_tag<1>())[1] = &* inserter(edge);//, (orientations == NULL) ? NULL : orientations + 1 );
+
+        edgevertices[0] = triangle.container(dimension_tag<0>())[1];
+        edgevertices[1] = triangle.container(dimension_tag<0>())[2];
+        edge.vertices(edgevertices);
+        triangle.container(dimension_tag<1>())[2] = &* inserter(edge);//, (orientations == NULL) ? NULL : orientations + 2 );
+      }
+      
     };
+    
+    
+    
+    template<typename bnd_cell_type>
+    struct bndcell_generator<triangle_tag, 1, bnd_cell_type>
+    {
+        
+        template<typename element_type, typename inserter_type>
+        void create_bnd_cells(element_type & triangle, inserter_type & inserter)
+        {
+            typedef typename element_type::VertexType VertexType;
+            typedef typename bnd_cell_type::VertexReferenceType VertexReferenceType;
+            
+            VertexReferenceType edgevertices[2];
+            bnd_cell_type edge;
+            
+            edgevertices[0] = element_type.vertices(0);
+            edgevertices[1] = element_type.vertices(1);
+            edge.vertices(edgevertices);
+            triangle.set_element( inserter(edge), edge, 0 );
+
+            edgevertices[0] = element_type.vertices(0);
+            edgevertices[1] = element_type.vertices(2);
+            edge.vertices(edgevertices);
+            triangle.set_element( inserter(edge), edge, 1 );
+
+            edgevertices[0] = element_type.vertices(1);
+            edgevertices[1] = element_type.vertices(2);
+            edge.vertices(edgevertices);
+            triangle.set_element( inserter(edge), edge, 2 );
+
+        }
+        
+    };
+    
+    
 
   } //topology
   
