@@ -111,7 +111,63 @@ namespace viennagrid
     private:
         // TODO: statt std::vector abhängig vom element_type
       std::vector< id_type > vertexIDs;
-  };  
+  };
+  
+  
+  /** @brief A key type that uniquely identifies an element by its vertices */
+  //template <typename ConfigType, typename ElementType>
+  template <typename element_type, typename id_type>
+  class element_key<element_type *, id_type>
+  {
+      typedef typename element_type::tag            ElementTag;
+      //typedef typename ElementKeyStorageType<ConfigType, ElementType>::result_type  StorageType;
+    public:
+      element_key( const element_type * el2) : vertexIDs(topology::bndcells<ElementTag, 0>::num)
+      {
+        typedef typename result_of::const_ncell_range<element_type, 0>::type       VertexConstRange;
+        typedef typename result_of::iterator<VertexConstRange>::type          VertexConstIterator;
+        long i = 0;
+        VertexConstRange vertices_el2 = ncells<0>(*el2);
+        for (VertexConstIterator vit = vertices_el2.begin();
+             vit != vertices_el2.end();
+             ++vit, ++i)
+          vertexIDs[i] = static_cast<id_type>(vit->id());
+        //sort it:
+        std::sort(vertexIDs.begin(), vertexIDs.end());
+      }
+
+      element_key( const element_key & ek2) : vertexIDs(ek2.vertexIDs.size())
+      {
+        //std::cout << "Copy constructor ElementKey " << this << std::endl;
+        for (typename std::vector<id_type>::size_type i=0; i<ek2.vertexIDs.size(); ++i)
+          vertexIDs[i] = ek2.vertexIDs[i];
+      }
+
+      bool operator < (element_key const & epc2) const
+      {
+        for (long i=0; i<topology::bndcells<ElementTag, 0>::num; ++i)
+        {
+          if ( vertexIDs[i] > epc2.vertexIDs[i] )
+            return false;
+          else if ( vertexIDs[i] < epc2.vertexIDs[i] )
+            return true;
+        }
+        return false;
+      }
+
+      void print() const
+      { 
+        for (typename std::vector<id_type>::const_iterator vit = vertexIDs.begin();
+              vit != vertexIDs.end();
+              ++vit)
+          std::cout << *vit << " ";
+        std::cout << std::endl;
+      }
+
+    private:
+        // TODO: statt std::vector abhängig vom element_type
+      std::vector< id_type > vertexIDs;
+  };
 }
 
 
