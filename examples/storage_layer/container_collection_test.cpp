@@ -118,7 +118,10 @@ int main()
     
     
     
-    typedef viennagrid::storage::container_collection::result_of::container_typelist<collection_type>::type view_config;
+    typedef viennagrid::storage::view::reference_typelist_from_container_typelist_using_reference_config<
+        viennagrid::storage::container_collection::result_of::container_typelist<collection_type>::type,
+        viennagrid::storage::inserter::pointer_reference_config>::type
+        view_config;
     typedef VIENNAMETA_MAKE_TYPEMAP_2( viennagrid::storage::default_tag, viennagrid::storage::view_tag<viennagrid::storage::std_deque_tag>,
                                        float, viennagrid::storage::view_tag<viennagrid::storage::std_vector_tag> ) view_container_config;
                                        
@@ -150,7 +153,11 @@ int main()
     cout << view_collection << endl;
     
     
-    typedef viennagrid::storage::container_collection::result_of::container_typelist<view_collection_type>::type view_config2;
+    typedef viennagrid::storage::view::reference_typelist_from_container_typelist_using_reference_config<
+        viennagrid::storage::container_collection::result_of::container_typelist<view_collection_type>::type,
+        viennagrid::storage::inserter::pointer_reference_config>::type
+        view_config2;
+    
     typedef VIENNAMETA_MAKE_TYPEMAP_2( viennagrid::storage::default_tag, viennagrid::storage::view_tag<viennagrid::storage::std_set_tag>,
                                        float, viennagrid::storage::view_tag<viennagrid::storage::std_deque_tag> ) view_container2_config;
                                        

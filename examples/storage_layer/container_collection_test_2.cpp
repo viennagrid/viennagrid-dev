@@ -159,8 +159,13 @@ int main()
     
     
     
+    typedef viennagrid::storage::view::reference_typelist_from_container_typelist_using_reference_config<
+        viennagrid::storage::container_collection::result_of::container_typelist<collection_type>::type,
+        viennagrid::storage::inserter::pointer_reference_config>::type
+        view_reference_types;
+    
     typedef viennagrid::storage::result_of::container_collection<
-        viennameta::typelist::result_of::erase_at<viennagrid::storage::container_collection::result_of::container_typelist<collection_type>::type, 1>::type,
+        viennameta::typelist::result_of::erase_at<view_reference_types, 1>::type,
         viennagrid::storage::view::default_view_config
     >::type view_collection_type;
     
