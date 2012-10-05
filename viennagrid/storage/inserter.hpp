@@ -37,7 +37,6 @@ namespace viennagrid
             template<typename value_type, typename inserter_type>
             std::pair<
                 typename viennagrid::storage::reference::reference_type_from_config<
-                    //value_type,
                     typename viennagrid::storage::result_of::container_of<container_collection_type, value_type>::type,
                     container_collection_reference_config
                 >::type,
