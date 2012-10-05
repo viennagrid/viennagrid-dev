@@ -14,7 +14,7 @@ namespace viennagrid
     namespace storage
     {
         
-        template<typename reference_type, typename view_container_tag = std_deque_tag>
+        template<typename reference_type, typename view_container_tag>
         class view_t
         {
             typedef typename viennagrid::storage::result_of::container_from_tag<reference_type, view_container_tag>::type view_container_type;
@@ -151,32 +151,50 @@ namespace viennagrid
         }
 
         
-        template<typename _view_container_tag, typename _view_reference_tag = pointer_reference_tag>
+        template<typename _view_container_tag>
         struct view_tag
         {
             typedef _view_container_tag view_container_tag;
-            typedef _view_reference_tag view_reference_tag;
         };
         
         
         namespace view
         {
-            typedef VIENNAMETA_MAKE_TYPEMAP_1( viennagrid::storage::default_tag, viennagrid::storage::view_tag<viennagrid::storage::std_deque_tag>) default_view_config;
+            typedef VIENNAMETA_MAKE_TYPEMAP_1(viennagrid::storage::default_tag, viennagrid::storage::view_tag<viennagrid::storage::std_deque_tag>) default_view_config;
+            
+            
+                template<typename container_typelist, typename reference_config>
+                struct reference_typelist_from_container_typelist_using_reference_config {};
+                
+                template<typename reference_config>
+                struct reference_typelist_from_container_typelist_using_reference_config<viennameta::null_type, reference_config>
+                {
+                    typedef viennameta::null_type type;
+                };
+                
+                template<typename head, typename tail, typename reference_config>
+                struct reference_typelist_from_container_typelist_using_reference_config<viennameta::typelist_t<head, tail>, reference_config>
+                {
+                    typedef viennameta::typelist_t<
+                        typename viennagrid::storage::reference::reference_type_from_config<head, reference_config>::type,
+                        typename reference_typelist_from_container_typelist_using_reference_config<tail, reference_config>::type
+                    > type;
+                };
         }
         
 
         namespace result_of
         {
-            template<typename base_container_type, typename view_container_tag, typename view_reference_tag>
+            template<typename reference_type, typename view_container_tag>
             struct view
             {
-                typedef view_t< typename viennagrid::storage::reference::reference_type<base_container_type, view_reference_tag>::type, view_container_tag> type;
+                typedef view_t<reference_type, view_container_tag> type;
             };
             
-            template<typename element_type, typename view_container_tag, typename view_reference_tag>
-            struct container_from_tag<element_type, view_tag<view_container_tag, view_reference_tag> >
+            template<typename reference_type, typename view_container_tag>
+            struct container_from_tag<reference_type, view_tag<view_container_tag> >
             {
-                typedef typename view<element_type, view_container_tag, view_reference_tag>::type type;
+                typedef typename view<reference_type, view_container_tag>::type type;
             };
         }
 
