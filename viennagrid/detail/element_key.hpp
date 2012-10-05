@@ -56,6 +56,8 @@ namespace viennagrid
 
   
   
+  
+  
   /** @brief A key type that uniquely identifies an element by its vertices */
   //template <typename ConfigType, typename ElementType>
   template <typename element_type, typename id_type>
@@ -107,6 +109,7 @@ namespace viennagrid
       }
 
     private:
+        // TODO: statt std::vector abhängig vom element_type
       std::vector< id_type > vertexIDs;
   };  
 }
