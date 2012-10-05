@@ -114,6 +114,7 @@ namespace viennagrid
   };
   
   
+  // TODO abstract version for references
   /** @brief A key type that uniquely identifies an element by its vertices */
   //template <typename ConfigType, typename ElementType>
   template <typename element_type, typename id_type>
