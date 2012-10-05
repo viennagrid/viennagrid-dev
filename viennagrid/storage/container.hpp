@@ -12,14 +12,12 @@ namespace viennagrid
 {
     namespace storage
     {
-        struct default_tag;
+        struct default_tag {};
         
-        struct std_vector_tag;
-        struct std_deque_tag;
-        struct std_list_tag;
-        struct std_set_tag;
-        
-        
+        struct std_vector_tag {};
+        struct std_deque_tag {};
+        struct std_list_tag {};
+        struct std_set_tag {};
         
         namespace result_of
         {
@@ -54,16 +52,17 @@ namespace viennagrid
         namespace container
         {
             template<typename container_type>
-            typename container_type::iterator insert( container_type & container, const typename container_type::value_type & element  )
+            std::pair<typename container_type::iterator, bool>
+                insert( container_type & container, const typename container_type::value_type & element )
             {
                 container.push_back( element );
-                return --container.end();
+                return std::make_pair(--container.end(), true);
             }
             
             template<typename key, typename compare, typename allocator>
-            typename std::set<key, compare, allocator>::iterator insert( std::set<key, compare, allocator> & container, const key & element )
+            std::pair<typename std::set<key, compare, allocator>::iterator, bool> insert( std::set<key, compare, allocator> & container, const key & element )
             {
-                return container.insert( element ).first;
+                return container.insert( element );
             }
         }
     
