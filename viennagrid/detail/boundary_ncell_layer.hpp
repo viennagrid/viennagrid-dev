@@ -376,7 +376,7 @@ namespace viennagrid
       
       element_container_type & vertices() { return vertices_; }
       const element_container_type & vertices() const { return vertices_; }
-      void vertices(VertexType ** vertices_in, size_t num = VertexSpecs::num)
+      void vertices(VertexType ** vertices_in, size_t num = LevelSpecs::num)
       {
             assert( num <= LevelSpecs::num );
             vertices_.resize(num);
