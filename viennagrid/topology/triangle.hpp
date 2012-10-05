@@ -136,10 +136,10 @@ namespace viennagrid
             for (int i = 0; i < 3; ++i)
                 for (int j = i+1; j < 3; ++j)
                 {
-                    vertices[0] = element.vertices(i);
-                    vertices[1] = element.vertices(j);
+                    vertices[0] = element.vertices()[i];
+                    vertices[1] = element.vertices()[j];
                     bnd_cell.vertices(vertices);
-                    element.set_element( bnd_cell, inserter(bnd_cell), index++ );
+                    element.set_bnd_cell( bnd_cell, inserter(bnd_cell), index++ );
                 }
         }
     };
