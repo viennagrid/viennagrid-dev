@@ -22,7 +22,7 @@
 #include "viennagrid/topology/point.hpp"
 #include "viennagrid/topology/line.hpp"
 #include "viennagrid/detail/element_iterators.hpp"
-// TODO #include "viennagrid/algorithm/norm.hpp"
+#include "viennagrid/algorithm/norm.hpp"
 
 /** @file triangle.hpp
     @brief Provides the topological definition of a triangle
@@ -48,6 +48,7 @@ namespace viennagrid
     {
       typedef point_tag             tag;
 
+      typedef static_layout_tag     layout_tag;
       enum{ num = 3 };     //3 vertices
     };
 
@@ -57,6 +58,7 @@ namespace viennagrid
     {
       typedef simplex_tag<1>              tag;
 
+      typedef static_layout_tag     layout_tag;
       enum{ num = 3 };     //3 edges
 
     };
@@ -71,57 +73,49 @@ namespace viennagrid
     struct bndcell_filler<triangle_tag, 1>
     {
       //fill edges:
-      template <typename ElementType, typename Vertices, typename Orientations, typename Segment>
-      static void fill(ElementType ** elements, Vertices ** vertices, Orientations * orientations, Segment & seg)
+      template <typename ElementContainerType, typename VertexContainerType, typename OrientatationContainerType, typename Segment>
+      static void fill(ElementContainerType & elements, const VertexContainerType & vertices, OrientatationContainerType & orientations, Segment & seg)
       {
-        Vertices * edgevertices[2];
-        ElementType edge;
-
+        typename VertexContainerType::value_type edgevertices[2];
+        typename utils::remove_pointer<typename ElementContainerType::value_type>::type edge;
+        
         edgevertices[0] = vertices[0];
         edgevertices[1] = vertices[1];
         edge.vertices(edgevertices);
-        elements[0] = seg.push_back(edge);//, (orientations == NULL) ? NULL : orientations);
+        elements[0] = seg.push_back(edge, &orientations[0]);
 
         edgevertices[0] = vertices[0];
         edgevertices[1] = vertices[2];
         edge.vertices(edgevertices);
-        elements[1] = seg.push_back(edge);//, (orientations == NULL) ? NULL : orientations + 1 );
-
+        elements[1] = seg.push_back(edge, &orientations[1]);
+ 
         edgevertices[0] = vertices[1];
         edgevertices[1] = vertices[2];
         edge.vertices(edgevertices);
-        elements[2] = seg.push_back(edge);//, (orientations == NULL) ? NULL : orientations + 2 );
+        elements[2] = seg.push_back(edge, &orientations[2]);
       }
       
-      
-      
-      
-      
-      template<typename bnd_element_type, typename inserter_type, typename element_type>
-      static void create_bnd_cells(element_type & triangle, inserter_type & inserter, bnd_element_type)
+      template <typename ElementContainerType, typename VertexContainerType, typename Segment>
+      static void fill(ElementContainerType & elements, const VertexContainerType & vertices, Segment & seg)
       {
-        typedef typename element_type::VertexType VertexType;
+        typename VertexContainerType::value_type edgevertices[2];
+        typename utils::remove_pointer<typename ElementContainerType::value_type>::type edge;
         
-          
-        VertexType * edgevertices[2];
-        bnd_element_type edge;
-
-        edgevertices[0] = triangle.container(dimension_tag<0>())[0];
-        edgevertices[1] = triangle.container(dimension_tag<0>())[1];
-        edge.vertices(edgevertices);
-        triangle.container(dimension_tag<1>())[0] = &* inserter(edge);//, (orientations == NULL) ? NULL : orientations);
-
-        edgevertices[0] = triangle.container(dimension_tag<0>())[0];
-        edgevertices[1] = triangle.container(dimension_tag<0>())[2];
-        edge.vertices(edgevertices);
-        triangle.container(dimension_tag<1>())[1] = &* inserter(edge);//, (orientations == NULL) ? NULL : orientations + 1 );
-
-        edgevertices[0] = triangle.container(dimension_tag<0>())[1];
-        edgevertices[1] = triangle.container(dimension_tag<0>())[2];
-        edge.vertices(edgevertices);
-        triangle.container(dimension_tag<1>())[2] = &* inserter(edge);//, (orientations == NULL) ? NULL : orientations + 2 );
-      }
-      
+         edgevertices[0] = vertices[0];
+         edgevertices[1] = vertices[1];
+         edge.vertices(edgevertices);
+        elements[0] = seg.push_back(edge, NULL);
+ 
+         edgevertices[0] = vertices[0];
+         edgevertices[1] = vertices[2];
+         edge.vertices(edgevertices);
+        elements[1] = seg.push_back(edge, NULL);
+ 
+         edgevertices[0] = vertices[1];
+         edgevertices[1] = vertices[2];
+         edge.vertices(edgevertices);
+        elements[2] = seg.push_back(edge, NULL);
+       }
     };
     
     
@@ -129,33 +123,25 @@ namespace viennagrid
     template<typename bnd_cell_type>
     struct bndcell_generator<triangle_tag, 1, bnd_cell_type>
     {
-        
         template<typename element_type, typename inserter_type>
-        void create_bnd_cells(element_type & triangle, inserter_type & inserter)
+        static void create_bnd_cells(element_type & element, inserter_type & inserter)
         {
             typedef typename element_type::VertexType VertexType;
             typedef typename bnd_cell_type::VertexReferenceType VertexReferenceType;
             
-            VertexReferenceType edgevertices[2];
-            bnd_cell_type edge;
+            VertexReferenceType vertices[2];
+            bnd_cell_type bnd_cell;
             
-            edgevertices[0] = element_type.vertices(0);
-            edgevertices[1] = element_type.vertices(1);
-            edge.vertices(edgevertices);
-            triangle.set_element( inserter(edge), edge, 0 );
-
-            edgevertices[0] = element_type.vertices(0);
-            edgevertices[1] = element_type.vertices(2);
-            edge.vertices(edgevertices);
-            triangle.set_element( inserter(edge), edge, 1 );
-
-            edgevertices[0] = element_type.vertices(1);
-            edgevertices[1] = element_type.vertices(2);
-            edge.vertices(edgevertices);
-            triangle.set_element( inserter(edge), edge, 2 );
-
+            int index = 0;
+            for (int i = 0; i < 3; ++i)
+                for (int j = i+1; j < 3; ++j)
+                {
+                    vertices[0] = element.vertices(i);
+                    vertices[1] = element.vertices(j);
+                    bnd_cell.vertices(vertices);
+                    element.set_element( bnd_cell, inserter(bnd_cell), index++ );
+                }
         }
-        
     };
     
     
@@ -304,121 +290,121 @@ namespace viennagrid
      *        /       \
      *       0 -- 3 -- 1
     */
-//     template <typename CellType, typename DomainTypeOut>
-//     static void apply2(CellType const & cell_in, DomainTypeOut & segment_out)
-//     {
-//       typedef typename CellType::config_type        ConfigTypeIn;
-//       typedef typename viennagrid::result_of::const_ncell_range<CellType, 0>::type            VertexOnCellRange;
-//       typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type         VertexOnCellIterator;            
-//       typedef typename viennagrid::result_of::const_ncell_range<CellType, 1>::type            EdgeOnCellRange;
-//       typedef typename viennagrid::result_of::iterator<EdgeOnCellRange>::type           EdgeOnCellIterator;            
-//       
-//       typedef typename viennagrid::result_of::ncell<ConfigTypeIn, 0>::type             VertexType;
-//       typedef typename viennagrid::result_of::ncell<ConfigTypeIn, 1>::type             EdgeType;
-// 
-//       VertexType * vertices[topology::bndcells<triangle_tag, 0>::num + 2];
-//       
-//       //
-//       // Step 1: Get vertices on the new domain
-//       //
-//       
-//       //grab existing vertices:
-//       VertexOnCellRange vertices_on_cell = viennagrid::ncells<0>(cell_in);
-//       VertexOnCellIterator vocit = vertices_on_cell.begin();
-//       vertices[0] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]); ++vocit;
-//       vertices[1] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]); ++vocit;
-//       vertices[2] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]);
-// 
-//       //Find rotation offset such that first two edges are to be refined
-//       EdgeOnCellRange edges_on_cell = viennagrid::ncells<1>(cell_in);
-//       std::size_t offset = 0;
-//       
-//       EdgeOnCellIterator eocit = edges_on_cell.begin();
-//       EdgeType const & e0 = *eocit; ++eocit;
-//       EdgeType const & e1 = *eocit; ++eocit;
-//       EdgeType const & e2 = *eocit;
-//       
-//       if ( (viennadata::access<refinement_key, bool>(refinement_key())(e0) == true)
-//            && (viennadata::access<refinement_key, bool>(refinement_key())(e1) == true) )
-//       {
-//         vertices[3] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)]);
-//         vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)]);
-//         offset = 2;
-//       }
-//       else if ( (viennadata::access<refinement_key, bool>(refinement_key())(e0) == true)
-//            && (viennadata::access<refinement_key, bool>(refinement_key())(e2) == true) )
-//       {
-//         vertices[3] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)]);
-//         vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
-//         offset = 0;
-//       }
-//       else if ( (viennadata::access<refinement_key, bool>(refinement_key())(e1) == true)
-//            && (viennadata::access<refinement_key, bool>(refinement_key())(e2) == true) )
-//       {
-//         vertices[3] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
-//         vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)]);
-//         offset = 1;
-//       }
-//       else
-//       {
-//         assert( (2 < 2) && "Logic error: Triangle does not have two edges for bisection!");
-//       }
-//       
-//       //
-//       // Step 2: Add new cells to new domain:
-//       //
-//       CellType new_cell;
-//       VertexType * cellvertices[topology::bndcells<triangle_tag, 0>::num];
-//       
-//       //3-1-4:
-//       cellvertices[0] = vertices[3];
-//       cellvertices[1] = vertices[(offset + 1) % topology::bndcells<triangle_tag, 0>::num];
-//       cellvertices[2] = vertices[4];
-//       new_cell.vertices(cellvertices);
-//       segment_out.push_back(new_cell);
-// 
-//       //split second-longest edge
-//       VertexType & v0 = *(vertices[(offset + 0) % topology::bndcells<triangle_tag, 0>::num]);
-//       VertexType & v1 = *(vertices[(offset + 1) % topology::bndcells<triangle_tag, 0>::num]);
-//       VertexType & v2 = *(vertices[(offset + 2) % topology::bndcells<triangle_tag, 0>::num]);
-//       double len_edge1 = viennagrid::norm(v1.point() - v0.point());
-//       double len_edge2 = viennagrid::norm(v2.point() - v1.point());
-//       
-//       if (len_edge1 > len_edge2) //split edge [v0, v1] again
-//       {
-//         //0-3-2:
-//         cellvertices[0] = vertices[(offset + 0) % topology::bndcells<triangle_tag, 0>::num];
-//         cellvertices[1] = vertices[3];
-//         cellvertices[2] = vertices[(offset + 2) % topology::bndcells<triangle_tag, 0>::num];
-//         new_cell.vertices(cellvertices);
-//         segment_out.push_back(new_cell);
-// 
-//         //2-3-4:
-//         cellvertices[0] = vertices[(offset + 2) % topology::bndcells<triangle_tag, 0>::num];
-//         cellvertices[1] = vertices[3];
-//         cellvertices[2] = vertices[4];
-//         new_cell.vertices(cellvertices);
-//         segment_out.push_back(new_cell);
-//       }
-//       else //split edge [v1, v2]
-//       {
-//         //0-3-4:
-//         cellvertices[0] = vertices[(offset + 0) % topology::bndcells<triangle_tag, 0>::num];
-//         cellvertices[1] = vertices[3];
-//         cellvertices[2] = vertices[4];
-//         new_cell.vertices(cellvertices);
-//         segment_out.push_back(new_cell);
-// 
-//         //0-4-2:
-//         cellvertices[0] = vertices[(offset + 0) % topology::bndcells<triangle_tag, 0>::num];
-//         cellvertices[1] = vertices[4];
-//         cellvertices[2] = vertices[(offset + 2) % topology::bndcells<triangle_tag, 0>::num];
-//         new_cell.vertices(cellvertices);
-//         segment_out.push_back(new_cell);
-//       }
-//       
-//       
-//     } //apply2()
+    template <typename CellType, typename DomainTypeOut>
+    static void apply2(CellType const & cell_in, DomainTypeOut & segment_out)
+    {
+      typedef typename CellType::config_type        ConfigTypeIn;
+      typedef typename viennagrid::result_of::const_ncell_range<CellType, 0>::type            VertexOnCellRange;
+      typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type         VertexOnCellIterator;            
+      typedef typename viennagrid::result_of::const_ncell_range<CellType, 1>::type            EdgeOnCellRange;
+      typedef typename viennagrid::result_of::iterator<EdgeOnCellRange>::type           EdgeOnCellIterator;            
+      
+      typedef typename viennagrid::result_of::ncell<ConfigTypeIn, 0>::type             VertexType;
+      typedef typename viennagrid::result_of::ncell<ConfigTypeIn, 1>::type             EdgeType;
+
+      VertexType * vertices[topology::bndcells<triangle_tag, 0>::num + 2];
+      
+      //
+      // Step 1: Get vertices on the new domain
+      //
+      
+      //grab existing vertices:
+      VertexOnCellRange vertices_on_cell = viennagrid::ncells<0>(cell_in);
+      VertexOnCellIterator vocit = vertices_on_cell.begin();
+      vertices[0] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]); ++vocit;
+      vertices[1] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]); ++vocit;
+      vertices[2] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]);
+
+      //Find rotation offset such that first two edges are to be refined
+      EdgeOnCellRange edges_on_cell = viennagrid::ncells<1>(cell_in);
+      std::size_t offset = 0;
+      
+      EdgeOnCellIterator eocit = edges_on_cell.begin();
+      EdgeType const & e0 = *eocit; ++eocit;
+      EdgeType const & e1 = *eocit; ++eocit;
+      EdgeType const & e2 = *eocit;
+      
+      if ( (viennadata::access<refinement_key, bool>(refinement_key())(e0) == true)
+           && (viennadata::access<refinement_key, bool>(refinement_key())(e1) == true) )
+      {
+        vertices[3] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)]);
+        vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)]);
+        offset = 2;
+      }
+      else if ( (viennadata::access<refinement_key, bool>(refinement_key())(e0) == true)
+           && (viennadata::access<refinement_key, bool>(refinement_key())(e2) == true) )
+      {
+        vertices[3] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)]);
+        vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
+        offset = 0;
+      }
+      else if ( (viennadata::access<refinement_key, bool>(refinement_key())(e1) == true)
+           && (viennadata::access<refinement_key, bool>(refinement_key())(e2) == true) )
+      {
+        vertices[3] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
+        vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)]);
+        offset = 1;
+      }
+      else
+      {
+        assert( (2 < 2) && "Logic error: Triangle does not have two edges for bisection!");
+      }
+      
+      //
+      // Step 2: Add new cells to new domain:
+      //
+      CellType new_cell;
+      VertexType * cellvertices[topology::bndcells<triangle_tag, 0>::num];
+      
+      //3-1-4:
+      cellvertices[0] = vertices[3];
+      cellvertices[1] = vertices[(offset + 1) % topology::bndcells<triangle_tag, 0>::num];
+      cellvertices[2] = vertices[4];
+      new_cell.vertices(cellvertices);
+      segment_out.push_back(new_cell);
+
+      //split second-longest edge
+      VertexType & v0 = *(vertices[(offset + 0) % topology::bndcells<triangle_tag, 0>::num]);
+      VertexType & v1 = *(vertices[(offset + 1) % topology::bndcells<triangle_tag, 0>::num]);
+      VertexType & v2 = *(vertices[(offset + 2) % topology::bndcells<triangle_tag, 0>::num]);
+      double len_edge1 = viennagrid::norm(v1.point() - v0.point());
+      double len_edge2 = viennagrid::norm(v2.point() - v1.point());
+      
+      if (len_edge1 > len_edge2) //split edge [v0, v1] again
+      {
+        //0-3-2:
+        cellvertices[0] = vertices[(offset + 0) % topology::bndcells<triangle_tag, 0>::num];
+        cellvertices[1] = vertices[3];
+        cellvertices[2] = vertices[(offset + 2) % topology::bndcells<triangle_tag, 0>::num];
+        new_cell.vertices(cellvertices);
+        segment_out.push_back(new_cell);
+
+        //2-3-4:
+        cellvertices[0] = vertices[(offset + 2) % topology::bndcells<triangle_tag, 0>::num];
+        cellvertices[1] = vertices[3];
+        cellvertices[2] = vertices[4];
+        new_cell.vertices(cellvertices);
+        segment_out.push_back(new_cell);
+      }
+      else //split edge [v1, v2]
+      {
+        //0-3-4:
+        cellvertices[0] = vertices[(offset + 0) % topology::bndcells<triangle_tag, 0>::num];
+        cellvertices[1] = vertices[3];
+        cellvertices[2] = vertices[4];
+        new_cell.vertices(cellvertices);
+        segment_out.push_back(new_cell);
+
+        //0-4-2:
+        cellvertices[0] = vertices[(offset + 0) % topology::bndcells<triangle_tag, 0>::num];
+        cellvertices[1] = vertices[4];
+        cellvertices[2] = vertices[(offset + 2) % topology::bndcells<triangle_tag, 0>::num];
+        new_cell.vertices(cellvertices);
+        segment_out.push_back(new_cell);
+      }
+      
+      
+    } //apply2()
     
 
 
