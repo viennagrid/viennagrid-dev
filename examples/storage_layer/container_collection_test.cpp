@@ -10,6 +10,7 @@ using std::endl;
 #include "viennagrid/storage/view.hpp"
 #include "viennagrid/storage/container_collection.hpp"
 #include "viennagrid/storage/inserter.hpp"
+#include "viennagrid/storage/id_generator.hpp"
 
 #include "viennagrid/storage/io.hpp"
 
@@ -66,14 +67,24 @@ int main()
 {
     typedef VIENNAMETA_MAKE_TYPELIST_4(char, int, float, double) config;
     typedef VIENNAMETA_MAKE_TYPEMAP_2( viennagrid::storage::default_tag, viennagrid::storage::std_deque_tag,
-                                       int, viennagrid::storage::std_deque_tag ) container_config;
+                                       int, viennagrid::storage::std_list_tag ) container_config;
         
     typedef viennagrid::storage::result_of::container_collection<config, container_config>::type collection_type;
     collection_type collection;
-                                       
+
     
-    typedef viennagrid::storage::result_of::recursive_inserter<collection_type>::type inserter_type;
-    inserter_type inserter(collection);
+    typedef viennagrid::storage::result_of::continuous_id_generator_layer<config>::type id_generator_type;
+    id_generator_type id_generator;
+    
+    
+    typedef viennagrid::storage::result_of::physical_inserter<
+        collection_type,
+        viennagrid::storage::inserter::pointer_reference_config, 
+        id_generator_type
+    >::type inserter_type;
+    
+    
+    inserter_type inserter(collection, id_generator);
     
     inserter( 'c' );
     inserter( 10 );

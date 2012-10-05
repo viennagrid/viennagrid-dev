@@ -10,13 +10,26 @@ using std::endl;
 #include "viennagrid/storage/view.hpp"
 #include "viennagrid/storage/container_collection.hpp"
 #include "viennagrid/storage/inserter.hpp"
+#include "viennagrid/storage/id_generator.hpp"
 
 #include "viennagrid/storage/io.hpp"
 
+template<typename _id_type>
+struct id_element
+{
+public:
+    typedef _id_type id_type;
+    
+    void id(id_type _id) { id_ = _id; }
+    id_type id() const { return id_; }
+
+private:
+    id_type id_;
+};
 
 
 template<typename _numeric_type>
-struct vertex
+struct vertex : public id_element<int>
 {
     typedef _numeric_type numeric_type;
     typedef VIENNAMETA_MAKE_TYPELIST_1( vertex<numeric_type> ) required_types;    
@@ -24,9 +37,9 @@ struct vertex
     enum { dim = 2 };
     
     vertex(numeric_type _x, numeric_type _y) : x(_x), y(_y) {}
-    
+        
     template<typename inserter_type>
-    void insert_callback( inserter_type & inserter )
+    void insert_callback( inserter_type & inserter, bool inserted )
     {}
     
     numeric_type x;
@@ -42,13 +55,13 @@ std::ostream & operator<<(std::ostream & os, const vertex<numeric_type> & v)
 
 
 template<typename _vertex_type>
-struct line
+struct line : public id_element<int>
 {
     typedef _vertex_type vertex_type;
     typedef typename viennameta::typelist::result_of::push_back<typename vertex_type::required_types, line<vertex_type> >::type required_types;
     
     template<typename inserter_type>
-    void insert_callback( inserter_type & inserter )
+    void insert_callback( inserter_type & inserter, bool inserted )
     {}
     
     vertex_type * vertices[2];
@@ -62,7 +75,7 @@ std::ostream & operator<<(std::ostream & os, const line<vertex_type> & l)
 }
 
 template<typename _vertex_type>
-struct triangle
+struct triangle : public id_element<int>
 {
     typedef _vertex_type vertex_type;
     typedef line<vertex_type> line_type;
@@ -70,21 +83,21 @@ struct triangle
     typedef typename viennameta::typelist::result_of::push_back<typename line_type::required_types, triangle<vertex_type> >::type required_types;
     
     template<typename inserter_type>
-    void insert_callback( inserter_type & inserter )
+    void insert_callback( inserter_type & inserter, bool inserted )
     {
         line_type l;
         
         l.vertices[0] = vertices[0];
         l.vertices[1] = vertices[1];
-        lines[0] = &* inserter(l);
+        lines[0] = &* inserter(l).first;
         
         l.vertices[0] = vertices[1];
         l.vertices[1] = vertices[2];
-        lines[1] = &* inserter(l);
+        lines[1] = &* inserter(l).first;
 
         l.vertices[0] = vertices[2];
         l.vertices[1] = vertices[0];
-        lines[2] = &* inserter(l);
+        lines[2] = &* inserter(l).first;
     }
     
     line_type * lines[3];
@@ -121,16 +134,23 @@ int main()
     collection_type collection;
     
     
+    typedef viennagrid::storage::result_of::continuous_id_generator_layer< triangle<vertex_type>::required_types >::type id_generator_type;
+    id_generator_type id_generator;
     
-    typedef viennagrid::storage::result_of::recursive_inserter<collection_type>::type inserter_type;
-    inserter_type inserter(collection);
+    
+    typedef viennagrid::storage::result_of::physical_inserter<
+        collection_type,
+        viennagrid::storage::inserter::pointer_reference_config, 
+        id_generator_type
+    >::type inserter_type;
+    inserter_type inserter(collection, id_generator);
     
     
     triangle_type t;
     
-    t.vertices[0] = &* inserter( vertex_type(0.0, 0.0) );
-    t.vertices[1] = &* inserter( vertex_type(1.0, 0.0) );
-    t.vertices[2] = &* inserter( vertex_type(0.0, 1.0) );
+    t.vertices[0] = &* inserter( vertex_type(0.0, 0.0) ).first;
+    t.vertices[1] = &* inserter( vertex_type(1.0, 0.0) ).first;
+    t.vertices[2] = &* inserter( vertex_type(0.0, 1.0) ).first;
     
     inserter( t );
     
@@ -154,9 +174,9 @@ int main()
     typedef viennagrid::storage::result_of::recursive_inserter<view_collection_type, inserter_type>::type view_inserter_type;
     view_inserter_type view_inserter(view_collection, inserter);
     
-    t.vertices[0] = &* view_inserter( vertex_type(5.0, 0.0) );
-    t.vertices[1] = &* view_inserter( vertex_type(7.0, 5.0) );
-    t.vertices[2] = &* view_inserter( vertex_type(0.0, 7.0) );
+    t.vertices[0] = &* view_inserter( vertex_type(5.0, 0.0) ).first;
+    t.vertices[1] = &* view_inserter( vertex_type(7.0, 5.0) ).first;
+    t.vertices[2] = &* view_inserter( vertex_type(0.0, 7.0) ).first;
     
     view_inserter( t );
     

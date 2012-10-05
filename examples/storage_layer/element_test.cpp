@@ -20,7 +20,11 @@ using std::endl;
 #include "viennagrid/storage/collection.hpp"
 #include "viennagrid/storage/container_collection.hpp"
 #include "viennagrid/storage/inserter.hpp"
+#include "viennagrid/storage/id_generator.hpp"
 
+
+
+#include "viennagrid/detail/element_key.hpp"
 
 
 
@@ -31,7 +35,7 @@ template<typename container_collection_type, typename inserter_type>
 struct domain_type
 {
     
-    domain_type() : container_collection(), inserter(container_collection) {}
+    domain_type() : container_collection(), inserter(container_collection, id_gernerator) {}
     
     
     template<typename element_type>
@@ -41,6 +45,7 @@ struct domain_type
     }
     
     
+    typename inserter_type::id_generator_type id_gernerator;
     container_collection_type container_collection;
     inserter_type inserter;
 };
@@ -53,28 +58,50 @@ struct domain_type
 
 int main()
 {
-    //typedef viennagrid::config::tetrahedral_3d element_config;
-    typedef viennagrid::config::triangular_3d element_config;
+    typedef viennagrid::config::tetrahedral_3d element_config;
+    //typedef viennagrid::config::triangular_3d element_config;
     typedef viennagrid::result_of::point< element_config >::type point_type;
-    //typedef viennagrid::result_of::ncell< element_config, 3 >::type tetrahedron_type;
+    typedef viennagrid::result_of::ncell< element_config, 3 >::type tetrahedron_type;
     typedef viennagrid::result_of::ncell< element_config, 2 >::type triangle_type;
     typedef viennagrid::result_of::ncell< element_config, 1 >::type line_type;
     typedef viennagrid::result_of::ncell< element_config, 0 >::type vertex_type;
+    
+    
+    
+    
+    typedef VIENNAMETA_MAKE_TYPEMAP_4(  vertex_type, viennagrid::storage::std_deque_tag,
+                                        tetrahedron_type, viennagrid::storage::std_deque_tag,
+                                        
+                                        //triangle_type, viennagrid::storage::std_deque_tag,
+                                        triangle_type, viennagrid::storage::hidden_key_map_tag< viennagrid::storage::element_key_tag<int> >,
+                                        
+                                        //line_type, viennagrid::storage::std_deque_tag
+                                        line_type, viennagrid::storage::hidden_key_map_tag< viennagrid::storage::element_key_tag<int> >
+    ) container_config;
 
     
     typedef viennagrid::storage::result_of::container_collection<
-        //tetrahedron_type::required_types,
-        triangle_type::required_types,
-        viennagrid::storage::container_collection::default_container_config
+        tetrahedron_type::required_types,
+        //triangle_type::required_types,
+        //viennagrid::storage::container_collection::default_container_config
+        container_config
     >::type domain_container_collection_type;
     
-    typedef viennagrid::storage::result_of::recursive_inserter< domain_container_collection_type >::type domain_inserter_type;
+    
+    
+    typedef viennagrid::storage::result_of::continuous_id_generator_layer< tetrahedron_type::required_types >::type id_generator_type;
+    //id_generator_type id_generator;
+    
+    typedef viennagrid::storage::result_of::physical_inserter<
+        domain_container_collection_type,
+        viennagrid::storage::inserter::pointer_reference_config, 
+        id_generator_type
+    >::type domain_inserter_type;
     
     domain_type<domain_container_collection_type, domain_inserter_type> domain;
-    
-    
-    //domain_type domain;
 
+    
+    
     
     vertex_type vertex;
     
@@ -90,19 +117,33 @@ int main()
     vertex.point() = point_type(0.0f, 10.0f, 10.0f);
     domain.push_back( vertex );
 
+    vertex.point() = point_type(0.0f, 10.0f, -10.0f);
+    domain.push_back( vertex );
     
     
-    
+    tetrahedron_type tetrahedron;
     vertex_type * vertices[4];
+    
+    
     vertices[0] = &viennagrid::storage::container_collection::get<vertex_type>( domain.container_collection )[0];
     vertices[1] = &viennagrid::storage::container_collection::get<vertex_type>( domain.container_collection )[1];
     vertices[2] = &viennagrid::storage::container_collection::get<vertex_type>( domain.container_collection )[2];
-    //vertices[3] = &viennagrid::storage::container_collection::get<vertex_type>( domain.container_collection )[3];
+    vertices[3] = &viennagrid::storage::container_collection::get<vertex_type>( domain.container_collection )[3];
     
-    tetrahedron_type tetrahedron;
-    tetrahedron.vertices(vertices);
-    
+    tetrahedron.vertices(vertices);    
     domain.push_back( tetrahedron );
+
+    
+    vertices[0] = &viennagrid::storage::container_collection::get<vertex_type>( domain.container_collection )[0];
+    vertices[1] = &viennagrid::storage::container_collection::get<vertex_type>( domain.container_collection )[1];
+    vertices[2] = &viennagrid::storage::container_collection::get<vertex_type>( domain.container_collection )[2];
+    vertices[3] = &viennagrid::storage::container_collection::get<vertex_type>( domain.container_collection )[4];
+    
+    tetrahedron.vertices(vertices);    
+    domain.push_back( tetrahedron );
+
+    
+    
     
     cout << "Vertices:" << endl;
     std::copy( viennagrid::storage::container_collection::get<vertex_type>(domain.container_collection).begin(), viennagrid::storage::container_collection::get<vertex_type>(domain.container_collection).end(), std::ostream_iterator<vertex_type>(cout, "\n") );
@@ -116,9 +157,9 @@ int main()
     std::copy( viennagrid::storage::container_collection::get<triangle_type>(domain.container_collection).begin(), viennagrid::storage::container_collection::get<triangle_type>(domain.container_collection).end(), std::ostream_iterator<triangle_type>(cout, "\n") );
     cout << "\n\n";
     
-//     cout << "Tetrahedrons:" << endl;
-//     std::copy( viennagrid::storage::container_collection::get<tetrahedron_type>(domain.container_collection).begin(), viennagrid::storage::container_collection::get<triangle_type>(domain.container_collection).end(), std::ostream_iterator<triangle_type>(cout, "\n") );
-//     cout << "\n\n";
+    cout << "Tetrahedrons:" << endl;
+    std::copy( viennagrid::storage::container_collection::get<tetrahedron_type>(domain.container_collection).begin(), viennagrid::storage::container_collection::get<tetrahedron_type>(domain.container_collection).end(), std::ostream_iterator<tetrahedron_type>(cout, "\n") );
+    cout << "\n\n";
     
     return 0;
 }
