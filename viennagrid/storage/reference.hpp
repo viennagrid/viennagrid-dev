@@ -86,6 +86,10 @@ namespace viennagrid
             template<typename iterator_type>
             iterator_type iterator_to_reference(iterator_type it, iterator_reference_tag)
             { return it; }
+            
+            template<typename iterator_type>
+            typename iterator_type::value_type::id_type iterator_to_reference(iterator_type it, id_reference_tag)
+            { return it->id(); }
 
         }
     }
