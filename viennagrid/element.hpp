@@ -74,28 +74,17 @@ namespace viennagrid
         this->id(e2.id());
       };
 
-      /** @brief Callback function used for filling the domain */
-      template <typename DomainType>
-      void fill(DomainType & dom)
-      {
-        Base::fill_level(dom);
-      }
-
       /** @brief Set the vertices defining the n-cell */
-      void vertices(VertexType **vertices_, std::size_t num = VertexSpecs::num)
-      {
-        for(int i=0; i<VertexSpecs::num; i++)
-        {
-          Base::vertices_[i] = vertices_[i];
-          //std::cout << i << " ";
-        }
-        //std::cout << std::endl;
-      }
+//       void vertices(VertexType **vertices_, std::size_t num = VertexSpecs::num)
+//       {
+//         Base::set_vertices(vertices_, num);
+//       }
       
+      /** @brief Callback function used for filling the domain */
     template<typename inserter_type>
-    void insert_callback( inserter_type & inserter )
+    void insert_callback( inserter_type & inserter, bool inserted )
     {
-        Base::create_bnd_cells(inserter);
+        if (inserted) Base::create_bnd_cells(inserter);
     }
 
   };
@@ -152,13 +141,10 @@ namespace viennagrid
 
       //clean up any data associated with the element if it is destroyed:
       ~element_t() { viennadata::erase<viennadata::all, viennadata::all>()(*this); }
-      
-      template <typename DomainType>
-      void fill(DomainType & dom) {}
-      
-    template<typename inserter_type>
-    void insert_callback( inserter_type & inserter )
-    {}
+           
+        template<typename inserter_type>
+        void insert_callback( inserter_type & inserter, bool inserted )
+        {}
 
       element_t & operator=(const element_t & other)
       {
