@@ -1,7 +1,10 @@
 #ifndef VIENNAGRID_STORAGE_VIEW_HPP
 #define VIENNAGRID_STORAGE_VIEW_HPP
 
-#include "container.hpp"
+#include <iterator>
+
+#include "viennagrid/storage/container.hpp"
+#include "viennagrid/storage/reference.hpp"
 #include "viennagrid/meta/typemap.hpp"
 #include "viennagrid/meta/typemap_macros.hpp"
 
@@ -11,50 +14,20 @@ namespace viennagrid
     namespace storage
     {
         
-        struct pointer_reference_tag;
-        struct iterator_reference_tag;
-        struct id_tag;
-        
-        
-        
-        
-        namespace view
-        {
-            template<typename base_container_type, typename view_container_tag, typename view_reference_tag>
-            struct view_container
-            {};
-            
-            template<typename base_container_type, typename view_container_tag>
-            struct view_container<base_container_type, view_container_tag, pointer_reference_tag>
-            {
-                typedef typename viennagrid::storage::result_of::container_from_tag<typename base_container_type::pointer, view_container_tag>::type type;
-            };
-            
-            template<typename base_container_type, typename view_container_tag>
-            struct view_container<base_container_type, view_container_tag, iterator_reference_tag>
-            {
-                typedef typename viennagrid::storage::result_of::container_from_tag<typename base_container_type::iterator, view_container_tag>::type type;
-            };
-        }
-        
-        
-        
-        
-        template<typename base_container_type, typename view_container_tag = std_deque_tag, typename view_reference_tag = pointer_reference_tag>
+        template<typename reference_type, typename view_container_tag = std_deque_tag>
         class view_t
         {
-            typedef typename view::view_container<base_container_type, view_container_tag, view_reference_tag>::type view_container_type;
+            typedef typename viennagrid::storage::result_of::container_from_tag<reference_type, view_container_tag>::type view_container_type;
             
         public:
             
-            typedef typename base_container_type::size_type size_type;
-            typedef typename base_container_type::value_type value_type;
-            typedef typename base_container_type::reference reference;
-            typedef typename base_container_type::const_reference const_reference;
-            typedef typename base_container_type::pointer pointer;
-            typedef typename base_container_type::const_pointer const_pointer;
-            
-            
+            typedef typename view_container_type::size_type size_type;
+            typedef typename viennagrid::storage::reference::value_type_from_reference_type<reference_type>::type value_type;
+            typedef value_type & reference;
+            typedef const value_type & const_reference;
+            typedef value_type * pointer;
+            typedef const value_type * const_pointer;
+
             
             
             class iterator : public view_container_type::iterator
@@ -63,8 +36,14 @@ namespace viennagrid
             public:
                 iterator(const base & foo) : base(foo) {}
                 
-                value_type & operator* () { return *(base::operator*()); }
-                const value_type & operator* () const { return *(base::operator*()); }
+                typedef view_t::value_type value_type;
+                typedef view_t::reference reference;
+                typedef view_t::const_reference const_reference;
+                typedef view_t::pointer pointer;
+                typedef view_t::const_pointer const_pointer;
+                
+                reference operator* () { return *(base::operator*()); }
+                const_reference operator* () const { return *(base::operator*()); }
             };
             
             
@@ -74,7 +53,13 @@ namespace viennagrid
             public:
                 const_iterator(const base & foo) : base(foo) {}
                 
-                const value_type & operator* () const { return *(base::operator*()); }
+                typedef view_t::value_type value_type;
+                typedef view_t::const_reference reference;
+                typedef view_t::const_reference const_reference;
+                typedef view_t::const_pointer pointer;
+                typedef view_t::const_pointer const_pointer;
+                
+                const_reference operator* () const { return *(base::operator*()); }
             };
             
             
@@ -84,8 +69,14 @@ namespace viennagrid
             public:
                 reverse_iterator(const base & foo) : base(foo) {}
                 
-                value_type & operator* () { return *(base::operator*()); }
-                const value_type & operator* () const { return *(base::operator*()); }
+                typedef view_t::value_type value_type;
+                typedef view_t::reference reference;
+                typedef view_t::const_reference const_reference;
+                typedef view_t::pointer pointer;
+                typedef view_t::const_pointer const_pointer;
+                
+                reference & operator* () { return *(base::operator*()); }
+                const_reference operator* () const { return *(base::operator*()); }
             };
             
             
@@ -95,7 +86,13 @@ namespace viennagrid
             public:
                 const_reverse_iterator(const base & foo) : base(foo) {}
                 
-                const value_type & operator* () const { return *(base::operator*()); }
+                typedef view_t::value_type value_type;
+                typedef view_t::const_reference reference;
+                typedef view_t::const_reference const_reference;
+                typedef view_t::const_pointer pointer;
+                typedef view_t::const_pointer const_pointer;
+                
+                const_reference operator* () const { return *(base::operator*()); }
             };
             
             
@@ -115,12 +112,15 @@ namespace viennagrid
             reference back() { return *(container.back()); }
             const_reference back() const { return *(container.back()); }
             
+            reference operator[]( size_type index ) { return container[index]; }
+            const_reference operator[]( size_type index ) const { return container[index]; }
+            
             
             
             size_type size() const { return container.size(); }
             
             
-            iterator insert(value_type & element)
+            std::pair<iterator, bool> insert(value_type & element)
             {
                 return viennagrid::storage::container::insert(container, &element);
             }
@@ -133,10 +133,10 @@ namespace viennagrid
         
         namespace container
         {
-            template<typename base_container_type, typename view_container_tag, typename view_reference_tag, typename value_type>
-            typename viennagrid::storage::view_t<base_container_type, view_container_tag, view_reference_tag>::iterator insert(
-                    viennagrid::storage::view_t<base_container_type, view_container_tag, view_reference_tag> & container,
-                    value_type & element)
+            template<typename reference_type, typename view_container_tag>
+            std::pair<typename viennagrid::storage::view_t<reference_type, view_container_tag>::iterator, bool> insert(
+                    viennagrid::storage::view_t<reference_type, view_container_tag> & container,
+                    typename viennagrid::storage::reference::value_type_from_reference_type<reference_type>::type & element)
             {
                 return container.insert( element );
             }
@@ -167,16 +167,16 @@ namespace viennagrid
 
         namespace result_of
         {
-            template<typename base_container_type, typename view_container_tag>
+            template<typename base_container_type, typename view_container_tag, typename view_reference_tag>
             struct view
             {
-                typedef view_t<base_container_type, view_container_tag> type;
+                typedef view_t< typename viennagrid::storage::reference::reference_type<base_container_type, view_reference_tag>::type, view_container_tag> type;
             };
             
-            template<typename element_type, typename view_container_tag>
-            struct container_from_tag<element_type, view_tag<view_container_tag> >
+            template<typename element_type, typename view_container_tag, typename view_reference_tag>
+            struct container_from_tag<element_type, view_tag<view_container_tag, view_reference_tag> >
             {
-                typedef typename view<element_type, view_container_tag>::type type;
+                typedef typename view<element_type, view_container_tag, view_reference_tag>::type type;
             };
         }
 
