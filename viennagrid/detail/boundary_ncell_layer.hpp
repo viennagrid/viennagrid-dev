@@ -29,6 +29,7 @@
 #include <vector>
 
 #include "viennagrid/meta/typelist.hpp"
+#include "viennagrid/storage/reference.hpp"
 
 /** @file boundary_ncell_layer.hpp
     @brief Provides the topological layers for n-cells
@@ -74,33 +75,23 @@ namespace viennagrid
 
     typedef element_t<ConfigType, typename LevelSpecs::tag>  LevelElementType;
     typedef element_orientation<VertexOnElementSpecs::num>     ElementOrientationType;
-    typedef typename result_of::element_container<element_t<ConfigType, ElementTag>, dim, ElementTag::dim>::type      container_type;
     
+     typedef typename topology::bndcells<ElementTag, dim>::layout_tag layout_tag;
+     static const long array_size = topology::bndcells<ElementTag, dim>::num;
+     typedef typename result_of::ncell<ConfigType, dim>::type            element_type;
+     
+     typedef typename result_of::container<element_type *, layout_tag, array_size>::type      element_container_type;
+     typedef typename result_of::container<ElementOrientationType, layout_tag, array_size>::type      orientation_container_type;
+     
     
     
 
     protected:
-      template <typename DomainType>
-      void fill_level(DomainType & dom)
-      {
-        //fill lower level first:
-        Base::fill_level(dom);
-
-        //for (long i=0; i<LevelSpecs::num; ++i)
-        //  orientations_[i].resize(VertexOnElementSpecs::num);
-
-        topology::bndcell_filler<ElementTag, dim>::fill(&(elements_[0]),
-                                                           &(Base::vertices_[0]),
-                                                           &(orientations_[0]),
-                                                           dom);
-      }
-      
       
       template<typename inserter_type>
       void create_bnd_cells(inserter_type & inserter)
       {
           Base::create_bnd_cells(inserter);
-          //topology::bndcell_filler<ElementTag, dim>::template create_bnd_cells(*this, inserter, typename viennagrid::result_of::ncell<ConfigType, dim>::type() );
           topology::bndcell_generator<ElementTag, dim, typename viennagrid::result_of::ncell<ConfigType, dim>::type>::create_bnd_cells(*this, inserter );
       }
 
@@ -114,41 +105,71 @@ namespace viennagrid
 
       boundary_ncell_layer( ) 
       {
-        for (long i=0; i < LevelSpecs::num; ++i)
-          elements_[i] = NULL;
+          std::fill( elements_.begin(), elements_.end(), static_cast<element_type *>(NULL) );
       };
 
-      boundary_ncell_layer( const boundary_ncell_layer & llh) : Base (llh)
-      {
-        //for (long i=0; i < LevelSpecs::num; ++i)
-        //  elements_[i] = llh.elements_[i];
-        std::copy(llh.elements_,     llh.elements_ + LevelSpecs::num,     elements_);
-        std::copy(llh.orientations_, llh.orientations_ + LevelSpecs::num, orientations_);
-      }
+      boundary_ncell_layer( const boundary_ncell_layer & llh) : Base (llh), elements_(llh.elements_), orientations_(llh.orientations_) {}
 
       /////////////////// access container: ////////////////////
 
       using Base::container;
 
       //non-const:
-      container_type *
+      element_container_type *
       container(dimension_tag<dim>)
       { 
-        return &(elements_[0]);
+        return &elements_;
       }
       
-      //const:
-      
-      const container_type *
+      //const:     
+      const element_container_type *
       container(dimension_tag<dim>) const
       { 
-        return &(elements_[0]);
+        return &elements_;
       }
       
-      using Base::set_element;
-      void set_element(const container_type & to_insert, container_type & inserted, unsigned int pos)
+      using Base::set_bnd_cell;
+      template<typename inserted_iterator_type>
+      void set_bnd_cell(const element_type & to_insert, std::pair<inserted_iterator_type, bool> inserted, unsigned int pos)
       {
-         elements_[pos] = inserted;
+          elements_[pos] = inserted.first;
+          
+          if (inserted.second)
+              orientations_[pos].setDefaultOrientation();
+          else
+          {
+          typedef typename result_of::const_ncell_range<element_type, 0>::type      VertexOnElementConstRange;
+          typedef typename result_of::iterator<VertexOnElementConstRange>::type         VertexOnElementConstIterator;
+
+          typedef typename result_of::ncell_range<element_type, 0>::type      VertexOnElementRange;
+          typedef typename result_of::iterator<VertexOnElementRange>::type         VertexOnElementIterator;
+              
+   
+            long i=0; dim_type j=0;
+            
+            
+            //set orientation:
+            VertexOnElementRange vertices_on_element = ncells<0>( *elements_[pos] );
+            for (VertexOnElementIterator voeit = vertices_on_element.begin();
+                    voeit != vertices_on_element.end();
+                    ++voeit, ++i)
+            {
+                
+                VertexOnElementConstRange vertices_on_element_2 = ncells<0>( to_insert );
+                for (VertexOnElementConstIterator voeit2 = vertices_on_element_2.begin();
+                        voeit2 != vertices_on_element_2.end();
+                        ++voeit2, ++j)
+                {
+                    if (voeit->id() == voeit2->id())
+                    {
+                        orientations_[pos].setPermutation(i,j);
+                        break;
+                    }
+                }
+                j=0;
+            }
+              
+          }
       }
 
       ////////////////// orientation: ////////////////////
@@ -164,8 +185,8 @@ namespace viennagrid
       }
 
     private: 
-      container_type elements_[LevelSpecs::num];
-      ElementOrientationType orientations_[LevelSpecs::num];
+      element_container_type elements_;
+      orientation_container_type orientations_;
   };
 
   
@@ -187,35 +208,26 @@ namespace viennagrid
 
     typedef element_t<ConfigType, typename LevelSpecs::tag>  LevelElementType;
     typedef element_orientation<VertexOnElementSpecs::num>     ElementOrientationType;
-    typedef typename result_of::element_container<element_t<ConfigType, ElementTag>, dim, ElementTag::dim>::type      container_type;
+    //typedef typename result_of::element_container<element_t<ConfigType, ElementTag>, dim, ElementTag::dim>::type      container_type;
     
+     typedef typename topology::bndcells<ElementTag, dim>::layout_tag layout_tag;
+     static const long array_size = topology::bndcells<ElementTag, dim>::num;
+     typedef typename result_of::ncell<ConfigType, dim>::type            element_type;
+     
+     typedef typename result_of::container<element_type *, layout_tag, array_size>::type      element_container_type;
+     
     
 
     protected:
-      template <typename DomainType>
-      void fill_level(DomainType & dom)
-      {
-        typedef ElementOrientationType *    OrientationPointer;
-        //fill lower level first:
-        Base::fill_level(dom);
-
-        topology::bndcell_filler<ElementTag, dim>::fill(&(elements_[0]),
-                                                           &(Base::vertices_[0]),
-                                                           OrientationPointer(NULL),
-                                                           dom);
-      }
-      
+        
       template<typename inserter_type>
       void create_bnd_cells(inserter_type & inserter)
       {
           Base::create_bnd_cells(inserter);
-          //topology::bndcell_filler<ElementTag, dim>::template create_bnd_cells(*this, inserter, typename viennagrid::result_of::ncell<ConfigType, dim>::type());
           topology::bndcell_generator<ElementTag, dim, typename viennagrid::result_of::ncell<ConfigType, dim>::type>::create_bnd_cells(*this, inserter );
       }
 
     public:
-        
-        //typedef Loki::Typelist< typename result_of::ncell<ConfigType, dim>::type, typename Base::required_elements > required_elements;
         
         typedef typename result_of::ncell<ConfigType, 0>::type      VertexType;
         typedef VertexType * VertexReferenceType;
@@ -223,42 +235,38 @@ namespace viennagrid
 
       boundary_ncell_layer( ) 
       {
-        for (long i=0; i < LevelSpecs::num; ++i)
-          elements_[i] = NULL;
+          std::fill( elements_.begin(), elements_.end(), static_cast<element_type *>(NULL) );
       };
 
-      boundary_ncell_layer( const boundary_ncell_layer & llh) : Base (llh)
-      {
-        for (long i=0; i < LevelSpecs::num; ++i)
-          elements_[i] = llh.elements_[i];
-      }
+      boundary_ncell_layer( const boundary_ncell_layer & llh) : Base (llh), elements_(llh.elements) {}
 
       /////////////////// access container: ////////////////////
 
       using Base::container;
 
       //non-const:
-      container_type *
+      element_container_type *
       container(dimension_tag<dim>)
       { 
-        return &(elements_[0]);
+        return &elements_;
       }
       
       //const:
-      const container_type *
+      const element_container_type *
       container(dimension_tag<dim>) const
       { 
-        return &(elements_[0]);
+        return &elements_;
       }
       
-      using Base::set_element;
-      void set_element(const container_type & to_insert, container_type & inserted, unsigned int pos)
+      using Base::set_bnd_cell;
+      template<typename inserted_iterator_type>
+      void set_bnd_cell(const element_type & to_insert, std::pair<inserted_iterator_type, bool> inserted, unsigned int pos)
       {
-         elements_[pos] = inserted;
+         elements_[pos] = inserted.first;
       }
 
     private: 
-      container_type elements_[LevelSpecs::num];
+      element_container_type elements_;
   };
 
   
@@ -273,19 +281,12 @@ namespace viennagrid
   {
     //requirements:
     //array of pointers to elements of class 'dim' and a integer representing the orientation within the cell relative to the element it points to.
-    //typedef typename DomainTypes<ConfigType>::segment_type        SegmentType;
     typedef topology::bndcells<ElementTag, dim>                                LevelSpecs;
     typedef boundary_ncell_layer < ConfigType, ElementTag, dim - 1 >      Base;
 
     typedef element_t<ConfigType, typename LevelSpecs::tag>  LevelElementType;
 
     protected:
-      template <typename DomainType>
-      void fill_level(DomainType & dom)
-      {
-        //fill lower topological levels only:
-        Base::fill_level(dom);
-      }
       
       template<typename inserter_type>
       void create_bnd_cells(inserter_type & inserter)
@@ -293,7 +294,7 @@ namespace viennagrid
           Base::create_bnd_cells(inserter);
       }
       
-      using Base::set_element;
+      using Base::set_bnd_cell;
 
     public:
         
@@ -315,13 +316,24 @@ namespace viennagrid
   class boundary_ncell_layer <ConfigType, ElementTag, 0, handling_tag, orienter_tag, true> 
   {
     //array of pointers to elements of class 'dim' and a integer representing the orientation within the cell relative to the element it points to.
-    //typedef typename DomainTypes<ConfigType>::segment_type               SegmentType;
     typedef topology::bndcells<ElementTag, 0>                                      LevelSpecs;
 
     
     typedef typename result_of::point<ConfigType>::type              PointType;
 
     typedef typename result_of::iterator< element_t<ConfigType, ElementTag>, 0>::type         VertexIterator;
+    
+    typedef typename topology::bndcells<ElementTag, 0>::layout_tag layout_tag;
+    static const long array_size = topology::bndcells<ElementTag, 0>::num;
+    typedef typename result_of::ncell<ConfigType, 0>::type            element_type;
+    
+    typedef typename result_of::container<element_type *, layout_tag, array_size>::type      element_container_type;
+    
+
+    public:
+        
+        typedef element_t<ConfigType, typename LevelSpecs::tag>         VertexType;
+        typedef topology::bndcells<VertexType, 0>                                 VertexSpecs;
 
     protected:
       //end recursion:
@@ -331,46 +343,49 @@ namespace viennagrid
       template<typename inserter_type>
       void create_bnd_cells(inserter_type & inserter) {}
       
-      void set_element(const VertexType & to_insert, VertexType & inserted, unsigned int pos)
+      template<typename inserted_iterator_type>
+      void set_bnd_cell(const VertexType & to_insert, std::pair<inserted_iterator_type, bool> inserted, unsigned int pos)
       {
-         elements_[pos] = inserted;
+          vertices_[pos] = inserted.first;
       }
 
     public:
         
-        typedef element_t<ConfigType, typename LevelSpecs::tag>         VertexType;
         typedef VertexType * VertexReferenceType;
         typedef VIENNAMETA_MAKE_TYPELIST_1( VertexType ) required_types;
         
       boundary_ncell_layer() {};
 
-      boundary_ncell_layer( const boundary_ncell_layer & llh)
-      {
-        for (long i=0; i < LevelSpecs::num; ++i)
-          vertices_[i] = llh.vertices_[i];
-      }
+      boundary_ncell_layer( const boundary_ncell_layer & llh) : vertices_(llh.vertices_) {}
 
       ////////////////// container access: /////////////////////////
       
-      VertexType * vertices( unsigned int pos ) { return vertices_[pos]; }
-      
       //non-const:
-      VertexType * *
+      element_container_type *
       container(dimension_tag<0>)
       { 
-        return &(vertices_[0]);
+        return &vertices_;
       }
 
       //const:
-      VertexType * const *
+      const element_container_type *
       container(dimension_tag<0>) const
       { 
-        return &(vertices_[0]);
+        return &vertices_;
       }
+      
+      element_container_type & vertices() { return vertices_; }
+      const element_container_type & vertices() const { return vertices_; }
+      void vertices(VertexType ** vertices_in, size_t num = VertexSpecs::num)
+      {
+            assert( num <= LevelSpecs::num );
+            vertices_.resize(num);
+            std::copy( vertices_in, vertices_in + num, vertices_.begin() );
+       }
 
 
     protected:
-      VertexType * vertices_[LevelSpecs::num];
+      element_container_type vertices_;
   };
 
 
