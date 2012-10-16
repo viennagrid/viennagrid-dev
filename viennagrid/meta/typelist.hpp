@@ -3,7 +3,6 @@
 
 
 #include "utils.hpp"
-#include "typelist_macros.hpp"
 
 
 namespace viennameta
@@ -15,11 +14,65 @@ namespace viennameta
        typedef head_ head;
        typedef tail_ tail;
     };
+    
+    
+    
+//     C++11 version
+
+//     template<typename ... types>
+//     struct make_typelist;
+//     
+//     template<>
+//     struct make_typelist<>
+//     {
+//         typedef viennameta::null_type type;
+//     };
+//     
+//     template<typename head, typename ... tail>
+//     struct make_typelist<head, tail...>
+//     {
+//         typedef viennameta::typelist_t<head, typename make_typelist<tail...>::type> type;
+//     };
+    
+    
+    
+    
+    
+    template<   typename T01 = viennameta::null_type, typename T02 = viennameta::null_type, typename T03 = viennameta::null_type, typename T04 = viennameta::null_type,
+                typename T05 = viennameta::null_type, typename T06 = viennameta::null_type, typename T07 = viennameta::null_type, typename T08 = viennameta::null_type,
+                typename T09 = viennameta::null_type, typename T10 = viennameta::null_type, typename T11 = viennameta::null_type, typename T12 = viennameta::null_type,
+                typename T13 = viennameta::null_type, typename T14 = viennameta::null_type, typename T15 = viennameta::null_type, typename T16 = viennameta::null_type,
+                typename T17 = viennameta::null_type, typename T18 = viennameta::null_type, typename T19 = viennameta::null_type, typename T20 = viennameta::null_type >
+    struct make_typelist
+    {
+        typedef
+            typelist_t<
+                T01,
+                typename make_typelist<T02, T03, T04, T05, T06, T07, T08, T09, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20>::type
+            > type;
+    };
+    
+    template<>
+    struct make_typelist<
+        viennameta::null_type, viennameta::null_type, viennameta::null_type, viennameta::null_type,
+        viennameta::null_type, viennameta::null_type, viennameta::null_type, viennameta::null_type,
+        viennameta::null_type, viennameta::null_type, viennameta::null_type, viennameta::null_type,
+        viennameta::null_type, viennameta::null_type, viennameta::null_type, viennameta::null_type,
+        viennameta::null_type, viennameta::null_type, viennameta::null_type, viennameta::null_type>
+    {
+        typedef viennameta::null_type type;
+    };
+
+
+
 
       
     
     namespace typelist
     {
+
+        
+        
         namespace result_of
         {
             

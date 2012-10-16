@@ -4,7 +4,6 @@
 
 #include "utils.hpp"
 #include "typelist.hpp"
-#include "typemap_macros.hpp"
 
 namespace viennameta
 {
@@ -333,6 +332,100 @@ namespace viennameta
         }
         
     }
+    
+
+    
+    
+    
+    
+    
+//     C++11 version     
+
+//     template<typename ... types>
+//     struct make_typemap_unsafe;
+//     
+//     template<>
+//     struct make_typemap_unsafe<>
+//     {
+//         typedef viennameta::null_type type;
+//     };
+//     
+//     template<typename key, typename value, typename ... tail>
+//     struct make_typemap_unsafe<key, value, tail...>
+//     {
+//         typedef viennameta::typelist_t<
+//             viennameta::static_pair<key,value>,
+//             typename make_typemap_unsafe<tail...>::type
+//         > type;
+//     };
+//     
+//     
+//     template<typename ... types>
+//     struct make_typemap
+//     {
+//         typedef typename viennameta::typemap::result_of::consistency< typename make_typemap_unsafe<types...>::type>::type type;
+//     };
+    
+    
+    
+    
+    template<   typename K01 = viennameta::null_type, typename V01 = viennameta::null_type, typename K02 = viennameta::null_type, typename V02 = viennameta::null_type,
+                typename K03 = viennameta::null_type, typename V03 = viennameta::null_type, typename K04 = viennameta::null_type, typename V04 = viennameta::null_type,
+                typename K05 = viennameta::null_type, typename V05 = viennameta::null_type, typename K06 = viennameta::null_type, typename V06 = viennameta::null_type,
+                typename K07 = viennameta::null_type, typename V07 = viennameta::null_type, typename K08 = viennameta::null_type, typename V08 = viennameta::null_type,
+                typename K09 = viennameta::null_type, typename V09 = viennameta::null_type, typename K10 = viennameta::null_type, typename V10 = viennameta::null_type,
+                typename K11 = viennameta::null_type, typename V11 = viennameta::null_type, typename K12 = viennameta::null_type, typename V12 = viennameta::null_type,
+                typename K13 = viennameta::null_type, typename V13 = viennameta::null_type, typename K14 = viennameta::null_type, typename V14 = viennameta::null_type,
+                typename K15 = viennameta::null_type, typename V15 = viennameta::null_type, typename K16 = viennameta::null_type, typename V16 = viennameta::null_type,
+                typename K17 = viennameta::null_type, typename V17 = viennameta::null_type, typename K18 = viennameta::null_type, typename V18 = viennameta::null_type,
+                typename K19 = viennameta::null_type, typename V19 = viennameta::null_type, typename K20 = viennameta::null_type, typename V20 = viennameta::null_type  >
+    struct make_typemap_unsafe
+    {
+        typedef
+            typelist_t<
+                viennameta::static_pair<K01,V01>,
+                typename make_typemap_unsafe<             K02, V02, K03, V03, K04, V04, K05, V05, K06, V06, K07, V07, K08, V08, K09, V09, K10, V10,
+                                                K11, V11, K12, V12, K13, V13, K14, V14, K15, V15, K16, V16, K17, V17, K18, V18, K19, V19, K20, V20>::type
+            > type;
+    };
+    
+    template<>
+    struct make_typemap_unsafe<
+        viennameta::null_type, viennameta::null_type, viennameta::null_type, viennameta::null_type,
+        viennameta::null_type, viennameta::null_type, viennameta::null_type, viennameta::null_type,
+        viennameta::null_type, viennameta::null_type, viennameta::null_type, viennameta::null_type,
+        viennameta::null_type, viennameta::null_type, viennameta::null_type, viennameta::null_type,
+        viennameta::null_type, viennameta::null_type, viennameta::null_type, viennameta::null_type,
+        viennameta::null_type, viennameta::null_type, viennameta::null_type, viennameta::null_type,
+        viennameta::null_type, viennameta::null_type, viennameta::null_type, viennameta::null_type,
+        viennameta::null_type, viennameta::null_type, viennameta::null_type, viennameta::null_type,
+        viennameta::null_type, viennameta::null_type, viennameta::null_type, viennameta::null_type,
+        viennameta::null_type, viennameta::null_type, viennameta::null_type, viennameta::null_type >
+    {
+        typedef viennameta::null_type type;
+    };
+    
+    
+    template<   typename K01 = viennameta::null_type, typename V01 = viennameta::null_type, typename K02 = viennameta::null_type, typename V02 = viennameta::null_type,
+                typename K03 = viennameta::null_type, typename V03 = viennameta::null_type, typename K04 = viennameta::null_type, typename V04 = viennameta::null_type,
+                typename K05 = viennameta::null_type, typename V05 = viennameta::null_type, typename K06 = viennameta::null_type, typename V06 = viennameta::null_type,
+                typename K07 = viennameta::null_type, typename V07 = viennameta::null_type, typename K08 = viennameta::null_type, typename V08 = viennameta::null_type,
+                typename K09 = viennameta::null_type, typename V09 = viennameta::null_type, typename K10 = viennameta::null_type, typename V10 = viennameta::null_type,
+                typename K11 = viennameta::null_type, typename V11 = viennameta::null_type, typename K12 = viennameta::null_type, typename V12 = viennameta::null_type,
+                typename K13 = viennameta::null_type, typename V13 = viennameta::null_type, typename K14 = viennameta::null_type, typename V14 = viennameta::null_type,
+                typename K15 = viennameta::null_type, typename V15 = viennameta::null_type, typename K16 = viennameta::null_type, typename V16 = viennameta::null_type,
+                typename K17 = viennameta::null_type, typename V17 = viennameta::null_type, typename K18 = viennameta::null_type, typename V18 = viennameta::null_type,
+                typename K19 = viennameta::null_type, typename V19 = viennameta::null_type, typename K20 = viennameta::null_type, typename V20 = viennameta::null_type  >
+    struct make_typemap
+    {
+        typedef typename viennameta::typemap::result_of::consistency<
+            typename make_typemap_unsafe<
+                K01, V01, K02, V02, K03, V03, K04, V04, K05, V05, K06, V06, K07, V07, K08, V08, K09, V09, K10, V10,
+                K11, V11, K12, V12, K13, V13, K14, V14, K15, V15, K16, V16, K17, V17, K18, V18, K19, V19, K20, V20
+            >::type
+        >::type type;
+    };
+    
     
 }
 
