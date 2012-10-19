@@ -63,62 +63,7 @@ namespace viennagrid
 
     };
   
-    ///////////////////////////////// Filler for subcell elements ///////////////////////////////////
-    
-    
-  
-
-    /** @brief Fills a segment or a domain with the edges of a triangle */
-    template <>
-    struct bndcell_filler<triangle_tag, 1>
-    {
-      //fill edges:
-      template <typename ElementContainerType, typename VertexContainerType, typename OrientatationContainerType, typename Segment>
-      static void fill(ElementContainerType & elements, const VertexContainerType & vertices, OrientatationContainerType & orientations, Segment & seg)
-      {
-        typename VertexContainerType::value_type edgevertices[2];
-        typename utils::remove_pointer<typename ElementContainerType::value_type>::type edge;
-        
-        edgevertices[0] = vertices[0];
-        edgevertices[1] = vertices[1];
-        edge.vertices(edgevertices);
-        elements[0] = seg.push_back(edge, &orientations[0]);
-
-        edgevertices[0] = vertices[0];
-        edgevertices[1] = vertices[2];
-        edge.vertices(edgevertices);
-        elements[1] = seg.push_back(edge, &orientations[1]);
- 
-        edgevertices[0] = vertices[1];
-        edgevertices[1] = vertices[2];
-        edge.vertices(edgevertices);
-        elements[2] = seg.push_back(edge, &orientations[2]);
-      }
-      
-      template <typename ElementContainerType, typename VertexContainerType, typename Segment>
-      static void fill(ElementContainerType & elements, const VertexContainerType & vertices, Segment & seg)
-      {
-        typename VertexContainerType::value_type edgevertices[2];
-        typename utils::remove_pointer<typename ElementContainerType::value_type>::type edge;
-        
-         edgevertices[0] = vertices[0];
-         edgevertices[1] = vertices[1];
-         edge.vertices(edgevertices);
-        elements[0] = seg.push_back(edge, NULL);
- 
-         edgevertices[0] = vertices[0];
-         edgevertices[1] = vertices[2];
-         edge.vertices(edgevertices);
-        elements[1] = seg.push_back(edge, NULL);
- 
-         edgevertices[0] = vertices[1];
-         edgevertices[1] = vertices[2];
-         edge.vertices(edgevertices);
-        elements[2] = seg.push_back(edge, NULL);
-       }
-    };
-    
-    
+    ///////////////////////////////// Generator for boundary cell elements ///////////////////////////////////
     
     template<typename bnd_cell_type>
     struct bndcell_generator<triangle_tag, 1, bnd_cell_type>
@@ -126,7 +71,7 @@ namespace viennagrid
         template<typename element_type, typename inserter_type>
         static void create_bnd_cells(element_type & element, inserter_type & inserter)
         {
-            typedef typename element_type::VertexType VertexType;
+            //typedef typename element_type::VertexType VertexType;
             typedef typename bnd_cell_type::VertexReferenceType VertexReferenceType;
             
             VertexReferenceType vertices[2];
