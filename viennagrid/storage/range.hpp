@@ -102,7 +102,7 @@ namespace viennagrid
             
             
             
-            bool empty() const { first == last; }
+            bool empty() const { return first == last; }
             
             
             
