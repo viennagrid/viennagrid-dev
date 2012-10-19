@@ -542,6 +542,9 @@ namespace viennagrid
       /** @brief STL-compatible typedef for the value returned by size() */
       typedef dim_type        size_type;
       
+      
+      typedef point_tag tag;
+      
       /** @brief Publish the geometric dimension of the point */
       enum { dim = CoordinateSystem::dim };
       
