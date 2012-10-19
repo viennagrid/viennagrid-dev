@@ -166,23 +166,7 @@ namespace viennagrid
             
             
             
-            template<typename container_collection_element_type, typename id_type>
-            void set_id( container_collection_element_type & element, id_type id )
-            {
-                element.id(id);
-            }
-            
-            template<typename id_type> void set_id( bool & element, id_type id ) {}
-            template<typename id_type> void set_id( char & element, id_type id ) {}
-            template<typename id_type> void set_id( unsigned char & element, id_type id ) {}
-            template<typename id_type> void set_id( short & element, id_type id ) {}
-            template<typename id_type> void set_id( unsigned short & element, id_type id ) {}
-            template<typename id_type> void set_id( int & element, id_type id ) {}
-            template<typename id_type> void set_id( unsigned int & element, id_type id ) {}
-            template<typename id_type> void set_id( long & element, id_type id ) {}
-            template<typename id_type> void set_id( unsigned long & element, id_type id ) {}
-            template<typename id_type> void set_id( float & element, id_type id ) {}
-            template<typename id_type> void set_id( double & element, id_type id ) {}
+
             
         }
     }
