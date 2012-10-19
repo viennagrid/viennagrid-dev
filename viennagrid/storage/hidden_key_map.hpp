@@ -2,6 +2,7 @@
 #define VIENNAGRID_STORAGE_HIDDEN_KEY_MAP_HPP
 
 #include <map>
+#include "container.hpp"
 
 namespace viennagrid
 {
@@ -32,27 +33,23 @@ namespace viennagrid
                 
                 typedef hidden_key_map::value_type value_type;
                 typedef hidden_key_map::reference reference;
-                typedef hidden_key_map::const_reference const_reference;
                 typedef hidden_key_map::pointer pointer;
-                typedef hidden_key_map::const_pointer const_pointer;
                 
-                value_type & operator* () { return base::operator*().second; }
-                const value_type & operator* () const { return base::operator*().second; }
+                reference operator* () { return base::operator*().second; }
+                const reference operator* () const { return base::operator*().second; }
             };
             
             class const_iterator : public container_type::const_iterator
             {
-                typedef typename container_type::iterator base;
+                typedef typename container_type::const_iterator base;
             public:
                 const_iterator(const base & foo) : base(foo) {}
                 
                 typedef hidden_key_map::value_type value_type;
                 typedef hidden_key_map::const_reference reference;
-                typedef hidden_key_map::const_reference const_reference;
                 typedef hidden_key_map::const_pointer pointer;
-                typedef hidden_key_map::const_pointer const_pointer;
                 
-                const value_type & operator* () const { return base::operator*().second; }
+                const reference operator* () const { return base::operator*().second; }
             };
             
             
@@ -62,6 +59,15 @@ namespace viennagrid
             const_iterator begin() const { return const_iterator(container.begin()); }
             const_iterator end() const { return const_iterator(container.end()); }
             
+            iterator find( const value_type & element)
+            {
+                return iterator(container.find( key_type(element) ));
+            }
+            
+            const_iterator find( const value_type & element) const
+            {
+                return const_iterator(container.find( key_type(element) ));
+            }
             
             std::pair<iterator, bool> insert( const value_type & element )
             {
@@ -78,6 +84,49 @@ namespace viennagrid
         };
         
         
+        
+        
+        
+        template<typename element_type, typename key_type, typename hook_tag>
+        class container_base_t<hidden_key_map<element_type, key_type>, hook_tag> : public hooked_container_t<hidden_key_map<element_type, key_type>, hook_tag>
+        {
+        public:
+            
+            typedef hooked_container_t<hidden_key_map<element_type, key_type>, hook_tag> hooked_container_type;
+            typedef typename hooked_container_type::container_type container_type;
+            
+            typedef typename hooked_container_type::value_type value_type;
+            
+            typedef typename hooked_container_type::pointer pointer;
+            typedef typename hooked_container_type::const_pointer const_pointer;            
+            
+            typedef typename hooked_container_type::reference reference;
+            typedef typename hooked_container_type::const_reference const_reference;
+            
+            typedef typename hooked_container_type::iterator iterator;
+            typedef typename hooked_container_type::const_iterator const_iterator;
+            
+            typedef typename hooked_container_type::hook_type hook_type;
+            typedef typename hooked_container_type::const_hook_type const_hook_type;
+            
+            typedef std::pair<hook_type, bool> return_type;
+            
+            bool is_present( const value_type & element ) const
+            {
+                return container_type::find(element) != container_type::end();
+            }
+            
+            typename container_type::iterator find( const value_type & element ) const
+            {
+                return container_type::find(element);
+            }
+            
+            return_type insert( const value_type & element )
+            {
+                std::pair<typename container_type::iterator, bool> tmp = container_type::insert( element );
+                return std::make_pair( viennagrid::storage::hook::iterator_to_hook<container_type, hook_tag>::convert(tmp.first), tmp.second);
+            }
+        };
         
         
         
