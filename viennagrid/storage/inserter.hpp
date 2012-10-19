@@ -2,7 +2,7 @@
 #define VIENNAGRID_STORAGE_INSERTER_HPP
 
 
-#include "viennagrid/storage/reference.hpp"
+//#include "viennagrid/storage/reference.hpp"
 #include "viennagrid/storage/container_collection.hpp"
 #include "viennagrid/storage/container_collection_element.hpp"
 
@@ -23,56 +23,46 @@ namespace viennagrid
 
         
 
-        template<typename container_collection_type, typename _container_collection_reference_config, typename _id_generator_type>
-        class physical_inserter_t : public inserter_base_t<container_collection_type>
+        template<typename container_collection_type, typename id_generator_type__>
+        class physical_inserter_t
         {
         public:
-            typedef inserter_base_t<container_collection_type> base_inserter;
             typedef container_collection_type physical_container_collection_type;
-            typedef _id_generator_type id_generator_type;
-            typedef _container_collection_reference_config container_collection_reference_config;
+            typedef id_generator_type__ id_generator_type;
             
-            physical_inserter_t(container_collection_type & _collection, id_generator_type & _id_generator) : base_inserter(_collection), id_generator(_id_generator) {}
+            physical_inserter_t(container_collection_type & _collection, id_generator_type id_generator__) : collection(_collection), id_generator(id_generator__) {}
             
             template<typename value_type, typename inserter_type>
             std::pair<
-                typename viennagrid::storage::reference::reference_type_from_config<
-                    typename viennagrid::storage::result_of::container_of<container_collection_type, value_type>::type,
-                    container_collection_reference_config
-                >::type,
+                typename viennagrid::storage::result_of::container_of<container_collection_type, value_type>::type::hook_type,
                 bool
             >
-                    physical_insert( const value_type & element, inserter_type & inserter )
+                    physical_insert( value_type element, inserter_type & inserter )
             {
                 typedef typename viennagrid::storage::result_of::container_of<container_collection_type, value_type>::type::iterator iterator;
                 typedef typename viennagrid::storage::result_of::container_of<container_collection_type, value_type>::type container_type;
-                typedef typename viennagrid::storage::reference::reference_tag_from_config<container_type, container_collection_reference_config>::type reference_tag;
-                typedef typename viennagrid::storage::reference::reference_type_from_config<container_type, container_collection_reference_config>::type reference_type;
+                typedef typename viennagrid::storage::result_of::container_of<container_collection_type, value_type>::type::hook_tag hook_tag;
+                typedef typename viennagrid::storage::result_of::container_of<container_collection_type, value_type>::type::hook_type hook_type;
                 
-                std::pair<iterator, bool> ret = viennagrid::storage::container::insert(viennagrid::storage::container_collection::get< value_type >( base_inserter::collection ), element);
+                if ( !viennagrid::storage::container_collection::get< value_type >( collection ).is_present( element ) )
+                    viennagrid::storage::id::set_id(element, id_generator( viennameta::tag<value_type>() ) );
                 
-                if (ret.second) viennagrid::storage::container_collection_element::set_id(*ret.first, id_generator( viennameta::tag<value_type>() ) );
-                
+                std::pair<hook_type, bool> ret = viennagrid::storage::container_collection::get< value_type >( collection ).insert( element );
+                               
                 viennagrid::storage::container_collection_element::insert_callback(*ret.first, ret.second, inserter);
                 
+                inserter.hook_insert( ret.first, viennameta::tag<value_type>() );
                 
-                reference_type ref = viennagrid::storage::reference::iterator_to_reference(ret.first, reference_tag());
-                inserter.reference_insert( ref );
-                
-                return std::make_pair(ref, ret.second);
+                return ret;
             }
             
-            template<typename reference_type>
-            void reference_insert( reference_type ref )
+            template<typename hook_type, typename value_type>
+            void hook_insert( hook_type ref, viennameta::tag<value_type> )
             {}
             
             template<typename value_type>
             std::pair<
-                typename viennagrid::storage::reference::reference_type_from_config<
-                    //value_type,
-                    typename viennagrid::storage::result_of::container_of<container_collection_type, value_type>::type,
-                    container_collection_reference_config
-                >::type,
+                typename viennagrid::storage::result_of::container_of<container_collection_type, value_type>::type::hook_type,
                 bool
             >
                 operator()( const value_type & element )
@@ -81,47 +71,41 @@ namespace viennagrid
             }
             
         private:
-            id_generator_type & id_generator;
-        };       
+            container_collection_type & collection;
+            id_generator_type id_generator;
+        };
         
-        template<typename container_collection_type, typename dependend_inserter_type>
-        class recursive_inserter_t : public inserter_base_t<container_collection_type>, dependend_inserter_type
+        
+        
+        
+        
+        
+        
+        
+        template<typename view_collection_type, typename dependend_inserter_type>
+        class recursive_inserter_t : public dependend_inserter_type
         {
         public:
-            typedef inserter_base_t<container_collection_type> base_inserter;
             typedef dependend_inserter_type base;
             
-            recursive_inserter_t(container_collection_type & _collection, const dependend_inserter_type & dependend_inserter) :
-                base_inserter(_collection), dependend_inserter_type(dependend_inserter) {}
+            recursive_inserter_t(view_collection_type & _collection, const dependend_inserter_type & dependend_inserter) :
+                dependend_inserter_type(dependend_inserter), view_collection(_collection) {}
             
             
-            template<typename reference_type>
-            void reference_insert( reference_type ref )
+            template<typename hook_type, typename value_type>
+            void hook_insert( hook_type ref, viennameta::tag<value_type> )
             {
-                typedef typename viennagrid::storage::reference::value_type_from_reference_type<reference_type>::type value_type;
-                
-                if (!viennameta::_equal<
-                        typename viennagrid::storage::result_of::container_of<container_collection_type, value_type>::type,
-                        viennameta::null_type
-                    >::value)
-                {
-                    viennagrid::storage::container_collection::insert_or_ignore( base_inserter::collection, *ref );
-                }
-                
-                base::reference_insert( ref );
+                viennagrid::storage::container_collection::hook_or_ignore( view_collection, ref, viennameta::tag<value_type>() );
+
+                base::hook_insert( ref, viennameta::tag<value_type>() );
             }
             
             
             typedef typename base::physical_container_collection_type physical_container_collection_type;
-            typedef typename base::container_collection_reference_config container_collection_reference_config;
             
             template<typename value_type, typename inserter_type>
             std::pair<
-                typename viennagrid::storage::reference::reference_type_from_config<
-                    //value_type,
-                    typename viennagrid::storage::result_of::container_of<physical_container_collection_type, value_type>::type,
-                    container_collection_reference_config
-                >::type,
+                typename viennagrid::storage::result_of::container_of<physical_container_collection_type, value_type>::type::hook_type,
                 bool
             >
                 physical_insert( const value_type & element, inserter_type & inserter )
@@ -131,25 +115,24 @@ namespace viennagrid
             
             template<typename value_type>
             std::pair<
-                typename viennagrid::storage::reference::reference_type_from_config<
-                    //value_type,
-                    typename viennagrid::storage::result_of::container_of<physical_container_collection_type, value_type>::type,
-                    container_collection_reference_config
-                >::type,
+                typename viennagrid::storage::result_of::container_of<physical_container_collection_type, value_type>::type::hook_type,
                 bool
             >
                 operator()( const value_type & element )
             {
                 return physical_insert( element, *this );
             }
+            
+        private:
+            view_collection_type & view_collection;
         };
         
         
         
         namespace inserter
         {
-            typedef VIENNAMETA_MAKE_TYPEMAP_1( viennagrid::storage::default_tag, viennagrid::storage::pointer_reference_tag ) pointer_reference_config;
-            typedef VIENNAMETA_MAKE_TYPEMAP_1( viennagrid::storage::default_tag, viennagrid::storage::iterator_reference_tag ) iterator_reference_config;
+            //typedef VIENNAMETA_MAKE_TYPEMAP_1( viennagrid::storage::default_tag, viennagrid::storage::pointer_reference_tag ) pointer_reference_config;
+            //typedef VIENNAMETA_MAKE_TYPEMAP_1( viennagrid::storage::default_tag, viennagrid::storage::iterator_reference_tag ) iterator_reference_config;
             
             template<typename dependend_inserter_type, typename container_collection_type>
             recursive_inserter_t<container_collection_type, dependend_inserter_type> get_recursive( const dependend_inserter_type & inserter, container_collection_type & collection )
@@ -167,10 +150,10 @@ namespace viennagrid
                 typedef recursive_inserter_t<container_collection_type, dependend_inserter_type> type;
             };
             
-            template<typename container_collection_type, typename container_collection_reference_config, typename id_generator_type>
+            template<typename container_collection_type, typename id_generator_type>
             struct physical_inserter
             {
-                typedef physical_inserter_t<container_collection_type, container_collection_reference_config, id_generator_type> type;
+                typedef physical_inserter_t<container_collection_type, id_generator_type> type;
             };
         }
         
