@@ -34,7 +34,7 @@
 #include <cstdlib>     //for EXIT_SUCCESS and EXIT_FAILURE
 
 #include "viennadata/api.hpp"
-#include "viennagrid/utils/static_array.hpp"
+#include "viennagrid/storage/static_array.hpp"
 #include "viennagrid/utils/remove_pointer.hpp"
  
 
@@ -330,7 +330,7 @@ namespace viennagrid
     template <typename element_type, long num>
     struct container<element_type, static_layout_tag, num>
     {
-        typedef utils::static_array<element_type, num> type;
+        typedef storage::static_array<element_type, num> type;
     };
     
     template <typename element_type, long num>
