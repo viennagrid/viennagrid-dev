@@ -29,7 +29,7 @@
 #include "viennagrid/detail/domain_iterators.hpp"
 #include "viennagrid/detail/segment_iterators.hpp"
 
-#include "viennagrid/utils/static_array.hpp"
+#include "viennagrid/storage/static_array.hpp"
 #include "viennadata/api.hpp"
 
 /** @file element_iterators.hpp
