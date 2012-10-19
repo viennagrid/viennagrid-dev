@@ -10,29 +10,18 @@ using std::endl;
 #include "viennagrid/storage/view.hpp"
 #include "viennagrid/storage/container_collection.hpp"
 #include "viennagrid/storage/inserter.hpp"
+#include "viennagrid/storage/id.hpp"
 #include "viennagrid/storage/id_generator.hpp"
 
 #include "viennagrid/storage/io.hpp"
 
-template<typename _id_type>
-struct id_element
-{
-public:
-    typedef _id_type id_type;
-    
-    void id(id_type _id) { id_ = _id; }
-    id_type id() const { return id_; }
-
-private:
-    id_type id_;
-};
 
 
 template<typename _numeric_type>
-struct vertex : public id_element<int>
+struct vertex : public viennagrid::storage::id_handler<int>
 {
     typedef _numeric_type numeric_type;
-    typedef VIENNAMETA_MAKE_TYPELIST_1( vertex<numeric_type> ) required_types;    
+    typedef typename viennameta::make_typelist< vertex<numeric_type> >::type required_types;    
     
     enum { dim = 2 };
     
@@ -49,13 +38,13 @@ struct vertex : public id_element<int>
 template <typename numeric_type>
 std::ostream & operator<<(std::ostream & os, const vertex<numeric_type> & v)
 {
-    os << "[Vertex] (" << v.x << "," << v.y << ")";    
+    os << "[Vertex id=" << v.id() << "] (" << v.x << "," << v.y << ")";    
     return os;
 }
 
 
 template<typename _vertex_type>
-struct line : public id_element<int>
+struct line : public viennagrid::storage::id_handler<int>
 {
     typedef _vertex_type vertex_type;
     typedef typename viennameta::typelist::result_of::push_back<typename vertex_type::required_types, line<vertex_type> >::type required_types;
@@ -70,12 +59,12 @@ struct line : public id_element<int>
 template <typename vertex_type>
 std::ostream & operator<<(std::ostream & os, const line<vertex_type> & l)
 {
-    os << "[Line] " << *l.vertices[0] << " " << *l.vertices[1];
+    os << "[Line id=" << l.id() << "] " << *l.vertices[0] << " " << *l.vertices[1];
     return os;
 }
 
 template<typename _vertex_type>
-struct triangle : public id_element<int>
+struct triangle : public viennagrid::storage::id_handler<int>
 {
     typedef _vertex_type vertex_type;
     typedef line<vertex_type> line_type;
@@ -107,7 +96,7 @@ struct triangle : public id_element<int>
 template <typename vertex_type>
 std::ostream & operator<<(std::ostream & os, const triangle<vertex_type> & t)
 {
-    os << "[Triangle] \n";
+    os << "[Triangle id=" << t.id() << "] \n";
     os << "  " << *t.vertices[0] << "\n";
     os << "  " << *t.vertices[1] << "\n";
     os << "  " << *t.vertices[2] << "\n";
@@ -127,22 +116,19 @@ int main()
     typedef triangle<vertex_type> triangle_type;
     
     typedef viennagrid::storage::result_of::container_collection<
-        triangle<vertex_type>::required_types,
-        viennagrid::storage::container_collection::default_container_config
+            triangle<vertex_type>::required_types,
+            viennagrid::storage::container_collection::default_container_config
     >::type collection_type;
     
     collection_type collection;
     
     
-    typedef viennagrid::storage::result_of::continuous_id_generator_layer< triangle<vertex_type>::required_types >::type id_generator_type;
+    typedef viennagrid::storage::result_of::continuous_id_generator< triangle<vertex_type>::required_types >::type id_generator_type;
     id_generator_type id_generator;
     
+    typedef viennagrid::storage::result_of::physical_inserter< collection_type, id_generator_type& >::type inserter_type;
     
-    typedef viennagrid::storage::result_of::physical_inserter<
-        collection_type,
-        viennagrid::storage::inserter::pointer_reference_config, 
-        id_generator_type
-    >::type inserter_type;
+
     inserter_type inserter(collection, id_generator);
     
     
@@ -159,18 +145,15 @@ int main()
     
     
     
-    typedef viennagrid::storage::view::reference_typelist_from_container_typelist_using_reference_config<
-        viennagrid::storage::container_collection::result_of::container_typelist<collection_type>::type,
-        viennagrid::storage::inserter::pointer_reference_config>::type
-        view_reference_types;
     
-    typedef viennagrid::storage::result_of::container_collection<
-        viennameta::typelist::result_of::erase_at<view_reference_types, 1>::type,
-        viennagrid::storage::view::default_view_config
+    typedef viennagrid::storage::container_collection::result_of::container_typelist<collection_type>::type collection_containers;
+    typedef viennagrid::storage::result_of::view_collection<
+            viennameta::typelist::result_of::erase_at<collection_containers, 1>::type,
+            viennagrid::storage::container_collection::default_container_config
     >::type view_collection_type;
     
     view_collection_type view_collection;
-    viennagrid::storage::container_collection::reference(collection, view_collection);
+    viennagrid::storage::container_collection::hook(collection, view_collection);
     
     cout << "view_collection" << endl;
     cout << view_collection << endl;

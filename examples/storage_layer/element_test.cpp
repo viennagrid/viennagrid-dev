@@ -32,19 +32,18 @@ using std::endl;
 
 
 
-template<typename _element_typelist, typename _container_config, typename _reference_config>
+template<typename _element_typelist, typename _container_config = viennagrid::storage::container_collection::default_container_config>
 struct domain_t
 {
 //public:
     typedef _element_typelist element_typelist;
     typedef _container_config container_config;
-    typedef _reference_config reference_config;
     
 //protected:    
     
     typedef typename viennagrid::storage::result_of::container_collection< element_typelist, container_config >::type container_collection_type;
-    typedef typename viennagrid::storage::result_of::continuous_id_generator_layer< element_typelist >::type id_generator_type;
-    typedef typename viennagrid::storage::result_of::physical_inserter<container_collection_type, reference_config, id_generator_type>::type inserter_type;
+    typedef typename viennagrid::storage::result_of::continuous_id_generator< element_typelist >::type id_generator_type;
+    typedef typename viennagrid::storage::result_of::physical_inserter<container_collection_type, id_generator_type&>::type inserter_type;
     
 //public:
     
@@ -69,28 +68,30 @@ struct domain_t
 
 template<typename domain_type,
     typename _element_typelist = typename domain_type::element_typelist,
-    typename _container_config = viennagrid::storage::view::default_view_config>
+    typename _container_config = viennagrid::storage::container_collection::default_container_config>
 struct segment_t
 {
     typedef _element_typelist element_typelist;
     typedef _container_config container_config;
-    typedef typename domain_type::reference_config reference_config;
     
     // TODO: element_typelist beachten!
     
-    typedef typename viennagrid::storage::view::reference_typelist_from_container_typelist_using_reference_config<
-        typename viennagrid::storage::container_collection::result_of::container_typelist<typename domain_type::container_collection_type>::type,
-        reference_config>::type element_reference_typelist;
     
-    typedef typename viennagrid::storage::result_of::container_collection<
-        element_reference_typelist,
-        container_config>::type container_collection_type;
+    typedef typename viennagrid::storage::result_of::view_collection< typename domain_type::container_collection_type, container_config>::type container_collection_type;
+    
+//     typedef typename viennagrid::storage::view::reference_typelist_from_container_typelist_using_reference_config<
+//         typename viennagrid::storage::container_collection::result_of::container_typelist<typename domain_type::container_collection_type>::type,
+//         reference_config>::type element_reference_typelist;
+//     
+//     typedef typename viennagrid::storage::result_of::container_collection<
+//         element_reference_typelist,
+//         container_config>::type container_collection_type;
     typedef typename viennagrid::storage::result_of::recursive_inserter<container_collection_type, typename domain_type::inserter_type>::type inserter_type;
     
     segment_t(domain_type & domain, bool copy = true) : container_collection(), inserter(container_collection, domain.inserter)
     {
         if (copy)
-            viennagrid::storage::container_collection::reference(domain.container_collection, container_collection);        
+            viennagrid::storage::container_collection::hook(domain.container_collection, container_collection);        
     }
     
     template<typename element_type>
@@ -137,20 +138,17 @@ int main()
     
     
     
-    typedef VIENNAMETA_MAKE_TYPEMAP_4(  vertex_type, viennagrid::storage::std_deque_tag,
-                                        tetrahedron_type, viennagrid::storage::std_deque_tag,
-                                        
-                                        //triangle_type, viennagrid::storage::std_deque_tag,
-                                        triangle_type, viennagrid::storage::hidden_key_map_tag< viennagrid::storage::element_key_tag<int> >,
-                                        
-                                        //line_type, viennagrid::storage::std_deque_tag
-                                        line_type, viennagrid::storage::hidden_key_map_tag< viennagrid::storage::element_key_tag<int> >
-    ) container_config;
-
+    typedef viennameta::make_typemap<
+        vertex_type,            viennagrid::storage::hooked_container_tag< viennagrid::storage::std_deque_tag, viennagrid::storage::pointer_hook_tag>,
+        tetrahedron_type,       viennagrid::storage::hooked_container_tag< viennagrid::storage::std_deque_tag, viennagrid::storage::pointer_hook_tag>,
+        triangle_type,          viennagrid::storage::hooked_container_tag< viennagrid::storage::hidden_key_map_tag< viennagrid::storage::element_key_tag<int> >, viennagrid::storage::pointer_hook_tag>,
+        line_type,              viennagrid::storage::hooked_container_tag< viennagrid::storage::hidden_key_map_tag< viennagrid::storage::element_key_tag<int> >, viennagrid::storage::pointer_hook_tag>
+    >::type container_config;
     
     
     
-    typedef domain_t<tetrahedron_type::required_types, container_config, viennagrid::storage::inserter::pointer_reference_config> domain_type;
+    
+    typedef domain_t<tetrahedron_type::required_types, container_config> domain_type;
     domain_type domain;
 
     
@@ -222,15 +220,22 @@ int main()
     
     
     
-    typedef VIENNAMETA_MAKE_TYPEMAP_4(  vertex_type *, viennagrid::storage::view_tag< viennagrid::storage::std_deque_tag >,
-                                        tetrahedron_type *,  viennagrid::storage::view_tag< viennagrid::storage::std_deque_tag >,
-                                        
-                                        //triangle_type, viennagrid::storage::std_deque_tag,
-                                        triangle_type *, viennagrid::storage::view_tag< viennagrid::storage::hidden_key_map_tag< viennagrid::storage::element_key_tag<int> > >,
-                                        
-                                        //line_type, viennagrid::storage::std_deque_tag
-                                        line_type *, viennagrid::storage::view_tag< viennagrid::storage::hidden_key_map_tag< viennagrid::storage::element_key_tag<int> > >
-    ) view_container_config;
+    typedef viennameta::make_typemap<
+        vertex_type,            viennagrid::storage::hooked_container_tag< viennagrid::storage::std_deque_tag, viennagrid::storage::no_hook_tag>,
+        tetrahedron_type,       viennagrid::storage::hooked_container_tag< viennagrid::storage::std_deque_tag, viennagrid::storage::no_hook_tag>,
+        triangle_type,          viennagrid::storage::hooked_container_tag< viennagrid::storage::hidden_key_map_tag< viennagrid::storage::element_key_tag<int> >, viennagrid::storage::no_hook_tag>,
+        line_type,              viennagrid::storage::hooked_container_tag< viennagrid::storage::hidden_key_map_tag< viennagrid::storage::element_key_tag<int> >, viennagrid::storage::no_hook_tag>
+    >::type view_container_config;
+    
+//     typedef VIENNAMETA_MAKE_TYPEMAP_4(  vertex_type *, viennagrid::storage::view_tag< viennagrid::storage::std_deque_tag >,
+//                                         tetrahedron_type *,  viennagrid::storage::view_tag< viennagrid::storage::std_deque_tag >,
+//                                         
+//                                         //triangle_type, viennagrid::storage::std_deque_tag,
+//                                         triangle_type *, viennagrid::storage::view_tag< viennagrid::storage::hidden_key_map_tag< viennagrid::storage::element_key_tag<int> > >,
+//                                         
+//                                         //line_type, viennagrid::storage::std_deque_tag
+//                                         line_type *, viennagrid::storage::view_tag< viennagrid::storage::hidden_key_map_tag< viennagrid::storage::element_key_tag<int> > >
+//     ) view_container_config;
 
     
     cout << "New Segment" << endl;

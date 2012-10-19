@@ -43,7 +43,8 @@ struct insert_bullshit_functor
     template<typename container_type>
     void operator() ( container_type & c)
     {
-        viennagrid::storage::container::insert( c, typename container_type::value_type() );
+        //viennagrid::storage::container::insert_helper<container_type>::insert_noreturn( c, typename container_type::value_type() );
+        c.insert( typename container_type::value_type() );
     }  
 };
 
@@ -65,26 +66,24 @@ struct view2_predicate
 
 int main()
 {
-    typedef VIENNAMETA_MAKE_TYPELIST_4(char, int, float, double) config;
-    typedef VIENNAMETA_MAKE_TYPEMAP_2( viennagrid::storage::default_tag, viennagrid::storage::std_deque_tag,
-                                       int, viennagrid::storage::std_list_tag ) container_config;
-        
+    typedef viennameta::make_typelist<char, int, float, double>::type config;
+    
+    
+    typedef viennameta::make_typemap<   
+                                        viennagrid::storage::default_tag,   viennagrid::storage::hooked_container_tag< viennagrid::storage::std_deque_tag, viennagrid::storage::pointer_hook_tag>,
+                                        int,                                viennagrid::storage::hooked_container_tag< viennagrid::storage::std_list_tag, viennagrid::storage::pointer_hook_tag>
+                                    >::type container_config;
     typedef viennagrid::storage::result_of::container_collection<config, container_config>::type collection_type;
     collection_type collection;
 
     
-    typedef viennagrid::storage::result_of::continuous_id_generator_layer<config>::type id_generator_type;
+    typedef viennagrid::storage::result_of::continuous_id_generator<config>::type id_generator_type;
     id_generator_type id_generator;
     
     
-    typedef viennagrid::storage::result_of::physical_inserter<
-        collection_type,
-        viennagrid::storage::inserter::pointer_reference_config, 
-        id_generator_type
-    >::type inserter_type;
-    
-    
+    typedef viennagrid::storage::result_of::physical_inserter< collection_type, id_generator_type& >::type inserter_type;
     inserter_type inserter(collection, id_generator);
+    
     
     inserter( 'c' );
     inserter( 10 );
@@ -98,10 +97,11 @@ int main()
     
     
     typedef viennagrid::storage::result_of::container_collection<
-        VIENNAMETA_MAKE_TYPELIST_3(char, int, double),
-        VIENNAMETA_MAKE_TYPEMAP_2( viennagrid::storage::default_tag, viennagrid::storage::std_vector_tag,
-                                       int, viennagrid::storage::std_deque_tag )
-    >::type collection2_type;
+        viennameta::make_typelist<char, int, double>::type,
+        viennameta::make_typemap<   viennagrid::storage::default_tag,   viennagrid::storage::hooked_container_tag< viennagrid::storage::std_vector_tag, viennagrid::storage::no_hook_tag> ,
+                                    int,                                viennagrid::storage::hooked_container_tag< viennagrid::storage::std_deque_tag, viennagrid::storage::no_hook_tag>
+                            >::type 
+        >::type collection2_type;
     
     collection2_type collection2;
     
@@ -118,26 +118,19 @@ int main()
     
     
     
-    typedef viennagrid::storage::view::reference_typelist_from_container_typelist_using_reference_config<
-        viennagrid::storage::container_collection::result_of::container_typelist<collection_type>::type,
-        viennagrid::storage::inserter::pointer_reference_config>::type
-        view_config;
-    typedef VIENNAMETA_MAKE_TYPEMAP_2( viennagrid::storage::default_tag, viennagrid::storage::view_tag<viennagrid::storage::std_deque_tag>,
-                                       float, viennagrid::storage::view_tag<viennagrid::storage::std_vector_tag> ) view_container_config;
-                                       
-    typedef viennagrid::storage::result_of::container_collection<view_config, view_container_config>::type view_collection_type;
+    typedef viennameta::make_typemap<   
+                                        viennagrid::storage::default_tag,       viennagrid::storage::hooked_container_tag< viennagrid::storage::std_deque_tag, viennagrid::storage::no_hook_tag>,
+                                        float,                                  viennagrid::storage::hooked_container_tag< viennagrid::storage::std_vector_tag, viennagrid::storage::no_hook_tag>
+                                    >::type view_container_config;
+    typedef viennagrid::storage::result_of::view_collection<collection_type, view_container_config>::type view_collection_type;
     view_collection_type view_collection;
     
-    viennagrid::storage::container_collection::reference(collection, view_collection);
+    viennagrid::storage::container_collection::hook(collection, view_collection);
     
     cout << "view_collection" << endl;
     cout << view_collection << endl;
     
-    
-    
-    
-    
-    
+
     typedef viennagrid::storage::result_of::recursive_inserter<view_collection_type, inserter_type>::type view_inserter_type;
     view_inserter_type view_inserter(view_collection, inserter);
 
@@ -152,19 +145,16 @@ int main()
     cout << "view_collection" << endl;
     cout << view_collection << endl;
     
+
     
-    typedef viennagrid::storage::view::reference_typelist_from_container_typelist_using_reference_config<
-        viennagrid::storage::container_collection::result_of::container_typelist<view_collection_type>::type,
-        viennagrid::storage::inserter::pointer_reference_config>::type
-        view_config2;
-    
-    typedef VIENNAMETA_MAKE_TYPEMAP_2( viennagrid::storage::default_tag, viennagrid::storage::view_tag<viennagrid::storage::std_set_tag>,
-                                       float, viennagrid::storage::view_tag<viennagrid::storage::std_deque_tag> ) view_container2_config;
-                                       
-    typedef viennagrid::storage::result_of::container_collection<view_config2, view_container2_config>::type view_collection2_type;
+    typedef viennameta::make_typemap<
+                                        viennagrid::storage::default_tag,   viennagrid::storage::hooked_container_tag< viennagrid::storage::std_set_tag, viennagrid::storage::no_hook_tag>,
+                                        float,                              viennagrid::storage::hooked_container_tag< viennagrid::storage::std_deque_tag, viennagrid::storage::no_hook_tag>
+                                    >::type view_container2_config;
+    typedef viennagrid::storage::result_of::view_collection<view_collection_type, view_container_config>::type view_collection2_type;
     view_collection2_type view_collection2;
-    
-    viennagrid::storage::container_collection::reference_if(view_collection, view_collection2, view2_predicate());
+
+    viennagrid::storage::container_collection::hook_if(view_collection, view_collection2, view2_predicate());
     
     cout << "view_collection2" << endl;
     cout << view_collection2 << endl;
