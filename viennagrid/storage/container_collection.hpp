@@ -31,7 +31,8 @@ namespace viennagrid
                         default_container
                     >::type container_tag_pair;
                     
-                    typedef typename viennagrid::storage::result_of::container_from_tag<value_type, typename container_tag_pair::second>::type type;
+                    //typedef typename viennagrid::storage::result_of::container_from_tag<value_type, typename container_tag_pair::second>::type type;
+                    typedef typename viennagrid::storage::result_of::hooked_container<value_type, typename container_tag_pair::second>::type type;
                 };
                 
                 
@@ -153,7 +154,9 @@ namespace viennagrid
         
         namespace container_collection
         {
-            typedef VIENNAMETA_MAKE_TYPEMAP_1( viennagrid::storage::default_tag, viennagrid::storage::std_deque_tag) default_container_config;
+            typedef viennameta::make_typemap<
+                        viennagrid::storage::default_tag,   viennagrid::storage::hooked_container_tag<viennagrid::storage::std_deque_tag, viennagrid::storage::pointer_hook_tag>
+                    >::type default_container_config;
             
             template<typename element_type, typename container_collection>
             typename viennagrid::storage::result_of::container_of< container_collection, element_type>::type & get( container_collection & collection )
@@ -171,6 +174,12 @@ namespace viennagrid
             
             
             
+            
+            
+            
+            
+            
+            
             template<typename container_collection_type, typename element_type, typename search_result>
             struct insert_or_ignore_helper
             {
@@ -178,12 +187,12 @@ namespace viennagrid
                 
                 static void insert_or_ignore( container_collection_type & collection, const element_type & element )
                 {
-                    viennagrid::storage::container::insert(collection.get( viennameta::tag<container_type>() ), element);
+                    collection.get( viennameta::tag<container_type>() ).insert(element);
                 }
                 
                 static void insert_or_ignore( container_collection_type & collection, element_type & element )
                 {
-                    viennagrid::storage::container::insert(collection.get( viennameta::tag<container_type>() ), element);
+                    collection.get( viennameta::tag<container_type>() ).insert(element);
                 }
             };
             
@@ -208,6 +217,54 @@ namespace viennagrid
             {
                 typedef typename viennagrid::storage::result_of::container_of< container_collection_type, element_type>::type container_type;
                 insert_or_ignore_helper<container_collection_type, element_type, container_type>::insert_or_ignore(collection, element);
+            }
+            
+            
+            
+            
+            
+            
+            
+            
+
+            
+            
+            
+            template<typename container_collection_type, typename hook_type, typename container_type>
+            struct hook_or_ignore_helper
+            {
+                static void hook_or_ignore( container_collection_type & collection, const hook_type & hook )
+                {
+                    collection.get( viennameta::tag<container_type>() ).insert_hook(hook);
+                }
+                
+                static void hook_or_ignore( container_collection_type & collection, hook_type & hook )
+                {
+                    collection.get( viennameta::tag<container_type>() ).insert_hook(hook);
+                }
+            };
+            
+            template<typename container_collection_type, typename hook_type>
+            struct hook_or_ignore_helper<container_collection_type, hook_type, viennameta::not_found>
+            {
+                static void hook_or_ignore( container_collection_type & collection, const hook_type & hook ) {}
+                
+                static void hook_or_ignore( container_collection_type & collection, hook_type & hook ) {}
+            };
+
+            
+            template<typename container_collection_type, typename hook_type, typename element_type>
+            void hook_or_ignore( container_collection_type & collection, const hook_type & hook, viennameta::tag<element_type> )
+            {
+                typedef typename viennagrid::storage::result_of::container_of< container_collection_type, element_type>::type container_type;
+                hook_or_ignore_helper<container_collection_type, hook_type, container_type>::hook_or_ignore(collection, hook);
+            }
+            
+            template<typename container_collection_type, typename hook_type, typename element_type>
+            void hook_or_ignore( container_collection_type & collection, hook_type & hook, viennameta::tag<element_type> )
+            {
+                typedef typename viennagrid::storage::result_of::container_of< container_collection_type, element_type>::type container_type;
+                hook_or_ignore_helper<container_collection_type, hook_type, container_type>::hook_or_ignore(collection, hook);
             }
             
 
