@@ -55,9 +55,9 @@ namespace viennagrid
         {
             
             template<typename typelist, typename id_type = int>
-            struct continuous_id_generator_layer
+            struct continuous_id_generator
             {
-                typedef continuous_id_generator_t<
+                typedef viennagrid::storage::continuous_id_generator_t<
                     typename viennameta::typelist::result_of::no_duplicates< typelist >::type,
                     id_type
                 > type;
