@@ -32,12 +32,12 @@ using std::endl;
 
 
 
-template<typename _element_typelist, typename _container_config = viennagrid::storage::container_collection::default_container_config>
+template<typename ElementTypeList, typename ContainerConfig = viennagrid::storage::container_collection::default_container_config>
 struct domain_t
 {
 //public:
-    typedef _element_typelist element_typelist;
-    typedef _container_config container_config;
+    typedef ElementTypeList element_typelist;
+    typedef ContainerConfig container_config;
     
 //protected:    
     
@@ -47,7 +47,7 @@ struct domain_t
     
 //public:
     
-    domain_t() : id_gernerator(), container_collection(), inserter(container_collection, id_gernerator) {}
+    domain_t() : id_generator(), container_collection(), inserter(container_collection, id_generator) {}
     
     
     template<typename element_type>
@@ -58,7 +58,7 @@ struct domain_t
     
     
 //protected:
-    id_generator_type id_gernerator;
+    id_generator_type id_generator;
     container_collection_type container_collection;
     inserter_type inserter;
 };
@@ -66,29 +66,29 @@ struct domain_t
 
 
 
-template<typename domain_type,
-    typename _element_typelist = typename domain_type::element_typelist,
-    typename _container_config = viennagrid::storage::container_collection::default_container_config>
+template<typename DomainType,
+    typename ElementTypeList = typename DomainType::element_typelist,
+    typename ContainerConfig = viennagrid::storage::container_collection::default_container_config>
 struct segment_t
 {
-    typedef _element_typelist element_typelist;
-    typedef _container_config container_config;
+    typedef ElementTypeList element_typelist;
+    typedef ContainerConfig container_config;
     
     // TODO: element_typelist beachten!
     
     
-    typedef typename viennagrid::storage::result_of::view_collection< typename domain_type::container_collection_type, container_config>::type container_collection_type;
+    typedef typename viennagrid::storage::result_of::view_collection< typename DomainType::container_collection_type, container_config>::type container_collection_type;
     
 //     typedef typename viennagrid::storage::view::reference_typelist_from_container_typelist_using_reference_config<
-//         typename viennagrid::storage::container_collection::result_of::container_typelist<typename domain_type::container_collection_type>::type,
+//         typename viennagrid::storage::container_collection::result_of::container_typelist<typename DomainType::container_collection_type>::type,
 //         reference_config>::type element_reference_typelist;
 //     
 //     typedef typename viennagrid::storage::result_of::container_collection<
 //         element_reference_typelist,
 //         container_config>::type container_collection_type;
-    typedef typename viennagrid::storage::result_of::recursive_inserter<container_collection_type, typename domain_type::inserter_type>::type inserter_type;
+    typedef typename viennagrid::storage::result_of::recursive_inserter<container_collection_type, typename DomainType::inserter_type>::type inserter_type;
     
-    segment_t(domain_type & domain, bool copy = true) : container_collection(), inserter(container_collection, domain.inserter)
+    segment_t(DomainType & domain, bool copy = true) : container_collection(), inserter(container_collection, domain.inserter)
     {
         if (copy)
             viennagrid::storage::container_collection::hook(domain.container_collection, container_collection);        
@@ -240,8 +240,8 @@ int main()
     
     cout << "New Segment" << endl;
     typedef segment_t<domain_type, tetrahedron_type::required_types, view_container_config> segment_type;
-    segment_type seg0(domain, false);
-    segment_type seg1(domain, false);
+    segment_type seg0(domain, true);
+    segment_type seg1(domain, true);
     
     
     

@@ -24,5 +24,5 @@ int main()
     viennagrid::storage::collection::get< std::vector<int> >( my_collection ).resize(10);
 
     
- 	return 0;
+    return 0;
 }

@@ -76,6 +76,7 @@ int main()
     typedef viennagrid::storage::result_of::container_collection<config, container_config>::type collection_type;
     collection_type collection;
 
+    //typedef collection_type::test_type test_type;
     
     typedef viennagrid::storage::result_of::continuous_id_generator<config>::type id_generator_type;
     id_generator_type id_generator;
@@ -210,12 +211,15 @@ int main()
     output_functor of;
     insert_bullshit_functor ibf;
     
-    
+    std::cout << "output_functor: " << std::endl;
     viennagrid::storage::collection::for_each( collection_ref, of );
+    std::cout << "count_size_functor: " << std::endl;
     viennagrid::storage::collection::for_each<const collection_type, count_size_functor&>( collection_ref, csf );
     cout << "total size: " << csf.size << endl;
     
+    std::cout << "insert_bullshit_functor: " << std::endl;
     viennagrid::storage::collection::for_each( collection, ibf );
+    std::cout << "output_functor: " << std::endl;
     viennagrid::storage::collection::for_each( collection_ref, of );
     
 

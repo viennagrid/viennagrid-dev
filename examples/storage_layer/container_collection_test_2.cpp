@@ -168,7 +168,7 @@ int main()
     
     view_inserter( t );
     
-    cout << "After Inser" << endl;
+    cout << "After Insert" << endl;
     
     cout << "collection" << endl;
     cout << collection << endl;
