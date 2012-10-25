@@ -81,8 +81,8 @@ namespace viennagrid
 //       }
       
       /** @brief Callback function used for filling the domain */
-    template<typename inserter_type>
-    void insert_callback( inserter_type & inserter, bool inserted )
+    template<typename inserter_type, typename container_collection_type>
+    void insert_callback( inserter_type & inserter, bool inserted, container_collection_type & container_collection )
     {
         if (inserted) Base::create_bnd_cells(inserter);
     }
@@ -142,8 +142,8 @@ namespace viennagrid
       //clean up any data associated with the element if it is destroyed:
       ~element_t() { viennadata::erase<viennadata::all, viennadata::all>()(*this); }
            
-        template<typename inserter_type>
-        void insert_callback( inserter_type & inserter, bool inserted )
+        template<typename inserter_type, typename container_collection_type>
+        void insert_callback( inserter_type & inserter, bool inserted, container_collection_type & container_collection )
         {}
 
       element_t & operator=(const element_t & other)
