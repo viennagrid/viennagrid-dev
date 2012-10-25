@@ -139,10 +139,25 @@ namespace viennagrid
                 hook_container.insert( hook );
             }
             
-            void set_reference( hook_type element, size_type pos )
+            void set_hook( hook_type element, size_type pos )
             {
                 hook_container[pos] = element;                
             }
+            
+            hook_type hook_at(std::size_t pos)
+            {
+                hook_iterator it = hook_begin();
+                std::advance( it, pos );
+                return *it;
+            }
+            
+            const_hook_type hook_at(std::size_t pos) const
+            {
+                hook_iterator it = hook_begin();
+                std::advance( it, pos );
+                return *it;
+            }
+
             
             
         private:
@@ -300,10 +315,25 @@ namespace viennagrid
                 hook_container.insert( hook );
             }
             
-            void set_reference( hook_type element, size_type pos )
+            void set_hook( hook_type element, size_type pos )
             {
                 hook_container[pos] = element;                
             }
+            
+            hook_type hook_at(std::size_t pos)
+            {
+                hook_iterator it = hook_begin();
+                std::advance( it, pos );
+                return *it;
+            }
+            
+            const_hook_type hook_at(std::size_t pos) const
+            {
+                hook_iterator it = hook_begin();
+                std::advance( it, pos );
+                return *it;
+            }
+
 
             
             
