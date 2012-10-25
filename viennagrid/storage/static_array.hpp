@@ -7,7 +7,7 @@ namespace viennagrid
 {
     namespace storage
     {
-        template<class T, std::size_t N>
+        template<typename T, std::size_t N>
         class static_array {
         public:
             T elems[N];    // fixed-size array of elements of type T
@@ -26,7 +26,7 @@ namespace viennagrid
             class const_iterator;
             
             
-            // TODO: implement random access operation: http://www.cplusplus.com/reference/std/iterator/RandomAccessIterator/
+            // random access iterator: http://www.cplusplus.com/reference/std/iterator/RandomAccessIterator/
             class iterator
             {
                 friend class const_iterator;
@@ -38,29 +38,63 @@ namespace viennagrid
                 typedef static_array::reference reference;
                 typedef std::random_access_iterator_tag iterator_category;
                 
+                // default-constructable
+                iterator() : ptr_(0) {}
+                
+                // copy- and copy-constructable
+                iterator(const iterator & it) : ptr_(it.ptr_) {}
+                iterator & operator=(const iterator & it) { ptr_ = it.ptr_; return *this; }
+                
+                // constructor for static_array
                 iterator(pointer ptr__) : ptr_(ptr__) {}
                 
-                
-                reference operator*() const { return *ptr_; }
-                pointer operator->() const { return ptr_; }
-
-                iterator & operator++() { ++ptr_; return *this; }
-                iterator operator++(int) { iterator tmp = *this; ++*this; return tmp; }
-                
-                iterator & operator--() { --ptr_; return *this; }
-                iterator operator--(int) { iterator tmp = *this; --*this; return tmp; }
-
+                // equal and inequal compareable
                 bool operator==(const iterator& i) const { return ptr_ == i.ptr_; }
                 bool operator!=(const iterator& i) const { return ptr_ != i.ptr_; }
                 
                 bool operator==(const const_iterator & it) const;
                 bool operator!=(const const_iterator & it) const;
                 
+                // dereferenceable
+                reference operator*() const { return *ptr_; }
+                pointer operator->() const { return ptr_; }
+                
+                // increment- and decrementable
+                iterator & operator++() { ++ptr_; return *this; }
+                iterator operator++(int) { iterator tmp = *this; ++*this; return tmp; }
+                
+                iterator & operator--() { --ptr_; return *this; }
+                iterator operator--(int) { iterator tmp = *this; --*this; return tmp; }
+                
+                // add and subtractable; operator+ and operator- is below
+                difference_type operator-(const iterator & it) const { return ptr_ - it.ptr_; }
+                difference_type operator-(const const_iterator & it) const { return ptr_ - it.ptr_; }
+                
+                // less and greater compareable
+                bool operator<(const iterator & it) const { return ptr_ < it.ptr; }
+                bool operator<=(const iterator & it) const { return ptr_ <= it.ptr; }
+
+                bool operator>(const iterator & it) const { return ptr_ > it.ptr; }
+                bool operator>=(const iterator & it) const { return ptr_ >= it.ptr; }
+                
+                bool operator<(const const_iterator & it) const { return ptr_ < it.ptr; }
+                bool operator<=(const const_iterator & it) const { return ptr_ <= it.ptr; }
+
+                bool operator>(const const_iterator & it) const { return ptr_ > it.ptr; }
+                bool operator>=(const const_iterator & it) const { return ptr_ >= it.ptr; }
+                                
+                // compound assign add- and subtractable
+                iterator & operator+=(long diff) { ptr_ += diff; return *this; }
+                iterator & operator-=(long diff) { ptr_ -= diff; return *this; }
+                
+                // offset dereferenceable
+                reference operator[](std::size_t offset) { return *(ptr_+offset); }
+                const reference operator[](std::size_t offset) const { return *(ptr_+offset); }
+
             private:
                 pointer ptr_;
             };
             
-            // TODO: implement random access operation: http://www.cplusplus.com/reference/std/iterator/RandomAccessIterator/
             class const_iterator
             {
                 friend class iterator;
@@ -73,25 +107,61 @@ namespace viennagrid
                 typedef std::random_access_iterator_tag iterator_category;
                 
                 
-                const_iterator( iterator it ) : ptr_(it.ptr_) {}
+                // default-constructable
+                const_iterator() : ptr_(0) {}
+                
+                // copy- and copy-constructable
+                const_iterator(const const_iterator & it) : ptr_(it.ptr_) {}
+                const_iterator(iterator it) : ptr_(it.ptr_) {}
+                const_iterator & operator=(const iterator & it) { ptr_ = it.ptr_; return *this; }
+                const_iterator & operator=(const const_iterator & it) { ptr_ = it.ptr_; return *this; }
+                
+                // constructor for static_array
                 const_iterator(const_pointer ptr__) : ptr_(ptr__) {}
                 
-                
-                reference operator*() const { return *ptr_; }
-                pointer operator->() const { return ptr_; }
-
-                const_iterator & operator++() { ++ptr_; return *this; }
-                const_iterator operator++(int) { iterator tmp = *this; ++*this; return tmp; }
-                
-                const_iterator & operator--() { --ptr_; return *this; }
-                const_iterator operator--(int) { iterator tmp = *this; --*this; return tmp; }
-
+                // equal and inequal compareable
                 bool operator==(const const_iterator& i) const { return ptr_ == i.ptr_; }
                 bool operator!=(const const_iterator& i) const { return ptr_ != i.ptr_; }
                 
                 bool operator==(const iterator & i) const { return ptr_ == i.ptr_; }
                 bool operator!=(const iterator & i) const { return ptr_ != i.ptr_; }
                 
+                // dereferenceable
+                reference operator*() const { return *ptr_; }
+                pointer operator->() const { return ptr_; }
+
+                
+                // increment- and decrementable
+                const_iterator & operator++() { ++ptr_; return *this; }
+                const_iterator operator++(int) { iterator tmp = *this; ++*this; return tmp; }
+                
+                const_iterator & operator--() { --ptr_; return *this; }
+                const_iterator operator--(int) { iterator tmp = *this; --*this; return tmp; }
+                
+                // add and subtractable; operator+ and operator- is below
+                difference_type operator-(const iterator & it) const { return ptr_ - it.ptr_; }
+                difference_type operator-(const const_iterator & it) const { return ptr_ - it.ptr_; }
+                
+                // less and greater compareable
+                bool operator<(const iterator & it) const { return ptr_ < it.ptr; }
+                bool operator<=(const iterator & it) const { return ptr_ <= it.ptr; }
+
+                bool operator>(const iterator & it) const { return ptr_ > it.ptr; }
+                bool operator>=(const iterator & it) const { return ptr_ >= it.ptr; }
+                
+                bool operator<(const const_iterator & it) const { return ptr_ < it.ptr; }
+                bool operator<=(const const_iterator & it) const { return ptr_ <= it.ptr; }
+
+                bool operator>(const const_iterator & it) const { return ptr_ > it.ptr; }
+                bool operator>=(const const_iterator & it) const { return ptr_ >= it.ptr; }
+                
+                // compound assign add- and subtractable
+                const_iterator & operator+=(long diff) { ptr_ += diff; return *this; }
+                const_iterator & operator-=(long diff) { ptr_ -= diff; return *this; }
+                
+                // offset dereferenceable
+                reference operator[](std::size_t offset) { return *(ptr_+offset); }
+
             private:
                 pointer ptr_;
             };
@@ -233,6 +303,27 @@ namespace viennagrid
         }
         
         
+        // iterator operations
+        template<typename T, std::size_t N>
+        typename static_array<T,N>::iterator operator+(const typename static_array<T,N>::iterator & it, long diff) { typename static_array<T,N>::iterator tmp(it); tmp += diff; return tmp; }
+        template<typename T, std::size_t N>
+        typename static_array<T,N>::iterator operator+(long diff, const typename static_array<T,N>::iterator & it) { typename static_array<T,N>::iterator tmp(it); tmp += diff; return tmp; }
+        
+        template<typename T, std::size_t N>
+        typename static_array<T,N>::iterator operator-(const typename static_array<T,N>::iterator & it, long diff) { typename static_array<T,N>::iterator tmp(it); tmp -= diff; return tmp; }
+        template<typename T, std::size_t N>
+        typename static_array<T,N>::iterator operator-(long diff, const typename static_array<T,N>::iterator & it) { typename static_array<T,N>::iterator tmp(it); tmp -= diff; return tmp; }
+               
+        
+        template<typename T, std::size_t N>
+        typename static_array<T,N>::const_iterator operator+(const typename static_array<T,N>::const_iterator & it, long diff) { typename static_array<T,N>::const_iterator tmp(it); tmp += diff; return tmp; }
+        template<typename T, std::size_t N>
+        typename static_array<T,N>::const_iterator operator+(long diff, const typename static_array<T,N>::const_iterator & it) { typename static_array<T,N>::const_iterator tmp(it); tmp += diff; return tmp; }
+        
+        template<typename T, std::size_t N>
+        typename static_array<T,N>::const_iterator operator-(const typename static_array<T,N>::const_iterator & it, long diff) { typename static_array<T,N>::const_iterator tmp(it); tmp -= diff; return tmp; }
+        template<typename T, std::size_t N>
+        typename static_array<T,N>::const_iterator operator-(long diff, const typename static_array<T,N>::const_iterator & it) { typename static_array<T,N>::const_iterator tmp(it); tmp -= diff; return tmp; }
         
         
         
