@@ -76,6 +76,15 @@ namespace viennagrid
       typedef static_layout_tag     layout_tag;
       enum{ num = 2 };     //2 vertices
     };
+    
+    
+    template<typename bnd_cell_type>
+    struct bndcell_generator<line_tag, 0, bnd_cell_type>
+    {
+        template<typename element_type, typename inserter_type>
+        static void create_bnd_cells(element_type & element, inserter_type & inserter)
+        {}
+    };
 
   }  
 
