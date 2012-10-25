@@ -77,25 +77,37 @@ namespace viennagrid
     
     //////// Tetrahedron ////////
     template<typename bnd_cell_type>
+    struct bndcell_generator<tetrahedron_tag, 0, bnd_cell_type>
+    {
+        template<typename element_type, typename inserter_type>
+        static void create_bnd_cells(element_type & element, inserter_type & inserter)
+        {}
+    };
+    
+    
+    template<typename bnd_cell_type>
     struct bndcell_generator<tetrahedron_tag, 1, bnd_cell_type>
     {
         
         template<typename element_type, typename inserter_type>
         static void create_bnd_cells(element_type & element, inserter_type & inserter)
         {
-            typedef typename element_type::VertexType VertexType;
-            typedef typename bnd_cell_type::VertexReferenceType VertexReferenceType;
+//             typedef typename element_type::VertexType VertexType;
+//             typedef typename bnd_cell_type::VertexReferenceType VertexReferenceType;
             
-            VertexReferenceType vertices[2];
+//             VertexReferenceType vertices[2];
             bnd_cell_type bnd_cell;
             
             int index = 0;
             for (int i = 0; i < 4; ++i)
                 for (int j = i+1; j < 4; ++j)
                 {
-                    vertices[0] = element.vertices()[i];
-                    vertices[1] = element.vertices()[j];
-                    bnd_cell.vertices(vertices);
+                    bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(i), 0 );
+                    bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(j), 1 );
+                    
+//                     vertices[0] = element.vertices()[i];
+//                     vertices[1] = element.vertices()[j];
+//                     bnd_cell.vertices(vertices);
                     element.set_bnd_cell( bnd_cell, inserter(bnd_cell), index++ );
                 }
         }
@@ -108,10 +120,10 @@ namespace viennagrid
         template<typename element_type, typename inserter_type>
         static void create_bnd_cells(element_type & element, inserter_type & inserter)
         {
-            typedef typename element_type::VertexType VertexType;
-            typedef typename bnd_cell_type::VertexReferenceType VertexReferenceType;
+//             typedef typename element_type::VertexType VertexType;
+//             typedef typename bnd_cell_type::VertexReferenceType VertexReferenceType;
             
-            VertexReferenceType vertices[3];
+//             VertexReferenceType vertices[3];
             bnd_cell_type bnd_cell;
             
             int index = 0;
@@ -119,14 +131,72 @@ namespace viennagrid
                 for (int j = i+1; j < 4; ++j)
                     for (int k = j+1; k < 4; ++k)
                     {
-                        vertices[0] = element.vertices()[i];
-                        vertices[1] = element.vertices()[j];
-                        vertices[2] = element.vertices()[k];
-                        bnd_cell.vertices(vertices);
+                        bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(i), 0 );
+                        bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(j), 1 );
+                        bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(k), 2 );
+                        
+//                         vertices[0] = element.vertices()[i];
+//                         vertices[1] = element.vertices()[j];
+//                         vertices[2] = element.vertices()[k];
+//                         bnd_cell.vertices(vertices);
                         element.set_bnd_cell( bnd_cell, inserter(bnd_cell), index++ );
                     }
         }
     };
+    
+    
+    
+//     template<typename bnd_cell_type>
+//     struct bndcell_generator<tetrahedron_tag, 1, bnd_cell_type>
+//     {
+//         
+//         template<typename element_type, typename inserter_type>
+//         static void create_bnd_cells(element_type & element, inserter_type & inserter)
+//         {
+//             typedef typename element_type::VertexType VertexType;
+//             typedef typename bnd_cell_type::VertexReferenceType VertexReferenceType;
+//             
+//             VertexReferenceType vertices[2];
+//             bnd_cell_type bnd_cell;
+//             
+//             int index = 0;
+//             for (int i = 0; i < 4; ++i)
+//                 for (int j = i+1; j < 4; ++j)
+//                 {
+//                     vertices[0] = element.vertices()[i];
+//                     vertices[1] = element.vertices()[j];
+//                     bnd_cell.vertices(vertices);
+//                     element.set_bnd_cell( bnd_cell, inserter(bnd_cell), index++ );
+//                 }
+//         }
+//     };
+//     
+//     template<typename bnd_cell_type>
+//     struct bndcell_generator<tetrahedron_tag, 2, bnd_cell_type>
+//     {
+//         
+//         template<typename element_type, typename inserter_type>
+//         static void create_bnd_cells(element_type & element, inserter_type & inserter)
+//         {
+//             typedef typename element_type::VertexType VertexType;
+//             typedef typename bnd_cell_type::VertexReferenceType VertexReferenceType;
+//             
+//             VertexReferenceType vertices[3];
+//             bnd_cell_type bnd_cell;
+//             
+//             int index = 0;
+//             for (int i = 0; i < 4; ++i)
+//                 for (int j = i+1; j < 4; ++j)
+//                     for (int k = j+1; k < 4; ++k)
+//                     {
+//                         vertices[0] = element.vertices()[i];
+//                         vertices[1] = element.vertices()[j];
+//                         vertices[2] = element.vertices()[k];
+//                         bnd_cell.vertices(vertices);
+//                         element.set_bnd_cell( bnd_cell, inserter(bnd_cell), index++ );
+//                     }
+//         }
+//     };
 
   } //topology
   
