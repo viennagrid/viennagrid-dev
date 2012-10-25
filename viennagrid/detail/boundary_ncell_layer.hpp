@@ -30,6 +30,10 @@
 
 #include "viennagrid/meta/typelist.hpp"
 #include "viennagrid/storage/hook.hpp"
+#include "viennagrid/storage/id.hpp"
+#include "viennagrid/storage/collection.hpp"
+#include "viennagrid/storage/container_collection.hpp"
+
 
 /** @file boundary_ncell_layer.hpp
     @brief Provides the topological layers for n-cells
@@ -43,21 +47,6 @@ namespace viennagrid
     
     namespace viennagrid_ng
     {
-               
-        template<typename _id_type = long>
-        struct id_element
-        {
-        public:
-            typedef _id_type id_type;
-            
-            void id(id_type _id) { id_ = _id; }
-            id_type id() const { return id_; }
-
-        private:
-            id_type id_;
-        };
-        
-        
         
         template<typename element_tag, typename bnd_cell_container_type__, typename orientation_container_type__>
         class boundary_ncell_layer
@@ -103,8 +92,8 @@ namespace viennagrid
                 return elements_;
             }
 
-            template<typename inserted_iterator_type>
-            void set_bnd_cell(const bnd_cell_type & to_insert, std::pair<inserted_iterator_type, bool> inserted, unsigned int pos)
+            template<typename hook_type>
+            void set_bnd_cell(const bnd_cell_type & to_insert, std::pair<hook_type, bool> inserted, unsigned int pos)
             {
                 elements_[pos] = inserted.first;
 
@@ -174,14 +163,22 @@ namespace viennagrid
 
             boundary_ncell_layer( const boundary_ncell_layer & llh) : elements_(llh.elements_) {}
             
+            template<typename container_typelist>
+            void set_container( viennagrid::storage::collection_t<container_typelist> & container_collection )
+            {
+                //typedef typename viennagrid::storage::result_of::container_of<bnd_cell_type>::type base_container_type;
+                elements_.set_base_container( viennagrid::storage::container_collection::get<bnd_cell_type>(container_collection) );
+            }
+            
         protected:
             
-            template<typename inserter_type>
-            void create_bnd_cells(inserter_type & inserter)
+            template<typename element_type, typename inserter_type>
+            void create_bnd_cells(element_type & element, inserter_type & inserter)
             {
-                topology::bndcell_generator<element_tag, dim, bnd_cell_type>::create_bnd_cells(*this, inserter );
+                //cout << "create bnd cells" << endl;
+                topology::bndcell_generator<element_tag, dim, bnd_cell_type>::create_bnd_cells(element, inserter);
             }
-
+            
             bnd_cell_container_type &
             container(dimension_tag<dim>)
             { 
@@ -195,10 +192,12 @@ namespace viennagrid
                 return elements_;
             }
 
-            template<typename inserted_iterator_type>
-            void set_bnd_cell(const bnd_cell_type & to_insert, std::pair<inserted_iterator_type, bool> inserted, unsigned int pos)
+            template<typename hook_type>
+            void set_bnd_cell(const bnd_cell_type & to_insert, std::pair<hook_type, bool> inserted, unsigned int pos)
             {
-                elements_[pos] = inserted.first;
+                //cout << "set bnd cell" << endl;
+                //elements_[pos] = inserted.first;
+                elements_.set_hook(inserted.first, pos);
             }
             
         private:
@@ -213,9 +212,12 @@ namespace viennagrid
         {
         public:
         protected:
-            template<typename inserter_type>
+            template<typename element_type, typename inserter_type>
             void create_bnd_cells(inserter_type & inserter)
             {}
+            
+            void set_bnd_cell();
+            void container();
             
         private:
         };
@@ -231,31 +233,98 @@ namespace viennagrid
         
         template<typename element_tag, typename head, typename tail>
         class boundary_ncell_layer_unwrapper<element_tag, viennameta::typelist_t<head, tail> > :
-            public boundary_ncell_layer<element_tag, typename head::first, typename head::second>
+            public  boundary_ncell_layer_unwrapper<element_tag, tail>,
+                    boundary_ncell_layer<element_tag, typename head::first, typename head::second>
         {
         
         private:
             
-            typedef boundary_ncell_layer<element_tag, typename head::first, typename head::second> base;
+            typedef boundary_ncell_layer_unwrapper<element_tag, tail> base;
+            typedef boundary_ncell_layer<element_tag, typename head::first, typename head::second> boundary_ncell_layer_type;
             
         public:
             
-            using base::create_bnd_cells;
+            template<typename container_typelist>
+            void set_container( viennagrid::storage::collection_t<container_typelist> & container_collection )
+            {
+                boundary_ncell_layer_type::set_container(container_collection);
+                base::set_container(container_collection);
+            }
+
+            
+            template<typename element_type, typename inserter_type>
+            void create_bnd_cells(element_type & element, inserter_type & inserter)
+            {
+                boundary_ncell_layer_type::create_bnd_cells(element, inserter);
+                base::create_bnd_cells(element, inserter);
+                //cout << "create bnd cells" << endl;
+                //topology::bndcell_generator<element_tag, dim, bnd_cell_type>::create_bnd_cells(*this, inserter);
+            }
+            
+            using boundary_ncell_layer_type::create_bnd_cells;
             using base::container;
+            using boundary_ncell_layer_type::container;
             using base::set_bnd_cell;
+            using boundary_ncell_layer_type::set_bnd_cell;
             
         protected:
         };
         
         template<typename element_tag>
         class boundary_ncell_layer_unwrapper<element_tag, viennameta::null_type>
-        {};
+        {
+        public:
+            
+            void set_bnd_cell();
+            void container();
+            
+            template<typename container_typelist>
+            void set_container( viennagrid::storage::collection_t<container_typelist> & container_collection )
+            {
+            }
+            
+            template<typename element_type, typename inserter_type>
+            void create_bnd_cells(element_type & element, inserter_type & inserter)
+            {
+            }
+        };
         
         
         
         
-        template<typename element_tag, typename bnd_cell_container_typelist__>
-        class element_t : public id_element<>,
+        namespace result_of
+        {
+            
+            template<typename typelist, long dim>
+            struct container_of_dimension;
+            
+            template<long dim>
+            struct container_of_dimension< viennameta::null_type, dim >
+            {
+                typedef viennameta::null_type type;
+            };
+            
+            template<typename container_pair, typename tail, long dim>
+            struct container_of_dimension< viennameta::typelist_t<container_pair, tail>, dim >
+            {
+                typedef typename container_pair::first container_type;
+                typedef typename container_type::value_type value_type;
+                //typedef typename viennagrid::storage::reference::value_type_from_reference_type<reference_type>::type value_type;
+
+                
+                typedef typename viennameta::_if<
+                    value_type::tag::dim == dim,
+                    container_type,
+                    typename container_of_dimension<tail, dim>::type
+                >::type type;
+            };
+        }
+        
+        
+        
+        
+        template<typename element_tag, typename bnd_cell_container_typelist__, typename id_type__>
+        class element_t : public viennagrid::storage::id_handler<id_type__>,
             public boundary_ncell_layer_unwrapper<element_tag, bnd_cell_container_typelist__>
         {
             typedef boundary_ncell_layer_unwrapper<element_tag, bnd_cell_container_typelist__> base;
@@ -265,12 +334,31 @@ namespace viennagrid
             typedef bnd_cell_container_typelist__ bnd_cell_container_typelist;
             typedef element_tag tag;
             
+            typedef typename result_of::container_of_dimension<bnd_cell_container_typelist, 0>::type vertex_container_type;
+            typedef typename vertex_container_type::value_type vertex_type;
             
-            template<typename inserter_type>
-            void insert_callback( inserter_type & inserter, bool inserted )
+            
+            template<typename inserter_type, typename container_typelist>
+            void insert_callback( inserter_type & inserter, bool inserted, viennagrid::storage::collection_t<container_typelist> & container_collection )
             {
-                if (inserted) base::create_bnd_cells(inserter);
+                
+                if (inserted)
+                {
+                    base::create_bnd_cells(*this, inserter);
+                    base::set_container(container_collection);
+                }
             }
+            
+            
+            
+//             vertex_container_type & vertices() { return ncells<0>(*this); }
+//             const vertex_container_type & vertices() const { return ncells<0>(*this); }
+//             void vertices(vertex_type ** vertices_in, size_t num)// = LevelSpecs::num)
+//             {
+//                 //assert( num <= LevelSpecs::num );
+//                 vertices().resize(num);
+//                 std::copy( vertices_in, vertices_in + num, vertices().begin() );
+//             }
             
         protected:
             
@@ -278,27 +366,10 @@ namespace viennagrid
         };
         
         
-//         /** @brief Overload for the output streaming operator */
-//         template <typename ConfigType, typename ElementTag>
-//         std::ostream & operator<<(std::ostream & os, element_t<ConfigType, ElementTag> const & el)
-//         {
-//             typedef element_t<ConfigType, ElementTag>                ElementType;
-//             typedef typename viennagrid::result_of::const_ncell_range<ElementType, 0>::type    VertexRange;
-//             typedef typename viennagrid::result_of::iterator<VertexRange>::type          VertexIterator;
-// 
-//             os << "-- " << ElementTag::name() << ", ID: " << el.id() << " --";
-//             VertexRange vertices = viennagrid::ncells<0>(el);
-//             for (VertexIterator vit  = vertices.begin();
-//                                 vit != vertices.end();
-//                                 ++vit)
-//             os << std::endl << "  " << *vit;
-// 
-//             return os;
-//         }
+
         
-        
-        template<typename point_type__>
-        class vertex_t : public id_element<>
+        template<typename point_type__, typename id_type__>
+        class vertex_t : public viennagrid::storage::id_handler<id_type__>
         {
         public:
             
@@ -307,9 +378,17 @@ namespace viennagrid
             typedef typename point_type::value_type coord_type;
             enum { dim = 0 };
             
-            template<typename inserter_type>
-            void insert_callback( inserter_type & inserter, bool inserted )
+            template<typename inserter_type, typename container_typelist>
+            void insert_callback( inserter_type & inserter, bool inserted, viennagrid::storage::collection_t<container_typelist> & container_collection )
             {}
+            
+            template<typename container_typelist>
+            void set_container( viennagrid::storage::collection_t<container_typelist> & container_collection )
+            {
+            }
+            
+            template<typename inserter_type>
+            void create_bnd_cells(inserter_type & inserter) {}
             
             /** @brief Provide access to the geometrical point object defining the location of the vertex in space */
             point_type & point() { return point_; }
@@ -337,8 +416,8 @@ namespace viennagrid
     
     
         /** @brief Overload for the output streaming operator for the vertex type */
-        template <typename point_type>
-        std::ostream & operator<<(std::ostream & os, vertex_t<point_type> const & el)
+        template <typename point_type, typename id_type>
+        std::ostream & operator<<(std::ostream & os, vertex_t<point_type, id_type> const & el)
         {
             os << "-- Vertex, ID: " << el.id() << "; Point: " << el.point();
 
@@ -349,34 +428,9 @@ namespace viennagrid
         
         
         namespace result_of
-        {
-            
-            template<typename typelist, long dim>
-            struct container_of_dimension;
-            
-            template<long dim>
-            struct container_of_dimension< viennameta::null_type, dim >
-            {
-                typedef viennameta::null_type type;
-            };
-            
-            template<typename container_pair, typename tail, long dim>
-            struct container_of_dimension< viennameta::typelist_t<container_pair, tail>, dim >
-            {
-                typedef typename container_pair::first container_type;
-                typedef typename container_type::value_type value_type;
-                //typedef typename viennagrid::storage::reference::value_type_from_reference_type<reference_type>::type value_type;
-
-                
-                typedef typename viennameta::_if<
-                    value_type::dim == dim,
-                    container_type,
-                    typename container_of_dimension<tail, dim>::type
-                >::type type;
-            };
-                        
-            template<typename element_tag, typename bnd_cell_container_typelist, long dim>
-            struct container_of_dimension< element_t<element_tag, bnd_cell_container_typelist>, dim >
+        {                        
+            template<typename element_tag, typename bnd_cell_container_typelist, typename id_type, long dim>
+            struct container_of_dimension< element_t<element_tag, bnd_cell_container_typelist, id_type>, dim >
             {
                 typedef typename container_of_dimension<bnd_cell_container_typelist, dim>::type type;
             };
@@ -387,6 +441,43 @@ namespace viennagrid
         typename result_of::container_of_dimension<element_type, dim>::type & ncells(element_type & element)
         {
             return element.container( dimension_tag<dim>() );
+        }
+        
+        template<long dim, typename element_type>
+        const typename result_of::container_of_dimension<element_type, dim>::type & ncells(const element_type & element)
+        {
+            return element.container( dimension_tag<dim>() );
+        }
+        
+        
+        
+        
+//         template<typename element_tag, typename bnd_cell_container_typelist__, typename id_type__>
+//         typename result_of::container_of_dimension<bnd_cell_container_typelist__, 0>::type & element_t<element_tag, bnd_cell_container_typelist__, id_type__>::vertices() { return ncells<0>(*this); }
+//         
+//         template<typename element_tag, typename bnd_cell_container_typelist__, typename id_type__>
+//         const typename result_of::container_of_dimension<bnd_cell_container_typelist__, 0>::type & element_t<element_tag, bnd_cell_container_typelist__, id_type__>::vertices() const { return ncells<0>(*this); }
+
+        
+        
+        
+        /** @brief Overload for the output streaming operator */
+        template <typename element_tag, typename bnd_cell_container_typelist__, typename id_type__>
+        std::ostream & operator<<(std::ostream & os, element_t<element_tag, bnd_cell_container_typelist__, id_type__> const & el)
+        {
+            //typedef const typename result_of::container_of_dimension< element_t<element_tag, bnd_cell_container_typelist__, id_type__>, 0 >::type vertex_range_type;
+            typedef typename element_t<element_tag, bnd_cell_container_typelist__, id_type__>::vertex_container_type vertex_container_type;
+            typedef typename vertex_container_type::const_iterator const_iterator;
+            
+            
+            os << "-- " << element_tag::name() << ", ID: " << el.id() << " --";
+            const vertex_container_type & vertices = ncells<0>(el);
+            for (const_iterator vit  = vertices.begin();
+                                vit != vertices.end();
+                            ++vit)
+            os << std::endl << "  " << *vit;
+            
+            return os;
         }
         
     
