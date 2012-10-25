@@ -173,6 +173,39 @@ namespace viennagrid
 //             }
         };
         
+        template<typename base_container__, typename id_type>
+        class hooked_container_t<base_container__, id_hook_tag<id_type> > : public base_container__
+        {
+        public:
+            typedef base_container__ container_type;
+            typedef typename container_type::value_type value_type;
+            
+            typedef typename container_type::pointer pointer;
+            typedef typename container_type::const_pointer const_pointer;            
+            
+            typedef typename container_type::reference reference;
+            typedef typename container_type::const_reference const_reference;
+            
+            typedef typename container_type::iterator iterator;
+            typedef typename container_type::const_iterator const_iterator;
+            
+            typedef typename viennagrid::storage::hook::hook_type<container_type, id_hook_tag<id_type> >::type hook_type;
+            typedef typename viennagrid::storage::hook::const_hook_type<container_type, id_hook_tag<id_type> >::type const_hook_type;
+            
+            value_type & dereference_hook( hook_type hook )
+            {
+                iterator it = container_type::begin();
+                std::advance(it, hook);
+                return *it;
+                //return *hook;
+            }
+            
+//             const value_type & dereference_hook( const_hook_type hook )
+//             {
+//                 return *hook;
+//             }
+        };
+        
         
         
         
@@ -284,6 +317,20 @@ namespace viennagrid
             typedef container::hook_iterator_impl<typename base_container::const_iterator, hook_tag> const_hook_iterator; 
             const_hook_iterator hook_begin() const { return hook_iterator(base_container::begin()); }
             const_hook_iterator hook_end() const { return hook_iterator(base_container::end()); }
+            
+            hook_type hook_at(std::size_t pos)
+            {
+                hook_iterator it = hook_begin();
+                std::advance( it, pos );
+                return *it;
+            }
+            const_hook_type hook_at(std::size_t pos) const
+            {
+                hook_iterator it = hook_begin();
+                std::advance( it, pos );
+                return *it;
+            }
+
             
             
         private:
