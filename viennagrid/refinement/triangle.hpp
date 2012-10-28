@@ -24,116 +24,13 @@
 #include "viennagrid/detail/element_iterators.hpp"
 #include "viennagrid/algorithm/norm.hpp"
 
-/** @file triangle.hpp
-    @brief Provides the topological definition of a triangle
+/** @file refinement/triangle.hpp
+    @brief Provides refinement routines for a triangle
 */
 
 namespace viennagrid
 {
 
-  /** @brief Topological description of a triangle.*/
-  template <>
-  struct simplex_tag<2>
-  {
-    enum{ dim = 2 };
-    static std::string name() { return "Triangle"; }
-  };
-
-  
-  namespace topology
-  {
-    /** @brief Topological description of the boundary 0-cells (vertices) of a triangle */
-    template <>
-    struct bndcells<triangle_tag, 0>
-    {
-      typedef point_tag             tag;
-
-      typedef static_layout_tag     layout_tag;
-      enum{ num = 3 };     //3 vertices
-    };
-
-    /** @brief Topological description of the boundary 1-cells (edges) of a triangle */
-    template <>
-    struct bndcells<triangle_tag, 1>
-    {
-      typedef simplex_tag<1>              tag;
-
-      typedef static_layout_tag     layout_tag;
-      enum{ num = 3 };     //3 edges
-
-    };
-  
-    ///////////////////////////////// Generator for boundary cell elements ///////////////////////////////////
-    
-    template<typename bnd_cell_type>
-    struct bndcell_generator<triangle_tag, 0, bnd_cell_type>
-    {
-        template<typename element_type, typename inserter_type>
-        static void create_bnd_cells(element_type & element, inserter_type & inserter)
-        {}
-    };
-    
-    
-    
-    template<typename bnd_cell_type>
-    struct bndcell_generator<triangle_tag, 1, bnd_cell_type>
-    {
-        template<typename element_type, typename inserter_type>
-        static void create_bnd_cells(element_type & element, inserter_type & inserter)
-        {
-            //typedef typename element_type::VertexType VertexType;
-//             typedef typename bnd_cell_type::VertexReferenceType VertexReferenceType;
-            
-//             VertexReferenceType vertices[2];
-            bnd_cell_type bnd_cell;
-            
-            int index = 0;
-            for (int i = 0; i < 3; ++i)
-                for (int j = i+1; j < 3; ++j)
-                {
-                    bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(i), 0 );
-                    bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(j), 1 );
-                    
-                    element.set_bnd_cell( bnd_cell, inserter(bnd_cell), index++ );
-                }
-        }
-    };
-    
-    
-//     template<typename bnd_cell_type>
-//     struct bndcell_generator<triangle_tag, 1, bnd_cell_type>
-//     {
-//         
-//         //template<typename element_type, typename typename inserter_type>
-//         
-//         
-//         
-//         template<typename element_type, typename inserter_type>
-//         static void create_bnd_cells(element_type & element, inserter_type & inserter)
-//         {
-//             //typedef typename element_type::VertexType VertexType;
-//             typedef typename bnd_cell_type::VertexReferenceType VertexReferenceType;
-//             
-//             VertexReferenceType vertices[2];
-//             bnd_cell_type bnd_cell;
-//             
-//             int index = 0;
-//             for (int i = 0; i < 3; ++i)
-//                 for (int j = i+1; j < 3; ++j)
-//                 {
-//                     vertices[0] = element.vertices()[i];
-//                     vertices[1] = element.vertices()[j];
-//                     bnd_cell.vertices(vertices);
-//                     element.set_bnd_cell( bnd_cell, inserter(bnd_cell), index++ );
-//                 }
-//         }
-//     };
-    
-    
-
-  } //topology
-  
-  
   
   /** @brief Specialization of the refinement class for a triangle */
   template <>

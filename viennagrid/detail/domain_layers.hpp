@@ -305,7 +305,7 @@ namespace viennagrid
         //typedef typename result_of::tag<typename Config::cell_tag, 0>::type   tag;
         typedef typename result_of::point<Config>::type                                   PointType;
         typedef domain_t<Config>                                                          domain_type;
-        typedef element_t<Config, point_tag >                                             element_type;
+        typedef element_t<Config, vertex_tag >                                             element_type;
         typedef element_t<Config, typename Config::cell_tag >                             cell_type;
         typedef typename result_of::element_container<domain_type,
                                                       0,

@@ -543,7 +543,7 @@ namespace viennagrid
       typedef dim_type        size_type;
       
       
-      typedef point_tag tag;
+      //typedef point_tag tag;
       
       /** @brief Publish the geometric dimension of the point */
       enum { dim = CoordinateSystem::dim };

@@ -11,6 +11,7 @@ rm viennagrid/detail/*.*~
 rm viennagrid/config/*.*~
 rm viennagrid/traits/*.*~
 rm viennagrid/topology/*.*~
+rm viennagrid/refinement/*.*~
 rm examples/tutorial/*.*~
 rm examples/benchmarks/*.*~
 rm examples/tests/*.*~

@@ -329,7 +329,7 @@ namespace viennagrid
         {
             typedef boundary_ncell_layer_unwrapper<element_tag, bnd_cell_container_typelist__> base;
             
-        public:
+          public:
             
             typedef bnd_cell_container_typelist__ bnd_cell_container_typelist;
             typedef element_tag tag;
@@ -349,33 +349,35 @@ namespace viennagrid
                 }
             }
             
+        };
+               
+
+        // separate specialization for vertices at the moment
+        template<typename bnd_cell_container_typelist__, typename id_type__>
+        class element_t<vertex_tag, bnd_cell_container_typelist__, id_type__> : public viennagrid::storage::id_handler<id_type__>
+        {
+            typedef element_t<vertex_tag, bnd_cell_container_typelist__, id_type__>            self_type;
             
+          public:
             
-//             vertex_container_type & vertices() { return ncells<0>(*this); }
-//             const vertex_container_type & vertices() const { return ncells<0>(*this); }
-//             void vertices(vertex_type ** vertices_in, size_t num)// = LevelSpecs::num)
-//             {
-//                 //assert( num <= LevelSpecs::num );
-//                 vertices().resize(num);
-//                 std::copy( vertices_in, vertices_in + num, vertices().begin() );
-//             }
+            typedef bnd_cell_container_typelist__ bnd_cell_container_typelist;
+            typedef vertex_tag tag;
             
-        protected:
+            //typedef typename result_of::container_of_dimension<bnd_cell_container_typelist, 0>::type vertex_container_type;
+            typedef self_type vertex_type;
             
-        private:
+            template<typename inserter_type, typename container_typelist>
+            void insert_callback( inserter_type & inserter, bool inserted, viennagrid::storage::collection_t<container_typelist> & container_collection ) {}
+            
         };
         
         
-
-        
-        template<typename point_type__, typename id_type__>
+/*        template<typename id_type__>
         class vertex_t : public viennagrid::storage::id_handler<id_type__>
         {
-        public:
+          public:
             
-            typedef point_type__ point_type;
-            typedef point_tag tag;
-            typedef typename point_type::value_type coord_type;
+            typedef vertex_tag tag;
             enum { dim = 0 };
             
             template<typename inserter_type, typename container_typelist>
@@ -389,37 +391,14 @@ namespace viennagrid
             
             template<typename inserter_type>
             void create_bnd_cells(inserter_type & inserter) {}
-            
-            /** @brief Provide access to the geometrical point object defining the location of the vertex in space */
-            point_type & point() { return point_; }
-            /** @brief Provide access to the geometrical point object defining the location of the vertex in space. const-version. */
-            point_type const & point() const { return point_; }
-            
-            //convenience access to coordinates of the vertex:
-            /** @brief Convenience access to the coordinates of the point */
-            coord_type & operator[](std::size_t i) { return point_[i]; }
-            /** @brief Convenience access to the coordinates of the point. const-version*/
-            coord_type const & operator[](std::size_t i) const { return point_[i]; }
-            
-            /** @brief Convenience forward for obtaining the geometrical dimension of the underlying Euclidian space. */
-            std::size_t size() const { return point_.size(); }
-
-            /** @brief Convenience less-than comparison function, forwarding to the point */
-            bool operator<(const vertex_t e2) const { return point_ < e2.point_; }
-            /** @brief Convenience greater-than comparison function, forwarding to the point */
-            bool operator>(const vertex_t e2) const { return point_ > e2.point_; }
-            
-        protected:
-        private:
-            point_type point_;
-        };
+        }; */
     
     
         /** @brief Overload for the output streaming operator for the vertex type */
-        template <typename point_type, typename id_type>
-        std::ostream & operator<<(std::ostream & os, vertex_t<point_type, id_type> const & el)
+        template <typename ContainerType, typename IDType>
+        std::ostream & operator<<(std::ostream & os, element_t<vertex_tag, ContainerType, IDType> const & el)
         {
-            os << "-- Vertex, ID: " << el.id() << "; Point: " << el.point();
+            os << "-- Vertex, ID: " << el.id();
 
             return os;
         }

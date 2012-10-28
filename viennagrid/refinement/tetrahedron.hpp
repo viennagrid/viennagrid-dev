@@ -1,5 +1,5 @@
-#ifndef VIENNAGRID_TOPOLOGY_TETRAHEDRON_HPP
-#define VIENNAGRID_TOPOLOGY_TETRAHEDRON_HPP
+#ifndef VIENNAGRID_REFINEMENT_TETRAHEDRON_HPP
+#define VIENNAGRID_REFINEMENT_TETRAHEDRON_HPP
 
 /* =======================================================================
    Copyright (c) 2011-2012, Institute for Microelectronics,
@@ -23,184 +23,14 @@
 #include "viennagrid/topology/line.hpp"
 #include "viennagrid/topology/triangle.hpp"
 #include "viennadata/api.hpp"
-// TODO #include "viennagrid/algorithm/norm.hpp"
 
-/** @file tetrahedron.hpp
-    @brief Provides the topological definition of a tetrahedron
+/** @file refinement/tetrahedron.hpp
+    @brief Provides refinement routines for tetrahedra
 */
 
 namespace viennagrid
 {
 
-  /** @brief Topological description of a tetrahedron.*/
-  template <>
-  struct simplex_tag<3>
-  {
-    enum{ dim = 3 };
-    static std::string name() { return "Tetrahedron"; }
-  };
-
-
-  namespace topology
-  {
-
-    //Tetrahedron:
-    /** @brief Topological description of the boundary 0-cells of a tetrahedron */
-    template <>
-    struct bndcells<tetrahedron_tag, 0>
-    {
-      typedef point_tag             tag;
-
-      typedef static_layout_tag     layout_tag;
-      enum{ num = 4 };     //4 vertices
-    };
-
-    /** @brief Topological description of the boundary 1-cells of a tetrahedron */
-    template <>
-    struct bndcells<tetrahedron_tag, 1>
-    {
-      typedef simplex_tag<1>              tag;
-
-      typedef static_layout_tag     layout_tag;
-      enum{ num = 6 };     //6 edges
-    };
-
-    /** @brief Topological description of the boundary 2-cells of a tetrahedron */
-    template <>
-    struct bndcells<tetrahedron_tag, 2>
-    {
-      typedef triangle_tag          tag;
-
-      typedef static_layout_tag     layout_tag;
-      enum{ num = 4 };     //4 facets
-    };
-    
-    //////// Tetrahedron ////////
-    template<typename bnd_cell_type>
-    struct bndcell_generator<tetrahedron_tag, 0, bnd_cell_type>
-    {
-        template<typename element_type, typename inserter_type>
-        static void create_bnd_cells(element_type & element, inserter_type & inserter)
-        {}
-    };
-    
-    
-    template<typename bnd_cell_type>
-    struct bndcell_generator<tetrahedron_tag, 1, bnd_cell_type>
-    {
-        
-        template<typename element_type, typename inserter_type>
-        static void create_bnd_cells(element_type & element, inserter_type & inserter)
-        {
-//             typedef typename element_type::VertexType VertexType;
-//             typedef typename bnd_cell_type::VertexReferenceType VertexReferenceType;
-            
-//             VertexReferenceType vertices[2];
-            bnd_cell_type bnd_cell;
-            
-            int index = 0;
-            for (int i = 0; i < 4; ++i)
-                for (int j = i+1; j < 4; ++j)
-                {
-                    bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(i), 0 );
-                    bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(j), 1 );
-                    
-//                     vertices[0] = element.vertices()[i];
-//                     vertices[1] = element.vertices()[j];
-//                     bnd_cell.vertices(vertices);
-                    element.set_bnd_cell( bnd_cell, inserter(bnd_cell), index++ );
-                }
-        }
-    };
-    
-    template<typename bnd_cell_type>
-    struct bndcell_generator<tetrahedron_tag, 2, bnd_cell_type>
-    {
-        
-        template<typename element_type, typename inserter_type>
-        static void create_bnd_cells(element_type & element, inserter_type & inserter)
-        {
-//             typedef typename element_type::VertexType VertexType;
-//             typedef typename bnd_cell_type::VertexReferenceType VertexReferenceType;
-            
-//             VertexReferenceType vertices[3];
-            bnd_cell_type bnd_cell;
-            
-            int index = 0;
-            for (int i = 0; i < 4; ++i)
-                for (int j = i+1; j < 4; ++j)
-                    for (int k = j+1; k < 4; ++k)
-                    {
-                        bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(i), 0 );
-                        bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(j), 1 );
-                        bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(k), 2 );
-                        
-//                         vertices[0] = element.vertices()[i];
-//                         vertices[1] = element.vertices()[j];
-//                         vertices[2] = element.vertices()[k];
-//                         bnd_cell.vertices(vertices);
-                        element.set_bnd_cell( bnd_cell, inserter(bnd_cell), index++ );
-                    }
-        }
-    };
-    
-    
-    
-//     template<typename bnd_cell_type>
-//     struct bndcell_generator<tetrahedron_tag, 1, bnd_cell_type>
-//     {
-//         
-//         template<typename element_type, typename inserter_type>
-//         static void create_bnd_cells(element_type & element, inserter_type & inserter)
-//         {
-//             typedef typename element_type::VertexType VertexType;
-//             typedef typename bnd_cell_type::VertexReferenceType VertexReferenceType;
-//             
-//             VertexReferenceType vertices[2];
-//             bnd_cell_type bnd_cell;
-//             
-//             int index = 0;
-//             for (int i = 0; i < 4; ++i)
-//                 for (int j = i+1; j < 4; ++j)
-//                 {
-//                     vertices[0] = element.vertices()[i];
-//                     vertices[1] = element.vertices()[j];
-//                     bnd_cell.vertices(vertices);
-//                     element.set_bnd_cell( bnd_cell, inserter(bnd_cell), index++ );
-//                 }
-//         }
-//     };
-//     
-//     template<typename bnd_cell_type>
-//     struct bndcell_generator<tetrahedron_tag, 2, bnd_cell_type>
-//     {
-//         
-//         template<typename element_type, typename inserter_type>
-//         static void create_bnd_cells(element_type & element, inserter_type & inserter)
-//         {
-//             typedef typename element_type::VertexType VertexType;
-//             typedef typename bnd_cell_type::VertexReferenceType VertexReferenceType;
-//             
-//             VertexReferenceType vertices[3];
-//             bnd_cell_type bnd_cell;
-//             
-//             int index = 0;
-//             for (int i = 0; i < 4; ++i)
-//                 for (int j = i+1; j < 4; ++j)
-//                     for (int k = j+1; k < 4; ++k)
-//                     {
-//                         vertices[0] = element.vertices()[i];
-//                         vertices[1] = element.vertices()[j];
-//                         vertices[2] = element.vertices()[k];
-//                         bnd_cell.vertices(vertices);
-//                         element.set_bnd_cell( bnd_cell, inserter(bnd_cell), index++ );
-//                     }
-//         }
-//     };
-
-  } //topology
-  
-  
   
   /** @brief Compares the lines (v1_1, v1_2) and (v2_1, v2_2) and returns true if the first is longer. 
    * 

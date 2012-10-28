@@ -42,7 +42,7 @@ namespace viennagrid
   /** @brief Internal helper class: holds an ordered number of vertices. Comparisons also take permutations into account.  */
   template <typename ConfigType, 
             typename ElementType,
-            typename IDHandler = typename result_of::element_id_handler<ConfigType, point_tag>::type>
+            typename IDHandler = typename result_of::element_id_handler<ConfigType, vertex_tag>::type>
   struct ElementKeyStorageType
   {
     typedef ElementType *           result_type;

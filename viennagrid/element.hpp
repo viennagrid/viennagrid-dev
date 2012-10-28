@@ -64,7 +64,7 @@ namespace viennagrid
       /** @brief Tag of the n-cell */
       typedef ElementTag                                       tag;
       /** @brief Publish ID handling class for dispatches */
-      typedef typename result_of::element_id_handler<ConfigType, point_tag>::type::id_type    id_type;
+      typedef typename result_of::element_id_handler<ConfigType, vertex_tag>::type::id_type    id_type;
 
       element_t ( ) {};   //construction of "template" for this type
 
@@ -112,8 +112,8 @@ namespace viennagrid
   //vertex-type needs separate treatment:
   /** @brief Specialization of the main n-cell class for vertices. Does not need to do any recursive inheritance here. */
   template <typename ConfigType>
-  class element_t <ConfigType, point_tag> :
-    public result_of::element_id_handler<ConfigType, point_tag>::type
+  class element_t <ConfigType, vertex_tag> :
+    public result_of::element_id_handler<ConfigType, vertex_tag>::type
   {
       typedef typename result_of::point<ConfigType>::type          PointType;
       typedef typename ConfigType::numeric_type                    CoordType;
@@ -122,8 +122,8 @@ namespace viennagrid
 
     public:
       typedef ConfigType                                       config_type;
-      typedef point_tag                                        tag;
-      typedef typename result_of::element_id_handler<ConfigType, point_tag>::type::id_type    id_type;
+      typedef vertex_tag                                        tag;
+      typedef typename result_of::element_id_handler<ConfigType, vertex_tag>::type::id_type    id_type;
 
       element_t() { };
 
@@ -178,7 +178,7 @@ namespace viennagrid
 
   /** @brief Overload for the output streaming operator for the vertex type */
   template <typename ConfigType>
-  std::ostream & operator<<(std::ostream & os, element_t<ConfigType, point_tag> const & el)
+  std::ostream & operator<<(std::ostream & os, element_t<ConfigType, vertex_tag> const & el)
   {
     os << "-- Vertex, ID: " << el.id() << "; Point: " << el.point();
     

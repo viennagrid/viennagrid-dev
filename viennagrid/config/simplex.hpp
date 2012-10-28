@@ -19,10 +19,9 @@
 ======================================================================= */
 
 
-#include "viennagrid/topology/triangle.hpp"
-#include "viennagrid/topology/tetrahedron.hpp"
+#include "viennagrid/topology/simplex.hpp"
 
-/** @file simplex.hpp
+/** @file config/simplex.hpp
     @brief Provides default configuration classes for simplex domains
 */
 

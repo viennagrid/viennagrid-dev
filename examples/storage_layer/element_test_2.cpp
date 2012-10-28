@@ -17,8 +17,7 @@ using std::endl;
 
 #include "viennagrid/topology/point.hpp"
 #include "viennagrid/topology/line.hpp"
-#include "viennagrid/topology/triangle.hpp"
-#include "viennagrid/topology/tetrahedron.hpp"
+#include "viennagrid/topology/simplex.hpp"
 
 
 #include "viennagrid/detail/boundary_ncell_layer.hpp"
@@ -30,31 +29,51 @@ using std::endl;
 
 int main()
 {
+    //
+    // First define the type of hook to use:
+    //
+    
     //typedef viennagrid::storage::pointer_hook_tag hook_tag;
     //typedef viennagrid::storage::iterator_hook_tag hook_tag;
     typedef viennagrid::storage::id_hook_tag<int> hook_tag;
     
+    //
+    // Get the vertex type:
+    //
+    typedef viennagrid::viennagrid_ng::element_t< viennagrid::vertex_tag,   // element tag
+                                                  viennameta::null_type,    // boundary k-cells container (a vertex does not have boundary cells, hence 'null_type'
+                                                  int                       // type 'int' is used as ID
+                                                > vertex_type;
     
-    
-    
-    
-    typedef viennagrid::point_t< double, viennagrid::cartesian_cs<3> > point_type;
+    //
+    // Instantiate a few vertices (note that they are now free of any geometry information)
+    //
+    vertex_type v0;
+    vertex_type v1;
+    vertex_type v2;
+    vertex_type v3;
     
 
-    typedef viennagrid::viennagrid_ng::vertex_t< point_type, int > vertex_type;
+                                                
+                                                
+    ///////////////////// Next step: Instantiate a line type ////////////////////////////////////                                            
     
-    
-    
+    //
+    // Create a container (type) for vertices. A hooked_container is basically a usual container which in addition provides hooks
+    //
     typedef viennagrid::storage::result_of::hooked_container<
-            vertex_type,
-            viennagrid::storage::hooked_container_tag<
-                viennagrid::storage::std_deque_tag,
-                hook_tag
+            vertex_type,                                         // the 'value_type', i.e. vertices     
+            viennagrid::storage::hooked_container_tag<           
+                viennagrid::storage::std_deque_tag,              // use a std::deque as container
+                hook_tag                                         // with the respective hooks
             >
         >::type vertex_container_type;
     
-
-    typedef viennameta::static_pair<
+        
+    //
+    // Create a view on the vertex container with two elements, thus referring to a line later on.
+    //
+    typedef viennameta::static_pair<                   
         viennagrid::storage::result_of::view<
             vertex_container_type,
             viennagrid::storage::hooked_container_tag<
@@ -63,11 +82,24 @@ int main()
                 viennagrid::storage::no_hook_tag
             >
         >::type,
-        viennameta::null_type
+        viennameta::null_type                                // no orientation container (only important for FEM-stuff)
     > line_vertex_containers;
     
+    //
+    // Provide the list of boundary k-cells. For a line, this is only the list of boundary vertices.
+    // 
+    // For technical reasons, all boundary containers of an element need to be wrapped in a typelist.
+    // A line only has vertices as boundary k-cells, thus the typelist consists of a single container element only:
+    //
     typedef viennameta::make_typelist< line_vertex_containers >::type line_containers_typelist;
-    typedef viennagrid::viennagrid_ng::element_t< viennagrid::line_tag, line_containers_typelist, int > line_type;
+    
+    // 
+    // Finally, we can instantiate the line type by passing the respective tag, the typelist of boundary k-cells, and the ID-type (int):
+    //
+    typedef viennagrid::viennagrid_ng::element_t< viennagrid::line_tag,           // element tag (as in ViennaGrid 1.0.x)
+                                                  line_containers_typelist,       // list of boundary containers
+                                                  int                             // ID type
+                                                > line_type;
     
     typedef viennagrid::storage::result_of::hooked_container<
             line_type,
@@ -77,33 +109,7 @@ int main()
                 hook_tag
             >
         >::type line_container_type;
-    
-    vertex_type v0;
-    vertex_type v1;
-    vertex_type v2;
-    vertex_type v3;
-    
-    v0[0] = 0;
-    v0[1] = 0;
-    v0[2] = 0;
-    //v0.id(0);
 
-    v1[0] = 1;
-    v1[1] = 0;
-    v1[2] = 0;
-    //v1.id(1);
-    
-    v2[0] = 0;
-    v2[1] = 1;
-    v2[2] = 0;
-    //v2.id(2);
-    
-    v3[0] = 0;
-    v3[1] = 0;
-    v3[2] = 1;
-    //v3.id(3);
-
-    
 //     line_type line;
 //     line.container( viennagrid::dimension_tag<0>() ).set_hook(&v0, 0);
 //     line.container( viennagrid::dimension_tag<0>() ).set_hook(&v1, 1);
@@ -113,8 +119,15 @@ int main()
 //     vertices_of_line_range_type range = viennagrid::viennagrid_ng::ncells<0>(line);   
 //     std::copy( range.begin(), range.end(), std::ostream_iterator<vertex_type>(cout, "\n") );
     
+
+        
+        
+        
+    ///////////////////// Next step: Instantiate a triangle type ////////////////////////////////////                                            
     
-    
+    //
+    // First we define the container for vertices of a triangle (just hooks to the vertex_container_type)
+    //
     typedef viennameta::static_pair<
         viennagrid::storage::result_of::view<
             vertex_container_type,
@@ -123,9 +136,12 @@ int main()
                 viennagrid::storage::no_hook_tag
             >
         >::type,
-        viennameta::null_type
+        viennameta::null_type                                // no orientation container (only important for FEM-stuff)
     > triangle_vertex_containers;
     
+    //
+    // Then we define the container for lines of a triangle (just hooks to the line_container_type)
+    //
     typedef viennameta::static_pair<
         viennagrid::storage::result_of::view<
             line_container_type,
@@ -135,12 +151,23 @@ int main()
                 viennagrid::storage::no_hook_tag
             >
         >::type,
-        viennameta::null_type
+        viennameta::null_type                                // no orientation container (only important for FEM-stuff)
     > triangle_line_containers;
     
+    
+    //
+    // Now all boundary k-cell-container of a triangle are given by concatenating the two vertex and line containers defined above
+    //
     typedef viennameta::make_typelist< triangle_vertex_containers, triangle_line_containers >::type triangle_containers_typelist;
+    
+    //
+    // Instantiate the triangle type as above: Provide the tag, the boundary container list, and the ID type
+    //
     typedef viennagrid::viennagrid_ng::element_t< viennagrid::triangle_tag, triangle_containers_typelist, int > triangle_type;
     
+    //
+    // Instantiate a hooked container of triangles using std::deque as the underlying container base. Hooks are again of the type defined at the beginning.
+    //
     typedef viennagrid::storage::result_of::hooked_container<
             triangle_type,
             viennagrid::storage::hooked_container_tag<
@@ -150,10 +177,16 @@ int main()
             >
         >::type triangle_container_type;
     
+
+        
+        
+        
+    ///////////////////// Next step: Instantiate a tetrahedron type ////////////////////////////////////                                            
     
     
-    
-    
+    //
+    // Define the vertices of a tetrahedron to be a view of static size 4 on the vertex_container defined above
+    //
     typedef viennameta::static_pair<
         viennagrid::storage::result_of::view<
             vertex_container_type,
@@ -162,9 +195,12 @@ int main()
                 viennagrid::storage::no_hook_tag
             >
         >::type,
-        viennameta::null_type
+        viennameta::null_type                                // no orientation container (only important for FEM-stuff)
     > tetrahedron_vertex_containers;
     
+    //
+    // Define the lines of a tetrahedron to be a view of static size 6 on the line_container defined above
+    //
     typedef viennameta::static_pair<
         viennagrid::storage::result_of::view<
             line_container_type,
@@ -173,9 +209,12 @@ int main()
                 viennagrid::storage::no_hook_tag
             >
         >::type,
-        viennameta::null_type
+        viennameta::null_type                                // no orientation container (only important for FEM-stuff)
     > tetrahedron_line_containers;
     
+    //
+    // Define the facets of a tetrahedron to be a view of static size 4 on the triangle_container defined above
+    //
     typedef viennameta::static_pair<
         viennagrid::storage::result_of::view<
             triangle_container_type,
@@ -184,12 +223,23 @@ int main()
                 viennagrid::storage::no_hook_tag
             >
         >::type,
-        viennameta::null_type
+        viennameta::null_type                                // no orientation container (only important for FEM-stuff)
     > tetrahedron_triangle_containers;
     
-    typedef viennameta::make_typelist< tetrahedron_vertex_containers, tetrahedron_line_containers, tetrahedron_triangle_containers >::type tetrahedron_containers_typelist;
+    //
+    // Now glue all the boundary k-cell container together into a single typelist:
+    //
+//    typedef viennameta::make_typelist< tetrahedron_vertex_containers, tetrahedron_line_containers, tetrahedron_triangle_containers >::type tetrahedron_containers_typelist;  // use this for 'all in'
+    typedef viennameta::make_typelist< tetrahedron_vertex_containers, tetrahedron_line_containers >::type tetrahedron_containers_typelist;             // use this to skip triangles
+    
+    //
+    // Now create the tetrahedron type as usual: Provide the tag, the boundary containers, and the ID type:
+    //
     typedef viennagrid::viennagrid_ng::element_t< viennagrid::tetrahedron_tag, tetrahedron_containers_typelist, int > tetrahedron_type;
     
+    //
+    // Instantiate a container of tetrahedra. A std::deque is used for the storage, and the usual hook type defined at the beginning is used
+    //
     typedef viennagrid::storage::result_of::hooked_container<
             tetrahedron_type,
             viennagrid::storage::hooked_container_tag<
@@ -199,21 +249,36 @@ int main()
         >::type tetrahedron_container_type;
         
         
+    ///////////////////// Final step: Instantiate a domain consisting of the vertex, line, triangle, and tetrahedron types and containers defined above ////////////////////////////////////                                            
+    
         
         
-        
+    //
+    // Generate a domain as a collection of vertices, lines, (triangles), and tetrahedra. 
+    //
     typedef viennagrid::storage::result_of::collection< 
-        viennameta::make_typelist< vertex_container_type, line_container_type, triangle_container_type, tetrahedron_container_type >::type
+//        viennameta::make_typelist< vertex_container_type, line_container_type, triangle_container_type, tetrahedron_container_type >::type   //including triangles
+        viennameta::make_typelist< vertex_container_type, line_container_type, tetrahedron_container_type >::type                              //without triangles
     >::type domain_type;
     domain_type domain;
     
+    //
+    // for pushing n-cells to a domain, each of them needs to be equipped with an ID. For that purpose, a suitable ID generator is deduced here:
+    //
     typedef viennagrid::storage::result_of::continuous_id_generator< viennagrid::storage::container_collection::result_of::value_typelist<domain_type>::type >::type id_generator_type;
+    
+    id_generator_type id_generator;
+    
+    //
+    // n-cells are inserted into the domain via dedicated inserter objects. Unless we wish to push an existing element to a view, a physical inserter is the way to go.
+    //
     typedef viennagrid::storage::result_of::physical_inserter<domain_type, id_generator_type&>::type inserter_type;
 
-    id_generator_type id_generator;
     inserter_type inserter(domain, id_generator);
     
-    
+    //
+    // Push the four vertices to the domain:
+    //
     inserter(v0);
     inserter(v1);
     inserter(v2);
@@ -221,7 +286,9 @@ int main()
     
     
 
-    
+    //
+    // Alright, now lets create a tetrahedron and link it with the four vertices.
+    //
     tetrahedron_type tet;
     tet.container( viennagrid::dimension_tag<0>() ).set_hook( viennagrid::storage::container_collection::get<vertex_type>(domain).hook_at(0), 0);
     tet.container( viennagrid::dimension_tag<0>() ).set_hook( viennagrid::storage::container_collection::get<vertex_type>(domain).hook_at(1), 1);
@@ -231,19 +298,20 @@ int main()
     inserter(tet);
     
 
-    
+    //
+    // Now lets print all the different elements in our domain:
+    //
     std::copy( viennagrid::storage::container_collection::get<vertex_type>(domain).begin(), viennagrid::storage::container_collection::get<vertex_type>(domain).end(), std::ostream_iterator<vertex_type>(cout, "\n") );
     cout << endl;
     
     std::copy( viennagrid::storage::container_collection::get<line_type>(domain).begin(), viennagrid::storage::container_collection::get<line_type>(domain).end(), std::ostream_iterator<line_type>(cout, "\n") );
     cout << endl;
     
-    std::copy( viennagrid::storage::container_collection::get<triangle_type>(domain).begin(), viennagrid::storage::container_collection::get<triangle_type>(domain).end(), std::ostream_iterator<triangle_type>(cout, "\n") );
-    cout << endl;
+//    std::copy( viennagrid::storage::container_collection::get<triangle_type>(domain).begin(), viennagrid::storage::container_collection::get<triangle_type>(domain).end(), std::ostream_iterator<triangle_type>(cout, "\n") );
+//    cout << endl;
     
     std::copy( viennagrid::storage::container_collection::get<tetrahedron_type>(domain).begin(), viennagrid::storage::container_collection::get<tetrahedron_type>(domain).end(), std::ostream_iterator<tetrahedron_type>(cout, "\n") );
     cout << endl;
-    
 
     
 

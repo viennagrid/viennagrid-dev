@@ -89,15 +89,14 @@ namespace viennagrid
 
   
   /********* Forward definitions of main classes *******************/
-  
-  /** @brief A tag referring to a point (geometrical object) */
-  struct point_tag;
 
   // Simplex family:
   /** @brief A tag for the simplex family (triangle, tetrahedron, etc.) */
   template <long dim>
   struct simplex_tag;
-  
+
+  /** @brief Convenience type definition for a vertex */
+  typedef simplex_tag<0>    vertex_tag;
   /** @brief Convenience type definition for a line */
   typedef simplex_tag<1>    line_tag;
   /** @brief Convenience type definition for a triangle */

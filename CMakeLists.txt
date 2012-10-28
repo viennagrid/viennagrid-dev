@@ -36,5 +36,5 @@ ADD_EXECUTABLE(container_test                  examples/storage_layer/container_
 ADD_EXECUTABLE(collection_test                 examples/storage_layer/collection_test.cpp)
 ADD_EXECUTABLE(container_collection_test       examples/storage_layer/container_collection_test.cpp)
 ADD_EXECUTABLE(container_collection_test_2     examples/storage_layer/container_collection_test_2.cpp)
-ADD_EXECUTABLE(element_test                    examples/storage_layer/element_test.cpp)
-# ADD_EXECUTABLE(element_test_2                  examples/storage_layer/element_test_2.cpp)
+#ADD_EXECUTABLE(element_test                    examples/storage_layer/element_test.cpp)
+ADD_EXECUTABLE(element_test_2                  examples/storage_layer/element_test_2.cpp)

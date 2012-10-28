@@ -21,8 +21,8 @@
 #include "viennagrid/forwards.h"
 #include "viennagrid/topology/point.hpp"
 
-/** @file line.hpp
-    @brief Provides the topological definition of a line
+/** @file polygon.hpp
+    @brief Provides the topological definition of a polygon
 */
 
 namespace viennagrid
@@ -39,7 +39,7 @@ namespace viennagrid
   {
 
     //Line:
-    /** @brief Topological description of the 0-cells of a line */
+    /** @brief Topological description of the 0-cells of a polygon */
     template <>
     struct bndcells<polygon_tag, 0>
     {
@@ -59,7 +59,7 @@ namespace viennagrid
     };
 
     
-    /** @brief Fills a segment or a domain with the edges of a triangle */
+    /** @brief Fills a segment or a domain with the edges of a polygon */
     template <>
     struct bndcell_filler<polygon_tag, 1>
     {
