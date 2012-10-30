@@ -233,8 +233,8 @@ namespace viennagrid
         
         template<typename element_tag, typename head, typename tail>
         class boundary_ncell_layer_unwrapper<element_tag, viennameta::typelist_t<head, tail> > :
-            public  boundary_ncell_layer_unwrapper<element_tag, tail>,
-                    boundary_ncell_layer<element_tag, typename head::first, typename head::second>
+            public boundary_ncell_layer_unwrapper<element_tag, tail>,
+            public boundary_ncell_layer<element_tag, typename head::first, typename head::second>
         {
         
         private:

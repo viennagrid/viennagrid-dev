@@ -129,6 +129,36 @@ namespace viennagrid
         };
         
         
+        namespace hook
+        {            
+            template<typename _key_type, typename _value_type>
+            struct iterator_to_hook<hidden_key_map<_key_type, _value_type>, iterator_hook_tag>
+            {
+                typedef typename viennagrid::storage::hook::hook_type<hidden_key_map<_key_type, _value_type>, iterator_hook_tag>::type hook_type;
+                
+                static hook_type convert( hook_type it ) { return it; }
+            };
+            
+            template<typename _key_type, typename _value_type>
+            struct iterator_to_hook<hidden_key_map<_key_type, _value_type>, pointer_hook_tag>
+            {
+                typedef typename viennagrid::storage::hook::hook_type<hidden_key_map<_key_type, _value_type>, pointer_hook_tag>::type hook_type;
+                
+                template<typename iterator>
+                static hook_type convert( iterator it ) { return & it->second; }
+            };
+            
+            template<typename _key_type, typename _value_type, typename id_type>
+            struct iterator_to_hook<hidden_key_map<_key_type, _value_type>, id_hook_tag<id_type> >
+            {
+                typedef typename viennagrid::storage::hook::hook_type<hidden_key_map<_key_type, _value_type>, id_hook_tag<id_type> >::type hook_type;
+                
+                template<typename iterator>
+                static hook_type convert( iterator it ) { return it->second.id(); }
+            };
+            
+        }
+        
         
         template<typename key_type_tag>
         struct hidden_key_map_tag {};
