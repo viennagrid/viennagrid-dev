@@ -63,6 +63,8 @@ namespace viennagrid
   template <long n>
   struct simplex_tag
   {
+    typedef simplex_tag<n-1> facet_tag;
+      
     enum{ dim = n };
     static std::string name() 
     {
@@ -78,6 +80,15 @@ namespace viennagrid
     /** @brief Topological description of the boundary k-cells an n-simplex */
     template <long n, long k>
     struct bndcells<simplex_tag<n>, k>
+    {
+      typedef simplex_tag<k>             tag;
+
+      typedef static_layout_tag     layout_tag;
+      enum{ num = meta::n_over_k<n+1, k+1>::value };
+    };
+    
+    template <long n, long k>
+    struct boundary_cells<simplex_tag<n>, simplex_tag<k> >
     {
       typedef simplex_tag<k>             tag;
 
