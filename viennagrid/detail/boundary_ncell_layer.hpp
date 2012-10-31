@@ -222,6 +222,21 @@ namespace viennagrid
         private:
         };
         
+        template<typename element_tag>
+        class boundary_ncell_layer<element_tag, viennameta::null_type, viennameta::null_type>
+        {
+        public:
+        protected:
+            template<typename element_type, typename inserter_type>
+            void create_bnd_cells(inserter_type & inserter)
+            {}
+            
+            void set_bnd_cell();
+            void container();
+            
+        private:
+        };
+        
         
         
         
