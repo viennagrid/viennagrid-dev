@@ -265,6 +265,19 @@ namespace viennagrid
       /** @brief k-cell tag for identification of the type */
       typedef ElementTag            tag;
     };
+    
+    template <typename ElementTag, typename BoundaryNCellTag = ElementTag>
+    struct boundary_cells
+    {
+      //the default case is simultaneously a pathetic case:
+      //cell-handling within the cell
+
+      /** @brief Number of boundary cells at this level */
+      enum{ num = 1 };     //1 cell
+
+      /** @brief k-cell tag for identification of the type */
+      typedef ElementTag            tag;
+    };
 
     /** @brief Worker class that sets up the boundary k-cells of a n-cell
      * 
