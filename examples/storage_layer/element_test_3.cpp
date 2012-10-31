@@ -41,10 +41,17 @@ namespace viennagrid
     namespace result_of
     {
         
+        
+        //
+        // Generates an element type
+        //
         template<typename config__, typename element_tag__, typename boundary_cell_tag__ = element_tag__>
         struct element;
         
         
+        //
+        // Some config values for an element
+        //
         template<typename complete_config, typename element_tag>
         struct element_config
         {
@@ -58,7 +65,9 @@ namespace viennagrid
         };
         
         
-        
+        //
+        // Getting the boundary cell storage and orientation layout for a element
+        //
         template<typename complete_config, typename element_tag, typename boundary_cell_tag>
         struct boundary_storage_layout
         {
@@ -73,12 +82,9 @@ namespace viennagrid
 
         
         
-//         template<typename >
-//         struct element_container_tag
-//         {
-//             
-//         };
-        
+        //
+        // Generates the boundary cell container (for example static_array<vertex_type, 4> for tetrahedron and vertex)
+        //
         template<typename config, typename element_tag, typename boundary_ncell_tag>
         struct boundary_ncell_container
         {
@@ -111,7 +117,9 @@ namespace viennagrid
         };
         
         
-        
+        //
+        // implementation
+        //
         template<typename config__, typename element_tag__, typename boundary_cell_tag__>
         struct element
         {
@@ -138,6 +146,9 @@ namespace viennagrid
             typedef viennagrid::viennagrid_ng::element_t<element_tag, boundary_ncell_container_list, id_type> type;
         };
         
+        //
+        // vertex spezilaisation
+        //
         template<typename config__, typename element_tag__>
         struct element<config__, element_tag__, viennagrid::vertex_tag>
         {
@@ -153,6 +164,10 @@ namespace viennagrid
         };
         
         
+        
+        //
+        // generates a container for a specified element_tag for the domain container collection
+        //
         template<typename config, typename element_tag>
         struct element_container_ng
         {
@@ -161,6 +176,9 @@ namespace viennagrid
         };
         
         
+        //
+        // generates the container typelist for the domain container collection
+        //
         template<typename config, typename cur_config = config>
         struct element_container_typelist;
         
@@ -206,7 +224,9 @@ int main()
     
     
     
-    
+    //
+    // A full config for tetrahedrons
+    //
     
     typedef viennameta::make_typemap<    
 
@@ -285,21 +305,18 @@ int main()
     
     
         
-    //typedef viennagrid::result_of::element<viennagrid::vertex_tag, viennagrid::vertex_tag, config>::type vertex_type;
-    typedef viennagrid::result_of::element<config, viennagrid::vertex_tag>::type vertex_type;
-    //cout << typeid(vertex_type).name() << endl << endl;
-    
+    //
+    // typedefs for the element types
+    //
+    typedef viennagrid::result_of::element<config, viennagrid::vertex_tag>::type vertex_type;        
     typedef viennagrid::result_of::element<config, viennagrid::line_tag>::type line_type;
-    //cout << typeid(line_type).name() << endl << endl;
-    
     typedef viennagrid::result_of::element<config, viennagrid::triangle_tag>::type triangle_type;
-    //cout << typeid(triangle_type).name() << endl << endl;
-    
     typedef viennagrid::result_of::element<config, viennagrid::tetrahedron_tag>::type tetrahedron_type;
-    //cout << typeid(tetrahedron_type).name() << endl << endl;
     
 
-    
+    //
+    // setting up the domain
+    //
     
     typedef viennagrid::result_of::element_container_typelist<config>::type element_container_typelist;
     
@@ -314,6 +331,9 @@ int main()
     inserter_type inserter(domain_container_collection, id_generator);
     
 
+    //
+    // Adding a tetrahedron
+    //
     
     vertex_type v0;
     vertex_type v1;
@@ -335,6 +355,10 @@ int main()
     inserter(tet);
     
     
+    //
+    // display the domain content
+    //
+    
     std::copy( viennagrid::storage::container_collection::get<vertex_type>(domain_container_collection).begin(), viennagrid::storage::container_collection::get<vertex_type>(domain_container_collection).end(), std::ostream_iterator<vertex_type>(cout, "\n") );
     cout << endl;
     
@@ -347,9 +371,6 @@ int main()
     std::copy( viennagrid::storage::container_collection::get<tetrahedron_type>(domain_container_collection).begin(), viennagrid::storage::container_collection::get<tetrahedron_type>(domain_container_collection).end(), std::ostream_iterator<tetrahedron_type>(cout, "\n") );
     cout << endl;
     
-
-    
-    //cout << typeid( viennagrid::result_of::element_config<config, viennagrid::vertex_tag>::id_type ).name() << endl;
     
     
     
