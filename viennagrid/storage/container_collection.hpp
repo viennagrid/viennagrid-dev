@@ -32,7 +32,7 @@ namespace viennagrid
                     >::type container_tag_pair;
                     
                     //typedef typename viennagrid::storage::result_of::container_from_tag<value_type, typename container_tag_pair::second>::type type;
-                    typedef typename viennagrid::storage::result_of::hooked_container<value_type, typename container_tag_pair::second>::type type;
+                    typedef typename viennagrid::storage::result_of::container<value_type, typename container_tag_pair::second>::type type;
                 };
                 
                 

@@ -170,7 +170,7 @@ namespace viennagrid
             
             
             template<typename element_type, typename key_type_tag>
-            struct container_from_tag<element_type, hidden_key_map_tag<key_type_tag> >
+            struct container<element_type, hidden_key_map_tag<key_type_tag> >
             {
                 typedef hidden_key_map< typename hidden_key_map_key_type_from_tag<element_type, key_type_tag>::type, element_type > type;
             };

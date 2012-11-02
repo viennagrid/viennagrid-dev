@@ -339,44 +339,39 @@ namespace viennagrid
 
         
         namespace result_of
-        {
+        {           
             template<typename value_type, typename container_tag>
-            struct container_from_tag;
+            struct container;
             
             template<typename value_type>
-            struct container_from_tag<value_type, std_vector_tag>
+            struct container<value_type, std_vector_tag>
             {
                 typedef std::vector<value_type> type;
             };
             
             template<typename value_type>
-            struct container_from_tag<value_type, std_deque_tag>
+            struct container<value_type, std_deque_tag>
             {
                 typedef std::deque<value_type> type;
             };
             
             template<typename value_type>
-            struct container_from_tag<value_type, std_list_tag>
+            struct container<value_type, std_list_tag>
             {
                 typedef std::list<value_type> type;
             };
             
             template<typename value_type>
-            struct container_from_tag<value_type, std_set_tag>
+            struct container<value_type, std_set_tag>
             {
                 typedef std::set<value_type> type;
             };
             
             
-            
-            template<typename value_type, typename hooked_container_tag>
-            struct hooked_container;
-            
-            
             template<typename value_type, typename container_tag, typename hook_tag>
-            struct hooked_container<value_type, hooked_container_tag<container_tag, hook_tag> >
+            struct container<value_type, hooked_container_tag<container_tag, hook_tag> >
             {
-                typedef container_t< typename container_from_tag<value_type, container_tag>::type, hook_tag > type;
+                typedef container_t< typename container<value_type, container_tag>::type, hook_tag > type;
             };
             
 

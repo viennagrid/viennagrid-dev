@@ -337,7 +337,7 @@ namespace viennagrid
         namespace result_of
         {
             template<typename element_type, long size>
-            struct container_from_tag<element_type, static_array_tag<size> >
+            struct container<element_type, static_array_tag<size> >
             {
                 typedef static_array<element_type, size> type;
             };
