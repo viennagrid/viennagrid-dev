@@ -64,7 +64,7 @@ int main()
     //
     // Create a container (type) for vertices. A hooked_container is basically a usual container which in addition provides hooks
     //
-    typedef viennagrid::storage::result_of::hooked_container<
+    typedef viennagrid::storage::result_of::container<
             vertex_type,                                         // the 'value_type', i.e. vertices     
             viennagrid::storage::hooked_container_tag<           
                 viennagrid::storage::std_deque_tag,              // use a std::deque as container
@@ -79,11 +79,7 @@ int main()
     typedef viennameta::static_pair<                   
         viennagrid::storage::result_of::view<
             vertex_container_type,
-            viennagrid::storage::hooked_container_tag<
-                //viennagrid::storage::std_deque_tag,
-                viennagrid::storage::static_array_tag<2>,
-                viennagrid::storage::no_hook_tag
-            >
+            viennagrid::storage::static_array_tag<2>
         >::type,
         viennameta::null_type                                // no orientation container (only important for FEM-stuff)
     > line_vertex_containers;
@@ -104,7 +100,7 @@ int main()
                                                   int                             // ID type
                                                 > line_type;
     
-    typedef viennagrid::storage::result_of::hooked_container<
+    typedef viennagrid::storage::result_of::container<
             line_type,
             viennagrid::storage::hooked_container_tag<
                 //viennagrid::storage::std_deque_tag,
@@ -134,10 +130,7 @@ int main()
     typedef viennameta::static_pair<
         viennagrid::storage::result_of::view<
             vertex_container_type,
-            viennagrid::storage::hooked_container_tag<
-                viennagrid::storage::static_array_tag<3>,
-                viennagrid::storage::no_hook_tag
-            >
+            viennagrid::storage::static_array_tag<3>
         >::type,
         viennameta::null_type                                // no orientation container (only important for FEM-stuff)
     > triangle_vertex_containers;
@@ -148,11 +141,7 @@ int main()
     typedef viennameta::static_pair<
         viennagrid::storage::result_of::view<
             line_container_type,
-            viennagrid::storage::hooked_container_tag<
-                //viennagrid::storage::std_deque_tag,
-                viennagrid::storage::static_array_tag<3>,
-                viennagrid::storage::no_hook_tag
-            >
+            viennagrid::storage::static_array_tag<3>
         >::type,
         viennameta::null_type                                // no orientation container (only important for FEM-stuff)
     > triangle_line_containers;
@@ -171,7 +160,7 @@ int main()
     //
     // Instantiate a hooked container of triangles using std::deque as the underlying container base. Hooks are again of the type defined at the beginning.
     //
-    typedef viennagrid::storage::result_of::hooked_container<
+    typedef viennagrid::storage::result_of::container<
             triangle_type,
             viennagrid::storage::hooked_container_tag<
                 //viennagrid::storage::std_deque_tag,
@@ -193,10 +182,7 @@ int main()
     typedef viennameta::static_pair<
         viennagrid::storage::result_of::view<
             vertex_container_type,
-            viennagrid::storage::hooked_container_tag<
-                viennagrid::storage::static_array_tag<4>,
-                viennagrid::storage::no_hook_tag
-            >
+            viennagrid::storage::static_array_tag<4>
         >::type,
         viennameta::null_type                                // no orientation container (only important for FEM-stuff)
     > tetrahedron_vertex_containers;
@@ -207,10 +193,7 @@ int main()
     typedef viennameta::static_pair<
         viennagrid::storage::result_of::view<
             line_container_type,
-            viennagrid::storage::hooked_container_tag<
-                viennagrid::storage::static_array_tag<6>,
-                viennagrid::storage::no_hook_tag
-            >
+            viennagrid::storage::static_array_tag<6>
         >::type,
         viennameta::null_type                                // no orientation container (only important for FEM-stuff)
     > tetrahedron_line_containers;
@@ -221,10 +204,7 @@ int main()
     typedef viennameta::static_pair<
         viennagrid::storage::result_of::view<
             triangle_container_type,
-            viennagrid::storage::hooked_container_tag<
-                viennagrid::storage::static_array_tag<4>,
-                viennagrid::storage::no_hook_tag
-            >
+            viennagrid::storage::static_array_tag<4>
         >::type,
         viennameta::null_type                                // no orientation container (only important for FEM-stuff)
     > tetrahedron_triangle_containers;
@@ -243,7 +223,7 @@ int main()
     //
     // Instantiate a container of tetrahedra. A std::deque is used for the storage, and the usual hook type defined at the beginning is used
     //
-    typedef viennagrid::storage::result_of::hooked_container<
+    typedef viennagrid::storage::result_of::container<
             tetrahedron_type,
             viennagrid::storage::hooked_container_tag<
                 viennagrid::storage::std_deque_tag,

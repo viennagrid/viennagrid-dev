@@ -56,7 +56,7 @@ template<typename container_tag>
 void test()
 {
     //typedef typename viennagrid::storage::result_of::container_from_tag< id_int, container_tag >::type my_container_type;
-    typedef typename viennagrid::storage::result_of::hooked_container< id_int, container_tag >::type my_container_type;
+    typedef typename viennagrid::storage::result_of::container< id_int, container_tag >::type my_container_type;
     typedef typename my_container_type::hook_type hook_type;
     
     my_container_type my_container;
