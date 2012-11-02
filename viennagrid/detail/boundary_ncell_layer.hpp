@@ -71,13 +71,27 @@ namespace viennagrid
 
             boundary_ncell_layer( const boundary_ncell_layer & llh) : elements_(llh.elements_), orientations_(llh.orientations_) {}
             
+            template<typename container_typelist>
+            void set_container( viennagrid::storage::collection_t<container_typelist> & container_collection )
+            {
+                //typedef typename viennagrid::storage::result_of::container_of<bnd_cell_type>::type base_container_type;
+                elements_.set_base_container( viennagrid::storage::container_collection::get<bnd_cell_type>(container_collection) );
+            }
+            
         protected:
             
-            template<typename inserter_type>
-            void create_bnd_cells(inserter_type & inserter)
+//             template<typename inserter_type>
+//             void create_bnd_cells(inserter_type & inserter)
+//             {
+//                 topology::bndcell_generator<element_tag, dim, bnd_cell_type>::create_bnd_cells(*this, inserter );
+//             }
+            template<typename element_type, typename inserter_type>
+            void create_bnd_cells(element_type & element, inserter_type & inserter)
             {
-                topology::bndcell_generator<element_tag, dim, bnd_cell_type>::create_bnd_cells(*this, inserter );
+                //cout << "create bnd cells" << endl;
+                topology::bndcell_generator<element_tag, dim, bnd_cell_type>::create_bnd_cells(element, inserter);
             }
+            
 
             bnd_cell_container_type &
             container(dimension_tag<dim>)
@@ -95,7 +109,8 @@ namespace viennagrid
             template<typename hook_type>
             void set_bnd_cell(const bnd_cell_type & to_insert, std::pair<hook_type, bool> inserted, unsigned int pos)
             {
-                elements_[pos] = inserted.first;
+                //elements_[pos] = inserted.first;
+                elements_.set_hook(inserted.first, pos);
 
                 if (inserted.second)
                     orientations_[pos].setDefaultOrientation();
@@ -133,6 +148,11 @@ namespace viennagrid
                     }
                     
                 }
+            }
+            
+            static void print_class()
+            {
+                cout << "  " << bnd_cell_tag::name() << " bnd cell storage and orientation" << endl;
             }
             
         private:
@@ -200,6 +220,12 @@ namespace viennagrid
                 elements_.set_hook(inserted.first, pos);
             }
             
+            static void print_class()
+            {
+                cout << "  " << bnd_cell_tag::name() << " only bnd cell storage " << endl;
+            }
+
+            
         private:
             
             bnd_cell_container_type elements_;
@@ -219,6 +245,11 @@ namespace viennagrid
             void set_bnd_cell();
             void container();
             
+            static void print_class()
+            {
+            }
+
+            
         private:
         };
         
@@ -233,6 +264,11 @@ namespace viennagrid
             
             void set_bnd_cell();
             void container();
+            
+            static void print_class()
+            {
+            }
+
             
         private:
         };
@@ -276,6 +312,12 @@ namespace viennagrid
                 //topology::bndcell_generator<element_tag, dim, bnd_cell_type>::create_bnd_cells(*this, inserter);
             }
             
+            static void print_class()
+            {
+                boundary_ncell_layer_type::print_class();
+                base::print_class();
+            }
+            
             using boundary_ncell_layer_type::create_bnd_cells;
             using base::container;
             using boundary_ncell_layer_type::container;
@@ -301,6 +343,10 @@ namespace viennagrid
             template<typename element_type, typename inserter_type>
             void create_bnd_cells(element_type & element, inserter_type & inserter)
             {
+            }
+            
+            static void print_class()
+            {   
             }
         };
         
@@ -364,6 +410,11 @@ namespace viennagrid
                 }
             }
             
+            static void print_class()
+            {
+                cout << element_tag::name() << endl;
+                base::print_class();
+            }
         };
                
 
@@ -384,6 +435,10 @@ namespace viennagrid
             template<typename inserter_type, typename container_typelist>
             void insert_callback( inserter_type & inserter, bool inserted, viennagrid::storage::collection_t<container_typelist> & container_collection ) {}
             
+            static void print_class()
+            {
+                cout << vertex_tag::name() << endl;
+            }
         };
         
         
