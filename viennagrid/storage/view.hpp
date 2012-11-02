@@ -17,7 +17,7 @@ namespace viennagrid
     namespace storage
     {
         
-        template<typename base_container_type__, typename hook_tag__, typename hooked_container_tag>
+        template<typename base_container_type__, typename hook_tag__, typename container_tag>
         class view_t
         {
         public:
@@ -30,7 +30,7 @@ namespace viennagrid
             
             
         private:
-            typedef typename viennagrid::storage::result_of::hooked_container<hook_type, hooked_container_tag>::type hook_container_type;
+            typedef typename viennagrid::storage::result_of::container<hook_type, container_tag>::type hook_container_type;
             
             
         public:
@@ -85,7 +85,7 @@ namespace viennagrid
             
             view_t() {}
             void set_base_container( base_container_type & base_container ) {}
-            void set_base_container( view_t<base_container_type, hook_tag, hooked_container_tag> & base_view ) {}
+            void set_base_container( view_t<base_container_type, hook_tag, container_tag> & base_view ) {}
 
             
             
@@ -168,8 +168,8 @@ namespace viennagrid
         
         
         
-        template<typename base_container_type__, typename id_type, typename hooked_container_tag>
-        class view_t< base_container_type__, id_hook_tag<id_type>, hooked_container_tag >
+        template<typename base_container_type__, typename id_type, typename container_tag>
+        class view_t< base_container_type__, id_hook_tag<id_type>, container_tag >
         {
             
         public:
@@ -182,7 +182,7 @@ namespace viennagrid
             
         private:
             //typedef typename viennagrid::storage::result_of::container_from_tag<hook_type, hook_container_tag>::type hook_container_type;
-            typedef typename viennagrid::storage::result_of::hooked_container<hook_type, hooked_container_tag>::type hook_container_type;
+            typedef typename viennagrid::storage::result_of::container<hook_type, container_tag>::type hook_container_type;
             
             
         public:
@@ -247,7 +247,7 @@ namespace viennagrid
                 base_container = &base_container_;
             }
             
-            void set_base_container( view_t<base_container_type, hook_tag, hooked_container_tag> & base_view )
+            void set_base_container( view_t<base_container_type, hook_tag, container_tag> & base_view )
             {
                 base_container = base_view.base_container;
             }
