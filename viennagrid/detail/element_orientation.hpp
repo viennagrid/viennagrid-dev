@@ -21,6 +21,7 @@
 
 #include <vector>
 #include <iostream>
+#include <boost/iterator/iterator_concepts.hpp>
 
 #include "viennagrid/forwards.h"
 
@@ -31,6 +32,30 @@
 namespace viennagrid
 {
   
+    
+    namespace result_of
+    {
+    
+        template<long num_elements>
+        struct permutator_type
+        {
+                typedef typename permutator_type<num_elements+1>::type type;
+        };
+        
+        template<>
+        struct permutator_type<256>
+        {
+                typedef unsigned char type;
+        };
+        
+        template<>
+        struct permutator_type<65536>
+        {
+                typedef unsigned short type;
+        };
+    }
+    
+    
   
   /************** Level 1: Elements contained by a higher-level element *******/
 
@@ -43,6 +68,8 @@ namespace viennagrid
   template <long num_vertices>
   class element_orientation
   {
+      typedef typename result_of::permutator_type<num_vertices>::type permutator_type;
+      
     public:
       void setDefaultOrientation()
       {
@@ -64,7 +91,7 @@ namespace viennagrid
       }
 
     private:
-      unsigned char permutator_[num_vertices];  //assuming less than 256 vertices is reasonable (no need to waste memory...)
+      permutator_type permutator_[num_vertices];
   };
 
 }
