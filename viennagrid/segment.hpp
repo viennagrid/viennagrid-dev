@@ -23,7 +23,7 @@
 #include <set>
 #include <deque>
 
-#include "viennagrid/forwards.h"
+#include "viennagrid/forwards.hpp"
 #include "viennagrid/domain.hpp"   //segment does not make any sense without domain
 #include "viennagrid/detail/segment_layers.hpp"
 #include "viennagrid/detail/segment_iterators.hpp"
@@ -36,22 +36,22 @@ namespace viennagrid
 {
   
   
-  //Segment type: set up using recursive inheritance, similar to domain_t and element_t
-  template <typename Conf>
-  class segment_t : public detail::segment_layers_top<Conf, Conf::cell_tag::dim>
-  {
-    typedef detail::segment_layers_top<Conf, Conf::cell_tag::dim>     base_type;
-    
-    public:
-      /** @brief Provide access to the configuration class */
-      typedef Conf                config_type;
-
-      /** @brief Destructor. Cleans up any data associated with the segment if it is destroyed */
-      ~segment_t() { viennadata::erase<viennadata::all, viennadata::all>()(*this); }
-      
-      using base_type::push_back;
-
-  };
+//   //Segment type: set up using recursive inheritance, similar to domain_t and element_t
+//   template <typename Conf>
+//   class segment_t : public detail::segment_layers_top<Conf, Conf::cell_tag::dim>
+//   {
+//     typedef detail::segment_layers_top<Conf, Conf::cell_tag::dim>     base_type;
+//     
+//     public:
+//       /** @brief Provide access to the configuration class */
+//       typedef Conf                config_type;
+// 
+//       /** @brief Destructor. Cleans up any data associated with the segment if it is destroyed */
+//       ~segment_t() { viennadata::erase<viennadata::all, viennadata::all>()(*this); }
+//       
+//       using base_type::push_back;
+// 
+//   };
 
   
   
