@@ -29,6 +29,7 @@ namespace viennagrid
             {
                 typedef typename container_type::iterator base;
             public:
+                iterator() {}
                 iterator(const base & foo) : base(foo) {}
                 
                 typedef hidden_key_map::value_type value_type;
@@ -43,6 +44,7 @@ namespace viennagrid
             {
                 typedef typename container_type::const_iterator base;
             public:
+                const_iterator() {}
                 const_iterator(const base & foo) : base(foo) {}
                 
                 typedef hidden_key_map::value_type value_type;
