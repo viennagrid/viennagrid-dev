@@ -21,7 +21,7 @@
 
 #include <vector>
 #include <limits>
-#include "viennagrid/forwards.h"
+#include "viennagrid/forwards.hpp"
 
 /** @file container.hpp
     @brief Provides a generic layer for container operations.

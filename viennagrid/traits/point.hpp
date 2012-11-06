@@ -18,7 +18,7 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
-#include "viennagrid/forwards.h"
+#include "viennagrid/forwards.hpp"
 
 /** @file viennagrid/traits/point.hpp
     @brief Provides a generic layer for point operations
