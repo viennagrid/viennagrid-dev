@@ -27,8 +27,8 @@ struct vertex : public viennagrid::storage::id_handler<int>
     
     vertex(numeric_type _x, numeric_type _y) : x(_x), y(_y) {}
         
-    template<typename inserter_type, typename container_collection_type>
-    void insert_callback( inserter_type & inserter, bool inserted, container_collection_type & container_collection )
+    template<typename inserter_type>
+    void insert_callback( inserter_type & inserter, bool inserted )
     {}
     
     numeric_type x;
@@ -49,8 +49,8 @@ struct line : public viennagrid::storage::id_handler<int>
     typedef _vertex_type vertex_type;
     typedef typename viennameta::typelist::result_of::push_back<typename vertex_type::required_types, line<vertex_type> >::type required_types;
     
-    template<typename inserter_type, typename container_collection_type>
-    void insert_callback( inserter_type & inserter, bool inserted, container_collection_type & container_collection )
+    template<typename inserter_type>
+    void insert_callback( inserter_type & inserter, bool inserted )
     {}
     
     vertex_type * vertices[2];
@@ -71,8 +71,8 @@ struct triangle : public viennagrid::storage::id_handler<int>
     
     typedef typename viennameta::typelist::result_of::push_back<typename line_type::required_types, triangle<vertex_type> >::type required_types;
     
-    template<typename inserter_type, typename container_collection_type>
-    void insert_callback( inserter_type & inserter, bool inserted, container_collection_type & container_collection )
+    template<typename inserter_type>
+    void insert_callback( inserter_type & inserter, bool inserted )
     {
         line_type l;
         
