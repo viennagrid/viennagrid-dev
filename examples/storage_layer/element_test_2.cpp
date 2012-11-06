@@ -7,7 +7,7 @@ using std::cout;
 using std::endl;
 
 
-#include "viennagrid/forwards.h"
+#include "viennagrid/forwards.hpp"
 
 #include "viennagrid/storage/view.hpp"
 #include "viennagrid/storage/container_collection.hpp"
@@ -21,8 +21,7 @@ using std::endl;
 #include "viennagrid/topology/simplex.hpp"
 
 
-#include "viennagrid/detail/element_key.hpp"
-#include "viennagrid/detail/boundary_ncell_layer.hpp"
+#include "viennagrid/element/element_key.hpp"
 #include "viennagrid/point.hpp"
 
 
@@ -43,10 +42,10 @@ int main()
     //
     // Get the vertex type:
     //
-    typedef viennagrid::viennagrid_ng::element_t< viennagrid::vertex_tag,   // element tag
-                                                  viennameta::null_type,    // boundary k-cells container (a vertex does not have boundary cells, hence 'null_type'
-                                                  int                       // type 'int' is used as ID
-                                                > vertex_type;
+    typedef viennagrid::element_t<  viennagrid::vertex_tag,   // element tag
+                                    viennameta::null_type,    // boundary k-cells container (a vertex does not have boundary cells, hence 'null_type'
+                                    int                       // type 'int' is used as ID
+                                    > vertex_type;
     
     //
     // Instantiate a few vertices (note that they are now free of any geometry information)
@@ -95,16 +94,16 @@ int main()
     // 
     // Finally, we can instantiate the line type by passing the respective tag, the typelist of boundary k-cells, and the ID-type (int):
     //
-    typedef viennagrid::viennagrid_ng::element_t< viennagrid::line_tag,           // element tag (as in ViennaGrid 1.0.x)
-                                                  line_containers_typelist,       // list of boundary containers
-                                                  int                             // ID type
-                                                > line_type;
+    typedef viennagrid::element_t<  viennagrid::line_tag,           // element tag (as in ViennaGrid 1.0.x)
+                                    line_containers_typelist,       // list of boundary containers
+                                    int                             // ID type
+                                    > line_type;
     
     typedef viennagrid::storage::result_of::container<
             line_type,
             viennagrid::storage::hooked_container_tag<
                 //viennagrid::storage::std_deque_tag,
-                viennagrid::storage::hidden_key_map_tag< viennagrid::storage::hooked_element_key_tag<int> >,
+                viennagrid::storage::hidden_key_map_tag< viennagrid::storage::element_key_tag<int> >,
                 hook_tag
             >
         >::type line_container_type;
@@ -155,7 +154,7 @@ int main()
     //
     // Instantiate the triangle type as above: Provide the tag, the boundary container list, and the ID type
     //
-    typedef viennagrid::viennagrid_ng::element_t< viennagrid::triangle_tag, triangle_containers_typelist, int > triangle_type;
+    typedef viennagrid::element_t< viennagrid::triangle_tag, triangle_containers_typelist, int > triangle_type;
     
     //
     // Instantiate a hooked container of triangles using std::deque as the underlying container base. Hooks are again of the type defined at the beginning.
@@ -164,7 +163,7 @@ int main()
             triangle_type,
             viennagrid::storage::hooked_container_tag<
                 //viennagrid::storage::std_deque_tag,
-                viennagrid::storage::hidden_key_map_tag< viennagrid::storage::hooked_element_key_tag<int> >,
+                viennagrid::storage::hidden_key_map_tag< viennagrid::storage::element_key_tag<int> >,
                 hook_tag
             >
         >::type triangle_container_type;
@@ -218,7 +217,7 @@ int main()
     //
     // Now create the tetrahedron type as usual: Provide the tag, the boundary containers, and the ID type:
     //
-    typedef viennagrid::viennagrid_ng::element_t< viennagrid::tetrahedron_tag, tetrahedron_containers_typelist, int > tetrahedron_type;
+    typedef viennagrid::element_t< viennagrid::tetrahedron_tag, tetrahedron_containers_typelist, int > tetrahedron_type;
     
     //
     // Instantiate a container of tetrahedra. A std::deque is used for the storage, and the usual hook type defined at the beginning is used
@@ -272,7 +271,7 @@ int main()
     //
     // Alright, now lets create a tetrahedron and link it with the four vertices.
     //
-    tetrahedron_type tet;
+    tetrahedron_type tet(domain);
     tet.container( viennagrid::dimension_tag<0>() ).set_hook( viennagrid::storage::container_collection::get<vertex_type>(domain).hook_at(0), 0);
     tet.container( viennagrid::dimension_tag<0>() ).set_hook( viennagrid::storage::container_collection::get<vertex_type>(domain).hook_at(1), 1);
     tet.container( viennagrid::dimension_tag<0>() ).set_hook( viennagrid::storage::container_collection::get<vertex_type>(domain).hook_at(2), 2);
