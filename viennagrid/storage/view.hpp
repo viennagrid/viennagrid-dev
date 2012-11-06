@@ -48,6 +48,7 @@ namespace viennagrid
                 typedef typename hook_container_type::iterator base;
             public:
                 iterator(const base & foo) : base(foo) {}
+                iterator(const iterator & it) : base(it) {}
                 
                 typedef typename std::iterator_traits<base>::difference_type difference_type;
                 typedef view_t::value_type value_type;
@@ -57,6 +58,8 @@ namespace viennagrid
                 
                 reference operator* () { return *(base::operator*()); }
                 const reference operator* () const { return *(base::operator*()); }
+                
+                pointer operator->() const { return &(operator* ()); }
             };
             
             
@@ -65,6 +68,8 @@ namespace viennagrid
                 typedef typename hook_container_type::const_iterator base;
             public:
                 const_iterator(const base & foo) : base(foo) {}
+                const_iterator(const const_iterator & it) : base(it) {}
+                const_iterator(const iterator & it) : base(it) {}
                 
                 typedef typename std::iterator_traits<base>::difference_type difference_type;
                 typedef view_t::value_type value_type;
@@ -74,6 +79,8 @@ namespace viennagrid
                 
                 reference operator* () { return *(base::operator*()); }
                 const reference operator* () const { return *(base::operator*()); }
+                
+                pointer operator->() const { return &(operator* ()); }
             };
             
             
@@ -194,12 +201,15 @@ namespace viennagrid
             typedef const value_type * const_pointer;
             
             
+            class const_iterator;
             
             class iterator : public hook_container_type::iterator
             {
                 typedef typename hook_container_type::iterator base;
+                friend class const_iterator;
             public:
                 iterator(view_t & view__, const base & foo) : base(foo), view(view__) {}
+                iterator(const iterator & it) : base(it), view(it.view) {}
                 
                 typedef typename std::iterator_traits<base>::difference_type difference_type;
                 typedef view_t::value_type value_type;
@@ -210,6 +220,7 @@ namespace viennagrid
                 reference operator* () { return view.dereference_hook( base::operator*() ); }
                 const reference operator* () const { return view.dereference_hook( base::operator*() ); }
                 
+                pointer operator->() const { return &view.dereference_hook( base::operator*() ); }
                 
             private:
                 view_t & view;
@@ -221,6 +232,8 @@ namespace viennagrid
                 typedef typename hook_container_type::const_iterator base;
             public:
                 const_iterator(const view_t & view__, const base & foo) : base(foo), view(view__) {}
+                const_iterator(const const_iterator & it) : base(it), view(it.view) {}
+                const_iterator(const iterator & it) : base(it), view(it.view) {}
                 
                 typedef typename std::iterator_traits<base>::difference_type difference_type;
                 typedef view_t::value_type value_type;
@@ -230,6 +243,8 @@ namespace viennagrid
                 
                 reference operator* () { return view.dereference_hook( base::operator*() ); }
                 const reference operator* () const { return view.dereference_hook( base::operator*() ); }
+                
+                pointer operator->() const { return &view.dereference_hook( base::operator*() ); }
                 
             private:
                 const view_t & view;
