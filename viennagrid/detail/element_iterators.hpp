@@ -25,7 +25,7 @@
 #include <stack>
 #include <assert.h>
 
-#include "viennagrid/forwards.h"
+#include "viennagrid/forwards.hpp"
 #include "viennagrid/detail/domain_iterators.hpp"
 #include "viennagrid/detail/segment_iterators.hpp"
 
@@ -146,13 +146,13 @@ namespace viennagrid
   };
 
   /** @brief Class that checks the validity of the requested iterator */
-  template <typename Config,
-            typename ElementTag,
-            long level>
-  struct IteratorChecker< element_t<Config, ElementTag>, level>
-  {
-    enum{ ReturnValue = ElementIteratorChecker<ElementTag, level>::ReturnValue };
-  };
+//   template <typename Config,
+//             typename ElementTag,
+//             long level>
+//   struct IteratorChecker< element_t<Config, ElementTag>, level>
+//   {
+//     enum{ ReturnValue = ElementIteratorChecker<ElementTag, level>::ReturnValue };
+//   };
 
 
   
@@ -163,80 +163,80 @@ namespace viennagrid
    * @tparam tag               Tag identifying the n-cell
    * @tparam dim               Topological dimension of the requested k-cells
    */
-  template <typename config_type, typename tag, long dim>
-  class ncell_range < element_t<config_type, tag>, dim, false>
-  {
-      typedef element_t< config_type,
-                       typename topology::bndcells<tag, dim>::tag
-                     >                                                         element_type;
-                     
-      typedef element_t<config_type, tag>                                host_type;
-                     
-      //typedef std::vector< element_type >     container_type;
-      typedef typename result_of::element_container<host_type, dim, config_type::cell_tag::dim>::type      container_type;
-    
-    public: 
-      //typedef typename container_type::iterator   iterator;
-      typedef on_element_iterator< element_type, container_type >                              iterator;
-      
-      ncell_range() : cont_(NULL) {};
-      
-      ncell_range(ncell_proxy<host_type> const & p) : cont_(p.get().container(dimension_tag<dim>())) {}
-      
-      ncell_range(host_type & e) : cont_(e.container(dimension_tag<dim>())) {}
-      
-      ncell_range & operator=(ncell_proxy<host_type> p)
-      { 
-        cont_ = p.get().container(dimension_tag<dim>());
-        return *this;
-      }
-      
-      iterator begin() const
-      { 
-        assert(cont_ != NULL);
-        return iterator( cont_->begin() );
-      }
-      
-      iterator end()   const
-      {
-        assert(cont_ != NULL);
-        return iterator( cont_->end() );
-      }
-      
-      /** @brief Provide direct random-access to boundary cells */
-      element_type & operator[](std::size_t index) const 
-      {
-        assert(index < size());
-        return *(*cont_)[index];
-      }
-      
-      /** @brief Returns the number of k-cells */
-      std::size_t size() const { return topology::bndcells<tag, dim>::num; }
-      
-    private:
-      container_type * cont_;
-  };
+//   template <typename config_type, typename tag, long dim>
+//   class ncell_range < element_t<config_type, tag>, dim, false>
+//   {
+//       typedef element_t< config_type,
+//                        typename topology::bndcells<tag, dim>::tag
+//                      >                                                         element_type;
+//                      
+//       typedef element_t<config_type, tag>                                host_type;
+//                      
+//       //typedef std::vector< element_type >     container_type;
+//       typedef typename result_of::element_container<host_type, dim, config_type::cell_tag::dim>::type      container_type;
+//     
+//     public: 
+//       //typedef typename container_type::iterator   iterator;
+//       typedef on_element_iterator< element_type, container_type >                              iterator;
+//       
+//       ncell_range() : cont_(NULL) {};
+//       
+//       ncell_range(ncell_proxy<host_type> const & p) : cont_(p.get().container(dimension_tag<dim>())) {}
+//       
+//       ncell_range(host_type & e) : cont_(e.container(dimension_tag<dim>())) {}
+//       
+//       ncell_range & operator=(ncell_proxy<host_type> p)
+//       { 
+//         cont_ = p.get().container(dimension_tag<dim>());
+//         return *this;
+//       }
+//       
+//       iterator begin() const
+//       { 
+//         assert(cont_ != NULL);
+//         return iterator( cont_->begin() );
+//       }
+//       
+//       iterator end()   const
+//       {
+//         assert(cont_ != NULL);
+//         return iterator( cont_->end() );
+//       }
+//       
+//       /** @brief Provide direct random-access to boundary cells */
+//       element_type & operator[](std::size_t index) const 
+//       {
+//         assert(index < size());
+//         return *(*cont_)[index];
+//       }
+//       
+//       /** @brief Returns the number of k-cells */
+//       std::size_t size() const { return topology::bndcells<tag, dim>::num; }
+//       
+//     private:
+//       container_type * cont_;
+//   };
   
   
   /** @brief Main function for range retrieval. Specialization for iteration over k-cells of a n-cell */
-  template <long dim, typename Config, typename ElementTag>
-  typename result_of::ncell_range< element_t<Config, ElementTag>, dim>::type
-  ncells(element_t<Config, ElementTag> & d)
-  {
-    return typename result_of::ncell_range< element_t<Config, ElementTag>, dim>::type(d);
-  }
+//   template <long dim, typename Config, typename ElementTag>
+//   typename result_of::ncell_range< element_t<Config, ElementTag>, dim>::type
+//   ncells(element_t<Config, ElementTag> & d)
+//   {
+//     return typename result_of::ncell_range< element_t<Config, ElementTag>, dim>::type(d);
+//   }
   
   /** @brief Main function for range retrieval. Specialization for iteration over k-cells of a n-cell. Returns only a proxy that must be assigned to a range object.
    *
    * Allows to omit the topological dimension if this is clear from the range type, e.g.
    *  VertexRange vertices = ncells(facet);
    */
-  template <typename Config, typename ElementTag>
-  ncell_proxy< element_t<Config, ElementTag> >
-  ncells(element_t<Config, ElementTag> & d)
-  {
-    return ncell_proxy< element_t<Config, ElementTag> >(d);
-  }
+//   template <typename Config, typename ElementTag>
+//   ncell_proxy< element_t<Config, ElementTag> >
+//   ncells(element_t<Config, ElementTag> & d)
+//   {
+//     return ncell_proxy< element_t<Config, ElementTag> >(d);
+//   }
   
   
   //
@@ -248,85 +248,85 @@ namespace viennagrid
    * @tparam tag               Tag identifying the n-cell
    * @tparam dim               Topological dimension of the requested k-cells
    */
-  template <typename config_type, typename tag, long dim>
-  class const_ncell_range < element_t<config_type, tag>, dim, false>
-  {
-      typedef element_t< config_type,
-                       typename topology::bndcells<tag, dim>::tag
-                     >                                                         element_type;
-                     
-      typedef element_t<config_type, tag>                                host_type;
-                     
-      //typedef std::vector< element_type >     container_type;
-      typedef typename result_of::element_container<host_type, dim, config_type::cell_tag::dim>::type      container_type;
-    
-    public: 
-      //typedef typename container_type::iterator   iterator;
-      typedef const_on_element_iterator< element_type, container_type >                         iterator;
-      const_ncell_range() : cont_(NULL) {};
-      
-      const_ncell_range(const_ncell_proxy<host_type> const & p) : cont_(p.get().container(dimension_tag<dim>())) {}
-
-      const_ncell_range(ncell_proxy<host_type> const & p) : cont_(p.get().container(dimension_tag<dim>())) {}
-
-      const_ncell_range(host_type const & e) : cont_(e.container(dimension_tag<dim>())) {}
-
-
-      const_ncell_range & operator=(const_ncell_proxy<host_type> p)
-      { 
-        cont_ = p.get().container(dimension_tag<dim>());
-        return *this;
-      }
-
-      const_ncell_range & operator=(ncell_proxy<host_type> p)
-      { 
-        cont_ = p.get().container(dimension_tag<dim>());
-        return *this;
-      }
-
-      iterator begin() const
-      {
-        assert(cont_ != NULL);
-        return iterator( cont_->begin() );
-      }
-      
-      iterator end() const
-      { 
-        assert(cont_ != NULL);
-        return iterator( cont_->end() );
-      }
-      
-      element_type const & operator[](std::size_t index) const 
-      {
-        assert(index < size());
-        return *(*cont_)[index];
-      }
-      
-      std::size_t size() const { return topology::bndcells<tag, dim>::num; }
-      
-    private:
-      const container_type * cont_;
-  };
+//   template <typename config_type, typename tag, long dim>
+//   class const_ncell_range < element_t<config_type, tag>, dim, false>
+//   {
+//       typedef element_t< config_type,
+//                        typename topology::bndcells<tag, dim>::tag
+//                      >                                                         element_type;
+//                      
+//       typedef element_t<config_type, tag>                                host_type;
+//                      
+//       //typedef std::vector< element_type >     container_type;
+//       typedef typename result_of::element_container<host_type, dim, config_type::cell_tag::dim>::type      container_type;
+//     
+//     public: 
+//       //typedef typename container_type::iterator   iterator;
+//       typedef const_on_element_iterator< element_type, container_type >                         iterator;
+//       const_ncell_range() : cont_(NULL) {};
+//       
+//       const_ncell_range(const_ncell_proxy<host_type> const & p) : cont_(p.get().container(dimension_tag<dim>())) {}
+// 
+//       const_ncell_range(ncell_proxy<host_type> const & p) : cont_(p.get().container(dimension_tag<dim>())) {}
+// 
+//       const_ncell_range(host_type const & e) : cont_(e.container(dimension_tag<dim>())) {}
+// 
+// 
+//       const_ncell_range & operator=(const_ncell_proxy<host_type> p)
+//       { 
+//         cont_ = p.get().container(dimension_tag<dim>());
+//         return *this;
+//       }
+// 
+//       const_ncell_range & operator=(ncell_proxy<host_type> p)
+//       { 
+//         cont_ = p.get().container(dimension_tag<dim>());
+//         return *this;
+//       }
+// 
+//       iterator begin() const
+//       {
+//         assert(cont_ != NULL);
+//         return iterator( cont_->begin() );
+//       }
+//       
+//       iterator end() const
+//       { 
+//         assert(cont_ != NULL);
+//         return iterator( cont_->end() );
+//       }
+//       
+//       element_type const & operator[](std::size_t index) const 
+//       {
+//         assert(index < size());
+//         return *(*cont_)[index];
+//       }
+//       
+//       std::size_t size() const { return topology::bndcells<tag, dim>::num; }
+//       
+//     private:
+//       const container_type * cont_;
+//   };
   
   /** @brief Main function for const range retrieval. Specialization for iteration over k-cells of a n-cell */
-  template <long dim, typename Config, typename ElementTag>
-  typename result_of::const_ncell_range< element_t<Config, ElementTag>, dim>::type
-  ncells(element_t<Config, ElementTag> const & d)
-  {
-    return typename result_of::const_ncell_range< element_t<Config, ElementTag>, dim>::type(d);
-  }
+//   template <long dim, typename Config, typename ElementTag>
+//   typename result_of::const_ncell_range< element_t<Config, ElementTag>, dim>::type
+//   ncells(element_t<Config, ElementTag> const & d)
+//   {
+//     return typename result_of::const_ncell_range< element_t<Config, ElementTag>, dim>::type(d);
+//   }
   
   /** @brief Main function for const range retrieval. Specialization for iteration over k-cells of a n-cell. Returns only a proxy that must be assigned to a range object.
    *
    * Allows to omit the topological dimension if this is clear from the range type, e.g.
    *  VertexRange vertices = ncells(facet);
    */
-  template <typename Config, typename ElementTag>
-  const_ncell_proxy< element_t<Config, ElementTag> >
-  ncells(element_t<Config, ElementTag> const & d)
-  {
-    return const_ncell_proxy< element_t<Config, ElementTag> >(d);
-  }
+//   template <typename Config, typename ElementTag>
+//   const_ncell_proxy< element_t<Config, ElementTag> >
+//   ncells(element_t<Config, ElementTag> const & d)
+//   {
+//     return const_ncell_proxy< element_t<Config, ElementTag> >(d);
+//   }
   
   
   
@@ -337,39 +337,39 @@ namespace viennagrid
   
   //helper meta function for selecting const/non-const containers:
   /** @brief A helper function that sets up the co-boundary information */
-  template <long dim_start,
-            long dim_iter,
-            typename RangeType,
-            typename KeyType,
-            typename EnclosingType>
-  void init_coboundary(KeyType const & key,
-                       EnclosingType const & domain)
-  {
-    typedef typename EnclosingType::config_type         Config;
-    typedef typename result_of::ncell<Config, dim_start>::type    LowerElementType;
-    typedef typename result_of::ncell<Config, dim_iter>::type     HigherElementType;
-    
-    typedef typename result_of::const_ncell_range<EnclosingType, dim_iter>::type      HigherElementRange;
-    typedef typename result_of::iterator<HigherElementRange>::type                    HigherElementIterator;
-    
-    typedef typename result_of::const_ncell_range<HigherElementType, dim_start>::type  LowerOnHigherRange;
-    typedef typename result_of::iterator<LowerOnHigherRange>::type                     LowerOnHigherIterator;
-    
-    
-    HigherElementRange higher_container = ncells<dim_iter>(domain);
-    for (HigherElementIterator hit = higher_container.begin();
-         hit != higher_container.end();
-         ++hit)
-    {
-      LowerOnHigherRange lower_container = ncells<dim_start>(*hit);
-      for (LowerOnHigherIterator low = lower_container.begin();
-           low != lower_container.end();
-           ++low)
-      {
-        viennadata::access<KeyType, RangeType>(key)(*low).push_back(const_cast<HigherElementType *>(&(*hit)));
-      }
-    }
-  }
+//   template <long dim_start,
+//             long dim_iter,
+//             typename RangeType,
+//             typename KeyType,
+//             typename EnclosingType>
+//   void init_coboundary(KeyType const & key,
+//                        EnclosingType const & domain)
+//   {
+//     typedef typename EnclosingType::config_type         Config;
+//     typedef typename result_of::ncell<Config, dim_start>::type    LowerElementType;
+//     typedef typename result_of::ncell<Config, dim_iter>::type     HigherElementType;
+//     
+//     typedef typename result_of::const_ncell_range<EnclosingType, dim_iter>::type      HigherElementRange;
+//     typedef typename result_of::iterator<HigherElementRange>::type                    HigherElementIterator;
+//     
+//     typedef typename result_of::const_ncell_range<HigherElementType, dim_start>::type  LowerOnHigherRange;
+//     typedef typename result_of::iterator<LowerOnHigherRange>::type                     LowerOnHigherIterator;
+//     
+//     
+//     HigherElementRange higher_container = ncells<dim_iter>(domain);
+//     for (HigherElementIterator hit = higher_container.begin();
+//          hit != higher_container.end();
+//          ++hit)
+//     {
+//       LowerOnHigherRange lower_container = ncells<dim_start>(*hit);
+//       for (LowerOnHigherIterator low = lower_container.begin();
+//            low != lower_container.end();
+//            ++low)
+//       {
+//         viennadata::access<KeyType, RangeType>(key)(*low).push_back(const_cast<HigherElementType *>(&(*hit)));
+//       }
+//     }
+//   }
   
   // non-const:
   /** @brief A proxy object for cheaper setup of range objects using the ncells<>() function */
@@ -388,12 +388,12 @@ namespace viennagrid
   };
   
   /** @brief Returns the co-boundary range of topological dimension k for a n-cell, k>n */
-  template <long dim, typename Config, typename ElementTag>
-  ncell_range < element_t<Config, ElementTag>, dim, true>
-  ncells(element_t<Config, ElementTag> & e, domain_t<Config> & d)
-  {
-    return ncell_range < element_t<Config, ElementTag>, dim, true>(e, d);
-  }
+//   template <long dim, typename Config, typename ElementTag>
+//   ncell_range < element_t<Config, ElementTag>, dim, true>
+//   ncells(element_t<Config, ElementTag> & e, domain_t<Config> & d)
+//   {
+//     return ncell_range < element_t<Config, ElementTag>, dim, true>(e, d);
+//   }
 
   /** @brief Returns a proxy object for the iteration over the neighbor elements within a domain. Non-const version.
    * 
@@ -404,14 +404,14 @@ namespace viennagrid
    * @param d  The domain in which the neighbors must be located
    * @return   A proxy object
    */
-  template <typename Config, typename ElementTag>
-  cobnd_proxy< element_t<Config, ElementTag>,
-               domain_t<Config> >
-  ncells(element_t<Config, ElementTag> & e, domain_t<Config> & d)
-  {
-    return cobnd_proxy< element_t<Config, ElementTag>,
-                        domain_t<Config> >(e, d);
-  }
+//   template <typename Config, typename ElementTag>
+//   cobnd_proxy< element_t<Config, ElementTag>,
+//                domain_t<Config> >
+//   ncells(element_t<Config, ElementTag> & e, domain_t<Config> & d)
+//   {
+//     return cobnd_proxy< element_t<Config, ElementTag>,
+//                         domain_t<Config> >(e, d);
+//   }
 
 
   /** @brief Returns a proxy object for the iteration over the neighbor elements within a segment. Non-const version.
@@ -423,12 +423,12 @@ namespace viennagrid
    * @param seg  The segment in which the neighbors must be located
    * @return   A proxy object
    */
-  template <long dim, typename Config, typename ElementTag>
-  ncell_range < element_t<Config, ElementTag>, dim, true>
-  ncells(element_t<Config, ElementTag> & e, segment_t<Config> & seg)
-  {
-    return ncell_range < element_t<Config, ElementTag>, dim, true>(e, seg);
-  }
+//   template <long dim, typename Config, typename ElementTag>
+//   ncell_range < element_t<Config, ElementTag>, dim, true>
+//   ncells(element_t<Config, ElementTag> & e, segment_t<Config> & seg)
+//   {
+//     return ncell_range < element_t<Config, ElementTag>, dim, true>(e, seg);
+//   }
 
 
   /** @brief Returns a proxy object for the iteration over the neighbor elements within a segment. Non-const version.
@@ -440,14 +440,14 @@ namespace viennagrid
    * @param seg  The segment in which the neighbors must be located
    * @return     A proxy object
    */
-  template <typename Config, typename ElementTag>
-  cobnd_proxy< element_t<Config, ElementTag>,
-               segment_t<Config> >
-  ncells(element_t<Config, ElementTag> & e, segment_t<Config> & seg)
-  {
-    return cobnd_proxy< element_t<Config, ElementTag>,
-                        segment_t<Config> >(e, seg);
-  }
+//   template <typename Config, typename ElementTag>
+//   cobnd_proxy< element_t<Config, ElementTag>,
+//                segment_t<Config> >
+//   ncells(element_t<Config, ElementTag> & e, segment_t<Config> & seg)
+//   {
+//     return cobnd_proxy< element_t<Config, ElementTag>,
+//                         segment_t<Config> >(e, seg);
+//   }
 
 
   /** @brief The range class for non-const iteration and access of coboundary k-cells of a n-cell, k>n 
@@ -456,94 +456,94 @@ namespace viennagrid
    * @tparam tag               Tag identifying the n-cell
    * @tparam dim               Topological dimension of the requested k-cells
    */
-  template <typename config_type, typename tag,
-            long dim>
-  class ncell_range < element_t<config_type, tag>, dim, true>
-  {
-      typedef element_t< config_type,
-                       typename topology::bndcells<typename config_type::cell_tag,
-                                               dim>::tag
-                     >                                                         element_type;
-                     
-      typedef element_t<config_type, tag>                              host_type;
-      typedef std::vector<element_type *>                                      container_type;
-    
-    public: 
-      //typedef typename container_type::iterator   iterator;
-      typedef on_element_iterator<element_type, container_type>                                iterator;
-      
-      ncell_range() : cont_(NULL) {};
-      
-      template <typename EnclosingType> //either domain or segment
-      ncell_range(cobnd_proxy<host_type, EnclosingType> const & p)
-      {
-        init(p.first(), p.second());
-      }
-      
-      template <typename EnclosingType> //either domain or segment
-      ncell_range(host_type const & e,
-                  EnclosingType const & d) 
-      {
-        //std::cout << "Using non-const!" << std::endl;
-        init(e, d);
-      }
-      
-      template <typename EnclosingType> //either domain or segment
-      ncell_range & operator=(cobnd_proxy<host_type, EnclosingType> const & p)
-      { 
-        init(p.first(), p.second());
-        return *this;
-      }
-      
-      iterator begin() const
-      {
-        assert(cont_ != NULL);
-        return iterator(cont_->begin());
-      }
-      
-      iterator end()   const
-      {
-        assert(cont_ != NULL);
-        return iterator(cont_->end());
-      }
-
-      element_type & operator[](std::size_t index) const 
-      {
-        assert(index < size());
-        return *(*cont_)[index]; 
-      }
-      
-      std::size_t size() const { return cont_->size(); }
-      
-      template <typename element_type, long dim2, bool b2>
-      friend class const_ncell_range;
-      
-    private:
-      template <typename EnclosingType>
-      void init(host_type const & e,
-                EnclosingType const & d)
-      //void init(cobnd_proxy< element<config_type, tag>,
-      //                       EnclosingType> const & p)
-      {
-        typedef coboundary_key<EnclosingType, dim>   CoBoundaryKey;
-        
-        CoBoundaryKey key(d);
-        
-        //initialize co-boundary if needed
-        if (viennadata::find<CoBoundaryKey,
-                             container_type >(key)(e) == NULL)
-        {
-           init_coboundary< tag::dim,
-                            dim,
-                            container_type>(key, d);
-        }
-        
-        cont_ = &viennadata::access<CoBoundaryKey,
-                                    container_type>(key)(e);
-      }
-      
-      container_type * cont_;
-  };
+//   template <typename config_type, typename tag,
+//             long dim>
+//   class ncell_range < element_t<config_type, tag>, dim, true>
+//   {
+//       typedef element_t< config_type,
+//                        typename topology::bndcells<typename config_type::cell_tag,
+//                                                dim>::tag
+//                      >                                                         element_type;
+//                      
+//       typedef element_t<config_type, tag>                              host_type;
+//       typedef std::vector<element_type *>                                      container_type;
+//     
+//     public: 
+//       //typedef typename container_type::iterator   iterator;
+//       typedef on_element_iterator<element_type, container_type>                                iterator;
+//       
+//       ncell_range() : cont_(NULL) {};
+//       
+//       template <typename EnclosingType> //either domain or segment
+//       ncell_range(cobnd_proxy<host_type, EnclosingType> const & p)
+//       {
+//         init(p.first(), p.second());
+//       }
+//       
+//       template <typename EnclosingType> //either domain or segment
+//       ncell_range(host_type const & e,
+//                   EnclosingType const & d) 
+//       {
+//         //std::cout << "Using non-const!" << std::endl;
+//         init(e, d);
+//       }
+//       
+//       template <typename EnclosingType> //either domain or segment
+//       ncell_range & operator=(cobnd_proxy<host_type, EnclosingType> const & p)
+//       { 
+//         init(p.first(), p.second());
+//         return *this;
+//       }
+//       
+//       iterator begin() const
+//       {
+//         assert(cont_ != NULL);
+//         return iterator(cont_->begin());
+//       }
+//       
+//       iterator end()   const
+//       {
+//         assert(cont_ != NULL);
+//         return iterator(cont_->end());
+//       }
+// 
+//       element_type & operator[](std::size_t index) const 
+//       {
+//         assert(index < size());
+//         return *(*cont_)[index]; 
+//       }
+//       
+//       std::size_t size() const { return cont_->size(); }
+//       
+//       template <typename element_type, long dim2, bool b2>
+//       friend class const_ncell_range;
+//       
+//     private:
+//       template <typename EnclosingType>
+//       void init(host_type const & e,
+//                 EnclosingType const & d)
+//       //void init(cobnd_proxy< element<config_type, tag>,
+//       //                       EnclosingType> const & p)
+//       {
+//         typedef coboundary_key<EnclosingType, dim>   CoBoundaryKey;
+//         
+//         CoBoundaryKey key(d);
+//         
+//         //initialize co-boundary if needed
+//         if (viennadata::find<CoBoundaryKey,
+//                              container_type >(key)(e) == NULL)
+//         {
+//            init_coboundary< tag::dim,
+//                             dim,
+//                             container_type>(key, d);
+//         }
+//         
+//         cont_ = &viennadata::access<CoBoundaryKey,
+//                                     container_type>(key)(e);
+//       }
+//       
+//       container_type * cont_;
+//   };
   
   
   // const:
@@ -568,114 +568,114 @@ namespace viennagrid
    * @tparam tag               Tag identifying the n-cell
    * @tparam dim               Topological dimension of the requested k-cells
    */
-  template <typename config_type, typename tag,
-            long dim>
-  class const_ncell_range < element_t<config_type, tag>, dim, true>
-  {
-      typedef element_t< config_type,
-                       typename topology::bndcells<typename config_type::cell_tag,
-                                                     dim>::tag
-                     >                                                         element_type;
-                     
-      typedef element_t<config_type, tag>                                host_type;
-      typedef std::vector<element_type *>                                      container_type;
-    
-    public: 
-      //typedef typename container_type::iterator   iterator;
-      typedef const_on_element_iterator<element_type, container_type>                                iterator;
-
-      const_ncell_range() {};
-      
-      template <typename EnclosingType> //either domain or segment
-      const_ncell_range(cobnd_proxy<host_type, EnclosingType> const & p) 
-      {
-        init(p.first(), p.second());
-      }
-
-      template <typename EnclosingType> //either domain or segment
-      const_ncell_range(const_cobnd_proxy<host_type, EnclosingType> const & p)
-      {
-        init(p.first(), p.second());
-      }
-
-      template <typename EnclosingType> //either domain or segment
-      const_ncell_range(host_type const & e,
-                        EnclosingType const & d) 
-      {
-        //std::cout << "Using const!" << std::endl;
-        init(e, d);
-      }
-
-
-
-      template <typename EnclosingType> //either domain or segment
-      const_ncell_range & operator=(cobnd_proxy<host_type, EnclosingType> const & p)
-      { 
-        init(p.first(), p.second());
-        return *this;
-      }
-
-      template <typename EnclosingType> //either domain or segment
-      const_ncell_range & operator=(const_cobnd_proxy<host_type, EnclosingType> const & p)
-      { 
-        init(p.first(), p.second());
-        return *this;
-      }
-
-      const_ncell_range & operator=(ncell_range<host_type, dim, true > const & other)
-      { 
-        cont_ = other.cont_;
-        return *this;
-      }
-
-      iterator begin() const
-      {
-        assert(cont_ != NULL);
-        return iterator(cont_->begin());
-      }
-      
-      iterator end()   const
-      {
-        assert(cont_ != NULL);
-        return iterator(cont_->end());
-      }
-      
-      element_type const & operator[](std::size_t index) const 
-      {
-        assert(index < size());
-        return *(*cont_)[index]; 
-      }
-      
-      std::size_t size() const { return cont_->size(); }
-      
-    private:
-      
-      template <typename EnclosingType>
-      void init(host_type const & e,
-                EnclosingType const & d)
-      //void init(const_cobnd_proxy< element<config_type, tag>,
-      //                                         EnclosingType> const & p)
-      {
-        typedef coboundary_key<EnclosingType, dim>   CoBoundaryKey;
-        
-        CoBoundaryKey key(d);
-        
-        //initialize co-boundary if needed
-        if (viennadata::find<CoBoundaryKey,
-                             container_type >(key)(e) == NULL)
-        {
-           init_coboundary< tag::dim,
-                            dim,
-                            container_type>(key, d);
-        }
-        
-        cont_ = &viennadata::access<CoBoundaryKey,
-                                    container_type>(key)(e);
-      }
-      
-      const container_type * cont_;
-  };
-  
+//   template <typename config_type, typename tag,
+//             long dim>
+//   class const_ncell_range < element_t<config_type, tag>, dim, true>
+//   {
+//       typedef element_t< config_type,
+//                        typename topology::bndcells<typename config_type::cell_tag,
+//                                                      dim>::tag
+//                      >                                                         element_type;
+//                      
+//       typedef element_t<config_type, tag>                                host_type;
+//       typedef std::vector<element_type *>                                      container_type;
+//     
+//     public: 
+//       //typedef typename container_type::iterator   iterator;
+//       typedef const_on_element_iterator<element_type, container_type>                                iterator;
+// 
+//       const_ncell_range() {};
+//       
+//       template <typename EnclosingType> //either domain or segment
+//       const_ncell_range(cobnd_proxy<host_type, EnclosingType> const & p) 
+//       {
+//         init(p.first(), p.second());
+//       }
+// 
+//       template <typename EnclosingType> //either domain or segment
+//       const_ncell_range(const_cobnd_proxy<host_type, EnclosingType> const & p)
+//       {
+//         init(p.first(), p.second());
+//       }
+// 
+//       template <typename EnclosingType> //either domain or segment
+//       const_ncell_range(host_type const & e,
+//                         EnclosingType const & d) 
+//       {
+//         //std::cout << "Using const!" << std::endl;
+//         init(e, d);
+//       }
+// 
+// 
+// 
+//       template <typename EnclosingType> //either domain or segment
+//       const_ncell_range & operator=(cobnd_proxy<host_type, EnclosingType> const & p)
+//       { 
+//         init(p.first(), p.second());
+//         return *this;
+//       }
+// 
+//       template <typename EnclosingType> //either domain or segment
+//       const_ncell_range & operator=(const_cobnd_proxy<host_type, EnclosingType> const & p)
+//       { 
+//         init(p.first(), p.second());
+//         return *this;
+//       }
+// 
+//       const_ncell_range & operator=(ncell_range<host_type, dim, true > const & other)
+//       { 
+//         cont_ = other.cont_;
+//         return *this;
+//       }
+// 
+//       iterator begin() const
+//       {
+//         assert(cont_ != NULL);
+//         return iterator(cont_->begin());
+//       }
+//       
+//       iterator end()   const
+//       {
+//         assert(cont_ != NULL);
+//         return iterator(cont_->end());
+//       }
+//       
+//       element_type const & operator[](std::size_t index) const 
+//       {
+//         assert(index < size());
+//         return *(*cont_)[index]; 
+//       }
+//       
+//       std::size_t size() const { return cont_->size(); }
+//       
+//     private:
+//       
+//       template <typename EnclosingType>
+//       void init(host_type const & e,
+//                 EnclosingType const & d)
+//       //void init(const_cobnd_proxy< element<config_type, tag>,
+//       //                                         EnclosingType> const & p)
+//       {
+//         typedef coboundary_key<EnclosingType, dim>   CoBoundaryKey;
+//         
+//         CoBoundaryKey key(d);
+//         
+//         //initialize co-boundary if needed
+//         if (viennadata::find<CoBoundaryKey,
+//                              container_type >(key)(e) == NULL)
+//         {
+//            init_coboundary< tag::dim,
+//                             dim,
+//                             container_type>(key, d);
+//         }
+//         
+//         cont_ = &viennadata::access<CoBoundaryKey,
+//                                     container_type>(key)(e);
+//       }
+//       
+//       const container_type * cont_;
+//   };
+//   
   
   /** @brief Returns a proxy object for the iteration over the neighbor elements within a domain. Non-const version.
    * 
@@ -686,12 +686,12 @@ namespace viennagrid
    * @param d    The domain in which the neighbors must be located
    * @return     A proxy object
    */
-  template <long dim, typename Config, typename ElementTag>
-  const_ncell_range < element_t<Config, ElementTag>, dim, true>
-  ncells(element_t<Config, ElementTag> const & e, domain_t<Config> const & d)
-  {
-    return const_ncell_range < element_t<Config, ElementTag>, dim, true>(e, d);
-  }
+//   template <long dim, typename Config, typename ElementTag>
+//   const_ncell_range < element_t<Config, ElementTag>, dim, true>
+//   ncells(element_t<Config, ElementTag> const & e, domain_t<Config> const & d)
+//   {
+//     return const_ncell_range < element_t<Config, ElementTag>, dim, true>(e, d);
+//   }
 
   /** @brief Returns a proxy object for the iteration over the neighbor elements within a domain. Const version.
    * 
@@ -702,14 +702,14 @@ namespace viennagrid
    * @param d    The domain in which the neighbors must be located
    * @return     A proxy object
    */
-  template <typename Config, typename ElementTag>
-  const_cobnd_proxy< element_t<Config, ElementTag>,
-                     domain_t<Config> >
-  ncells(element_t<Config, ElementTag> const & e, domain_t<Config> const & d)
-  {
-    return const_cobnd_proxy< element_t<Config, ElementTag>,
-                              domain_t<Config> >(e, d);
-  }
+//   template <typename Config, typename ElementTag>
+//   const_cobnd_proxy< element_t<Config, ElementTag>,
+//                      domain_t<Config> >
+//   ncells(element_t<Config, ElementTag> const & e, domain_t<Config> const & d)
+//   {
+//     return const_cobnd_proxy< element_t<Config, ElementTag>,
+//                               domain_t<Config> >(e, d);
+//   }
 
 
 
@@ -722,12 +722,12 @@ namespace viennagrid
    * @param seg  The segment in which the neighbors must be located
    * @return     A proxy object
    */
-  template <long dim, typename Config, typename ElementTag>
-  const_ncell_range < element_t<Config, ElementTag>, dim, true>
-  ncells(element_t<Config, ElementTag> const & e, segment_t<Config> const & seg)
-  {
-    return const_ncell_range < element_t<Config, ElementTag>, dim, true>(e, seg);
-  }
+//   template <long dim, typename Config, typename ElementTag>
+//   const_ncell_range < element_t<Config, ElementTag>, dim, true>
+//   ncells(element_t<Config, ElementTag> const & e, segment_t<Config> const & seg)
+//   {
+//     return const_ncell_range < element_t<Config, ElementTag>, dim, true>(e, seg);
+//   }
 
   /** @brief Returns a proxy object for the iteration over the neighbor elements within a segment. Const version.
    * 
@@ -738,14 +738,14 @@ namespace viennagrid
    * @param seg  The segment in which the neighbors must be located
    * @return     A proxy object
    */
-  template <typename Config, typename ElementTag>
-  const_cobnd_proxy< element_t<Config, ElementTag>,
-                     segment_t<Config> >
-  ncells(element_t<Config, ElementTag> const & e, segment_t<Config> const & seg)
-  {
-    return const_cobnd_proxy< element_t<Config, ElementTag>,
-                              segment_t<Config> >(e, seg);
-  }
+//   template <typename Config, typename ElementTag>
+//   const_cobnd_proxy< element_t<Config, ElementTag>,
+//                      segment_t<Config> >
+//   ncells(element_t<Config, ElementTag> const & e, segment_t<Config> const & seg)
+//   {
+//     return const_cobnd_proxy< element_t<Config, ElementTag>,
+//                               segment_t<Config> >(e, seg);
+//   }
 
   
   
@@ -756,17 +756,17 @@ namespace viennagrid
    * 
    * @param host_ncell     The hosting n-cell
    * @param bnd_kcell      The boundary k-cell
-   * @param index          Index for the i-th vertex
+   * @param index          Index for the i-th vertxe
    */
-  template <typename ConfigType, typename Tag1, typename Tag2>
-  typename result_of::ncell<ConfigType, 0>::type
-  local_vertex(element_t<ConfigType, Tag1> const & host_ncell,
-               element_t<ConfigType, Tag2> const & bnd_kcell,
-               std::size_t index)
-  {
-    //std::cout << host_ncell.global_to_local_orientation(bnd_kcell, index) << std::endl;
-    return viennagrid::ncells<0>(bnd_kcell)[host_ncell.global_to_local_orientation(bnd_kcell, index)];
-  }
+//   template <typename ConfigType, typename Tag1, typename Tag2>
+//   typename result_of::ncell<ConfigType, 0>::type
+//   local_vertex(element_t<ConfigType, Tag1> const & host_ncell,
+//                element_t<ConfigType, Tag2> const & bnd_kcell,
+//                std::size_t index)
+//   {
+//     //std::cout << host_ncell.global_to_local_orientation(bnd_kcell, index) << std::endl;
+//     return viennagrid::ncells<0>(bnd_kcell)[host_ncell.global_to_local_orientation(bnd_kcell, index)];
+//   }
   
   
   
@@ -784,55 +784,55 @@ namespace viennagrid
     };
     
     /** @brief Range type retrieval for boundary and coboundary iteration */
-    template <typename Config, typename ElementTag,
-              long dim>  //topological level
-    struct ncell_range < element_t<Config, ElementTag>, dim >
-    {
-      typedef viennagrid::ncell_range<element_t<Config, ElementTag>,
-                                          dim,
-                                          is_smaller<ElementTag::dim, dim>::value
-                                      > 
-                                                   type;
-    };
+//     template <typename Config, typename ElementTag,
+//               long dim>  //topological level
+//     struct ncell_range < element_t<Config, ElementTag>, dim >
+//     {
+//       typedef viennagrid::ncell_range<element_t<Config, ElementTag>,
+//                                           dim,
+//                                           is_smaller<ElementTag::dim, dim>::value
+//                                       > 
+//                                                    type;
+//     };
     
     /** @brief Const Range type retrieval for boundary and coboundary iteration */
-    template <typename Config, typename ElementTag,
-              long dim>  //topological level
-    struct const_ncell_range < element_t<Config, ElementTag>, dim >
-    {
-      typedef viennagrid::const_ncell_range<element_t<Config, ElementTag>,
-                                             dim,
-                                             is_smaller<ElementTag::dim, dim>::value
-                                           > 
-                                                   type;
-    };
+//     template <typename Config, typename ElementTag,
+//               long dim>  //topological level
+//     struct const_ncell_range < element_t<Config, ElementTag>, dim >
+//     {
+//       typedef viennagrid::const_ncell_range<element_t<Config, ElementTag>,
+//                                              dim,
+//                                              is_smaller<ElementTag::dim, dim>::value
+//                                            > 
+//                                                    type;
+//     };
     
     /** @brief Returns the internal storage type of ranges for boundary k-cells */
-    template <typename config, typename element_tag,
-              long dim,
-              long cell_level /* see forwards.h for default argument */>
-    struct element_container< element_t<config, element_tag>, dim, cell_level >
-    {
-      typedef typename result_of::ncell<config, dim>::type            element_type;
-      typedef typename topology::bndcells<element_tag, dim>::layout_tag layout_tag;
-      const static long num = topology::bndcells<element_tag, dim>::num;
-        
-      typedef typename container<element_type*, layout_tag, num>::type type;
-    };
+//     template <typename config, typename element_tag,
+//               long dim,
+//               long cell_level /* see forwards.h for default argument */>
+//     struct element_container< element_t<config, element_tag>, dim, cell_level >
+//     {
+//       typedef typename result_of::ncell<config, dim>::type            element_type;
+//       typedef typename topology::bndcells<element_tag, dim>::layout_tag layout_tag;
+//       const static long num = topology::bndcells<element_tag, dim>::num;
+//         
+//       typedef typename container<element_type*, layout_tag, num>::type type;
+//     };
     
     //Iterator types for elements
     /** @brief Returns the iterator for iteration over a range */
-    template <typename config_type, typename tag, long dim>
-    struct iterator< element_t<config_type, tag>,
-                     dim>
-    {
-      /*typedef on_element_iterator< element<Config, ElementTag>, //the host element type
-                                   element<Config, //the subcell type
-                                           typename subcell_traits<ElementTag, level>::tag> 
-                                 > type; */
-                                 
-      typedef typename viennagrid::ncell_range < element_t<config_type, tag>, dim>::iterator    type;                           
-    };
+//     template <typename config_type, typename tag, long dim>
+//     struct iterator< element_t<config_type, tag>,
+//                      dim>
+//     {
+//       /*typedef on_element_iterator< element<Config, ElementTag>, //the host element type
+//                                    element<Config, //the subcell type
+//                                            typename subcell_traits<ElementTag, level>::tag> 
+//                                  > type; */
+//                                  
+//       typedef typename viennagrid::ncell_range < element_t<config_type, tag>, dim>::iterator    type;                           
+//     };
 
 
   }
