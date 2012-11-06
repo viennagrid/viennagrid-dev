@@ -18,7 +18,7 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
-#include "viennagrid/forwards.h"
+#include "viennagrid/forwards.hpp"
 
 /** @file viennagrid/topology/point.hpp
     @brief Provides the topological definition of a point (vertex)

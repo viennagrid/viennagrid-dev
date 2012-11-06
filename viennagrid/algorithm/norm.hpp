@@ -19,7 +19,7 @@
 ======================================================================= */
 
 #include <cmath>
-#include "viennagrid/forwards.h"
+#include "viennagrid/forwards.hpp"
 #include "viennagrid/traits/point.hpp"
 #include "viennagrid/point.hpp"
 

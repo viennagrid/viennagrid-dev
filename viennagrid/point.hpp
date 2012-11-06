@@ -25,7 +25,7 @@
 #include <cstddef>
 #include <sstream>
 
-#include "viennagrid/forwards.h"
+#include "viennagrid/forwards.hpp"
 #include "viennagrid/traits/point.hpp"
 
 /** @file viennagrid/point.hpp
