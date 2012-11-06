@@ -18,7 +18,7 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
-#include "viennagrid/forwards.h"
+#include "viennagrid/forwards.hpp"
 #include "viennagrid/topology/point.hpp"
 #include "viennagrid/topology/line.hpp"
 #include "viennagrid/detail/element_iterators.hpp"
@@ -115,7 +115,7 @@ namespace viennagrid
         template<typename element_type, typename inserter_type>
         static void create_bnd_cells(element_type & element, inserter_type & inserter)
         {
-            bnd_cell_type bnd_cell;
+            bnd_cell_type bnd_cell( inserter.get_physical_container_collection() );
             
             int index = 0;
             for (int i = 0; i < bndcells<simplex_tag<n>, 0>::num; ++i)
@@ -136,7 +136,7 @@ namespace viennagrid
         template<typename element_type, typename inserter_type>
         static void create_bnd_cells(element_type & element, inserter_type & inserter)
         {
-            bnd_cell_type bnd_cell;
+            bnd_cell_type bnd_cell( inserter.get_physical_container_collection() );
             
             int index = 0;
             for (int i = 0; i < bndcells<simplex_tag<n>, 0>::num; ++i)
