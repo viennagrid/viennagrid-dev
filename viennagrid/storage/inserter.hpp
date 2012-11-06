@@ -57,9 +57,7 @@ namespace viennagrid
                 viennagrid::storage::container_collection_element::insert_callback(
                     container.dereference_hook(ret.first),
                     ret.second,
-                    inserter,
-                    collection
-                                                                                  );
+                    inserter);
                 
                 //viennagrid::storage::container_collection_element::insert_callback(*ret.first, ret.second, inserter);
                 
@@ -80,6 +78,11 @@ namespace viennagrid
                 operator()( const value_type & element )
             {
                 return physical_insert( element, *this );
+            }
+            
+            container_collection_type & get_physical_container_collection()
+            {
+                return collection;
             }
             
         private:
