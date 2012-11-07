@@ -28,8 +28,7 @@
 namespace viennagrid
 {
     namespace result_of
-    {
-        
+    {       
         template<typename storage_layout_tag, long num>
         struct boundary_cell_container_tag
         {};
@@ -88,10 +87,11 @@ namespace viennagrid
         {
             typedef typename viennameta::typemap::result_of::find< domain_config, element_tag >::type::second element_config;
             typedef typename viennameta::typemap::result_of::find< element_config, viennagrid::element_boundary_storage_layout_tag >::type::second element_storage_layout_config;
-            typedef typename viennameta::typemap::result_of::find< element_storage_layout_config, boundary_cell_tag >::type::second boundary_cell_storage_layout;
+            typedef typename viennameta::typemap::result_of::find< element_storage_layout_config, boundary_cell_tag >::type::second boundary_cell_storage_handling;
+            //typedef typename viennameta::typemap::result_of::find< element_storage_layout_config, boundary_cell_tag >::type::second boundary_cell_storage_layout;
             
-            typedef typename boundary_cell_storage_layout::first storage_tag;
-            typedef typename boundary_cell_storage_layout::second orientation_tag;
+            //typedef typename boundary_cell_storage_layout::first storage_tag;
+            //typedef typename boundary_cell_storage_layout::second orientation_tag;
         };
         
         
@@ -103,7 +103,7 @@ namespace viennagrid
         {
             static const bool value = 
                 !viennameta::_equal<
-                    typename boundary_storage_layout<domain_config__, element_tag__, boundary_cell_tag__>::storage_tag,
+                    typename boundary_storage_layout<domain_config__, element_tag__, boundary_cell_tag__>::boundary_cell_storage_handling,
                     viennagrid::no_handling_tag
                 >::value;
         };
@@ -128,9 +128,14 @@ namespace viennagrid
         struct has_orientation_helper
         {
             static const bool value = 
-                !viennameta::_equal<
-                    typename boundary_storage_layout<domain_config__, element_tag__, boundary_cell_tag__>::orientation_tag,
-                    viennagrid::no_handling_tag
+                viennameta::_equal<
+                    typename boundary_storage_layout<domain_config__, element_tag__, boundary_cell_tag__>::boundary_cell_storage_handling,
+                    viennagrid::full_handling_tag
+                >::value
+                    ||
+                viennameta::_equal<
+                    typename boundary_storage_layout<domain_config__, element_tag__, boundary_cell_tag__>::boundary_cell_storage_handling,
+                    viennagrid::full_lazy_handling_tag
                 >::value;
         };
         
@@ -206,10 +211,7 @@ namespace viennagrid
            
             typedef typename 
                 viennameta::_if<
-                    viennameta::_equal<
-                        typename boundary_storage_layout< domain_config, element_tag, boundary_cell_tag >::orientation_tag,
-                        viennagrid::full_handling_tag
-                    >::value,
+                    has_orientation< domain_config, element_tag, boundary_cell_tag>::value,
                     typename viennagrid::storage::result_of::container< facet_orientation_type, container_tag >::type,
                     viennameta::null_type
                 >::type facet_orientation_container_type;
