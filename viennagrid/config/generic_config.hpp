@@ -41,7 +41,8 @@ namespace viennagrid
                 typename storage_layout_config<element_tag, typename boundary_cell_tag::facet_tag>::type,
                 viennameta::static_pair<
                     boundary_cell_tag,
-                    viennameta::static_pair< viennagrid::full_handling_tag, viennagrid::full_handling_tag >
+                    viennagrid::full_handling_tag
+                    //viennameta::static_pair< viennagrid::full_handling_tag, viennagrid::full_handling_tag >
                 >
             >::type type;
         };
@@ -52,7 +53,8 @@ namespace viennagrid
             //typedef viennameta::static_pair< viennagrid::full_handling_tag, viennagrid::no_handling_tag > type;
             typedef typename viennameta::make_typemap<
                 viennagrid::vertex_tag,
-                viennameta::static_pair< viennagrid::full_handling_tag, viennagrid::no_handling_tag >
+                viennagrid::no_orientation_handling_tag
+                //viennameta::static_pair< viennagrid::full_handling_tag, viennagrid::no_handling_tag >
             >::type type;
         };
         
