@@ -118,13 +118,13 @@ int main()
 //         
 //             viennagrid::element_container_tag,
 //             viennagrid::storage::hooked_container_tag<           
-//                 viennagrid::storage::hidden_key_map_tag< viennagrid::storage::hooked_element_key_tag<int> >,
+//                 viennagrid::storage::hidden_key_map_tag< viennagrid::storage::element_key_tag<int> >,
 //                 hook_tag
 //             >,
 //             
 //             viennagrid::element_boundary_storage_layout_tag,
 //             viennameta::make_typemap<
-//                 viennagrid::vertex_tag, viennameta::static_pair< viennagrid::full_handling_tag, viennagrid::no_handling_tag >
+//                 viennagrid::vertex_tag, viennagrid::no_orientation_handling_tag
 //             >::type
 //         >::type,
 //         
@@ -135,14 +135,14 @@ int main()
 //         
 //             viennagrid::element_container_tag,
 //             viennagrid::storage::hooked_container_tag<           
-//                 viennagrid::storage::hidden_key_map_tag< viennagrid::storage::hooked_element_key_tag<int> >,
+//                 viennagrid::storage::hidden_key_map_tag< viennagrid::storage::element_key_tag<int> >,
 //                 hook_tag
 //             >,
 //             
 //             viennagrid::element_boundary_storage_layout_tag,
 //             viennameta::make_typemap<
-//                 viennagrid::vertex_tag, viennameta::static_pair< viennagrid::full_handling_tag, viennagrid::no_handling_tag >,
-//                 viennagrid::line_tag, viennameta::static_pair< viennagrid::full_handling_tag, viennagrid::full_handling_tag >
+//                 viennagrid::vertex_tag, viennagrid::no_orientation_handling_tag,
+//                 viennagrid::line_tag, viennagrid::full_handling_tag
 //             >::type
 //         >::type,
 // 
@@ -159,13 +159,13 @@ int main()
 //             
 //             viennagrid::element_boundary_storage_layout_tag,
 //             viennameta::make_typemap<
-//                 viennagrid::vertex_tag, viennameta::static_pair< viennagrid::full_handling_tag, viennagrid::no_handling_tag >,
-//                 viennagrid::line_tag, viennameta::static_pair< viennagrid::full_handling_tag, viennagrid::full_handling_tag >,
-//                 viennagrid::triangle_tag, viennameta::static_pair< viennagrid::full_handling_tag, viennagrid::full_handling_tag >
+//                 viennagrid::vertex_tag, viennagrid::no_orientation_handling_tag,
+//                 viennagrid::line_tag, viennagrid::full_handling_tag,
+//                 viennagrid::triangle_tag, viennagrid::full_handling_tag
 //             >::type
 //         >::type
 // 
-//     >::type test_config;
+//     >::type config;
     
     
     
