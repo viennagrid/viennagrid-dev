@@ -60,7 +60,6 @@ namespace viennagrid
             template<typename container_typelist>
             void set_container( viennagrid::storage::collection_t<container_typelist> & container_collection )
             {
-                cout << "set_container for " << bnd_cell_tag::name() << " layer in " << element_tag::name() << endl;
                 elements_.set_base_container( viennagrid::storage::container_collection::get<bnd_cell_type>(container_collection) );
                 base::set_container( container_collection );
             }
@@ -172,7 +171,6 @@ namespace viennagrid
             template<typename container_typelist>
             void set_container( viennagrid::storage::collection_t<container_typelist> & container_collection )
             {
-                cout << "set_container for " << bnd_cell_tag::name() << " layer in " << element_tag::name() << endl;
                 elements_.set_base_container( viennagrid::storage::container_collection::get<bnd_cell_type>(container_collection) );
                 base::set_container( container_collection );
             }
