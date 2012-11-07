@@ -86,6 +86,10 @@ namespace viennagrid
   struct full_handling_tag {};
   /** @brief A tag denoting that the (boundary) k-cells should not be stored */
   struct no_handling_tag {};
+  
+  struct no_orientation_handling_tag {};
+  struct no_orientation_lazy_handling_tag {};
+  struct full_lazy_handling_tag {};
 
   
   /********* Forward definitions of main classes *******************/
