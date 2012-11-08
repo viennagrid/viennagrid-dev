@@ -402,8 +402,11 @@ namespace viennagrid
      * @tparam cell_level   Internal flag that refers to the maximum dimension in the domain
      */
     
-    template<typename element_or_config, long dim>
+    template<typename element_domain_segment_config_or_something_like_that, long dim>
     struct ncell;
+    
+    template<typename element_domain_segment_config_or_something_like_that, long dim>
+    struct ncell_hook;
     
 //     template <typename Config,
 //               long dim,
