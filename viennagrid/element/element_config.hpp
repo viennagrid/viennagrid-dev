@@ -272,9 +272,93 @@ namespace viennagrid
             
             typedef viennagrid::element_t<element_tag__, container_typelist, id_type> type;
         };
-    }
 
+    }
         
+        
+        
+        
+    namespace result_of
+    {
+        template<typename domain_config, long dim>
+        struct ncell_tag;
+        
+        template<typename element_tag, typename element_config, typename tail, long dim>
+        struct ncell_tag< viennameta::typelist_t< viennameta::static_pair<element_tag, element_config>, tail >, dim >
+        {
+            typedef typename viennameta::_if<
+                element_tag::dim == dim,
+                element_tag,
+                typename ncell_tag<tail, dim>::type
+            >::type type;
+        };
+        
+        template<long dim>
+        struct ncell_tag<viennameta::null_type, dim>
+        {
+            typedef viennameta::null_type type;
+        };
+        
+
+        template<typename domain_config, long dim>
+        struct ncell
+        {
+            typedef typename element<
+                domain_config,
+                typename ncell_tag<domain_config, dim>::type
+            >::type type;
+        };
+        
+        
+    }
+        
+        
+        
+    namespace result_of
+    {
+        //
+        // generates a container for a specified element_tag for the domain container collection
+        //
+        template<typename config, typename element_tag>
+        struct element_container
+        {
+            typedef typename element<config, element_tag>::type element_type;
+            typedef typename viennagrid::storage::result_of::container<element_type, typename element_container_tag<config, element_tag>::type >::type type;
+        };
+        
+        
+        //
+        // generates the container typelist for the domain container collection
+        //
+        template<typename config, typename cur_config = config>
+        struct element_container_typelist;
+        
+        template<typename config, typename key, typename value, typename tail>
+        struct element_container_typelist< config, viennameta::typelist_t< viennameta::static_pair<key, value>, tail > >
+        {
+            typedef viennameta::typelist_t<
+                typename element_container<config, key>::type,
+                typename element_container_typelist<config, tail>::type
+            > type;
+        };
+        
+        template<typename config>
+        struct element_container_typelist<config, viennameta::null_type>
+        {
+            typedef viennameta::null_type type;
+        };
+    }
+    
+    namespace result_of
+    {
+        
+        template<typename domain_config, typename element_tag>
+        struct element_hook
+        {
+            typedef typename element_container<domain_config, element_tag>::type::hook_type type;
+        };
+        
+    }
   
 }
 
