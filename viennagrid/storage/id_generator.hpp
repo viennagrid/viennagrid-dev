@@ -2,6 +2,8 @@
 #define VIENNAGRID_STORAGE_ID_GENERATOR_HPP
 
 #include "viennagrid/meta/typelist.hpp"
+#include "viennagrid/meta/typemap.hpp"
+#include "id.hpp"
 
 
 namespace viennagrid
@@ -12,18 +14,18 @@ namespace viennagrid
      
         
         
-        template<typename typelist, typename id_type>
+        template<typename typemap>
         class continuous_id_generator_layer_t;
         
-        template<typename head, typename tail, typename id_type>
-        class continuous_id_generator_layer_t<viennameta::typelist_t<head, tail>, id_type> : public continuous_id_generator_layer_t<tail, id_type>
+        template<typename value_type, typename id_type, typename tail>
+        class continuous_id_generator_layer_t<viennameta::typelist_t< viennameta::static_pair<value_type, id_type>, tail> > : public continuous_id_generator_layer_t<tail>
         {
-            typedef continuous_id_generator_layer_t<tail, id_type> base;
+            typedef continuous_id_generator_layer_t<tail> base;
         public:
             continuous_id_generator_layer_t() : base(), last_id(0) {}
             
             using base::operator();
-            id_type operator()( viennameta::tag<head> )
+            id_type operator()( viennameta::tag<value_type> )
             {
                 return last_id++;
             }
@@ -32,35 +34,51 @@ namespace viennagrid
             id_type last_id;
         };
         
-        template<typename id_type>
-        class continuous_id_generator_layer_t<viennameta::null_type, id_type>
+        template<>
+        class continuous_id_generator_layer_t<viennameta::null_type>
         {
         public:
-            id_type operator()();
+            void operator()();
         };
-        
-        template<typename typelist, typename id_type>
-        class continuous_id_generator_t : public continuous_id_generator_layer_t<typelist, id_type>
-        {
-            typedef continuous_id_generator_layer_t<typelist, id_type> base;
-            
-        public:
-            using base::operator();
-        };
-        
-        
         
         
         namespace result_of
         {
+            template<typename typelist, typename id_type>
+            struct continuous_id_generator_config_helper;
             
-            template<typename typelist, typename id_type = int>
+            template<typename head, typename tail, typename id_type>
+            struct continuous_id_generator_config_helper< viennameta::typelist_t<head, tail>, id_type >
+            {
+                typedef typename viennameta::typemap::result_of::insert<
+                    typename continuous_id_generator_config_helper<tail, id_type>::type,
+                    viennameta::static_pair<
+                        head,
+                        id_type
+                    >
+                >::type type;
+            };
+            
+            template<typename id_type>
+            struct continuous_id_generator_config_helper<viennameta::null_type, id_type>
+            {
+                typedef viennameta::null_type type;
+            };
+            
+            template<typename typelist, typename id_type>
+            struct continuous_id_generator_config
+            {
+                typedef typename continuous_id_generator_config_helper<
+                    typename viennameta::typelist::result_of::no_duplicates<typelist>::type,
+                    id_type
+                >::type type;
+            };
+            
+            
+            template<typename typemap>
             struct continuous_id_generator
             {
-                typedef viennagrid::storage::continuous_id_generator_t<
-                    typename viennameta::typelist::result_of::no_duplicates< typelist >::type,
-                    id_type
-                > type;
+                typedef viennagrid::storage::continuous_id_generator_layer_t< typemap > type;
             };
             
             
