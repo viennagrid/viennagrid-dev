@@ -31,51 +31,6 @@ using std::endl;
 
 
 
-
-namespace viennagrid
-{
-    
-    namespace result_of
-    {
-        //
-        // generates a container for a specified element_tag for the domain container collection
-        //
-        template<typename config, typename element_tag>
-        struct element_container
-        {
-            typedef typename element<config, element_tag>::type element_type;
-            typedef typename viennagrid::storage::result_of::container<element_type, typename element_container_tag<config, element_tag>::type >::type type;
-        };
-        
-        
-        //
-        // generates the container typelist for the domain container collection
-        //
-        template<typename config, typename cur_config = config>
-        struct element_container_typelist;
-        
-        template<typename config, typename key, typename value, typename tail>
-        struct element_container_typelist< config, viennameta::typelist_t< viennameta::static_pair<key, value>, tail > >
-        {
-            typedef viennameta::typelist_t<
-                typename element_container<config, key>::type,
-                typename element_container_typelist<config, tail>::type
-            > type;
-        };
-        
-        template<typename config>
-        struct element_container_typelist<config, viennameta::null_type>
-        {
-            typedef viennameta::null_type type;
-        };
-    }
-}
-
-
-
-    
-
-
 int main()
 {
     
@@ -218,8 +173,9 @@ int main()
     typedef viennagrid::storage::result_of::collection< element_container_typelist >::type domain_container_collection_type;
     domain_container_collection_type domain_container_collection;
     
-    
-    typedef viennagrid::storage::result_of::continuous_id_generator< viennagrid::storage::container_collection::result_of::value_typelist<domain_container_collection_type>::type >::type id_generator_type;
+
+    typedef viennagrid::storage::result_of::continuous_id_generator_config< viennagrid::storage::container_collection::result_of::value_typelist<domain_container_collection_type>::type, int>::type id_generator_config;
+    typedef viennagrid::storage::result_of::continuous_id_generator< id_generator_config >::type id_generator_type;
     id_generator_type id_generator;
     
     typedef viennagrid::storage::result_of::physical_inserter<domain_container_collection_type, id_generator_type&>::type inserter_type;
