@@ -78,7 +78,8 @@ int main()
 
     //typedef collection_type::test_type test_type;
     
-    typedef viennagrid::storage::result_of::continuous_id_generator<config>::type id_generator_type;
+    typedef viennagrid::storage::result_of::continuous_id_generator_config<config, int>::type id_generator_config;
+    typedef viennagrid::storage::result_of::continuous_id_generator<id_generator_config>::type id_generator_type;
     id_generator_type id_generator;
     
     

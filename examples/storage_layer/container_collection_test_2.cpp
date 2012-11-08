@@ -123,7 +123,8 @@ int main()
     collection_type collection;
     
     
-    typedef viennagrid::storage::result_of::continuous_id_generator< triangle<vertex_type>::required_types >::type id_generator_type;
+    typedef viennagrid::storage::result_of::continuous_id_generator_config<triangle<vertex_type>::required_types, int>::type id_generator_config;
+    typedef viennagrid::storage::result_of::continuous_id_generator< id_generator_config >::type id_generator_type;
     id_generator_type id_generator;
     
     typedef viennagrid::storage::result_of::physical_inserter< collection_type, id_generator_type& >::type inserter_type;
