@@ -135,7 +135,7 @@ namespace viennagrid
   class element_t;
   }
 
-  template <typename ConfigType, typename ElementType>
+  template <typename element_type>
   class element_key;
 
   //Segment type: 
