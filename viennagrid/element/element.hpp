@@ -243,7 +243,6 @@ namespace viennagrid
     
     namespace result_of
     {
-        
         template<typename typelist, long dim>
         struct container_of_dimension;
         
@@ -270,8 +269,11 @@ namespace viennagrid
     
     
     
-    template<typename element_tag, typename bnd_cell_container_typelist__, typename id_type__>
-    class element_t : public viennagrid::storage::id_handler<id_type__>,
+    template<typename element_tag, typename bnd_cell_container_typelist__, typename id_tag>
+    class element_t :
+        public viennagrid::storage::id_handler<
+                    typename viennagrid::storage::result_of::id< element_t<element_tag, bnd_cell_container_typelist__, id_tag>, id_tag>::type
+                >,
         public boundary_cell_layer<element_tag, bnd_cell_container_typelist__>
     {
         typedef boundary_cell_layer<element_tag, bnd_cell_container_typelist__> base;
@@ -312,10 +314,13 @@ namespace viennagrid
             
 
     // separate specialization for vertices at the moment
-    template<typename bnd_cell_container_typelist__, typename id_type__>
-    class element_t<vertex_tag, bnd_cell_container_typelist__, id_type__> : public viennagrid::storage::id_handler<id_type__>
+    template<typename bnd_cell_container_typelist__, typename id_tag>
+    class element_t<vertex_tag, bnd_cell_container_typelist__, id_tag> :
+        public viennagrid::storage::id_handler<
+                    typename viennagrid::storage::result_of::id< element_t<vertex_tag, bnd_cell_container_typelist__, id_tag>, id_tag>::type
+                >
     {
-        typedef element_t<vertex_tag, bnd_cell_container_typelist__, id_type__>            self_type;
+        typedef element_t<vertex_tag, bnd_cell_container_typelist__, id_tag>            self_type;
         
         public:
         
