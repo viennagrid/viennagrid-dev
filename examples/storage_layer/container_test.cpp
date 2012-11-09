@@ -20,10 +20,11 @@ using std::endl;
 
 
 
+struct id_int;
+typedef viennagrid::storage::smart_id<id_int, int> id_type;
 
 
-
-struct id_int : public viennagrid::storage::id_handler<int>
+struct id_int : public viennagrid::storage::id_handler< viennagrid::storage::smart_id<id_int, int> >
 {
     id_int(int value_) : value(value_) {}
     int value;
@@ -61,7 +62,7 @@ void test()
     
     my_container_type my_container;
     id_int i0(10);
-    i0.id(0);
+    i0.id( id_type(0) );
     my_container.insert(i0);
     
     
@@ -73,7 +74,7 @@ void test()
     my_view.set_base_container(my_container);
     
     id_int i1(15);
-    i1.id(1);
+    i1.id( id_type(1) );
     my_view.insert_hook( my_container.insert(i1).first );
     
     
@@ -85,7 +86,7 @@ void test()
     my_view2.set_base_container(my_view);
     
     id_int i2(20);
-    i2.id(2);
+    i2.id( id_type(2) );
     my_view2.insert_hook( my_container.insert(i2).first );
     
     
@@ -186,7 +187,7 @@ int main()
          << " --------------------------- "
          << endl << endl;
     
-    test< viennagrid::storage::hooked_container_tag< viennagrid::storage::std_vector_tag, viennagrid::storage::id_hook_tag<int> > >();
+    test< viennagrid::storage::hooked_container_tag< viennagrid::storage::std_vector_tag, viennagrid::storage::id_hook_tag > >();
     cout << endl 
          << " --------------------------- "
          << endl << endl;
