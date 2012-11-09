@@ -120,7 +120,7 @@ namespace viennagrid
   typedef hypercube_tag<3>  hexahedron_tag;
   
   
-    struct element_id_type_tag {};
+    struct element_id_tag {};
     struct element_container_tag {};
     struct element_boundary_storage_layout_tag {};
 
