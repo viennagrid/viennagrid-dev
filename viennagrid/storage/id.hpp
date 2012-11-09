@@ -106,7 +106,7 @@ namespace viennagrid
         class id_compare
         {
         public:
-            typedeef id_type_ id_type;
+            typedef id_type_ id_type;
             
             id_compare(id_type id__) : id(id__) {}
             
