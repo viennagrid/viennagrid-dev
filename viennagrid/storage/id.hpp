@@ -1,5 +1,7 @@
 #ifndef VIENNAGRID_STORAGE_ID_HPP
 #define VIENNAGRID_STORAGE_ID_HPP
+#include <boost/iterator/iterator_concepts.hpp>
+#include <boost/type_traits/detail/is_function_ptr_helper.hpp>
 
 
 namespace viennagrid
@@ -7,12 +9,86 @@ namespace viennagrid
 
     namespace storage
     {
+        template<typename id_type>
+        struct id_tag;
+        
+        template<typename base_id_type>
+        struct smart_id_tag;
+        
+        
+        template<typename value_type_, typename base_id_type>
+        class smart_id
+        {
+        public:
+            typedef smart_id self_type;
+            typedef value_type_ value_type;
+            
+            smart_id() : internal_id(0) {}
+            explicit smart_id( base_id_type internal_id_ ) : internal_id(internal_id_) {}
+            
+            base_id_type get() const { return internal_id; }
+            void set( base_id_type internal_id_ ) { internal_id =internal_id_; }
+            
+            bool operator== ( self_type rhs ) const { return internal_id == rhs.internal_id; }
+            bool operator< ( self_type rhs ) const { return internal_id < rhs.internal_id; }
+            bool operator<= ( self_type rhs ) const { return internal_id <= rhs.internal_id; }
+            bool operator> ( self_type rhs ) const { return internal_id > rhs.internal_id; }
+            bool operator>= (self_type rhs ) const { return internal_id >= rhs.internal_id; }
+            
+            self_type & operator++() { ++internal_id; return *this; }
+            self_type operator++(int) { self_type tmp(*this); ++*this; return tmp; }
+            
+        private:
+            base_id_type internal_id;
+        };
+        
+        template<typename value_type_, typename base_id_type>
+        std::ostream & operator<< (std::ostream & os, smart_id<value_type_, base_id_type> id)
+        {
+            os << id.get();
+            return os;
+        }
+        
+        namespace result_of
+        {
+            template<typename value_type, typename id_tag>
+            struct id;
+            
+            template<typename value_type, typename id_type>
+            struct id<value_type, id_tag<id_type> >
+            {
+                typedef id_type type;
+            };
+            
+            template<typename value_type, typename base_id_type>
+            struct id<value_type, smart_id_tag<base_id_type> >
+            {
+                typedef smart_id<value_type, base_id_type> type;
+            };
+            
+        }
+        
+        
+//         template<typename value_type_, typename base_id_type>
+//         smart_id<value_type_, base_id_type> operator+( const smart_id<value_type_, base_id_type> & lhs, const smart_id<value_type_, base_id_type> & rhs )
+//         {
+//             return smart_id<value_type_, base_id_type>( lhs.get() + rhs.get() );
+//         }
+        
+//         template<typename value_type_, typename base_id_type>
+//         base_id_type operator-( const smart_id<value_type_, base_id_type> & lhs, const smart_id<value_type_, base_id_type> & rhs )
+//         {
+//             return smart_id<value_type_, base_id_type>( lhs.get() - rhs.get() );
+//         }
+        
+        
+
      
-        template<typename id_type__>
+        template<typename id_type_>
         class id_handler
         {
         public:
-            typedef id_type__ id_type;
+            typedef id_type_ id_type;
             
             id_handler() {}
             id_handler(const id_handler & rhs) : id_(rhs.id_) {}
@@ -26,11 +102,11 @@ namespace viennagrid
             
 
         
-        template<typename id_type__>
+        template<typename id_type_>
         class id_compare
         {
         public:
-            typedef id_type__ id_type;
+            typedeef id_type_ id_type;
             
             id_compare(id_type id__) : id(id__) {}
             
@@ -73,3 +149,5 @@ namespace viennagrid
 }
 
 #endif
+template<class _Signature >
+class result_of;
