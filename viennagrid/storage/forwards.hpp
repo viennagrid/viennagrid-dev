@@ -22,8 +22,6 @@ namespace viennagrid
         struct no_hook_tag {};
         struct iterator_hook_tag {};
         struct pointer_hook_tag {};
-        
-        template<typename id_type>
         struct id_hook_tag {};
 
         
