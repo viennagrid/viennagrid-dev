@@ -5,6 +5,7 @@
 #include <vector>
 #include <map>
 #include "viennagrid/meta/typemap.hpp"
+#include "viennagrid/storage/id.hpp"
 #include "viennagrid/storage/forwards.hpp"
 
 
@@ -16,6 +17,7 @@ namespace viennagrid
 
         namespace hook
         {
+            
             template<typename base_container_type, typename view_reference_tag>
             struct hook_type
             {};
@@ -38,10 +40,10 @@ namespace viennagrid
                 typedef typename base_container_type::iterator type;
             };
             
-            template<typename base_container_type, typename id_type>
-            struct hook_type<base_container_type, id_hook_tag<id_type> >
+            template<typename base_container_type>
+            struct hook_type<base_container_type, id_hook_tag>
             {
-                typedef id_type type;
+                typedef typename base_container_type::value_type::id_type type;
             };
             
             
@@ -69,10 +71,10 @@ namespace viennagrid
                 typedef typename base_container_type::const_iterator type;
             };
             
-            template<typename base_container_type, typename id_type>
-            struct const_hook_type<base_container_type, id_hook_tag<id_type> >
+            template<typename base_container_type>
+            struct const_hook_type<base_container_type, id_hook_tag>
             {
-                typedef const id_type type;
+                typedef const typename base_container_type::value_type::id_type type;
             };
             
             
@@ -111,10 +113,10 @@ namespace viennagrid
                 static hook_type convert( iterator it ) { return &* it; }
             };
             
-            template<typename container_type, typename id_type>
-            struct iterator_to_hook<container_type, id_hook_tag<id_type> >
+            template<typename container_type>
+            struct iterator_to_hook<container_type, id_hook_tag>
             {
-                typedef typename viennagrid::storage::hook::hook_type<container_type, id_hook_tag<id_type> >::type hook_type;
+                typedef typename viennagrid::storage::hook::hook_type<container_type, id_hook_tag>::type hook_type;
                 
                 template<typename iterator>
                 static hook_type convert( iterator it ) { return it->id(); }
