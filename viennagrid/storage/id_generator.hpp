@@ -17,11 +17,14 @@ namespace viennagrid
         template<typename typemap>
         class continuous_id_generator_layer_t;
         
-        template<typename value_type, typename id_type, typename tail>
-        class continuous_id_generator_layer_t<viennameta::typelist_t< viennameta::static_pair<value_type, id_type>, tail> > : public continuous_id_generator_layer_t<tail>
+        template<typename value_type, typename id_tag, typename tail>
+        class continuous_id_generator_layer_t<viennameta::typelist_t< viennameta::static_pair<value_type, id_tag>, tail> > : public continuous_id_generator_layer_t<tail>
         {
             typedef continuous_id_generator_layer_t<tail> base;
         public:
+            //typedef smart_id<value_type, base_id_type> id_type;
+            typedef typename result_of::id<value_type, id_tag>::type id_type;
+            
             continuous_id_generator_layer_t() : base(), last_id(0) {}
             
             using base::operator();
