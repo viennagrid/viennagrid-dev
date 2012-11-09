@@ -68,10 +68,10 @@ namespace viennagrid
         
         
         template<typename domain_config, typename element_tag>
-        struct element_id_type
+        struct element_id_tag
         {
             typedef typename viennameta::typemap::result_of::find< domain_config, element_tag >::type::second element_config;
-            typedef typename viennameta::typemap::result_of::find< element_config, element_id_type_tag >::type::second type;
+            typedef typename viennameta::typemap::result_of::find< element_config, viennagrid::element_id_tag >::type::second type;
         };
         
         template<typename domain_config, typename element_tag>
@@ -266,11 +266,11 @@ namespace viennagrid
         template<typename config__, typename element_tag__>
         struct element
         {
-            typedef typename element_id_type<config__, element_tag__>::type id_type;
+            typedef typename element_id_tag<config__, element_tag__>::type id_tag;
             
             typedef typename element_boundary_cell_container_typelist<config__, element_tag__, element_tag__>::type container_typelist;
             
-            typedef viennagrid::element_t<element_tag__, container_typelist, id_type> type;
+            typedef viennagrid::element_t<element_tag__, container_typelist, id_tag> type;
         };
 
     }
