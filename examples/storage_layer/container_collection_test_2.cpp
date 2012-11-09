@@ -16,9 +16,20 @@ using std::endl;
 #include "viennagrid/storage/io.hpp"
 
 
+template<typename _numeric_type>
+struct vertex;
+
+template<typename _vertex_type>
+struct line;
+
+template<typename _vertex_type>
+struct triangle;
+
+
+
 
 template<typename _numeric_type>
-struct vertex : public viennagrid::storage::id_handler<int>
+struct vertex : public viennagrid::storage::id_handler< viennagrid::storage::smart_id<vertex<_numeric_type>, int> >
 {
     typedef _numeric_type numeric_type;
     typedef typename viennameta::make_typelist< vertex<numeric_type> >::type required_types;    
@@ -44,7 +55,7 @@ std::ostream & operator<<(std::ostream & os, const vertex<numeric_type> & v)
 
 
 template<typename _vertex_type>
-struct line : public viennagrid::storage::id_handler<int>
+struct line : public viennagrid::storage::id_handler< viennagrid::storage::smart_id<line<_vertex_type>, int> >
 {
     typedef _vertex_type vertex_type;
     typedef typename viennameta::typelist::result_of::push_back<typename vertex_type::required_types, line<vertex_type> >::type required_types;
@@ -64,7 +75,7 @@ std::ostream & operator<<(std::ostream & os, const line<vertex_type> & l)
 }
 
 template<typename _vertex_type>
-struct triangle : public viennagrid::storage::id_handler<int>
+struct triangle : public viennagrid::storage::id_handler< viennagrid::storage::smart_id<triangle<_vertex_type>, int> >
 {
     typedef _vertex_type vertex_type;
     typedef line<vertex_type> line_type;
@@ -123,7 +134,7 @@ int main()
     collection_type collection;
     
     
-    typedef viennagrid::storage::result_of::continuous_id_generator_config<triangle<vertex_type>::required_types, int>::type id_generator_config;
+    typedef viennagrid::storage::result_of::continuous_id_generator_config<triangle<vertex_type>::required_types, viennagrid::storage::smart_id_tag<int> >::type id_generator_config;
     typedef viennagrid::storage::result_of::continuous_id_generator< id_generator_config >::type id_generator_type;
     id_generator_type id_generator;
     
