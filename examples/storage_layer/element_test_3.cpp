@@ -40,7 +40,7 @@ int main()
     
     //typedef viennagrid::storage::pointer_hook_tag hook_tag;
     //typedef viennagrid::storage::iterator_hook_tag hook_tag;
-    typedef viennagrid::storage::id_hook_tag<int> hook_tag;
+    typedef viennagrid::storage::id_hook_tag hook_tag;
     
     
     
@@ -174,7 +174,7 @@ int main()
     domain_container_collection_type domain_container_collection;
     
 
-    typedef viennagrid::storage::result_of::continuous_id_generator_config< viennagrid::storage::container_collection::result_of::value_typelist<domain_container_collection_type>::type, int>::type id_generator_config;
+    typedef viennagrid::storage::result_of::continuous_id_generator_config< viennagrid::storage::container_collection::result_of::value_typelist<domain_container_collection_type>::type, viennagrid::storage::smart_id_tag<int> >::type id_generator_config;
     typedef viennagrid::storage::result_of::continuous_id_generator< id_generator_config >::type id_generator_type;
     id_generator_type id_generator;
     

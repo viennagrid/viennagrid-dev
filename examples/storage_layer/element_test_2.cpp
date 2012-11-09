@@ -37,15 +37,15 @@ int main()
     
     //typedef viennagrid::storage::pointer_hook_tag hook_tag;
     //typedef viennagrid::storage::iterator_hook_tag hook_tag;
-    typedef viennagrid::storage::id_hook_tag<int> hook_tag;
+    typedef viennagrid::storage::id_hook_tag hook_tag;
     
     //
     // Get the vertex type:
     //
     typedef viennagrid::element_t<  viennagrid::vertex_tag,   // element tag
                                     viennameta::null_type,    // boundary k-cells container (a vertex does not have boundary cells, hence 'null_type'
-                                    int                       // type 'int' is used as ID
-                                    > vertex_type;
+                                    viennagrid::storage::smart_id_tag<int>                       // type 'int' is used as ID
+                                > vertex_type;
     
     //
     // Instantiate a few vertices (note that they are now free of any geometry information)
@@ -96,14 +96,14 @@ int main()
     //
     typedef viennagrid::element_t<  viennagrid::line_tag,           // element tag (as in ViennaGrid 1.0.x)
                                     line_containers_typelist,       // list of boundary containers
-                                    int                             // ID type
+                                    viennagrid::storage::smart_id_tag<int>                             // ID type
                                     > line_type;
     
     typedef viennagrid::storage::result_of::container<
             line_type,
             viennagrid::storage::hooked_container_tag<
                 //viennagrid::storage::std_deque_tag,
-                viennagrid::storage::hidden_key_map_tag< viennagrid::storage::element_key_tag<int> >,
+                viennagrid::storage::hidden_key_map_tag< viennagrid::storage::element_key_tag >,
                 hook_tag
             >
         >::type line_container_type;
@@ -154,7 +154,7 @@ int main()
     //
     // Instantiate the triangle type as above: Provide the tag, the boundary container list, and the ID type
     //
-    typedef viennagrid::element_t< viennagrid::triangle_tag, triangle_containers_typelist, int > triangle_type;
+    typedef viennagrid::element_t< viennagrid::triangle_tag, triangle_containers_typelist, viennagrid::storage::smart_id_tag<int> > triangle_type;
     
     //
     // Instantiate a hooked container of triangles using std::deque as the underlying container base. Hooks are again of the type defined at the beginning.
@@ -163,7 +163,7 @@ int main()
             triangle_type,
             viennagrid::storage::hooked_container_tag<
                 //viennagrid::storage::std_deque_tag,
-                viennagrid::storage::hidden_key_map_tag< viennagrid::storage::element_key_tag<int> >,
+                viennagrid::storage::hidden_key_map_tag< viennagrid::storage::element_key_tag >,
                 hook_tag
             >
         >::type triangle_container_type;
@@ -217,7 +217,7 @@ int main()
     //
     // Now create the tetrahedron type as usual: Provide the tag, the boundary containers, and the ID type:
     //
-    typedef viennagrid::element_t< viennagrid::tetrahedron_tag, tetrahedron_containers_typelist, int > tetrahedron_type;
+    typedef viennagrid::element_t< viennagrid::tetrahedron_tag, tetrahedron_containers_typelist, viennagrid::storage::smart_id_tag<int> > tetrahedron_type;
     
     //
     // Instantiate a container of tetrahedra. A std::deque is used for the storage, and the usual hook type defined at the beginning is used
@@ -247,7 +247,7 @@ int main()
     //
     // for pushing n-cells to a domain, each of them needs to be equipped with an ID. For that purpose, a suitable ID generator is deduced here:
     //
-    typedef viennagrid::storage::result_of::continuous_id_generator_config< viennagrid::storage::container_collection::result_of::value_typelist<domain_type>::type, int>::type id_generator_config;
+    typedef viennagrid::storage::result_of::continuous_id_generator_config< viennagrid::storage::container_collection::result_of::value_typelist<domain_type>::type, viennagrid::storage::smart_id_tag<int> >::type id_generator_config;
     typedef viennagrid::storage::result_of::continuous_id_generator< id_generator_config >::type id_generator_type;
     
     id_generator_type id_generator;
