@@ -58,10 +58,14 @@ namespace viennagrid
                 const value_type operator* () const { return static_cast<base_iterator>(*this); }
             };
             
-            template<typename base_iterator, typename id_type>
-            class hook_iterator_impl<base_iterator, id_hook_tag<id_type> > : public base_iterator
+            template<typename base_iterator>
+            class hook_iterator_impl<base_iterator, id_hook_tag> : public base_iterator
             {
             public:
+                
+                //typedef smart_id< typename std::iterator_traits<base_iterator>::value_type, base_id_type > id_type;
+                //typedef typename viennagrid::storage::result_of::id<typename std::iterator_traits<base_iterator>::value_type, id_tag>::type id_type;
+                typedef typename std::iterator_traits<base_iterator>::value_type::id_type id_type;
                 
                 typedef typename std::iterator_traits<base_iterator>::difference_type difference_type;
                 typedef id_type value_type;
@@ -120,10 +124,14 @@ namespace viennagrid
                 const value_type operator* () const { return static_cast<base_iterator>(*this); }
             };
             
-            template<typename base_iterator, typename id_type>
-            class const_hook_iterator_impl<base_iterator, id_hook_tag<id_type> > : public base_iterator
+            template<typename base_iterator>
+            class const_hook_iterator_impl<base_iterator, id_hook_tag> : public base_iterator
             {
             public:
+                
+                //typedef smart_id< typename std::iterator_traits<base_iterator>::value_type, base_id_type > id_type;
+                //typedef typename viennagrid::storage::result_of::id<typename std::iterator_traits<base_iterator>::value_type, id_tag>::type id_type;
+                typedef typename std::iterator_traits<base_iterator>::value_type::id_type id_type;
                 
                 typedef typename std::iterator_traits<base_iterator>::difference_type difference_type;
                 typedef id_type value_type;
@@ -173,8 +181,8 @@ namespace viennagrid
 //             }
         };
         
-        template<typename base_container__, typename id_type>
-        class hooked_container_t<base_container__, id_hook_tag<id_type> > : public base_container__
+        template<typename base_container__>
+        class hooked_container_t<base_container__, id_hook_tag> : public base_container__
         {
         public:
             typedef base_container__ container_type;
@@ -189,13 +197,13 @@ namespace viennagrid
             typedef typename container_type::iterator iterator;
             typedef typename container_type::const_iterator const_iterator;
             
-            typedef typename viennagrid::storage::hook::hook_type<container_type, id_hook_tag<id_type> >::type hook_type;
-            typedef typename viennagrid::storage::hook::const_hook_type<container_type, id_hook_tag<id_type> >::type const_hook_type;
+            typedef typename viennagrid::storage::hook::hook_type<container_type, id_hook_tag>::type hook_type;
+            typedef typename viennagrid::storage::hook::const_hook_type<container_type, id_hook_tag>::type const_hook_type;
             
             value_type & dereference_hook( hook_type hook )
             {
                 iterator it = container_type::begin();
-                std::advance(it, hook);
+                std::advance(it, hook.get());
                 return *it;
                 //return *hook;
             }
