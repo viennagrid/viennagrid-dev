@@ -150,10 +150,10 @@ namespace viennagrid
                 static hook_type convert( iterator it ) { return & it->second; }
             };
             
-            template<typename _key_type, typename _value_type, typename id_type>
-            struct iterator_to_hook<hidden_key_map<_key_type, _value_type>, id_hook_tag<id_type> >
+            template<typename _key_type, typename _value_type>
+            struct iterator_to_hook<hidden_key_map<_key_type, _value_type>, id_hook_tag>
             {
-                typedef typename viennagrid::storage::hook::hook_type<hidden_key_map<_key_type, _value_type>, id_hook_tag<id_type> >::type hook_type;
+                typedef typename viennagrid::storage::hook::hook_type<hidden_key_map<_key_type, _value_type>, id_hook_tag>::type hook_type;
                 
                 template<typename iterator>
                 static hook_type convert( iterator it ) { return it->second.id(); }

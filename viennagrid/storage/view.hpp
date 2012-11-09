@@ -175,21 +175,24 @@ namespace viennagrid
         
         
         
-        template<typename base_container_type__, typename id_type, typename container_tag>
-        class view_t< base_container_type__, id_hook_tag<id_type>, container_tag >
+        template<typename base_container_type__, typename container_tag>
+        class view_t< base_container_type__, id_hook_tag, container_tag >
         {
             
         public:
             
             typedef base_container_type__ base_container_type;
             
-            typedef id_hook_tag<id_type> hook_tag;
+            //typedef typename viennagrid::storage::result_of::id< typename base_container_type::value_type, id_tag >::type id_type;
+            typedef id_hook_tag hook_tag;
             typedef typename hook::hook_type<base_container_type, hook_tag>::type hook_type;
             typedef typename hook::const_hook_type<base_container_type, hook_tag>::type const_hook_type;
             
         private:
             //typedef typename viennagrid::storage::result_of::container_from_tag<hook_type, hook_container_tag>::type hook_container_type;
             typedef typename viennagrid::storage::result_of::container<hook_type, container_tag>::type hook_container_type;
+            
+            typedef typename base_container_type::value_type::id_type id_type;
             
             
         public:
