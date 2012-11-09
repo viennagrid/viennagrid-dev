@@ -39,12 +39,18 @@ namespace viennagrid
   
   /** @brief A key type that uniquely identifies an element by its vertices */
   //template <typename ConfigType, typename ElementType>
-  template <typename element_type, typename id_type>
+  template <typename element_type>
   class element_key
   {
       typedef typename element_type::tag            ElementTag;
+      typedef typename viennagrid::result_of::ncell< element_type, 0 >::type vertex_type;
+      typedef typename vertex_type::id_type id_type;
+      //typedef typename viennagrid::storage::result_of::id<vertex_type, id_tag>::type id_type;
+      
+      
       //typedef typename ElementKeyStorageType<ConfigType, ElementType>::result_type  StorageType;
     public:
+        
       element_key( const element_type & el2) : vertex_ids(topology::bndcells<ElementTag, 0>::num)
       {
             //typedef typename element_type::vertex_container_type vertex_container_type;
@@ -106,15 +112,14 @@ namespace viennagrid
 {
     namespace storage
     {       
-        template<typename id_type>
         struct element_key_tag {};
         
         namespace result_of
         {            
-            template<typename element_type, typename id_type>
-            struct hidden_key_map_key_type_from_tag<element_type, element_key_tag<id_type> >
+            template<typename element_type>
+            struct hidden_key_map_key_type_from_tag<element_type, element_key_tag>
             {
-                typedef element_key<element_type, id_type> type;
+                typedef element_key<element_type> type;
             };
 
         }
