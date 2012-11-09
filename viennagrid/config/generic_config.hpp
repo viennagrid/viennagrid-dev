@@ -69,7 +69,7 @@ namespace viennagrid
         template<typename element_tag, typename boundary_cell_tag>
         struct default_container_tag
         {
-            typedef viennagrid::storage::hidden_key_map_tag< viennagrid::storage::element_key_tag< viennagrid::storage::smart_id_tag<int> > > type;
+            typedef viennagrid::storage::hidden_key_map_tag< viennagrid::storage::element_key_tag > type;
         };
         
         template<typename element_tag>
