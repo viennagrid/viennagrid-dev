@@ -63,7 +63,7 @@ namespace viennagrid
         //typedef typename result_of::const_ncell_range<element_type, 0>::type       VertexConstRange;
         //typedef typename result_of::iterator<VertexConstRange>::type          VertexConstIterator;
         long i = 0;
-        vertex_range & vertices_el2 = ncells<0>(el2);
+        vertex_range vertices_el2 = ncells<0>(el2);
         for (const_iterator vit = vertices_el2.begin();
              vit != vertices_el2.end();
              ++vit, ++i)

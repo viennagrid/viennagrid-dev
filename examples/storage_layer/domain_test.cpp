@@ -15,6 +15,7 @@ using std::endl;
 #include "viennagrid/storage/inserter.hpp"
 #include "viennagrid/storage/id_generator.hpp"
 #include "viennagrid/storage/hidden_key_map.hpp"
+#include "viennagrid/storage/range.hpp"
 
 
 #include "viennagrid/topology/point.hpp"
@@ -137,36 +138,42 @@ namespace viennagrid
         template<typename domain_config, long dim>
         struct ncell_range< topological_domain_t<domain_config>, dim >
         {
-            typedef typename viennagrid::storage::result_of::container_of<
-                typename topological_domain_t<domain_config>::domain_container_collection_type,
-                typename ncell<topological_domain_t<domain_config>, dim>::type
-            >::type type;
+            typedef viennagrid::storage::container_range_wrapper<
+                typename viennagrid::storage::result_of::container_of<
+                    typename topological_domain_t<domain_config>::domain_container_collection_type,
+                    typename ncell<topological_domain_t<domain_config>, dim>::type
+                >::type
+            > type;
         };
         
         template<typename domain_config, long dim>
         struct const_ncell_range< topological_domain_t<domain_config>, dim >
         {
-            typedef const typename viennagrid::storage::result_of::container_of<
-                typename topological_domain_t<domain_config>::domain_container_collection_type,
-                typename ncell<topological_domain_t<domain_config>, dim>::type
-            >::type type;
+            typedef viennagrid::storage::container_range_wrapper<
+                const typename viennagrid::storage::result_of::container_of<
+                    typename topological_domain_t<domain_config>::domain_container_collection_type,
+                    typename ncell<topological_domain_t<domain_config>, dim>::type
+                >::type
+            > type;
         };
 
         
     }
     
     template<long dim, typename domain_config>
-    typename result_of::ncell_range<topological_domain_t<domain_config>, dim>::type & ncells(topological_domain_t<domain_config> & domain)
+    typename result_of::ncell_range<topological_domain_t<domain_config>, dim>::type ncells(topological_domain_t<domain_config> & domain)
     {
         typedef typename result_of::ncell<topological_domain_t<domain_config>, dim>::type element_type;
-        return viennagrid::storage::container_collection::get<element_type>(domain.get_container_collection());
+        return typename result_of::ncell_range<topological_domain_t<domain_config>, dim>::type(
+            viennagrid::storage::container_collection::get<element_type>(domain.get_container_collection()) );
     }
     
     template<long dim, typename domain_config>
-    typename result_of::const_ncell_range<topological_domain_t<domain_config>, dim>::type & ncells(const topological_domain_t<domain_config> & domain)
+    typename result_of::const_ncell_range<topological_domain_t<domain_config>, dim>::type ncells(const topological_domain_t<domain_config> & domain)
     {
-        typedef typename result_of::ncell<topological_domain_t<domain_config>, dim>::type element_type;
-        return viennagrid::storage::container_collection::get<element_type>(domain.get_container_collection());
+        typedef const typename result_of::ncell<topological_domain_t<domain_config>, dim>::type element_type;
+        return typename result_of::const_ncell_range<topological_domain_t<domain_config>, dim>::type(
+            viennagrid::storage::container_collection::get<element_type>(domain.get_container_collection()) );
     }
     
     
@@ -336,9 +343,9 @@ int main()
     // First define the type of hook to use:
     //
     
-    //typedef viennagrid::storage::pointer_hook_tag hook_tag;
+    typedef viennagrid::storage::pointer_hook_tag hook_tag;
     //typedef viennagrid::storage::iterator_hook_tag hook_tag;
-    typedef viennagrid::storage::id_hook_tag hook_tag;
+    //typedef viennagrid::storage::id_hook_tag hook_tag;
     
     
     
@@ -442,7 +449,7 @@ int main()
     typedef viennagrid::result_of::const_iterator<tetrahedron_triangle_range>::type tetrahedron_triangle_iterator;
     
     cout << "All triangles of the first tetdrahedron in the domain" << endl;
-    tetrahedron_triangle_range & tri_range = viennagrid::ncells<2>(test_tet);
+    tetrahedron_triangle_range tri_range = viennagrid::ncells<2>(test_tet);
     for (tetrahedron_triangle_iterator it = tri_range.begin(); it != tri_range.end(); ++it)
         cout << *it << endl;
     cout << endl;
@@ -458,7 +465,7 @@ int main()
     typedef viennagrid::result_of::const_iterator<triangle_line_range>::type triangle_line_iterator;
 
     cout << "All lines of the first triangle in the domain" << endl;
-    triangle_line_range & lin_range = viennagrid::ncells<1>(test_tri);
+    triangle_line_range lin_range = viennagrid::ncells<1>(test_tri);
     for (triangle_line_iterator it = lin_range.begin(); it != lin_range.end(); ++it)
         cout << *it << endl;
     cout << endl;
@@ -478,7 +485,7 @@ int main()
     typedef viennagrid::result_of::const_iterator<tetrahedron_vertex_range>::type tetrahedron_vertex_iterator;
     
     cout << "All vertices of the first tetdrahedron in the domain" << endl;
-    tetrahedron_vertex_range & vtx_range = viennagrid::ncells<0>(test_tet);
+    tetrahedron_vertex_range vtx_range = viennagrid::ncells<0>(test_tet);
     for (tetrahedron_vertex_iterator it = vtx_range.begin(); it != vtx_range.end(); ++it)
         cout << *it << " geometric information: " << viennagrid::look_up(vector_container, *it) << endl;
     

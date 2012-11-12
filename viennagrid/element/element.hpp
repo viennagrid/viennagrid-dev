@@ -22,6 +22,7 @@
 #include "viennagrid/forwards.hpp"
 #include "viennagrid/meta/typelist.hpp"
 
+#include "viennagrid/storage/range.hpp"
 #include "viennagrid/element/element_orientation.hpp"
 
 /** @file element.hpp
@@ -367,28 +368,30 @@ namespace viennagrid
         template<typename element_tag, typename boundary_cell_container_typelist, typename id_type, long dim>
         struct ncell_range< element_t<element_tag, boundary_cell_container_typelist, id_type>, dim >
         {
-            typedef typename container_of_dimension<boundary_cell_container_typelist, dim>::type type;
+            //typedef typename container_of_dimension<boundary_cell_container_typelist, dim>::type type;
+            typedef viennagrid::storage::container_range_wrapper< typename container_of_dimension<boundary_cell_container_typelist, dim>::type > type;
         };
         
         template<typename element_tag, typename boundary_cell_container_typelist, typename id_type, long dim>
         struct const_ncell_range< element_t<element_tag, boundary_cell_container_typelist, id_type>, dim >
         {
-            typedef const typename container_of_dimension<boundary_cell_container_typelist, dim>::type type;
+            //typedef const typename container_of_dimension<boundary_cell_container_typelist, dim>::type type;
+            typedef const viennagrid::storage::container_range_wrapper< const typename container_of_dimension<boundary_cell_container_typelist, dim>::type > type;
         };
         
     }
     
     
     template<long dim, typename element_type>
-    typename result_of::ncell_range<element_type, dim>::type & ncells(element_type & element)
+    typename result_of::ncell_range<element_type, dim>::type ncells(element_type & element)
     {
-        return element.container( dimension_tag<dim>() );
+        return typename result_of::ncell_range<element_type, dim>::type( element.container( dimension_tag<dim>() ) );
     }
     
     template<long dim, typename element_type>
-    typename result_of::const_ncell_range<element_type, dim>::type & ncells(const element_type & element)
+    typename result_of::const_ncell_range<element_type, dim>::type ncells(const element_type & element)
     {
-        return element.container( dimension_tag<dim>() );
+        return typename result_of::const_ncell_range<element_type, dim>::type( element.container( dimension_tag<dim>() ) );
     }
     
     
