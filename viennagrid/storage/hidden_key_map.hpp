@@ -54,6 +54,35 @@ namespace viennagrid
                 const reference operator* () const { return base::operator*().second; }
             };
             
+            class reverse_iterator : public container_type::reverse_iterator
+            {
+                typedef typename container_type::reverse_iterator base;
+            public:
+                reverse_iterator() {}
+                reverse_iterator(const base & foo) : base(foo) {}
+                
+                typedef hidden_key_map::value_type value_type;
+                typedef hidden_key_map::reference reference;
+                typedef hidden_key_map::pointer pointer;
+                
+                reference operator* () { return base::operator*().second; }
+                const reference operator* () const { return base::operator*().second; }
+            };
+            
+            class const_reverse_iterator : public container_type::const_reverse_iterator
+            {
+                typedef typename container_type::const_reverse_iterator base;
+            public:
+                const_reverse_iterator() {}
+                const_reverse_iterator(const base & foo) : base(foo) {}
+                
+                typedef hidden_key_map::value_type value_type;
+                typedef hidden_key_map::const_reference reference;
+                typedef hidden_key_map::const_pointer pointer;
+                
+                const reference operator* () const { return base::operator*().second; }
+            };
+            
             
             iterator begin() { return iterator(container.begin()); }
             iterator end() { return iterator(container.end()); }

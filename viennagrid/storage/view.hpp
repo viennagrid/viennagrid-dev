@@ -83,6 +83,46 @@ namespace viennagrid
                 pointer operator->() const { return &(operator* ()); }
             };
             
+            class reverse_iterator : public hook_container_type::reverse_iterator
+            {
+                typedef typename hook_container_type::reverse_iterator base;
+            public:
+                reverse_iterator(const base & foo) : base(foo) {}
+                reverse_iterator(const reverse_iterator & it) : base(it) {}
+                
+                typedef typename std::iterator_traits<base>::difference_type difference_type;
+                typedef view_t::value_type value_type;
+                typedef view_t::reference reference;
+                typedef view_t::pointer pointer;
+                typedef typename std::iterator_traits<base>::iterator_category iterator_category;
+                
+                reference operator* () { return *(base::operator*()); }
+                const reference operator* () const { return *(base::operator*()); }
+                
+                pointer operator->() const { return &(operator* ()); }
+            };
+            
+            
+            class const_reverse_iterator : public hook_container_type::const_reverse_iterator
+            {
+                typedef typename hook_container_type::const_reverse_iterator base;
+            public:
+                const_reverse_iterator(const base & foo) : base(foo) {}
+                const_reverse_iterator(const const_reverse_iterator & it) : base(it) {}
+                const_reverse_iterator(const reverse_iterator & it) : base(it) {}
+                
+                typedef typename std::iterator_traits<base>::difference_type difference_type;
+                typedef view_t::value_type value_type;
+                typedef view_t::const_reference reference;
+                typedef view_t::const_pointer pointer;
+                typedef typename std::iterator_traits<base>::iterator_category iterator_category;
+                
+                reference operator* () { return *(base::operator*()); }
+                const reference operator* () const { return *(base::operator*()); }
+                
+                pointer operator->() const { return &(operator* ()); }
+            };
+            
             
             
             typedef typename hook_container_type::iterator hook_iterator;
@@ -237,6 +277,53 @@ namespace viennagrid
                 const_iterator(const view_t & view__, const base & foo) : base(foo), view(view__) {}
                 const_iterator(const const_iterator & it) : base(it), view(it.view) {}
                 const_iterator(const iterator & it) : base(it), view(it.view) {}
+                
+                typedef typename std::iterator_traits<base>::difference_type difference_type;
+                typedef view_t::value_type value_type;
+                typedef view_t::const_reference reference;
+                typedef view_t::const_pointer pointer;
+                typedef typename std::iterator_traits<base>::iterator_category iterator_category;
+                
+                reference operator* () { return view.dereference_hook( base::operator*() ); }
+                const reference operator* () const { return view.dereference_hook( base::operator*() ); }
+                
+                pointer operator->() const { return &view.dereference_hook( base::operator*() ); }
+                
+            private:
+                const view_t & view;
+            };
+            
+            class reverse_iterator : public hook_container_type::reverse_iterator
+            {
+                typedef typename hook_container_type::reverse_iterator base;
+                friend class const_iterator;
+            public:
+                reverse_iterator(view_t & view__, const base & foo) : base(foo), view(view__) {}
+                reverse_iterator(const reverse_iterator & it) : base(it), view(it.view) {}
+                
+                typedef typename std::iterator_traits<base>::difference_type difference_type;
+                typedef view_t::value_type value_type;
+                typedef view_t::reference reference;
+                typedef view_t::pointer pointer;
+                typedef typename std::iterator_traits<base>::iterator_category iterator_category;
+                
+                reference operator* () { return view.dereference_hook( base::operator*() ); }
+                const reference operator* () const { return view.dereference_hook( base::operator*() ); }
+                
+                pointer operator->() const { return &view.dereference_hook( base::operator*() ); }
+                
+            private:
+                view_t & view;
+            };
+            
+            
+            class const_reverse_iterator : public hook_container_type::const_reverse_iterator
+            {
+                typedef typename hook_container_type::const_reverse_iterator base;
+            public:
+                const_reverse_iterator(const view_t & view__, const base & foo) : base(foo), view(view__) {}
+                const_reverse_iterator(const const_reverse_iterator & it) : base(it), view(it.view) {}
+                const_reverse_iterator(const iterator & it) : base(it), view(it.view) {}
                 
                 typedef typename std::iterator_traits<base>::difference_type difference_type;
                 typedef view_t::value_type value_type;
