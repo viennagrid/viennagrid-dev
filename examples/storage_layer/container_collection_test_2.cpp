@@ -158,9 +158,10 @@ int main()
     
     
     
-    typedef viennagrid::storage::container_collection::result_of::container_typelist<collection_type>::type collection_containers;
+    //typedef viennagrid::storage::container_collection::result_of::container_typelist<collection_type>::type collection_containers;
     typedef viennagrid::storage::result_of::view_collection<
-            viennameta::typelist::result_of::erase_at<collection_containers, 1>::type,
+            //viennameta::typelist::result_of::erase_at<collection_type::typemap, 1>::type,
+            viennameta::typemap::result_of::erase<collection_type::typemap, line_type>::type,
             viennagrid::storage::container_collection::default_container_config
     >::type view_collection_type;
     

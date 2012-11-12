@@ -87,6 +87,12 @@ int main()
     inserter_type inserter(collection, id_generator);
     
     
+    
+    
+    cout << typeid(collection_type).name() << endl;
+    cout << typeid( viennagrid::storage::result_of::container_of<collection_type, char>::type ).name() << endl;
+    
+    
     inserter( 'c' );
     inserter( 10 );
     inserter( 35 );

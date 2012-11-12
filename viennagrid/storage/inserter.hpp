@@ -45,12 +45,12 @@ namespace viennagrid
                 typedef typename viennagrid::storage::result_of::container_of<container_collection_type, value_type>::type::hook_type hook_type;
                 
                 
-                container_type & container = viennagrid::storage::container_collection::get< value_type >( collection );
+                container_type & container = viennagrid::storage::collection::get< value_type >( collection );
                 
                 if ( !container.is_present( element ) )
                     viennagrid::storage::id::set_id(element, id_generator( viennameta::tag<value_type>() ) );
                 
-                std::pair<hook_type, bool> ret = viennagrid::storage::container_collection::get< value_type >( collection ).insert( element );
+                std::pair<hook_type, bool> ret = container.insert( element );
                 
                 //container.dereference_hook(ret.first).set_container(collection);
 

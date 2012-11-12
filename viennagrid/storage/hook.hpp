@@ -126,21 +126,30 @@ namespace viennagrid
             
             
           
-//             template<typename reference_type>
-//             struct value_type_from_reference_type;
-//             
-//             template<typename value_type>
-//             struct value_type_from_reference_type< value_type * >
-//             {
-//                 typedef value_type type;
-//             };
-//             
+            template<typename hook_type>
+            struct value_type
+            {
+                typedef typename hook_type::value_type type;
+            };
+            
+            template<typename value_type_>
+            struct value_type< value_type_ * >
+            {
+                typedef value_type_ type;
+            };
+            
+            template<typename value_type_>
+            struct value_type< const value_type_ * >
+            {
+                typedef const value_type_ type;
+            };
+            
 //             template<typename category, typename value_type, typename distance, typename pointer, typename reference>
 //             struct value_type_from_reference_type< std::iterator<category, value_type, distance, pointer, reference> >
 //             {
 //                 typedef value_type type;
 //             };
-            
+//             
                 
 //             template<typename value_type, typename reference_tag_config>
 //             struct reference_tag_from_config

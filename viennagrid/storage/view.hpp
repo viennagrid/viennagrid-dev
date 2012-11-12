@@ -529,25 +529,27 @@ namespace viennagrid
 
             
             
-            template<typename container_typelist, typename view_container_config>
-            struct view_container_typelist {};
+            template<typename container_typemap, typename view_container_config>
+            struct view_container_typemap;
             
             template<typename view_container_config>
-            struct view_container_typelist<viennameta::null_type, view_container_config>
+            struct view_container_typemap<viennameta::null_type, view_container_config>
             {
                 typedef viennameta::null_type type;
             };
             
-            template<typename head, typename tail, typename view_container_config>
-            struct view_container_typelist<viennameta::typelist_t<head, tail>, view_container_config>
+            template<typename value_type, typename container_type, typename tail, typename view_container_config>
+            struct view_container_typemap<viennameta::typelist_t< viennameta::static_pair<value_type, container_type>, tail>, view_container_config>
             {
                 typedef viennameta::typelist_t<
-                    typename viennagrid::storage::result_of::view<
-                        head,
-                        typename view_container_tag<head, view_container_config>::type
-                        >::type,
-                    
-                    typename view_container_typelist<tail, view_container_config>::type
+                    viennameta::static_pair<
+                        value_type,
+                        typename viennagrid::storage::result_of::view<
+                            container_type,
+                            typename view_container_tag<container_type, view_container_config>::type
+                        >::type
+                    >,
+                    typename view_container_typemap<tail, view_container_config>::type
                 > type;
             };
         }
@@ -556,12 +558,12 @@ namespace viennagrid
         namespace result_of
         {
             
-            template<typename container_typelist, typename view_container_config>
+            template<typename container_typemap, typename view_container_config>
             struct view_collection
             {
                 typedef typename viennagrid::storage::result_of::collection<
-                    typename viennagrid::storage::view::view_container_typelist<
-                        container_typelist,
+                    typename viennagrid::storage::view::view_container_typemap<
+                        container_typemap,
                         view_container_config
                     >::type
                 >::type type;
@@ -573,7 +575,7 @@ namespace viennagrid
                 typedef viennagrid::storage::collection_t<container_typelist> container_collection_type;
                 
                 typedef typename viennagrid::storage::result_of::collection<
-                    typename viennagrid::storage::view::view_container_typelist<
+                    typename viennagrid::storage::view::view_container_typemap<
                         //typename viennagrid::storage::container_collection::result_of::container_typelist<container_collection_type>::type,
                         container_typelist,
                         view_container_config

@@ -331,19 +331,22 @@ namespace viennagrid
         // generates the container typelist for the domain container collection
         //
         template<typename config, typename cur_config = config>
-        struct element_container_typelist;
+        struct element_container_typemap;
         
-        template<typename config, typename key, typename value, typename tail>
-        struct element_container_typelist< config, viennameta::typelist_t< viennameta::static_pair<key, value>, tail > >
+        template<typename config, typename value_tag, typename value_config, typename tail>
+        struct element_container_typemap< config, viennameta::typelist_t< viennameta::static_pair<value_tag, value_config>, tail > >
         {
             typedef viennameta::typelist_t<
-                typename element_container<config, key>::type,
-                typename element_container_typelist<config, tail>::type
+                viennameta::static_pair<
+                    typename element<config, value_tag>::type,
+                    typename element_container<config, value_tag>::type
+                >,
+                typename element_container_typemap<config, tail>::type
             > type;
         };
         
         template<typename config>
-        struct element_container_typelist<config, viennameta::null_type>
+        struct element_container_typemap<config, viennameta::null_type>
         {
             typedef viennameta::null_type type;
         };

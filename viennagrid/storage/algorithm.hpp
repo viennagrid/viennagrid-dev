@@ -20,19 +20,19 @@ namespace viennagrid
             {
                 for_each_functor(collection_type & _collection, functor _f) : collection(_collection), f(_f) {}
                 
-                template<typename type>
-                void operator()( viennameta::tag<type> )
-                { f( viennagrid::storage::collection::get<type>(collection) ); }
+                template<typename key_type, typename value_type>
+                void operator()( viennameta::tag< viennameta::static_pair<key_type, value_type> > )
+                { f( viennagrid::storage::collection::get<key_type>(collection) ); }
                 
                 collection_type & collection;
                 functor f;
             };
                         
             template<typename collection_type, typename functor>
-            void for_each(collection_type & collection, functor f)
+            void for_each( collection_type & collection, functor f)
             {
                 for_each_functor<collection_type, functor> ff(collection, f);
-                viennameta::typelist::for_each< typename viennagrid::storage::container_collection::result_of::container_typelist<collection_type>::type >(ff);
+                viennameta::typelist::for_each< typename collection_type::typemap >(ff);
             }
             
             template<typename typelist, typename collection_type, typename functor>
@@ -41,35 +41,35 @@ namespace viennagrid
                 for_each_functor<collection_type, functor> ff(collection, f);
                 viennameta::typelist::for_each<typelist>(ff);
             }
-        }
-        
-        
-        
-        namespace container_collection
-        {
-            template<typename collection_type, typename functor>
-            class for_each_functor
-            {
-            public:
-                for_each_functor(collection_type & _collection, functor _f) : collection(_collection), f(_f) {}
-                
-                template<typename type>
-                void operator()( viennameta::tag<type> )
-                { f( viennagrid::storage::container_collection::get<type>(collection) ); }
-                
-            private:
-                collection_type & collection;
-                functor f;
-            };
+//         }
+//         
+//         
+//         
+//         namespace container_collection
+//         {
+//             template<typename collection_type, typename functor>
+//             class for_each_functor
+//             {
+//             public:
+//                 for_each_functor(collection_type & _collection, functor _f) : collection(_collection), f(_f) {}
+//                 
+//                 template<typename value_type, typename container_type>
+//                 void operator()( viennameta::tag< viennameta::static_pair<value_type, container_type> > )
+//                 { f( viennagrid::storage::collection::get<value_type>(collection) ); }
+//                 
+//             private:
+//                 collection_type & collection;
+//                 functor f;
+//             };
             
 
             
-            template<typename typelist, typename collection_type, typename functor>
-            void for_each_typelist(collection_type & collection, functor f)
-            {
-                for_each_functor<collection_type, functor> ff(collection, f);
-                viennameta::typelist::for_each<typelist>(ff);
-            }
+//             template<typename typelist, typename collection_type, typename functor>
+//             void for_each_typelist(collection_type & collection, functor f)
+//             {
+//                 for_each_functor<collection_type, functor> ff(collection, f);
+//                 viennameta::typelist::for_each<typelist>(ff);
+//             }
             
             
             
@@ -92,8 +92,8 @@ namespace viennagrid
                 void operator() ( viennameta::tag<type> )
                 {
                     f(
-                        viennagrid::storage::container_collection::get<type>(container_collection_1),
-                        viennagrid::storage::container_collection::get<type>(container_collection_2)
+                        viennagrid::storage::collection::get<type>(container_collection_1),
+                        viennagrid::storage::collection::get<type>(container_collection_2)
                     );                    
                 }
                 
@@ -104,7 +104,11 @@ namespace viennagrid
             };
             
             
-            
+        }
+        
+        
+        namespace container_collection
+        {   
             template<typename predicate>
             class copy_functor
             {
@@ -131,7 +135,7 @@ namespace viennagrid
             template<typename src_container_typelist, typename dst_container_typelist>
             void copy(const collection_t<src_container_typelist> & src, collection_t<dst_container_typelist> & dst)
             {
-                dual_for_each_functor<
+                collection::dual_for_each_functor<
                     const collection_t<src_container_typelist>,
                     collection_t<dst_container_typelist>,
                     copy_functor<viennameta::true_predicate>
@@ -148,7 +152,7 @@ namespace viennagrid
             template<typename src_container_typelist, typename dst_container_typelist, typename predicate>
             void copy_if(const collection_t<src_container_typelist> & src, collection_t<dst_container_typelist> & dst, predicate pred)
             {
-                dual_for_each_functor<
+                collection::dual_for_each_functor<
                     const collection_t<src_container_typelist>,
                     collection_t<dst_container_typelist>,
                     copy_functor<predicate>
@@ -189,7 +193,7 @@ namespace viennagrid
             template<typename src_container_typelist, typename dst_container_typelist>
             void hook(collection_t<src_container_typelist> & src, collection_t<dst_container_typelist> & dst)
             {
-                dual_for_each_functor<
+                collection::dual_for_each_functor<
                     collection_t<src_container_typelist>,
                     collection_t<dst_container_typelist>,
                     hook_functor<viennameta::true_predicate>
@@ -206,7 +210,7 @@ namespace viennagrid
             template<typename src_container_typelist, typename dst_container_typelist, typename predicate>
             void hook_if(collection_t<src_container_typelist> & src, collection_t<dst_container_typelist> & dst, predicate pred)
             {
-                dual_for_each_functor<
+                collection::dual_for_each_functor<
                     collection_t<src_container_typelist>,
                     collection_t<dst_container_typelist>,
                     hook_functor<predicate>

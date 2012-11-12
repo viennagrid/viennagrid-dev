@@ -1,5 +1,6 @@
 #ifndef VIENNAMETA_UTILS_HPP
 #define VIENNAMETA_UTILS_HPP
+#include <boost/concept_check.hpp>
 
 
 namespace viennameta
@@ -69,6 +70,33 @@ namespace viennameta
         typedef first_ first;
         typedef second_ second;
     };
+    
+    namespace result_of
+    {
+        template<typename pair>
+        struct first
+        {
+            typedef not_found type;
+        };
+        
+        template<typename first_, typename second_>
+        struct first< static_pair<first_, second_> >
+        {
+            typedef first_ type;
+        };
+        
+        template<typename pair>
+        struct second
+        {
+            typedef not_found type;
+        };
+        
+        template<typename first_, typename second_>
+        struct second< static_pair<first_, second_> >
+        {
+            typedef second_ type;
+        };
+    }
     
     
     // a tag wrapper

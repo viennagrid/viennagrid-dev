@@ -88,7 +88,7 @@ namespace viennagrid
     {
     public:
         typedef domain_config_ domain_config;
-        typedef typename viennagrid::result_of::element_container_typelist<domain_config>::type element_container_typelist;
+        typedef typename viennagrid::result_of::element_container_typemap<domain_config>::type element_container_typelist;
         typedef typename viennagrid::storage::result_of::collection< element_container_typelist >::type domain_container_collection_type;
         
         typedef typename viennagrid::result_of::continuous_id_generator_config_from_domain_config<domain_config>::type id_generator_config;
@@ -165,7 +165,7 @@ namespace viennagrid
     {
         typedef typename result_of::ncell<topological_domain_t<domain_config>, dim>::type element_type;
         return typename result_of::ncell_range<topological_domain_t<domain_config>, dim>::type(
-            viennagrid::storage::container_collection::get<element_type>(domain.get_container_collection()) );
+            viennagrid::storage::collection::get<element_type>(domain.get_container_collection()) );
     }
     
     template<long dim, typename domain_config>
@@ -173,7 +173,7 @@ namespace viennagrid
     {
         typedef const typename result_of::ncell<topological_domain_t<domain_config>, dim>::type element_type;
         return typename result_of::const_ncell_range<topological_domain_t<domain_config>, dim>::type(
-            viennagrid::storage::container_collection::get<element_type>(domain.get_container_collection()) );
+            viennagrid::storage::collection::get<element_type>(domain.get_container_collection()) );
     }
     
     
@@ -194,15 +194,6 @@ namespace viennagrid
             >
         push_element( topological_domain_t<domain_config> & domain, const viennagrid::element_t<element_tag, boundary_cell_container_typelist, id_type> & element)
     {
-//         typedef std::pair<
-//                 typename viennagrid::storage::result_of::container_of<
-//                     typename topological_domain_t<domain_config>::domain_container_collection_type,
-//                     viennagrid::element_t<element_tag, boundary_cell_container_typelist, id_type>
-//                 >::type::hook_type,
-//                 bool
-//             > return_type;
-        
-        
         return domain.get_inserter()(element);
     }
         
@@ -221,7 +212,7 @@ namespace viennagrid
     typename result_of::element_hook<domain_config, viennagrid::vertex_tag>::type get_vertex_hook( topological_domain_t<domain_config> & domain, unsigned int pos )
     {
         typedef typename result_of::element<domain_config, viennagrid::vertex_tag>::type vertex_type;
-        return viennagrid::storage::container_collection::get<vertex_type>( domain.get_container_collection() ).hook_at(pos);
+        return viennagrid::storage::collection::get<vertex_type>( domain.get_container_collection() ).hook_at(pos);
     }
 }
 
@@ -329,6 +320,35 @@ namespace viennagrid
 
 
 
+namespace viennagrid
+{
+    
+    namespace result_of
+    {
+        
+        template<typename container_collection_type, typename element_type, typename metainfo_type>
+        struct info_container
+        {
+            typedef typename viennagrid::storage::result_of::container_of< container_collection_type, element_type >::type element_container_collection_type;
+            typedef typename viennagrid::storage::result_of::container_of< element_container_collection_type, metainfo_type >::type type;
+        };
+    }
+    
+    
+    template< typename element_type, typename metainfo_type, typename container_collection_type >
+    typename result_of::info_container<container_collection_type, element_type, metainfo_type>::type & get_info( container_collection_type & container_collection )
+    {
+        return viennagrid::storage::collection::get<metainfo_type>( viennagrid::storage::collection::get<element_type>(container_collection) );
+    }
+    
+    template< typename element_type, typename metainfo_type, typename container_collection_type >
+    const typename result_of::info_container<container_collection_type, element_type, metainfo_type>::type & get_info( const container_collection_type & container_collection )
+    {
+        return viennagrid::storage::collection::get<metainfo_type>( viennagrid::storage::collection::get<element_type>(container_collection) );
+    }
+}
+
+
 
 
 
@@ -370,6 +390,17 @@ int main()
     typedef viennagrid::result_of::ncell<domain_type, 1>::type line_type;
     typedef viennagrid::result_of::ncell<domain_type, 2>::type triangle_type;
     typedef viennagrid::result_of::ncell<domain_type, 3>::type tetrahedron_type;
+    
+    
+    
+    
+    
+    
+    typedef viennameta::make_typelist<
+    
+    >::type metainfo_config;
+    
+    
     
 
     //
