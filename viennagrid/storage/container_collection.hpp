@@ -65,26 +65,8 @@ namespace viennagrid
                 
                 
                 //
-                // Generates a typelist of the value types
-                //
-
-//                 template<typename container_typelist>
-//                 struct value_typelist_from_container_typelist {};
-//                 
-//                 template<>
-//                 struct value_typelist_from_container_typelist<viennameta::null_type>
-//                 {
-//                     typedef viennameta::null_type type;
-//                 };
-//                 
-//                 template<typename head, typename tail>
-//                 struct value_typelist_from_container_typelist< viennameta::typelist_t<head, tail> >
-//                 {
-//                     typedef viennameta::typelist_t< typename head::value_type, typename value_typelist_from_container_typelist<tail>::type > type;
-//                 };
-                
-                
-                
+                // Generates a typelist of the container types
+                //               
                 template<typename container_collection_type>
                 struct container_typelist {};
                 
@@ -101,7 +83,10 @@ namespace viennagrid
                 };
                 
                 
-                
+                //
+                // Generates a typelist of the value types
+                //               
+
                 template<typename container_collection_type>
                 struct value_typelist {};
                 
@@ -116,18 +101,6 @@ namespace viennagrid
                 {
                     typedef typename viennagrid::storage::result_of::key_typelist<typemap_>::type type;
                 };
-                
-                
-//                 template<typename container_collection_type>
-//                 struct value_typelist {};
-//                 
-//                 template<typename _container_typelist>
-//                 struct value_typelist< collection_t<_container_typelist> >
-//                 { typedef typename value_typelist_from_container_typelist<_container_typelist>::type type; };
-//                 
-//                 template<typename _container_typelist>
-//                 struct value_typelist< const collection_t<_container_typelist> >
-//                 { typedef typename value_typelist_from_container_typelist<_container_typelist>::type type; };
                                 
             } // namespace result_of
             
@@ -145,22 +118,6 @@ namespace viennagrid
                     typename viennameta::typemap::result_of::find< typemap_, element_type >::type
                 >::type type;
             };
-            
-//             template<typename element_type>
-//             struct container_of<viennameta::null_type, element_type>
-//             {
-//                 typedef viennameta::not_found type;
-//             };
-//             
-//             template<typename head, typename tail, typename element_type>
-//             struct container_of< viennameta::typelist_t<head, tail>, element_type >
-//             {
-//                 typedef typename viennameta::_if<
-//                     viennameta::_equal< typename head::value_type, element_type>::value,
-//                     head,
-//                     typename container_of<tail, element_type>::type
-//                 >::type type;
-//             };
             
             template<typename typemap_, typename element_type>
             struct container_of< collection_t< typemap_ >, element_type >
