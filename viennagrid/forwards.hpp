@@ -142,8 +142,8 @@ namespace viennagrid
   template <typename ConfigType>
   class segment_t;
 
-  template <typename ConfigType>
-  class domain_t;
+  //template <typename ConfigType>
+  //class domain_t;
   
   /********* Other *******************/
 
@@ -408,6 +408,8 @@ namespace viennagrid
     template<typename element_domain_segment_config_or_something_like_that, long dim>
     struct ncell_hook;
     
+    
+    
 //     template <typename Config,
 //               long dim,
 //               long cell_level = Config::cell_tag::dim>
@@ -428,19 +430,19 @@ namespace viennagrid
 //                         typename Config::cell_tag>       type;
 //     };
     
-    /** @brief Metafunction returning the type of a geometric point as used by vertices of the domain */
-    template <typename Config>
-    struct point
-    {
-      typedef viennagrid::point_t<typename Config::numeric_type, typename Config::coordinate_system_tag>   type;
-    };
-    
-    /** @brief (Trivial) Convenience overload for retrieving the point type from a point */
-    template <typename CoordType, typename CoordinateSystem>
-    struct point< point_t<CoordType, CoordinateSystem> >
-    {
-      typedef viennagrid::point_t<CoordType, CoordinateSystem>   type;
-    };
+//     /** @brief Metafunction returning the type of a geometric point as used by vertices of the domain */
+//     template <typename Config>
+//     struct point
+//     {
+//       typedef viennagrid::point_t<typename Config::numeric_type, typename Config::coordinate_system_tag>   type;
+//     };
+//     
+//     /** @brief (Trivial) Convenience overload for retrieving the point type from a point */
+//     template <typename CoordType, typename CoordinateSystem>
+//     struct point< point_t<CoordType, CoordinateSystem> >
+//     {
+//       typedef viennagrid::point_t<CoordType, CoordinateSystem>   type;
+//     };
     
 //     /** @brief Convenience overload for retrieving the point type from an element */
 //     template <typename Config, typename ElementTag>
@@ -449,35 +451,35 @@ namespace viennagrid
 //       typedef viennagrid::point_t<typename Config::numeric_type, typename Config::coordinate_system_tag>   type;
 //     };
     
-    /** @brief Convenience overload for retrieving the point type from a segment */
-    template <typename Config>
-    struct point< segment_t<Config> >
-    {
-      typedef viennagrid::point_t<typename Config::numeric_type, typename Config::coordinate_system_tag>   type;
-    };
+//     /** @brief Convenience overload for retrieving the point type from a segment */
+//     template <typename Config>
+//     struct point< segment_t<Config> >
+//     {
+//       typedef viennagrid::point_t<typename Config::numeric_type, typename Config::coordinate_system_tag>   type;
+//     };
+//     
+//     /** @brief Convenience overload for retrieving the point type from a domain */
+//     template <typename Config>
+//     struct point< domain_t<Config> >
+//     {
+//       typedef viennagrid::point_t<typename Config::numeric_type, typename Config::coordinate_system_tag>   type;
+//     };
     
-    /** @brief Convenience overload for retrieving the point type from a domain */
-    template <typename Config>
-    struct point< domain_t<Config> >
-    {
-      typedef viennagrid::point_t<typename Config::numeric_type, typename Config::coordinate_system_tag>   type;
-    };
     
     
-    
-    /** @brief Metafunction returning the numeric type from the domain config */
-    template <typename Config>
-    struct numeric
-    {
-      typedef typename Config::numeric_type   type;
-    };
-    
-    /** @brief Convenience overload for retrieving the numeric type (value_type) from a point */
-    template <typename CoordType, typename CoordinateSystem>
-    struct numeric< point_t<CoordType, CoordinateSystem> >
-    {
-      typedef CoordType   type;
-    };
+//     /** @brief Metafunction returning the numeric type from the domain config */
+//     template <typename Config>
+//     struct numeric
+//     {
+//       typedef typename Config::numeric_type   type;
+//     };
+//     
+//     /** @brief Convenience overload for retrieving the numeric type (value_type) from a point */
+//     template <typename CoordType, typename CoordinateSystem>
+//     struct numeric< point_t<CoordType, CoordinateSystem> >
+//     {
+//       typedef CoordType   type;
+//     };
     
 //     /** @brief Convenience overload for retrieving the numeric type (value_type) from an element */
 //     template <typename Config, typename ElementTag>
@@ -486,119 +488,126 @@ namespace viennagrid
 //       typedef typename Config::numeric_type   type;
 //     };
 
-    /** @brief Convenience overload for retrieving the numeric type (value_type) from a segment */
-    template <typename Config>
-    struct numeric< segment_t<Config> >
-    {
-      typedef typename Config::numeric_type   type;
-    };
-
-    /** @brief Convenience overload for retrieving the numeric type (value_type) from a domain */
-    template <typename Config>
-    struct numeric< domain_t<Config> >
-    {
-      typedef typename Config::numeric_type   type;
-    };
-
-    
-    /** @brief Metafunction for local-to-global-orienters: By default, orienters are stored on n-cells
-     * 
-     * @tparam ConfigType        Configuration class
-     * @tparam T                 Tag for the boundary k-cell
-     * @tparam dim               Topological dimension k of the boundary k-cell
-     */
-    template <typename ConfigType, typename T, long dim>
-    struct bndcell_orientation
-    {
-      typedef full_handling_tag    type;
-    };
-    
-    
-    /** @brief Metafunction for the storage of boundary k-cells of an n-cell. By default, pointers to boundary k-cells are stored on n-cells 
-     * 
-     * @tparam ConfigType        Configuration class
-     * @tparam T                 Tag for the boundary k-cell
-     * @tparam dim               Topological dimension k of the boundary k-cell
-     */
-    template <typename ConfigType, typename T, long dim>
-    struct bndcell_handling
-    {
-      typedef full_handling_tag    type;
-    };
+//     /** @brief Convenience overload for retrieving the numeric type (value_type) from a segment */
+//     template <typename Config>
+//     struct numeric< segment_t<Config> >
+//     {
+//       typedef typename Config::numeric_type   type;
+//     };
+// 
+//     /** @brief Convenience overload for retrieving the numeric type (value_type) from a domain */
+//     template <typename Config>
+//     struct numeric< domain_t<Config> >
+//     {
+//       typedef typename Config::numeric_type   type;
+//     };
 
     
-    /** @brief Specialization of the boundary k-cell handling for vertices. Vertex level always uses full handling (it is the defining entity of an element).
-     * 
-     * Even though the full_handling_tag is covered by the default overload, make this specialization explicit such that the user cannot accidentally modify it.
-     * 
-     */ 
-    template <typename ConfigType, typename T>
-    struct bndcell_handling<ConfigType, T, 0>
-    {
-      typedef full_handling_tag    type; 
-    };
+//     /** @brief Metafunction for local-to-global-orienters: By default, orienters are stored on n-cells
+//      * 
+//      * @tparam ConfigType        Configuration class
+//      * @tparam T                 Tag for the boundary k-cell
+//      * @tparam dim               Topological dimension k of the boundary k-cell
+//      */
+//     template <typename ConfigType, typename T, long dim>
+//     struct bndcell_orientation
+//     {
+//       typedef full_handling_tag    type;
+//     };
+//     
+//     
+//     /** @brief Metafunction for the storage of boundary k-cells of an n-cell. By default, pointers to boundary k-cells are stored on n-cells 
+//      * 
+//      * @tparam ConfigType        Configuration class
+//      * @tparam T                 Tag for the boundary k-cell
+//      * @tparam dim               Topological dimension k of the boundary k-cell
+//      */
+//     template <typename ConfigType, typename T, long dim>
+//     struct bndcell_handling
+//     {
+//       typedef full_handling_tag    type;
+//     };
+// 
+//     
+//     /** @brief Specialization of the boundary k-cell handling for vertices. Vertex level always uses full handling (it is the defining entity of an element).
+//      * 
+//      * Even though the full_handling_tag is covered by the default overload, make this specialization explicit such that the user cannot accidentally modify it.
+//      * 
+//      */ 
+//     template <typename ConfigType, typename T>
+//     struct bndcell_handling<ConfigType, T, 0>
+//     {
+//       typedef full_handling_tag    type; 
+//     };
     
     
 
-    //for domains
-    /** @brief Specialization of the k-cell handling for the domain
-     * 
-     */ 
-    template <typename ConfigType, long dim>
-    struct bndcell_handling<ConfigType, domain_t<ConfigType>, dim>
-    {
-      typedef full_handling_tag    type;
-    };
-    
-    /** @brief Specialization of the k-cell handling for the domain. Vertices always uses full handling (it is the defining entity of an element).
-     * 
-     * Even though the full_handling_tag is covered by the default overload, make this specialization explicit such that the user cannot accidentally modify it.
-     */ 
-    template <typename ConfigType>
-    struct bndcell_handling<ConfigType, domain_t<ConfigType>, 0>
-    {
-      typedef full_handling_tag    type; 
-    };
+//     //for domains
+//     /** @brief Specialization of the k-cell handling for the domain
+//      * 
+//      */ 
+//     template <typename ConfigType, long dim>
+//     struct bndcell_handling<ConfigType, domain_t<ConfigType>, dim>
+//     {
+//       typedef full_handling_tag    type;
+//     };
+//     
+//     /** @brief Specialization of the k-cell handling for the domain. Vertices always uses full handling (it is the defining entity of an element).
+//      * 
+//      * Even though the full_handling_tag is covered by the default overload, make this specialization explicit such that the user cannot accidentally modify it.
+//      */ 
+//     template <typename ConfigType>
+//     struct bndcell_handling<ConfigType, domain_t<ConfigType>, 0>
+//     {
+//       typedef full_handling_tag    type; 
+//     };
 
     
-    //for segments:
-    /** @brief Specialization of the k-cell handling for segments
-     * 
-     */ 
-    template <typename ConfigType, long dim>
-    struct bndcell_handling<ConfigType, segment_t<ConfigType>, dim>
-    {
-      typedef typename bndcell_handling<ConfigType, typename ConfigType::cell_tag, dim>::type    type;
-    };
-
-    /** @brief Specialization of the k-cell handling for segments. Vertices always uses full handling (it is the defining entity of an element).
-     * 
-     * Even though the full_handling_tag is covered by the default overload, make this specialization explicit such that the user cannot accidentally modify it.
-     */ 
-    template <typename ConfigType>
-    struct bndcell_handling<ConfigType, segment_t<ConfigType>, 0>  //avoid ambiguities
-    {
-      typedef typename bndcell_handling<ConfigType, typename ConfigType::cell_tag, 0>::type    type;
-    };
+//     //for segments:
+//     /** @brief Specialization of the k-cell handling for segments
+//      * 
+//      */ 
+//     template <typename ConfigType, long dim>
+//     struct bndcell_handling<ConfigType, segment_t<ConfigType>, dim>
+//     {
+//       typedef typename bndcell_handling<ConfigType, typename ConfigType::cell_tag, dim>::type    type;
+//     };
+// 
+//     /** @brief Specialization of the k-cell handling for segments. Vertices always uses full handling (it is the defining entity of an element).
+//      * 
+//      * Even though the full_handling_tag is covered by the default overload, make this specialization explicit such that the user cannot accidentally modify it.
+//      */ 
+//     template <typename ConfigType>
+//     struct bndcell_handling<ConfigType, segment_t<ConfigType>, 0>  //avoid ambiguities
+//     {
+//       typedef typename bndcell_handling<ConfigType, typename ConfigType::cell_tag, 0>::type    type;
+//     };
     
   }
   
-  // providing forwards for the ncells function
-  template <long dim, typename DomainConfig>
-  ncell_range<domain_t<DomainConfig>, dim>
-  ncells(domain_t<DomainConfig> & d);
-
-  template <typename DomainConfig>
-  ncell_proxy< domain_t<DomainConfig> >
-  ncells(domain_t<DomainConfig> & d);
-
-  template <long dim, typename DomainConfig>
-  ncell_range<segment_t<DomainConfig>, dim>
-  ncells(segment_t<DomainConfig> & d);
-
-  template <typename DomainConfig>
-  ncell_proxy< segment_t<DomainConfig> >
-  ncells(segment_t<DomainConfig> & d);
+    template<long dim, typename element_domain_segment_config_or_something_like_that>
+    typename result_of::ncell_range<element_domain_segment_config_or_something_like_that, dim>::type ncells( element_domain_segment_config_or_something_like_that & domain);
+  
+    template<long dim, typename element_domain_segment_config_or_something_like_that>
+    typename result_of::const_ncell_range<element_domain_segment_config_or_something_like_that, dim>::type ncells( const element_domain_segment_config_or_something_like_that & domain);
+  
+  
+//   // providing forwards for the ncells function
+//   template <long dim, typename DomainConfig>
+//   ncell_range<domain_t<DomainConfig>, dim>
+//   ncells(domain_t<DomainConfig> & d);
+// 
+//   template <typename DomainConfig>
+//   ncell_proxy< domain_t<DomainConfig> >
+//   ncells(domain_t<DomainConfig> & d);
+// 
+//   template <long dim, typename DomainConfig>
+//   ncell_range<segment_t<DomainConfig>, dim>
+//   ncells(segment_t<DomainConfig> & d);
+// 
+//   template <typename DomainConfig>
+//   ncell_proxy< segment_t<DomainConfig> >
+//   ncells(segment_t<DomainConfig> & d);
 
 //   template <long dim, typename Config, typename ElementTag>
 //   typename result_of::ncell_range< element_t<Config, ElementTag>, dim>::type
@@ -608,22 +617,22 @@ namespace viennagrid
 //   ncell_proxy< element_t<Config, ElementTag> >
 //   ncells(element_t<Config, ElementTag> & d);
   
-  //same for const:  
-  template <long dim, typename DomainConfig>
-  const_ncell_range<domain_t<DomainConfig>, dim>
-  ncells(domain_t<DomainConfig> const & d);
-
-  template <typename DomainConfig>
-  const_ncell_proxy< domain_t<DomainConfig> >
-  ncells(domain_t<DomainConfig> const & d);
-
-  template <long dim, typename DomainConfig>
-  const_ncell_range<segment_t<DomainConfig>, dim>
-  ncells(segment_t<DomainConfig> const & d);
-
-  template <typename DomainConfig>
-  const_ncell_proxy< segment_t<DomainConfig> >
-  ncells(segment_t<DomainConfig> const & d);
+//   //same for const:  
+//   template <long dim, typename DomainConfig>
+//   const_ncell_range<domain_t<DomainConfig>, dim>
+//   ncells(domain_t<DomainConfig> const & d);
+// 
+//   template <typename DomainConfig>
+//   const_ncell_proxy< domain_t<DomainConfig> >
+//   ncells(domain_t<DomainConfig> const & d);
+// 
+//   template <long dim, typename DomainConfig>
+//   const_ncell_range<segment_t<DomainConfig>, dim>
+//   ncells(segment_t<DomainConfig> const & d);
+// 
+//   template <typename DomainConfig>
+//   const_ncell_proxy< segment_t<DomainConfig> >
+//   ncells(segment_t<DomainConfig> const & d);
 
 //   template <long dim, typename Config, typename ElementTag>
 //   typename result_of::const_ncell_range< element_t<Config, ElementTag>, dim>::type
@@ -674,7 +683,7 @@ namespace viennagrid
   /** @brief The namespace holding the implementations of domains, segments and ncells as well as some algorithm implementations. Not of interest for library users */
   namespace detail
   {
-    template <typename ConfigTypeIn, typename ConfigTypeOut>
+/*    template <typename ConfigTypeIn, typename ConfigTypeOut>
     void refine_impl(domain_t<ConfigTypeIn> const & domain_in,
                     domain_t<ConfigTypeOut> & domain_out,
                     uniform_refinement_tag);
@@ -682,7 +691,7 @@ namespace viennagrid
     template <typename ConfigTypeIn, typename ConfigTypeOut>
     void refine_impl(domain_t<ConfigTypeIn> const & domain_in,
                     domain_t<ConfigTypeOut> & domain_out,
-                    local_refinement_tag);    
+                    local_refinement_tag);   */ 
   }
   
   //
