@@ -199,25 +199,25 @@ namespace viennagrid
 //       container_type * cont_;
 //   };
   
-  /** @brief Main function for range retrieval. Specialization for iteration over k-cells on the domain */
-  template <long dim, typename DomainConfig>
-  ncell_range<domain_t<DomainConfig>, dim>
-  ncells(domain_t<DomainConfig> & d)
-  {
-    return ncell_range<domain_t<DomainConfig>, dim>(d);
-  }
-  
-  /** @brief Main function for range retrieval. Specialization for iteration over k-cells on the domain. Returns only a proxy that must be assigned to a range object.
-   *
-   * Allows to omit the topological dimension if this is clear from the range type, e.g.
-   *  VertexRange vertices = ncells(domain);
-   */
-  template <typename DomainConfig>
-  ncell_proxy< domain_t<DomainConfig> >
-  ncells(domain_t<DomainConfig> & d)
-  {
-    return ncell_proxy< domain_t<DomainConfig> >(d);
-  }
+//   /** @brief Main function for range retrieval. Specialization for iteration over k-cells on the domain */
+//   template <long dim, typename DomainConfig>
+//   ncell_range<domain_t<DomainConfig>, dim>
+//   ncells(domain_t<DomainConfig> & d)
+//   {
+//     return ncell_range<domain_t<DomainConfig>, dim>(d);
+//   }
+//   
+//   /** @brief Main function for range retrieval. Specialization for iteration over k-cells on the domain. Returns only a proxy that must be assigned to a range object.
+//    *
+//    * Allows to omit the topological dimension if this is clear from the range type, e.g.
+//    *  VertexRange vertices = ncells(domain);
+//    */
+//   template <typename DomainConfig>
+//   ncell_proxy< domain_t<DomainConfig> >
+//   ncells(domain_t<DomainConfig> & d)
+//   {
+//     return ncell_proxy< domain_t<DomainConfig> >(d);
+//   }
 
 
   //
@@ -287,25 +287,25 @@ namespace viennagrid
 //       const container_type * cont_;
 //   };
   
-  /** @brief Main function for const range retrieval. Specialization for iteration over k-cells on the domain */
-  template <long dim, typename DomainConfig>
-  const_ncell_range< domain_t<DomainConfig>, dim>
-  ncells(domain_t<DomainConfig> const & d)
-  {
-    return const_ncell_range< domain_t<DomainConfig>, dim>(d);
-  }
-  
-  /** @brief Main function for const range retrieval. Specialization for iteration over k-cells on the domain. Returns only a proxy that must be assigned to a range object.
-   *
-   * Allows to omit the topological dimension if this is clear from the range type, e.g.
-   *  VertexRange vertices = ncells(domain);
-   */
-  template <typename DomainConfig>
-  const_ncell_proxy< domain_t<DomainConfig> >
-  ncells(domain_t<DomainConfig> const & d)
-  {
-    return const_ncell_proxy< domain_t<DomainConfig> >(d);
-  }
+//   /** @brief Main function for const range retrieval. Specialization for iteration over k-cells on the domain */
+//   template <long dim, typename DomainConfig>
+//   const_ncell_range< domain_t<DomainConfig>, dim>
+//   ncells(domain_t<DomainConfig> const & d)
+//   {
+//     return const_ncell_range< domain_t<DomainConfig>, dim>(d);
+//   }
+//   
+//   /** @brief Main function for const range retrieval. Specialization for iteration over k-cells on the domain. Returns only a proxy that must be assigned to a range object.
+//    *
+//    * Allows to omit the topological dimension if this is clear from the range type, e.g.
+//    *  VertexRange vertices = ncells(domain);
+//    */
+//   template <typename DomainConfig>
+//   const_ncell_proxy< domain_t<DomainConfig> >
+//   ncells(domain_t<DomainConfig> const & d)
+//   {
+//     return const_ncell_proxy< domain_t<DomainConfig> >(d);
+//   }
 
   
     
