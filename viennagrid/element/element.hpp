@@ -382,16 +382,16 @@ namespace viennagrid
     }
     
     
-    template<long dim, typename element_type>
-    typename result_of::ncell_range<element_type, dim>::type ncells(element_type & element)
+    template<long dim, typename element_tag, typename boundary_cell_container_typelist, typename id_type>
+    typename result_of::ncell_range<element_t<element_tag, boundary_cell_container_typelist, id_type>, dim>::type ncells( element_t<element_tag, boundary_cell_container_typelist, id_type> & element)
     {
-        return typename result_of::ncell_range<element_type, dim>::type( element.container( dimension_tag<dim>() ) );
+        return typename result_of::ncell_range<element_t<element_tag, boundary_cell_container_typelist, id_type>, dim>::type( element.container( dimension_tag<dim>() ) );
     }
     
-    template<long dim, typename element_type>
-    typename result_of::const_ncell_range<element_type, dim>::type ncells(const element_type & element)
+    template<long dim, typename element_tag, typename boundary_cell_container_typelist, typename id_type>
+    typename result_of::const_ncell_range<element_t<element_tag, boundary_cell_container_typelist, id_type>, dim>::type ncells(const element_t<element_tag, boundary_cell_container_typelist, id_type> & element)
     {
-        return typename result_of::const_ncell_range<element_type, dim>::type( element.container( dimension_tag<dim>() ) );
+        return typename result_of::const_ncell_range<element_t<element_tag, boundary_cell_container_typelist, id_type>, dim>::type( element.container( dimension_tag<dim>() ) );
     }
     
     
