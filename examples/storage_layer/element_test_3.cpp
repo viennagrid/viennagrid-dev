@@ -52,7 +52,7 @@ int main()
 //     
 //         viennagrid::vertex_tag,
 //         viennameta::make_typemap<
-//             viennagrid::element_id_type_tag,
+//             viennagrid::element_id_tag,
 //             int,
 //         
 //             viennagrid::element_container_tag,
@@ -68,7 +68,7 @@ int main()
 //         
 //         viennagrid::line_tag,
 //         viennameta::make_typemap<
-//             viennagrid::element_id_type_tag,
+//             viennagrid::element_id_tag,
 //             int,
 //         
 //             viennagrid::element_container_tag,
@@ -85,7 +85,7 @@ int main()
 //         
 //         viennagrid::triangle_tag,
 //         viennameta::make_typemap<
-//             viennagrid::element_id_type_tag,
+//             viennagrid::element_id_tag,
 //             int,
 //         
 //             viennagrid::element_container_tag,
@@ -103,7 +103,7 @@ int main()
 // 
 //         viennagrid::tetrahedron_tag,
 //         viennameta::make_typemap<
-//             viennagrid::element_id_type_tag,
+//             viennagrid::element_id_tag,
 //             int,
 //             
 //             viennagrid::element_container_tag,
