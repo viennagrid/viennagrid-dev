@@ -1,6 +1,7 @@
 #ifndef VIENNAGRID_STORAGE_FORWARDS_HPP
 #define VIENNAGRID_STORAGE_FORWARDS_HPP
 
+#include "viennagrid/meta/typemap.hpp"
 
 namespace viennagrid
 {
@@ -19,23 +20,28 @@ namespace viennagrid
 
 
         // hooks
-        struct no_hook_tag {};
-        struct iterator_hook_tag {};
-        struct pointer_hook_tag {};
-        struct id_hook_tag {};
+        struct no_hook_tag;
+        struct iterator_hook_tag;
+        struct pointer_hook_tag;
+        struct id_hook_tag;
 
         
         
         
         
         // container
-        struct default_tag {};
+        struct default_tag;
         
-        struct std_vector_tag {};
-        struct std_deque_tag {};
-        struct std_list_tag {};
-        struct std_set_tag {};
+        struct std_vector_tag;
+        struct std_deque_tag;
+        struct std_list_tag;
+        struct std_set_tag;
         
+        
+        typedef viennameta::make_typemap<
+            default_tag,
+            std_deque_tag
+        >::type default_container_config;
         
         
         template<typename container_tag__, typename hook_tag__>
