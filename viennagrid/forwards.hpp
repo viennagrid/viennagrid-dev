@@ -402,10 +402,16 @@ namespace viennagrid
      * @tparam cell_level   Internal flag that refers to the maximum dimension in the domain
      */
     
-    template<typename element_domain_segment_config_or_something_like_that, long dim>
+    template<typename config_domain_segment_element_or_something_like_that, typename element_tag>
+    struct element;
+
+    template<typename config_domain_segment_element_or_something_like_that, typename element_tag>
+    struct element_hook;
+    
+    template<typename config_domain_segment_element_or_something_like_that, long dim>
     struct ncell;
     
-    template<typename element_domain_segment_config_or_something_like_that, long dim>
+    template<typename config_domain_segment_element_or_something_like_that, long dim>
     struct ncell_hook;
     
     
@@ -584,12 +590,22 @@ namespace viennagrid
 //     };
     
   }
+   
+    template<long dim, typename element_domain_segment_config_or_something_like_that>
+    typename result_of::ncell_range<element_domain_segment_config_or_something_like_that, dim>::type ncells( element_domain_segment_config_or_something_like_that & something);
   
     template<long dim, typename element_domain_segment_config_or_something_like_that>
-    typename result_of::ncell_range<element_domain_segment_config_or_something_like_that, dim>::type ncells( element_domain_segment_config_or_something_like_that & domain);
+    typename result_of::const_ncell_range<element_domain_segment_config_or_something_like_that, dim>::type ncells( const element_domain_segment_config_or_something_like_that & something);
+    
+    template<typename element_tag, typename element_domain_segment_config_or_something_like_that>
+    typename result_of::ncell_range<element_domain_segment_config_or_something_like_that, element_tag::dim>::type elements( element_domain_segment_config_or_something_like_that & something)
+    { return ncells<element_tag::dim>(something); }
   
-    template<long dim, typename element_domain_segment_config_or_something_like_that>
-    typename result_of::const_ncell_range<element_domain_segment_config_or_something_like_that, dim>::type ncells( const element_domain_segment_config_or_something_like_that & domain);
+    template<typename element_tag, typename element_domain_segment_config_or_something_like_that>
+    typename result_of::const_ncell_range<element_domain_segment_config_or_something_like_that, element_tag::dim>::type elements( const element_domain_segment_config_or_something_like_that & something)
+    { return ncells<element_tag::dim>(something); }
+
+
   
   
 //   // providing forwards for the ncells function
