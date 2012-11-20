@@ -68,7 +68,9 @@ int main()
     
     typedef viennagrid::result_of::ncell<domain_type, 1>::type line_type;
     typedef viennagrid::result_of::ncell<domain_type, 2>::type triangle_type;
+    
     typedef viennagrid::result_of::ncell<domain_type, 3>::type tetrahedron_type;
+    typedef viennagrid::result_of::ncell_hook<domain_type, 3>::type tetrahedron_hook_type;
     
 
     //
@@ -86,7 +88,7 @@ int main()
     hooks[0] = vh0; hooks[1] = vh1; hooks[2] = vh2; hooks[3] = vh3;
     
     // creates the tetrahedron within the domain, all boundary cell generation is done here implicit
-    tetrahedron_type & tet = viennagrid::create_element<tetrahedron_type>( domain, hooks );
+    tetrahedron_hook_type tet = viennagrid::create_element<tetrahedron_type>( domain, hooks );
 
     
     //
