@@ -322,8 +322,15 @@ namespace viennagrid
                 >
     {
         typedef element_t<vertex_tag, bnd_cell_container_typelist__, id_tag>            self_type;
+        typedef viennagrid::storage::id_handler<
+                    typename viennagrid::storage::result_of::id< element_t<vertex_tag, bnd_cell_container_typelist__, id_tag>, id_tag>::type
+                > id_handler;
         
-        public:
+    public:
+        element_t() {}
+        
+        template<typename container_typelist>
+        element_t( viennagrid::storage::collection_t<container_typelist> & container_collection ) {}
         
         typedef bnd_cell_container_typelist__ bnd_cell_container_typelist;
         typedef vertex_tag tag;
