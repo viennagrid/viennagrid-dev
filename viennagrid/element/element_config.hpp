@@ -50,9 +50,7 @@ namespace viennagrid
         //
         // Generates an element type
         //
-        template<typename config__, typename element_tag__>
-        struct element;
-        
+
         template<typename domain_config, typename element_tag>
         struct is_element_present
         {
@@ -350,19 +348,7 @@ namespace viennagrid
         {
             typedef viennameta::null_type type;
         };
-    }
-    
-    namespace result_of
-    {
-        
-        template<typename domain_config, typename element_tag>
-        struct element_hook
-        {
-            typedef typename element_container<domain_config, element_tag>::type::hook_type type;
-        };
-        
-    }
-  
+    }  
 }
 
 
