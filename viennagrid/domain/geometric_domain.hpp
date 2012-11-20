@@ -224,21 +224,33 @@ namespace viennagrid
     }
     
     
-    template<typename metainfo_type, typename domain_config, typename element_type>
-    typename metainfo::result_of::associative_container_value_type<
-        typename result_of::info_container< typename geometric_domain_t<domain_config>::metainfo_collection_type, element_type, metainfo_type >::type
-    >::type & look_up( geometric_domain_t<domain_config> & domain, const element_type & element )
+    template<typename metainfo_type, typename domain_config, typename element_tag, typename boundary_cell_container_typelist, typename id_type>
+    metainfo_type & look_up( geometric_domain_t<domain_config> & domain, const element_t<element_tag, boundary_cell_container_typelist, id_type> & element )
     {
         return look_up<metainfo_type>( domain.get_metainfo_collection(), element );
     }
     
-    template<typename metainfo_type, typename domain_config, typename element_type>
-    const typename metainfo::result_of::associative_container_value_type<
-        typename result_of::info_container< typename geometric_domain_t<domain_config>::metainfo_collection_type, element_type, metainfo_type >::type
-    >::type & look_up( const geometric_domain_t<domain_config> & domain, const element_type & element )
+    template<typename metainfo_type, typename domain_config, typename element_tag, typename boundary_cell_container_typelist, typename id_type>
+    const metainfo_type & look_up( const geometric_domain_t<domain_config> & domain, const element_t<element_tag, boundary_cell_container_typelist, id_type> & element )
     {
         return look_up<metainfo_type>( domain.get_metainfo_collection(), element );
     }
+    
+    
+    template<typename metainfo_type, typename domain_config, typename element_hook_type>
+    metainfo_type & look_up( geometric_domain_t<domain_config> & domain, const element_hook_type & element_hook )
+    {
+        return look_up<metainfo_type>( domain.get_metainfo_collection(), dereference_hook(domain, element_hook) );
+    }
+    
+    template<typename metainfo_type, typename domain_config, typename element_hook_type>
+    const metainfo_type & look_up( const geometric_domain_t<domain_config> & domain, const element_hook_type & element_hook )
+    {
+        return look_up<metainfo_type>( domain.get_metainfo_collection(), dereference_hook(domain, element_hook) );
+    }
+    
+    
+    
     
     template<typename domain_config, typename element_type, typename metainfo_type>
     void set( geometric_domain_t<domain_config> & domain, const element_type & element, const metainfo_type & meta_info )
