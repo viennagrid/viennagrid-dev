@@ -128,7 +128,7 @@ int main()
     // Generates the same config as show above in comment
     //
     
-    typedef viennagrid::result_of::default_config<viennagrid::tetrahedron_tag, hook_tag>::type config;
+    typedef viennagrid::result_of::default_topologic_config<viennagrid::tetrahedron_tag, hook_tag>::type config;
        
     
         
