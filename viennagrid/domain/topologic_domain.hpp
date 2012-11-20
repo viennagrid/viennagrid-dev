@@ -302,7 +302,7 @@ namespace viennagrid
     
     
     template<typename element_type, typename domain_type, typename hook_array_type>
-    element_type & create_element( domain_type & domain, const hook_array_type & array )
+    typename result_of::element_hook<domain_type, typename element_type::tag>::type create_element( domain_type & domain, const hook_array_type & array )
     {
         element_type element = element_type( container_collection(domain) );
         
@@ -310,7 +310,7 @@ namespace viennagrid
         for (typename hook_array_type::const_iterator it = array.begin(); it != array.end(); ++it, ++element_index)
             viennagrid::set_vertex( element, *it, element_index );
                 
-        return dereference_hook(domain, push_element(domain, element ).first);
+        return push_element(domain, element ).first;
     }    
 }
 
