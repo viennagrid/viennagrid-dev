@@ -60,7 +60,6 @@ int main()
     typedef ublas::vector<double> vector_type;
     typedef viennagrid::result_of::geometric_domain_config< viennagrid::tetrahedron_tag, vector_type, hook_tag, metainfo_typelist >::type domain_config;
     
-    
     //
     // typedefing and setting up the geometric domain
     //
@@ -102,7 +101,7 @@ int main()
     vector_type p2(3);
     p2[0] = 0.0; p2[1] = 1.0; p2[2] = 0.0;
     vector_type p3(3);
-    p3[0] = 0.0; p3[1] = 0.0; p3[2] = 1.0;    
+    p3[0] = 0.0; p3[1] = 0.0; p3[2] = 1.0;
     
     
     // set the geometric information for the vertices
