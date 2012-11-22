@@ -261,14 +261,17 @@ namespace viennagrid
         };
         
         
-        template<typename config__, typename element_tag__>
-        struct element
+        template<typename config_element_tag, typename config_element_config, typename config_tail, typename element_tag_>
+        struct element< viennameta::typelist_t< viennameta::static_pair<config_element_tag, config_element_config>, config_tail >, element_tag_ >
         {
-            typedef typename element_id_tag<config__, element_tag__>::type id_tag;
+            typedef viennameta::typelist_t< viennameta::static_pair<config_element_tag, config_element_config>, config_tail > config;
+            typedef element_tag_ element_tag;
             
-            typedef typename element_boundary_cell_container_typelist<config__, element_tag__, element_tag__>::type container_typelist;
+            typedef typename element_id_tag<config, element_tag>::type id_tag;
             
-            typedef viennagrid::element_t<element_tag__, container_typelist, id_tag> type;
+            typedef typename element_boundary_cell_container_typelist<config, element_tag, element_tag>::type container_typelist;
+            
+            typedef viennagrid::element_t<element_tag, container_typelist, id_tag> type;
         };
 
     }
@@ -317,11 +320,21 @@ namespace viennagrid
         //
         // generates a container for a specified element_tag for the domain container collection
         //
-        template<typename config, typename element_tag>
+        template<typename something, typename element_tag>
         struct element_container
         {
-            typedef typename element<config, element_tag>::type element_type;
-            typedef typename viennagrid::storage::result_of::container<element_type, typename element_container_tag<config, element_tag>::type >::type type;
+            typedef something topologic_config;
+            
+            typedef typename element<topologic_config, element_tag>::type element_type;
+            typedef typename viennagrid::storage::result_of::container<element_type, typename element_container_tag<topologic_config, element_tag>::type >::type type;
+        };
+        
+        template<typename container_collection_typemap, typename element_tag>
+        struct element_container< storage::collection_t<container_collection_typemap>, element_tag >
+        {
+            typedef typename element<storage::collection_t<container_collection_typemap>, element_tag>::type element_type;
+            typedef typename viennameta::typemap::result_of::find< container_collection_typemap, element_type >::type::second type;
+            //typedef typename viennagrid::storage::result_of::container<element_type, typename element_container_tag<config, element_tag>::type >::type type;
         };
         
         
