@@ -49,7 +49,11 @@ int main()
     
     
     
+    
+    
     typedef viennagrid::result_of::default_topologic_config<viennagrid::tetrahedron_tag, hook_tag>::type toplological_config;
+
+    
     
     
     //
@@ -57,7 +61,7 @@ int main()
     //
     
     typedef viennagrid::result_of::topologic_domain<toplological_config>::type domain_type;
-    domain_type domain;
+    domain_type domain = viennagrid::create_topologic_domain<domain_type>();
     
     //
     // typedefs for the element types
@@ -88,7 +92,7 @@ int main()
     hooks[0] = vh0; hooks[1] = vh1; hooks[2] = vh2; hooks[3] = vh3;
     
     // creates the tetrahedron within the domain, all boundary cell generation is done here implicit
-    tetrahedron_hook_type tet = viennagrid::create_element<tetrahedron_type>( domain, hooks );
+    viennagrid::create_element<tetrahedron_type>( domain, hooks );
 
     
     //
