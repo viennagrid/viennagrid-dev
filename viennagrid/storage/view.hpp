@@ -132,7 +132,9 @@ namespace viennagrid
             
             view_t() {}
             void set_base_container( base_container_type & base_container ) {}
-            void set_base_container( view_t<base_container_type, hook_tag, container_tag> & base_view ) {}
+            
+            template<typename other_container_tag>
+            void set_base_container( view_t<base_container_type, hook_tag, other_container_tag> & base_view ) {}
 
             
             
@@ -183,7 +185,7 @@ namespace viennagrid
             
             void insert_hook(hook_type hook)
             {
-                hook_container.insert( hook );
+                viennagrid::storage::container::insert(hook_container, hook);
             }
             
             void set_hook( hook_type element, size_type pos )
@@ -352,7 +354,8 @@ namespace viennagrid
                 base_container = &base_container_;
             }
             
-            void set_base_container( view_t<base_container_type, hook_tag, container_tag> & base_view )
+            template<typename other_container_tag>
+            void set_base_container( view_t<base_container_type, hook_tag, other_container_tag> & base_view )
             {
                 base_container = base_view.base_container;
             }
@@ -583,6 +586,38 @@ namespace viennagrid
                 >::type type;
             };
             
+        }
+        
+        
+        
+        template<typename container_collection_typemap>
+        struct set_base_container_helper;
+
+        template<>
+        struct set_base_container_helper<viennameta::null_type>
+        {
+            template<typename base_container_collection_type, typename view_container_collection_type>
+            static void exec( base_container_collection_type & base_container_collection, view_container_collection_type & view_container_collection )
+            {}
+        };
+        
+        template<typename value_type, typename container_type, typename tail>
+        struct set_base_container_helper< viennameta::typelist_t< viennameta::static_pair<value_type, container_type>, tail > >
+        {
+            template<typename base_container_collection_type, typename view_container_collection_type>
+            static void exec( base_container_collection_type & base_container_collection, view_container_collection_type & view_container_collection )
+            {
+                storage::collection::get<value_type>(view_container_collection).set_base_container( storage::collection::get<value_type>(base_container_collection) );
+                
+                set_base_container_helper<tail>::exec(base_container_collection, view_container_collection);
+            }
+        };
+
+        
+        template<typename base_container_collection_type, typename view_container_collection_type>
+        void set_base_container( base_container_collection_type & base_container_collection, view_container_collection_type & view_container_collection )
+        {
+            set_base_container_helper< typename view_container_collection_type::typemap >::exec(base_container_collection, view_container_collection);
         }
 
 
