@@ -16,7 +16,17 @@ namespace viennagrid
     namespace storage
     {
         namespace container
-        {            
+        {
+            
+            template<typename container_type>
+            void insert(container_type & container, const typename container_type::value_type & value)
+            {
+                container.push_back(value);
+            }
+
+            
+            
+            
             template<typename base_iterator, typename hook_tag>
             class hook_iterator_impl {};
             
@@ -344,7 +354,6 @@ namespace viennagrid
         private:
         };
         
-
         
         namespace result_of
         {           
