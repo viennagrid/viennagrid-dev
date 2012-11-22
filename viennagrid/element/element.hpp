@@ -386,6 +386,62 @@ namespace viennagrid
             typedef const viennagrid::storage::container_range_wrapper< const typename container_of_dimension<boundary_cell_container_typelist, dim>::type > type;
         };
         
+        
+        
+        
+        
+        template<typename container_collection_typemap, typename element_tag>
+        struct element_of_container_collection_helper;
+        
+        template<typename element_tag>
+        struct element_of_container_collection_helper<viennameta::null_type, element_tag>
+        {
+            typedef viennameta::null_type type;
+        };
+        
+        template<typename element_type, typename container_type, typename tail, typename element_tag>
+        struct element_of_container_collection_helper<viennameta::typelist_t< viennameta::static_pair<element_type, container_type>, tail >, element_tag>
+        {
+            typedef typename viennameta::_if<
+                viennameta::_equal<typename element_type::tag, element_tag>::value,
+                element_type,
+                typename element_of_container_collection_helper<tail, element_tag>::type
+            >::type type;
+        };
+        
+        template<typename container_collection_typemap, typename element_tag>
+        struct element<storage::collection_t<container_collection_typemap>, element_tag>
+        {
+            typedef typename element_of_container_collection_helper<container_collection_typemap, element_tag>::type type;
+        };
+        
+        
+        
+        
+        template<typename container_collection_typemap, long dim>
+        struct ncell_of_container_collection_helper;
+        
+        template<long dim>
+        struct ncell_of_container_collection_helper<viennameta::null_type, dim>
+        {
+            typedef viennameta::null_type type;
+        };
+        
+        template<typename element_type, typename container_type, typename tail, long dim>
+        struct ncell_of_container_collection_helper<viennameta::typelist_t< viennameta::static_pair<element_type, container_type>, tail >, dim>
+        {
+            typedef typename viennameta::_if<
+                element_type::tag::dim == dim,
+                element_type,
+                typename ncell_of_container_collection_helper<tail, dim>::type
+            >::type type;
+        };
+        
+        template<typename container_collection_typemap, long dim>
+        struct ncell<storage::collection_t<container_collection_typemap>, dim>
+        {
+            typedef typename ncell_of_container_collection_helper<container_collection_typemap, dim>::type type;
+        };
     }
     
     
