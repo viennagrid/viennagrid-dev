@@ -33,6 +33,7 @@ namespace viennagrid
             physical_inserter_t() : collection(0) {}
             physical_inserter_t(container_collection_type & _collection, id_generator_type id_generator_) : collection(&_collection), id_generator(id_generator_) {}
             
+            void set_container_collection(container_collection_type & _collection) { collection = &_collection; }
             
             template<typename value_type, typename inserter_type>
             std::pair<
@@ -83,6 +84,7 @@ namespace viennagrid
             }
             
             container_collection_type & get_physical_container_collection() { return *collection; }
+            id_generator_type & get_id_generator() { return id_generator; }
             
         private:
             container_collection_type * collection;
@@ -104,6 +106,7 @@ namespace viennagrid
             recursive_inserter_t(view_collection_type & collection_, dependend_inserter_type & dependend_inserter_) :
                view_collection(&collection_), dependend_inserter(&dependend_inserter_) {}
             
+            void set_container_collection(view_collection_type & _collection) { view_collection = &_collection; }
             
             
             template<typename hook_type, typename value_type>
