@@ -75,6 +75,10 @@ namespace viennagrid
         typedef inserter_type_ inserter_type;
         
         topologic_domain_t() : container_collection(), inserter() {}
+        topologic_domain_t(const topologic_domain_t & rhs) : container_collection(rhs.container_collection), inserter(rhs.inserter)
+        {
+            inserter.set_container_collection( container_collection );
+        }
         
         container_collection_type & get_container_collection() { return container_collection; }
         const container_collection_type & get_container_collection() const { return container_collection; }
