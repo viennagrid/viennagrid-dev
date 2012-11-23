@@ -127,15 +127,15 @@ int main()
     // output
     //  
     
-    cout << "All vertices of the domain" << endl;
+    cout << "All tetrahedrons of the domain" << endl;
     std::copy( viennagrid::ncells<3>(domain).begin(), viennagrid::ncells<3>(domain).end(), std::ostream_iterator<tetrahedron_type>(cout, "\n") );
     cout << endl;
 
-    cout << "All vertices of the domain view 1" << endl;
+    cout << "All tetrahedrons of the domain view 1" << endl;
     std::copy( viennagrid::ncells<3>(domain_view_1).begin(), viennagrid::ncells<3>(domain_view_1).end(), std::ostream_iterator<tetrahedron_type>(cout, "\n") );
     cout << endl;
     
-    cout << "All vertices of the domain view 2" << endl;
+    cout << "All tetrahedrons of the domain view 2" << endl;
     std::copy( viennagrid::ncells<3>(domain_view_2).begin(), viennagrid::ncells<3>(domain_view_2).end(), std::ostream_iterator<tetrahedron_type>(cout, "\n") );
     cout << endl;
 
