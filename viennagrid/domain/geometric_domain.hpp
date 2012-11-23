@@ -344,17 +344,24 @@ namespace viennagrid
     }
     
     
-    
-    
-    template<typename geomatric_view_type, typename geometric_domain_type>
-    geomatric_view_type create_geometric_view( geometric_domain_type & domain )
+
+    template<typename vector_type, typename topologic_domain_type, typename metainfo_collection_type>
+    struct create_view_helper< geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type> >
     {
-        typedef typename geomatric_view_type::topologic_domain_type topologic_view_type;
-        return geomatric_view_type(
-            viennagrid::create_topologic_view<topologic_view_type>( viennagrid::topologic_domain(domain) ),
-            domain.get_metainfo_collection()
-        );
-    }
+        typedef geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type> geomatric_view_type;
+        
+        template<typename domain_type>
+        static geomatric_view_type create( domain_type & domain )
+        {
+            typedef typename geomatric_view_type::topologic_domain_type topologic_view_type;
+            return geomatric_view_type(
+                viennagrid::create_view<topologic_view_type>( viennagrid::topologic_domain(domain) ),
+                domain.get_metainfo_collection()
+            );
+        }
+    };
+
+    
     
 }
 

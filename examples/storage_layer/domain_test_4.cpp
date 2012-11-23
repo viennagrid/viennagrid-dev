@@ -109,8 +109,8 @@ int main()
     
     //geometric_view_type geometric_view( viennagrid::create_topologic_view<topologic_view_type>( viennagrid::topologic_domain(domain) ), domain.get_metainfo_collection() );
     
-    geometric_view_type geometric_view_1 = viennagrid::create_geometric_view<geometric_view_type>(domain);
-    geometric_view_type geometric_view_2 = viennagrid::create_geometric_view<geometric_view_type>(domain);
+    geometric_view_type geometric_view_1 = viennagrid::create_view<geometric_view_type>(domain);
+    geometric_view_type geometric_view_2 = viennagrid::create_view<geometric_view_type>(domain);
     
     
     

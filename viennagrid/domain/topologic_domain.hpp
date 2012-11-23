@@ -229,14 +229,31 @@ namespace viennagrid
         view.get_inserter() = typename topologic_view_type::inserter_type( view.get_container_collection(), domain.get_inserter() );
     }
     
+
+    template<typename view_type>
+    struct create_view_helper;
+
+    
+    template<typename container_collection_type_, typename inserter_type_>
+    struct create_view_helper< topologic_domain_t<container_collection_type_,inserter_type_> >
+    {
+        typedef topologic_domain_t<container_collection_type_,inserter_type_> topologic_view_type;
+        
+        template<typename domain_type>
+        static topologic_view_type create( domain_type & domain )
+        {
+            topologic_view_type view;      
+            init_view(view, domain);
+            return view;
+        }
+    };
     
     template<typename topologic_view_type, typename topologic_domain_type>
-    topologic_view_type create_topologic_view( topologic_domain_type & domain )
+    topologic_view_type create_view( topologic_domain_type & domain )
     {
-        topologic_view_type view;      
-        init_view(view, domain);
-        return view;
+        return create_view_helper<topologic_view_type>::create(domain);
     }
+
     
     
     
