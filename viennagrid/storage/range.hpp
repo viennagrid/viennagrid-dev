@@ -80,10 +80,10 @@ namespace viennagrid
             typedef typename container_type::size_type size_type;
             typedef typename container_type::value_type value_type;
             
-            typedef typename container_type::reference reference;
+            typedef typename container_type::const_reference reference;
             typedef typename container_type::const_reference const_reference;
             
-            typedef typename container_type::pointer pointer;
+            typedef typename container_type::const_pointer pointer;
             typedef typename container_type::const_pointer const_pointer;
             
             typedef typename container_type::const_iterator iterator;
