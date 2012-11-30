@@ -21,8 +21,12 @@
 
 #include "viennagrid/forwards.hpp"
 #include "viennagrid/meta/typelist.hpp"
+#include "viennagrid/meta/algorithm.hpp"
 
+#include "viennagrid/storage/collection.hpp"
 #include "viennagrid/storage/range.hpp"
+
+#include "viennagrid/topology/simplex.hpp"
 #include "viennagrid/element/element_orientation.hpp"
 
 /** @file element.hpp
@@ -77,6 +81,19 @@ namespace viennagrid
         
         using base::container;
         using base::set_bnd_cell;
+        
+        bnd_cell_container_type &
+        container(bnd_cell_tag)
+        { 
+            return elements_;
+        }
+
+        //const:     
+        const bnd_cell_container_type &
+        container(bnd_cell_tag) const
+        { 
+            return elements_;
+        }
 
         bnd_cell_container_type &
         container(dimension_tag<dim>)
@@ -136,7 +153,7 @@ namespace viennagrid
         
         static void print_class()
         {
-            cout << "  [ + + ]  " << bnd_cell_tag::name() << endl;
+            std::cout << "  [ + + ]  " << bnd_cell_tag::name() << std::endl;
             base::print_class();
         }
         
@@ -188,6 +205,22 @@ namespace viennagrid
         using base::container;
         using base::set_bnd_cell;
         
+        
+        
+        bnd_cell_container_type &
+        container(bnd_cell_tag)
+        { 
+            return elements_;
+        }
+
+        //const:     
+        const bnd_cell_container_type &
+        container(bnd_cell_tag) const
+        { 
+            return elements_;
+        }
+        
+        
         bnd_cell_container_type &
         container(dimension_tag<dim>)
         { 
@@ -209,7 +242,7 @@ namespace viennagrid
         
         static void print_class()
         {
-            cout << "  [ + - ]  " << bnd_cell_tag::name() << endl;
+            std::cout << "  [ + - ]  " << bnd_cell_tag::name() << std::endl;
             base::print_class();
         }
 
@@ -244,17 +277,71 @@ namespace viennagrid
     
     namespace result_of
     {
+        template<typename bnd_cell_typelist>
+        struct boundary_cell_typelist;
+        
+        template<>
+        struct boundary_cell_typelist<viennameta::null_type>
+        {
+            typedef viennameta::null_type type;
+        };
+        
+        template<typename boundary_cell_container_type, typename orientation_container_type, typename tail>
+        struct boundary_cell_typelist< viennameta::typelist_t<viennameta::static_pair<boundary_cell_container_type, orientation_container_type>, tail > >
+        {
+            typedef viennameta::typelist_t<
+                typename boundary_cell_container_type::value_type,
+                typename boundary_cell_typelist<tail>::type
+            > type;
+        };
+        
+        template<typename element_tag, typename bnd_cell_container_typelist_, typename id_tag>
+        struct boundary_cell_typelist< element_t<element_tag, bnd_cell_container_typelist_, id_tag> >
+        {
+            typedef typename boundary_cell_typelist<bnd_cell_container_typelist_>::type type;
+        };
+        
+        
+        
+        
+        
+        template<typename typelist, typename tag>
+        struct container_of_tag_for_element;
+        
+        template<typename tag>
+        struct container_of_tag_for_element< viennameta::null_type, tag >
+        {
+            typedef viennameta::null_type type;
+        };
+        
+        template<typename container_pair, typename tail, typename tag>
+        struct container_of_tag_for_element< viennameta::typelist_t<container_pair, tail>, tag >
+        {
+            typedef typename container_pair::first container_type;
+            typedef typename container_type::value_type value_type;
+            
+            typedef typename viennameta::_if<
+                viennameta::_equal<typename value_type::tag, tag>::value,
+                container_type,
+                typename container_of_tag_for_element<tail, tag>::type
+            >::type type;
+        };
+        
+        
+        
+        
+        
         template<typename typelist, long dim>
-        struct container_of_dimension;
+        struct container_of_dimension_for_element;
         
         template<long dim>
-        struct container_of_dimension< viennameta::null_type, dim >
+        struct container_of_dimension_for_element< viennameta::null_type, dim >
         {
             typedef viennameta::null_type type;
         };
         
         template<typename container_pair, typename tail, long dim>
-        struct container_of_dimension< viennameta::typelist_t<container_pair, tail>, dim >
+        struct container_of_dimension_for_element< viennameta::typelist_t<container_pair, tail>, dim >
         {
             typedef typename container_pair::first container_type;
             typedef typename container_type::value_type value_type;
@@ -262,7 +349,49 @@ namespace viennagrid
             typedef typename viennameta::_if<
                 value_type::tag::dim == dim,
                 container_type,
-                typename container_of_dimension<tail, dim>::type
+                typename container_of_dimension_for_element<tail, dim>::type
+            >::type type;
+        };
+        
+        
+        
+        template<typename container_collection_typemap, typename element_tag>
+        struct container_of_tag_for_collection;
+        
+        template<typename element_tag>
+        struct container_of_tag_for_collection<viennameta::null_type, element_tag>
+        {
+            typedef viennameta::null_type type;
+        };
+        
+        template<typename element_type, typename container_type, typename tail, typename element_tag>
+        struct container_of_tag_for_collection<viennameta::typelist_t< viennameta::static_pair<element_type, container_type>, tail >, element_tag>
+        {
+            typedef typename viennameta::_if<
+                viennameta::_equal<typename element_type::tag, element_tag>::value,
+                container_type,
+                typename container_of_tag_for_collection<tail, element_tag>::type
+            >::type type;
+        };
+        
+        
+        
+        template<typename container_collection_typemap, long dim>
+        struct container_of_dimension_for_collection;
+        
+        template<long dim>
+        struct container_of_dimension_for_collection<viennameta::null_type, dim>
+        {
+            typedef viennameta::null_type type;
+        };
+        
+        template<typename element_type, typename container_type, typename tail, long dim>
+        struct container_of_dimension_for_collection<viennameta::typelist_t< viennameta::static_pair<element_type, container_type>, tail >, dim>
+        {
+            typedef typename viennameta::_if<
+                element_type::tag::dim == dim,
+                container_type,
+                typename container_of_dimension_for_collection<tail, dim>::type
             >::type type;
         };
     }
@@ -270,19 +399,21 @@ namespace viennagrid
     
     
     
-    template<typename element_tag, typename bnd_cell_container_typelist__, typename id_tag>
+    template<typename element_tag, typename bnd_cell_container_typelist_, typename id_tag>
     class element_t :
         public viennagrid::storage::id_handler<
-                    typename viennagrid::storage::result_of::id< element_t<element_tag, bnd_cell_container_typelist__, id_tag>, id_tag>::type
+                    typename viennagrid::storage::result_of::id< element_t<element_tag, bnd_cell_container_typelist_, id_tag>, id_tag>::type
                 >,
-        public boundary_cell_layer<element_tag, bnd_cell_container_typelist__>
+        public boundary_cell_layer<element_tag, bnd_cell_container_typelist_>
     {
-        typedef boundary_cell_layer<element_tag, bnd_cell_container_typelist__> base;
+        typedef boundary_cell_layer<element_tag, bnd_cell_container_typelist_> base;
         
-        public:
+    public:
         
-        typedef bnd_cell_container_typelist__ bnd_cell_container_typelist;
+        typedef bnd_cell_container_typelist_ bnd_cell_container_typelist;
         typedef element_tag tag;
+        typedef typename result_of::boundary_cell_typelist<bnd_cell_container_typelist_>::type boundary_cell_typelist;
+        typedef typename viennagrid::storage::result_of::id< element_t<element_tag, bnd_cell_container_typelist_, id_tag>, id_tag>::type id_type;
                     
         template<typename container_typelist>
         element_t( viennagrid::storage::collection_t<container_typelist> & container_collection )
@@ -301,12 +432,12 @@ namespace viennagrid
         
         static void print_class()
         {
-            cout << element_tag::name() << endl;
+            std::cout << element_tag::name() << std::endl;
             base::print_class();
         }
         
         
-        typedef typename result_of::container_of_dimension< bnd_cell_container_typelist__, 0>::type::hook_type vertex_hook_type;
+        typedef typename result_of::container_of_dimension_for_element< bnd_cell_container_typelist, 0>::type::hook_type vertex_hook_type;
         void set_vertex( const vertex_hook_type & vertex, unsigned int pos )
         {
             this->container(viennagrid::dimension_tag<0>()).set_hook( vertex, pos );
@@ -315,15 +446,15 @@ namespace viennagrid
             
 
     // separate specialization for vertices at the moment
-    template<typename bnd_cell_container_typelist__, typename id_tag>
-    class element_t<vertex_tag, bnd_cell_container_typelist__, id_tag> :
+    template<typename bnd_cell_container_typelist_, typename id_tag>
+    class element_t<vertex_tag, bnd_cell_container_typelist_, id_tag> :
         public viennagrid::storage::id_handler<
-                    typename viennagrid::storage::result_of::id< element_t<vertex_tag, bnd_cell_container_typelist__, id_tag>, id_tag>::type
+                    typename viennagrid::storage::result_of::id< element_t<vertex_tag, bnd_cell_container_typelist_, id_tag>, id_tag>::type
                 >
     {
-        typedef element_t<vertex_tag, bnd_cell_container_typelist__, id_tag>            self_type;
+        typedef element_t<vertex_tag, bnd_cell_container_typelist_, id_tag>            self_type;
         typedef viennagrid::storage::id_handler<
-                    typename viennagrid::storage::result_of::id< element_t<vertex_tag, bnd_cell_container_typelist__, id_tag>, id_tag>::type
+                    typename viennagrid::storage::result_of::id< element_t<vertex_tag, bnd_cell_container_typelist_, id_tag>, id_tag>::type
                 > id_handler;
         
     public:
@@ -332,15 +463,17 @@ namespace viennagrid
         template<typename container_typelist>
         element_t( viennagrid::storage::collection_t<container_typelist> & container_collection ) {}
         
-        typedef bnd_cell_container_typelist__ bnd_cell_container_typelist;
+        typedef bnd_cell_container_typelist_ bnd_cell_container_typelist;
         typedef vertex_tag tag;
+        typedef typename result_of::boundary_cell_typelist<bnd_cell_container_typelist_>::type boundary_cell_typelist;
+        typedef typename viennagrid::storage::result_of::id< element_t<vertex_tag, bnd_cell_container_typelist_, id_tag>, id_tag>::type id_type;
                     
         template<typename inserter_type>
         void insert_callback( inserter_type & inserter, bool inserted ) {}
         
         static void print_class()
         {
-            cout << vertex_tag::name() << endl;
+            std::cout << vertex_tag::name() << std::endl;
         }
     };
     
@@ -359,91 +492,216 @@ namespace viennagrid
     
     
     namespace result_of
-    {                        
+    {          
+        
+        template<typename element_tag_>
+        struct element_tag
+        {
+            typedef element_tag_ type;
+        };
+        
+        template<typename element_tag_, typename boundary_cell_container_typelist, typename id_type>
+        struct element_tag< element_t<element_tag_, boundary_cell_container_typelist, id_type> >
+        {
+            typedef element_tag_ type;
+        };
+        
+        
+        
+        
+        // Defines a SUB-ELEMENT from an ELEMENT using SUB-ELEMENT TAG
+        template<typename element_tag, typename boundary_cell_container_typelist, typename id_type, typename sub_element_tag>
+        struct element< element_t<element_tag, boundary_cell_container_typelist, id_type>, sub_element_tag >
+        {
+            typedef typename container_of_tag_for_element< boundary_cell_container_typelist, sub_element_tag >::type::value_type type;
+        };
+        
+        // Defines a SUB-ELEMENT from an ELEMENT using SUB-ELEMENT TYPE
+        template<typename element_tag, typename boundary_cell_container_typelist, typename id_type,
+                 typename sub_element_tag, typename sub_boundary_cell_container_typelist, typename sub_id_type>
+        struct element< element_t<element_tag, boundary_cell_container_typelist, id_type>, element_t<sub_element_tag, sub_boundary_cell_container_typelist, sub_id_type> >
+        {
+            typedef typename element< element_t<element_tag, boundary_cell_container_typelist, id_type>, sub_element_tag >::type type;
+        };
+        
+        // Defines a HOOK TO a SUB-ELEMENT from an ELEMENT using SUB-ELEMENT TAG
+        template<typename element_tag, typename boundary_cell_container_typelist, typename id_type, typename sub_element_tag>
+        struct element_hook< element_t<element_tag, boundary_cell_container_typelist, id_type>, sub_element_tag >
+        {
+            typedef typename container_of_tag_for_element< boundary_cell_container_typelist, sub_element_tag >::type::hook_type type;
+        };
+        
+        // Defines a HOOK TO a SUB-ELEMENT from an ELEMENT using SUB-ELEMENT TYPE
+        template<typename element_tag, typename boundary_cell_container_typelist, typename id_type,
+                 typename sub_element_tag, typename sub_boundary_cell_container_typelist, typename sub_id_type>
+        struct element_hook< element_t<element_tag, boundary_cell_container_typelist, id_type>, element_t<sub_element_tag, sub_boundary_cell_container_typelist, sub_id_type> >
+        {
+            typedef typename element_hook< element_t<element_tag, boundary_cell_container_typelist, id_type>, sub_element_tag >::type type;
+        };
+        
+        
+        template<typename element_tag, typename boundary_cell_container_typelist, typename id_type, typename sub_element_type_or_tag>
+        struct element_range< element_t<element_tag, boundary_cell_container_typelist, id_type>, sub_element_type_or_tag >
+        {
+            typedef typename element< element_t<element_tag, boundary_cell_container_typelist, id_type>, sub_element_type_or_tag>::type sub_element_type;
+            typedef viennagrid::storage::container_range_wrapper< typename container_of_tag_for_element<boundary_cell_container_typelist, typename sub_element_type::tag>::type > type;
+        };
+        
+        template<typename element_tag, typename boundary_cell_container_typelist, typename id_type, typename sub_element_type_or_tag>
+        struct const_element_range< element_t<element_tag, boundary_cell_container_typelist, id_type>, sub_element_type_or_tag >
+        {
+            typedef typename element< element_t<element_tag, boundary_cell_container_typelist, id_type>, sub_element_type_or_tag>::type sub_element_type;
+            typedef viennagrid::storage::container_range_wrapper< const typename container_of_tag_for_element<boundary_cell_container_typelist, typename sub_element_type::tag>::type > type;
+        };
+        
+        template<typename element_tag, typename boundary_cell_container_typelist, typename id_type, typename sub_element_type_or_tag>
+        struct element_range< const element_t<element_tag, boundary_cell_container_typelist, id_type>, sub_element_type_or_tag >
+        {
+            typedef typename const_element_range< element_t<element_tag, boundary_cell_container_typelist, id_type>, sub_element_type_or_tag >::type type;
+        };
+        
+        
+        
+        
+        
+        
         template<typename element_tag, typename boundary_cell_container_typelist, typename id_type, long dim>
         struct ncell< element_t<element_tag, boundary_cell_container_typelist, id_type>, dim >
         {
-            typedef typename container_of_dimension< boundary_cell_container_typelist, dim >::type::value_type type;
+            typedef typename container_of_dimension_for_element< boundary_cell_container_typelist, dim >::type::value_type type;
         };
         
         template<typename element_tag, typename boundary_cell_container_typelist, typename id_type, long dim>
         struct ncell_hook< element_t<element_tag, boundary_cell_container_typelist, id_type>, dim >
         {
-            typedef typename container_of_dimension< boundary_cell_container_typelist, dim >::type::hook_type type;
+            typedef typename container_of_dimension_for_element< boundary_cell_container_typelist, dim >::type::hook_type type;
         };
+        
         
         template<typename element_tag, typename boundary_cell_container_typelist, typename id_type, long dim>
         struct ncell_range< element_t<element_tag, boundary_cell_container_typelist, id_type>, dim >
         {
-            //typedef typename container_of_dimension<boundary_cell_container_typelist, dim>::type type;
-            typedef viennagrid::storage::container_range_wrapper< typename container_of_dimension<boundary_cell_container_typelist, dim>::type > type;
+            typedef viennagrid::storage::container_range_wrapper< typename container_of_dimension_for_element<boundary_cell_container_typelist, dim>::type > type;
         };
         
         template<typename element_tag, typename boundary_cell_container_typelist, typename id_type, long dim>
         struct const_ncell_range< element_t<element_tag, boundary_cell_container_typelist, id_type>, dim >
         {
-            //typedef const typename container_of_dimension<boundary_cell_container_typelist, dim>::type type;
-            typedef const viennagrid::storage::container_range_wrapper< const typename container_of_dimension<boundary_cell_container_typelist, dim>::type > type;
+            typedef viennagrid::storage::container_range_wrapper< const typename container_of_dimension_for_element<boundary_cell_container_typelist, dim>::type > type;
         };
         
-        
-        
-        
-        
-        template<typename container_collection_typemap, typename element_tag>
-        struct element_of_container_collection_helper;
-        
-        template<typename element_tag>
-        struct element_of_container_collection_helper<viennameta::null_type, element_tag>
+        template<typename element_tag, typename boundary_cell_container_typelist, typename id_type, long dim>
+        struct ncell_range< const element_t<element_tag, boundary_cell_container_typelist, id_type>, dim >
         {
-            typedef viennameta::null_type type;
+            typedef typename const_ncell_range<element_t<element_tag, boundary_cell_container_typelist, id_type>, dim>::type type;
         };
         
-        template<typename element_type, typename container_type, typename tail, typename element_tag>
-        struct element_of_container_collection_helper<viennameta::typelist_t< viennameta::static_pair<element_type, container_type>, tail >, element_tag>
-        {
-            typedef typename viennameta::_if<
-                viennameta::_equal<typename element_type::tag, element_tag>::value,
-                element_type,
-                typename element_of_container_collection_helper<tail, element_tag>::type
-            >::type type;
-        };
+
+        
+        
+        
+        
+
         
         template<typename container_collection_typemap, typename element_tag>
         struct element<storage::collection_t<container_collection_typemap>, element_tag>
         {
-            typedef typename element_of_container_collection_helper<container_collection_typemap, element_tag>::type type;
+            typedef typename container_of_tag_for_collection<container_collection_typemap, element_tag>::type::value_type type;
         };
         
-        
-        
-        
-        template<typename container_collection_typemap, long dim>
-        struct ncell_of_container_collection_helper;
-        
-        template<long dim>
-        struct ncell_of_container_collection_helper<viennameta::null_type, dim>
+        template<typename container_collection_typemap,
+                 typename sub_element_tag, typename sub_boundary_cell_container_typelist, typename sub_id_type>
+        struct element< storage::collection_t<container_collection_typemap>, element_t<sub_element_tag, sub_boundary_cell_container_typelist, sub_id_type> >
         {
-            typedef viennameta::null_type type;
+            typedef typename element< storage::collection_t<container_collection_typemap>, sub_element_tag >::type type;
         };
         
-        template<typename element_type, typename container_type, typename tail, long dim>
-        struct ncell_of_container_collection_helper<viennameta::typelist_t< viennameta::static_pair<element_type, container_type>, tail >, dim>
+        template<typename container_collection_typemap, typename element_tag>
+        struct element_hook<storage::collection_t<container_collection_typemap>, element_tag>
         {
-            typedef typename viennameta::_if<
-                element_type::tag::dim == dim,
-                element_type,
-                typename ncell_of_container_collection_helper<tail, dim>::type
-            >::type type;
+            typedef typename container_of_tag_for_collection<container_collection_typemap, element_tag>::type::hook_type type;
         };
+        
+        template<typename container_collection_typemap,
+                 typename sub_element_tag, typename sub_boundary_cell_container_typelist, typename sub_id_type>
+        struct element_hook< storage::collection_t<container_collection_typemap>, element_t<sub_element_tag, sub_boundary_cell_container_typelist, sub_id_type> >
+        {
+            typedef typename element_hook< storage::collection_t<container_collection_typemap>, sub_element_tag >::type type;
+        };
+        
+
+        template<typename container_collection_typemap, typename element_type_or_tag>
+        struct element_range<storage::collection_t<container_collection_typemap>, element_type_or_tag>
+        {
+            typedef typename element< storage::collection_t<container_collection_typemap>, element_type_or_tag>::type element_type;
+            typedef viennagrid::storage::container_range_wrapper< typename container_of_tag_for_collection<container_collection_typemap, typename element_type::tag>::type > type;
+        };
+        
+        template<typename container_collection_typemap, typename element_type_or_tag>
+        struct const_element_range<storage::collection_t<container_collection_typemap>, element_type_or_tag>
+        {
+            typedef typename element< storage::collection_t<container_collection_typemap>, element_type_or_tag>::type element_type;
+            typedef const viennagrid::storage::container_range_wrapper< const typename container_of_tag_for_collection<container_collection_typemap, typename element_type::tag>::type > type;
+        };
+        
+        template<typename container_collection_typemap, typename element_type_or_tag>
+        struct element_range< const storage::collection_t<container_collection_typemap>, element_type_or_tag>
+        {
+            typedef typename const_element_range<storage::collection_t<container_collection_typemap>, element_type_or_tag>::type type;
+        };
+        
+        
         
         template<typename container_collection_typemap, long dim>
         struct ncell<storage::collection_t<container_collection_typemap>, dim>
         {
-            typedef typename ncell_of_container_collection_helper<container_collection_typemap, dim>::type type;
+            typedef typename container_of_dimension_for_collection<container_collection_typemap, dim>::type::value_type type;
         };
+        
+        template<typename container_collection_typemap, long dim>
+        struct ncell_hook<storage::collection_t<container_collection_typemap>, dim>
+        {
+            typedef typename container_of_dimension_for_collection<container_collection_typemap, dim>::type::hook_type type;
+        };
+        
+
+        template<typename container_collection_typemap, long dim>
+        struct ncell_range<storage::collection_t<container_collection_typemap>, dim>
+        {
+            typedef viennagrid::storage::container_range_wrapper< typename container_of_dimension_for_collection<container_collection_typemap, dim>::type > type;
+        };
+        
+        template<typename container_collection_typemap, long dim>
+        struct const_ncell_range<storage::collection_t<container_collection_typemap>, dim>
+        {
+            typedef const viennagrid::storage::container_range_wrapper< const typename container_of_dimension_for_collection<container_collection_typemap, dim>::type > type;
+        };
+        
+        template<typename container_collection_typemap, long dim>
+        struct ncell_range<const storage::collection_t<container_collection_typemap>, dim>
+        {
+            typedef typename const_ncell_range<storage::collection_t<container_collection_typemap>, dim>::type type;
+        };
+        
     }
     
+    
+
+    template<typename sub_element_type_or_tag, typename element_tag, typename boundary_cell_container_typelist, typename id_type>
+    typename result_of::element_range<element_t<element_tag, boundary_cell_container_typelist, id_type>, sub_element_type_or_tag>::type elements( element_t<element_tag, boundary_cell_container_typelist, id_type> & element)
+    {
+        typedef typename result_of::element<element_t<element_tag, boundary_cell_container_typelist, id_type>, sub_element_type_or_tag>::type sub_element_type;
+        return typename result_of::element_range<element_t<element_tag, boundary_cell_container_typelist, id_type>, sub_element_type_or_tag>::type( element.container( typename sub_element_type::tag() ) );
+    }
+
+    template<typename sub_element_type_or_tag, typename element_tag, typename boundary_cell_container_typelist, typename id_type>
+    typename result_of::const_element_range<element_t<element_tag, boundary_cell_container_typelist, id_type>, sub_element_type_or_tag>::type elements( const element_t<element_tag, boundary_cell_container_typelist, id_type> & element)
+    {
+        typedef typename result_of::element<element_t<element_tag, boundary_cell_container_typelist, id_type>, sub_element_type_or_tag>::type sub_element_type;
+        //std::cout << typeid(typename sub_element_type::tag).name() << std::endl;
+        return typename result_of::const_element_range<element_t<element_tag, boundary_cell_container_typelist, id_type>, sub_element_type_or_tag>::type( element.container( typename sub_element_type::tag() ) );
+    }
+
     
     template<long dim, typename element_tag, typename boundary_cell_container_typelist, typename id_type>
     typename result_of::ncell_range<element_t<element_tag, boundary_cell_container_typelist, id_type>, dim>::type ncells( element_t<element_tag, boundary_cell_container_typelist, id_type> & element)
@@ -457,6 +715,70 @@ namespace viennagrid
         return typename result_of::const_ncell_range<element_t<element_tag, boundary_cell_container_typelist, id_type>, dim>::type( element.container( dimension_tag<dim>() ) );
     }
     
+    
+    
+    
+    template<typename element_type_or_tag, typename container_collection_typemap>
+    typename result_of::element_range<storage::collection_t<container_collection_typemap>, element_type_or_tag>::type elements( storage::collection_t<container_collection_typemap> & collection)
+    {
+        typedef typename result_of::element<storage::collection_t<container_collection_typemap>, element_type_or_tag>::type element_type;
+        return typename result_of::element_range<storage::collection_t<container_collection_typemap>, element_type_or_tag>::type( storage::collection::get<element_type>(collection) );
+    }
+    
+    template<typename element_type_or_tag, typename container_collection_typemap>
+    typename result_of::const_element_range<storage::collection_t<container_collection_typemap>, element_type_or_tag>::type elements( const storage::collection_t<container_collection_typemap> & collection)
+    {
+        typedef typename result_of::element<storage::collection_t<container_collection_typemap>, element_type_or_tag>::type element_type;
+        return typename result_of::const_element_range<storage::collection_t<container_collection_typemap>, element_type_or_tag>::type( storage::collection::get<element_type>(collection) );
+    }
+    
+    
+    template<long dim, typename container_collection_typemap>
+    typename result_of::ncell_range<storage::collection_t<container_collection_typemap>, dim>::type ncells( storage::collection_t<container_collection_typemap> & collection)
+    {
+        typedef typename result_of::ncell<storage::collection_t<container_collection_typemap>, dim>::type element_type;
+        return typename result_of::ncell_range<storage::collection_t<container_collection_typemap>, dim>::type( storage::collection::get<element_type>(collection) );
+    }
+    
+    template<long dim, typename container_collection_typemap>
+    typename result_of::const_ncell_range<storage::collection_t<container_collection_typemap>, dim>::type ncells( const storage::collection_t<container_collection_typemap> & collection)
+    {
+        typedef typename result_of::ncell<storage::collection_t<container_collection_typemap>, dim>::type element_type;
+        return typename result_of::const_ncell_range<storage::collection_t<container_collection_typemap>, dim>::type( storage::collection::get<element_type>(collection) );
+    }
+
+    
+    
+    template<typename element_type, typename functor_type>
+    struct for_each_boundary_cell_functor
+    {
+    public:
+        
+        for_each_boundary_cell_functor( element_type & element_, functor_type functor_ ) : element(element_), functor(functor_) {}
+        
+        template<typename boundary_cell_type>
+        void operator()( viennameta::tag<boundary_cell_type> )
+        {
+            typedef typename result_of::element_range<element_type, boundary_cell_type>::type boundary_cell_range_type;
+            typedef typename result_of::iterator<boundary_cell_range_type>::type boundary_cell_iterator_type;
+            
+            boundary_cell_range_type range = viennagrid::elements<boundary_cell_type>( element );
+            for (boundary_cell_iterator_type it = range.begin(); it != range.end(); ++it)
+                functor(*it);
+        }
+        
+    private:
+        element_type & element;
+        functor_type functor;
+    };
+    
+    template<typename element_type, typename functor_type>
+    void for_each_boundary_cell( element_type & element, functor_type functor )
+    {
+        for_each_boundary_cell_functor<element_type, functor_type> for_each_functor( element, functor );
+        
+        viennameta::typelist::for_each<typename element_type::boundary_cell_typelist>(for_each_functor);
+    }
     
     
     
@@ -478,6 +800,7 @@ namespace viennagrid
         
         return os;
     }
+    
   
 }
 
