@@ -149,5 +149,3 @@ namespace viennagrid
 }
 
 #endif
-template<class _Signature >
-class result_of;
