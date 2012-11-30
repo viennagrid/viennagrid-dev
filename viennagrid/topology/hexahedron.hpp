@@ -18,7 +18,7 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
-#include "viennagrid/forwards.h"
+#include "viennagrid/forwards.hpp"
 #include "viennagrid/topology/line.hpp"
 #include "viennagrid/topology/quadrilateral.hpp"
 
@@ -45,7 +45,7 @@ namespace viennagrid
     template <>
     struct bndcells<hexahedron_tag, 0>
     {
-      typedef point_tag             tag;
+      typedef vertex_tag            tag;
 
       typedef static_layout_tag     layout_tag;
       enum{ num = 8 };     //8 vertices

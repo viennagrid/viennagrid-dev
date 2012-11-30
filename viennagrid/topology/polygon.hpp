@@ -18,7 +18,7 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
-#include "viennagrid/forwards.h"
+#include "viennagrid/forwards.hpp"
 #include "viennagrid/topology/point.hpp"
 
 /** @file polygon.hpp
@@ -43,7 +43,7 @@ namespace viennagrid
     template <>
     struct bndcells<polygon_tag, 0>
     {
-      typedef point_tag             tag;
+      typedef vertex_tag            tag;
       
       typedef dynamic_layout_tag    layout_tag;
       enum{ num = -1 };

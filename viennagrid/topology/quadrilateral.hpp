@@ -18,7 +18,7 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
-#include "viennagrid/forwards.h"
+#include "viennagrid/forwards.hpp"
 #include "viennagrid/topology/point.hpp"
 #include "viennagrid/topology/line.hpp"
 
@@ -26,6 +26,8 @@
     @brief Provides the topological definition of a quadrilateral
 */
 
+template<class _numeric_type >
+class vertex;
 namespace viennagrid
 {
   /** @brief Topological description of a quadrilateral.*/
@@ -43,7 +45,7 @@ namespace viennagrid
     template <>
     struct bndcells<quadrilateral_tag, 0>
     {
-      typedef point_tag             tag;
+      typedef vertex_tag            tag;
 
       typedef static_layout_tag     layout_tag;
       enum{ num = 4 };     //4 vertices
