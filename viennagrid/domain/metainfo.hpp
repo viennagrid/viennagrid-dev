@@ -83,6 +83,26 @@ namespace viennagrid
         
         
         
+        template<typename geometric_container_type, typename element_type>
+        const typename result_of::associative_container_value_type<geometric_container_type>::type & look_up( const geometric_container_type & container, const element_type & element, random_access_tag )
+        {
+            return container[ element.id().get() ];
+        }
+        
+        template<typename geometric_container_type, typename element_type>
+        const typename result_of::associative_container_value_type<geometric_container_type>::type & look_up( const geometric_container_type & container, const element_type & element, associative_access_tag )
+        {
+            typename geometric_container_type::iterator it = container.find( element.id() );
+            return it->second;
+        }
+        
+        template<typename geometric_container_type, typename element_type>
+        const typename result_of::associative_container_value_type<geometric_container_type>::type & look_up( const geometric_container_type & container, const element_type & element )
+        {
+            return look_up(container, element, typename result_of::associative_container_access_tag<geometric_container_type>::type() );
+        }
+        
+        
         
         template<typename geometric_container_type, typename element_type>
         void set( geometric_container_type & container, const element_type & element, const typename result_of::associative_container_value_type<geometric_container_type>::type & info, random_access_tag )
@@ -149,6 +169,21 @@ namespace viennagrid
         >::type
     >::type & look_up(
             viennagrid::storage::collection_t<metainfo_container_typemap> & metainfo_collection,
+            const element_type & element
+        )
+    {
+        return metainfo::look_up( get_info<element_type, metainfo_type>(metainfo_collection), element );
+    }
+    
+    template<typename metainfo_type, typename metainfo_container_typemap, typename element_type>
+    const typename metainfo::result_of::associative_container_value_type<
+        typename result_of::info_container<
+            viennagrid::storage::collection_t<metainfo_container_typemap>,
+            element_type,
+            metainfo_type
+        >::type
+    >::type & look_up(
+            const viennagrid::storage::collection_t<metainfo_container_typemap> & metainfo_collection,
             const element_type & element
         )
     {
