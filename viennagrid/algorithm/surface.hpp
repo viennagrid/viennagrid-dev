@@ -23,7 +23,7 @@
 #include <string>
 #include <stdexcept>
 
-#include "viennagrid/forwards.h"
+#include "viennagrid/forwards.hpp"
 #include "viennagrid/algorithm/volume.hpp"
 #include "viennagrid/algorithm/boundary.hpp"
 
@@ -37,25 +37,24 @@ namespace viennagrid
   namespace detail
   {
     /** @brief Implementation for the calculation of the surface of a domain or segment */
-    template <typename ContainerType>
-    typename ContainerType::config_type::numeric_type
-    surface_domainsegment(ContainerType const & d)
+    template <typename ElementTypeOrTag, typename GeometricContainerType>
+    typename viennagrid::traits::value_type< typename viennagrid::result_of::point_type<GeometricContainerType>::type >::type
+    surface_domainsegment(GeometricContainerType const & d)
     {
-      typedef ContainerType                                      DomainType;
-      typedef typename ContainerType::config_type::cell_tag      CellTag;
+      typedef typename viennagrid::result_of::element_tag<ElementTypeOrTag>::type ElementTag;
       
-      typedef typename viennagrid::result_of::const_ncell_range<DomainType, CellTag::dim-1>::type  FacetRange;
+      typedef typename viennagrid::result_of::const_element_range<GeometricContainerType, typename ElementTag::facet_tag>::type  FacetRange;
       typedef typename viennagrid::result_of::iterator<FacetRange>::type         FacetIterator;
       
-      typename ContainerType::config_type::numeric_type result = 0;
+      typename viennagrid::traits::value_type< typename viennagrid::result_of::point_type<GeometricContainerType>::type >::type result = 0;
       
-      FacetRange facets = viennagrid::ncells(d);
+      FacetRange facets = viennagrid::elements<typename ElementTag::facet_tag>(d);
       for (FacetIterator fit = facets.begin();
                          fit != facets.end();
                        ++fit)
       {
         if (is_boundary(*fit, d))
-          result += viennagrid::volume(*fit);
+          result += viennagrid::volume(*fit, d);
       }
       return result;
     }
@@ -67,46 +66,41 @@ namespace viennagrid
   // The public interface functions
   //
   /** @brief Returns the surface of a n-cell */
-  template <typename ElementType>
-  typename ElementType::config_type::numeric_type
-  surface(ElementType const & element)
+  template <typename ElementType, typename GeometricContainerType>
+  typename viennagrid::traits::value_type< typename viennagrid::result_of::point_type<GeometricContainerType>::type >::type
+  surface(ElementType const & element, const GeometricContainerType & geometric_container)
   {
-    typedef typename ElementType::config_type                   ConfigType;
+    //typedef typename ElementType::config_type                   ConfigType;
     typedef typename viennagrid::result_of::const_ncell_range<ElementType, ElementType::tag::dim-1>::type   ElementBoundaryRange;
     typedef typename viennagrid::result_of::iterator<ElementBoundaryRange>::type       ElementBoundaryIterator;
     
-    typedef typename ElementType::config_type::numeric_type value_type;
+    //typedef typename ElementType::config_type::numeric_type value_type;
+    typedef typename viennagrid::traits::value_type< typename viennagrid::result_of::point_type<GeometricContainerType>::type >::type value_type;
     
     value_type result = 0;
     
-    ElementBoundaryRange boundary = viennagrid::ncells(element);
+    ElementBoundaryRange boundary = viennagrid::ncells<ElementType::tag::dim-1>(element);
     for (ElementBoundaryIterator ebit = boundary.begin();
                                   ebit != boundary.end();
                                 ++ebit)
     {
-      result += viennagrid::volume(*ebit);
+      result += viennagrid::volume(*ebit, geometric_container);
     }
     
     return result;
   }
   
+  
+  
   //special case: domain
   /** @brief Returns the surface of a domain */
-  template <typename ConfigType>
-  typename ConfigType::numeric_type
-  surface(domain_t<ConfigType> const & d)
+  template <typename ElementTypeOrTag, typename GeometricContainerType>
+  typename viennagrid::traits::value_type< typename viennagrid::result_of::point_type<GeometricContainerType>::type >::type
+  surface(GeometricContainerType const & d)
   {
-    return detail::surface_domainsegment(d);
+    return detail::surface_domainsegment<ElementTypeOrTag>(d);
   }    
-  
-  //special case: segment
-  /** @brief Returns the surface of a segment */
-  template <typename ConfigType>
-  typename ConfigType::numeric_type
-  surface(segment_t<ConfigType> const & d)
-  {
-    return detail::surface_domainsegment(d);
-  }
+
     
 } //namespace viennagrid
 #endif
