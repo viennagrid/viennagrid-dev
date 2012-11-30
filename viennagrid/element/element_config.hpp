@@ -19,7 +19,9 @@
 ======================================================================= */
 
 
+#include "viennagrid/storage/view.hpp"
 #include "viennagrid/element/element.hpp"
+
 
 /** @file element.hpp
     @brief Provides the main n-cell type
@@ -301,9 +303,10 @@ namespace viennagrid
         };
         
 
-        template<typename domain_config, long dim>
-        struct ncell
+        template<typename head, typename tail, long dim>
+        struct ncell< viennameta::typelist_t<head, tail>, dim >
         {
+            typedef viennameta::typelist_t<head, tail> domain_config;
             typedef typename element<
                 domain_config,
                 typename ncell_tag<domain_config, dim>::type
