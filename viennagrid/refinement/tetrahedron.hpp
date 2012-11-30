@@ -18,10 +18,10 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
-#include "viennagrid/forwards.h"
+#include "viennagrid/forwards.hpp"
 #include "viennagrid/topology/point.hpp"
 #include "viennagrid/topology/line.hpp"
-#include "viennagrid/topology/triangle.hpp"
+#include "viennagrid/topology/simplex.hpp"
 #include "viennadata/api.hpp"
 
 /** @file refinement/tetrahedron.hpp
@@ -91,18 +91,19 @@ namespace viennagrid
     static void apply0(CellType const & cell_in, DomainTypeOut & segment_out)
     {
       //std::cout << "tetrahedron::apply0()" << std::endl;
-      typedef typename CellType::config_type        ConfigTypeIn;
-      typedef typename viennagrid::result_of::const_ncell_range<CellType, 0>::type            VertexOnCellRange;
+      //typedef typename CellType::config_type        ConfigTypeIn;
+      typedef typename viennagrid::result_of::const_element_range<CellType, vertex_tag>::type            VertexOnCellRange;
       typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type         VertexOnCellIterator;            
-      typedef typename viennagrid::result_of::const_ncell_range<CellType, 1>::type            EdgeOnCellRange;
+      typedef typename viennagrid::result_of::const_element_range<CellType, line_tag>::type            EdgeOnCellRange;
       typedef typename viennagrid::result_of::iterator<EdgeOnCellRange>::type           EdgeOnCellIterator;            
       
-      typedef typename viennagrid::result_of::ncell<ConfigTypeIn, 0>::type             VertexType;
+      typedef typename viennagrid::result_of::element<DomainTypeOut, vertex_tag>::type             VertexType;
+      typedef typename viennagrid::result_of::element_hook<DomainTypeOut, vertex_tag>::type             VertexHookType;
 
       VertexType * vertices[topology::bndcells<tetrahedron_tag, 0>::num];
       
       // Step 1: grab existing vertices:
-      VertexOnCellRange vertices_on_cell = viennagrid::ncells<0>(cell_in);
+      VertexOnCellRange vertices_on_cell = viennagrid::elements<vertex_tag>(cell_in);
       VertexOnCellIterator vocit = vertices_on_cell.begin();
       vertices[0] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]); ++vocit;
       vertices[1] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]); ++vocit;
