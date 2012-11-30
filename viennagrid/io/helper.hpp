@@ -24,7 +24,7 @@
 #include <iostream>
 #include <cctype>
 #include <string>
-#include "viennagrid/forwards.h"
+#include "viennagrid/forwards.hpp"
 
 /** @file helper.hpp
     @brief Various helpers for I/O operations

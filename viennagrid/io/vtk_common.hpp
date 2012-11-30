@@ -23,7 +23,7 @@
 #include <iostream>
 #include "viennagrid/io/helper.hpp"
 #include "viennagrid/topology/all.hpp"
-#include "viennagrid/forwards.h"
+#include "viennagrid/forwards.hpp"
 
 /** @file vtk_common.hpp
     @brief Provides common things for VTK reader and writer
@@ -171,75 +171,75 @@ namespace viennagrid
      * @tparam DomainSegmentType   Type of either a domain or a segment
      * @tparam IDHandler           The ID handling class used for dispatching.
      */
-    template <typename DomainSegmentType,
-              typename IDHandler = typename viennagrid::result_of::element_id_handler<typename DomainSegmentType::config_type,
-                                                                                      viennagrid::point_tag>::type
-             >
-    class vtk_vertex_id_repository //default case: This is a segment
-    {
-        typedef typename DomainSegmentType::config_type                      ConfigType;
-        typedef typename viennagrid::result_of::segment<ConfigType>::type    SegmentType;
-        typedef typename viennagrid::result_of::ncell<ConfigType, 0>::type   VertexType;
-        
-      public:
-        vtk_vertex_id_repository(SegmentType const & seg) {}
-      
-        /** @brief Returns the ID of the the vertex with respect to the segment */
-        long operator()(VertexType const & v, SegmentType const & seg) const
-        {
-          return viennadata::access<segment_mapping_key<SegmentType>, long>(seg)(v);
-        }
-    };
-    
-    /** @brief Specialization for a domain. The simple case: Vertices know their global IDs. */
-    template <typename ConfigType>
-    class vtk_vertex_id_repository< viennagrid::domain_t<ConfigType>, viennagrid::integral_id >
-    {
-        typedef typename viennagrid::result_of::domain<ConfigType>::type     DomainType;
-        typedef typename viennagrid::result_of::ncell<ConfigType, 0>::type   VertexType;
-        
-      public:
-        vtk_vertex_id_repository(DomainType const & seg) {}
-      
-        /** @brief Returns the global ID of the vertex */
-        long operator()(VertexType const & v, DomainType const & seg) const
-        {
-          return v.id();
-        }
-    };
-
-    /** @brief Specialization for a domain. The tough case: Vertices don't know their global IDs. Set up a map first. */
-    template <typename ConfigType>
-    class vtk_vertex_id_repository< viennagrid::domain_t<ConfigType>, viennagrid::pointer_id >
-    {
-        typedef typename viennagrid::domain_t<ConfigType>                    DomainType;
-        typedef typename viennagrid::result_of::ncell<ConfigType, 0>::type   VertexType;
-        
-      public:
-        vtk_vertex_id_repository(DomainType const & domain)
-        {
-          typedef typename viennagrid::result_of::const_ncell_range<DomainType, 0>::type    VertexRange;
-          typedef typename viennagrid::result_of::iterator<VertexRange>::type               VertexIterator;
-          
-          VertexRange vertices = viennagrid::ncells(domain);
-          long vertex_index = 0;
-          for (VertexIterator vit = vertices.begin();
-                              vit != vertices.end();
-                            ++vit, ++vertex_index)
-          {
-            ptr_to_global_id[&(*vit)] = vertex_index;
-          }
-        }
-      
-        /** @brief Returns the global ID of the vertex */
-        long operator()(VertexType const & v, DomainType const &)
-        {
-          return ptr_to_global_id[&v];
-        }
-        
-      private:
-        std::map<VertexType const *, long>  ptr_to_global_id;
-    };
+//     template <typename DomainSegmentType,
+//               typename IDHandler = typename viennagrid::result_of::element_id_handler<typename DomainSegmentType::config_type,
+//                                                                                       viennagrid::point_tag>::type
+//              >
+//     class vtk_vertex_id_repository //default case: This is a segment
+//     {
+//         typedef typename DomainSegmentType::config_type                      ConfigType;
+//         typedef typename viennagrid::result_of::segment<ConfigType>::type    SegmentType;
+//         typedef typename viennagrid::result_of::ncell<ConfigType, 0>::type   VertexType;
+//         
+//       public:
+//         vtk_vertex_id_repository(SegmentType const & seg) {}
+//       
+//         /** @brief Returns the ID of the the vertex with respect to the segment */
+//         long operator()(VertexType const & v, SegmentType const & seg) const
+//         {
+//           return viennadata::access<segment_mapping_key<SegmentType>, long>(seg)(v);
+//         }
+//     };
+//     
+//     /** @brief Specialization for a domain. The simple case: Vertices know their global IDs. */
+//     template <typename ConfigType>
+//     class vtk_vertex_id_repository< viennagrid::domain_t<ConfigType>, viennagrid::integral_id >
+//     {
+//         typedef typename viennagrid::result_of::domain<ConfigType>::type     DomainType;
+//         typedef typename viennagrid::result_of::ncell<ConfigType, 0>::type   VertexType;
+//         
+//       public:
+//         vtk_vertex_id_repository(DomainType const & seg) {}
+//       
+//         /** @brief Returns the global ID of the vertex */
+//         long operator()(VertexType const & v, DomainType const & seg) const
+//         {
+//           return v.id();
+//         }
+//     };
+// 
+//     /** @brief Specialization for a domain. The tough case: Vertices don't know their global IDs. Set up a map first. */
+//     template <typename ConfigType>
+//     class vtk_vertex_id_repository< viennagrid::domain_t<ConfigType>, viennagrid::pointer_id >
+//     {
+//         typedef typename viennagrid::domain_t<ConfigType>                    DomainType;
+//         typedef typename viennagrid::result_of::ncell<ConfigType, 0>::type   VertexType;
+//         
+//       public:
+//         vtk_vertex_id_repository(DomainType const & domain)
+//         {
+//           typedef typename viennagrid::result_of::const_ncell_range<DomainType, 0>::type    VertexRange;
+//           typedef typename viennagrid::result_of::iterator<VertexRange>::type               VertexIterator;
+//           
+//           VertexRange vertices = viennagrid::ncells(domain);
+//           long vertex_index = 0;
+//           for (VertexIterator vit = vertices.begin();
+//                               vit != vertices.end();
+//                             ++vit, ++vertex_index)
+//           {
+//             ptr_to_global_id[&(*vit)] = vertex_index;
+//           }
+//         }
+//       
+//         /** @brief Returns the global ID of the vertex */
+//         long operator()(VertexType const & v, DomainType const &)
+//         {
+//           return ptr_to_global_id[&v];
+//         }
+//         
+//       private:
+//         std::map<VertexType const *, long>  ptr_to_global_id;
+//     };
     
 
     

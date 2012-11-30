@@ -23,7 +23,7 @@
 #include <sstream>
 #include <iostream>
 #include "viennagrid/domain.hpp"
-#include "viennagrid/forwards.h"
+#include "viennagrid/forwards.hpp"
 #include "viennagrid/iterators.hpp"
 #include "viennagrid/io/helper.hpp"
 #include "viennagrid/io/vtk_common.hpp"

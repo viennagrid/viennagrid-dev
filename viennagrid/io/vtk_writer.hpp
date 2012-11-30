@@ -23,7 +23,7 @@
 #include <sstream>
 #include <iostream>
 #include "viennagrid/domain.hpp"
-#include "viennagrid/forwards.h"
+#include "viennagrid/forwards.hpp"
 #include "viennagrid/iterators.hpp"
 #include "viennagrid/io/helper.hpp"
 #include "viennagrid/io/vtk_common.hpp"
@@ -62,9 +62,17 @@ namespace viennagrid
         typedef typename DomainConfiguration::coordinate_system_tag      CoordinateSystemTag;
         typedef typename DomainConfiguration::cell_tag                   CellTag;
 
-        typedef typename result_of::point<DomainConfiguration>::type                              PointType;
+        //typedef typename result_of::point<DomainConfiguration>::type                              PointType;
         typedef typename result_of::ncell<DomainConfiguration, 0>::type                           VertexType;
         typedef typename result_of::ncell<DomainConfiguration, CellTag::dim>::type     CellType;
+        
+        
+//         typedef typename viennagrid::result_of::point_type<DomainType>::type    PointType;
+//         typedef typename viennagrid::traits::value_type< PointType >::type      CoordType;
+//         typedef CellType_                                                       CellType;
+//         typedef typename CellType_::tag                                         CellTag;
+//         
+//         typedef typename result_of::ncell<DomainType, 0>::type          VertexType;
 
       protected:
 
@@ -116,7 +124,7 @@ namespace viennagrid
           typedef typename viennagrid::result_of::const_ncell_range<CellType, 0>::type      VertexOnCellRange;
           typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type         VertexOnCellIterator;
           
-          vtk_vertex_id_repository<DomainSegmentType>  vertex_ids(domseg);
+          //vtk_vertex_id_repository<DomainSegmentType>  vertex_ids(domseg);
           
           writer << "   <Cells> " << std::endl;
           writer << "    <DataArray type=\"Int32\" Name=\"connectivity\" format=\"ascii\">" << std::endl;
