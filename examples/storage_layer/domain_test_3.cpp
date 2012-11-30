@@ -43,9 +43,9 @@ int main()
     // First define the type of hook to use:
     //
     
-    typedef viennagrid::storage::pointer_hook_tag hook_tag;
+    //typedef viennagrid::storage::pointer_hook_tag hook_tag;
     //typedef viennagrid::storage::iterator_hook_tag hook_tag;
-    //typedef viennagrid::storage::id_hook_tag hook_tag;
+    typedef viennagrid::storage::id_hook_tag hook_tag;
     
     
     

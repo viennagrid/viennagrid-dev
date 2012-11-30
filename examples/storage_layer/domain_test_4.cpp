@@ -46,9 +46,9 @@ int main()
     // First define the type of hook to use:
     //
     
-    typedef viennagrid::storage::pointer_hook_tag hook_tag;
+    //typedef viennagrid::storage::pointer_hook_tag hook_tag;
     //typedef viennagrid::storage::iterator_hook_tag hook_tag;
-    //typedef viennagrid::storage::id_hook_tag hook_tag;
+    typedef viennagrid::storage::id_hook_tag hook_tag;
     
     
     
@@ -224,6 +224,8 @@ int main()
     for (domain_vertex_iterator it = domain_vtx_range.begin(); it != domain_vtx_range.end(); ++it)
         cout << *it << " geometric information: " << viennagrid::look_up<vector_type>( domain, *it ) << endl;
     cout << endl;
+
+    
     
     
     typedef viennagrid::result_of::const_ncell_range<geometric_view_type, 0>::type view_vertex_range;

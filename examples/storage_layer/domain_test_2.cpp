@@ -49,9 +49,9 @@ int main()
     // First define the type of hook to use:
     //
     
-    typedef viennagrid::storage::pointer_hook_tag hook_tag;
+    //typedef viennagrid::storage::pointer_hook_tag hook_tag;
     //typedef viennagrid::storage::iterator_hook_tag hook_tag;
-    //typedef viennagrid::storage::id_hook_tag hook_tag;
+    typedef viennagrid::storage::id_hook_tag hook_tag;
     
 
     typedef viennameta::make_typelist< viennameta::static_pair<viennagrid::tetrahedron_tag, double> >::type metainfo_typelist;
@@ -192,9 +192,29 @@ int main()
     typedef viennagrid::result_of::const_ncell_range<tetrahedron_type, 0>::type tetrahedron_vertex_range;
     typedef viennagrid::result_of::const_iterator<tetrahedron_vertex_range>::type tetrahedron_vertex_iterator;
     
-    cout << "All vertices of the first tetdrahedron in the domain" << endl;
+    cout << "All vertices of the first tetdrahedron in the domain USING ncells<dim>()" << endl;
     tetrahedron_vertex_range vtx_range = viennagrid::ncells<0>(test_tet);
     for (tetrahedron_vertex_iterator it = vtx_range.begin(); it != vtx_range.end(); ++it)
+        cout << *it << " geometric information: " << viennagrid::look_up<vector_type>( domain, *it ) << endl;
+    cout << endl;
+    
+    
+    typedef viennagrid::result_of::const_element_range<domain_type, viennagrid::vertex_tag>::type domain_vertex_range_2;
+    typedef viennagrid::result_of::const_iterator<domain_vertex_range_2>::type domain_vertex_iterator_2;
+    
+    cout << "All vertices of the first tetdrahedron in the domain USING elements<tag>()" << endl;
+    domain_vertex_range_2 domain_vtx_range_2 = viennagrid::elements<viennagrid::vertex_tag>(domain);
+    for (domain_vertex_iterator_2 it = domain_vtx_range_2.begin(); it != domain_vtx_range_2.end(); ++it)
+        cout << *it << " geometric information: " << viennagrid::look_up<vector_type>( domain, *it ) << endl;
+    cout << endl;
+    
+    
+    typedef viennagrid::result_of::const_element_range<domain_type, vertex_type>::type domain_vertex_range_3;
+    typedef viennagrid::result_of::const_iterator<domain_vertex_range_3>::type domain_vertex_iterator_3;
+    
+    cout << "All vertices of the first tetdrahedron in the domain USING elements<type>()" << endl;
+    domain_vertex_range_3 domain_vtx_range_3 = viennagrid::elements<vertex_type>(domain);
+    for (domain_vertex_iterator_3 it = domain_vtx_range_3.begin(); it != domain_vtx_range_3.end(); ++it)
         cout << *it << " geometric information: " << viennagrid::look_up<vector_type>( domain, *it ) << endl;
     cout << endl;
     
@@ -211,6 +231,30 @@ int main()
         cout << "   geometric information: " << viennagrid::look_up<double>( domain, *it ) << endl;
     }
     cout << endl;
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    const domain_type & test = domain;
+
+    typedef viennagrid::result_of::const_ncell_range<domain_type, 0>::type const_vertex_range;
+    typedef viennagrid::result_of::iterator<const_vertex_range>::type const_vertex_iterator;
+    
+    const_vertex_range r = viennagrid::ncells<0>(test);
+    for (const_vertex_iterator i = r.begin(); i != r.end(); ++i)
+    {
+        cout << *i << endl;
+        cout << viennagrid::point(test, *i) << endl;
+    }
+    
     
     return 0;
 }
