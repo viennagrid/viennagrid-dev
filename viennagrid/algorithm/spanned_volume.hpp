@@ -21,7 +21,7 @@
 
 
 //#include <math.h>
-#include "viennagrid/forwards.h"
+#include "viennagrid/forwards.hpp"
 #include "viennagrid/algorithm/cross_prod.hpp"
 #include "viennagrid/algorithm/norm.hpp"
 #include "viennagrid/algorithm/inner_prod.hpp"
