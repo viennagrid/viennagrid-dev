@@ -22,17 +22,18 @@
     @brief Convenience header file for all topological objects
 */
 
+// simplex:
+#include "viennagrid/topology/simplex.hpp"
+
 //one-dimensional:
 #include "viennagrid/topology/line.hpp"
 
 //two-dimensional:
-#include "viennagrid/topology/triangle.hpp"
 #include "viennagrid/topology/quadrilateral.hpp"
 
 #include "viennagrid/topology/polygon.hpp"
 
 //three-dimensional:
-#include "viennagrid/topology/tetrahedron.hpp"
 #include "viennagrid/topology/hexahedron.hpp"
 
 #endif
