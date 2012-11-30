@@ -18,6 +18,12 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
+#include "viennagrid/forwards.hpp"
+#include "viennagrid/storage/id_generator.hpp"
+#include "viennagrid/storage/inserter.hpp"
+
+#include "viennagrid/element/element_config.hpp"
+
 namespace viennagrid
 {
 
@@ -75,9 +81,17 @@ namespace viennagrid
         typedef inserter_type_ inserter_type;
         
         topologic_domain_t() : container_collection(), inserter() {}
-        topologic_domain_t(const topologic_domain_t & rhs) : container_collection(rhs.container_collection), inserter(rhs.inserter)
+        topologic_domain_t(const topologic_domain_t & other) : container_collection(other.container_collection), inserter(other.inserter)
         {
             inserter.set_container_collection( container_collection );
+        }
+        
+        topologic_domain_t & operator=(const topologic_domain_t & other)
+        {
+            container_collection = other.container_collection;
+            inserter = other.inserter;
+            inserter.set_container_collection( container_collection );
+            return *this;
         }
         
         container_collection_type & get_container_collection() { return container_collection; }
@@ -86,7 +100,6 @@ namespace viennagrid
         inserter_type & get_inserter() { return inserter; }
         
     protected:
-        //id_generator_type id_generator;
         container_collection_type container_collection;
         inserter_type inserter;
     };
@@ -300,17 +313,33 @@ namespace viennagrid
     namespace result_of
     {
         
-        template<typename domain_container_collection_type_, typename inserter_type_, typename element_tag>
-        struct element< topologic_domain_t<domain_container_collection_type_, inserter_type_>, element_tag >
+        template<typename domain_container_collection_type_, typename inserter_type_, typename element_type_or_tag>
+        struct element< topologic_domain_t<domain_container_collection_type_, inserter_type_>, element_type_or_tag >
         {
-            typedef typename element<domain_container_collection_type_, element_tag>::type type;
+            typedef typename element<domain_container_collection_type_, element_type_or_tag>::type type;
         };
         
-        template<typename domain_container_collection_type_, typename inserter_type_, typename element_tag>
-        struct element_hook<topologic_domain_t<domain_container_collection_type_, inserter_type_>, element_tag>
+        template<typename domain_container_collection_type_, typename inserter_type_, typename element_type_or_tag>
+        struct element_hook<topologic_domain_t<domain_container_collection_type_, inserter_type_>, element_type_or_tag>
         {
-            typedef typename element_container<domain_container_collection_type_, element_tag>::type::hook_type type;
+            typedef typename element_hook<domain_container_collection_type_, element_type_or_tag>::type type;
         };
+        
+        
+        template<typename domain_container_collection_type_, typename inserter_type_, typename element_type_or_tag>
+        struct element_range< topologic_domain_t<domain_container_collection_type_, inserter_type_>, element_type_or_tag >
+        {
+            typedef typename element_range<domain_container_collection_type_, element_type_or_tag>::type type;
+        };
+        
+        template<typename domain_container_collection_type_, typename inserter_type_, typename element_type_or_tag>
+        struct const_element_range<topologic_domain_t<domain_container_collection_type_, inserter_type_>, element_type_or_tag>
+        {
+            typedef typename const_element_range<domain_container_collection_type_, element_type_or_tag>::type type;
+        };
+        
+        
+        
         
         template<typename domain_container_collection_type_, typename inserter_type_, long dim>
         struct ncell< topologic_domain_t<domain_container_collection_type_, inserter_type_>, dim >
@@ -321,54 +350,47 @@ namespace viennagrid
         template<typename domain_container_collection_type_, typename inserter_type_, long dim>
         struct ncell_hook< topologic_domain_t<domain_container_collection_type_, inserter_type_>, dim >
         {
-            typedef typename ncell<domain_container_collection_type_, dim>::type element_type;
-            typedef typename element_container<domain_container_collection_type_, typename element_type::tag>::type::hook_type type;
+            typedef typename ncell_hook<domain_container_collection_type_, dim>::type type;
         };
+        
         
         template<typename domain_container_collection_type_, typename inserter_type_, long dim>
         struct ncell_range< topologic_domain_t<domain_container_collection_type_, inserter_type_>, dim >
         {
-            typedef viennagrid::storage::container_range_wrapper<
-                typename viennagrid::storage::result_of::container_of<
-                    typename topologic_domain_t<domain_container_collection_type_, inserter_type_>::container_collection_type,
-                    typename ncell<topologic_domain_t<domain_container_collection_type_, inserter_type_>, dim>::type
-                >::type
-            > type;
+            typedef typename ncell_range<domain_container_collection_type_, dim>::type type;
         };
         
         template<typename domain_container_collection_type_, typename inserter_type_, long dim>
         struct const_ncell_range< topologic_domain_t<domain_container_collection_type_, inserter_type_>, dim >
         {
-            typedef viennagrid::storage::container_range_wrapper<
-                const typename viennagrid::storage::result_of::container_of<
-                    typename topologic_domain_t<domain_container_collection_type_, inserter_type_>::container_collection_type,
-                    typename ncell<topologic_domain_t<domain_container_collection_type_, inserter_type_>, dim>::type
-                >::type
-            > type;
+            typedef typename const_ncell_range<domain_container_collection_type_, dim>::type type;
         };
+    }
+    
+    
+    template<typename element_type_or_tag, typename domain_container_collection_type_, typename inserter_type_>
+    typename result_of::element_range<topologic_domain_t<domain_container_collection_type_, inserter_type_>, element_type_or_tag>::type elements(topologic_domain_t<domain_container_collection_type_, inserter_type_> & domain)
+    {
+        return elements<element_type_or_tag>(domain.get_container_collection());
+    }
+    
+    template<typename element_type_or_tag, typename domain_container_collection_type_, typename inserter_type_>
+    typename result_of::const_element_range<topologic_domain_t<domain_container_collection_type_, inserter_type_>, element_type_or_tag>::type elements(const topologic_domain_t<domain_container_collection_type_, inserter_type_> & domain)
+    {
+        return elements<element_type_or_tag>(domain.get_container_collection());
     }
     
     template<long dim, typename domain_container_collection_type_, typename inserter_type_>
     typename result_of::ncell_range<topologic_domain_t<domain_container_collection_type_, inserter_type_>, dim>::type ncells(topologic_domain_t<domain_container_collection_type_, inserter_type_> & domain)
     {
-        typedef typename result_of::ncell<topologic_domain_t<domain_container_collection_type_, inserter_type_>, dim>::type element_type;
-        return typename result_of::ncell_range<topologic_domain_t<domain_container_collection_type_, inserter_type_>, dim>::type(
-            viennagrid::storage::collection::get<element_type>(domain.get_container_collection()) );
+        return ncells<dim>(domain.get_container_collection());
     }
     
     template<long dim, typename domain_container_collection_type_, typename inserter_type_>
     typename result_of::const_ncell_range<topologic_domain_t<domain_container_collection_type_, inserter_type_>, dim>::type ncells(const topologic_domain_t<domain_container_collection_type_, inserter_type_> & domain)
     {
-        typedef const typename result_of::ncell<topologic_domain_t<domain_container_collection_type_, inserter_type_>, dim>::type element_type;
-        return typename result_of::const_ncell_range<topologic_domain_t<domain_container_collection_type_, inserter_type_>, dim>::type(
-            viennagrid::storage::collection::get<element_type>(domain.get_container_collection()) );
+        return ncells<dim>(domain.get_container_collection());
     }
-    
-    
-    
-    
-
-    
 
     
 
@@ -387,7 +409,18 @@ namespace viennagrid
         return inserter(domain)(element);
     }
     
-    
+    template<typename domain_type, typename element_tag, typename boundary_cell_container_typelist, typename id_type>
+    std::pair<
+                typename viennagrid::storage::result_of::container_of<
+                    typename result_of::container_collection<domain_type>::type,
+                    viennagrid::element_t<element_tag, boundary_cell_container_typelist, id_type>
+                >::type::hook_type,
+                bool
+            >
+        push_element_noid( domain_type & domain, const viennagrid::element_t<element_tag, boundary_cell_container_typelist, id_type> & element)
+    {
+        return inserter(domain).insert_noid(element);
+    }
 
     
 
@@ -416,10 +449,23 @@ namespace viennagrid
     
        
     template<typename element_type, typename domain_type>
-    typename result_of::element_hook<domain_type, viennagrid::vertex_tag>::type create_element( domain_type & domain )
+    typename result_of::element_hook<domain_type, element_type>::type create_element( domain_type & domain )
     {
-        typedef typename result_of::element<domain_type, viennagrid::vertex_tag>::type vertex_type;
-        return push_element(domain, vertex_type() ).first;
+        //typedef typename result_of::element<domain_type, viennagrid::vertex_tag>::type vertex_type;
+        //element_type element;
+        
+        return push_element(domain, element_type() ).first;
+    }
+    
+    template<typename element_type, typename domain_type>
+    typename result_of::element_hook<domain_type, element_type>::type create_element( domain_type & domain, typename element_type::id_type id )
+    {
+        //typedef typename result_of::element<domain_type, viennagrid::vertex_tag>::type vertex_type;
+        
+        element_type element;
+        element.id( id );
+        
+        return push_element_noid(domain, element).first;
     }
     
     
@@ -433,7 +479,21 @@ namespace viennagrid
             viennagrid::set_vertex( element, *it, element_index );
                 
         return push_element(domain, element ).first;
-    }    
+    }
+    
+    template<typename element_type, typename domain_type, typename hook_array_type>
+    typename result_of::element_hook<domain_type, typename element_type::tag>::type create_element( domain_type & domain, const hook_array_type & array, typename element_type::id_type id )
+    {
+        element_type element = element_type( inserter(domain).get_physical_container_collection() );
+        
+        element.id( id );
+        
+        size_t element_index = 0;
+        for (typename hook_array_type::const_iterator it = array.begin(); it != array.end(); ++it, ++element_index)
+            viennagrid::set_vertex( element, *it, element_index );
+                
+        return push_element_noid(domain, element ).first;
+    }
 }
 
 
