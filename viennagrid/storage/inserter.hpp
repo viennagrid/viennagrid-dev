@@ -35,7 +35,7 @@ namespace viennagrid
             
             void set_container_collection(container_collection_type & _collection) { collection = &_collection; }
             
-            template<typename value_type, typename inserter_type>
+            template<bool generate_id, typename value_type, typename inserter_type>
             std::pair<
                 typename viennagrid::storage::result_of::container_of<container_collection_type, value_type>::type::hook_type,
                 bool
@@ -50,7 +50,7 @@ namespace viennagrid
                 
                 container_type & container = viennagrid::storage::collection::get< value_type >( *collection );
                 
-                if ( !container.is_present( element ) )
+                if ( generate_id && !container.is_present( element ) )
                     viennagrid::storage::id::set_id(element, id_generator( viennameta::tag<value_type>() ) );
                 
                 std::pair<hook_type, bool> ret = container.insert( element );
@@ -80,7 +80,17 @@ namespace viennagrid
             >
                 operator()( const value_type & element )
             {
-                return physical_insert( element, *this );
+                return physical_insert<true>( element, *this );
+            }
+            
+            template<typename value_type>
+            std::pair<
+                typename viennagrid::storage::result_of::container_of<container_collection_type, value_type>::type::hook_type,
+                bool
+            >
+                insert_noid( const value_type & element )
+            {
+                return physical_insert<true>( element, *this );
             }
             
             container_collection_type & get_physical_container_collection() { return *collection; }
@@ -120,14 +130,14 @@ namespace viennagrid
             
             typedef typename dependend_inserter_type::physical_container_collection_type physical_container_collection_type;
             
-            template<typename value_type, typename inserter_type>
+            template<bool generate_id, typename value_type, typename inserter_type>
             std::pair<
                 typename viennagrid::storage::result_of::container_of<physical_container_collection_type, value_type>::type::hook_type,
                 bool
             >
                 physical_insert( const value_type & element, inserter_type & inserter )
             {
-                return dependend_inserter->physical_insert( element, inserter );
+                return dependend_inserter->physical_insert<generate_id>( element, inserter );
             }
             
             template<typename value_type>
@@ -137,7 +147,17 @@ namespace viennagrid
             >
                 operator()( const value_type & element )
             {
-                return physical_insert( element, *this );
+                return physical_insert<true>( element, *this );
+            }
+            
+            template<typename value_type>
+            std::pair<
+                typename viennagrid::storage::result_of::container_of<physical_container_collection_type, value_type>::type::hook_type,
+                bool
+            >
+                insert_noid( const value_type & element )
+            {
+                return physical_insert<false>( element, *this );
             }
             
             physical_container_collection_type & get_physical_container_collection() { return dependend_inserter->get_physical_container_collection(); }
