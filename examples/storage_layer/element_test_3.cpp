@@ -250,7 +250,7 @@ int main()
     //typedef tetrahedron_triangle_range::const_iterator tetrahedron_triangle_iterator;
     
     cout << "All triangles of the first tetdrahedron in the domain" << endl;
-    tetrahedron_triangle_range & tri_range = viennagrid::ncells<2>(test_tet);
+    tetrahedron_triangle_range tri_range = viennagrid::ncells<2>(test_tet);
     for (tetrahedron_triangle_iterator it = tri_range.begin(); it != tri_range.end(); ++it)
         cout << *it << endl;
     cout << endl;
@@ -266,7 +266,7 @@ int main()
     typedef viennagrid::result_of::const_iterator<triangle_line_range>::type triangle_line_iterator;
 
     cout << "All lines of the first triangle in the domain" << endl;
-    triangle_line_range & lin_range = viennagrid::ncells<1>(test_tri);
+    triangle_line_range lin_range = viennagrid::ncells<1>(test_tri);
     for (triangle_line_iterator it = lin_range.begin(); it != lin_range.end(); ++it)
         cout << *it << endl;
     cout << endl;
