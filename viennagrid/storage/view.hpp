@@ -420,7 +420,8 @@ namespace viennagrid
             
             void insert_hook(hook_type hook)
             {
-                hook_container.insert( hook );
+                viennagrid::storage::container::insert(hook_container, hook);
+                //hook_container.insert( hook );
             }
             
             void set_hook( hook_type element, size_type pos )
