@@ -85,6 +85,7 @@ namespace viennagrid
         
         typedef typename result_of::element< self_type, viennagrid::vertex_tag >::type vertex_type;
         typedef typename result_of::element_hook< self_type, viennagrid::vertex_tag >::type vertex_hook_type;
+        typedef typename result_of::const_element_hook< self_type, viennagrid::vertex_tag >::type const_vertex_hook_type;
         
         topologic_domain_type & get_topological_domain() { return topologic_domain; }
         const topologic_domain_type & get_topological_domain() const { return topologic_domain; }
@@ -115,6 +116,7 @@ namespace viennagrid
         
         typedef typename result_of::element< self_type, viennagrid::vertex_tag >::type vertex_type;
         typedef typename result_of::element_hook< self_type, viennagrid::vertex_tag >::type vertex_hook_type;
+        typedef typename result_of::const_element_hook< self_type, viennagrid::vertex_tag >::type const_vertex_hook_type;
         
         topologic_domain_type & get_topological_domain() { return topologic_domain; }
         const topologic_domain_type & get_topological_domain() const { return topologic_domain; }
@@ -146,6 +148,12 @@ namespace viennagrid
             typedef typename element_hook<topologic_domain_type, element_type_or_tag>::type type;
         };
         
+        template<typename vector_type, typename topologic_domain_type, typename metainfo_collection_type, typename element_type_or_tag>
+        struct const_element_hook< geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type>, element_type_or_tag >
+        {
+            typedef typename const_element_hook<topologic_domain_type, element_type_or_tag>::type type;
+        };
+        
         
         template<typename vector_type, typename topologic_domain_type, typename metainfo_collection_type, typename element_type_or_tag>
         struct element_range< geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type>, element_type_or_tag >
@@ -172,6 +180,12 @@ namespace viennagrid
         struct ncell_hook< geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type>, dim >
         {
             typedef typename ncell_hook<topologic_domain_type, dim>::type type;
+        };
+        
+        template<typename vector_type, typename topologic_domain_type, typename metainfo_collection_type, long dim>
+        struct const_ncell_hook< geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type>, dim >
+        {
+            typedef typename const_ncell_hook<topologic_domain_type, dim>::type type;
         };
         
         

@@ -325,6 +325,12 @@ namespace viennagrid
             typedef typename element_hook<domain_container_collection_type_, element_type_or_tag>::type type;
         };
         
+        template<typename domain_container_collection_type_, typename inserter_type_, typename element_type_or_tag>
+        struct const_element_hook<topologic_domain_t<domain_container_collection_type_, inserter_type_>, element_type_or_tag>
+        {
+            typedef typename const_element_hook<domain_container_collection_type_, element_type_or_tag>::type type;
+        };
+        
         
         template<typename domain_container_collection_type_, typename inserter_type_, typename element_type_or_tag>
         struct element_range< topologic_domain_t<domain_container_collection_type_, inserter_type_>, element_type_or_tag >
@@ -351,6 +357,12 @@ namespace viennagrid
         struct ncell_hook< topologic_domain_t<domain_container_collection_type_, inserter_type_>, dim >
         {
             typedef typename ncell_hook<domain_container_collection_type_, dim>::type type;
+        };
+        
+        template<typename domain_container_collection_type_, typename inserter_type_, long dim>
+        struct const_ncell_hook< topologic_domain_t<domain_container_collection_type_, inserter_type_>, dim >
+        {
+            typedef typename const_ncell_hook<domain_container_collection_type_, dim>::type type;
         };
         
         

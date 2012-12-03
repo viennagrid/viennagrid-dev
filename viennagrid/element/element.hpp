@@ -539,6 +539,21 @@ namespace viennagrid
             typedef typename element_hook< element_t<element_tag, boundary_cell_container_typelist, id_type>, sub_element_tag >::type type;
         };
         
+        // Defines a const HOOK TO a SUB-ELEMENT from an ELEMENT using SUB-ELEMENT TAG
+        template<typename element_tag, typename boundary_cell_container_typelist, typename id_type, typename sub_element_tag>
+        struct const_element_hook< element_t<element_tag, boundary_cell_container_typelist, id_type>, sub_element_tag >
+        {
+            typedef typename container_of_tag_for_element< boundary_cell_container_typelist, sub_element_tag >::type::const_hook_type type;
+        };
+        
+        // Defines a const HOOK TO a SUB-ELEMENT from an ELEMENT using SUB-ELEMENT TYPE
+        template<typename element_tag, typename boundary_cell_container_typelist, typename id_type,
+                 typename sub_element_tag, typename sub_boundary_cell_container_typelist, typename sub_id_type>
+        struct const_element_hook< element_t<element_tag, boundary_cell_container_typelist, id_type>, element_t<sub_element_tag, sub_boundary_cell_container_typelist, sub_id_type> >
+        {
+            typedef typename const_element_hook< element_t<element_tag, boundary_cell_container_typelist, id_type>, sub_element_tag >::type type;
+        };
+        
         
         template<typename element_tag, typename boundary_cell_container_typelist, typename id_type, typename sub_element_type_or_tag>
         struct element_range< element_t<element_tag, boundary_cell_container_typelist, id_type>, sub_element_type_or_tag >
@@ -575,6 +590,12 @@ namespace viennagrid
         struct ncell_hook< element_t<element_tag, boundary_cell_container_typelist, id_type>, dim >
         {
             typedef typename container_of_dimension_for_element< boundary_cell_container_typelist, dim >::type::hook_type type;
+        };
+        
+        template<typename element_tag, typename boundary_cell_container_typelist, typename id_type, long dim>
+        struct const_ncell_hook< element_t<element_tag, boundary_cell_container_typelist, id_type>, dim >
+        {
+            typedef typename container_of_dimension_for_element< boundary_cell_container_typelist, dim >::type::const_hook_type type;
         };
         
         
@@ -629,6 +650,19 @@ namespace viennagrid
             typedef typename element_hook< storage::collection_t<container_collection_typemap>, sub_element_tag >::type type;
         };
         
+        template<typename container_collection_typemap, typename element_tag>
+        struct const_element_hook<storage::collection_t<container_collection_typemap>, element_tag>
+        {
+            typedef typename container_of_tag_for_collection<container_collection_typemap, element_tag>::type::const_hook_type type;
+        };
+        
+        template<typename container_collection_typemap,
+                 typename sub_element_tag, typename sub_boundary_cell_container_typelist, typename sub_id_type>
+        struct const_element_hook< storage::collection_t<container_collection_typemap>, element_t<sub_element_tag, sub_boundary_cell_container_typelist, sub_id_type> >
+        {
+            typedef typename const_element_hook< storage::collection_t<container_collection_typemap>, sub_element_tag >::type type;
+        };
+        
 
         template<typename container_collection_typemap, typename element_type_or_tag>
         struct element_range<storage::collection_t<container_collection_typemap>, element_type_or_tag>
@@ -662,6 +696,12 @@ namespace viennagrid
         struct ncell_hook<storage::collection_t<container_collection_typemap>, dim>
         {
             typedef typename container_of_dimension_for_collection<container_collection_typemap, dim>::type::hook_type type;
+        };
+        
+        template<typename container_collection_typemap, long dim>
+        struct const_ncell_hook<storage::collection_t<container_collection_typemap>, dim>
+        {
+            typedef typename container_of_dimension_for_collection<container_collection_typemap, dim>::type::const_hook_type type;
         };
         
 
