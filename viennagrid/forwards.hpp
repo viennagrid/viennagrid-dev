@@ -337,12 +337,17 @@ namespace viennagrid
     template<typename config_domain_segment_element_or_something_like_that, typename element_tag>
     struct element_hook;
     
+    template<typename config_domain_segment_element_or_something_like_that, typename element_tag>
+    struct const_element_hook;
+    
     template<typename config_domain_segment_element_or_something_like_that, long dim>
     struct ncell;
     
     template<typename config_domain_segment_element_or_something_like_that, long dim>
     struct ncell_hook;
     
+    template<typename config_domain_segment_element_or_something_like_that, long dim>
+    struct const_ncell_hook;
 
 
     
