@@ -56,7 +56,7 @@ namespace viennagrid
             template<typename base_container_type>
             struct const_hook_type<base_container_type, no_hook_tag>
             {
-                typedef const viennameta::null_type type;
+                typedef viennameta::null_type type;
             };
             
             template<typename base_container_type>
@@ -74,7 +74,7 @@ namespace viennagrid
             template<typename base_container_type>
             struct const_hook_type<base_container_type, id_hook_tag>
             {
-                typedef const typename base_container_type::value_type::id_type type;
+                typedef typename base_container_type::value_type::id_type type;
             };
             
             
@@ -141,7 +141,7 @@ namespace viennagrid
             template<typename value_type_>
             struct value_type< const value_type_ * >
             {
-                typedef const value_type_ type;
+                typedef value_type_ type;
             };
             
 //             template<typename category, typename value_type, typename distance, typename pointer, typename reference>
