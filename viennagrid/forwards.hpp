@@ -382,6 +382,18 @@ namespace viennagrid
         typedef typename container::const_iterator type;
     };
     
+    template <typename container>
+    struct hook_iterator
+    {
+        typedef typename container::hook_iterator type;
+    };
+
+    template <typename container>
+    struct const_hook_iterator
+    {
+        typedef typename container::const_hook_iterator type;
+    };
+    
     
         
 
