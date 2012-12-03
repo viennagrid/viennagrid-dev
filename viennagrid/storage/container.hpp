@@ -87,8 +87,8 @@ namespace viennagrid
                 hook_iterator_impl(base_iterator it) : base_iterator(it) {}
                 
                 
-                value_type operator* () { return (*this)->id(); }
-                const value_type operator* () const { return (*this)->id(); }
+                value_type operator* () { return base_iterator::operator*().id(); }
+                const value_type operator* () const { return base_iterator::operator*().id(); }
             };
             
             
@@ -153,8 +153,8 @@ namespace viennagrid
                 const_hook_iterator_impl(base_iterator it) : base_iterator(it) {}
                 
                 
-                value_type operator* () { return (*this)->id(); }
-                const value_type operator* () const { return (*this)->id(); }
+                value_type operator* () { return base_iterator::operator*().id(); }
+                const value_type operator* () const { return base_iterator::operator*().id(); }
             };
         
         }
@@ -185,6 +185,11 @@ namespace viennagrid
                 return *hook;
             }
             
+            const value_type & dereference_hook( const_hook_type hook ) const
+            {
+                return *hook;
+            }
+            
 //             const value_type & dereference_hook( const_hook_type hook )
 //             {
 //                 return *hook;
@@ -210,18 +215,27 @@ namespace viennagrid
             typedef typename viennagrid::storage::hook::hook_type<container_type, id_hook_tag>::type hook_type;
             typedef typename viennagrid::storage::hook::const_hook_type<container_type, id_hook_tag>::type const_hook_type;
             
+            
+            typedef typename value_type::id_type id_type;
+            
             value_type & dereference_hook( hook_type hook )
             {
-                iterator it = container_type::begin();
-                std::advance(it, hook.get());
-                return *it;
-                //return *hook;
+                return *std::find_if(
+                    container_type::begin(),
+                    container_type::end(),
+                    viennagrid::storage::id_compare<id_type>(hook)
+                );
             }
             
-//             const value_type & dereference_hook( const_hook_type hook )
-//             {
-//                 return *hook;
-//             }
+            const value_type & dereference_hook( hook_type hook ) const
+            {
+                return *std::find_if(
+                    container_type::begin(),
+                    container_type::end(),
+                    viennagrid::storage::id_compare<id_type>(hook)
+                );
+
+            }
         };
         
         
@@ -332,9 +346,9 @@ namespace viennagrid
             hook_iterator hook_begin() { return hook_iterator(base_container::begin()); }
             hook_iterator hook_end() { return hook_iterator(base_container::end()); }
             
-            typedef container::hook_iterator_impl<typename base_container::const_iterator, hook_tag> const_hook_iterator; 
-            const_hook_iterator hook_begin() const { return hook_iterator(base_container::begin()); }
-            const_hook_iterator hook_end() const { return hook_iterator(base_container::end()); }
+            typedef container::const_hook_iterator_impl<typename base_container::const_iterator, hook_tag> const_hook_iterator; 
+            const_hook_iterator hook_begin() const { return const_hook_iterator(base_container::begin()); }
+            const_hook_iterator hook_end() const { return const_hook_iterator(base_container::end()); }
             
             hook_type hook_at(std::size_t pos)
             {
