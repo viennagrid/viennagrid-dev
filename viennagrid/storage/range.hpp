@@ -64,6 +64,18 @@ namespace viennagrid
             size_type size() const { return container.size(); }
             
             
+            
+            
+            typedef typename container_type::hook_type hook_type;
+            typedef typename container_type::hook_iterator hook_iterator;
+            hook_iterator hook_begin() { return container.hook_begin(); }
+            hook_iterator hook_end() { return container.hook_end(); }
+
+            typedef typename container_type::const_hook_type const_hook_type;
+            typedef typename container_type::const_hook_iterator const_hook_iterator;
+            const_hook_iterator hook_begin() const { return container.hook_begin(); }
+            const_hook_iterator hook_end() const { return container.hook_end(); }
+            
         private:
             
             container_type & container;
@@ -121,6 +133,17 @@ namespace viennagrid
             bool empty() const { return container.empty(); }
             size_type size() const { return container.size(); }
             
+            
+            
+            typedef typename container_type::const_hook_type hook_type;
+            typedef typename container_type::const_hook_iterator hook_iterator;
+            hook_iterator hook_begin() { return container.hook_begin(); }
+            hook_iterator hook_end() { return container.hook_end(); }
+
+            typedef typename container_type::const_hook_type const_hook_type;
+            typedef typename container_type::const_hook_iterator const_hook_iterator;
+            const_hook_iterator hook_begin() const { return container.hook_begin(); }
+            const_hook_iterator hook_end() const { return container.hook_end(); }
             
         private:
             
