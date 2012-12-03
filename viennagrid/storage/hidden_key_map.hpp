@@ -46,6 +46,7 @@ namespace viennagrid
             public:
                 const_iterator() {}
                 const_iterator(const base & foo) : base(foo) {}
+                const_iterator(const iterator & it) : base(it) {}
                 
                 typedef hidden_key_map::value_type value_type;
                 typedef hidden_key_map::const_reference reference;
@@ -75,6 +76,7 @@ namespace viennagrid
             public:
                 const_reverse_iterator() {}
                 const_reverse_iterator(const base & foo) : base(foo) {}
+                const_reverse_iterator(const reverse_iterator & it) : base(it) {}
                 
                 typedef hidden_key_map::value_type value_type;
                 typedef hidden_key_map::const_reference reference;
@@ -113,8 +115,7 @@ namespace viennagrid
         private:
             container_type container;
         };
-        
-        
+
         
         
         
