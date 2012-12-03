@@ -21,6 +21,7 @@
 #include "viennagrid/forwards.hpp"
 #include "viennagrid/storage/id_generator.hpp"
 #include "viennagrid/storage/inserter.hpp"
+#include "viennagrid/storage/algorithm.hpp"
 
 #include "viennagrid/element/element_config.hpp"
 
@@ -236,9 +237,33 @@ namespace viennagrid
     }
     
     
+    
+    template<typename container_collection_type>
+    class view_domain_setter
+    {
+    public:
+        
+        view_domain_setter(container_collection_type & domain_) : domain(domain_) {}
+        
+        template<typename container_type>
+        void operator()( container_type & container )
+        {
+            typedef typename container_type::value_type value_type;
+            container.set_base_container( viennagrid::storage::collection::get<value_type>(domain) );
+        }
+        
+        
+    private:
+        container_collection_type & domain;
+    };
+    
+    
     template<typename topologic_view_type, typename topologic_domain_type> 
     void init_view( topologic_view_type & view, topologic_domain_type & domain )
     {
+        view_domain_setter< typename result_of::container_collection<topologic_domain_type>::type > functor(domain.get_container_collection());
+        viennagrid::storage::collection::for_each(view.get_container_collection(), functor);
+        
         view.get_inserter() = typename topologic_view_type::inserter_type( view.get_container_collection(), domain.get_inserter() );
     }
     
@@ -303,6 +328,26 @@ namespace viennagrid
         typedef typename storage::hook::value_type<hook_type>::type value_type;
         return storage::collection::get<value_type>(container_collection(domain)).dereference_hook( hook );
     }
+    
+    
+    
+    template<typename container_type>
+    class dereference_hook_comperator
+    {
+    public:
+        
+        dereference_hook_comperator(const container_type & container_) : container(container_) {}
+        
+        template<typename hook>
+        bool operator() ( hook h1, hook h2 )
+        {
+            return &viennagrid::dereference_hook( container, h1 ) < &viennagrid::dereference_hook( container, h2 );
+        }
+        
+    private:
+        const container_type & container;
+    };
+    
 }
 
 
@@ -503,7 +548,7 @@ namespace viennagrid
         size_t element_index = 0;
         for (typename hook_array_type::const_iterator it = array.begin(); it != array.end(); ++it, ++element_index)
             viennagrid::set_vertex( element, *it, element_index );
-                
+
         return push_element_noid(domain, element ).first;
     }
 }
