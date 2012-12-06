@@ -49,22 +49,29 @@ namespace viennagrid
      *
      * @tparam DomainType    Type of the ViennaGrid domain. Must not be a segment! 
      */
-    template < typename DomainType >
+    template < typename DomainType, typename CellTypeOrTag >
     class vtk_writer
     {
       public:
       
       protected:
 
-        typedef typename DomainType::config_type                         DomainConfiguration;
+        //typedef typename DomainType::config_type                         DomainConfiguration;
+        
+        typedef typename result_of::point_type<DomainType>::type PointType;
+        typedef typename traits::value_type<PointType>::type CoordType;
+        enum { dim = traits::static_size<PointType>::value };
+        
+        typedef typename result_of::element_tag<CellTypeOrTag>::type CellTag;
+        typedef typename result_of::element<DomainType, CellTag>::type CellType;
 
-        typedef typename DomainConfiguration::numeric_type               CoordType;
-        typedef typename DomainConfiguration::coordinate_system_tag      CoordinateSystemTag;
-        typedef typename DomainConfiguration::cell_tag                   CellTag;
+        //typedef typename DomainConfiguration::numeric_type               CoordType;
+        //typedef typename DomainConfiguration::coordinate_system_tag      CoordinateSystemTag;
+        //typedef typename DomainConfiguration::cell_tag                   CellTag;
 
         //typedef typename result_of::point<DomainConfiguration>::type                              PointType;
-        typedef typename result_of::ncell<DomainConfiguration, 0>::type                           VertexType;
-        typedef typename result_of::ncell<DomainConfiguration, CellTag::dim>::type     CellType;
+        typedef typename result_of::element<DomainType, vertex_tag>::type                           VertexType;
+        //typedef typename result_of::element<DomainConfiguration, CellTag::dim>::type     CellType;
         
         
 //         typedef typename viennagrid::result_of::point_type<DomainType>::type    PointType;
@@ -88,23 +95,24 @@ namespace viennagrid
         template <typename SegmentType>
         void writePoints(SegmentType const & segment, std::ofstream & writer)
         {
-          typedef typename viennagrid::result_of::const_ncell_range<SegmentType, 0>::type   VertexRange;
+          typedef typename viennagrid::result_of::const_element_range<SegmentType, vertex_tag>::type   VertexRange;
           typedef typename viennagrid::result_of::iterator<VertexRange>::type               VertexIterator;
           
           writer << "   <Points>" << std::endl;
           writer << "    <DataArray type=\"Float32\" NumberOfComponents=\"3\" format=\"ascii\">" << std::endl;
 
-          VertexRange vertices = viennagrid::ncells<0>(segment);
+          VertexRange vertices = viennagrid::elements<vertex_tag>(segment);
           for (VertexIterator vit = vertices.begin();
               vit != vertices.end();
               ++vit)
           {
-            PointWriter<CoordinateSystemTag::dim>::write(writer, vit->point());
+            //PointWriter<dim>::write(writer, vit->point());
+            PointWriter<dim>::write(writer, viennagrid::point(segment, *vit) );
 
             // add 0's for less than three dimensions
-              if (CoordinateSystemTag::dim == 2)
+              if (dim == 2)
                 writer << " " << 0;
-              if(CoordinateSystemTag::dim == 1)
+              if(dim == 1)
                 writer << " " << 0 << " " << 0;
 
               writer << std::endl;
@@ -148,8 +156,9 @@ namespace viennagrid
               viennagrid_to_vtk_orientations<CellTag> reorderer;
               for (std::size_t i=0; i<viennagrid_vertices.size(); ++i)
               {
-                writer << vertex_ids(*(viennagrid_vertices[reorderer(static_cast<long>(i))]), //convert between different orientations used within VTK and ViennaGrid
-                                     domseg) << " ";
+                writer << viennagrid_vertices[reorderer(static_cast<long>(i))]->id() << " ";
+//                 writer << vertex_ids(*(viennagrid_vertices[reorderer(static_cast<long>(i))]), //convert between different orientations used within VTK and ViennaGrid
+//                                      domseg) << " ";
               }
                 
               
@@ -184,7 +193,7 @@ namespace viennagrid
         template <typename SegmentType>
         void writePointDataScalar(SegmentType const & segment, std::ofstream & writer, std::size_t seg_id = 0)
         {
-          typedef typename viennagrid::result_of::const_ncell_range<SegmentType, 0>::type   VertexRange;
+          typedef typename viennagrid::result_of::const_element_range<SegmentType, vertex_tag>::type   VertexRange;
           typedef typename viennagrid::result_of::iterator<VertexRange>::type               VertexIterator;
           
           if (vertex_data_scalar.size() > 0)
@@ -193,7 +202,7 @@ namespace viennagrid
             {
               writer << "    <DataArray type=\"Float32\" Name=\"" << vertex_data_scalar_names[i] << "\" format=\"ascii\">" << std::endl;
               
-              VertexRange vertices = viennagrid::ncells<0>(segment);
+              VertexRange vertices = viennagrid::elements<vertex_tag>(segment);
               for (VertexIterator vit = vertices.begin();
                   vit != vertices.end();
                   ++vit)
@@ -210,7 +219,7 @@ namespace viennagrid
         template <typename SegmentType>
         void writePointDataVector(SegmentType const & segment, std::ofstream & writer, std::size_t seg_id = 0)
         {
-          typedef typename viennagrid::result_of::const_ncell_range<SegmentType, 0>::type   VertexRange;
+          typedef typename viennagrid::result_of::const_element_range<SegmentType, vertex_tag>::type   VertexRange;
           typedef typename viennagrid::result_of::iterator<VertexRange>::type               VertexIterator;
           
           if (vertex_data_vector.size() > 0)
@@ -219,7 +228,7 @@ namespace viennagrid
             {
               writer << "    <DataArray type=\"Float32\" Name=\"" << vertex_data_vector_names[i] << "\" NumberOfComponents=\"3\" format=\"ascii\">" << std::endl;
               
-              VertexRange vertices = viennagrid::ncells<0>(segment);
+              VertexRange vertices = viennagrid::elements<vertex_tag>(segment);
               for (VertexIterator vit = vertices.begin();
                   vit != vertices.end();
                   ++vit)
@@ -237,7 +246,7 @@ namespace viennagrid
         template <typename SegmentType>
         void writePointDataNormal(SegmentType const & segment, std::ofstream & writer, std::size_t seg_id = 0)
         {
-          typedef typename viennagrid::result_of::const_ncell_range<SegmentType, 0>::type   VertexRange;
+          typedef typename viennagrid::result_of::const_element_range<SegmentType, vertex_tag>::type   VertexRange;
           typedef typename viennagrid::result_of::iterator<VertexRange>::type               VertexIterator;
           
           if (vertex_data_normal.size() > 0)
@@ -246,7 +255,7 @@ namespace viennagrid
             {
               writer << "    <DataArray type=\"Float32\" Name=\"" << vertex_data_normal_names[i] << "\" NumberOfComponents=\"3\" format=\"ascii\">" << std::endl;
               
-              VertexRange vertices = viennagrid::ncells<0>(segment);
+              VertexRange vertices = viennagrid::elements<vertex_tag>(segment);
               for (VertexIterator vit = vertices.begin();
                   vit != vertices.end();
                   ++vit)
@@ -267,7 +276,7 @@ namespace viennagrid
         template <typename SegmentType>
         void writeCellDataScalar(SegmentType const & segment, std::ofstream & writer, std::size_t seg_id = 0)
         {
-          typedef typename viennagrid::result_of::const_ncell_range<SegmentType, CellTag::dim>::type   CellRange;
+          typedef typename viennagrid::result_of::const_element_range<SegmentType, CellTag>::type   CellRange;
           typedef typename viennagrid::result_of::iterator<CellRange>::type               CellIterator;
           
           if (cell_data_scalar.size() > 0)
@@ -276,7 +285,7 @@ namespace viennagrid
             {
               writer << "    <DataArray type=\"Float32\" Name=\"" << cell_data_scalar_names[i] << "\" format=\"ascii\">" << std::endl;
               
-              CellRange cells = viennagrid::ncells(segment);
+              CellRange cells = viennagrid::elements<CellTag>(segment);
               for (CellIterator cit  = cells.begin();
                                 cit != cells.end();
                               ++cit)
@@ -293,7 +302,7 @@ namespace viennagrid
         template <typename SegmentType>
         void writeCellDataVector(SegmentType const & segment, std::ofstream & writer, std::size_t seg_id = 0)
         {
-          typedef typename viennagrid::result_of::const_ncell_range<SegmentType, CellTag::dim>::type   CellRange;
+          typedef typename viennagrid::result_of::const_element_range<SegmentType, CellTag>::type   CellRange;
           typedef typename viennagrid::result_of::iterator<CellRange>::type               CellIterator;
           
           if (cell_data_vector.size() > 0)
@@ -302,7 +311,7 @@ namespace viennagrid
             {
               writer << "    <DataArray type=\"Float32\" Name=\"" << cell_data_vector_names[i] << "\" NumberOfComponents=\"3\" format=\"ascii\">" << std::endl;
               
-              CellRange cells = viennagrid::ncells(segment);
+              CellRange cells = viennagrid::elements<CellTag>(segment);
               for (CellIterator cit  = cells.begin();
                                 cit != cells.end();
                               ++cit)
@@ -321,7 +330,7 @@ namespace viennagrid
                                   std::ofstream & writer,
                                   std::size_t seg_id = 0)
         {
-          typedef typename viennagrid::result_of::const_ncell_range<SegmentType, CellTag::dim>::type     CellRange;
+          typedef typename viennagrid::result_of::const_element_range<SegmentType, CellTag>::type     CellRange;
           typedef typename viennagrid::result_of::iterator<CellRange>::type                                         CellIterator;
           
           if (cell_data_normal.size() > 0)
@@ -330,7 +339,7 @@ namespace viennagrid
             {
               writer << "    <DataArray type=\"Float32\" Name=\"" << cell_data_normal_names[i] << "\" NumberOfComponents=\"3\" format=\"ascii\">" << std::endl;
 
-              CellRange cells = viennagrid::ncells<CellTag::dim>(segment);
+              CellRange cells = viennagrid::elements<CellTag>(segment);
               for (CellIterator cit  = cells.begin();
                                 cit != cells.end();
                               ++cit)
@@ -364,8 +373,68 @@ namespace viennagrid
          */
         int operator()(DomainType const & domain, std::string const & filename)
         {
+            std::stringstream ss;
+            ss << filename << ".vtu";
+            std::ofstream writer(ss.str().c_str());
+            writeHeader(writer);
+            
+            writer << "  <Piece NumberOfPoints=\""
+                   << viennagrid::ncells<0>(domain).size()
+                   << "\" NumberOfCells=\""
+                   << viennagrid::ncells<CellTag::dim>(domain).size()
+                   << "\">" << std::endl;
 
-          long segment_num = domain.segments().size();
+
+            writePoints(domain, writer);
+            
+            if (vertex_data_scalar.size() + vertex_data_vector.size() + vertex_data_normal.size() > 0)
+            {
+              writer << "   <PointData ";
+              if (vertex_data_scalar.size() > 0)
+                writer << "Scalars=\"" << vertex_data_scalar_names[0] << "\" ";
+              if (vertex_data_vector.size() > 0)
+                writer << "Vectors=\"" << vertex_data_vector_names[0] << "\" ";
+              if (vertex_data_normal.size() > 0)
+                writer << "Normals=\"" << vertex_data_normal_names[0] << "\" ";
+              writer << ">" << std::endl;
+              writePointDataScalar(domain, writer);
+              writePointDataVector(domain, writer);
+              writePointDataNormal(domain, writer);
+              writer << "   </PointData>" << std::endl;
+            }
+
+            writeCells(domain, writer);
+            if (cell_data_scalar.size() + cell_data_vector.size() + cell_data_normal.size() > 0)
+            {
+              writer << "   <CellData ";
+              if (cell_data_scalar.size() > 0)
+                writer << "Scalars=\"" << cell_data_scalar_names[0] << "\" ";
+              if (cell_data_vector.size() > 0)
+                writer << "Vectors=\"" << cell_data_vector_names[0] << "\" ";
+              if (cell_data_normal.size() > 0)
+                writer << "Normals=\"" << cell_data_normal_names[0] << "\" ";
+              writer << ">" << std::endl;
+              writeCellDataScalar(domain, writer);
+              writeCellDataVector(domain, writer);
+              writeCellDataNormals(domain, writer);
+              writer << "   </CellData>" << std::endl;
+            }
+
+            writer << "  </Piece>" << std::endl;
+            writeFooter(writer);
+          
+          return EXIT_SUCCESS;
+        }
+        
+        
+        
+        
+        template<typename SegmentContainerType>
+        int operator()(DomainType const & domain, const SegmentContainerType & segments, std::string const & filename)
+        {
+            typedef typename SegmentContainerType::value_type SegmentType;
+
+          long segment_num = segments.size();
           if (segment_num > 0)
           {
             //
@@ -420,17 +489,17 @@ namespace viennagrid
                 return EXIT_FAILURE;
               }
               
-              typedef typename DomainType::segment_type                                             SegmentType;
-              typedef typename viennagrid::result_of::const_ncell_range<SegmentType, 0>::type   VertexRange;
+              //typedef typename DomainType::segment_type                                             SegmentType;
+              typedef typename viennagrid::result_of::const_element_range<SegmentType, vertex_tag>::type   VertexRange;
               typedef typename viennagrid::result_of::iterator<VertexRange>::type               VertexIterator;
               //std::cout << "Writing segment" << std::endl;
               //Segment & curSeg = *segit;
 
-              SegmentType const & seg = domain.segments()[i];
+              SegmentType const & seg = *viennagrid::advance(segments.begin(), i);
               
               //setting local segment numbering on vertices:
               long current_id = 0;
-              VertexRange vertices = viennagrid::ncells<0>(seg);
+              VertexRange vertices = viennagrid::elements<vertex_tag>(seg);
               for (VertexIterator vit = vertices.begin();
                   vit != vertices.end();
                   ++vit)
@@ -439,9 +508,9 @@ namespace viennagrid
               }
 
               writer << "  <Piece NumberOfPoints=\""
-                    << viennagrid::ncells<0>(seg).size()
+                    << viennagrid::elements<vertex_tag>(seg).size()
                     << "\" NumberOfCells=\""
-                    << viennagrid::ncells<CellTag::dim>(seg).size()
+                    << viennagrid::elements<CellTag>(seg).size()
                     << "\">" << std::endl;
 
 
@@ -486,61 +555,11 @@ namespace viennagrid
             }
           }
           else
-          {
-            std::stringstream ss;
-            ss << filename << ".vtu";
-            std::ofstream writer(ss.str().c_str());
-            writeHeader(writer);
-            
-            writer << "  <Piece NumberOfPoints=\""
-                   << viennagrid::ncells<0>(domain).size()
-                   << "\" NumberOfCells=\""
-                   << viennagrid::ncells<CellTag::dim>(domain).size()
-                   << "\">" << std::endl;
-
-
-            writePoints(domain, writer);
-            
-            if (vertex_data_scalar.size() + vertex_data_vector.size() + vertex_data_normal.size() > 0)
-            {
-              writer << "   <PointData ";
-              if (vertex_data_scalar.size() > 0)
-                writer << "Scalars=\"" << vertex_data_scalar_names[0] << "\" ";
-              if (vertex_data_vector.size() > 0)
-                writer << "Vectors=\"" << vertex_data_vector_names[0] << "\" ";
-              if (vertex_data_normal.size() > 0)
-                writer << "Normals=\"" << vertex_data_normal_names[0] << "\" ";
-              writer << ">" << std::endl;
-              writePointDataScalar(domain, writer);
-              writePointDataVector(domain, writer);
-              writePointDataNormal(domain, writer);
-              writer << "   </PointData>" << std::endl;
-            }
-
-            writeCells(domain, writer);
-            if (cell_data_scalar.size() + cell_data_vector.size() + cell_data_normal.size() > 0)
-            {
-              writer << "   <CellData ";
-              if (cell_data_scalar.size() > 0)
-                writer << "Scalars=\"" << cell_data_scalar_names[0] << "\" ";
-              if (cell_data_vector.size() > 0)
-                writer << "Vectors=\"" << cell_data_vector_names[0] << "\" ";
-              if (cell_data_normal.size() > 0)
-                writer << "Normals=\"" << cell_data_normal_names[0] << "\" ";
-              writer << ">" << std::endl;
-              writeCellDataScalar(domain, writer);
-              writeCellDataVector(domain, writer);
-              writeCellDataNormals(domain, writer);
-              writer << "   </CellData>" << std::endl;
-            }
-
-            writer << "  </Piece>" << std::endl;
-            writeFooter(writer);
-
-          }
+              (*this)(domain, filename);
           
           return EXIT_SUCCESS;
         }
+        
         
         
         /** @brief Specify scalar-valued data for vertices to the writer. Prefer the free function add_scalar_data_on_vertices() 
@@ -651,11 +670,11 @@ namespace viennagrid
     };
 
     /** @brief Convenience function that exports a domain to file directly. Does not export quantities */
-    template < typename DomainType > 
-    int export_vtk(DomainType const& domain, std::string const & filename)
+    template < typename DomainType, typename CellTypeOrTag, typename SegmentContainerType > 
+    int export_vtk(DomainType const& domain, const SegmentContainerType & segments, std::string const & filename)
     {
-      vtk_writer<DomainType> vtk_writer;
-      return vtk_writer(domain, filename);
+      vtk_writer<DomainType, CellTypeOrTag> vtk_writer;
+      return vtk_writer(domain, segments, filename);
     }
 
 
@@ -673,8 +692,8 @@ namespace viennagrid
       * @param  key         The key object for ViennaData
       * @param  quantity_name        The quantity name that should appear in the VTK file
       */
-    template <typename KeyType, typename DataType, typename DomainType>
-    vtk_writer<DomainType> & add_scalar_data_on_vertices(vtk_writer<DomainType> & writer,
+    template <typename KeyType, typename DataType, typename DomainType, typename CellType>
+    vtk_writer<DomainType, CellType> & add_scalar_data_on_vertices(vtk_writer<DomainType, CellType> & writer,
                                                          KeyType const & key,
                                                          std::string quantity_name)
     {
@@ -695,13 +714,13 @@ namespace viennagrid
       * @param  key         The key object for ViennaData
       * @param  quantity_name        The quantity name that should appear in the VTK file
       */
-    template <typename KeyType, typename DataType, typename DomainType>
-    vtk_writer<DomainType> & add_scalar_data_on_vertices_per_segment(vtk_writer<DomainType> & writer,
+    template <typename KeyType, typename DataType, typename DomainType, typename CellType>
+    vtk_writer<DomainType, CellType> & add_scalar_data_on_vertices_per_segment(vtk_writer<DomainType, CellType> & writer,
                                                                      KeyType const & key,
                                                                      std::string quantity_name)
     {
-      typedef typename DomainType::config_type                             DomainConfiguration;
-      typedef typename result_of::ncell<DomainConfiguration, 0>::type      VertexType;
+      //typedef typename DomainType::config_type                             DomainConfiguration;
+      typedef typename result_of::element<DomainType, vertex_tag>::type      VertexType;
       
       data_accessor_wrapper<VertexType> wrapper(new segment_scalar_data_accessor<VertexType, KeyType, DataType>(key));
       writer.add_scalar_data_on_vertices(wrapper, quantity_name);
@@ -717,8 +736,8 @@ namespace viennagrid
       * @param  key         The key object for ViennaData
       * @param  quantity_name        The quantity name that should appear in the VTK file
       */
-    template <typename KeyType, typename DataType, typename DomainType>
-    vtk_writer<DomainType> & add_vector_data_on_vertices(vtk_writer<DomainType> & writer,
+    template <typename KeyType, typename DataType, typename DomainType, typename CellType>
+    vtk_writer<DomainType, CellType> & add_vector_data_on_vertices(vtk_writer<DomainType, CellType> & writer,
                                                          KeyType const & key,
                                                          std::string quantity_name)
     {
@@ -739,13 +758,13 @@ namespace viennagrid
       * @param  key         The key object for ViennaData
       * @param  quantity_name        The quantity name that should appear in the VTK file
       */
-    template <typename KeyType, typename DataType, typename DomainType>
-    vtk_writer<DomainType> & add_vector_data_on_vertices_per_segment(vtk_writer<DomainType> & writer,
+    template <typename KeyType, typename DataType, typename DomainType, typename CellType>
+    vtk_writer<DomainType, CellType> & add_vector_data_on_vertices_per_segment(vtk_writer<DomainType, CellType> & writer,
                                                                      KeyType const & key,
                                                                      std::string quantity_name)
     {
-      typedef typename DomainType::config_type                             DomainConfiguration;
-      typedef typename result_of::ncell<DomainConfiguration, 0>::type      VertexType;
+      //typedef typename DomainType::config_type                             DomainConfiguration;
+      typedef typename result_of::element<DomainType, vertex_tag>::type      VertexType;
       
       data_accessor_wrapper<VertexType> wrapper(new segment_vector_data_accessor<VertexType, KeyType, DataType>(key));
       writer.add_vector_data_on_vertices(wrapper, quantity_name);
@@ -762,13 +781,13 @@ namespace viennagrid
       * @param  key         The key object for ViennaData
       * @param  quantity_name        The quantity name that should appear in the VTK file
       */
-    template <typename KeyType, typename DataType, typename DomainType>
-    vtk_writer<DomainType> & add_normal_data_on_vertices(vtk_writer<DomainType> & writer,
+    template <typename KeyType, typename DataType, typename DomainType, typename CellType>
+    vtk_writer<DomainType, CellType> & add_normal_data_on_vertices(vtk_writer<DomainType, CellType> & writer,
                                                          KeyType const & key,
                                                          std::string quantity_name)
     {
-      typedef typename DomainType::config_type                             DomainConfiguration;
-      typedef typename result_of::ncell<DomainConfiguration, 0>::type      VertexType;
+//       typedef typename DomainType::config_type                             DomainConfiguration;
+      typedef typename result_of::element<DomainType, vertex_tag>::type      VertexType;
       
       data_accessor_wrapper<VertexType> wrapper(new global_vector_data_accessor<VertexType, KeyType, DataType>(key));
       writer.add_normal_data_on_vertices(wrapper, quantity_name);
@@ -784,13 +803,13 @@ namespace viennagrid
       * @param  key         The key object for ViennaData
       * @param  quantity_name        The quantity name that should appear in the VTK file
       */
-    template <typename KeyType, typename DataType, typename DomainType>
-    vtk_writer<DomainType> & add_normal_data_on_vertices_per_segment(vtk_writer<DomainType> & writer,
+    template <typename KeyType, typename DataType, typename DomainType, typename CellType>
+    vtk_writer<DomainType, CellType> & add_normal_data_on_vertices_per_segment(vtk_writer<DomainType, CellType> & writer,
                                                                      KeyType const & key,
                                                                      std::string quantity_name)
     {
-      typedef typename DomainType::config_type                             DomainConfiguration;
-      typedef typename result_of::ncell<DomainConfiguration, 0>::type      VertexType;
+      //typedef typename DomainType::config_type                             DomainConfiguration;
+      typedef typename result_of::element<DomainType, vertex_tag>::type      VertexType;
       
       data_accessor_wrapper<VertexType> wrapper(new segment_vector_data_accessor<VertexType, KeyType, DataType>(key));
       writer.add_normal_data_on_vertices(wrapper, quantity_name);
@@ -814,14 +833,15 @@ namespace viennagrid
       * @param  key         The key object for ViennaData
       * @param  quantity_name        The quantity name that should appear in the VTK file
       */
-    template <typename KeyType, typename DataType, typename DomainType>
-    vtk_writer<DomainType> & add_scalar_data_on_cells(vtk_writer<DomainType> & writer,
+    template <typename KeyType, typename DataType, typename DomainType, typename CellTypeOrTag>
+    vtk_writer<DomainType, CellTypeOrTag> & add_scalar_data_on_cells(vtk_writer<DomainType, CellTypeOrTag> & writer,
                                                       KeyType const & key,
                                                       std::string quantity_name)
     {
-      typedef typename DomainType::config_type                         DomainConfiguration;
-      typedef typename DomainConfiguration::cell_tag                   CellTag;
-      typedef typename result_of::ncell<DomainConfiguration, CellTag::dim>::type     CellType;
+      typedef typename result_of::element<DomainType, CellTypeOrTag>::type CellType;
+//       typedef typename DomainType::config_type                         DomainConfiguration;
+//       typedef typename DomainConfiguration::cell_tag                   CellTag;
+//       typedef typename result_of::ncell<DomainConfiguration, CellTag::dim>::type     CellType;
       
       data_accessor_wrapper<CellType> wrapper(new global_scalar_data_accessor<CellType, KeyType, DataType>(key));
       writer.add_scalar_data_on_cells(wrapper, quantity_name);
@@ -837,14 +857,15 @@ namespace viennagrid
       * @param  key         The key object for ViennaData
       * @param  quantity_name        The quantity name that should appear in the VTK file
       */
-    template <typename KeyType, typename DataType, typename DomainType>
-    vtk_writer<DomainType> & add_scalar_data_on_cells_per_segment(vtk_writer<DomainType> & writer,
+    template <typename KeyType, typename DataType, typename DomainType, typename CellTypeOrTag>
+    vtk_writer<DomainType, CellTypeOrTag> & add_scalar_data_on_cells_per_segment(vtk_writer<DomainType, CellTypeOrTag> & writer,
                                                                   KeyType const & key,
                                                                   std::string quantity_name)
     {
-      typedef typename DomainType::config_type                         DomainConfiguration;
-      typedef typename DomainConfiguration::cell_tag                   CellTag;
-      typedef typename result_of::ncell<DomainConfiguration, CellTag::dim>::type     CellType;
+      typedef typename result_of::element<DomainType, CellTypeOrTag>::type CellType;
+//       typedef typename DomainType::config_type                         DomainConfiguration;
+//       typedef typename DomainConfiguration::cell_tag                   CellTag;
+//       typedef typename result_of::ncell<DomainConfiguration, CellTag::dim>::type     CellType;
       
       data_accessor_wrapper<CellType> wrapper(new segment_scalar_data_accessor<CellType, KeyType, DataType>(key));
       writer.add_scalar_data_on_cells(wrapper, quantity_name);
@@ -861,14 +882,15 @@ namespace viennagrid
       * @param  key         The key object for ViennaData
       * @param  quantity_name        The quantity name that should appear in the VTK file
       */
-    template <typename KeyType, typename DataType, typename DomainType>
-    vtk_writer<DomainType> & add_vector_data_on_cells(vtk_writer<DomainType> & writer,
+    template <typename KeyType, typename DataType, typename DomainType, typename CellTypeOrTag>
+    vtk_writer<DomainType, CellTypeOrTag> & add_vector_data_on_cells(vtk_writer<DomainType, CellTypeOrTag> & writer,
                                                       KeyType const & key,
                                                       std::string quantity_name)
     {
-      typedef typename DomainType::config_type                         DomainConfiguration;
-      typedef typename DomainConfiguration::cell_tag                   CellTag;
-      typedef typename result_of::ncell<DomainConfiguration, CellTag::dim>::type     CellType;
+      typedef typename result_of::element<DomainType, CellTypeOrTag>::type CellType;
+//       typedef typename DomainType::config_type                         DomainConfiguration;
+//       typedef typename DomainConfiguration::cell_tag                   CellTag;
+//       typedef typename result_of::ncell<DomainConfiguration, CellTag::dim>::type     CellType;
       
       data_accessor_wrapper<CellType> wrapper(new global_vector_data_accessor<CellType, KeyType, DataType>(key));
       writer.add_vector_data_on_cells(wrapper, quantity_name);
@@ -884,14 +906,15 @@ namespace viennagrid
       * @param  key         The key object for ViennaData
       * @param  quantity_name        The quantity name that should appear in the VTK file
       */
-    template <typename KeyType, typename DataType, typename DomainType>
-    vtk_writer<DomainType> & add_vector_data_on_cells_per_segment(vtk_writer<DomainType> & writer,
+    template <typename KeyType, typename DataType, typename DomainType, typename CellTypeOrTag>
+    vtk_writer<DomainType, CellTypeOrTag> & add_vector_data_on_cells_per_segment(vtk_writer<DomainType, CellTypeOrTag> & writer,
                                                                   KeyType const & key,
                                                                   std::string quantity_name)
     {
-      typedef typename DomainType::config_type                         DomainConfiguration;
-      typedef typename DomainConfiguration::cell_tag                   CellTag;
-      typedef typename result_of::ncell<DomainConfiguration, CellTag::dim>::type     CellType;
+      typedef typename result_of::element<DomainType, CellTypeOrTag>::type CellType;
+//       typedef typename DomainType::config_type                         DomainConfiguration;
+//       typedef typename DomainConfiguration::cell_tag                   CellTag;
+//       typedef typename result_of::ncell<DomainConfiguration, CellTag::dim>::type     CellType;
       
       data_accessor_wrapper<CellType> wrapper(new segment_vector_data_accessor<CellType, KeyType, DataType>(key));
       writer.add_vector_data_on_cells(wrapper, quantity_name);
@@ -908,14 +931,15 @@ namespace viennagrid
       * @param  key         The key object for ViennaData
       * @param  quantity_name        The quantity name that should appear in the VTK file
       */
-    template <typename KeyType, typename DataType, typename DomainType>
-    vtk_writer<DomainType> & add_normal_data_on_cells(vtk_writer<DomainType> & writer,
+    template <typename KeyType, typename DataType, typename DomainType, typename CellTypeOrTag>
+    vtk_writer<DomainType, CellTypeOrTag> & add_normal_data_on_cells(vtk_writer<DomainType, CellTypeOrTag> & writer,
                                                       KeyType const & key,
                                                       std::string quantity_name)
     {
-      typedef typename DomainType::config_type                         DomainConfiguration;
-      typedef typename DomainConfiguration::cell_tag                   CellTag;
-      typedef typename result_of::ncell<DomainConfiguration, CellTag::dim>::type     CellType;
+      typedef typename result_of::element<DomainType, CellTypeOrTag>::type CellType;
+//       typedef typename DomainType::config_type                         DomainConfiguration;
+//       typedef typename DomainConfiguration::cell_tag                   CellTag;
+//       typedef typename result_of::ncell<DomainConfiguration, CellTag::dim>::type     CellType;
       
       data_accessor_wrapper<CellType> wrapper(new global_vector_data_accessor<CellType, KeyType, DataType>(key));
       writer.add_normal_data_on_cells(wrapper, quantity_name);
@@ -931,14 +955,15 @@ namespace viennagrid
       * @param  key         The key object for ViennaData
       * @param  quantity_name        The quantity name that should appear in the VTK file
       */
-    template <typename KeyType, typename DataType, typename DomainType>
-    vtk_writer<DomainType> & add_normal_data_on_cells_per_segment(vtk_writer<DomainType> & writer,
+    template <typename KeyType, typename DataType, typename DomainType, typename CellTypeOrTag>
+    vtk_writer<DomainType, CellTypeOrTag> & add_normal_data_on_cells_per_segment(vtk_writer<DomainType, CellTypeOrTag> & writer,
                                                                   KeyType const & key,
                                                                   std::string quantity_name)
     {
-      typedef typename DomainType::config_type                         DomainConfiguration;
-      typedef typename DomainConfiguration::cell_tag                   CellTag;
-      typedef typename result_of::ncell<DomainConfiguration, CellTag::dim>::type     CellType;
+      typedef typename result_of::element<DomainType, CellTypeOrTag>::type CellType;
+//       typedef typename DomainType::config_type                         DomainConfiguration;
+//       typedef typename DomainConfiguration::cell_tag                   CellTag;
+//       typedef typename result_of::ncell<DomainConfiguration, CellTag::dim>::type     CellType;
       
       data_accessor_wrapper<CellType> wrapper(new segment_vector_data_accessor<CellType, KeyType, DataType>(key));
       writer.add_normal_data_on_cells(wrapper, quantity_name);
