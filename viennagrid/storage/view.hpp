@@ -195,16 +195,18 @@ namespace viennagrid
             
             hook_type hook_at(std::size_t pos)
             {
-                hook_iterator it = hook_begin();
-                std::advance( it, pos );
-                return *it;
+                return *viennagrid::advance(hook_begin(), pos);
+//                 hook_iterator it = hook_begin();
+//                 std::advance( it, pos );
+//                 return *it;
             }
             
             const_hook_type hook_at(std::size_t pos) const
             {
-                const_hook_iterator it = hook_begin();
-                std::advance( it, pos );
-                return *it;
+                return *viennagrid::advance(hook_begin(), pos);
+//                 const_hook_iterator it = hook_begin();
+//                 std::advance( it, pos );
+//                 return *it;
             }
 
             
