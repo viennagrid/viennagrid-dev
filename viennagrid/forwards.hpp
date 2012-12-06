@@ -59,6 +59,19 @@
 /** @brief The main ViennaGrid namespace. Most functionality resides in this namespace */
 namespace viennagrid
 {
+    
+    
+    template<typename iterator_type, typename distance_type>
+    iterator_type advance(const iterator_type & in, distance_type distance)
+    {
+        iterator_type out(in);
+        std::advance(out, distance);
+        return out;
+    }
+    
+    
+    
+    
   /** @brief A global size_type equivalent for use throughout ViennaData. */
   typedef std::size_t       dim_type;
   
