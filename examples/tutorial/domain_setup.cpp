@@ -21,30 +21,29 @@
 #endif
 
 
-#include "viennagrid/forwards.h"
-#include "viennagrid/element.hpp"
+#include "viennagrid/forwards.hpp"
+#include "viennagrid/domain/geometric_domain.hpp"
 #include "viennagrid/point.hpp"
 #include "viennagrid/domain.hpp"
 #include "viennagrid/segment.hpp"
 #include "viennagrid/config/simplex.hpp"
 
 
-template <typename CellType, typename DomainType>
-void setup_cell(CellType & cell,
-                DomainType & domain,
+template <typename CellType, typename DomainType, typename SegmentType>
+void setup_cell(DomainType & domain,
+                SegmentType & segment,
                 std::size_t id0,
                 std::size_t id1,
                 std::size_t id2)
 {
-  typedef typename DomainType::config_type                                 ConfigType;
-  typedef typename viennagrid::result_of::ncell<ConfigType, 0>::type       VertexType;
-
-  VertexType * cell_vertices[3]; //holds pointers to the respective vertices in the domain
- 
-  cell_vertices[0] = &(viennagrid::ncells<0>(domain)[id0]);
-  cell_vertices[1] = &(viennagrid::ncells<0>(domain)[id1]);
-  cell_vertices[2] = &(viennagrid::ncells<0>(domain)[id2]);
-  cell.vertices(cell_vertices);
+  typedef typename viennagrid::result_of::element_hook<DomainType, viennagrid::vertex_tag>::type       VertexHookType;
+  
+  viennagrid::storage::static_array<VertexHookType, 3> vertices;
+  vertices[0] = viennagrid::elements<viennagrid::vertex_tag>(domain).hook_at( id0 );
+  vertices[1] = viennagrid::elements<viennagrid::vertex_tag>(domain).hook_at( id1 );
+  vertices[2] = viennagrid::elements<viennagrid::vertex_tag>(domain).hook_at( id2 );
+  
+  viennagrid::create_element<CellType>(segment, vertices);
 }
 
 //
@@ -64,17 +63,25 @@ int main()
   //
   // Define the necessary types:
   //
-  typedef viennagrid::config::triangular_2d                       ConfigType;
-  typedef viennagrid::result_of::domain<ConfigType>::type         Domain;
-  typedef viennagrid::result_of::segment<ConfigType>::type        Segment;
-  typedef ConfigType::cell_tag                                    CellTag;
   
-  typedef viennagrid::result_of::point<ConfigType>::type          PointType;
-  typedef viennagrid::result_of::ncell<ConfigType, 0>::type       VertexType;
-  typedef viennagrid::result_of::ncell<ConfigType,
-                                       CellTag::dim>::type   CellType;
+  typedef viennagrid::point_t<double, viennagrid::cartesian_cs<2> > PointType;
+  
+  typedef viennagrid::result_of::geometric_domain_config< viennagrid::triangle_tag, PointType, viennagrid::storage::id_hook_tag >::type DomainConfig;
+  
+  //typedef viennagrid::config::triangular_2d                       ConfigType;
+  //typedef viennagrid::result_of::domain<ConfigType>::type         Domain;
+  //typedef viennagrid::result_of::segment<ConfigType>::type        Segment;
+  
+  typedef viennagrid::result_of::geometric_domain< DomainConfig >::type Domain;  
+  typedef viennagrid::result_of::geometric_view<Domain>::type Segment;
+  typedef viennagrid::triangle_tag                                    CellTag;
+  
+  //typedef viennagrid::result_of::point<ConfigType>::type          PointType;
+  typedef viennagrid::result_of::element<Domain, viennagrid::vertex_tag>::type       VertexType;
+  typedef viennagrid::result_of::element_hook<Domain, viennagrid::vertex_tag>::type       VertexHookType;
+  typedef viennagrid::result_of::element<Domain, CellTag>::type   CellType;
 
-  typedef viennagrid::result_of::ncell_range<Segment, CellTag::dim>::type    CellRange;
+  typedef viennagrid::result_of::element_range<Segment, CellTag>::type    CellRange;
   typedef viennagrid::result_of::iterator<CellRange>::type                             CellIterator;
 
   std::cout << "-------------------------------------------------------------- " << std::endl;
@@ -86,49 +93,57 @@ int main()
   // Step 1: Instantiate the domain and create two segments:
   //
   Domain domain;
-  domain.segments().resize(2);
-  Segment seg0 = domain.segments()[0];
-  Segment seg1 = domain.segments()[1];
+//   std::vector<Segment> segments;
+//   
+//   segments.resize(2);
+//   segments[0] = viennagrid::create_view<Segment>(domain);
+//   segments[1] = viennagrid::create_view<Segment>(domain);
+//   
+  
+  //domain.segments().resize(2);
+  Segment seg0 = viennagrid::create_view<Segment>(domain);
+  Segment seg1 = viennagrid::create_view<Segment>(domain);
   
   //
   // Step 2: Add vertices to the domain. 
   //         Note that vertices with IDs are enumerated in the order they are pushed to the domain.
   //
-  domain.push_back(PointType(0,0));
-  domain.push_back(PointType(1,0));
-  domain.push_back(PointType(2,0));
-  domain.push_back(PointType(2,1));
-  domain.push_back(PointType(1,1));
-  domain.push_back(PointType(0,1));
+  viennagrid::point( domain, viennagrid::create_element<VertexType>(domain) ) = PointType(0,0);
+  viennagrid::point( domain, viennagrid::create_element<VertexType>(domain) ) = PointType(1,0);
+  viennagrid::point( domain, viennagrid::create_element<VertexType>(domain) ) = PointType(2,0);
+  viennagrid::point( domain, viennagrid::create_element<VertexType>(domain) ) = PointType(2,1);
+  viennagrid::point( domain, viennagrid::create_element<VertexType>(domain) ) = PointType(1,1);
+  viennagrid::point( domain, viennagrid::create_element<VertexType>(domain) ) = PointType(0,1);
+
   
   //
   // Step 3: Fill the two segments with cells. 
   //         To do so, each cell must be linked with the defining vertices from the domain (not v0, v1, ...!)
   //
-  CellType cell;
-  VertexType * cell_vertices[3]; //holds pointers to the respective vertices in the domain
+  
+  viennagrid::storage::static_array<VertexHookType, 3> vertices;
+  
+  
+  //CellType cell;
+  //VertexType * cell_vertices[3]; //holds pointers to the respective vertices in the domain
 
   // First triangle: (do not use v0, v1, etc. for vertex setup!)
-  cell_vertices[0] = &(viennagrid::ncells<0>(domain)[0]); //get vertex with ID 0 from domain
-  cell_vertices[1] = &(viennagrid::ncells<0>(domain)[1]); //get vertex with ID 1 from domain
-  cell_vertices[2] = &(viennagrid::ncells<0>(domain)[5]); //get vertex with ID 5 from domain
-  cell.vertices(cell_vertices); //set cell vertices. 
+  vertices[0] = viennagrid::elements<viennagrid::vertex_tag>(domain).hook_at(0);
+  vertices[1] = viennagrid::elements<viennagrid::vertex_tag>(domain).hook_at(1);
+  vertices[2] = viennagrid::elements<viennagrid::vertex_tag>(domain).hook_at(5);
   //Note that vertices are rearranged internally if they are not supplied in mathematically positive order.
   
-  seg0.push_back(cell); //copies 'cell' to the domain. 'cell' can be reused for setting up the other cells.
+  viennagrid::create_element<CellType>(seg0, vertices); //copies 'cell' to the domain. 'cell' can be reused for setting up the other cells.
   
   
   // Second triangle:
-  setup_cell(cell, domain, 1, 4, 5);  //use the shortcut function defined at the beginning of this tutorial
-  seg0.push_back(cell);
+  setup_cell<CellType>(domain, seg0, 1, 4, 5);  //use the shortcut function defined at the beginning of this tutorial
 
   // Third triangle:
-  setup_cell(cell, domain, 1, 2, 4);
-  seg1.push_back(cell); // Note that we push to 'seg1' now.
+  setup_cell<CellType>(domain, seg1, 1, 2, 4); // Note that we push to 'seg1' now.
 
   // Fourth triangle:
-  setup_cell(cell, domain, 2, 3, 4);
-  seg1.push_back(cell);
+  setup_cell<CellType>(domain, seg1, 2, 3, 4);
 
   //
   // That's it. The domain consisting of two segments is now set up.
@@ -140,7 +155,7 @@ int main()
   //
   
   std::cout << "Cells in segment 0:" << std::endl;
-  CellRange cells_seg0 = viennagrid::ncells(seg0);
+  CellRange cells_seg0 = viennagrid::elements<CellType>(seg0);
   for (CellIterator cit0 = cells_seg0.begin();
                     cit0 != cells_seg0.end();
                   ++cit0)
@@ -150,7 +165,7 @@ int main()
   std::cout << std::endl;
   
   std::cout << "Cells in segment 1:" << std::endl;
-  CellRange cells_seg1 = viennagrid::ncells(seg1);
+  CellRange cells_seg1 = viennagrid::elements<CellType>(seg1);
   for (CellIterator cit1 = cells_seg1.begin();
                     cit1 != cells_seg1.end();
                   ++cit1)
