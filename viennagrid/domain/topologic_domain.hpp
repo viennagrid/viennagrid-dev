@@ -448,6 +448,77 @@ namespace viennagrid
     {
         return ncells<dim>(domain.get_container_collection());
     }
+    
+    
+    
+    
+    
+    
+    
+    
+    template<typename domain_type, typename id_type>
+    typename result_of::element_hook<domain_type, typename id_type::value_type::tag>::type find_hook(domain_type & domain, id_type id)
+    {
+        typedef typename id_type::value_type element_type;
+        typedef typename element_type::tag element_tag;
+        typedef typename viennagrid::result_of::element_range<domain_type, element_tag>::type RangeType;
+        typedef typename viennagrid::result_of::hook_iterator<RangeType>::type RangeIterator;
+        
+        RangeType range = viennagrid::elements<element_tag>(domain);
+        for (RangeIterator it = range.hook_begin(); it != range.hook_end(); ++it)
+        {
+            if ( viennagrid::dereference_hook(domain, *it).id() == id )
+                return *it;
+        }
+        
+        return typename result_of::element_hook<domain_type, element_tag>::type();
+    }
+    
+    template<typename domain_type, typename id_type>
+    typename result_of::const_element_hook<domain_type, typename id_type::value_type::tag>::type find_hook(const domain_type & domain, id_type id)
+    {
+        typedef typename id_type::value_type element_type;
+        typedef typename element_type::tag element_tag;
+        typedef typename viennagrid::result_of::const_element_range<domain_type, element_tag>::type RangeType;
+        typedef typename viennagrid::result_of::const_hook_iterator<RangeType>::type RangeIterator;
+        
+        RangeType range = viennagrid::elements<element_tag>(domain);
+        for (RangeIterator it = range.hook_begin(); it != range.hook_end(); ++it)
+        {
+            if ( viennagrid::dereference_hook(domain, *it).id() == id )
+                return *it;
+        }
+        
+        return typename result_of::const_element_hook<domain_type, element_tag>::type();
+    }
+    
+    template<typename domain_type, typename id_type>
+    typename result_of::element<domain_type, typename id_type::value_type::tag>::type & find(domain_type & domain, id_type id )
+    {
+        typedef typename id_type::value_type element_type;
+        typedef typename element_type::tag element_tag;
+        typedef typename viennagrid::result_of::element_range<domain_type, element_tag>::type RangeType;
+        RangeType range = viennagrid::elements<element_tag>(domain);
+        return *std::find_if(
+                    range.begin(),
+                    range.end(),
+                    viennagrid::storage::id_compare<id_type>(id)
+            );
+    }
+    
+    template<typename domain_type, typename id_type>
+    const typename result_of::element<domain_type, typename id_type::value_type::tag>::type & find(const domain_type & domain, id_type id )
+    {
+        typedef typename id_type::value_type element_type;
+        typedef typename element_type::tag element_tag;
+        typedef typename viennagrid::result_of::const_element_range<domain_type, element_tag>::type RangeType;
+        RangeType range = viennagrid::elements<element_tag>(domain);
+        return *std::find_if(
+                    range.begin(),
+                    range.end(),       
+                    viennagrid::storage::id_compare<id_type>(id)
+            );
+    }
 
     
 
