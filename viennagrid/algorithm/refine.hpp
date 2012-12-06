@@ -208,7 +208,10 @@ namespace viennagrid
       typedef typename viennagrid::result_of::const_element_range<CellType, vertex_tag>::type                               VertexOnCellRange;
       typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type                                  VertexOnCellIterator;            
       typedef typename viennagrid::result_of::const_element_range<EdgeType, vertex_tag>::type                               VertexOnEdgeRange;
-      typedef typename viennagrid::result_of::iterator<VertexOnEdgeRange>::type                                  VertexOnEdgeIterator;            
+      typedef typename viennagrid::result_of::iterator<VertexOnEdgeRange>::type                                  VertexOnEdgeIterator;
+      
+      typedef typename viennagrid::result_of::element<GeometricDomainTypeOut, vertex_tag>::type                                      VertexTypeOut;
+      typedef typename VertexTypeOut::id_type VertexIDTypeOut;
 
       //typedef typename detail::refinement_vertex_id_requirement<domain_t<ConfigTypeIn> >::type   checked_type;
       
@@ -228,7 +231,8 @@ namespace viennagrid
                         ++vit)
       {
         //domain_out.push_back(*vit);
-        viennagrid::push_element_noid( domain_out, *vit );
+        VertexHookType vh = viennagrid::push_element_noid( domain_out, *vit ).first;
+        viennagrid::point( domain_out, vh ) = viennagrid::point( domain_in, *vit );
         ++num_vertices;
       }
 
@@ -245,7 +249,8 @@ namespace viennagrid
           VertexHookType v = viennagrid::create_element<VertexType>( domain_out, typename VertexType::id_type(num_vertices) );
           viennagrid::point(domain_out, v) = viennagrid::centroid(*eit, domain_in);
 
-          viennadata::access<refinement_key, std::size_t>()(*eit) = num_vertices;
+          //viennadata::access<refinement_key, std::size_t>()(*eit) = num_vertices;
+          viennadata::access<refinement_key, VertexIDTypeOut>()(*eit) = VertexIDTypeOut(num_vertices);
           ++num_vertices;
         }
       }
@@ -310,7 +315,10 @@ namespace viennagrid
       typedef typename viennagrid::result_of::const_element_range<CellType, vertex_tag>::type                               VertexOnCellRange;
       typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type                                  VertexOnCellIterator;            
       typedef typename viennagrid::result_of::const_element_range<EdgeType, vertex_tag>::type                               VertexOnEdgeRange;
-      typedef typename viennagrid::result_of::iterator<VertexOnEdgeRange>::type                                  VertexOnEdgeIterator;           
+      typedef typename viennagrid::result_of::iterator<VertexOnEdgeRange>::type                                  VertexOnEdgeIterator;
+      
+      typedef typename viennagrid::result_of::element<GeometricDomainTypeOut, vertex_tag>::type                                      VertexTypeOut;
+      typedef typename VertexTypeOut::id_type VertexIDTypeOut;
       
       //typedef typename detail::refinement_vertex_id_requirement<domain_t<ConfigTypeIn> >::type   checked_type;
       
@@ -324,7 +332,8 @@ namespace viennagrid
                         ++vit)
       {
         //domain_out.push_back(*vit);
-        viennagrid::push_element_noid( domain_out, *vit );
+        VertexHookType vh = viennagrid::push_element_noid( domain_out, *vit ).first;
+        viennagrid::point( domain_out, vh ) = viennagrid::point( domain_in, *vit );
         ++num_vertices;
       }
 
@@ -337,9 +346,10 @@ namespace viennagrid
                       ++eit)
       {
           VertexHookType v = viennagrid::create_element<VertexType>( domain_out, typename VertexType::id_type(num_vertices) );
-          viennagrid::point(domain_out, v) = viennagrid::centroid(*eit);
+          viennagrid::point(domain_out, v) = viennagrid::centroid(*eit, domain_in);
 
-          viennadata::access<refinement_key, std::size_t>()(*eit) = num_vertices;
+          //viennadata::access<refinement_key, std::size_t>()(*eit) = num_vertices;
+          viennadata::access<refinement_key, VertexIDTypeOut>()(*eit) = VertexIDTypeOut(num_vertices);
           viennadata::access<refinement_key, bool>()(*eit) = true;
           ++num_vertices;
       }
