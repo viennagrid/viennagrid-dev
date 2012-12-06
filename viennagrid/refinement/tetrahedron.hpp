@@ -37,20 +37,32 @@ namespace viennagrid
    * Ensures that the result is the same no matter in which order the parameters are passed. 
    * If the two lines have equal length, the line with the larger vertex IDs involved is considered as longer.
    */
-  template <typename VertexType>
-  bool stable_line_is_longer(VertexType const * v1_1, VertexType const * v1_2,  
-                             VertexType const * v2_1, VertexType const * v2_2)
+  template <typename GeometricContainerType, typename VertexHookType>
+  bool stable_line_is_longer(GeometricContainerType const & domain,
+                             VertexHookType vh1_1, VertexHookType vh1_2,  
+                             VertexHookType vh2_1, VertexHookType vh2_2)
   {
-    typedef typename VertexType::config_type::numeric_type       ScalarType;
+      typedef typename viennagrid::storage::hook::value_type< VertexHookType >::type VertexType;
+      typedef typename viennagrid::result_of::point_type< GeometricContainerType >::type PointType;
+      typedef typename viennagrid::traits::value_type< PointType >::type ScalarType;
+      
+      const VertexType & v1_1 = viennagrid::dereference_hook( domain, vh1_1 );
+      const VertexType & v1_2 = viennagrid::dereference_hook( domain, vh1_2 );
+      const VertexType & v2_1 = viennagrid::dereference_hook( domain, vh2_1 );
+      const VertexType & v2_2 = viennagrid::dereference_hook( domain, vh2_2 );
+      
+      
+    //typedef typename VertexType::config_type::numeric_type       ScalarType;
     
-    VertexType const * v1_1_ptr = (v1_1->id() < v1_2->id()) ? v1_1 : v1_2; //v1_1 carries smaller ID
-    VertexType const * v1_2_ptr = (v1_1->id() < v1_2->id()) ? v1_2 : v1_1; //v1_2 carries larger ID
+    const VertexType & v1_1_ptr = (v1_1.id() < v1_2.id()) ? v1_1 : v1_2; //v1_1 carries smaller ID
+    const VertexType & v1_2_ptr = (v1_1.id() < v1_2.id()) ? v1_2 : v1_1; //v1_2 carries larger ID
     
-    VertexType const * v2_1_ptr = (v2_1->id() < v2_2->id()) ? v2_1 : v2_2; //v2_1 carries smaller ID
-    VertexType const * v2_2_ptr = (v2_1->id() < v2_2->id()) ? v2_2 : v2_1; //v2_2 carries larger ID
+    const VertexType & v2_1_ptr = (v2_1.id() < v2_2.id()) ? v2_1 : v2_2; //v2_1 carries smaller ID
+    const VertexType & v2_2_ptr = (v2_1.id() < v2_2.id()) ? v2_2 : v2_1; //v2_2 carries larger ID
     
-    ScalarType line1 = viennagrid::norm(v1_1->point() - v1_2->point());
-    ScalarType line2 = viennagrid::norm(v2_1->point() - v2_2->point());
+    ScalarType line1 = viennagrid::norm( viennagrid::point(domain, v1_1) - viennagrid::point(domain, v1_2) );
+    ScalarType line2 = viennagrid::norm( viennagrid::point(domain, v2_1) - viennagrid::point(domain, v2_2) );
+
     
     if (line1 > line2)
     {
@@ -59,21 +71,46 @@ namespace viennagrid
     else if (line1 == line2)
     {
       //compare IDs:
-      if (v1_1_ptr->id() > v2_1_ptr->id())
+      if (v1_1_ptr.id() > v2_1_ptr.id())
       {
         return true;
       }
-      else if (v1_1_ptr->id() == v2_1_ptr->id())
+      else if (v1_1_ptr.id() == v2_1_ptr.id())
       {
-        if (v1_2_ptr->id() > v2_2_ptr->id())
+        if (v1_2_ptr.id() > v2_2_ptr.id())
           return true;
-        else if (v1_2_ptr->id() == v2_2_ptr->id())
+        else if (v1_2_ptr.id() == v2_2_ptr.id())
           return false; //identical lines are compared!
       }
     }
 
     return false;
   }
+  
+  template<typename GeometricContainerType, typename VertexHookContainer>
+  bool stable_line_is_longer(GeometricContainerType const & domain, VertexHookContainer vertices, unsigned int i0, unsigned int i1, unsigned int i2, unsigned int i3)
+  {
+      return stable_line_is_longer(domain,
+                                *viennagrid::advance(vertices.begin(), i0), *viennagrid::advance(vertices.begin(), i1),
+                                *viennagrid::advance(vertices.begin(), i2), *viennagrid::advance(vertices.begin(), i1));
+  }
+  
+  
+  template<typename CellType, typename GeometricDomainType, typename VertexHookContainer>
+  void create_refinement_cell(GeometricDomainType & domain, VertexHookContainer vertex_hook_container, unsigned int i0, unsigned int i1, unsigned int i2, unsigned int i3)
+  {
+      typedef typename VertexHookContainer::iterator VertexHookIteratorType;
+      typedef typename std::iterator_traits<VertexHookIteratorType>::value_type VertexHookType;
+      storage::static_array< VertexHookType, topology::bndcells<tetrahedron_tag, 0>::num > cellvertices;
+      
+      cellvertices[0] = *viennagrid::advance(vertex_hook_container.begin(), i0);
+      cellvertices[1] = *viennagrid::advance(vertex_hook_container.begin(), i1);
+      cellvertices[2] = *viennagrid::advance(vertex_hook_container.begin(), i2);
+      cellvertices[3] = *viennagrid::advance(vertex_hook_container.begin(), i3);
+      
+      viennagrid::create_element<CellType>( domain, cellvertices );
+  }
+  
   
   
   
@@ -99,21 +136,35 @@ namespace viennagrid
       
       typedef typename viennagrid::result_of::element<DomainTypeOut, vertex_tag>::type             VertexType;
       typedef typename viennagrid::result_of::element_hook<DomainTypeOut, vertex_tag>::type             VertexHookType;
-
-      VertexType * vertices[topology::bndcells<tetrahedron_tag, 0>::num];
+      
+      typedef typename viennagrid::result_of::element<DomainTypeOut, vertex_tag>::type                                      VertexTypeOut;
+      typedef typename VertexTypeOut::id_type VertexIDTypeOut;
+      
+      
+      //VertexType * vertices[topology::bndcells<tetrahedron_tag, 0>::num];
+      storage::static_array< VertexHookType, topology::bndcells<tetrahedron_tag, 0>::num > vertex_hooks;
       
       // Step 1: grab existing vertices:
       VertexOnCellRange vertices_on_cell = viennagrid::elements<vertex_tag>(cell_in);
       VertexOnCellIterator vocit = vertices_on_cell.begin();
-      vertices[0] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]); ++vocit;
-      vertices[1] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]); ++vocit;
-      vertices[2] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]); ++vocit;
-      vertices[3] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]);
+      
+//       vertices[0] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]); ++vocit;
+//       vertices[1] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]); ++vocit;
+//       vertices[2] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]); ++vocit;
+//       vertices[3] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]);
+      
+      vertex_hooks[0] = viennagrid::find_hook( segment_out, vocit->id() ); ++vocit;
+      vertex_hooks[1] = viennagrid::find_hook( segment_out, vocit->id() ); ++vocit;
+      vertex_hooks[2] = viennagrid::find_hook( segment_out, vocit->id() ); ++vocit;
+      vertex_hooks[3] = viennagrid::find_hook( segment_out, vocit->id() );
+      
+
 
       // Step 2: Add new cells to new domain:
-      CellType new_cell;
-      new_cell.vertices(vertices);
-      segment_out.push_back(new_cell);
+      //CellType new_cell;
+      //new_cell.vertices(vertices);
+      //segment_out.push_back(new_cell);
+      viennagrid::create_element<CellType>( segment_out, vertex_hooks );
 
     }    
 
@@ -121,34 +172,50 @@ namespace viennagrid
     template <typename CellType, typename DomainTypeOut>
     static void apply1(CellType const & cell_in, DomainTypeOut & segment_out)
     {
-      typedef typename CellType::config_type        ConfigTypeIn;
-      typedef typename viennagrid::result_of::const_ncell_range<CellType, 0>::type            VertexOnCellRange;
+      typedef typename viennagrid::result_of::const_element_range<CellType, vertex_tag>::type            VertexOnCellRange;
       typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type         VertexOnCellIterator;            
-      typedef typename viennagrid::result_of::const_ncell_range<CellType, 1>::type            EdgeOnCellRange;
+      typedef typename viennagrid::result_of::const_element_range<CellType, line_tag>::type            EdgeOnCellRange;
       typedef typename viennagrid::result_of::iterator<EdgeOnCellRange>::type           EdgeOnCellIterator;            
       
-      typedef typename viennagrid::result_of::ncell<ConfigTypeIn, 0>::type             VertexType;
-      typedef typename viennagrid::result_of::ncell<ConfigTypeIn, 1>::type             EdgeType;
+      typedef typename viennagrid::result_of::element<CellType, line_tag>::type             EdgeType;
+      
+      typedef typename viennagrid::result_of::element<DomainTypeOut, vertex_tag>::type             VertexType;
+      typedef typename viennagrid::result_of::element_hook<DomainTypeOut, vertex_tag>::type             VertexHookType;
+      
+      typedef typename viennagrid::result_of::element<DomainTypeOut, vertex_tag>::type                                      VertexTypeOut;
+      typedef typename VertexTypeOut::id_type VertexIDTypeOut;
 
-      VertexType * vertices[topology::bndcells<tetrahedron_tag, 0>::num];
+
+
+      //VertexType * vertices[topology::bndcells<tetrahedron_tag, 0>::num];
+      storage::static_array< VertexHookType, topology::bndcells<tetrahedron_tag, 0>::num > vertices;
+
       //std::cout << "apply1()" << std::endl;
       
       //
       // Step 1: Get vertices from input cell
       //
-      VertexOnCellRange vertices_on_cell = viennagrid::ncells<0>(cell_in);
+      VertexOnCellRange vertices_on_cell = viennagrid::elements<vertex_tag>(cell_in);
       VertexOnCellIterator vocit = vertices_on_cell.begin();
-      vertices[0] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]); ++vocit;
-      vertices[1] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]); ++vocit;
-      vertices[2] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]); ++vocit;
-      vertices[3] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]);
+      
+//       vertices[0] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]); ++vocit;
+//       vertices[1] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]); ++vocit;
+//       vertices[2] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]); ++vocit;
+//       vertices[3] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]);
+      
+      vertices[0] = viennagrid::find_hook( segment_out, vocit->id() ); ++vocit;
+      vertices[1] = viennagrid::find_hook( segment_out, vocit->id() ); ++vocit;
+      vertices[2] = viennagrid::find_hook( segment_out, vocit->id() ); ++vocit;
+      vertices[3] = viennagrid::find_hook( segment_out, vocit->id() );
       
 
       //
       // Step 2: Bring vertices in correct order, such that refined edge is on {0,1}-edge
       //
-      VertexType * ordered_vertices[topology::bndcells<tetrahedron_tag, 0>::num + 1];
-      EdgeOnCellRange edges_on_cell = viennagrid::ncells<1>(cell_in);
+      //VertexType * ordered_vertices[topology::bndcells<tetrahedron_tag, 0>::num + 1];
+      storage::static_array< VertexHookType, topology::bndcells<tetrahedron_tag, 0>::num + 1 > ordered_vertices;
+      
+      EdgeOnCellRange edges_on_cell = viennagrid::elements<line_tag>(cell_in);
       EdgeOnCellIterator eocit = edges_on_cell.begin();
       EdgeType const & e0 = *eocit; ++eocit;
       EdgeType const & e1 = *eocit; ++eocit;
@@ -163,7 +230,9 @@ namespace viennagrid
         ordered_vertices[1] = vertices[1];
         ordered_vertices[2] = vertices[2];
         ordered_vertices[3] = vertices[3];
-        ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)]);
+        ordered_vertices[4] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
+        
+        //[)]);
       }
       else if (viennadata::access<refinement_key, bool>(refinement_key())(e1) == true)
       {
@@ -171,7 +240,7 @@ namespace viennagrid
         ordered_vertices[1] = vertices[0];
         ordered_vertices[2] = vertices[1];
         ordered_vertices[3] = vertices[3];
-        ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)]);
+        ordered_vertices[4] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
       }
       else if (viennadata::access<refinement_key, bool>(refinement_key())(e2) == true)
       {
@@ -179,7 +248,7 @@ namespace viennagrid
         ordered_vertices[1] = vertices[3];
         ordered_vertices[2] = vertices[1];
         ordered_vertices[3] = vertices[2];
-        ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
+        ordered_vertices[4] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
       }
       else if (viennadata::access<refinement_key, bool>(refinement_key())(e3) == true)
       {
@@ -187,7 +256,7 @@ namespace viennagrid
         ordered_vertices[1] = vertices[2];
         ordered_vertices[2] = vertices[0];
         ordered_vertices[3] = vertices[3];
-        ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)]);
+        ordered_vertices[4] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
       }
       else if (viennadata::access<refinement_key, bool>(refinement_key())(e4) == true)
       {
@@ -195,7 +264,7 @@ namespace viennagrid
         ordered_vertices[1] = vertices[1];
         ordered_vertices[2] = vertices[0];
         ordered_vertices[3] = vertices[2];
-        ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
+        ordered_vertices[4] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
       }
       else if (viennadata::access<refinement_key, bool>(refinement_key())(e5) == true)
       {
@@ -203,7 +272,7 @@ namespace viennagrid
         ordered_vertices[1] = vertices[2];
         ordered_vertices[2] = vertices[1];
         ordered_vertices[3] = vertices[0];
-        ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
+        ordered_vertices[4] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
       }
       else
       {
@@ -214,24 +283,32 @@ namespace viennagrid
       //
       // Step 3: Write new cells to domain_out
       //
-      CellType new_cell;
-      VertexType * cellvertices[topology::bndcells<tetrahedron_tag, 0>::num];
+      //storage::static_array< VertexHookType, topology::bndcells<tetrahedron_tag, 0>::num > cellvertices;
       
-      //cell containing vertex 0:
-      cellvertices[0] = ordered_vertices[0];
-      cellvertices[1] = ordered_vertices[4];
-      cellvertices[2] = ordered_vertices[2];
-      cellvertices[3] = ordered_vertices[3];
-      new_cell.vertices(cellvertices);
-      segment_out.push_back(new_cell);
-
-      //cell without vertex 0:
-      cellvertices[0] = ordered_vertices[4];
-      cellvertices[1] = ordered_vertices[1];
-      cellvertices[2] = ordered_vertices[2];
-      cellvertices[3] = ordered_vertices[3];
-      new_cell.vertices(cellvertices);
-      segment_out.push_back(new_cell);
+      //CellType new_cell;
+      //VertexType * cellvertices[topology::bndcells<tetrahedron_tag, 0>::num];
+      
+      
+      create_refinement_cell<CellType>( segment_out, ordered_vertices, 0, 4, 2, 3);
+      create_refinement_cell<CellType>( segment_out, ordered_vertices, 4, 1, 2, 3);
+      
+//       //cell containing vertex 0:
+//       cellvertices[0] = ordered_vertices[0];
+//       cellvertices[1] = ordered_vertices[4];
+//       cellvertices[2] = ordered_vertices[2];
+//       cellvertices[3] = ordered_vertices[3];
+// //       new_cell.vertices(cellvertices);
+// //       segment_out.push_back(new_cell);
+//       viennagrid::create_element<CellType>( segment_out, cellvertices );
+// 
+//       //cell without vertex 0:
+//       cellvertices[0] = ordered_vertices[4];
+//       cellvertices[1] = ordered_vertices[1];
+//       cellvertices[2] = ordered_vertices[2];
+//       cellvertices[3] = ordered_vertices[3];
+// //       new_cell.vertices(cellvertices);
+// //       segment_out.push_back(new_cell);
+//       viennagrid::create_element<CellType>( segment_out, cellvertices );
       
     }    
 
@@ -256,47 +333,24 @@ namespace viennagrid
      * 
      * 
      */
-    template <typename CellType, typename DomainTypeOut, typename VertexType>
-    static void apply2_1(CellType const & cell_in, 
-                         DomainTypeOut & segment_out,
-                         VertexType ** vertices
+    template <typename CellType, typename DomainTypeOut, typename VertexHookIteratorType>
+    static void apply2_1(DomainTypeOut & segment_out,
+                         VertexHookIteratorType vertices
                         )
     {
-      CellType new_cell;
-      VertexType * cellvertices[topology::bndcells<tetrahedron_tag, 0>::num];
+      create_refinement_cell<CellType>( segment_out, vertices, 4, 1, 5, 3);
 
-      cellvertices[0] = vertices[4];
-      cellvertices[1] = vertices[1];
-      cellvertices[2] = vertices[5];
-      cellvertices[3] = vertices[3];
-      new_cell.vertices(cellvertices);
-      segment_out.push_back(new_cell);
-      
-      //double diag01_len = viennagrid::norm(vertices[0]->point() - vertices[1]->point());
-      //double diag12_len = viennagrid::norm(vertices[2]->point() - vertices[1]->point());
-
-      //if (diag01_len > diag12_len) //split edge 01, introduce line 42
-      if (stable_line_is_longer(vertices[0], vertices[1],
-                                vertices[2], vertices[1])) //split edge 01, introduce line 42
+      if (stable_line_is_longer(segment_out, vertices, 0, 1, 2, 1))
+//                                 *viennagrid::advance(vertices, 0), *viennagrid::advance(vertices, 1),
+//                                 *viennagrid::advance(vertices, 2), *viennagrid::advance(vertices, 1))) //split edge 01, introduce line 42
       {
         /*std::cout << "Norm " << vertices[0]->id() << vertices[1]->id() << ": " 
                              << viennagrid::norm(vertices[0]->point() - vertices[1]->point()) << std::endl;
         std::cout << "Norm " << vertices[2]->id() << vertices[1]->id() << ": " 
                              << viennagrid::norm(vertices[2]->point() - vertices[1]->point()) << std::endl;
         std::cout << "Splitting " << vertices[0]->id() << vertices[1]->id() << std::endl;*/
-        cellvertices[0] = vertices[0];
-        cellvertices[1] = vertices[4];
-        cellvertices[2] = vertices[2];
-        cellvertices[3] = vertices[3];
-        new_cell.vertices(cellvertices);
-        segment_out.push_back(new_cell);
-        
-        cellvertices[0] = vertices[4];
-        cellvertices[1] = vertices[5];
-        cellvertices[2] = vertices[2];
-        cellvertices[3] = vertices[3];
-        new_cell.vertices(cellvertices);
-        segment_out.push_back(new_cell);
+            create_refinement_cell<CellType>( segment_out, vertices, 0, 4, 2, 3);
+            create_refinement_cell<CellType>( segment_out, vertices, 4, 5, 2, 3);
       }
       else //split edge 12, introduce line 05
       {
@@ -305,19 +359,8 @@ namespace viennagrid
         std::cout << "Norm " << vertices[2]->id() << vertices[1]->id() << ": " 
                              << viennagrid::norm(vertices[2]->point() - vertices[1]->point()) << std::endl;
         std::cout << "Splitting " << vertices[2]->id() << vertices[1]->id() << std::endl;*/
-        cellvertices[0] = vertices[0];
-        cellvertices[1] = vertices[4];
-        cellvertices[2] = vertices[5];
-        cellvertices[3] = vertices[3];
-        new_cell.vertices(cellvertices);
-        segment_out.push_back(new_cell);
-        
-        cellvertices[0] = vertices[0];
-        cellvertices[1] = vertices[5];
-        cellvertices[2] = vertices[2];
-        cellvertices[3] = vertices[3];
-        new_cell.vertices(cellvertices);
-        segment_out.push_back(new_cell);
+            create_refinement_cell<CellType>( segment_out, vertices, 0, 4, 5, 3);
+            create_refinement_cell<CellType>( segment_out, vertices, 0, 5, 2, 3);
       }
       
     }
@@ -335,42 +378,15 @@ namespace viennagrid
      *     0 ----- 4 ------ 1
      * 
      */
-    template <typename CellType, typename DomainTypeOut, typename VertexType>
-    static void apply2_2(CellType const & cell_in, 
-                         DomainTypeOut & segment_out,
-                         VertexType ** vertices
+    template <typename CellType, typename DomainTypeOut, typename VertexHookIteratorType>
+    static void apply2_2(DomainTypeOut & segment_out,
+                         VertexHookIteratorType vertices
                         )
     {
-      CellType new_cell;
-      VertexType * cellvertices[topology::bndcells<tetrahedron_tag, 0>::num];
-
-      cellvertices[0] = vertices[4];
-      cellvertices[1] = vertices[1];
-      cellvertices[2] = vertices[2];
-      cellvertices[3] = vertices[5];
-      new_cell.vertices(cellvertices);
-      segment_out.push_back(new_cell);
-      
-      cellvertices[0] = vertices[4];
-      cellvertices[1] = vertices[1];
-      cellvertices[2] = vertices[5];
-      cellvertices[3] = vertices[3];
-      new_cell.vertices(cellvertices);
-      segment_out.push_back(new_cell);
-      
-      cellvertices[0] = vertices[0];
-      cellvertices[1] = vertices[4];
-      cellvertices[2] = vertices[2];
-      cellvertices[3] = vertices[5];
-      new_cell.vertices(cellvertices);
-      segment_out.push_back(new_cell);
-      
-      cellvertices[0] = vertices[0];
-      cellvertices[1] = vertices[4];
-      cellvertices[2] = vertices[5];
-      cellvertices[3] = vertices[3];
-      new_cell.vertices(cellvertices);
-      segment_out.push_back(new_cell);
+        create_refinement_cell<CellType>( segment_out, vertices, 4, 1, 2, 5);
+        create_refinement_cell<CellType>( segment_out, vertices, 4, 1, 5, 3);
+        create_refinement_cell<CellType>( segment_out, vertices, 0, 4, 2, 5);
+        create_refinement_cell<CellType>( segment_out, vertices, 0, 4, 5, 3);
     }
 
     /** @brief Entry function for the refinement of a tetrahedron by bisection of two edges. Reorders the tetrahedron to reduce complexity.
@@ -379,34 +395,41 @@ namespace viennagrid
     template <typename CellType, typename DomainTypeOut>
     static void apply2(CellType const & cell_in, DomainTypeOut & segment_out)
     {
-      typedef typename CellType::config_type        ConfigTypeIn;
-      typedef typename viennagrid::result_of::const_ncell_range<CellType, 0>::type            VertexOnCellRange;
+      //typedef typename CellType::config_type        ConfigTypeIn;
+      typedef typename viennagrid::result_of::const_element_range<CellType, vertex_tag>::type            VertexOnCellRange;
       typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type         VertexOnCellIterator;            
-      typedef typename viennagrid::result_of::const_ncell_range<CellType, 1>::type            EdgeOnCellRange;
+      typedef typename viennagrid::result_of::const_element_range<CellType, line_tag>::type            EdgeOnCellRange;
       typedef typename viennagrid::result_of::iterator<EdgeOnCellRange>::type           EdgeOnCellIterator;            
       
-      typedef typename viennagrid::result_of::ncell<ConfigTypeIn, 0>::type             VertexType;
-      typedef typename viennagrid::result_of::ncell<ConfigTypeIn, 1>::type             EdgeType;
+      typedef typename viennagrid::result_of::element<CellType, vertex_tag>::type             VertexType;
+      typedef typename viennagrid::result_of::element_hook<CellType, vertex_tag>::type             VertexHookType;
+      typedef typename viennagrid::result_of::element<CellType, line_tag>::type             EdgeType;
+      
+      typedef typename viennagrid::result_of::element<DomainTypeOut, vertex_tag>::type                                      VertexTypeOut;
+      typedef typename VertexTypeOut::id_type VertexIDTypeOut;
 
-      VertexType * vertices[topology::bndcells<tetrahedron_tag, 0>::num];
+
+      
+      storage::static_array< VertexHookType, topology::bndcells<tetrahedron_tag, 0>::num > vertices;
+      
       //std::cout << "apply2()" << std::endl;
       
       //
       // Step 1: Get vertices from input cell
       //
-      VertexOnCellRange vertices_on_cell = viennagrid::ncells<0>(cell_in);
+      VertexOnCellRange vertices_on_cell = viennagrid::elements<vertex_tag>(cell_in);
       VertexOnCellIterator vocit = vertices_on_cell.begin();
-      vertices[0] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]); ++vocit;
-      vertices[1] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]); ++vocit;
-      vertices[2] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]); ++vocit;
-      vertices[3] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]);
-      
+      vertices[0] = viennagrid::find_hook( segment_out, vocit->id() ); ++vocit;
+      vertices[1] = viennagrid::find_hook( segment_out, vocit->id() ); ++vocit;
+      vertices[2] = viennagrid::find_hook( segment_out, vocit->id() ); ++vocit;
+      vertices[3] = viennagrid::find_hook( segment_out, vocit->id() );      
 
       //
       // Step 2: Bring vertices in correct order, such that refined edge is on {0,1}-edge
       //
-      VertexType * ordered_vertices[topology::bndcells<tetrahedron_tag, 0>::num + 2];
-      EdgeOnCellRange edges_on_cell = viennagrid::ncells<1>(cell_in);
+      //VertexType * ordered_vertices[topology::bndcells<tetrahedron_tag, 0>::num + 2];
+      storage::static_array< VertexHookType, topology::bndcells<tetrahedron_tag, 0>::num + 2 > ordered_vertices;
+      EdgeOnCellRange edges_on_cell = viennagrid::elements<line_tag>(cell_in);
       EdgeOnCellIterator eocit = edges_on_cell.begin();
       EdgeType const & e0 = *eocit; ++eocit;
       EdgeType const & e1 = *eocit; ++eocit;
@@ -424,10 +447,10 @@ namespace viennagrid
           ordered_vertices[1] = vertices[0];
           ordered_vertices[2] = vertices[1];
           ordered_vertices[3] = vertices[3];
-          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)]);
-          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)]);
+          ordered_vertices[4] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
+          ordered_vertices[5] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
           
-          apply2_1(cell_in, segment_out, ordered_vertices);
+          apply2_1<CellType>(segment_out, ordered_vertices);
         }
         else if (viennadata::access<refinement_key, bool>(refinement_key())(e2) == true)
         {
@@ -435,10 +458,10 @@ namespace viennagrid
           ordered_vertices[1] = vertices[0];
           ordered_vertices[2] = vertices[3];
           ordered_vertices[3] = vertices[2];
-          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)]);
-          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
+          ordered_vertices[4] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
+          ordered_vertices[5] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
           
-          apply2_1(cell_in, segment_out, ordered_vertices);
+          apply2_1<CellType>(segment_out, ordered_vertices);
         }
         else if (viennadata::access<refinement_key, bool>(refinement_key())(e3) == true) 
         {
@@ -446,10 +469,10 @@ namespace viennagrid
           ordered_vertices[1] = vertices[1];
           ordered_vertices[2] = vertices[2];
           ordered_vertices[3] = vertices[3];
-          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)]);
-          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)]);
+          ordered_vertices[4] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
+          ordered_vertices[5] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
           
-          apply2_1(cell_in, segment_out, ordered_vertices);
+          apply2_1<CellType>(segment_out, ordered_vertices);
         }
         else if (viennadata::access<refinement_key, bool>(refinement_key())(e4) == true) 
         {
@@ -457,10 +480,10 @@ namespace viennagrid
           ordered_vertices[1] = vertices[1];
           ordered_vertices[2] = vertices[0];
           ordered_vertices[3] = vertices[2];
-          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
-          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)]);
+          ordered_vertices[4] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
+          ordered_vertices[5] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
           
-          apply2_1(cell_in, segment_out, ordered_vertices);
+          apply2_1<CellType>(segment_out, ordered_vertices);
         }
         else if (viennadata::access<refinement_key, bool>(refinement_key())(e5) == true) 
         {
@@ -468,10 +491,10 @@ namespace viennagrid
           ordered_vertices[1] = vertices[1];
           ordered_vertices[2] = vertices[2];
           ordered_vertices[3] = vertices[3];
-          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)]);
-          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
+          ordered_vertices[4] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
+          ordered_vertices[5] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
           
-          apply2_2(cell_in, segment_out, ordered_vertices);
+          apply2_2<CellType>(segment_out, ordered_vertices);
         }
         else
         {
@@ -486,10 +509,10 @@ namespace viennagrid
           ordered_vertices[1] = vertices[0];
           ordered_vertices[2] = vertices[2];
           ordered_vertices[3] = vertices[1];
-          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
-          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)]);
+          ordered_vertices[4] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
+          ordered_vertices[5] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
           
-          apply2_1(cell_in, segment_out, ordered_vertices);
+          apply2_1<CellType>(segment_out, ordered_vertices);
         }
         else if (viennadata::access<refinement_key, bool>(refinement_key())(e3) == true) 
         {
@@ -497,10 +520,11 @@ namespace viennagrid
           ordered_vertices[1] = vertices[2];
           ordered_vertices[2] = vertices[0];
           ordered_vertices[3] = vertices[3];
-          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)]);
-          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)]);
+          ordered_vertices[4] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
+          ordered_vertices[5] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
+
           
-          apply2_1(cell_in, segment_out, ordered_vertices);
+          apply2_1<CellType>(segment_out, ordered_vertices);
         }
         else if (viennadata::access<refinement_key, bool>(refinement_key())(e4) == true) 
         {
@@ -508,10 +532,10 @@ namespace viennagrid
           ordered_vertices[1] = vertices[0];
           ordered_vertices[2] = vertices[1];
           ordered_vertices[3] = vertices[3];
-          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)]);
-          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
+          ordered_vertices[4] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
+          ordered_vertices[5] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
           
-          apply2_2(cell_in, segment_out, ordered_vertices);
+          apply2_2<CellType>(segment_out, ordered_vertices);
         }
         else if (viennadata::access<refinement_key, bool>(refinement_key())(e5) == true) 
         {
@@ -519,10 +543,10 @@ namespace viennagrid
           ordered_vertices[1] = vertices[2];
           ordered_vertices[2] = vertices[3];
           ordered_vertices[3] = vertices[1];
-          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)]);
-          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
+          ordered_vertices[4] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
+          ordered_vertices[5] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
           
-          apply2_1(cell_in, segment_out, ordered_vertices);
+          apply2_1<CellType>(segment_out, ordered_vertices);
         }
         else
         {
@@ -537,10 +561,10 @@ namespace viennagrid
           ordered_vertices[1] = vertices[0];
           ordered_vertices[2] = vertices[2];
           ordered_vertices[3] = vertices[1];
-          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
-          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)]);
+          ordered_vertices[4] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
+          ordered_vertices[5] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
           
-          apply2_2(cell_in, segment_out, ordered_vertices);
+          apply2_2<CellType>(segment_out, ordered_vertices);
         }
         else if (viennadata::access<refinement_key, bool>(refinement_key())(e4) == true) 
         {
@@ -548,10 +572,10 @@ namespace viennagrid
           ordered_vertices[1] = vertices[3];
           ordered_vertices[2] = vertices[1];
           ordered_vertices[3] = vertices[2];
-          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
-          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
+          ordered_vertices[4] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
+          ordered_vertices[5] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
           
-          apply2_1(cell_in, segment_out, ordered_vertices);
+          apply2_1<CellType>(segment_out, ordered_vertices);
         }
         else if (viennadata::access<refinement_key, bool>(refinement_key())(e5) == true) 
         {
@@ -559,10 +583,10 @@ namespace viennagrid
           ordered_vertices[1] = vertices[3];
           ordered_vertices[2] = vertices[0];
           ordered_vertices[3] = vertices[1];
-          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
-          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
+          ordered_vertices[4] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
+          ordered_vertices[5] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
           
-          apply2_1(cell_in, segment_out, ordered_vertices);
+          apply2_1<CellType>(segment_out, ordered_vertices);
         }
         else
         {
@@ -577,10 +601,10 @@ namespace viennagrid
           ordered_vertices[1] = vertices[1];
           ordered_vertices[2] = vertices[3];
           ordered_vertices[3] = vertices[0];
-          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)]);
-          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
+          ordered_vertices[4] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
+          ordered_vertices[5] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
           
-          apply2_1(cell_in, segment_out, ordered_vertices);
+          apply2_1<CellType>(segment_out, ordered_vertices);
         }
         else if (viennadata::access<refinement_key, bool>(refinement_key())(e5) == true) 
         {
@@ -588,10 +612,10 @@ namespace viennagrid
           ordered_vertices[1] = vertices[2];
           ordered_vertices[2] = vertices[1];
           ordered_vertices[3] = vertices[0];
-          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
-          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)]);
+          ordered_vertices[4] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
+          ordered_vertices[5] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
           
-          apply2_1(cell_in, segment_out, ordered_vertices);
+          apply2_1<CellType>(segment_out, ordered_vertices);
         }
         else
         {
@@ -606,10 +630,10 @@ namespace viennagrid
           ordered_vertices[1] = vertices[3];
           ordered_vertices[2] = vertices[2];
           ordered_vertices[3] = vertices[0];
-          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
-          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
+          ordered_vertices[4] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
+          ordered_vertices[5] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
           
-          apply2_1(cell_in, segment_out, ordered_vertices);
+          apply2_1<CellType>(segment_out, ordered_vertices);
         }
         else
         {
@@ -640,21 +664,12 @@ namespace viennagrid
      * 
      * 
      */
-    template <typename CellType, typename DomainTypeOut, typename VertexType>
-    static void apply3_1(CellType const & cell_in, 
-                         DomainTypeOut & segment_out,
-                         VertexType ** vertices
+    template <typename CellType, typename DomainTypeOut, typename VertexHookIteratorType>
+    static void apply3_1(DomainTypeOut & segment_out,
+                         VertexHookIteratorType vertices
                         )
     {
-      CellType new_cell;
-      VertexType * cellvertices[topology::bndcells<tetrahedron_tag, 0>::num];
-
-      cellvertices[0] = vertices[4];
-      cellvertices[1] = vertices[1];
-      cellvertices[2] = vertices[5];
-      cellvertices[3] = vertices[6];
-      new_cell.vertices(cellvertices);
-      segment_out.push_back(new_cell);
+      create_refinement_cell<CellType>( segment_out, vertices, 4, 1, 5, 6);
       
       //double diag01_len = viennagrid::norm(vertices[0]->point() - vertices[1]->point());
       //double diag12_len = viennagrid::norm(vertices[2]->point() - vertices[1]->point());
@@ -663,8 +678,7 @@ namespace viennagrid
       // Strategy: The two longest edges of the common vertex are split 'twice',
       //           i.e. two new edges start from the center of the two longest edges
       //if (diag01_len > diag12_len) //split edge 01 again, introduce line 42
-      if (stable_line_is_longer(vertices[0], vertices[1],
-                                vertices[1], vertices[2])) //split edge 01 again, introduce line 42
+      if (stable_line_is_longer(segment_out, vertices, 0, 1, 1, 2))
       {
         /*std::cout << "Norm " << vertices[0]->id() << vertices[1]->id() << ": " 
                              << viennagrid::norm(vertices[0]->point() - vertices[1]->point()) << std::endl;
@@ -672,8 +686,7 @@ namespace viennagrid
                              << viennagrid::norm(vertices[2]->point() - vertices[1]->point()) << std::endl;
         std::cout << "Splitting " << vertices[0]->id() << vertices[1]->id() << std::endl;*/
         //if (diag13_len > diag12_len) //split edge 13 again, introduce line 62
-        if (stable_line_is_longer(vertices[1], vertices[3],
-                                  vertices[1], vertices[2])) //split edge 13 again, introduce line 62
+        if (stable_line_is_longer(segment_out, vertices, 1, 3, 1, 2))
         {
           /*std::cout << "Norm " << vertices[1]->id() << vertices[3]->id() << ": " 
                                 << viennagrid::norm(vertices[1]->point() - vertices[3]->point()) << std::endl;
@@ -681,117 +694,46 @@ namespace viennagrid
                                 << viennagrid::norm(vertices[2]->point() - vertices[1]->point()) << std::endl;
           std::cout << "Splitting " << vertices[1]->id() << vertices[3]->id() << std::endl; */
           
-          if (stable_line_is_longer(vertices[1], vertices[3],
-                                    vertices[0], vertices[1])) //split edge 13 again, introduce line 60
+          if (stable_line_is_longer(segment_out, vertices, 1, 3, 0, 1))
           {
-            cellvertices[0] = vertices[0];
-            cellvertices[1] = vertices[6];
-            cellvertices[2] = vertices[2];
-            cellvertices[3] = vertices[3];
-            new_cell.vertices(cellvertices);
-            segment_out.push_back(new_cell);
-            
-            cellvertices[0] = vertices[0];
-            cellvertices[1] = vertices[4];
-            cellvertices[2] = vertices[2];
-            cellvertices[3] = vertices[6];
-            new_cell.vertices(cellvertices);
-            segment_out.push_back(new_cell);
-            
-            cellvertices[0] = vertices[4];
-            cellvertices[1] = vertices[5];
-            cellvertices[2] = vertices[2];
-            cellvertices[3] = vertices[6];
-            new_cell.vertices(cellvertices);
-            segment_out.push_back(new_cell);
+            create_refinement_cell<CellType>( segment_out, vertices, 0, 6, 2, 3);
+            create_refinement_cell<CellType>( segment_out, vertices, 0, 4, 2, 6);
+            create_refinement_cell<CellType>( segment_out, vertices, 4, 5, 2, 6);
           }
           else  //split edge 01 again, introduce line 43
           {
             //std::cout << "apply_3_1_1" << std::endl;
-            cellvertices[0] = vertices[0];
-            cellvertices[1] = vertices[4];
-            cellvertices[2] = vertices[2];
-            cellvertices[3] = vertices[3];
-            new_cell.vertices(cellvertices);
-            segment_out.push_back(new_cell);
-            
-            cellvertices[0] = vertices[3];
-            cellvertices[1] = vertices[4];
-            cellvertices[2] = vertices[2];
-            cellvertices[3] = vertices[6];
-            new_cell.vertices(cellvertices);
-            segment_out.push_back(new_cell);
-            
-            cellvertices[0] = vertices[4];
-            cellvertices[1] = vertices[5];
-            cellvertices[2] = vertices[2];
-            cellvertices[3] = vertices[6];
-            new_cell.vertices(cellvertices);
-            segment_out.push_back(new_cell);
+
+            create_refinement_cell<CellType>( segment_out, vertices, 0, 4, 2, 3);
+            create_refinement_cell<CellType>( segment_out, vertices, 3, 4, 2, 6);
+            create_refinement_cell<CellType>( segment_out, vertices, 4, 5, 2, 6);
           }
         }
         else //split edge 12 again, introduce lines 43 and 53
         {
-          if (stable_line_is_longer(vertices[1], vertices[3],
-                                    vertices[0], vertices[1])) //split edge 13 again, introduce line 60
+          if (stable_line_is_longer(segment_out, vertices, 1, 3, 0, 1))
           {
             assert(false && "diag13_len > diag01_len impossible!");
           }
           else  //split edge 01 again, introduce line 43
           {
             //std::cout << "apply_3_1_2" << std::endl;
-            cellvertices[0] = vertices[0];
-            cellvertices[1] = vertices[4];
-            cellvertices[2] = vertices[2];
-            cellvertices[3] = vertices[3];
-            new_cell.vertices(cellvertices);
-            segment_out.push_back(new_cell);
-            
-            cellvertices[0] = vertices[4];
-            cellvertices[1] = vertices[5];
-            cellvertices[2] = vertices[2];
-            cellvertices[3] = vertices[3];
-            new_cell.vertices(cellvertices);
-            segment_out.push_back(new_cell);
-            
-            cellvertices[0] = vertices[4];
-            cellvertices[1] = vertices[6];
-            cellvertices[2] = vertices[5];
-            cellvertices[3] = vertices[3];
-            new_cell.vertices(cellvertices);
-            segment_out.push_back(new_cell);
+            create_refinement_cell<CellType>( segment_out, vertices, 0, 4, 2, 3);
+            create_refinement_cell<CellType>( segment_out, vertices, 4, 5, 2, 3);
+            create_refinement_cell<CellType>( segment_out, vertices, 4, 6, 5, 3);
           }
         }
       }
       else //split edge 12, introduce line 05
       {
-        if (stable_line_is_longer(vertices[1], vertices[3],
-                                  vertices[1], vertices[2])) //split edge 13 again, introduce line 62
+        if (stable_line_is_longer(segment_out, vertices, 1, 3, 1, 2)) //split edge 13 again, introduce line 62
         {
-          if (stable_line_is_longer(vertices[1], vertices[3],
-                                    vertices[0], vertices[1])) //split edge 13 again, introduce line 60
+          if (stable_line_is_longer(segment_out, vertices, 1, 3, 0, 1)) //split edge 13 again, introduce line 60
           {
             //std::cout << "apply_3_1_3" << std::endl;
-            cellvertices[0] = vertices[0];
-            cellvertices[1] = vertices[4];
-            cellvertices[2] = vertices[5];
-            cellvertices[3] = vertices[6];
-            new_cell.vertices(cellvertices);
-            segment_out.push_back(new_cell);
-            
-            cellvertices[0] = vertices[0];
-            cellvertices[1] = vertices[6];
-            cellvertices[2] = vertices[5];
-            cellvertices[3] = vertices[2];
-            new_cell.vertices(cellvertices);
-            segment_out.push_back(new_cell);
-            
-            cellvertices[0] = vertices[0];
-            cellvertices[1] = vertices[6];
-            cellvertices[2] = vertices[2];
-            cellvertices[3] = vertices[3];
-            new_cell.vertices(cellvertices);
-            segment_out.push_back(new_cell);
+            create_refinement_cell<CellType>( segment_out, vertices, 0, 4, 5, 6);
+            create_refinement_cell<CellType>( segment_out, vertices, 0, 6, 5, 2);
+            create_refinement_cell<CellType>( segment_out, vertices, 0, 6, 2, 3);
           }
           else  //split edge 01 again, introduce line 43
           {
@@ -800,53 +742,18 @@ namespace viennagrid
         }
         else //split edge 12 again, introduce line 53
         {
-          if (stable_line_is_longer(vertices[1], vertices[3],
-                                    vertices[0], vertices[1])) //split edge 13 again, introduce line 60
+          if (stable_line_is_longer(segment_out, vertices, 1, 3, 0, 1)) //split edge 13 again, introduce line 60
           {
-            cellvertices[0] = vertices[0];
-            cellvertices[1] = vertices[4];
-            cellvertices[2] = vertices[5];
-            cellvertices[3] = vertices[6];
-            new_cell.vertices(cellvertices);
-            segment_out.push_back(new_cell);
-            
-            cellvertices[0] = vertices[0];
-            cellvertices[1] = vertices[6];
-            cellvertices[2] = vertices[5];
-            cellvertices[3] = vertices[3];
-            new_cell.vertices(cellvertices);
-            segment_out.push_back(new_cell);
-            
-            cellvertices[0] = vertices[0];
-            cellvertices[1] = vertices[5];
-            cellvertices[2] = vertices[2];
-            cellvertices[3] = vertices[3];
-            new_cell.vertices(cellvertices);
-            segment_out.push_back(new_cell);
+            create_refinement_cell<CellType>( segment_out, vertices, 0, 4, 5, 6);
+            create_refinement_cell<CellType>( segment_out, vertices, 0, 6, 5, 3);
+            create_refinement_cell<CellType>( segment_out, vertices, 0, 5, 2, 3);
           }
           else  //split edge 01 again, introduce line 43
           {
             //std::cout << "apply_3_1_4" << std::endl;
-            cellvertices[0] = vertices[0];
-            cellvertices[1] = vertices[4];
-            cellvertices[2] = vertices[5];
-            cellvertices[3] = vertices[3];
-            new_cell.vertices(cellvertices);
-            segment_out.push_back(new_cell);
-            
-            cellvertices[0] = vertices[4];
-            cellvertices[1] = vertices[5];
-            cellvertices[2] = vertices[3];
-            cellvertices[3] = vertices[6];
-            new_cell.vertices(cellvertices);
-            segment_out.push_back(new_cell);
-            
-            cellvertices[0] = vertices[0];
-            cellvertices[1] = vertices[5];
-            cellvertices[2] = vertices[2];
-            cellvertices[3] = vertices[3];
-            new_cell.vertices(cellvertices);
-            segment_out.push_back(new_cell);
+            create_refinement_cell<CellType>( segment_out, vertices, 0, 4, 5, 3);
+            create_refinement_cell<CellType>( segment_out, vertices, 4, 5, 3, 6);
+            create_refinement_cell<CellType>( segment_out, vertices, 0, 5, 2, 3);
           }
         }
       }
@@ -868,45 +775,16 @@ namespace viennagrid
      * 
      * 
      */
-    template <typename CellType, typename DomainTypeOut, typename VertexType>
-    static void apply3_2(CellType const & cell_in, 
-                         DomainTypeOut & segment_out,
-                         VertexType ** vertices
+    template <typename CellType, typename DomainTypeOut, typename VertexHookIteratorType>
+    static void apply3_2(DomainTypeOut & segment_out,
+                         VertexHookIteratorType vertices
                         )
     {
-      CellType new_cell;
-      VertexType * cellvertices[topology::bndcells<tetrahedron_tag, 0>::num];
-
       //std::cout << "apply_3_2" << std::endl;
-      
-      cellvertices[0] = vertices[0];
-      cellvertices[1] = vertices[4];
-      cellvertices[2] = vertices[6];
-      cellvertices[3] = vertices[3];
-      new_cell.vertices(cellvertices);
-      segment_out.push_back(new_cell);
-      
-      cellvertices[0] = vertices[4];
-      cellvertices[1] = vertices[5];
-      cellvertices[2] = vertices[6];
-      cellvertices[3] = vertices[3];
-      new_cell.vertices(cellvertices);
-      segment_out.push_back(new_cell);
-      
-      cellvertices[0] = vertices[4];
-      cellvertices[1] = vertices[1];
-      cellvertices[2] = vertices[5];
-      cellvertices[3] = vertices[3];
-      new_cell.vertices(cellvertices);
-      segment_out.push_back(new_cell);
-      
-      cellvertices[0] = vertices[6];
-      cellvertices[1] = vertices[5];
-      cellvertices[2] = vertices[2];
-      cellvertices[3] = vertices[3];
-      new_cell.vertices(cellvertices);
-      segment_out.push_back(new_cell);
-      
+      create_refinement_cell<CellType>( segment_out, vertices, 0, 4, 6, 3);
+      create_refinement_cell<CellType>( segment_out, vertices, 4, 5, 6, 3);
+      create_refinement_cell<CellType>( segment_out, vertices, 4, 1, 5, 3);
+      create_refinement_cell<CellType>( segment_out, vertices, 6, 5, 2, 3);
     }
 
 
@@ -923,15 +801,12 @@ namespace viennagrid
      * 
      * 
      */
-    template <typename CellType, typename DomainTypeOut, typename VertexType>
-    static void apply3_3(CellType const & cell_in, 
-                         DomainTypeOut & segment_out,
-                         VertexType ** vertices
+    template <typename CellType, typename DomainTypeOut, typename VertexHookIteratorType>
+    static void apply3_3(DomainTypeOut & segment_out,
+                         VertexHookIteratorType vertices
                         )
     {
       //std::cout << "Found!" << std::endl;
-      CellType new_cell;
-      VertexType * cellvertices[topology::bndcells<tetrahedron_tag, 0>::num];
 
       //double diag01_len = viennagrid::norm(vertices[0]->point() - vertices[1]->point());
       //double diag12_len = viennagrid::norm(vertices[1]->point() - vertices[2]->point());
@@ -940,132 +815,45 @@ namespace viennagrid
       // Strategy: The two longest edges of the common vertex are split 'twice',
       //           i.e. two new edges start from the center of the two longest edges
       //if (diag01_len > diag03_len) //split edge 01 again, introduce line 43
-      if (stable_line_is_longer(vertices[0], vertices[1],
-                                vertices[0], vertices[3])) //split edge 01 again, introduce line 43
+      if (stable_line_is_longer(segment_out, vertices, 0, 1, 0, 3)) //split edge 01 again, introduce line 43
       {
-        cellvertices[0] = vertices[4];
-        cellvertices[1] = vertices[1];
-        cellvertices[2] = vertices[5];
-        cellvertices[3] = vertices[3];
-        new_cell.vertices(cellvertices);
-        segment_out.push_back(new_cell);
+        create_refinement_cell<CellType>( segment_out, vertices, 4, 1, 5, 3);
           
         //if (diag01_len > diag12_len) //split edge 01 again, introduce line 42
-        if (stable_line_is_longer(vertices[0], vertices[1],
-                                  vertices[1], vertices[2])) //split edge 01 again, introduce line 42
+        if (stable_line_is_longer(segment_out, vertices, 0, 1, 1, 2)) //split edge 01 again, introduce line 42
         {
           //std::cout << "apply_3_3_1" << std::endl;
-          cellvertices[0] = vertices[0];
-          cellvertices[1] = vertices[4];
-          cellvertices[2] = vertices[2];
-          cellvertices[3] = vertices[6];
-          new_cell.vertices(cellvertices);
-          segment_out.push_back(new_cell);
-          
-          cellvertices[0] = vertices[6];
-          cellvertices[1] = vertices[4];
-          cellvertices[2] = vertices[2];
-          cellvertices[3] = vertices[3];
-          new_cell.vertices(cellvertices);
-          segment_out.push_back(new_cell);
-          
-          cellvertices[0] = vertices[4];
-          cellvertices[1] = vertices[5];
-          cellvertices[2] = vertices[2];
-          cellvertices[3] = vertices[3];
-          new_cell.vertices(cellvertices);
-          segment_out.push_back(new_cell);
+          create_refinement_cell<CellType>( segment_out, vertices, 0, 4, 2, 6);
+          create_refinement_cell<CellType>( segment_out, vertices, 6, 4, 2, 3);
+          create_refinement_cell<CellType>( segment_out, vertices, 4, 5, 2, 3);
         }
         else //split edge 12 again, introduce line 50
         {
           //std::cout << "apply_3_3_2" << std::endl;
-          cellvertices[0] = vertices[0];
-          cellvertices[1] = vertices[4];
-          cellvertices[2] = vertices[5];
-          cellvertices[3] = vertices[6];
-          new_cell.vertices(cellvertices);
-          segment_out.push_back(new_cell);
-          
-          cellvertices[0] = vertices[0];
-          cellvertices[1] = vertices[5];
-          cellvertices[2] = vertices[2];
-          cellvertices[3] = vertices[6];
-          new_cell.vertices(cellvertices);
-          segment_out.push_back(new_cell);
-          
-          cellvertices[0] = vertices[6];
-          cellvertices[1] = vertices[4];
-          cellvertices[2] = vertices[5];
-          cellvertices[3] = vertices[3];
-          new_cell.vertices(cellvertices);
-          segment_out.push_back(new_cell);
-          
-          cellvertices[0] = vertices[6];
-          cellvertices[1] = vertices[5];
-          cellvertices[2] = vertices[2];
-          cellvertices[3] = vertices[3];
-          new_cell.vertices(cellvertices);
-          segment_out.push_back(new_cell);
+          create_refinement_cell<CellType>( segment_out, vertices, 0, 4, 5, 6);
+          create_refinement_cell<CellType>( segment_out, vertices, 0, 5, 2, 6);
+          create_refinement_cell<CellType>( segment_out, vertices, 6, 4, 5, 3);
+          create_refinement_cell<CellType>( segment_out, vertices, 6, 5, 2, 3);
         }
       }
       else  //split edge 03 again, introduce line 61
       {
-        cellvertices[0] = vertices[4];
-        cellvertices[1] = vertices[1];
-        cellvertices[2] = vertices[5];
-        cellvertices[3] = vertices[6];
-        new_cell.vertices(cellvertices);
-        segment_out.push_back(new_cell);
-          
-        cellvertices[0] = vertices[6];
-        cellvertices[1] = vertices[1];
-        cellvertices[2] = vertices[5];
-        cellvertices[3] = vertices[3];
-        new_cell.vertices(cellvertices);
-        segment_out.push_back(new_cell);
-          
-        cellvertices[0] = vertices[6];
-        cellvertices[1] = vertices[5];
-        cellvertices[2] = vertices[2];
-        cellvertices[3] = vertices[3];
-        new_cell.vertices(cellvertices);
-        segment_out.push_back(new_cell);
+        create_refinement_cell<CellType>( segment_out, vertices, 4, 1, 5, 6);
+        create_refinement_cell<CellType>( segment_out, vertices, 6, 1, 5, 3);
+        create_refinement_cell<CellType>( segment_out, vertices, 6, 5, 2, 3);
           
         //if (diag01_len > diag12_len) //split edge 01 again, introduce line 42
-        if (stable_line_is_longer(vertices[0], vertices[1],
-                                  vertices[1], vertices[2])) //split edge 01 again, introduce line 42
+        if (stable_line_is_longer(segment_out, vertices, 0, 1, 1, 2)) //split edge 01 again, introduce line 42
         {
           //std::cout << "apply_3_3_3" << std::endl;
-          cellvertices[0] = vertices[0];
-          cellvertices[1] = vertices[4];
-          cellvertices[2] = vertices[2];
-          cellvertices[3] = vertices[6];
-          new_cell.vertices(cellvertices);
-          segment_out.push_back(new_cell);
-          
-          cellvertices[0] = vertices[6];
-          cellvertices[1] = vertices[4];
-          cellvertices[2] = vertices[5];
-          cellvertices[3] = vertices[2];
-          new_cell.vertices(cellvertices);
-          segment_out.push_back(new_cell);
+          create_refinement_cell<CellType>( segment_out, vertices, 0, 4, 2, 6);
+          create_refinement_cell<CellType>( segment_out, vertices, 6, 4, 5, 2);
         }
         else //split edge 12 again, introduce line 50
         {
           //std::cout << "apply_3_3_4" << std::endl;
-          cellvertices[0] = vertices[0];
-          cellvertices[1] = vertices[4];
-          cellvertices[2] = vertices[5];
-          cellvertices[3] = vertices[6];
-          new_cell.vertices(cellvertices);
-          segment_out.push_back(new_cell);
-          
-          cellvertices[0] = vertices[0];
-          cellvertices[1] = vertices[5];
-          cellvertices[2] = vertices[2];
-          cellvertices[3] = vertices[6];
-          new_cell.vertices(cellvertices);
-          segment_out.push_back(new_cell);
+          create_refinement_cell<CellType>( segment_out, vertices, 0, 4, 5, 6);
+          create_refinement_cell<CellType>( segment_out, vertices, 0, 5, 2, 6);
         }
       }
       
@@ -1084,14 +872,13 @@ namespace viennagrid
      * 
      * 
      */
-    template <typename CellType, typename DomainTypeOut, typename VertexType>
-    static void apply3_4(CellType const & cell_in, 
-                         DomainTypeOut & segment_out,
-                         VertexType ** vertices
+    template <typename CellType, typename DomainTypeOut, typename VertexHookIteratorType>
+    static void apply3_4(DomainTypeOut & segment_out,
+                         VertexHookIteratorType vertices
                         )
     {
-      CellType new_cell;
-      VertexType * cellvertices[topology::bndcells<tetrahedron_tag, 0>::num];
+//       CellType new_cell;
+//       VertexType * cellvertices[topology::bndcells<tetrahedron_tag, 0>::num];
 
       //double diag01_len = viennagrid::norm(vertices[0]->point() - vertices[1]->point());
       //double diag12_len = viennagrid::norm(vertices[1]->point() - vertices[2]->point());
@@ -1100,139 +887,45 @@ namespace viennagrid
       // Strategy: The two longest edges of the common vertex are split 'twice',
       //           i.e. two new edges start from the center of the two longest edges
       //if (diag01_len > diag12_len) //split edge 01 again, introduce line 42
-      if (stable_line_is_longer(vertices[0], vertices[1],
-                                vertices[1], vertices[2])) //split edge 01 again, introduce line 42
+      if (stable_line_is_longer(segment_out, vertices, 0, 1, 1, 2)) //split edge 01 again, introduce line 42
       {
-        cellvertices[0] = vertices[0];
-        cellvertices[1] = vertices[4];
-        cellvertices[2] = vertices[2];
-        cellvertices[3] = vertices[6];
-        new_cell.vertices(cellvertices);
-        segment_out.push_back(new_cell);
-      
-        cellvertices[0] = vertices[0];
-        cellvertices[1] = vertices[4];
-        cellvertices[2] = vertices[6];
-        cellvertices[3] = vertices[3];
-        new_cell.vertices(cellvertices);
-        segment_out.push_back(new_cell);
-        
-        cellvertices[0] = vertices[4];
-        cellvertices[1] = vertices[5];
-        cellvertices[2] = vertices[2];
-        cellvertices[3] = vertices[6];
-        new_cell.vertices(cellvertices);
-        segment_out.push_back(new_cell);
+        create_refinement_cell<CellType>( segment_out, vertices, 0, 4, 2, 6);
+        create_refinement_cell<CellType>( segment_out, vertices, 0, 4, 6, 3);
+        create_refinement_cell<CellType>( segment_out, vertices, 4, 5, 2, 6);
           
         //if (diag12_len > diag23_len) //split edge 12 again, introduce line 53
-        if (stable_line_is_longer(vertices[1], vertices[2],
-                                  vertices[2], vertices[3])) //split edge 12 again, introduce line 53
+        if (stable_line_is_longer(segment_out, vertices, 1, 2, 2, 3)) //split edge 12 again, introduce line 53
         {
           //std::cout << "apply_3_4_1" << std::endl;
-          cellvertices[0] = vertices[4];
-          cellvertices[1] = vertices[1];
-          cellvertices[2] = vertices[5];
-          cellvertices[3] = vertices[3];
-          new_cell.vertices(cellvertices);
-          segment_out.push_back(new_cell);
-          
-          cellvertices[0] = vertices[4];
-          cellvertices[1] = vertices[5];
-          cellvertices[2] = vertices[6];
-          cellvertices[3] = vertices[3];
-          new_cell.vertices(cellvertices);
-          segment_out.push_back(new_cell);
+          create_refinement_cell<CellType>( segment_out, vertices, 4, 1, 5, 3);
+          create_refinement_cell<CellType>( segment_out, vertices, 4, 5, 6, 3);
         }
         else //split edge 23 again, introduce line 61
         {
           //std::cout << "apply_3_4_2" << std::endl;
-          cellvertices[0] = vertices[4];
-          cellvertices[1] = vertices[1];
-          cellvertices[2] = vertices[6];
-          cellvertices[3] = vertices[3];
-          new_cell.vertices(cellvertices);
-          segment_out.push_back(new_cell);
-          
-          cellvertices[0] = vertices[4];
-          cellvertices[1] = vertices[1];
-          cellvertices[2] = vertices[5];
-          cellvertices[3] = vertices[6];
-          new_cell.vertices(cellvertices);
-          segment_out.push_back(new_cell);
+          create_refinement_cell<CellType>( segment_out, vertices, 4, 1, 6, 3);
+          create_refinement_cell<CellType>( segment_out, vertices, 4, 1, 5, 6);
         }
       }
       else //split edge 12, introduce line 50
       {
         //if (diag12_len > diag23_len) //split edge 12 again, introduce line 53
-        if (stable_line_is_longer(vertices[1], vertices[2],
-                                  vertices[2], vertices[3])) //split edge 12 again, introduce line 53
+        if (stable_line_is_longer(segment_out, vertices, 1, 2, 2, 3)) //split edge 12 again, introduce line 53
         {
           //std::cout << "apply_3_4_3" << std::endl;
-          cellvertices[0] = vertices[0];
-          cellvertices[1] = vertices[4];
-          cellvertices[2] = vertices[5];
-          cellvertices[3] = vertices[3];
-          new_cell.vertices(cellvertices);
-          segment_out.push_back(new_cell);
-          
-          cellvertices[0] = vertices[0];
-          cellvertices[1] = vertices[5];
-          cellvertices[2] = vertices[6];
-          cellvertices[3] = vertices[3];
-          new_cell.vertices(cellvertices);
-          segment_out.push_back(new_cell);
-          
-          cellvertices[0] = vertices[0];
-          cellvertices[1] = vertices[5];
-          cellvertices[2] = vertices[2];
-          cellvertices[3] = vertices[6];
-          new_cell.vertices(cellvertices);
-          segment_out.push_back(new_cell);
-            
-          cellvertices[0] = vertices[4];
-          cellvertices[1] = vertices[1];
-          cellvertices[2] = vertices[5];
-          cellvertices[3] = vertices[3];
-          new_cell.vertices(cellvertices);
-          segment_out.push_back(new_cell);
+          create_refinement_cell<CellType>( segment_out, vertices, 0, 4, 5, 3);
+          create_refinement_cell<CellType>( segment_out, vertices, 0, 5, 6, 3);
+          create_refinement_cell<CellType>( segment_out, vertices, 0, 5, 2, 6);
+          create_refinement_cell<CellType>( segment_out, vertices, 4, 1, 5, 3);
         }
         else //split edge 23 again, introduce line 61
         {
           //std::cout << "apply_3_4_4" << std::endl;
-          cellvertices[0] = vertices[0];
-          cellvertices[1] = vertices[4];
-          cellvertices[2] = vertices[5];
-          cellvertices[3] = vertices[6];
-          new_cell.vertices(cellvertices);
-          segment_out.push_back(new_cell);
-          
-          cellvertices[0] = vertices[0];
-          cellvertices[1] = vertices[4];
-          cellvertices[2] = vertices[6];
-          cellvertices[3] = vertices[3];
-          new_cell.vertices(cellvertices);
-          segment_out.push_back(new_cell);
-          
-          cellvertices[0] = vertices[0];
-          cellvertices[1] = vertices[5];
-          cellvertices[2] = vertices[2];
-          cellvertices[3] = vertices[6];
-          new_cell.vertices(cellvertices);
-          segment_out.push_back(new_cell);
-          
-          cellvertices[0] = vertices[4];
-          cellvertices[1] = vertices[1];
-          cellvertices[2] = vertices[5];
-          cellvertices[3] = vertices[6];
-          new_cell.vertices(cellvertices);
-          segment_out.push_back(new_cell);
-          
-          cellvertices[0] = vertices[4];
-          cellvertices[1] = vertices[1];
-          cellvertices[2] = vertices[6];
-          cellvertices[3] = vertices[3];
-          new_cell.vertices(cellvertices);
-          segment_out.push_back(new_cell);          
+          create_refinement_cell<CellType>( segment_out, vertices, 0, 4, 5, 6);
+          create_refinement_cell<CellType>( segment_out, vertices, 0, 4, 6, 3);
+          create_refinement_cell<CellType>( segment_out, vertices, 0, 5, 2, 6);
+          create_refinement_cell<CellType>( segment_out, vertices, 4, 1, 5, 6);
+          create_refinement_cell<CellType>( segment_out, vertices, 4, 1, 6, 3);
         }
       }
       
@@ -1244,16 +937,21 @@ namespace viennagrid
     template <typename CellType, typename DomainTypeOut>
     static void apply3(CellType const & cell_in, DomainTypeOut & segment_out)
     {
-      typedef typename CellType::config_type        ConfigTypeIn;
-      typedef typename viennagrid::result_of::const_ncell_range<CellType, 0>::type            VertexOnCellRange;
+      typedef typename viennagrid::result_of::const_element_range<CellType, vertex_tag>::type            VertexOnCellRange;
       typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type         VertexOnCellIterator;            
-      typedef typename viennagrid::result_of::const_ncell_range<CellType, 1>::type            EdgeOnCellRange;
+      typedef typename viennagrid::result_of::const_element_range<CellType, line_tag>::type            EdgeOnCellRange;
       typedef typename viennagrid::result_of::iterator<EdgeOnCellRange>::type           EdgeOnCellIterator;            
       
-      typedef typename viennagrid::result_of::ncell<ConfigTypeIn, 0>::type             VertexType;
-      typedef typename viennagrid::result_of::ncell<ConfigTypeIn, 1>::type             EdgeType;
+      typedef typename viennagrid::result_of::element<CellType, vertex_tag>::type             VertexType;
+      typedef typename viennagrid::result_of::element_hook<CellType, vertex_tag>::type             VertexHookType;
+      typedef typename viennagrid::result_of::element<CellType, line_tag>::type             EdgeType;
+      
+      typedef typename viennagrid::result_of::element<DomainTypeOut, vertex_tag>::type                                      VertexTypeOut;
+      typedef typename VertexTypeOut::id_type VertexIDTypeOut;
 
-      VertexType * vertices[topology::bndcells<tetrahedron_tag, 0>::num];
+
+      //VertexType * vertices[topology::bndcells<tetrahedron_tag, 0>::num];
+      storage::static_array< VertexHookType, topology::bndcells<tetrahedron_tag, 0>::num > vertices;
       //std::cout << "apply3()" << std::endl;
       
       //
@@ -1261,17 +959,22 @@ namespace viennagrid
       //
       VertexOnCellRange vertices_on_cell = viennagrid::ncells<0>(cell_in);
       VertexOnCellIterator vocit = vertices_on_cell.begin();
-      vertices[0] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]); ++vocit;
-      vertices[1] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]); ++vocit;
-      vertices[2] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]); ++vocit;
-      vertices[3] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]);
+//       vertices[0] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]); ++vocit;
+//       vertices[1] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]); ++vocit;
+//       vertices[2] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]); ++vocit;
+//       vertices[3] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]);
+      vertices[0] = viennagrid::find_hook( segment_out, vocit->id() ); ++vocit;
+      vertices[1] = viennagrid::find_hook( segment_out, vocit->id() ); ++vocit;
+      vertices[2] = viennagrid::find_hook( segment_out, vocit->id() ); ++vocit;
+      vertices[3] = viennagrid::find_hook( segment_out, vocit->id() );  
       
 
       //
       // Step 2: Bring vertices in correct order
       //
-      VertexType * ordered_vertices[topology::bndcells<tetrahedron_tag, 0>::num + 3];
-      EdgeOnCellRange edges_on_cell = viennagrid::ncells<1>(cell_in);
+      //VertexType * ordered_vertices[topology::bndcells<tetrahedron_tag, 0>::num + 3];
+      storage::static_array< VertexHookType, topology::bndcells<tetrahedron_tag, 0>::num + 3 > ordered_vertices;
+      EdgeOnCellRange edges_on_cell = viennagrid::elements<line_tag>(cell_in);
       EdgeOnCellIterator eocit = edges_on_cell.begin();
       EdgeType const & e0 = *eocit; ++eocit;
       EdgeType const & e1 = *eocit; ++eocit;
@@ -1289,28 +992,28 @@ namespace viennagrid
           ordered_vertices[1] = vertices[0];
           ordered_vertices[2] = vertices[1];
           ordered_vertices[3] = vertices[3];
-          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)]);
-          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)]);
+          ordered_vertices[4] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
+          ordered_vertices[5] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
           
           if (viennadata::access<refinement_key, bool>(refinement_key())(e2) == true)
           {
-            ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
-            apply3_1(cell_in, segment_out, ordered_vertices);
+            ordered_vertices[6] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
+            apply3_1<CellType>(segment_out, ordered_vertices);
           }
           else if (viennadata::access<refinement_key, bool>(refinement_key())(e3) == true)
           {
-            ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)]);
-            apply3_2(cell_in, segment_out, ordered_vertices);
+            ordered_vertices[6] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
+            apply3_2<CellType>(segment_out, ordered_vertices);
           }
           else if (viennadata::access<refinement_key, bool>(refinement_key())(e4) == true)
           {
-            ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
-            apply3_4(cell_in, segment_out, ordered_vertices);
+            ordered_vertices[6] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
+            apply3_4<CellType>(segment_out, ordered_vertices);
           }
           else if (viennadata::access<refinement_key, bool>(refinement_key())(e5) == true)
           {
-            ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
-            apply3_3(cell_in, segment_out, ordered_vertices);
+            ordered_vertices[6] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
+            apply3_3<CellType>(segment_out, ordered_vertices);
           }
           else
           {
@@ -1323,23 +1026,23 @@ namespace viennagrid
           ordered_vertices[1] = vertices[0];
           ordered_vertices[2] = vertices[3];
           ordered_vertices[3] = vertices[2];
-          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)]);
-          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
+          ordered_vertices[4] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
+          ordered_vertices[5] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
           
           if (viennadata::access<refinement_key, bool>(refinement_key())(e3) == true)
           {
-            ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)]);
-            apply3_3(cell_in, segment_out, ordered_vertices);
+            ordered_vertices[6] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
+            apply3_3<CellType>(segment_out, ordered_vertices);
           }
           else if (viennadata::access<refinement_key, bool>(refinement_key())(e4) == true)
           {
-            ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
-            apply3_2(cell_in, segment_out, ordered_vertices);
+            ordered_vertices[6] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
+            apply3_2<CellType>(segment_out, ordered_vertices);
           }
           else if (viennadata::access<refinement_key, bool>(refinement_key())(e5) == true)
           {
-            ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
-            apply3_4(cell_in, segment_out, ordered_vertices);
+            ordered_vertices[6] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
+            apply3_4<CellType>(segment_out, ordered_vertices);
           }
           else
           {
@@ -1352,18 +1055,18 @@ namespace viennagrid
           ordered_vertices[1] = vertices[1];
           ordered_vertices[2] = vertices[2];
           ordered_vertices[3] = vertices[3];
-          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)]);
-          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)]);
+          ordered_vertices[4] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
+          ordered_vertices[5] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
           
           if (viennadata::access<refinement_key, bool>(refinement_key())(e4) == true)
           {
-            ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
-            apply3_1(cell_in, segment_out, ordered_vertices);
+            ordered_vertices[6] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
+            apply3_1<CellType>(segment_out, ordered_vertices);
           }
           else if (viennadata::access<refinement_key, bool>(refinement_key())(e5) == true)
           {
-            ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
-            apply3_4(cell_in, segment_out, ordered_vertices);
+            ordered_vertices[6] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
+            apply3_4<CellType>(segment_out, ordered_vertices);
           }
           else
           {
@@ -1376,13 +1079,13 @@ namespace viennagrid
           ordered_vertices[1] = vertices[1];
           ordered_vertices[2] = vertices[0];
           ordered_vertices[3] = vertices[2];
-          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
-          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)]);
+          ordered_vertices[4] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
+          ordered_vertices[5] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
           
           if (viennadata::access<refinement_key, bool>(refinement_key())(e5) == true)
           {
-            ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
-            apply3_3(cell_in, segment_out, ordered_vertices);
+            ordered_vertices[6] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
+            apply3_3<CellType>(segment_out, ordered_vertices);
           }
           else
           {
@@ -1402,23 +1105,23 @@ namespace viennagrid
           ordered_vertices[1] = vertices[0];
           ordered_vertices[2] = vertices[2];
           ordered_vertices[3] = vertices[1];
-          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
-          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)]);
+          ordered_vertices[4] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
+          ordered_vertices[5] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
           
           if (viennadata::access<refinement_key, bool>(refinement_key())(e3) == true)
           {
-            ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)]);
-            apply3_4(cell_in, segment_out, ordered_vertices);
+            ordered_vertices[6] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
+            apply3_4<CellType>(segment_out, ordered_vertices);
           }
           else if (viennadata::access<refinement_key, bool>(refinement_key())(e4) == true)
           {
-            ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
-            apply3_3(cell_in, segment_out, ordered_vertices);
+            ordered_vertices[6] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
+            apply3_3<CellType>(segment_out, ordered_vertices);
           }
           else if (viennadata::access<refinement_key, bool>(refinement_key())(e5) == true)
           {
-            ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
-            apply3_2(cell_in, segment_out, ordered_vertices);
+            ordered_vertices[6] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
+            apply3_2<CellType>(segment_out, ordered_vertices);
           }
           else
           {
@@ -1431,18 +1134,18 @@ namespace viennagrid
           ordered_vertices[1] = vertices[2];
           ordered_vertices[2] = vertices[0];
           ordered_vertices[3] = vertices[3];
-          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)]);
-          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)]);
+          ordered_vertices[4] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
+          ordered_vertices[5] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
           
           if (viennadata::access<refinement_key, bool>(refinement_key())(e4) == true)
           {
-            ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
-            apply3_3(cell_in, segment_out, ordered_vertices);
+            ordered_vertices[6] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
+            apply3_3<CellType>(segment_out, ordered_vertices);
           }
           else if (viennadata::access<refinement_key, bool>(refinement_key())(e5) == true)
           {
-            ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
-            apply3_1(cell_in, segment_out, ordered_vertices);
+            ordered_vertices[6] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
+            apply3_1<CellType>(segment_out, ordered_vertices);
           }
           else
           {
@@ -1458,11 +1161,11 @@ namespace viennagrid
             ordered_vertices[1] = vertices[3];
             ordered_vertices[2] = vertices[2];
             ordered_vertices[3] = vertices[0];
-            ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
-            ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
-            ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)]);
+            ordered_vertices[4] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
+            ordered_vertices[5] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
+            ordered_vertices[6] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
             
-            apply3_4(cell_in, segment_out, ordered_vertices);
+            apply3_4<CellType>(segment_out, ordered_vertices);
           }
           else
           {
@@ -1487,11 +1190,11 @@ namespace viennagrid
             ordered_vertices[1] = vertices[3];
             ordered_vertices[2] = vertices[1];
             ordered_vertices[3] = vertices[2];
-            ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
-            ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
-            ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)]);
+            ordered_vertices[4] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
+            ordered_vertices[5] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
+            ordered_vertices[6] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
             
-            apply3_4(cell_in, segment_out, ordered_vertices);
+            apply3_4<CellType>(segment_out, ordered_vertices);
           }
           else if (viennadata::access<refinement_key, bool>(refinement_key())(e5) == true)
           {
@@ -1500,11 +1203,11 @@ namespace viennagrid
             ordered_vertices[1] = vertices[2];
             ordered_vertices[2] = vertices[1];
             ordered_vertices[3] = vertices[0];
-            ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
-            ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)]);
-            ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
+            ordered_vertices[4] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
+            ordered_vertices[5] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
+            ordered_vertices[6] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
             
-            apply3_3(cell_in, segment_out, ordered_vertices);
+            apply3_3<CellType>(segment_out, ordered_vertices);
           }
           else
           {
@@ -1517,13 +1220,13 @@ namespace viennagrid
           ordered_vertices[1] = vertices[3];
           ordered_vertices[2] = vertices[1];
           ordered_vertices[3] = vertices[2];
-          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
-          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
+          ordered_vertices[4] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
+          ordered_vertices[5] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
           
           if (viennadata::access<refinement_key, bool>(refinement_key())(e5) == true)
           {
-            ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
-            apply3_1(cell_in, segment_out, ordered_vertices);
+            ordered_vertices[6] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
+            apply3_1<CellType>(segment_out, ordered_vertices);
           }
           else
           {
@@ -1543,13 +1246,13 @@ namespace viennagrid
           ordered_vertices[1] = vertices[1];
           ordered_vertices[2] = vertices[3];
           ordered_vertices[3] = vertices[0];
-          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)]);
-          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
+          ordered_vertices[4] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
+          ordered_vertices[5] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
           
           if (viennadata::access<refinement_key, bool>(refinement_key())(e5) == true)
           {
-            ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
-            apply3_2(cell_in, segment_out, ordered_vertices);
+            ordered_vertices[6] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
+            apply3_2<CellType>(segment_out, ordered_vertices);
           }
           else
           {
@@ -1586,160 +1289,64 @@ namespace viennagrid
      * 
      * 
      */
-    template <typename CellType, typename DomainTypeOut, typename VertexType>
-    static void apply4_1(CellType const & cell_in, 
-                         DomainTypeOut & segment_out,
-                         VertexType ** vertices
+    template <typename CellType, typename DomainTypeOut, typename VertexHookIteratorType>
+    static void apply4_1(DomainTypeOut & segment_out,
+                         VertexHookIteratorType vertices
                         )
     {
-      CellType new_cell;
-      VertexType * cellvertices[topology::bndcells<tetrahedron_tag, 0>::num];
+//       CellType new_cell;
+//       VertexType * cellvertices[topology::bndcells<tetrahedron_tag, 0>::num];
 
       //double diag03_len = viennagrid::norm(vertices[0]->point() - vertices[3]->point());
       //double diag13_len = viennagrid::norm(vertices[1]->point() - vertices[3]->point());
       //double diag23_len = viennagrid::norm(vertices[2]->point() - vertices[3]->point());
 
+      
+      
+        
+      
       //if (diag03_len > diag13_len) //split edge 03, introduce line 71
-      if (stable_line_is_longer(vertices[0], vertices[3],
-                                vertices[1], vertices[3])) //split edge 03, introduce line 71
+      if (stable_line_is_longer(segment_out, vertices, 0, 3, 1, 3)) //split edge 03, introduce line 71
       {
-        cellvertices[0] = vertices[0];
-        cellvertices[1] = vertices[1];
-        cellvertices[2] = vertices[4];
-        cellvertices[3] = vertices[7];
-        new_cell.vertices(cellvertices);
-        segment_out.push_back(new_cell);
-          
-        cellvertices[0] = vertices[7];
-        cellvertices[1] = vertices[5];
-        cellvertices[2] = vertices[6];
-        cellvertices[3] = vertices[3];
-        new_cell.vertices(cellvertices);
-        segment_out.push_back(new_cell);
+        create_refinement_cell<CellType>( segment_out, vertices, 0, 1, 4, 7);
+        create_refinement_cell<CellType>( segment_out, vertices, 7, 5, 6, 3);
         
         //if (diag13_len > diag23_len) //split edge 13, introduce line 52
-        if (stable_line_is_longer(vertices[1], vertices[3],
-                                  vertices[2], vertices[3])) //split edge 13, introduce line 52
+        if (stable_line_is_longer(segment_out, vertices, 1, 3, 2, 3)) //split edge 13, introduce line 52
         {
           //std::cout << "apply_4_1_1" << std::endl;
-          cellvertices[0] = vertices[7];
-          cellvertices[1] = vertices[1];
-          cellvertices[2] = vertices[4];
-          cellvertices[3] = vertices[5];
-          new_cell.vertices(cellvertices);
-          segment_out.push_back(new_cell);
-
-          cellvertices[0] = vertices[7];
-          cellvertices[1] = vertices[5];
-          cellvertices[2] = vertices[4];
-          cellvertices[3] = vertices[6];
-          new_cell.vertices(cellvertices);
-          segment_out.push_back(new_cell);
-          
-          cellvertices[0] = vertices[1];
-          cellvertices[1] = vertices[2];
-          cellvertices[2] = vertices[4];
-          cellvertices[3] = vertices[5];
-          new_cell.vertices(cellvertices);
-          segment_out.push_back(new_cell);
-          
-          cellvertices[0] = vertices[4];
-          cellvertices[1] = vertices[5];
-          cellvertices[2] = vertices[2];
-          cellvertices[3] = vertices[6];
-          new_cell.vertices(cellvertices);
-          segment_out.push_back(new_cell);
+          create_refinement_cell<CellType>( segment_out, vertices, 7, 1, 4, 5);
+          create_refinement_cell<CellType>( segment_out, vertices, 7, 5, 4, 6);
+          create_refinement_cell<CellType>( segment_out, vertices, 1, 2, 4, 5);
+          create_refinement_cell<CellType>( segment_out, vertices, 4, 5, 2, 6);
         }
         else //split edge 23, introduce line 61
         {
           //std::cout << "apply_4_1_2" << std::endl;
-          cellvertices[0] = vertices[7];
-          cellvertices[1] = vertices[1];
-          cellvertices[2] = vertices[6];
-          cellvertices[3] = vertices[5];
-          new_cell.vertices(cellvertices);
-          segment_out.push_back(new_cell);
-          
-          cellvertices[0] = vertices[7];
-          cellvertices[1] = vertices[1];
-          cellvertices[2] = vertices[4];
-          cellvertices[3] = vertices[6];
-          new_cell.vertices(cellvertices);
-          segment_out.push_back(new_cell);
-
-          cellvertices[0] = vertices[1];
-          cellvertices[1] = vertices[2];
-          cellvertices[2] = vertices[4];
-          cellvertices[3] = vertices[6];
-          new_cell.vertices(cellvertices);
-          segment_out.push_back(new_cell);
+          create_refinement_cell<CellType>( segment_out, vertices, 7, 1, 6, 5);
+          create_refinement_cell<CellType>( segment_out, vertices, 7, 1, 4, 6);
+          create_refinement_cell<CellType>( segment_out, vertices, 1, 2, 4, 6);
         }
       }
       else //split edge 13, introduce line 50
       {
-        cellvertices[0] = vertices[0];
-        cellvertices[1] = vertices[1];
-        cellvertices[2] = vertices[4];
-        cellvertices[3] = vertices[5];
-        new_cell.vertices(cellvertices);
-        segment_out.push_back(new_cell);
-          
-        cellvertices[0] = vertices[0];
-        cellvertices[1] = vertices[5];
-        cellvertices[2] = vertices[4];
-        cellvertices[3] = vertices[7];
-        new_cell.vertices(cellvertices);
-        segment_out.push_back(new_cell);
-
-        cellvertices[0] = vertices[7];
-        cellvertices[1] = vertices[5];
-        cellvertices[2] = vertices[6];
-        cellvertices[3] = vertices[3];
-        new_cell.vertices(cellvertices);
-        segment_out.push_back(new_cell);
-        
-        cellvertices[0] = vertices[7];
-        cellvertices[1] = vertices[5];
-        cellvertices[2] = vertices[4];
-        cellvertices[3] = vertices[6];
-        new_cell.vertices(cellvertices);
-        segment_out.push_back(new_cell);
+        create_refinement_cell<CellType>( segment_out, vertices, 0, 1, 4, 5);
+        create_refinement_cell<CellType>( segment_out, vertices, 0, 5, 4, 7);
+        create_refinement_cell<CellType>( segment_out, vertices, 7, 5, 6, 3);
+        create_refinement_cell<CellType>( segment_out, vertices, 7, 5, 4, 6);
 
         //if (diag13_len > diag23_len) //split edge 13 again, introduce line 52
-        if (stable_line_is_longer(vertices[1], vertices[3],
-                                  vertices[2], vertices[3])) //split edge 13 again, introduce line 52
+        if (stable_line_is_longer(segment_out, vertices, 1, 3, 2, 3)) //split edge 13 again, introduce line 52
         {
           //std::cout << "apply_4_1_3" << std::endl;
-          cellvertices[0] = vertices[1];
-          cellvertices[1] = vertices[2];
-          cellvertices[2] = vertices[4];
-          cellvertices[3] = vertices[5];
-          new_cell.vertices(cellvertices);
-          segment_out.push_back(new_cell);
-          
-          cellvertices[0] = vertices[4];
-          cellvertices[1] = vertices[5];
-          cellvertices[2] = vertices[2];
-          cellvertices[3] = vertices[6];
-          new_cell.vertices(cellvertices);
-          segment_out.push_back(new_cell);
+          create_refinement_cell<CellType>( segment_out, vertices, 1, 2, 4, 5);
+          create_refinement_cell<CellType>( segment_out, vertices, 4, 5, 2, 6);
         }
         else //split edge 23, introduce line 61
         {
           //std::cout << "apply_4_1_4" << std::endl;
-          cellvertices[0] = vertices[5];
-          cellvertices[1] = vertices[1];
-          cellvertices[2] = vertices[4];
-          cellvertices[3] = vertices[6];
-          new_cell.vertices(cellvertices);
-          segment_out.push_back(new_cell);
-
-          cellvertices[0] = vertices[4];
-          cellvertices[1] = vertices[1];
-          cellvertices[2] = vertices[2];
-          cellvertices[3] = vertices[6];
-          new_cell.vertices(cellvertices);
-          segment_out.push_back(new_cell);
+          create_refinement_cell<CellType>( segment_out, vertices, 5, 1, 4, 6);
+          create_refinement_cell<CellType>( segment_out, vertices, 4, 1, 2, 6);
         }
       }
       
@@ -1759,14 +1366,13 @@ namespace viennagrid
      * 
      * 
      */
-    template <typename CellType, typename DomainTypeOut, typename VertexType>
-    static void apply4_2(CellType const & cell_in, 
-                         DomainTypeOut & segment_out,
-                         VertexType ** vertices
+    template <typename CellType, typename DomainTypeOut, typename VertexHookIteratorType>
+    static void apply4_2(DomainTypeOut & segment_out,
+                         VertexHookIteratorType vertices
                         )
     {
-      CellType new_cell;
-      VertexType * cellvertices[topology::bndcells<tetrahedron_tag, 0>::num];
+//       CellType new_cell;
+//       VertexType * cellvertices[topology::bndcells<tetrahedron_tag, 0>::num];
 
       //double diag02_len = viennagrid::norm(vertices[0]->point() - vertices[2]->point());
       //double diag03_len = viennagrid::norm(vertices[0]->point() - vertices[3]->point());
@@ -1774,64 +1380,25 @@ namespace viennagrid
       //double diag13_len = viennagrid::norm(vertices[1]->point() - vertices[3]->point());
 
       //if (diag03_len > diag13_len) //split edge 03, introduce line 61
-      if (stable_line_is_longer(vertices[0], vertices[3],
-                                vertices[1], vertices[3])) //split edge 03, introduce line 61
+      if (stable_line_is_longer(segment_out, vertices, 0, 3, 1, 3)) //split edge 03, introduce line 61
       {
         //std::cout << "split!" << std::endl;
         //if (diag13_len > diag12_len) //split edge 13, introduce line 72
-        if (stable_line_is_longer(vertices[1], vertices[3],
-                                  vertices[1], vertices[2])) //split edge 13, introduce line 72
+        if (stable_line_is_longer(segment_out, vertices, 1, 3, 1, 2)) //split edge 13, introduce line 72
         {
           //if (diag02_len > diag03_len) //split edge 02, introduce line 53
-          if (stable_line_is_longer(vertices[0], vertices[2],
-                                    vertices[0], vertices[3])) //split edge 02, introduce line 53
+          if (stable_line_is_longer(segment_out, vertices, 0, 2, 0, 3)) //split edge 02, introduce line 53
           {
             //if (diag02_len > diag12_len) //split edge 02, introduce line 51
-            if (stable_line_is_longer(vertices[0], vertices[2],
-                                      vertices[1], vertices[2])) //split edge 02, introduce line 51
+            if (stable_line_is_longer(segment_out, vertices, 0, 2, 1, 2)) //split edge 02, introduce line 51
             {
               //std::cout << "apply_4_2_1_" << std::endl;
-              cellvertices[0] = vertices[0];
-              cellvertices[1] = vertices[1];
-              cellvertices[2] = vertices[5];
-              cellvertices[3] = vertices[6];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[6];
-              cellvertices[1] = vertices[1];
-              cellvertices[2] = vertices[5];
-              cellvertices[3] = vertices[7];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[1];
-              cellvertices[1] = vertices[4];
-              cellvertices[2] = vertices[5];
-              cellvertices[3] = vertices[7];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[4];
-              cellvertices[1] = vertices[2];
-              cellvertices[2] = vertices[5];
-              cellvertices[3] = vertices[7];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[6];
-              cellvertices[1] = vertices[7];
-              cellvertices[2] = vertices[5];
-              cellvertices[3] = vertices[3];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[7];
-              cellvertices[1] = vertices[2];
-              cellvertices[2] = vertices[5];
-              cellvertices[3] = vertices[3];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
+              create_refinement_cell<CellType>( segment_out, vertices, 0, 1, 5, 6);
+              create_refinement_cell<CellType>( segment_out, vertices, 6, 1, 5, 7);
+              create_refinement_cell<CellType>( segment_out, vertices, 1, 4, 5, 7);
+              create_refinement_cell<CellType>( segment_out, vertices, 4, 2, 5, 7);
+              create_refinement_cell<CellType>( segment_out, vertices, 6, 7, 5, 3);
+              create_refinement_cell<CellType>( segment_out, vertices, 7, 2, 5, 3);
             }
             else //split edge 12, introduce line 40
             {
@@ -1842,293 +1409,79 @@ namespace viennagrid
           {
             //std::cout << "split!" << std::endl;
             //if (diag02_len > diag12_len) //split edge 02, introduce line 51
-            if (stable_line_is_longer(vertices[0], vertices[2],
-                                      vertices[1], vertices[2])) //split edge 02, introduce line 51
+            if (stable_line_is_longer(segment_out, vertices, 0, 2, 1, 2)) //split edge 02, introduce line 51
             {
               //std::cout << "split!" << std::endl;
               //std::cout << "apply_4_2_2" << std::endl;
-              cellvertices[0] = vertices[0];
-              cellvertices[1] = vertices[1];
-              cellvertices[2] = vertices[5];
-              cellvertices[3] = vertices[6];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[1];
-              cellvertices[1] = vertices[4];
-              cellvertices[2] = vertices[5];
-              cellvertices[3] = vertices[6];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[1];
-              cellvertices[1] = vertices[4];
-              cellvertices[2] = vertices[6];
-              cellvertices[3] = vertices[7];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[7];
-              cellvertices[1] = vertices[4];
-              cellvertices[2] = vertices[6];
-              cellvertices[3] = vertices[2];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[4];
-              cellvertices[1] = vertices[2];
-              cellvertices[2] = vertices[5];
-              cellvertices[3] = vertices[6];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[6];
-              cellvertices[1] = vertices[7];
-              cellvertices[2] = vertices[2];
-              cellvertices[3] = vertices[3];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
+              create_refinement_cell<CellType>( segment_out, vertices, 0, 1, 5, 6);
+              create_refinement_cell<CellType>( segment_out, vertices, 1, 4, 5, 6);
+              create_refinement_cell<CellType>( segment_out, vertices, 1, 4, 6, 7);
+              create_refinement_cell<CellType>( segment_out, vertices, 7, 4, 6, 2);
+              create_refinement_cell<CellType>( segment_out, vertices, 4, 2, 5, 6);
+              create_refinement_cell<CellType>( segment_out, vertices, 6, 7, 2, 3);
               //std::cout << "done!" << std::endl;
             }
             else //split edge 12, introduce line 40
             {
               //std::cout << "apply_4_2_3" << std::endl;
-              cellvertices[0] = vertices[0];
-              cellvertices[1] = vertices[1];
-              cellvertices[2] = vertices[4];
-              cellvertices[3] = vertices[6];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[0];
-              cellvertices[1] = vertices[4];
-              cellvertices[2] = vertices[5];
-              cellvertices[3] = vertices[6];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[6];
-              cellvertices[1] = vertices[1];
-              cellvertices[2] = vertices[4];
-              cellvertices[3] = vertices[7];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[6];
-              cellvertices[1] = vertices[7];
-              cellvertices[2] = vertices[4];
-              cellvertices[3] = vertices[2];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[6];
-              cellvertices[1] = vertices[4];
-              cellvertices[2] = vertices[5];
-              cellvertices[3] = vertices[2];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[6];
-              cellvertices[1] = vertices[7];
-              cellvertices[2] = vertices[2];
-              cellvertices[3] = vertices[3];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
+              create_refinement_cell<CellType>( segment_out, vertices, 0, 1, 4, 6);
+              create_refinement_cell<CellType>( segment_out, vertices, 0, 4, 5, 6);
+              create_refinement_cell<CellType>( segment_out, vertices, 6, 1, 4, 7);
+              create_refinement_cell<CellType>( segment_out, vertices, 6, 7, 4, 2);
+              create_refinement_cell<CellType>( segment_out, vertices, 6, 4, 5, 2);
+              create_refinement_cell<CellType>( segment_out, vertices, 6, 7, 2, 3);
             }
           }
         }
         else //split edge 12, introduce line 43
         {
           //if (diag02_len > diag03_len) //split edge 02, introduce line 53
-          if (stable_line_is_longer(vertices[0], vertices[2],
-                                    vertices[0], vertices[3])) //split edge 02, introduce line 53
+          if (stable_line_is_longer(segment_out, vertices, 0, 2, 0, 3)) //split edge 02, introduce line 53
           {
             //if (diag02_len > diag12_len) //split edge 02, introduce line 51
-            if (stable_line_is_longer(vertices[0], vertices[2],
-                                      vertices[1], vertices[2])) //split edge 02, introduce line 51
+            if (stable_line_is_longer(segment_out, vertices, 0, 2, 1, 2)) //split edge 02, introduce line 51
             {
               //std::cout << "apply_4_2_4" << std::endl;
-              cellvertices[0] = vertices[0];
-              cellvertices[1] = vertices[1];
-              cellvertices[2] = vertices[5];
-              cellvertices[3] = vertices[6];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[6];
-              cellvertices[1] = vertices[1];
-              cellvertices[2] = vertices[5];
-              cellvertices[3] = vertices[7];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[1];
-              cellvertices[1] = vertices[4];
-              cellvertices[2] = vertices[5];
-              cellvertices[3] = vertices[7];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[5];
-              cellvertices[1] = vertices[4];
-              cellvertices[2] = vertices[2];
-              cellvertices[3] = vertices[3];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[5];
-              cellvertices[1] = vertices[7];
-              cellvertices[2] = vertices[4];
-              cellvertices[3] = vertices[3];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[6];
-              cellvertices[1] = vertices[7];
-              cellvertices[2] = vertices[5];
-              cellvertices[3] = vertices[3];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
+              create_refinement_cell<CellType>( segment_out, vertices, 0, 1, 5, 6);
+              create_refinement_cell<CellType>( segment_out, vertices, 6, 1, 5, 7);
+              create_refinement_cell<CellType>( segment_out, vertices, 1, 4, 5, 7);
+              create_refinement_cell<CellType>( segment_out, vertices, 5, 4, 2, 3);
+              create_refinement_cell<CellType>( segment_out, vertices, 5, 7, 4, 3);
+              create_refinement_cell<CellType>( segment_out, vertices, 6, 7, 5, 3);
             }
             else //split edge 12, introduce line 40
             {
               //std::cout << "apply_4_2_5" << std::endl;
-              cellvertices[0] = vertices[0];
-              cellvertices[1] = vertices[1];
-              cellvertices[2] = vertices[4];
-              cellvertices[3] = vertices[6];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[6];
-              cellvertices[1] = vertices[1];
-              cellvertices[2] = vertices[4];
-              cellvertices[3] = vertices[7];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[6];
-              cellvertices[1] = vertices[7];
-              cellvertices[2] = vertices[4];
-              cellvertices[3] = vertices[3];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[6];
-              cellvertices[1] = vertices[4];
-              cellvertices[2] = vertices[5];
-              cellvertices[3] = vertices[3];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[0];
-              cellvertices[1] = vertices[4];
-              cellvertices[2] = vertices[5];
-              cellvertices[3] = vertices[6];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[5];
-              cellvertices[1] = vertices[4];
-              cellvertices[2] = vertices[2];
-              cellvertices[3] = vertices[3];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
+              create_refinement_cell<CellType>( segment_out, vertices, 0, 1, 4, 6);
+              create_refinement_cell<CellType>( segment_out, vertices, 6, 1, 4, 7);
+              create_refinement_cell<CellType>( segment_out, vertices, 6, 7, 4, 3);
+              create_refinement_cell<CellType>( segment_out, vertices, 6, 4, 5, 3);
+              create_refinement_cell<CellType>( segment_out, vertices, 0, 4, 5, 6);
+              create_refinement_cell<CellType>( segment_out, vertices, 5, 4, 2, 3);
             }
           }
           else //split edge 03, introduce line 62
           {
             //if (diag02_len > diag12_len) //split edge 02, introduce line 51
-            if (stable_line_is_longer(vertices[0], vertices[2],
-                                      vertices[1], vertices[2])) //split edge 02, introduce line 51
+            if (stable_line_is_longer(segment_out, vertices, 0, 2, 1, 2)) //split edge 02, introduce line 51
             {
               //std::cout << "apply_4_2_6" << std::endl;
-              cellvertices[0] = vertices[0];
-              cellvertices[1] = vertices[1];
-              cellvertices[2] = vertices[5];
-              cellvertices[3] = vertices[6];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[1];
-              cellvertices[1] = vertices[4];
-              cellvertices[2] = vertices[5];
-              cellvertices[3] = vertices[6];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[1];
-              cellvertices[1] = vertices[4];
-              cellvertices[2] = vertices[6];
-              cellvertices[3] = vertices[7];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[7];
-              cellvertices[1] = vertices[4];
-              cellvertices[2] = vertices[6];
-              cellvertices[3] = vertices[3];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[4];
-              cellvertices[1] = vertices[2];
-              cellvertices[2] = vertices[5];
-              cellvertices[3] = vertices[6];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[6];
-              cellvertices[1] = vertices[4];
-              cellvertices[2] = vertices[2];
-              cellvertices[3] = vertices[3];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
+              create_refinement_cell<CellType>( segment_out, vertices, 0, 1, 5, 6);
+              create_refinement_cell<CellType>( segment_out, vertices, 1, 4, 5, 6);
+              create_refinement_cell<CellType>( segment_out, vertices, 1, 4, 6, 7);
+              create_refinement_cell<CellType>( segment_out, vertices, 7, 4, 6, 3);
+              create_refinement_cell<CellType>( segment_out, vertices, 4, 2, 5, 6);
+              create_refinement_cell<CellType>( segment_out, vertices, 6, 4, 2, 3);
             }
             else //split edge 12, introduce line 40
             {
               //std::cout << "apply_4_2_7" << std::endl;
-              cellvertices[0] = vertices[0];
-              cellvertices[1] = vertices[1];
-              cellvertices[2] = vertices[4];
-              cellvertices[3] = vertices[6];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[6];
-              cellvertices[1] = vertices[1];
-              cellvertices[2] = vertices[4];
-              cellvertices[3] = vertices[7];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[6];
-              cellvertices[1] = vertices[7];
-              cellvertices[2] = vertices[4];
-              cellvertices[3] = vertices[3];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[0];
-              cellvertices[1] = vertices[4];
-              cellvertices[2] = vertices[5];
-              cellvertices[3] = vertices[6];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[5];
-              cellvertices[1] = vertices[4];
-              cellvertices[2] = vertices[2];
-              cellvertices[3] = vertices[6];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[6];
-              cellvertices[1] = vertices[4];
-              cellvertices[2] = vertices[2];
-              cellvertices[3] = vertices[3];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
+              create_refinement_cell<CellType>( segment_out, vertices, 0, 1, 4, 6);
+              create_refinement_cell<CellType>( segment_out, vertices, 6, 1, 4, 7);
+              create_refinement_cell<CellType>( segment_out, vertices, 6, 7, 4, 3);
+              create_refinement_cell<CellType>( segment_out, vertices, 0, 4, 5, 6);
+              create_refinement_cell<CellType>( segment_out, vertices, 5, 4, 2, 6);
+              create_refinement_cell<CellType>( segment_out, vertices, 6, 4, 2, 3);
             }
           }
         }
@@ -2136,306 +1489,89 @@ namespace viennagrid
       else //split edge 13, introduce line 70
       {
         //if (diag13_len > diag12_len) //split edge 13, introduce line 72
-        if (stable_line_is_longer(vertices[1], vertices[3],
-                                  vertices[1], vertices[2])) //split edge 13, introduce line 72
+        if (stable_line_is_longer(segment_out, vertices, 1, 3, 1, 2)) //split edge 13, introduce line 72
         {
           //if (diag02_len > diag03_len) //split edge 02, introduce line 53
-          if (stable_line_is_longer(vertices[0], vertices[2],
-                                    vertices[0], vertices[3])) //split edge 02, introduce line 53
+          if (stable_line_is_longer(segment_out, vertices, 0, 2, 0, 3)) //split edge 02, introduce line 53
           {
             //if (diag02_len > diag12_len) //split edge 02, introduce line 51
-            if (stable_line_is_longer(vertices[0], vertices[2],
-                                      vertices[1], vertices[2])) //split edge 02, introduce line 51
+            if (stable_line_is_longer(segment_out, vertices, 0, 2, 1, 2)) //split edge 02, introduce line 51
             {
               //std::cout << "apply_4_2_8" << std::endl;
-              cellvertices[0] = vertices[0];
-              cellvertices[1] = vertices[1];
-              cellvertices[2] = vertices[5];
-              cellvertices[3] = vertices[7];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[0];
-              cellvertices[1] = vertices[7];
-              cellvertices[2] = vertices[5];
-              cellvertices[3] = vertices[6];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[1];
-              cellvertices[1] = vertices[4];
-              cellvertices[2] = vertices[5];
-              cellvertices[3] = vertices[7];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[5];
-              cellvertices[1] = vertices[4];
-              cellvertices[2] = vertices[2];
-              cellvertices[3] = vertices[7];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[5];
-              cellvertices[1] = vertices[7];
-              cellvertices[2] = vertices[2];
-              cellvertices[3] = vertices[3];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[6];
-              cellvertices[1] = vertices[7];
-              cellvertices[2] = vertices[5];
-              cellvertices[3] = vertices[3];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
+              create_refinement_cell<CellType>( segment_out, vertices, 0, 1, 5, 7);
+              create_refinement_cell<CellType>( segment_out, vertices, 0, 7, 5, 6);
+              create_refinement_cell<CellType>( segment_out, vertices, 1, 4, 5, 7);
+              create_refinement_cell<CellType>( segment_out, vertices, 5, 4, 2, 7);
+              create_refinement_cell<CellType>( segment_out, vertices, 5, 7, 2, 3);
+              create_refinement_cell<CellType>( segment_out, vertices, 6, 7, 5, 3);
             }
             else //split edge 12, introduce line 40
             {
               //std::cout << "apply_4_2_9" << std::endl;
-              cellvertices[0] = vertices[0];
-              cellvertices[1] = vertices[1];
-              cellvertices[2] = vertices[4];
-              cellvertices[3] = vertices[7];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[0];
-              cellvertices[1] = vertices[4];
-              cellvertices[2] = vertices[5];
-              cellvertices[3] = vertices[7];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[0];
-              cellvertices[1] = vertices[7];
-              cellvertices[2] = vertices[5];
-              cellvertices[3] = vertices[6];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[6];
-              cellvertices[1] = vertices[7];
-              cellvertices[2] = vertices[5];
-              cellvertices[3] = vertices[3];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[5];
-              cellvertices[1] = vertices[4];
-              cellvertices[2] = vertices[2];
-              cellvertices[3] = vertices[7];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[5];
-              cellvertices[1] = vertices[7];
-              cellvertices[2] = vertices[2];
-              cellvertices[3] = vertices[3];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
+              create_refinement_cell<CellType>( segment_out, vertices, 0, 1, 4, 7);
+              create_refinement_cell<CellType>( segment_out, vertices, 0, 4, 5, 7);
+              create_refinement_cell<CellType>( segment_out, vertices, 0, 7, 5, 6);
+              create_refinement_cell<CellType>( segment_out, vertices, 6, 7, 5, 3);
+              create_refinement_cell<CellType>( segment_out, vertices, 5, 4, 2, 7);
+              create_refinement_cell<CellType>( segment_out, vertices, 5, 7, 2, 3);
             }
           }
           else //split edge 03, introduce line 62
           {
             //if (diag02_len > diag12_len) //split edge 02, introduce line 51
-            if (stable_line_is_longer(vertices[0], vertices[2],
-                                      vertices[1], vertices[2])) //split edge 02, introduce line 51
+            if (stable_line_is_longer(segment_out, vertices, 0, 2, 1, 2)) //split edge 02, introduce line 51
             {
               //std::cout << "apply_4_2_10" << std::endl;
-              cellvertices[0] = vertices[0];
-              cellvertices[1] = vertices[1];
-              cellvertices[2] = vertices[5];
-              cellvertices[3] = vertices[7];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[1];
-              cellvertices[1] = vertices[4];
-              cellvertices[2] = vertices[5];
-              cellvertices[3] = vertices[7];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[0];
-              cellvertices[1] = vertices[7];
-              cellvertices[2] = vertices[5];
-              cellvertices[3] = vertices[6];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[4];
-              cellvertices[1] = vertices[2];
-              cellvertices[2] = vertices[5];
-              cellvertices[3] = vertices[7];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[7];
-              cellvertices[1] = vertices[2];
-              cellvertices[2] = vertices[5];
-              cellvertices[3] = vertices[6];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[7];
-              cellvertices[1] = vertices[2];
-              cellvertices[2] = vertices[6];
-              cellvertices[3] = vertices[3];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
+              create_refinement_cell<CellType>( segment_out, vertices, 0, 1, 5, 7);
+              create_refinement_cell<CellType>( segment_out, vertices, 1, 4, 5, 7);
+              create_refinement_cell<CellType>( segment_out, vertices, 0, 7, 5, 6);
+              create_refinement_cell<CellType>( segment_out, vertices, 4, 2, 5, 7);
+              create_refinement_cell<CellType>( segment_out, vertices, 7, 2, 5, 6);
+              create_refinement_cell<CellType>( segment_out, vertices, 7, 2, 6, 3);
             }
             else //split edge 12, introduce line 40
             {
               //std::cout << "apply_4_2_11" << std::endl;
-              cellvertices[0] = vertices[0];
-              cellvertices[1] = vertices[1];
-              cellvertices[2] = vertices[4];
-              cellvertices[3] = vertices[7];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[0];
-              cellvertices[1] = vertices[7];
-              cellvertices[2] = vertices[4];
-              cellvertices[3] = vertices[6];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[0];
-              cellvertices[1] = vertices[4];
-              cellvertices[2] = vertices[5];
-              cellvertices[3] = vertices[6];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[6];
-              cellvertices[1] = vertices[7];
-              cellvertices[2] = vertices[4];
-              cellvertices[3] = vertices[2];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[6];
-              cellvertices[1] = vertices[4];
-              cellvertices[2] = vertices[5];
-              cellvertices[3] = vertices[2];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[6];
-              cellvertices[1] = vertices[7];
-              cellvertices[2] = vertices[2];
-              cellvertices[3] = vertices[3];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
+              create_refinement_cell<CellType>( segment_out, vertices, 0, 1, 4, 7);
+              create_refinement_cell<CellType>( segment_out, vertices, 0, 7, 4, 6);
+              create_refinement_cell<CellType>( segment_out, vertices, 0, 4, 5, 6);
+              create_refinement_cell<CellType>( segment_out, vertices, 6, 7, 4, 2);
+              create_refinement_cell<CellType>( segment_out, vertices, 6, 4, 5, 2);
+              create_refinement_cell<CellType>( segment_out, vertices, 6, 7, 2, 3);
             }
           }
         }
         else //split edge 12, introduce line 43
         {
           //if (diag02_len > diag03_len) //split edge 02, introduce line 53
-          if (stable_line_is_longer(vertices[0], vertices[2],
-                                    vertices[0], vertices[3])) //split edge 02, introduce line 53
+          if (stable_line_is_longer(segment_out, vertices, 0, 2, 0, 3)) //split edge 02, introduce line 53
           {
             //if (diag02_len > diag12_len) //split edge 02, introduce line 51
-            if (stable_line_is_longer(vertices[0], vertices[2],
-                                      vertices[1], vertices[2])) //split edge 02, introduce line 51
+            if (stable_line_is_longer(segment_out, vertices, 0, 2, 1, 2)) //split edge 02, introduce line 51
             {
               //std::cout << "apply_4_2_12" << std::endl;
-              cellvertices[0] = vertices[0];
-              cellvertices[1] = vertices[1];
-              cellvertices[2] = vertices[5];
-              cellvertices[3] = vertices[7];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[0];
-              cellvertices[1] = vertices[7];
-              cellvertices[2] = vertices[5];
-              cellvertices[3] = vertices[6];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[6];
-              cellvertices[1] = vertices[7];
-              cellvertices[2] = vertices[5];
-              cellvertices[3] = vertices[3];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[1];
-              cellvertices[1] = vertices[4];
-              cellvertices[2] = vertices[5];
-              cellvertices[3] = vertices[7];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[7];
-              cellvertices[1] = vertices[4];
-              cellvertices[2] = vertices[5];
-              cellvertices[3] = vertices[3];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[4];
-              cellvertices[1] = vertices[2];
-              cellvertices[2] = vertices[5];
-              cellvertices[3] = vertices[3];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
+              create_refinement_cell<CellType>( segment_out, vertices, 0, 1, 5, 7);
+              create_refinement_cell<CellType>( segment_out, vertices, 0, 7, 5, 6);
+              create_refinement_cell<CellType>( segment_out, vertices, 6, 7, 5, 3);
+              create_refinement_cell<CellType>( segment_out, vertices, 1, 4, 5, 7);
+              create_refinement_cell<CellType>( segment_out, vertices, 7, 4, 5, 3);
+              create_refinement_cell<CellType>( segment_out, vertices, 4, 2, 5, 3);
             }
             else //split edge 12, introduce line 40
             {
               //std::cout << "apply_4_2_13" << std::endl;
-              cellvertices[0] = vertices[0];
-              cellvertices[1] = vertices[1];
-              cellvertices[2] = vertices[4];
-              cellvertices[3] = vertices[7];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[0];
-              cellvertices[1] = vertices[4];
-              cellvertices[2] = vertices[5];
-              cellvertices[3] = vertices[7];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[0];
-              cellvertices[1] = vertices[7];
-              cellvertices[2] = vertices[5];
-              cellvertices[3] = vertices[6];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[6];
-              cellvertices[1] = vertices[7];
-              cellvertices[2] = vertices[5];
-              cellvertices[3] = vertices[3];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[7];
-              cellvertices[1] = vertices[4];
-              cellvertices[2] = vertices[5];
-              cellvertices[3] = vertices[3];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[4];
-              cellvertices[1] = vertices[2];
-              cellvertices[2] = vertices[5];
-              cellvertices[3] = vertices[3];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
+              create_refinement_cell<CellType>( segment_out, vertices, 0, 1, 4, 7);
+              create_refinement_cell<CellType>( segment_out, vertices, 0, 4, 5, 7);
+              create_refinement_cell<CellType>( segment_out, vertices, 0, 7, 5, 6);
+              create_refinement_cell<CellType>( segment_out, vertices, 6, 7, 5, 3);
+              create_refinement_cell<CellType>( segment_out, vertices, 7, 4, 5, 3);
+              create_refinement_cell<CellType>( segment_out, vertices, 4, 2, 5, 3);
             }
           }
           else //split edge 03, introduce line 62
           {
             //if (diag02_len > diag12_len) //split edge 02, introduce line 51
-            if (stable_line_is_longer(vertices[0], vertices[2],
-                                      vertices[1], vertices[2])) //split edge 02, introduce line 51
+            if (stable_line_is_longer(segment_out, vertices, 0, 2, 1, 2)) //split edge 02, introduce line 51
             {
               //we have diag12_len > diag13_len > diag03_len > diag02_len alreday, hence this case is bogus!
               assert( false && "Logic error: diag02 > diag12 not possible here!");
@@ -2443,47 +1579,12 @@ namespace viennagrid
             else //split edge 12, introduce line 40
             {
               //std::cout << "apply_4_2_14" << std::endl;
-              cellvertices[0] = vertices[0];
-              cellvertices[1] = vertices[1];
-              cellvertices[2] = vertices[4];
-              cellvertices[3] = vertices[7];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[0];
-              cellvertices[1] = vertices[7];
-              cellvertices[2] = vertices[4];
-              cellvertices[3] = vertices[6];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[0];
-              cellvertices[1] = vertices[4];
-              cellvertices[2] = vertices[5];
-              cellvertices[3] = vertices[6];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[6];
-              cellvertices[1] = vertices[7];
-              cellvertices[2] = vertices[4];
-              cellvertices[3] = vertices[3];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[6];
-              cellvertices[1] = vertices[4];
-              cellvertices[2] = vertices[2];
-              cellvertices[3] = vertices[3];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
-
-              cellvertices[0] = vertices[5];
-              cellvertices[1] = vertices[4];
-              cellvertices[2] = vertices[2];
-              cellvertices[3] = vertices[6];
-              new_cell.vertices(cellvertices);
-              segment_out.push_back(new_cell);
+              create_refinement_cell<CellType>( segment_out, vertices, 0, 1, 4, 7);
+              create_refinement_cell<CellType>( segment_out, vertices, 0, 7, 4, 6);
+              create_refinement_cell<CellType>( segment_out, vertices, 0, 4, 5, 6);
+              create_refinement_cell<CellType>( segment_out, vertices, 6, 7, 4, 3);
+              create_refinement_cell<CellType>( segment_out, vertices, 6, 4, 2, 3);
+              create_refinement_cell<CellType>( segment_out, vertices, 5, 4, 2, 6);
             }
           }
         }
@@ -2495,16 +1596,21 @@ namespace viennagrid
     template <typename CellType, typename DomainTypeOut>
     static void apply4(CellType const & cell_in, DomainTypeOut & segment_out)
     {
-      typedef typename CellType::config_type        ConfigTypeIn;
-      typedef typename viennagrid::result_of::const_ncell_range<CellType, 0>::type            VertexOnCellRange;
+      typedef typename viennagrid::result_of::const_element_range<CellType, vertex_tag>::type            VertexOnCellRange;
       typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type         VertexOnCellIterator;            
-      typedef typename viennagrid::result_of::const_ncell_range<CellType, 1>::type            EdgeOnCellRange;
+      typedef typename viennagrid::result_of::const_element_range<CellType, line_tag>::type            EdgeOnCellRange;
       typedef typename viennagrid::result_of::iterator<EdgeOnCellRange>::type           EdgeOnCellIterator;            
       
-      typedef typename viennagrid::result_of::ncell<ConfigTypeIn, 0>::type             VertexType;
-      typedef typename viennagrid::result_of::ncell<ConfigTypeIn, 1>::type             EdgeType;
+      typedef typename viennagrid::result_of::element<CellType, vertex_tag>::type             VertexType;
+      typedef typename viennagrid::result_of::element_hook<CellType, vertex_tag>::type             VertexHookType;
+      typedef typename viennagrid::result_of::element<CellType, line_tag>::type             EdgeType;
+      
+      typedef typename viennagrid::result_of::element<DomainTypeOut, vertex_tag>::type                                      VertexTypeOut;
+      typedef typename VertexTypeOut::id_type VertexIDTypeOut;
 
-      VertexType * vertices[topology::bndcells<tetrahedron_tag, 0>::num];
+
+      //VertexType * vertices[topology::bndcells<tetrahedron_tag, 0>::num];
+      storage::static_array< VertexHookType, topology::bndcells<tetrahedron_tag, 0>::num > vertices;
       //std::cout << "apply4()" << std::endl;
       
       //
@@ -2512,17 +1618,22 @@ namespace viennagrid
       //
       VertexOnCellRange vertices_on_cell = viennagrid::ncells<0>(cell_in);
       VertexOnCellIterator vocit = vertices_on_cell.begin();
-      vertices[0] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]); ++vocit;
-      vertices[1] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]); ++vocit;
-      vertices[2] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]); ++vocit;
-      vertices[3] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]);
+//       vertices[0] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]); ++vocit;
+//       vertices[1] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]); ++vocit;
+//       vertices[2] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]); ++vocit;
+//       vertices[3] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]);
+      vertices[0] = viennagrid::find_hook( segment_out, vocit->id() ); ++vocit;
+      vertices[1] = viennagrid::find_hook( segment_out, vocit->id() ); ++vocit;
+      vertices[2] = viennagrid::find_hook( segment_out, vocit->id() ); ++vocit;
+      vertices[3] = viennagrid::find_hook( segment_out, vocit->id() );  
       
 
       //
       // Step 2: Bring vertices in correct order, such that refined edge is on {0,1}-edge
       //
-      VertexType * ordered_vertices[topology::bndcells<tetrahedron_tag, 0>::num + 4];
-      EdgeOnCellRange edges_on_cell = viennagrid::ncells<1>(cell_in);
+      //VertexType * ordered_vertices[topology::bndcells<tetrahedron_tag, 0>::num + 4];
+      storage::static_array< VertexHookType, topology::bndcells<tetrahedron_tag, 0>::num + 4 > ordered_vertices;
+      EdgeOnCellRange edges_on_cell = viennagrid::elements<line_tag>(cell_in);
       EdgeOnCellIterator eocit = edges_on_cell.begin();
       EdgeType const & e0 = *eocit; ++eocit;
       EdgeType const & e1 = *eocit; ++eocit;
@@ -2540,12 +1651,12 @@ namespace viennagrid
           ordered_vertices[1] = vertices[0];
           ordered_vertices[2] = vertices[1];
           ordered_vertices[3] = vertices[3];
-          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)]);
-          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
-          ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
-          ordered_vertices[7] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
+          ordered_vertices[4] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
+          ordered_vertices[5] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
+          ordered_vertices[6] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
+          ordered_vertices[7] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
           
-          apply4_1(cell_in, segment_out, ordered_vertices);
+          apply4_1<CellType>(segment_out, ordered_vertices);
         }
         else if (viennadata::access<refinement_key, bool>(refinement_key())(e2) == false)
         {
@@ -2553,12 +1664,12 @@ namespace viennagrid
           ordered_vertices[1] = vertices[0];
           ordered_vertices[2] = vertices[3];
           ordered_vertices[3] = vertices[2];
-          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
-          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)]);
-          ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
-          ordered_vertices[7] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)]);
+          ordered_vertices[4] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
+          ordered_vertices[5] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
+          ordered_vertices[6] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
+          ordered_vertices[7] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
           
-          apply4_1(cell_in, segment_out, ordered_vertices);
+          apply4_1<CellType>(segment_out, ordered_vertices);
         }
         else if (viennadata::access<refinement_key, bool>(refinement_key())(e3) == false) 
         {
@@ -2566,12 +1677,12 @@ namespace viennagrid
           ordered_vertices[1] = vertices[1];
           ordered_vertices[2] = vertices[2];
           ordered_vertices[3] = vertices[3];
-          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)]);
-          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
-          ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
-          ordered_vertices[7] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
+          ordered_vertices[4] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
+          ordered_vertices[5] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
+          ordered_vertices[6] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
+          ordered_vertices[7] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
           
-          apply4_1(cell_in, segment_out, ordered_vertices);
+          apply4_1<CellType>(segment_out, ordered_vertices);
         }
         else if (viennadata::access<refinement_key, bool>(refinement_key())(e4) == false) 
         {
@@ -2579,12 +1690,12 @@ namespace viennagrid
           ordered_vertices[1] = vertices[1];
           ordered_vertices[2] = vertices[0];
           ordered_vertices[3] = vertices[2];
-          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
-          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)]);
-          ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)]);
-          ordered_vertices[7] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
+          ordered_vertices[4] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
+          ordered_vertices[5] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
+          ordered_vertices[6] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
+          ordered_vertices[7] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
           
-          apply4_1(cell_in, segment_out, ordered_vertices);
+          apply4_1<CellType>(segment_out, ordered_vertices);
         }
         else if (viennadata::access<refinement_key, bool>(refinement_key())(e5) == false) 
         {
@@ -2592,12 +1703,12 @@ namespace viennagrid
           ordered_vertices[1] = vertices[1];
           ordered_vertices[2] = vertices[2];
           ordered_vertices[3] = vertices[3];
-          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)]);
-          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)]);
-          ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
-          ordered_vertices[7] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
+          ordered_vertices[4] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
+          ordered_vertices[5] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
+          ordered_vertices[6] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
+          ordered_vertices[7] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
           
-          apply4_2(cell_in, segment_out, ordered_vertices);
+          apply4_2<CellType>(segment_out, ordered_vertices);
         }
         else
         {
@@ -2612,12 +1723,12 @@ namespace viennagrid
           ordered_vertices[1] = vertices[0];
           ordered_vertices[2] = vertices[2];
           ordered_vertices[3] = vertices[1];
-          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
-          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)]);
-          ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)]);
-          ordered_vertices[7] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
+          ordered_vertices[4] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
+          ordered_vertices[5] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
+          ordered_vertices[6] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
+          ordered_vertices[7] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
           
-          apply4_1(cell_in, segment_out, ordered_vertices);
+          apply4_1<CellType>(segment_out, ordered_vertices);
         }
         else if (viennadata::access<refinement_key, bool>(refinement_key())(e3) == false) 
         {
@@ -2625,12 +1736,12 @@ namespace viennagrid
           ordered_vertices[1] = vertices[2];
           ordered_vertices[2] = vertices[0];
           ordered_vertices[3] = vertices[3];
-          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)]);
-          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
-          ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
-          ordered_vertices[7] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
+          ordered_vertices[4] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
+          ordered_vertices[5] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
+          ordered_vertices[6] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
+          ordered_vertices[7] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
           
-          apply4_1(cell_in, segment_out, ordered_vertices);
+          apply4_1<CellType>(segment_out, ordered_vertices);
         }
         else if (viennadata::access<refinement_key, bool>(refinement_key())(e4) == false) 
         {
@@ -2638,12 +1749,12 @@ namespace viennagrid
           ordered_vertices[1] = vertices[0];
           ordered_vertices[2] = vertices[1];
           ordered_vertices[3] = vertices[3];
-          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)]);
-          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)]);
-          ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
-          ordered_vertices[7] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
+          ordered_vertices[4] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
+          ordered_vertices[5] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
+          ordered_vertices[6] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
+          ordered_vertices[7] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
           
-          apply4_2(cell_in, segment_out, ordered_vertices);
+          apply4_2<CellType>(segment_out, ordered_vertices);
         }
         else if (viennadata::access<refinement_key, bool>(refinement_key())(e5) == false) 
         {
@@ -2651,12 +1762,12 @@ namespace viennagrid
           ordered_vertices[1] = vertices[2];
           ordered_vertices[2] = vertices[3];
           ordered_vertices[3] = vertices[1];
-          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
-          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)]);
-          ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
-          ordered_vertices[7] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)]);
+          ordered_vertices[4] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
+          ordered_vertices[5] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
+          ordered_vertices[6] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
+          ordered_vertices[7] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
           
-          apply4_1(cell_in, segment_out, ordered_vertices);
+          apply4_1<CellType>(segment_out, ordered_vertices);
         }
         else
         {
@@ -2671,12 +1782,12 @@ namespace viennagrid
           ordered_vertices[1] = vertices[0];
           ordered_vertices[2] = vertices[2];
           ordered_vertices[3] = vertices[1];
-          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)]);
-          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
-          ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
-          ordered_vertices[7] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)]);
+          ordered_vertices[4] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
+          ordered_vertices[5] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
+          ordered_vertices[6] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
+          ordered_vertices[7] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
           
-          apply4_2(cell_in, segment_out, ordered_vertices);
+          apply4_2<CellType>(segment_out, ordered_vertices);
         }
         else if (viennadata::access<refinement_key, bool>(refinement_key())(e4) == false) 
         {
@@ -2684,12 +1795,12 @@ namespace viennagrid
           ordered_vertices[1] = vertices[3];
           ordered_vertices[2] = vertices[1];
           ordered_vertices[3] = vertices[2];
-          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)]);
-          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
-          ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)]);
-          ordered_vertices[7] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)]);
+          ordered_vertices[4] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
+          ordered_vertices[5] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
+          ordered_vertices[6] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
+          ordered_vertices[7] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
           
-          apply4_1(cell_in, segment_out, ordered_vertices);
+          apply4_1<CellType>(segment_out, ordered_vertices);
         }
         else if (viennadata::access<refinement_key, bool>(refinement_key())(e5) == false) 
         {
@@ -2697,12 +1808,12 @@ namespace viennagrid
           ordered_vertices[1] = vertices[3];
           ordered_vertices[2] = vertices[0];
           ordered_vertices[3] = vertices[1];
-          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)]);
-          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
-          ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)]);
-          ordered_vertices[7] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)]);
+          ordered_vertices[4] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
+          ordered_vertices[5] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
+          ordered_vertices[6] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
+          ordered_vertices[7] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
           
-          apply4_1(cell_in, segment_out, ordered_vertices);
+          apply4_1<CellType>(segment_out, ordered_vertices);
         }
         else
         {
@@ -2717,12 +1828,12 @@ namespace viennagrid
           ordered_vertices[1] = vertices[1];
           ordered_vertices[2] = vertices[3];
           ordered_vertices[3] = vertices[0];
-          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
-          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)]);
-          ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
-          ordered_vertices[7] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)]);
+          ordered_vertices[4] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
+          ordered_vertices[5] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
+          ordered_vertices[6] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
+          ordered_vertices[7] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
           
-          apply4_1(cell_in, segment_out, ordered_vertices);
+          apply4_1<CellType>(segment_out, ordered_vertices);
         }
         else if (viennadata::access<refinement_key, bool>(refinement_key())(e5) == false) 
         {
@@ -2730,12 +1841,12 @@ namespace viennagrid
           ordered_vertices[1] = vertices[2];
           ordered_vertices[2] = vertices[1];
           ordered_vertices[3] = vertices[0];
-          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
-          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)]);
-          ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)]);
-          ordered_vertices[7] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
+          ordered_vertices[4] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
+          ordered_vertices[5] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
+          ordered_vertices[6] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
+          ordered_vertices[7] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
           
-          apply4_1(cell_in, segment_out, ordered_vertices);
+          apply4_1<CellType>(segment_out, ordered_vertices);
         }
         else
         {
@@ -2750,12 +1861,12 @@ namespace viennagrid
           ordered_vertices[1] = vertices[3];
           ordered_vertices[2] = vertices[2];
           ordered_vertices[3] = vertices[0];
-          ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)]);
-          ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
-          ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)]);
-          ordered_vertices[7] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)]);
+          ordered_vertices[4] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
+          ordered_vertices[5] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
+          ordered_vertices[6] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
+          ordered_vertices[7] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
           
-          apply4_1(cell_in, segment_out, ordered_vertices);
+          apply4_1<CellType>(segment_out, ordered_vertices);
         }
         else
         {
@@ -2786,167 +1897,55 @@ namespace viennagrid
      * 
      * 
      */
-    template <typename CellType, typename DomainTypeOut, typename VertexType>
-    static void apply5_1(CellType const & cell_in, 
-                         DomainTypeOut & segment_out,
-                         VertexType ** vertices
+    template <typename CellType, typename DomainTypeOut, typename VertexHookIteratorType>
+    static void apply5_1(DomainTypeOut & segment_out,
+                         VertexHookIteratorType vertices
                         )
     {
-      CellType new_cell;
-      VertexType * cellvertices[topology::bndcells<tetrahedron_tag, 0>::num];
+//       CellType new_cell;
+//       VertexType * cellvertices[topology::bndcells<tetrahedron_tag, 0>::num];
 
-      cellvertices[0] = vertices[6];
-      cellvertices[1] = vertices[7];
-      cellvertices[2] = vertices[8];
-      cellvertices[3] = vertices[3];
-      new_cell.vertices(cellvertices);
-      segment_out.push_back(new_cell);
-
-      cellvertices[0] = vertices[5];
-      cellvertices[1] = vertices[4];
-      cellvertices[2] = vertices[2];
-      cellvertices[3] = vertices[8];
-      new_cell.vertices(cellvertices);
-      segment_out.push_back(new_cell);
+      create_refinement_cell<CellType>( segment_out, vertices, 6, 7, 8, 3);
+      create_refinement_cell<CellType>( segment_out, vertices, 5, 4, 2, 8);
       
 
       //if (diag03_len > diag13_len) //split edge 03, introduce line 61
-      if (stable_line_is_longer(vertices[0], vertices[3],
-                                vertices[1], vertices[3])) //split edge 03, introduce line 61
+      if (stable_line_is_longer(segment_out, vertices, 0, 3, 1, 3)) //split edge 03, introduce line 61
       {
-        cellvertices[0] = vertices[6];
-        cellvertices[1] = vertices[4];
-        cellvertices[2] = vertices[5];
-        cellvertices[3] = vertices[8];
-        new_cell.vertices(cellvertices);
-        segment_out.push_back(new_cell);
-        
-        cellvertices[0] = vertices[6];
-        cellvertices[1] = vertices[7];
-        cellvertices[2] = vertices[4];
-        cellvertices[3] = vertices[8];
-        new_cell.vertices(cellvertices);
-        segment_out.push_back(new_cell);
-        
-        cellvertices[0] = vertices[1];
-        cellvertices[1] = vertices[4];
-        cellvertices[2] = vertices[6];
-        cellvertices[3] = vertices[7];
-        new_cell.vertices(cellvertices);
-        segment_out.push_back(new_cell);
+        create_refinement_cell<CellType>( segment_out, vertices, 6, 4, 5, 8);
+        create_refinement_cell<CellType>( segment_out, vertices, 6, 7, 4, 8);
+        create_refinement_cell<CellType>( segment_out, vertices, 1, 4, 6, 7);
         
         //if (diag02_len > diag12_len) //split edge 02, introduce line 51
-        if (stable_line_is_longer(vertices[0], vertices[2],
-                                  vertices[1], vertices[2])) //split edge 02, introduce line 51
+        if (stable_line_is_longer(segment_out, vertices, 0, 2, 1, 2)) //split edge 02, introduce line 51
         {
-          cellvertices[0] = vertices[0];
-          cellvertices[1] = vertices[1];
-          cellvertices[2] = vertices[5];
-          cellvertices[3] = vertices[6];
-          new_cell.vertices(cellvertices);
-          segment_out.push_back(new_cell);
-          
-          cellvertices[0] = vertices[1];
-          cellvertices[1] = vertices[4];
-          cellvertices[2] = vertices[5];
-          cellvertices[3] = vertices[6];
-          new_cell.vertices(cellvertices);
-          segment_out.push_back(new_cell);
+          create_refinement_cell<CellType>( segment_out, vertices, 0, 1, 5, 6);
+          create_refinement_cell<CellType>( segment_out, vertices, 1, 4, 5, 6);
         }
         else //split edge 12, introduce line 40
         {
-          cellvertices[0] = vertices[0];
-          cellvertices[1] = vertices[1];
-          cellvertices[2] = vertices[4];
-          cellvertices[3] = vertices[6];
-          new_cell.vertices(cellvertices);
-          segment_out.push_back(new_cell);
-          
-          cellvertices[0] = vertices[0];
-          cellvertices[1] = vertices[4];
-          cellvertices[2] = vertices[5];
-          cellvertices[3] = vertices[6];
-          new_cell.vertices(cellvertices);
-          segment_out.push_back(new_cell);
+          create_refinement_cell<CellType>( segment_out, vertices, 0, 1, 4, 6);
+          create_refinement_cell<CellType>( segment_out, vertices, 0, 4, 5, 6);
         }
       }
       else  //split edge 13, introduce line 70
       {
         //if (diag02_len > diag12_len) //split edge 02, introduce line 51
-        if (stable_line_is_longer(vertices[0], vertices[2],
-                                  vertices[1], vertices[2])) //split edge 02, introduce line 51
+        if (stable_line_is_longer(segment_out, vertices, 0, 2, 1, 2)) //split edge 02, introduce line 51
         {
-          cellvertices[0] = vertices[0];
-          cellvertices[1] = vertices[1];
-          cellvertices[2] = vertices[5];
-          cellvertices[3] = vertices[7];
-          new_cell.vertices(cellvertices);
-          segment_out.push_back(new_cell);
-          
-          cellvertices[0] = vertices[0];
-          cellvertices[1] = vertices[7];
-          cellvertices[2] = vertices[5];
-          cellvertices[3] = vertices[6];
-          new_cell.vertices(cellvertices);
-          segment_out.push_back(new_cell);
-          
-          cellvertices[0] = vertices[1];
-          cellvertices[1] = vertices[4];
-          cellvertices[2] = vertices[5];
-          cellvertices[3] = vertices[7];
-          new_cell.vertices(cellvertices);
-          segment_out.push_back(new_cell);
-          
-          cellvertices[0] = vertices[7];
-          cellvertices[1] = vertices[4];
-          cellvertices[2] = vertices[5];
-          cellvertices[3] = vertices[8];
-          new_cell.vertices(cellvertices);
-          segment_out.push_back(new_cell);
-          
-          cellvertices[0] = vertices[6];
-          cellvertices[1] = vertices[7];
-          cellvertices[2] = vertices[5];
-          cellvertices[3] = vertices[8];
-          new_cell.vertices(cellvertices);
-          segment_out.push_back(new_cell);
+          create_refinement_cell<CellType>( segment_out, vertices, 0, 1, 5, 7);
+          create_refinement_cell<CellType>( segment_out, vertices, 0, 7, 5, 6);
+          create_refinement_cell<CellType>( segment_out, vertices, 1, 4, 5, 7);
+          create_refinement_cell<CellType>( segment_out, vertices, 7, 4, 5, 8);
+          create_refinement_cell<CellType>( segment_out, vertices, 6, 7, 5, 8);
         }
         else //split edge 12, introduce line 40
         {
-          cellvertices[0] = vertices[0];
-          cellvertices[1] = vertices[1];
-          cellvertices[2] = vertices[4];
-          cellvertices[3] = vertices[7];
-          new_cell.vertices(cellvertices);
-          segment_out.push_back(new_cell);
-          
-          cellvertices[0] = vertices[0];
-          cellvertices[1] = vertices[7];
-          cellvertices[2] = vertices[4];
-          cellvertices[3] = vertices[6];
-          new_cell.vertices(cellvertices);
-          segment_out.push_back(new_cell);
-          
-          cellvertices[0] = vertices[0];
-          cellvertices[1] = vertices[4];
-          cellvertices[2] = vertices[5];
-          cellvertices[3] = vertices[6];
-          new_cell.vertices(cellvertices);
-          segment_out.push_back(new_cell);
-          
-          cellvertices[0] = vertices[6];
-          cellvertices[1] = vertices[4];
-          cellvertices[2] = vertices[5];
-          cellvertices[3] = vertices[8];
-          new_cell.vertices(cellvertices);
-          segment_out.push_back(new_cell);
-          
-          cellvertices[0] = vertices[6];
-          cellvertices[1] = vertices[7];
-          cellvertices[2] = vertices[4];
-          cellvertices[3] = vertices[8];
-          new_cell.vertices(cellvertices);
-          segment_out.push_back(new_cell);
+          create_refinement_cell<CellType>( segment_out, vertices, 0, 1, 4, 7);
+          create_refinement_cell<CellType>( segment_out, vertices, 0, 7, 4, 6);
+          create_refinement_cell<CellType>( segment_out, vertices, 0, 4, 5, 6);
+          create_refinement_cell<CellType>( segment_out, vertices, 6, 4, 5, 8);
+          create_refinement_cell<CellType>( segment_out, vertices, 6, 7, 4, 8);
         }
       }
     }
@@ -2955,33 +1954,43 @@ namespace viennagrid
     template <typename CellType, typename DomainTypeOut>
     static void apply5(CellType const & cell_in, DomainTypeOut & segment_out)
     {
-      typedef typename CellType::config_type        ConfigTypeIn;
-      typedef typename viennagrid::result_of::const_ncell_range<CellType, 0>::type            VertexOnCellRange;
+      typedef typename viennagrid::result_of::const_element_range<CellType, vertex_tag>::type            VertexOnCellRange;
       typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type         VertexOnCellIterator;            
-      typedef typename viennagrid::result_of::const_ncell_range<CellType, 1>::type            EdgeOnCellRange;
+      typedef typename viennagrid::result_of::const_element_range<CellType, line_tag>::type            EdgeOnCellRange;
       typedef typename viennagrid::result_of::iterator<EdgeOnCellRange>::type           EdgeOnCellIterator;            
       
-      typedef typename viennagrid::result_of::ncell<ConfigTypeIn, 0>::type             VertexType;
-      typedef typename viennagrid::result_of::ncell<ConfigTypeIn, 1>::type             EdgeType;
+      typedef typename viennagrid::result_of::element<CellType, vertex_tag>::type             VertexType;
+      typedef typename viennagrid::result_of::element_hook<CellType, vertex_tag>::type             VertexHookType;
+      typedef typename viennagrid::result_of::element<CellType, line_tag>::type             EdgeType;
+      
+      typedef typename viennagrid::result_of::element<DomainTypeOut, vertex_tag>::type                                      VertexTypeOut;
+      typedef typename VertexTypeOut::id_type VertexIDTypeOut;
 
-      VertexType * vertices[topology::bndcells<tetrahedron_tag, 0>::num];
-      //std::cout << "apply5()" << std::endl;
+      
+      //VertexType * vertices[topology::bndcells<tetrahedron_tag, 0>::num];
+      storage::static_array< VertexHookType, topology::bndcells<tetrahedron_tag, 0>::num > vertices;
+      //std::cout << "apply4()" << std::endl;
       
       //
       // Step 1: Get vertices from input cell
       //
-      VertexOnCellRange vertices_on_cell = viennagrid::ncells<0>(cell_in);
+      VertexOnCellRange vertices_on_cell = viennagrid::elements<vertex_tag>(cell_in);
       VertexOnCellIterator vocit = vertices_on_cell.begin();
-      vertices[0] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]); ++vocit;
-      vertices[1] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]); ++vocit;
-      vertices[2] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]); ++vocit;
-      vertices[3] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]);
+//       vertices[0] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]); ++vocit;
+//       vertices[1] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]); ++vocit;
+//       vertices[2] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]); ++vocit;
+//       vertices[3] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]);
+      vertices[0] = viennagrid::find_hook( segment_out, vocit->id() ); ++vocit;
+      vertices[1] = viennagrid::find_hook( segment_out, vocit->id() ); ++vocit;
+      vertices[2] = viennagrid::find_hook( segment_out, vocit->id() ); ++vocit;
+      vertices[3] = viennagrid::find_hook( segment_out, vocit->id() );  
       
 
       //
       // Step 2: Bring vertices in correct order, such that refined edge is on {0,1}-edge
       //
-      VertexType * ordered_vertices[topology::bndcells<tetrahedron_tag, 0>::num + 5];
+      //VertexType * ordered_vertices[topology::bndcells<tetrahedron_tag, 0>::num + 5];
+      storage::static_array< VertexHookType, topology::bndcells<tetrahedron_tag, 0>::num + 5 > ordered_vertices;
       EdgeOnCellRange edges_on_cell = viennagrid::ncells<1>(cell_in);
       EdgeOnCellIterator eocit = edges_on_cell.begin();
       EdgeType const & e0 = *eocit; ++eocit;
@@ -2997,13 +2006,13 @@ namespace viennagrid
         ordered_vertices[1] = vertices[1];
         ordered_vertices[2] = vertices[2];
         ordered_vertices[3] = vertices[3];
-        ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)]);
-        ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)]);
-        ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
-        ordered_vertices[7] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
-        ordered_vertices[8] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
+        ordered_vertices[4] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
+        ordered_vertices[5] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
+        ordered_vertices[6] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
+        ordered_vertices[7] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
+        ordered_vertices[8] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
         
-        apply5_1(cell_in, segment_out, ordered_vertices);
+        apply5_1<CellType>(segment_out, ordered_vertices);
       }
       else if (viennadata::access<refinement_key, bool>(refinement_key())(e1) == false)
       {
@@ -3011,13 +2020,13 @@ namespace viennagrid
         ordered_vertices[1] = vertices[0];
         ordered_vertices[2] = vertices[1];
         ordered_vertices[3] = vertices[3];
-        ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)]);
-        ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)]);
-        ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
-        ordered_vertices[7] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
-        ordered_vertices[8] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
+        ordered_vertices[4] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
+        ordered_vertices[5] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
+        ordered_vertices[6] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
+        ordered_vertices[7] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
+        ordered_vertices[8] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
         
-        apply5_1(cell_in, segment_out, ordered_vertices);
+        apply5_1<CellType>(segment_out, ordered_vertices);
       }
       else if (viennadata::access<refinement_key, bool>(refinement_key())(e2) == false)
       {
@@ -3025,13 +2034,13 @@ namespace viennagrid
         ordered_vertices[1] = vertices[3];
         ordered_vertices[2] = vertices[1];
         ordered_vertices[3] = vertices[2];
-        ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
-        ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)]);
-        ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)]);
-        ordered_vertices[7] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
-        ordered_vertices[8] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)]);
+        ordered_vertices[4] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
+        ordered_vertices[5] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
+        ordered_vertices[6] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
+        ordered_vertices[7] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
+        ordered_vertices[8] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
         
-        apply5_1(cell_in, segment_out, ordered_vertices);
+        apply5_1<CellType>(segment_out, ordered_vertices);
       }
       else if (viennadata::access<refinement_key, bool>(refinement_key())(e3) == false)
       {
@@ -3039,13 +2048,13 @@ namespace viennagrid
         ordered_vertices[1] = vertices[2];
         ordered_vertices[2] = vertices[0];
         ordered_vertices[3] = vertices[3];
-        ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)]);
-        ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)]);
-        ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
-        ordered_vertices[7] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
-        ordered_vertices[8] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
+        ordered_vertices[4] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
+        ordered_vertices[5] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
+        ordered_vertices[6] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
+        ordered_vertices[7] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
+        ordered_vertices[8] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
         
-        apply5_1(cell_in, segment_out, ordered_vertices);
+        apply5_1<CellType>(segment_out, ordered_vertices);
       }
       else if (viennadata::access<refinement_key, bool>(refinement_key())(e4) == false)
       {
@@ -3053,13 +2062,13 @@ namespace viennagrid
         ordered_vertices[1] = vertices[3];
         ordered_vertices[2] = vertices[2];
         ordered_vertices[3] = vertices[0];
-        ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e5)]);
-        ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)]);
-        ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)]);
-        ordered_vertices[7] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
-        ordered_vertices[8] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)]);
+        ordered_vertices[4] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
+        ordered_vertices[5] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
+        ordered_vertices[6] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
+        ordered_vertices[7] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
+        ordered_vertices[8] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
         
-        apply5_1(cell_in, segment_out, ordered_vertices);
+        apply5_1<CellType>(segment_out, ordered_vertices);
       }
       else if (viennadata::access<refinement_key, bool>(refinement_key())(e5) == false)
       {
@@ -3067,13 +2076,13 @@ namespace viennagrid
         ordered_vertices[1] = vertices[2];
         ordered_vertices[2] = vertices[1];
         ordered_vertices[3] = vertices[0];
-        ordered_vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e3)]);
-        ordered_vertices[5] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e4)]);
-        ordered_vertices[6] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
-        ordered_vertices[7] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)]);
-        ordered_vertices[8] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)]);
+        ordered_vertices[4] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
+        ordered_vertices[5] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
+        ordered_vertices[6] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
+        ordered_vertices[7] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
+        ordered_vertices[8] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
         
-        apply5_1(cell_in, segment_out, ordered_vertices);
+        apply5_1<CellType>(segment_out, ordered_vertices);
       }
       else
       {
@@ -3092,16 +2101,23 @@ namespace viennagrid
     template <typename CellType, typename DomainTypeOut>
     static void apply6(CellType const & cell_in, DomainTypeOut & segment_out)
     {
-      typedef typename CellType::config_type        ConfigTypeIn;
-      typedef typename viennagrid::result_of::const_ncell_range<CellType, 0>::type            VertexOnCellRange;
+      typedef typename viennagrid::result_of::const_element_range<CellType, vertex_tag>::type            VertexOnCellRange;
       typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type         VertexOnCellIterator;            
-      typedef typename viennagrid::result_of::const_ncell_range<CellType, 1>::type            EdgeOnCellRange;
+      typedef typename viennagrid::result_of::const_element_range<CellType, line_tag>::type            EdgeOnCellRange;
       typedef typename viennagrid::result_of::iterator<EdgeOnCellRange>::type           EdgeOnCellIterator;            
       
-      typedef typename viennagrid::result_of::ncell<ConfigTypeIn, 0>::type             VertexType;
+      typedef typename viennagrid::result_of::element<CellType, vertex_tag>::type             VertexType;
+      typedef typename viennagrid::result_of::element_hook<CellType, vertex_tag>::type             VertexHookType;
+      typedef typename viennagrid::result_of::element<CellType, line_tag>::type             EdgeType;
+      
+      typedef typename viennagrid::result_of::element<DomainTypeOut, vertex_tag>::type                                      VertexTypeOut;
+      typedef typename VertexTypeOut::id_type VertexIDTypeOut;
 
-      VertexType * vertices[topology::bndcells<tetrahedron_tag, 0>::num
-                            + topology::bndcells<tetrahedron_tag, 1>::num];
+      storage::static_array< VertexHookType, topology::bndcells<tetrahedron_tag, 0>::num +
+                                             topology::bndcells<tetrahedron_tag, 1>::num> vertices;
+      
+//       VertexType * vertices[topology::bndcells<tetrahedron_tag, 0>::num
+//                             + topology::bndcells<tetrahedron_tag, 1>::num];
       //std::cout << "apply6()" << std::endl;
       
       //
@@ -3109,166 +2125,93 @@ namespace viennagrid
       //
       
       //grab existing vertices:
-      VertexOnCellRange vertices_on_cell = viennagrid::ncells<0>(cell_in);
+      VertexOnCellRange vertices_on_cell = viennagrid::elements<vertex_tag>(cell_in);
       VertexOnCellIterator vocit = vertices_on_cell.begin();
-      vertices[0] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]); ++vocit;
-      vertices[1] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]); ++vocit;
-      vertices[2] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]); ++vocit;
-      vertices[3] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]);
-
+//       vertices[0] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]); ++vocit;
+//       vertices[1] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]); ++vocit;
+//       vertices[2] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]); ++vocit;
+//       vertices[3] = &(viennagrid::ncells<0>(segment_out.domain())[vocit->id()]);
+      vertices[0] = viennagrid::find_hook( segment_out, vocit->id() ); ++vocit;
+      vertices[1] = viennagrid::find_hook( segment_out, vocit->id() ); ++vocit;
+      vertices[2] = viennagrid::find_hook( segment_out, vocit->id() ); ++vocit;
+      vertices[3] = viennagrid::find_hook( segment_out, vocit->id() );  
+      
       //add vertices from edge
-      EdgeOnCellRange edges_on_cell = viennagrid::ncells<1>(cell_in);
+      EdgeOnCellRange edges_on_cell = viennagrid::elements<line_tag>(cell_in);
       EdgeOnCellIterator eocit = edges_on_cell.begin();
-      vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(*eocit)]); ++eocit;
-      vertices[5] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(*eocit)]); ++eocit;
-      vertices[6] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(*eocit)]); ++eocit;
-      vertices[7] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(*eocit)]); ++eocit;
-      vertices[8] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(*eocit)]); ++eocit;
-      vertices[9] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(*eocit)]);
+      
+      
+      
+      vertices[4] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(*eocit) ); ++eocit;
+      vertices[5] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(*eocit) ); ++eocit;
+      vertices[6] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(*eocit) ); ++eocit;
+      vertices[7] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(*eocit) ); ++eocit;
+      vertices[8] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(*eocit) ); ++eocit;
+      vertices[9] = viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(*eocit) );
       
       //
       // Step 2: Add new cells to new domain:
       //
-      CellType new_cell;
-      VertexType * cellvertices[topology::bndcells<tetrahedron_tag, 0>::num];
+//       CellType new_cell;
+//       VertexType * cellvertices[topology::bndcells<tetrahedron_tag, 0>::num];
       
       //0-4-5-6:
-      cellvertices[0] = vertices[0];
-      cellvertices[1] = vertices[4];
-      cellvertices[2] = vertices[5];
-      cellvertices[3] = vertices[6];
-      new_cell.vertices(cellvertices);
-      segment_out.push_back(new_cell);
+      create_refinement_cell<CellType>( segment_out, vertices, 0, 4, 5, 6);
 
       //1-7-4-8:
-      cellvertices[0] = vertices[1];
-      cellvertices[1] = vertices[7];
-      cellvertices[2] = vertices[4];
-      cellvertices[3] = vertices[8];
-      new_cell.vertices(cellvertices);
-      segment_out.push_back(new_cell);
+      create_refinement_cell<CellType>( segment_out, vertices, 1, 7, 4, 8);
 
       //2-5-7-9:
-      cellvertices[0] = vertices[2];
-      cellvertices[1] = vertices[5];
-      cellvertices[2] = vertices[7];
-      cellvertices[3] = vertices[9];
-      new_cell.vertices(cellvertices);
-      segment_out.push_back(new_cell);
+      create_refinement_cell<CellType>( segment_out, vertices, 2, 5, 7, 9);
 
       //3-8-6-9:
-      cellvertices[0] = vertices[3];
-      cellvertices[1] = vertices[8];
-      cellvertices[2] = vertices[6];
-      cellvertices[3] = vertices[9];
-      new_cell.vertices(cellvertices);
-      segment_out.push_back(new_cell);
+      create_refinement_cell<CellType>( segment_out, vertices, 3, 8, 6, 9);
       
-      double diag58 = viennagrid::norm(vertices[5]->point() - vertices[8]->point());
-      double diag67 = viennagrid::norm(vertices[6]->point() - vertices[7]->point());
-      double diag49 = viennagrid::norm(vertices[4]->point() - vertices[9]->point());
+      double diag58 = viennagrid::norm( viennagrid::point(segment_out, vertices[5]) - viennagrid::point(segment_out, vertices[8]) );
+      double diag67 = viennagrid::norm( viennagrid::point(segment_out, vertices[6]) - viennagrid::point(segment_out, vertices[7]) );
+      double diag49 = viennagrid::norm( viennagrid::point(segment_out, vertices[4]) - viennagrid::point(segment_out, vertices[9]) );
       
       if ( (diag58 <= diag67) && (diag58 <= diag49) )  //diag58 is shortest: keep it, split others
       {
         //4-8-5-6:
-        cellvertices[0] = vertices[4];
-        cellvertices[1] = vertices[8];
-        cellvertices[2] = vertices[5];
-        cellvertices[3] = vertices[6];
-        new_cell.vertices(cellvertices);
-        segment_out.push_back(new_cell);
+        create_refinement_cell<CellType>( segment_out, vertices, 4, 8, 5, 6);
         
         //4-8-7-5:
-        cellvertices[0] = vertices[4];
-        cellvertices[1] = vertices[8];
-        cellvertices[2] = vertices[7];
-        cellvertices[3] = vertices[5];
-        new_cell.vertices(cellvertices);
-        segment_out.push_back(new_cell);
+        create_refinement_cell<CellType>( segment_out, vertices, 4, 8, 7, 5);
 
         //7-8-9-5:
-        cellvertices[0] = vertices[7];
-        cellvertices[1] = vertices[8];
-        cellvertices[2] = vertices[9];
-        cellvertices[3] = vertices[5];
-        new_cell.vertices(cellvertices);
-        segment_out.push_back(new_cell);
+        create_refinement_cell<CellType>( segment_out, vertices, 7, 8, 9, 5);
 
         //8-6-9-5:
-        cellvertices[0] = vertices[8];
-        cellvertices[1] = vertices[6];
-        cellvertices[2] = vertices[9];
-        cellvertices[3] = vertices[5];
-        new_cell.vertices(cellvertices);
-        segment_out.push_back(new_cell);
+        create_refinement_cell<CellType>( segment_out, vertices, 8, 6, 9, 5);
       }
       else if ( (diag67 <= diag58) && (diag67 <= diag49) ) //diag67 is shortest: keep it, split others
       {
         //4-7-6-8:
-        cellvertices[0] = vertices[4];
-        cellvertices[1] = vertices[7];
-        cellvertices[2] = vertices[6];
-        cellvertices[3] = vertices[8];
-        new_cell.vertices(cellvertices);
-        segment_out.push_back(new_cell);
+        create_refinement_cell<CellType>( segment_out, vertices, 4, 7, 6, 8);
         
         //4-7-5-6:
-        cellvertices[0] = vertices[4];
-        cellvertices[1] = vertices[7];
-        cellvertices[2] = vertices[5];
-        cellvertices[3] = vertices[6];
-        new_cell.vertices(cellvertices);
-        segment_out.push_back(new_cell);
+        create_refinement_cell<CellType>( segment_out, vertices, 4, 7, 5, 6);
 
         //7-9-6-8:
-        cellvertices[0] = vertices[7];
-        cellvertices[1] = vertices[9];
-        cellvertices[2] = vertices[6];
-        cellvertices[3] = vertices[8];
-        new_cell.vertices(cellvertices);
-        segment_out.push_back(new_cell);
+        create_refinement_cell<CellType>( segment_out, vertices, 7, 9, 6, 8);
 
         //7-9-5-6:
-        cellvertices[0] = vertices[7];
-        cellvertices[1] = vertices[9];
-        cellvertices[2] = vertices[5];
-        cellvertices[3] = vertices[6];
-        new_cell.vertices(cellvertices);
-        segment_out.push_back(new_cell);
+        create_refinement_cell<CellType>( segment_out, vertices, 7, 9, 5, 6);
       }
       else //keep shortest diagonal diag49
       {
         //4-9-6-8:
-        cellvertices[0] = vertices[4];
-        cellvertices[1] = vertices[9];
-        cellvertices[2] = vertices[6];
-        cellvertices[3] = vertices[8];
-        new_cell.vertices(cellvertices);
-        segment_out.push_back(new_cell);
+        create_refinement_cell<CellType>( segment_out, vertices, 4, 9, 6, 8);
         
         //4-9-5-6:
-        cellvertices[0] = vertices[4];
-        cellvertices[1] = vertices[9];
-        cellvertices[2] = vertices[5];
-        cellvertices[3] = vertices[6];
-        new_cell.vertices(cellvertices);
-        segment_out.push_back(new_cell);
+        create_refinement_cell<CellType>( segment_out, vertices, 4, 9, 5, 6);
 
         //4-7-9-8:
-        cellvertices[0] = vertices[4];
-        cellvertices[1] = vertices[7];
-        cellvertices[2] = vertices[9];
-        cellvertices[3] = vertices[8];
-        new_cell.vertices(cellvertices);
-        segment_out.push_back(new_cell);
+        create_refinement_cell<CellType>( segment_out, vertices, 4, 7, 9, 8);
 
         //4-7-5-9:
-        cellvertices[0] = vertices[4];
-        cellvertices[1] = vertices[7];
-        cellvertices[2] = vertices[5];
-        cellvertices[3] = vertices[9];
-        new_cell.vertices(cellvertices);
-        segment_out.push_back(new_cell);
+        create_refinement_cell<CellType>( segment_out, vertices, 4, 7, 5, 9);
       }
       
     } //apply6()
