@@ -88,7 +88,8 @@ int main()
     vertex_hook_type vh3 = viennagrid::create_element<vertex_type>( domain );
     
     // creates a hook buffer for the vertex hooks of the tetdrahedron
-    std::vector<vertex_hook_type> hooks(4);
+    //std::vector<vertex_hook_type> hooks(4);
+    viennagrid::storage::static_array<vertex_hook_type, 4> hooks;
     hooks[0] = vh0; hooks[1] = vh1; hooks[2] = vh2; hooks[3] = vh3;
     
     // creates the tetrahedron within the domain, all boundary cell generation is done here implicit
