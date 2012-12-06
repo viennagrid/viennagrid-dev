@@ -1,7 +1,7 @@
 #ifndef VIENNAGRID_STORAGE_RANGE_HPP
 #define VIENNAGRID_STORAGE_RANGE_HPP
 
-
+#include "viennagrid/forwards.hpp"
 
 namespace viennagrid
 {
@@ -76,6 +76,22 @@ namespace viennagrid
             const_hook_iterator hook_begin() const { return container.hook_begin(); }
             const_hook_iterator hook_end() const { return container.hook_end(); }
             
+            hook_type hook_at(std::size_t pos)
+            {
+                return *viennagrid::advance(hook_begin(), pos);
+//                 hook_iterator it = hook_begin();
+//                 std::advance( it, pos );
+//                 return *it;
+            }
+            
+            const_hook_type hook_at(std::size_t pos) const
+            {
+                return *viennagrid::advance(hook_begin(), pos);
+//                 const_hook_iterator it = hook_begin();
+//                 std::advance( it, pos );
+//                 return *it;
+            }
+            
         private:
             
             container_type & container;
@@ -144,6 +160,22 @@ namespace viennagrid
             typedef typename container_type::const_hook_iterator const_hook_iterator;
             const_hook_iterator hook_begin() const { return container.hook_begin(); }
             const_hook_iterator hook_end() const { return container.hook_end(); }
+            
+            hook_type hook_at(std::size_t pos)
+            {
+                return *viennagrid::advance(hook_begin(), pos);
+//                 hook_iterator it = hook_begin();
+//                 std::advance( it, pos );
+//                 return *it;
+            }
+            
+            const_hook_type hook_at(std::size_t pos) const
+            {
+                return *viennagrid::advance(hook_begin(), pos);
+//                 const_hook_iterator it = hook_begin();
+//                 std::advance( it, pos );
+//                 return *it;
+            }
             
         private:
             
