@@ -52,13 +52,10 @@ int main()
     
   typedef viennagrid::point_t<double, viennagrid::cartesian_cs<3> > PointType;
   
-  typedef viennagrid::result_of::geometric_domain_config< viennagrid::tetrahedron_tag, PointType, viennagrid::storage::pointer_hook_tag >::type DomainConfig;
+  typedef viennagrid::result_of::geometric_domain_config< viennagrid::tetrahedron_tag, PointType, viennagrid::storage::id_hook_tag >::type DomainConfig;
   typedef viennagrid::result_of::geometric_domain< DomainConfig >::type Domain;
   
-  
-
-  
-  typedef viennagrid::result_of::geometric_view<Domain>::type View;
+  typedef viennagrid::result_of::geometric_view<Domain>::type Segment;
   
   typedef viennagrid::tetrahedron_tag CellTag;
   
@@ -70,20 +67,7 @@ int main()
     
   typedef viennagrid::result_of::ncell_range<Domain, 0>::type       VertexRange;
   typedef viennagrid::result_of::ncell_range<Domain, 3>::type       CellRange;
-    
-    
-//   typedef viennagrid::config::tetrahedral_3d                       ConfigType;
-//   typedef viennagrid::result_of::domain<ConfigType>::type         Domain;
-//   typedef ConfigType::cell_tag                                    CellTag;
-//   
-//   typedef viennagrid::result_of::point<ConfigType>::type          PointType;
-//   typedef viennagrid::result_of::ncell<ConfigType, 0>::type       VertexType;
-//   typedef viennagrid::result_of::ncell<ConfigType, 1>::type       EdgeType;
-//   typedef viennagrid::result_of::ncell<ConfigType,
-//                                        CellTag::dim>::type   CellType;
-// 
-//   typedef viennagrid::result_of::ncell_range<Domain, 0>::type                          VertexRange;
-//   typedef viennagrid::result_of::ncell_range<Domain, CellTag::dim>::type    CellRange;
+
                       
   std::cout << "------------------------------------------------------------ " << std::endl;
   std::cout << "-- ViennaGrid tutorial: Algorithms on points and elements -- " << std::endl;
@@ -91,7 +75,7 @@ int main()
   std::cout << std::endl;
   
   Domain domain;
-  std::vector<View> segments;
+  std::vector<Segment> segments;
   
   //
   // Read domain from Netgen file
@@ -179,25 +163,26 @@ int main()
             << viennadata::access<std::string, double>(box_volume_key)(vertices[0])
             << std::endl;
   
-
+            
             
   //          
   // Refine domain uniformly:
-  //Domain uniformly_refined_domain = viennagrid::refine_uniformly(domain);
+  Domain uniformly_refined_domain = viennagrid::refine_uniformly<viennagrid::tetrahedron_tag>(domain);
   //Domain uniformly_refined_domain = viennagrid::refine(domain, viennagrid::uniform_refinement_tag()); //equivalent to previous line
-  
+    
   //
   // Adaptive refinement: Tag first three cells in domain for refinement
   CellRange cells = viennagrid::elements<CellTag>(domain);
   viennadata::access<viennagrid::refinement_key, bool>()(cells[0]) = true;
   viennadata::access<viennagrid::refinement_key, bool>()(cells[1]) = true;
   viennadata::access<viennagrid::refinement_key, bool>()(cells[2]) = true;
-  //Domain adaptively_refined_domain = viennagrid::refine<CellTag>(domain, viennagrid::local_refinement_tag());
+  Domain adaptively_refined_domain = viennagrid::refine<CellTag>(domain, viennagrid::local_refinement_tag());
   //Domain adaptively_refined_domain = viennagrid::refine_adaptively(domain);  //equivalent to previous line
   
-//   viennagrid::io::vtk_writer<Domain> writer;
-//   writer(uniformly_refined_domain, "uniform_refinement");
-//   writer(adaptively_refined_domain, "local_refinement");
+  
+  viennagrid::io::vtk_writer<Domain, CellType> writer;
+  writer(uniformly_refined_domain, "uniform_refinement");
+  writer(adaptively_refined_domain, "local_refinement");
   
   
   //
