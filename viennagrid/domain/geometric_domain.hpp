@@ -77,7 +77,7 @@ namespace viennagrid
 
       /** @brief Constructor triggering the refinement of the domain */
       template <typename CellTag, typename OtherDomainType, typename RefinementTag>
-      geometric_domain_t(refinement_proxy<CellTag, OtherDomainType, RefinementTag> const & proxy)
+      geometric_domain_t(refinement_proxy<CellTag, OtherDomainType, RefinementTag> const & proxy) : topologic_domain(create_topologic_domain<topologic_domain_type>())
       {
         detail::refine_impl<CellTag>(proxy.get(), *this, proxy.tag());
       }
