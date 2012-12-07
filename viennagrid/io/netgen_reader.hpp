@@ -38,7 +38,7 @@ namespace viennagrid
   {
 
     /** @brief Reader for Netgen files obtained from the 'Export mesh...' menu item. Tested with Netgen version 4.9.12. */
-    template<typename CellType>
+    template<typename CellTypeOrTag>
     struct netgen_reader
     {
       /** @brief The functor interface triggering the read operation.
@@ -60,7 +60,9 @@ namespace viennagrid
         //typedef typename ConfigType::coordinate_system_tag               CoordinateSystemTag;
         enum { point_dim = viennagrid::traits::static_size<PointType>::value };
         
-        typedef typename CellType::tag                            CellTag;
+        typedef typename result_of::element_tag<CellTypeOrTag>::type CellTag;
+        typedef typename result_of::element<GeometricDomainType, CellTag>::type CellType;
+        //typedef typename CellType::tag                            CellTag;
         typedef typename result_of::element_hook<GeometricDomainType, CellTag>::type                           CellHookType;
 
         //typedef typename result_of::point<ConfigType>::type                              PointType;
