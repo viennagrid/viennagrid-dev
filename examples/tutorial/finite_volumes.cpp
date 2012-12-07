@@ -32,6 +32,8 @@
 #include "viennagrid/algorithm/voronoi.hpp"
 #include "viennagrid/io/netgen_reader.hpp"
 
+#include "viennagrid/domain/coboundary_iteration.hpp"
+
 //
 // A very simple sparse matrix class
 //
@@ -60,21 +62,26 @@ class sparse_matrix
 //
 // The assembly routine for Poisson equation:  div( grad(psi) ) = 1
 //
-template <typename DomainType, typename MatrixType, typename VectorType>
+template <typename CellTypeOrTag, typename DomainType, typename MatrixType, typename VectorType>
 void assemble(DomainType & domain,
               MatrixType & system_matrix,
               VectorType & load_vector)
 {
-  typedef typename DomainType::config_type           Config;
-  typedef typename Config::cell_tag                  CellTag;
-  typedef typename viennagrid::result_of::ncell<Config, 0>::type                         VertexType;
-  typedef typename viennagrid::result_of::ncell<Config, 1>::type                         EdgeType;
-  typedef typename viennagrid::result_of::ncell<Config, CellTag::dim>::type   CellType;
+  typedef typename viennagrid::result_of::element_tag<CellTypeOrTag>::type CellTag;
+  typedef typename viennagrid::result_of::element<DomainType, CellTag>::type CellType;
+    
+  //typedef typename DomainType::config_type           Config;
+  //typedef typename Config::cell_tag                  CellTag;
+  typedef typename viennagrid::result_of::element<DomainType, viennagrid::vertex_tag>::type                         VertexType;
+  typedef typename viennagrid::result_of::element<DomainType, viennagrid::line_tag>::type                         EdgeType;
+  //typedef typename viennagrid::result_of::element<Config, CellTag>::type   CellType;
   
-  typedef typename viennagrid::result_of::ncell_range<DomainType, 0>::type     VertexContainer;
+  typedef typename viennagrid::result_of::element_range<DomainType, viennagrid::vertex_tag>::type     VertexContainer;
   typedef typename viennagrid::result_of::iterator<VertexContainer>::type          VertexIterator;
+  typedef typename viennagrid::result_of::hook_iterator<VertexContainer>::type          VertexHookIterator;
 
-  typedef typename viennagrid::result_of::ncell_range<VertexType, 1>::type     EdgeOnVertexContainer;
+  //typedef typename viennagrid::result_of::element_range<VertexType, viennagrid::line_tag>::type     EdgeOnVertexContainer;
+  typedef typename viennagrid::result_of::coboundary_range<DomainType, viennagrid::line_tag>::type EdgeOnVertexContainer;
   typedef typename viennagrid::result_of::iterator<EdgeOnVertexContainer>::type    EdgeOnVertexIterator;
   
   std::size_t current_dof = 0;
@@ -82,18 +89,19 @@ void assemble(DomainType & domain,
   //
   // Compute Voronoi info
   //
-  viennagrid::apply_voronoi(domain);
+  viennagrid::apply_voronoi<CellTypeOrTag>(domain);
   
   //
   // Iterate over all vertices in the domain and enumerate degrees of freedom (aka. unknown indices)
   //
-  VertexContainer vertices = viennagrid::ncells<0>(domain);
+  VertexContainer vertices = viennagrid::elements<viennagrid::vertex_tag>(domain);
   for (VertexIterator vit = vertices.begin();
       vit != vertices.end();
       ++vit)
   {  
     //boundary condition: Assuming homogeneous Dirichlet boundary conditions at x=0 and x=1
-    if ( (vit->point()[0] == 0) || (vit->point()[0] == 1) )
+    //if ( (vit->point()[0] == 0) || (vit->point()[0] == 1) )
+    if ( (viennagrid::point(domain, *vit)[0] == 0) || (viennagrid::point(domain, *vit)[0] == 1) )
       viennadata::access<std::string, long>("dof")(*vit) = -1;
     else
     {
@@ -112,32 +120,44 @@ void assemble(DomainType & domain,
   //        
   // Poisson equation assembly:  div( grad(psi) ) = 1
   //
-  for (VertexIterator vit = vertices.begin();
-        vit != vertices.end();
-        ++vit)
+  for (VertexHookIterator vhit = vertices.hook_begin();
+        vhit != vertices.hook_end();
+        ++vhit)
   {
-    long row_index = viennadata::access<std::string, long>("dof")(*vit);
+    VertexType & vertex = viennagrid::dereference_hook(domain, *vhit);
+    long row_index = viennadata::access<std::string, long>("dof")(vertex);
+    
+    //std::cout << vertex << " " << row_index << std::endl;
     
     if (row_index < 0) //this is a Dirichlet boundary condition
       continue;
     
-    EdgeOnVertexContainer edges = viennagrid::ncells<1>(*vit, domain);
+    //EdgeOnVertexContainer edges = viennagrid::ncells<1>(*vit, domain);
+      EdgeOnVertexContainer edges = viennagrid::coboundary_elements<viennagrid::line_tag>(domain, *vhit);
     for (EdgeOnVertexIterator eovit = edges.begin();
           eovit != edges.end();
           ++eovit)
     {
-      VertexType const * other_vertex_ptr = &(viennagrid::ncells<0>(*eovit)[0]);
-      if (other_vertex_ptr == &(*vit)) //one of the two vertices of the edge is different from *vit
-        other_vertex_ptr = &(viennagrid::ncells<0>(*eovit)[1]);
+      VertexType const * other_vertex_ptr = &(viennagrid::elements<viennagrid::vertex_tag>(*eovit)[0]);
+      if (other_vertex_ptr == &(vertex)) //one of the two vertices of the edge is different from *vit
+        other_vertex_ptr = &(viennagrid::elements<viennagrid::vertex_tag>(*eovit)[1]);
       
       long col_index        = viennadata::access<std::string, long>("dof")(*other_vertex_ptr);
-      double edge_len       = viennagrid::volume(*eovit);
+      double edge_len       = viennagrid::volume(*eovit, domain);
       double interface_area = viennadata::access<viennagrid::voronoi_interface_area_key, double>()(*eovit);
+      
+      //std::cout << "  " << *other_vertex_ptr << std::endl;
+      //std::cout << "  " << col_index << " " << edge_len << " " << interface_area << std::endl;
       
       if (col_index >= 0)
         system_matrix(row_index, col_index) = - interface_area / edge_len;
       
       system_matrix(row_index, row_index) += interface_area / edge_len;
+      
+      //std::cout << "  " << system_matrix(row_index, col_index) << " " << system_matrix(row_index, row_index) << std::endl;
+      //std::cout << std::endl;
+      
+      std::cout << (*eovit).id() << "      " << viennadata::access<viennagrid::voronoi_box_volume_key, double>()(*eovit) << std::endl;
       
       //Note: volume stored on edges consists of volumes of both adjacent boxes.
       load_vector[row_index] += viennadata::access<viennagrid::voronoi_box_volume_key, double>()(*eovit) / 2.0;
@@ -149,9 +169,18 @@ void assemble(DomainType & domain,
 
 int main()
 {
-  typedef viennagrid::config::tetrahedral_3d                      ConfigType;  //use this for a 3d example
+  typedef viennagrid::point_t<double, viennagrid::cartesian_cs<3> > PointType;  //use this for a 3d example
+  //typedef viennagrid::point_t<double, viennagrid::cartesian_cs<2> > PointType;  //use this for a 2d example
+  typedef viennagrid::result_of::geometric_domain_config< viennagrid::tetrahedron_tag, PointType, viennagrid::storage::id_hook_tag >::type DomainConfig;
+  typedef viennagrid::result_of::geometric_domain< DomainConfig >::type Domain;
+  typedef viennagrid::result_of::geometric_view<Domain>::type Segment;
+  
+  typedef viennagrid::tetrahedron_tag CellTag;
+    
+    
+  //typedef viennagrid::config::tetrahedral_3d                      ConfigType;  //use this for a 3d example
   //typedef viennagrid::config::triangular_2d                       ConfigType;  //use this for a 2d example
-  typedef viennagrid::result_of::domain<ConfigType>::type         Domain;
+  //typedef viennagrid::result_of::domain<ConfigType>::type         Domain;
   
   std::cout << "----------------------------------------------------------" << std::endl;
   std::cout << "-- ViennaGrid tutorial: Finite Volumes using ViennaGrid --" << std::endl;
@@ -159,19 +188,21 @@ int main()
   std::cout << std::endl;
   
   Domain domain;
-  viennagrid::io::netgen_reader reader;
+  std::vector<Segment> segments;
+  
+  viennagrid::io::netgen_reader<CellTag> reader;
   #ifdef _MSC_VER      //Visual Studio builds in a subfolder
   std::string path = "../../examples/data/";
   #else
   std::string path = "../examples/data/";
   #endif
-  reader(domain, path + "cube48.mesh"); //use this for a 3d example
+  reader(domain, segments, path + "cube48.mesh"); //use this for a 3d example
   //reader(domain, path + "square32.mesh"); //use this for a 2d example
   
   sparse_matrix<double> system_matrix;
   std::vector<double> load_vector;
   
-  assemble(domain, system_matrix, load_vector);
+  assemble<CellTag>(domain, system_matrix, load_vector);
   
   //
   // Next step: Solve here using a linear algebra library, e.g. ViennaCL. (not included in this tutorial to avoid external dependencies)
