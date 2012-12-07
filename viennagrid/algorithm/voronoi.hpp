@@ -272,7 +272,6 @@ namespace viennagrid
           viennadata::access<InterfaceAreaKey, double>(interface_key)(*eocit) += interface_contribution;
           viennadata::access<InterfaceAreaKey, CellContributionType>(interface_key)(*eocit).push_back( std::make_pair( &(*cit), interface_contribution) );
 
-          
           //box volume contribution:
           double edge_contribution = 0;
           VertexOnEdgeRange vertices_on_edge = viennagrid::elements<VertexType>(*eocit);
@@ -818,13 +817,13 @@ namespace viennagrid
           double interface_contribution = spanned_volume(interface_segments[i].first.first, interface_segments[i].first.second, inner_point);
           if (interface_contribution > 0)
           {
-            voronoi_unique_quantity_update(viennadata::access<InterfaceAreaKey, CellContributionType>(interface_key)(*eit),
+            voronoi_unique_quantity_update(viennadata::access<InterfaceAreaKey, CellContributionType>(interface_key)( edge ),
                                            std::make_pair(interface_segments[i].second, interface_contribution) );
             interface_area += interface_contribution;
             
             // box volume:
             double volume_contribution = interface_contribution * edge_length / 6.0;
-            voronoi_unique_quantity_update(viennadata::access<BoxVolumeKey, CellContributionType>(box_volume_key)(*eit),
+            voronoi_unique_quantity_update(viennadata::access<BoxVolumeKey, CellContributionType>(box_volume_key)( edge ),
                                            std::make_pair(interface_segments[i].second, 2.0 * volume_contribution) ); //volume contribution of both box volumes associated with the edge
             voronoi_unique_quantity_update(viennadata::access<BoxVolumeKey, CellContributionType>(box_volume_key)(v0),
                                            std::make_pair( interface_segments[i].second, volume_contribution) );
@@ -838,12 +837,15 @@ namespace viennagrid
         //
         
         //std::cout << "Interface area: " << interface_area << std::endl;
-        viennadata::access<InterfaceAreaKey, double>(interface_key)(*eit) = interface_area;
+        viennadata::access<InterfaceAreaKey, double>(interface_key)( edge ) = interface_area;
         double volume_contribution = interface_area * edge_length / 6.0;
         //std::cout << "Volume contribution: " << volume_contribution << std::endl;
         viennadata::access<BoxVolumeKey, double>(box_volume_key)(*eit) = 2.0 * volume_contribution; //volume contribution of both box volumes associated with the edge
         viennadata::access<BoxVolumeKey, double>(box_volume_key)(v0) += volume_contribution;
         viennadata::access<BoxVolumeKey, double>(box_volume_key)(v1) += volume_contribution;
+        
+        //std::cout << "VOR " << v0 << " " << v1 << std::endl;
+        //std::cout << "    " << viennadata::access<BoxVolumeKey, double>(box_volume_key)(v0) << " " << viennadata::access<BoxVolumeKey, double>(box_volume_key)(v1)  << std::endl;
       } //for edges
 
     } //write_voronoi_info(tetrahedron_tag)
