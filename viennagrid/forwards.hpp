@@ -171,7 +171,7 @@ namespace viennagrid
   class const_ncell_range;
   
   /** @brief A key used for ViennaData to store coboundary information on n-cells */
-  template <typename T, long dim> //topological dimension of the elements over which to iterate
+  template <typename T, typename element_tag> //topological dimension of the elements over which to iterate
   class coboundary_key
   {
     public:
@@ -179,6 +179,21 @@ namespace viennagrid
       
       /** @brief Comparison operator for compatibility with std::map */
       bool operator<(coboundary_key const & other) const
+      {
+        return t < other.t;
+      }
+    private:
+      T const * t;
+  };
+  
+  template <typename T, typename connector_boundary_element_tag> //topological dimension of the elements over which to iterate
+  class neighbour_key
+  {
+    public:
+      neighbour_key(T const & t_) : t(&t_) {}
+      
+      /** @brief Comparison operator for compatibility with std::map */
+      bool operator<(neighbour_key const & other) const
       {
         return t < other.t;
       }
