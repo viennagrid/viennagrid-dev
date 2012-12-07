@@ -17,7 +17,7 @@ namespace viennagrid
             
         public:
             
-            container_range_wrapper(container_type & _container) : container(_container) {}
+            container_range_wrapper(container_type & _container) : container(&_container) {}
             
             typedef typename container_type::size_type size_type;
             typedef typename container_type::value_type value_type;
@@ -36,45 +36,45 @@ namespace viennagrid
             
             
             
-            iterator begin() { return container.begin(); }
-            const_iterator begin() const { return container.begin(); }
-            iterator end() { return container.end(); }
-            const_iterator end() const { return container.end(); }
+            iterator begin() { return container->begin(); }
+            const_iterator begin() const { return container->begin(); }
+            iterator end() { return container->end(); }
+            const_iterator end() const { return container->end(); }
             
-            reverse_iterator rbegin() { return container.rbegin(); }
-            const_reverse_iterator rbegin() const { return container.rbegin(); }
-            reverse_iterator rend() { return container.rend(); }
-            const_reverse_iterator rend() const { return container.rend(); }
-            
-            
-            
-            reference front() { return container.front(); }
-            const_reference front() const { return container.front(); }
-            reference back() { return container.back(); }
-            const_reference back() const { return container.back(); }
+            reverse_iterator rbegin() { return container->rbegin(); }
+            const_reverse_iterator rbegin() const { return container->rbegin(); }
+            reverse_iterator rend() { return container->rend(); }
+            const_reverse_iterator rend() const { return container->rend(); }
             
             
             
-            reference operator[] (size_type index) { return container[index]; }
-            const_reference operator[] (size_type index) const { return container[index]; }
+            reference front() { return container->front(); }
+            const_reference front() const { return container->front(); }
+            reference back() { return container->back(); }
+            const_reference back() const { return container->back(); }
             
             
             
-            bool empty() const { return container.empty(); }
-            size_type size() const { return container.size(); }
+            reference operator[] (size_type index) { return (*container)[index]; }
+            const_reference operator[] (size_type index) const { return (*container)[index]; }
+            
+            
+            
+            bool empty() const { return container->empty(); }
+            size_type size() const { return container->size(); }
             
             
             
             
             typedef typename container_type::hook_type hook_type;
             typedef typename container_type::hook_iterator hook_iterator;
-            hook_iterator hook_begin() { return container.hook_begin(); }
-            hook_iterator hook_end() { return container.hook_end(); }
+            hook_iterator hook_begin() { return container->hook_begin(); }
+            hook_iterator hook_end() { return container->hook_end(); }
 
             typedef typename container_type::const_hook_type const_hook_type;
             typedef typename container_type::const_hook_iterator const_hook_iterator;
-            const_hook_iterator hook_begin() const { return container.hook_begin(); }
-            const_hook_iterator hook_end() const { return container.hook_end(); }
+            const_hook_iterator hook_begin() const { return container->hook_begin(); }
+            const_hook_iterator hook_end() const { return container->hook_end(); }
             
             hook_type hook_at(std::size_t pos)
             {
@@ -94,7 +94,7 @@ namespace viennagrid
             
         private:
             
-            container_type & container;
+            container_type * container;
         };
         
         template<typename container_type>
@@ -102,7 +102,7 @@ namespace viennagrid
         {
         public:
             
-            container_range_wrapper(const container_type & _container) : container(_container) {}
+            container_range_wrapper(const container_type & _container) : container(&_container) {}
             container_range_wrapper(const container_range_wrapper<container_type> & rhs) : container(rhs.container) {}
             
             typedef typename container_type::size_type size_type;
@@ -122,44 +122,44 @@ namespace viennagrid
             
             
             
-            iterator begin() { return container.begin(); }
-            const_iterator begin() const { return container.begin(); }
-            iterator end() { return container.end(); }
-            const_iterator end() const { return container.end(); }
+            iterator begin() { return container->begin(); }
+            const_iterator begin() const { return container->begin(); }
+            iterator end() { return container->end(); }
+            const_iterator end() const { return container->end(); }
             
-            reverse_iterator rbegin() { return container.rbegin(); }
-            const_reverse_iterator rbegin() const { return container.rbegin(); }
-            reverse_iterator rend() { return container.rend(); }
-            const_reverse_iterator rend() const { return container.rend(); }
-            
-            
-            
-            reference front() { return container.front(); }
-            const_reference front() const { return container.front(); }
-            reference back() { return container.back(); }
-            const_reference back() const { return container.back(); }
+            reverse_iterator rbegin() { return container->rbegin(); }
+            const_reverse_iterator rbegin() const { return container->rbegin(); }
+            reverse_iterator rend() { return container->rend(); }
+            const_reverse_iterator rend() const { return container->rend(); }
             
             
             
-            reference operator[] (size_type index) { return container[index]; }
-            const_reference operator[] (size_type index) const { return container[index]; }
+            reference front() { return container->front(); }
+            const_reference front() const { return container->front(); }
+            reference back() { return container->back(); }
+            const_reference back() const { return container->back(); }
             
             
             
-            bool empty() const { return container.empty(); }
-            size_type size() const { return container.size(); }
+            reference operator[] (size_type index) { return (*container)[index]; }
+            const_reference operator[] (size_type index) const { return (*container)[index]; }
+            
+            
+            
+            bool empty() const { return container->empty(); }
+            size_type size() const { return container->size(); }
             
             
             
             typedef typename container_type::const_hook_type hook_type;
             typedef typename container_type::const_hook_iterator hook_iterator;
-            hook_iterator hook_begin() { return container.hook_begin(); }
-            hook_iterator hook_end() { return container.hook_end(); }
+            hook_iterator hook_begin() { return container->hook_begin(); }
+            hook_iterator hook_end() { return container->hook_end(); }
 
             typedef typename container_type::const_hook_type const_hook_type;
             typedef typename container_type::const_hook_iterator const_hook_iterator;
-            const_hook_iterator hook_begin() const { return container.hook_begin(); }
-            const_hook_iterator hook_end() const { return container.hook_end(); }
+            const_hook_iterator hook_begin() const { return container->hook_begin(); }
+            const_hook_iterator hook_end() const { return container->hook_end(); }
             
             hook_type hook_at(std::size_t pos)
             {
@@ -179,7 +179,7 @@ namespace viennagrid
             
         private:
             
-            const container_type & container;
+            const container_type * container;
         };
         
         
