@@ -394,6 +394,39 @@ namespace viennagrid
                 typename container_of_dimension_for_collection<tail, dim>::type
             >::type type;
         };
+        
+        
+        
+        
+        template<typename element_or_collection, typename tag>
+        struct container_of_tag;
+        
+        template<typename container_collection_typemap, typename tag>
+        struct container_of_tag< storage::collection_t<container_collection_typemap>, tag >
+        {
+            typedef typename container_of_tag_for_collection<container_collection_typemap, tag>::type type;
+        };
+        
+        template<typename element_tag, typename boundary_cell_typelist, typename id_type, typename tag>
+        struct container_of_tag< element_t<element_tag, boundary_cell_typelist, id_type>, tag >
+        {
+            typedef typename container_of_tag_for_element<boundary_cell_typelist, tag>::type type;
+        };
+        
+        template<typename element_or_collection, long dim>
+        struct container_of_dimension;
+        
+        template<typename container_collection_typemap, long dim>
+        struct container_of_dimension< storage::collection_t<container_collection_typemap>, dim >
+        {
+            typedef typename container_of_dimension_for_collection<container_collection_typemap, dim>::type type;
+        };
+        
+        template<typename element_tag, typename boundary_cell_typelist, typename id_type, long dim>
+        struct container_of_dimension< element_t<element_tag, boundary_cell_typelist, id_type>, dim >
+        {
+            typedef typename container_of_dimension_for_element<boundary_cell_typelist, dim>::type type;
+        };
     }
     
     
