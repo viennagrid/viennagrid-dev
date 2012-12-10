@@ -1,67 +1,152 @@
-cmake_minimum_required(VERSION 2.6)
+# Project setup
+###############
 
-PROJECT(ViennaGrid)
-
-
-    SET (CMAKE_C_COMPILER             "/usr/bin/clang")
-    SET (CMAKE_C_FLAGS                "-Wall -std=c99")
-    SET (CMAKE_C_FLAGS_DEBUG          "-g")
-    SET (CMAKE_C_FLAGS_MINSIZEREL     "-Os -DNDEBUG")
-    SET (CMAKE_C_FLAGS_RELEASE        "-O4 -DNDEBUG")
-    SET (CMAKE_C_FLAGS_RELWITHDEBINFO "-O2 -g")
-
-    SET (CMAKE_CXX_COMPILER             "/usr/bin/clang++")
-    SET (CMAKE_CXX_FLAGS                "-Wall -ferror-limit=1")
-    SET (CMAKE_CXX_FLAGS_DEBUG          "-g")
-    SET (CMAKE_CXX_FLAGS_MINSIZEREL     "-Os -DNDEBUG")
-    SET (CMAKE_CXX_FLAGS_RELEASE        "-O4 -DNDEBUG")
-    SET (CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g")
-
-    SET (CMAKE_AR      "/usr/bin/llvm-ar")
-    SET (CMAKE_LINKER  "/usr/bin/llvm-ld")
-    SET (CMAKE_NM      "/usr/bin/llvm-nm")
-    SET (CMAKE_OBJDUMP "/usr/bin/llvm-objdump")
-    SET (CMAKE_RANLIB  "/usr/bin/llvm-ranlib")
+cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
+if(COMMAND cmake_policy)
+  cmake_policy(SET CMP0003 NEW)
+endif(COMMAND cmake_policy)
 
 
-#if you don't want the full compiler output, remove the following line
-#SET(CMAKE_VERBOSE_MAKEFILE ON)
+project(ViennaGrid)
 
-#specify include and source directory
-INCLUDE_DIRECTORIES(".")
-INCLUDE_DIRECTORIES("../ViennaData")      #ViennaData
+set(VERSION_MAJOR 1)
+set(VERSION_MINOR 1)
+set(VERSION_PATCH 0)
+set(VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
 
-#add definitions, compiler switches, etc.
+SET(CMAKE_VERBOSE_MAKEFILE ON)   #uncomment this line to increase CMake verbosity
+
+list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
+
+# Common options
+################
+
+include(ViennaGridCommon)
+
+# Set release build:
 IF(DEFINED CMAKE_BUILD_TYPE)
  SET (CMAKE_BUILD_TYPE ${CMAKE_BUILD_TYPE})
 ELSE()
  SET (CMAKE_BUILD_TYPE Release)
 ENDIF()
 
-IF(CMAKE_COMPILER_IS_GNUCXX)
-   ADD_DEFINITIONS(-Wall -pedantic -O0 -g)
-   #ADD_DEFINITIONS(-Wall -pedantic -O3)
-ENDIF(CMAKE_COMPILER_IS_GNUCXX)
+# User options
+##############
 
-ADD_EXECUTABLE(algorithms          examples/tutorial/algorithms.cpp)
-ADD_EXECUTABLE(domain_setup        examples/tutorial/domain_setup.cpp)
-ADD_EXECUTABLE(finite_volumes      examples/tutorial/finite_volumes.cpp)
-#ADD_EXECUTABLE(io                  examples/tutorial/io.cpp)
-#ADD_EXECUTABLE(iterators           examples/tutorial/iterators.cpp)
-#ADD_EXECUTABLE(multi_segment       examples/tutorial/multi_segment.cpp)
-#ADD_EXECUTABLE(slim_domain         examples/tutorial/slim_domain.cpp)
-#ADD_EXECUTABLE(store_access_data   examples/tutorial/store_access_data.cpp)
+option(BUILD_DOXYGEN_DOCS "Build the Doxygen-generated API docs" OFF)
+
+option(BUILD_MANUAL "Build the PDF manual" OFF)
+
+cmake_dependent_option(ENABLE_DIST "Enable the the distribution tarball target" ON "BUILD_DOXYGEN_DOCS;BUILD_MANUAL" OFF)
+
+mark_as_advanced(BUILD_DOXYGEN_DOCS BUILD_MANUAL ENABLE_DIST)
+
+# Find prerequisites
+####################
+
+if(BUILD_DOXYGEN_DOCS)
+   find_package(Doxygen REQUIRED)
+endif()
+
+if(BUILD_MANUAL)
+   find_package(LATEX REQUIRED)
+endif()
+
+# Compile options
+#################
+
+include_directories(BEFORE ${PROJECT_SOURCE_DIR})
 
 
-ADD_EXECUTABLE(container_test                  examples/storage_layer/container_test.cpp)
-ADD_EXECUTABLE(collection_test                 examples/storage_layer/collection_test.cpp)
-ADD_EXECUTABLE(container_collection_test       examples/storage_layer/container_collection_test.cpp)
-ADD_EXECUTABLE(container_collection_test_2     examples/storage_layer/container_collection_test_2.cpp)
-#ADD_EXECUTABLE(element_test                    examples/storage_layer/element_test.cpp)
-ADD_EXECUTABLE(element_test_2                  examples/storage_layer/element_test_2.cpp)
-ADD_EXECUTABLE(element_test_3                  examples/storage_layer/element_test_3.cpp)
-ADD_EXECUTABLE(domain_test                     examples/storage_layer/domain_test.cpp)
-ADD_EXECUTABLE(domain_test_2                   examples/storage_layer/domain_test_2.cpp)
-ADD_EXECUTABLE(domain_test_3                   examples/storage_layer/domain_test_3.cpp)
-ADD_EXECUTABLE(domain_test_4                   examples/storage_layer/domain_test_4.cpp)
-ADD_EXECUTABLE(domain_test_5                   examples/storage_layer/domain_test_5.cpp)
+# Subdirectories
+################
+
+if(BUILD_EXAMPLES)
+   add_subdirectory(examples)
+endif()
+
+if(BUILD_TESTING)
+   INCLUDE(CTest)
+   add_subdirectory(tests)
+endif()
+
+add_subdirectory(doc)
+
+# Install
+#########
+
+install(DIRECTORY viennagrid ${CMAKE_CURRENT_BINARY_DIR}/viennagrid
+   DESTINATION ${INSTALL_INCLUDE_DIR} COMPONENT dev
+   FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
+
+# Dist target
+#############
+
+if(ENABLE_DIST)
+   file(MAKE_DIRECTORY "${PROJECT_BINARY_DIR}/dist")
+
+   set(DISTDIR "${PROJECT_BINARY_DIR}/dist/ViennaGrid-${VERSION}-all-arch")
+   configure_file(cmake/CMakeLists.txt.in "${DISTDIR}/CMakeLists.txt" @ONLY)
+
+   #
+   # Full package:
+   #
+   add_custom_target(dist
+      COMMAND "${CMAKE_COMMAND}" -E make_directory "${DISTDIR}"
+
+      COMMAND "${CMAKE_COMMAND}" -E copy_if_different
+         "${PROJECT_SOURCE_DIR}/LICENSE" "${DISTDIR}/LICENSE"
+
+      COMMAND "${CMAKE_COMMAND}" -E copy_if_different
+         "${PROJECT_SOURCE_DIR}/changelog" "${DISTDIR}/changelog"
+
+      COMMAND "${CMAKE_COMMAND}" -E copy_if_different
+         "${PROJECT_SOURCE_DIR}/README" "${DISTDIR}/README"
+
+      COMMAND "${CMAKE_COMMAND}" -E make_directory "${DISTDIR}/build"
+      COMMAND "${CMAKE_COMMAND}" -E copy_if_different
+         "${PROJECT_SOURCE_DIR}/build/README" "${DISTDIR}/build/README"
+
+      COMMAND "${CMAKE_COMMAND}" -E make_directory "${DISTDIR}/cmake"
+      COMMAND "${CMAKE_COMMAND}" -E copy_if_different
+         "${PROJECT_SOURCE_DIR}/cmake/copymanual.cmake" "${DISTDIR}/cmake/copymanual.cmake"
+      COMMAND "${CMAKE_COMMAND}" -E copy_if_different
+         "${PROJECT_SOURCE_DIR}/cmake/ViennaGridCommon.cmake" "${DISTDIR}/cmake/ViennaGridCommon.cmake"
+      COMMAND "${CMAKE_COMMAND}" -E copy_if_different
+         "${PROJECT_SOURCE_DIR}/cmake/ViennaGridConfig.cmake.in" "${DISTDIR}/cmake/ViennaGridConfig.cmake.in"
+      COMMAND "${CMAKE_COMMAND}" -E copy_if_different
+         "${PROJECT_SOURCE_DIR}/cmake/ViennaGridConfigVersion.cmake.in" "${DISTDIR}/cmake/ViennaGridConfigVersion.cmake.in"
+
+      COMMAND "${CMAKE_COMMAND}" -E make_directory "${DISTDIR}/doc"
+      COMMAND "${CMAKE_COMMAND}" -E copy_if_different
+         "${PROJECT_SOURCE_DIR}/doc/viennagrid.pdf" "${DISTDIR}/doc/viennagrid.pdf"
+      COMMAND "${CMAKE_COMMAND}" -E copy_directory
+         "${CMAKE_CURRENT_BINARY_DIR}/doc/doxygen"
+         "${DISTDIR}/doc/doxygen"
+      COMMAND "${CMAKE_COMMAND}" -E copy_if_different
+         "${PROJECT_SOURCE_DIR}/doc/viennagrid.pdf" "${DISTDIR}/doc/viennagrid.pdf"
+
+      COMMAND "${CMAKE_COMMAND}" -E copy_if_different
+         "${PROJECT_SOURCE_DIR}/doc/Doxyfile.in" "${DISTDIR}/doc/Doxyfile.in"
+
+      COMMAND "${CMAKE_COMMAND}" -E copy_directory
+         "${PROJECT_SOURCE_DIR}/examples" "${DISTDIR}/examples"
+
+      COMMAND "${CMAKE_COMMAND}" -E make_directory "${DISTDIR}/tests"
+      COMMAND "${CMAKE_COMMAND}" -E make_directory "${DISTDIR}/tests/src"
+      COMMAND "${CMAKE_COMMAND}" -E copy_directory
+         "${PROJECT_SOURCE_DIR}/tests/src" "${DISTDIR}/tests/src"
+      COMMAND "${CMAKE_COMMAND}" -E copy_if_different
+         "${PROJECT_SOURCE_DIR}/tests/CMakeLists.txt" "${DISTDIR}/tests/CMakeLists.txt"
+
+      COMMAND "${CMAKE_COMMAND}" -E copy_directory
+         "${PROJECT_SOURCE_DIR}/viennagrid" "${DISTDIR}/viennagrid"
+
+      COMMAND "${CMAKE_COMMAND}" -E tar czf ViennaGrid-${VERSION}-all-arch.tar.gz
+           ViennaGrid-${VERSION}-all-arch
+      WORKING_DIRECTORY "${PROJECT_BINARY_DIR}/dist"
+      COMMENT "Generating dist/ViennaGrid-${VERSION}-all-arch.tar.gz"
+      VERBATIM)
+   add_dependencies(dist apidoc manual)
+
+endif()
