@@ -48,6 +48,7 @@ namespace viennagrid
         
         typedef bnd_cell_container_type_ bnd_cell_container_type;
         typedef typename bnd_cell_container_type::value_type bnd_cell_type;
+        typedef typename bnd_cell_container_type::hook_type bnd_hook_type;
         
         typedef typename bnd_cell_type::tag bnd_cell_tag;
         enum { dim = bnd_cell_tag::dim };
@@ -74,13 +75,14 @@ namespace viennagrid
         template<typename element_type, typename inserter_type>
         void create_bnd_cells(element_type & element, inserter_type & inserter)
         {
-            topology::bndcell_generator<element_tag, dim, bnd_cell_type>::create_bnd_cells(element, inserter);
+            topology::bndcell_generator<element_tag, bnd_cell_tag, bnd_cell_type>::create_bnd_cells(element, inserter);
             base::create_bnd_cells(element, inserter);
         }
         
         
         using base::container;
         using base::set_bnd_cell;
+        using base::global_to_local_orientation;
         
         bnd_cell_container_type &
         container(bnd_cell_tag)
@@ -118,30 +120,32 @@ namespace viennagrid
                 orientations_[pos].setDefaultOrientation();
             else
             {
-                typedef typename result_of::const_ncell_range<bnd_cell_type, 0>::type           VertexOnElementConstRange;
-                typedef typename result_of::const_iterator<VertexOnElementConstRange>::type     VertexOnElementConstIterator;
+                //std::cout << "Non Default Orientation" << std::endl;
+                
+                typedef typename result_of::const_element_range<bnd_cell_type, vertex_tag>::type           VertexOnElementConstRange;
+                typedef typename result_of::const_hook_iterator<VertexOnElementConstRange>::type     VertexOnElementConstIterator;
 
-                typedef typename result_of::ncell_range<bnd_cell_type, 0>::type      VertexOnElementRange;
-                typedef typename result_of::iterator<VertexOnElementRange>::type     VertexOnElementIterator;
+                typedef typename result_of::element_range<bnd_cell_type, vertex_tag>::type      VertexOnElementRange;
+                typedef typename result_of::hook_iterator<VertexOnElementRange>::type     VertexOnElementIterator;
                 
 
                 long i=0; dim_type j=0;
                                     
                 //set orientation:
-                VertexOnElementRange vertices_on_element = ncells<0>( elements_[pos] );
-                for (VertexOnElementIterator voeit = vertices_on_element.begin();
-                        voeit != vertices_on_element.end();
+                VertexOnElementRange vertices_on_element = elements<vertex_tag>( elements_[pos] );
+                for (VertexOnElementIterator voeit = vertices_on_element.hook_begin();
+                        voeit != vertices_on_element.hook_end();
                         ++voeit, ++i)
                 {
                     
-                    VertexOnElementConstRange vertices_on_element_2 = ncells<0>( to_insert );
-                    for (VertexOnElementConstIterator voeit2 = vertices_on_element_2.begin();
-                            voeit2 != vertices_on_element_2.end();
+                    VertexOnElementConstRange vertices_on_element_2 = elements<vertex_tag>( to_insert );
+                    for (VertexOnElementConstIterator voeit2 = vertices_on_element_2.hook_begin();
+                            voeit2 != vertices_on_element_2.hook_end();
                             ++voeit2, ++j)
                     {
-                        if (voeit->id() == voeit2->id())
+                        if (*voeit == *voeit2)
                         {
-                            orientations_[pos].setPermutation(i,j);
+                            orientations_[pos].setPermutation(j,i);
                             break;
                         }
                     }
@@ -151,10 +155,32 @@ namespace viennagrid
             }
         }
         
+        
+      ////////////////// orientation: ////////////////////
+      std::size_t global_to_local_orientation(bnd_hook_type const & el, long index) const
+      { 
+        for (std::size_t i=0; i<elements_.size(); ++i)
+        {
+          if (elements_.hook_at(i) == el)
+            return orientations_[i](index);
+        }
+        assert(false && "Provided k-cell is not a boundary element of the hosting n-cell!");
+        return index;
+      }
+        
+        
         static void print_class()
         {
             std::cout << "  [ + + ]  " << bnd_cell_tag::name() << std::endl;
             base::print_class();
+        }
+        
+        void print_orientation()
+        {
+            std::cout << "  [ + + ]  " << bnd_cell_tag::name() << std::endl;
+            for (std::size_t i = 0; i < orientations_.size(); ++i)
+                std::cout << "  " << orientations_[i] << std::endl;
+            base::print_orientation();
         }
         
     private:
@@ -198,7 +224,7 @@ namespace viennagrid
         template<typename element_type, typename inserter_type>
         void create_bnd_cells(element_type & element, inserter_type & inserter)
         {
-            topology::bndcell_generator<element_tag, dim, bnd_cell_type>::create_bnd_cells(element, inserter);
+            topology::bndcell_generator<element_tag, bnd_cell_tag, bnd_cell_type>::create_bnd_cells(element, inserter);
             base::create_bnd_cells(element, inserter);
         }
         
@@ -245,6 +271,12 @@ namespace viennagrid
             std::cout << "  [ + - ]  " << bnd_cell_tag::name() << std::endl;
             base::print_class();
         }
+        
+        void print_orientation()
+        {
+            std::cout << "  [ - - ]  " << bnd_cell_tag::name() << std::endl;
+            base::print_orientation();
+        }
 
         
     private:
@@ -265,9 +297,11 @@ namespace viennagrid
         void create_bnd_cells(element_type & element, inserter_type & inserter) {}            
         
         static void print_class() {}
-
+        void print_orientation() {}
+        
         void container();
         void set_bnd_cell();
+        void global_to_local_orientation();
         
     private:
     };
@@ -469,6 +503,12 @@ namespace viennagrid
             base::print_class();
         }
         
+        void print_orientation()
+        {
+            std::cout << element_tag::name() << std::endl;
+            base::print_orientation();
+        }
+        
         
         typedef typename result_of::container_of_dimension_for_element< bnd_cell_container_typelist, 0>::type::hook_type vertex_hook_type;
         void set_vertex( const vertex_hook_type & vertex, unsigned int pos )
@@ -504,6 +544,11 @@ namespace viennagrid
         template<typename inserter_type>
         void insert_callback( inserter_type & inserter, bool inserted ) {}
         
+        void print_orientation()
+        {
+            std::cout << vertex_tag::name() << std::endl;
+        }
+        
         static void print_class()
         {
             std::cout << vertex_tag::name() << std::endl;
@@ -522,6 +567,7 @@ namespace viennagrid
     }
 
     
+
     
     
     namespace result_of
@@ -537,6 +583,24 @@ namespace viennagrid
         struct element_tag< element_t<element_tag_, boundary_cell_container_typelist, id_type> >
         {
             typedef element_tag_ type;
+        };
+        
+        
+        
+        
+        template<typename element_type, typename boundary_cell_type_or_tag>
+        struct has_boundary
+        {};
+        
+        template<typename element_tag_, typename boundary_cell_container_typelist, typename id_type, typename boundary_cell_type_or_tag>
+        struct has_boundary< element_t<element_tag_, boundary_cell_container_typelist, id_type>, boundary_cell_type_or_tag >
+        {
+            typedef typename element_tag<boundary_cell_type_or_tag>::type boundary_cell_tag;
+            
+            const static bool value = 
+            !viennameta::_equal<
+                typename container_of_tag< element_t<element_tag_, boundary_cell_container_typelist, id_type>, boundary_cell_tag >::type,
+                viennameta::null_type>::value;
         };
         
         
@@ -873,7 +937,6 @@ namespace viennagrid
         
         return os;
     }
-    
   
 }
 
