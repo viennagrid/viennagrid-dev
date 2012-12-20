@@ -33,6 +33,8 @@ namespace viennagrid
   template <>
   struct hypercube_tag<3>
   {
+    typedef hypercube_tag<2> facet_tag;
+      
     enum{ dim = 3 };
     static std::string name() { return "Hexahedron"; }
   };
@@ -41,6 +43,146 @@ namespace viennagrid
   namespace topology
   {
 
+    template <>
+    struct boundary_cells<hypercube_tag<3>, hypercube_tag<2> >
+    {
+      //typedef simplex_tag<k>             tag;
+
+      typedef static_layout_tag     layout_tag;
+      enum{ num = 6 };
+    };
+    
+    template <>
+    struct boundary_cells<hypercube_tag<3>, simplex_tag<1> >
+    {
+      //typedef simplex_tag<k>             tag;
+
+      typedef static_layout_tag     layout_tag;
+      enum{ num = 12 };
+    };
+    
+    template <>
+    struct boundary_cells<hypercube_tag<3>, simplex_tag<0> >
+    {
+      //typedef simplex_tag<k>             tag;
+
+      typedef static_layout_tag     layout_tag;
+      enum{ num = 8 };
+    };
+    
+    
+    
+    template<typename bnd_cell_type>
+    struct bndcell_generator<hypercube_tag<3>, simplex_tag<1>, bnd_cell_type>
+    {
+        template<typename element_type, typename inserter_type>
+        static void create_bnd_cells(element_type & element, inserter_type & inserter)
+        {
+            bnd_cell_type bnd_cell( inserter.get_physical_container_collection() );
+            int index = 0;
+            
+            bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(0), 0 );
+            bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(1), 1 );
+            element.set_bnd_cell( bnd_cell, inserter(bnd_cell), index++ );
+
+            bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(0), 0 );
+            bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(2), 1 );
+            element.set_bnd_cell( bnd_cell, inserter(bnd_cell), index++ );
+            
+            bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(0), 0 );
+            bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(4), 1 );
+            element.set_bnd_cell( bnd_cell, inserter(bnd_cell), index++ );
+            
+            bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(1), 0 );
+            bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(3), 1 );
+            element.set_bnd_cell( bnd_cell, inserter(bnd_cell), index++ );
+            
+            bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(1), 0 );
+            bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(5), 1 );
+            element.set_bnd_cell( bnd_cell, inserter(bnd_cell), index++ );
+            
+            bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(2), 0 );
+            bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(3), 1 );
+            element.set_bnd_cell( bnd_cell, inserter(bnd_cell), index++ );
+            
+            bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(2), 0 );
+            bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(5), 1 );
+            element.set_bnd_cell( bnd_cell, inserter(bnd_cell), index++ );
+            
+            bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(3), 0 );
+            bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(7), 1 );
+            element.set_bnd_cell( bnd_cell, inserter(bnd_cell), index++ );
+            
+            bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(4), 0 );
+            bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(5), 1 );
+            element.set_bnd_cell( bnd_cell, inserter(bnd_cell), index++ );
+
+            bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(4), 0 );
+            bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(6), 1 );
+            element.set_bnd_cell( bnd_cell, inserter(bnd_cell), index++ );
+            
+            bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(5), 0 );
+            bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(7), 1 );        
+            element.set_bnd_cell( bnd_cell, inserter(bnd_cell), index++ );
+            
+            bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(6), 0 );
+            bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(7), 1 );        
+            element.set_bnd_cell( bnd_cell, inserter(bnd_cell), index++ );
+        }
+    };
+    
+    
+    
+    template<typename bnd_cell_type>
+    struct bndcell_generator<hypercube_tag<3>, hypercube_tag<2>, bnd_cell_type>
+    {
+        template<typename element_type, typename inserter_type>
+        static void create_bnd_cells(element_type & element, inserter_type & inserter)
+        {
+            bnd_cell_type bnd_cell( inserter.get_physical_container_collection() );
+            int index = 0;
+            
+            bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(0), 0 );
+            bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(1), 1 );
+            bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(2), 2 );
+            bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(3), 3 );
+            element.set_bnd_cell( bnd_cell, inserter(bnd_cell), index++ );
+
+            bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(0), 0 );
+            bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(1), 1 );
+            bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(4), 2 );
+            bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(5), 3 );
+            element.set_bnd_cell( bnd_cell, inserter(bnd_cell), index++ );
+            
+            bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(0), 0 );
+            bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(2), 1 );
+            bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(4), 2 );
+            bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(6), 3 );
+            element.set_bnd_cell( bnd_cell, inserter(bnd_cell), index++ );
+            
+            bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(1), 0 );
+            bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(3), 1 );
+            bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(5), 2 );
+            bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(7), 3 );
+            element.set_bnd_cell( bnd_cell, inserter(bnd_cell), index++ );
+            
+            bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(2), 0 );
+            bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(3), 1 );
+            bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(6), 2 );
+            bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(7), 3 );
+            element.set_bnd_cell( bnd_cell, inserter(bnd_cell), index++ );
+            
+            bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(4), 0 );
+            bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(5), 1 );
+            bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(6), 2 );
+            bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(7), 3 );
+            element.set_bnd_cell( bnd_cell, inserter(bnd_cell), index++ );
+        }
+    };
+    
+    
+      
+      
     /** @brief Topological description of the boundary 0-cells of a hexahedron */
     template <>
     struct bndcells<hexahedron_tag, 0>
