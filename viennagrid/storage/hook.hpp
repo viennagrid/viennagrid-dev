@@ -80,6 +80,62 @@ namespace viennagrid
             
             
             
+            
+            template<typename hook_type, typename container_type>
+            struct invalid_hook_helper
+            {
+                typedef typename container_type::const_iterator invalid_hook_type;
+                
+                static invalid_hook_type get(const container_type & container)
+                {
+                    return container.end();
+                }
+                
+            };
+            
+            template<typename value_type, typename container_type>
+            struct invalid_hook_helper<value_type *, container_type>
+            {
+                typedef const value_type * invalid_hook_type;
+                
+                static invalid_hook_type get(const container_type & container)
+                {
+                    return NULL;
+                }
+            };
+            
+            template<typename value_type, typename container_type>
+            struct invalid_hook_helper<const value_type *, container_type>
+            {
+                typedef const value_type * invalid_hook_type;
+                
+                static invalid_hook_type get(const container_type & container)
+                {
+                    return NULL;
+                }
+            };
+            
+            template<typename id_type, typename value_type, typename container_type>
+            struct invalid_hook_helper< smart_id<value_type, id_type>, container_type>
+            {
+                typedef smart_id<value_type, id_type> invalid_hook_type;
+                
+                static invalid_hook_type get(const container_type & container)
+                {
+                    return invalid_hook_type(-1);
+                }
+            };
+            
+            
+            
+            
+            template<typename container_type>
+            typename invalid_hook_helper<typename container_type::hook_type, container_type>::invalid_hook_type invalid_hook(const container_type & container)
+            {
+                return invalid_hook_helper<typename container_type::hook_type, container_type>::get(container);
+            }
+            
+            
            
             
             
