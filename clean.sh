@@ -1,6 +1,7 @@
 #!/bin/bash
 
 rm *~
+rm cmake/*.*~
 rm doc/*.*~
 rm doc/manual/*.*~
 rm viennagrid/*.*~
@@ -16,5 +17,6 @@ rm examples/tutorial/*.*~
 rm examples/benchmarks/*.*~
 rm examples/tests/*.*~
 rm examples/data/*.*~
+rm examples/*.*~
 rm tests/*.*~
 rm tests/src/*.*~

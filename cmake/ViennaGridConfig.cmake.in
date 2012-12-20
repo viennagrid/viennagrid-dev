@@ -1,0 +1,20 @@
+#- CMake configuration file for ViennaGrid
+# Sets the following variables if ViennaGrid was found:
+#  VIENNAGRID_FOUND         : TRUE if found
+#  VIENNAGRID_INCLUDE_DIRS  : Include-directories to be used
+#  VIENNAGRID_LIBRARIES     : Libraries to link against
+
+# Compute paths
+get_filename_component(VIENNAGRID_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+if(EXISTS "${VIENNAGRID_CMAKE_DIR}/CMakeCache.txt")
+   # in build tree
+   get_filename_component(VIENNAGRID_INSTALL_PREFIX "${VIENNAGRID_CMAKE_DIR}" PATH)
+   set(VIENNAGRID_INCLUDE_DIR "${_VIENNAGRID_PREFIX}")
+else()
+   set(VIENNAGRID_INSTALL_PREFIX "${VIENNAGRID_CMAKE_DIR}/@CONF_REL_INSTALL_PREFIX@")
+   set(VIENNAGRID_INCLUDE_DIR "${VIENNAGRID_CMAKE_DIR}/@CONF_REL_INCLUDE_DIR@")
+endif()
+
+# Set up variables
+set(VIENNAGRID_INCLUDE_DIRS ${VIENNAGRID_INCLUDE_DIR})
+set(VIENNAGRID_LIBRARIES "")
