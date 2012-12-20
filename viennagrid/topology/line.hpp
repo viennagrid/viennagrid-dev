@@ -54,7 +54,7 @@ namespace viennagrid
     
     
     template<typename bnd_cell_type>
-    struct bndcell_generator<line_tag, 0, bnd_cell_type>
+    struct bndcell_generator<simplex_tag<1>, simplex_tag<0>, bnd_cell_type>
     {
         template<typename element_type, typename inserter_type>
         static void create_bnd_cells(element_type & element, inserter_type & inserter)
