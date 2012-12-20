@@ -101,6 +101,14 @@ namespace viennagrid
   {
     return detail::surface_domainsegment<CellTypeOrTag, ElementTypeOrTag>(d);
   }    
+  
+  template <typename CellTypeOrTag, typename GeometricContainerType>
+  typename viennagrid::traits::value_type< typename viennagrid::result_of::point_type<GeometricContainerType>::type >::type
+  surface(GeometricContainerType const & d)
+  {
+    return detail::surface_domainsegment<CellTypeOrTag, CellTypeOrTag>(d);
+  }  
+  
 
     
 } //namespace viennagrid
