@@ -59,36 +59,39 @@ namespace viennagrid
   class boundary_key
   {    
     public:
-      boundary_key(GeometricContainerType const & e) : e_(&e) {}
-      
+      boundary_key(GeometricContainerType const & e) : e_(&e)
+      {}
+          
       /** @brief Provide less-than operator for compatibility with std::map */
       bool operator<(boundary_key const & other) const
       {
         return e_ < other.e_;
       }
+      
     private:
       GeometricContainerType const * e_;
   };
   
   
   
-  /** @brief Specialization for n-cells */
-  template<typename element_tag, typename bnd_cell_container_typelist, typename id_tag>
-  class boundary_key< element_t<element_tag, bnd_cell_container_typelist, id_tag> >
-  {
-      typedef element_t<element_tag, bnd_cell_container_typelist, id_tag>  element_type;
-    
-    public:
-      boundary_key(element_type const & e) : e_(&e) {}
-      
-      /** @brief Provide less-than operator for compatibility with std::map */
-      bool operator<(boundary_key const & other) const
-      {
-        return e_ < other.e_;
-      }
-    private:
-      element_type const * e_;
-  };  
+//   /** @brief Specialization for n-cells */
+//   template<typename element_tag, typename bnd_cell_container_typelist, typename id_tag>
+//   class boundary_key< element_t<element_tag, bnd_cell_container_typelist, id_tag> >
+//   {
+//       typedef element_t<element_tag, bnd_cell_container_typelist, id_tag>  element_type;
+//     
+//     public:
+//       boundary_key(element_type const & e) : e_(&e) {}
+//       
+//       /** @brief Provide less-than operator for compatibility with std::map */
+//       bool operator<(boundary_key const & other) const
+//       {
+//         return e_ < other.e_;
+//         std::cout << "CALL!" << std::endl;
+//       }
+//     private:
+//       element_type const * e_;
+//   };  
 }
 
 // Configure ViennaData to use a type-based dispatch on the domain
@@ -99,11 +102,11 @@ namespace viennadata
   /** @brief Customizations of keys for ViennaData */
   namespace config
   {
-    template <typename GeometricContainerType>
-    struct key_dispatch<viennagrid::boundary_key< GeometricContainerType > >
-    {
-      typedef type_key_dispatch_tag    tag;
-    };
+//     template <typename GeometricContainerType>
+//     struct key_dispatch<viennagrid::boundary_key< GeometricContainerType > >
+//     {
+//       typedef type_key_dispatch_tag    tag;
+//     };
   }
 }
   
@@ -166,22 +169,22 @@ namespace viennagrid
     typedef typename viennagrid::result_of::element<TopologicContainerType, typename ElementTag::facet_tag >::type   FacetType;
     typedef typename viennagrid::result_of::element<TopologicContainerType, ElementTag>::type     CellType;
 
-    typedef typename viennagrid::result_of::const_ncell_range<TopologicContainerType, ElementTag::dim-1>::type      FacetRange;
+    typedef typename viennagrid::result_of::const_element_range<TopologicContainerType, typename ElementTag::facet_tag>::type      FacetRange;
     typedef typename viennagrid::result_of::iterator<FacetRange>::type                                           FacetIterator;
       
-    typedef typename viennagrid::result_of::const_ncell_range<TopologicContainerType, ElementTag::dim>::type        CellRange;
+    typedef typename viennagrid::result_of::const_element_range<TopologicContainerType, ElementTag>::type        CellRange;
     typedef typename viennagrid::result_of::iterator<CellRange>::type                                            CellIterator;
 
-    typedef typename viennagrid::result_of::const_ncell_range<CellType, ElementTag::dim-1>::type     FacetOnCellRange;
+    typedef typename viennagrid::result_of::const_element_range<CellType, typename ElementTag::facet_tag>::type     FacetOnCellRange;
     typedef typename viennagrid::result_of::iterator<FacetOnCellRange>::type                           FacetOnCellIterator;
-
+    
     //iterate over all cells, over facets there and tag them:
-    CellRange cells = viennagrid::ncells<ElementTag::dim>(topologic_domain);
+    CellRange cells = viennagrid::elements<ElementTag>(topologic_domain);
     for (CellIterator cit = cells.begin();
           cit != cells.end();
           ++cit)
     {
-      FacetOnCellRange facets_on_cell = ncells<ElementTag::dim-1>(*cit);
+      FacetOnCellRange facets_on_cell = elements<typename ElementTag::facet_tag>(*cit);
       for (FacetOnCellIterator focit = facets_on_cell.begin();
             focit != facets_on_cell.end();
             ++focit)
@@ -202,7 +205,7 @@ namespace viennagrid
     }
     
     //iterate over all facets again and tag all lower level topological elements on facets that belong to the boundary:
-    FacetRange facets = viennagrid::ncells<ElementTag::dim-1>(topologic_domain);
+    FacetRange facets = viennagrid::elements<typename ElementTag::facet_tag>(topologic_domain);
     for (FacetIterator fit = facets.begin();
           fit != facets.end();
           ++fit)
@@ -252,16 +255,19 @@ namespace viennagrid
    * @param el      The n-cell
    * @param domain  The ViennaGrid domain
    */
-  template <typename ElementType, typename TopologicContainerType>
+  template <typename CellTypeOrTag, typename ElementType, typename TopologicContainerType>
   bool is_boundary(ElementType const & el,
                    TopologicContainerType const & topologic_domain)
   {
-    typedef boundary_key<TopologicContainerType>    BoundaryKey;
+    typedef typename result_of::element_tag<CellTypeOrTag>::type CellTag;
     
-    detect_boundary<viennagrid::tetrahedron_tag>(topologic_domain, BoundaryKey(topologic_domain));
-    if (viennadata::find<BoundaryKey, bool>()(el) != NULL)
+    typedef boundary_key<TopologicContainerType>    BoundaryKey;
+    BoundaryKey key(topologic_domain);
+    
+    detect_boundary<CellTag>(topologic_domain, key);
+    if (viennadata::find<BoundaryKey, bool>(key)(el) != NULL)
     {
-      return viennadata::access<BoundaryKey, bool>()(el);
+      return viennadata::access<BoundaryKey, bool>(key)(el);
     }
     return false;
   }
