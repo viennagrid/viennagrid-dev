@@ -204,6 +204,7 @@ namespace viennagrid
   template <typename T>
   class boundary_key;
 
+  template <typename T>
   class interface_key;
 
   template <typename SegmentType>
@@ -327,8 +328,16 @@ namespace viennagrid
     template <typename ElementTag, long k>
     struct bndcell_filler {};
 
-    template <typename element_tag, long k, typename bnd_cell_type>
+    template <typename element_tag, typename bnd_cell_tag, typename bnd_cell_type>
     struct bndcell_generator {};
+    
+    template<typename cell_type, typename bnd_cell_type>
+    struct bndcell_generator<cell_type, simplex_tag<0>, bnd_cell_type>
+    {
+        template<typename element_type, typename inserter_type>
+        static void create_bnd_cells(element_type & element, inserter_type & inserter)
+        {}
+    };
     
   }
   
