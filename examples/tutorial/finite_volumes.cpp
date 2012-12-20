@@ -157,8 +157,6 @@ void assemble(DomainType & domain,
       //std::cout << "  " << system_matrix(row_index, col_index) << " " << system_matrix(row_index, row_index) << std::endl;
       //std::cout << std::endl;
       
-      std::cout << (*eovit).id() << "      " << viennadata::access<viennagrid::voronoi_box_volume_key, double>()(*eovit) << std::endl;
-      
       //Note: volume stored on edges consists of volumes of both adjacent boxes.
       load_vector[row_index] += viennadata::access<viennagrid::voronoi_box_volume_key, double>()(*eovit) / 2.0;
     } //for edges
