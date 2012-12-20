@@ -20,7 +20,7 @@
 
 #include <fstream>
 #include <iostream>
-#include "viennagrid/forwards.h"
+#include "viennagrid/forwards.hpp"
 #include "viennagrid/io/helper.hpp"
 #include "viennagrid/io/data_accessor.hpp"
 
@@ -80,26 +80,32 @@ namespace viennagrid
      * 
      * @tparam DomainType   The ViennaGrid domain.
      */
-    template <typename DomainType>
+    template <typename CellTypeOrTag, typename DomainType>
     class opendx_writer
     {
-        typedef typename DomainType::config_type                         DomainConfiguration;
+        //typedef typename DomainType::config_type                         DomainConfiguration;
 
-        typedef typename DomainConfiguration::numeric_type               CoordType;
-        typedef typename DomainConfiguration::coordinate_system_tag      CoordinateSystemTag;
-        typedef typename DomainConfiguration::cell_tag                   CellTag;
+        typedef typename viennagrid::result_of::point_type<DomainType>::type PointType;
+        typedef typename viennagrid::traits::value_type<PointType>::type CoordType;
+        enum { geometric_dim = viennagrid::traits::static_size<PointType>::value };
+        
+        //typedef typename DomainConfiguration::numeric_type               CoordType;
+        //typedef typename DomainConfiguration::coordinate_system_tag      CoordinateSystemTag;
+        //typedef typename DomainConfiguration::cell_tag                   CellTag;
+        typedef typename viennagrid::result_of::element_tag<CellTypeOrTag>::type CellTag;
 
-        typedef typename result_of::point<DomainConfiguration>::type                              PointType;
-        typedef typename result_of::ncell<DomainConfiguration, 0>::type                           VertexType;
-        typedef typename result_of::ncell<DomainConfiguration, CellTag::dim>::type     CellType;
+        //typedef typename result_of::point<DomainConfiguration>::type                              PointType;
+        //typedef typename result_of::point_type<DomainType>::type                                  PointType;
+        typedef typename result_of::element<DomainType, viennagrid::vertex_tag>::type                           VertexType;
+        typedef typename result_of::element<DomainType, CellTag>::type     CellType;
 
-        typedef typename viennagrid::result_of::const_ncell_range<DomainType, 0>::type   VertexRange;
+        typedef typename viennagrid::result_of::const_element_range<DomainType, viennagrid::vertex_tag>::type   VertexRange;
         typedef typename viennagrid::result_of::iterator<VertexRange>::type              VertexIterator;
         
-        typedef typename viennagrid::result_of::const_ncell_range<DomainType, CellTag::dim>::type     CellRange;
+        typedef typename viennagrid::result_of::const_element_range<DomainType, CellTag>::type     CellRange;
         typedef typename viennagrid::result_of::iterator<CellRange>::type                                        CellIterator;
         
-        typedef typename viennagrid::result_of::const_ncell_range<CellType, 0>::type      VertexOnCellRange;
+        typedef typename viennagrid::result_of::const_element_range<CellType, viennagrid::vertex_tag>::type      VertexOnCellRange;
         typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type         VertexOnCellIterator;
         
         
@@ -111,7 +117,7 @@ namespace viennagrid
          */
         int operator()(DomainType const & domain, std::string const & filename)
         {
-          typedef DXHelper<CoordinateSystemTag::dim>  DXHelper;
+          typedef DXHelper<geometric_dim>  DXHelper;
         
           std::ofstream writer(filename.c_str());
           if (!writer.is_open())
@@ -122,7 +128,7 @@ namespace viennagrid
         
           std::size_t pointnum = viennagrid::ncells<0>(domain).size();
         
-          writer << "object \"points\" class array type float rank 1 shape " << CoordinateSystemTag::dim << " items ";
+          writer << "object \"points\" class array type float rank 1 shape " << geometric_dim << " items ";
           writer << pointnum << " data follows" << std::endl;
         
           //Nodes:
@@ -131,14 +137,14 @@ namespace viennagrid
               vit != vertices.end();
               ++vit)
           {
-            PointWriter<CoordinateSystemTag::dim>::write(writer, vit->point());
+            PointWriter<geometric_dim>::write(writer, viennagrid::point( domain, *vit ) );
             writer << std::endl;
           }
           writer << std::endl;
 
           //Cells:
           std::size_t cellnum = viennagrid::ncells<CellTag::dim>(domain).size();
-          writer << "object \"grid_Line_One\" class array type int rank 1 shape " << (CoordinateSystemTag::dim + 1) << " items " << cellnum << " data follows" << std::endl;
+          writer << "object \"grid_Line_One\" class array type int rank 1 shape " << (geometric_dim + 1) << " items " << cellnum << " data follows" << std::endl;
 
           CellRange cells = viennagrid::ncells<CellTag::dim>(domain);
           for (CellIterator cit = cells.begin();
@@ -252,13 +258,13 @@ namespace viennagrid
       * @param  key         The key object for ViennaData
       * @param  quantity_name        Ignored. Only used for a homogeneous interface with VTK reader/writer.
       */
-    template <typename KeyType, typename DataType, typename DomainType>
-    opendx_writer<DomainType> & add_scalar_data_on_vertices(opendx_writer<DomainType> & writer,
+    template <typename KeyType, typename DataType, typename CellTypeOrTag, typename DomainType>
+    opendx_writer<CellTypeOrTag, DomainType> & add_scalar_data_on_vertices(opendx_writer<CellTypeOrTag, DomainType> & writer,
                                                             KeyType const & key,
                                                             std::string quantity_name)
     {
-      typedef typename DomainType::config_type                             DomainConfiguration;
-      typedef typename result_of::ncell<DomainConfiguration, 0>::type      VertexType;
+      //typedef typename DomainType::config_type                             DomainConfiguration;
+      typedef typename result_of::element<DomainType, viennagrid::vertex_tag>::type      VertexType;
       
       data_accessor_wrapper<VertexType> wrapper(new global_scalar_data_accessor<VertexType, KeyType, DataType>(key));
       writer.add_scalar_data_on_vertices(wrapper, quantity_name);
@@ -274,14 +280,14 @@ namespace viennagrid
       * @param  key         The key object for ViennaData
       * @param  quantity_name        Ignored. Only used for a homogeneous interface with VTK reader/writer.
       */
-    template <typename KeyType, typename DataType, typename DomainType>
-    opendx_writer<DomainType> & add_scalar_data_on_cells(opendx_writer<DomainType> & writer,
+    template <typename KeyType, typename DataType, typename CellTypeOrTag, typename DomainType>
+    opendx_writer<CellTypeOrTag, DomainType> & add_scalar_data_on_cells(opendx_writer<CellTypeOrTag, DomainType> & writer,
                                                          KeyType const & key,
                                                          std::string quantity_name)
     {
       typedef typename DomainType::config_type                         DomainConfiguration;
-      typedef typename DomainConfiguration::cell_tag                   CellTag;
-      typedef typename result_of::ncell<DomainConfiguration, CellTag::dim>::type     CellType;
+      typedef typename result_of::element_tag<CellTypeOrTag>::type                   CellTag;
+      typedef typename result_of::element<DomainConfiguration, CellTag>::type     CellType;
       
       data_accessor_wrapper<CellType> wrapper(new global_scalar_data_accessor<CellType, KeyType, DataType>(key));
       writer.add_scalar_data_on_cells(wrapper, quantity_name);
