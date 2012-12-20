@@ -149,7 +149,8 @@ namespace viennagrid
         for (int i=0; i<cell_num; ++i)
         {
           long vertex_num;
-          std::vector<VertexHookType> cell_vertex_hooks(topology::bndcells<CellTag, 0>::num);
+          //std::vector<VertexHookType> cell_vertex_hooks(topology::bndcells<CellTag, 0>::num);
+          viennagrid::storage::static_array<VertexHookType, topology::bndcells<CellTag, 0>::num> cell_vertex_hooks;
           
           if (!reader.good())
             throw bad_file_format_exception(filename, "EOF encountered while reading cells (segment index expected).");
