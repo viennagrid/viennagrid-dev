@@ -34,12 +34,64 @@ namespace viennagrid
   template <>
   struct hypercube_tag<2>
   {
+    typedef simplex_tag<1> facet_tag;
+      
     enum{ dim = 2 };
     static std::string name() { return "Quadrilateral"; }
   };
   
   namespace topology
   {
+      
+    template <>
+    struct boundary_cells<hypercube_tag<2>, simplex_tag<1> >
+    {
+      //typedef simplex_tag<k>             tag;
+
+      typedef static_layout_tag     layout_tag;
+      enum{ num = 4 };
+    };
+    
+    template <>
+    struct boundary_cells<hypercube_tag<2>, simplex_tag<0> >
+    {
+      //typedef simplex_tag<k>             tag;
+
+      typedef static_layout_tag     layout_tag;
+      enum{ num = 4 };
+    };
+    
+
+    template<typename bnd_cell_type>
+    struct bndcell_generator<hypercube_tag<2>, simplex_tag<1>, bnd_cell_type>
+    {
+        template<typename element_type, typename inserter_type>
+        static void create_bnd_cells(element_type & element, inserter_type & inserter)
+        {
+            bnd_cell_type bnd_cell( inserter.get_physical_container_collection() );
+            int index = 0;
+            
+            bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(0), 0 );
+            bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(1), 1 );
+            element.set_bnd_cell( bnd_cell, inserter(bnd_cell), index++ );
+
+            bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(0), 0 );
+            bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(2), 1 );
+            element.set_bnd_cell( bnd_cell, inserter(bnd_cell), index++ );
+            
+            bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(1), 0 );
+            bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(3), 1 );
+            element.set_bnd_cell( bnd_cell, inserter(bnd_cell), index++ );
+            
+            bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(2), 0 );
+            bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(3), 1 );
+            element.set_bnd_cell( bnd_cell, inserter(bnd_cell), index++ );
+        }
+    };
+    
+    
+      
+      
   
     /** @brief Topological description of the boundary 0-cells of a quadrilateral */
     template <>
