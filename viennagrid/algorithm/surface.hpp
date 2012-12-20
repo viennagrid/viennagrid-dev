@@ -37,7 +37,7 @@ namespace viennagrid
   namespace detail
   {
     /** @brief Implementation for the calculation of the surface of a domain or segment */
-    template <typename ElementTypeOrTag, typename GeometricContainerType>
+    template <typename CellTypeOrTag, typename ElementTypeOrTag, typename GeometricContainerType>
     typename viennagrid::traits::value_type< typename viennagrid::result_of::point_type<GeometricContainerType>::type >::type
     surface_domainsegment(GeometricContainerType const & d)
     {
@@ -53,7 +53,8 @@ namespace viennagrid
                          fit != facets.end();
                        ++fit)
       {
-        if (is_boundary(*fit, d))
+          //std::cout << *fit << " boundary=" << is_boundary<CellTypeOrTag>(*fit, d) << std::endl;
+        if (is_boundary<CellTypeOrTag>(*fit, d))
           result += viennagrid::volume(*fit, d);
       }
       return result;
@@ -94,11 +95,11 @@ namespace viennagrid
   
   //special case: domain
   /** @brief Returns the surface of a domain */
-  template <typename ElementTypeOrTag, typename GeometricContainerType>
+  template <typename CellTypeOrTag, typename ElementTypeOrTag, typename GeometricContainerType>
   typename viennagrid::traits::value_type< typename viennagrid::result_of::point_type<GeometricContainerType>::type >::type
   surface(GeometricContainerType const & d)
   {
-    return detail::surface_domainsegment<ElementTypeOrTag>(d);
+    return detail::surface_domainsegment<CellTypeOrTag, ElementTypeOrTag>(d);
   }    
 
     
