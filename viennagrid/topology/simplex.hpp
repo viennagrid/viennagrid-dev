@@ -90,7 +90,7 @@ namespace viennagrid
     template <long n, long k>
     struct boundary_cells<simplex_tag<n>, simplex_tag<k> >
     {
-      typedef simplex_tag<k>             tag;
+      //typedef simplex_tag<k>             tag;
 
       typedef static_layout_tag     layout_tag;
       enum{ num = meta::n_over_k<n+1, k+1>::value };
@@ -99,18 +99,9 @@ namespace viennagrid
   
     ///////////////////////////////// Generator for boundary cell elements ///////////////////////////////////
     
-    template<long n, typename bnd_cell_type>
-    struct bndcell_generator<simplex_tag<n>, 0, bnd_cell_type>
-    {
-        template<typename element_type, typename inserter_type>
-        static void create_bnd_cells(element_type & element, inserter_type & inserter)
-        {}
-    };
-    
-    
     
     template<long n, typename bnd_cell_type>
-    struct bndcell_generator<simplex_tag<n>, 1, bnd_cell_type>
+    struct bndcell_generator<simplex_tag<n>, simplex_tag<1>, bnd_cell_type>
     {
         template<typename element_type, typename inserter_type>
         static void create_bnd_cells(element_type & element, inserter_type & inserter)
@@ -131,7 +122,7 @@ namespace viennagrid
     
     
     template<long n, typename bnd_cell_type>
-    struct bndcell_generator<simplex_tag<n>, 2, bnd_cell_type>
+    struct bndcell_generator<simplex_tag<n>, simplex_tag<2>, bnd_cell_type>
     {
         template<typename element_type, typename inserter_type>
         static void create_bnd_cells(element_type & element, inserter_type & inserter)
