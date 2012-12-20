@@ -422,7 +422,7 @@ namespace viennagrid
             typename metainfo_typelist = viennameta::null_type, typename metainfo_container_config = viennagrid::storage::default_container_config>
         struct geometric_domain_config
         {
-            typedef typename viennagrid::result_of::default_topologic_config<viennagrid::tetrahedron_tag, hook_tag>::type toplologic_config;
+            typedef typename viennagrid::result_of::default_topologic_config<element_tag, hook_tag>::type toplologic_config;
             typedef typename viennameta::make_typemap<
                 viennagrid::topologic_config_tag, toplologic_config,
                 viennagrid::vector_type_tag, vector_type,
