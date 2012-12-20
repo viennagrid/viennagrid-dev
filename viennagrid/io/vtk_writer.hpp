@@ -395,6 +395,8 @@ namespace viennagrid
                    << "\">" << std::endl;
 
 
+            vertex_to_index_map.resize(1);
+                   
             writePoints(domain, writer, 0);
             
             if (vertex_data_scalar.size() + vertex_data_vector.size() + vertex_data_normal.size() > 0)
