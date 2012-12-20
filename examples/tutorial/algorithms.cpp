@@ -142,7 +142,7 @@ int main()
   std::cout << std::endl;
   
   std::cout << "Volume of domain: "       << viennagrid::volume<viennagrid::tetrahedron_tag>(domain) << std::endl;
-  std::cout << "Surface of domain: "       << viennagrid::surface<viennagrid::tetrahedron_tag, viennagrid::tetrahedron_tag>(domain) << std::endl;
+  std::cout << "Surface of domain: "       << viennagrid::surface<viennagrid::tetrahedron_tag>(domain) << std::endl;
   
   
   //
