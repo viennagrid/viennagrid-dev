@@ -839,8 +839,7 @@ namespace viennagrid
         //std::cout << "Interface area: " << interface_area << std::endl;
         viennadata::access<InterfaceAreaKey, double>(interface_key)( edge ) = interface_area;
         double volume_contribution = interface_area * edge_length / 6.0;
-        //std::cout << "Volume contribution: " << volume_contribution << std::endl;
-        viennadata::access<BoxVolumeKey, double>(box_volume_key)(*eit) = 2.0 * volume_contribution; //volume contribution of both box volumes associated with the edge
+        viennadata::access<BoxVolumeKey, double>(box_volume_key)(edge) = 2.0 * volume_contribution; //volume contribution of both box volumes associated with the edge
         viennadata::access<BoxVolumeKey, double>(box_volume_key)(v0) += volume_contribution;
         viennadata::access<BoxVolumeKey, double>(box_volume_key)(v1) += volume_contribution;
         
@@ -867,17 +866,19 @@ namespace viennagrid
       //typedef typename Config::cell_tag                  CellTag;
       
       typedef typename viennagrid::result_of::element<DomainType, CellTag>::type CellType;
+      typedef typename viennagrid::result_of::const_element_hook<DomainType, CellTag>::type ConstCellHookType;
       
       typedef typename viennagrid::result_of::point_type<DomainType>::type                            PointType;
       typedef typename viennagrid::result_of::element<DomainType, vertex_tag>::type                         VertexType;
       typedef typename viennagrid::result_of::element<DomainType, line_tag>::type                         EdgeType;
-      typedef typename viennagrid::result_of::element<DomainType, triangle_tag>::type                         FacetType;
+      typedef typename viennagrid::result_of::element<DomainType, quadrilateral_tag>::type                         FacetType;
       //typedef typename viennagrid::result_of::element<DomainType, CellTag::dim>::type   CellType;
       
       typedef typename viennagrid::result_of::const_element_range<DomainType, CellTag>::type    CellRange;
       typedef typename viennagrid::result_of::iterator<CellRange>::type                                       CellIterator;
+      typedef typename viennagrid::result_of::hook_iterator<CellRange>::type                                       CellHookIterator;
 
-      typedef typename viennagrid::result_of::const_element_range<CellType, triangle_tag>::type                            FacetOnCellRange;
+      typedef typename viennagrid::result_of::const_element_range<CellType, quadrilateral_tag>::type                            FacetOnCellRange;
       typedef typename viennagrid::result_of::iterator<FacetOnCellRange>::type                                FacetOnCellIterator;
 
       typedef typename viennagrid::result_of::const_element_range<FacetType, line_tag>::type                           EdgeOnFacetRange;
@@ -886,20 +887,21 @@ namespace viennagrid
       typedef typename viennagrid::result_of::const_element_range<EdgeType, vertex_tag>::type                            VertexOnEdgeRange;
       typedef typename viennagrid::result_of::iterator<VertexOnEdgeRange>::type                               VertexOnEdgeIterator;
 
-      typedef typename viennagrid::result_of::voronoi_cell_contribution<CellType>::type      CellContributionType;
+      typedef typename viennagrid::result_of::voronoi_cell_contribution<ConstCellHookType>::type      CellContributionType;
       
       //
       // Algorithm: Iterate over all cells, compute circumcenter and add interface area to edge, box volume to vertex.
       //
       
       CellRange cells = viennagrid::elements<CellTag>(domain);
-      for (CellIterator cit  = cells.begin();
-                        cit != cells.end();
+      for (CellHookIterator cit  = cells.hook_begin();
+                        cit != cells.hook_end();
                       ++cit)
       {
-        PointType cell_center = circumcenter(*cit, domain);
+        const CellType & cell = viennagrid::dereference_hook(domain, *cit);
+        PointType cell_center = circumcenter(cell, domain);
 
-        FacetOnCellRange facets_on_cell = viennagrid::elements<viennagrid::triangle_tag>(*cit);
+        FacetOnCellRange facets_on_cell = viennagrid::elements<viennagrid::quadrilateral_tag>(cell);
         for (FacetOnCellIterator focit  = facets_on_cell.begin();
                                 focit != facets_on_cell.end();
                               ++focit)
@@ -916,7 +918,7 @@ namespace viennagrid
             
             // interface contribution:
             double interface_contribution = spanned_volume(cell_center, facet_center, edge_midpoint);
-            viennadata::access<InterfaceAreaKey, CellContributionType>(interface_key)(*eocit).push_back(std::make_pair(&(*cit), interface_contribution) );   //Note: Due to iteration over cells there is no need to use a voronoi_unique_quantity_update() here
+            viennadata::access<InterfaceAreaKey, CellContributionType>(interface_key)(*eocit).push_back(std::make_pair((*cit), interface_contribution) );   //Note: Due to iteration over cells there is no need to use a voronoi_unique_quantity_update() here
             viennadata::access<InterfaceAreaKey, double>(interface_key)(*eocit) += interface_contribution;
             
             //box volume contribution:
@@ -926,12 +928,13 @@ namespace viennagrid
                                       voeit != vertices_on_edge.end();
                                     ++voeit)
             {
-              double contribution = spanned_volume(cell_center, facet_center, edge_midpoint, voeit->point());
-              viennadata::access<BoxVolumeKey, CellContributionType>(box_volume_key)(*voeit).push_back(std::make_pair( &(*cit), contribution) );
+              //double contribution = spanned_volume(cell_center, facet_center, edge_midpoint, voeit->point());
+              double contribution = spanned_volume(cell_center, facet_center, edge_midpoint, viennagrid::point(domain, *voeit));
+              viennadata::access<BoxVolumeKey, CellContributionType>(box_volume_key)(*voeit).push_back(std::make_pair( (*cit), contribution) );
               viennadata::access<BoxVolumeKey, double>(box_volume_key)(*voeit) += contribution;
               edge_contribution += contribution;
             }
-            viennadata::access<BoxVolumeKey, CellContributionType>(box_volume_key)(*eocit).push_back(std::make_pair( &(*cit), edge_contribution) );
+            viennadata::access<BoxVolumeKey, CellContributionType>(box_volume_key)(*eocit).push_back(std::make_pair( (*cit), edge_contribution) );
             viennadata::access<BoxVolumeKey, double>(box_volume_key)(*eocit) += edge_contribution;
           } //for edges on facet
 
