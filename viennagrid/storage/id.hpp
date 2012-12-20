@@ -23,7 +23,7 @@ namespace viennagrid
             typedef smart_id self_type;
             typedef value_type_ value_type;
             
-            smart_id() : internal_id(0) {}
+            smart_id() : internal_id(-1) {}
             explicit smart_id( base_id_type internal_id_ ) : internal_id(internal_id_) {}
             
             base_id_type get() const { return internal_id; }
