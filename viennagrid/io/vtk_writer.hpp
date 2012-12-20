@@ -71,6 +71,7 @@ namespace viennagrid
 
         //typedef typename result_of::point<DomainConfiguration>::type                              PointType;
         typedef typename result_of::element<DomainType, vertex_tag>::type                           VertexType;
+        typedef typename result_of::element_hook<DomainType, vertex_tag>::type          VertexHookType;
         //typedef typename result_of::element<DomainConfiguration, CellTag::dim>::type     CellType;
         
         
@@ -79,7 +80,8 @@ namespace viennagrid
 //         typedef CellType_                                                       CellType;
 //         typedef typename CellType_::tag                                         CellTag;
 //         
-//         typedef typename result_of::ncell<DomainType, 0>::type          VertexType;
+        //typedef typename result_of::element<DomainType, viennagrid::vertex_tag>::type          VertexType;
+        
 
       protected:
 
@@ -93,21 +95,26 @@ namespace viennagrid
 
         /** @brief Writes the vertices in the domain */
         template <typename SegmentType>
-        void writePoints(SegmentType const & segment, std::ofstream & writer)
+        void writePoints(SegmentType const & segment, std::ofstream & writer, int seg_num)
         {
           typedef typename viennagrid::result_of::const_element_range<SegmentType, vertex_tag>::type   VertexRange;
-          typedef typename viennagrid::result_of::iterator<VertexRange>::type               VertexIterator;
+          typedef typename viennagrid::result_of::hook_iterator<VertexRange>::type               VertexHookIterator;
           
           writer << "   <Points>" << std::endl;
           writer << "    <DataArray type=\"Float32\" NumberOfComponents=\"3\" format=\"ascii\">" << std::endl;
 
+          std::size_t index = 0;
           VertexRange vertices = viennagrid::elements<vertex_tag>(segment);
-          for (VertexIterator vit = vertices.begin();
-              vit != vertices.end();
+          for (VertexHookIterator vit = vertices.hook_begin();
+              vit != vertices.hook_end();
               ++vit)
           {
             //PointWriter<dim>::write(writer, vit->point());
-            PointWriter<dim>::write(writer, viennagrid::point(segment, *vit) );
+            vertex_to_index_map[seg_num][*vit] = index++;
+            
+            VertexType const & vertex = viennagrid::dereference_hook(segment, *vit);
+            
+            PointWriter<dim>::write(writer, viennagrid::point(segment, vertex) );
 
             // add 0's for less than three dimensions
               if (dim == 2)
@@ -124,13 +131,14 @@ namespace viennagrid
 
         /** @brief Writes the cells to the domain */
         template <typename DomainSegmentType>
-        void writeCells(DomainSegmentType const & domseg, std::ofstream & writer)
+        void writeCells(DomainSegmentType const & domseg, std::ofstream & writer, int seg_num)
         {
           typedef typename viennagrid::result_of::const_ncell_range<DomainSegmentType, CellTag::dim>::type     CellRange;
           typedef typename viennagrid::result_of::iterator<CellRange>::type                                         CellIterator;
 
           typedef typename viennagrid::result_of::const_ncell_range<CellType, 0>::type      VertexOnCellRange;
           typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type         VertexOnCellIterator;
+          typedef typename viennagrid::result_of::hook_iterator<VertexOnCellRange>::type         VertexHookOnCellIterator;
           
           //vtk_vertex_id_repository<DomainSegmentType>  vertex_ids(domseg);
           
@@ -142,21 +150,23 @@ namespace viennagrid
               ++cit)
           {
               //step 1: Write vertex indices in ViennaGrid orientation to array:
-              std::vector<VertexType const *> viennagrid_vertices(viennagrid::topology::bndcells<CellTag, 0>::num);
+              std::vector<std::size_t> viennagrid_vertices(viennagrid::topology::bndcells<CellTag, 0>::num);
               VertexOnCellRange vertices_on_cell = viennagrid::ncells<0>(*cit);
               std::size_t j = 0;
-              for (VertexOnCellIterator vocit = vertices_on_cell.begin();
-                  vocit != vertices_on_cell.end();
+              for (VertexHookOnCellIterator vocit = vertices_on_cell.hook_begin();
+                  vocit != vertices_on_cell.hook_end();
                   ++vocit, ++j)
               {
-                viennagrid_vertices[j] = &(*vocit);
+                viennagrid_vertices[j] = vertex_to_index_map[seg_num][*vocit];
+                //&(*vocit);
               }
               
               //Step 2: Write the transformed connectivities:
               viennagrid_to_vtk_orientations<CellTag> reorderer;
               for (std::size_t i=0; i<viennagrid_vertices.size(); ++i)
               {
-                writer << viennagrid_vertices[reorderer(static_cast<long>(i))]->id() << " ";
+                //writer << viennagrid_vertices[reorderer(static_cast<long>(i))]->id() << " ";
+                writer <<   viennagrid_vertices[reorderer(static_cast<long>(i))] << " ";
 //                 writer << vertex_ids(*(viennagrid_vertices[reorderer(static_cast<long>(i))]), //convert between different orientations used within VTK and ViennaGrid
 //                                      domseg) << " ";
               }
@@ -385,7 +395,7 @@ namespace viennagrid
                    << "\">" << std::endl;
 
 
-            writePoints(domain, writer);
+            writePoints(domain, writer, 0);
             
             if (vertex_data_scalar.size() + vertex_data_vector.size() + vertex_data_normal.size() > 0)
             {
@@ -403,7 +413,7 @@ namespace viennagrid
               writer << "   </PointData>" << std::endl;
             }
 
-            writeCells(domain, writer);
+            writeCells(domain, writer, 0);
             if (cell_data_scalar.size() + cell_data_vector.size() + cell_data_normal.size() > 0)
             {
               writer << "   <CellData ";
@@ -473,6 +483,8 @@ namespace viennagrid
             }
             
             
+            vertex_to_index_map.resize( segment_num );
+            
             //
             // Step 2: Write segments to individual files
             //
@@ -514,7 +526,7 @@ namespace viennagrid
                     << "\">" << std::endl;
 
 
-              writePoints(seg, writer);
+              writePoints(seg, writer, i);
               
               if (vertex_data_scalar.size() + vertex_data_vector.size() + vertex_data_normal.size() > 0)
               {
@@ -532,7 +544,7 @@ namespace viennagrid
                 writer << "   </PointData>" << std::endl;
               }
 
-              writeCells(seg, writer);
+              writeCells(seg, writer, i);
               if (cell_data_scalar.size() + cell_data_vector.size() + cell_data_normal.size() > 0)
               {
                 writer << "   <CellData ";
@@ -649,6 +661,9 @@ namespace viennagrid
         }
 
       private:
+          
+        std::vector< std::map< VertexHookType, std::size_t > >            vertex_to_index_map;
+          
         std::vector< data_accessor_wrapper<VertexType> >    vertex_data_scalar;
         std::vector< std::string >                          vertex_data_scalar_names;
         
@@ -697,8 +712,8 @@ namespace viennagrid
                                                          KeyType const & key,
                                                          std::string quantity_name)
     {
-      typedef typename DomainType::config_type                             DomainConfiguration;
-      typedef typename result_of::ncell<DomainConfiguration, 0>::type      VertexType;
+      //typedef typename DomainType::config_type                             DomainConfiguration;
+      typedef typename result_of::element<DomainType, viennagrid::vertex_tag>::type      VertexType;
       
       data_accessor_wrapper<VertexType> wrapper(new global_scalar_data_accessor<VertexType, KeyType, DataType>(key));
       writer.add_scalar_data_on_vertices(wrapper, quantity_name);
@@ -741,8 +756,8 @@ namespace viennagrid
                                                          KeyType const & key,
                                                          std::string quantity_name)
     {
-      typedef typename DomainType::config_type                             DomainConfiguration;
-      typedef typename result_of::ncell<DomainConfiguration, 0>::type      VertexType;
+      //typedef typename DomainType::config_type                             DomainConfiguration;
+      typedef typename result_of::element<DomainType, vertex_tag>::type      VertexType;
       
       data_accessor_wrapper<VertexType> wrapper(new global_vector_data_accessor<VertexType, KeyType, DataType>(key));
       writer.add_vector_data_on_vertices(wrapper, quantity_name);
