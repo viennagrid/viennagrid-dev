@@ -142,7 +142,7 @@ int main()
   std::cout << std::endl;
   
   std::cout << "Volume of domain: "       << viennagrid::volume<viennagrid::tetrahedron_tag>(domain) << std::endl;
-  std::cout << "Surface of domain: "       << viennagrid::surface<viennagrid::tetrahedron_tag>(domain) << std::endl;
+  std::cout << "Surface of domain: "       << viennagrid::surface<viennagrid::tetrahedron_tag, viennagrid::tetrahedron_tag>(domain) << std::endl;
   
   
   //
@@ -187,7 +187,7 @@ int main()
   //
   // Get boundary information of first vertex with respect to the full domain:
   std::cout << "Boundary flag of first vertex with respect to domain: "
-            << viennagrid::is_boundary(vertices[0], domain)    //second argument is the enclosing complex (either a domain or a segment)
+            << viennagrid::is_boundary<viennagrid::tetrahedron_tag>(vertices[0], domain)    //second argument is the enclosing complex (either a domain or a segment)
             << std::endl << std::endl;
   
   
