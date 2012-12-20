@@ -369,8 +369,8 @@ namespace viennagrid
             
             viennagrid::storage::static_array<VertexHookType, topology::bndcells<CellTag, 0>::num> cell_vertex_hooks;
             
-            std::cout << "Pushing Cell " << i << " to segment " << seg_id << std::endl;
-            std::cout << "  ";
+            //std::cout << "Pushing Cell " << i << " to segment " << seg_id << std::endl;
+            //std::cout << "  ";
             
             vtk_to_viennagrid_orientations<CellTag> reorderer;
             for (long j = 0; j < numVertices; j++)
@@ -379,7 +379,7 @@ namespace viennagrid
               std::size_t local_index = local_cell_vertices[seg_id][reordered_j + offsetIdx];
               std::size_t global_vertex_index = local_to_global_map[seg_id][local_index];
               
-              std::cout << global_vertex_index << " ";
+              //std::cout << global_vertex_index << " ";
               cell_vertex_hooks[j] = viennagrid::elements<viennagrid::vertex_tag>(domain).hook_at(global_vertex_index);
               
               viennagrid::add_hook( segments[seg_id], domain, cell_vertex_hooks[j] );
@@ -388,7 +388,7 @@ namespace viennagrid
               //vertices[j] = &(viennagrid::ncells<0>(domain)[global_vertex_index]);
               //std::cout << "j+offsetidx: " << j+offsetIdx << std::endl;
             }
-            std::cout << std::endl;
+            //std::cout << std::endl;
 
             
             
