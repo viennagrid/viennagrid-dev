@@ -31,23 +31,33 @@
 #include "viennagrid/algorithm/volume.hpp"
 #include "viennagrid/algorithm/voronoi.hpp"
 #include "viennagrid/io/netgen_reader.hpp"
+#include "viennagrid/domain/coboundary_iteration.hpp"
+
 
 
 
 int main()
 {
-  typedef viennagrid::config::tetrahedral_3d                      ConfigType;  //use this for a 3d example
+    typedef viennagrid::point_t<double, viennagrid::cartesian_cs<3> > PointType;  //use this for a 3d examples
+    typedef viennagrid::tetrahedron_tag                           CellTag;
+    typedef viennagrid::result_of::geometric_domain_config<CellTag, PointType, viennagrid::storage::id_hook_tag >::type DomainConfig;
+    typedef viennagrid::result_of::geometric_domain< DomainConfig >::type DomainType;
+    typedef viennagrid::result_of::geometric_view<DomainType>::type SegmentType;
+
+    
+  //typedef viennagrid::config::tetrahedral_3d                      ConfigType;  //use this for a 3d example
   //typedef viennagrid::config::triangular_2d                       ConfigType;  //use this for a 2d example (also change filename below!)
-  typedef viennagrid::result_of::domain<ConfigType>::type         DomainType;
-  typedef ConfigType::cell_tag                           CellTag;
+  //typedef viennagrid::result_of::domain<ConfigType>::type         DomainType;
+  //typedef ConfigType::cell_tag                           CellTag;
 
   //
   // Define the types of the elements in the domain (derived from ConfigType):
   //
-  typedef viennagrid::result_of::ncell<ConfigType, 0>::type                          VertexType;
-  typedef viennagrid::result_of::ncell<ConfigType, 1>::type                          EdgeType;
-  typedef viennagrid::result_of::ncell<ConfigType, CellTag::dim-1>::type  FacetType;
-  typedef viennagrid::result_of::ncell<ConfigType, CellTag::dim>::type    CellType;
+  typedef viennagrid::result_of::element<DomainType, viennagrid::vertex_tag>::type                          VertexType;
+  typedef viennagrid::result_of::element_hook<DomainType, viennagrid::vertex_tag>::type                          VertexHookType;
+  typedef viennagrid::result_of::element<DomainType, viennagrid::line_tag>::type                          EdgeType;
+  typedef viennagrid::result_of::element<DomainType, CellTag::facet_tag>::type  FacetType;
+  typedef viennagrid::result_of::element<DomainType, CellTag>::type    CellType;
 
   std::cout << "--------------------------------------------------" << std::endl;
   std::cout << "-- ViennaGrid tutorial: Iteration over elements --" << std::endl;
@@ -55,6 +65,7 @@ int main()
   std::cout << std::endl;
   
   DomainType domain;
+  std::vector<SegmentType> segments;
   
   
   //
@@ -62,13 +73,13 @@ int main()
   //
   try
   {
-    viennagrid::io::netgen_reader reader;
+    viennagrid::io::netgen_reader<CellTag> reader;
     #ifdef _MSC_VER      //Visual Studio builds in a subfolder
     std::string path = "../../examples/data/";
     #else
     std::string path = "../examples/data/";
     #endif
-    reader(domain, path + "cube6.mesh"); //use this for a 3d example
+    reader(domain, segments, path + "cube6.mesh"); //use this for a 3d example
     //reader(domain, path + "square8.mesh"); //use this for a 2d example (also change ConfigType defined above!)
   }
   catch (std::exception & e)
@@ -91,19 +102,19 @@ int main()
   // The first template argument to ncell_range<> denotes the enclosing body (here: the domain),
   // and the second argument denotes the topological dimension of the elements over which to iterate (0...vertices, 1...lines, etc.)
   //
-  typedef viennagrid::result_of::ncell_range<DomainType, 0>::type     VertexRange;
+  typedef viennagrid::result_of::element_range<DomainType, viennagrid::vertex_tag>::type     VertexRange;
   typedef viennagrid::result_of::iterator<VertexRange>::type          VertexIterator;
   
   //
   // Define global edge, facet and cell ranges and their iterator types in the same way:
   //
-  typedef viennagrid::result_of::ncell_range<DomainType, 1>::type     EdgeRange;
+  typedef viennagrid::result_of::element_range<DomainType, viennagrid::line_tag>::type     EdgeRange;
   typedef viennagrid::result_of::iterator<EdgeRange>::type            EdgeIterator;
 
-  typedef viennagrid::result_of::ncell_range<DomainType, CellTag::dim-1>::type     FacetRange;
+  typedef viennagrid::result_of::element_range<DomainType, CellTag::facet_tag>::type     FacetRange;
   typedef viennagrid::result_of::iterator<FacetRange>::type                        FacetIterator;
   
-  typedef viennagrid::result_of::ncell_range<DomainType, CellTag::dim>::type       CellRange;
+  typedef viennagrid::result_of::element_range<DomainType, CellTag>::type       CellRange;
   typedef viennagrid::result_of::iterator<CellRange>::type                         CellIterator;
   
   
@@ -112,7 +123,7 @@ int main()
   // Note: when assigned to a range, the topological level usually required as template argument for ncells<>()
   //       can be deduced automatically and may thus be omitted
   //
-  VertexRange vertices = viennagrid::ncells(domain);   
+  VertexRange vertices = viennagrid::elements<viennagrid::vertex_tag>(domain);   
   //VertexRange vertices = viennagrid::ncells<0>(domain); //this is an equivalent way of setting up the vertex range
   
   for (VertexIterator vit = vertices.begin();  //STL-like iteration
@@ -127,8 +138,8 @@ int main()
   // Iterate over all edges of the domain.
   // Can be done like above. To show alternatives as well, this time the range is not set up explicitly in a named variable:
   std::size_t num_edges = 0;
-  for (EdgeIterator eit = viennagrid::ncells<1>(domain).begin();   //Note that the template parameter '1' is mandatory here to select edges
-                    eit != viennagrid::ncells<1>(domain).end();
+  for (EdgeIterator eit = viennagrid::elements<viennagrid::line_tag>(domain).begin();   //Note that the template parameter '1' is mandatory here to select edges
+                    eit != viennagrid::elements<viennagrid::line_tag>(domain).end();
                   ++eit)
   {
     //do something with *eit here. 
@@ -142,7 +153,7 @@ int main()
   // However, this does not work for all domain storage configurations. Cells and vertices will always work.
   //
   std::size_t num_cells = 0;
-  CellRange cells = viennagrid::ncells<CellTag::dim>(domain);
+  CellRange cells = viennagrid::elements<CellTag>(domain);
   for (std::size_t i=0; i<cells.size(); ++i)
   {
     ++num_cells;
@@ -166,13 +177,14 @@ int main()
   // Define some on-element ranges and iterators in the same way.
   // Mind the first template argument of ncell_range<>, which is the enclosing element.
   //
-  typedef viennagrid::result_of::ncell_range<FacetType, 0>::type                VertexOnFacetRange;
+  typedef viennagrid::result_of::element_range<FacetType, viennagrid::vertex_tag>::type                VertexOnFacetRange;
   typedef viennagrid::result_of::iterator<VertexOnFacetRange>::type             VertexOnFacetIterator;
   
-  typedef viennagrid::result_of::ncell_range<FacetType, 1>::type                EdgeOnFacetRange;
+  typedef viennagrid::result_of::element_range<FacetType, viennagrid::line_tag>::type                EdgeOnFacetRange;
   typedef viennagrid::result_of::iterator<EdgeOnFacetRange>::type               EdgeOnFacetIterator;
   
-  typedef viennagrid::result_of::ncell_range<CellType, CellTag::dim-1>::type    FacetOnCellRange;
+  typedef viennagrid::result_of::element_range<CellType, CellTag::facet_tag>::type    FacetOnCellRange;
+  typedef viennagrid::result_of::hook_iterator<FacetOnCellRange>::type               FacetOnCellHookIterator;
   typedef viennagrid::result_of::iterator<FacetOnCellRange>::type               FacetOnCellIterator;
 
   for (CellIterator cit = cells.begin(); cit != cells.end(); ++cit) //iterate over all cells
@@ -182,15 +194,17 @@ int main()
     //
     // The facets of the cell are obtained by passing the cell as parameter to the ncell() function
     //
-    FacetOnCellRange facets_on_cells = viennagrid::ncells(*cit);
-    for (FacetOnCellIterator focit = facets_on_cells.begin();
-                             focit != facets_on_cells.end();
+    FacetOnCellRange facets_on_cells = viennagrid::elements<CellTag::facet_tag>(*cit);
+    for (FacetOnCellHookIterator focit = facets_on_cells.hook_begin();
+                             focit != facets_on_cells.hook_end();
                            ++focit)
     {
+      FacetType & facet = viennagrid::dereference_hook(domain, *focit);
+        
       // Iterate over all vertices of the facet:
       std::cout << "Vertices in global orientation: " << std::endl;
-      for (VertexOnFacetIterator vofit = viennagrid::ncells<0>(*focit).begin();
-                                 vofit != viennagrid::ncells<0>(*focit).end();
+      for (VertexOnFacetIterator vofit = viennagrid::elements<viennagrid::vertex_tag>(facet).begin();
+                                 vofit != viennagrid::elements<viennagrid::vertex_tag>(facet).end();
                                ++vofit)
       {
         std::cout << *vofit << std::endl;
@@ -198,8 +212,8 @@ int main()
 
       // Same again, but using the orientation imposed by the cell
       std::cout << "Vertices in local orientation: " << std::endl;
-      for (std::size_t i=0; i<viennagrid::ncells<0>(*focit).size(); ++i)
-        std::cout << viennagrid::local_vertex(*cit, *focit, i) << std::endl;
+      for (std::size_t i=0; i<viennagrid::elements<viennagrid::vertex_tag>(facet).size(); ++i)
+        std::cout << viennagrid::local_vertex(domain, *cit, *focit, i) << std::endl;
     }
     
     std::cout << std::endl << "---------------" << std::endl << std::endl;
@@ -216,28 +230,28 @@ int main()
   // As before, the first argument specifies the root of the iteration,
   // the second argument denotes the topological dimension of the elements over which to iterate.
   //
-  typedef viennagrid::result_of::ncell_range<VertexType, 1>::type                EdgeOnVertexRange;
+  typedef viennagrid::result_of::coboundary_range<DomainType, viennagrid::line_tag>::type                EdgeOnVertexRange;
   typedef viennagrid::result_of::iterator<EdgeOnVertexRange>::type               EdgeOnVertexIterator;
   
-  typedef viennagrid::result_of::ncell_range<EdgeType, CellTag::dim>::type   CellOnEdgeRange;
+  typedef viennagrid::result_of::coboundary_range<DomainType, CellTag>::type   CellOnEdgeRange;
   typedef viennagrid::result_of::iterator<CellOnEdgeRange>::type                        CellOnEdgeIterator;
   
   
   // Iteration over all edges connected to the first vertex in the domain:
-  VertexType & v0 = viennagrid::ncells<0>(domain)[0];
+  VertexHookType vh0 = viennagrid::elements<viennagrid::vertex_tag>(domain).hook_at(0);
   std::size_t num_v0edges = 0;
   
   // To set up the range, two arguments need to be passed to the ncells() function.
   // The second argument denotes the enclosing complex over which to iterate and is either a segment or the full domain.
-  EdgeOnVertexRange edges_on_v0 = viennagrid::ncells(v0, domain);
+  EdgeOnVertexRange edges_on_v0 = viennagrid::coboundary_elements<viennagrid::line_tag>(domain, vh0);
   for (EdgeOnVertexIterator eovit = edges_on_v0.begin();
                             eovit != edges_on_v0.end();
                           ++eovit)
   {
     ++num_v0edges;
   }
-  std::cout << "Edges connected to v0 visited: " << num_v0edges << std::endl;
-  std::cout << "Edges connected to v0 available: " << edges_on_v0.size() << std::endl;
+  std::cout << "Edges connected to vh0 visited: " << num_v0edges << std::endl;
+  std::cout << "Edges connected to vh0 available: " << edges_on_v0.size() << std::endl;
   
   //
   // In the same manner, other co-boundary operations are carried out, e.g. cell-on-edge, facet-on-vertex.
