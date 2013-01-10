@@ -24,6 +24,11 @@ namespace viennagrid
                 container.push_back(value);
             }
 
+            template<typename type, typename compare, typename allocator>
+            void insert(std::set<type, compare, allocator> & container, const typename std::set<type, compare, allocator>::value_type & value)
+            {
+                container.insert(value);
+            }
             
             
             
