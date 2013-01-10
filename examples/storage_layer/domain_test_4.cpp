@@ -74,17 +74,17 @@ int main()
     // typedefs for the element types
     //    
      
-    typedef viennagrid::result_of::ncell<domain_type, 0>::type vertex_type;
-    typedef viennagrid::result_of::ncell_hook<domain_type, 0>::type vertex_hook_type;
+    typedef viennagrid::result_of::element<domain_type, viennagrid::vertex_tag>::type vertex_type;
+    typedef viennagrid::result_of::element_hook<domain_type, viennagrid::vertex_tag>::type vertex_hook_type;
     
-    typedef viennagrid::result_of::ncell<domain_type, 1>::type line_type;
-    typedef viennagrid::result_of::ncell_hook<domain_type, 1>::type line_hook_type;
+    typedef viennagrid::result_of::element<domain_type, viennagrid::line_tag>::type line_type;
+    typedef viennagrid::result_of::element_hook<domain_type, viennagrid::line_tag>::type line_hook_type;
     
-    typedef viennagrid::result_of::ncell<domain_type, 2>::type triangle_type;
-    typedef viennagrid::result_of::ncell_hook<domain_type, 2>::type triangle_hook_type;
+    typedef viennagrid::result_of::element<domain_type, viennagrid::triangle_tag>::type triangle_type;
+    typedef viennagrid::result_of::element_hook<domain_type, viennagrid::triangle_tag>::type triangle_hook_type;
     
-    typedef viennagrid::result_of::ncell<domain_type, 3>::type tetrahedron_type;
-    typedef viennagrid::result_of::ncell_hook<domain_type, 3>::type tetrahedron_hook_type;
+    typedef viennagrid::result_of::element<domain_type, viennagrid::tetrahedron_tag>::type tetrahedron_type;
+    typedef viennagrid::result_of::element_hook<domain_type, viennagrid::tetrahedron_tag>::type tetrahedron_hook_type;
     
     
     
@@ -197,15 +197,15 @@ int main()
     //  
     
     cout << "All tetrahedrons of the domain" << endl;
-    std::copy( viennagrid::ncells<3>(domain).begin(), viennagrid::ncells<3>(domain).end(), std::ostream_iterator<tetrahedron_type>(cout, "\n") );
+    std::copy( viennagrid::elements<viennagrid::tetrahedron_tag>(domain).begin(), viennagrid::elements<viennagrid::tetrahedron_tag>(domain).end(), std::ostream_iterator<tetrahedron_type>(cout, "\n") );
     cout << endl;
     
     cout << "All tetrahedrons of the geometric_view_1" << endl;
-    std::copy( viennagrid::ncells<3>(geometric_view_1).begin(), viennagrid::ncells<3>(geometric_view_1).end(), std::ostream_iterator<tetrahedron_type>(cout, "\n") );
+    std::copy( viennagrid::elements<viennagrid::tetrahedron_tag>(geometric_view_1).begin(), viennagrid::elements<viennagrid::tetrahedron_tag>(geometric_view_1).end(), std::ostream_iterator<tetrahedron_type>(cout, "\n") );
     cout << endl;
     
     cout << "All tetrahedrons of the geometric_view_2" << endl;
-    std::copy( viennagrid::ncells<3>(geometric_view_2).begin(), viennagrid::ncells<3>(geometric_view_2).end(), std::ostream_iterator<tetrahedron_type>(cout, "\n") );
+    std::copy( viennagrid::elements<viennagrid::tetrahedron_tag>(geometric_view_2).begin(), viennagrid::elements<viennagrid::tetrahedron_tag>(geometric_view_2).end(), std::ostream_iterator<tetrahedron_type>(cout, "\n") );
     cout << endl;
 
 
@@ -216,11 +216,11 @@ int main()
     //
     
     // iterating over all vertices and piping out the point information
-    typedef viennagrid::result_of::const_ncell_range<domain_type, 0>::type domain_vertex_range;
+    typedef viennagrid::result_of::const_element_range<domain_type, viennagrid::vertex_tag>::type domain_vertex_range;
     typedef viennagrid::result_of::const_iterator<domain_vertex_range>::type domain_vertex_iterator;
     
     cout << "All vertices of the geometric_view_1 with geometric info" << endl;
-    domain_vertex_range domain_vtx_range = viennagrid::ncells<0>(domain);
+    domain_vertex_range domain_vtx_range = viennagrid::elements<viennagrid::vertex_tag>(domain);
     for (domain_vertex_iterator it = domain_vtx_range.begin(); it != domain_vtx_range.end(); ++it)
         cout << *it << " geometric information: " << viennagrid::look_up<vector_type>( domain, *it ) << endl;
     cout << endl;
@@ -228,19 +228,19 @@ int main()
     
     
     
-    typedef viennagrid::result_of::const_ncell_range<geometric_view_type, 0>::type view_vertex_range;
+    typedef viennagrid::result_of::const_element_range<geometric_view_type, viennagrid::vertex_tag>::type view_vertex_range;
     typedef viennagrid::result_of::const_iterator<view_vertex_range>::type view_vertex_iterator;
     
     // iterating over all vertices and piping out the point information    
     cout << "All vertices of the geometric_view_1 with geometric info" << endl;
-    view_vertex_range view_vtx_range_1 = viennagrid::ncells<0>(geometric_view_1);
+    view_vertex_range view_vtx_range_1 = viennagrid::elements<viennagrid::vertex_tag>(geometric_view_1);
     for (view_vertex_iterator it = view_vtx_range_1.begin(); it != view_vtx_range_1.end(); ++it)
         cout << *it << " geometric information: " << viennagrid::look_up<vector_type>( domain, *it ) << endl;
     cout << endl;
     
     // iterating over all vertices and piping out the point information
     cout << "All vertices of the geometric_view_2 with geometric info" << endl;
-    view_vertex_range view_vtx_range_2 = viennagrid::ncells<0>(geometric_view_2);
+    view_vertex_range view_vtx_range_2 = viennagrid::elements<viennagrid::vertex_tag>(geometric_view_2);
     for (view_vertex_iterator it = view_vtx_range_2.begin(); it != view_vtx_range_2.end(); ++it)
         cout << *it << " geometric information: " << viennagrid::look_up<vector_type>( domain, *it ) << endl;
     cout << endl;

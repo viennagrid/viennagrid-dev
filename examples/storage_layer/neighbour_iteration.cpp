@@ -68,12 +68,12 @@ int main()
     // typedefs for the element types
     //    
      
-    typedef viennagrid::result_of::ncell<domain_type, 0>::type vertex_type;
-    typedef viennagrid::result_of::ncell_hook<domain_type, 0>::type vertex_hook_type;
+    typedef viennagrid::result_of::element<domain_type, viennagrid::vertex_tag>::type vertex_type;
+    typedef viennagrid::result_of::element_hook<domain_type, viennagrid::vertex_tag>::type vertex_hook_type;
     
-    typedef viennagrid::result_of::ncell<domain_type, 1>::type line_type;
-    typedef viennagrid::result_of::ncell<domain_type, 2>::type triangle_type;
-    typedef viennagrid::result_of::ncell_hook<domain_type, 2>::type triangle_hook_type;
+    typedef viennagrid::result_of::element<domain_type, viennagrid::line_tag>::type line_type;
+    typedef viennagrid::result_of::element<domain_type, viennagrid::triangle_tag>::type triangle_type;
+    typedef viennagrid::result_of::element_hook<domain_type, viennagrid::triangle_tag>::type triangle_hook_type;
     
 
     //

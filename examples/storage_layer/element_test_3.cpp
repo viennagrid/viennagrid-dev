@@ -245,12 +245,12 @@ int main()
     
     const tetrahedron_type & test_tet = *viennagrid::storage::collection::get<tetrahedron_type>(domain_container_collection).begin();
     
-    typedef viennagrid::result_of::const_ncell_range<tetrahedron_type, 2>::type tetrahedron_triangle_range;
+    typedef viennagrid::result_of::const_element_range<tetrahedron_type, viennagrid::triangle_tag>::type tetrahedron_triangle_range;
     typedef viennagrid::result_of::const_iterator<tetrahedron_triangle_range>::type tetrahedron_triangle_iterator;
     //typedef tetrahedron_triangle_range::const_iterator tetrahedron_triangle_iterator;
     
     cout << "All triangles of the first tetdrahedron in the domain" << endl;
-    tetrahedron_triangle_range tri_range = viennagrid::ncells<2>(test_tet);
+    tetrahedron_triangle_range tri_range = viennagrid::elements<viennagrid::triangle_tag>(test_tet);
     for (tetrahedron_triangle_iterator it = tri_range.begin(); it != tri_range.end(); ++it)
         cout << *it << endl;
     cout << endl;
@@ -262,11 +262,11 @@ int main()
     
     const triangle_type & test_tri = *viennagrid::storage::collection::get<triangle_type>(domain_container_collection).begin();
     
-    typedef viennagrid::result_of::const_ncell_range<triangle_type, 1>::type triangle_line_range;
+    typedef viennagrid::result_of::const_element_range<triangle_type, viennagrid::line_tag>::type triangle_line_range;
     typedef viennagrid::result_of::const_iterator<triangle_line_range>::type triangle_line_iterator;
 
     cout << "All lines of the first triangle in the domain" << endl;
-    triangle_line_range lin_range = viennagrid::ncells<1>(test_tri);
+    triangle_line_range lin_range = viennagrid::elements<viennagrid::line_tag>(test_tri);
     for (triangle_line_iterator it = lin_range.begin(); it != lin_range.end(); ++it)
         cout << *it << endl;
     cout << endl;

@@ -67,14 +67,14 @@ int main()
     // typedefs for the element types
     //    
      
-    typedef viennagrid::result_of::ncell<domain_type, 0>::type vertex_type;
-    typedef viennagrid::result_of::ncell_hook<domain_type, 0>::type vertex_hook_type;
+    typedef viennagrid::result_of::element<domain_type, viennagrid::vertex_tag>::type vertex_type;
+    typedef viennagrid::result_of::element_hook<domain_type, viennagrid::vertex_tag>::type vertex_hook_type;
     
-    typedef viennagrid::result_of::ncell<domain_type, 1>::type line_type;
-    typedef viennagrid::result_of::ncell<domain_type, 2>::type triangle_type;
+    typedef viennagrid::result_of::element<domain_type, viennagrid::line_tag>::type line_type;
+    typedef viennagrid::result_of::element<domain_type, viennagrid::triangle_tag>::type triangle_type;
     
-    typedef viennagrid::result_of::ncell<domain_type, 3>::type tetrahedron_type;
-    typedef viennagrid::result_of::ncell_hook<domain_type, 3>::type tetrahedron_hook_type;
+    typedef viennagrid::result_of::element<domain_type, viennagrid::tetrahedron_tag>::type tetrahedron_type;
+    typedef viennagrid::result_of::element_hook<domain_type, viennagrid::tetrahedron_tag>::type tetrahedron_hook_type;
     
 
     //
@@ -102,21 +102,21 @@ int main()
     
     cout << "  USING ncells<dim>()" << endl;
     
-    cout << "All vertices of the domain" << endl;
-    std::copy( viennagrid::ncells<0>(domain).begin(), viennagrid::ncells<0>(domain).end(), std::ostream_iterator<vertex_type>(cout, "\n") );
-    cout << endl;
-    
-    cout << "All lines of the domain" << endl;
-    std::copy( viennagrid::ncells<1>(domain).begin(), viennagrid::ncells<1>(domain).end(), std::ostream_iterator<line_type>(cout, "\n") );
-    cout << endl;
-    
-    cout << "All triangles of the domain" << endl;
-    std::copy( viennagrid::ncells<2>(domain).begin(), viennagrid::ncells<2>(domain).end(), std::ostream_iterator<triangle_type>(cout, "\n") );
-    cout << endl;
-    
-    cout << "All tetraherons of the domain" << endl;
-    std::copy( viennagrid::ncells<3>(domain).begin(), viennagrid::ncells<3>(domain).end(), std::ostream_iterator<tetrahedron_type>(cout, "\n") );
-    cout << endl;
+//     cout << "All vertices of the domain" << endl;
+//     std::copy( viennagrid::ncells<0>(domain).begin(), viennagrid::ncells<0>(domain).end(), std::ostream_iterator<vertex_type>(cout, "\n") );
+//     cout << endl;
+//     
+//     cout << "All lines of the domain" << endl;
+//     std::copy( viennagrid::ncells<1>(domain).begin(), viennagrid::ncells<1>(domain).end(), std::ostream_iterator<line_type>(cout, "\n") );
+//     cout << endl;
+//     
+//     cout << "All triangles of the domain" << endl;
+//     std::copy( viennagrid::ncells<2>(domain).begin(), viennagrid::ncells<2>(domain).end(), std::ostream_iterator<triangle_type>(cout, "\n") );
+//     cout << endl;
+//     
+//     cout << "All tetraherons of the domain" << endl;
+//     std::copy( viennagrid::ncells<3>(domain).begin(), viennagrid::ncells<3>(domain).end(), std::ostream_iterator<tetrahedron_type>(cout, "\n") );
+//     cout << endl;
     
     
     cout << "  USING elements<tag>()" << endl;
@@ -161,23 +161,23 @@ int main()
     // doing some boundary cell iteration
     //
     
-    const tetrahedron_type & test_tet = *viennagrid::ncells<3>(domain).begin();
-    const triangle_type & test_tri = *viennagrid::ncells<2>(domain).begin();
+    const tetrahedron_type & test_tet = *viennagrid::elements<viennagrid::tetrahedron_tag>(domain).begin();
+    const triangle_type & test_tri = *viennagrid::elements<viennagrid::triangle_tag>(domain).begin();
     
     
     
-    typedef viennagrid::result_of::const_ncell_range<tetrahedron_type, 2>::type tetrahedron_triangle_range;
-    typedef viennagrid::result_of::const_iterator<tetrahedron_triangle_range>::type tetrahedron_triangle_iterator;
-    
-    cout << "All triangles of the first tetdrahedron in the domain" << endl;
-    tetrahedron_triangle_range tri_range = viennagrid::ncells<2>(test_tet);
-    for (tetrahedron_triangle_iterator it = tri_range.begin(); it != tri_range.end(); ++it)
-        cout << *it << endl;
-    cout << endl;
-    
-    cout << "Once more with std::copy" << endl;
-    std::copy( tri_range.begin(), tri_range.end(), std::ostream_iterator<triangle_type>(cout, "\n") );
-    cout << endl;
+//     typedef viennagrid::result_of::const_ncell_range<tetrahedron_type, 2>::type tetrahedron_triangle_range;
+//     typedef viennagrid::result_of::const_iterator<tetrahedron_triangle_range>::type tetrahedron_triangle_iterator;
+//     
+//     cout << "All triangles of the first tetdrahedron in the domain" << endl;
+//     tetrahedron_triangle_range tri_range = viennagrid::elements<viennagrid::triangle_tag>(test_tet);
+//     for (tetrahedron_triangle_iterator it = tri_range.begin(); it != tri_range.end(); ++it)
+//         cout << *it << endl;
+//     cout << endl;
+//     
+//     cout << "Once more with std::copy" << endl;
+//     std::copy( tri_range.begin(), tri_range.end(), std::ostream_iterator<triangle_type>(cout, "\n") );
+//     cout << endl;
     
     
     
@@ -187,7 +187,7 @@ int main()
     typedef viennagrid::result_of::const_iterator<tetrahedron_triangle_range_2>::type tetrahedron_triangle_iterator_2;
     
     cout << "All triangles of the first tetdrahedron in the domain" << endl;
-    tetrahedron_triangle_range_2 tri_range_2 = viennagrid::ncells<2>(test_tet);
+    tetrahedron_triangle_range_2 tri_range_2 = viennagrid::elements<viennagrid::triangle_tag>(test_tet);
     for (tetrahedron_triangle_iterator_2 it = tri_range_2.begin(); it != tri_range_2.end(); ++it)
         cout << *it << endl;
     cout << endl;
@@ -200,11 +200,11 @@ int main()
     
     
     
-    typedef viennagrid::result_of::const_ncell_range<triangle_type, 1>::type triangle_line_range;
+    typedef viennagrid::result_of::const_element_range<triangle_type, viennagrid::line_tag>::type triangle_line_range;
     typedef viennagrid::result_of::const_iterator<triangle_line_range>::type triangle_line_iterator;
 
     cout << "All lines of the first triangle in the domain" << endl;
-    triangle_line_range lin_range = viennagrid::ncells<1>(test_tri);
+    triangle_line_range lin_range = viennagrid::elements<viennagrid::line_tag>(test_tri);
     for (triangle_line_iterator it = lin_range.begin(); it != lin_range.end(); ++it)
         cout << *it << endl;
     cout << endl;
