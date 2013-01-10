@@ -19,7 +19,7 @@
 ======================================================================= */
 
 #include "viennagrid/forwards.hpp"
-#include "viennagrid/topology/point.hpp"
+#include "viennagrid/topology/simplex.hpp"
 
 /** @file polygon.hpp
     @brief Provides the topological definition of a polygon
@@ -30,85 +30,92 @@ namespace viennagrid
 
   struct polygon_tag
   {
+    typedef simplex_tag<1> facet_tag;
+      
     enum{ dim = 2 };
     static std::string name() { return "Polygon"; }
   };
 
-
+    struct hole_polygon_tag
+    {
+        typedef simplex_tag<1> facet_tag;
+        
+        enum{ dim = 2 };
+        static std::string name() { return "Hole Polygon"; }
+    };
+  
+  
   namespace topology
   {
 
     //Line:
     /** @brief Topological description of the 0-cells of a polygon */
     template <>
-    struct bndcells<polygon_tag, 0>
+    struct boundary_cells<polygon_tag, vertex_tag>
     {
-      typedef vertex_tag            tag;
-      
-      typedef dynamic_layout_tag    layout_tag;
+      typedef dynamic_layout_tag     layout_tag;
       enum{ num = -1 };
     };
-
+    
     template <>
-    struct bndcells<polygon_tag, 1>
+    struct boundary_cells<polygon_tag, line_tag>
     {
-      typedef simplex_tag<1>              tag;
-      
-      typedef dynamic_layout_tag    layout_tag;
+      typedef dynamic_layout_tag     layout_tag;
+      enum{ num = -1 };
+    };
+    
+    
+    
+    template <>
+    struct boundary_cells<hole_polygon_tag, vertex_tag>
+    {
+      typedef dynamic_layout_tag     layout_tag;
+      enum{ num = -1 };
+    };
+    
+    template <>
+    struct boundary_cells<hole_polygon_tag, line_tag>
+    {
+      typedef dynamic_layout_tag     layout_tag;
       enum{ num = -1 };
     };
 
     
-    /** @brief Fills a segment or a domain with the edges of a polygon */
-    template <>
-    struct bndcell_filler<polygon_tag, 1>
+    
+    template<typename bnd_cell_type>
+    struct bndcell_generator<polygon_tag, simplex_tag<1>, bnd_cell_type>
     {
-      //fill edges:
-      template <typename ElementContainerType, typename VertexContainerType, typename OrientatationContainerType, typename Segment>
-      static void fill(ElementContainerType & elements, const VertexContainerType & vertices, OrientatationContainerType & orientations, Segment & seg)
-      {
-        typename VertexContainerType::value_type edgevertices[2];
-        typename utils::remove_pointer<typename ElementContainerType::value_type>::type edge;
-        
-        elements.resize(vertices.size());
-        orientations.resize(vertices.size());
-        
-        for (size_t i = 0; i < vertices.size()-1; ++i)
+        template<typename element_type, typename inserter_type>
+        static void create_bnd_cells(element_type & element, inserter_type & inserter)
         {
-            edgevertices[0] = vertices[i];
-            edgevertices[1] = vertices[i+1];
-            edge.vertices(edgevertices);
-            elements[i] = seg.push_back(edge, &orientations[i]);
+            bnd_cell_type bnd_cell( inserter.get_physical_container_collection() );
+            
+            int index = 0;
+            for (int i = 0; i < element.container( dimension_tag<0>() ).size()-1; ++i)
+            {
+                bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(i), 0 );
+                bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(i+1), 1 ); 
+                element.set_bnd_cell( bnd_cell, inserter(bnd_cell), index++ );
+            }
+                
+                
+            bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at( element.container( dimension_tag<0>() ).size()-1 ), 0 );
+            bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(0), 1 );
+            element.set_bnd_cell( bnd_cell, inserter(bnd_cell), index++ );
         }
-        
-        edgevertices[0] = vertices[ vertices.size()-1 ];
-        edgevertices[1] = vertices[ 0 ];
-        edge.vertices(edgevertices);
-        elements[vertices.size()-1] = seg.push_back(edge, &orientations[vertices.size()-1]);
-      }
-      
-      template <typename ElementContainerType, typename VertexContainerType, typename Segment>
-      static void fill(ElementContainerType & elements, const VertexContainerType & vertices, Segment & seg)
-      {
-        typename VertexContainerType::value_type edgevertices[2];
-        typename utils::remove_pointer<typename ElementContainerType::value_type>::type edge;
-        
-        elements.resize(vertices.size());
-        
-        for (size_t i = 0; i < vertices.size()-1; ++i)
-        {
-            edgevertices[0] = vertices[i];
-            edgevertices[1] = vertices[i+1];
-            edge.vertices(edgevertices);
-            elements[i] = seg.push_back(edge, NULL);
-        }
-        
-        edgevertices[0] = vertices[ vertices.size()-1 ];
-        edgevertices[1] = vertices[ 0 ];
-        edge.vertices(edgevertices);
-        elements[vertices.size()-1] = seg.push_back(edge, NULL);
-      }
     };
+
+    template<typename bnd_cell_type>
+    struct bndcell_generator<hole_polygon_tag, simplex_tag<1>, bnd_cell_type>
+    {
+        template<typename element_type, typename inserter_type>
+        static void create_bnd_cells(element_type & element, inserter_type & inserter)
+        {
+            bndcell_generator< polygon_tag, simplex_tag<1>, bnd_cell_type >::create_bnd_cells(element, inserter);
+        }
+    };
+
+    
 
   } //topology
 }
