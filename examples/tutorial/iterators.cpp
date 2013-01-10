@@ -25,8 +25,6 @@
 #include <fstream>
 #include <vector>
 
-#include "viennagrid/domain.hpp"
-#include "viennagrid/iterators.hpp"
 #include "viennagrid/config/simplex.hpp"
 #include "viennagrid/algorithm/volume.hpp"
 #include "viennagrid/algorithm/voronoi.hpp"
@@ -146,7 +144,7 @@ int main()
     ++num_edges;  
   }
   std::cout << "Number of edges traversed: " << num_edges << std::endl;
-  std::cout << "Number of edges in domain: " << viennagrid::ncells<1>(domain).size() << std::endl;
+  std::cout << "Number of edges in domain: " << viennagrid::elements<viennagrid::line_tag>(domain).size() << std::endl;
   
   //
   // Even though not recommended, it is also possible to iterate through the elements using operator[]:
@@ -159,7 +157,7 @@ int main()
     ++num_cells;
   }
   std::cout << "Number of cells traversed: " << num_cells << std::endl;
-  std::cout << "Number of cells in domain: " << viennagrid::ncells<CellTag::dim>(domain).size() << std::endl;
+  std::cout << "Number of cells in domain: " << viennagrid::elements<CellTag>(domain).size() << std::endl;
   
   //
   // In the same manner, iteration over all facets can be carried out using one of the three methods presented above

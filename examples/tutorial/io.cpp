@@ -21,8 +21,6 @@
 #endif
 
 
-#include "viennagrid/domain.hpp"
-#include "viennagrid/segment.hpp"
 #include "viennagrid/algorithm/boundary.hpp"
 #include "viennagrid/algorithm/centroid.hpp"
 #include "viennagrid/algorithm/circumcenter.hpp"
@@ -234,7 +232,7 @@ void write_data(DomainType & domain)
   
 
   //write x-component to each vertex
-  VertexContainer vertices = viennagrid::ncells<0>(domain);
+  VertexContainer vertices = viennagrid::elements<viennagrid::vertex_tag>(domain);
   for (VertexIterator vit = vertices.begin();
       vit != vertices.end();
       ++vit)

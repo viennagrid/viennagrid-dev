@@ -24,8 +24,6 @@
 #include "viennagrid/forwards.hpp"
 #include "viennagrid/domain/geometric_domain.hpp"
 #include "viennagrid/point.hpp"
-#include "viennagrid/domain.hpp"
-#include "viennagrid/segment.hpp"
 #include "viennagrid/config/simplex.hpp"
 
 

@@ -22,7 +22,6 @@
 
 
 #include "viennagrid/forwards.hpp"
-#include "viennagrid/domain.hpp"
 #include "viennagrid/config/simplex.hpp"
 #include "viennagrid/io/netgen_reader.hpp"
 #include "viennagrid/io/vtk_writer.hpp"
@@ -64,8 +63,8 @@ int main()
   typedef viennagrid::result_of::element<Domain, viennagrid::vertex_tag>::type         VertexType;
   typedef viennagrid::result_of::element_hook<Domain, viennagrid::vertex_tag>::type    VertexHookType;
     
-  typedef viennagrid::result_of::ncell_range<Domain, 0>::type       VertexRange;
-  typedef viennagrid::result_of::ncell_range<Domain, 3>::type       CellRange;
+  typedef viennagrid::result_of::element_range<Domain, viennagrid::vertex_tag>::type       VertexRange;
+  typedef viennagrid::result_of::element_range<Domain, viennagrid::tetrahedron_tag>::type       CellRange;
 
                       
   std::cout << "------------------------------------------------------------ " << std::endl;
@@ -100,7 +99,7 @@ int main()
   //
 
   // Extract the first four points of the domain:
-  VertexRange vertices = viennagrid::ncells<0>(domain);
+  VertexRange vertices = viennagrid::elements<viennagrid::vertex_tag>(domain);
   
   PointType const & p0 = viennagrid::point(domain, vertices[0]);
   PointType const & p1 = viennagrid::point(domain, vertices[1]);
