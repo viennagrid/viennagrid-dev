@@ -176,7 +176,7 @@ namespace viennagrid
             void insert_hook(hook_type hook) { viennagrid::storage::container::insert(hook_container, hook); }
             void set_hook( hook_type element, size_type pos )
             {
-                increment_size();
+                resize(pos+1);
                 hook_container[pos] = element;
             }
             
@@ -554,7 +554,7 @@ namespace viennagrid
             void insert_hook(hook_type hook) { viennagrid::storage::container::insert(hook_container, hook); }
             void set_hook( hook_type element, size_type pos )
             {
-                increment_size();
+                resize(pos+1);
                 hook_container[pos] = element;
             }
             
