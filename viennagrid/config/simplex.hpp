@@ -30,55 +30,67 @@ namespace viennagrid
   /** @brief Provides a number of predefined configuration classes, which cover the most frequent use cases. */
   namespace config
   {
-    /** @brief Predefined configuration class for one-dimensional simplex cells (lines) in a 1d geometry using Cartesian coordinates. */
-    struct line_1d
-    {
-      typedef double                                numeric_type;
-      typedef viennagrid::cartesian_cs<1>           coordinate_system_tag;
-      typedef viennagrid::simplex_tag<1>            cell_tag;
-    };
-    
-
-    /** @brief Predefined configuration class for one-dimensional simplex cells (lines) in a 2d geometry using Cartesian coordinates. */
-    struct line_2d
-    {
-      typedef double                                numeric_type;
-      typedef viennagrid::cartesian_cs<2>           coordinate_system_tag;
-      typedef viennagrid::simplex_tag<1>            cell_tag;
-    };
-
-    /** @brief Predefined configuration class for two-dimensional simplex cells (triangles) in a 2d geometry using Cartesian coordinates. */
-    struct triangular_2d
-    {
-      typedef double                                numeric_type;
-      typedef viennagrid::cartesian_cs<2>           coordinate_system_tag;
-      typedef viennagrid::triangle_tag              cell_tag;
-    };
-    
-    //3d geometry:
-    /** @brief Predefined configuration class for one-dimensional simplex cells (lines) in a 3d geometry using Cartesian coordinates. */
-    struct line_3d
-    {
-      typedef double                                numeric_type;
-      typedef viennagrid::cartesian_cs<3>           coordinate_system_tag;
-      typedef viennagrid::simplex_tag<1>            cell_tag;
-    };
-
-    /** @brief Predefined configuration class for two-dimensional simplex cells (triangles) in a 3d geometry using Cartesian coordinates. */
-    struct triangular_3d
-    {
-      typedef double                                numeric_type;
-      typedef viennagrid::cartesian_cs<3>           coordinate_system_tag;
-      typedef viennagrid::triangle_tag              cell_tag;
-    };
-
-    /** @brief Predefined configuration class for three-dimensional simplex cells (tetrahedra) in a 3d geometry using Cartesian coordinates. */
-    struct tetrahedral_3d
-    {
-      typedef double                                numeric_type;
-      typedef viennagrid::cartesian_cs<3>           coordinate_system_tag;
-      typedef viennagrid::tetrahedron_tag           cell_tag;
-    };
+//       typedef viennagrid::point_t<double, viennagrid::cartesian_cs<1> > point_type_1d;
+//       typedef viennagrid::point_t<double, viennagrid::cartesian_cs<2> > point_type_2d;
+//       typedef viennagrid::point_t<double, viennagrid::cartesian_cs<3> > point_type_3d;
+//       
+//       
+//       
+//       
+//       typedef viennagrid::result_of::geometric_domain_config< viennagrid::line_tag, point_type_1d, viennagrid::storage::pointer_hook_tag >::type line_1d;
+      
+      
+      
+      
+//     /** @brief Predefined configuration class for one-dimensional simplex cells (lines) in a 1d geometry using Cartesian coordinates. */
+//     struct line_1d
+//     {
+//       typedef double                                numeric_type;
+//       typedef viennagrid::cartesian_cs<1>           coordinate_system_tag;
+//       typedef viennagrid::simplex_tag<1>            cell_tag;
+//     };
+//     
+// 
+//     /** @brief Predefined configuration class for one-dimensional simplex cells (lines) in a 2d geometry using Cartesian coordinates. */
+//     struct line_2d
+//     {
+//       typedef double                                numeric_type;
+//       typedef viennagrid::cartesian_cs<2>           coordinate_system_tag;
+//       typedef viennagrid::simplex_tag<1>            cell_tag;
+//     };
+// 
+//     /** @brief Predefined configuration class for two-dimensional simplex cells (triangles) in a 2d geometry using Cartesian coordinates. */
+//     struct triangular_2d
+//     {
+//       typedef double                                numeric_type;
+//       typedef viennagrid::cartesian_cs<2>           coordinate_system_tag;
+//       typedef viennagrid::triangle_tag              cell_tag;
+//     };
+//     
+//     //3d geometry:
+//     /** @brief Predefined configuration class for one-dimensional simplex cells (lines) in a 3d geometry using Cartesian coordinates. */
+//     struct line_3d
+//     {
+//       typedef double                                numeric_type;
+//       typedef viennagrid::cartesian_cs<3>           coordinate_system_tag;
+//       typedef viennagrid::simplex_tag<1>            cell_tag;
+//     };
+// 
+//     /** @brief Predefined configuration class for two-dimensional simplex cells (triangles) in a 3d geometry using Cartesian coordinates. */
+//     struct triangular_3d
+//     {
+//       typedef double                                numeric_type;
+//       typedef viennagrid::cartesian_cs<3>           coordinate_system_tag;
+//       typedef viennagrid::triangle_tag              cell_tag;
+//     };
+// 
+//     /** @brief Predefined configuration class for three-dimensional simplex cells (tetrahedra) in a 3d geometry using Cartesian coordinates. */
+//     struct tetrahedral_3d
+//     {
+//       typedef double                                numeric_type;
+//       typedef viennagrid::cartesian_cs<3>           coordinate_system_tag;
+//       typedef viennagrid::tetrahedron_tag           cell_tag;
+//     };
   }
 }
 

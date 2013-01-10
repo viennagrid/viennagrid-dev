@@ -32,45 +32,45 @@ namespace viennagrid
 {
   namespace config
   {
-    /** @brief Predefined configuration class for two-dimensional hypercube cells (quadrilaterals) in a 2d geometry using Cartesian coordinates. */
-    struct quadrilateral_2d
-    {
-      typedef double                                numeric_type;
-      typedef viennagrid::cartesian_cs<2>           coordinate_system_tag;
-      typedef viennagrid::quadrilateral_tag         cell_tag;
-    };
-
-    /** @brief Predefined configuration class for two-dimensional polygon cells in a 2d geometry using Cartesian coordinates. */
-    struct polygon_2d
-    {
-      typedef double                                numeric_type;
-      typedef viennagrid::cartesian_cs<2>           coordinate_system_tag;
-      typedef viennagrid::polygon_tag               cell_tag;
-    };
-    
-    /** @brief Predefined configuration class for two-dimensional polygon cells in a 3d geometry using Cartesian coordinates. */
-    struct polygon_3d
-    {
-      typedef double                                numeric_type;
-      typedef viennagrid::cartesian_cs<3>           coordinate_system_tag;
-      typedef viennagrid::polygon_tag               cell_tag;
-    };
-    
-    /** @brief Predefined configuration class for two-dimensional hypercube cells (quadrilaterals) in a 3d geometry using Cartesian coordinates. */
-    struct quadrilateral_3d
-    {
-      typedef double                                numeric_type;
-      typedef viennagrid::cartesian_cs<3>           coordinate_system_tag;
-      typedef viennagrid::quadrilateral_tag         cell_tag;
-    };
-    
-    /** @brief Predefined configuration class for three-dimensional hypercube cells (hexahedra) in a 3d geometry using Cartesian coordinates. */
-    struct hexahedral_3d
-    {
-      typedef double                                numeric_type;
-      typedef viennagrid::cartesian_cs<3>           coordinate_system_tag;
-      typedef viennagrid::hexahedron_tag            cell_tag;
-    };
+//     /** @brief Predefined configuration class for two-dimensional hypercube cells (quadrilaterals) in a 2d geometry using Cartesian coordinates. */
+//     struct quadrilateral_2d
+//     {
+//       typedef double                                numeric_type;
+//       typedef viennagrid::cartesian_cs<2>           coordinate_system_tag;
+//       typedef viennagrid::quadrilateral_tag         cell_tag;
+//     };
+// 
+//     /** @brief Predefined configuration class for two-dimensional polygon cells in a 2d geometry using Cartesian coordinates. */
+//     struct polygon_2d
+//     {
+//       typedef double                                numeric_type;
+//       typedef viennagrid::cartesian_cs<2>           coordinate_system_tag;
+//       typedef viennagrid::polygon_tag               cell_tag;
+//     };
+//     
+//     /** @brief Predefined configuration class for two-dimensional polygon cells in a 3d geometry using Cartesian coordinates. */
+//     struct polygon_3d
+//     {
+//       typedef double                                numeric_type;
+//       typedef viennagrid::cartesian_cs<3>           coordinate_system_tag;
+//       typedef viennagrid::polygon_tag               cell_tag;
+//     };
+//     
+//     /** @brief Predefined configuration class for two-dimensional hypercube cells (quadrilaterals) in a 3d geometry using Cartesian coordinates. */
+//     struct quadrilateral_3d
+//     {
+//       typedef double                                numeric_type;
+//       typedef viennagrid::cartesian_cs<3>           coordinate_system_tag;
+//       typedef viennagrid::quadrilateral_tag         cell_tag;
+//     };
+//     
+//     /** @brief Predefined configuration class for three-dimensional hypercube cells (hexahedra) in a 3d geometry using Cartesian coordinates. */
+//     struct hexahedral_3d
+//     {
+//       typedef double                                numeric_type;
+//       typedef viennagrid::cartesian_cs<3>           coordinate_system_tag;
+//       typedef viennagrid::hexahedron_tag            cell_tag;
+//     };
   }
 }
 
