@@ -25,11 +25,12 @@
 #include <limits>
 #include <utility>
 
-#include "viennagrid/forwards.h"
+#include "viennagrid/forwards.hpp"
 #include "viennagrid/topology/all.hpp"
 #include "viennagrid/algorithm/norm.hpp"
 #include "viennagrid/algorithm/inner_prod.hpp"
 #include "viennagrid/algorithm/boundary.hpp"
+#include "viennagrid/domain/geometric_domain.hpp"
 
 /** @file closest_points.hpp
     @brief Routines for computing the two points of two different objects being closest to each other.
@@ -144,41 +145,41 @@ namespace viennagrid
     //
     
     // Closest points between two points:
-    template <typename CoordType, typename CoordinateSystem>
-    std::pair<point_t<CoordType, CoordinateSystem>,
-              point_t<CoordType, CoordinateSystem> >
-    closest_points_impl(point_t<CoordType, CoordinateSystem> const & p1,
-                        point_t<CoordType, CoordinateSystem> const & p2)
+    template <typename DomainPointType, typename TopologicDomainType, typename MetainfoCollectionType, typename CoordType1, typename CoordinateSystem1, typename CoordType2, typename CoordinateSystem2>
+    std::pair<point_t<CoordType1, CoordinateSystem1>, point_t<CoordType2, CoordinateSystem2> >
+    closest_points_impl(const geometric_domain_t<DomainPointType, TopologicDomainType, MetainfoCollectionType> & domain,
+                        point_t<CoordType1, CoordinateSystem1> const & p1,
+                        point_t<CoordType2, CoordinateSystem2> const & p2)
     {
       return std::make_pair(p1, p2);
     }
 
-    template <typename CoordType, typename CoordinateSystem, typename ConfigType>
-    std::pair<point_t<CoordType, CoordinateSystem>,
-              point_t<CoordType, CoordinateSystem> >
-    closest_points_impl(point_t<CoordType, CoordinateSystem> const & p1,
-                        element_t<ConfigType, point_tag> const & v2)
+    template <typename DomainPointType, typename TopologicDomainType, typename MetainfoCollectionType, typename PointType>
+    std::pair<PointType, DomainPointType>
+    closest_points_impl(const geometric_domain_t<DomainPointType, TopologicDomainType, MetainfoCollectionType> & domain,
+                        PointType const & p1,
+                        typename result_of::element< geometric_domain_t<DomainPointType, TopologicDomainType, MetainfoCollectionType>, vertex_tag > const & v2)
     {
-      return std::make_pair(p1, v2.point());
+      return std::make_pair(p1, viennagrid::point(domain, v2));
     }
 
-    template <typename ConfigType, typename CoordType, typename CoordinateSystem>
-    std::pair<point_t<CoordType, CoordinateSystem>,
-              point_t<CoordType, CoordinateSystem> >
-    closest_points_impl(element_t<ConfigType, point_tag> const & v1,
-                        point_t<CoordType, CoordinateSystem> const & p2)
+    template <typename DomainPointType, typename TopologicDomainType, typename MetainfoCollectionType, typename PointType>
+    std::pair<DomainPointType, PointType>
+    closest_points_impl(const geometric_domain_t<DomainPointType, TopologicDomainType, MetainfoCollectionType> & domain,
+                        typename result_of::element< geometric_domain_t<DomainPointType, TopologicDomainType, MetainfoCollectionType>, vertex_tag > const & v1,
+                        PointType const & p2)
     {
-      return std::make_pair(v1.point(), p2);
+      return std::make_pair(viennagrid::point(domain, v1), p2);
     }
     
     // Closest points between vertices:
-    template <typename ConfigType>
-    std::pair<typename result_of::point<ConfigType>::type,
-              typename result_of::point<ConfigType>::type>
-    closest_points_impl(element_t<ConfigType, point_tag> const & v1,
-                        element_t<ConfigType, point_tag> const & v2)
+    template <typename DomainPointType, typename TopologicDomainType, typename MetainfoCollectionType>
+    std::pair<DomainPointType, DomainPointType>
+    closest_points_impl(const geometric_domain_t<DomainPointType, TopologicDomainType, MetainfoCollectionType> & domain,
+                        typename result_of::element< geometric_domain_t<DomainPointType, TopologicDomainType, MetainfoCollectionType>, vertex_tag > const & v1,
+                        typename result_of::element< geometric_domain_t<DomainPointType, TopologicDomainType, MetainfoCollectionType>, vertex_tag > const & v2)
     {
-      return std::make_pair(v1.point(), v2.point());
+      return std::make_pair( viennagrid::point(domain, v1), viennagrid::point(domain, v2) );
     }
 
     
@@ -188,14 +189,14 @@ namespace viennagrid
     //
     
     // Implementation: Supposed to work for arbitrary dimensions
-    template <typename CoordType, typename CoordinateSystem>
-    std::pair<point_t<CoordType, CoordinateSystem>,
-              point_t<CoordType, CoordinateSystem> >
-    closest_points_point_line(point_t<CoordType, CoordinateSystem> const & p,
-                              point_t<CoordType, CoordinateSystem> const & line_p1,
-                              point_t<CoordType, CoordinateSystem> const & line_p2)
+    template <typename PointType, typename LinePointType>
+    std::pair<PointType, LinePointType>
+            closest_points_point_line(PointType const & p,
+                                      LinePointType const & line_p1,
+                                      LinePointType const & line_p2)
     {
-      typedef point_t<CoordType, CoordinateSystem>  PointType;
+      //typedef point_t<CoordType, CoordinateSystem>  PointType;
+      typedef typename traits::value_type< PointType >::type CoordType;
 
       //compute t such that projection of p onto [line_p1, line_p2] is given by p' = line_p1 + t * (line_p2 - line_p1)
       CoordType t = viennagrid::inner_prod( (p - line_p1), (line_p2 - line_p1) ) / viennagrid::inner_prod(line_p2 - line_p1, line_p2 - line_p1);
@@ -203,54 +204,58 @@ namespace viennagrid
       //restrict t to line segment, i.e. t \in [0, 1]
       t = std::max<CoordType>(0, std::min<CoordType>(1, t));
       
-      PointType p_prime = line_p1 + t * (line_p2 - line_p1);  //closest point to p on line
+      LinePointType p_prime = line_p1 + t * (line_p2 - line_p1);  //closest point to p on line
       
       return std::make_pair(p, p_prime);
     }
     
     
     //convenience overload: point and simplex line
-    template <typename CoordType, typename CoordinateSystem, typename ConfigType>
-    std::pair<point_t<CoordType, CoordinateSystem>,
-              point_t<CoordType, CoordinateSystem> >
-    closest_points_impl(point_t<CoordType, CoordinateSystem> const & p,
-                        element_t<ConfigType, simplex_tag<1> > const & el)
+    template <typename DomainPointType, typename TopologicDomainType, typename MetainfoCollectionType, typename PointType, typename BoundaryCellTypelist, typename IDType>
+    std::pair<DomainPointType,PointType>
+            closest_points_impl(const geometric_domain_t<DomainPointType, TopologicDomainType, MetainfoCollectionType> & domain,
+                                PointType const & p,
+                                element_t< simplex_tag<1>, BoundaryCellTypelist, IDType > const & el)
     {
       return closest_points_point_line(p, 
-                                       viennagrid::ncells<0>(el)[0].point(), viennagrid::ncells<0>(el)[1].point());
+                                       viennagrid::point(domain, viennagrid::elements<vertex_tag>(el)[0]),
+                                       viennagrid::point(domain, viennagrid::elements<vertex_tag>(el)[1]));
     }
     
     //convenience overload: point and hypercube line
-    template <typename CoordType, typename CoordinateSystem, typename ConfigType>
-    std::pair<point_t<CoordType, CoordinateSystem>,
-              point_t<CoordType, CoordinateSystem> >
-    closest_points_impl(point_t<CoordType, CoordinateSystem> const & p,
-                        element_t<ConfigType, hypercube_tag<1> > const & el)
+    template <typename DomainPointType, typename TopologicDomainType, typename MetainfoCollectionType, typename PointType, typename BoundaryCellTypelist, typename IDType>
+    std::pair<DomainPointType,PointType>
+            closest_points_impl(const geometric_domain_t<DomainPointType, TopologicDomainType, MetainfoCollectionType> & domain,
+                                PointType const & p,
+                                element_t< hypercube_tag<1>, BoundaryCellTypelist, IDType > const & el)
     {
       return closest_points_point_line(p, 
-                                       viennagrid::ncells<0>(el)[0].point(), viennagrid::ncells<0>(el)[1].point());
+                                       viennagrid::point(domain, viennagrid::elements<vertex_tag>(el)[0]),
+                                       viennagrid::point(domain, viennagrid::elements<vertex_tag>(el)[1]));
     }
     
     //convenience overload: vertex and simplex line
-    template <typename ConfigType>
-    std::pair<typename result_of::point<ConfigType>::type,
-              typename result_of::point<ConfigType>::type>
-    closest_points_impl(element_t<ConfigType, point_tag> const & v,
-                        element_t<ConfigType, simplex_tag<1> > const & el)
+    template <typename PointType, typename TopologicDomainType, typename MetainfoCollectionType, typename BoundaryCellTypelist1, typename IDType1, typename BoundaryCellTypelist2, typename IDType2>
+    std::pair<PointType,PointType>
+            closest_points_impl(const geometric_domain_t<PointType, TopologicDomainType, MetainfoCollectionType> & domain,
+                                element_t< vertex_tag, BoundaryCellTypelist1, IDType1 > const & v,
+                                element_t< simplex_tag<1>, BoundaryCellTypelist2, IDType2 > const & el)
     {
-      return closest_points_point_line(v.point(), 
-                                       viennagrid::ncells<0>(el)[0].point(), viennagrid::ncells<0>(el)[1].point());
+      return closest_points_point_line(viennagrid::point(domain,v),
+                                       viennagrid::point(domain, viennagrid::elements<vertex_tag>(el)[0]),
+                                       viennagrid::point(domain, viennagrid::elements<vertex_tag>(el)[1]));
     }
     
     //convenience overload: vertex and hypercube line
-    template <typename ConfigType>
-    std::pair<typename result_of::point<ConfigType>::type,
-              typename result_of::point<ConfigType>::type>
-    closest_points_impl(element_t<ConfigType, point_tag> const & v,
-                        element_t<ConfigType, hypercube_tag<1> > const & el)
+    template <typename PointType, typename TopologicDomainType, typename MetainfoCollectionType, typename BoundaryCellTypelist1, typename IDType1, typename BoundaryCellTypelist2, typename IDType2>
+    std::pair<PointType,PointType>
+            closest_points_impl(const geometric_domain_t<PointType, TopologicDomainType, MetainfoCollectionType> & domain,
+                                element_t< vertex_tag, BoundaryCellTypelist1, IDType1 > const & v,
+                                element_t< hypercube_tag<1>, BoundaryCellTypelist2, IDType2 > const & el)
     {
-      return closest_points_point_line(v.point(), 
-                                       viennagrid::ncells<0>(el)[0].point(), viennagrid::ncells<0>(el)[1].point());
+      return closest_points_point_line(viennagrid::point(domain,v),
+                                       viennagrid::point(domain, viennagrid::elements<vertex_tag>(el)[0]),
+                                       viennagrid::point(domain, viennagrid::elements<vertex_tag>(el)[1]));
     }
     
     //
@@ -258,13 +263,13 @@ namespace viennagrid
     //
     
     // Implementation: Supposed to work for arbitrary dimensions
-    template <typename CoordType, typename CoordinateSystem>
-    std::pair<point_t<CoordType, CoordinateSystem>,
-              point_t<CoordType, CoordinateSystem> >
-    closest_points_line_line(point_t<CoordType, CoordinateSystem> const & v0, point_t<CoordType, CoordinateSystem> const & v1, //endpoints of first line
-                             point_t<CoordType, CoordinateSystem> const & w0, point_t<CoordType, CoordinateSystem> const & w1) //endpoints of second line
+    template <typename PointType>
+    std::pair<PointType, PointType>
+            closest_points_line_line(PointType const & v0, PointType const & v1, //endpoints of first line
+                                     PointType const & w0, PointType const & w1) //endpoints of second line
     {
-      typedef point_t<CoordType, CoordinateSystem>  PointType;
+      //typedef point_t<CoordType, CoordinateSystem>  PointType;
+      typedef typename traits::value_type< PointType >::type CoordType;
 
       // write V(s) = v0 + s * (v1 - v0), s \in [0,1]
       //       W(t) = w0 + t * (w1 - w0), t \in [0,1]
@@ -319,47 +324,55 @@ namespace viennagrid
     
     
     //convenience overload: simplex line and simplex line
-    template <typename ConfigType>
-    std::pair<typename result_of::point<ConfigType>::type,
-              typename result_of::point<ConfigType>::type>
-    closest_points_impl(element_t<ConfigType, simplex_tag<1> > const & line0,
-                        element_t<ConfigType, simplex_tag<1> > const & line1)
+    template <typename PointType, typename TopologicDomainType, typename MetainfoCollectionType, typename BoundaryCellTypelist1, typename IDType1, typename BoundaryCellTypelist2, typename IDType2>
+    std::pair<PointType,PointType>
+            closest_points_impl(const geometric_domain_t<PointType, TopologicDomainType, MetainfoCollectionType> & domain,
+                                element_t< simplex_tag<1>, BoundaryCellTypelist1, IDType1 > const & line0,
+                                element_t< simplex_tag<1>, BoundaryCellTypelist2, IDType2 > const & line1)
     {
-      return closest_points_line_line(viennagrid::ncells<0>(line0)[0].point(), viennagrid::ncells<0>(line0)[1].point(), 
-                                      viennagrid::ncells<0>(line1)[0].point(), viennagrid::ncells<0>(line1)[1].point());
+      return closest_points_line_line(viennagrid::point(domain, viennagrid::elements<vertex_tag>(line0)[0]),
+                                      viennagrid::point(domain, viennagrid::elements<vertex_tag>(line0)[1]),
+                                      viennagrid::point(domain, viennagrid::elements<vertex_tag>(line1)[0]),
+                                      viennagrid::point(domain, viennagrid::elements<vertex_tag>(line1)[1]));
     }
     
     //convenience overload: hypercube line and simplex line
-    template <typename ConfigType>
-    std::pair<typename result_of::point<ConfigType>::type,
-              typename result_of::point<ConfigType>::type>
-    closest_points_impl(element_t<ConfigType, hypercube_tag<1> > const & line0,
-                        element_t<ConfigType, simplex_tag<1> > const & line1)
+    template <typename PointType, typename TopologicDomainType, typename MetainfoCollectionType, typename BoundaryCellTypelist1, typename IDType1, typename BoundaryCellTypelist2, typename IDType2>
+    std::pair<PointType, PointType>
+            closest_points_impl(const geometric_domain_t<PointType, TopologicDomainType, MetainfoCollectionType> & domain,
+                                element_t< hypercube_tag<1>, BoundaryCellTypelist1, IDType1 > const & line0,
+                                element_t< simplex_tag<1>, BoundaryCellTypelist2, IDType2 > const & line1)
     {
-      return closest_points_line_line(viennagrid::ncells<0>(line0)[0].point(), viennagrid::ncells<0>(line0)[1].point(), 
-                                      viennagrid::ncells<0>(line1)[0].point(), viennagrid::ncells<0>(line1)[1].point());
+      return closest_points_line_line(viennagrid::point(domain, viennagrid::elements<vertex_tag>(line0)[0]),
+                                      viennagrid::point(domain, viennagrid::elements<vertex_tag>(line0)[1]),
+                                      viennagrid::point(domain, viennagrid::elements<vertex_tag>(line1)[0]),
+                                      viennagrid::point(domain, viennagrid::elements<vertex_tag>(line1)[1]));
     }
 
     //convenience overload: simplex line and hypercube line
-    template <typename ConfigType>
-    std::pair<typename result_of::point<ConfigType>::type,
-              typename result_of::point<ConfigType>::type>
-    closest_points_impl(element_t<ConfigType, simplex_tag<1> > const & line0,
-                        element_t<ConfigType, hypercube_tag<1> > const & line1)
+    template <typename PointType, typename TopologicDomainType, typename MetainfoCollectionType, typename BoundaryCellTypelist1, typename IDType1, typename BoundaryCellTypelist2, typename IDType2>
+    std::pair<PointType, PointType>
+            closest_points_impl(const geometric_domain_t<PointType, TopologicDomainType, MetainfoCollectionType> & domain,
+                                element_t< simplex_tag<1>, BoundaryCellTypelist2, IDType2 > const & line0,
+                                element_t< hypercube_tag<1>, BoundaryCellTypelist2, IDType2 > const & line1)
     {
-      return closest_points_line_line(viennagrid::ncells<0>(line0)[0].point(), viennagrid::ncells<0>(line0)[1].point(), 
-                                      viennagrid::ncells<0>(line1)[0].point(), viennagrid::ncells<0>(line1)[1].point());
+      return closest_points_line_line(viennagrid::point(domain, viennagrid::elements<vertex_tag>(line0)[0]),
+                                      viennagrid::point(domain, viennagrid::elements<vertex_tag>(line0)[1]),
+                                      viennagrid::point(domain, viennagrid::elements<vertex_tag>(line1)[0]),
+                                      viennagrid::point(domain, viennagrid::elements<vertex_tag>(line1)[1]));
     }
     
     //convenience overload: hypercube line and hypercube line
-    template <typename ConfigType>
-    std::pair<typename result_of::point<ConfigType>::type,
-              typename result_of::point<ConfigType>::type>
-    closest_points_impl(element_t<ConfigType, hypercube_tag<1> > const & line0,
-                        element_t<ConfigType, hypercube_tag<1> > const & line1)
+    template <typename PointType, typename TopologicDomainType, typename MetainfoCollectionType, typename BoundaryCellTypelist1, typename IDType1, typename BoundaryCellTypelist2, typename IDType2>
+    std::pair<PointType, PointType>
+            closest_points_impl(const geometric_domain_t<PointType, TopologicDomainType, MetainfoCollectionType> & domain,
+                                element_t< hypercube_tag<1>, BoundaryCellTypelist1, IDType1 > const & line0,
+                                element_t< hypercube_tag<1>, BoundaryCellTypelist2, IDType2 > const & line1)
     {
-      return closest_points_line_line(viennagrid::ncells<0>(line0)[0].point(), viennagrid::ncells<0>(line0)[1].point(), 
-                                      viennagrid::ncells<0>(line1)[0].point(), viennagrid::ncells<0>(line1)[1].point());
+      return closest_points_line_line(viennagrid::point(domain, viennagrid::elements<vertex_tag>(line0)[0]),
+                                      viennagrid::point(domain, viennagrid::elements<vertex_tag>(line0)[1]),
+                                      viennagrid::point(domain, viennagrid::elements<vertex_tag>(line1)[0]),
+                                      viennagrid::point(domain, viennagrid::elements<vertex_tag>(line1)[1]));
     }
     
 
@@ -369,15 +382,14 @@ namespace viennagrid
     
     // Implementation: Supposed to work for arbitrary dimensions
     // Projects p onto the plane spanned by the triangle, then computes the shortest distance in the plane and uses Pythagoras for the full distance
-    template <typename CoordType, typename CoordinateSystem>
-    std::pair<point_t<CoordType, CoordinateSystem>,
-              point_t<CoordType, CoordinateSystem> >
-    closest_points_point_triangle(point_t<CoordType, CoordinateSystem> const & p,
-                                  point_t<CoordType, CoordinateSystem> const & v0,
-                                  point_t<CoordType, CoordinateSystem> const & v1,
-                                  point_t<CoordType, CoordinateSystem> const & v2) //endpoints of second line
+    template <typename PointType>
+    std::pair<PointType,PointType>
+            closest_points_point_triangle(PointType const & p,
+                                          PointType const & v0,
+                                          PointType const & v1,
+                                          PointType const & v2) //endpoints of second line
     {
-      typedef point_t<CoordType, CoordinateSystem>  PointType;
+      typedef typename traits::value_type< PointType >::type CoordType;
 
       // write T(s) =  v0 + s * (v1 - v0) + t * (v2 - v0), {s,t} \in [0,1], s+t < 1 for the triangle T
       //            =: v0 + s * u0 + t * u1
@@ -437,26 +449,26 @@ namespace viennagrid
     
 
     //convenience overload: point 
-    template <typename CoordType, typename CoordinateSystem, typename ConfigType>
-    std::pair<point_t<CoordType, CoordinateSystem>,
-              point_t<CoordType, CoordinateSystem> >
-    closest_points_impl(point_t<CoordType, CoordinateSystem> const & p,
-                        element_t<ConfigType, simplex_tag<2> > const & el)
+    template <typename PointType, typename TopologicDomainType, typename MetainfoCollectionType, typename BoundaryCellTypelist, typename IDType>
+    std::pair<PointType,PointType>
+            closest_points_impl(const geometric_domain_t<PointType, TopologicDomainType, MetainfoCollectionType> & domain,
+                                PointType const & p,
+                                element_t< simplex_tag<2>, BoundaryCellTypelist, IDType> const & el)
     {
       return closest_points_point_triangle(p, 
-                                           viennagrid::ncells<0>(el)[0].point(),
-                                           viennagrid::ncells<0>(el)[1].point(),
-                                           viennagrid::ncells<0>(el)[2].point());
+                                           viennagrid::point(domain, viennagrid::elements<viennagrid::vertex_tag>(el)[0]),
+                                           viennagrid::point(domain, viennagrid::elements<viennagrid::vertex_tag>(el)[1]),
+                                           viennagrid::point(domain, viennagrid::elements<viennagrid::vertex_tag>(el)[2]));
     }
 
     //convenience overload: vertex 
-    template <typename ConfigType>
-    std::pair<typename result_of::point<ConfigType>::type,
-              typename result_of::point<ConfigType>::type>
-    closest_points_impl(element_t<ConfigType, point_tag> const & v,
-                        element_t<ConfigType, simplex_tag<2> > const & el)
+    template <typename PointType, typename TopologicDomainType, typename MetainfoCollectionType, typename BoundaryCellTypelist1, typename IDType1, typename BoundaryCellTypelist2, typename IDType2>
+    std::pair<PointType,PointType>
+    closest_points_impl(const geometric_domain_t<PointType, TopologicDomainType, MetainfoCollectionType> & domain,
+                        element_t< vertex_tag, BoundaryCellTypelist1, IDType1> const & v,
+                        element_t< simplex_tag<2>, BoundaryCellTypelist2, IDType2> const & el)
     {
-      return closest_points_impl(v.point(), el);
+      return closest_points_impl( viennagrid::point(domain,v), el);
     }
     
     
@@ -478,31 +490,31 @@ namespace viennagrid
     //    * --------- *
     //   v[0]        v[1]
     //
-    template <typename CoordType, typename CoordinateSystem, typename ConfigType>
-    std::pair<point_t<CoordType, CoordinateSystem>,
-              point_t<CoordType, CoordinateSystem> >
-    closest_points_impl(point_t<CoordType, CoordinateSystem> const & p,
-                        element_t<ConfigType, hypercube_tag<2> > const & el)
+    template <typename PointType, typename TopologicDomainType, typename MetainfoCollectionType, typename BoundaryCellTypelist, typename IDType>
+    std::pair<PointType,PointType>
+            closest_points_impl(const geometric_domain_t<PointType, TopologicDomainType, MetainfoCollectionType> & domain,
+                                PointType const & p,
+                                element_t< hypercube_tag<2>, BoundaryCellTypelist, IDType> const & el)
     {
       return point_pair_with_shortest_distance(closest_points_point_triangle(p, 
-                                                                             viennagrid::ncells<0>(el)[0].point(),
-                                                                             viennagrid::ncells<0>(el)[1].point(),
-                                                                             viennagrid::ncells<0>(el)[2].point()),
+                                                                             viennagrid::point(domain, viennagrid::elements<viennagrid::vertex_tag>(el)[0]),
+                                                                             viennagrid::point(domain, viennagrid::elements<viennagrid::vertex_tag>(el)[1]),
+                                                                             viennagrid::point(domain, viennagrid::elements<viennagrid::vertex_tag>(el)[2])),
                                                closest_points_point_triangle(p, 
-                                                                             viennagrid::ncells<0>(el)[1].point(),
-                                                                             viennagrid::ncells<0>(el)[3].point(),
-                                                                             viennagrid::ncells<0>(el)[2].point())
+                                                                             viennagrid::point(domain, viennagrid::elements<viennagrid::vertex_tag>(el)[1]),
+                                                                             viennagrid::point(domain, viennagrid::elements<viennagrid::vertex_tag>(el)[3]),
+                                                                             viennagrid::point(domain, viennagrid::elements<viennagrid::vertex_tag>(el)[2]))
                                               );
     }
 
     //convenience overload: vertex 
-    template <typename ConfigType>
-    std::pair<typename result_of::point<ConfigType>::type,
-              typename result_of::point<ConfigType>::type>
-    closest_points_impl(element_t<ConfigType, point_tag> const & v,
-                        element_t<ConfigType, hypercube_tag<2> > const & el)
+    template <typename PointType, typename TopologicDomainType, typename MetainfoCollectionType, typename BoundaryCellTypelist1, typename IDType1, typename BoundaryCellTypelist2, typename IDType2>
+    std::pair<PointType,PointType>
+            closest_points_impl(const geometric_domain_t<PointType, TopologicDomainType, MetainfoCollectionType> & domain,
+                                element_t< vertex_tag, BoundaryCellTypelist1, IDType1> const & v,
+                                element_t< hypercube_tag<2>, BoundaryCellTypelist2, IDType2> const & el)
     {
-      return closest_points_impl(v.point(), el);
+      return closest_points_impl( viennagrid::point(domain,v), el);
     }
 
     
@@ -513,16 +525,15 @@ namespace viennagrid
     
     // Implementation: Supposed to work for arbitrary geometric dimensions
     // Projects p onto the plane spanned by the triangle, then computes the shortest distance in the plane and uses Pythagoras for the full distance
-    template <typename CoordType, typename CoordinateSystem>
-    std::pair<point_t<CoordType, CoordinateSystem>,
-              point_t<CoordType, CoordinateSystem> >
-    closest_points_point_tetrahedron(point_t<CoordType, CoordinateSystem> const & p,
-                                     point_t<CoordType, CoordinateSystem> const & v0,
-                                     point_t<CoordType, CoordinateSystem> const & v1,
-                                     point_t<CoordType, CoordinateSystem> const & v2,
-                                     point_t<CoordType, CoordinateSystem> const & v3)
+    template <typename PointType>
+    std::pair<PointType,PointType>
+            closest_points_point_tetrahedron(PointType const & p,
+                                             PointType const & v0,
+                                             PointType const & v1,
+                                             PointType const & v2,
+                                             PointType const & v3)
     {
-      typedef point_t<CoordType, CoordinateSystem>  PointType;
+      typedef typename traits::value_type< PointType >::type CoordType;
 
       // write T(s) =  v0 + r * (v1 - v0) + s * (v2 - v0) + t * (v3 - v1), {r,s,t} \in [0,1], r+s+t < 1 for the tetrahedron T
       //            =: v0 + r * u0 + s * u1 + t * u2
@@ -599,27 +610,27 @@ namespace viennagrid
     
 
     //convenience overload: point 
-    template <typename CoordType, typename CoordinateSystem, typename ConfigType>
-    std::pair<point_t<CoordType, CoordinateSystem>,
-              point_t<CoordType, CoordinateSystem> >
-    closest_points_impl(point_t<CoordType, CoordinateSystem> const & p,
-                        element_t<ConfigType, simplex_tag<3> > const & el)
+    template <typename PointType, typename TopologicDomainType, typename MetainfoCollectionType, typename BoundaryCellTypelist, typename IDType>
+    std::pair<PointType,PointType>
+            closest_points_impl(const geometric_domain_t<PointType, TopologicDomainType, MetainfoCollectionType> & domain,
+                                PointType const & p,
+                                element_t< simplex_tag<3>, BoundaryCellTypelist, IDType> const & el)
     {
       return closest_points_point_tetrahedron(p, 
-                                              viennagrid::ncells<0>(el)[0].point(),
-                                              viennagrid::ncells<0>(el)[1].point(),
-                                              viennagrid::ncells<0>(el)[2].point(),
-                                              viennagrid::ncells<0>(el)[3].point());
+                                              viennagrid::point(domain, viennagrid::elements<viennagrid::vertex_tag>(el)[0]),
+                                              viennagrid::point(domain, viennagrid::elements<viennagrid::vertex_tag>(el)[1]),
+                                              viennagrid::point(domain, viennagrid::elements<viennagrid::vertex_tag>(el)[2]),
+                                              viennagrid::point(domain, viennagrid::elements<viennagrid::vertex_tag>(el)[3]));
     }
 
     //convenience overload: vertex 
-    template <typename ConfigType>
-    std::pair<typename result_of::point<ConfigType>::type,
-              typename result_of::point<ConfigType>::type>
-    closest_points_impl(element_t<ConfigType, point_tag> const & v,
-                        element_t<ConfigType, simplex_tag<3> > const & el)
+    template <typename PointType, typename TopologicDomainType, typename MetainfoCollectionType, typename BoundaryCellTypelist1, typename IDType1, typename BoundaryCellTypelist2, typename IDType2>
+    std::pair<PointType,PointType>
+            closest_points_impl(const geometric_domain_t<PointType, TopologicDomainType, MetainfoCollectionType> & domain,
+                                element_t< vertex_tag, BoundaryCellTypelist1, IDType1> const & v,
+                                element_t< simplex_tag<3>, BoundaryCellTypelist2, IDType2> const & el)
     {
-      return closest_points_impl(v.point(), el);
+      return closest_points_impl( viennagrid::point(domain.v), el);
     }
     
     
@@ -629,53 +640,53 @@ namespace viennagrid
     //
 
     //convenience overload: point 
-    template <typename CoordType, typename CoordinateSystem, typename ConfigType>
-    std::pair<point_t<CoordType, CoordinateSystem>,
-              point_t<CoordType, CoordinateSystem> >
-    closest_points_impl(point_t<CoordType, CoordinateSystem> const & p,
-                        element_t<ConfigType, hypercube_tag<3> > const & el)
+    template <typename PointType, typename TopologicDomainType, typename MetainfoCollectionType, typename BoundaryCellTypelist, typename IDType>
+    std::pair<PointType,PointType>
+            closest_points_impl(const geometric_domain_t<PointType, TopologicDomainType, MetainfoCollectionType> & domain,
+                                PointType const & p,
+                                element_t< hypercube_tag<3>, BoundaryCellTypelist, IDType> const & el)
     {
       return point_pair_with_shortest_distance(closest_points_point_tetrahedron(p, 
-                                                                                viennagrid::ncells<0>(el)[0].point(),
-                                                                                viennagrid::ncells<0>(el)[1].point(),
-                                                                                viennagrid::ncells<0>(el)[3].point(),
-                                                                                viennagrid::ncells<0>(el)[7].point()),
+                                                                                viennagrid::point(domain, viennagrid::elements<viennagrid::vertex_tag>(el)[0]),
+                                                                                viennagrid::point(domain, viennagrid::elements<viennagrid::vertex_tag>(el)[1]),
+                                                                                viennagrid::point(domain, viennagrid::elements<viennagrid::vertex_tag>(el)[3]),
+                                                                                viennagrid::point(domain, viennagrid::elements<viennagrid::vertex_tag>(el)[7])),
                                                closest_points_point_tetrahedron(p, 
-                                                                                viennagrid::ncells<0>(el)[0].point(),
-                                                                                viennagrid::ncells<0>(el)[1].point(),
-                                                                                viennagrid::ncells<0>(el)[7].point(),
-                                                                                viennagrid::ncells<0>(el)[5].point()),
+                                                                                viennagrid::point(domain, viennagrid::elements<viennagrid::vertex_tag>(el)[0]),
+                                                                                viennagrid::point(domain, viennagrid::elements<viennagrid::vertex_tag>(el)[1]),
+                                                                                viennagrid::point(domain, viennagrid::elements<viennagrid::vertex_tag>(el)[7]),
+                                                                                viennagrid::point(domain, viennagrid::elements<viennagrid::vertex_tag>(el)[5])),
                                                closest_points_point_tetrahedron(p, 
-                                                                                viennagrid::ncells<0>(el)[0].point(),
-                                                                                viennagrid::ncells<0>(el)[2].point(),
-                                                                                viennagrid::ncells<0>(el)[6].point(),
-                                                                                viennagrid::ncells<0>(el)[7].point()),
+                                                                                viennagrid::point(domain, viennagrid::elements<viennagrid::vertex_tag>(el)[0]),
+                                                                                viennagrid::point(domain, viennagrid::elements<viennagrid::vertex_tag>(el)[2]),
+                                                                                viennagrid::point(domain, viennagrid::elements<viennagrid::vertex_tag>(el)[6]),
+                                                                                viennagrid::point(domain, viennagrid::elements<viennagrid::vertex_tag>(el)[7])),
                                                closest_points_point_tetrahedron(p, 
-                                                                                viennagrid::ncells<0>(el)[0].point(),
-                                                                                viennagrid::ncells<0>(el)[3].point(),
-                                                                                viennagrid::ncells<0>(el)[2].point(),
-                                                                                viennagrid::ncells<0>(el)[7].point()),
+                                                                                viennagrid::point(domain, viennagrid::elements<viennagrid::vertex_tag>(el)[0]),
+                                                                                viennagrid::point(domain, viennagrid::elements<viennagrid::vertex_tag>(el)[3]),
+                                                                                viennagrid::point(domain, viennagrid::elements<viennagrid::vertex_tag>(el)[2]),
+                                                                                viennagrid::point(domain, viennagrid::elements<viennagrid::vertex_tag>(el)[7])),
                                                closest_points_point_tetrahedron(p, 
-                                                                                viennagrid::ncells<0>(el)[0].point(),
-                                                                                viennagrid::ncells<0>(el)[5].point(),
-                                                                                viennagrid::ncells<0>(el)[7].point(),
-                                                                                viennagrid::ncells<0>(el)[4].point()),
+                                                                                viennagrid::point(domain, viennagrid::elements<viennagrid::vertex_tag>(el)[0]),
+                                                                                viennagrid::point(domain, viennagrid::elements<viennagrid::vertex_tag>(el)[5]),
+                                                                                viennagrid::point(domain, viennagrid::elements<viennagrid::vertex_tag>(el)[7]),
+                                                                                viennagrid::point(domain, viennagrid::elements<viennagrid::vertex_tag>(el)[4])),
                                                closest_points_point_tetrahedron(p, 
-                                                                                viennagrid::ncells<0>(el)[0].point(),
-                                                                                viennagrid::ncells<0>(el)[6].point(),
-                                                                                viennagrid::ncells<0>(el)[4].point(),
-                                                                                viennagrid::ncells<0>(el)[7].point())
+                                                                                viennagrid::point(domain, viennagrid::elements<viennagrid::vertex_tag>(el)[0]),
+                                                                                viennagrid::point(domain, viennagrid::elements<viennagrid::vertex_tag>(el)[6]),
+                                                                                viennagrid::point(domain, viennagrid::elements<viennagrid::vertex_tag>(el)[4]),
+                                                                                viennagrid::point(domain, viennagrid::elements<viennagrid::vertex_tag>(el)[7]))
                                               );
     }
 
     //convenience overload: vertex 
-    template <typename ConfigType>
-    std::pair<typename result_of::point<ConfigType>::type,
-              typename result_of::point<ConfigType>::type>
-    closest_points_impl(element_t<ConfigType, point_tag> const & v,
-                        element_t<ConfigType, hypercube_tag<3> > const & el)
+    template <typename PointType, typename TopologicDomainType, typename MetainfoCollectionType, typename BoundaryCellTypelist1, typename IDType1, typename BoundaryCellTypelist2, typename IDType2>
+    std::pair<PointType,PointType>
+    closest_points_impl(geometric_domain_t<PointType, TopologicDomainType, MetainfoCollectionType> const & domain,
+                        element_t< vertex_tag, BoundaryCellTypelist1, IDType1> const & v,
+                        element_t< hypercube_tag<3>, BoundaryCellTypelist2, IDType2> const & el)
     {
-      return closest_points_impl(v.point(), el);
+      return closest_points_impl( viennagrid::point(domain.v), el);
     }
 
     //
@@ -696,63 +707,68 @@ namespace viennagrid
       return std::make_pair(p1, p2);
     }
 
-    template <typename CoordType, typename CoordinateSystem, typename ConfigType>
-    std::pair<point_t<CoordType, CoordinateSystem>,
-              point_t<CoordType, CoordinateSystem> >
-    closest_points_on_boundary_impl(point_t<CoordType, CoordinateSystem> const & p1,
-                                    element_t<ConfigType, point_tag> const & v2)
+    
+    
+    template <typename DomainPointType, typename TopologicDomainType, typename MetainfoCollectionType, typename PointType,
+            typename BoundaryCellTypelist, typename IDType>
+    std::pair<PointType, DomainPointType>
+    closest_points_on_boundary_impl(geometric_domain_t<DomainPointType, TopologicDomainType, MetainfoCollectionType> const & domain,
+                                    PointType const & p1,
+                                    element_t< vertex_tag, BoundaryCellTypelist, IDType> const & v2)
     {
-      return std::make_pair(p1, v2.point());
-    }
-
-    template <typename ConfigType, typename CoordType, typename CoordinateSystem>
-    std::pair<point_t<CoordType, CoordinateSystem>,
-              point_t<CoordType, CoordinateSystem> >
-    closest_points_on_boundary_impl(element_t<ConfigType, point_tag> const & v1,
-                                    point_t<CoordType, CoordinateSystem> const & p2)
-    {
-      return std::make_pair(v1.point(), p2);
+      return std::make_pair(p1, viennagrid::point(domain, v2));
     }
     
-    // Closest points between vertices:
-    template <typename ConfigType>
-    std::pair<typename result_of::point<ConfigType>::type,
-              typename result_of::point<ConfigType>::type>
-    closest_points_on_boundary_impl(element_t<ConfigType, point_tag> const & v1,
-                                    element_t<ConfigType, point_tag> const & v2)
+    template <typename DomainPointType, typename TopologicDomainType, typename MetainfoCollectionType, typename PointType,
+            typename BoundaryCellTypelist, typename IDType>
+    std::pair<DomainPointType, PointType>
+    closest_points_on_boundary_impl(geometric_domain_t<DomainPointType, TopologicDomainType, MetainfoCollectionType> const & domain,
+                                    element_t< vertex_tag, BoundaryCellTypelist, IDType> const & v1,
+                                    PointType const & p2)
     {
-      return std::make_pair(v1.point(), v2.point());
+      return std::make_pair(viennagrid::point(domain, v1), p2);
+    }
+
+    
+    // Closest points between vertices:
+    template <typename DomainPointType, typename TopologicDomainType, typename MetainfoCollectionType,
+            typename BoundaryCellTypelist1, typename IDType1, typename BoundaryCellTypelist2, typename IDType2>
+    std::pair<DomainPointType, DomainPointType>
+    closest_points_on_boundary_impl(geometric_domain_t<DomainPointType, TopologicDomainType, MetainfoCollectionType> const & domain,
+                        element_t< vertex_tag, BoundaryCellTypelist1, IDType1> const & v1,
+                        element_t< vertex_tag, BoundaryCellTypelist2, IDType2> const & v2)
+    {
+      return std::make_pair(viennagrid::point(domain, v1), viennagrid::point(domain, v2));
     }
 
     
     ////////////////// Distance from point to container ////////////////////
     
     /** @tparam ContainerType   Any topological object (ncell, segment, domain) */
-    template <long facet_dim, typename CoordType, typename CoordinateSystem, typename ContainerType>
-    std::pair<point_t<CoordType, CoordinateSystem>,
-              point_t<CoordType, CoordinateSystem> >
-    closest_points_on_boundary_point_to_any(point_t<CoordType, CoordinateSystem> const & v,
+    template <typename FacetTypeOrTag, typename DomainPointType, typename TopologicDomainType, typename MetainfoCollectionType, typename PointType, typename ContainerType>
+    std::pair<PointType, DomainPointType>
+    closest_points_on_boundary_point_to_any(geometric_domain_t<DomainPointType, TopologicDomainType, MetainfoCollectionType> const & domain,
+                                            PointType const & v,
                                             ContainerType const & cont)
     {
-      typedef std::pair<point_t<CoordType, CoordinateSystem>,
-                        point_t<CoordType, CoordinateSystem> >       PairType;
+      typedef typename result_of::element_tag<FacetTypeOrTag>::type FacetTag;
+      typedef std::pair<PointType, DomainPointType>       PairType;
                         
-      typedef typename viennagrid::result_of::const_ncell_range<ContainerType,
-                                                                facet_dim>::type           FacetRange;
+      typedef typename viennagrid::result_of::const_element_range<ContainerType, FacetTag>::type           FacetRange;
       typedef typename viennagrid::result_of::iterator<FacetRange>::type                  FacetIterator;
       
       PairType closest_pair;
       double shortest_distance = std::numeric_limits<double>::max();
       
-      FacetRange facets = viennagrid::ncells(cont);
+      FacetRange facets = viennagrid::elements<FacetTag>(cont);
       for (FacetIterator fit = facets.begin();
                          fit != facets.end();
                        ++fit)
       {
-        if (!is_boundary(*fit, cont))
+        if (!is_boundary<FacetTag>(*fit, cont))
           continue;
         
-        PairType p = closest_points_impl(v, *fit);
+        PairType p = closest_points_impl(domain, v, *fit);
         double cur_norm = norm_2(p.first - p.second);
         if (cur_norm < shortest_distance)
         {
@@ -766,80 +782,82 @@ namespace viennagrid
 
     
     
-    template <typename ConfigType, typename CoordType, typename CoordinateSystem, typename ElementTag>
-    std::pair<typename result_of::point<ConfigType>::type,
-              typename result_of::point<ConfigType>::type>
-    closest_points_on_boundary_impl(point_t<CoordType, CoordinateSystem> const & v,
-                                    element_t<ConfigType, ElementTag> const & el)
+    template <typename DomainPointType, typename TopologicDomainType, typename MetainfoCollectionType, typename PointType, typename ElementTag, typename BoundaryCellTypelist, typename id_type>
+    std::pair<PointType, DomainPointType>
+    closest_points_on_boundary_impl(geometric_domain_t<DomainPointType, TopologicDomainType, MetainfoCollectionType> const & domain,
+                                    PointType const & v,
+                                    element_t<ElementTag, BoundaryCellTypelist, id_type> const & el)
     {
-      return closest_points_on_boundary_point_to_any<ElementTag::dim-1>(v, el);
+      return closest_points_on_boundary_point_to_any<typename ElementTag::facet_tag>(domain, v, el);
     }
     
-    template <typename ConfigType, typename CoordType, typename CoordinateSystem>
-    std::pair<typename result_of::point<ConfigType>::type,
-              typename result_of::point<ConfigType>::type>
-    closest_points_on_boundary_impl(point_t<CoordType, CoordinateSystem> const & v,
-                                    segment_t<ConfigType> const & seg)
-    {
-      return closest_points_on_boundary_point_to_any<ConfigType::cell_tag::dim-1>(v, seg);
-    }
+//     template <typename ConfigType, typename CoordType, typename CoordinateSystem>
+//     std::pair<typename result_of::point<ConfigType>::type,
+//               typename result_of::point<ConfigType>::type>
+//     closest_points_on_boundary_impl(point_t<CoordType, CoordinateSystem> const & v,
+//                                     segment_t<ConfigType> const & seg)
+//     {
+//       return closest_points_on_boundary_point_to_any<ConfigType::cell_tag::dim-1>(v, seg);
+//     }
 
-        template <typename ConfigType, typename CoordType, typename CoordinateSystem>
-    std::pair<typename result_of::point<ConfigType>::type,
-              typename result_of::point<ConfigType>::type>
-    closest_points_on_boundary_impl(point_t<CoordType, CoordinateSystem> const & v,
-                                    domain_t<ConfigType> const & dom)
+    template <typename ElementTypeOrTag, typename DomainPointType, typename TopologicDomainType, typename MetainfoCollectionType, typename PointType>
+    std::pair<PointType, DomainPointType>
+    closest_points_on_boundary_impl(geometric_domain_t<DomainPointType, TopologicDomainType, MetainfoCollectionType> const & domain,
+                                    PointType const & v)
     {
-      return closest_points_on_boundary_point_to_any<ConfigType::cell_tag::dim-1>(v, dom);
+        typedef typename result_of::element_tag<ElementTypeOrTag>::type ElementTag;
+      return closest_points_on_boundary_point_to_any<typename ElementTag::facet_tag>(domain, v, domain);
     }
  
     
     
-    template <typename ConfigType, typename ElementTag>
-    std::pair<typename result_of::point<ConfigType>::type,
-              typename result_of::point<ConfigType>::type>
-    closest_points_on_boundary_impl(element_t<ConfigType, point_tag> const & v,
-                                    element_t<ConfigType, ElementTag> const & el)
+    template <typename DomainPointType, typename TopologicDomainType, typename MetainfoCollectionType,
+        typename BoundaryCellTypelist1, typename IDType1, typename ElementTag, typename BoundaryCellTypelist2, typename IDType2>
+    std::pair<DomainPointType, DomainPointType>
+    closest_points_on_boundary_impl(geometric_domain_t<DomainPointType, TopologicDomainType, MetainfoCollectionType> const & domain,
+                                    element_t< vertex_tag, BoundaryCellTypelist1, IDType1> const & v,
+                                    element_t< ElementTag, BoundaryCellTypelist2, IDType2> const & el)
     {
-      return closest_points_on_boundary_impl(v.point(), el);
+      return closest_points_on_boundary_impl( viennagrid::point(domain, v), el);
     }
 
-    template <typename ConfigType>
-    std::pair<typename result_of::point<ConfigType>::type,
-              typename result_of::point<ConfigType>::type>
-    closest_points_on_boundary_impl(element_t<ConfigType, point_tag> const & v,
-                                    segment_t<ConfigType> const & seg)
-    {
-      return closest_points_on_boundary_impl(v.point(), seg);
-    }
+//     template <typename ConfigType>
+//     std::pair<typename result_of::point<ConfigType>::type,
+//               typename result_of::point<ConfigType>::type>
+//     closest_points_on_boundary_impl(element_t<ConfigType, point_tag> const & v,
+//                                     segment_t<ConfigType> const & seg)
+//     {
+//       return closest_points_on_boundary_impl(v.point(), seg);
+//     }
 
-        template <typename ConfigType>
-    std::pair<typename result_of::point<ConfigType>::type,
-              typename result_of::point<ConfigType>::type>
-    closest_points_on_boundary_impl(element_t<ConfigType, point_tag> const & v,
-                                    domain_t<ConfigType> const & dom)
+    template <typename ElementTypeOrTag, typename DomainPointType, typename TopologicDomainType, typename MetainfoCollectionType,
+            typename BoundaryCellTypelist, typename IDType>
+    std::pair<DomainPointType, DomainPointType>
+    closest_points_on_boundary_impl(geometric_domain_t<DomainPointType, TopologicDomainType, MetainfoCollectionType> const & domain,
+                                    element_t< vertex_tag, BoundaryCellTypelist, IDType> const & v)
     {
-      return closest_points_on_boundary_impl(v.point(), dom);
+      return closest_points_on_boundary_impl<ElementTypeOrTag>( viennagrid::point(domain, v), domain);
     }
 
     
     ////////// Distance from Container to Container /////////////////////
     
-    template <long facet_dim1, long facet_dim2, typename ContainerType1, typename ContainerType2>
-    std::pair<typename result_of::point<typename ContainerType1::config_type>::type,
-              typename result_of::point<typename ContainerType2::config_type>::type>
-    closest_points_on_boundary_generic(ContainerType1 const & el1,
+    template <typename FacetTypeOrTag1, typename FacetTypeOrTag2, typename DomainPointType, typename TopologicDomainType, typename MetainfoCollectionType, typename ContainerType1, typename ContainerType2>
+    std::pair<DomainPointType, DomainPointType>
+    closest_points_on_boundary_generic(geometric_domain_t<DomainPointType, TopologicDomainType, MetainfoCollectionType> const & domain,
+                                       ContainerType1 const & el1,
                                        ContainerType2 const & el2)
     {
-      typedef std::pair<typename result_of::point<typename ContainerType1::config_type>::type,
-                        typename result_of::point<typename ContainerType2::config_type>::type>       PairType;
+      typedef typename result_of::element_tag<FacetTypeOrTag1>::type FacetTag1;
+      typedef typename result_of::element_tag<FacetTypeOrTag2>::type FacetTag2;
+        
+        
+      typedef std::pair<DomainPointType, DomainPointType>       PairType;
                         
-      typedef typename viennagrid::result_of::const_ncell_range<ContainerType1,
-                                                                facet_dim1>::type           FacetRange1;
+      typedef typename viennagrid::result_of::const_element_range<ContainerType1, FacetTag1>::type           FacetRange1;
       typedef typename viennagrid::result_of::iterator<FacetRange1>::type                   FacetIterator1;
 
-      typedef typename viennagrid::result_of::const_ncell_range<ContainerType2,
-                                                                facet_dim2>::type           FacetRange2;
+      typedef typename viennagrid::result_of::const_element_range<ContainerType2, FacetTag2>::type           FacetRange2;
       typedef typename viennagrid::result_of::iterator<FacetRange2>::type                   FacetIterator2;
       
       PairType closest_pair;
@@ -877,62 +895,66 @@ namespace viennagrid
     }
 
     
-    template <typename ConfigType, typename ElementTag1, typename ElementTag2>
-    std::pair<typename result_of::point<ConfigType>::type,
-              typename result_of::point<ConfigType>::type>
-    closest_points_on_boundary_impl(element_t<ConfigType, ElementTag1> const & el1,
-                                    element_t<ConfigType, ElementTag2> const & el2)
+    template <typename DomainPointType, typename TopologicDomainType, typename MetainfoCollectionType,
+              typename ElementTag1, typename BoundaryCellTypelist1, typename IDType1,
+              typename ElementTag2, typename BoundaryCellTypelist2, typename IDType2>
+    std::pair<DomainPointType, DomainPointType>
+    closest_points_on_boundary_impl(geometric_domain_t<DomainPointType, TopologicDomainType, MetainfoCollectionType> const & domain,
+                                    element_t<ElementTag1, BoundaryCellTypelist1, IDType1> const & el1,
+                                    element_t<ElementTag2, BoundaryCellTypelist2, IDType2> const & el2)
     {
-      return closest_points_on_boundary_generic<ElementTag1::dim-1, ElementTag2::dim-1>(el1, el2);
+      return closest_points_on_boundary_generic<typename ElementTag1::facet_tag, typename ElementTag2::facet_tag>(domain, el1, el2);
     }
     
-    template <typename ConfigType, typename ElementTag1>
-    std::pair<typename result_of::point<ConfigType>::type,
-              typename result_of::point<ConfigType>::type>
-    closest_points_on_boundary_impl(element_t<ConfigType, ElementTag1> const & el1,
-                                    segment_t<ConfigType> const & seg)
+    template <typename ElementTypeOrTag,
+              typename DomainPointType, typename TopologicDomainType, typename MetainfoCollectionType,
+              typename ElementTag1, typename BoundaryCellTypelist1, typename IDType1>
+    std::pair<DomainPointType, DomainPointType>
+    closest_points_on_boundary_impl(geometric_domain_t<DomainPointType, TopologicDomainType, MetainfoCollectionType> const & domain,
+                                    element_t<ElementTag1, BoundaryCellTypelist1, IDType1> const & el1)
     {
-      return closest_points_on_boundary_generic<ElementTag1::dim-1, ConfigType::cell_tag::dim-1>(el1, seg);
+      return closest_points_on_boundary_generic<typename ElementTag1::facet_tag, ElementTypeOrTag>(domain, el1);
     }
 
-    template <typename ConfigType, typename ElementTag1>
-    std::pair<typename result_of::point<ConfigType>::type,
-              typename result_of::point<ConfigType>::type>
-    closest_points_on_boundary_impl(element_t<ConfigType, ElementTag1> const & el1,
-                                    domain_t<ConfigType> const & dom)
-    {
-      return closest_points_on_boundary_generic<ElementTag1::dim-1, ConfigType::cell_tag::dim-1>(el1, dom);
-    }
+//     template <typename ConfigType, typename ElementTag1>
+//     std::pair<typename result_of::point<ConfigType>::type,
+//               typename result_of::point<ConfigType>::type>
+//     closest_points_on_boundary_impl(element_t<ConfigType, ElementTag1> const & el1,
+//                                     domain_t<ConfigType> const & dom)
+//     {
+//       return closest_points_on_boundary_generic<ElementTag1::dim-1, ConfigType::cell_tag::dim-1>(el1, dom);
+//     }
 
     
     
-    template <typename ConfigType>
-    std::pair<typename result_of::point<ConfigType>::type,
-              typename result_of::point<ConfigType>::type>
-    closest_points_on_boundary_impl(segment_t<ConfigType> const & seg1,
-                                    segment_t<ConfigType> const & seg2)
+    template <typename ElementTypeOrTag1, typename ElementTypeOrTag2,
+              typename DomainPointType1, typename TopologicDomainType1, typename MetainfoCollectionType1,
+              typename DomainPointType2, typename TopologicDomainType2, typename MetainfoCollectionType2>
+    std::pair<DomainPointType1, DomainPointType2>
+    closest_points_on_boundary_impl(geometric_domain_t<DomainPointType1, TopologicDomainType1, MetainfoCollectionType1> const & domain1,
+                                    geometric_domain_t<DomainPointType2, TopologicDomainType2, MetainfoCollectionType2> const & domain2)
     {
-      return closest_points_on_boundary_generic<ConfigType::cell_tag::dim-1, ConfigType::cell_tag::dim-1>(seg1, seg2);
+      return closest_points_on_boundary_generic<ElementTypeOrTag1, ElementTypeOrTag2>(domain1, domain2);
     }
 
-    template <typename ConfigType>
-    std::pair<typename result_of::point<ConfigType>::type,
-              typename result_of::point<ConfigType>::type>
-    closest_points_on_boundary_impl(segment_t<ConfigType> const & seg1,
-                                    domain_t<ConfigType> const & dom)
-    {
-      return closest_points_on_boundary_generic<ConfigType::cell_tag::dim-1, ConfigType::cell_tag::dim-1>(seg1, dom);
-    }
-    
-    
-    template <typename ConfigType>
-    std::pair<typename result_of::point<ConfigType>::type,
-              typename result_of::point<ConfigType>::type>
-    closest_points_on_boundary_impl(domain_t<ConfigType> const & dom1,
-                                    domain_t<ConfigType> const & dom2)
-    {
-      return closest_points_on_boundary_generic<ConfigType::cell_tag::dim-1, ConfigType::cell_tag::dim-1>(dom1, dom2);
-    }
+//     template <typename ConfigType>
+//     std::pair<typename result_of::point<ConfigType>::type,
+//               typename result_of::point<ConfigType>::type>
+//     closest_points_on_boundary_impl(segment_t<ConfigType> const & seg1,
+//                                     domain_t<ConfigType> const & dom)
+//     {
+//       return closest_points_on_boundary_generic<ConfigType::cell_tag::dim-1, ConfigType::cell_tag::dim-1>(seg1, dom);
+//     }
+//     
+//     
+//     template <typename ConfigType>
+//     std::pair<typename result_of::point<ConfigType>::type,
+//               typename result_of::point<ConfigType>::type>
+//     closest_points_on_boundary_impl(domain_t<ConfigType> const & dom1,
+//                                     domain_t<ConfigType> const & dom2)
+//     {
+//       return closest_points_on_boundary_generic<ConfigType::cell_tag::dim-1, ConfigType::cell_tag::dim-1>(dom1, dom2);
+//     }
 
     
     
@@ -953,36 +975,36 @@ namespace viennagrid
     };
 
     
-    template <typename ConfigType, long dim>
-    struct topological_id< element_t<ConfigType, simplex_tag<dim> > >
+    template <long dim, typename BoundaryCellTypelist, typename IDType>
+    struct topological_id< element_t<simplex_tag<dim>, BoundaryCellTypelist, IDType> >
     {
       enum { value = 10000 + dim }; //10.000 dimensions are certainly far from being ever instantiated
     };
     
-    template <typename ConfigType, long dim>
-    struct topological_id< element_t<ConfigType, hypercube_tag<dim> > >
+    template <long dim, typename BoundaryCellTypelist, typename IDType>
+    struct topological_id< element_t<hypercube_tag<dim>, BoundaryCellTypelist, IDType> >
     {
       enum { value = 20000 + dim };
     };
     
-    template <typename ConfigType>
-    struct topological_id< segment_t<ConfigType> >
+    template <typename DomainPointType, typename TopologicDomainType, typename MetainfoCollectionType>
+    struct topological_id< geometric_domain_t<DomainPointType, TopologicDomainType, MetainfoCollectionType> >
     {
       enum { value = 100000 };
     };
     
-    template <typename ConfigType>
-    struct topological_id< domain_t<ConfigType> >
-    {
-      enum { value = 100001 };
-    };
+//     template <typename ConfigType>
+//     struct topological_id< domain_t<ConfigType> >
+//     {
+//       enum { value = 100001 };
+//     };
     
     
     
     template <typename T, typename U>
     struct topologically_sorted
     {
-      enum { value = (topological_id<T>::value - topological_id<U>::value <= 0) ? true : false };
+      enum { value = (topological_id<T>::value <= topological_id<U>::value) ? true : false };
     };
     
     
@@ -1009,26 +1031,47 @@ namespace viennagrid
   // The public interface functions
   //
   /** @brief Returns the distance between n-cells */
-  template <typename ElementType1, typename ElementType2>
-  std::pair<typename result_of::point<ElementType1>::type,
-            typename result_of::point<ElementType1>::type>
-  closest_points(ElementType1 const & el1,
+  template <typename DomainPointType, typename TopologicDomainType, typename MetainfoCollectionType,
+            typename ElementType1, typename ElementType2>
+  std::pair<DomainPointType, DomainPointType>
+  closest_points(geometric_domain_t<DomainPointType, TopologicDomainType, MetainfoCollectionType> const & domain,
+                 ElementType1 const & el1,
                  ElementType2 const & el2)
   {
-    return detail::closest_points_impl(detail::ascending_topological_order<ElementType1, ElementType2>::first(el1, el2),
+    return detail::closest_points_impl(domain,
+                                       detail::ascending_topological_order<ElementType1, ElementType2>::first(el1, el2),
                                        detail::ascending_topological_order<ElementType1, ElementType2>::second(el1, el2));
   }
   
 
   /** @brief Returns the distance between n-cells */
-  template <typename ElementType1, typename ElementType2>
-  std::pair<typename result_of::point<ElementType1>::type,
-            typename result_of::point<ElementType1>::type>
-  closest_points_on_boundary(ElementType1 const & el1,
+  template <typename DomainPointType, typename TopologicDomainType, typename MetainfoCollectionType,
+            typename ElementType1, typename ElementType2>
+  std::pair<DomainPointType, DomainPointType>
+  closest_points_on_boundary(geometric_domain_t<DomainPointType, TopologicDomainType, MetainfoCollectionType> const & domain,
+                             ElementType1 const & el1,
                              ElementType2 const & el2)
   {
-    return detail::closest_points_on_boundary_impl(detail::ascending_topological_order<ElementType1, ElementType2>::first(el1, el2),
+    return detail::closest_points_on_boundary_impl(domain,
+                                                   detail::ascending_topological_order<ElementType1, ElementType2>::first(el1, el2),
                                                    detail::ascending_topological_order<ElementType1, ElementType2>::second(el1, el2));
+  }
+  
+  /** @brief Returns the distance between n-cells */
+  template <typename ElementTypeOrTag, typename DomainPointType, typename TopologicDomainType, typename MetainfoCollectionType, typename ElementType>
+  std::pair<DomainPointType, DomainPointType>
+  closest_points_on_boundary(geometric_domain_t<DomainPointType, TopologicDomainType, MetainfoCollectionType> const & domain,
+                             ElementType const & element)
+  {
+    return detail::closest_points_on_boundary_impl<ElementTypeOrTag>(domain, element);
+  }
+  
+  template <typename ElementTypeOrTag, typename DomainPointType, typename TopologicDomainType, typename MetainfoCollectionType, typename ElementType>
+  std::pair<DomainPointType, DomainPointType>
+  closest_points_on_boundary(ElementType const & element,
+                             geometric_domain_t<DomainPointType, TopologicDomainType, MetainfoCollectionType> const & domain)
+  {
+    return detail::closest_points_on_boundary_impl<ElementTypeOrTag>(domain, element);
   }
   
 } //namespace viennagrid
