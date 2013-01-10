@@ -67,17 +67,17 @@ int main()
     // typedefs for the element types
     //    
      
-    typedef viennagrid::result_of::ncell<domain_type, 0>::type vertex_type;
-    typedef viennagrid::result_of::ncell_hook<domain_type, 0>::type vertex_hook_type;
+    typedef viennagrid::result_of::element<domain_type, viennagrid::vertex_tag>::type vertex_type;
+    typedef viennagrid::result_of::element_hook<domain_type, viennagrid::vertex_tag>::type vertex_hook_type;
     
-    typedef viennagrid::result_of::ncell<domain_type, 1>::type line_type;
-    typedef viennagrid::result_of::ncell_hook<domain_type, 1>::type line_hook_type;
+    typedef viennagrid::result_of::element<domain_type, viennagrid::line_tag>::type line_type;
+    typedef viennagrid::result_of::element_hook<domain_type, viennagrid::line_tag>::type line_hook_type;
     
-    typedef viennagrid::result_of::ncell<domain_type, 2>::type triangle_type;
-    typedef viennagrid::result_of::ncell_hook<domain_type, 2>::type triangle_hook_type;
+    typedef viennagrid::result_of::element<domain_type, viennagrid::triangle_tag>::type triangle_type;
+    typedef viennagrid::result_of::element_hook<domain_type, viennagrid::triangle_tag>::type triangle_hook_type;
     
-    typedef viennagrid::result_of::ncell<domain_type, 3>::type tetrahedron_type;
-    typedef viennagrid::result_of::ncell_hook<domain_type, 3>::type tetrahedron_hook_type;
+    typedef viennagrid::result_of::element<domain_type, viennagrid::tetrahedron_tag>::type tetrahedron_type;
+    typedef viennagrid::result_of::element_hook<domain_type, viennagrid::tetrahedron_tag>::type tetrahedron_hook_type;
     
     
     
@@ -131,15 +131,15 @@ int main()
     //  
     
     cout << "All tetrahedrons of the domain" << endl;
-    std::copy( viennagrid::ncells<3>(domain).begin(), viennagrid::ncells<3>(domain).end(), std::ostream_iterator<tetrahedron_type>(cout, "\n") );
+    std::copy( viennagrid::elements<viennagrid::tetrahedron_tag>(domain).begin(), viennagrid::elements<viennagrid::tetrahedron_tag>(domain).end(), std::ostream_iterator<tetrahedron_type>(cout, "\n") );
     cout << endl;
 
     cout << "All tetrahedrons of the domain view 1" << endl;
-    std::copy( viennagrid::ncells<3>(domain_view_1).begin(), viennagrid::ncells<3>(domain_view_1).end(), std::ostream_iterator<tetrahedron_type>(cout, "\n") );
+    std::copy( viennagrid::elements<viennagrid::tetrahedron_tag>(domain_view_1).begin(), viennagrid::elements<viennagrid::tetrahedron_tag>(domain_view_1).end(), std::ostream_iterator<tetrahedron_type>(cout, "\n") );
     cout << endl;
     
     cout << "All tetrahedrons of the domain view 2" << endl;
-    std::copy( viennagrid::ncells<3>(domain_view_2).begin(), viennagrid::ncells<3>(domain_view_2).end(), std::ostream_iterator<tetrahedron_type>(cout, "\n") );
+    std::copy( viennagrid::elements<viennagrid::tetrahedron_tag>(domain_view_2).begin(), viennagrid::elements<viennagrid::tetrahedron_tag>(domain_view_2).end(), std::ostream_iterator<tetrahedron_type>(cout, "\n") );
     cout << endl;
 
     
@@ -170,19 +170,19 @@ int main()
     //  
     
     cout << "All tetrahedrons of the domain" << endl;
-    std::copy( viennagrid::ncells<3>(domain).begin(), viennagrid::ncells<3>(domain).end(), std::ostream_iterator<tetrahedron_type>(cout, "\n") );
+    std::copy( viennagrid::elements<viennagrid::tetrahedron_tag>(domain).begin(), viennagrid::elements<viennagrid::tetrahedron_tag>(domain).end(), std::ostream_iterator<tetrahedron_type>(cout, "\n") );
     cout << endl;
 
     cout << "All tetrahedrons of the domain view 1" << endl;
-    std::copy( viennagrid::ncells<3>(domain_view_1).begin(), viennagrid::ncells<3>(domain_view_1).end(), std::ostream_iterator<tetrahedron_type>(cout, "\n") );
+    std::copy( viennagrid::elements<viennagrid::tetrahedron_tag>(domain_view_1).begin(), viennagrid::elements<viennagrid::tetrahedron_tag>(domain_view_1).end(), std::ostream_iterator<tetrahedron_type>(cout, "\n") );
     cout << endl;
     
     cout << "All tetrahedrons of the domain view 2" << endl;
-    std::copy( viennagrid::ncells<3>(domain_view_2).begin(), viennagrid::ncells<3>(domain_view_2).end(), std::ostream_iterator<tetrahedron_type>(cout, "\n") );
+    std::copy( viennagrid::elements<viennagrid::tetrahedron_tag>(domain_view_2).begin(), viennagrid::elements<viennagrid::tetrahedron_tag>(domain_view_2).end(), std::ostream_iterator<tetrahedron_type>(cout, "\n") );
     cout << endl;
     
     cout << "All tetrahedrons of the domain view view" << endl;
-    std::copy( viennagrid::ncells<3>(domain_view_view_1).begin(), viennagrid::ncells<3>(domain_view_view_1).end(), std::ostream_iterator<tetrahedron_type>(cout, "\n") );
+    std::copy( viennagrid::elements<viennagrid::tetrahedron_tag>(domain_view_view_1).begin(), viennagrid::elements<viennagrid::tetrahedron_tag>(domain_view_view_1).end(), std::ostream_iterator<tetrahedron_type>(cout, "\n") );
     cout << endl;
 
     return 0;
