@@ -166,12 +166,19 @@ namespace viennagrid
             
             
             size_type size() const { return hook_container.size(); }
+            void resize(size_type size_) { hook_container.resize(size_); }
+            void increment_size() { resize( size()+1 ); }
+            
             bool empty() const { return hook_container.empty(); }
             void clear() { hook_container.clear(); }
             
             
             void insert_hook(hook_type hook) { viennagrid::storage::container::insert(hook_container, hook); }
-            void set_hook( hook_type element, size_type pos ) { hook_container[pos] = element; }
+            void set_hook( hook_type element, size_type pos )
+            {
+                increment_size();
+                hook_container[pos] = element;
+            }
             
             hook_type hook_at(std::size_t pos) { return *viennagrid::advance(hook_begin(), pos); }
             const_hook_type hook_at(std::size_t pos) const { return *viennagrid::advance(hook_begin(), pos); }
@@ -537,16 +544,22 @@ namespace viennagrid
             
             
             size_type size() const { return hook_container.size(); }
+            void resize(size_type size_) { hook_container.resize(size_); }
+            void increment_size() { resize( size()+1 ); }
+            
             bool empty() const { return hook_container.empty(); }
             void clear() { hook_container.clear(); }
             
             
             void insert_hook(hook_type hook) { viennagrid::storage::container::insert(hook_container, hook); }
-            void set_hook( hook_type element, size_type pos ) { hook_container[pos] = element; }
+            void set_hook( hook_type element, size_type pos )
+            {
+                increment_size();
+                hook_container[pos] = element;
+            }
             
             hook_type hook_at(std::size_t pos) { return *viennagrid::advance(hook_begin(), pos); }
             const_hook_type hook_at(std::size_t pos) const { return *viennagrid::advance(hook_begin(), pos); }
-
 
         private:
             
