@@ -20,9 +20,7 @@
 
 #include <vector>
 #include "viennagrid/forwards.hpp"
-#include "viennagrid/domain.hpp"
-#include "viennagrid/detail/element_iterators.hpp"
-#include "viennagrid/detail/domain_iterators.hpp"
+#include "viennagrid/element/element.hpp"
 
 /** @file boundary.hpp
     @brief Provides the detection and check for boundary n-cells.
@@ -284,11 +282,11 @@ namespace viennagrid
                    element_t<element_tag_2, bnd_cell_container_typelist_2, id_tag_2> const & el2)
   {
 
-    typedef typename viennagrid::result_of::const_ncell_range<element_t<element_tag_2, bnd_cell_container_typelist_2, id_tag_2>,
-                                                              element_tag_1::dim>::type   BoundaryRange;
+    typedef typename viennagrid::result_of::const_element_range<element_t<element_tag_2, bnd_cell_container_typelist_2, id_tag_2>,
+                                                              element_tag_1>::type   BoundaryRange;
     typedef typename viennagrid::result_of::iterator<BoundaryRange>::type               BoundaryIterator;
         
-    BoundaryRange bnd_cells = viennagrid::ncells(el2);
+    BoundaryRange bnd_cells = viennagrid::elements<element_tag_1>(el2);
     for (BoundaryIterator bit = bnd_cells.begin();
                           bit != bnd_cells.end();
                         ++bit)

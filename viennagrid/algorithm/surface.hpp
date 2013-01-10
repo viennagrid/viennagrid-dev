@@ -72,7 +72,7 @@ namespace viennagrid
   surface(ElementType const & element, const GeometricContainerType & geometric_container)
   {
     //typedef typename ElementType::config_type                   ConfigType;
-    typedef typename viennagrid::result_of::const_ncell_range<ElementType, ElementType::tag::dim-1>::type   ElementBoundaryRange;
+    typedef typename viennagrid::result_of::const_facet_range<ElementType>::type   ElementBoundaryRange;
     typedef typename viennagrid::result_of::iterator<ElementBoundaryRange>::type       ElementBoundaryIterator;
     
     //typedef typename ElementType::config_type::numeric_type value_type;
@@ -80,7 +80,7 @@ namespace viennagrid
     
     value_type result = 0;
     
-    ElementBoundaryRange boundary = viennagrid::ncells<ElementType::tag::dim-1>(element);
+    ElementBoundaryRange boundary = viennagrid::facets(element);
     for (ElementBoundaryIterator ebit = boundary.begin();
                                   ebit != boundary.end();
                                 ++ebit)

@@ -71,7 +71,7 @@ namespace viennagrid
       
       //typedef typename viennagrid::result_of::const_ncell_range<ElementType, 0>::type         VertexOnCellRange;
 
-      //VertexOnCellRange vertices = viennagrid::ncells<0>(cell);
+      //VertexOnCellRange vertices = viennagrid::elements<viennagrid::vertex_tag>(cell);
       
       PointType const & A = viennagrid::point(geometric_container, elements<vertex_tag>(cell)[0]);
       PointType const & B = viennagrid::point(geometric_container, elements<vertex_tag>(cell)[1]);
@@ -106,7 +106,7 @@ namespace viennagrid
       
       //typedef typename viennagrid::result_of::const_ncell_range<ElementType, 0>::type         VertexOnCellRange;
 
-      //VertexOnCellRange vertices = viennagrid::ncells<0>(cell);
+      //VertexOnCellRange vertices = viennagrid::elements<viennagrid::vertex_tag>(cell);
       
       PointType const & A = viennagrid::point(geometric_container, elements<vertex_tag>(cell)[0]);
       PointType const & B = viennagrid::point(geometric_container, elements<vertex_tag>(cell)[1]);
@@ -160,7 +160,7 @@ namespace viennagrid
         p0 += viennagrid::point(geometric_container, *vocit);
       }
       
-      p0 /= viennagrid::topology::bndcells<CellTag, 0>::num;
+      p0 /= viennagrid::topology::boundary_cells<CellTag, vertex_tag>::num;
       
       return p0;
     }
@@ -183,11 +183,11 @@ namespace viennagrid
       
       //typedef typename viennagrid::result_of::const_ncell_range<ElementType, 0>::type         VertexOnCellRange;
 
-      //VertexOnCellRange vertices = viennagrid::ncells<0>(cell);
+      //VertexOnCellRange vertices = viennagrid::elements<viennagrid::vertex_tag>(cell);
       
-      PointType const & A = viennagrid::point(geometric_container, viennagrid::ncells<0>(cell)[0]);
-      PointType const & B = viennagrid::point(geometric_container, viennagrid::ncells<0>(cell)[1]);
-      PointType const & C = viennagrid::point(geometric_container, viennagrid::ncells<0>(cell)[2]);
+      PointType const & A = viennagrid::point(geometric_container, viennagrid::elements<viennagrid::vertex_tag>(cell)[0]);
+      PointType const & B = viennagrid::point(geometric_container, viennagrid::elements<viennagrid::vertex_tag>(cell)[1]);
+      PointType const & C = viennagrid::point(geometric_container, viennagrid::elements<viennagrid::vertex_tag>(cell)[2]);
       
       double denominator = 2.0 * viennagrid::inner_prod(viennagrid::cross_prod(A-B, B-C), viennagrid::cross_prod(A-B, B-C));
       
@@ -229,7 +229,7 @@ namespace viennagrid
         p0 += viennagrid::point(geometric_container, *vocit);
       }
       
-      p0 /= viennagrid::topology::bndcells<ElementTag, 0>::num;
+      p0 /= viennagrid::topology::boundary_cells<ElementTag, vertex_tag>::num;
       
       return p0;
     }
@@ -303,7 +303,7 @@ namespace viennagrid
         p0 += viennagrid::point(geometric_container, *vocit);
       }
       
-      p0 /= viennagrid::topology::bndcells<CellTag, 0>::num;
+      p0 /= viennagrid::topology::boundary_cells<CellTag, vertex_tag>::num;
       
       return p0;
     }

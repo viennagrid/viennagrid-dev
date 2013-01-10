@@ -64,7 +64,7 @@ namespace viennagrid
         p0 += viennagrid::point(geometric_container, *vocit);
       }
       
-      p0 /= viennagrid::topology::bndcells<ElementTag, 0>::num;
+      p0 /= viennagrid::topology::boundary_cells<ElementTag, vertex_tag>::num;
       
       return p0;
     }

@@ -20,8 +20,6 @@
 
 #include <vector>
 #include "viennagrid/forwards.hpp"
-#include "viennagrid/detail/element_iterators.hpp"
-#include "viennagrid/detail/domain_iterators.hpp"
 #include "viennagrid/algorithm/norm.hpp"
 #include "viennagrid/algorithm/centroid.hpp"
 #include "viennagrid/algorithm/boundary.hpp"

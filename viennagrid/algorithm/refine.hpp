@@ -19,7 +19,6 @@
 ======================================================================= */
 
 #include "viennagrid/forwards.hpp"
-#include "viennagrid/domain.hpp"
 #include "viennagrid/algorithm/centroid.hpp"
 #include "viennagrid/algorithm/norm.hpp"
 #include "viennadata/api.hpp"
@@ -66,9 +65,9 @@ namespace viennagrid
       
       typedef typename viennagrid::result_of::const_element_range<GeometricDomainTypeIn, CellTagIn>::type   CellRange;          
       typedef typename viennagrid::result_of::iterator<CellRange>::type                                          CellIterator;         
-      typedef typename viennagrid::result_of::const_ncell_range<CellType, 1>::type                               EdgeOnCellRange;
+      typedef typename viennagrid::result_of::const_element_range<CellType, line_tag>::type                               EdgeOnCellRange;
       typedef typename viennagrid::result_of::iterator<EdgeOnCellRange>::type                                    EdgeOnCellIterator;            
-      typedef typename viennagrid::result_of::const_ncell_range<EdgeType, 0>::type                               VertexOnEdgeRange;
+      typedef typename viennagrid::result_of::const_element_range<EdgeType, vertex_tag>::type                               VertexOnEdgeRange;
       typedef typename viennagrid::result_of::iterator<VertexOnEdgeRange>::type                                  VertexOnEdgeIterator;            
       
       
@@ -114,7 +113,7 @@ namespace viennagrid
                                     eocit != edges_on_cell.end();
                                   ++eocit)
             {
-              VertexOnEdgeRange vertices_on_edge = viennagrid::ncells<0>(*eocit);
+              VertexOnEdgeRange vertices_on_edge = viennagrid::elements<vertex_tag>(*eocit);
               VertexOnEdgeIterator voeit = vertices_on_edge.begin();
               VertexType const & v0 = *voeit; ++voeit;
               VertexType const & v1 = *voeit;
@@ -151,7 +150,7 @@ namespace viennagrid
       
       typedef typename viennagrid::result_of::const_element_range<GeometricDomainTypeIn, CellTagIn>::type   CellRange;          
       typedef typename viennagrid::result_of::iterator<CellRange>::type                                          CellIterator;         
-      typedef typename viennagrid::result_of::const_ncell_range<CellType, 1>::type                               EdgeOnCellRange;
+      typedef typename viennagrid::result_of::const_element_range<CellType, line_tag>::type                               EdgeOnCellRange;
       typedef typename viennagrid::result_of::iterator<EdgeOnCellRange>::type                                    EdgeOnCellIterator;            
       
       std::size_t cells_for_refinement = 0;
@@ -239,7 +238,7 @@ namespace viennagrid
       //
       // Step 3: Each tagged edge in old domain results in a new vertex (temporarily store new vertex IDs on old domain)
       //
-      EdgeRange edges = viennagrid::ncells<1>(domain_in);
+      EdgeRange edges = viennagrid::elements<line_tag>(domain_in);
       for (EdgeIterator eit = edges.begin();
                         eit != edges.end();
                       ++eit)
