@@ -43,16 +43,6 @@ namespace viennagrid
 
     //Line:
     /** @brief Topological description of the 0-cells of a line */
-    template <>
-    struct bndcells<hypercube_tag<1>, 0>
-    {
-      typedef vertex_tag             tag;
-
-      typedef static_layout_tag     layout_tag;
-      enum{ num = 2 };     //2 vertices
-    };
-    
-    
     template<typename bnd_cell_type>
     struct bndcell_generator<simplex_tag<1>, simplex_tag<0>, bnd_cell_type>
     {
