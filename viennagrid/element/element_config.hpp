@@ -21,6 +21,8 @@
 
 #include "viennagrid/storage/view.hpp"
 #include "viennagrid/element/element.hpp"
+#include "viennagrid/element/plc.hpp"
+#include "viennagrid/topology/polygon.hpp"
 
 
 /** @file element.hpp
@@ -263,8 +265,12 @@ namespace viennagrid
         };
         
         
+        
+        template<typename config, typename element_tag_>
+        struct element_from_config_impl;
+        
         template<typename config_element_tag, typename config_element_config, typename config_tail, typename element_tag_>
-        struct element< viennameta::typelist_t< viennameta::static_pair<config_element_tag, config_element_config>, config_tail >, element_tag_ >
+        struct element_from_config_impl< viennameta::typelist_t< viennameta::static_pair<config_element_tag, config_element_config>, config_tail >, element_tag_ >
         {
             typedef viennameta::typelist_t< viennameta::static_pair<config_element_tag, config_element_config>, config_tail > config;
             typedef element_tag_ element_tag;
@@ -275,6 +281,42 @@ namespace viennagrid
             
             typedef viennagrid::element_t<element_tag, container_typelist, id_tag> type;
         };
+        
+        
+        template<typename config_element_tag, typename config_element_config, typename config_tail>
+        struct element_from_config_impl< viennameta::typelist_t< viennameta::static_pair<config_element_tag, config_element_config>, config_tail >, plc_tag >
+        {
+            typedef viennameta::typelist_t< viennameta::static_pair<config_element_tag, config_element_config>, config_tail > config;
+            typedef plc_tag element_tag;
+            
+            typedef typename element_id_tag<config, element_tag>::type id_tag;
+            
+            typedef typename element<config, vertex_tag>::type vertex_type;
+            typedef typename viennagrid::storage::result_of::container<vertex_type, typename element_container_tag<config, vertex_tag>::type >::type vertex_base_container_type;
+            typedef typename viennagrid::storage::result_of::view<vertex_base_container_type, viennagrid::storage::std_set_tag>::type vertex_view_type;
+            
+            typedef typename element<config, line_tag>::type line_type;
+            typedef typename viennagrid::storage::result_of::container<line_type, typename element_container_tag<config, line_tag>::type >::type line_base_container_type;
+            typedef typename viennagrid::storage::result_of::view<line_base_container_type, viennagrid::storage::std_set_tag>::type line_view_type;
+
+            typedef typename element<config, hole_polygon_tag>::type hole_polygon_type;
+            typedef typename viennagrid::storage::result_of::container<hole_polygon_type, typename element_container_tag<config, polygon_tag>::type >::type hole_polygon_base_container_type;
+            typedef typename viennagrid::storage::result_of::view<hole_polygon_base_container_type, viennagrid::storage::std_set_tag>::type hole_poly_view_type;
+
+            
+            typedef typename element<config, polygon_tag>::type polygon_type;
+            typedef typename viennagrid::storage::result_of::container<polygon_type, typename element_container_tag<config, polygon_tag>::type >::type polygon_base_container_type;
+            typedef typename viennagrid::storage::result_of::view<polygon_base_container_type, viennagrid::storage::static_array_tag<1> >::type bounding_poly_view_type;
+            
+            typedef viennagrid::plc_t<bounding_poly_view_type, hole_poly_view_type, line_view_type, vertex_view_type, id_tag> type;
+        };
+        
+        
+        template<typename config_element_tag, typename config_element_config, typename config_tail, typename element_tag_>
+        struct element< viennameta::typelist_t< viennameta::static_pair<config_element_tag, config_element_config>, config_tail >, element_tag_ >
+        {
+            typedef typename element_from_config_impl< viennameta::typelist_t< viennameta::static_pair<config_element_tag, config_element_config>, config_tail >, element_tag_ >::type type;
+        };
 
     }
         
@@ -283,35 +325,35 @@ namespace viennagrid
         
     namespace result_of
     {
-        template<typename domain_config, long dim>
-        struct ncell_tag;
-        
-        template<typename element_tag, typename element_config, typename tail, long dim>
-        struct ncell_tag< viennameta::typelist_t< viennameta::static_pair<element_tag, element_config>, tail >, dim >
-        {
-            typedef typename viennameta::_if<
-                element_tag::dim == dim,
-                element_tag,
-                typename ncell_tag<tail, dim>::type
-            >::type type;
-        };
-        
-        template<long dim>
-        struct ncell_tag<viennameta::null_type, dim>
-        {
-            typedef viennameta::null_type type;
-        };
-        
-
-        template<typename head, typename tail, long dim>
-        struct ncell< viennameta::typelist_t<head, tail>, dim >
-        {
-            typedef viennameta::typelist_t<head, tail> domain_config;
-            typedef typename element<
-                domain_config,
-                typename ncell_tag<domain_config, dim>::type
-            >::type type;
-        };
+//         template<typename domain_config, long dim>
+//         struct ncell_tag;
+//         
+//         template<typename element_tag, typename element_config, typename tail, long dim>
+//         struct ncell_tag< viennameta::typelist_t< viennameta::static_pair<element_tag, element_config>, tail >, dim >
+//         {
+//             typedef typename viennameta::_if<
+//                 element_tag::dim == dim,
+//                 element_tag,
+//                 typename ncell_tag<tail, dim>::type
+//             >::type type;
+//         };
+//         
+//         template<long dim>
+//         struct ncell_tag<viennameta::null_type, dim>
+//         {
+//             typedef viennameta::null_type type;
+//         };
+//         
+// 
+//         template<typename head, typename tail, long dim>
+//         struct ncell< viennameta::typelist_t<head, tail>, dim >
+//         {
+//             typedef viennameta::typelist_t<head, tail> domain_config;
+//             typedef typename element<
+//                 domain_config,
+//                 typename ncell_tag<domain_config, dim>::type
+//             >::type type;
+//         };
         
         
     }
