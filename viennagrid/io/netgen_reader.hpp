@@ -24,7 +24,6 @@
 #include <assert.h>
 #include "viennagrid/forwards.hpp"
 #include "viennagrid/io/helper.hpp"
-#include "viennagrid/iterators.hpp"
 
 #include "viennagrid/domain/geometric_domain.hpp"
 
@@ -150,7 +149,7 @@ namespace viennagrid
         {
           long vertex_num;
           //std::vector<VertexHookType> cell_vertex_hooks(topology::bndcells<CellTag, 0>::num);
-          viennagrid::storage::static_array<VertexHookType, topology::bndcells<CellTag, 0>::num> cell_vertex_hooks;
+          viennagrid::storage::static_array<VertexHookType, topology::boundary_cells<CellTag, vertex_tag>::num> cell_vertex_hooks;
           
           if (!reader.good())
             throw bad_file_format_exception(filename, "EOF encountered while reading cells (segment index expected).");
@@ -158,7 +157,7 @@ namespace viennagrid
           std::size_t segment_index;
           reader >> segment_index;
     
-          for (int j=0; j<topology::bndcells<CellTag, 0>::num; ++j)
+          for (int j=0; j<topology::boundary_cells<CellTag, vertex_tag>::num; ++j)
           {
             if (!reader.good())
               throw bad_file_format_exception(filename, "EOF encountered while reading cells (cell ID expected).");

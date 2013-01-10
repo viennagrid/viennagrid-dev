@@ -22,13 +22,11 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
-#include "viennagrid/domain.hpp"
 #include "viennagrid/forwards.hpp"
-#include "viennagrid/iterators.hpp"
 #include "viennagrid/io/helper.hpp"
 #include "viennagrid/io/vtk_common.hpp"
 #include "viennagrid/traits/container.hpp"
-//#include "viennagrid/algorithm/cell_normals.hpp"
+
 #include "viennadata/api.hpp"
 
 /** @file data_accessor.hpp

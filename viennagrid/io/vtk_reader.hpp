@@ -367,7 +367,7 @@ namespace viennagrid
             // and add the cells to the "vertices"-array
             //****************************************************
             
-            viennagrid::storage::static_array<VertexHookType, topology::bndcells<CellTag, 0>::num> cell_vertex_hooks;
+            viennagrid::storage::static_array<VertexHookType, topology::boundary_cells<CellTag, vertex_tag>::num> cell_vertex_hooks;
             
             //std::cout << "Pushing Cell " << i << " to segment " << seg_id << std::endl;
             //std::cout << "  ";
@@ -385,7 +385,7 @@ namespace viennagrid
               viennagrid::add_hook( segments[seg_id], domain, cell_vertex_hooks[j] );
               
               
-              //vertices[j] = &(viennagrid::ncells<0>(domain)[global_vertex_index]);
+              //vertices[j] = &(viennagrid::elements<viennagrid::vertex_tag>(domain)[global_vertex_index]);
               //std::cout << "j+offsetidx: " << j+offsetIdx << std::endl;
             }
             //std::cout << std::endl;
@@ -470,7 +470,7 @@ namespace viennagrid
             for (std::size_t i=0; i<container.second.size() / 3; ++i)
             {
               std::size_t global_vertex_id = local_to_global_map[seg_id][i];
-              VertexType const & vertex = viennagrid::ncells<0>(domain)[global_vertex_id];
+              VertexType const & vertex = viennagrid::elements<viennagrid::vertex_tag>(domain)[global_vertex_id];
               vertex_data_vector[data_accessor_index](vertex, seg_id, 0, (container.second)[3*i]);
               vertex_data_vector[data_accessor_index](vertex, seg_id, 1, (container.second)[3*i+1]);
               vertex_data_vector[data_accessor_index](vertex, seg_id, 2, (container.second)[3*i+2]);
@@ -498,7 +498,7 @@ namespace viennagrid
             std::cout << "* vtk_reader::operator(): Reading vector quantity " 
                       << container.first << " using viennadata to vertices." << std::endl;
             #endif
-            assert( 3 * viennagrid::ncells<0>(segments[seg_id]).size() == container.second.size());
+            assert( 3 * viennagrid::elements<viennagrid::vertex_tag>(segments[seg_id]).size() == container.second.size());
             for (std::size_t i=0; i<container.second.size() / 3; ++i)
             {
               std::size_t global_vertex_id = local_to_global_map[seg_id][i];

@@ -22,9 +22,7 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
-#include "viennagrid/domain.hpp"
 #include "viennagrid/forwards.hpp"
-#include "viennagrid/iterators.hpp"
 #include "viennagrid/io/helper.hpp"
 #include "viennagrid/io/vtk_common.hpp"
 #include "viennagrid/io/data_accessor.hpp"
@@ -133,10 +131,10 @@ namespace viennagrid
         template <typename DomainSegmentType>
         void writeCells(DomainSegmentType const & domseg, std::ofstream & writer, int seg_num)
         {
-          typedef typename viennagrid::result_of::const_ncell_range<DomainSegmentType, CellTag::dim>::type     CellRange;
+          typedef typename viennagrid::result_of::const_element_range<DomainSegmentType, CellTag>::type     CellRange;
           typedef typename viennagrid::result_of::iterator<CellRange>::type                                         CellIterator;
 
-          typedef typename viennagrid::result_of::const_ncell_range<CellType, 0>::type      VertexOnCellRange;
+          typedef typename viennagrid::result_of::const_element_range<CellType, vertex_tag>::type      VertexOnCellRange;
           typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type         VertexOnCellIterator;
           typedef typename viennagrid::result_of::hook_iterator<VertexOnCellRange>::type         VertexHookOnCellIterator;
           
@@ -144,14 +142,14 @@ namespace viennagrid
           
           writer << "   <Cells> " << std::endl;
           writer << "    <DataArray type=\"Int32\" Name=\"connectivity\" format=\"ascii\">" << std::endl;
-          CellRange cells = viennagrid::ncells<CellTag::dim>(domseg);
+          CellRange cells = viennagrid::elements<CellTag>(domseg);
           for (CellIterator cit = cells.begin();
               cit != cells.end();
               ++cit)
           {
               //step 1: Write vertex indices in ViennaGrid orientation to array:
-              std::vector<std::size_t> viennagrid_vertices(viennagrid::topology::bndcells<CellTag, 0>::num);
-              VertexOnCellRange vertices_on_cell = viennagrid::ncells<0>(*cit);
+              std::vector<std::size_t> viennagrid_vertices(viennagrid::topology::boundary_cells<CellTag, vertex_tag>::num);
+              VertexOnCellRange vertices_on_cell = viennagrid::elements<vertex_tag>(*cit);
               std::size_t j = 0;
               for (VertexHookOnCellIterator vocit = vertices_on_cell.hook_begin();
                   vocit != vertices_on_cell.hook_end();
@@ -179,17 +177,17 @@ namespace viennagrid
 
             writer << "    <DataArray type=\"Int32\" Name=\"offsets\" format=\"ascii\">" << std::endl;
             for (std::size_t offsets = 1;
-                 offsets <= viennagrid::ncells<CellTag::dim>(domseg).size();
+                 offsets <= viennagrid::elements<CellTag>(domseg).size();
                  ++offsets)
             {
-              writer << ( offsets * viennagrid::topology::bndcells<CellTag, 0>::num) << " ";
+              writer << ( offsets * viennagrid::topology::boundary_cells<CellTag, vertex_tag>::num) << " ";
             }
             writer << std::endl;
             writer << "    </DataArray>" << std::endl;
 
             writer << "    <DataArray type=\"UInt8\" Name=\"types\" format=\"ascii\">" << std::endl;
             for (std::size_t offsets = 1;
-                  offsets <= viennagrid::ncells<CellTag::dim>(domseg).size();
+                  offsets <= viennagrid::elements<CellTag>(domseg).size();
                   ++offsets)
             {
               writer << ELEMENT_TAG_TO_VTK_TYPE<CellTag>::value << " ";
@@ -389,9 +387,9 @@ namespace viennagrid
             writeHeader(writer);
             
             writer << "  <Piece NumberOfPoints=\""
-                   << viennagrid::ncells<0>(domain).size()
+                   << viennagrid::elements<vertex_tag>(domain).size()
                    << "\" NumberOfCells=\""
-                   << viennagrid::ncells<CellTag::dim>(domain).size()
+                   << viennagrid::elements<CellTag>(domain).size()
                    << "\">" << std::endl;
 
 

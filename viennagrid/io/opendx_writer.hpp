@@ -126,13 +126,13 @@ namespace viennagrid
             return EXIT_FAILURE;
           }
         
-          std::size_t pointnum = viennagrid::ncells<0>(domain).size();
+          std::size_t pointnum = viennagrid::elements<vertex_tag>(domain).size();
         
           writer << "object \"points\" class array type float rank 1 shape " << geometric_dim << " items ";
           writer << pointnum << " data follows" << std::endl;
         
           //Nodes:
-          VertexRange vertices = viennagrid::ncells<0>(domain);
+          VertexRange vertices = viennagrid::elements<vertex_tag>(domain);
           for (VertexIterator vit = vertices.begin();
               vit != vertices.end();
               ++vit)
@@ -143,15 +143,15 @@ namespace viennagrid
           writer << std::endl;
 
           //Cells:
-          std::size_t cellnum = viennagrid::ncells<CellTag::dim>(domain).size();
+          std::size_t cellnum = viennagrid::elements<CellTag>(domain).size();
           writer << "object \"grid_Line_One\" class array type int rank 1 shape " << (geometric_dim + 1) << " items " << cellnum << " data follows" << std::endl;
 
-          CellRange cells = viennagrid::ncells<CellTag::dim>(domain);
+          CellRange cells = viennagrid::elements<CellTag>(domain);
           for (CellIterator cit = cells.begin();
               cit != cells.end();
               ++cit)
           {
-            VertexOnCellRange vertices_for_cell = viennagrid::ncells<0>(*cit);
+            VertexOnCellRange vertices_for_cell = viennagrid::elements<vertex_tag>(*cit);
             for (VertexOnCellIterator vocit = vertices_for_cell.begin();
                 vocit != vertices_for_cell.end();
                 ++vocit)
