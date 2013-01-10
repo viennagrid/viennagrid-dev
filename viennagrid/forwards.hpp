@@ -38,6 +38,7 @@
 #include "viennagrid/utils/remove_pointer.hpp"
 
 #include "viennagrid/storage/forwards.hpp"
+//#include "topology/polygon.hpp"
  
 
 //Debug levels:
@@ -118,6 +119,7 @@ namespace viennagrid
   typedef simplex_tag<0>    vertex_tag;
   /** @brief Convenience type definition for a line */
   typedef simplex_tag<1>    line_tag;
+  typedef simplex_tag<1>    edge_tag;
   /** @brief Convenience type definition for a triangle */
   typedef simplex_tag<2>    triangle_tag;
   /** @brief Convenience type definition for a tetrahedron */
@@ -133,6 +135,11 @@ namespace viennagrid
   typedef hypercube_tag<2>  quadrilateral_tag;
   /** @brief Convenience type definition for a hexahedron */
   typedef hypercube_tag<3>  hexahedron_tag;
+  
+  struct polygon_tag;
+  struct hole_polygon_tag;
+  
+  struct plc_tag;
   
   
     struct element_id_tag {};
@@ -152,23 +159,23 @@ namespace viennagrid
   class element_key;
 
   //Segment type: 
-  template <typename ConfigType>
-  class segment_t;
+//   template <typename ConfigType>
+//   class segment_t;
 
   //template <typename ConfigType>
   //class domain_t;
   
   /********* Other *******************/
 
-  template <typename host_element,
-            long dim,
-            bool is_coboundary = false>
-  class ncell_range;
-
-  template <typename host_element,
-            long dim,
-            bool is_coboundary = false>
-  class const_ncell_range;
+//   template <typename host_element,
+//             long dim,
+//             bool is_coboundary = false>
+//   class ncell_range;
+// 
+//   template <typename host_element,
+//             long dim,
+//             bool is_coboundary = false>
+//   class const_ncell_range;
   
   /** @brief A key used for ViennaData to store coboundary information on n-cells */
   template <typename T, typename element_tag> //topological dimension of the elements over which to iterate
@@ -226,30 +233,30 @@ namespace viennagrid
   
   //proxy classes for iterator/container retrieval:
   /** @brief A proxy class for retrieving const n-cell ranges */
-  template <typename T>
-  class const_ncell_proxy
-  {
-    public:
-      const_ncell_proxy(T const & t_) : t(t_) {}
-      
-      T const & get() const { return t; }
-    
-    private:
-      T const & t;
-  };
-  
-  /** @brief A proxy class for retrieving n-cell ranges */
-  template <typename T>
-  class ncell_proxy
-  {
-    public:
-      ncell_proxy(T & t_) : t(t_) {}
-      
-      T & get() const { return t; }
-    
-    private:
-      T & t;
-  };
+//   template <typename T>
+//   class const_ncell_proxy
+//   {
+//     public:
+//       const_ncell_proxy(T const & t_) : t(t_) {}
+//       
+//       T const & get() const { return t; }
+//     
+//     private:
+//       T const & t;
+//   };
+//   
+//   /** @brief A proxy class for retrieving n-cell ranges */
+//   template <typename T>
+//   class ncell_proxy
+//   {
+//     public:
+//       ncell_proxy(T & t_) : t(t_) {}
+//       
+//       T & get() const { return t; }
+//     
+//     private:
+//       T & t;
+//   };
   
 
   //ID handling:
@@ -293,19 +300,19 @@ namespace viennagrid
      * @tparam ElementTag   Identifier for the n-cell
      * @tparam level        Topological dimension of the boundary that is specified here
      */
-    template <typename ElementTag, 
-              long level = ElementTag::dim>
-    struct bndcells
-    {
-      //the default case is simultaneously a pathetic case:
-      //cell-handling within the cell
-
-      /** @brief Number of boundary cells at this level */
-      enum{ num = 1 };     //1 cell
-
-      /** @brief k-cell tag for identification of the type */
-      typedef ElementTag            tag;
-    };
+//     template <typename ElementTag, 
+//               long level = ElementTag::dim>
+//     struct bndcells
+//     {
+//       //the default case is simultaneously a pathetic case:
+//       //cell-handling within the cell
+// 
+//       /** @brief Number of boundary cells at this level */
+//       enum{ num = 1 };     //1 cell
+// 
+//       /** @brief k-cell tag for identification of the type */
+//       typedef ElementTag            tag;
+//     };
     
     template <typename ElementTag, typename BoundaryNCellTag = ElementTag>
     struct boundary_cells
@@ -325,8 +332,8 @@ namespace viennagrid
      * @tparam ElementTag   Tag for the identification of the hosting n-cell
      * @tparam k            Topological boundary dimension
      */
-    template <typename ElementTag, long k>
-    struct bndcell_filler {};
+//     template <typename ElementTag, long k>
+//     struct bndcell_filler {};
 
     template <typename element_tag, typename bnd_cell_tag, typename bnd_cell_type>
     struct bndcell_generator {};
@@ -365,11 +372,11 @@ namespace viennagrid
     template<typename config_domain_segment_element_or_something_like_that, typename element_tag>
     struct element;
     
-    template<typename config_domain_segment_element_or_something_like_that, typename element_tag, typename bnd_cell_container_typelist, typename id_type>
-    struct element<config_domain_segment_element_or_something_like_that, element_t<element_tag, bnd_cell_container_typelist, id_type> >
-    {
-        typedef element_t<element_tag, bnd_cell_container_typelist, id_type> type;
-    };
+//     template<typename config_domain_segment_element_or_something_like_that, typename element_tag, typename bnd_cell_container_typelist, typename id_type>
+//     struct element<config_domain_segment_element_or_something_like_that, element_t<element_tag, bnd_cell_container_typelist, id_type> >
+//     {
+//         typedef element_t<element_tag, bnd_cell_container_typelist, id_type> type;
+//     };
 
     template<typename config_domain_segment_element_or_something_like_that, typename element_tag>
     struct element_hook;
@@ -377,14 +384,24 @@ namespace viennagrid
     template<typename config_domain_segment_element_or_something_like_that, typename element_tag>
     struct const_element_hook;
     
-    template<typename config_domain_segment_element_or_something_like_that, long dim>
-    struct ncell;
+//     template<typename config_domain_segment_element_or_something_like_that, long dim>
+//     struct ncell;
+//     
+//     template<typename config_domain_segment_element_or_something_like_that, long dim>
+//     struct ncell_hook;
+//     
+//     template<typename config_domain_segment_element_or_something_like_that, long dim>
+//     struct const_ncell_hook;
     
-    template<typename config_domain_segment_element_or_something_like_that, long dim>
-    struct ncell_hook;
     
-    template<typename config_domain_segment_element_or_something_like_that, long dim>
-    struct const_ncell_hook;
+    template<typename element_type>
+    struct facet_type;
+    
+    template<typename element_type>
+    struct facet_hook;
+        
+    template<typename element_type>
+    struct const_facet_hook;
 
 
     
@@ -434,48 +451,103 @@ namespace viennagrid
     
         
 
+    
+        template<typename element_tag_>
+        struct element_tag
+        {
+            typedef element_tag_ type;
+        };
+        
+        template<typename element_tag_, typename boundary_cell_container_typelist, typename id_type>
+        struct element_tag< element_t<element_tag_, boundary_cell_container_typelist, id_type> >
+        {
+            typedef element_tag_ type;
+        };
+        
+        template<typename element_tag_, typename boundary_cell_container_typelist, typename id_type>
+        struct element_tag< const element_t<element_tag_, boundary_cell_container_typelist, id_type> >
+        {
+            typedef element_tag_ type;
+        };
+        
+        
+        
         template<typename element_type_or_tag>
         struct facet_tag
         {
-            typedef typename element_type_or_tag::facet_tag type;
+            typedef typename element_tag<element_type_or_tag>::type::facet_tag type;
         };
         
-        template<typename element_tag, typename boundary_cell_container_typelist, typename id_type>
-        struct facet_tag< element_t<element_tag, boundary_cell_container_typelist, id_type> >
-        {
-            typedef typename element_tag::facet_tag type;
-        };
         
         
         template<typename element_type>
         struct facet_type
         {
-            typedef typename element<element_type, typename element_type::tag::facet_tag>::type type;
+            typedef typename element<element_type, typename facet_tag<element_type>::type >::type type;
         };
     
+        template<typename element_tag, typename boundary_cell_typelist, typename id_type>
+        struct facet_hook< element_t<element_tag, boundary_cell_typelist, id_type> >
+        {
+            typedef typename element_hook< element_t<element_tag, boundary_cell_typelist, id_type>, typename facet_tag<element_tag>::type >::type type;
+        };
+        
+        template<typename element_tag, typename boundary_cell_typelist, typename id_type>
+        struct const_facet_hook< element_t<element_tag, boundary_cell_typelist, id_type> >
+        {
+            typedef typename const_element_hook< element_t<element_tag, boundary_cell_typelist, id_type>, typename facet_tag<element_tag>::type >::type type;
+        };
+        
+        
+        template<typename element_type>
+        struct facet_range
+        {
+            typedef typename element_range<element_type, typename facet_tag<element_type>::type >::type type;
+        };
+        
+        template<typename element_type>
+        struct const_facet_range
+        {
+            typedef typename const_element_range<element_type, typename facet_tag<element_type>::type >::type type;
+        };
   }
-   
-    template<long dim, typename element_domain_segment_config_or_something_like_that>
-    typename result_of::ncell_range<element_domain_segment_config_or_something_like_that, dim>::type ncells( element_domain_segment_config_or_something_like_that & something);
   
-    template<long dim, typename element_domain_segment_config_or_something_like_that>
-    typename result_of::const_ncell_range<element_domain_segment_config_or_something_like_that, dim>::type ncells( const element_domain_segment_config_or_something_like_that & something);
     
+
+  
+   
+//     template<long dim, typename element_domain_segment_config_or_something_like_that>
+//     typename result_of::ncell_range<element_domain_segment_config_or_something_like_that, dim>::type ncells( element_domain_segment_config_or_something_like_that & something);
+//   
+//     template<long dim, typename element_domain_segment_config_or_something_like_that>
+//     typename result_of::const_ncell_range<element_domain_segment_config_or_something_like_that, dim>::type ncells( const element_domain_segment_config_or_something_like_that & something);
+//     
     template<typename element_tag, typename element_domain_segment_config_or_something_like_that>
-    typename result_of::ncell_range<element_domain_segment_config_or_something_like_that, element_tag::dim>::type elements( element_domain_segment_config_or_something_like_that & something)
-    { return ncells<element_tag::dim>(something); }
+    typename result_of::element_range<element_domain_segment_config_or_something_like_that, element_tag>::type elements( element_domain_segment_config_or_something_like_that & something);
   
     template<typename element_tag, typename element_domain_segment_config_or_something_like_that>
-    typename result_of::const_ncell_range<element_domain_segment_config_or_something_like_that, element_tag::dim>::type elements( const element_domain_segment_config_or_something_like_that & something)
-    { return ncells<element_tag::dim>(something); }
+    typename result_of::const_element_range<element_domain_segment_config_or_something_like_that, element_tag>::type elements( const element_domain_segment_config_or_something_like_that & something);
+
+    template<typename element_type>
+    typename result_of::facet_range<element_type>::type facets(element_type & element)
+    {
+        return elements< typename result_of::facet_tag<element_type>::type >(element);
+    }
+    
+    template<typename element_type>
+    typename result_of::const_facet_range<element_type>::type facets(const element_type & element)
+    {
+        return elements< typename result_of::facet_tag<element_type>::type >(element);
+    }
 
     
     
-    template<typename something>
-    typename result_of::point_type<something>::type point( something &, const typename result_of::element<something, vertex_tag>::type &);
     
-    template<typename something>
-    const typename result_of::point_type<something>::type point( const something &, const typename result_of::element<something, vertex_tag>::type &);
+//     template<typename something>
+//     typename result_of::point_type<something>::type point( something &, const typename result_of::element<something, vertex_tag>::type &);
+//     
+//     template<typename something>
+//     const typename result_of::point_type<something>::type point( const something &, const typename result_of::element<something, vertex_tag>::type &);
 
   
   
