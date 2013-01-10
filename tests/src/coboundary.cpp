@@ -24,13 +24,9 @@
 
 
 #include "viennagrid/forwards.hpp"
-//#include "viennagrid/element.hpp"
 #include "viennagrid/point.hpp"
 #include "viennagrid/domain/config.hpp"
 #include "viennagrid/domain/coboundary_iteration.hpp"
-#include "viennagrid/config/simplex.hpp"
-//#include "viennagrid/segment.hpp"
-//#include "viennagrid/boundary.hpp"
 #include "viennagrid/io/netgen_reader.hpp"
 
 template <typename CellTypeOrTag, typename Domain>

@@ -25,8 +25,6 @@
 #include "viennagrid/forwards.hpp"
 #include "viennagrid/domain/config.hpp"
 #include "viennagrid/point.hpp"
-#include "viennagrid/config/simplex.hpp"
-#include "viennagrid/config/others.hpp"
 #include "viennagrid/algorithm/distance.hpp"
 
 void fuzzy_check(double a, double b)

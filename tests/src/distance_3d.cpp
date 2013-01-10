@@ -27,8 +27,6 @@
 #include "viennagrid/forwards.hpp"
 #include "viennagrid/domain/config.hpp"
 #include "viennagrid/point.hpp"
-#include "viennagrid/config/simplex.hpp"
-#include "viennagrid/config/others.hpp"
 #include "viennagrid/algorithm/distance.hpp"
 #include "viennagrid/algorithm/volume.hpp"
 #include "viennagrid/algorithm/cross_prod.hpp"
