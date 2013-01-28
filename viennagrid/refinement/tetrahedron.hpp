@@ -44,7 +44,7 @@ namespace viennagrid
   {
       typedef typename viennagrid::storage::hook::value_type< VertexHookType >::type VertexType;
       typedef typename viennagrid::result_of::point_type< GeometricContainerType >::type PointType;
-      typedef typename viennagrid::traits::value_type< PointType >::type ScalarType;
+      typedef typename viennagrid::result_of::coord_type< PointType >::type ScalarType;
       
       const VertexType & v1_1 = viennagrid::dereference_hook( domain, vh1_1 );
       const VertexType & v1_2 = viennagrid::dereference_hook( domain, vh1_2 );

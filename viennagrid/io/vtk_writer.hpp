@@ -57,7 +57,7 @@ namespace viennagrid
         //typedef typename DomainType::config_type                         DomainConfiguration;
         
         typedef typename result_of::point_type<DomainType>::type PointType;
-        typedef typename traits::value_type<PointType>::type CoordType;
+        typedef typename result_of::coord_type<PointType>::type CoordType;
         enum { dim = traits::static_size<PointType>::value };
         
         typedef typename result_of::element_tag<CellTypeOrTag>::type CellTag;
@@ -74,7 +74,7 @@ namespace viennagrid
         
         
 //         typedef typename viennagrid::result_of::point_type<DomainType>::type    PointType;
-//         typedef typename viennagrid::traits::value_type< PointType >::type      CoordType;
+//         typedef typename viennagrid::result_of::coord_type< PointType >::type      CoordType;
 //         typedef CellType_                                                       CellType;
 //         typedef typename CellType_::tag                                         CellTag;
 //         

@@ -53,7 +53,7 @@ namespace viennagrid
         typedef typename GeometricSegmentContainerType::value_type SegmentType;
         
         typedef typename viennagrid::result_of::point_type<GeometricDomainType>::type    PointType;
-        typedef typename viennagrid::traits::value_type< PointType >::type         CoordType;
+        typedef typename viennagrid::result_of::coord_type< PointType >::type         CoordType;
 
         //typedef typename ConfigType::numeric_type                        CoordType;
         //typedef typename ConfigType::coordinate_system_tag               CoordinateSystemTag;
