@@ -74,7 +74,7 @@ namespace viennagrid
             template<typename base_container_type>
             struct const_hook_type<base_container_type, id_hook_tag>
             {
-                typedef typename base_container_type::value_type::id_type type;
+                typedef const typename base_container_type::value_type::id_type type;
             };
             
             
