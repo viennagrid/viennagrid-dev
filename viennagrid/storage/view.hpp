@@ -22,6 +22,8 @@ namespace viennagrid
         {
         public:
             
+            friend class view_t<const base_container_type__, hook_tag__, container_tag>;
+            
             typedef base_container_type__ base_container_type;
             
             typedef hook_tag__ hook_tag;
@@ -305,6 +307,15 @@ namespace viennagrid
 
             
             view_t() {}
+            view_t( const view_t<base_container_type__, hook_tag__, container_tag> & other )
+            {
+                hook_container.resize( other.hook_container.size() );
+                std::copy( other.hook_container.begin(), other.hook_container.end(), hook_container.begin() );                
+            }
+            
+//             : hook_container( other.hook_container ) {}
+//             view_t( const view_t<const base_container_type__, hook_tag__, container_tag> & other )  {}
+            
             void set_base_container( const base_container_type & base_container ) {}
             
             template<typename other_container_tag>
@@ -365,6 +376,8 @@ namespace viennagrid
         {
             
         public:
+            
+            friend class view_t<const base_container_type__, id_hook_tag, container_tag>;
             
             typedef base_container_type__ base_container_type;
             
@@ -695,6 +708,11 @@ namespace viennagrid
             
 
             view_t() : base_container(0) {}
+            view_t( const view_t<base_container_type__, id_hook_tag, container_tag> & other ) : base_container(other.base_container)
+            {
+                hook_container.resize( other.hook_container.size() );
+                std::copy( other.hook_container.begin(), other.hook_container.end(), hook_container.begin() );                
+            }
             
             void set_base_container( const base_container_type & base_container_ )
             {
@@ -788,6 +806,24 @@ namespace viennagrid
             struct view< view_t<base_container_type, base_view_hook_tag, base_view_container_tag>, view_container_tag>
             {
                 typedef view_t<base_container_type, typename base_container_type::hook_tag, view_container_tag> type;
+            };
+            
+            template<typename base_container_type, typename base_view_hook_tag, typename base_view_container_tag, typename view_container_tag>
+            struct view< const view_t<base_container_type, base_view_hook_tag, base_view_container_tag>, view_container_tag>
+            {
+                typedef view_t<const base_container_type, typename base_container_type::hook_tag, view_container_tag> type;
+            };
+            
+            template<typename base_container_type, typename base_view_hook_tag, typename base_view_container_tag, typename view_container_tag>
+            struct view< const view_t<const base_container_type, base_view_hook_tag, base_view_container_tag>, view_container_tag>
+            {
+                typedef view_t<const base_container_type, typename base_container_type::hook_tag, view_container_tag> type;
+            };
+            
+            template<typename base_container_type, typename base_view_hook_tag, typename base_view_container_tag, typename view_container_tag>
+            struct view< view_t<const base_container_type, base_view_hook_tag, base_view_container_tag>, view_container_tag>
+            {
+                typedef view_t<const base_container_type, typename base_container_type::hook_tag, view_container_tag> type;
             };
             
             template<typename base_container_type, typename view_container_config>
