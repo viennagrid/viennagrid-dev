@@ -90,7 +90,7 @@ namespace viennagrid
             >
                 insert_noid( const value_type & element )
             {
-                return physical_insert<true>( element, *this );
+                return physical_insert<false>( element, *this );
             }
             
             container_collection_type & get_physical_container_collection() { return *collection; }
