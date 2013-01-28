@@ -35,15 +35,6 @@ namespace viennagrid
     enum{ dim = 2 };
     static std::string name() { return "Polygon"; }
   };
-
-    struct hole_polygon_tag
-    {
-        typedef simplex_tag<1> facet_tag;
-        
-        enum{ dim = 2 };
-        static std::string name() { return "Hole Polygon"; }
-    };
-  
   
   namespace topology
   {
@@ -59,22 +50,6 @@ namespace viennagrid
     
     template <>
     struct boundary_cells<polygon_tag, line_tag>
-    {
-      typedef dynamic_layout_tag     layout_tag;
-      enum{ num = -1 };
-    };
-    
-    
-    
-    template <>
-    struct boundary_cells<hole_polygon_tag, vertex_tag>
-    {
-      typedef dynamic_layout_tag     layout_tag;
-      enum{ num = -1 };
-    };
-    
-    template <>
-    struct boundary_cells<hole_polygon_tag, line_tag>
     {
       typedef dynamic_layout_tag     layout_tag;
       enum{ num = -1 };
@@ -104,17 +79,6 @@ namespace viennagrid
             element.set_bnd_cell( bnd_cell, inserter(bnd_cell), index++ );
         }
     };
-
-    template<typename bnd_cell_type>
-    struct bndcell_generator<hole_polygon_tag, simplex_tag<1>, bnd_cell_type>
-    {
-        template<typename element_type, typename inserter_type>
-        static void create_bnd_cells(element_type & element, inserter_type & inserter)
-        {
-            bndcell_generator< polygon_tag, simplex_tag<1>, bnd_cell_type >::create_bnd_cells(element, inserter);
-        }
-    };
-
     
 
   } //topology
