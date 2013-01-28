@@ -17,6 +17,8 @@ namespace viennagrid
             
         public:
             
+            typedef container_type base_container_type;
+            
             container_range_wrapper(container_type & _container) : container(&_container) {}
             
             typedef typename container_type::size_type size_type;
@@ -77,21 +79,13 @@ namespace viennagrid
             const_hook_iterator hook_end() const { return container->hook_end(); }
             
             hook_type hook_at(std::size_t pos)
-            {
-                return *viennagrid::advance(hook_begin(), pos);
-//                 hook_iterator it = hook_begin();
-//                 std::advance( it, pos );
-//                 return *it;
-            }
-            
+            { return *viennagrid::advance(hook_begin(), pos); }
             const_hook_type hook_at(std::size_t pos) const
-            {
-                return *viennagrid::advance(hook_begin(), pos);
-//                 const_hook_iterator it = hook_begin();
-//                 std::advance( it, pos );
-//                 return *it;
-            }
+            { return *viennagrid::advance(hook_begin(), pos); }
             
+            container_type * get_base_container() { return container; }
+            const container_type * get_base_container() const { return container; }
+
         private:
             
             container_type * container;
@@ -101,6 +95,8 @@ namespace viennagrid
         class container_range_wrapper<const container_type>
         {
         public:
+            
+            typedef const container_type base_container_type;
             
             container_range_wrapper(const container_type & _container) : container(&_container) {}
             container_range_wrapper(const container_range_wrapper<container_type> & rhs) : container(rhs.container) {}
@@ -162,20 +158,11 @@ namespace viennagrid
             const_hook_iterator hook_end() const { return container->hook_end(); }
             
             hook_type hook_at(std::size_t pos)
-            {
-                return *viennagrid::advance(hook_begin(), pos);
-//                 hook_iterator it = hook_begin();
-//                 std::advance( it, pos );
-//                 return *it;
-            }
-            
+            { return *viennagrid::advance(hook_begin(), pos); }
             const_hook_type hook_at(std::size_t pos) const
-            {
-                return *viennagrid::advance(hook_begin(), pos);
-//                 const_hook_iterator it = hook_begin();
-//                 std::advance( it, pos );
-//                 return *it;
-            }
+            { return *viennagrid::advance(hook_begin(), pos); }
+            
+            const container_type * get_base_container() const { return container; }
             
         private:
             
