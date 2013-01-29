@@ -80,7 +80,7 @@ namespace viennagrid
   PointType1
   cross_prod_impl(PointType1 const & p1, PointType2 const & p2, CSystem1 const &, CSystem2 const &)
   {
-    typedef typename traits::value_type<PointType1>::type    value_type;
+    typedef typename result_of::coord_type<PointType1>::type    value_type;
     typedef typename result_of::cartesian_point<PointType1>::type   CartesianPoint1;
     
     return detail::cross_prod_impl<CartesianPoint1>::apply(to_cartesian(p1), to_cartesian(p2));

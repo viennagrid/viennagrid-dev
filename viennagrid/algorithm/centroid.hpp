@@ -175,7 +175,7 @@ namespace viennagrid
   }
   
   template<typename ElementTypeOrTag, typename vector_type, typename topologic_domain_type, typename metainfo_collection_type>
-  typename viennagrid::traits::value_type<
+  typename viennagrid::result_of::coord_type<
     typename viennagrid::result_of::point_type<
         geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type>
     >::type

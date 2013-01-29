@@ -196,7 +196,7 @@ namespace viennagrid
                                       LinePointType const & line_p2)
     {
       //typedef point_t<CoordType, CoordinateSystem>  PointType;
-      typedef typename traits::value_type< PointType >::type CoordType;
+      typedef typename result_of::coord_type< PointType >::type CoordType;
 
       //compute t such that projection of p onto [line_p1, line_p2] is given by p' = line_p1 + t * (line_p2 - line_p1)
       CoordType t = viennagrid::inner_prod( (p - line_p1), (line_p2 - line_p1) ) / viennagrid::inner_prod(line_p2 - line_p1, line_p2 - line_p1);
@@ -269,7 +269,7 @@ namespace viennagrid
                                      PointType const & w0, PointType const & w1) //endpoints of second line
     {
       //typedef point_t<CoordType, CoordinateSystem>  PointType;
-      typedef typename traits::value_type< PointType >::type CoordType;
+      typedef typename result_of::coord_type< PointType >::type CoordType;
 
       // write V(s) = v0 + s * (v1 - v0), s \in [0,1]
       //       W(t) = w0 + t * (w1 - w0), t \in [0,1]
@@ -389,7 +389,7 @@ namespace viennagrid
                                           PointType const & v1,
                                           PointType const & v2) //endpoints of second line
     {
-      typedef typename traits::value_type< PointType >::type CoordType;
+      typedef typename result_of::coord_type< PointType >::type CoordType;
 
       // write T(s) =  v0 + s * (v1 - v0) + t * (v2 - v0), {s,t} \in [0,1], s+t < 1 for the triangle T
       //            =: v0 + s * u0 + t * u1
@@ -533,7 +533,7 @@ namespace viennagrid
                                              PointType const & v2,
                                              PointType const & v3)
     {
-      typedef typename traits::value_type< PointType >::type CoordType;
+      typedef typename result_of::coord_type< PointType >::type CoordType;
 
       // write T(s) =  v0 + r * (v1 - v0) + s * (v2 - v0) + t * (v3 - v1), {r,s,t} \in [0,1], r+s+t < 1 for the tetrahedron T
       //            =: v0 + r * u0 + s * u1 + t * u2

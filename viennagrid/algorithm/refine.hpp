@@ -189,7 +189,7 @@ namespace viennagrid
       //typedef typename ConfigTypeIn::numeric_type       NumericType;
       typedef typename viennagrid::result_of::point_type<GeometricDomainTypeIn>::type PointType;
       
-      typedef typename viennagrid::traits::value_type<PointType>::type NumericType;
+      typedef typename viennagrid::result_of::coord_type<PointType>::type NumericType;
 
       //typedef typename DomainTypeIn::segment_type                                                                    SegmentTypeIn; 
       //typedef typename viennagrid::result_of::point<ConfigTypeIn>::type                                         PointType;
@@ -296,7 +296,7 @@ namespace viennagrid
       //typedef typename ConfigTypeIn::numeric_type       NumericType;
       typedef typename viennagrid::result_of::point_type<GeometricDomainTypeIn>::type PointType;
       
-      typedef typename viennagrid::traits::value_type<PointType>::type NumericType;
+      typedef typename viennagrid::result_of::coord_type<PointType>::type NumericType;
 
       //typedef typename DomainTypeIn::segment_type                                                                    SegmentTypeIn; 
       //typedef typename viennagrid::result_of::point<ConfigTypeIn>::type                                         PointType;

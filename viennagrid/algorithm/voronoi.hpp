@@ -305,7 +305,7 @@ namespace viennagrid
       typedef TriangleType CellType;
       typedef typename viennagrid::result_of::const_element_range<CellType, vertex_tag>::type               VertexRange;
       typedef typename viennagrid::result_of::point_type<GeometricDomain>::type PointType;
-      typedef typename viennagrid::traits::value_type<PointType>::type                   value_type;
+      typedef typename viennagrid::result_of::coord_type<PointType>::type                   value_type;
       
       VertexRange vertices = viennagrid::elements<viennagrid::vertex_tag>(triangle);
       

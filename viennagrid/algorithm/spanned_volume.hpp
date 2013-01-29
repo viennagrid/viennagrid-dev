@@ -45,7 +45,7 @@ namespace viennagrid
     template <typename PointType>
     struct signed_spanned_volume_impl<PointType, 1>
     {
-      typedef typename traits::value_type<PointType>::type    value_type;
+      typedef typename result_of::coord_type<PointType>::type    value_type;
 
       static value_type apply(PointType const & p1,
                               PointType const & p2)
@@ -59,7 +59,7 @@ namespace viennagrid
     template <typename PointType>
     struct signed_spanned_volume_impl<PointType, 2>
     {
-      typedef typename traits::value_type<PointType>::type    value_type;
+      typedef typename result_of::coord_type<PointType>::type    value_type;
       
       static value_type apply(PointType const & p1,
                               PointType const & p2)
@@ -86,7 +86,7 @@ namespace viennagrid
     template <typename PointType>
     struct signed_spanned_volume_impl<PointType, 3>
     {
-      typedef typename traits::value_type<PointType>::type    value_type;
+      typedef typename result_of::coord_type<PointType>::type    value_type;
       
       static value_type apply(PointType const & p1,
                               PointType const & p2)
@@ -134,13 +134,13 @@ namespace viennagrid
   //
   /** @brief Dispatch facility for two points with possibly different coordinate systems */
   template<typename PointType1, typename PointType2, typename CSystem1, typename CSystem2>
-  typename traits::value_type<PointType1>::type
+  typename result_of::coord_type<PointType1>::type
   signed_spanned_volume_impl(PointType1 const & p1,
                       PointType2 const & p2,
                       CSystem1 const &,
                       CSystem2 const &)
   {
-    typedef typename traits::value_type<PointType1>::type    value_type;
+    typedef typename result_of::coord_type<PointType1>::type    value_type;
     typedef typename result_of::cartesian_point<PointType1>::type   CartesianPoint1;
     
     return detail::signed_spanned_volume_impl<CartesianPoint1>::apply(to_cartesian(p1), to_cartesian(p2));
@@ -149,7 +149,7 @@ namespace viennagrid
   /** @brief Dispatch facility for three points with possibly different coordinate systems */
   template<typename PointType1, typename PointType2, typename PointType3,
            typename CSystem1, typename CSystem2, typename CSystem3>
-  typename traits::value_type<PointType1>::type
+  typename result_of::coord_type<PointType1>::type
   signed_spanned_volume_impl(PointType1 const & p1,
                       PointType2 const & p2,
                       PointType3 const & p3,
@@ -157,7 +157,7 @@ namespace viennagrid
                       CSystem2 const &,
                       CSystem3 const &)
   {
-    typedef typename traits::value_type<PointType1>::type    value_type;
+    typedef typename result_of::coord_type<PointType1>::type    value_type;
     typedef typename result_of::cartesian_point<PointType1>::type   CartesianPoint1;
     
     return detail::signed_spanned_volume_impl<CartesianPoint1>::apply(to_cartesian(p1), to_cartesian(p2), to_cartesian(p3));
@@ -166,7 +166,7 @@ namespace viennagrid
   /** @brief Dispatch facility for four points with possibly different coordinate systems */
   template<typename PointType1, typename PointType2, typename PointType3, typename PointType4,
            typename CSystem1, typename CSystem2, typename CSystem3, typename CSystem4>
-  typename traits::value_type<PointType1>::type
+  typename result_of::coord_type<PointType1>::type
   signed_spanned_volume_impl(PointType1 const & p1,
                       PointType2 const & p2,
                       PointType3 const & p3,
@@ -176,7 +176,7 @@ namespace viennagrid
                       CSystem3 const &,
                       CSystem4 const &)
   {
-    typedef typename traits::value_type<PointType1>::type    value_type;
+    typedef typename result_of::coord_type<PointType1>::type    value_type;
     typedef typename result_of::cartesian_point<PointType1>::type   CartesianPoint1;
     
     return detail::signed_spanned_volume_impl<CartesianPoint1>::apply(to_cartesian(p1), to_cartesian(p2), to_cartesian(p3), to_cartesian(p4));
@@ -187,7 +187,7 @@ namespace viennagrid
   //
   /** @brief Dispatch facility for two points in Cartesian coordinates */
   template<typename PointType1, typename PointType2, long d>
-  typename traits::value_type<PointType1>::type
+  typename result_of::coord_type<PointType1>::type
   signed_spanned_volume_impl(PointType1 const & p1,
                       PointType2 const & p2,
                       cartesian_cs<d>,
@@ -198,7 +198,7 @@ namespace viennagrid
 
   /** @brief Dispatch facility for three points in Cartesian coordinates */
   template <typename PointType1, typename PointType2, typename PointType3, long d>
-  typename traits::value_type<PointType1>::type
+  typename result_of::coord_type<PointType1>::type
   signed_spanned_volume_impl(PointType1 const & p1,
                       PointType2 const & p2,
                       PointType3 const & p3,
@@ -211,7 +211,7 @@ namespace viennagrid
 
   /** @brief Dispatch facility for four points in Cartesian coordinates */
   template <typename PointType1, typename PointType2, typename PointType3, typename PointType4, long d>
-  typename traits::value_type<PointType1>::type
+  typename result_of::coord_type<PointType1>::type
   signed_spanned_volume_impl(PointType1 const & p1,
                       PointType2 const & p2,
                       PointType3 const & p3,
@@ -231,7 +231,7 @@ namespace viennagrid
   //
   /** @brief Returns the volume of the 1-simplex (line) spanned by the two points */
   template <typename PointType1, typename PointType2>
-  typename traits::value_type<PointType1>::type 
+  typename result_of::coord_type<PointType1>::type 
   signed_spanned_volume(PointType1 const & p1, PointType2 const & p2)
   {
     return signed_spanned_volume_impl(p1,
@@ -243,7 +243,7 @@ namespace viennagrid
   
   /** @brief Returns the two-dimensional volume of the 2-simplex (triangle) spanned by the three points */
   template <typename PointType1, typename PointType2, typename PointType3>
-  typename traits::value_type<PointType1>::type 
+  typename result_of::coord_type<PointType1>::type 
   signed_spanned_volume(PointType1 const & p1, PointType2 const & p2, PointType3 const & p3)
   {
     return signed_spanned_volume_impl(p1,
@@ -259,7 +259,7 @@ namespace viennagrid
   
   /** @brief Returns the three-dimensional volume of the 3-simplex (tetrahedron) spanned by the four points */
   template <typename PointType1, typename PointType2, typename PointType3, typename PointType4>
-  typename traits::value_type<PointType1>::type 
+  typename result_of::coord_type<PointType1>::type 
   signed_spanned_volume(PointType1 const & p1,
                   PointType2 const & p2,
                   PointType3 const & p3,
@@ -279,7 +279,7 @@ namespace viennagrid
   
   /** @brief Returns the volume of the 1-simplex (line) spanned by the two points */
   template <typename PointType1, typename PointType2>
-  typename traits::value_type<PointType1>::type 
+  typename result_of::coord_type<PointType1>::type 
   spanned_volume(PointType1 const & p1, PointType2 const & p2)
   {
     return std::abs(signed_spanned_volume(p1, p2));
@@ -288,7 +288,7 @@ namespace viennagrid
   
   /** @brief Returns the two-dimensional volume of the 2-simplex (triangle) spanned by the three points */
   template <typename PointType1, typename PointType2, typename PointType3>
-  typename traits::value_type<PointType1>::type 
+  typename result_of::coord_type<PointType1>::type 
   spanned_volume(PointType1 const & p1, PointType2 const & p2, PointType3 const & p3)
   {
     return std::abs(signed_spanned_volume(p1, p2, p3));
@@ -297,7 +297,7 @@ namespace viennagrid
   
   /** @brief Returns the three-dimensional volume of the 3-simplex (tetrahedron) spanned by the four points */
   template <typename PointType1, typename PointType2, typename PointType3, typename PointType4>
-  typename traits::value_type<PointType1>::type 
+  typename result_of::coord_type<PointType1>::type 
   spanned_volume(PointType1 const & p1,
                   PointType2 const & p2,
                   PointType3 const & p3,
