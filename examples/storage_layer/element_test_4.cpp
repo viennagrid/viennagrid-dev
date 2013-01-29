@@ -106,7 +106,7 @@ int main()
             >::type
         >::type,
         
-        viennagrid::hole_polygon_tag,
+        viennagrid::triangle_tag,
         viennameta::make_typemap<
             viennagrid::element_id_tag,
             viennagrid::storage::smart_id_tag<int>,
@@ -145,7 +145,7 @@ int main()
     
     
     std::cout << typeid( viennagrid::result_of::element<config, viennagrid::polygon_tag>::type ).name() << std::endl;
-    std::cout << typeid( viennagrid::result_of::element<config, viennagrid::hole_polygon_tag>::type ).name() << std::endl;
+    std::cout << typeid( viennagrid::result_of::element<config, viennagrid::triangle_tag>::type ).name() << std::endl;
     
     
     
