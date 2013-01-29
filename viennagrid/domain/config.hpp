@@ -24,6 +24,7 @@
 #include "viennagrid/topology/quadrilateral.hpp"
 #include "viennagrid/topology/polygon.hpp"
 #include "viennagrid/topology/hexahedron.hpp"
+#include "viennagrid/topology/plc.hpp"
 
 /** @file config/simplex.hpp
     @brief Provides default configuration classes for simplex domains
@@ -109,6 +110,18 @@ namespace viennagrid
       typedef viennagrid::result_of::geometric_domain< polygonal_3d >::type polygonal_3d_domain;
       typedef viennagrid::result_of::geometric_view< polygonal_3d_domain >::type polygonal_3d_segment;
       typedef viennagrid::result_of::element<polygonal_3d_domain, viennagrid::polygon_tag>::type polygonal_3d_cell;
+      
+      
+      
+      typedef viennagrid::result_of::geometric_domain_config< viennagrid::plc_tag, point_type_2d, viennagrid::storage::pointer_hook_tag >::type plc_2d;
+      typedef viennagrid::result_of::geometric_domain< plc_2d >::type plc_2d_domain;
+      typedef viennagrid::result_of::geometric_view< plc_2d_domain >::type plc_2d_segment;
+      typedef viennagrid::result_of::element<plc_2d_domain, viennagrid::plc_tag>::type plc_2d_cell;
+      
+      typedef viennagrid::result_of::geometric_domain_config< viennagrid::plc_tag, point_type_3d, viennagrid::storage::pointer_hook_tag >::type plc_3d;
+      typedef viennagrid::result_of::geometric_domain< plc_3d >::type plc_3d_domain;
+      typedef viennagrid::result_of::geometric_view< plc_3d_domain >::type plc_3d_segment;
+      typedef viennagrid::result_of::element<plc_3d_domain, viennagrid::plc_tag>::type plc_3d_cell;
   }
 }
 
