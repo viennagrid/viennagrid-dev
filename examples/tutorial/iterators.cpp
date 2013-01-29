@@ -25,7 +25,6 @@
 #include <fstream>
 #include <vector>
 
-#include "viennagrid/config/simplex.hpp"
 #include "viennagrid/algorithm/volume.hpp"
 #include "viennagrid/algorithm/voronoi.hpp"
 #include "viennagrid/io/netgen_reader.hpp"

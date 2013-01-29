@@ -22,7 +22,6 @@
 
 
 #include "viennagrid/forwards.hpp"
-#include "viennagrid/config/simplex.hpp"
 #include "viennagrid/io/netgen_reader.hpp"
 #include "viennagrid/io/vtk_writer.hpp"
 
