@@ -21,7 +21,7 @@
 
 #include "viennagrid/storage/view.hpp"
 #include "viennagrid/element/element.hpp"
-#include "viennagrid/element/plc.hpp"
+// #include "viennagrid/element/plc.hpp"
 #include "viennagrid/topology/polygon.hpp"
 
 
@@ -47,6 +47,12 @@ namespace viennagrid
         struct boundary_cell_container_tag<viennagrid::dynamic_layout_tag, num>
         {
             typedef viennagrid::storage::std_vector_tag type;
+        };
+        
+        template<long num>
+        struct boundary_cell_container_tag<viennagrid::dynamic_unique_layout_tag, num>
+        {
+            typedef viennagrid::storage::std_set_tag type;
         };
         
         
@@ -203,12 +209,12 @@ namespace viennagrid
             >::type permutator_type;
             
             typedef typename boundary_cell_container_tag<
-                    typename viennagrid::topology::boundary_cells< element_tag, boundary_cell_tag>::layout_tag,
-                    viennagrid::topology::boundary_cells< element_tag, boundary_cell_tag>::num
+                    typename viennagrid::topology::boundary_cells< boundary_cell_tag, typename boundary_cell_tag::facet_tag>::layout_tag,
+                    viennagrid::topology::boundary_cells< boundary_cell_tag, typename boundary_cell_tag::facet_tag>::num
                 >::type orientation_container_tag;
             
             
-            typedef typename viennagrid::storage::result_of::container<permutator_type, container_tag>::type orientation_container_type;
+            typedef typename viennagrid::storage::result_of::container<permutator_type, orientation_container_tag>::type orientation_container_type;
             typedef viennagrid::element_orientation<orientation_container_type> facet_orientation_type;
            
             typedef typename 
@@ -228,6 +234,60 @@ namespace viennagrid
                             facet_orientation_container_type
                         > type;
         };
+        
+        template<typename domain_config, typename element_tag, bool is_present>
+        struct element_boundary_cell_container_helper<domain_config, element_tag, vertex_tag, is_present>
+        {
+            
+            typedef vertex_tag boundary_cell_tag;
+            
+            //
+            // boundary cell view
+            //
+            
+            typedef typename element<domain_config, boundary_cell_tag>::type boundary_cell_type;
+            
+            typedef typename viennagrid::storage::result_of::container<
+                boundary_cell_type,                                         // the 'value_type', i.e. vertices     
+                typename element_container_tag<domain_config, boundary_cell_tag>::type
+            >::type boundary_cell_container;
+            
+            
+            typedef typename boundary_cell_container_tag<
+                    typename viennagrid::topology::boundary_cells< element_tag, boundary_cell_tag>::layout_tag,
+                    viennagrid::topology::boundary_cells< element_tag, boundary_cell_tag>::num
+                >::type container_tag;
+            
+
+            typedef typename viennagrid::storage::result_of::view<
+                    boundary_cell_container,
+                    container_tag
+                >::type
+            boundary_cell_view;
+            
+            
+            
+            //
+            // Orientation
+            //
+           
+            typedef viennameta::null_type facet_orientation_container_type;
+            
+                
+            //
+            // final container pair
+            //
+                
+            typedef viennameta::static_pair<
+                            boundary_cell_view,
+                            facet_orientation_container_type
+                        > type;
+        };
+        
+        
+        
+        
+        
         
         template<typename config__, typename element_tag__, typename boundary_cell_tag__>
         struct element_boundary_cell_container_helper<config__, element_tag__, boundary_cell_tag__, false>
@@ -280,37 +340,7 @@ namespace viennagrid
             typedef typename element_boundary_cell_container_typelist<config, element_tag, element_tag>::type container_typelist;
             
             typedef viennagrid::element_t<element_tag, container_typelist, id_tag> type;
-        };
-        
-        
-        template<typename config_element_tag, typename config_element_config, typename config_tail>
-        struct element_from_config_impl< viennameta::typelist_t< viennameta::static_pair<config_element_tag, config_element_config>, config_tail >, plc_tag >
-        {
-            typedef viennameta::typelist_t< viennameta::static_pair<config_element_tag, config_element_config>, config_tail > config;
-            typedef plc_tag element_tag;
-            
-            typedef typename element_id_tag<config, element_tag>::type id_tag;
-            
-            typedef typename element<config, vertex_tag>::type vertex_type;
-            typedef typename viennagrid::storage::result_of::container<vertex_type, typename element_container_tag<config, vertex_tag>::type >::type vertex_base_container_type;
-            typedef typename viennagrid::storage::result_of::view<vertex_base_container_type, viennagrid::storage::std_set_tag>::type vertex_view_type;
-            
-            typedef typename element<config, line_tag>::type line_type;
-            typedef typename viennagrid::storage::result_of::container<line_type, typename element_container_tag<config, line_tag>::type >::type line_base_container_type;
-            typedef typename viennagrid::storage::result_of::view<line_base_container_type, viennagrid::storage::std_set_tag>::type line_view_type;
-
-            typedef typename element<config, hole_polygon_tag>::type hole_polygon_type;
-            typedef typename viennagrid::storage::result_of::container<hole_polygon_type, typename element_container_tag<config, polygon_tag>::type >::type hole_polygon_base_container_type;
-            typedef typename viennagrid::storage::result_of::view<hole_polygon_base_container_type, viennagrid::storage::std_set_tag>::type hole_poly_view_type;
-
-            
-            typedef typename element<config, polygon_tag>::type polygon_type;
-            typedef typename viennagrid::storage::result_of::container<polygon_type, typename element_container_tag<config, polygon_tag>::type >::type polygon_base_container_type;
-            typedef typename viennagrid::storage::result_of::view<polygon_base_container_type, viennagrid::storage::static_array_tag<1> >::type bounding_poly_view_type;
-            
-            typedef viennagrid::plc_t<bounding_poly_view_type, hole_poly_view_type, line_view_type, vertex_view_type, id_tag> type;
-        };
-        
+        };        
         
         template<typename config_element_tag, typename config_element_config, typename config_tail, typename element_tag_>
         struct element< viennameta::typelist_t< viennameta::static_pair<config_element_tag, config_element_config>, config_tail >, element_tag_ >
