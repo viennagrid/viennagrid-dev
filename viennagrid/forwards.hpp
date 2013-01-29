@@ -137,7 +137,7 @@ namespace viennagrid
   typedef hypercube_tag<3>  hexahedron_tag;
   
   struct polygon_tag;
-  struct hole_polygon_tag;
+//   struct hole_polygon_tag;
   
   struct plc_tag;
   
@@ -290,6 +290,7 @@ namespace viennagrid
   
     struct static_layout_tag;
     struct dynamic_layout_tag;
+    struct dynamic_unique_layout_tag;
   
   /** @brief Namespace for definition and handling of the individual topological elements (triangles, hexahedra, etc.) */
   namespace topology
@@ -359,6 +360,12 @@ namespace viennagrid
         template<typename something>
         struct point_type;
         
+        template<typename point_type>
+        struct coord_type
+        {
+            typedef typename point_type::value_type type;
+        };
+        
 
         
         
@@ -420,7 +427,6 @@ namespace viennagrid
     template <typename T, 
               typename element_tag>
     struct const_element_range;
-    
 
     
     
