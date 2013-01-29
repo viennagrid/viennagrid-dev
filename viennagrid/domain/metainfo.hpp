@@ -92,7 +92,7 @@ namespace viennagrid
         template<typename geometric_container_type, typename element_type>
         const typename result_of::associative_container_value_type<geometric_container_type>::type & look_up( const geometric_container_type & container, const element_type & element, associative_access_tag )
         {
-            typename geometric_container_type::iterator it = container.find( element.id() );
+            typename geometric_container_type::const_iterator it = container.find( element.id() );
             return it->second;
         }
         
