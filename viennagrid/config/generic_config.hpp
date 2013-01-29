@@ -135,63 +135,6 @@ namespace viennagrid
         {
             typedef typename default_topologic_config_helper<element_tag, element_tag, hook_tag>::type type;
         };
-        
-        template<typename hook_tag>
-        struct default_topologic_config<plc_tag, hook_tag>
-        {
-            typedef viennameta::static_pair<
-                plc_tag,
-                typename viennameta::make_typemap<
-            
-                    viennagrid::element_id_tag,
-                    viennagrid::storage::smart_id_tag<int>,
-                
-                    viennagrid::element_container_tag,
-                    viennagrid::storage::hooked_container_tag<           
-                        typename default_container_tag<plc_tag, plc_tag>::type,
-                        hook_tag
-                    >,
-                
-                    viennagrid::element_boundary_storage_layout_tag,
-                    viennameta::null_type
-            
-                >::type
-            > plc_config;
-            
-            
-            
-            typedef viennameta::static_pair<
-                hole_polygon_tag,
-                typename viennameta::make_typemap<
-            
-                    viennagrid::element_id_tag,
-                    viennagrid::storage::smart_id_tag<int>,
-                
-                    viennagrid::element_container_tag,
-                    viennagrid::storage::hooked_container_tag<
-                        typename default_container_tag<plc_tag, hole_polygon_tag>::type,
-                        hook_tag
-                    >,
-                
-                    viennagrid::element_boundary_storage_layout_tag,
-                    viennameta::make_typemap<
-                        viennagrid::vertex_tag, viennagrid::no_orientation_handling_tag,
-                        viennagrid::line_tag, viennagrid::full_handling_tag
-                    >::type
-            
-                >::type
-            > hole_polygon_config;            
-            
-            
-            
-            typedef typename viennameta::typemap::result_of::insert<
-                typename viennameta::typemap::result_of::insert<
-                    typename default_topologic_config_helper<plc_tag, polygon_tag, hook_tag>::type,
-                    hole_polygon_config
-                >::type,
-                plc_config
-            >::type type;
-        };
     }
 }
 
