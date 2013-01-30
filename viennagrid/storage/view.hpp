@@ -61,7 +61,8 @@ namespace viennagrid
                 reference operator* () { return *(base::operator*()); }
                 const reference operator* () const { return *(base::operator*()); }
                 
-                pointer operator->() const { return &(operator* ()); }
+                pointer operator->() { return &(operator* ()); }
+                const pointer operator->() const { return &(operator* ()); }
             };
             
             
@@ -101,7 +102,8 @@ namespace viennagrid
                 reference operator* () { return *(base::operator*()); }
                 const reference operator* () const { return *(base::operator*()); }
                 
-                pointer operator->() const { return &(operator* ()); }
+                pointer operator->() { return &(operator* ()); }
+                const pointer operator->() const { return &(operator* ()); }
             };
             
             
