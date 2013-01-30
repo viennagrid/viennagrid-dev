@@ -222,6 +222,7 @@ namespace viennagrid
             
             
             typedef typename value_type::id_type id_type;
+            typedef typename value_type::const_id_type const_id_type;
             
             value_type & dereference_hook( hook_type hook )
             {

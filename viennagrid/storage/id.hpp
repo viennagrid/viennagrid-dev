@@ -17,14 +17,14 @@ namespace viennagrid
         
         
         template<typename value_type_, typename base_id_type>
-        class smart_id
+        class smart_id_t
         {
         public:
-            typedef smart_id self_type;
+            typedef smart_id_t self_type;
             typedef value_type_ value_type;
             
-            smart_id() : internal_id(-1) {}
-            explicit smart_id( base_id_type internal_id_ ) : internal_id(internal_id_) {}
+            smart_id_t() : internal_id(-1) {}
+            explicit smart_id_t( base_id_type internal_id_ ) : internal_id(internal_id_) {}
             
             base_id_type get() const { return internal_id; }
             void set( base_id_type internal_id_ ) { internal_id =internal_id_; }
@@ -42,8 +42,39 @@ namespace viennagrid
             base_id_type internal_id;
         };
         
+        
+        
         template<typename value_type_, typename base_id_type>
-        std::ostream & operator<< (std::ostream & os, smart_id<value_type_, base_id_type> id)
+        class smart_id_t<const value_type_, base_id_type>
+        {
+        public:
+            typedef smart_id_t self_type;
+            typedef value_type_ value_type;
+            
+            smart_id_t() : internal_id(-1) {}
+            smart_id_t( smart_id_t<value_type_, base_id_type> const & id_ ) : internal_id(id_.get()) {}
+            explicit smart_id_t( base_id_type internal_id_ ) : internal_id(internal_id_) {}
+            
+            base_id_type get() const { return internal_id; }
+            void set( base_id_type internal_id_ ) { internal_id =internal_id_; }
+            
+            bool operator== ( self_type rhs ) const { return internal_id == rhs.internal_id; }
+            bool operator< ( self_type rhs ) const { return internal_id < rhs.internal_id; }
+            bool operator<= ( self_type rhs ) const { return internal_id <= rhs.internal_id; }
+            bool operator> ( self_type rhs ) const { return internal_id > rhs.internal_id; }
+            bool operator>= (self_type rhs ) const { return internal_id >= rhs.internal_id; }
+            
+            self_type & operator++() { ++internal_id; return *this; }
+            self_type operator++(int) { self_type tmp(*this); ++*this; return tmp; }
+            
+        private:
+            base_id_type internal_id;
+        };
+        
+        
+        
+        template<typename value_type_, typename base_id_type>
+        std::ostream & operator<< (std::ostream & os, smart_id_t<value_type_, base_id_type> id)
         {
             os << id.get();
             return os;
@@ -52,18 +83,31 @@ namespace viennagrid
         namespace result_of
         {
             template<typename value_type, typename id_tag>
-            struct id;
+            struct smart_id;
             
             template<typename value_type, typename id_type>
-            struct id<value_type, id_tag<id_type> >
+            struct smart_id<value_type, id_tag<id_type> >
             {
                 typedef id_type type;
             };
             
             template<typename value_type, typename base_id_type>
-            struct id<value_type, smart_id_tag<base_id_type> >
+            struct smart_id<value_type, smart_id_tag<base_id_type> >
             {
-                typedef smart_id<value_type, base_id_type> type;
+                typedef smart_id_t<value_type, base_id_type> type;
+            };
+            
+            
+            template<typename id_type>
+            struct const_id
+            {
+                typedef const id_type type;
+            };
+            
+            template<typename value_type, typename id_type>
+            struct const_id< smart_id_t<value_type, id_type> >
+            {
+                typedef smart_id_t<const value_type, id_type> type;
             };
             
         }
@@ -89,6 +133,7 @@ namespace viennagrid
         {
         public:
             typedef id_type_ id_type;
+            typedef typename result_of::const_id<id_type>::type const_id_type;
             
             id_handler() {}
             id_handler(const id_handler & rhs) : id_(rhs.id_) {}

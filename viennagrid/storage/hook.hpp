@@ -74,7 +74,7 @@ namespace viennagrid
             template<typename base_container_type>
             struct const_hook_type<base_container_type, id_hook_tag>
             {
-                typedef const typename base_container_type::value_type::id_type type;
+                typedef typename base_container_type::value_type::const_id_type type;
             };
             
             
@@ -116,9 +116,9 @@ namespace viennagrid
             };
             
             template<typename id_type, typename value_type, typename container_type>
-            struct invalid_hook_helper< smart_id<value_type, id_type>, container_type>
+            struct invalid_hook_helper< smart_id_t<value_type, id_type>, container_type>
             {
-                typedef smart_id<value_type, id_type> invalid_hook_type;
+                typedef smart_id_t<value_type, id_type> invalid_hook_type;
                 
                 static invalid_hook_type get(const container_type & container)
                 {
