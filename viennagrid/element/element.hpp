@@ -539,7 +539,7 @@ namespace viennagrid
     template<typename element_tag, typename bnd_cell_container_typelist_, typename id_tag>
     class element_t :
         public viennagrid::storage::id_handler<
-                    typename viennagrid::storage::result_of::id< element_t<element_tag, bnd_cell_container_typelist_, id_tag>, id_tag>::type
+                    typename viennagrid::storage::result_of::smart_id< element_t<element_tag, bnd_cell_container_typelist_, id_tag>, id_tag>::type
                 >,
         public boundary_cell_layer<element_tag, bnd_cell_container_typelist_>
     {
@@ -550,7 +550,9 @@ namespace viennagrid
         typedef bnd_cell_container_typelist_ bnd_cell_container_typelist;
         typedef element_tag tag;
         typedef typename result_of::boundary_cell_typelist<bnd_cell_container_typelist_>::type boundary_cell_typelist;
-        typedef typename viennagrid::storage::result_of::id< element_t<element_tag, bnd_cell_container_typelist_, id_tag>, id_tag>::type id_type;
+        
+        typedef typename viennagrid::storage::result_of::smart_id< element_t<element_tag, bnd_cell_container_typelist_, id_tag>, id_tag>::type id_type;
+        typedef typename viennagrid::storage::result_of::const_id<id_type>::type const_id_type;
                     
         template<typename container_typelist>
         element_t( viennagrid::storage::collection_t<container_typelist> & container_collection )
@@ -592,12 +594,12 @@ namespace viennagrid
     template<typename bnd_cell_container_typelist_, typename id_tag>
     class element_t<vertex_tag, bnd_cell_container_typelist_, id_tag> :
         public viennagrid::storage::id_handler<
-                    typename viennagrid::storage::result_of::id< element_t<vertex_tag, bnd_cell_container_typelist_, id_tag>, id_tag>::type
+                    typename viennagrid::storage::result_of::smart_id< element_t<vertex_tag, bnd_cell_container_typelist_, id_tag>, id_tag>::type
                 >
     {
         typedef element_t<vertex_tag, bnd_cell_container_typelist_, id_tag>            self_type;
         typedef viennagrid::storage::id_handler<
-                    typename viennagrid::storage::result_of::id< element_t<vertex_tag, bnd_cell_container_typelist_, id_tag>, id_tag>::type
+                    typename viennagrid::storage::result_of::smart_id< element_t<vertex_tag, bnd_cell_container_typelist_, id_tag>, id_tag>::type
                 > id_handler;
         
     public:
@@ -609,7 +611,8 @@ namespace viennagrid
         typedef bnd_cell_container_typelist_ bnd_cell_container_typelist;
         typedef vertex_tag tag;
         typedef typename result_of::boundary_cell_typelist<bnd_cell_container_typelist_>::type boundary_cell_typelist;
-        typedef typename viennagrid::storage::result_of::id< element_t<vertex_tag, bnd_cell_container_typelist_, id_tag>, id_tag>::type id_type;
+        typedef typename viennagrid::storage::result_of::smart_id< element_t<vertex_tag, bnd_cell_container_typelist_, id_tag>, id_tag>::type id_type;
+        typedef typename viennagrid::storage::result_of::const_id<id_type>::type const_id_type;
                     
         template<typename inserter_type>
         void insert_callback( inserter_type & inserter, bool inserted ) {}
