@@ -29,7 +29,7 @@ struct triangle;
 
 
 template<typename _numeric_type>
-struct vertex : public viennagrid::storage::id_handler< viennagrid::storage::smart_id<vertex<_numeric_type>, int> >
+struct vertex : public viennagrid::storage::id_handler< viennagrid::storage::smart_id_t<vertex<_numeric_type>, int> >
 {
     typedef _numeric_type numeric_type;
     typedef typename viennameta::make_typelist< vertex<numeric_type> >::type required_types;    
@@ -55,7 +55,7 @@ std::ostream & operator<<(std::ostream & os, const vertex<numeric_type> & v)
 
 
 template<typename _vertex_type>
-struct line : public viennagrid::storage::id_handler< viennagrid::storage::smart_id<line<_vertex_type>, int> >
+struct line : public viennagrid::storage::id_handler< viennagrid::storage::smart_id_t<line<_vertex_type>, int> >
 {
     typedef _vertex_type vertex_type;
     typedef typename viennameta::typelist::result_of::push_back<typename vertex_type::required_types, line<vertex_type> >::type required_types;
@@ -75,7 +75,7 @@ std::ostream & operator<<(std::ostream & os, const line<vertex_type> & l)
 }
 
 template<typename _vertex_type>
-struct triangle : public viennagrid::storage::id_handler< viennagrid::storage::smart_id<triangle<_vertex_type>, int> >
+struct triangle : public viennagrid::storage::id_handler< viennagrid::storage::smart_id_t<triangle<_vertex_type>, int> >
 {
     typedef _vertex_type vertex_type;
     typedef line<vertex_type> line_type;

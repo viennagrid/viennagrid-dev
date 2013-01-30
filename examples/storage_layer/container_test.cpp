@@ -21,10 +21,10 @@ using std::endl;
 
 
 struct id_int;
-typedef viennagrid::storage::smart_id<id_int, int> id_type;
+typedef viennagrid::storage::smart_id_t<id_int, int> id_type;
 
 
-struct id_int : public viennagrid::storage::id_handler< viennagrid::storage::smart_id<id_int, int> >
+struct id_int : public viennagrid::storage::id_handler< viennagrid::storage::smart_id_t<id_int, int> >
 {
     id_int(int value_) : value(value_) {}
     int value;
