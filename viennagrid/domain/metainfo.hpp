@@ -56,6 +56,21 @@ namespace viennagrid
                 typedef associative_access_tag type;
             };
             
+            
+            
+            
+            template<typename container_type>
+            struct value_type
+            {
+                typedef typename container_type::value_type type;
+            };
+            
+            template<typename key_type, typename value_type_, typename compare, typename alloc>
+            struct value_type< std::map<key_type, value_type_, compare, alloc> >
+            {
+                typedef value_type_ type;
+            };
+            
         }
         
         
@@ -135,24 +150,33 @@ namespace viennagrid
     namespace result_of
     {
         template<typename container_collection_type, typename element_type, typename metainfo_type>
-        struct info_container;
+        struct metainfo_container;
         
         template<typename container_typemap, typename element_type, typename metainfo_type>
-        struct info_container< viennagrid::storage::collection_t<container_typemap>, element_type, metainfo_type >
+        struct metainfo_container< viennagrid::storage::collection_t<container_typemap>, element_type, metainfo_type >
         {
             typedef typename viennagrid::storage::result_of::container_of< viennagrid::storage::collection_t<container_typemap>, viennameta::static_pair<element_type, metainfo_type> >::type type;
+        };
+        
+        template<typename container_collection_type, typename element_type, typename metainfo_type>
+        struct const_metainfo_container;
+        
+        template<typename container_typemap, typename element_type, typename metainfo_type>
+        struct const_metainfo_container< viennagrid::storage::collection_t<container_typemap>, element_type, metainfo_type >
+        {
+            typedef const typename viennagrid::storage::result_of::container_of< viennagrid::storage::collection_t<container_typemap>, viennameta::static_pair<element_type, metainfo_type> >::type type;
         };
     }
     
     
     template< typename element_type, typename metainfo_type, typename container_typemap >
-    typename result_of::info_container< viennagrid::storage::collection_t<container_typemap>, element_type, metainfo_type>::type & get_info( viennagrid::storage::collection_t<container_typemap> & container_collection )
+    typename result_of::metainfo_container< viennagrid::storage::collection_t<container_typemap>, element_type, metainfo_type>::type & metainfo_container( viennagrid::storage::collection_t<container_typemap> & container_collection )
     {
         return viennagrid::storage::collection::get< viennameta::static_pair<element_type, metainfo_type> >(container_collection);
     }
     
     template< typename element_type, typename metainfo_type, typename container_typemap >
-    const typename result_of::info_container<viennagrid::storage::collection_t<container_typemap>, element_type, metainfo_type>::type & get_info( const viennagrid::storage::collection_t<container_typemap> & container_collection )
+    typename result_of::metainfo_container<viennagrid::storage::collection_t<container_typemap>, element_type, metainfo_type>::type const & metainfo_container( viennagrid::storage::collection_t<container_typemap> const & container_collection )
     {
         return viennagrid::storage::collection::get< viennameta::static_pair<element_type, metainfo_type> >(container_collection);
     }
@@ -162,7 +186,7 @@ namespace viennagrid
     
     template<typename metainfo_type, typename metainfo_container_typemap, typename element_type>
     typename metainfo::result_of::associative_container_value_type<
-        typename result_of::info_container<
+        typename result_of::metainfo_container<
             viennagrid::storage::collection_t<metainfo_container_typemap>,
             element_type,
             metainfo_type
@@ -172,12 +196,12 @@ namespace viennagrid
             const element_type & element
         )
     {
-        return metainfo::look_up( get_info<element_type, metainfo_type>(metainfo_collection), element );
+        return metainfo::look_up( metainfo_container<element_type, metainfo_type>(metainfo_collection), element );
     }
     
     template<typename metainfo_type, typename metainfo_container_typemap, typename element_type>
     const typename metainfo::result_of::associative_container_value_type<
-        typename result_of::info_container<
+        typename result_of::metainfo_container<
             viennagrid::storage::collection_t<metainfo_container_typemap>,
             element_type,
             metainfo_type
@@ -187,7 +211,7 @@ namespace viennagrid
             const element_type & element
         )
     {
-        return metainfo::look_up( get_info<element_type, metainfo_type>(metainfo_collection), element );
+        return metainfo::look_up( metainfo_container<element_type, metainfo_type>(metainfo_collection), element );
     }
     
     template<typename metainfo_type, typename metainfo_container_typemap, typename element_type>
@@ -195,14 +219,14 @@ namespace viennagrid
             viennagrid::storage::collection_t<metainfo_container_typemap> & metainfo_collection,
              const element_type & element,
              const typename metainfo::result_of::associative_container_value_type<
-                typename result_of::info_container<
+                typename result_of::metainfo_container<
                     viennagrid::storage::collection_t<metainfo_container_typemap>,
                     element_type,
                     metainfo_type
                 >::type
             >::type & meta_info )
     {
-        metainfo::set( get_info<element_type, metainfo_type>(metainfo_collection), element, meta_info );
+        metainfo::set( metainfo_container<element_type, metainfo_type>(metainfo_collection), element, meta_info );
     }
     
     
@@ -252,7 +276,7 @@ namespace viennagrid
             template<typename metainfo_container_typemap, typename functor_type>
             static void exec( storage::collection_t<metainfo_container_typemap> & collection, functor_type functor)
             {
-                functor( get_info<element_type, cur_metainfo_type>(collection) );
+                functor( metainfo_container<element_type, cur_metainfo_type>(collection) );
                 //get_info<element_type, cur_metainfo_type>(collection).resize( size );
                 for_each_element_helper<element_type, tail>::exec(collection, functor);
             }
