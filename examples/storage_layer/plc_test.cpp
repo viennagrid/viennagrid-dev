@@ -37,6 +37,7 @@ using std::endl;
 #include "viennagrid/domain/metainfo.hpp"
 #include "viennagrid/domain/geometric_domain.hpp"
 #include "viennagrid/domain/config.hpp"
+#include "viennagrid/domain/element_creation.hpp"
 
 
 
@@ -132,10 +133,13 @@ int main()
     typedef viennagrid::result_of::element_range<plc_type, vertex_type>::type vertex_on_plc_range;
     typedef viennagrid::result_of::iterator<vertex_on_plc_range>::type vertex_on_plc_iterator;
     
+    
+    viennagrid::tagging::result_of::element_tag<plc_type, viennagrid::loose_tag>::type loose_tag = viennagrid::tagging::create_element_tag<viennagrid::loose_tag>(plc);
+    
     std::cout << "All vertices of the PLC" << std::endl;
     vertex_on_plc_range vertex_range = viennagrid::elements<vertex_type>( plc );
     for (vertex_on_plc_iterator it = vertex_range.begin(); it != vertex_range.end(); ++it)
-        std::cout << *it << " " << viennagrid::point(domain, *it) << " is loose: " << viennagrid::is_tagged<viennagrid::loose_tag>(*it, plc) << std::endl;
+        std::cout << *it << " " << viennagrid::point(domain, *it) << " is loose: " << viennagrid::tagging::is_tagged(*it, loose_tag) << std::endl;
     std::cout << std::endl;
     
     typedef viennagrid::result_of::element_range<plc_type, line_type>::type line_on_plc_range;
@@ -144,7 +148,7 @@ int main()
     std::cout << "All lines of the PLC" << std::endl;
     line_on_plc_range line_range = viennagrid::elements<line_type>( plc );
     for (line_on_plc_iterator it = line_range.begin(); it != line_range.end(); ++it)
-        std::cout << *it << " is loose: " << viennagrid::is_tagged<viennagrid::loose_tag>(*it, plc) << std::endl;
+        std::cout << *it << " is loose: " << viennagrid::tagging::is_tagged(*it, loose_tag) << std::endl;
     std::cout << std::endl;
     
     std::cout << "All PLCs of the domain" << std::endl;
@@ -182,7 +186,8 @@ int main()
     typedef viennagrid::result_of::element_view<plc_type, line_type>::type line_view_type;
 
     std::cout << "All inner lines of the plc" << std::endl;
-    line_view_type inner_lines = viennagrid::untagged_elements<line_type, viennagrid::bounding_tag>(plc);
+    viennagrid::tagging::result_of::element_tag<plc_type, viennagrid::bounding_tag>::type bounding_tag = viennagrid::tagging::create_element_tag<viennagrid::bounding_tag>(plc);
+    line_view_type inner_lines = viennagrid::untagged_elements<line_type>(plc, bounding_tag);
     std::copy( inner_lines.begin(), inner_lines.end(), std::ostream_iterator<line_type>(std::cout, "\n") );
 
     
