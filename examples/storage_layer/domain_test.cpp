@@ -32,6 +32,7 @@ using std::endl;
 
 #include "viennagrid/domain/topologic_domain.hpp"
 #include "viennagrid/domain/metainfo.hpp"
+#include "viennagrid/domain/element_creation.hpp"
 
 
 
