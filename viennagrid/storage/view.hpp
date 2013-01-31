@@ -144,6 +144,9 @@ namespace viennagrid
             
             iterator begin() { return iterator(hook_container.begin()); }
             iterator end() { return iterator(hook_container.end()); }
+            
+            const_iterator cbegin() { return const_iterator(hook_container.begin()); }
+            const_iterator cend() { return const_iterator(hook_container.end()); }
 
             const_iterator begin() const { return const_iterator(hook_container.begin()); }
             const_iterator end() const { return const_iterator(hook_container.end()); }
@@ -327,6 +330,9 @@ namespace viennagrid
             
             iterator begin() { return iterator(hook_container.begin()); }
             iterator end() { return iterator(hook_container.end()); }
+            
+            const_iterator cbegin() { return const_iterator(hook_container.begin()); }
+            const_iterator cend() { return const_iterator(hook_container.end()); }
 
             const_iterator begin() const { return const_iterator(hook_container.begin()); }
             const_iterator end() const { return const_iterator(hook_container.end()); }
@@ -515,6 +521,9 @@ namespace viennagrid
             
             iterator begin() { return iterator(*this, hook_container.begin()); }
             iterator end() { return iterator(*this, hook_container.end()); }
+            
+            const_iterator cbegin() { return const_iterator(*this, hook_container.begin()); }
+            const_iterator cend() { return const_iterator(*this, hook_container.end()); }
 
             const_iterator begin() const { return const_iterator(*this, hook_container.begin()); }
             const_iterator end() const { return const_iterator(*this, hook_container.end()); }
@@ -730,6 +739,9 @@ namespace viennagrid
             
             iterator begin() { return iterator(*this, hook_container.begin()); }
             iterator end() { return iterator(*this, hook_container.end()); }
+            
+            const_iterator cbegin() { return const_iterator(*this, hook_container.begin()); }
+            const_iterator cend() { return const_iterator(*this, hook_container.end()); }
 
             const_iterator begin() const { return const_iterator(*this, hook_container.begin()); }
             const_iterator end() const { return const_iterator(*this, hook_container.end()); }
