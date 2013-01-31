@@ -21,7 +21,7 @@
 #include "viennagrid/forwards.hpp"
 #include "viennagrid/topology/simplex.hpp"
 #include "viennagrid/topology/polygon.hpp"
-#include "viennagrid/element/element_view.hpp"
+#include "viennagrid/element/tagging.hpp"
 
 /** @file polygon.hpp
     @brief Provides the topological definition of a polygon
@@ -89,6 +89,8 @@ namespace viennagrid
             PolygonRange polygons = elements<polygon_tag>(plc);
             for (PolygonIterator pit = polygons.begin(); pit != polygons.end(); ++pit)
             {
+                typename tagging::result_of::element_tag<element_type, bounding_tag>::type plc_bounding_tag = tagging::create_element_tag<bounding_tag>(plc);
+                
                 typedef typename result_of::element_range<PolygonType, line_tag>::type LineOnPolygonRange;
                 typedef typename result_of::hook_iterator<LineOnPolygonRange>::type LineOnPolygonIterator;
                 
@@ -96,8 +98,8 @@ namespace viennagrid
                 for (LineOnPolygonIterator lphit = lines.begin(); lphit != lines.end(); ++lphit)
                 {
                     plc.container( line_tag() ).insert_hook( *lphit );
-                    if (is_tagged<bounding_tag>(*pit, plc))
-                        tag<bounding_tag>(viennagrid::dereference_hook(plc,*lphit), plc);
+                    if (tagging::is_tagged(*pit, plc_bounding_tag))
+                        tagging::tag(viennagrid::dereference_hook(plc,*lphit), plc_bounding_tag);
                 }
             }
         }
@@ -126,6 +128,8 @@ namespace viennagrid
             
             
             
+            typename tagging::result_of::element_tag<element_type, bounding_tag>::type plc_bounding_tag = tagging::create_element_tag<bounding_tag>(plc);
+            
             typedef typename result_of::element<element_type, polygon_tag>::type PolygonType;
             typedef typename result_of::element_range<element_type, polygon_tag>::type PolygonRange;
             typedef typename result_of::iterator<PolygonRange>::type PolygonIterator;
@@ -140,8 +144,8 @@ namespace viennagrid
                 for (VertexOnPolygonIterator vphit = vertices.begin(); vphit != vertices.end(); ++vphit)
                 {
                     plc.container( vertex_tag() ).insert_hook( *vphit );
-                    if (is_tagged<bounding_tag>(*pit, plc))
-                        tag<bounding_tag>(viennagrid::dereference_hook(plc,*vphit), plc);
+                    if (tagging::is_tagged(*pit, plc_bounding_tag))
+                        tagging::tag(viennagrid::dereference_hook(plc,*vphit), plc_bounding_tag);
                 }
             }
         }
