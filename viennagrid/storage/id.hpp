@@ -16,12 +16,13 @@ namespace viennagrid
         struct smart_id_tag;
         
         
-        template<typename value_type_, typename base_id_type>
+        template<typename value_type_, typename base_id_type_>
         class smart_id_t
         {
         public:
             typedef smart_id_t self_type;
             typedef value_type_ value_type;
+            typedef base_id_type_ base_id_type;
             
             smart_id_t() : internal_id(-1) {}
             explicit smart_id_t( base_id_type internal_id_ ) : internal_id(internal_id_) {}
@@ -44,12 +45,13 @@ namespace viennagrid
         
         
         
-        template<typename value_type_, typename base_id_type>
-        class smart_id_t<const value_type_, base_id_type>
+        template<typename value_type_, typename base_id_type_>
+        class smart_id_t<const value_type_, base_id_type_>
         {
         public:
             typedef smart_id_t self_type;
             typedef value_type_ value_type;
+            typedef base_id_type_ base_id_type;
             
             smart_id_t() : internal_id(-1) {}
             smart_id_t( smart_id_t<value_type_, base_id_type> const & id_ ) : internal_id(id_.get()) {}
