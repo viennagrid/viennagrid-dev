@@ -52,6 +52,18 @@ namespace viennagrid
     }
     
     
+    template<typename element_type_or_tag, typename something>
+    typename result_of::element_view<something, element_type_or_tag>::type element_view( something & s )
+    {
+        typedef typename result_of::element_tag<element_type_or_tag>::type element_tag;
+        typedef typename result_of::element<something, element_tag>::type element_type;
+
+        typename result_of::element_view<something, element_tag>::type view;
+        view.set_base_container( viennagrid::storage::collection::get<element_type>(viennagrid::container_collection(s)) );
+        
+        return view;
+    }
+    
     
     template<typename element_type_or_tag, typename something, typename functor>
     typename result_of::element_view<something, element_type_or_tag>::type element_view( something & s, functor f )
