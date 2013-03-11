@@ -70,6 +70,7 @@ namespace viennagrid
         //typedef typename result_of::point<DomainConfiguration>::type                              PointType;
         typedef typename result_of::element<DomainType, vertex_tag>::type                           VertexType;
         typedef typename result_of::element_hook<DomainType, vertex_tag>::type          VertexHookType;
+        typedef typename result_of::const_element_hook<DomainType, vertex_tag>::type          ConstVertexHookType;
         //typedef typename result_of::element<DomainConfiguration, CellTag::dim>::type     CellType;
         
         
@@ -662,7 +663,7 @@ namespace viennagrid
 
       private:
           
-        std::vector< std::map< VertexHookType, std::size_t > >            vertex_to_index_map;
+        std::vector< std::map< ConstVertexHookType, std::size_t > >            vertex_to_index_map;
           
         std::vector< data_accessor_wrapper<VertexType> >    vertex_data_scalar;
         std::vector< std::string >                          vertex_data_scalar_names;
