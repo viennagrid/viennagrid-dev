@@ -224,7 +224,7 @@ namespace viennagrid
     
     
     struct loose_tag {};
-    struct hole_tag {};
+//     struct hole_tag {};
     struct bounding_tag {};
     
 
@@ -245,19 +245,19 @@ namespace viennagrid
     }
     
     
-    template<typename element_type_or_tag, typename base_element_type>
-    typename viennagrid::result_of::element_view<base_element_type, element_type_or_tag>::type hole_elements( base_element_type & base_element )
-    {
-        typedef typename tagging::result_of::element_tag<base_element_type, hole_tag>::type tag;
-        return tagged_elements<element_type_or_tag, tag>(base_element, tag(base_element) );
-    }
-    
-    template<typename element_type_or_tag, typename base_element_type>
-    typename viennagrid::result_of::const_element_view<base_element_type, element_type_or_tag>::type hole_elements( base_element_type const & base_element )
-    {
-        typedef typename tagging::result_of::element_tag<base_element_type, hole_tag>::type tag;
-        return tagged_elements<element_type_or_tag, tag>(base_element, tag(base_element) );
-    }
+//     template<typename element_type_or_tag, typename base_element_type>
+//     typename viennagrid::result_of::element_view<base_element_type, element_type_or_tag>::type hole_elements( base_element_type & base_element )
+//     {
+//         typedef typename tagging::result_of::element_tag<base_element_type, hole_tag>::type tag;
+//         return tagged_elements<element_type_or_tag, tag>(base_element, tag(base_element) );
+//     }
+//     
+//     template<typename element_type_or_tag, typename base_element_type>
+//     typename viennagrid::result_of::const_element_view<base_element_type, element_type_or_tag>::type hole_elements( base_element_type const & base_element )
+//     {
+//         typedef typename tagging::result_of::element_tag<base_element_type, hole_tag>::type tag;
+//         return tagged_elements<element_type_or_tag, tag>(base_element, tag(base_element) );
+//     }
     
     template<typename element_type_or_tag, typename base_element_type>
     typename viennagrid::result_of::element_view<base_element_type, element_type_or_tag>::type bounding_elements( base_element_type & base_element )
