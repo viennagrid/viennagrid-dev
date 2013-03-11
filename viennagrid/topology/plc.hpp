@@ -27,6 +27,31 @@
     @brief Provides the topological definition of a polygon
 */
 
+
+
+namespace viennagrid
+{
+    struct plc_hole_point_tag;
+}
+
+VIENNADATA_ENABLE_TYPE_BASED_KEY_DISPATCH( viennagrid::plc_hole_point_tag )
+
+namespace viennagrid
+{
+    template<typename domain_type, typename plc_type>
+    std::vector< typename result_of::point_type<domain_type>::type > & hole_points( plc_type & plc )
+    {
+        return viennadata::access< plc_hole_point_tag, std::vector< typename result_of::point_type<domain_type>::type > >()(plc);
+    }
+    
+    template<typename domain_type, typename plc_type>
+    std::vector< typename result_of::point_type<domain_type>::type > const & hole_points( plc_type const & plc )
+    {
+        return viennadata::access< plc_hole_point_tag, std::vector< typename result_of::point_type<domain_type>::type > >()(plc);
+    }
+}
+
+
 namespace viennagrid
 {
 
@@ -37,6 +62,11 @@ namespace viennagrid
     enum{ dim = 2 };
     static std::string name() { return "PLC"; }
   };
+  
+  
+  
+  
+  
   
   
   namespace topology
@@ -98,8 +128,7 @@ namespace viennagrid
                 for (LineOnPolygonIterator lphit = lines.begin(); lphit != lines.end(); ++lphit)
                 {
                     plc.container( line_tag() ).insert_hook( *lphit );
-                    if (tagging::is_tagged(*pit, plc_bounding_tag))
-                        tagging::tag(viennagrid::dereference_hook(plc,*lphit), plc_bounding_tag);
+                    tagging::tag(viennagrid::dereference_hook(plc,*lphit), plc_bounding_tag);
                 }
             }
         }
@@ -144,8 +173,7 @@ namespace viennagrid
                 for (VertexOnPolygonIterator vphit = vertices.begin(); vphit != vertices.end(); ++vphit)
                 {
                     plc.container( vertex_tag() ).insert_hook( *vphit );
-                    if (tagging::is_tagged(*pit, plc_bounding_tag))
-                        tagging::tag(viennagrid::dereference_hook(plc,*vphit), plc_bounding_tag);
+                    tagging::tag(viennagrid::dereference_hook(plc,*vphit), plc_bounding_tag);
                 }
             }
         }
