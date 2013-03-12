@@ -43,11 +43,8 @@ namespace viennagrid
         typedef typename range_or_view_type::value_type element_type;
         typedef typename viennagrid::metainfo::result_of::value_type<metainfo_container_type>::type metainfo_type;
         
-        
-        
-        
         typedef typename range_or_view_type::size_type size_type;
-        typedef std::pair<element_type&, metainfo_type&> value_type;
+        typedef metainfo_type value_type;
         typedef value_type & reference;
         typedef const value_type & const_reference;
         typedef value_type * pointer;
@@ -55,17 +52,20 @@ namespace viennagrid
         
         metainfo_range_t( range_or_view_type const & range_, metainfo_container_type & metainfo_container_ ) : range(range_), metainfo_container(&metainfo_container_) {}
         
+        struct const_iterator;
+        
         struct iterator : public range_iterator
         {
             typedef range_iterator base;
         public:
             iterator(const base & foo, metainfo_container_type * metainfo_container_) : base(foo), metainfo_container(metainfo_container_) {}
-            
+
             typedef typename std::iterator_traits<base>::difference_type difference_type;
-            typedef std::pair<element_type&, metainfo_type&> value_type;
+            typedef metainfo_type value_type;
             typedef value_type & reference;
             typedef value_type * pointer;
             typedef typename std::iterator_traits<base>::iterator_category iterator_category;
+            
             
             element_type & element() { return base::operator*(); }
             element_type const & element() const { return base::operator*(); }
@@ -73,11 +73,26 @@ namespace viennagrid
             metainfo_type & metainfo() { return viennagrid::metainfo::look_up(*metainfo_container, base::operator*()); }
             metainfo_type const & metainfo() const { return viennagrid::metainfo::look_up(*metainfo_container, base::operator*()); }
             
-            value_type operator* () { return value_type(element(), metainfo()); }
-            const value_type operator* () const { return value_type(element(), metainfo()); }
             
-            pointer operator->() { return &**this; }
-            const pointer operator->() const { return &**this; }
+            
+            // increment- and decrementable
+            iterator & operator++() { base::operator++(); return *this; }
+            iterator operator++(int) { base::operator++(int()); return *this; }
+            
+            iterator & operator--() { base::operator--(); return *this; }
+            iterator operator--(int) { base::operator--(int()); return *this; }
+            
+            // add and subtractable; operator+ and operator- is below
+            difference_type operator-(const iterator & it) const { return base(*this) - base(it); }
+            difference_type operator-(const const_iterator & it) const { return base(*this) - base(it); }
+            
+
+            // dereference
+            metainfo_type & operator* () { return metainfo(); }
+            metainfo_type const & operator* () const { return metainfo(); }
+            
+            metainfo_type * operator->() { return &**this; }
+            metainfo_type const * operator->() const { return &**this; }
             
         private:
             metainfo_container_type * metainfo_container;
@@ -88,19 +103,35 @@ namespace viennagrid
         {
             typedef range_const_iterator base;
         public:
-            const_iterator(const range_const_iterator & foo, const metainfo_container_type * metainfo_container_) : range_const_iterator(foo), metainfo_container(metainfo_container_) {}
-            
+            const_iterator(const base & foo, const metainfo_container_type * metainfo_container_) : base(foo), metainfo_container(metainfo_container_) {}
+
             typedef typename std::iterator_traits<base>::difference_type difference_type;
-            typedef std::pair<const element_type&, const metainfo_type&> value_type;
+            typedef const metainfo_type value_type;
             typedef value_type & reference;
             typedef value_type * pointer;
             typedef typename std::iterator_traits<base>::iterator_category iterator_category;
             
-            const element_type & element() const { return range_const_iterator::operator*(); }
-            metainfo_type const & metainfo() const { return viennagrid::metainfo::look_up(*metainfo_container, range_const_iterator::operator*()); }
             
-            const value_type operator* () const { return value_type(element(), metainfo()); }
-            const pointer operator->() const { return &**this; }
+            element_type const & element() const { return base::operator*(); }
+            metainfo_type const & metainfo() const { return viennagrid::metainfo::look_up(*metainfo_container, base::operator*()); }
+
+            
+            
+            // increment- and decrementable
+            iterator & operator++() { base::operator++(); return *this; }
+            iterator operator++(int) { base::operator++(int()); return *this; }
+            
+            iterator & operator--() { base::operator--(); return *this; }
+            iterator operator--(int) { base::operator--(int()); return *this; }
+            
+            // add and subtractable; operator+ and operator- is below
+            difference_type operator-(const iterator & it) const { return base::operator-(it); }
+            difference_type operator-(const const_iterator & it) const { return base::operator-(it); }
+            
+            
+            // dereference            
+            metainfo_type const & operator* () const { return metainfo(); }
+            metainfo_type const * operator->() const { return &**this; }
             
         private:
             const metainfo_container_type * metainfo_container;
@@ -126,6 +157,7 @@ namespace viennagrid
         reference operator[]( size_type index ) { return look_up(range[index]); }
         const_reference operator[]( size_type index ) const { return look_up(range[index]); }
 
+        size_type size() const { return range.size(); }
         
     private:
         
@@ -152,7 +184,7 @@ namespace viennagrid
         typedef typename viennagrid::metainfo::result_of::value_type<metainfo_container_type>::type metainfo_type;
         
         typedef typename range_or_view_type::size_type size_type;
-        typedef std::pair<element_type&, metainfo_type&> value_type;
+        typedef metainfo_type value_type;
         typedef value_type & reference;
         typedef const value_type & const_reference;
         typedef value_type * pointer;
@@ -164,19 +196,19 @@ namespace viennagrid
         {
             typedef range_const_iterator base;
         public:
-            const_iterator(const range_const_iterator & foo, const metainfo_container_type * metainfo_container_) : range_const_iterator(foo), metainfo_container(metainfo_container_) {}
+            const_iterator(const base & foo, const metainfo_container_type * metainfo_container_) : base(foo), metainfo_container(metainfo_container_) {}
             
             typedef typename std::iterator_traits<base>::difference_type difference_type;
-            typedef std::pair<const element_type&, const metainfo_type&> value_type;
+            typedef metainfo_type value_type;
             typedef value_type & reference;
             typedef value_type * pointer;
             typedef typename std::iterator_traits<base>::iterator_category iterator_category;
             
-            const element_type & element() const { return range_const_iterator::operator*(); }
-            metainfo_type const & metainfo() const { return viennagrid::metainfo::look_up(*metainfo_container, range_const_iterator::operator*()); }
+            const element_type & element() const { return base::operator*(); }
+            metainfo_type const & metainfo() const { std::cout << "## " << base::operator*() << std::endl; return viennagrid::metainfo::look_up(*metainfo_container, base::operator*()); }
             
-            const value_type operator* () const { return value_type(element(), metainfo()); }
-            const pointer operator->() const { return &**this; }
+            metainfo_type const & operator* () const { return metainfo(); }
+            metainfo_type const * operator->() const { return &**this; }
             
         private:
             const metainfo_container_type * metainfo_container;
@@ -199,6 +231,8 @@ namespace viennagrid
         
         reference operator[]( size_type index ) { return look_up(range[index]); }
         const_reference operator[]( size_type index ) const { return look_up(range[index]); }
+        
+        size_type size() const { return range.size(); }
 
         
     private:
@@ -378,12 +412,12 @@ namespace viennagrid
     
     
     
-    template<typename element_tag, typename boundary_cell_typelist, typename id_type, typename metainfo>
-    std::ostream & operator<<(std::ostream & os, std::pair< element_t<element_tag, boundary_cell_typelist, id_type>, metainfo> const & p)
-    {
-        os << p.first << " " << p.second;
-        return os;
-    }
+//     template<typename element_tag, typename boundary_cell_typelist, typename id_type, typename metainfo>
+//     std::ostream & operator<<(std::ostream & os, std::pair< element_t<element_tag, boundary_cell_typelist, id_type>, metainfo> const & p)
+//     {
+//         os << p.first << " " << p.second;
+//         return os;
+//     }
     
 }
 
