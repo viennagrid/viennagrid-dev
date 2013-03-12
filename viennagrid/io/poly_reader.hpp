@@ -30,6 +30,9 @@
 
 #include "viennagrid/domain/geometric_domain.hpp"
 
+#include "viennagrid/algorithm/geometry.hpp"
+#include "viennagrid/domain/metainfo_range.hpp"
+
 /** @file netgen_reader.hpp
     @brief Provides a reader for Netgen files
 */
@@ -173,8 +176,8 @@ namespace viennagrid
         
         if (node_num < 0)
             throw bad_file_format_exception(filename, "POLY file has less than 0 nodes");
-        if (dim != 3)
-            throw bad_file_format_exception(filename, "POLY dimension is not 3");
+        if (dim != point_dim)
+            throw bad_file_format_exception(filename, "POLY point dimension missmatch");
         if (attribute_num < 0)
             throw bad_file_format_exception(filename, "POLY file has less than 0 attributes");
         if ((boundary_marker_num < 0) || (boundary_marker_num > 1))
@@ -183,7 +186,9 @@ namespace viennagrid
         #if defined VIENNAGRID_DEBUG_STATUS || defined VIENNAGRID_DEBUG_IO
         std::cout << "* netgen_reader::operator(): Reading " << node_num << " vertices... " << std::endl;  
         #endif
-
+        
+        typedef typename VertexIDType::base_id_type id_type;
+        
         for (int i=0; i<node_num; i++)
         {
             if (!get_valid_line(reader, tmp))
@@ -200,17 +205,20 @@ namespace viennagrid
             for (int j=0; j<point_dim; j++)
                 current_line >> p[j];
             
-            std::vector<CoordType> attributes(attribute_num);
-            for (int j=0; j<attribute_num; j++)
-                current_line >> attributes[j];
-            
-            viennadata::access<poly_attribute_tag, std::vector<CoordType> >()(viennagrid::dereference_hook(domain, vertex)) = attributes;
+            if (attribute_num > 0)
+            {
+                std::vector<CoordType> attributes(attribute_num);
+                for (int j=0; j<attribute_num; j++)
+                    current_line >> attributes[j];
+                
+                viennadata::access<poly_attribute_tag, std::vector<CoordType> >()(viennagrid::dereference_hook(domain, vertex)) = attributes;
+            }
         }
     
         //std::cout << "DONE" << std::endl;
         if (!reader.good())
           throw bad_file_format_exception(filename, "EOF encountered when reading number of cells.");
-          
+        
         
         //
         // Read facets:
@@ -255,10 +263,13 @@ namespace viennagrid
                 throw bad_file_format_exception(filename, "POLY facet has less than 0 holes");
             
             
-            std::vector<PolygonHookType> polygons;
-            std::vector<LineHookType> lines;
-            std::vector<VertexHookType> vertices;
+            std::list<PolygonHookType> polygons;
+            std::list<LineHookType> lines;
+            std::list<VertexHookType> vertices;
             
+            
+            typedef typename viennagrid::result_of::element_view<GeometricDomainType, VertexType>::type VertexViewType;
+            VertexViewType used_vertices = viennagrid::element_view<VertexType>(domain);
             
             for (int j = 0; j<polygon_num; ++j)
             {
@@ -281,35 +292,58 @@ namespace viennagrid
                     long id;
                     current_line >> id;
                     vertex_hooks[k] = *viennagrid::find_hook( domain, VertexIDType(id) );
+//                     used_vertices.insert( vertex_hooks[k] );
+                    used_vertices.insert_hook( vertex_hooks[k] );
                 }
                 
                 if (vertex_num == 1)
                 {
                     vertices.push_back( vertex_hooks.front() );
-//                     std::cout << " Added loose vertex" << std::endl;
+                    std::cout << " Added loose vertex" << std::endl;
                 }
                 else if (vertex_num == 2)
                 {
                     lines.push_back( viennagrid::create_element<LineType>(domain, vertex_hooks.begin(), vertex_hooks.end()) );
-//                     std::cout << " Added loose line" << std::endl;
+                    std::cout << " Added loose line" << std::endl;
                 }
                 else
                 {
                     polygons.push_back( viennagrid::create_element<PolygonType>(domain, vertex_hooks.begin(), vertex_hooks.end()) );
-//                     std::cout << " Added polygon " << vertex_hooks.size() << std::endl;
+                    std::cout << " Added polygon " << vertex_hooks.size() << std::endl;
                 }
             }
+                       
+            std::list<PointType> hole_points;
             
+            for (int j = 0; j<hole_num; ++j)
+            {
+                if (!get_valid_line(reader, tmp))
+                    throw bad_file_format_exception(filename, "EOF encountered when reading information");
+                
+                long hole_id;
+                
+                current_line.str(tmp); current_line.clear();
+                current_line >> hole_id;
+                
+                PointType p;
             
+                for (int j=0; j<point_dim; j++)
+                    current_line >> p[j];
+                
+                std::cout << "Adding hole Point " << p << std::endl;
+                
+                hole_points.push_back(p);
+            }
+            
+
+                
             viennagrid::create_element<CellType>(
                 domain,
                 polygons.begin(), polygons.end(),
-                polygons.begin(), polygons.begin(),
                 lines.begin(), lines.end(),
-                vertices.begin(), vertices.end()
+                vertices.begin(), vertices.end(),
+                hole_points.begin(), hole_points.end()
             );
-            
-//             std::cout << "Created PLC " << i << std::endl;
         }
         //std::cout << "All done!" << std::endl;
         
