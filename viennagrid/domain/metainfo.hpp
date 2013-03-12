@@ -80,6 +80,15 @@ namespace viennagrid
         template<typename geometric_container_type, typename element_type>
         typename result_of::associative_container_value_type<geometric_container_type>::type & look_up( geometric_container_type & container, const element_type & element, random_access_tag )
         {
+//             std::cout << "Look Up on Container " << &container << " at " << element.id().get() << std::endl;
+            if (container.size() <= element.id().get())
+            {
+//                 std::cout << "  resizing container" << std::endl;
+                container.resize( element.id().get()+1 );
+            }
+            
+//             std::copy( container.begin(), container.end(), std::ostream_iterator< typename geometric_container_type::value_type >(std::cout, "\n") );
+            
             return container[ element.id().get() ];
         }
         
@@ -101,6 +110,8 @@ namespace viennagrid
         template<typename geometric_container_type, typename element_type>
         const typename result_of::associative_container_value_type<geometric_container_type>::type & look_up( const geometric_container_type & container, const element_type & element, random_access_tag )
         {
+//             std::cout << "Look Up (const) on Container " << &container << std::endl;
+            assert( container.size() > element.id().get() );
             return container[ element.id().get() ];
         }
         
@@ -196,6 +207,7 @@ namespace viennagrid
             const element_type & element
         )
     {
+//         std::cout << "Look-Up on Metainfo-Collection" << std::endl;
         return metainfo::look_up( metainfo_container<element_type, metainfo_type>(metainfo_collection), element );
     }
     
@@ -211,6 +223,7 @@ namespace viennagrid
             const element_type & element
         )
     {
+//         std::cout << "Look-Up (const) on Metainfo-Collection" << std::endl;
         return metainfo::look_up( metainfo_container<element_type, metainfo_type>(metainfo_collection), element );
     }
     
