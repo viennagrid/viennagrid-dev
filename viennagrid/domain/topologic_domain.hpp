@@ -578,6 +578,20 @@ namespace viennagrid
 
     
     
+    template<bool generate_id, bool call_callback, typename domain_type, typename element_tag, typename boundary_cell_container_typelist, typename id_type>
+    std::pair<
+                typename viennagrid::storage::result_of::container_of<
+                    typename result_of::container_collection<domain_type>::type,
+                    viennagrid::element_t<element_tag, boundary_cell_container_typelist, id_type>
+                >::type::hook_type,
+                bool
+            >
+        push_element( domain_type & domain, const viennagrid::element_t<element_tag, boundary_cell_container_typelist, id_type> & element)
+    {
+        return inserter(domain).template insert<generate_id, call_callback>(element);
+    }
+    
+    
     template<typename domain_type, typename element_tag, typename boundary_cell_container_typelist, typename id_type>
     std::pair<
                 typename viennagrid::storage::result_of::container_of<
@@ -601,7 +615,7 @@ namespace viennagrid
             >
         push_element_noid( domain_type & domain, const element_type & element)
     {
-        return inserter(domain).insert_noid(element);
+        return inserter(domain).template insert<false, true>(element);
     }
 
     
