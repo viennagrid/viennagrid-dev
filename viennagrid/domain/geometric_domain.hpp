@@ -498,7 +498,7 @@ namespace viennagrid
         push_element_noid( geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type> & domain, const element_type & element)
     {
         metainfo::increment_size< element_type >(metainfo_collection(domain));
-        return inserter(domain).insert_noid(element);
+        return inserter(domain).template insert<false, true>(element);
     }
     
     
@@ -562,9 +562,9 @@ namespace viennagrid
             typename metainfo_typelist = viennameta::null_type, typename metainfo_container_config = viennagrid::storage::default_container_config>
         struct geometric_domain_config
         {
-            typedef typename viennagrid::result_of::default_topologic_config<element_tag, hook_tag>::type toplologic_config;
+            typedef typename viennagrid::result_of::default_topologic_config<element_tag, hook_tag>::type topologic_config;
             typedef typename viennameta::make_typemap<
-                viennagrid::topologic_config_tag, toplologic_config,
+                viennagrid::topologic_config_tag, topologic_config,
                 viennagrid::vector_type_tag, vector_type,
                 viennagrid::metainfo_typelist_tag, metainfo_typelist,
                 viennagrid::metainfo_container_config_tag, metainfo_container_config
