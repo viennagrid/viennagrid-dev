@@ -269,7 +269,7 @@ namespace viennagrid
             
             
             typedef typename viennagrid::result_of::element_view<GeometricDomainType, VertexType>::type VertexViewType;
-            VertexViewType used_vertices = viennagrid::element_view<VertexType>(domain);
+//             VertexViewType used_vertices = viennagrid::element_view<VertexType>(domain);
             
             for (int j = 0; j<polygon_num; ++j)
             {
@@ -293,23 +293,24 @@ namespace viennagrid
                     current_line >> id;
                     vertex_hooks[k] = *viennagrid::find_hook( domain, VertexIDType(id) );
 //                     used_vertices.insert( vertex_hooks[k] );
-                    used_vertices.insert_hook( vertex_hooks[k] );
+//                     used_vertices.insert_hook( vertex_hooks[k] );
+//                     std::cout << "  " << viennagrid::point( domain, vertex_hooks[k]) << std::endl;
                 }
                 
                 if (vertex_num == 1)
                 {
                     vertices.push_back( vertex_hooks.front() );
-                    std::cout << " Added loose vertex" << std::endl;
+//                     std::cout << " Added loose vertex" << std::endl;
                 }
                 else if (vertex_num == 2)
                 {
                     lines.push_back( viennagrid::create_element<LineType>(domain, vertex_hooks.begin(), vertex_hooks.end()) );
-                    std::cout << " Added loose line" << std::endl;
+//                     std::cout << " Added loose line" << std::endl;
                 }
                 else
                 {
                     polygons.push_back( viennagrid::create_element<PolygonType>(domain, vertex_hooks.begin(), vertex_hooks.end()) );
-                    std::cout << " Added polygon " << vertex_hooks.size() << std::endl;
+//                     std::cout << " Added polygon " << vertex_hooks.size() << std::endl;
                 }
             }
                        
