@@ -40,7 +40,7 @@ namespace viennagrid
             open_tag intersect_tag( tag0, tag1 )
             { return open_tag(); }
             
-            closed_tag intersect_tag ( closed_tag, closed_tag )
+            inline closed_tag intersect_tag ( closed_tag, closed_tag )
             { return closed_tag(); }
             
             inline bool is_open(open_tag) { return true; }
