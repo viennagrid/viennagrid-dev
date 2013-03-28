@@ -177,6 +177,14 @@ namespace viennagrid
     
 
     
+    template<typename domain_type>
+    typename result_of::element_hook<domain_type, vertex_tag>::type create_vertex( domain_type & domain )
+    {
+        typedef typename result_of::element<domain_type, vertex_tag>::type element_type;
+        return create_element<element_type>(domain);
+    }
+    
+
     
     template<typename domain_type, typename vertex_hook_type>
     typename result_of::element_hook<domain_type, line_tag>::type create_line( domain_type & domain, vertex_hook_type v0, vertex_hook_type v1 )
