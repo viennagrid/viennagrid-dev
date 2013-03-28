@@ -179,6 +179,20 @@ namespace viennagrid
         
         
         
+//         template<typename vector_type>
+//         bool same_side( vector_type const & p1, vector_type const & p2, vector_type const & a, vector_type const & b )
+//         {
+//             typedef typename viennagrid::result_of::coord_type<vector_type>::type coord_type;
+//             coord_type cp1 = viennagrid::cross_prod(b-a, p1-a);
+//             coord_type cp2 = viennagrid::cross_prod(b-a, p2-a);
+//             
+//             if (viennagrid::inner_prod(cp1, cp2) >= 0)
+//                 return true;
+//             else
+//                 return false;
+//         }
+        
+        
         
         
         
@@ -245,12 +259,13 @@ namespace viennagrid
             
             
             // setting up a map of vectors from the center to all points, sorted descending by the length of that vector
-            typedef std::map<numeric_type, point_type, std::greater<numeric_type> > vector_map_type;
+            typedef std::multimap<numeric_type, point_type, std::greater<numeric_type> > vector_map_type;
             vector_map_type sorted_vectors;
             pit = start;
             for (; pit != end; ++pit)
             {
-                typename vector_map_type::iterator it = sorted_vectors.insert( std::make_pair( viennagrid::norm_2( center - *pit ), *pit - center ) ).first;
+                point_type vector = center - *pit;
+                typename vector_map_type::iterator it = sorted_vectors.insert( std::make_pair( viennagrid::norm_2( vector ), vector ) );
                 it->second /= it->first;    // normalizing the vector
             }
             
