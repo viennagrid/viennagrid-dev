@@ -635,6 +635,12 @@ namespace viennagrid
       // operators:
       //
       
+      /** @brief Convenience overload for the subtraction of points. */
+      point_t operator-() const
+      {
+        return point_t() - *this;
+      }
+      
       //with point:
       /** @brief Convenience overload for the addition of points. */
       point_t operator+(point_t const & other) const
