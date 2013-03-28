@@ -431,7 +431,7 @@ namespace viennagrid
     }
     
     template<typename vector_type, typename topologic_domain_type, typename metainfo_collection_type>
-    const typename geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type>::vector_type & point( const geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type> & geometric_domain, const typename geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type>::vertex_hook_type & vertex_hook )
+    const typename geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type>::vector_type & point( const geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type> & geometric_domain, const typename geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type>::const_vertex_hook_type & vertex_hook )
     {
         return viennagrid::look_up<typename geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type>::vector_type>( geometric_domain, dereference_hook(geometric_domain, vertex_hook) );
     }
@@ -510,6 +510,17 @@ namespace viennagrid
         //typedef typename result_of::element<domain_type, viennagrid::vertex_tag>::type vertex_type;
         //element_type element;
         typename result_of::element_hook<geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type>, element_type>::type ret = push_element(domain, element_type() ).first;
+        viennagrid::point(domain, ret) = point;
+        
+        return ret;
+    }
+    
+    template<typename vector_type, typename topologic_domain_type, typename metainfo_collection_type>
+    typename result_of::element_hook<geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type>, vertex_tag>::type
+        create_vertex( geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type> & domain, const vector_type & point )
+    {
+        typedef typename result_of::element< geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type>, vertex_tag>::type element_type;
+        typename result_of::element_hook< geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type>, element_type>::type ret = push_element(domain, element_type() ).first;
         viennagrid::point(domain, ret) = point;
         
         return ret;
