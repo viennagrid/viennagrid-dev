@@ -66,6 +66,9 @@ namespace viennagrid
             size_type size() const { return container->size(); }
             
             
+
+            
+            
             
             
             typedef typename container_type::hook_type hook_type;
@@ -78,10 +81,23 @@ namespace viennagrid
             const_hook_iterator hook_begin() const { return container->hook_begin(); }
             const_hook_iterator hook_end() const { return container->hook_end(); }
             
+            
+            
+            iterator erase( iterator pos ) { return container->erase( pos ); }
+            hook_iterator erase( hook_iterator pos ) { return hook_iterator(container->erase( pos )); }
+            
+            
+            
+            
             hook_type hook_at(std::size_t pos)
             { return *viennagrid::advance(hook_begin(), pos); }
             const_hook_type hook_at(std::size_t pos) const
             { return *viennagrid::advance(hook_begin(), pos); }
+            
+            void set_hook_at(hook_type hook, std::size_t pos)
+            { viennagrid::advance(hook_begin(), pos) = hook; }
+//             const_hook_type set_hook_at(std::size_t pos) const
+//             { return *viennagrid::advance(hook_begin(), pos); }
             
             container_type * get_base_container() { return container; }
             const container_type * get_base_container() const { return container; }
