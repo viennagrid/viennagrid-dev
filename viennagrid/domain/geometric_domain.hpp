@@ -293,6 +293,12 @@ namespace viennagrid
             typedef vector_type type;
         };
         
+        template<typename vector_type, typename topologic_domain_type, typename metainfo_collection_type>
+        struct point_type< const geometric_domain_t< vector_type, topologic_domain_type, metainfo_collection_type > >
+        {
+            typedef vector_type type;
+        };
+        
     }
     
     
