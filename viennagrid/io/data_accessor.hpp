@@ -90,6 +90,35 @@ namespace viennagrid
       private:
         KeyType key_;
     };
+    
+    
+    
+    
+    template <typename ElementType, typename KeyType, typename DataType>
+    class global_scalar_data_accessor_type_based_key : public data_accessor_interface<ElementType>
+    {
+      typedef global_scalar_data_accessor_type_based_key<ElementType, KeyType, DataType>    self_type;
+      
+      public:
+        global_scalar_data_accessor_type_based_key() {}
+        //vtk_data_accessor_global() {}
+
+        std::string operator()(ElementType const & element, std::size_t segment_id) const
+        {
+          std::stringstream ss;
+          ss << viennadata::access<KeyType, DataType>()(element);
+          return ss.str();
+        }
+        
+        void operator()(ElementType const & element, std::size_t segment_id, std::size_t k, double value) const
+        {
+          viennadata::access<KeyType, DataType>()(element) = static_cast<DataType>(value);
+        }
+        
+        data_accessor_interface<ElementType> * clone() const { return new self_type(); }
+
+    };
+    
 
     /** @brief Wrapper: Access vector-valued data for all elements in the domain
      * 

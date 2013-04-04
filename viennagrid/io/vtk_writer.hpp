@@ -863,6 +863,22 @@ namespace viennagrid
       writer.add_scalar_data_on_cells(wrapper, quantity_name);
       return writer;
     }
+    
+    
+    template <typename KeyType, typename DataType, typename DomainType, typename CellTypeOrTag>
+    vtk_writer<DomainType, CellTypeOrTag> & add_scalar_data_on_cells(vtk_writer<DomainType, CellTypeOrTag> & writer,
+                                                      std::string quantity_name)
+    {
+      typedef typename result_of::element<DomainType, CellTypeOrTag>::type CellType;
+//       typedef typename DomainType::config_type                         DomainConfiguration;
+//       typedef typename DomainConfiguration::cell_tag                   CellTag;
+//       typedef typename result_of::ncell<DomainConfiguration, CellTag::dim>::type     CellType;
+      
+      data_accessor_wrapper<CellType> wrapper(new global_scalar_data_accessor_type_based_key<CellType, KeyType, DataType>());
+      writer.add_scalar_data_on_cells(wrapper, quantity_name);
+      return writer;
+    }
+    
 
     /** @brief Registers scalar-valued data on cells at the XML writer. Data is segment based and might be discontinuous at segment boundaries.
       *
