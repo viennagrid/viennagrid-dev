@@ -78,8 +78,8 @@ int main()
     typedef viennagrid::result_of::element<domain_type, viennagrid::line_tag>::type line_type;
     typedef viennagrid::result_of::element_hook<domain_type, viennagrid::line_tag>::type line_hook_type;
     
-    typedef viennagrid::result_of::element<domain_type, viennagrid::polygon_tag>::type polygon_type;
-    typedef viennagrid::result_of::element_hook<domain_type, viennagrid::polygon_tag>::type polygon_hook_type;
+//     typedef viennagrid::result_of::element<domain_type, viennagrid::polygon_tag>::type polygon_type;
+//     typedef viennagrid::result_of::element_hook<domain_type, viennagrid::polygon_tag>::type polygon_hook_type;
 
     
     std::vector<vertex_hook_type> v;
@@ -101,20 +101,46 @@ int main()
     v.push_back( viennagrid::create_element<vertex_type>( domain, point_type(15, 15) ) );
     
     
-    polygon_hook_type bounding_poly = viennagrid::create_element<polygon_type>( domain, v.begin(), v.begin() + 7 );
+    std::vector<line_hook_type> lines;
     
-    polygon_hook_type hole_poly = viennagrid::create_element<polygon_type>( domain, v.begin() + 7, v.begin() + 10 );
+    {
+        std::vector<vertex_hook_type>::iterator start = v.begin();
+        std::vector<vertex_hook_type>::iterator end = v.begin() + 7;
+        
+        std::vector<vertex_hook_type>::iterator it1 = start;
+        std::vector<vertex_hook_type>::iterator it2 = it1; ++it2;
+        for (; it2 != end; ++it1, ++it2)
+            lines.push_back( viennagrid::create_line(domain, *it1, *it2) );
+        lines.push_back( viennagrid::create_line(domain, *it1, *start) );
+    }
     
-    std::vector<line_hook_type> lines( viennagrid::elements<line_type>( viennagrid::dereference_hook(domain, hole_poly) ).size() );
-    std::copy( viennagrid::elements<line_type>( viennagrid::dereference_hook(domain, hole_poly)  ).hook_begin(), viennagrid::elements<line_type>( viennagrid::dereference_hook(domain, hole_poly)  ).hook_end(), lines.begin() );
+    
+    {
+        std::vector<vertex_hook_type>::iterator start = v.begin() + 7;
+        std::vector<vertex_hook_type>::iterator end = v.begin() + 10;
+        
+        std::vector<vertex_hook_type>::iterator it1 = start;
+        std::vector<vertex_hook_type>::iterator it2 = it1; ++it2;
+        for (; it2 != end; ++it1, ++it2)
+            lines.push_back( viennagrid::create_line(domain, *it1, *it2) );
+        lines.push_back( viennagrid::create_line(domain, *it1, *start) );
+    }
+    
+    
+//     polygon_hook_type bounding_poly = viennagrid::create_element<polygon_type>( domain, v.begin(), v.begin() + 7 );
+    
+//     polygon_hook_type hole_poly = viennagrid::create_element<polygon_type>( domain, v.begin() + 7, v.begin() + 10 );
+    
+//     std::vector<line_hook_type> lines( viennagrid::elements<line_type>( viennagrid::dereference_hook(domain, hole_poly) ).size() );
+//     std::copy( viennagrid::elements<line_type>( viennagrid::dereference_hook(domain, hole_poly)  ).hook_begin(), viennagrid::elements<line_type>( viennagrid::dereference_hook(domain, hole_poly)  ).hook_end(), lines.begin() );
     lines.push_back( viennagrid::create_element<line_type>( domain, v.begin() + 9, v.begin() + 11 ) );
     
     vertex_hook_type point = v[11];
     
-    std::cout << bounding_poly << std::endl;
-    std::cout << viennagrid::dereference_hook(domain, bounding_poly) << std::endl;
-    std::cout << hole_poly << std::endl;
-    std::cout << viennagrid::dereference_hook(domain, hole_poly) << std::endl;
+//     std::cout << bounding_poly << std::endl;
+//     std::cout << viennagrid::dereference_hook(domain, bounding_poly) << std::endl;
+//     std::cout << hole_poly << std::endl;
+//     std::cout << viennagrid::dereference_hook(domain, hole_poly) << std::endl;
     
 
     typedef viennagrid::result_of::element<domain_type, viennagrid::plc_tag>::type plc_type;
@@ -124,9 +150,9 @@ int main()
     hole_points.push_back( point_type(10.5, 10.5) );
 
     plc_hook_type plc_hook = viennagrid::create_element<plc_type>(  domain, 
-                                                                    &bounding_poly, &bounding_poly + 1,
+//                                                                     &bounding_poly, &bounding_poly + 1,
 //                                                                     bounding_poly,
-                                                                    &hole_poly, &hole_poly+1,
+//                                                                     &hole_poly, &hole_poly+1,
                                                                     lines.begin(), lines.end(),
                                                                     &point, &point + 1,
                                                                     hole_points.begin(), hole_points.end()
@@ -141,12 +167,12 @@ int main()
     typedef viennagrid::result_of::iterator<vertex_on_plc_range>::type vertex_on_plc_iterator;
     
     
-    viennagrid::tagging::result_of::element_tag<plc_type, viennagrid::loose_tag>::type loose_tag = viennagrid::tagging::create_element_tag<viennagrid::loose_tag>(plc);
+//     viennagrid::tagging::result_of::element_tag<plc_type, viennagrid::loose_tag>::type loose_tag = viennagrid::tagging::create_element_tag<viennagrid::loose_tag>(plc);
     
     std::cout << "All vertices of the PLC" << std::endl;
     vertex_on_plc_range vertex_range = viennagrid::elements<vertex_type>( plc );
     for (vertex_on_plc_iterator it = vertex_range.begin(); it != vertex_range.end(); ++it)
-        std::cout << *it << " " << viennagrid::point(domain, *it) << " is loose: " << viennagrid::tagging::is_tagged(*it, loose_tag) << std::endl;
+        std::cout << *it << " " << viennagrid::point(domain, *it) << std::endl;
     std::cout << std::endl;
     
     typedef viennagrid::result_of::element_range<plc_type, line_type>::type line_on_plc_range;
@@ -155,7 +181,7 @@ int main()
     std::cout << "All lines of the PLC" << std::endl;
     line_on_plc_range line_range = viennagrid::elements<line_type>( plc );
     for (line_on_plc_iterator it = line_range.begin(); it != line_range.end(); ++it)
-        std::cout << *it << " is loose: " << viennagrid::tagging::is_tagged(*it, loose_tag) << std::endl;
+        std::cout << *it << std::endl;
     std::cout << std::endl;
     
     std::cout << "All PLCs of the domain" << std::endl;
@@ -166,24 +192,24 @@ int main()
     std::cout << std::endl;
         
         
-    typedef viennagrid::result_of::const_element_view<plc_type, vertex_type>::type vertex_view_type;
-    typedef viennagrid::result_of::iterator<vertex_view_type>::type vertex_view_iterator;
-    
-    std::cout << "All loose points of the plc" << std::endl;
-    vertex_view_type vertex_view = viennagrid::loose_elements<vertex_type>(plc);
-    for (vertex_view_iterator it = vertex_view.begin(); it != vertex_view.end(); ++it)
-        std::cout << *it << std::endl;
-    std::cout << std::endl;
+//     typedef viennagrid::result_of::const_element_view<plc_type, vertex_type>::type vertex_view_type;
+//     typedef viennagrid::result_of::iterator<vertex_view_type>::type vertex_view_iterator;
+//     
+//     std::cout << "All loose points of the plc" << std::endl;
+//     vertex_view_type vertex_view = viennagrid::loose_elements<vertex_type>(plc);
+//     for (vertex_view_iterator it = vertex_view.begin(); it != vertex_view.end(); ++it)
+//         std::cout << *it << std::endl;
+//     std::cout << std::endl;
     
     
 
-    typedef viennagrid::result_of::element_view<plc_type, line_type>::type line_view_type;
-
-    std::cout << "All inner lines of the plc" << std::endl;
-    viennagrid::tagging::result_of::element_tag<plc_type, viennagrid::bounding_tag>::type bounding_tag = viennagrid::tagging::create_element_tag<viennagrid::bounding_tag>(plc);
-    line_view_type inner_lines = viennagrid::untagged_elements<line_type>(plc, bounding_tag);
-    std::copy( inner_lines.begin(), inner_lines.end(), std::ostream_iterator<line_type>(std::cout, "\n") );
-    std::cout << std::endl;
+//     typedef viennagrid::result_of::element_view<plc_type, line_type>::type line_view_type;
+// 
+//     std::cout << "All inner lines of the plc" << std::endl;
+//     viennagrid::tagging::result_of::element_tag<plc_type, viennagrid::bounding_tag>::type bounding_tag = viennagrid::tagging::create_element_tag<viennagrid::bounding_tag>(plc);
+//     line_view_type inner_lines = viennagrid::untagged_elements<line_type>(plc, bounding_tag);
+//     std::copy( inner_lines.begin(), inner_lines.end(), std::ostream_iterator<line_type>(std::cout, "\n") );
+//     std::cout << std::endl;
     
     
     std::cout << "All hole points of the plc" << std::endl;

@@ -120,8 +120,8 @@ namespace viennagrid
         typedef typename VertexType::id_type VertexIDType;
         //typedef typename result_of::ncell<DomainType, CellTag::dim>::type     CellType;
         
-        typedef typename result_of::element<GeometricDomainType, polygon_tag>::type                           PolygonType;
-        typedef typename result_of::element_hook<GeometricDomainType, polygon_tag>::type                           PolygonHookType;
+//         typedef typename result_of::element<GeometricDomainType, polygon_tag>::type                           PolygonType;
+//         typedef typename result_of::element_hook<GeometricDomainType, polygon_tag>::type                           PolygonHookType;
         
         typedef typename result_of::element<GeometricDomainType, line_tag>::type                           LineType;
         typedef typename result_of::element_hook<GeometricDomainType, line_tag>::type                           LineHookType;
@@ -263,7 +263,7 @@ namespace viennagrid
                 throw bad_file_format_exception(filename, "POLY facet has less than 0 holes");
             
             
-            std::list<PolygonHookType> polygons;
+//             std::list<PolygonHookType> polygons;
             std::list<LineHookType> lines;
             std::list<VertexHookType> vertices;
             
@@ -304,12 +304,19 @@ namespace viennagrid
                 }
                 else if (vertex_num == 2)
                 {
-                    lines.push_back( viennagrid::create_element<LineType>(domain, vertex_hooks.begin(), vertex_hooks.end()) );
+                    lines.push_back( viennagrid::create_line(domain, vertex_hooks[0], vertex_hooks[1]) );
 //                     std::cout << " Added loose line" << std::endl;
                 }
                 else
                 {
-                    polygons.push_back( viennagrid::create_element<PolygonType>(domain, vertex_hooks.begin(), vertex_hooks.end()) );
+                    typename std::vector<VertexHookType>::iterator it1 = vertex_hooks.begin();
+                    typename std::vector<VertexHookType>::iterator it2 = it1; ++it2;
+                    for (; it2 != vertex_hooks.end(); ++it2)
+                        lines.push_back( viennagrid::create_line(domain, *it1, *it2) );
+                    lines.push_back( viennagrid::create_line(domain, vertex_hooks.back(), vertex_hooks.front()) );
+                    
+                    
+//                     polygons.push_back( viennagrid::create_element<PolygonType>(domain, vertex_hooks.begin(), vertex_hooks.end()) );
 //                     std::cout << " Added polygon " << vertex_hooks.size() << std::endl;
                 }
             }
@@ -340,7 +347,7 @@ namespace viennagrid
                 
             viennagrid::create_element<CellType>(
                 domain,
-                polygons.begin(), polygons.end(),
+//                 polygons.begin(), polygons.end(),
                 lines.begin(), lines.end(),
                 vertices.begin(), vertices.end(),
                 hole_points.begin(), hole_points.end()
