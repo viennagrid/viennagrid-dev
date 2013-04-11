@@ -189,7 +189,7 @@ namespace viennagrid
         struct trivial_point_line_intersect_functor
         {
             template<typename point_type, typename line_tag>
-            void operator() (point_type const & p, point_type const & q0, point_type const & q1, line_tag tag) {}
+            void operator() (point_type const & p, point_type const & q0, point_type const & q1, line_tag tag) const {}
         };
         
         
@@ -244,7 +244,7 @@ namespace viennagrid
         struct trivial_point_ray_intersect_functor
         {
             template<typename point_type>
-            void operator() (point_type const & p, point_type const & q0, point_type const & q1) {}
+            void operator() (point_type const & p, point_type const & q0, point_type const & q1) const {}
         };
         
         
@@ -293,7 +293,7 @@ namespace viennagrid
             template<typename point_type, typename line1_tag, typename line2_tag, typename coord_type>
             void operator() (point_type const & v0, point_type const & v1 , line1_tag tag1,
                              point_type const & w0, point_type const & w1, line2_tag tag2,
-                             coord_type s, coord_type t, coord_type denominator) {}
+                             coord_type s, coord_type t, coord_type denominator) const {}
         };
         
         struct trivial_line_line_intersect_overlapping_lines_functor
@@ -302,7 +302,7 @@ namespace viennagrid
             void operator() (point_type const & v0, point_type const & v1 , line1_tag tag1,
                              point_type const & w0, point_type const & w1, line2_tag tag2,
                              coord_type first1, coord_type second1,
-                             coord_type first2, coord_type second2) {}
+                             coord_type first2, coord_type second2) const {}
         };
         
         
