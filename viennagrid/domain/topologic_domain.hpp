@@ -87,6 +87,11 @@ namespace viennagrid
             inserter.set_container_collection( container_collection );
         }
         
+        ~topologic_domain_t()
+        {
+            viennadata::erase<viennadata::all, viennadata::all>()(*this);
+        }
+        
         topologic_domain_t & operator=(const topologic_domain_t & other)
         {
             container_collection = other.container_collection;

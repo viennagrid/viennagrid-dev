@@ -75,6 +75,11 @@ namespace viennagrid
 //             topologic_domain(topologic_domain_), metainfo_collection(metainfo_collection_) {}
 
 
+        ~geometric_domain_t()
+        {
+            viennadata::erase<viennadata::all, viennadata::all>()(*this);
+        }
+
 
       /** @brief Constructor triggering the refinement of the domain */
       template <typename CellTag, typename OtherDomainType, typename RefinementTag>
