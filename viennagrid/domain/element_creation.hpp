@@ -241,6 +241,20 @@ namespace viennagrid
         return push_element(domain, element).first;
     }
     
+    template<typename domain_type, typename vertex_hook_type>
+    typename result_of::element_hook<domain_type, tetrahedron_tag>::type create_tetrahedron( domain_type & domain, vertex_hook_type v0, vertex_hook_type v1, vertex_hook_type v2, vertex_hook_type v3 )
+    {
+        typedef typename result_of::element<domain_type, tetrahedron_tag>::type element_type;
+        element_type element = element_type( inserter(domain).get_physical_container_collection() );
+        
+        viennagrid::set_vertex( element, v0, 0 );
+        viennagrid::set_vertex( element, v1, 1 );
+        viennagrid::set_vertex( element, v2, 2 );
+        viennagrid::set_vertex( element, v3, 3 );
+                
+        return push_element(domain, element).first;
+    }
+    
 }
 
 
