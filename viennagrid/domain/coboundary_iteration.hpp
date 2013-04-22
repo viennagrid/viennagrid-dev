@@ -1,6 +1,8 @@
 #ifndef VIENNAGRID_DOMAIN_COBOUNDARY_ITERATION_HPP
 #define VIENNAGRID_DOMAIN_COBOUNDARY_ITERATION_HPP
-#include <viennagrid/element/element_key.hpp>
+
+#include "viennagrid/forwards.hpp"
+#include "viennagrid/storage/forwards.hpp"
  
 namespace viennagrid
 {
