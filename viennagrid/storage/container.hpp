@@ -195,10 +195,6 @@ namespace viennagrid
                 return *hook;
             }
             
-//             const value_type & dereference_hook( const_hook_type hook )
-//             {
-//                 return *hook;
-//             }
         };
         
         template<typename base_container__>
