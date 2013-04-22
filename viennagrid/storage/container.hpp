@@ -226,6 +226,7 @@ namespace viennagrid
             
             value_type & dereference_hook( hook_type hook )
             {
+                // TODO: what happens if hook is not found ??
                 return *std::find_if(
                     container_type::begin(),
                     container_type::end(),
@@ -235,6 +236,7 @@ namespace viennagrid
             
             const value_type & dereference_hook( hook_type hook ) const
             {
+                // TODO: what happens if hook is not found ??
                 return *std::find_if(
                     container_type::begin(),
                     container_type::end(),
