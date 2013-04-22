@@ -22,11 +22,13 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+
+#include "viennagrid/domain/geometric_domain.hpp"
+
 #include "viennagrid/forwards.hpp"
 #include "viennagrid/io/helper.hpp"
 #include "viennagrid/io/vtk_common.hpp"
 #include "viennagrid/io/data_accessor.hpp"
-//#include "viennagrid/algorithm/cell_normals.hpp"
 #include "viennadata/api.hpp"
 
 /** @file vtk_writer.hpp
@@ -382,9 +384,14 @@ namespace viennagrid
          */
         int operator()(DomainType const & domain, std::string const & filename)
         {
-            std::stringstream ss;
-            ss << filename << ".vtu";
-            std::ofstream writer(ss.str().c_str());
+//             std::stringstream ss;
+//             ss << filename;
+//             
+//             if (filename.rfind(".vtu") != filename.size()-4)
+//                 ss << ".vtu";
+//             std::ofstream writer(ss.str().c_str());
+
+            std::ofstream writer(filename.c_str());
             writeHeader(writer);
             
             writer << "  <Piece NumberOfPoints=\""
