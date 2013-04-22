@@ -18,11 +18,12 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
+#include <assert.h>
+
 #include "viennagrid/forwards.hpp"
 #include "viennagrid/algorithm/numeric.hpp"
 #include "viennagrid/algorithm/inner_prod.hpp"
 #include "viennagrid/algorithm/norm.hpp"
-#include <boost/concept_check.hpp>
 
 namespace viennagrid 
 {
