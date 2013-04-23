@@ -19,8 +19,6 @@ namespace viennagrid
             
             typedef container_type base_container_type;
             
-            container_range_wrapper(container_type & _container) : container(&_container) {}
-            
             typedef typename container_type::size_type size_type;
             typedef typename container_type::value_type value_type;
             
@@ -34,7 +32,14 @@ namespace viennagrid
             typedef typename container_type::const_iterator const_iterator;
             
             typedef typename container_type::reverse_iterator reverse_iterator;
-            typedef typename container_type::const_reverse_iterator const_reverse_iterator;
+            typedef typename container_type::const_reverse_iterator const_reverse_iterator;            
+            
+
+            container_range_wrapper(container_type & container_) : container(&container_) {}
+                        
+            template<typename element_domain_segment_config_or_something_like_that>
+            container_range_wrapper( viennagrid::element_range_proxy<element_domain_segment_config_or_something_like_that> range_proxy )
+            { *this = elements< value_type >( range_proxy.something ); }
             
             
             
@@ -114,9 +119,6 @@ namespace viennagrid
             
             typedef const container_type base_container_type;
             
-            container_range_wrapper(const container_type & _container) : container(&_container) {}
-            container_range_wrapper(const container_range_wrapper<container_type> & rhs) : container(rhs.container) {}
-            
             typedef typename container_type::size_type size_type;
             typedef typename container_type::value_type value_type;
             
@@ -131,6 +133,17 @@ namespace viennagrid
             
             typedef typename container_type::const_reverse_iterator reverse_iterator;
             typedef typename container_type::const_reverse_iterator const_reverse_iterator;
+            
+            
+            container_range_wrapper(const container_type & _container) : container(&_container) {}
+            container_range_wrapper(const container_range_wrapper<container_type> & rhs) : container(rhs.container) {}
+            
+            template<typename element_domain_segment_config_or_something_like_that>
+            container_range_wrapper( const viennagrid::element_range_proxy<element_domain_segment_config_or_something_like_that> range_proxy )
+            { *this = elements< value_type >( range_proxy.something ); }
+            template<typename element_domain_segment_config_or_something_like_that>
+            container_range_wrapper( const viennagrid::const_element_range_proxy<element_domain_segment_config_or_something_like_that> range_proxy )
+            { *this = elements< value_type >( range_proxy.something ); }
             
             
             
