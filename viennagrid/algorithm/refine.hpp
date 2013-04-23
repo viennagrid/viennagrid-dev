@@ -194,7 +194,7 @@ namespace viennagrid
       //typedef typename DomainTypeIn::segment_type                                                                    SegmentTypeIn; 
       //typedef typename viennagrid::result_of::point<ConfigTypeIn>::type                                         PointType;
       typedef typename viennagrid::result_of::element<GeometricDomainTypeIn, vertex_tag>::type                                      VertexType;
-      typedef typename viennagrid::result_of::element_handle<GeometricDomainTypeIn, vertex_tag>::type                                      VertexHookType;
+      typedef typename viennagrid::result_of::handle<GeometricDomainTypeIn, vertex_tag>::type                                      VertexHookType;
       typedef typename viennagrid::result_of::element<GeometricDomainTypeIn, line_tag>::type                                      EdgeType;
       typedef typename viennagrid::result_of::element<GeometricDomainTypeIn, CellTagIn>::type              CellType;
       
@@ -301,7 +301,7 @@ namespace viennagrid
       //typedef typename DomainTypeIn::segment_type                                                                    SegmentTypeIn; 
       //typedef typename viennagrid::result_of::point<ConfigTypeIn>::type                                         PointType;
       typedef typename viennagrid::result_of::element<GeometricDomainTypeIn, vertex_tag>::type                                      VertexType;
-      typedef typename viennagrid::result_of::element_handle<GeometricDomainTypeIn, vertex_tag>::type                                      VertexHookType;
+      typedef typename viennagrid::result_of::handle<GeometricDomainTypeIn, vertex_tag>::type                                      VertexHookType;
       typedef typename viennagrid::result_of::element<GeometricDomainTypeIn, line_tag>::type                                      EdgeType;
       typedef typename viennagrid::result_of::element<GeometricDomainTypeIn, CellTagIn>::type              CellType;
       

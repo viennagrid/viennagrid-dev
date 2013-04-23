@@ -33,7 +33,7 @@ void setup_cell(DomainType & domain,
                 std::size_t id1,
                 std::size_t id2)
 {
-  typedef typename viennagrid::result_of::element_handle<DomainType, viennagrid::vertex_tag>::type       VertexHookType;
+  typedef typename viennagrid::result_of::handle<DomainType, viennagrid::vertex_tag>::type       VertexHookType;
   
   viennagrid::storage::static_array<VertexHookType, 3> vertices;
   vertices[0] = viennagrid::elements<viennagrid::vertex_tag>(domain).handle_at( id0 );
@@ -75,7 +75,7 @@ int main()
   
   //typedef viennagrid::result_of::point<ConfigType>::type          PointType;
   typedef viennagrid::result_of::element<Domain, viennagrid::vertex_tag>::type       VertexType;
-  typedef viennagrid::result_of::element_handle<Domain, viennagrid::vertex_tag>::type       VertexHookType;
+  typedef viennagrid::result_of::handle<Domain, viennagrid::vertex_tag>::type       VertexHookType;
   typedef viennagrid::result_of::element<Domain, CellTag>::type   CellType;
 
   typedef viennagrid::result_of::element_range<Segment, CellTag>::type    CellRange;

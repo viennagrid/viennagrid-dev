@@ -51,7 +51,7 @@ int main()
   // Define the types of the elements in the domain (derived from ConfigType):
   //
   typedef viennagrid::result_of::element<DomainType, viennagrid::vertex_tag>::type                          VertexType;
-  typedef viennagrid::result_of::element_handle<DomainType, viennagrid::vertex_tag>::type                          VertexHookType;
+  typedef viennagrid::result_of::handle<DomainType, viennagrid::vertex_tag>::type                          VertexHookType;
   typedef viennagrid::result_of::element<DomainType, viennagrid::line_tag>::type                          EdgeType;
   typedef viennagrid::result_of::element<DomainType, CellTag::facet_tag>::type  FacetType;
   typedef viennagrid::result_of::element<DomainType, CellTag>::type    CellType;

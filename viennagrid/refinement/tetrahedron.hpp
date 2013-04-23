@@ -135,7 +135,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::iterator<EdgeOnCellRange>::type           EdgeOnCellIterator;            
       
       typedef typename viennagrid::result_of::element<DomainTypeOut, vertex_tag>::type             VertexType;
-      typedef typename viennagrid::result_of::element_handle<DomainTypeOut, vertex_tag>::type             VertexHookType;
+      typedef typename viennagrid::result_of::handle<DomainTypeOut, vertex_tag>::type             VertexHookType;
       
       typedef typename viennagrid::result_of::element<DomainTypeOut, vertex_tag>::type                                      VertexTypeOut;
       typedef typename VertexTypeOut::id_type VertexIDTypeOut;
@@ -180,7 +180,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::element<CellType, line_tag>::type             EdgeType;
       
       typedef typename viennagrid::result_of::element<DomainTypeOut, vertex_tag>::type             VertexType;
-      typedef typename viennagrid::result_of::element_handle<DomainTypeOut, vertex_tag>::type             VertexHookType;
+      typedef typename viennagrid::result_of::handle<DomainTypeOut, vertex_tag>::type             VertexHookType;
       
       typedef typename viennagrid::result_of::element<DomainTypeOut, vertex_tag>::type                                      VertexTypeOut;
       typedef typename VertexTypeOut::id_type VertexIDTypeOut;
@@ -402,7 +402,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::iterator<EdgeOnCellRange>::type           EdgeOnCellIterator;            
       
       typedef typename viennagrid::result_of::element<CellType, vertex_tag>::type             VertexType;
-      typedef typename viennagrid::result_of::element_handle<CellType, vertex_tag>::type             VertexHookType;
+      typedef typename viennagrid::result_of::handle<CellType, vertex_tag>::type             VertexHookType;
       typedef typename viennagrid::result_of::element<CellType, line_tag>::type             EdgeType;
       
       typedef typename viennagrid::result_of::element<DomainTypeOut, vertex_tag>::type                                      VertexTypeOut;
@@ -943,7 +943,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::iterator<EdgeOnCellRange>::type           EdgeOnCellIterator;            
       
       typedef typename viennagrid::result_of::element<CellType, vertex_tag>::type             VertexType;
-      typedef typename viennagrid::result_of::element_handle<CellType, vertex_tag>::type             VertexHookType;
+      typedef typename viennagrid::result_of::handle<CellType, vertex_tag>::type             VertexHookType;
       typedef typename viennagrid::result_of::element<CellType, line_tag>::type             EdgeType;
       
       typedef typename viennagrid::result_of::element<DomainTypeOut, vertex_tag>::type                                      VertexTypeOut;
@@ -1602,7 +1602,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::iterator<EdgeOnCellRange>::type           EdgeOnCellIterator;            
       
       typedef typename viennagrid::result_of::element<CellType, vertex_tag>::type             VertexType;
-      typedef typename viennagrid::result_of::element_handle<CellType, vertex_tag>::type             VertexHookType;
+      typedef typename viennagrid::result_of::handle<CellType, vertex_tag>::type             VertexHookType;
       typedef typename viennagrid::result_of::element<CellType, line_tag>::type             EdgeType;
       
       typedef typename viennagrid::result_of::element<DomainTypeOut, vertex_tag>::type                                      VertexTypeOut;
@@ -1960,7 +1960,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::iterator<EdgeOnCellRange>::type           EdgeOnCellIterator;            
       
       typedef typename viennagrid::result_of::element<CellType, vertex_tag>::type             VertexType;
-      typedef typename viennagrid::result_of::element_handle<CellType, vertex_tag>::type             VertexHookType;
+      typedef typename viennagrid::result_of::handle<CellType, vertex_tag>::type             VertexHookType;
       typedef typename viennagrid::result_of::element<CellType, line_tag>::type             EdgeType;
       
       typedef typename viennagrid::result_of::element<DomainTypeOut, vertex_tag>::type                                      VertexTypeOut;
@@ -2107,7 +2107,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::iterator<EdgeOnCellRange>::type           EdgeOnCellIterator;            
       
       typedef typename viennagrid::result_of::element<CellType, vertex_tag>::type             VertexType;
-      typedef typename viennagrid::result_of::element_handle<CellType, vertex_tag>::type             VertexHookType;
+      typedef typename viennagrid::result_of::handle<CellType, vertex_tag>::type             VertexHookType;
       typedef typename viennagrid::result_of::element<CellType, line_tag>::type             EdgeType;
       
       typedef typename viennagrid::result_of::element<DomainTypeOut, vertex_tag>::type                                      VertexTypeOut;

@@ -112,19 +112,19 @@ namespace viennagrid
         typedef plc_tag CellTag;
         typedef typename result_of::element<GeometricDomainType, CellTag>::type CellType;
         //typedef typename CellType::tag                            CellTag;
-        typedef typename result_of::element_handle<GeometricDomainType, CellTag>::type                           CellHookType;
+        typedef typename result_of::handle<GeometricDomainType, CellTag>::type                           CellHookType;
 
         //typedef typename result_of::point<ConfigType>::type                              PointType;
         typedef typename result_of::element<GeometricDomainType, vertex_tag>::type                           VertexType;
-        typedef typename result_of::element_handle<GeometricDomainType, vertex_tag>::type                           VertexHookType;
+        typedef typename result_of::handle<GeometricDomainType, vertex_tag>::type                           VertexHookType;
         typedef typename VertexType::id_type VertexIDType;
         //typedef typename result_of::ncell<DomainType, CellTag::dim>::type     CellType;
         
 //         typedef typename result_of::element<GeometricDomainType, polygon_tag>::type                           PolygonType;
-//         typedef typename result_of::element_handle<GeometricDomainType, polygon_tag>::type                           PolygonHookType;
+//         typedef typename result_of::handle<GeometricDomainType, polygon_tag>::type                           PolygonHookType;
         
         typedef typename result_of::element<GeometricDomainType, line_tag>::type                           LineType;
-        typedef typename result_of::element_handle<GeometricDomainType, line_tag>::type                           LineHookType;
+        typedef typename result_of::handle<GeometricDomainType, line_tag>::type                           LineHookType;
 
 //         typedef typename viennagrid::result_of::element_range<GeometricDomainType, vertex_tag>::type   VertexRange;
 //         typedef typename viennagrid::result_of::iterator<VertexRange>::type        VertexIterator;

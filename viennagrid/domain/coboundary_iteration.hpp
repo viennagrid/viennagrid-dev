@@ -59,10 +59,10 @@ namespace viennagrid
     
     
     
-    template<typename coboundary_type_or_tag, typename domain_or_container_type, typename element_handle_type>
-    typename result_of::coboundary_container<domain_or_container_type, coboundary_type_or_tag>::type create_coboundary_container(domain_or_container_type & domain, element_handle_type handle)
+    template<typename coboundary_type_or_tag, typename domain_or_container_type, typename handle_type>
+    typename result_of::coboundary_container<domain_or_container_type, coboundary_type_or_tag>::type create_coboundary_container(domain_or_container_type & domain, handle_type handle)
     {
-        typedef typename viennagrid::storage::handle::value_type< element_handle_type >::type element_type;
+        typedef typename viennagrid::storage::handle::value_type< handle_type >::type element_type;
         typedef typename viennagrid::result_of::element_tag< element_type >::type element_tag;
         
         typedef typename viennagrid::result_of::element_tag< coboundary_type_or_tag >::type coboundary_tag;
@@ -81,12 +81,12 @@ namespace viennagrid
         for (coboundary_handle_iterator chit = coboundary_range.handle_begin(); chit != coboundary_range.handle_end(); ++chit)
         {
             typedef typename viennagrid::result_of::element_range< coboundary_type, element_tag >::type element_on_coboundary_range_type;
-            typedef typename viennagrid::result_of::handle_iterator< element_on_coboundary_range_type >::type element_handle_on_coboundary_iterator;
+            typedef typename viennagrid::result_of::handle_iterator< element_on_coboundary_range_type >::type handle_on_coboundary_iterator;
             
             coboundary_type & coboundary_element = viennagrid::dereference_handle(domain, *chit);
             
             element_on_coboundary_range_type element_on_coboundary_range = viennagrid::elements<element_tag>( coboundary_element );
-            for (element_handle_on_coboundary_iterator ehcit = element_on_coboundary_range.handle_begin(); ehcit != element_on_coboundary_range.handle_end(); ++ehcit)
+            for (handle_on_coboundary_iterator ehcit = element_on_coboundary_range.handle_begin(); ehcit != element_on_coboundary_range.handle_end(); ++ehcit)
             {
                 if ( *ehcit == handle )
                     coboundary_container.insert_handle( *chit );
@@ -96,10 +96,10 @@ namespace viennagrid
         return coboundary_container;
     }
     
-    template<typename coboundary_type_or_tag, typename domain_or_container_type, typename element_handle_type>
-    typename result_of::const_coboundary_container<domain_or_container_type, coboundary_type_or_tag>::type create_coboundary_container(const domain_or_container_type & domain, element_handle_type handle)
+    template<typename coboundary_type_or_tag, typename domain_or_container_type, typename handle_type>
+    typename result_of::const_coboundary_container<domain_or_container_type, coboundary_type_or_tag>::type create_coboundary_container(const domain_or_container_type & domain, handle_type handle)
     {
-        typedef typename viennagrid::storage::handle::value_type< element_handle_type >::type element_type;
+        typedef typename viennagrid::storage::handle::value_type< handle_type >::type element_type;
         typedef typename viennagrid::result_of::element_tag< element_type >::type element_tag;
         
         typedef typename viennagrid::result_of::element_tag< coboundary_type_or_tag >::type coboundary_tag;
@@ -118,12 +118,12 @@ namespace viennagrid
         for (coboundary_handle_iterator chit = coboundary_range.handle_begin(); chit != coboundary_range.handle_end(); ++chit)
         {
             typedef typename viennagrid::result_of::const_element_range< coboundary_type, element_tag >::type element_on_coboundary_range_type;
-            typedef typename viennagrid::result_of::const_handle_iterator< element_on_coboundary_range_type >::type element_handle_on_coboundary_iterator;
+            typedef typename viennagrid::result_of::const_handle_iterator< element_on_coboundary_range_type >::type handle_on_coboundary_iterator;
             
             const coboundary_type & coboundary_element = viennagrid::dereference_handle(domain, *chit);
             
             element_on_coboundary_range_type element_on_coboundary_range = viennagrid::elements<element_tag>( coboundary_element );
-            for (element_handle_on_coboundary_iterator ehcit = element_on_coboundary_range.handle_begin(); ehcit != element_on_coboundary_range.handle_end(); ++ehcit)
+            for (handle_on_coboundary_iterator ehcit = element_on_coboundary_range.handle_begin(); ehcit != element_on_coboundary_range.handle_end(); ++ehcit)
             {
                 if ( *ehcit == handle )
                     coboundary_container.insert_handle( *chit );
@@ -134,10 +134,10 @@ namespace viennagrid
     }
     
     
-    template<typename coboundary_type_or_tag, typename domain_or_container_type, typename element_handle_type>
-    typename result_of::coboundary_range<domain_or_container_type, coboundary_type_or_tag>::type coboundary_elements(domain_or_container_type & domain, element_handle_type handle)
+    template<typename coboundary_type_or_tag, typename domain_or_container_type, typename handle_type>
+    typename result_of::coboundary_range<domain_or_container_type, coboundary_type_or_tag>::type coboundary_elements(domain_or_container_type & domain, handle_type handle)
     {
-        typedef typename viennagrid::storage::handle::value_type<element_handle_type>::type element_type;
+        typedef typename viennagrid::storage::handle::value_type<handle_type>::type element_type;
         typedef typename result_of::element_tag<coboundary_type_or_tag>::type coboundary_tag;
         typedef typename result_of::coboundary_container<domain_or_container_type, coboundary_type_or_tag>::type container_type;
         typedef typename result_of::coboundary_range<domain_or_container_type, coboundary_type_or_tag>::type range_type;
@@ -163,10 +163,10 @@ namespace viennagrid
     }
     
     
-    template<typename coboundary_type_or_tag, typename domain_or_container_type, typename element_handle_type>
-    typename result_of::const_coboundary_range<domain_or_container_type, coboundary_type_or_tag>::type coboundary_elements(const domain_or_container_type & domain, element_handle_type handle)
+    template<typename coboundary_type_or_tag, typename domain_or_container_type, typename handle_type>
+    typename result_of::const_coboundary_range<domain_or_container_type, coboundary_type_or_tag>::type coboundary_elements(const domain_or_container_type & domain, handle_type handle)
     {
-        typedef typename viennagrid::storage::handle::value_type<element_handle_type>::type element_type;
+        typedef typename viennagrid::storage::handle::value_type<handle_type>::type element_type;
         typedef typename result_of::element_tag<coboundary_type_or_tag>::type coboundary_tag;
         typedef typename result_of::const_coboundary_container<domain_or_container_type, coboundary_type_or_tag>::type container_type;
         typedef typename result_of::const_coboundary_range<domain_or_container_type, coboundary_type_or_tag>::type range_type;

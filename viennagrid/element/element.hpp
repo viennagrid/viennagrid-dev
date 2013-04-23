@@ -695,7 +695,7 @@ namespace viennagrid
         
         // Defines a HOOK TO a SUB-ELEMENT from an ELEMENT using SUB-ELEMENT TYPE or TAG
         template<typename element_tag_, typename boundary_cell_container_typelist, typename id_type, typename sub_element_type_or_tag>
-        struct element_handle< element_t<element_tag_, boundary_cell_container_typelist, id_type>, sub_element_type_or_tag >
+        struct handle< element_t<element_tag_, boundary_cell_container_typelist, id_type>, sub_element_type_or_tag >
         {
             typedef typename element_tag<sub_element_type_or_tag>::type sub_element_tag;
             typedef typename container_of_tag_for_element< boundary_cell_container_typelist, sub_element_tag >::type::handle_type type;
@@ -703,7 +703,7 @@ namespace viennagrid
         
         // Defines a const HOOK TO a SUB-ELEMENT from an ELEMENT using SUB-ELEMENT TYPE or TAG
         template<typename element_tag_, typename boundary_cell_container_typelist, typename id_type, typename sub_element_type_or_tag>
-        struct const_element_handle< element_t<element_tag_, boundary_cell_container_typelist, id_type>, sub_element_type_or_tag >
+        struct const_handle< element_t<element_tag_, boundary_cell_container_typelist, id_type>, sub_element_type_or_tag >
         {
             typedef typename element_tag<sub_element_type_or_tag>::type sub_element_tag;
             typedef typename container_of_tag_for_element< boundary_cell_container_typelist, sub_element_tag >::type::const_handle_type type;
@@ -794,7 +794,7 @@ namespace viennagrid
 //         };
         
         template<typename container_collection_typemap, typename element_type_or_tag>
-        struct element_handle<storage::collection_t<container_collection_typemap>, element_type_or_tag>
+        struct handle<storage::collection_t<container_collection_typemap>, element_type_or_tag>
         {
             typedef typename element_tag<element_type_or_tag>::type element_tag;
             typedef typename container_of_tag_for_collection<container_collection_typemap, element_tag>::type::handle_type type;
@@ -802,13 +802,13 @@ namespace viennagrid
         
 //         template<typename container_collection_typemap,
 //                  typename sub_element_tag, typename sub_boundary_cell_container_typelist, typename sub_id_type>
-//         struct element_handle< storage::collection_t<container_collection_typemap>, element_t<sub_element_tag, sub_boundary_cell_container_typelist, sub_id_type> >
+//         struct handle< storage::collection_t<container_collection_typemap>, element_t<sub_element_tag, sub_boundary_cell_container_typelist, sub_id_type> >
 //         {
-//             typedef typename element_handle< storage::collection_t<container_collection_typemap>, sub_element_tag >::type type;
+//             typedef typename handle< storage::collection_t<container_collection_typemap>, sub_element_tag >::type type;
 //         };
         
         template<typename container_collection_typemap, typename element_type_or_tag>
-        struct const_element_handle<storage::collection_t<container_collection_typemap>, element_type_or_tag>
+        struct const_handle<storage::collection_t<container_collection_typemap>, element_type_or_tag>
         {
             typedef typename element_tag<element_type_or_tag>::type element_tag;
             typedef typename container_of_tag_for_collection<container_collection_typemap, element_tag>::type::const_handle_type type;
@@ -816,9 +816,9 @@ namespace viennagrid
         
 //         template<typename container_collection_typemap,
 //                  typename sub_element_tag, typename sub_boundary_cell_container_typelist, typename sub_id_type>
-//         struct const_element_handle< storage::collection_t<container_collection_typemap>, element_t<sub_element_tag, sub_boundary_cell_container_typelist, sub_id_type> >
+//         struct const_handle< storage::collection_t<container_collection_typemap>, element_t<sub_element_tag, sub_boundary_cell_container_typelist, sub_id_type> >
 //         {
-//             typedef typename const_element_handle< storage::collection_t<container_collection_typemap>, sub_element_tag >::type type;
+//             typedef typename const_handle< storage::collection_t<container_collection_typemap>, sub_element_tag >::type type;
 //         };
         
 

@@ -71,8 +71,8 @@ namespace viennagrid
 
         //typedef typename result_of::point<DomainConfiguration>::type                              PointType;
         typedef typename result_of::element<DomainType, vertex_tag>::type                           VertexType;
-        typedef typename result_of::element_handle<DomainType, vertex_tag>::type          VertexHookType;
-        typedef typename result_of::const_element_handle<DomainType, vertex_tag>::type          ConstVertexHookType;
+        typedef typename result_of::handle<DomainType, vertex_tag>::type          VertexHookType;
+        typedef typename result_of::const_handle<DomainType, vertex_tag>::type          ConstVertexHookType;
         //typedef typename result_of::element<DomainConfiguration, CellTag::dim>::type     CellType;
         
         

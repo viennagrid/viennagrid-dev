@@ -181,7 +181,7 @@ namespace viennagrid
     typedef typename viennagrid::result_of::element_tag<CellTypeOrTag>::type CellTag;
     typedef typename viennagrid::result_of::point_type<SegmentType>::type                              PointType;
     typedef typename viennagrid::result_of::element<SegmentType, typename CellTag::facet_tag>::type   FacetType;
-    typedef typename viennagrid::result_of::const_element_handle<SegmentType, typename CellTag::facet_tag>::type   ConstFacetHookType;
+    typedef typename viennagrid::result_of::const_handle<SegmentType, typename CellTag::facet_tag>::type   ConstFacetHookType;
     typedef typename viennagrid::result_of::element<SegmentType, CellTag>::type     CellType;
 
     typedef typename viennagrid::result_of::const_element_range<SegmentType, typename CellTag::facet_tag>::type      FacetRange;
@@ -266,7 +266,7 @@ namespace viennagrid
 //     typedef typename viennagrid::result_of::element_tag<CellTypeOrTag>::type CellTag;
 //     typedef typename viennagrid::result_of::point_type<SegmentType>::type                              PointType;
 //     typedef typename viennagrid::result_of::element<SegmentType, typename CellTag::facet_tag>::type   FacetType;
-//     typedef typename viennagrid::result_of::const_element_handle<SegmentType, typename CellTag::facet_tag>::type   ConstFacetHookType;
+//     typedef typename viennagrid::result_of::const_handle<SegmentType, typename CellTag::facet_tag>::type   ConstFacetHookType;
 //     typedef typename viennagrid::result_of::element<SegmentType, CellTag>::type     CellType;
 // 
 //     typedef typename viennagrid::result_of::const_element_range<SegmentType, typename CellTag::facet_tag>::type      FacetRange;

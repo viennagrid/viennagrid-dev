@@ -48,7 +48,7 @@ int main()
   typedef viennagrid::result_of::element<DomainType, viennagrid::vertex_tag>::type       VertexType;
   typedef viennagrid::result_of::element<DomainType, viennagrid::line_tag>::type       EdgeType;
   typedef viennagrid::result_of::element<DomainType, CellTag::facet_tag>::type FacetType;
-  typedef viennagrid::result_of::element_handle<DomainType, CellTag::facet_tag>::type FacetHookType;
+  typedef viennagrid::result_of::handle<DomainType, CellTag::facet_tag>::type FacetHookType;
   typedef viennagrid::result_of::element<DomainType, CellTag>::type   CellType;
                                             
   typedef viennagrid::result_of::element_range<DomainType, viennagrid::vertex_tag>::type       VertexRange;

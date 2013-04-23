@@ -638,14 +638,14 @@ namespace viennagrid
       //typedef typename DomainType::config_type           Config;
       //typedef typename Config::cell_tag                  CellTag;
       typedef typename viennagrid::result_of::element<DomainType, CellTag>::type CellType;
-      typedef typename viennagrid::result_of::const_element_handle<DomainType, CellTag>::type ConstCellHookType;
+      typedef typename viennagrid::result_of::const_handle<DomainType, CellTag>::type ConstCellHookType;
       
       typedef typename viennagrid::result_of::point_type<DomainType>::type                            PointType;
       typedef typename viennagrid::result_of::element<DomainType, vertex_tag>::type                         VertexType;
       typedef typename viennagrid::result_of::element<DomainType, line_tag>::type                         EdgeType;
-      typedef typename viennagrid::result_of::const_element_handle<DomainType, line_tag>::type                         ConstEdgeHookType;
+      typedef typename viennagrid::result_of::const_handle<DomainType, line_tag>::type                         ConstEdgeHookType;
       typedef typename viennagrid::result_of::element<DomainType, triangle_tag>::type                         FacetType;
-      typedef typename viennagrid::result_of::const_element_handle<DomainType, triangle_tag>::type                         ConstFacetHookType;
+      typedef typename viennagrid::result_of::const_handle<DomainType, triangle_tag>::type                         ConstFacetHookType;
       //typedef typename viennagrid::result_of::element<DomainType, CellTag>::type              CellType;
       
       typedef typename viennagrid::result_of::const_element_range<DomainType, CellTag>::type    CellRange;
@@ -866,7 +866,7 @@ namespace viennagrid
       //typedef typename Config::cell_tag                  CellTag;
       
       typedef typename viennagrid::result_of::element<DomainType, CellTag>::type CellType;
-      typedef typename viennagrid::result_of::const_element_handle<DomainType, CellTag>::type ConstCellHookType;
+      typedef typename viennagrid::result_of::const_handle<DomainType, CellTag>::type ConstCellHookType;
       
       typedef typename viennagrid::result_of::point_type<DomainType>::type                            PointType;
       typedef typename viennagrid::result_of::element<DomainType, vertex_tag>::type                         VertexType;

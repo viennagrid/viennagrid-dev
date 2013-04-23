@@ -66,9 +66,9 @@ namespace viennagrid
       //typedef typename result_of::point<DomainConfiguration>::type                              PointType;
       //typedef typename result_of::point_type<DomainType>::type                                  PointType;
       typedef typename result_of::element<DomainType, viennagrid::vertex_tag>::type                           VertexType;
-      typedef typename result_of::element_handle<DomainType, viennagrid::vertex_tag>::type                           VertexHookType;
+      typedef typename result_of::handle<DomainType, viennagrid::vertex_tag>::type                           VertexHookType;
       typedef typename result_of::element<DomainType, CellTag>::type     CellType;
-      typedef typename result_of::element_handle<DomainType, CellTag>::type     CellHookType;
+      typedef typename result_of::handle<DomainType, CellTag>::type     CellHookType;
       //typedef typename DomainTypes<DomainConfiguration>::segment_type  Segment;
 
       typedef typename viennagrid::result_of::element_range<DomainType, viennagrid::vertex_tag>::type   VertexRange;

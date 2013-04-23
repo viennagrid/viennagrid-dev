@@ -382,14 +382,14 @@ namespace viennagrid
     
   template<typename domain_type,
            typename element_tag_1, typename bnd_cell_typelist_1, typename id_type_1,
-           typename element_handle_type_2>
+           typename handle_type_2>
   typename viennagrid::result_of::element<domain_type, viennagrid::vertex_tag>::type
   local_vertex(const domain_type & domain,
                element_t<element_tag_1, bnd_cell_typelist_1, id_type_1> const & host_ncell,
-               element_handle_type_2 const & bnd_kcell_handle,
+               handle_type_2 const & bnd_kcell_handle,
                std::size_t index)
   {
-    typedef typename viennagrid::storage::handle::value_type<element_handle_type_2>::type element_type_2;
+    typedef typename viennagrid::storage::handle::value_type<handle_type_2>::type element_type_2;
     const element_type_2 & bnd_kcell = viennagrid::dereference_handle(domain, bnd_kcell_handle);
     return viennagrid::elements< viennagrid::vertex_tag >(bnd_kcell)[host_ncell.global_to_local_orientation(bnd_kcell_handle, index)];
   }
@@ -430,15 +430,15 @@ namespace viennagrid
         };
         
         template<typename domain_container_collection_type_, typename inserter_type_, typename element_type_or_tag>
-        struct element_handle<topologic_domain_t<domain_container_collection_type_, inserter_type_>, element_type_or_tag>
+        struct handle<topologic_domain_t<domain_container_collection_type_, inserter_type_>, element_type_or_tag>
         {
-            typedef typename element_handle<domain_container_collection_type_, element_type_or_tag>::type type;
+            typedef typename handle<domain_container_collection_type_, element_type_or_tag>::type type;
         };
         
         template<typename domain_container_collection_type_, typename inserter_type_, typename element_type_or_tag>
-        struct const_element_handle<topologic_domain_t<domain_container_collection_type_, inserter_type_>, element_type_or_tag>
+        struct const_handle<topologic_domain_t<domain_container_collection_type_, inserter_type_>, element_type_or_tag>
         {
-            typedef typename const_element_handle<domain_container_collection_type_, element_type_or_tag>::type type;
+            typedef typename const_handle<domain_container_collection_type_, element_type_or_tag>::type type;
         };
         
         
@@ -631,7 +631,7 @@ namespace viennagrid
     template<typename element_tag, typename boundary_cell_container_typelist, typename id_type>
     void set_vertex(
             viennagrid::element_t<element_tag, boundary_cell_container_typelist, id_type> & element,
-            typename viennagrid::result_of::element_handle< viennagrid::element_t<element_tag, boundary_cell_container_typelist, id_type>, vertex_tag >::type vertex_handle,
+            typename viennagrid::result_of::handle< viennagrid::element_t<element_tag, boundary_cell_container_typelist, id_type>, vertex_tag >::type vertex_handle,
             unsigned int pos
         )
     {
@@ -639,7 +639,7 @@ namespace viennagrid
     }
     
     template<typename domain_type>
-    typename result_of::element_handle<domain_type, viennagrid::vertex_tag>::type get_vertex_handle( domain_type & domain, unsigned int pos )
+    typename result_of::handle<domain_type, viennagrid::vertex_tag>::type get_vertex_handle( domain_type & domain, unsigned int pos )
     {
         typedef typename result_of::element<domain_type, viennagrid::vertex_tag>::type vertex_type;
         return viennagrid::storage::collection::get<vertex_type>( container_collection(domain) ).handle_at(pos);

@@ -386,10 +386,10 @@ namespace viennagrid
 //     };
 
     template<typename config_domain_segment_element_or_something_like_that, typename element_tag>
-    struct element_handle;
+    struct handle;
     
     template<typename config_domain_segment_element_or_something_like_that, typename element_tag>
-    struct const_element_handle;
+    struct const_handle;
     
 //     template<typename config_domain_segment_element_or_something_like_that, long dim>
 //     struct ncell;
@@ -495,13 +495,13 @@ namespace viennagrid
         template<typename element_tag, typename boundary_cell_typelist, typename id_type>
         struct facet_handle< element_t<element_tag, boundary_cell_typelist, id_type> >
         {
-            typedef typename element_handle< element_t<element_tag, boundary_cell_typelist, id_type>, typename facet_tag<element_tag>::type >::type type;
+            typedef typename handle< element_t<element_tag, boundary_cell_typelist, id_type>, typename facet_tag<element_tag>::type >::type type;
         };
         
         template<typename element_tag, typename boundary_cell_typelist, typename id_type>
         struct const_facet_handle< element_t<element_tag, boundary_cell_typelist, id_type> >
         {
-            typedef typename const_element_handle< element_t<element_tag, boundary_cell_typelist, id_type>, typename facet_tag<element_tag>::type >::type type;
+            typedef typename const_handle< element_t<element_tag, boundary_cell_typelist, id_type>, typename facet_tag<element_tag>::type >::type type;
         };
         
         
