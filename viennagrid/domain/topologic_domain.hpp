@@ -453,40 +453,6 @@ namespace viennagrid
         {
             typedef typename const_element_range<domain_container_collection_type_, element_type_or_tag>::type type;
         };
-        
-        
-        
-        
-//         template<typename domain_container_collection_type_, typename inserter_type_, long dim>
-//         struct ncell< topologic_domain_t<domain_container_collection_type_, inserter_type_>, dim >
-//         {
-//             typedef typename ncell<domain_container_collection_type_, dim>::type type;
-//         };
-//         
-//         template<typename domain_container_collection_type_, typename inserter_type_, long dim>
-//         struct ncell_handle< topologic_domain_t<domain_container_collection_type_, inserter_type_>, dim >
-//         {
-//             typedef typename ncell_handle<domain_container_collection_type_, dim>::type type;
-//         };
-//         
-//         template<typename domain_container_collection_type_, typename inserter_type_, long dim>
-//         struct const_ncell_handle< topologic_domain_t<domain_container_collection_type_, inserter_type_>, dim >
-//         {
-//             typedef typename const_ncell_handle<domain_container_collection_type_, dim>::type type;
-//         };
-//         
-//         
-//         template<typename domain_container_collection_type_, typename inserter_type_, long dim>
-//         struct ncell_range< topologic_domain_t<domain_container_collection_type_, inserter_type_>, dim >
-//         {
-//             typedef typename ncell_range<domain_container_collection_type_, dim>::type type;
-//         };
-//         
-//         template<typename domain_container_collection_type_, typename inserter_type_, long dim>
-//         struct const_ncell_range< topologic_domain_t<domain_container_collection_type_, inserter_type_>, dim >
-//         {
-//             typedef typename const_ncell_range<domain_container_collection_type_, dim>::type type;
-//         };
     }
     
     
@@ -501,22 +467,7 @@ namespace viennagrid
     {
         return elements<element_type_or_tag>(domain.get_container_collection());
     }
-    
-    template<long dim, typename domain_container_collection_type_, typename inserter_type_>
-    typename result_of::ncell_range<topologic_domain_t<domain_container_collection_type_, inserter_type_>, dim>::type ncells(topologic_domain_t<domain_container_collection_type_, inserter_type_> & domain)
-    {
-        return ncells<dim>(domain.get_container_collection());
-    }
-    
-    template<long dim, typename domain_container_collection_type_, typename inserter_type_>
-    typename result_of::const_ncell_range<topologic_domain_t<domain_container_collection_type_, inserter_type_>, dim>::type ncells(const topologic_domain_t<domain_container_collection_type_, inserter_type_> & domain)
-    {
-        return ncells<dim>(domain.get_container_collection());
-    }
-    
-    
-    
-    
+
     
     
 //     template<typename domain_type, typename id_type>
@@ -537,18 +488,11 @@ namespace viennagrid
 //         return false;
 //     }
 //     
-    
-    
 
     
     
     
-    
-    
-    
-    
     template<typename domain_type, typename id_type>
-    //typename result_of::element<domain_type, typename id_type::value_type::tag>::type & 
     typename viennagrid::result_of::iterator< typename viennagrid::result_of::element_range<domain_type, typename id_type::value_type::tag>::type >::type
             find(domain_type & domain, id_type id )
     {
@@ -564,7 +508,6 @@ namespace viennagrid
     }
     
     template<typename domain_type, typename id_type>
-    //const typename result_of::element<domain_type, typename id_type::value_type::tag>::type & find(const domain_type & domain, id_type id )
     typename viennagrid::result_of::const_iterator< typename viennagrid::result_of::element_range<domain_type, typename id_type::value_type::tag>::type >::type
             find(const domain_type & domain, id_type id )
     {
