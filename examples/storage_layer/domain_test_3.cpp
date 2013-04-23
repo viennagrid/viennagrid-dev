@@ -41,18 +41,18 @@ int main()
 {
     
     //
-    // First define the type of hook to use:
+    // First define the type of handle to use:
     //
     
-    //typedef viennagrid::storage::pointer_hook_tag hook_tag;
-    //typedef viennagrid::storage::iterator_hook_tag hook_tag;
-    typedef viennagrid::storage::id_hook_tag hook_tag;
+    //typedef viennagrid::storage::pointer_handle_tag handle_tag;
+    //typedef viennagrid::storage::iterator_handle_tag handle_tag;
+    typedef viennagrid::storage::id_handle_tag handle_tag;
     
     
     
     
     
-    typedef viennagrid::result_of::default_topologic_config<viennagrid::tetrahedron_tag, hook_tag>::type toplological_config;
+    typedef viennagrid::result_of::default_topologic_config<viennagrid::tetrahedron_tag, handle_tag>::type toplological_config;
 
     
     
@@ -69,16 +69,16 @@ int main()
     //    
      
     typedef viennagrid::result_of::element<domain_type, viennagrid::vertex_tag>::type vertex_type;
-    typedef viennagrid::result_of::element_hook<domain_type, viennagrid::vertex_tag>::type vertex_hook_type;
+    typedef viennagrid::result_of::element_handle<domain_type, viennagrid::vertex_tag>::type vertex_handle_type;
     
     typedef viennagrid::result_of::element<domain_type, viennagrid::line_tag>::type line_type;
-    typedef viennagrid::result_of::element_hook<domain_type, viennagrid::line_tag>::type line_hook_type;
+    typedef viennagrid::result_of::element_handle<domain_type, viennagrid::line_tag>::type line_handle_type;
     
     typedef viennagrid::result_of::element<domain_type, viennagrid::triangle_tag>::type triangle_type;
-    typedef viennagrid::result_of::element_hook<domain_type, viennagrid::triangle_tag>::type triangle_hook_type;
+    typedef viennagrid::result_of::element_handle<domain_type, viennagrid::triangle_tag>::type triangle_handle_type;
     
     typedef viennagrid::result_of::element<domain_type, viennagrid::tetrahedron_tag>::type tetrahedron_type;
-    typedef viennagrid::result_of::element_hook<domain_type, viennagrid::tetrahedron_tag>::type tetrahedron_hook_type;
+    typedef viennagrid::result_of::element_handle<domain_type, viennagrid::tetrahedron_tag>::type tetrahedron_handle_type;
     
     
     
@@ -101,26 +101,26 @@ int main()
     // filling the view/domain
     //   
     
-    std::vector<vertex_hook_type> hooks(4);
+    std::vector<vertex_handle_type> handles(4);
     
     // pushing a tetrahedron to domain_view_1
-    hooks[0] = viennagrid::create_element<vertex_type>( domain );
-    hooks[1] = viennagrid::create_element<vertex_type>( domain );
-    hooks[2] = viennagrid::create_element<vertex_type>( domain );
-    hooks[3] = viennagrid::create_element<vertex_type>( domain );
+    handles[0] = viennagrid::create_element<vertex_type>( domain );
+    handles[1] = viennagrid::create_element<vertex_type>( domain );
+    handles[2] = viennagrid::create_element<vertex_type>( domain );
+    handles[3] = viennagrid::create_element<vertex_type>( domain );
     
     // creates the tetrahedron within the domain, all boundary cell generation is done here implicit
-    viennagrid::create_element<tetrahedron_type>( domain_view_1, hooks );
+    viennagrid::create_element<tetrahedron_type>( domain_view_1, handles );
     
     
     // pushing a tetrahedron to domain_view_2
-    hooks[0] = viennagrid::create_element<vertex_type>( domain );
-    hooks[1] = viennagrid::create_element<vertex_type>( domain );
-    hooks[2] = viennagrid::create_element<vertex_type>( domain );
-    hooks[3] = viennagrid::create_element<vertex_type>( domain );
+    handles[0] = viennagrid::create_element<vertex_type>( domain );
+    handles[1] = viennagrid::create_element<vertex_type>( domain );
+    handles[2] = viennagrid::create_element<vertex_type>( domain );
+    handles[3] = viennagrid::create_element<vertex_type>( domain );
     
     // creates the tetrahedron within the domain, all boundary cell generation is done here implicit
-    viennagrid::create_element<tetrahedron_type>( domain_view_2, hooks );
+    viennagrid::create_element<tetrahedron_type>( domain_view_2, handles );
     
     
     

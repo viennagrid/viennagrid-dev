@@ -181,12 +181,12 @@ namespace viennagrid
     typedef typename viennagrid::result_of::element_tag<CellTypeOrTag>::type CellTag;
     typedef typename viennagrid::result_of::point_type<SegmentType>::type                              PointType;
     typedef typename viennagrid::result_of::element<SegmentType, typename CellTag::facet_tag>::type   FacetType;
-    typedef typename viennagrid::result_of::const_element_hook<SegmentType, typename CellTag::facet_tag>::type   ConstFacetHookType;
+    typedef typename viennagrid::result_of::const_element_handle<SegmentType, typename CellTag::facet_tag>::type   ConstFacetHookType;
     typedef typename viennagrid::result_of::element<SegmentType, CellTag>::type     CellType;
 
     typedef typename viennagrid::result_of::const_element_range<SegmentType, typename CellTag::facet_tag>::type      FacetRange;
     typedef typename viennagrid::result_of::iterator<FacetRange>::type                                           FacetIterator;
-    typedef typename viennagrid::result_of::hook_iterator<FacetRange>::type                                           FacetHookIterator;
+    typedef typename viennagrid::result_of::handle_iterator<FacetRange>::type                                           FacetHookIterator;
     
     //typedef typename ConfigType::numeric_type         numeric_type;
 
@@ -196,11 +196,11 @@ namespace viennagrid
     // Step 1: Write facets of segment 1 to a map:
     //
     FacetRange facets_seg1 = viennagrid::elements<typename CellTag::facet_tag>(seg1);
-    for (FacetHookIterator fit = facets_seg1.hook_begin();
-          fit != facets_seg1.hook_end();
+    for (FacetHookIterator fit = facets_seg1.handle_begin();
+          fit != facets_seg1.handle_end();
           ++fit)
     {
-        const FacetType & facet = viennagrid::dereference_hook(seg1, *fit);
+        const FacetType & facet = viennagrid::dereference_handle(seg1, *fit);
         
       if (is_boundary<CellTypeOrTag>(facet, seg1))
         facets_ptrs_seg1.insert( *fit );
@@ -210,11 +210,11 @@ namespace viennagrid
     // Step 2: Compare facet in segment 2 with those stored in the map
     //
     FacetRange facets_seg2 = viennagrid::elements<typename CellTag::facet_tag>(seg2);
-    for (FacetHookIterator fit = facets_seg2.hook_begin();
-          fit != facets_seg2.hook_end();
+    for (FacetHookIterator fit = facets_seg2.handle_begin();
+          fit != facets_seg2.handle_end();
           ++fit)
     {
-        const FacetType & facet = viennagrid::dereference_hook(seg2, *fit);
+        const FacetType & facet = viennagrid::dereference_handle(seg2, *fit);
         
       if (facets_ptrs_seg1.find( *fit ) != facets_ptrs_seg1.end())
         viennadata::access<KeyType, bool>(key)(facet) = true;
@@ -266,12 +266,12 @@ namespace viennagrid
 //     typedef typename viennagrid::result_of::element_tag<CellTypeOrTag>::type CellTag;
 //     typedef typename viennagrid::result_of::point_type<SegmentType>::type                              PointType;
 //     typedef typename viennagrid::result_of::element<SegmentType, typename CellTag::facet_tag>::type   FacetType;
-//     typedef typename viennagrid::result_of::const_element_hook<SegmentType, typename CellTag::facet_tag>::type   ConstFacetHookType;
+//     typedef typename viennagrid::result_of::const_element_handle<SegmentType, typename CellTag::facet_tag>::type   ConstFacetHookType;
 //     typedef typename viennagrid::result_of::element<SegmentType, CellTag>::type     CellType;
 // 
 //     typedef typename viennagrid::result_of::const_element_range<SegmentType, typename CellTag::facet_tag>::type      FacetRange;
 //     typedef typename viennagrid::result_of::iterator<FacetRange>::type                                           FacetIterator;
-//     typedef typename viennagrid::result_of::hook_iterator<FacetRange>::type                                           FacetHookIterator;
+//     typedef typename viennagrid::result_of::handle_iterator<FacetRange>::type                                           FacetHookIterator;
 //     
 //     //typedef typename ConfigType::numeric_type         numeric_type;
 // 
@@ -281,11 +281,11 @@ namespace viennagrid
 //     // Step 1: Write facets of segment 1 to a map:
 //     //
 //     FacetRange facets_seg1 = viennagrid::elements<typename CellTag::facet_tag>(seg1);
-//     for (FacetHookIterator fit = facets_seg1.hook_begin();
-//           fit != facets_seg1.hook_end();
+//     for (FacetHookIterator fit = facets_seg1.handle_begin();
+//           fit != facets_seg1.handle_end();
 //           ++fit)
 //     {
-//         FacetType & facet = viennagrid::dereference_hook(seg1, *fit);
+//         FacetType & facet = viennagrid::dereference_handle(seg1, *fit);
 //         
 //       if (is_boundary(facet, seg1))
 //         facets_ptrs_seg1.insert( *fit );
@@ -295,11 +295,11 @@ namespace viennagrid
 //     // Step 2: Compare facet in segment 2 with those stored in the map
 //     //
 //     FacetRange facets_seg2 = viennagrid::elements<typename CellTag::facet_tag>(seg2);
-//     for (FacetIterator fit = facets_seg2.hook_begin();
-//           fit != facets_seg2.hook_end();
+//     for (FacetIterator fit = facets_seg2.handle_begin();
+//           fit != facets_seg2.handle_end();
 //           ++fit)
 //     {
-//         FacetType & facet = viennagrid::dereference_hook(seg2, *fit);
+//         FacetType & facet = viennagrid::dereference_handle(seg2, *fit);
 //         
 //       if (facets_ptrs_seg1.find( *fit ) != facets_ptrs_seg1.end())
 //         viennadata::access<KeyType, bool>(key)(facet) = true;

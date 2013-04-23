@@ -68,14 +68,14 @@ namespace viennagrid
             int index = 0;
             for (int i = 0; i < element.container( dimension_tag<0>() ).size()-1; ++i)
             {
-                bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(i), 0 );
-                bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(i+1), 1 ); 
+                bnd_cell.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(i), 0 );
+                bnd_cell.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(i+1), 1 ); 
                 element.set_bnd_cell( bnd_cell, inserter(bnd_cell), index++ );
             }
                 
                 
-            bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at( element.container( dimension_tag<0>() ).size()-1 ), 0 );
-            bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(0), 1 );
+            bnd_cell.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at( element.container( dimension_tag<0>() ).size()-1 ), 0 );
+            bnd_cell.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(0), 1 );
             element.set_bnd_cell( bnd_cell, inserter(bnd_cell), index++ );
         }
     };

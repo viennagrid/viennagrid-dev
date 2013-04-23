@@ -166,7 +166,7 @@ int main()
     >::type view_collection_type;
     
     view_collection_type view_collection;
-    viennagrid::storage::container_collection::hook(collection, view_collection);
+    viennagrid::storage::container_collection::handle(collection, view_collection);
     
     cout << "view_collection" << endl;
     cout << view_collection << endl;

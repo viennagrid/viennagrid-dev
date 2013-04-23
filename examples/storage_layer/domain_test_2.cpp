@@ -47,19 +47,19 @@ int main()
 {
     
     //
-    // First define the type of hook to use:
+    // First define the type of handle to use:
     //
     
-    //typedef viennagrid::storage::pointer_hook_tag hook_tag;
-    //typedef viennagrid::storage::iterator_hook_tag hook_tag;
-    typedef viennagrid::storage::id_hook_tag hook_tag;
+    //typedef viennagrid::storage::pointer_handle_tag handle_tag;
+    //typedef viennagrid::storage::iterator_handle_tag handle_tag;
+    typedef viennagrid::storage::id_handle_tag handle_tag;
     
 
     typedef viennameta::make_typelist< viennameta::static_pair<viennagrid::tetrahedron_tag, double> >::type metainfo_typelist;
     
 
     typedef ublas::vector<double> vector_type;
-    typedef viennagrid::result_of::geometric_domain_config< viennagrid::tetrahedron_tag, vector_type, hook_tag, metainfo_typelist >::type domain_config;
+    typedef viennagrid::result_of::geometric_domain_config< viennagrid::tetrahedron_tag, vector_type, handle_tag, metainfo_typelist >::type domain_config;
     
     //
     // typedefing and setting up the geometric domain
@@ -73,25 +73,25 @@ int main()
     //
     
     typedef viennagrid::result_of::element<domain_type, viennagrid::vertex_tag>::type vertex_type;
-    typedef viennagrid::result_of::element_hook<domain_type, viennagrid::vertex_tag>::type vertex_hook_type;
+    typedef viennagrid::result_of::element_handle<domain_type, viennagrid::vertex_tag>::type vertex_handle_type;
     
     typedef viennagrid::result_of::element<domain_type, viennagrid::line_tag>::type line_type;
     typedef viennagrid::result_of::element<domain_type, viennagrid::triangle_tag>::type triangle_type;
     
     typedef viennagrid::result_of::element<domain_type, viennagrid::tetrahedron_tag>::type tetrahedron_type;
-    typedef viennagrid::result_of::element_hook<domain_type, viennagrid::tetrahedron_tag>::type tetrahedron_hook_type;
+    typedef viennagrid::result_of::element_handle<domain_type, viennagrid::tetrahedron_tag>::type tetrahedron_handle_type;
     
 
     //
     // Adding a tetrahedron
     //
     
-    // creates four vertices within the domain, vh is short vor vertex hook
+    // creates four vertices within the domain, vh is short vor vertex handle
     // create_element is responsible for resizing all meta-info container which are associated with vertex_type
-    vertex_hook_type vh0 = viennagrid::create_element<vertex_type>( domain );
-    vertex_hook_type vh1 = viennagrid::create_element<vertex_type>( domain );
-    vertex_hook_type vh2 = viennagrid::create_element<vertex_type>( domain );
-    vertex_hook_type vh3 = viennagrid::create_element<vertex_type>( domain );
+    vertex_handle_type vh0 = viennagrid::create_element<vertex_type>( domain );
+    vertex_handle_type vh1 = viennagrid::create_element<vertex_type>( domain );
+    vertex_handle_type vh2 = viennagrid::create_element<vertex_type>( domain );
+    vertex_handle_type vh3 = viennagrid::create_element<vertex_type>( domain );
     
     
     // create geometric information for the vertices
@@ -113,12 +113,12 @@ int main()
     viennagrid::point(domain, vh3) = p3;
     
     
-    // creates a hook buffer for the vertex hooks of the tetdrahedron
-    std::vector<vertex_hook_type> hooks(4);
-    hooks[0] = vh0; hooks[1] = vh1; hooks[2] = vh2; hooks[3] = vh3;
+    // creates a handle buffer for the vertex handles of the tetdrahedron
+    std::vector<vertex_handle_type> handles(4);
+    handles[0] = vh0; handles[1] = vh1; handles[2] = vh2; handles[3] = vh3;
     
     // creates the tetrahedron within the domain, all boundary cell generation is done here implicit
-    tetrahedron_hook_type tet = viennagrid::create_element<tetrahedron_type>( domain, hooks );
+    tetrahedron_handle_type tet = viennagrid::create_element<tetrahedron_type>( domain, handles );
     
     // set a double value to a tetdrahedron
     viennagrid::look_up<double>(domain, tet) = 1.0;

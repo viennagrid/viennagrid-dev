@@ -1,5 +1,5 @@
-#ifndef VIENNAGRID_STORAGE_HOOK_HPP
-#define VIENNAGRID_STORAGE_HOOK_HPP
+#ifndef VIENNAGRID_STORAGE_HANDLE_HPP
+#define VIENNAGRID_STORAGE_HANDLE_HPP
 
 #include <iterator>
 #include <vector>
@@ -15,33 +15,33 @@ namespace viennagrid
     {
         
 
-        namespace hook
+        namespace handle
         {
             
             template<typename base_container_type, typename view_reference_tag>
-            struct hook_type
+            struct handle_type
             {};
             
             template<typename base_container_type>
-            struct hook_type<base_container_type, no_hook_tag>
+            struct handle_type<base_container_type, no_handle_tag>
             {
                 typedef viennameta::null_type type;
             };
             
             template<typename base_container_type>
-            struct hook_type<base_container_type, pointer_hook_tag>
+            struct handle_type<base_container_type, pointer_handle_tag>
             {
                 typedef typename base_container_type::pointer type;
             };
             
             template<typename base_container_type>
-            struct hook_type<base_container_type, iterator_hook_tag>
+            struct handle_type<base_container_type, iterator_handle_tag>
             {
                 typedef typename base_container_type::iterator type;
             };
             
             template<typename base_container_type>
-            struct hook_type<base_container_type, id_hook_tag>
+            struct handle_type<base_container_type, id_handle_tag>
             {
                 typedef typename base_container_type::value_type::id_type type;
             };
@@ -50,29 +50,29 @@ namespace viennagrid
             
             
             template<typename base_container_type, typename view_reference_tag>
-            struct const_hook_type
+            struct const_handle_type
             {};
             
             template<typename base_container_type>
-            struct const_hook_type<base_container_type, no_hook_tag>
+            struct const_handle_type<base_container_type, no_handle_tag>
             {
                 typedef viennameta::null_type type;
             };
             
             template<typename base_container_type>
-            struct const_hook_type<base_container_type, pointer_hook_tag>
+            struct const_handle_type<base_container_type, pointer_handle_tag>
             {
                 typedef typename base_container_type::const_pointer type;
             };
             
             template<typename base_container_type>
-            struct const_hook_type<base_container_type, iterator_hook_tag>
+            struct const_handle_type<base_container_type, iterator_handle_tag>
             {
                 typedef typename base_container_type::const_iterator type;
             };
             
             template<typename base_container_type>
-            struct const_hook_type<base_container_type, id_hook_tag>
+            struct const_handle_type<base_container_type, id_handle_tag>
             {
                 typedef typename base_container_type::value_type::const_id_type type;
             };
@@ -81,12 +81,12 @@ namespace viennagrid
             
             
             
-            template<typename hook_type, typename container_type>
-            struct invalid_hook_helper
+            template<typename handle_type, typename container_type>
+            struct invalid_handle_helper
             {
-                typedef typename container_type::const_iterator invalid_hook_type;
+                typedef typename container_type::const_iterator invalid_handle_type;
                 
-                static invalid_hook_type get(const container_type & container)
+                static invalid_handle_type get(const container_type & container)
                 {
                     return container.end();
                 }
@@ -94,35 +94,35 @@ namespace viennagrid
             };
             
             template<typename value_type, typename container_type>
-            struct invalid_hook_helper<value_type *, container_type>
+            struct invalid_handle_helper<value_type *, container_type>
             {
-                typedef const value_type * invalid_hook_type;
+                typedef const value_type * invalid_handle_type;
                 
-                static invalid_hook_type get(const container_type & container)
+                static invalid_handle_type get(const container_type & container)
                 {
                     return NULL;
                 }
             };
             
             template<typename value_type, typename container_type>
-            struct invalid_hook_helper<const value_type *, container_type>
+            struct invalid_handle_helper<const value_type *, container_type>
             {
-                typedef const value_type * invalid_hook_type;
+                typedef const value_type * invalid_handle_type;
                 
-                static invalid_hook_type get(const container_type & container)
+                static invalid_handle_type get(const container_type & container)
                 {
                     return NULL;
                 }
             };
             
             template<typename id_type, typename value_type, typename container_type>
-            struct invalid_hook_helper< smart_id_t<value_type, id_type>, container_type>
+            struct invalid_handle_helper< smart_id_t<value_type, id_type>, container_type>
             {
-                typedef smart_id_t<value_type, id_type> invalid_hook_type;
+                typedef smart_id_t<value_type, id_type> invalid_handle_type;
                 
-                static invalid_hook_type get(const container_type & container)
+                static invalid_handle_type get(const container_type & container)
                 {
-                    return invalid_hook_type(-1);
+                    return invalid_handle_type(-1);
                 }
             };
             
@@ -130,9 +130,9 @@ namespace viennagrid
             
             
             template<typename container_type>
-            typename invalid_hook_helper<typename container_type::hook_type, container_type>::invalid_hook_type invalid_hook(const container_type & container)
+            typename invalid_handle_helper<typename container_type::handle_type, container_type>::invalid_handle_type invalid_handle(const container_type & container)
             {
-                return invalid_hook_helper<typename container_type::hook_type, container_type>::get(container);
+                return invalid_handle_helper<typename container_type::handle_type, container_type>::get(container);
             }
             
             
@@ -140,52 +140,52 @@ namespace viennagrid
             
             
             
-            template<typename container_type, typename hook_tag>
-            struct iterator_to_hook;
+            template<typename container_type, typename handle_tag>
+            struct iterator_to_handle;
             
             template<typename container_type>
-            struct iterator_to_hook<container_type, no_hook_tag>
+            struct iterator_to_handle<container_type, no_handle_tag>
             {
-                typedef typename viennagrid::storage::hook::hook_type<container_type, no_hook_tag>::type hook_type;
+                typedef typename viennagrid::storage::handle::handle_type<container_type, no_handle_tag>::type handle_type;
                 
                 template<typename iterator>
-                static hook_type convert( iterator it ) { return hook_type(); }
+                static handle_type convert( iterator it ) { return handle_type(); }
             };
             
             template<typename container_type>
-            struct iterator_to_hook<container_type, iterator_hook_tag>
+            struct iterator_to_handle<container_type, iterator_handle_tag>
             {
-                typedef typename viennagrid::storage::hook::hook_type<container_type, iterator_hook_tag>::type hook_type;
+                typedef typename viennagrid::storage::handle::handle_type<container_type, iterator_handle_tag>::type handle_type;
                 
-                static hook_type convert( hook_type it ) { return it; }
+                static handle_type convert( handle_type it ) { return it; }
             };
             
             template<typename container_type>
-            struct iterator_to_hook<container_type, pointer_hook_tag>
+            struct iterator_to_handle<container_type, pointer_handle_tag>
             {
-                typedef typename viennagrid::storage::hook::hook_type<container_type, pointer_hook_tag>::type hook_type;
+                typedef typename viennagrid::storage::handle::handle_type<container_type, pointer_handle_tag>::type handle_type;
                 
                 template<typename iterator>
-                static hook_type convert( iterator it ) { return &* it; }
+                static handle_type convert( iterator it ) { return &* it; }
             };
             
             template<typename container_type>
-            struct iterator_to_hook<container_type, id_hook_tag>
+            struct iterator_to_handle<container_type, id_handle_tag>
             {
-                typedef typename viennagrid::storage::hook::hook_type<container_type, id_hook_tag>::type hook_type;
+                typedef typename viennagrid::storage::handle::handle_type<container_type, id_handle_tag>::type handle_type;
                 
                 template<typename iterator>
-                static hook_type convert( iterator it ) { return it->id(); }
+                static handle_type convert( iterator it ) { return it->id(); }
             };
             
             
             
             
           
-            template<typename hook_type>
+            template<typename handle_type>
             struct value_type
             {
-                typedef typename hook_type::value_type type;
+                typedef typename handle_type::value_type type;
             };
             
             template<typename value_type_>

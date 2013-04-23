@@ -62,11 +62,11 @@ namespace viennagrid
         typedef typename result_of::element_tag<CellTypeOrTag>::type CellTag;
         typedef typename result_of::element<GeometricDomainType, CellTag>::type CellType;
         //typedef typename CellType::tag                            CellTag;
-        typedef typename result_of::element_hook<GeometricDomainType, CellTag>::type                           CellHookType;
+        typedef typename result_of::element_handle<GeometricDomainType, CellTag>::type                           CellHookType;
 
         //typedef typename result_of::point<ConfigType>::type                              PointType;
         typedef typename result_of::element<GeometricDomainType, vertex_tag>::type                           VertexType;
-        typedef typename result_of::element_hook<GeometricDomainType, vertex_tag>::type                           VertexHookType;
+        typedef typename result_of::element_handle<GeometricDomainType, vertex_tag>::type                           VertexHookType;
         //typedef typename result_of::ncell<DomainType, CellTag::dim>::type     CellType;
 
         typedef typename viennagrid::result_of::element_range<GeometricDomainType, vertex_tag>::type   VertexRange;
@@ -124,7 +124,7 @@ namespace viennagrid
           for (int j=0; j<point_dim; j++)
             reader >> p[j];
             
-          //viennagrid::dereference_hook(domain, vertex).id( storage::smart_id<VertexType, int>(i) );
+          //viennagrid::dereference_handle(domain, vertex).id( storage::smart_id<VertexType, int>(i) );
         }
     
         //std::cout << "DONE" << std::endl;
@@ -148,8 +148,8 @@ namespace viennagrid
         for (int i=0; i<cell_num; ++i)
         {
           long vertex_num;
-          //std::vector<VertexHookType> cell_vertex_hooks(topology::bndcells<CellTag, 0>::num);
-          viennagrid::storage::static_array<VertexHookType, topology::boundary_cells<CellTag, vertex_tag>::num> cell_vertex_hooks;
+          //std::vector<VertexHookType> cell_vertex_handles(topology::bndcells<CellTag, 0>::num);
+          viennagrid::storage::static_array<VertexHookType, topology::boundary_cells<CellTag, vertex_tag>::num> cell_vertex_handles;
           
           if (!reader.good())
             throw bad_file_format_exception(filename, "EOF encountered while reading cells (segment index expected).");
@@ -163,7 +163,7 @@ namespace viennagrid
               throw bad_file_format_exception(filename, "EOF encountered while reading cells (cell ID expected).");
             
             reader >> vertex_num;
-            cell_vertex_hooks[j] = viennagrid::get_vertex_hook(domain, vertex_num - 1);
+            cell_vertex_handles[j] = viennagrid::get_vertex_handle(domain, vertex_num - 1);
           }
     
           if (segments.size() < segment_index) //not that segment_index is 1-based
@@ -172,7 +172,7 @@ namespace viennagrid
             segments[segment_index - 1] = viennagrid::create_view<SegmentType>(domain);
           }
           
-          viennagrid::create_element<CellType>(segments[segment_index - 1], cell_vertex_hooks, typename CellType::id_type(i));
+          viennagrid::create_element<CellType>(segments[segment_index - 1], cell_vertex_handles, typename CellType::id_type(i));
         }
         
         //std::cout << "All done!" << std::endl;

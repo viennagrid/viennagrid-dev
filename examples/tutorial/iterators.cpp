@@ -37,7 +37,7 @@ int main()
 {
     typedef viennagrid::point_t<double, viennagrid::cartesian_cs<3> > PointType;  //use this for a 3d examples
     typedef viennagrid::tetrahedron_tag                           CellTag;
-    typedef viennagrid::result_of::geometric_domain_config<CellTag, PointType, viennagrid::storage::id_hook_tag >::type DomainConfig;
+    typedef viennagrid::result_of::geometric_domain_config<CellTag, PointType, viennagrid::storage::id_handle_tag >::type DomainConfig;
     typedef viennagrid::result_of::geometric_domain< DomainConfig >::type DomainType;
     typedef viennagrid::result_of::geometric_view<DomainType>::type SegmentType;
 
@@ -51,7 +51,7 @@ int main()
   // Define the types of the elements in the domain (derived from ConfigType):
   //
   typedef viennagrid::result_of::element<DomainType, viennagrid::vertex_tag>::type                          VertexType;
-  typedef viennagrid::result_of::element_hook<DomainType, viennagrid::vertex_tag>::type                          VertexHookType;
+  typedef viennagrid::result_of::element_handle<DomainType, viennagrid::vertex_tag>::type                          VertexHookType;
   typedef viennagrid::result_of::element<DomainType, viennagrid::line_tag>::type                          EdgeType;
   typedef viennagrid::result_of::element<DomainType, CellTag::facet_tag>::type  FacetType;
   typedef viennagrid::result_of::element<DomainType, CellTag>::type    CellType;
@@ -181,7 +181,7 @@ int main()
   typedef viennagrid::result_of::iterator<EdgeOnFacetRange>::type               EdgeOnFacetIterator;
   
   typedef viennagrid::result_of::element_range<CellType, CellTag::facet_tag>::type    FacetOnCellRange;
-  typedef viennagrid::result_of::hook_iterator<FacetOnCellRange>::type               FacetOnCellHookIterator;
+  typedef viennagrid::result_of::handle_iterator<FacetOnCellRange>::type               FacetOnCellHookIterator;
   typedef viennagrid::result_of::iterator<FacetOnCellRange>::type               FacetOnCellIterator;
 
   for (CellIterator cit = cells.begin(); cit != cells.end(); ++cit) //iterate over all cells
@@ -192,11 +192,11 @@ int main()
     // The facets of the cell are obtained by passing the cell as parameter to the ncell() function
     //
     FacetOnCellRange facets_on_cells = viennagrid::elements<CellTag::facet_tag>(*cit);
-    for (FacetOnCellHookIterator focit = facets_on_cells.hook_begin();
-                             focit != facets_on_cells.hook_end();
+    for (FacetOnCellHookIterator focit = facets_on_cells.handle_begin();
+                             focit != facets_on_cells.handle_end();
                            ++focit)
     {
-      FacetType & facet = viennagrid::dereference_hook(domain, *focit);
+      FacetType & facet = viennagrid::dereference_handle(domain, *focit);
         
       // Iterate over all vertices of the facet:
       std::cout << "Vertices in global orientation: " << std::endl;
@@ -235,7 +235,7 @@ int main()
   
   
   // Iteration over all edges connected to the first vertex in the domain:
-  VertexHookType vh0 = viennagrid::elements<viennagrid::vertex_tag>(domain).hook_at(0);
+  VertexHookType vh0 = viennagrid::elements<viennagrid::vertex_tag>(domain).handle_at(0);
   std::size_t num_v0edges = 0;
   
   // To set up the range, two arguments need to be passed to the ncells() function.

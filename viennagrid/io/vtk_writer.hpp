@@ -71,8 +71,8 @@ namespace viennagrid
 
         //typedef typename result_of::point<DomainConfiguration>::type                              PointType;
         typedef typename result_of::element<DomainType, vertex_tag>::type                           VertexType;
-        typedef typename result_of::element_hook<DomainType, vertex_tag>::type          VertexHookType;
-        typedef typename result_of::const_element_hook<DomainType, vertex_tag>::type          ConstVertexHookType;
+        typedef typename result_of::element_handle<DomainType, vertex_tag>::type          VertexHookType;
+        typedef typename result_of::const_element_handle<DomainType, vertex_tag>::type          ConstVertexHookType;
         //typedef typename result_of::element<DomainConfiguration, CellTag::dim>::type     CellType;
         
         
@@ -99,21 +99,21 @@ namespace viennagrid
         void writePoints(SegmentType const & segment, std::ofstream & writer, int seg_num)
         {
           typedef typename viennagrid::result_of::const_element_range<SegmentType, vertex_tag>::type   VertexRange;
-          typedef typename viennagrid::result_of::hook_iterator<VertexRange>::type               VertexHookIterator;
+          typedef typename viennagrid::result_of::handle_iterator<VertexRange>::type               VertexHookIterator;
           
           writer << "   <Points>" << std::endl;
           writer << "    <DataArray type=\"Float32\" NumberOfComponents=\"3\" format=\"ascii\">" << std::endl;
 
           std::size_t index = 0;
           VertexRange vertices = viennagrid::elements<vertex_tag>(segment);
-          for (VertexHookIterator vit = vertices.hook_begin();
-              vit != vertices.hook_end();
+          for (VertexHookIterator vit = vertices.handle_begin();
+              vit != vertices.handle_end();
               ++vit)
           {
             //PointWriter<dim>::write(writer, vit->point());
             vertex_to_index_map[seg_num][*vit] = index++;
             
-            VertexType const & vertex = viennagrid::dereference_hook(segment, *vit);
+            VertexType const & vertex = viennagrid::dereference_handle(segment, *vit);
             
             PointWriter<dim>::write(writer, viennagrid::point(segment, vertex) );
 
@@ -139,7 +139,7 @@ namespace viennagrid
 
           typedef typename viennagrid::result_of::const_element_range<CellType, vertex_tag>::type      VertexOnCellRange;
           typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type         VertexOnCellIterator;
-          typedef typename viennagrid::result_of::hook_iterator<VertexOnCellRange>::type         VertexHookOnCellIterator;
+          typedef typename viennagrid::result_of::handle_iterator<VertexOnCellRange>::type         VertexHookOnCellIterator;
           
           //vtk_vertex_id_repository<DomainSegmentType>  vertex_ids(domseg);
           
@@ -154,8 +154,8 @@ namespace viennagrid
               std::vector<std::size_t> viennagrid_vertices(viennagrid::topology::boundary_cells<CellTag, vertex_tag>::num);
               VertexOnCellRange vertices_on_cell = viennagrid::elements<vertex_tag>(*cit);
               std::size_t j = 0;
-              for (VertexHookOnCellIterator vocit = vertices_on_cell.hook_begin();
-                  vocit != vertices_on_cell.hook_end();
+              for (VertexHookOnCellIterator vocit = vertices_on_cell.handle_begin();
+                  vocit != vertices_on_cell.handle_end();
                   ++vocit, ++j)
               {
                 viennagrid_vertices[j] = vertex_to_index_map[seg_num][*vocit];

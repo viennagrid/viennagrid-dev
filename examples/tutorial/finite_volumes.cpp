@@ -75,7 +75,7 @@ void assemble(DomainType & domain,
   
   typedef typename viennagrid::result_of::element_range<DomainType, viennagrid::vertex_tag>::type     VertexContainer;
   typedef typename viennagrid::result_of::iterator<VertexContainer>::type          VertexIterator;
-  typedef typename viennagrid::result_of::hook_iterator<VertexContainer>::type          VertexHookIterator;
+  typedef typename viennagrid::result_of::handle_iterator<VertexContainer>::type          VertexHookIterator;
 
   //typedef typename viennagrid::result_of::element_range<VertexType, viennagrid::line_tag>::type     EdgeOnVertexContainer;
   typedef typename viennagrid::result_of::coboundary_range<DomainType, viennagrid::line_tag>::type EdgeOnVertexContainer;
@@ -117,11 +117,11 @@ void assemble(DomainType & domain,
   //        
   // Poisson equation assembly:  div( grad(psi) ) = 1
   //
-  for (VertexHookIterator vhit = vertices.hook_begin();
-        vhit != vertices.hook_end();
+  for (VertexHookIterator vhit = vertices.handle_begin();
+        vhit != vertices.handle_end();
         ++vhit)
   {
-    VertexType & vertex = viennagrid::dereference_hook(domain, *vhit);
+    VertexType & vertex = viennagrid::dereference_handle(domain, *vhit);
     long row_index = viennadata::access<std::string, long>("dof")(vertex);
     
     //std::cout << vertex << " " << row_index << std::endl;
@@ -166,7 +166,7 @@ int main()
 {
   typedef viennagrid::point_t<double, viennagrid::cartesian_cs<3> > PointType;  //use this for a 3d example
   //typedef viennagrid::point_t<double, viennagrid::cartesian_cs<2> > PointType;  //use this for a 2d example
-  typedef viennagrid::result_of::geometric_domain_config< viennagrid::tetrahedron_tag, PointType, viennagrid::storage::id_hook_tag >::type DomainConfig;
+  typedef viennagrid::result_of::geometric_domain_config< viennagrid::tetrahedron_tag, PointType, viennagrid::storage::id_handle_tag >::type DomainConfig;
   typedef viennagrid::result_of::geometric_domain< DomainConfig >::type Domain;
   typedef viennagrid::result_of::geometric_view<Domain>::type Segment;
   

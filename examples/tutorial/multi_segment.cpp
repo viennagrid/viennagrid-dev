@@ -39,8 +39,8 @@ int main()
 {
     typedef viennagrid::point_t<double, viennagrid::cartesian_cs<3> > PointType;  //use this for a 3d examples
     typedef viennagrid::hexahedron_tag                           CellTag;
-    typedef viennagrid::result_of::default_topologic_config<viennagrid::hexahedron_tag, viennagrid::storage::pointer_hook_tag>::type TopologicConfig;
-    typedef viennagrid::result_of::geometric_domain_config<viennagrid::hexahedron_tag, PointType, viennagrid::storage::id_hook_tag >::type DomainConfig;
+    typedef viennagrid::result_of::default_topologic_config<viennagrid::hexahedron_tag, viennagrid::storage::pointer_handle_tag>::type TopologicConfig;
+    typedef viennagrid::result_of::geometric_domain_config<viennagrid::hexahedron_tag, PointType, viennagrid::storage::id_handle_tag >::type DomainConfig;
     typedef viennagrid::result_of::geometric_domain< DomainConfig >::type DomainType;
     typedef viennagrid::result_of::geometric_view<DomainType>::type SegmentType;
   
@@ -48,7 +48,7 @@ int main()
   typedef viennagrid::result_of::element<DomainType, viennagrid::vertex_tag>::type       VertexType;
   typedef viennagrid::result_of::element<DomainType, viennagrid::line_tag>::type       EdgeType;
   typedef viennagrid::result_of::element<DomainType, CellTag::facet_tag>::type FacetType;
-  typedef viennagrid::result_of::element_hook<DomainType, CellTag::facet_tag>::type FacetHookType;
+  typedef viennagrid::result_of::element_handle<DomainType, CellTag::facet_tag>::type FacetHookType;
   typedef viennagrid::result_of::element<DomainType, CellTag>::type   CellType;
                                             
   typedef viennagrid::result_of::element_range<DomainType, viennagrid::vertex_tag>::type       VertexRange;
@@ -56,7 +56,7 @@ int main()
                                             
   typedef viennagrid::result_of::element_range<DomainType, CellTag::facet_tag>::type      FacetRange;
   typedef viennagrid::result_of::iterator<FacetRange>::type                     FacetIterator;
-  typedef viennagrid::result_of::hook_iterator<FacetRange>::type                     FacetHookIterator;
+  typedef viennagrid::result_of::handle_iterator<FacetRange>::type                     FacetHookIterator;
   
   typedef viennagrid::result_of::coboundary_range<SegmentType, CellTag>::type     CellOnFacetRange;
   typedef viennagrid::result_of::iterator<CellOnFacetRange>::type               CellOnFacetIterator;
@@ -89,25 +89,25 @@ int main()
   // Iterate over all facets of the domain and find the interface facet:
   // In the same way, one may also traverse interface vertices, etc.
   std::cout << "Facets of the full domain:" << std::endl;
-  FacetHookType interface_facet_hook;
+  FacetHookType interface_facet_handle;
   FacetRange facets = viennagrid::elements<FacetType>(domain);  
   for (FacetHookIterator fit = facets.begin(); fit != facets.end(); ++fit)
   {
-    FacetType & facet = viennagrid::dereference_hook(domain, *fit);
+    FacetType & facet = viennagrid::dereference_handle(domain, *fit);
     if (viennagrid::is_interface<CellTag>(facet, seg1, seg2))  //three arguments: The element and the two interfacing segments
-      interface_facet_hook = *fit;
+      interface_facet_handle = *fit;
     
     std::cout << facet << std::endl;
   }
   
-  FacetType & interface_facet = viennagrid::dereference_hook(domain, interface_facet_hook);
+  FacetType & interface_facet = viennagrid::dereference_handle(domain, interface_facet_handle);
   std::cout << "Interface facet: " << std::endl;
   std::cout << interface_facet << std::endl;
   
   //
   // Now iterate over the cells the facet is member of with respect to the two segments:
   // Mind the second argument to the ncells() function, which is the respective segment
-  CellOnFacetRange cells_on_facet_seg1 = viennagrid::coboundary_elements<CellTag>(seg1, interface_facet_hook);
+  CellOnFacetRange cells_on_facet_seg1 = viennagrid::coboundary_elements<CellTag>(seg1, interface_facet_handle);
   std::cout << "Cells that share the interface facet in seg1:" << std::endl;
   for (CellOnFacetIterator cofit = cells_on_facet_seg1.begin();
                            cofit != cells_on_facet_seg1.end();
@@ -116,7 +116,7 @@ int main()
     std::cout << *cofit << std::endl;
   }
   
-  CellOnFacetRange cells_on_facet_seg2 = viennagrid::coboundary_elements<CellTag>(seg2, interface_facet_hook);
+  CellOnFacetRange cells_on_facet_seg2 = viennagrid::coboundary_elements<CellTag>(seg2, interface_facet_handle);
   std::cout << "Cells that share the interface facet in seg2:" << std::endl;
   for (CellOnFacetIterator cofit = cells_on_facet_seg2.begin();
                            cofit != cells_on_facet_seg2.end();

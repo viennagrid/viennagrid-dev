@@ -152,7 +152,7 @@ namespace viennagrid
         namespace container_collection
         {
             typedef viennameta::make_typemap<
-                        viennagrid::storage::default_tag,   viennagrid::storage::hooked_container_tag<viennagrid::storage::std_deque_tag, viennagrid::storage::pointer_hook_tag>
+                        viennagrid::storage::default_tag,   viennagrid::storage::handleed_container_tag<viennagrid::storage::std_deque_tag, viennagrid::storage::pointer_handle_tag>
                     >::type default_container_config;
             
 //             template<typename element_type, typename container_collection>
@@ -225,43 +225,43 @@ namespace viennagrid
             
             
             
-            template<typename container_collection_type, typename hook_type, typename container_type>
-            struct hook_or_ignore_helper
+            template<typename container_collection_type, typename handle_type, typename container_type>
+            struct handle_or_ignore_helper
             {
-                typedef typename viennagrid::storage::hook::value_type<hook_type>::type value_type;
+                typedef typename viennagrid::storage::handle::value_type<handle_type>::type value_type;
                 
-                static void hook_or_ignore( container_collection_type & collection, const hook_type & hook )
+                static void handle_or_ignore( container_collection_type & collection, const handle_type & handle )
                 {
-                    collection.get( viennameta::tag<value_type>() ).insert_hook(hook);
+                    collection.get( viennameta::tag<value_type>() ).insert_handle(handle);
                 }
                 
-                static void hook_or_ignore( container_collection_type & collection, hook_type & hook )
+                static void handle_or_ignore( container_collection_type & collection, handle_type & handle )
                 {
-                    collection.get( viennameta::tag<value_type>() ).insert_hook(hook);
+                    collection.get( viennameta::tag<value_type>() ).insert_handle(handle);
                 }
             };
             
-            template<typename container_collection_type, typename hook_type>
-            struct hook_or_ignore_helper<container_collection_type, hook_type, viennameta::not_found>
+            template<typename container_collection_type, typename handle_type>
+            struct handle_or_ignore_helper<container_collection_type, handle_type, viennameta::not_found>
             {
-                static void hook_or_ignore( container_collection_type & collection, const hook_type & hook ) {}
+                static void handle_or_ignore( container_collection_type & collection, const handle_type & handle ) {}
                 
-                static void hook_or_ignore( container_collection_type & collection, hook_type & hook ) {}
+                static void handle_or_ignore( container_collection_type & collection, handle_type & handle ) {}
             };
 
             
-            template<typename container_collection_type, typename hook_type, typename element_type>
-            void hook_or_ignore( container_collection_type & collection, const hook_type & hook, viennameta::tag<element_type> )
+            template<typename container_collection_type, typename handle_type, typename element_type>
+            void handle_or_ignore( container_collection_type & collection, const handle_type & handle, viennameta::tag<element_type> )
             {
                 typedef typename viennagrid::storage::result_of::container_of< container_collection_type, element_type>::type container_type;
-                hook_or_ignore_helper<container_collection_type, hook_type, container_type>::hook_or_ignore(collection, hook);
+                handle_or_ignore_helper<container_collection_type, handle_type, container_type>::handle_or_ignore(collection, handle);
             }
             
-            template<typename container_collection_type, typename hook_type, typename element_type>
-            void hook_or_ignore( container_collection_type & collection, hook_type & hook, viennameta::tag<element_type> )
+            template<typename container_collection_type, typename handle_type, typename element_type>
+            void handle_or_ignore( container_collection_type & collection, handle_type & handle, viennameta::tag<element_type> )
             {
                 typedef typename viennagrid::storage::result_of::container_of< container_collection_type, element_type>::type container_type;
-                hook_or_ignore_helper<container_collection_type, hook_type, container_type>::hook_or_ignore(collection, hook);
+                handle_or_ignore_helper<container_collection_type, handle_type, container_type>::handle_or_ignore(collection, handle);
             }
             
 

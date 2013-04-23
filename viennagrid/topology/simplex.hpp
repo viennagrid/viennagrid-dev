@@ -112,11 +112,11 @@ namespace viennagrid
             for (int i = 0; i < boundary_cells<simplex_tag<n>, vertex_tag >::num; ++i)
                 for (int j = i+1; j < boundary_cells<simplex_tag<n>, vertex_tag >::num; ++j)
                 {
-                    bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(i), 0 );
-                    bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(j), 1 );
+                    bnd_cell.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(i), 0 );
+                    bnd_cell.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(j), 1 );
                     
 //                     std::cout << "## " << i << " " << j << std::endl;
-//                     std::cout << "## bnd cell generation for " << n << "-simplex: " << element.container( dimension_tag<0>() ).hook_at(i) << " " << element.container( dimension_tag<0>() ).hook_at(j) << std::endl;
+//                     std::cout << "## bnd cell generation for " << n << "-simplex: " << element.container( dimension_tag<0>() ).handle_at(i) << " " << element.container( dimension_tag<0>() ).handle_at(j) << std::endl;
                     
                     element.set_bnd_cell( bnd_cell, inserter(bnd_cell), index++ );
                 }
@@ -137,9 +137,9 @@ namespace viennagrid
                 for (int j = i+1; j < boundary_cells<simplex_tag<n>, vertex_tag >::num; ++j)
                     for (int k = j+1; k < boundary_cells<simplex_tag<n>, vertex_tag >::num; ++k)
                     {
-                        bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(i), 0 );
-                        bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(j), 1 );
-                        bnd_cell.container(dimension_tag<0>()).set_hook( element.container( dimension_tag<0>() ).hook_at(k), 2 );
+                        bnd_cell.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(i), 0 );
+                        bnd_cell.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(j), 1 );
+                        bnd_cell.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(k), 2 );
                         
                         element.set_bnd_cell( bnd_cell, inserter(bnd_cell), index++ );
                     }

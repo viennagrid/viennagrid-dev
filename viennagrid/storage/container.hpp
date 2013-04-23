@@ -8,7 +8,7 @@
 
 #include "viennagrid/meta/utils.hpp"
 #include "viennagrid/storage/forwards.hpp"
-#include "viennagrid/storage/hook.hpp"
+#include "viennagrid/storage/handle.hpp"
 
 
 namespace viennagrid
@@ -32,11 +32,11 @@ namespace viennagrid
             
             
             
-            template<typename base_iterator, typename hook_tag>
-            class hook_iterator_impl {};
+            template<typename base_iterator, typename handle_tag>
+            class handle_iterator_impl {};
             
             template<typename base_iterator>
-            class hook_iterator_impl<base_iterator, pointer_hook_tag> : public base_iterator
+            class handle_iterator_impl<base_iterator, pointer_handle_tag> : public base_iterator
             {
             public:
                 
@@ -47,7 +47,7 @@ namespace viennagrid
                 typedef typename std::iterator_traits<base_iterator>::iterator_category iterator_category;
                 
                 
-                hook_iterator_impl(base_iterator it) : base_iterator(it) {}
+                handle_iterator_impl(base_iterator it) : base_iterator(it) {}
                 
                 
                 value_type operator* () { return & base_iterator::operator*(); }
@@ -55,7 +55,7 @@ namespace viennagrid
             };
             
             template<typename base_iterator>
-            class hook_iterator_impl<base_iterator, iterator_hook_tag> : public base_iterator
+            class handle_iterator_impl<base_iterator, iterator_handle_tag> : public base_iterator
             {
             public:
                 
@@ -66,7 +66,7 @@ namespace viennagrid
                 typedef typename std::iterator_traits<base_iterator>::iterator_category iterator_category;
                 
                 
-                hook_iterator_impl(base_iterator it) : base_iterator(it) {}
+                handle_iterator_impl(base_iterator it) : base_iterator(it) {}
                 
                 
                 value_type operator* () { return static_cast<base_iterator>(*this); }
@@ -74,7 +74,7 @@ namespace viennagrid
             };
             
             template<typename base_iterator>
-            class hook_iterator_impl<base_iterator, id_hook_tag> : public base_iterator
+            class handle_iterator_impl<base_iterator, id_handle_tag> : public base_iterator
             {
             public:
                 
@@ -89,7 +89,7 @@ namespace viennagrid
                 typedef typename std::iterator_traits<base_iterator>::iterator_category iterator_category;
                 
                 
-                hook_iterator_impl(base_iterator it) : base_iterator(it) {}
+                handle_iterator_impl(base_iterator it) : base_iterator(it) {}
                 
                 
                 value_type operator* () { return base_iterator::operator*().id(); }
@@ -98,11 +98,11 @@ namespace viennagrid
             
             
             
-            template<typename base_iterator, typename hook_tag>
-            class const_hook_iterator_impl {};
+            template<typename base_iterator, typename handle_tag>
+            class const_handle_iterator_impl {};
             
             template<typename base_iterator>
-            class const_hook_iterator_impl<base_iterator, pointer_hook_tag> : public base_iterator
+            class const_handle_iterator_impl<base_iterator, pointer_handle_tag> : public base_iterator
             {
             public:
                 
@@ -113,7 +113,7 @@ namespace viennagrid
                 typedef typename std::iterator_traits<base_iterator>::iterator_category iterator_category;
                 
                 
-                const_hook_iterator_impl(base_iterator it) : base_iterator(it) {}
+                const_handle_iterator_impl(base_iterator it) : base_iterator(it) {}
                 
                 
                 value_type operator* () { return & base_iterator::operator*(); }
@@ -121,7 +121,7 @@ namespace viennagrid
             };
             
             template<typename base_iterator>
-            class const_hook_iterator_impl<base_iterator, iterator_hook_tag> : public base_iterator
+            class const_handle_iterator_impl<base_iterator, iterator_handle_tag> : public base_iterator
             {
             public:
                 
@@ -132,7 +132,7 @@ namespace viennagrid
                 typedef typename std::iterator_traits<base_iterator>::iterator_category iterator_category;
                 
                 
-                const_hook_iterator_impl(base_iterator it) : base_iterator(it) {}
+                const_handle_iterator_impl(base_iterator it) : base_iterator(it) {}
                 
                 
                 value_type operator* () { return static_cast<base_iterator>(*this); }
@@ -140,7 +140,7 @@ namespace viennagrid
             };
             
             template<typename base_iterator>
-            class const_hook_iterator_impl<base_iterator, id_hook_tag> : public base_iterator
+            class const_handle_iterator_impl<base_iterator, id_handle_tag> : public base_iterator
             {
             public:
                 
@@ -155,7 +155,7 @@ namespace viennagrid
                 typedef typename std::iterator_traits<base_iterator>::iterator_category iterator_category;
                 
                 
-                const_hook_iterator_impl(base_iterator it) : base_iterator(it) {}
+                const_handle_iterator_impl(base_iterator it) : base_iterator(it) {}
                 
                 
                 value_type operator* () { return base_iterator::operator*().id(); }
@@ -166,8 +166,8 @@ namespace viennagrid
         
         
         
-        template<typename base_container__, typename hook_tag>
-        class hooked_container_t : public base_container__
+        template<typename base_container__, typename handle_tag>
+        class handleed_container_t : public base_container__
         {
         public:
             typedef base_container__ container_type;
@@ -182,23 +182,23 @@ namespace viennagrid
             typedef typename container_type::iterator iterator;
             typedef typename container_type::const_iterator const_iterator;
             
-            typedef typename viennagrid::storage::hook::hook_type<container_type, hook_tag>::type hook_type;
-            typedef typename viennagrid::storage::hook::const_hook_type<container_type, hook_tag>::type const_hook_type;
+            typedef typename viennagrid::storage::handle::handle_type<container_type, handle_tag>::type handle_type;
+            typedef typename viennagrid::storage::handle::const_handle_type<container_type, handle_tag>::type const_handle_type;
             
-            value_type & dereference_hook( hook_type hook )
+            value_type & dereference_handle( handle_type handle )
             {
-                return *hook;
+                return *handle;
             }
             
-            const value_type & dereference_hook( const_hook_type hook ) const
+            const value_type & dereference_handle( const_handle_type handle ) const
             {
-                return *hook;
+                return *handle;
             }
             
         };
         
         template<typename base_container__>
-        class hooked_container_t<base_container__, id_hook_tag> : public base_container__
+        class handleed_container_t<base_container__, id_handle_tag> : public base_container__
         {
         public:
             typedef base_container__ container_type;
@@ -213,30 +213,30 @@ namespace viennagrid
             typedef typename container_type::iterator iterator;
             typedef typename container_type::const_iterator const_iterator;
             
-            typedef typename viennagrid::storage::hook::hook_type<container_type, id_hook_tag>::type hook_type;
-            typedef typename viennagrid::storage::hook::const_hook_type<container_type, id_hook_tag>::type const_hook_type;
+            typedef typename viennagrid::storage::handle::handle_type<container_type, id_handle_tag>::type handle_type;
+            typedef typename viennagrid::storage::handle::const_handle_type<container_type, id_handle_tag>::type const_handle_type;
             
             
             typedef typename value_type::id_type id_type;
             typedef typename value_type::const_id_type const_id_type;
             
-            value_type & dereference_hook( hook_type hook )
+            value_type & dereference_handle( handle_type handle )
             {
-                // TODO: what happens if hook is not found ??
+                // TODO: what happens if handle is not found ??
                 return *std::find_if(
                     container_type::begin(),
                     container_type::end(),
-                    viennagrid::storage::id_compare<id_type>(hook)
+                    viennagrid::storage::id_compare<id_type>(handle)
                 );
             }
             
-            const value_type & dereference_hook( hook_type hook ) const
+            const value_type & dereference_handle( handle_type handle ) const
             {
-                // TODO: what happens if hook is not found ??
+                // TODO: what happens if handle is not found ??
                 return *std::find_if(
                     container_type::begin(),
                     container_type::end(),
-                    viennagrid::storage::id_compare<id_type>(hook)
+                    viennagrid::storage::id_compare<id_type>(handle)
                 );
 
             }
@@ -245,29 +245,29 @@ namespace viennagrid
         
         
         
-        template<typename base_container__, typename hook_tag>
-        class container_base_t : public hooked_container_t<base_container__, hook_tag>
+        template<typename base_container__, typename handle_tag>
+        class container_base_t : public handleed_container_t<base_container__, handle_tag>
         {
         public:
 
-            typedef hooked_container_t<base_container__, hook_tag> hooked_container_type;
-            typedef typename hooked_container_type::container_type container_type;
+            typedef handleed_container_t<base_container__, handle_tag> handleed_container_type;
+            typedef typename handleed_container_type::container_type container_type;
             
-            typedef typename hooked_container_type::value_type value_type;
+            typedef typename handleed_container_type::value_type value_type;
             
-            typedef typename hooked_container_type::pointer pointer;
-            typedef typename hooked_container_type::const_pointer const_pointer;            
+            typedef typename handleed_container_type::pointer pointer;
+            typedef typename handleed_container_type::const_pointer const_pointer;            
             
-            typedef typename hooked_container_type::reference reference;
-            typedef typename hooked_container_type::const_reference const_reference;
+            typedef typename handleed_container_type::reference reference;
+            typedef typename handleed_container_type::const_reference const_reference;
             
-            typedef typename hooked_container_type::iterator iterator;
-            typedef typename hooked_container_type::const_iterator const_iterator;
+            typedef typename handleed_container_type::iterator iterator;
+            typedef typename handleed_container_type::const_iterator const_iterator;
             
-            typedef typename hooked_container_type::hook_type hook_type;
-            typedef typename hooked_container_type::const_hook_type const_hook_type;
+            typedef typename handleed_container_type::handle_type handle_type;
+            typedef typename handleed_container_type::const_handle_type const_handle_type;
             
-            typedef std::pair<hook_type, bool> return_type;
+            typedef std::pair<handle_type, bool> return_type;
             
 
             bool is_present( const value_type & element ) const
@@ -283,34 +283,34 @@ namespace viennagrid
             return_type insert( const value_type & element )
             {
                 container_type::push_back( element );
-                return std::make_pair( viennagrid::storage::hook::iterator_to_hook<container_type, hook_tag>::convert(--container_type::end()), true);
+                return std::make_pair( viennagrid::storage::handle::iterator_to_handle<container_type, handle_tag>::convert(--container_type::end()), true);
             }
         };
         
         
-        template<typename key, typename compare, typename allocator, typename hook_tag>
-        class container_base_t<std::set<key, compare, allocator>, hook_tag> : public hooked_container_t<std::set<key, compare, allocator>, hook_tag>
+        template<typename key, typename compare, typename allocator, typename handle_tag>
+        class container_base_t<std::set<key, compare, allocator>, handle_tag> : public handleed_container_t<std::set<key, compare, allocator>, handle_tag>
         {
         public:
             
-            typedef hooked_container_t<std::set<key, compare, allocator>, hook_tag> hooked_container_type;
-            typedef typename hooked_container_type::container_type container_type;
+            typedef handleed_container_t<std::set<key, compare, allocator>, handle_tag> handleed_container_type;
+            typedef typename handleed_container_type::container_type container_type;
             
-            typedef typename hooked_container_type::value_type value_type;
+            typedef typename handleed_container_type::value_type value_type;
             
-            typedef typename hooked_container_type::pointer pointer;
-            typedef typename hooked_container_type::const_pointer const_pointer;            
+            typedef typename handleed_container_type::pointer pointer;
+            typedef typename handleed_container_type::const_pointer const_pointer;            
             
-            typedef typename hooked_container_type::reference reference;
-            typedef typename hooked_container_type::const_reference const_reference;
+            typedef typename handleed_container_type::reference reference;
+            typedef typename handleed_container_type::const_reference const_reference;
             
-            typedef typename hooked_container_type::iterator iterator;
-            typedef typename hooked_container_type::const_iterator const_iterator;
+            typedef typename handleed_container_type::iterator iterator;
+            typedef typename handleed_container_type::const_iterator const_iterator;
             
-            typedef typename hooked_container_type::hook_type hook_type;
-            typedef typename hooked_container_type::const_hook_type const_hook_type;
+            typedef typename handleed_container_type::handle_type handle_type;
+            typedef typename handleed_container_type::const_handle_type const_handle_type;
             
-            typedef std::pair<hook_type, bool> return_type;
+            typedef std::pair<handle_type, bool> return_type;
             
             bool is_present( const value_type & element ) const
             {
@@ -325,44 +325,44 @@ namespace viennagrid
             return_type insert( const value_type & element )
             {
                 std::pair<typename container_type::iterator, bool> tmp = container_type::insert( element );
-                return std::make_pair( viennagrid::storage::hook::iterator_to_hook<container_type, hook_tag>::convert(tmp.first), tmp.second);
+                return std::make_pair( viennagrid::storage::handle::iterator_to_handle<container_type, handle_tag>::convert(tmp.first), tmp.second);
             }
         };
         
         
         
-        template<typename base_container__, typename hook_tag__>
-        class container_t : public container_base_t<base_container__, hook_tag__>
+        template<typename base_container__, typename handle_tag__>
+        class container_t : public container_base_t<base_container__, handle_tag__>
         {
         public:
             
             typedef base_container__ base_container;
             
-            typedef hook_tag__ hook_tag;
-            typedef typename hook::hook_type<base_container, hook_tag>::type hook_type;
-            typedef typename hook::const_hook_type<base_container, hook_tag>::type const_hook_type;
-            typedef std::pair<hook_type, bool> insert_return_type;
+            typedef handle_tag__ handle_tag;
+            typedef typename handle::handle_type<base_container, handle_tag>::type handle_type;
+            typedef typename handle::const_handle_type<base_container, handle_tag>::type const_handle_type;
+            typedef std::pair<handle_type, bool> insert_return_type;
 
 
             typedef typename base_container::value_type value_type;
             
-            typedef container::hook_iterator_impl<typename base_container::iterator, hook_tag> hook_iterator; 
-            hook_iterator hook_begin() { return hook_iterator(base_container::begin()); }
-            hook_iterator hook_end() { return hook_iterator(base_container::end()); }
+            typedef container::handle_iterator_impl<typename base_container::iterator, handle_tag> handle_iterator; 
+            handle_iterator handle_begin() { return handle_iterator(base_container::begin()); }
+            handle_iterator handle_end() { return handle_iterator(base_container::end()); }
             
-            typedef container::const_hook_iterator_impl<typename base_container::const_iterator, hook_tag> const_hook_iterator; 
-            const_hook_iterator hook_begin() const { return const_hook_iterator(base_container::begin()); }
-            const_hook_iterator hook_end() const { return const_hook_iterator(base_container::end()); }
+            typedef container::const_handle_iterator_impl<typename base_container::const_iterator, handle_tag> const_handle_iterator; 
+            const_handle_iterator handle_begin() const { return const_handle_iterator(base_container::begin()); }
+            const_handle_iterator handle_end() const { return const_handle_iterator(base_container::end()); }
             
-            hook_type hook_at(std::size_t pos)
+            handle_type handle_at(std::size_t pos)
             {
-                hook_iterator it = hook_begin();
+                handle_iterator it = handle_begin();
                 std::advance( it, pos );
                 return *it;
             }
-            const_hook_type hook_at(std::size_t pos) const
+            const_handle_type handle_at(std::size_t pos) const
             {
-                hook_iterator it = hook_begin();
+                handle_iterator it = handle_begin();
                 std::advance( it, pos );
                 return *it;
             }
@@ -403,10 +403,10 @@ namespace viennagrid
             };
             
             
-            template<typename value_type, typename container_tag, typename hook_tag>
-            struct container<value_type, hooked_container_tag<container_tag, hook_tag> >
+            template<typename value_type, typename container_tag, typename handle_tag>
+            struct container<value_type, handleed_container_tag<container_tag, handle_tag> >
             {
-                typedef container_t< typename container<value_type, container_tag>::type, hook_tag > type;
+                typedef container_t< typename container<value_type, container_tag>::type, handle_tag > type;
             };
             
 

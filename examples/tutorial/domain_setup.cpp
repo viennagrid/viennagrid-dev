@@ -33,12 +33,12 @@ void setup_cell(DomainType & domain,
                 std::size_t id1,
                 std::size_t id2)
 {
-  typedef typename viennagrid::result_of::element_hook<DomainType, viennagrid::vertex_tag>::type       VertexHookType;
+  typedef typename viennagrid::result_of::element_handle<DomainType, viennagrid::vertex_tag>::type       VertexHookType;
   
   viennagrid::storage::static_array<VertexHookType, 3> vertices;
-  vertices[0] = viennagrid::elements<viennagrid::vertex_tag>(domain).hook_at( id0 );
-  vertices[1] = viennagrid::elements<viennagrid::vertex_tag>(domain).hook_at( id1 );
-  vertices[2] = viennagrid::elements<viennagrid::vertex_tag>(domain).hook_at( id2 );
+  vertices[0] = viennagrid::elements<viennagrid::vertex_tag>(domain).handle_at( id0 );
+  vertices[1] = viennagrid::elements<viennagrid::vertex_tag>(domain).handle_at( id1 );
+  vertices[2] = viennagrid::elements<viennagrid::vertex_tag>(domain).handle_at( id2 );
   
   viennagrid::create_element<CellType>(segment, vertices);
 }
@@ -63,7 +63,7 @@ int main()
   
   typedef viennagrid::point_t<double, viennagrid::cartesian_cs<2> > PointType;
   
-  typedef viennagrid::result_of::geometric_domain_config< viennagrid::triangle_tag, PointType, viennagrid::storage::id_hook_tag >::type DomainConfig;
+  typedef viennagrid::result_of::geometric_domain_config< viennagrid::triangle_tag, PointType, viennagrid::storage::id_handle_tag >::type DomainConfig;
   
   //typedef viennagrid::config::triangular_2d                       ConfigType;
   //typedef viennagrid::result_of::domain<ConfigType>::type         Domain;
@@ -75,7 +75,7 @@ int main()
   
   //typedef viennagrid::result_of::point<ConfigType>::type          PointType;
   typedef viennagrid::result_of::element<Domain, viennagrid::vertex_tag>::type       VertexType;
-  typedef viennagrid::result_of::element_hook<Domain, viennagrid::vertex_tag>::type       VertexHookType;
+  typedef viennagrid::result_of::element_handle<Domain, viennagrid::vertex_tag>::type       VertexHookType;
   typedef viennagrid::result_of::element<Domain, CellTag>::type   CellType;
 
   typedef viennagrid::result_of::element_range<Segment, CellTag>::type    CellRange;
@@ -125,9 +125,9 @@ int main()
   //VertexType * cell_vertices[3]; //holds pointers to the respective vertices in the domain
 
   // First triangle: (do not use v0, v1, etc. for vertex setup!)
-  vertices[0] = viennagrid::elements<viennagrid::vertex_tag>(domain).hook_at(0);
-  vertices[1] = viennagrid::elements<viennagrid::vertex_tag>(domain).hook_at(1);
-  vertices[2] = viennagrid::elements<viennagrid::vertex_tag>(domain).hook_at(5);
+  vertices[0] = viennagrid::elements<viennagrid::vertex_tag>(domain).handle_at(0);
+  vertices[1] = viennagrid::elements<viennagrid::vertex_tag>(domain).handle_at(1);
+  vertices[2] = viennagrid::elements<viennagrid::vertex_tag>(domain).handle_at(5);
   //Note that vertices are rearranged internally if they are not supplied in mathematically positive order.
   
   viennagrid::create_element<CellType>(seg0, vertices); //copies 'cell' to the domain. 'cell' can be reused for setting up the other cells.

@@ -42,14 +42,14 @@ namespace viennagrid
                              VertexHookType vh1_1, VertexHookType vh1_2,  
                              VertexHookType vh2_1, VertexHookType vh2_2)
   {
-      typedef typename viennagrid::storage::hook::value_type< VertexHookType >::type VertexType;
+      typedef typename viennagrid::storage::handle::value_type< VertexHookType >::type VertexType;
       typedef typename viennagrid::result_of::point_type< GeometricContainerType >::type PointType;
       typedef typename viennagrid::result_of::coord_type< PointType >::type ScalarType;
       
-      const VertexType & v1_1 = viennagrid::dereference_hook( domain, vh1_1 );
-      const VertexType & v1_2 = viennagrid::dereference_hook( domain, vh1_2 );
-      const VertexType & v2_1 = viennagrid::dereference_hook( domain, vh2_1 );
-      const VertexType & v2_2 = viennagrid::dereference_hook( domain, vh2_2 );
+      const VertexType & v1_1 = viennagrid::dereference_handle( domain, vh1_1 );
+      const VertexType & v1_2 = viennagrid::dereference_handle( domain, vh1_2 );
+      const VertexType & v2_1 = viennagrid::dereference_handle( domain, vh2_1 );
+      const VertexType & v2_2 = viennagrid::dereference_handle( domain, vh2_2 );
       
       
     //typedef typename VertexType::config_type::numeric_type       ScalarType;
@@ -97,16 +97,16 @@ namespace viennagrid
   
   
   template<typename CellType, typename GeometricDomainType, typename VertexHookContainer>
-  void create_refinement_cell(GeometricDomainType & domain, VertexHookContainer vertex_hook_container, unsigned int i0, unsigned int i1, unsigned int i2, unsigned int i3)
+  void create_refinement_cell(GeometricDomainType & domain, VertexHookContainer vertex_handle_container, unsigned int i0, unsigned int i1, unsigned int i2, unsigned int i3)
   {
       typedef typename VertexHookContainer::iterator VertexHookIteratorType;
       typedef typename std::iterator_traits<VertexHookIteratorType>::value_type VertexHookType;
       storage::static_array< VertexHookType, topology::boundary_cells<tetrahedron_tag, vertex_tag>::num > cellvertices;
       
-      cellvertices[0] = *viennagrid::advance(vertex_hook_container.begin(), i0);
-      cellvertices[1] = *viennagrid::advance(vertex_hook_container.begin(), i1);
-      cellvertices[2] = *viennagrid::advance(vertex_hook_container.begin(), i2);
-      cellvertices[3] = *viennagrid::advance(vertex_hook_container.begin(), i3);
+      cellvertices[0] = *viennagrid::advance(vertex_handle_container.begin(), i0);
+      cellvertices[1] = *viennagrid::advance(vertex_handle_container.begin(), i1);
+      cellvertices[2] = *viennagrid::advance(vertex_handle_container.begin(), i2);
+      cellvertices[3] = *viennagrid::advance(vertex_handle_container.begin(), i3);
       
       viennagrid::create_element<CellType>( domain, cellvertices );
   }
@@ -135,14 +135,14 @@ namespace viennagrid
       typedef typename viennagrid::result_of::iterator<EdgeOnCellRange>::type           EdgeOnCellIterator;            
       
       typedef typename viennagrid::result_of::element<DomainTypeOut, vertex_tag>::type             VertexType;
-      typedef typename viennagrid::result_of::element_hook<DomainTypeOut, vertex_tag>::type             VertexHookType;
+      typedef typename viennagrid::result_of::element_handle<DomainTypeOut, vertex_tag>::type             VertexHookType;
       
       typedef typename viennagrid::result_of::element<DomainTypeOut, vertex_tag>::type                                      VertexTypeOut;
       typedef typename VertexTypeOut::id_type VertexIDTypeOut;
       
       
       //VertexType * vertices[topology::boundary_cells<tetrahedron_tag, vertex_tag>::num];
-      storage::static_array< VertexHookType, topology::boundary_cells<tetrahedron_tag, vertex_tag>::num > vertex_hooks;
+      storage::static_array< VertexHookType, topology::boundary_cells<tetrahedron_tag, vertex_tag>::num > vertex_handles;
       
       // Step 1: grab existing vertices:
       VertexOnCellRange vertices_on_cell = viennagrid::elements<vertex_tag>(cell_in);
@@ -153,10 +153,10 @@ namespace viennagrid
 //       vertices[2] = &(viennagrid::elements<vertex_tag>(segment_out.domain())[vocit->id()]); ++vocit;
 //       vertices[3] = &(viennagrid::elements<vertex_tag>(segment_out.domain())[vocit->id()]);
       
-      vertex_hooks[0] = *viennagrid::find_hook( segment_out, vocit->id() ); ++vocit;
-      vertex_hooks[1] = *viennagrid::find_hook( segment_out, vocit->id() ); ++vocit;
-      vertex_hooks[2] = *viennagrid::find_hook( segment_out, vocit->id() ); ++vocit;
-      vertex_hooks[3] = *viennagrid::find_hook( segment_out, vocit->id() );
+      vertex_handles[0] = *viennagrid::find_handle( segment_out, vocit->id() ); ++vocit;
+      vertex_handles[1] = *viennagrid::find_handle( segment_out, vocit->id() ); ++vocit;
+      vertex_handles[2] = *viennagrid::find_handle( segment_out, vocit->id() ); ++vocit;
+      vertex_handles[3] = *viennagrid::find_handle( segment_out, vocit->id() );
       
 
 
@@ -164,7 +164,7 @@ namespace viennagrid
       //CellType new_cell;
       //new_cell.vertices(vertices);
       //segment_out.push_back(new_cell);
-      viennagrid::create_element<CellType>( segment_out, vertex_hooks );
+      viennagrid::create_element<CellType>( segment_out, vertex_handles );
 
     }    
 
@@ -180,7 +180,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::element<CellType, line_tag>::type             EdgeType;
       
       typedef typename viennagrid::result_of::element<DomainTypeOut, vertex_tag>::type             VertexType;
-      typedef typename viennagrid::result_of::element_hook<DomainTypeOut, vertex_tag>::type             VertexHookType;
+      typedef typename viennagrid::result_of::element_handle<DomainTypeOut, vertex_tag>::type             VertexHookType;
       
       typedef typename viennagrid::result_of::element<DomainTypeOut, vertex_tag>::type                                      VertexTypeOut;
       typedef typename VertexTypeOut::id_type VertexIDTypeOut;
@@ -203,10 +203,10 @@ namespace viennagrid
 //       vertices[2] = &(viennagrid::elements<vertex_tag>(segment_out.domain())[vocit->id()]); ++vocit;
 //       vertices[3] = &(viennagrid::elements<vertex_tag>(segment_out.domain())[vocit->id()]);
       
-      vertices[0] = *viennagrid::find_hook( segment_out, vocit->id() ); ++vocit;
-      vertices[1] = *viennagrid::find_hook( segment_out, vocit->id() ); ++vocit;
-      vertices[2] = *viennagrid::find_hook( segment_out, vocit->id() ); ++vocit;
-      vertices[3] = *viennagrid::find_hook( segment_out, vocit->id() );
+      vertices[0] = *viennagrid::find_handle( segment_out, vocit->id() ); ++vocit;
+      vertices[1] = *viennagrid::find_handle( segment_out, vocit->id() ); ++vocit;
+      vertices[2] = *viennagrid::find_handle( segment_out, vocit->id() ); ++vocit;
+      vertices[3] = *viennagrid::find_handle( segment_out, vocit->id() );
       
 
       //
@@ -230,7 +230,7 @@ namespace viennagrid
         ordered_vertices[1] = vertices[1];
         ordered_vertices[2] = vertices[2];
         ordered_vertices[3] = vertices[3];
-        ordered_vertices[4] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
+        ordered_vertices[4] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
         
         //[)]);
       }
@@ -240,7 +240,7 @@ namespace viennagrid
         ordered_vertices[1] = vertices[0];
         ordered_vertices[2] = vertices[1];
         ordered_vertices[3] = vertices[3];
-        ordered_vertices[4] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
+        ordered_vertices[4] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
       }
       else if (viennadata::access<refinement_key, bool>(refinement_key())(e2) == true)
       {
@@ -248,7 +248,7 @@ namespace viennagrid
         ordered_vertices[1] = vertices[3];
         ordered_vertices[2] = vertices[1];
         ordered_vertices[3] = vertices[2];
-        ordered_vertices[4] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
+        ordered_vertices[4] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
       }
       else if (viennadata::access<refinement_key, bool>(refinement_key())(e3) == true)
       {
@@ -256,7 +256,7 @@ namespace viennagrid
         ordered_vertices[1] = vertices[2];
         ordered_vertices[2] = vertices[0];
         ordered_vertices[3] = vertices[3];
-        ordered_vertices[4] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
+        ordered_vertices[4] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
       }
       else if (viennadata::access<refinement_key, bool>(refinement_key())(e4) == true)
       {
@@ -264,7 +264,7 @@ namespace viennagrid
         ordered_vertices[1] = vertices[1];
         ordered_vertices[2] = vertices[0];
         ordered_vertices[3] = vertices[2];
-        ordered_vertices[4] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
+        ordered_vertices[4] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
       }
       else if (viennadata::access<refinement_key, bool>(refinement_key())(e5) == true)
       {
@@ -272,7 +272,7 @@ namespace viennagrid
         ordered_vertices[1] = vertices[2];
         ordered_vertices[2] = vertices[1];
         ordered_vertices[3] = vertices[0];
-        ordered_vertices[4] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
+        ordered_vertices[4] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
       }
       else
       {
@@ -402,7 +402,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::iterator<EdgeOnCellRange>::type           EdgeOnCellIterator;            
       
       typedef typename viennagrid::result_of::element<CellType, vertex_tag>::type             VertexType;
-      typedef typename viennagrid::result_of::element_hook<CellType, vertex_tag>::type             VertexHookType;
+      typedef typename viennagrid::result_of::element_handle<CellType, vertex_tag>::type             VertexHookType;
       typedef typename viennagrid::result_of::element<CellType, line_tag>::type             EdgeType;
       
       typedef typename viennagrid::result_of::element<DomainTypeOut, vertex_tag>::type                                      VertexTypeOut;
@@ -419,10 +419,10 @@ namespace viennagrid
       //
       VertexOnCellRange vertices_on_cell = viennagrid::elements<vertex_tag>(cell_in);
       VertexOnCellIterator vocit = vertices_on_cell.begin();
-      vertices[0] = *viennagrid::find_hook( segment_out, vocit->id() ); ++vocit;
-      vertices[1] = *viennagrid::find_hook( segment_out, vocit->id() ); ++vocit;
-      vertices[2] = *viennagrid::find_hook( segment_out, vocit->id() ); ++vocit;
-      vertices[3] = *viennagrid::find_hook( segment_out, vocit->id() );      
+      vertices[0] = *viennagrid::find_handle( segment_out, vocit->id() ); ++vocit;
+      vertices[1] = *viennagrid::find_handle( segment_out, vocit->id() ); ++vocit;
+      vertices[2] = *viennagrid::find_handle( segment_out, vocit->id() ); ++vocit;
+      vertices[3] = *viennagrid::find_handle( segment_out, vocit->id() );      
 
       //
       // Step 2: Bring vertices in correct order, such that refined edge is on {0,1}-edge
@@ -447,8 +447,8 @@ namespace viennagrid
           ordered_vertices[1] = vertices[0];
           ordered_vertices[2] = vertices[1];
           ordered_vertices[3] = vertices[3];
-          ordered_vertices[4] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
-          ordered_vertices[5] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
+          ordered_vertices[4] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
+          ordered_vertices[5] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
           
           apply2_1<CellType>(segment_out, ordered_vertices);
         }
@@ -458,8 +458,8 @@ namespace viennagrid
           ordered_vertices[1] = vertices[0];
           ordered_vertices[2] = vertices[3];
           ordered_vertices[3] = vertices[2];
-          ordered_vertices[4] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
-          ordered_vertices[5] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
+          ordered_vertices[4] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
+          ordered_vertices[5] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
           
           apply2_1<CellType>(segment_out, ordered_vertices);
         }
@@ -469,8 +469,8 @@ namespace viennagrid
           ordered_vertices[1] = vertices[1];
           ordered_vertices[2] = vertices[2];
           ordered_vertices[3] = vertices[3];
-          ordered_vertices[4] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
-          ordered_vertices[5] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
+          ordered_vertices[4] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
+          ordered_vertices[5] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
           
           apply2_1<CellType>(segment_out, ordered_vertices);
         }
@@ -480,8 +480,8 @@ namespace viennagrid
           ordered_vertices[1] = vertices[1];
           ordered_vertices[2] = vertices[0];
           ordered_vertices[3] = vertices[2];
-          ordered_vertices[4] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
-          ordered_vertices[5] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
+          ordered_vertices[4] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
+          ordered_vertices[5] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
           
           apply2_1<CellType>(segment_out, ordered_vertices);
         }
@@ -491,8 +491,8 @@ namespace viennagrid
           ordered_vertices[1] = vertices[1];
           ordered_vertices[2] = vertices[2];
           ordered_vertices[3] = vertices[3];
-          ordered_vertices[4] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
-          ordered_vertices[5] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
+          ordered_vertices[4] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
+          ordered_vertices[5] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
           
           apply2_2<CellType>(segment_out, ordered_vertices);
         }
@@ -509,8 +509,8 @@ namespace viennagrid
           ordered_vertices[1] = vertices[0];
           ordered_vertices[2] = vertices[2];
           ordered_vertices[3] = vertices[1];
-          ordered_vertices[4] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
-          ordered_vertices[5] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
+          ordered_vertices[4] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
+          ordered_vertices[5] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
           
           apply2_1<CellType>(segment_out, ordered_vertices);
         }
@@ -520,8 +520,8 @@ namespace viennagrid
           ordered_vertices[1] = vertices[2];
           ordered_vertices[2] = vertices[0];
           ordered_vertices[3] = vertices[3];
-          ordered_vertices[4] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
-          ordered_vertices[5] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
+          ordered_vertices[4] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
+          ordered_vertices[5] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
 
           
           apply2_1<CellType>(segment_out, ordered_vertices);
@@ -532,8 +532,8 @@ namespace viennagrid
           ordered_vertices[1] = vertices[0];
           ordered_vertices[2] = vertices[1];
           ordered_vertices[3] = vertices[3];
-          ordered_vertices[4] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
-          ordered_vertices[5] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
+          ordered_vertices[4] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
+          ordered_vertices[5] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
           
           apply2_2<CellType>(segment_out, ordered_vertices);
         }
@@ -543,8 +543,8 @@ namespace viennagrid
           ordered_vertices[1] = vertices[2];
           ordered_vertices[2] = vertices[3];
           ordered_vertices[3] = vertices[1];
-          ordered_vertices[4] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
-          ordered_vertices[5] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
+          ordered_vertices[4] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
+          ordered_vertices[5] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
           
           apply2_1<CellType>(segment_out, ordered_vertices);
         }
@@ -561,8 +561,8 @@ namespace viennagrid
           ordered_vertices[1] = vertices[0];
           ordered_vertices[2] = vertices[2];
           ordered_vertices[3] = vertices[1];
-          ordered_vertices[4] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
-          ordered_vertices[5] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
+          ordered_vertices[4] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
+          ordered_vertices[5] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
           
           apply2_2<CellType>(segment_out, ordered_vertices);
         }
@@ -572,8 +572,8 @@ namespace viennagrid
           ordered_vertices[1] = vertices[3];
           ordered_vertices[2] = vertices[1];
           ordered_vertices[3] = vertices[2];
-          ordered_vertices[4] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
-          ordered_vertices[5] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
+          ordered_vertices[4] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
+          ordered_vertices[5] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
           
           apply2_1<CellType>(segment_out, ordered_vertices);
         }
@@ -583,8 +583,8 @@ namespace viennagrid
           ordered_vertices[1] = vertices[3];
           ordered_vertices[2] = vertices[0];
           ordered_vertices[3] = vertices[1];
-          ordered_vertices[4] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
-          ordered_vertices[5] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
+          ordered_vertices[4] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
+          ordered_vertices[5] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
           
           apply2_1<CellType>(segment_out, ordered_vertices);
         }
@@ -601,8 +601,8 @@ namespace viennagrid
           ordered_vertices[1] = vertices[1];
           ordered_vertices[2] = vertices[3];
           ordered_vertices[3] = vertices[0];
-          ordered_vertices[4] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
-          ordered_vertices[5] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
+          ordered_vertices[4] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
+          ordered_vertices[5] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
           
           apply2_1<CellType>(segment_out, ordered_vertices);
         }
@@ -612,8 +612,8 @@ namespace viennagrid
           ordered_vertices[1] = vertices[2];
           ordered_vertices[2] = vertices[1];
           ordered_vertices[3] = vertices[0];
-          ordered_vertices[4] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
-          ordered_vertices[5] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
+          ordered_vertices[4] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
+          ordered_vertices[5] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
           
           apply2_1<CellType>(segment_out, ordered_vertices);
         }
@@ -630,8 +630,8 @@ namespace viennagrid
           ordered_vertices[1] = vertices[3];
           ordered_vertices[2] = vertices[2];
           ordered_vertices[3] = vertices[0];
-          ordered_vertices[4] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
-          ordered_vertices[5] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
+          ordered_vertices[4] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
+          ordered_vertices[5] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
           
           apply2_1<CellType>(segment_out, ordered_vertices);
         }
@@ -943,7 +943,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::iterator<EdgeOnCellRange>::type           EdgeOnCellIterator;            
       
       typedef typename viennagrid::result_of::element<CellType, vertex_tag>::type             VertexType;
-      typedef typename viennagrid::result_of::element_hook<CellType, vertex_tag>::type             VertexHookType;
+      typedef typename viennagrid::result_of::element_handle<CellType, vertex_tag>::type             VertexHookType;
       typedef typename viennagrid::result_of::element<CellType, line_tag>::type             EdgeType;
       
       typedef typename viennagrid::result_of::element<DomainTypeOut, vertex_tag>::type                                      VertexTypeOut;
@@ -963,10 +963,10 @@ namespace viennagrid
 //       vertices[1] = &(viennagrid::elements<vertex_tag>(segment_out.domain())[vocit->id()]); ++vocit;
 //       vertices[2] = &(viennagrid::elements<vertex_tag>(segment_out.domain())[vocit->id()]); ++vocit;
 //       vertices[3] = &(viennagrid::elements<vertex_tag>(segment_out.domain())[vocit->id()]);
-      vertices[0] = *viennagrid::find_hook( segment_out, vocit->id() ); ++vocit;
-      vertices[1] = *viennagrid::find_hook( segment_out, vocit->id() ); ++vocit;
-      vertices[2] = *viennagrid::find_hook( segment_out, vocit->id() ); ++vocit;
-      vertices[3] = *viennagrid::find_hook( segment_out, vocit->id() );  
+      vertices[0] = *viennagrid::find_handle( segment_out, vocit->id() ); ++vocit;
+      vertices[1] = *viennagrid::find_handle( segment_out, vocit->id() ); ++vocit;
+      vertices[2] = *viennagrid::find_handle( segment_out, vocit->id() ); ++vocit;
+      vertices[3] = *viennagrid::find_handle( segment_out, vocit->id() );  
       
 
       //
@@ -992,27 +992,27 @@ namespace viennagrid
           ordered_vertices[1] = vertices[0];
           ordered_vertices[2] = vertices[1];
           ordered_vertices[3] = vertices[3];
-          ordered_vertices[4] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
-          ordered_vertices[5] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
+          ordered_vertices[4] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
+          ordered_vertices[5] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
           
           if (viennadata::access<refinement_key, bool>(refinement_key())(e2) == true)
           {
-            ordered_vertices[6] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
+            ordered_vertices[6] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
             apply3_1<CellType>(segment_out, ordered_vertices);
           }
           else if (viennadata::access<refinement_key, bool>(refinement_key())(e3) == true)
           {
-            ordered_vertices[6] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
+            ordered_vertices[6] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
             apply3_2<CellType>(segment_out, ordered_vertices);
           }
           else if (viennadata::access<refinement_key, bool>(refinement_key())(e4) == true)
           {
-            ordered_vertices[6] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
+            ordered_vertices[6] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
             apply3_4<CellType>(segment_out, ordered_vertices);
           }
           else if (viennadata::access<refinement_key, bool>(refinement_key())(e5) == true)
           {
-            ordered_vertices[6] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
+            ordered_vertices[6] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
             apply3_3<CellType>(segment_out, ordered_vertices);
           }
           else
@@ -1026,22 +1026,22 @@ namespace viennagrid
           ordered_vertices[1] = vertices[0];
           ordered_vertices[2] = vertices[3];
           ordered_vertices[3] = vertices[2];
-          ordered_vertices[4] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
-          ordered_vertices[5] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
+          ordered_vertices[4] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
+          ordered_vertices[5] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
           
           if (viennadata::access<refinement_key, bool>(refinement_key())(e3) == true)
           {
-            ordered_vertices[6] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
+            ordered_vertices[6] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
             apply3_3<CellType>(segment_out, ordered_vertices);
           }
           else if (viennadata::access<refinement_key, bool>(refinement_key())(e4) == true)
           {
-            ordered_vertices[6] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
+            ordered_vertices[6] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
             apply3_2<CellType>(segment_out, ordered_vertices);
           }
           else if (viennadata::access<refinement_key, bool>(refinement_key())(e5) == true)
           {
-            ordered_vertices[6] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
+            ordered_vertices[6] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
             apply3_4<CellType>(segment_out, ordered_vertices);
           }
           else
@@ -1055,17 +1055,17 @@ namespace viennagrid
           ordered_vertices[1] = vertices[1];
           ordered_vertices[2] = vertices[2];
           ordered_vertices[3] = vertices[3];
-          ordered_vertices[4] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
-          ordered_vertices[5] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
+          ordered_vertices[4] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
+          ordered_vertices[5] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
           
           if (viennadata::access<refinement_key, bool>(refinement_key())(e4) == true)
           {
-            ordered_vertices[6] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
+            ordered_vertices[6] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
             apply3_1<CellType>(segment_out, ordered_vertices);
           }
           else if (viennadata::access<refinement_key, bool>(refinement_key())(e5) == true)
           {
-            ordered_vertices[6] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
+            ordered_vertices[6] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
             apply3_4<CellType>(segment_out, ordered_vertices);
           }
           else
@@ -1079,12 +1079,12 @@ namespace viennagrid
           ordered_vertices[1] = vertices[1];
           ordered_vertices[2] = vertices[0];
           ordered_vertices[3] = vertices[2];
-          ordered_vertices[4] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
-          ordered_vertices[5] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
+          ordered_vertices[4] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
+          ordered_vertices[5] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
           
           if (viennadata::access<refinement_key, bool>(refinement_key())(e5) == true)
           {
-            ordered_vertices[6] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
+            ordered_vertices[6] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
             apply3_3<CellType>(segment_out, ordered_vertices);
           }
           else
@@ -1105,22 +1105,22 @@ namespace viennagrid
           ordered_vertices[1] = vertices[0];
           ordered_vertices[2] = vertices[2];
           ordered_vertices[3] = vertices[1];
-          ordered_vertices[4] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
-          ordered_vertices[5] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
+          ordered_vertices[4] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
+          ordered_vertices[5] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
           
           if (viennadata::access<refinement_key, bool>(refinement_key())(e3) == true)
           {
-            ordered_vertices[6] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
+            ordered_vertices[6] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
             apply3_4<CellType>(segment_out, ordered_vertices);
           }
           else if (viennadata::access<refinement_key, bool>(refinement_key())(e4) == true)
           {
-            ordered_vertices[6] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
+            ordered_vertices[6] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
             apply3_3<CellType>(segment_out, ordered_vertices);
           }
           else if (viennadata::access<refinement_key, bool>(refinement_key())(e5) == true)
           {
-            ordered_vertices[6] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
+            ordered_vertices[6] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
             apply3_2<CellType>(segment_out, ordered_vertices);
           }
           else
@@ -1134,17 +1134,17 @@ namespace viennagrid
           ordered_vertices[1] = vertices[2];
           ordered_vertices[2] = vertices[0];
           ordered_vertices[3] = vertices[3];
-          ordered_vertices[4] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
-          ordered_vertices[5] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
+          ordered_vertices[4] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
+          ordered_vertices[5] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
           
           if (viennadata::access<refinement_key, bool>(refinement_key())(e4) == true)
           {
-            ordered_vertices[6] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
+            ordered_vertices[6] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
             apply3_3<CellType>(segment_out, ordered_vertices);
           }
           else if (viennadata::access<refinement_key, bool>(refinement_key())(e5) == true)
           {
-            ordered_vertices[6] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
+            ordered_vertices[6] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
             apply3_1<CellType>(segment_out, ordered_vertices);
           }
           else
@@ -1161,9 +1161,9 @@ namespace viennagrid
             ordered_vertices[1] = vertices[3];
             ordered_vertices[2] = vertices[2];
             ordered_vertices[3] = vertices[0];
-            ordered_vertices[4] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
-            ordered_vertices[5] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
-            ordered_vertices[6] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
+            ordered_vertices[4] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
+            ordered_vertices[5] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
+            ordered_vertices[6] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
             
             apply3_4<CellType>(segment_out, ordered_vertices);
           }
@@ -1190,9 +1190,9 @@ namespace viennagrid
             ordered_vertices[1] = vertices[3];
             ordered_vertices[2] = vertices[1];
             ordered_vertices[3] = vertices[2];
-            ordered_vertices[4] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
-            ordered_vertices[5] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
-            ordered_vertices[6] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
+            ordered_vertices[4] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
+            ordered_vertices[5] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
+            ordered_vertices[6] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
             
             apply3_4<CellType>(segment_out, ordered_vertices);
           }
@@ -1203,9 +1203,9 @@ namespace viennagrid
             ordered_vertices[1] = vertices[2];
             ordered_vertices[2] = vertices[1];
             ordered_vertices[3] = vertices[0];
-            ordered_vertices[4] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
-            ordered_vertices[5] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
-            ordered_vertices[6] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
+            ordered_vertices[4] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
+            ordered_vertices[5] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
+            ordered_vertices[6] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
             
             apply3_3<CellType>(segment_out, ordered_vertices);
           }
@@ -1220,12 +1220,12 @@ namespace viennagrid
           ordered_vertices[1] = vertices[3];
           ordered_vertices[2] = vertices[1];
           ordered_vertices[3] = vertices[2];
-          ordered_vertices[4] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
-          ordered_vertices[5] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
+          ordered_vertices[4] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
+          ordered_vertices[5] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
           
           if (viennadata::access<refinement_key, bool>(refinement_key())(e5) == true)
           {
-            ordered_vertices[6] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
+            ordered_vertices[6] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
             apply3_1<CellType>(segment_out, ordered_vertices);
           }
           else
@@ -1246,12 +1246,12 @@ namespace viennagrid
           ordered_vertices[1] = vertices[1];
           ordered_vertices[2] = vertices[3];
           ordered_vertices[3] = vertices[0];
-          ordered_vertices[4] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
-          ordered_vertices[5] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
+          ordered_vertices[4] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
+          ordered_vertices[5] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
           
           if (viennadata::access<refinement_key, bool>(refinement_key())(e5) == true)
           {
-            ordered_vertices[6] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
+            ordered_vertices[6] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
             apply3_2<CellType>(segment_out, ordered_vertices);
           }
           else
@@ -1602,7 +1602,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::iterator<EdgeOnCellRange>::type           EdgeOnCellIterator;            
       
       typedef typename viennagrid::result_of::element<CellType, vertex_tag>::type             VertexType;
-      typedef typename viennagrid::result_of::element_hook<CellType, vertex_tag>::type             VertexHookType;
+      typedef typename viennagrid::result_of::element_handle<CellType, vertex_tag>::type             VertexHookType;
       typedef typename viennagrid::result_of::element<CellType, line_tag>::type             EdgeType;
       
       typedef typename viennagrid::result_of::element<DomainTypeOut, vertex_tag>::type                                      VertexTypeOut;
@@ -1622,10 +1622,10 @@ namespace viennagrid
 //       vertices[1] = &(viennagrid::elements<vertex_tag>(segment_out.domain())[vocit->id()]); ++vocit;
 //       vertices[2] = &(viennagrid::elements<vertex_tag>(segment_out.domain())[vocit->id()]); ++vocit;
 //       vertices[3] = &(viennagrid::elements<vertex_tag>(segment_out.domain())[vocit->id()]);
-      vertices[0] = *viennagrid::find_hook( segment_out, vocit->id() ); ++vocit;
-      vertices[1] = *viennagrid::find_hook( segment_out, vocit->id() ); ++vocit;
-      vertices[2] = *viennagrid::find_hook( segment_out, vocit->id() ); ++vocit;
-      vertices[3] = *viennagrid::find_hook( segment_out, vocit->id() );  
+      vertices[0] = *viennagrid::find_handle( segment_out, vocit->id() ); ++vocit;
+      vertices[1] = *viennagrid::find_handle( segment_out, vocit->id() ); ++vocit;
+      vertices[2] = *viennagrid::find_handle( segment_out, vocit->id() ); ++vocit;
+      vertices[3] = *viennagrid::find_handle( segment_out, vocit->id() );  
       
 
       //
@@ -1651,10 +1651,10 @@ namespace viennagrid
           ordered_vertices[1] = vertices[0];
           ordered_vertices[2] = vertices[1];
           ordered_vertices[3] = vertices[3];
-          ordered_vertices[4] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
-          ordered_vertices[5] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
-          ordered_vertices[6] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
-          ordered_vertices[7] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
+          ordered_vertices[4] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
+          ordered_vertices[5] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
+          ordered_vertices[6] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
+          ordered_vertices[7] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
           
           apply4_1<CellType>(segment_out, ordered_vertices);
         }
@@ -1664,10 +1664,10 @@ namespace viennagrid
           ordered_vertices[1] = vertices[0];
           ordered_vertices[2] = vertices[3];
           ordered_vertices[3] = vertices[2];
-          ordered_vertices[4] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
-          ordered_vertices[5] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
-          ordered_vertices[6] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
-          ordered_vertices[7] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
+          ordered_vertices[4] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
+          ordered_vertices[5] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
+          ordered_vertices[6] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
+          ordered_vertices[7] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
           
           apply4_1<CellType>(segment_out, ordered_vertices);
         }
@@ -1677,10 +1677,10 @@ namespace viennagrid
           ordered_vertices[1] = vertices[1];
           ordered_vertices[2] = vertices[2];
           ordered_vertices[3] = vertices[3];
-          ordered_vertices[4] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
-          ordered_vertices[5] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
-          ordered_vertices[6] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
-          ordered_vertices[7] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
+          ordered_vertices[4] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
+          ordered_vertices[5] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
+          ordered_vertices[6] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
+          ordered_vertices[7] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
           
           apply4_1<CellType>(segment_out, ordered_vertices);
         }
@@ -1690,10 +1690,10 @@ namespace viennagrid
           ordered_vertices[1] = vertices[1];
           ordered_vertices[2] = vertices[0];
           ordered_vertices[3] = vertices[2];
-          ordered_vertices[4] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
-          ordered_vertices[5] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
-          ordered_vertices[6] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
-          ordered_vertices[7] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
+          ordered_vertices[4] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
+          ordered_vertices[5] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
+          ordered_vertices[6] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
+          ordered_vertices[7] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
           
           apply4_1<CellType>(segment_out, ordered_vertices);
         }
@@ -1703,10 +1703,10 @@ namespace viennagrid
           ordered_vertices[1] = vertices[1];
           ordered_vertices[2] = vertices[2];
           ordered_vertices[3] = vertices[3];
-          ordered_vertices[4] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
-          ordered_vertices[5] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
-          ordered_vertices[6] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
-          ordered_vertices[7] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
+          ordered_vertices[4] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
+          ordered_vertices[5] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
+          ordered_vertices[6] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
+          ordered_vertices[7] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
           
           apply4_2<CellType>(segment_out, ordered_vertices);
         }
@@ -1723,10 +1723,10 @@ namespace viennagrid
           ordered_vertices[1] = vertices[0];
           ordered_vertices[2] = vertices[2];
           ordered_vertices[3] = vertices[1];
-          ordered_vertices[4] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
-          ordered_vertices[5] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
-          ordered_vertices[6] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
-          ordered_vertices[7] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
+          ordered_vertices[4] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
+          ordered_vertices[5] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
+          ordered_vertices[6] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
+          ordered_vertices[7] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
           
           apply4_1<CellType>(segment_out, ordered_vertices);
         }
@@ -1736,10 +1736,10 @@ namespace viennagrid
           ordered_vertices[1] = vertices[2];
           ordered_vertices[2] = vertices[0];
           ordered_vertices[3] = vertices[3];
-          ordered_vertices[4] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
-          ordered_vertices[5] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
-          ordered_vertices[6] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
-          ordered_vertices[7] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
+          ordered_vertices[4] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
+          ordered_vertices[5] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
+          ordered_vertices[6] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
+          ordered_vertices[7] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
           
           apply4_1<CellType>(segment_out, ordered_vertices);
         }
@@ -1749,10 +1749,10 @@ namespace viennagrid
           ordered_vertices[1] = vertices[0];
           ordered_vertices[2] = vertices[1];
           ordered_vertices[3] = vertices[3];
-          ordered_vertices[4] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
-          ordered_vertices[5] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
-          ordered_vertices[6] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
-          ordered_vertices[7] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
+          ordered_vertices[4] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
+          ordered_vertices[5] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
+          ordered_vertices[6] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
+          ordered_vertices[7] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
           
           apply4_2<CellType>(segment_out, ordered_vertices);
         }
@@ -1762,10 +1762,10 @@ namespace viennagrid
           ordered_vertices[1] = vertices[2];
           ordered_vertices[2] = vertices[3];
           ordered_vertices[3] = vertices[1];
-          ordered_vertices[4] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
-          ordered_vertices[5] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
-          ordered_vertices[6] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
-          ordered_vertices[7] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
+          ordered_vertices[4] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
+          ordered_vertices[5] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
+          ordered_vertices[6] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
+          ordered_vertices[7] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
           
           apply4_1<CellType>(segment_out, ordered_vertices);
         }
@@ -1782,10 +1782,10 @@ namespace viennagrid
           ordered_vertices[1] = vertices[0];
           ordered_vertices[2] = vertices[2];
           ordered_vertices[3] = vertices[1];
-          ordered_vertices[4] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
-          ordered_vertices[5] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
-          ordered_vertices[6] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
-          ordered_vertices[7] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
+          ordered_vertices[4] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
+          ordered_vertices[5] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
+          ordered_vertices[6] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
+          ordered_vertices[7] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
           
           apply4_2<CellType>(segment_out, ordered_vertices);
         }
@@ -1795,10 +1795,10 @@ namespace viennagrid
           ordered_vertices[1] = vertices[3];
           ordered_vertices[2] = vertices[1];
           ordered_vertices[3] = vertices[2];
-          ordered_vertices[4] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
-          ordered_vertices[5] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
-          ordered_vertices[6] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
-          ordered_vertices[7] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
+          ordered_vertices[4] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
+          ordered_vertices[5] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
+          ordered_vertices[6] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
+          ordered_vertices[7] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
           
           apply4_1<CellType>(segment_out, ordered_vertices);
         }
@@ -1808,10 +1808,10 @@ namespace viennagrid
           ordered_vertices[1] = vertices[3];
           ordered_vertices[2] = vertices[0];
           ordered_vertices[3] = vertices[1];
-          ordered_vertices[4] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
-          ordered_vertices[5] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
-          ordered_vertices[6] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
-          ordered_vertices[7] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
+          ordered_vertices[4] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
+          ordered_vertices[5] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
+          ordered_vertices[6] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
+          ordered_vertices[7] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
           
           apply4_1<CellType>(segment_out, ordered_vertices);
         }
@@ -1828,10 +1828,10 @@ namespace viennagrid
           ordered_vertices[1] = vertices[1];
           ordered_vertices[2] = vertices[3];
           ordered_vertices[3] = vertices[0];
-          ordered_vertices[4] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
-          ordered_vertices[5] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
-          ordered_vertices[6] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
-          ordered_vertices[7] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
+          ordered_vertices[4] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
+          ordered_vertices[5] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
+          ordered_vertices[6] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
+          ordered_vertices[7] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
           
           apply4_1<CellType>(segment_out, ordered_vertices);
         }
@@ -1841,10 +1841,10 @@ namespace viennagrid
           ordered_vertices[1] = vertices[2];
           ordered_vertices[2] = vertices[1];
           ordered_vertices[3] = vertices[0];
-          ordered_vertices[4] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
-          ordered_vertices[5] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
-          ordered_vertices[6] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
-          ordered_vertices[7] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
+          ordered_vertices[4] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
+          ordered_vertices[5] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
+          ordered_vertices[6] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
+          ordered_vertices[7] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
           
           apply4_1<CellType>(segment_out, ordered_vertices);
         }
@@ -1861,10 +1861,10 @@ namespace viennagrid
           ordered_vertices[1] = vertices[3];
           ordered_vertices[2] = vertices[2];
           ordered_vertices[3] = vertices[0];
-          ordered_vertices[4] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
-          ordered_vertices[5] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
-          ordered_vertices[6] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
-          ordered_vertices[7] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
+          ordered_vertices[4] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
+          ordered_vertices[5] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
+          ordered_vertices[6] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
+          ordered_vertices[7] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
           
           apply4_1<CellType>(segment_out, ordered_vertices);
         }
@@ -1960,7 +1960,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::iterator<EdgeOnCellRange>::type           EdgeOnCellIterator;            
       
       typedef typename viennagrid::result_of::element<CellType, vertex_tag>::type             VertexType;
-      typedef typename viennagrid::result_of::element_hook<CellType, vertex_tag>::type             VertexHookType;
+      typedef typename viennagrid::result_of::element_handle<CellType, vertex_tag>::type             VertexHookType;
       typedef typename viennagrid::result_of::element<CellType, line_tag>::type             EdgeType;
       
       typedef typename viennagrid::result_of::element<DomainTypeOut, vertex_tag>::type                                      VertexTypeOut;
@@ -1980,10 +1980,10 @@ namespace viennagrid
 //       vertices[1] = &(viennagrid::elements<vertex_tag>(segment_out.domain())[vocit->id()]); ++vocit;
 //       vertices[2] = &(viennagrid::elements<vertex_tag>(segment_out.domain())[vocit->id()]); ++vocit;
 //       vertices[3] = &(viennagrid::elements<vertex_tag>(segment_out.domain())[vocit->id()]);
-      vertices[0] = *viennagrid::find_hook( segment_out, vocit->id() ); ++vocit;
-      vertices[1] = *viennagrid::find_hook( segment_out, vocit->id() ); ++vocit;
-      vertices[2] = *viennagrid::find_hook( segment_out, vocit->id() ); ++vocit;
-      vertices[3] = *viennagrid::find_hook( segment_out, vocit->id() );  
+      vertices[0] = *viennagrid::find_handle( segment_out, vocit->id() ); ++vocit;
+      vertices[1] = *viennagrid::find_handle( segment_out, vocit->id() ); ++vocit;
+      vertices[2] = *viennagrid::find_handle( segment_out, vocit->id() ); ++vocit;
+      vertices[3] = *viennagrid::find_handle( segment_out, vocit->id() );  
       
 
       //
@@ -2006,11 +2006,11 @@ namespace viennagrid
         ordered_vertices[1] = vertices[1];
         ordered_vertices[2] = vertices[2];
         ordered_vertices[3] = vertices[3];
-        ordered_vertices[4] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
-        ordered_vertices[5] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
-        ordered_vertices[6] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
-        ordered_vertices[7] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
-        ordered_vertices[8] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
+        ordered_vertices[4] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
+        ordered_vertices[5] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
+        ordered_vertices[6] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
+        ordered_vertices[7] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
+        ordered_vertices[8] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
         
         apply5_1<CellType>(segment_out, ordered_vertices);
       }
@@ -2020,11 +2020,11 @@ namespace viennagrid
         ordered_vertices[1] = vertices[0];
         ordered_vertices[2] = vertices[1];
         ordered_vertices[3] = vertices[3];
-        ordered_vertices[4] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
-        ordered_vertices[5] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
-        ordered_vertices[6] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
-        ordered_vertices[7] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
-        ordered_vertices[8] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
+        ordered_vertices[4] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
+        ordered_vertices[5] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
+        ordered_vertices[6] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
+        ordered_vertices[7] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
+        ordered_vertices[8] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
         
         apply5_1<CellType>(segment_out, ordered_vertices);
       }
@@ -2034,11 +2034,11 @@ namespace viennagrid
         ordered_vertices[1] = vertices[3];
         ordered_vertices[2] = vertices[1];
         ordered_vertices[3] = vertices[2];
-        ordered_vertices[4] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
-        ordered_vertices[5] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
-        ordered_vertices[6] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
-        ordered_vertices[7] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
-        ordered_vertices[8] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
+        ordered_vertices[4] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
+        ordered_vertices[5] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
+        ordered_vertices[6] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
+        ordered_vertices[7] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
+        ordered_vertices[8] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
         
         apply5_1<CellType>(segment_out, ordered_vertices);
       }
@@ -2048,11 +2048,11 @@ namespace viennagrid
         ordered_vertices[1] = vertices[2];
         ordered_vertices[2] = vertices[0];
         ordered_vertices[3] = vertices[3];
-        ordered_vertices[4] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
-        ordered_vertices[5] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
-        ordered_vertices[6] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
-        ordered_vertices[7] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
-        ordered_vertices[8] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
+        ordered_vertices[4] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
+        ordered_vertices[5] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
+        ordered_vertices[6] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
+        ordered_vertices[7] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
+        ordered_vertices[8] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
         
         apply5_1<CellType>(segment_out, ordered_vertices);
       }
@@ -2062,11 +2062,11 @@ namespace viennagrid
         ordered_vertices[1] = vertices[3];
         ordered_vertices[2] = vertices[2];
         ordered_vertices[3] = vertices[0];
-        ordered_vertices[4] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
-        ordered_vertices[5] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
-        ordered_vertices[6] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
-        ordered_vertices[7] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
-        ordered_vertices[8] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
+        ordered_vertices[4] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e5) );
+        ordered_vertices[5] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
+        ordered_vertices[6] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
+        ordered_vertices[7] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
+        ordered_vertices[8] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
         
         apply5_1<CellType>(segment_out, ordered_vertices);
       }
@@ -2076,11 +2076,11 @@ namespace viennagrid
         ordered_vertices[1] = vertices[2];
         ordered_vertices[2] = vertices[1];
         ordered_vertices[3] = vertices[0];
-        ordered_vertices[4] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
-        ordered_vertices[5] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
-        ordered_vertices[6] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
-        ordered_vertices[7] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
-        ordered_vertices[8] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
+        ordered_vertices[4] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e3) );
+        ordered_vertices[5] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e4) );
+        ordered_vertices[6] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) );
+        ordered_vertices[7] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) );
+        ordered_vertices[8] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) );
         
         apply5_1<CellType>(segment_out, ordered_vertices);
       }
@@ -2107,7 +2107,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::iterator<EdgeOnCellRange>::type           EdgeOnCellIterator;            
       
       typedef typename viennagrid::result_of::element<CellType, vertex_tag>::type             VertexType;
-      typedef typename viennagrid::result_of::element_hook<CellType, vertex_tag>::type             VertexHookType;
+      typedef typename viennagrid::result_of::element_handle<CellType, vertex_tag>::type             VertexHookType;
       typedef typename viennagrid::result_of::element<CellType, line_tag>::type             EdgeType;
       
       typedef typename viennagrid::result_of::element<DomainTypeOut, vertex_tag>::type                                      VertexTypeOut;
@@ -2131,10 +2131,10 @@ namespace viennagrid
 //       vertices[1] = &(viennagrid::elements<vertex_tag>(segment_out.domain())[vocit->id()]); ++vocit;
 //       vertices[2] = &(viennagrid::elements<vertex_tag>(segment_out.domain())[vocit->id()]); ++vocit;
 //       vertices[3] = &(viennagrid::elements<vertex_tag>(segment_out.domain())[vocit->id()]);
-      vertices[0] = *viennagrid::find_hook( segment_out, vocit->id() ); ++vocit;
-      vertices[1] = *viennagrid::find_hook( segment_out, vocit->id() ); ++vocit;
-      vertices[2] = *viennagrid::find_hook( segment_out, vocit->id() ); ++vocit;
-      vertices[3] = *viennagrid::find_hook( segment_out, vocit->id() );  
+      vertices[0] = *viennagrid::find_handle( segment_out, vocit->id() ); ++vocit;
+      vertices[1] = *viennagrid::find_handle( segment_out, vocit->id() ); ++vocit;
+      vertices[2] = *viennagrid::find_handle( segment_out, vocit->id() ); ++vocit;
+      vertices[3] = *viennagrid::find_handle( segment_out, vocit->id() );  
       
       //add vertices from edge
       EdgeOnCellRange edges_on_cell = viennagrid::elements<line_tag>(cell_in);
@@ -2142,12 +2142,12 @@ namespace viennagrid
       
       
       
-      vertices[4] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(*eocit) ); ++eocit;
-      vertices[5] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(*eocit) ); ++eocit;
-      vertices[6] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(*eocit) ); ++eocit;
-      vertices[7] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(*eocit) ); ++eocit;
-      vertices[8] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(*eocit) ); ++eocit;
-      vertices[9] = *viennagrid::find_hook( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(*eocit) );
+      vertices[4] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(*eocit) ); ++eocit;
+      vertices[5] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(*eocit) ); ++eocit;
+      vertices[6] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(*eocit) ); ++eocit;
+      vertices[7] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(*eocit) ); ++eocit;
+      vertices[8] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(*eocit) ); ++eocit;
+      vertices[9] = *viennagrid::find_handle( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(*eocit) );
       
       //
       // Step 2: Add new cells to new domain:

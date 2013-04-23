@@ -57,7 +57,7 @@ namespace viennagrid
             typedef typename viennagrid::result_of::const_element_range< element_type, vertex_tag >::type vertex_range;
             typedef typename viennagrid::result_of::const_iterator< vertex_range >::type const_iterator;
             //typedef typename vertex_container_type::const_iterator const_iterator;
-            //typedef typename vertex_container_type::const_hook_iterator const_hook_iterator;
+            //typedef typename vertex_container_type::const_handle_iterator const_handle_iterator;
           
           
         //typedef typename result_of::const_ncell_range<element_type, 0>::type       VertexConstRange;

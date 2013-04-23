@@ -58,7 +58,7 @@ void test()
 {
     //typedef typename viennagrid::storage::result_of::container_from_tag< id_int, container_tag >::type my_container_type;
     typedef typename viennagrid::storage::result_of::container< id_int, container_tag >::type my_container_type;
-    typedef typename my_container_type::hook_type hook_type;
+    typedef typename my_container_type::handle_type handle_type;
     
     my_container_type my_container;
     id_int i0(10);
@@ -68,34 +68,34 @@ void test()
     
     typedef typename viennagrid::storage::result_of::view<
                 my_container_type,
-                viennagrid::storage::hooked_container_tag<viennagrid::storage::std_deque_tag, viennagrid::storage::no_hook_tag>
+                viennagrid::storage::handleed_container_tag<viennagrid::storage::std_deque_tag, viennagrid::storage::no_handle_tag>
             >::type my_view_type;
     my_view_type my_view;
     my_view.set_base_container(my_container);
     
     id_int i1(15);
     i1.id( id_type(1) );
-    my_view.insert_hook( my_container.insert(i1).first );
+    my_view.insert_handle( my_container.insert(i1).first );
     
     
     typedef typename viennagrid::storage::result_of::view<
                 my_view_type,
-                viennagrid::storage::hooked_container_tag<viennagrid::storage::std_deque_tag, viennagrid::storage::no_hook_tag>
+                viennagrid::storage::handleed_container_tag<viennagrid::storage::std_deque_tag, viennagrid::storage::no_handle_tag>
             >::type my_view_type2;
     my_view_type2 my_view2;
     my_view2.set_base_container(my_view);
     
     id_int i2(20);
     i2.id( id_type(2) );
-    my_view2.insert_hook( my_container.insert(i2).first );
+    my_view2.insert_handle( my_container.insert(i2).first );
     
     
     cout << typeid(my_container).name() << endl;
     cout << "my_container iteration ";
     std::copy( my_container.begin(), my_container.end(), std::ostream_iterator<id_int>(cout, " ") );
     cout << endl;
-    cout << "my_container hook iteration ";
-    for (typename my_container_type::hook_iterator it = my_container.hook_begin(); it != my_container.hook_end(); ++it)
+    cout << "my_container handle iteration ";
+    for (typename my_container_type::handle_iterator it = my_container.handle_begin(); it != my_container.handle_end(); ++it)
         cout << *it << " ";
     cout << endl;
     cout << "my_container front/back " << my_container.front() << " " << my_container.back() << endl;
@@ -108,8 +108,8 @@ void test()
     std::copy( my_view.begin(), my_view.end(), std::ostream_iterator<id_int>(cout, " ") );
     cout << endl;
 
-    cout << "my_view hook iteration ";
-    for (typename my_view_type::hook_iterator it = my_view.hook_begin(); it != my_view.hook_end(); ++it)
+    cout << "my_view handle iteration ";
+    for (typename my_view_type::handle_iterator it = my_view.handle_begin(); it != my_view.handle_end(); ++it)
         cout << *it << " ";
     cout << endl;
     cout << "my_view front/back " << my_view.front() << " " << my_view.back() << endl;
@@ -122,8 +122,8 @@ void test()
     std::copy( my_view2.begin(), my_view2.end(), std::ostream_iterator<id_int>(cout, " ") );
     cout << endl;
 
-    cout << "my_view2 hook iteration ";
-    for (typename my_view_type::hook_iterator it = my_view2.hook_begin(); it != my_view2.hook_end(); ++it)
+    cout << "my_view2 handle iteration ";
+    for (typename my_view_type::handle_iterator it = my_view2.handle_begin(); it != my_view2.handle_end(); ++it)
         cout << *it << " ";
     cout << endl;
     cout << "my_view2 front/back " << my_view2.front() << " " << my_view2.back() << endl;
@@ -134,14 +134,14 @@ void test()
     
     my_view_type my_view3;
     my_view3.set_base_container(my_container);
-    viennagrid::storage::view::hook(my_container, my_view3);
+    viennagrid::storage::view::handle(my_container, my_view3);
     
     
     cout << "my_view3 iteration ";
     std::copy( my_view3.begin(), my_view3.end(), std::ostream_iterator<id_int>(cout, " ") );
     cout << endl;
-    cout << "my_view3 hook iteration ";
-    for (typename my_view_type::hook_iterator it = my_view3.hook_begin(); it != my_view3.hook_end(); ++it)
+    cout << "my_view3 handle iteration ";
+    for (typename my_view_type::handle_iterator it = my_view3.handle_begin(); it != my_view3.handle_end(); ++it)
         cout << *it << " ";
     cout << endl;
     cout << "my_view3 front/back " << my_view3.front() << " " << my_view3.back() << endl;
@@ -151,7 +151,7 @@ void test()
     
     
     my_view3.clear();
-    viennagrid::storage::view::hook(my_view, my_view3);
+    viennagrid::storage::view::handle(my_view, my_view3);
     
     
     cout << "clear and reference my_view" << endl;
@@ -161,9 +161,9 @@ void test()
     cout << "my_view3 iteration ";
     std::copy( my_view3.begin(), my_view3.end(), std::ostream_iterator<id_int>(cout, " ") );
     cout << endl;
-    cout << "my_view3 hook iteration ";
-    std::copy( my_view3.hook_begin(), my_view3.hook_end(), std::ostream_iterator<hook_type>(cout, " ") );
-    //for (typename my_view_type::hook_iterator it = my_view3.hook_begin(); it != my_view3.hook_end(); ++it)
+    cout << "my_view3 handle iteration ";
+    std::copy( my_view3.handle_begin(), my_view3.handle_end(), std::ostream_iterator<handle_type>(cout, " ") );
+    //for (typename my_view_type::handle_iterator it = my_view3.handle_begin(); it != my_view3.handle_end(); ++it)
     //    cout << *it << " ";
     cout << endl;
     cout << "my_view3 front/back " << my_view3.front() << " " << my_view3.back() << endl;
@@ -177,22 +177,22 @@ int main()
 {
 
     
-    test< viennagrid::storage::hooked_container_tag< viennagrid::storage::std_vector_tag, viennagrid::storage::pointer_hook_tag > >();
+    test< viennagrid::storage::handleed_container_tag< viennagrid::storage::std_vector_tag, viennagrid::storage::pointer_handle_tag > >();
     cout << endl 
          << " --------------------------- "
          << endl << endl;
     
-    test< viennagrid::storage::hooked_container_tag< viennagrid::storage::std_vector_tag, viennagrid::storage::iterator_hook_tag > >();
+    test< viennagrid::storage::handleed_container_tag< viennagrid::storage::std_vector_tag, viennagrid::storage::iterator_handle_tag > >();
     cout << endl 
          << " --------------------------- "
          << endl << endl;
     
-    test< viennagrid::storage::hooked_container_tag< viennagrid::storage::std_vector_tag, viennagrid::storage::id_hook_tag > >();
+    test< viennagrid::storage::handleed_container_tag< viennagrid::storage::std_vector_tag, viennagrid::storage::id_handle_tag > >();
     cout << endl 
          << " --------------------------- "
          << endl << endl;
 
-    test< viennagrid::storage::hooked_container_tag< viennagrid::storage::std_deque_tag, viennagrid::storage::iterator_hook_tag > >();
+    test< viennagrid::storage::handleed_container_tag< viennagrid::storage::std_deque_tag, viennagrid::storage::iterator_handle_tag > >();
     cout << endl 
          << " --------------------------- "
          << endl << endl;

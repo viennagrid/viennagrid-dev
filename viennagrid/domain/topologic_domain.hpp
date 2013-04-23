@@ -300,18 +300,18 @@ namespace viennagrid
     
     
     template<typename container_collection_type>
-    class hook_domain_functor
+    class handle_domain_functor
     {
     public:
         
-        hook_domain_functor(container_collection_type & collection_) : collection(collection_) {}
+        handle_domain_functor(container_collection_type & collection_) : collection(collection_) {}
         
         template<typename container_type>
         void operator()( container_type & container )
         {
             typedef typename container_type::value_type value_type;
             //container.set_base_container(  );
-            storage::view::hook( viennagrid::storage::collection::get<value_type>(collection), container);
+            storage::view::handle( viennagrid::storage::collection::get<value_type>(collection), container);
         }
         
         
@@ -320,25 +320,25 @@ namespace viennagrid
     };
     
     template<typename view_type, typename domain_type>
-    void hook_domain( view_type & view, domain_type & domain )
+    void handle_domain( view_type & view, domain_type & domain )
     {
-        hook_domain_functor< typename result_of::container_collection<domain_type>::type > functor( container_collection(domain) );
+        handle_domain_functor< typename result_of::container_collection<domain_type>::type > functor( container_collection(domain) );
         viennagrid::storage::collection::for_each( container_collection(view), functor);
     }
     
     
-    template<typename view_type, typename domain_type, typename hook_type>
-    void add_hook( view_type & view, domain_type & domain, hook_type hook )
+    template<typename view_type, typename domain_type, typename handle_type>
+    void add_handle( view_type & view, domain_type & domain, handle_type handle )
     {
-        typedef typename storage::hook::value_type<hook_type>::type value_type;
-        value_type & element = dereference_hook(domain, hook);
+        typedef typename storage::handle::value_type<handle_type>::type value_type;
+        value_type & element = dereference_handle(domain, handle);
         
         typedef typename viennagrid::result_of::element_range< view_type, value_type >::type range_type;
-        typedef typename viennagrid::result_of::hook_iterator<range_type>::type iterator_type;
+        typedef typename viennagrid::result_of::handle_iterator<range_type>::type iterator_type;
         
-        iterator_type it = find_hook( view, element.id() );
+        iterator_type it = find_handle( view, element.id() );
         if ( it == elements<value_type>(view).end() )
-            viennagrid::storage::collection::get<value_type>( container_collection(view) ).insert_hook( hook );
+            viennagrid::storage::collection::get<value_type>( container_collection(view) ).insert_handle( handle );
     }
 
     
@@ -364,49 +364,49 @@ namespace viennagrid
     { return topologic_domain(domain).get_inserter(); }
     
     
-    template<typename domain_type, typename hook_type>
-    typename storage::hook::value_type<hook_type>::type & dereference_hook( domain_type & domain, const hook_type & hook)
+    template<typename domain_type, typename handle_type>
+    typename storage::handle::value_type<handle_type>::type & dereference_handle( domain_type & domain, const handle_type & handle)
     {
-        typedef typename storage::hook::value_type<hook_type>::type value_type;
-        return storage::collection::get<value_type>(container_collection(domain)).dereference_hook( hook );
+        typedef typename storage::handle::value_type<handle_type>::type value_type;
+        return storage::collection::get<value_type>(container_collection(domain)).dereference_handle( handle );
     }
     
-    template<typename domain_type, typename hook_type>
-    const typename storage::hook::value_type<hook_type>::type & dereference_hook( const domain_type & domain, const hook_type & hook)
+    template<typename domain_type, typename handle_type>
+    const typename storage::handle::value_type<handle_type>::type & dereference_handle( const domain_type & domain, const handle_type & handle)
     {
-        typedef typename storage::hook::value_type<hook_type>::type value_type;
-        return storage::collection::get<value_type>(container_collection(domain)).dereference_hook( hook );
+        typedef typename storage::handle::value_type<handle_type>::type value_type;
+        return storage::collection::get<value_type>(container_collection(domain)).dereference_handle( handle );
     }
     
     
     
   template<typename domain_type,
            typename element_tag_1, typename bnd_cell_typelist_1, typename id_type_1,
-           typename element_hook_type_2>
+           typename element_handle_type_2>
   typename viennagrid::result_of::element<domain_type, viennagrid::vertex_tag>::type
   local_vertex(const domain_type & domain,
                element_t<element_tag_1, bnd_cell_typelist_1, id_type_1> const & host_ncell,
-               element_hook_type_2 const & bnd_kcell_hook,
+               element_handle_type_2 const & bnd_kcell_handle,
                std::size_t index)
   {
-    typedef typename viennagrid::storage::hook::value_type<element_hook_type_2>::type element_type_2;
-    const element_type_2 & bnd_kcell = viennagrid::dereference_hook(domain, bnd_kcell_hook);
-    return viennagrid::elements< viennagrid::vertex_tag >(bnd_kcell)[host_ncell.global_to_local_orientation(bnd_kcell_hook, index)];
+    typedef typename viennagrid::storage::handle::value_type<element_handle_type_2>::type element_type_2;
+    const element_type_2 & bnd_kcell = viennagrid::dereference_handle(domain, bnd_kcell_handle);
+    return viennagrid::elements< viennagrid::vertex_tag >(bnd_kcell)[host_ncell.global_to_local_orientation(bnd_kcell_handle, index)];
   }
     
     
     
     template<typename container_type>
-    class dereference_hook_comperator
+    class dereference_handle_comperator
     {
     public:
         
-        dereference_hook_comperator(const container_type & container_) : container(container_) {}
+        dereference_handle_comperator(const container_type & container_) : container(container_) {}
         
-        template<typename hook>
-        bool operator() ( hook h1, hook h2 )
+        template<typename handle>
+        bool operator() ( handle h1, handle h2 )
         {
-            return &viennagrid::dereference_hook( container, h1 ) < &viennagrid::dereference_hook( container, h2 );
+            return &viennagrid::dereference_handle( container, h1 ) < &viennagrid::dereference_handle( container, h2 );
         }
         
     private:
@@ -430,15 +430,15 @@ namespace viennagrid
         };
         
         template<typename domain_container_collection_type_, typename inserter_type_, typename element_type_or_tag>
-        struct element_hook<topologic_domain_t<domain_container_collection_type_, inserter_type_>, element_type_or_tag>
+        struct element_handle<topologic_domain_t<domain_container_collection_type_, inserter_type_>, element_type_or_tag>
         {
-            typedef typename element_hook<domain_container_collection_type_, element_type_or_tag>::type type;
+            typedef typename element_handle<domain_container_collection_type_, element_type_or_tag>::type type;
         };
         
         template<typename domain_container_collection_type_, typename inserter_type_, typename element_type_or_tag>
-        struct const_element_hook<topologic_domain_t<domain_container_collection_type_, inserter_type_>, element_type_or_tag>
+        struct const_element_handle<topologic_domain_t<domain_container_collection_type_, inserter_type_>, element_type_or_tag>
         {
-            typedef typename const_element_hook<domain_container_collection_type_, element_type_or_tag>::type type;
+            typedef typename const_element_handle<domain_container_collection_type_, element_type_or_tag>::type type;
         };
         
         
@@ -464,15 +464,15 @@ namespace viennagrid
 //         };
 //         
 //         template<typename domain_container_collection_type_, typename inserter_type_, long dim>
-//         struct ncell_hook< topologic_domain_t<domain_container_collection_type_, inserter_type_>, dim >
+//         struct ncell_handle< topologic_domain_t<domain_container_collection_type_, inserter_type_>, dim >
 //         {
-//             typedef typename ncell_hook<domain_container_collection_type_, dim>::type type;
+//             typedef typename ncell_handle<domain_container_collection_type_, dim>::type type;
 //         };
 //         
 //         template<typename domain_container_collection_type_, typename inserter_type_, long dim>
-//         struct const_ncell_hook< topologic_domain_t<domain_container_collection_type_, inserter_type_>, dim >
+//         struct const_ncell_handle< topologic_domain_t<domain_container_collection_type_, inserter_type_>, dim >
 //         {
-//             typedef typename const_ncell_hook<domain_container_collection_type_, dim>::type type;
+//             typedef typename const_ncell_handle<domain_container_collection_type_, dim>::type type;
 //         };
 //         
 //         
@@ -525,12 +525,12 @@ namespace viennagrid
 //         typedef typename id_type::value_type element_type;
 //         typedef typename element_type::tag element_tag;
 //         typedef typename viennagrid::result_of::const_element_range<domain_type, element_tag>::type RangeType;
-//         typedef typename viennagrid::result_of::const_hook_iterator<RangeType>::type RangeIterator;
+//         typedef typename viennagrid::result_of::const_handle_iterator<RangeType>::type RangeIterator;
 //         
 //         RangeType range = viennagrid::elements<element_tag>(domain);
-//         for (RangeIterator it = range.hook_begin(); it != range.hook_end(); ++it)
+//         for (RangeIterator it = range.handle_begin(); it != range.handle_end(); ++it)
 //         {
-//             if ( viennagrid::dereference_hook(domain, *it).id() == id )
+//             if ( viennagrid::dereference_handle(domain, *it).id() == id )
 //                 return true;
 //         }
 //         
@@ -588,7 +588,7 @@ namespace viennagrid
                 typename viennagrid::storage::result_of::container_of<
                     typename result_of::container_collection<domain_type>::type,
                     viennagrid::element_t<element_tag, boundary_cell_container_typelist, id_type>
-                >::type::hook_type,
+                >::type::handle_type,
                 bool
             >
         push_element( domain_type & domain, const viennagrid::element_t<element_tag, boundary_cell_container_typelist, id_type> & element)
@@ -602,7 +602,7 @@ namespace viennagrid
                 typename viennagrid::storage::result_of::container_of<
                     typename result_of::container_collection<domain_type>::type,
                     viennagrid::element_t<element_tag, boundary_cell_container_typelist, id_type>
-                >::type::hook_type,
+                >::type::handle_type,
                 bool
             >
         push_element( domain_type & domain, const viennagrid::element_t<element_tag, boundary_cell_container_typelist, id_type> & element)
@@ -615,7 +615,7 @@ namespace viennagrid
                 typename viennagrid::storage::result_of::container_of<
                     typename result_of::container_collection<domain_type>::type,
                     element_type
-                >::type::hook_type,
+                >::type::handle_type,
                 bool
             >
         push_element_noid( domain_type & domain, const element_type & element)
@@ -631,18 +631,18 @@ namespace viennagrid
     template<typename element_tag, typename boundary_cell_container_typelist, typename id_type>
     void set_vertex(
             viennagrid::element_t<element_tag, boundary_cell_container_typelist, id_type> & element,
-            typename viennagrid::result_of::element_hook< viennagrid::element_t<element_tag, boundary_cell_container_typelist, id_type>, vertex_tag >::type vertex_hook,
+            typename viennagrid::result_of::element_handle< viennagrid::element_t<element_tag, boundary_cell_container_typelist, id_type>, vertex_tag >::type vertex_handle,
             unsigned int pos
         )
     {
-        element.container( viennagrid::dimension_tag<0>() ).set_hook( vertex_hook, pos );
+        element.container( viennagrid::dimension_tag<0>() ).set_handle( vertex_handle, pos );
     }
     
     template<typename domain_type>
-    typename result_of::element_hook<domain_type, viennagrid::vertex_tag>::type get_vertex_hook( domain_type & domain, unsigned int pos )
+    typename result_of::element_handle<domain_type, viennagrid::vertex_tag>::type get_vertex_handle( domain_type & domain, unsigned int pos )
     {
         typedef typename result_of::element<domain_type, viennagrid::vertex_tag>::type vertex_type;
-        return viennagrid::storage::collection::get<vertex_type>( container_collection(domain) ).hook_at(pos);
+        return viennagrid::storage::collection::get<vertex_type>( container_collection(domain) ).handle_at(pos);
     }
     
 

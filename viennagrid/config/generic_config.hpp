@@ -87,7 +87,7 @@ namespace viennagrid
         };
         
         
-        template<typename element_tag, typename boundary_cell_tag, typename hook_tag>
+        template<typename element_tag, typename boundary_cell_tag, typename handle_tag>
         struct default_element_config
         {
             typedef typename viennameta::make_typemap<
@@ -96,10 +96,10 @@ namespace viennagrid
                 viennagrid::storage::smart_id_tag<int>,
                 
                 viennagrid::element_container_tag,
-                viennagrid::storage::hooked_container_tag<           
+                viennagrid::storage::handleed_container_tag<           
                     //viennagrid::storage::std_deque_tag,
                     typename default_container_tag<element_tag, boundary_cell_tag>::type,
-                    hook_tag
+                    handle_tag
                 >,
                 
                 viennagrid::element_boundary_storage_layout_tag,
@@ -108,32 +108,32 @@ namespace viennagrid
             >::type type;
         };
         
-        template<typename element_tag, typename boundary_cell_tag, typename hook_tag>
+        template<typename element_tag, typename boundary_cell_tag, typename handle_tag>
         struct default_topologic_config_helper
         {
             typedef typename viennameta::typemap::result_of::insert<
-                typename default_topologic_config_helper<element_tag, typename boundary_cell_tag::facet_tag, hook_tag>::type,
+                typename default_topologic_config_helper<element_tag, typename boundary_cell_tag::facet_tag, handle_tag>::type,
                 viennameta::static_pair<
                     boundary_cell_tag,
-                    typename default_element_config<element_tag, boundary_cell_tag, hook_tag>::type
+                    typename default_element_config<element_tag, boundary_cell_tag, handle_tag>::type
                 >
             >::type type;
         };
         
-        template<typename element_tag, typename hook_tag>
-        struct default_topologic_config_helper<element_tag, viennagrid::vertex_tag, hook_tag>
+        template<typename element_tag, typename handle_tag>
+        struct default_topologic_config_helper<element_tag, viennagrid::vertex_tag, handle_tag>
         {
             typedef typename viennameta::make_typemap<
                 viennagrid::vertex_tag,
-                typename default_element_config<element_tag, viennagrid::vertex_tag, hook_tag>::type
+                typename default_element_config<element_tag, viennagrid::vertex_tag, handle_tag>::type
             >::type type;
         };
         
         
-        template<typename element_tag, typename hook_tag>
+        template<typename element_tag, typename handle_tag>
         struct default_topologic_config
         {
-            typedef typename default_topologic_config_helper<element_tag, element_tag, hook_tag>::type type;
+            typedef typename default_topologic_config_helper<element_tag, element_tag, handle_tag>::type type;
         };
     }
 }

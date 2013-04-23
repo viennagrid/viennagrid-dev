@@ -122,13 +122,13 @@ namespace viennagrid
 //                 typename tagging::result_of::element_tag<element_type, bounding_tag>::type plc_bounding_tag = tagging::create_element_tag<bounding_tag>(plc);
 //                 
 //                 typedef typename result_of::element_range<PolygonType, line_tag>::type LineOnPolygonRange;
-//                 typedef typename result_of::hook_iterator<LineOnPolygonRange>::type LineOnPolygonIterator;
+//                 typedef typename result_of::handle_iterator<LineOnPolygonRange>::type LineOnPolygonIterator;
 //                 
 //                 LineOnPolygonRange lines = elements<line_tag>(*pit);
 //                 for (LineOnPolygonIterator lphit = lines.begin(); lphit != lines.end(); ++lphit)
 //                 {
-//                     plc.container( line_tag() ).insert_hook( *lphit );
-//                     tagging::tag(viennagrid::dereference_hook(plc,*lphit), plc_bounding_tag);
+//                     plc.container( line_tag() ).insert_handle( *lphit );
+//                     tagging::tag(viennagrid::dereference_handle(plc,*lphit), plc_bounding_tag);
 //                 }
 //             }
         }
@@ -145,14 +145,14 @@ namespace viennagrid
             typedef typename result_of::iterator<LineRange>::type LineIterator;
             
             LineRange lines = elements<line_tag>(plc);
-            for (LineIterator lit = lines.hook_begin(); lit != lines.hook_end(); ++lit)
+            for (LineIterator lit = lines.handle_begin(); lit != lines.handle_end(); ++lit)
             {
                 typedef typename result_of::element_range<LineType, vertex_tag>::type VertexOnLineRange;
-                typedef typename result_of::hook_iterator<VertexOnLineRange>::type VertexOnLineHookIterator;
+                typedef typename result_of::handle_iterator<VertexOnLineRange>::type VertexOnLineHookIterator;
                 
                 VertexOnLineRange vertices = elements<vertex_tag>(*lit);
                 for (VertexOnLineHookIterator vlhit = vertices.begin(); vlhit != vertices.end(); ++vlhit)
-                    plc.container( vertex_tag() ).insert_hook( *vlhit );
+                    plc.container( vertex_tag() ).insert_handle( *vlhit );
             }
             
             
@@ -164,16 +164,16 @@ namespace viennagrid
 //             typedef typename result_of::iterator<PolygonRange>::type PolygonIterator;
 //             
 //             PolygonRange polygons = elements<polygon_tag>(plc);
-//             for (PolygonIterator pit = polygons.hook_begin(); pit != polygons.hook_end(); ++pit)
+//             for (PolygonIterator pit = polygons.handle_begin(); pit != polygons.handle_end(); ++pit)
 //             {
 //                 typedef typename result_of::element_range<PolygonType, vertex_tag>::type VertexOnPolygonRange;
-//                 typedef typename result_of::hook_iterator<VertexOnPolygonRange>::type VertexOnPolygonIterator;
+//                 typedef typename result_of::handle_iterator<VertexOnPolygonRange>::type VertexOnPolygonIterator;
 //                 
 //                 VertexOnPolygonRange vertices = elements<vertex_tag>(*pit);
 //                 for (VertexOnPolygonIterator vphit = vertices.begin(); vphit != vertices.end(); ++vphit)
 //                 {
-//                     plc.container( vertex_tag() ).insert_hook( *vphit );
-//                     tagging::tag(viennagrid::dereference_hook(plc,*vphit), plc_bounding_tag);
+//                     plc.container( vertex_tag() ).insert_handle( *vphit );
+//                     tagging::tag(viennagrid::dereference_handle(plc,*vphit), plc_bounding_tag);
 //                 }
 //             }
         }

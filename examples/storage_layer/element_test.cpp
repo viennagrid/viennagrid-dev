@@ -91,7 +91,7 @@ struct segment_t
     segment_t(DomainType & domain, bool copy = true) : container_collection(), inserter(container_collection, domain.inserter)
     {
         if (copy)
-            viennagrid::storage::container_collection::hook(domain.container_collection, container_collection);        
+            viennagrid::storage::container_collection::handle(domain.container_collection, container_collection);        
     }
     
     template<typename element_type>
@@ -139,10 +139,10 @@ int main()
     
     
     typedef viennameta::make_typemap<
-        vertex_type,            viennagrid::storage::hooked_container_tag< viennagrid::storage::std_deque_tag, viennagrid::storage::pointer_hook_tag>,
-        tetrahedron_type,       viennagrid::storage::hooked_container_tag< viennagrid::storage::std_deque_tag, viennagrid::storage::pointer_hook_tag>,
-        triangle_type,          viennagrid::storage::hooked_container_tag< viennagrid::storage::hidden_key_map_tag< viennagrid::storage::element_key_tag<int> >, viennagrid::storage::pointer_hook_tag>,
-        line_type,              viennagrid::storage::hooked_container_tag< viennagrid::storage::hidden_key_map_tag< viennagrid::storage::element_key_tag<int> >, viennagrid::storage::pointer_hook_tag>
+        vertex_type,            viennagrid::storage::handleed_container_tag< viennagrid::storage::std_deque_tag, viennagrid::storage::pointer_handle_tag>,
+        tetrahedron_type,       viennagrid::storage::handleed_container_tag< viennagrid::storage::std_deque_tag, viennagrid::storage::pointer_handle_tag>,
+        triangle_type,          viennagrid::storage::handleed_container_tag< viennagrid::storage::hidden_key_map_tag< viennagrid::storage::element_key_tag<int> >, viennagrid::storage::pointer_handle_tag>,
+        line_type,              viennagrid::storage::handleed_container_tag< viennagrid::storage::hidden_key_map_tag< viennagrid::storage::element_key_tag<int> >, viennagrid::storage::pointer_handle_tag>
     >::type container_config;
     
     
@@ -221,10 +221,10 @@ int main()
     
     
     typedef viennameta::make_typemap<
-        vertex_type,            viennagrid::storage::hooked_container_tag< viennagrid::storage::std_deque_tag, viennagrid::storage::no_hook_tag>,
-        tetrahedron_type,       viennagrid::storage::hooked_container_tag< viennagrid::storage::std_deque_tag, viennagrid::storage::no_hook_tag>,
-        triangle_type,          viennagrid::storage::hooked_container_tag< viennagrid::storage::hidden_key_map_tag< viennagrid::storage::element_key_tag<int> >, viennagrid::storage::no_hook_tag>,
-        line_type,              viennagrid::storage::hooked_container_tag< viennagrid::storage::hidden_key_map_tag< viennagrid::storage::element_key_tag<int> >, viennagrid::storage::no_hook_tag>
+        vertex_type,            viennagrid::storage::handleed_container_tag< viennagrid::storage::std_deque_tag, viennagrid::storage::no_handle_tag>,
+        tetrahedron_type,       viennagrid::storage::handleed_container_tag< viennagrid::storage::std_deque_tag, viennagrid::storage::no_handle_tag>,
+        triangle_type,          viennagrid::storage::handleed_container_tag< viennagrid::storage::hidden_key_map_tag< viennagrid::storage::element_key_tag<int> >, viennagrid::storage::no_handle_tag>,
+        line_type,              viennagrid::storage::handleed_container_tag< viennagrid::storage::hidden_key_map_tag< viennagrid::storage::element_key_tag<int> >, viennagrid::storage::no_handle_tag>
     >::type view_container_config;
     
 //     typedef VIENNAMETA_MAKE_TYPEMAP_4(  vertex_type *, viennagrid::storage::view_tag< viennagrid::storage::std_deque_tag >,

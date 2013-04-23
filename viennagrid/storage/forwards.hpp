@@ -19,11 +19,11 @@ namespace viennagrid
 //         struct id_reference_tag {};
 
 
-        // hooks
-        struct no_hook_tag;
-        struct iterator_hook_tag;
-        struct pointer_hook_tag;
-        struct id_hook_tag;
+        // handles
+        struct no_handle_tag;
+        struct iterator_handle_tag;
+        struct pointer_handle_tag;
+        struct id_handle_tag;
 
         
         
@@ -44,11 +44,11 @@ namespace viennagrid
         >::type default_container_config;
         
         
-        template<typename container_tag__, typename hook_tag__>
-        struct hooked_container_tag
+        template<typename container_tag__, typename handle_tag__>
+        struct handleed_container_tag
         {
             typedef container_tag__ container_tag;
-            typedef hook_tag__ hook_tag;
+            typedef handle_tag__ handle_tag;
         };
 
         

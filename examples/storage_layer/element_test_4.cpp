@@ -40,12 +40,12 @@ int main()
 {
     
     //
-    // First define the type of hook to use:
+    // First define the type of handle to use:
     //
     
-    //typedef viennagrid::storage::pointer_hook_tag hook_tag;
-    //typedef viennagrid::storage::iterator_hook_tag hook_tag;
-    typedef viennagrid::storage::id_hook_tag hook_tag;
+    //typedef viennagrid::storage::pointer_handle_tag handle_tag;
+    //typedef viennagrid::storage::iterator_handle_tag handle_tag;
+    typedef viennagrid::storage::id_handle_tag handle_tag;
     
     
     
@@ -61,9 +61,9 @@ int main()
             viennagrid::storage::smart_id_tag<int>,
         
             viennagrid::element_container_tag,
-            viennagrid::storage::hooked_container_tag<           
+            viennagrid::storage::handleed_container_tag<           
                 viennagrid::storage::std_deque_tag,
-                hook_tag
+                handle_tag
             >,
             
             viennagrid::element_boundary_storage_layout_tag,
@@ -77,9 +77,9 @@ int main()
             viennagrid::storage::smart_id_tag<int>,
         
             viennagrid::element_container_tag,
-            viennagrid::storage::hooked_container_tag<           
+            viennagrid::storage::handleed_container_tag<           
                 viennagrid::storage::hidden_key_map_tag< viennagrid::storage::element_key_tag >,
-                hook_tag
+                handle_tag
             >,
             
             viennagrid::element_boundary_storage_layout_tag,
@@ -94,9 +94,9 @@ int main()
             viennagrid::storage::smart_id_tag<int>,
         
             viennagrid::element_container_tag,
-            viennagrid::storage::hooked_container_tag<           
+            viennagrid::storage::handleed_container_tag<           
                 viennagrid::storage::hidden_key_map_tag< viennagrid::storage::element_key_tag >,
-                hook_tag
+                handle_tag
             >,
             
             viennagrid::element_boundary_storage_layout_tag,
@@ -112,9 +112,9 @@ int main()
             viennagrid::storage::smart_id_tag<int>,
         
             viennagrid::element_container_tag,
-            viennagrid::storage::hooked_container_tag<           
+            viennagrid::storage::handleed_container_tag<           
                 viennagrid::storage::hidden_key_map_tag< viennagrid::storage::element_key_tag >,
-                hook_tag
+                handle_tag
             >,
             
             viennagrid::element_boundary_storage_layout_tag,
@@ -132,7 +132,7 @@ int main()
     // Generates the same config as show above in comment
     //
     
-    //typedef viennagrid::result_of::default_topologic_config<viennagrid::tetrahedron_tag, hook_tag>::type config;
+    //typedef viennagrid::result_of::default_topologic_config<viennagrid::tetrahedron_tag, handle_tag>::type config;
        
     
         
@@ -215,10 +215,10 @@ int main()
     
 //     tetrahedron_type tet(domain_container_collection);
 //     
-//     tet.container( viennagrid::dimension_tag<0>() ).set_hook( viennagrid::storage::collection::get<vertex_type>(domain_container_collection).hook_at(0), 0);
-//     tet.container( viennagrid::dimension_tag<0>() ).set_hook( viennagrid::storage::collection::get<vertex_type>(domain_container_collection).hook_at(1), 1);
-//     tet.container( viennagrid::dimension_tag<0>() ).set_hook( viennagrid::storage::collection::get<vertex_type>(domain_container_collection).hook_at(2), 2);
-//     tet.container( viennagrid::dimension_tag<0>() ).set_hook( viennagrid::storage::collection::get<vertex_type>(domain_container_collection).hook_at(3), 3);
+//     tet.container( viennagrid::dimension_tag<0>() ).set_handle( viennagrid::storage::collection::get<vertex_type>(domain_container_collection).handle_at(0), 0);
+//     tet.container( viennagrid::dimension_tag<0>() ).set_handle( viennagrid::storage::collection::get<vertex_type>(domain_container_collection).handle_at(1), 1);
+//     tet.container( viennagrid::dimension_tag<0>() ).set_handle( viennagrid::storage::collection::get<vertex_type>(domain_container_collection).handle_at(2), 2);
+//     tet.container( viennagrid::dimension_tag<0>() ).set_handle( viennagrid::storage::collection::get<vertex_type>(domain_container_collection).handle_at(3), 3);
 //     
 //     inserter(tet);
 //     

@@ -112,19 +112,19 @@ namespace viennagrid
         typedef plc_tag CellTag;
         typedef typename result_of::element<GeometricDomainType, CellTag>::type CellType;
         //typedef typename CellType::tag                            CellTag;
-        typedef typename result_of::element_hook<GeometricDomainType, CellTag>::type                           CellHookType;
+        typedef typename result_of::element_handle<GeometricDomainType, CellTag>::type                           CellHookType;
 
         //typedef typename result_of::point<ConfigType>::type                              PointType;
         typedef typename result_of::element<GeometricDomainType, vertex_tag>::type                           VertexType;
-        typedef typename result_of::element_hook<GeometricDomainType, vertex_tag>::type                           VertexHookType;
+        typedef typename result_of::element_handle<GeometricDomainType, vertex_tag>::type                           VertexHookType;
         typedef typename VertexType::id_type VertexIDType;
         //typedef typename result_of::ncell<DomainType, CellTag::dim>::type     CellType;
         
 //         typedef typename result_of::element<GeometricDomainType, polygon_tag>::type                           PolygonType;
-//         typedef typename result_of::element_hook<GeometricDomainType, polygon_tag>::type                           PolygonHookType;
+//         typedef typename result_of::element_handle<GeometricDomainType, polygon_tag>::type                           PolygonHookType;
         
         typedef typename result_of::element<GeometricDomainType, line_tag>::type                           LineType;
-        typedef typename result_of::element_hook<GeometricDomainType, line_tag>::type                           LineHookType;
+        typedef typename result_of::element_handle<GeometricDomainType, line_tag>::type                           LineHookType;
 
 //         typedef typename viennagrid::result_of::element_range<GeometricDomainType, vertex_tag>::type   VertexRange;
 //         typedef typename viennagrid::result_of::iterator<VertexRange>::type        VertexIterator;
@@ -211,7 +211,7 @@ namespace viennagrid
                 for (int j=0; j<attribute_num; j++)
                     current_line >> attributes[j];
                 
-                viennadata::access<poly_attribute_tag, std::vector<CoordType> >()(viennagrid::dereference_hook(domain, vertex)) = attributes;
+                viennadata::access<poly_attribute_tag, std::vector<CoordType> >()(viennagrid::dereference_handle(domain, vertex)) = attributes;
             }
         }
     
@@ -285,39 +285,39 @@ namespace viennagrid
                 if (vertex_num < 0)
                     throw bad_file_format_exception(filename, "POLY polygon has less than 0 vertices");
                 
-                std::vector<VertexHookType> vertex_hooks(vertex_num);
+                std::vector<VertexHookType> vertex_handles(vertex_num);
                 
                 for (int k = 0; k<vertex_num; ++k)
                 {
                     long id;
                     current_line >> id;
-                    vertex_hooks[k] = *viennagrid::find_hook( domain, VertexIDType(id) );
-//                     used_vertices.insert( vertex_hooks[k] );
-//                     used_vertices.insert_hook( vertex_hooks[k] );
-//                     std::cout << "  " << viennagrid::point( domain, vertex_hooks[k]) << std::endl;
+                    vertex_handles[k] = *viennagrid::find_handle( domain, VertexIDType(id) );
+//                     used_vertices.insert( vertex_handles[k] );
+//                     used_vertices.insert_handle( vertex_handles[k] );
+//                     std::cout << "  " << viennagrid::point( domain, vertex_handles[k]) << std::endl;
                 }
                 
                 if (vertex_num == 1)
                 {
-                    vertices.push_back( vertex_hooks.front() );
+                    vertices.push_back( vertex_handles.front() );
 //                     std::cout << " Added loose vertex" << std::endl;
                 }
                 else if (vertex_num == 2)
                 {
-                    lines.push_back( viennagrid::create_line(domain, vertex_hooks[0], vertex_hooks[1]) );
+                    lines.push_back( viennagrid::create_line(domain, vertex_handles[0], vertex_handles[1]) );
 //                     std::cout << " Added loose line" << std::endl;
                 }
                 else
                 {
-                    typename std::vector<VertexHookType>::iterator it1 = vertex_hooks.begin();
+                    typename std::vector<VertexHookType>::iterator it1 = vertex_handles.begin();
                     typename std::vector<VertexHookType>::iterator it2 = it1; ++it2;
-                    for (; it2 != vertex_hooks.end(); ++it2)
+                    for (; it2 != vertex_handles.end(); ++it2)
                         lines.push_back( viennagrid::create_line(domain, *it1, *it2) );
-                    lines.push_back( viennagrid::create_line(domain, vertex_hooks.back(), vertex_hooks.front()) );
+                    lines.push_back( viennagrid::create_line(domain, vertex_handles.back(), vertex_handles.front()) );
                     
                     
-//                     polygons.push_back( viennagrid::create_element<PolygonType>(domain, vertex_hooks.begin(), vertex_hooks.end()) );
-//                     std::cout << " Added polygon " << vertex_hooks.size() << std::endl;
+//                     polygons.push_back( viennagrid::create_element<PolygonType>(domain, vertex_handles.begin(), vertex_handles.end()) );
+//                     std::cout << " Added polygon " << vertex_handles.size() << std::endl;
                 }
             }
                        

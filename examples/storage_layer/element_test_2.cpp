@@ -32,12 +32,12 @@ using std::endl;
 int main()
 {
     //
-    // First define the type of hook to use:
+    // First define the type of handle to use:
     //
     
-    //typedef viennagrid::storage::pointer_hook_tag hook_tag;
-    //typedef viennagrid::storage::iterator_hook_tag hook_tag;
-    typedef viennagrid::storage::id_hook_tag hook_tag;
+    //typedef viennagrid::storage::pointer_handle_tag handle_tag;
+    //typedef viennagrid::storage::iterator_handle_tag handle_tag;
+    typedef viennagrid::storage::id_handle_tag handle_tag;
     
     //
     // Get the vertex type:
@@ -61,13 +61,13 @@ int main()
     ///////////////////// Next step: Instantiate a line type ////////////////////////////////////                                            
     
     //
-    // Create a container (type) for vertices. A hooked_container is basically a usual container which in addition provides hooks
+    // Create a container (type) for vertices. A handleed_container is basically a usual container which in addition provides handles
     //
     typedef viennagrid::storage::result_of::container<
             vertex_type,                                         // the 'value_type', i.e. vertices     
-            viennagrid::storage::hooked_container_tag<           
+            viennagrid::storage::handleed_container_tag<           
                 viennagrid::storage::std_deque_tag,              // use a std::deque as container
-                hook_tag                                         // with the respective hooks
+                handle_tag                                         // with the respective handles
             >
         >::type vertex_container_type;
     
@@ -101,16 +101,16 @@ int main()
     
     typedef viennagrid::storage::result_of::container<
             line_type,
-            viennagrid::storage::hooked_container_tag<
+            viennagrid::storage::handleed_container_tag<
                 //viennagrid::storage::std_deque_tag,
                 viennagrid::storage::hidden_key_map_tag< viennagrid::storage::element_key_tag >,
-                hook_tag
+                handle_tag
             >
         >::type line_container_type;
 
 //     line_type line;
-//     line.container( viennagrid::dimension_tag<0>() ).set_hook(&v0, 0);
-//     line.container( viennagrid::dimension_tag<0>() ).set_hook(&v1, 1);
+//     line.container( viennagrid::dimension_tag<0>() ).set_handle(&v0, 0);
+//     line.container( viennagrid::dimension_tag<0>() ).set_handle(&v1, 1);
     
     
 //     typedef viennagrid::viennagrid_ng::result_of::container_of_dimension<line_type, 0>::type vertices_of_line_range_type;
@@ -124,7 +124,7 @@ int main()
     ///////////////////// Next step: Instantiate a triangle type ////////////////////////////////////                                            
     
     //
-    // First we define the container for vertices of a triangle (just hooks to the vertex_container_type)
+    // First we define the container for vertices of a triangle (just handles to the vertex_container_type)
     //
     typedef viennameta::static_pair<
         viennagrid::storage::result_of::view<
@@ -135,7 +135,7 @@ int main()
     > triangle_vertex_containers;
     
     //
-    // Then we define the container for lines of a triangle (just hooks to the line_container_type)
+    // Then we define the container for lines of a triangle (just handles to the line_container_type)
     //
     typedef viennameta::static_pair<
         viennagrid::storage::result_of::view<
@@ -157,14 +157,14 @@ int main()
     typedef viennagrid::element_t< viennagrid::triangle_tag, triangle_containers_typelist, viennagrid::storage::smart_id_tag<int> > triangle_type;
     
     //
-    // Instantiate a hooked container of triangles using std::deque as the underlying container base. Hooks are again of the type defined at the beginning.
+    // Instantiate a handleed container of triangles using std::deque as the underlying container base. Hooks are again of the type defined at the beginning.
     //
     typedef viennagrid::storage::result_of::container<
             triangle_type,
-            viennagrid::storage::hooked_container_tag<
+            viennagrid::storage::handleed_container_tag<
                 //viennagrid::storage::std_deque_tag,
                 viennagrid::storage::hidden_key_map_tag< viennagrid::storage::element_key_tag >,
-                hook_tag
+                handle_tag
             >
         >::type triangle_container_type;
     
@@ -220,13 +220,13 @@ int main()
     typedef viennagrid::element_t< viennagrid::tetrahedron_tag, tetrahedron_containers_typelist, viennagrid::storage::smart_id_tag<int> > tetrahedron_type;
     
     //
-    // Instantiate a container of tetrahedra. A std::deque is used for the storage, and the usual hook type defined at the beginning is used
+    // Instantiate a container of tetrahedra. A std::deque is used for the storage, and the usual handle type defined at the beginning is used
     //
     typedef viennagrid::storage::result_of::container<
             tetrahedron_type,
-            viennagrid::storage::hooked_container_tag<
+            viennagrid::storage::handleed_container_tag<
                 viennagrid::storage::std_deque_tag,
-                hook_tag
+                handle_tag
             >
         >::type tetrahedron_container_type;
         
@@ -278,10 +278,10 @@ int main()
     // Alright, now lets create a tetrahedron and link it with the four vertices.
     //
     tetrahedron_type tet(domain);
-    tet.container( viennagrid::dimension_tag<0>() ).set_hook( viennagrid::storage::collection::get<vertex_type>(domain).hook_at(0), 0);
-    tet.container( viennagrid::dimension_tag<0>() ).set_hook( viennagrid::storage::collection::get<vertex_type>(domain).hook_at(1), 1);
-    tet.container( viennagrid::dimension_tag<0>() ).set_hook( viennagrid::storage::collection::get<vertex_type>(domain).hook_at(2), 2);
-    tet.container( viennagrid::dimension_tag<0>() ).set_hook( viennagrid::storage::collection::get<vertex_type>(domain).hook_at(3), 3);
+    tet.container( viennagrid::dimension_tag<0>() ).set_handle( viennagrid::storage::collection::get<vertex_type>(domain).handle_at(0), 0);
+    tet.container( viennagrid::dimension_tag<0>() ).set_handle( viennagrid::storage::collection::get<vertex_type>(domain).handle_at(1), 1);
+    tet.container( viennagrid::dimension_tag<0>() ).set_handle( viennagrid::storage::collection::get<vertex_type>(domain).handle_at(2), 2);
+    tet.container( viennagrid::dimension_tag<0>() ).set_handle( viennagrid::storage::collection::get<vertex_type>(domain).handle_at(3), 3);
     
     inserter(tet);
     

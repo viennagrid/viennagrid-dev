@@ -386,29 +386,29 @@ namespace viennagrid
 //     };
 
     template<typename config_domain_segment_element_or_something_like_that, typename element_tag>
-    struct element_hook;
+    struct element_handle;
     
     template<typename config_domain_segment_element_or_something_like_that, typename element_tag>
-    struct const_element_hook;
+    struct const_element_handle;
     
 //     template<typename config_domain_segment_element_or_something_like_that, long dim>
 //     struct ncell;
 //     
 //     template<typename config_domain_segment_element_or_something_like_that, long dim>
-//     struct ncell_hook;
+//     struct ncell_handle;
 //     
 //     template<typename config_domain_segment_element_or_something_like_that, long dim>
-//     struct const_ncell_hook;
+//     struct const_ncell_handle;
     
     
     template<typename element_type>
     struct facet_type;
     
     template<typename element_type>
-    struct facet_hook;
+    struct facet_handle;
         
     template<typename element_type>
-    struct const_facet_hook;
+    struct const_facet_handle;
 
 
     
@@ -443,15 +443,15 @@ namespace viennagrid
     };
     
     template <typename container>
-    struct hook_iterator
+    struct handle_iterator
     {
-        typedef typename container::hook_iterator type;
+        typedef typename container::handle_iterator type;
     };
 
     template <typename container>
-    struct const_hook_iterator
+    struct const_handle_iterator
     {
-        typedef typename container::const_hook_iterator type;
+        typedef typename container::const_handle_iterator type;
     };
     
     
@@ -493,15 +493,15 @@ namespace viennagrid
         };
     
         template<typename element_tag, typename boundary_cell_typelist, typename id_type>
-        struct facet_hook< element_t<element_tag, boundary_cell_typelist, id_type> >
+        struct facet_handle< element_t<element_tag, boundary_cell_typelist, id_type> >
         {
-            typedef typename element_hook< element_t<element_tag, boundary_cell_typelist, id_type>, typename facet_tag<element_tag>::type >::type type;
+            typedef typename element_handle< element_t<element_tag, boundary_cell_typelist, id_type>, typename facet_tag<element_tag>::type >::type type;
         };
         
         template<typename element_tag, typename boundary_cell_typelist, typename id_type>
-        struct const_facet_hook< element_t<element_tag, boundary_cell_typelist, id_type> >
+        struct const_facet_handle< element_t<element_tag, boundary_cell_typelist, id_type> >
         {
-            typedef typename const_element_hook< element_t<element_tag, boundary_cell_typelist, id_type>, typename facet_tag<element_tag>::type >::type type;
+            typedef typename const_element_handle< element_t<element_tag, boundary_cell_typelist, id_type>, typename facet_tag<element_tag>::type >::type type;
         };
         
         

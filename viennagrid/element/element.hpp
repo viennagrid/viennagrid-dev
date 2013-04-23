@@ -48,8 +48,8 @@ namespace viennagrid
         
         typedef bnd_cell_container_type_ bnd_cell_container_type;
         typedef typename bnd_cell_container_type::value_type bnd_cell_type;
-        typedef typename bnd_cell_container_type::hook_type bnd_cell_hook_type;
-        typedef typename bnd_cell_container_type::const_hook_type bnd_cell_const_hook_type;
+        typedef typename bnd_cell_container_type::handle_type bnd_cell_handle_type;
+        typedef typename bnd_cell_container_type::const_handle_type bnd_cell_const_handle_type;
         
         typedef typename bnd_cell_type::tag bnd_cell_tag;
         enum { dim = bnd_cell_tag::dim };
@@ -83,32 +83,32 @@ namespace viennagrid
         
         using base::container;
         using base::set_bnd_cell;
-        using base::dereference_hook;
+        using base::dereference_handle;
         using base::global_to_local_orientation;
         
         
         bnd_cell_type &
-        dereference_hook(bnd_cell_hook_type hook)
+        dereference_handle(bnd_cell_handle_type handle)
         {
-            return elements_.dereference_hook(hook);
+            return elements_.dereference_handle(handle);
         }
         
         const bnd_cell_type &
-        dereference_hook(bnd_cell_hook_type hook) const
+        dereference_handle(bnd_cell_handle_type handle) const
         {
-            return elements_.dereference_hook(hook);
+            return elements_.dereference_handle(handle);
         }
         
         const bnd_cell_type &
-        dereference_hook(bnd_cell_const_hook_type hook)
+        dereference_handle(bnd_cell_const_handle_type handle)
         {
-            return elements_.dereference_hook(hook);
+            return elements_.dereference_handle(handle);
         }
         
         const bnd_cell_type &
-        dereference_hook(bnd_cell_const_hook_type hook) const
+        dereference_handle(bnd_cell_const_handle_type handle) const
         {
-            return elements_.dereference_hook(hook);
+            return elements_.dereference_handle(handle);
         }
         
         
@@ -139,11 +139,11 @@ namespace viennagrid
             return elements_;
         }
 
-        template<typename hook_type>
-        void set_bnd_cell(const bnd_cell_type & to_insert, std::pair<hook_type, bool> inserted, unsigned int pos)
+        template<typename handle_type>
+        void set_bnd_cell(const bnd_cell_type & to_insert, std::pair<handle_type, bool> inserted, unsigned int pos)
         {
             //elements_[pos] = inserted.first;
-            elements_.set_hook(inserted.first, pos);
+            elements_.set_handle(inserted.first, pos);
             orientations_.resize(pos+1);
 
             if (inserted.second)
@@ -153,24 +153,24 @@ namespace viennagrid
                 //std::cout << "Non Default Orientation" << std::endl;
                 
                 typedef typename result_of::const_element_range<bnd_cell_type, vertex_tag>::type           VertexOnElementConstRange;
-                typedef typename result_of::const_hook_iterator<VertexOnElementConstRange>::type     VertexOnElementConstIterator;
+                typedef typename result_of::const_handle_iterator<VertexOnElementConstRange>::type     VertexOnElementConstIterator;
 
                 typedef typename result_of::element_range<bnd_cell_type, vertex_tag>::type      VertexOnElementRange;
-                typedef typename result_of::hook_iterator<VertexOnElementRange>::type     VertexOnElementIterator;
+                typedef typename result_of::handle_iterator<VertexOnElementRange>::type     VertexOnElementIterator;
                 
 
                 long i=0; dim_type j=0;
                                     
                 //set orientation:
                 VertexOnElementRange vertices_on_element = elements<vertex_tag>( elements_[pos] );
-                for (VertexOnElementIterator voeit = vertices_on_element.hook_begin();
-                        voeit != vertices_on_element.hook_end();
+                for (VertexOnElementIterator voeit = vertices_on_element.handle_begin();
+                        voeit != vertices_on_element.handle_end();
                         ++voeit, ++i)
                 {
                     
                     VertexOnElementConstRange vertices_on_element_2 = elements<vertex_tag>( to_insert );
-                    for (VertexOnElementConstIterator voeit2 = vertices_on_element_2.hook_begin();
-                            voeit2 != vertices_on_element_2.hook_end();
+                    for (VertexOnElementConstIterator voeit2 = vertices_on_element_2.handle_begin();
+                            voeit2 != vertices_on_element_2.handle_end();
                             ++voeit2, ++j)
                     {
                         if (*voeit == *voeit2)
@@ -185,19 +185,19 @@ namespace viennagrid
             }
         }
         
-        template<typename hook_type>
-        void add_bnd_cell(const bnd_cell_type & to_insert, std::pair<hook_type, bool> inserted)
+        template<typename handle_type>
+        void add_bnd_cell(const bnd_cell_type & to_insert, std::pair<handle_type, bool> inserted)
         {
             set_bnd_cell(to_insert, inserted, elements_.size());
         }
         
         
       ////////////////// orientation: ////////////////////
-      std::size_t global_to_local_orientation(bnd_cell_hook_type const & el, long index) const
+      std::size_t global_to_local_orientation(bnd_cell_handle_type const & el, long index) const
       { 
         for (std::size_t i=0; i<elements_.size(); ++i)
         {
-          if (elements_.hook_at(i) == el)
+          if (elements_.handle_at(i) == el)
             return orientations_[i](index);
         }
         assert(false && "Provided k-cell is not a boundary element of the hosting n-cell!");
@@ -235,8 +235,8 @@ namespace viennagrid
         
         typedef bnd_cell_container_type_ bnd_cell_container_type;
         typedef typename bnd_cell_container_type::value_type bnd_cell_type;
-        typedef typename bnd_cell_container_type::hook_type bnd_cell_hook_type;
-        typedef typename bnd_cell_container_type::const_hook_type bnd_cell_const_hook_type;
+        typedef typename bnd_cell_container_type::handle_type bnd_cell_handle_type;
+        typedef typename bnd_cell_container_type::const_handle_type bnd_cell_const_handle_type;
         
         typedef typename bnd_cell_type::tag bnd_cell_tag;
         enum { dim = bnd_cell_tag::dim };
@@ -268,31 +268,31 @@ namespace viennagrid
         
         using base::container;
         using base::set_bnd_cell;
-        using base::dereference_hook;
+        using base::dereference_handle;
         
         
         bnd_cell_type &
-        dereference_hook(bnd_cell_hook_type hook)
+        dereference_handle(bnd_cell_handle_type handle)
         {
-            return elements_.dereference_hook(hook);
+            return elements_.dereference_handle(handle);
         }
         
         const bnd_cell_type &
-        dereference_hook(bnd_cell_hook_type hook) const
+        dereference_handle(bnd_cell_handle_type handle) const
         {
-            return elements_.dereference_hook(hook);
+            return elements_.dereference_handle(handle);
         }
         
         const bnd_cell_type &
-        dereference_hook(bnd_cell_const_hook_type hook)
+        dereference_handle(bnd_cell_const_handle_type handle)
         {
-            return elements_.dereference_hook(hook);
+            return elements_.dereference_handle(handle);
         }
         
         const bnd_cell_type &
-        dereference_hook(bnd_cell_const_hook_type hook) const
+        dereference_handle(bnd_cell_const_handle_type handle) const
         {
-            return elements_.dereference_hook(hook);
+            return elements_.dereference_handle(handle);
         }
         
         
@@ -323,14 +323,14 @@ namespace viennagrid
             return elements_;
         }
 
-        template<typename hook_type>
-        void set_bnd_cell(const bnd_cell_type & to_insert, std::pair<hook_type, bool> inserted, unsigned int pos)
+        template<typename handle_type>
+        void set_bnd_cell(const bnd_cell_type & to_insert, std::pair<handle_type, bool> inserted, unsigned int pos)
         {
-            elements_.set_hook(inserted.first, pos);
+            elements_.set_handle(inserted.first, pos);
         }
         
-        template<typename hook_type>
-        void add_bnd_cell(const bnd_cell_type & to_insert, std::pair<hook_type, bool> inserted)
+        template<typename handle_type>
+        void add_bnd_cell(const bnd_cell_type & to_insert, std::pair<handle_type, bool> inserted)
         {
             set_bnd_cell(to_insert, inserted, elements_.size());
         }
@@ -370,7 +370,7 @@ namespace viennagrid
         
         void container();
         void set_bnd_cell();
-        void dereference_hook();
+        void dereference_handle();
         void global_to_local_orientation();
         
     private:
@@ -587,10 +587,10 @@ namespace viennagrid
         }
         
         
-        typedef typename result_of::container_of_dimension_for_element< bnd_cell_container_typelist, 0>::type::hook_type vertex_hook_type;
-        void set_vertex( const vertex_hook_type & vertex, unsigned int pos )
+        typedef typename result_of::container_of_dimension_for_element< bnd_cell_container_typelist, 0>::type::handle_type vertex_handle_type;
+        void set_vertex( const vertex_handle_type & vertex, unsigned int pos )
         {
-            this->container(viennagrid::dimension_tag<0>()).set_hook( vertex, pos );
+            this->container(viennagrid::dimension_tag<0>()).set_handle( vertex, pos );
         }
     };
             
@@ -695,18 +695,18 @@ namespace viennagrid
         
         // Defines a HOOK TO a SUB-ELEMENT from an ELEMENT using SUB-ELEMENT TYPE or TAG
         template<typename element_tag_, typename boundary_cell_container_typelist, typename id_type, typename sub_element_type_or_tag>
-        struct element_hook< element_t<element_tag_, boundary_cell_container_typelist, id_type>, sub_element_type_or_tag >
+        struct element_handle< element_t<element_tag_, boundary_cell_container_typelist, id_type>, sub_element_type_or_tag >
         {
             typedef typename element_tag<sub_element_type_or_tag>::type sub_element_tag;
-            typedef typename container_of_tag_for_element< boundary_cell_container_typelist, sub_element_tag >::type::hook_type type;
+            typedef typename container_of_tag_for_element< boundary_cell_container_typelist, sub_element_tag >::type::handle_type type;
         };
         
         // Defines a const HOOK TO a SUB-ELEMENT from an ELEMENT using SUB-ELEMENT TYPE or TAG
         template<typename element_tag_, typename boundary_cell_container_typelist, typename id_type, typename sub_element_type_or_tag>
-        struct const_element_hook< element_t<element_tag_, boundary_cell_container_typelist, id_type>, sub_element_type_or_tag >
+        struct const_element_handle< element_t<element_tag_, boundary_cell_container_typelist, id_type>, sub_element_type_or_tag >
         {
             typedef typename element_tag<sub_element_type_or_tag>::type sub_element_tag;
-            typedef typename container_of_tag_for_element< boundary_cell_container_typelist, sub_element_tag >::type::const_hook_type type;
+            typedef typename container_of_tag_for_element< boundary_cell_container_typelist, sub_element_tag >::type::const_handle_type type;
         };
 
         
@@ -742,15 +742,15 @@ namespace viennagrid
 //         };
 //         
 //         template<typename element_tag, typename boundary_cell_container_typelist, typename id_type, long dim>
-//         struct ncell_hook< element_t<element_tag, boundary_cell_container_typelist, id_type>, dim >
+//         struct ncell_handle< element_t<element_tag, boundary_cell_container_typelist, id_type>, dim >
 //         {
-//             typedef typename container_of_dimension_for_element< boundary_cell_container_typelist, dim >::type::hook_type type;
+//             typedef typename container_of_dimension_for_element< boundary_cell_container_typelist, dim >::type::handle_type type;
 //         };
 //         
 //         template<typename element_tag, typename boundary_cell_container_typelist, typename id_type, long dim>
-//         struct const_ncell_hook< element_t<element_tag, boundary_cell_container_typelist, id_type>, dim >
+//         struct const_ncell_handle< element_t<element_tag, boundary_cell_container_typelist, id_type>, dim >
 //         {
-//             typedef typename container_of_dimension_for_element< boundary_cell_container_typelist, dim >::type::const_hook_type type;
+//             typedef typename container_of_dimension_for_element< boundary_cell_container_typelist, dim >::type::const_handle_type type;
 //         };
 //         
 //         
@@ -794,31 +794,31 @@ namespace viennagrid
 //         };
         
         template<typename container_collection_typemap, typename element_type_or_tag>
-        struct element_hook<storage::collection_t<container_collection_typemap>, element_type_or_tag>
+        struct element_handle<storage::collection_t<container_collection_typemap>, element_type_or_tag>
         {
             typedef typename element_tag<element_type_or_tag>::type element_tag;
-            typedef typename container_of_tag_for_collection<container_collection_typemap, element_tag>::type::hook_type type;
+            typedef typename container_of_tag_for_collection<container_collection_typemap, element_tag>::type::handle_type type;
         };
         
 //         template<typename container_collection_typemap,
 //                  typename sub_element_tag, typename sub_boundary_cell_container_typelist, typename sub_id_type>
-//         struct element_hook< storage::collection_t<container_collection_typemap>, element_t<sub_element_tag, sub_boundary_cell_container_typelist, sub_id_type> >
+//         struct element_handle< storage::collection_t<container_collection_typemap>, element_t<sub_element_tag, sub_boundary_cell_container_typelist, sub_id_type> >
 //         {
-//             typedef typename element_hook< storage::collection_t<container_collection_typemap>, sub_element_tag >::type type;
+//             typedef typename element_handle< storage::collection_t<container_collection_typemap>, sub_element_tag >::type type;
 //         };
         
         template<typename container_collection_typemap, typename element_type_or_tag>
-        struct const_element_hook<storage::collection_t<container_collection_typemap>, element_type_or_tag>
+        struct const_element_handle<storage::collection_t<container_collection_typemap>, element_type_or_tag>
         {
             typedef typename element_tag<element_type_or_tag>::type element_tag;
-            typedef typename container_of_tag_for_collection<container_collection_typemap, element_tag>::type::const_hook_type type;
+            typedef typename container_of_tag_for_collection<container_collection_typemap, element_tag>::type::const_handle_type type;
         };
         
 //         template<typename container_collection_typemap,
 //                  typename sub_element_tag, typename sub_boundary_cell_container_typelist, typename sub_id_type>
-//         struct const_element_hook< storage::collection_t<container_collection_typemap>, element_t<sub_element_tag, sub_boundary_cell_container_typelist, sub_id_type> >
+//         struct const_element_handle< storage::collection_t<container_collection_typemap>, element_t<sub_element_tag, sub_boundary_cell_container_typelist, sub_id_type> >
 //         {
-//             typedef typename const_element_hook< storage::collection_t<container_collection_typemap>, sub_element_tag >::type type;
+//             typedef typename const_element_handle< storage::collection_t<container_collection_typemap>, sub_element_tag >::type type;
 //         };
         
 
@@ -853,15 +853,15 @@ namespace viennagrid
 //         };
 //         
 //         template<typename container_collection_typemap, long dim>
-//         struct ncell_hook<storage::collection_t<container_collection_typemap>, dim>
+//         struct ncell_handle<storage::collection_t<container_collection_typemap>, dim>
 //         {
-//             typedef typename container_of_dimension_for_collection<container_collection_typemap, dim>::type::hook_type type;
+//             typedef typename container_of_dimension_for_collection<container_collection_typemap, dim>::type::handle_type type;
 //         };
 //         
 //         template<typename container_collection_typemap, long dim>
-//         struct const_ncell_hook<storage::collection_t<container_collection_typemap>, dim>
+//         struct const_ncell_handle<storage::collection_t<container_collection_typemap>, dim>
 //         {
-//             typedef typename container_of_dimension_for_collection<container_collection_typemap, dim>::type::const_hook_type type;
+//             typedef typename container_of_dimension_for_collection<container_collection_typemap, dim>::type::const_handle_type type;
 //         };
 //         
 // 
@@ -915,16 +915,16 @@ namespace viennagrid
     
     
     
-    template<typename element_tag, typename boundary_cell_container_typelist, typename id_type, typename hook_type>
-    typename storage::hook::value_type<hook_type>::type & dereference_hook( element_t<element_tag, boundary_cell_container_typelist, id_type> & element, hook_type hook)
+    template<typename element_tag, typename boundary_cell_container_typelist, typename id_type, typename handle_type>
+    typename storage::handle::value_type<handle_type>::type & dereference_handle( element_t<element_tag, boundary_cell_container_typelist, id_type> & element, handle_type handle)
     {
-        return element.dereference_hook(hook);
+        return element.dereference_handle(handle);
     }
     
-    template<typename element_tag, typename boundary_cell_container_typelist, typename id_type, typename hook_type>
-    const typename storage::hook::value_type<hook_type>::type & dereference_hook( element_t<element_tag, boundary_cell_container_typelist, id_type> const & element, hook_type hook)
+    template<typename element_tag, typename boundary_cell_container_typelist, typename id_type, typename handle_type>
+    const typename storage::handle::value_type<handle_type>::type & dereference_handle( element_t<element_tag, boundary_cell_container_typelist, id_type> const & element, handle_type handle)
     {
-        return element.dereference_hook(hook);
+        return element.dereference_handle(handle);
     }
 
     
