@@ -610,7 +610,7 @@ namespace viennagrid
 //                 std::advance( it, pos );
 //                 return it.handle();
                 
-                handle_iterator it = handle_begin();
+                const_handle_iterator it = handle_begin();
                 std::advance( it, pos );
                 return *it;
             }
