@@ -702,8 +702,8 @@ namespace viennagrid
     {
         element_range_proxy(element_domain_segment_config_or_something_like_that & something_) : something(something_) {}
         
-//         const element_domain_segment_config_or_something_like_that & operator() () const { return something; }
-//         element_domain_segment_config_or_something_like_that & operator() () { return something; }
+        element_domain_segment_config_or_something_like_that const & operator() () const { return something; }
+        element_domain_segment_config_or_something_like_that & operator() () { return something; }
         
         element_domain_segment_config_or_something_like_that & something;
     };
@@ -743,22 +743,12 @@ namespace viennagrid
     template<typename element_domain_segment_config_or_something_like_that>
     typename result_of::element_range<element_domain_segment_config_or_something_like_that, hexahedron_tag>::type hexahedrons( element_domain_segment_config_or_something_like_that & something)
     { return elements<hexahedron_tag>(something); }
+
     
-    
-    
+     
     template<typename element_domain_segment_config_or_something_like_that>
-    struct const_element_range_proxy
-    {
-        const_element_range_proxy(element_domain_segment_config_or_something_like_that & something_) : something(something_) {}
-        
-//         element_domain_segment_config_or_something_like_that const & operator() () const { return something; }
-        
-        element_domain_segment_config_or_something_like_that const & something;
-    };    
-    
-    template<typename element_domain_segment_config_or_something_like_that>
-    const_element_range_proxy<element_domain_segment_config_or_something_like_that> elements( const element_domain_segment_config_or_something_like_that & something)
-    { return const_element_range_proxy<element_domain_segment_config_or_something_like_that>(something); }
+    element_range_proxy<const element_domain_segment_config_or_something_like_that> elements( const element_domain_segment_config_or_something_like_that & something)
+    { return element_range_proxy<const element_domain_segment_config_or_something_like_that>(something); }
     
     template<typename element_tag, typename element_domain_segment_config_or_something_like_that>
     typename result_of::const_element_range<element_domain_segment_config_or_something_like_that, element_tag>::type elements( const element_domain_segment_config_or_something_like_that & something);
