@@ -218,10 +218,10 @@ int main()
     
     // iterating over all vertices and piping out the point information
     typedef viennagrid::result_of::const_element_range<domain_type, viennagrid::vertex_tag>::type domain_vertex_range;
-    typedef viennagrid::result_of::const_iterator<domain_vertex_range>::type domain_vertex_iterator;
+    typedef viennagrid::result_of::iterator<domain_vertex_range>::type domain_vertex_iterator;
     
     cout << "All vertices of the geometric_view_1 with geometric info" << endl;
-    domain_vertex_range domain_vtx_range = viennagrid::elements<viennagrid::vertex_tag>(domain);
+    domain_vertex_range domain_vtx_range = viennagrid::elements(domain);
     for (domain_vertex_iterator it = domain_vtx_range.begin(); it != domain_vtx_range.end(); ++it)
         cout << *it << " geometric information: " << viennagrid::look_up<vector_type>( domain, *it ) << endl;
     cout << endl;
@@ -234,14 +234,14 @@ int main()
     
     // iterating over all vertices and piping out the point information    
     cout << "All vertices of the geometric_view_1 with geometric info" << endl;
-    view_vertex_range view_vtx_range_1 = viennagrid::elements<viennagrid::vertex_tag>(geometric_view_1);
+    view_vertex_range view_vtx_range_1 = viennagrid::elements(geometric_view_1);
     for (view_vertex_iterator it = view_vtx_range_1.begin(); it != view_vtx_range_1.end(); ++it)
         cout << *it << " geometric information: " << viennagrid::look_up<vector_type>( domain, *it ) << endl;
     cout << endl;
     
     // iterating over all vertices and piping out the point information
     cout << "All vertices of the geometric_view_2 with geometric info" << endl;
-    view_vertex_range view_vtx_range_2 = viennagrid::elements<viennagrid::vertex_tag>(geometric_view_2);
+    view_vertex_range view_vtx_range_2 = viennagrid::elements(geometric_view_2);
     for (view_vertex_iterator it = view_vtx_range_2.begin(); it != view_vtx_range_2.end(); ++it)
         cout << *it << " geometric information: " << viennagrid::look_up<vector_type>( domain, *it ) << endl;
     cout << endl;
