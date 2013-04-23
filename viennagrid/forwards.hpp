@@ -158,24 +158,6 @@ namespace viennagrid
   template <typename element_type>
   class element_key;
 
-  //Segment type: 
-//   template <typename ConfigType>
-//   class segment_t;
-
-  //template <typename ConfigType>
-  //class domain_t;
-  
-  /********* Other *******************/
-
-//   template <typename host_element,
-//             long dim,
-//             bool is_coboundary = false>
-//   class ncell_range;
-// 
-//   template <typename host_element,
-//             long dim,
-//             bool is_coboundary = false>
-//   class const_ncell_range;
   
   /** @brief A key used for ViennaData to store coboundary information on n-cells */
   template <typename T, typename element_tag> //topological dimension of the elements over which to iterate
@@ -301,19 +283,7 @@ namespace viennagrid
      * @tparam ElementTag   Identifier for the n-cell
      * @tparam level        Topological dimension of the boundary that is specified here
      */
-//     template <typename ElementTag, 
-//               long level = ElementTag::dim>
-//     struct bndcells
-//     {
-//       //the default case is simultaneously a pathetic case:
-//       //cell-handling within the cell
-// 
-//       /** @brief Number of boundary cells at this level */
-//       enum{ num = 1 };     //1 cell
-// 
-//       /** @brief k-cell tag for identification of the type */
-//       typedef ElementTag            tag;
-//     };
+
     
     template <typename ElementTag, typename BoundaryNCellTag = ElementTag>
     struct boundary_cells
@@ -333,8 +303,6 @@ namespace viennagrid
      * @tparam ElementTag   Tag for the identification of the hosting n-cell
      * @tparam k            Topological boundary dimension
      */
-//     template <typename ElementTag, long k>
-//     struct bndcell_filler {};
 
     template <typename element_tag, typename bnd_cell_tag, typename bnd_cell_type>
     struct bndcell_generator {};
@@ -379,6 +347,49 @@ namespace viennagrid
     template<typename config_domain_segment_element_or_something_like_that, typename element_tag>
     struct element;
     
+    template<typename config_domain_segment_element_or_something_like_that>
+    struct vertex
+    {
+        typedef typename element<config_domain_segment_element_or_something_like_that, vertex_tag>::type type;
+    };
+    
+    template<typename config_domain_segment_element_or_something_like_that>
+    struct line
+    {
+        typedef typename element<config_domain_segment_element_or_something_like_that, line_tag>::type type;
+    };
+    
+    template<typename config_domain_segment_element_or_something_like_that>
+    struct triangle
+    {
+        typedef typename element<config_domain_segment_element_or_something_like_that, triangle_tag>::type type;
+    };
+    
+    template<typename config_domain_segment_element_or_something_like_that>
+    struct quadrilateral
+    {
+        typedef typename element<config_domain_segment_element_or_something_like_that, quadrilateral_tag>::type type;
+    };
+    
+    template<typename config_domain_segment_element_or_something_like_that>
+    struct plc
+    {
+        typedef typename element<config_domain_segment_element_or_something_like_that, plc_tag>::type type;
+    };
+    
+    template<typename config_domain_segment_element_or_something_like_that>
+    struct tetrahedron
+    {
+        typedef typename element<config_domain_segment_element_or_something_like_that, tetrahedron_tag>::type type;
+    };
+    
+    template<typename config_domain_segment_element_or_something_like_that>
+    struct hexahedron
+    {
+        typedef typename element<config_domain_segment_element_or_something_like_that, hexahedron_tag>::type type;
+    };
+    
+    
 //     template<typename config_domain_segment_element_or_something_like_that, typename element_tag, typename bnd_cell_container_typelist, typename id_type>
 //     struct element<config_domain_segment_element_or_something_like_that, element_t<element_tag, bnd_cell_container_typelist, id_type> >
 //     {
@@ -388,17 +399,97 @@ namespace viennagrid
     template<typename config_domain_segment_element_or_something_like_that, typename element_tag>
     struct handle;
     
+    
+    template<typename config_domain_segment_element_or_something_like_that>
+    struct vertex_handle
+    {
+        typedef typename handle<config_domain_segment_element_or_something_like_that, vertex_tag>::type type;
+    };
+    
+    template<typename config_domain_segment_element_or_something_like_that>
+    struct line_handle
+    {
+        typedef typename handle<config_domain_segment_element_or_something_like_that, line_tag>::type type;
+    };
+    
+    template<typename config_domain_segment_element_or_something_like_that>
+    struct triangle_handle
+    {
+        typedef typename handle<config_domain_segment_element_or_something_like_that, triangle_tag>::type type;
+    };
+    
+    template<typename config_domain_segment_element_or_something_like_that>
+    struct quadrilateral_handle
+    {
+        typedef typename handle<config_domain_segment_element_or_something_like_that, quadrilateral_tag>::type type;
+    };
+    
+    template<typename config_domain_segment_element_or_something_like_that>
+    struct plc_handle
+    {
+        typedef typename handle<config_domain_segment_element_or_something_like_that, plc_tag>::type type;
+    };
+    
+    template<typename config_domain_segment_element_or_something_like_that>
+    struct tetrahedron_handle
+    {
+        typedef typename handle<config_domain_segment_element_or_something_like_that, tetrahedron_tag>::type type;
+    };
+    
+    template<typename config_domain_segment_element_or_something_like_that>
+    struct hexahedron_handle
+    {
+        typedef typename handle<config_domain_segment_element_or_something_like_that, hexahedron_tag>::type type;
+    };
+    
+    
+    
     template<typename config_domain_segment_element_or_something_like_that, typename element_tag>
     struct const_handle;
     
-//     template<typename config_domain_segment_element_or_something_like_that, long dim>
-//     struct ncell;
-//     
-//     template<typename config_domain_segment_element_or_something_like_that, long dim>
-//     struct ncell_handle;
-//     
-//     template<typename config_domain_segment_element_or_something_like_that, long dim>
-//     struct const_ncell_handle;
+    
+    template<typename config_domain_segment_element_or_something_like_that>
+    struct const_vertex_handle
+    {
+        typedef typename const_handle<config_domain_segment_element_or_something_like_that, vertex_tag>::type type;
+    };
+    
+    template<typename config_domain_segment_element_or_something_like_that>
+    struct const_line_handle
+    {
+        typedef typename const_handle<config_domain_segment_element_or_something_like_that, line_tag>::type type;
+    };
+    
+    template<typename config_domain_segment_element_or_something_like_that>
+    struct const_triangle_handle
+    {
+        typedef typename const_handle<config_domain_segment_element_or_something_like_that, triangle_tag>::type type;
+    };
+    
+    template<typename config_domain_segment_element_or_something_like_that>
+    struct const_quadrilateral_handle
+    {
+        typedef typename const_handle<config_domain_segment_element_or_something_like_that, quadrilateral_tag>::type type;
+    };
+    
+    template<typename config_domain_segment_element_or_something_like_that>
+    struct const_plc_handle
+    {
+        typedef typename const_handle<config_domain_segment_element_or_something_like_that, plc_tag>::type type;
+    };
+    
+    template<typename config_domain_segment_element_or_something_like_that>
+    struct const_tetrahedron_handle
+    {
+        typedef typename const_handle<config_domain_segment_element_or_something_like_that, tetrahedron_tag>::type type;
+    };
+    
+    template<typename config_domain_segment_element_or_something_like_that>
+    struct const_hexahedron_handle
+    {
+        typedef typename const_handle<config_domain_segment_element_or_something_like_that, hexahedron_tag>::type type;
+    };
+    
     
     
     template<typename element_type>
@@ -413,21 +504,106 @@ namespace viennagrid
 
     
     template <typename T, 
-              long dim>  //topological level
-    struct ncell_range;
-    
-    template <typename T, 
-              long dim>  //topological level
-    struct const_ncell_range;
-    
-    template <typename T, 
               typename element_tag>
     struct element_range;
+    
+    
+    template<typename config_domain_segment_element_or_something_like_that>
+    struct vertex_range
+    {
+        typedef typename element_range<config_domain_segment_element_or_something_like_that, vertex_tag>::type type;
+    };
+    
+    template<typename config_domain_segment_element_or_something_like_that>
+    struct line_range
+    {
+        typedef typename element_range<config_domain_segment_element_or_something_like_that, line_tag>::type type;
+    };
+    
+    template<typename config_domain_segment_element_or_something_like_that>
+    struct triangle_range
+    {
+        typedef typename element_range<config_domain_segment_element_or_something_like_that, triangle_tag>::type type;
+    };
+    
+    template<typename config_domain_segment_element_or_something_like_that>
+    struct quadrilateral_range
+    {
+        typedef typename element_range<config_domain_segment_element_or_something_like_that, quadrilateral_tag>::type type;
+    };
+    
+    template<typename config_domain_segment_element_or_something_like_that>
+    struct plc_range
+    {
+        typedef typename element_range<config_domain_segment_element_or_something_like_that, plc_tag>::type type;
+    };
+    
+    template<typename config_domain_segment_element_or_something_like_that>
+    struct tetrahedron_range
+    {
+        typedef typename element_range<config_domain_segment_element_or_something_like_that, tetrahedron_tag>::type type;
+    };
+    
+    template<typename config_domain_segment_element_or_something_like_that>
+    struct hexahedron_range
+    {
+        typedef typename element_range<config_domain_segment_element_or_something_like_that, hexahedron_tag>::type type;
+    };
+
+    
+    
+    
+    
     
     template <typename T, 
               typename element_tag>
     struct const_element_range;
 
+    
+    
+    template<typename config_domain_segment_element_or_something_like_that>
+    struct const_vertex_range
+    {
+        typedef typename const_element_range<config_domain_segment_element_or_something_like_that, vertex_tag>::type type;
+    };
+    
+    template<typename config_domain_segment_element_or_something_like_that>
+    struct const_line_range
+    {
+        typedef typename const_element_range<config_domain_segment_element_or_something_like_that, line_tag>::type type;
+    };
+    
+    template<typename config_domain_segment_element_or_something_like_that>
+    struct const_triangle_range
+    {
+        typedef typename const_element_range<config_domain_segment_element_or_something_like_that, triangle_tag>::type type;
+    };
+    
+    template<typename config_domain_segment_element_or_something_like_that>
+    struct const_quadrilateral_range
+    {
+        typedef typename const_element_range<config_domain_segment_element_or_something_like_that, quadrilateral_tag>::type type;
+    };
+    
+    template<typename config_domain_segment_element_or_something_like_that>
+    struct const_plc_range
+    {
+        typedef typename const_element_range<config_domain_segment_element_or_something_like_that, plc_tag>::type type;
+    };
+    
+    template<typename config_domain_segment_element_or_something_like_that>
+    struct const_tetrahedron_range
+    {
+        typedef typename const_element_range<config_domain_segment_element_or_something_like_that, tetrahedron_tag>::type type;
+    };
+    
+    template<typename config_domain_segment_element_or_something_like_that>
+    struct const_hexahedron_range
+    {
+        typedef typename const_element_range<config_domain_segment_element_or_something_like_that, hexahedron_tag>::type type;
+    };
+    
+    
     
     
     template <typename container>
@@ -519,20 +695,103 @@ namespace viennagrid
   }
   
     
+    
+    
+    template<typename element_domain_segment_config_or_something_like_that>
+    struct element_range_proxy
+    {
+        element_range_proxy(element_domain_segment_config_or_something_like_that & something_) : something(something_) {}
+        
+//         const element_domain_segment_config_or_something_like_that & operator() () const { return something; }
+//         element_domain_segment_config_or_something_like_that & operator() () { return something; }
+        
+        element_domain_segment_config_or_something_like_that & something;
+    };
+    
 
-  
-   
-//     template<long dim, typename element_domain_segment_config_or_something_like_that>
-//     typename result_of::ncell_range<element_domain_segment_config_or_something_like_that, dim>::type ncells( element_domain_segment_config_or_something_like_that & something);
-//   
-//     template<long dim, typename element_domain_segment_config_or_something_like_that>
-//     typename result_of::const_ncell_range<element_domain_segment_config_or_something_like_that, dim>::type ncells( const element_domain_segment_config_or_something_like_that & something);
-//     
+    template<typename element_domain_segment_config_or_something_like_that>
+    element_range_proxy<element_domain_segment_config_or_something_like_that> elements( element_domain_segment_config_or_something_like_that & something)
+    { return element_range_proxy<element_domain_segment_config_or_something_like_that>(something); }
+    
     template<typename element_tag, typename element_domain_segment_config_or_something_like_that>
     typename result_of::element_range<element_domain_segment_config_or_something_like_that, element_tag>::type elements( element_domain_segment_config_or_something_like_that & something);
-  
+
+    template<typename element_domain_segment_config_or_something_like_that>
+    typename result_of::element_range<element_domain_segment_config_or_something_like_that, vertex_tag>::type vertices( element_domain_segment_config_or_something_like_that & something)
+    { return elements<vertex_tag>(something); }
+
+    template<typename element_domain_segment_config_or_something_like_that>
+    typename result_of::element_range<element_domain_segment_config_or_something_like_that, line_tag>::type lines( element_domain_segment_config_or_something_like_that & something)
+    { return elements<line_tag>(something); }
+    
+    template<typename element_domain_segment_config_or_something_like_that>
+    typename result_of::element_range<element_domain_segment_config_or_something_like_that, triangle_tag>::type triangles( element_domain_segment_config_or_something_like_that & something)
+    { return elements<triangle_tag>(something); }
+    
+    template<typename element_domain_segment_config_or_something_like_that>
+    typename result_of::element_range<element_domain_segment_config_or_something_like_that, quadrilateral_tag>::type quadrilaterals( element_domain_segment_config_or_something_like_that & something)
+    { return elements<quadrilateral_tag>(something); }
+    
+    template<typename element_domain_segment_config_or_something_like_that>
+    typename result_of::element_range<element_domain_segment_config_or_something_like_that, plc_tag>::type plcs( element_domain_segment_config_or_something_like_that & something)
+    { return elements<plc_tag>(something); }
+    
+    template<typename element_domain_segment_config_or_something_like_that>
+    typename result_of::element_range<element_domain_segment_config_or_something_like_that, tetrahedron_tag>::type tetrahedrons( element_domain_segment_config_or_something_like_that & something)
+    { return elements<tetrahedron_tag>(something); }
+    
+    template<typename element_domain_segment_config_or_something_like_that>
+    typename result_of::element_range<element_domain_segment_config_or_something_like_that, hexahedron_tag>::type hexahedrons( element_domain_segment_config_or_something_like_that & something)
+    { return elements<hexahedron_tag>(something); }
+    
+    
+    
+    template<typename element_domain_segment_config_or_something_like_that>
+    struct const_element_range_proxy
+    {
+        const_element_range_proxy(element_domain_segment_config_or_something_like_that & something_) : something(something_) {}
+        
+//         element_domain_segment_config_or_something_like_that const & operator() () const { return something; }
+        
+        element_domain_segment_config_or_something_like_that const & something;
+    };    
+    
+    template<typename element_domain_segment_config_or_something_like_that>
+    const_element_range_proxy<element_domain_segment_config_or_something_like_that> elements( const element_domain_segment_config_or_something_like_that & something)
+    { return const_element_range_proxy<element_domain_segment_config_or_something_like_that>(something); }
+    
     template<typename element_tag, typename element_domain_segment_config_or_something_like_that>
     typename result_of::const_element_range<element_domain_segment_config_or_something_like_that, element_tag>::type elements( const element_domain_segment_config_or_something_like_that & something);
+    
+    template<typename element_domain_segment_config_or_something_like_that>
+    typename result_of::const_element_range<element_domain_segment_config_or_something_like_that, vertex_tag>::type vertices( const element_domain_segment_config_or_something_like_that & something)
+    { return elements<vertex_tag>(something); }
+
+    template<typename element_domain_segment_config_or_something_like_that>
+    typename result_of::const_element_range<element_domain_segment_config_or_something_like_that, line_tag>::type lines( const element_domain_segment_config_or_something_like_that & something)
+    { return elements<line_tag>(something); }
+    
+    template<typename element_domain_segment_config_or_something_like_that>
+    typename result_of::const_element_range<element_domain_segment_config_or_something_like_that, triangle_tag>::type triangles( const element_domain_segment_config_or_something_like_that & something)
+    { return elements<triangle_tag>(something); }
+    
+    template<typename element_domain_segment_config_or_something_like_that>
+    typename result_of::const_element_range<element_domain_segment_config_or_something_like_that, quadrilateral_tag>::type quadrilaterals( const element_domain_segment_config_or_something_like_that & something)
+    { return elements<quadrilateral_tag>(something); }
+    
+    template<typename element_domain_segment_config_or_something_like_that>
+    typename result_of::const_element_range<element_domain_segment_config_or_something_like_that, plc_tag>::type plcs( const element_domain_segment_config_or_something_like_that & something)
+    { return elements<plc_tag>(something); }
+    
+    template<typename element_domain_segment_config_or_something_like_that>
+    typename result_of::const_element_range<element_domain_segment_config_or_something_like_that, tetrahedron_tag>::type tetrahedrons( const element_domain_segment_config_or_something_like_that & something)
+    { return elements<tetrahedron_tag>(something); }
+    
+    template<typename element_domain_segment_config_or_something_like_that>
+    typename result_of::const_element_range<element_domain_segment_config_or_something_like_that, hexahedron_tag>::type hexahedrons( const element_domain_segment_config_or_something_like_that & something)
+    { return elements<hexahedron_tag>(something); }
+    
+    
 
     template<typename element_type>
     typename result_of::facet_range<element_type>::type facets(element_type & element)
@@ -547,65 +806,7 @@ namespace viennagrid
     }
 
     
-    
-    
-//     template<typename something>
-//     typename result_of::point_type<something>::type point( something &, const typename result_of::element<something, vertex_tag>::type &);
-//     
-//     template<typename something>
-//     const typename result_of::point_type<something>::type point( const something &, const typename result_of::element<something, vertex_tag>::type &);
 
-  
-  
-//   // providing forwards for the ncells function
-//   template <long dim, typename DomainConfig>
-//   ncell_range<domain_t<DomainConfig>, dim>
-//   ncells(domain_t<DomainConfig> & d);
-// 
-//   template <typename DomainConfig>
-//   ncell_proxy< domain_t<DomainConfig> >
-//   ncells(domain_t<DomainConfig> & d);
-// 
-//   template <long dim, typename DomainConfig>
-//   ncell_range<segment_t<DomainConfig>, dim>
-//   ncells(segment_t<DomainConfig> & d);
-// 
-//   template <typename DomainConfig>
-//   ncell_proxy< segment_t<DomainConfig> >
-//   ncells(segment_t<DomainConfig> & d);
-
-//   template <long dim, typename Config, typename ElementTag>
-//   typename result_of::ncell_range< element_t<Config, ElementTag>, dim>::type
-//   ncells(element_t<Config, ElementTag> & d);
-  
-//   template <typename Config, typename ElementTag>
-//   ncell_proxy< element_t<Config, ElementTag> >
-//   ncells(element_t<Config, ElementTag> & d);
-  
-//   //same for const:  
-//   template <long dim, typename DomainConfig>
-//   const_ncell_range<domain_t<DomainConfig>, dim>
-//   ncells(domain_t<DomainConfig> const & d);
-// 
-//   template <typename DomainConfig>
-//   const_ncell_proxy< domain_t<DomainConfig> >
-//   ncells(domain_t<DomainConfig> const & d);
-// 
-//   template <long dim, typename DomainConfig>
-//   const_ncell_range<segment_t<DomainConfig>, dim>
-//   ncells(segment_t<DomainConfig> const & d);
-// 
-//   template <typename DomainConfig>
-//   const_ncell_proxy< segment_t<DomainConfig> >
-//   ncells(segment_t<DomainConfig> const & d);
-
-//   template <long dim, typename Config, typename ElementTag>
-//   typename result_of::const_ncell_range< element_t<Config, ElementTag>, dim>::type
-//   ncells(element_t<Config, ElementTag> const & d);
-  
-//   template <typename Config, typename ElementTag>
-//   const_ncell_proxy< element_t<Config, ElementTag> >
-//   ncells(element_t<Config, ElementTag> const & d);
 
   
    // norm tags for: algorithm/norm.hpp
@@ -668,196 +869,10 @@ namespace viennagrid
   struct voronoi_box_volume_key {}; 
 }
 
-/*
-namespace viennadata
-{
-  namespace config
-  {
-    template <>
-    struct key_dispatch<viennagrid::refinement_key>
-    {
-      typedef type_key_dispatch_tag    tag;
-    };    
-    
-    template <>
-    struct key_dispatch<viennagrid::voronoi_interface_area_key>
-    {
-      typedef type_key_dispatch_tag    tag;
-    };
-    
-    template <>
-    struct key_dispatch<viennagrid::voronoi_box_volume_key>
-    {
-      typedef type_key_dispatch_tag    tag;
-    };
-  }
-}
-*/
 
 // tell ViennaData to use a type-based key dispatch for the refinement and the voronoi keys
 VIENNADATA_ENABLE_TYPE_BASED_KEY_DISPATCH(viennagrid::refinement_key)
 VIENNADATA_ENABLE_TYPE_BASED_KEY_DISPATCH(viennagrid::voronoi_interface_area_key)
 VIENNADATA_ENABLE_TYPE_BASED_KEY_DISPATCH(viennagrid::voronoi_box_volume_key)
-
-////// storage scheme for cells ////////
-
-/** @brief Convenience macro for disabling boundary k-cells of dimension arg_DIM for a n-cell identified by arg_TAG when used with a certain configuration class arg_CONFIG */
-#define VIENNAGRID_DISABLE_BOUNDARY_NCELL(arg_CONFIG, arg_TAG, arg_DIM) \
- namespace viennagrid { namespace result_of { \
-    template <> \
-    struct bndcell_handling<arg_CONFIG, arg_TAG, arg_DIM> { \
-      typedef no_handling_tag    type; \
-    }; \
- } }
-
-/** @brief Convenience macro for enabling boundary k-cells of dimension arg_DIM for a n-cell identified by arg_TAG when used with a certain configuration class arg_CONFIG */
-#define VIENNAGRID_ENABLE_BOUNDARY_NCELL(arg_CONFIG, arg_TAG, arg_DIM) \
- namespace viennagrid { namespace result_of { \
-    template <> \
-    struct bndcell_handling<arg_CONFIG, arg_TAG, arg_DIM> { \
-      typedef full_handling_tag    type; \
-    }; \
- } }
-
-/** @brief Convenience macro for disabling boundary k-cells of dimension arg_DIM for a n-cell identified by arg_TAG for all configuration classes */
-#define VIENNAGRID_GLOBAL_DISABLE_BOUNDARY_NCELL(arg_TAG, arg_DIM) \
- namespace viennagrid { namespace result_of { \
-    template <typename ConfigType> \
-    struct bndcell_handling<ConfigType, arg_TAG, arg_DIM> { \
-      typedef no_handling_tag    type; \
-    }; \
- } }
-
-//note that VIENNAGRID_GLOBAL_ENABLE_BOUNDARY_NCELL(arg_TAG, arg_DIM)  does not make sense, since the default is full_handling already.
-
-//
-// Same for orientation
-//
-/** @brief Convenience macro for disabling local orientation storage for boundary k-cells of dimension arg_DIM for a n-cell identified by arg_TAG when used with a certain configuration class arg_CONFIG */
-#define VIENNAGRID_DISABLE_BOUNDARY_NCELL_ORIENTATION(arg_CONFIG, arg_TAG, arg_DIM) \
- namespace viennagrid { namespace result_of { \
-    template <> \
-    struct bndcell_orientation<arg_CONFIG, arg_TAG, arg_DIM> { \
-      typedef no_handling_tag    type; \
-    }; \
- } }
-
-/** @brief Convenience macro for enabling local orientation storage for boundary k-cells of dimension arg_DIM for a n-cell identified by arg_TAG when used with a certain configuration class arg_CONFIG */
-#define VIENNAGRID_ENABLE_BOUNDARY_NCELL_ORIENTATION(arg_CONFIG, arg_TAG, arg_DIM) \
- namespace viennagrid { namespace result_of { \
-    template <> \
-    struct bndcell_orientation<arg_CONFIG, arg_TAG, arg_DIM> { \
-      typedef full_handling_tag    type; \
-    }; \
- } }
-
-/** @brief Convenience macro for disabling local orientation storage for boundary k-cells of dimension arg_DIM for a n-cell identified by arg_TAG for all configuration classes */
-#define VIENNAGRID_GLOBAL_DISABLE_BOUNDARY_NCELL_ORIENTATION(arg_TAG, arg_DIM) \
- namespace viennagrid { namespace result_of { \
-    template <typename ConfigType> \
-    struct bndcell_orientation<ConfigType, arg_TAG, arg_DIM> { \
-      typedef no_handling_tag    type; \
-    }; \
- } }
-
-//
-// ID for elements:
-//
-/** @brief Convenience macro for disabling the storage of an ID for a n-cell identified by arg_TAG when used with a certain configuration class arg_CONFIG */
-#define VIENNAGRID_DISABLE_NCELL_ID(arg_CONFIG, arg_TAG) \
- namespace viennagrid { namespace result_of { \
-    template <> \
-    struct element_id_handler<arg_CONFIG, arg_TAG> { \
-      typedef pointer_id    type; \
-    }; \
- } }
-
-/** @brief Convenience macro for enabling the storage of an ID for a n-cell identified by arg_TAG when used with a certain configuration class arg_CONFIG */
-#define VIENNAGRID_ENABLE_NCELL_ID(arg_CONFIG, arg_TAG) \
- namespace viennagrid { namespace result_of { \
-    template <> \
-    struct element_id_handler<arg_CONFIG, arg_TAG> { \
-      typedef integral_id    type; \
-    }; \
- } }
- 
-/** @brief Convenience macro for disabling the storage of an ID for a n-cell identified by arg_TAG for all configuration classes. */
-#define VIENNAGRID_GLOBAL_DISABLE_NCELL_ID(arg_TAG) \
- namespace viennagrid { namespace result_of { \
-    template <typename ConfigType> \
-    struct element_id_handler<ConfigType, arg_TAG> { \
-      typedef pointer_id    type; \
-    }; \
- } }
-
-
-//
-////// storage scheme for domain ////////
-//
-/** @brief Disable the storage of n-cells for the domain with a certain configuration class arg_CONFIG. Requires disabled storage of boundary n-cells. */
-#define VIENNAGRID_DISABLE_DOMAIN_NCELL(arg_CONFIG, arg_DIM) \
- namespace viennagrid { namespace result_of { \
-    template <> \
-    struct bndcell_handling<arg_CONFIG, domain_t<arg_CONFIG>, arg_DIM> { \
-      typedef no_handling_tag    type; \
-    }; \
- } }
-
-/** @brief Selectively enable the storage of n-cells for the domain with a certain configuration class arg_CONFIG. */
-#define VIENNAGRID_ENABLE_DOMAIN_NCELL(arg_CONFIG, arg_DIM) \
- namespace viennagrid { namespace result_of { \
-    template <> \
-    struct bndcell_handling<arg_CONFIG, domain_t<arg_CONFIG>, arg_DIM> { \
-      typedef full_handling_tag    type; \
-    }; \
- } }
-
-/** @brief Disable the storage of n-cells for the domain for all configuration classes. Requires disabled storage of boundary n-cells. */
-#define VIENNAGRID_GLOBAL_DISABLE_DOMAIN_NCELL(arg_DIM) \
- namespace viennagrid { namespace result_of { \
-    template <typename ConfigType> \
-    struct bndcell_handling<ConfigType, domain_t<ConfigType>, arg_DIM> { \
-      typedef no_handling_tag    type; \
-    }; \
- } }
-
-//
-//////////// Enable ID for ncells
-//
-/** @brief Enable the use of the n-cell ID for ViennaData for a certain configuration class arg_CONFIG. Required for dense storage with ViennaData. arg_CELLTAG denotes the n-cell tag. */
-#define VIENNAGRID_ENABLE_NCELL_ID_FOR_DATA(arg_CONFIG, arg_CELLTAG) \
-namespace viennadata { namespace config { \
-    template <> struct object_identifier<viennagrid::element_t<arg_CONFIG, arg_CELLTAG> >  { \
-      typedef object_provided_id    tag; \
-      typedef size_t                id_type; \
-      static size_t get(viennagrid::element_t<arg_CONFIG, arg_CELLTAG> const & obj) { return obj.id(); } \
-    };  }  }
-
-/** @brief Enable the use of the n-cell ID for ViennaData for all n-cells using a certain configuration class arg_CONFIG. Required for dense storage with ViennaData. */
-#define VIENNAGRID_ENABLE_ALL_NCELL_ID_FOR_DATA(arg_CONFIG) \
-namespace viennadata { namespace config { \
-    template <typename CellTag> struct object_identifier<viennagrid::element_t<arg_CONFIG, CellTag> >  { \
-      typedef object_provided_id    tag; \
-      typedef size_t                id_type; \
-      static size_t get(viennagrid::element_t<arg_CONFIG, CellTag> const & obj) { return obj.id(); } \
-    };  }  }
-
-/** @brief Enable the use of the n-cell ID for ViennaData for n-cells identified by the tag arg_CELLTAG, irrespective of the configuration class. Required for dense storage with ViennaData. */
-#define VIENNAGRID_GLOBAL_ENABLE_NCELL_ID_FOR_DATA(arg_CELLTAG) \
-namespace viennadata { namespace config { \
-    template <typename ConfigType> struct object_identifier<viennagrid::element_t<ConfigType, arg_CELLTAG> >  { \
-      typedef object_provided_id    tag; \
-      typedef size_t                id_type; \
-      static size_t get(viennagrid::element_t<ConfigType, arg_CELLTAG> const & obj) { return obj.id(); } \
-    };  }  }
-
-/** @brief Enable the use of the n-cell ID for ViennaData for all n-cells and all configuration classes. Required for dense storage with ViennaData. */
-#define VIENNAGRID_GLOBAL_ENABLE_ALL_NCELL_ID_FOR_DATA() \
-namespace viennadata { namespace config { \
-    template <typename ConfigType, typename CellTag> struct object_identifier<viennagrid::element_t<ConfigType, CellTag> >  { \
-      typedef object_provided_id    tag; \
-      typedef size_t                id_type; \
-      static size_t get(viennagrid::element_t<ConfigType, CellTag> const & obj) { return obj.id(); } \
-    };  }  }
 
 #endif
