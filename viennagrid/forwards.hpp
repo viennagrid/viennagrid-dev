@@ -212,34 +212,6 @@ namespace viennagrid
       SegmentType const * pSeg;
   };
   
-  
-  //proxy classes for iterator/container retrieval:
-  /** @brief A proxy class for retrieving const n-cell ranges */
-//   template <typename T>
-//   class const_ncell_proxy
-//   {
-//     public:
-//       const_ncell_proxy(T const & t_) : t(t_) {}
-//       
-//       T const & get() const { return t; }
-//     
-//     private:
-//       T const & t;
-//   };
-//   
-//   /** @brief A proxy class for retrieving n-cell ranges */
-//   template <typename T>
-//   class ncell_proxy
-//   {
-//     public:
-//       ncell_proxy(T & t_) : t(t_) {}
-//       
-//       T & get() const { return t; }
-//     
-//     private:
-//       T & t;
-//   };
-  
 
   //ID handling:
   /** @brief ID handler class for IDs based on the n-cell address */

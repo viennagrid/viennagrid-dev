@@ -96,7 +96,7 @@ namespace viennagrid
                 viennagrid::storage::smart_id_tag<int>,
                 
                 viennagrid::element_container_tag,
-                viennagrid::storage::handleed_container_tag<           
+                viennagrid::storage::handled_container_tag<           
                     //viennagrid::storage::std_deque_tag,
                     typename default_container_tag<element_tag, boundary_cell_tag>::type,
                     handle_tag

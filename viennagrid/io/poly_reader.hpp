@@ -28,7 +28,7 @@
 #include "viennagrid/forwards.hpp"
 #include "viennagrid/io/helper.hpp"
 
-#include "viennagrid/domain/geometric_domain.hpp"
+#include "viennagrid/domain/domain.hpp"
 
 #include "viennagrid/algorithm/geometry.hpp"
 #include "viennagrid/domain/metainfo_range.hpp"

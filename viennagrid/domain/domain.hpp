@@ -60,9 +60,9 @@ namespace viennagrid
 
     
     template<typename vector_type_, typename topologic_domain_type_, typename metainfo_collection_type_>
-    class geometric_domain_t
+    class domain_t
     {
-        typedef geometric_domain_t<vector_type_, topologic_domain_type_, metainfo_collection_type_> self_type;
+        typedef domain_t<vector_type_, topologic_domain_type_, metainfo_collection_type_> self_type;
         
     public:
         
@@ -70,9 +70,9 @@ namespace viennagrid
         typedef topologic_domain_type_ topologic_domain_type;       
         typedef metainfo_collection_type_ metainfo_collection_type;
         
-        geometric_domain_t() : topologic_domain(create_topologic_domain<topologic_domain_type>()) {}
+        domain_t() : topologic_domain(create_topologic_domain<topologic_domain_type>()) {}
 
-        ~geometric_domain_t()
+        ~domain_t()
         {
             viennadata::erase<viennadata::all, viennadata::all>()(*this);
         }
@@ -80,7 +80,7 @@ namespace viennagrid
 
       /** @brief Constructor triggering the refinement of the domain */
       template <typename CellTag, typename OtherDomainType, typename RefinementTag>
-      geometric_domain_t(refinement_proxy<CellTag, OtherDomainType, RefinementTag> const & proxy) : topologic_domain(create_topologic_domain<topologic_domain_type>())
+      domain_t(refinement_proxy<CellTag, OtherDomainType, RefinementTag> const & proxy) : topologic_domain(create_topologic_domain<topologic_domain_type>())
       {
         detail::refine_impl<CellTag>(proxy.get(), *this, proxy.tag());
       }
@@ -103,9 +103,9 @@ namespace viennagrid
     };
     
     template<typename vector_type_, typename topologic_domain_type_, typename metainfo_collection_type_>
-    class geometric_domain_t<vector_type_, topologic_domain_type_, metainfo_collection_type_ *>
+    class domain_t<vector_type_, topologic_domain_type_, metainfo_collection_type_ *>
     {
-        typedef geometric_domain_t<vector_type_, topologic_domain_type_, metainfo_collection_type_*> self_type;
+        typedef domain_t<vector_type_, topologic_domain_type_, metainfo_collection_type_*> self_type;
         
     public:
         
@@ -113,8 +113,8 @@ namespace viennagrid
         typedef topologic_domain_type_ topologic_domain_type;
         typedef metainfo_collection_type_ metainfo_collection_type;
         
-        geometric_domain_t() : metainfo_collection(0) {}
-        geometric_domain_t(topologic_domain_type topologic_domain_, metainfo_collection_type & metainfo_collection_) :
+        domain_t() : metainfo_collection(0) {}
+        domain_t(topologic_domain_type topologic_domain_, metainfo_collection_type & metainfo_collection_) :
             topologic_domain(topologic_domain_), metainfo_collection(&metainfo_collection_) {}
         
         typedef typename result_of::element< self_type, viennagrid::vertex_tag >::type vertex_type;
@@ -140,32 +140,32 @@ namespace viennagrid
     namespace result_of
     {
         template<typename vector_type, typename topologic_domain_type, typename metainfo_collection_type, typename element_type_or_tag>
-        struct element< geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type>, element_type_or_tag >
+        struct element< domain_t<vector_type, topologic_domain_type, metainfo_collection_type>, element_type_or_tag >
         {
             typedef typename element<topologic_domain_type, element_type_or_tag>::type type;
         };
         
         template<typename vector_type, typename topologic_domain_type, typename metainfo_collection_type, typename element_type_or_tag>
-        struct handle< geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type>, element_type_or_tag >
+        struct handle< domain_t<vector_type, topologic_domain_type, metainfo_collection_type>, element_type_or_tag >
         {
             typedef typename handle<topologic_domain_type, element_type_or_tag>::type type;
         };
         
         template<typename vector_type, typename topologic_domain_type, typename metainfo_collection_type, typename element_type_or_tag>
-        struct const_handle< geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type>, element_type_or_tag >
+        struct const_handle< domain_t<vector_type, topologic_domain_type, metainfo_collection_type>, element_type_or_tag >
         {
             typedef typename const_handle<topologic_domain_type, element_type_or_tag>::type type;
         };
         
         
         template<typename vector_type, typename topologic_domain_type, typename metainfo_collection_type, typename element_type_or_tag>
-        struct element_range< geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type>, element_type_or_tag >
+        struct element_range< domain_t<vector_type, topologic_domain_type, metainfo_collection_type>, element_type_or_tag >
         {
             typedef typename element_range< topologic_domain_type, element_type_or_tag>::type type;
         };
         
         template<typename vector_type, typename topologic_domain_type, typename metainfo_collection_type, typename element_type_or_tag>
-        struct const_element_range< geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type>, element_type_or_tag >
+        struct const_element_range< domain_t<vector_type, topologic_domain_type, metainfo_collection_type>, element_type_or_tag >
         {
             typedef typename const_element_range< topologic_domain_type, element_type_or_tag>::type type;
         };
@@ -174,13 +174,13 @@ namespace viennagrid
     
     
     template<typename element_type_or_tag, typename vector_type, typename topologic_domain_type, typename metainfo_collection_type>
-    typename result_of::element_range<geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type>, element_type_or_tag>::type elements(geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type> & domain)
+    typename result_of::element_range<domain_t<vector_type, topologic_domain_type, metainfo_collection_type>, element_type_or_tag>::type elements(domain_t<vector_type, topologic_domain_type, metainfo_collection_type> & domain)
     {
         return elements<element_type_or_tag>( domain.get_topological_domain() );
     }
     
     template<typename element_type_or_tag, typename vector_type, typename topologic_domain_type, typename metainfo_collection_type>
-    typename result_of::const_element_range<geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type>, element_type_or_tag>::type elements(const geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type> & domain)
+    typename result_of::const_element_range<domain_t<vector_type, topologic_domain_type, metainfo_collection_type>, element_type_or_tag>::type elements(const domain_t<vector_type, topologic_domain_type, metainfo_collection_type> & domain)
     {
         return elements<element_type_or_tag>( domain.get_topological_domain() );
     }
@@ -192,13 +192,13 @@ namespace viennagrid
     namespace result_of
     {
         template<typename vector_type, typename topologic_domain_type, typename metainfo_collection_type>
-        struct topologic_domain< geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type> >
+        struct topologic_domain< domain_t<vector_type, topologic_domain_type, metainfo_collection_type> >
         {
             typedef topologic_domain_type type;
         };
         
         template<typename vector_type, typename topologic_domain_type, typename metainfo_collection_type>
-        struct container_collection< geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type> >
+        struct container_collection< domain_t<vector_type, topologic_domain_type, metainfo_collection_type> >
         {
             typedef typename topologic_domain_type::container_collection_type type;
         };
@@ -209,13 +209,13 @@ namespace viennagrid
         
         
         template<typename vector_type, typename topologic_domain_type, typename metainfo_collection_type>
-        struct metainfo_collection< geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type> >
+        struct metainfo_collection< domain_t<vector_type, topologic_domain_type, metainfo_collection_type> >
         {
             typedef metainfo_collection_type type;
         };
         
         template<typename vector_type, typename topologic_domain_type, typename metainfo_collection_type>
-        struct metainfo_collection< geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type *> >
+        struct metainfo_collection< domain_t<vector_type, topologic_domain_type, metainfo_collection_type *> >
         {
             typedef metainfo_collection_type type;
         };
@@ -223,13 +223,13 @@ namespace viennagrid
         
         
         template<typename vector_type, typename topologic_domain_type, typename metainfo_collection_type, typename element_type, typename metainfo_type>
-        struct metainfo_container< geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type>, element_type, metainfo_type>
+        struct metainfo_container< domain_t<vector_type, topologic_domain_type, metainfo_collection_type>, element_type, metainfo_type>
         {
             typedef typename metainfo_container<metainfo_collection_type, element_type, metainfo_type >::type type;
         };
         
         template<typename vector_type, typename topologic_domain_type, typename metainfo_collection_type, typename element_type, typename metainfo_type>
-        struct const_metainfo_container< geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type>, element_type, metainfo_type>
+        struct const_metainfo_container< domain_t<vector_type, topologic_domain_type, metainfo_collection_type>, element_type, metainfo_type>
         {
             typedef typename const_metainfo_container<metainfo_collection_type, element_type, metainfo_type >::type type;
         };
@@ -242,13 +242,13 @@ namespace viennagrid
         };
 
         template<typename vector_type, typename topologic_domain_type, typename metainfo_collection_type>
-        struct point_type< geometric_domain_t< vector_type, topologic_domain_type, metainfo_collection_type > >
+        struct point_type< domain_t< vector_type, topologic_domain_type, metainfo_collection_type > >
         {
             typedef vector_type type;
         };
         
         template<typename vector_type, typename topologic_domain_type, typename metainfo_collection_type>
-        struct point_type< const geometric_domain_t< vector_type, topologic_domain_type, metainfo_collection_type > >
+        struct point_type< const domain_t< vector_type, topologic_domain_type, metainfo_collection_type > >
         {
             typedef vector_type type;
         };
@@ -257,27 +257,27 @@ namespace viennagrid
     
     
     template<typename vector_type, typename topologic_domain_type, typename metainfo_collection_type>
-    typename result_of::topologic_domain< geometric_domain_t< vector_type, topologic_domain_type, metainfo_collection_type > >::type & topologic_domain( geometric_domain_t< vector_type, topologic_domain_type, metainfo_collection_type > & domain )
+    typename result_of::topologic_domain< domain_t< vector_type, topologic_domain_type, metainfo_collection_type > >::type & topologic_domain( domain_t< vector_type, topologic_domain_type, metainfo_collection_type > & domain )
     { return domain.get_topological_domain(); }
     
     template<typename vector_type, typename topologic_domain_type, typename metainfo_collection_type>
-    const typename result_of::topologic_domain< geometric_domain_t< vector_type, topologic_domain_type, metainfo_collection_type > >::type & topologic_domain( const geometric_domain_t< vector_type, topologic_domain_type, metainfo_collection_type > & domain )
+    const typename result_of::topologic_domain< domain_t< vector_type, topologic_domain_type, metainfo_collection_type > >::type & topologic_domain( const domain_t< vector_type, topologic_domain_type, metainfo_collection_type > & domain )
     { return domain.get_topological_domain(); }
     
     template<typename vector_type, typename topologic_domain_type, typename metainfo_collection_type>
-    typename result_of::metainfo_collection< geometric_domain_t< vector_type, topologic_domain_type, metainfo_collection_type > >::type & metainfo_collection( geometric_domain_t< vector_type, topologic_domain_type, metainfo_collection_type > & domain )
+    typename result_of::metainfo_collection< domain_t< vector_type, topologic_domain_type, metainfo_collection_type > >::type & metainfo_collection( domain_t< vector_type, topologic_domain_type, metainfo_collection_type > & domain )
     { return domain.get_metainfo_collection(); }
     
     template<typename vector_type, typename topologic_domain_type, typename metainfo_collection_type>
-    const typename result_of::metainfo_collection< geometric_domain_t< vector_type, topologic_domain_type, metainfo_collection_type > >::type & metainfo_collection( const geometric_domain_t< vector_type, topologic_domain_type, metainfo_collection_type > & domain )
+    const typename result_of::metainfo_collection< domain_t< vector_type, topologic_domain_type, metainfo_collection_type > >::type & metainfo_collection( const domain_t< vector_type, topologic_domain_type, metainfo_collection_type > & domain )
     { return domain.get_metainfo_collection(); }
     
     template<typename vector_type, typename topologic_domain_type, typename metainfo_collection_type>
-    typename result_of::metainfo_collection< geometric_domain_t< vector_type, topologic_domain_type, metainfo_collection_type* > >::type & metainfo_collection( geometric_domain_t< vector_type, topologic_domain_type, metainfo_collection_type* > & domain )
+    typename result_of::metainfo_collection< domain_t< vector_type, topologic_domain_type, metainfo_collection_type* > >::type & metainfo_collection( domain_t< vector_type, topologic_domain_type, metainfo_collection_type* > & domain )
     { return domain.get_metainfo_collection(); }
     
     template<typename vector_type, typename topologic_domain_type, typename metainfo_collection_type>
-    const typename result_of::metainfo_collection< geometric_domain_t< vector_type, topologic_domain_type, metainfo_collection_type* > >::type & metainfo_collection( const geometric_domain_t< vector_type, topologic_domain_type, metainfo_collection_type* > & domain )
+    const typename result_of::metainfo_collection< domain_t< vector_type, topologic_domain_type, metainfo_collection_type* > >::type & metainfo_collection( const domain_t< vector_type, topologic_domain_type, metainfo_collection_type* > & domain )
     { return domain.get_metainfo_collection(); }
     
     template<typename metainfo_collection_type>
@@ -293,15 +293,15 @@ namespace viennagrid
     
     
     template<typename element_type, typename metainfo_type, typename vector_type, typename topologic_domain_type, typename metainfo_collection_type>
-    typename result_of::metainfo_container< geometric_domain_t< vector_type, topologic_domain_type, metainfo_collection_type >, element_type, metainfo_type>::type &
-        metainfo_container( geometric_domain_t< vector_type, topologic_domain_type, metainfo_collection_type > & domain )
+    typename result_of::metainfo_container< domain_t< vector_type, topologic_domain_type, metainfo_collection_type >, element_type, metainfo_type>::type &
+        metainfo_container( domain_t< vector_type, topologic_domain_type, metainfo_collection_type > & domain )
     {
         return metainfo_container<element_type, metainfo_type>( metainfo_collection(domain) );
     }
     
     template<typename element_type, typename metainfo_type, typename vector_type, typename topologic_domain_type, typename metainfo_collection_type>
-    typename result_of::metainfo_container< geometric_domain_t< vector_type, topologic_domain_type, metainfo_collection_type >, element_type, metainfo_type>::type const &
-        metainfo_container( geometric_domain_t< vector_type, topologic_domain_type, metainfo_collection_type > const & domain )
+    typename result_of::metainfo_container< domain_t< vector_type, topologic_domain_type, metainfo_collection_type >, element_type, metainfo_type>::type const &
+        metainfo_container( domain_t< vector_type, topologic_domain_type, metainfo_collection_type > const & domain )
     {
         return metainfo_container<element_type, metainfo_type>( metainfo_collection(domain) );
     }
@@ -310,26 +310,26 @@ namespace viennagrid
     
     
     template<typename metainfo_type, typename vector_type, typename topologic_domain_type, typename metainfo_collection_type, typename element_tag, typename boundary_cell_container_typelist, typename id_type>
-    metainfo_type & look_up( geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type> & domain, const element_t<element_tag, boundary_cell_container_typelist, id_type> & element )
+    metainfo_type & look_up( domain_t<vector_type, topologic_domain_type, metainfo_collection_type> & domain, const element_t<element_tag, boundary_cell_container_typelist, id_type> & element )
     {
         return look_up<metainfo_type>( metainfo_collection(domain), element );
     }
     
     template<typename metainfo_type, typename vector_type, typename topologic_domain_type, typename metainfo_collection_type, typename element_tag, typename boundary_cell_container_typelist, typename id_type>
-    const metainfo_type & look_up( const geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type> & domain, const element_t<element_tag, boundary_cell_container_typelist, id_type> & element )
+    const metainfo_type & look_up( const domain_t<vector_type, topologic_domain_type, metainfo_collection_type> & domain, const element_t<element_tag, boundary_cell_container_typelist, id_type> & element )
     {
         return look_up<metainfo_type>( metainfo_collection(domain), element );
     }
     
     
     template<typename metainfo_type, typename vector_type, typename topologic_domain_type, typename metainfo_collection_type, typename handle_type>
-    metainfo_type & look_up( geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type> & domain, const handle_type & handle )
+    metainfo_type & look_up( domain_t<vector_type, topologic_domain_type, metainfo_collection_type> & domain, const handle_type & handle )
     {
         return look_up<metainfo_type>( metainfo_collection(domain), dereference_handle(domain, handle) );
     }
     
     template<typename metainfo_type, typename vector_type, typename topologic_domain_type, typename metainfo_collection_type, typename handle_type>
-    const metainfo_type & look_up( const geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type> & domain, const handle_type & handle )
+    const metainfo_type & look_up( const domain_t<vector_type, topologic_domain_type, metainfo_collection_type> & domain, const handle_type & handle )
     {
         return look_up<metainfo_type>( metainfo_collection(domain), dereference_handle(domain, handle) );
     }
@@ -338,7 +338,7 @@ namespace viennagrid
     
     
     template<typename vector_type, typename topologic_domain_type, typename metainfo_collection_type, typename element_type, typename metainfo_type>
-    void set( geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type> & domain, const element_type & element, const metainfo_type & meta_info )
+    void set( domain_t<vector_type, topologic_domain_type, metainfo_collection_type> & domain, const element_type & element, const metainfo_type & meta_info )
     {
         metainfo::set( metainfo_container<element_type, metainfo_type>(domain.get_metainfo_collection()), element, meta_info );
     }
@@ -373,27 +373,27 @@ namespace viennagrid
     }
     
     template<typename vector_type, typename topologic_domain_type, typename metainfo_collection_type>
-    typename geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type>::vector_type & point( geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type> & geometric_domain, const typename geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type>::vertex_type & vertex )
+    typename domain_t<vector_type, topologic_domain_type, metainfo_collection_type>::vector_type & point( domain_t<vector_type, topologic_domain_type, metainfo_collection_type> & domain, const typename domain_t<vector_type, topologic_domain_type, metainfo_collection_type>::vertex_type & vertex )
     {
-        return viennagrid::look_up<typename geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type>::vector_type>( geometric_domain, vertex );
+        return viennagrid::look_up<typename domain_t<vector_type, topologic_domain_type, metainfo_collection_type>::vector_type>( domain, vertex );
     }
     
     template<typename vector_type, typename topologic_domain_type, typename metainfo_collection_type>
-    const typename geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type>::vector_type & point( const geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type> & geometric_domain, const typename geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type>::vertex_type & vertex )
+    const typename domain_t<vector_type, topologic_domain_type, metainfo_collection_type>::vector_type & point( const domain_t<vector_type, topologic_domain_type, metainfo_collection_type> & domain, const typename domain_t<vector_type, topologic_domain_type, metainfo_collection_type>::vertex_type & vertex )
     {
-        return viennagrid::look_up<typename geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type>::vector_type>( geometric_domain, vertex );
+        return viennagrid::look_up<typename domain_t<vector_type, topologic_domain_type, metainfo_collection_type>::vector_type>( domain, vertex );
     }
     
     template<typename vector_type, typename topologic_domain_type, typename metainfo_collection_type>
-    typename geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type>::vector_type & point( geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type> & geometric_domain, const typename geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type>::vertex_handle_type & vertex_handle )
+    typename domain_t<vector_type, topologic_domain_type, metainfo_collection_type>::vector_type & point( domain_t<vector_type, topologic_domain_type, metainfo_collection_type> & domain, const typename domain_t<vector_type, topologic_domain_type, metainfo_collection_type>::vertex_handle_type & vertex_handle )
     {
-        return viennagrid::look_up<typename geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type>::vector_type>( geometric_domain, dereference_handle(geometric_domain, vertex_handle) );
+        return viennagrid::look_up<typename domain_t<vector_type, topologic_domain_type, metainfo_collection_type>::vector_type>( domain, dereference_handle(domain, vertex_handle) );
     }
     
     template<typename vector_type, typename topologic_domain_type, typename metainfo_collection_type>
-    const typename geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type>::vector_type & point( const geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type> & geometric_domain, const typename geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type>::const_vertex_handle_type & vertex_handle )
+    const typename domain_t<vector_type, topologic_domain_type, metainfo_collection_type>::vector_type & point( const domain_t<vector_type, topologic_domain_type, metainfo_collection_type> & domain, const typename domain_t<vector_type, topologic_domain_type, metainfo_collection_type>::const_vertex_handle_type & vertex_handle )
     {
-        return viennagrid::look_up<typename geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type>::vector_type>( geometric_domain, dereference_handle(geometric_domain, vertex_handle) );
+        return viennagrid::look_up<typename domain_t<vector_type, topologic_domain_type, metainfo_collection_type>::vector_type>( domain, dereference_handle(domain, vertex_handle) );
     }
     
     
@@ -407,12 +407,12 @@ namespace viennagrid
     template<typename vector_type, typename topologic_domain_type, typename metainfo_collection_type, typename element_tag, typename boundary_cell_container_typelist, typename id_type>
     std::pair<
                 typename viennagrid::storage::result_of::container_of<
-                    typename result_of::container_collection< geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type> >::type,
+                    typename result_of::container_collection< domain_t<vector_type, topologic_domain_type, metainfo_collection_type> >::type,
                     viennagrid::element_t<element_tag, boundary_cell_container_typelist, id_type>
                 >::type::handle_type,
                 bool
             >
-        push_element( geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type> & domain, const viennagrid::element_t<element_tag, boundary_cell_container_typelist, id_type> & element)
+        push_element( domain_t<vector_type, topologic_domain_type, metainfo_collection_type> & domain, const viennagrid::element_t<element_tag, boundary_cell_container_typelist, id_type> & element)
     {
         metainfo::increment_size< viennagrid::element_t<element_tag, boundary_cell_container_typelist, id_type> >(metainfo_collection(domain));
         return inserter(domain)(element);
@@ -421,12 +421,12 @@ namespace viennagrid
     template<typename vector_type, typename topologic_domain_type, typename metainfo_collection_type, typename element_type>
     std::pair<
                 typename viennagrid::storage::result_of::container_of<
-                    typename result_of::container_collection< geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type> >::type,
+                    typename result_of::container_collection< domain_t<vector_type, topologic_domain_type, metainfo_collection_type> >::type,
                     element_type
                 >::type::handle_type,
                 bool
             >
-        push_element( geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type> & domain, const element_type & element)
+        push_element( domain_t<vector_type, topologic_domain_type, metainfo_collection_type> & domain, const element_type & element)
     {
         metainfo::increment_size< element_type >(metainfo_collection(domain));
         return inserter(domain)(element);
@@ -435,12 +435,12 @@ namespace viennagrid
     template<typename vector_type, typename topologic_domain_type, typename metainfo_collection_type, typename element_type>
     std::pair<
                 typename viennagrid::storage::result_of::container_of<
-                    typename result_of::container_collection< geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type> >::type,
+                    typename result_of::container_collection< domain_t<vector_type, topologic_domain_type, metainfo_collection_type> >::type,
                     element_type
                 >::type::handle_type,
                 bool
             >
-        push_element_noid( geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type> & domain, const element_type & element)
+        push_element_noid( domain_t<vector_type, topologic_domain_type, metainfo_collection_type> & domain, const element_type & element)
     {
         metainfo::increment_size< element_type >(metainfo_collection(domain));
         return inserter(domain).template insert<false, true>(element);
@@ -449,31 +449,31 @@ namespace viennagrid
     
     
     template<typename element_type, typename vector_type, typename topologic_domain_type, typename metainfo_collection_type>
-    typename result_of::handle<geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type>, element_type>::type
-        create_element( geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type> & domain, const vector_type & point )
+    typename result_of::handle<domain_t<vector_type, topologic_domain_type, metainfo_collection_type>, element_type>::type
+        create_element( domain_t<vector_type, topologic_domain_type, metainfo_collection_type> & domain, const vector_type & point )
     {
-        typename result_of::handle<geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type>, element_type>::type ret = push_element(domain, element_type() ).first;
+        typename result_of::handle<domain_t<vector_type, topologic_domain_type, metainfo_collection_type>, element_type>::type ret = push_element(domain, element_type() ).first;
         viennagrid::point(domain, ret) = point;
         
         return ret;
     }
     
     template<typename vector_type, typename topologic_domain_type, typename metainfo_collection_type>
-    typename result_of::handle<geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type>, vertex_tag>::type
-        create_vertex( geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type> & domain, const vector_type & point )
+    typename result_of::handle<domain_t<vector_type, topologic_domain_type, metainfo_collection_type>, vertex_tag>::type
+        create_vertex( domain_t<vector_type, topologic_domain_type, metainfo_collection_type> & domain, const vector_type & point )
     {
-        typedef typename result_of::element< geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type>, vertex_tag>::type element_type;
-        typename result_of::handle< geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type>, element_type>::type ret = push_element(domain, element_type() ).first;
+        typedef typename result_of::element< domain_t<vector_type, topologic_domain_type, metainfo_collection_type>, vertex_tag>::type element_type;
+        typename result_of::handle< domain_t<vector_type, topologic_domain_type, metainfo_collection_type>, element_type>::type ret = push_element(domain, element_type() ).first;
         viennagrid::point(domain, ret) = point;
         
         return ret;
     }
     
     template<typename vector_type, typename topologic_domain_type, typename metainfo_collection_type>
-    typename result_of::handle<geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type>, vertex_tag>::type
-        create_unique_vertex( geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type> & domain, const vector_type & p, typename result_of::coord_type<vector_type>::type tolerance = 1e-6 )
+    typename result_of::handle<domain_t<vector_type, topologic_domain_type, metainfo_collection_type>, vertex_tag>::type
+        create_unique_vertex( domain_t<vector_type, topologic_domain_type, metainfo_collection_type> & domain, const vector_type & p, typename result_of::coord_type<vector_type>::type tolerance = 1e-6 )
     {
-        typedef geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type> domain_type;
+        typedef domain_t<vector_type, topologic_domain_type, metainfo_collection_type> domain_type;
         typedef typename result_of::element_range<domain_type, vertex_tag>::type vertex_range_type;
         typedef typename result_of::handle_iterator<vertex_range_type>::type vertex_range_handle_iterator;
         
@@ -493,15 +493,15 @@ namespace viennagrid
     
     
     template<typename element_type, typename vector_type, typename topologic_domain_type, typename metainfo_collection_type>
-    typename result_of::handle<geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type>, element_type>::type
-        create_element( geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type> & domain, typename element_type::id_type id, const vector_type & point )
+    typename result_of::handle<domain_t<vector_type, topologic_domain_type, metainfo_collection_type>, element_type>::type
+        create_element( domain_t<vector_type, topologic_domain_type, metainfo_collection_type> & domain, typename element_type::id_type id, const vector_type & point )
     {
         //typedef typename result_of::element<domain_type, viennagrid::vertex_tag>::type vertex_type;
         
         element_type element;
         element.id( id );
         
-        typename result_of::handle<geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type>, element_type>::type ret = push_element_noid(domain, element_type() ).first;
+        typename result_of::handle<domain_t<vector_type, topologic_domain_type, metainfo_collection_type>, element_type>::type ret = push_element_noid(domain, element_type() ).first;
         viennagrid::point(domain, ret) = point;
         
         return ret;
@@ -515,7 +515,7 @@ namespace viennagrid
         
         template<typename element_tag, typename vector_type, typename handle_tag = viennagrid::storage::pointer_handle_tag,
             typename metainfo_typelist = viennameta::null_type, typename metainfo_container_config = viennagrid::storage::default_container_config>
-        struct geometric_domain_config
+        struct domain_config
         {
             typedef typename viennagrid::result_of::default_topologic_config<element_tag, handle_tag>::type topologic_config;
             typedef typename viennameta::make_typemap<
@@ -527,30 +527,30 @@ namespace viennagrid
         };
         
         
-        template<typename geometric_domain_config>
-        struct geometric_domain
+        template<typename domain_config>
+        struct domain
         {
             typedef typename viennagrid::result_of::topologic_domain<
-                    typename result_of::topologic_config<geometric_domain_config>::type
+                    typename result_of::topologic_config<domain_config>::type
                 >::type topologic_domain_type;
                 
-             typedef typename result_of::vector_type<geometric_domain_config>::type vector_type;
+             typedef typename result_of::vector_type<domain_config>::type vector_type;
                 
             typedef typename viennagrid::storage::collection_t<
                     typename viennagrid::result_of::metainfo_container_typemap<
                         typename viennameta::typelist::result_of::push_back<
-                            typename result_of::metainfo_typelist< geometric_domain_config >::type,
+                            typename result_of::metainfo_typelist< domain_config >::type,
                             viennameta::static_pair<
                                 viennagrid::vertex_tag,
                                 vector_type
                             >
                         >::type,
-                        typename result_of::metainfo_container_config<geometric_domain_config>::type,
-                        typename result_of::topologic_config<geometric_domain_config>::type
+                        typename result_of::metainfo_container_config<domain_config>::type,
+                        typename result_of::topologic_config<domain_config>::type
                     >::type
                 > metainfo_collection_type;  
             
-            typedef geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type> type;
+            typedef domain_t<vector_type, topologic_domain_type, metainfo_collection_type> type;
         };
         
         
@@ -558,27 +558,27 @@ namespace viennagrid
         
         
         template<
-            typename geometric_domain_type,
+            typename domain_type,
             typename element_typelist = 
                 typename storage::container_collection::result_of::value_typelist<
-                    typename container_collection<geometric_domain_type>::type
+                    typename container_collection<domain_type>::type
                 >::type,
             typename container_config = 
                 storage::default_container_config>
         struct geometric_view
         {
-            typedef typename viennagrid::result_of::topologic_view<typename geometric_domain_type::topologic_domain_type, element_typelist>::type topologic_view_type;
-            typedef typename geometric_domain_type::metainfo_collection_type metainfo_collection_type;
-            typedef typename viennagrid::geometric_domain_t<typename geometric_domain_type::vector_type, topologic_view_type, metainfo_collection_type*> type;
+            typedef typename viennagrid::result_of::topologic_view<typename domain_type::topologic_domain_type, element_typelist>::type topologic_view_type;
+            typedef typename domain_type::metainfo_collection_type metainfo_collection_type;
+            typedef typename viennagrid::domain_t<typename domain_type::vector_type, topologic_view_type, metainfo_collection_type*> type;
         };
     }
     
     
 
     template<typename vector_type, typename topologic_domain_type, typename metainfo_collection_type>
-    struct create_view_helper< geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type> >
+    struct create_view_helper< domain_t<vector_type, topologic_domain_type, metainfo_collection_type> >
     {
-        typedef geometric_domain_t<vector_type, topologic_domain_type, metainfo_collection_type> geomatric_view_type;
+        typedef domain_t<vector_type, topologic_domain_type, metainfo_collection_type> geomatric_view_type;
         
         template<typename domain_type>
         static geomatric_view_type create( domain_type & domain )

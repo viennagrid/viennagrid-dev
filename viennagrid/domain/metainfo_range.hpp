@@ -20,7 +20,7 @@
 
 
 #include "viennagrid/element/element.hpp"
-#include "viennagrid/domain/geometric_domain.hpp"
+#include "viennagrid/domain/domain.hpp"
 
 /** @file element.hpp
     @brief Provides the main n-cell type
@@ -259,7 +259,7 @@ namespace viennagrid
         struct metainfo_view
         {
 //             typedef typename view_type::value_type element_type;
-//             typedef typename metainfo_container<geometric_domain_type, element_type, metainfo_type>::type metainfo_container_type;
+//             typedef typename metainfo_container<domain_type, element_type, metainfo_type>::type metainfo_container_type;
             
             typedef metainfo_range_t<view_type, metainfo_container_type> type;
         };
@@ -268,7 +268,7 @@ namespace viennagrid
 //         struct const_metainfo_view
 //         {
 //             typedef typename view_type::value_type element_type;
-//             typedef typename const_metainfo_container<geometric_domain_type, element_type, metainfo_type>::type metainfo_container_type;
+//             typedef typename const_metainfo_container<domain_type, element_type, metainfo_type>::type metainfo_container_type;
 //             
 //             typedef metainfo_range_t<view_type, metainfo_container_type> type;
 //         };
@@ -276,20 +276,20 @@ namespace viennagrid
         
         
         
-        template<typename geometric_domain_type, typename element_type, typename metainfo_type>
+        template<typename domain_type, typename element_type, typename metainfo_type>
         struct metainfo_range
         {
-            typedef typename element_range<geometric_domain_type, element_type>::type element_range_type;
-            typedef typename metainfo_container<geometric_domain_type, element_type, metainfo_type>::type metainfo_container_type;
+            typedef typename element_range<domain_type, element_type>::type element_range_type;
+            typedef typename metainfo_container<domain_type, element_type, metainfo_type>::type metainfo_container_type;
             
             typedef metainfo_range_t<element_range_type, metainfo_container_type> type;
         };
         
-        template<typename geometric_domain_type, typename element_type, typename metainfo_type>
+        template<typename domain_type, typename element_type, typename metainfo_type>
         struct const_metainfo_range
         {
-            typedef typename const_element_range<geometric_domain_type, element_type>::type element_range_type;
-            typedef typename const_metainfo_container<geometric_domain_type, element_type, metainfo_type>::type metainfo_container_type;
+            typedef typename const_element_range<domain_type, element_type>::type element_range_type;
+            typedef typename const_metainfo_container<domain_type, element_type, metainfo_type>::type metainfo_container_type;
             
             typedef metainfo_range_t<element_range_type, metainfo_container_type> type;
         };
@@ -302,12 +302,12 @@ namespace viennagrid
     
     
     
-    template<typename geometric_domain_type, typename element_type, typename metainfo_type>
+    template<typename domain_type, typename element_type, typename metainfo_type>
     struct metainfo_range_helper
     {
-        typedef typename result_of::metainfo_range<geometric_domain_type, element_type, metainfo_type>::type result_type;
+        typedef typename result_of::metainfo_range<domain_type, element_type, metainfo_type>::type result_type;
         
-        static result_type exec( geometric_domain_type & domain )
+        static result_type exec( domain_type & domain )
         {
             return result_type(
                 viennagrid::elements<element_type>(domain),
@@ -316,12 +316,12 @@ namespace viennagrid
         }
     };
     
-    template<typename geometric_domain_type, typename element_type, typename metainfo_type>
-    struct metainfo_range_helper<const geometric_domain_type, element_type, metainfo_type>
+    template<typename domain_type, typename element_type, typename metainfo_type>
+    struct metainfo_range_helper<const domain_type, element_type, metainfo_type>
     {
-        typedef typename result_of::const_metainfo_range<geometric_domain_type, element_type, metainfo_type>::type result_type;
+        typedef typename result_of::const_metainfo_range<domain_type, element_type, metainfo_type>::type result_type;
         
-        static result_type exec( geometric_domain_type const & domain )
+        static result_type exec( domain_type const & domain )
         {
             return result_type(
                 viennagrid::elements<element_type>(domain),
@@ -330,24 +330,24 @@ namespace viennagrid
         }
     };
     
-    template<typename element_type, typename metainfo_type, typename geometric_domain_type>
-    typename metainfo_range_helper<geometric_domain_type, element_type, metainfo_type>::result_type metainfo_range( geometric_domain_type & domain )
-    { return metainfo_range_helper<geometric_domain_type, element_type, metainfo_type>::exec(domain); }
+    template<typename element_type, typename metainfo_type, typename domain_type>
+    typename metainfo_range_helper<domain_type, element_type, metainfo_type>::result_type metainfo_range( domain_type & domain )
+    { return metainfo_range_helper<domain_type, element_type, metainfo_type>::exec(domain); }
      
      
      
      
      
-    template<typename view_type, typename geometric_domain_type, typename metainfo_type>
+    template<typename view_type, typename domain_type, typename metainfo_type>
     struct metainfo_view_from_domain_helper
     {
         typedef typename view_type::value_type element_type;
         typedef typename result_of::metainfo_view<
                 view_type,
-                typename result_of::metainfo_container<geometric_domain_type, element_type, metainfo_type>::type
+                typename result_of::metainfo_container<domain_type, element_type, metainfo_type>::type
             >::type result_type;
         
-        static result_type exec( view_type & view, geometric_domain_type & domain )
+        static result_type exec( view_type & view, domain_type & domain )
         {
             return result_type(
                 view,
@@ -356,16 +356,16 @@ namespace viennagrid
         }
     };
     
-    template<typename view_type, typename geometric_domain_type, typename metainfo_type>
-    struct metainfo_view_from_domain_helper<const view_type, const geometric_domain_type, metainfo_type>
+    template<typename view_type, typename domain_type, typename metainfo_type>
+    struct metainfo_view_from_domain_helper<const view_type, const domain_type, metainfo_type>
     {
         typedef typename view_type::value_type element_type;
         typedef typename result_of::metainfo_view<
                 const view_type,
-                const typename result_of::metainfo_container<geometric_domain_type, element_type, metainfo_type>::type
+                const typename result_of::metainfo_container<domain_type, element_type, metainfo_type>::type
             >::type result_type;
         
-        static result_type exec( view_type & view, geometric_domain_type & domain )
+        static result_type exec( view_type & view, domain_type & domain )
         {
             return result_type(
                 view,
@@ -375,9 +375,9 @@ namespace viennagrid
     };
 
     
-    template<typename metainfo_type, typename view_type, typename geometric_domain_type>
-    typename metainfo_view_from_domain_helper<view_type, geometric_domain_type, metainfo_type>::result_type metainfo_view( view_type & view, geometric_domain_type & domain )
-    { return metainfo_view_from_domain_helper<view_type, geometric_domain_type, metainfo_type>::exec(view, domain); }
+    template<typename metainfo_type, typename view_type, typename domain_type>
+    typename metainfo_view_from_domain_helper<view_type, domain_type, metainfo_type>::result_type metainfo_view( view_type & view, domain_type & domain )
+    { return metainfo_view_from_domain_helper<view_type, domain_type, metainfo_type>::exec(view, domain); }
     
     
     

@@ -70,8 +70,8 @@ int main()
     
     
     typedef viennameta::make_typemap<   
-                                        viennagrid::storage::default_tag,   viennagrid::storage::handleed_container_tag< viennagrid::storage::std_deque_tag, viennagrid::storage::pointer_handle_tag>,
-                                        int,                                viennagrid::storage::handleed_container_tag< viennagrid::storage::std_list_tag, viennagrid::storage::pointer_handle_tag>
+                                        viennagrid::storage::default_tag,   viennagrid::storage::handled_container_tag< viennagrid::storage::std_deque_tag, viennagrid::storage::pointer_handle_tag>,
+                                        int,                                viennagrid::storage::handled_container_tag< viennagrid::storage::std_list_tag, viennagrid::storage::pointer_handle_tag>
                                     >::type container_config;
     typedef viennagrid::storage::result_of::container_collection<config, container_config>::type collection_type;
     collection_type collection;
@@ -106,8 +106,8 @@ int main()
     
     typedef viennagrid::storage::result_of::container_collection<
         viennameta::make_typelist<char, int, double>::type,
-        viennameta::make_typemap<   viennagrid::storage::default_tag,   viennagrid::storage::handleed_container_tag< viennagrid::storage::std_vector_tag, viennagrid::storage::no_handle_tag> ,
-                                    int,                                viennagrid::storage::handleed_container_tag< viennagrid::storage::std_deque_tag, viennagrid::storage::no_handle_tag>
+        viennameta::make_typemap<   viennagrid::storage::default_tag,   viennagrid::storage::handled_container_tag< viennagrid::storage::std_vector_tag, viennagrid::storage::no_handle_tag> ,
+                                    int,                                viennagrid::storage::handled_container_tag< viennagrid::storage::std_deque_tag, viennagrid::storage::no_handle_tag>
                             >::type 
         >::type collection2_type;
     
@@ -127,8 +127,8 @@ int main()
     
     
     typedef viennameta::make_typemap<   
-                                        viennagrid::storage::default_tag,       viennagrid::storage::handleed_container_tag< viennagrid::storage::std_deque_tag, viennagrid::storage::no_handle_tag>,
-                                        float,                                  viennagrid::storage::handleed_container_tag< viennagrid::storage::std_vector_tag, viennagrid::storage::no_handle_tag>
+                                        viennagrid::storage::default_tag,       viennagrid::storage::handled_container_tag< viennagrid::storage::std_deque_tag, viennagrid::storage::no_handle_tag>,
+                                        float,                                  viennagrid::storage::handled_container_tag< viennagrid::storage::std_vector_tag, viennagrid::storage::no_handle_tag>
                                     >::type view_container_config;
     typedef viennagrid::storage::result_of::view_collection<collection_type, view_container_config>::type view_collection_type;
     view_collection_type view_collection;
@@ -156,8 +156,8 @@ int main()
 
     
     typedef viennameta::make_typemap<
-                                        viennagrid::storage::default_tag,   viennagrid::storage::handleed_container_tag< viennagrid::storage::std_set_tag, viennagrid::storage::no_handle_tag>,
-                                        float,                              viennagrid::storage::handleed_container_tag< viennagrid::storage::std_deque_tag, viennagrid::storage::no_handle_tag>
+                                        viennagrid::storage::default_tag,   viennagrid::storage::handled_container_tag< viennagrid::storage::std_set_tag, viennagrid::storage::no_handle_tag>,
+                                        float,                              viennagrid::storage::handled_container_tag< viennagrid::storage::std_deque_tag, viennagrid::storage::no_handle_tag>
                                     >::type view_container2_config;
     typedef viennagrid::storage::result_of::view_collection<view_collection_type, view_container_config>::type view_collection2_type;
     view_collection2_type view_collection2;

@@ -32,7 +32,7 @@ using std::endl;
 
 #include "viennagrid/domain/topologic_domain.hpp"
 #include "viennagrid/domain/metainfo.hpp"
-#include "viennagrid/domain/geometric_domain.hpp"
+#include "viennagrid/domain/domain.hpp"
 #include "viennagrid/domain/element_creation.hpp"
 
 #include <boost/numeric/ublas/vector.hpp>
@@ -59,7 +59,7 @@ int main()
     
 
     typedef ublas::vector<double> vector_type;
-    typedef viennagrid::result_of::geometric_domain_config< viennagrid::tetrahedron_tag, vector_type, handle_tag, metainfo_typelist >::type domain_config;
+    typedef viennagrid::result_of::domain_config< viennagrid::tetrahedron_tag, vector_type, handle_tag, metainfo_typelist >::type domain_config;
 
     
     
@@ -68,7 +68,7 @@ int main()
     // typedefing and setting up the topological domain
     //
     
-    typedef viennagrid::result_of::geometric_domain< domain_config >::type domain_type;
+    typedef viennagrid::result_of::domain< domain_config >::type domain_type;
     domain_type domain;
     
     //
@@ -104,7 +104,7 @@ int main()
 //     
 //     typedef domain_type::metainfo_collection_type metainfo_collection_type;
 //     
-//     typedef viennagrid::geometric_domain_t<vector_type, topologic_view_type, metainfo_collection_type&> geometric_view_type;
+//     typedef viennagrid::domain_t<vector_type, topologic_view_type, metainfo_collection_type&> geometric_view_type;
     
     typedef viennagrid::result_of::geometric_view<domain_type, view_types>::type geometric_view_type;
     

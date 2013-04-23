@@ -32,7 +32,7 @@ using std::endl;
 
 #include "viennagrid/domain/topologic_domain.hpp"
 #include "viennagrid/domain/metainfo.hpp"
-#include "viennagrid/domain/geometric_domain.hpp"
+#include "viennagrid/domain/domain.hpp"
 #include "viennagrid/domain/element_creation.hpp"
 
 
@@ -59,13 +59,13 @@ int main()
     
 
     typedef ublas::vector<double> vector_type;
-    typedef viennagrid::result_of::geometric_domain_config< viennagrid::tetrahedron_tag, vector_type, handle_tag, metainfo_typelist >::type domain_config;
+    typedef viennagrid::result_of::domain_config< viennagrid::tetrahedron_tag, vector_type, handle_tag, metainfo_typelist >::type domain_config;
     
     //
     // typedefing and setting up the geometric domain
     //
     
-    typedef viennagrid::result_of::geometric_domain< domain_config >::type domain_type;
+    typedef viennagrid::result_of::domain< domain_config >::type domain_type;
     domain_type domain;
         
     //

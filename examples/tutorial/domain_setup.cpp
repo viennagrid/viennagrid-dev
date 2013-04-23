@@ -22,7 +22,7 @@
 
 
 #include "viennagrid/forwards.hpp"
-#include "viennagrid/domain/geometric_domain.hpp"
+#include "viennagrid/domain/domain.hpp"
 #include "viennagrid/point.hpp"
 
 
@@ -63,13 +63,13 @@ int main()
   
   typedef viennagrid::point_t<double, viennagrid::cartesian_cs<2> > PointType;
   
-  typedef viennagrid::result_of::geometric_domain_config< viennagrid::triangle_tag, PointType, viennagrid::storage::id_handle_tag >::type DomainConfig;
+  typedef viennagrid::result_of::domain_config< viennagrid::triangle_tag, PointType, viennagrid::storage::id_handle_tag >::type DomainConfig;
   
   //typedef viennagrid::config::triangular_2d                       ConfigType;
   //typedef viennagrid::result_of::domain<ConfigType>::type         Domain;
   //typedef viennagrid::result_of::segment<ConfigType>::type        Segment;
   
-  typedef viennagrid::result_of::geometric_domain< DomainConfig >::type Domain;  
+  typedef viennagrid::result_of::domain< DomainConfig >::type Domain;  
   typedef viennagrid::result_of::geometric_view<Domain>::type Segment;
   typedef viennagrid::triangle_tag                                    CellTag;
   

@@ -50,8 +50,8 @@ int main()
     
   typedef viennagrid::point_t<double, viennagrid::cartesian_cs<3> > PointType;
   
-  typedef viennagrid::result_of::geometric_domain_config< viennagrid::tetrahedron_tag, PointType, viennagrid::storage::id_handle_tag >::type DomainConfig;
-  typedef viennagrid::result_of::geometric_domain< DomainConfig >::type Domain;  
+  typedef viennagrid::result_of::domain_config< viennagrid::tetrahedron_tag, PointType, viennagrid::storage::id_handle_tag >::type DomainConfig;
+  typedef viennagrid::result_of::domain< DomainConfig >::type Domain;  
   typedef viennagrid::result_of::geometric_view<Domain>::type Segment;
   
   typedef viennagrid::tetrahedron_tag CellTag;

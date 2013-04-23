@@ -28,7 +28,7 @@
 #include "viennagrid/algorithm/norm.hpp"
 #include "viennagrid/algorithm/spanned_volume.hpp"
 
-#include "viennagrid/domain/geometric_domain.hpp"
+#include "viennagrid/domain/domain.hpp"
 
 /** @file volume.hpp
     @brief Computes the volume of different cell types as well as domains and segments

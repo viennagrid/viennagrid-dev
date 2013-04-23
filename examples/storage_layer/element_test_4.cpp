@@ -61,7 +61,7 @@ int main()
             viennagrid::storage::smart_id_tag<int>,
         
             viennagrid::element_container_tag,
-            viennagrid::storage::handleed_container_tag<           
+            viennagrid::storage::handled_container_tag<           
                 viennagrid::storage::std_deque_tag,
                 handle_tag
             >,
@@ -77,7 +77,7 @@ int main()
             viennagrid::storage::smart_id_tag<int>,
         
             viennagrid::element_container_tag,
-            viennagrid::storage::handleed_container_tag<           
+            viennagrid::storage::handled_container_tag<           
                 viennagrid::storage::hidden_key_map_tag< viennagrid::storage::element_key_tag >,
                 handle_tag
             >,
@@ -94,7 +94,7 @@ int main()
             viennagrid::storage::smart_id_tag<int>,
         
             viennagrid::element_container_tag,
-            viennagrid::storage::handleed_container_tag<           
+            viennagrid::storage::handled_container_tag<           
                 viennagrid::storage::hidden_key_map_tag< viennagrid::storage::element_key_tag >,
                 handle_tag
             >,
@@ -112,7 +112,7 @@ int main()
             viennagrid::storage::smart_id_tag<int>,
         
             viennagrid::element_container_tag,
-            viennagrid::storage::handleed_container_tag<           
+            viennagrid::storage::handled_container_tag<           
                 viennagrid::storage::hidden_key_map_tag< viennagrid::storage::element_key_tag >,
                 handle_tag
             >,

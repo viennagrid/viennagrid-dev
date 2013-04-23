@@ -20,7 +20,7 @@
 
 
 #include "viennagrid/element/element.hpp"
-#include "viennagrid/domain/geometric_domain.hpp"
+#include "viennagrid/domain/domain.hpp"
 
 /** @file element.hpp
     @brief Provides the main n-cell type

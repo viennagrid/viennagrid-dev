@@ -25,7 +25,7 @@
 #include "viennagrid/forwards.hpp"
 #include "viennagrid/io/helper.hpp"
 
-#include "viennagrid/domain/geometric_domain.hpp"
+#include "viennagrid/domain/domain.hpp"
 
 /** @file netgen_reader.hpp
     @brief Provides a reader for Netgen files

@@ -23,7 +23,7 @@
 #include <sstream>
 #include <iostream>
 
-#include "viennagrid/domain/geometric_domain.hpp"
+#include "viennagrid/domain/domain.hpp"
 
 #include "viennagrid/forwards.hpp"
 #include "viennagrid/io/helper.hpp"

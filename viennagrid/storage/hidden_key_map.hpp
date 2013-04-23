@@ -120,26 +120,26 @@ namespace viennagrid
         
         
         template<typename element_type, typename key_type, typename handle_tag>
-        class container_base_t<hidden_key_map<element_type, key_type>, handle_tag> : public handleed_container_t<hidden_key_map<element_type, key_type>, handle_tag>
+        class container_base_t<hidden_key_map<element_type, key_type>, handle_tag> : public handled_container_t<hidden_key_map<element_type, key_type>, handle_tag>
         {
         public:
             
-            typedef handleed_container_t<hidden_key_map<element_type, key_type>, handle_tag> handleed_container_type;
-            typedef typename handleed_container_type::container_type container_type;
+            typedef handled_container_t<hidden_key_map<element_type, key_type>, handle_tag> handled_container_type;
+            typedef typename handled_container_type::container_type container_type;
             
-            typedef typename handleed_container_type::value_type value_type;
+            typedef typename handled_container_type::value_type value_type;
             
-            typedef typename handleed_container_type::pointer pointer;
-            typedef typename handleed_container_type::const_pointer const_pointer;            
+            typedef typename handled_container_type::pointer pointer;
+            typedef typename handled_container_type::const_pointer const_pointer;            
             
-            typedef typename handleed_container_type::reference reference;
-            typedef typename handleed_container_type::const_reference const_reference;
+            typedef typename handled_container_type::reference reference;
+            typedef typename handled_container_type::const_reference const_reference;
             
-            typedef typename handleed_container_type::iterator iterator;
-            typedef typename handleed_container_type::const_iterator const_iterator;
+            typedef typename handled_container_type::iterator iterator;
+            typedef typename handled_container_type::const_iterator const_iterator;
             
-            typedef typename handleed_container_type::handle_type handle_type;
-            typedef typename handleed_container_type::const_handle_type const_handle_type;
+            typedef typename handled_container_type::handle_type handle_type;
+            typedef typename handled_container_type::const_handle_type const_handle_type;
             
             typedef std::pair<handle_type, bool> return_type;
             

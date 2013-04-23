@@ -20,7 +20,7 @@
 
 #include "viennagrid/element/tagging.hpp"
 #include "viennagrid/domain/topologic_domain.hpp"
-#include "viennagrid/domain/geometric_domain.hpp"
+#include "viennagrid/domain/domain.hpp"
 #include "viennagrid/topology/plc.hpp"
 
 namespace viennagrid

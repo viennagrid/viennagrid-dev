@@ -45,7 +45,7 @@ namespace viennagrid
         
         
         template<typename container_tag__, typename handle_tag__>
-        struct handleed_container_tag
+        struct handled_container_tag
         {
             typedef container_tag__ container_tag;
             typedef handle_tag__ handle_tag;

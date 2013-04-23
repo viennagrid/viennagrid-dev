@@ -252,8 +252,8 @@ void write_data(DomainType & domain)
 int main()
 {
     typedef viennagrid::point_t<double, viennagrid::cartesian_cs<3> > PointType;  //use this for a 3d examples
-    typedef viennagrid::result_of::geometric_domain_config< viennagrid::tetrahedron_tag, PointType, viennagrid::storage::id_handle_tag >::type DomainConfig;
-    typedef viennagrid::result_of::geometric_domain< DomainConfig >::type Domain;
+    typedef viennagrid::result_of::domain_config< viennagrid::tetrahedron_tag, PointType, viennagrid::storage::id_handle_tag >::type DomainConfig;
+    typedef viennagrid::result_of::domain< DomainConfig >::type Domain;
     typedef viennagrid::result_of::geometric_view<Domain>::type Segment;
         
 //   typedef viennagrid::config::tetrahedral_3d     ConfigType;

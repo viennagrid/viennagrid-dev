@@ -35,7 +35,7 @@ using std::endl;
 
 #include "viennagrid/domain/topologic_domain.hpp"
 #include "viennagrid/domain/metainfo.hpp"
-#include "viennagrid/domain/geometric_domain.hpp"
+#include "viennagrid/domain/domain.hpp"
 #include "viennagrid/domain/config.hpp"
 #include "viennagrid/domain/element_creation.hpp"
 
@@ -60,10 +60,10 @@ int main()
     // typedefing and setting up the topological domain
     //
     
-    typedef viennagrid::result_of::geometric_domain_config<viennagrid::plc_tag, viennagrid::config::point_type_3d, viennagrid::storage::pointer_handle_tag>::type domain_config;
+    typedef viennagrid::result_of::domain_config<viennagrid::plc_tag, viennagrid::config::point_type_3d, viennagrid::storage::pointer_handle_tag>::type domain_config;
     
     //typedef viennagrid::config::polygonal_2d_domain domain_type;
-    typedef viennagrid::result_of::geometric_domain< domain_config >::type domain_type;
+    typedef viennagrid::result_of::domain< domain_config >::type domain_type;
     domain_type domain;
     
     

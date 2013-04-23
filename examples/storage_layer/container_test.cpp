@@ -68,7 +68,7 @@ void test()
     
     typedef typename viennagrid::storage::result_of::view<
                 my_container_type,
-                viennagrid::storage::handleed_container_tag<viennagrid::storage::std_deque_tag, viennagrid::storage::no_handle_tag>
+                viennagrid::storage::handled_container_tag<viennagrid::storage::std_deque_tag, viennagrid::storage::no_handle_tag>
             >::type my_view_type;
     my_view_type my_view;
     my_view.set_base_container(my_container);
@@ -80,7 +80,7 @@ void test()
     
     typedef typename viennagrid::storage::result_of::view<
                 my_view_type,
-                viennagrid::storage::handleed_container_tag<viennagrid::storage::std_deque_tag, viennagrid::storage::no_handle_tag>
+                viennagrid::storage::handled_container_tag<viennagrid::storage::std_deque_tag, viennagrid::storage::no_handle_tag>
             >::type my_view_type2;
     my_view_type2 my_view2;
     my_view2.set_base_container(my_view);
@@ -177,22 +177,22 @@ int main()
 {
 
     
-    test< viennagrid::storage::handleed_container_tag< viennagrid::storage::std_vector_tag, viennagrid::storage::pointer_handle_tag > >();
+    test< viennagrid::storage::handled_container_tag< viennagrid::storage::std_vector_tag, viennagrid::storage::pointer_handle_tag > >();
     cout << endl 
          << " --------------------------- "
          << endl << endl;
     
-    test< viennagrid::storage::handleed_container_tag< viennagrid::storage::std_vector_tag, viennagrid::storage::iterator_handle_tag > >();
+    test< viennagrid::storage::handled_container_tag< viennagrid::storage::std_vector_tag, viennagrid::storage::iterator_handle_tag > >();
     cout << endl 
          << " --------------------------- "
          << endl << endl;
     
-    test< viennagrid::storage::handleed_container_tag< viennagrid::storage::std_vector_tag, viennagrid::storage::id_handle_tag > >();
+    test< viennagrid::storage::handled_container_tag< viennagrid::storage::std_vector_tag, viennagrid::storage::id_handle_tag > >();
     cout << endl 
          << " --------------------------- "
          << endl << endl;
 
-    test< viennagrid::storage::handleed_container_tag< viennagrid::storage::std_deque_tag, viennagrid::storage::iterator_handle_tag > >();
+    test< viennagrid::storage::handled_container_tag< viennagrid::storage::std_deque_tag, viennagrid::storage::iterator_handle_tag > >();
     cout << endl 
          << " --------------------------- "
          << endl << endl;

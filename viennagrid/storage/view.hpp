@@ -858,7 +858,7 @@ namespace viennagrid
         {
             //typedef viennameta::make_typemap<viennagrid::storage::default_tag, viennagrid::storage::std_deque_tag<> >::type default_view_container_config;
             typedef viennameta::make_typemap<
-                        viennagrid::storage::default_tag,   viennagrid::storage::handleed_container_tag<viennagrid::storage::std_deque_tag, viennagrid::storage::no_handle_tag>
+                        viennagrid::storage::default_tag,   viennagrid::storage::handled_container_tag<viennagrid::storage::std_deque_tag, viennagrid::storage::no_handle_tag>
                     >::type default_view_container_config;
             
             

@@ -61,11 +61,11 @@ int main()
     ///////////////////// Next step: Instantiate a line type ////////////////////////////////////                                            
     
     //
-    // Create a container (type) for vertices. A handleed_container is basically a usual container which in addition provides handles
+    // Create a container (type) for vertices. A handled_container is basically a usual container which in addition provides handles
     //
     typedef viennagrid::storage::result_of::container<
             vertex_type,                                         // the 'value_type', i.e. vertices     
-            viennagrid::storage::handleed_container_tag<           
+            viennagrid::storage::handled_container_tag<           
                 viennagrid::storage::std_deque_tag,              // use a std::deque as container
                 handle_tag                                         // with the respective handles
             >
@@ -101,7 +101,7 @@ int main()
     
     typedef viennagrid::storage::result_of::container<
             line_type,
-            viennagrid::storage::handleed_container_tag<
+            viennagrid::storage::handled_container_tag<
                 //viennagrid::storage::std_deque_tag,
                 viennagrid::storage::hidden_key_map_tag< viennagrid::storage::element_key_tag >,
                 handle_tag
@@ -157,11 +157,11 @@ int main()
     typedef viennagrid::element_t< viennagrid::triangle_tag, triangle_containers_typelist, viennagrid::storage::smart_id_tag<int> > triangle_type;
     
     //
-    // Instantiate a handleed container of triangles using std::deque as the underlying container base. Hooks are again of the type defined at the beginning.
+    // Instantiate a handled container of triangles using std::deque as the underlying container base. Hooks are again of the type defined at the beginning.
     //
     typedef viennagrid::storage::result_of::container<
             triangle_type,
-            viennagrid::storage::handleed_container_tag<
+            viennagrid::storage::handled_container_tag<
                 //viennagrid::storage::std_deque_tag,
                 viennagrid::storage::hidden_key_map_tag< viennagrid::storage::element_key_tag >,
                 handle_tag
@@ -224,7 +224,7 @@ int main()
     //
     typedef viennagrid::storage::result_of::container<
             tetrahedron_type,
-            viennagrid::storage::handleed_container_tag<
+            viennagrid::storage::handled_container_tag<
                 viennagrid::storage::std_deque_tag,
                 handle_tag
             >

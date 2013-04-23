@@ -32,7 +32,7 @@
 template <typename CellTypeOrTag, typename Domain, typename ReaderType>
 void test(ReaderType & my_reader, std::string const & infile, double reference_surface)
 {
-  //typedef typename viennagrid::result_of::geometric_domain< DomainConfig >::type Domain;  
+  //typedef typename viennagrid::result_of::domain< DomainConfig >::type Domain;  
   typedef typename viennagrid::result_of::geometric_view<Domain>::type Segment;
   
   typedef typename viennagrid::result_of::element_tag<CellTypeOrTag>::type CellTag;
@@ -137,7 +137,7 @@ int main()
   //viennagrid::io::netgen_reader my_netgen_reader;
 
   std::cout << "*********** line, 1d ***********" << std::endl;
-  typedef viennagrid::result_of::geometric_domain< viennagrid::config::line_1d >::type Line1DDomain;
+  typedef viennagrid::result_of::domain< viennagrid::config::line_1d >::type Line1DDomain;
   viennagrid::io::netgen_reader<viennagrid::line_tag> line_1d_reader;
   test<viennagrid::line_tag, viennagrid::config::line_1d_domain>(line_1d_reader, path + "line8.mesh", 2);
   
