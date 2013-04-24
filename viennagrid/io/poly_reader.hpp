@@ -112,19 +112,19 @@ namespace viennagrid
         typedef plc_tag CellTag;
         typedef typename result_of::element<GeometricDomainType, CellTag>::type CellType;
         //typedef typename CellType::tag                            CellTag;
-        typedef typename result_of::handle<GeometricDomainType, CellTag>::type                           CellHookType;
+        typedef typename result_of::handle<GeometricDomainType, CellTag>::type                           CellHandleType;
 
         //typedef typename result_of::point<ConfigType>::type                              PointType;
         typedef typename result_of::element<GeometricDomainType, vertex_tag>::type                           VertexType;
-        typedef typename result_of::handle<GeometricDomainType, vertex_tag>::type                           VertexHookType;
+        typedef typename result_of::handle<GeometricDomainType, vertex_tag>::type                           VertexHandleType;
         typedef typename VertexType::id_type VertexIDType;
         //typedef typename result_of::ncell<DomainType, CellTag::dim>::type     CellType;
         
 //         typedef typename result_of::element<GeometricDomainType, polygon_tag>::type                           PolygonType;
-//         typedef typename result_of::handle<GeometricDomainType, polygon_tag>::type                           PolygonHookType;
+//         typedef typename result_of::handle<GeometricDomainType, polygon_tag>::type                           PolygonHandleType;
         
         typedef typename result_of::element<GeometricDomainType, line_tag>::type                           LineType;
-        typedef typename result_of::handle<GeometricDomainType, line_tag>::type                           LineHookType;
+        typedef typename result_of::handle<GeometricDomainType, line_tag>::type                           LineHandleType;
 
 //         typedef typename viennagrid::result_of::element_range<GeometricDomainType, vertex_tag>::type   VertexRange;
 //         typedef typename viennagrid::result_of::iterator<VertexRange>::type        VertexIterator;
@@ -199,7 +199,7 @@ namespace viennagrid
             current_line.str(tmp); current_line.clear();
             current_line >> id;
           
-            VertexHookType vertex = viennagrid::create_element<VertexType>( domain, VertexIDType(id) );
+            VertexHandleType vertex = viennagrid::create_element<VertexType>( domain, VertexIDType(id) );
             PointType & p = viennagrid::point( domain, vertex );
           
             for (int j=0; j<point_dim; j++)
@@ -242,7 +242,7 @@ namespace viennagrid
         std::cout << "* netgen_reader::operator(): Reading " << cell_num << " cells... " << std::endl;  
         #endif
         
-        //CellHookType cell = viennagrid::create_element<CellType>(domain);
+        //CellHandleType cell = viennagrid::create_element<CellType>(domain);
         //std::cout << "Filling " << cell_num << " cells:" << std::endl;
     
         for (int i=0; i<facet_num; ++i)
@@ -263,9 +263,9 @@ namespace viennagrid
                 throw bad_file_format_exception(filename, "POLY facet has less than 0 holes");
             
             
-//             std::list<PolygonHookType> polygons;
-            std::list<LineHookType> lines;
-            std::list<VertexHookType> vertices;
+//             std::list<PolygonHandleType> polygons;
+            std::list<LineHandleType> lines;
+            std::list<VertexHandleType> vertices;
             
             
             typedef typename viennagrid::result_of::element_view<GeometricDomainType, VertexType>::type VertexViewType;
@@ -285,7 +285,7 @@ namespace viennagrid
                 if (vertex_num < 0)
                     throw bad_file_format_exception(filename, "POLY polygon has less than 0 vertices");
                 
-                std::vector<VertexHookType> vertex_handles(vertex_num);
+                std::vector<VertexHandleType> vertex_handles(vertex_num);
                 
                 for (int k = 0; k<vertex_num; ++k)
                 {
@@ -294,7 +294,7 @@ namespace viennagrid
                     vertex_handles[k] = *viennagrid::find_handle( domain, VertexIDType(id) );
 //                     used_vertices.insert( vertex_handles[k] );
 //                     used_vertices.insert_handle( vertex_handles[k] );
-//                     std::cout << "  " << viennagrid::point( domain, vertex_handles[k]) << std::endl;
+//                     std::cout << "  id " << id << " = " << viennagrid::point( domain, vertex_handles[k]) << std::endl;
                 }
                 
                 if (vertex_num == 1)
@@ -309,9 +309,9 @@ namespace viennagrid
                 }
                 else
                 {
-                    typename std::vector<VertexHookType>::iterator it1 = vertex_handles.begin();
-                    typename std::vector<VertexHookType>::iterator it2 = it1; ++it2;
-                    for (; it2 != vertex_handles.end(); ++it2)
+                    typename std::vector<VertexHandleType>::iterator it1 = vertex_handles.begin();
+                    typename std::vector<VertexHandleType>::iterator it2 = it1; ++it2;
+                    for (; it2 != vertex_handles.end(); ++it1, ++it2)
                         lines.push_back( viennagrid::create_line(domain, *it1, *it2) );
                     lines.push_back( viennagrid::create_line(domain, vertex_handles.back(), vertex_handles.front()) );
                     
@@ -320,6 +320,11 @@ namespace viennagrid
 //                     std::cout << " Added polygon " << vertex_handles.size() << std::endl;
                 }
             }
+            
+//             std::cout << "READ PLC" << std::endl;
+//             for (typename std::list<LineHandleType>::iterator it = lines.begin(); it != lines.end(); ++it)
+//                 std::cout << " Line = " << viennagrid::point( domain, viennagrid::vertices( viennagrid::dereference_handle(domain, *it) )[0] ) << " - " <<
+//                         viennagrid::point( domain, viennagrid::vertices( viennagrid::dereference_handle(domain, *it) )[1] ) << std::endl;
                        
             std::list<PointType> hole_points;
             
@@ -338,13 +343,14 @@ namespace viennagrid
                 for (int j=0; j<point_dim; j++)
                     current_line >> p[j];
                 
-                std::cout << "Adding hole Point " << p << std::endl;
+//                 std::cout << "Adding hole Point " << p << std::endl;
                 
                 hole_points.push_back(p);
             }
             
 
                 
+//             CellHandleType plc_handle =
             viennagrid::create_element<CellType>(
                 domain,
 //                 polygons.begin(), polygons.end(),
@@ -352,6 +358,9 @@ namespace viennagrid
                 vertices.begin(), vertices.end(),
                 hole_points.begin(), hole_points.end()
             );
+            
+//             CellType plc = viennagrid::dereference_handle( domain, plc_handle );
+//             std::cout << "PLC has " << viennagrid::lines(plc).size() << " lines" << std::endl;
         }
         //std::cout << "All done!" << std::endl;
         

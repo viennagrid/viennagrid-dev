@@ -194,7 +194,7 @@ namespace viennagrid
       //typedef typename DomainTypeIn::segment_type                                                                    SegmentTypeIn; 
       //typedef typename viennagrid::result_of::point<ConfigTypeIn>::type                                         PointType;
       typedef typename viennagrid::result_of::element<GeometricDomainTypeIn, vertex_tag>::type                                      VertexType;
-      typedef typename viennagrid::result_of::handle<GeometricDomainTypeIn, vertex_tag>::type                                      VertexHookType;
+      typedef typename viennagrid::result_of::handle<GeometricDomainTypeIn, vertex_tag>::type                                      VertexHandleType;
       typedef typename viennagrid::result_of::element<GeometricDomainTypeIn, line_tag>::type                                      EdgeType;
       typedef typename viennagrid::result_of::element<GeometricDomainTypeIn, CellTagIn>::type              CellType;
       
@@ -230,7 +230,7 @@ namespace viennagrid
                         ++vit)
       {
         //domain_out.push_back(*vit);
-        VertexHookType vh = viennagrid::push_element_noid( domain_out, *vit ).first;
+        VertexHandleType vh = viennagrid::push_element_noid( domain_out, *vit ).first;
         viennagrid::point( domain_out, vh ) = viennagrid::point( domain_in, *vit );
         ++num_vertices;
       }
@@ -245,7 +245,7 @@ namespace viennagrid
       {
         if (viennadata::access<refinement_key, bool>()(*eit) == true)
         {
-          VertexHookType v = viennagrid::create_element<VertexType>( domain_out, typename VertexType::id_type(num_vertices) );
+          VertexHandleType v = viennagrid::create_element<VertexType>( domain_out, typename VertexType::id_type(num_vertices) );
           viennagrid::point(domain_out, v) = viennagrid::centroid(*eit, domain_in);
 
           //viennadata::access<refinement_key, std::size_t>()(*eit) = num_vertices;
@@ -301,7 +301,7 @@ namespace viennagrid
       //typedef typename DomainTypeIn::segment_type                                                                    SegmentTypeIn; 
       //typedef typename viennagrid::result_of::point<ConfigTypeIn>::type                                         PointType;
       typedef typename viennagrid::result_of::element<GeometricDomainTypeIn, vertex_tag>::type                                      VertexType;
-      typedef typename viennagrid::result_of::handle<GeometricDomainTypeIn, vertex_tag>::type                                      VertexHookType;
+      typedef typename viennagrid::result_of::handle<GeometricDomainTypeIn, vertex_tag>::type                                      VertexHandleType;
       typedef typename viennagrid::result_of::element<GeometricDomainTypeIn, line_tag>::type                                      EdgeType;
       typedef typename viennagrid::result_of::element<GeometricDomainTypeIn, CellTagIn>::type              CellType;
       
@@ -331,7 +331,7 @@ namespace viennagrid
                         ++vit)
       {
         //domain_out.push_back(*vit);
-        VertexHookType vh = viennagrid::push_element_noid( domain_out, *vit ).first;
+        VertexHandleType vh = viennagrid::push_element_noid( domain_out, *vit ).first;
         viennagrid::point( domain_out, vh ) = viennagrid::point( domain_in, *vit );
         ++num_vertices;
       }
@@ -344,7 +344,7 @@ namespace viennagrid
                         eit != edges.end();
                       ++eit)
       {
-          VertexHookType v = viennagrid::create_element<VertexType>( domain_out, typename VertexType::id_type(num_vertices) );
+          VertexHandleType v = viennagrid::create_element<VertexType>( domain_out, typename VertexType::id_type(num_vertices) );
           viennagrid::point(domain_out, v) = viennagrid::centroid(*eit, domain_in);
 
           //viennadata::access<refinement_key, std::size_t>()(*eit) = num_vertices;

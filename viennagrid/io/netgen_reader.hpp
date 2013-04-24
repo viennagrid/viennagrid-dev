@@ -62,11 +62,11 @@ namespace viennagrid
         typedef typename result_of::element_tag<CellTypeOrTag>::type CellTag;
         typedef typename result_of::element<GeometricDomainType, CellTag>::type CellType;
         //typedef typename CellType::tag                            CellTag;
-        typedef typename result_of::handle<GeometricDomainType, CellTag>::type                           CellHookType;
+        typedef typename result_of::handle<GeometricDomainType, CellTag>::type                           CellHandleType;
 
         //typedef typename result_of::point<ConfigType>::type                              PointType;
         typedef typename result_of::element<GeometricDomainType, vertex_tag>::type                           VertexType;
-        typedef typename result_of::handle<GeometricDomainType, vertex_tag>::type                           VertexHookType;
+        typedef typename result_of::handle<GeometricDomainType, vertex_tag>::type                           VertexHandleType;
         //typedef typename result_of::ncell<DomainType, CellTag::dim>::type     CellType;
 
         typedef typename viennagrid::result_of::element_range<GeometricDomainType, vertex_tag>::type   VertexRange;
@@ -118,7 +118,7 @@ namespace viennagrid
             throw bad_file_format_exception(filename, "EOF encountered while reading vertices.");
           
           
-          VertexHookType vertex = viennagrid::create_element<VertexType>( domain, typename VertexType::id_type(i) );
+          VertexHandleType vertex = viennagrid::create_element<VertexType>( domain, typename VertexType::id_type(i) );
           PointType & p = viennagrid::point( domain, vertex );
           
           for (int j=0; j<point_dim; j++)
@@ -142,14 +142,14 @@ namespace viennagrid
         std::cout << "* netgen_reader::operator(): Reading " << cell_num << " cells... " << std::endl;  
         #endif
         
-        //CellHookType cell = viennagrid::create_element<CellType>(domain);
+        //CellHandleType cell = viennagrid::create_element<CellType>(domain);
         //std::cout << "Filling " << cell_num << " cells:" << std::endl;
     
         for (int i=0; i<cell_num; ++i)
         {
           long vertex_num;
-          //std::vector<VertexHookType> cell_vertex_handles(topology::bndcells<CellTag, 0>::num);
-          viennagrid::storage::static_array<VertexHookType, topology::boundary_cells<CellTag, vertex_tag>::num> cell_vertex_handles;
+          //std::vector<VertexHandleType> cell_vertex_handles(topology::bndcells<CellTag, 0>::num);
+          viennagrid::storage::static_array<VertexHandleType, topology::boundary_cells<CellTag, vertex_tag>::num> cell_vertex_handles;
           
           if (!reader.good())
             throw bad_file_format_exception(filename, "EOF encountered while reading cells (segment index expected).");

@@ -117,6 +117,8 @@ namespace viennagrid
 //             tagging::tag(viennagrid::dereference_handle(domain, *line_it), plc_loose_tag);
         }
         
+//         std::cout << "In PLC_CREATE: " << plc.container( viennagrid::line_tag() ).size() << std::endl;
+        
         for ( ; vertex_it != vertices_end; ++vertex_it)
         {
             plc.container( viennagrid::vertex_tag() ).insert_handle( *vertex_it );

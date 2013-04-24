@@ -40,10 +40,10 @@ namespace viennagrid
 {
   namespace result_of
   {
-    template <typename ConstCellHookType>
+    template <typename ConstCellHandleType>
     struct voronoi_cell_contribution
     {
-      typedef std::vector< std::pair<ConstCellHookType, double> >   type;
+      typedef std::vector< std::pair<ConstCellHandleType, double> >   type;
     };
   }
   
@@ -638,44 +638,44 @@ namespace viennagrid
       //typedef typename DomainType::config_type           Config;
       //typedef typename Config::cell_tag                  CellTag;
       typedef typename viennagrid::result_of::element<DomainType, CellTag>::type CellType;
-      typedef typename viennagrid::result_of::const_handle<DomainType, CellTag>::type ConstCellHookType;
+      typedef typename viennagrid::result_of::const_handle<DomainType, CellTag>::type ConstCellHandleType;
       
       typedef typename viennagrid::result_of::point_type<DomainType>::type                            PointType;
       typedef typename viennagrid::result_of::element<DomainType, vertex_tag>::type                         VertexType;
       typedef typename viennagrid::result_of::element<DomainType, line_tag>::type                         EdgeType;
-      typedef typename viennagrid::result_of::const_handle<DomainType, line_tag>::type                         ConstEdgeHookType;
+      typedef typename viennagrid::result_of::const_handle<DomainType, line_tag>::type                         ConstEdgeHandleType;
       typedef typename viennagrid::result_of::element<DomainType, triangle_tag>::type                         FacetType;
-      typedef typename viennagrid::result_of::const_handle<DomainType, triangle_tag>::type                         ConstFacetHookType;
+      typedef typename viennagrid::result_of::const_handle<DomainType, triangle_tag>::type                         ConstFacetHandleType;
       //typedef typename viennagrid::result_of::element<DomainType, CellTag>::type              CellType;
       
       typedef typename viennagrid::result_of::const_element_range<DomainType, CellTag>::type    CellRange;
       typedef typename viennagrid::result_of::iterator<CellRange>::type                                       CellIterator;
-      typedef typename viennagrid::result_of::handle_iterator<CellRange>::type                                       CellHookIterator;
+      typedef typename viennagrid::result_of::handle_iterator<CellRange>::type                                       CellHandleIterator;
 
       typedef typename viennagrid::result_of::const_element_range<DomainType, typename CellTag::facet_tag>::type  FacetRange;
       typedef typename viennagrid::result_of::iterator<FacetRange>::type                                      FacetIterator;
-      typedef typename viennagrid::result_of::handle_iterator<FacetRange>::type                                      FacetHookIterator;
+      typedef typename viennagrid::result_of::handle_iterator<FacetRange>::type                                      FacetHandleIterator;
       
       typedef typename viennagrid::result_of::const_element_range<DomainType, line_tag>::type                          EdgeRange;
       typedef typename viennagrid::result_of::iterator<EdgeRange>::type                                       EdgeIterator;
-      typedef typename viennagrid::result_of::handle_iterator<EdgeRange>::type                                       EdgeHookIterator;
+      typedef typename viennagrid::result_of::handle_iterator<EdgeRange>::type                                       EdgeHandleIterator;
       
       typedef typename viennagrid::result_of::const_element_range<CellType, typename CellTag::facet_tag>::type    FacetOnCellRange;
       typedef typename viennagrid::result_of::iterator<FacetOnCellRange>::type                                FacetOnCellIterator;
-      typedef typename viennagrid::result_of::handle_iterator<FacetOnCellRange>::type                                FacetOnCellHookIterator;
+      typedef typename viennagrid::result_of::handle_iterator<FacetOnCellRange>::type                                FacetOnCellHandleIterator;
 
       typedef typename viennagrid::result_of::const_element_range<FacetType, line_tag>::type                           EdgeOnFacetRange;
       typedef typename viennagrid::result_of::iterator<EdgeOnFacetRange>::type                                EdgeOnFacetIterator;
-      typedef typename viennagrid::result_of::handle_iterator<EdgeOnFacetRange>::type                                EdgeOnFacetHookIterator;
+      typedef typename viennagrid::result_of::handle_iterator<EdgeOnFacetRange>::type                                EdgeOnFacetHandleIterator;
       
       typedef typename viennagrid::result_of::const_element_range<EdgeType, vertex_tag>::type                            VertexOnEdgeRange;
       typedef typename viennagrid::result_of::iterator<VertexOnEdgeRange>::type                               VertexOnEdgeIterator;
 
-      typedef typename viennagrid::result_of::voronoi_cell_contribution<ConstCellHookType>::type      CellContributionType;
+      typedef typename viennagrid::result_of::voronoi_cell_contribution<ConstCellHandleType>::type      CellContributionType;
       
-      typedef std::pair<PointType, ConstCellHookType>             PointWithCellInfo;
+      typedef std::pair<PointType, ConstCellHandleType>             PointWithCellInfo;
       typedef std::pair<std::pair<PointType, PointType>,
-                        ConstCellHookType>                        EdgePointsWithCellInfo;
+                        ConstCellHandleType>                        EdgePointsWithCellInfo;
       typedef std::vector< PointWithCellInfo >                   CircumcenterContainer;
       
       
@@ -686,17 +686,17 @@ namespace viennagrid
       
       viennagrid::dereference_handle_comperator<DomainType> comp(domain);
       
-      std::map< ConstFacetHookType, CircumcenterContainer, viennagrid::dereference_handle_comperator<DomainType> >
+      std::map< ConstFacetHandleType, CircumcenterContainer, viennagrid::dereference_handle_comperator<DomainType> >
                                                                circumcenters_on_facets( comp );
       //std::map< EdgeType const *,
-      std::map< ConstEdgeHookType,
+      std::map< ConstEdgeHandleType,
                 std::vector< EdgePointsWithCellInfo >,
                 viennagrid::dereference_handle_comperator<DomainType>
               >                                                interface_boundaries_on_edges(comp);
                                    
       
       CellRange cells = viennagrid::elements<CellType>(domain);
-      for (CellHookIterator cit  = cells.handle_begin();
+      for (CellHandleIterator cit  = cells.handle_begin();
                         cit != cells.handle_end();
                       ++cit)
       {
@@ -704,7 +704,7 @@ namespace viennagrid
         PointType circ_center = circumcenter(cell, domain);
         
         FacetOnCellRange facets_on_cell = viennagrid::elements<FacetType>(cell);
-        for (FacetOnCellHookIterator focit  = facets_on_cell.handle_begin();
+        for (FacetOnCellHandleIterator focit  = facets_on_cell.handle_begin();
                                 focit != facets_on_cell.handle_end();
                               ++focit)
         {
@@ -717,7 +717,7 @@ namespace viennagrid
       // Step two: Write lines connecting circumcenters to edges
       //
       FacetRange facets = viennagrid::elements<FacetType>(domain);
-      for (FacetHookIterator fit  = facets.handle_begin();
+      for (FacetHandleIterator fit  = facets.handle_begin();
                          fit != facets.handle_end();
                        ++fit)
       {
@@ -725,7 +725,7 @@ namespace viennagrid
         const FacetType & facet = viennagrid::dereference_handle(domain,*fit);
         
         EdgeOnFacetRange edges_on_facet = viennagrid::elements<EdgeType>( facet );
-        for (EdgeOnFacetHookIterator eofit  = edges_on_facet.handle_begin();
+        for (EdgeOnFacetHandleIterator eofit  = edges_on_facet.handle_begin();
                                 eofit != edges_on_facet.handle_end();
                               ++eofit)
         {
@@ -776,7 +776,7 @@ namespace viennagrid
       // Step three: Compute Voronoi information:
       //
       EdgeRange edges = viennagrid::elements<EdgeType>(domain);
-      for (EdgeHookIterator eit  = edges.handle_begin();
+      for (EdgeHandleIterator eit  = edges.handle_begin();
                         eit != edges.handle_end();
                       ++eit)
       {
@@ -866,7 +866,7 @@ namespace viennagrid
       //typedef typename Config::cell_tag                  CellTag;
       
       typedef typename viennagrid::result_of::element<DomainType, CellTag>::type CellType;
-      typedef typename viennagrid::result_of::const_handle<DomainType, CellTag>::type ConstCellHookType;
+      typedef typename viennagrid::result_of::const_handle<DomainType, CellTag>::type ConstCellHandleType;
       
       typedef typename viennagrid::result_of::point_type<DomainType>::type                            PointType;
       typedef typename viennagrid::result_of::element<DomainType, vertex_tag>::type                         VertexType;
@@ -876,7 +876,7 @@ namespace viennagrid
       
       typedef typename viennagrid::result_of::const_element_range<DomainType, CellTag>::type    CellRange;
       typedef typename viennagrid::result_of::iterator<CellRange>::type                                       CellIterator;
-      typedef typename viennagrid::result_of::handle_iterator<CellRange>::type                                       CellHookIterator;
+      typedef typename viennagrid::result_of::handle_iterator<CellRange>::type                                       CellHandleIterator;
 
       typedef typename viennagrid::result_of::const_element_range<CellType, quadrilateral_tag>::type                            FacetOnCellRange;
       typedef typename viennagrid::result_of::iterator<FacetOnCellRange>::type                                FacetOnCellIterator;
@@ -887,14 +887,14 @@ namespace viennagrid
       typedef typename viennagrid::result_of::const_element_range<EdgeType, vertex_tag>::type                            VertexOnEdgeRange;
       typedef typename viennagrid::result_of::iterator<VertexOnEdgeRange>::type                               VertexOnEdgeIterator;
 
-      typedef typename viennagrid::result_of::voronoi_cell_contribution<ConstCellHookType>::type      CellContributionType;
+      typedef typename viennagrid::result_of::voronoi_cell_contribution<ConstCellHandleType>::type      CellContributionType;
       
       //
       // Algorithm: Iterate over all cells, compute circumcenter and add interface area to edge, box volume to vertex.
       //
       
       CellRange cells = viennagrid::elements<CellTag>(domain);
-      for (CellHookIterator cit  = cells.handle_begin();
+      for (CellHandleIterator cit  = cells.handle_begin();
                         cit != cells.handle_end();
                       ++cit)
       {

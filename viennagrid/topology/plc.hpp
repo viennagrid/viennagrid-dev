@@ -148,10 +148,10 @@ namespace viennagrid
             for (LineIterator lit = lines.handle_begin(); lit != lines.handle_end(); ++lit)
             {
                 typedef typename result_of::element_range<LineType, vertex_tag>::type VertexOnLineRange;
-                typedef typename result_of::handle_iterator<VertexOnLineRange>::type VertexOnLineHookIterator;
+                typedef typename result_of::handle_iterator<VertexOnLineRange>::type VertexOnLineHandleIterator;
                 
                 VertexOnLineRange vertices = elements<vertex_tag>(*lit);
-                for (VertexOnLineHookIterator vlhit = vertices.begin(); vlhit != vertices.end(); ++vlhit)
+                for (VertexOnLineHandleIterator vlhit = vertices.begin(); vlhit != vertices.end(); ++vlhit)
                     plc.container( vertex_tag() ).insert_handle( *vlhit );
             }
             

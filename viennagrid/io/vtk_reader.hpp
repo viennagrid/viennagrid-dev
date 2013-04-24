@@ -66,9 +66,9 @@ namespace viennagrid
       //typedef typename result_of::point<DomainConfiguration>::type                              PointType;
       //typedef typename result_of::point_type<DomainType>::type                                  PointType;
       typedef typename result_of::element<DomainType, viennagrid::vertex_tag>::type                           VertexType;
-      typedef typename result_of::handle<DomainType, viennagrid::vertex_tag>::type                           VertexHookType;
+      typedef typename result_of::handle<DomainType, viennagrid::vertex_tag>::type                           VertexHandleType;
       typedef typename result_of::element<DomainType, CellTag>::type     CellType;
-      typedef typename result_of::handle<DomainType, CellTag>::type     CellHookType;
+      typedef typename result_of::handle<DomainType, CellTag>::type     CellHandleType;
       //typedef typename DomainTypes<DomainConfiguration>::segment_type  Segment;
 
       typedef typename viennagrid::result_of::element_range<DomainType, viennagrid::vertex_tag>::type   VertexRange;
@@ -311,7 +311,7 @@ namespace viennagrid
       {
         for (std::size_t i=0; i<global_points_2.size(); ++i)
         {
-          VertexHookType vertex = viennagrid::create_element<VertexType>( domain, typename VertexType::id_type(i) );
+          VertexHandleType vertex = viennagrid::create_element<VertexType>( domain, typename VertexType::id_type(i) );
             
             
           //VertexType v;
@@ -367,7 +367,7 @@ namespace viennagrid
             // and add the cells to the "vertices"-array
             //****************************************************
             
-            viennagrid::storage::static_array<VertexHookType, topology::boundary_cells<CellTag, vertex_tag>::num> cell_vertex_handles;
+            viennagrid::storage::static_array<VertexHandleType, topology::boundary_cells<CellTag, vertex_tag>::num> cell_vertex_handles;
             
             //std::cout << "Pushing Cell " << i << " to segment " << seg_id << std::endl;
             //std::cout << "  ";
@@ -395,7 +395,7 @@ namespace viennagrid
             
             
             
-            CellHookType cell = viennagrid::create_element<CellType>(segments[seg_id], cell_vertex_handles);//, typename CellType::id_type(i));
+            CellHandleType cell = viennagrid::create_element<CellType>(segments[seg_id], cell_vertex_handles);//, typename CellType::id_type(i));
             //cell.vertices(&(vertices[0]));
             //cell.id(i);
             //domain.segments()[seg_id].push_back(cell);
