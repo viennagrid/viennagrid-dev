@@ -157,7 +157,7 @@ int main()
     typedef viennagrid::element_t< viennagrid::triangle_tag, triangle_containers_typelist, viennagrid::storage::smart_id_tag<int> > triangle_type;
     
     //
-    // Instantiate a handled container of triangles using std::deque as the underlying container base. Hooks are again of the type defined at the beginning.
+    // Instantiate a handled container of triangles using std::deque as the underlying container base. Handles are again of the type defined at the beginning.
     //
     typedef viennagrid::storage::result_of::container<
             triangle_type,

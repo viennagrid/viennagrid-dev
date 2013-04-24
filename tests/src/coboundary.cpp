@@ -48,14 +48,14 @@ void test(std::string infile)
                                             
   typedef typename viennagrid::result_of::element_range<Domain, viennagrid::vertex_tag>::type       VertexContainer;
   typedef typename viennagrid::result_of::iterator<VertexContainer>::type    VertexIterator;
-  typedef typename viennagrid::result_of::hook_iterator<VertexContainer>::type    VertexHookIterator;
+  typedef typename viennagrid::result_of::hook_iterator<VertexContainer>::type    VertexHandleIterator;
                                             
   typedef typename viennagrid::result_of::element_range<Domain, viennagrid::line_tag>::type       EdgeContainer;
   typedef typename viennagrid::result_of::iterator<EdgeContainer>::type      EdgeIterator;
 
   typedef typename viennagrid::result_of::element_range<Domain, typename CellTag::facet_tag>::type   FacetContainer;
   typedef typename viennagrid::result_of::iterator<FacetContainer>::type                         FacetIterator;
-  typedef typename viennagrid::result_of::hook_iterator<FacetContainer>::type                         FacetHookIterator;
+  typedef typename viennagrid::result_of::hook_iterator<FacetContainer>::type                         FacetHandleIterator;
 
   typedef typename viennagrid::result_of::element_range<Domain, CellTag>::type     CellContainer;
   typedef typename viennagrid::result_of::iterator<CellContainer>::type                          CellIterator;
@@ -86,7 +86,7 @@ void test(std::string infile)
   std::cout << "* Test 2: Iteration over all edges adjacent to each vertex" << std::endl;
   std::cout << "*" << std::endl;
   VertexContainer vertices = viennagrid::elements<viennagrid::vertex_tag>(domain);
-  for (VertexHookIterator vit = vertices.hook_begin();
+  for (VertexHandleIterator vit = vertices.hook_begin();
        vit != vertices.hook_end();
        ++vit)
   {
@@ -113,7 +113,7 @@ void test(std::string infile)
   std::cout << "* Test 2: Iteration over all cells adjacent to each facet" << std::endl;
   std::cout << "*" << std::endl;
   FacetContainer facets = viennagrid::elements<typename CellTag::facet_tag>(domain);
-  for (FacetHookIterator fit = facets.hook_begin();
+  for (FacetHandleIterator fit = facets.hook_begin();
        fit != facets.hook_end();
        ++fit)
   {

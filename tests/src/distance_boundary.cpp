@@ -58,7 +58,7 @@ void setup_domains(viennagrid::config::triangular_2d_domain & domain0,
   
   typedef viennagrid::result_of::point_type<DomainType>::type          PointType;
   typedef viennagrid::result_of::element<DomainType, viennagrid::vertex_tag>::type       VertexType;
-  typedef viennagrid::result_of::element_hook<DomainType, viennagrid::vertex_tag>::type       VertexHookType;
+  typedef viennagrid::result_of::element_hook<DomainType, viennagrid::vertex_tag>::type       VertexHandleType;
   
   typedef viennagrid::result_of::element<DomainType, CellTag>::type        CellType;
   
@@ -66,7 +66,7 @@ void setup_domains(viennagrid::config::triangular_2d_domain & domain0,
   {
     const size_t s = 15;
     PointType p[s];
-    VertexHookType v[s];
+    VertexHandleType v[s];
       
     p[0] = PointType(0.0, 0.0);
     p[1] = PointType(1.0, 0.0);
@@ -98,7 +98,7 @@ void setup_domains(viennagrid::config::triangular_2d_domain & domain0,
 
     
     std::cout << "Adding cells to domain..." << std::endl;
-    VertexHookType vertices[3];
+    VertexHandleType vertices[3];
 
     
     segments0.resize(2);
@@ -174,7 +174,7 @@ void setup_domains(viennagrid::config::triangular_2d_domain & domain0,
   {
     const size_t s = 6;
     PointType p[s];
-    VertexHookType v[s];
+    VertexHandleType v[s];
       
     p[0] = PointType(3.0, 0.0);
     p[1] = PointType(4.0, 0.0);
@@ -195,7 +195,7 @@ void setup_domains(viennagrid::config::triangular_2d_domain & domain0,
 
     
     std::cout << "Adding cells to domain..." << std::endl;
-    VertexHookType vertices[3];
+    VertexHandleType vertices[3];
     
     segments1.resize(1);
     segments1[0] = viennagrid::create_view<viennagrid::config::triangular_2d_segment>(domain1);

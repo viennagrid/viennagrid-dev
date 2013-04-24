@@ -5,7 +5,6 @@
 #include <deque>
 #include <list>
 #include <set>
-#include <boost/type_traits/detail/is_function_ptr_helper.hpp>
 
 #include "viennagrid/meta/utils.hpp"
 #include "viennagrid/storage/forwards.hpp"
@@ -464,7 +463,16 @@ namespace viennagrid
                     container_type::end(),
                     viennagrid::storage::id_compare<id_type>(handle)
                 );
-
+            }
+            
+            value_type const & dereference_handle( const_handle_type handle ) const
+            {
+                // TODO: what happens if handle is not found ??
+                return *std::find_if(
+                    container_type::begin(),
+                    container_type::end(),
+                    viennagrid::storage::id_compare<const_id_type>(handle)
+                );
             }
         };
         

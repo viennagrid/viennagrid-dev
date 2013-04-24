@@ -56,12 +56,12 @@ void setup_domain(viennagrid::config::line_2d_domain & domain)
   
   typedef viennagrid::result_of::point_type<DomainType>::type          PointType;
   typedef viennagrid::result_of::element<DomainType, viennagrid::vertex_tag>::type       VertexType;
-  typedef viennagrid::result_of::element_hook<DomainType, viennagrid::vertex_tag>::type       VertexHookType;
+  typedef viennagrid::result_of::element_hook<DomainType, viennagrid::vertex_tag>::type       VertexHandleType;
   typedef viennagrid::result_of::element<DomainType, CellTag>::type        CellType;
 
   const size_t s = 9;
   PointType p[s];
-  VertexHookType v[s];
+  VertexHandleType v[s];
                                        
   p[0] = PointType(3.0, 0.0);
   p[1] = PointType(1.0, 1.0);
@@ -82,7 +82,7 @@ void setup_domain(viennagrid::config::line_2d_domain & domain)
   }
 
   std::cout << "Adding cells to domain..." << std::endl;
-  VertexHookType vertices[2];
+  VertexHandleType vertices[2];
   
   vertices[0] = v[0];
   vertices[1] = v[6];
@@ -289,13 +289,13 @@ void setup_domain(viennagrid::config::triangular_2d_domain & domain)
   
   typedef viennagrid::result_of::point_type<DomainType>::type          PointType;
   typedef viennagrid::result_of::element<DomainType, viennagrid::vertex_tag>::type       VertexType;
-  typedef viennagrid::result_of::element_hook<DomainType, viennagrid::vertex_tag>::type       VertexHookType;
+  typedef viennagrid::result_of::element_hook<DomainType, viennagrid::vertex_tag>::type       VertexHandleType;
   
   typedef viennagrid::result_of::element<DomainType, CellTag>::type        CellType;
   
   const size_t s = 4;
   PointType p[s];
-  VertexHookType v[s];
+  VertexHandleType v[s];
                                        
   p[0] = PointType(2.0, 1.0);
   p[1] = PointType(3.0, 2.0);
@@ -311,7 +311,7 @@ void setup_domain(viennagrid::config::triangular_2d_domain & domain)
   }
 
   std::cout << "Adding cells to domain..." << std::endl;
-  VertexHookType vertices[3];
+  VertexHandleType vertices[3];
   
   vertices[0] = v[0];
   vertices[1] = v[2];
@@ -502,12 +502,12 @@ void setup_domain(viennagrid::config::quadrilateral_2d_domain & domain)
   
   typedef viennagrid::result_of::point_type<DomainType>::type          PointType;
   typedef viennagrid::result_of::element<DomainType, viennagrid::vertex_tag>::type       VertexType;
-  typedef viennagrid::result_of::element_hook<DomainType, viennagrid::vertex_tag>::type       VertexHookType;  
+  typedef viennagrid::result_of::element_hook<DomainType, viennagrid::vertex_tag>::type       VertexHandleType;  
   typedef viennagrid::result_of::element<DomainType, CellTag>::type        CellType;
   
   const size_t s = 4;
   PointType p[s];
-  VertexHookType v[s];
+  VertexHandleType v[s];
   
   p[0] = PointType(2.0, 1.0);
   p[1] = PointType(3.0, 2.0);  

@@ -75,7 +75,7 @@ void assemble(DomainType & domain,
   
   typedef typename viennagrid::result_of::element_range<DomainType, viennagrid::vertex_tag>::type     VertexContainer;
   typedef typename viennagrid::result_of::iterator<VertexContainer>::type          VertexIterator;
-  typedef typename viennagrid::result_of::handle_iterator<VertexContainer>::type          VertexHookIterator;
+  typedef typename viennagrid::result_of::handle_iterator<VertexContainer>::type          VertexHandleIterator;
 
   //typedef typename viennagrid::result_of::element_range<VertexType, viennagrid::line_tag>::type     EdgeOnVertexContainer;
   typedef typename viennagrid::result_of::coboundary_range<DomainType, viennagrid::line_tag>::type EdgeOnVertexContainer;
@@ -117,7 +117,7 @@ void assemble(DomainType & domain,
   //        
   // Poisson equation assembly:  div( grad(psi) ) = 1
   //
-  for (VertexHookIterator vhit = vertices.handle_begin();
+  for (VertexHandleIterator vhit = vertices.handle_begin();
         vhit != vertices.handle_end();
         ++vhit)
   {
@@ -189,7 +189,7 @@ int main()
   #ifdef _MSC_VER      //Visual Studio builds in a subfolder
   std::string path = "../../examples/data/";
   #else
-  std::string path = "../examples/data/";
+  std::string path = "../../examples/data/";
   #endif
   reader(domain, segments, path + "cube48.mesh"); //use this for a 3d example
   //reader(domain, path + "square32.mesh"); //use this for a 2d example

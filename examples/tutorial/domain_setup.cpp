@@ -23,6 +23,7 @@
 
 #include "viennagrid/forwards.hpp"
 #include "viennagrid/domain/domain.hpp"
+#include "viennagrid/domain/element_creation.hpp"
 #include "viennagrid/point.hpp"
 
 
@@ -33,9 +34,9 @@ void setup_cell(DomainType & domain,
                 std::size_t id1,
                 std::size_t id2)
 {
-  typedef typename viennagrid::result_of::handle<DomainType, viennagrid::vertex_tag>::type       VertexHookType;
+  typedef typename viennagrid::result_of::handle<DomainType, viennagrid::vertex_tag>::type       VertexHandleType;
   
-  viennagrid::storage::static_array<VertexHookType, 3> vertices;
+  viennagrid::storage::static_array<VertexHandleType, 3> vertices;
   vertices[0] = viennagrid::elements<viennagrid::vertex_tag>(domain).handle_at( id0 );
   vertices[1] = viennagrid::elements<viennagrid::vertex_tag>(domain).handle_at( id1 );
   vertices[2] = viennagrid::elements<viennagrid::vertex_tag>(domain).handle_at( id2 );
@@ -75,7 +76,7 @@ int main()
   
   //typedef viennagrid::result_of::point<ConfigType>::type          PointType;
   typedef viennagrid::result_of::element<Domain, viennagrid::vertex_tag>::type       VertexType;
-  typedef viennagrid::result_of::handle<Domain, viennagrid::vertex_tag>::type       VertexHookType;
+  typedef viennagrid::result_of::handle<Domain, viennagrid::vertex_tag>::type       VertexHandleType;
   typedef viennagrid::result_of::element<Domain, CellTag>::type   CellType;
 
   typedef viennagrid::result_of::element_range<Segment, CellTag>::type    CellRange;
@@ -105,12 +106,12 @@ int main()
   // Step 2: Add vertices to the domain. 
   //         Note that vertices with IDs are enumerated in the order they are pushed to the domain.
   //
-  viennagrid::point( domain, viennagrid::create_element<VertexType>(domain) ) = PointType(0,0);
-  viennagrid::point( domain, viennagrid::create_element<VertexType>(domain) ) = PointType(1,0);
-  viennagrid::point( domain, viennagrid::create_element<VertexType>(domain) ) = PointType(2,0);
-  viennagrid::point( domain, viennagrid::create_element<VertexType>(domain) ) = PointType(2,1);
-  viennagrid::point( domain, viennagrid::create_element<VertexType>(domain) ) = PointType(1,1);
-  viennagrid::point( domain, viennagrid::create_element<VertexType>(domain) ) = PointType(0,1);
+  viennagrid::create_element<VertexType>(domain, PointType(0,0));
+  viennagrid::create_element<VertexType>(domain, PointType(1,0));
+  viennagrid::create_element<VertexType>(domain, PointType(2,0));
+  viennagrid::create_element<VertexType>(domain, PointType(2,1));
+  viennagrid::create_element<VertexType>(domain, PointType(1,1));
+  viennagrid::create_element<VertexType>(domain, PointType(0,1));
 
   
   //
@@ -118,7 +119,7 @@ int main()
   //         To do so, each cell must be linked with the defining vertices from the domain (not v0, v1, ...!)
   //
   
-  viennagrid::storage::static_array<VertexHookType, 3> vertices;
+  viennagrid::storage::static_array<VertexHandleType, 3> vertices;
   
   
   //CellType cell;

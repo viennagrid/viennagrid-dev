@@ -37,6 +37,7 @@
 #include "viennagrid/io/data_accessor.hpp"
 #include "viennagrid/io/helper.hpp"
 #include "viennagrid/io/xml_tag.hpp"
+#include "viennagrid/domain/element_creation.hpp"
 
 namespace viennagrid
 {

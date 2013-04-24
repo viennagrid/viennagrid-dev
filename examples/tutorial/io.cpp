@@ -41,7 +41,7 @@ void read_netgen(DomainType & domain, SegmentContainerType & segment_container)
   #ifdef _MSC_VER      //Visual Studio builds in a subfolder
   std::string path = "../../examples/data/";
   #else
-  std::string path = "../examples/data/";
+  std::string path = "../../examples/data/";
   #endif
   std::string filename = path + "cube48.mesh";
   my_netgen_reader(domain, segment_container, filename);
@@ -127,7 +127,7 @@ void read_vtk(DomainType & domain, SegmentContainerType & segments)
   #ifdef _MSC_VER      //Visual Studio builds in a subfolder
   std::string path = "../../examples/data/";
   #else
-  std::string path = "../examples/data/";
+  std::string path = "../../examples/data/";
   #endif
   reader(domain, segments, path + "tets_with_data_main.pvd");
   

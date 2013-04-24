@@ -26,6 +26,7 @@
 #include "viennagrid/io/helper.hpp"
 
 #include "viennagrid/domain/domain.hpp"
+#include "viennagrid/domain/element_creation.hpp"
 
 /** @file netgen_reader.hpp
     @brief Provides a reader for Netgen files
@@ -117,12 +118,12 @@ namespace viennagrid
           if (!reader.good())
             throw bad_file_format_exception(filename, "EOF encountered while reading vertices.");
           
-          
-          VertexHandleType vertex = viennagrid::create_element<VertexType>( domain, typename VertexType::id_type(i) );
-          PointType & p = viennagrid::point( domain, vertex );
+          PointType p;
           
           for (int j=0; j<point_dim; j++)
             reader >> p[j];
+          
+          VertexHandleType vertex = viennagrid::create_vertex( domain, typename VertexType::id_type(i), p );
             
           //viennagrid::dereference_handle(domain, vertex).id( storage::smart_id<VertexType, int>(i) );
         }

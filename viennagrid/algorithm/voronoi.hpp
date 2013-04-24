@@ -427,7 +427,7 @@ namespace viennagrid
           
           //find 'other' triangle
           CellType const * other_cell = NULL;
-          CellOnEdgeRange other_cells = viennagrid::ncells(*intersected_edge_ptr, domain);
+          CellOnEdgeRange other_cells = viennagrid::elements(*intersected_edge_ptr, domain);
           for (CellOnEdgeIterator coeit  = other_cells.begin();
                                   coeit != other_cells.end();
                                 ++coeit)

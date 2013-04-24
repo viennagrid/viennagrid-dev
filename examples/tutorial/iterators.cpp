@@ -51,7 +51,7 @@ int main()
   // Define the types of the elements in the domain (derived from ConfigType):
   //
   typedef viennagrid::result_of::element<DomainType, viennagrid::vertex_tag>::type                          VertexType;
-  typedef viennagrid::result_of::handle<DomainType, viennagrid::vertex_tag>::type                          VertexHookType;
+  typedef viennagrid::result_of::handle<DomainType, viennagrid::vertex_tag>::type                          VertexHandleType;
   typedef viennagrid::result_of::element<DomainType, viennagrid::line_tag>::type                          EdgeType;
   typedef viennagrid::result_of::element<DomainType, CellTag::facet_tag>::type  FacetType;
   typedef viennagrid::result_of::element<DomainType, CellTag>::type    CellType;
@@ -181,7 +181,7 @@ int main()
   typedef viennagrid::result_of::iterator<EdgeOnFacetRange>::type               EdgeOnFacetIterator;
   
   typedef viennagrid::result_of::element_range<CellType, CellTag::facet_tag>::type    FacetOnCellRange;
-  typedef viennagrid::result_of::handle_iterator<FacetOnCellRange>::type               FacetOnCellHookIterator;
+  typedef viennagrid::result_of::handle_iterator<FacetOnCellRange>::type               FacetOnCellHandleIterator;
   typedef viennagrid::result_of::iterator<FacetOnCellRange>::type               FacetOnCellIterator;
 
   for (CellIterator cit = cells.begin(); cit != cells.end(); ++cit) //iterate over all cells
@@ -192,7 +192,7 @@ int main()
     // The facets of the cell are obtained by passing the cell as parameter to the ncell() function
     //
     FacetOnCellRange facets_on_cells = viennagrid::elements<CellTag::facet_tag>(*cit);
-    for (FacetOnCellHookIterator focit = facets_on_cells.handle_begin();
+    for (FacetOnCellHandleIterator focit = facets_on_cells.handle_begin();
                              focit != facets_on_cells.handle_end();
                            ++focit)
     {
@@ -235,7 +235,7 @@ int main()
   
   
   // Iteration over all edges connected to the first vertex in the domain:
-  VertexHookType vh0 = viennagrid::elements<viennagrid::vertex_tag>(domain).handle_at(0);
+  VertexHandleType vh0 = viennagrid::elements<viennagrid::vertex_tag>(domain).handle_at(0);
   std::size_t num_v0edges = 0;
   
   // To set up the range, two arguments need to be passed to the ncells() function.

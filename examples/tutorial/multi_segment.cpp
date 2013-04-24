@@ -48,7 +48,7 @@ int main()
   typedef viennagrid::result_of::element<DomainType, viennagrid::vertex_tag>::type       VertexType;
   typedef viennagrid::result_of::element<DomainType, viennagrid::line_tag>::type       EdgeType;
   typedef viennagrid::result_of::element<DomainType, CellTag::facet_tag>::type FacetType;
-  typedef viennagrid::result_of::handle<DomainType, CellTag::facet_tag>::type FacetHookType;
+  typedef viennagrid::result_of::handle<DomainType, CellTag::facet_tag>::type FacetHandleType;
   typedef viennagrid::result_of::element<DomainType, CellTag>::type   CellType;
                                             
   typedef viennagrid::result_of::element_range<DomainType, viennagrid::vertex_tag>::type       VertexRange;
@@ -56,7 +56,7 @@ int main()
                                             
   typedef viennagrid::result_of::element_range<DomainType, CellTag::facet_tag>::type      FacetRange;
   typedef viennagrid::result_of::iterator<FacetRange>::type                     FacetIterator;
-  typedef viennagrid::result_of::handle_iterator<FacetRange>::type                     FacetHookIterator;
+  typedef viennagrid::result_of::handle_iterator<FacetRange>::type                     FacetHandleIterator;
   
   typedef viennagrid::result_of::coboundary_range<SegmentType, CellTag>::type     CellOnFacetRange;
   typedef viennagrid::result_of::iterator<CellOnFacetRange>::type               CellOnFacetIterator;
@@ -77,7 +77,7 @@ int main()
   #ifdef _MSC_VER      //Visual Studio builds in a subfolder
   std::string path = "../../examples/data/";
   #else
-  std::string path = "../examples/data/";
+  std::string path = "../../examples/data/";
   #endif
   reader(domain, segments, path + "multi_segment_hex_main.pvd");
 
@@ -89,9 +89,9 @@ int main()
   // Iterate over all facets of the domain and find the interface facet:
   // In the same way, one may also traverse interface vertices, etc.
   std::cout << "Facets of the full domain:" << std::endl;
-  FacetHookType interface_facet_handle;
+  FacetHandleType interface_facet_handle;
   FacetRange facets = viennagrid::elements<FacetType>(domain);  
-  for (FacetHookIterator fit = facets.begin(); fit != facets.end(); ++fit)
+  for (FacetHandleIterator fit = facets.begin(); fit != facets.end(); ++fit)
   {
     FacetType & facet = viennagrid::dereference_handle(domain, *fit);
     if (viennagrid::is_interface<CellTag>(facet, seg1, seg2))  //three arguments: The element and the two interfacing segments

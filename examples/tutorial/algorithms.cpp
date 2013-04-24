@@ -60,7 +60,7 @@ int main()
   typedef viennagrid::result_of::element<Domain, viennagrid::triangle_tag>::type       TriangleType;
   typedef viennagrid::result_of::element<Domain, viennagrid::line_tag>::type           EdgeType;
   typedef viennagrid::result_of::element<Domain, viennagrid::vertex_tag>::type         VertexType;
-  typedef viennagrid::result_of::handle<Domain, viennagrid::vertex_tag>::type    VertexHookType;
+  typedef viennagrid::result_of::handle<Domain, viennagrid::vertex_tag>::type    VertexHandleType;
     
   typedef viennagrid::result_of::element_range<Domain, viennagrid::vertex_tag>::type       VertexRange;
   typedef viennagrid::result_of::element_range<Domain, viennagrid::tetrahedron_tag>::type       CellRange;
@@ -83,7 +83,7 @@ int main()
     #ifdef _MSC_VER      //Visual Studio builds in a subfolder
     reader(domain, segments, "../../examples/data/cube48.mesh");
     #else
-    reader(domain, segments, "../examples/data/cube48.mesh");
+    reader(domain, segments, "../../examples/data/cube48.mesh");
     #endif
   }
   catch (std::exception & e)
