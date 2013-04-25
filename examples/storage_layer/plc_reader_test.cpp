@@ -18,25 +18,26 @@ using std::endl;
 #include "viennagrid/storage/range.hpp"
 
 
-#include "viennagrid/topology/point.hpp"
+#include "viennagrid/topology/vertex.hpp"
 #include "viennagrid/topology/line.hpp"
 #include "viennagrid/topology/simplex.hpp"
 #include "viennagrid/topology/plc.hpp"
 
 
-#include "viennagrid/element/element_config.hpp"
 #include "viennagrid/element/element_key.hpp"
 #include "viennagrid/element/element_orientation.hpp"
 #include "viennagrid/element/element_view.hpp"
 
 #include "viennagrid/point.hpp"
 
-#include "viennagrid/config/generic_config.hpp"
+#include "viennagrid/config/element_config.hpp"
+#include "viennagrid/config/topology_config.hpp"
+#include "viennagrid/config/domain_config.hpp"
+#include "viennagrid/config/default_configs.hpp"
 
-#include "viennagrid/domain/topologic_domain.hpp"
+#include "viennagrid/domain/topology.hpp"
 #include "viennagrid/domain/metainfo.hpp"
 #include "viennagrid/domain/domain.hpp"
-#include "viennagrid/domain/config.hpp"
 #include "viennagrid/domain/element_creation.hpp"
 
 #include "viennagrid/io/poly_reader.hpp"
@@ -60,7 +61,7 @@ int main()
     // typedefing and setting up the topological domain
     //
     
-    typedef viennagrid::result_of::domain_config<viennagrid::plc_tag, viennagrid::config::point_type_3d, viennagrid::storage::pointer_handle_tag>::type domain_config;
+    typedef viennagrid::config::result_of::full_domain_config<viennagrid::plc_tag, viennagrid::config::point_type_3d, viennagrid::storage::pointer_handle_tag>::type domain_config;
     
     //typedef viennagrid::config::polygonal_2d_domain domain_type;
     typedef viennagrid::result_of::domain< domain_config >::type domain_type;

@@ -1,7 +1,5 @@
 #ifndef VIENNAGRID_STORAGE_ID_HPP
 #define VIENNAGRID_STORAGE_ID_HPP
-#include <boost/iterator/iterator_concepts.hpp>
-#include <boost/type_traits/detail/is_function_ptr_helper.hpp>
 
 
 namespace viennagrid

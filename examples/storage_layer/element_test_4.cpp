@@ -17,23 +17,17 @@ using std::endl;
 #include "viennagrid/storage/hidden_key_map.hpp"
 
 
-#include "viennagrid/topology/point.hpp"
+#include "viennagrid/topology/vertex.hpp"
 #include "viennagrid/topology/line.hpp"
 #include "viennagrid/topology/simplex.hpp"
-#include "viennagrid/topology/quadrilateral.hpp"
-#include "viennagrid/topology/polygon.hpp"
 
 
-#include "viennagrid/element/element_config.hpp"
+#include "viennagrid/config/element_config.hpp"
+#include "viennagrid/config/topology_config.hpp"
+
 #include "viennagrid/element/element_key.hpp"
 #include "viennagrid/element/element_orientation.hpp"
 #include "viennagrid/point.hpp"
-
-#include "viennagrid/config/generic_config.hpp"
-
-
-
-#include "viennagrid/domain/topologic_domain.hpp"
 
 
 int main()
@@ -53,77 +47,80 @@ int main()
     // A full config for tetrahedrons
     //
     
-    typedef viennameta::make_typemap<    
-    
-        viennagrid::vertex_tag,
-        viennameta::make_typemap<
-            viennagrid::element_id_tag,
-            viennagrid::storage::smart_id_tag<int>,
+    typedef viennameta::make_typemap<
+        viennagrid::config::topology_config_tag,    
+        viennameta::make_typemap<    
         
-            viennagrid::element_container_tag,
-            viennagrid::storage::handled_container_tag<           
-                viennagrid::storage::std_deque_tag,
-                handle_tag
-            >,
-            
-            viennagrid::element_boundary_storage_layout_tag,
+            viennagrid::vertex_tag,
             viennameta::make_typemap<
-            >::type
-        >::type,
-        
-        viennagrid::line_tag,
-        viennameta::make_typemap<
-            viennagrid::element_id_tag,
-            viennagrid::storage::smart_id_tag<int>,
-        
-            viennagrid::element_container_tag,
-            viennagrid::storage::handled_container_tag<           
-                viennagrid::storage::hidden_key_map_tag< viennagrid::storage::element_key_tag >,
-                handle_tag
-            >,
+                viennagrid::config::element_id_tag,
+                viennagrid::storage::smart_id_tag<int>,
             
-            viennagrid::element_boundary_storage_layout_tag,
-            viennameta::make_typemap<
-                viennagrid::vertex_tag, viennagrid::no_orientation_handling_tag
-            >::type
-        >::type,
-        
-        viennagrid::polygon_tag,
-        viennameta::make_typemap<
-            viennagrid::element_id_tag,
-            viennagrid::storage::smart_id_tag<int>,
-        
-            viennagrid::element_container_tag,
-            viennagrid::storage::handled_container_tag<           
-                viennagrid::storage::hidden_key_map_tag< viennagrid::storage::element_key_tag >,
-                handle_tag
-            >,
+                viennagrid::config::element_container_tag,
+                viennagrid::storage::handled_container_tag<           
+                    viennagrid::storage::std_deque_tag,
+                    handle_tag
+                >,
+                
+                viennagrid::config::element_boundary_storage_layout_tag,
+                viennameta::make_typemap<
+                >::type
+            >::type,
             
-            viennagrid::element_boundary_storage_layout_tag,
+            viennagrid::line_tag,
             viennameta::make_typemap<
-                viennagrid::vertex_tag, viennagrid::no_orientation_handling_tag,
-                viennagrid::line_tag, viennagrid::full_handling_tag
-            >::type
-        >::type,
-        
-        viennagrid::triangle_tag,
-        viennameta::make_typemap<
-            viennagrid::element_id_tag,
-            viennagrid::storage::smart_id_tag<int>,
-        
-            viennagrid::element_container_tag,
-            viennagrid::storage::handled_container_tag<           
-                viennagrid::storage::hidden_key_map_tag< viennagrid::storage::element_key_tag >,
-                handle_tag
-            >,
+                viennagrid::config::element_id_tag,
+                viennagrid::storage::smart_id_tag<int>,
             
-            viennagrid::element_boundary_storage_layout_tag,
+                viennagrid::config::element_container_tag,
+                viennagrid::storage::handled_container_tag<           
+                    viennagrid::storage::hidden_key_map_tag< viennagrid::storage::element_key_tag >,
+                    handle_tag
+                >,
+                
+                viennagrid::config::element_boundary_storage_layout_tag,
+                viennameta::make_typemap<
+                    viennagrid::vertex_tag, viennagrid::no_orientation_handling_tag
+                >::type
+            >::type,
+            
+            viennagrid::polygon_tag,
             viennameta::make_typemap<
-                viennagrid::vertex_tag, viennagrid::no_orientation_handling_tag,
-                viennagrid::line_tag, viennagrid::full_handling_tag
+                viennagrid::config::element_id_tag,
+                viennagrid::storage::smart_id_tag<int>,
+            
+                viennagrid::config::element_container_tag,
+                viennagrid::storage::handled_container_tag<           
+                    viennagrid::storage::hidden_key_map_tag< viennagrid::storage::element_key_tag >,
+                    handle_tag
+                >,
+                
+                viennagrid::config::element_boundary_storage_layout_tag,
+                viennameta::make_typemap<
+                    viennagrid::vertex_tag, viennagrid::no_orientation_handling_tag,
+                    viennagrid::line_tag, viennagrid::full_handling_tag
+                >::type
+            >::type,
+            
+            viennagrid::triangle_tag,
+            viennameta::make_typemap<
+                viennagrid::config::element_id_tag,
+                viennagrid::storage::smart_id_tag<int>,
+            
+                viennagrid::config::element_container_tag,
+                viennagrid::storage::handled_container_tag<           
+                    viennagrid::storage::hidden_key_map_tag< viennagrid::storage::element_key_tag >,
+                    handle_tag
+                >,
+                
+                viennagrid::config::element_boundary_storage_layout_tag,
+                viennameta::make_typemap<
+                    viennagrid::vertex_tag, viennagrid::no_orientation_handling_tag,
+                    viennagrid::line_tag, viennagrid::full_handling_tag
+                >::type
             >::type
-        >::type
 
+        >::type
     >::type config;
     
     

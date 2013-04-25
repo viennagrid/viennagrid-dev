@@ -160,7 +160,7 @@ namespace viennagrid
 
   /** @brief Implementation of boundary detection. Should not be called by library users. */
   template <typename ElementTag, typename TopologicContainerType, typename KeyType>
-  void detect_boundary_impl(TopologicContainerType const & topologic_domain, KeyType const & key)
+  void detect_boundary_impl(TopologicContainerType const & topology, KeyType const & key)
   {
     //typedef typename DomainSegmentType::config_type                            ConfigType;
     //typedef typename ElementType:tag                                      ElementTag;
@@ -177,7 +177,7 @@ namespace viennagrid
     typedef typename viennagrid::result_of::iterator<FacetOnCellRange>::type                           FacetOnCellIterator;
     
     //iterate over all cells, over facets there and tag them:
-    CellRange cells = viennagrid::elements<ElementTag>(topologic_domain);
+    CellRange cells = viennagrid::elements<ElementTag>(topology);
     for (CellIterator cit = cells.begin();
           cit != cells.end();
           ++cit)
@@ -203,7 +203,7 @@ namespace viennagrid
     }
     
     //iterate over all facets again and tag all lower level topological elements on facets that belong to the boundary:
-    FacetRange facets = viennagrid::elements<typename ElementTag::facet_tag>(topologic_domain);
+    FacetRange facets = viennagrid::elements<typename ElementTag::facet_tag>(topology);
     for (FacetIterator fit = facets.begin();
           fit != facets.end();
           ++fit)
@@ -232,7 +232,7 @@ namespace viennagrid
    * @param key                   The key object for ViennaData
    */
   template <typename ElemenTag, typename TopologicContainerType, typename KeyType>
-  void detect_boundary(TopologicContainerType const & topologic_domain, KeyType const & key)
+  void detect_boundary(TopologicContainerType const & topology, KeyType const & key)
   {
     //typedef typename DomainSegmentType::config_type            ConfigType;
     //typedef typename ConfigType::cell_tag                   CellTag;
@@ -240,10 +240,10 @@ namespace viennagrid
     //typedef typename result_of::bndcell_handling<ConfigType, DomainType,
     //                                                CellTag::dim-1>::type  HandlingTag;
     
-    if (viennadata::access<KeyType, bool>(key)(topologic_domain) == false)
+    if (viennadata::access<KeyType, bool>(key)(topology) == false)
     {
-      detect_boundary_impl<ElemenTag>(topologic_domain, key);//, HandlingTag());
-      viennadata::access<KeyType, bool>(key)(topologic_domain) = true;
+      detect_boundary_impl<ElemenTag>(topology, key);//, HandlingTag());
+      viennadata::access<KeyType, bool>(key)(topology) = true;
     }
   }
 
@@ -255,14 +255,14 @@ namespace viennagrid
    */
   template <typename CellTypeOrTag, typename ElementType, typename TopologicContainerType>
   bool is_boundary(ElementType const & el,
-                   TopologicContainerType const & topologic_domain)
+                   TopologicContainerType const & topology)
   {
     typedef typename result_of::element_tag<CellTypeOrTag>::type CellTag;
     
     typedef boundary_key<TopologicContainerType>    BoundaryKey;
-    BoundaryKey key(topologic_domain);
+    BoundaryKey key(topology);
     
-    detect_boundary<CellTag>(topologic_domain, key);
+    detect_boundary<CellTag>(topology, key);
     if (viennadata::find<BoundaryKey, bool>(key)(el) != NULL)
     {
       return viennadata::access<BoundaryKey, bool>(key)(el);

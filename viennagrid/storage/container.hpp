@@ -5,6 +5,7 @@
 #include <deque>
 #include <list>
 #include <set>
+#include <algorithm>
 
 #include "viennagrid/meta/utils.hpp"
 #include "viennagrid/storage/forwards.hpp"

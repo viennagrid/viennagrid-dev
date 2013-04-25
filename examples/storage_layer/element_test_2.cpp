@@ -16,7 +16,7 @@ using std::endl;
 #include "viennagrid/storage/hidden_key_map.hpp"
 
 
-#include "viennagrid/topology/point.hpp"
+#include "viennagrid/topology/vertex.hpp"
 #include "viennagrid/topology/line.hpp"
 #include "viennagrid/topology/simplex.hpp"
 

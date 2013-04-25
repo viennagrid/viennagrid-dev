@@ -22,7 +22,7 @@
 
 
 #include "viennagrid/forwards.hpp"
-//#include "viennagrid/element.hpp"
+#include "viennagrid/config/domain_config.hpp"
 #include "viennagrid/point.hpp"
 #include "viennagrid/io/netgen_reader.hpp"
 #include "viennagrid/io/vtk_reader.hpp"
@@ -39,10 +39,10 @@ int main()
 {
     typedef viennagrid::point_t<double, viennagrid::cartesian_cs<3> > PointType;  //use this for a 3d examples
     typedef viennagrid::hexahedron_tag                           CellTag;
-    typedef viennagrid::result_of::default_topologic_config<viennagrid::hexahedron_tag, viennagrid::storage::pointer_handle_tag>::type TopologicConfig;
-    typedef viennagrid::result_of::domain_config<viennagrid::hexahedron_tag, PointType, viennagrid::storage::id_handle_tag >::type DomainConfig;
+//     typedef viennagrid::result_of::default_topologic_config<viennagrid::hexahedron_tag, viennagrid::storage::pointer_handle_tag>::type TopologicConfig;
+    typedef viennagrid::config::result_of::full_domain_config<viennagrid::hexahedron_tag, PointType, viennagrid::storage::id_handle_tag >::type DomainConfig;
     typedef viennagrid::result_of::domain< DomainConfig >::type DomainType;
-    typedef viennagrid::result_of::geometric_view<DomainType>::type SegmentType;
+    typedef viennagrid::result_of::domain_view<DomainType>::type SegmentType;
   
   typedef viennagrid::result_of::point_type<DomainType>::type          PointType;
   typedef viennagrid::result_of::element<DomainType, viennagrid::vertex_tag>::type       VertexType;

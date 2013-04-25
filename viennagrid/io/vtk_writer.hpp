@@ -151,7 +151,7 @@ namespace viennagrid
               ++cit)
           {
               //step 1: Write vertex indices in ViennaGrid orientation to array:
-              std::vector<std::size_t> viennagrid_vertices(viennagrid::topology::boundary_cells<CellTag, vertex_tag>::num);
+              std::vector<std::size_t> viennagrid_vertices(viennagrid::element_topology::boundary_cells<CellTag, vertex_tag>::num);
               VertexOnCellRange vertices_on_cell = viennagrid::elements<vertex_tag>(*cit);
               std::size_t j = 0;
               for (VertexHandleOnCellIterator vocit = vertices_on_cell.handle_begin();
@@ -183,7 +183,7 @@ namespace viennagrid
                  offsets <= viennagrid::elements<CellTag>(domseg).size();
                  ++offsets)
             {
-              writer << ( offsets * viennagrid::topology::boundary_cells<CellTag, vertex_tag>::num) << " ";
+              writer << ( offsets * viennagrid::element_topology::boundary_cells<CellTag, vertex_tag>::num) << " ";
             }
             writer << std::endl;
             writer << "    </DataArray>" << std::endl;

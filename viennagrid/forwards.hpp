@@ -32,6 +32,7 @@
 #include <map>
 #include <cstddef>     //for std::size_t
 #include <cstdlib>     //for EXIT_SUCCESS and EXIT_FAILURE
+#include <boost/concept_check.hpp>
 
 #include "viennadata/api.hpp"
 #include "viennagrid/storage/static_array.hpp"
@@ -141,12 +142,6 @@ namespace viennagrid
   
   struct plc_tag;
   
-  
-    struct element_id_tag {};
-    struct element_container_tag {};
-    struct element_boundary_storage_layout_tag {};
-
-
   //forward declarations:
   template <typename CoordType, typename CoordinateSystem>
   class point_t;
@@ -195,7 +190,9 @@ namespace viennagrid
 
   template <typename T>
   class interface_key;
-
+  
+  
+  
   template <typename SegmentType>
   class segment_mapping_key
   {
@@ -215,17 +212,17 @@ namespace viennagrid
 
   //ID handling:
   /** @brief ID handler class for IDs based on the n-cell address */
-  class pointer_id
-  {
-    public:
-      typedef pointer_id *  id_type;
-      
-      //for compatibility:
-      void id(const pointer_id *) { };
-      void id(long) { };
-      const pointer_id * id() const { return this; };
-      pointer_id * id() { return this; };
-  };
+//   class pointer_id
+//   {
+//     public:
+//       typedef pointer_id *  id_type;
+//       
+//       //for compatibility:
+//       void id(const pointer_id *) { };
+//       void id(long) { };
+//       const pointer_id * id() const { return this; };
+//       pointer_id * id() { return this; };
+//   };
 
   /** @brief ID handler class for IDs of type long. Has to be used for dense quantity storage with ViennaData. */
   class integral_id
@@ -247,7 +244,7 @@ namespace viennagrid
     struct dynamic_unique_layout_tag;
   
   /** @brief Namespace for definition and handling of the individual topological elements (triangles, hexahedra, etc.) */
-  namespace topology
+  namespace element_topology
   {
     
     /** @brief Holds the topological information about boundary cells for a n-cell
@@ -293,6 +290,10 @@ namespace viennagrid
   /** @brief The metafunction layer. Provides type generators that derive the respective type from the domain configuration */
   namespace result_of
   {
+      
+            template<typename something>
+            struct topology;
+
 
         template<typename something>
         struct metainfo_collection;

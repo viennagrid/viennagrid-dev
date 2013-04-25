@@ -19,7 +19,7 @@
 ======================================================================= */
 
 #include "viennagrid/forwards.hpp"
-#include "viennagrid/topology/point.hpp"
+#include "viennagrid/topology/vertex.hpp"
 #include "viennagrid/topology/line.hpp"
 // #include "viennagrid/detail/element_iterators.hpp"
 #include "viennagrid/algorithm/norm.hpp"
@@ -75,7 +75,7 @@ namespace viennagrid
   };
 
   
-  namespace topology
+  namespace element_topology
   {
     /** @brief Topological description of the boundary k-cells an n-simplex */
 //     template <long n, long k>

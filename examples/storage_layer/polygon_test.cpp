@@ -18,22 +18,22 @@ using std::endl;
 #include "viennagrid/storage/range.hpp"
 
 
-#include "viennagrid/topology/point.hpp"
+#include "viennagrid/topology/vertex.hpp"
 #include "viennagrid/topology/line.hpp"
 #include "viennagrid/topology/simplex.hpp"
 
-
-#include "viennagrid/element/element_config.hpp"
 #include "viennagrid/element/element_key.hpp"
 #include "viennagrid/element/element_orientation.hpp"
 #include "viennagrid/point.hpp"
 
-#include "viennagrid/config/generic_config.hpp"
+#include "viennagrid/config/element_config.hpp"
+#include "viennagrid/config/topology_config.hpp"
+#include "viennagrid/config/domain_config.hpp"
+#include "viennagrid/config/default_configs.hpp"
 
-#include "viennagrid/domain/topologic_domain.hpp"
+#include "viennagrid/domain/topology.hpp"
 #include "viennagrid/domain/metainfo.hpp"
 #include "viennagrid/domain/domain.hpp"
-#include "viennagrid/domain/config.hpp"
 #include "viennagrid/domain/element_creation.hpp"
 
 #include <boost/numeric/ublas/vector.hpp>

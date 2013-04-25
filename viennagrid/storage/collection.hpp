@@ -3,7 +3,6 @@
 
 #include "viennagrid/meta/utils.hpp"
 #include "viennagrid/meta/typemap.hpp"
-#include <boost/concept_check.hpp>
 
 namespace viennagrid
 {

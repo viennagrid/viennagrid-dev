@@ -19,7 +19,7 @@
 ======================================================================= */
 
 #include "viennagrid/forwards.hpp"
-#include "viennagrid/topology/point.hpp"
+#include "viennagrid/topology/vertex.hpp"
 #include "viennagrid/topology/line.hpp"
 
 /** @file quadrilateral.hpp
@@ -40,7 +40,7 @@ namespace viennagrid
     static std::string name() { return "Quadrilateral"; }
   };
   
-  namespace topology
+  namespace element_topology
   {
       
     template <>

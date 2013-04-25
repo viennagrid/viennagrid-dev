@@ -25,6 +25,8 @@
 #include <fstream>
 #include <vector>
 
+#include "viennagrid/config/domain_config.hpp"
+
 #include "viennagrid/algorithm/volume.hpp"
 #include "viennagrid/algorithm/voronoi.hpp"
 #include "viennagrid/io/netgen_reader.hpp"
@@ -166,9 +168,9 @@ int main()
 {
   typedef viennagrid::point_t<double, viennagrid::cartesian_cs<3> > PointType;  //use this for a 3d example
   //typedef viennagrid::point_t<double, viennagrid::cartesian_cs<2> > PointType;  //use this for a 2d example
-  typedef viennagrid::result_of::domain_config< viennagrid::tetrahedron_tag, PointType, viennagrid::storage::id_handle_tag >::type DomainConfig;
+  typedef viennagrid::config::result_of::full_domain_config< viennagrid::tetrahedron_tag, PointType, viennagrid::storage::id_handle_tag >::type DomainConfig;
   typedef viennagrid::result_of::domain< DomainConfig >::type Domain;
-  typedef viennagrid::result_of::geometric_view<Domain>::type Segment;
+  typedef viennagrid::result_of::domain_view<Domain>::type Segment;
   
   typedef viennagrid::tetrahedron_tag CellTag;
     

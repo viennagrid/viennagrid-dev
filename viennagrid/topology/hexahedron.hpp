@@ -40,7 +40,7 @@ namespace viennagrid
   };
   
 
-  namespace topology
+  namespace element_topology
   {
 
     template <>

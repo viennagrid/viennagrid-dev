@@ -368,7 +368,7 @@ namespace viennagrid
             // and add the cells to the "vertices"-array
             //****************************************************
             
-            viennagrid::storage::static_array<VertexHandleType, topology::boundary_cells<CellTag, vertex_tag>::num> cell_vertex_handles;
+            viennagrid::storage::static_array<VertexHandleType, element_topology::boundary_cells<CellTag, vertex_tag>::num> cell_vertex_handles;
             
             //std::cout << "Pushing Cell " << i << " to segment " << seg_id << std::endl;
             //std::cout << "  ";

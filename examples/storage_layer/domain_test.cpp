@@ -18,19 +18,20 @@ using std::endl;
 #include "viennagrid/storage/range.hpp"
 
 
-#include "viennagrid/topology/point.hpp"
+#include "viennagrid/topology/vertex.hpp"
 #include "viennagrid/topology/line.hpp"
 #include "viennagrid/topology/simplex.hpp"
 
 
-#include "viennagrid/element/element_config.hpp"
 #include "viennagrid/element/element_key.hpp"
 #include "viennagrid/element/element_orientation.hpp"
+
+#include "viennagrid/config/element_config.hpp"
+#include "viennagrid/config/topology_config.hpp"
+
 #include "viennagrid/point.hpp"
 
-#include "viennagrid/config/generic_config.hpp"
-
-#include "viennagrid/domain/topologic_domain.hpp"
+#include "viennagrid/domain/topology.hpp"
 #include "viennagrid/domain/metainfo.hpp"
 #include "viennagrid/domain/element_creation.hpp"
 
@@ -52,7 +53,7 @@ int main()
     
     
     
-    typedef viennagrid::result_of::default_topologic_config<viennagrid::tetrahedron_tag, handle_tag>::type toplological_config;
+    typedef viennagrid::config::result_of::full_topology_config<viennagrid::tetrahedron_tag, handle_tag>::type toplological_config;
 
     
     
@@ -61,8 +62,8 @@ int main()
     // typedefing and setting up the topological domain
     //
     
-    typedef viennagrid::result_of::topologic_domain<toplological_config>::type domain_type;
-    domain_type domain = viennagrid::create_topologic_domain<domain_type>();
+    typedef viennagrid::result_of::topology<toplological_config>::type domain_type;
+    domain_type domain = viennagrid::create_topology<domain_type>();
     
     //
     // typedefs for the element types

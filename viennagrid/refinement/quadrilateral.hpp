@@ -19,7 +19,7 @@
 ======================================================================= */
 
 #include "viennagrid/forwards.h"
-#include "viennagrid/topology/point.hpp"
+#include "viennagrid/topology/vertex.hpp"
 #include "viennagrid/topology/line.hpp"
 
 /** @file refinement/quadrilateral.hpp

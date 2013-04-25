@@ -18,21 +18,22 @@ using std::endl;
 #include "viennagrid/storage/range.hpp"
 
 
-#include "viennagrid/topology/point.hpp"
+#include "viennagrid/topology/vertex.hpp"
 #include "viennagrid/topology/line.hpp"
 #include "viennagrid/topology/simplex.hpp"
 
 
-#include "viennagrid/element/element_config.hpp"
 #include "viennagrid/element/element_key.hpp"
 #include "viennagrid/element/element_orientation.hpp"
+
+#include "viennagrid/config/element_config.hpp"
+#include "viennagrid/config/topology_config.hpp"
+#include "viennagrid/config/domain_config.hpp"
+
 #include "viennagrid/point.hpp"
 
-#include "viennagrid/config/generic_config.hpp"
-
-#include "viennagrid/domain/topologic_domain.hpp"
+#include "viennagrid/domain/topology.hpp"
 #include "viennagrid/domain/metainfo.hpp"
-#include "viennagrid/domain/domain.hpp"
 #include "viennagrid/domain/element_creation.hpp"
 
 #include <boost/numeric/ublas/vector.hpp>
@@ -59,7 +60,7 @@ int main()
     
 
     typedef ublas::vector<double> vector_type;
-    typedef viennagrid::result_of::domain_config< viennagrid::tetrahedron_tag, vector_type, handle_tag, metainfo_typelist >::type domain_config;
+    typedef viennagrid::config::result_of::full_domain_config< viennagrid::tetrahedron_tag, vector_type, handle_tag, metainfo_typelist >::type domain_config;
 
     
     
@@ -100,15 +101,15 @@ int main()
     
     
     
-//     typedef viennagrid::result_of::topologic_view<domain_type::topologic_domain_type, view_types>::type topologic_view_type;
+//     typedef viennagrid::result_of::topologic_view<domain_type::topology_type, view_types>::type topologic_view_type;
 //     
 //     typedef domain_type::metainfo_collection_type metainfo_collection_type;
 //     
 //     typedef viennagrid::domain_t<vector_type, topologic_view_type, metainfo_collection_type&> geometric_view_type;
     
-    typedef viennagrid::result_of::geometric_view<domain_type, view_types>::type geometric_view_type;
+    typedef viennagrid::result_of::domain_view<domain_type, view_types>::type geometric_view_type;
     
-    //geometric_view_type geometric_view( viennagrid::create_topologic_view<topologic_view_type>( viennagrid::topologic_domain(domain) ), domain.get_metainfo_collection() );
+    //geometric_view_type geometric_view( viennagrid::create_topologic_view<topologic_view_type>( viennagrid::topology(domain) ), domain.get_metainfo_collection() );
     
     geometric_view_type geometric_view_1 = viennagrid::create_view<geometric_view_type>(domain);
     geometric_view_type geometric_view_2 = viennagrid::create_view<geometric_view_type>(domain);

@@ -36,7 +36,7 @@ namespace viennagrid
     static std::string name() { return "Polygon"; }
   };
   
-  namespace topology
+  namespace element_topology
   {
 
     //Line:

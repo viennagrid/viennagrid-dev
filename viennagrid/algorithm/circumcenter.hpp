@@ -160,7 +160,7 @@ namespace viennagrid
         p0 += viennagrid::point(geometric_container, *vocit);
       }
       
-      p0 /= viennagrid::topology::boundary_cells<CellTag, vertex_tag>::num;
+      p0 /= viennagrid::element_topology::boundary_cells<CellTag, vertex_tag>::num;
       
       return p0;
     }
@@ -229,7 +229,7 @@ namespace viennagrid
         p0 += viennagrid::point(geometric_container, *vocit);
       }
       
-      p0 /= viennagrid::topology::boundary_cells<ElementTag, vertex_tag>::num;
+      p0 /= viennagrid::element_topology::boundary_cells<ElementTag, vertex_tag>::num;
       
       return p0;
     }
@@ -303,7 +303,7 @@ namespace viennagrid
         p0 += viennagrid::point(geometric_container, *vocit);
       }
       
-      p0 /= viennagrid::topology::boundary_cells<CellTag, vertex_tag>::num;
+      p0 /= viennagrid::element_topology::boundary_cells<CellTag, vertex_tag>::num;
       
       return p0;
     }

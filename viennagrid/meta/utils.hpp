@@ -1,6 +1,5 @@
 #ifndef VIENNAMETA_UTILS_HPP
 #define VIENNAMETA_UTILS_HPP
-#include <boost/concept_check.hpp>
 
 
 namespace viennameta

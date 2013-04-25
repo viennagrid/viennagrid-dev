@@ -361,11 +361,11 @@ namespace viennagrid
     
     namespace result_of
     {
-        template<typename pair_type, typename container_config, typename topologic_domain_config>
+        template<typename pair_type, typename container_config, typename topology_config>
         struct metainfo_container;
 
-        template<typename element_type, typename metainfo_type, typename container_config, typename topologic_domain_config>
-        struct metainfo_container< viennameta::static_pair<element_type, metainfo_type>, container_config, topologic_domain_config >
+        template<typename element_type, typename metainfo_type, typename container_config, typename topology_config>
+        struct metainfo_container< viennameta::static_pair<element_type, metainfo_type>, container_config, topology_config >
         {
             typedef typename viennameta::typemap::result_of::find<container_config, viennameta::static_pair<element_type, metainfo_type> >::type search_result;
             typedef typename viennameta::typemap::result_of::find<container_config, viennagrid::storage::default_tag>::type default_container;
@@ -381,26 +381,26 @@ namespace viennagrid
         };
         
         
-        template<typename element_list, typename container_config, typename topologic_domain_config>
+        template<typename element_list, typename container_config, typename domain_config>
         struct metainfo_container_typemap;
         
-        template<typename container_config, typename topologic_domain_config>
-        struct metainfo_container_typemap<viennameta::null_type, container_config, topologic_domain_config>
+        template<typename container_config, typename domain_config>
+        struct metainfo_container_typemap<viennameta::null_type, container_config, domain_config>
         {
             typedef viennameta::null_type type;
         };
         
-        template<typename element_tag, typename metainfo_type, typename tail, typename container_config, typename topologic_domain_config>
-        struct metainfo_container_typemap<viennameta::typelist_t< viennameta::static_pair<element_tag, metainfo_type>, tail>, container_config, topologic_domain_config>
+        template<typename element_tag, typename metainfo_type, typename tail, typename container_config, typename domain_config>
+        struct metainfo_container_typemap<viennameta::typelist_t< viennameta::static_pair<element_tag, metainfo_type>, tail>, container_config, domain_config>
         {
-            typedef typename viennagrid::result_of::element<topologic_domain_config, element_tag>::type element_type;
+            typedef typename viennagrid::result_of::element<domain_config, element_tag>::type element_type;
             
             typedef viennameta::typelist_t<
                 typename viennameta::static_pair<
                         viennameta::static_pair<element_type, metainfo_type>,
-                        typename metainfo_container< viennameta::static_pair<element_type, metainfo_type>, container_config, topologic_domain_config>::type
+                        typename metainfo_container< viennameta::static_pair<element_type, metainfo_type>, container_config, domain_config>::type
                     >,
-                typename metainfo_container_typemap<tail, container_config, topologic_domain_config>::type
+                typename metainfo_container_typemap<tail, container_config, domain_config>::type
             > type;
         };
     }

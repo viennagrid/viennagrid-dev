@@ -1,3 +1,0 @@
-This is the build directory of ViennaGrid. Build here using
-$> cmake ..
-$> make

@@ -19,7 +19,7 @@
 ======================================================================= */
 
 #include "viennagrid/forwards.hpp"
-#include "viennagrid/topology/point.hpp"
+#include "viennagrid/topology/vertex.hpp"
 
 /** @file topology/line.hpp
     @brief Provides the topological definition of a line
@@ -38,7 +38,7 @@ namespace viennagrid
   };
 
 
-  namespace topology
+  namespace element_topology
   {
 
     //Line:

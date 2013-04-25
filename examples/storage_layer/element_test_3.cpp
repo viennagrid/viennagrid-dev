@@ -17,17 +17,19 @@ using std::endl;
 #include "viennagrid/storage/hidden_key_map.hpp"
 
 
-#include "viennagrid/topology/point.hpp"
+#include "viennagrid/topology/vertex.hpp"
 #include "viennagrid/topology/line.hpp"
 #include "viennagrid/topology/simplex.hpp"
 
 
-#include "viennagrid/element/element_config.hpp"
+#include "viennagrid/config/element_config.hpp"
+#include "viennagrid/config/topology_config.hpp"
+
 #include "viennagrid/element/element_key.hpp"
 #include "viennagrid/element/element_orientation.hpp"
 #include "viennagrid/point.hpp"
 
-#include "viennagrid/config/generic_config.hpp"
+
 
 
 
@@ -128,7 +130,7 @@ int main()
     // Generates the same config as show above in comment
     //
     
-    typedef viennagrid::result_of::default_topologic_config<viennagrid::tetrahedron_tag, handle_tag>::type config;
+    typedef viennagrid::config::result_of::full_topology_config<viennagrid::tetrahedron_tag, handle_tag>::type config;
        
     
         
@@ -168,7 +170,7 @@ int main()
     // setting up the domain
     //
     
-    typedef viennagrid::result_of::element_container_typemap<config>::type element_container_typemap;
+    typedef viennagrid::config::result_of::element_container_typemap<config>::type element_container_typemap;
     
     //cout << typeid(element_container_typelist).name() << endl;
     

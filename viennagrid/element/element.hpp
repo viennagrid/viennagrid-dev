@@ -76,7 +76,7 @@ namespace viennagrid
         template<typename element_type, typename inserter_type>
         void create_bnd_cells(element_type & element, inserter_type & inserter)
         {
-            topology::bndcell_generator<element_tag, bnd_cell_tag, bnd_cell_type>::create_bnd_cells(element, inserter);
+            element_topology::bndcell_generator<element_tag, bnd_cell_tag, bnd_cell_type>::create_bnd_cells(element, inserter);
             base::create_bnd_cells(element, inserter);
         }
         
@@ -262,7 +262,7 @@ namespace viennagrid
         template<typename element_type, typename inserter_type>
         void create_bnd_cells(element_type & element, inserter_type & inserter)
         {
-            topology::bndcell_generator<element_tag, bnd_cell_tag, bnd_cell_type>::create_bnd_cells(element, inserter);
+            element_topology::bndcell_generator<element_tag, bnd_cell_tag, bnd_cell_type>::create_bnd_cells(element, inserter);
             base::create_bnd_cells(element, inserter);
         }
         
@@ -657,6 +657,21 @@ namespace viennagrid
         {
             typedef typename element_type::id_type type;
         };
+        
+        
+        
+        
+        
+        template<typename element_type>
+        struct topologic_dimension;
+        
+        template<typename element_tag_, typename boundary_cell_container_typelist, typename id_type>
+        struct topologic_dimension< element_t<element_tag_, boundary_cell_container_typelist, id_type>  >
+        {
+            static const int value = element_tag_::dim;
+        };
+        
+        
         
         
         

@@ -18,6 +18,7 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
+#include <limits>
 #include "viennagrid/algorithm/intersect.hpp"
 
 namespace viennagrid 

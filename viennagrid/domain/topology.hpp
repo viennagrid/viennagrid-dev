@@ -23,76 +23,32 @@
 #include "viennagrid/storage/inserter.hpp"
 #include "viennagrid/storage/algorithm.hpp"
 
-#include "viennagrid/element/element_config.hpp"
+#include "viennagrid/config/element_config.hpp"
 
-namespace viennagrid
-{
-
-    namespace result_of
-    {
-        template<typename topologic_domain_config, typename typemap>
-        struct continuous_id_generator_config_helper;
-        
-        
-        template<typename topologic_domain_config, typename element_tag, typename element_config, typename tail>
-        struct continuous_id_generator_config_helper< topologic_domain_config, viennameta::typelist_t<viennameta::static_pair<element_tag, element_config>, tail> >
-        {
-            typedef typename viennameta::typemap::result_of::insert<
-                typename continuous_id_generator_config_helper<topologic_domain_config, tail>::type,
-                viennameta::static_pair<
-                    typename viennagrid::result_of::element<topologic_domain_config, element_tag>::type,
-                    typename viennagrid::result_of::element_id_tag<topologic_domain_config, element_tag>::type
-                >
-            >::type type;
-        };
-        
-        template<typename topologic_domain_config>
-        struct continuous_id_generator_config_helper<topologic_domain_config, viennameta::null_type>
-        {
-            typedef viennameta::null_type type;
-        };
-        
-        
-        template<typename topologic_domain_config>
-        struct continuous_id_generator_config
-        {
-            typedef typename continuous_id_generator_config_helper<topologic_domain_config, topologic_domain_config>::type type;
-        };
-        
-        
-        template<typename topologic_domain_config>
-        struct continuous_id_generator
-        {
-            typedef typename continuous_id_generator_config<topologic_domain_config>::type id_generator_config;
-            typedef typename viennagrid::storage::result_of::continuous_id_generator< id_generator_config >::type type;
-        };
-    }
-
-}
 
 
 namespace viennagrid
 {
 
     template<typename container_collection_type_, typename inserter_type_>
-    class topologic_domain_t
+    class topology_t
     {
     public:
         typedef container_collection_type_ container_collection_type;
         typedef inserter_type_ inserter_type;
         
-        topologic_domain_t() : container_collection(), inserter() {}
-        topologic_domain_t(const topologic_domain_t & other) : container_collection(other.container_collection), inserter(other.inserter)
+        topology_t() : container_collection(), inserter() {}
+        topology_t(const topology_t & other) : container_collection(other.container_collection), inserter(other.inserter)
         {
             inserter.set_container_collection( container_collection );
         }
         
-        ~topologic_domain_t()
+        ~topology_t()
         {
             viennadata::erase<viennadata::all, viennadata::all>()(*this);
         }
         
-        topologic_domain_t & operator=(const topologic_domain_t & other)
+        topology_t & operator=(const topology_t & other)
         {
             container_collection = other.container_collection;
             inserter = other.inserter;
@@ -118,39 +74,6 @@ namespace viennagrid
     namespace result_of
     {
         template<typename something>
-        struct topologic_domain;
-        
-        
-        // topologic domain type from config
-        
-        template<typename key_type, typename value_type, typename tail>
-        struct topologic_domain< viennameta::typelist_t< viennameta::static_pair<key_type, value_type>, tail > >
-        {
-            typedef viennameta::typelist_t< viennameta::static_pair<key_type, value_type>, tail > topologic_domain_config;
-            
-            typedef typename viennagrid::result_of::element_container_typemap<topologic_domain_config>::type element_container_typelist;
-            typedef typename viennagrid::storage::result_of::collection< element_container_typelist >::type domain_container_collection_type;
-            
-            typedef typename viennagrid::storage::result_of::continuous_id_generator<
-                    typename viennagrid::result_of::continuous_id_generator_config<topologic_domain_config>::type
-                >::type id_generator_type;
-            
-            typedef typename viennagrid::storage::result_of::physical_inserter<domain_container_collection_type, id_generator_type>::type inserter_type; 
-            
-            typedef topologic_domain_t<domain_container_collection_type, inserter_type> type;
-        };
-        
-        // identity meta functor
-        
-        template<typename domain_container_collection_type_, typename inserter_type_>
-        struct topologic_domain< topologic_domain_t<domain_container_collection_type_, inserter_type_> >
-        {
-            typedef topologic_domain_t<domain_container_collection_type_, inserter_type_> type;
-        };
-        
-        
-        
-        template<typename something>
         struct container_collection;
         
         template<typename typemap>
@@ -161,9 +84,44 @@ namespace viennagrid
         
         
         template<typename domain_container_collection_type_, typename inserter_type_>
-        struct container_collection< topologic_domain_t<domain_container_collection_type_, inserter_type_> >
+        struct container_collection< topology_t<domain_container_collection_type_, inserter_type_> >
         {
-            typedef typename topologic_domain_t<domain_container_collection_type_, inserter_type_>::container_collection_type type;
+            typedef domain_container_collection_type_ type;
+        };
+        
+        
+        
+        
+        
+        template<typename something>
+        struct cell_dimension;
+
+        template<>
+        struct cell_dimension<viennameta::null_type>
+        {
+            static const int value = -1;
+        };
+        
+        template<typename key_type, typename value_type, typename tail>
+        struct cell_dimension< viennameta::typelist_t< viennameta::static_pair<key_type, value_type>, tail > >
+        {
+            typedef typename value_type::value_type element_type;
+            static const int current_topologic_dim = viennagrid::result_of::topologic_dimension<element_type>::value;
+            static const int tail_topologic_dim = cell_dimension<tail>::value;
+            
+            static const int value = (current_topologic_dim < tail_topologic_dim) ? tail_topologic_dim : current_topologic_dim;
+        };
+        
+        template<typename typemap>
+        struct cell_dimension< storage::collection_t<typemap> >
+        {
+            static const int value = cell_dimension<typemap>::value;
+        };
+        
+        template<typename domain_container_collection_type_, typename inserter_type_>
+        struct cell_dimension< topology_t<domain_container_collection_type_, inserter_type_> >
+        {
+            static const int value = cell_dimension<domain_container_collection_type_>::value;
         };
         
         
@@ -203,40 +161,40 @@ namespace viennagrid
         
         
         template<
-            typename topologic_domain_type,
+            typename topology_type,
             typename element_typelist = 
                 typename storage::container_collection::result_of::value_typelist<
-                    typename container_collection<topologic_domain_type>::type
+                    typename container_collection<topology_type>::type
                 >::type,
             typename container_config = 
                 storage::default_container_config
             >
         struct topologic_view
         {
-            typedef typename topologic_domain_type::container_collection_type container_collection_type;
-            typedef typename topologic_domain_type::inserter_type domain_inserter_type;
+            typedef typename topology_type::container_collection_type container_collection_type;
+            typedef typename topology_type::inserter_type domain_inserter_type;
             
             typedef typename filter_element_container<element_typelist, typename container_collection_type::typemap>::type view_container_collection_typemap;
             typedef typename viennagrid::storage::result_of::view_collection<view_container_collection_typemap, container_config>::type view_container_collection_type;
             
             typedef typename viennagrid::storage::result_of::recursive_inserter<view_container_collection_type, domain_inserter_type>::type view_inserter_type;
             
-            typedef topologic_domain_t<view_container_collection_type, view_inserter_type> type; 
+            typedef topology_t<view_container_collection_type, view_inserter_type> type; 
         };
     }
     
     
     template<typename container_collection_type, typename inserter_type>
-    void init_domain( topologic_domain_t<container_collection_type, inserter_type> & domain )
+    void init_domain( topology_t<container_collection_type, inserter_type> & domain )
     {
         typedef typename inserter_type::id_generator_type id_generator_type;
         domain.get_inserter() = inserter_type( domain.get_container_collection(), id_generator_type() );
     }
     
-    template<typename topologic_domain_type>
-    topologic_domain_type create_topologic_domain()
+    template<typename topology_type>
+    topology_type create_topology()
     {
-        topologic_domain_type domain;
+        topology_type domain;
         init_domain(domain);
         return domain;
     }
@@ -263,10 +221,10 @@ namespace viennagrid
     };
     
     
-    template<typename topologic_view_type, typename topologic_domain_type> 
-    void init_view( topologic_view_type & view, topologic_domain_type & domain )
+    template<typename topologic_view_type, typename topology_type> 
+    void init_view( topologic_view_type & view, topology_type & domain )
     {
-        view_domain_setter< typename result_of::container_collection<topologic_domain_type>::type > functor(domain.get_container_collection());
+        view_domain_setter< typename result_of::container_collection<topology_type>::type > functor(domain.get_container_collection());
         viennagrid::storage::collection::for_each(view.get_container_collection(), functor);
         
         view.get_inserter() = typename topologic_view_type::inserter_type( view.get_container_collection(), domain.get_inserter() );
@@ -278,9 +236,9 @@ namespace viennagrid
 
     
     template<typename container_collection_type_, typename inserter_type_>
-    struct create_view_helper< topologic_domain_t<container_collection_type_,inserter_type_> >
+    struct create_view_helper< topology_t<container_collection_type_,inserter_type_> >
     {
-        typedef topologic_domain_t<container_collection_type_,inserter_type_> topologic_view_type;
+        typedef topology_t<container_collection_type_,inserter_type_> topologic_view_type;
         
         template<typename domain_type>
         static topologic_view_type create( domain_type & domain )
@@ -291,8 +249,8 @@ namespace viennagrid
         }
     };
     
-    template<typename topologic_view_type, typename topologic_domain_type>
-    topologic_view_type create_view( topologic_domain_type & domain )
+    template<typename topologic_view_type, typename topology_type>
+    topologic_view_type create_view( topology_type & domain )
     {
         return create_view_helper<topologic_view_type>::create(domain);
     }
@@ -345,23 +303,23 @@ namespace viennagrid
     
     
     template<typename domain_container_collection_type_, typename inserter_type_>
-    topologic_domain_t<domain_container_collection_type_, inserter_type_> & topologic_domain( topologic_domain_t<domain_container_collection_type_, inserter_type_> & domain) { return domain; }
+    topology_t<domain_container_collection_type_, inserter_type_> & topology( topology_t<domain_container_collection_type_, inserter_type_> & domain) { return domain; }
     
     template<typename domain_container_collection_type_, typename inserter_type_>
-    const topologic_domain_t<domain_container_collection_type_, inserter_type_> & topologic_domain( const topologic_domain_t<domain_container_collection_type_, inserter_type_> & domain) { return domain; }
+    const topology_t<domain_container_collection_type_, inserter_type_> & topology( const topology_t<domain_container_collection_type_, inserter_type_> & domain) { return domain; }
     
     template<typename domain_type>
     typename result_of::container_collection< domain_type >::type & container_collection( domain_type & domain)
-    { return topologic_domain(domain).get_container_collection(); }
+    { return topology(domain).get_container_collection(); }
 
     template<typename domain_type>
     const typename result_of::container_collection< domain_type >::type & container_collection( const domain_type & domain)
-    { return topologic_domain(domain).get_container_collection(); }
+    { return topology(domain).get_container_collection(); }
 
 
     template<typename domain_type>
-    typename result_of::topologic_domain<domain_type>::type::inserter_type & inserter(domain_type & domain)
-    { return topologic_domain(domain).get_inserter(); }
+    typename result_of::topology<domain_type>::type::inserter_type & inserter(domain_type & domain)
+    { return topology(domain).get_inserter(); }
     
     
     template<typename domain_type, typename handle_type>
@@ -424,32 +382,32 @@ namespace viennagrid
     {
         
         template<typename domain_container_collection_type_, typename inserter_type_, typename element_type_or_tag>
-        struct element< topologic_domain_t<domain_container_collection_type_, inserter_type_>, element_type_or_tag >
+        struct element< topology_t<domain_container_collection_type_, inserter_type_>, element_type_or_tag >
         {
             typedef typename element<domain_container_collection_type_, element_type_or_tag>::type type;
         };
         
         template<typename domain_container_collection_type_, typename inserter_type_, typename element_type_or_tag>
-        struct handle<topologic_domain_t<domain_container_collection_type_, inserter_type_>, element_type_or_tag>
+        struct handle<topology_t<domain_container_collection_type_, inserter_type_>, element_type_or_tag>
         {
             typedef typename handle<domain_container_collection_type_, element_type_or_tag>::type type;
         };
         
         template<typename domain_container_collection_type_, typename inserter_type_, typename element_type_or_tag>
-        struct const_handle<topologic_domain_t<domain_container_collection_type_, inserter_type_>, element_type_or_tag>
+        struct const_handle<topology_t<domain_container_collection_type_, inserter_type_>, element_type_or_tag>
         {
             typedef typename const_handle<domain_container_collection_type_, element_type_or_tag>::type type;
         };
         
         
         template<typename domain_container_collection_type_, typename inserter_type_, typename element_type_or_tag>
-        struct element_range< topologic_domain_t<domain_container_collection_type_, inserter_type_>, element_type_or_tag >
+        struct element_range< topology_t<domain_container_collection_type_, inserter_type_>, element_type_or_tag >
         {
             typedef typename element_range<domain_container_collection_type_, element_type_or_tag>::type type;
         };
         
         template<typename domain_container_collection_type_, typename inserter_type_, typename element_type_or_tag>
-        struct const_element_range<topologic_domain_t<domain_container_collection_type_, inserter_type_>, element_type_or_tag>
+        struct const_element_range<topology_t<domain_container_collection_type_, inserter_type_>, element_type_or_tag>
         {
             typedef typename const_element_range<domain_container_collection_type_, element_type_or_tag>::type type;
         };
@@ -457,13 +415,13 @@ namespace viennagrid
     
     
     template<typename element_type_or_tag, typename domain_container_collection_type_, typename inserter_type_>
-    typename result_of::element_range<topologic_domain_t<domain_container_collection_type_, inserter_type_>, element_type_or_tag>::type elements(topologic_domain_t<domain_container_collection_type_, inserter_type_> & domain)
+    typename result_of::element_range<topology_t<domain_container_collection_type_, inserter_type_>, element_type_or_tag>::type elements(topology_t<domain_container_collection_type_, inserter_type_> & domain)
     {
         return elements<element_type_or_tag>(domain.get_container_collection());
     }
     
     template<typename element_type_or_tag, typename domain_container_collection_type_, typename inserter_type_>
-    typename result_of::const_element_range<topologic_domain_t<domain_container_collection_type_, inserter_type_>, element_type_or_tag>::type elements(const topologic_domain_t<domain_container_collection_type_, inserter_type_> & domain)
+    typename result_of::const_element_range<topology_t<domain_container_collection_type_, inserter_type_>, element_type_or_tag>::type elements(const topology_t<domain_container_collection_type_, inserter_type_> & domain)
     {
         return elements<element_type_or_tag>(domain.get_container_collection());
     }

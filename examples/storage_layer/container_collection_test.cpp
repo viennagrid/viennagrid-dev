@@ -6,7 +6,6 @@
 using std::cout;
 using std::endl;
 
-
 #include "viennagrid/storage/view.hpp"
 #include "viennagrid/storage/container_collection.hpp"
 #include "viennagrid/storage/inserter.hpp"

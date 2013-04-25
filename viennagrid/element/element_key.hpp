@@ -25,7 +25,7 @@
 
 #include "viennagrid/forwards.hpp"
 #include "viennagrid/element/element.hpp"
-#include "viennagrid/topology/point.hpp"
+#include "viennagrid/topology/vertex.hpp"
 
 #include "viennagrid/storage/container.hpp"
 #include "viennagrid/storage/hidden_key_map.hpp"

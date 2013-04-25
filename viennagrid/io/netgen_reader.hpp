@@ -150,7 +150,7 @@ namespace viennagrid
         {
           long vertex_num;
           //std::vector<VertexHandleType> cell_vertex_handles(topology::bndcells<CellTag, 0>::num);
-          viennagrid::storage::static_array<VertexHandleType, topology::boundary_cells<CellTag, vertex_tag>::num> cell_vertex_handles;
+          viennagrid::storage::static_array<VertexHandleType, element_topology::boundary_cells<CellTag, vertex_tag>::num> cell_vertex_handles;
           
           if (!reader.good())
             throw bad_file_format_exception(filename, "EOF encountered while reading cells (segment index expected).");
@@ -158,7 +158,7 @@ namespace viennagrid
           std::size_t segment_index;
           reader >> segment_index;
     
-          for (int j=0; j<topology::boundary_cells<CellTag, vertex_tag>::num; ++j)
+          for (int j=0; j<element_topology::boundary_cells<CellTag, vertex_tag>::num; ++j)
           {
             if (!reader.good())
               throw bad_file_format_exception(filename, "EOF encountered while reading cells (cell ID expected).");

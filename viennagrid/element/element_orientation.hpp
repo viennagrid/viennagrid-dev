@@ -21,7 +21,6 @@
 
 #include <vector>
 #include <iostream>
-#include <boost/iterator/iterator_concepts.hpp>
 
 #include "viennagrid/forwards.hpp"
 
