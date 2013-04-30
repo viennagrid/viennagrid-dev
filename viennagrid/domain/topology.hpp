@@ -24,6 +24,7 @@
 #include "viennagrid/storage/algorithm.hpp"
 
 #include "viennagrid/config/element_config.hpp"
+#include <boost/concept_check.hpp>
 
 
 
@@ -74,7 +75,25 @@ namespace viennagrid
     namespace result_of
     {
         template<typename something>
-        struct container_collection;
+        struct container_collection_typemap
+        {
+            typedef typename container_collection_typemap< typename container_collection<something>::type >::type type;
+        };
+        
+        template<typename typemap>
+        struct container_collection_typemap< storage::collection_t<typemap> >
+        {
+            typedef typemap type;
+        };
+        
+        template<typename key_type, typename value_type, typename tail>
+        struct container_collection_typemap< viennameta::typelist_t< viennameta::static_pair<key_type, value_type>, tail > >
+        {
+            typedef viennameta::typelist_t< viennameta::static_pair<key_type, value_type>, tail > type;
+        };
+        
+
+        
         
         template<typename typemap>
         struct container_collection< storage::collection_t<typemap> >
@@ -496,6 +515,94 @@ namespace viennagrid
         {
             typedef typename const_element_range<domain_container_collection_type_, element_type_or_tag>::type type;
         };
+        
+        
+        
+        
+
+        
+        
+        
+        
+        template<typename typemap>
+        struct topologic_cell_dimension_impl;
+        
+        template<>
+        struct topologic_cell_dimension_impl<viennameta::null_type>
+        {
+            static const int value = -1;
+        };
+        
+        template<typename element_type, typename element_container_type, typename tail>
+        struct topologic_cell_dimension_impl< viennameta::typelist_t< viennameta::static_pair<element_type, element_container_type>, tail > >
+        {
+            static const int tail_cell_dimension = topologic_cell_dimension_impl<tail>::value;
+            static const int current_element_dimension = topologic_dimension<element_type>::value;
+            
+            static const int value = (tail_cell_dimension > current_element_dimension) ? tail_cell_dimension : current_element_dimension;
+        };
+        
+        template<typename something>
+        struct topologic_cell_dimension
+        {
+            static const int value = topologic_cell_dimension_impl< typename container_collection_typemap<something>::type >::value;
+        };
+        
+        
+        
+
+        
+        template<typename typemap, int topologic_dimension>
+        struct elements_of_topologic_dim_impl;
+        
+        template<int topologic_dimension>
+        struct elements_of_topologic_dim_impl< viennameta::null_type, topologic_dimension >
+        {
+            typedef viennameta::null_type type;
+        };
+        
+        template<typename element_type, typename element_container_type, typename tail, int topologic_dimension>
+        struct elements_of_topologic_dim_impl< viennameta::typelist_t< viennameta::static_pair<element_type, element_container_type>, tail >, topologic_dimension >
+        {
+            typedef typename elements_of_topologic_dim_impl<tail, topologic_dimension>::type tail_typelist;
+            
+            typedef typename viennameta::_if<
+                viennagrid::result_of::topologic_dimension<element_type>::value == topologic_dimension,
+                typename viennameta::typelist::result_of::push_back<tail_typelist, element_type>::type,
+                tail_typelist
+            >::type type;
+        };
+        
+        template<typename something, int topologic_dimension>
+        struct elements_of_topologic_dim
+        {
+            typedef typename elements_of_topologic_dim_impl< typename container_collection_typemap<something>::type, topologic_dimension>::type type;
+        };
+        
+        
+        
+        template<typename something>
+        struct cell_types
+        {
+            typedef typename elements_of_topologic_dim<
+                something,
+                topologic_cell_dimension<something>::value
+            >::type type;
+        };
+
+        
+        template<typename something>
+        struct cell_type
+        {
+            typedef typename cell_types<something>::type all_cell_types;
+            typedef typename viennameta::_static_assert< viennameta::typelist::result_of::size<all_cell_types>::value == 1 >::type static_assert_typedef;
+            
+            typedef typename viennameta::typelist::result_of::at<all_cell_types,0>::type type;
+        };
+        
+        
+        
+        
     }
     
     

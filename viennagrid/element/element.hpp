@@ -662,14 +662,17 @@ namespace viennagrid
         
         
         
-        template<typename element_type>
-        struct topologic_dimension;
-        
-        template<typename element_tag_, typename boundary_cell_container_typelist, typename id_type>
-        struct topologic_dimension< element_t<element_tag_, boundary_cell_container_typelist, id_type>  >
+        template<typename element_type_or_tag>
+        struct topologic_dimension
         {
-            static const int value = element_tag_::dim;
+            static const int value = element_tag<element_type_or_tag>::type::dim;
         };
+        
+//         template<typename element_tag_, typename boundary_cell_container_typelist, typename id_type>
+//         struct topologic_dimension< element_t<element_tag_, boundary_cell_container_typelist, id_type>  >
+//         {
+//             static const int value = element_tag_::dim;
+//         };
         
         
         

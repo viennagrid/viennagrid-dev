@@ -290,21 +290,33 @@ namespace viennagrid
   /** @brief The metafunction layer. Provides type generators that derive the respective type from the domain configuration */
   namespace result_of
   {
+        template<typename something>
+        struct topology;
+        
+        template<typename something>
+        struct container_collection;
       
-            template<typename something>
-            struct topology;
-
+        template<typename something>
+        struct container_collection_typemap;
 
         template<typename something>
         struct metainfo_collection;
         
+        
+        
         template<typename something>
         struct point_type;
         
-        template<typename point_type>
+        template<typename something>
         struct coord_type
         {
-            typedef typename point_type::value_type type;
+            typedef typename coord_type< typename point_type<something>::type >::type type;
+        };
+        
+        template<typename something>
+        struct geometric_dimension
+        {
+            static const int value = geometric_dimension< typename point_type<something>::type >::value;
         };
         
 

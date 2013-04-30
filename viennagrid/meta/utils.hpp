@@ -43,6 +43,17 @@ namespace viennameta
     
     
     // error generator
+    template<bool error>
+    struct _static_assert
+    {
+        typedef void type;
+    };
+    
+    template<>
+    struct _static_assert<false>
+    {};
+
+    
     template<typename _type, bool error>
     struct _identity_errcheck
     {

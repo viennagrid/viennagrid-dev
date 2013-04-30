@@ -108,7 +108,7 @@ namespace viennagrid
       cellvertices[2] = *viennagrid::advance(vertex_handle_container.begin(), i2);
       cellvertices[3] = *viennagrid::advance(vertex_handle_container.begin(), i3);
       
-      viennagrid::create_element<CellType>( domain, cellvertices );
+      viennagrid::create_element<CellType>( domain, cellvertices.begin(), cellvertices.end() );
   }
   
   
@@ -164,7 +164,7 @@ namespace viennagrid
       //CellType new_cell;
       //new_cell.vertices(vertices);
       //segment_out.push_back(new_cell);
-      viennagrid::create_element<CellType>( segment_out, vertex_handles );
+      viennagrid::create_element<CellType>( segment_out, vertex_handles.begin(), vertex_handles.end() );
 
     }    
 

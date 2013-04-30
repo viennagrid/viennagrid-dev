@@ -174,13 +174,13 @@ namespace viennagrid
     return detail::centroid(cell, geometric_container, typename CellType::tag());
   }
   
-  template<typename ElementTypeOrTag, typename vector_type, typename topology_type, typename metainfo_collection_type>
+  template<typename ElementTypeOrTag, typename config_type, typename topology_type, typename metainfo_collection_type>
   typename viennagrid::result_of::coord_type<
     typename viennagrid::result_of::point_type<
-        domain_t<vector_type, topology_type, metainfo_collection_type>
+        domain_t<config_type, topology_type, metainfo_collection_type>
     >::type
   >::type
-  centroid(const domain_t<vector_type, topology_type, metainfo_collection_type> & domain)
+  centroid(const domain_t<config_type, topology_type, metainfo_collection_type> & domain)
   {
       return detail::centroid_domain<ElementTypeOrTag>(domain);
   }

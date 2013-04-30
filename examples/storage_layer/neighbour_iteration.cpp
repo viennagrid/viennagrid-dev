@@ -99,28 +99,28 @@ int main()
     
     // creates the tetrahedron within the domain, all boundary cell generation is done here implicit
     handles[0] = vh0; handles[1] = vh1; handles[2] = vh3;
-    triangle_handle_type th0 = viennagrid::create_element<triangle_type>( domain, handles );
+    triangle_handle_type th0 = viennagrid::create_element<triangle_type>( domain, handles.begin(), handles.end() );
 
     handles[0] = vh1; handles[1] = vh4; handles[2] = vh3;
-    triangle_handle_type th1 = viennagrid::create_element<triangle_type>( domain, handles );
+    triangle_handle_type th1 = viennagrid::create_element<triangle_type>( domain, handles.begin(), handles.end() );
     
     handles[0] = vh1; handles[1] = vh5; handles[2] = vh4;
-    viennagrid::create_element<triangle_type>( domain, handles );
+    viennagrid::create_element<triangle_type>( domain, handles.begin(), handles.end() );
     
     handles[0] = vh1; handles[1] = vh2; handles[2] = vh5;
-    viennagrid::create_element<triangle_type>( domain, handles );
+    viennagrid::create_element<triangle_type>( domain, handles.begin(), handles.end() );
     
     handles[0] = vh3; handles[1] = vh7; handles[2] = vh6;
-    viennagrid::create_element<triangle_type>( domain, handles );
+    viennagrid::create_element<triangle_type>( domain, handles.begin(), handles.end() );
     
     handles[0] = vh3; handles[1] = vh4; handles[2] = vh7;
-    viennagrid::create_element<triangle_type>( domain, handles );
+    viennagrid::create_element<triangle_type>( domain, handles.begin(), handles.end() );
     
     handles[0] = vh4; handles[1] = vh5; handles[2] = vh7;
-    viennagrid::create_element<triangle_type>( domain, handles );
+    viennagrid::create_element<triangle_type>( domain, handles.begin(), handles.end() );
 
     handles[0] = vh5; handles[1] = vh8; handles[2] = vh7;
-    viennagrid::create_element<triangle_type>( domain, handles );
+    viennagrid::create_element<triangle_type>( domain, handles.begin(), handles.end() );
 
 
 

@@ -154,7 +154,7 @@ int main()
     handles[3] = vh3;
     
     // creates the tetrahedron within the domain, all boundary cell generation is done here implicit
-    viennagrid::create_element<tetrahedron_type>( geometric_view_1, handles );
+    viennagrid::create_element<tetrahedron_type>( geometric_view_1, handles.begin(), handles.end() );
     
     
     
@@ -191,7 +191,7 @@ int main()
     handles[3] = vh7;
     
     // creates the tetrahedron within the domain, all boundary cell generation is done here implicit
-    viennagrid::create_element<tetrahedron_type>( geometric_view_2, handles );
+    viennagrid::create_element<tetrahedron_type>( geometric_view_2, handles.begin(), handles.end() );
     
     
     //

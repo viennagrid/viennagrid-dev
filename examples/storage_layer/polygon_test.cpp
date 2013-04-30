@@ -75,18 +75,18 @@ int main()
     typedef viennagrid::result_of::handle<domain_type, viennagrid::polygon_tag>::type polygon_handle_type;
     
     
-    viennagrid::storage::static_array<vertex_handle_type, 7> v;
+    viennagrid::storage::static_array<vertex_handle_type, 7> handles;
     
-    v[0] = viennagrid::create_element<vertex_type>( domain, point_type(0, 0) );
-    v[1] = viennagrid::create_element<vertex_type>( domain, point_type(1, 0) );
-    v[2] = viennagrid::create_element<vertex_type>( domain, point_type(2, 1) );
-    v[3] = viennagrid::create_element<vertex_type>( domain, point_type(2, 2) );
-    v[4] = viennagrid::create_element<vertex_type>( domain, point_type(1, 2) );
-    v[5] = viennagrid::create_element<vertex_type>( domain, point_type(0, 1) );
-    v[6] = viennagrid::create_element<vertex_type>( domain, point_type(0.5, 0.5) );
+    handles[0] = viennagrid::create_vertex( domain, point_type(0, 0) );
+    handles[1] = viennagrid::create_vertex( domain, point_type(1, 0) );
+    handles[2] = viennagrid::create_vertex( domain, point_type(2, 1) );
+    handles[3] = viennagrid::create_vertex( domain, point_type(2, 2) );
+    handles[4] = viennagrid::create_vertex( domain, point_type(1, 2) );
+    handles[5] = viennagrid::create_vertex( domain, point_type(0, 1) );
+    handles[6] = viennagrid::create_vertex( domain, point_type(0.5, 0.5) );
     
     
-    viennagrid::create_element<polygon_type>( domain, v );
+    viennagrid::create_element<polygon_type>( domain, handles.begin(), handles.end() );
     
     std::cout << viennagrid::elements<viennagrid::polygon_tag>(domain)[0] << std::endl;
     

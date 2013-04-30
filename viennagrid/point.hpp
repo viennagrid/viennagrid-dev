@@ -785,6 +785,11 @@ namespace viennagrid
             typedef CoordType type;
         };
         
+        template<typename CoordType, typename CoordinateSystem>
+        struct geometric_dimension< point_t<CoordType, CoordinateSystem> >
+        {
+            static const int value = point_t<CoordType, CoordinateSystem>::dim;
+        };
     }
 
 }

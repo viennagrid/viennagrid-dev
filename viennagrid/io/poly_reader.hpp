@@ -351,7 +351,7 @@ namespace viennagrid
 
                 
 //             CellHandleType plc_handle =
-            viennagrid::create_element<CellType>(
+            viennagrid::create_plc(
                 domain,
 //                 polygons.begin(), polygons.end(),
                 lines.begin(), lines.end(),

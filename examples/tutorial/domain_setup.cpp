@@ -42,7 +42,7 @@ void setup_cell(DomainType & domain,
   vertices[1] = viennagrid::elements<viennagrid::vertex_tag>(domain).handle_at( id1 );
   vertices[2] = viennagrid::elements<viennagrid::vertex_tag>(domain).handle_at( id2 );
   
-  viennagrid::create_element<CellType>(segment, vertices);
+  viennagrid::create_element<CellType>(segment, vertices.begin(), vertices.end());
 }
 
 //
@@ -107,12 +107,12 @@ int main()
   // Step 2: Add vertices to the domain. 
   //         Note that vertices with IDs are enumerated in the order they are pushed to the domain.
   //
-  viennagrid::create_element<VertexType>(domain, PointType(0,0));
-  viennagrid::create_element<VertexType>(domain, PointType(1,0));
-  viennagrid::create_element<VertexType>(domain, PointType(2,0));
-  viennagrid::create_element<VertexType>(domain, PointType(2,1));
-  viennagrid::create_element<VertexType>(domain, PointType(1,1));
-  viennagrid::create_element<VertexType>(domain, PointType(0,1));
+  VertexHandleType vh0 = viennagrid::create_vertex(domain, PointType(0,0));
+  VertexHandleType vh1 = viennagrid::create_vertex(domain, PointType(1,0));
+  VertexHandleType vh2 = viennagrid::create_vertex(domain, PointType(2,0));
+  VertexHandleType vh3 = viennagrid::create_vertex(domain, PointType(2,1));
+  VertexHandleType vh4 = viennagrid::create_vertex(domain, PointType(1,1));
+  VertexHandleType vh5 = viennagrid::create_vertex(domain, PointType(0,1));
 
   
   //
@@ -127,12 +127,12 @@ int main()
   //VertexType * cell_vertices[3]; //holds pointers to the respective vertices in the domain
 
   // First triangle: (do not use v0, v1, etc. for vertex setup!)
-  vertices[0] = viennagrid::elements<viennagrid::vertex_tag>(domain).handle_at(0);
-  vertices[1] = viennagrid::elements<viennagrid::vertex_tag>(domain).handle_at(1);
-  vertices[2] = viennagrid::elements<viennagrid::vertex_tag>(domain).handle_at(5);
+  vertices[0] = vh0;
+  vertices[1] = vh1;
+  vertices[2] = vh5;
   //Note that vertices are rearranged internally if they are not supplied in mathematically positive order.
   
-  viennagrid::create_element<CellType>(seg0, vertices); //copies 'cell' to the domain. 'cell' can be reused for setting up the other cells.
+  viennagrid::create_element<CellType>(seg0, vertices.begin(), vertices.end()); //copies 'cell' to the domain. 'cell' can be reused for setting up the other cells.
   
   
   // Second triangle:
@@ -142,7 +142,8 @@ int main()
   setup_cell<CellType>(domain, seg1, 1, 2, 4); // Note that we push to 'seg1' now.
 
   // Fourth triangle:
-  setup_cell<CellType>(domain, seg1, 2, 3, 4);
+//   setup_cell<CellType>(domain, seg1, 2, 3, 4);
+  viennagrid::create_triangle( seg1, vh2, vh3, vh4 );
 
   //
   // That's it. The domain consisting of two segments is now set up.
