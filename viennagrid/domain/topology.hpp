@@ -89,6 +89,12 @@ namespace viennagrid
             typedef domain_container_collection_type_ type;
         };
         
+        template<typename domain_type>
+        struct element_typelist
+        {
+            typedef typename container_collection<domain_type>::type container_collection;
+            typedef typename viennagrid::storage::container_collection::result_of::value_typelist<container_collection>::type type;
+        };
         
         
         
