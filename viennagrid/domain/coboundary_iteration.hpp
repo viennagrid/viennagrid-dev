@@ -162,6 +162,26 @@ namespace viennagrid
         }
     }
     
+    template<typename coboundary_type_or_tag, typename domain_or_container_type, typename handle_type>
+    typename result_of::coboundary_range<domain_or_container_type, coboundary_type_or_tag>::type create_coboundary_elements(domain_or_container_type & domain, handle_type handle)
+    {
+        typedef typename viennagrid::storage::handle::value_type<handle_type>::type element_type;
+        typedef typename result_of::element_tag<coboundary_type_or_tag>::type coboundary_tag;
+        typedef typename result_of::coboundary_container<domain_or_container_type, coboundary_type_or_tag>::type container_type;
+        typedef typename result_of::coboundary_range<domain_or_container_type, coboundary_type_or_tag>::type range_type;
+        
+        typedef viennagrid::coboundary_key<domain_or_container_type, coboundary_tag> key_type;
+        key_type key(domain);
+        
+        element_type & element = viennagrid::dereference_handle(domain, handle);
+        container_type * container = viennadata::find<key_type, container_type>(key)(element);
+//        cout << " coboundary_elements handle=" << handle << " " << container << endl;
+        
+
+        viennadata::access<key_type, container_type>(key)(element) = create_coboundary_container<coboundary_type_or_tag>(domain, handle);
+        return range_type( viennadata::access<key_type, container_type>(key)(element) );
+    }
+    
     
     template<typename coboundary_type_or_tag, typename domain_or_container_type, typename handle_type>
     typename result_of::const_coboundary_range<domain_or_container_type, coboundary_type_or_tag>::type coboundary_elements(const domain_or_container_type & domain, handle_type handle)
@@ -189,6 +209,24 @@ namespace viennagrid
             viennadata::access<key_type, container_type>(key)(element) = create_coboundary_container<coboundary_type_or_tag>(domain, handle);
             return range_type( viennadata::access<key_type, container_type>(key)(element) );
         }
+    }
+    
+    template<typename coboundary_type_or_tag, typename domain_or_container_type, typename handle_type>
+    typename result_of::const_coboundary_range<domain_or_container_type, coboundary_type_or_tag>::type create_coboundary_elements(const domain_or_container_type & domain, handle_type handle)
+    {
+        typedef typename viennagrid::storage::handle::value_type<handle_type>::type element_type;
+        typedef typename result_of::element_tag<coboundary_type_or_tag>::type coboundary_tag;
+        typedef typename result_of::const_coboundary_container<domain_or_container_type, coboundary_type_or_tag>::type container_type;
+        typedef typename result_of::const_coboundary_range<domain_or_container_type, coboundary_type_or_tag>::type range_type;
+        
+        typedef viennagrid::coboundary_key<domain_or_container_type, coboundary_tag> key_type;
+        key_type key(domain);
+        
+        const element_type & element = viennagrid::dereference_handle(domain, handle);
+        container_type * container = viennadata::find<key_type, container_type>(key)(element);
+
+        viennadata::access<key_type, container_type>(key)(element) = create_coboundary_container<coboundary_type_or_tag>(domain, handle);
+        return range_type( viennadata::access<key_type, container_type>(key)(element) );
     }
 }
 
