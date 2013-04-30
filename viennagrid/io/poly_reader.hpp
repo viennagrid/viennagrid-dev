@@ -291,7 +291,7 @@ namespace viennagrid
                 {
                     long id;
                     current_line >> id;
-                    vertex_handles[k] = *viennagrid::find_handle( domain, VertexIDType(id) );
+                    vertex_handles[k] = viennagrid::find_by_id( domain, VertexIDType(id) ).handle();
 //                     used_vertices.insert( vertex_handles[k] );
 //                     used_vertices.insert_handle( vertex_handles[k] );
 //                     std::cout << "  id " << id << " = " << viennagrid::point( domain, vertex_handles[k]) << std::endl;
