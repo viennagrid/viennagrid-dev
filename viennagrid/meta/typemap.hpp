@@ -329,6 +329,42 @@ namespace viennameta
             };
             
             
+            
+            
+            template<typename typemap_>
+            struct key_typelist;
+            
+            template<>
+            struct key_typelist<viennameta::null_type>
+            {
+                typedef viennameta::null_type type;
+            };
+            
+            template<typename key_, typename value_, typename tail>
+            struct key_typelist< viennameta::typelist_t< viennameta::static_pair<key_, value_> , tail> >
+            {
+                typedef viennameta::typelist_t< key_, typename key_typelist<tail>::type > type;
+            };
+            
+            
+            
+            
+            template<typename typemap_>
+            struct value_typelist;
+            
+            template<>
+            struct value_typelist<viennameta::null_type>
+            {
+                typedef viennameta::null_type type;
+            };
+            
+            template<typename key_, typename value_, typename tail>
+            struct value_typelist< viennameta::typelist_t< viennameta::static_pair<key_, value_> , tail> >
+            {
+                typedef viennameta::typelist_t< value_, typename key_typelist<tail>::type > type;
+            };
+            
+            
         }
         
     }
