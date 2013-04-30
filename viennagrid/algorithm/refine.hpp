@@ -23,6 +23,7 @@
 #include "viennagrid/algorithm/norm.hpp"
 #include "viennadata/api.hpp"
 
+#include "viennagrid/refinement/triangle.hpp"
 #include "viennagrid/refinement/tetrahedron.hpp"
 
 /** @file refine.hpp
