@@ -184,11 +184,11 @@ namespace viennagrid
                 
                 const_iterator(base_const_iterator it) : base_const_iterator(it) {}
                 
-                const_iterator & operator++() { base_iterator::operator++(); return *this; }
-                const_iterator operator++(int) { base_iterator::operator++(int()); return *this; }
+                const_iterator & operator++() { base_const_iterator::operator++(); return *this; }
+                const_iterator operator++(int) { base_const_iterator::operator++(int()); return *this; }
                 
-                const_iterator & operator--() { base_iterator::operator--(); return *this; }
-                const_iterator operator--(int) { base_iterator::operator--(int()); return *this; }
+                const_iterator & operator--() { base_const_iterator::operator--(); return *this; }
+                const_iterator operator--(int) { base_const_iterator::operator--(int()); return *this; }
                 
                 value_type const & value() { return base_const_iterator::operator*(); }
                 value_type const &  value() const { return base_const_iterator::operator*(); }
