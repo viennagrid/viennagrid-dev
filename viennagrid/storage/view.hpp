@@ -58,6 +58,9 @@ namespace viennagrid
                 typedef view_t::pointer pointer;
                 typedef typename std::iterator_traits<base>::iterator_category iterator_category;
                 
+                handle_type & handle() { return base::operator*(); }
+                const_handle_type & handle() const { return base::operator*(); }
+                
                 reference operator* () { return *(base::operator*()); }
                 const reference operator* () const { return *(base::operator*()); }
                 
@@ -80,6 +83,9 @@ namespace viennagrid
                 typedef view_t::const_pointer pointer;
                 typedef typename std::iterator_traits<base>::iterator_category iterator_category;
                 
+                const_handle_type & handle() { return base::operator*(); }
+                const_handle_type & handle() const { return base::operator*(); }
+                
                 reference operator* () { return *(base::operator*()); }
                 const reference operator* () const { return *(base::operator*()); }
                 
@@ -98,6 +104,9 @@ namespace viennagrid
                 typedef view_t::reference reference;
                 typedef view_t::pointer pointer;
                 typedef typename std::iterator_traits<base>::iterator_category iterator_category;
+                
+                handle_type & handle() { return base::operator*(); }
+                const_handle_type & handle() const { return base::operator*(); }
                 
                 reference operator* () { return *(base::operator*()); }
                 const reference operator* () const { return *(base::operator*()); }
@@ -120,6 +129,9 @@ namespace viennagrid
                 typedef view_t::const_reference reference;
                 typedef view_t::const_pointer pointer;
                 typedef typename std::iterator_traits<base>::iterator_category iterator_category;
+                
+                const_handle_type & handle() { return base::operator*(); }
+                const_handle_type & handle() const { return base::operator*(); }
                 
                 reference operator* () { return *(base::operator*()); }
                 const reference operator* () const { return *(base::operator*()); }
@@ -237,6 +249,9 @@ namespace viennagrid
                 typedef view_t::pointer pointer;
                 typedef typename std::iterator_traits<base>::iterator_category iterator_category;
                 
+                const_handle_type & handle() { return base::operator*(); }
+                const_handle_type & handle() const { return base::operator*(); }
+                
                 reference operator* () { return *(base::operator*()); }
                 const reference operator* () const { return *(base::operator*()); }
                 
@@ -258,6 +273,9 @@ namespace viennagrid
                 typedef view_t::const_pointer pointer;
                 typedef typename std::iterator_traits<base>::iterator_category iterator_category;
                 
+                const_handle_type & handle() { return base::operator*(); }
+                const_handle_type & handle() const { return base::operator*(); }
+                
                 reference operator* () { return *(base::operator*()); }
                 const reference operator* () const { return *(base::operator*()); }
                 
@@ -276,6 +294,9 @@ namespace viennagrid
                 typedef view_t::reference reference;
                 typedef view_t::pointer pointer;
                 typedef typename std::iterator_traits<base>::iterator_category iterator_category;
+                
+                const_handle_type handle() { return base::operator*(); }
+                const_handle_type handle() const { return base::operator*(); }
                 
                 reference operator* () { return *(base::operator*()); }
                 const reference operator* () const { return *(base::operator*()); }
@@ -297,6 +318,9 @@ namespace viennagrid
                 typedef view_t::const_reference reference;
                 typedef view_t::const_pointer pointer;
                 typedef typename std::iterator_traits<base>::iterator_category iterator_category;
+                
+                const_handle_type & handle() { return base::operator*(); }
+                const_handle_type & handle() const { return base::operator*(); }
                 
                 reference operator* () { return *(base::operator*()); }
                 const reference operator* () const { return *(base::operator*()); }
