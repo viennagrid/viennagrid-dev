@@ -107,6 +107,12 @@ namespace viennagrid
                 std::pair<typename container_type::iterator, bool> ret = container.insert( std::make_pair( key_type(element), element ) );
                 return std::make_pair( iterator(ret.first), ret.second );
             }
+            
+            iterator erase( iterator to_erase )
+            {
+                container.erase( to_erase++ );
+                return to_erase;
+            }
 
             
             size_type size() const { return container.size(); }
