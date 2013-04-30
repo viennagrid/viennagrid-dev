@@ -490,6 +490,7 @@ namespace viennagrid
     
     
     
+    
     template<typename domain_type, typename id_type>
     typename viennagrid::result_of::iterator< typename viennagrid::result_of::element_range<domain_type, typename id_type::value_type::tag>::type >::type
             find_by_id(domain_type & domain, id_type id)
@@ -500,13 +501,13 @@ namespace viennagrid
         typedef typename viennagrid::result_of::iterator<RangeType>::type RangeIterator;
         
         RangeType range = viennagrid::elements<element_tag>(domain);
-        for (RangeIterator it = range.handle_begin(); it != range.handle_end(); ++it)
+        for (RangeIterator it = range.begin(); it != range.end(); ++it)
         {
             if ( viennagrid::dereference_handle(domain, it.handle()).id() == id )
                 return it;
         }
         
-        return range.handle_end();
+        return range.end();
     }
     
     template<typename domain_type, typename id_type>
@@ -519,13 +520,13 @@ namespace viennagrid
         typedef typename viennagrid::result_of::const_iterator<RangeType>::type RangeIterator;
         
         RangeType range = viennagrid::elements<element_tag>(domain);
-        for (RangeIterator it = range.handle_begin(); it != range.handle_end(); ++it)
+        for (RangeIterator it = range.begin(); it != range.end(); ++it)
         {
             if ( viennagrid::dereference_handle(domain, it.handle()).id() == id )
                 return it;
         }
         
-        return range.handle_end();
+        return range.end();
     }
 
     template<typename domain_type, typename handle_type>
@@ -544,7 +545,7 @@ namespace viennagrid
                 return it;
         }
         
-        return range.handle_end();
+        return range.end();
     }
     
     template<typename domain_type, typename handle_type>
@@ -563,7 +564,7 @@ namespace viennagrid
                 return it;
         }
         
-        return range.handle_end();
+        return range.end();
     }
     
 }
