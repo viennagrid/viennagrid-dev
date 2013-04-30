@@ -339,8 +339,6 @@ namespace viennagrid
         return create_view_helper<topologic_view_type>::create(domain);
     }
     
-    
-    
     template<typename container_collection_type>
     class handle_domain_functor
     {
@@ -369,6 +367,9 @@ namespace viennagrid
     }
     
     
+    
+    
+    
     template<typename view_type, typename domain_type, typename handle_type>
     void add_handle( view_type & view, domain_type & domain, handle_type handle )
     {
@@ -376,9 +377,9 @@ namespace viennagrid
         value_type & element = dereference_handle(domain, handle);
         
         typedef typename viennagrid::result_of::element_range< view_type, value_type >::type range_type;
-        typedef typename viennagrid::result_of::handle_iterator<range_type>::type iterator_type;
+        typedef typename viennagrid::result_of::iterator<range_type>::type iterator_type;
         
-        iterator_type it = find_handle( view, element.id() );
+        iterator_type it = find_by_id( view, element.id() );
         if ( it == elements<value_type>(view).end() )
             viennagrid::storage::collection::get<value_type>( container_collection(view) ).insert_handle( handle );
     }
