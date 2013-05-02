@@ -180,6 +180,9 @@ namespace viennagrid
     }
     
     
+    
+
+    
     template< typename element_type, typename metainfo_type, typename container_typemap >
     typename result_of::metainfo_container< viennagrid::storage::collection_t<container_typemap>, element_type, metainfo_type>::type & metainfo_container( viennagrid::storage::collection_t<container_typemap> & container_collection )
     {
@@ -195,6 +198,31 @@ namespace viennagrid
     
     
     
+    
+    template<typename container_type, typename element_type>
+    typename container_type::value_type & look_up(
+            container_type & container,
+            element_type const & element
+        )
+    {
+//         std::cout << "Look-Up on Metainfo-Collection" << std::endl;
+        return metainfo::look_up( container, element );
+    }
+    
+    template<typename container_type, typename element_type>
+    typename container_type::value_type const & look_up(
+            container_type const & container,
+            element_type const & element
+        )
+    {
+//         std::cout << "Look-Up on Metainfo-Collection" << std::endl;
+        return metainfo::look_up( container, element );
+    }
+    
+    
+    
+    
+    
     template<typename metainfo_type, typename metainfo_container_typemap, typename element_type>
     typename metainfo::result_of::associative_container_value_type<
         typename result_of::metainfo_container<
@@ -204,7 +232,7 @@ namespace viennagrid
         >::type
     >::type & look_up(
             viennagrid::storage::collection_t<metainfo_container_typemap> & metainfo_collection,
-            const element_type & element
+            element_type const & element
         )
     {
 //         std::cout << "Look-Up on Metainfo-Collection" << std::endl;
@@ -219,8 +247,8 @@ namespace viennagrid
             metainfo_type
         >::type
     >::type & look_up(
-            const viennagrid::storage::collection_t<metainfo_container_typemap> & metainfo_collection,
-            const element_type & element
+            viennagrid::storage::collection_t<metainfo_container_typemap> const & metainfo_collection,
+            element_type const & element
         )
     {
 //         std::cout << "Look-Up (const) on Metainfo-Collection" << std::endl;
