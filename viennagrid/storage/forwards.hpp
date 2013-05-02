@@ -8,26 +8,12 @@ namespace viennagrid
     
     namespace storage
     {
-        
-        // reference
-//         struct pointer_reference_tag {};
-//         
-//         template<typename container_type>
-//         struct iterator_reference_tag {};
-//         
-//         template<typename container_type>
-//         struct id_reference_tag {};
-
 
         // handles
         struct no_handle_tag;
         struct iterator_handle_tag;
         struct pointer_handle_tag;
         struct id_handle_tag;
-
-        
-        
-        
         
         // container
         struct default_tag;
