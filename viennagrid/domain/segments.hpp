@@ -3,12 +3,9 @@
 
 #include "viennagrid/forwards.hpp"
 
-namespace viennameta {
-template<class first_, class second_ >
-struct static_pair;}
-
 namespace viennagrid
 {
+
     template<typename base_type = int, base_type invalid_id = -1>
     struct segment_id_t
     {
@@ -16,7 +13,7 @@ namespace viennagrid
         segment_id_t() : id(invalid_id) {}
         segment_id_t( base_type id_ ) : id(id_) {}
         
-        bool is_valid() { return id == invalid_id; }
+        bool is_valid() const { return id == invalid_id; }
         operator base_type() const { return id; }
         
     private:
@@ -30,162 +27,127 @@ namespace viennagrid
     
     
     template<typename element_tag, unsigned int geometric_dimension, typename segmentation_type_tag, typename segment_id_type>
-    struct element_segment_info;
+    struct element_segment_info_t;
 
-    template<typename segment_id_type>
-    struct element_segment_info<line_tag, 1, disjunct_segmentation_tag, segment_id_type>
+    template<typename element_tag_, unsigned int geometric_dimension_, typename segment_id_type_>
+    struct element_segment_info_t<element_tag_, geometric_dimension_, disjunct_segmentation_tag, segment_id_type_>
     {
+        typedef segment_id_type_ segment_id_type;
+        
+        element_segment_info_t() {}
+        element_segment_info_t( segment_id_type const & segment_id_ ) : segment_id(segment_id_) {}
+        
         segment_id_type segment_id;
-    };
+        
+        template<typename segmentation_type>
+        void add_segments( segmentation_type & segmentation ) const { segmentation.add_segment(segment_id); }
+    };    
     
-    template<typename segment_id_type>
-    struct element_segment_info<triangle_tag, 2, disjunct_segmentation_tag, segment_id_type>
+    template<typename segment_id_type_>
+    struct element_segment_info_t<triangle_tag, 3, disjunct_segmentation_tag, segment_id_type_>
     {
-        segment_id_type segment_id;
-    };
-    
-    template<typename segment_id_type>
-    struct element_segment_info<tetrahedron_tag, 3, disjunct_segmentation_tag, segment_id_type>
-    {
-        segment_id_type segment_id;
-    };
-    
-    template<typename segment_id_type>
-    struct element_segment_info<triangle_tag, 3, disjunct_segmentation_tag, segment_id_type>
-    {
+        typedef segment_id_type_ segment_id_type;
+        
+        element_segment_info_t() {}
+        element_segment_info_t( segment_id_type const & positive_orientation_segment_id_,
+                                segment_id_type const & negative_orientation_segment_id_) :
+                        positive_orientation_segment_id(positive_orientation_segment_id_), negative_orientation_segment_id(negative_orientation_segment_id_) {}
+        
         segment_id_type positive_orientation_segment_id;
         segment_id_type negative_orientation_segment_id;
-    };
-    
-
-    
-    template<typename element_segmentation_info_type_, typename segmentation_id_type_>
-    struct segmentation_info
-    {
-        typedef element_segmentation_info_type_ element_segmentation_info_type;
-        typedef segmentation_id_type_ segmentation_id_type;
         
-        element_segmentation_info_type & operator() () { return default_segmentation; }
-        element_segmentation_info_type const & operator() () const { return default_segmentation; }
-        
-        element_segmentation_info_type & operator[] ( segmentation_id_type const & id ) { return segmentations[id]; }
-        element_segmentation_info_type const & operator() ( segmentation_id_type const & id ) const
+        template<typename segmentation_type>
+        void add_segments( segmentation_type & segmentation ) const
         {
-            typename std::map<segmentation_id_type, element_segmentation_info_type>::const_iterator it = segmentations.find(id);
-            assert( it != segmentations.end() );
-            return *it;
+            segmentation.add_segment(positive_orientation_segment_id);
+            segmentation.add_segment(negative_orientation_segment_id);
         }
-
-        
-        element_segmentation_info_type default_segmentation;
-        std::map<segmentation_id_type, element_segmentation_info_type> segmentations;
     };
     
     
     
-    
-    
-//     template<typename domain_type, typename element_type>
-    
-    
-    
-    
-    
+    template<typename segmentation_type, typename element_segment_info_type>
+    void add_segments( segmentation_type & segmentation, element_segment_info_type const & segment_element_info )
+    {
+        segment_element_info.add_segments(segmentation);
+    }
     
     
     
     namespace result_of
     {
-        template<typename domain_type, typename element_type_or_tag,
-            typename segmentation_type_tag = disjunct_segmentation_tag,
-            typename segment_id_type = segment_id_t<>,
-            typename segmentation_id_type = int
-            >
-        struct segment_info
+        template<typename something>
+        struct segment_id_type
+        {
+            typedef typename something::segment_id_type type;
+        };
+    }
+    
+    
+    
+    template<typename element_type_, typename element_segment_info_container_type_>
+    class segmentation_t
+    {
+    public:
+        typedef element_type_ element_type;
+        typedef element_segment_info_container_type_ element_segment_info_container_type;
+        
+        typedef typename element_segment_info_container_type::value_type element_segment_info_type;
+        
+        typedef typename result_of::segment_id_type<element_segment_info_type>::type segment_id_type;
+        
+        
+        element_segment_info_type const & segment_info( element_type const & element ) const
+        {
+            return viennagrid::look_up( segmentation, element );
+        }
+        
+        void set_segment_info( element_type const & element, element_segment_info_type const & segment_element_info )
+        {
+            viennagrid::look_up( segmentation, element ) = segment_element_info;
+            add_segments( *this, segment_element_info );
+        }
+        
+        // TODO reference counting on segments -> unused segments disapear
+        void add_segment( segment_id_type const & segment_id )
+        {
+            if (segment_id.is_valid())
+                used_segments.insert(segment_id);
+        }
+        
+        std::set<segment_id_type> const & segments() const { return used_segments; }
+        
+        
+    private:
+        
+        element_segment_info_container_type segmentation;
+        std::set<segment_id_type> used_segments;
+    };
+    
+
+    namespace result_of
+    {
+        template<typename domain_type, typename element_type_or_tag, typename segmentation_type_tag = disjunct_segmentation_tag, typename segment_id_type = segment_id_t<> >
+        struct element_segment_info
         {
             typedef typename viennagrid::result_of::point_type<domain_type>::type point_type;
             static const unsigned int geometric_dimension = viennagrid::result_of::geometric_dimension<domain_type>::value;
             typedef typename viennagrid::result_of::element_tag<element_type_or_tag>::type element_tag;
             
-            typedef element_segment_info<element_tag, geometric_dimension, segmentation_type_tag, segment_id_type> element_segment_info_type;
-            
-            typedef segmentation_info< element_segment_info_type, segmentation_id_type > type;
+            typedef element_segment_info_t<element_tag, geometric_dimension, segmentation_type_tag, segment_id_type> type;
         };
         
-        template<typename domain_type,
-            typename segmentation_type_tag = disjunct_segmentation_tag,
-            typename segment_id_type = segment_id_t<>,
-            typename segmentation_id_type = int
-            >
-        struct cell_segment_info
+        
+        template<typename domain_type, typename element_type_or_tag, typename container_tag = storage::std_deque_tag,
+            typename segmentation_type_tag = disjunct_segmentation_tag, typename segment_id_type = segment_id_t<> >
+        struct segmentation
         {
-            typedef typename viennagrid::result_of::cell_type<domain_type>::type cell_type;
-            typedef typename segment_info<domain_type, cell_type, segmentation_type_tag, segment_id_type, segmentation_id_type>::type type;
+            typedef typename element_segment_info<domain_type, element_type_or_tag, segmentation_type_tag, segment_id_type>::type element_segment_info_type;
+            typedef typename storage::result_of::container< element_segment_info_type, container_tag >::type element_segment_info_container_type;
+            typedef typename viennagrid::result_of::element<domain_type, element_type_or_tag>::type element_type;
+            typedef segmentation_t<element_type, element_segment_info_container_type> type;
         };
-        
-
-        
-        template<typename domain_config, typename segment_id_type = segment_id_t<>, typename  segmentation_id_type = int>
-        struct cell_segmented_domain_config
-        {
-            typedef typename viennagrid::result_of::domain<domain_config>::type domain_type;
-            typedef typename viennagrid::result_of::cell_type<domain_type>::type cell_type;
-            typedef typename viennagrid::result_of::element_tag<cell_type>::type cell_tag;
-            static const int geometric_dimension = viennagrid::result_of::geometric_dimension<domain_type>::value;
-            
-            typedef typename viennagrid::result_of::cell_segment_info<domain_type>::type cell_segment_information;
-            
-            typedef typename viennameta::typemap::result_of::insert_or_modify<
-                    typename viennagrid::config::result_of::query_config<domain_config, viennagrid::config::metainfo_typelist_tag>::type,
-                    viennameta::static_pair<cell_tag, cell_segment_information>
-                >::type segmentation_metainfo_typemap;
-            
-            typedef typename viennameta::make_typemap<
-                viennagrid::config::segment_id_type_tag, segment_id_type,
-                viennagrid::config::segmentation_id_type_tag, segmentation_id_type,
-                viennagrid::config::element_segmentation_tag, typename viennameta::make_typemap<
-                                                                  cell_tag, cell_segment_information
-                                                              >::type
-            >::type segmentation_config_type;
-            
-            typedef typename viennameta::typemap::result_of::merge_overwrite<
-                typename viennameta::typemap::result_of::insert_or_modify<
-                    domain_config,
-                    viennameta::static_pair<
-                        viennagrid::config::metainfo_typelist_tag,
-                        segmentation_metainfo_typemap
-                    >
-                >::type,
-                segmentation_config_type
-            >::type type;
-        };
-
-        
-        
-        template<typename something, typename element_type_or_tag>
-        struct element_segment_information
-        {
-            typedef typename viennagrid::result_of::element_tag<element_type_or_tag>::type element_tag;
-            typedef typename viennagrid::result_of::config<something>::type config_type;
-            typedef typename viennagrid::config::result_of::query_config<config_type, viennagrid::config::element_segmentation_tag>::type element_segmentation_config;
-            typedef typename viennagrid::config::result_of::query_config<element_segmentation_config, element_tag>::type type;
-        };
-    }
-    
-    
-    template<typename domain_type, typename element_type>
-    typename result_of::element_segment_information<domain_type, element_type>::type & segment_info( domain_type & domain, element_type const & element )
-    {
-        return viennagrid::look_up< typename result_of::element_segment_information<domain_type, element_type>::type >( domain, element );
-    }
-    
-    template<typename domain_type, typename element_type>
-    typename result_of::element_segment_information<domain_type, element_type>::type::element_segmentation_info_type & default_segment( domain_type & domain, element_type const & element )
-    {
-        return viennagrid::look_up< typename result_of::element_segment_information<domain_type, element_type>::type >( domain, element )();
-    }
-    
-    
+    }    
 }
 
 
