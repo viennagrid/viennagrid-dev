@@ -30,11 +30,11 @@ namespace viennagrid
         >::type default_container_config;
         
         
-        template<typename container_tag__, typename handle_tag__>
+        template<typename container_tag_, typename handle_tag_>
         struct handled_container_tag
         {
-            typedef container_tag__ container_tag;
-            typedef handle_tag__ handle_tag;
+            typedef container_tag_ container_tag;
+            typedef handle_tag_ handle_tag;
         };
 
         

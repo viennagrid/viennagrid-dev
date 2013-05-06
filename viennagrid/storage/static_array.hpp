@@ -46,7 +46,7 @@ namespace viennagrid
                 iterator & operator=(const iterator & it) { ptr_ = it.ptr_; return *this; }
                 
                 // constructor for static_array
-                iterator(pointer ptr__) : ptr_(ptr__) {}
+                iterator(pointer ptr_) : ptr_(ptr_) {}
                 
                 // equal and inequal compareable
                 bool operator==(const iterator& i) const { return ptr_ == i.ptr_; }
@@ -117,7 +117,7 @@ namespace viennagrid
                 const_iterator & operator=(const const_iterator & it) { ptr_ = it.ptr_; return *this; }
                 
                 // constructor for static_array
-                const_iterator(const_pointer ptr__) : ptr_(ptr__) {}
+                const_iterator(const_pointer ptr_) : ptr_(ptr_) {}
                 
                 // equal and inequal compareable
                 bool operator==(const const_iterator& i) const { return ptr_ == i.ptr_; }
@@ -327,10 +327,10 @@ namespace viennagrid
         
         
         
-        template<long size__>
+        template<long size_>
         struct static_array_tag
         {
-            enum { size = size__ };
+            enum { size = size_ };
         };
         
         

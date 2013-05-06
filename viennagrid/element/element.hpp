@@ -424,8 +424,8 @@ namespace viennagrid
             typedef typename container_pair::first container_type;
             typedef typename container_type::value_type value_type;
             
-            typedef typename viennameta::_if<
-                viennameta::_equal<typename value_type::tag, tag>::value,
+            typedef typename viennameta::IF<
+                viennameta::EQUAL<typename value_type::tag, tag>::value,
                 container_type,
                 typename container_of_tag_for_element<tail, tag>::type
             >::type type;
@@ -450,7 +450,7 @@ namespace viennagrid
             typedef typename container_pair::first container_type;
             typedef typename container_type::value_type value_type;
             
-            typedef typename viennameta::_if<
+            typedef typename viennameta::IF<
                 value_type::tag::dim == dim,
                 container_type,
                 typename container_of_dimension_for_element<tail, dim>::type
@@ -471,8 +471,8 @@ namespace viennagrid
         template<typename element_type, typename container_type, typename tail, typename element_tag>
         struct container_of_tag_for_collection<viennameta::typelist_t< viennameta::static_pair<element_type, container_type>, tail >, element_tag>
         {
-            typedef typename viennameta::_if<
-                viennameta::_equal<typename element_type::tag, element_tag>::value,
+            typedef typename viennameta::IF<
+                viennameta::EQUAL<typename element_type::tag, element_tag>::value,
                 container_type,
                 typename container_of_tag_for_collection<tail, element_tag>::type
             >::type type;
@@ -492,7 +492,7 @@ namespace viennagrid
         template<typename element_type, typename container_type, typename tail, long dim>
         struct container_of_dimension_for_collection<viennameta::typelist_t< viennameta::static_pair<element_type, container_type>, tail >, dim>
         {
-            typedef typename viennameta::_if<
+            typedef typename viennameta::IF<
                 element_type::tag::dim == dim,
                 container_type,
                 typename container_of_dimension_for_collection<tail, dim>::type
@@ -688,7 +688,7 @@ namespace viennagrid
             typedef typename element_tag<boundary_cell_type_or_tag>::type boundary_cell_tag;
             
             const static bool value = 
-            !viennameta::_equal<
+            !viennameta::EQUAL<
                 typename container_of_tag< element_t<element_tag_, boundary_cell_container_typelist, id_type>, boundary_cell_tag >::type,
                 viennameta::null_type>::value;
         };
@@ -1032,10 +1032,10 @@ namespace viennagrid
     
     
     /** @brief Overload for the output streaming operator */
-    template <typename element_tag, typename bnd_cell_container_typelist__, typename id_type__>
-    std::ostream & operator<<(std::ostream & os, element_t<element_tag, bnd_cell_container_typelist__, id_type__> const & el)
+    template <typename element_tag, typename bnd_cell_container_typelist_, typename id_type_>
+    std::ostream & operator<<(std::ostream & os, element_t<element_tag, bnd_cell_container_typelist_, id_type_> const & el)
     {
-        typedef element_t<element_tag, bnd_cell_container_typelist__, id_type__> element_type;
+        typedef element_t<element_tag, bnd_cell_container_typelist_, id_type_> element_type;
         typedef typename viennagrid::result_of::const_element_range< element_type, vertex_tag >::type vertex_range;
         typedef typename viennagrid::result_of::const_iterator< vertex_range >::type const_vertex_iterator;
         

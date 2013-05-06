@@ -71,7 +71,7 @@ namespace viennagrid
                 typedef typename query_config<domain_config, topology_config_tag>::type topology_config;
                 
                 static const bool value =
-                    !viennameta::_equal<
+                    !viennameta::EQUAL<
                         typename viennameta::typemap::result_of::find<
                             topology_config,
                             element_tag
@@ -123,60 +123,60 @@ namespace viennagrid
             
             
             
-            template<typename domain_config__, typename element_tag__, typename boundary_cell_tag__, bool is_present = is_element_present<domain_config__, boundary_cell_tag__>::value >
+            template<typename domain_config_, typename element_tag_, typename boundary_cell_tag_, bool is_present = is_element_present<domain_config_, boundary_cell_tag_>::value >
             struct has_boundary_cells_helper
             {
                 static const bool value = 
-                    !viennameta::_equal<
-                        typename query_boundary_storage_layout<domain_config__, element_tag__, boundary_cell_tag__>::boundary_cell_storage_handling,
+                    !viennameta::EQUAL<
+                        typename query_boundary_storage_layout<domain_config_, element_tag_, boundary_cell_tag_>::boundary_cell_storage_handling,
                         viennagrid::no_handling_tag
                     >::value;
             };
             
-            template<typename domain_config__, typename element_tag__, typename boundary_cell_tag__>
-            struct has_boundary_cells_helper<domain_config__, element_tag__, boundary_cell_tag__, false>
+            template<typename domain_config_, typename element_tag_, typename boundary_cell_tag_>
+            struct has_boundary_cells_helper<domain_config_, element_tag_, boundary_cell_tag_, false>
             {
                 static const bool value = false;
             };
             
             
-            template<typename domain_config__, typename element_tag__, typename boundary_cell_tag__>
+            template<typename domain_config_, typename element_tag_, typename boundary_cell_tag_>
             struct has_boundary_cells
             {
-                static const bool is_present = is_element_present<domain_config__, boundary_cell_tag__>::value;
+                static const bool is_present = is_element_present<domain_config_, boundary_cell_tag_>::value;
                             
-                static const bool value = has_boundary_cells_helper<domain_config__, element_tag__, boundary_cell_tag__, is_present>::value;
+                static const bool value = has_boundary_cells_helper<domain_config_, element_tag_, boundary_cell_tag_, is_present>::value;
             };
             
             
-            template<typename domain_config__, typename element_tag__, typename boundary_cell_tag__, bool is_present = is_element_present<domain_config__, boundary_cell_tag__>::value >
+            template<typename domain_config_, typename element_tag_, typename boundary_cell_tag_, bool is_present = is_element_present<domain_config_, boundary_cell_tag_>::value >
             struct has_orientation_helper
             {
                 static const bool value = 
-                    viennameta::_equal<
-                        typename query_boundary_storage_layout<domain_config__, element_tag__, boundary_cell_tag__>::boundary_cell_storage_handling,
+                    viennameta::EQUAL<
+                        typename query_boundary_storage_layout<domain_config_, element_tag_, boundary_cell_tag_>::boundary_cell_storage_handling,
                         viennagrid::full_handling_tag
                     >::value
                         ||
-                    viennameta::_equal<
-                        typename query_boundary_storage_layout<domain_config__, element_tag__, boundary_cell_tag__>::boundary_cell_storage_handling,
+                    viennameta::EQUAL<
+                        typename query_boundary_storage_layout<domain_config_, element_tag_, boundary_cell_tag_>::boundary_cell_storage_handling,
                         viennagrid::full_lazy_handling_tag
                     >::value;
             };
             
-            template<typename domain_config__, typename element_tag__, typename boundary_cell_tag__>
-            struct has_orientation_helper<domain_config__, element_tag__, boundary_cell_tag__, false>
+            template<typename domain_config_, typename element_tag_, typename boundary_cell_tag_>
+            struct has_orientation_helper<domain_config_, element_tag_, boundary_cell_tag_, false>
             {
                 static const bool value = false;
             };
             
             
-            template<typename domain_config__, typename element_tag__, typename boundary_cell_tag__>
+            template<typename domain_config_, typename element_tag_, typename boundary_cell_tag_>
             struct has_orientation
             {
-                static const bool is_present = is_element_present<domain_config__, boundary_cell_tag__>::value;
+                static const bool is_present = is_element_present<domain_config_, boundary_cell_tag_>::value;
                             
-                static const bool value = has_orientation_helper<domain_config__, element_tag__, boundary_cell_tag__, is_present>::value;
+                static const bool value = has_orientation_helper<domain_config_, element_tag_, boundary_cell_tag_, is_present>::value;
             };
             
             
@@ -235,7 +235,7 @@ namespace viennagrid
                 typedef viennagrid::element_orientation<orientation_container_type> facet_orientation_type;
             
                 typedef typename 
-                    viennameta::_if<
+                    viennameta::IF<
                         has_orientation< domain_config, element_tag, boundary_cell_tag>::value,
                         typename viennagrid::storage::result_of::container< facet_orientation_type, container_tag >::type,
                         viennameta::null_type
@@ -306,8 +306,8 @@ namespace viennagrid
             
             
             
-            template<typename config__, typename element_tag__, typename boundary_cell_tag__>
-            struct element_boundary_cell_container_helper<config__, element_tag__, boundary_cell_tag__, false>
+            template<typename config_, typename element_tag_, typename boundary_cell_tag_>
+            struct element_boundary_cell_container_helper<config_, element_tag_, boundary_cell_tag_, false>
             {
                 typedef viennameta::null_type type;
             };
@@ -372,7 +372,7 @@ namespace viennagrid
     //         template<typename element_tag, typename element_config, typename tail, long dim>
     //         struct ncell_tag< viennameta::typelist_t< viennameta::static_pair<element_tag, element_config>, tail >, dim >
     //         {
-    //             typedef typename viennameta::_if<
+    //             typedef typename viennameta::IF<
     //                 element_tag::dim == dim,
     //                 element_tag,
     //                 typename ncell_tag<tail, dim>::type

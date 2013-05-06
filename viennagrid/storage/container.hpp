@@ -433,11 +433,11 @@ namespace viennagrid
         
         
         
-        template<typename base_container__, typename handle_tag>
-        class handled_container_t : public base_container__
+        template<typename base_container_, typename handle_tag>
+        class handled_container_t : public base_container_
         {
         public:
-            typedef base_container__ container_type;
+            typedef base_container_ container_type;
             typedef typename container_type::value_type value_type;
             
             typedef typename container_type::pointer pointer;
@@ -464,11 +464,11 @@ namespace viennagrid
             
         };
         
-        template<typename base_container__>
-        class handled_container_t<base_container__, id_handle_tag> : public base_container__
+        template<typename base_container_>
+        class handled_container_t<base_container_, id_handle_tag> : public base_container_
         {
         public:
-            typedef base_container__ container_type;
+            typedef base_container_ container_type;
             typedef typename container_type::value_type value_type;
             
             typedef typename container_type::pointer pointer;
@@ -521,12 +521,12 @@ namespace viennagrid
         
         
         
-        template<typename base_container__, typename handle_tag>
-        class container_base_t : public handled_container_t<base_container__, handle_tag>
+        template<typename base_container_, typename handle_tag>
+        class container_base_t : public handled_container_t<base_container_, handle_tag>
         {
         public:
 
-            typedef handled_container_t<base_container__, handle_tag> handled_container_type;
+            typedef handled_container_t<base_container_, handle_tag> handled_container_type;
             typedef typename handled_container_type::container_type container_type;
             
             typedef typename handled_container_type::value_type value_type;
@@ -607,14 +607,14 @@ namespace viennagrid
         
         
         
-        template<typename base_container__, typename handle_tag__>
-        class container_t : public container_base_t<base_container__, handle_tag__>
+        template<typename base_container_, typename handle_tag_>
+        class container_t : public container_base_t<base_container_, handle_tag_>
         {
         public:
             
-            typedef base_container__ base_container;
+            typedef base_container_ base_container;
             
-            typedef handle_tag__ handle_tag;
+            typedef handle_tag_ handle_tag;
             typedef typename handle::handle_type<base_container, handle_tag>::type handle_type;
             typedef typename handle::const_handle_type<base_container, handle_tag>::type const_handle_type;
             typedef std::pair<handle_type, bool> insert_return_type;

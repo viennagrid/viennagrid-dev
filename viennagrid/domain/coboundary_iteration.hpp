@@ -3,6 +3,7 @@
 
 #include "viennagrid/forwards.hpp"
 #include "viennagrid/storage/forwards.hpp"
+#include "viennagrid/domain/domain.hpp"
  
 namespace viennagrid
 {

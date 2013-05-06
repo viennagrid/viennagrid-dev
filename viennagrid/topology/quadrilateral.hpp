@@ -26,8 +26,6 @@
     @brief Provides the topological definition of a quadrilateral
 */
 
-template<class _numeric_type >
-class vertex;
 namespace viennagrid
 {
   /** @brief Topological description of a quadrilateral.*/

@@ -32,7 +32,6 @@
 #include <map>
 #include <cstddef>     //for std::size_t
 #include <cstdlib>     //for EXIT_SUCCESS and EXIT_FAILURE
-#include <boost/concept_check.hpp>
 
 #include "viennadata/api.hpp"
 #include "viennagrid/storage/static_array.hpp"
@@ -301,6 +300,16 @@ namespace viennagrid
 
         template<typename something>
         struct metainfo_collection;
+        
+        
+        template<typename something>
+        struct topologic_cell_dimension;
+
+        template<typename something>
+        struct cell_types;
+
+        template<typename something>
+        struct cell_type;
         
         
         

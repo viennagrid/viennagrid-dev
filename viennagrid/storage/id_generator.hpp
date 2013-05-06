@@ -99,6 +99,12 @@ namespace viennagrid
                 return last_id++;
             }
             
+            using base::max_id;
+            id_type max_id( viennameta::tag<value_type> ) const
+            {
+                return last_id;
+            }
+            
         private:
             id_type last_id;
         };
@@ -108,6 +114,7 @@ namespace viennagrid
         {
         public:
             void operator()();
+            void max_id() const;
         };
         
         

@@ -106,13 +106,12 @@ namespace viennameta
                 
                 // !!!!! INFO !!!!!
                 // if a compiler error points to the next lines, you might want to insert a key which is already present
-                typedef typename _identity_errcheck<
-                    typename typelist::result_of::push_back<typemap, static_pair<to_insert_key, to_insert_value> >::type,
-                    _equal<
+                typedef typename STATIC_ASSERT<EQUAL<
                         not_found,
                         typename find<typemap,to_insert_key>::type
-                    >::value
-                >::type type;
+                    >::value >::type static_assert_typedef;
+                
+                typedef typename typelist::result_of::push_back<typemap, static_pair<to_insert_key, to_insert_value> >::type type;
             };
             
             
@@ -143,14 +142,13 @@ namespace viennameta
                 
                 // !!!!! INFO !!!!!
                 // if a compiler error points to the next lines, you might want to modify an element which is not present
-                typedef typename _identity_errcheck<
-                    typename typelist::result_of::replace_at<
+                typedef typename STATIC_ASSERT<index != -1>::type static_assert_typedef;
+                
+                typedef typename typelist::result_of::replace_at<
                         typemap,
                         index,
                         static_pair<key_to_find, modified_value>
-                    >::type,
-                index != -1
-                >::type type;
+                    >::type type;
             };
             
             
@@ -179,7 +177,7 @@ namespace viennameta
                 
                 // !!!!! INFO !!!!!
                 // if a compiler error points to the next lines, you might want to modify an element which is not present
-                typedef typename _if<
+                typedef typename IF<
                     index == -1,
                     typename typelist::result_of::push_back<typemap, static_pair<key_to_find, modified_value> >::type,
                     typename typelist::result_of::replace_at<typemap, index, static_pair<key_to_find, modified_value> >::type
@@ -196,13 +194,12 @@ namespace viennameta
                 
                 // !!!!! INFO !!!!!
                 // if a compiler error points to the next lines, you might want to erase a key which does not exist
-                typedef typename _identity_errcheck<
-                    typename typelist::result_of::erase_at<
+                typedef typename STATIC_ASSERT<index != -1>::type static_assert_typedef;
+                
+                typedef typename typelist::result_of::erase_at<
                         typemap,
                         index
-                    >::type,
-                    index != -1
-                >::type type;                
+                    >::type type;                
             };
             
             
@@ -316,14 +313,14 @@ namespace viennameta
             {
                 // !!!!! INFO !!!!!
                 // if a compiler error points to the next lines, your viennamta::map is currupted (e.g. dublicate keys, ...)
-                typedef typelist_t<
-                    typename _identity_errcheck<
-                        static_pair<key,value>,
-                        _equal<
+                typedef typename STATIC_ASSERT<
+                        EQUAL<
                             not_found,
                             typename find<tail, key>::type
-                        >::value
-                    >::type,
+                        >::value >::type static_assert_typedef;
+                
+                typedef typelist_t<
+                    static_pair<key,value>,
                     typename consistency<tail>::type
                 > type;
             };

@@ -74,11 +74,29 @@ namespace viennagrid
         }
         
         
-
+        
+        template<typename container_type, typename element_type>
+        bool metainfo_available( container_type const & container, element_type const & element, random_access_tag )
+        {
+            return container.size() >= element.id().get();
+        }
+        
+        template<typename container_type, typename element_type>
+        bool metainfo_available( container_type const & container, element_type const & element, associative_access_tag )
+        {
+            return container.find( element.id() ) != container.end();
+        }
+        
+        template<typename container_type, typename element_type>
+        bool metainfo_available( container_type & container, const element_type & element )
+        {
+            return look_up(container, element, typename result_of::associative_container_access_tag<container_type>::type() );
+        }
         
         
-        template<typename geometric_container_type, typename element_type>
-        typename result_of::associative_container_value_type<geometric_container_type>::type & look_up( geometric_container_type & container, const element_type & element, random_access_tag )
+        
+        template<typename container_type, typename element_type>
+        typename result_of::associative_container_value_type<container_type>::type & look_up( container_type & container, const element_type & element, random_access_tag )
         {
 //             std::cout << "Look Up on Container " << &container << " at " << element.id().get() << std::endl;
             if (container.size() <= element.id().get())
@@ -87,51 +105,52 @@ namespace viennagrid
                 container.resize( element.id().get()+1 );
             }
             
-//             std::copy( container.begin(), container.end(), std::ostream_iterator< typename geometric_container_type::value_type >(std::cout, "\n") );
+//             std::copy( container.begin(), container.end(), std::ostream_iterator< typename container_type::value_type >(std::cout, "\n") );
             
             return container[ element.id().get() ];
         }
         
-        template<typename geometric_container_type, typename element_type>
-        typename result_of::associative_container_value_type<geometric_container_type>::type & look_up( geometric_container_type & container, const element_type & element, associative_access_tag )
+        template<typename container_type, typename element_type>
+        typename result_of::associative_container_value_type<container_type>::type & look_up( container_type & container, const element_type & element, associative_access_tag )
         {
-            typename geometric_container_type::iterator it = container.find( element.id() );
+            typename container_type::iterator it = container.find( element.id() );
             return it->second;
         }
         
-        template<typename geometric_container_type, typename element_type>
-        typename result_of::associative_container_value_type<geometric_container_type>::type & look_up( geometric_container_type & container, const element_type & element )
+        template<typename container_type, typename element_type>
+        typename result_of::associative_container_value_type<container_type>::type & look_up( container_type & container, const element_type & element )
         {
-            return look_up(container, element, typename result_of::associative_container_access_tag<geometric_container_type>::type() );
+            return look_up(container, element, typename result_of::associative_container_access_tag<container_type>::type() );
         }
         
         
         
-        template<typename geometric_container_type, typename element_type>
-        const typename result_of::associative_container_value_type<geometric_container_type>::type & look_up( const geometric_container_type & container, const element_type & element, random_access_tag )
+        template<typename container_type, typename element_type>
+        const typename result_of::associative_container_value_type<container_type>::type & look_up( const container_type & container, const element_type & element, random_access_tag )
         {
 //             std::cout << "Look Up (const) on Container " << &container << std::endl;
             assert( container.size() > element.id().get() );
             return container[ element.id().get() ];
         }
         
-        template<typename geometric_container_type, typename element_type>
-        const typename result_of::associative_container_value_type<geometric_container_type>::type & look_up( const geometric_container_type & container, const element_type & element, associative_access_tag )
+        template<typename container_type, typename element_type>
+        const typename result_of::associative_container_value_type<container_type>::type & look_up( const container_type & container, const element_type & element, associative_access_tag )
         {
-            typename geometric_container_type::const_iterator it = container.find( element.id() );
+            typename container_type::const_iterator it = container.find( element.id() );
+            assert( it != container.end() );
             return it->second;
         }
         
-        template<typename geometric_container_type, typename element_type>
-        const typename result_of::associative_container_value_type<geometric_container_type>::type & look_up( const geometric_container_type & container, const element_type & element )
+        template<typename container_type, typename element_type>
+        const typename result_of::associative_container_value_type<container_type>::type & look_up( const container_type & container, const element_type & element )
         {
-            return look_up(container, element, typename result_of::associative_container_access_tag<geometric_container_type>::type() );
+            return look_up(container, element, typename result_of::associative_container_access_tag<container_type>::type() );
         }
         
         
         
-        template<typename geometric_container_type, typename element_type>
-        void set( geometric_container_type & container, const element_type & element, const typename result_of::associative_container_value_type<geometric_container_type>::type & info, random_access_tag )
+        template<typename container_type, typename element_type>
+        void set( container_type & container, const element_type & element, const typename result_of::associative_container_value_type<container_type>::type & info, random_access_tag )
         {
             if (container.size() >= element.id().get() )
                 container.resize( element.id().get()+1 );
@@ -139,18 +158,18 @@ namespace viennagrid
             container[ element.id().get() ] = info;
         }
         
-        template<typename geometric_container_type, typename element_type>
-        void set( geometric_container_type & container, const element_type & element, const typename result_of::associative_container_value_type<geometric_container_type>::type & info, associative_access_tag )
+        template<typename container_type, typename element_type>
+        void set( container_type & container, const element_type & element, const typename result_of::associative_container_value_type<container_type>::type & info, associative_access_tag )
         {
             container.insert(
                 std::make_pair( element.id(), info )
             );
         }
         
-        template<typename geometric_container_type, typename element_type>
-        void set( geometric_container_type & container, const element_type & element, const typename result_of::associative_container_value_type<geometric_container_type>::type & info )
+        template<typename container_type, typename element_type>
+        void set( container_type & container, const element_type & element, const typename result_of::associative_container_value_type<container_type>::type & info )
         {
-            set(container, element, info, typename result_of::associative_container_access_tag<geometric_container_type>::type() );
+            set(container, element, info, typename result_of::associative_container_access_tag<container_type>::type() );
         }
     }
 }
@@ -200,6 +219,15 @@ namespace viennagrid
     
     
     template<typename container_type, typename element_type>
+    bool metainfo_available(
+            container_type const & container,
+            element_type const & element
+        )
+    {
+        return metainfo::metainfo_available( container, element );
+    }
+    
+    template<typename container_type, typename element_type>
     typename container_type::value_type & look_up(
             container_type & container,
             element_type const & element
@@ -222,6 +250,16 @@ namespace viennagrid
     
     
     
+    
+    
+    template<typename metainfo_type, typename metainfo_container_typemap, typename element_type>
+    bool metainfo_available(
+            viennagrid::storage::collection_t<metainfo_container_typemap> & metainfo_collection,
+            element_type const & element
+        )
+    {
+        return metainfo::metainfo_available( metainfo_container<element_type, metainfo_type>(metainfo_collection), element );
+    }
     
     template<typename metainfo_type, typename metainfo_container_typemap, typename element_type>
     typename metainfo::result_of::associative_container_value_type<
@@ -398,8 +436,8 @@ namespace viennagrid
             typedef typename viennameta::typemap::result_of::find<container_config, viennameta::static_pair<element_type, metainfo_type> >::type search_result;
             typedef typename viennameta::typemap::result_of::find<container_config, viennagrid::storage::default_tag>::type default_container;
             
-            typedef typename viennameta::_if<
-                !viennameta::_equal<search_result, viennameta::not_found>::value,
+            typedef typename viennameta::IF<
+                !viennameta::EQUAL<search_result, viennameta::not_found>::value,
                 search_result,
                 default_container
             >::type container_tag_pair;

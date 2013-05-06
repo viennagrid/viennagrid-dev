@@ -6,37 +6,37 @@ namespace viennameta
 {
     // basic operations
     template<typename type1, typename type2>
-    struct _equal
+    struct EQUAL
     {
         static const bool value = false;
     };
     
     template<typename type>
-    struct _equal<type,type>
+    struct EQUAL<type,type>
     {
         static const bool value = true;
     };
     
     template<typename type1, typename type2>
-    struct _not_equal
+    struct NOT_EQUAL
     {
-        static const bool value = !_equal<type1, type2>::value;
+        static const bool value = !EQUAL<type1, type2>::value;
     };
     
     template<bool condition, typename type1, typename type2>
-    struct _if
+    struct IF
     {
         typedef type1 type;
     };
     
     template<typename type1, typename type2>
-    struct _if<false, type1, type2>
+    struct IF<false, type1, type2>
     {
         typedef type2 type;
     };
     
     template<typename _type>
-    struct _identity
+    struct IDENTITY
     {
         typedef _type type;
     };
@@ -44,25 +44,15 @@ namespace viennameta
     
     // error generator
     template<bool error>
-    struct _static_assert
+    struct STATIC_ASSERT
     {
         typedef void type;
     };
     
     template<>
-    struct _static_assert<false>
+    struct STATIC_ASSERT<false>
     {};
 
-    
-    template<typename _type, bool error>
-    struct _identity_errcheck
-    {
-        typedef _type type;
-    };
-
-    template<typename _type>
-    struct _identity_errcheck<_type, false>
-    {};
 
     
     // an empty type

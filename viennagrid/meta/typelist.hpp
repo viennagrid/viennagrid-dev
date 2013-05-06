@@ -375,13 +375,13 @@ namespace viennameta
                 
                 enum { search_result = index_of< typelist2, head1 >::value }; 
                 
-                typedef typename _if<
+                typedef typename IF<
                     (search_result >= 0),
                     typename erase_at<typelist2, search_result>::type,
                     typelist2
                 >::type new_typelist2;
                 
-                typedef typename _if<
+                typedef typename IF<
                     (search_result >= 0),
                     typelist_t<head1, typename intersection<tail1, new_typelist2>::type >,
                     typename intersection<tail1, new_typelist2>::type

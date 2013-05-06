@@ -169,7 +169,7 @@ namespace viennagrid
         public:
             typedef id_type_ id_type;
             
-            id_compare(id_type id__) : id(id__) {}
+            id_compare(id_type id_) : id(id_) {}
             
             template<typename type>
             bool operator() ( const type & to_compare )

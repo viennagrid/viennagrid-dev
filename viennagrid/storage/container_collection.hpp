@@ -30,8 +30,8 @@ namespace viennagrid
                     typedef typename viennameta::typemap::result_of::find<container_config, value_type>::type search_result;
                     typedef typename viennameta::typemap::result_of::find<container_config, viennagrid::storage::default_tag>::type default_container;
                     
-                    typedef typename viennameta::_if<
-                        !viennameta::_equal<search_result, viennameta::not_found>::value,
+                    typedef typename viennameta::IF<
+                        !viennameta::EQUAL<search_result, viennameta::not_found>::value,
                         search_result,
                         default_container
                     >::type container_tag_pair;

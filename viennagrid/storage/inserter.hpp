@@ -106,7 +106,10 @@ namespace viennagrid
 //             }
             
             container_collection_type & get_physical_container_collection() { return *collection; }
+            container_collection_type const & get_physical_container_collection() const { return *collection; }
+            
             id_generator_type & get_id_generator() { return id_generator; }
+            id_generator_type const & get_id_generator() const { return id_generator; }
             
         private:
             container_collection_type * collection;
@@ -175,6 +178,12 @@ namespace viennagrid
             }
             
             physical_container_collection_type & get_physical_container_collection() { return dependend_inserter->get_physical_container_collection(); }
+            physical_container_collection_type const & get_physical_container_collection() const { return dependend_inserter->get_physical_container_collection(); }
+            
+            typedef typename dependend_inserter_type::id_generator_type id_generator_type;
+            id_generator_type & get_id_generator() { return dependend_inserter->get_id_generator(); }
+            id_generator_type const & get_id_generator() const { return dependend_inserter->get_id_generator(); }
+
             
         private:
             view_collection_type * view_collection;

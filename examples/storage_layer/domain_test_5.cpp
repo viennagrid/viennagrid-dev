@@ -38,6 +38,16 @@ using std::endl;
 
 
 
+struct element_output_functor
+{
+    template<typename element_type>
+    void operator() ( element_type const & element ) const
+    {
+        std::cout << element << std::endl;
+    };
+};
+
+
 
 int main()
 {
@@ -187,6 +197,13 @@ int main()
     cout << "All tetrahedrons of the domain view view" << endl;
     std::copy( viennagrid::elements<viennagrid::tetrahedron_tag>(domain_view_view_1).begin(), viennagrid::elements<viennagrid::tetrahedron_tag>(domain_view_view_1).end(), std::ostream_iterator<tetrahedron_type>(cout, "\n") );
     cout << endl;
+    
+    
+    
+    cout << "All tetrahedrons of the domain using for_each" << endl;
+    viennagrid::for_each<3>( domain, element_output_functor() );
+    
+    
 
     return 0;
 }

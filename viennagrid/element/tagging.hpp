@@ -164,7 +164,7 @@ namespace viennagrid
         {
         public:
             
-            tag_predicate(const tag & tag__) : tag_(tag__) {}
+            tag_predicate(const tag & t_) : tag_(t_) {}
             
             template<typename element_type>
             bool operator()( const element_type & element )
@@ -180,7 +180,7 @@ namespace viennagrid
         {
         public:
             
-            inverse_tag_predicate(const tag & tag__) : tag_(tag__) {}
+            inverse_tag_predicate(const tag & t_) : tag_(t_) {}
             
             template<typename element_type>
             bool operator()( const element_type & element )
@@ -195,27 +195,27 @@ namespace viennagrid
         
 
     template<typename element_type_or_tag, typename tag_, typename base_element_type>
-    typename viennagrid::result_of::element_view<base_element_type, element_type_or_tag>::type tagged_elements( base_element_type & base_element, tag_ tag__ )
+    typename viennagrid::result_of::element_view<base_element_type, element_type_or_tag>::type tagged_elements( base_element_type & base_element, tag_ t_ )
     {
-        return viennagrid::element_view<element_type_or_tag>( base_element, tagging::tag_predicate<tag_>(tag__) );
+        return viennagrid::element_view<element_type_or_tag>( base_element, tagging::tag_predicate<tag_>(t_) );
     }
     
     template<typename element_type_or_tag, typename tag_, typename base_element_type>
-    typename viennagrid::result_of::const_element_view<base_element_type, element_type_or_tag>::type tagged_elements( base_element_type const & base_element, tag_ tag__ )
+    typename viennagrid::result_of::const_element_view<base_element_type, element_type_or_tag>::type tagged_elements( base_element_type const & base_element, tag_ t_ )
     {
-        return viennagrid::element_view<element_type_or_tag>( base_element, tagging::tag_predicate<tag_>(tag__) );
+        return viennagrid::element_view<element_type_or_tag>( base_element, tagging::tag_predicate<tag_>(t_) );
     }
     
     template<typename element_type_or_tag, typename tag_, typename base_element_type>
-    typename viennagrid::result_of::element_view<base_element_type, element_type_or_tag>::type untagged_elements( base_element_type & base_element, tag_ tag__ )
+    typename viennagrid::result_of::element_view<base_element_type, element_type_or_tag>::type untagged_elements( base_element_type & base_element, tag_ t_ )
     {
-        return viennagrid::element_view<element_type_or_tag>( base_element, tagging::inverse_tag_predicate<tag_>(tag__) );
+        return viennagrid::element_view<element_type_or_tag>( base_element, tagging::inverse_tag_predicate<tag_>(t_) );
     }
     
     template<typename element_type_or_tag, typename tag_, typename base_element_type>
-    typename viennagrid::result_of::const_element_view<base_element_type, element_type_or_tag>::type untagged_elements( base_element_type const & base_element, tag_ tag__ )
+    typename viennagrid::result_of::const_element_view<base_element_type, element_type_or_tag>::type untagged_elements( base_element_type const & base_element, tag_ t_ )
     {
-        return viennagrid::element_view<element_type_or_tag>( base_element, tagging::inverse_tag_predicate<tag_>(tag__) );
+        return viennagrid::element_view<element_type_or_tag>( base_element, tagging::inverse_tag_predicate<tag_>(t_) );
     }
     
     
