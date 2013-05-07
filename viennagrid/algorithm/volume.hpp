@@ -42,7 +42,7 @@ namespace viennagrid
     
     /** @brief Computes the volume of topologically zero-dimensional elements (vertices). Degenerate case, returns 1 */
     template <typename DomainType, typename ElementType>
-    typename viennagrid::result_of::coord_type< typename viennagrid::result_of::point_type<DomainType>::type >::type
+    typename viennagrid::result_of::coord_type< DomainType >::type
     volume_impl(const DomainType & domain, ElementType const & cell, viennagrid::vertex_tag)
     {
       return typename viennagrid::result_of::coord_type<typename DomainType::vector_type>::type(1);
@@ -50,7 +50,7 @@ namespace viennagrid
     
     /** @brief Computes the volume of topologically one-dimensional elements (lines, 1-simplex).*/
     template <typename DomainType, typename ElementType>
-    typename viennagrid::result_of::coord_type< typename viennagrid::result_of::point_type<DomainType>::type >::type
+    typename viennagrid::result_of::coord_type< DomainType >::type
     volume_impl(const DomainType & domain, ElementType const & cell, viennagrid::simplex_tag<1>)
     {
       typedef typename viennagrid::result_of::point_type<DomainType>::type                 PointType;
@@ -63,7 +63,7 @@ namespace viennagrid
     
     /** @brief Computes the volume of topologically one-dimensional elements (lines, 1-hypercube).*/
     template <typename DomainType, typename ElementType>
-    typename viennagrid::result_of::coord_type< typename viennagrid::result_of::point_type<DomainType>::type >::type
+    typename viennagrid::result_of::coord_type< DomainType >::type
     volume_impl(const DomainType & domain, ElementType const & cell, viennagrid::hypercube_tag<1>)
     {
       return volume_impl(cell, domain, viennagrid::simplex_tag<1>());
@@ -72,7 +72,7 @@ namespace viennagrid
     //topologically two-dimensional elements
     /** @brief Computes the two-dimensional volume of a triangle.*/
     template <typename DomainType, typename ElementType>
-    typename viennagrid::result_of::coord_type< typename viennagrid::result_of::point_type<DomainType>::type >::type
+    typename viennagrid::result_of::coord_type< DomainType >::type
     volume_impl(const DomainType & domain, ElementType const & cell, viennagrid::triangle_tag)
     {
       typedef typename viennagrid::result_of::point_type<DomainType>::type                 PointType;
@@ -86,7 +86,7 @@ namespace viennagrid
 
     /** @brief Computes the two-dimensional volume of a quadrilateral.*/
     template <typename DomainType, typename ElementType>
-    typename viennagrid::result_of::coord_type< typename viennagrid::result_of::point_type<DomainType>::type >::type
+    typename viennagrid::result_of::coord_type< DomainType >::type
     volume_impl(const DomainType & domain, ElementType const & cell, viennagrid::quadrilateral_tag)
     {
       typedef typename viennagrid::result_of::point_type<DomainType>::type                 PointType;
@@ -102,10 +102,10 @@ namespace viennagrid
     
     /** @brief Computes the two-dimensional volume of a polygon.*/
     template <typename DomainType, typename ElementType>
-    typename viennagrid::result_of::coord_type< typename viennagrid::result_of::point_type<DomainType>::type >::type
+    typename viennagrid::result_of::coord_type< DomainType >::type
     volume_impl(const DomainType & domain, ElementType const & cell, viennagrid::polygon_tag)
     {
-      typedef typename viennagrid::result_of::coord_type< typename viennagrid::result_of::point_type<DomainType>::type >::type NumericType;
+      typedef typename viennagrid::result_of::coord_type< DomainType >::type NumericType;
       typedef typename viennagrid::result_of::point_type<DomainType>::type                 PointType;
       typedef typename viennagrid::result_of::const_element_range<ElementType, vertex_tag>::type       VertexOnCellContainer;
       typedef typename viennagrid::result_of::iterator<VertexOnCellContainer>::type       VertexOnCellIterator;
@@ -134,7 +134,7 @@ namespace viennagrid
     //topologically three-dimensional elements
     /** @brief Computes the three-dimensional volume of a tetrahedron.*/
     template <typename DomainType, typename ElementType>
-    typename viennagrid::result_of::coord_type< typename viennagrid::result_of::point_type<DomainType>::type >::type
+    typename viennagrid::result_of::coord_type< DomainType >::type
     volume_impl(const DomainType & domain, ElementType const & cell, viennagrid::tetrahedron_tag)
     {
       typedef typename viennagrid::result_of::point_type<DomainType>::type                 PointType;
@@ -150,7 +150,7 @@ namespace viennagrid
 
     /** @brief Computes the three-dimensional volume of a hexahedron.*/
     template <typename DomainType, typename ElementType>
-    typename viennagrid::result_of::coord_type< typename viennagrid::result_of::point_type<DomainType>::type >::type
+    typename viennagrid::result_of::coord_type< DomainType >::type
     volume_impl(const DomainType & domain, ElementType const & cell, viennagrid::hexahedron_tag)
     {
       typedef typename viennagrid::result_of::point_type<DomainType>::type                 PointType;
@@ -177,13 +177,13 @@ namespace viennagrid
     //
     /** @brief Dispatched function for computing the volume of a domain or segment.*/
     template <typename ElementTypeOrTag, typename DomainType>
-    typename viennagrid::result_of::coord_type< typename viennagrid::result_of::point_type<DomainType>::type >::type
+    typename viennagrid::result_of::coord_type< DomainType >::type
     volume_domain(DomainType const & domain)
     {
       typedef typename viennagrid::result_of::const_element_range<DomainType, ElementTypeOrTag>::type  CellContainer;
       typedef typename viennagrid::result_of::iterator<CellContainer>::type         CellIterator;
       
-      typename viennagrid::result_of::coord_type< typename viennagrid::result_of::point_type<DomainType>::type >::type new_volume = 0;
+      typename viennagrid::result_of::coord_type< DomainType >::type new_volume = 0;
       CellContainer new_cells = viennagrid::elements<ElementTypeOrTag>(domain);
       for (CellIterator new_cit = new_cells.begin();
                         new_cit != new_cells.end();
@@ -200,7 +200,7 @@ namespace viennagrid
   //
   /** @brief Returns the n-dimensional volume of a n-cell */
   template <typename DomainType, typename ElementType>
-  typename viennagrid::result_of::coord_type< typename viennagrid::result_of::point_type<DomainType>::type >::type
+  typename viennagrid::result_of::coord_type< DomainType >::type
   volume(const DomainType & domain, ElementType const & cell)
   {
     return detail::volume_impl(domain, cell, typename ElementType::tag());

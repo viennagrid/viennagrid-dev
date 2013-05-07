@@ -224,14 +224,6 @@ namespace viennagrid
     
     namespace segmentation
     {
-
-        template<typename point_type>
-        typename viennagrid::result_of::coord_type<point_type>::type determinant( point_type const & p0, point_type const & p1, point_type const & p2 )
-        {
-            return p0[0]*p1[1]*p2[2] + p1[0]*p2[1]*p0[2] + p2[0]*p0[1]*p1[2] - p0[2]*p1[1]*p2[0] - p1[2]*p2[1]*p0[0] - p2[2]*p0[1]*p1[0];
-        }
-
-
         template<typename point_type>
         bool triangle_ray_intersect(point_type const & r, point_type d, point_type const & A, point_type const & B, point_type const & C)
         {
@@ -246,7 +238,7 @@ namespace viennagrid
             // (b c -d) (beta gamma lambda)^T = r-A
             // (beta gamma lambda)^T = (b c -d)^-1 (r-A)
 
-            double det = determinant( b, c, -d );
+            double det = viennagrid::geometry::determinant( b, c, -d );
             
 //             std::cout << "      det = " << det << std::endl;
             

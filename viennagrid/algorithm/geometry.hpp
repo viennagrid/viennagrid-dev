@@ -27,6 +27,11 @@ namespace viennagrid
     namespace geometry
     {
         
+        template<typename point_type>
+        typename viennagrid::result_of::coord_type<point_type>::type determinant( point_type const & p0, point_type const & p1, point_type const & p2 )
+        {
+            return p0[0]*p1[1]*p2[2] + p1[0]*p2[1]*p0[2] + p2[0]*p0[1]*p1[2] - p0[2]*p1[1]*p2[0] - p1[2]*p2[1]*p0[0] - p2[2]*p0[1]*p1[0];
+        }
         
         template<typename point_iterator_type>
         std::pair<
