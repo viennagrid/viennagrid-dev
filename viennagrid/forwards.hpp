@@ -311,6 +311,8 @@ namespace viennagrid
         template<typename something>
         struct cell_type;
         
+        template<typename something>
+        struct cell_tag;
         
         
         template<typename something>
@@ -503,6 +505,13 @@ namespace viennagrid
     
     
     template<typename config_domain_segment_element_or_something_like_that>
+    struct cell_range
+    {
+        typedef typename cell_tag<config_domain_segment_element_or_something_like_that>::type cell_tag;
+        typedef typename element_range<config_domain_segment_element_or_something_like_that, cell_tag>::type type;
+    };
+    
+    template<typename config_domain_segment_element_or_something_like_that>
     struct vertex_range
     {
         typedef typename element_range<config_domain_segment_element_or_something_like_that, vertex_tag>::type type;
@@ -554,6 +563,13 @@ namespace viennagrid
     struct const_element_range;
 
     
+    
+    template<typename config_domain_segment_element_or_something_like_that>
+    struct const_cell_range
+    {
+        typedef typename cell_tag<config_domain_segment_element_or_something_like_that>::type cell_tag;
+        typedef typename const_element_range<config_domain_segment_element_or_something_like_that, cell_tag>::type type;
+    };
     
     template<typename config_domain_segment_element_or_something_like_that>
     struct const_vertex_range
@@ -709,6 +725,10 @@ namespace viennagrid
     
     template<typename element_tag, typename element_domain_segment_config_or_something_like_that>
     typename result_of::element_range<element_domain_segment_config_or_something_like_that, element_tag>::type elements( element_domain_segment_config_or_something_like_that & something);
+    
+    template<typename element_domain_segment_config_or_something_like_that>
+    typename result_of::cell_range<element_domain_segment_config_or_something_like_that>::type cells( element_domain_segment_config_or_something_like_that & something)
+    { return elements<typename result_of::cell_tag<element_domain_segment_config_or_something_like_that>::type>(something); }    
 
     template<typename element_domain_segment_config_or_something_like_that>
     typename result_of::element_range<element_domain_segment_config_or_something_like_that, vertex_tag>::type vertices( element_domain_segment_config_or_something_like_that & something)
@@ -746,6 +766,10 @@ namespace viennagrid
     
     template<typename element_tag, typename element_domain_segment_config_or_something_like_that>
     typename result_of::const_element_range<element_domain_segment_config_or_something_like_that, element_tag>::type elements( const element_domain_segment_config_or_something_like_that & something);
+    
+    template<typename element_domain_segment_config_or_something_like_that>
+    typename result_of::const_cell_range<element_domain_segment_config_or_something_like_that>::type cells( element_domain_segment_config_or_something_like_that const & something)
+    { return elements<typename result_of::cell_tag<element_domain_segment_config_or_something_like_that>::type>(something); }   
     
     template<typename element_domain_segment_config_or_something_like_that>
     typename result_of::const_element_range<element_domain_segment_config_or_something_like_that, vertex_tag>::type vertices( const element_domain_segment_config_or_something_like_that & something)

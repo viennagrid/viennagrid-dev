@@ -154,6 +154,12 @@ namespace viennagrid
         {
             typedef typename const_element_range< topology_type, element_type_or_tag>::type type;
         };
+        
+        template<typename config_type, typename topology_type, typename metainfo_collection_type, typename element_type_or_tag>
+        struct element_range< const domain_t<config_type, topology_type, metainfo_collection_type>, element_type_or_tag >
+        {
+            typedef typename const_element_range< domain_t<config_type, topology_type, metainfo_collection_type>, element_type_or_tag >::type type;
+        };
     }
     
     
@@ -193,6 +199,12 @@ namespace viennagrid
         struct container_collection< domain_t<config_type, topology_type, metainfo_collection_type> >
         {
             typedef typename topology_type::container_collection_type type;
+        };
+        
+        template<typename config_type, typename topology_type, typename metainfo_collection_type>
+        struct container_collection< const domain_t<config_type, topology_type, metainfo_collection_type> >
+        {
+            typedef const typename topology_type::container_collection_type type;
         };
         
 
@@ -476,6 +488,17 @@ namespace viennagrid
         {
             typedef typename viennagrid::result_of::topologic_view<typename domain_type::topology_type, element_typelist>::type topologic_view_type;
             typedef typename domain_type::metainfo_collection_type metainfo_collection_type;
+            typedef typename viennagrid::domain_t<typename domain_type::config_type, topologic_view_type, metainfo_collection_type*> type;
+        };
+        
+        template<
+            typename config_type, typename topology_type, typename metainfo_collection_type,
+            typename element_typelist,
+            typename container_config>
+        struct domain_view< domain_t<config_type, topology_type, metainfo_collection_type*>, element_typelist, container_config >
+        {
+            typedef domain_t<config_type, topology_type, metainfo_collection_type*> domain_type;
+            typedef typename viennagrid::result_of::topologic_view<typename domain_type::topology_type, element_typelist>::type topologic_view_type;
             typedef typename viennagrid::domain_t<typename domain_type::config_type, topologic_view_type, metainfo_collection_type*> type;
         };
     }

@@ -88,6 +88,12 @@ namespace viennagrid
             typedef typemap type;
         };
         
+        template<typename typemap>
+        struct container_collection_typemap< const storage::collection_t<typemap> >
+        {
+            typedef typemap type;
+        };
+        
         template<typename key_type, typename value_type, typename tail>
         struct container_collection_typemap< viennameta::typelist_t< viennameta::static_pair<key_type, value_type>, tail > >
         {
@@ -614,6 +620,12 @@ namespace viennagrid
             typedef typename viennameta::STATIC_ASSERT< viennameta::typelist::result_of::size<all_cell_types>::value == 1 >::type static_assert_typedef;
             
             typedef typename viennameta::typelist::result_of::at<all_cell_types,0>::type type;
+        };
+        
+        template<typename something>
+        struct cell_tag
+        {
+            typedef typename element_tag< typename cell_type<something>::type >::type type;
         };
     }
     

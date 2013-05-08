@@ -123,7 +123,8 @@ namespace viennagrid
           for (int j=0; j<point_dim; j++)
             reader >> p[j];
           
-          VertexHandleType vertex = viennagrid::create_vertex( domain, typename VertexType::id_type(i), p );
+//           VertexHandleType vertex = 
+            viennagrid::create_vertex( domain, typename VertexType::id_type(i), p );
             
           //viennagrid::dereference_handle(domain, vertex).id( storage::smart_id<VertexType, int>(i) );
         }
@@ -169,11 +170,16 @@ namespace viennagrid
     
           if (segments.size() < segment_index) //not that segment_index is 1-based
           {
+            std::size_t old_size = segments.size();
             segments.resize(segment_index);
-            segments[segment_index - 1] = viennagrid::create_view<SegmentType>(domain);
+            
+            for (; old_size != segment_index; ++old_size)
+                segments[old_size] = viennagrid::create_view<SegmentType>(domain);
           }
           
-          viennagrid::create_element<CellType>(segments[segment_index - 1], cell_vertex_handles.begin(), cell_vertex_handles.end(), typename CellType::id_type(i));
+          SegmentType & cur_segment = segments[segment_index - 1];
+          
+          viennagrid::create_element<CellType>(cur_segment, cell_vertex_handles.begin(), cell_vertex_handles.end(), typename CellType::id_type(i));
         }
         
         //std::cout << "All done!" << std::endl;

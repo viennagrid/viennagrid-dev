@@ -247,7 +247,7 @@ namespace viennagrid
         if (viennadata::access<refinement_key, bool>()(*eit) == true)
         {
           VertexHandleType v = viennagrid::create_element<VertexType>( domain_out, typename VertexType::id_type(num_vertices) );
-          viennagrid::point(domain_out, v) = viennagrid::centroid(*eit, domain_in);
+          viennagrid::point(domain_out, v) = viennagrid::centroid(domain_in, *eit);
 
           //viennadata::access<refinement_key, std::size_t>()(*eit) = num_vertices;
           viennadata::access<refinement_key, VertexIDTypeOut>()(*eit) = VertexIDTypeOut(num_vertices);
@@ -346,7 +346,7 @@ namespace viennagrid
                       ++eit)
       {
           VertexHandleType v = viennagrid::create_element<VertexType>( domain_out, typename VertexType::id_type(num_vertices) );
-          viennagrid::point(domain_out, v) = viennagrid::centroid(*eit, domain_in);
+          viennagrid::point(domain_out, v) = viennagrid::centroid(domain_in, *eit);
 
           //viennadata::access<refinement_key, std::size_t>()(*eit) = num_vertices;
           viennadata::access<refinement_key, VertexIDTypeOut>()(*eit) = VertexIDTypeOut(num_vertices);

@@ -40,15 +40,15 @@ namespace viennagrid
     // Calculation of centroid
     //
     /** @brief Implementation of the calculation of a centroid for a triangle */
-    template <typename ElementType, typename GeometricContainerType>
-    typename viennagrid::result_of::point_type<GeometricContainerType>::type
-    centroid(ElementType const & cell, const GeometricContainerType & geometric_container, viennagrid::triangle_tag)
+    template <typename DomainType, typename ElementType>
+    typename viennagrid::result_of::point_type<DomainType>::type
+    centroid(const DomainType & domain, ElementType const & cell, viennagrid::triangle_tag)
     {
       //typedef typename ElementType::config_type             Config;
       typedef typename ElementType::tag             ElementTag;
-      typedef typename viennagrid::result_of::point_type<GeometricContainerType>::type                       PointType;
-      typedef typename viennagrid::result_of::element<GeometricContainerType, vertex_tag>::type                         VertexType;
-      typedef typename viennagrid::result_of::element<GeometricContainerType, line_tag>::type                         EdgeType;
+      typedef typename viennagrid::result_of::point_type<DomainType>::type                       PointType;
+      typedef typename viennagrid::result_of::element<DomainType, vertex_tag>::type                         VertexType;
+      typedef typename viennagrid::result_of::element<DomainType, line_tag>::type                         EdgeType;
       
       typedef typename viennagrid::result_of::const_element_range<ElementType, vertex_tag>::type         VertexOnCellRange;
       typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type            VertexOnCellIterator;
@@ -61,7 +61,7 @@ namespace viennagrid
            ++vocit)
       {
         //p0 += vocit->point();
-        p0 += viennagrid::point(geometric_container, *vocit);
+        p0 += viennagrid::point(domain, *vocit);
       }
       
       p0 /= viennagrid::element_topology::boundary_cells<ElementTag, vertex_tag>::num;
@@ -71,58 +71,58 @@ namespace viennagrid
 
     //tetrahedron can reuse the algorithm defined for a triangle
     /** @brief Implementation of the calculation of a centroid for a tetrahedron */
-    template <typename ElementType, typename GeometricContainerType>
-    typename viennagrid::result_of::point_type<GeometricContainerType>::type
-    centroid(ElementType const & cell, const GeometricContainerType & geometric_container, viennagrid::tetrahedron_tag)
+    template <typename DomainType, typename ElementType>
+    typename viennagrid::result_of::point_type<DomainType>::type
+    centroid(const DomainType & domain, ElementType const & cell, viennagrid::tetrahedron_tag)
     {
-      return centroid(cell, geometric_container, viennagrid::triangle_tag());
+      return centroid(domain, cell, viennagrid::triangle_tag());
     }
 
     //
     // Note: This works for rectangles only, but not for general quadrilateral
     //
     /** @brief Implementation of the calculation of a centroid for a quadrilateral */
-    template <typename ElementType, typename GeometricContainerType>
-    typename viennagrid::result_of::point_type<GeometricContainerType>::type
-    centroid(ElementType const & cell, const GeometricContainerType & geometric_container, viennagrid::quadrilateral_tag)
+    template <typename DomainType, typename ElementType>
+    typename viennagrid::result_of::point_type<DomainType>::type
+    centroid(const DomainType & domain, ElementType const & cell, viennagrid::quadrilateral_tag)
     {
-      return centroid(cell, geometric_container, viennagrid::triangle_tag());
+      return centroid(domain, cell, viennagrid::triangle_tag());
     }
 
     //
     // Note: This works for cuboids only, but not for general hexahedra
     //
     /** @brief Implementation of the calculation of a centroid for a hexahedron */
-    template <typename ElementType, typename GeometricContainerType>
-    typename viennagrid::result_of::point_type<GeometricContainerType>::type
-    centroid(ElementType const & cell, const GeometricContainerType & geometric_container, viennagrid::hexahedron_tag)
+    template <typename DomainType, typename ElementType>
+    typename viennagrid::result_of::point_type<DomainType>::type
+    centroid(const DomainType & domain, ElementType const & cell, viennagrid::hexahedron_tag)
     {
-      return centroid(cell, geometric_container, viennagrid::triangle_tag());
+      return centroid(domain, cell, viennagrid::triangle_tag());
     }
 
 
     //a line can reuse the algorithm defined for a triangle
     /** @brief Implementation of the calculation of a centroid for a line (1-simplex) */
-    template <typename ElementType, typename GeometricContainerType>
-    typename viennagrid::result_of::point_type<GeometricContainerType>::type
-    centroid(ElementType const & cell, const GeometricContainerType & geometric_container, viennagrid::simplex_tag<1>)
+    template <typename DomainType, typename ElementType>
+    typename viennagrid::result_of::point_type<DomainType>::type
+    centroid(const DomainType & domain, ElementType const & cell, viennagrid::simplex_tag<1>)
     {
-      return centroid(cell, geometric_container, viennagrid::triangle_tag());
+      return centroid(domain, cell, viennagrid::triangle_tag());
     }
 
     /** @brief Implementation of the calculation of a centroid for a line (1-hypercube) */
-    template <typename ElementType, typename GeometricContainerType>
-    typename viennagrid::result_of::point_type<GeometricContainerType>::type
-    centroid(ElementType const & cell, const GeometricContainerType & geometric_container, viennagrid::hypercube_tag<1>)
+    template <typename DomainType, typename ElementType>
+    typename viennagrid::result_of::point_type<DomainType>::type
+    centroid(const DomainType & domain, ElementType const & cell, viennagrid::hypercube_tag<1>)
     {
-      return centroid(cell, geometric_container, viennagrid::triangle_tag());
+      return centroid(domain, cell, viennagrid::triangle_tag());
     }
 
     //a point is degenerate and returns its location
     /** @brief Implementation of the calculation of a centroid for a point */
-    template <typename ElementType, typename GeometricContainerType>
-    typename viennagrid::result_of::point_type<GeometricContainerType>::type
-    centroid(ElementType const & cell, const GeometricContainerType & geometric_container, viennagrid::vertex_tag)
+    template <typename DomainType, typename ElementType>
+    typename viennagrid::result_of::point_type<DomainType>::type
+    centroid(const DomainType & domain, ElementType const & cell, viennagrid::vertex_tag)
     {
       return cell.point();
     }
@@ -130,30 +130,30 @@ namespace viennagrid
 
 
 
-    template <typename ElementTypeOrTag, typename GeometricContainerType>
-    typename viennagrid::result_of::point_type<GeometricContainerType>::type
-    centroid_domain(const GeometricContainerType & geometric_container)
+    template <typename ElementTypeOrTag, typename DomainType>
+    typename viennagrid::result_of::point_type<DomainType>::type
+    centroid_domain(const DomainType & domain)
     {
       //typedef typename DomainSegmentType::config_type                                      ConfigType;
       //typedef typename ElementType::tag                                                CellTag;
       typedef typename viennagrid::result_of::element_tag<ElementTypeOrTag>::type ElementTag;
       
-      typedef typename viennagrid::result_of::point_type<GeometricContainerType>::type                      PointType;
-      typedef typename viennagrid::result_of::element<GeometricContainerType, vertex_tag>::type                         VertexType;
-      typedef typename viennagrid::result_of::element<GeometricContainerType, line_tag>::type                         EdgeType;
+      typedef typename viennagrid::result_of::point_type<DomainType>::type                      PointType;
+      typedef typename viennagrid::result_of::element<DomainType, vertex_tag>::type                         VertexType;
+      typedef typename viennagrid::result_of::element<DomainType, line_tag>::type                         EdgeType;
       
-      typedef typename viennagrid::result_of::const_element_range<GeometricContainerType,
+      typedef typename viennagrid::result_of::const_element_range<DomainType,
                                                                 ElementTag>::type  CellRange;
       typedef typename viennagrid::result_of::iterator<CellRange>::type                         CellIterator;
       
       PointType result = 0;
       double volume = 0;
       
-      CellRange cells = viennagrid::elements<ElementTag>(geometric_container);
+      CellRange cells = viennagrid::elements<ElementTag>(domain);
       for (CellIterator cit = cells.begin(); cit != cells.end(); ++cit)
       {
-        double vol_cell = viennagrid::volume(*cit);
-        result += vol_cell * centroid(*cit);
+        double vol_cell = viennagrid::volume(domain, *cit);
+        result += vol_cell * centroid(domain, *cit);
         volume += vol_cell;
       }
       
@@ -167,11 +167,11 @@ namespace viennagrid
    * 
    * @param cell    The n-cell for which the centroid should be computed
    */
-    template <typename CellType, typename GeometricContainerType>
-    typename viennagrid::result_of::point_type<GeometricContainerType>::type
-  centroid(CellType const & cell, const GeometricContainerType & geometric_container)
+    template <typename DomainType, typename ElementType>
+    typename viennagrid::result_of::point_type<DomainType>::type
+  centroid(const DomainType & domain, ElementType const & cell)
   {
-    return detail::centroid(cell, geometric_container, typename CellType::tag());
+    return detail::centroid(domain, cell, typename ElementType::tag());
   }
   
   template<typename ElementTypeOrTag, typename config_type, typename topology_type, typename metainfo_collection_type>

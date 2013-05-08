@@ -93,29 +93,65 @@ namespace viennagrid
           writer << "<VTKFile type=\"UnstructuredGrid\" version=\"0.1\" byte_order=\"LittleEndian\">" << std::endl;
           writer << " <UnstructuredGrid>" << std::endl;
         }
+        
+        
+        template<typename SegmentType>
+        unsigned int preparePoints(SegmentType const & segment, int seg_num)
+        {
+          typedef typename viennagrid::result_of::const_element_range<SegmentType, CellTag>::type     CellRange;
+          typedef typename viennagrid::result_of::iterator<CellRange>::type                                         CellIterator;
+
+          typedef typename viennagrid::result_of::const_element_range<CellType, vertex_tag>::type      VertexOnCellRange;
+          typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type         VertexOnCellIterator;
+          
+          std::deque< ConstVertexHandleType > & current_used_vertices = used_vertices[seg_num];
+          std::map< ConstVertexHandleType, std::size_t > & current_vertex_to_index_map = vertex_to_index_map[seg_num];
+          
+          std::size_t index = 0;
+          CellRange cells = viennagrid::elements(segment);
+//           std::cout << cells.size() << std::endl;
+          for (CellIterator it = cells.begin(); it != cells.end(); ++it)
+          {
+              VertexOnCellRange vertices_on_cell = viennagrid::elements(*it);
+              for (VertexOnCellIterator jt = vertices_on_cell.begin(); jt != vertices_on_cell.end(); ++jt)
+              {
+                  typename std::map< ConstVertexHandleType, std::size_t >::iterator kt = current_vertex_to_index_map.find( jt.handle() );
+                  if (kt == current_vertex_to_index_map.end())
+                  {
+                      current_vertex_to_index_map.insert( std::make_pair( jt.handle(), index++ ) );
+                      current_used_vertices.push_back( jt.handle() );
+                  }
+              }
+          }
+          
+          return current_vertex_to_index_map.size();
+        }
 
         /** @brief Writes the vertices in the domain */
         template <typename SegmentType>
         void writePoints(SegmentType const & segment, std::ofstream & writer, int seg_num)
         {
-          typedef typename viennagrid::result_of::const_element_range<SegmentType, vertex_tag>::type   VertexRange;
-          typedef typename viennagrid::result_of::handle_iterator<VertexRange>::type               VertexHandleIterator;
+//           std::map< ConstVertexHandleType, std::size_t > & current_vertex_to_index_map = vertex_to_index_map[seg_num];
+            std::deque< ConstVertexHandleType > & current_used_vertices = used_vertices[seg_num];
           
           writer << "   <Points>" << std::endl;
           writer << "    <DataArray type=\"Float32\" NumberOfComponents=\"3\" format=\"ascii\">" << std::endl;
 
-          std::size_t index = 0;
-          VertexRange vertices = viennagrid::elements<vertex_tag>(segment);
-          for (VertexHandleIterator vit = vertices.handle_begin();
-              vit != vertices.handle_end();
-              ++vit)
+          
+//           VertexRange vertices = viennagrid::elements<vertex_tag>(segment);
+//           for (VertexHandleIterator vit = vertices.handle_begin();
+//               vit != vertices.handle_end();
+//               ++vit)
+//           std::cout << current_vertex_to_index_map.size() << std::endl;
+          for (typename std::deque< ConstVertexHandleType >::iterator it = current_used_vertices.begin(); it != current_used_vertices.end(); ++it)
           {
             //PointWriter<dim>::write(writer, vit->point());
-            vertex_to_index_map[seg_num][*vit] = index++;
+//             vertex_to_index_map[seg_num][*vit] = index++;
             
-            VertexType const & vertex = viennagrid::dereference_handle(segment, *vit);
+//             VertexType const & vertex = viennagrid::dereference_handle(segment, it->first);
             
-            PointWriter<dim>::write(writer, viennagrid::point(segment, vertex) );
+            PointWriter<dim>::write(writer, viennagrid::point(segment, *it) );
+//             std::cout << viennagrid::point(segment, it->first) << std::endl;
 
             // add 0's for less than three dimensions
               if (dim == 2)
@@ -394,15 +430,17 @@ namespace viennagrid
             std::ofstream writer(filename.c_str());
             writeHeader(writer);
             
+            used_vertices.resize(1);
+            vertex_to_index_map.resize(1);
+            
+            unsigned int num_points = preparePoints(domain, 0);
+            
             writer << "  <Piece NumberOfPoints=\""
-                   << viennagrid::elements<vertex_tag>(domain).size()
+                   << num_points
                    << "\" NumberOfCells=\""
                    << viennagrid::elements<CellTag>(domain).size()
                    << "\">" << std::endl;
 
-
-            vertex_to_index_map.resize(1);
-                   
             writePoints(domain, writer, 0);
             
             if (vertex_data_scalar.size() + vertex_data_vector.size() + vertex_data_normal.size() > 0)
@@ -491,6 +529,7 @@ namespace viennagrid
             }
             
             
+            used_vertices.resize( segment_num );
             vertex_to_index_map.resize( segment_num );
             
             //
@@ -526,9 +565,11 @@ namespace viennagrid
               {
                 viennadata::access<segment_mapping_key<SegmentType>, long>(seg)(*vit) = current_id++;
               }
+              
+              unsigned int num_points = preparePoints(seg, i);
 
               writer << "  <Piece NumberOfPoints=\""
-                    << viennagrid::elements<vertex_tag>(seg).size()
+                    << num_points
                     << "\" NumberOfCells=\""
                     << viennagrid::elements<CellTag>(seg).size()
                     << "\">" << std::endl;
@@ -671,6 +712,7 @@ namespace viennagrid
       private:
           
         std::vector< std::map< ConstVertexHandleType, std::size_t > >            vertex_to_index_map;
+        std::vector< std::deque< ConstVertexHandleType> >                        used_vertices;
           
         std::vector< data_accessor_wrapper<VertexType> >    vertex_data_scalar;
         std::vector< std::string >                          vertex_data_scalar_names;

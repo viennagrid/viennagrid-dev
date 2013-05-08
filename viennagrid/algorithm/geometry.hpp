@@ -19,10 +19,26 @@
 ======================================================================= */
 
 #include <limits>
+#include "viennagrid/domain/domain.hpp"
 #include "viennagrid/algorithm/intersect.hpp"
 
 namespace viennagrid 
 {
+    
+    
+    template<typename domain_type, typename element_type>
+    typename viennagrid::result_of::point_type<domain_type>::type normal_vector( domain_type const & domain, element_type const & element )
+    {
+        typedef typename viennagrid::result_of::point_type<domain_type>::type point_type;
+        
+        point_type const & p0 = viennagrid::point( domain, viennagrid::vertices(element)[0] );
+        point_type const & p1 = viennagrid::point( domain, viennagrid::vertices(element)[1] );
+        point_type const & p2 = viennagrid::point( domain, viennagrid::vertices(element)[2] );
+        
+        return viennagrid::cross_prod( p1-p0, p2-p0 );
+    }
+    
+    
   
     namespace geometry
     {

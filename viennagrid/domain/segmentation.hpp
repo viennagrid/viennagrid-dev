@@ -641,7 +641,7 @@ namespace viennagrid
                 // if the projection if negative, the triangle faces outward
                 bool faces_outward = p < 0;
                 
-                bool is_inside = false;
+//                 bool is_inside = false;
                 // iterating over all triangles and check for intersection
                 triangle_range_iterator jt = triangles.begin();
                 for (; jt != triangles.end(); ++jt)
