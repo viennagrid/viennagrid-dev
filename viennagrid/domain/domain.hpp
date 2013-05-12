@@ -399,13 +399,6 @@ namespace viennagrid
     }
     
     
-    
-    
-    
-    
-
-    
-    
     template<typename config_type, typename topology_type, typename metainfo_collection_type, typename element_tag, typename boundary_cell_container_typelist, typename id_type>
     std::pair<
                 typename viennagrid::storage::result_of::container_of<
