@@ -175,7 +175,7 @@ namespace viennagrid
         key_type key(domain);
         
         element_type & element = viennagrid::dereference_handle(domain, handle);
-        container_type * container = viennadata::find<key_type, container_type>(key)(element);
+//         container_type * container = viennadata::find<key_type, container_type>(key)(element);
 //        cout << " coboundary_elements handle=" << handle << " " << container << endl;
         
 
@@ -224,7 +224,7 @@ namespace viennagrid
         key_type key(domain);
         
         const element_type & element = viennagrid::dereference_handle(domain, handle);
-        container_type * container = viennadata::find<key_type, container_type>(key)(element);
+//         container_type * container = viennadata::find<key_type, container_type>(key)(element);
 
         viennadata::access<key_type, container_type>(key)(element) = create_coboundary_container<coboundary_type_or_tag>(domain, handle);
         return range_type( viennadata::access<key_type, container_type>(key)(element) );

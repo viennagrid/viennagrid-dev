@@ -264,6 +264,32 @@ namespace viennagrid
                 handle_or_ignore_helper<container_collection_type, handle_type, container_type>::handle_or_ignore(collection, handle);
             }
             
+            
+            
+            
+            template<typename container_collection_type>
+            struct clear_all_functor
+            {
+                clear_all_functor( container_collection_type & container_collection_ ) : container_collection(container_collection_) {}
+                
+                template<typename type>
+                void operator() ( viennameta::tag<type> )
+                {
+                    viennagrid::storage::collection::get<type>( container_collection ).clear();
+                }
+                
+                container_collection_type & container_collection;
+            };
+            
+            
+            template<typename container_collection_typemap>
+            void clear_all( collection_t<container_collection_typemap> & container_collection)
+            {
+                clear_all_functor< collection_t<container_collection_typemap> > f( container_collection );
+                viennameta::typelist::for_each< typename viennameta::typemap::result_of::key_typelist<container_collection_typemap>::type >( f );
+            }
+            
+            
 
         } // namespace container_collection
         

@@ -814,6 +814,33 @@ namespace viennagrid
     }
 
     
+    
+    template<typename config_type_, typename topology_type_, typename metainfo_collection_type_>
+    class domain_t;
+    
+    
+    
+    
+    template<typename container_type, typename vertex_type>
+    typename container_type::value_type & point( container_type & geometric_container, vertex_type const & vertex );
+    
+    
+    template<typename element_type, typename domain_type, typename handle_array_iterator_type>
+    typename result_of::handle<domain_type, typename element_type::tag>::type create_element( domain_type & domain,
+                                                                                              handle_array_iterator_type array_start,
+                                                                                              const handle_array_iterator_type & array_end );
+
+    template<typename element_type, typename domain_type, typename handle_array_iterator_type>
+    typename result_of::handle<domain_type, typename element_type::tag>::type create_element( domain_type & domain,
+                                                                                              handle_array_iterator_type array_start,
+                                                                                              const handle_array_iterator_type & array_end,
+                                                                                              typename element_type::id_type id );
+    
+    template<typename config_type, typename topology_type, typename metainfo_collection_type, typename point_type>
+    typename result_of::handle<domain_t<config_type, topology_type, metainfo_collection_type>, vertex_tag>::type
+        create_unique_vertex( domain_t<config_type, topology_type, metainfo_collection_type> & domain,
+                              point_type const & p,
+                              typename viennagrid::result_of::coord_type< domain_t<config_type, topology_type, metainfo_collection_type> >::type tolerance = 1e-6 );
 
 
   

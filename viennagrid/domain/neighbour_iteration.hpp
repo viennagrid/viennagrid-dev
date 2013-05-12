@@ -170,6 +170,36 @@ namespace viennagrid
         }
     }
     
+    template<typename connector_boundary_element_type_or_tag, typename domain_or_container_type, typename handle_type>
+    typename result_of::neighbour_range<domain_or_container_type, typename viennagrid::storage::handle::value_type< handle_type >::type >::type
+        create_neighbour_elements(domain_or_container_type & domain, handle_type handle)
+    {
+        typedef typename viennagrid::storage::handle::value_type<handle_type>::type element_type;
+        typedef typename result_of::element_tag<connector_boundary_element_type_or_tag>::type connector_boundary_element_tag;
+        //typedef typename result_of::element_tag<coboundary_type_or_tag>::type coboundary_tag;
+        typedef typename result_of::neighbour_container<domain_or_container_type, element_type>::type container_type;
+        typedef typename result_of::neighbour_range<domain_or_container_type, element_type>::type range_type;
+        
+        typedef viennagrid::neighbour_key<domain_or_container_type, connector_boundary_element_tag> key_type;
+        key_type key(domain);
+        
+        element_type & element = viennagrid::dereference_handle(domain, handle);
+//         container_type * container = viennadata::find<key_type, container_type>(key)(element);
+//        cout << " coboundary_elements handle=" << handle << " " << container << endl;
+        
+//         if (container)
+//         {
+// //             cout << "Using existing neighbour container" << endl;
+//             return range_type( *container );
+//         }
+//         else
+//         {
+//             cout << "Creating neighbour container" << endl;
+            viennadata::access<key_type, container_type>(key)(element) = create_neighbour_container<connector_boundary_element_tag>(domain, handle);
+            return range_type( viennadata::access<key_type, container_type>(key)(element) );
+//         }
+    }
+    
     
     template<typename connector_boundary_element_type_or_tag, typename domain_or_container_type, typename handle_type>
     typename result_of::const_neighbour_range<domain_or_container_type, typename viennagrid::storage::handle::value_type< handle_type >::type >::type
@@ -199,6 +229,37 @@ namespace viennagrid
             viennadata::access<key_type, container_type>(key)(element) = create_neighbour_container<connector_boundary_element_tag>(domain, handle);
             return range_type( viennadata::access<key_type, container_type>(key)(element) );
         }
+    }
+    
+    
+    template<typename connector_boundary_element_type_or_tag, typename domain_or_container_type, typename handle_type>
+    typename result_of::const_neighbour_range<domain_or_container_type, typename viennagrid::storage::handle::value_type< handle_type >::type >::type
+        create_neighbour_elements(const domain_or_container_type & domain, handle_type handle)
+    {
+        typedef typename viennagrid::storage::handle::value_type<handle_type>::type element_type;
+        typedef typename result_of::element_tag<connector_boundary_element_type_or_tag>::type connector_boundary_element_tag;
+        //typedef typename result_of::element_tag<coboundary_type_or_tag>::type coboundary_tag;
+        typedef typename result_of::const_coboundary_container<domain_or_container_type, element_type>::type container_type;
+        typedef typename result_of::const_coboundary_range<domain_or_container_type, element_type>::type range_type;
+        
+        typedef viennagrid::coboundary_key<domain_or_container_type, connector_boundary_element_tag> key_type;
+        key_type key(domain);
+        
+        const element_type & element = viennagrid::dereference_handle(domain, handle);
+//         container_type * container = viennadata::find<key_type, container_type>(key)(element);
+//        cout << " coboundary_elements handle=" << handle << " " << container << endl;
+        
+//         if (container)
+//         {
+// //             cout << "Using existing co-boundary container" << endl;
+//             return range_type( *container );
+//         }
+//         else
+//         {
+//             cout << "Creating co-boundary container" << endl;
+            viennadata::access<key_type, container_type>(key)(element) = create_neighbour_container<connector_boundary_element_tag>(domain, handle);
+            return range_type( viennadata::access<key_type, container_type>(key)(element) );
+//         }
     }
 }
 

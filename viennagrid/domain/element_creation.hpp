@@ -119,7 +119,7 @@ namespace viennagrid
         create_unique_vertex( domain_t<config_type, topology_type, metainfo_collection_type> & domain,
 //                               typename viennagrid::result_of::point_type< domain_t<config_type, topology_type, metainfo_collection_type> >::type const & p,
                               point_type const & p,
-                              typename viennagrid::result_of::coord_type< domain_t<config_type, topology_type, metainfo_collection_type> >::type tolerance = 1e-6 )
+                              typename viennagrid::result_of::coord_type< domain_t<config_type, topology_type, metainfo_collection_type> >::type tolerance )
     {
         typedef domain_t<config_type, topology_type, metainfo_collection_type> domain_type;
         typedef typename result_of::element_range<domain_type, vertex_tag>::type vertex_range_type;

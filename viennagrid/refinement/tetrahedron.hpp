@@ -92,7 +92,7 @@ namespace viennagrid
   {
       return stable_line_is_longer(domain,
                                 *viennagrid::advance(vertices.begin(), i0), *viennagrid::advance(vertices.begin(), i1),
-                                *viennagrid::advance(vertices.begin(), i2), *viennagrid::advance(vertices.begin(), i1));
+                                *viennagrid::advance(vertices.begin(), i2), *viennagrid::advance(vertices.begin(), i3));
   }
   
   

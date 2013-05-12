@@ -113,6 +113,11 @@ namespace viennagrid
                 container.erase( to_erase++ );
                 return to_erase;
             }
+            
+            void clear()
+            {
+                container.clear();
+            }
 
             
             size_type size() const { return container.size(); }

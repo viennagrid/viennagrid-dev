@@ -47,12 +47,11 @@ namespace viennagrid
 
 
       /** @brief Constructor triggering the refinement of the domain */
-      template <typename CellTag, typename OtherDomainType, typename RefinementTag>
-      domain_t(refinement_proxy<CellTag, OtherDomainType, RefinementTag> const & proxy) : topology(create_topology<topology_type>())
-      {
-        detail::refine_impl<CellTag>(proxy.get(), *this, proxy.tag());
-      }
-
+//       template <typename CellTag, typename OtherDomainType, typename RefinementTag>
+//       domain_t(refinement_proxy<CellTag, OtherDomainType, RefinementTag> const & proxy) : topology(create_topology<topology_type>())
+//       {
+//         detail::refine_impl<CellTag>(proxy.get(), *this, proxy.tag());
+//       }
         
         typedef typename result_of::element< self_type, viennagrid::vertex_tag >::type vertex_type;
         typedef typename result_of::handle< self_type, viennagrid::vertex_tag >::type vertex_handle_type;

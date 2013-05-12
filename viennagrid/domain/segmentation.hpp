@@ -7,6 +7,7 @@
 #include "viennagrid/algorithm/inner_prod.hpp"
 #include "viennagrid/algorithm/cross_prod.hpp"
 #include "viennagrid/algorithm/geometry.hpp"
+#include "viennagrid/algorithm/centroid.hpp"
 #include "viennagrid/domain/coboundary_iteration.hpp"
 
 namespace viennagrid
@@ -19,7 +20,7 @@ namespace viennagrid
         segment_id_t() : id(invalid_id) {}
         segment_id_t( base_type id_ ) : id(id_) {}
         
-        bool is_valid() const { return id == invalid_id; }
+        bool is_valid() const { return id != invalid_id; }
         operator base_type() const { return id; }
         
     private:
@@ -45,6 +46,11 @@ namespace viennagrid
         
         segment_id_type segment_id;
         
+        bool in_segment( segment_id_type const & segment_id_ ) const
+        {
+            return (segment_id == segment_id_);
+        }
+        
         operator segment_id_type() const { return segment_id; }
         element_segment_info_t & operator=( segment_id_type const & segment_id_ ) { segment_id = segment_id_; return *this; }
         
@@ -65,7 +71,7 @@ namespace viennagrid
         segment_id_type positive_orientation_segment_id;
         segment_id_type negative_orientation_segment_id;
         
-        bool is_on_segment( segment_id_type const & segment_id ) const
+        bool in_segment( segment_id_type const & segment_id ) const
         {
             return (segment_id == positive_orientation_segment_id) || (segment_id == negative_orientation_segment_id);
         }
@@ -82,6 +88,32 @@ namespace viennagrid
             segmentation.add_segment(negative_orientation_segment_id);
         }
     };
+    
+    
+    
+    template<typename element_tag, unsigned int geometric_dimension, typename segmentation_type_tag, typename segment_id_type>
+    bool in_segment( element_segment_info_t<element_tag, geometric_dimension, segmentation_type_tag, segment_id_type> const & segment_info, segment_id_type segment_id )
+    {
+        return segment_info.in_segment(segment_id);
+    }
+    
+    template<typename segmentation_type, typename element_type, typename base_type, base_type invalid_id>
+    bool in_segment( segmentation_type const & segmentation, element_type const & element, segment_id_t<base_type, invalid_id> segment_id )
+    {
+        return in_segment(segmentation.segment_info(element), segment_id);
+    }
+    
+    template<typename segment_id_type_>
+    bool faces_outward_on_segment( element_segment_info_t<triangle_tag, 3, disjunct_segmentation_tag, segment_id_type_> const & segment_info, segment_id_type_ segment_id )
+    {
+        return (segment_id == segment_info.positive_orientation_segment_id);
+    }
+    
+    template<typename segmentation_type, typename element_type, typename base_type, base_type invalid_id>
+    bool faces_outward_on_segment( segmentation_type const & segmentation, element_type const & element, segment_id_t<base_type, invalid_id> segment_id )
+    {
+        return faces_outward_on_segment(segmentation.segment_info(element), segment_id);
+    }
     
     
     
@@ -163,7 +195,7 @@ namespace viennagrid
         typedef segment_id_type element_segment_info_type;
         typedef typename storage::static_array<segment_id_type, 1> segment_ids_container_type;
         
-        dummy_segmentation() : segment_id(0)
+        dummy_segmentation( segment_id_type segment_id_ = segment_id_type(0) ) : segment_id(segment_id_)
         {
             used_segments[0] = segment_id;
         }
@@ -172,7 +204,7 @@ namespace viennagrid
         void init( domain_type & domain );
         
         template<typename element_type>
-        element_segment_info_type const segment_info( element_type const & element )
+        element_segment_info_type const segment_info( element_type const & element ) const
         { return segment_id; }
         
         template<typename element_type>
@@ -188,6 +220,19 @@ namespace viennagrid
         const segment_id_type segment_id;
         segment_ids_container_type used_segments;
     };
+    
+    
+    template<typename base_type, base_type invalid_id>
+    bool in_segment( segment_id_t<base_type, invalid_id> const & segment_info, segment_id_t<base_type, invalid_id> segment_id )
+    {
+        return segment_info == segment_id;
+    }
+    
+    template<typename base_type, base_type invalid_id>
+    bool faces_outward_on_segment( segment_id_t<base_type, invalid_id> const & segment_info, segment_id_t<base_type, invalid_id> segment_id )
+    {
+        return segment_info == segment_id;
+    }
     
     
 
@@ -219,6 +264,54 @@ namespace viennagrid
     
     
     
+    
+    template<typename domain_type, typename segmentation_type, typename view_container_type>
+    void split_in_views( domain_type & domain, segmentation_type const & segmentation, view_container_type & views )
+    {
+        typedef typename view_container_type::value_type view_type;
+        typedef typename viennagrid::result_of::cell_type<domain_type>::type cell_type;
+        typedef typename viennagrid::result_of::cell_range<domain_type>::type cell_range_type;
+        typedef typename viennagrid::result_of::iterator<cell_range_type>::type cell_range_iterator;
+        
+        typedef typename segmentation_type::segment_id_type segment_id_type;
+        typedef typename segmentation_type::segment_ids_container_type segment_ids_container_type;
+        segment_ids_container_type const & segments = segmentation.segments();
+        
+        views.resize( segments.size() );
+        unsigned int segment_index = 0;
+        for (typename segment_ids_container_type::iterator seg_it = segments.begin(); seg_it != segments.end(); ++seg_it, ++segment_index)
+            views[segment_index] = viennagrid::create_view<view_type>(domain);
+
+        cell_range_type cells = viennagrid::elements(domain);
+        for (cell_range_iterator it = cells.begin(); it != cells.end(); ++it)
+        {
+            segment_index = 0;
+            for (typename segment_ids_container_type::iterator seg_it = segments.begin(); seg_it != segments.end(); ++seg_it, ++segment_index)
+            {
+                segment_id_type segment_id = *seg_it;
+                
+                if ( viennagrid::in_segment( segmentation, *it, segment_id ) )
+                    viennagrid::add_handle( views[segment_index], domain, it.handle() );
+            }
+        }
+    }
+    
+    template<typename segment_container_type, typename seed_point_container>
+    void extract_seed_points( segment_container_type const & segments, seed_point_container & seed_points )
+    {
+        typedef typename segment_container_type::value_type segment_type;
+        typedef typename viennagrid::result_of::const_cell_range<segment_type>::type cell_range_type;
+        typedef typename viennagrid::result_of::iterator<cell_range_type>::type cell_range_iterator;
+        typedef typename viennagrid::result_of::point_type<segment_type>::type point_type;
+        
+        int segment_index = 0;
+        for (typename segment_container_type::const_iterator it = segments.begin(); it != segments.end(); ++it, ++segment_index)
+        {
+            cell_range_type cells = viennagrid::elements(*it);
+            point_type centroid = viennagrid::centroid( *it, cells[0] );
+            seed_points.push_back( std::make_pair(segment_index, centroid) );
+        }
+    }
     
     
     
@@ -431,7 +524,7 @@ namespace viennagrid
                 typedef typename viennagrid::result_of::handle_iterator<neighbour_range_type>::type neighbour_handle_iterator;
                 
                 
-                neighbour_range_type neighbour_triangles = viennagrid::coboundary_elements<viennagrid::triangle_tag>(domain, *lit);
+                neighbour_range_type neighbour_triangles = viennagrid::create_coboundary_elements<viennagrid::triangle_tag>(domain, *lit);
                 
 //                 if ( neighbour_triangles.size() != 2 )
 //                 {

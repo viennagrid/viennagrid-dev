@@ -396,7 +396,8 @@ namespace viennagrid
             
             
             
-            CellHandleType cell = viennagrid::create_element<CellType>(segments[seg_id], cell_vertex_handles.begin(), cell_vertex_handles.end());//, typename CellType::id_type(i));
+//             CellHandleType cell = 
+                viennagrid::create_element<CellType>(segments[seg_id], cell_vertex_handles.begin(), cell_vertex_handles.end());//, typename CellType::id_type(i));
             //cell.vertices(&(vertices[0]));
             //cell.id(i);
             //domain.segments()[seg_id].push_back(cell);

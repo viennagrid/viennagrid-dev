@@ -195,6 +195,7 @@ namespace viennagrid
       //typedef typename DomainTypeIn::segment_type                                                                    SegmentTypeIn; 
       //typedef typename viennagrid::result_of::point<ConfigTypeIn>::type                                         PointType;
       typedef typename viennagrid::result_of::element<GeometricDomainTypeIn, vertex_tag>::type                                      VertexType;
+      typedef typename VertexType::id_type                                      VertexIDType;
       typedef typename viennagrid::result_of::handle<GeometricDomainTypeIn, vertex_tag>::type                                      VertexHandleType;
       typedef typename viennagrid::result_of::element<GeometricDomainTypeIn, line_tag>::type                                      EdgeType;
       typedef typename viennagrid::result_of::element<GeometricDomainTypeIn, CellTagIn>::type              CellType;
@@ -231,8 +232,9 @@ namespace viennagrid
                         ++vit)
       {
         //domain_out.push_back(*vit);
-        VertexHandleType vh = viennagrid::push_element_noid( domain_out, *vit ).first;
-        viennagrid::point( domain_out, vh ) = viennagrid::point( domain_in, *vit );
+        VertexHandleType vh = viennagrid::create_vertex( domain_out, VertexIDType(num_vertices), viennagrid::point( domain_in, *vit ) );
+//         viennagrid::push_element_noid( domain_out, *vit ).first;
+//         viennagrid::point( domain_out, vh ) = viennagrid::point( domain_in, *vit );
         ++num_vertices;
       }
 
@@ -246,8 +248,9 @@ namespace viennagrid
       {
         if (viennadata::access<refinement_key, bool>()(*eit) == true)
         {
-          VertexHandleType v = viennagrid::create_element<VertexType>( domain_out, typename VertexType::id_type(num_vertices) );
-          viennagrid::point(domain_out, v) = viennagrid::centroid(domain_in, *eit);
+//           VertexHandleType v = viennagrid::create_element<VertexType>( domain_out, typename VertexType::id_type(num_vertices) );
+//           viennagrid::point(domain_out, v) = ;
+          VertexHandleType vh = viennagrid::create_vertex( domain_out, VertexIDType(num_vertices), viennagrid::centroid(domain_in, *eit) );
 
           //viennadata::access<refinement_key, std::size_t>()(*eit) = num_vertices;
           viennadata::access<refinement_key, VertexIDTypeOut>()(*eit) = VertexIDTypeOut(num_vertices);
@@ -286,38 +289,171 @@ namespace viennagrid
     
     
     
-    /** @brief Implementation of uniform refinement. Responsible for all the book-keeping. */
-    template <typename CellTagIn, typename GeometricDomainTypeIn, typename GeometricDomainTypeOut>
-    void refine_impl(GeometricDomainTypeIn const & domain_in,
-                    GeometricDomainTypeOut & domain_out,
-                    uniform_refinement_tag)
+    /** @brief Implementation of adaptive refinement. Responsible for all the book-keeping */
+    template <typename CellTagIn, typename DomainTypeIn, typename SegmentContainerTypeIn, typename DomainTypeOut, typename SegmentContainerTypeOut>
+    void refine_impl(DomainTypeIn const & domain_in, SegmentContainerTypeIn const & segments_in,
+                    DomainTypeOut & domain_out, SegmentContainerTypeOut & segments_out,
+                    local_refinement_tag)
     {
       //typedef domain_t<ConfigTypeIn>                      DomainTypeIn;
       //typedef typename ConfigTypeIn::cell_tag           CellTagIn;   
       //typedef typename ConfigTypeIn::numeric_type       NumericType;
-      typedef typename viennagrid::result_of::point_type<GeometricDomainTypeIn>::type PointType;
+      
+      typedef typename SegmentContainerTypeIn::value_type SegmentTypeIn;
+      typedef typename SegmentContainerTypeOut::value_type SegmentTypeOut;
+      
+      typedef typename viennagrid::result_of::point_type<DomainTypeIn>::type PointType;
       
       typedef typename viennagrid::result_of::coord_type<PointType>::type NumericType;
 
       //typedef typename DomainTypeIn::segment_type                                                                    SegmentTypeIn; 
       //typedef typename viennagrid::result_of::point<ConfigTypeIn>::type                                         PointType;
-      typedef typename viennagrid::result_of::element<GeometricDomainTypeIn, vertex_tag>::type                                      VertexType;
-      typedef typename viennagrid::result_of::handle<GeometricDomainTypeIn, vertex_tag>::type                                      VertexHandleType;
-      typedef typename viennagrid::result_of::element<GeometricDomainTypeIn, line_tag>::type                                      EdgeType;
-      typedef typename viennagrid::result_of::element<GeometricDomainTypeIn, CellTagIn>::type              CellType;
+      typedef typename viennagrid::result_of::element<DomainTypeIn, vertex_tag>::type                                      VertexType;
+//       typedef typename VertexType::id_type                                      VertexIDType;
+      typedef typename viennagrid::result_of::handle<DomainTypeIn, vertex_tag>::type                                      VertexHandleType;
+      typedef typename viennagrid::result_of::element<DomainTypeIn, line_tag>::type                                      EdgeType;
+      typedef typename viennagrid::result_of::element<DomainTypeIn, CellTagIn>::type              CellType;
       
-      typedef typename viennagrid::result_of::const_element_range<GeometricDomainTypeIn, vertex_tag>::type                           VertexRange;          
+      typedef typename viennagrid::result_of::const_element_range<DomainTypeIn, vertex_tag>::type                           VertexRange;          
       typedef typename viennagrid::result_of::iterator<VertexRange>::type                                        VertexIterator;         
-      typedef typename viennagrid::result_of::const_element_range<GeometricDomainTypeIn, line_tag>::type                           EdgeRange;          
+      typedef typename viennagrid::result_of::const_element_range<DomainTypeIn, line_tag>::type                           EdgeRange;          
       typedef typename viennagrid::result_of::iterator<EdgeRange>::type                                          EdgeIterator;         
-      typedef typename viennagrid::result_of::const_element_range<GeometricDomainTypeIn, CellTagIn>::type  CellRange;          
+      typedef typename viennagrid::result_of::const_element_range<SegmentTypeIn, CellTagIn>::type  CellOnSegmentRange;          
+      typedef typename viennagrid::result_of::iterator<CellOnSegmentRange>::type                                          CellOnSegmentIterator;         
+      typedef typename viennagrid::result_of::const_element_range<CellType, vertex_tag>::type                               VertexOnCellRange;
+      typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type                                  VertexOnCellIterator;            
+      typedef typename viennagrid::result_of::const_element_range<EdgeType, vertex_tag>::type                               VertexOnEdgeRange;
+      typedef typename viennagrid::result_of::iterator<VertexOnEdgeRange>::type                                  VertexOnEdgeIterator;
+      
+      typedef typename viennagrid::result_of::element<DomainTypeOut, vertex_tag>::type                                      VertexTypeOut;
+      typedef typename VertexTypeOut::id_type VertexIDTypeOut;
+      
+      for (typename SegmentContainerTypeIn::const_iterator it = segments_in.begin(); it != segments_in.end(); ++it)
+          segments_out.push_back( viennagrid::create_view<SegmentTypeOut>( domain_out ) );
+      
+//       segments_out.resize( segments_in.size() );
+//       for (unsigned int i = 0; i < segments_out.size(); ++i)
+//           segments_out[i] = viennagrid::create_view<SegmentTypeOut>( domain_out );
+
+      //typedef typename detail::refinement_vertex_id_requirement<domain_t<ConfigTypeIn> >::type   checked_type;
+      
+      //
+      // Step 1: Write tags from cells to edges:
+      //
+      cell_refinement_to_edge_refinement<CellTagIn>(domain_in);
+      ensure_longest_edge_refinement<CellTagIn>(domain_in);
+      
+      //
+      // Step 2: Write old vertices to new domain
+      //
+      std::size_t num_vertices = 0;
+      VertexRange vertices = viennagrid::elements<vertex_tag>(domain_in);
+      for (VertexIterator vit  = vertices.begin();
+                          vit != vertices.end();
+                        ++vit)
+      {
+        //domain_out.push_back(*vit);
+        VertexHandleType vh = viennagrid::create_vertex( domain_out, VertexIDTypeOut(num_vertices), viennagrid::point( domain_in, *vit ) );
+//         viennagrid::push_element_noid( domain_out, *vit ).first;
+//         viennagrid::point( domain_out, vh ) = viennagrid::point( domain_in, *vit );
+        ++num_vertices;
+        
+        for (typename SegmentContainerTypeOut::iterator it = segments_out.begin(); it != segments_out.end(); ++it)
+            viennagrid::add_handle( *it, domain_out, vh );
+      }
+
+      //
+      // Step 3: Each tagged edge in old domain results in a new vertex (temporarily store new vertex IDs on old domain)
+      //
+      EdgeRange edges = viennagrid::elements<line_tag>(domain_in);
+      for (EdgeIterator eit = edges.begin();
+                        eit != edges.end();
+                      ++eit)
+      {
+        if (viennadata::access<refinement_key, bool>()(*eit) == true)
+        {
+//           VertexHandleType v = viennagrid::create_element<VertexType>( domain_out, typename VertexType::id_type(num_vertices) );
+//           viennagrid::point(domain_out, v) = ;
+          VertexHandleType vh = viennagrid::create_vertex( domain_out, VertexIDTypeOut(num_vertices), viennagrid::centroid(domain_in, *eit) );
+
+          //viennadata::access<refinement_key, std::size_t>()(*eit) = num_vertices;
+          viennadata::access<refinement_key, VertexIDTypeOut>()(*eit) = VertexIDTypeOut(num_vertices);
+          ++num_vertices;
+          
+        for (typename SegmentContainerTypeOut::iterator it = segments_out.begin(); it != segments_out.end(); ++it)
+            viennagrid::add_handle( *it, domain_out, vh );
+        }
+      }
+      //std::cout << "Number of vertices in new domain: " << num_vertices << std::endl;
+
+      //
+      // Step 4: Now write new cells to new domain
+      //
+      //domain_out.segments().resize(domain_in.segments().size());
+      //for (std::size_t i=0; i<domain_in.segments().size(); ++i)
+      //{
+        //std::cout << "Working on segment " << i << std::endl;
+        
+      typename SegmentContainerTypeOut::iterator jt = segments_out.begin();
+      for (typename SegmentContainerTypeIn::const_iterator it = segments_in.begin(); it != segments_in.end(); ++it, ++jt)
+      {
+        
+        CellOnSegmentRange cells = viennagrid::elements<CellTagIn>( *it );
+        for (CellOnSegmentIterator cit  = cells.begin();
+                          cit != cells.end();
+                        ++cit)
+        {
+          element_refinement<CellTagIn>::apply(*cit, *jt);
+        }
+      }
+      //}
+
+      // Clean up refinement flags:
+      for (EdgeIterator eit = edges.begin();
+                        eit != edges.end();
+                      ++eit)
+      {
+        viennadata::erase<refinement_key, std::size_t>()(*eit);
+        viennadata::erase<refinement_key, bool>()(*eit);
+      }
+
+    }
+    
+    
+    
+    
+    /** @brief Implementation of uniform refinement. Responsible for all the book-keeping. */
+    template <typename CellTagIn, typename DomainTypeIn, typename DomainTypeOut>
+    void refine_impl(DomainTypeIn const & domain_in,
+                    DomainTypeOut & domain_out,
+                    uniform_refinement_tag)
+    {
+      //typedef domain_t<ConfigTypeIn>                      DomainTypeIn;
+      //typedef typename ConfigTypeIn::cell_tag           CellTagIn;   
+      //typedef typename ConfigTypeIn::numeric_type       NumericType;
+      typedef typename viennagrid::result_of::point_type<DomainTypeIn>::type PointType;
+      
+      typedef typename viennagrid::result_of::coord_type<PointType>::type NumericType;
+
+      //typedef typename DomainTypeIn::segment_type                                                                    SegmentTypeIn; 
+      //typedef typename viennagrid::result_of::point<ConfigTypeIn>::type                                         PointType;
+      typedef typename viennagrid::result_of::element<DomainTypeIn, vertex_tag>::type                                      VertexType;
+      typedef typename viennagrid::result_of::handle<DomainTypeIn, vertex_tag>::type                                      VertexHandleType;
+      typedef typename viennagrid::result_of::element<DomainTypeIn, line_tag>::type                                      EdgeType;
+      typedef typename viennagrid::result_of::element<DomainTypeIn, CellTagIn>::type              CellType;
+      
+      typedef typename viennagrid::result_of::const_element_range<DomainTypeIn, vertex_tag>::type                           VertexRange;          
+      typedef typename viennagrid::result_of::iterator<VertexRange>::type                                        VertexIterator;         
+      typedef typename viennagrid::result_of::const_element_range<DomainTypeIn, line_tag>::type                           EdgeRange;          
+      typedef typename viennagrid::result_of::iterator<EdgeRange>::type                                          EdgeIterator;         
+      typedef typename viennagrid::result_of::const_element_range<DomainTypeIn, CellTagIn>::type  CellRange;          
       typedef typename viennagrid::result_of::iterator<CellRange>::type                                          CellIterator;         
       typedef typename viennagrid::result_of::const_element_range<CellType, vertex_tag>::type                               VertexOnCellRange;
       typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type                                  VertexOnCellIterator;            
       typedef typename viennagrid::result_of::const_element_range<EdgeType, vertex_tag>::type                               VertexOnEdgeRange;
       typedef typename viennagrid::result_of::iterator<VertexOnEdgeRange>::type                                  VertexOnEdgeIterator;
       
-      typedef typename viennagrid::result_of::element<GeometricDomainTypeOut, vertex_tag>::type                                      VertexTypeOut;
+      typedef typename viennagrid::result_of::element<DomainTypeOut, vertex_tag>::type                                      VertexTypeOut;
       typedef typename VertexTypeOut::id_type VertexIDTypeOut;
       
       //typedef typename detail::refinement_vertex_id_requirement<domain_t<ConfigTypeIn> >::type   checked_type;
@@ -332,8 +468,9 @@ namespace viennagrid
                         ++vit)
       {
         //domain_out.push_back(*vit);
-        VertexHandleType vh = viennagrid::push_element_noid( domain_out, *vit ).first;
-        viennagrid::point( domain_out, vh ) = viennagrid::point( domain_in, *vit );
+//         VertexHandleType vh = viennagrid::push_element_noid( domain_out, *vit ).first;
+//         viennagrid::point( domain_out, vh ) = viennagrid::point( domain_in, *vit );
+        VertexHandleType vh = viennagrid::create_vertex( domain_out, VertexIDTypeOut(num_vertices), viennagrid::point( domain_in, *vit ) );
         ++num_vertices;
       }
 
@@ -345,8 +482,9 @@ namespace viennagrid
                         eit != edges.end();
                       ++eit)
       {
-          VertexHandleType v = viennagrid::create_element<VertexType>( domain_out, typename VertexType::id_type(num_vertices) );
-          viennagrid::point(domain_out, v) = viennagrid::centroid(domain_in, *eit);
+//           VertexHandleType v = viennagrid::create_element<VertexType>( domain_out, typename VertexType::id_type(num_vertices) );
+//           viennagrid::point(domain_out, v) = viennagrid::centroid(domain_in, *eit);
+          VertexHandleType vh = viennagrid::create_vertex( domain_out, VertexIDTypeOut(num_vertices), viennagrid::centroid(domain_in, *eit) );
 
           //viennadata::access<refinement_key, std::size_t>()(*eit) = num_vertices;
           viennadata::access<refinement_key, VertexIDTypeOut>()(*eit) = VertexIDTypeOut(num_vertices);
@@ -386,53 +524,42 @@ namespace viennagrid
     
   } //namespace detail
   
-  /** @brief A proxy class that is used to allow ' refined_domain = refine(domain); ' without temporary. */
-  template <typename CellTag, typename DomainType, typename RefinementTag>
-  class refinement_proxy
-  {
-    public:
-      refinement_proxy(DomainType const & domain_in,
-                       RefinementTag const & refinement_tag) : domain_in_(domain_in), tag_(refinement_tag) {}
-      
-      DomainType const & get() const 
-      {
-        return domain_in_;
-      }
-      
-      RefinementTag const & tag() const { return tag_; }
-      
-    private:
-      DomainType const & domain_in_;
-      RefinementTag const & tag_;
-  };
   
   
   /** @brief Public interface for refinement of a domain. If local refinement is desired, cells or edges needs to be tagged using ViennaData with refinement_key.*/
-  template <typename CellTag, typename DomainTypeIn, typename RefinementTag>
-  refinement_proxy< CellTag, DomainTypeIn, RefinementTag >
-  refine(DomainTypeIn const & domain_in, RefinementTag const & tag)
+  template <typename CellTypeOrTag, typename DomainTypeIn, typename DomainTypeOut, typename RefinementTag>
+  void refine(DomainTypeIn const & domain_in, DomainTypeOut & domain_out, RefinementTag const & tag)
   {
-    //typedef typename detail::refinement_vertex_id_requirement<domain_t<ConfigTypeIn> >::type   checked_type;
-    return refinement_proxy< CellTag, DomainTypeIn, RefinementTag >(domain_in, tag);
+    typedef typename viennagrid::result_of::element_tag<CellTypeOrTag>::type CellTag;
+    detail::refine_impl<CellTag>(domain_in, domain_out, tag);
   }
   
   /** @brief Convenience overload for uniform refinement of a domain.  */
-  template <typename CellTag, typename DomainTypeIn>
-  refinement_proxy< CellTag, DomainTypeIn, uniform_refinement_tag >
-  refine_uniformly(DomainTypeIn const & domain_in)
+  template <typename CellTypeOrTag, typename DomainTypeIn, typename DomainTypeOut>
+  void refine_uniformly(DomainTypeIn const & domain_in, DomainTypeOut & domain_out)
   {
-    //typedef typename detail::refinement_vertex_id_requirement<domain_t<ConfigTypeIn> >::type   checked_type;
-    return refinement_proxy< CellTag, DomainTypeIn, uniform_refinement_tag >(domain_in, uniform_refinement_tag());
+      refine<CellTypeOrTag>( domain_in, domain_out, uniform_refinement_tag() );
   }
   
   /** @brief Convenience overload for adaptive refinement of a domain. Cells or edges needs to be tagged using ViennaData with refinement_key. */
-  template <typename CellTag, typename DomainTypeIn>
-  refinement_proxy< CellTag, DomainTypeIn, local_refinement_tag >
-  refine_locally(DomainTypeIn const & domain_in)
+  template <typename CellTypeOrTag, typename DomainTypeIn, typename DomainTypeOut>
+  void refine_locally(DomainTypeIn const & domain_in, DomainTypeOut & domain_out)
   {
-    //typedef typename detail::refinement_vertex_id_requirement<domain_t<ConfigTypeIn> >::type   checked_type;
-    return refinement_proxy< CellTag, DomainTypeIn, local_refinement_tag >(domain_in, local_refinement_tag());
+      refine<CellTypeOrTag>( domain_in, domain_out, local_refinement_tag() );
   }
+  
+  
+  
+  /** @brief Public interface for refinement of a domain. If local refinement is desired, cells or edges needs to be tagged using ViennaData with refinement_key.*/
+  template <typename CellTypeOrTag, typename DomainTypeIn, typename SegmentContainerTypeIn, typename DomainTypeOut, typename SegmentContainerTypeOut, typename RefinementTag>
+  void refine(DomainTypeIn const & domain_in, SegmentContainerTypeIn const & segments_in,
+              DomainTypeOut & domain_out, SegmentContainerTypeOut & segments_out,
+              RefinementTag const & tag)
+  {
+    typedef typename viennagrid::result_of::element_tag<CellTypeOrTag>::type CellTag;
+    detail::refine_impl<CellTag>(domain_in, segments_in, domain_out, segments_out, tag);
+  }
+
   
 } 
 

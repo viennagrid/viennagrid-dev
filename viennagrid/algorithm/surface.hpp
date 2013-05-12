@@ -109,6 +109,117 @@ namespace viennagrid
     return detail::surface_domainsegment<CellTypeOrTag, CellTypeOrTag>(d);
   }  
   
+  
+  
+  
+  
+    template<typename boundary_element_type_or_tag, typename domain_type, typename element_type>
+    typename viennagrid::result_of::handle<domain_type, boundary_element_type_or_tag>::type smallest_boundary_volume( domain_type & domain, element_type & element )
+    {
+        typedef typename viennagrid::result_of::coord_type<domain_type>::type numeric_type;
+        typedef typename viennagrid::result_of::handle<element_type, boundary_element_type_or_tag>::type boundary_element_handle;
+        typedef typename viennagrid::result_of::element_range<element_type, boundary_element_type_or_tag>::type boundary_element_range_type;
+        typedef typename viennagrid::result_of::iterator<boundary_element_range_type>::type boundary_element_range_iterator;
+        
+        boundary_element_range_type boundary_elements = viennagrid::elements( element );
+        boundary_element_range_iterator it = boundary_elements.begin();
+        
+        boundary_element_handle best_handle = it.handle();
+        numeric_type best_volume = viennagrid::volume( domain, *it );
+        
+        for (; it != boundary_elements.end(); ++it)
+        {
+            numeric_type volume = viennagrid::volume( domain, *it );
+            if (volume < best_volume)
+            {
+                best_handle = it.handle();
+                best_volume = volume;
+            }
+        }
+        
+        return best_handle;
+    }
+    
+    template<typename boundary_element_type_or_tag, typename domain_type, typename element_type>
+    typename viennagrid::result_of::const_handle<domain_type, boundary_element_type_or_tag>::type smallest_boundary_volume( domain_type const & domain, element_type const & element )
+    {
+        typedef typename viennagrid::result_of::coord_type<domain_type>::type numeric_type;
+        typedef typename viennagrid::result_of::const_handle<element_type, boundary_element_type_or_tag>::type boundary_element_handle;
+        typedef typename viennagrid::result_of::const_element_range<element_type, boundary_element_type_or_tag>::type boundary_element_range_type;
+        typedef typename viennagrid::result_of::iterator<boundary_element_range_type>::type boundary_element_range_iterator;
+        
+        boundary_element_range_type boundary_elements = viennagrid::elements( element );
+        boundary_element_range_iterator it = boundary_elements.begin();
+        
+        boundary_element_handle best_handle = it.handle();
+        numeric_type best_volume = viennagrid::volume( domain, *it );
+        
+        for (; it != boundary_elements.end(); ++it)
+        {
+            numeric_type volume = viennagrid::volume( domain, *it );
+            if (volume < best_volume)
+            {
+                best_handle = it.handle();
+                best_volume = volume;
+            }
+        }
+        
+        return best_handle;
+    }
+    
+    template<typename boundary_element_type_or_tag, typename domain_type, typename element_type>
+    typename viennagrid::result_of::handle<domain_type, boundary_element_type_or_tag>::type largest_boundary_volume( domain_type & domain, element_type & element )
+    {
+        typedef typename viennagrid::result_of::coord_type<domain_type>::type numeric_type;
+        typedef typename viennagrid::result_of::handle<element_type, boundary_element_type_or_tag>::type boundary_element_handle;
+        typedef typename viennagrid::result_of::element_range<element_type, boundary_element_type_or_tag>::type boundary_element_range_type;
+        typedef typename viennagrid::result_of::iterator<boundary_element_range_type>::type boundary_element_range_iterator;
+        
+        boundary_element_range_type boundary_elements = viennagrid::elements( element );
+        boundary_element_range_iterator it = boundary_elements.begin();
+        
+        boundary_element_handle best_handle = it.handle();
+        numeric_type best_volume = viennagrid::volume( domain, *it );
+        
+        for (; it != boundary_elements.end(); ++it)
+        {
+            numeric_type volume = viennagrid::volume( domain, *it );
+            if (volume > best_volume)
+            {
+                best_handle = it.handle();
+                best_volume = volume;
+            }
+        }
+        
+        return best_handle;
+    }
+  
+    template<typename boundary_element_type_or_tag, typename domain_type, typename element_type>
+    typename viennagrid::result_of::const_handle<domain_type, boundary_element_type_or_tag>::type largest_boundary_volume( domain_type const & domain, element_type const & element )
+    {
+        typedef typename viennagrid::result_of::coord_type<domain_type>::type numeric_type;
+        typedef typename viennagrid::result_of::const_handle<element_type, boundary_element_type_or_tag>::type boundary_element_handle;
+        typedef typename viennagrid::result_of::const_element_range<element_type, boundary_element_type_or_tag>::type boundary_element_range_type;
+        typedef typename viennagrid::result_of::iterator<boundary_element_range_type>::type boundary_element_range_iterator;
+        
+        boundary_element_range_type boundary_elements = viennagrid::elements( element );
+        boundary_element_range_iterator it = boundary_elements.begin();
+        
+        boundary_element_handle best_handle = it.handle();
+        numeric_type best_volume = viennagrid::volume( domain, *it );
+        
+        for (; it != boundary_elements.end(); ++it)
+        {
+            numeric_type volume = viennagrid::volume( domain, *it );
+            if (volume > best_volume)
+            {
+                best_handle = it.handle();
+                best_volume = volume;
+            }
+        }
+        
+        return best_handle;
+    }
 
     
 } //namespace viennagrid

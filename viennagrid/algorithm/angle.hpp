@@ -4,7 +4,6 @@
 #include "viennagrid/algorithm/inner_prod.hpp"
 #include "viennagrid/algorithm/norm.hpp"
 #include "viennagrid/algorithm/geometry.hpp"
-#include <CGAL/Plane_3.h>
 
 namespace viennagrid
 {
