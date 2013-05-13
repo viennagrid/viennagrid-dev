@@ -229,6 +229,80 @@ namespace viennagrid
         viennadata::access<key_type, container_type>(key)(element) = create_coboundary_container<coboundary_type_or_tag>(domain, handle);
         return range_type( viennadata::access<key_type, container_type>(key)(element) );
     }
+    
+    
+    
+//     template<typename element_type_or_tag, typename coboundary_type_or_tag, typename domain_type>
+//     void create_coboundary_information( domain_type & domain )
+//     {
+//         typedef typename viennagrid::result_of::element_tag<coboundary_type_or_tag>::type coboundary_tag;
+//         typedef typename viennagrid::result_of::element< domain_type, coboundary_type_or_tag >::type coboundary_element_type;
+//         typedef typename viennagrid::result_of::element_range< domain_type, coboundary_type_or_tag >::type coboundary_range_type;
+//         typedef typename viennagrid::result_of::iterator< coboundary_range_type >::type coboundary_range_iterator;
+//         
+//         typedef typename result_of::coboundary_container<domain_type, coboundary_type_or_tag>::type coboundary_container_type;
+//         
+//         typedef viennagrid::coboundary_key<domain_type, coboundary_tag> key_type;
+//         key_type key(domain);
+//         
+//         coboundary_range_type coboundary_elements = viennagrid::elements( domain );
+//         for (coboundary_range_iterator it = coboundary_elements.begin(); it != coboundary_elements.end(); ++it)
+//         {
+//             typedef typename viennagrid::result_of::element_range< coboundary_element_type, element_type_or_tag >::type element_on_coboundary_range_type;
+//             typedef typename viennagrid::result_of::iterator< element_on_coboundary_range_type >::type element_on_coboundary_range_iterator;
+//             
+//             element_on_coboundary_range_type elements_on_coboundary = viennagrid::elements( *it );
+//             for (element_on_coboundary_range_iterator jt = elements_on_coboundary.begin(); jt != elements_on_coboundary.end(); ++jt)
+//             {
+//                 coboundary_container_type * container = viennadata::find<key_type, coboundary_container_type>(key)( *jt );
+//                 if (container)
+//                     container->insert_handle( it.handle() );
+//                 else    
+//                 {
+//                     coboundary_container_type coboundary_container;
+//                     coboundary_container.set_base_container( viennagrid::storage::collection::get< coboundary_element_type >( viennagrid::container_collection(domain) ) );
+//                     viennadata::access<key_type, coboundary_container_type>(key)(*jt) = coboundary_container;
+//                 }
+//             }
+//         }
+//     }
+    
+    template<typename element_type_or_tag, typename coboundary_type_or_tag, typename domain_type>
+    void create_coboundary_information( domain_type const & domain )
+    {
+        typedef typename viennagrid::result_of::element_tag<coboundary_type_or_tag>::type coboundary_tag;
+        typedef typename viennagrid::result_of::element< domain_type, coboundary_type_or_tag >::type coboundary_element_type;
+        typedef typename viennagrid::result_of::const_element_range< domain_type, coboundary_type_or_tag >::type coboundary_range_type;
+        typedef typename viennagrid::result_of::iterator< coboundary_range_type >::type coboundary_range_iterator;
+        
+        typedef typename result_of::const_coboundary_container<domain_type, coboundary_type_or_tag>::type coboundary_container_type;
+        
+        typedef viennagrid::coboundary_key<domain_type, coboundary_tag> key_type;
+        key_type key(domain);
+        
+        coboundary_range_type coboundary_elements = viennagrid::elements( domain );
+        for (coboundary_range_iterator it = coboundary_elements.begin(); it != coboundary_elements.end(); ++it)
+        {
+            typedef typename viennagrid::result_of::const_element_range< coboundary_element_type, element_type_or_tag >::type element_on_coboundary_range_type;
+            typedef typename viennagrid::result_of::iterator< element_on_coboundary_range_type >::type element_on_coboundary_range_iterator;
+            
+            element_on_coboundary_range_type elements_on_coboundary = viennagrid::elements( *it );
+            for (element_on_coboundary_range_iterator jt = elements_on_coboundary.begin(); jt != elements_on_coboundary.end(); ++jt)
+            {
+                coboundary_container_type * container = viennadata::find<key_type, coboundary_container_type>(key)( *jt );
+                if (container)
+                    container->insert_handle( it.handle() );
+                else    
+                {
+                    coboundary_container_type coboundary_container;
+                    coboundary_container.set_base_container( viennagrid::storage::collection::get< coboundary_element_type >( viennagrid::container_collection(domain) ) );
+                    coboundary_container.insert_handle( it.handle() );
+                    viennadata::access<key_type, coboundary_container_type>(key)(*jt) = coboundary_container;
+                }
+            }
+        }
+    }
+    
 }
 
 #endif
