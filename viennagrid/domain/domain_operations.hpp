@@ -1,5 +1,5 @@
-#ifndef VIENNAGRID_DOMAIN_HPP
-#define VIENNAGRID_DOMAIN_HPP
+#ifndef VIENNAGRID_DOMAIN_OPERATIONS_HPP
+#define VIENNAGRID_DOMAIN_OPERATIONS_HPP
 
 /* =======================================================================
    Copyright (c) 2011-2012, Institute for Microelectronics,
