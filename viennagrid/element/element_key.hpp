@@ -86,7 +86,7 @@ namespace viennagrid
         if ( vertex_ids.size() != epc2.vertex_ids.size() )
             return vertex_ids.size() < epc2.vertex_ids.size();
           
-        for (long i=0; i < vertex_ids.size(); ++i)
+        for (std::size_t i=0; i < vertex_ids.size(); ++i)
         {
           if ( vertex_ids[i] > epc2.vertex_ids[i] )
             return false;
