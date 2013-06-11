@@ -12,7 +12,7 @@ namespace viennagrid
     template<typename domain_type, typename to_switch_element_handle>
     struct switch_handle_functor
     {
-        typedef typename viennagrid::storage::handle::value_type<to_switch_element_handle>::type to_switch_element_type;
+        typedef typename viennagrid::storage::handle::result_of::value_type<to_switch_element_handle>::type to_switch_element_type;
         
         switch_handle_functor(domain_type & domain_, to_switch_element_handle from_, to_switch_element_handle to_) : domain(domain_), from(from_), to(to_) {}
         
@@ -51,7 +51,7 @@ namespace viennagrid
     template<typename domain_type, typename handle_type>
     void switch_handle( domain_type & domain, handle_type old_handle, handle_type new_handle)
     {
-        typedef typename viennagrid::storage::handle::value_type<handle_type>::type to_switch_element_type; 
+        typedef typename viennagrid::storage::handle::result_of::value_type<handle_type>::type to_switch_element_type; 
         typedef typename viennagrid::result_of::referencing_element_typelist<domain_type, to_switch_element_type>::type parent_element_typelist;
         
         switch_handle_functor<domain_type, handle_type> functor(domain, old_handle, new_handle);
@@ -64,7 +64,7 @@ namespace viennagrid
     
     
     
-    template<typename domain_type, typename domain_view_type, typename handle_type, typename referencing_element_typelist = typename viennagrid::result_of::referencing_element_typelist<domain_type, typename viennagrid::storage::handle::value_type<handle_type>::type >::type >
+    template<typename domain_type, typename domain_view_type, typename handle_type, typename referencing_element_typelist = typename viennagrid::result_of::referencing_element_typelist<domain_type, typename viennagrid::storage::handle::result_of::value_type<handle_type>::type >::type >
     struct mark_erase_elements_impl;
     
     template<typename domain_type, typename domain_view_type, typename handle_type, typename coboundary_element_type, typename tail>
@@ -72,7 +72,7 @@ namespace viennagrid
     {
         static void mark(domain_type & domain, domain_view_type & domain_view, handle_type to_erase)
         {
-            typedef typename viennagrid::storage::handle::value_type<handle_type>::type element_type;
+            typedef typename viennagrid::storage::handle::result_of::value_type<handle_type>::type element_type;
 
             typedef typename viennagrid::result_of::element_range<domain_view_type, element_type>::type element_range_type;
             typedef typename viennagrid::result_of::iterator<element_range_type>::type element_range_iterator;
@@ -98,7 +98,7 @@ namespace viennagrid
     {
         static void mark(domain_type & domain, domain_view_type & domain_view, handle_type to_erase)
         {
-            typedef typename viennagrid::storage::handle::value_type<handle_type>::type element_type;
+            typedef typename viennagrid::storage::handle::result_of::value_type<handle_type>::type element_type;
 
             typedef typename viennagrid::result_of::element_range<domain_view_type, element_type>::type element_range_type;
             typedef typename viennagrid::result_of::iterator<element_range_type>::type element_range_iterator;
@@ -122,7 +122,7 @@ namespace viennagrid
     template<typename domain_type, typename handle_type>
     void simple_erase_element(domain_type & domain, handle_type & element_to_erase)
     {
-        typedef typename viennagrid::storage::handle::value_type<handle_type>::type element_type;
+        typedef typename viennagrid::storage::handle::result_of::value_type<handle_type>::type element_type;
         typedef typename viennagrid::result_of::handle<domain_type, element_type>::type element_handle;
         
         typedef typename viennagrid::result_of::element_range<domain_type, element_type>::type element_range_type;

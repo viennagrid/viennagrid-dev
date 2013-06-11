@@ -18,255 +18,274 @@ namespace viennagrid
         namespace handle
         {
             
-            template<typename base_container_type, typename view_reference_tag>
-            struct handle_type
-            {};
-            
-            template<typename base_container_type>
-            struct handle_type<base_container_type, no_handle_tag>
+            namespace result_of
             {
-                typedef viennameta::null_type type;
-            };
             
-            template<typename base_container_type>
-            struct handle_type<base_container_type, pointer_handle_tag>
-            {
-                typedef typename base_container_type::pointer type;
-            };
-            
-            template<typename base_container_type>
-            struct handle_type<base_container_type, iterator_handle_tag>
-            {
-                typedef typename base_container_type::iterator type;
-            };
-            
-            template<typename base_container_type>
-            struct handle_type<base_container_type, id_handle_tag>
-            {
-                typedef typename base_container_type::value_type::id_type type;
-            };
-            
-            
-            
-            
-            template<typename base_container_type, typename view_reference_tag>
-            struct const_handle_type
-            {};
-            
-            template<typename base_container_type>
-            struct const_handle_type<base_container_type, no_handle_tag>
-            {
-                typedef viennameta::null_type type;
-            };
-            
-            template<typename base_container_type>
-            struct const_handle_type<base_container_type, pointer_handle_tag>
-            {
-                typedef typename base_container_type::const_pointer type;
-            };
-            
-            template<typename base_container_type>
-            struct const_handle_type<base_container_type, iterator_handle_tag>
-            {
-                typedef typename base_container_type::const_iterator type;
-            };
-            
-            template<typename base_container_type>
-            struct const_handle_type<base_container_type, id_handle_tag>
-            {
-                typedef typename base_container_type::value_type::const_id_type type;
-            };
-            
-            
-            
-            
-            
-            template<typename handle_type, typename container_type>
-            struct invalid_handle_helper
-            {
-                typedef typename container_type::const_iterator invalid_handle_type;
+                template<typename base_container_type, typename handle_tag>
+                struct handle_type
+                {};
                 
-                static invalid_handle_type get(const container_type & container)
+                template<typename base_container_type>
+                struct handle_type<base_container_type, no_handle_tag>
                 {
-                    return container.end();
-                }
+                    typedef viennameta::null_type type;
+                };
                 
-            };
-            
-            template<typename value_type, typename container_type>
-            struct invalid_handle_helper<value_type *, container_type>
-            {
-                typedef const value_type * invalid_handle_type;
-                
-                static invalid_handle_type get(const container_type & container)
+                template<typename base_container_type>
+                struct handle_type<base_container_type, pointer_handle_tag>
                 {
-                    return NULL;
-                }
-            };
-            
-            template<typename value_type, typename container_type>
-            struct invalid_handle_helper<const value_type *, container_type>
-            {
-                typedef const value_type * invalid_handle_type;
+                    typedef typename base_container_type::pointer type;
+                };
                 
-                static invalid_handle_type get(const container_type & container)
+                template<typename base_container_type>
+                struct handle_type<base_container_type, iterator_handle_tag>
                 {
-                    return NULL;
-                }
-            };
-            
-            template<typename id_type, typename value_type, typename container_type>
-            struct invalid_handle_helper< smart_id_t<value_type, id_type>, container_type>
-            {
-                typedef smart_id_t<value_type, id_type> invalid_handle_type;
+                    typedef typename base_container_type::iterator type;
+                };
                 
-                static invalid_handle_type get(const container_type & container)
+                template<typename base_container_type>
+                struct handle_type<base_container_type, id_handle_tag>
                 {
-                    return invalid_handle_type(-1);
-                }
-            };
+                    typedef typename base_container_type::value_type::id_type type;
+                };
+                
+                
+                
+                
+                template<typename base_container_type, typename handle_tag>
+                struct const_handle_type
+                {};
+                
+                template<typename base_container_type>
+                struct const_handle_type<base_container_type, no_handle_tag>
+                {
+                    typedef viennameta::null_type type;
+                };
+                
+                template<typename base_container_type>
+                struct const_handle_type<base_container_type, pointer_handle_tag>
+                {
+                    typedef typename base_container_type::const_pointer type;
+                };
+                
+                template<typename base_container_type>
+                struct const_handle_type<base_container_type, iterator_handle_tag>
+                {
+                    typedef typename base_container_type::const_iterator type;
+                };
+                
+                template<typename base_container_type>
+                struct const_handle_type<base_container_type, id_handle_tag>
+                {
+                    typedef typename base_container_type::value_type::const_id_type type;
+                };
+                
+                
+                
+                
+                // default = iterator
+                template<typename handle_type>
+                struct value_type
+                {
+                    typedef typename viennameta::IF<
+                        viennameta::is_const_iterator<handle_type>::value,
+                        const typename handle_type::value_type,
+                        typename handle_type::value_type
+                    >::type type;
+                };
+                
+                // pointer
+                template<typename value_type_>
+                struct value_type< value_type_ * >
+                {
+                    typedef value_type_ type;
+                };
+                
+                template<typename value_type_>
+                struct value_type< const value_type_ * >
+                {
+                    typedef const value_type_ type;
+                };
+                
+                // id
+                template<typename value_type_, typename base_id_type_>
+                struct value_type< smart_id_t<value_type_, base_id_type_> >
+                {
+                    typedef value_type_ type;
+                };
+                
+                template<typename value_type_, typename base_id_type_>
+                struct value_type< smart_id_t<const value_type_, base_id_type_> >
+                {
+                    typedef const value_type_ type;
+                };
+                
+                
+                
+                
+                // default = iterator
+                template<typename handle_type>
+                struct handle_tag
+                {
+                    typedef iterator_handle_tag type;
+                };
+                
+                // no handle
+                template<>
+                struct handle_tag<viennameta::null_type>
+                {
+                    typedef no_handle_tag type;
+                };
+                
+                // pointer
+                template<typename value_type>
+                struct handle_tag<value_type *>
+                {
+                    typedef pointer_handle_tag type;
+                };
+                
+                // id
+                template<typename value_type_, typename base_id_type_>
+                struct handle_tag< smart_id_t<value_type_, base_id_type_> >
+                {
+                    typedef id_handle_tag type;
+                };
+            
+            }
+            
+          
+            
+
+            // Pointer handle
+            template<typename container_type, typename handle_type>
+            typename result_of::value_type<handle_type>::type & dereference_handle( container_type & container, handle_type handle, pointer_handle_tag )
+            { return *handle; }
+            
+            template<typename container_type, typename handle_type>
+            typename result_of::value_type<handle_type>::type const & dereference_handle( container_type const & container, handle_type handle, pointer_handle_tag )
+            { return *handle; }
+
+            
+            // Iterator handle
+            template<typename container_type, typename handle_type>
+            typename result_of::value_type<handle_type>::type & dereference_handle( container_type & container, handle_type handle, iterator_handle_tag )
+            { return *handle; }
+            
+            template<typename container_type, typename handle_type>
+            typename result_of::value_type<handle_type>::type const & dereference_handle( container_type const & container, handle_type handle, iterator_handle_tag )
+            { return *handle; }
             
             
-            
-            
-            template<typename container_type>
-            typename invalid_handle_helper<typename container_type::handle_type, container_type>::invalid_handle_type invalid_handle(const container_type & container)
+            // ID handle
+            template<typename container_type, typename handle_type>
+            typename result_of::value_type<handle_type>::type & dereference_handle( container_type & container, handle_type handle, id_handle_tag )
             {
-                return invalid_handle_helper<typename container_type::handle_type, container_type>::get(container);
+                typedef typename result_of::value_type<handle_type>::type value_type;
+                typedef typename storage::result_of::id_type<value_type>::type id_type;
+                
+                return *std::find_if(
+                    container.begin(),
+                    container.end(),
+                    id_compare<id_type>(handle)
+                );
+            }
+            
+            template<typename container_type, typename handle_type>
+            typename result_of::value_type<handle_type>::type const & dereference_handle( container_type const & container, handle_type handle, id_handle_tag )
+            {
+                typedef typename result_of::value_type<handle_type>::type value_type;
+                typedef typename storage::result_of::id_type<value_type>::type id_type;
+                
+                return *std::find_if(
+                    container.begin(),
+                    container.end(),
+                    id_compare<id_type>(handle)
+                );
             }
             
             
-           
-            
-            
-            
-            template<typename container_type, typename handle_tag>
-            struct iterator_to_handle;
-            
-            template<typename container_type>
-            struct iterator_to_handle<container_type, no_handle_tag>
-            {
-                typedef typename viennagrid::storage::handle::handle_type<container_type, no_handle_tag>::type handle_type;
-                
-                template<typename iterator>
-                static handle_type convert( iterator it ) { return handle_type(); }
-            };
-            
-            template<typename container_type>
-            struct iterator_to_handle<container_type, iterator_handle_tag>
-            {
-                typedef typename viennagrid::storage::handle::handle_type<container_type, iterator_handle_tag>::type handle_type;
-                
-                static handle_type convert( handle_type it ) { return it; }
-            };
-            
-            template<typename container_type>
-            struct iterator_to_handle<container_type, pointer_handle_tag>
-            {
-                typedef typename viennagrid::storage::handle::handle_type<container_type, pointer_handle_tag>::type handle_type;
-                
-                template<typename iterator>
-                static handle_type convert( iterator it ) { return &* it; }
-            };
-            
-            template<typename container_type>
-            struct iterator_to_handle<container_type, id_handle_tag>
-            {
-                typedef typename viennagrid::storage::handle::handle_type<container_type, id_handle_tag>::type handle_type;
-                
-                template<typename iterator>
-                static handle_type convert( iterator it ) { return it->id(); }
-            };
-            
-            
-            
-            
-          
-            template<typename handle_type>
-            struct value_type
-            {
-                typedef typename handle_type::value_type type;
-            };
-            
-            template<typename value_type_>
-            struct value_type< value_type_ * >
-            {
-                typedef value_type_ type;
-            };
-            
-            template<typename value_type_>
-            struct value_type< const value_type_ * >
-            {
-                typedef value_type_ type;
-            };
-            
-//             template<typename category, typename value_type, typename distance, typename pointer, typename reference>
-//             struct value_type_from_reference_type< std::iterator<category, value_type, distance, pointer, reference> >
+//             // generic
+//             template<typename container_type, typename handle_type>
+//             typename result_of::value_type<handle_type>::type & dereference_handle( container_type & container, handle_type handle )
 //             {
-//                 typedef value_type type;
-//             };
+//                 return dereference_handle(container, handle, typename result_of::handle_tag<handle_type>::type());
+//             }
 //             
-                
-//             template<typename value_type, typename reference_tag_config>
-//             struct reference_tag_from_config
+//             template<typename container_type, typename handle_type>
+//             typename result_of::value_type<handle_type>::type const & dereference_handle( container_type const & container, handle_type handle )
 //             {
-//                 typedef typename viennameta::typemap::result_of::find<reference_tag_config, value_type>::type search_result;
-//                 typedef typename viennameta::typemap::result_of::find<reference_tag_config, viennagrid::storage::default_tag>::type default_reference_tag;
-//                 
-//                 typedef typename viennameta::_if<
-//                     !viennameta::_equal<search_result, viennameta::not_found>::value,
-//                     search_result,
-//                     default_reference_tag
-//                 >::type::second type;
-//             };
-//             
-//             template<typename container_type, typename reference_tag_config>
-//             struct reference_type_from_config
-//             {
-//                 typedef typename reference_type<
-//                     container_type,
-//                     typename reference_tag_from_config<typename container_type::iterator, reference_tag_config>::type
-//                 >::type type;
-//             };
-  
+//                 return dereference_handle(container, handle, typename result_of::handle_tag<handle_type>::type());
+//             }
             
             
             
-//             template<typename iterator_type>
-//             typename iterator_type::value_type * iterator_to_reference(iterator_type it, pointer_reference_tag)
-//             { return &* it; }
-//             
-//             template<typename iterator_type>
-//             iterator_type iterator_to_reference(iterator_type it, iterator_reference_tag)
-//             { return it; }
-//             
-//             template<typename iterator_type>
-//             typename iterator_type::value_type::id_type iterator_to_reference(iterator_type it, id_reference_tag)
-//             { return it->id(); }
             
-            
-            
-//             template<typename dst_reference_type>
-//             struct reference_converter
-//             {
-//                 static dst_reference_type convert( dst_reference_type ref )
-//                 {
-//                     return ref;
-//                 }
-//             };
-//             
-//             template<typename value_type>
-//             struct reference_converter<value_type *>
-//             {
-//                 template<typename iterator_type>
-//                 static value_type * convert( iterator_type it )
-//                 {
-//                     typedef typename iterator_type::iterator_category tmp;
-//                     return &* it;
-//                 }
-//             };
+            template<typename container_type, typename value_type, typename handle_tag>
+            struct handle_helper;
 
+            
+            template<typename container_type, typename value_type>
+            struct handle_helper<container_type, value_type, no_handle_tag>
+            {
+                static typename result_of::handle_type<container_type, no_handle_tag>::type handle( container_type & container, value_type & value )
+                { return typename result_of::handle_type<container_type, no_handle_tag>::type(); }
+                
+                static typename result_of::const_handle_type<container_type, no_handle_tag>::type handle( container_type const & container, value_type const & value )
+                { return typename result_of::handle_type<container_type, no_handle_tag>::type(); }
+            };
+            
+            template<typename container_type, typename value_type>
+            struct handle_helper<container_type, value_type, iterator_handle_tag>
+            {
+                static typename result_of::handle_type<container_type, iterator_handle_tag>::type handle( container_type & container, value_type & value )
+                {
+                    for (typename container_type::iterator it = container.begin(); it != container.end(); ++it)
+                        if ( &(*it) == &value ) return it;
+                    return container.end();
+                }
+                            
+                static typename result_of::const_handle_type<container_type, iterator_handle_tag>::type handle( container_type const & container, value_type const & value )
+                {
+                    for (typename container_type::const_iterator it = container.begin(); it != container.end(); ++it)
+                        if ( &(*it) == &value ) return it;
+                    return container.end();
+                }
+            };
+            
+            template<typename container_type, typename value_type>
+            struct handle_helper<container_type, value_type, pointer_handle_tag>
+            {
+                static typename result_of::handle_type<container_type, pointer_handle_tag>::type handle( container_type & container, value_type & value )
+                { return &value; }
+                
+                static typename result_of::const_handle_type<container_type, pointer_handle_tag>::type handle( container_type const & container, value_type const & value )
+                { return &value; }
+            };
+            
+            template<typename container_type, typename value_type>
+            struct handle_helper<container_type, value_type, id_handle_tag>
+            {
+                static typename result_of::handle_type<container_type, id_handle_tag>::type handle( container_type & container, value_type & value )
+                { return value.id(); }
+                
+                static typename result_of::const_handle_type<container_type, id_handle_tag>::type handle( container_type const & container, value_type const & value )
+                { return value.id(); }
+            };
+            
+            
+            
+            template<typename container_type, typename value_type, typename handle_tag>
+            typename result_of::handle_type<container_type, handle_tag>::type handle( container_type & container, value_type & value, handle_tag )
+            { return handle_helper<container_type, value_type, handle_tag>::handle( container,value ); }
+            
+            template<typename container_type, typename value_type, typename handle_tag>
+            typename result_of::const_handle_type<container_type, handle_tag>::type handle( container_type const & container, value_type const & value, handle_tag )
+            { return handle_helper<container_type, value_type, handle_tag>::handle( container,value ); }
+            
+            
+            
         }
+        
     }
 }
 

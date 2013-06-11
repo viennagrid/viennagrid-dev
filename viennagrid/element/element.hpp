@@ -84,60 +84,33 @@ namespace viennagrid
         using base::container;
         using base::set_bnd_cell;
         using base::dereference_handle;
+        using base::handle;
         using base::global_to_local_orientation;
         
         
-        bnd_cell_type &
-        dereference_handle(bnd_cell_handle_type handle)
-        {
-            return elements_.dereference_handle(handle);
-        }
+        bnd_cell_type & dereference_handle(bnd_cell_handle_type handle)
+        { return elements_.dereference_handle(handle); }
         
-        const bnd_cell_type &
-        dereference_handle(bnd_cell_handle_type handle) const
-        {
-            return elements_.dereference_handle(handle);
-        }
-        
-        const bnd_cell_type &
-        dereference_handle(bnd_cell_const_handle_type handle)
-        {
-            return elements_.dereference_handle(handle);
-        }
-        
-        const bnd_cell_type &
-        dereference_handle(bnd_cell_const_handle_type handle) const
-        {
-            return elements_.dereference_handle(handle);
-        }
+        const bnd_cell_type & dereference_handle(bnd_cell_const_handle_type handle) const
+        { return elements_.dereference_handle(handle); }
         
         
         
-        bnd_cell_container_type &
-        container(bnd_cell_tag)
-        { 
-            return elements_;
-        }
+        bnd_cell_handle_type handle(bnd_cell_type & boundary_element)
+        { return elements_.handle(boundary_element); }
+        
+        bnd_cell_const_handle_type handle(bnd_cell_type const & boundary_element) const
+        { return elements_.handle(boundary_element); }
+        
+        
+        
+        bnd_cell_container_type & container(bnd_cell_tag) { return elements_; }
+        const bnd_cell_container_type & container(bnd_cell_tag) const { return elements_; }
 
-        //const:     
-        const bnd_cell_container_type &
-        container(bnd_cell_tag) const
-        { 
-            return elements_;
-        }
-
-        bnd_cell_container_type &
-        container(dimension_tag<dim>)
-        { 
-            return elements_;
-        }
-
-        //const:     
-        const bnd_cell_container_type &
-        container(dimension_tag<dim>) const
-        { 
-            return elements_;
-        }
+        bnd_cell_container_type & container(dimension_tag<dim>) { return elements_; }
+        const bnd_cell_container_type & container(dimension_tag<dim>) const { return elements_; }
+        
+        
 
         template<typename handle_type>
         void set_bnd_cell(const bnd_cell_type & to_insert, std::pair<handle_type, bool> inserted, unsigned int pos)
@@ -187,9 +160,7 @@ namespace viennagrid
         
         template<typename handle_type>
         void add_bnd_cell(const bnd_cell_type & to_insert, std::pair<handle_type, bool> inserted)
-        {
-            set_bnd_cell(to_insert, inserted, elements_.size());
-        }
+        { set_bnd_cell(to_insert, inserted, elements_.size()); }
         
         
       ////////////////// orientation: ////////////////////
@@ -269,71 +240,40 @@ namespace viennagrid
         using base::container;
         using base::set_bnd_cell;
         using base::dereference_handle;
+        using base::handle;
         
         
-        bnd_cell_type &
-        dereference_handle(bnd_cell_handle_type handle)
-        {
-            return elements_.dereference_handle(handle);
-        }
+        bnd_cell_type & dereference_handle(bnd_cell_handle_type handle)
+        { return elements_.dereference_handle(handle); }
         
-        const bnd_cell_type &
-        dereference_handle(bnd_cell_handle_type handle) const
-        {
-            return elements_.dereference_handle(handle);
-        }
-        
-        const bnd_cell_type &
-        dereference_handle(bnd_cell_const_handle_type handle)
-        {
-            return elements_.dereference_handle(handle);
-        }
-        
-        const bnd_cell_type &
-        dereference_handle(bnd_cell_const_handle_type handle) const
-        {
-            return elements_.dereference_handle(handle);
-        }
+        const bnd_cell_type & dereference_handle(bnd_cell_const_handle_type handle) const
+        { return elements_.dereference_handle(handle); }
         
         
-        bnd_cell_container_type &
-        container(bnd_cell_tag)
-        { 
-            return elements_;
-        }
+        
+        bnd_cell_handle_type handle(bnd_cell_type & boundary_element)
+        { return elements_.handle(boundary_element); }
+        
+        bnd_cell_const_handle_type handle(bnd_cell_type const & boundary_element) const
+        { return elements_.handle(boundary_element); }
+        
+        
+        
+        bnd_cell_container_type & container(bnd_cell_tag) { return elements_; }
+        const bnd_cell_container_type & container(bnd_cell_tag) const { return elements_; }
+                
+        bnd_cell_container_type & container(dimension_tag<dim>) { return elements_; }
+        const bnd_cell_container_type & container(dimension_tag<dim>) const {  return elements_; }
 
-        //const:     
-        const bnd_cell_container_type &
-        container(bnd_cell_tag) const
-        { 
-            return elements_;
-        }
         
         
-        bnd_cell_container_type &
-        container(dimension_tag<dim>)
-        { 
-            return elements_;
-        }
-
-        //const:     
-        const bnd_cell_container_type &
-        container(dimension_tag<dim>) const
-        { 
-            return elements_;
-        }
-
         template<typename handle_type>
         void set_bnd_cell(const bnd_cell_type & to_insert, std::pair<handle_type, bool> inserted, unsigned int pos)
-        {
-            elements_.set_handle(inserted.first, pos);
-        }
+        { elements_.set_handle(inserted.first, pos); }
         
         template<typename handle_type>
         void add_bnd_cell(const bnd_cell_type & to_insert, std::pair<handle_type, bool> inserted)
-        {
-            set_bnd_cell(to_insert, inserted, elements_.size());
-        }
+        { set_bnd_cell(to_insert, inserted, elements_.size()); }
         
         static void print_class()
         {
@@ -371,6 +311,7 @@ namespace viennagrid
         void container();
         void set_bnd_cell();
         void dereference_handle();
+        void handle();
         void global_to_local_orientation();
         
     private:
@@ -934,16 +875,32 @@ namespace viennagrid
     
     
     template<typename element_tag, typename boundary_cell_container_typelist, typename id_type, typename handle_type>
-    typename storage::handle::value_type<handle_type>::type & dereference_handle( element_t<element_tag, boundary_cell_container_typelist, id_type> & element, handle_type handle)
+    typename storage::handle::result_of::value_type<handle_type>::type & dereference_handle( element_t<element_tag, boundary_cell_container_typelist, id_type> & element, handle_type handle)
     {
         return element.dereference_handle(handle);
     }
     
     template<typename element_tag, typename boundary_cell_container_typelist, typename id_type, typename handle_type>
-    const typename storage::handle::value_type<handle_type>::type & dereference_handle( element_t<element_tag, boundary_cell_container_typelist, id_type> const & element, handle_type handle)
+    const typename storage::handle::result_of::value_type<handle_type>::type & dereference_handle( element_t<element_tag, boundary_cell_container_typelist, id_type> const & element, handle_type handle)
     {
         return element.dereference_handle(handle);
     }
+    
+    
+    
+    template<typename element_tag, typename boundary_cell_container_typelist, typename id_type, typename value_type>
+    typename result_of::handle<element_t<element_tag, boundary_cell_container_typelist, id_type>, value_type>::type handle( element_t<element_tag, boundary_cell_container_typelist, id_type> & element, value_type & boundary_element )
+    {
+        return element.handle(boundary_element);
+    }
+    
+    template<typename element_tag, typename boundary_cell_container_typelist, typename id_type, typename value_type>
+    typename result_of::const_handle<element_t<element_tag, boundary_cell_container_typelist, id_type>, value_type>::type handle( element_t<element_tag, boundary_cell_container_typelist, id_type> const & element, value_type const & boundary_element )
+    {
+        return element.handle(boundary_element);
+    }
+    
+    
 
     
 //     template<long dim, typename element_tag, typename boundary_cell_container_typelist, typename id_type>

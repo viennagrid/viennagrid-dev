@@ -400,7 +400,7 @@ namespace viennagrid
     template<typename view_type, typename domain_type, typename handle_type>
     void add_handle( view_type & view, domain_type & domain, handle_type handle )
     {
-        typedef typename storage::handle::value_type<handle_type>::type value_type;
+        typedef typename storage::handle::result_of::value_type<handle_type>::type value_type;
         value_type & element = dereference_handle(domain, handle);
         
         typedef typename viennagrid::result_of::element_range< view_type, value_type >::type range_type;
@@ -456,18 +456,32 @@ namespace viennagrid
     
     
     template<typename domain_type, typename handle_type>
-    typename storage::handle::value_type<handle_type>::type & dereference_handle( domain_type & domain, const handle_type & handle)
+    typename storage::handle::result_of::value_type<handle_type>::type & dereference_handle( domain_type & domain, const handle_type & handle)
     {
-        typedef typename storage::handle::value_type<handle_type>::type value_type;
+        typedef typename storage::handle::result_of::value_type<handle_type>::type value_type;
         return storage::collection::get<value_type>(container_collection(domain)).dereference_handle( handle );
     }
     
     template<typename domain_type, typename handle_type>
-    const typename storage::handle::value_type<handle_type>::type & dereference_handle( const domain_type & domain, const handle_type & handle)
+    typename storage::handle::result_of::value_type<handle_type>::type const & dereference_handle( const domain_type & domain, const handle_type & handle)
     {
-        typedef typename storage::handle::value_type<handle_type>::type value_type;
+        typedef typename storage::handle::result_of::value_type<handle_type>::type value_type;
         return storage::collection::get<value_type>(container_collection(domain)).dereference_handle( handle );
     }
+    
+    
+    template<typename domain_type, typename value_type>
+    typename result_of::handle<domain_type, value_type>::type handle( domain_type & domain, value_type & element)
+    {
+        return storage::collection::get<value_type>(container_collection(domain)).handle( element );
+    }
+    
+    template<typename domain_type, typename value_type>
+    typename result_of::const_handle<domain_type, value_type>::type handle( domain_type const & domain, value_type const & element)
+    {
+        return storage::collection::get<value_type>(container_collection(domain)).handle( element );
+    }
+    
     
     
     
@@ -480,7 +494,7 @@ namespace viennagrid
                handle_type_2 const & bnd_kcell_handle,
                std::size_t index)
   {
-    typedef typename viennagrid::storage::handle::value_type<handle_type_2>::type element_type_2;
+    typedef typename viennagrid::storage::handle::result_of::value_type<handle_type_2>::type element_type_2;
     const element_type_2 & bnd_kcell = viennagrid::dereference_handle(domain, bnd_kcell_handle);
     return viennagrid::elements< viennagrid::vertex_tag >(bnd_kcell)[host_ncell.global_to_local_orientation(bnd_kcell_handle, index)];
   }

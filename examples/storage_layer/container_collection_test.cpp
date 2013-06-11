@@ -88,8 +88,8 @@ int main()
     
     
     
-    cout << typeid(collection_type).name() << endl;
-    cout << typeid( viennagrid::storage::result_of::container_of<collection_type, char>::type ).name() << endl;
+//     cout << typeid(collection_type).name() << endl;
+//     cout << typeid( viennagrid::storage::result_of::container_of<collection_type, char>::type ).name() << endl;
     
     
     inserter( 'c' );

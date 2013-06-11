@@ -10,10 +10,10 @@ namespace viennagrid
     {
 
         // handles
-        struct no_handle_tag;
-        struct iterator_handle_tag;
-        struct pointer_handle_tag;
-        struct id_handle_tag;
+        struct no_handle_tag {};
+        struct iterator_handle_tag {};
+        struct pointer_handle_tag {};
+        struct id_handle_tag {};
         
         // container
         struct default_tag;

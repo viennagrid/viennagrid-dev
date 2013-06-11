@@ -105,15 +105,15 @@ namespace viennagrid
         namespace collection
         {
             template<typename type, typename typemap>
-            typename result_of::value_type<typemap, type>::type & get( collection_t<typemap> & c )
+            typename result_of::value_type<typemap, typename viennameta::remove_const<type>::type >::type & get( collection_t<typemap> & c )
             {
-                return c.get( viennameta::tag<type>() );
+                return c.get( viennameta::tag< typename viennameta::remove_const<type>::type >() );
             }
             
             template<typename type, typename typemap>
-            const typename result_of::value_type<typemap, type>::type & get( const collection_t<typemap> & c )
+            const typename result_of::value_type<typemap, typename viennameta::remove_const<type>::type >::type & get( const collection_t<typemap> & c )
             {
-                return c.get( viennameta::tag<type>() );
+                return c.get( viennameta::tag< typename viennameta::remove_const<type>::type >() );
             }
         } // namespace collection
         

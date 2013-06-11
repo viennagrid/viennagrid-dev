@@ -69,7 +69,8 @@ int main()
     
     
     
-    domain_type refined = viennagrid::refine_uniformly<viennagrid::triangle_tag>(domain);
+    domain_type refined;
+    viennagrid::refine_uniformly<viennagrid::triangle_tag>(domain, refined);
     
     
     std::cout << viennagrid::triangles(domain).size() << std::endl;

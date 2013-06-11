@@ -39,10 +39,10 @@ namespace viennagrid
     
     
     template<typename connector_boundary_element_type_or_tag, typename domain_or_container_type, typename handle_type>
-    typename result_of::neighbour_container<domain_or_container_type, typename viennagrid::storage::handle::value_type< handle_type >::type>::type
+    typename result_of::neighbour_container<domain_or_container_type, typename viennagrid::storage::handle::result_of::value_type< handle_type >::type>::type
         create_neighbour_container(domain_or_container_type & domain, handle_type handle)
     {
-        typedef typename viennagrid::storage::handle::value_type< handle_type >::type element_type;
+        typedef typename viennagrid::storage::handle::result_of::value_type< handle_type >::type element_type;
         typedef typename viennagrid::result_of::element_tag< element_type >::type element_tag;
                 
         typedef typename result_of::neighbour_container<domain_or_container_type, element_tag>::type neighbour_container_type;
@@ -88,10 +88,10 @@ namespace viennagrid
     
     
     template<typename connector_boundary_element_type_or_tag, typename domain_or_container_type, typename handle_type>
-    typename result_of::const_neighbour_container<domain_or_container_type, typename viennagrid::storage::handle::value_type< handle_type >::type>::type
+    typename result_of::const_neighbour_container<domain_or_container_type, typename viennagrid::storage::handle::result_of::value_type< handle_type >::type>::type
         create_neighbour_container(const domain_or_container_type & domain, handle_type handle)
     {
-        typedef typename viennagrid::storage::handle::value_type< handle_type >::type element_type;
+        typedef typename viennagrid::storage::handle::result_of::value_type< handle_type >::type element_type;
         typedef typename viennagrid::result_of::element_tag< element_type >::type element_tag;
                 
         typedef typename result_of::const_neighbour_container<domain_or_container_type, element_tag>::type neighbour_container_type;
@@ -141,10 +141,10 @@ namespace viennagrid
     
     
     template<typename connector_boundary_element_type_or_tag, typename domain_or_container_type, typename handle_type>
-    typename result_of::neighbour_range<domain_or_container_type, typename viennagrid::storage::handle::value_type< handle_type >::type >::type
+    typename result_of::neighbour_range<domain_or_container_type, typename viennagrid::storage::handle::result_of::value_type< handle_type >::type >::type
         neighbour_elements(domain_or_container_type & domain, handle_type handle)
     {
-        typedef typename viennagrid::storage::handle::value_type<handle_type>::type element_type;
+        typedef typename viennagrid::storage::handle::result_of::value_type<handle_type>::type element_type;
         typedef typename result_of::element_tag<connector_boundary_element_type_or_tag>::type connector_boundary_element_tag;
         //typedef typename result_of::element_tag<coboundary_type_or_tag>::type coboundary_tag;
         typedef typename result_of::neighbour_container<domain_or_container_type, element_type>::type container_type;
@@ -171,10 +171,10 @@ namespace viennagrid
     }
     
     template<typename connector_boundary_element_type_or_tag, typename domain_or_container_type, typename handle_type>
-    typename result_of::neighbour_range<domain_or_container_type, typename viennagrid::storage::handle::value_type< handle_type >::type >::type
+    typename result_of::neighbour_range<domain_or_container_type, typename viennagrid::storage::handle::result_of::value_type< handle_type >::type >::type
         create_neighbour_elements(domain_or_container_type & domain, handle_type handle)
     {
-        typedef typename viennagrid::storage::handle::value_type<handle_type>::type element_type;
+        typedef typename viennagrid::storage::handle::result_of::value_type<handle_type>::type element_type;
         typedef typename result_of::element_tag<connector_boundary_element_type_or_tag>::type connector_boundary_element_tag;
         //typedef typename result_of::element_tag<coboundary_type_or_tag>::type coboundary_tag;
         typedef typename result_of::neighbour_container<domain_or_container_type, element_type>::type container_type;
@@ -202,10 +202,10 @@ namespace viennagrid
     
     
     template<typename connector_boundary_element_type_or_tag, typename domain_or_container_type, typename handle_type>
-    typename result_of::const_neighbour_range<domain_or_container_type, typename viennagrid::storage::handle::value_type< handle_type >::type >::type
+    typename result_of::const_neighbour_range<domain_or_container_type, typename viennagrid::storage::handle::result_of::value_type< handle_type >::type >::type
         neighbour_elements(const domain_or_container_type & domain, handle_type handle)
     {
-        typedef typename viennagrid::storage::handle::value_type<handle_type>::type element_type;
+        typedef typename viennagrid::storage::handle::result_of::value_type<handle_type>::type element_type;
         typedef typename result_of::element_tag<connector_boundary_element_type_or_tag>::type connector_boundary_element_tag;
         //typedef typename result_of::element_tag<coboundary_type_or_tag>::type coboundary_tag;
         typedef typename result_of::const_coboundary_container<domain_or_container_type, element_type>::type container_type;
@@ -233,10 +233,10 @@ namespace viennagrid
     
     
     template<typename connector_boundary_element_type_or_tag, typename domain_or_container_type, typename handle_type>
-    typename result_of::const_neighbour_range<domain_or_container_type, typename viennagrid::storage::handle::value_type< handle_type >::type >::type
+    typename result_of::const_neighbour_range<domain_or_container_type, typename viennagrid::storage::handle::result_of::value_type< handle_type >::type >::type
         create_neighbour_elements(const domain_or_container_type & domain, handle_type handle)
     {
-        typedef typename viennagrid::storage::handle::value_type<handle_type>::type element_type;
+        typedef typename viennagrid::storage::handle::result_of::value_type<handle_type>::type element_type;
         typedef typename result_of::element_tag<connector_boundary_element_type_or_tag>::type connector_boundary_element_tag;
         //typedef typename result_of::element_tag<coboundary_type_or_tag>::type coboundary_tag;
         typedef typename result_of::const_coboundary_container<domain_or_container_type, element_type>::type container_type;

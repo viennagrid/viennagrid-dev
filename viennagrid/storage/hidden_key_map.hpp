@@ -167,40 +167,11 @@ namespace viennagrid
             return_type insert( const value_type & element )
             {
                 std::pair<typename container_type::iterator, bool> tmp = container_type::insert( element );
-                return std::make_pair( viennagrid::storage::handle::iterator_to_handle<container_type, handle_tag>::convert(tmp.first), tmp.second);
+                return std::make_pair( handled_container_type::handle(*tmp.first), tmp.second);
+//                 return std::make_pair( handle::iterator_to_handle<container_type, handle_tag>::convert(tmp.first), tmp.second);
             }
         };
-        
-        
-        namespace handle
-        {            
-            template<typename _key_type, typename _value_type>
-            struct iterator_to_handle<hidden_key_map<_key_type, _value_type>, iterator_handle_tag>
-            {
-                typedef typename viennagrid::storage::handle::handle_type<hidden_key_map<_key_type, _value_type>, iterator_handle_tag>::type handle_type;
-                
-                static handle_type convert( handle_type it ) { return it; }
-            };
-            
-            template<typename _key_type, typename _value_type>
-            struct iterator_to_handle<hidden_key_map<_key_type, _value_type>, pointer_handle_tag>
-            {
-                typedef typename viennagrid::storage::handle::handle_type<hidden_key_map<_key_type, _value_type>, pointer_handle_tag>::type handle_type;
-                
-                template<typename iterator>
-                static handle_type convert( iterator it ) { return & it->second; }
-            };
-            
-            template<typename _key_type, typename _value_type>
-            struct iterator_to_handle<hidden_key_map<_key_type, _value_type>, id_handle_tag>
-            {
-                typedef typename viennagrid::storage::handle::handle_type<hidden_key_map<_key_type, _value_type>, id_handle_tag>::type handle_type;
-                
-                template<typename iterator>
-                static handle_type convert( iterator it ) { return it->second.id(); }
-            };
-            
-        }
+
         
         
         template<typename key_type_tag>

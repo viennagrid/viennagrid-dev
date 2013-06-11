@@ -555,10 +555,10 @@ namespace viennagrid
     }
 
     template<typename domain_type, typename handle_type>
-    typename viennagrid::result_of::iterator< typename viennagrid::result_of::element_range<domain_type, typename viennagrid::storage::handle::value_type<handle_type>::type >::type >::type
+    typename viennagrid::result_of::iterator< typename viennagrid::result_of::element_range<domain_type, typename storage::handle::result_of::value_type<handle_type>::type >::type >::type
             find_by_handle(domain_type & domain, handle_type handle)
     {
-        typedef typename viennagrid::storage::handle::value_type<handle_type>::type element_type;
+        typedef typename storage::handle::result_of::value_type<handle_type>::type element_type;
         typedef typename element_type::tag element_tag;
         typedef typename viennagrid::result_of::element_range<domain_type, element_tag>::type RangeType;
         typedef typename viennagrid::result_of::iterator<RangeType>::type RangeIterator;
@@ -574,10 +574,10 @@ namespace viennagrid
     }
     
     template<typename domain_type, typename handle_type>
-    typename viennagrid::result_of::const_iterator< typename viennagrid::result_of::const_element_range<domain_type, typename viennagrid::storage::handle::value_type<handle_type>::type >::type  >::type
+    typename viennagrid::result_of::const_iterator< typename viennagrid::result_of::const_element_range<domain_type, typename storage::handle::result_of::value_type<handle_type>::type >::type  >::type
             find_by_handle(const domain_type & domain, handle_type handle)
     {
-        typedef typename viennagrid::storage::handle::value_type<handle_type>::type element_type;
+        typedef typename storage::handle::result_of::value_type<handle_type>::type element_type;
         typedef typename element_type::tag element_tag;
         typedef typename viennagrid::result_of::const_element_range<domain_type, element_tag>::type RangeType;
         typedef typename viennagrid::result_of::const_iterator<RangeType>::type RangeIterator;

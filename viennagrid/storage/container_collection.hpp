@@ -3,6 +3,7 @@
 
 #include "viennagrid/meta/typelist.hpp"
 #include "viennagrid/meta/typemap.hpp"
+#include "viennagrid/meta/algorithm.hpp"
 
 #include "viennagrid/storage/container.hpp"
 #include "viennagrid/storage/collection.hpp"
@@ -228,7 +229,7 @@ namespace viennagrid
             template<typename container_collection_type, typename handle_type, typename container_type>
             struct handle_or_ignore_helper
             {
-                typedef typename viennagrid::storage::handle::value_type<handle_type>::type value_type;
+                typedef typename viennagrid::storage::handle::result_of::value_type<handle_type>::type value_type;
                 
                 static void handle_or_ignore( container_collection_type & collection, const handle_type & handle )
                 {

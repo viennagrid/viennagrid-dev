@@ -160,6 +160,19 @@ namespace viennagrid
         private:
             id_type id_;
         };
+        
+        
+        namespace result_of
+        {
+            
+            template<typename some_type>
+            struct id_type
+            {
+                typedef typename some_type::id_type type;
+            };
+            
+            
+        }
             
 
         
@@ -168,8 +181,9 @@ namespace viennagrid
         {
         public:
             typedef id_type_ id_type;
+            typedef typename result_of::const_id<id_type>::type const_id_type;
             
-            id_compare(id_type id_) : id(id_) {}
+            id_compare(const_id_type id_) : id(id_) {}
             
             template<typename type>
             bool operator() ( const type & to_compare )
@@ -178,7 +192,7 @@ namespace viennagrid
             }
             
         private:
-            id_type id;
+            const_id_type id;
         };
         
         namespace id

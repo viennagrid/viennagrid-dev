@@ -113,6 +113,39 @@ namespace viennameta
             return true;
         }
     };
+    
+    
+    
+    
+    
+    
+    template<typename some_type>
+    struct remove_const
+    {
+        typedef some_type type;
+    };
+    
+    template<typename some_type>
+    struct remove_const<const some_type>
+    {
+        typedef some_type type;
+    };
+    
+    
+    
+    // http://stackoverflow.com/questions/5423246/how-to-detect-if-a-type-is-an-iterator-or-const-iterator
+    template<typename T>
+    struct is_const_pointer { static const bool value = false; };
+
+    template<typename T>
+    struct is_const_pointer<const T*> { static const bool value = true; };
+
+    template <typename TIterator>
+    struct is_const_iterator
+    {
+        typedef typename std::iterator_traits<TIterator>::pointer pointer;
+        static const bool value = is_const_pointer<pointer>::value;
+    };
 }
 
 

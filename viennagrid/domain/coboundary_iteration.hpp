@@ -63,7 +63,7 @@ namespace viennagrid
     template<typename coboundary_type_or_tag, typename domain_or_container_type, typename handle_type>
     typename result_of::coboundary_container<domain_or_container_type, coboundary_type_or_tag>::type create_coboundary_container(domain_or_container_type & domain, handle_type handle)
     {
-        typedef typename viennagrid::storage::handle::value_type< handle_type >::type element_type;
+        typedef typename viennagrid::storage::handle::result_of::value_type< handle_type >::type element_type;
         typedef typename viennagrid::result_of::element_tag< element_type >::type element_tag;
         
         typedef typename viennagrid::result_of::element_tag< coboundary_type_or_tag >::type coboundary_tag;
@@ -100,7 +100,7 @@ namespace viennagrid
     template<typename coboundary_type_or_tag, typename domain_or_container_type, typename handle_type>
     typename result_of::const_coboundary_container<domain_or_container_type, coboundary_type_or_tag>::type create_coboundary_container(const domain_or_container_type & domain, handle_type handle)
     {
-        typedef typename viennagrid::storage::handle::value_type< handle_type >::type element_type;
+        typedef typename viennagrid::storage::handle::result_of::value_type< handle_type >::type element_type;
         typedef typename viennagrid::result_of::element_tag< element_type >::type element_tag;
         
         typedef typename viennagrid::result_of::element_tag< coboundary_type_or_tag >::type coboundary_tag;
@@ -138,7 +138,7 @@ namespace viennagrid
     template<typename coboundary_type_or_tag, typename domain_or_container_type, typename handle_type>
     typename result_of::coboundary_range<domain_or_container_type, coboundary_type_or_tag>::type coboundary_elements(domain_or_container_type & domain, handle_type handle)
     {
-        typedef typename viennagrid::storage::handle::value_type<handle_type>::type element_type;
+        typedef typename viennagrid::storage::handle::result_of::value_type<handle_type>::type element_type;
         typedef typename result_of::element_tag<coboundary_type_or_tag>::type coboundary_tag;
         typedef typename result_of::coboundary_container<domain_or_container_type, coboundary_type_or_tag>::type container_type;
         typedef typename result_of::coboundary_range<domain_or_container_type, coboundary_type_or_tag>::type range_type;
@@ -166,7 +166,7 @@ namespace viennagrid
     template<typename coboundary_type_or_tag, typename domain_or_container_type, typename handle_type>
     typename result_of::coboundary_range<domain_or_container_type, coboundary_type_or_tag>::type create_coboundary_elements(domain_or_container_type & domain, handle_type handle)
     {
-        typedef typename viennagrid::storage::handle::value_type<handle_type>::type element_type;
+        typedef typename viennagrid::storage::handle::result_of::value_type<handle_type>::type element_type;
         typedef typename result_of::element_tag<coboundary_type_or_tag>::type coboundary_tag;
         typedef typename result_of::coboundary_container<domain_or_container_type, coboundary_type_or_tag>::type container_type;
         typedef typename result_of::coboundary_range<domain_or_container_type, coboundary_type_or_tag>::type range_type;
@@ -187,7 +187,7 @@ namespace viennagrid
     template<typename coboundary_type_or_tag, typename domain_or_container_type, typename handle_type>
     typename result_of::const_coboundary_range<domain_or_container_type, coboundary_type_or_tag>::type coboundary_elements(const domain_or_container_type & domain, handle_type handle)
     {
-        typedef typename viennagrid::storage::handle::value_type<handle_type>::type element_type;
+        typedef typename viennagrid::storage::handle::result_of::value_type<handle_type>::type element_type;
         typedef typename result_of::element_tag<coboundary_type_or_tag>::type coboundary_tag;
         typedef typename result_of::const_coboundary_container<domain_or_container_type, coboundary_type_or_tag>::type container_type;
         typedef typename result_of::const_coboundary_range<domain_or_container_type, coboundary_type_or_tag>::type range_type;
@@ -215,7 +215,7 @@ namespace viennagrid
     template<typename coboundary_type_or_tag, typename domain_or_container_type, typename handle_type>
     typename result_of::const_coboundary_range<domain_or_container_type, coboundary_type_or_tag>::type create_coboundary_elements(const domain_or_container_type & domain, handle_type handle)
     {
-        typedef typename viennagrid::storage::handle::value_type<handle_type>::type element_type;
+        typedef typename viennagrid::storage::handle::result_of::value_type<handle_type>::type element_type;
         typedef typename result_of::element_tag<coboundary_type_or_tag>::type coboundary_tag;
         typedef typename result_of::const_coboundary_container<domain_or_container_type, coboundary_type_or_tag>::type container_type;
         typedef typename result_of::const_coboundary_range<domain_or_container_type, coboundary_type_or_tag>::type range_type;
