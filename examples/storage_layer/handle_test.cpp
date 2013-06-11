@@ -11,7 +11,7 @@
 
 int main()
 {
-    typedef viennagrid::storage::iterator_handle_tag handle_tag;
+    typedef viennagrid::storage::pointer_handle_tag handle_tag;
     typedef viennagrid::config::point_type_3d vector_type;
     typedef viennagrid::config::result_of::full_domain_config< viennagrid::tetrahedron_tag, vector_type, handle_tag >::type domain_config;
     
@@ -33,13 +33,13 @@ int main()
     
     tetrahedron_handle_type tet_handle0 = viennagrid::create_tetrahedron(domain, v0, v1, v2, v3);
     tetrahedron_handle_type tet_handle1 = viennagrid::create_tetrahedron(domain, v0, v1, v2, v4);
-//     std::cout << tet_handle0 << std::endl;
+    std::cout << tet_handle0 << std::endl;
     
     tetrahedron_type & tet = viennagrid::dereference_handle(domain, tet_handle0);
     std::cout << tet << std::endl;
     
     tetrahedron_handle_type tet_handle2 = viennagrid::handle(domain, tet);
-//     std::cout << tet_handle2 << std::endl;
+    std::cout << tet_handle2 << std::endl;
     
     tetrahedron_type & tet2 = viennagrid::dereference_handle(domain, tet_handle2);
     std::cout << tet2 << std::endl;
@@ -50,13 +50,12 @@ int main()
     typedef viennagrid::result_of::handle<tetrahedron_type, viennagrid::line_tag>::type line_handle_type;
     
     line_type & line = viennagrid::lines(tet)[2];
-//     std::cout << viennagrid::lines(tet).handle_at(2) << std::endl;
+    std::cout << viennagrid::lines(tet).handle_at(2) << std::endl;
     std::cout << viennagrid::dereference_handle(tet, viennagrid::lines(tet).handle_at(2)) << std::endl;
     
     line_handle_type line_handle = viennagrid::handle(tet, line);
+    std::cout << line_handle << std::endl;
     std::cout << viennagrid::dereference_handle(tet, line_handle) << std::endl;
-    
-//     std::cout << line_handle << std::endl;
     
     
     return 0;
