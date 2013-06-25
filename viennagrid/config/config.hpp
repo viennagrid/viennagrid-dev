@@ -2,6 +2,7 @@
 #define VIENNAGRID_CONFIG_HPP
 
 #include "viennagrid/meta/typemap.hpp"
+#include "viennagrid/storage/forwards.hpp"
 
 namespace viennagrid
 {
@@ -13,18 +14,22 @@ namespace viennagrid
         struct element_id_tag;
         struct element_container_tag;
         struct element_boundary_storage_layout_tag;
+        struct element_appendix_type_tag;
         
         struct id_generator_tag;
         struct continuous_id_generator_tag;
+        
+        struct coboundary_container_tag;
+        struct coboundary_view_container_tag;
     
         
         struct vector_type_tag;
         struct metainfo_typelist_tag;
         struct metainfo_container_config_tag;
         
-        struct segment_id_type_tag;
-        struct segmentation_id_type_tag;
-        struct element_segmentation_tag;
+//         struct segment_id_type_tag;
+//         struct segmentation_id_type_tag;
+//         struct element_segmentation_tag;
         
         
         
@@ -37,6 +42,24 @@ namespace viennagrid
             struct default_config<id_generator_tag>
             {
                 typedef continuous_id_generator_tag type;
+            };
+            
+            template<>
+            struct default_config<element_appendix_type_tag>
+            {
+                typedef viennameta::null_type type;
+            };
+            
+            template<>
+            struct default_config<coboundary_container_tag>
+            {
+                typedef storage::std_vector_tag type;
+            };
+            
+            template<>
+            struct default_config<coboundary_view_container_tag>
+            {
+                typedef storage::std_vector_tag type;
             };
             
             

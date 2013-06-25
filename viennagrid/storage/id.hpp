@@ -88,6 +88,23 @@ namespace viennagrid
         };
         
         
+        template<typename value_type, typename base_id_type>
+        bool operator<( smart_id_t<value_type, base_id_type> const & lhs, smart_id_t<value_type, base_id_type> const & rhs )
+        { return lhs.get() < rhs.get(); }
+        
+        template<typename value_type, typename base_id_type>
+        bool operator<( smart_id_t<const value_type, base_id_type> const & lhs, smart_id_t<value_type, base_id_type> const & rhs )
+        { return lhs.get() < rhs.get(); }
+        
+        template<typename value_type, typename base_id_type>
+        bool operator<( smart_id_t<value_type, base_id_type> const & lhs, smart_id_t<const value_type, base_id_type> const & rhs )
+        { return lhs.get() < rhs.get(); }
+        
+        template<typename value_type, typename base_id_type>
+        bool operator<( smart_id_t<const value_type, base_id_type> const & lhs, smart_id_t<const value_type, base_id_type> const & rhs )
+        { return lhs.get() < rhs.get(); }
+        
+        
         
         template<typename value_type_, typename base_id_type>
         std::ostream & operator<< (std::ostream & os, smart_id_t<value_type_, base_id_type> id)

@@ -34,7 +34,7 @@ namespace viennagrid
     struct plc_hole_point_tag;
 }
 
-VIENNADATA_ENABLE_TYPE_BASED_KEY_DISPATCH( viennagrid::plc_hole_point_tag )
+// VIENNADATA_ENABLE_TYPE_BASED_KEY_DISPATCH( viennagrid::plc_hole_point_tag )
 
 namespace viennagrid
 {

@@ -84,44 +84,44 @@ namespace viennagrid
         return create_element<element_type>(domain);
     }
     
-    template<typename config_type, typename topology_type, typename metainfo_collection_type, typename point_type>
-    typename viennagrid::result_of::handle<domain_t<config_type, topology_type, metainfo_collection_type>, vertex_tag>::type
-        create_vertex( domain_t<config_type, topology_type, metainfo_collection_type> & domain,
-                       point_type const & point )
+    template<typename A, typename B, typename C, typename D, typename E>
+    typename viennagrid::result_of::vertex_handle< domain_t<A, B, C, D, E> >::type
+        create_vertex( domain_t<A, B, C, D, E> & domain,
+                       typename result_of::point_type< domain_t<A, B, C, D, E> >::type const & point )
 //                        typename viennagrid::result_of::point_type< domain_t<config_type, topology_type, metainfo_collection_type> >::type & point )
     {
-        typedef typename result_of::element< domain_t<config_type, topology_type, metainfo_collection_type>, vertex_tag>::type element_type;
-        typename result_of::handle< domain_t<config_type, topology_type, metainfo_collection_type>, element_type>::type ret = push_element(domain, element_type() ).first;
+        typedef typename result_of::vertex< domain_t<A, B, C, D, E> >::type element_type;
+        typename result_of::vertex_handle< domain_t<A, B, C, D, E> >::type ret = push_element(domain, element_type() ).first;
         viennagrid::point(domain, ret) = point;
         
         return ret;
     }
     
-    template<typename config_type, typename topology_type, typename metainfo_collection_type, typename point_type>
-    typename result_of::handle<domain_t<config_type, topology_type, metainfo_collection_type>, vertex_tag>::type
-        create_vertex( domain_t<config_type, topology_type, metainfo_collection_type> & domain,
-                       typename viennagrid::result_of::element<domain_t<config_type, topology_type, metainfo_collection_type>, vertex_tag>::type::id_type id,
-                       point_type const & point )
+    template<typename A, typename B, typename C, typename D, typename E>
+    typename viennagrid::result_of::vertex_handle< domain_t<A, B, C, D, E> >::type
+        create_vertex( domain_t<A, B, C, D, E> & domain,
+                       typename viennagrid::result_of::element< domain_t<A, B, C, D, E>, vertex_tag>::type::id_type id,
+                       typename result_of::point_type< domain_t<A, B, C, D, E> >::type const & point )
 //                        typename viennagrid::result_of::point_type< domain_t<config_type, topology_type, metainfo_collection_type> >::type const & point )
     {
-        typedef typename result_of::element< domain_t<config_type, topology_type, metainfo_collection_type>, vertex_tag>::type element_type;
+        typedef typename result_of::element< domain_t<A, B, C, D, E>, vertex_tag>::type element_type;
         element_type element;
         element.id( id );
         
-        typename result_of::handle< domain_t<config_type, topology_type, metainfo_collection_type>, element_type>::type ret = push_element_noid(domain, element ).first;
+        typename result_of::handle< domain_t<A, B, C, D, E>, element_type>::type ret = push_element_noid(domain, element ).first;
         viennagrid::point(domain, ret) = point;
         
         return ret;
     }
     
-    template<typename config_type, typename topology_type, typename metainfo_collection_type, typename point_type>
-    typename result_of::handle<domain_t<config_type, topology_type, metainfo_collection_type>, vertex_tag>::type
-        create_unique_vertex( domain_t<config_type, topology_type, metainfo_collection_type> & domain,
+    template<typename A, typename B, typename C, typename D, typename E>
+    typename result_of::handle<domain_t<A, B, C, D, E>, vertex_tag>::type
+        create_unique_vertex( domain_t<A, B, C, D, E> & domain,
 //                               typename viennagrid::result_of::point_type< domain_t<config_type, topology_type, metainfo_collection_type> >::type const & p,
-                              point_type const & p,
-                              typename viennagrid::result_of::coord_type< domain_t<config_type, topology_type, metainfo_collection_type> >::type tolerance )
+                              typename result_of::point_type< domain_t<A, B, C, D, E> >::type const & p,
+                              typename viennagrid::result_of::coord_type< domain_t<A, B, C, D, E> >::type tolerance )
     {
-        typedef domain_t<config_type, topology_type, metainfo_collection_type> domain_type;
+        typedef domain_t<A, B, C, D, E> domain_type;
         typedef typename result_of::element_range<domain_type, vertex_tag>::type vertex_range_type;
         typedef typename result_of::handle_iterator<vertex_range_type>::type vertex_range_handle_iterator;
         

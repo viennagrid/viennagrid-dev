@@ -27,7 +27,7 @@
 #include "viennagrid/topology/plc.hpp"
 
 #include "viennagrid/config/domain_config.hpp"
-#include "viennagrid/domain/segmentation.hpp"
+// #include "viennagrid/domain/segmentation.hpp"
 
 /** @file config/simplex.hpp
     @brief Provides default configuration classes for simplex domains
@@ -48,7 +48,7 @@ namespace viennagrid
       typedef result_of::full_domain_config< viennagrid::line_tag, point_type_1d, viennagrid::storage::pointer_handle_tag >::type line_1d;
       typedef viennagrid::result_of::domain< line_1d >::type line_1d_domain;
       typedef viennagrid::result_of::domain_view< line_1d_domain >::type line_1d_view;
-      typedef viennagrid::result_of::segmentation< line_1d_domain >::type line_1d_segmentation;
+//       typedef viennagrid::result_of::segmentation< line_1d_domain >::type line_1d_segmentation;
       typedef viennagrid::result_of::element<line_1d_domain, viennagrid::line_tag>::type line_1d_cell;
       
       
@@ -61,7 +61,7 @@ namespace viennagrid
       typedef result_of::full_domain_config< viennagrid::triangle_tag, point_type_2d, viennagrid::storage::pointer_handle_tag >::type triangular_2d;
       typedef viennagrid::result_of::domain< triangular_2d >::type triangular_2d_domain;
       typedef viennagrid::result_of::domain_view< triangular_2d_domain >::type triangular_2d_view;
-      typedef viennagrid::result_of::segmentation< triangular_2d_domain >::type triangular_2d_segmentation;
+//       typedef viennagrid::result_of::segmentation< triangular_2d_domain >::type triangular_2d_segmentation;
       typedef viennagrid::result_of::element<triangular_2d_domain, viennagrid::triangle_tag>::type triangular_2d_cell;
       
 
@@ -76,13 +76,13 @@ namespace viennagrid
       typedef result_of::full_domain_config< viennagrid::triangle_tag, point_type_3d, viennagrid::storage::pointer_handle_tag >::type triangular_3d;
       typedef viennagrid::result_of::domain< triangular_3d >::type triangular_3d_domain;
       typedef viennagrid::result_of::domain_view< triangular_3d_domain >::type triangular_3d_view;
-      typedef viennagrid::result_of::segmentation< triangular_3d_domain >::type triangular_3d_segmentation;
+//       typedef viennagrid::result_of::segmentation< triangular_3d_domain >::type triangular_3d_segmentation;
       typedef viennagrid::result_of::element<triangular_3d_domain, viennagrid::triangle_tag>::type triangular_3d_cell;
       
       typedef result_of::full_domain_config< viennagrid::tetrahedron_tag, point_type_3d, viennagrid::storage::pointer_handle_tag >::type tetrahedral_3d;
       typedef viennagrid::result_of::domain< tetrahedral_3d >::type tetrahedral_3d_domain;
       typedef viennagrid::result_of::domain_view< tetrahedral_3d_domain >::type tetrahedral_3d_view;
-      typedef viennagrid::result_of::segmentation< tetrahedral_3d_domain >::type tetrahedral_3d_segmentation;
+//       typedef viennagrid::result_of::segmentation< tetrahedral_3d_domain >::type tetrahedral_3d_segmentation;
       typedef viennagrid::result_of::element<tetrahedral_3d_domain, viennagrid::tetrahedron_tag>::type tetrahedral_3d_cell;
       
       

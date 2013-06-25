@@ -60,7 +60,7 @@ int main()
     
 
     typedef ublas::vector<double> vector_type;
-    typedef viennagrid::config::result_of::full_domain_config< viennagrid::tetrahedron_tag, vector_type, handle_tag, metainfo_typelist >::type domain_config;
+    typedef viennagrid::config::result_of::full_domain_config< viennagrid::tetrahedron_tag, vector_type, handle_tag >::type domain_config;
     
     //
     // typedefing and setting up the geometric domain
@@ -122,7 +122,7 @@ int main()
     tetrahedron_handle_type tet = viennagrid::create_element<tetrahedron_type>( domain, handles.begin(), handles.end() );
     
     // set a double value to a tetdrahedron
-    viennagrid::look_up<double>(domain, tet) = 1.0;
+//     viennagrid::look_up<double>(domain, tet) = 1.0;
     
     //
     // display the domain content
@@ -191,48 +191,48 @@ int main()
     //
     
     // iterating over all vertices and piping out the point information
-    typedef viennagrid::result_of::const_element_range<tetrahedron_type, viennagrid::vertex_tag>::type tetrahedron_vertex_range;
-    typedef viennagrid::result_of::const_iterator<tetrahedron_vertex_range>::type tetrahedron_vertex_iterator;
-    
-    cout << "All vertices of the first tetdrahedron in the domain USING ncells<dim>()" << endl;
-    tetrahedron_vertex_range vtx_range = viennagrid::elements<viennagrid::vertex_tag>(test_tet);
-    for (tetrahedron_vertex_iterator it = vtx_range.begin(); it != vtx_range.end(); ++it)
-        cout << *it << " geometric information: " << viennagrid::look_up<vector_type>( domain, *it ) << endl;
-    cout << endl;
-    
-    
-    typedef viennagrid::result_of::const_element_range<domain_type, viennagrid::vertex_tag>::type domain_vertex_range_2;
-    typedef viennagrid::result_of::const_iterator<domain_vertex_range_2>::type domain_vertex_iterator_2;
-    
-    cout << "All vertices of the first tetdrahedron in the domain USING elements<tag>()" << endl;
-    domain_vertex_range_2 domain_vtx_range_2 = viennagrid::elements<viennagrid::vertex_tag>(domain);
-    for (domain_vertex_iterator_2 it = domain_vtx_range_2.begin(); it != domain_vtx_range_2.end(); ++it)
-        cout << *it << " geometric information: " << viennagrid::look_up<vector_type>( domain, *it ) << endl;
-    cout << endl;
-    
-    
-    typedef viennagrid::result_of::const_element_range<domain_type, vertex_type>::type domain_vertex_range_3;
-    typedef viennagrid::result_of::const_iterator<domain_vertex_range_3>::type domain_vertex_iterator_3;
-    
-    cout << "All vertices of the first tetdrahedron in the domain USING elements<type>()" << endl;
-    domain_vertex_range_3 domain_vtx_range_3 = viennagrid::elements<vertex_type>(domain);
-    for (domain_vertex_iterator_3 it = domain_vtx_range_3.begin(); it != domain_vtx_range_3.end(); ++it)
-        cout << *it << " geometric information: " << viennagrid::look_up<vector_type>( domain, *it ) << endl;
-    cout << endl;
-    
-    
-    // iterating over all tetrahedrons and piping out the double meta-information
-    typedef viennagrid::result_of::const_element_range<domain_type, viennagrid::tetrahedron_tag>::type tetrahedron_range;
-    typedef viennagrid::result_of::const_iterator<tetrahedron_range>::type tetrahedron_iterator;
-    
-    cout << "All tetdrahedrons in the domain" << endl;
-    tetrahedron_range tet_range = viennagrid::elements<viennagrid::tetrahedron_tag>(domain);
-    for (tetrahedron_iterator it = tet_range.begin(); it != tet_range.end(); ++it)
-    {
-        cout << *it << endl;
-        cout << "   geometric information: " << viennagrid::look_up<double>( domain, *it ) << endl;
-    }
-    cout << endl;
+//     typedef viennagrid::result_of::const_element_range<tetrahedron_type, viennagrid::vertex_tag>::type tetrahedron_vertex_range;
+//     typedef viennagrid::result_of::const_iterator<tetrahedron_vertex_range>::type tetrahedron_vertex_iterator;
+//     
+//     cout << "All vertices of the first tetdrahedron in the domain USING ncells<dim>()" << endl;
+//     tetrahedron_vertex_range vtx_range = viennagrid::elements<viennagrid::vertex_tag>(test_tet);
+//     for (tetrahedron_vertex_iterator it = vtx_range.begin(); it != vtx_range.end(); ++it)
+//         cout << *it << " geometric information: " << viennagrid::look_up<vector_type>( domain, *it ) << endl;
+//     cout << endl;
+//     
+//     
+//     typedef viennagrid::result_of::const_element_range<domain_type, viennagrid::vertex_tag>::type domain_vertex_range_2;
+//     typedef viennagrid::result_of::const_iterator<domain_vertex_range_2>::type domain_vertex_iterator_2;
+//     
+//     cout << "All vertices of the first tetdrahedron in the domain USING elements<tag>()" << endl;
+//     domain_vertex_range_2 domain_vtx_range_2 = viennagrid::elements<viennagrid::vertex_tag>(domain);
+//     for (domain_vertex_iterator_2 it = domain_vtx_range_2.begin(); it != domain_vtx_range_2.end(); ++it)
+//         cout << *it << " geometric information: " << viennagrid::look_up<vector_type>( domain, *it ) << endl;
+//     cout << endl;
+//     
+//     
+//     typedef viennagrid::result_of::const_element_range<domain_type, vertex_type>::type domain_vertex_range_3;
+//     typedef viennagrid::result_of::const_iterator<domain_vertex_range_3>::type domain_vertex_iterator_3;
+//     
+//     cout << "All vertices of the first tetdrahedron in the domain USING elements<type>()" << endl;
+//     domain_vertex_range_3 domain_vtx_range_3 = viennagrid::elements<vertex_type>(domain);
+//     for (domain_vertex_iterator_3 it = domain_vtx_range_3.begin(); it != domain_vtx_range_3.end(); ++it)
+//         cout << *it << " geometric information: " << viennagrid::look_up<vector_type>( domain, *it ) << endl;
+//     cout << endl;
+//     
+//     
+//     // iterating over all tetrahedrons and piping out the double meta-information
+//     typedef viennagrid::result_of::const_element_range<domain_type, viennagrid::tetrahedron_tag>::type tetrahedron_range;
+//     typedef viennagrid::result_of::const_iterator<tetrahedron_range>::type tetrahedron_iterator;
+//     
+//     cout << "All tetdrahedrons in the domain" << endl;
+//     tetrahedron_range tet_range = viennagrid::elements<viennagrid::tetrahedron_tag>(domain);
+//     for (tetrahedron_iterator it = tet_range.begin(); it != tet_range.end(); ++it)
+//     {
+//         cout << *it << endl;
+//         cout << "   geometric information: " << viennagrid::look_up<double>( domain, *it ) << endl;
+//     }
+//     cout << endl;
     
     
     

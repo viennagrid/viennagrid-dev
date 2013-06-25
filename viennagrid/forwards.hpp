@@ -146,7 +146,7 @@ namespace viennagrid
   class point_t;
 
 
-  template<typename element_tag, typename bnd_cell_container_typelist_, typename id_tag>
+  template<typename element_tag, typename bnd_cell_container_typelist_, typename id_tag, typename appendix_type = viennameta::null_type>
   class element_t;
 
   template <typename element_type>
@@ -224,19 +224,19 @@ namespace viennagrid
 //   };
 
   /** @brief ID handler class for IDs of type long. Has to be used for dense quantity storage with ViennaData. */
-  class integral_id
-  {
-    public:
-      typedef long   id_type;
-      
-      integral_id() : id_(-1) {};
-
-      long id() const { return id_; };
-      void id(long new_id) { id_ = new_id; };
-
-    protected:
-      id_type id_;
-  };
+//   class integral_id
+//   {
+//     public:
+//       typedef long   id_type;
+//       
+//       integral_id() : id_(-1) {};
+// 
+//       long id() const { return id_; };
+//       void id(long new_id) { id_ = new_id; };
+// 
+//     protected:
+//       id_type id_;
+//   };
   
     struct static_layout_tag;
     struct dynamic_layout_tag;
@@ -289,46 +289,46 @@ namespace viennagrid
   /** @brief The metafunction layer. Provides type generators that derive the respective type from the domain configuration */
   namespace result_of
   {
-        template<typename something>
-        struct topology;
-        
-        template<typename something>
-        struct container_collection;
-      
-        template<typename something>
-        struct container_collection_typemap;
+    template<typename something>
+    struct domain;
+    
+    template<typename something>
+    struct element_collection;
+  
+    template<typename something>
+    struct container_collection_typemap;
 
-        template<typename something>
-        struct metainfo_collection;
-        
-        
-        template<typename something>
-        struct topologic_cell_dimension;
+    template<typename something>
+    struct metainfo_collection;
+    
+    
+    template<typename something>
+    struct topologic_cell_dimension;
 
-        template<typename something>
-        struct cell_types;
+    template<typename something>
+    struct cell_types;
 
-        template<typename something>
-        struct cell_type;
-        
-        template<typename something>
-        struct cell_tag;
-        
-        
-        template<typename something>
-        struct point_type;
-        
-        template<typename something>
-        struct coord_type
-        {
-            typedef typename coord_type< typename point_type<something>::type >::type type;
-        };
-        
-        template<typename something>
-        struct geometric_dimension
-        {
-            static const int value = geometric_dimension< typename point_type<something>::type >::value;
-        };
+    template<typename something>
+    struct cell_type;
+    
+    template<typename something>
+    struct cell_tag;
+    
+    
+    template<typename something>
+    struct point_type;
+    
+    template<typename something>
+    struct coord_type
+    {
+        typedef typename coord_type< typename point_type<something>::type >::type type;
+    };
+    
+    template<typename something>
+    struct geometric_dimension
+    {
+        static const int value = geometric_dimension< typename point_type<something>::type >::value;
+    };
         
 
         
@@ -650,14 +650,14 @@ namespace viennagrid
             typedef element_tag_ type;
         };
         
-        template<typename element_tag_, typename boundary_cell_container_typelist, typename id_type>
-        struct element_tag< element_t<element_tag_, boundary_cell_container_typelist, id_type> >
+        template<typename element_tag_, typename boundary_cell_container_typelist, typename id_type, typename appendix_type>
+        struct element_tag< element_t<element_tag_, boundary_cell_container_typelist, id_type, appendix_type> >
         {
             typedef element_tag_ type;
         };
         
-        template<typename element_tag_, typename boundary_cell_container_typelist, typename id_type>
-        struct element_tag< const element_t<element_tag_, boundary_cell_container_typelist, id_type> >
+        template<typename element_tag_, typename boundary_cell_container_typelist, typename id_type, typename appendix_type>
+        struct element_tag< const element_t<element_tag_, boundary_cell_container_typelist, id_type, appendix_type> >
         {
             typedef element_tag_ type;
         };
@@ -804,7 +804,7 @@ namespace viennagrid
     template<typename element_type>
     typename result_of::facet_range<element_type>::type facets(element_type & element)
     {
-        return elements< typename result_of::facet_tag<element_type>::type >(element);
+//         return elements< typename result_of::facet_tag<element_type>::type >(element);
     }
     
     template<typename element_type>
@@ -815,8 +815,8 @@ namespace viennagrid
 
     
     
-    template<typename config_type_, typename topology_type_, typename metainfo_collection_type_>
-    class domain_t;
+//     template<typename config_type_, typename topology_type_, typename metainfo_collection_type_>
+//     class domain_t;
     
     
     
@@ -836,11 +836,11 @@ namespace viennagrid
                                                                                               const handle_array_iterator_type & array_end,
                                                                                               typename element_type::id_type id );
     
-    template<typename config_type, typename topology_type, typename metainfo_collection_type, typename point_type>
-    typename result_of::handle<domain_t<config_type, topology_type, metainfo_collection_type>, vertex_tag>::type
-        create_unique_vertex( domain_t<config_type, topology_type, metainfo_collection_type> & domain,
-                              point_type const & p,
-                              typename viennagrid::result_of::coord_type< domain_t<config_type, topology_type, metainfo_collection_type> >::type tolerance = 1e-6 );
+//     template<typename config_type, typename topology_type, typename metainfo_collection_type, typename point_type>
+//     typename result_of::handle<domain_t<config_type, topology_type, metainfo_collection_type>, vertex_tag>::type
+//         create_unique_vertex( domain_t<config_type, topology_type, metainfo_collection_type> & domain,
+//                               point_type const & p,
+//                               typename viennagrid::result_of::coord_type< domain_t<config_type, topology_type, metainfo_collection_type> >::type tolerance = 1e-6 );
 
 
   
@@ -906,8 +906,8 @@ namespace viennagrid
 
 
 // tell ViennaData to use a type-based key dispatch for the refinement and the voronoi keys
-VIENNADATA_ENABLE_TYPE_BASED_KEY_DISPATCH(viennagrid::refinement_key)
-VIENNADATA_ENABLE_TYPE_BASED_KEY_DISPATCH(viennagrid::voronoi_interface_area_key)
-VIENNADATA_ENABLE_TYPE_BASED_KEY_DISPATCH(viennagrid::voronoi_box_volume_key)
+// VIENNADATA_ENABLE_TYPE_BASED_KEY_DISPATCH(viennagrid::refinement_key)
+// VIENNADATA_ENABLE_TYPE_BASED_KEY_DISPATCH(viennagrid::voronoi_interface_area_key)
+// VIENNADATA_ENABLE_TYPE_BASED_KEY_DISPATCH(viennagrid::voronoi_box_volume_key)
 
 #endif

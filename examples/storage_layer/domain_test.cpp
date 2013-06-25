@@ -62,8 +62,8 @@ int main()
     // typedefing and setting up the topological domain
     //
     
-    typedef viennagrid::result_of::topology<toplological_config>::type domain_type;
-    domain_type domain = viennagrid::create_topology<domain_type>();
+    typedef viennagrid::result_of::domain<toplological_config>::type domain_type;
+    domain_type domain;
     
     //
     // typedefs for the element types

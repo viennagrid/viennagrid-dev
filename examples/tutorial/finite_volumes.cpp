@@ -142,7 +142,7 @@ void assemble(DomainType & domain,
         other_vertex_ptr = &(viennagrid::elements<viennagrid::vertex_tag>(*eovit)[1]);
       
       long col_index        = viennadata::access<std::string, long>("dof")(*other_vertex_ptr);
-      double edge_len       = viennagrid::volume(*eovit, domain);
+      double edge_len       = viennagrid::volume(domain, *eovit);
       double interface_area = viennadata::access<viennagrid::voronoi_interface_area_key, double>()(*eovit);
       
       //std::cout << "  " << *other_vertex_ptr << std::endl;

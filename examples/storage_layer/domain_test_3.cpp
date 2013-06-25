@@ -63,8 +63,8 @@ int main()
     // typedefing and setting up the topological domain
     //
     
-    typedef viennagrid::result_of::topology<toplological_config>::type domain_type;
-    domain_type domain = viennagrid::create_topology<domain_type>();
+    typedef viennagrid::result_of::domain<toplological_config>::type domain_type;
+    domain_type domain;
     
     //
     // typedefs for the element types
@@ -92,11 +92,11 @@ int main()
     typedef viennameta::make_typelist< tetrahedron_type >::type view_types;
     
     // typedefing the view
-    typedef viennagrid::result_of::topologic_view<domain_type, view_types>::type domain_view_type;
+    typedef viennagrid::result_of::domain_view<domain_type, view_types>::type domain_view_type;
     
     // creating two views of the domain
-    domain_view_type domain_view_1 = viennagrid::create_view<domain_view_type>(domain);
-    domain_view_type domain_view_2 = viennagrid::create_view<domain_view_type>(domain);
+    domain_view_type domain_view_1 = viennagrid::create_view(domain);
+    domain_view_type domain_view_2 = viennagrid::create_view(domain);
 
     
     //

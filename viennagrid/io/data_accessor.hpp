@@ -18,7 +18,7 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
-
+#include <memory>
 #include <fstream>
 #include <sstream>
 #include <iostream>

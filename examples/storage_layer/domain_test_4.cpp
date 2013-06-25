@@ -60,7 +60,7 @@ int main()
     
 
     typedef ublas::vector<double> vector_type;
-    typedef viennagrid::config::result_of::full_domain_config< viennagrid::tetrahedron_tag, vector_type, handle_tag, metainfo_typelist >::type domain_config;
+    typedef viennagrid::config::result_of::full_domain_config< viennagrid::tetrahedron_tag, vector_type, handle_tag >::type domain_config;
 
     
     
@@ -111,8 +111,8 @@ int main()
     
     //geometric_view_type geometric_view( viennagrid::create_topologic_view<topologic_view_type>( viennagrid::topology(domain) ), domain.get_metainfo_collection() );
     
-    geometric_view_type geometric_view_1 = viennagrid::create_view<geometric_view_type>(domain);
-    geometric_view_type geometric_view_2 = viennagrid::create_view<geometric_view_type>(domain);
+    geometric_view_type geometric_view_1 = viennagrid::create_view(domain);
+    geometric_view_type geometric_view_2 = viennagrid::create_view(domain);
     
     
     
@@ -224,7 +224,7 @@ int main()
     cout << "All vertices of the geometric_view_1 with geometric info" << endl;
     domain_vertex_range domain_vtx_range = viennagrid::elements(domain);
     for (domain_vertex_iterator it = domain_vtx_range.begin(); it != domain_vtx_range.end(); ++it)
-        cout << *it << " geometric information: " << viennagrid::look_up<vector_type>( domain, *it ) << endl;
+        cout << *it << " geometric information: " << viennagrid::point( domain, *it ) << endl;
     cout << endl;
 
     
@@ -237,14 +237,14 @@ int main()
     cout << "All vertices of the geometric_view_1 with geometric info" << endl;
     view_vertex_range view_vtx_range_1 = viennagrid::elements(geometric_view_1);
     for (view_vertex_iterator it = view_vtx_range_1.begin(); it != view_vtx_range_1.end(); ++it)
-        cout << *it << " geometric information: " << viennagrid::look_up<vector_type>( domain, *it ) << endl;
+        cout << *it << " geometric information: " << viennagrid::point( domain, *it ) << endl;
     cout << endl;
     
     // iterating over all vertices and piping out the point information
     cout << "All vertices of the geometric_view_2 with geometric info" << endl;
     view_vertex_range view_vtx_range_2 = viennagrid::elements(geometric_view_2);
     for (view_vertex_iterator it = view_vtx_range_2.begin(); it != view_vtx_range_2.end(); ++it)
-        cout << *it << " geometric information: " << viennagrid::look_up<vector_type>( domain, *it ) << endl;
+        cout << *it << " geometric information: " << viennagrid::point( domain, *it ) << endl;
     cout << endl;
     
 

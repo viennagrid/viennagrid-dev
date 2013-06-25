@@ -1,6 +1,8 @@
 #ifndef VIENNAMETA_UTILS_HPP
 #define VIENNAMETA_UTILS_HPP
 
+#include <iterator>
+
 
 namespace viennameta
 {

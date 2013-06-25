@@ -31,6 +31,7 @@ namespace viennagrid
             typedef id_generator_type_ id_generator_type;
             
             physical_inserter_t() : collection(0) {}
+            physical_inserter_t(container_collection_type & _collection) : collection(&_collection) {}
             physical_inserter_t(container_collection_type & _collection, id_generator_type id_generator_) : collection(&_collection), id_generator(id_generator_) {}
             
             void set_container_collection(container_collection_type & _collection) { collection = &_collection; }
@@ -128,6 +129,7 @@ namespace viennagrid
         {
         public:            
             recursive_inserter_t() : view_collection(0), dependend_inserter(0) {}
+            recursive_inserter_t(view_collection_type & collection_) : view_collection(&collection_), dependend_inserter(0) {}
             recursive_inserter_t(view_collection_type & collection_, dependend_inserter_type & dependend_inserter_) :
                view_collection(&collection_), dependend_inserter(&dependend_inserter_) {}
             

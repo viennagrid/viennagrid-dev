@@ -140,7 +140,7 @@ namespace viennagrid
   template<typename element_type, typename viennadata_key_type>
   void mark_interfacet_cell(element_type & element, viennadata_key_type viennadata_key)
   {
-      boundary_setter_functor<viennadata_key_type> setter_functor(viennadata_key);
+      interface_setter_functor<viennadata_key_type> setter_functor(viennadata_key);
       viennagrid::for_each_boundary_cell( element, setter_functor );
   }
   

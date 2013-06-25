@@ -174,7 +174,7 @@ namespace viennagrid
             segments.resize(segment_index);
             
             for (; old_size != segment_index; ++old_size)
-                segments[old_size] = viennagrid::create_view<SegmentType>(domain);
+                segments[old_size] = viennagrid::create_view(domain);
           }
           
           SegmentType & cur_segment = segments[segment_index - 1];

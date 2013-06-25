@@ -41,7 +41,7 @@ namespace viennagrid
     /** @brief Throws a compile time error if the n-cell type is not supported. */
     template <typename ElementType, typename GeometricContainerType, typename ElementTag, typename DimensionTag>
     typename viennagrid::result_of::point_type<GeometricContainerType>::type
-    circumcenter(ElementType const & cell, const GeometricContainerType & geometric_container, ElementTag const &, DimensionTag const &)
+    circumcenter(ElementType const & cell, GeometricContainerType const & geometric_container, ElementTag const &, DimensionTag const &)
     {
       typedef typename ElementType::ERROR_COMPUTATION_OF_CIRCUMCENTER_NOT_IMPLEMENTED   error_type;
       return typename viennagrid::result_of::point_type<GeometricContainerType>::type();
@@ -52,7 +52,7 @@ namespace viennagrid
     /** @brief Implementation of the calculation of a circumcenter for a point (degenerate case) */
     template <typename ElementType, typename GeometricContainerType>
     typename viennagrid::result_of::point_type<GeometricContainerType>::type
-    circumcenter(ElementType const & cell, const GeometricContainerType & geometric_container, viennagrid::vertex_tag)
+    circumcenter(ElementType const & cell, GeometricContainerType const & geometric_container, viennagrid::vertex_tag)
     {
       return cell.point();
     }
@@ -63,7 +63,7 @@ namespace viennagrid
     /** @brief Implementation of the calculation of a circumcenter for a line (1-simplex) */
     template <typename ElementType, typename GeometricContainerType, typename DimensionTag>
     typename viennagrid::result_of::point_type<GeometricContainerType>::type
-    circumcenter(ElementType const & cell, const GeometricContainerType & geometric_container, viennagrid::simplex_tag<1>, DimensionTag)
+    circumcenter(ElementType const & cell, GeometricContainerType const & geometric_container, viennagrid::simplex_tag<1>, DimensionTag)
     {
       //typedef typename ElementType::config_type             Config;
       //typedef typename viennagrid::result_of::point<Config>::type                            PointType;
@@ -85,7 +85,7 @@ namespace viennagrid
     /** @brief Implementation of the calculation of a circumcenter for a line (1-hypercube) */
     template <typename ElementType, typename GeometricContainerType, typename DimensionTag>
     typename viennagrid::result_of::point_type<GeometricContainerType>::type
-    circumcenter(ElementType const & cell, const GeometricContainerType & geometric_container, viennagrid::hypercube_tag<1>, DimensionTag)
+    circumcenter(ElementType const & cell, GeometricContainerType const & geometric_container, viennagrid::hypercube_tag<1>, DimensionTag)
     {
       return circumcenter(cell, geometric_container, viennagrid::simplex_tag<1>(), DimensionTag());
     }
@@ -96,7 +96,7 @@ namespace viennagrid
     /** @brief Implementation of the calculation of a circumcenter for a triangle in two dimensions */
     template <typename ElementType, typename GeometricContainerType>
     typename viennagrid::result_of::point_type<GeometricContainerType>::type
-    circumcenter(ElementType const & cell, const GeometricContainerType & geometric_container, viennagrid::triangle_tag, viennagrid::dimension_tag<2>)
+    circumcenter(ElementType const & cell, GeometricContainerType const & geometric_container, viennagrid::triangle_tag, viennagrid::dimension_tag<2>)
     {
       //typedef typename ElementType::config_type             Config;
       //typedef typename Config::cell_tag                  CellTag;
@@ -139,7 +139,7 @@ namespace viennagrid
     /** @brief Implementation of the calculation of a circumcenter for a quadrilateral in two dimensions. Mind that the user has to ensure that the quadrilateral actually has a circumcenter! */
     template <typename CellType, typename GeometricContainerType>
     typename viennagrid::result_of::point_type<GeometricContainerType>::type
-    circumcenter(CellType const & cell, const GeometricContainerType & geometric_container, viennagrid::quadrilateral_tag, viennagrid::dimension_tag<2>)
+    circumcenter(CellType const & cell, GeometricContainerType const & geometric_container, viennagrid::quadrilateral_tag, viennagrid::dimension_tag<2>)
     {
       //typedef typename CellType::config_type             Config;
       typedef typename CellType::tag                  CellTag;
@@ -173,7 +173,7 @@ namespace viennagrid
     /** @brief Implementation of the calculation of a circumcenter for a triangle in three dimensions */
     template <typename ElementType, typename GeometricContainerType>
     typename viennagrid::result_of::point_type<GeometricContainerType>::type
-    circumcenter(ElementType const & cell, const GeometricContainerType & geometric_container, viennagrid::triangle_tag, viennagrid::dimension_tag<3>)
+    circumcenter(ElementType const & cell, GeometricContainerType const & geometric_container, viennagrid::triangle_tag, viennagrid::dimension_tag<3>)
     {
       //typedef typename ElementType::config_type             Config;
       //typedef typename ElementType::tag                  CellTag;
@@ -208,7 +208,7 @@ namespace viennagrid
     /** @brief Implementation of the calculation of a circumcenter for a quadrilateral in three dimensions. Mind that the user has to ensure that the quadrilateral actually has a circumcenter! */
     template <typename CellType, typename GeometricContainerType>
     typename viennagrid::result_of::point_type<GeometricContainerType>::type
-    circumcenter(CellType const & cell, const GeometricContainerType & geometric_container, viennagrid::quadrilateral_tag, viennagrid::dimension_tag<3>)
+    circumcenter(CellType const & cell, GeometricContainerType const & geometric_container, viennagrid::quadrilateral_tag, viennagrid::dimension_tag<3>)
     {
       //typedef typename CellType::config_type             Config;
       typedef typename CellType::tag             ElementTag;
@@ -241,7 +241,7 @@ namespace viennagrid
     /** @brief Implementation of the calculation of a circumcenter for a tetrahedron in three dimensions */
     template <typename ElementType, typename GeometricContainerType>
     typename viennagrid::result_of::point_type<GeometricContainerType>::type
-    circumcenter(ElementType const & cell, const GeometricContainerType & geometric_container, viennagrid::tetrahedron_tag, viennagrid::dimension_tag<3>)
+    circumcenter(ElementType const & cell, GeometricContainerType const & geometric_container, viennagrid::tetrahedron_tag, viennagrid::dimension_tag<3>)
     {
 //       typedef typename ElementType::config_type             Config;
 //       typedef typename Config::cell_tag                  CellTag;
@@ -282,7 +282,7 @@ namespace viennagrid
     /** @brief Implementation of the calculation of a circumcenter for a hexahedron in three dimensions.  Mind that the user has to ensure that the quadrilateral actually has a circumcenter! */
     template <typename CellType, typename GeometricContainerType>
     typename viennagrid::result_of::point_type<GeometricContainerType>::type
-    circumcenter(CellType const & cell, const GeometricContainerType & geometric_container, viennagrid::hexahedron_tag, viennagrid::dimension_tag<3>)
+    circumcenter(CellType const & cell, GeometricContainerType const & geometric_container, viennagrid::hexahedron_tag, viennagrid::dimension_tag<3>)
     {
       //typedef typename CellType::config_type             Config;
       typedef typename CellType::tag                  CellTag;
@@ -316,9 +316,9 @@ namespace viennagrid
    */
   template <typename CellType, typename GeometricContainerType>
   typename viennagrid::result_of::point_type<GeometricContainerType>::type
-  circumcenter(CellType const & cell, const GeometricContainerType & geometric_container)
+  circumcenter(CellType const & cell, GeometricContainerType const & geometric_container)
   {
-    typedef typename GeometricContainerType::vector_type vector_type;
+    typedef typename viennagrid::result_of::point_type<GeometricContainerType>::type vector_type;
       
     return detail::circumcenter(cell,
                         geometric_container,

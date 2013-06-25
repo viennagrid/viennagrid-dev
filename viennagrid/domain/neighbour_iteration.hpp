@@ -3,264 +3,219 @@
 
 #include "viennagrid/domain/coboundary_iteration.hpp"
 
+
+
+
+
+
 namespace viennagrid
 {
-    
+
     
     namespace result_of
     {
-        
-        template<typename domain_or_container_type, typename element_type_or_tag, typename view_container_tag = viennagrid::storage::std_deque_tag>
-        struct neighbour_container
+        template<typename domain_type, typename element_type_or_tag, typename connector_element_type_or_tag>
+        struct neighbour_view
         {
-            typedef typename coboundary_container<domain_or_container_type, element_type_or_tag, view_container_tag>::type type;
+            typedef typename viennagrid::result_of::element_tag< element_type_or_tag >::type element_tag;
+            typedef typename viennagrid::result_of::element_tag< connector_element_type_or_tag >::type connector_element_tag;
+            
+            typedef typename viennagrid::storage::result_of::value_type<
+                  typename domain_type::neighbour_collection_type,
+                  viennameta::static_pair<element_tag, connector_element_tag>
+                >::type::container_type::value_type type;
         };
         
-        template<typename domain_or_container_type, typename element_type_or_tag, typename view_container_tag = viennagrid::storage::std_deque_tag>
-        struct const_neighbour_container
-        {
-            typedef typename const_coboundary_container<domain_or_container_type, element_type_or_tag, view_container_tag>::type type;
-        };
         
-        
-        template<typename domain_or_container_type, typename element_type_or_tag, typename view_container_tag = viennagrid::storage::std_deque_tag>
+        template<typename domain_type, typename element_type_or_tag, typename connector_element_type_or_tag>
         struct neighbour_range
         {
-            typedef typename coboundary_range<domain_or_container_type, element_type_or_tag, view_container_tag>::type type;
+            typedef viennagrid::storage::container_range_wrapper< typename neighbour_view<domain_type, element_type_or_tag, connector_element_type_or_tag>::type > type; 
         };
         
-        template<typename domain_or_container_type, typename element_type_or_tag, typename view_container_tag = viennagrid::storage::std_deque_tag>
+        template<typename domain_type, typename element_type_or_tag, typename connector_element_type_or_tag>
         struct const_neighbour_range
         {
-            typedef typename const_coboundary_range<domain_or_container_type, element_type_or_tag, view_container_tag>::type type;
+            typedef viennagrid::storage::container_range_wrapper< const typename neighbour_view<domain_type, element_type_or_tag, connector_element_type_or_tag>::type > type; 
+        };
+        
+        template<typename domain_type, typename element_type_or_tag, typename connector_element_type_or_tag>
+        struct neighbour_range<const domain_type, element_type_or_tag, connector_element_type_or_tag>
+        {
+            typedef typename const_neighbour_range<domain_type, element_type_or_tag, connector_element_type_or_tag>::type type;
         };
         
     }
     
     
-    template<typename connector_boundary_element_type_or_tag, typename domain_or_container_type, typename handle_type>
-    typename result_of::neighbour_container<domain_or_container_type, typename viennagrid::storage::handle::result_of::value_type< handle_type >::type>::type
-        create_neighbour_container(domain_or_container_type & domain, handle_type handle)
+    
+    
+    template<typename element_type_or_tag, typename connector_element_type_or_tag, typename domain_type, typename neigbour_accessor_type>
+    void create_neighbour_information(domain_type & domain, neigbour_accessor_type & accessor)
     {
-        typedef typename viennagrid::storage::handle::result_of::value_type< handle_type >::type element_type;
-        typedef typename viennagrid::result_of::element_tag< element_type >::type element_tag;
-                
-        typedef typename result_of::neighbour_container<domain_or_container_type, element_tag>::type neighbour_container_type;
+        std::cout << "Recalculating neighbour" << std::endl;
         
-        neighbour_container_type neighbour_container;
-        neighbour_container.set_base_container( viennagrid::storage::collection::get< element_type >( viennagrid::container_collection(domain) ) );
+        typedef typename viennagrid::result_of::element_tag< element_type_or_tag >::type element_tag;
+        typedef typename viennagrid::result_of::element_tag< connector_element_type_or_tag >::type connector_element_tag;
+        
+        typedef typename viennagrid::result_of::element< domain_type, element_type_or_tag >::type element_type;
+        
+        typedef typename viennagrid::result_of::element_range< domain_type, element_type_or_tag >::type element_range_type;
+        typedef typename viennagrid::result_of::iterator< element_range_type >::type element_range_iterator;
+        
+        typedef typename viennagrid::storage::result_of::value_type<
+                typename domain_type::neighbour_collection_type,
+                viennameta::static_pair<element_tag, connector_element_tag>
+                >::type neighbour_container_type;
+        
+        element_range_type elements = viennagrid::elements(domain);        
+        accessor.resize( elements.size() );
         
         
-        typedef typename result_of::element_tag<connector_boundary_element_type_or_tag>::type connector_boundary_element_tag;
-        typedef typename result_of::element<domain_or_container_type, connector_boundary_element_tag>::type connector_boundary_element_type;
-        
-        typedef typename viennagrid::result_of::element_range< element_type, connector_boundary_element_tag >::type facet_on_element_range_type;
-        typedef typename viennagrid::result_of::handle_iterator<facet_on_element_range_type>::type facet_on_handle_iterator;
-        
-        element_type & element = viennagrid::dereference_handle( domain, handle );
-        
-        facet_on_element_range_type facet_on_element_range = viennagrid::elements<connector_boundary_element_tag>( element );
-        for (facet_on_handle_iterator feit = facet_on_element_range.handle_begin(); feit != facet_on_element_range.handle_end(); ++feit)
+        for ( element_range_iterator it = elements.begin(); it != elements.end(); ++it )
         {
-            typedef typename viennagrid::result_of::coboundary_range<domain_or_container_type, element_type>::type element_on_facet_coboundary_range_type;
-            typedef typename viennagrid::result_of::handle_iterator<element_on_facet_coboundary_range_type>::type element_on_facet_coboundary_iterator;
+            accessor( *it ).clear();
+            accessor( *it ).set_base_container( viennagrid::storage::collection::get< element_type >( element_collection(domain) ) );
+        }
+        
+        
+        typedef typename viennagrid::result_of::element_range< domain_type, connector_element_tag >::type connector_element_range_type;
+        typedef typename viennagrid::result_of::iterator< connector_element_range_type >::type connector_element_range_iterator;
+        
+        connector_element_range_type connector_elements = viennagrid::elements(domain);
+        for ( connector_element_range_iterator it = connector_elements.begin(); it != connector_elements.end(); ++it )
+        {
+            typedef typename viennagrid::result_of::coboundary_range< domain_type, connector_element_tag, element_tag >::type element_on_connector_element_range_type;
+            typedef typename viennagrid::result_of::iterator< element_on_connector_element_range_type >::type element_on_connector_element_range_iterator;
             
-            element_on_facet_coboundary_range_type element_on_facet_coboundary_range = viennagrid::coboundary_elements<element_tag>(domain, *feit);
-            for (element_on_facet_coboundary_iterator efcit = element_on_facet_coboundary_range.handle_begin(); efcit != element_on_facet_coboundary_range.handle_end(); ++efcit)
+            element_on_connector_element_range_type coboundary_range = viennagrid::coboundary_elements<connector_element_tag, element_tag>( domain, it.handle() );
+            if (coboundary_range.empty())
+                continue;
+            
+            element_on_connector_element_range_iterator jt1 = coboundary_range.begin(); ++jt1;
+            for (; jt1 != coboundary_range.end(); ++jt1)
             {
-                if (*efcit != handle)
+                for (element_on_connector_element_range_iterator jt0 = coboundary_range.begin(); jt0 != jt1; ++jt0)
                 {
-                    typename neighbour_container_type::handle_iterator ncit = neighbour_container.begin();
-                    for (; ncit != neighbour_container.handle_end(); ++ncit)
-                    {
-                        if ( *ncit == *efcit )
-                            break;
-                    }
-                    if (ncit == neighbour_container.handle_end())
-                        neighbour_container.insert_handle( *efcit );
-                }
+                    typedef typename result_of::neighbour_view<domain_type, element_type_or_tag, connector_element_type_or_tag>::type view_type;
+                    view_type & view = accessor( *jt0 );
                     
+                    typename view_type::iterator kt = view.begin();
+                    for (; kt != view.end(); ++kt)
+                        if ( kt->id() == jt1->id() )
+                            break;
+                    
+                    if (kt == view.end())
+                    {
+                        accessor( *jt0 ).insert_handle( jt1.handle() );
+                        accessor( *jt1 ).insert_handle( jt0.handle() );
+                    }
+                }
             }
         }
-
-        return neighbour_container;
     }
     
     
-    template<typename connector_boundary_element_type_or_tag, typename domain_or_container_type, typename handle_type>
-    typename result_of::const_neighbour_container<domain_or_container_type, typename viennagrid::storage::handle::result_of::value_type< handle_type >::type>::type
-        create_neighbour_container(const domain_or_container_type & domain, handle_type handle)
+    
+    template<typename element_type_or_tag, typename connector_element_type_or_tag, typename domain_type>
+    void create_neighbour_information(domain_type & domain)
     {
-        typedef typename viennagrid::storage::handle::result_of::value_type< handle_type >::type element_type;
-        typedef typename viennagrid::result_of::element_tag< element_type >::type element_tag;
+        typedef typename viennagrid::result_of::element_tag< element_type_or_tag >::type element_tag;
+        typedef typename viennagrid::result_of::element_tag< connector_element_type_or_tag >::type connector_element_tag;
+        typedef typename viennagrid::result_of::element< domain_type, element_type_or_tag >::type element_type;
+        
+        typedef typename viennagrid::storage::result_of::value_type<
+                typename domain_type::neighbour_collection_type,
+                viennameta::static_pair<element_tag, connector_element_tag>
+                >::type neighbour_container_wrapper_type;
                 
-        typedef typename result_of::const_neighbour_container<domain_or_container_type, element_tag>::type neighbour_container_type;
+        neighbour_container_wrapper_type & neighbour_container_wrapper = viennagrid::storage::collection::get< viennameta::static_pair<element_tag, connector_element_tag> > ( domain.neighbour_collection() );
         
-        neighbour_container_type neighbour_container;
-        neighbour_container.set_base_container( viennagrid::storage::collection::get< element_type >( viennagrid::container_collection(domain) ) );
+        viennagrid::accessor::dense_container_accessor_t< typename neighbour_container_wrapper_type::container_type, element_type > accessor( neighbour_container_wrapper.container );
+        create_neighbour_information<element_type_or_tag, connector_element_type_or_tag>( domain, accessor );
         
+        neighbour_container_wrapper.change_counter = domain.change_counter();
+    }
+    
+    
+    
+    
+    template<typename element_type_or_tag, typename connector_element_type_or_tag, typename neigbour_accessor_type, typename EA, typename EB, typename EC, typename ED>
+    viennagrid::storage::container_range_wrapper<typename neigbour_accessor_type::value_type> neighbour_elements(neigbour_accessor_type & accessor, element_t<EA, EB, EC, ED> & element)
+    {
+        typedef viennagrid::storage::container_range_wrapper<typename neigbour_accessor_type::value_type> range_type;
+        return range_type( accessor( element ) );
+    }
+    
+    template<typename element_type_or_tag, typename connector_element_type_or_tag, typename neigbour_accessor_type, typename EA, typename EB, typename EC, typename ED>
+    viennagrid::storage::container_range_wrapper<const typename neigbour_accessor_type::value_type> neighbour_elements(neigbour_accessor_type const & accessor, element_t<EA, EB, EC, ED> const & element)
+    {
+        typedef viennagrid::storage::container_range_wrapper<const typename neigbour_accessor_type::value_type> range_type;
+        return range_type( accessor( element ) );
+    }
+    
+    
+    template<typename element_type_or_tag, typename connector_element_type_or_tag, typename neigbour_accessor_type, typename A, typename B, typename C, typename D, typename E, typename element_or_handle_type>
+    viennagrid::storage::container_range_wrapper<typename neigbour_accessor_type::value_type> neighbour_elements(domain_t<A,B,C,D,E> & domain, neigbour_accessor_type & accessor, element_or_handle_type & hendl)
+    {
+        return neighbour_elements<element_type_or_tag, connector_element_type_or_tag>( accessor, viennagrid::dereference_handle(domain, hendl) );
+    }
+    
+    template<typename element_type_or_tag, typename connector_element_type_or_tag, typename neigbour_accessor_type, typename A, typename B, typename C, typename D, typename E, typename element_or_handle_type>
+    viennagrid::storage::container_range_wrapper<const typename neigbour_accessor_type::value_type> neighbour_elements(domain_t<A,B,C,D,E> const & domain, neigbour_accessor_type const & accessor, element_or_handle_type const & hendl)
+    {
+        return neighbour_elements<element_type_or_tag, connector_element_type_or_tag>( accessor, viennagrid::dereference_handle(domain, hendl) );
+    }
+    
+    
+    
+    
+    template<typename element_type_or_tag, typename connector_element_type_or_tag, typename A, typename B, typename C, typename D, typename E, typename element_or_handle_type>
+    typename result_of::neighbour_range<domain_t<A,B,C,D,E>, element_type_or_tag, connector_element_type_or_tag>::type neighbour_elements(domain_t<A,B,C,D,E> & domain, element_or_handle_type const & hendl)
+    {
+        typedef domain_t<A,B,C,D,E> domain_type;
+        typedef typename viennagrid::result_of::element_tag< element_type_or_tag >::type element_tag;
+        typedef typename viennagrid::result_of::element_tag< connector_element_type_or_tag >::type connector_element_tag;
+        typedef typename viennagrid::result_of::element< domain_type, element_type_or_tag >::type element_type;
+                
+        typedef typename viennagrid::storage::result_of::value_type<
+                typename domain_type::neighbour_collection_type,
+                viennameta::static_pair<element_tag, connector_element_tag>
+                >::type neighbour_container_wrapper_type;
+        neighbour_container_wrapper_type & neighbour_container_wrapper = viennagrid::storage::collection::get< viennameta::static_pair<element_tag, connector_element_tag> > ( domain.neighbour_collection() );
         
-        typedef typename result_of::element_tag<connector_boundary_element_type_or_tag>::type connector_boundary_element_tag;
-        typedef typename result_of::element<domain_or_container_type, connector_boundary_element_tag>::type connector_boundary_element_type;
+        if ( neighbour_container_wrapper.change_counter != domain.change_counter() )
+            create_neighbour_information<element_type_or_tag, connector_element_type_or_tag>(domain);
         
-        typedef typename viennagrid::result_of::const_element_range< element_type, connector_boundary_element_tag >::type facet_on_element_range_type;
-        typedef typename viennagrid::result_of::const_handle_iterator<facet_on_element_range_type>::type facet_on_handle_iterator;
+        viennagrid::accessor::dense_container_accessor_t< typename neighbour_container_wrapper_type::container_type, element_type > accessor( neighbour_container_wrapper.container );
+        return neighbour_elements<element_type_or_tag, connector_element_type_or_tag>( accessor, viennagrid::dereference_handle(domain, hendl) );
+    }
+    
+    
+    template<typename element_type_or_tag, typename connector_element_type_or_tag, typename A, typename B, typename C, typename D, typename E, typename element_or_handle_type>
+    typename result_of::const_neighbour_range<domain_t<A,B,C,D,E>, element_type_or_tag, connector_element_type_or_tag>::type neighbour_elements(domain_t<A,B,C,D,E> const & domain, element_or_handle_type const & hendl)
+    {
+        typedef domain_t<A,B,C,D,E> domain_type;
+        typedef typename viennagrid::result_of::element_tag< element_type_or_tag >::type element_tag;
+        typedef typename viennagrid::result_of::element_tag< connector_element_type_or_tag >::type connector_element_tag;
+        typedef typename viennagrid::result_of::element< domain_type, element_type_or_tag >::type element_type;
+                
+        typedef typename viennagrid::storage::result_of::value_type<
+                typename domain_type::neighbour_collection_type,
+                viennameta::static_pair<element_tag, connector_element_tag>
+                >::type neighbour_container_wrapper_type;
+        neighbour_container_wrapper_type const & neighbour_container_wrapper = viennagrid::storage::collection::get< viennameta::static_pair<element_tag, connector_element_tag> > ( domain.neighbour_collection() );
         
-        const element_type & element = viennagrid::dereference_handle( domain, handle );
-        
-        facet_on_element_range_type facet_on_element_range = viennagrid::elements<connector_boundary_element_tag>( element );
-        for (facet_on_handle_iterator feit = facet_on_element_range.handle_begin(); feit != facet_on_element_range.handle_end(); ++feit)
-        {
-            typedef typename viennagrid::result_of::const_coboundary_range<domain_or_container_type, element_type>::type element_on_facet_coboundary_range_type;
-            typedef typename viennagrid::result_of::const_handle_iterator<element_on_facet_coboundary_range_type>::type element_on_facet_coboundary_iterator;
-            
-            element_on_facet_coboundary_range_type element_on_facet_coboundary_range = viennagrid::coboundary_elements<element_tag>(domain, *feit);
-            for (element_on_facet_coboundary_iterator efcit = element_on_facet_coboundary_range.handle_begin(); efcit != element_on_facet_coboundary_range.handle_end(); ++efcit)
-            {
-                if (*efcit != handle)
-                {
-                    typename neighbour_container_type::const_handle_iterator ncit = neighbour_container.begin();
-                    for (; ncit != neighbour_container.handle_end(); ++ncit)
-                    {
-                        if ( *ncit == *efcit )
-                            break;
-                    }
-                    if (ncit == neighbour_container.handle_end())
-                        neighbour_container.insert_handle( *efcit );
-                }
-                    
-            }
-        }
+        if ( neighbour_container_wrapper.change_counter != domain.change_counter() )
+            create_neighbour_information<element_type_or_tag, connector_element_type_or_tag>( const_cast<domain_type&>(domain) );
 
-        return neighbour_container;
+        
+        viennagrid::accessor::dense_container_accessor_t< const typename neighbour_container_wrapper_type::container_type, element_type > accessor( neighbour_container_wrapper.container );
+        return neighbour_elements<element_type_or_tag, connector_element_type_or_tag>( accessor, viennagrid::dereference_handle(domain, hendl) );
     }
     
-    
-    
-    
-    
-    
-    template<typename connector_boundary_element_type_or_tag, typename domain_or_container_type, typename handle_type>
-    typename result_of::neighbour_range<domain_or_container_type, typename viennagrid::storage::handle::result_of::value_type< handle_type >::type >::type
-        neighbour_elements(domain_or_container_type & domain, handle_type handle)
-    {
-        typedef typename viennagrid::storage::handle::result_of::value_type<handle_type>::type element_type;
-        typedef typename result_of::element_tag<connector_boundary_element_type_or_tag>::type connector_boundary_element_tag;
-        //typedef typename result_of::element_tag<coboundary_type_or_tag>::type coboundary_tag;
-        typedef typename result_of::neighbour_container<domain_or_container_type, element_type>::type container_type;
-        typedef typename result_of::neighbour_range<domain_or_container_type, element_type>::type range_type;
-        
-        typedef viennagrid::neighbour_key<domain_or_container_type, connector_boundary_element_tag> key_type;
-        key_type key(domain);
-        
-        element_type & element = viennagrid::dereference_handle(domain, handle);
-        container_type * container = viennadata::find<key_type, container_type>(key)(element);
-//        cout << " coboundary_elements handle=" << handle << " " << container << endl;
-        
-        if (container)
-        {
-//             cout << "Using existing neighbour container" << endl;
-            return range_type( *container );
-        }
-        else
-        {
-//             cout << "Creating neighbour container" << endl;
-            viennadata::access<key_type, container_type>(key)(element) = create_neighbour_container<connector_boundary_element_tag>(domain, handle);
-            return range_type( viennadata::access<key_type, container_type>(key)(element) );
-        }
-    }
-    
-    template<typename connector_boundary_element_type_or_tag, typename domain_or_container_type, typename handle_type>
-    typename result_of::neighbour_range<domain_or_container_type, typename viennagrid::storage::handle::result_of::value_type< handle_type >::type >::type
-        create_neighbour_elements(domain_or_container_type & domain, handle_type handle)
-    {
-        typedef typename viennagrid::storage::handle::result_of::value_type<handle_type>::type element_type;
-        typedef typename result_of::element_tag<connector_boundary_element_type_or_tag>::type connector_boundary_element_tag;
-        //typedef typename result_of::element_tag<coboundary_type_or_tag>::type coboundary_tag;
-        typedef typename result_of::neighbour_container<domain_or_container_type, element_type>::type container_type;
-        typedef typename result_of::neighbour_range<domain_or_container_type, element_type>::type range_type;
-        
-        typedef viennagrid::neighbour_key<domain_or_container_type, connector_boundary_element_tag> key_type;
-        key_type key(domain);
-        
-        element_type & element = viennagrid::dereference_handle(domain, handle);
-//         container_type * container = viennadata::find<key_type, container_type>(key)(element);
-//        cout << " coboundary_elements handle=" << handle << " " << container << endl;
-        
-//         if (container)
-//         {
-// //             cout << "Using existing neighbour container" << endl;
-//             return range_type( *container );
-//         }
-//         else
-//         {
-//             cout << "Creating neighbour container" << endl;
-            viennadata::access<key_type, container_type>(key)(element) = create_neighbour_container<connector_boundary_element_tag>(domain, handle);
-            return range_type( viennadata::access<key_type, container_type>(key)(element) );
-//         }
-    }
-    
-    
-    template<typename connector_boundary_element_type_or_tag, typename domain_or_container_type, typename handle_type>
-    typename result_of::const_neighbour_range<domain_or_container_type, typename viennagrid::storage::handle::result_of::value_type< handle_type >::type >::type
-        neighbour_elements(const domain_or_container_type & domain, handle_type handle)
-    {
-        typedef typename viennagrid::storage::handle::result_of::value_type<handle_type>::type element_type;
-        typedef typename result_of::element_tag<connector_boundary_element_type_or_tag>::type connector_boundary_element_tag;
-        //typedef typename result_of::element_tag<coboundary_type_or_tag>::type coboundary_tag;
-        typedef typename result_of::const_coboundary_container<domain_or_container_type, element_type>::type container_type;
-        typedef typename result_of::const_coboundary_range<domain_or_container_type, element_type>::type range_type;
-        
-        typedef viennagrid::coboundary_key<domain_or_container_type, connector_boundary_element_tag> key_type;
-        key_type key(domain);
-        
-        const element_type & element = viennagrid::dereference_handle(domain, handle);
-        container_type * container = viennadata::find<key_type, container_type>(key)(element);
-//        cout << " coboundary_elements handle=" << handle << " " << container << endl;
-        
-        if (container)
-        {
-//             cout << "Using existing co-boundary container" << endl;
-            return range_type( *container );
-        }
-        else
-        {
-//             cout << "Creating co-boundary container" << endl;
-            viennadata::access<key_type, container_type>(key)(element) = create_neighbour_container<connector_boundary_element_tag>(domain, handle);
-            return range_type( viennadata::access<key_type, container_type>(key)(element) );
-        }
-    }
-    
-    
-    template<typename connector_boundary_element_type_or_tag, typename domain_or_container_type, typename handle_type>
-    typename result_of::const_neighbour_range<domain_or_container_type, typename viennagrid::storage::handle::result_of::value_type< handle_type >::type >::type
-        create_neighbour_elements(const domain_or_container_type & domain, handle_type handle)
-    {
-        typedef typename viennagrid::storage::handle::result_of::value_type<handle_type>::type element_type;
-        typedef typename result_of::element_tag<connector_boundary_element_type_or_tag>::type connector_boundary_element_tag;
-        //typedef typename result_of::element_tag<coboundary_type_or_tag>::type coboundary_tag;
-        typedef typename result_of::const_coboundary_container<domain_or_container_type, element_type>::type container_type;
-        typedef typename result_of::const_coboundary_range<domain_or_container_type, element_type>::type range_type;
-        
-        typedef viennagrid::coboundary_key<domain_or_container_type, connector_boundary_element_tag> key_type;
-        key_type key(domain);
-        
-        const element_type & element = viennagrid::dereference_handle(domain, handle);
-//         container_type * container = viennadata::find<key_type, container_type>(key)(element);
-//        cout << " coboundary_elements handle=" << handle << " " << container << endl;
-        
-//         if (container)
-//         {
-// //             cout << "Using existing co-boundary container" << endl;
-//             return range_type( *container );
-//         }
-//         else
-//         {
-//             cout << "Creating co-boundary container" << endl;
-            viennadata::access<key_type, container_type>(key)(element) = create_neighbour_container<connector_boundary_element_tag>(domain, handle);
-            return range_type( viennadata::access<key_type, container_type>(key)(element) );
-//         }
-    }
+
 }
+
 
 #endif

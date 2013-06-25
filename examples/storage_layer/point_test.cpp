@@ -45,8 +45,8 @@ namespace ublas = boost::numeric::ublas;
 
 
 
-struct test_tag {};
-VIENNADATA_ENABLE_TYPE_BASED_KEY_DISPATCH(test_tag)
+// struct test_tag {};
+// VIENNADATA_ENABLE_TYPE_BASED_KEY_DISPATCH(test_tag)
 
 
 
@@ -61,11 +61,9 @@ int main()
     typedef viennagrid::storage::id_handle_tag handle_tag;
     
 
-    typedef viennameta::make_typelist< viennameta::static_pair<viennagrid::tetrahedron_tag, double> >::type metainfo_typelist;
-    
 
     typedef ublas::vector<double> vector_type;
-    typedef viennagrid::config::result_of::full_domain_config< viennagrid::tetrahedron_tag, vector_type, handle_tag, metainfo_typelist >::type domain_config;
+    typedef viennagrid::config::result_of::full_domain_config< viennagrid::tetrahedron_tag, vector_type, handle_tag >::type domain_config;
     
     //
     // typedefing and setting up the geometric domain
@@ -100,8 +98,8 @@ int main()
     vertex_handle_type vh3 = viennagrid::create_element<vertex_type>( domain );
     
     
-    viennagrid::tagging::tag<test_tag>( viennagrid::dereference_handle(domain, vh1) );
-    viennagrid::tagging::tag<test_tag>( viennagrid::dereference_handle(domain, vh2) );
+//     viennagrid::tagging::tag<test_tag>( viennagrid::dereference_handle(domain, vh1) );
+//     viennagrid::tagging::tag<test_tag>( viennagrid::dereference_handle(domain, vh2) );
     
     
     // create geometric information for the vertices
@@ -131,7 +129,6 @@ int main()
     tetrahedron_handle_type tet = viennagrid::create_element<tetrahedron_type>( domain, handles.begin(), handles.end() );
     
     // set a double value to a tetdrahedron
-    viennagrid::look_up<double>(domain, tet) = 1.0;
     
     
     
@@ -147,35 +144,35 @@ int main()
     cout << endl;
     
     
-    cout << "All points of the domain using point_range" << endl;
-    viennagrid::result_of::metainfo_range<domain_type, vertex_type, vector_type>::type point_range = viennagrid::metainfo_range<vertex_type, vector_type>(domain);
-    for (viennagrid::result_of::metainfo_range<domain_type, vertex_type, vector_type>::type::iterator it = point_range.begin(); it != point_range.end(); ++it)
-        cout << (*it) << endl;
-    cout << endl;
+//     cout << "All points of the domain using point_range" << endl;
+//     viennagrid::result_of::metainfo_range<domain_type, vertex_type, vector_type>::type point_range = viennagrid::metainfo_range<vertex_type, vector_type>(domain);
+//     for (viennagrid::result_of::metainfo_range<domain_type, vertex_type, vector_type>::type::iterator it = point_range.begin(); it != point_range.end(); ++it)
+//         cout << (*it) << endl;
+//     cout << endl;
+// 
+//     
+//     
+//     cout << "All points of the domain using point_range and std::copy" << endl;
+//     std::copy( point_range.begin(), point_range.end(), std::ostream_iterator<vector_type>(std::cout, "\n") );
+//     cout << endl;
+    
+    
+//     cout << "All points of the domain using point_range using const domain" << endl;
+//     viennagrid::result_of::const_metainfo_range<domain_type, vertex_type, vector_type>::type const_point_range =
+//             viennagrid::metainfo_range<vertex_type, vector_type>( test );
+//     
+//     for (viennagrid::result_of::const_metainfo_range<domain_type, vertex_type, vector_type>::type::iterator it = const_point_range.begin(); it != const_point_range.end(); ++it)
+//         cout << it.element() << " " << it.metainfo() << endl;
+//     cout << endl;
+
 
     
-    
-    cout << "All points of the domain using point_range and std::copy" << endl;
-    std::copy( point_range.begin(), point_range.end(), std::ostream_iterator<vector_type>(std::cout, "\n") );
-    cout << endl;
-    
-    
-    cout << "All points of the domain using point_range using const domain" << endl;
-    viennagrid::result_of::const_metainfo_range<domain_type, vertex_type, vector_type>::type const_point_range =
-            viennagrid::metainfo_range<vertex_type, vector_type>( test );
-    
-    for (viennagrid::result_of::const_metainfo_range<domain_type, vertex_type, vector_type>::type::iterator it = const_point_range.begin(); it != const_point_range.end(); ++it)
-        cout << it.element() << " " << it.metainfo() << endl;
-    cout << endl;
-
-
-    
-    cout << "All tagged points of the domain using point_range and std::copy" << endl;
-    typedef viennagrid::result_of::element_view<domain_type, vertex_type>::type VertexView;
-    VertexView view = viennagrid::tagged_elements<vertex_type>(domain, test_tag());
-    viennagrid::result_of::metainfo_view<VertexView, viennagrid::result_of::metainfo_container<domain_type, vertex_type, vector_type>::type>::type
-        point_range2 = viennagrid::metainfo_view<vector_type>( view, domain );    
-    std::copy( point_range2.begin(), point_range2.end(), std::ostream_iterator< vector_type >(std::cout, "\n") );
+//     cout << "All tagged points of the domain using point_range and std::copy" << endl;
+//     typedef viennagrid::result_of::element_view<domain_type, vertex_type>::type VertexView;
+//     VertexView view = viennagrid::tagged_elements<vertex_type>(domain, test_tag());
+//     viennagrid::result_of::metainfo_view<VertexView, viennagrid::result_of::metainfo_container<domain_type, vertex_type, vector_type>::type>::type
+//         point_range2 = viennagrid::metainfo_view<vector_type>( view, domain );    
+//     std::copy( point_range2.begin(), point_range2.end(), std::ostream_iterator< vector_type >(std::cout, "\n") );
     
 
     

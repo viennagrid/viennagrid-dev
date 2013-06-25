@@ -134,10 +134,10 @@ int main()
   std::cout << "cell: " << std::endl << cell << std::endl;
   
   // Run algorithms:
-  std::cout << "Centroid of cell: "     << viennagrid::centroid(cell, domain) << std::endl;
+  std::cout << "Centroid of cell: "     << viennagrid::centroid(domain, cell) << std::endl;
   std::cout << "Circumcenter of cell: " << viennagrid::circumcenter(cell, domain) << std::endl;
-  std::cout << "Surface of cell: "      << viennagrid::surface(cell, domain) << std::endl;
-  std::cout << "Volume of cell: "       << viennagrid::volume(cell, domain) << std::endl;
+  std::cout << "Surface of cell: "      << viennagrid::surface(domain, cell) << std::endl;
+  std::cout << "Volume of cell: "       << viennagrid::volume(domain, cell) << std::endl;
   std::cout << std::endl;
   
   std::cout << "Volume of domain: "       << viennagrid::volume<viennagrid::tetrahedron_tag>(domain) << std::endl;
@@ -165,28 +165,30 @@ int main()
             
   //          
   // Refine domain uniformly:
-  Domain uniformly_refined_domain = viennagrid::refine_uniformly<viennagrid::tetrahedron_tag>(domain);
+//   Domain uniformly_refined_domain = viennagrid::refine_uniformly<viennagrid::tetrahedron_tag>(domain);
   //Domain uniformly_refined_domain = viennagrid::refine(domain, viennagrid::uniform_refinement_tag()); //equivalent to previous line
     
   //
   // Adaptive refinement: Tag first three cells in domain for refinement
-  CellRange cells = viennagrid::elements<CellTag>(domain);
-  viennadata::access<viennagrid::refinement_key, bool>()(cells[0]) = true;
-  viennadata::access<viennagrid::refinement_key, bool>()(cells[1]) = true;
-  viennadata::access<viennagrid::refinement_key, bool>()(cells[2]) = true;
-  Domain adaptively_refined_domain = viennagrid::refine<CellTag>(domain, viennagrid::local_refinement_tag());
+//   CellRange cells = viennagrid::elements<CellTag>(domain);
+//   viennadata::access<viennagrid::refinement_key, bool>()(cells[0]) = true;
+//   viennadata::access<viennagrid::refinement_key, bool>()(cells[1]) = true;
+//   viennadata::access<viennagrid::refinement_key, bool>()(cells[2]) = true;
+//   Domain adaptively_refined_domain = viennagrid::refine<CellTag>(domain, viennagrid::local_refinement_tag());
   //Domain adaptively_refined_domain = viennagrid::refine_adaptively(domain);  //equivalent to previous line
   
   
-  viennagrid::io::vtk_writer<Domain, CellType> writer;
-  writer(uniformly_refined_domain, "uniform_refinement");
-  writer(adaptively_refined_domain, "local_refinement");
+//   viennagrid::io::vtk_writer<Domain, CellType> writer;
+//   writer(uniformly_refined_domain, "uniform_refinement");
+//   writer(adaptively_refined_domain, "local_refinement");
   
   
   //
   // Get boundary information of first vertex with respect to the full domain:
-  std::cout << "Boundary flag of first vertex with respect to domain: "
-            << viennagrid::is_boundary<viennagrid::tetrahedron_tag>(vertices[0], domain)    //second argument is the enclosing complex (either a domain or a segment)
+            
+            for (VertexRange::iterator it = vertices.begin(); it != vertices.end(); ++it)
+  std::cout << *it << " " << viennagrid::point(domain, *it) << " "
+            << viennagrid::is_boundary<viennagrid::tetrahedron_tag>(*it, domain)    //second argument is the enclosing complex (either a domain or a segment)
             << std::endl << std::endl;
   
   

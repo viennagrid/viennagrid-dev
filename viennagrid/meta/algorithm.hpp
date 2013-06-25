@@ -42,6 +42,30 @@ namespace viennameta
         template<typename typelist, typename functor>
         void for_each(const functor & f)
         { for_each_impl<typelist>::exec(f); }
+        
+        
+        
+        
+        template<template<typename> class functor, typename typelist>
+        struct TRANSFORM;
+       
+        
+        template<template<typename> class functor>
+        struct TRANSFORM<functor, viennameta::null_type>
+        {
+            typedef viennameta::null_type type;
+        };
+        
+        template<template<typename> class functor, typename head, typename tail>
+        struct TRANSFORM< functor, viennameta::typelist_t<head, tail> >
+        {
+            typedef viennameta::typelist_t<
+                typename functor<head>::type,
+                typename TRANSFORM<functor, tail>::type
+            > type;
+            
+        };
+
     }
 }
 

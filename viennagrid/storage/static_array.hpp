@@ -1,6 +1,7 @@
 #ifndef VIENNAGRID_STORAGE_STATIC_ARRAY_HPP
 #define VIENNAGRID_STORAGE_STATIC_ARRAY_HPP
 
+#include <cassert>
 #include "viennagrid/storage/container.hpp"
 
 namespace viennagrid

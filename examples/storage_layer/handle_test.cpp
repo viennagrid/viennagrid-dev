@@ -3,7 +3,7 @@
 
 #include "viennagrid/config/default_configs.hpp"
 
-#include "viennagrid/domain/segmentation.hpp"
+// #include "viennagrid/domain/segmentation.hpp"
 #include "viennagrid/domain/element_creation.hpp"
 
 

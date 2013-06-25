@@ -59,7 +59,7 @@ namespace viennagrid
         typedef typename result_of::element<something, element_tag>::type element_type;
 
         typename result_of::element_view<something, element_tag>::type view;
-        view.set_base_container( viennagrid::storage::collection::get<element_type>(viennagrid::container_collection(s)) );
+        view.set_base_container( viennagrid::storage::collection::get<element_type>( element_collection(s) ) );
         
         return view;
     }

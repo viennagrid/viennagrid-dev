@@ -120,6 +120,17 @@ namespace viennagrid
             };
             
             
+            template<typename domain_config, typename element_tag>
+            struct query_appendix_type
+            {
+                typedef typename query_config<domain_config, topology_config_tag>::type topology_config;
+                
+                typedef typename query_config<topology_config, element_tag>::type element_config;
+
+                typedef typename query_config<element_config, element_appendix_type_tag>::type type;
+            };
+            
+            
             
             
             
@@ -356,9 +367,10 @@ namespace viennagrid
                 
                 typedef typename element_boundary_cell_container_typelist<domain_config, element_tag, element_tag>::type container_typelist;
                 
-                typedef viennagrid::element_t<element_tag, container_typelist, id_tag> type;
-            };        
-            
+                typedef typename query_appendix_type<domain_config, element_tag>::type appendix_type;
+
+                typedef viennagrid::element_t<element_tag, container_typelist, id_tag, appendix_type> type;
+            };            
         }
             
             
@@ -411,16 +423,7 @@ namespace viennagrid
     
     
     
-    namespace result_of
-    {
-        template<typename config_element_tag, typename config_element_config, typename config_tail, typename element_tag_>
-        struct element< viennameta::typelist_t< viennameta::static_pair<config_element_tag, config_element_config>, config_tail >, element_tag_ >
-        {
-            typedef viennameta::typelist_t< viennameta::static_pair<config_element_tag, config_element_config>, config_tail > domain_config;
-//             typedef typename config::result_of::query_config<domain_config, config::topology_config_tag>::type topology_config;
-            typedef typename viennagrid::config::result_of::element_from_config_impl< domain_config, element_tag_ >::type type;
-        };        
-    }
+
 }
 
 

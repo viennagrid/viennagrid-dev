@@ -19,270 +19,249 @@
 ======================================================================= */
 
 #include <vector>
+#include <boost/concept_check.hpp>
 #include "viennagrid/forwards.hpp"
 #include "viennagrid/element/element.hpp"
+#include "viennagrid/domain/accessor.hpp"
 
-/** @file boundary.hpp
-    @brief Provides the detection and check for boundary n-cells.
-*/
+
 
 namespace viennagrid
 {
-//   /** @brief A key type for storing boundary information on n-cells, segments and domains */
-//   template <typename T>
-//   class boundary_key
-//   {
-//     typedef typename T::ERROR_BOUNDARY_KEY_MUST_BE_USED_WITH_NCELL_OR_DOMAIN_OR_SEGMENT   error_type;
-//   };
-  
-//   /** @brief Specialization for segments */
-//   template <typename GeometricContainerType>
-//   class boundary_key
-//   {
-//     public:
-//       boundary_key(std::size_t seg_id) : seg_id_(seg_id) {}
-//       
-//       /** @brief Provide less-than operator for compatibility with std::map */
-//       bool operator<(boundary_key const & other) const
-//       {
-//         return seg_id_ < other.seg_id_;
-//       }
-//     private:
-//       std::size_t seg_id_;
-//   };
-
-
-  /** @brief Specialization for n-cells */
-  template <typename GeometricContainerType>
-  class boundary_key
-  {    
-    public:
-      boundary_key(GeometricContainerType const & e) : e_(&e)
-      {}
-          
-      /** @brief Provide less-than operator for compatibility with std::map */
-      bool operator<(boundary_key const & other) const
-      {
-        return e_ < other.e_;
-      }
-      
-    private:
-      GeometricContainerType const * e_;
-  };
-  
-  
-  
-//   /** @brief Specialization for n-cells */
-//   template<typename element_tag, typename bnd_cell_container_typelist, typename id_tag>
-//   class boundary_key< element_t<element_tag, bnd_cell_container_typelist, id_tag> >
-//   {
-//       typedef element_t<element_tag, bnd_cell_container_typelist, id_tag>  element_type;
-//     
-//     public:
-//       boundary_key(element_type const & e) : e_(&e) {}
-//       
-//       /** @brief Provide less-than operator for compatibility with std::map */
-//       bool operator<(boundary_key const & other) const
-//       {
-//         return e_ < other.e_;
-//         std::cout << "CALL!" << std::endl;
-//       }
-//     private:
-//       element_type const * e_;
-//   };  
-}
-
-// Configure ViennaData to use a type-based dispatch on the domain
-
-/** @brief Customizations of keys for ViennaData */
-namespace viennadata
-{
-  /** @brief Customizations of keys for ViennaData */
-  namespace config
-  {
-//     template <typename GeometricContainerType>
-//     struct key_dispatch<viennagrid::boundary_key< GeometricContainerType > >
-//     {
-//       typedef type_key_dispatch_tag    tag;
-//     };
-  }
-}
-  
-namespace viennagrid
-{
-
-  /** @brief Helper struct for setting boundary flag of lower level elements of a facet
-   * 
-   * @tparam dim    Topological dimension the boundary setter is acting on
-   */
-  
-  
-  template<typename viennadata_key_type>
-  class boundary_setter_functor
-  {
-  public:
-      boundary_setter_functor(viennadata_key_type viennadata_key_) : viennadata_key(viennadata_key_) {}
-      
-      template<typename element_type>
-      void operator()( const element_type & element )
-      {
-          viennadata::access<viennadata_key_type, bool>(viennadata_key)(element) = true;
-      }
-  private:
-      
-      viennadata_key_type viennadata_key;
-  };
-  
-  
-  template<typename element_type, typename viennadata_key_type>
-  void mark_boundary_cell(element_type & element, viennadata_key_type viennadata_key)
-  {
-      boundary_setter_functor<viennadata_key_type> setter_functor(viennadata_key);
-      viennagrid::for_each_boundary_cell( element, setter_functor );
-  }
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-
-  /** @brief Implementation of boundary detection for the case no facets are available. Issues a hopefully useful compiler error. */
-  template <typename DomainSegmentType, typename KeyType>
-  void detect_boundary_impl(DomainSegmentType const & seg, KeyType const & key)
-  {
-    typedef typename DomainSegmentType::ERROR_CANNOT_DETECT_BOUNDARY_BECAUSE_FACETS_ARE_DISABLED        error_type;
-  }
 
   /** @brief Implementation of boundary detection. Should not be called by library users. */
-  template <typename ElementTag, typename TopologicContainerType, typename KeyType>
-  void detect_boundary_impl(TopologicContainerType const & topology, KeyType const & key)
+  template <typename DomainType, typename AccessorType>
+  void detect_boundary(DomainType & domain, AccessorType & boundary_info_accessor)
   {
-    //typedef typename DomainSegmentType::config_type                            ConfigType;
-    //typedef typename ElementType:tag                                      ElementTag;
-    typedef typename viennagrid::result_of::element<TopologicContainerType, typename ElementTag::facet_tag >::type   FacetType;
-    typedef typename viennagrid::result_of::element<TopologicContainerType, ElementTag>::type     CellType;
+    typedef typename viennagrid::result_of::cell_tag<DomainType>::type CellTag;
+    typedef typename viennagrid::result_of::facet_tag<CellTag>::type FacetTag;
+    
+    typedef typename viennagrid::result_of::element<DomainType, FacetTag >::type   FacetType;
+    typedef typename viennagrid::result_of::element<DomainType, CellTag>::type     CellType;
 
-    typedef typename viennagrid::result_of::const_element_range<TopologicContainerType, typename ElementTag::facet_tag>::type      FacetRange;
+    typedef typename viennagrid::result_of::element_range<DomainType, FacetTag>::type      FacetRange;
     typedef typename viennagrid::result_of::iterator<FacetRange>::type                                           FacetIterator;
       
-    typedef typename viennagrid::result_of::const_element_range<TopologicContainerType, ElementTag>::type        CellRange;
+    typedef typename viennagrid::result_of::element_range<DomainType, CellTag>::type        CellRange;
     typedef typename viennagrid::result_of::iterator<CellRange>::type                                            CellIterator;
 
-    typedef typename viennagrid::result_of::const_element_range<CellType, typename ElementTag::facet_tag>::type     FacetOnCellRange;
+    typedef typename viennagrid::result_of::element_range<CellType, FacetTag>::type     FacetOnCellRange;
     typedef typename viennagrid::result_of::iterator<FacetOnCellRange>::type                           FacetOnCellIterator;
     
+    
+    
+    
+    FacetRange facets = viennagrid::elements(domain);
+    
+    boundary_info_accessor.resize( facets.size() );
+    
+    for (FacetIterator fit = facets.begin();
+          fit != facets.end();
+          ++fit)
+        boundary_info_accessor(*fit) = false;
+
     //iterate over all cells, over facets there and tag them:
-    CellRange cells = viennagrid::elements<ElementTag>(topology);
+    CellRange cells = viennagrid::elements(domain);
     for (CellIterator cit = cells.begin();
           cit != cells.end();
           ++cit)
     {
-      FacetOnCellRange facets_on_cell = elements<typename ElementTag::facet_tag>(*cit);
+      FacetOnCellRange facets_on_cell = elements(*cit);
       for (FacetOnCellIterator focit = facets_on_cell.begin();
             focit != facets_on_cell.end();
             ++focit)
-      {
-        bool * data_ptr = viennadata::find<KeyType, bool>(key)(*focit);
-        if (data_ptr == NULL)  //Facet has not yet been tagged
-        {
-          viennadata::access<KeyType, bool>(key)(*focit) = true;
-        }
-        else
-        {
-          if (*data_ptr == false)          //mind densely stored data
-            *data_ptr = true;
-          else          
-            viennadata::erase<KeyType, bool>(key)(*focit);
-        }        
-      }
-    }
-    
-    //iterate over all facets again and tag all lower level topological elements on facets that belong to the boundary:
-    FacetRange facets = viennagrid::elements<typename ElementTag::facet_tag>(topology);
-    for (FacetIterator fit = facets.begin();
-          fit != facets.end();
-          ++fit)
-    {
-      if (viennadata::find<KeyType, bool>(key)(*fit) != NULL)
-      {
-        if (viennadata::access<KeyType, bool>(key)(*fit) == true)
-            
-            mark_boundary_cell( *fit, key );
-            
-//           boundary_setter<CellTag::dim-2>::apply(*fit,
-//                                                             key,
-//                                                             typename viennagrid::result_of::bndcell_handling<ConfigType, CellTag, CellTag::dim-2>::type()
-//                                                            );
-      }
+            boundary_info_accessor(*focit) = !boundary_info_accessor(*focit); 
     }
   }
-
-
-
-  /** @brief Public interface functions for boundary detection. No need to call it explicitly, since it is called by is_boundary().
-   * 
-   * @tparam DomainSegmentType    Either a segment or a domain type
-   * @tparam KeyType              Type of the key used with ViennaData.
-   * @param segment               Either a segment or a domain object
-   * @param key                   The key object for ViennaData
-   */
-  template <typename ElemenTag, typename TopologicContainerType, typename KeyType>
-  void detect_boundary(TopologicContainerType const & topology, KeyType const & key)
+  
+  
+  
+  template <typename DomainType, typename SourceAccessorType, typename DestinationAccessorType>
+  void transfer_boundary_information(DomainType const & domain,
+                       SourceAccessorType const & source_boundary_info_accessor,
+                       DestinationAccessorType & destination_boundary_info_accessor
+                      )
   {
-    //typedef typename DomainSegmentType::config_type            ConfigType;
-    //typedef typename ConfigType::cell_tag                   CellTag;
-    //typedef typename result_of::domain<ConfigType>::type                        DomainType;
-    //typedef typename result_of::bndcell_handling<ConfigType, DomainType,
-    //                                                CellTag::dim-1>::type  HandlingTag;
-    
-    if (viennadata::access<KeyType, bool>(key)(topology) == false)
-    {
-      detect_boundary_impl<ElemenTag>(topology, key);//, HandlingTag());
-      viennadata::access<KeyType, bool>(key)(topology) = true;
+      typedef typename SourceAccessorType::access_type src_element_type;
+      typedef typename DestinationAccessorType::access_type dst_element_type;
+
+      typedef typename viennagrid::result_of::const_element_range< DomainType, dst_element_type >::type dst_range_type;
+      typedef typename viennagrid::result_of::iterator< dst_range_type >::type dst_range_iterator;
+      
+      dst_range_type dst_elements = viennagrid::elements( domain );
+      
+      destination_boundary_info_accessor.resize( dst_elements.size() );
+      
+      for (dst_range_iterator it = dst_elements.begin(); it != dst_elements.end(); ++it)
+          destination_boundary_info_accessor(*it) = false;
+      
+      
+      typedef typename viennagrid::result_of::const_element_range< DomainType, src_element_type >::type src_range_type;
+      typedef typename viennagrid::result_of::iterator< src_range_type >::type src_range_iterator;
+      
+      src_range_type src_elements = viennagrid::elements( domain );
+      
+      
+      for (src_range_iterator fit = src_elements.begin();
+          fit != src_elements.end();
+          ++fit)
+        {
+            if ( source_boundary_info_accessor(*fit) )
+            {
+                typedef typename viennagrid::result_of::const_element_range< src_element_type, dst_element_type >::type dst_on_src_range_type;
+                typedef typename viennagrid::result_of::iterator< dst_on_src_range_type >::type dst_on_src_range_iterator;
+                
+                dst_on_src_range_type dst_on_src_range = viennagrid::elements(*fit);
+                for (dst_on_src_range_iterator dosit = dst_on_src_range.begin(); dosit != dst_on_src_range.end(); ++dosit)
+                    destination_boundary_info_accessor(*dosit) = true;
+            }
+
+        }
     }
-  }
+  
+  
+  
+  
+  
+    template<typename domain_type>
+    class boundary_setter_functor
+    {
+    public:
+        boundary_setter_functor(domain_type & domain_) : domain(domain_) {}
+        
+        template<typename something>
+        void operator()( viennameta::tag<something> )
+        {
+            typedef typename viennagrid::result_of::element_tag< something >::type element_tag;
+            typedef typename viennagrid::result_of::element< domain_type, element_tag >::type element_type;
+            
+            typedef typename viennagrid::result_of::cell_tag< domain_type >::type cell_tag;
+            typedef typename viennagrid::result_of::facet_tag< cell_tag >::type facet_tag;
+            typedef typename viennagrid::result_of::element< domain_type, facet_tag >::type facet_type;
+            
+            
+            typedef typename viennagrid::storage::result_of::value_type<
+                    typename domain_type::boundary_information_collection_type,
+                    facet_tag
+                    >::type src_boundary_information_container_wrapper_type;
+            
+            src_boundary_information_container_wrapper_type & src_boundary_information_container_wrapper = viennagrid::storage::collection::get< facet_tag > ( domain.boundary_information() );
+            viennagrid::accessor::dense_container_accessor_t< const typename src_boundary_information_container_wrapper_type::container_type, facet_type > src_accessor( src_boundary_information_container_wrapper.container );
+            
+            
+            typedef typename viennagrid::storage::result_of::value_type<
+                    typename domain_type::boundary_information_collection_type,
+                    element_tag
+                    >::type dst_boundary_information_container_wrapper_type;
+                    
+            dst_boundary_information_container_wrapper_type & dst_boundary_information_container_wrapper = viennagrid::storage::collection::get< element_tag > ( domain.boundary_information() );
+            viennagrid::accessor::dense_container_accessor_t< typename dst_boundary_information_container_wrapper_type::container_type, element_type > dst_accessor( dst_boundary_information_container_wrapper.container );
 
+            transfer_boundary_information(domain, src_accessor, dst_accessor);
+            
+            dst_boundary_information_container_wrapper.change_counter = domain.change_counter();
+        }
+    private:
+        
+        domain_type & domain;
+    };
+  
+  
+  
+    template<typename A, typename B, typename C, typename D, typename E>
+    void transfer_boundary_information( domain_t<A,B,C,D,E> & domain )
+    {
+        typedef domain_t<A,B,C,D,E> domain_type;
+        typedef typename viennagrid::result_of::cell_tag< domain_type >::type cell_tag;
+        typedef typename viennagrid::result_of::facet_tag< cell_tag >::type facet_tag;
+        
+        typedef typename viennameta::typelist::result_of::erase<
+            typename viennameta::typemap::result_of::key_typelist< typename domain_type::boundary_information_collection_type::typemap >::type,
+            facet_tag
+        >::type typelist;
+        
+        boundary_setter_functor<domain_type> functor(domain);
+        
+        viennameta::typelist::for_each< typelist >( functor );
+    }
+  
+  
+    template<typename A, typename B, typename C, typename D, typename E>
+    void detect_boundary( domain_t<A,B,C,D,E> & domain )
+    {
+        typedef domain_t<A,B,C,D,E> domain_type;
+        typedef typename viennagrid::result_of::cell_tag< domain_type >::type cell_tag;
+        typedef typename viennagrid::result_of::facet_tag< cell_tag >::type facet_tag;
+        
+        typedef typename viennagrid::result_of::element< domain_type, facet_tag >::type facet_type;
+        
+        typedef typename viennagrid::storage::result_of::value_type<
+                typename domain_type::boundary_information_collection_type,
+                facet_tag
+                >::type boundary_information_container_wrapper_type;
+        
+        boundary_information_container_wrapper_type & boundary_information_container_wrapper = viennagrid::storage::collection::get< facet_tag > ( domain.boundary_information() );
+      
+        viennagrid::accessor::dense_container_accessor_t< typename boundary_information_container_wrapper_type::container_type, facet_type > accessor( boundary_information_container_wrapper.container );
+        detect_boundary( domain, accessor );
+        
+        transfer_boundary_information(domain);
+        boundary_information_container_wrapper.change_counter = domain.change_counter();
+    }
+  
+  
 
+  
+
+  
+  
   /** @brief Returns true if a n-cell is located on the boundary of the domain 
    *
    * @param el      The n-cell
    * @param domain  The ViennaGrid domain
    */
-  template <typename CellTypeOrTag, typename ElementType, typename TopologicContainerType>
-  bool is_boundary(ElementType const & el,
-                   TopologicContainerType const & topology)
+  template <typename ElementType, typename AccessorType>
+  bool is_boundary(AccessorType const & boundary_info_accessor,
+                   ElementType const & element)
   {
-    typedef typename result_of::element_tag<CellTypeOrTag>::type CellTag;
-    
-    typedef boundary_key<TopologicContainerType>    BoundaryKey;
-    BoundaryKey key(topology);
-    
-    detect_boundary<CellTag>(topology, key);
-    if (viennadata::find<BoundaryKey, bool>(key)(el) != NULL)
-    {
-      return viennadata::access<BoundaryKey, bool>(key)(el);
-    }
-    return false;
+      return boundary_info_accessor(element);
   }
-
+  
+  template <typename A, typename B, typename C, typename D, typename E, typename ElementType>
+  bool is_boundary(domain_t<A, B, C, D, E> const & domain, ElementType const & element)
+  {
+        typedef domain_t<A,B,C,D,E> domain_type;
+        typedef typename viennagrid::result_of::cell_tag< domain_type >::type cell_tag;
+        typedef typename viennagrid::result_of::facet_tag< cell_tag >::type facet_tag;
+        
+        typedef typename viennagrid::result_of::element_tag<ElementType>::type element_tag;
+        
+        typedef typename viennagrid::storage::result_of::value_type<
+                typename domain_type::boundary_information_collection_type,
+                element_tag
+                >::type boundary_information_container_wrapper_type;
+        boundary_information_container_wrapper_type const & boundary_information_container_wrapper = viennagrid::storage::collection::get< element_tag > ( domain.boundary_information() );        
+                
+        if (boundary_information_container_wrapper.change_counter != domain.change_counter())
+            detect_boundary( const_cast<domain_type&>(domain) );
+        
+        viennagrid::accessor::dense_container_accessor_t< const typename boundary_information_container_wrapper_type::container_type, ElementType > accessor( boundary_information_container_wrapper.container );        
+        return is_boundary( accessor, element );
+  }
+  
 
   /** @brief Returns true if the k-cell provided as first argument is on the boundary of the n-cell provided as second argument
    *
    * @param el      The n-cell
    * @param segment A segment of a domain
    */
-  template <typename element_tag_1, typename bnd_cell_container_typelist_1, typename id_tag_1,
-            typename element_tag_2, typename bnd_cell_container_typelist_2, typename id_tag_2>
-  bool is_boundary(element_t<element_tag_1, bnd_cell_container_typelist_1, id_tag_1> const & el1,
-                   element_t<element_tag_2, bnd_cell_container_typelist_2, id_tag_2> const & el2)
+  template <typename element_tag_1, typename bnd_cell_container_typelist_1, typename id_tag_1, typename appendix_type_1,
+            typename element_tag_2, typename bnd_cell_container_typelist_2, typename id_tag_2, typename appendix_type_2>
+  bool is_boundary(element_t<element_tag_1, bnd_cell_container_typelist_1, id_tag_1, appendix_type_1> const & el1,
+                   element_t<element_tag_2, bnd_cell_container_typelist_2, id_tag_2, appendix_type_2> const & el2)
   {
 
-    typedef typename viennagrid::result_of::const_element_range<element_t<element_tag_2, bnd_cell_container_typelist_2, id_tag_2>,
+    typedef typename viennagrid::result_of::const_element_range<element_t<element_tag_2, bnd_cell_container_typelist_2, id_tag_2, appendix_type_2>,
                                                               element_tag_1>::type   BoundaryRange;
     typedef typename viennagrid::result_of::iterator<BoundaryRange>::type               BoundaryIterator;
         

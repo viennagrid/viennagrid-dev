@@ -96,7 +96,7 @@ namespace viennagrid
         
         
         template<typename container_type, typename element_type>
-        typename result_of::associative_container_value_type<container_type>::type & look_up( container_type & container, const element_type & element, random_access_tag )
+        typename result_of::associative_container_value_type<container_type>::type & look_up( container_type & container, element_type const & element, random_access_tag )
         {
 //             std::cout << "Look Up on Container " << &container << " at " << element.id().get() << std::endl;
             if (container.size() <= element.id().get())
@@ -111,14 +111,15 @@ namespace viennagrid
         }
         
         template<typename container_type, typename element_type>
-        typename result_of::associative_container_value_type<container_type>::type & look_up( container_type & container, const element_type & element, associative_access_tag )
+        typename result_of::associative_container_value_type<container_type>::type & look_up( container_type & container, element_type const & element, associative_access_tag )
         {
-            typename container_type::iterator it = container.find( element.id() );
-            return it->second;
+            return container[ element.id() ];
+//             typename container_type::iterator it = container.find( element.id() );
+//             return it->second;
         }
         
         template<typename container_type, typename element_type>
-        typename result_of::associative_container_value_type<container_type>::type & look_up( container_type & container, const element_type & element )
+        typename result_of::associative_container_value_type<container_type>::type & look_up( container_type & container, element_type const & element )
         {
             return look_up(container, element, typename result_of::associative_container_access_tag<container_type>::type() );
         }
@@ -227,26 +228,26 @@ namespace viennagrid
         return metainfo::metainfo_available( container, element );
     }
     
-    template<typename container_type, typename element_type>
-    typename container_type::value_type & look_up(
-            container_type & container,
-            element_type const & element
-        )
-    {
-//         std::cout << "Look-Up on Metainfo-Collection" << std::endl;
-        return metainfo::look_up( container, element );
-    }
-    
-    template<typename container_type, typename element_type>
-    typename container_type::value_type const & look_up(
-            container_type const & container,
-            element_type const & element
-        )
-    {
-//         std::cout << "Look-Up on Metainfo-Collection" << std::endl;
-        return metainfo::look_up( container, element );
-    }
-    
+//     template<typename container_type, typename element_type>
+//     typename metainfo::result_of::associative_container_value_type<container_type>::type & look_up(
+//             container_type & container,
+//             element_type const & element
+//         )
+//     {
+// //         std::cout << "Look-Up on Metainfo-Collection" << std::endl;
+//         return metainfo::look_up( container, element );
+//     }
+//     
+//     template<typename container_type, typename element_type>
+//     typename metainfo::result_of::associative_container_value_type<container_type>::type const & look_up(
+//             container_type const & container,
+//             element_type const & element
+//         )
+//     {
+// //         std::cout << "Look-Up on Metainfo-Collection" << std::endl;
+//         return metainfo::look_up( container, element );
+//     }
+//     
     
     
     
@@ -276,15 +277,16 @@ namespace viennagrid
 //         std::cout << "Look-Up on Metainfo-Collection" << std::endl;
         return metainfo::look_up( metainfo_container<element_type, metainfo_type>(metainfo_collection), element );
     }
+
     
     template<typename metainfo_type, typename metainfo_container_typemap, typename element_type>
-    const typename metainfo::result_of::associative_container_value_type<
+    typename metainfo::result_of::associative_container_value_type<
         typename result_of::metainfo_container<
             viennagrid::storage::collection_t<metainfo_container_typemap>,
             element_type,
             metainfo_type
         >::type
-    >::type & look_up(
+    >::type const & look_up(
             viennagrid::storage::collection_t<metainfo_container_typemap> const & metainfo_collection,
             element_type const & element
         )
@@ -427,11 +429,11 @@ namespace viennagrid
     
     namespace result_of
     {
-        template<typename pair_type, typename container_config, typename topology_config>
-        struct metainfo_container;
+        template<typename pair_type, typename container_config>
+        struct metainfo_container_from_config;
 
-        template<typename element_type, typename metainfo_type, typename container_config, typename topology_config>
-        struct metainfo_container< viennameta::static_pair<element_type, metainfo_type>, container_config, topology_config >
+        template<typename element_type, typename metainfo_type, typename container_config>
+        struct metainfo_container_from_config< viennameta::static_pair<element_type, metainfo_type>, container_config>
         {
             typedef typename viennameta::typemap::result_of::find<container_config, viennameta::static_pair<element_type, metainfo_type> >::type search_result;
             typedef typename viennameta::typemap::result_of::find<container_config, viennagrid::storage::default_tag>::type default_container;
@@ -464,7 +466,7 @@ namespace viennagrid
             typedef viennameta::typelist_t<
                 typename viennameta::static_pair<
                         viennameta::static_pair<element_type, metainfo_type>,
-                        typename metainfo_container< viennameta::static_pair<element_type, metainfo_type>, container_config, domain_config>::type
+                        typename metainfo_container_from_config< viennameta::static_pair<element_type, metainfo_type>, container_config>::type
                     >,
                 typename metainfo_container_typemap<tail, container_config, domain_config>::type
             > type;

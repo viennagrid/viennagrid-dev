@@ -20,6 +20,7 @@
 
 #include <limits>
 #include "viennagrid/domain/domain.hpp"
+#include "viennagrid/algorithm/cross_prod.hpp"
 #include "viennagrid/algorithm/intersect.hpp"
 
 namespace viennagrid 
