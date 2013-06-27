@@ -21,9 +21,12 @@ namespace viennagrid
             typedef typename viennagrid::result_of::element_tag< connector_element_type_or_tag >::type connector_element_tag;
             
             typedef typename viennagrid::storage::result_of::value_type<
-                  typename domain_type::neighbour_collection_type,
-                  viennameta::static_pair<element_tag, connector_element_tag>
-                >::type::container_type::value_type type;
+                typename viennagrid::storage::result_of::value_type<
+                    typename domain_type::appendix_type,
+                    neighbour_collection_tag
+                  >::type,
+                viennameta::static_pair<element_tag, connector_element_tag>
+              >::type::container_type::value_type type;
         };
         
         
@@ -51,7 +54,7 @@ namespace viennagrid
     
     
     template<typename element_type_or_tag, typename connector_element_type_or_tag, typename domain_type, typename neigbour_accessor_type>
-    void create_neighbour_information(domain_type & domain, neigbour_accessor_type & accessor)
+    void create_neighbour_information(domain_type & domain, neigbour_accessor_type accessor)
     {
         std::cout << "Recalculating neighbour" << std::endl;
         
@@ -62,11 +65,6 @@ namespace viennagrid
         
         typedef typename viennagrid::result_of::element_range< domain_type, element_type_or_tag >::type element_range_type;
         typedef typename viennagrid::result_of::iterator< element_range_type >::type element_range_iterator;
-        
-        typedef typename viennagrid::storage::result_of::value_type<
-                typename domain_type::neighbour_collection_type,
-                viennameta::static_pair<element_tag, connector_element_tag>
-                >::type neighbour_container_type;
         
         element_range_type elements = viennagrid::elements(domain);        
         accessor.resize( elements.size() );
@@ -125,11 +123,13 @@ namespace viennagrid
         typedef typename viennagrid::result_of::element< domain_type, element_type_or_tag >::type element_type;
         
         typedef typename viennagrid::storage::result_of::value_type<
-                typename domain_type::neighbour_collection_type,
+                typename viennagrid::storage::result_of::value_type<
+                    typename domain_type::appendix_type,
+                    neighbour_collection_tag
+                >::type,
                 viennameta::static_pair<element_tag, connector_element_tag>
                 >::type neighbour_container_wrapper_type;
-                
-        neighbour_container_wrapper_type & neighbour_container_wrapper = viennagrid::storage::collection::get< viennameta::static_pair<element_tag, connector_element_tag> > ( domain.neighbour_collection() );
+        neighbour_container_wrapper_type & neighbour_container_wrapper = neighbour_collection<element_tag, connector_element_tag>( domain );
         
         viennagrid::accessor::dense_container_accessor_t< typename neighbour_container_wrapper_type::container_type, element_type > accessor( neighbour_container_wrapper.container );
         create_neighbour_information<element_type_or_tag, connector_element_type_or_tag>( domain, accessor );
@@ -141,28 +141,28 @@ namespace viennagrid
     
     
     template<typename element_type_or_tag, typename connector_element_type_or_tag, typename neigbour_accessor_type, typename EA, typename EB, typename EC, typename ED>
-    viennagrid::storage::container_range_wrapper<typename neigbour_accessor_type::value_type> neighbour_elements(neigbour_accessor_type & accessor, element_t<EA, EB, EC, ED> & element)
+    viennagrid::storage::container_range_wrapper<typename neigbour_accessor_type::value_type> neighbour_elements(neigbour_accessor_type accessor, element_t<EA, EB, EC, ED> & element)
     {
         typedef viennagrid::storage::container_range_wrapper<typename neigbour_accessor_type::value_type> range_type;
         return range_type( accessor( element ) );
     }
     
     template<typename element_type_or_tag, typename connector_element_type_or_tag, typename neigbour_accessor_type, typename EA, typename EB, typename EC, typename ED>
-    viennagrid::storage::container_range_wrapper<const typename neigbour_accessor_type::value_type> neighbour_elements(neigbour_accessor_type const & accessor, element_t<EA, EB, EC, ED> const & element)
+    viennagrid::storage::container_range_wrapper<const typename neigbour_accessor_type::value_type> neighbour_elements(neigbour_accessor_type const accessor, element_t<EA, EB, EC, ED> const & element)
     {
         typedef viennagrid::storage::container_range_wrapper<const typename neigbour_accessor_type::value_type> range_type;
         return range_type( accessor( element ) );
     }
     
     
-    template<typename element_type_or_tag, typename connector_element_type_or_tag, typename neigbour_accessor_type, typename A, typename B, typename C, typename D, typename E, typename element_or_handle_type>
-    viennagrid::storage::container_range_wrapper<typename neigbour_accessor_type::value_type> neighbour_elements(domain_t<A,B,C,D,E> & domain, neigbour_accessor_type & accessor, element_or_handle_type & hendl)
+    template<typename element_type_or_tag, typename connector_element_type_or_tag, typename neigbour_accessor_type, typename A, typename B, typename C, typename element_or_handle_type>
+    viennagrid::storage::container_range_wrapper<typename neigbour_accessor_type::value_type> neighbour_elements(domain_t<A,B,C> & domain, neigbour_accessor_type accessor, element_or_handle_type & hendl)
     {
         return neighbour_elements<element_type_or_tag, connector_element_type_or_tag>( accessor, viennagrid::dereference_handle(domain, hendl) );
     }
     
-    template<typename element_type_or_tag, typename connector_element_type_or_tag, typename neigbour_accessor_type, typename A, typename B, typename C, typename D, typename E, typename element_or_handle_type>
-    viennagrid::storage::container_range_wrapper<const typename neigbour_accessor_type::value_type> neighbour_elements(domain_t<A,B,C,D,E> const & domain, neigbour_accessor_type const & accessor, element_or_handle_type const & hendl)
+    template<typename element_type_or_tag, typename connector_element_type_or_tag, typename neigbour_accessor_type, typename A, typename B, typename C, typename element_or_handle_type>
+    viennagrid::storage::container_range_wrapper<const typename neigbour_accessor_type::value_type> neighbour_elements(domain_t<A,B,C> const & domain, neigbour_accessor_type const accessor, element_or_handle_type const & hendl)
     {
         return neighbour_elements<element_type_or_tag, connector_element_type_or_tag>( accessor, viennagrid::dereference_handle(domain, hendl) );
     }
@@ -170,48 +170,52 @@ namespace viennagrid
     
     
     
-    template<typename element_type_or_tag, typename connector_element_type_or_tag, typename A, typename B, typename C, typename D, typename E, typename element_or_handle_type>
-    typename result_of::neighbour_range<domain_t<A,B,C,D,E>, element_type_or_tag, connector_element_type_or_tag>::type neighbour_elements(domain_t<A,B,C,D,E> & domain, element_or_handle_type const & hendl)
+    template<typename element_type_or_tag, typename connector_element_type_or_tag, typename A, typename B, typename C, typename element_or_handle_type>
+    typename result_of::neighbour_range<domain_t<A,B,C>, element_type_or_tag, connector_element_type_or_tag>::type neighbour_elements(domain_t<A,B,C> & domain, element_or_handle_type const & hendl)
     {
-        typedef domain_t<A,B,C,D,E> domain_type;
+        typedef domain_t<A,B,C> domain_type;
         typedef typename viennagrid::result_of::element_tag< element_type_or_tag >::type element_tag;
         typedef typename viennagrid::result_of::element_tag< connector_element_type_or_tag >::type connector_element_tag;
         typedef typename viennagrid::result_of::element< domain_type, element_type_or_tag >::type element_type;
                 
         typedef typename viennagrid::storage::result_of::value_type<
-                typename domain_type::neighbour_collection_type,
+                typename viennagrid::storage::result_of::value_type<
+                    typename domain_type::appendix_type,
+                    neighbour_collection_tag
+                >::type,
                 viennameta::static_pair<element_tag, connector_element_tag>
                 >::type neighbour_container_wrapper_type;
-        neighbour_container_wrapper_type & neighbour_container_wrapper = viennagrid::storage::collection::get< viennameta::static_pair<element_tag, connector_element_tag> > ( domain.neighbour_collection() );
+        neighbour_container_wrapper_type & neighbour_container_wrapper = neighbour_collection<element_tag, connector_element_tag>( domain );
         
         if ( neighbour_container_wrapper.change_counter != domain.change_counter() )
             create_neighbour_information<element_type_or_tag, connector_element_type_or_tag>(domain);
         
-        viennagrid::accessor::dense_container_accessor_t< typename neighbour_container_wrapper_type::container_type, element_type > accessor( neighbour_container_wrapper.container );
-        return neighbour_elements<element_type_or_tag, connector_element_type_or_tag>( accessor, viennagrid::dereference_handle(domain, hendl) );
+        return neighbour_elements<element_type_or_tag, connector_element_type_or_tag>( accessor::dense_container_accessor<element_type>(neighbour_container_wrapper.container), viennagrid::dereference_handle(domain, hendl) );
     }
     
     
-    template<typename element_type_or_tag, typename connector_element_type_or_tag, typename A, typename B, typename C, typename D, typename E, typename element_or_handle_type>
-    typename result_of::const_neighbour_range<domain_t<A,B,C,D,E>, element_type_or_tag, connector_element_type_or_tag>::type neighbour_elements(domain_t<A,B,C,D,E> const & domain, element_or_handle_type const & hendl)
+    template<typename element_type_or_tag, typename connector_element_type_or_tag, typename A, typename B, typename C, typename element_or_handle_type>
+    typename result_of::const_neighbour_range<domain_t<A,B,C>, element_type_or_tag, connector_element_type_or_tag>::type neighbour_elements(domain_t<A,B,C> const & domain, element_or_handle_type const & hendl)
     {
-        typedef domain_t<A,B,C,D,E> domain_type;
+        typedef domain_t<A,B,C> domain_type;
         typedef typename viennagrid::result_of::element_tag< element_type_or_tag >::type element_tag;
         typedef typename viennagrid::result_of::element_tag< connector_element_type_or_tag >::type connector_element_tag;
         typedef typename viennagrid::result_of::element< domain_type, element_type_or_tag >::type element_type;
                 
         typedef typename viennagrid::storage::result_of::value_type<
-                typename domain_type::neighbour_collection_type,
+                typename viennagrid::storage::result_of::value_type<
+                    typename domain_type::appendix_type,
+                    neighbour_collection_tag
+                >::type,
                 viennameta::static_pair<element_tag, connector_element_tag>
                 >::type neighbour_container_wrapper_type;
-        neighbour_container_wrapper_type const & neighbour_container_wrapper = viennagrid::storage::collection::get< viennameta::static_pair<element_tag, connector_element_tag> > ( domain.neighbour_collection() );
+        neighbour_container_wrapper_type const & neighbour_container_wrapper = neighbour_collection<element_tag, connector_element_tag>( domain );
         
         if ( neighbour_container_wrapper.change_counter != domain.change_counter() )
             create_neighbour_information<element_type_or_tag, connector_element_type_or_tag>( const_cast<domain_type&>(domain) );
 
         
-        viennagrid::accessor::dense_container_accessor_t< const typename neighbour_container_wrapper_type::container_type, element_type > accessor( neighbour_container_wrapper.container );
-        return neighbour_elements<element_type_or_tag, connector_element_type_or_tag>( accessor, viennagrid::dereference_handle(domain, hendl) );
+        return neighbour_elements<element_type_or_tag, connector_element_type_or_tag>( accessor::dense_container_accessor<element_type>(neighbour_container_wrapper.container), viennagrid::dereference_handle(domain, hendl) );
     }
     
 

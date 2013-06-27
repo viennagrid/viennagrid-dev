@@ -31,7 +31,7 @@ namespace viennagrid
 
   /** @brief Implementation of boundary detection. Should not be called by library users. */
   template <typename DomainType, typename AccessorType>
-  void detect_boundary(DomainType & domain, AccessorType & boundary_info_accessor)
+  void detect_boundary(DomainType & domain, AccessorType boundary_info_accessor)
   {
     typedef typename viennagrid::result_of::cell_tag<DomainType>::type CellTag;
     typedef typename viennagrid::result_of::facet_tag<CellTag>::type FacetTag;
@@ -79,7 +79,7 @@ namespace viennagrid
   template <typename DomainType, typename SourceAccessorType, typename DestinationAccessorType>
   void transfer_boundary_information(DomainType const & domain,
                        SourceAccessorType const & source_boundary_info_accessor,
-                       DestinationAccessorType & destination_boundary_info_accessor
+                       DestinationAccessorType destination_boundary_info_accessor
                       )
   {
       typedef typename SourceAccessorType::access_type src_element_type;
@@ -140,21 +140,30 @@ namespace viennagrid
             typedef typename viennagrid::result_of::element< domain_type, facet_tag >::type facet_type;
             
             
-            typedef typename viennagrid::storage::result_of::value_type<
-                    typename domain_type::boundary_information_collection_type,
-                    facet_tag
-                    >::type src_boundary_information_container_wrapper_type;
             
-            src_boundary_information_container_wrapper_type & src_boundary_information_container_wrapper = viennagrid::storage::collection::get< facet_tag > ( domain.boundary_information() );
+          typedef typename viennagrid::storage::result_of::value_type<
+                  typename viennagrid::storage::result_of::value_type<
+                      typename domain_type::appendix_type,
+                      boundary_information_collection_tag
+                    >::type,
+                    facet_tag
+                  >::type src_boundary_information_container_wrapper_type;
+            
+            src_boundary_information_container_wrapper_type & src_boundary_information_container_wrapper = boundary_information_collection<facet_tag>( domain );
             viennagrid::accessor::dense_container_accessor_t< const typename src_boundary_information_container_wrapper_type::container_type, facet_type > src_accessor( src_boundary_information_container_wrapper.container );
             
             
-            typedef typename viennagrid::storage::result_of::value_type<
-                    typename domain_type::boundary_information_collection_type,
+            
+            
+          typedef typename viennagrid::storage::result_of::value_type<
+                  typename viennagrid::storage::result_of::value_type<
+                      typename domain_type::appendix_type,
+                      boundary_information_collection_tag
+                    >::type,
                     element_tag
-                    >::type dst_boundary_information_container_wrapper_type;
+                  >::type dst_boundary_information_container_wrapper_type;
                     
-            dst_boundary_information_container_wrapper_type & dst_boundary_information_container_wrapper = viennagrid::storage::collection::get< element_tag > ( domain.boundary_information() );
+            dst_boundary_information_container_wrapper_type & dst_boundary_information_container_wrapper = boundary_information_collection<element_tag>( domain );
             viennagrid::accessor::dense_container_accessor_t< typename dst_boundary_information_container_wrapper_type::container_type, element_type > dst_accessor( dst_boundary_information_container_wrapper.container );
 
             transfer_boundary_information(domain, src_accessor, dst_accessor);
@@ -168,15 +177,20 @@ namespace viennagrid
   
   
   
-    template<typename A, typename B, typename C, typename D, typename E>
-    void transfer_boundary_information( domain_t<A,B,C,D,E> & domain )
+    template<typename A, typename B, typename C>
+    void transfer_boundary_information( domain_t<A,B,C> & domain )
     {
-        typedef domain_t<A,B,C,D,E> domain_type;
+        typedef domain_t<A,B,C> domain_type;
         typedef typename viennagrid::result_of::cell_tag< domain_type >::type cell_tag;
         typedef typename viennagrid::result_of::facet_tag< cell_tag >::type facet_tag;
         
         typedef typename viennameta::typelist::result_of::erase<
-            typename viennameta::typemap::result_of::key_typelist< typename domain_type::boundary_information_collection_type::typemap >::type,
+            typename viennameta::typemap::result_of::key_typelist<
+                typename viennagrid::storage::result_of::value_type<
+                    typename domain_type::appendix_type,
+                    boundary_information_collection_tag
+                >::type::typemap
+            >::type,
             facet_tag
         >::type typelist;
         
@@ -186,24 +200,26 @@ namespace viennagrid
     }
   
   
-    template<typename A, typename B, typename C, typename D, typename E>
-    void detect_boundary( domain_t<A,B,C,D,E> & domain )
+    template<typename A, typename B, typename C>
+    void detect_boundary( domain_t<A,B,C> & domain )
     {
-        typedef domain_t<A,B,C,D,E> domain_type;
+        typedef domain_t<A,B,C> domain_type;
         typedef typename viennagrid::result_of::cell_tag< domain_type >::type cell_tag;
         typedef typename viennagrid::result_of::facet_tag< cell_tag >::type facet_tag;
         
         typedef typename viennagrid::result_of::element< domain_type, facet_tag >::type facet_type;
         
         typedef typename viennagrid::storage::result_of::value_type<
-                typename domain_type::boundary_information_collection_type,
-                facet_tag
+                typename viennagrid::storage::result_of::value_type<
+                    typename domain_type::appendix_type,
+                    boundary_information_collection_tag
+                  >::type,
+                  facet_tag
                 >::type boundary_information_container_wrapper_type;
+        boundary_information_container_wrapper_type & boundary_information_container_wrapper = boundary_information_collection<facet_tag>( domain );
         
-        boundary_information_container_wrapper_type & boundary_information_container_wrapper = viennagrid::storage::collection::get< facet_tag > ( domain.boundary_information() );
-      
-        viennagrid::accessor::dense_container_accessor_t< typename boundary_information_container_wrapper_type::container_type, facet_type > accessor( boundary_information_container_wrapper.container );
-        detect_boundary( domain, accessor );
+//         viennagrid::accessor::dense_container_accessor_t< typename boundary_information_container_wrapper_type::container_type, facet_type > accessor( boundary_information_container_wrapper.container );
+        detect_boundary( domain, accessor::dense_container_accessor<facet_type>( boundary_information_container_wrapper.container ) );
         
         transfer_boundary_information(domain);
         boundary_information_container_wrapper.change_counter = domain.change_counter();
@@ -227,20 +243,24 @@ namespace viennagrid
       return boundary_info_accessor(element);
   }
   
-  template <typename A, typename B, typename C, typename D, typename E, typename ElementType>
-  bool is_boundary(domain_t<A, B, C, D, E> const & domain, ElementType const & element)
+  template <typename A, typename B, typename C, typename ElementType>
+  bool is_boundary(domain_t<A, B, C> const & domain, ElementType const & element)
   {
-        typedef domain_t<A,B,C,D,E> domain_type;
+        typedef domain_t<A,B,C> domain_type;
         typedef typename viennagrid::result_of::cell_tag< domain_type >::type cell_tag;
         typedef typename viennagrid::result_of::facet_tag< cell_tag >::type facet_tag;
         
         typedef typename viennagrid::result_of::element_tag<ElementType>::type element_tag;
         
+        
         typedef typename viennagrid::storage::result_of::value_type<
-                typename domain_type::boundary_information_collection_type,
-                element_tag
+                typename viennagrid::storage::result_of::value_type<
+                    typename domain_type::appendix_type,
+                    boundary_information_collection_tag
+                  >::type,
+                  element_tag
                 >::type boundary_information_container_wrapper_type;
-        boundary_information_container_wrapper_type const & boundary_information_container_wrapper = viennagrid::storage::collection::get< element_tag > ( domain.boundary_information() );        
+        boundary_information_container_wrapper_type const & boundary_information_container_wrapper = boundary_information_collection<element_tag>( domain );        
                 
         if (boundary_information_container_wrapper.change_counter != domain.change_counter())
             detect_boundary( const_cast<domain_type&>(domain) );

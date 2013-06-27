@@ -522,14 +522,32 @@ namespace viennagrid
             typedef typename id_generator<domain_config>::type id_generator_type;
             typedef typename viennagrid::storage::result_of::physical_inserter<element_collection_type, id_generator_type>::type inserter_type;
             
-            typedef domain_t<element_collection_type, coboundary_collection_type, neighbour_collection_type, boundary_information_type  , inserter_type> type;
+            
+            typedef typename viennagrid::storage::collection_t<
+                typename viennameta::make_typemap<
+                
+                    coboundary_collection_tag,
+                    coboundary_collection_type,
+                    
+                    neighbour_collection_tag,
+                    neighbour_collection_type,
+                    
+                    boundary_information_collection_tag,
+                    boundary_information_type
+                    
+                >::type
+            > appendix_type;
+
+            
+            
+            typedef domain_t<element_collection_type, appendix_type, inserter_type> type;
         };
         
         // identity meta functor
-        template<typename A, typename B, typename C, typename D, typename E>
-        struct domain< domain_t<A, B, C, D, E> >
+        template<typename A, typename B, typename C>
+        struct domain< domain_t<A, B, C> >
         {
-            typedef domain_t<A, B, C, D, E> type;
+            typedef domain_t<A, B, C> type;
         };
     }
 

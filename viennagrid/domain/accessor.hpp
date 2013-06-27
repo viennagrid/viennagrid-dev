@@ -22,6 +22,7 @@
 
 #include "viennagrid/domain/metainfo.hpp"
 #include <boost/concept_check.hpp>
+#include "../storage/container_collection.hpp"
 
 
 namespace viennadata
@@ -151,7 +152,7 @@ namespace viennagrid
             
             typename container_type::reference access( access_type const & element )
             {
-                if (container.size() <= element.id().get()) container.resize(element.id().get());
+                if (container.size() <= element.id().get()) container.resize(element.id().get()+1);
 //                 container.resize(element.id().get());
                 return container[ element.id().get() ];
             }
@@ -176,6 +177,40 @@ namespace viennagrid
         private:
             container_type & container;
         };
+        
+        template<typename element_type, typename container_type>
+        dense_container_accessor_t< container_type, element_type > dense_container_accessor( container_type & container )
+        { return dense_container_accessor_t< container_type, element_type >(container); }
+        
+        template<typename element_type, typename container_type>
+        dense_container_accessor_t< const container_type, element_type > dense_container_accessor( container_type const & container )
+        { return dense_container_accessor_t< const container_type, element_type >(container); }
+        
+        
+        
+        template<typename element_type, typename container_collection_typemap>
+        dense_container_accessor_t<
+            typename storage::result_of::container_of<
+                container_collection_typemap,
+                element_type
+            >::type,
+            element_type
+        > dense_container_accessor( storage::collection_t<container_collection_typemap> & collection )
+        {
+            return dense_container_accessor<element_type>( storage::collection::get<element_type>(collection) );
+        }
+        
+        template<typename element_type, typename container_collection_typemap>
+        dense_container_accessor_t<
+            const typename storage::result_of::container_of<
+                container_collection_typemap,
+                element_type
+            >::type,
+            element_type
+        > dense_container_accessor( storage::collection_t<container_collection_typemap> const & collection )
+        {
+            return dense_container_accessor<element_type>( storage::collection::get<element_type>(collection) );
+        }
         
         
 

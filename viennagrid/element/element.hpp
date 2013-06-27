@@ -507,7 +507,7 @@ namespace viennagrid
     template<typename element_tag, typename bnd_cell_container_typelist_, typename id_tag, typename appendix_type_>
     class element_t :
         public viennagrid::storage::id_handler<
-                    typename viennagrid::storage::result_of::smart_id< element_t<element_tag, bnd_cell_container_typelist_, id_tag, appendix_type_>, id_tag>::type
+                    typename viennagrid::storage::result_of::id< element_t<element_tag, bnd_cell_container_typelist_, id_tag, appendix_type_>, id_tag>::type
                 >,
         public boundary_element_layer<element_tag, bnd_cell_container_typelist_>
     {
@@ -519,7 +519,7 @@ namespace viennagrid
         typedef element_tag tag;
         typedef typename result_of::boundary_element_typelist<bnd_cell_container_typelist_>::type boundary_cell_typelist;
         
-        typedef typename viennagrid::storage::result_of::smart_id< element_t<element_tag, bnd_cell_container_typelist_, id_tag, appendix_type_>, id_tag>::type id_type;
+        typedef typename viennagrid::storage::result_of::id< element_t<element_tag, bnd_cell_container_typelist_, id_tag, appendix_type_>, id_tag>::type id_type;
         typedef typename viennagrid::storage::result_of::const_id<id_type>::type const_id_type;
                     
         template<typename container_typelist>
@@ -576,12 +576,12 @@ namespace viennagrid
     template<typename bnd_cell_container_typelist_, typename id_tag, typename appendix_type_>
     class element_t<vertex_tag, bnd_cell_container_typelist_, id_tag, appendix_type_> :
         public viennagrid::storage::id_handler<
-                    typename viennagrid::storage::result_of::smart_id< element_t<vertex_tag, bnd_cell_container_typelist_, id_tag, appendix_type_>, id_tag>::type
+                    typename viennagrid::storage::result_of::id< element_t<vertex_tag, bnd_cell_container_typelist_, id_tag, appendix_type_>, id_tag>::type
                 >
     {
         typedef element_t<vertex_tag, bnd_cell_container_typelist_, id_tag, appendix_type_>            self_type;
         typedef viennagrid::storage::id_handler<
-                    typename viennagrid::storage::result_of::smart_id< element_t<vertex_tag, bnd_cell_container_typelist_, id_tag, appendix_type_>, id_tag>::type
+                    typename viennagrid::storage::result_of::id< element_t<vertex_tag, bnd_cell_container_typelist_, id_tag, appendix_type_>, id_tag>::type
                 > id_handler;
         
     public:
@@ -593,7 +593,7 @@ namespace viennagrid
         typedef bnd_cell_container_typelist_ bnd_cell_container_typelist;
         typedef vertex_tag tag;
         typedef typename result_of::boundary_element_typelist<bnd_cell_container_typelist_>::type boundary_cell_typelist;
-        typedef typename viennagrid::storage::result_of::smart_id< element_t<vertex_tag, bnd_cell_container_typelist_, id_tag, appendix_type_>, id_tag>::type id_type;
+        typedef typename viennagrid::storage::result_of::id< element_t<vertex_tag, bnd_cell_container_typelist_, id_tag, appendix_type_>, id_tag>::type id_type;
         typedef typename viennagrid::storage::result_of::const_id<id_type>::type const_id_type;
                     
         template<typename inserter_type>
@@ -933,14 +933,14 @@ namespace viennagrid
     
     
     
-    template<typename element_tag, typename boundary_cell_container_typelist, typename id_type, typename value_type>
-    typename result_of::handle<element_t<element_tag, boundary_cell_container_typelist, id_type>, value_type>::type handle( element_t<element_tag, boundary_cell_container_typelist, id_type> & element, value_type & boundary_element )
+    template<typename EA1, typename EB1, typename EC1, typename ED1, typename EA2, typename EB2, typename EC2, typename ED2>
+    typename result_of::handle<element_t<EA1, EB1, EC1, ED1>, element_t<EA2, EB2, EC2, ED2> >::type handle( element_t<EA1, EB1, EC1, ED1> & element, element_t<EA2, EB2, EC2, ED2> & boundary_element )
     {
         return element.handle(boundary_element);
     }
     
-    template<typename element_tag, typename boundary_cell_container_typelist, typename id_type, typename value_type>
-    typename result_of::const_handle<element_t<element_tag, boundary_cell_container_typelist, id_type>, value_type>::type handle( element_t<element_tag, boundary_cell_container_typelist, id_type> const & element, value_type const & boundary_element )
+    template<typename EA1, typename EB1, typename EC1, typename ED1, typename EA2, typename EB2, typename EC2, typename ED2>
+    typename result_of::const_handle<element_t<EA1, EB1, EC1, ED1>, element_t<EA2, EB2, EC2, ED2> >::type handle( element_t<EA1, EB1, EC1, ED1> const & element, element_t<EA2, EB2, EC2, ED2> const & boundary_element )
     {
         return element.handle(boundary_element);
     }

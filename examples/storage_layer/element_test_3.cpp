@@ -187,7 +187,7 @@ int main()
     
 
     typedef viennagrid::storage::result_of::continuous_id_generator_config<
-        viennagrid::storage::container_collection::result_of::value_typelist<domain_container_collection_type>::type,
+        viennameta::typemap::result_of::key_typelist<domain_container_collection_type::typemap>::type,
         viennagrid::storage::smart_id_tag<int>
     >::type id_generator_config;
     

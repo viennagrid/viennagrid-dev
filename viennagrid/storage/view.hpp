@@ -205,6 +205,15 @@ namespace viennagrid
                 resize(pos+1);
                 handle_container[pos] = element;
             }
+            void erase_handle(handle_type handle)
+            {
+              for (iterator it = handle_container.begin(); it != handle_container.end(); ++it)
+                if (it.handle() == handle)
+                {
+                  handle_container.erase( it );
+                  return;
+                }
+            }
             
             handle_type handle_at(std::size_t pos) { return *viennagrid::advance(handle_begin(), pos); }
             const_handle_type handle_at(std::size_t pos) const { return *viennagrid::advance(handle_begin(), pos); }

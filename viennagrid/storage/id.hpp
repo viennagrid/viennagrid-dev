@@ -116,16 +116,16 @@ namespace viennagrid
         namespace result_of
         {
             template<typename value_type, typename id_tag>
-            struct smart_id;
+            struct id;
             
             template<typename value_type, typename id_type>
-            struct smart_id<value_type, id_tag<id_type> >
+            struct id<value_type, id_tag<id_type> >
             {
                 typedef id_type type;
             };
             
             template<typename value_type, typename base_id_type>
-            struct smart_id<value_type, smart_id_tag<base_id_type> >
+            struct id<value_type, smart_id_tag<base_id_type> >
             {
                 typedef smart_id_t<value_type, base_id_type> type;
             };

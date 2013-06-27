@@ -252,7 +252,7 @@ int main()
     //
     // for pushing n-cells to a domain, each of them needs to be equipped with an ID. For that purpose, a suitable ID generator is deduced here:
     //
-    typedef viennagrid::storage::result_of::continuous_id_generator_config< viennagrid::storage::container_collection::result_of::value_typelist<domain_type>::type, viennagrid::storage::smart_id_tag<int> >::type id_generator_config;
+    typedef viennagrid::storage::result_of::continuous_id_generator_config< viennameta::typemap::result_of::key_typelist<domain_type::typemap>::type, viennagrid::storage::smart_id_tag<int> >::type id_generator_config;
     typedef viennagrid::storage::result_of::continuous_id_generator< id_generator_config >::type id_generator_type;
     
     id_generator_type id_generator;

@@ -65,43 +65,43 @@ namespace viennagrid
                 
                 
                 
-                //
-                // Generates a typelist of the container types
-                //               
-                template<typename container_collection_type>
-                struct container_typelist {};
-                
-                template<typename typemap_>
-                struct container_typelist< collection_t<typemap_> >
-                {
-                    typedef typename viennameta::typemap::result_of::value_typelist<typemap_>::type type;
-                };
-                
-                template<typename typemap_>
-                struct container_typelist< const collection_t<typemap_> >
-                {
-                    typedef typename viennameta::typemap::result_of::value_typelist<typemap_>::type type;
-                };
-                
-                
-                //
-                // Generates a typelist of the value types
-                //               
-
-                template<typename container_collection_type>
-                struct value_typelist {};
-                
-                template<typename typemap_>
-                struct value_typelist< collection_t<typemap_> >
-                {
-                    typedef typename viennameta::typemap::result_of::key_typelist<typemap_>::type type;
-                };
-                
-                template<typename typemap_>
-                struct value_typelist< const collection_t<typemap_> >
-                {
-                    typedef typename viennameta::typemap::result_of::key_typelist<typemap_>::type type;
-                };
+//                 //
+//                 // Generates a typelist of the container types
+//                 //               
+//                 template<typename container_collection_type>
+//                 struct container_typelist {};
+//                 
+//                 template<typename typemap_>
+//                 struct container_typelist< collection_t<typemap_> >
+//                 {
+//                     typedef typename viennameta::typemap::result_of::value_typelist<typemap_>::type type;
+//                 };
+//                 
+//                 template<typename typemap_>
+//                 struct container_typelist< const collection_t<typemap_> >
+//                 {
+//                     typedef typename viennameta::typemap::result_of::value_typelist<typemap_>::type type;
+//                 };
+//                 
+//                 
+//                 //
+//                 // Generates a typelist of the value types
+//                 //               
+// 
+//                 template<typename container_collection_type>
+//                 struct value_typelist {};
+//                 
+//                 template<typename typemap_>
+//                 struct value_typelist< collection_t<typemap_> >
+//                 {
+//                     typedef typename viennameta::typemap::result_of::key_typelist<typemap_>::type type;
+//                 };
+//                 
+//                 template<typename typemap_>
+//                 struct value_typelist< const collection_t<typemap_> >
+//                 {
+//                     typedef typename viennameta::typemap::result_of::key_typelist<typemap_>::type type;
+//                 };
                                 
             } // namespace result_of
             
@@ -136,8 +136,8 @@ namespace viennagrid
                 typedef collection_t<container_typelist_1> from_container_collection_type; 
                 typedef collection_t<container_typelist_2> to_container_collection_type;
                                 
-                typedef typename viennagrid::storage::container_collection::result_of::value_typelist<from_container_collection_type>::type from_container_collection_value_typelist;
-                typedef typename viennagrid::storage::container_collection::result_of::value_typelist<to_container_collection_type>::type to_container_collection_value_typelist;
+                typedef typename viennameta::typemap::result_of::key_typelist<typename from_container_collection_type::typemap>::type from_container_collection_value_typelist;
+                typedef typename viennameta::typemap::result_of::key_typelist<typename to_container_collection_type::typemap>::type to_container_collection_value_typelist;
                 
                 typedef typename viennameta::typelist::result_of::intersection<
                     from_container_collection_value_typelist,

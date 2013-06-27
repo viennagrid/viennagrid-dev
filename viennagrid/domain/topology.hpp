@@ -27,7 +27,6 @@
 #include "viennagrid/storage/algorithm.hpp"
 
 #include "viennagrid/config/element_config.hpp"
-#include <boost/concept_check.hpp>
 
 
 namespace viennagrid
@@ -94,12 +93,16 @@ namespace viennagrid
         container_type container;
     };
     
+    
+    
+    struct coboundary_collection_tag;
+    struct neighbour_collection_tag;
+    struct boundary_information_collection_tag;
+    
 
     template<
         typename element_collection_type_,
-        typename coboundary_collection_type_,
-        typename neighbour_collection_type_,
-        typename boundary_information_collection_type_,
+        typename appendix_type_,
         typename inserter_type_
         >
     class domain_t
@@ -107,25 +110,27 @@ namespace viennagrid
     public:
         typedef domain_t<
             element_collection_type_,
-            coboundary_collection_type_,
-            neighbour_collection_type_,
-            boundary_information_collection_type_,
+            appendix_type_,
+//             coboundary_collection_type_,
+//             neighbour_collection_type_,
+//             boundary_information_collection_type_,
             inserter_type_
                 > self_type;
         
         
         typedef element_collection_type_ element_collection_type;
-        typedef coboundary_collection_type_ coboundary_collection_type;
-        typedef neighbour_collection_type_ neighbour_collection_type;
-        typedef boundary_information_collection_type_ boundary_information_collection_type;
+        typedef appendix_type_ appendix_type;
+//         typedef coboundary_collection_type_ coboundary_collection_type;
+//         typedef neighbour_collection_type_ neighbour_collection_type;
+//         typedef boundary_information_collection_type_ boundary_information_collection_type;
         typedef inserter_type_ inserter_type;
         
         typedef typename inserter_type::id_generator_type id_generator_type;
 
         domain_t() : inserter( element_container_collection ), change_counter_(0) {}
         
-        template<typename container_collection_type_2, typename B, typename C, typename D, typename E>
-        domain_t( domain_proxy<domain_t<container_collection_type_2, B, C, D, E> > proxy ) : change_counter_(0)
+        template<typename container_collection_type_2, typename B, typename C>
+        domain_t( domain_proxy<domain_t<container_collection_type_2, B, C> > proxy ) : change_counter_(0)
         {
             view_domain_setter< container_collection_type_2 > functor(proxy.domain->element_collection());
             viennagrid::storage::collection::for_each(element_container_collection, functor);
@@ -157,14 +162,17 @@ namespace viennagrid
         element_collection_type & element_collection() { return element_container_collection; }
         element_collection_type const & element_collection() const { return element_container_collection; }
         
-        coboundary_collection_type & coboundary_collection() { return coboundary_container_collection; }
-        coboundary_collection_type const & coboundary_collection() const { return coboundary_container_collection; }
+        appendix_type & appendix() { return appendix_; }
+        appendix_type const & appendix() const { return appendix_; }
         
-        neighbour_collection_type & neighbour_collection() { return neighbour_container_collection; }
-        neighbour_collection_type const & neighbour_collection() const { return neighbour_container_collection; }
-
-        boundary_information_collection_type & boundary_information() { return boundary_information_collection; }
-        boundary_information_collection_type const & boundary_information() const { return boundary_information_collection; }
+//         coboundary_collection_type & coboundary_collection() { return coboundary_container_collection; }
+//         coboundary_collection_type const & coboundary_collection() const { return coboundary_container_collection; }
+//         
+//         neighbour_collection_type & neighbour_collection() { return neighbour_container_collection; }
+//         neighbour_collection_type const & neighbour_collection() const { return neighbour_container_collection; }
+// 
+//         boundary_information_collection_type & boundary_information() { return boundary_information_collection; }
+//         boundary_information_collection_type const & boundary_information() const { return boundary_information_collection; }
 
 
         
@@ -177,10 +185,11 @@ namespace viennagrid
         
     protected:
         element_collection_type element_container_collection;
-        
-        coboundary_collection_type coboundary_container_collection;
-        neighbour_collection_type neighbour_container_collection;
-        boundary_information_collection_type boundary_information_collection;
+
+        appendix_type appendix_;
+//         coboundary_collection_type coboundary_container_collection;
+//         neighbour_collection_type neighbour_container_collection;
+//         boundary_information_collection_type boundary_information_collection;
         
         inserter_type inserter;
         
@@ -188,6 +197,70 @@ namespace viennagrid
     };
 
     
+    
+    template<typename element_tag, typename coboundary_tag, typename domain_type>
+    typename viennagrid::storage::result_of::value_type<
+                typename viennagrid::storage::result_of::value_type<
+                    typename domain_type::appendix_type,
+                    coboundary_collection_tag
+                >::type,
+                viennameta::static_pair<element_tag, coboundary_tag>
+                >::type & coboundary_collection( domain_type & domain )
+    { return viennagrid::storage::collection::get< viennameta::static_pair<element_tag, coboundary_tag> >( viennagrid::storage::collection::get<coboundary_collection_tag>( domain.appendix() ) );}
+    
+    template<typename element_tag, typename coboundary_tag, typename domain_type>
+    typename viennagrid::storage::result_of::value_type<
+                typename viennagrid::storage::result_of::value_type<
+                    typename domain_type::appendix_type,
+                    coboundary_collection_tag
+                >::type,
+                viennameta::static_pair<element_tag, coboundary_tag>
+                >::type const & coboundary_collection( domain_type const & domain )
+    { return viennagrid::storage::collection::get< viennameta::static_pair<element_tag, coboundary_tag> >( viennagrid::storage::collection::get<coboundary_collection_tag>( domain.appendix() ) );}
+    
+    
+    
+    template<typename element_tag, typename connector_element_tag, typename domain_type>
+    typename viennagrid::storage::result_of::value_type<
+                typename viennagrid::storage::result_of::value_type<
+                    typename domain_type::appendix_type,
+                    neighbour_collection_tag
+                >::type,
+                viennameta::static_pair<element_tag, connector_element_tag>
+                >::type & neighbour_collection( domain_type & domain )
+    { return viennagrid::storage::collection::get< viennameta::static_pair<element_tag, connector_element_tag> >( viennagrid::storage::collection::get<neighbour_collection_tag>( domain.appendix() ) ); }
+    
+    template<typename element_tag, typename connector_element_tag, typename domain_type>
+    typename viennagrid::storage::result_of::value_type<
+                typename viennagrid::storage::result_of::value_type<
+                    typename domain_type::appendix_type,
+                    neighbour_collection_tag
+                >::type,
+                viennameta::static_pair<element_tag, connector_element_tag>
+                >::type const & neighbour_collection( domain_type const & domain )
+    { return viennagrid::storage::collection::get< viennameta::static_pair<element_tag, connector_element_tag> >( viennagrid::storage::collection::get<neighbour_collection_tag>( domain.appendix() ) ); }
+    
+    
+    
+    template<typename element_tag, typename domain_type>
+    typename viennagrid::storage::result_of::value_type<
+        typename viennagrid::storage::result_of::value_type<
+            typename domain_type::appendix_type,
+            boundary_information_collection_tag 
+        >::type,
+        element_tag
+    >::type & boundary_information_collection( domain_type & domain )
+    { return viennagrid::storage::collection::get<element_tag>( viennagrid::storage::collection::get<boundary_information_collection_tag>( domain.appendix() ) ); }   
+    
+    template<typename element_tag, typename domain_type>
+    typename viennagrid::storage::result_of::value_type<
+        typename viennagrid::storage::result_of::value_type<
+            typename domain_type::appendix_type,
+            boundary_information_collection_tag 
+        >::type,
+        element_tag
+    >::type const & boundary_information_collection( domain_type const & domain )
+    { return viennagrid::storage::collection::get<element_tag>( viennagrid::storage::collection::get<boundary_information_collection_tag>( domain.appendix() ) ); }   
     
 }
 
@@ -227,14 +300,14 @@ namespace viennagrid
         };
         
         
-        template<typename domain_container_collection_type_, typename B, typename C, typename D, typename E>
-        struct element_collection< domain_t<domain_container_collection_type_, B, C, D, E> >
+        template<typename domain_container_collection_type_, typename B, typename C>
+        struct element_collection< domain_t<domain_container_collection_type_, B, C> >
         {
             typedef domain_container_collection_type_ type;
         };
         
-        template<typename domain_container_collection_type_, typename B, typename C, typename D, typename E>
-        struct element_collection< const domain_t<domain_container_collection_type_, B, C, D, E> >
+        template<typename domain_container_collection_type_, typename B, typename C>
+        struct element_collection< const domain_t<domain_container_collection_type_, B, C> >
         {
             typedef domain_container_collection_type_ type;
         };        
@@ -243,7 +316,7 @@ namespace viennagrid
         struct element_typelist
         {
             typedef typename element_collection<domain_type>::type container_collection;
-            typedef typename viennagrid::storage::container_collection::result_of::value_typelist<container_collection>::type type;
+            typedef typename viennameta::typemap::result_of::value_typelist<typename container_collection::typemap >::type type;
         };
         
         template<typename domain_type>
@@ -368,8 +441,8 @@ namespace viennagrid
             static const int value = cell_dimension<typemap>::value;
         };
         
-        template<typename domain_container_collection_type_, typename B, typename C, typename D, typename E>
-        struct cell_dimension< domain_t<domain_container_collection_type_, B, C, D, E> >
+        template<typename domain_container_collection_type_, typename B, typename C>
+        struct cell_dimension< domain_t<domain_container_collection_type_, B, C> >
         {
             static const int value = cell_dimension<domain_container_collection_type_>::value;
         };
@@ -413,8 +486,8 @@ namespace viennagrid
         template<
             typename domain_type,
             typename element_typelist = 
-                typename storage::container_collection::result_of::value_typelist<
-                    typename element_collection<domain_type>::type
+                typename viennameta::typemap::result_of::value_typelist<
+                    typename element_collection<domain_type>::type::typemap
                 >::type,
             typename container_config = 
                 storage::default_container_config
@@ -429,7 +502,9 @@ namespace viennagrid
             
             typedef typename viennagrid::storage::result_of::recursive_inserter<view_container_collection_type, domain_inserter_type>::type view_inserter_type;
             
-            typedef domain_t<view_container_collection_type, viennameta::null_type, viennameta::null_type, viennameta::null_type, view_inserter_type> type; 
+
+            // TODO: change viennameta::null_type !!!
+            typedef domain_t<view_container_collection_type, viennameta::null_type, view_inserter_type> type; 
         };
     }
     
@@ -555,21 +630,21 @@ namespace viennagrid
 //     template<typename domain_container_collection_type_, typename inserter_type_>
 //     const domain_t<domain_container_collection_type_, inserter_type_> & topology( const domain_t<domain_container_collection_type_, inserter_type_> & domain) { return domain; }
     
-    template<typename element_container_collection_type, typename B, typename C, typename D, typename E>
-    element_container_collection_type & element_collection( domain_t<element_container_collection_type, B, C, D, E> & domain)
+    template<typename element_container_collection_type, typename B, typename C>
+    element_container_collection_type & element_collection( domain_t<element_container_collection_type, B, C> & domain)
     { return domain.element_collection(); }
 
-    template<typename element_container_collection_type, typename B, typename C, typename D, typename E>
-    element_container_collection_type const & element_collection( domain_t<element_container_collection_type, B, C, D, E> const & domain)
+    template<typename element_container_collection_type, typename B, typename C>
+    element_container_collection_type const & element_collection( domain_t<element_container_collection_type, B, C> const & domain)
     { return domain.element_collection(); }
 
 
-    template<typename A, typename B, typename C, typename D, typename inserter_type>
-    inserter_type & inserter(domain_t<A, B, C, D, inserter_type> & domain)
+    template<typename A, typename B, typename inserter_type>
+    inserter_type & inserter(domain_t<A, B, inserter_type> & domain)
     { return domain.get_inserter(); }
     
-    template<typename A, typename B, typename C, typename D, typename inserter_type>
-    inserter_type const & inserter(domain_t<A, B, C, D, inserter_type> const & domain)
+    template<typename A, typename B, typename inserter_type>
+    inserter_type const & inserter(domain_t<A, B, inserter_type> const & domain)
     { return domain.get_inserter(); }
     
 
@@ -604,8 +679,6 @@ namespace viennagrid
         return storage::collection::get<value_type>(element_collection(domain)).dereference_handle( handle );
     }
     
-    
-    
     template<typename domain_type, typename EA, typename EB, typename EC, typename ED>
     element_t<EA, EB, EC, ED> & dereference_handle( domain_type & domain, element_t<EA, EB, EC, ED> & handle)
     { return handle; }
@@ -616,17 +689,18 @@ namespace viennagrid
     
     
     
-    template<typename domain_type, typename value_type>
-    typename result_of::handle<domain_type, value_type>::type handle( domain_type & domain, value_type & element)
-    {
-        return storage::collection::get<value_type>(element_collection(domain)).handle( element );
-    }
     
-    template<typename domain_type, typename value_type>
-    typename result_of::const_handle<domain_type, value_type>::type handle( domain_type const & domain, value_type const & element)
-    {
-        return storage::collection::get<value_type>(element_collection(domain)).handle( element );
-    }
+    template<typename domain_type, typename EA, typename EB, typename EC, typename ED>
+    typename result_of::handle<domain_type, element_t<EA, EB, EC, ED> >::type handle( domain_type & domain, element_t<EA, EB, EC, ED> & element)
+    { return storage::collection::get< element_t<EA, EB, EC, ED> >(element_collection(domain)).handle( element ); }
+    
+    template<typename domain_type, typename EA, typename EB, typename EC, typename ED>
+    typename result_of::const_handle<domain_type, element_t<EA, EB, EC, ED> >::type handle( domain_type const & domain, element_t<EA, EB, EC, ED> const & element)
+    { return storage::collection::get< element_t<EA, EB, EC, ED> >(element_collection(domain)).handle( element ); }
+    
+    
+    template<typename domain_type, typename handle_type>
+    handle_type handle( domain_type & domain, handle_type handle) { return handle; }
     
     
     
