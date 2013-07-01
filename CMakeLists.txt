@@ -79,6 +79,15 @@ install(DIRECTORY viennagrid ${CMAKE_CURRENT_BINARY_DIR}/viennagrid
    DESTINATION ${INSTALL_INCLUDE_DIR} COMPONENT dev
    FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
 
+
+# Add visibility of headers
+# Necessary for Qt-Creator usage.
+################
+file( GLOB_RECURSE MAKE_HEADERS_VISIBLE_SRC
+    *.hpp *.h)
+add_custom_target( MAKE_HEADERS_VISIBLE SOURCES ${MAKE_HEADERS_VISIBLE_SRC} )
+
+
 # Dist target
 #############
 
