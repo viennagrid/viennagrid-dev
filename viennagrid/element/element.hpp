@@ -620,6 +620,8 @@ namespace viennagrid
     };
     
 
+    std::ostream & operator<<(std::ostream & os, viennameta::null_type) { return os; }
+
 
     /** @brief Overload for the output streaming operator for the vertex type */
     template <typename ContainerType, typename IDType, typename appendix_type>
