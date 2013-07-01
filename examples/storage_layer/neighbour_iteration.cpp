@@ -102,6 +102,15 @@ int main()
     triangle_handle_type th5 = viennagrid::create_triangle( domain, vh3, vh4, vh7 );
     triangle_handle_type th6 = viennagrid::create_triangle( domain, vh4, vh5, vh7 );
     triangle_handle_type th7 = viennagrid::create_triangle( domain, vh5, vh8, vh7 );
+    
+    std::cout << "th0: " << th0 << std::endl;
+    std::cout << "th1: " << th1 << std::endl;
+    std::cout << "th2: " << th2 << std::endl;
+    std::cout << "th3: " << th3 << std::endl;
+    std::cout << "th4: " << th4 << std::endl;
+    std::cout << "th5: " << th5 << std::endl;
+    std::cout << "th6: " << th6 << std::endl;
+    std::cout << "th7: " << th7 << std::endl;
 
 
 

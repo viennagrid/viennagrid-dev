@@ -34,6 +34,7 @@ int main()
     tetrahedron_handle_type tet_handle0 = viennagrid::create_tetrahedron(domain, v0, v1, v2, v3);
     tetrahedron_handle_type tet_handle1 = viennagrid::create_tetrahedron(domain, v0, v1, v2, v4);
     std::cout << tet_handle0 << std::endl;
+    std::cout << tet_handle1 << std::endl;
     
     tetrahedron_type & tet = viennagrid::dereference_handle(domain, tet_handle0);
     std::cout << tet << std::endl;

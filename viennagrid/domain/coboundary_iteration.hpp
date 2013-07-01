@@ -9,9 +9,6 @@
 namespace viennagrid
 {
 
-class coboundary_collection_tag;
-
-    
     namespace result_of
     {
         template<typename domain_type, typename element_type_or_tag, typename coboundary_type_or_tag>

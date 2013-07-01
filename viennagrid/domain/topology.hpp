@@ -93,12 +93,6 @@ namespace viennagrid
         container_type container;
     };
     
-    
-    
-    struct coboundary_collection_tag;
-    struct neighbour_collection_tag;
-    struct boundary_information_collection_tag;
-    
 
     template<
         typename element_collection_type_,
@@ -883,7 +877,7 @@ namespace viennagrid
     template<typename domain_type, typename functor>
     struct for_each_element_functor
     {
-        for_each_element_functor( domain_type & domain_, functor f_ ) : domain(domain_), f(f_) {}
+        for_each_element_functor( domain_type & d, functor f ) : f_(f), domain_(d) {}
         
         template<typename element_type>
         void operator() ( viennameta::tag<element_type> )
@@ -891,9 +885,9 @@ namespace viennagrid
             typedef typename viennagrid::result_of::element_range<domain_type, element_type>::type element_range_type;
             typedef typename viennagrid::result_of::iterator<element_range_type>::type element_range_iterator;
             
-            element_range_type range = viennagrid::elements(domain);
+            element_range_type range = viennagrid::elements(domain_);
             for (element_range_iterator it = range.begin(); it != range.end(); ++it)
-                f(*it);
+                f_(*it);
         }
         
         template<typename element_type>
@@ -902,13 +896,13 @@ namespace viennagrid
             typedef typename viennagrid::result_of::const_element_range<domain_type, element_type>::type element_range_type;
             typedef typename viennagrid::result_of::iterator<element_range_type>::type element_range_iterator;
             
-            element_range_type range = viennagrid::elements(domain);
+            element_range_type range = viennagrid::elements(domain_);
             for (element_range_iterator it = range.begin(); it != range.end(); ++it)
-                f(*it);
+                f_(*it);
         }
         
-        functor f;
-        domain_type & domain;
+        functor f_;
+        domain_type & domain_;
     };
     
     

@@ -107,6 +107,10 @@ namespace viennagrid
   struct no_orientation_lazy_handling_tag {};
   struct full_lazy_handling_tag {};
 
+  struct coboundary_collection_tag;
+  struct neighbour_collection_tag;
+  struct boundary_information_collection_tag;
+
   
   /********* Forward definitions of main classes *******************/
 
