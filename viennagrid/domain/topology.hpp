@@ -504,7 +504,7 @@ namespace viennagrid
             
 
             // TODO: change viennameta::null_type !!!
-            typedef domain_t<view_container_collection_type, viennameta::null_type, view_inserter_type> type; 
+            typedef domain_t<view_container_collection_type, typename domain_type::appendix_type, view_inserter_type> type; 
         };
     }
     

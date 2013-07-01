@@ -87,7 +87,7 @@ int main()
   //
 
   // Extract the first four points of the domain:
-  VertexRange vertices = viennagrid::elements<viennagrid::vertex_tag>(domain);
+  VertexRange vertices = viennagrid::elements(domain);
 
 
   
@@ -101,6 +101,16 @@ int main()
             << viennagrid::is_boundary(domain, *it)    //second argument is the enclosing complex (either a domain or a segment)
             << std::endl << std::endl;
             
+            
+            
+            
+  typedef viennagrid::result_of::line_range<Domain>::type LineRange;
+  LineRange lines = viennagrid::elements(domain);
+  
+  for (LineRange::iterator it = lines.begin(); it != lines.end(); ++it)
+    std::cout << *it
+            << viennagrid::is_boundary(domain, *it)    //second argument is the enclosing complex (either a domain or a segment)
+            << std::endl << std::endl;
             
             
             

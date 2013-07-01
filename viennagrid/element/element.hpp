@@ -625,7 +625,7 @@ namespace viennagrid
     template <typename ContainerType, typename IDType, typename appendix_type>
     std::ostream & operator<<(std::ostream & os, element_t<vertex_tag, ContainerType, IDType, appendix_type> const & el)
     {
-        os << "-- Vertex, ID: " << el.id();
+        os << "-- Vertex, ID: " << el.id() << " " << el.appendix();
 
         return os;
     }

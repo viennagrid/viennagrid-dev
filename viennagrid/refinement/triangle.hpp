@@ -110,8 +110,9 @@ namespace viennagrid
      *        /     \ 
      *       0 - 3 - 1
      */
-    template <typename CellType, typename DomainTypeOut>
-    static void apply1(CellType const & cell_in, DomainTypeOut & segment_out)
+    template <typename CellType, typename DomainTypeOut, typename EdgeRefinementFlagAccessor, typename EdgeToVertexHandleAccessor>
+    static void apply1(CellType const & cell_in, DomainTypeOut & segment_out,
+                       EdgeRefinementFlagAccessor const edge_refinement_flag_accessor, EdgeToVertexHandleAccessor edge_to_vertex_handle_accessor)
     {
 //       typedef typename CellType::config_type        ConfigTypeIn;
       typedef typename viennagrid::result_of::const_element_range<CellType, viennagrid::vertex_tag>::type            VertexOnCellRange;
@@ -136,33 +137,33 @@ namespace viennagrid
       //
       
       //grab existing vertices:
-      VertexOnCellRange vertices_on_cell = viennagrid::elements<viennagrid::vertex_tag>(cell_in);
+      VertexOnCellRange vertices_on_cell = viennagrid::elements(cell_in);
       VertexOnCellIterator vocit = vertices_on_cell.begin();
-      vertex_handles[0] = viennagrid::find_by_id( segment_out, vocit->id() ).handle(); ++vocit;
-      vertex_handles[1] = viennagrid::find_by_id( segment_out, vocit->id() ).handle(); ++vocit;
-      vertex_handles[2] = viennagrid::find_by_id( segment_out, vocit->id() ).handle();
+      vertex_handles[0] = vocit.handle(); ++vocit;
+      vertex_handles[1] = vocit.handle(); ++vocit;
+      vertex_handles[2] = vocit.handle();
 
       //add vertices from edge
-      EdgeOnCellRange edges_on_cell = viennagrid::elements<viennagrid::line_tag>(cell_in);
+      EdgeOnCellRange edges_on_cell = viennagrid::elements(cell_in);
       std::size_t offset = 0;
       EdgeOnCellIterator eocit = edges_on_cell.begin();
       EdgeType const & e0 = *eocit; ++eocit;
       EdgeType const & e1 = *eocit; ++eocit;
       EdgeType const & e2 = *eocit;
       
-      if ( (viennadata::access<refinement_key, bool>(refinement_key())(e0)) == true )
+      if ( edge_refinement_flag_accessor(e0) )
       {
-        vertex_handles[3] = viennagrid::find_by_id( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) ).handle();
+        vertex_handles[3] = edge_to_vertex_handle_accessor(e0);
         offset = 0;
       }
-      else if ( (viennadata::access<refinement_key, bool>(refinement_key())(e1)) == true )
+      else if ( edge_refinement_flag_accessor(e1) )
       {
-        vertex_handles[3] = viennagrid::find_by_id( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) ).handle();
+        vertex_handles[3] = edge_to_vertex_handle_accessor(e1);
         offset = 2;
       }
-      else if ( (viennadata::access<refinement_key, bool>(refinement_key())(e2)) == true )
+      else if ( edge_refinement_flag_accessor(e2) )
       {
-        vertex_handles[3] = viennagrid::find_by_id( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) ).handle();
+        vertex_handles[3] = edge_to_vertex_handle_accessor(e2);
         offset = 1;
       }
       else
@@ -173,27 +174,11 @@ namespace viennagrid
       //
       // Step 2: Add new cells to new domain:
       //
-      
+      //0-3-2
       create_refinement_cell<CellType>( segment_out, vertex_handles, (offset + 0) % num_vertices, 3, (offset + 2) % num_vertices );
       
-//       CellType new_cell;
-//       VertexType * cellvertices[topology::bndcells<triangle_tag, 0>::num];
-//       
-//       //0-3-2:
-//       cellvertices[0] = vertices[(offset + 0) % topology::bndcells<triangle_tag, 0>::num];
-//       cellvertices[1] = vertices[3];
-//       cellvertices[2] = vertices[(offset + 2) % topology::bndcells<triangle_tag, 0>::num];
-//       new_cell.vertices(cellvertices);
-//       segment_out.push_back(new_cell);
-
-      
-      create_refinement_cell<CellType>( segment_out, vertex_handles, 3, (offset + 1) % num_vertices, (offset + 2) % num_vertices );
       //3-1-2:
-//       cellvertices[0] = vertices[3];
-//       cellvertices[1] = vertices[(offset + 1) % topology::bndcells<triangle_tag, 0>::num];
-//       cellvertices[2] = vertices[(offset + 2) % topology::bndcells<triangle_tag, 0>::num];
-//       new_cell.vertices(cellvertices);
-//       segment_out.push_back(new_cell);
+      create_refinement_cell<CellType>( segment_out, vertex_handles, 3, (offset + 1) % num_vertices, (offset + 2) % num_vertices );
     } //apply1()
     
 
@@ -207,8 +192,9 @@ namespace viennagrid
      *        /       \
      *       0 -- 3 -- 1
     */
-    template <typename CellType, typename DomainTypeOut>
-    static void apply2(CellType const & cell_in, DomainTypeOut & segment_out)
+    template <typename CellType, typename DomainTypeOut, typename EdgeRefinementFlagAccessor, typename EdgeToVertexHandleAccessor>
+    static void apply2(CellType const & cell_in, DomainTypeOut & segment_out,
+                       EdgeRefinementFlagAccessor const edge_refinement_flag_accessor, EdgeToVertexHandleAccessor edge_to_vertex_handle_accessor)
     {
 //       typedef typename CellType::config_type        ConfigTypeIn;
       typedef typename viennagrid::result_of::const_element_range<CellType, viennagrid::vertex_tag>::type            VertexOnCellRange;
@@ -237,9 +223,9 @@ namespace viennagrid
       //grab existing vertices:
       VertexOnCellRange vertices_on_cell = viennagrid::elements<viennagrid::vertex_tag>(cell_in);
       VertexOnCellIterator vocit = vertices_on_cell.begin();
-      vertex_handles[0] = viennagrid::find_by_id( segment_out, vocit->id() ).handle(); ++vocit;
-      vertex_handles[1] = viennagrid::find_by_id( segment_out, vocit->id() ).handle(); ++vocit;
-      vertex_handles[2] = viennagrid::find_by_id( segment_out, vocit->id() ).handle();
+      vertex_handles[0] = vocit.handle(); ++vocit;
+      vertex_handles[1] = vocit.handle(); ++vocit;
+      vertex_handles[2] = vocit.handle();
 
       //Find rotation offset such that first two edges are to be refined
       EdgeOnCellRange edges_on_cell = viennagrid::elements<viennagrid::line_tag>(cell_in);
@@ -250,34 +236,22 @@ namespace viennagrid
       EdgeType const & e1 = *eocit; ++eocit;
       EdgeType const & e2 = *eocit;
       
-      if ( (viennadata::access<refinement_key, bool>(refinement_key())(e0) == true)
-           && (viennadata::access<refinement_key, bool>(refinement_key())(e1) == true) )
+      if ( edge_refinement_flag_accessor(e0) && edge_refinement_flag_accessor(e1) )
       {
-          vertex_handles[3] = viennagrid::find_by_id( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) ).handle();
-          vertex_handles[4] = viennagrid::find_by_id( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) ).handle();
-          
-//         vertices[3] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)]);
-//         vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)]);
+        vertex_handles[3] = edge_to_vertex_handle_accessor(e1);
+        vertex_handles[4] = edge_to_vertex_handle_accessor(e0);
         offset = 2;
       }
-      else if ( (viennadata::access<refinement_key, bool>(refinement_key())(e0) == true)
-           && (viennadata::access<refinement_key, bool>(refinement_key())(e2) == true) )
+      else if ( edge_refinement_flag_accessor(e0) && edge_refinement_flag_accessor(e2) )
       {
-          vertex_handles[3] = viennagrid::find_by_id( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e0) ).handle();
-          vertex_handles[4] = viennagrid::find_by_id( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) ).handle();
-          
-//         vertices[3] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e0)]);
-//         vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
+        vertex_handles[3] = edge_to_vertex_handle_accessor(e0);
+        vertex_handles[4] = edge_to_vertex_handle_accessor(e2);
         offset = 0;
       }
-      else if ( (viennadata::access<refinement_key, bool>(refinement_key())(e1) == true)
-           && (viennadata::access<refinement_key, bool>(refinement_key())(e2) == true) )
+      else if ( edge_refinement_flag_accessor(e1) && edge_refinement_flag_accessor(e2) )
       {
-          vertex_handles[3] = viennagrid::find_by_id( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e2) ).handle();
-          vertex_handles[4] = viennagrid::find_by_id( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(e1) ).handle();
-          
-//         vertices[3] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e2)]);
-//         vertices[4] = &(viennagrid::ncells<0>(segment_out.domain())[viennadata::access<refinement_key, std::size_t>(refinement_key())(e1)]);
+        vertex_handles[3] = edge_to_vertex_handle_accessor(e2);
+        vertex_handles[4] = edge_to_vertex_handle_accessor(e1);
         offset = 1;
       }
       else
@@ -288,16 +262,8 @@ namespace viennagrid
       //
       // Step 2: Add new cells to new domain:
       //
-//       CellType new_cell;
-//       VertexType * cellvertices[topology::bndcells<triangle_tag, 0>::num];
-      
-      //3-1-4:
-//       cellvertices[0] = vertices[3];
-//       cellvertices[1] = vertices[(offset + 1) % topology::bndcells<triangle_tag, 0>::num];
-//       cellvertices[2] = vertices[4];
-//       new_cell.vertices(cellvertices);
-//       segment_out.push_back(new_cell);
 
+      //3-1-4:
         create_refinement_cell<CellType>( segment_out, vertex_handles, 3, (offset + 1) % num_vertices, 4 );
 
       //split second-longest edge
@@ -309,42 +275,18 @@ namespace viennagrid
       
       if (len_edge1 > len_edge2) //split edge [v0, v1] again
       {
-//         //0-3-2:
-//         cellvertices[0] = vertices[(offset + 0) % topology::bndcells<triangle_tag, 0>::num];
-//         cellvertices[1] = vertices[3];
-//         cellvertices[2] = vertices[(offset + 2) % topology::bndcells<triangle_tag, 0>::num];
-//         new_cell.vertices(cellvertices);
-//         segment_out.push_back(new_cell);
-        
+        //0-3-2:
         create_refinement_cell<CellType>( segment_out, vertex_handles, (offset + 0) % num_vertices, 3, (offset + 2) % num_vertices );
 
-//         //2-3-4:
-//         cellvertices[0] = vertices[(offset + 2) % topology::bndcells<triangle_tag, 0>::num];
-//         cellvertices[1] = vertices[3];
-//         cellvertices[2] = vertices[4];
-//         new_cell.vertices(cellvertices);
-//         segment_out.push_back(new_cell);
-        
+        //2-3-4:
         create_refinement_cell<CellType>( segment_out, vertex_handles, (offset + 2) % num_vertices, 3, 4 );
       }
       else //split edge [v1, v2]
       {
-//         //0-3-4:
-//         cellvertices[0] = vertices[(offset + 0) % topology::bndcells<triangle_tag, 0>::num];
-//         cellvertices[1] = vertices[3];
-//         cellvertices[2] = vertices[4];
-//         new_cell.vertices(cellvertices);
-//         segment_out.push_back(new_cell);
-        
+        //0-3-4:
         create_refinement_cell<CellType>( segment_out, vertex_handles, (offset + 0) % num_vertices, 3, 4 );
 
-//         //0-4-2:
-//         cellvertices[0] = vertices[(offset + 0) % topology::bndcells<triangle_tag, 0>::num];
-//         cellvertices[1] = vertices[4];
-//         cellvertices[2] = vertices[(offset + 2) % topology::bndcells<triangle_tag, 0>::num];
-//         new_cell.vertices(cellvertices);
-//         segment_out.push_back(new_cell);
-        
+        //0-4-2:
         create_refinement_cell<CellType>( segment_out, vertex_handles, (offset + 0) % num_vertices, 4, (offset + 2) % num_vertices );
       }
       
@@ -355,8 +297,9 @@ namespace viennagrid
 
     
     /** @brief Refinement of a triangle with three edges to be refined (uniform refinement) */
-    template <typename CellType, typename DomainTypeOut>
-    static void apply3(CellType const & cell_in, DomainTypeOut & segment_out)
+    template <typename CellType, typename DomainTypeOut, typename EdgeRefinementFlagAccessor, typename EdgeToVertexHandleAccessor>
+    static void apply3(CellType const & cell_in, DomainTypeOut & segment_out,
+                       EdgeRefinementFlagAccessor const edge_refinement_flag_accessor, EdgeToVertexHandleAccessor edge_to_vertex_handle_accessor)
     {
 //       typedef typename CellType::config_type        ConfigTypeIn;
       typedef typename viennagrid::result_of::const_element_range<CellType, viennagrid::vertex_tag>::type            VertexOnCellRange;
@@ -374,10 +317,7 @@ namespace viennagrid
       const unsigned int num_lines = element_topology::boundary_cells<triangle_tag, line_tag>::num;
       
       storage::static_array<VertexHandleType, num_vertices+num_lines> vertex_handles;
-      
-//       VertexType * vertices[topology::bndcells<triangle_tag, 0>::num
-//                             + topology::bndcells<triangle_tag, 1>::num];
-      
+
       //
       // Step 1: Get vertices on the new domain
       //
@@ -385,57 +325,31 @@ namespace viennagrid
       //grab existing vertices:
       VertexOnCellRange vertices_on_cell = viennagrid::elements<viennagrid::vertex_tag>(cell_in);
       VertexOnCellIterator vocit = vertices_on_cell.begin();
-      vertex_handles[0] = viennagrid::find_by_id( segment_out, vocit->id() ).handle(); ++vocit;
-      vertex_handles[1] = viennagrid::find_by_id( segment_out, vocit->id() ).handle(); ++vocit;
-      vertex_handles[2] = viennagrid::find_by_id( segment_out, vocit->id() ).handle();
+      vertex_handles[0] = vocit.handle(); ++vocit;
+      vertex_handles[1] = vocit.handle(); ++vocit;
+      vertex_handles[2] = vocit.handle();
 
       //add vertices from edge
       EdgeOnCellRange edges_on_cell = viennagrid::elements<viennagrid::line_tag>(cell_in);
       EdgeOnCellIterator eocit = edges_on_cell.begin();
-      vertex_handles[3] = viennagrid::find_by_id( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(*eocit) ).handle(); ++eocit;
-      vertex_handles[4] = viennagrid::find_by_id( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(*eocit) ).handle(); ++eocit;
-      vertex_handles[5] = viennagrid::find_by_id( segment_out, viennadata::access<refinement_key, VertexIDTypeOut>(refinement_key())(*eocit) ).handle();
+      vertex_handles[3] = edge_to_vertex_handle_accessor(*eocit); ++eocit;
+      vertex_handles[4] = edge_to_vertex_handle_accessor(*eocit); ++eocit;
+      vertex_handles[5] = edge_to_vertex_handle_accessor(*eocit);
       
       //
       // Step 2: Add new cells to new domain:
       //
-//       CellType new_cell;
-//       VertexType * cellvertices[topology::bndcells<triangle_tag, 0>::num];
-//       
-//       //0-3-4:
-//       cellvertices[0] = vertices[0];
-//       cellvertices[1] = vertices[3];
-//       cellvertices[2] = vertices[4];
-//       new_cell.vertices(cellvertices);
-//       segment_out.push_back(new_cell);
-      
+
+      //0-3-4:
       create_refinement_cell<CellType>( segment_out, vertex_handles, 0, 3, 4 );
 
-//       //3-1-5:
-//       cellvertices[0] = vertices[3];
-//       cellvertices[1] = vertices[1];
-//       cellvertices[2] = vertices[5];
-//       new_cell.vertices(cellvertices);
-//       segment_out.push_back(new_cell);
-      
+      //3-1-5:
       create_refinement_cell<CellType>( segment_out, vertex_handles, 3, 1, 5 );
 
-//       //4-5-2:
-//       cellvertices[0] = vertices[4];
-//       cellvertices[1] = vertices[5];
-//       cellvertices[2] = vertices[2];
-//       new_cell.vertices(cellvertices);
-//       segment_out.push_back(new_cell);
-      
+      //4-5-2:
       create_refinement_cell<CellType>( segment_out, vertex_handles, 4, 5, 2 );
 
-//       //4-3-5:
-//       cellvertices[0] = vertices[4];
-//       cellvertices[1] = vertices[3];
-//       cellvertices[2] = vertices[5];
-//       new_cell.vertices(cellvertices);
-//       segment_out.push_back(new_cell);
-      
+      //4-3-5:
       create_refinement_cell<CellType>( segment_out, vertex_handles, 4, 3, 5 );
       
     } //apply3()
@@ -446,8 +360,9 @@ namespace viennagrid
      * @param cell_in       The triangle to be refined
      * @param segment_out   The domain or segment the refined triangles are written to
      */
-    template <typename CellType, typename DomainTypeOut>
-    static void apply(CellType const & cell_in, DomainTypeOut & segment_out)
+    template <typename CellType, typename DomainTypeOut, typename EdgeRefinementFlagAccessor, typename EdgeToVertexHandleAccessor>
+    static void apply(CellType const & cell_in, DomainTypeOut & segment_out,
+                      EdgeRefinementFlagAccessor const edge_refinement_flag_accessor, EdgeToVertexHandleAccessor edge_to_vertex_handle_accessor)
     {
       typedef typename viennagrid::result_of::const_element_range<CellType, viennagrid::line_tag>::type            EdgeOnCellRange;
       typedef typename viennagrid::result_of::iterator<EdgeOnCellRange>::type                 EdgeOnCellIterator;            
@@ -458,16 +373,16 @@ namespace viennagrid
                               eocit != edges_on_cell.end();
                             ++eocit)
       {
-        if (viennadata::access<refinement_key, bool>(refinement_key())(*eocit) == true)
+        if ( edge_refinement_flag_accessor(*eocit) )
           ++edges_to_refine;
       }
       
       switch (edges_to_refine)
       {
-        case 0: apply0(cell_in, segment_out); break;
-        case 1: apply1(cell_in, segment_out); break;
-        case 2: apply2(cell_in, segment_out); break;
-        case 3: apply3(cell_in, segment_out); break;
+        case 0: apply0(cell_in, segment_out, edge_refinement_flag_accessor, edge_to_vertex_handle_accessor); break;
+        case 1: apply1(cell_in, segment_out, edge_refinement_flag_accessor, edge_to_vertex_handle_accessor); break;
+        case 2: apply2(cell_in, segment_out, edge_refinement_flag_accessor, edge_to_vertex_handle_accessor); break;
+        case 3: apply3(cell_in, segment_out, edge_refinement_flag_accessor, edge_to_vertex_handle_accessor); break;
         default: //nothing to do...
                 break;
       }

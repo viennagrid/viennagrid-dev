@@ -19,7 +19,6 @@
 ======================================================================= */
 
 #include <vector>
-#include <boost/concept_check.hpp>
 #include "viennagrid/forwards.hpp"
 #include "viennagrid/element/element.hpp"
 #include "viennagrid/domain/accessor.hpp"
@@ -78,7 +77,7 @@ namespace viennagrid
   
   template <typename DomainType, typename SourceAccessorType, typename DestinationAccessorType>
   void transfer_boundary_information(DomainType const & domain,
-                       SourceAccessorType const & source_boundary_info_accessor,
+                       SourceAccessorType const source_boundary_info_accessor,
                        DestinationAccessorType destination_boundary_info_accessor
                       )
   {
@@ -237,7 +236,7 @@ namespace viennagrid
    * @param domain  The ViennaGrid domain
    */
   template <typename ElementType, typename AccessorType>
-  bool is_boundary(AccessorType const & boundary_info_accessor,
+  bool is_boundary(AccessorType const boundary_info_accessor,
                    ElementType const & element)
   {
       return boundary_info_accessor(element);

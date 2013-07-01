@@ -20,9 +20,8 @@
 
 
 
-#include "viennagrid/domain/metainfo.hpp"
-#include <boost/concept_check.hpp>
-#include "../storage/container_collection.hpp"
+// #include "viennagrid/domain/metainfo.hpp"
+// #include "../forwards.hpp"
 
 
 namespace viennadata
@@ -46,16 +45,17 @@ namespace viennagrid
     namespace accessor
     {
         
-        template<typename point_type, typename element_type>
+        template<typename value_type_, typename element_type>
         class appendix_accessor_t
         {
-            typedef point_type value_type;
+        public:
+            typedef value_type_ value_type;
             typedef element_type access_type;
             
             value_type       * find( access_type & element )              { return &element.appendix(); }
             value_type const * find( access_type const & element )  const { return &element.appendix(); }
 
-            value_type       & access_unchecked( access_type const & element )       { return access(element); }
+            value_type       & access_unchecked( access_type & element )       { return access(element); }
             value_type const & access_unchecked( access_type const & element ) const { return access(element); }
             
             value_type       & access( access_type & element )             { return element.appendix(); }
@@ -90,6 +90,38 @@ namespace viennagrid
         
         
         
+        template<typename domain_or_element_type>
+        appendix_accessor_t<
+          typename viennagrid::result_of::point_type<domain_or_element_type>::type,
+          typename viennagrid::result_of::vertex<domain_or_element_type>::type
+          > default_point_accessor( domain_or_element_type const & domain_or_element )
+        {
+          return appendix_accessor_t<
+            typename viennagrid::result_of::point_type<domain_or_element_type>::type,
+            typename viennagrid::result_of::vertex<domain_or_element_type>::type
+          >();
+        }
+    }
+    
+    
+    namespace result_of
+    {
+        template<typename value_type, typename EB, typename EC, typename ED>
+        struct point_type< accessor::appendix_accessor_t<value_type, element_t<vertex_tag, EB, EC, ED> > >
+        {
+            typedef value_type type;
+        };
+        
+        template<typename value_type, typename EB, typename EC, typename ED>
+        struct point_type< const accessor::appendix_accessor_t<value_type, element_t<vertex_tag, EB, EC, ED> > >
+        {
+            typedef value_type type;
+        };
+    }
+    
+        
+    namespace accessor
+    {
         template<typename key_type, typename value_type_, typename element_type_>
         class viennadata_accessor_t
         {
@@ -178,6 +210,38 @@ namespace viennagrid
             container_type & container;
         };
         
+        
+        
+        template<typename container_type_, typename element_type_>
+        class dense_container_accessor_t<const container_type_, element_type_>
+        {
+        public:
+            
+            typedef container_type_ container_type;
+            typedef typename container_type::value_type value_type;
+            typedef element_type_ access_type;
+            
+            dense_container_accessor_t( container_type const & container_ ) : container(container_) {}
+            
+            typename container_type::const_pointer find( access_type const & element )  const { return (element.id().get() >= container.size()) ? NULL : &container[ element.id().get() ]; }
+
+            typename container_type::const_reference access_unchecked( access_type const & element ) const { return container[ element.id().get() ]; }
+
+            typename container_type::const_reference access( access_type const & element ) const
+            {
+                assert(container.size() > element.id().get());
+                return container[ element.id().get() ];
+            }
+
+            typename container_type::const_reference operator()( access_type const & element ) const { return access(element); }            
+            
+        private:
+            container_type const & container;
+        };
+        
+        
+        
+        
         template<typename element_type, typename container_type>
         dense_container_accessor_t< container_type, element_type > dense_container_accessor( container_type & container )
         { return dense_container_accessor_t< container_type, element_type >(container); }
@@ -212,6 +276,22 @@ namespace viennagrid
             return dense_container_accessor<element_type>( storage::collection::get<element_type>(collection) );
         }
         
+    }
+    
+    namespace result_of
+    {
+        template<typename value_type, typename EB, typename EC, typename ED>
+        struct point_type< accessor::dense_container_accessor_t<value_type, element_t<vertex_tag, EB, EC, ED> > >
+        {
+            typedef typename accessor::dense_container_accessor_t<value_type, element_t<vertex_tag, EB, EC, ED> >::value_type type;
+        };
+        
+        template<typename value_type, typename EB, typename EC, typename ED>
+        struct point_type< const accessor::dense_container_accessor_t<value_type, element_t<vertex_tag, EB, EC, ED> > >
+        {
+            typedef typename accessor::dense_container_accessor_t<value_type, element_t<vertex_tag, EB, EC, ED> >::value_type type;
+        };
+    }
         
 
         
@@ -306,7 +386,7 @@ namespace viennagrid
 
         
     
-    }
+//     }
     
 }
 

@@ -753,8 +753,10 @@ namespace viennagrid
   std::ostream& operator << (std::ostream & os, point_t<CoordType, CoordinateSystem> const & p)
   {
     typedef typename point_t<CoordType, CoordinateSystem>::size_type      size_type;
+    os << "(";
     for (size_type i=0; i<static_cast<size_type>(CoordinateSystem::dim); ++i)
-      os << p[i] << " ";
+      os << p[i] << (i == static_cast<size_type>(CoordinateSystem::dim)-1 ? "" :" ");
+    os << ")";
     return os;
   }
   

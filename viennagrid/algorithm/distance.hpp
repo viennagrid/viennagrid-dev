@@ -45,43 +45,56 @@ namespace viennagrid
     //
     
     // Distance between two points:
-    template <typename CoordType, typename CoordinateSystem>
-    CoordType
-    distance_impl(point_t<CoordType, CoordinateSystem> const & p1,
-                  point_t<CoordType, CoordinateSystem> const & p2)
+    template <typename PointType1, typename PointType2>
+    typename viennagrid::result_of::coord_type<PointType1>::type
+    distance_impl(PointType1 const & p1,
+                  PointType2 const & p2)
     {
       return norm_2(p1 - p2);
     }
-
-    template <typename DomainPointType, typename TopologicDomainType, typename MetainfoCollectionType,
-              typename CoordType, typename CoordinateSystem, typename BoundaryCellTypelist, typename IDType>
-    CoordType
-    distance_impl(domain_t<DomainPointType, TopologicDomainType, MetainfoCollectionType> const & domain,
-                  point_t<CoordType, CoordinateSystem> const & p1,
-                  element_t<viennagrid::vertex_tag, BoundaryCellTypelist, IDType> const & v2)
+    
+    template <typename PointType1, typename PointType2>
+    typename viennagrid::result_of::coord_type<PointType1>::type
+    distance_impl( std::pair<PointType1,PointType2> const & pts)
     {
-      return norm_2(p1 - viennagrid::point(domain, v2));
+      return distance_impl(pts.first, pts.second);
+    }
+    
+    template <typename PointAccessorType, typename CoordType1, typename CoordinateSystem1, typename CoordType2, typename CoordinateSystem2>
+    CoordType1
+    distance_impl(PointAccessorType const accessor,
+                  point_t<CoordType1, CoordinateSystem1> const & p1,
+                  point_t<CoordType2, CoordinateSystem2> const & p2)
+    {
+      return distance_impl(p1, p2);
     }
 
-    template <typename DomainPointType, typename TopologicDomainType, typename MetainfoCollectionType,
-              typename CoordType, typename CoordinateSystem, typename BoundaryCellTypelist, typename IDType>
-    CoordType
-    distance_impl(domain_t<DomainPointType, TopologicDomainType, MetainfoCollectionType> const & domain,
-                  element_t<viennagrid::vertex_tag, BoundaryCellTypelist, IDType> const & v1,
-                  point_t<CoordType, CoordinateSystem> const & p2)
+    template <typename PointAccessorType, typename PointType, typename EB, typename EC, typename ED>
+    typename viennagrid::result_of::coord_type<PointType>::type
+    distance_impl(PointAccessorType const accessor,
+                  PointType const & p1,
+                  element_t<viennagrid::vertex_tag, EB,EC,ED> const & v2)
     {
-      return norm_2(viennagrid::point(domain, v1) - p2);
+      return distance_impl(p1, accessor(v2));
+    }
+
+    template <typename PointAccessorType, typename PointType, typename EB, typename EC, typename ED>
+    typename viennagrid::result_of::coord_type<PointAccessorType>::type
+    distance_impl(PointAccessorType const accessor,
+                  element_t<viennagrid::vertex_tag, EB,EC,ED> const & v1,
+                  PointType const & p2)
+    {
+      return distance_impl(accessor(v1), p2);
     }
     
     // Distance between vertices: Use point distance
-    template <typename DomainPointType, typename TopologicDomainType, typename MetainfoCollectionType,
-              typename BoundaryCellTypelist, typename IDType>
-    typename result_of::coord_type<DomainPointType>::type
-    distance_impl(domain_t<DomainPointType, TopologicDomainType, MetainfoCollectionType> const & domain,
-                  element_t<viennagrid::vertex_tag, BoundaryCellTypelist, IDType> const & v1,
-                  element_t<viennagrid::vertex_tag, BoundaryCellTypelist, IDType> const & v2)
+    template <typename PointAccessorType, typename PointType, typename EB1, typename EC1, typename ED1, typename EB2, typename EC2, typename ED2>
+    typename result_of::coord_type<PointAccessorType>::type
+    distance_impl(PointAccessorType const accessor,
+                  element_t<viennagrid::vertex_tag, EB1,EC1,ED1> const & v1,
+                  element_t<viennagrid::vertex_tag, EB2,EC2,ED2> const & v2)
     {
-      return norm_2(viennagrid::point(domain, v1) - viennagrid::point(domain, v2));
+      return distance_impl(accessor(v1), accessor(v2));
     }
 
     
@@ -89,110 +102,121 @@ namespace viennagrid
     //
     // Generic distance computation: Reuse closest_points()
     //
-    template <typename DomainPointType, typename TopologicDomainType, typename MetainfoCollectionType,
-              typename ElementType1, typename ElementType2>
-    typename result_of::coord_type<DomainPointType>::type
-    distance_impl(domain_t<DomainPointType, TopologicDomainType, MetainfoCollectionType> const & domain,
-                  ElementType1 const & el1,
-                  ElementType2 const & el2)
+    template <typename PointAccessorType, typename Something1, typename Something2>
+    typename result_of::coord_type<PointAccessorType>::type
+    distance_impl(PointAccessorType const accessor,
+                  Something1 const & el1,
+                  Something2 const & el2)
     {
       //typedef typename result_of::point<ElementType1>::type   PointType;
-      typedef DomainPointType PointType;
+      typedef typename result_of::point_type<PointAccessorType>::type PointType;
       
-      std::pair<PointType, PointType> points = closest_points(domain, el1, el2);
+      std::pair<PointType, PointType> points = closest_points(accessor, el1, el2);
       
-      return norm_2(points.first - points.second);
+      return distance_impl( points );
     }
     
     
     
     ////////////////////////////////// boundary distance //////////////////////////////////////
 
-    // Distance between two points:
-    template <typename CoordType, typename CoordinateSystem>
-    CoordType
-    boundary_distance_impl(point_t<CoordType, CoordinateSystem> const & p1,
-                           point_t<CoordType, CoordinateSystem> const & p2)
+    
+    template <typename PointType1, typename PointType2>
+    typename viennagrid::result_of::coord_type<PointType1>::type
+    boundary_distance_impl(PointType1 const & p1,
+                  PointType2 const & p2)
     {
       return norm_2(p1 - p2);
     }
-
-    template <typename DomainPointType, typename TopologicDomainType, typename MetainfoCollectionType,
-              typename CoordType, typename CoordinateSystem, typename BoundaryCellTypelist, typename IDType>
-    CoordType
-    boundary_distance_impl(domain_t<DomainPointType, TopologicDomainType, MetainfoCollectionType> const & domain,
-                           point_t<CoordType, CoordinateSystem> const & p1,
-                           element_t<vertex_tag, BoundaryCellTypelist, IDType> const & v2)
+    
+    template <typename PointType1, typename PointType2>
+    typename viennagrid::result_of::coord_type<PointType1>::type
+    boundary_distance_impl( std::pair<PointType1,PointType2> const & pts)
     {
-      return norm_2(p1 - viennagrid::point(domain, v2));
+      return boundary_distance_impl(pts.first, pts.second);
+    }
+    
+    template <typename PointAccessorType, typename CoordType1, typename CoordinateSystem1, typename CoordType2, typename CoordinateSystem2>
+    CoordType1
+    boundary_distance_impl(PointAccessorType const accessor,
+                  point_t<CoordType1, CoordinateSystem1> const & p1,
+                  point_t<CoordType2, CoordinateSystem2> const & p2)
+    {
+      return boundary_distance_impl(p1, p2);
     }
 
-    template <typename DomainPointType, typename TopologicDomainType, typename MetainfoCollectionType,
-              typename CoordType, typename CoordinateSystem, typename BoundaryCellTypelist, typename IDType>
-    CoordType
-    boundary_distance_impl(domain_t<DomainPointType, TopologicDomainType, MetainfoCollectionType> const & domain,
-                           element_t<vertex_tag, BoundaryCellTypelist, IDType> const & v1,
-                           point_t<CoordType, CoordinateSystem> const & p2)
+    template <typename PointAccessorType, typename PointType, typename EB, typename EC, typename ED>
+    typename viennagrid::result_of::coord_type<PointType>::type
+    boundary_distance_impl(PointAccessorType const accessor,
+                  PointType const & p1,
+                  element_t<viennagrid::vertex_tag, EB,EC,ED> const & v2)
     {
-      return norm_2(viennagrid::point(domain, v1) - p2);
+      return boundary_distance_impl(p1, accessor(v2));
+    }
+
+    template <typename PointAccessorType, typename PointType, typename EB, typename EC, typename ED>
+    typename viennagrid::result_of::coord_type<PointAccessorType>::type
+    boundary_distance_impl(PointAccessorType const accessor,
+                  element_t<viennagrid::vertex_tag, EB,EC,ED> const & v1,
+                  PointType const & p2)
+    {
+      return boundary_distance_impl(accessor(v1), p2);
     }
     
     // Distance between vertices: Use point distance
-    template <typename DomainPointType, typename TopologicDomainType, typename MetainfoCollectionType,
-              typename BoundaryCellTypelist, typename IDType>
-    typename result_of::coord_type<DomainPointType>::type
-    boundary_distance_impl(domain_t<DomainPointType, TopologicDomainType, MetainfoCollectionType> const & domain,
-                           element_t<vertex_tag, BoundaryCellTypelist, IDType> const & v1,
-                           element_t<vertex_tag, BoundaryCellTypelist, IDType> const & v2)
+    template <typename PointAccessorType, typename PointType, typename EB1, typename EC1, typename ED1, typename EB2, typename EC2, typename ED2>
+    typename result_of::coord_type<PointAccessorType>::type
+    boundary_distance_impl(PointAccessorType const accessor,
+                  element_t<viennagrid::vertex_tag, EB1,EC1,ED1> const & v1,
+                  element_t<viennagrid::vertex_tag, EB2,EC2,ED2> const & v2)
     {
-      return norm_2(viennagrid::point(domain, v1) - viennagrid::point(domain, v2));
+      return boundary_distance_impl(accessor(v1), accessor(v2));
     }
-
+    
     
     
     //
     // Generic distance computation: Reuse closest_points()
     //
-    template <typename DomainPointType, typename TopologicDomainType, typename MetainfoCollectionType,
-              typename ElementType1, typename ElementType2>
-    typename result_of::coord_type<DomainPointType>::type
-    boundary_distance_impl(domain_t<DomainPointType, TopologicDomainType, MetainfoCollectionType> const & domain,
-                           ElementType1 const & el1,
-                           ElementType2 const & el2)
+    template <typename PointAccessorType, typename Something1, typename Something2>
+    typename result_of::coord_type<PointAccessorType>::type
+    boundary_distance_impl(PointAccessorType const accessor,
+                           Something1 const & el1,
+                           Something2 const & el2)
     {
       //typedef typename result_of::point<ElementType1>::type      PointType;
-      typedef DomainPointType PointType;
+      typedef typename result_of::point_type<PointAccessorType>::type PointType;
       
-      std::pair<PointType, PointType> points = closest_points_on_boundary(domain, el1, el2);
+      std::pair<PointType, PointType> points = closest_points_on_boundary(accessor, el1, el2);
       
-      return norm_2(points.first - points.second);
+      return boundary_distance_impl(points);
     }
     
-    template <typename ElementTypeOrTag, typename DomainPointType, typename TopologicDomainType, typename MetainfoCollectionType, typename ElementType>
-    typename result_of::coord_type<DomainPointType>::type
-    boundary_distance_impl(domain_t<DomainPointType, TopologicDomainType, MetainfoCollectionType> const & domain,
-                           ElementType const & element)
-    {
-      //typedef typename result_of::point<ElementType1>::type      PointType;
-      typedef DomainPointType PointType;
-      
-      std::pair<PointType, PointType> points = closest_points_on_boundary<ElementTypeOrTag>(domain, element);
-      
-      return norm_2(points.first - points.second);
-    }
-    
-    template <typename ElementTypeOrTag, typename DomainPointType, typename TopologicDomainType, typename MetainfoCollectionType, typename ElementType>
-    typename result_of::coord_type<DomainPointType>::type
-    boundary_distance_impl(ElementType const & element,
-                           domain_t<DomainPointType, TopologicDomainType, MetainfoCollectionType> const & domain)
-    {
-      //typedef typename result_of::point<ElementType1>::type      PointType;
-      typedef DomainPointType PointType;
-      
-      std::pair<PointType, PointType> points = closest_points_on_boundary<ElementTypeOrTag>(domain, element);
-      
-      return norm_2(points.first - points.second);
-    }
+//     template <typename ElementTypeOrTag, typename DomainPointType, typename TopologicDomainType, typename MetainfoCollectionType, typename ElementType>
+//     typename result_of::coord_type<DomainPointType>::type
+//     boundary_distance_impl(domain_t<DomainPointType, TopologicDomainType, MetainfoCollectionType> const & domain,
+//                            ElementType const & element)
+//     {
+//       //typedef typename result_of::point<ElementType1>::type      PointType;
+//       typedef DomainPointType PointType;
+//       
+//       std::pair<PointType, PointType> points = closest_points_on_boundary<ElementTypeOrTag>(domain, element);
+//       
+//       return norm_2(points.first - points.second);
+//     }
+//     
+//     template <typename ElementTypeOrTag, typename DomainPointType, typename TopologicDomainType, typename MetainfoCollectionType, typename ElementType>
+//     typename result_of::coord_type<DomainPointType>::type
+//     boundary_distance_impl(ElementType const & element,
+//                            domain_t<DomainPointType, TopologicDomainType, MetainfoCollectionType> const & domain)
+//     {
+//       //typedef typename result_of::point<ElementType1>::type      PointType;
+//       typedef DomainPointType PointType;
+//       
+//       std::pair<PointType, PointType> points = closest_points_on_boundary<ElementTypeOrTag>(domain, element);
+//       
+//       return norm_2(points.first - points.second);
+//     }
     
     
   } //namespace detail
@@ -201,44 +225,77 @@ namespace viennagrid
   // The public interface functions
   //
   /** @brief Returns the distance between n-cells, segments and/or domains */
-  template <typename DomainPointType, typename TopologicDomainType, typename MetainfoCollectionType,
-            typename ElementType1, typename ElementType2>
-  typename result_of::coord_type<DomainPointType>::type
-  distance(domain_t<DomainPointType, TopologicDomainType, MetainfoCollectionType> const & domain,
-           ElementType1 const & el1,
-           ElementType2 const & el2)
+  template <typename PointAccessorType, typename Something1, typename Something2>
+  typename result_of::coord_type<Something1>::type
+  distance(PointAccessorType const accessor,
+           Something1 const & el1,
+           Something2 const & el2)
   {
-    return detail::distance_impl(domain, el1, el2);
+    return detail::distance_impl(accessor, el1, el2);
   }
   
   
-  /** @brief Returns the distance between the boundary of n-cells, segments and/or domains */
-  template <typename DomainPointType, typename TopologicDomainType, typename MetainfoCollectionType,
-            typename ElementType1, typename ElementType2>
-  typename result_of::coord_type<DomainPointType>::type
-  boundary_distance(domain_t<DomainPointType, TopologicDomainType, MetainfoCollectionType> const & domain,
-                    ElementType1 const & el1, ElementType2 const & el2)
+  template <typename Something1, typename Something2>
+  typename result_of::coord_type<Something1>::type
+  distance(Something1 const & el1,
+           Something2 const & el2)
   {
-    return detail::boundary_distance_impl(domain, el1, el2);
+    return detail::distance_impl( accessor::default_point_accessor(el1), el1, el2 );
   }
   
-  /** @brief Returns the distance between the boundary of n-cells, segments and/or domains */
-  template <typename ElementTypeOrTag, typename DomainPointType, typename TopologicDomainType, typename MetainfoCollectionType, typename ElementType>
-  typename result_of::coord_type<DomainPointType>::type
-  boundary_distance(domain_t<DomainPointType, TopologicDomainType, MetainfoCollectionType> const & domain,
-                    ElementType const & element)
+  
+  
+  
+  /** @brief Returns the distance between n-cells, segments and/or domains */
+  template <typename PointAccessorType, typename Something1, typename Something2>
+  typename result_of::coord_type<Something1>::type
+  boundary_distance(PointAccessorType const accessor,
+           Something1 const & el1,
+           Something2 const & el2)
   {
-    return detail::boundary_distance_impl<ElementTypeOrTag>(domain, element);
+    return detail::boundary_distance_impl(accessor, el1, el2);
   }
   
-  /** @brief Returns the distance between the boundary of n-cells, segments and/or domains */
-  template <typename ElementTypeOrTag, typename DomainPointType, typename TopologicDomainType, typename MetainfoCollectionType, typename ElementType>
-  typename result_of::coord_type<DomainPointType>::type
-  boundary_distance(ElementType const & element,
-                    domain_t<DomainPointType, TopologicDomainType, MetainfoCollectionType> const & domain)
+  /** @brief Returns the distance between n-cells, segments and/or domains */
+  template <typename Something1, typename Something2>
+  typename result_of::coord_type<Something1>::type
+  boundary_distance(Something1 const & el1,
+                    Something2 const & el2)
   {
-    return detail::boundary_distance_impl<ElementTypeOrTag>(domain, element);
+    return detail::boundary_distance_impl( accessor::default_point_accessor(el1), el1, el2 );
   }
+  
+  
+  
+  
+  
+//   /** @brief Returns the distance between the boundary of n-cells, segments and/or domains */
+//   template <typename DomainPointType, typename TopologicDomainType, typename MetainfoCollectionType,
+//             typename ElementType1, typename ElementType2>
+//   typename result_of::coord_type<DomainPointType>::type
+//   boundary_distance(domain_t<DomainPointType, TopologicDomainType, MetainfoCollectionType> const & domain,
+//                     ElementType1 const & el1, ElementType2 const & el2)
+//   {
+//     return detail::boundary_distance_impl(domain, el1, el2);
+//   }
+//   
+//   /** @brief Returns the distance between the boundary of n-cells, segments and/or domains */
+//   template <typename ElementTypeOrTag, typename DomainPointType, typename TopologicDomainType, typename MetainfoCollectionType, typename ElementType>
+//   typename result_of::coord_type<DomainPointType>::type
+//   boundary_distance(domain_t<DomainPointType, TopologicDomainType, MetainfoCollectionType> const & domain,
+//                     ElementType const & element)
+//   {
+//     return detail::boundary_distance_impl<ElementTypeOrTag>(domain, element);
+//   }
+//   
+//   /** @brief Returns the distance between the boundary of n-cells, segments and/or domains */
+//   template <typename ElementTypeOrTag, typename DomainPointType, typename TopologicDomainType, typename MetainfoCollectionType, typename ElementType>
+//   typename result_of::coord_type<DomainPointType>::type
+//   boundary_distance(ElementType const & element,
+//                     domain_t<DomainPointType, TopologicDomainType, MetainfoCollectionType> const & domain)
+//   {
+//     return detail::boundary_distance_impl<ElementTypeOrTag>(domain, element);
+//   }
   
 } //namespace viennagrid
 #endif

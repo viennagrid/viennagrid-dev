@@ -45,6 +45,18 @@ namespace viennagrid
         {
             typedef typename viennagrid::result_of::vertex< domain_t<A, B, C> >::type::appendix_type type;
         };
+        
+        template<typename EA, typename EB, typename EC, typename ED>
+        struct point_type< element_t<EA, EB, EC, ED> >
+        {
+            typedef typename viennagrid::result_of::vertex< element_t<EA, EB, EC, ED> >::type::appendix_type type;
+        };
+        
+        template<typename EA, typename EB, typename EC, typename ED>
+        struct point_type< const element_t<EA, EB, EC, ED> >
+        {
+            typedef typename viennagrid::result_of::vertex< element_t<EA, EB, EC, ED> >::type::appendix_type type;
+        };
     }
     
     
