@@ -43,7 +43,7 @@
 //Domain-based algorithms:
 #include "viennagrid/algorithm/boundary.hpp"
 #include "viennagrid/algorithm/refine.hpp"
-// #include "viennagrid/algorithm/voronoi.hpp"
+#include "viennagrid/algorithm/voronoi.hpp"
 
 
 #include <typeinfo>
@@ -168,18 +168,34 @@ int main()
   // Part 3: Domain-based algorithms (except interfaces. Refer to the multi-segment tutorial multi_segment.cpp)
   //
   
-  //
+  
+  typedef viennagrid::result_of::const_handle<Domain, CellType>::type    ConstCellHandleType;
+  
+  std::deque<double> interface_areas;
+  std::deque< viennagrid::result_of::voronoi_cell_contribution<ConstCellHandleType>::type > interface_contributions;
+  
+  std::deque<double> vertex_box_volumes;
+  std::deque< viennagrid::result_of::voronoi_cell_contribution<ConstCellHandleType>::type > vertex_box_volume_contributions;
+  
+  std::deque<double> edge_box_volumes;
+  std::deque< viennagrid::result_of::voronoi_cell_contribution<ConstCellHandleType>::type > edge_box_volume_contributions;
+  
+  
   // Write Voronoi info to default ViennaData keys:
-//   viennagrid::apply_voronoi<CellType>(domain);
+  viennagrid::apply_voronoi<CellType>(
+          domain,
+          viennagrid::accessor::dense_container_accessor<EdgeType>(interface_areas),
+          viennagrid::accessor::dense_container_accessor<EdgeType>(interface_contributions),
+          viennagrid::accessor::dense_container_accessor<VertexType>(vertex_box_volumes),
+          viennagrid::accessor::dense_container_accessor<VertexType>(vertex_box_volume_contributions),
+          viennagrid::accessor::dense_container_accessor<EdgeType>(edge_box_volumes),
+          viennagrid::accessor::dense_container_accessor<EdgeType>(edge_box_volume_contributions)
+  );
   
   // Write Voronoi info again, this time using custom keys
-//   std::string interface_area_key = "voronoi_interface";
-//   std::string box_volume_key = "voronoi_volume";
-//   viennagrid::apply_voronoi<CellType>(domain, interface_area_key, box_volume_key);
-//   
-//   std::cout << "Voronoi box volume at first vertex: "
-//             << viennadata::access<std::string, double>(box_volume_key)(vertices[0])
-//             << std::endl;
+  std::cout << "Voronoi box volume at first vertex: "
+            << vertex_box_volumes[ vertices[0].id().get() ]
+            << std::endl;
   
             
 

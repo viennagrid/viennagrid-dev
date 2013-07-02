@@ -29,7 +29,7 @@
 #include "viennagrid/algorithm/volume.hpp"
 #include "viennagrid/algorithm/inner_prod.hpp"
 
-#include "viennadata/api.hpp"
+// #include "viennadata/api.hpp"
 
 /** @file voronoi.hpp
     @brief Computes the Voronoi information for a Delaunay triangulation.
@@ -76,62 +76,69 @@ namespace viennagrid
     }
     
     
-    /** @brief Implementation of the computation of Voronoi quantities for a quadrilateral domain */
-    template <typename CellType,
-              typename DomainType,
-              typename InterfaceAreaKey,
-              typename BoxVolumeKey>
-    void clear_voronoi_info(DomainType const & domain,
-                            InterfaceAreaKey const & interface_key,
-                            BoxVolumeKey const & box_volume_key)
-    {
-      //std::cout << "Warning: Voronoi info for quadrilaterals is only correct when having rectangles only." << std::endl;
-      //typedef typename DomainType::config_type           Config;
-      //typedef typename Config::cell_tag                  CellTag;
-      typedef typename viennagrid::result_of::point_type<DomainType>::type                            PointType;
-      typedef typename viennagrid::result_of::element<DomainType, vertex_tag>::type                         VertexType;
-      typedef typename viennagrid::result_of::element<DomainType, line_tag>::type                         EdgeType;
-      //typedef typename viennagrid::result_of::element<DomainType, CellTag::dim>::type              CellType;
-
-      typedef typename viennagrid::result_of::const_element_range<DomainType, vertex_tag>::type               VertexRange;
-      typedef typename viennagrid::result_of::iterator<VertexRange>::type                          VertexIterator;
-      
-      typedef typename viennagrid::result_of::const_element_range<DomainType, line_tag>::type               EdgeRange;
-      typedef typename viennagrid::result_of::iterator<EdgeRange>::type                            EdgeIterator;
-      
-      typedef typename viennagrid::result_of::voronoi_cell_contribution<CellType>::type      CellContributionType;
-
-      // Ensure that everything is clean:
-      VertexRange vertices = viennagrid::elements<VertexType>(domain);
-      for (VertexIterator vit  = vertices.begin();
-                          vit != vertices.end();
-                        ++vit)
-      {
-        viennadata::access<BoxVolumeKey, double>(box_volume_key)(*vit) = 0;
-        viennadata::access<BoxVolumeKey, CellContributionType>(box_volume_key)(*vit).clear();
-      }
-      
-      EdgeRange edges = viennagrid::elements<EdgeType>(domain);
-      for (EdgeIterator eit  = edges.begin();
-                        eit != edges.end();
-                      ++eit)
-      {
-        viennadata::access<InterfaceAreaKey, double>(interface_key)(*eit) = 0;
-        viennadata::access<BoxVolumeKey, double>(box_volume_key)(*eit) = 0;
-        viennadata::access<InterfaceAreaKey, CellContributionType>(interface_key)(*eit).clear();
-        viennadata::access<BoxVolumeKey, CellContributionType>(box_volume_key)(*eit).clear();
-      }
-
-    }
+//     /** @brief Implementation of the computation of Voronoi quantities for a quadrilateral domain */
+//     template <typename CellType,
+//               typename DomainType,
+//               typename InterfaceAreaKey,
+//               typename BoxVolumeKey>
+//     void clear_voronoi_info(DomainType const & domain,
+//                             InterfaceAreaKey const & interface_key,
+//                             BoxVolumeKey const & box_volume_key)
+//     {
+//       //std::cout << "Warning: Voronoi info for quadrilaterals is only correct when having rectangles only." << std::endl;
+//       //typedef typename DomainType::config_type           Config;
+//       //typedef typename Config::cell_tag                  CellTag;
+//       typedef typename viennagrid::result_of::point_type<DomainType>::type                            PointType;
+//       typedef typename viennagrid::result_of::element<DomainType, vertex_tag>::type                         VertexType;
+//       typedef typename viennagrid::result_of::element<DomainType, line_tag>::type                         EdgeType;
+//       //typedef typename viennagrid::result_of::element<DomainType, CellTag::dim>::type              CellType;
+// 
+//       typedef typename viennagrid::result_of::const_element_range<DomainType, vertex_tag>::type               VertexRange;
+//       typedef typename viennagrid::result_of::iterator<VertexRange>::type                          VertexIterator;
+//       
+//       typedef typename viennagrid::result_of::const_element_range<DomainType, line_tag>::type               EdgeRange;
+//       typedef typename viennagrid::result_of::iterator<EdgeRange>::type                            EdgeIterator;
+//       
+//       typedef typename viennagrid::result_of::voronoi_cell_contribution<CellType>::type      CellContributionType;
+// 
+//       // Ensure that everything is clean:
+//       VertexRange vertices = viennagrid::elements(domain);
+//       for (VertexIterator vit  = vertices.begin();
+//                           vit != vertices.end();
+//                         ++vit)
+//       {
+//         box_volume_accessor(*vit) = 0;
+//         box_volume_cell_contribution_accessor(*vit).clear();
+//       }
+//       
+//       EdgeRange edges = viennagrid::elements(domain);
+//       for (EdgeIterator eit  = edges.begin();
+//                         eit != edges.end();
+//                       ++eit)
+//       {
+//         interface_area_accessor(*eit) = 0;
+//         box_volume_accessor(*eit) = 0;
+//         BoxVolumeCellContributionAccessor(*eit).clear();
+//         box_volume_cell_contribution_accessor(*eit).clear();
+//       }
+//     }
     
     /** @brief Implementation of the computation of Voronoi quantities for a one-dimensional domain (line, 1-simplex) */
     template <typename CellTag,
               typename DomainType,
-              typename InterfaceAreaKey,
-              typename BoxVolumeKey>
+              typename InterfaceAreaAccessor,
+              typename InterfaceAreaCellContributionAccessor,
+              typename VertexBoxVolumeAccessor,
+              typename VertexBoxVolumeCellContributionAccessor,
+              typename EdgeBoxVolumeAccessor,
+              typename EdgeBoxVolumeCellContributionAccessor>
     void write_voronoi_info(DomainType const & domain,
-                            InterfaceAreaKey const & interface_key,
-                            BoxVolumeKey const & box_volume_key,
+                            InterfaceAreaAccessor interface_area_accessor,
+                            InterfaceAreaCellContributionAccessor interface_area_cell_contribution_accessor,
+                            VertexBoxVolumeAccessor vertex_box_volume_accessor,
+                            VertexBoxVolumeCellContributionAccessor vertex_box_volume_cell_contribution_accessor,
+                            EdgeBoxVolumeAccessor edge_box_volume_accessor,
+                            EdgeBoxVolumeCellContributionAccessor edge_box_volume_cell_contribution_accessor,
                             viennagrid::simplex_tag<1>)
     {
 //       typedef typename DomainType::config_type           Config;
@@ -157,7 +164,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::voronoi_cell_contribution<CellType>::type      CellContributionType;
 
       // Ensure that everything is clean:
-      clear_voronoi_info(domain, interface_key, box_volume_key);
+//       clear_voronoi_info(domain, interface_key, box_volume_key);
       
       
       //
@@ -169,8 +176,11 @@ namespace viennagrid
                         cit != cells.end();
                       ++cit)
       {
-        viennadata::access<InterfaceAreaKey, double>(interface_key)(*cit) = 1;
-        viennadata::access<InterfaceAreaKey, CellContributionType>(interface_key)(*cit).push_back( std::make_pair( &(*cit), 1) );
+        interface_area_accessor(*cit) = 1;
+        interface_area_cell_contribution_accessor(*cit).push_back( std::make_pair( &(*cit), 1) );
+        
+//         interface_area_accessor(*cit) = 1;
+//         BoxVolumeCellContributionAccessor(*cit).push_back( std::make_pair( &(*cit), 1) );
         
         double edge_contribution = 0;
         VertexOnCellRange vertices_on_cell = viennagrid::elements<VertexType>(*cit);
@@ -180,12 +190,19 @@ namespace viennagrid
         {
           double contribution = volume(*cit) / 2.0;
           edge_contribution += contribution;
-          viennadata::access<BoxVolumeKey, double>(box_volume_key)(*vocit) += contribution;
-          viennadata::access<BoxVolumeKey, CellContributionType>(box_volume_key)(*vocit).push_back( std::make_pair( &(*cit), contribution) );
+          
+          vertex_box_volume_accessor(*vocit) += contribution;
+          vertex_box_volume_cell_contribution_accessor(*vocit).push_back( std::make_pair( &(*cit), contribution) );
+          
+//           box_volume_accessor(*vocit) += contribution;
+//           box_volume_cell_contribution_accessor(*vocit).push_back( std::make_pair( &(*cit), contribution) );
         }
 
-        viennadata::access<BoxVolumeKey, double>(box_volume_key)(*cit) = edge_contribution;
-        viennadata::access<BoxVolumeKey, CellContributionType>(box_volume_key)(*cit).push_back( std::make_pair( &(*cit), edge_contribution) );
+        edge_box_volume_accessor(*cit) = edge_contribution;
+        edge_box_volume_cell_contribution_accessor(*cit).push_back( std::make_pair( &(*cit), edge_contribution) );
+        
+//         box_volume_accessor(*cit) = edge_contribution;
+//         box_volume_cell_contribution_accessor(*cit).push_back( std::make_pair( &(*cit), edge_contribution) );
 
       }
     }
@@ -193,14 +210,26 @@ namespace viennagrid
     /** @brief Implementation of the computation of Voronoi quantities for a one-dimensional domain (line, 1-hypercube) */
     template <typename CellTag,
               typename DomainType,
-              typename InterfaceAreaKey,
-              typename BoxVolumeKey>
+              typename InterfaceAreaAccessor,
+              typename InterfaceAreaCellContributionAccessor,
+              typename VertexBoxVolumeAccessor,
+              typename VertexBoxVolumeCellContributionAccessor,
+              typename EdgeBoxVolumeAccessor,
+              typename EdgeBoxVolumeCellContributionAccessor>
     void write_voronoi_info(DomainType const & domain,
-                            InterfaceAreaKey const & interface_key,
-                            BoxVolumeKey const & box_volume_key,
+                            InterfaceAreaAccessor interface_area_accessor,
+                            InterfaceAreaCellContributionAccessor interface_area_cell_contribution_accessor,
+                            VertexBoxVolumeAccessor vertex_box_volume_accessor,
+                            VertexBoxVolumeCellContributionAccessor vertex_box_volume_cell_contribution_accessor,
+                            EdgeBoxVolumeAccessor edge_box_volume_accessor,
+                            EdgeBoxVolumeCellContributionAccessor edge_box_volume_cell_contribution_accessor,
                             viennagrid::hypercube_tag<1>)
     {
-      write_voronoi_info<CellTag>(domain, interface_key, box_volume_key, viennagrid::simplex_tag<1>());
+        write_voronoi_info<CellTag>(domain,
+                                    interface_area_accessor, interface_area_cell_contribution_accessor,
+                                    vertex_box_volume_accessor, vertex_box_volume_cell_contribution_accessor,
+                                    edge_box_volume_accessor, edge_box_volume_cell_contribution_accessor,
+                                    viennagrid::simplex_tag<1>());
     }
     
     //
@@ -209,11 +238,19 @@ namespace viennagrid
     /** @brief Implementation of the computation of Voronoi quantities for a quadrilateral domain */
     template <typename CellTag,
               typename DomainType,
-              typename InterfaceAreaKey,
-              typename BoxVolumeKey>
+              typename InterfaceAreaAccessor,
+              typename InterfaceAreaCellContributionAccessor,
+              typename VertexBoxVolumeAccessor,
+              typename VertexBoxVolumeCellContributionAccessor,
+              typename EdgeBoxVolumeAccessor,
+              typename EdgeBoxVolumeCellContributionAccessor>
     void write_voronoi_info(DomainType const & domain,
-                            InterfaceAreaKey const & interface_key,
-                            BoxVolumeKey const & box_volume_key,
+                            InterfaceAreaAccessor interface_area_accessor,
+                            InterfaceAreaCellContributionAccessor interface_area_cell_contribution_accessor,
+                            VertexBoxVolumeAccessor vertex_box_volume_accessor,
+                            VertexBoxVolumeCellContributionAccessor vertex_box_volume_cell_contribution_accessor,
+                            EdgeBoxVolumeAccessor edge_box_volume_accessor,
+                            EdgeBoxVolumeCellContributionAccessor edge_box_volume_cell_contribution_accessor,
                             viennagrid::quadrilateral_tag)
     {
       //std::cout << "Warning: Voronoi info for quadrilaterals is only correct when having rectangles only." << std::endl;
@@ -245,7 +282,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::voronoi_cell_contribution<CellType>::type      CellContributionType;
 
       // Ensure that everything is clean:
-      clear_voronoi_info(domain, interface_key, box_volume_key);
+//       clear_voronoi_info(domain, interface_key, box_volume_key);
 
       
       //
@@ -269,8 +306,12 @@ namespace viennagrid
 
           // interface contribution:
           double interface_contribution = spanned_volume(circ_center, edge_midpoint);
-          viennadata::access<InterfaceAreaKey, double>(interface_key)(*eocit) += interface_contribution;
-          viennadata::access<InterfaceAreaKey, CellContributionType>(interface_key)(*eocit).push_back( std::make_pair( &(*cit), interface_contribution) );
+          
+          interface_area_accessor(*eocit) += interface_contribution;
+          interface_area_cell_contribution_accessor(*eocit).push_back( std::make_pair( &(*cit), interface_contribution) );
+          
+//           interface_area_accessor(*eocit) += interface_contribution;
+//           BoxVolumeCellContributionAccessor(*eocit).push_back( std::make_pair( &(*cit), interface_contribution) );
 
           //box volume contribution:
           double edge_contribution = 0;
@@ -281,11 +322,19 @@ namespace viennagrid
           {
             double contribution = spanned_volume(circ_center, edge_midpoint, viennagrid::point(domain, *voeit));
             edge_contribution += contribution;
-            viennadata::access<BoxVolumeKey, double>(box_volume_key)(*voeit) += contribution;
-            viennadata::access<BoxVolumeKey, CellContributionType>(box_volume_key)(*voeit).push_back( std::make_pair( &(*cit), contribution) );
+            
+            vertex_vertex_box_volume_accessor(*voeit) += contribution;
+            vertex_vertex_box_volume_cell_contribution_accessor(*eocit).push_back( std::make_pair( &(*cit), contribution) );
+            
+//             vertex_box_volume_accessor(*voeit) += contribution;
+//             vertex_box_volume_cell_contribution_accessor(*eocit).push_back( std::make_pair( &(*cit), contribution) );
           }
-          viennadata::access<BoxVolumeKey, double>(box_volume_key)(*eocit) += edge_contribution;
-          viennadata::access<BoxVolumeKey, CellContributionType>(box_volume_key)(*eocit).push_back( std::make_pair( &(*cit), edge_contribution) );
+          
+          edge_edge_box_volume_accessor(*eocit) += edge_contribution;
+          edge_edge_box_volume_cell_contribution_accessor(*eocit).push_back( std::make_pair( &(*cit), edge_contribution) );
+          
+//           edge_box_volume_accessor(*eocit) += edge_contribution;
+//           edge_box_volume_cell_contribution_accessor(*eocit).push_back( std::make_pair( &(*cit), edge_contribution) );
         } //for edges on cells
         
       } //for cells
@@ -346,11 +395,19 @@ namespace viennagrid
     /** @brief Implementation of the computation of Voronoi quantities for a triangular domain */
     template <typename CellTag,
               typename DomainType,
-              typename InterfaceAreaKey,
-              typename BoxVolumeKey>
+              typename InterfaceAreaAccessor,
+              typename InterfaceAreaCellContributionAccessor,
+              typename VertexBoxVolumeAccessor,
+              typename VertexBoxVolumeCellContributionAccessor,
+              typename EdgeBoxVolumeAccessor,
+              typename EdgeBoxVolumeCellContributionAccessor>
     void write_voronoi_info(DomainType const & domain,
-                            InterfaceAreaKey const & interface_key,
-                            BoxVolumeKey const & box_volume_key,
+                            InterfaceAreaAccessor interface_area_accessor,
+                            InterfaceAreaCellContributionAccessor interface_area_cell_contribution_accessor,
+                            VertexBoxVolumeAccessor vertex_box_volume_accessor,
+                            VertexBoxVolumeCellContributionAccessor vertex_box_volume_cell_contribution_accessor,
+                            EdgeBoxVolumeAccessor edge_box_volume_accessor,
+                            EdgeBoxVolumeCellContributionAccessor edge_box_volume_cell_contribution_accessor,
                             viennagrid::triangle_tag)
     {
       //typedef typename DomainType::config_type           Config;
@@ -384,7 +441,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::voronoi_cell_contribution<CellType>::type      CellContributionType;
 
       // Ensure that everything is clean:
-      clear_voronoi_info(domain, interface_key, box_volume_key);
+//       clear_voronoi_info(domain, interface_key, box_volume_key);
 
 
       CellRange cells = viennagrid::elements<CellTag>(domain);
@@ -468,19 +525,26 @@ namespace viennagrid
               
               // contribution from cell:
               interface_contribution = spanned_volume(edge_intersection, edge_midpoint);
-              viennadata::access<InterfaceAreaKey, double>(interface_key)(*eocit) += interface_contribution;
-              voronoi_unique_quantity_update(viennadata::access<InterfaceAreaKey, CellContributionType>(interface_key)(*eocit),
-                                             std::make_pair( &(*cit), interface_contribution) );
+              
+              interface_area_accessor(*eocit) += interface_contribution;
+              voronoi_unique_quantity_update(interface_area_cell_contribution_accessor(*eocit), std::make_pair( &(*cit), interface_contribution) );
+              
+//               interface_area_accessor(*eocit) += interface_contribution;
+//               voronoi_unique_quantity_update(BoxVolumeCellContributionAccessor(*eocit),
+//                                              std::make_pair( &(*cit), interface_contribution) );
 
               // contribution from other cell containing the circumcenter:
               interface_contribution = spanned_volume(edge_intersection, circ_center);
-              viennadata::access<InterfaceAreaKey, double>(interface_key)(*eocit) += interface_contribution;
+              interface_area_accessor(*eocit) += interface_contribution;
               if ( other_cell != NULL)
-                voronoi_unique_quantity_update(viennadata::access<InterfaceAreaKey, CellContributionType>(interface_key)(*eocit),
-                                               std::make_pair( other_cell, interface_contribution) );
+                voronoi_unique_quantity_update(interface_area_cell_contribution_accessor(*eocit), std::make_pair( other_cell, interface_contribution) );
+              
+//               interface_area_accessor(*eocit) += interface_contribution;
+//               if ( other_cell != NULL)
+//                 voronoi_unique_quantity_update(BoxVolumeCellContributionAccessor(*eocit),
+//                                                std::make_pair( other_cell, interface_contribution) );
 
-              
-              
+                
               //
               // Box volume contribution:
               //
@@ -494,49 +558,52 @@ namespace viennagrid
               {
                 double contribution = spanned_volume(edge_intersection, edge_midpoint, voeit->point());
                 edge_contribution += contribution;
-                viennadata::access<BoxVolumeKey, double>(box_volume_key)(*voeit) += contribution;
-                voronoi_unique_quantity_update(viennadata::access<BoxVolumeKey, CellContributionType>(box_volume_key)(*voeit),
-                                               std::make_pair( &(*cit), contribution) );
+                
+                vertex_box_volume_accessor(*voeit) += contribution;
+                voronoi_unique_quantity_update(vertex_box_volume_cell_contribution_accessor(*eocit), std::make_pair( &(*cit), contribution) );
+//                 vertex_box_volume_accessor(*voeit) += contribution;
+//                 voronoi_unique_quantity_update(vertex_box_volume_cell_contribution_accessor(*eocit),
+//                                                std::make_pair( &(*cit), contribution) );
                 
                 if ( &(*voeit) != opposite_vertex_ptr )  // non-splitted contribution
                 {
                   if (other_cell != NULL)
                   {
                     double contribution_other = spanned_volume(circ_center, edge_intersection, voeit->point());
-                    viennadata::access<BoxVolumeKey, double>(box_volume_key)(*voeit) += contribution_other;
-                    voronoi_unique_quantity_update(viennadata::access<BoxVolumeKey, CellContributionType>(box_volume_key)(*voeit),
+                    vertex_box_volume_accessor(*voeit) += contribution_other;
+                    voronoi_unique_quantity_update(vertex_vertex_box_volume_cell_contribution_accessor(*eocit),
                                                    std::make_pair(other_cell, contribution_other) );
-                    viennadata::access<BoxVolumeKey, double>(box_volume_key)(*eocit) += contribution_other;
-                    voronoi_unique_quantity_update(viennadata::access<BoxVolumeKey, CellContributionType>(box_volume_key)(*eocit),
+                    edge_box_volume_accessor(*eocit) += contribution_other;
+                    voronoi_unique_quantity_update(edge_box_volume_cell_contribution_accessor(*eocit),
                                                    std::make_pair(other_cell, contribution_other) );
                   }
                 }
                 else //splitted contribution around center of the edge. Contributes to opposite vertex
                 {
                   double contribution_cell = spanned_volume(opposite_vertex_edge_intersection, edge_intersection, voeit->point());
-                  viennadata::access<BoxVolumeKey, double>(box_volume_key)(*voeit) += contribution_cell;
-                  voronoi_unique_quantity_update(viennadata::access<BoxVolumeKey, CellContributionType>(box_volume_key)(*voeit),
+                  vertex_box_volume_accessor(*voeit) += contribution_cell;
+                  voronoi_unique_quantity_update(vertex_vertex_box_volume_cell_contribution_accessor(*eocit),
                                                  std::make_pair( &(*cit), contribution_cell) );
-                  viennadata::access<BoxVolumeKey, double>(box_volume_key)(*eocit) += contribution_cell;
-                  voronoi_unique_quantity_update(viennadata::access<BoxVolumeKey, CellContributionType>(box_volume_key)(*eocit),
+                  edge_box_volume_accessor(*eocit) += contribution_cell;
+                  voronoi_unique_quantity_update(edge_box_volume_cell_contribution_accessor(*eocit),
                                                  std::make_pair( &(*cit), contribution_cell) );
                   
                   if (other_cell != NULL)
                   {
                     double contribution_other = spanned_volume(circ_center, edge_intersection, opposite_vertex_edge_intersection);
-                    viennadata::access<BoxVolumeKey, double>(box_volume_key)(*voeit) += contribution_other;
-                    voronoi_unique_quantity_update(viennadata::access<BoxVolumeKey, CellContributionType>(box_volume_key)(*voeit),
+                    vertex_box_volume_accessor(*voeit) += contribution_other;
+                    voronoi_unique_quantity_update(vertex_box_volume_cell_contribution_accessor(*eocit),
                                                    std::make_pair(other_cell, contribution_other) );
-                    viennadata::access<BoxVolumeKey, double>(box_volume_key)(*eocit) += contribution_other;
-                    voronoi_unique_quantity_update(viennadata::access<BoxVolumeKey, CellContributionType>(box_volume_key)(*eocit),
+                    edge_box_volume_accessor(*eocit) += contribution_other;
+                    voronoi_unique_quantity_update(edge_box_volume_cell_contribution_accessor(*eocit),
                                                    std::make_pair(other_cell, contribution_other) );
                   }
                 }
                 
                 
               }
-              viennadata::access<BoxVolumeKey, double>(box_volume_key)(*eocit) += edge_contribution;
-              voronoi_unique_quantity_update(viennadata::access<BoxVolumeKey, CellContributionType>(box_volume_key)(*eocit),
+              edge_box_volume_accessor(*eocit) += edge_contribution;
+              voronoi_unique_quantity_update(edge_box_volume_cell_contribution_accessor(*eocit),
                                              std::make_pair( &(*cit), edge_contribution) );
 
             }
@@ -544,8 +611,8 @@ namespace viennagrid
             {
               // interface contribution:
               double interface_contribution = spanned_volume(circ_center, edge_midpoint);
-              viennadata::access<InterfaceAreaKey, double>(interface_key)(*eocit) -= interface_contribution;
-              voronoi_unique_quantity_update(viennadata::access<InterfaceAreaKey, CellContributionType>(interface_key)(*eocit),
+              interface_area_accessor(*eocit) -= interface_contribution;
+              voronoi_unique_quantity_update(BoxVolumeCellContributionAccessor(*eocit),
                                              std::make_pair(other_cell, -1.0 * interface_contribution) );
 
               
@@ -558,12 +625,12 @@ namespace viennagrid
               {
                 double contribution = spanned_volume(circ_center, edge_midpoint, voeit->point());
                 edge_contribution += contribution;
-                viennadata::access<BoxVolumeKey, double>(box_volume_key)(*voeit) -= contribution;
-                voronoi_unique_quantity_update(viennadata::access<BoxVolumeKey, CellContributionType>(box_volume_key)(*voeit),
+                vertex_box_volume_accessor(*voeit) -= contribution;
+                voronoi_unique_quantity_update(vertex_vertex_box_volume_cell_contribution_accessor(*eocit),
                                                std::make_pair(other_cell, -1.0 * contribution) );
               }
-              viennadata::access<BoxVolumeKey, double>(box_volume_key)(*eocit) -= edge_contribution;
-              voronoi_unique_quantity_update(viennadata::access<BoxVolumeKey, CellContributionType>(box_volume_key)(*eocit),
+              edge_box_volume_accessor(*eocit) -= edge_contribution;
+              voronoi_unique_quantity_update(edge_box_volume_cell_contribution_accessor(*eocit),
                                              std::make_pair(other_cell, -1.0 * edge_contribution) );
             }
             // else {}    //nothing to do for a boundary edge
@@ -584,8 +651,8 @@ namespace viennagrid
 
             // interface contribution:
             double interface_contribution = spanned_volume(circ_center, edge_midpoint);
-            viennadata::access<InterfaceAreaKey, double>(interface_key)(*eocit) += interface_contribution;
-            voronoi_unique_quantity_update(viennadata::access<InterfaceAreaKey, CellContributionType>(interface_key)(*eocit),
+            interface_area_accessor(*eocit) += interface_contribution;
+            voronoi_unique_quantity_update(BoxVolumeCellContributionAccessor(*eocit),
                                            std::make_pair( &(*cit), interface_contribution) );
 
             
@@ -598,12 +665,12 @@ namespace viennagrid
             {
               double contribution = spanned_volume(circ_center, edge_midpoint, voeit->point());
               edge_contribution += contribution;
-              viennadata::access<BoxVolumeKey, double>(box_volume_key)(*voeit) += contribution;
-              voronoi_unique_quantity_update(viennadata::access<BoxVolumeKey, CellContributionType>(box_volume_key)(*voeit),
+              vertex_box_volume_accessor(*voeit) += contribution;
+              voronoi_unique_quantity_update(vertex_box_volume_cell_contribution_accessor(*eocit),
                                              std::make_pair( &(*cit), contribution) );
             }
-            viennadata::access<BoxVolumeKey, double>(box_volume_key)(*eocit) += edge_contribution;
-            voronoi_unique_quantity_update(viennadata::access<BoxVolumeKey, CellContributionType>(box_volume_key)(*eocit),
+            edge_box_volume_accessor(*eocit) += edge_contribution;
+            voronoi_unique_quantity_update(edge_box_volume_cell_contribution_accessor(*eocit),
                                            std::make_pair( &(*cit), edge_contribution) );
           } //for edges on cells
           
@@ -628,11 +695,19 @@ namespace viennagrid
      */
     template <typename CellTag,
               typename DomainType,
-              typename InterfaceAreaKey,
-              typename BoxVolumeKey>
+              typename InterfaceAreaAccessor,
+              typename InterfaceAreaCellContributionAccessor,
+              typename VertexBoxVolumeAccessor,
+              typename VertexBoxVolumeCellContributionAccessor,
+              typename EdgeBoxVolumeAccessor,
+              typename EdgeBoxVolumeCellContributionAccessor>
     void write_voronoi_info(DomainType const & domain,
-                            InterfaceAreaKey const & interface_key,
-                            BoxVolumeKey const & box_volume_key,
+                            InterfaceAreaAccessor interface_area_accessor,
+                            InterfaceAreaCellContributionAccessor interface_area_cell_contribution_accessor,
+                            VertexBoxVolumeAccessor vertex_box_volume_accessor,
+                            VertexBoxVolumeCellContributionAccessor vertex_box_volume_cell_contribution_accessor,
+                            EdgeBoxVolumeAccessor edge_box_volume_accessor,
+                            EdgeBoxVolumeCellContributionAccessor edge_box_volume_cell_contribution_accessor,
                             viennagrid::tetrahedron_tag)
     {
       //typedef typename DomainType::config_type           Config;
@@ -701,7 +776,7 @@ namespace viennagrid
                       ++cit)
       {
         const CellType & cell = viennagrid::dereference_handle(domain,*cit);
-        PointType circ_center = circumcenter(cell, domain);
+        PointType circ_center = circumcenter(cell);
         
         FacetOnCellRange facets_on_cell = viennagrid::elements<FacetType>(cell);
         for (FacetOnCellHandleIterator focit  = facets_on_cell.handle_begin();
@@ -733,10 +808,10 @@ namespace viennagrid
             
           if (circ_centers.size() == 1)
           {
-            interface_boundaries_on_edges[*eofit].push_back(std::make_pair( std::make_pair(circ_centers[0].first, circumcenter(facet, domain)),
+            interface_boundaries_on_edges[*eofit].push_back(std::make_pair( std::make_pair(circ_centers[0].first, circumcenter(facet)),
                                                                                circ_centers[0].second)
                                                               );
-            interface_boundaries_on_edges[*eofit].push_back(std::make_pair( std::make_pair(circumcenter(edge, domain), circumcenter(facet, domain)),
+            interface_boundaries_on_edges[*eofit].push_back(std::make_pair( std::make_pair(circumcenter(edge), circumcenter(facet)),
                                                                                circ_centers[0].second)
                                                               );
             /*viennadata::access<InterfaceAreaKey,
@@ -817,17 +892,17 @@ namespace viennagrid
           double interface_contribution = spanned_volume(interface_segments[i].first.first, interface_segments[i].first.second, inner_point);
           if (interface_contribution > 0)
           {
-            voronoi_unique_quantity_update(viennadata::access<InterfaceAreaKey, CellContributionType>(interface_key)( edge ),
+            voronoi_unique_quantity_update(edge_box_volume_cell_contribution_accessor( edge ),
                                            std::make_pair(interface_segments[i].second, interface_contribution) );
             interface_area += interface_contribution;
             
             // box volume:
             double volume_contribution = interface_contribution * edge_length / 6.0;
-            voronoi_unique_quantity_update(viennadata::access<BoxVolumeKey, CellContributionType>(box_volume_key)( edge ),
+            voronoi_unique_quantity_update(edge_box_volume_cell_contribution_accessor( edge ),
                                            std::make_pair(interface_segments[i].second, 2.0 * volume_contribution) ); //volume contribution of both box volumes associated with the edge
-            voronoi_unique_quantity_update(viennadata::access<BoxVolumeKey, CellContributionType>(box_volume_key)(v0),
+            voronoi_unique_quantity_update(vertex_box_volume_cell_contribution_accessor(v0),
                                            std::make_pair( interface_segments[i].second, volume_contribution) );
-            voronoi_unique_quantity_update(viennadata::access<BoxVolumeKey, CellContributionType>(box_volume_key)(v1),
+            voronoi_unique_quantity_update(vertex_box_volume_cell_contribution_accessor(v1),
                                            std::make_pair( interface_segments[i].second, volume_contribution) );
           }
         }
@@ -837,14 +912,14 @@ namespace viennagrid
         //
         
         //std::cout << "Interface area: " << interface_area << std::endl;
-        viennadata::access<InterfaceAreaKey, double>(interface_key)( edge ) = interface_area;
+        interface_area_accessor( edge ) = interface_area;
         double volume_contribution = interface_area * edge_length / 6.0;
-        viennadata::access<BoxVolumeKey, double>(box_volume_key)(edge) = 2.0 * volume_contribution; //volume contribution of both box volumes associated with the edge
-        viennadata::access<BoxVolumeKey, double>(box_volume_key)(v0) += volume_contribution;
-        viennadata::access<BoxVolumeKey, double>(box_volume_key)(v1) += volume_contribution;
+        edge_box_volume_accessor(edge) = 2.0 * volume_contribution; //volume contribution of both box volumes associated with the edge
+        vertex_box_volume_accessor(v0) += volume_contribution;
+        vertex_box_volume_accessor(v1) += volume_contribution;
         
         //std::cout << "VOR " << v0 << " " << v1 << std::endl;
-        //std::cout << "    " << viennadata::access<BoxVolumeKey, double>(box_volume_key)(v0) << " " << viennadata::access<BoxVolumeKey, double>(box_volume_key)(v1)  << std::endl;
+        //std::cout << "    " << box_volume_accessor(v0) << " " << box_volume_accessor(v1)  << std::endl;
       } //for edges
 
     } //write_voronoi_info(tetrahedron_tag)
@@ -854,11 +929,19 @@ namespace viennagrid
     /** @brief Implementation of the computation of Voronoi quantities for a hexahedral domain */
     template <typename CellTag,
               typename DomainType,
-              typename InterfaceAreaKey,
-              typename BoxVolumeKey>
+              typename InterfaceAreaAccessor,
+              typename InterfaceAreaCellContributionAccessor,
+              typename VertexBoxVolumeAccessor,
+              typename VertexBoxVolumeCellContributionAccessor,
+              typename EdgeBoxVolumeAccessor,
+              typename EdgeBoxVolumeCellContributionAccessor>
     void write_voronoi_info(DomainType const & domain,
-                            InterfaceAreaKey const & interface_key,
-                            BoxVolumeKey const & box_volume_key,
+                            InterfaceAreaAccessor interface_area_accessor,
+                            InterfaceAreaCellContributionAccessor interface_area_cell_contribution_accessor,
+                            VertexBoxVolumeAccessor vertex_box_volume_accessor,
+                            VertexBoxVolumeCellContributionAccessor vertex_box_volume_cell_contribution_accessor,
+                            EdgeBoxVolumeAccessor edge_box_volume_accessor,
+                            EdgeBoxVolumeCellContributionAccessor edge_box_volume_cell_contribution_accessor,
                             viennagrid::hexahedron_tag)
     {
       //std::cout << "Warning: Voronoi info for hexahedron is only correct when having regular cuboids only." << std::endl;
@@ -918,8 +1001,8 @@ namespace viennagrid
             
             // interface contribution:
             double interface_contribution = spanned_volume(cell_center, facet_center, edge_midpoint);
-            viennadata::access<InterfaceAreaKey, CellContributionType>(interface_key)(*eocit).push_back(std::make_pair((*cit), interface_contribution) );   //Note: Due to iteration over cells there is no need to use a voronoi_unique_quantity_update() here
-            viennadata::access<InterfaceAreaKey, double>(interface_key)(*eocit) += interface_contribution;
+            BoxVolumeCellContributionAccessor(*eocit).push_back(std::make_pair((*cit), interface_contribution) );   //Note: Due to iteration over cells there is no need to use a voronoi_unique_quantity_update() here
+            interface_area_accessor(*eocit) += interface_contribution;
             
             //box volume contribution:
             double edge_contribution = 0;
@@ -930,12 +1013,12 @@ namespace viennagrid
             {
               //double contribution = spanned_volume(cell_center, facet_center, edge_midpoint, voeit->point());
               double contribution = spanned_volume(cell_center, facet_center, edge_midpoint, viennagrid::point(domain, *voeit));
-              viennadata::access<BoxVolumeKey, CellContributionType>(box_volume_key)(*voeit).push_back(std::make_pair( (*cit), contribution) );
-              viennadata::access<BoxVolumeKey, double>(box_volume_key)(*voeit) += contribution;
+              vertex_box_volume_cell_contribution_accessor(*eocit).push_back(std::make_pair( (*cit), contribution) );
+              vertex_box_volume_accessor(*voeit) += contribution;
               edge_contribution += contribution;
             }
-            viennadata::access<BoxVolumeKey, CellContributionType>(box_volume_key)(*eocit).push_back(std::make_pair( (*cit), edge_contribution) );
-            viennadata::access<BoxVolumeKey, double>(box_volume_key)(*eocit) += edge_contribution;
+            edge_box_volume_cell_contribution_accessor(*eocit).push_back(std::make_pair( (*cit), edge_contribution) );
+            edge_box_volume_accessor(*eocit) += edge_contribution;
           } //for edges on facet
 
         } //for facets on cell
@@ -958,26 +1041,40 @@ namespace viennagrid
    */
   template <typename CellTypeOrTag,
             typename DomainType,
-            typename InterfaceAreaKey,
-            typename BoxVolumeKey>
+            typename InterfaceAreaAccessor,
+            typename InterfaceAreaCellContributionAccessor,
+            typename VertexBoxVolumeAccessor,
+            typename VertexBoxVolumeCellContributionAccessor,
+            typename EdgeBoxVolumeAccessor,
+            typename EdgeBoxVolumeCellContributionAccessor>
   void apply_voronoi(DomainType const & domain,
-                     InterfaceAreaKey const & interface_area_key = viennagrid::voronoi_interface_area_key(),
-                     BoxVolumeKey const & box_volume_key = viennagrid::voronoi_box_volume_key())
+                      InterfaceAreaAccessor interface_area_accessor,
+                      InterfaceAreaCellContributionAccessor interface_area_cell_contribution_accessor,
+                      VertexBoxVolumeAccessor vertex_box_volume_accessor,
+                      VertexBoxVolumeCellContributionAccessor vertex_box_volume_cell_contribution_accessor,
+                      EdgeBoxVolumeAccessor edge_box_volume_accessor,
+                      EdgeBoxVolumeCellContributionAccessor edge_box_volume_cell_contribution_accessor)
+//                      InterfaceAreaKey const & interface_area_key = viennagrid::voronoi_interface_area_key(),
+//                      BoxVolumeKey const & box_volume_key = viennagrid::voronoi_box_volume_key())
   {
       typedef typename viennagrid::result_of::element_tag<CellTypeOrTag>::type CellTag;
       
     detail::write_voronoi_info<CellTag>(domain,
-                               interface_area_key,
-                               box_volume_key,
+                               interface_area_accessor,
+                               interface_area_cell_contribution_accessor,
+                               vertex_box_volume_accessor,
+                               vertex_box_volume_cell_contribution_accessor,
+                               edge_box_volume_accessor,
+                               edge_box_volume_cell_contribution_accessor,
                                CellTag());
   }
     
-  /** @brief Convenience overload for storing Voronoi information on a domain or segment. Uses the default keys for interface areas and box volumes. */
-  template <typename CellTypeOrTag, typename DomainType>
-  void apply_voronoi(DomainType const & domain)
-  {
-    apply_voronoi<CellTypeOrTag>(domain, viennagrid::voronoi_interface_area_key(), viennagrid::voronoi_box_volume_key());
-  }
+//   /** @brief Convenience overload for storing Voronoi information on a domain or segment. Uses the default keys for interface areas and box volumes. */
+//   template <typename CellTypeOrTag, typename DomainType>
+//   void apply_voronoi(DomainType const & domain)
+//   {
+//     apply_voronoi<CellTypeOrTag>(domain, viennagrid::voronoi_interface_area_key(), viennagrid::voronoi_box_volume_key());
+//   }
     
 } //namespace viennagrid
 #endif
