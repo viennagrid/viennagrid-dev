@@ -818,11 +818,20 @@ namespace viennagrid
     }
 
     
+    template <typename DomainConfigType, typename ElementTypeList, typename ContainerConfig>
+    class decorated_domain_view_config;
     
-//     template<typename config_type_, typename topology_type_, typename metainfo_collection_type_>
-//     class domain_t;
+    template <typename WrappedConfigType>
+    class domain_t;
     
+    template<typename container_type_>
+    struct coboundary_container_wrapper;
     
+    template<typename container_type_>
+    struct neighbour_container_wrapper;
+    
+    template<typename container_type_>
+    struct boundary_information_wrapper;
     
     
     template<typename container_type, typename vertex_type>

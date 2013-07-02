@@ -27,7 +27,7 @@
 #include "viennagrid/element/element_key.hpp"
 #include "viennagrid/config/element_config.hpp"
 
-#include "viennagrid/domain/topology.hpp"
+//#include "viennagrid/domain/topology.hpp"
 
 /** @file config/simplex.hpp
     @brief Provides default configuration classes for simplex domains
@@ -506,6 +506,7 @@ namespace viennagrid
         };
         
         // topologic domain type from config
+        /*
         template<typename key_type, typename value_type, typename tail>
         struct domain< viennameta::typelist_t< viennameta::static_pair<key_type, value_type>, tail > >
         {
@@ -548,7 +549,7 @@ namespace viennagrid
         struct domain< domain_t<A, B, C> >
         {
             typedef domain_t<A, B, C> type;
-        };
+        }; */
     }
 
 }

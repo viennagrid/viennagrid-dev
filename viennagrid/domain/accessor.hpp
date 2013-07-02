@@ -23,6 +23,12 @@
 // #include "viennagrid/domain/metainfo.hpp"
 // #include "../forwards.hpp"
 
+#include "viennagrid/forwards.hpp"
+#include "viennagrid/storage/id.hpp"
+#include "viennagrid/storage/container_collection.hpp"
+
+
+#include "viennadata/meta/result_of.hpp"
 
 namespace viennadata
 {

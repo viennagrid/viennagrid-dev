@@ -34,16 +34,16 @@ namespace viennagrid
 //             typedef typename viennagrid::metainfo::result_of::value_type<point_container_type>::type type;
         };
 
-        template<typename A, typename B, typename C>
-        struct point_type< domain_t<A, B, C> >
+        template<typename ConfigType>
+        struct point_type< domain_t<ConfigType> >
         {
-            typedef typename viennagrid::result_of::vertex< domain_t<A, B, C> >::type::appendix_type type;
+            typedef typename viennagrid::result_of::vertex< domain_t<ConfigType> >::type::appendix_type type;
         };
         
-        template<typename A, typename B, typename C>
-        struct point_type< const domain_t<A, B, C> >
+        template<typename ConfigType>
+        struct point_type< const domain_t<ConfigType> >
         {
-            typedef typename viennagrid::result_of::vertex< domain_t<A, B, C> >::type::appendix_type type;
+            typedef typename viennagrid::result_of::vertex< domain_t<ConfigType> >::type::appendix_type type;
         };
         
         template<typename EA, typename EB, typename EC, typename ED>
@@ -62,38 +62,38 @@ namespace viennagrid
     
 
     
-    template<typename A, typename B, typename C>
-    typename result_of::point_type< domain_t<A, B, C> >::type & point(
-            domain_t<A, B, C> & domain,
-            typename result_of::vertex< domain_t<A, B, C> >::type & vertex
+    template<typename ConfigType>
+    typename result_of::point_type< domain_t<ConfigType> >::type & point(
+            domain_t<ConfigType> & domain,
+            typename result_of::vertex< domain_t<ConfigType> >::type & vertex
         )
     {
         return vertex.appendix();
     }
     
-    template<typename A, typename B, typename C>
-    typename result_of::point_type< domain_t<A, B, C> >::type const & point(
-            domain_t<A, B, C> const & domain,
-            typename result_of::vertex< domain_t<A, B, C> >::type const & vertex
+    template<typename ConfigType>
+    typename result_of::point_type< domain_t<ConfigType> >::type const & point(
+            domain_t<ConfigType> const & domain,
+            typename result_of::vertex< domain_t<ConfigType> >::type const & vertex
         )
     {
         return vertex.appendix();
     }
     
     
-    template<typename A, typename B, typename C>
-    typename result_of::point_type< domain_t<A, B, C> >::type & point(
-            domain_t<A, B, C> & domain,
-            typename result_of::vertex_handle< domain_t<A, B, C> >::type vertex_handle
+    template<typename ConfigType>
+    typename result_of::point_type< domain_t<ConfigType> >::type & point(
+            domain_t<ConfigType> & domain,
+            typename result_of::vertex_handle< domain_t<ConfigType> >::type vertex_handle
         )
     {
         return dereference_handle(domain, vertex_handle).appendix();
     }
     
-    template<typename A, typename B, typename C>
-    typename result_of::point_type< domain_t<A, B, C> >::type const & point(
-            domain_t<A, B, C> const & domain,
-            typename result_of::const_vertex_handle< domain_t<A, B, C> >::type vertex_handle
+    template<typename ConfigType>
+    typename result_of::point_type< domain_t<ConfigType> >::type const & point(
+            domain_t<ConfigType> const & domain,
+            typename result_of::const_vertex_handle< domain_t<ConfigType> >::type vertex_handle
         )
     {
         return dereference_handle(domain, vertex_handle).appendix();

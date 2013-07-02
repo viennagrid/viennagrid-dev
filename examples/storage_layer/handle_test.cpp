@@ -1,23 +1,31 @@
 #include <iostream>
 #include <typeinfo>
 
-#include "viennagrid/config/default_configs.hpp"
+//#include "viennagrid/config/default_configs.hpp"
 
 // #include "viennagrid/domain/segmentation.hpp"
 #include "viennagrid/domain/element_creation.hpp"
 
 
+typedef viennagrid::point_t<double, viennagrid::cartesian_cs<3> > vector_type;
 
+class my_domain_config
+{
+  private:
+    typedef viennagrid::storage::pointer_handle_tag   handle_tag;
+    //typedef viennagrid::storage::iterator_handle_tag  handle_tag;
+    //typedef viennagrid::storage::id_handle_tag        handle_tag;
+    
+  public:
+    
+    typedef viennagrid::config::result_of::full_domain_config< viennagrid::tetrahedron_tag, vector_type, handle_tag >::type     type;
+};
 
 int main()
 {
-    typedef viennagrid::storage::pointer_handle_tag handle_tag;
-    typedef viennagrid::config::point_type_3d vector_type;
-    typedef viennagrid::config::result_of::full_domain_config< viennagrid::tetrahedron_tag, vector_type, handle_tag >::type domain_config;
-    
     
 //     typedef viennagrid::config::tetrahedral_3d config;
-    typedef viennagrid::result_of::domain<domain_config>::type domain_type;
+    typedef viennagrid::domain_t<my_domain_config>   domain_type;
     domain_type domain;
         
     typedef viennagrid::result_of::point_type<domain_type>::type point_type;

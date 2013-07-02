@@ -176,10 +176,10 @@ namespace viennagrid
   
   
   
-    template<typename A, typename B, typename C>
-    void transfer_boundary_information( domain_t<A,B,C> & domain )
+    template<typename WrappedConfigType>
+    void transfer_boundary_information( domain_t<WrappedConfigType> & domain )
     {
-        typedef domain_t<A,B,C> domain_type;
+        typedef domain_t<WrappedConfigType> domain_type;
         typedef typename viennagrid::result_of::cell_tag< domain_type >::type cell_tag;
         typedef typename viennagrid::result_of::facet_tag< cell_tag >::type facet_tag;
         
@@ -199,10 +199,10 @@ namespace viennagrid
     }
   
   
-    template<typename A, typename B, typename C>
-    void detect_boundary( domain_t<A,B,C> & domain )
+    template<typename WrappedConfigType>
+    void detect_boundary( domain_t<WrappedConfigType> & domain )
     {
-        typedef domain_t<A,B,C> domain_type;
+        typedef domain_t<WrappedConfigType> domain_type;
         typedef typename viennagrid::result_of::cell_tag< domain_type >::type cell_tag;
         typedef typename viennagrid::result_of::facet_tag< cell_tag >::type facet_tag;
         
@@ -242,10 +242,10 @@ namespace viennagrid
       return boundary_info_accessor(element);
   }
   
-  template <typename A, typename B, typename C, typename ElementType>
-  bool is_boundary(domain_t<A, B, C> const & domain, ElementType const & element)
+  template <typename WrappedConfigType, typename ElementType>
+  bool is_boundary(domain_t<WrappedConfigType> const & domain, ElementType const & element)
   {
-        typedef domain_t<A,B,C> domain_type;
+        typedef domain_t<WrappedConfigType> domain_type;
         typedef typename viennagrid::result_of::cell_tag< domain_type >::type cell_tag;
         typedef typename viennagrid::result_of::facet_tag< cell_tag >::type facet_tag;
         

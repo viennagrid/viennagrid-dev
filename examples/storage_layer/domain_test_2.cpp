@@ -41,32 +41,30 @@ using std::endl;
 #include <boost/numeric/ublas/io.hpp>
 namespace ublas = boost::numeric::ublas;
 
+typedef ublas::vector<double> vector_type;
 
+class my_domain_config
+{
+  private:
+    //typedef viennagrid::storage::pointer_handle_tag handle_tag;
+    //typedef viennagrid::storage::iterator_handle_tag handle_tag;
+    typedef viennagrid::storage::id_handle_tag          handle_tag;
+    
+  public:
+    
+    typedef viennagrid::config::result_of::full_domain_config< viennagrid::tetrahedron_tag, vector_type, handle_tag >::type     type;
+};
 
 
 int main()
 {
-    
-    //
-    // First define the type of handle to use:
-    //
-    
-    //typedef viennagrid::storage::pointer_handle_tag handle_tag;
-    //typedef viennagrid::storage::iterator_handle_tag handle_tag;
-    typedef viennagrid::storage::id_handle_tag handle_tag;
-    
 
-    typedef viennameta::make_typelist< viennameta::static_pair<viennagrid::tetrahedron_tag, double> >::type metainfo_typelist;
-    
-
-    typedef ublas::vector<double> vector_type;
-    typedef viennagrid::config::result_of::full_domain_config< viennagrid::tetrahedron_tag, vector_type, handle_tag >::type domain_config;
     
     //
     // typedefing and setting up the geometric domain
     //
     
-    typedef viennagrid::result_of::domain< domain_config >::type domain_type;
+    typedef viennagrid::domain_t<my_domain_config> domain_type;
     domain_type domain;
         
     //

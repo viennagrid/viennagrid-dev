@@ -37,33 +37,27 @@ using std::endl;
 #include "viennagrid/domain/element_creation.hpp"
 
 
+class my_domain_config
+{
+  private:
+    //typedef viennagrid::storage::pointer_handle_tag handle_tag;
+    //typedef viennagrid::storage::iterator_handle_tag handle_tag;
+    typedef viennagrid::storage::id_handle_tag          handle_tag;
+    
+  public:
+    
+    typedef viennagrid::config::result_of::full_topology_config<viennagrid::tetrahedron_tag, handle_tag>::type    type;
+};
 
 
 int main()
 {
     
     //
-    // First define the type of handle to use:
-    //
-    
-    //typedef viennagrid::storage::pointer_handle_tag handle_tag;
-    //typedef viennagrid::storage::iterator_handle_tag handle_tag;
-    typedef viennagrid::storage::id_handle_tag handle_tag;
-    
-    
-    
-    
-    
-    typedef viennagrid::config::result_of::full_topology_config<viennagrid::tetrahedron_tag, handle_tag>::type toplological_config;
-
-    
-    
-    
-    //
     // typedefing and setting up the topological domain
     //
     
-    typedef viennagrid::result_of::domain<toplological_config>::type domain_type;
+    typedef viennagrid::domain_t<my_domain_config> domain_type;
     domain_type domain;
     
     //
@@ -114,7 +108,6 @@ int main()
     // creates the tetrahedron within the domain, all boundary cell generation is done here implicit
     viennagrid::create_element<tetrahedron_type>( domain_view_1, handles.begin(), handles.end() );
     
-    
     // pushing a tetrahedron to domain_view_2
     handles[0] = viennagrid::create_element<vertex_type>( domain );
     handles[1] = viennagrid::create_element<vertex_type>( domain );
@@ -141,8 +134,6 @@ int main()
     cout << "All tetrahedrons of the domain view 2" << endl;
     std::copy( viennagrid::elements<viennagrid::tetrahedron_tag>(domain_view_2).begin(), viennagrid::elements<viennagrid::tetrahedron_tag>(domain_view_2).end(), std::ostream_iterator<tetrahedron_type>(cout, "\n") );
     cout << endl;
-
-    
 
     return 0;
 }

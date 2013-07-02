@@ -84,44 +84,44 @@ namespace viennagrid
         return create_element<element_type>(domain);
     }
     
-    template<typename A, typename B, typename C>
-    typename viennagrid::result_of::vertex_handle< domain_t<A, B, C> >::type
-        create_vertex( domain_t<A, B, C> & domain,
-                       typename result_of::point_type< domain_t<A, B, C> >::type const & point )
+    template<typename ConfigType>
+    typename viennagrid::result_of::vertex_handle< domain_t<ConfigType> >::type
+        create_vertex( domain_t<ConfigType> & domain,
+                       typename result_of::point_type< domain_t<ConfigType> >::type const & point )
 //                        typename viennagrid::result_of::point_type< domain_t<config_type, topology_type, metainfo_collection_type> >::type & point )
     {
-        typedef typename result_of::vertex< domain_t<A, B, C> >::type element_type;
-        typename result_of::vertex_handle< domain_t<A, B, C> >::type ret = push_element(domain, element_type() ).first;
+        typedef typename result_of::vertex< domain_t<ConfigType> >::type element_type;
+        typename result_of::vertex_handle< domain_t<ConfigType> >::type ret = push_element(domain, element_type() ).first;
         viennagrid::point(domain, ret) = point;
         
         return ret;
     }
     
-    template<typename A, typename B, typename C>
-    typename viennagrid::result_of::vertex_handle< domain_t<A, B, C> >::type
-        create_vertex( domain_t<A, B, C> & domain,
-                       typename viennagrid::result_of::element< domain_t<A, B, C>, vertex_tag>::type::id_type id,
-                       typename result_of::point_type< domain_t<A, B, C> >::type const & point )
+    template<typename ConfigType>
+    typename viennagrid::result_of::vertex_handle< domain_t<ConfigType> >::type
+        create_vertex( domain_t<ConfigType> & domain,
+                       typename viennagrid::result_of::element< domain_t<ConfigType>, vertex_tag>::type::id_type id,
+                       typename result_of::point_type< domain_t<ConfigType> >::type const & point )
 //                        typename viennagrid::result_of::point_type< domain_t<config_type, topology_type, metainfo_collection_type> >::type const & point )
     {
-        typedef typename result_of::element< domain_t<A, B, C>, vertex_tag>::type element_type;
+        typedef typename result_of::element< domain_t<ConfigType>, vertex_tag>::type element_type;
         element_type element;
         element.id( id );
         
-        typename result_of::handle< domain_t<A, B, C>, element_type>::type ret = push_element_noid(domain, element ).first;
+        typename result_of::handle< domain_t<ConfigType>, element_type>::type ret = push_element_noid(domain, element ).first;
         viennagrid::point(domain, ret) = point;
         
         return ret;
     }
     
-    template<typename A, typename B, typename C>
-    typename result_of::handle<domain_t<A, B, C>, vertex_tag>::type
-        create_unique_vertex( domain_t<A, B, C> & domain,
+    template<typename ConfigType>
+    typename result_of::handle<domain_t<ConfigType>, vertex_tag>::type
+        create_unique_vertex( domain_t<ConfigType> & domain,
 //                               typename viennagrid::result_of::point_type< domain_t<config_type, topology_type, metainfo_collection_type> >::type const & p,
-                              typename result_of::point_type< domain_t<A, B, C> >::type const & p,
-                              typename viennagrid::result_of::coord_type< domain_t<A, B, C> >::type tolerance )
+                              typename result_of::point_type< domain_t<ConfigType> >::type const & p,
+                              typename viennagrid::result_of::coord_type< domain_t<ConfigType> >::type tolerance )
     {
-        typedef domain_t<A, B, C> domain_type;
+        typedef domain_t<ConfigType> domain_type;
         typedef typename result_of::element_range<domain_type, vertex_tag>::type vertex_range_type;
         typedef typename result_of::handle_iterator<vertex_range_type>::type vertex_range_handle_iterator;
         

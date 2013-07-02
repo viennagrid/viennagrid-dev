@@ -5,6 +5,7 @@
 #include "accessor.hpp"
 
 #include "viennagrid/forwards.hpp"
+#include "viennagrid/domain/topology.hpp"
 
 // #include "viennagrid/algorithm/inner_prod.hpp"
 // #include "viennagrid/algorithm/cross_prod.hpp"

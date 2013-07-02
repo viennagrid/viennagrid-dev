@@ -1,25 +1,34 @@
 #include <iostream>
 #include <typeinfo>
 
-#include "viennagrid/config/default_configs.hpp"
+//#include "viennagrid/config/default_configs.hpp"
 
 #include "viennagrid/domain/accessor.hpp"
 #include "viennagrid/domain/segmentation.hpp"
 #include "viennagrid/domain/element_creation.hpp"
 
 
+class my_domain_config
+{
+  private:
+    typedef viennagrid::point_t<double, viennagrid::cartesian_cs<3> > point_type_3d;
+    
+  public:
+    
+    typedef viennagrid::config::result_of::full_domain_config< viennagrid::triangle_tag, point_type_3d, viennagrid::storage::pointer_handle_tag >::type    type;
+};
 
 
 int main()
 {
-  typedef viennagrid::config::triangular_3d_domain domain_type;
-  typedef viennagrid::config::triangular_3d_view view_type;
+  typedef viennagrid::domain_t<my_domain_config>                  domain_type;
+  typedef viennagrid::result_of::domain_view< domain_type >::type view_type;
   
   
   
-  typedef viennagrid::result_of::vertex_handle< domain_type >::type vertex_handle_type;
-  typedef viennagrid::result_of::triangle_handle< domain_type >::type triangle_handle_type;
-  typedef viennagrid::result_of::triangle< domain_type >::type triangle_type;
+  typedef viennagrid::result_of::vertex_handle< domain_type >::type     vertex_handle_type;
+  typedef viennagrid::result_of::triangle_handle< domain_type >::type   triangle_handle_type;
+  typedef viennagrid::result_of::triangle< domain_type >::type          triangle_type;
   
   
 //   typedef int segment_id_type;
