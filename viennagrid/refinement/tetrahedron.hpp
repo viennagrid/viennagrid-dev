@@ -163,7 +163,7 @@ namespace viennagrid
     static void apply1(CellType const & cell_in, DomainTypeOut & segment_out,
                        EdgeRefinementFlagAccessor const edge_refinement_flag_accessor, VertexToVertexHandleAccessor const vertex_to_vertex_handle_accessor, EdgeToVertexHandleAccessor const edge_to_vertex_handle_accessor)
     {
-      std::cout << "tetrahedron::apply1()" << std::endl;
+//       std::cout << "tetrahedron::apply1()" << std::endl;
       typedef typename viennagrid::result_of::const_element_range<CellType, vertex_tag>::type            VertexOnCellRange;
       typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type         VertexOnCellIterator;            
       typedef typename viennagrid::result_of::const_element_range<CellType, line_tag>::type            EdgeOnCellRange;
@@ -208,12 +208,8 @@ namespace viennagrid
       EdgeType const & e4 = *eocit; ++eocit;
       EdgeType const & e5 = *eocit;
       
-      std::cout << "Cell to refine: " << cell_in << std::endl;
-      
       if (edge_refinement_flag_accessor(e0) == true)
       {
-        std::cout << "Edge to refine: " << e0 << std::endl;
-        
         ordered_vertices[0] = vertices[0];
         ordered_vertices[1] = vertices[1];
         ordered_vertices[2] = vertices[2];
@@ -224,8 +220,6 @@ namespace viennagrid
       }
       else if (edge_refinement_flag_accessor(e1) == true)
       {
-        std::cout << "Edge to refine: " << e1 << std::endl;
-        
         ordered_vertices[0] = vertices[2];
         ordered_vertices[1] = vertices[0];
         ordered_vertices[2] = vertices[1];
@@ -234,8 +228,6 @@ namespace viennagrid
       }
       else if (edge_refinement_flag_accessor(e2) == true)
       {
-        std::cout << "Edge to refine: " << e2 << std::endl;
-        
         ordered_vertices[0] = vertices[0];
         ordered_vertices[1] = vertices[3];
         ordered_vertices[2] = vertices[1];
@@ -244,8 +236,6 @@ namespace viennagrid
       }
       else if (edge_refinement_flag_accessor(e3) == true)
       {
-        std::cout << "Edge to refine: " << e3 << std::endl;
-        
         ordered_vertices[0] = vertices[1];
         ordered_vertices[1] = vertices[2];
         ordered_vertices[2] = vertices[0];
@@ -254,8 +244,6 @@ namespace viennagrid
       }
       else if (edge_refinement_flag_accessor(e4) == true)
       {
-        std::cout << "Edge to refine: " << e4 << std::endl;
-        
         ordered_vertices[0] = vertices[3];
         ordered_vertices[1] = vertices[1];
         ordered_vertices[2] = vertices[0];
@@ -264,8 +252,6 @@ namespace viennagrid
       }
       else if (edge_refinement_flag_accessor(e5) == true)
       {
-        std::cout << "Edge to refine: " << e5 << std::endl;
-        
         ordered_vertices[0] = vertices[3];
         ordered_vertices[1] = vertices[2];
         ordered_vertices[2] = vertices[1];
@@ -276,14 +262,7 @@ namespace viennagrid
       {
         assert(false && "Logic error: No edge for refinement found!"); 
       }
-      
-      
-      std::cout << viennagrid::dereference_handle( segment_out, ordered_vertices[0] ).id() << std::endl;
-      std::cout << viennagrid::dereference_handle( segment_out, ordered_vertices[1] ).id() << std::endl;
-      std::cout << viennagrid::dereference_handle( segment_out, ordered_vertices[2] ).id() << std::endl;
-      std::cout << viennagrid::dereference_handle( segment_out, ordered_vertices[3] ).id() << std::endl;
-      std::cout << viennagrid::dereference_handle( segment_out, ordered_vertices[4] ).id() << std::endl;
-      
+
       //
       // Step 3: Write new cells to domain_out
       //
@@ -366,7 +345,7 @@ namespace viennagrid
     static void apply2(CellType const & cell_in, DomainTypeOut & segment_out,
                        EdgeRefinementFlagAccessor const edge_refinement_flag_accessor, VertexToVertexHandleAccessor const vertex_to_vertex_handle_accessor, EdgeToVertexHandleAccessor const edge_to_vertex_handle_accessor)
     {
-      std::cout << "tetrahedron::apply2()" << std::endl;
+//       std::cout << "tetrahedron::apply2()" << std::endl;
       //typedef typename CellType::config_type        ConfigTypeIn;
       typedef typename viennagrid::result_of::const_element_range<CellType, vertex_tag>::type            VertexOnCellRange;
       typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type         VertexOnCellIterator;            
@@ -910,7 +889,7 @@ namespace viennagrid
     static void apply3(CellType const & cell_in, DomainTypeOut & segment_out,
                        EdgeRefinementFlagAccessor const edge_refinement_flag_accessor, VertexToVertexHandleAccessor const vertex_to_vertex_handle_accessor, EdgeToVertexHandleAccessor const edge_to_vertex_handle_accessor)
     {
-      std::cout << "tetrahedron::apply3()" << std::endl;
+//       std::cout << "tetrahedron::apply3()" << std:4endl;
       typedef typename viennagrid::result_of::const_element_range<CellType, vertex_tag>::type            VertexOnCellRange;
       typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type         VertexOnCellIterator;            
       typedef typename viennagrid::result_of::const_element_range<CellType, line_tag>::type            EdgeOnCellRange;
@@ -1565,7 +1544,7 @@ namespace viennagrid
     static void apply4(CellType const & cell_in, DomainTypeOut & segment_out,
                        EdgeRefinementFlagAccessor const edge_refinement_flag_accessor, VertexToVertexHandleAccessor const vertex_to_vertex_handle_accessor, EdgeToVertexHandleAccessor const edge_to_vertex_handle_accessor)
     {
-      std::cout << "tetrahedron::apply4()" << std::endl;
+//       std::cout << "tetrahedron::apply4()" << std::endl;
       typedef typename viennagrid::result_of::const_element_range<CellType, vertex_tag>::type            VertexOnCellRange;
       typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type         VertexOnCellIterator;            
       typedef typename viennagrid::result_of::const_element_range<CellType, line_tag>::type            EdgeOnCellRange;
@@ -1925,7 +1904,7 @@ namespace viennagrid
     static void apply5(CellType const & cell_in, DomainTypeOut & segment_out,
                        EdgeRefinementFlagAccessor const edge_refinement_flag_accessor, VertexToVertexHandleAccessor const vertex_to_vertex_handle_accessor, EdgeToVertexHandleAccessor const edge_to_vertex_handle_accessor)
     {
-      std::cout << "tetrahedron::apply5()" << std::endl;
+//       std::cout << "tetrahedron::apply5()" << std::endl;
       typedef typename viennagrid::result_of::const_element_range<CellType, vertex_tag>::type            VertexOnCellRange;
       typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type         VertexOnCellIterator;            
       typedef typename viennagrid::result_of::const_element_range<CellType, line_tag>::type            EdgeOnCellRange;
@@ -2074,7 +2053,7 @@ namespace viennagrid
     static void apply6(CellType const & cell_in, DomainTypeOut & segment_out,
                        EdgeRefinementFlagAccessor const edge_refinement_flag_accessor, VertexToVertexHandleAccessor const vertex_to_vertex_handle_accessor, EdgeToVertexHandleAccessor const edge_to_vertex_handle_accessor)
     {
-      std::cout << "tetrahedron::apply6()" << std::endl;
+//       std::cout << "tetrahedron::apply6()" << std::endl;
       typedef typename viennagrid::result_of::const_element_range<CellType, vertex_tag>::type            VertexOnCellRange;
       typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type         VertexOnCellIterator;            
       typedef typename viennagrid::result_of::const_element_range<CellType, line_tag>::type            EdgeOnCellRange;

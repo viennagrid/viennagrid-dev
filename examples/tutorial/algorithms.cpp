@@ -116,49 +116,49 @@ int main()
   //
 
   // Extract the first four points of the domain:
-//   VertexRange vertices = viennagrid::elements<viennagrid::vertex_tag>(domain);
-//   
-//   PointType const & p0 = viennagrid::point(domain, vertices[0]);
-//   PointType const & p1 = viennagrid::point(domain, vertices[1]);
-//   PointType const & p2 = viennagrid::point(domain, vertices[2]);
-//   PointType const & p3 = viennagrid::point(domain, vertices[3]);
-//   
-//   std::cout << "Point p0: " << p0 << std::endl;
-//   std::cout << "Point p1: " << p1 << std::endl;
-//   std::cout << "Point p2: " << p2 << std::endl;
-//   std::cout << "Point p3: " << p3 << std::endl;
-//   
-//   // Run a few algorithms:
-//   std::cout << "Cross-product of p1 and p2: " << viennagrid::cross_prod(p1, p2) << std::endl;
-//   std::cout << "Inner product of p1 and p2: " << viennagrid::inner_prod(p1, p2) << std::endl;
-//   std::cout << "1-Norm of p2: "               << viennagrid::norm_1(p2) << std::endl;
-//   std::cout << "2-Norm of p2: "               << viennagrid::norm_2(p2) << std::endl;
-//   std::cout << "Inf-Norm of p2: "             << viennagrid::norm_inf(p2) << std::endl;
-//   std::cout << "Length of line [p0, p1]: "    << viennagrid::spanned_volume(p0, p1) << std::endl;
-//   std::cout << "Area of triangle [p0, p1, p2]: " << viennagrid::spanned_volume(p0, p1, p2) << std::endl;
-//   std::cout << "Volume of tetrahedron [p0, p1, p2, p3]: " << viennagrid::spanned_volume(p0, p1, p2, p3) << std::endl;
-//   
-//   std::cout << std::endl << "--------------------------------" << std::endl << std::endl;
-//   
-//   
-//   //
-//   // Part 2: Cell-based algorithms:
-//   //
-//   
-//   // Extract first cell from domain:
-//   CellType const & cell = viennagrid::elements<CellTag>(domain)[0];
-//   
-//   std::cout << "cell: " << std::endl << cell << std::endl;
-//   
-//   // Run algorithms:
-//   std::cout << "Centroid of cell: "     << viennagrid::centroid(cell) << std::endl;
-//   std::cout << "Circumcenter of cell: " << viennagrid::circumcenter(cell) << std::endl;
-//   std::cout << "Surface of cell: "      << viennagrid::surface(cell) << std::endl;
-//   std::cout << "Volume of cell: "       << viennagrid::volume(cell) << std::endl;
-//   std::cout << std::endl;
-//   
-//   std::cout << "Volume of domain: "       << viennagrid::volume(domain) << std::endl;
-//   std::cout << "Surface of domain: "       << viennagrid::surface(domain) << std::endl;
+  VertexRange vertices = viennagrid::elements<viennagrid::vertex_tag>(domain);
+  
+  PointType const & p0 = viennagrid::point(domain, vertices[0]);
+  PointType const & p1 = viennagrid::point(domain, vertices[1]);
+  PointType const & p2 = viennagrid::point(domain, vertices[2]);
+  PointType const & p3 = viennagrid::point(domain, vertices[3]);
+  
+  std::cout << "Point p0: " << p0 << std::endl;
+  std::cout << "Point p1: " << p1 << std::endl;
+  std::cout << "Point p2: " << p2 << std::endl;
+  std::cout << "Point p3: " << p3 << std::endl;
+  
+  // Run a few algorithms:
+  std::cout << "Cross-product of p1 and p2: " << viennagrid::cross_prod(p1, p2) << std::endl;
+  std::cout << "Inner product of p1 and p2: " << viennagrid::inner_prod(p1, p2) << std::endl;
+  std::cout << "1-Norm of p2: "               << viennagrid::norm_1(p2) << std::endl;
+  std::cout << "2-Norm of p2: "               << viennagrid::norm_2(p2) << std::endl;
+  std::cout << "Inf-Norm of p2: "             << viennagrid::norm_inf(p2) << std::endl;
+  std::cout << "Length of line [p0, p1]: "    << viennagrid::spanned_volume(p0, p1) << std::endl;
+  std::cout << "Area of triangle [p0, p1, p2]: " << viennagrid::spanned_volume(p0, p1, p2) << std::endl;
+  std::cout << "Volume of tetrahedron [p0, p1, p2, p3]: " << viennagrid::spanned_volume(p0, p1, p2, p3) << std::endl;
+  
+  std::cout << std::endl << "--------------------------------" << std::endl << std::endl;
+  
+  
+  //
+  // Part 2: Cell-based algorithms:
+  //
+  
+  // Extract first cell from domain:
+  CellType const & cell = viennagrid::elements<CellTag>(domain)[0];
+  
+  std::cout << "cell: " << std::endl << cell << std::endl;
+  
+  // Run algorithms:
+  std::cout << "Centroid of cell: "     << viennagrid::centroid(cell) << std::endl;
+  std::cout << "Circumcenter of cell: " << viennagrid::circumcenter(cell) << std::endl;
+  std::cout << "Surface of cell: "      << viennagrid::surface(cell) << std::endl;
+  std::cout << "Volume of cell: "       << viennagrid::volume(cell) << std::endl;
+  std::cout << std::endl;
+  
+  std::cout << "Volume of domain: "       << viennagrid::volume(domain) << std::endl;
+  std::cout << "Surface of domain: "       << viennagrid::surface(domain) << std::endl;
   
 //   CellType const & cell2 = viennagrid::elements<CellTag>(domain)[1];
 //   std::cout << "Distance between cells: " << viennagrid::boundary_distance(cell, cell2) << std::endl;
@@ -183,61 +183,46 @@ int main()
   
             
 
-  
-  std::deque<bool> cell_refinement_flag;
-  std::deque<bool> edge_refinement_flag;
-  std::deque<VertexHandleType> vertex_refinement_vertex_handle;
-  std::deque<VertexHandleType> edge_refinement_vertex_handle;
-  
-  cell_refinement_flag.resize( 1000 );
-  edge_refinement_flag.resize( 1000 );
-  vertex_refinement_vertex_handle.resize( 1000 );
-  edge_refinement_vertex_handle.resize( 1000 );
-  
-  std::fill( cell_refinement_flag.begin(), cell_refinement_flag.end(), false );
-  std::fill( edge_refinement_flag.begin(), edge_refinement_flag.end(), false );
-  
-//   cell_refinement_flag[0] = true;
-  edge_refinement_flag[0] = true;
+
   
   //          
   // Refine domain uniformly:
-  Domain uniformly_refined_domain;
-  viennagrid::refine<viennagrid::tetrahedron_tag>(domain, uniformly_refined_domain,
-                                                  viennagrid::accessor::dense_container_accessor<CellType>(cell_refinement_flag),
-                                                  viennagrid::accessor::dense_container_accessor<EdgeType>(edge_refinement_flag),
-                                                  viennagrid::accessor::dense_container_accessor<VertexType>(vertex_refinement_vertex_handle),
-                                                  viennagrid::accessor::dense_container_accessor<EdgeType>(edge_refinement_vertex_handle));
+  Domain uniformly_refined_domain;  
+  viennagrid::refine_uniformly<viennagrid::tetrahedron_tag>(domain, uniformly_refined_domain);
+  
+  {
+    viennagrid::io::vtk_writer<Domain, CellType> writer;
+    writer(uniformly_refined_domain, "uniform_refinement.vtu");
+  }
   
   
-//   std::deque<PointType> tmp_points;  
-//   std::cout << viennagrid::centroid( viennagrid::accessor::dense_container_accessor<VertexType>(tmp_points), cell ) << std::endl;
   
-  //Domain uniformly_refined_domain = viennagrid::refine(domain, viennagrid::uniform_refinement_tag()); //equivalent to previous line
-    
-  //
-  // Adaptive refinement: Tag first three cells in domain for refinement
-//   CellRange cells = viennagrid::elements<CellTag>(domain);
-//   viennadata::access<viennagrid::refinement_key, bool>()(cells[0]) = true;
-//   viennadata::access<viennagrid::refinement_key, bool>()(cells[1]) = true;
-//   viennadata::access<viennagrid::refinement_key, bool>()(cells[2]) = true;
-//   Domain adaptively_refined_domain = viennagrid::refine<CellTag>(domain, viennagrid::local_refinement_tag());
-  //Domain adaptively_refined_domain = viennagrid::refine_adaptively(domain);  //equivalent to previous line
+  Domain adaptively_refined_domain;
   
+  std::deque<bool> cell_refinement_flag;
+  viennagrid::accessor::dense_container_accessor_t< std::deque<bool>, CellType > cell_refinement_accessor(cell_refinement_flag);
   
-  viennagrid::io::vtk_writer<Domain, CellType> writer;
-  writer(domain, "domain.vtu");
-  writer(uniformly_refined_domain, "uniform_refinement.vtu");
-//   writer(adaptively_refined_domain, "local_refinement");
+  cell_refinement_accessor( viennagrid::elements<CellTag>(domain)[0] ) = true;
+  cell_refinement_accessor( viennagrid::elements<CellTag>(domain)[3] ) = true;
+  cell_refinement_accessor( viennagrid::elements<CellTag>(domain)[8] ) = true;
+  cell_refinement_accessor.resize( viennagrid::elements<CellTag>(domain).size() );
+  
+  viennagrid::refine_cell<viennagrid::tetrahedron_tag>(domain, adaptively_refined_domain, cell_refinement_accessor);
+  
+  {
+    viennagrid::io::vtk_writer<Domain, CellType> writer;
+    writer(adaptively_refined_domain, "adaptively_refinement.vtu");
+  }
+
   
   
   //
   // Get boundary information of first vertex with respect to the full domain:
             
-//             for (VertexRange::iterator it = vertices.begin(); it != vertices.end(); ++it)
-//   std::cout << *it << " " << viennagrid::point(domain, *it) << " "
-//             << viennagrid::is_boundary(domain, *it)    //second argument is the enclosing complex (either a domain or a segment)
-//             << std::endl << std::endl;
+            for (VertexRange::iterator it = vertices.begin(); it != vertices.end(); ++it)
+  std::cout << *it << " " << viennagrid::point(domain, *it) << " "
+            << viennagrid::is_boundary(domain, *it)    //second argument is the enclosing complex (either a domain or a segment)
+            << std::endl << std::endl;
   
   
   

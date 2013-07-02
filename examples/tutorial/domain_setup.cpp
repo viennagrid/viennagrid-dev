@@ -45,6 +45,23 @@ void setup_cell(DomainType & domain,
   viennagrid::create_element<CellType>(segment, vertices.begin(), vertices.end());
 }
 
+
+
+
+class my_domain_config
+{
+  private:
+    //typedef viennagrid::storage::pointer_handle_tag handle_tag;
+    //typedef viennagrid::storage::iterator_handle_tag handle_tag;
+    typedef viennagrid::storage::id_handle_tag          handle_tag;
+    
+  public:
+    
+    typedef viennagrid::point_t<double, viennagrid::cartesian_cs<2> > PointType;
+    typedef viennagrid::config::result_of::full_domain_config< viennagrid::triangle_tag, PointType, viennagrid::storage::pointer_handle_tag >::type type;
+};
+
+
 //
 //    Let us construct the following input domain:
 //
@@ -63,15 +80,13 @@ int main()
   // Define the necessary types:
   //
   
-  typedef viennagrid::point_t<double, viennagrid::cartesian_cs<2> > PointType;
-  
-  typedef viennagrid::config::result_of::full_domain_config< viennagrid::triangle_tag, PointType, viennagrid::storage::id_handle_tag >::type DomainConfig;
+  typedef my_domain_config::PointType PointType;
   
   //typedef viennagrid::config::triangular_2d                       ConfigType;
   //typedef viennagrid::result_of::domain<ConfigType>::type         Domain;
   //typedef viennagrid::result_of::segment<ConfigType>::type        Segment;
   
-  typedef viennagrid::result_of::domain< DomainConfig >::type Domain;  
+  typedef viennagrid::domain_t< my_domain_config > Domain;  
   typedef viennagrid::result_of::domain_view<Domain>::type Segment;
   typedef viennagrid::triangle_tag                                    CellTag;
   
@@ -100,8 +115,8 @@ int main()
 //   
   
   //domain.segments().resize(2);
-  Segment seg0 = viennagrid::create_view<Segment>(domain);
-  Segment seg1 = viennagrid::create_view<Segment>(domain);
+  Segment seg0 = viennagrid::create_view(domain);
+  Segment seg1 = viennagrid::create_view(domain);
   
   //
   // Step 2: Add vertices to the domain. 
