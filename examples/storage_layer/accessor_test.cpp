@@ -114,19 +114,6 @@ int main()
             
             
             
-  typedef viennagrid::result_of::line_range<Domain>::type LineRange;
-  LineRange lines = viennagrid::elements(domain);
-  
-  for (LineRange::iterator it = lines.begin(); it != lines.end(); ++it)
-    std::cout << *it
-            << viennagrid::is_boundary(domain, *it)    //second argument is the enclosing complex (either a domain or a segment)
-            << std::endl << std::endl;
-            
-            
-            
-            
-            
-            
   std::vector<bool> facet_boundary_marker;
   viennadata::container_accessor<
     std::vector<bool>,

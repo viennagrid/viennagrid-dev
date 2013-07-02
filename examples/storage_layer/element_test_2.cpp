@@ -26,9 +26,6 @@ using std::endl;
 
 
 
-    
-
-
 int main()
 {
     //
@@ -43,8 +40,11 @@ int main()
     // Get the vertex type:
     //
     typedef viennagrid::element_t<  viennagrid::vertex_tag,   // element tag
-                                    viennameta::null_type,    // boundary k-cells container (a vertex does not have boundary cells, hence 'null_type'
-                                    viennagrid::storage::smart_id_tag<int>                       // type 'int' is used as ID
+                                    viennagrid::config::element_config_wrapper_t<
+                                      viennameta::null_type,                                  // boundary k-cells container (a vertex does not have boundary cells, hence 'null_type'
+                                      viennagrid::storage::smart_id_tag<int>,                 // type 'int' is used as ID
+                                      viennameta::null_type
+                                    >
                                 > vertex_type;
     
     //
@@ -95,8 +95,11 @@ int main()
     // Finally, we can instantiate the line type by passing the respective tag, the typelist of boundary k-cells, and the ID-type (int):
     //
     typedef viennagrid::element_t<  viennagrid::line_tag,           // element tag (as in ViennaGrid 1.0.x)
-                                    line_containers_typelist,       // list of boundary containers
-                                    viennagrid::storage::smart_id_tag<int>                             // ID type
+                                    viennagrid::config::element_config_wrapper_t<
+                                      line_containers_typelist,                               // list of boundary containers
+                                      viennagrid::storage::smart_id_tag<int>,                 // type 'int' is used as ID
+                                      viennameta::null_type
+                                    >
                                     > line_type;
     
     typedef viennagrid::storage::result_of::container<
@@ -154,7 +157,12 @@ int main()
     //
     // Instantiate the triangle type as above: Provide the tag, the boundary container list, and the ID type
     //
-    typedef viennagrid::element_t< viennagrid::triangle_tag, triangle_containers_typelist, viennagrid::storage::smart_id_tag<int> > triangle_type;
+    typedef viennagrid::element_t< viennagrid::triangle_tag,
+                                   viennagrid::config::element_config_wrapper_t<
+                                      triangle_containers_typelist,                               // list of boundary containers
+                                      viennagrid::storage::smart_id_tag<int>,                 // type 'int' is used as ID
+                                      viennameta::null_type
+                                    > > triangle_type;
     
     //
     // Instantiate a handled container of triangles using std::deque as the underlying container base. Handles are again of the type defined at the beginning.
@@ -217,7 +225,13 @@ int main()
     //
     // Now create the tetrahedron type as usual: Provide the tag, the boundary containers, and the ID type:
     //
-    typedef viennagrid::element_t< viennagrid::tetrahedron_tag, tetrahedron_containers_typelist, viennagrid::storage::smart_id_tag<int> > tetrahedron_type;
+    typedef viennagrid::element_t< viennagrid::tetrahedron_tag, 
+                                   viennagrid::config::element_config_wrapper_t<
+                                      tetrahedron_containers_typelist,                               // list of boundary containers
+                                      viennagrid::storage::smart_id_tag<int>,                 // type 'int' is used as ID
+                                      viennameta::null_type
+                                    >
+                                  > tetrahedron_type;
     
     //
     // Instantiate a container of tetrahedra. A std::deque is used for the storage, and the usual handle type defined at the beginning is used

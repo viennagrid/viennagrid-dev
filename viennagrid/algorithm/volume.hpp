@@ -208,27 +208,27 @@ namespace viennagrid
   }
   
   /** @brief Returns the n-dimensional volume of a n-cell */
-  template <typename EA, typename EB, typename EC, typename ED>
-  typename viennagrid::result_of::coord_type< element_t<EA,EB,EC,ED> >::type
-  volume(element_t<EA,EB,EC,ED> const & cell)
+  template <typename ElementTag, typename WrappedConfigType>
+  typename viennagrid::result_of::coord_type< element_t<ElementTag, WrappedConfigType> >::type
+  volume(element_t<ElementTag, WrappedConfigType> const & cell)
   {
     return volume( accessor::default_point_accessor(cell), cell );
   }
   
   
-  template<typename ElementTypeOrTag, typename A, typename B, typename C>
-  typename viennagrid::result_of::coord_type< domain_t<A,B,C> >::type
-  volume(domain_t<A,B,C> const & domain)
+  template<typename ElementTypeOrTag, typename WrappedConfigType>
+  typename viennagrid::result_of::coord_type< domain_t<WrappedConfigType> >::type
+  volume(domain_t<WrappedConfigType> const & domain)
   {
       return detail::volume_domain<ElementTypeOrTag>(domain);
   }
   
   // default Element Tag = Cell Tag
-  template<typename A, typename B, typename C>
-  typename viennagrid::result_of::coord_type< domain_t<A,B,C> >::type
-  volume(domain_t<A,B,C> const & domain)
+  template<typename WrappedConfigType>
+  typename viennagrid::result_of::coord_type< domain_t<WrappedConfigType> >::type
+  volume(domain_t<WrappedConfigType> const & domain)
   {
-      return detail::volume_domain< typename viennagrid::result_of::cell_tag< domain_t<A,B,C> >::type >(domain);
+      return detail::volume_domain< typename viennagrid::result_of::cell_tag< domain_t<WrappedConfigType> >::type >(domain);
   }
   
 

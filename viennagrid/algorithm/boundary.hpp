@@ -274,17 +274,16 @@ namespace viennagrid
    * @param el      The n-cell
    * @param segment A segment of a domain
    */
-  template <typename element_tag_1, typename bnd_cell_container_typelist_1, typename id_tag_1, typename appendix_type_1,
-            typename element_tag_2, typename bnd_cell_container_typelist_2, typename id_tag_2, typename appendix_type_2>
-  bool is_boundary(element_t<element_tag_1, bnd_cell_container_typelist_1, id_tag_1, appendix_type_1> const & el1,
-                   element_t<element_tag_2, bnd_cell_container_typelist_2, id_tag_2, appendix_type_2> const & el2)
+  template <typename ElementTag1, typename WrappedConfigType1,
+            typename ElementTag2, typename WrappedConfigType2>
+  bool is_boundary(element_t<ElementTag1, WrappedConfigType1> const & el1,
+                   element_t<ElementTag2, WrappedConfigType2> const & el2)
   {
 
-    typedef typename viennagrid::result_of::const_element_range<element_t<element_tag_2, bnd_cell_container_typelist_2, id_tag_2, appendix_type_2>,
-                                                              element_tag_1>::type   BoundaryRange;
+    typedef typename viennagrid::result_of::const_element_range<element_t<ElementTag2, WrappedConfigType2>, ElementTag1>::type   BoundaryRange;
     typedef typename viennagrid::result_of::iterator<BoundaryRange>::type               BoundaryIterator;
         
-    BoundaryRange bnd_cells = viennagrid::elements<element_tag_1>(el2);
+    BoundaryRange bnd_cells = viennagrid::elements(el2);
     for (BoundaryIterator bit = bnd_cells.begin();
                           bit != bnd_cells.end();
                         ++bit)

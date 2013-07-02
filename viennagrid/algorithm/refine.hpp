@@ -250,13 +250,14 @@ namespace viennagrid
         {
 //           VertexHandleType v = viennagrid::create_element<VertexType>( domain_out, typename VertexType::id_type(num_vertices) );
 //           viennagrid::point(domain_out, v) = ;
-          VertexHandleType vh = viennagrid::create_vertex( domain_out, typename VertexType::id_type(num_vertices), viennagrid::centroid(point_accessor_in, *eit) );
+          PointType tmp = viennagrid::centroid(point_accessor_in, *eit);
+          VertexHandleType vh = viennagrid::create_vertex( domain_out, typename VertexType::id_type(num_vertices), tmp );
 
           //viennadata::access<refinement_key, std::size_t>()(*eit) = num_vertices;
 //           viennadata::access<refinement_key, VertexIDTypeOut>()(*eit) = VertexIDTypeOut(num_vertices);
           edge_to_vertex_handle_accessor( *eit ) = vh;
           
-          std::cout << "One edge marked for refinement: " << *eit << std::endl;
+          std::cout << "One edge marked for refinement: " << *eit << "  with Point " << tmp << std::endl;
           
           ++num_vertices;
         }

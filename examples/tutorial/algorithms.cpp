@@ -48,13 +48,28 @@
 
 #include <typeinfo>
 
+
+
+class my_domain_config
+{
+  private:
+    //typedef viennagrid::storage::pointer_handle_tag handle_tag;
+    //typedef viennagrid::storage::iterator_handle_tag handle_tag;
+    typedef viennagrid::storage::id_handle_tag          handle_tag;
+    
+  public:
+    
+    typedef viennagrid::point_t<double, viennagrid::cartesian_cs<3> > PointType;
+    typedef viennagrid::config::result_of::full_domain_config< viennagrid::tetrahedron_tag, PointType, viennagrid::storage::pointer_handle_tag >::type type;
+};
+
+
 int main()
 {
     
-  typedef viennagrid::point_t<double, viennagrid::cartesian_cs<3> > PointType;
+  typedef my_domain_config::PointType PointType;
   
-  typedef viennagrid::config::result_of::full_domain_config< viennagrid::tetrahedron_tag, PointType, viennagrid::storage::pointer_handle_tag >::type DomainConfig;
-  typedef viennagrid::result_of::domain< DomainConfig >::type Domain;  
+  typedef viennagrid::domain_t< my_domain_config > Domain;  
   typedef viennagrid::result_of::domain_view<Domain>::type Segment;
   
   typedef viennagrid::tetrahedron_tag CellTag;

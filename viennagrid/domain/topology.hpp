@@ -445,10 +445,11 @@ namespace viennagrid
             static const bool value = viennameta::EQUAL< element_type, boundary_element_type >::value ? true : is_boundary_type<tail, boundary_element_type>::value;
         };
         
-        template<typename element_tag, typename bnd_cell_container_typelist_, typename id_tag, typename appendix_type, typename boundary_element_type>
-        struct is_boundary_type< element_t<element_tag, bnd_cell_container_typelist_, id_tag, appendix_type>, boundary_element_type>
+        template<typename element_tag, typename WrappedConfigType, typename boundary_element_type>
+        struct is_boundary_type< element_t<element_tag, WrappedConfigType>, boundary_element_type>
         {
-            static const bool value = is_boundary_type<bnd_cell_container_typelist_, boundary_element_type>::value;
+            typedef typename result_of::element_boundary_cell_container_typelist<WrappedConfigType>::type bnd_cell_container_typelist;
+            static const bool value = is_boundary_type<bnd_cell_container_typelist, boundary_element_type>::value;
         };
         
         
@@ -496,8 +497,8 @@ namespace viennagrid
             typedef viennameta::null_type type;
         };
         
-        template<typename element_tag, typename bnd_cell_container_typelist_, typename id_tag, typename tail>
-        struct element_to_tag< viennameta::typelist_t< element_t<element_tag, bnd_cell_container_typelist_, id_tag>, tail > >
+        template<typename element_tag, typename WrappedConfigType, typename tail>
+        struct element_to_tag< viennameta::typelist_t< element_t<element_tag, WrappedConfigType>, tail > >
         {
             typedef viennameta::typelist_t<
                 element_tag,
@@ -786,24 +787,24 @@ namespace viennagrid
         return storage::collection::get<value_type>(element_collection(domain)).dereference_handle( handle );
     }
     
-    template<typename domain_type, typename EA, typename EB, typename EC, typename ED>
-    element_t<EA, EB, EC, ED> & dereference_handle( domain_type & domain, element_t<EA, EB, EC, ED> & handle)
+    template<typename domain_type, typename ElementTag, typename WrappedConfigType>
+    element_t<ElementTag, WrappedConfigType> & dereference_handle( domain_type & domain, element_t<ElementTag, WrappedConfigType> & handle)
     { return handle; }
     
-    template<typename domain_type, typename EA, typename EB, typename EC, typename ED>
-    element_t<EA, EB, EC, ED> const & dereference_handle( domain_type & domain, element_t<EA, EB, EC, ED> const & handle)
+    template<typename domain_type, typename ElementTag, typename WrappedConfigType>
+    element_t<ElementTag, WrappedConfigType> const & dereference_handle( domain_type & domain, element_t<ElementTag, WrappedConfigType> const & handle)
     { return handle; }
     
     
     
     
-    template<typename domain_type, typename EA, typename EB, typename EC, typename ED>
-    typename result_of::handle<domain_type, element_t<EA, EB, EC, ED> >::type handle( domain_type & domain, element_t<EA, EB, EC, ED> & element)
-    { return storage::collection::get< element_t<EA, EB, EC, ED> >(element_collection(domain)).handle( element ); }
+    template<typename domain_type, typename ElementTag, typename WrappedConfigType>
+    typename result_of::handle<domain_type, element_t<ElementTag, WrappedConfigType> >::type handle( domain_type & domain, element_t<ElementTag, WrappedConfigType> & element)
+    { return storage::collection::get< element_t<ElementTag, WrappedConfigType> >(element_collection(domain)).handle( element ); }
     
-    template<typename domain_type, typename EA, typename EB, typename EC, typename ED>
-    typename result_of::const_handle<domain_type, element_t<EA, EB, EC, ED> >::type handle( domain_type const & domain, element_t<EA, EB, EC, ED> const & element)
-    { return storage::collection::get< element_t<EA, EB, EC, ED> >(element_collection(domain)).handle( element ); }
+    template<typename domain_type, typename ElementTag, typename WrappedConfigType>
+    typename result_of::const_handle<domain_type, element_t<ElementTag, WrappedConfigType> >::type handle( domain_type const & domain, element_t<ElementTag, WrappedConfigType> const & element)
+    { return storage::collection::get< element_t<ElementTag, WrappedConfigType> >(element_collection(domain)).handle( element ); }
     
     
     template<typename domain_type, typename handle_type>
@@ -813,15 +814,15 @@ namespace viennagrid
     
     
   template<typename domain_type,
-           typename element_tag_1, typename bnd_cell_typelist_1, typename id_type_1,
-           typename handle_type_2>
+           typename ElementType, typename WrappedConfigType,
+           typename handle_type>
   typename viennagrid::result_of::element<domain_type, viennagrid::vertex_tag>::type
   local_vertex(const domain_type & domain,
-               element_t<element_tag_1, bnd_cell_typelist_1, id_type_1> const & host_ncell,
-               handle_type_2 const & bnd_kcell_handle,
+               element_t<ElementType, WrappedConfigType> const & host_ncell,
+               handle_type const & bnd_kcell_handle,
                std::size_t index)
   {
-    typedef typename viennagrid::storage::handle::result_of::value_type<handle_type_2>::type element_type_2;
+    typedef typename viennagrid::storage::handle::result_of::value_type<handle_type>::type element_type_2;
     const element_type_2 & bnd_kcell = viennagrid::dereference_handle(domain, bnd_kcell_handle);
     return viennagrid::elements< viennagrid::vertex_tag >(bnd_kcell)[host_ncell.global_to_local_orientation(bnd_kcell_handle, index)];
   }
@@ -1121,30 +1122,30 @@ namespace viennagrid
 
     
     
-    template<bool generate_id, bool call_callback, typename domain_type, typename element_tag, typename boundary_cell_container_typelist, typename id_type, typename appendix_type>
+    template<bool generate_id, bool call_callback, typename domain_type, typename ElementTag, typename WrappedConfigType>
     std::pair<
                 typename viennagrid::storage::result_of::container_of<
                     typename result_of::element_collection<domain_type>::type,
-                    viennagrid::element_t<element_tag, boundary_cell_container_typelist, id_type, appendix_type>
+                    viennagrid::element_t<ElementTag, WrappedConfigType>
                 >::type::handle_type,
                 bool
             >
-        push_element( domain_type & domain, viennagrid::element_t<element_tag, boundary_cell_container_typelist, id_type, appendix_type> const & element)
+        push_element( domain_type & domain, viennagrid::element_t<ElementTag, WrappedConfigType> const & element)
     {
         domain.increment_change_counter();
         return inserter(domain).template insert<generate_id, call_callback>(element);
     }
     
     
-    template<typename domain_type, typename element_tag, typename boundary_cell_container_typelist, typename id_type, typename appendix_type>
+    template<typename domain_type, typename ElementTag, typename WrappedConfigType>
     std::pair<
                 typename viennagrid::storage::result_of::container_of<
                     typename result_of::element_collection<domain_type>::type,
-                    viennagrid::element_t<element_tag, boundary_cell_container_typelist, id_type, appendix_type>
+                    viennagrid::element_t<ElementTag, WrappedConfigType>
                 >::type::handle_type,
                 bool
             >
-        push_element( domain_type & domain, viennagrid::element_t<element_tag, boundary_cell_container_typelist, id_type, appendix_type> const & element)
+        push_element( domain_type & domain, viennagrid::element_t<ElementTag, WrappedConfigType> const & element)
     {
         domain.increment_change_counter();
         return inserter(domain)(element);
@@ -1169,10 +1170,10 @@ namespace viennagrid
     
         
     
-    template<typename element_tag, typename boundary_cell_container_typelist, typename id_type, typename appendix_type>
+    template<typename ElementTag, typename WrappedConfigType>
     void set_vertex(
-            viennagrid::element_t<element_tag, boundary_cell_container_typelist, id_type, appendix_type> & element,
-            typename viennagrid::result_of::handle< viennagrid::element_t<element_tag, boundary_cell_container_typelist, id_type, appendix_type>, vertex_tag >::type vertex_handle,
+            viennagrid::element_t<ElementTag, WrappedConfigType> & element,
+            typename viennagrid::result_of::handle< viennagrid::element_t<ElementTag, WrappedConfigType>, vertex_tag >::type vertex_handle,
             unsigned int pos
         )
     {

@@ -34,6 +34,7 @@ namespace viennagrid
     
     namespace config
     {
+      
     
         namespace result_of
         {       
@@ -369,7 +370,9 @@ namespace viennagrid
                 
                 typedef typename query_appendix_type<domain_config, element_tag>::type appendix_type;
 
-                typedef viennagrid::element_t<element_tag, container_typelist, id_tag, appendix_type> type;
+                typedef element_config_wrapper_t< container_typelist, id_tag, appendix_type > WrappedConfigType;
+                
+                typedef viennagrid::element_t<element_tag, WrappedConfigType> type;
             };            
         }
             

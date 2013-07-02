@@ -69,30 +69,30 @@ namespace viennagrid
       return distance_impl(p1, p2);
     }
 
-    template <typename PointAccessorType, typename PointType, typename EB, typename EC, typename ED>
+    template <typename PointAccessorType, typename PointType, typename WrappedConfigType>
     typename viennagrid::result_of::coord_type<PointType>::type
     distance_impl(PointAccessorType const accessor,
                   PointType const & p1,
-                  element_t<viennagrid::vertex_tag, EB,EC,ED> const & v2)
+                  element_t<viennagrid::vertex_tag, WrappedConfigType> const & v2)
     {
       return distance_impl(p1, accessor(v2));
     }
 
-    template <typename PointAccessorType, typename PointType, typename EB, typename EC, typename ED>
+    template <typename PointAccessorType, typename PointType, typename WrappedConfigType>
     typename viennagrid::result_of::coord_type<PointAccessorType>::type
     distance_impl(PointAccessorType const accessor,
-                  element_t<viennagrid::vertex_tag, EB,EC,ED> const & v1,
+                  element_t<viennagrid::vertex_tag, WrappedConfigType> const & v1,
                   PointType const & p2)
     {
       return distance_impl(accessor(v1), p2);
     }
     
     // Distance between vertices: Use point distance
-    template <typename PointAccessorType, typename PointType, typename EB1, typename EC1, typename ED1, typename EB2, typename EC2, typename ED2>
+    template <typename PointAccessorType, typename PointType, typename WrappedConfigType1, typename WrappedConfigType2>
     typename result_of::coord_type<PointAccessorType>::type
     distance_impl(PointAccessorType const accessor,
-                  element_t<viennagrid::vertex_tag, EB1,EC1,ED1> const & v1,
-                  element_t<viennagrid::vertex_tag, EB2,EC2,ED2> const & v2)
+                  element_t<viennagrid::vertex_tag, WrappedConfigType1> const & v1,
+                  element_t<viennagrid::vertex_tag, WrappedConfigType2> const & v2)
     {
       return distance_impl(accessor(v1), accessor(v2));
     }
@@ -145,30 +145,30 @@ namespace viennagrid
       return boundary_distance_impl(p1, p2);
     }
 
-    template <typename PointAccessorType, typename PointType, typename EB, typename EC, typename ED>
+    template <typename PointAccessorType, typename PointType, typename WrappedConfigType>
     typename viennagrid::result_of::coord_type<PointType>::type
     boundary_distance_impl(PointAccessorType const accessor,
                   PointType const & p1,
-                  element_t<viennagrid::vertex_tag, EB,EC,ED> const & v2)
+                  element_t<viennagrid::vertex_tag, WrappedConfigType> const & v2)
     {
       return boundary_distance_impl(p1, accessor(v2));
     }
 
-    template <typename PointAccessorType, typename PointType, typename EB, typename EC, typename ED>
+    template <typename PointAccessorType, typename PointType, typename WrappedConfigType>
     typename viennagrid::result_of::coord_type<PointAccessorType>::type
     boundary_distance_impl(PointAccessorType const accessor,
-                  element_t<viennagrid::vertex_tag, EB,EC,ED> const & v1,
+                  element_t<viennagrid::vertex_tag, WrappedConfigType> const & v1,
                   PointType const & p2)
     {
       return boundary_distance_impl(accessor(v1), p2);
     }
     
     // Distance between vertices: Use point distance
-    template <typename PointAccessorType, typename PointType, typename EB1, typename EC1, typename ED1, typename EB2, typename EC2, typename ED2>
+    template <typename PointAccessorType, typename PointType, typename WrappedConfigType1, typename WrappedConfigType2>
     typename result_of::coord_type<PointAccessorType>::type
     boundary_distance_impl(PointAccessorType const accessor,
-                  element_t<viennagrid::vertex_tag, EB1,EC1,ED1> const & v1,
-                  element_t<viennagrid::vertex_tag, EB2,EC2,ED2> const & v2)
+                  element_t<viennagrid::vertex_tag, WrappedConfigType1> const & v1,
+                  element_t<viennagrid::vertex_tag, WrappedConfigType2> const & v2)
     {
       return boundary_distance_impl(accessor(v1), accessor(v2));
     }

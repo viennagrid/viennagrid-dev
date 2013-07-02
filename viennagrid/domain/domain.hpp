@@ -46,16 +46,16 @@ namespace viennagrid
             typedef typename viennagrid::result_of::vertex< domain_t<ConfigType> >::type::appendix_type type;
         };
         
-        template<typename EA, typename EB, typename EC, typename ED>
-        struct point_type< element_t<EA, EB, EC, ED> >
+        template<typename ElementTag, typename WrappedConfigType>
+        struct point_type< element_t<ElementTag, WrappedConfigType> >
         {
-            typedef typename viennagrid::result_of::vertex< element_t<EA, EB, EC, ED> >::type::appendix_type type;
+            typedef typename viennagrid::result_of::vertex< element_t<ElementTag, WrappedConfigType> >::type::appendix_type type;
         };
         
-        template<typename EA, typename EB, typename EC, typename ED>
-        struct point_type< const element_t<EA, EB, EC, ED> >
+        template<typename ElementTag, typename WrappedConfigType>
+        struct point_type< const element_t<ElementTag, WrappedConfigType> >
         {
-            typedef typename viennagrid::result_of::vertex< element_t<EA, EB, EC, ED> >::type::appendix_type type;
+            typedef typename viennagrid::result_of::vertex< element_t<ElementTag, WrappedConfigType> >::type::appendix_type type;
         };
     }
     

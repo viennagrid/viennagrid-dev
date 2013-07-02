@@ -112,14 +112,14 @@ namespace viennagrid
     
     namespace result_of
     {
-        template<typename value_type, typename EB, typename EC, typename ED>
-        struct point_type< accessor::appendix_accessor_t<value_type, element_t<vertex_tag, EB, EC, ED> > >
+        template<typename value_type, typename WrappedConfigType>
+        struct point_type< accessor::appendix_accessor_t<value_type, element_t<vertex_tag, WrappedConfigType> > >
         {
             typedef value_type type;
         };
         
-        template<typename value_type, typename EB, typename EC, typename ED>
-        struct point_type< const accessor::appendix_accessor_t<value_type, element_t<vertex_tag, EB, EC, ED> > >
+        template<typename value_type, typename WrappedConfigType>
+        struct point_type< const accessor::appendix_accessor_t<value_type, element_t<vertex_tag, WrappedConfigType> > >
         {
             typedef value_type type;
         };
@@ -286,16 +286,16 @@ namespace viennagrid
     
     namespace result_of
     {
-        template<typename value_type, typename EB, typename EC, typename ED>
-        struct point_type< accessor::dense_container_accessor_t<value_type, element_t<vertex_tag, EB, EC, ED> > >
+        template<typename value_type, typename WrappedConfigType>
+        struct point_type< accessor::dense_container_accessor_t<value_type, element_t<vertex_tag, WrappedConfigType> > >
         {
-            typedef typename accessor::dense_container_accessor_t<value_type, element_t<vertex_tag, EB, EC, ED> >::value_type type;
+            typedef typename accessor::dense_container_accessor_t<value_type, element_t<vertex_tag, WrappedConfigType> >::value_type type;
         };
         
-        template<typename value_type, typename EB, typename EC, typename ED>
-        struct point_type< const accessor::dense_container_accessor_t<value_type, element_t<vertex_tag, EB, EC, ED> > >
+        template<typename value_type, typename WrappedConfigType>
+        struct point_type< const accessor::dense_container_accessor_t<value_type, element_t<vertex_tag, WrappedConfigType> > >
         {
-            typedef typename accessor::dense_container_accessor_t<value_type, element_t<vertex_tag, EB, EC, ED> >::value_type type;
+            typedef typename accessor::dense_container_accessor_t<value_type, element_t<vertex_tag, WrappedConfigType> >::value_type type;
         };
     }
         

@@ -140,17 +140,17 @@ namespace viennagrid
     
     
     
-    template<typename element_type_or_tag, typename connector_element_type_or_tag, typename neigbour_accessor_type, typename EA, typename EB, typename EC, typename ED>
+    template<typename element_type_or_tag, typename connector_element_type_or_tag, typename neigbour_accessor_type, typename ElementTag, typename WrappedConfigType>
     viennagrid::storage::container_range_wrapper<typename neigbour_accessor_type::value_type>
-    neighbour_elements(neigbour_accessor_type accessor, element_t<EA, EB, EC, ED> & element)
+    neighbour_elements(neigbour_accessor_type accessor, element_t<ElementTag, WrappedConfigType> & element)
     {
         typedef viennagrid::storage::container_range_wrapper<typename neigbour_accessor_type::value_type> range_type;
         return range_type( accessor( element ) );
     }
     
-    template<typename element_type_or_tag, typename connector_element_type_or_tag, typename neigbour_accessor_type, typename EA, typename EB, typename EC, typename ED>
+    template<typename element_type_or_tag, typename connector_element_type_or_tag, typename neigbour_accessor_type, typename ElementTag, typename WrappedConfigType>
     viennagrid::storage::container_range_wrapper<const typename neigbour_accessor_type::value_type>
-    neighbour_elements(neigbour_accessor_type const accessor, element_t<EA, EB, EC, ED> const & element)
+    neighbour_elements(neigbour_accessor_type const accessor, element_t<ElementTag, WrappedConfigType> const & element)
     {
         typedef viennagrid::storage::container_range_wrapper<const typename neigbour_accessor_type::value_type> range_type;
         return range_type( accessor( element ) );

@@ -150,7 +150,8 @@ namespace viennagrid
   class point_t;
 
 
-  template<typename element_tag, typename bnd_cell_container_typelist_, typename id_tag, typename appendix_type = viennameta::null_type>
+//   template<typename element_tag, typename bnd_cell_container_typelist_, typename id_tag, typename appendix_type = viennameta::null_type>
+  template<typename element_tag, typename WrappedConfigType>
   class element_t;
 
   template <typename element_type>
@@ -654,14 +655,14 @@ namespace viennagrid
             typedef element_tag_ type;
         };
         
-        template<typename element_tag_, typename boundary_cell_container_typelist, typename id_type, typename appendix_type>
-        struct element_tag< element_t<element_tag_, boundary_cell_container_typelist, id_type, appendix_type> >
+        template<typename element_tag_, typename WrappedConfigType>
+        struct element_tag< element_t<element_tag_, WrappedConfigType> >
         {
             typedef element_tag_ type;
         };
         
-        template<typename element_tag_, typename boundary_cell_container_typelist, typename id_type, typename appendix_type>
-        struct element_tag< const element_t<element_tag_, boundary_cell_container_typelist, id_type, appendix_type> >
+        template<typename element_tag_, typename WrappedConfigType>
+        struct element_tag< const element_t<element_tag_, WrappedConfigType> >
         {
             typedef element_tag_ type;
         };
@@ -682,16 +683,16 @@ namespace viennagrid
             typedef typename element<element_type, typename facet_tag<element_type>::type >::type type;
         };
     
-        template<typename element_tag, typename boundary_cell_typelist, typename id_type>
-        struct facet_handle< element_t<element_tag, boundary_cell_typelist, id_type> >
+        template<typename element_tag, typename WrappedConfigType>
+        struct facet_handle< element_t<element_tag, WrappedConfigType> >
         {
-            typedef typename handle< element_t<element_tag, boundary_cell_typelist, id_type>, typename facet_tag<element_tag>::type >::type type;
+            typedef typename handle< element_t<element_tag, WrappedConfigType>, typename facet_tag<element_tag>::type >::type type;
         };
         
-        template<typename element_tag, typename boundary_cell_typelist, typename id_type>
-        struct const_facet_handle< element_t<element_tag, boundary_cell_typelist, id_type> >
+        template<typename element_tag, typename WrappedConfigType>
+        struct const_facet_handle< element_t<element_tag, WrappedConfigType> >
         {
-            typedef typename const_handle< element_t<element_tag, boundary_cell_typelist, id_type>, typename facet_tag<element_tag>::type >::type type;
+            typedef typename const_handle< element_t<element_tag, WrappedConfigType>, typename facet_tag<element_tag>::type >::type type;
         };
         
         

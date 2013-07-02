@@ -65,12 +65,12 @@ namespace viennagrid
   // The public interface functions
   //
   /** @brief Returns the surface of a n-cell */
-  template <typename PointAccessorType, typename EA, typename EB, typename EC, typename ED>
+  template <typename PointAccessorType, typename ElementTag, typename WrappedConfigType>
   typename viennagrid::result_of::coord_type< PointAccessorType >::type
-  surface(PointAccessorType const accessor, element_t<EA,EB,EC,ED> const & element)
+  surface(PointAccessorType const accessor, element_t<ElementTag, WrappedConfigType> const & element)
   {
     //typedef typename ElementType::config_type                   ConfigType;
-    typedef typename viennagrid::result_of::const_facet_range< element_t<EA,EB,EC,ED> >::type   ElementBoundaryRange;
+    typedef typename viennagrid::result_of::const_facet_range< element_t<ElementTag, WrappedConfigType> >::type   ElementBoundaryRange;
     typedef typename viennagrid::result_of::iterator<ElementBoundaryRange>::type       ElementBoundaryIterator;
     
     //typedef typename ElementType::config_type::numeric_type value_type;
@@ -89,9 +89,9 @@ namespace viennagrid
     return result;
   }
   
-  template <typename EA, typename EB, typename EC, typename ED>
-  typename viennagrid::result_of::coord_type< element_t<EA,EB,EC,ED> >::type
-  surface( element_t<EA,EB,EC,ED> const & element)
+  template < typename ElementTag, typename WrappedConfigType>
+  typename viennagrid::result_of::coord_type< element_t<ElementTag, WrappedConfigType> >::type
+  surface( element_t<ElementTag, WrappedConfigType> const & element)
   {
     return surface( accessor::default_point_accessor(element), element );
   }
@@ -100,18 +100,18 @@ namespace viennagrid
   
   //special case: domain
   /** @brief Returns the surface of a domain */
-  template <typename ElementTypeOrTag, typename DA, typename DB, typename DC>
-  typename viennagrid::result_of::coord_type< domain_t<DA,DB,DC> >::type
-  surface(domain_t<DA,DB,DC> const & d)
+  template <typename ElementTypeOrTag, typename WrappedConfigType>
+  typename viennagrid::result_of::coord_type< domain_t<WrappedConfigType> >::type
+  surface(domain_t<WrappedConfigType> const & d)
   {
     return detail::surface_domainsegment<ElementTypeOrTag>(d);
   }    
   
-  template <typename DA, typename DB, typename DC>
-  typename viennagrid::result_of::coord_type< domain_t<DA,DB,DC> >::type
-  surface(domain_t<DA,DB,DC> const & d)
+  template <typename WrappedConfigType>
+  typename viennagrid::result_of::coord_type< domain_t<WrappedConfigType> >::type
+  surface(domain_t<WrappedConfigType> const & d)
   {
-    typedef typename viennagrid::result_of::cell_tag< domain_t<DA,DB,DC> >::type CellTag;
+    typedef typename viennagrid::result_of::cell_tag< domain_t<WrappedConfigType> >::type CellTag;
     return detail::surface_domainsegment< typename viennagrid::result_of::facet_tag<CellTag>::type>(d);
   }  
   

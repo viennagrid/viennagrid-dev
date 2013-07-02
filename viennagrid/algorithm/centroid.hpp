@@ -177,18 +177,18 @@ namespace viennagrid
     return detail::centroid( accessor, cell, typename ElementType::tag());
   }
   
-    template <typename ElementTag, typename EB, typename EC, typename ED>
-    typename viennagrid::result_of::point_type< element_t<ElementTag,EB,EC,ED> >::type
-  centroid(element_t<ElementTag,EB,EC,ED> const & cell)
+    template <typename ElementTag, typename WrappedConfigType>
+    typename viennagrid::result_of::point_type< element_t<ElementTag,WrappedConfigType> >::type
+  centroid(element_t<ElementTag,WrappedConfigType> const & cell)
   {
     return detail::centroid( accessor::default_point_accessor(cell), cell, ElementTag());
   }
   
-  template<typename ElementTypeOrTag, typename A, typename B, typename C>
+  template<typename ElementTypeOrTag, typename WrappedConfigType>
   typename viennagrid::result_of::coord_type<
-        domain_t<A, B, C>
+        domain_t<WrappedConfigType>
   >::type
-  centroid(domain_t<A, B, C> const & domain)
+  centroid(domain_t<WrappedConfigType> const & domain)
   {
       return detail::centroid_domain<ElementTypeOrTag>(domain);
   }
