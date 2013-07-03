@@ -421,15 +421,15 @@ namespace viennagrid
                  typename segment_id_type = int,
                  typename appendix_type =
                  viennagrid::storage::collection_t<
-                    typename viennameta::make_typemap<
+                    typename viennagrid::meta::make_typemap<
                         element_segment_mapping_tag,
                         viennagrid::storage::collection_t<
-                            typename viennameta::typemap::result_of::modify<
+                            typename viennagrid::meta::typemap::result_of::modify<
                                 typename trivial_segmentation_appendix<
                                     typename viennagrid::result_of::element_typelist<domain_type>::type,
                                     segment_id_type
                                 >::type,
-                                viennameta::static_pair<
+                                viennagrid::meta::static_pair<
                                     typename viennagrid::result_of::element< domain_type, viennagrid::triangle_tag >::type,
                                     typename viennagrid::storage::result_of::container<
                                         segment_info_t< element_segment_mapping<segment_id_type, bool> >,
