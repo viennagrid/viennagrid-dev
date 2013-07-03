@@ -129,7 +129,7 @@ namespace viennagrid
         boundary_setter_functor(domain_type & domain_) : domain(domain_) {}
         
         template<typename something>
-        void operator()( viennameta::tag<something> )
+        void operator()( viennagrid::meta::tag<something> )
         {
             typedef typename viennagrid::result_of::element_tag< something >::type element_tag;
             typedef typename viennagrid::result_of::element< domain_type, element_tag >::type element_type;
@@ -183,8 +183,8 @@ namespace viennagrid
         typedef typename viennagrid::result_of::cell_tag< domain_type >::type cell_tag;
         typedef typename viennagrid::result_of::facet_tag< cell_tag >::type facet_tag;
         
-        typedef typename viennameta::typelist::result_of::erase<
-            typename viennameta::typemap::result_of::key_typelist<
+        typedef typename viennagrid::meta::typelist::result_of::erase<
+            typename viennagrid::meta::typemap::result_of::key_typelist<
                 typename viennagrid::storage::result_of::value_type<
                     typename domain_type::appendix_type,
                     boundary_information_collection_tag
@@ -195,7 +195,7 @@ namespace viennagrid
         
         boundary_setter_functor<domain_type> functor(domain);
         
-        viennameta::typelist::for_each< typelist >( functor );
+        viennagrid::meta::typelist::for_each< typelist >( functor );
     }
   
   

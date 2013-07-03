@@ -72,12 +72,12 @@ namespace viennagrid
                 typedef typename query_config<domain_config, topology_config_tag>::type topology_config;
                 
                 static const bool value =
-                    !viennameta::EQUAL<
-                        typename viennameta::typemap::result_of::find<
+                    !viennagrid::meta::EQUAL<
+                        typename viennagrid::meta::typemap::result_of::find<
                             topology_config,
                             element_tag
                         >::type,
-                        viennameta::not_found
+                        viennagrid::meta::not_found
                     >::value;
             };
             
@@ -89,7 +89,7 @@ namespace viennagrid
                 
                 typedef typename query_config<topology_config, element_tag>::type element_config;
                 
-//                 typedef typename viennameta::typemap::result_of::find< topology_config, element_tag >::type::second element_config;
+//                 typedef typename viennagrid::meta::typemap::result_of::find< topology_config, element_tag >::type::second element_config;
                 typedef typename query_config<element_config, element_id_tag>::type type;
             };
             
@@ -99,7 +99,7 @@ namespace viennagrid
                 typedef typename query_config<domain_config, topology_config_tag>::type topology_config;
                 
                 typedef typename query_config<topology_config, element_tag>::type element_config;
-//                 typedef typename viennameta::typemap::result_of::find< topology_config, element_tag >::type::second element_config;
+//                 typedef typename viennagrid::meta::typemap::result_of::find< topology_config, element_tag >::type::second element_config;
                 typedef typename query_config<element_config, element_container_tag>::type type;
             };
             
@@ -111,10 +111,10 @@ namespace viennagrid
                 
                 typedef typename query_config<topology_config, element_tag>::type element_config;
                 
-//                 typedef typename viennameta::typemap::result_of::find< topology_config, element_tag >::type::second element_config;
-                typedef typename viennameta::typemap::result_of::find< element_config, element_boundary_storage_layout_tag >::type::second element_storage_layout_config;
-                typedef typename viennameta::typemap::result_of::find< element_storage_layout_config, boundary_cell_tag >::type::second boundary_cell_storage_handling;
-                //typedef typename viennameta::typemap::result_of::find< element_storage_layout_config, boundary_cell_tag >::type::second boundary_cell_storage_layout;
+//                 typedef typename viennagrid::meta::typemap::result_of::find< topology_config, element_tag >::type::second element_config;
+                typedef typename viennagrid::meta::typemap::result_of::find< element_config, element_boundary_storage_layout_tag >::type::second element_storage_layout_config;
+                typedef typename viennagrid::meta::typemap::result_of::find< element_storage_layout_config, boundary_cell_tag >::type::second boundary_cell_storage_handling;
+                //typedef typename viennagrid::meta::typemap::result_of::find< element_storage_layout_config, boundary_cell_tag >::type::second boundary_cell_storage_layout;
                 
                 //typedef typename boundary_cell_storage_layout::first storage_tag;
                 //typedef typename boundary_cell_storage_layout::second orientation_tag;
@@ -139,7 +139,7 @@ namespace viennagrid
             struct has_boundary_cells_helper
             {
                 static const bool value = 
-                    !viennameta::EQUAL<
+                    !viennagrid::meta::EQUAL<
                         typename query_boundary_storage_layout<domain_config_, element_tag_, boundary_cell_tag_>::boundary_cell_storage_handling,
                         viennagrid::no_handling_tag
                     >::value;
@@ -165,12 +165,12 @@ namespace viennagrid
             struct has_orientation_helper
             {
                 static const bool value = 
-                    viennameta::EQUAL<
+                    viennagrid::meta::EQUAL<
                         typename query_boundary_storage_layout<domain_config_, element_tag_, boundary_cell_tag_>::boundary_cell_storage_handling,
                         viennagrid::full_handling_tag
                     >::value
                         ||
-                    viennameta::EQUAL<
+                    viennagrid::meta::EQUAL<
                         typename query_boundary_storage_layout<domain_config_, element_tag_, boundary_cell_tag_>::boundary_cell_storage_handling,
                         viennagrid::full_lazy_handling_tag
                     >::value;
@@ -247,10 +247,10 @@ namespace viennagrid
                 typedef viennagrid::element_orientation<orientation_container_type> facet_orientation_type;
             
                 typedef typename 
-                    viennameta::IF<
+                    viennagrid::meta::IF<
                         has_orientation< domain_config, element_tag, boundary_cell_tag>::value,
                         typename viennagrid::storage::result_of::container< facet_orientation_type, container_tag >::type,
-                        viennameta::null_type
+                        viennagrid::meta::null_type
                     >::type facet_orientation_container_type;
                 
                     
@@ -258,7 +258,7 @@ namespace viennagrid
                 // final container pair
                 //
                     
-                typedef viennameta::static_pair<
+                typedef viennagrid::meta::static_pair<
                                 boundary_cell_view,
                                 facet_orientation_container_type
                             > type;
@@ -300,14 +300,14 @@ namespace viennagrid
                 // Orientation
                 //
             
-                typedef viennameta::null_type facet_orientation_container_type;
+                typedef viennagrid::meta::null_type facet_orientation_container_type;
                 
                     
                 //
                 // final container pair
                 //
                     
-                typedef viennameta::static_pair<
+                typedef viennagrid::meta::static_pair<
                                 boundary_cell_view,
                                 facet_orientation_container_type
                             > type;
@@ -321,7 +321,7 @@ namespace viennagrid
             template<typename config_, typename element_tag_, typename boundary_cell_tag_>
             struct element_boundary_cell_container_helper<config_, element_tag_, boundary_cell_tag_, false>
             {
-                typedef viennameta::null_type type;
+                typedef viennagrid::meta::null_type type;
             };
             
             
@@ -341,7 +341,7 @@ namespace viennagrid
                 typedef typename boundary_cell_tag::facet_tag facet_tag;
                 
                 typedef typename element_boundary_cell_container<config, element_tag, facet_tag>::type boundary_cell_layer_containers;
-                typedef typename viennameta::typelist::result_of::push_back<
+                typedef typename viennagrid::meta::typelist::result_of::push_back<
                     typename element_boundary_cell_container_typelist< config, element_tag, facet_tag >::type,
                     boundary_cell_layer_containers
                 >::type type;
@@ -350,7 +350,7 @@ namespace viennagrid
             template<typename config, typename element_tag>
             struct element_boundary_cell_container_typelist<config, element_tag, viennagrid::vertex_tag>
             {
-                typedef viennameta::null_type type;
+                typedef viennagrid::meta::null_type type;
             };
             
             
@@ -359,9 +359,9 @@ namespace viennagrid
             struct element_from_config_impl;
             
             template<typename config_element_tag, typename config_element_config, typename config_tail, typename element_tag_>
-            struct element_from_config_impl< viennameta::typelist_t< viennameta::static_pair<config_element_tag, config_element_config>, config_tail >, element_tag_ >
+            struct element_from_config_impl< viennagrid::meta::typelist_t< viennagrid::meta::static_pair<config_element_tag, config_element_config>, config_tail >, element_tag_ >
             {
-                typedef viennameta::typelist_t< viennameta::static_pair<config_element_tag, config_element_config>, config_tail > domain_config;
+                typedef viennagrid::meta::typelist_t< viennagrid::meta::static_pair<config_element_tag, config_element_config>, config_tail > domain_config;
                 typedef element_tag_ element_tag;
                 
                 typedef typename query_element_id_tag<domain_config, element_tag>::type id_tag;
@@ -385,9 +385,9 @@ namespace viennagrid
     //         struct ncell_tag;
     //         
     //         template<typename element_tag, typename element_config, typename tail, long dim>
-    //         struct ncell_tag< viennameta::typelist_t< viennameta::static_pair<element_tag, element_config>, tail >, dim >
+    //         struct ncell_tag< viennagrid::meta::typelist_t< viennagrid::meta::static_pair<element_tag, element_config>, tail >, dim >
     //         {
-    //             typedef typename viennameta::IF<
+    //             typedef typename viennagrid::meta::IF<
     //                 element_tag::dim == dim,
     //                 element_tag,
     //                 typename ncell_tag<tail, dim>::type
@@ -395,16 +395,16 @@ namespace viennagrid
     //         };
     //         
     //         template<long dim>
-    //         struct ncell_tag<viennameta::null_type, dim>
+    //         struct ncell_tag<viennagrid::meta::null_type, dim>
     //         {
-    //             typedef viennameta::null_type type;
+    //             typedef viennagrid::meta::null_type type;
     //         };
     //         
     // 
     //         template<typename head, typename tail, long dim>
-    //         struct ncell< viennameta::typelist_t<head, tail>, dim >
+    //         struct ncell< viennagrid::meta::typelist_t<head, tail>, dim >
     //         {
-    //             typedef viennameta::typelist_t<head, tail> domain_config;
+    //             typedef viennagrid::meta::typelist_t<head, tail> domain_config;
     //             typedef typename element<
     //                 domain_config,
     //                 typename ncell_tag<domain_config, dim>::type

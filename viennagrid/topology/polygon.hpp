@@ -66,7 +66,7 @@ namespace viennagrid
             bnd_cell_type bnd_cell( inserter.get_physical_container_collection() );
             
             int index = 0;
-            for (int i = 0; i < element.container( dimension_tag<0>() ).size()-1; ++i)
+            for (std::size_t i = 0; i < element.container( dimension_tag<0>() ).size()-1; ++i)
             {
                 bnd_cell.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(i), 0 );
                 bnd_cell.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(i+1), 1 ); 

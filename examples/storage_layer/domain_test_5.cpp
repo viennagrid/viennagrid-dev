@@ -44,7 +44,7 @@ struct element_output_functor
     void operator() ( element_type const & element ) const
     {
         std::cout << element << std::endl;
-    };
+    }
 };
 
 class my_domain_config
@@ -94,7 +94,7 @@ int main()
     //   
     
     // only tetrahedrons are stored in the view
-    typedef viennameta::make_typelist< tetrahedron_type >::type view_types;
+    typedef viennagrid::meta::make_typelist< tetrahedron_type >::type view_types;
     
     // typedefing the view
     typedef viennagrid::result_of::domain_view<domain_type, view_types>::type domain_view_type;

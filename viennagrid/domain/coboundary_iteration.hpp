@@ -22,7 +22,7 @@ namespace viennagrid
                     typename domain_type::appendix_type,
                     coboundary_collection_tag
                   >::type,
-                viennameta::static_pair<element_tag, coboundary_tag>
+                viennagrid::meta::static_pair<element_tag, coboundary_tag>
               >::type::container_type::value_type type;
         };
         
@@ -104,12 +104,12 @@ namespace viennagrid
                     typename domain_type::appendix_type,
                     coboundary_collection_tag
                 >::type,
-                viennameta::static_pair<element_tag, coboundary_tag>
+                viennagrid::meta::static_pair<element_tag, coboundary_tag>
                 >::type coboundary_container_wrapper_type;
         
 //         std::cout << "Recalculating co-boundary" << std::endl;
                 
-        coboundary_container_wrapper_type & coboundary_container_wrapper = coboundary_collection<element_tag, coboundary_tag>( domain );//viennagrid::storage::collection::get< viennameta::static_pair<element_tag, coboundary_tag> > ( domain.coboundary_collection() );
+        coboundary_container_wrapper_type & coboundary_container_wrapper = coboundary_collection<element_tag, coboundary_tag>( domain );//viennagrid::storage::collection::get< viennagrid::meta::static_pair<element_tag, coboundary_tag> > ( domain.coboundary_collection() );
         
         viennagrid::accessor::dense_container_accessor_t< typename coboundary_container_wrapper_type::container_type, element_type > accessor( coboundary_container_wrapper.container );
         create_coboundary_information<element_type_or_tag, coboundary_type_or_tag>( domain, accessor );
@@ -169,7 +169,7 @@ namespace viennagrid
                     typename domain_type::appendix_type,
                     coboundary_collection_tag
                 >::type,
-                viennameta::static_pair<element_tag, coboundary_tag>
+                viennagrid::meta::static_pair<element_tag, coboundary_tag>
                 >::type coboundary_container_wrapper_type;
         coboundary_container_wrapper_type & coboundary_container_wrapper = coboundary_collection<element_tag, coboundary_tag>( domain );
         
@@ -195,7 +195,7 @@ namespace viennagrid
                     typename domain_type::appendix_type,
                     coboundary_collection_tag
                 >::type,
-                viennameta::static_pair<element_tag, coboundary_tag>
+                viennagrid::meta::static_pair<element_tag, coboundary_tag>
                 >::type coboundary_container_wrapper_type;
         coboundary_container_wrapper_type const & coboundary_container_wrapper = coboundary_collection<element_tag, coboundary_tag>( domain );
         

@@ -87,7 +87,7 @@ int main()
     //   
     
     // only tetrahedrons are stored in the view
-    typedef viennameta::make_typelist< vertex_type, tetrahedron_type >::type view_types;
+    typedef viennagrid::meta::make_typelist< vertex_type, tetrahedron_type >::type view_types;
     
     
     

@@ -178,6 +178,7 @@ namespace viennagrid
             
             typedef container_type_ container_type;
             typedef typename container_type::value_type value_type;
+            typedef typename container_type::size_type  size_type;
             typedef element_type_ access_type;
             
             dense_container_accessor_t( container_type & container_ ) : container(container_) {}
@@ -190,13 +191,13 @@ namespace viennagrid
             
             typename container_type::reference access( access_type const & element )
             {
-                if (container.size() <= element.id().get()) container.resize(element.id().get()+1);
+                if (container.size() <= static_cast<size_type>(element.id().get())) container.resize(element.id().get()+1);
 //                 container.resize(element.id().get());
                 return container[ element.id().get() ];
             }
             typename container_type::const_reference access( access_type const & element ) const
             {
-                assert(container.size() > element.id().get());
+                assert(container.size() > static_cast<size_type>(element.id().get()));
                 return container[ element.id().get() ];
             }
 
@@ -205,7 +206,8 @@ namespace viennagrid
             
             void erase( access_type const & element )
             {
-                if (element.id().get()-1 == container.size())
+              if (container.size() > 0)
+                if (static_cast<size_type>(element.id().get()) == container.size() - 1)
                     container.erase( container.size()-1 );
             }
             
@@ -225,6 +227,7 @@ namespace viennagrid
             
             typedef container_type_ container_type;
             typedef typename container_type::value_type value_type;
+            typedef typename container_type::size_type  size_type;
             typedef element_type_ access_type;
             
             dense_container_accessor_t( container_type const & container_ ) : container(container_) {}
@@ -235,7 +238,7 @@ namespace viennagrid
 
             typename container_type::const_reference access( access_type const & element ) const
             {
-                assert(container.size() > element.id().get());
+                assert(container.size() > static_cast<size_type>(element.id().get()));
                 return container[ element.id().get() ];
             }
 

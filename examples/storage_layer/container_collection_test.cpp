@@ -65,10 +65,10 @@ struct view2_predicate
 
 int main()
 {
-    typedef viennameta::make_typelist<char, int, float, double>::type config;
+    typedef viennagrid::meta::make_typelist<char, int, float, double>::type config;
     
     
-    typedef viennameta::make_typemap<   
+    typedef viennagrid::meta::make_typemap<   
                                         viennagrid::storage::default_tag,   viennagrid::storage::handled_container_tag< viennagrid::storage::std_deque_tag, viennagrid::storage::pointer_handle_tag>,
                                         int,                                viennagrid::storage::handled_container_tag< viennagrid::storage::std_list_tag, viennagrid::storage::pointer_handle_tag>
                                     >::type container_config;
@@ -104,8 +104,8 @@ int main()
     
     
     typedef viennagrid::storage::result_of::container_collection<
-        viennameta::make_typelist<char, int, double>::type,
-        viennameta::make_typemap<   viennagrid::storage::default_tag,   viennagrid::storage::handled_container_tag< viennagrid::storage::std_vector_tag, viennagrid::storage::no_handle_tag> ,
+        viennagrid::meta::make_typelist<char, int, double>::type,
+        viennagrid::meta::make_typemap<   viennagrid::storage::default_tag,   viennagrid::storage::handled_container_tag< viennagrid::storage::std_vector_tag, viennagrid::storage::no_handle_tag> ,
                                     int,                                viennagrid::storage::handled_container_tag< viennagrid::storage::std_deque_tag, viennagrid::storage::no_handle_tag>
                             >::type 
         >::type collection2_type;
@@ -125,7 +125,7 @@ int main()
     
     
     
-    typedef viennameta::make_typemap<   
+    typedef viennagrid::meta::make_typemap<   
                                         viennagrid::storage::default_tag,       viennagrid::storage::handled_container_tag< viennagrid::storage::std_deque_tag, viennagrid::storage::no_handle_tag>,
                                         float,                                  viennagrid::storage::handled_container_tag< viennagrid::storage::std_vector_tag, viennagrid::storage::no_handle_tag>
                                     >::type view_container_config;
@@ -154,7 +154,7 @@ int main()
     
 
     
-    typedef viennameta::make_typemap<
+    typedef viennagrid::meta::make_typemap<
                                         viennagrid::storage::default_tag,   viennagrid::storage::handled_container_tag< viennagrid::storage::std_set_tag, viennagrid::storage::no_handle_tag>,
                                         float,                              viennagrid::storage::handled_container_tag< viennagrid::storage::std_deque_tag, viennagrid::storage::no_handle_tag>
                                     >::type view_container2_config;

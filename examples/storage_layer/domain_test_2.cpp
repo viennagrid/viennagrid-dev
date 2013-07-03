@@ -118,6 +118,7 @@ int main()
     
     // creates the tetrahedron within the domain, all boundary cell generation is done here implicit
     tetrahedron_handle_type tet = viennagrid::create_element<tetrahedron_type>( domain, handles.begin(), handles.end() );
+    std::cout << tet << std::endl;
     
     // set a double value to a tetdrahedron
 //     viennagrid::look_up<double>(domain, tet) = 1.0;

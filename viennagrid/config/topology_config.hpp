@@ -48,12 +48,12 @@ namespace viennagrid
             struct storage_layout_config
             {
                 
-                typedef typename viennameta::typemap::result_of::insert<
+                typedef typename viennagrid::meta::typemap::result_of::insert<
                     typename storage_layout_config<element_tag, typename boundary_cell_tag::facet_tag>::type,
-                    viennameta::static_pair<
+                    viennagrid::meta::static_pair<
                         boundary_cell_tag,
                         viennagrid::full_handling_tag
-                        //viennameta::static_pair< viennagrid::full_handling_tag, viennagrid::full_handling_tag >
+                        //viennagrid::meta::static_pair< viennagrid::full_handling_tag, viennagrid::full_handling_tag >
                     >
                 >::type type;
             };
@@ -61,19 +61,19 @@ namespace viennagrid
             template<typename element_tag>
             struct storage_layout_config<element_tag, viennagrid::vertex_tag>
             {
-                //typedef viennameta::static_pair< viennagrid::full_handling_tag, viennagrid::no_handling_tag > type;
-                typedef typename viennameta::make_typemap<
+                //typedef viennagrid::meta::static_pair< viennagrid::full_handling_tag, viennagrid::no_handling_tag > type;
+                typedef typename viennagrid::meta::make_typemap<
                     viennagrid::vertex_tag,
                     viennagrid::no_orientation_handling_tag
-                    //viennameta::static_pair< viennagrid::full_handling_tag, viennagrid::no_handling_tag >
+                    //viennagrid::meta::static_pair< viennagrid::full_handling_tag, viennagrid::no_handling_tag >
                 >::type type;
             };
             
             template<typename element_tag>
-            struct storage_layout_config<element_tag, viennameta::null_type>
+            struct storage_layout_config<element_tag, viennagrid::meta::null_type>
             {
-                //typedef viennameta::static_pair< viennagrid::full_handling_tag, viennagrid::no_handling_tag > type;
-                typedef viennameta::null_type type;
+                //typedef viennagrid::meta::static_pair< viennagrid::full_handling_tag, viennagrid::no_handling_tag > type;
+                typedef viennagrid::meta::null_type type;
             };
             
             
@@ -99,7 +99,7 @@ namespace viennagrid
             template<typename element_tag, typename boundary_cell_tag, typename handle_tag>
             struct full_element_config
             {
-                typedef typename viennameta::make_typemap<
+                typedef typename viennagrid::meta::make_typemap<
                 
                     element_id_tag,
                     viennagrid::storage::smart_id_tag<int>,
@@ -120,9 +120,9 @@ namespace viennagrid
             template<typename element_tag, typename boundary_cell_tag, typename handle_tag>
             struct full_topology_config_helper
             {
-                typedef typename viennameta::typemap::result_of::insert<
+                typedef typename viennagrid::meta::typemap::result_of::insert<
                     typename full_topology_config_helper<element_tag, typename boundary_cell_tag::facet_tag, handle_tag>::type,
-                    viennameta::static_pair<
+                    viennagrid::meta::static_pair<
                         boundary_cell_tag,
                         typename full_element_config<element_tag, boundary_cell_tag, handle_tag>::type
                     >
@@ -132,7 +132,7 @@ namespace viennagrid
             template<typename element_tag, typename handle_tag>
             struct full_topology_config_helper<element_tag, viennagrid::vertex_tag, handle_tag>
             {
-                typedef typename viennameta::make_typemap<
+                typedef typename viennagrid::meta::make_typemap<
                     viennagrid::vertex_tag,
                     typename full_element_config<element_tag, viennagrid::vertex_tag, handle_tag>::type
                 >::type type;
@@ -142,7 +142,7 @@ namespace viennagrid
             template<typename element_tag, typename handle_tag>
             struct full_topology_config
             {
-                typedef typename viennameta::make_typemap<
+                typedef typename viennagrid::meta::make_typemap<
                     topology_config_tag,
                     typename full_topology_config_helper<element_tag, element_tag, handle_tag>::type
                     >::type type;
@@ -155,20 +155,20 @@ namespace viennagrid
             {
                 typedef typename viennagrid::config::result_of::full_topology_config<cell_tag, handle_tag>::type config;
                 
-                typedef typename viennameta::typemap::result_of::find<config, topology_config_tag>::type::second topology_config;
-                typedef typename viennameta::typemap::result_of::find<topology_config, vertex_tag>::type::second vertex_config;
+                typedef typename viennagrid::meta::typemap::result_of::find<config, topology_config_tag>::type::second topology_config;
+                typedef typename viennagrid::meta::typemap::result_of::find<topology_config, vertex_tag>::type::second vertex_config;
                 
-                typedef typename viennameta::typemap::result_of::insert_or_modify<
+                typedef typename viennagrid::meta::typemap::result_of::insert_or_modify<
                         vertex_config,
-                        viennameta::static_pair< element_appendix_type_tag, vector_type >
+                        viennagrid::meta::static_pair< element_appendix_type_tag, vector_type >
                     >::type new_vertex_config;
                     
-                typedef typename viennameta::typemap::result_of::insert_or_modify<
+                typedef typename viennagrid::meta::typemap::result_of::insert_or_modify<
                         topology_config,
-                        viennameta::static_pair< vertex_tag, new_vertex_config >
+                        viennagrid::meta::static_pair< vertex_tag, new_vertex_config >
                     >::type new_topology_config;
                     
-                typedef typename viennameta::make_typemap<
+                typedef typename viennagrid::meta::make_typemap<
                     topology_config_tag,
                     new_topology_config
                 >::type type;
@@ -202,7 +202,7 @@ namespace viennagrid
             struct element_container< storage::collection_t<container_collection_typemap>, element_tag >
             {
                 typedef typename viennagrid::result_of::element<storage::collection_t<container_collection_typemap>, element_tag>::type element_type;
-                typedef typename viennameta::typemap::result_of::find< container_collection_typemap, element_type >::type::second type;
+                typedef typename viennagrid::meta::typemap::result_of::find< container_collection_typemap, element_type >::type::second type;
                 //typedef typename viennagrid::storage::result_of::container<element_type, typename element_container_tag<config, element_tag>::type >::type type;
             };
             
@@ -214,10 +214,10 @@ namespace viennagrid
             struct element_container_typemap;
             
             template<typename domain_config, typename value_tag, typename value_config, typename tail>
-            struct element_container_typemap< domain_config, viennameta::typelist_t< viennameta::static_pair<value_tag, value_config>, tail > >
+            struct element_container_typemap< domain_config, viennagrid::meta::typelist_t< viennagrid::meta::static_pair<value_tag, value_config>, tail > >
             {
-                typedef viennameta::typelist_t<
-                    viennameta::static_pair<
+                typedef viennagrid::meta::typelist_t<
+                    viennagrid::meta::static_pair<
                         typename viennagrid::result_of::element<domain_config, value_tag>::type,
                         typename element_container<domain_config, value_tag>::type
                     >,
@@ -226,9 +226,9 @@ namespace viennagrid
             };
             
             template<typename domain_config>
-            struct element_container_typemap<domain_config, viennameta::null_type>
+            struct element_container_typemap<domain_config, viennagrid::meta::null_type>
             {
-                typedef viennameta::null_type type;
+                typedef viennagrid::meta::null_type type;
             };
             
         }
@@ -240,24 +240,24 @@ namespace viennagrid
     namespace result_of
     {
         template<typename config_element_tag, typename config_element_config, typename config_tail, typename element_tag_>
-        struct element< viennameta::typelist_t< viennameta::static_pair<config_element_tag, config_element_config>, config_tail >, element_tag_ >
+        struct element< viennagrid::meta::typelist_t< viennagrid::meta::static_pair<config_element_tag, config_element_config>, config_tail >, element_tag_ >
         {
-            typedef viennameta::typelist_t< viennameta::static_pair<config_element_tag, config_element_config>, config_tail > domain_config;
+            typedef viennagrid::meta::typelist_t< viennagrid::meta::static_pair<config_element_tag, config_element_config>, config_tail > domain_config;
 //             typedef typename config::result_of::query_config<domain_config, config::topology_config_tag>::type topology_config;
             typedef typename viennagrid::config::result_of::element_from_config_impl< domain_config, element_tag_ >::type type;
         };
         
         template<typename config_element_tag, typename config_element_config, typename config_tail, typename element_tag_>
-        struct handle< viennameta::typelist_t< viennameta::static_pair<config_element_tag, config_element_config>, config_tail >, element_tag_ >
+        struct handle< viennagrid::meta::typelist_t< viennagrid::meta::static_pair<config_element_tag, config_element_config>, config_tail >, element_tag_ >
         {
-            typedef viennameta::typelist_t< viennameta::static_pair<config_element_tag, config_element_config>, config_tail > domain_config;
+            typedef viennagrid::meta::typelist_t< viennagrid::meta::static_pair<config_element_tag, config_element_config>, config_tail > domain_config;
             typedef typename config::result_of::element_container<domain_config, element_tag_>::type::handle_type type;
         }; 
         
         template<typename config_element_tag, typename config_element_config, typename config_tail, typename element_tag_>
-        struct const_handle< viennameta::typelist_t< viennameta::static_pair<config_element_tag, config_element_config>, config_tail >, element_tag_ >
+        struct const_handle< viennagrid::meta::typelist_t< viennagrid::meta::static_pair<config_element_tag, config_element_config>, config_tail >, element_tag_ >
         {
-            typedef viennameta::typelist_t< viennameta::static_pair<config_element_tag, config_element_config>, config_tail > domain_config;
+            typedef viennagrid::meta::typelist_t< viennagrid::meta::static_pair<config_element_tag, config_element_config>, config_tail > domain_config;
             typedef typename config::result_of::element_container<domain_config, element_tag_>::type::const_handle_type type;
         }; 
     }
@@ -273,13 +273,13 @@ namespace viennagrid
         struct coboundary_container_collection_per_element_typemap;
         
         template<typename domain_config, typename element_tag>
-        struct coboundary_container_collection_per_element_typemap<domain_config, element_tag, viennameta::null_type>
+        struct coboundary_container_collection_per_element_typemap<domain_config, element_tag, viennagrid::meta::null_type>
         {
-            typedef viennameta::null_type type;
+            typedef viennagrid::meta::null_type type;
         };
         
         template<typename domain_config, typename element_tag, typename boundary_element_tag, typename tail>
-        struct coboundary_container_collection_per_element_typemap<domain_config, element_tag, viennameta::typelist_t<boundary_element_tag, tail> >
+        struct coboundary_container_collection_per_element_typemap<domain_config, element_tag, viennagrid::meta::typelist_t<boundary_element_tag, tail> >
         {
           // TODO richtig aus der config rauslesen!
             typedef typename config::result_of::query_config<domain_config, config::coboundary_container_tag>::type coboundary_container_tag;
@@ -290,9 +290,9 @@ namespace viennagrid
             typedef typename viennagrid::storage::result_of::view<base_element_container, coboundary_view_container_tag>::type element_view_type;
             typedef typename storage::result_of::container<element_view_type, coboundary_container_tag >::type base_coboundary_container;
             
-            typedef viennameta::typelist_t<
-                viennameta::static_pair<
-                    viennameta::static_pair<
+            typedef viennagrid::meta::typelist_t<
+                viennagrid::meta::static_pair<
+                    viennagrid::meta::static_pair<
                         boundary_element_tag,
                         element_tag
                     >,
@@ -304,22 +304,22 @@ namespace viennagrid
         
         
         template<typename domain_config, typename element_taglist =
-                typename viennameta::typemap::result_of::key_typelist<
+                typename viennagrid::meta::typemap::result_of::key_typelist<
                     typename config::result_of::query_config<domain_config, config::topology_config_tag>::type
                 >::type
             >
         struct coboundary_container_collection_typemap;
         
         template<typename domain_config>
-        struct coboundary_container_collection_typemap<domain_config, viennameta::null_type>
+        struct coboundary_container_collection_typemap<domain_config, viennagrid::meta::null_type>
         {
-          typedef viennameta::null_type type;
+          typedef viennagrid::meta::null_type type;
         };
         
         template<typename domain_config, typename element_tag, typename tail>
-        struct coboundary_container_collection_typemap<domain_config, viennameta::typelist_t<element_tag, tail> >
+        struct coboundary_container_collection_typemap<domain_config, viennagrid::meta::typelist_t<element_tag, tail> >
         {
-            typedef typename viennameta::typemap::result_of::merge<
+            typedef typename viennagrid::meta::typemap::result_of::merge<
               typename coboundary_container_collection_per_element_typemap<domain_config, element_tag>::type,
               typename coboundary_container_collection_typemap<domain_config, tail>::type
             >::type type;
@@ -336,13 +336,13 @@ namespace viennagrid
         struct neighbour_container_collection_per_element_typemap;
         
         template<typename domain_config, typename element_tag>
-        struct neighbour_container_collection_per_element_typemap<domain_config, element_tag, viennameta::null_type>
+        struct neighbour_container_collection_per_element_typemap<domain_config, element_tag, viennagrid::meta::null_type>
         {
-            typedef viennameta::null_type type;
+            typedef viennagrid::meta::null_type type;
         };
         
         template<typename domain_config, typename element_tag, typename connector_element_tag, typename tail>
-        struct neighbour_container_collection_per_element_typemap<domain_config, element_tag, viennameta::typelist_t<connector_element_tag, tail> >
+        struct neighbour_container_collection_per_element_typemap<domain_config, element_tag, viennagrid::meta::typelist_t<connector_element_tag, tail> >
         {
           // TODO richtig aus der config rauslesen!
             typedef typename config::result_of::query_config<domain_config, config::coboundary_container_tag>::type coboundary_container_tag;
@@ -353,9 +353,9 @@ namespace viennagrid
             typedef typename viennagrid::storage::result_of::view<base_element_container, coboundary_view_container_tag>::type element_view_type;
             typedef typename storage::result_of::container<element_view_type, coboundary_container_tag >::type base_container;
             
-            typedef viennameta::typelist_t<
-                viennameta::static_pair<
-                    viennameta::static_pair<
+            typedef viennagrid::meta::typelist_t<
+                viennagrid::meta::static_pair<
+                    viennagrid::meta::static_pair<
                         element_tag,
                         connector_element_tag
                     >,
@@ -367,22 +367,22 @@ namespace viennagrid
         
         
         template<typename domain_config, typename element_taglist =
-                typename viennameta::typemap::result_of::key_typelist<
+                typename viennagrid::meta::typemap::result_of::key_typelist<
                     typename config::result_of::query_config<domain_config, config::topology_config_tag>::type
                 >::type
             >
         struct neighbour_container_collection_typemap;
         
         template<typename domain_config>
-        struct neighbour_container_collection_typemap<domain_config, viennameta::null_type>
+        struct neighbour_container_collection_typemap<domain_config, viennagrid::meta::null_type>
         {
-          typedef viennameta::null_type type;
+          typedef viennagrid::meta::null_type type;
         };
         
         template<typename domain_config, typename element_tag, typename tail>
-        struct neighbour_container_collection_typemap<domain_config, viennameta::typelist_t<element_tag, tail> >
+        struct neighbour_container_collection_typemap<domain_config, viennagrid::meta::typelist_t<element_tag, tail> >
         {
-            typedef typename viennameta::typemap::result_of::merge<
+            typedef typename viennagrid::meta::typemap::result_of::merge<
               typename neighbour_container_collection_per_element_typemap<domain_config, element_tag>::type,
               typename neighbour_container_collection_typemap<domain_config, tail>::type
             >::type type;
@@ -396,13 +396,13 @@ namespace viennagrid
         struct topologic_cell_dimension;
         
         template<>
-        struct topologic_cell_dimension<viennameta::null_type>
+        struct topologic_cell_dimension<viennagrid::meta::null_type>
         {
             static const int value = -1;
         };
         
         template<typename element_tag, typename tail>
-        struct topologic_cell_dimension< viennameta::typelist_t<element_tag, tail> >
+        struct topologic_cell_dimension< viennagrid::meta::typelist_t<element_tag, tail> >
         {
             static const int tail_cell_dimension = topologic_cell_dimension<tail>::value;
             static const int current_element_dimension = element_tag::dim;
@@ -417,19 +417,19 @@ namespace viennagrid
         struct elements_of_topologic_dim;
         
         template<int topologic_dimension>
-        struct elements_of_topologic_dim< viennameta::null_type, topologic_dimension >
+        struct elements_of_topologic_dim< viennagrid::meta::null_type, topologic_dimension >
         {
-            typedef viennameta::null_type type;
+            typedef viennagrid::meta::null_type type;
         };
         
         template<typename element_tag, typename tail, int topologic_dimension>
-        struct elements_of_topologic_dim< viennameta::typelist_t<element_tag, tail>, topologic_dimension >
+        struct elements_of_topologic_dim< viennagrid::meta::typelist_t<element_tag, tail>, topologic_dimension >
         {
             typedef typename elements_of_topologic_dim<tail, topologic_dimension>::type tail_typelist;
             
-            typedef typename viennameta::IF<
+            typedef typename viennagrid::meta::IF<
                 element_tag::dim == topologic_dimension,
-                typename viennameta::typelist::result_of::push_back<tail_typelist, element_tag>::type,
+                typename viennagrid::meta::typelist::result_of::push_back<tail_typelist, element_tag>::type,
                 tail_typelist
             >::type type;
         };
@@ -440,7 +440,7 @@ namespace viennagrid
         {
             static const int dim = topologic_cell_dimension<typelist>::value;
             typedef typename elements_of_topologic_dim<typelist, dim>::type cell_types;
-            typedef typename viennameta::typelist::result_of::at<cell_types,0>::type type;
+            typedef typename viennagrid::meta::typelist::result_of::at<cell_types,0>::type type;
         };
 
         
@@ -452,13 +452,13 @@ namespace viennagrid
         struct boundary_information_collection_typemap_impl;
         
         template<typename domain_config>
-        struct boundary_information_collection_typemap_impl<domain_config, viennameta::null_type>
+        struct boundary_information_collection_typemap_impl<domain_config, viennagrid::meta::null_type>
         {
-            typedef viennameta::null_type type;
+            typedef viennagrid::meta::null_type type;
         };
         
         template<typename domain_config, typename element_tag, typename tail>
-        struct boundary_information_collection_typemap_impl<domain_config, viennameta::typelist_t<element_tag, tail> >
+        struct boundary_information_collection_typemap_impl<domain_config, viennagrid::meta::typelist_t<element_tag, tail> >
         {
           // TODO richtig aus der config rauslesen!
             typedef typename config::result_of::query_config<domain_config, config::coboundary_container_tag>::type boundary_container_tag;
@@ -467,8 +467,8 @@ namespace viennagrid
 //             typedef typename viennagrid::storage::result_of::view<base_element_container, coboundary_view_container_tag>::type element_view_type;
             typedef typename storage::result_of::container<bool, boundary_container_tag >::type base_container;
             
-            typedef viennameta::typelist_t<
-                viennameta::static_pair<
+            typedef viennagrid::meta::typelist_t<
+                viennagrid::meta::static_pair<
                     element_tag,
                     boundary_information_wrapper<base_container>
                 >,
@@ -480,12 +480,12 @@ namespace viennagrid
         template<typename domain_config>
         struct boundary_information_collection_typemap
         {
-            typedef typename viennameta::typemap::result_of::key_typelist<
+            typedef typename viennagrid::meta::typemap::result_of::key_typelist<
                     typename config::result_of::query_config<domain_config, config::topology_config_tag>::type
                 >::type element_taglist;
                 
             typedef typename cell_tag_from_typelist<element_taglist>::type cell_tag;
-            typedef typename viennameta::typelist::result_of::erase< element_taglist, cell_tag>::type element_typelist_without_cell_tag;
+            typedef typename viennagrid::meta::typelist::result_of::erase< element_taglist, cell_tag>::type element_typelist_without_cell_tag;
           
           
             typedef typename boundary_information_collection_typemap_impl<domain_config, element_typelist_without_cell_tag>::type type;
@@ -498,9 +498,9 @@ namespace viennagrid
     namespace result_of
     {
         template<typename key_type, typename value_type, typename tail>
-        struct element_collection< viennameta::typelist_t< viennameta::static_pair<key_type, value_type>, tail> >
+        struct element_collection< viennagrid::meta::typelist_t< viennagrid::meta::static_pair<key_type, value_type>, tail> >
         {
-            typedef viennameta::typelist_t< viennameta::static_pair<key_type, value_type>, tail> domain_config;
+            typedef viennagrid::meta::typelist_t< viennagrid::meta::static_pair<key_type, value_type>, tail> domain_config;
             typedef typename config::result_of::element_container_typemap<domain_config>::type element_container_typelist;
             typedef typename viennagrid::storage::result_of::collection< element_container_typelist >::type type;
         };
@@ -508,9 +508,9 @@ namespace viennagrid
         // topologic domain type from config
         /*
         template<typename key_type, typename value_type, typename tail>
-        struct domain< viennameta::typelist_t< viennameta::static_pair<key_type, value_type>, tail > >
+        struct domain< viennagrid::meta::typelist_t< viennagrid::meta::static_pair<key_type, value_type>, tail > >
         {
-            typedef viennameta::typelist_t< viennameta::static_pair<key_type, value_type>, tail > domain_config;
+            typedef viennagrid::meta::typelist_t< viennagrid::meta::static_pair<key_type, value_type>, tail > domain_config;
 //             typedef typename config::result_of::query_config< domain_config, config::topology_config_tag>::type topology_config;
 
             typedef typename element_collection< domain_config >::type element_collection_type;
@@ -525,7 +525,7 @@ namespace viennagrid
             
             
             typedef typename viennagrid::storage::collection_t<
-                typename viennameta::make_typemap<
+                typename viennagrid::meta::make_typemap<
                 
                     coboundary_collection_tag,
                     coboundary_collection_type,

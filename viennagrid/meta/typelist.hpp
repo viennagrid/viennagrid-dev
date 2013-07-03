@@ -1,12 +1,14 @@
-#ifndef VIENNAMETA_TYPELIST_HPP
-#define VIENNAMETA_TYPELIST_HPP
+#ifndef VIENNAGRID_META_TYPELIST_HPP
+#define VIENNAGRID_META_TYPELIST_HPP
 
 
 #include "utils.hpp"
 
 
-namespace viennameta
+namespace viennagrid
 {
+  namespace meta
+  {
 
     template <class head_, class tail_>
     struct typelist_t
@@ -25,24 +27,24 @@ namespace viennameta
 //     template<>
 //     struct make_typelist<>
 //     {
-//         typedef viennameta::null_type type;
+//         typedef viennagrid::meta::null_type type;
 //     };
 //     
 //     template<typename head, typename ... tail>
 //     struct make_typelist<head, tail...>
 //     {
-//         typedef viennameta::typelist_t<head, typename make_typelist<tail...>::type> type;
+//         typedef viennagrid::meta::typelist_t<head, typename make_typelist<tail...>::type> type;
 //     };
     
     
     
     
     
-    template<   typename T01 = viennameta::null_type, typename T02 = viennameta::null_type, typename T03 = viennameta::null_type, typename T04 = viennameta::null_type,
-                typename T05 = viennameta::null_type, typename T06 = viennameta::null_type, typename T07 = viennameta::null_type, typename T08 = viennameta::null_type,
-                typename T09 = viennameta::null_type, typename T10 = viennameta::null_type, typename T11 = viennameta::null_type, typename T12 = viennameta::null_type,
-                typename T13 = viennameta::null_type, typename T14 = viennameta::null_type, typename T15 = viennameta::null_type, typename T16 = viennameta::null_type,
-                typename T17 = viennameta::null_type, typename T18 = viennameta::null_type, typename T19 = viennameta::null_type, typename T20 = viennameta::null_type >
+    template<   typename T01 = viennagrid::meta::null_type, typename T02 = viennagrid::meta::null_type, typename T03 = viennagrid::meta::null_type, typename T04 = viennagrid::meta::null_type,
+                typename T05 = viennagrid::meta::null_type, typename T06 = viennagrid::meta::null_type, typename T07 = viennagrid::meta::null_type, typename T08 = viennagrid::meta::null_type,
+                typename T09 = viennagrid::meta::null_type, typename T10 = viennagrid::meta::null_type, typename T11 = viennagrid::meta::null_type, typename T12 = viennagrid::meta::null_type,
+                typename T13 = viennagrid::meta::null_type, typename T14 = viennagrid::meta::null_type, typename T15 = viennagrid::meta::null_type, typename T16 = viennagrid::meta::null_type,
+                typename T17 = viennagrid::meta::null_type, typename T18 = viennagrid::meta::null_type, typename T19 = viennagrid::meta::null_type, typename T20 = viennagrid::meta::null_type >
     struct make_typelist
     {
         typedef
@@ -54,13 +56,13 @@ namespace viennameta
     
     template<>
     struct make_typelist<
-        viennameta::null_type, viennameta::null_type, viennameta::null_type, viennameta::null_type,
-        viennameta::null_type, viennameta::null_type, viennameta::null_type, viennameta::null_type,
-        viennameta::null_type, viennameta::null_type, viennameta::null_type, viennameta::null_type,
-        viennameta::null_type, viennameta::null_type, viennameta::null_type, viennameta::null_type,
-        viennameta::null_type, viennameta::null_type, viennameta::null_type, viennameta::null_type>
+        viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type,
+        viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type,
+        viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type,
+        viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type,
+        viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type>
     {
-        typedef viennameta::null_type type;
+        typedef viennagrid::meta::null_type type;
     };
 
 
@@ -391,7 +393,8 @@ namespace viennameta
             
         }
     }   
-}
+  } // namespace meta
+} // namespace viennagrid
 
 
 #endif // end file guardian

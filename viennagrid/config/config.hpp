@@ -47,7 +47,7 @@ namespace viennagrid
             template<>
             struct default_config<element_appendix_type_tag>
             {
-                typedef viennameta::null_type type;
+                typedef viennagrid::meta::null_type type;
             };
             
             template<>
@@ -72,7 +72,7 @@ namespace viennagrid
             };
             
             template<typename config_tag>
-            struct query_config_impl< viennameta::not_found, config_tag >
+            struct query_config_impl< viennagrid::meta::not_found, config_tag >
             {
                 typedef typename default_config<config_tag>::type type;
             };
@@ -81,7 +81,7 @@ namespace viennagrid
             template<typename domain_config, typename config_tag>
             struct query_config
             {
-                typedef typename viennameta::typemap::result_of::find<domain_config, config_tag>::type found;
+                typedef typename viennagrid::meta::typemap::result_of::find<domain_config, config_tag>::type found;
                 typedef typename query_config_impl<found, config_tag>::type type;
             };
         }

@@ -40,7 +40,7 @@ namespace viennagrid
     
     
     template<typename element_tag, typename bnd_cell_container_type_, typename orientation_container_type_, typename tail>
-    class boundary_element_layer<element_tag, viennameta::typelist_t< viennameta::static_pair<bnd_cell_container_type_, orientation_container_type_>, tail > > :
+    class boundary_element_layer<element_tag, viennagrid::meta::typelist_t< viennagrid::meta::static_pair<bnd_cell_container_type_, orientation_container_type_>, tail > > :
         public boundary_element_layer<element_tag, tail>
     {
     public:
@@ -198,7 +198,7 @@ namespace viennagrid
     
 
     template<typename element_tag, typename bnd_cell_container_type_, typename tail>
-    class boundary_element_layer<element_tag, viennameta::typelist_t< viennameta::static_pair<bnd_cell_container_type_, viennameta::null_type>, tail > > :
+    class boundary_element_layer<element_tag, viennagrid::meta::typelist_t< viennagrid::meta::static_pair<bnd_cell_container_type_, viennagrid::meta::null_type>, tail > > :
         public boundary_element_layer<element_tag, tail>
     {
     public:
@@ -294,7 +294,7 @@ namespace viennagrid
     };
     
     template<typename element_tag>
-    class boundary_element_layer<element_tag, viennameta::null_type >
+    class boundary_element_layer<element_tag, viennagrid::meta::null_type >
     {
     public:
     //protected:
@@ -348,15 +348,15 @@ namespace viennagrid
         struct boundary_element_typelist;
         
         template<>
-        struct boundary_element_typelist<viennameta::null_type>
+        struct boundary_element_typelist<viennagrid::meta::null_type>
         {
-            typedef viennameta::null_type type;
+            typedef viennagrid::meta::null_type type;
         };
         
         template<typename boundary_cell_container_type, typename orientation_container_type, typename tail>
-        struct boundary_element_typelist< viennameta::typelist_t<viennameta::static_pair<boundary_cell_container_type, orientation_container_type>, tail > >
+        struct boundary_element_typelist< viennagrid::meta::typelist_t<viennagrid::meta::static_pair<boundary_cell_container_type, orientation_container_type>, tail > >
         {
-            typedef viennameta::typelist_t<
+            typedef viennagrid::meta::typelist_t<
                 typename boundary_cell_container_type::value_type,
                 typename boundary_element_typelist<tail>::type
             > type;
@@ -374,15 +374,15 @@ namespace viennagrid
         struct boundary_element_taglist;
         
         template<>
-        struct boundary_element_taglist<viennameta::null_type>
+        struct boundary_element_taglist<viennagrid::meta::null_type>
         {
-            typedef viennameta::null_type type;
+            typedef viennagrid::meta::null_type type;
         };
         
         template<typename boundary_cell_container_type, typename orientation_container_type, typename tail>
-        struct boundary_element_taglist< viennameta::typelist_t<viennameta::static_pair<boundary_cell_container_type, orientation_container_type>, tail > >
+        struct boundary_element_taglist< viennagrid::meta::typelist_t<viennagrid::meta::static_pair<boundary_cell_container_type, orientation_container_type>, tail > >
         {
-            typedef viennameta::typelist_t<
+            typedef viennagrid::meta::typelist_t<
                 typename boundary_cell_container_type::value_type::tag,
                 typename boundary_element_taglist<tail>::type
             > type;
@@ -403,19 +403,19 @@ namespace viennagrid
         struct container_of_tag_for_element;
         
         template<typename tag>
-        struct container_of_tag_for_element< viennameta::null_type, tag >
+        struct container_of_tag_for_element< viennagrid::meta::null_type, tag >
         {
-            typedef viennameta::null_type type;
+            typedef viennagrid::meta::null_type type;
         };
         
         template<typename container_pair, typename tail, typename tag>
-        struct container_of_tag_for_element< viennameta::typelist_t<container_pair, tail>, tag >
+        struct container_of_tag_for_element< viennagrid::meta::typelist_t<container_pair, tail>, tag >
         {
             typedef typename container_pair::first container_type;
             typedef typename container_type::value_type value_type;
             
-            typedef typename viennameta::IF<
-                viennameta::EQUAL<typename value_type::tag, tag>::value,
+            typedef typename viennagrid::meta::IF<
+                viennagrid::meta::EQUAL<typename value_type::tag, tag>::value,
                 container_type,
                 typename container_of_tag_for_element<tail, tag>::type
             >::type type;
@@ -429,18 +429,18 @@ namespace viennagrid
         struct container_of_dimension_for_element;
         
         template<long dim>
-        struct container_of_dimension_for_element< viennameta::null_type, dim >
+        struct container_of_dimension_for_element< viennagrid::meta::null_type, dim >
         {
-            typedef viennameta::null_type type;
+            typedef viennagrid::meta::null_type type;
         };
         
         template<typename container_pair, typename tail, long dim>
-        struct container_of_dimension_for_element< viennameta::typelist_t<container_pair, tail>, dim >
+        struct container_of_dimension_for_element< viennagrid::meta::typelist_t<container_pair, tail>, dim >
         {
             typedef typename container_pair::first container_type;
             typedef typename container_type::value_type value_type;
             
-            typedef typename viennameta::IF<
+            typedef typename viennagrid::meta::IF<
                 value_type::tag::dim == dim,
                 container_type,
                 typename container_of_dimension_for_element<tail, dim>::type
@@ -453,16 +453,16 @@ namespace viennagrid
         struct container_of_tag_for_collection;
         
         template<typename element_tag>
-        struct container_of_tag_for_collection<viennameta::null_type, element_tag>
+        struct container_of_tag_for_collection<viennagrid::meta::null_type, element_tag>
         {
-            typedef viennameta::null_type type;
+            typedef viennagrid::meta::null_type type;
         };
         
         template<typename element_type, typename container_type, typename tail, typename element_tag>
-        struct container_of_tag_for_collection<viennameta::typelist_t< viennameta::static_pair<element_type, container_type>, tail >, element_tag>
+        struct container_of_tag_for_collection<viennagrid::meta::typelist_t< viennagrid::meta::static_pair<element_type, container_type>, tail >, element_tag>
         {
-            typedef typename viennameta::IF<
-                viennameta::EQUAL<typename element_type::tag, element_tag>::value,
+            typedef typename viennagrid::meta::IF<
+                viennagrid::meta::EQUAL<typename element_type::tag, element_tag>::value,
                 container_type,
                 typename container_of_tag_for_collection<tail, element_tag>::type
             >::type type;
@@ -474,15 +474,15 @@ namespace viennagrid
         struct container_of_dimension_for_collection;
         
         template<long dim>
-        struct container_of_dimension_for_collection<viennameta::null_type, dim>
+        struct container_of_dimension_for_collection<viennagrid::meta::null_type, dim>
         {
-            typedef viennameta::null_type type;
+            typedef viennagrid::meta::null_type type;
         };
         
         template<typename element_type, typename container_type, typename tail, long dim>
-        struct container_of_dimension_for_collection<viennameta::typelist_t< viennameta::static_pair<element_type, container_type>, tail >, dim>
+        struct container_of_dimension_for_collection<viennagrid::meta::typelist_t< viennagrid::meta::static_pair<element_type, container_type>, tail >, dim>
         {
-            typedef typename viennameta::IF<
+            typedef typename viennagrid::meta::IF<
                 element_type::tag::dim == dim,
                 container_type,
                 typename container_of_dimension_for_collection<tail, dim>::type
@@ -725,9 +725,9 @@ namespace viennagrid
             typedef typename element_tag<boundary_cell_type_or_tag>::type boundary_cell_tag;
             
             const static bool value = 
-            !viennameta::EQUAL<
+            !viennagrid::meta::EQUAL<
                 typename container_of_tag< element_t<element_tag_, WrappedConfigType>, boundary_cell_tag >::type,
-                viennameta::null_type>::value;
+                viennagrid::meta::null_type>::value;
         };
         
         
@@ -1065,7 +1065,7 @@ namespace viennagrid
         for_each_boundary_cell_functor( element_type & element_, functor_type functor_ ) : element(element_), functor(functor_) {}
         
         template<typename boundary_cell_type>
-        void operator()( viennameta::tag<boundary_cell_type> )
+        void operator()( viennagrid::meta::tag<boundary_cell_type> )
         {
             typedef typename result_of::element_range<element_type, boundary_cell_type>::type boundary_cell_range_type;
             typedef typename result_of::iterator<boundary_cell_range_type>::type boundary_cell_iterator_type;
@@ -1085,13 +1085,13 @@ namespace viennagrid
     {
         for_each_boundary_cell_functor<element_type, functor_type> for_each_functor( element, functor );
         
-        viennameta::typelist::for_each<typename element_type::boundary_cell_typelist>(for_each_functor);
+        viennagrid::meta::typelist::for_each<typename element_type::boundary_cell_typelist>(for_each_functor);
     }
     
     
     
     
-    std::ostream & operator<<(std::ostream & os, viennameta::null_type) { return os; }
+    std::ostream & operator<<(std::ostream & os, viennagrid::meta::null_type) { return os; }
 
 
     /** @brief Overload for the output streaming operator for the vertex type */

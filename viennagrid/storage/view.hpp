@@ -1300,8 +1300,8 @@ namespace viennagrid
         
         namespace view
         {
-            //typedef viennameta::make_typemap<viennagrid::storage::default_tag, viennagrid::storage::std_deque_tag<> >::type default_view_container_config;
-            typedef viennameta::make_typemap<
+            //typedef viennagrid::meta::make_typemap<viennagrid::storage::default_tag, viennagrid::storage::std_deque_tag<> >::type default_view_container_config;
+            typedef viennagrid::meta::make_typemap<
                         viennagrid::storage::default_tag,   viennagrid::storage::handled_container_tag<viennagrid::storage::std_deque_tag, viennagrid::storage::no_handle_tag>
                     >::type default_view_container_config;
             
@@ -1319,7 +1319,7 @@ namespace viennagrid
             template<typename base_container_type, typename view_base_container_type, typename handle_tag, typename view_container_tag>
             void handle(base_container_type & src_container, view_t<view_base_container_type, handle_tag, view_container_tag> & dst_view)
             {
-                handle_if(src_container, dst_view, viennameta::true_predicate());
+                handle_if(src_container, dst_view, viennagrid::meta::true_predicate());
             }
             
             
@@ -1332,11 +1332,11 @@ namespace viennagrid
             struct view_container_tag
             {
                 typedef typename container_type::value_type value_type;
-                typedef typename viennameta::typemap::result_of::find<view_container_config, value_type>::type search_result;
-                typedef typename viennameta::typemap::result_of::find<view_container_config, viennagrid::storage::default_tag>::type default_container;
+                typedef typename viennagrid::meta::typemap::result_of::find<view_container_config, value_type>::type search_result;
+                typedef typename viennagrid::meta::typemap::result_of::find<view_container_config, viennagrid::storage::default_tag>::type default_container;
                 
-                typedef typename viennameta::IF<
-                    !viennameta::EQUAL<search_result, viennameta::not_found>::value,
+                typedef typename viennagrid::meta::IF<
+                    !viennagrid::meta::EQUAL<search_result, viennagrid::meta::not_found>::value,
                     search_result,
                     default_container
                 >::type::second type;
@@ -1350,16 +1350,16 @@ namespace viennagrid
             struct view_container_typemap;
             
             template<typename view_container_config>
-            struct view_container_typemap<viennameta::null_type, view_container_config>
+            struct view_container_typemap<viennagrid::meta::null_type, view_container_config>
             {
-                typedef viennameta::null_type type;
+                typedef viennagrid::meta::null_type type;
             };
             
             template<typename value_type, typename container_type, typename tail, typename view_container_config>
-            struct view_container_typemap<viennameta::typelist_t< viennameta::static_pair<value_type, container_type>, tail>, view_container_config>
+            struct view_container_typemap<viennagrid::meta::typelist_t< viennagrid::meta::static_pair<value_type, container_type>, tail>, view_container_config>
             {
-                typedef viennameta::typelist_t<
-                    viennameta::static_pair<
+                typedef viennagrid::meta::typelist_t<
+                    viennagrid::meta::static_pair<
                         value_type,
                         typename viennagrid::storage::result_of::view<
                             container_type,
@@ -1408,7 +1408,7 @@ namespace viennagrid
         struct set_base_container_helper;
 
         template<>
-        struct set_base_container_helper<viennameta::null_type>
+        struct set_base_container_helper<viennagrid::meta::null_type>
         {
             template<typename base_container_collection_type, typename view_container_collection_type>
             static void exec( base_container_collection_type & base_container_collection, view_container_collection_type & view_container_collection )
@@ -1416,7 +1416,7 @@ namespace viennagrid
         };
         
         template<typename value_type, typename container_type, typename tail>
-        struct set_base_container_helper< viennameta::typelist_t< viennameta::static_pair<value_type, container_type>, tail > >
+        struct set_base_container_helper< viennagrid::meta::typelist_t< viennagrid::meta::static_pair<value_type, container_type>, tail > >
         {
             template<typename base_container_collection_type, typename view_container_collection_type>
             static void exec( base_container_collection_type & base_container_collection, view_container_collection_type & view_container_collection )

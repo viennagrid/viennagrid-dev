@@ -1,11 +1,13 @@
-#ifndef VIENNAMETA_UTILS_HPP
-#define VIENNAMETA_UTILS_HPP
+#ifndef VIENNAGRID_META_UTILS_HPP
+#define VIENNAGRID_META_UTILS_HPP
 
 #include <iterator>
 
 
-namespace viennameta
+namespace viennagrid
 {
+  namespace meta
+  {
     // basic operations
     template<typename type1, typename type2>
     struct EQUAL
@@ -148,7 +150,9 @@ namespace viennameta
         typedef typename std::iterator_traits<TIterator>::pointer pointer;
         static const bool value = is_const_pointer<pointer>::value;
     };
-}
+    
+  } // namespace meta
+} // namespace viennagrid
 
 
 #endif
