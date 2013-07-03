@@ -104,20 +104,93 @@ namespace viennagrid
     
     
     
+    template<typename container_type_>
+    struct segment_interface_information_wrapper
+    {
+      typedef container_type_ container_type;
+      segment_interface_information_wrapper() : change_counter(0) {}
+      
+        long change_counter;
+        container_type container;
+    };
     
     
-    template<typename domain_type_, typename view_type_, typename segment_id_type_, typename appendix_type_ = viennameta::null_type, typename view_container_tag = viennagrid::storage::std_deque_tag>
+    
+    template<typename segment_id_type, typename container_type_>
+    struct interface_information_wrapper
+    {
+        interface_information_wrapper() {}
+        
+        std::map< std::pair<segment_id_type,segment_id_type>, segment_interface_information_wrapper<container_type_> > interface_flags;
+    };
+    
+
+    
+    namespace result_of
+    {
+      template<typename WrappedConfigType>
+      struct segmentation_domain_type
+      {
+        typedef typename WrappedConfigType::domain_type type;
+      };
+      
+      template<typename WrappedConfigType>
+      struct segmentation_view_type
+      {
+        typedef typename WrappedConfigType::view_type type;
+      };
+      
+      template<typename WrappedConfigType>
+      struct segmentation_segment_id_type
+      {
+        typedef typename WrappedConfigType::segment_id_type type;
+      };
+      
+      template<typename WrappedConfigType>
+      struct segmentation_appendix_type
+      {
+        typedef typename WrappedConfigType::appendix_type type;
+      };
+      
+      template<typename WrappedConfigType>
+      struct segmentation_view_container_tag
+      {
+        typedef typename WrappedConfigType::view_container_tag type;
+      };
+      
+    }
+    
+    
+    
+    namespace config
+    {
+        template<typename domain_type_, typename view_type_, typename segment_id_type_, typename appendix_type_, typename view_container_tag_>
+        struct segmentation_config_wrapper_t
+        {
+          typedef domain_type_ domain_type;
+          typedef view_type_ view_type;
+          typedef segment_id_type_ segment_id_type;
+          typedef appendix_type_ appendix_type;
+          typedef view_container_tag_ view_container_tag;
+        };
+    }
+    
+    
+//     template<typename domain_type_, typename view_type_, typename segment_id_type_, typename appendix_type_ = viennameta::null_type, typename view_container_tag = viennagrid::storage::std_deque_tag>
+    template<typename WrappedConfigType>
     class segmentation_t
     {
     public:
         
-        typedef domain_type_ domain_type;
-        typedef view_type_ view_type;
-        typedef segment_id_type_ segment_id_type;
+        typedef typename result_of::segmentation_domain_type<WrappedConfigType>::type domain_type;
+        typedef typename result_of::segmentation_view_type<WrappedConfigType>::type view_type;
+        typedef typename result_of::segmentation_segment_id_type<WrappedConfigType>::type segment_id_type;
+        typedef typename result_of::segmentation_appendix_type<WrappedConfigType>::type appendix_type;
+        typedef typename result_of::segmentation_view_container_tag<WrappedConfigType>::type view_container_tag;
         
-        typedef appendix_type_ appendix_type;
+//         typedef appendix_type_ appendix_type;
         
-        typedef segmentation_t<domain_type, view_type, segment_id_type, appendix_type, view_container_tag> self_type;
+        typedef segmentation_t<WrappedConfigType> self_type;
         
         typedef segment_t<self_type> segment_type;
         
@@ -335,7 +408,9 @@ namespace viennagrid
                 typename view_container_tag = viennagrid::storage::std_deque_tag >
         struct segmentation
         {
-            typedef segmentation_t<domain_type, view_type, segment_id_type, appendix_type, view_container_tag> type;
+          typedef config::segmentation_config_wrapper_t<domain_type, view_type, segment_id_type, appendix_type, view_container_tag> WrappedConfigType;
+          
+          typedef segmentation_t<WrappedConfigType> type;
         };
         
         
@@ -368,7 +443,9 @@ namespace viennagrid
                 typename view_container_tag = viennagrid::storage::std_deque_tag >
         struct oriented_3d_hull_segmentation
         {
-            typedef segmentation_t<domain_type, view_type, segment_id_type, appendix_type, view_container_tag> type;
+          typedef config::segmentation_config_wrapper_t<domain_type, view_type, segment_id_type, appendix_type, view_container_tag> WrappedConfigType;
+          
+          typedef segmentation_t<WrappedConfigType> type;
         };
         
     }

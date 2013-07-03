@@ -814,12 +814,6 @@ namespace viennagrid
             interface_boundaries_on_edges[*eofit].push_back(std::make_pair( std::make_pair(circumcenter(edge), circumcenter(facet)),
                                                                                circ_centers[0].second)
                                                               );
-            /*viennadata::access<InterfaceAreaKey,
-                               std::vector<std::pair<PointType, PointType> > 
-                              >(interface_key)(*eofit).push_back(std::make_pair(circ_centers[0], circumcenter(*fit)));
-            viennadata::access<InterfaceAreaKey,
-                               std::vector<std::pair<PointType, PointType> >
-                              >(interface_key)(*eofit).push_back(std::make_pair(circumcenter(*eofit), circumcenter(*fit))); */
           }
           else if (circ_centers.size() == 2)
           {
@@ -832,9 +826,6 @@ namespace viennagrid
             interface_boundaries_on_edges[*eofit].push_back(std::make_pair( std::make_pair(edge_mid, circ_centers[1].first),
                                                                                circ_centers[1].second)
                                                               );
-            /* viennadata::access<InterfaceAreaKey,
-                               std::vector<std::pair<PointType, PointType> >
-                              >(interface_key)(*eofit).push_back(std::make_pair(circ_centers[0], circ_centers[1])); */
           }
           else
           {
