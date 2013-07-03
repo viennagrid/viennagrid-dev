@@ -31,294 +31,176 @@
 
 namespace viennagrid
 {
-//   /** @brief A key used for ViennaData in order to store interface information */
-//   template<typename internal_id>
-//   class interface_key
-//   {
-//     public:
-//       interface_key(internal_id id1, internal_id id2) : id_(id1, id2)
-//       {
-//           if (id1 > id2)
-//               std::swap(id_.first, id_.second);
-//       }
-//       
-//       /** @brief For compatibility with std::map<> */
-//       bool operator<(interface_key const & other) const
-//       {
-//         return id_ < other.id_;
-//       }
-//       
-//     private:
-//       std::pair<internal_id, internal_id> id_;
-//   };
-
-
-//   /** @brief Helper struct for setting interface flag of boundary k-cells of a facet */
-//   template <typename cell_type, typename element_tag, bool has_boundary = result_of::has_boundary<cell_type, element_tag>::value >
-//   struct interface_setter;
-//   
-//   template <typename cell_type, typename element_tag>
-//   struct interface_setter<cell_type, element_tag, true>
-//   {
-//     template <typename FacetType, typename KeyType>
-//     static void apply(FacetType const & facet, KeyType const & key)
-//     {
-//       //typedef typename FacetType::config_type        ConfigType;
-//       //typedef typename ConfigType::cell_tag          CellTag;
-//       
-//       typedef typename viennagrid::result_of::const_element_range<FacetType, element_tag>::type    ElementOnFacetRange;
-//       typedef typename result_of::iterator<ElementOnFacetRange>::type                    ElementOnFacetIterator;
-// 
-//       ElementOnFacetRange eof_container = elements<element_tag>(facet);
-//       for (ElementOnFacetIterator eofit = eof_container.begin();
-//             eofit != eof_container.end();
-//             ++eofit)
-//       {
-//         viennadata::access<KeyType, bool>(key)(*eofit) = true;
-//       }
-// 
-//       //proceed to lower level:
-//       typedef typename element_tag::facet_tag facet_tag;
-//       interface_setter<cell_type, facet_tag, result_of::has_boundary<cell_type, facet_tag>::value >::apply(facet, key);
-//     }
-//   };
-//   
-//   template <typename cell_type, typename element_tag>
-//   struct interface_setter<cell_type, element_tag, false>
-//   {
-//     
-//     template <typename FacetType, typename KeyType>
-//     static void apply(FacetType const & facet, KeyType const & key)
-//     {
-// //       typedef typename FacetType::config_type        ConfigType;
-// //       typedef typename ConfigType::cell_tag          CellTag;
-//       
-//       //proceed to lower level:
-//       typedef typename element_tag::facet_tag facet_tag;
-//       interface_setter<cell_type, facet_tag, result_of::has_boundary<cell_type, facet_tag>::value >::apply(facet, key);
-//     }
-//     
-//   };
-//   
-//   
-//   
-//   //end recursion of topological dimension = -1
-//   /** @brief Specialization that stops recursion below the vertex level */
-//   template <typename cell_type>
-//   struct interface_setter< cell_type, viennagrid::meta::null_type, true >
-//   {
-//     template <typename FacetType, typename KeyType>
-//     static void apply(FacetType const & facet, KeyType const & key) {}
-//   };
-//   template <typename cell_type>
-//   struct interface_setter< cell_type, viennagrid::meta::null_type, false >
-//   {
-//     template <typename FacetType, typename KeyType>
-//     static void apply(FacetType const & facet, KeyType const & key) {}
-//   };
-
-  
-  
-  
-//   template<typename viennadata_key_type>
-//   class interface_setter_functor
-//   {
-//   public:
-//       interface_setter_functor(viennadata_key_type viennadata_key_) : viennadata_key(viennadata_key_) {}
-//       
-//       template<typename element_type>
-//       void operator()( const element_type & element )
-//       {
-//           viennadata::access<viennadata_key_type, bool>(viennadata_key)(element) = true;
-//       }
-//   private:
-//       
-//       viennadata_key_type viennadata_key;
-//   };
-//   
-//   
-//   template<typename element_type, typename viennadata_key_type>
-//   void mark_interfacet_cell(element_type & element, viennadata_key_type viennadata_key)
-//   {
-//       interface_setter_functor<viennadata_key_type> setter_functor(viennadata_key);
-//       viennagrid::for_each_boundary_cell( element, setter_functor );
-//   }
-  
-  
-
-
-  
-  
-  
-  
-  
-  
-  template< bool boundary_storage>
-  struct detect_interface_impl;
-  
-  template<>
-  struct detect_interface_impl<false>
+  namespace detail
   {
-        template <typename DomainType1, typename DomainType2, typename AccessorType>
-        static void detect(DomainType1 const & seg1,
-                             DomainType2 const & seg2,
-                             AccessorType accessor)
-        {
-            typedef typename SegmentType::ERROR_CANNOT_DETECT_INTERFACE_BECAUSE_FACETS_ARE_DISABLED        error_type;
-        }
-  };
-  
-  struct detect_interface_impl<true>
-  {
-        template <typename DomainType1, typename DomainType2, typename AccessorType>
-        static void detect(DomainType1 const & seg1,
-                           DomainType2 const & seg2,
-                           AccessorType accessor)
-        {
-   //typedef typename SegmentType::config_type                                  ConfigType;
-    //typedef typename ConfigType::cell_tag                                      CellTag;
-    typedef typename viennagrid::result_of::cell_tag<DomainType1>::type CellTag;
-    typedef typename viennagrid::result_of::point_type<DomainType1>::type                              PointType;
-    typedef typename viennagrid::result_of::element<DomainType1, typename CellTag::facet_tag>::type   FacetType;
-    typedef typename viennagrid::result_of::const_handle<DomainType1, typename CellTag::facet_tag>::type   ConstFacetHandleType;
-    typedef typename viennagrid::result_of::element<DomainType1, CellTag>::type     CellType;
-
-    typedef typename viennagrid::result_of::const_element_range<DomainType1, typename CellTag::facet_tag>::type      FacetRange;
-    typedef typename viennagrid::result_of::iterator<FacetRange>::type                                           FacetIterator;
-    typedef typename viennagrid::result_of::handle_iterator<FacetRange>::type                                           FacetHandleIterator;
+    template< bool boundary_storage>
+    struct detect_interface_impl;
     
-    //typedef typename ConfigType::numeric_type         numeric_type;
-
-    std::set<ConstFacetHandleType>  facets_ptrs_seg1;
-    
-    //
-    // Step 1: Write facets of segment 1 to a map:
-    //
-    FacetRange facets_seg1 = viennagrid::elements(seg1);
-    for (FacetHandleIterator fit = facets_seg1.handle_begin();
-          fit != facets_seg1.handle_end();
-          ++fit)
+    template<>
+    struct detect_interface_impl<false>
     {
-        const FacetType & facet = viennagrid::dereference_handle(seg1, *fit);
-        
-      if (is_boundary(seg1, facet))
-        facets_ptrs_seg1.insert( *fit );
-    }
+          template <typename AccessorType, typename DomainType1, typename DomainType2>
+          static void detect(AccessorType accessor,
+                            DomainType1 const & seg0,
+                            DomainType2 const & seg1)
+          {
+              typedef typename DomainType1::ERROR_CANNOT_DETECT_INTERFACE_BECAUSE_FACETS_ARE_DISABLED        error_type;
+          }
+    };
     
-    //
-    // Step 2: Compare facet in segment 2 with those stored in the map
-    //
-    FacetRange facets_seg2 = viennagrid::elements(seg2);
-    for (FacetHandleIterator fit = facets_seg2.handle_begin();
-          fit != facets_seg2.handle_end();
-          ++fit)
+    template<>
+    struct detect_interface_impl<true>
     {
-        const FacetType & facet = viennagrid::dereference_handle(seg2, *fit);
-        
-      if (facets_ptrs_seg1.find( *fit ) != facets_ptrs_seg1.end())
-        accessor(facet) = true;
-//         viennadata::access<KeyType, bool>(key)(facet) = true;
-    }
-    
-    //
-    // Step 3: Iterate over all facets again and tag all lower level topological elements on facets that belong to the boundary:
-    //
-//     for (FacetIterator fit = facets_seg1.begin();
-//           fit != facets_seg1.end();
-//           ++fit)
-//     {
-//       if (viennadata::find<KeyType, bool>(key)(*fit) != NULL)
-//       {
-//         if (viennadata::access<KeyType, bool>(key)(*fit) == true)
-//             mark_interfacet_cell(*fit, key);
-//           //interface_setter<CellType, typename CellTag::facet_tag::facet_tag>::apply(*fit, key);
-//       }
-//     }
-        }
-  };
-  
-  
-  
-  /** @brief A guard that forces a compile time error if no facets are available (i.e. disabled). */
-//   template <typename SegmentType, typename KeyType>
-//   void detect_interface_impl(SegmentType const & seg1,
-//                              SegmentType const & seg2,
-//                              KeyType const & key,
-//                              no_handling_tag)
-//   {
-//     typedef typename SegmentType::ERROR_CANNOT_DETECT_INTERFACE_BECAUSE_FACETS_ARE_DISABLED        error_type;
-//   }
+          template <typename AccessorType, typename DomainType1, typename DomainType2>
+          static void detect(AccessorType accessor,
+                            DomainType1 const & seg0,
+                            DomainType2 const & seg1)
+          {
+              typedef typename viennagrid::result_of::cell_tag<DomainType1>::type CellTag;
+              typedef typename viennagrid::result_of::point_type<DomainType1>::type                              PointType;
+              typedef typename viennagrid::result_of::element<DomainType1, typename CellTag::facet_tag>::type   FacetType;
+              typedef typename viennagrid::result_of::const_handle<DomainType1, typename CellTag::facet_tag>::type   ConstFacetHandleType;
+              typedef typename viennagrid::result_of::element<DomainType1, CellTag>::type     CellType;
 
-  /** @brief Implementation of interface facet detection with complexity O(N log(N)), where N is the number of facets in both segments.
-   * 
-   * @param seg1     The first segment
-   * @param seg2     The second segment
-   * @param key      Key object for use with ViennaData.
-   */
-//   template <typename CellTypeOrTag, typename SegmentType, typename KeyType>
-//   void detect_interface_impl(SegmentType const & seg1,
-//                              SegmentType const & seg2,
-//                              KeyType const & key,
-//                              full_handling_tag)
-//   {
-//     //typedef typename SegmentType::config_type                                  ConfigType;
-//     //typedef typename ConfigType::cell_tag                                      CellTag;
-//     typedef typename viennagrid::result_of::element_tag<CellTypeOrTag>::type CellTag;
-//     typedef typename viennagrid::result_of::point_type<SegmentType>::type                              PointType;
-//     typedef typename viennagrid::result_of::element<SegmentType, typename CellTag::facet_tag>::type   FacetType;
-//     typedef typename viennagrid::result_of::const_handle<SegmentType, typename CellTag::facet_tag>::type   ConstFacetHandleType;
-//     typedef typename viennagrid::result_of::element<SegmentType, CellTag>::type     CellType;
-// 
-//     typedef typename viennagrid::result_of::const_element_range<SegmentType, typename CellTag::facet_tag>::type      FacetRange;
-//     typedef typename viennagrid::result_of::iterator<FacetRange>::type                                           FacetIterator;
-//     typedef typename viennagrid::result_of::handle_iterator<FacetRange>::type                                           FacetHandleIterator;
-//     
-//     //typedef typename ConfigType::numeric_type         numeric_type;
-// 
-//     std::set<ConstFacetHandleType>  facets_ptrs_seg1;
-//     
-//     //
-//     // Step 1: Write facets of segment 1 to a map:
-//     //
-//     FacetRange facets_seg1 = viennagrid::elements<typename CellTag::facet_tag>(seg1);
-//     for (FacetHandleIterator fit = facets_seg1.handle_begin();
-//           fit != facets_seg1.handle_end();
-//           ++fit)
-//     {
-//         FacetType & facet = viennagrid::dereference_handle(seg1, *fit);
-//         
-//       if (is_boundary(facet, seg1))
-//         facets_ptrs_seg1.insert( *fit );
-//     }
-//     
-//     //
-//     // Step 2: Compare facet in segment 2 with those stored in the map
-//     //
-//     FacetRange facets_seg2 = viennagrid::elements<typename CellTag::facet_tag>(seg2);
-//     for (FacetIterator fit = facets_seg2.handle_begin();
-//           fit != facets_seg2.handle_end();
-//           ++fit)
-//     {
-//         FacetType & facet = viennagrid::dereference_handle(seg2, *fit);
-//         
-//       if (facets_ptrs_seg1.find( *fit ) != facets_ptrs_seg1.end())
-//         viennadata::access<KeyType, bool>(key)(facet) = true;
-//     }
-//     
-//     //
-//     // Step 3: Iterate over all facets again and tag all lower level topological elements on facets that belong to the boundary:
-//     //
-//     for (FacetIterator fit = facets_seg1.begin();
-//           fit != facets_seg1.end();
-//           ++fit)
-//     {
-//       if (viennadata::find<KeyType, bool>(key)(*fit) != NULL)
-//       {
-//         if (viennadata::access<KeyType, bool>(key)(*fit) == true)
-//           interface_setter<CellTag, typename CellTag::facet_tag::facet_tag>::apply(*fit, key);
-//       }
-//     }
-//   }
+              typedef typename viennagrid::result_of::const_element_range<DomainType1, typename CellTag::facet_tag>::type      FacetRange;
+              typedef typename viennagrid::result_of::iterator<FacetRange>::type                                           FacetIterator;
+              typedef typename viennagrid::result_of::handle_iterator<FacetRange>::type                                           FacetHandleIterator;
+              
+              std::set<ConstFacetHandleType>  facets_ptrs_seg0;
+              
+              accessor.resize(
+                std::max(
+                  viennagrid::max_id<FacetType>(seg0).get(),
+                  viennagrid::max_id<FacetType>(seg1).get()
+                )
+              );
+              
+              //
+              // Step 1: Write facets of segment 1 to a map:
+              //
+              FacetRange facets_seg0 = viennagrid::elements(seg0);
+              for (FacetHandleIterator fit = facets_seg0.handle_begin();
+                    fit != facets_seg0.handle_end();
+                    ++fit)
+              {
+                  const FacetType & facet = viennagrid::dereference_handle(seg0, *fit);
+                  
+                if (is_boundary(seg0, facet))
+                  facets_ptrs_seg0.insert( *fit );
+              }
+              
+              //
+              // Step 2: Compare facet in segment 2 with those stored in the map
+              //
+              FacetRange facets_seg1 = viennagrid::elements(seg1);
+              for (FacetHandleIterator fit = facets_seg1.handle_begin();
+                    fit != facets_seg1.handle_end();
+                    ++fit)
+              {
+                const FacetType & facet = viennagrid::dereference_handle(seg1, *fit);
+                  
+                if (facets_ptrs_seg0.find( *fit ) != facets_ptrs_seg0.end()) accessor(facet) = true;
+              }
+
+          }
+    };
+  }
+  
+
+
+
+    template<typename SegmentationType>
+    class interface_setter_functor
+    {
+    public:
+        typedef segment_t<SegmentationType> SegmentType;
+      
+        interface_setter_functor(SegmentType & seg0_, SegmentType & seg1_) : seg0(seg0_), seg1(seg1_) {}
+        
+        template<typename something>
+        void operator()( viennagrid::meta::tag<something> )
+        {
+            typedef typename viennagrid::result_of::element_tag< something >::type element_tag;
+            typedef typename viennagrid::result_of::element< SegmentType, element_tag >::type element_type;
+            
+            typedef typename viennagrid::result_of::cell_tag< SegmentType >::type cell_tag;
+            typedef typename viennagrid::result_of::facet_tag< cell_tag >::type facet_tag;
+            typedef typename viennagrid::result_of::element< SegmentType, facet_tag >::type facet_type;
+            
+            
+            
+          typedef typename viennagrid::storage::result_of::value_type<
+                  typename viennagrid::storage::result_of::value_type<
+                      typename SegmentationType::appendix_type,
+                      interface_information_collection_tag
+                    >::type,
+                    facet_tag
+                  >::type::segment_interface_information_wrapper_type src_interface_information_container_wrapper_type;
+            
+            src_interface_information_container_wrapper_type & src_interface_information_container_wrapper = interface_information_collection<facet_tag>( seg0, seg1 );
+            viennagrid::accessor::dense_container_accessor_t< const typename src_interface_information_container_wrapper_type::container_type, facet_type > src_accessor( src_interface_information_container_wrapper.container );
+            
+            
+            
+            
+          typedef typename viennagrid::storage::result_of::value_type<
+                  typename viennagrid::storage::result_of::value_type<
+                      typename SegmentationType::appendix_type,
+                      interface_information_collection_tag
+                    >::type,
+                    element_tag
+                  >::type::segment_interface_information_wrapper_type dst_interface_information_container_wrapper_type;
+                    
+            dst_interface_information_container_wrapper_type & dst_interface_information_container_wrapper = interface_information_collection<element_tag>( seg0, seg1 );
+            viennagrid::accessor::dense_container_accessor_t< typename dst_interface_information_container_wrapper_type::container_type, element_type > dst_accessor( dst_interface_information_container_wrapper.container );
+            
+            dst_accessor.resize(
+              std::max(
+               max_id<element_tag>(seg0).get(),
+               max_id<element_tag>(seg1).get()
+              )
+            );
+            
+            transfer_boundary_information(seg0, src_accessor, dst_accessor);
+            transfer_boundary_information(seg1, src_accessor, dst_accessor);
+            
+             seg0.view().update_change_counter( dst_interface_information_container_wrapper.seg0_change_counter );
+             seg1.view().update_change_counter( dst_interface_information_container_wrapper.seg1_change_counter );
+        }
+    private:
+        
+        SegmentType & seg0;
+        SegmentType & seg1;
+    };
+  
+  
+  
+    template<typename SegmentationType>
+    void transfer_interface_information( segment_t<SegmentationType> & seg0, segment_t<SegmentationType> & seg1 )
+    {
+      assert( &seg0.segmentation() == &seg1.segmentation() );
+      
+        typedef segment_t<SegmentationType> segment_type;
+        typedef typename viennagrid::result_of::cell_tag< segment_type >::type cell_tag;
+        typedef typename viennagrid::result_of::facet_tag< cell_tag >::type facet_tag;
+        
+        typedef typename viennagrid::meta::typelist::result_of::erase<
+            typename viennagrid::meta::typemap::result_of::key_typelist<
+                typename viennagrid::storage::result_of::value_type<
+                    typename SegmentationType::appendix_type,
+                    interface_information_collection_tag
+                >::type::typemap
+            >::type,
+            facet_tag
+        >::type typelist;
+        
+        interface_setter_functor<SegmentationType> functor(seg0, seg1);
+        
+        viennagrid::meta::typelist::for_each< typelist >( functor );
+    }
+
+
+
 
 
 
@@ -328,30 +210,53 @@ namespace viennagrid
    * @param seg2  The second segment
    * @param key   The key object for ViennaData
    */
-  template <typename CellTypeOrTag, typename DomainType1, typename DomainType2, typename AccessorType>
-  void detect_interface(DomainType1 const & seg1,
-                        DomainType2 const & seg2,
+  template <typename SegmentationType, typename AccessorType>
+  void detect_interface(segment_t<SegmentationType> & seg0,
+                        segment_t<SegmentationType> & seg1,
                         AccessorType accessor)
   {
-      typedef typename result_of::cell_tag<DomainType1>::type CellTag;
-      typedef typename result_of::element<DomainType1, CellTag>::type CellType;
-      
-      
-      detect_interface_impl< CellTag, result_of::has_boundary<CellType, typename CellTag::facet_tag>::value >::detect(seg1, seg2, accessor);
-      
-      
-//    typedef typename SegmentType::config_type               ConfigType;
-//    typedef typename ConfigType::cell_tag                   CellTag;
-//     typedef typename result_of::bndcell_handling<ConfigType, CellTag,
-//                                                     CellTag::dim-1>::type  HandlingTag;
+    assert( &seg0.segmentation() == &seg1.segmentation() );
+//       std::cout << "DETECT INTERFACE" << std::endl;
     
-//     if (viennadata::access<KeyType, bool>(key)(seg1) == false)
-//     {
-//       detect_interface_impl< CellTag, result_of::has_boundary<CellType, typename CellTag::facet_tag>::value >::detect(seg1, seg2, key);
-//       viennadata::access<KeyType, bool>(key)(seg1) = true;
-//       viennadata::access<KeyType, bool>(key)(seg2) = true;
-//     }
+      typedef typename result_of::cell_tag< segment_t<SegmentationType> >::type CellTag;
+      typedef typename result_of::element< segment_t<SegmentationType>, CellTag>::type CellType;
+      
+      detail::detect_interface_impl< result_of::has_boundary<CellType, typename CellTag::facet_tag>::value >::detect(accessor, seg0, seg1);
   }
+  
+  template <typename SegmentationType>
+  void detect_interface(segment_t<SegmentationType> & seg0,
+                        segment_t<SegmentationType> & seg1)
+  {
+    assert( &seg0.segmentation() == &seg1.segmentation() );
+    
+    typedef typename result_of::cell_tag< segment_t<SegmentationType> >::type CellTag;
+    typedef typename result_of::facet_tag<CellTag>::type FacetTag;
+    typedef typename result_of::element< segment_t<SegmentationType>, FacetTag >::type FacetType;
+    
+    
+        typedef typename viennagrid::storage::result_of::value_type<
+                typename viennagrid::storage::result_of::value_type<
+                    typename SegmentationType::appendix_type,
+                    interface_information_collection_tag
+                  >::type,
+                  FacetTag
+                >::type::segment_interface_information_wrapper_type interface_information_container_wrapper_type;
+        interface_information_container_wrapper_type & interface_information_container_wrapper = interface_information_collection<FacetTag>( seg0, seg1 );   
+    
+        
+    detect_interface( seg0, seg1, viennagrid::accessor::dense_container_accessor<FacetType>(interface_information_container_wrapper.container) );
+    
+        transfer_interface_information( seg0, seg1 );
+        seg0.view().update_change_counter( interface_information_container_wrapper.seg0_change_counter );
+        seg1.view().update_change_counter( interface_information_container_wrapper.seg1_change_counter );
+//       typedef typename result_of::cell_tag<DomainType1>::type CellTag;
+//       typedef typename result_of::element<DomainType1, CellTag>::type CellType;
+      
+//       detect_interface_impl< result_of::has_boundary<CellType, typename CellTag::facet_tag>::value >::detect(accessor, seg1, seg2);
+  }
+  
+  
 
   /** @brief Returns true if the n-cell is located at the interface between two segments
    * 
@@ -360,9 +265,47 @@ namespace viennagrid
    * @param seg2  The sevond segment
    */
   template <typename ElementType, typename AccessorType>
-  bool is_interface(ElementType const & el,
-                    AccessorType const accessor)
+  bool is_interface(AccessorType const accessor,
+                    ElementType const & el)
   { return accessor(el); }
+  
+  
+  template <typename SegmentationType, typename ElementType>
+  bool is_interface(segment_t<SegmentationType> const & seg0,
+                    segment_t<SegmentationType> const & seg1,
+                    ElementType const & element)
+  {
+    assert( &seg0.segmentation() == &seg1.segmentation() );
+    
+    typedef segment_t<SegmentationType> SegmentType;
+    typedef typename result_of::cell_tag< segment_t<SegmentationType> >::type CellTag;
+    typedef typename result_of::facet_tag<CellTag>::type FacetTag;
+    typedef typename result_of::element< segment_t<SegmentationType>, FacetTag >::type FacetType;
+
+        
+    typedef typename viennagrid::result_of::element_tag<ElementType>::type element_tag;
+        
+    
+        typedef typename viennagrid::storage::result_of::value_type<
+                typename viennagrid::storage::result_of::value_type<
+                    typename SegmentationType::appendix_type,
+                    interface_information_collection_tag
+                  >::type,
+                  element_tag
+                >::type::segment_interface_information_wrapper_type interface_information_container_wrapper_type;
+        interface_information_container_wrapper_type const & interface_information_container_wrapper = interface_information_collection<element_tag>( seg0, seg1 );   
+  
+//         std::cout << interface_information_container_wrapper.seg0_change_counter << std::endl;
+//         std::cout << interface_information_container_wrapper.seg1_change_counter << std::endl;
+        
+                
+        if ( (seg0.view().is_obsolete(interface_information_container_wrapper.seg0_change_counter)) ||
+             (seg1.view().is_obsolete(interface_information_container_wrapper.seg1_change_counter) ))
+            detect_interface( const_cast<SegmentType&>(seg0), const_cast<SegmentType&>(seg1) );
+        
+        viennagrid::accessor::dense_container_accessor_t< const typename interface_information_container_wrapper_type::container_type, ElementType > accessor( interface_information_container_wrapper.container );
+        return is_interface( accessor, element );
+  }
 
 }
 

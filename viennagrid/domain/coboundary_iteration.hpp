@@ -114,7 +114,7 @@ namespace viennagrid
         viennagrid::accessor::dense_container_accessor_t< typename coboundary_container_wrapper_type::container_type, element_type > accessor( coboundary_container_wrapper.container );
         create_coboundary_information<element_type_or_tag, coboundary_type_or_tag>( domain, accessor );
         
-        coboundary_container_wrapper.change_counter = domain.change_counter();
+        domain.update_change_counter( coboundary_container_wrapper.change_counter );
     }
     
     
@@ -173,7 +173,7 @@ namespace viennagrid
                 >::type coboundary_container_wrapper_type;
         coboundary_container_wrapper_type & coboundary_container_wrapper = coboundary_collection<element_tag, coboundary_tag>( domain );
         
-        if ( coboundary_container_wrapper.change_counter != domain.change_counter() )
+        if ( domain.is_obsolete(coboundary_container_wrapper.change_counter) )
             create_coboundary_information<element_type_or_tag, coboundary_type_or_tag>(domain);
 
         return coboundary_elements<element_type_or_tag, coboundary_type_or_tag>( accessor::dense_container_accessor<element_type>(coboundary_container_wrapper.container), viennagrid::dereference_handle(domain, hendl) );
@@ -199,7 +199,7 @@ namespace viennagrid
                 >::type coboundary_container_wrapper_type;
         coboundary_container_wrapper_type const & coboundary_container_wrapper = coboundary_collection<element_tag, coboundary_tag>( domain );
         
-        if ( coboundary_container_wrapper.change_counter != domain.change_counter() )
+        if ( domain.is_obsolete(coboundary_container_wrapper.change_counter) )
             create_coboundary_information<element_type_or_tag, coboundary_type_or_tag>( const_cast<domain_type&>(domain) );
 
         return coboundary_elements<element_type_or_tag, coboundary_type_or_tag>( accessor::dense_container_accessor<element_type>(coboundary_container_wrapper.container), viennagrid::dereference_handle(domain, hendl) );

@@ -271,7 +271,15 @@ namespace viennagrid
         inserter_type & get_inserter() { return inserter; }
         inserter_type const & get_inserter() const { return inserter; }
         
-        long change_counter() const { return change_counter_; }
+        typedef long ChangeCounterType;
+        
+//         ChangeCounterType change_counter() const { return change_counter_; }
+        bool is_obsolete( ChangeCounterType change_counter_to_check ) const
+        {
+//           std::cout << "CC: " << change_counter_ << " " << change_counter_to_check << std::endl;
+          return change_counter_to_check != change_counter_;
+        }
+        void update_change_counter( ChangeCounterType & change_counter_to_update ) const { change_counter_to_update = change_counter_; }
         void increment_change_counter() { ++change_counter_; }
 
         
@@ -285,7 +293,7 @@ namespace viennagrid
         
         inserter_type inserter;
         
-        long change_counter_;
+        ChangeCounterType change_counter_;
     };
 
     
@@ -408,7 +416,7 @@ namespace viennagrid
         struct element_typelist
         {
             typedef typename element_collection<domain_type>::type container_collection;
-            typedef typename viennagrid::meta::typemap::result_of::value_typelist<typename container_collection::typemap >::type type;
+            typedef typename viennagrid::meta::typemap::result_of::key_typelist<typename container_collection::typemap >::type type;
         };
         
         template<typename domain_type>
@@ -593,11 +601,11 @@ namespace viennagrid
         template<
             typename domain_type,
             typename element_typelist = 
-                typename viennagrid::meta::typemap::result_of::value_typelist<
+                typename viennagrid::meta::typemap::result_of::key_typelist<
                     typename element_collection<domain_type>::type::typemap
                 >::type,
             typename container_config = 
-                storage::default_container_config
+                storage::default_view_container_config
             >
         struct domain_view
         {
@@ -756,13 +764,24 @@ namespace viennagrid
     { return domain.get_inserter(); }
     
 
-    template<typename domain_type>
-    typename result_of::domain<domain_type>::type::inserter_type::id_generator_type & id_generator(domain_type & domain)
+    template<typename ConfigType>
+    typename domain_t<ConfigType>::inserter_type::id_generator_type & id_generator(domain_t<ConfigType> & domain)
     { return inserter(domain).get_id_generator(); }
     
-    template<typename domain_type>
-    typename result_of::domain<domain_type>::type::inserter_type::id_generator_type const & id_generator(domain_type const & domain)
+    template<typename ConfigType>
+    typename domain_t<ConfigType>::inserter_type::id_generator_type const & id_generator(domain_t<ConfigType> const & domain)
     { return inserter(domain).get_id_generator(); }
+    
+    
+    
+
+
+    template<typename ElementTypeOrTag, typename ConfigType>
+    typename viennagrid::result_of::id_type<
+      typename viennagrid::result_of::element< domain_t<ConfigType>, ElementTypeOrTag>::type
+    >::type max_id( domain_t<ConfigType> const & domain )
+    { return id_generator(domain).max_id( viennagrid::meta::tag< typename viennagrid::result_of::element< domain_t<ConfigType>, ElementTypeOrTag>::type >() ); }
+    
     
     
     
@@ -773,15 +792,15 @@ namespace viennagrid
     }
     
     
-    template<typename domain_type, typename handle_type>
-    typename storage::handle::result_of::value_type<handle_type>::type & dereference_handle( domain_type & domain, const handle_type & handle)
+    template<typename WrappedConfigType, typename handle_type>
+    typename storage::handle::result_of::value_type<handle_type>::type & dereference_handle( domain_t<WrappedConfigType> & domain, handle_type const & handle)
     {
         typedef typename storage::handle::result_of::value_type<handle_type>::type value_type;
         return storage::collection::get<value_type>(element_collection(domain)).dereference_handle( handle );
     }
     
-    template<typename domain_type, typename handle_type>
-    typename storage::handle::result_of::value_type<handle_type>::type const & dereference_handle( const domain_type & domain, const handle_type & handle)
+    template<typename WrappedConfigType, typename handle_type>
+    typename storage::handle::result_of::value_type<handle_type>::type const & dereference_handle( domain_t<WrappedConfigType> const & domain, handle_type const & handle)
     {
         typedef typename storage::handle::result_of::value_type<handle_type>::type value_type;
         return storage::collection::get<value_type>(element_collection(domain)).dereference_handle( handle );
@@ -792,7 +811,7 @@ namespace viennagrid
     { return handle; }
     
     template<typename domain_type, typename ElementTag, typename WrappedConfigType>
-    element_t<ElementTag, WrappedConfigType> const & dereference_handle( domain_type & domain, element_t<ElementTag, WrappedConfigType> const & handle)
+    element_t<ElementTag, WrappedConfigType> const & dereference_handle( domain_type const & domain, element_t<ElementTag, WrappedConfigType> const & handle)
     { return handle; }
     
     
@@ -809,6 +828,9 @@ namespace viennagrid
     
     template<typename domain_type, typename handle_type>
     handle_type handle( domain_type & domain, handle_type handle) { return handle; }
+    
+    template<typename domain_type, typename handle_type>
+    const handle_type handle( domain_type const & domain, handle_type handle) { return handle; }
     
     
     

@@ -29,6 +29,11 @@ namespace viennagrid
             std_deque_tag
         >::type default_container_config;
         
+        typedef viennagrid::meta::make_typemap<
+            default_tag,
+            std_set_tag
+        >::type default_view_container_config;
+        
         
         template<typename container_tag_, typename handle_tag_>
         struct handled_container_tag

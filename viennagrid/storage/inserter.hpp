@@ -54,6 +54,9 @@ namespace viennagrid
                 if ( generate_id && !container.is_present( element ) )
                     viennagrid::storage::id::set_id(element, id_generator( viennagrid::meta::tag<value_type>() ) );
                 
+                if (!generate_id)
+                  id_generator.set_max_id( element.id() );
+                
                 std::pair<handle_type, bool> ret = container.insert( element );
                 
                 //container.dereference_handle(ret.first).set_container(collection);

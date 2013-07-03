@@ -207,7 +207,7 @@ namespace viennagrid
             }
             void erase_handle(handle_type handle)
             {
-              for (iterator it = handle_container.begin(); it != handle_container.end(); ++it)
+              for (const_iterator it = handle_container.begin(); it != handle_container.end(); ++it)
                 if (it.handle() == handle)
                 {
                   handle_container.erase( it );

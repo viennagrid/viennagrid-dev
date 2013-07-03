@@ -22,6 +22,9 @@ namespace viennagrid
         struct coboundary_container_tag;
         struct coboundary_view_container_tag;
     
+        struct boundary_information_container_tag;
+        
+        struct interface_information_container_tag;
         
         struct vector_type_tag;
         struct metainfo_typelist_tag;
@@ -62,6 +65,17 @@ namespace viennagrid
                 typedef storage::std_vector_tag type;
             };
             
+            template<>
+            struct default_config<boundary_information_container_tag>
+            {
+                typedef storage::std_vector_tag type;
+            };
+            
+            template<>
+            struct default_config<interface_information_container_tag>
+            {
+                typedef storage::std_vector_tag type;
+            };
             
             
             

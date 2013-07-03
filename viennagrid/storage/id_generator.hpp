@@ -99,6 +99,16 @@ namespace viennagrid
                 return last_id++;
             }
             
+            using base::set_max_id;
+            void set_max_id( id_type last_id_ )
+            {
+                if (last_id_ > last_id)
+                {
+                  last_id = last_id_;
+                  ++last_id;
+                }
+            }
+            
             using base::max_id;
             id_type max_id( viennagrid::meta::tag<value_type> ) const
             {
@@ -114,6 +124,7 @@ namespace viennagrid
         {
         public:
             void operator()();
+            void set_max_id();
             void max_id() const;
         };
         

@@ -461,7 +461,7 @@ namespace viennagrid
         struct boundary_information_collection_typemap_impl<domain_config, viennagrid::meta::typelist_t<element_tag, tail> >
         {
           // TODO richtig aus der config rauslesen!
-            typedef typename config::result_of::query_config<domain_config, config::coboundary_container_tag>::type boundary_container_tag;
+            typedef typename config::result_of::query_config<domain_config, config::boundary_information_container_tag>::type boundary_container_tag;
             
 //             typedef typename config::result_of::element_container< domain_config, element_tag>::type base_element_container;
 //             typedef typename viennagrid::storage::result_of::view<base_element_container, coboundary_view_container_tag>::type element_view_type;

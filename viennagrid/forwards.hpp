@@ -110,6 +110,8 @@ namespace viennagrid
   struct coboundary_collection_tag;
   struct neighbour_collection_tag;
   struct boundary_information_collection_tag;
+  
+  struct interface_information_collection_tag;
 
   
   /********* Forward definitions of main classes *******************/

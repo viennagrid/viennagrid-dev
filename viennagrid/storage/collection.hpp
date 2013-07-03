@@ -111,7 +111,7 @@ namespace viennagrid
             }
             
             template<typename type, typename typemap>
-            const typename result_of::value_type<typemap, typename viennagrid::meta::remove_const<type>::type >::type & get( const collection_t<typemap> & c )
+            typename result_of::value_type<typemap, typename viennagrid::meta::remove_const<type>::type >::type const & get( collection_t<typemap> const & c )
             {
                 return c.get( viennagrid::meta::tag< typename viennagrid::meta::remove_const<type>::type >() );
             }

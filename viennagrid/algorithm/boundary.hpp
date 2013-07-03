@@ -22,6 +22,7 @@
 #include "viennagrid/forwards.hpp"
 #include "viennagrid/element/element.hpp"
 #include "viennagrid/domain/accessor.hpp"
+#include "viennagrid/domain/segmentation.hpp"
 
 
 
@@ -32,6 +33,8 @@ namespace viennagrid
   template <typename DomainType, typename AccessorType>
   void detect_boundary(DomainType & domain, AccessorType boundary_info_accessor)
   {
+//     std::cout << "DETECT BOUNDARY" << std::endl;
+    
     typedef typename viennagrid::result_of::cell_tag<DomainType>::type CellTag;
     typedef typename viennagrid::result_of::facet_tag<CellTag>::type FacetTag;
     
@@ -89,7 +92,7 @@ namespace viennagrid
       
       dst_range_type dst_elements = viennagrid::elements( domain );
       
-      destination_boundary_info_accessor.resize( dst_elements.size() );
+      destination_boundary_info_accessor.resize( max_id<dst_element_type>(domain).get() );
       
       for (dst_range_iterator it = dst_elements.begin(); it != dst_elements.end(); ++it)
           destination_boundary_info_accessor(*it) = false;
@@ -167,7 +170,7 @@ namespace viennagrid
 
             transfer_boundary_information(domain, src_accessor, dst_accessor);
             
-            dst_boundary_information_container_wrapper.change_counter = domain.change_counter();
+            domain.update_change_counter( dst_boundary_information_container_wrapper.change_counter );
         }
     private:
         
@@ -197,6 +200,10 @@ namespace viennagrid
         
         viennagrid::meta::typelist::for_each< typelist >( functor );
     }
+    
+    template<typename SegmentationType>
+    void transfer_boundary_information( segment_t<SegmentationType> & segment )
+    { transfer_boundary_information( segment.view() ); }
   
   
     template<typename WrappedConfigType>
@@ -221,8 +228,13 @@ namespace viennagrid
         detect_boundary( domain, accessor::dense_container_accessor<facet_type>( boundary_information_container_wrapper.container ) );
         
         transfer_boundary_information(domain);
-        boundary_information_container_wrapper.change_counter = domain.change_counter();
+        domain.update_change_counter( boundary_information_container_wrapper.change_counter );
     }
+    
+    
+    template<typename SegmentationType>
+    void detect_boundary( segment_t<SegmentationType> & segment )
+    { detect_boundary( segment.view() ); }
   
   
 
@@ -261,12 +273,17 @@ namespace viennagrid
                 >::type boundary_information_container_wrapper_type;
         boundary_information_container_wrapper_type const & boundary_information_container_wrapper = boundary_information_collection<element_tag>( domain );        
                 
-        if (boundary_information_container_wrapper.change_counter != domain.change_counter())
+        if (domain.is_obsolete(boundary_information_container_wrapper.change_counter))
             detect_boundary( const_cast<domain_type&>(domain) );
         
         viennagrid::accessor::dense_container_accessor_t< const typename boundary_information_container_wrapper_type::container_type, ElementType > accessor( boundary_information_container_wrapper.container );        
         return is_boundary( accessor, element );
   }
+  
+  template <typename SegmentationType, typename ElementType>
+  bool is_boundary(segment_t<SegmentationType> const & segment, ElementType const & element)
+  { return is_boundary( segment.view(), element ); }
+  
   
 
   /** @brief Returns true if the k-cell provided as first argument is on the boundary of the n-cell provided as second argument
