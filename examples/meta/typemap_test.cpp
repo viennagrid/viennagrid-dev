@@ -9,7 +9,7 @@ int main()
 {
     std::cout << "size" << std::endl;
     test_value<
-        viennameta::typemap::result_of::size< viennameta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type >::value,
+        viennagrid::meta::typemap::result_of::size< viennagrid::meta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type >::value,
         3
     >();
     
@@ -17,40 +17,40 @@ int main()
     
     std::cout << "at" << std::endl;
     test_type<
-        viennameta::typemap::result_of::at< viennameta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type, 0 >::type,
-        viennameta::static_pair<int, unsigned int>
+        viennagrid::meta::typemap::result_of::at< viennagrid::meta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type, 0 >::type,
+        viennagrid::meta::static_pair<int, unsigned int>
     >();
     
     test_type<
-        viennameta::typemap::result_of::at< viennameta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type, 2 >::type,
-        viennameta::static_pair<short, unsigned short>
+        viennagrid::meta::typemap::result_of::at< viennagrid::meta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type, 2 >::type,
+        viennagrid::meta::static_pair<short, unsigned short>
     >();
 
     test_type<
-        viennameta::typemap::result_of::at< viennameta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type, -10 >::type,
-        viennameta::out_of_range
+        viennagrid::meta::typemap::result_of::at< viennagrid::meta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type, -10 >::type,
+        viennagrid::meta::out_of_range
     >();
 
     test_type<
-        viennameta::typemap::result_of::at< viennameta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type, 10 >::type,
-        viennameta::out_of_range
+        viennagrid::meta::typemap::result_of::at< viennagrid::meta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type, 10 >::type,
+        viennagrid::meta::out_of_range
     >();
     
     
     
     std::cout << "index_of" << std::endl;
     test_value<
-        viennameta::typemap::result_of::index_of< viennameta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type, int >::value,
+        viennagrid::meta::typemap::result_of::index_of< viennagrid::meta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type, int >::value,
         0
     >();
     
     test_value<
-        viennameta::typemap::result_of::index_of< viennameta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type, char >::value,
+        viennagrid::meta::typemap::result_of::index_of< viennagrid::meta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type, char >::value,
         1
     >();
     
     test_value<
-        viennameta::typemap::result_of::index_of< viennameta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type, double >::value,
+        viennagrid::meta::typemap::result_of::index_of< viennagrid::meta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type, double >::value,
         -1
     >();    
     
@@ -58,95 +58,95 @@ int main()
     
     std::cout << "find" << std::endl;
     test_type<
-        viennameta::typemap::result_of::find< viennameta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type, int >::type::second,
+        viennagrid::meta::typemap::result_of::find< viennagrid::meta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type, int >::type::second,
         unsigned int
     >();
 
     test_type<
-        viennameta::typemap::result_of::find< viennameta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type, char >::type::second,
+        viennagrid::meta::typemap::result_of::find< viennagrid::meta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type, char >::type::second,
         unsigned char
     >();
     
     test_type<
-        viennameta::typemap::result_of::find< viennameta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type, short >::type::second,
+        viennagrid::meta::typemap::result_of::find< viennagrid::meta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type, short >::type::second,
         unsigned short
     >();
     
     test_type<
-        viennameta::typemap::result_of::find< viennameta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type, float >::type,
-        viennameta::not_found
+        viennagrid::meta::typemap::result_of::find< viennagrid::meta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type, float >::type,
+        viennagrid::meta::not_found
     >();
 
     
     
     std::cout << "insert" << std::endl;
     test_type<
-        viennameta::typemap::result_of::insert< viennameta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type, viennameta::static_pair<float, double> >::type,
-        viennameta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short, float, double>::type
+        viennagrid::meta::typemap::result_of::insert< viennagrid::meta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type, viennagrid::meta::static_pair<float, double> >::type,
+        viennagrid::meta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short, float, double>::type
     >();
 
     test_type<
-        viennameta::typemap::result_of::insert< viennameta::null_type, viennameta::static_pair<float, double> >::type,
-        viennameta::make_typemap<float, double>::type
+        viennagrid::meta::typemap::result_of::insert< viennagrid::meta::null_type, viennagrid::meta::static_pair<float, double> >::type,
+        viennagrid::meta::make_typemap<float, double>::type
     >();
 
     test_type<
-        viennameta::typemap::result_of::insert< viennameta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type, viennameta::null_type >::type,
-        viennameta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type
+        viennagrid::meta::typemap::result_of::insert< viennagrid::meta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type, viennagrid::meta::null_type >::type,
+        viennagrid::meta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type
     >();
     
     // this should not work and generate a compiler error
 //     test_type<
-//         viennameta::typemap::result_of::insert< viennameta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type, viennameta::static_pair<int, double> >::type,
-//         viennameta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short, float, double>::type
+//         viennagrid::meta::typemap::result_of::insert< viennagrid::meta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type, viennagrid::meta::static_pair<int, double> >::type,
+//         viennagrid::meta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short, float, double>::type
 //     >();
     
     
     
     std::cout << "modify" << std::endl;
     test_type<
-        viennameta::typemap::result_of::modify< viennameta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type, viennameta::static_pair<int, float> >::type,
-        viennameta::make_typemap<int, float, char, unsigned char, short, unsigned short>::type
+        viennagrid::meta::typemap::result_of::modify< viennagrid::meta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type, viennagrid::meta::static_pair<int, float> >::type,
+        viennagrid::meta::make_typemap<int, float, char, unsigned char, short, unsigned short>::type
     >();
     
     // this should not work and generate a compiler error
 //     test_type<
-//         viennameta::typemap::result_of::modify< viennameta::null_type, viennameta::static_pair<int, float> >::type,
-//         viennameta::null_type
+//         viennagrid::meta::typemap::result_of::modify< viennagrid::meta::null_type, viennagrid::meta::static_pair<int, float> >::type,
+//         viennagrid::meta::null_type
 //     >();
     
     // this should not work and generate a compiler error
 //     test_type<
-//         viennameta::typemap::result_of::modify< viennameta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type, viennameta::static_pair<float, float> >::type,
-//         viennameta::make_typemap<int, float, char, unsigned char, short, unsigned short>::type
+//         viennagrid::meta::typemap::result_of::modify< viennagrid::meta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type, viennagrid::meta::static_pair<float, float> >::type,
+//         viennagrid::meta::make_typemap<int, float, char, unsigned char, short, unsigned short>::type
 //     >();
 
 
     
     std::cout << "insert_or_modify" << std::endl;
     test_type<
-        viennameta::typemap::result_of::insert_or_modify< viennameta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type, viennameta::static_pair<int, float> >::type,
-        viennameta::make_typemap<int, float, char, unsigned char, short, unsigned short>::type
+        viennagrid::meta::typemap::result_of::insert_or_modify< viennagrid::meta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type, viennagrid::meta::static_pair<int, float> >::type,
+        viennagrid::meta::make_typemap<int, float, char, unsigned char, short, unsigned short>::type
     >();
     
     test_type<
-        viennameta::typemap::result_of::insert_or_modify< viennameta::null_type, viennameta::static_pair<float, double> >::type,
-        viennameta::make_typemap<float, double>::type
+        viennagrid::meta::typemap::result_of::insert_or_modify< viennagrid::meta::null_type, viennagrid::meta::static_pair<float, double> >::type,
+        viennagrid::meta::make_typemap<float, double>::type
     >();
 
     test_type<
-        viennameta::typemap::result_of::insert_or_modify< viennameta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type, viennameta::null_type >::type,
-        viennameta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type
+        viennagrid::meta::typemap::result_of::insert_or_modify< viennagrid::meta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type, viennagrid::meta::null_type >::type,
+        viennagrid::meta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type
     >();   
     
     test_type<
-        viennameta::typemap::result_of::insert_or_modify< viennameta::null_type, viennameta::static_pair<int, double> >::type,
-        viennameta::make_typemap<int, double>::type
+        viennagrid::meta::typemap::result_of::insert_or_modify< viennagrid::meta::null_type, viennagrid::meta::static_pair<int, double> >::type,
+        viennagrid::meta::make_typemap<int, double>::type
     >();
     
     test_type<
-        viennameta::typemap::result_of::insert_or_modify< viennameta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type, viennameta::static_pair<float, float> >::type,
-        viennameta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short, float, float>::type
+        viennagrid::meta::typemap::result_of::insert_or_modify< viennagrid::meta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type, viennagrid::meta::static_pair<float, float> >::type,
+        viennagrid::meta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short, float, float>::type
     >();
     
     
@@ -154,77 +154,77 @@ int main()
     
     std::cout << "erase" << std::endl;
     test_type<
-        viennameta::typemap::result_of::erase< viennameta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type, int >::type,
-        viennameta::make_typemap<char, unsigned char, short, unsigned short>::type
+        viennagrid::meta::typemap::result_of::erase< viennagrid::meta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type, int >::type,
+        viennagrid::meta::make_typemap<char, unsigned char, short, unsigned short>::type
     >();
     
     // this should not work and generate a compiler error
 //     test_type<
-//         viennameta::typemap::result_of::erase< viennameta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type, float >::type,
-//         viennameta::null_type
+//         viennagrid::meta::typemap::result_of::erase< viennagrid::meta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type, float >::type,
+//         viennagrid::meta::null_type
 //     >();
     
     
     
     std::cout << "merge" << std::endl;
     test_type<
-        viennameta::typemap::result_of::merge<
-            viennameta::null_type,
-            viennameta::make_typemap<float, float, double, double>::type
+        viennagrid::meta::typemap::result_of::merge<
+            viennagrid::meta::null_type,
+            viennagrid::meta::make_typemap<float, float, double, double>::type
         >::type,
-       viennameta::make_typemap<float, float, double, double>::type
+       viennagrid::meta::make_typemap<float, float, double, double>::type
     >();
     
     test_type<
-        viennameta::typemap::result_of::merge<
-            viennameta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type,
-            viennameta::null_type
+        viennagrid::meta::typemap::result_of::merge<
+            viennagrid::meta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type,
+            viennagrid::meta::null_type
         >::type,
-        viennameta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type
+        viennagrid::meta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type
     >();
     
     test_type<
-        viennameta::typemap::result_of::merge<
-            viennameta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type,
-            viennameta::make_typemap<float, float, double, double>::type
+        viennagrid::meta::typemap::result_of::merge<
+            viennagrid::meta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type,
+            viennagrid::meta::make_typemap<float, float, double, double>::type
         >::type,
-        viennameta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short, float, float, double, double>::type
+        viennagrid::meta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short, float, float, double, double>::type
     >();
 
     // this should not work and generate a compiler error
 //     test_type<
-//         viennameta::typemap::result_of::merge<
-//             viennameta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type,
-//             viennameta::make_typemap<int, float, double, double>::type
+//         viennagrid::meta::typemap::result_of::merge<
+//             viennagrid::meta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type,
+//             viennagrid::meta::make_typemap<int, float, double, double>::type
 //         >::type,
-//         viennameta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short, float, float, double, double>::type
+//         viennagrid::meta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short, float, float, double, double>::type
 //     >();
 
     test_type<
-        viennameta::typemap::result_of::merge_overwrite<
-            viennameta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type,
-            viennameta::make_typemap<float, float, double, double, int, bool>::type
+        viennagrid::meta::typemap::result_of::merge_overwrite<
+            viennagrid::meta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type,
+            viennagrid::meta::make_typemap<float, float, double, double, int, bool>::type
         >::type,
-        viennameta::make_typemap<int, bool, char, unsigned char, short, unsigned short, float, float, double, double>::type
+        viennagrid::meta::make_typemap<int, bool, char, unsigned char, short, unsigned short, float, float, double, double>::type
     >();
     
     test_type<
-        viennameta::typemap::result_of::merge_ignore<
-            viennameta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type,
-            viennameta::make_typemap<float, float, double, double, int, bool>::type
+        viennagrid::meta::typemap::result_of::merge_ignore<
+            viennagrid::meta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type,
+            viennagrid::meta::make_typemap<float, float, double, double, int, bool>::type
         >::type,
-        viennameta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short, float, float, double, double>::type
+        viennagrid::meta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short, float, float, double, double>::type
     >();
     
     
     std::cout << "consistency test" << std::endl;
     test_type<
-        viennameta::typemap::result_of::consistency< viennameta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type >::type,
-        viennameta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type
+        viennagrid::meta::typemap::result_of::consistency< viennagrid::meta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type >::type,
+        viennagrid::meta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type
     >();
     
     // this should not work and generate a compiler error
-    // viennameta::make_typemap<int, unsigned int, char, unsigned char, int, unsigned short>::type tmp;
+    // viennagrid::meta::make_typemap<int, unsigned int, char, unsigned char, int, unsigned short>::type tmp;
    
     return 0;
 }

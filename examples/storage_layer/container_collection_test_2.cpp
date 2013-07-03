@@ -32,7 +32,7 @@ template<typename _numeric_type>
 struct vertex : public viennagrid::storage::id_handler< viennagrid::storage::smart_id_t<vertex<_numeric_type>, int> >
 {
     typedef _numeric_type numeric_type;
-    typedef typename viennameta::make_typelist< vertex<numeric_type> >::type required_types;    
+    typedef typename viennagrid::meta::make_typelist< vertex<numeric_type> >::type required_types;    
     
     enum { dim = 2 };
     
@@ -58,7 +58,7 @@ template<typename _vertex_type>
 struct line : public viennagrid::storage::id_handler< viennagrid::storage::smart_id_t<line<_vertex_type>, int> >
 {
     typedef _vertex_type vertex_type;
-    typedef typename viennameta::typelist::result_of::push_back<typename vertex_type::required_types, line<vertex_type> >::type required_types;
+    typedef typename viennagrid::meta::typelist::result_of::push_back<typename vertex_type::required_types, line<vertex_type> >::type required_types;
     
     template<typename inserter_type>
     void insert_callback( inserter_type & inserter, bool inserted )
@@ -80,7 +80,7 @@ struct triangle : public viennagrid::storage::id_handler< viennagrid::storage::s
     typedef _vertex_type vertex_type;
     typedef line<vertex_type> line_type;
     
-    typedef typename viennameta::typelist::result_of::push_back<typename line_type::required_types, triangle<vertex_type> >::type required_types;
+    typedef typename viennagrid::meta::typelist::result_of::push_back<typename line_type::required_types, triangle<vertex_type> >::type required_types;
     
     template<typename inserter_type>
     void insert_callback( inserter_type & inserter, bool inserted )
@@ -160,8 +160,8 @@ int main()
     
     //typedef viennagrid::storage::container_collection::result_of::container_typelist<collection_type>::type collection_containers;
     typedef viennagrid::storage::result_of::view_collection<
-            //viennameta::typelist::result_of::erase_at<collection_type::typemap, 1>::type,
-            viennameta::typemap::result_of::erase<collection_type::typemap, line_type>::type,
+            //viennagrid::meta::typelist::result_of::erase_at<collection_type::typemap, 1>::type,
+            viennagrid::meta::typemap::result_of::erase<collection_type::typemap, line_type>::type,
             viennagrid::storage::container_collection::default_container_config
     >::type view_collection_type;
     

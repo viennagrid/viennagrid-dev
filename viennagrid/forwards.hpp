@@ -150,7 +150,7 @@ namespace viennagrid
   class point_t;
 
 
-//   template<typename element_tag, typename bnd_cell_container_typelist_, typename id_tag, typename appendix_type = viennameta::null_type>
+//   template<typename element_tag, typename bnd_cell_container_typelist_, typename id_tag, typename appendix_type = viennagrid::meta::null_type>
   template<typename element_tag, typename WrappedConfigType>
   class element_t;
 

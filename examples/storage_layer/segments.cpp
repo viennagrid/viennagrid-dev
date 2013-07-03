@@ -34,7 +34,7 @@ int main()
 //   typedef int segment_id_type;
 //   
 //   typedef std::deque< viennagrid::segment_info_t< viennagrid::element_segment_mapping<segment_id_type, bool> > > segment_info_container_type;
-//   typedef viennameta::make_typemap< triangle_type, segment_info_container_type >::type typemap;
+//   typedef viennagrid::meta::make_typemap< triangle_type, segment_info_container_type >::type typemap;
   
   typedef viennagrid::result_of::oriented_3d_hull_segmentation<domain_type>::type segmentation_type;
 //   typedef viennagrid::result_of::segmentation<domain_type>::type segmentation_type;

@@ -316,7 +316,7 @@ namespace viennagrid
     
     std::deque<bool> edge_refinement_flag;
     
-    edge_refinement_flag.resize( domain_in.get_inserter().get_id_generator().max_id( viennameta::tag<EdgeType>() ).get() );
+    edge_refinement_flag.resize( domain_in.get_inserter().get_id_generator().max_id( viennagrid::meta::tag<EdgeType>() ).get() );
     
     cell_refinement_to_edge_refinement<CellTypeOrTag>( domain_in,
                                         cell_refinement_flag_accessor,

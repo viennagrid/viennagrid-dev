@@ -25,7 +25,7 @@ namespace viennagrid
                     typename domain_type::appendix_type,
                     neighbour_collection_tag
                   >::type,
-                viennameta::static_pair<element_tag, connector_element_tag>
+                viennagrid::meta::static_pair<element_tag, connector_element_tag>
               >::type::container_type::value_type type;
         };
         
@@ -127,7 +127,7 @@ namespace viennagrid
                     typename domain_type::appendix_type,
                     neighbour_collection_tag
                 >::type,
-                viennameta::static_pair<element_tag, connector_element_tag>
+                viennagrid::meta::static_pair<element_tag, connector_element_tag>
                 >::type neighbour_container_wrapper_type;
         neighbour_container_wrapper_type & neighbour_container_wrapper = neighbour_collection<element_tag, connector_element_tag>( domain );
         
@@ -188,7 +188,7 @@ namespace viennagrid
                     typename domain_type::appendix_type,
                     neighbour_collection_tag
                 >::type,
-                viennameta::static_pair<element_tag, connector_element_tag>
+                viennagrid::meta::static_pair<element_tag, connector_element_tag>
                 >::type neighbour_container_wrapper_type;
         neighbour_container_wrapper_type & neighbour_container_wrapper = neighbour_collection<element_tag, connector_element_tag>( domain );
         
@@ -213,7 +213,7 @@ namespace viennagrid
                     typename domain_type::appendix_type,
                     neighbour_collection_tag
                 >::type,
-                viennameta::static_pair<element_tag, connector_element_tag>
+                viennagrid::meta::static_pair<element_tag, connector_element_tag>
                 >::type neighbour_container_wrapper_type;
         neighbour_container_wrapper_type const & neighbour_container_wrapper = neighbour_collection<element_tag, connector_element_tag>( domain );
         

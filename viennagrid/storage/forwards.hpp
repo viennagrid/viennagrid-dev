@@ -24,7 +24,7 @@ namespace viennagrid
         struct std_set_tag;
         
         
-        typedef viennameta::make_typemap<
+        typedef viennagrid::meta::make_typemap<
             default_tag,
             std_deque_tag
         >::type default_container_config;

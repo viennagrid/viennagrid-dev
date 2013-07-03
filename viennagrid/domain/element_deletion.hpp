@@ -17,7 +17,7 @@ namespace viennagrid
         switch_handle_functor(domain_type & domain_, to_switch_element_handle from_, to_switch_element_handle to_) : domain(domain_), from(from_), to(to_) {}
         
         template<typename parent_element_type_or_tag>
-        void operator() ( viennameta::tag<parent_element_type_or_tag> )
+        void operator() ( viennagrid::meta::tag<parent_element_type_or_tag> )
         {
 //             std::cout << "HERE" << std::endl;
             
@@ -58,7 +58,7 @@ namespace viennagrid
 //         std::cout << typeid(typename viennagrid::result_of::element_to_tag< parent_element_typelist >::type).name() << std::endl;
 //         std::cout << "Switching " << viennagrid::dereference_handle(domain, old_handle) << " with " << viennagrid::dereference_handle(domain, new_handle) << std::endl;
         
-        viennameta::typelist::for_each<parent_element_typelist>( functor );
+        viennagrid::meta::typelist::for_each<parent_element_typelist>( functor );
     }
     
     
@@ -68,7 +68,7 @@ namespace viennagrid
     struct mark_erase_elements_impl;
     
     template<typename domain_type, typename domain_view_type, typename handle_type, typename coboundary_element_type, typename tail>
-    struct mark_erase_elements_impl<domain_type, domain_view_type, handle_type, viennameta::typelist_t<coboundary_element_type, tail> >
+    struct mark_erase_elements_impl<domain_type, domain_view_type, handle_type, viennagrid::meta::typelist_t<coboundary_element_type, tail> >
     {
         static void mark(domain_type & domain, domain_view_type & domain_view, handle_type to_erase)
         {
@@ -94,7 +94,7 @@ namespace viennagrid
     };
     
     template<typename domain_type, typename domain_view_type, typename handle_type>
-    struct mark_erase_elements_impl<domain_type, domain_view_type, handle_type, viennameta::null_type >
+    struct mark_erase_elements_impl<domain_type, domain_view_type, handle_type, viennagrid::meta::null_type >
     {
         static void mark(domain_type & domain, domain_view_type & domain_view, handle_type to_erase)
         {
@@ -147,7 +147,7 @@ namespace viennagrid
         erase_functor(domain_type & domain_, domain_view_type & view_to_erase_) : domain(domain_), view_to_erase(view_to_erase_) {}
         
         template<typename element_type>
-        void operator()( viennameta::tag<element_type> )
+        void operator()( viennagrid::meta::tag<element_type> )
         {
             typedef typename viennagrid::result_of::element_range<domain_view_type, element_type>::type to_erase_element_range_type;
             typedef typename viennagrid::result_of::iterator<to_erase_element_range_type>::type to_erase_element_range_iterator;
@@ -192,7 +192,7 @@ namespace viennagrid
     {
         typedef typename viennagrid::result_of::element_typelist<domain_view_type>::type element_typelist;
         erase_functor<domain_type, domain_view_type> functor( domain, elements_to_erase );
-        viennameta::typelist::for_each<element_typelist>(functor);
+        viennagrid::meta::typelist::for_each<element_typelist>(functor);
     }
     
     template<typename domain_type, typename handle_type>

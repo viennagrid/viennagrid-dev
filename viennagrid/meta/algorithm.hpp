@@ -1,16 +1,18 @@
-#ifndef VIENNAGRID_STORAGE_ALGORITHM_HPP
-#define VIENNAGRID_STORAGE_ALGORITHM_HPP
+#ifndef VIENNAGRID_META_ALGORITHM_HPP
+#define VIENNAGRID_META_ALGORITHM_HPP
 
 
-namespace viennameta
+namespace viennagrid
 {
+  namespace meta
+  {
     namespace typelist
     {
         template<typename typelist>
         struct for_each_impl {};
         
         template<typename head, typename tail>
-        struct for_each_impl< viennameta::typelist_t<head, tail> >
+        struct for_each_impl< viennagrid::meta::typelist_t<head, tail> >
         {
             template<typename functor>
             static void exec( functor & f)
@@ -28,7 +30,7 @@ namespace viennameta
         };
         
         template<>
-        struct for_each_impl< viennameta::null_type >
+        struct for_each_impl< viennagrid::meta::null_type >
         {
             template<typename functor> static void exec( functor & f) {}
             template<typename functor> static void exec( const functor & f) {}
@@ -51,15 +53,15 @@ namespace viennameta
        
         
         template<template<typename> class functor>
-        struct TRANSFORM<functor, viennameta::null_type>
+        struct TRANSFORM<functor, viennagrid::meta::null_type>
         {
-            typedef viennameta::null_type type;
+            typedef viennagrid::meta::null_type type;
         };
         
         template<template<typename> class functor, typename head, typename tail>
-        struct TRANSFORM< functor, viennameta::typelist_t<head, tail> >
+        struct TRANSFORM< functor, viennagrid::meta::typelist_t<head, tail> >
         {
-            typedef viennameta::typelist_t<
+            typedef viennagrid::meta::typelist_t<
                 typename functor<head>::type,
                 typename TRANSFORM<functor, tail>::type
             > type;
@@ -67,6 +69,7 @@ namespace viennameta
         };
 
     }
+  }
 }
 
 #endif

@@ -52,7 +52,7 @@ namespace viennagrid
                 container_type & container = viennagrid::storage::collection::get< value_type >( *collection );
                 
                 if ( generate_id && !container.is_present( element ) )
-                    viennagrid::storage::id::set_id(element, id_generator( viennameta::tag<value_type>() ) );
+                    viennagrid::storage::id::set_id(element, id_generator( viennagrid::meta::tag<value_type>() ) );
                 
                 std::pair<handle_type, bool> ret = container.insert( element );
                 
@@ -66,13 +66,13 @@ namespace viennagrid
                 
                 //viennagrid::storage::container_collection_element::insert_callback(*ret.first, ret.second, inserter);
                 
-                inserter.handle_insert( ret.first, viennameta::tag<value_type>() );
+                inserter.handle_insert( ret.first, viennagrid::meta::tag<value_type>() );
                 
                 return ret;
             }
             
             template<typename handle_type, typename value_type>
-            void handle_insert( handle_type ref, viennameta::tag<value_type> )
+            void handle_insert( handle_type ref, viennagrid::meta::tag<value_type> )
             {}
             
             
@@ -137,11 +137,11 @@ namespace viennagrid
             
             
             template<typename handle_type, typename value_type>
-            void handle_insert( handle_type ref, viennameta::tag<value_type> )
+            void handle_insert( handle_type ref, viennagrid::meta::tag<value_type> )
             {
-                viennagrid::storage::container_collection::handle_or_ignore( *view_collection, ref, viennameta::tag<value_type>() );
+                viennagrid::storage::container_collection::handle_or_ignore( *view_collection, ref, viennagrid::meta::tag<value_type>() );
 
-                dependend_inserter->handle_insert( ref, viennameta::tag<value_type>() );
+                dependend_inserter->handle_insert( ref, viennagrid::meta::tag<value_type>() );
             }
             
             

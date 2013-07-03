@@ -13,7 +13,7 @@ using std::endl;
 
 int main()
 {
-    typedef viennameta::make_typemap<int, int, float, float, std::vector<int>, std::vector<int> >::type config;
+    typedef viennagrid::meta::make_typemap<int, int, float, float, std::vector<int>, std::vector<int> >::type config;
 
     typedef viennagrid::storage::result_of::collection<config>::type my_collection_type;
     my_collection_type my_collection;

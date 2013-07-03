@@ -186,7 +186,7 @@ namespace viennagrid
         template<typename container_typemap, typename element_type, typename metainfo_type>
         struct metainfo_container< viennagrid::storage::collection_t<container_typemap>, element_type, metainfo_type >
         {
-            typedef typename viennagrid::storage::result_of::container_of< viennagrid::storage::collection_t<container_typemap>, viennameta::static_pair<element_type, metainfo_type> >::type type;
+            typedef typename viennagrid::storage::result_of::container_of< viennagrid::storage::collection_t<container_typemap>, viennagrid::meta::static_pair<element_type, metainfo_type> >::type type;
         };
         
         template<typename container_collection_type, typename element_type, typename metainfo_type>
@@ -195,7 +195,7 @@ namespace viennagrid
         template<typename container_typemap, typename element_type, typename metainfo_type>
         struct const_metainfo_container< viennagrid::storage::collection_t<container_typemap>, element_type, metainfo_type >
         {
-            typedef const typename viennagrid::storage::result_of::container_of< viennagrid::storage::collection_t<container_typemap>, viennameta::static_pair<element_type, metainfo_type> >::type type;
+            typedef const typename viennagrid::storage::result_of::container_of< viennagrid::storage::collection_t<container_typemap>, viennagrid::meta::static_pair<element_type, metainfo_type> >::type type;
         };
     }
     
@@ -206,13 +206,13 @@ namespace viennagrid
     template< typename element_type, typename metainfo_type, typename container_typemap >
     typename result_of::metainfo_container< viennagrid::storage::collection_t<container_typemap>, element_type, metainfo_type>::type & metainfo_container( viennagrid::storage::collection_t<container_typemap> & container_collection )
     {
-        return viennagrid::storage::collection::get< viennameta::static_pair<element_type, metainfo_type> >(container_collection);
+        return viennagrid::storage::collection::get< viennagrid::meta::static_pair<element_type, metainfo_type> >(container_collection);
     }
     
     template< typename element_type, typename metainfo_type, typename container_typemap >
     typename result_of::metainfo_container<viennagrid::storage::collection_t<container_typemap>, element_type, metainfo_type>::type const & metainfo_container( viennagrid::storage::collection_t<container_typemap> const & container_collection )
     {
-        return viennagrid::storage::collection::get< viennameta::static_pair<element_type, metainfo_type> >(container_collection);
+        return viennagrid::storage::collection::get< viennagrid::meta::static_pair<element_type, metainfo_type> >(container_collection);
     }
     
     
@@ -322,9 +322,9 @@ namespace viennagrid
         template<typename element_type, typename cur_element_type, typename cur_metainfo_type, typename container_type, typename tail>
         struct for_each_element_helper<
             element_type,
-            viennameta::typelist_t<
-                viennameta::static_pair<
-                    viennameta::static_pair<
+            viennagrid::meta::typelist_t<
+                viennagrid::meta::static_pair<
+                    viennagrid::meta::static_pair<
                         cur_element_type,
                         cur_metainfo_type
                     >,
@@ -343,9 +343,9 @@ namespace viennagrid
         template<typename element_type, typename cur_metainfo_type, typename container_type, typename tail>
         struct for_each_element_helper<
             element_type,
-            viennameta::typelist_t<
-                viennameta::static_pair<
-                    viennameta::static_pair<
+            viennagrid::meta::typelist_t<
+                viennagrid::meta::static_pair<
+                    viennagrid::meta::static_pair<
                         element_type,
                         cur_metainfo_type
                     >,
@@ -366,7 +366,7 @@ namespace viennagrid
         template<typename element_type>
         struct for_each_element_helper<
             element_type,
-            viennameta::null_type
+            viennagrid::meta::null_type
         >
         {
             template<typename metainfo_container_typemap, typename functor_type>
@@ -433,13 +433,13 @@ namespace viennagrid
         struct metainfo_container_from_config;
 
         template<typename element_type, typename metainfo_type, typename container_config>
-        struct metainfo_container_from_config< viennameta::static_pair<element_type, metainfo_type>, container_config>
+        struct metainfo_container_from_config< viennagrid::meta::static_pair<element_type, metainfo_type>, container_config>
         {
-            typedef typename viennameta::typemap::result_of::find<container_config, viennameta::static_pair<element_type, metainfo_type> >::type search_result;
-            typedef typename viennameta::typemap::result_of::find<container_config, viennagrid::storage::default_tag>::type default_container;
+            typedef typename viennagrid::meta::typemap::result_of::find<container_config, viennagrid::meta::static_pair<element_type, metainfo_type> >::type search_result;
+            typedef typename viennagrid::meta::typemap::result_of::find<container_config, viennagrid::storage::default_tag>::type default_container;
             
-            typedef typename viennameta::IF<
-                !viennameta::EQUAL<search_result, viennameta::not_found>::value,
+            typedef typename viennagrid::meta::IF<
+                !viennagrid::meta::EQUAL<search_result, viennagrid::meta::not_found>::value,
                 search_result,
                 default_container
             >::type container_tag_pair;
@@ -453,20 +453,20 @@ namespace viennagrid
         struct metainfo_container_typemap;
         
         template<typename container_config, typename domain_config>
-        struct metainfo_container_typemap<viennameta::null_type, container_config, domain_config>
+        struct metainfo_container_typemap<viennagrid::meta::null_type, container_config, domain_config>
         {
-            typedef viennameta::null_type type;
+            typedef viennagrid::meta::null_type type;
         };
         
         template<typename element_tag, typename metainfo_type, typename tail, typename container_config, typename domain_config>
-        struct metainfo_container_typemap<viennameta::typelist_t< viennameta::static_pair<element_tag, metainfo_type>, tail>, container_config, domain_config>
+        struct metainfo_container_typemap<viennagrid::meta::typelist_t< viennagrid::meta::static_pair<element_tag, metainfo_type>, tail>, container_config, domain_config>
         {
             typedef typename viennagrid::result_of::element<domain_config, element_tag>::type element_type;
             
-            typedef viennameta::typelist_t<
-                typename viennameta::static_pair<
-                        viennameta::static_pair<element_type, metainfo_type>,
-                        typename metainfo_container_from_config< viennameta::static_pair<element_type, metainfo_type>, container_config>::type
+            typedef viennagrid::meta::typelist_t<
+                typename viennagrid::meta::static_pair<
+                        viennagrid::meta::static_pair<element_type, metainfo_type>,
+                        typename metainfo_container_from_config< viennagrid::meta::static_pair<element_type, metainfo_type>, container_config>::type
                     >,
                 typename metainfo_container_typemap<tail, container_config, domain_config>::type
             > type;

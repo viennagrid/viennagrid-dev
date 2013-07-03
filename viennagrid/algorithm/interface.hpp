@@ -105,13 +105,13 @@ namespace viennagrid
 //   //end recursion of topological dimension = -1
 //   /** @brief Specialization that stops recursion below the vertex level */
 //   template <typename cell_type>
-//   struct interface_setter< cell_type, viennameta::null_type, true >
+//   struct interface_setter< cell_type, viennagrid::meta::null_type, true >
 //   {
 //     template <typename FacetType, typename KeyType>
 //     static void apply(FacetType const & facet, KeyType const & key) {}
 //   };
 //   template <typename cell_type>
-//   struct interface_setter< cell_type, viennameta::null_type, false >
+//   struct interface_setter< cell_type, viennagrid::meta::null_type, false >
 //   {
 //     template <typename FacetType, typename KeyType>
 //     static void apply(FacetType const & facet, KeyType const & key) {}

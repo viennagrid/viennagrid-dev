@@ -106,7 +106,7 @@ namespace viennagrid
     
     
     
-    template<typename domain_type_, typename view_type_, typename segment_id_type_, typename appendix_type_ = viennameta::null_type, typename view_container_tag = viennagrid::storage::std_deque_tag>
+    template<typename domain_type_, typename view_type_, typename segment_id_type_, typename appendix_type_ = viennagrid::meta::null_type, typename view_container_tag = viennagrid::storage::std_deque_tag>
     class segmentation_t
     {
     public:
@@ -224,7 +224,7 @@ namespace viennagrid
     
     
     
-    template<typename segment_id_type_, typename element_segment_info_type_ = viennameta::null_type>
+    template<typename segment_id_type_, typename element_segment_info_type_ = viennagrid::meta::null_type>
     struct element_segment_mapping
     {        
         typedef segment_id_type_ segment_id_type;
@@ -263,20 +263,20 @@ namespace viennagrid
         struct segmentation_info_container_typemap;
         
         template<typename segment_id_type, typename container_tag, typename segment_info_container_tag>
-        struct segmentation_info_container_typemap< viennameta::null_type, segment_id_type, container_tag, segment_info_container_tag >
+        struct segmentation_info_container_typemap< viennagrid::meta::null_type, segment_id_type, container_tag, segment_info_container_tag >
         {
-            typedef viennameta::null_type type;
+            typedef viennagrid::meta::null_type type;
         };
         
         template<typename element_tag, typename segment_info_type, typename tail, typename segment_id_type, typename container_tag, typename segment_info_container_tag>
-        struct segmentation_info_container_typemap< viennameta::typelist_t<viennameta::static_pair<element_tag, segment_info_type>, tail>, segment_id_type, container_tag, segment_info_container_tag >
+        struct segmentation_info_container_typemap< viennagrid::meta::typelist_t<viennagrid::meta::static_pair<element_tag, segment_info_type>, tail>, segment_id_type, container_tag, segment_info_container_tag >
         {
-            typedef viennameta::static_pair< element_tag, segment_info_type > key_type;
+            typedef viennagrid::meta::static_pair< element_tag, segment_info_type > key_type;
             typedef typename viennagrid::storage::result_of::container< std::pair<segment_id_type, segment_info_type>, segment_info_container_tag>::type segment_info_container;
             typedef typename viennagrid::storage::result_of::container<segment_info_container, container_tag>::type container_type;
             
-            typedef viennameta::typelist_t<
-                viennameta::static_pair<
+            typedef viennagrid::meta::typelist_t<
+                viennagrid::meta::static_pair<
                     element_tag,
                     container_type
                 >,
@@ -294,16 +294,16 @@ namespace viennagrid
         struct trivial_segmentation_appendix;
 
         template<typename segment_id_type,typename container_tag>
-        struct trivial_segmentation_appendix< viennameta::null_type, segment_id_type, container_tag >
+        struct trivial_segmentation_appendix< viennagrid::meta::null_type, segment_id_type, container_tag >
         {
-            typedef viennameta::null_type type;
+            typedef viennagrid::meta::null_type type;
         };
         
         template<typename element_type, typename tail, typename segment_id_type, typename container_tag>
-        struct trivial_segmentation_appendix< viennameta::typelist_t<element_type, tail>, segment_id_type, container_tag >
+        struct trivial_segmentation_appendix< viennagrid::meta::typelist_t<element_type, tail>, segment_id_type, container_tag >
         {
-            typedef viennameta::typelist_t<
-                viennameta::static_pair<
+            typedef viennagrid::meta::typelist_t<
+                viennagrid::meta::static_pair<
                     element_type,
                     typename viennagrid::storage::result_of::container<
                         segment_info_t< element_segment_mapping<segment_id_type> >,
@@ -322,7 +322,7 @@ namespace viennagrid
                  typename segment_id_type = int,
                  typename appendix_type =
                     viennagrid::storage::collection_t<
-                        typename viennameta::make_typemap<
+                        typename viennagrid::meta::make_typemap<
                             element_segment_mapping_tag,
                             viennagrid::storage::collection_t<
                                 typename trivial_segmentation_appendix<
@@ -346,15 +346,15 @@ namespace viennagrid
                  typename segment_id_type = int,
                  typename appendix_type =
                  viennagrid::storage::collection_t<
-                    typename viennameta::make_typemap<
+                    typename viennagrid::meta::make_typemap<
                         element_segment_mapping_tag,
                         viennagrid::storage::collection_t<
-                            typename viennameta::typemap::result_of::modify<
+                            typename viennagrid::meta::typemap::result_of::modify<
                                 typename trivial_segmentation_appendix<
                                     typename viennagrid::result_of::element_typelist<domain_type>::type,
                                     segment_id_type
                                 >::type,
-                                viennameta::static_pair<
+                                viennagrid::meta::static_pair<
                                     typename viennagrid::result_of::element< domain_type, viennagrid::triangle_tag >::type,
                                     typename viennagrid::storage::result_of::container<
                                         segment_info_t< element_segment_mapping<segment_id_type, bool> >,

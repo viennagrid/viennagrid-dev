@@ -41,9 +41,9 @@ int main()
     //
     typedef viennagrid::element_t<  viennagrid::vertex_tag,   // element tag
                                     viennagrid::config::element_config_wrapper_t<
-                                      viennameta::null_type,                                  // boundary k-cells container (a vertex does not have boundary cells, hence 'null_type'
+                                      viennagrid::meta::null_type,                                  // boundary k-cells container (a vertex does not have boundary cells, hence 'null_type'
                                       viennagrid::storage::smart_id_tag<int>,                 // type 'int' is used as ID
-                                      viennameta::null_type
+                                      viennagrid::meta::null_type
                                     >
                                 > vertex_type;
     
@@ -75,12 +75,12 @@ int main()
     //
     // Create a view on the vertex container with two elements, thus referring to a line later on.
     //
-    typedef viennameta::static_pair<                   
+    typedef viennagrid::meta::static_pair<                   
         viennagrid::storage::result_of::view<
             vertex_container_type,
             viennagrid::storage::static_array_tag<2>
         >::type,
-        viennameta::null_type                                // no orientation container (only important for FEM-stuff)
+        viennagrid::meta::null_type                                // no orientation container (only important for FEM-stuff)
     > line_vertex_containers;
     
     //
@@ -89,7 +89,7 @@ int main()
     // For technical reasons, all boundary containers of an element need to be wrapped in a typelist.
     // A line only has vertices as boundary k-cells, thus the typelist consists of a single container element only:
     //
-    typedef viennameta::make_typelist< line_vertex_containers >::type line_containers_typelist;
+    typedef viennagrid::meta::make_typelist< line_vertex_containers >::type line_containers_typelist;
     
     // 
     // Finally, we can instantiate the line type by passing the respective tag, the typelist of boundary k-cells, and the ID-type (int):
@@ -98,7 +98,7 @@ int main()
                                     viennagrid::config::element_config_wrapper_t<
                                       line_containers_typelist,                               // list of boundary containers
                                       viennagrid::storage::smart_id_tag<int>,                 // type 'int' is used as ID
-                                      viennameta::null_type
+                                      viennagrid::meta::null_type
                                     >
                                     > line_type;
     
@@ -129,30 +129,30 @@ int main()
     //
     // First we define the container for vertices of a triangle (just handles to the vertex_container_type)
     //
-    typedef viennameta::static_pair<
+    typedef viennagrid::meta::static_pair<
         viennagrid::storage::result_of::view<
             vertex_container_type,
             viennagrid::storage::static_array_tag<3>
         >::type,
-        viennameta::null_type                                // no orientation container (only important for FEM-stuff)
+        viennagrid::meta::null_type                                // no orientation container (only important for FEM-stuff)
     > triangle_vertex_containers;
     
     //
     // Then we define the container for lines of a triangle (just handles to the line_container_type)
     //
-    typedef viennameta::static_pair<
+    typedef viennagrid::meta::static_pair<
         viennagrid::storage::result_of::view<
             line_container_type,
             viennagrid::storage::static_array_tag<3>
         >::type,
-        viennameta::null_type                                // no orientation container (only important for FEM-stuff)
+        viennagrid::meta::null_type                                // no orientation container (only important for FEM-stuff)
     > triangle_line_containers;
     
     
     //
     // Now all boundary k-cell-container of a triangle are given by concatenating the two vertex and line containers defined above
     //
-    typedef viennameta::make_typelist< triangle_vertex_containers, triangle_line_containers >::type triangle_containers_typelist;
+    typedef viennagrid::meta::make_typelist< triangle_vertex_containers, triangle_line_containers >::type triangle_containers_typelist;
     
     //
     // Instantiate the triangle type as above: Provide the tag, the boundary container list, and the ID type
@@ -161,7 +161,7 @@ int main()
                                    viennagrid::config::element_config_wrapper_t<
                                       triangle_containers_typelist,                               // list of boundary containers
                                       viennagrid::storage::smart_id_tag<int>,                 // type 'int' is used as ID
-                                      viennameta::null_type
+                                      viennagrid::meta::null_type
                                     > > triangle_type;
     
     //
@@ -186,41 +186,41 @@ int main()
     //
     // Define the vertices of a tetrahedron to be a view of static size 4 on the vertex_container defined above
     //
-    typedef viennameta::static_pair<
+    typedef viennagrid::meta::static_pair<
         viennagrid::storage::result_of::view<
             vertex_container_type,
             viennagrid::storage::static_array_tag<4>
         >::type,
-        viennameta::null_type                                // no orientation container (only important for FEM-stuff)
+        viennagrid::meta::null_type                                // no orientation container (only important for FEM-stuff)
     > tetrahedron_vertex_containers;
     
     //
     // Define the lines of a tetrahedron to be a view of static size 6 on the line_container defined above
     //
-    typedef viennameta::static_pair<
+    typedef viennagrid::meta::static_pair<
         viennagrid::storage::result_of::view<
             line_container_type,
             viennagrid::storage::static_array_tag<6>
         >::type,
-        viennameta::null_type                                // no orientation container (only important for FEM-stuff)
+        viennagrid::meta::null_type                                // no orientation container (only important for FEM-stuff)
     > tetrahedron_line_containers;
     
     //
     // Define the facets of a tetrahedron to be a view of static size 4 on the triangle_container defined above
     //
-    typedef viennameta::static_pair<
+    typedef viennagrid::meta::static_pair<
         viennagrid::storage::result_of::view<
             triangle_container_type,
             viennagrid::storage::static_array_tag<4>
         >::type,
-        viennameta::null_type                                // no orientation container (only important for FEM-stuff)
+        viennagrid::meta::null_type                                // no orientation container (only important for FEM-stuff)
     > tetrahedron_triangle_containers;
     
     //
     // Now glue all the boundary k-cell container together into a single typelist:
     //
-    typedef viennameta::make_typelist< tetrahedron_vertex_containers, tetrahedron_line_containers, tetrahedron_triangle_containers >::type tetrahedron_containers_typelist;  // use this for 'all in'
-//    typedef viennameta::make_typelist< tetrahedron_vertex_containers, tetrahedron_line_containers >::type tetrahedron_containers_typelist;             // use this to skip triangles
+    typedef viennagrid::meta::make_typelist< tetrahedron_vertex_containers, tetrahedron_line_containers, tetrahedron_triangle_containers >::type tetrahedron_containers_typelist;  // use this for 'all in'
+//    typedef viennagrid::meta::make_typelist< tetrahedron_vertex_containers, tetrahedron_line_containers >::type tetrahedron_containers_typelist;             // use this to skip triangles
     
     //
     // Now create the tetrahedron type as usual: Provide the tag, the boundary containers, and the ID type:
@@ -229,7 +229,7 @@ int main()
                                    viennagrid::config::element_config_wrapper_t<
                                       tetrahedron_containers_typelist,                               // list of boundary containers
                                       viennagrid::storage::smart_id_tag<int>,                 // type 'int' is used as ID
-                                      viennameta::null_type
+                                      viennagrid::meta::null_type
                                     >
                                   > tetrahedron_type;
     
@@ -253,20 +253,20 @@ int main()
     // Generate a domain as a collection of vertices, lines, (triangles), and tetrahedra. 
     //
     typedef viennagrid::storage::result_of::collection< 
-        viennameta::make_typemap<
+        viennagrid::meta::make_typemap<
             vertex_type, vertex_container_type,
             line_type, line_container_type,
             triangle_type, triangle_container_type,
             tetrahedron_type, tetrahedron_container_type
         >::type   //including triangles
-//        viennameta::make_typemap< vertex_type, vertex_container_type, line_type, line_container_type, tetrahedron_type, tetrahedron_container_type >::type                              //without triangles
+//        viennagrid::meta::make_typemap< vertex_type, vertex_container_type, line_type, line_container_type, tetrahedron_type, tetrahedron_container_type >::type                              //without triangles
     >::type domain_type;
     domain_type domain;
     
     //
     // for pushing n-cells to a domain, each of them needs to be equipped with an ID. For that purpose, a suitable ID generator is deduced here:
     //
-    typedef viennagrid::storage::result_of::continuous_id_generator_config< viennameta::typemap::result_of::key_typelist<domain_type::typemap>::type, viennagrid::storage::smart_id_tag<int> >::type id_generator_config;
+    typedef viennagrid::storage::result_of::continuous_id_generator_config< viennagrid::meta::typemap::result_of::key_typelist<domain_type::typemap>::type, viennagrid::storage::smart_id_tag<int> >::type id_generator_config;
     typedef viennagrid::storage::result_of::continuous_id_generator< id_generator_config >::type id_generator_type;
     
     id_generator_type id_generator;

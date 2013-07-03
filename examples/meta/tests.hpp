@@ -9,7 +9,7 @@ template<typename type1, typename type2>
 void test_type()
 {
     
-    bool is_the_same = viennameta::EQUAL<type1, type2>::value;
+    bool is_the_same = viennagrid::meta::EQUAL<type1, type2>::value;
         
     std::cout << " " << std::boolalpha << is_the_same << std::endl;
     

@@ -51,13 +51,13 @@ int main()
     // A full config for tetrahedrons
     //
     
-//     typedef viennameta::make_typemap<
+//     typedef viennagrid::meta::make_typemap<
 //     
 //       viennagrid::config::topology_config_tag,
-//       viennameta::make_typemap<
+//       viennagrid::meta::make_typemap<
 //     
 //         viennagrid::vertex_tag,
-//         viennameta::make_typemap<
+//         viennagrid::meta::make_typemap<
 //             viennagrid::config::element_id_tag,
 //             viennagrid::storage::smart_id_tag<int>,
 //         
@@ -68,7 +68,7 @@ int main()
 //             >,
 //             
 //             viennagrid::config::element_boundary_storage_layout_tag,
-//             viennameta::make_typemap<
+//             viennagrid::meta::make_typemap<
 //             >::type,
 //             
 //             viennagrid::config::element_appendix_type_tag,
@@ -76,7 +76,7 @@ int main()
 //         >::type,
 //         
 //         viennagrid::line_tag,
-//         viennameta::make_typemap<
+//         viennagrid::meta::make_typemap<
 //             viennagrid::config::element_id_tag,
 //             viennagrid::storage::smart_id_tag<int>,
 //         
@@ -87,13 +87,13 @@ int main()
 //             >,
 //             
 //             viennagrid::config::element_boundary_storage_layout_tag,
-//             viennameta::make_typemap<
+//             viennagrid::meta::make_typemap<
 //                 viennagrid::vertex_tag, viennagrid::no_orientation_handling_tag
 //             >::type
 //         >::type,
 //         
 //         viennagrid::triangle_tag,
-//         viennameta::make_typemap<
+//         viennagrid::meta::make_typemap<
 //             viennagrid::config::element_id_tag,
 //             viennagrid::storage::smart_id_tag<int>,
 //         
@@ -104,14 +104,14 @@ int main()
 //             >,
 //             
 //             viennagrid::config::element_boundary_storage_layout_tag,
-//             viennameta::make_typemap<
+//             viennagrid::meta::make_typemap<
 //                 viennagrid::vertex_tag, viennagrid::no_orientation_handling_tag,
 //                 viennagrid::line_tag, viennagrid::full_handling_tag
 //             >::type
 //         >::type,
 // 
 //         viennagrid::tetrahedron_tag,
-//         viennameta::make_typemap<
+//         viennagrid::meta::make_typemap<
 //             viennagrid::config::element_id_tag,
 //             viennagrid::storage::smart_id_tag<int>,
 //             
@@ -122,7 +122,7 @@ int main()
 //             >,
 //             
 //             viennagrid::config::element_boundary_storage_layout_tag,
-//             viennameta::make_typemap<
+//             viennagrid::meta::make_typemap<
 //                 viennagrid::vertex_tag, viennagrid::no_orientation_handling_tag,
 //                 viennagrid::line_tag, viennagrid::full_handling_tag,
 //                 viennagrid::triangle_tag, viennagrid::full_handling_tag
@@ -187,7 +187,7 @@ int main()
     
 
     typedef viennagrid::storage::result_of::continuous_id_generator_config<
-        viennameta::typemap::result_of::key_typelist<domain_container_collection_type::typemap>::type,
+        viennagrid::meta::typemap::result_of::key_typelist<domain_container_collection_type::typemap>::type,
         viennagrid::storage::smart_id_tag<int>
     >::type id_generator_config;
     
