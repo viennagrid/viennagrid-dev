@@ -170,7 +170,7 @@ namespace viennagrid
 
             transfer_boundary_information(domain, src_accessor, dst_accessor);
             
-            domain.update_change_counter( dst_boundary_information_container_wrapper.change_counter );
+            update_change_counter( domain, dst_boundary_information_container_wrapper.change_counter );
         }
     private:
         
@@ -228,7 +228,7 @@ namespace viennagrid
         detect_boundary( domain, accessor::dense_container_accessor<facet_type>( boundary_information_container_wrapper.container ) );
         
         transfer_boundary_information(domain);
-        domain.update_change_counter( boundary_information_container_wrapper.change_counter );
+        update_change_counter( domain, boundary_information_container_wrapper.change_counter );
     }
     
     

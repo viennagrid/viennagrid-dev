@@ -51,7 +51,8 @@ int main()
     
   
   typedef viennagrid::domain_t<my_domain_config>             Domain;  
-  typedef viennagrid::result_of::domain_view<Domain>::type   Segment;
+  typedef viennagrid::result_of::segmentation<Domain>::type Segmentation;
+//   typedef viennagrid::result_of::domain_view<Domain>::type   Segment;
   
   typedef viennagrid::tetrahedron_tag CellTag;
   
@@ -71,18 +72,19 @@ int main()
   std::cout << std::endl;
   
   Domain domain;
-  std::vector<Segment> segments;
+  Segmentation segmentation(domain);
+//   std::vector<Segment> segments;
   
   //
   // Read domain from Netgen file
   //
   try
   {
-    viennagrid::io::netgen_reader<CellType> reader;
+    viennagrid::io::netgen_reader reader;
     #ifdef _MSC_VER      //Visual Studio builds in a subfolder
-    reader(domain, segments, "../../examples/data/cube48.mesh");
+    reader(domain, segmentation, "../../examples/data/cube48.mesh");
     #else
-    reader(domain, segments, "../../examples/data/cube48.mesh");
+    reader(domain, segmentation, "../../examples/data/cube48.mesh");
     #endif
   }
   catch (std::exception & e)

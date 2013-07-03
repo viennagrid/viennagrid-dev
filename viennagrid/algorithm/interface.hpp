@@ -164,8 +164,8 @@ namespace viennagrid
             transfer_boundary_information(seg0, src_accessor, dst_accessor);
             transfer_boundary_information(seg1, src_accessor, dst_accessor);
             
-             seg0.view().update_change_counter( dst_interface_information_container_wrapper.seg0_change_counter );
-             seg1.view().update_change_counter( dst_interface_information_container_wrapper.seg1_change_counter );
+             update_change_counter( seg0, dst_interface_information_container_wrapper.seg0_change_counter );
+             update_change_counter( seg1, dst_interface_information_container_wrapper.seg1_change_counter );
         }
     private:
         
@@ -245,15 +245,11 @@ namespace viennagrid
         interface_information_container_wrapper_type & interface_information_container_wrapper = interface_information_collection<FacetTag>( seg0, seg1 );   
     
         
-    detect_interface( seg0, seg1, viennagrid::accessor::dense_container_accessor<FacetType>(interface_information_container_wrapper.container) );
+      detect_interface( seg0, seg1, viennagrid::accessor::dense_container_accessor<FacetType>(interface_information_container_wrapper.container) );
     
         transfer_interface_information( seg0, seg1 );
-        seg0.view().update_change_counter( interface_information_container_wrapper.seg0_change_counter );
-        seg1.view().update_change_counter( interface_information_container_wrapper.seg1_change_counter );
-//       typedef typename result_of::cell_tag<DomainType1>::type CellTag;
-//       typedef typename result_of::element<DomainType1, CellTag>::type CellType;
-      
-//       detect_interface_impl< result_of::has_boundary<CellType, typename CellTag::facet_tag>::value >::detect(accessor, seg1, seg2);
+        update_change_counter( seg0, interface_information_container_wrapper.seg0_change_counter );
+        update_change_counter( seg1, interface_information_container_wrapper.seg1_change_counter );
   }
   
   
@@ -299,8 +295,8 @@ namespace viennagrid
 //         std::cout << interface_information_container_wrapper.seg1_change_counter << std::endl;
         
                 
-        if ( (seg0.view().is_obsolete(interface_information_container_wrapper.seg0_change_counter)) ||
-             (seg1.view().is_obsolete(interface_information_container_wrapper.seg1_change_counter) ))
+        if ( (is_obsolete(seg0, interface_information_container_wrapper.seg0_change_counter)) ||
+             (is_obsolete(seg1, interface_information_container_wrapper.seg1_change_counter) ))
             detect_interface( const_cast<SegmentType&>(seg0), const_cast<SegmentType&>(seg1) );
         
         viennagrid::accessor::dense_container_accessor_t< const typename interface_information_container_wrapper_type::container_type, ElementType > accessor( interface_information_container_wrapper.container );

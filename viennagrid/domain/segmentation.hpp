@@ -64,6 +64,13 @@ namespace viennagrid
     namespace result_of
     {
         template<typename segmentation_type>
+        struct element_collection< segment_t<segmentation_type> >
+        {
+            typedef typename element_collection<typename segment_t<segmentation_type>::view_type>::type type;
+        };
+      
+      
+        template<typename segmentation_type>
         struct point_type< segment_t<segmentation_type> >
         {
             typedef typename point_type<typename segment_t<segmentation_type>::view_type>::type type;
@@ -114,6 +121,21 @@ namespace viennagrid
           typedef typename cell_tag< typename segment_t<segmentation_type>::view_type >::type type;
         };
     }
+    
+    
+    
+    
+    template<typename SegmentationType>
+    bool is_obsolete( segment_t<SegmentationType> const & segment, typename segment_t<SegmentationType>::view_type::ChangeCounterType change_counter_to_check )
+    { return is_obsolete(segment.view(), change_counter_to_check); }
+    
+    template<typename SegmentationType>
+    void update_change_counter( segment_t<SegmentationType> & segment, typename segment_t<SegmentationType>::view_type::ChangeCounterType & change_counter_to_update )
+    { update_change_counter(segment.view(), change_counter_to_update); }
+
+    template<typename SegmentationType>
+    void increment_change_counter( segment_t<SegmentationType> & segment )
+    { increment_change_counter(segment.view()); }
     
     
     
@@ -278,7 +300,7 @@ namespace viennagrid
         bool segment_present( segment_id_type const & segment_id ) const { return segment_id_map.find(segment_id) != segment_id_map.end(); }       
         
         // create a new segment
-        segment_type create_segment( segment_id_type const & segment_id )
+        segment_type & get_create_segment( segment_id_type const & segment_id )
         {
             typename segment_id_map_type::iterator it = segment_id_map.find(segment_id);
             
@@ -289,15 +311,15 @@ namespace viennagrid
             
             segment_type segment( *this, view_segments.back(), segment_id );
             
-            segment_id_map.insert( std::make_pair(segment_id, segment) );
-            
             if ( highest_id < segment_id )
                 highest_id = segment_id;
             
-            return segment;
+            return (segment_id_map.insert( std::make_pair(segment_id, segment) ).first)->second;
         }
         
-        segment_type create_segment() { return create_segment( ++highest_id ); }
+        segment_type & create_segment() { return get_create_segment( ++highest_id ); }
+        
+        segment_type & operator()( segment_id_type const & segment_id ) { return get_create_segment(segment_id); }
         
 
         

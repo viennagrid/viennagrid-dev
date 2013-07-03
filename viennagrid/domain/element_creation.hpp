@@ -25,6 +25,57 @@
 
 namespace viennagrid
 {
+    template<bool generate_id, bool call_callback, typename domain_type, typename ElementTag, typename WrappedConfigType>
+    std::pair<
+                typename viennagrid::storage::result_of::container_of<
+                    typename result_of::element_collection<domain_type>::type,
+                    viennagrid::element_t<ElementTag, WrappedConfigType>
+                >::type::handle_type,
+                bool
+            >
+        push_element( domain_type & domain, viennagrid::element_t<ElementTag, WrappedConfigType> const & element)
+    {
+        increment_change_counter(domain);
+        return inserter(domain).template insert<generate_id, call_callback>(element);
+    }
+    
+    
+    template<typename domain_type, typename ElementTag, typename WrappedConfigType>
+    std::pair<
+                typename viennagrid::storage::result_of::container_of<
+                    typename result_of::element_collection<domain_type>::type,
+                    viennagrid::element_t<ElementTag, WrappedConfigType>
+                >::type::handle_type,
+                bool
+            >
+        push_element( domain_type & domain, viennagrid::element_t<ElementTag, WrappedConfigType> const & element)
+    {
+        increment_change_counter(domain);
+        return inserter(domain)(element);
+    }
+    
+    template<typename domain_type, typename element_type>
+    std::pair<
+                typename viennagrid::storage::result_of::container_of<
+                    typename result_of::element_collection<domain_type>::type,
+                    element_type
+                >::type::handle_type,
+                bool
+            >
+        push_element_noid( domain_type & domain, element_type const & element)
+    {
+        increment_change_counter(domain);
+        return inserter(domain).template insert<false, true>(element);
+    }
+    
+    
+    
+    
+    
+  
+  
+  
+  
     template<typename element_type, typename domain_type>
     typename result_of::handle<domain_type, element_type>::type create_element( domain_type & domain )
     {
@@ -32,7 +83,7 @@ namespace viennagrid
     }
     
     template<typename element_type, typename domain_type>
-    typename result_of::handle<domain_type, element_type>::type create_element( domain_type & domain, typename element_type::id_type id )
+    typename result_of::handle<domain_type, element_type>::type create_element_with_id( domain_type & domain, typename element_type::id_type id )
     {
         element_type element;
         element.id( id );

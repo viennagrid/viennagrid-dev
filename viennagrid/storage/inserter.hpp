@@ -11,18 +11,6 @@ namespace viennagrid
     namespace storage
     {
         
-        template<typename container_collection_type>
-        class inserter_base_t
-        {
-        public:
-            inserter_base_t(container_collection_type & _collection) : collection(_collection) {}
-            
-        protected:
-            container_collection_type & collection;
-        };
-
-        
-
         template<typename container_collection_type, typename id_generator_type_>
         class physical_inserter_t
         {

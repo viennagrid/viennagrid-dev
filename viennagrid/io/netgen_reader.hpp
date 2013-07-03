@@ -26,6 +26,7 @@
 #include "viennagrid/io/helper.hpp"
 
 #include "viennagrid/domain/domain.hpp"
+#include "viennagrid/domain/segmentation.hpp"
 #include "viennagrid/domain/element_creation.hpp"
 
 /** @file netgen_reader.hpp
@@ -38,7 +39,7 @@ namespace viennagrid
   {
 
     /** @brief Reader for Netgen files obtained from the 'Export mesh...' menu item. Tested with Netgen version 4.9.12. */
-    template<typename CellTypeOrTag>
+//     template<typename CellTypeOrTag>
     struct netgen_reader
     {
       /** @brief The functor interface triggering the read operation.
@@ -46,40 +47,40 @@ namespace viennagrid
        * @param domain    A ViennaGrid domain
        * @param filename  Name of the file
        */
-      template <typename GeometricDomainType, typename GeometricSegmentContainerType>
-      int operator()(GeometricDomainType & domain, GeometricSegmentContainerType & segments, std::string const & filename) const
+      template <typename DomainType, typename SegmentationType>
+      int operator()(DomainType & domain, SegmentationType & segmentation, std::string const & filename) const
       {
         //typedef typename DomainType::config_type                         ConfigType;
         
-        typedef typename GeometricSegmentContainerType::value_type SegmentType;
+        typedef typename SegmentationType::segment_type SegmentType;
         
-        typedef typename viennagrid::result_of::point_type<GeometricDomainType>::type    PointType;
+        typedef typename viennagrid::result_of::point_type<DomainType>::type    PointType;
         typedef typename viennagrid::result_of::coord_type< PointType >::type         CoordType;
 
         //typedef typename ConfigType::numeric_type                        CoordType;
         //typedef typename ConfigType::coordinate_system_tag               CoordinateSystemTag;
         enum { point_dim = viennagrid::traits::static_size<PointType>::value };
         
-        typedef typename result_of::element_tag<CellTypeOrTag>::type CellTag;
-        typedef typename result_of::element<GeometricDomainType, CellTag>::type CellType;
+        typedef typename result_of::cell_tag<DomainType>::type CellTag;
+        typedef typename result_of::element<DomainType, CellTag>::type CellType;
         //typedef typename CellType::tag                            CellTag;
-        typedef typename result_of::handle<GeometricDomainType, CellTag>::type                           CellHandleType;
+        typedef typename result_of::handle<DomainType, CellTag>::type                           CellHandleType;
 
         //typedef typename result_of::point<ConfigType>::type                              PointType;
-        typedef typename result_of::element<GeometricDomainType, vertex_tag>::type                           VertexType;
-        typedef typename result_of::handle<GeometricDomainType, vertex_tag>::type                           VertexHandleType;
+        typedef typename result_of::element<DomainType, vertex_tag>::type                           VertexType;
+        typedef typename result_of::handle<DomainType, vertex_tag>::type                           VertexHandleType;
         //typedef typename result_of::ncell<DomainType, CellTag::dim>::type     CellType;
 
-        typedef typename viennagrid::result_of::element_range<GeometricDomainType, vertex_tag>::type   VertexRange;
+        typedef typename viennagrid::result_of::element_range<DomainType, vertex_tag>::type   VertexRange;
         typedef typename viennagrid::result_of::iterator<VertexRange>::type        VertexIterator;
             
-        typedef typename viennagrid::result_of::element_range<GeometricDomainType, line_tag>::type   EdgeRange;
+        typedef typename viennagrid::result_of::element_range<DomainType, line_tag>::type   EdgeRange;
         typedef typename viennagrid::result_of::iterator<EdgeRange>::type          EdgeIterator;
 
-        typedef typename viennagrid::result_of::element_range<GeometricDomainType, typename CellType::tag::facet_tag >::type   FacetRange;
+        typedef typename viennagrid::result_of::element_range<DomainType, typename CellType::tag::facet_tag >::type   FacetRange;
         typedef typename viennagrid::result_of::iterator<FacetRange>::type                                 FacetIterator;
 
-        typedef typename viennagrid::result_of::element_range<GeometricDomainType, CellTag>::type     CellRange;
+        typedef typename viennagrid::result_of::element_range<DomainType, CellTag>::type     CellRange;
         typedef typename viennagrid::result_of::iterator<CellRange>::type                                  CellIterator;
         
         std::ifstream reader(filename.c_str());
@@ -167,19 +168,8 @@ namespace viennagrid
             reader >> vertex_num;
             cell_vertex_handles[j] = viennagrid::get_vertex_handle(domain, vertex_num - 1);
           }
-    
-          if (segments.size() < segment_index) //not that segment_index is 1-based
-          {
-            std::size_t old_size = segments.size();
-            segments.resize(segment_index);
-            
-            for (; old_size != segment_index; ++old_size)
-                segments[old_size] = viennagrid::create_view(domain);
-          }
-          
-          SegmentType & cur_segment = segments[segment_index - 1];
-          
-          viennagrid::create_element<CellType>(cur_segment, cell_vertex_handles.begin(), cell_vertex_handles.end(), typename CellType::id_type(i));
+
+          viennagrid::create_element<CellType>(segmentation( segment_index ), cell_vertex_handles.begin(), cell_vertex_handles.end(), typename CellType::id_type(i));
         }
         
         //std::cout << "All done!" << std::endl;

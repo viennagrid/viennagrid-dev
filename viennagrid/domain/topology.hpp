@@ -295,6 +295,22 @@ namespace viennagrid
         
         ChangeCounterType change_counter_;
     };
+    
+    
+    
+    template<typename WrappedConfigType>
+    bool is_obsolete( domain_t<WrappedConfigType> const & domain, typename domain_t<WrappedConfigType>::ChangeCounterType change_counter_to_check )
+    { return domain.is_obsolete( change_counter_to_check ); }
+    
+    template<typename WrappedConfigType>
+    void update_change_counter( domain_t<WrappedConfigType> & domain, typename domain_t<WrappedConfigType>::ChangeCounterType & change_counter_to_update )
+    { domain.update_change_counter( change_counter_to_update ); }
+    
+    template<typename WrappedConfigType>
+    void increment_change_counter( domain_t<WrappedConfigType> & domain )
+    { domain.increment_change_counter(); }
+
+    
 
     
     
@@ -1141,56 +1157,6 @@ namespace viennagrid
     }
 
     
-
-    
-    
-    template<bool generate_id, bool call_callback, typename domain_type, typename ElementTag, typename WrappedConfigType>
-    std::pair<
-                typename viennagrid::storage::result_of::container_of<
-                    typename result_of::element_collection<domain_type>::type,
-                    viennagrid::element_t<ElementTag, WrappedConfigType>
-                >::type::handle_type,
-                bool
-            >
-        push_element( domain_type & domain, viennagrid::element_t<ElementTag, WrappedConfigType> const & element)
-    {
-        domain.increment_change_counter();
-        return inserter(domain).template insert<generate_id, call_callback>(element);
-    }
-    
-    
-    template<typename domain_type, typename ElementTag, typename WrappedConfigType>
-    std::pair<
-                typename viennagrid::storage::result_of::container_of<
-                    typename result_of::element_collection<domain_type>::type,
-                    viennagrid::element_t<ElementTag, WrappedConfigType>
-                >::type::handle_type,
-                bool
-            >
-        push_element( domain_type & domain, viennagrid::element_t<ElementTag, WrappedConfigType> const & element)
-    {
-        domain.increment_change_counter();
-        return inserter(domain)(element);
-    }
-    
-    template<typename domain_type, typename element_type>
-    std::pair<
-                typename viennagrid::storage::result_of::container_of<
-                    typename result_of::element_collection<domain_type>::type,
-                    element_type
-                >::type::handle_type,
-                bool
-            >
-        push_element_noid( domain_type & domain, const element_type & element)
-    {
-        domain.increment_change_counter();
-        return inserter(domain).template insert<false, true>(element);
-    }
-
-    
-
-    
-        
     
     template<typename ElementTag, typename WrappedConfigType>
     void set_vertex(
