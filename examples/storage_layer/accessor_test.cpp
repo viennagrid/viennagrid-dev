@@ -24,7 +24,6 @@
 #include "viennagrid/forwards.hpp"
 #include "viennagrid/config/domain_config.hpp"
 #include "viennagrid/io/netgen_reader.hpp"
-#include "viennagrid/io/vtk_writer.hpp"
 
 //Domain-based algorithms:
 #include "viennagrid/algorithm/boundary.hpp"
