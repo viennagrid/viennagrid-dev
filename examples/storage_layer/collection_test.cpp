@@ -23,6 +23,7 @@ int main()
     float & the_float = viennagrid::storage::collection::get<float>( my_collection );
     viennagrid::storage::collection::get< std::vector<int> >( my_collection ).resize(10);
 
-    
+    std::cout << the_int << std::endl;
+    std::cout << the_float << std::endl;
     return 0;
 }

@@ -44,7 +44,7 @@ struct element_output_functor
     void operator() ( element_type const & element ) const
     {
         std::cout << element << std::endl;
-    };
+    }
 };
 
 class my_domain_config
