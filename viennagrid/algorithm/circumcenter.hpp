@@ -28,8 +28,6 @@
 #include "viennagrid/algorithm/cross_prod.hpp"
 #include "viennagrid/topology/all.hpp"
 
-#include "viennadata/api.hpp"
-
 /** @file circumcenter.hpp
     @brief Computes the circumcenter of n-cells.
 */

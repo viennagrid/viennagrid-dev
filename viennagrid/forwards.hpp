@@ -33,7 +33,6 @@
 #include <cstddef>     //for std::size_t
 #include <cstdlib>     //for EXIT_SUCCESS and EXIT_FAILURE
 
-#include "viennadata/api.hpp"
 #include "viennagrid/storage/static_array.hpp"
 #include "viennagrid/utils/remove_pointer.hpp"
 

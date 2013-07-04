@@ -21,7 +21,6 @@
 #include "viennagrid/forwards.hpp"
 #include "viennagrid/topology/simplex.hpp"
 #include "viennagrid/topology/polygon.hpp"
-#include "viennagrid/element/tagging.hpp"
 
 /** @file polygon.hpp
     @brief Provides the topological definition of a polygon
@@ -29,28 +28,29 @@
 
 
 
-namespace viennagrid
-{
-    struct plc_hole_point_tag;
-}
-
+// namespace viennagrid
+// {
+//     struct plc_hole_point_tag;
+// }
+// 
+// TODO: holes using appendix!!
 // VIENNADATA_ENABLE_TYPE_BASED_KEY_DISPATCH( viennagrid::plc_hole_point_tag )
-
-namespace viennagrid
-{
-    template<typename domain_type, typename plc_type>
-    std::vector< typename result_of::point_type<domain_type>::type > & hole_points( plc_type & plc )
-    {
-        return viennadata::access< plc_hole_point_tag, std::vector< typename result_of::point_type<domain_type>::type > >()(plc);
-    }
-    
-    template<typename domain_type, typename plc_type>
-    std::vector< typename result_of::point_type<domain_type>::type > const & hole_points( plc_type const & plc )
-    {
-        return viennadata::access< plc_hole_point_tag, std::vector< typename result_of::point_type<domain_type>::type > >()(plc);
-    }
-}
-
+// 
+// namespace viennagrid
+// {
+//     template<typename domain_type, typename plc_type>
+//     std::vector< typename result_of::point_type<domain_type>::type > & hole_points( plc_type & plc )
+//     {
+//         return viennadata::access< plc_hole_point_tag, std::vector< typename result_of::point_type<domain_type>::type > >()(plc);
+//     }
+//     
+//     template<typename domain_type, typename plc_type>
+//     std::vector< typename result_of::point_type<domain_type>::type > const & hole_points( plc_type const & plc )
+//     {
+//         return viennadata::access< plc_hole_point_tag, std::vector< typename result_of::point_type<domain_type>::type > >()(plc);
+//     }
+// }
+// 
 
 namespace viennagrid
 {

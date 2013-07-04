@@ -580,9 +580,7 @@ namespace viennagrid
         }
         
         ~element_t()
-        {
-//             viennadata::erase<viennadata::all, viennadata::all>()(*this);
-        }
+        {}
         
         template<typename inserter_type>
         void insert_callback( inserter_type & inserter, bool inserted )

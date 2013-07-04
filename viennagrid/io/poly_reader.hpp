@@ -23,8 +23,6 @@
 #include <iostream>
 #include <assert.h>
 
-#include "viennadata/api.hpp"
-
 #include "viennagrid/forwards.hpp"
 #include "viennagrid/io/helper.hpp"
 
@@ -39,15 +37,15 @@
 
 
 
-namespace viennagrid
-{
-  namespace io
-  {
-    struct poly_attribute_tag {};
-  }
-}
-
-VIENNADATA_ENABLE_TYPE_BASED_KEY_DISPATCH(viennagrid::io::poly_attribute_tag)
+// namespace viennagrid
+// {
+//   namespace io
+//   {
+//     struct poly_attribute_tag {};
+//   }
+// }
+// 
+// VIENNADATA_ENABLE_TYPE_BASED_KEY_DISPATCH(viennagrid::io::poly_attribute_tag)
 
 
 
@@ -211,7 +209,8 @@ namespace viennagrid
                 for (int j=0; j<attribute_num; j++)
                     current_line >> attributes[j];
                 
-                viennadata::access<poly_attribute_tag, std::vector<CoordType> >()(viennagrid::dereference_handle(domain, vertex)) = attributes;
+                // TODO fix using accesor or appendix!
+//                 viennadata::access<poly_attribute_tag, std::vector<CoordType> >()(viennagrid::dereference_handle(domain, vertex)) = attributes;
             }
         }
     

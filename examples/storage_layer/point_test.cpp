@@ -23,7 +23,6 @@ using std::endl;
 #include "viennagrid/element/element_key.hpp"
 #include "viennagrid/element/element_orientation.hpp"
 #include "viennagrid/element/element_view.hpp"
-#include "viennagrid/element/tagging.hpp"
 #include "viennagrid/point.hpp"
 
 

@@ -35,7 +35,6 @@
 #include "viennagrid/forwards.hpp"
 #include "viennagrid/point.hpp"
 #include "viennagrid/io/vtk_common.hpp"
-#include "viennagrid/io/data_accessor.hpp"
 #include "viennagrid/io/helper.hpp"
 #include "viennagrid/io/xml_tag.hpp"
 #include "viennagrid/domain/element_creation.hpp"
@@ -492,7 +491,7 @@ namespace viennagrid
           {
             #if defined VIENNAGRID_DEBUG_ALL || defined VIENNAGRID_DEBUG_IO
             std::cout << "* vtk_reader::operator(): Reading scalar quantity " 
-                      << container.first << " using viennadata to vertices." << std::endl;
+                      << container.first << " to vertices." << std::endl;
             #endif
             for (std::size_t i=0; i<container.second.size(); ++i)
             {
@@ -537,7 +536,7 @@ namespace viennagrid
           {
             #if defined VIENNAGRID_DEBUG_ALL || defined VIENNAGRID_DEBUG_IO
             std::cout << "* vtk_reader::operator(): Reading vector quantity " 
-                      << container.first << " using viennadata to vertices." << std::endl;
+                      << container.first << " to vertices." << std::endl;
             #endif
             assert( 3 * viennagrid::elements<viennagrid::vertex_tag>(segment).size() == container.second.size());
             for (std::size_t i=0; i<container.second.size() / 3; ++i)
@@ -586,7 +585,7 @@ namespace viennagrid
           {
             #if defined VIENNAGRID_DEBUG_ALL || defined VIENNAGRID_DEBUG_IO
             std::cout << "* vtk_reader::operator(): Reading scalar quantity " 
-                      << container.first << " using viennadata to vertices." << std::endl;
+                      << container.first << " to vertices." << std::endl;
             #endif
             for (std::size_t i=0; i<container.second.size(); ++i)
             {
@@ -628,7 +627,7 @@ namespace viennagrid
           {
             #if defined VIENNAGRID_DEBUG_ALL || defined VIENNAGRID_DEBUG_IO
             std::cout << "* vtk_reader::operator(): Reading vector quantity " 
-                      << container.first << " using viennadata to vertices." << std::endl;
+                      << container.first << " to vertices." << std::endl;
             #endif
             assert( 3 * viennagrid::elements<CellTag>(segment).size() == container.second.size());
             for (std::size_t i=0; i<container.second.size() / 3; ++i)
@@ -643,42 +642,6 @@ namespace viennagrid
             }
           }
         }
-        
-        
-        
-//         if (num_components == 1)
-//         {
-//           #if defined VIENNAGRID_DEBUG_ALL || defined VIENNAGRID_DEBUG_IO
-//           std::cout << "* vtk_reader::operator(): Reading scalar quantity "
-//                     << container.first << " using viennadata to cells." << std::endl;
-//           #endif
-//           for (std::size_t i=0; i<container.second.size(); ++i)
-//           {
-//             //CellType const & cell = viennagrid::ncells<CoordinateSystemTag::dim>(domain.segments()[seg_id])[i];
-//             CellType const & cell = viennagrid::elements<CellTag>(segmentation[seg_id])[i];
-//             
-//             if (cell_scalar_data[container.first][seg_id].size() <= cell.id().get()) cell_scalar_data[container.first][seg_id].resize(cell.id().get()+1);
-//             cell_scalar_data[container.first][seg_id][cell.id().get()] = (container.second)[i];
-//           }
-//         }
-//         else
-//         {
-//           #if defined VIENNAGRID_DEBUG_ALL || defined VIENNAGRID_DEBUG_IO
-//           std::cout << "* vtk_reader::operator(): Reading vector quantity "
-//                     << container.first << " using viennadata to cells." << std::endl;
-//           #endif
-//           assert( 3 * viennagrid::elements<CellTag>(segmentation[seg_id]).size() == container.second.size());
-//           for (std::size_t i=0; i<container.second.size() / 3; ++i)
-//           {
-//             CellType const & cell = viennagrid::elements<CellTag>(segmentation[seg_id])[i];
-//             
-//             if (cell_vector_data[container.first][seg_id].size() <= cell.id().get()) cell_vector_data[container.first][seg_id].resize(cell.id().get()+1);
-//             cell_vector_data[container.first][seg_id][cell.id().get()].resize(3);
-//             cell_vector_data[container.first][seg_id][cell.id().get()][0] = (container.second)[3*i+0];
-//             cell_vector_data[container.first][seg_id][cell.id().get()][0] = (container.second)[3*i+1];
-//             cell_vector_data[container.first][seg_id][cell.id().get()][0] = (container.second)[3*i+2];
-//           }
-//         }
       }
 
       /** @brief Writes all data read from files to the domain */

@@ -28,8 +28,6 @@
 #include "viennagrid/forwards.hpp"
 #include "viennagrid/io/helper.hpp"
 #include "viennagrid/io/vtk_common.hpp"
-#include "viennagrid/io/data_accessor.hpp"
-#include "viennadata/api.hpp"
 
 /** @file vtk_writer.hpp
     @brief Provides a writer to VTK files
