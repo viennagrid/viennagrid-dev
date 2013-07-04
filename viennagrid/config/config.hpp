@@ -27,8 +27,6 @@ namespace viennagrid
         struct interface_information_container_tag;
         
         struct vector_type_tag;
-        struct metainfo_typelist_tag;
-        struct metainfo_container_config_tag;
         
 //         struct segment_id_type_tag;
 //         struct segmentation_id_type_tag;

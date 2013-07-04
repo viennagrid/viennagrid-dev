@@ -996,17 +996,6 @@ namespace viennagrid
         return erase_from_segment( segment, accessor::dense_container_accessor<element_type>( element_segment_mapping_collection(segment) ), element );
     }
     
-    
-    
-    
-//     template<typename accessor_type, typename element_type>
-//     typename accessor_type::value_type & segment_information( accessor_type & segmentation, element_type const & element )
-//     {
-//         viennagrid::storage::collection::get< typename element_type::tag >( segmentation.segment_metainfo ).resize( element.id().get() );
-//         return viennagrid::storage::collection::get< typename element_type::tag >( segmentation.segment_metainfo )[ element.id().get() ];
-//     }
-    
-    
 
     
     
@@ -1212,12 +1201,6 @@ namespace viennagrid
 // 
 //     template<typename segment_type, typename element_type>
 //     bool is_in_segment( segment_type const & segment, element_type const & element );
-//     
-//     template<typename segment_type, typename element_type, typename segment_meta_info>
-//     segment_meta_info get_segment_metainfo( segment_type const & segment, element_type const & element );
-// 
-//     template<typename segment_type, typename element_type, typename segment_meta_info>
-//     void set_segment_metainfo( segment_type const & segment, element_type const & element, segment_meta_info const & metainfo );
 //     
 //     template<typename segment_type, typename element_type>
 //     void add_element_to_segment( segment_type const & segment, element_type const & element );

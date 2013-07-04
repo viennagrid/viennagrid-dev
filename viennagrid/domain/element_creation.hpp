@@ -138,7 +138,6 @@ namespace viennagrid
     typename viennagrid::result_of::vertex_handle< domain_t<ConfigType> >::type
         create_vertex( domain_t<ConfigType> & domain,
                        typename result_of::point_type< domain_t<ConfigType> >::type const & point )
-//                        typename viennagrid::result_of::point_type< domain_t<config_type, topology_type, metainfo_collection_type> >::type & point )
     {
         typedef typename result_of::vertex< domain_t<ConfigType> >::type element_type;
         typename result_of::vertex_handle< domain_t<ConfigType> >::type ret = push_element(domain, element_type() ).first;
@@ -152,7 +151,6 @@ namespace viennagrid
         create_vertex( domain_t<ConfigType> & domain,
                        typename viennagrid::result_of::element< domain_t<ConfigType>, vertex_tag>::type::id_type id,
                        typename result_of::point_type< domain_t<ConfigType> >::type const & point )
-//                        typename viennagrid::result_of::point_type< domain_t<config_type, topology_type, metainfo_collection_type> >::type const & point )
     {
         typedef typename result_of::element< domain_t<ConfigType>, vertex_tag>::type element_type;
         element_type element;
@@ -167,7 +165,6 @@ namespace viennagrid
     template<typename ConfigType>
     typename result_of::handle<domain_t<ConfigType>, vertex_tag>::type
         create_unique_vertex( domain_t<ConfigType> & domain,
-//                               typename viennagrid::result_of::point_type< domain_t<config_type, topology_type, metainfo_collection_type> >::type const & p,
                               typename result_of::point_type< domain_t<ConfigType> >::type const & p,
                               typename viennagrid::result_of::coord_type< domain_t<ConfigType> >::type tolerance )
     {

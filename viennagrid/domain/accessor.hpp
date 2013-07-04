@@ -20,9 +20,6 @@
 
 
 
-// #include "viennagrid/domain/metainfo.hpp"
-// #include "../forwards.hpp"
-
 #include "viennagrid/forwards.hpp"
 #include "viennagrid/storage/id.hpp"
 #include "viennagrid/storage/container_collection.hpp"
@@ -387,101 +384,6 @@ namespace viennagrid
         
     }
         
-        
-        
-        
-        
-    
-//         template<typename key_type>
-//         class viennadata_accessor
-//         {
-//         public:
-//             viennadata_accessor( key_type const & key_ ) : key(key_) {}
-//             
-//             template<typename value_type, typename element_type>
-//             value_type & get(element_type const & element)
-//             { return viennadata::access<key_type, value_type>(key)(element); }
-// 
-//             template<typename value_type, typename element_type>
-//             value_type const & get(element_type const & element) const
-//             { return viennadata::access<key_type, value_type>(key)(element); }
-// 
-//             
-//         private:
-//             key_type key;
-//         };
-//         
-//         
-//         template<typename container_type>
-//         class container_accessor
-//         {
-//         public:
-//             typedef typename container_type::value_type value_type;
-//             
-//             container_accessor( container_type & container_ ) : container(container_) {}
-//             
-//             template<typename value_type, typename element_type>
-//             value_type & get(element_type const & element)
-//             { return viennagrid::metainfo::look_up(container, element); }
-// 
-//             template<typename value_type, typename element_type>
-//             value_type const & get(element_type const & element) const
-//             { return viennagrid::metainfo::look_up(container, element); }
-// 
-//             
-//         private:
-//             container_type & container;
-//         };
-//         
-//         
-//         template<typename metainfo_collection_type>
-//         class metainfo_collection_accessor
-//         {
-//         public:
-//             metainfo_collection_accessor( metainfo_collection_type & metainfo_collection_ ) : metainfo_collection(metainfo_collection_) {}
-//             
-//             template<typename metainfo_type, typename element_type>
-//             metainfo_type & get(element_type const & element)
-//             // explicit function template name needed because compiler (clang 3.0 and 4.7.2) cannot resolve correct template function. Might need to take a look at C++ standard function template function overloading resolution
-//             { return viennagrid::look_up<metainfo_type, typename metainfo_collection_type::typemap, element_type>(metainfo_collection, element); }
-// 
-//             template<typename metainfo_type, typename element_type>
-//             metainfo_type const & get(element_type const & element) const
-//             // explicit function template name needed because compiler (clang 3.0 and 4.7.2) cannot resolve correct template function. Might need to take a look at C++ standard function template function overloading resolution
-//             { return viennagrid::look_up<metainfo_type, typename metainfo_collection_type::typemap, element_type>(metainfo_collection, element); }
-// 
-//             
-//         private:
-//             metainfo_collection_type & metainfo_collection;
-//         };
-        
-        
-        
-        
-        
-        
-        
-        
-        
-//         template<typename metainfo_type, typename accessor_type, typename element_type>
-//         metainfo_type & look_up( accessor_type & accessor, element_type const & element)
-//         {
-//             return accessor.template get<metainfo_type>(element);
-//         }
-//         
-//         template<typename metainfo_type, typename accessor_type, typename element_type>
-//         metainfo_type const & look_up( accessor_type const & accessor, element_type const & element)
-//         {
-//             return accessor.template get<metainfo_type>(element);
-//         }
-        
-        
-        
-
-        
-    
-//     }
-    
 }
 
 

@@ -29,7 +29,6 @@
 #include "viennagrid/domain/domain.hpp"
 
 #include "viennagrid/algorithm/geometry.hpp"
-#include "viennagrid/domain/metainfo_range.hpp"
 
 /** @file netgen_reader.hpp
     @brief Provides a reader for Netgen files

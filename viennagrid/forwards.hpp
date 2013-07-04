@@ -305,10 +305,6 @@ namespace viennagrid
     struct container_collection_typemap;
 
     template<typename something>
-    struct metainfo_collection;
-    
-    
-    template<typename something>
     struct topologic_cell_dimension;
 
     template<typename something>
@@ -851,13 +847,6 @@ namespace viennagrid
                                                                                               const handle_array_iterator_type & array_end,
                                                                                               typename element_type::id_type id );
     
-//     template<typename config_type, typename topology_type, typename metainfo_collection_type, typename point_type>
-//     typename result_of::handle<domain_t<config_type, topology_type, metainfo_collection_type>, vertex_tag>::type
-//         create_unique_vertex( domain_t<config_type, topology_type, metainfo_collection_type> & domain,
-//                               point_type const & p,
-//                               typename viennagrid::result_of::coord_type< domain_t<config_type, topology_type, metainfo_collection_type> >::type tolerance = 1e-6 );
-
-
   
    // norm tags for: algorithm/norm.hpp
   /** @brief Tag for denoting the 1-norm */

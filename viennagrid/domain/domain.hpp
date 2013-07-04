@@ -20,7 +20,6 @@
 
 #include "viennagrid/config/topology_config.hpp"
 #include "viennagrid/domain/topology.hpp"
-// #include "viennagrid/domain/metainfo.hpp"
 #include "viennagrid/element/element_view.hpp"
 
 namespace viennagrid
@@ -29,10 +28,7 @@ namespace viennagrid
     namespace result_of
     {
         template<typename point_container_type>
-        struct point_type
-        {
-//             typedef typename viennagrid::metainfo::result_of::value_type<point_container_type>::type type;
-        };
+        struct point_type {};
 
         template<typename ConfigType>
         struct point_type< domain_t<ConfigType> >
@@ -80,124 +76,6 @@ namespace viennagrid
     { return dereference_handle(domain, vertex_handle).appendix(); }
 
 
-    
-    
-//     template<typename config_type, typename topology_type, typename metainfo_collection_type, typename element_tag, typename boundary_cell_container_typelist, typename id_type, typename appendix_type>
-//     std::pair<
-//                 typename viennagrid::storage::result_of::container_of<
-//                     typename result_of::container_collection< domain_t<config_type, topology_type, metainfo_collection_type> >::type,
-//                     viennagrid::element_t<element_tag, boundary_cell_container_typelist, id_type, appendix_type>
-//                 >::type::handle_type,
-//                 bool
-//             >
-//         push_element( domain_t<config_type, topology_type, metainfo_collection_type> & domain, const viennagrid::element_t<element_tag, boundary_cell_container_typelist, id_type, appendix_type> & element)
-//     {
-//         metainfo::increment_size< viennagrid::element_t<element_tag, boundary_cell_container_typelist, id_type, appendix_type> >(metainfo_collection(domain));
-//         return inserter(domain)(element);
-//     }
-//     
-//     template<typename config_type, typename topology_type, typename metainfo_collection_type, typename element_type>
-//     std::pair<
-//                 typename viennagrid::storage::result_of::container_of<
-//                     typename result_of::container_collection< domain_t<config_type, topology_type, metainfo_collection_type> >::type,
-//                     element_type
-//                 >::type::handle_type,
-//                 bool
-//             >
-//         push_element( domain_t<config_type, topology_type, metainfo_collection_type> & domain, const element_type & element)
-//     {
-//         metainfo::increment_size< element_type >(metainfo_collection(domain));
-//         return inserter(domain)(element);
-//     }   
-//     
-//     template<typename config_type, typename topology_type, typename metainfo_collection_type, typename element_type>
-//     std::pair<
-//                 typename viennagrid::storage::result_of::container_of<
-//                     typename result_of::container_collection< domain_t<config_type, topology_type, metainfo_collection_type> >::type,
-//                     element_type
-//                 >::type::handle_type,
-//                 bool
-//             >
-//         push_element_noid( domain_t<config_type, topology_type, metainfo_collection_type> & domain, const element_type & element)
-//     {
-//         metainfo::increment_size< element_type >(metainfo_collection(domain));
-//         return inserter(domain).template insert<false, true>(element);
-//     }
-    
-    
-    
-    
-    
-//     namespace result_of
-//     {
-//         template<typename domain_config>
-//         struct domain
-//         {
-//             typedef typename viennagrid::result_of::topology<
-//                     domain_config
-//                 >::type topology_type;
-//                 
-//              typedef typename viennagrid::config::result_of::query_config<domain_config, viennagrid::config::vector_type_tag>::type vector_type;
-//                 
-//             typedef typename viennagrid::storage::collection_t<
-//                     typename viennagrid::result_of::metainfo_container_typemap<
-//                         typename viennagrid::config::result_of::query_config< domain_config, viennagrid::config::metainfo_typelist_tag >::type,
-//                         typename viennagrid::config::result_of::query_config< domain_config, viennagrid::config::metainfo_container_config_tag >::type,
-//                         domain_config
-//                     >::type
-//                 > metainfo_collection_type;  
-//             
-//             typedef domain_t<domain_config, topology_type, metainfo_collection_type> type;
-//         };
-//         
-//         
-//         template<
-//             typename domain_type,
-//             typename element_typelist = 
-//                 typename storage::container_collection::result_of::value_typelist<
-//                     typename container_collection<domain_type>::type
-//                 >::type,
-//             typename container_config = 
-//                 storage::default_container_config>
-//         struct domain_view
-//         {
-//             typedef typename viennagrid::result_of::topologic_view<typename domain_type::topology_type, element_typelist>::type topologic_view_type;
-//             typedef typename domain_type::metainfo_collection_type metainfo_collection_type;
-//             typedef typename viennagrid::domain_t<typename domain_type::config_type, topologic_view_type, metainfo_collection_type*> type;
-//         };
-//         
-//         template<
-//             typename config_type, typename topology_type, typename metainfo_collection_type,
-//             typename element_typelist,
-//             typename container_config>
-//         struct domain_view< domain_t<config_type, topology_type, metainfo_collection_type*>, element_typelist, container_config >
-//         {
-//             typedef domain_t<config_type, topology_type, metainfo_collection_type*> domain_type;
-//             typedef typename viennagrid::result_of::topologic_view<typename domain_type::topology_type, element_typelist>::type topologic_view_type;
-//             typedef typename viennagrid::domain_t<typename domain_type::config_type, topologic_view_type, metainfo_collection_type*> type;
-//         };
-//     }
-    
-    
-
-//     template<typename config_type, typename topology_type, typename metainfo_collection_type>
-//     struct create_view_helper< domain_t<config_type, topology_type, metainfo_collection_type> >
-//     {
-//         typedef domain_t<config_type, topology_type, metainfo_collection_type> geomatric_view_type;
-//         
-//         template<typename domain_type>
-//         static geomatric_view_type create( domain_type & domain )
-//         {
-//             typedef typename geomatric_view_type::topology_type topologic_view_type;
-//             return geomatric_view_type(
-//                 viennagrid::create_view<topologic_view_type>( viennagrid::topology(domain) ),
-//                 domain.get_metainfo_collection()
-//             );
-//         }
-//     };
-    
-    
-    
     
     template<typename domain_type, typename id_type>
     typename viennagrid::result_of::iterator< typename viennagrid::result_of::element_range<domain_type, typename id_type::value_type::tag>::type >::type

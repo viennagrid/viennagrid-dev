@@ -33,7 +33,6 @@ using std::endl;
 // #include "viennagrid/config/generic_config.hpp"
 
 #include "viennagrid/domain/topology.hpp"
-#include "viennagrid/domain/metainfo.hpp"
 #include "viennagrid/domain/coboundary_iteration.hpp"
 #include "viennagrid/domain/element_creation.hpp"
 

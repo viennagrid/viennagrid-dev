@@ -33,7 +33,6 @@ using std::endl;
 #include "viennagrid/point.hpp"
 
 #include "viennagrid/domain/topology.hpp"
-#include "viennagrid/domain/metainfo.hpp"
 #include "viennagrid/domain/element_creation.hpp"
 
 

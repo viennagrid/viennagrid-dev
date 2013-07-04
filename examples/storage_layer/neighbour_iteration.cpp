@@ -32,7 +32,6 @@ using std::endl;
 #include "viennagrid/config/element_config.hpp"
 
 #include "viennagrid/domain/topology.hpp"
-#include "viennagrid/domain/metainfo.hpp"
 #include "viennagrid/domain/neighbour_iteration.hpp"
 #include "viennagrid/domain/element_creation.hpp"
 
