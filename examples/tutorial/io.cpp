@@ -34,23 +34,23 @@
 //
 // Shows how to read a domain from Netgen mesh files
 //
-template <typename CellTypeOrTag, typename DomainType, typename SegmentContainerType>
-void read_netgen(DomainType & domain, SegmentContainerType & segment_container)
+template <typename CellTypeOrTag, typename DomainType, typename SegmentationType>
+void read_netgen(DomainType & domain, SegmentationType & segmentation)
 {
   
-  viennagrid::io::netgen_reader<CellTypeOrTag> my_netgen_reader;
+  viennagrid::io::netgen_reader my_netgen_reader;
   #ifdef _MSC_VER      //Visual Studio builds in a subfolder
   std::string path = "../../examples/data/";
   #else
   std::string path = "../../examples/data/";
   #endif
   std::string filename = path + "cube48.mesh";
-  my_netgen_reader(domain, segment_container, filename);
+  my_netgen_reader(domain, segmentation, filename);
   
   //
   // Note that the Netgen format supports multiple segments, which will be automatically created by the reader
   //
-  std::cout << "Number of segments in Netgen file: " << segment_container.size() << std::endl;
+  std::cout << "Number of segments in Netgen file: " << segmentation.size() << std::endl;
   
   // do more stuff with the domain here.
 }
@@ -59,28 +59,28 @@ void read_netgen(DomainType & domain, SegmentContainerType & segment_container)
 //
 // Write to IBM Vizualization DataExplorer (OpenDX, http://www.opendx.org/) file
 //
-template <typename CellTypeOrTag, typename DomainType>
+template <typename DomainType>
 void write_opendx(DomainType const & domain)
 {
-  // Instantiate writer object:
-  viennagrid::io::opendx_writer<CellTypeOrTag, DomainType> my_dx_writer;
-  
-  // Add scalar vertex data: Note that only the first data is used.
-  viennagrid::io::add_scalar_data_on_vertices<std::string, double>(my_dx_writer, "vtk_data", "data_double");
-  
-  // Add scalar cell data: Note that only the first data is used and that no other vertex data must be present!
-  //viennagrid::io::add_scalar_data_on_cells<std::string, double>(my_dx_writer, "vtk_data", "cell_data_double");
-  
-  
-  my_dx_writer(domain, "tutorial_io.out");
+//   // Instantiate writer object:
+//   viennagrid::io::opendx_writer<CellTypeOrTag, DomainType> my_dx_writer;
+//   
+//   // Add scalar vertex data: Note that only the first data is used.
+//   viennagrid::io::add_scalar_data_on_vertices<std::string, double>(my_dx_writer, "vtk_data", "data_double");
+//   
+//   // Add scalar cell data: Note that only the first data is used and that no other vertex data must be present!
+//   //viennagrid::io::add_scalar_data_on_cells<std::string, double>(my_dx_writer, "vtk_data", "cell_data_double");
+//   
+//   
+//   my_dx_writer(domain, "tutorial_io.out");
 }
 
 
 //
 // Read the mesh from the VTK File format (XML)
 //
-template <typename CellTypeOrTag, typename DomainType, typename SegmentContainerType>
-void read_vtk(DomainType & domain, SegmentContainerType & segments)
+template <typename DomainType, typename SegmentationType>
+void read_vtk(DomainType & domain, SegmentationType & segmentation)
 {
   //
   // Step 1: Instantiate reader object
@@ -130,7 +130,7 @@ void read_vtk(DomainType & domain, SegmentContainerType & segments)
   #else
   std::string path = "../../examples/data/";
   #endif
-  reader(domain, segments, path + "tets_with_data_main.pvd");
+  reader(domain, segmentation, path + "tets_with_data_main.pvd");
   
   
   //

@@ -169,7 +169,7 @@ namespace viennagrid
             cell_vertex_handles[j] = viennagrid::get_vertex_handle(domain, vertex_num - 1);
           }
 
-          viennagrid::create_element<CellType>(segmentation( segment_index ), cell_vertex_handles.begin(), cell_vertex_handles.end(), typename CellType::id_type(i));
+          viennagrid::create_element<CellType>(segmentation[segment_index], cell_vertex_handles.begin(), cell_vertex_handles.end(), typename CellType::id_type(i));
         }
         
         //std::cout << "All done!" << std::endl;

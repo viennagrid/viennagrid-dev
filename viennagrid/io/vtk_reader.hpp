@@ -30,6 +30,7 @@
 #include <deque>
 #include <string>
 #include <algorithm>
+#include <boost/concept_check.hpp>
 
 #include "viennagrid/forwards.hpp"
 #include "viennagrid/point.hpp"
@@ -44,11 +45,17 @@ namespace viennagrid
   namespace io
   {
     
+
+    
+    
+    
+    
+    
     /** @brief A VTK reader class that allows to read meshes from XML-based VTK files as defined in http://www.vtk.org/pdf/file-formats.pdf
      * 
      * @tparam DomainType   The type of the domain to be read. Must not be a segment type!
      */
-    template <typename CellTypeOrTag, typename DomainType>
+    template <typename DomainType, typename SegmentationType = typename viennagrid::result_of::segmentation<DomainType>::type >
     class vtk_reader
     {
     protected:
@@ -57,11 +64,18 @@ namespace viennagrid
 //       typedef typename DomainConfiguration::numeric_type                 CoordType;
 //       typedef typename DomainConfiguration::coordinate_system_tag      CoordinateSystemTag;
 //       typedef typename DomainConfiguration::cell_tag                   CellTag;
+
+        
+
+        typedef typename SegmentationType::segment_type SegmentType;
+        typedef typename SegmentationType::segment_id_type segment_id_type;
+
+
         typedef typename viennagrid::result_of::point_type<DomainType>::type PointType;
         typedef typename viennagrid::result_of::coord_type<PointType>::type CoordType;
         enum { geometric_dim = viennagrid::traits::static_size<PointType>::value };
         
-        typedef typename viennagrid::result_of::element_tag<CellTypeOrTag>::type CellTag;
+        typedef typename viennagrid::result_of::cell_tag<DomainType>::type CellTag;
       
 
       //typedef typename result_of::point<DomainConfiguration>::type                              PointType;
@@ -83,6 +97,19 @@ namespace viennagrid
 
       typedef typename viennagrid::result_of::element_range<DomainType, CellTag>::type     CellRange;
       typedef typename viennagrid::result_of::iterator<CellRange>::type                                  CellIterator;
+      
+      
+      typedef std::vector<double> vector_data_type;
+      
+      typedef std::map< std::string, accessor::base_dynamic_accessor_t<double, VertexType> * > VertexScalarOutputAccessorContainer;
+      typedef std::map< std::string, accessor::base_dynamic_accessor_t<vector_data_type, VertexType> * > VertexVectorOutputAccessorContainer;
+
+      typedef std::map< std::string, accessor::base_dynamic_accessor_t<double, CellType> * > CellScalarOutputAccessorContainer;
+      typedef std::map< std::string, accessor::base_dynamic_accessor_t<vector_data_type, CellType> * > CellVectorOutputAccessorContainer;       
+      
+      
+      
+      
 
       std::ifstream                                 reader;
       std::map<PointType, std::size_t, point_less>         global_points;
@@ -97,6 +124,53 @@ namespace viennagrid
       std::deque<std::deque<std::pair<std::string, std::deque<double> > > >  local_vector_vertex_data;
       std::deque<std::deque<std::pair<std::string, std::deque<double> > > >  local_scalar_cell_data;
       std::deque<std::deque<std::pair<std::string, std::deque<double> > > >  local_vector_cell_data;
+      
+      
+      
+      
+      
+        template<typename map_type>
+        void clear_map( map_type & map )
+        {
+          for (typename map_type::iterator it = map.begin(); it != map.end(); ++it)
+            delete it->second;
+          
+          map.clear();
+        }
+        
+        void clear()
+        {
+          clear_map(registered_vertex_scalar_data);
+          clear_map(registered_vertex_vector_data);
+          
+          clear_map(registered_cell_scalar_data);
+          clear_map(registered_cell_vector_data);
+          
+          
+          for (typename std::map< segment_id_type, VertexScalarOutputAccessorContainer>::iterator it = registered_segment_vertex_scalar_data.begin(); it != registered_segment_vertex_scalar_data.end(); ++it)
+            clear_map(it->second);
+          
+          for (typename std::map< segment_id_type, VertexVectorOutputAccessorContainer>::iterator it = registered_segment_vertex_vector_data.begin(); it != registered_segment_vertex_vector_data.end(); ++it)
+            clear_map(it->second);
+
+            
+          for (typename std::map< segment_id_type, CellScalarOutputAccessorContainer>::iterator it = registered_segment_cell_scalar_data.begin(); it != registered_segment_cell_scalar_data.end(); ++it)
+            clear_map(it->second);
+          
+          for (typename std::map< segment_id_type, CellVectorOutputAccessorContainer>::iterator it = registered_segment_cell_vector_data.begin(); it != registered_segment_cell_vector_data.end(); ++it)
+            clear_map(it->second);
+          
+          
+          registered_segment_vertex_scalar_data.clear();
+          registered_segment_vertex_vector_data.clear();
+          
+          registered_segment_cell_scalar_data.clear();
+          registered_segment_cell_vector_data.clear();
+        }
+      
+      
+      
+      
       
       /** @brief Opens a file */
       void openFile(std::string const & filename)
@@ -142,7 +216,7 @@ namespace viennagrid
       }
 
       /** @brief Reads the coordinates of the points/vertices in the domain */
-      void readNodeCoordinates(long nodeNum, long numberOfComponents, std::size_t seg_id)
+      void readNodeCoordinates(long nodeNum, long numberOfComponents, segment_id_type seg_id)
       {
         double nodeCoord;
         local_to_global_map[seg_id].resize(nodeNum);
@@ -259,7 +333,7 @@ namespace viennagrid
       
       /** @brief Read point or cell data and fill the respective data containers */
       template <typename ContainerType, typename NameContainerType>
-      void readPointCellData(size_t seg_id,
+      void readPointCellData(segment_id_type seg_id,
                              ContainerType & scalar_data,
                              ContainerType & vector_data,
                              NameContainerType & data_names_scalar,
@@ -311,21 +385,11 @@ namespace viennagrid
       void setupVertices(DomainType & domain)
       {
         for (std::size_t i=0; i<global_points_2.size(); ++i)
-        {
-          VertexHandleType vertex = viennagrid::create_element<VertexType>( domain, typename VertexType::id_type(i) );
-            
-            
-          //VertexType v;
-          //v.point() = global_points_2[i];
-          viennagrid::point( domain, vertex ) = global_points_2[i];
-          //domain.push_back(v);
-          //viennagrid::
-        }
+          viennagrid::create_vertex( domain, typename VertexType::id_type(i), global_points_2[i] );
       }
       
       /** @brief Pushes the cells read to the domain. Preserves segment information. */
-      template<typename SegmentContainerType>
-      void setupCells(DomainType & domain, SegmentContainerType & segments, std::size_t seg_id)
+      void setupCells(DomainType & domain, SegmentationType & segmentation, segment_id_type seg_id)
       {
           //***************************************************
           // building up the cells in ViennaGrid
@@ -383,7 +447,7 @@ namespace viennagrid
               //std::cout << global_vertex_index << " ";
               cell_vertex_handles[j] = viennagrid::elements<viennagrid::vertex_tag>(domain).handle_at(global_vertex_index);
               
-              viennagrid::add_handle( segments[seg_id], domain, cell_vertex_handles[j] );
+              viennagrid::add_handle( segmentation[seg_id], domain, cell_vertex_handles[j] );
               
               
               //vertices[j] = &(viennagrid::elements<viennagrid::vertex_tag>(domain)[global_vertex_index]);
@@ -391,97 +455,40 @@ namespace viennagrid
             }
             //std::cout << std::endl;
 
-            
-            
-            
-            
-            
-//             CellHandleType cell = 
-                viennagrid::create_element<CellType>(segments[seg_id], cell_vertex_handles.begin(), cell_vertex_handles.end());//, typename CellType::id_type(i));
-            //cell.vertices(&(vertices[0]));
-            //cell.id(i);
-            //domain.segments()[seg_id].push_back(cell);
+              viennagrid::create_element<CellType>(segmentation[seg_id], cell_vertex_handles.begin(), cell_vertex_handles.end());//, typename CellType::id_type(i));
           }
       }
       
       /** @brief Writes data for vertices to the ViennaGrid domain using ViennaData */
-      template <typename ContainerType, typename SegmentContainerType>
-      void setupDataVertex(DomainType & domain, SegmentContainerType & segments, std::size_t seg_id, ContainerType const & container, std::size_t num_components)
+      template <typename ContainerType>
+      void setupDataVertex(DomainType & domain, SegmentType & segment, segment_id_type seg_id, ContainerType const & container, std::size_t num_components)
       {
-        //
-        // Step 1: Try to find data name in list of registered quantity names:
-        //
-        bool name_registered = false;
-        std::size_t data_accessor_index = 0;
+        std::string const & name = container.first;
+        
         if (num_components == 1)
         {
-          for (std::size_t i=0; i<vertex_data_scalar_names.size(); ++i)
+          VertexScalarOutputAccessorContainer & current_registered_segment_vertex_scalar_data = registered_segment_vertex_scalar_data[seg_id];
+          if (registered_vertex_scalar_data.find(name) != registered_vertex_scalar_data.end())
           {
-            if (container.first == vertex_data_scalar_names[i])
-            {
-              name_registered = true;
-              data_accessor_index = i;
-              #if defined VIENNAGRID_DEBUG_ALL || defined VIENNAGRID_DEBUG_IO
-              std::cout << "* vtk_reader::operator(): Found registered scalar name " << container.first << std::endl;
-              #endif
-              break;
-            }
-          }
-        }
-        else
-        {
-          for (std::size_t i=0; i<vertex_data_vector_names.size(); ++i)
-          {
-            if (container.first == vertex_data_vector_names[i])
-            {
-              name_registered = true;
-              data_accessor_index = i;
-              #if defined VIENNAGRID_DEBUG_ALL || defined VIENNAGRID_DEBUG_IO
-              std::cout << "* vtk_reader::operator(): Found registered vertex name " << container.first << std::endl;
-              #endif
-              break;
-            }
-          }
-        }
-        
-        //
-        // Step 2: Write to domain
-        //
-        if (name_registered)
-        {
-          if (num_components == 1)
-          {
-            #if defined VIENNAGRID_DEBUG_ALL || defined VIENNAGRID_DEBUG_IO
-            std::cout << "* vtk_reader::operator(): Reading scalar quantity " 
-                      << container.first << " using data_accessor to vertices." << std::endl;
-            #endif
             for (std::size_t i=0; i<container.second.size(); ++i)
             {
               std::size_t global_vertex_id = local_to_global_map[seg_id][i];
               VertexType const & vertex = viennagrid::elements<viennagrid::vertex_tag>(domain)[global_vertex_id];
-              vertex_data_scalar[data_accessor_index](vertex, seg_id, 0, (container.second)[i]);
+              
+              (*registered_vertex_scalar_data[name])(vertex) = (container.second)[i];
             }
           }
-          else
+          else if (current_registered_segment_vertex_scalar_data.find(name) != current_registered_segment_vertex_scalar_data.end())
           {
-            #if defined VIENNAGRID_DEBUG_ALL || defined VIENNAGRID_DEBUG_IO
-            std::cout << "* vtk_reader::operator(): Reading vector quantity "
-                      << container.first << " using data_accessor to vertices." << std::endl;
-            #endif
-            assert( 3 * viennagrid::elements<viennagrid::vertex_tag>(segments[seg_id]).size() == container.second.size() );
-            for (std::size_t i=0; i<container.second.size() / 3; ++i)
+            for (std::size_t i=0; i<container.second.size(); ++i)
             {
               std::size_t global_vertex_id = local_to_global_map[seg_id][i];
               VertexType const & vertex = viennagrid::elements<viennagrid::vertex_tag>(domain)[global_vertex_id];
-              vertex_data_vector[data_accessor_index](vertex, seg_id, 0, (container.second)[3*i]);
-              vertex_data_vector[data_accessor_index](vertex, seg_id, 1, (container.second)[3*i+1]);
-              vertex_data_vector[data_accessor_index](vertex, seg_id, 2, (container.second)[3*i+2]);
+              
+              (*current_registered_segment_vertex_scalar_data[name])(vertex) = (container.second)[i];
             }
           }
-        }
-        else
-        {
-          if (num_components == 1)
+          else
           {
             #if defined VIENNAGRID_DEBUG_ALL || defined VIENNAGRID_DEBUG_IO
             std::cout << "* vtk_reader::operator(): Reading scalar quantity " 
@@ -491,7 +498,39 @@ namespace viennagrid
             {
               std::size_t global_vertex_id = local_to_global_map[seg_id][i];
               VertexType const & vertex = viennagrid::elements<viennagrid::vertex_tag>(domain)[global_vertex_id];
-              viennadata::access<std::string, double>(container.first)(vertex) = (container.second)[i];
+              
+              if (vertex_scalar_data[container.first][seg_id].size() <= vertex.id().get()) vertex_scalar_data[container.first][seg_id].resize(vertex.id().get()+1);
+              vertex_scalar_data[container.first][seg_id][vertex.id().get()] = (container.second)[i];
+            }
+          }
+        }
+        else
+        {
+          VertexVectorOutputAccessorContainer & current_registered_segment_vertex_vector_data = registered_segment_vertex_vector_data[seg_id];
+          if (registered_vertex_vector_data.find(name) != registered_vertex_vector_data.end())
+          {
+            for (std::size_t i=0; i<container.second.size(); ++i)
+            {
+              std::size_t global_vertex_id = local_to_global_map[seg_id][i];
+              VertexType const & vertex = viennagrid::elements<viennagrid::vertex_tag>(domain)[global_vertex_id];
+              
+              (*registered_vertex_vector_data[name])(vertex).resize(3);
+              (*registered_vertex_vector_data[name])(vertex)[0] = (container.second)[3*i+0];
+              (*registered_vertex_vector_data[name])(vertex)[1] = (container.second)[3*i+1];
+              (*registered_vertex_vector_data[name])(vertex)[2] = (container.second)[3*i+2];
+            }
+          }
+          else if (current_registered_segment_vertex_vector_data.find(name) != current_registered_segment_vertex_vector_data.end())
+          {
+            for (std::size_t i=0; i<container.second.size(); ++i)
+            {
+              std::size_t global_vertex_id = local_to_global_map[seg_id][i];
+              VertexType const & vertex = viennagrid::elements<viennagrid::vertex_tag>(domain)[global_vertex_id];
+              
+              (*current_registered_segment_vertex_vector_data[name])(vertex).resize(3);
+              (*current_registered_segment_vertex_vector_data[name])(vertex)[0] = (container.second)[3*i+0];
+              (*current_registered_segment_vertex_vector_data[name])(vertex)[1] = (container.second)[3*i+1];
+              (*current_registered_segment_vertex_vector_data[name])(vertex)[2] = (container.second)[3*i+2];
             }
           }
           else
@@ -500,167 +539,176 @@ namespace viennagrid
             std::cout << "* vtk_reader::operator(): Reading vector quantity " 
                       << container.first << " using viennadata to vertices." << std::endl;
             #endif
-            assert( 3 * viennagrid::elements<viennagrid::vertex_tag>(segments[seg_id]).size() == container.second.size());
+            assert( 3 * viennagrid::elements<viennagrid::vertex_tag>(segment).size() == container.second.size());
             for (std::size_t i=0; i<container.second.size() / 3; ++i)
             {
               std::size_t global_vertex_id = local_to_global_map[seg_id][i];
               VertexType const & vertex = viennagrid::elements<viennagrid::vertex_tag>(domain)[global_vertex_id];
-              viennadata::access<std::string, std::vector<double> >(container.first)(vertex).resize(3);
-              viennadata::access<std::string,
-                                 std::vector<double> >(container.first)(vertex)[0] = (container.second)[3*i];
-              viennadata::access<std::string,
-                                 std::vector<double> >(container.first)(vertex)[1] = (container.second)[3*i+1];
-              viennadata::access<std::string,
-                                 std::vector<double> >(container.first)(vertex)[2] = (container.second)[3*i+2];
+              
+              if (vertex_vector_data[container.first][seg_id].size() <= vertex.id().get()) vertex_vector_data[container.first][seg_id].resize(vertex.id().get()+1);
+              vertex_vector_data[container.first][seg_id][vertex.id().get()].resize(3);
+              vertex_vector_data[container.first][seg_id][vertex.id().get()][0] = (container.second)[3*i+0];
+              vertex_vector_data[container.first][seg_id][vertex.id().get()][1] = (container.second)[3*i+1];
+              vertex_vector_data[container.first][seg_id][vertex.id().get()][2] = (container.second)[3*i+2];
             }
           }
         }
-          
       }
 
       /** @brief Writes data for cells to the ViennaGrid domain using ViennaData */
-      template <typename ContainerType, typename SegmentContainerType>
-      void setupDataCell(DomainType & domain, SegmentContainerType & segments, std::size_t seg_id, ContainerType const & container, std::size_t num_components)
+      template <typename ContainerType>
+      void setupDataCell(DomainType & domain, SegmentType & segment, segment_id_type seg_id, ContainerType const & container, std::size_t num_components)
       {
-        //
-        // Step 1: Try to find data name in list of registered quantity names:
-        //
-        bool name_registered = false;
-        std::size_t data_accessor_index = 0;
+        std::string const & name = container.first;
+        
         if (num_components == 1)
         {
-          for (std::size_t i=0; i<cell_data_scalar_names.size(); ++i)
+          CellScalarOutputAccessorContainer & current_registered_segment_cell_scalar_data = registered_segment_cell_scalar_data[seg_id];
+          if (registered_cell_scalar_data.find(name) != registered_cell_scalar_data.end())
           {
-            if (container.first == cell_data_scalar_names[i])
+            for (std::size_t i=0; i<container.second.size(); ++i)
             {
-              name_registered = true;
-              data_accessor_index = i;
-              #if defined VIENNAGRID_DEBUG_ALL || defined VIENNAGRID_DEBUG_IO
-              std::cout << "* vtk_reader::operator(): Found registered cell scalar name " << container.first << std::endl;
-              #endif
-              break;
+              CellType const & cell = viennagrid::elements<CellTag>(segment)[i];
+              
+              (*registered_cell_scalar_data[name])(cell) = (container.second)[i];
+            }
+          }
+          else if (current_registered_segment_cell_scalar_data.find(name) != current_registered_segment_cell_scalar_data.end())
+          {
+            for (std::size_t i=0; i<container.second.size(); ++i)
+            {
+              CellType const & cell = viennagrid::elements<CellTag>(segment)[i];
+              
+              (*current_registered_segment_cell_scalar_data[name])(cell) = (container.second)[i];
+            }
+          }
+          else
+          {
+            #if defined VIENNAGRID_DEBUG_ALL || defined VIENNAGRID_DEBUG_IO
+            std::cout << "* vtk_reader::operator(): Reading scalar quantity " 
+                      << container.first << " using viennadata to vertices." << std::endl;
+            #endif
+            for (std::size_t i=0; i<container.second.size(); ++i)
+            {
+              CellType const & cell = viennagrid::elements<CellTag>(segment)[i];
+              
+              if (cell_scalar_data[container.first][seg_id].size() <= cell.id().get()) cell_scalar_data[container.first][seg_id].resize(cell.id().get()+1);
+              cell_scalar_data[container.first][seg_id][cell.id().get()] = (container.second)[i];
             }
           }
         }
         else
         {
-          for (std::size_t i=0; i<cell_data_vector_names.size(); ++i)
+          CellVectorOutputAccessorContainer & current_registered_segment_cell_vector_data = registered_segment_cell_vector_data[seg_id];
+          if (registered_cell_vector_data.find(name) != registered_cell_vector_data.end())
           {
-            if (container.first == cell_data_vector_names[i])
-            {
-              name_registered = true;
-              data_accessor_index = i;
-              #if defined VIENNAGRID_DEBUG_ALL || defined VIENNAGRID_DEBUG_IO
-              std::cout << "* vtk_reader::operator(): Found registered cell vector name " << container.first << std::endl;
-              #endif
-              break;
-            }
-          }
-        }
-        
-        //
-        // Step 2: Write to domain
-        //
-        if (name_registered)
-        {
-          if (num_components == 1)
-          {
-            #if defined VIENNAGRID_DEBUG_ALL || defined VIENNAGRID_DEBUG_IO
-            std::cout << "* vtk_reader::operator(): Reading scalar quantity " 
-                      << container.first << " using data_accessor to cells." << std::endl;
-            #endif
             for (std::size_t i=0; i<container.second.size(); ++i)
             {
-              CellType const & cell = viennagrid::elements<CellTag>(segments[seg_id])[i];
-              //CellType const & cell = viennagrid::ncells<geometric_dim>(domain.segments()[seg_id])[i];
-              cell_data_scalar[data_accessor_index](cell, seg_id, 0, (container.second)[i]);
+              CellType const & cell = viennagrid::elements<CellTag>(segment)[i];
+              
+              (*registered_cell_vector_data[name])(cell).resize(3);
+              (*registered_cell_vector_data[name])(cell)[0] = (container.second)[3*i+0];
+              (*registered_cell_vector_data[name])(cell)[1] = (container.second)[3*i+1];
+              (*registered_cell_vector_data[name])(cell)[2] = (container.second)[3*i+2];
+            }
+          }
+          else if (current_registered_segment_cell_vector_data.find(name) != current_registered_segment_cell_vector_data.end())
+          {
+            for (std::size_t i=0; i<container.second.size(); ++i)
+            {
+              CellType const & cell = viennagrid::elements<CellTag>(segment)[i];
+              
+              (*current_registered_segment_cell_vector_data[name])(cell).resize(3);
+              (*current_registered_segment_cell_vector_data[name])(cell)[0] = (container.second)[3*i+0];
+              (*current_registered_segment_cell_vector_data[name])(cell)[1] = (container.second)[3*i+1];
+              (*current_registered_segment_cell_vector_data[name])(cell)[2] = (container.second)[3*i+2];
             }
           }
           else
           {
             #if defined VIENNAGRID_DEBUG_ALL || defined VIENNAGRID_DEBUG_IO
             std::cout << "* vtk_reader::operator(): Reading vector quantity " 
-                      << container.first << " using data_accessor to cells." << std::endl;
+                      << container.first << " using viennadata to vertices." << std::endl;
             #endif
-            assert( 3 * viennagrid::elements<CellTag>(segments[seg_id]).size() == container.second.size());
+            assert( 3 * viennagrid::elements<CellTag>(segment).size() == container.second.size());
             for (std::size_t i=0; i<container.second.size() / 3; ++i)
             {
-              //CellType const & cell = viennagrid::ncells<CoordinateSystemTag::dim>(domain.segments()[seg_id])[i];
-              CellType const & cell = viennagrid::elements<CellTag>(segments[seg_id])[i];
-              cell_data_vector[data_accessor_index](cell, seg_id, 0, (container.second)[3*i]);
-              cell_data_vector[data_accessor_index](cell, seg_id, 1, (container.second)[3*i+1]);
-              cell_data_vector[data_accessor_index](cell, seg_id, 2, (container.second)[3*i+2]);
+              CellType const & cell = viennagrid::elements<CellTag>(segment)[i];
+              
+              if (cell_vector_data[container.first][seg_id].size() <= cell.id().get()) cell_vector_data[container.first][seg_id].resize(cell.id().get()+1);
+              cell_vector_data[container.first][seg_id][cell.id().get()].resize(3);
+              cell_vector_data[container.first][seg_id][cell.id().get()][0] = (container.second)[3*i+0];
+              cell_vector_data[container.first][seg_id][cell.id().get()][1] = (container.second)[3*i+1];
+              cell_vector_data[container.first][seg_id][cell.id().get()][2] = (container.second)[3*i+2];
             }
           }
         }
-        else
-        {
-          if (num_components == 1)
-          {
-            #if defined VIENNAGRID_DEBUG_ALL || defined VIENNAGRID_DEBUG_IO
-            std::cout << "* vtk_reader::operator(): Reading scalar quantity "
-                      << container.first << " using viennadata to cells." << std::endl;
-            #endif
-            for (std::size_t i=0; i<container.second.size(); ++i)
-            {
-              //CellType const & cell = viennagrid::ncells<CoordinateSystemTag::dim>(domain.segments()[seg_id])[i];
-              CellType const & cell = viennagrid::elements<CellTag>(segments[seg_id])[i];
-              viennadata::access<std::string,
-                                 double>(container.first)(cell) = (container.second)[i];
-            }
-          }
-          else
-          {
-            #if defined VIENNAGRID_DEBUG_ALL || defined VIENNAGRID_DEBUG_IO
-            std::cout << "* vtk_reader::operator(): Reading vector quantity "
-                      << container.first << " using viennadata to cells." << std::endl;
-            #endif
-            assert( 3 * viennagrid::elements<CellTag>(segments[seg_id]).size() == container.second.size());
-            for (std::size_t i=0; i<container.second.size() / 3; ++i)
-            {
-              CellType const & cell = viennagrid::elements<CellTag>(segments[seg_id])[i];
-              viennadata::access<std::string, std::vector<double> >(container.first)(cell).resize(3);
-              viennadata::access<std::string,
-                                 std::vector<double> >(container.first)(cell)[0] = (container.second)[3*i];
-              viennadata::access<std::string,
-                                 std::vector<double> >(container.first)(cell)[1] = (container.second)[3*i+1];
-              viennadata::access<std::string,
-                                 std::vector<double> >(container.first)(cell)[2] = (container.second)[3*i+2];
-            }
-          }
-        }
-          
+        
+        
+        
+//         if (num_components == 1)
+//         {
+//           #if defined VIENNAGRID_DEBUG_ALL || defined VIENNAGRID_DEBUG_IO
+//           std::cout << "* vtk_reader::operator(): Reading scalar quantity "
+//                     << container.first << " using viennadata to cells." << std::endl;
+//           #endif
+//           for (std::size_t i=0; i<container.second.size(); ++i)
+//           {
+//             //CellType const & cell = viennagrid::ncells<CoordinateSystemTag::dim>(domain.segments()[seg_id])[i];
+//             CellType const & cell = viennagrid::elements<CellTag>(segmentation[seg_id])[i];
+//             
+//             if (cell_scalar_data[container.first][seg_id].size() <= cell.id().get()) cell_scalar_data[container.first][seg_id].resize(cell.id().get()+1);
+//             cell_scalar_data[container.first][seg_id][cell.id().get()] = (container.second)[i];
+//           }
+//         }
+//         else
+//         {
+//           #if defined VIENNAGRID_DEBUG_ALL || defined VIENNAGRID_DEBUG_IO
+//           std::cout << "* vtk_reader::operator(): Reading vector quantity "
+//                     << container.first << " using viennadata to cells." << std::endl;
+//           #endif
+//           assert( 3 * viennagrid::elements<CellTag>(segmentation[seg_id]).size() == container.second.size());
+//           for (std::size_t i=0; i<container.second.size() / 3; ++i)
+//           {
+//             CellType const & cell = viennagrid::elements<CellTag>(segmentation[seg_id])[i];
+//             
+//             if (cell_vector_data[container.first][seg_id].size() <= cell.id().get()) cell_vector_data[container.first][seg_id].resize(cell.id().get()+1);
+//             cell_vector_data[container.first][seg_id][cell.id().get()].resize(3);
+//             cell_vector_data[container.first][seg_id][cell.id().get()][0] = (container.second)[3*i+0];
+//             cell_vector_data[container.first][seg_id][cell.id().get()][0] = (container.second)[3*i+1];
+//             cell_vector_data[container.first][seg_id][cell.id().get()][0] = (container.second)[3*i+2];
+//           }
+//         }
       }
 
       /** @brief Writes all data read from files to the domain */
-      template<typename SegmentContainerType>
-      void setupData(DomainType & domain, SegmentContainerType & segments, std::size_t seg_id)
+      void setupData(DomainType & domain, SegmentationType & segmentation, segment_id_type seg_id)
       {
         for (size_t i=0; i<local_scalar_vertex_data[seg_id].size(); ++i)
         {
-          setupDataVertex(domain, segments, seg_id, local_scalar_vertex_data[seg_id][i], 1);
+          setupDataVertex(domain, segmentation[seg_id], seg_id, local_scalar_vertex_data[seg_id][i], 1);
         }
 
         for (size_t i=0; i<local_vector_vertex_data[seg_id].size(); ++i)
         {
-          setupDataVertex(domain, segments, seg_id, local_vector_vertex_data[seg_id][i], 3);
+          setupDataVertex(domain, segmentation[seg_id], seg_id, local_vector_vertex_data[seg_id][i], 3);
         }
 
 
         for (size_t i=0; i<local_scalar_cell_data[seg_id].size(); ++i)
         {
-          setupDataCell(domain, segments, seg_id, local_scalar_cell_data[seg_id][i], 1);
+          setupDataCell(domain, segmentation[seg_id], seg_id, local_scalar_cell_data[seg_id][i], 1);
         }
 
         for (size_t i=0; i<local_vector_cell_data[seg_id].size(); ++i)
         {
-          setupDataCell(domain, segments, seg_id, local_vector_cell_data[seg_id][i], 3);
+          setupDataCell(domain, segmentation[seg_id], seg_id, local_vector_cell_data[seg_id][i], 3);
         }
 
       }
      
       /** @brief Parses a .vtu file referring to a segment of the domain */
-      void parse_vtu_segment(std::string filename, std::size_t seg_id)
+      void parse_vtu_segment(std::string filename, segment_id_type seg_id)
       {
 
         try
@@ -876,15 +924,18 @@ namespace viennagrid
 
     public:
 
+      
+      ~vtk_reader() { clear(); }
+      
+      
       /** @brief Triggers the read process.
        * 
        * @param domain    The ViennaGrid domain
        * @param filename  Name of the file containing the mesh. Either .pvd (multi-segment) or .vtu (single segment)
        */
-      template<typename SegmentContainerType>
-      int operator()(DomainType & domain, SegmentContainerType & segments, std::string const & filename)
+//       template<typename SegmentContainerType>
+      int operator()(DomainType & domain, SegmentationType & segmentation, std::string const & filename)
       {
-        typedef typename SegmentContainerType::value_type SegmentType;
         std::string::size_type pos  = filename.rfind(".")+1;
         std::string extension = filename.substr(pos, filename.size());      
       
@@ -909,24 +960,39 @@ namespace viennagrid
         // push everything to the ViennaGrid domain:
         // 
         setupVertices(domain);
-        segments.resize(local_cell_num.size());
+//         segments.resize(local_cell_num.size());
         for (size_t seg_id = 0; seg_id < local_cell_num.size(); ++seg_id)
         {
-          segments[seg_id] = viennagrid::create_view<SegmentType>(domain);
+          segmentation.create_segment();
+          
+//           segments[seg_id] = viennagrid::create_view<SegmentType>(domain);
           //handle_domain( segments[seg_id], domain );
         }
         
         for (size_t seg_id = 0; seg_id < local_cell_num.size(); ++seg_id)
         {
-          setupCells(domain, segments, seg_id);
-          setupData(domain, segments, seg_id);
+          setupCells(domain, segmentation, seg_id);
+          setupData(domain, segmentation, seg_id);
         }
-
+        
+        clear();
+        
         return EXIT_SUCCESS;
       } //operator()
       
+      
+      
+      int operator()(DomainType & domain, std::string const & filename)
+      {
+        SegmentationType tmp;
+        (*this)(domain, tmp, filename);
+      }
+      
+      
+      
+      
       /** @brief Returns the data names of all scalar vertex data read */
-      std::vector<std::string> scalar_vertex_data_names(std::size_t segment_id) const 
+      std::vector<std::string> scalar_vertex_data_names(segment_id_type segment_id) const 
       {
         std::vector<std::string> ret;
         for (std::size_t i=0; i<local_scalar_vertex_data[segment_id].size(); ++i)
@@ -936,7 +1002,7 @@ namespace viennagrid
       }
 
       /** @brief Returns the data names of all vector vertex data read */
-      std::vector<std::string> vector_vertex_data_names(std::size_t segment_id) const 
+      std::vector<std::string> vector_vertex_data_names(segment_id_type segment_id) const 
       {
         std::vector<std::string> ret;
         for (std::size_t i=0; i<local_vector_vertex_data[segment_id].size(); ++i)
@@ -946,7 +1012,7 @@ namespace viennagrid
       }
 
       /** @brief Returns the data names of all scalar cell data read */
-      std::vector<std::string> scalar_cell_data_names(std::size_t segment_id) const 
+      std::vector<std::string> scalar_cell_data_names(segment_id_type segment_id) const 
       {
         std::vector<std::string> ret;
         for (std::size_t i=0; i<local_scalar_cell_data[segment_id].size(); ++i)
@@ -956,7 +1022,7 @@ namespace viennagrid
       }
 
       /** @brief Returns the data names of all vector cell data read */
-      std::vector<std::string> vector_cell_data_names(std::size_t segment_id) const 
+      std::vector<std::string> vector_cell_data_names(segment_id_type segment_id) const 
       {
         std::vector<std::string> ret;
         for (std::size_t i=0; i<local_vector_cell_data[segment_id].size(); ++i)
@@ -964,95 +1030,6 @@ namespace viennagrid
         
         return ret;
       }
-
-      ///////////////////// data handling ///////////////////////
-
-        /** @brief Specify a special handling of scalar-valued data for vertices. Prefer the free function add_vector_data_on_vertices() 
-         *
-         * @tparam T       Anything that can be wrapped by a data_accessor_wrapper
-         * @param  accessor The quantity accessor
-         * @param  name    The quantity name that should appear in the VTK file
-         */
-        template <typename T>
-        void add_scalar_data_on_vertices(T const & accessor, std::string name)
-        {
-          data_accessor_wrapper<VertexType> wrapper(accessor.clone());
-          vertex_data_scalar.push_back(wrapper);
-          vertex_data_scalar_names.push_back(name);
-        }
-
-        /** @brief Specify a special handling of vector-valued data for vertices. Prefer the free function add_vector_data_on_vertices() 
-         *
-         * @tparam T       Anything that can be wrapped by a data_accessor_wrapper
-         * @param  accessor The quantity accessor
-         * @param  name    The quantity name that should appear in the VTK file
-         */
-        template <typename T>
-        void add_vector_data_on_vertices(T const & accessor, std::string name)
-        {
-          data_accessor_wrapper<VertexType> wrapper(accessor.clone());
-          vertex_data_vector.push_back(wrapper);
-          vertex_data_vector_names.push_back(name);
-        }
-
-        /** @brief Specify a special handling of vector-valued (normal) data for vertices. Prefer the free function add_normal_data_on_vertices() 
-         *
-         * @tparam T       Anything that can be wrapped by a data_accessor_wrapper
-         * @param  accessor The quantity accessor
-         * @param  name    The quantity name that should appear in the VTK file
-         */
-        template <typename T>
-        void add_normal_data_on_vertices(T const & accessor, std::string name)
-        {
-          data_accessor_wrapper<VertexType> wrapper(accessor.clone());
-          vertex_data_normal.push_back(wrapper);
-          vertex_data_normal_names.push_back(name);
-        }
-
-
-        /** @brief Specify a special handling of scalar-valued data for cells. Prefer the free function add_scalar_data_on_cells() 
-         *
-         * @tparam T       Anything that can be wrapped by a data_accessor_wrapper
-         * @param  accessor The quantity accessor
-         * @param  name    The quantity name that should appear in the VTK file
-         */
-        template <typename T>
-        void add_scalar_data_on_cells(T const & accessor, std::string name)
-        {
-          data_accessor_wrapper<CellType> wrapper(accessor.clone());
-          cell_data_scalar.push_back(wrapper);
-          cell_data_scalar_names.push_back(name);
-        }
-
-        /** @brief Specify a special handling of vector-valued data for cells. Prefer the free function add_vector_data_on_cells() 
-         *
-         * @tparam T       Anything that can be wrapped by a data_accessor_wrapper
-         * @param  accessor The quantity accessor
-         * @param  name    The quantity name that should appear in the VTK file
-         */
-        template <typename T>
-        void add_vector_data_on_cells(T const & accessor, std::string name)
-        {
-          data_accessor_wrapper<CellType> wrapper(accessor.clone());
-          cell_data_vector.push_back(wrapper);
-          cell_data_vector_names.push_back(name);
-        }
-
-
-        /** @brief Specify a special handling of vector-valued data (normals) for cells. Prefer the free function add_normal_data_on_cells() 
-         *
-         * @tparam T       Anything that can be wrapped by a data_accessor_wrapper
-         * @param  accessor The quantity accessor
-         * @param  name    The quantity name that should appear in the VTK file
-         */
-        template <typename T>
-        void add_normal_data_on_cells(T const & accessor, std::string name)
-        {
-          data_accessor_wrapper<CellType> wrapper(accessor.clone());
-          cell_data_normal.push_back(wrapper);
-          cell_data_normal_names.push_back(name);
-        }
-
 
         // Extract data read from file:
         
@@ -1079,25 +1056,165 @@ namespace viennagrid
         {
           return cell_data_vector_read;
         }
+        
+        
+        
+    private:
+      
+      template<typename MapType, typename AccessorType>
+      void register_to_map(MapType & map, AccessorType accessor, std::string const & name)
+      {
+          typename MapType::iterator it = map.find(name);
+          if (it != map.end())
+          {
+            delete it->second;
+            it->second = new accessor::dynamic_accessor_t<AccessorType>( accessor );
+          }
+          else
+            map[name] = new accessor::dynamic_accessor_t<AccessorType>( accessor );
+      }
+      
+      
+    public:
+        
+        
+        template<typename AccessorType>
+        void register_vertex_scalar_accessor(AccessorType accessor, std::string const & name)
+        { register_to_map(registered_vertex_scalar_data, accessor, name); }
+        
+        template<typename AccessorType>
+        void register_vertex_scalar_accessor(segment_id_type seg_id, AccessorType accessor, std::string const & name)
+        { register_to_map(registered_segment_vertex_scalar_data[seg_id], accessor, name); }
+        
+        template<typename AccessorType>
+        void register_vertex_scalar_accessor(SegmentType const & segment, AccessorType accessor, std::string const & name)
+        { register_vertex_scalar_accessor(segment.id(), accessor, name); }
+        
+        
+        template<typename AccessorType>
+        void register_vertex_vector_accessor(AccessorType accessor, std::string const & name)
+        { register_to_map(registered_vertex_vector_data, accessor, name); }
+        
+        template<typename AccessorType>
+        void register_vertex_vector_accessor(segment_id_type seg_id, AccessorType accessor, std::string const & name)
+        { register_to_map(registered_segment_vertex_vector_data[seg_id], accessor, name); }
+        
+        template<typename AccessorType>
+        void register_vertex_vector_accessor(SegmentType const & segment, AccessorType accessor, std::string const & name)
+        { register_vertex_vector_accessor(segment.id(), accessor, name); }
+        
+        
+        
+        
+        
+        template<typename AccessorType>
+        void register_cell_scalar_accessor(AccessorType accessor, std::string const & name)
+        { register_to_map(registered_cell_scalar_data, accessor, name); }
+        
+        template<typename AccessorType>
+        void register_cell_scalar_accessor(segment_id_type seg_id, AccessorType accessor, std::string const & name)
+        { register_to_map(registered_segment_cell_scalar_data[seg_id], accessor, name); }
+        
+        template<typename AccessorType>
+        void register_cell_scalar_accessor(SegmentType const & segment, AccessorType accessor, std::string const & name)
+        { register_cell_scalar_accessor(segment.id(), accessor, name); }
+        
+        
+        template<typename AccessorType>
+        void register_cell_vector_accessor(AccessorType accessor, std::string const & name)
+        { register_to_map(registered_cell_vector_data, accessor, name); }
+        
+        template<typename AccessorType>
+        void register_cell_vector_accessor(segment_id_type seg_id, AccessorType accessor, std::string const & name)
+        { register_to_map(registered_segment_cell_vector_data[seg_id], accessor, name); }
+        
+        template<typename AccessorType>
+        void register_cell_vector_accessor(SegmentType const & segment, AccessorType accessor, std::string const & name)
+        { register_cell_vector_accessor(segment.id(), accessor, name); }
+        
+        
+        
+        
+        
+        
+        
+        accessor::dense_container_accessor_t< std::deque<double>, VertexType > vertex_scalar_accessor( std::string const & name, segment_id_type seg_id )
+        {
+          typename std::map< std::string, std::map<segment_id_type, std::deque<double> > >::iterator it = vertex_scalar_data.find(name);
+          if (it == vertex_scalar_data.end()) return accessor::dense_container_accessor_t< std::deque<double>, VertexType >();
+          
+          typename std::map<segment_id_type, std::deque<double> >::iterator jt = it->second.find( seg_id );
+          if (jt == it->second.end()) return accessor::dense_container_accessor_t< std::deque<double>, VertexType >();
+          
+          return accessor::dense_container_accessor<VertexType>( jt->second );
+        }
+        
+        accessor::dense_container_accessor_t< std::deque<double>, VertexType > vertex_scalar_accessor( std::string const & name, SegmentType const & segment )
+        { return vertex_scalar_accessor(name, segment.id()); }
+        
+        accessor::dense_container_accessor_t< std::deque<vector_data_type>, VertexType > vertex_vector_accessor( std::string const & name, segment_id_type seg_id )
+        {
+          typename std::map< std::string, std::map<segment_id_type, std::deque<vector_data_type> > >::iterator it = vertex_vector_data.find(name);
+          if (it == vertex_vector_data.end()) return accessor::dense_container_accessor_t< std::deque<vector_data_type>, VertexType >();
+          
+          typename std::map<segment_id_type, std::deque<vector_data_type> >::iterator jt = it->second.find( seg_id );
+          if (jt == it->second.end()) return accessor::dense_container_accessor_t< std::deque<vector_data_type>, VertexType >();
+          
+          return accessor::dense_container_accessor<VertexType>( jt->second );
+        }
+        
+        accessor::dense_container_accessor_t< std::deque<vector_data_type>, VertexType > vertex_vector_accessor( std::string const & name, SegmentType const & segment )
+        { return vertex_scalar_accessor(name, segment.id()); }
+        
+        
+        
+        accessor::dense_container_accessor_t< std::deque<double>, CellType > cell_scalar_accessor( std::string const & name, segment_id_type seg_id ) 
+        {
+          typename std::map< std::string, std::map<segment_id_type, std::deque<double> > >::iterator it = cell_scalar_data.find(name);
+          if (it == cell_scalar_data.end()) return accessor::dense_container_accessor_t< std::deque<double>, CellType >();
+          
+          typename std::map<segment_id_type, std::deque<double> >::iterator jt = it->second.find( seg_id );
+          if (jt == it->second.end()) return accessor::dense_container_accessor_t< std::deque<double>, CellType >();
+          
+          return accessor::dense_container_accessor<CellType>( jt->second );
+        }
+        
+        accessor::dense_container_accessor_t< std::deque<double>, CellType > cell_scalar_accessor( std::string const & name, SegmentType const & segment )
+        { return cell_scalar_accessor(name, segment.id()); }
+        
+        accessor::dense_container_accessor_t< std::deque<vector_data_type>, CellType > cell_vector_accessor( std::string const & name, segment_id_type seg_id )
+        {
+          typename std::map< std::string, std::map<segment_id_type, std::deque<vector_data_type> > >::iterator it = cell_vector_data.find(name);
+          if (it == cell_vector_data.end()) return accessor::dense_container_accessor_t< std::deque<vector_data_type>, CellType >();
+          
+          typename std::map<segment_id_type, std::deque<vector_data_type> >::iterator jt = it->second.find( seg_id );
+          if (jt == it->second.end()) return accessor::dense_container_accessor_t< std::deque<vector_data_type>, CellType >();
+          
+          return accessor::dense_container_accessor<CellType>( jt->second );
+        }
+        
+        accessor::dense_container_accessor_t< std::deque<vector_data_type>, CellType > cell_vector_accessor( std::string const & name, SegmentType const & segment )
+        { return cell_vector_accessor(name, segment.id()); }
+        
 
       private:
-        std::vector< data_accessor_wrapper<VertexType> >    vertex_data_scalar;
-        std::vector< std::string >                          vertex_data_scalar_names;
-        
-        std::vector< data_accessor_wrapper<VertexType> >    vertex_data_vector;
-        std::vector< std::string >                          vertex_data_vector_names;
-        
-        std::vector< data_accessor_wrapper<VertexType> >    vertex_data_normal;
-        std::vector< std::string >                          vertex_data_normal_names;
-        
-        std::vector< data_accessor_wrapper<CellType> >      cell_data_scalar;
-        std::vector< std::string >                          cell_data_scalar_names;
-        
-        std::vector< data_accessor_wrapper<CellType> >      cell_data_vector;
-        std::vector< std::string >                          cell_data_vector_names;
-        
-        std::vector< data_accessor_wrapper<CellType> >      cell_data_normal;
-        std::vector< std::string >                          cell_data_normal_names;
+//         std::vector< data_accessor_wrapper<VertexType> >    vertex_data_scalar;
+//         std::vector< std::string >                          vertex_data_scalar_names;
+//         
+//         std::vector< data_accessor_wrapper<VertexType> >    vertex_data_vector;
+//         std::vector< std::string >                          vertex_data_vector_names;
+//         
+//         std::vector< data_accessor_wrapper<VertexType> >    vertex_data_normal;
+//         std::vector< std::string >                          vertex_data_normal_names;
+//         
+//         std::vector< data_accessor_wrapper<CellType> >      cell_data_scalar;
+//         std::vector< std::string >                          cell_data_scalar_names;
+//         
+//         std::vector< data_accessor_wrapper<CellType> >      cell_data_vector;
+//         std::vector< std::string >                          cell_data_vector_names;
+//         
+//         std::vector< data_accessor_wrapper<CellType> >      cell_data_normal;
+//         std::vector< std::string >                          cell_data_normal_names;
         
         // Quantities read:
         std::vector<std::pair<std::size_t, std::string> >         vertex_data_scalar_read;
@@ -1105,324 +1222,56 @@ namespace viennagrid
 
         std::vector<std::pair<std::size_t, std::string> >         cell_data_scalar_read;
         std::vector<std::pair<std::size_t, std::string> >         cell_data_vector_read;
+        
+        
+        
+        
+        
+        std::map< std::string, std::map<segment_id_type, std::deque<double> > > vertex_scalar_data;
+        std::map< std::string, std::map<segment_id_type, std::deque<vector_data_type> > > vertex_vector_data;
+        
+        std::map< std::string, std::map<segment_id_type, std::deque<double> > > cell_scalar_data;
+        std::map< std::string, std::map<segment_id_type, std::deque<vector_data_type> > > cell_vector_data;
+        
+        
+        
+        
+        
+        VertexScalarOutputAccessorContainer          registered_vertex_scalar_data;
+        VertexVectorOutputAccessorContainer          registered_vertex_vector_data;
+        
+        CellScalarOutputAccessorContainer          registered_cell_scalar_data;
+        CellVectorOutputAccessorContainer          registered_cell_vector_data;
+        
+        std::map< segment_id_type, VertexScalarOutputAccessorContainer > registered_segment_vertex_scalar_data;
+        std::map< segment_id_type, VertexVectorOutputAccessorContainer > registered_segment_vertex_vector_data;
+        
+        std::map< segment_id_type, CellScalarOutputAccessorContainer >   registered_segment_cell_scalar_data;
+        std::map< segment_id_type, CellVectorOutputAccessorContainer >   registered_segment_cell_vector_data;
+        
+        
+        
     }; //class vtk_reader
 
 
     /** @brief Convenience function for importing a mesh using a single line of code. */
-    template < typename CellTypeOrTag, typename DomainType > 
+    template <typename DomainType, typename SegmentationType > 
+    int import_vtk(DomainType & domain, SegmentationType & segmentation, std::string const & filename)
+    {
+      vtk_reader<DomainType, SegmentationType> vtk_reader;
+      return vtk_reader(domain, segmentation, filename);
+    }
+    
+    template <typename DomainType> 
     int import_vtk(DomainType & domain, std::string const & filename)
     {
-      vtk_reader<CellTypeOrTag, DomainType> vtk_reader;
+      vtk_reader<DomainType> vtk_reader;
       return vtk_reader(domain, filename);
     }
 
 
 
 
-
-    //
-    // Convenience functions for adding vertex-based data
-    //    
-    
-    // scalar data
-    /** @brief Registers scalar-valued data on vertices for special treatment by the VTK reader.
-      *
-      * @tparam KeyType     Type of the key used with ViennaData
-      * @tparam DataType    Type of the data as used with ViennaData
-      * @tparam DomainType  The ViennaGrid domain type
-      * @param  reader      The XML reader object for which the data should be registered
-      * @param  key         The key object for ViennaData
-      * @param  quantity_name     The quantity name given in the VTK file
-      */
-    template <typename KeyType, typename DataType, typename CellTypeOrTag, typename DomainType>
-    vtk_reader<CellTypeOrTag, DomainType> & add_scalar_data_on_vertices(vtk_reader<CellTypeOrTag, DomainType> & reader,
-                                                         KeyType const & key,
-                                                         std::string quantity_name)
-    {
-      //typedef typename DomainType::config_type                             DomainConfiguration;
-      typedef typename result_of::element<DomainType, viennagrid::vertex_tag>::type      VertexType;
-      
-      data_accessor_wrapper<VertexType> wrapper(new global_scalar_data_accessor<VertexType, KeyType, DataType>(key));
-      reader.add_scalar_data_on_vertices(wrapper, quantity_name);
-      return reader;
-    }
-
-    /** @brief Registers scalar-valued data on vertices for special treatment by the VTK reader. Operates on a per-segment basis.
-      *
-      * @tparam KeyType     Type of the key used with ViennaData
-      * @tparam DataType    Type of the data as used with ViennaData
-      * @tparam DomainType  The ViennaGrid domain type
-      * @param  reader      The XML reader object for which the data should be registered
-      * @param  key         The key object for ViennaData
-      * @param  quantity_name     The quantity name given in the VTK file
-      */
-    template <typename KeyType, typename DataType, typename CellTypeOrTag, typename DomainType>
-    vtk_reader<CellTypeOrTag, DomainType> & add_scalar_data_on_vertices_per_segment(vtk_reader<CellTypeOrTag, DomainType> & reader,
-                                                                     KeyType const & key,
-                                                                     std::string quantity_name)
-    {
-      //typedef typename DomainType::config_type                             DomainConfiguration;
-      typedef typename result_of::element<DomainType, viennagrid::vertex_tag>::type      VertexType;
-      
-      data_accessor_wrapper<VertexType> wrapper(new segment_scalar_data_accessor<VertexType, KeyType, DataType>(key));
-      reader.add_scalar_data_on_vertices(wrapper, quantity_name);
-      return reader;
-    }
-
-    // vector data
-    /** @brief Registers vector-valued data on vertices for special treatment by the VTK reader.
-      *
-      * @tparam KeyType     Type of the key used with ViennaData
-      * @tparam DataType    Type of the data as used with ViennaData
-      * @tparam DomainType  The ViennaGrid domain type
-      * @param  reader      The XML reader object for which the data should be registered
-      * @param  key         The key object for ViennaData
-      * @param  quantity_name     The quantity name given in the VTK file
-      */
-    template <typename KeyType, typename DataType, typename CellTypeOrTag, typename DomainType>
-    vtk_reader<CellTypeOrTag, DomainType> & add_vector_data_on_vertices(vtk_reader<CellTypeOrTag, DomainType> & reader,
-                                                         KeyType const & key,
-                                                         std::string quantity_name)
-    {
-      //typedef typename DomainType::config_type                             DomainConfiguration;
-      typedef typename result_of::element<DomainType, viennagrid::vertex_tag>::type      VertexType;
-      
-      data_accessor_wrapper<VertexType> wrapper(new global_vector_data_accessor<VertexType, KeyType, DataType>(key));
-      reader.add_vector_data_on_vertices(wrapper, quantity_name);
-      return reader;
-    }
-
-    /** @brief Registers vector-valued data on vertices for special treatment by the VTK reader. Operates on a per-segment basis.
-      *
-      * @tparam KeyType     Type of the key used with ViennaData
-      * @tparam DataType    Type of the data as used with ViennaData
-      * @tparam DomainType  The ViennaGrid domain type
-      * @param  reader      The XML reader object for which the data should be registered
-      * @param  key         The key object for ViennaData
-      * @param  quantity_name     The quantity name given in the VTK file
-      */
-    template <typename KeyType, typename DataType, typename CellTypeOrTag, typename DomainType>
-    vtk_reader<CellTypeOrTag, DomainType> & add_vector_data_on_vertices_per_segment(vtk_reader<CellTypeOrTag, DomainType> & reader,
-                                                                     KeyType const & key,
-                                                                     std::string quantity_name)
-    {
-      //typedef typename DomainType::config_type                             DomainConfiguration;
-      typedef typename result_of::element<DomainType, viennagrid::vertex_tag>::type      VertexType;
-      
-      data_accessor_wrapper<VertexType> wrapper(new segment_vector_data_accessor<VertexType, KeyType, DataType>(key));
-      reader.add_vector_data_on_vertices(wrapper, quantity_name);
-      return reader;
-    }
-
-
-    // normal data
-    /** @brief Registers vector-valued data (normals) on vertices for special treatment by the VTK reader. Equivalent to add_vector_data_on_vertices()
-      *
-      * @tparam KeyType     Type of the key used with ViennaData
-      * @tparam DataType    Type of the data as used with ViennaData
-      * @tparam DomainType  The ViennaGrid domain type
-      * @param  reader      The XML reader object for which the data should be registered
-      * @param  key         The key object for ViennaData
-      * @param  quantity_name     The quantity name given in the VTK file
-      */
-    template <typename KeyType, typename DataType, typename CellTypeOrTag, typename DomainType>
-    vtk_reader<CellTypeOrTag, DomainType> & add_normal_data_on_vertices(vtk_reader<CellTypeOrTag, DomainType> & reader,
-                                                         KeyType const & key,
-                                                         std::string quantity_name)
-    {
-      //typedef typename DomainType::config_type                             DomainConfiguration;
-      typedef typename result_of::element<DomainType, viennagrid::vertex_tag>::type      VertexType;
-      
-      data_accessor_wrapper<VertexType> wrapper(new global_vector_data_accessor<VertexType, KeyType, DataType>(key));
-      reader.add_vector_data_on_vertices(wrapper, quantity_name);
-      return reader;
-    }
-
-    /** @brief Registers vector-valued data (normals) on vertices for special treatment by the VTK reader. Operates on a per-segment basis and is equivalent to add_vector_data_on_vertices_per_segment()
-      *
-      * @tparam KeyType     Type of the key used with ViennaData
-      * @tparam DataType    Type of the data as used with ViennaData
-      * @tparam DomainType  The ViennaGrid domain type
-      * @param  reader      The XML reader object for which the data should be registered
-      * @param  key         The key object for ViennaData
-      * @param  quantity_name     The quantity name given in the VTK file
-      */
-    template <typename KeyType, typename DataType, typename CellTypeOrTag, typename DomainType>
-    vtk_reader<CellTypeOrTag, DomainType> & add_normal_data_on_vertices_per_segment(vtk_reader<CellTypeOrTag, DomainType> & reader,
-                                                                     KeyType const & key,
-                                                                     std::string quantity_name)
-    {
-      //typedef typename DomainType::config_type                             DomainConfiguration;
-      typedef typename result_of::element<DomainType, viennagrid::vertex_tag>::type      VertexType;
-      
-      data_accessor_wrapper<VertexType> wrapper(new segment_vector_data_accessor<VertexType, KeyType, DataType>(key));
-      reader.add_vector_data_on_vertices(wrapper, quantity_name);
-      return reader;
-    }
-
-
-
-
-    //
-    // Convenience functions for adding cell-based data
-    //
-
-
-
-    // scalar data
-    /** @brief Registers scalar-valued data on cells for special treatment by the VTK reader.
-      *
-      * @tparam KeyType     Type of the key used with ViennaData
-      * @tparam DataType    Type of the data as used with ViennaData
-      * @tparam DomainType  The ViennaGrid domain type
-      * @param  reader      The XML reader object for which the data should be registered
-      * @param  key         The key object for ViennaData
-      * @param  quantity_name     The quantity name given in the VTK file
-      */
-    template <typename KeyType, typename DataType, typename CellTypeOrTag, typename DomainType>
-    vtk_reader<CellTypeOrTag, DomainType> & add_scalar_data_on_cells(vtk_reader<CellTypeOrTag, DomainType> & reader,
-                                                      KeyType const & key,
-                                                      std::string quantity_name)
-    {
-      typedef typename result_of::element_tag<CellTypeOrTag>::type                   CellTag;
-      typedef typename result_of::element<DomainType, CellTag>::type     CellType;
-      
-      data_accessor_wrapper<CellType> wrapper(new global_scalar_data_accessor<CellType, KeyType, DataType>(key));
-      reader.add_scalar_data_on_cells(wrapper, quantity_name);
-      return reader;
-    }
-
-    /** @brief Registers scalar-valued data on cells for special treatment by the VTK reader. Operates on a per-segment basis.
-      *
-      * @tparam KeyType     Type of the key used with ViennaData
-      * @tparam DataType    Type of the data as used with ViennaData
-      * @tparam DomainType  The ViennaGrid domain type
-      * @param  reader      The XML reader object for which the data should be registered
-      * @param  key         The key object for ViennaData
-      * @param  quantity_name     The quantity name given in the VTK file
-      */
-    template <typename KeyType, typename DataType, typename CellTypeOrTag, typename DomainType>
-    vtk_reader<CellTypeOrTag, DomainType> & add_scalar_data_on_cells_per_segment(vtk_reader<CellTypeOrTag, DomainType> & reader,
-                                                                  KeyType const & key,
-                                                                  std::string quantity_name)
-    {
-      typedef typename result_of::element_tag<CellTypeOrTag>::type                   CellTag;
-      typedef typename result_of::element<DomainType, CellTag>::type     CellType;
-      
-      data_accessor_wrapper<CellType> wrapper(new segment_scalar_data_accessor<CellType, KeyType, DataType>(key));
-      reader.add_scalar_data_on_cells(wrapper, quantity_name);
-      return reader;
-    }
-
-    // vector data
-    /** @brief Registers vector-valued data on cells for special treatment by the VTK reader.
-      *
-      * @tparam KeyType     Type of the key used with ViennaData
-      * @tparam DataType    Type of the data as used with ViennaData
-      * @tparam DomainType  The ViennaGrid domain type
-      * @param  reader      The XML reader object for which the data should be registered
-      * @param  key         The key object for ViennaData
-      * @param  quantity_name     The quantity name given in the VTK file
-      */
-    template <typename KeyType, typename DataType, typename CellTypeOrTag, typename DomainType>
-    vtk_reader<CellTypeOrTag, DomainType> & add_vector_data_on_cells(vtk_reader<CellTypeOrTag, DomainType> & reader,
-                                                      KeyType const & key,
-                                                      std::string quantity_name)
-    {
-      typedef typename result_of::element_tag<CellTypeOrTag>::type                   CellTag;
-      typedef typename result_of::element<DomainType, CellTag>::type     CellType;
-      
-      data_accessor_wrapper<CellType> wrapper(new global_vector_data_accessor<CellType, KeyType, DataType>(key));
-      reader.add_vector_data_on_cells(wrapper, quantity_name);
-      return reader;
-    }
-
-    /** @brief Registers vector-valued data on cells for special treatment by the VTK reader. Operates on a per-segment basis.
-      *
-      * @tparam KeyType     Type of the key used with ViennaData
-      * @tparam DataType    Type of the data as used with ViennaData
-      * @tparam DomainType  The ViennaGrid domain type
-      * @param  reader      The XML reader object for which the data should be registered
-      * @param  key         The key object for ViennaData
-      * @param  quantity_name     The quantity name given in the VTK file
-      */
-    template <typename KeyType, typename DataType, typename CellTypeOrTag, typename DomainType>
-    vtk_reader<CellTypeOrTag, DomainType> & add_vector_data_on_cells_per_segment(vtk_reader<CellTypeOrTag, DomainType> & reader,
-                                                                  KeyType const & key,
-                                                                  std::string quantity_name)
-    {
-      typedef typename result_of::element_tag<CellTypeOrTag>::type                   CellTag;
-      typedef typename result_of::element<DomainType, CellTag>::type     CellType;
-      
-      data_accessor_wrapper<CellType> wrapper(new segment_vector_data_accessor<CellType, KeyType, DataType>(key));
-      reader.add_vector_data_on_cells(wrapper, quantity_name);
-      return reader;
-    }
-
-    // cell data
-    /** @brief Registers vector-valued data (normals) on cells for special treatment by the VTK reader.
-      *
-      * @tparam KeyType     Type of the key used with ViennaData
-      * @tparam DataType    Type of the data as used with ViennaData
-      * @tparam DomainType  The ViennaGrid domain type
-      * @param  reader      The XML reader object for which the data should be registered
-      * @param  key         The key object for ViennaData
-      * @param  quantity_name     The quantity name given in the VTK file
-      */
-    template <typename KeyType, typename DataType, typename CellTypeOrTag, typename DomainType>
-    vtk_reader<CellTypeOrTag, DomainType> & add_normal_data_on_cells(vtk_reader<CellTypeOrTag, DomainType> & reader,
-                                                      KeyType const & key,
-                                                      std::string quantity_name)
-    {
-      typedef typename result_of::element_tag<CellTypeOrTag>::type                   CellTag;
-      typedef typename result_of::element<DomainType, CellTag>::type     CellType;
-      
-      data_accessor_wrapper<CellType> wrapper(new global_vector_data_accessor<CellType, KeyType, DataType>(key));
-      reader.add_vector_data_on_cells(wrapper, quantity_name);
-      return reader;
-    }
-
-    /** @brief Registers vector-valued data (normals) on cells for special treatment by the VTK reader. Operates on a per-segment basis.
-      *
-      * @tparam KeyType     Type of the key used with ViennaData
-      * @tparam DataType    Type of the data as used with ViennaData
-      * @tparam DomainType  The ViennaGrid domain type
-      * @param  reader      The XML reader object for which the data should be registered
-      * @param  key         The key object for ViennaData
-      * @param  quantity_name     The quantity name given in the VTK file
-      */
-    template <typename KeyType, typename DataType, typename CellTypeOrTag, typename DomainType>
-    vtk_reader<CellTypeOrTag, DomainType> & add_normal_data_on_cells_per_segment(vtk_reader<CellTypeOrTag, DomainType> & reader,
-                                                                  KeyType const & key,
-                                                                  std::string quantity_name)
-    {
-      typedef typename result_of::element_tag<CellTypeOrTag>::type                   CellTag;
-      typedef typename result_of::element<DomainType, CellTag>::type     CellType;
-      
-      data_accessor_wrapper<CellType> wrapper(new segment_vector_data_accessor<CellType, KeyType, DataType>(key));
-      reader.add_vector_data_on_cells(wrapper, quantity_name);
-      return reader;
-    }
-
-    /** @brief Returns the names of all scalar-valued data read for vertices */
-    template <typename ReaderType>
-    std::vector<std::pair<std::size_t, std::string> > const & 
-    get_scalar_data_on_vertices(ReaderType const & reader) { return reader.get_scalar_data_on_vertices(); }
-    
-    /** @brief Returns the names of all vector-valued data read for vertices */
-    template <typename ReaderType>
-    std::vector<std::pair<std::size_t, std::string> > const & 
-    get_vector_data_on_vertices(ReaderType const & reader) { return reader.get_vector_data_on_vertices(); }
-
-    /** @brief Returns the names of all scalar-valued data read for cells */
-    template <typename ReaderType>
-    std::vector<std::pair<std::size_t, std::string> > const & 
-    get_scalar_data_on_cells(ReaderType const & reader) { return reader.get_scalar_data_on_cells(); }
-    
-    /** @brief Returns the names of all vector-valued data read for cells */
-    template <typename ReaderType>
-    std::vector<std::pair<std::size_t, std::string> > const & 
-    get_vector_data_on_cells(ReaderType const & reader) { return reader.get_vector_data_on_cells(); }
 
 
   } //namespace io

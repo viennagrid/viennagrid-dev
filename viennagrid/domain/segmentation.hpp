@@ -68,8 +68,15 @@ namespace viennagrid
         {
             typedef typename element_collection<typename segment_t<segmentation_type>::view_type>::type type;
         };
+        
+        template<typename segmentation_type>
+        struct element_collection< const segment_t<segmentation_type> >
+        {
+            typedef typename element_collection<const typename segment_t<segmentation_type>::view_type>::type type;
+        };
       
       
+        
         template<typename segmentation_type>
         struct point_type< segment_t<segmentation_type> >
         {
@@ -99,9 +106,6 @@ namespace viennagrid
         
       
       
-
-
-      
         template<typename segmentation_type, typename element_type_or_tag>
         struct element_range< segment_t<segmentation_type>, element_type_or_tag >
         {
@@ -113,6 +117,7 @@ namespace viennagrid
         {
             typedef typename const_element_range<typename segment_t<segmentation_type>::view_type, element_type_or_tag>::type type;
         };
+        
         
         
         template<typename segmentation_type>
@@ -186,12 +191,12 @@ namespace viennagrid
     { return element_range_proxy< const typename segment_t<segmentation_type>::view_type >(segment.view()); }
     
     
+    
     template<typename ElementTypeOrTag, typename SegmentationType>
     typename viennagrid::result_of::id_type<
       typename viennagrid::result_of::element< segment_t<SegmentationType>, ElementTypeOrTag>::type
     >::type max_id( segment_t<SegmentationType> const & segment )
     { return max_id<ElementTypeOrTag>( segment.view() ); }
-    
     
     
     
@@ -212,6 +217,30 @@ namespace viennagrid
     template<typename segmentation_type, typename value_type>
     typename result_of::const_handle<typename segment_t<segmentation_type>::view_type, value_type>::type handle( segment_t<segmentation_type> const & segment, value_type const & element)
     { return handle( segment.view(), element ); }
+    
+    
+    
+    template<typename SegmentationType>
+    typename result_of::point_type< segment_t<SegmentationType> >::type & point(segment_t<SegmentationType> & segment, typename result_of::vertex< segment_t<SegmentationType> >::type & vertex)
+    { return point( segment.view(), vertex ); }
+    
+    template<typename SegmentationType>
+    typename result_of::point_type< segment_t<SegmentationType> >::type const & point( segment_t<SegmentationType> const & segment, typename result_of::vertex< segment_t<SegmentationType> >::type const & vertex)
+    { return point( segment.view(), vertex ); }
+    
+    template<typename SegmentationType>
+    typename result_of::point_type< segment_t<SegmentationType> >::type & point(segment_t<SegmentationType> & segment, typename result_of::vertex_handle< segment_t<SegmentationType> >::type vertex)
+    { return point( segment.view(), vertex ); }
+    
+    template<typename SegmentationType>
+    typename result_of::point_type< segment_t<SegmentationType> >::type const & point( segment_t<SegmentationType> const & segment, typename result_of::const_vertex_handle< segment_t<SegmentationType> >::type vertex)
+    { return point( segment.view(), vertex ); }
+    
+    
+    
+    
+    
+    
     
     
     namespace result_of
@@ -320,7 +349,9 @@ namespace viennagrid
         segment_type & create_segment() { return get_create_segment( ++highest_id ); }
         
         segment_type & operator()( segment_id_type const & segment_id ) { return get_create_segment(segment_id); }
+        segment_type & operator[]( segment_id_type const & segment_id ) { return (*this)(segment_id); }
         
+        segment_id_type max_id() const { return highest_id; }
 
         
         
@@ -362,6 +393,9 @@ namespace viennagrid
         
         const_iterator begin() const { return cbegin(); }
         const_iterator end() const { return cend(); }
+        
+        std::size_t size() const { return segment_id_map.size(); }
+        bool empty() const { return segment_id_map.empty(); }
         
         iterator find( segment_id_type const & segment_id ) { return iterator( segment_id_map.find(segment_id) ); }
         const_iterator find( segment_id_type const & segment_id ) const { return const_iterator( segment_id_map.find(segment_id) ); }

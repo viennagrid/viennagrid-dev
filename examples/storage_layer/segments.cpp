@@ -61,7 +61,7 @@ int main()
 
   
   segment_type seg0 = segmentation.create_segment();
-  segment_type seg1 = segmentation( segment_id_type(4) );
+  segment_type seg1 = segmentation[ segment_id_type(4) ];
   segment_type seg2 = segmentation.create_segment();
   
   for ( segmentation_type::iterator it = segmentation.begin(); it != segmentation.end(); ++it)

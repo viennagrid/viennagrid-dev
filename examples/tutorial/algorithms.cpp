@@ -70,6 +70,7 @@ int main()
   typedef my_domain_config::PointType PointType;
   
   typedef viennagrid::domain_t< my_domain_config > Domain;  
+  typedef viennagrid::result_of::segmentation<Domain>::type Segmentation;
   typedef viennagrid::result_of::domain_view<Domain>::type Segment;
   
   typedef viennagrid::tetrahedron_tag CellTag;
@@ -90,18 +91,18 @@ int main()
   std::cout << std::endl;
   
   Domain domain;
-  std::vector<Segment> segments;
+  Segmentation segmentation(domain);
   
   //
   // Read domain from Netgen file
   //
   try
   {
-    viennagrid::io::netgen_reader<CellType> reader;
+    viennagrid::io::netgen_reader reader;
     #ifdef _MSC_VER      //Visual Studio builds in a subfolder
-    reader(domain, segments, "../../examples/data/cube48.mesh");
+    reader(domain, segmentation, "../../examples/data/cube48.mesh");
     #else
-    reader(domain, segments, "../../examples/data/cube48.mesh");
+    reader(domain, segmentation, "../../examples/data/cube48.mesh");
     #endif
   }
   catch (std::exception & e)
@@ -207,7 +208,7 @@ int main()
   viennagrid::refine_uniformly<viennagrid::tetrahedron_tag>(domain, uniformly_refined_domain);
   
   {
-    viennagrid::io::vtk_writer<Domain, CellType> writer;
+    viennagrid::io::vtk_writer<Domain> writer;
     writer(uniformly_refined_domain, "uniform_refinement.vtu");
   }
   
@@ -226,7 +227,7 @@ int main()
   viennagrid::refine_cell<viennagrid::tetrahedron_tag>(domain, adaptively_refined_domain, cell_refinement_accessor);
   
   {
-    viennagrid::io::vtk_writer<Domain, CellType> writer;
+    viennagrid::io::vtk_writer<Domain> writer;
     writer(adaptively_refined_domain, "adaptively_refinement.vtu");
   }
 

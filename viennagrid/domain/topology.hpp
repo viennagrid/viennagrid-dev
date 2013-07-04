@@ -1081,14 +1081,14 @@ namespace viennagrid
     
     
     
-    template<typename element_type_or_tag, typename domain_type>
-    typename result_of::element_range<domain_type, element_type_or_tag>::type elements(domain_type & domain)
+    template<typename element_type_or_tag, typename WrappedConfigType>
+    typename result_of::element_range<domain_t<WrappedConfigType>, element_type_or_tag>::type elements(domain_t<WrappedConfigType> & domain)
     {
         return elements<element_type_or_tag>( element_collection(domain) );
     }
     
-    template<typename element_type_or_tag, typename domain_type>
-    typename result_of::const_element_range<domain_type, element_type_or_tag>::type elements(domain_type const & domain)
+    template<typename element_type_or_tag, typename WrappedConfigType>
+    typename result_of::const_element_range<domain_t<WrappedConfigType>, element_type_or_tag>::type elements(domain_t<WrappedConfigType> const & domain)
     {
         return elements<element_type_or_tag>( element_collection(domain) );
     }

@@ -62,8 +62,8 @@ namespace viennagrid
                 typedef view_t::pointer pointer;
                 typedef typename std::iterator_traits<base>::iterator_category iterator_category;
                 
-                handle_type & handle() { return base::operator*(); }
-                const_handle_type & handle() const { return base::operator*(); }
+                handle_type handle() { return base::operator*(); }
+                const_handle_type handle() const { return base::operator*(); }
 
                 reference operator* () { return *(base::operator*()); }
                 const reference operator* () const { return *(base::operator*()); }
@@ -187,8 +187,8 @@ namespace viennagrid
             reference back() { return *(handle_container.back()); }
             const_reference back() const { return *(handle_container.back()); }
             
-            reference operator[]( size_type index ) { return *(handle_container[index]); }
-            const_reference operator[]( size_type index ) const { return *(handle_container[index]); }
+            reference operator[]( size_type index ) { iterator it = begin(); std::advance(it, index); return *it; }
+            const_reference operator[]( size_type index ) const { const_iterator it = begin(); std::advance(it, index); return *it; }
             
             
             size_type size() const { return handle_container.size(); }
