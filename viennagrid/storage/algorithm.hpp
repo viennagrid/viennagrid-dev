@@ -41,37 +41,6 @@ namespace viennagrid
                 for_each_functor<collection_type, functor> ff(collection, f);
                 viennagrid::meta::typelist::for_each<typelist>(ff);
             }
-//         }
-//         
-//         
-//         
-//         namespace container_collection
-//         {
-//             template<typename collection_type, typename functor>
-//             class for_each_functor
-//             {
-//             public:
-//                 for_each_functor(collection_type & _collection, functor _f) : collection(_collection), f(_f) {}
-//                 
-//                 template<typename value_type, typename container_type>
-//                 void operator()( viennagrid::meta::tag< viennagrid::meta::static_pair<value_type, container_type> > )
-//                 { f( viennagrid::storage::collection::get<value_type>(collection) ); }
-//                 
-//             private:
-//                 collection_type & collection;
-//                 functor f;
-//             };
-            
-
-            
-//             template<typename typelist, typename collection_type, typename functor>
-//             void for_each_typelist(collection_type & collection, functor f)
-//             {
-//                 for_each_functor<collection_type, functor> ff(collection, f);
-//                 viennagrid::meta::typelist::for_each<typelist>(ff);
-//             }
-            
-            
             
             
             
@@ -121,8 +90,6 @@ namespace viennagrid
                     for (typename src_container_type::const_iterator it = src_container.begin(); it != src_container.end(); ++it)
                         if (pred(*it))
                             dst_container.insert( *it );
-                            //viennagrid::storage::container::insert(dst_container, *it);
-                        //viennagrid::storage::container::insert_helper<dst_container_type>::insert_noreturn(dst_container, *it);
                 }
                 
             private:

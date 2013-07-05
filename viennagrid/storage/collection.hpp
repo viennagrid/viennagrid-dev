@@ -63,45 +63,6 @@ namespace viennagrid
         }
         
         
-        
-//         template<typename typelist>
-//         class collection_layer;
-// 
-//         template<typename _typelist>
-//         class collection_t : public collection_layer< typename viennagrid::meta::typelist::result_of::no_duplicates<_typelist>::type >
-//         {
-//         public:
-//             typedef typename viennagrid::meta::typelist::result_of::no_duplicates<_typelist>::type typelist;
-//             typedef collection_layer< typelist > base;
-//             
-//             using base::get;
-//         private:
-//         };
-//         
-// 
-//         template<typename head, typename tail>
-//         class collection_layer< viennagrid::meta::typelist_t<head, tail> > : public collection_layer<tail>
-//         {
-//         public:
-//             typedef collection_layer< tail > base;
-//             typedef head type;
-//             
-//             using base::get;
-//             head & get( viennagrid::meta::tag<type> ) { return element; }
-//             const head & get( viennagrid::meta::tag<type> ) const { return element; }
-//             
-//         private:
-//             type element;
-//         };
-// 
-//         template<>
-//         class collection_layer< viennagrid::meta::null_type >
-//         {
-//         public:            
-//             void get();
-//         };
-        
-        
         namespace collection
         {
             template<typename type, typename typemap>

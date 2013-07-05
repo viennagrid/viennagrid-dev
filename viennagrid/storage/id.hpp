@@ -145,20 +145,6 @@ namespace viennagrid
             
         }
         
-        
-//         template<typename value_type_, typename base_id_type>
-//         smart_id<value_type_, base_id_type> operator+( const smart_id<value_type_, base_id_type> & lhs, const smart_id<value_type_, base_id_type> & rhs )
-//         {
-//             return smart_id<value_type_, base_id_type>( lhs.get() + rhs.get() );
-//         }
-        
-//         template<typename value_type_, typename base_id_type>
-//         base_id_type operator-( const smart_id<value_type_, base_id_type> & lhs, const smart_id<value_type_, base_id_type> & rhs )
-//         {
-//             return smart_id<value_type_, base_id_type>( lhs.get() - rhs.get() );
-//         }
-        
-        
 
      
         template<typename id_type_>

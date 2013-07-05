@@ -1300,7 +1300,6 @@ namespace viennagrid
         
         namespace view
         {
-            //typedef viennagrid::meta::make_typemap<viennagrid::storage::default_tag, viennagrid::storage::std_deque_tag<> >::type default_view_container_config;
             typedef viennagrid::meta::make_typemap<
                         viennagrid::storage::default_tag,   viennagrid::storage::handled_container_tag<viennagrid::storage::std_deque_tag, viennagrid::storage::no_handle_tag>
                     >::type default_view_container_config;
@@ -1393,7 +1392,6 @@ namespace viennagrid
                 
                 typedef typename viennagrid::storage::result_of::collection<
                     typename viennagrid::storage::view::view_container_typemap<
-                        //typename viennagrid::storage::container_collection::result_of::container_typelist<container_collection_type>::type,
                         container_typelist,
                         view_container_config
                     >::type

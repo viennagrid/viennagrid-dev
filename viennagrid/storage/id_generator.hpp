@@ -88,7 +88,6 @@ namespace viennagrid
             
             typedef viennagrid::meta::typelist_t< viennagrid::meta::static_pair<value_type, id_tag>, tail> config_type;
             
-            //typedef smart_id<value_type, base_id_type> id_type;
             typedef typename result_of::id<value_type, id_tag>::type id_type;
             
             continuous_id_generator_layer_t() : base(), last_id(0) {}

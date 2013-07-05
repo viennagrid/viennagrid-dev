@@ -37,7 +37,6 @@ namespace viennagrid
                         default_container
                     >::type container_tag_pair;
                     
-                    //typedef typename viennagrid::storage::result_of::container_from_tag<value_type, typename container_tag_pair::second>::type type;
                     typedef typename viennagrid::storage::result_of::container<value_type, typename container_tag_pair::second>::type type;
                 };
                 
@@ -64,45 +63,6 @@ namespace viennagrid
                 };
                 
                 
-                
-//                 //
-//                 // Generates a typelist of the container types
-//                 //               
-//                 template<typename container_collection_type>
-//                 struct container_typelist {};
-//                 
-//                 template<typename typemap_>
-//                 struct container_typelist< collection_t<typemap_> >
-//                 {
-//                     typedef typename viennagrid::meta::typemap::result_of::value_typelist<typemap_>::type type;
-//                 };
-//                 
-//                 template<typename typemap_>
-//                 struct container_typelist< const collection_t<typemap_> >
-//                 {
-//                     typedef typename viennagrid::meta::typemap::result_of::value_typelist<typemap_>::type type;
-//                 };
-//                 
-//                 
-//                 //
-//                 // Generates a typelist of the value types
-//                 //               
-// 
-//                 template<typename container_collection_type>
-//                 struct value_typelist {};
-//                 
-//                 template<typename typemap_>
-//                 struct value_typelist< collection_t<typemap_> >
-//                 {
-//                     typedef typename viennagrid::meta::typemap::result_of::key_typelist<typemap_>::type type;
-//                 };
-//                 
-//                 template<typename typemap_>
-//                 struct value_typelist< const collection_t<typemap_> >
-//                 {
-//                     typedef typename viennagrid::meta::typemap::result_of::key_typelist<typemap_>::type type;
-//                 };
-                                
             } // namespace result_of
             
         } // namespace container_collection
@@ -155,27 +115,6 @@ namespace viennagrid
             typedef viennagrid::meta::make_typemap<
                         viennagrid::storage::default_tag,   viennagrid::storage::handled_container_tag<viennagrid::storage::std_deque_tag, viennagrid::storage::pointer_handle_tag>
                     >::type default_container_config;
-            
-//             template<typename element_type, typename container_collection>
-//             typename viennagrid::storage::result_of::container_of< container_collection, element_type>::type & get( container_collection & collection )
-//             {
-//                 typedef typename viennagrid::storage::result_of::container_of< container_collection, element_type>::type container_type;
-//                 return collection.get( viennagrid::meta::tag<container_type>() );                
-//             }
-//             
-//             template<typename element_type, typename container_collection>
-//             const typename viennagrid::storage::result_of::container_of< container_collection, element_type>::type & get( const container_collection & collection )
-//             {
-//                 typedef typename viennagrid::storage::result_of::container_of< container_collection, element_type>::type container_type;
-//                 return collection.get( viennagrid::meta::tag<container_type>() );                
-//             }
-            
-            
-            
-            
-            
-            
-            
             
             
             template<typename container_collection_type, typename element_type, typename search_result>

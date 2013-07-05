@@ -204,22 +204,6 @@ namespace viennagrid
             }
             
             
-//             // generic
-//             template<typename container_type, typename handle_type>
-//             typename result_of::value_type<handle_type>::type & dereference_handle( container_type & container, handle_type handle )
-//             {
-//                 return dereference_handle(container, handle, typename result_of::handle_tag<handle_type>::type());
-//             }
-//             
-//             template<typename container_type, typename handle_type>
-//             typename result_of::value_type<handle_type>::type const & dereference_handle( container_type const & container, handle_type handle )
-//             {
-//                 return dereference_handle(container, handle, typename result_of::handle_tag<handle_type>::type());
-//             }
-            
-            
-            
-            
             template<typename container_type, typename value_type, typename handle_tag>
             struct handle_helper;
 

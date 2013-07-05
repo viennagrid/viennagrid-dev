@@ -107,12 +107,6 @@ namespace viennagrid
             void set_handle_at(handle_type handle, std::size_t pos)
             { container->set_handle(handle, pos); }
 
-//             { viennagrid::advance(handle_begin(), pos) = handle; }
-            
-            
-//             const_handle_type set_handle_at(std::size_t pos) const
-//             { return *viennagrid::advance(handle_begin(), pos); }
-            
             container_type * get_base_container() { return container; }
             const container_type * get_base_container() const { return container; }
 

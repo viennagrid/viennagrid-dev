@@ -168,7 +168,6 @@ namespace viennagrid
             {
                 std::pair<typename container_type::iterator, bool> tmp = container_type::insert( element );
                 return std::make_pair( handled_container_type::handle(*tmp.first), tmp.second);
-//                 return std::make_pair( handle::iterator_to_handle<container_type, handle_tag>::convert(tmp.first), tmp.second);
             }
         };
 

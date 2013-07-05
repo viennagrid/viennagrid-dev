@@ -47,15 +47,12 @@ namespace viennagrid
                 
                 std::pair<handle_type, bool> ret = container.insert( element );
                 
-                //container.dereference_handle(ret.first).set_container(collection);
 
                 if (call_callback)
                     viennagrid::storage::container_collection_element::insert_callback(
                         container.dereference_handle(ret.first),
                         ret.second,
                         inserter);
-                
-                //viennagrid::storage::container_collection_element::insert_callback(*ret.first, ret.second, inserter);
                 
                 inserter.handle_insert( ret.first, viennagrid::meta::tag<value_type>() );
                 
@@ -86,16 +83,6 @@ namespace viennagrid
             {
                 return insert<true, true>( element );
             }
-            
-//             template<typename value_type>
-//             std::pair<
-//                 typename viennagrid::storage::result_of::container_of<container_collection_type, value_type>::type::handle_type,
-//                 bool
-//             >
-//                 insert_noid( const value_type & element )
-//             {
-//                 return physical_insert<false, true>( element, *this );
-//             }
             
             container_collection_type & get_physical_container_collection() { return *collection; }
             container_collection_type const & get_physical_container_collection() const { return *collection; }
@@ -187,9 +174,6 @@ namespace viennagrid
         
         namespace inserter
         {
-            //typedef VIENNAMETA_MAKE_TYPEMAP_1( viennagrid::storage::default_tag, viennagrid::storage::pointer_reference_tag ) pointer_reference_config;
-            //typedef VIENNAMETA_MAKE_TYPEMAP_1( viennagrid::storage::default_tag, viennagrid::storage::iterator_reference_tag ) iterator_reference_config;
-            
             template<typename dependend_inserter_type, typename container_collection_type>
             recursive_inserter_t<container_collection_type, dependend_inserter_type> get_recursive( const dependend_inserter_type & inserter, container_collection_type & collection )
             {

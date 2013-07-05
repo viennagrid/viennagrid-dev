@@ -454,9 +454,6 @@ namespace viennagrid
             typedef typename container_type::reference reference;
             typedef typename container_type::const_reference const_reference;
             
-//             typedef typename container_type::iterator iterator;
-//             typedef typename container_type::const_iterator const_iterator;
-            
             typedef typename handle::result_of::handle_type<container_type, handle_tag>::type handle_type;
             typedef typename handle::result_of::const_handle_type<container_type, handle_tag>::type const_handle_type;
             
@@ -567,7 +564,6 @@ namespace viennagrid
             {
                 std::pair<typename container_type::iterator, bool> tmp = container_type::insert( element );
                 return std::make_pair( handled_container_type::handle(*tmp.first), tmp.second);
-//                 return std::make_pair( handle::iterator_to_handle<container_type, handle_tag>::convert(tmp.first), tmp.second);
             }
         };
         
@@ -612,20 +608,12 @@ namespace viennagrid
             
             handle_type handle_at(std::size_t pos)
             {
-//                 iterator it = begin();
-//                 std::advance( it, pos );
-//                 return it.handle();
-                
                 handle_iterator it = handle_begin();
                 std::advance( it, pos );
                 return *it;
             }
             const_handle_type handle_at(std::size_t pos) const
             {
-//                 const_iterator it = begin();
-//                 std::advance( it, pos );
-//                 return it.handle();
-                
                 const_handle_iterator it = handle_begin();
                 std::advance( it, pos );
                 return *it;
