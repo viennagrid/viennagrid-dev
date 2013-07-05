@@ -26,6 +26,7 @@
 #include <vector>
 
 #include "viennagrid/config/domain_config.hpp"
+#include "viennagrid/config/default_configs.hpp"
 #include "viennagrid/algorithm/volume.hpp"
 #include "viennagrid/algorithm/voronoi.hpp"
 #include "viennagrid/io/netgen_reader.hpp"
@@ -36,15 +37,14 @@
 
 int main()
 {
-    typedef viennagrid::point_t<double, viennagrid::cartesian_cs<3> > PointType;  //use this for a 3d examples
-    typedef viennagrid::tetrahedron_tag                           CellTag;
-    typedef viennagrid::config::result_of::full_domain_config<CellTag, PointType, viennagrid::storage::id_handle_tag >::type DomainConfig;
-    typedef viennagrid::result_of::domain< DomainConfig >::type DomainType;
-    typedef viennagrid::result_of::domain_view<DomainType>::type SegmentType;
+  typedef viennagrid::point_t<double, viennagrid::cartesian_cs<3> >    PointType;  //use this for a 3d examples
+  typedef viennagrid::tetrahedron_tag                                  CellTag;
+  typedef viennagrid::config::tetrahedral_3d                           ConfigType;  //use this for a 3d example
+  //typedef viennagrid::config::triangular_2d                            ConfigType;  //use this for a 2d example (also change filename for Netgen reader below!)
+  typedef viennagrid::domain_t< ConfigType >                           DomainType;
+  typedef viennagrid::result_of::segmentation<DomainType>::type        Segmentation;
 
     
-  //typedef viennagrid::config::tetrahedral_3d                      ConfigType;  //use this for a 3d example
-  //typedef viennagrid::config::triangular_2d                       ConfigType;  //use this for a 2d example (also change filename below!)
   //typedef viennagrid::result_of::domain<ConfigType>::type         DomainType;
   //typedef ConfigType::cell_tag                           CellTag;
 
@@ -62,8 +62,8 @@ int main()
   std::cout << "-------------------------------------------------- " << std::endl;
   std::cout << std::endl;
   
-  DomainType domain;
-  std::vector<SegmentType> segments;
+  DomainType    domain;
+  Segmentation  segments(domain);
   
   
   //
@@ -71,8 +71,8 @@ int main()
   //
   try
   {
-    viennagrid::io::netgen_reader<CellTag> reader;
-    reader(domain, segments, "../examples/data/cube6.mesh"); //use this for a 3d example
+    viennagrid::io::netgen_reader reader;
+    reader(domain, segments, "../examples/data/cube6.mesh");    //use this for a 3d example
     //reader(domain, segments, "../examples/data/square8.mesh"); //use this for a 2d example (also change ConfigType defined above!)
   }
   catch (std::exception & e)
@@ -117,7 +117,6 @@ int main()
   //       can be deduced automatically and may thus be omitted
   //
   VertexRange vertices = viennagrid::elements<viennagrid::vertex_tag>(domain);   
-  //VertexRange vertices = viennagrid::ncells<0>(domain); //this is an equivalent way of setting up the vertex range
   
   for (VertexIterator vit = vertices.begin();  //STL-like iteration
                       vit != vertices.end();
@@ -223,11 +222,11 @@ int main()
   // As before, the first argument specifies the root of the iteration,
   // the second argument denotes the topological dimension of the elements over which to iterate.
   //
-  typedef viennagrid::result_of::coboundary_range<DomainType, viennagrid::line_tag>::type                EdgeOnVertexRange;
-  typedef viennagrid::result_of::iterator<EdgeOnVertexRange>::type               EdgeOnVertexIterator;
+  typedef viennagrid::result_of::coboundary_range<DomainType, viennagrid::vertex_tag, viennagrid::line_tag>::type    EdgeOnVertexRange;
+  typedef viennagrid::result_of::iterator<EdgeOnVertexRange>::type                                                   EdgeOnVertexIterator;
   
-  typedef viennagrid::result_of::coboundary_range<DomainType, CellTag>::type   CellOnEdgeRange;
-  typedef viennagrid::result_of::iterator<CellOnEdgeRange>::type                        CellOnEdgeIterator;
+  typedef viennagrid::result_of::coboundary_range<DomainType, viennagrid::line_tag, CellTag>::type   CellOnEdgeRange;
+  typedef viennagrid::result_of::iterator<CellOnEdgeRange>::type                                     CellOnEdgeIterator;
   
   
   // Iteration over all edges connected to the first vertex in the domain:
@@ -236,7 +235,7 @@ int main()
   
   // To set up the range, two arguments need to be passed to the ncells() function.
   // The second argument denotes the enclosing complex over which to iterate and is either a segment or the full domain.
-  EdgeOnVertexRange edges_on_v0 = viennagrid::coboundary_elements<viennagrid::line_tag>(domain, vh0);
+  EdgeOnVertexRange edges_on_v0 = viennagrid::coboundary_elements<viennagrid::vertex_tag, viennagrid::line_tag>(domain, vh0);
   for (EdgeOnVertexIterator eovit = edges_on_v0.begin();
                             eovit != edges_on_v0.end();
                           ++eovit)
