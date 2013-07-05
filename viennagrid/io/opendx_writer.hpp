@@ -83,19 +83,13 @@ namespace viennagrid
     template <typename CellTypeOrTag, typename DomainType>
     class opendx_writer
     {
-        //typedef typename DomainType::config_type                         DomainConfiguration;
 
         typedef typename viennagrid::result_of::point_type<DomainType>::type PointType;
         typedef typename viennagrid::result_of::coord_type<PointType>::type CoordType;
         enum { geometric_dim = viennagrid::traits::static_size<PointType>::value };
         
-        //typedef typename DomainConfiguration::numeric_type               CoordType;
-        //typedef typename DomainConfiguration::coordinate_system_tag      CoordinateSystemTag;
-        //typedef typename DomainConfiguration::cell_tag                   CellTag;
         typedef typename viennagrid::result_of::element_tag<CellTypeOrTag>::type CellTag;
 
-        //typedef typename result_of::point<DomainConfiguration>::type                              PointType;
-        //typedef typename result_of::point_type<DomainType>::type                                  PointType;
         typedef typename result_of::element<DomainType, viennagrid::vertex_tag>::type                           VertexType;
         typedef typename result_of::element<DomainType, CellTag>::type     CellType;
 
