@@ -99,11 +99,7 @@ int main()
   try
   {
     viennagrid::io::netgen_reader reader;
-    #ifdef _MSC_VER      //Visual Studio builds in a subfolder
     reader(domain, segmentation, "../../examples/data/cube48.mesh");
-    #else
-    reader(domain, segmentation, "../../examples/data/cube48.mesh");
-    #endif
   }
   catch (std::exception & e)
   {

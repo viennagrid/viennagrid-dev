@@ -51,9 +51,7 @@ void read_netgen(DomainType & domain, SegmentationType & segmentation)
 {
   
   viennagrid::io::netgen_reader my_netgen_reader;
-  std::string path = "../examples/data/";
-  std::string filename = path + "cube48.mesh";
-  my_netgen_reader(domain, segmentation, filename);
+  my_netgen_reader(domain, segmentation, "../examples/data/cube48.mesh");
   
   //
   // Note that the Netgen format supports multiple segments, which will be automatically created by the reader

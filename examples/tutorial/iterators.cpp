@@ -72,13 +72,8 @@ int main()
   try
   {
     viennagrid::io::netgen_reader<CellTag> reader;
-    #ifdef _MSC_VER      //Visual Studio builds in a subfolder
-    std::string path = "../../examples/data/";
-    #else
-    std::string path = "../examples/data/";
-    #endif
-    reader(domain, segments, path + "cube6.mesh"); //use this for a 3d example
-    //reader(domain, path + "square8.mesh"); //use this for a 2d example (also change ConfigType defined above!)
+    reader(domain, segments, "../examples/data/cube6.mesh"); //use this for a 3d example
+    //reader(domain, segments, "../examples/data/square8.mesh"); //use this for a 2d example (also change ConfigType defined above!)
   }
   catch (std::exception & e)
   {

@@ -74,12 +74,7 @@ int main()
 
   //read a multi-segment mesh using the VTK reader:
   viennagrid::io::vtk_reader<CellTag, DomainType>  reader;
-  #ifdef _MSC_VER      //Visual Studio builds in a subfolder
-  std::string path = "../../examples/data/";
-  #else
-  std::string path = "../../examples/data/";
-  #endif
-  reader(domain, segments, path + "multi_segment_hex_main.pvd");
+  reader(domain, segments, "../examples/data/multi_segment_hex_main.pvd");
 
   // Obtain references to the two segments.
   SegmentType & seg1 = segments[0];
