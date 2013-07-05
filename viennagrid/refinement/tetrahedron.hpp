@@ -41,17 +41,14 @@ namespace viennagrid
                              VertexHandleType vh1_1, VertexHandleType vh1_2,  
                              VertexHandleType vh2_1, VertexHandleType vh2_2)
   {
-      typedef typename viennagrid::storage::handle::result_of::value_type< VertexHandleType >::type VertexType;
-      typedef typename viennagrid::result_of::point_type< GeometricContainerType >::type PointType;
-      typedef typename viennagrid::result_of::coord_type< PointType >::type ScalarType;
-      
-      const VertexType & v1_1 = viennagrid::dereference_handle( domain, vh1_1 );
-      const VertexType & v1_2 = viennagrid::dereference_handle( domain, vh1_2 );
-      const VertexType & v2_1 = viennagrid::dereference_handle( domain, vh2_1 );
-      const VertexType & v2_2 = viennagrid::dereference_handle( domain, vh2_2 );
-      
-      
-    //typedef typename VertexType::config_type::numeric_type       ScalarType;
+    typedef typename viennagrid::storage::handle::result_of::value_type< VertexHandleType >::type VertexType;
+    typedef typename viennagrid::result_of::point_type< GeometricContainerType >::type PointType;
+    typedef typename viennagrid::result_of::coord_type< PointType >::type ScalarType;
+    
+    const VertexType & v1_1 = viennagrid::dereference_handle( domain, vh1_1 );
+    const VertexType & v1_2 = viennagrid::dereference_handle( domain, vh1_2 );
+    const VertexType & v2_1 = viennagrid::dereference_handle( domain, vh2_1 );
+    const VertexType & v2_2 = viennagrid::dereference_handle( domain, vh2_2 );
     
     const VertexType & v1_1_ptr = (v1_1.id() < v1_2.id()) ? v1_1 : v1_2; //v1_1 carries smaller ID
     const VertexType & v1_2_ptr = (v1_1.id() < v1_2.id()) ? v1_2 : v1_1; //v1_2 carries larger ID
@@ -127,8 +124,6 @@ namespace viennagrid
     static void apply0(CellType const & cell_in, DomainTypeOut & segment_out,
                        EdgeRefinementFlagAccessor const edge_refinement_flag_accessor, VertexToVertexHandleAccessor const vertex_to_vertex_handle_accessor, EdgeToVertexHandleAccessor const edge_to_vertex_handle_accessor)
     {
-//       std::cout << "tetrahedron::apply0()" << std::endl;
-      //typedef typename CellType::config_type        ConfigTypeIn;
       typedef typename viennagrid::result_of::const_element_range<CellType, vertex_tag>::type            VertexOnCellRange;
       typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type         VertexOnCellIterator;            
       typedef typename viennagrid::result_of::const_element_range<CellType, line_tag>::type            EdgeOnCellRange;
@@ -162,7 +157,7 @@ namespace viennagrid
     static void apply1(CellType const & cell_in, DomainTypeOut & segment_out,
                        EdgeRefinementFlagAccessor const edge_refinement_flag_accessor, VertexToVertexHandleAccessor const vertex_to_vertex_handle_accessor, EdgeToVertexHandleAccessor const edge_to_vertex_handle_accessor)
     {
-//       std::cout << "tetrahedron::apply1()" << std::endl;
+
       typedef typename viennagrid::result_of::const_element_range<CellType, vertex_tag>::type            VertexOnCellRange;
       typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type         VertexOnCellIterator;            
       typedef typename viennagrid::result_of::const_element_range<CellType, line_tag>::type            EdgeOnCellRange;
@@ -195,7 +190,7 @@ namespace viennagrid
       //
       // Step 2: Bring vertices in correct order, such that refined edge is on {0,1}-edge
       //
-      //VertexType * ordered_vertices[element_topology::boundary_cells<tetrahedron_tag, vertex_tag>::num + 1];
+
       storage::static_array< VertexHandleType, element_topology::boundary_cells<tetrahedron_tag, vertex_tag>::num + 1 > ordered_vertices;
       
       EdgeOnCellRange edges_on_cell = viennagrid::elements(cell_in);
@@ -214,8 +209,6 @@ namespace viennagrid
         ordered_vertices[2] = vertices[2];
         ordered_vertices[3] = vertices[3];
         ordered_vertices[4] = edge_to_vertex_handle_accessor(e0);
-        
-        //[)]);
       }
       else if (edge_refinement_flag_accessor(e1) == true)
       {
@@ -344,8 +337,6 @@ namespace viennagrid
     static void apply2(CellType const & cell_in, DomainTypeOut & segment_out,
                        EdgeRefinementFlagAccessor const edge_refinement_flag_accessor, VertexToVertexHandleAccessor const vertex_to_vertex_handle_accessor, EdgeToVertexHandleAccessor const edge_to_vertex_handle_accessor)
     {
-//       std::cout << "tetrahedron::apply2()" << std::endl;
-      //typedef typename CellType::config_type        ConfigTypeIn;
       typedef typename viennagrid::result_of::const_element_range<CellType, vertex_tag>::type            VertexOnCellRange;
       typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type         VertexOnCellIterator;            
       typedef typename viennagrid::result_of::const_element_range<CellType, line_tag>::type            EdgeOnCellRange;
@@ -362,8 +353,6 @@ namespace viennagrid
       
       storage::static_array< VertexHandleType, element_topology::boundary_cells<tetrahedron_tag, vertex_tag>::num > vertices;
       
-      //std::cout << "apply2()" << std::endl;
-      
       //
       // Step 1: Get vertices from input cell
       //
@@ -377,7 +366,7 @@ namespace viennagrid
       //
       // Step 2: Bring vertices in correct order, such that refined edge is on {0,1}-edge
       //
-      //VertexType * ordered_vertices[element_topology::boundary_cells<tetrahedron_tag, vertex_tag>::num + 2];
+
       storage::static_array< VertexHandleType, element_topology::boundary_cells<tetrahedron_tag, vertex_tag>::num + 2 > ordered_vertices;
       EdgeOnCellRange edges_on_cell = viennagrid::elements<line_tag>(cell_in);
       EdgeOnCellIterator eocit = edges_on_cell.begin();
@@ -621,29 +610,14 @@ namespace viennagrid
     {
       create_refinement_cell<CellType>( segment_out, vertices, 4, 1, 5, 6);
       
-      //double diag01_len = viennagrid::norm(vertices[0]->point() - vertices[1]->point());
-      //double diag12_len = viennagrid::norm(vertices[2]->point() - vertices[1]->point());
-      //double diag13_len = viennagrid::norm(vertices[3]->point() - vertices[1]->point());
-
       // Strategy: The two longest edges of the common vertex are split 'twice',
       //           i.e. two new edges start from the center of the two longest edges
-      //if (diag01_len > diag12_len) //split edge 01 again, introduce line 42
+
       if (stable_line_is_longer(segment_out, vertices, 0, 1, 1, 2))
       {
-        /*std::cout << "Norm " << vertices[0]->id() << vertices[1]->id() << ": " 
-                             << viennagrid::norm(vertices[0]->point() - vertices[1]->point()) << std::endl;
-        std::cout << "Norm " << vertices[2]->id() << vertices[1]->id() << ": " 
-                             << viennagrid::norm(vertices[2]->point() - vertices[1]->point()) << std::endl;
-        std::cout << "Splitting " << vertices[0]->id() << vertices[1]->id() << std::endl;*/
         //if (diag13_len > diag12_len) //split edge 13 again, introduce line 62
         if (stable_line_is_longer(segment_out, vertices, 1, 3, 1, 2))
         {
-          /*std::cout << "Norm " << vertices[1]->id() << vertices[3]->id() << ": " 
-                                << viennagrid::norm(vertices[1]->point() - vertices[3]->point()) << std::endl;
-          std::cout << "Norm " << vertices[2]->id() << vertices[1]->id() << ": " 
-                                << viennagrid::norm(vertices[2]->point() - vertices[1]->point()) << std::endl;
-          std::cout << "Splitting " << vertices[1]->id() << vertices[3]->id() << std::endl; */
-          
           if (stable_line_is_longer(segment_out, vertices, 1, 3, 0, 1))
           {
             create_refinement_cell<CellType>( segment_out, vertices, 0, 6, 2, 3);
@@ -652,8 +626,6 @@ namespace viennagrid
           }
           else  //split edge 01 again, introduce line 43
           {
-            //std::cout << "apply_3_1_1" << std::endl;
-
             create_refinement_cell<CellType>( segment_out, vertices, 0, 4, 2, 3);
             create_refinement_cell<CellType>( segment_out, vertices, 3, 4, 2, 6);
             create_refinement_cell<CellType>( segment_out, vertices, 4, 5, 2, 6);
@@ -667,7 +639,6 @@ namespace viennagrid
           }
           else  //split edge 01 again, introduce line 43
           {
-            //std::cout << "apply_3_1_2" << std::endl;
             create_refinement_cell<CellType>( segment_out, vertices, 0, 4, 2, 3);
             create_refinement_cell<CellType>( segment_out, vertices, 4, 5, 2, 3);
             create_refinement_cell<CellType>( segment_out, vertices, 4, 6, 5, 3);
@@ -680,7 +651,6 @@ namespace viennagrid
         {
           if (stable_line_is_longer(segment_out, vertices, 1, 3, 0, 1)) //split edge 13 again, introduce line 60
           {
-            //std::cout << "apply_3_1_3" << std::endl;
             create_refinement_cell<CellType>( segment_out, vertices, 0, 4, 5, 6);
             create_refinement_cell<CellType>( segment_out, vertices, 0, 6, 5, 2);
             create_refinement_cell<CellType>( segment_out, vertices, 0, 6, 2, 3);
@@ -730,7 +700,6 @@ namespace viennagrid
                          VertexHandleIteratorType vertices
                         )
     {
-      //std::cout << "apply_3_2" << std::endl;
       create_refinement_cell<CellType>( segment_out, vertices, 0, 4, 6, 3);
       create_refinement_cell<CellType>( segment_out, vertices, 4, 5, 6, 3);
       create_refinement_cell<CellType>( segment_out, vertices, 4, 1, 5, 3);
@@ -756,12 +725,6 @@ namespace viennagrid
                          VertexHandleIteratorType vertices
                         )
     {
-      //std::cout << "Found!" << std::endl;
-
-      //double diag01_len = viennagrid::norm(vertices[0]->point() - vertices[1]->point());
-      //double diag12_len = viennagrid::norm(vertices[1]->point() - vertices[2]->point());
-      //double diag03_len = viennagrid::norm(vertices[0]->point() - vertices[3]->point());
-
       // Strategy: The two longest edges of the common vertex are split 'twice',
       //           i.e. two new edges start from the center of the two longest edges
       //if (diag01_len > diag03_len) //split edge 01 again, introduce line 43
@@ -772,14 +735,12 @@ namespace viennagrid
         //if (diag01_len > diag12_len) //split edge 01 again, introduce line 42
         if (stable_line_is_longer(segment_out, vertices, 0, 1, 1, 2)) //split edge 01 again, introduce line 42
         {
-          //std::cout << "apply_3_3_1" << std::endl;
           create_refinement_cell<CellType>( segment_out, vertices, 0, 4, 2, 6);
           create_refinement_cell<CellType>( segment_out, vertices, 6, 4, 2, 3);
           create_refinement_cell<CellType>( segment_out, vertices, 4, 5, 2, 3);
         }
         else //split edge 12 again, introduce line 50
         {
-          //std::cout << "apply_3_3_2" << std::endl;
           create_refinement_cell<CellType>( segment_out, vertices, 0, 4, 5, 6);
           create_refinement_cell<CellType>( segment_out, vertices, 0, 5, 2, 6);
           create_refinement_cell<CellType>( segment_out, vertices, 6, 4, 5, 3);
@@ -792,16 +753,13 @@ namespace viennagrid
         create_refinement_cell<CellType>( segment_out, vertices, 6, 1, 5, 3);
         create_refinement_cell<CellType>( segment_out, vertices, 6, 5, 2, 3);
           
-        //if (diag01_len > diag12_len) //split edge 01 again, introduce line 42
         if (stable_line_is_longer(segment_out, vertices, 0, 1, 1, 2)) //split edge 01 again, introduce line 42
         {
-          //std::cout << "apply_3_3_3" << std::endl;
           create_refinement_cell<CellType>( segment_out, vertices, 0, 4, 2, 6);
           create_refinement_cell<CellType>( segment_out, vertices, 6, 4, 5, 2);
         }
         else //split edge 12 again, introduce line 50
         {
-          //std::cout << "apply_3_3_4" << std::endl;
           create_refinement_cell<CellType>( segment_out, vertices, 0, 4, 5, 6);
           create_refinement_cell<CellType>( segment_out, vertices, 0, 5, 2, 6);
         }
@@ -827,16 +785,10 @@ namespace viennagrid
                          VertexHandleIteratorType vertices
                         )
     {
-//       CellType new_cell;
-//       VertexType * cellvertices[element_topology::boundary_cells<tetrahedron_tag, vertex_tag>::num];
-
-      //double diag01_len = viennagrid::norm(vertices[0]->point() - vertices[1]->point());
-      //double diag12_len = viennagrid::norm(vertices[1]->point() - vertices[2]->point());
-      //double diag23_len = viennagrid::norm(vertices[2]->point() - vertices[3]->point());
 
       // Strategy: The two longest edges of the common vertex are split 'twice',
       //           i.e. two new edges start from the center of the two longest edges
-      //if (diag01_len > diag12_len) //split edge 01 again, introduce line 42
+
       if (stable_line_is_longer(segment_out, vertices, 0, 1, 1, 2)) //split edge 01 again, introduce line 42
       {
         create_refinement_cell<CellType>( segment_out, vertices, 0, 4, 2, 6);
@@ -846,13 +798,11 @@ namespace viennagrid
         //if (diag12_len > diag23_len) //split edge 12 again, introduce line 53
         if (stable_line_is_longer(segment_out, vertices, 1, 2, 2, 3)) //split edge 12 again, introduce line 53
         {
-          //std::cout << "apply_3_4_1" << std::endl;
           create_refinement_cell<CellType>( segment_out, vertices, 4, 1, 5, 3);
           create_refinement_cell<CellType>( segment_out, vertices, 4, 5, 6, 3);
         }
         else //split edge 23 again, introduce line 61
         {
-          //std::cout << "apply_3_4_2" << std::endl;
           create_refinement_cell<CellType>( segment_out, vertices, 4, 1, 6, 3);
           create_refinement_cell<CellType>( segment_out, vertices, 4, 1, 5, 6);
         }
@@ -862,7 +812,6 @@ namespace viennagrid
         //if (diag12_len > diag23_len) //split edge 12 again, introduce line 53
         if (stable_line_is_longer(segment_out, vertices, 1, 2, 2, 3)) //split edge 12 again, introduce line 53
         {
-          //std::cout << "apply_3_4_3" << std::endl;
           create_refinement_cell<CellType>( segment_out, vertices, 0, 4, 5, 3);
           create_refinement_cell<CellType>( segment_out, vertices, 0, 5, 6, 3);
           create_refinement_cell<CellType>( segment_out, vertices, 0, 5, 2, 6);
@@ -870,7 +819,6 @@ namespace viennagrid
         }
         else //split edge 23 again, introduce line 61
         {
-          //std::cout << "apply_3_4_4" << std::endl;
           create_refinement_cell<CellType>( segment_out, vertices, 0, 4, 5, 6);
           create_refinement_cell<CellType>( segment_out, vertices, 0, 4, 6, 3);
           create_refinement_cell<CellType>( segment_out, vertices, 0, 5, 2, 6);
@@ -888,7 +836,6 @@ namespace viennagrid
     static void apply3(CellType const & cell_in, DomainTypeOut & segment_out,
                        EdgeRefinementFlagAccessor const edge_refinement_flag_accessor, VertexToVertexHandleAccessor const vertex_to_vertex_handle_accessor, EdgeToVertexHandleAccessor const edge_to_vertex_handle_accessor)
     {
-//       std::cout << "tetrahedron::apply3()" << std:4endl;
       typedef typename viennagrid::result_of::const_element_range<CellType, vertex_tag>::type            VertexOnCellRange;
       typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type         VertexOnCellIterator;            
       typedef typename viennagrid::result_of::const_element_range<CellType, line_tag>::type            EdgeOnCellRange;
@@ -918,7 +865,6 @@ namespace viennagrid
       //
       // Step 2: Bring vertices in correct order
       //
-      //VertexType * ordered_vertices[element_topology::boundary_cells<tetrahedron_tag, vertex_tag>::num + 3];
       storage::static_array< VertexHandleType, element_topology::boundary_cells<tetrahedron_tag, vertex_tag>::num + 3 > ordered_vertices;
       EdgeOnCellRange edges_on_cell = viennagrid::elements<line_tag>(cell_in);
       EdgeOnCellIterator eocit = edges_on_cell.begin();
@@ -1240,16 +1186,6 @@ namespace viennagrid
                          VertexHandleIteratorType vertices
                         )
     {
-//       CellType new_cell;
-//       VertexType * cellvertices[element_topology::boundary_cells<tetrahedron_tag, vertex_tag>::num];
-
-      //double diag03_len = viennagrid::norm(vertices[0]->point() - vertices[3]->point());
-      //double diag13_len = viennagrid::norm(vertices[1]->point() - vertices[3]->point());
-      //double diag23_len = viennagrid::norm(vertices[2]->point() - vertices[3]->point());
-
-      
-      
-        
       
       //if (diag03_len > diag13_len) //split edge 03, introduce line 71
       if (stable_line_is_longer(segment_out, vertices, 0, 3, 1, 3)) //split edge 03, introduce line 71
@@ -1317,18 +1253,9 @@ namespace viennagrid
                          VertexHandleIteratorType vertices
                         )
     {
-//       CellType new_cell;
-//       VertexType * cellvertices[element_topology::boundary_cells<tetrahedron_tag, vertex_tag>::num];
-
-      //double diag02_len = viennagrid::norm(vertices[0]->point() - vertices[2]->point());
-      //double diag03_len = viennagrid::norm(vertices[0]->point() - vertices[3]->point());
-      //double diag12_len = viennagrid::norm(vertices[1]->point() - vertices[2]->point());
-      //double diag13_len = viennagrid::norm(vertices[1]->point() - vertices[3]->point());
-
       //if (diag03_len > diag13_len) //split edge 03, introduce line 61
       if (stable_line_is_longer(segment_out, vertices, 0, 3, 1, 3)) //split edge 03, introduce line 61
       {
-        //std::cout << "split!" << std::endl;
         //if (diag13_len > diag12_len) //split edge 13, introduce line 72
         if (stable_line_is_longer(segment_out, vertices, 1, 3, 1, 2)) //split edge 13, introduce line 72
         {
@@ -1543,7 +1470,6 @@ namespace viennagrid
     static void apply4(CellType const & cell_in, DomainTypeOut & segment_out,
                        EdgeRefinementFlagAccessor const edge_refinement_flag_accessor, VertexToVertexHandleAccessor const vertex_to_vertex_handle_accessor, EdgeToVertexHandleAccessor const edge_to_vertex_handle_accessor)
     {
-//       std::cout << "tetrahedron::apply4()" << std::endl;
       typedef typename viennagrid::result_of::const_element_range<CellType, vertex_tag>::type            VertexOnCellRange;
       typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type         VertexOnCellIterator;            
       typedef typename viennagrid::result_of::const_element_range<CellType, line_tag>::type            EdgeOnCellRange;
@@ -1556,20 +1482,13 @@ namespace viennagrid
       typedef typename viennagrid::result_of::element<DomainTypeOut, vertex_tag>::type                                      VertexTypeOut;
       typedef typename VertexTypeOut::id_type VertexIDTypeOut;
 
-
-      //VertexType * vertices[element_topology::boundary_cells<tetrahedron_tag, vertex_tag>::num];
       storage::static_array< VertexHandleType, element_topology::boundary_cells<tetrahedron_tag, vertex_tag>::num > vertices;
-      //std::cout << "apply4()" << std::endl;
       
       //
       // Step 1: Get vertices from input cell
       //
       VertexOnCellRange vertices_on_cell = viennagrid::elements<vertex_tag>(cell_in);
       VertexOnCellIterator vocit = vertices_on_cell.begin();
-//       vertices[0] = &(viennagrid::elements<vertex_tag>(segment_out.domain())[vocit->id()]); ++vocit;
-//       vertices[1] = &(viennagrid::elements<vertex_tag>(segment_out.domain())[vocit->id()]); ++vocit;
-//       vertices[2] = &(viennagrid::elements<vertex_tag>(segment_out.domain())[vocit->id()]); ++vocit;
-//       vertices[3] = &(viennagrid::elements<vertex_tag>(segment_out.domain())[vocit->id()]);
       vertices[0] = vertex_to_vertex_handle_accessor(*vocit); ++vocit;
       vertices[1] = vertex_to_vertex_handle_accessor(*vocit); ++vocit;
       vertices[2] = vertex_to_vertex_handle_accessor(*vocit); ++vocit;
@@ -1579,7 +1498,6 @@ namespace viennagrid
       //
       // Step 2: Bring vertices in correct order, such that refined edge is on {0,1}-edge
       //
-      //VertexType * ordered_vertices[element_topology::boundary_cells<tetrahedron_tag, vertex_tag>::num + 4];
       storage::static_array< VertexHandleType, element_topology::boundary_cells<tetrahedron_tag, vertex_tag>::num + 4 > ordered_vertices;
       EdgeOnCellRange edges_on_cell = viennagrid::elements<line_tag>(cell_in);
       EdgeOnCellIterator eocit = edges_on_cell.begin();
@@ -1850,9 +1768,6 @@ namespace viennagrid
                          VertexHandleIteratorType vertices
                         )
     {
-//       CellType new_cell;
-//       VertexType * cellvertices[element_topology::boundary_cells<tetrahedron_tag, vertex_tag>::num];
-
       create_refinement_cell<CellType>( segment_out, vertices, 6, 7, 8, 3);
       create_refinement_cell<CellType>( segment_out, vertices, 5, 4, 2, 8);
       
@@ -1903,7 +1818,6 @@ namespace viennagrid
     static void apply5(CellType const & cell_in, DomainTypeOut & segment_out,
                        EdgeRefinementFlagAccessor const edge_refinement_flag_accessor, VertexToVertexHandleAccessor const vertex_to_vertex_handle_accessor, EdgeToVertexHandleAccessor const edge_to_vertex_handle_accessor)
     {
-//       std::cout << "tetrahedron::apply5()" << std::endl;
       typedef typename viennagrid::result_of::const_element_range<CellType, vertex_tag>::type            VertexOnCellRange;
       typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type         VertexOnCellIterator;            
       typedef typename viennagrid::result_of::const_element_range<CellType, line_tag>::type            EdgeOnCellRange;
@@ -1917,19 +1831,13 @@ namespace viennagrid
       typedef typename VertexTypeOut::id_type VertexIDTypeOut;
 
       
-      //VertexType * vertices[element_topology::boundary_cells<tetrahedron_tag, vertex_tag>::num];
       storage::static_array< VertexHandleType, element_topology::boundary_cells<tetrahedron_tag, vertex_tag>::num > vertices;
-      //std::cout << "apply4()" << std::endl;
       
       //
       // Step 1: Get vertices from input cell
       //
       VertexOnCellRange vertices_on_cell = viennagrid::elements<vertex_tag>(cell_in);
       VertexOnCellIterator vocit = vertices_on_cell.begin();
-//       vertices[0] = &(viennagrid::elements<vertex_tag>(segment_out.domain())[vocit->id()]); ++vocit;
-//       vertices[1] = &(viennagrid::elements<vertex_tag>(segment_out.domain())[vocit->id()]); ++vocit;
-//       vertices[2] = &(viennagrid::elements<vertex_tag>(segment_out.domain())[vocit->id()]); ++vocit;
-//       vertices[3] = &(viennagrid::elements<vertex_tag>(segment_out.domain())[vocit->id()]);
       vertices[0] = vertex_to_vertex_handle_accessor(*vocit); ++vocit;
       vertices[1] = vertex_to_vertex_handle_accessor(*vocit); ++vocit;
       vertices[2] = vertex_to_vertex_handle_accessor(*vocit); ++vocit;
@@ -1939,7 +1847,6 @@ namespace viennagrid
       //
       // Step 2: Bring vertices in correct order, such that refined edge is on {0,1}-edge
       //
-      //VertexType * ordered_vertices[element_topology::boundary_cells<tetrahedron_tag, vertex_tag>::num + 5];
       storage::static_array< VertexHandleType, element_topology::boundary_cells<tetrahedron_tag, vertex_tag>::num + 5 > ordered_vertices;
       EdgeOnCellRange edges_on_cell = viennagrid::elements<line_tag>(cell_in);
       EdgeOnCellIterator eocit = edges_on_cell.begin();
@@ -2052,7 +1959,6 @@ namespace viennagrid
     static void apply6(CellType const & cell_in, DomainTypeOut & segment_out,
                        EdgeRefinementFlagAccessor const edge_refinement_flag_accessor, VertexToVertexHandleAccessor const vertex_to_vertex_handle_accessor, EdgeToVertexHandleAccessor const edge_to_vertex_handle_accessor)
     {
-//       std::cout << "tetrahedron::apply6()" << std::endl;
       typedef typename viennagrid::result_of::const_element_range<CellType, vertex_tag>::type            VertexOnCellRange;
       typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type         VertexOnCellIterator;            
       typedef typename viennagrid::result_of::const_element_range<CellType, line_tag>::type            EdgeOnCellRange;
@@ -2068,10 +1974,6 @@ namespace viennagrid
       storage::static_array< VertexHandleType, element_topology::boundary_cells<tetrahedron_tag, vertex_tag>::num +
                                              element_topology::boundary_cells<tetrahedron_tag, line_tag>::num> vertices;
       
-//       VertexType * vertices[element_topology::boundary_cells<tetrahedron_tag, vertex_tag>::num
-//                             + element_topology::boundary_cells<tetrahedron_tag, line_tag>::num];
-      //std::cout << "apply6()" << std::endl;
-      
       //
       // Step 1: Get vertices on the new domain
       //
@@ -2079,10 +1981,6 @@ namespace viennagrid
       //grab existing vertices:
       VertexOnCellRange vertices_on_cell = viennagrid::elements<vertex_tag>(cell_in);
       VertexOnCellIterator vocit = vertices_on_cell.begin();
-//       vertices[0] = &(viennagrid::elements<vertex_tag>(segment_out.domain())[vocit->id()]); ++vocit;
-//       vertices[1] = &(viennagrid::elements<vertex_tag>(segment_out.domain())[vocit->id()]); ++vocit;
-//       vertices[2] = &(viennagrid::elements<vertex_tag>(segment_out.domain())[vocit->id()]); ++vocit;
-//       vertices[3] = &(viennagrid::elements<vertex_tag>(segment_out.domain())[vocit->id()]);
       vertices[0] = vertex_to_vertex_handle_accessor(*vocit); ++vocit;
       vertices[1] = vertex_to_vertex_handle_accessor(*vocit); ++vocit;
       vertices[2] = vertex_to_vertex_handle_accessor(*vocit); ++vocit;
@@ -2104,8 +2002,6 @@ namespace viennagrid
       //
       // Step 2: Add new cells to new domain:
       //
-//       CellType new_cell;
-//       VertexType * cellvertices[element_topology::boundary_cells<tetrahedron_tag, vertex_tag>::num];
       
       //0-4-5-6:
       create_refinement_cell<CellType>( segment_out, vertices, 0, 4, 5, 6);
@@ -2177,12 +2073,13 @@ namespace viennagrid
      */
     template <typename CellType, typename DomainTypeOut, typename EdgeRefinementFlagAccessor, typename VertexToVertexHandleAccessor, typename EdgeToVertexHandleAccessor>
     static void apply(CellType const & cell_in, DomainTypeOut & segment_out,
-                      EdgeRefinementFlagAccessor const edge_refinement_flag_accessor, VertexToVertexHandleAccessor const vertex_to_vertex_handle_accessor, EdgeToVertexHandleAccessor const edge_to_vertex_handle_accessor)
+                      EdgeRefinementFlagAccessor   const edge_refinement_flag_accessor,
+                      VertexToVertexHandleAccessor const vertex_to_vertex_handle_accessor,
+                      EdgeToVertexHandleAccessor   const edge_to_vertex_handle_accessor)
     {
       typedef typename viennagrid::result_of::const_element_range<CellType, line_tag>::type            EdgeOnCellRange;
       typedef typename viennagrid::result_of::iterator<EdgeOnCellRange>::type                 EdgeOnCellIterator;            
       
-      //std::cout << "tetrahedron_tag::apply()" << std::endl;
       std::size_t edges_to_refine = 0;
       EdgeOnCellRange edges_on_cell = viennagrid::elements(cell_in);
       for (EdgeOnCellIterator eocit = edges_on_cell.begin();
