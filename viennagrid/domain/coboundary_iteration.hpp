@@ -53,8 +53,6 @@ namespace viennagrid
     template<typename element_type_or_tag, typename coboundary_type_or_tag, typename domain_type, typename coboundary_accessor_type>
     void create_coboundary_information(domain_type & domain, coboundary_accessor_type accessor)
     {
-//         std::cout << "Recalculating co-boundary with accessor" << std::endl;
-        
         typedef typename viennagrid::result_of::element_tag< element_type_or_tag >::type element_tag;
         typedef typename viennagrid::result_of::element_tag< coboundary_type_or_tag >::type coboundary_tag;
         
@@ -65,7 +63,6 @@ namespace viennagrid
         
         element_range_type elements = viennagrid::elements(domain);
         
-//         accessor.clear();
         accessor.resize( elements.size() );
         
         
@@ -107,8 +104,6 @@ namespace viennagrid
                 viennagrid::meta::static_pair<element_tag, coboundary_tag>
                 >::type coboundary_container_wrapper_type;
         
-//         std::cout << "Recalculating co-boundary" << std::endl;
-                
         coboundary_container_wrapper_type & coboundary_container_wrapper = coboundary_collection<element_tag, coboundary_tag>( domain );//viennagrid::storage::collection::get< viennagrid::meta::static_pair<element_tag, coboundary_tag> > ( domain.coboundary_collection() );
         
         viennagrid::accessor::dense_container_accessor_t< typename coboundary_container_wrapper_type::container_type, element_type > accessor( coboundary_container_wrapper.container );

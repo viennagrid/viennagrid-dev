@@ -257,26 +257,13 @@ namespace viennagrid
         appendix_type & appendix() { return appendix_; }
         appendix_type const & appendix() const { return appendix_; }
         
-//         coboundary_collection_type & coboundary_collection() { return coboundary_container_collection; }
-//         coboundary_collection_type const & coboundary_collection() const { return coboundary_container_collection; }
-//         
-//         neighbour_collection_type & neighbour_collection() { return neighbour_container_collection; }
-//         neighbour_collection_type const & neighbour_collection() const { return neighbour_container_collection; }
-// 
-//         boundary_information_collection_type & boundary_information() { return boundary_information_collection; }
-//         boundary_information_collection_type const & boundary_information() const { return boundary_information_collection; }
-
-
-        
         inserter_type & get_inserter() { return inserter; }
         inserter_type const & get_inserter() const { return inserter; }
         
         typedef long ChangeCounterType;
         
-//         ChangeCounterType change_counter() const { return change_counter_; }
         bool is_obsolete( ChangeCounterType change_counter_to_check ) const
         {
-//           std::cout << "CC: " << change_counter_ << " " << change_counter_to_check << std::endl;
           return change_counter_to_check != change_counter_;
         }
         void update_change_counter( ChangeCounterType & change_counter_to_update ) const { change_counter_to_update = change_counter_; }
@@ -287,10 +274,6 @@ namespace viennagrid
         element_collection_type element_container_collection;
 
         appendix_type appendix_;
-//         coboundary_collection_type coboundary_container_collection;
-//         neighbour_collection_type neighbour_container_collection;
-//         boundary_information_collection_type boundary_information_collection;
-        
         inserter_type inserter;
         
         ChangeCounterType change_counter_;
@@ -443,13 +426,6 @@ namespace viennagrid
                 typename element_typelist<domain_type>::type
             >::type type;
         };
-        
-        // for config
-//         template<typename head, typename tail>
-//         struct element_taglist< viennagrid::meta::typelist_t<head, tail> >
-//         {
-//             typedef typename viennagrid::meta::typemap::key_typelist< viennagrid::meta::typelist_t<head, tail> >::type type;
-//         };
         
         template<typename something, typename boundary_element_type>
         struct is_boundary_type;
@@ -641,64 +617,6 @@ namespace viennagrid
     }
     
     
-//     template<typename container_collection_type, typename inserter_type>
-//     void init_domain( topology_t<container_collection_type, inserter_type> & domain )
-//     {
-//         typedef typename inserter_type::id_generator_type id_generator_type;
-//         domain.get_inserter() = inserter_type( domain.get_container_collection(), id_generator_type() );
-//     }
-//     
-//     template<typename topology_type>
-//     topology_type create_topology()
-//     {
-//         topology_type domain;
-//         init_domain(domain);
-//         return domain;
-//     }
-    
-    
-
-    
-    
-    
-
-    
-    
-//     template<typename topology_view_type, typename topology_type> 
-//     void init_view( topology_view_type & view, topology_type & domain )
-//     {
-//         view_domain_setter< typename result_of::container_collection<topology_type>::type > functor(domain.get_container_collection());
-//         viennagrid::storage::collection::for_each(view.get_container_collection(), functor);
-//         
-//         view.get_inserter() = typename topology_view_type::inserter_type( view.get_container_collection(), domain.get_inserter() );
-//     }
-    
-
-//     template<typename view_type>
-//     struct create_view_helper;
-// 
-//     
-//     template<typename A, typename B, typename C, typename D, typename E>
-//     struct create_view_helper< domain_t<A, B, C, D, E> >
-//     {
-//         typedef domain_t<A, B, C, D, E> doman_view_type;
-//         
-//         template<typename domain_type>
-//         static doman_view_type create( domain_type & domain )
-//         {
-//             doman_view_type view;      
-//             init_view(view, domain);
-//             return view;
-//         }
-//     };
-    
-//     template<typename topology_view_type, typename topology_type>
-//     topology_view_type create_view( topology_type & domain )
-//     {
-//         return create_view_helper<topology_view_type>::create(domain);
-//     }
-    
-    
     template<typename topology_type>
     domain_proxy<topology_type> create_view( topology_type & domain )
     {
@@ -753,14 +671,6 @@ namespace viennagrid
             viennagrid::storage::collection::get<value_type>( element_collection(view) ).insert_handle( handle );
     }
 
-    
-    
-    
-//     template<typename A, typename B, typename C, typename d, typename E>
-//     domain_t<A, B, C, D, E, inserter_type_> & topology( domain_t<domain_container_collection_type_, inserter_type_> & domain) { return domain; }
-    
-//     template<typename domain_container_collection_type_, typename inserter_type_>
-//     const domain_t<domain_container_collection_type_, inserter_type_> & topology( const domain_t<domain_container_collection_type_, inserter_type_> & domain) { return domain; }
     
     template<typename ConfigType>
     typename domain_t<ConfigType>::element_collection_type & element_collection( domain_t<ConfigType> & domain)
@@ -1092,29 +1002,6 @@ namespace viennagrid
     {
         return elements<element_type_or_tag>( element_collection(domain) );
     }
-
-    
-    
-//     template<typename domain_type, typename id_type>
-//     bool element_present(const domain_type & domain, id_type id)
-//     {
-//         typedef typename id_type::value_type element_type;
-//         typedef typename element_type::tag element_tag;
-//         typedef typename viennagrid::result_of::const_element_range<domain_type, element_tag>::type RangeType;
-//         typedef typename viennagrid::result_of::const_handle_iterator<RangeType>::type RangeIterator;
-//         
-//         RangeType range = viennagrid::elements<element_tag>(domain);
-//         for (RangeIterator it = range.handle_begin(); it != range.handle_end(); ++it)
-//         {
-//             if ( viennagrid::dereference_handle(domain, *it).id() == id )
-//                 return true;
-//         }
-//         
-//         return false;
-//     }
-//     
-
-
 
 
     template<typename element_type_or_tag, typename domain_type>

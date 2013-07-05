@@ -53,7 +53,6 @@ namespace viennagrid
         std::map<src_const_vertex_handle, dst_vertex_handle> vertex_handle_map;
         
         src_vertex_range_type vertices = viennagrid::elements( src_domain );
-    //     std::cout << "Copy: vertex count = " << vertices.size() << std::endl;
         for (src_vertex_range_iterator it = vertices.begin(); it != vertices.end(); ++it)
             vertex_handle_map[it.handle()] = viennagrid::create_vertex( dst_domain, viennagrid::point(src_domain, *it) );
         
@@ -65,7 +64,6 @@ namespace viennagrid
             dst_segment_type & dst_segment = dst_segments.back();
             
             src_cell_range_type cells = viennagrid::elements( *seg_it );
-    //         std::cout << "Copy: cell count = " << cells.size() << std::endl;
             for (src_cell_range_itertor it = cells.begin(); it != cells.end(); ++it)
             {
                 src_cell_type const & cell = *it;

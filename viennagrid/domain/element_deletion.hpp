@@ -19,8 +19,6 @@ namespace viennagrid
         template<typename parent_element_type_or_tag>
         void operator() ( viennagrid::meta::tag<parent_element_type_or_tag> )
         {
-//             std::cout << "HERE" << std::endl;
-            
             typedef typename viennagrid::result_of::element<domain_type, parent_element_type_or_tag>::type parent_element_type;
             typedef typename viennagrid::result_of::element_range<domain_type, parent_element_type_or_tag>::type parent_element_range_type;
             typedef typename viennagrid::result_of::iterator<parent_element_range_type>::type parent_element_range_iterator;
@@ -55,8 +53,6 @@ namespace viennagrid
         typedef typename viennagrid::result_of::referencing_element_typelist<domain_type, to_switch_element_type>::type parent_element_typelist;
         
         switch_handle_functor<domain_type, handle_type> functor(domain, old_handle, new_handle);
-//         std::cout << typeid(typename viennagrid::result_of::element_to_tag< parent_element_typelist >::type).name() << std::endl;
-//         std::cout << "Switching " << viennagrid::dereference_handle(domain, old_handle) << " with " << viennagrid::dereference_handle(domain, new_handle) << std::endl;
         
         viennagrid::meta::typelist::for_each<parent_element_typelist>( functor );
     }

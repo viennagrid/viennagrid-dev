@@ -118,48 +118,6 @@ namespace viennagrid
         
     namespace accessor
     {
-//         template<typename key_type, typename value_type_, typename element_type_>
-//         class viennadata_accessor_t
-//         {
-//         public:
-//             
-//             typedef value_type_ value_type;
-//             typedef element_type_ access_type;
-//             
-//             viennadata_accessor_t( key_type const & key_ ) : key(key_) {}
-//             
-//             
-//             value_type       * find( access_type const & element )        { return viennadata::find<key_type, value_type>(key)(element); }
-//             value_type const * find( access_type const & element )  const { return viennadata::find<key_type, value_type>(key)(element); }
-//             
-//             value_type       & access( access_type const & element )       { return viennadata::access<key_type, value_type>(key)(element); }
-//             value_type const & access( access_type const & element ) const { return viennadata::access<key_type, value_type>(key)(element); }
-// 
-//             value_type       & access_unchecked( access_type const & element )       { return access(element); }
-//             value_type const & access_unchecked( access_type const & element ) const { return access(element); }
-//             
-//             value_type       & operator()( access_type const & element )       { return access(element); }
-//             value_type const & operator()( access_type const & element ) const { return access(element); }            
-//             
-//             void erase( access_type const & element )
-//             {
-//                 viennadata::erase<key_type, value_type>(key)(element);
-//             }
-//             
-//             void clear()
-//             {
-// #ifdef _DEBUG_
-//                 std::cout << "WARNING! calling clear on viennadata accessor: not supported" << std::endl;
-// #endif
-//             }
-//             
-//             void resize( std::size_t size ) {}
-//             
-//         private:
-//             key_type key;
-//         };
-        
-        
         
         template<typename container_type_, typename element_type_>
         class dense_container_accessor_t
@@ -182,8 +140,8 @@ namespace viennagrid
             
             typename container_type::reference access( access_type const & element )
             {
-                if ((*container).size() <= static_cast<size_type>(element.id().get())) (*container).resize(element.id().get()+1);
-//                 container.resize(element.id().get());
+                if ((*container).size() <= static_cast<size_type>(element.id().get()))
+                  container->resize(element.id().get()+1);
                 return (*container)[ element.id().get() ];
             }
             typename container_type::const_reference access( access_type const & element ) const

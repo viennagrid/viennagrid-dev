@@ -228,40 +228,6 @@ namespace viennagrid
         return push_element(domain, element).first;
     }
     
-    
-    
-//     template<typename domain_type, typename line_handle_array_iterator_type, typename vertex_handle_array_iterator_type, typename point_iterator_type>
-//     typename result_of::handle<domain_type, plc_tag>::type create_plc( domain_type & domain,
-//                              line_handle_array_iterator_type line_it, line_handle_array_iterator_type const & lines_end,
-//                              vertex_handle_array_iterator_type vertex_it, vertex_handle_array_iterator_type const & vertices_end,
-//                              point_iterator_type hole_point_it, point_iterator_type const & hole_point_end
-//                                                                                 )
-//     {
-//         typedef typename viennagrid::result_of::element<domain_type, plc_tag>::type plc_type;
-//         std::pair<typename result_of::handle<domain_type, plc_type>::type, bool> ret = viennagrid::push_element<true, false>(domain, plc_type( inserter(domain).get_physical_container_collection() ) );
-//         typename result_of::handle<domain_type, plc_type>::type plc_handle = ret.first;
-//         plc_type & plc = viennagrid::dereference_handle(domain, plc_handle);
-//         
-//         for ( ; line_it != lines_end; ++line_it)
-//         {
-//             plc.container( viennagrid::line_tag() ).insert_handle( *line_it );
-//         }
-//         
-//         for ( ; vertex_it != vertices_end; ++vertex_it)
-//         {
-//             plc.container( viennagrid::vertex_tag() ).insert_handle( *vertex_it );
-//         }
-//         
-//         
-//         typedef typename std::iterator_traits<point_iterator_type>::value_type point_type;
-//         std::vector<point_type> hole_points;
-//         std::copy(hole_point_it, hole_point_end, std::back_inserter(hole_points) );
-//         viennadata::access< plc_hole_point_tag, std::vector<point_type> >()(plc) = hole_points;
-// 
-//         plc.insert_callback( inserter(domain), ret.second );
-//         return plc_handle;
-//     }
-    
 }
 
 

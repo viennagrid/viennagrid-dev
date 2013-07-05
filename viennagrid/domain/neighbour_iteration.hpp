@@ -56,8 +56,6 @@ namespace viennagrid
     template<typename element_type_or_tag, typename connector_element_type_or_tag, typename domain_type, typename neigbour_accessor_type>
     void create_neighbour_information(domain_type & domain, neigbour_accessor_type accessor)
     {
-        std::cout << "Recalculating neighbour" << std::endl;
-        
         typedef typename viennagrid::result_of::element_tag< element_type_or_tag >::type element_tag;
         typedef typename viennagrid::result_of::element_tag< connector_element_type_or_tag >::type connector_element_tag;
         
