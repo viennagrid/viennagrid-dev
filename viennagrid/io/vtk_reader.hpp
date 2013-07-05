@@ -30,7 +30,6 @@
 #include <deque>
 #include <string>
 #include <algorithm>
-#include <boost/concept_check.hpp>
 
 #include "viennagrid/forwards.hpp"
 #include "viennagrid/point.hpp"
