@@ -57,13 +57,6 @@ namespace viennagrid
     class vtk_reader
     {
     protected:
-      //typedef typename DomainType::config_type                     DomainConfiguration;
-
-//       typedef typename DomainConfiguration::numeric_type                 CoordType;
-//       typedef typename DomainConfiguration::coordinate_system_tag      CoordinateSystemTag;
-//       typedef typename DomainConfiguration::cell_tag                   CellTag;
-
-        
 
         typedef typename SegmentationType::segment_type SegmentType;
         typedef typename SegmentationType::segment_id_type segment_id_type;
@@ -76,13 +69,10 @@ namespace viennagrid
         typedef typename viennagrid::result_of::cell_tag<DomainType>::type CellTag;
       
 
-      //typedef typename result_of::point<DomainConfiguration>::type                              PointType;
-      //typedef typename result_of::point_type<DomainType>::type                                  PointType;
       typedef typename result_of::element<DomainType, viennagrid::vertex_tag>::type                           VertexType;
       typedef typename result_of::handle<DomainType, viennagrid::vertex_tag>::type                           VertexHandleType;
       typedef typename result_of::element<DomainType, CellTag>::type     CellType;
       typedef typename result_of::handle<DomainType, CellTag>::type     CellHandleType;
-      //typedef typename DomainTypes<DomainConfiguration>::segment_type  Segment;
 
       typedef typename viennagrid::result_of::element_range<DomainType, viennagrid::vertex_tag>::type   VertexRange;
       typedef typename viennagrid::result_of::iterator<VertexRange>::type        VertexIterator;
@@ -228,14 +218,12 @@ namespace viennagrid
             reader >> nodeCoord;
             if (j < geometric_dim)
               p[j] = nodeCoord;
-            //std::cout << nodeCoord << " ";
           }
           
           //add point to global list if not already there
           if (global_points.find(p) == global_points.end())
           {
             std::size_t new_global_id = global_points.size();
-            //std::cout << "new_global_id: " << new_global_id << std::endl;
             global_points.insert( std::make_pair(p, new_global_id) );
             global_points_2.insert( std::make_pair(new_global_id, p) );
             local_to_global_map[seg_id][i] = new_global_id;
@@ -243,7 +231,6 @@ namespace viennagrid
           else
           {
             local_to_global_map[seg_id][i] = global_points[p];
-            //std::cout << "Found vertex: " << p << "with ID " << local_to_global_map[seg_id][i] << std::endl;
           }
         }
       }
@@ -421,9 +408,6 @@ namespace viennagrid
               numVertices = offsets[i]-offsets[i-1];
             }
 
-            //std::vector<VertexType *> vertices(numVertices);
-
-            //std::cout << "offsetIdx: " << offsetIdx << ", numVertices: " << numVertices << std::endl;
 
             //****************************************************
             // read out the node indices form the "cells"-vector
@@ -431,9 +415,6 @@ namespace viennagrid
             //****************************************************
             
             viennagrid::storage::static_array<VertexHandleType, element_topology::boundary_cells<CellTag, vertex_tag>::num> cell_vertex_handles;
-            
-            //std::cout << "Pushing Cell " << i << " to segment " << seg_id << std::endl;
-            //std::cout << "  ";
             
             vtk_to_viennagrid_orientations<CellTag> reorderer;
             for (long j = 0; j < numVertices; j++)
@@ -447,13 +428,9 @@ namespace viennagrid
               
               viennagrid::add_handle( segmentation[seg_id], domain, cell_vertex_handles[j] );
               
-              
-              //vertices[j] = &(viennagrid::elements<viennagrid::vertex_tag>(domain)[global_vertex_index]);
-              //std::cout << "j+offsetidx: " << j+offsetIdx << std::endl;
             }
-            //std::cout << std::endl;
 
-              viennagrid::create_element<CellType>(segmentation[seg_id], cell_vertex_handles.begin(), cell_vertex_handles.end());//, typename CellType::id_type(i));
+            viennagrid::create_element<CellType>(segmentation[seg_id], cell_vertex_handles.begin(), cell_vertex_handles.end());//, typename CellType::id_type(i));
           }
       }
       
@@ -819,7 +796,6 @@ namespace viennagrid
         if (string_to_lower(tag.get_value("type")) != "collection")
           throw bad_file_format_exception(filename, "Parse error: Type-attribute of VTKFile tag is not 'Collection'!");
         
-        //checkNextToken("<Collection>");
         tag.parse(reader);
         if (tag.name() != "collection")
           throw bad_file_format_exception(filename, "Parse error: Collection tag expected!");
@@ -895,7 +871,6 @@ namespace viennagrid
        * @param domain    The ViennaGrid domain
        * @param filename  Name of the file containing the mesh. Either .pvd (multi-segment) or .vtu (single segment)
        */
-//       template<typename SegmentContainerType>
       int operator()(DomainType & domain, SegmentationType & segmentation, std::string const & filename)
       {
         std::string::size_type pos  = filename.rfind(".")+1;
@@ -922,13 +897,9 @@ namespace viennagrid
         // push everything to the ViennaGrid domain:
         // 
         setupVertices(domain);
-//         segments.resize(local_cell_num.size());
         for (size_t seg_id = 0; seg_id < local_cell_num.size(); ++seg_id)
         {
           segmentation.create_segment();
-          
-//           segments[seg_id] = viennagrid::create_view<SegmentType>(domain);
-          //handle_domain( segments[seg_id], domain );
         }
         
         for (size_t seg_id = 0; seg_id < local_cell_num.size(); ++seg_id)
@@ -1160,23 +1131,6 @@ namespace viennagrid
         
 
       private:
-//         std::vector< data_accessor_wrapper<VertexType> >    vertex_data_scalar;
-//         std::vector< std::string >                          vertex_data_scalar_names;
-//         
-//         std::vector< data_accessor_wrapper<VertexType> >    vertex_data_vector;
-//         std::vector< std::string >                          vertex_data_vector_names;
-//         
-//         std::vector< data_accessor_wrapper<VertexType> >    vertex_data_normal;
-//         std::vector< std::string >                          vertex_data_normal_names;
-//         
-//         std::vector< data_accessor_wrapper<CellType> >      cell_data_scalar;
-//         std::vector< std::string >                          cell_data_scalar_names;
-//         
-//         std::vector< data_accessor_wrapper<CellType> >      cell_data_vector;
-//         std::vector< std::string >                          cell_data_vector_names;
-//         
-//         std::vector< data_accessor_wrapper<CellType> >      cell_data_normal;
-//         std::vector< std::string >                          cell_data_normal_names;
         
         // Quantities read:
         std::vector<std::pair<std::size_t, std::string> >         vertex_data_scalar_read;

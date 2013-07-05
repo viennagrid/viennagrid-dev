@@ -36,7 +36,6 @@ namespace viennagrid
   {
     /** @brief Domain wrapper which models the Boost serialization concept 
      *
-     * @tparam dummy    The Domain-Type has to be provided
      */  
     template<typename DomainT>
     struct domain_serializer

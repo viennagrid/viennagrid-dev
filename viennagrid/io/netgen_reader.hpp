@@ -50,26 +50,19 @@ namespace viennagrid
       template <typename DomainType, typename SegmentationType>
       int operator()(DomainType & domain, SegmentationType & segmentation, std::string const & filename) const
       {
-        //typedef typename DomainType::config_type                         ConfigType;
-        
         typedef typename SegmentationType::segment_type SegmentType;
         
         typedef typename viennagrid::result_of::point_type<DomainType>::type    PointType;
         typedef typename viennagrid::result_of::coord_type< PointType >::type         CoordType;
 
-        //typedef typename ConfigType::numeric_type                        CoordType;
-        //typedef typename ConfigType::coordinate_system_tag               CoordinateSystemTag;
         enum { point_dim = viennagrid::traits::static_size<PointType>::value };
         
         typedef typename result_of::cell_tag<DomainType>::type CellTag;
         typedef typename result_of::element<DomainType, CellTag>::type CellType;
-        //typedef typename CellType::tag                            CellTag;
         typedef typename result_of::handle<DomainType, CellTag>::type                           CellHandleType;
 
-        //typedef typename result_of::point<ConfigType>::type                              PointType;
         typedef typename result_of::element<DomainType, vertex_tag>::type                           VertexType;
         typedef typename result_of::handle<DomainType, vertex_tag>::type                           VertexHandleType;
-        //typedef typename result_of::ncell<DomainType, CellTag::dim>::type     CellType;
 
         typedef typename viennagrid::result_of::element_range<DomainType, vertex_tag>::type   VertexRange;
         typedef typename viennagrid::result_of::iterator<VertexRange>::type        VertexIterator;
@@ -124,13 +117,9 @@ namespace viennagrid
           for (int j=0; j<point_dim; j++)
             reader >> p[j];
           
-//           VertexHandleType vertex = 
-            viennagrid::create_vertex( domain, typename VertexType::id_type(i), p );
-            
-          //viennagrid::dereference_handle(domain, vertex).id( storage::smart_id<VertexType, int>(i) );
+          viennagrid::create_vertex( domain, typename VertexType::id_type(i), p );
         }
     
-        //std::cout << "DONE" << std::endl;
         if (!reader.good())
           throw bad_file_format_exception(filename, "EOF encountered when reading number of cells.");
           
@@ -139,19 +128,14 @@ namespace viennagrid
         // Read cells:
         //
         reader >> cell_num;
-        //domain.reserve_cells(cell_num);
         
         #if defined VIENNAGRID_DEBUG_STATUS || defined VIENNAGRID_DEBUG_IO
         std::cout << "* netgen_reader::operator(): Reading " << cell_num << " cells... " << std::endl;  
         #endif
         
-        //CellHandleType cell = viennagrid::create_element<CellType>(domain);
-        //std::cout << "Filling " << cell_num << " cells:" << std::endl;
-    
         for (int i=0; i<cell_num; ++i)
         {
           long vertex_num;
-          //std::vector<VertexHandleType> cell_vertex_handles(topology::bndcells<CellTag, 0>::num);
           viennagrid::storage::static_array<VertexHandleType, element_topology::boundary_cells<CellTag, vertex_tag>::num> cell_vertex_handles;
           
           if (!reader.good())
@@ -171,8 +155,6 @@ namespace viennagrid
 
           viennagrid::create_element<CellType>(segmentation[segment_index], cell_vertex_handles.begin(), cell_vertex_handles.end(), typename CellType::id_type(i));
         }
-        
-        //std::cout << "All done!" << std::endl;
         
         return EXIT_SUCCESS;
       } //operator()

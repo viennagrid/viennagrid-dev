@@ -123,11 +123,6 @@ namespace viennagrid
             {
               inside_string = true;
             }
-            else if (!inside_string && c == ' ')
-            {
-              //do nothing
-              //throw bad_file_format_exception("filename", "Parse error: XML attribute ends prematurely.");
-            }
 
             if (inside_string)
               token.append(1, c); //do not transform values to lower-case (e.g. filenames may get invalid)

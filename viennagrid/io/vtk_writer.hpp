@@ -62,63 +62,6 @@ namespace viennagrid
     };
 
     
-    
-//     template<typename ElementType>
-//     class base_VTK_output_accessor
-//     {
-//     public:
-//       
-//       base_VTK_output_accessor( std::string const & data_name_ ) : data_name(data_name_) {}
-//       
-//       virtual ~base_VTK_output_accessor() {}
-//       
-//       virtual void write_header( std::ostream & os ) const = 0;
-//       virtual void write_data( std::ostream & os, ElementType const & element ) const = 0;
-//       virtual void write_footer( std::ostream & os ) const = 0;
-//       
-//       std::string const & name() const { return data_name; }
-//       
-//     private:
-//       std::string data_name;
-//     };
-//     
-//     
-//     template<typename AccessorType>
-//     class VTK_output_accessor : public base_VTK_output_accessor< typename AccessorType::access_type >
-//     {
-//     public:
-//       
-//       typedef typename AccessorType::access_type ElementType;
-//       typedef typename AccessorType::value_type ValueType;
-//       
-//       VTK_output_accessor( AccessorType const accessor_, std::string const & data_name_ ) :
-//           base_VTK_output_accessor< typename AccessorType::access_type >(data_name_), accessor(accessor_) {}
-//       
-//       
-//       virtual void write_header( std::ostream & os ) const
-//       {
-//         os << "    <DataArray type=\"" << ValueTypeInformation<ValueType>::type_name() << "\" Name=\"" << this->name() <<
-//             "\" NumberOfComponents=\"" << ValueTypeInformation<ValueType>::num_components() << "\" format=\"ascii\">" << std::endl;
-//       }
-//       
-//       virtual void write_data( std::ostream & os, ElementType const & element ) const
-//       {
-//         os << accessor(element);
-//       }
-//       
-//       virtual void write_footer( std::ostream & os ) const
-//       {
-//         os << "    </DataArray>" << std::endl;
-//       }
-//       
-//       AccessorType const accessor;
-//     };
-//     
-    
-    
-
-    
-    
     /////////////////// VTK export ////////////////////////////
 
     //helper: translate element tags to VTK-element types
@@ -134,8 +77,6 @@ namespace viennagrid
       public:
       
       protected:
-
-        //typedef typename DomainType::config_type                         DomainConfiguration;
         
         typedef typename SegmentationType::segment_id_type segment_id_type;
         
@@ -230,7 +171,7 @@ namespace viennagrid
           
           std::size_t index = 0;
           CellRange cells = viennagrid::elements(segment);
-//           std::cout << cells.size() << std::endl;
+
           for (CellIterator it = cells.begin(); it != cells.end(); ++it)
           {
               VertexOnCellRange vertices_on_cell = viennagrid::elements(*it);
@@ -306,7 +247,6 @@ namespace viennagrid
                   ++vocit, ++j)
               {
                 viennagrid_vertices[j] = current_vertex_to_index_map[*vocit];
-                //&(*vocit);
               }
               
               //Step 2: Write the transformed connectivities:
@@ -529,7 +469,6 @@ namespace viennagrid
                 return EXIT_FAILURE;
               }
               
-              //typedef typename DomainType::segment_type                                             SegmentType;
               typedef typename viennagrid::result_of::const_element_range<SegmentType, vertex_tag>::type   VertexRange;
               typedef typename viennagrid::result_of::iterator<VertexRange>::type               VertexIterator;
               
