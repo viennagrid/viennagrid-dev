@@ -19,14 +19,6 @@ namespace viennagrid
 {
     
     template<typename WrappedConfigType>
-    class segmentation_t;
-  
-    
-    template<typename segmentation_type_>
-    class segment_t;
-    
-    
-    template<typename WrappedConfigType>
     class segment_t< segmentation_t<WrappedConfigType> >
     {
     public:

@@ -786,6 +786,12 @@ namespace viennagrid
     template <typename WrappedConfigType>
     class domain_t;
     
+    template<typename WrappedConfigType>
+    class segmentation_t;
+
+    template<typename segmentation_type_>
+    class segment_t;
+
     template<typename container_type_>
     struct coboundary_container_wrapper;
     
