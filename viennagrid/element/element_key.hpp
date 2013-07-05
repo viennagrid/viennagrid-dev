@@ -38,30 +38,20 @@ namespace viennagrid
 {
   
   /** @brief A key type that uniquely identifies an element by its vertices */
-  //template <typename ConfigType, typename ElementType>
   template <typename element_type>
   class element_key
   {
       typedef typename element_type::tag            ElementTag;
       typedef typename viennagrid::result_of::element< element_type, vertex_tag >::type vertex_type;
       typedef typename vertex_type::id_type id_type;
-      //typedef typename viennagrid::storage::result_of::id<vertex_type, id_tag>::type id_type;
       
-      
-      //typedef typename ElementKeyStorageType<ConfigType, ElementType>::result_type  StorageType;
     public:
         
       element_key( const element_type & el2) : vertex_ids( viennagrid::elements<vertex_tag>(el2).size() )
       {
-            //typedef typename element_type::vertex_container_type vertex_container_type;
-            typedef typename viennagrid::result_of::const_element_range< element_type, vertex_tag >::type vertex_range;
-            typedef typename viennagrid::result_of::const_iterator< vertex_range >::type const_iterator;
-            //typedef typename vertex_container_type::const_iterator const_iterator;
-            //typedef typename vertex_container_type::const_handle_iterator const_handle_iterator;
+        typedef typename viennagrid::result_of::const_element_range< element_type, vertex_tag >::type vertex_range;
+        typedef typename viennagrid::result_of::const_iterator< vertex_range >::type const_iterator;
           
-          
-        //typedef typename result_of::const_ncell_range<element_type, 0>::type       VertexConstRange;
-        //typedef typename result_of::iterator<VertexConstRange>::type          VertexConstIterator;
         long i = 0;
         vertex_range vertices_el2 = elements<vertex_tag>(el2);
         for (const_iterator vit = vertices_el2.begin();
@@ -74,11 +64,7 @@ namespace viennagrid
 
       element_key( const element_key & ek2) : vertex_ids(ek2.vertex_ids.size())
       {
-        //std::cout << "Copy constructor ElementKey " << this << std::endl;
         std::copy( ek2.vertex_ids.begin(), ek2.vertex_ids.end(), vertex_ids.begin() );
-        
-//         for (typename std::vector<id_type>::size_type i=0; i<ek2.vertex_ids.size(); ++i)
-//           vertex_ids[i] = ek2.vertex_ids[i];
       }
 
       bool operator < (element_key const & epc2) const
@@ -106,7 +92,7 @@ namespace viennagrid
       }
 
     private:
-        // TODO: statt std::vector abhängig vom element_type
+        // TODO: rather than hard-wiring std::vector, make this configurable
       std::vector< id_type > vertex_ids;
   };
 }
