@@ -23,6 +23,7 @@
 
 #include "viennagrid/forwards.hpp"
 #include "viennagrid/config/domain_config.hpp"
+#include "viennagrid/config/default_configs.hpp"
 #include "viennagrid/point.hpp"
 #include "viennagrid/io/netgen_reader.hpp"
 #include "viennagrid/io/vtk_reader.hpp"
@@ -37,32 +38,33 @@
 
 int main()
 {
-    typedef viennagrid::point_t<double, viennagrid::cartesian_cs<3> > PointType;  //use this for a 3d examples
-    typedef viennagrid::hexahedron_tag                           CellTag;
-//     typedef viennagrid::result_of::default_topologic_config<viennagrid::hexahedron_tag, viennagrid::storage::pointer_handle_tag>::type TopologicConfig;
-    typedef viennagrid::config::result_of::full_domain_config<viennagrid::hexahedron_tag, PointType, viennagrid::storage::id_handle_tag >::type DomainConfig;
-    typedef viennagrid::result_of::domain< DomainConfig >::type DomainType;
-    typedef viennagrid::result_of::domain_view<DomainType>::type SegmentType;
+  //typedef viennagrid::config::result_of::full_domain_config<viennagrid::hexahedron_tag, PointType, viennagrid::storage::id_handle_tag >::type DomainConfig;
+
+  typedef viennagrid::hexahedron_tag                                   CellTag;
+  typedef viennagrid::domain_t< viennagrid::config::hexahedral_3d >    DomainType;
+  typedef viennagrid::result_of::domain_view<DomainType>::type         DomainViewType;
+  typedef viennagrid::result_of::segmentation<DomainType>::type        SegmentationType;
+  typedef SegmentationType::segment_type                               SegmentType;
   
   typedef viennagrid::result_of::point_type<DomainType>::type          PointType;
-  typedef viennagrid::result_of::element<DomainType, viennagrid::vertex_tag>::type       VertexType;
+  typedef viennagrid::result_of::element<DomainType, viennagrid::vertex_tag>::type     VertexType;
   typedef viennagrid::result_of::element<DomainType, viennagrid::line_tag>::type       EdgeType;
-  typedef viennagrid::result_of::element<DomainType, CellTag::facet_tag>::type FacetType;
-  typedef viennagrid::result_of::handle<DomainType, CellTag::facet_tag>::type FacetHandleType;
-  typedef viennagrid::result_of::element<DomainType, CellTag>::type   CellType;
+  typedef viennagrid::result_of::element<DomainType, CellTag::facet_tag>::type         FacetType;
+  typedef viennagrid::result_of::handle<DomainType,  CellTag::facet_tag>::type         FacetHandleType;
+  typedef viennagrid::result_of::element<DomainType, CellTag>::type                    CellType;
                                             
-  typedef viennagrid::result_of::element_range<DomainType, viennagrid::vertex_tag>::type       VertexRange;
-  typedef viennagrid::result_of::iterator<VertexRange>::type        VertexIterator;
+  typedef viennagrid::result_of::element_range<DomainType, viennagrid::vertex_tag>::type  VertexRange;
+  typedef viennagrid::result_of::iterator<VertexRange>::type                              VertexIterator;
                                             
   typedef viennagrid::result_of::element_range<DomainType, CellTag::facet_tag>::type      FacetRange;
-  typedef viennagrid::result_of::iterator<FacetRange>::type                     FacetIterator;
-  typedef viennagrid::result_of::handle_iterator<FacetRange>::type                     FacetHandleIterator;
+  typedef viennagrid::result_of::iterator<FacetRange>::type                               FacetIterator;
+  typedef viennagrid::result_of::handle_iterator<FacetRange>::type                        FacetHandleIterator;
   
-  typedef viennagrid::result_of::coboundary_range<SegmentType, CellTag>::type     CellOnFacetRange;
-  typedef viennagrid::result_of::iterator<CellOnFacetRange>::type               CellOnFacetIterator;
+  //TODO: typedef viennagrid::result_of::coboundary_range<SegmentType, CellTag::facet_tag, CellTag>::type   CellOnFacetRange;
+  //TODO: typedef viennagrid::result_of::iterator<CellOnFacetRange>::type                                   CellOnFacetIterator;
 
-  typedef viennagrid::result_of::element_range<SegmentType, viennagrid::vertex_tag>::type              VertexOnSegmentRange;
-  typedef viennagrid::result_of::iterator<VertexOnSegmentRange>::type           VertexOnSegmentIterator;
+  typedef viennagrid::result_of::element_range<SegmentType, viennagrid::vertex_tag>::type    VertexOnSegmentRange;
+  typedef viennagrid::result_of::iterator<VertexOnSegmentRange>::type                        VertexOnSegmentIterator;
   
   std::cout << "------------------------------------------------" << std::endl;
   std::cout << "-- ViennaGrid tutorial: Multi-segment domains --" << std::endl;
@@ -70,10 +72,10 @@ int main()
   std::cout << std::endl;
   
   DomainType domain;
-  std::vector<SegmentType> segments;
+  SegmentationType segments(domain);
 
   //read a multi-segment mesh using the VTK reader:
-  viennagrid::io::vtk_reader<CellTag, DomainType>  reader;
+  viennagrid::io::vtk_reader<DomainType, SegmentationType>  reader;
   reader(domain, segments, "../examples/data/multi_segment_hex_main.pvd");
 
   // Obtain references to the two segments.
@@ -89,7 +91,7 @@ int main()
   for (FacetHandleIterator fit = facets.begin(); fit != facets.end(); ++fit)
   {
     FacetType & facet = viennagrid::dereference_handle(domain, *fit);
-    if (viennagrid::is_interface<CellTag>(facet, seg1, seg2))  //three arguments: The element and the two interfacing segments
+    if (viennagrid::is_interface(seg1, seg2, facet))  //three arguments: The element and the two interfacing segments
       interface_facet_handle = *fit;
     
     std::cout << facet << std::endl;
@@ -102,6 +104,7 @@ int main()
   //
   // Now iterate over the cells the facet is member of with respect to the two segments:
   // Mind the second argument to the ncells() function, which is the respective segment
+  /* TODO: Make this work (i.e. coboundary iteration in segments)
   CellOnFacetRange cells_on_facet_seg1 = viennagrid::coboundary_elements<CellTag>(seg1, interface_facet_handle);
   std::cout << "Cells that share the interface facet in seg1:" << std::endl;
   for (CellOnFacetIterator cofit = cells_on_facet_seg1.begin();
@@ -118,31 +121,67 @@ int main()
                          ++cofit)
   {
     std::cout << *cofit << std::endl;
-  }
+  }*/
 
   
   //
   // volume, surface and Voronoi information works for segments as well:
-  std::cout << "Volumes of segments: " << viennagrid::volume<CellTag>(seg1) << ", " << viennagrid::volume<CellTag>(seg2) << std::endl;
-  std::cout << "Surfaces of segments: " << viennagrid::surface<CellTag>(seg1) << ", " << viennagrid::surface<CellTag>(seg2) << std::endl;
+  std::cout << "Volumes of segments: " << viennagrid::volume(seg1) << ", " << viennagrid::volume(seg2) << std::endl;
+  std::cout << "Surfaces of segments: " << viennagrid::surface(seg1) << ", " << viennagrid::surface(seg2) << std::endl;
   
-  // Mind that the default Voronoi keys operate on a domain-wide manner and are thus overwritten at the interface of the two segments
-  // As a remedy, we use custom keys for the second segment
-  std::string interface_key_seg2 = "interface";
-  std::string volume_key_seg2 = "box";
-  viennagrid::apply_voronoi<CellTag>(seg1);
-  viennagrid::apply_voronoi<CellTag>(seg2, interface_key_seg2, volume_key_seg2);
+  // Compute Voronoi information for each of the two segments:
+
+  typedef viennagrid::result_of::const_handle<DomainType, CellType>::type    ConstCellHandleType;
+  
+  std::deque<double> interface_areas_seg1;
+  std::deque<double> interface_areas_seg2;
+  std::deque< viennagrid::result_of::voronoi_cell_contribution<ConstCellHandleType>::type > interface_contributions_seg1;
+  std::deque< viennagrid::result_of::voronoi_cell_contribution<ConstCellHandleType>::type > interface_contributions_seg2;
+  
+  std::deque<double> vertex_box_volumes_seg1;
+  std::deque<double> vertex_box_volumes_seg2;
+  std::deque< viennagrid::result_of::voronoi_cell_contribution<ConstCellHandleType>::type > vertex_box_volume_contributions_seg1;
+  std::deque< viennagrid::result_of::voronoi_cell_contribution<ConstCellHandleType>::type > vertex_box_volume_contributions_seg2;
+  
+  std::deque<double> edge_box_volumes_seg1;
+  std::deque<double> edge_box_volumes_seg2;
+  std::deque< viennagrid::result_of::voronoi_cell_contribution<ConstCellHandleType>::type > edge_box_volume_contributions_seg1;
+  std::deque< viennagrid::result_of::voronoi_cell_contribution<ConstCellHandleType>::type > edge_box_volume_contributions_seg2;
+  
+  
+  // Write Voronoi info to default ViennaData keys:
+  viennagrid::apply_voronoi<CellType>(
+          seg1,
+          viennagrid::accessor::dense_container_accessor<EdgeType>(interface_areas_seg1),
+          viennagrid::accessor::dense_container_accessor<EdgeType>(interface_contributions_seg1),
+          viennagrid::accessor::dense_container_accessor<VertexType>(vertex_box_volumes_seg1),
+          viennagrid::accessor::dense_container_accessor<VertexType>(vertex_box_volume_contributions_seg1),
+          viennagrid::accessor::dense_container_accessor<EdgeType>(edge_box_volumes_seg1),
+          viennagrid::accessor::dense_container_accessor<EdgeType>(edge_box_volume_contributions_seg1)
+  );
+  viennagrid::apply_voronoi<CellType>(
+          seg2,
+          viennagrid::accessor::dense_container_accessor<EdgeType>(interface_areas_seg2),
+          viennagrid::accessor::dense_container_accessor<EdgeType>(interface_contributions_seg2),
+          viennagrid::accessor::dense_container_accessor<VertexType>(vertex_box_volumes_seg2),
+          viennagrid::accessor::dense_container_accessor<VertexType>(vertex_box_volume_contributions_seg2),
+          viennagrid::accessor::dense_container_accessor<EdgeType>(edge_box_volumes_seg2),
+          viennagrid::accessor::dense_container_accessor<EdgeType>(edge_box_volume_contributions_seg2)
+  );
 
   
   //
   // Finally, iterate over the vertices of the domain and write segment-based vertex data:
   // As data container std::map<std::size_t, double> is used, where the key is used for the segment index 
+  std::deque< double > first_segment_data;
+  std::deque< double > second_segment_data;
+
   VertexOnSegmentRange vertices_seg1 = viennagrid::elements<viennagrid::vertex_tag>(seg1);
   for (VertexOnSegmentIterator vosit = vertices_seg1.begin();
                              vosit != vertices_seg1.end();
                            ++vosit)
   {
-    viennadata::access<std::string, std::map<std::size_t, double> >("segment_data")(*vosit)[0] = 1.0;
+    first_segment_data.push_back(1.0);
   }
   
   VertexOnSegmentRange vertices_seg2 = viennagrid::elements<viennagrid::vertex_tag>(seg2);
@@ -150,16 +189,13 @@ int main()
                              vosit != vertices_seg2.end();
                            ++vosit)
   {
-    viennadata::access<std::string, std::map<std::size_t, double> >("segment_data")(*vosit)[1] = 2.0;
+    second_segment_data.push_back(2.0);
   }
   
-  viennagrid::io::vtk_writer<DomainType, CellType> my_vtk_writer;
-  viennagrid::io::add_scalar_data_on_vertices_per_segment<std::string, 
-                                                          std::map<std::size_t, double> >
-                                                         (my_vtk_writer,
-                                                          "segment_data",
-                                                          "segment_data");
-  my_vtk_writer(domain, segments, "multi_segment");                                                       
+  viennagrid::io::vtk_writer<DomainType, SegmentationType> my_vtk_writer;  
+  my_vtk_writer.add_scalar_data_on_vertices(seg1, viennagrid::accessor::dense_container_accessor<VertexType>(first_segment_data), "segment_data" );
+  my_vtk_writer.add_scalar_data_on_vertices(seg2, viennagrid::accessor::dense_container_accessor<VertexType>(second_segment_data), "segment_data" );
+  my_vtk_writer(domain, segments, "multi_segment");
   
   
   std::cout << "-----------------------------------------------" << std::endl;
