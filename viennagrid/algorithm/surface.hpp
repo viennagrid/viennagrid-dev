@@ -112,7 +112,13 @@ namespace viennagrid
     return detail::surface_domainsegment< typename viennagrid::result_of::facet_tag<CellTag>::type>(d);
   }  
   
-  
+  template<typename SegmentationType>
+  typename viennagrid::result_of::coord_type< typename SegmentationType::domain_type >::type
+  surface(segment_t<SegmentationType> const & segment)
+  {
+    typedef typename viennagrid::result_of::cell_tag< typename SegmentationType::domain_type >::type CellTag;
+    return detail::surface_domainsegment< typename viennagrid::result_of::facet_tag<CellTag>::type >(segment);
+  }
   
   
   

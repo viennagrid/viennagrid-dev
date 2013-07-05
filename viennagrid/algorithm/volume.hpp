@@ -231,6 +231,13 @@ namespace viennagrid
       return detail::volume_domain< typename viennagrid::result_of::cell_tag< domain_t<WrappedConfigType> >::type >(domain);
   }
   
+  template<typename SegmentationType>
+  typename viennagrid::result_of::coord_type< typename SegmentationType::domain_type >::type
+  volume(segment_t<SegmentationType> const & segment)
+  {
+      return detail::volume_domain< typename viennagrid::result_of::cell_tag< typename SegmentationType::domain_type >::type >(segment);
+  }
+  
 
 } //namespace viennagrid
 #endif
