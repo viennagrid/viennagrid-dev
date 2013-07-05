@@ -18,7 +18,7 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
-
+#include <assert.h>
 
 #include "viennagrid/forwards.hpp"
 #include "viennagrid/storage/id.hpp"
@@ -69,23 +69,17 @@ namespace viennagrid
 
             void erase( access_type const & element )
             {
-#ifdef _DEBUG_
-                std::cout << "WARNING! calling erase on apppendix accessor: not supported" << std::endl;
-#endif
+              assert(false && bool("WARNING! calling erase on apppendix accessor: not supported"));
             }            
 
             void clear()
             {
-#ifdef _DEBUG_
-                std::cout << "WARNING! calling clear on apppendix accessor: not supported" << std::endl;
-#endif
+              assert(false && bool("WARNING! calling clear on apppendix accessor: not supported"));
             }
             
             void resize( std::size_t size )
             {
-#ifdef _DEBUG_
-                std::cout << "WARNING! calling clear on apppendix accessor: not supported" << std::endl;
-#endif
+              assert(false && bool("WARNING! calling clear on apppendix accessor: not supported"));
             }
             
         };
