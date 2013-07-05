@@ -34,7 +34,7 @@ using std::endl;
 
 #include "viennagrid/domain/topology.hpp"
 #include "viennagrid/domain/element_creation.hpp"
-
+#include "viennagrid/config/default_configs.hpp"
 
 
 struct element_output_functor
@@ -46,19 +46,6 @@ struct element_output_functor
     }
 };
 
-class my_domain_config
-{
-  private:
-    typedef viennagrid::storage::pointer_handle_tag     handle_tag;
-    //typedef viennagrid::storage::iterator_handle_tag    handle_tag;
-    //typedef viennagrid::storage::id_handle_tag          handle_tag;
-    
-  public:
-    
-    typedef viennagrid::config::result_of::full_topology_config<viennagrid::tetrahedron_tag, handle_tag>::type    type;
-};
-
-
 
 int main()
 {
@@ -67,7 +54,8 @@ int main()
     // typedefing and setting up the topological domain
     //
     
-    typedef viennagrid::domain_t<my_domain_config> domain_type;
+    //typedef viennagrid::domain_t<my_domain_config> domain_type;
+    typedef viennagrid::tetrahedral_3d_domain domain_type;
     domain_type domain;
     
     //

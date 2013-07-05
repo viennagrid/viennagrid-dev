@@ -30,24 +30,11 @@ using std::endl;
 
 #include "viennagrid/config/topology_config.hpp"
 #include "viennagrid/config/element_config.hpp"
+#include "viennagrid/config/default_configs.hpp"
 
 #include "viennagrid/domain/topology.hpp"
 #include "viennagrid/domain/neighbour_iteration.hpp"
 #include "viennagrid/domain/element_creation.hpp"
-
-
-class my_domain_config
-{
-  private:
-    typedef viennagrid::storage::pointer_handle_tag handle_tag;
-    //typedef viennagrid::storage::iterator_handle_tag handle_tag;
-    //typedef viennagrid::storage::id_handle_tag          handle_tag;
-    
-  public:
-    
-    typedef viennagrid::config::result_of::full_topology_config<viennagrid::triangle_tag, handle_tag>::type    type;
-};
-
 
 
 int main()
@@ -57,7 +44,7 @@ int main()
     // typedefing and setting up the topological domain
     //
     
-    typedef viennagrid::domain_t<my_domain_config> domain_type;
+    typedef viennagrid::triangular_2d_domain domain_type;
     domain_type domain;
     
     //

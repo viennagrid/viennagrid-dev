@@ -1,7 +1,7 @@
 #include <iostream>
 #include <typeinfo>
 
-//#include "viennagrid/config/default_configs.hpp"
+#include "viennagrid/config/default_configs.hpp"
 
 #include "viennagrid/domain/accessor.hpp"
 #include "viennagrid/domain/segmentation.hpp"
@@ -10,27 +10,15 @@
 #include "viennagrid/algorithm/boundary.hpp"
 #include "viennagrid/algorithm/interface.hpp"
 
-
-class my_domain_config
-{
-  private:
-    typedef viennagrid::point_t<double, viennagrid::cartesian_cs<3> > point_type_3d;
-    
-  public:
-    
-    typedef viennagrid::config::result_of::full_domain_config< viennagrid::triangle_tag, point_type_3d, viennagrid::storage::pointer_handle_tag >::type    type;
-};
-
-
 int main()
 {
-  typedef viennagrid::domain_t<my_domain_config>                  domain_type;
+  typedef viennagrid::triangular_3d_domain                        domain_type;
   typedef viennagrid::result_of::domain_view< domain_type >::type view_type;
   
   
   
   typedef viennagrid::result_of::vertex< domain_type >::type     vertex_type;
-  typedef viennagrid::result_of::line< domain_type >::type     line_type;
+  typedef viennagrid::result_of::line< domain_type >::type       line_type;
   
   typedef viennagrid::result_of::vertex_handle< domain_type >::type     vertex_handle_type;
   typedef viennagrid::result_of::triangle_handle< domain_type >::type   triangle_handle_type;

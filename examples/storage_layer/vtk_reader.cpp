@@ -1,11 +1,13 @@
 #include <iostream>
 #include <typeinfo>
 
-//#include "viennagrid/config/default_configs.hpp"
+#include "viennagrid/config/default_configs.hpp"
 
 #include "viennagrid/domain/accessor.hpp"
 #include "viennagrid/domain/segmentation.hpp"
 #include "viennagrid/domain/element_creation.hpp"
+
+
 
 #include "viennagrid/io/vtk_reader.hpp"
 #include "viennagrid/io/vtk_writer.hpp"
@@ -24,7 +26,8 @@ class my_domain_config
 
 int main()
 {
-  typedef viennagrid::domain_t<my_domain_config>                  domain_type;
+  //typedef viennagrid::domain_t<my_domain_config>                  domain_type;
+  typedef viennagrid::triangular_2d_domain                        domain_type;
   typedef viennagrid::result_of::domain_view< domain_type >::type view_type;
   
   typedef viennagrid::result_of::point_type<domain_type>::type point_type;

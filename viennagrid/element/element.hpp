@@ -20,6 +20,7 @@
 
 
 #include "viennagrid/forwards.hpp"
+#include "viennagrid/point.hpp"
 #include "viennagrid/meta/typelist.hpp"
 #include "viennagrid/meta/algorithm.hpp"
 

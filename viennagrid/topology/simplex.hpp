@@ -18,11 +18,11 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
+#include <sstream>
+
 #include "viennagrid/forwards.hpp"
 #include "viennagrid/topology/vertex.hpp"
 #include "viennagrid/topology/line.hpp"
-// #include "viennagrid/detail/element_iterators.hpp"
-#include "viennagrid/algorithm/norm.hpp"
 
 /** @file topology/simplex.hpp
     @brief Provides the topological definition of an arbitrary simplex element

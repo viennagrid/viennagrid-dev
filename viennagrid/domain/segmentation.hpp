@@ -2,7 +2,7 @@
 #define VIENNAGRID_SEGMENTATION_HPP
 
 #include <limits>
-#include "accessor.hpp"
+#include "viennagrid/domain/accessor.hpp"
 
 #include "viennagrid/forwards.hpp"
 #include "viennagrid/domain/topology.hpp"

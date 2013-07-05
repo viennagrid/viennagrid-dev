@@ -21,6 +21,7 @@
 #include "viennagrid/domain/topology.hpp"
 #include "viennagrid/domain/domain.hpp"
 #include "viennagrid/topology/plc.hpp"
+#include "viennagrid/algorithm/norm.hpp"
 
 namespace viennagrid
 {
