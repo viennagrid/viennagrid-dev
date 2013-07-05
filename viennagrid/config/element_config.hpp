@@ -89,7 +89,6 @@ namespace viennagrid
                 
                 typedef typename query_config<topology_config, element_tag>::type element_config;
                 
-//                 typedef typename viennagrid::meta::typemap::result_of::find< topology_config, element_tag >::type::second element_config;
                 typedef typename query_config<element_config, element_id_tag>::type type;
             };
             
@@ -99,7 +98,6 @@ namespace viennagrid
                 typedef typename query_config<domain_config, topology_config_tag>::type topology_config;
                 
                 typedef typename query_config<topology_config, element_tag>::type element_config;
-//                 typedef typename viennagrid::meta::typemap::result_of::find< topology_config, element_tag >::type::second element_config;
                 typedef typename query_config<element_config, element_container_tag>::type type;
             };
             
@@ -111,13 +109,8 @@ namespace viennagrid
                 
                 typedef typename query_config<topology_config, element_tag>::type element_config;
                 
-//                 typedef typename viennagrid::meta::typemap::result_of::find< topology_config, element_tag >::type::second element_config;
                 typedef typename viennagrid::meta::typemap::result_of::find< element_config, element_boundary_storage_layout_tag >::type::second element_storage_layout_config;
                 typedef typename viennagrid::meta::typemap::result_of::find< element_storage_layout_config, boundary_cell_tag >::type::second boundary_cell_storage_handling;
-                //typedef typename viennagrid::meta::typemap::result_of::find< element_storage_layout_config, boundary_cell_tag >::type::second boundary_cell_storage_layout;
-                
-                //typedef typename boundary_cell_storage_layout::first storage_tag;
-                //typedef typename boundary_cell_storage_layout::second orientation_tag;
             };
             
             
@@ -379,53 +372,7 @@ namespace viennagrid
             
             
             
-        namespace result_of
-        {
-    //         template<typename domain_config, long dim>
-    //         struct ncell_tag;
-    //         
-    //         template<typename element_tag, typename element_config, typename tail, long dim>
-    //         struct ncell_tag< viennagrid::meta::typelist_t< viennagrid::meta::static_pair<element_tag, element_config>, tail >, dim >
-    //         {
-    //             typedef typename viennagrid::meta::IF<
-    //                 element_tag::dim == dim,
-    //                 element_tag,
-    //                 typename ncell_tag<tail, dim>::type
-    //             >::type type;
-    //         };
-    //         
-    //         template<long dim>
-    //         struct ncell_tag<viennagrid::meta::null_type, dim>
-    //         {
-    //             typedef viennagrid::meta::null_type type;
-    //         };
-    //         
-    // 
-    //         template<typename head, typename tail, long dim>
-    //         struct ncell< viennagrid::meta::typelist_t<head, tail>, dim >
-    //         {
-    //             typedef viennagrid::meta::typelist_t<head, tail> domain_config;
-    //             typedef typename element<
-    //                 domain_config,
-    //                 typename ncell_tag<domain_config, dim>::type
-    //             >::type type;
-    //         };
-            
-            
-        }
-            
-            
-            
-        namespace result_of
-        {
-
-        }  
-    
     }
-    
-    
-    
-    
 
 }
 

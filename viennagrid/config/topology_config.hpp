@@ -27,8 +27,6 @@
 #include "viennagrid/element/element_key.hpp"
 #include "viennagrid/config/element_config.hpp"
 
-//#include "viennagrid/domain/topology.hpp"
-
 /** @file config/simplex.hpp
     @brief Provides default configuration classes for simplex domains
 */
@@ -53,7 +51,6 @@ namespace viennagrid
                     viennagrid::meta::static_pair<
                         boundary_cell_tag,
                         viennagrid::full_handling_tag
-                        //viennagrid::meta::static_pair< viennagrid::full_handling_tag, viennagrid::full_handling_tag >
                     >
                 >::type type;
             };
@@ -61,18 +58,15 @@ namespace viennagrid
             template<typename element_tag>
             struct storage_layout_config<element_tag, viennagrid::vertex_tag>
             {
-                //typedef viennagrid::meta::static_pair< viennagrid::full_handling_tag, viennagrid::no_handling_tag > type;
                 typedef typename viennagrid::meta::make_typemap<
                     viennagrid::vertex_tag,
                     viennagrid::no_orientation_handling_tag
-                    //viennagrid::meta::static_pair< viennagrid::full_handling_tag, viennagrid::no_handling_tag >
                 >::type type;
             };
             
             template<typename element_tag>
             struct storage_layout_config<element_tag, viennagrid::meta::null_type>
             {
-                //typedef viennagrid::meta::static_pair< viennagrid::full_handling_tag, viennagrid::no_handling_tag > type;
                 typedef viennagrid::meta::null_type type;
             };
             
@@ -106,7 +100,6 @@ namespace viennagrid
                     
                     element_container_tag,
                     viennagrid::storage::handled_container_tag<           
-                        //viennagrid::storage::std_deque_tag,
                         typename default_container_tag<element_tag, boundary_cell_tag>::type,
                         handle_tag
                     >,
@@ -203,7 +196,6 @@ namespace viennagrid
             {
                 typedef typename viennagrid::result_of::element<storage::collection_t<container_collection_typemap>, element_tag>::type element_type;
                 typedef typename viennagrid::meta::typemap::result_of::find< container_collection_typemap, element_type >::type::second type;
-                //typedef typename viennagrid::storage::result_of::container<element_type, typename element_container_tag<config, element_tag>::type >::type type;
             };
             
             
@@ -243,7 +235,6 @@ namespace viennagrid
         struct element< viennagrid::meta::typelist_t< viennagrid::meta::static_pair<config_element_tag, config_element_config>, config_tail >, element_tag_ >
         {
             typedef viennagrid::meta::typelist_t< viennagrid::meta::static_pair<config_element_tag, config_element_config>, config_tail > domain_config;
-//             typedef typename config::result_of::query_config<domain_config, config::topology_config_tag>::type topology_config;
             typedef typename viennagrid::config::result_of::element_from_config_impl< domain_config, element_tag_ >::type type;
         };
         
@@ -281,7 +272,7 @@ namespace viennagrid
         template<typename domain_config, typename element_tag, typename boundary_element_tag, typename tail>
         struct coboundary_container_collection_per_element_typemap<domain_config, element_tag, viennagrid::meta::typelist_t<boundary_element_tag, tail> >
         {
-          // TODO richtig aus der config rauslesen!
+            // TODO correctly extract from config
             typedef typename config::result_of::query_config<domain_config, config::coboundary_container_tag>::type coboundary_container_tag;
             typedef typename config::result_of::query_config<domain_config, config::coboundary_view_container_tag>::type coboundary_view_container_tag;
             
@@ -344,7 +335,7 @@ namespace viennagrid
         template<typename domain_config, typename element_tag, typename connector_element_tag, typename tail>
         struct neighbour_container_collection_per_element_typemap<domain_config, element_tag, viennagrid::meta::typelist_t<connector_element_tag, tail> >
         {
-          // TODO richtig aus der config rauslesen!
+            // TODO correctly extract from config
             typedef typename config::result_of::query_config<domain_config, config::coboundary_container_tag>::type coboundary_container_tag;
             typedef typename config::result_of::query_config<domain_config, config::coboundary_view_container_tag>::type coboundary_view_container_tag;
             
@@ -460,11 +451,9 @@ namespace viennagrid
         template<typename domain_config, typename element_tag, typename tail>
         struct boundary_information_collection_typemap_impl<domain_config, viennagrid::meta::typelist_t<element_tag, tail> >
         {
-          // TODO richtig aus der config rauslesen!
+          // TODO correctly extract from config
             typedef typename config::result_of::query_config<domain_config, config::boundary_information_container_tag>::type boundary_container_tag;
             
-//             typedef typename config::result_of::element_container< domain_config, element_tag>::type base_element_container;
-//             typedef typename viennagrid::storage::result_of::view<base_element_container, coboundary_view_container_tag>::type element_view_type;
             typedef typename storage::result_of::container<bool, boundary_container_tag >::type base_container;
             
             typedef viennagrid::meta::typelist_t<
@@ -505,51 +494,6 @@ namespace viennagrid
             typedef typename viennagrid::storage::result_of::collection< element_container_typelist >::type type;
         };
         
-        // topologic domain type from config
-        /*
-        template<typename key_type, typename value_type, typename tail>
-        struct domain< viennagrid::meta::typelist_t< viennagrid::meta::static_pair<key_type, value_type>, tail > >
-        {
-            typedef viennagrid::meta::typelist_t< viennagrid::meta::static_pair<key_type, value_type>, tail > domain_config;
-//             typedef typename config::result_of::query_config< domain_config, config::topology_config_tag>::type topology_config;
-
-            typedef typename element_collection< domain_config >::type element_collection_type;
-            typedef typename viennagrid::storage::result_of::collection< typename coboundary_container_collection_typemap< domain_config >::type >::type coboundary_collection_type;
-            
-            typedef typename viennagrid::storage::result_of::collection< typename neighbour_container_collection_typemap< domain_config >::type >::type neighbour_collection_type;
-            
-            typedef typename viennagrid::storage::result_of::collection< typename boundary_information_collection_typemap<domain_config>::type >::type boundary_information_type;
-            
-            typedef typename id_generator<domain_config>::type id_generator_type;
-            typedef typename viennagrid::storage::result_of::physical_inserter<element_collection_type, id_generator_type>::type inserter_type;
-            
-            
-            typedef typename viennagrid::storage::collection_t<
-                typename viennagrid::meta::make_typemap<
-                
-                    coboundary_collection_tag,
-                    coboundary_collection_type,
-                    
-                    neighbour_collection_tag,
-                    neighbour_collection_type,
-                    
-                    boundary_information_collection_tag,
-                    boundary_information_type
-                    
-                >::type
-            > appendix_type;
-
-            
-            
-            typedef domain_t<element_collection_type, appendix_type, inserter_type> type;
-        };
-        
-        // identity meta functor
-        template<typename A, typename B, typename C>
-        struct domain< domain_t<A, B, C> >
-        {
-            typedef domain_t<A, B, C> type;
-        }; */
     }
 
 }

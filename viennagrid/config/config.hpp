@@ -28,11 +28,6 @@ namespace viennagrid
         
         struct vector_type_tag;
         
-//         struct segment_id_type_tag;
-//         struct segmentation_id_type_tag;
-//         struct element_segmentation_tag;
-        
-        
         
         namespace result_of
         {
