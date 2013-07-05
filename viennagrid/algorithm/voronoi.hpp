@@ -861,14 +861,14 @@ namespace viennagrid
                       ++cit)
       {
         const CellType & cell = viennagrid::dereference_handle(domain, *cit);
-        PointType cell_center = circumcenter(cell, domain);
+        PointType cell_center = circumcenter(cell);
 
         FacetOnCellRange facets_on_cell = viennagrid::elements<viennagrid::quadrilateral_tag>(cell);
         for (FacetOnCellIterator focit  = facets_on_cell.begin();
                                 focit != facets_on_cell.end();
                               ++focit)
         {
-          PointType facet_center = circumcenter(*focit, domain);
+          PointType facet_center = circumcenter(*focit);
           
           //iterate over edges:
           EdgeOnFacetRange edges_on_facet = viennagrid::elements<EdgeType>(*focit);
@@ -876,11 +876,11 @@ namespace viennagrid
                                   eocit != edges_on_facet.end();
                                 ++eocit)
           {
-            PointType edge_midpoint = viennagrid::circumcenter(*eocit, domain);
+            PointType edge_midpoint = viennagrid::circumcenter(*eocit);
             
             // interface contribution:
             double interface_contribution = spanned_volume(cell_center, facet_center, edge_midpoint);
-            BoxVolumeCellContributionAccessor(*eocit).push_back(std::make_pair((*cit), interface_contribution) );   //Note: Due to iteration over cells there is no need to use a voronoi_unique_quantity_update() here
+            interface_area_cell_contribution_accessor(*eocit).push_back(std::make_pair((*cit), interface_contribution) );   //Note: Due to iteration over cells there is no need to use a voronoi_unique_quantity_update() here
             interface_area_accessor(*eocit) += interface_contribution;
             
             //box volume contribution:
@@ -892,7 +892,7 @@ namespace viennagrid
             {
               //double contribution = spanned_volume(cell_center, facet_center, edge_midpoint, voeit->point());
               double contribution = spanned_volume(cell_center, facet_center, edge_midpoint, viennagrid::point(domain, *voeit));
-              vertex_box_volume_cell_contribution_accessor(*eocit).push_back(std::make_pair( (*cit), contribution) );
+              vertex_box_volume_cell_contribution_accessor(*voeit).push_back(std::make_pair( (*cit), contribution) );
               vertex_box_volume_accessor(*voeit) += contribution;
               edge_contribution += contribution;
             }
