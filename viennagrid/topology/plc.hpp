@@ -27,31 +27,6 @@
 */
 
 
-
-// namespace viennagrid
-// {
-//     struct plc_hole_point_tag;
-// }
-// 
-// TODO: holes using appendix!!
-// VIENNADATA_ENABLE_TYPE_BASED_KEY_DISPATCH( viennagrid::plc_hole_point_tag )
-// 
-// namespace viennagrid
-// {
-//     template<typename domain_type, typename plc_type>
-//     std::vector< typename result_of::point_type<domain_type>::type > & hole_points( plc_type & plc )
-//     {
-//         return viennadata::access< plc_hole_point_tag, std::vector< typename result_of::point_type<domain_type>::type > >()(plc);
-//     }
-//     
-//     template<typename domain_type, typename plc_type>
-//     std::vector< typename result_of::point_type<domain_type>::type > const & hole_points( plc_type const & plc )
-//     {
-//         return viennadata::access< plc_hole_point_tag, std::vector< typename result_of::point_type<domain_type>::type > >()(plc);
-//     }
-// }
-// 
-
 namespace viennagrid
 {
 
@@ -88,23 +63,6 @@ namespace viennagrid
       enum{ num = -1 };
     };
     
-//     template <>
-//     struct boundary_cells<plc_tag, polygon_tag>
-//     {
-//       typedef dynamic_unique_layout_tag     layout_tag;
-//       enum{ num = -1 };
-//     };
-
-
-    
-    
-//     template<typename bnd_cell_type>
-//     struct bndcell_generator<plc_tag, polygon_tag, bnd_cell_type>
-//     {
-//         template<typename element_type, typename inserter_type>
-//         static void create_bnd_cells(element_type & element, inserter_type & inserter)
-//         {}
-//     };
     
     template<typename bnd_cell_type>
     struct bndcell_generator<plc_tag, line_tag, bnd_cell_type>
@@ -112,25 +70,6 @@ namespace viennagrid
         template<typename element_type, typename inserter_type>
         static void create_bnd_cells(element_type & plc, inserter_type & inserter)
         {
-//             typedef typename result_of::element<element_type, polygon_tag>::type PolygonType;
-//             typedef typename result_of::element_range<element_type, polygon_tag>::type PolygonRange;
-//             typedef typename result_of::iterator<PolygonRange>::type PolygonIterator;
-//             
-//             PolygonRange polygons = elements<polygon_tag>(plc);
-//             for (PolygonIterator pit = polygons.begin(); pit != polygons.end(); ++pit)
-//             {
-//                 typename tagging::result_of::element_tag<element_type, bounding_tag>::type plc_bounding_tag = tagging::create_element_tag<bounding_tag>(plc);
-//                 
-//                 typedef typename result_of::element_range<PolygonType, line_tag>::type LineOnPolygonRange;
-//                 typedef typename result_of::handle_iterator<LineOnPolygonRange>::type LineOnPolygonIterator;
-//                 
-//                 LineOnPolygonRange lines = elements<line_tag>(*pit);
-//                 for (LineOnPolygonIterator lphit = lines.begin(); lphit != lines.end(); ++lphit)
-//                 {
-//                     plc.container( line_tag() ).insert_handle( *lphit );
-//                     tagging::tag(viennagrid::dereference_handle(plc,*lphit), plc_bounding_tag);
-//                 }
-//             }
         }
     };
     
@@ -155,27 +94,6 @@ namespace viennagrid
                     plc.container( vertex_tag() ).insert_handle( *vlhit );
             }
             
-            
-            
-//             typename tagging::result_of::element_tag<element_type, bounding_tag>::type plc_bounding_tag = tagging::create_element_tag<bounding_tag>(plc);
-//             
-//             typedef typename result_of::element<element_type, polygon_tag>::type PolygonType;
-//             typedef typename result_of::element_range<element_type, polygon_tag>::type PolygonRange;
-//             typedef typename result_of::iterator<PolygonRange>::type PolygonIterator;
-//             
-//             PolygonRange polygons = elements<polygon_tag>(plc);
-//             for (PolygonIterator pit = polygons.handle_begin(); pit != polygons.handle_end(); ++pit)
-//             {
-//                 typedef typename result_of::element_range<PolygonType, vertex_tag>::type VertexOnPolygonRange;
-//                 typedef typename result_of::handle_iterator<VertexOnPolygonRange>::type VertexOnPolygonIterator;
-//                 
-//                 VertexOnPolygonRange vertices = elements<vertex_tag>(*pit);
-//                 for (VertexOnPolygonIterator vphit = vertices.begin(); vphit != vertices.end(); ++vphit)
-//                 {
-//                     plc.container( vertex_tag() ).insert_handle( *vphit );
-//                     tagging::tag(viennagrid::dereference_handle(plc,*vphit), plc_bounding_tag);
-//                 }
-//             }
         }
     };
 

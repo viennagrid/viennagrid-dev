@@ -30,7 +30,7 @@
 
 namespace viennagrid
 {
-  namespace meta  //TODO: agree on handling meta stuff
+  namespace meta
   {
     template <long n, long k>
     struct n_over_k
@@ -78,15 +78,6 @@ namespace viennagrid
   namespace element_topology
   {
     /** @brief Topological description of the boundary k-cells an n-simplex */
-//     template <long n, long k>
-//     struct bndcells<simplex_tag<n>, k>
-//     {
-//       typedef simplex_tag<k>             tag;
-// 
-//       typedef static_layout_tag     layout_tag;
-//       enum{ num = meta::n_over_k<n+1, k+1>::value };
-//     };
-    
     template <long n, long k>
     struct boundary_cells<simplex_tag<n>, simplex_tag<k> >
     {
@@ -114,9 +105,6 @@ namespace viennagrid
                 {
                     bnd_cell.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(i), 0 );
                     bnd_cell.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(j), 1 );
-                    
-//                     std::cout << "## " << i << " " << j << std::endl;
-//                     std::cout << "## bnd cell generation for " << n << "-simplex: " << element.container( dimension_tag<0>() ).handle_at(i) << " " << element.container( dimension_tag<0>() ).handle_at(j) << std::endl;
                     
                     element.set_bnd_cell( bnd_cell, inserter(bnd_cell), index++ );
                 }
