@@ -51,7 +51,6 @@ namespace viennagrid
                          fit != facets.end();
                        ++fit)
       {
-          //std::cout << *fit << " boundary=" << is_boundary<CellTypeOrTag>(*fit, d) << std::endl;
         if (is_boundary(domain, *fit))
           result += viennagrid::volume(*fit);
       }
@@ -69,11 +68,9 @@ namespace viennagrid
   typename viennagrid::result_of::coord_type< PointAccessorType >::type
   surface(PointAccessorType const accessor, element_t<ElementTag, WrappedConfigType> const & element)
   {
-    //typedef typename ElementType::config_type                   ConfigType;
     typedef typename viennagrid::result_of::const_facet_range< element_t<ElementTag, WrappedConfigType> >::type   ElementBoundaryRange;
     typedef typename viennagrid::result_of::iterator<ElementBoundaryRange>::type       ElementBoundaryIterator;
     
-    //typedef typename ElementType::config_type::numeric_type value_type;
     typedef typename viennagrid::result_of::coord_type< PointAccessorType >::type value_type;
     
     value_type result = 0;

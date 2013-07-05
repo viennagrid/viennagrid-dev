@@ -216,7 +216,6 @@ namespace viennagrid
                         AccessorType accessor)
   {
     assert( &seg0.segmentation() == &seg1.segmentation() );
-//       std::cout << "DETECT INTERFACE" << std::endl;
     
       typedef typename result_of::cell_tag< segment_t<SegmentationType> >::type CellTag;
       typedef typename result_of::element< segment_t<SegmentationType>, CellTag>::type CellType;
@@ -291,10 +290,6 @@ namespace viennagrid
                 >::type::segment_interface_information_wrapper_type interface_information_container_wrapper_type;
         interface_information_container_wrapper_type const & interface_information_container_wrapper = interface_information_collection<element_tag>( seg0, seg1 );   
   
-//         std::cout << interface_information_container_wrapper.seg0_change_counter << std::endl;
-//         std::cout << interface_information_container_wrapper.seg1_change_counter << std::endl;
-        
-                
         if ( (is_obsolete(seg0, interface_information_container_wrapper.seg0_change_counter)) ||
              (is_obsolete(seg1, interface_information_container_wrapper.seg1_change_counter) ))
             detect_interface( const_cast<SegmentType&>(seg0), const_cast<SegmentType&>(seg1) );

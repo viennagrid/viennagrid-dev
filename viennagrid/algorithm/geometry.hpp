@@ -115,14 +115,10 @@ namespace viennagrid
             point_iterator_type it_prev = it_end; --it_prev;
             point_iterator_type it_cur = it_start;
             
-//             std::cout << "Testing-Line: (" << point_to_test << ") (" << outer_point << ")" << std::endl;
-            
             for ( ;it_cur != it_end ; ++it_cur, it_prev = circular_next(it_prev, it_start, it_end) )
             {
                 PolygonPointType const & q0 = *it_prev;
                 PolygonPointType const & q1 = *it_cur;
-                
-//                 std::cout << " Testing line " << q0 << " " << q1 << std::endl;
                 
                 // is inner point on polygon line?
                 if ( point_line_intersect( point_to_test, q0, q1, interval::closed_open_tag(), nc ) )
@@ -134,7 +130,6 @@ namespace viennagrid
                 {
                     if ( line_line_intersect( q0, q1, interval::open_open_tag(), point_to_test, outer_point, interval::open_open_tag(), nc ) )
                     {
-//                         std::cout << "  line intersect -> counting" << std::endl;
                         is_inside = !is_inside;
                     }
                 }
@@ -162,25 +157,17 @@ namespace viennagrid
             // iterating over all points
             while (it != circular_start_it)
             {
-//                 std::cout << " Testing " << *it << std::endl;
-                
                 // is point on testing line?
                 if ( point_line_intersect( *it, point_to_test, outer_point, interval::open_open_tag(), nc ) )
                 {
-//                     std::cout << "  is on line! -> searching next point not on line" << std::endl;
-                    
                     // find next point which is not on testing line
                     point_iterator_type it_next = circular_next(it, it_start, it_end);
                     while ( point_line_intersect( *it_next, point_to_test, outer_point, interval::open_open_tag(), nc ) )
                         it_next = circular_next(it_next, it_start, it_end);
                     
-//                     std::cout << "   next not on line: " << *it_next << std::endl;
-//                     std::cout << "   prev not on line: " << *it_prev << std::endl;
-                    
                     // check if the the lines/points are an ear
                     if ( ((*it_prev)[0] - (*it)[0]) * ((*it_next)[0] - (*it)[0]) < 0 )
                     {
-//                         std::cout << "  intersect, no polygon ear -> conting" << std::endl;
                         is_inside = !is_inside;
                     }
                     
@@ -196,24 +183,6 @@ namespace viennagrid
             
             return is_inside;
         }
-        
-        
-        
-        
-        
-        
-//         template<typename vector_type>
-//         bool same_side( vector_type const & p1, vector_type const & p2, vector_type const & a, vector_type const & b )
-//         {
-//             typedef typename viennagrid::result_of::coord_type<vector_type>::type coord_type;
-//             coord_type cp1 = viennagrid::cross_prod(b-a, p1-a);
-//             coord_type cp2 = viennagrid::cross_prod(b-a, p2-a);
-//             
-//             if (viennagrid::inner_prod(cp1, cp2) >= 0)
-//                 return true;
-//             else
-//                 return false;
-//         }
         
         
         

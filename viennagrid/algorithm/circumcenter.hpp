@@ -63,13 +63,7 @@ namespace viennagrid
     typename viennagrid::result_of::point_type<PointAccessorType>::type
     circumcenter(PointAccessorType const accessor, ElementType const & cell, viennagrid::simplex_tag<1>, DimensionTag)
     {
-      //typedef typename ElementType::config_type             Config;
-      //typedef typename viennagrid::result_of::point<Config>::type                            PointType;
       typedef typename viennagrid::result_of::point_type<PointAccessorType>::type PointType;
-      
-      //typedef typename viennagrid::result_of::const_ncell_range<ElementType, 0>::type         VertexOnCellRange;
-
-      //VertexOnCellRange vertices = viennagrid::elements<viennagrid::vertex_tag>(cell);
       
       PointType const & A = accessor( vertices(cell)[0] );
       PointType const & B = accessor( vertices(cell)[1] );
@@ -96,17 +90,7 @@ namespace viennagrid
     typename viennagrid::result_of::point_type<PointAccessorType>::type
     circumcenter(PointAccessorType const accessor, ElementType const & cell, viennagrid::triangle_tag, viennagrid::dimension_tag<2>)
     {
-      //typedef typename ElementType::config_type             Config;
-      //typedef typename Config::cell_tag                  CellTag;
-      
       typedef typename viennagrid::result_of::point_type<PointAccessorType>::type PointType;
-//       typedef typename viennagrid::result_of::point_type<GeometricContainerType>::type                            PointType;
-//       typedef typename viennagrid::result_of::element<GeometricContainerType, vertex_tag>::type                         VertexType;
-//       typedef typename viennagrid::result_of::element<GeometricContainerType, line_tag>::type                         EdgeType;
-      
-      //typedef typename viennagrid::result_of::const_ncell_range<ElementType, 0>::type         VertexOnCellRange;
-
-      //VertexOnCellRange vertices = viennagrid::elements<viennagrid::vertex_tag>(cell);
       
       PointType const & A = accessor( vertices(cell)[0] );
       PointType const & B = accessor( vertices(cell)[1] );
@@ -141,13 +125,7 @@ namespace viennagrid
     typename viennagrid::result_of::point_type<PointAccessorType>::type
     circumcenter(PointAccessorType const accessor, ElementType const & cell, viennagrid::quadrilateral_tag, viennagrid::dimension_tag<2>)
     {
-      //typedef typename CellType::config_type             Config;
       typedef typename viennagrid::result_of::point_type<PointAccessorType>::type PointType;
-      
-//       typedef typename CellType::tag                  CellTag;
-//       typedef typename viennagrid::result_of::point_type<GeometricContainerType>::type                            PointType;
-//       typedef typename viennagrid::result_of::element<GeometricContainerType, vertex_tag>::type                         VertexType;
-//       typedef typename viennagrid::result_of::element<GeometricContainerType, line_tag>::type                         EdgeType;
       
       typedef typename viennagrid::result_of::const_element_range<ElementType, vertex_tag>::type         VertexOnCellRange;
       typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type      VertexOnCellIterator;
@@ -160,10 +138,9 @@ namespace viennagrid
            ++vocit)
       {
         p0 += accessor( *vocit );
-//         viennagrid::point(geometric_container, *vocit);
       }
       
-      p0 /= vertices.size(); //viennagrid::element_topology::boundary_cells<CellTag, vertex_tag>::num;
+      p0 /= vertices.size();
       
       return p0;
     }
@@ -179,16 +156,6 @@ namespace viennagrid
     circumcenter(PointAccessorType const accessor, ElementType const & cell, viennagrid::triangle_tag, viennagrid::dimension_tag<3>)
     {
       typedef typename viennagrid::result_of::point_type<PointAccessorType>::type PointType;
-      
-      //typedef typename ElementType::config_type             Config;
-      //typedef typename ElementType::tag                  CellTag;
-//       typedef typename viennagrid::result_of::point_type<GeometricContainerType>::type                            PointType;
-//       typedef typename viennagrid::result_of::element<GeometricContainerType, vertex_tag>::type                         VertexType;
-//       typedef typename viennagrid::result_of::element<GeometricContainerType, line_tag>::type                         EdgeType;
-      
-      //typedef typename viennagrid::result_of::const_ncell_range<ElementType, 0>::type         VertexOnCellRange;
-
-      //VertexOnCellRange vertices = viennagrid::elements<viennagrid::vertex_tag>(cell);
       
       PointType const & A = accessor( vertices(cell)[0] );
       PointType const & B = accessor( vertices(cell)[1] );
@@ -217,12 +184,6 @@ namespace viennagrid
     {
       typedef typename viennagrid::result_of::point_type<PointAccessorType>::type PointType;
       
-      //typedef typename CellType::config_type             Config;
-//       typedef typename CellType::tag             ElementTag;
-//       typedef typename viennagrid::result_of::point_type<GeometricContainerType>::type                            PointType;
-//       typedef typename viennagrid::result_of::element<GeometricContainerType, vertex_tag>::type                         VertexType;
-//       typedef typename viennagrid::result_of::element<GeometricContainerType, line_tag>::type                         EdgeType;
-      
       typedef typename viennagrid::result_of::const_element_range<ElementType, vertex_tag>::type         VertexOnCellRange;
       typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type      VertexOnCellIterator;
 
@@ -234,10 +195,9 @@ namespace viennagrid
            ++vocit)
       {
         p0 += accessor( *vocit );
-//         viennagrid::point(geometric_container, *vocit);
       }
       
-      p0 /= vertices.size(); //viennagrid::element_topology::boundary_cells<ElementTag, vertex_tag>::num;
+      p0 /= vertices.size();
       
       return p0;
     }
@@ -252,12 +212,6 @@ namespace viennagrid
     circumcenter(PointAccessorType const accessor, ElementType const & cell, viennagrid::tetrahedron_tag, viennagrid::dimension_tag<3>)
     {
       typedef typename viennagrid::result_of::point_type<PointAccessorType>::type PointType;
-      
-//       typedef typename ElementType::config_type             Config;
-//       typedef typename Config::cell_tag                  CellTag;
-//       typedef typename viennagrid::result_of::point_type<GeometricContainerType>::type                            PointType;
-//       typedef typename viennagrid::result_of::element<GeometricContainerType, vertex_tag>::type                         VertexType;
-//       typedef typename viennagrid::result_of::element<GeometricContainerType, line_tag>::type                         EdgeType;
       
       typedef typename viennagrid::result_of::const_element_range<ElementType, vertex_tag>::type         VertexOnCellRange;
       typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type            VertexOnCellIterator;
@@ -296,12 +250,6 @@ namespace viennagrid
     {
       typedef typename viennagrid::result_of::point_type<PointAccessorType>::type PointType;
       
-      //typedef typename CellType::config_type             Config;
-//       typedef typename CellType::tag                  CellTag;
-//       typedef typename viennagrid::result_of::point_type<GeometricContainerType>::type                            PointType;
-//       typedef typename viennagrid::result_of::element<GeometricContainerType, vertex_tag>::type                         VertexType;
-//       typedef typename viennagrid::result_of::element<GeometricContainerType, line_tag>::type                         EdgeType;
-      
       typedef typename viennagrid::result_of::const_element_range<ElementType, vertex_tag>::type         VertexOnCellRange;
       typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type      VertexOnCellIterator;
 
@@ -315,7 +263,7 @@ namespace viennagrid
         p0 += accessor(*vocit);
       }
       
-      p0 /= vertices.size();//viennagrid::element_topology::boundary_cells<CellTag, vertex_tag>::num;
+      p0 /= vertices.size();
       
       return p0;
     }

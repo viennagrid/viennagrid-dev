@@ -67,7 +67,6 @@ namespace viennagrid
       //
       // Step 2: Write old vertices to new domain
       //
-//       std::size_t num_vertices = 0;
       VertexRange vertices = viennagrid::elements(domain_in);
       for (VertexIterator vit  = vertices.begin();
                           vit != vertices.end();
@@ -87,7 +86,6 @@ namespace viennagrid
         if ( edge_refinement_flag_accessor(*eit) )
           edge_to_vertex_handle_accessor( *eit ) = viennagrid::create_vertex( domain_out, viennagrid::centroid(point_accessor_in, *eit) );
       }
-      //std::cout << "Number of vertices in new domain: " << num_vertices << std::endl;
 
       //
       // Step 4: Now write new cells to new domain
@@ -111,7 +109,6 @@ namespace viennagrid
     template <typename CellTagIn, typename DomainTypeIn, typename EdgeRefinementFlagAccessor>
     void ensure_longest_edge_refinement(DomainTypeIn const & domain_in, EdgeRefinementFlagAccessor edge_refinement_flag_accessor)
     {
-//       typedef typename viennagrid::resulf_of::cell_tag<DomainTypeIn>::type           CellTagIn;
       
       typedef typename viennagrid::result_of::element<DomainTypeIn, vertex_tag>::type                                      VertexType;
       typedef typename viennagrid::result_of::element<DomainTypeIn, line_tag>::type                                      EdgeType;
@@ -131,8 +128,6 @@ namespace viennagrid
       while (something_changed)
       {
         something_changed = false;
-        //std::cout << "Longest edge bisection, run " << ++iter_cnt << std::endl;
-        
       
         CellRange cells = viennagrid::elements<CellTagIn>(domain_in);
         for (CellIterator cit  = cells.begin();
@@ -199,7 +194,6 @@ namespace viennagrid
     void cell_refinement_to_edge_refinement(DomainTypeIn const & domain_in,
                                             CellRefinementFlagAccessor cell_refinement_flag, EdgeRefinementFlagAccessor edge_refinement_flag_accessor)
     {
-//       typedef typename viennagrid::resulf_of::cell_tag<DomainTypeIn>::type           CellTagIn;   
       typedef typename viennagrid::result_of::element<DomainTypeIn, CellTagIn>::type              CellType;
       
       typedef typename viennagrid::result_of::const_element_range<DomainTypeIn, CellTagIn>::type   CellRange;          
@@ -227,7 +221,6 @@ namespace viennagrid
         }
       }
       
-      //std::cout << "No. of cells tagged for refinement: " << cells_for_refinement << std::endl;
     }
     
     
@@ -259,11 +252,6 @@ namespace viennagrid
       
       typedef typename viennagrid::result_of::element_tag<CellTypeOrTag>::type CellTag;
       
-//       cell_refinement_to_edge_refinement<CellTag>(domain_in, cell_refinement_flag, edge_refinement_flag_accessor);
-//       ensure_longest_edge_refinement<CellTag>(domain_in, edge_refinement_flag_accessor);
-    
-    
-    
     detail::refine_impl<CellTag>(domain_in, domain_out, point_accessor_in,
                                  edge_refinement_flag_accessor, vertex_to_vertex_handle_accessor, edge_to_vertex_handle_accessor);
   }

@@ -262,8 +262,6 @@ namespace viennagrid
             
             inner_numeric_type relative_eps = numeric::relative_tolerance(nc, viennagrid::norm_1(dir) );
             
-//             std::cout << "  " << dir[0] << " " << lhs [0] << std::endl;
-            
             if ( norm_1(dir) < relative_eps )
                 return intersection_result::no_intersection();
             
@@ -315,7 +313,6 @@ namespace viennagrid
                                 numeric_config nc,
                                 point_intersection_functor_type point_intersection_functor, overlapping_lines_functor_type overlapping_lines_functor)
         {
-            //typedef point_t<CoordType, CoordinateSystem>  PointType;
             typedef typename viennagrid::result_of::coord_type< point_type >::type coord_type;
             typedef typename numeric::result_of::numeric_type<numeric_config, coord_type>::type inner_numeric_type;
 
@@ -334,7 +331,6 @@ namespace viennagrid
             coord_type w_in_w = viennagrid::inner_prod(dir_w, dir_w);
             
             coord_type denominator = v_in_v * w_in_w - v_in_w * v_in_w;
-//             std::cout << "denominator: " << denominator << std::endl;
                                     
             if ( std::abs(denominator) < numeric::relative_tolerance(nc, v_in_v * w_in_w) ) //lines parallel (up to round-off)
             {
@@ -363,9 +359,6 @@ namespace viennagrid
             //Lines are not parallel: Compute minimizers s, t:
             point_type dir_distance = v0 - w0;  //any vector connecting two points on V and W
             
-            //if (inner_prod(dir_distance, dir_distance) / v_in_v < 1e-10)  //v0 and w0 are the same point
-            //  return std::make_pair(v0, w0);
-            
             coord_type v_in_dir_distance = viennagrid::inner_prod(dir_v, dir_distance);
             coord_type w_in_dir_distance = viennagrid::inner_prod(dir_w, dir_distance);
             
@@ -379,8 +372,6 @@ namespace viennagrid
             }
             else
                 return intersection_result::no_intersection();
-            
-//             return point_in_interval(coord_type(0), denominator, tag1, s) && point_in_interval(coord_type(0), denominator, tag2, t);
         }
         
         template <typename point_type, typename numeric_config, typename line1_tag, typename line2_tag>
