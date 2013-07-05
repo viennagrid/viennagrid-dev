@@ -75,21 +75,6 @@ namespace viennagrid
       return p.size();
     }
     
-    
-//     /** @brief  Value Type retrieval for a point. Returns the numeric type of each coordinate entry */
-//     template <typename PointType>
-//     struct value_type
-//     {
-//         typedef typename PointType::value_type type;
-//     };
-// 
-//     /** @brief  Value Type retrieval for a point. Returns the numeric type of each coordinate entry. Specialization for a ViennaGrid point. */
-//     template <typename CoordType, typename CoordinateSystem>
-//     struct value_type< point_t<CoordType, CoordinateSystem> >
-//     {
-//       typedef CoordType    type;
-//     };
-    
   }
 } 
 

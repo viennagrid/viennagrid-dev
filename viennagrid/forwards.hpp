@@ -151,7 +151,6 @@ namespace viennagrid
   class point_t;
 
 
-//   template<typename element_tag, typename bnd_cell_container_typelist_, typename id_tag, typename appendix_type = viennagrid::meta::null_type>
   template<typename element_tag, typename WrappedConfigType>
   class element_t;
 
@@ -215,38 +214,9 @@ namespace viennagrid
   };
   
 
-  //ID handling:
-  /** @brief ID handler class for IDs based on the n-cell address */
-//   class pointer_id
-//   {
-//     public:
-//       typedef pointer_id *  id_type;
-//       
-//       //for compatibility:
-//       void id(const pointer_id *) { };
-//       void id(long) { };
-//       const pointer_id * id() const { return this; };
-//       pointer_id * id() { return this; };
-//   };
-
-  /** @brief ID handler class for IDs of type long. Has to be used for dense quantity storage with ViennaData. */
-//   class integral_id
-//   {
-//     public:
-//       typedef long   id_type;
-//       
-//       integral_id() : id_(-1) {};
-// 
-//       long id() const { return id_; };
-//       void id(long new_id) { id_ = new_id; };
-// 
-//     protected:
-//       id_type id_;
-//   };
-  
-    struct static_layout_tag;
-    struct dynamic_layout_tag;
-    struct dynamic_unique_layout_tag;
+  struct static_layout_tag;
+  struct dynamic_layout_tag;
+  struct dynamic_unique_layout_tag;
   
   /** @brief Namespace for definition and handling of the individual topological elements (triangles, hexahedra, etc.) */
   namespace element_topology
@@ -388,11 +358,6 @@ namespace viennagrid
     };
     
     
-//     template<typename config_domain_segment_element_or_something_like_that, typename element_tag, typename bnd_cell_container_typelist, typename id_type>
-//     struct element<config_domain_segment_element_or_something_like_that, element_t<element_tag, bnd_cell_container_typelist, id_type> >
-//     {
-//         typedef element_t<element_tag, bnd_cell_container_typelist, id_type> type;
-//     };
 
     template<typename config_domain_segment_element_or_something_like_that, typename element_tag>
     struct handle;
@@ -643,67 +608,65 @@ namespace viennagrid
     };
     
     
-        
+    
+    template<typename element_tag_>
+    struct element_tag
+    {
+        typedef element_tag_ type;
+    };
+    
+    template<typename element_tag_, typename WrappedConfigType>
+    struct element_tag< element_t<element_tag_, WrappedConfigType> >
+    {
+        typedef element_tag_ type;
+    };
+    
+    template<typename element_tag_, typename WrappedConfigType>
+    struct element_tag< const element_t<element_tag_, WrappedConfigType> >
+    {
+        typedef element_tag_ type;
+    };
+    
+    
+    
+    template<typename element_type_or_tag>
+    struct facet_tag
+    {
+        typedef typename element_tag<element_type_or_tag>::type::facet_tag type;
+    };
+    
+    
+    
+    template<typename element_type>
+    struct facet_type
+    {
+        typedef typename element<element_type, typename facet_tag<element_type>::type >::type type;
+    };
 
+    template<typename element_tag, typename WrappedConfigType>
+    struct facet_handle< element_t<element_tag, WrappedConfigType> >
+    {
+        typedef typename handle< element_t<element_tag, WrappedConfigType>, typename facet_tag<element_tag>::type >::type type;
+    };
     
-        template<typename element_tag_>
-        struct element_tag
-        {
-            typedef element_tag_ type;
-        };
-        
-        template<typename element_tag_, typename WrappedConfigType>
-        struct element_tag< element_t<element_tag_, WrappedConfigType> >
-        {
-            typedef element_tag_ type;
-        };
-        
-        template<typename element_tag_, typename WrappedConfigType>
-        struct element_tag< const element_t<element_tag_, WrappedConfigType> >
-        {
-            typedef element_tag_ type;
-        };
-        
-        
-        
-        template<typename element_type_or_tag>
-        struct facet_tag
-        {
-            typedef typename element_tag<element_type_or_tag>::type::facet_tag type;
-        };
-        
-        
-        
-        template<typename element_type>
-        struct facet_type
-        {
-            typedef typename element<element_type, typename facet_tag<element_type>::type >::type type;
-        };
+    template<typename element_tag, typename WrappedConfigType>
+    struct const_facet_handle< element_t<element_tag, WrappedConfigType> >
+    {
+        typedef typename const_handle< element_t<element_tag, WrappedConfigType>, typename facet_tag<element_tag>::type >::type type;
+    };
     
-        template<typename element_tag, typename WrappedConfigType>
-        struct facet_handle< element_t<element_tag, WrappedConfigType> >
-        {
-            typedef typename handle< element_t<element_tag, WrappedConfigType>, typename facet_tag<element_tag>::type >::type type;
-        };
-        
-        template<typename element_tag, typename WrappedConfigType>
-        struct const_facet_handle< element_t<element_tag, WrappedConfigType> >
-        {
-            typedef typename const_handle< element_t<element_tag, WrappedConfigType>, typename facet_tag<element_tag>::type >::type type;
-        };
-        
-        
-        template<typename element_type>
-        struct facet_range
-        {
-            typedef typename element_range<element_type, typename facet_tag<element_type>::type >::type type;
-        };
-        
-        template<typename element_type>
-        struct const_facet_range
-        {
-            typedef typename const_element_range<element_type, typename facet_tag<element_type>::type >::type type;
-        };
+    
+    template<typename element_type>
+    struct facet_range
+    {
+        typedef typename element_range<element_type, typename facet_tag<element_type>::type >::type type;
+    };
+    
+    template<typename element_type>
+    struct const_facet_range
+    {
+        typedef typename const_element_range<element_type, typename facet_tag<element_type>::type >::type type;
+    };
   }
   
     
@@ -806,6 +769,7 @@ namespace viennagrid
     template<typename element_type>
     typename result_of::facet_range<element_type>::type facets(element_type & element)
     {
+      assert(false && "implementation missing!");
 //         return elements< typename result_of::facet_tag<element_type>::type >(element);
     }
     
@@ -907,11 +871,5 @@ namespace viennagrid
   /** @brief ViennaData key for the Voronoi box volume associated with an edge or vertex */
   struct voronoi_box_volume_key {}; 
 }
-
-
-// tell ViennaData to use a type-based key dispatch for the refinement and the voronoi keys
-// VIENNADATA_ENABLE_TYPE_BASED_KEY_DISPATCH(viennagrid::refinement_key)
-// VIENNADATA_ENABLE_TYPE_BASED_KEY_DISPATCH(viennagrid::voronoi_interface_area_key)
-// VIENNADATA_ENABLE_TYPE_BASED_KEY_DISPATCH(viennagrid::voronoi_box_volume_key)
 
 #endif

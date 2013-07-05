@@ -545,8 +545,6 @@ namespace viennagrid
       typedef dim_type        size_type;
       
       
-      //typedef point_tag tag;
-      
       /** @brief Publish the geometric dimension of the point */
       enum { dim = CoordinateSystem::dim };
       
@@ -566,70 +564,17 @@ namespace viennagrid
       template <typename CoordType2, typename CoordinateSystem2>
       point_t(point_t<CoordType2, CoordinateSystem2> const & p2)
       {
-        //std::cout << "Copy CTOR!" << std::endl;
         *this = coordinate_converter<point_t<CoordType2, CoordinateSystem2>, point_t>()(p2);
       }
 
-//       //explicit copy CTOR
-//       /** @brief Copy constructor. Copies the entries. */
-//       point_t(point_t const & other)
-//       {
-//         for (size_type i=0; i<size_type(dim); ++i)
-//           coords[i] = other.coords[i];
-//       }
-
-//       /** @brief Assignment operator for a point with the same coordinate system */
-//       point_t & operator=(point_t const & p2)
-//       {
-//         for (size_type i=0; i<size_type(dim); ++i)
-//           coords[i] = p2.coords[i];
-//         return *this;
-//       }
-      
       
       /** @brief Assignment operator for a point given in a different coordinate system */
       template <typename CoordType2, typename CoordinateSystem2>
       point_t & operator=(point_t<CoordType2, CoordinateSystem2> const & p2)
       {
-        //std::cout << "Assignment operator!" << std::endl;
         *this = coordinate_converter<point_t<CoordType2, CoordinateSystem2>, point_t>()(p2);
         return *this;
       }
-      
-//       /** @brief Read/Write access to the coordinate at position 'index' */
-//       CoordType & operator[](size_type index) 
-//       {
-//         assert(index < dim);
-//         return coords[index]; 
-//       }
-//       
-//       /** @brief Read access to the coordinate at position 'index' */
-//       CoordType const & operator[](size_type index) const
-//       {
-//         assert(index < dim);
-//         return coords[index]; 
-//       }
-//       
-//       /** @brief STL-type checked read/write access to the coordinate at position 'index'. Throws an exception if 'index' is invalid. */
-//       CoordType at(size_type index)
-//       {
-//         if (index < 0 || index >= dim)
-//           throw point_index_out_of_bounds_exception(index);
-//         
-//         return coords[index];
-//       }
-// 
-//       /** @brief STL-type checked read access to the coordinate at position 'index'. Throws an exception if 'index' is invalid. */
-//       CoordType const & at(size_type index) const
-//       {
-//         if (index < 0 || index >= dim)
-//           throw point_index_out_of_bounds_exception(index);
-//         
-//         return coords[index];
-//       }
-      
-//       /** @brief Returns the geometric dimension of the point */
-//       size_type size() const { return dim; }
       
       //
       // operators:
@@ -674,8 +619,6 @@ namespace viennagrid
       point_t & operator*=(CoordType factor)
       {
         CoordinateSystem::inplace_stretch(*this, factor);
-        //for (size_type i=0; i<d; ++i)
-        //  coords[i] *= factor;
         return *this;
       }
       
@@ -683,8 +626,6 @@ namespace viennagrid
       point_t & operator/=(CoordType factor)
       {
         CoordinateSystem::inplace_stretch(*this, 1.0 / factor);
-        //for (size_type i=0; i<d; ++i)
-        //  coords[i] /= factor;
         return *this;
       }
 
@@ -693,9 +634,6 @@ namespace viennagrid
       {
         point_t ret(*this);
         return CoordinateSystem::inplace_stretch(ret, factor);
-        //for (size_type i=0; i<d; ++i)
-        //  ret[i] = coords[i] * factor;
-        //return ret;
       }
 
       /** @brief Convenience overload for stretching the vector given by the point. The vector is stretched in the Euclidian space - thus coordinates are transformed appropriately if required */
@@ -703,14 +641,8 @@ namespace viennagrid
       {
         point_t ret(*this);
         return CoordinateSystem::inplace_stretch(ret, 1.0 / factor);
-        //point_t ret;
-        //for (size_type i=0; i<d; ++i)
-        //  ret[i] = coords[i] / factor;
-        //return ret;
       }
 
-    private:
-      //CoordType coords[dim];
   };
   
   
@@ -740,13 +672,6 @@ namespace viennagrid
   {
     return p * val;
   }
-
-/*  template <typename CoordType, long d, typename CoordinateSystem>
-  point_t<CoordType, d, CoordinateSystem>
-  operator*(CoordType val, point_t<CoordType, d, CoordinateSystem> const & p)
-  {
-    return p * val;
-  }*/
 
   /** @brief Overload of the output stream operator. Allows simple printing to screen or streaming to file */
   template <typename CoordType, typename CoordinateSystem>
