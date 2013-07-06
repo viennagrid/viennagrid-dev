@@ -629,38 +629,114 @@ namespace viennagrid
         {           
             template<typename value_type, typename container_tag>
             struct container;
-            
+
             template<typename value_type>
             struct container<value_type, std_vector_tag>
             {
                 typedef std::vector<value_type> type;
             };
-            
+
             template<typename value_type>
             struct container<value_type, std_deque_tag>
             {
                 typedef std::deque<value_type> type;
             };
-            
+
             template<typename value_type>
             struct container<value_type, std_list_tag>
             {
                 typedef std::list<value_type> type;
             };
-            
+
             template<typename value_type>
             struct container<value_type, std_set_tag>
             {
                 typedef std::set<value_type> type;
             };
-            
-            
+
+
             template<typename value_type, typename container_tag, typename handle_tag>
             struct container<value_type, handled_container_tag<container_tag, handle_tag> >
             {
                 typedef container_t< typename container<value_type, container_tag>::type, handle_tag > type;
             };
-            
+
+            // vector
+            template<typename value_type>
+            struct container<value_type, std_vector_with_iterator_handle_tag >
+            {
+                typedef container_t< typename container<value_type, std_vector_tag>::type, iterator_handle_tag > type;
+            };
+
+            template<typename value_type>
+            struct container<value_type, std_vector_with_pointer_handle_tag >
+            {
+                typedef container_t< typename container<value_type, std_vector_tag>::type, pointer_handle_tag > type;
+            };
+
+            template<typename value_type>
+            struct container<value_type, std_vector_with_id_handle_tag >
+            {
+                typedef container_t< typename container<value_type, std_vector_tag>::type, id_handle_tag > type;
+            };
+
+            // deque
+            template<typename value_type>
+            struct container<value_type, std_deque_with_iterator_handle_tag >
+            {
+                typedef container_t< typename container<value_type, std_deque_tag>::type, iterator_handle_tag > type;
+            };
+
+            template<typename value_type>
+            struct container<value_type, std_deque_with_pointer_handle_tag >
+            {
+                typedef container_t< typename container<value_type, std_deque_tag>::type, pointer_handle_tag > type;
+            };
+
+            template<typename value_type>
+            struct container<value_type, std_deque_with_id_handle_tag >
+            {
+                typedef container_t< typename container<value_type, std_deque_tag>::type, id_handle_tag > type;
+            };
+
+            // list
+            template<typename value_type>
+            struct container<value_type, std_list_with_iterator_handle_tag >
+            {
+                typedef container_t< typename container<value_type, std_list_tag>::type, iterator_handle_tag > type;
+            };
+
+            template<typename value_type>
+            struct container<value_type, std_list_with_pointer_handle_tag >
+            {
+                typedef container_t< typename container<value_type, std_list_tag>::type, pointer_handle_tag > type;
+            };
+
+            template<typename value_type>
+            struct container<value_type, std_list_with_id_handle_tag >
+            {
+                typedef container_t< typename container<value_type, std_list_tag>::type, id_handle_tag > type;
+            };
+
+            // set
+            template<typename value_type>
+            struct container<value_type, std_set_with_iterator_handle_tag >
+            {
+                typedef container_t< typename container<value_type, std_set_tag>::type, iterator_handle_tag > type;
+            };
+
+            template<typename value_type>
+            struct container<value_type, std_set_with_pointer_handle_tag >
+            {
+                typedef container_t< typename container<value_type, std_set_tag>::type, pointer_handle_tag > type;
+            };
+
+            template<typename value_type>
+            struct container<value_type, std_set_with_id_handle_tag >
+            {
+                typedef container_t< typename container<value_type, std_set_tag>::type, id_handle_tag > type;
+            };
+
 
         }
         

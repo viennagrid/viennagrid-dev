@@ -20,6 +20,7 @@ using std::endl;
 #include "viennagrid/topology/line.hpp"
 #include "viennagrid/topology/simplex.hpp"
 
+#include "viennagrid/config/element_config.hpp"
 
 #include "viennagrid/element/element_key.hpp"
 #include "viennagrid/point.hpp"
@@ -40,12 +41,8 @@ int main()
     // Get the vertex type:
     //
     typedef viennagrid::element_t<  viennagrid::vertex_tag,   // element tag
-                                    viennagrid::config::element_config_wrapper_t<
-                                      viennagrid::meta::null_type,                                  // boundary k-cells container (a vertex does not have boundary cells, hence 'null_type'
-                                      viennagrid::storage::smart_id_tag<int>,                 // type 'int' is used as ID
-                                      viennagrid::meta::null_type
-                                    >
-                                > vertex_type;
+                                    viennagrid::config::element_smart_id_no_boundary_no_appendix
+                                 > vertex_type;
     
     //
     // Instantiate a few vertices (note that they are now free of any geometry information)
@@ -95,12 +92,8 @@ int main()
     // Finally, we can instantiate the line type by passing the respective tag, the typelist of boundary k-cells, and the ID-type (int):
     //
     typedef viennagrid::element_t<  viennagrid::line_tag,           // element tag (as in ViennaGrid 1.0.x)
-                                    viennagrid::config::element_config_wrapper_t<
-                                      line_containers_typelist,                               // list of boundary containers
-                                      viennagrid::storage::smart_id_tag<int>,                 // type 'int' is used as ID
-                                      viennagrid::meta::null_type
-                                    >
-                                    > line_type;
+                                    viennagrid::config::element_smart_id_with_boundary_no_appendix<line_containers_typelist>
+                                 > line_type;
     
     typedef viennagrid::storage::result_of::container<
             line_type,
@@ -158,11 +151,8 @@ int main()
     // Instantiate the triangle type as above: Provide the tag, the boundary container list, and the ID type
     //
     typedef viennagrid::element_t< viennagrid::triangle_tag,
-                                   viennagrid::config::element_config_wrapper_t<
-                                      triangle_containers_typelist,                               // list of boundary containers
-                                      viennagrid::storage::smart_id_tag<int>,                 // type 'int' is used as ID
-                                      viennagrid::meta::null_type
-                                    > > triangle_type;
+                                   viennagrid::config::element_smart_id_with_boundary_no_appendix<triangle_containers_typelist>
+                                 > triangle_type;
     
     //
     // Instantiate a handled container of triangles using std::deque as the underlying container base. Handles are again of the type defined at the beginning.
@@ -226,11 +216,7 @@ int main()
     // Now create the tetrahedron type as usual: Provide the tag, the boundary containers, and the ID type:
     //
     typedef viennagrid::element_t< viennagrid::tetrahedron_tag, 
-                                   viennagrid::config::element_config_wrapper_t<
-                                      tetrahedron_containers_typelist,                               // list of boundary containers
-                                      viennagrid::storage::smart_id_tag<int>,                 // type 'int' is used as ID
-                                      viennagrid::meta::null_type
-                                    >
+                                   viennagrid::config::element_smart_id_with_boundary_no_appendix<tetrahedron_containers_typelist>
                                   > tetrahedron_type;
     
     //

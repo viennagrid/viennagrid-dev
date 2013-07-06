@@ -34,8 +34,68 @@ namespace viennagrid
     
     namespace config
     {
+        typedef viennagrid::storage::smart_id_tag<int>      element_default_id_tag;
       
-    
+        // default configuration classes for elements:
+        //
+        //  template<typename bnd_cell_container_typelist_, typename id_tag_, typename appendix_type_>
+        //  struct element_config_wrapper_t
+        //  {
+        //    typedef bnd_cell_container_typelist_          bnd_cell_container_typelist;
+        //    typedef id_tag_                               id_tag;
+        //    typedef appendix_type_                        appendix_type;
+        //  };
+
+        ////////////// no boundary typelist: vertex configuration /////////
+
+        struct element_smart_id_no_boundary_no_appendix
+        {
+            typedef element_default_id_tag                     id_tag;
+            typedef viennagrid::meta::null_type                bnd_cell_container_typelist;
+            typedef viennagrid::meta::null_type                appendix_type;
+        };
+
+        template <typename AppendixType>
+        struct element_smart_id_no_boundary_with_appendix
+        {
+            typedef element_default_id_tag                     id_tag;
+            typedef viennagrid::meta::null_type                bnd_cell_container_typelist;
+            typedef AppendixType                               appendix_type;
+        };
+
+        struct element_smart_id_no_boundary_with_point_1d
+        {
+            typedef element_default_id_tag                                      id_tag;
+            typedef viennagrid::meta::null_type                                 bnd_cell_container_typelist;
+            typedef viennagrid::point_t<double, viennagrid::cartesian_cs<1> >   appendix_type;
+        };
+
+        struct element_smart_id_no_boundary_with_point_2d
+        {
+            typedef element_default_id_tag                                      id_tag;
+            typedef viennagrid::meta::null_type                                 bnd_cell_container_typelist;
+            typedef viennagrid::point_t<double, viennagrid::cartesian_cs<2> >   appendix_type;
+        };
+
+        struct element_smart_id_no_boundary_with_point_3d
+        {
+            typedef element_default_id_tag                                      id_tag;
+            typedef viennagrid::meta::null_type                                 bnd_cell_container_typelist;
+            typedef viennagrid::point_t<double, viennagrid::cartesian_cs<3> >   appendix_type;
+        };
+
+
+        ////////////// higher-dimensional configuration /////////
+
+        template <typename BoundaryTypeList>
+        struct element_smart_id_with_boundary_no_appendix
+        {
+            typedef element_default_id_tag                     id_tag;
+            typedef BoundaryTypeList                           bnd_cell_container_typelist;
+            typedef viennagrid::meta::null_type                appendix_type;
+        };
+
+
         namespace result_of
         {       
             template<typename storage_layout_tag, long num>
@@ -69,7 +129,8 @@ namespace viennagrid
             template<typename domain_config, typename element_tag>
             struct is_element_present
             {
-                typedef typename query_config<domain_config, topology_config_tag>::type topology_config;
+                //typedef typename query_config<domain_config, topology_config_tag>::type topology_config;
+                typedef domain_config   topology_config;
                 
                 static const bool value =
                     !viennagrid::meta::EQUAL<
@@ -85,43 +146,34 @@ namespace viennagrid
             template<typename domain_config, typename element_tag>
             struct query_element_id_tag
             {
-                typedef typename query_config<domain_config, topology_config_tag>::type topology_config;
+                typedef typename query_config<domain_config, element_tag>::type  domain_element_config;
                 
-                typedef typename query_config<topology_config, element_tag>::type element_config;
-                
-                typedef typename query_config<element_config, element_id_tag>::type type;
+                typedef typename domain_element_config::element_config::id_tag   type;
             };
             
             template<typename domain_config, typename element_tag>
             struct query_element_container_tag
             {
-                typedef typename query_config<domain_config, topology_config_tag>::type topology_config;
-                
-                typedef typename query_config<topology_config, element_tag>::type element_config;
-                typedef typename query_config<element_config, element_container_tag>::type type;
+                typedef typename query_config<domain_config, element_tag>::type     domain_element_config;
+                typedef typename domain_element_config::element_container_tag       type;
             };
             
 
             template<typename domain_config, typename element_tag, typename boundary_cell_tag>
             struct query_boundary_storage_layout
             {
-                typedef typename query_config<domain_config, topology_config_tag>::type topology_config;
+                typedef typename query_config<domain_config, element_tag>::type domain_element_config;
                 
-                typedef typename query_config<topology_config, element_tag>::type element_config;
-                
-                typedef typename viennagrid::meta::typemap::result_of::find< element_config, element_boundary_storage_layout_tag >::type::second element_storage_layout_config;
-                typedef typename viennagrid::meta::typemap::result_of::find< element_storage_layout_config, boundary_cell_tag >::type::second boundary_cell_storage_handling;
+                typedef typename domain_element_config::element_config::bnd_cell_container_typelist       boundary_cell_storage_handling;
             };
             
             
             template<typename domain_config, typename element_tag>
             struct query_appendix_type
             {
-                typedef typename query_config<domain_config, topology_config_tag>::type topology_config;
+                typedef typename query_config<domain_config, element_tag>::type  domain_element_config;
                 
-                typedef typename query_config<topology_config, element_tag>::type element_config;
-
-                typedef typename query_config<element_config, element_appendix_type_tag>::type type;
+                typedef typename domain_element_config::element_config::appendix_type   type;
             };
             
             

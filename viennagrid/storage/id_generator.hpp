@@ -46,7 +46,7 @@ namespace viennagrid
                     typename continuous_id_generator_config_from_domain_config_helper<domain_config, tail>::type,
                     viennagrid::meta::static_pair<
                         typename viennagrid::result_of::element<domain_config, element_tag>::type,
-                        typename config::result_of::query_config<element_config, config::element_id_tag>::type
+                        typename element_config::element_config::id_tag
                     >
                 >::type type;
             };
@@ -69,7 +69,7 @@ namespace viennagrid
             template<typename domain_config>
             struct continuous_id_generator_config_from_domain_config
             {
-                typedef typename config::result_of::query_config<domain_config, config::topology_config_tag>::type topology_config;
+                typedef domain_config topology_config;
                 typedef typename continuous_id_generator_config_from_domain_config_helper<domain_config, topology_config>::type type;
             };
         }
