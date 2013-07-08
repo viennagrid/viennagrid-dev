@@ -22,6 +22,8 @@
 #include "viennagrid/algorithm/centroid.hpp"
 #include "viennagrid/algorithm/norm.hpp"
 
+#include "viennagrid/domain/element_creation.hpp"
+
 #include "viennagrid/refinement/triangle.hpp"
 #include "viennagrid/refinement/tetrahedron.hpp"
 
