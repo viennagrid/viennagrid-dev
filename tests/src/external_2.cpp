@@ -29,10 +29,33 @@
 //
 // *** ViennaGrid
 //
-#include "viennagrid/domain.hpp"
-#include "viennagrid/config/simplex.hpp"
+
+#include "viennagrid/storage/view.hpp"
+#include "viennagrid/storage/container_collection.hpp"
+#include "viennagrid/storage/inserter.hpp"
+#include "viennagrid/storage/id_generator.hpp"
+#include "viennagrid/storage/hidden_key_map.hpp"
+#include "viennagrid/storage/range.hpp"
+
+
+#include "viennagrid/topology/vertex.hpp"
+#include "viennagrid/topology/line.hpp"
+#include "viennagrid/topology/simplex.hpp"
+
+
+#include "viennagrid/element/element_key.hpp"
+#include "viennagrid/element/element_orientation.hpp"
+
+#include "viennagrid/config/element_config.hpp"
+#include "viennagrid/config/topology_config.hpp"
+#include "viennagrid/config/domain_config.hpp"
+#include "viennagrid/config/default_configs.hpp"
+
+#include "viennagrid/domain/domain.hpp"
+#include "viennagrid/domain/topology.hpp"
 
 //algorithms:
+#include "viennagrid/algorithm/angle.hpp"
 #include "viennagrid/algorithm/boundary.hpp"
 #include "viennagrid/algorithm/centroid.hpp"
 #include "viennagrid/algorithm/circumcenter.hpp"
@@ -49,17 +72,18 @@
 
 //io:
 #include "viennagrid/io/netgen_reader.hpp"
-#include "viennagrid/io/opendx_writer.hpp"
+//#include "viennagrid/io/opendx_writer.hpp"
 #include "viennagrid/io/vtk_reader.hpp"
 #include "viennagrid/io/vtk_writer.hpp"
 
+
 void other_func()
 {
-  viennagrid::domain_t<viennagrid::config::tetrahedral_3d>  domain;
+  viennagrid::tetrahedral_3d_domain  domain;
   
   std::cout << "--- Tetrahedral domain, 3d ---" << std::endl;
-  std::cout << "Size<0>: " << viennagrid::ncells<0>(domain).size() << std::endl;
-  std::cout << "Size<1>: " << viennagrid::ncells<0>(domain).size() << std::endl;
-  std::cout << "Size<2>: " << viennagrid::ncells<0>(domain).size() << std::endl;
-  std::cout << "Size<3>: " << viennagrid::ncells<0>(domain).size() << std::endl;
+  std::cout << "Size<0>: " << viennagrid::elements<viennagrid::vertex_tag>(domain).size() << std::endl;
+  std::cout << "Size<1>: " << viennagrid::elements<viennagrid::vertex_tag>(domain).size() << std::endl;
+  std::cout << "Size<2>: " << viennagrid::elements<viennagrid::vertex_tag>(domain).size() << std::endl;
+  std::cout << "Size<3>: " << viennagrid::elements<viennagrid::vertex_tag>(domain).size() << std::endl;
 }
