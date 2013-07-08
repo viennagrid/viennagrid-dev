@@ -33,7 +33,6 @@
 namespace viennagrid
 {
     
-    
     template<typename container_collection_type>
     class view_domain_setter
     {
@@ -127,9 +126,9 @@ namespace viennagrid
       template <typename WrappedConfigType>
       struct domain_element_collection_type
       {
-        typedef typename WrappedConfigType::type   ConfigType;
+//         typedef typename WrappedConfigType::type   ConfigType;
 
-        typedef typename result_of::element_collection< ConfigType >::type   type;
+        typedef typename config::result_of::element_collection< WrappedConfigType >::type   type;
       };
       
       template <typename WrappedDomainConfigType, typename ElementTypeList, typename ContainerConfig>
@@ -149,9 +148,9 @@ namespace viennagrid
       {
         typedef typename WrappedConfigType::type   ConfigType;
             
-        typedef typename viennagrid::storage::result_of::collection< typename viennagrid::result_of::coboundary_container_collection_typemap<ConfigType>::type >::type   coboundary_collection_type;        
-        typedef typename viennagrid::storage::result_of::collection< typename viennagrid::result_of::neighbour_container_collection_typemap< ConfigType>::type >::type   neighbour_collection_type;        
-        typedef typename viennagrid::storage::result_of::collection< typename viennagrid::result_of::boundary_information_collection_typemap<ConfigType>::type >::type   boundary_information_type;
+        typedef typename viennagrid::storage::result_of::collection< typename viennagrid::result_of::coboundary_container_collection_typemap<WrappedConfigType>::type >::type   coboundary_collection_type;        
+        typedef typename viennagrid::storage::result_of::collection< typename viennagrid::result_of::neighbour_container_collection_typemap< WrappedConfigType>::type >::type   neighbour_collection_type;        
+        typedef typename viennagrid::storage::result_of::collection< typename viennagrid::result_of::boundary_information_collection_typemap<WrappedConfigType>::type >::type   boundary_information_type;
           
         typedef typename viennagrid::storage::collection_t<
               typename viennagrid::meta::make_typemap<
@@ -179,10 +178,11 @@ namespace viennagrid
       template <typename WrappedConfigType>
       struct domain_inserter_type
       {
-        typedef typename WrappedConfigType::type   ConfigType;
+//         typedef typename WrappedConfigType::type   ConfigType;
+//         typedef WrappedConfigType ConfigType;
           
-        typedef typename result_of::element_collection<ConfigType>::type                                                       element_collection_type;
-        typedef typename viennagrid::result_of::id_generator<ConfigType>::type                                                 id_generator_type;
+        typedef typename config::result_of::element_collection<WrappedConfigType>::type                                                       element_collection_type;
+        typedef typename viennagrid::result_of::id_generator<WrappedConfigType>::type                                                 id_generator_type;
 
         typedef typename viennagrid::storage::result_of::physical_inserter<element_collection_type, id_generator_type>::type   type;
       };
@@ -191,7 +191,8 @@ namespace viennagrid
       struct domain_inserter_type< decorated_domain_view_config<WrappedDomainConfigType, ElementTypeList, ContainerConfig> >
       {
         typedef decorated_domain_view_config<WrappedDomainConfigType, ElementTypeList, ContainerConfig>  argument_type;
-        typedef typename WrappedDomainConfigType::type                                                   DomainConfigType;
+//         typedef typename WrappedDomainConfigType::type                                                   DomainConfigType;
+        typedef WrappedDomainConfigType ConfigType;
 
         typedef typename domain_element_collection_type<argument_type>::type                             view_container_collection_type;
         typedef typename domain_inserter_type<WrappedDomainConfigType>::type                             full_domain_inserter_type;
@@ -448,7 +449,7 @@ namespace viennagrid
         template<typename element_tag, typename WrappedConfigType, typename boundary_element_type>
         struct is_boundary_type< element_t<element_tag, WrappedConfigType>, boundary_element_type>
         {
-            typedef typename result_of::element_boundary_cell_container_typelist<WrappedConfigType>::type bnd_cell_container_typelist;
+            typedef typename element_t<element_tag, WrappedConfigType>::bnd_cell_container_typelist bnd_cell_container_typelist;
             static const bool value = is_boundary_type<bnd_cell_container_typelist, boundary_element_type>::value;
         };
         
@@ -547,14 +548,14 @@ namespace viennagrid
         
     }
         
-    template <typename DomainConfigType, typename ElementTypeList, typename ContainerConfig>
+    template <typename WrappedConfigType, typename ElementTypeList, typename ContainerConfig>
     class decorated_domain_view_config
     {
       private:
-        typedef typename DomainConfigType::type      config_type;
+//         typedef typename DomainConfigType::type      config_type;
         
-        typedef typename result_of::element_collection< config_type >::type                                                   element_collection_type;
-        typedef typename viennagrid::result_of::id_generator<config_type>::type                                               id_generator_type;
+        typedef typename config::result_of::element_collection< WrappedConfigType >::type                                                   element_collection_type;
+        typedef typename viennagrid::result_of::id_generator<WrappedConfigType>::type                                               id_generator_type;
 
         typedef typename result_of::filter_element_container<ElementTypeList, typename element_collection_type::typemap>::type        view_container_collection_typemap;
         typedef typename viennagrid::storage::result_of::view_collection<view_container_collection_typemap, ContainerConfig>::type    view_container_collection_type;
@@ -563,18 +564,18 @@ namespace viennagrid
       public:
         typedef view_container_collection_typemap    type;
 
-        typedef DomainConfigType                     domain_config_type;
+        typedef WrappedConfigType                     domain_config_type;
     };
     
   
-    template <typename DomainConfigType, typename E, typename C, typename ElementTypeList, typename ContainerConfig>
-    class decorated_domain_view_config< decorated_domain_view_config<DomainConfigType, E, C>, ElementTypeList, ContainerConfig>
+    template <typename WrappedConfigType, typename E, typename C, typename ElementTypeList, typename ContainerConfig>
+    class decorated_domain_view_config< decorated_domain_view_config<WrappedConfigType, E, C>, ElementTypeList, ContainerConfig>
     {
       private:
-        typedef typename DomainConfigType::type      config_type;
+//         typedef typename DomainConfigType::type      config_type;
         
-        typedef typename result_of::element_collection< config_type >::type                                                   element_collection_type;
-        typedef typename viennagrid::result_of::id_generator<config_type>::type                                               id_generator_type;
+        typedef typename config::result_of::element_collection< WrappedConfigType >::type                                                   element_collection_type;
+        typedef typename viennagrid::result_of::id_generator<WrappedConfigType>::type                                               id_generator_type;
 
         typedef typename result_of::filter_element_container<ElementTypeList, typename element_collection_type::typemap>::type        view_container_collection_typemap;
         typedef typename viennagrid::storage::result_of::view_collection<view_container_collection_typemap, ContainerConfig>::type    view_container_collection_type;
@@ -583,7 +584,7 @@ namespace viennagrid
       public:
         typedef view_container_collection_typemap    type;
 
-        typedef typename decorated_domain_view_config<DomainConfigType, E, C>::domain_config_type      domain_config_type;
+        typedef typename decorated_domain_view_config<WrappedConfigType, E, C>::domain_config_type      domain_config_type;
     };
   
 
@@ -601,18 +602,7 @@ namespace viennagrid
             >
         struct domain_view
         {
-            typedef typename result_of::element_collection< domain_type >::type element_collection_type;
-            typedef typename domain_type::inserter_type domain_inserter_type;
-            
-            typedef typename filter_element_container<element_typelist, typename element_collection_type::typemap>::type view_container_collection_typemap;
-            typedef typename viennagrid::storage::result_of::view_collection<view_container_collection_typemap, container_config>::type view_container_collection_type;
-            
-            typedef typename viennagrid::storage::result_of::recursive_inserter<view_container_collection_type, domain_inserter_type>::type view_inserter_type;
-            
-
-            // TODO: change viennagrid::meta::null_type !!!
             typedef domain_t< decorated_domain_view_config<typename domain_type::wrapped_config_type, element_typelist, container_config> >  type;
-            //typedef domain_t<view_container_collection_type, typename domain_type::appendix_type, view_inserter_type> type; 
         };
     }
     
@@ -762,11 +752,11 @@ namespace viennagrid
     
     
   template<typename domain_type,
-           typename ElementType, typename WrappedConfigType,
+           typename ElementTag, typename WrappedConfigType,
            typename handle_type>
   typename viennagrid::result_of::element<domain_type, viennagrid::vertex_tag>::type
   local_vertex(const domain_type & domain,
-               element_t<ElementType, WrappedConfigType> const & host_ncell,
+               element_t<ElementTag, WrappedConfigType> const & host_ncell,
                handle_type const & bnd_kcell_handle,
                std::size_t index)
   {
@@ -803,36 +793,97 @@ namespace viennagrid
     
     namespace result_of
     {
+      template<typename DomainSegmentType, typename element_type_or_tag>
+      struct is_element_present;
+      
+        template<typename WrappedConfigType, typename element_type_or_tag>
+        struct is_element_present< domain_t<WrappedConfigType>, element_type_or_tag >
+        {
+          typedef typename viennagrid::result_of::element_tag<element_type_or_tag>::type tag;
+          static const bool value = config::result_of::is_element_present<WrappedConfigType, tag>::value;
+        };
         
-        template<typename domain_type, typename element_type_or_tag>
+        template<typename WrappedConfigType, typename element_type_or_tag>
+        struct is_element_present< const domain_t<WrappedConfigType>, element_type_or_tag >
+        {
+          static const bool value = is_element_present<domain_t<WrappedConfigType>, element_type_or_tag>::value;
+        };
+        
+        
+        
+        
+        template<typename typelist, typename element_tag>
+        struct is_element_present_helper;
+        
+        template<typename element_tag>
+        struct is_element_present_helper<meta::null_type, element_tag>
+        {
+            static const bool value = false;
+        };
+        
+        template<typename element_type, typename tail, typename element_tag>
+        struct is_element_present_helper< meta::typelist_t<element_type, tail>, element_tag>
+        {
+            static const bool value = 
+              viennagrid::meta::EQUAL<
+                typename element_type::tag,
+                element_tag
+              >::value ||
+              is_element_present_helper<tail, element_tag>::value;
+        };
+        
+        
+        template <typename WrappedDomainConfigType, typename ElementTypeList, typename ContainerConfig, typename element_type_or_tag>
+        struct is_element_present< domain_t< decorated_domain_view_config<WrappedDomainConfigType, ElementTypeList, ContainerConfig> >, element_type_or_tag >
+        {
+          typedef typename viennagrid::result_of::element_tag<element_type_or_tag>::type tag;
+          static const bool value = is_element_present_helper<ElementTypeList, tag>::value;
+        };
+        
+        template <typename WrappedDomainConfigType, typename ElementTypeList, typename ContainerConfig, typename element_type_or_tag>
+        struct is_element_present< const domain_t< decorated_domain_view_config<WrappedDomainConfigType, ElementTypeList, ContainerConfig> >, element_type_or_tag >
+        {
+          static const bool value = is_element_present<domain_t< decorated_domain_view_config<WrappedDomainConfigType, ElementTypeList, ContainerConfig> >, element_type_or_tag>::value;
+        };
+      
+      
+      
+      
+        
+        template<typename DomainSegmentType, typename element_type_or_tag>
         struct element
         {
-            typedef typename element< typename element_collection<domain_type>::type, element_type_or_tag >::type type;
+            typedef typename meta::STATIC_ASSERT< is_element_present<DomainSegmentType, element_type_or_tag>::value >::type ERROR_ELEMENT_IS_NOT_PRESENT_IN_DOMAIN;
+            typedef typename element< typename element_collection< DomainSegmentType >::type, element_type_or_tag >::type type;
         };
         
-        template<typename domain_type, typename element_type_or_tag>
+        template<typename DomainSegmentType, typename element_type_or_tag>
         struct handle
         {
-            typedef typename handle< typename element_collection<domain_type>::type, element_type_or_tag >::type type;
+            typedef typename meta::STATIC_ASSERT< is_element_present<DomainSegmentType, element_type_or_tag>::value >::type ERROR_ELEMENT_IS_NOT_PRESENT_IN_DOMAIN;
+            typedef typename handle< typename element_collection< DomainSegmentType >::type, element_type_or_tag >::type type;
         };
         
-        template<typename domain_type, typename element_type_or_tag>
+        template<typename DomainSegmentType, typename element_type_or_tag>
         struct const_handle
         {
-            typedef typename const_handle< typename element_collection<domain_type>::type, element_type_or_tag >::type type;
+            typedef typename meta::STATIC_ASSERT< is_element_present<DomainSegmentType, element_type_or_tag>::value >::type ERROR_ELEMENT_IS_NOT_PRESENT_IN_DOMAIN;
+            typedef typename const_handle< typename element_collection< DomainSegmentType >::type, element_type_or_tag >::type type;
         };
         
         
-        template<typename domain_type, typename element_type_or_tag>
+        template<typename DomainSegmentType, typename element_type_or_tag>
         struct element_range
         {
-            typedef typename element_range< typename element_collection<domain_type>::type, element_type_or_tag >::type type;
+            typedef typename meta::STATIC_ASSERT< is_element_present<DomainSegmentType, element_type_or_tag>::value >::type ERROR_ELEMENT_IS_NOT_PRESENT_IN_DOMAIN;
+            typedef typename element_range< typename element_collection< DomainSegmentType >::type, element_type_or_tag >::type type;
         };
         
-        template<typename domain_type, typename element_type_or_tag>
+        template<typename DomainSegmentType, typename element_type_or_tag>
         struct const_element_range
         {
-            typedef typename const_element_range< typename element_collection<domain_type>::type, element_type_or_tag >::type type;
+            typedef typename meta::STATIC_ASSERT< is_element_present<DomainSegmentType, element_type_or_tag>::value >::type ERROR_ELEMENT_IS_NOT_PRESENT_IN_DOMAIN;
+            typedef typename const_element_range< typename element_collection< DomainSegmentType >::type, element_type_or_tag >::type type;
         };
         
         
@@ -1045,10 +1096,11 @@ namespace viennagrid
 
     
     
-    template<typename ElementTag, typename WrappedConfigType>
+    template<typename ElementTag, typename WrappedConfigType, typename HandleType>
     void set_vertex(
             viennagrid::element_t<ElementTag, WrappedConfigType> & element,
-            typename viennagrid::result_of::handle< viennagrid::element_t<ElementTag, WrappedConfigType>, vertex_tag >::type vertex_handle,
+            HandleType vertex_handle,
+//             typename viennagrid::result_of::handle< viennagrid::element_t<ElementTag, WrappedConfigType>, vertex_tag >::type vertex_handle,
             unsigned int pos
         )
     {

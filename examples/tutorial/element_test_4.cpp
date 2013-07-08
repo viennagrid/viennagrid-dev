@@ -30,9 +30,8 @@ using std::endl;
 #include "viennagrid/point.hpp"
 
 
-int main()
-{
-    
+
+
     //
     // First define the type of handle to use:
     //
@@ -48,67 +47,94 @@ int main()
     //
     
     typedef viennagrid::meta::make_typemap<
-                                                       // New: Topology not used separately in typelist.
-            viennagrid::vertex_tag,
-            viennagrid::config::topology_element_config<
-                viennagrid::storage::handled_container_tag<           
-                    viennagrid::storage::std_deque_tag,
-                    handle_tag
-                >,
-                viennagrid::config::element_config_wrapper_t<   // New: boundary elements, ID, and appendix merged together
-                    viennagrid::meta::make_typemap<>::type,     // boundary
-                    viennagrid::storage::smart_id_tag<int>,     // ID
-                    viennagrid::meta::null_type                 // appendix
-                >
-            >,
+    
+            viennagrid::config::topology_config_tag,
+            viennagrid::meta::make_typemap<
             
-            viennagrid::line_tag,
-            viennagrid::config::topology_element_config<
-                viennagrid::storage::handled_container_tag<           
-                    viennagrid::storage::hidden_key_map_tag< viennagrid::storage::element_key_tag >,
-                    handle_tag
-                >,
-                viennagrid::config::element_config_wrapper_t<   // New: boundary elements, ID, and appendix merged together
+                                                       // New: Topology not used separately in typelist.
+                viennagrid::vertex_tag,
+                viennagrid::meta::make_typemap<
+                    viennagrid::config::element_id_tag,
+                    viennagrid::storage::smart_id_tag<int>,
+                
+                    viennagrid::config::element_container_tag,
+                    viennagrid::storage::handled_container_tag<
+                        viennagrid::storage::std_deque_tag,
+                        handle_tag
+                    >,
+                    
+                    viennagrid::config::element_boundary_storage_layout_tag,
+                    viennagrid::meta::make_typemap<
+                    >::type
+                >::type,
+
+                
+                viennagrid::line_tag,
+                viennagrid::meta::make_typemap<
+                    viennagrid::config::element_id_tag,
+                    viennagrid::storage::smart_id_tag<int>,
+                
+                    viennagrid::config::element_container_tag,
+                    viennagrid::storage::handled_container_tag<
+                        viennagrid::storage::std_deque_tag,
+                        handle_tag
+                    >,
+                    
+                    viennagrid::config::element_boundary_storage_layout_tag,
                     viennagrid::meta::make_typemap<
                         viennagrid::vertex_tag, viennagrid::no_orientation_handling_tag
-                    >::type,                                    // vertex for line
-                    viennagrid::storage::smart_id_tag<int>,     // ID
-                    viennagrid::meta::null_type                 // appendix
-                >
-            >,
-            
-            viennagrid::polygon_tag,
-            viennagrid::config::topology_element_config<
-                viennagrid::storage::handled_container_tag<           
-                    viennagrid::storage::hidden_key_map_tag< viennagrid::storage::element_key_tag >,
-                    handle_tag
-                >,
-                viennagrid::config::element_config_wrapper_t<   // New: boundary elements, ID, and appendix merged together
+                    >::type
+                >::type,
+
+                
+                viennagrid::polygon_tag,
+                viennagrid::meta::make_typemap<
+                    viennagrid::config::element_id_tag,
+                    viennagrid::storage::smart_id_tag<int>,
+                
+                    viennagrid::config::element_container_tag,
+                    viennagrid::storage::handled_container_tag<
+                        viennagrid::storage::std_deque_tag,
+                        handle_tag
+                    >,
+                    
+                    viennagrid::config::element_boundary_storage_layout_tag,
                     viennagrid::meta::make_typemap<
                         viennagrid::vertex_tag, viennagrid::no_orientation_handling_tag,
                         viennagrid::line_tag, viennagrid::full_handling_tag
-                    >::type,
+                    >::type
+                >::type,
+                
+                viennagrid::triangle_tag,
+                viennagrid::meta::make_typemap<
+                    viennagrid::config::element_id_tag,
                     viennagrid::storage::smart_id_tag<int>,
-                    viennagrid::meta::null_type                 // appendix
-                >
-            >,
-            
-            viennagrid::triangle_tag,
-            viennagrid::config::topology_element_config<
-                viennagrid::storage::handled_container_tag<           
-                    viennagrid::storage::hidden_key_map_tag< viennagrid::storage::element_key_tag >,
-                    handle_tag
-                >,
-                viennagrid::config::element_config_wrapper_t<   // New: boundary elements, ID, and appendix merged together
+                
+                    viennagrid::config::element_container_tag,
+                    viennagrid::storage::handled_container_tag<
+                        viennagrid::storage::std_deque_tag,
+                        handle_tag
+                    >,
+                    
+                    viennagrid::config::element_boundary_storage_layout_tag,
                     viennagrid::meta::make_typemap<
                         viennagrid::vertex_tag, viennagrid::no_orientation_handling_tag,
                         viennagrid::line_tag, viennagrid::full_handling_tag
-                    >::type,
-                    viennagrid::storage::smart_id_tag<int>,
-                    viennagrid::meta::null_type                 // appendix
-                >
-            >
-    >::type config;
+                    >::type
+                >::type
+            >::type
+    >::type inner_config;
+    
+    struct config
+    {
+      typedef inner_config type;
+    };
+
+
+int main()
+{
+    
+
     
     
     
@@ -123,13 +149,9 @@ int main()
     //
     // typedefs for the element types
     //
-    typedef viennagrid::result_of::element<config, viennagrid::vertex_tag>::type vertex_type;        
-    typedef viennagrid::result_of::element<config, viennagrid::line_tag>::type line_type;
+    typedef viennagrid::element_t<viennagrid::vertex_tag, config> vertex_type;
+    typedef viennagrid::element_t<viennagrid::line_tag, config> line_type;
 //     typedef viennagrid::result_of::element<config, viennagrid::triangle_tag>::type triangle_type;
-    
-    
-    std::cout << typeid( viennagrid::result_of::element<config, viennagrid::polygon_tag>::type ).name() << std::endl;
-    std::cout << typeid( viennagrid::result_of::element<config, viennagrid::triangle_tag>::type ).name() << std::endl;
     
     
     

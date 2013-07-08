@@ -32,7 +32,23 @@ namespace viennagrid
         namespace result_of
         {
             template<typename config_tag>
-            struct default_config;
+            struct default_config
+            {
+              typedef viennagrid::meta::null_type type;
+            };
+            
+            
+            template<>
+            struct default_config<element_id_tag>
+            {
+                typedef viennagrid::storage::smart_id_tag<int> type;
+            };
+            
+            template<>
+            struct default_config<element_container_tag>
+            {
+                typedef viennagrid::storage::handled_container_tag<viennagrid::storage::std_deque_tag, viennagrid::storage::pointer_handle_tag> type;
+            };
             
             template<>
             struct default_config<id_generator_tag>
@@ -85,11 +101,11 @@ namespace viennagrid
             };
 
             
-            template<typename domain_config, typename config_tag>
+            template<typename ConfigType, typename ConfigTag>
             struct query_config
             {
-                typedef typename viennagrid::meta::typemap::result_of::find<domain_config, config_tag>::type found;
-                typedef typename query_config_impl<found, config_tag>::type type;
+                typedef typename viennagrid::meta::typemap::result_of::find<ConfigType, ConfigTag>::type found;
+                typedef typename query_config_impl<found, ConfigTag>::type type;
             };
         }
     }

@@ -102,6 +102,8 @@ namespace viennagrid
 
             void erase_handle(handle_type handle)
             { container->erase_handle(handle); }
+            void insert_unique_handle(handle_type handle)
+            { container->insert_unique_handle(handle); }
             void insert_handle(handle_type handle)
             { container->insert_handle(handle); }
             void set_handle_at(handle_type handle, std::size_t pos)

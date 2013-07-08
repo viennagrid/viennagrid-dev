@@ -736,8 +736,6 @@ namespace viennagrid
             {
                 typedef container_t< typename container<value_type, std_set_tag>::type, id_handle_tag > type;
             };
-
-
         }
         
         

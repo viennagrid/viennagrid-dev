@@ -15,7 +15,7 @@
 
 int main()
 {
-    typedef viennagrid::config::triangular_2d_domain domain_type;
+    typedef viennagrid::triangular_2d_domain domain_type;
     
     typedef viennagrid::result_of::point_type<domain_type>::type point_type;
     
@@ -57,33 +57,42 @@ int main()
     std::cout << viennagrid::triangles(domain).size() << std::endl;
     
     
-//     typedef viennagrid::result_of::domain_view<domain_type>::type domain_view_type;
-//     domain_view_type elements_to_erase = viennagrid::create_view<domain_view_type>(domain);
-//     viennagrid::mark_erase_elements( domain, elements_to_erase, v22 );
+    typedef viennagrid::result_of::domain_view<domain_type>::type domain_view_type;
+    domain_view_type elements_to_erase = viennagrid::create_view(domain);
+    viennagrid::mark_erase_elements( domain, elements_to_erase, v22 );
 //     viennagrid::mark_erase_elements( domain, elements_to_erase, v00 );
+    
+    viennagrid::erase_elements(domain, elements_to_erase);
+    
+    
+//     typedef viennagrid::result_of::vertex_range<domain_type>::type vertex_range;
+//     vertex_range vertices = viennagrid::elements(domain);
+//     for (vertex_range::iterator it = vertices.begin(); it != vertices.end(); ++it)
+//       std::cout << *it << std::endl;
+    
+//     typedef viennagrid::result_of::line_range<domain_type>::type line_range;
+//     line_range lines = viennagrid::elements(domain);
+//     for (line_range::iterator it = lines.begin(); it != lines.end(); ++it)
+//       std::cout << *it << std::endl;
+    
+    
+    
+//     domain_type refined;
+//     viennagrid::refine_uniformly<viennagrid::triangle_tag>(domain, refined);
 //     
-//     viennagrid::erase_elements(domain, elements_to_erase);
-    
-//     viennagrid::erase_element(domain, v00);
-
-    
-    
-    
-    domain_type refined;
-    viennagrid::refine_uniformly<viennagrid::triangle_tag>(domain, refined);
-    
-    
-    std::cout << viennagrid::triangles(domain).size() << std::endl;
+//     
+//     std::cout << viennagrid::triangles(domain).size() << std::endl;
+//     std::cout << viennagrid::triangles(refined).size() << std::endl;
     
     {
-        viennagrid::io::vtk_writer<viennagrid::config::triangular_2d_domain, viennagrid::config::triangular_2d_cell> vtk_writer;
+        viennagrid::io::vtk_writer<viennagrid::triangular_2d_domain> vtk_writer;
         vtk_writer(domain, "triangle_domain.vtu");
     }
     
-    {
-        viennagrid::io::vtk_writer<viennagrid::config::triangular_2d_domain, viennagrid::config::triangular_2d_cell> vtk_writer;
-        vtk_writer(refined, "triangle_domain_refined.vtu");
-    }
+//     {
+//         viennagrid::io::vtk_writer<viennagrid::triangular_2d_domain> vtk_writer;
+//         vtk_writer(refined, "triangle_domain_refined.vtu");
+//     }
     
     return 0;
 }

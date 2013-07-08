@@ -143,8 +143,8 @@ namespace viennagrid
             public:
                 handle_functor(predicate _pred) : pred(_pred) {}
                 
-                template<typename container_type, typename base_container_type, typename handle_tag, typename handle_container_tag>
-                void operator() (container_type & src_container, view_t<base_container_type, handle_tag, handle_container_tag> & dst_view)
+                template<typename container_type, typename base_container_type, typename handle_container_tag>
+                void operator() (container_type & src_container, view_t<base_container_type, handle_container_tag> & dst_view)
                 {
                     for (typename container_type::handle_iterator it = src_container.handle_begin(); it != src_container.handle_end(); ++it)
                         if (pred( src_container.dereference_handle(*it) ))

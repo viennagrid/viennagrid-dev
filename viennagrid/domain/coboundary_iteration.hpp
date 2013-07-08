@@ -26,6 +26,13 @@ namespace viennagrid
               >::type::container_type::value_type type;
         };
         
+        template<typename SegmentationType, typename element_type_or_tag, typename coboundary_type_or_tag>
+        struct coboundary_view< segment_t<SegmentationType>, element_type_or_tag, coboundary_type_or_tag >
+        {
+            typedef typename coboundary_view< typename segment_t<SegmentationType>::view_type, element_type_or_tag, coboundary_type_or_tag >::type type;
+        };
+        
+        
         
         template<typename domain_type, typename element_type_or_tag, typename coboundary_type_or_tag>
         struct coboundary_range
@@ -198,6 +205,27 @@ namespace viennagrid
             create_coboundary_information<element_type_or_tag, coboundary_type_or_tag>( const_cast<domain_type&>(domain) );
 
         return coboundary_elements<element_type_or_tag, coboundary_type_or_tag>( accessor::dense_container_accessor<element_type>(coboundary_container_wrapper.container), viennagrid::dereference_handle(domain, hendl) );
+    }
+    
+    
+    
+    
+    
+    
+    
+    template<typename element_type_or_tag, typename coboundary_type_or_tag, typename SegmentationType, typename element_or_handle_type>
+    typename result_of::coboundary_range<segment_t<SegmentationType>, element_type_or_tag, coboundary_type_or_tag>::type 
+    coboundary_elements(segment_t<SegmentationType> & segment, element_or_handle_type const & hendl)
+    {
+        return coboundary_elements<element_type_or_tag, coboundary_type_or_tag>( segment.view(), hendl );
+    }
+    
+    
+    template<typename element_type_or_tag, typename coboundary_type_or_tag, typename SegmentationType, typename element_or_handle_type>
+    typename result_of::const_coboundary_range<segment_t<SegmentationType>, element_type_or_tag, coboundary_type_or_tag>::type
+    coboundary_elements(segment_t<SegmentationType> const & segment, element_or_handle_type const & hendl)
+    {
+        return coboundary_elements<element_type_or_tag, coboundary_type_or_tag>( segment.view(), hendl );
     }
 
 }

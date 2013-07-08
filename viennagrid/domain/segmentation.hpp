@@ -55,6 +55,20 @@ namespace viennagrid
     
     namespace result_of
     {
+        template<typename SegmentationType, typename element_type_or_tag>
+        struct is_element_present< segment_t<SegmentationType>, element_type_or_tag >
+        {
+          static const bool value = is_element_present< typename segment_t<SegmentationType>::view_type, element_type_or_tag>::value;
+        };
+        
+        template<typename SegmentationType, typename element_type_or_tag>
+        struct is_element_present< const segment_t<SegmentationType>, element_type_or_tag >
+        {
+          static const bool value = is_element_present<segment_t<SegmentationType>, element_type_or_tag>::value;
+        };
+
+      
+      
         template<typename segmentation_type>
         struct element_collection< segment_t<segmentation_type> >
         {
@@ -116,6 +130,33 @@ namespace viennagrid
         struct cell_tag< segment_t<segmentation_type> >
         {
           typedef typename cell_tag< typename segment_t<segmentation_type>::view_type >::type type;
+        };
+        
+        
+        
+        template<typename SegmentationType>
+        struct segment;
+        
+        template<typename WrappedConfigType>
+        struct segment< segmentation_t<WrappedConfigType> >
+        {
+          typedef segment_t< segmentation_t<WrappedConfigType> > type;
+        };
+        
+        
+        template<typename SegmentationType>
+        struct segment_id;
+        
+        template<typename SegmentationType>
+        struct segment_id< segment_t<SegmentationType> >
+        {
+          typedef typename segment_t<SegmentationType>::segment_id_type type;
+        };
+        
+        template<typename WrappedConfigType>
+        struct segment_id< segmentation_t<WrappedConfigType> >
+        {
+          typedef typename segmentation_t<WrappedConfigType>::segment_id_type type;
         };
     }
     
@@ -855,7 +896,7 @@ namespace viennagrid
     void add_to_segment( segment_type & segment, element_t<vertex_tag, WrappedConfigType> & element )
     {
       typedef element_t<vertex_tag, WrappedConfigType> element_type;
-        viennagrid::elements<element_type>( segment.view() ).insert_handle( viennagrid::handle( segment.segmentation().domain(), element ) );
+        viennagrid::elements<element_type>( segment.view() ).insert_unique_handle( viennagrid::handle( segment.segmentation().domain(), element ) );
         add_to_segment( segment, accessor::dense_container_accessor<element_type>( element_segment_mapping_collection(segment) ), element );      
     }
     
@@ -863,7 +904,7 @@ namespace viennagrid
     void add_to_segment( segment_type & segment, element_t<ElementTag, WrappedConfigType> & element )
     {
         typedef element_t<ElementTag, WrappedConfigType> element_type;
-        viennagrid::elements<element_type>( segment.view() ).insert_handle( viennagrid::handle( segment.segmentation().domain(), element ) );
+        viennagrid::elements<element_type>( segment.view() ).insert_unique_handle( viennagrid::handle( segment.segmentation().domain(), element ) );
         add_to_segment( segment, accessor::dense_container_accessor<element_type>( element_segment_mapping_collection(segment) ), element );
         
         // recursively adding facet elements; view containers has to be std::set

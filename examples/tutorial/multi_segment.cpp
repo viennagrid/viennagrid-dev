@@ -33,6 +33,7 @@
 #include "viennagrid/algorithm/voronoi.hpp"
 #include "viennagrid/io/vtk_writer.hpp"
 #include "viennagrid/domain/coboundary_iteration.hpp"
+#include "viennagrid/domain/neighbour_iteration.hpp"
 
 #include <typeinfo>
 
@@ -60,8 +61,11 @@ int main()
   typedef viennagrid::result_of::iterator<FacetRange>::type                               FacetIterator;
   typedef viennagrid::result_of::handle_iterator<FacetRange>::type                        FacetHandleIterator;
   
-  //TODO: typedef viennagrid::result_of::coboundary_range<SegmentType, CellTag::facet_tag, CellTag>::type   CellOnFacetRange;
-  //TODO: typedef viennagrid::result_of::iterator<CellOnFacetRange>::type                                   CellOnFacetIterator;
+  typedef viennagrid::result_of::coboundary_range<SegmentType, CellTag::facet_tag, CellTag>::type   CellOnFacetRange;
+  typedef viennagrid::result_of::iterator<CellOnFacetRange>::type                                   CellOnFacetIterator;
+  
+  typedef viennagrid::result_of::neighbour_range<SegmentType, CellTag, viennagrid::vertex_tag>::type   NeighbourCellRange;
+  typedef viennagrid::result_of::iterator<NeighbourCellRange>::type                                   NeighbourCellIterator;
 
   typedef viennagrid::result_of::element_range<SegmentType, viennagrid::vertex_tag>::type    VertexOnSegmentRange;
   typedef viennagrid::result_of::iterator<VertexOnSegmentRange>::type                        VertexOnSegmentIterator;
@@ -76,7 +80,7 @@ int main()
 
   //read a multi-segment mesh using the VTK reader:
   viennagrid::io::vtk_reader<DomainType, SegmentationType>  reader;
-  reader(domain, segments, "../examples/data/multi_segment_hex_main.pvd");
+  reader(domain, segments, "../data/multi_segment_hex_main.pvd");
 
   // Obtain references to the two segments.
   SegmentType & seg1 = segments[0];
@@ -104,8 +108,7 @@ int main()
   //
   // Now iterate over the cells the facet is member of with respect to the two segments:
   // Mind the second argument to the ncells() function, which is the respective segment
-  /* TODO: Make this work (i.e. coboundary iteration in segments)
-  CellOnFacetRange cells_on_facet_seg1 = viennagrid::coboundary_elements<CellTag>(seg1, interface_facet_handle);
+  CellOnFacetRange cells_on_facet_seg1 = viennagrid::coboundary_elements<FacetType, CellTag>(seg1, interface_facet_handle);
   std::cout << "Cells that share the interface facet in seg1:" << std::endl;
   for (CellOnFacetIterator cofit = cells_on_facet_seg1.begin();
                            cofit != cells_on_facet_seg1.end();
@@ -114,14 +117,37 @@ int main()
     std::cout << *cofit << std::endl;
   }
   
-  CellOnFacetRange cells_on_facet_seg2 = viennagrid::coboundary_elements<CellTag>(seg2, interface_facet_handle);
+  CellOnFacetRange cells_on_facet_seg2 = viennagrid::coboundary_elements<FacetType, CellTag>(seg2, interface_facet_handle);
   std::cout << "Cells that share the interface facet in seg2:" << std::endl;
   for (CellOnFacetIterator cofit = cells_on_facet_seg2.begin();
                            cofit != cells_on_facet_seg2.end();
                          ++cofit)
   {
     std::cout << *cofit << std::endl;
-  }*/
+  }
+  
+  
+  //
+  // Now iterate over all cells neighbouring the first cell
+  
+  NeighbourCellRange neigbouring_cells_seg1 = viennagrid::neighbour_elements<CellTag, viennagrid::vertex_tag>(seg1, viennagrid::elements<CellTag>(seg1).handle_at(0));
+  std::cout << "Neighbour Elements for first cell in seg1 (should be no elements, because only one element per segment)" << std::endl;
+  for (NeighbourCellIterator cofit = neigbouring_cells_seg1.begin();
+                           cofit != neigbouring_cells_seg1.end();
+                         ++cofit)
+  {
+    std::cout << *cofit << std::endl;
+  }
+  
+  NeighbourCellRange neigbouring_cells_seg2 = viennagrid::neighbour_elements<CellTag, viennagrid::vertex_tag>(seg2, viennagrid::elements<CellTag>(seg2).handle_at(0));
+  std::cout << "Neighbour Elements for first cell in seg2 (should be no elements, because only one element per segment)" << std::endl;
+  for (NeighbourCellIterator cofit = neigbouring_cells_seg2.begin();
+                           cofit != neigbouring_cells_seg2.end();
+                         ++cofit)
+  {
+    std::cout << *cofit << std::endl;
+  }
+  
 
   
   //
@@ -181,7 +207,8 @@ int main()
                              vosit != vertices_seg1.end();
                            ++vosit)
   {
-    first_segment_data.push_back(1.0);
+    viennagrid::accessor::dense_container_accessor<VertexType>(first_segment_data)(*vosit) = 1.0;
+//     first_segment_data.push_back(1.0);
   }
   
   VertexOnSegmentRange vertices_seg2 = viennagrid::elements<viennagrid::vertex_tag>(seg2);
@@ -189,7 +216,8 @@ int main()
                              vosit != vertices_seg2.end();
                            ++vosit)
   {
-    second_segment_data.push_back(2.0);
+    viennagrid::accessor::dense_container_accessor<VertexType>(second_segment_data)(*vosit) = 1.0;
+//     second_segment_data.push_back(2.0);
   }
   
   viennagrid::io::vtk_writer<DomainType, SegmentationType> my_vtk_writer;  

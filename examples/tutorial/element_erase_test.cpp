@@ -14,7 +14,7 @@
 
 int main()
 {
-    typedef viennagrid::config::triangular_2d_domain domain_type;
+    typedef viennagrid::triangular_2d_domain domain_type;
     
     typedef viennagrid::result_of::point_type<domain_type>::type point_type;
     
@@ -57,19 +57,17 @@ int main()
     
     
     typedef viennagrid::result_of::domain_view<domain_type>::type domain_view_type;
-    domain_view_type elements_to_erase = viennagrid::create_view<domain_view_type>(domain);
+    domain_view_type elements_to_erase = viennagrid::create_view(domain);
     viennagrid::mark_erase_elements( domain, elements_to_erase, v22 );
-    viennagrid::mark_erase_elements( domain, elements_to_erase, v00 );
+//     viennagrid::mark_erase_elements( domain, elements_to_erase, v00 );
     
     viennagrid::erase_elements(domain, elements_to_erase);
     
-//     viennagrid::erase_element(domain, v00);
-
     
     std::cout << viennagrid::triangles(domain).size() << std::endl;
     
     {
-        viennagrid::io::vtk_writer<viennagrid::config::triangular_2d_domain, viennagrid::config::triangular_2d_cell> vtk_writer;
+        viennagrid::io::vtk_writer<viennagrid::triangular_2d_domain> vtk_writer;
         vtk_writer(domain, "triangle_domain.vtu");
     }
     

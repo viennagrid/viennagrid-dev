@@ -79,6 +79,9 @@ int main()
     typedef viennagrid::result_of::element<domain_type, viennagrid::tetrahedron_tag>::type tetrahedron_type;
     typedef viennagrid::result_of::handle<domain_type, viennagrid::tetrahedron_tag>::type tetrahedron_handle_type;
     
+    
+//     typedef viennagrid::result_of::handle<domain_type, viennagrid::polygon_tag>::type tetrahedron_handle_type;
+    
 
     //
     // Adding a tetrahedron

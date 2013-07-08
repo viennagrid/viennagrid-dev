@@ -17,11 +17,11 @@ namespace viennagrid
             typedef storage::continuous_id_generator<typemap> type;
         };
         
-        template<typename domain_config>
+        template<typename WrappedConfig>
         struct id_generator
         {
-            typedef typename config::result_of::query_config<domain_config, config::id_generator_tag>::type id_generator_tag;
-            typedef typename id_generator_impl<domain_config, id_generator_tag>::type type;
+            typedef typename config::result_of::query_config<typename WrappedConfig::type, config::id_generator_tag>::type id_generator_tag;
+            typedef typename id_generator_impl<WrappedConfig, id_generator_tag>::type type;
         };
     }
 }

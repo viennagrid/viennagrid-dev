@@ -29,6 +29,12 @@ namespace viennagrid
               >::type::container_type::value_type type;
         };
         
+        template<typename SegmentationType, typename element_type_or_tag, typename connector_element_type_or_tag>
+        struct neighbour_view< segment_t<SegmentationType>, element_type_or_tag, connector_element_type_or_tag >
+        {
+            typedef typename neighbour_view< typename segment_t<SegmentationType>::view_type, element_type_or_tag, connector_element_type_or_tag >::type type;
+        };
+        
         
         template<typename domain_type, typename element_type_or_tag, typename connector_element_type_or_tag>
         struct neighbour_range
@@ -223,6 +229,22 @@ namespace viennagrid
     }
     
 
+    
+    template<typename element_type_or_tag, typename connector_element_type_or_tag, typename SegmentationType, typename element_or_handle_type>
+    typename result_of::neighbour_range<segment_t<SegmentationType>, element_type_or_tag, connector_element_type_or_tag>::type 
+    neighbour_elements(segment_t<SegmentationType> & segment, element_or_handle_type const & hendl)
+    {
+        return neighbour_elements<element_type_or_tag, connector_element_type_or_tag>( segment.view(), hendl );
+    }
+    
+    
+    template<typename element_type_or_tag, typename connector_element_type_or_tag, typename SegmentationType, typename element_or_handle_type>
+    typename result_of::neighbour_range<segment_t<SegmentationType>, element_type_or_tag, connector_element_type_or_tag>::type
+    neighbour_elements(segment_t<SegmentationType> const & segment, element_or_handle_type const & hendl)
+    {
+        return neighbour_elements<element_type_or_tag, connector_element_type_or_tag>( segment.view(), hendl );
+    }
+    
 }
 
 

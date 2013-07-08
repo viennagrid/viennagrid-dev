@@ -86,7 +86,9 @@ namespace viennagrid
                       ++eit)
       {
         if ( edge_refinement_flag_accessor(*eit) )
+        {
           edge_to_vertex_handle_accessor( *eit ) = viennagrid::create_vertex( domain_out, viennagrid::centroid(point_accessor_in, *eit) );
+        }
       }
 
       //
@@ -248,14 +250,10 @@ namespace viennagrid
               EdgeRefinementFlagAccessor const edge_refinement_flag_accessor,
               VertexToVertexHandleAccessor vertex_to_vertex_handle_accessor, RefinementVertexAccessor edge_to_vertex_handle_accessor)
   {
-      //
-      // Step 1: Write tags from cells to edges:
-      //
-      
       typedef typename viennagrid::result_of::element_tag<CellTypeOrTag>::type CellTag;
       
-    detail::refine_impl<CellTag>(domain_in, domain_out, point_accessor_in,
-                                 edge_refinement_flag_accessor, vertex_to_vertex_handle_accessor, edge_to_vertex_handle_accessor);
+      detail::refine_impl<CellTag>(domain_in, domain_out, point_accessor_in,
+                                  edge_refinement_flag_accessor, vertex_to_vertex_handle_accessor, edge_to_vertex_handle_accessor);
   }
   
   

@@ -20,7 +20,7 @@
 
 
 #include "viennagrid/storage/view.hpp"
-#include "viennagrid/element/element.hpp"
+#include "viennagrid/element/element_orientation.hpp"
 #include "viennagrid/config/config.hpp"
 #include "viennagrid/topology/polygon.hpp"
 
@@ -34,68 +34,6 @@ namespace viennagrid
     
     namespace config
     {
-        typedef viennagrid::storage::smart_id_tag<int>      element_default_id_tag;
-      
-        // default configuration classes for elements:
-        //
-        //  template<typename bnd_cell_container_typelist_, typename id_tag_, typename appendix_type_>
-        //  struct element_config_wrapper_t
-        //  {
-        //    typedef bnd_cell_container_typelist_          bnd_cell_container_typelist;
-        //    typedef id_tag_                               id_tag;
-        //    typedef appendix_type_                        appendix_type;
-        //  };
-
-        ////////////// no boundary typelist: vertex configuration /////////
-
-        struct element_smart_id_no_boundary_no_appendix
-        {
-            typedef element_default_id_tag                     id_tag;
-            typedef viennagrid::meta::null_type                bnd_cell_container_typelist;
-            typedef viennagrid::meta::null_type                appendix_type;
-        };
-
-        template <typename AppendixType>
-        struct element_smart_id_no_boundary_with_appendix
-        {
-            typedef element_default_id_tag                     id_tag;
-            typedef viennagrid::meta::null_type                bnd_cell_container_typelist;
-            typedef AppendixType                               appendix_type;
-        };
-
-        struct element_smart_id_no_boundary_with_point_1d
-        {
-            typedef element_default_id_tag                                      id_tag;
-            typedef viennagrid::meta::null_type                                 bnd_cell_container_typelist;
-            typedef viennagrid::point_t<double, viennagrid::cartesian_cs<1> >   appendix_type;
-        };
-
-        struct element_smart_id_no_boundary_with_point_2d
-        {
-            typedef element_default_id_tag                                      id_tag;
-            typedef viennagrid::meta::null_type                                 bnd_cell_container_typelist;
-            typedef viennagrid::point_t<double, viennagrid::cartesian_cs<2> >   appendix_type;
-        };
-
-        struct element_smart_id_no_boundary_with_point_3d
-        {
-            typedef element_default_id_tag                                      id_tag;
-            typedef viennagrid::meta::null_type                                 bnd_cell_container_typelist;
-            typedef viennagrid::point_t<double, viennagrid::cartesian_cs<3> >   appendix_type;
-        };
-
-
-        ////////////// higher-dimensional configuration /////////
-
-        template <typename BoundaryTypeList>
-        struct element_smart_id_with_boundary_no_appendix
-        {
-            typedef element_default_id_tag                     id_tag;
-            typedef BoundaryTypeList                           bnd_cell_container_typelist;
-            typedef viennagrid::meta::null_type                appendix_type;
-        };
-
-
         namespace result_of
         {       
             template<typename storage_layout_tag, long num>
@@ -126,16 +64,15 @@ namespace viennagrid
             // Generates an element type
             //
 
-            template<typename domain_config, typename element_tag>
+            template<typename WrappedConfigType, typename element_tag>
             struct is_element_present
             {
-                //typedef typename query_config<domain_config, topology_config_tag>::type topology_config;
-                typedef domain_config   topology_config;
+                typedef typename query_config<typename WrappedConfigType::type, topology_config_tag>::type  TopologyConfig;
                 
                 static const bool value =
                     !viennagrid::meta::EQUAL<
                         typename viennagrid::meta::typemap::result_of::find<
-                            topology_config,
+                            TopologyConfig,
                             element_tag
                         >::type,
                         viennagrid::meta::not_found
@@ -143,37 +80,39 @@ namespace viennagrid
             };
             
             
-            template<typename domain_config, typename element_tag>
+            template<typename WrappedConfigType, typename element_tag>
             struct query_element_id_tag
             {
-                typedef typename query_config<domain_config, element_tag>::type  domain_element_config;
-                
-                typedef typename domain_element_config::element_config::id_tag   type;
+                typedef typename query_config<typename WrappedConfigType::type, topology_config_tag>::type  TopologyConfig;
+                typedef typename query_config<TopologyConfig, element_tag>::type  ElementConfig;
+                typedef typename query_config<ElementConfig, element_id_tag>::type  type;
             };
             
-            template<typename domain_config, typename element_tag>
+            template<typename WrappedConfigType, typename element_tag>
             struct query_element_container_tag
             {
-                typedef typename query_config<domain_config, element_tag>::type     domain_element_config;
-                typedef typename domain_element_config::element_container_tag       type;
+                typedef typename query_config<typename WrappedConfigType::type, topology_config_tag>::type  TopologyConfig;
+                typedef typename query_config<TopologyConfig, element_tag>::type  ElementConfig;
+                typedef typename query_config<ElementConfig, element_container_tag>::type  type;
             };
             
 
-            template<typename domain_config, typename element_tag, typename boundary_cell_tag>
+            template<typename WrappedConfigType, typename element_tag, typename boundary_cell_tag>
             struct query_boundary_storage_layout
             {
-                typedef typename query_config<domain_config, element_tag>::type domain_element_config;
-                
-                typedef typename domain_element_config::element_config::bnd_cell_container_typelist       boundary_cell_storage_handling;
+                typedef typename query_config<typename WrappedConfigType::type, topology_config_tag>::type  TopologyConfig;
+                typedef typename query_config<TopologyConfig, element_tag>::type  ElementConfig;
+                typedef typename query_config<ElementConfig, element_boundary_storage_layout_tag>::type  BoundaryStorageLayoutConfig;
+                typedef typename query_config<BoundaryStorageLayoutConfig, boundary_cell_tag>::type  type;
             };
             
             
-            template<typename domain_config, typename element_tag>
+            template<typename WrappedConfigType, typename element_tag>
             struct query_appendix_type
             {
-                typedef typename query_config<domain_config, element_tag>::type  domain_element_config;
-                
-                typedef typename domain_element_config::element_config::appendix_type   type;
+                typedef typename query_config<typename WrappedConfigType::type, topology_config_tag>::type  TopologyConfig;
+                typedef typename query_config<TopologyConfig, element_tag>::type  ElementConfig;
+                typedef typename query_config<ElementConfig, element_appendix_type_tag>::type  type;
             };
             
             
@@ -185,7 +124,7 @@ namespace viennagrid
             {
                 static const bool value = 
                     !viennagrid::meta::EQUAL<
-                        typename query_boundary_storage_layout<domain_config_, element_tag_, boundary_cell_tag_>::boundary_cell_storage_handling,
+                        typename query_boundary_storage_layout<domain_config_, element_tag_, boundary_cell_tag_>::type,
                         viennagrid::no_handling_tag
                     >::value;
             };
@@ -211,12 +150,12 @@ namespace viennagrid
             {
                 static const bool value = 
                     viennagrid::meta::EQUAL<
-                        typename query_boundary_storage_layout<domain_config_, element_tag_, boundary_cell_tag_>::boundary_cell_storage_handling,
+                        typename query_boundary_storage_layout<domain_config_, element_tag_, boundary_cell_tag_>::type,
                         viennagrid::full_handling_tag
                     >::value
                         ||
                     viennagrid::meta::EQUAL<
-                        typename query_boundary_storage_layout<domain_config_, element_tag_, boundary_cell_tag_>::boundary_cell_storage_handling,
+                        typename query_boundary_storage_layout<domain_config_, element_tag_, boundary_cell_tag_>::type,
                         viennagrid::full_lazy_handling_tag
                     >::value;
             };
@@ -248,8 +187,7 @@ namespace viennagrid
                 //
                 // boundary cell view
                 //
-                
-                typedef typename viennagrid::result_of::element<domain_config, boundary_cell_tag>::type boundary_cell_type;
+                typedef element_t<boundary_cell_tag, domain_config> boundary_cell_type;
                 
                 typedef typename viennagrid::storage::result_of::container<
                     boundary_cell_type,                                         // the 'value_type', i.e. vertices     
@@ -319,7 +257,7 @@ namespace viennagrid
                 // boundary cell view
                 //
                 
-                typedef typename viennagrid::result_of::element<domain_config, boundary_cell_tag>::type boundary_cell_type;
+                typedef element_t<boundary_cell_tag, domain_config> boundary_cell_type;
                 
                 typedef typename viennagrid::storage::result_of::container<
                     boundary_cell_type,                                         // the 'value_type', i.e. vertices     
@@ -396,29 +334,7 @@ namespace viennagrid
             struct element_boundary_cell_container_typelist<config, element_tag, viennagrid::vertex_tag>
             {
                 typedef viennagrid::meta::null_type type;
-            };
-            
-            
-            
-            template<typename domain_config, typename element_tag_>
-            struct element_from_config_impl;
-            
-            template<typename config_element_tag, typename config_element_config, typename config_tail, typename element_tag_>
-            struct element_from_config_impl< viennagrid::meta::typelist_t< viennagrid::meta::static_pair<config_element_tag, config_element_config>, config_tail >, element_tag_ >
-            {
-                typedef viennagrid::meta::typelist_t< viennagrid::meta::static_pair<config_element_tag, config_element_config>, config_tail > domain_config;
-                typedef element_tag_ element_tag;
-                
-                typedef typename query_element_id_tag<domain_config, element_tag>::type id_tag;
-                
-                typedef typename element_boundary_cell_container_typelist<domain_config, element_tag, element_tag>::type container_typelist;
-                
-                typedef typename query_appendix_type<domain_config, element_tag>::type appendix_type;
-
-                typedef element_config_wrapper_t< container_typelist, id_tag, appendix_type > WrappedConfigType;
-                
-                typedef viennagrid::element_t<element_tag, WrappedConfigType> type;
-            };            
+            };          
         }
             
             

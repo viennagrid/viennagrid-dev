@@ -30,6 +30,8 @@
 #include "viennagrid/topology/simplex.hpp"
 #include "viennagrid/element/element_orientation.hpp"
 
+#include "viennagrid/config/element_config.hpp"
+
 /** @file element.hpp
     @brief Provides the main n-cell type
 */
@@ -312,26 +314,26 @@ namespace viennagrid
 
     
     
-    namespace result_of
-    {
-      template<typename WrappedConfigType>
-      struct element_boundary_cell_container_typelist
-      {
-        typedef typename WrappedConfigType::bnd_cell_container_typelist type;
-      };
-      
-      template<typename WrappedConfigType>
-      struct element_id_tag
-      {
-        typedef typename WrappedConfigType::id_tag type;
-      };
-      
-      template<typename WrappedConfigType>
-      struct element_appendix_type
-      {
-        typedef typename WrappedConfigType::appendix_type type;
-      };
-    }
+//     namespace result_of
+//     {
+//       template<typename WrappedConfigType>
+//       struct element_boundary_cell_container_typelist
+//       {
+//         typedef typename WrappedConfigType::bnd_cell_container_typelist type;
+//       };
+//       
+//       template<typename WrappedConfigType>
+//       struct element_id_tag
+//       {
+//         typedef typename WrappedConfigType::id_tag type;
+//       };
+//       
+//       template<typename WrappedConfigType>
+//       struct element_appendix_type
+//       {
+//         typedef typename WrappedConfigType::appendix_type type;
+//       };
+//     }
     
     
     namespace result_of
@@ -357,7 +359,7 @@ namespace viennagrid
         template<typename element_tag, typename WrappedConfigType>
         struct boundary_element_typelist< element_t<element_tag, WrappedConfigType> >
         {
-            typedef typename boundary_element_typelist< typename element_boundary_cell_container_typelist<WrappedConfigType>::type >::type type;
+            typedef typename element_t<element_tag, WrappedConfigType>::bnd_cell_container_typelist type;
         };
         
         
@@ -383,7 +385,7 @@ namespace viennagrid
         template<typename element_tag, typename WrappedConfigType>
         struct boundary_element_taglist< element_t<element_tag, WrappedConfigType> >
         {
-            typedef typename boundary_element_taglist< typename element_boundary_cell_container_typelist<WrappedConfigType>::type >::type type;
+            typedef typename boundary_element_taglist< typename element_t<element_tag, WrappedConfigType>::bnd_cell_container_typelist >::type type;
         };
         
         
@@ -496,7 +498,7 @@ namespace viennagrid
         template<typename element_tag, typename WrappedConfigType, typename tag>
         struct container_of_tag< element_t<element_tag, WrappedConfigType>, tag >
         {
-            typedef typename container_of_tag_for_element<typename result_of::element_boundary_cell_container_typelist<WrappedConfigType>::type, tag>::type type;
+            typedef typename container_of_tag_for_element<typename element_t<element_tag, WrappedConfigType>::bnd_cell_container_typelist, tag>::type type;
         };
         
         template<typename element_or_collection, long dim>
@@ -511,7 +513,7 @@ namespace viennagrid
         template<typename element_tag, typename WrappedConfigType, long dim>
         struct container_of_dimension< element_t<element_tag, WrappedConfigType>, dim >
         {
-            typedef typename container_of_dimension_for_element<typename result_of::element_boundary_cell_container_typelist<WrappedConfigType>::type, dim>::type type;
+            typedef typename container_of_dimension_for_element<typename element_t<element_tag, WrappedConfigType>::bnd_cell_container_typelist, dim>::type type;
         };
     }
     
@@ -537,17 +539,18 @@ namespace viennagrid
                         ElementTag,
                         WrappedConfigType
                       >,
-                      typename result_of::element_id_tag<WrappedConfigType>::type
+                      typename config::result_of::query_element_id_tag<WrappedConfigType, vertex_tag>::type
                     >::type
                 >,
-        public boundary_element_layer<ElementTag, typename result_of::element_boundary_cell_container_typelist<WrappedConfigType>::type>
+          public boundary_element_layer<ElementTag, typename config::result_of::element_boundary_cell_container_typelist<WrappedConfigType, ElementTag, ElementTag>::type>
     {
     public:
       
         typedef ElementTag tag;
-        typedef typename result_of::element_boundary_cell_container_typelist<WrappedConfigType>::type bnd_cell_container_typelist;
-        typedef typename result_of::element_id_tag<WrappedConfigType>::type id_tag;
-        typedef typename result_of::element_appendix_type<WrappedConfigType>::type appendix_type;
+        
+        typedef typename config::result_of::element_boundary_cell_container_typelist<WrappedConfigType, ElementTag, ElementTag>::type bnd_cell_container_typelist;
+        typedef typename config::result_of::query_element_id_tag<WrappedConfigType, ElementTag>::type id_tag;
+        typedef typename config::result_of::query_appendix_type<WrappedConfigType, ElementTag>::type appendix_type;
       
         typedef boundary_element_layer<ElementTag, bnd_cell_container_typelist> base;
         
@@ -610,16 +613,17 @@ namespace viennagrid
                         vertex_tag,
                         WrappedConfigType
                       >,
-                      typename result_of::element_id_tag<WrappedConfigType>::type
+                      typename config::result_of::query_element_id_tag<WrappedConfigType, vertex_tag>::type
                     >::type
                 >
     {
     public:
       
         typedef vertex_tag tag;
-        typedef typename result_of::element_boundary_cell_container_typelist<WrappedConfigType>::type bnd_cell_container_typelist;
-        typedef typename result_of::element_id_tag<WrappedConfigType>::type id_tag;
-        typedef typename result_of::element_appendix_type<WrappedConfigType>::type appendix_type;
+        
+        typedef typename config::result_of::element_boundary_cell_container_typelist<WrappedConfigType, vertex_tag, vertex_tag>::type bnd_cell_container_typelist;
+        typedef typename config::result_of::query_element_id_tag<WrappedConfigType, vertex_tag>::type id_tag;
+        typedef typename config::result_of::query_appendix_type<WrappedConfigType, vertex_tag>::type appendix_type;
       
         typedef element_t<vertex_tag, WrappedConfigType>            self_type;
 
@@ -698,7 +702,7 @@ namespace viennagrid
         template<typename element_tag_, typename WrappedConfigType, typename sub_element_type_or_tag>
         struct element< element_t<element_tag_, WrappedConfigType>, sub_element_type_or_tag >
         {
-            typedef typename result_of::element_boundary_cell_container_typelist<WrappedConfigType>::type boundary_cell_container_typelist;
+            typedef typename element_t<element_tag_, WrappedConfigType>::bnd_cell_container_typelist boundary_cell_container_typelist;
             typedef typename element_tag<sub_element_type_or_tag>::type sub_element_tag;
             typedef typename container_of_tag_for_element<boundary_cell_container_typelist , sub_element_tag >::type::value_type type;
         };
@@ -706,7 +710,7 @@ namespace viennagrid
         template<typename element_tag_, typename WrappedConfigType, typename sub_element_type_or_tag>
         struct element< const element_t<element_tag_, WrappedConfigType>, sub_element_type_or_tag >
         {
-            typedef typename result_of::element_boundary_cell_container_typelist<WrappedConfigType>::type boundary_cell_container_typelist;
+            typedef typename element_t<element_tag_, WrappedConfigType>::bnd_cell_container_typelist boundary_cell_container_typelist;
             typedef typename element_tag<sub_element_type_or_tag>::type sub_element_tag;
             typedef const typename container_of_tag_for_element< boundary_cell_container_typelist, sub_element_tag >::type::value_type type;
         };
@@ -715,7 +719,7 @@ namespace viennagrid
         template<typename element_tag_, typename WrappedConfigType, typename sub_element_type_or_tag>
         struct handle< element_t<element_tag_, WrappedConfigType>, sub_element_type_or_tag >
         {
-            typedef typename result_of::element_boundary_cell_container_typelist<WrappedConfigType>::type boundary_cell_container_typelist;
+            typedef typename element_t<element_tag_, WrappedConfigType>::bnd_cell_container_typelist boundary_cell_container_typelist;
             typedef typename element_tag<sub_element_type_or_tag>::type sub_element_tag;
             typedef typename container_of_tag_for_element< boundary_cell_container_typelist, sub_element_tag >::type::handle_type type;
         };
@@ -724,7 +728,7 @@ namespace viennagrid
         template<typename element_tag_, typename WrappedConfigType, typename sub_element_type_or_tag>
         struct const_handle< element_t<element_tag_, WrappedConfigType>, sub_element_type_or_tag >
         {
-            typedef typename result_of::element_boundary_cell_container_typelist<WrappedConfigType>::type boundary_cell_container_typelist;
+            typedef typename element_t<element_tag_, WrappedConfigType>::bnd_cell_container_typelist boundary_cell_container_typelist;
             typedef typename element_tag<sub_element_type_or_tag>::type sub_element_tag;
             typedef typename container_of_tag_for_element< boundary_cell_container_typelist, sub_element_tag >::type::const_handle_type type;
         };
@@ -733,7 +737,7 @@ namespace viennagrid
         template<typename element_tag_, typename WrappedConfigType, typename sub_element_type_or_tag>
         struct element_range< element_t<element_tag_, WrappedConfigType>, sub_element_type_or_tag >
         {
-            typedef typename result_of::element_boundary_cell_container_typelist<WrappedConfigType>::type boundary_cell_container_typelist;
+            typedef typename element_t<element_tag_, WrappedConfigType>::bnd_cell_container_typelist boundary_cell_container_typelist;
             typedef typename element< element_t<element_tag_, WrappedConfigType>, sub_element_type_or_tag>::type sub_element_type;
             typedef viennagrid::storage::container_range_wrapper< typename container_of_tag_for_element<boundary_cell_container_typelist, typename sub_element_type::tag>::type > type;
         };
@@ -741,7 +745,7 @@ namespace viennagrid
         template<typename element_tag_, typename WrappedConfigType, typename sub_element_type_or_tag>
         struct const_element_range< element_t<element_tag_, WrappedConfigType>, sub_element_type_or_tag >
         {
-            typedef typename result_of::element_boundary_cell_container_typelist<WrappedConfigType>::type boundary_cell_container_typelist;
+            typedef typename element_t<element_tag_, WrappedConfigType>::bnd_cell_container_typelist boundary_cell_container_typelist;
             typedef typename element< element_t<element_tag_, WrappedConfigType>, sub_element_type_or_tag>::type sub_element_type;
             typedef viennagrid::storage::container_range_wrapper< const typename container_of_tag_for_element<boundary_cell_container_typelist, typename sub_element_type::tag>::type > type;
         };
@@ -765,6 +769,8 @@ namespace viennagrid
         struct handle<storage::collection_t<container_collection_typemap>, element_type_or_tag>
         {
             typedef typename element_tag<element_type_or_tag>::type element_tag;
+            
+            // Error in line below possibly means that there is no element_type_or_tag in 
             typedef typename container_of_tag_for_collection<container_collection_typemap, element_tag>::type::handle_type type;
         };
         

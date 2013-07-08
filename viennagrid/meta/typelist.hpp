@@ -261,6 +261,36 @@ namespace viennagrid
             };
             
             
+            
+            // reverse
+            template <typename typelist> struct reverse;
+            
+            template <> struct
+            reverse<null_type>
+            {
+                typedef null_type type;
+            };
+
+            template <typename head, typename tail>
+            struct reverse< typelist_t<head, tail> >
+            {
+            public:
+                typedef typelist_t<head, tail> typelist;
+              
+                typedef typelist_t<
+                    typename at<
+                      typelist,
+                      size<typelist>::value-1
+                    >::type,
+                    typename erase_at<
+                      typelist,
+                      size<typelist>::value-1
+                    >::type
+                > type;
+            };
+            
+            
+            
             // no duplicate types
             template <typename typelist> struct no_duplicates;
             

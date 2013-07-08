@@ -1,11 +1,8 @@
 
 # Tests (to be integrated in tests/)
 add_executable(collection_test collection_test.cpp)
-# add_executable(container_collection_test container_collection_test.cpp)
 add_executable(container_collection_test_2 container_collection_test_2.cpp)
 add_executable(container_test container_test.cpp)
-#add_executable(element_test element_test.cpp)
-add_executable(element_test_2 element_test_2.cpp)
 add_executable(element_test_3 element_test_3.cpp)
 add_executable(element_test_4 element_test_4.cpp)
 # add_executable(element_erase_test element_erase_test.cpp)
@@ -22,7 +19,6 @@ add_executable(point_test point_test.cpp)
 add_executable(handle_test handle_test.cpp)
 add_executable(accessor_test accessor_test.cpp)
 add_executable(interface_test interface_test.cpp)
-#add_executable(view_test view_test.cpp)
 
 # Tutorials:
 ADD_EXECUTABLE(algorithms           algorithms.cpp)

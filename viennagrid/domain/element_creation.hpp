@@ -40,6 +40,34 @@ namespace viennagrid
     }
     
     
+    
+    template<bool generate_id, bool call_callback, typename SegmentationType, typename ElementTag, typename WrappedConfigType>
+    std::pair<
+                typename viennagrid::storage::result_of::container_of<
+                    typename result_of::element_collection< segment_t<SegmentationType> >::type,
+                    viennagrid::element_t<ElementTag, WrappedConfigType>
+                >::type::handle_type,
+                bool
+            >
+        push_element( segment_t<SegmentationType> & segment, viennagrid::element_t<ElementTag, WrappedConfigType> const & element)
+    {
+        std::pair<
+                typename viennagrid::storage::result_of::container_of<
+                    typename result_of::element_collection< segment_t<SegmentationType> >::type,
+                    viennagrid::element_t<ElementTag, WrappedConfigType>
+                >::type::handle_type,
+                bool
+            > result = push_element( segment.view(), element );
+
+        add_to_segment( segment, viennagrid::dereference_handle(segment, result.first) );
+        return result;
+    }
+    
+    
+    
+    
+    
+    
     template<typename domain_type, typename ElementTag, typename WrappedConfigType>
     std::pair<
                 typename viennagrid::storage::result_of::container_of<
@@ -50,8 +78,7 @@ namespace viennagrid
             >
         push_element( domain_type & domain, viennagrid::element_t<ElementTag, WrappedConfigType> const & element)
     {
-        increment_change_counter(domain);
-        return inserter(domain)(element);
+        return push_element<true,true>(domain, element);
     }
     
     template<typename domain_type, typename element_type>
@@ -64,14 +91,12 @@ namespace viennagrid
             >
         push_element_noid( domain_type & domain, element_type const & element)
     {
-        increment_change_counter(domain);
-        return inserter(domain).template insert<false, true>(element);
+        return push_element<false, true>( domain, element );
     }
-    
-    
-    
-    
-    
+  
+  
+  
+  
   
   
   
