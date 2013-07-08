@@ -897,7 +897,7 @@ namespace viennagrid
     
     
     
-    std::ostream & operator<<(std::ostream & os, viennagrid::meta::null_type) { return os; }
+    inline std::ostream & operator<<(std::ostream & os, viennagrid::meta::null_type) { return os; }
 
 
     /** @brief Overload for the output streaming operator for the vertex type */
