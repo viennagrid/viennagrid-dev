@@ -363,7 +363,7 @@ namespace viennagrid
             
             writeHeader(writer);
             
-            segment_id_type tmp_id;
+            segment_id_type tmp_id = 0;
             
             unsigned int num_points = preparePoints(domain, tmp_id);
             
