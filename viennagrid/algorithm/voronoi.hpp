@@ -182,10 +182,10 @@ namespace viennagrid
     void write_voronoi_info(DomainType const & domain,
                             InterfaceAreaAccessor interface_area_accessor,
                             InterfaceAreaCellContributionAccessor interface_area_cell_contribution_accessor,
-                            VertexBoxVolumeAccessor vertex_box_volume_accessor,
-                            VertexBoxVolumeCellContributionAccessor vertex_box_volume_cell_contribution_accessor,
-                            EdgeBoxVolumeAccessor edge_box_volume_accessor,
-                            EdgeBoxVolumeCellContributionAccessor edge_box_volume_cell_contribution_accessor,
+                            VertexBoxVolumeAccessor,
+                            VertexBoxVolumeCellContributionAccessor,
+                            EdgeBoxVolumeAccessor,
+                            EdgeBoxVolumeCellContributionAccessor,
                             viennagrid::quadrilateral_tag)
     {
       typedef typename viennagrid::result_of::element<DomainType, CellTag>::type CellType;
@@ -601,7 +601,7 @@ namespace viennagrid
               typename EdgeBoxVolumeCellContributionAccessor>
     void write_voronoi_info(DomainType const & domain,
                             InterfaceAreaAccessor interface_area_accessor,
-                            InterfaceAreaCellContributionAccessor interface_area_cell_contribution_accessor,
+                            InterfaceAreaCellContributionAccessor,
                             VertexBoxVolumeAccessor vertex_box_volume_accessor,
                             VertexBoxVolumeCellContributionAccessor vertex_box_volume_cell_contribution_accessor,
                             EdgeBoxVolumeAccessor edge_box_volume_accessor,

@@ -32,8 +32,8 @@ namespace viennagrid
         template<>
         struct for_each_impl< viennagrid::meta::null_type >
         {
-            template<typename functor> static void exec( functor & f) {}
-            template<typename functor> static void exec( const functor & f) {}
+            template<typename functor> static void exec( functor & ) {}
+            template<typename functor> static void exec( const functor & ) {}
         };
 
         

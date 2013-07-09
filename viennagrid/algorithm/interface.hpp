@@ -40,9 +40,9 @@ namespace viennagrid
     struct detect_interface_impl<false>
     {
           template <typename AccessorType, typename DomainType1, typename DomainType2>
-          static void detect(AccessorType accessor,
-                            DomainType1 const & seg0,
-                            DomainType2 const & seg1)
+          static void detect(AccessorType,
+                            DomainType1 const &,
+                            DomainType2 const &)
           {
               typedef typename DomainType1::ERROR_CANNOT_DETECT_INTERFACE_BECAUSE_FACETS_ARE_DISABLED        error_type;
           }

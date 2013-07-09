@@ -54,7 +54,7 @@ namespace viennagrid
   {
     public:
       /** @brief By default, conversion is unknown, thus an error is forced when calling the functor */
-      ToPointType operator()(FromPointType const & p_in)
+      ToPointType operator()(FromPointType const &)
       {
         typedef typename FromPointType::ERROR_COORDINATE_SYSTEM_UNKNOWN   type;
       }

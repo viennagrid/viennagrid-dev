@@ -68,7 +68,7 @@ namespace viennagrid
         value_type const & operator()( access_type const & element ) const { return access(element); }
 
 
-        void erase( access_type const & element )
+        void erase( access_type const & )
         {
           assert(false && bool("WARNING! calling erase on apppendix accessor: not supported"));
         }            
@@ -78,7 +78,7 @@ namespace viennagrid
           assert(false && bool("WARNING! calling clear on apppendix accessor: not supported"));
         }
         
-        void resize( std::size_t size )
+        void resize( std::size_t )
         {
           assert(false && bool("WARNING! calling clear on apppendix accessor: not supported"));
         }
@@ -91,7 +91,7 @@ namespace viennagrid
     appendix_accessor_t<
       typename viennagrid::result_of::point_type<domain_or_element_type>::type,
       typename viennagrid::result_of::vertex<domain_or_element_type>::type
-      > default_point_accessor( domain_or_element_type const & domain_or_element )
+      > default_point_accessor( domain_or_element_type const & )
     {
       return appendix_accessor_t<
         typename viennagrid::result_of::point_type<domain_or_element_type>::type,
@@ -202,8 +202,8 @@ namespace viennagrid
         
         virtual ~base_dynamic_accessor_t() {}
         
-        virtual pointer find( access_type const & element ) { return 0; }
-        virtual const_pointer find( access_type const & element ) const { return 0; }
+        virtual pointer find( access_type const & ) { return 0; }
+        virtual const_pointer find( access_type const & ) const { return 0; }
 
         virtual reference access_unchecked( access_type const & element ) = 0;
         virtual const_reference access_unchecked( access_type const & element ) const = 0;
@@ -214,10 +214,10 @@ namespace viennagrid
         reference operator()( access_type const & element )       { return access(element); }
         const_reference operator()( access_type const & element ) const { return access(element); }            
         
-        virtual void erase( access_type const & element ) {}
+        virtual void erase( access_type const & ) {}
         
         virtual void clear() {}
-        virtual void resize( std::size_t size ) {}
+        virtual void resize( std::size_t ) {}
     };
     
     

@@ -264,7 +264,7 @@ namespace viennagrid
         
         
         template<typename handle_type>
-        void set_boundary_element(const bnd_cell_type & to_insert, std::pair<handle_type, bool> inserted, unsigned int pos)
+        void set_boundary_element(const bnd_cell_type &, std::pair<handle_type, bool> inserted, unsigned int pos)
         { elements_.set_handle(inserted.first, pos); }
         
         template<typename handle_type>
@@ -296,10 +296,10 @@ namespace viennagrid
     //protected:
     
         template<typename container_typelist>
-        void set_container( viennagrid::storage::collection_t<container_typelist> & container_collection ) {}
+        void set_container( viennagrid::storage::collection_t<container_typelist> & ) {}
     
         template<typename element_type, typename inserter_type>
-        void create_boundary_elements(element_type & element, inserter_type & inserter) {}            
+        void create_boundary_elements(element_type &, inserter_type &) {}            
         
         static void print_class() {}
         void print_orientation() {}
@@ -633,14 +633,14 @@ namespace viennagrid
         element_t() {}
         
         template<typename container_typelist>
-        element_t( viennagrid::storage::collection_t<container_typelist> & container_collection ) {}
+        element_t( viennagrid::storage::collection_t<container_typelist> & ) {}
         
         typedef typename result_of::boundary_element_typelist<bnd_cell_container_typelist>::type boundary_cell_typelist;
         typedef typename viennagrid::storage::result_of::id< element_t<vertex_tag, WrappedConfigType>, id_tag>::type id_type;
         typedef typename viennagrid::storage::result_of::const_id<id_type>::type const_id_type;
                     
         template<typename inserter_type>
-        void insert_callback( inserter_type & inserter, bool inserted ) {}
+        void insert_callback( inserter_type &, bool ) {}
         
         void print_orientation()
         {

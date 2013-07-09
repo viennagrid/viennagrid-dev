@@ -39,7 +39,6 @@ int main()
   vertex_handle_type vh2 = viennagrid::make_vertex( domain );
   vertex_handle_type vh3 = viennagrid::make_vertex( domain );
   vertex_handle_type vh4 = viennagrid::make_vertex( domain );
-  vertex_handle_type vh5 = viennagrid::make_vertex( domain );
   
   triangle_handle_type th0 = viennagrid::make_triangle( domain, vh0, vh1, vh2 );
   triangle_handle_type th1 = viennagrid::make_triangle( domain, vh0, vh2, vh3 );

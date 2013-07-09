@@ -62,7 +62,7 @@ namespace viennagrid
     
     template <typename PointAccessorType, typename CoordType1, typename CoordinateSystem1, typename CoordType2, typename CoordinateSystem2>
     CoordType1
-    distance_impl(PointAccessorType const accessor,
+    distance_impl(PointAccessorType const,
                   point_t<CoordType1, CoordinateSystem1> const & p1,
                   point_t<CoordType2, CoordinateSystem2> const & p2)
     {
@@ -138,7 +138,7 @@ namespace viennagrid
     
     template <typename PointAccessorType, typename CoordType1, typename CoordinateSystem1, typename CoordType2, typename CoordinateSystem2>
     CoordType1
-    boundary_distance_impl(PointAccessorType const accessor,
+    boundary_distance_impl(PointAccessorType const,
                   point_t<CoordType1, CoordinateSystem1> const & p1,
                   point_t<CoordType2, CoordinateSystem2> const & p2)
     {

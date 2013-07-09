@@ -41,7 +41,7 @@ namespace viennagrid
     struct norm_impl 
     {
       template<typename PointType>
-      typename result_of::coord_type<PointType>::type operator()(PointType const& p)
+      typename result_of::coord_type<PointType>::type operator()(PointType const&)
       {
           std::cerr << "ViennaGrid - Norm Error - this error type is not implemented" << std::endl;
           return 0.0;

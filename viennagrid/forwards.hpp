@@ -259,7 +259,7 @@ namespace viennagrid
     struct boundary_element_generator<cell_type, simplex_tag<0>, bnd_cell_type>
     {
         template<typename element_type, typename inserter_type>
-        static void create_boundary_elements(element_type & element, inserter_type & inserter) {}
+        static void create_boundary_elements(element_type &, inserter_type &) {}
     };
     
   }

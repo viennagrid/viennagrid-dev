@@ -107,8 +107,8 @@ int main()
   std::cout << std::endl;
   
   // Adding additional triangles to seg2 and printing them
-  triangle_handle_type th3 = viennagrid::make_triangle( seg2, vh1, vh4, vh5 );
-  triangle_handle_type th4 = viennagrid::make_triangle( seg2, vh2, vh4, vh5 );
+  viennagrid::make_triangle( seg2, vh1, vh4, vh5 );
+  viennagrid::make_triangle( seg2, vh2, vh4, vh5 );
   
   std::cout << "Triangles of Segment 2, added 2 additional" << std::endl;
   range = viennagrid::elements( seg2 );

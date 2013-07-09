@@ -42,8 +42,8 @@ namespace viennagrid
     template <typename PointType>
     struct cross_prod_impl<PointType, 1>
     {
-      static PointType apply(PointType const & p1,
-                            PointType const & p2)
+      static PointType apply(PointType const &,
+                            PointType const &)
       {
         return PointType(0);
       }

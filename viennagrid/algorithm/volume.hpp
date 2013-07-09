@@ -44,7 +44,7 @@ namespace viennagrid
     /** @brief Computes the volume of topologically zero-dimensional elements (vertices). Degenerate case, returns 1 */
     template <typename PointAccessorType, typename ElementType>
     typename viennagrid::result_of::coord_type<PointAccessorType>::type
-    volume_impl(PointAccessorType const accessor, ElementType const & cell, viennagrid::vertex_tag)
+    volume_impl(PointAccessorType const, ElementType const &, viennagrid::vertex_tag)
     {
       return typename viennagrid::result_of::coord_type<PointAccessorType>::type(1);
     }

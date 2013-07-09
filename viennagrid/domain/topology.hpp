@@ -765,11 +765,11 @@ namespace viennagrid
     }
     
     template<typename domain_type, typename ElementTag, typename WrappedConfigType>
-    element_t<ElementTag, WrappedConfigType> & dereference_handle( domain_type & domain, element_t<ElementTag, WrappedConfigType> & handle)
+    element_t<ElementTag, WrappedConfigType> & dereference_handle( domain_type &, element_t<ElementTag, WrappedConfigType> & handle)
     { return handle; }
     
     template<typename domain_type, typename ElementTag, typename WrappedConfigType>
-    element_t<ElementTag, WrappedConfigType> const & dereference_handle( domain_type const & domain, element_t<ElementTag, WrappedConfigType> const & handle)
+    element_t<ElementTag, WrappedConfigType> const & dereference_handle( domain_type const &, element_t<ElementTag, WrappedConfigType> const & handle)
     { return handle; }
     
     
@@ -785,10 +785,10 @@ namespace viennagrid
     
     
     template<typename domain_type, typename handle_type>
-    handle_type handle( domain_type & domain, handle_type handle) { return handle; }
+    handle_type handle( domain_type &, handle_type handle) { return handle; }
     
     template<typename domain_type, typename handle_type>
-    const handle_type handle( domain_type const & domain, handle_type handle) { return handle; }
+    const handle_type handle( domain_type const &, handle_type handle) { return handle; }
     
     
     

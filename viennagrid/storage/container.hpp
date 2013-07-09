@@ -508,12 +508,12 @@ namespace viennagrid
             typedef std::pair<handle_type, bool> return_type;
             
 
-            bool is_present( value_type const & element ) const
+            bool is_present( value_type const & ) const
             {
                 return false;
             }
             
-            iterator find( value_type const & element ) const
+            iterator find( value_type const & ) const
             {
                 return container_type::end();
             }

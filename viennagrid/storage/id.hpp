@@ -207,17 +207,17 @@ namespace viennagrid
                 element.id(id);
             }
             
-            template<typename id_type> void set_id( bool & element, id_type id ) {}
-            template<typename id_type> void set_id( char & element, id_type id ) {}
-            template<typename id_type> void set_id( unsigned char & element, id_type id ) {}
-            template<typename id_type> void set_id( short & element, id_type id ) {}
-            template<typename id_type> void set_id( unsigned short & element, id_type id ) {}
-            template<typename id_type> void set_id( int & element, id_type id ) {}
-            template<typename id_type> void set_id( unsigned int & element, id_type id ) {}
-            template<typename id_type> void set_id( long & element, id_type id ) {}
-            template<typename id_type> void set_id( unsigned long & element, id_type id ) {}
-            template<typename id_type> void set_id( float & element, id_type id ) {}
-            template<typename id_type> void set_id( double & element, id_type id ) {}
+            template<typename id_type> void set_id( bool &, id_type ) {}
+            template<typename id_type> void set_id( char &, id_type ) {}
+            template<typename id_type> void set_id( unsigned char &, id_type ) {}
+            template<typename id_type> void set_id( short &, id_type ) {}
+            template<typename id_type> void set_id( unsigned short &, id_type ) {}
+            template<typename id_type> void set_id( int &, id_type ) {}
+            template<typename id_type> void set_id( unsigned int &, id_type ) {}
+            template<typename id_type> void set_id( long &, id_type ) {}
+            template<typename id_type> void set_id( unsigned long &, id_type ) {}
+            template<typename id_type> void set_id( float &, id_type ) {}
+            template<typename id_type> void set_id( double &, id_type ) {}
             
         }
         

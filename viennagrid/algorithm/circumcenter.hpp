@@ -39,7 +39,7 @@ namespace viennagrid
     /** @brief Throws a compile time error if the n-cell type is not supported. */
     template <typename ElementType, typename GeometricContainerType, typename ElementTag, typename DimensionTag>
     typename viennagrid::result_of::point_type<GeometricContainerType>::type
-    circumcenter(ElementType const & cell, GeometricContainerType const & geometric_container, ElementTag const &, DimensionTag const &)
+    circumcenter(ElementType const &, GeometricContainerType const &, ElementTag const &, DimensionTag const &)
     {
       typedef typename ElementType::ERROR_COMPUTATION_OF_CIRCUMCENTER_NOT_IMPLEMENTED   error_type;
       return typename viennagrid::result_of::point_type<GeometricContainerType>::type();

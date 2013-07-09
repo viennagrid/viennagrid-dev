@@ -66,7 +66,7 @@ void read_netgen(DomainType & domain, SegmentationType & segmentation)
 // Write to IBM Vizualization DataExplorer (OpenDX, http://www.opendx.org/) file
 //
 template <typename DomainType>
-void write_opendx(DomainType const & domain)
+void write_opendx(DomainType const &)
 {
 //   // Instantiate writer object:
 //   viennagrid::io::opendx_writer<CellTypeOrTag, DomainType> my_dx_writer;

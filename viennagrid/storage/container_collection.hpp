@@ -134,9 +134,9 @@ namespace viennagrid
             template<typename container_collection_type, typename element_type>
             struct insert_or_ignore_helper<container_collection_type, element_type, viennagrid::meta::not_found>
             {
-                static void insert_or_ignore( container_collection_type & collection, const element_type & element ) {}
+                static void insert_or_ignore( container_collection_type &, const element_type & ) {}
                 
-                static void insert_or_ignore( container_collection_type & collection, element_type & element ) {}
+                static void insert_or_ignore( container_collection_type &, element_type & ) {}
             };
 
             
@@ -184,9 +184,9 @@ namespace viennagrid
             template<typename container_collection_type, typename handle_type>
             struct handle_or_ignore_helper<container_collection_type, handle_type, viennagrid::meta::not_found>
             {
-                static void handle_or_ignore( container_collection_type & collection, const handle_type & handle ) {}
+                static void handle_or_ignore( container_collection_type &, const handle_type & ) {}
                 
-                static void handle_or_ignore( container_collection_type & collection, handle_type & handle ) {}
+                static void handle_or_ignore( container_collection_type &, handle_type & ) {}
             };
 
             

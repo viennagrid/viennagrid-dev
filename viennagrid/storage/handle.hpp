@@ -158,21 +158,21 @@ namespace viennagrid
 
             // Pointer handle
             template<typename container_type, typename handle_type>
-            typename result_of::value_type<handle_type>::type & dereference_handle( container_type & container, handle_type handle, pointer_handle_tag )
+            typename result_of::value_type<handle_type>::type & dereference_handle( container_type &, handle_type handle, pointer_handle_tag )
             { return *handle; }
             
             template<typename container_type, typename handle_type>
-            typename result_of::value_type<handle_type>::type const & dereference_handle( container_type const & container, handle_type handle, pointer_handle_tag )
+            typename result_of::value_type<handle_type>::type const & dereference_handle( container_type const &, handle_type handle, pointer_handle_tag )
             { return *handle; }
 
             
             // Iterator handle
             template<typename container_type, typename handle_type>
-            typename result_of::value_type<handle_type>::type & dereference_handle( container_type & container, handle_type handle, iterator_handle_tag )
+            typename result_of::value_type<handle_type>::type & dereference_handle( container_type &, handle_type handle, iterator_handle_tag )
             { return *handle; }
             
             template<typename container_type, typename handle_type>
-            typename result_of::value_type<handle_type>::type const & dereference_handle( container_type const & container, handle_type handle, iterator_handle_tag )
+            typename result_of::value_type<handle_type>::type const & dereference_handle( container_type const &, handle_type handle, iterator_handle_tag )
             { return *handle; }
             
             
@@ -211,10 +211,10 @@ namespace viennagrid
             template<typename container_type, typename value_type>
             struct handle_helper<container_type, value_type, no_handle_tag>
             {
-                static typename result_of::handle_type<container_type, no_handle_tag>::type handle( container_type & container, value_type & value )
+                static typename result_of::handle_type<container_type, no_handle_tag>::type handle( container_type &, value_type & )
                 { return typename result_of::handle_type<container_type, no_handle_tag>::type(); }
                 
-                static typename result_of::const_handle_type<container_type, no_handle_tag>::type handle( container_type const & container, value_type const & value )
+                static typename result_of::const_handle_type<container_type, no_handle_tag>::type handle( container_type const &, value_type const & )
                 { return typename result_of::handle_type<container_type, no_handle_tag>::type(); }
             };
             
@@ -239,20 +239,20 @@ namespace viennagrid
             template<typename container_type, typename value_type>
             struct handle_helper<container_type, value_type, pointer_handle_tag>
             {
-                static typename result_of::handle_type<container_type, pointer_handle_tag>::type handle( container_type & container, value_type & value )
+                static typename result_of::handle_type<container_type, pointer_handle_tag>::type handle( container_type &, value_type & value )
                 { return &value; }
                 
-                static typename result_of::const_handle_type<container_type, pointer_handle_tag>::type handle( container_type const & container, value_type const & value )
+                static typename result_of::const_handle_type<container_type, pointer_handle_tag>::type handle( container_type const &, value_type const & value )
                 { return &value; }
             };
             
             template<typename container_type, typename value_type>
             struct handle_helper<container_type, value_type, id_handle_tag>
             {
-                static typename result_of::handle_type<container_type, id_handle_tag>::type handle( container_type & container, value_type & value )
+                static typename result_of::handle_type<container_type, id_handle_tag>::type handle( container_type &, value_type & value )
                 { return value.id(); }
                 
-                static typename result_of::const_handle_type<container_type, id_handle_tag>::type handle( container_type const & container, value_type const & value )
+                static typename result_of::const_handle_type<container_type, id_handle_tag>::type handle( container_type const &, value_type const & value )
                 { return value.id(); }
             };
             

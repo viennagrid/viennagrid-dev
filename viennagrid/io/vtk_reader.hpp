@@ -43,12 +43,6 @@ namespace viennagrid
   namespace io
   {
     
-
-    
-    
-    
-    
-    
     /** @brief A VTK reader class that allows to read meshes from XML-based VTK files as defined in http://www.vtk.org/pdf/file-formats.pdf
      * 
      * @tparam DomainType   The type of the domain to be read. Must not be a segment type!
@@ -474,7 +468,7 @@ namespace viennagrid
               std::size_t global_vertex_id = local_to_global_map[seg_id][i];
               VertexType const & vertex = viennagrid::elements<viennagrid::vertex_tag>(domain)[global_vertex_id];
               
-              if (vertex_scalar_data[container.first][seg_id].size() <= vertex.id().get()) vertex_scalar_data[container.first][seg_id].resize(vertex.id().get()+1);
+              if ( static_cast<typename VertexType::id_type::base_id_type>(vertex_scalar_data[container.first][seg_id].size()) <= vertex.id().get()) vertex_scalar_data[container.first][seg_id].resize(vertex.id().get()+1);
               vertex_scalar_data[container.first][seg_id][vertex.id().get()] = (container.second)[i];
             }
           }
@@ -520,7 +514,7 @@ namespace viennagrid
               std::size_t global_vertex_id = local_to_global_map[seg_id][i];
               VertexType const & vertex = viennagrid::elements<viennagrid::vertex_tag>(domain)[global_vertex_id];
               
-              if (vertex_vector_data[container.first][seg_id].size() <= vertex.id().get()) vertex_vector_data[container.first][seg_id].resize(vertex.id().get()+1);
+              if ( static_cast<typename VertexType::id_type::base_id_type>(vertex_vector_data[container.first][seg_id].size()) <= vertex.id().get()) vertex_vector_data[container.first][seg_id].resize(vertex.id().get()+1);
               vertex_vector_data[container.first][seg_id][vertex.id().get()].resize(3);
               vertex_vector_data[container.first][seg_id][vertex.id().get()][0] = (container.second)[3*i+0];
               vertex_vector_data[container.first][seg_id][vertex.id().get()][1] = (container.second)[3*i+1];
@@ -532,7 +526,7 @@ namespace viennagrid
 
       /** @brief Writes data for cells to the ViennaGrid domain using ViennaData */
       template <typename ContainerType>
-      void setupDataCell(DomainType & domain, SegmentType & segment, segment_id_type seg_id, ContainerType const & container, std::size_t num_components)
+      void setupDataCell(DomainType &, SegmentType & segment, segment_id_type seg_id, ContainerType const & container, std::size_t num_components)
       {
         std::string const & name = container.first;
         
@@ -567,7 +561,7 @@ namespace viennagrid
             {
               CellType const & cell = viennagrid::elements<CellTag>(segment)[i];
               
-              if (cell_scalar_data[container.first][seg_id].size() <= cell.id().get()) cell_scalar_data[container.first][seg_id].resize(cell.id().get()+1);
+              if ( static_cast<typename CellType::id_type::base_id_type>(cell_scalar_data[container.first][seg_id].size()) <= cell.id().get()) cell_scalar_data[container.first][seg_id].resize(cell.id().get()+1);
               cell_scalar_data[container.first][seg_id][cell.id().get()] = (container.second)[i];
             }
           }
@@ -610,7 +604,7 @@ namespace viennagrid
             {
               CellType const & cell = viennagrid::elements<CellTag>(segment)[i];
               
-              if (cell_vector_data[container.first][seg_id].size() <= cell.id().get()) cell_vector_data[container.first][seg_id].resize(cell.id().get()+1);
+              if ( static_cast<typename CellType::id_type::base_id_type>(cell_vector_data[container.first][seg_id].size()) <= cell.id().get()) cell_vector_data[container.first][seg_id].resize(cell.id().get()+1);
               cell_vector_data[container.first][seg_id][cell.id().get()].resize(3);
               cell_vector_data[container.first][seg_id][cell.id().get()][0] = (container.second)[3*i+0];
               cell_vector_data[container.first][seg_id][cell.id().get()][1] = (container.second)[3*i+1];

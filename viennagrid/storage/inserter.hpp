@@ -69,8 +69,7 @@ namespace viennagrid
             }
             
             template<typename handle_type, typename value_type>
-            void handle_insert( handle_type ref, viennagrid::meta::tag<value_type> )
-            {}
+            void handle_insert( handle_type, viennagrid::meta::tag<value_type> ) {}
             
             
             template<bool generate_id, bool call_callback, typename value_type>
@@ -209,7 +208,7 @@ namespace viennagrid
                   container_collection_type & collection,
                   change_counter_type & change_counter)
             {
-                return recursive_inserter_t<container_collection_type, dependend_inserter_type, change_counter_type>(inserter, collection);
+                return recursive_inserter_t<container_collection_type, dependend_inserter_type, change_counter_type>(inserter, change_counter, collection);
             }
         }
         

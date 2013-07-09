@@ -68,7 +68,7 @@ namespace viennagrid
     struct boundary_element_generator<plc_tag, line_tag, BoundaryElementType>
     {
         template<typename element_type, typename inserter_type>
-        static void create_boundary_elements(element_type & plc, inserter_type & inserter)
+        static void create_boundary_elements(element_type &, inserter_type &)
         {
         }
     };
@@ -77,7 +77,7 @@ namespace viennagrid
     struct boundary_element_generator<plc_tag, simplex_tag<0>, BoundaryElementType>
     {
         template<typename element_type, typename inserter_type>
-        static void create_boundary_elements(element_type & plc, inserter_type & inserter)
+        static void create_boundary_elements(element_type & plc, inserter_type &)
         {
             typedef typename result_of::element<element_type, line_tag>::type LineType;
             typedef typename result_of::element_range<element_type, line_tag>::type LineRange;

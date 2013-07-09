@@ -155,7 +155,7 @@ namespace viennagrid
     
     template <typename PointAccessorType, typename CoordType1, typename CoordinateSystem1, typename CoordType2, typename CoordinateSystem2>
     std::pair< point_t<CoordType1, CoordinateSystem1>, point_t<CoordType2, CoordinateSystem2> >
-    closest_points_impl(PointAccessorType const accessor,
+    closest_points_impl(PointAccessorType const,
                         point_t<CoordType1, CoordinateSystem1> const & p1,
                         point_t<CoordType2, CoordinateSystem2> const & p2)
     {
@@ -716,7 +716,7 @@ namespace viennagrid
     
     template <typename PointAccessorType, typename CoordType1, typename CoordinateSystem1, typename CoordType2, typename CoordinateSystem2>
     std::pair< point_t<CoordType1, CoordinateSystem1>, point_t<CoordType1, CoordinateSystem1> >
-    closest_points_on_boundary_impl(PointAccessorType const accessor,
+    closest_points_on_boundary_impl(PointAccessorType const,
                                     point_t<CoordType1, CoordinateSystem1> const & p1,
                                     point_t<CoordType2, CoordinateSystem2> const & p2)
     {
@@ -777,11 +777,11 @@ namespace viennagrid
         if (!is_boundary<FacetTag>(cont, *fit))
           continue;
         
-        PairType p = closest_points_impl(accessor, p, *fit);
-        double cur_norm = norm_2(p.first - p.second);
+        PairType pair = closest_points_impl(accessor, p, *fit);
+        double cur_norm = norm_2(pair.first - pair.second);
         if (cur_norm < shortest_distance)
         {
-          closest_pair = p;
+          closest_pair = pair;
           shortest_distance = cur_norm;
         }
       }
@@ -969,16 +969,16 @@ namespace viennagrid
               bool correct_order = topologically_sorted<T, U>::value >
     struct ascending_topological_order
     {
-      static T const & first(T const & t, U const & u) { return t; }
-      static U const & second(T const & t, U const & u) { return u; }
+      static T const & first(T const & t, U const &) { return t; }
+      static U const & second(T const &, U const & u) { return u; }
     };
     
     template <typename T,
               typename U>
     struct ascending_topological_order<T, U, false>
     {
-      static U const & first(T const & t, U const & u) { return u; }
-      static T const & second(T const & t, U const & u) { return t; }
+      static U const & first(T const &, U const & u) { return u; }
+      static T const & second(T const & t, U const &) { return t; }
     };
     
   } //namespace detail

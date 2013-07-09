@@ -411,8 +411,7 @@ namespace viennagrid
         struct set_base_container_helper<viennagrid::meta::null_type>
         {
             template<typename base_container_collection_type, typename view_container_collection_type>
-            static void exec( base_container_collection_type & base_container_collection, view_container_collection_type & view_container_collection )
-            {}
+            static void exec( base_container_collection_type &, view_container_collection_type & ) {}
         };
         
         template<typename value_type, typename container_type, typename tail>
