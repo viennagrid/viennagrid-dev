@@ -28,6 +28,8 @@ namespace viennagrid
         
         struct vector_type_tag;
         
+        struct domain_change_counter_tag;
+        
         
         namespace result_of
         {
@@ -86,8 +88,16 @@ namespace viennagrid
                 typedef storage::std_vector_tag type;
             };
             
+            template<>
+            struct default_config<domain_change_counter_tag>
+            {
+                typedef long type;
+            };
             
-            
+        }
+        
+        namespace result_of
+        {
             template<typename config_entry, typename config_tag>
             struct query_config_impl
             {

@@ -35,7 +35,7 @@ namespace viennagrid
             >
         push_element( domain_type & domain, viennagrid::element_t<ElementTag, WrappedConfigType> const & element)
     {
-        increment_change_counter(domain);
+//         increment_change_counter(domain);
         return inserter(domain).template insert<generate_id, call_callback>(element);
     }
     

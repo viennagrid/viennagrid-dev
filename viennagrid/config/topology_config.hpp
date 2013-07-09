@@ -279,6 +279,8 @@ namespace viennagrid
         template<typename WrappedConfigType, typename element_tag, typename boundary_element_tag, typename tail>
         struct coboundary_container_collection_per_element_typemap<WrappedConfigType, element_tag, viennagrid::meta::typelist_t<boundary_element_tag, tail> >
         {
+            typedef typename config::result_of::query_config<typename WrappedConfigType::type, config::domain_change_counter_tag>::type domain_change_counter_type;
+          
             // TODO correctly extract from config
             typedef typename config::result_of::query_config<typename WrappedConfigType::type, config::coboundary_container_tag>::type coboundary_container_tag;
             typedef typename config::result_of::query_config<typename WrappedConfigType::type, config::coboundary_view_container_tag>::type coboundary_view_container_tag;
@@ -294,7 +296,7 @@ namespace viennagrid
                         boundary_element_tag,
                         element_tag
                     >,
-                    coboundary_container_wrapper<base_coboundary_container>
+                    coboundary_container_wrapper<base_coboundary_container, domain_change_counter_type>
                 >,
                 typename coboundary_container_collection_per_element_typemap<WrappedConfigType, element_tag, tail>::type
             > type;
@@ -340,6 +342,8 @@ namespace viennagrid
         template<typename WrappedConfigType, typename element_tag, typename connector_element_tag, typename tail>
         struct neighbour_container_collection_per_element_typemap<WrappedConfigType, element_tag, viennagrid::meta::typelist_t<connector_element_tag, tail> >
         {
+            typedef typename config::result_of::query_config<typename WrappedConfigType::type, config::domain_change_counter_tag>::type domain_change_counter_type;
+          
             // TODO correctly extract from config
             typedef typename config::result_of::query_config<typename WrappedConfigType::type, config::coboundary_container_tag>::type coboundary_container_tag;
             typedef typename config::result_of::query_config<typename WrappedConfigType::type, config::coboundary_view_container_tag>::type coboundary_view_container_tag;
@@ -355,7 +359,7 @@ namespace viennagrid
                         element_tag,
                         connector_element_tag
                     >,
-                    neighbour_container_wrapper<base_container>
+                    neighbour_container_wrapper<base_container, domain_change_counter_type>
                 >,
                 typename neighbour_container_collection_per_element_typemap<WrappedConfigType, element_tag, tail>::type
             > type;
@@ -454,6 +458,8 @@ namespace viennagrid
         template<typename WrappedConfigType, typename element_tag, typename tail>
         struct boundary_information_collection_typemap_impl<WrappedConfigType, viennagrid::meta::typelist_t<element_tag, tail> >
         {
+            typedef typename config::result_of::query_config<typename WrappedConfigType::type, config::domain_change_counter_tag>::type domain_change_counter_type;
+          
           // TODO correctly extract from config
             typedef typename config::result_of::query_config<typename WrappedConfigType::type, config::boundary_information_container_tag>::type boundary_container_tag;
             
@@ -462,7 +468,7 @@ namespace viennagrid
             typedef viennagrid::meta::typelist_t<
                 viennagrid::meta::static_pair<
                     element_tag,
-                    boundary_information_wrapper<base_container>
+                    boundary_information_wrapper<base_container, domain_change_counter_type>
                 >,
                 typename boundary_information_collection_typemap_impl<WrappedConfigType, tail>::type
             > type;

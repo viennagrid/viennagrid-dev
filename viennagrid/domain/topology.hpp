@@ -62,34 +62,34 @@ namespace viennagrid
     };
     
     
-    template<typename container_type_>
+    template<typename container_type_, typename change_counter_type>
     struct coboundary_container_wrapper
     {
         typedef container_type_ container_type;
         coboundary_container_wrapper() : change_counter(0) {}
         
-        long change_counter;
+        change_counter_type change_counter;
         container_type container;
     };
     
     
-    template<typename container_type_>
+    template<typename container_type_, typename change_counter_type>
     struct neighbour_container_wrapper
     {
         typedef container_type_ container_type;
         neighbour_container_wrapper() : change_counter(0) {}
         
-        long change_counter;
+        change_counter_type change_counter;
         container_type container;
     };
     
-    template<typename container_type_>
+    template<typename container_type_, typename change_counter_type>
     struct boundary_information_wrapper
     {
         typedef container_type_ container_type;
         boundary_information_wrapper() : change_counter(0) {}
         
-        long change_counter;
+        change_counter_type change_counter;
         container_type container;
     };
     
@@ -174,33 +174,44 @@ namespace viennagrid
         typedef typename domain_appendix_type<WrappedDomainConfigType>::type    type;
       };
       
+      
+      // domain_change_counter_type
+      template <typename WrappedConfigType>
+      struct domain_change_counter_type
+      {
+        typedef typename config::result_of::query_config<typename WrappedConfigType::type, config::domain_change_counter_tag>::type  type;
+      };
+      
+      template <typename WrappedDomainConfigType, typename ElementTypeList, typename ContainerConfig>
+      struct domain_change_counter_type< decorated_domain_view_config<WrappedDomainConfigType, ElementTypeList, ContainerConfig> >
+      {
+        typedef typename config::result_of::query_config<typename WrappedDomainConfigType::type, config::domain_change_counter_tag>::type  type;
+      };
+
+      
       // domain_inserter_type
       template <typename WrappedConfigType>
       struct domain_inserter_type
       {
-//         typedef typename WrappedConfigType::type   ConfigType;
-//         typedef WrappedConfigType ConfigType;
-          
         typedef typename config::result_of::element_collection<WrappedConfigType>::type                                                       element_collection_type;
         typedef typename viennagrid::result_of::id_generator<WrappedConfigType>::type                                                 id_generator_type;
+        typedef typename domain_change_counter_type<WrappedConfigType>::type change_counter_type;
 
-        typedef typename viennagrid::storage::result_of::physical_inserter<element_collection_type, id_generator_type>::type   type;
+        typedef typename viennagrid::storage::result_of::physical_inserter<element_collection_type, change_counter_type, id_generator_type>::type   type;
       };
       
       template <typename WrappedDomainConfigType, typename ElementTypeList, typename ContainerConfig>
       struct domain_inserter_type< decorated_domain_view_config<WrappedDomainConfigType, ElementTypeList, ContainerConfig> >
       {
         typedef decorated_domain_view_config<WrappedDomainConfigType, ElementTypeList, ContainerConfig>  argument_type;
-//         typedef typename WrappedDomainConfigType::type                                                   DomainConfigType;
         typedef WrappedDomainConfigType ConfigType;
 
         typedef typename domain_element_collection_type<argument_type>::type                             view_container_collection_type;
         typedef typename domain_inserter_type<WrappedDomainConfigType>::type                             full_domain_inserter_type;
+        typedef typename domain_change_counter_type<WrappedDomainConfigType>::type change_counter_type;
           
-        typedef typename viennagrid::storage::result_of::recursive_inserter<view_container_collection_type, full_domain_inserter_type>::type      type;
+        typedef typename viennagrid::storage::result_of::recursive_inserter<view_container_collection_type, change_counter_type, full_domain_inserter_type>::type      type;
       };
-
-      
     }
 
     template <typename WrappedConfigType>
@@ -215,6 +226,7 @@ namespace viennagrid
         
         typedef typename result_of::domain_element_collection_type<WrappedConfigType>::type     element_collection_type;
         typedef typename result_of::domain_appendix_type<WrappedConfigType>::type               appendix_type;
+        typedef typename result_of::domain_change_counter_type<WrappedConfigType>::type         change_counter_type;
         typedef typename result_of::domain_inserter_type<WrappedConfigType>::type               inserter_type;
         
         
@@ -228,7 +240,7 @@ namespace viennagrid
             view_domain_setter< other_element_collection_type > functor(proxy.domain->element_collection());
             viennagrid::storage::collection::for_each(element_container_collection, functor);
         
-            inserter = inserter_type( element_container_collection, proxy.domain->get_inserter() );
+            inserter = inserter_type( element_container_collection, change_counter_,proxy.domain->get_inserter() );
         }
         
         ~domain_t() {}
@@ -238,7 +250,7 @@ namespace viennagrid
         // buggy !!
         domain_t(const domain_t & other) : element_container_collection(other.element_container_collection), inserter(other.inserter), change_counter_(other.change_counter_)
         {
-            inserter.set_container_collection( element_container_collection );
+            inserter.set_domain_info( element_container_collection, change_counter_ );
         }
         
         // buggy !!
@@ -246,7 +258,7 @@ namespace viennagrid
         {
             element_container_collection = other.element_container_collection;
             inserter = other.inserter;
-            inserter.set_container_collection( element_container_collection );
+            inserter.set_domain_info( element_container_collection, change_counter_ );
             return *this;
         }
     public:
@@ -261,15 +273,9 @@ namespace viennagrid
         inserter_type & get_inserter() { return inserter; }
         inserter_type const & get_inserter() const { return inserter; }
         
-        typedef long ChangeCounterType;
-        
-        bool is_obsolete( ChangeCounterType change_counter_to_check ) const
-        {
-          return change_counter_to_check != change_counter_;
-        }
-        void update_change_counter( ChangeCounterType & change_counter_to_update ) const { change_counter_to_update = change_counter_; }
+        bool is_obsolete( change_counter_type change_counter_to_check ) const { return change_counter_to_check != change_counter_; }
+        void update_change_counter( change_counter_type & change_counter_to_update ) const { change_counter_to_update = change_counter_; }
         void increment_change_counter() { ++change_counter_; }
-
         
     protected:
         element_collection_type element_container_collection;
@@ -277,17 +283,17 @@ namespace viennagrid
         appendix_type appendix_;
         inserter_type inserter;
         
-        ChangeCounterType change_counter_;
+        change_counter_type change_counter_;
     };
     
     
     
     template<typename WrappedConfigType>
-    bool is_obsolete( domain_t<WrappedConfigType> const & domain, typename domain_t<WrappedConfigType>::ChangeCounterType change_counter_to_check )
+    bool is_obsolete( domain_t<WrappedConfigType> const & domain, typename domain_t<WrappedConfigType>::change_counter_type change_counter_to_check )
     { return domain.is_obsolete( change_counter_to_check ); }
     
     template<typename WrappedConfigType>
-    void update_change_counter( domain_t<WrappedConfigType> & domain, typename domain_t<WrappedConfigType>::ChangeCounterType & change_counter_to_update )
+    void update_change_counter( domain_t<WrappedConfigType> & domain, typename domain_t<WrappedConfigType>::change_counter_type & change_counter_to_update )
     { domain.update_change_counter( change_counter_to_update ); }
     
     template<typename WrappedConfigType>

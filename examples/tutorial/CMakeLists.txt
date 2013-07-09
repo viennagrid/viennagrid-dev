@@ -19,6 +19,8 @@ add_executable(point_test point_test.cpp)
 add_executable(handle_test handle_test.cpp)
 add_executable(accessor_test accessor_test.cpp)
 add_executable(interface_test interface_test.cpp)
+add_executable(coboundary_iteration_with_segments coboundary_iteration_with_segments.cpp)
+
 
 # Tutorials:
 ADD_EXECUTABLE(algorithms           algorithms.cpp)

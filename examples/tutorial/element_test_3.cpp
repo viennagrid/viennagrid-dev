@@ -202,7 +202,7 @@ int main()
     typedef viennagrid::storage::result_of::continuous_id_generator< id_generator_config >::type id_generator_type;
     id_generator_type id_generator;
     
-    typedef viennagrid::storage::result_of::physical_inserter<domain_container_collection_type, id_generator_type&>::type inserter_type;
+    typedef viennagrid::storage::result_of::physical_inserter<domain_container_collection_type, long, id_generator_type&>::type inserter_type;
     inserter_type inserter(domain_container_collection, id_generator);
     
 

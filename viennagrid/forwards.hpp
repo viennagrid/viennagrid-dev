@@ -800,13 +800,13 @@ namespace viennagrid
     template<typename segmentation_type_>
     class segment_t;
 
-    template<typename container_type_>
+    template<typename container_type_, typename change_counter_type>
     struct coboundary_container_wrapper;
     
-    template<typename container_type_>
+    template<typename container_type_, typename change_counter_type>
     struct neighbour_container_wrapper;
     
-    template<typename container_type_>
+    template<typename container_type_, typename change_counter_type>
     struct boundary_information_wrapper;
     
     

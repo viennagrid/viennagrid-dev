@@ -11,18 +11,27 @@ namespace viennagrid
     namespace storage
     {
         
-        template<typename container_collection_type, typename id_generator_type_>
+        template<typename container_collection_type, typename change_counter_type, typename id_generator_type_>
         class physical_inserter_t
         {
         public:
             typedef container_collection_type physical_container_collection_type;
             typedef id_generator_type_ id_generator_type;
             
-            physical_inserter_t() : collection(0) {}
-            physical_inserter_t(container_collection_type & _collection) : collection(&_collection) {}
-            physical_inserter_t(container_collection_type & _collection, id_generator_type id_generator_) : collection(&_collection), id_generator(id_generator_) {}
+            physical_inserter_t() : collection(0), change_counter(0) {}
+            physical_inserter_t(container_collection_type & _collection) : collection(&_collection), change_counter(0) {}
+            physical_inserter_t(container_collection_type & _collection, id_generator_type id_generator_) : collection(&_collection), change_counter(0), id_generator(id_generator_) {}
             
-            void set_container_collection(container_collection_type & _collection) { collection = &_collection; }
+            physical_inserter_t(container_collection_type & _collection, change_counter_type & change_counter_) :
+                collection(&_collection), change_counter(&change_counter_) {}
+            physical_inserter_t(container_collection_type & _collection, change_counter_type & change_counter_, id_generator_type id_generator_) :
+                collection(&_collection), change_counter(&change_counter_), id_generator(id_generator_) {}
+            
+            void set_domain_info(container_collection_type & _collection, change_counter_type & change_counter_)
+            {
+                collection = &_collection;
+                change_counter = &change_counter_;
+            }
             
             template<bool generate_id, bool call_callback, typename value_type, typename inserter_type>
             std::pair<
@@ -46,8 +55,8 @@ namespace viennagrid
                   id_generator.set_max_id( element.id() );
                 
                 std::pair<handle_type, bool> ret = container.insert( element );
+                if (change_counter) ++(*change_counter);
                 
-
                 if (call_callback)
                     viennagrid::storage::container_collection_element::insert_callback(
                         container.dereference_handle(ret.first),
@@ -92,6 +101,8 @@ namespace viennagrid
             
         private:
             container_collection_type * collection;
+            change_counter_type * change_counter;
+            
             id_generator_type id_generator;
         };
         
@@ -102,16 +113,31 @@ namespace viennagrid
         
         
         
-        template<typename view_collection_type, typename dependend_inserter_type>
+        template<typename view_collection_type, typename change_counter_type, typename dependend_inserter_type>
         class recursive_inserter_t
         {
         public:            
-            recursive_inserter_t() : view_collection(0), dependend_inserter(0) {}
-            recursive_inserter_t(view_collection_type & collection_) : view_collection(&collection_), dependend_inserter(0) {}
-            recursive_inserter_t(view_collection_type & collection_, dependend_inserter_type & dependend_inserter_) :
-               view_collection(&collection_), dependend_inserter(&dependend_inserter_) {}
+            recursive_inserter_t() : view_collection(0), change_counter(0), dependend_inserter(0) {}
+            recursive_inserter_t(view_collection_type & collection_) : view_collection(&collection_), change_counter(0), dependend_inserter(0) {}
             
-            void set_container_collection(view_collection_type & _collection) { view_collection = &_collection; }
+            recursive_inserter_t(view_collection_type & _collection, change_counter_type & change_counter_) :
+                view_collection(&_collection), change_counter(&change_counter_) {}
+            recursive_inserter_t(view_collection_type & _collection, dependend_inserter_type & dependend_inserter_) :
+                view_collection(&_collection), change_counter(0), dependend_inserter(&dependend_inserter_) {}
+                
+            recursive_inserter_t(view_collection_type & _collection, change_counter_type & change_counter_, dependend_inserter_type & dependend_inserter_) :
+                view_collection(&_collection), change_counter(&change_counter_), dependend_inserter(&dependend_inserter_) {}
+            
+            
+//             recursive_inserter_t(view_collection_type & collection_, dependend_inserter_type & dependend_inserter_) :
+//                view_collection(&collection_), dependend_inserter(&dependend_inserter_) {}
+            
+            
+            void set_domain_info(view_collection_type & _collection, change_counter_type & change_counter_)
+            {
+                view_collection = &_collection;
+                change_counter = &change_counter_;
+            }
             
             
             template<typename handle_type, typename value_type>
@@ -120,6 +146,7 @@ namespace viennagrid
                 viennagrid::storage::container_collection::handle_or_ignore( *view_collection, ref, viennagrid::meta::tag<value_type>() );
 
                 dependend_inserter->handle_insert( ref, viennagrid::meta::tag<value_type>() );
+                if (change_counter) ++(*change_counter);
             }
             
             
@@ -167,6 +194,8 @@ namespace viennagrid
             
         private:
             view_collection_type * view_collection;
+            change_counter_type * change_counter;
+            
             dependend_inserter_type * dependend_inserter;
         };
         
@@ -174,26 +203,29 @@ namespace viennagrid
         
         namespace inserter
         {
-            template<typename dependend_inserter_type, typename container_collection_type>
-            recursive_inserter_t<container_collection_type, dependend_inserter_type> get_recursive( const dependend_inserter_type & inserter, container_collection_type & collection )
+            template<typename dependend_inserter_type, typename container_collection_type, typename change_counter_type>
+            recursive_inserter_t<container_collection_type, dependend_inserter_type, change_counter_type> get_recursive(
+                  dependend_inserter_type const & inserter,
+                  container_collection_type & collection,
+                  change_counter_type & change_counter)
             {
-                return recursive_inserter_t<container_collection_type, dependend_inserter_type>(inserter, collection);
+                return recursive_inserter_t<container_collection_type, dependend_inserter_type, change_counter_type>(inserter, collection);
             }
         }
         
         
         namespace result_of
         {
-            template<typename container_collection_type, typename dependend_inserter_type>
+            template<typename container_collection_type, typename change_counter_type, typename dependend_inserter_type>
             struct recursive_inserter
             {
-                typedef recursive_inserter_t<container_collection_type, dependend_inserter_type> type;
+                typedef recursive_inserter_t<container_collection_type, change_counter_type, dependend_inserter_type> type;
             };
             
-            template<typename container_collection_type, typename id_generator_type>
+            template<typename container_collection_type, typename change_counter_type, typename id_generator_type>
             struct physical_inserter
             {
-                typedef physical_inserter_t<container_collection_type, id_generator_type> type;
+                typedef physical_inserter_t<container_collection_type, change_counter_type, id_generator_type> type;
             };
         }
         

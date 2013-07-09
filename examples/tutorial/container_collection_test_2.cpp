@@ -138,7 +138,7 @@ int main()
     typedef viennagrid::storage::result_of::continuous_id_generator< id_generator_config >::type id_generator_type;
     id_generator_type id_generator;
     
-    typedef viennagrid::storage::result_of::physical_inserter< collection_type, id_generator_type& >::type inserter_type;
+    typedef viennagrid::storage::result_of::physical_inserter< collection_type, long, id_generator_type& >::type inserter_type;
     
 
     inserter_type inserter(collection, id_generator);
@@ -172,7 +172,7 @@ int main()
     cout << view_collection << endl;
 
     
-    typedef viennagrid::storage::result_of::recursive_inserter<view_collection_type, inserter_type>::type view_inserter_type;
+    typedef viennagrid::storage::result_of::recursive_inserter<view_collection_type, long, inserter_type>::type view_inserter_type;
     view_inserter_type view_inserter(view_collection, inserter);
     
     t.vertices[0] = &* view_inserter( vertex_type(5.0, 0.0) ).first;

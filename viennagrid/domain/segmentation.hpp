@@ -7,14 +7,7 @@
 #include "viennagrid/forwards.hpp"
 #include "viennagrid/domain/topology.hpp"
 
-// #include "viennagrid/algorithm/inner_prod.hpp"
-// #include "viennagrid/algorithm/cross_prod.hpp"
-// #include "viennagrid/algorithm/geometry.hpp"
-// #include "viennagrid/algorithm/centroid.hpp"
-// #include "viennagrid/domain/coboundary_iteration.hpp"
 
-
-    
 namespace viennagrid
 {
     
@@ -164,11 +157,11 @@ namespace viennagrid
     
     
     template<typename SegmentationType>
-    bool is_obsolete( segment_t<SegmentationType> const & segment, typename segment_t<SegmentationType>::view_type::ChangeCounterType change_counter_to_check )
+    bool is_obsolete( segment_t<SegmentationType> const & segment, typename segment_t<SegmentationType>::view_type::change_counter_type change_counter_to_check )
     { return is_obsolete(segment.view(), change_counter_to_check); }
     
     template<typename SegmentationType>
-    void update_change_counter( segment_t<SegmentationType> & segment, typename segment_t<SegmentationType>::view_type::ChangeCounterType & change_counter_to_update )
+    void update_change_counter( segment_t<SegmentationType> & segment, typename segment_t<SegmentationType>::view_type::change_counter_type & change_counter_to_update )
     { update_change_counter(segment.view(), change_counter_to_update); }
 
     template<typename SegmentationType>
@@ -506,25 +499,27 @@ namespace viennagrid
     
     
     
-    template<typename container_type_>
+    template<typename container_type_, typename ChangeCounterType>
     struct segment_interface_information_wrapper
     {
       typedef container_type_ container_type;
+      typedef ChangeCounterType change_counter_type;
+      
       segment_interface_information_wrapper() : seg0_change_counter(0), seg1_change_counter(0) {}
       
-        long seg0_change_counter;
-        long seg1_change_counter;
+        change_counter_type seg0_change_counter;
+        change_counter_type seg1_change_counter;
         
         container_type container;
     };
     
     
     
-    template<typename segment_id_type, typename container_type_>
+    template<typename segment_id_type, typename container_type_, typename ChangeCounterType>
     struct interface_information_wrapper
     {
       typedef container_type_ container_type;
-      typedef segment_interface_information_wrapper<container_type> segment_interface_information_wrapper_type;
+      typedef segment_interface_information_wrapper<container_type, ChangeCounterType> segment_interface_information_wrapper_type;
       typedef std::pair<segment_id_type, segment_id_type> key_type;
       typedef std::map< key_type, segment_interface_information_wrapper_type > map_type;
       
@@ -580,37 +575,37 @@ namespace viennagrid
     
     namespace result_of
     {
-        template<typename segment_id_type, typename interface_information_container_tag, typename element_taglist>
+        template<typename segment_id_type, typename interface_information_container_tag, typename ChangeCounterType, typename element_taglist>
         struct interface_information_collection_typemap_impl;
         
-        template<typename segment_id_type, typename interface_information_container_tag>
-        struct interface_information_collection_typemap_impl<segment_id_type, interface_information_container_tag, viennagrid::meta::null_type>
+        template<typename segment_id_type, typename interface_information_container_tag, typename ChangeCounterType>
+        struct interface_information_collection_typemap_impl<segment_id_type, interface_information_container_tag, ChangeCounterType, viennagrid::meta::null_type>
         {
             typedef viennagrid::meta::null_type type;
         };
         
-        template<typename segment_id_type, typename interface_information_container_tag, typename element_tag, typename tail>
-        struct interface_information_collection_typemap_impl<segment_id_type, interface_information_container_tag, viennagrid::meta::typelist_t<element_tag, tail> >
+        template<typename segment_id_type, typename interface_information_container_tag, typename ChangeCounterType, typename element_tag, typename tail>
+        struct interface_information_collection_typemap_impl<segment_id_type, interface_information_container_tag, ChangeCounterType, viennagrid::meta::typelist_t<element_tag, tail> >
         {
             typedef typename storage::result_of::container<bool, interface_information_container_tag >::type base_container;
             
             typedef viennagrid::meta::typelist_t<
                 viennagrid::meta::static_pair<
                     element_tag,
-                    interface_information_wrapper<segment_id_type, base_container>
+                    interface_information_wrapper<segment_id_type, base_container, ChangeCounterType>
                 >,
-                typename interface_information_collection_typemap_impl<segment_id_type, interface_information_container_tag, tail>::type
+                typename interface_information_collection_typemap_impl<segment_id_type, interface_information_container_tag, ChangeCounterType, tail>::type
             > type;
         };
         
         
-        template<typename element_taglist, typename segment_id_type, typename interface_information_container_tag>
+        template<typename element_taglist, typename segment_id_type, typename interface_information_container_tag, typename ChangeCounterType>
         struct interface_information_collection_typemap
         {
             typedef typename cell_tag_from_typelist<element_taglist>::type cell_tag;
             typedef typename viennagrid::meta::typelist::result_of::erase< element_taglist, cell_tag>::type element_typelist_without_cell_tag;
                     
-            typedef typename interface_information_collection_typemap_impl<segment_id_type, interface_information_container_tag, element_typelist_without_cell_tag>::type type;
+            typedef typename interface_information_collection_typemap_impl<segment_id_type, interface_information_container_tag, ChangeCounterType, element_typelist_without_cell_tag>::type type;
         };
     }
     
@@ -696,7 +691,8 @@ namespace viennagrid
                               typename viennagrid::result_of::interface_information_collection_typemap<
                                 typename viennagrid::result_of::element_taglist<domain_type>::type,
                                 segment_id_type,
-                                viennagrid::storage::std_vector_tag
+                                viennagrid::storage::std_vector_tag,
+                                typename domain_type::change_counter_type
                               >::type
                             >
                             
@@ -741,7 +737,8 @@ namespace viennagrid
                           typename viennagrid::result_of::interface_information_collection_typemap<
                             typename viennagrid::result_of::element_taglist<domain_type>::type,
                             segment_id_type,
-                            viennagrid::storage::std_vector_tag
+                            viennagrid::storage::std_vector_tag,
+                            typename domain_type::change_counter_type
                           >::type
                         >
                         
@@ -881,7 +878,7 @@ namespace viennagrid
         }
         
         segment_info.element_segment_mapping_container.push_back( element_segment_mapping_type(segment.id()) );
-        segment.view().increment_change_counter();
+        increment_change_counter( segment.view() );
     }
     
     
@@ -932,7 +929,7 @@ namespace viennagrid
             if (it->segment_id == segment.id())
             {
                 segment_info.element_segment_mapping_container.erase(it);
-                segment.view().increment_change_counter();
+                increment_change_counter( segment.view() );
                 return true;
             }
         }
