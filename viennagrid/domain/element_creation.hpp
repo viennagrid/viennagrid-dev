@@ -221,9 +221,9 @@ namespace viennagrid
         handles[0] = v0;
         handles[1] = v1;
         handles[2] = v2;
-        handles[2] = v3;
-        handles[3] = v4;
-        handles[4] = v5;
+        handles[3] = v3;
+        handles[4] = v4;
+        handles[5] = v5;
         
         return make_element<viennagrid::hexahedron_tag>( domain, handles.begin(), handles.end() );
     }
