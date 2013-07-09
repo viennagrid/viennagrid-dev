@@ -135,8 +135,7 @@ namespace viennagrid
                 >::type neighbour_container_wrapper_type;
         neighbour_container_wrapper_type & neighbour_container_wrapper = neighbour_collection<element_tag, connector_element_tag>( domain );
         
-        viennagrid::accessor::dense_container_accessor_t< typename neighbour_container_wrapper_type::container_type, element_type > accessor( neighbour_container_wrapper.container );
-        create_neighbour_information<element_type_or_tag, connector_element_type_or_tag>( domain, accessor );
+        create_neighbour_information<element_type_or_tag, connector_element_type_or_tag>( domain, viennagrid::make_accessor<element_type>(neighbour_container_wrapper.container) );
         
         update_change_counter( domain, neighbour_container_wrapper.change_counter );
     }
@@ -199,7 +198,7 @@ namespace viennagrid
         if ( is_obsolete( domain, neighbour_container_wrapper.change_counter ) )
             create_neighbour_information<element_type_or_tag, connector_element_type_or_tag>(domain);
         
-        return neighbour_elements<element_type_or_tag, connector_element_type_or_tag>( accessor::dense_container_accessor<element_type>(neighbour_container_wrapper.container), viennagrid::dereference_handle(domain, hendl) );
+        return neighbour_elements<element_type_or_tag, connector_element_type_or_tag>( viennagrid::make_accessor<element_type>(neighbour_container_wrapper.container), viennagrid::dereference_handle(domain, hendl) );
     }
     
     
@@ -225,7 +224,7 @@ namespace viennagrid
             create_neighbour_information<element_type_or_tag, connector_element_type_or_tag>( const_cast<domain_type&>(domain) );
 
         
-        return neighbour_elements<element_type_or_tag, connector_element_type_or_tag>( accessor::dense_container_accessor<element_type>(neighbour_container_wrapper.container), viennagrid::dereference_handle(domain, hendl) );
+        return neighbour_elements<element_type_or_tag, connector_element_type_or_tag>( viennagrid::make_accessor<element_type>(neighbour_container_wrapper.container), viennagrid::dereference_handle(domain, hendl) );
     }
     
 

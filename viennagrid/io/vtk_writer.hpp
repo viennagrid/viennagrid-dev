@@ -96,11 +96,11 @@ namespace viennagrid
         
         typedef std::vector<double> vector_data_type;
         
-        typedef std::map< std::string, accessor::base_dynamic_accessor_t<double, VertexType> * > VertexScalarOutputAccessorContainer;
-        typedef std::map< std::string, accessor::base_dynamic_accessor_t<vector_data_type, VertexType> * > VertexVectorOutputAccessorContainer;
+        typedef std::map< std::string, base_dynamic_accessor_t<double, VertexType> * > VertexScalarOutputAccessorContainer;
+        typedef std::map< std::string, base_dynamic_accessor_t<vector_data_type, VertexType> * > VertexVectorOutputAccessorContainer;
 
-        typedef std::map< std::string, accessor::base_dynamic_accessor_t<double, CellType> * > CellScalarOutputAccessorContainer;
-        typedef std::map< std::string, accessor::base_dynamic_accessor_t<vector_data_type, CellType> * > CellVectorOutputAccessorContainer;        
+        typedef std::map< std::string, base_dynamic_accessor_t<double, CellType> * > CellScalarOutputAccessorContainer;
+        typedef std::map< std::string, base_dynamic_accessor_t<vector_data_type, CellType> * > CellVectorOutputAccessorContainer;        
 
       protected:
         
@@ -239,7 +239,7 @@ namespace viennagrid
               ++cit)
           {
               //step 1: Write vertex indices in ViennaGrid orientation to array:
-              std::vector<std::size_t> viennagrid_vertices(viennagrid::element_topology::boundary_cells<CellTag, vertex_tag>::num);
+              std::vector<std::size_t> viennagrid_vertices(viennagrid::boundary_elements<CellTag, vertex_tag>::num);
               VertexOnCellRange vertices_on_cell = viennagrid::elements<vertex_tag>(*cit);
               std::size_t j = 0;
               for (VertexHandleOnCellIterator vocit = vertices_on_cell.handle_begin();
@@ -264,7 +264,7 @@ namespace viennagrid
                  offsets <= viennagrid::elements<CellTag>(domseg).size();
                  ++offsets)
             {
-              writer << ( offsets * viennagrid::element_topology::boundary_cells<CellTag, vertex_tag>::num) << " ";
+              writer << ( offsets * viennagrid::boundary_elements<CellTag, vertex_tag>::num) << " ";
             }
             writer << std::endl;
             writer << "    </DataArray>" << std::endl;
@@ -548,10 +548,10 @@ namespace viennagrid
           if (it != map.end())
           {
             delete it->second;
-            it->second = new accessor::dynamic_accessor_t<AccessorType>( accessor );
+            it->second = new dynamic_accessor_t<AccessorType>( accessor );
           }
           else
-            map[name] = new accessor::dynamic_accessor_t<AccessorType>( accessor );
+            map[name] = new dynamic_accessor_t<AccessorType>( accessor );
       }
       
       

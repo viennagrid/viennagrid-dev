@@ -36,47 +36,46 @@ namespace viennagrid
     static std::string name() { return "Polygon"; }
   };
   
+  
+  //Line:
+  /** @brief Topological description of the 0-cells of a polygon */
+  template <>
+  struct boundary_elements<polygon_tag, vertex_tag>
+  {
+    typedef dynamic_layout_tag     layout_tag;
+    enum{ num = -1 };
+  };
+  
+  template <>
+  struct boundary_elements<polygon_tag, line_tag>
+  {
+    typedef dynamic_layout_tag     layout_tag;
+    enum{ num = -1 };
+  };
+  
+  
   namespace element_topology
   {
-
-    //Line:
-    /** @brief Topological description of the 0-cells of a polygon */
-    template <>
-    struct boundary_cells<polygon_tag, vertex_tag>
-    {
-      typedef dynamic_layout_tag     layout_tag;
-      enum{ num = -1 };
-    };
-    
-    template <>
-    struct boundary_cells<polygon_tag, line_tag>
-    {
-      typedef dynamic_layout_tag     layout_tag;
-      enum{ num = -1 };
-    };
-
-    
-    
-    template<typename bnd_cell_type>
-    struct bndcell_generator<polygon_tag, simplex_tag<1>, bnd_cell_type>
+    template<typename BoundaryElementType>
+    struct boundary_element_generator<polygon_tag, simplex_tag<1>, BoundaryElementType>
     {
         template<typename element_type, typename inserter_type>
-        static void create_bnd_cells(element_type & element, inserter_type & inserter)
+        static void create_boundary_elements(element_type & element, inserter_type & inserter)
         {
-            bnd_cell_type bnd_cell( inserter.get_physical_container_collection() );
+            BoundaryElementType boundary_element( inserter.get_physical_container_collection() );
             
             int index = 0;
             for (std::size_t i = 0; i < element.container( dimension_tag<0>() ).size()-1; ++i)
             {
-                bnd_cell.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(i), 0 );
-                bnd_cell.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(i+1), 1 ); 
-                element.set_bnd_cell( bnd_cell, inserter(bnd_cell), index++ );
+                boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(i), 0 );
+                boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(i+1), 1 ); 
+                element.set_boundary_element( boundary_element, inserter(boundary_element), index++ );
             }
                 
                 
-            bnd_cell.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at( element.container( dimension_tag<0>() ).size()-1 ), 0 );
-            bnd_cell.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(0), 1 );
-            element.set_bnd_cell( bnd_cell, inserter(bnd_cell), index++ );
+            boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at( element.container( dimension_tag<0>() ).size()-1 ), 0 );
+            boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(0), 1 );
+            element.set_boundary_element( boundary_element, inserter(boundary_element), index++ );
         }
     };
     

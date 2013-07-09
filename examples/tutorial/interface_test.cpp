@@ -34,21 +34,21 @@ int main()
   segmentation_type segmentation(domain);
   
   
-  vertex_handle_type vh0 = viennagrid::create_vertex( domain );
-  vertex_handle_type vh1 = viennagrid::create_vertex( domain );
-  vertex_handle_type vh2 = viennagrid::create_vertex( domain );
-  vertex_handle_type vh3 = viennagrid::create_vertex( domain );
-  vertex_handle_type vh4 = viennagrid::create_vertex( domain );
-  vertex_handle_type vh5 = viennagrid::create_vertex( domain );
+  vertex_handle_type vh0 = viennagrid::make_vertex( domain );
+  vertex_handle_type vh1 = viennagrid::make_vertex( domain );
+  vertex_handle_type vh2 = viennagrid::make_vertex( domain );
+  vertex_handle_type vh3 = viennagrid::make_vertex( domain );
+  vertex_handle_type vh4 = viennagrid::make_vertex( domain );
+  vertex_handle_type vh5 = viennagrid::make_vertex( domain );
   
-  triangle_handle_type th0 = viennagrid::create_triangle( domain, vh0, vh1, vh2 );
-  triangle_handle_type th1 = viennagrid::create_triangle( domain, vh0, vh2, vh3 );
-  triangle_handle_type th2 = viennagrid::create_triangle( domain, vh0, vh3, vh4 );
-  triangle_handle_type th3 = viennagrid::create_triangle( domain, vh0, vh4, vh1 );
+  triangle_handle_type th0 = viennagrid::make_triangle( domain, vh0, vh1, vh2 );
+  triangle_handle_type th1 = viennagrid::make_triangle( domain, vh0, vh2, vh3 );
+  triangle_handle_type th2 = viennagrid::make_triangle( domain, vh0, vh3, vh4 );
+  triangle_handle_type th3 = viennagrid::make_triangle( domain, vh0, vh4, vh1 );
 
   
-  segment_type seg0 = segmentation.create_segment();
-  segment_type seg1 = segmentation.create_segment(); 
+  segment_type seg0 = segmentation.make_segment();
+  segment_type seg1 = segmentation.make_segment(); 
   
     
   triangle_type & tri0 = viennagrid::dereference_handle(domain, th0);
@@ -56,10 +56,10 @@ int main()
   triangle_type & tri2 = viennagrid::dereference_handle(domain, th2);
   triangle_type & tri3 = viennagrid::dereference_handle(domain, th3);
   
-  viennagrid::add_to_segment( seg0, tri0 );
-  viennagrid::add_to_segment( seg0, tri1 );
-  viennagrid::add_to_segment( seg1, tri2 );
-  viennagrid::add_to_segment( seg1, tri3 );
+  viennagrid::add( seg0, tri0 );
+  viennagrid::add( seg0, tri1 );
+  viennagrid::add( seg1, tri2 );
+  viennagrid::add( seg1, tri3 );
   
   typedef viennagrid::result_of::element_range< domain_type, viennagrid::line_tag >::type line_range;
   line_range lines = viennagrid::elements( domain );

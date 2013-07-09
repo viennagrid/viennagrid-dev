@@ -21,14 +21,14 @@ int main()
     typedef viennagrid::result_of::tetrahedron<domain_type>::type tetrahedron_type;
     typedef viennagrid::result_of::tetrahedron_handle<domain_type>::type tetrahedron_handle_type;
     
-    vertex_handle_type v0 = viennagrid::create_vertex(domain, point_type(0.0, 0.0, 0.0));
-    vertex_handle_type v1 = viennagrid::create_vertex(domain, point_type(1.0, 0.0, 0.0));
-    vertex_handle_type v2 = viennagrid::create_vertex(domain, point_type(0.0, 1.0, 0.0));
-    vertex_handle_type v3 = viennagrid::create_vertex(domain, point_type(0.0, 0.0, 1.0));
-    vertex_handle_type v4 = viennagrid::create_vertex(domain, point_type(0.0, 1.0, 1.0));
+    vertex_handle_type v0 = viennagrid::make_vertex(domain, point_type(0.0, 0.0, 0.0));
+    vertex_handle_type v1 = viennagrid::make_vertex(domain, point_type(1.0, 0.0, 0.0));
+    vertex_handle_type v2 = viennagrid::make_vertex(domain, point_type(0.0, 1.0, 0.0));
+    vertex_handle_type v3 = viennagrid::make_vertex(domain, point_type(0.0, 0.0, 1.0));
+    vertex_handle_type v4 = viennagrid::make_vertex(domain, point_type(0.0, 1.0, 1.0));
     
-    tetrahedron_handle_type tet_handle0 = viennagrid::create_tetrahedron(domain, v0, v1, v2, v3);
-    tetrahedron_handle_type tet_handle1 = viennagrid::create_tetrahedron(domain, v0, v1, v2, v4);
+    tetrahedron_handle_type tet_handle0 = viennagrid::make_tetrahedron(domain, v0, v1, v2, v3);
+    tetrahedron_handle_type tet_handle1 = viennagrid::make_tetrahedron(domain, v0, v1, v2, v4);
     std::cout << tet_handle0 << std::endl;
     std::cout << tet_handle1 << std::endl;
     

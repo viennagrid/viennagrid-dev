@@ -138,7 +138,7 @@ namespace viennagrid
                   >::type::segment_interface_information_wrapper_type src_interface_information_container_wrapper_type;
             
             src_interface_information_container_wrapper_type & src_interface_information_container_wrapper = interface_information_collection<facet_tag>( seg0, seg1 );
-            viennagrid::accessor::dense_container_accessor_t< const typename src_interface_information_container_wrapper_type::container_type, facet_type > src_accessor( src_interface_information_container_wrapper.container );
+//             viennagrid::dense_container_accessor_t< const typename src_interface_information_container_wrapper_type::container_type, facet_type > src_accessor( src_interface_information_container_wrapper.container );
             
             
             
@@ -152,7 +152,7 @@ namespace viennagrid
                   >::type::segment_interface_information_wrapper_type dst_interface_information_container_wrapper_type;
                     
             dst_interface_information_container_wrapper_type & dst_interface_information_container_wrapper = interface_information_collection<element_tag>( seg0, seg1 );
-            viennagrid::accessor::dense_container_accessor_t< typename dst_interface_information_container_wrapper_type::container_type, element_type > dst_accessor( dst_interface_information_container_wrapper.container );
+            typename viennagrid::result_of::accessor< typename dst_interface_information_container_wrapper_type::container_type, element_type >::type dst_accessor( dst_interface_information_container_wrapper.container );
             
             dst_accessor.resize(
               std::max(
@@ -161,8 +161,8 @@ namespace viennagrid
               )
             );
             
-            transfer_boundary_information(seg0, src_accessor, dst_accessor);
-            transfer_boundary_information(seg1, src_accessor, dst_accessor);
+            transfer_boundary_information(seg0, viennagrid::make_accessor<facet_type>(src_interface_information_container_wrapper.container), dst_accessor);
+            transfer_boundary_information(seg1, viennagrid::make_accessor<facet_type>(src_interface_information_container_wrapper.container), dst_accessor);
             
              update_change_counter( seg0, dst_interface_information_container_wrapper.seg0_change_counter );
              update_change_counter( seg1, dst_interface_information_container_wrapper.seg1_change_counter );
@@ -244,7 +244,7 @@ namespace viennagrid
         interface_information_container_wrapper_type & interface_information_container_wrapper = interface_information_collection<FacetTag>( seg0, seg1 );   
     
         
-      detect_interface( seg0, seg1, viennagrid::accessor::dense_container_accessor<FacetType>(interface_information_container_wrapper.container) );
+        detect_interface( seg0, seg1, viennagrid::make_accessor<FacetType>(interface_information_container_wrapper.container) );
     
         transfer_interface_information( seg0, seg1 );
         update_change_counter( seg0, interface_information_container_wrapper.seg0_change_counter );
@@ -294,8 +294,7 @@ namespace viennagrid
              (is_obsolete(seg1, interface_information_container_wrapper.seg1_change_counter) ))
             detect_interface( const_cast<SegmentType&>(seg0), const_cast<SegmentType&>(seg1) );
         
-        viennagrid::accessor::dense_container_accessor_t< const typename interface_information_container_wrapper_type::container_type, ElementType > accessor( interface_information_container_wrapper.container );
-        return is_interface( accessor, element );
+        return is_interface( viennagrid::make_accessor<ElementType>(interface_information_container_wrapper.container), element );
   }
 
 }

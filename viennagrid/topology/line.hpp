@@ -43,12 +43,11 @@ namespace viennagrid
 
     //Line:
     /** @brief Topological description of the 0-cells of a line */
-    template<typename bnd_cell_type>
-    struct bndcell_generator<simplex_tag<1>, simplex_tag<0>, bnd_cell_type>
+    template<typename BoundaryElementType>
+    struct boundary_element_generator<simplex_tag<1>, simplex_tag<0>, BoundaryElementType>
     {
         template<typename element_type, typename inserter_type>
-        static void create_bnd_cells(element_type & element, inserter_type & inserter)
-        {}
+        static void create_boundary_elements(element_type & element, inserter_type & inserter) {}
     };
 
   }  

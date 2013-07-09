@@ -117,7 +117,7 @@ namespace viennagrid
           for (int j=0; j<point_dim; j++)
             reader >> p[j];
           
-          viennagrid::create_vertex( domain, typename VertexType::id_type(i), p );
+          viennagrid::make_vertex( domain, typename VertexType::id_type(i), p );
         }
     
         if (!reader.good())
@@ -136,7 +136,7 @@ namespace viennagrid
         for (int i=0; i<cell_num; ++i)
         {
           long vertex_num;
-          viennagrid::storage::static_array<VertexHandleType, element_topology::boundary_cells<CellTag, vertex_tag>::num> cell_vertex_handles;
+          viennagrid::storage::static_array<VertexHandleType, boundary_elements<CellTag, vertex_tag>::num> cell_vertex_handles;
           
           if (!reader.good())
             throw bad_file_format_exception(filename, "EOF encountered while reading cells (segment index expected).");
@@ -144,7 +144,7 @@ namespace viennagrid
           std::size_t segment_index;
           reader >> segment_index;
     
-          for (int j=0; j<element_topology::boundary_cells<CellTag, vertex_tag>::num; ++j)
+          for (int j=0; j<boundary_elements<CellTag, vertex_tag>::num; ++j)
           {
             if (!reader.good())
               throw bad_file_format_exception(filename, "EOF encountered while reading cells (cell ID expected).");
@@ -153,7 +153,7 @@ namespace viennagrid
             cell_vertex_handles[j] = viennagrid::get_vertex_handle(domain, vertex_num - 1);
           }
 
-          viennagrid::create_element<CellType>(segmentation[segment_index], cell_vertex_handles.begin(), cell_vertex_handles.end(), typename CellType::id_type(i));
+          viennagrid::make_element_with_id<CellType>(segmentation[segment_index], cell_vertex_handles.begin(), cell_vertex_handles.end(), typename CellType::id_type(i));
         }
         
         return EXIT_SUCCESS;

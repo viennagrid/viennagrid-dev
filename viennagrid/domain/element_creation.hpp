@@ -57,87 +57,45 @@ namespace viennagrid
                     viennagrid::element_t<ElementTag, WrappedConfigType>
                 >::type::handle_type,
                 bool
-            > result = push_element( segment.view(), element );
+            > result = push_element<generate_id, call_callback>( segment.view(), element );
 
-        add_to_segment( segment, viennagrid::dereference_handle(segment, result.first) );
+        add( segment, viennagrid::dereference_handle(segment, result.first) );
         return result;
     }
     
     
+
+  
+  
+
     
     
-    
-    
-    template<typename domain_type, typename ElementTag, typename WrappedConfigType>
-    std::pair<
-                typename viennagrid::storage::result_of::container_of<
-                    typename result_of::element_collection<domain_type>::type,
-                    viennagrid::element_t<ElementTag, WrappedConfigType>
-                >::type::handle_type,
-                bool
-            >
-        push_element( domain_type & domain, viennagrid::element_t<ElementTag, WrappedConfigType> const & element)
+    template<typename ElementTypeOrTag, typename DomainType, typename HandleIteratorType>
+    typename result_of::handle<DomainType, ElementTypeOrTag>::type make_element(
+          DomainType & domain,
+          HandleIteratorType array_start,
+          HandleIteratorType const & array_end )
     {
-        return push_element<true,true>(domain, element);
-    }
-    
-    template<typename domain_type, typename element_type>
-    std::pair<
-                typename viennagrid::storage::result_of::container_of<
-                    typename result_of::element_collection<domain_type>::type,
-                    element_type
-                >::type::handle_type,
-                bool
-            >
-        push_element_noid( domain_type & domain, element_type const & element)
-    {
-        return push_element<false, true>( domain, element );
-    }
-  
-  
-  
-  
-  
-  
-  
-  
-    template<typename element_type, typename domain_type>
-    typename result_of::handle<domain_type, element_type>::type create_element( domain_type & domain )
-    {
-        return push_element(domain, element_type() ).first;
-    }
-    
-    template<typename element_type, typename domain_type>
-    typename result_of::handle<domain_type, element_type>::type create_element_with_id( domain_type & domain, typename element_type::id_type id )
-    {
-        element_type element;
-        element.id( id );
-        
-        return push_element_noid(domain, element).first;
-    }
-    
-    
-    template<typename element_type, typename domain_type, typename handle_array_iterator_type>
-    typename result_of::handle<domain_type, typename element_type::tag>::type create_element( domain_type & domain,
-                                                                                                    handle_array_iterator_type array_start, const handle_array_iterator_type & array_end )
-    {
-        element_type element = element_type( inserter(domain).get_physical_container_collection() );
+        typedef typename viennagrid::result_of::element<DomainType, ElementTypeOrTag>::type ElementType;
+        ElementType element = ElementType( inserter(domain).get_physical_container_collection() );
         
         size_t element_index = 0;
         for ( ; array_start != array_end; ++array_start, ++element_index )
             viennagrid::set_vertex( element, *array_start, element_index );
                 
-        return push_element(domain, element).first;
+        return push_element<true, true>(domain, element).first;
     }
     
     
-    template<typename element_type, typename domain_type, typename handle_array_iterator_type>
-    typename result_of::handle<domain_type, typename element_type::tag>::type create_element( domain_type & domain,
-                                                                                                    handle_array_iterator_type array_start,
-                                                                                                    const handle_array_iterator_type & array_end,
-                                                                                                    typename element_type::id_type id )
+    template<typename ElementTypeOrTag, typename DomainType, typename HandleIteratorType>
+    typename result_of::handle<DomainType, ElementTypeOrTag>::type make_element_with_id(
+          DomainType & domain,
+          HandleIteratorType array_start,
+          HandleIteratorType const & array_end,
+          typename viennagrid::result_of::element<DomainType, ElementTypeOrTag>::type::id_type id )
     {
-        element_type element = element_type( inserter(domain).get_physical_container_collection() );
+        typedef typename viennagrid::result_of::element<DomainType, ElementTypeOrTag>::type ElementType;
+        ElementType element = ElementType( inserter(domain).get_physical_container_collection() );
         
         element.id( id );
         
@@ -145,7 +103,7 @@ namespace viennagrid
         for ( ; array_start != array_end; ++array_start, ++element_index )
             viennagrid::set_vertex( element, *array_start, element_index );
 
-        return push_element_noid(domain, element ).first;
+        return push_element<false, true>(domain, element ).first;
     }
 
     
@@ -154,27 +112,25 @@ namespace viennagrid
     
     
     template<typename domain_type>
-    typename result_of::handle<domain_type, vertex_tag>::type create_vertex( domain_type & domain )
+    typename result_of::handle<domain_type, vertex_tag>::type make_vertex( domain_type & domain )
     {
         typedef typename result_of::element<domain_type, vertex_tag>::type element_type;
-        return create_element<element_type>(domain);
+        return push_element<true, true>(domain, element_type() ).first;
     }
     
     template<typename ConfigType>
     typename viennagrid::result_of::vertex_handle< domain_t<ConfigType> >::type
-        create_vertex( domain_t<ConfigType> & domain,
+        make_vertex( domain_t<ConfigType> & domain,
                        typename result_of::point_type< domain_t<ConfigType> >::type const & point )
     {
-        typedef typename result_of::vertex< domain_t<ConfigType> >::type element_type;
-        typename result_of::vertex_handle< domain_t<ConfigType> >::type ret = push_element(domain, element_type() ).first;
-        viennagrid::point(domain, ret) = point;
-        
-        return ret;
+        typename viennagrid::result_of::vertex_handle< domain_t<ConfigType> >::type vtx_handle = make_vertex(domain);
+        viennagrid::point(domain, vtx_handle) = point;
+        return vtx_handle;
     }
     
     template<typename ConfigType>
     typename viennagrid::result_of::vertex_handle< domain_t<ConfigType> >::type
-        create_vertex( domain_t<ConfigType> & domain,
+        make_vertex( domain_t<ConfigType> & domain,
                        typename viennagrid::result_of::element< domain_t<ConfigType>, vertex_tag>::type::id_type id,
                        typename result_of::point_type< domain_t<ConfigType> >::type const & point )
     {
@@ -182,7 +138,7 @@ namespace viennagrid
         element_type element;
         element.id( id );
         
-        typename result_of::handle< domain_t<ConfigType>, element_type>::type ret = push_element_noid(domain, element ).first;
+        typename result_of::handle< domain_t<ConfigType>, element_type>::type ret = push_element<false, true>(domain, element ).first;
         viennagrid::point(domain, ret) = point;
         
         return ret;
@@ -190,7 +146,7 @@ namespace viennagrid
     
     template<typename ConfigType>
     typename result_of::handle<domain_t<ConfigType>, vertex_tag>::type
-        create_unique_vertex( domain_t<ConfigType> & domain,
+        make_unique_vertex( domain_t<ConfigType> & domain,
                               typename result_of::point_type< domain_t<ConfigType> >::type const & p,
                               typename viennagrid::result_of::coord_type< domain_t<ConfigType> >::type tolerance )
     {
@@ -205,52 +161,42 @@ namespace viennagrid
                 return *hit;
         }
         
-        typedef typename result_of::element< domain_type, vertex_tag>::type element_type;
-        typename result_of::handle< domain_type, element_type>::type ret = push_element(domain, element_type() ).first;
-        viennagrid::point(domain, ret) = p;
-        
-        return ret;
+        return make_vertex(domain, p);
     }
     
 
     
     template<typename domain_type, typename vertex_handle_type>
-    typename result_of::handle<domain_type, line_tag>::type create_line( domain_type & domain, vertex_handle_type v0, vertex_handle_type v1 )
+    typename result_of::handle<domain_type, line_tag>::type make_line( domain_type & domain, vertex_handle_type v0, vertex_handle_type v1 )
     {
-        typedef typename result_of::element<domain_type, line_tag>::type element_type;
-        element_type element = element_type( inserter(domain).get_physical_container_collection() );
+        viennagrid::storage::static_array<vertex_handle_type, 2> handles;
+        handles[0] = v0;
+        handles[1] = v1;
         
-        viennagrid::set_vertex( element, v0, 0 );
-        viennagrid::set_vertex( element, v1, 1 );
-                
-        return push_element(domain, element).first;
+        return make_element<viennagrid::line_tag>( domain, handles.begin(), handles.end() );
     }
     
     template<typename domain_type, typename vertex_handle_type>
-    typename result_of::handle<domain_type, triangle_tag>::type create_triangle( domain_type & domain, vertex_handle_type v0, vertex_handle_type v1, vertex_handle_type v2 )
+    typename result_of::handle<domain_type, triangle_tag>::type make_triangle( domain_type & domain, vertex_handle_type v0, vertex_handle_type v1, vertex_handle_type v2 )
     {
-        typedef typename result_of::element<domain_type, triangle_tag>::type element_type;
-        element_type element = element_type( inserter(domain).get_physical_container_collection() );
+        viennagrid::storage::static_array<vertex_handle_type, 3> handles;
+        handles[0] = v0;
+        handles[1] = v1;
+        handles[2] = v2;
         
-        viennagrid::set_vertex( element, v0, 0 );
-        viennagrid::set_vertex( element, v1, 1 );
-        viennagrid::set_vertex( element, v2, 2 );
-                
-        return push_element(domain, element).first;
+        return make_element<viennagrid::triangle_tag>( domain, handles.begin(), handles.end() );
     }
     
     template<typename domain_type, typename vertex_handle_type>
-    typename result_of::handle<domain_type, tetrahedron_tag>::type create_tetrahedron( domain_type & domain, vertex_handle_type v0, vertex_handle_type v1, vertex_handle_type v2, vertex_handle_type v3 )
+    typename result_of::handle<domain_type, tetrahedron_tag>::type make_tetrahedron( domain_type & domain, vertex_handle_type v0, vertex_handle_type v1, vertex_handle_type v2, vertex_handle_type v3 )
     {
-        typedef typename result_of::element<domain_type, tetrahedron_tag>::type element_type;
-        element_type element = element_type( inserter(domain).get_physical_container_collection() );
+        viennagrid::storage::static_array<vertex_handle_type, 4> handles;
+        handles[0] = v0;
+        handles[1] = v1;
+        handles[2] = v2;
+        handles[3] = v3;
         
-        viennagrid::set_vertex( element, v0, 0 );
-        viennagrid::set_vertex( element, v1, 1 );
-        viennagrid::set_vertex( element, v2, 2 );
-        viennagrid::set_vertex( element, v3, 3 );
-                
-        return push_element(domain, element).first;
+        return make_element<viennagrid::tetrahedron_tag>( domain, handles.begin(), handles.end() );
     }
     
 }

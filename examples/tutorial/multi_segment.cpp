@@ -178,21 +178,21 @@ int main()
   // Write Voronoi info to default ViennaData keys:
   viennagrid::apply_voronoi<CellType>(
           seg1,
-          viennagrid::accessor::dense_container_accessor<EdgeType>(interface_areas_seg1),
-          viennagrid::accessor::dense_container_accessor<EdgeType>(interface_contributions_seg1),
-          viennagrid::accessor::dense_container_accessor<VertexType>(vertex_box_volumes_seg1),
-          viennagrid::accessor::dense_container_accessor<VertexType>(vertex_box_volume_contributions_seg1),
-          viennagrid::accessor::dense_container_accessor<EdgeType>(edge_box_volumes_seg1),
-          viennagrid::accessor::dense_container_accessor<EdgeType>(edge_box_volume_contributions_seg1)
+          viennagrid::make_accessor<EdgeType>(interface_areas_seg1),
+          viennagrid::make_accessor<EdgeType>(interface_contributions_seg1),
+          viennagrid::make_accessor<VertexType>(vertex_box_volumes_seg1),
+          viennagrid::make_accessor<VertexType>(vertex_box_volume_contributions_seg1),
+          viennagrid::make_accessor<EdgeType>(edge_box_volumes_seg1),
+          viennagrid::make_accessor<EdgeType>(edge_box_volume_contributions_seg1)
   );
   viennagrid::apply_voronoi<CellType>(
           seg2,
-          viennagrid::accessor::dense_container_accessor<EdgeType>(interface_areas_seg2),
-          viennagrid::accessor::dense_container_accessor<EdgeType>(interface_contributions_seg2),
-          viennagrid::accessor::dense_container_accessor<VertexType>(vertex_box_volumes_seg2),
-          viennagrid::accessor::dense_container_accessor<VertexType>(vertex_box_volume_contributions_seg2),
-          viennagrid::accessor::dense_container_accessor<EdgeType>(edge_box_volumes_seg2),
-          viennagrid::accessor::dense_container_accessor<EdgeType>(edge_box_volume_contributions_seg2)
+          viennagrid::make_accessor<EdgeType>(interface_areas_seg2),
+          viennagrid::make_accessor<EdgeType>(interface_contributions_seg2),
+          viennagrid::make_accessor<VertexType>(vertex_box_volumes_seg2),
+          viennagrid::make_accessor<VertexType>(vertex_box_volume_contributions_seg2),
+          viennagrid::make_accessor<EdgeType>(edge_box_volumes_seg2),
+          viennagrid::make_accessor<EdgeType>(edge_box_volume_contributions_seg2)
   );
 
   
@@ -207,7 +207,7 @@ int main()
                              vosit != vertices_seg1.end();
                            ++vosit)
   {
-    viennagrid::accessor::dense_container_accessor<VertexType>(first_segment_data)(*vosit) = 1.0;
+    viennagrid::make_accessor<VertexType>(first_segment_data)(*vosit) = 1.0;
 //     first_segment_data.push_back(1.0);
   }
   
@@ -216,13 +216,13 @@ int main()
                              vosit != vertices_seg2.end();
                            ++vosit)
   {
-    viennagrid::accessor::dense_container_accessor<VertexType>(second_segment_data)(*vosit) = 1.0;
+    viennagrid::make_accessor<VertexType>(second_segment_data)(*vosit) = 1.0;
 //     second_segment_data.push_back(2.0);
   }
   
   viennagrid::io::vtk_writer<DomainType, SegmentationType> my_vtk_writer;  
-  my_vtk_writer.add_scalar_data_on_vertices(seg1, viennagrid::accessor::dense_container_accessor<VertexType>(first_segment_data), "segment_data" );
-  my_vtk_writer.add_scalar_data_on_vertices(seg2, viennagrid::accessor::dense_container_accessor<VertexType>(second_segment_data), "segment_data" );
+  my_vtk_writer.add_scalar_data_on_vertices(seg1, viennagrid::make_accessor<VertexType>(first_segment_data), "segment_data" );
+  my_vtk_writer.add_scalar_data_on_vertices(seg2, viennagrid::make_accessor<VertexType>(second_segment_data), "segment_data" );
   my_vtk_writer(domain, segments, "multi_segment");
   
   

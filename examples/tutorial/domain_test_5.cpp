@@ -81,14 +81,12 @@ int main()
     //   
     
     // only tetrahedrons are stored in the view
-    typedef viennagrid::meta::make_typelist< tetrahedron_type >::type view_types;
-    
     // typedefing the view
-    typedef viennagrid::result_of::domain_view<domain_type, view_types>::type domain_view_type;
+    typedef viennagrid::result_of::domain_view<domain_type, tetrahedron_type>::type domain_view_type;
     
     // creating two views of the domain
-    domain_view_type domain_view_1 = viennagrid::create_view(domain);
-    domain_view_type domain_view_2 = viennagrid::create_view(domain);
+    domain_view_type domain_view_1 = viennagrid::make_view(domain);
+    domain_view_type domain_view_2 = viennagrid::make_view(domain);
 
     
     //
@@ -98,23 +96,23 @@ int main()
     std::vector<vertex_handle_type> handles(4);
     
     // pushing a tetrahedron to domain_view_1
-    handles[0] = viennagrid::create_element<vertex_type>( domain );
-    handles[1] = viennagrid::create_element<vertex_type>( domain );
-    handles[2] = viennagrid::create_element<vertex_type>( domain );
-    handles[3] = viennagrid::create_element<vertex_type>( domain );
+    handles[0] = viennagrid::make_vertex( domain );
+    handles[1] = viennagrid::make_vertex( domain );
+    handles[2] = viennagrid::make_vertex( domain );
+    handles[3] = viennagrid::make_vertex( domain );
     
     // creates the tetrahedron within the domain, all boundary cell generation is done here implicit
-    viennagrid::create_element<tetrahedron_type>( domain_view_1, handles.begin(), handles.end() );
+    viennagrid::make_element<tetrahedron_type>( domain_view_1, handles.begin(), handles.end() );
     
     
     // pushing a tetrahedron to domain_view_2
-    handles[0] = viennagrid::create_element<vertex_type>( domain );
-    handles[1] = viennagrid::create_element<vertex_type>( domain );
-    handles[2] = viennagrid::create_element<vertex_type>( domain );
-    handles[3] = viennagrid::create_element<vertex_type>( domain );
+    handles[0] = viennagrid::make_vertex( domain );
+    handles[1] = viennagrid::make_vertex( domain );
+    handles[2] = viennagrid::make_vertex( domain );
+    handles[3] = viennagrid::make_vertex( domain );
     
     // creates the tetrahedron within the domain, all boundary cell generation is done here implicit
-    viennagrid::create_element<tetrahedron_type>( domain_view_2, handles.begin(), handles.end() );
+    viennagrid::make_element<tetrahedron_type>( domain_view_2, handles.begin(), handles.end() );
     
     
     
@@ -145,18 +143,18 @@ int main()
     cout << "--------------" << endl;
     
     
-    typedef viennagrid::result_of::domain_view< domain_view_type, view_types >::type domain_view_view_type;
+    typedef viennagrid::result_of::domain_view< domain_view_type, tetrahedron_type >::type domain_view_view_type;
     
-    domain_view_view_type domain_view_view_1 = viennagrid::create_view(domain_view_1);
+    domain_view_view_type domain_view_view_1 = viennagrid::make_view(domain_view_1);
 
     // pushing a tetrahedron to domain_view_1
-    handles[0] = viennagrid::create_element<vertex_type>( domain );
-    handles[1] = viennagrid::create_element<vertex_type>( domain );
-    handles[2] = viennagrid::create_element<vertex_type>( domain );
-    handles[3] = viennagrid::create_element<vertex_type>( domain );
+    handles[0] = viennagrid::make_vertex( domain );
+    handles[1] = viennagrid::make_vertex( domain );
+    handles[2] = viennagrid::make_vertex( domain );
+    handles[3] = viennagrid::make_vertex( domain );
     
     // creates the tetrahedron within the domain, all boundary cell generation is done here implicit
-    viennagrid::create_element<tetrahedron_type>( domain_view_view_1, handles.begin(), handles.end() );
+    viennagrid::make_element<tetrahedron_type>( domain_view_view_1, handles.begin(), handles.end() );
 
 
     

@@ -181,12 +181,12 @@ int main()
   // Write Voronoi info to default ViennaData keys:
   viennagrid::apply_voronoi<CellType>(
           domain,
-          viennagrid::accessor::dense_container_accessor<EdgeType>(interface_areas),
-          viennagrid::accessor::dense_container_accessor<EdgeType>(interface_contributions),
-          viennagrid::accessor::dense_container_accessor<VertexType>(vertex_box_volumes),
-          viennagrid::accessor::dense_container_accessor<VertexType>(vertex_box_volume_contributions),
-          viennagrid::accessor::dense_container_accessor<EdgeType>(edge_box_volumes),
-          viennagrid::accessor::dense_container_accessor<EdgeType>(edge_box_volume_contributions)
+          viennagrid::make_accessor<EdgeType>(interface_areas),
+          viennagrid::make_accessor<EdgeType>(interface_contributions),
+          viennagrid::make_accessor<VertexType>(vertex_box_volumes),
+          viennagrid::make_accessor<VertexType>(vertex_box_volume_contributions),
+          viennagrid::make_accessor<EdgeType>(edge_box_volumes),
+          viennagrid::make_accessor<EdgeType>(edge_box_volume_contributions)
   );
   
   // Write Voronoi info again, this time using custom keys
@@ -201,7 +201,7 @@ int main()
   //          
   // Refine domain uniformly:
   Domain uniformly_refined_domain;  
-  viennagrid::refine_uniformly<viennagrid::tetrahedron_tag>(domain, uniformly_refined_domain);
+  viennagrid::refine_uniformly(domain, uniformly_refined_domain);
   
   {
     viennagrid::io::vtk_writer<Domain> writer;
@@ -213,14 +213,14 @@ int main()
   Domain adaptively_refined_domain;
   
   std::deque<bool> cell_refinement_flag;
-  viennagrid::accessor::dense_container_accessor_t< std::deque<bool>, CellType > cell_refinement_accessor(cell_refinement_flag);
+  viennagrid::result_of::accessor< std::deque<bool>, CellType >::type cell_refinement_accessor(cell_refinement_flag);
   
   cell_refinement_accessor( viennagrid::elements<CellTag>(domain)[0] ) = true;
   cell_refinement_accessor( viennagrid::elements<CellTag>(domain)[3] ) = true;
   cell_refinement_accessor( viennagrid::elements<CellTag>(domain)[8] ) = true;
   cell_refinement_accessor.resize( viennagrid::elements<CellTag>(domain).size() );
   
-  viennagrid::refine_cell<viennagrid::tetrahedron_tag>(domain, adaptively_refined_domain, cell_refinement_accessor);
+  viennagrid::refine_element<viennagrid::tetrahedron_tag>(domain, adaptively_refined_domain, cell_refinement_accessor);
   
   {
     viennagrid::io::vtk_writer<Domain> writer;

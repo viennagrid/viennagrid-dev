@@ -74,15 +74,16 @@ namespace viennagrid
     //protected:
         
         template<typename element_type, typename inserter_type>
-        void create_bnd_cells(element_type & element, inserter_type & inserter)
+        void create_boundary_elements(element_type & element, inserter_type & inserter)
         {
-            element_topology::bndcell_generator<element_tag, bnd_cell_tag, bnd_cell_type>::create_bnd_cells(element, inserter);
-            base::create_bnd_cells(element, inserter);
+            element_topology::boundary_element_generator<element_tag, bnd_cell_tag, bnd_cell_type>::create_boundary_elements(element, inserter);
+            base::create_boundary_elements(element, inserter);
         }
         
         
         using base::container;
-        using base::set_bnd_cell;
+        using base::set_boundary_element;
+        using base::add_boundary_element;
         using base::dereference_handle;
         using base::handle;
         using base::global_to_local_orientation;
@@ -113,7 +114,7 @@ namespace viennagrid
         
 
         template<typename handle_type>
-        void set_bnd_cell(const bnd_cell_type & to_insert, std::pair<handle_type, bool> inserted, unsigned int pos)
+        void set_boundary_element(const bnd_cell_type & to_insert, std::pair<handle_type, bool> inserted, unsigned int pos)
         {
             elements_.set_handle(inserted.first, pos);
             orientations_.resize(pos+1);
@@ -156,8 +157,8 @@ namespace viennagrid
         }
         
         template<typename handle_type>
-        void add_bnd_cell(const bnd_cell_type & to_insert, std::pair<handle_type, bool> inserted)
-        { set_bnd_cell(to_insert, inserted, elements_.size()); }
+        void add_boundary_element(const bnd_cell_type & to_insert, std::pair<handle_type, bool> inserted)
+        { set_boundary_element(to_insert, inserted, elements_.size()); }
         
         
       ////////////////// orientation: ////////////////////
@@ -225,14 +226,15 @@ namespace viennagrid
     //protected:
         
         template<typename element_type, typename inserter_type>
-        void create_bnd_cells(element_type & element, inserter_type & inserter)
+        void create_boundary_elements(element_type & element, inserter_type & inserter)
         {
-            element_topology::bndcell_generator<element_tag, bnd_cell_tag, bnd_cell_type>::create_bnd_cells(element, inserter);
-            base::create_bnd_cells(element, inserter);
+            element_topology::boundary_element_generator<element_tag, bnd_cell_tag, bnd_cell_type>::create_boundary_elements(element, inserter);
+            base::create_boundary_elements(element, inserter);
         }
         
         using base::container;
-        using base::set_bnd_cell;
+        using base::set_boundary_element;
+        using base::add_boundary_element;
         using base::dereference_handle;
         using base::handle;
         
@@ -262,12 +264,12 @@ namespace viennagrid
         
         
         template<typename handle_type>
-        void set_bnd_cell(const bnd_cell_type & to_insert, std::pair<handle_type, bool> inserted, unsigned int pos)
+        void set_boundary_element(const bnd_cell_type & to_insert, std::pair<handle_type, bool> inserted, unsigned int pos)
         { elements_.set_handle(inserted.first, pos); }
         
         template<typename handle_type>
-        void add_bnd_cell(const bnd_cell_type & to_insert, std::pair<handle_type, bool> inserted)
-        { set_bnd_cell(to_insert, inserted, elements_.size()); }
+        void add_boundary_element(const bnd_cell_type & to_insert, std::pair<handle_type, bool> inserted)
+        { set_boundary_element(to_insert, inserted, elements_.size()); }
         
         static void print_class()
         {
@@ -297,13 +299,14 @@ namespace viennagrid
         void set_container( viennagrid::storage::collection_t<container_typelist> & container_collection ) {}
     
         template<typename element_type, typename inserter_type>
-        void create_bnd_cells(element_type & element, inserter_type & inserter) {}            
+        void create_boundary_elements(element_type & element, inserter_type & inserter) {}            
         
         static void print_class() {}
         void print_orientation() {}
         
         void container();
-        void set_bnd_cell();
+        void set_boundary_element();
+        void add_boundary_element();
         void dereference_handle();
         void handle();
         void global_to_local_orientation();
@@ -570,7 +573,7 @@ namespace viennagrid
         {
             if (inserted)
             {
-                base::create_bnd_cells(*this, inserter);
+                base::create_boundary_elements(*this, inserter);
             }
         }
         

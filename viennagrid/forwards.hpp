@@ -218,6 +218,21 @@ namespace viennagrid
   struct dynamic_layout_tag;
   struct dynamic_unique_layout_tag;
   
+  
+  template <typename ElementTag, typename BoundaryNCellTag = ElementTag>
+  struct boundary_elements
+  {
+    //the default case is simultaneously a pathetic case:
+    //cell-handling within the cell
+
+    /** @brief Number of boundary cells at this level */
+    enum{ num = 1 };     //1 cell
+
+    /** @brief k-cell tag for identification of the type */
+    typedef ElementTag            tag;
+  };
+  
+  
   /** @brief Namespace for definition and handling of the individual topological elements (triangles, hexahedra, etc.) */
   namespace element_topology
   {
@@ -229,18 +244,7 @@ namespace viennagrid
      */
 
     
-    template <typename ElementTag, typename BoundaryNCellTag = ElementTag>
-    struct boundary_cells
-    {
-      //the default case is simultaneously a pathetic case:
-      //cell-handling within the cell
 
-      /** @brief Number of boundary cells at this level */
-      enum{ num = 1 };     //1 cell
-
-      /** @brief k-cell tag for identification of the type */
-      typedef ElementTag            tag;
-    };
 
     /** @brief Worker class that sets up the boundary k-cells of a n-cell
      * 
@@ -249,14 +253,13 @@ namespace viennagrid
      */
 
     template <typename element_tag, typename bnd_cell_tag, typename bnd_cell_type>
-    struct bndcell_generator {};
+    struct boundary_element_generator {};
     
     template<typename cell_type, typename bnd_cell_type>
-    struct bndcell_generator<cell_type, simplex_tag<0>, bnd_cell_type>
+    struct boundary_element_generator<cell_type, simplex_tag<0>, bnd_cell_type>
     {
         template<typename element_type, typename inserter_type>
-        static void create_bnd_cells(element_type & element, inserter_type & inserter)
-        {}
+        static void create_boundary_elements(element_type & element, inserter_type & inserter) {}
     };
     
   }
@@ -314,6 +317,12 @@ namespace viennagrid
     
     template<typename config_domain_segment_element_or_something_like_that, typename element_tag>
     struct element;
+    
+    template<typename config_domain_segment_element_or_something_like_that>
+    struct element<config_domain_segment_element_or_something_like_that, viennagrid::meta::null_type>
+    {
+        typedef viennagrid::meta::null_type type;
+    };
     
     template<typename config_domain_segment_element_or_something_like_that>
     struct vertex
@@ -716,11 +725,11 @@ namespace viennagrid
     { return elements<plc_tag>(something); }
     
     template<typename element_domain_segment_config_or_something_like_that>
-    typename result_of::element_range<element_domain_segment_config_or_something_like_that, tetrahedron_tag>::type tetrahedrons( element_domain_segment_config_or_something_like_that & something)
+    typename result_of::element_range<element_domain_segment_config_or_something_like_that, tetrahedron_tag>::type tetraheda( element_domain_segment_config_or_something_like_that & something)
     { return elements<tetrahedron_tag>(something); }
     
     template<typename element_domain_segment_config_or_something_like_that>
-    typename result_of::element_range<element_domain_segment_config_or_something_like_that, hexahedron_tag>::type hexahedrons( element_domain_segment_config_or_something_like_that & something)
+    typename result_of::element_range<element_domain_segment_config_or_something_like_that, hexahedron_tag>::type hexaheda( element_domain_segment_config_or_something_like_that & something)
     { return elements<hexahedron_tag>(something); }
 
     
@@ -757,11 +766,11 @@ namespace viennagrid
     { return elements<plc_tag>(something); }
     
     template<typename element_domain_segment_config_or_something_like_that>
-    typename result_of::const_element_range<element_domain_segment_config_or_something_like_that, tetrahedron_tag>::type tetrahedrons( const element_domain_segment_config_or_something_like_that & something)
+    typename result_of::const_element_range<element_domain_segment_config_or_something_like_that, tetrahedron_tag>::type tetraheda( const element_domain_segment_config_or_something_like_that & something)
     { return elements<tetrahedron_tag>(something); }
     
     template<typename element_domain_segment_config_or_something_like_that>
-    typename result_of::const_element_range<element_domain_segment_config_or_something_like_that, hexahedron_tag>::type hexahedrons( const element_domain_segment_config_or_something_like_that & something)
+    typename result_of::const_element_range<element_domain_segment_config_or_something_like_that, hexahedron_tag>::type hexaheda( const element_domain_segment_config_or_something_like_that & something)
     { return elements<hexahedron_tag>(something); }
     
     
@@ -769,8 +778,7 @@ namespace viennagrid
     template<typename element_type>
     typename result_of::facet_range<element_type>::type facets(element_type & element)
     {
-      assert(false && "implementation missing!");
-//         return elements< typename result_of::facet_tag<element_type>::type >(element);
+      return elements< typename result_of::facet_tag<element_type>::type >(element);
     }
     
     template<typename element_type>
@@ -806,16 +814,18 @@ namespace viennagrid
     typename container_type::value_type & point( container_type & geometric_container, vertex_type const & vertex );
     
     
-    template<typename element_type, typename domain_type, typename handle_array_iterator_type>
-    typename result_of::handle<domain_type, typename element_type::tag>::type create_element( domain_type & domain,
-                                                                                              handle_array_iterator_type array_start,
-                                                                                              const handle_array_iterator_type & array_end );
+    template<typename ElementTypeOrTag, typename DomainType, typename HandleIteratorType>
+    typename result_of::handle<DomainType, ElementTypeOrTag>::type create_element(
+          DomainType & domain,
+          HandleIteratorType array_start,
+          HandleIteratorType const & array_end );
 
-    template<typename element_type, typename domain_type, typename handle_array_iterator_type>
-    typename result_of::handle<domain_type, typename element_type::tag>::type create_element( domain_type & domain,
-                                                                                              handle_array_iterator_type array_start,
-                                                                                              const handle_array_iterator_type & array_end,
-                                                                                              typename element_type::id_type id );
+    template<typename ElementTypeOrTag, typename DomainType, typename HandleIteratorType>
+    typename result_of::handle<DomainType, ElementTypeOrTag>::type create_element_with_id(
+          DomainType & domain,
+          HandleIteratorType array_start,
+          HandleIteratorType const & array_end,
+          typename viennagrid::result_of::element<DomainType, ElementTypeOrTag>::type::id_type id );
     
   
    // norm tags for: algorithm/norm.hpp

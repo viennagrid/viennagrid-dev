@@ -152,9 +152,6 @@ namespace viennagrid
                   >::type src_boundary_information_container_wrapper_type;
             
             src_boundary_information_container_wrapper_type & src_boundary_information_container_wrapper = boundary_information_collection<facet_tag>( domain );
-            viennagrid::accessor::dense_container_accessor_t< const typename src_boundary_information_container_wrapper_type::container_type, facet_type > src_accessor( src_boundary_information_container_wrapper.container );
-            
-            
             
             
           typedef typename viennagrid::storage::result_of::value_type<
@@ -166,9 +163,10 @@ namespace viennagrid
                   >::type dst_boundary_information_container_wrapper_type;
                     
             dst_boundary_information_container_wrapper_type & dst_boundary_information_container_wrapper = boundary_information_collection<element_tag>( domain );
-            viennagrid::accessor::dense_container_accessor_t< typename dst_boundary_information_container_wrapper_type::container_type, element_type > dst_accessor( dst_boundary_information_container_wrapper.container );
-
-            transfer_boundary_information(domain, src_accessor, dst_accessor);
+            
+            transfer_boundary_information(domain,
+                                          viennagrid::make_accessor<facet_type>( src_boundary_information_container_wrapper.container ),
+                                          viennagrid::make_accessor<element_type>( dst_boundary_information_container_wrapper.container ));
             
             update_change_counter( domain, dst_boundary_information_container_wrapper.change_counter );
         }
@@ -223,9 +221,7 @@ namespace viennagrid
                   facet_tag
                 >::type boundary_information_container_wrapper_type;
         boundary_information_container_wrapper_type & boundary_information_container_wrapper = boundary_information_collection<facet_tag>( domain );
-        
-//         viennagrid::accessor::dense_container_accessor_t< typename boundary_information_container_wrapper_type::container_type, facet_type > accessor( boundary_information_container_wrapper.container );
-        detect_boundary( domain, accessor::dense_container_accessor<facet_type>( boundary_information_container_wrapper.container ) );
+        detect_boundary( domain, viennagrid::make_accessor<facet_type>( boundary_information_container_wrapper.container ) );
         
         transfer_boundary_information(domain);
         update_change_counter( domain, boundary_information_container_wrapper.change_counter );
@@ -276,8 +272,7 @@ namespace viennagrid
         if (domain.is_obsolete(boundary_information_container_wrapper.change_counter))
             detect_boundary( const_cast<domain_type&>(domain) );
         
-        viennagrid::accessor::dense_container_accessor_t< const typename boundary_information_container_wrapper_type::container_type, ElementType > accessor( boundary_information_container_wrapper.container );        
-        return is_boundary( accessor, element );
+        return is_boundary( viennagrid::make_accessor<ElementType>(boundary_information_container_wrapper.container), element );
   }
   
   template <typename SegmentationType, typename ElementType>

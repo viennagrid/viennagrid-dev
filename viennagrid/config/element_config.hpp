@@ -196,8 +196,8 @@ namespace viennagrid
                 
                 
                 typedef typename boundary_cell_container_tag<
-                        typename viennagrid::element_topology::boundary_cells< element_tag, boundary_cell_tag>::layout_tag,
-                        viennagrid::element_topology::boundary_cells< element_tag, boundary_cell_tag>::num
+                        typename viennagrid::boundary_elements< element_tag, boundary_cell_tag>::layout_tag,
+                        viennagrid::boundary_elements< element_tag, boundary_cell_tag>::num
                     >::type container_tag;
                 
 
@@ -214,15 +214,15 @@ namespace viennagrid
                 //
                 
                 typedef typename viennagrid::result_of::permutator_type<
-                    viennagrid::element_topology::boundary_cells<
+                    viennagrid::boundary_elements<
                         boundary_cell_tag,
                         typename boundary_cell_tag::facet_tag
                     >::num
                 >::type permutator_type;
                 
                 typedef typename boundary_cell_container_tag<
-                        typename viennagrid::element_topology::boundary_cells< boundary_cell_tag, typename boundary_cell_tag::facet_tag>::layout_tag,
-                        viennagrid::element_topology::boundary_cells< boundary_cell_tag, typename boundary_cell_tag::facet_tag>::num
+                        typename viennagrid::boundary_elements< boundary_cell_tag, typename boundary_cell_tag::facet_tag>::layout_tag,
+                        viennagrid::boundary_elements< boundary_cell_tag, typename boundary_cell_tag::facet_tag>::num
                     >::type orientation_container_tag;
                 
                 
@@ -266,8 +266,8 @@ namespace viennagrid
                 
                 
                 typedef typename boundary_cell_container_tag<
-                        typename viennagrid::element_topology::boundary_cells< element_tag, boundary_cell_tag>::layout_tag,
-                        viennagrid::element_topology::boundary_cells< element_tag, boundary_cell_tag>::num
+                        typename viennagrid::boundary_elements< element_tag, boundary_cell_tag>::layout_tag,
+                        viennagrid::boundary_elements< element_tag, boundary_cell_tag>::num
                     >::type container_tag;
                 
 

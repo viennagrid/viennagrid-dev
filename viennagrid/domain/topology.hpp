@@ -590,7 +590,6 @@ namespace viennagrid
 
     namespace result_of
     {
-        
         template<
             typename domain_type,
             typename element_typelist = 
@@ -600,15 +599,52 @@ namespace viennagrid
             typename container_config = 
                 storage::default_view_container_config
             >
-        struct domain_view
+        struct domain_view_from_typelist
         {
             typedef domain_t< decorated_domain_view_config<typename domain_type::wrapped_config_type, element_typelist, container_config> >  type;
+        };
+      
+      
+        template<typename DomainType,
+                 typename ElementType0 = viennagrid::meta::null_type, typename ElementType1 = viennagrid::meta::null_type,
+                 typename ElementType2 = viennagrid::meta::null_type, typename ElementType3 = viennagrid::meta::null_type,
+                 typename ElementType4 = viennagrid::meta::null_type, typename ElementType5 = viennagrid::meta::null_type,
+                 typename ElementType6 = viennagrid::meta::null_type, typename ElementType7 = viennagrid::meta::null_type,
+                 typename ElementType8 = viennagrid::meta::null_type, typename ElementType9 = viennagrid::meta::null_type>
+        struct domain_view
+        {
+            typedef typename domain_view_from_typelist<
+                DomainType,
+                typename viennagrid::meta::make_typelist<
+                  typename element<DomainType, ElementType0>::type,
+                  typename element<DomainType, ElementType1>::type,
+                  typename element<DomainType, ElementType2>::type,
+                  typename element<DomainType, ElementType3>::type,
+                  typename element<DomainType, ElementType4>::type,
+                  typename element<DomainType, ElementType5>::type,
+                  typename element<DomainType, ElementType6>::type,
+                  typename element<DomainType, ElementType7>::type,
+                  typename element<DomainType, ElementType8>::type,
+                  typename element<DomainType, ElementType9>::type
+                >::type
+            >::type type;
+        };
+      
+        
+        template<typename DomainType>
+        struct domain_view<DomainType,
+            viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type,
+            viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type,
+            viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type,
+            viennagrid::meta::null_type>
+        {
+            typedef typename domain_view_from_typelist<DomainType>::type type;
         };
     }
     
     
     template<typename topology_type>
-    domain_proxy<topology_type> create_view( topology_type & domain )
+    domain_proxy<topology_type> make_view( topology_type & domain )
     {
         return domain_proxy<topology_type>( domain );
     }

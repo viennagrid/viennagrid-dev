@@ -113,9 +113,7 @@ namespace viennagrid
         
         coboundary_container_wrapper_type & coboundary_container_wrapper = coboundary_collection<element_tag, coboundary_tag>( domain );//viennagrid::storage::collection::get< viennagrid::meta::static_pair<element_tag, coboundary_tag> > ( domain.coboundary_collection() );
         
-        viennagrid::accessor::dense_container_accessor_t< typename coboundary_container_wrapper_type::container_type, element_type > accessor( coboundary_container_wrapper.container );
-        create_coboundary_information<element_type_or_tag, coboundary_type_or_tag>( domain, accessor );
-        
+        create_coboundary_information<element_type_or_tag, coboundary_type_or_tag>( domain, viennagrid::make_accessor<element_type>(coboundary_container_wrapper.container) );
         update_change_counter( domain, coboundary_container_wrapper.change_counter );
     }
     
@@ -178,7 +176,7 @@ namespace viennagrid
         if ( is_obsolete(domain, coboundary_container_wrapper.change_counter) )
             create_coboundary_information<element_type_or_tag, coboundary_type_or_tag>(domain);
 
-        return coboundary_elements<element_type_or_tag, coboundary_type_or_tag>( accessor::dense_container_accessor<element_type>(coboundary_container_wrapper.container), viennagrid::dereference_handle(domain, hendl) );
+        return coboundary_elements<element_type_or_tag, coboundary_type_or_tag>( viennagrid::make_accessor<element_type>(coboundary_container_wrapper.container), viennagrid::dereference_handle(domain, hendl) );
         
     }
     
@@ -204,7 +202,7 @@ namespace viennagrid
         if ( is_obsolete(domain, coboundary_container_wrapper.change_counter) )
             create_coboundary_information<element_type_or_tag, coboundary_type_or_tag>( const_cast<domain_type&>(domain) );
 
-        return coboundary_elements<element_type_or_tag, coboundary_type_or_tag>( accessor::dense_container_accessor<element_type>(coboundary_container_wrapper.container), viennagrid::dereference_handle(domain, hendl) );
+        return coboundary_elements<element_type_or_tag, coboundary_type_or_tag>( viennagrid::make_accessor<element_type>(coboundary_container_wrapper.container), viennagrid::dereference_handle(domain, hendl) );
     }
     
     

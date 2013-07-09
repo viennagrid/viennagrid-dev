@@ -213,7 +213,7 @@ namespace viennagrid
   distance(Something1 const & el1,
            Something2 const & el2)
   {
-    return detail::distance_impl( accessor::default_point_accessor(el1), el1, el2 );
+    return detail::distance_impl( default_point_accessor(el1), el1, el2 );
   }
   
   
@@ -235,7 +235,7 @@ namespace viennagrid
   boundary_distance(Something1 const & el1,
                     Something2 const & el2)
   {
-    return detail::boundary_distance_impl( accessor::default_point_accessor(el1), el1, el2 );
+    return detail::boundary_distance_impl( default_point_accessor(el1), el1, el2 );
   }
   
   

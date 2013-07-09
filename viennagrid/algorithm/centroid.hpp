@@ -156,7 +156,7 @@ namespace viennagrid
       for (CellIterator cit = cells.begin(); cit != cells.end(); ++cit)
       {
         double vol_cell = viennagrid::volume(domain, *cit);
-        result += vol_cell * centroid( accessor::default_point_accessor(domain), *cit);
+        result += vol_cell * centroid( default_point_accessor(domain), *cit);
         volume += vol_cell;
       }
       
@@ -181,7 +181,7 @@ namespace viennagrid
     typename viennagrid::result_of::point_type< element_t<ElementTag,WrappedConfigType> >::type
   centroid(element_t<ElementTag,WrappedConfigType> const & cell)
   {
-    return detail::centroid( accessor::default_point_accessor(cell), cell, ElementTag());
+    return detail::centroid( default_point_accessor(cell), cell, ElementTag());
   }
   
   template<typename ElementTypeOrTag, typename WrappedConfigType>

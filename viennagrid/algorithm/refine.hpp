@@ -74,7 +74,7 @@ namespace viennagrid
                           vit != vertices.end();
                         ++vit)
       {
-        vertex_to_vertex_handle_accessor( *vit ) = viennagrid::create_vertex( domain_out, point_accessor_in(*vit) );
+        vertex_to_vertex_handle_accessor( *vit ) = viennagrid::make_vertex( domain_out, point_accessor_in(*vit) );
       }
 
       //
@@ -87,7 +87,7 @@ namespace viennagrid
       {
         if ( edge_refinement_flag_accessor(*eit) )
         {
-          edge_to_vertex_handle_accessor( *eit ) = viennagrid::create_vertex( domain_out, viennagrid::centroid(point_accessor_in, *eit) );
+          edge_to_vertex_handle_accessor( *eit ) = viennagrid::make_vertex( domain_out, viennagrid::centroid(point_accessor_in, *eit) );
         }
       }
 
@@ -272,8 +272,8 @@ namespace viennagrid
     
     refine<CellTypeOrTag>(domain_in, domain_out, point_accessor_in,
                     edge_refinement_flag_accessor,
-                    viennagrid::accessor::dense_container_accessor<VertexType>(vertex_refinement_vertex_handle),
-                    viennagrid::accessor::dense_container_accessor<EdgeType>(edge_refinement_vertex_handle));
+                    viennagrid::make_accessor<VertexType>(vertex_refinement_vertex_handle),
+                    viennagrid::make_accessor<EdgeType>(edge_refinement_vertex_handle));
   }
   
   /** @brief Public interface for refinement of a domain. If local refinement is desired, cells or edges needs to be tagged using ViennaData with refinement_key.*/
@@ -288,14 +288,14 @@ namespace viennagrid
     std::deque<VertexHandleType> vertex_refinement_vertex_handle;
     std::deque<VertexHandleType> edge_refinement_vertex_handle;
     
-    refine<CellTypeOrTag>(domain_in, domain_out, accessor::default_point_accessor(domain_in), edge_refinement_flag_accessor);
+    refine<CellTypeOrTag>(domain_in, domain_out, default_point_accessor(domain_in), edge_refinement_flag_accessor);
   }
   
   
   
   /** @brief Public interface for refinement of a domain. If local refinement is desired, cells or edges needs to be tagged using ViennaData with refinement_key.*/
   template <typename CellTypeOrTag, typename DomainTypeIn, typename DomainTypeOut, typename PointAccessorType, typename CellRefinementFlagAccessor>
-  void refine_cell(DomainTypeIn const & domain_in, DomainTypeOut & domain_out, PointAccessorType point_accessor_in,
+  void refine_element(DomainTypeIn const & domain_in, DomainTypeOut & domain_out, PointAccessorType point_accessor_in,
               CellRefinementFlagAccessor const cell_refinement_flag_accessor)
   {
     typedef typename viennagrid::result_of::line<DomainTypeOut>::type EdgeType;
@@ -307,17 +307,17 @@ namespace viennagrid
     
     cell_refinement_to_edge_refinement<CellTypeOrTag>( domain_in,
                                         cell_refinement_flag_accessor,
-                                        viennagrid::accessor::dense_container_accessor<EdgeType>(edge_refinement_flag));
+                                        viennagrid::make_accessor<EdgeType>(edge_refinement_flag));
     
     refine<CellTypeOrTag>(domain_in, domain_out, point_accessor_in,
-                    viennagrid::accessor::dense_container_accessor<EdgeType>(edge_refinement_flag));
+                    viennagrid::make_accessor<EdgeType>(edge_refinement_flag));
   }
   
   /** @brief Public interface for refinement of a domain. If local refinement is desired, cells or edges needs to be tagged using ViennaData with refinement_key.*/
   template <typename CellTypeOrTag, typename DomainTypeIn, typename DomainTypeOut, typename CellRefinementFlagAccessor>
-  void refine_cell(DomainTypeIn const & domain_in, DomainTypeOut & domain_out, CellRefinementFlagAccessor const cell_refinement_flag_accessor)
+  void refine_element(DomainTypeIn const & domain_in, DomainTypeOut & domain_out, CellRefinementFlagAccessor const cell_refinement_flag_accessor)
   {
-    refine_cell<CellTypeOrTag>(domain_in, domain_out, accessor::default_point_accessor(domain_in), cell_refinement_flag_accessor);
+    refine_element<CellTypeOrTag>(domain_in, domain_out, default_point_accessor(domain_in), cell_refinement_flag_accessor);
   }
   
   
@@ -348,7 +348,7 @@ namespace viennagrid
   template <typename CellTypeOrTag, typename DomainTypeIn, typename DomainTypeOut, typename EdgeRefinementFlagAccessor>
   void refine_uniformly(DomainTypeIn const & domain_in, DomainTypeOut & domain_out, EdgeRefinementFlagAccessor const edge_refinement_flag_accessor)
   {
-    refine_uniformly<CellTypeOrTag>(domain_in, domain_out, accessor::default_point_accessor(domain_in), edge_refinement_flag_accessor);
+    refine_uniformly<CellTypeOrTag>(domain_in, domain_out, default_point_accessor(domain_in), edge_refinement_flag_accessor);
   }
   
   template <typename CellTypeOrTag, typename DomainTypeIn, typename DomainTypeOut>
@@ -357,9 +357,15 @@ namespace viennagrid
     typedef typename viennagrid::result_of::line<DomainTypeOut>::type EdgeType;
     std::deque<bool> edge_refinement_flag;
     
-    refine_uniformly<CellTypeOrTag>(domain_in, domain_out, viennagrid::accessor::dense_container_accessor<EdgeType>(edge_refinement_flag));
+    refine_uniformly<CellTypeOrTag>(domain_in, domain_out, viennagrid::make_accessor<EdgeType>(edge_refinement_flag));
   }
 
+  template <typename DomainTypeIn, typename DomainTypeOut>
+  void refine_uniformly(DomainTypeIn const & domain_in, DomainTypeOut & domain_out)
+  {
+    typedef typename viennagrid::result_of::cell_type<DomainTypeIn>::type CellType;
+    refine_uniformly<CellType>(domain_in, domain_out);
+  }
   
 } 
 

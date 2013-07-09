@@ -85,25 +85,13 @@ int main()
     // typedefs for the view
     //   
     
-    // only tetrahedrons are stored in the view
-    typedef viennagrid::meta::make_typelist< vertex_type, tetrahedron_type >::type view_types;
+    // only vertices and tetrahedrons are stored in the view
+    typedef viennagrid::result_of::domain_view<domain_type, vertex_type, tetrahedron_type>::type geometric_view_type;
     
+    //geometric_view_type geometric_view( viennagrid::make_topologic_view<topologic_view_type>( viennagrid::topology(domain) ), domain.get_metainfo_collection() );
     
-    
-    
-    
-//     typedef viennagrid::result_of::topologic_view<domain_type::topology_type, view_types>::type topologic_view_type;
-//     
-//     typedef domain_type::metainfo_collection_type metainfo_collection_type;
-//     
-//     typedef viennagrid::domain_t<vector_type, topologic_view_type, metainfo_collection_type&> geometric_view_type;
-    
-    typedef viennagrid::result_of::domain_view<domain_type, view_types>::type geometric_view_type;
-    
-    //geometric_view_type geometric_view( viennagrid::create_topologic_view<topologic_view_type>( viennagrid::topology(domain) ), domain.get_metainfo_collection() );
-    
-    geometric_view_type geometric_view_1 = viennagrid::create_view(domain);
-    geometric_view_type geometric_view_2 = viennagrid::create_view(domain);
+    geometric_view_type geometric_view_1 = viennagrid::make_view(domain);
+    geometric_view_type geometric_view_2 = viennagrid::make_view(domain);
     
     
     
@@ -114,11 +102,11 @@ int main()
     std::vector<vertex_handle_type> handles(4);
     
     // creates four vertices within the domain, vh is short vor vertex handle
-    // create_element is responsible for resizing all meta-info container which are associated with vertex_type
-    vertex_handle_type vh0 = viennagrid::create_element<vertex_type>( geometric_view_1 );
-    vertex_handle_type vh1 = viennagrid::create_element<vertex_type>( geometric_view_1 );
-    vertex_handle_type vh2 = viennagrid::create_element<vertex_type>( geometric_view_1 );
-    vertex_handle_type vh3 = viennagrid::create_element<vertex_type>( geometric_view_1 );
+    // make_element is responsible for resizing all meta-info container which are associated with vertex_type
+    vertex_handle_type vh0 = viennagrid::make_vertex( geometric_view_1 );
+    vertex_handle_type vh1 = viennagrid::make_vertex( geometric_view_1 );
+    vertex_handle_type vh2 = viennagrid::make_vertex( geometric_view_1 );
+    vertex_handle_type vh3 = viennagrid::make_vertex( geometric_view_1 );
     
     // create geometric information for the vertices
     vector_type p0(3);
@@ -145,17 +133,17 @@ int main()
     handles[3] = vh3;
     
     // creates the tetrahedron within the domain, all boundary cell generation is done here implicit
-    viennagrid::create_element<tetrahedron_type>( geometric_view_1, handles.begin(), handles.end() );
+    viennagrid::make_element<tetrahedron_type>( geometric_view_1, handles.begin(), handles.end() );
     
     
     
     
     // creates four vertices within the domain, vh is short vor vertex handle
-    // create_element is responsible for resizing all meta-info container which are associated with vertex_type
-    vertex_handle_type vh4 = viennagrid::create_element<vertex_type>( geometric_view_2 );
-    vertex_handle_type vh5 = viennagrid::create_element<vertex_type>( geometric_view_2 );
-    vertex_handle_type vh6 = viennagrid::create_element<vertex_type>( geometric_view_2 );
-    vertex_handle_type vh7 = viennagrid::create_element<vertex_type>( geometric_view_2 );
+    // make_element is responsible for resizing all meta-info container which are associated with vertex_type
+    vertex_handle_type vh4 = viennagrid::make_vertex( geometric_view_2 );
+    vertex_handle_type vh5 = viennagrid::make_vertex( geometric_view_2 );
+    vertex_handle_type vh6 = viennagrid::make_vertex( geometric_view_2 );
+    vertex_handle_type vh7 = viennagrid::make_vertex( geometric_view_2 );
     
     // create geometric information for the vertices
     vector_type p4(3);
@@ -182,7 +170,7 @@ int main()
     handles[3] = vh7;
     
     // creates the tetrahedron within the domain, all boundary cell generation is done here implicit
-    viennagrid::create_element<tetrahedron_type>( geometric_view_2, handles.begin(), handles.end() );
+    viennagrid::make_element<tetrahedron_type>( geometric_view_2, handles.begin(), handles.end() );
     
     
     //

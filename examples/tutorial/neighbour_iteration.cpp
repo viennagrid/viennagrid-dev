@@ -64,25 +64,25 @@ int main()
     //
 
     // creates four vertices within the domain, vh is short vor vertex handle
-    vertex_handle_type vh0 = viennagrid::create_vertex( domain );
-    vertex_handle_type vh1 = viennagrid::create_vertex( domain );
-    vertex_handle_type vh2 = viennagrid::create_vertex( domain );
-    vertex_handle_type vh3 = viennagrid::create_vertex( domain );
-    vertex_handle_type vh4 = viennagrid::create_vertex( domain );
-    vertex_handle_type vh5 = viennagrid::create_vertex( domain );
-    vertex_handle_type vh6 = viennagrid::create_vertex( domain );
-    vertex_handle_type vh7 = viennagrid::create_vertex( domain );
-    vertex_handle_type vh8 = viennagrid::create_vertex( domain );
+    vertex_handle_type vh0 = viennagrid::make_vertex( domain );
+    vertex_handle_type vh1 = viennagrid::make_vertex( domain );
+    vertex_handle_type vh2 = viennagrid::make_vertex( domain );
+    vertex_handle_type vh3 = viennagrid::make_vertex( domain );
+    vertex_handle_type vh4 = viennagrid::make_vertex( domain );
+    vertex_handle_type vh5 = viennagrid::make_vertex( domain );
+    vertex_handle_type vh6 = viennagrid::make_vertex( domain );
+    vertex_handle_type vh7 = viennagrid::make_vertex( domain );
+    vertex_handle_type vh8 = viennagrid::make_vertex( domain );
        
     // creates the tetrahedron within the domain, all boundary cell generation is done here implicit
-    triangle_handle_type th0 = viennagrid::create_triangle( domain, vh0, vh1, vh3 );
-    triangle_handle_type th1 = viennagrid::create_triangle( domain, vh1, vh4, vh3 );
-    triangle_handle_type th2 = viennagrid::create_triangle( domain, vh1, vh5, vh4 );
-    triangle_handle_type th3 = viennagrid::create_triangle( domain, vh1, vh2, vh5 );
-    triangle_handle_type th4 = viennagrid::create_triangle( domain, vh3, vh7, vh6 );
-    triangle_handle_type th5 = viennagrid::create_triangle( domain, vh3, vh4, vh7 );
-    triangle_handle_type th6 = viennagrid::create_triangle( domain, vh4, vh5, vh7 );
-    triangle_handle_type th7 = viennagrid::create_triangle( domain, vh5, vh8, vh7 );
+    triangle_handle_type th0 = viennagrid::make_triangle( domain, vh0, vh1, vh3 );
+    triangle_handle_type th1 = viennagrid::make_triangle( domain, vh1, vh4, vh3 );
+    triangle_handle_type th2 = viennagrid::make_triangle( domain, vh1, vh5, vh4 );
+    triangle_handle_type th3 = viennagrid::make_triangle( domain, vh1, vh2, vh5 );
+    triangle_handle_type th4 = viennagrid::make_triangle( domain, vh3, vh7, vh6 );
+    triangle_handle_type th5 = viennagrid::make_triangle( domain, vh3, vh4, vh7 );
+    triangle_handle_type th6 = viennagrid::make_triangle( domain, vh4, vh5, vh7 );
+    triangle_handle_type th7 = viennagrid::make_triangle( domain, vh5, vh8, vh7 );
     
     std::cout << "th0: " << th0 << std::endl;
     std::cout << "th1: " << th1 << std::endl;

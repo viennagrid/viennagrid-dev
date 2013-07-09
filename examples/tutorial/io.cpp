@@ -104,10 +104,10 @@ void read_vtk(DomainType & domain, SegmentationType & segmentation, UserData & d
   //
   
   // Write scalar vertex data that matches the name 'data_double' to ViennaData as data of type double, using a key of type std::string and value "vtk_data":
-  reader.register_vertex_scalar_accessor( viennagrid::accessor::dense_container_accessor<vertex_type>(data.vertex_scalar_array), "data_double" );
+  reader.register_vertex_scalar_accessor( viennagrid::make_accessor<vertex_type>(data.vertex_scalar_array), "data_double" );
   
   // Write vector-valued vertex data that matches the name 'data_point' to ViennaData as data of type std::vector<double>, using a key of type std::string and value "vtk_data":
-  //reader.register_vertex_vector_accessor( viennagrid::accessor::dense_container_accessor<vertex_type>(data.vertex_vector_array), "data_point" );
+  //reader.register_vertex_vector_accessor( viennagrid::make_accessor<vertex_type>(data.vertex_vector_array), "data_point" );
   
   // Write normal (vector-valued) vertex data that matches the name 'data_normal' to ViennaData as data of type std::vector<double>, using a key of type std::string and value "vtk_data_2":
   //viennagrid::io::add_normal_data_on_vertices<std::string, std::vector<double> >(reader, "vtk_data_2", "data_normal");
@@ -120,10 +120,10 @@ void read_vtk(DomainType & domain, SegmentationType & segmentation, UserData & d
   //
 
   // Write scalar cell data that matches the name 'data_double' to ViennaData as data of type double, using a key of type std::string and value "vtk_data":
-  reader.register_cell_scalar_accessor( viennagrid::accessor::dense_container_accessor<cell_type>(data.cell_scalar_array), "data_double" );
+  reader.register_cell_scalar_accessor( viennagrid::make_accessor<cell_type>(data.cell_scalar_array), "data_double" );
   
   // Write vector-valued cell data that matches the name 'data_point' to ViennaData as data of type std::vector<double>, using a key of type std::string and value "vtk_data":
-  //reader.register_cell_vector_accessor( viennagrid::accessor::dense_container_accessor<cell_type>(data.cell_vector_array), "data_point" );
+  //reader.register_cell_vector_accessor( viennagrid::make_accessor<cell_type>(data.cell_vector_array), "data_point" );
   
   // Write normal (vector-valued) cell data that matches the name 'data_normal' to ViennaData as data of type std::vector<double>, using a key of type std::string and value "vtk_data_2":
   //viennagrid::io::add_normal_data_on_cells<std::string, std::vector<double> >(reader, "vtk_data_2", "data_normal");
@@ -194,14 +194,14 @@ void write_vtk(DomainType & domain, UserData & data)
   
   // Write data of type data that is stored with ViennaData for keys of type std::string with value "vtk_data" and call it "data_double" in the VTK file:
   //viennagrid::io::add_scalar_data_on_vertices<std::string, double>(my_vtk_writer, "vtk_data", "data_double");
-  writer.add_scalar_data_on_vertices( viennagrid::accessor::dense_container_accessor<vertex_type>(data.vertex_scalar_array), "data_double" );
+  writer.add_scalar_data_on_vertices( viennagrid::make_accessor<vertex_type>(data.vertex_scalar_array), "data_double" );
 
   // Same as above, but with data of type long, which is then called "data_long" in the VTK file:
   //viennagrid::io::add_scalar_data_on_vertices<std::string, long>(my_vtk_writer, "vtk_data", "data_long");
   
   // Vector-valued data of type std::vector<double> is written to the VTK file and named "data_vector". Data is accessed with ViennaData using a std::string "vtk_data" as key.
   //viennagrid::io::add_vector_data_on_vertices<std::string, std::vector<double> >(my_vtk_writer, "vtk_data", "data_point");
-  writer.add_vector_data_on_vertices( viennagrid::accessor::dense_container_accessor<vertex_type>(data.vertex_vector_array), "data_point" );
+  writer.add_vector_data_on_vertices( viennagrid::make_accessor<vertex_type>(data.vertex_vector_array), "data_point" );
 
   // Same as vector-data, but with the constraint that each vector has length 1
   //viennagrid::io::add_normal_data_on_vertices<std::string, std::vector<double> >(my_vtk_writer, "vtk_data", "data_normal");
@@ -214,11 +214,11 @@ void write_vtk(DomainType & domain, UserData & data)
   
   // Write data of type double, using the std::string key "vtk_data". Name in VTK file is "data_double" (there is no name collision with vertex data here).
   //viennagrid::io::add_scalar_data_on_cells<std::string, double>(my_vtk_writer, "vtk_data", "data_double");
-  writer.add_scalar_data_on_cells( viennagrid::accessor::dense_container_accessor<cell_type>(data.cell_scalar_array), "data_double" );
+  writer.add_scalar_data_on_cells( viennagrid::make_accessor<cell_type>(data.cell_scalar_array), "data_double" );
   
   // Vector valued data on cells. Similar to vertex case
   //viennagrid::io::add_vector_data_on_cells<std::string, std::vector<double> >(my_vtk_writer, "vtk_data", "data_vector");
-  writer.add_vector_data_on_cells( viennagrid::accessor::dense_container_accessor<cell_type>(data.cell_vector_array), "data_vector" );
+  writer.add_vector_data_on_cells( viennagrid::make_accessor<cell_type>(data.cell_vector_array), "data_vector" );
 
   // Vector valued data on cells. Just like vector data, but with a normalization requirement to length 1.
   //viennagrid::io::add_normal_data_on_cells<std::string, std::vector<double> >(my_vtk_writer, "vtk_data", "data_normal");

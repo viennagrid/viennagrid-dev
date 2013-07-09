@@ -73,63 +73,62 @@ namespace viennagrid
       return ss.str();
     }
   };
+  
+  /** @brief Topological description of the boundary k-cells an n-simplex */
+  template <long n, long k>
+  struct boundary_elements<simplex_tag<n>, simplex_tag<k> >
+  {
+    //typedef simplex_tag<k>             tag;
+
+    typedef static_layout_tag     layout_tag;
+    enum{ num = meta::n_over_k<n+1, k+1>::value };
+  };
 
   
   namespace element_topology
   {
-    /** @brief Topological description of the boundary k-cells an n-simplex */
-    template <long n, long k>
-    struct boundary_cells<simplex_tag<n>, simplex_tag<k> >
-    {
-      //typedef simplex_tag<k>             tag;
-
-      typedef static_layout_tag     layout_tag;
-      enum{ num = meta::n_over_k<n+1, k+1>::value };
-    };
-
-  
     ///////////////////////////////// Generator for boundary cell elements ///////////////////////////////////
     
     
-    template<long n, typename bnd_cell_type>
-    struct bndcell_generator<simplex_tag<n>, simplex_tag<1>, bnd_cell_type>
+    template<long n, typename BoundaryElementType>
+    struct boundary_element_generator<simplex_tag<n>, simplex_tag<1>, BoundaryElementType>
     {
         template<typename element_type, typename inserter_type>
-        static void create_bnd_cells(element_type & element, inserter_type & inserter)
+        static void create_boundary_elements(element_type & element, inserter_type & inserter)
         {
-            bnd_cell_type bnd_cell( inserter.get_physical_container_collection() );
+            BoundaryElementType boundary_element( inserter.get_physical_container_collection() );
             
             int index = 0;
-            for (int i = 0; i < boundary_cells<simplex_tag<n>, vertex_tag >::num; ++i)
-                for (int j = i+1; j < boundary_cells<simplex_tag<n>, vertex_tag >::num; ++j)
+            for (int i = 0; i < boundary_elements<simplex_tag<n>, vertex_tag >::num; ++i)
+                for (int j = i+1; j < boundary_elements<simplex_tag<n>, vertex_tag >::num; ++j)
                 {
-                    bnd_cell.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(i), 0 );
-                    bnd_cell.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(j), 1 );
+                    boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(i), 0 );
+                    boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(j), 1 );
                     
-                    element.set_bnd_cell( bnd_cell, inserter(bnd_cell), index++ );
+                    element.set_boundary_element( boundary_element, inserter(boundary_element), index++ );
                 }
         }
     };
     
     
-    template<long n, typename bnd_cell_type>
-    struct bndcell_generator<simplex_tag<n>, simplex_tag<2>, bnd_cell_type>
+    template<long n, typename BoundaryElementType>
+    struct boundary_element_generator<simplex_tag<n>, simplex_tag<2>, BoundaryElementType>
     {
         template<typename element_type, typename inserter_type>
-        static void create_bnd_cells(element_type & element, inserter_type & inserter)
+        static void create_boundary_elements(element_type & element, inserter_type & inserter)
         {
-            bnd_cell_type bnd_cell( inserter.get_physical_container_collection() );
+            BoundaryElementType boundary_element( inserter.get_physical_container_collection() );
             
             int index = 0;
-            for (int i = 0; i < boundary_cells<simplex_tag<n>, vertex_tag >::num; ++i)
-                for (int j = i+1; j < boundary_cells<simplex_tag<n>, vertex_tag >::num; ++j)
-                    for (int k = j+1; k < boundary_cells<simplex_tag<n>, vertex_tag >::num; ++k)
+            for (int i = 0; i < boundary_elements<simplex_tag<n>, vertex_tag >::num; ++i)
+                for (int j = i+1; j < boundary_elements<simplex_tag<n>, vertex_tag >::num; ++j)
+                    for (int k = j+1; k < boundary_elements<simplex_tag<n>, vertex_tag >::num; ++k)
                     {
-                        bnd_cell.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(i), 0 );
-                        bnd_cell.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(j), 1 );
-                        bnd_cell.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(k), 2 );
+                        boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(i), 0 );
+                        boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(j), 1 );
+                        boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(k), 2 );
                         
-                        element.set_bnd_cell( bnd_cell, inserter(bnd_cell), index++ );
+                        element.set_boundary_element( boundary_element, inserter(boundary_element), index++ );
                     }
         }
     };

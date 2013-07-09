@@ -38,29 +38,26 @@ namespace viennagrid
     static std::string name() { return "Quadrilateral"; }
   };
   
+  template <>
+  struct boundary_elements<hypercube_tag<2>, simplex_tag<1> >
+  {
+    //typedef simplex_tag<k>             tag;
+
+    typedef static_layout_tag     layout_tag;
+    enum{ num = 4 };
+  };
+  
+  template <>
+  struct boundary_elements<hypercube_tag<2>, simplex_tag<0> >
+  {
+    //typedef simplex_tag<k>             tag;
+
+    typedef static_layout_tag     layout_tag;
+    enum{ num = 4 };
+  };
+  
   namespace element_topology
   {
-      
-    template <>
-    struct boundary_cells<hypercube_tag<2>, simplex_tag<1> >
-    {
-      //typedef simplex_tag<k>             tag;
-
-      typedef static_layout_tag     layout_tag;
-      enum{ num = 4 };
-    };
-    
-    template <>
-    struct boundary_cells<hypercube_tag<2>, simplex_tag<0> >
-    {
-      //typedef simplex_tag<k>             tag;
-
-      typedef static_layout_tag     layout_tag;
-      enum{ num = 4 };
-    };
-    
-
-    
       //fill edges:
       //
       // Reference orientation: (v... vertices, e...edges)
@@ -72,30 +69,30 @@ namespace viennagrid
       // v0 --------- v1
       //        e0
     
-    template<typename bnd_cell_type>
-    struct bndcell_generator<hypercube_tag<2>, simplex_tag<1>, bnd_cell_type>
+    template<typename BoundaryElementType>
+    struct boundary_element_generator<hypercube_tag<2>, simplex_tag<1>, BoundaryElementType>
     {
         template<typename element_type, typename inserter_type>
-        static void create_bnd_cells(element_type & element, inserter_type & inserter)
+        static void create_boundary_elements(element_type & element, inserter_type & inserter)
         {
-            bnd_cell_type bnd_cell( inserter.get_physical_container_collection() );
+            BoundaryElementType boundary_element( inserter.get_physical_container_collection() );
             int index = 0;
             
-            bnd_cell.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(0), 0 );
-            bnd_cell.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(1), 1 );
-            element.set_bnd_cell( bnd_cell, inserter(bnd_cell), index++ );
+            boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(0), 0 );
+            boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(1), 1 );
+            element.set_boundary_element( boundary_element, inserter(boundary_element), index++ );
 
-            bnd_cell.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(0), 0 );
-            bnd_cell.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(2), 1 );
-            element.set_bnd_cell( bnd_cell, inserter(bnd_cell), index++ );
+            boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(0), 0 );
+            boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(2), 1 );
+            element.set_boundary_element( boundary_element, inserter(boundary_element), index++ );
             
-            bnd_cell.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(1), 0 );
-            bnd_cell.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(3), 1 );
-            element.set_bnd_cell( bnd_cell, inserter(bnd_cell), index++ );
+            boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(1), 0 );
+            boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(3), 1 );
+            element.set_boundary_element( boundary_element, inserter(boundary_element), index++ );
             
-            bnd_cell.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(2), 0 );
-            bnd_cell.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(3), 1 );
-            element.set_bnd_cell( bnd_cell, inserter(bnd_cell), index++ );
+            boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(2), 0 );
+            boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(3), 1 );
+            element.set_boundary_element( boundary_element, inserter(boundary_element), index++ );
         }
     };
     

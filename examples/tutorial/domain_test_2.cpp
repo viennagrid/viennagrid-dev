@@ -88,11 +88,11 @@ int main()
     //
     
     // creates four vertices within the domain, vh is short vor vertex handle
-    // create_element is responsible for resizing all meta-info container which are associated with vertex_type
-    vertex_handle_type vh0 = viennagrid::create_element<vertex_type>( domain );
-    vertex_handle_type vh1 = viennagrid::create_element<vertex_type>( domain );
-    vertex_handle_type vh2 = viennagrid::create_element<vertex_type>( domain );
-    vertex_handle_type vh3 = viennagrid::create_element<vertex_type>( domain );
+    // make_element is responsible for resizing all meta-info container which are associated with vertex_type
+    vertex_handle_type vh0 = viennagrid::make_vertex( domain );
+    vertex_handle_type vh1 = viennagrid::make_vertex( domain );
+    vertex_handle_type vh2 = viennagrid::make_vertex( domain );
+    vertex_handle_type vh3 = viennagrid::make_vertex( domain );
     
     
     // create geometric information for the vertices
@@ -119,7 +119,7 @@ int main()
     handles[0] = vh0; handles[1] = vh1; handles[2] = vh2; handles[3] = vh3;
     
     // creates the tetrahedron within the domain, all boundary cell generation is done here implicit
-    tetrahedron_handle_type tet = viennagrid::create_element<tetrahedron_type>( domain, handles.begin(), handles.end() );
+    tetrahedron_handle_type tet = viennagrid::make_element<tetrahedron_type>( domain, handles.begin(), handles.end() );
     std::cout << tet << std::endl;
     
     // set a double value to a tetdrahedron

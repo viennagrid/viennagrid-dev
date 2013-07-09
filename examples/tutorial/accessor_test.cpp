@@ -118,7 +118,7 @@ int main()
 //   
 //   metainfo_collection_type metainfo_collection;
   
-//   viennagrid::accessor::metainfo_collection_accessor<metainfo_collection_type> accessor(metainfo_collection);
+//   viennagrid::metainfo_collection_accessor<metainfo_collection_type> accessor(metainfo_collection);
   viennagrid::detect_boundary(domain, acc);
 
   

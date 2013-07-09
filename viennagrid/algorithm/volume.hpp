@@ -190,7 +190,7 @@ namespace viennagrid
                         new_cit != new_cells.end();
                       ++new_cit)
       {
-        new_volume += volume( accessor::default_point_accessor(domain), *new_cit);
+        new_volume += volume( default_point_accessor(domain), *new_cit);
       }
       return new_volume;
     }
@@ -212,7 +212,7 @@ namespace viennagrid
   typename viennagrid::result_of::coord_type< element_t<ElementTag, WrappedConfigType> >::type
   volume(element_t<ElementTag, WrappedConfigType> const & cell)
   {
-    return volume( accessor::default_point_accessor(cell), cell );
+    return volume( default_point_accessor(cell), cell );
   }
   
   

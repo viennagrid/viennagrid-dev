@@ -806,7 +806,7 @@ namespace viennagrid
                                     PointType const & p)
     {
         typedef typename result_of::cell_tag< domain_t<WrappedConfigType> >::type CellTag;
-      return closest_points_on_boundary_point_to_any<typename CellTag::facet_tag>( accessor::default_point_accessor(domain), p, domain );
+      return closest_points_on_boundary_point_to_any<typename CellTag::facet_tag>( default_point_accessor(domain), p, domain );
     }
  
     
@@ -825,7 +825,7 @@ namespace viennagrid
     closest_points_on_boundary_impl(domain_t<WrappedDomainConfigType> const & domain,
                                     element_t<vertex_tag,WrappedConfigType> const & v)
     {
-      return closest_points_on_boundary_impl( accessor::default_point_accessor(domain)(v), domain);
+      return closest_points_on_boundary_impl( default_point_accessor(domain)(v), domain);
     }
 
     
@@ -1003,7 +1003,7 @@ namespace viennagrid
   closest_points(Something1 const & el1,
                  Something2 const & el2)
   {
-    return closest_points_impl(accessor::default_point_accessor(el1),
+    return closest_points_impl(default_point_accessor(el1),
                                        detail::ascending_topological_order<Something1, Something2>::first(el1, el2),
                                        detail::ascending_topological_order<Something1, Something2>::second(el1, el2));
   }
@@ -1027,7 +1027,7 @@ namespace viennagrid
   closest_points_on_boundary(Something1 const & el1,
                              Something2 const & el2)
   {
-    return closest_points_on_boundary_impl(accessor::default_point_accessor(el1),
+    return closest_points_on_boundary_impl(default_point_accessor(el1),
                                        detail::ascending_topological_order<Something1, Something2>::first(el1, el2),
                                        detail::ascending_topological_order<Something1, Something2>::second(el1, el2));
   }

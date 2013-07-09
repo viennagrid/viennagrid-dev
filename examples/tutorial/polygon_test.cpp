@@ -67,16 +67,16 @@ int main()
     
     viennagrid::storage::static_array<vertex_handle_type, 7> handles;
     
-    handles[0] = viennagrid::create_vertex( domain, point_type(0, 0) );
-    handles[1] = viennagrid::create_vertex( domain, point_type(1, 0) );
-    handles[2] = viennagrid::create_vertex( domain, point_type(2, 1) );
-    handles[3] = viennagrid::create_vertex( domain, point_type(2, 2) );
-    handles[4] = viennagrid::create_vertex( domain, point_type(1, 2) );
-    handles[5] = viennagrid::create_vertex( domain, point_type(0, 1) );
-    handles[6] = viennagrid::create_vertex( domain, point_type(0.5, 0.5) );
+    handles[0] = viennagrid::make_vertex( domain, point_type(0, 0) );
+    handles[1] = viennagrid::make_vertex( domain, point_type(1, 0) );
+    handles[2] = viennagrid::make_vertex( domain, point_type(2, 1) );
+    handles[3] = viennagrid::make_vertex( domain, point_type(2, 2) );
+    handles[4] = viennagrid::make_vertex( domain, point_type(1, 2) );
+    handles[5] = viennagrid::make_vertex( domain, point_type(0, 1) );
+    handles[6] = viennagrid::make_vertex( domain, point_type(0.5, 0.5) );
     
     
-    viennagrid::create_element<polygon_type>( domain, handles.begin(), handles.end() );
+    viennagrid::make_element<polygon_type>( domain, handles.begin(), handles.end() );
     
     std::cout << viennagrid::elements<viennagrid::polygon_tag>(domain)[0] << std::endl;
     

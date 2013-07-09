@@ -291,7 +291,7 @@ namespace viennagrid
   typename viennagrid::result_of::point_type< ElementType >::type
   circumcenter(ElementType const & cell)
   {
-   return circumcenter( accessor::default_point_accessor(cell), cell );
+   return circumcenter( default_point_accessor(cell), cell );
   }
   
     

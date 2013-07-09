@@ -90,7 +90,7 @@ namespace viennagrid
   typename viennagrid::result_of::coord_type< element_t<ElementTag, WrappedConfigType> >::type
   surface( element_t<ElementTag, WrappedConfigType> const & element)
   {
-    return surface( accessor::default_point_accessor(element), element );
+    return surface( default_point_accessor(element), element );
   }
   
   

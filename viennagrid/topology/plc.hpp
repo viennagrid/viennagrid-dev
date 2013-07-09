@@ -38,7 +38,21 @@ namespace viennagrid
     static std::string name() { return "PLC"; }
   };
   
+  //Line:
+  /** @brief Topological description of the 0-cells of a polygon */
+  template <>
+  struct boundary_elements<plc_tag, vertex_tag>
+  {
+    typedef dynamic_unique_layout_tag     layout_tag;
+    enum{ num = -1 };
+  };
   
+  template <>
+  struct boundary_elements<plc_tag, line_tag>
+  {
+    typedef dynamic_unique_layout_tag     layout_tag;
+    enum{ num = -1 };
+  };
   
   
   
@@ -47,37 +61,23 @@ namespace viennagrid
   namespace element_topology
   {
 
-    //Line:
-    /** @brief Topological description of the 0-cells of a polygon */
-    template <>
-    struct boundary_cells<plc_tag, vertex_tag>
-    {
-      typedef dynamic_unique_layout_tag     layout_tag;
-      enum{ num = -1 };
-    };
-    
-    template <>
-    struct boundary_cells<plc_tag, line_tag>
-    {
-      typedef dynamic_unique_layout_tag     layout_tag;
-      enum{ num = -1 };
-    };
+
     
     
-    template<typename bnd_cell_type>
-    struct bndcell_generator<plc_tag, line_tag, bnd_cell_type>
+    template<typename BoundaryElementType>
+    struct boundary_element_generator<plc_tag, line_tag, BoundaryElementType>
     {
         template<typename element_type, typename inserter_type>
-        static void create_bnd_cells(element_type & plc, inserter_type & inserter)
+        static void create_boundary_elements(element_type & plc, inserter_type & inserter)
         {
         }
     };
     
-    template<typename bnd_cell_type>
-    struct bndcell_generator<plc_tag, simplex_tag<0>, bnd_cell_type>
+    template<typename BoundaryElementType>
+    struct boundary_element_generator<plc_tag, simplex_tag<0>, BoundaryElementType>
     {
         template<typename element_type, typename inserter_type>
-        static void create_bnd_cells(element_type & plc, inserter_type & inserter)
+        static void create_boundary_elements(element_type & plc, inserter_type & inserter)
         {
             typedef typename result_of::element<element_type, line_tag>::type LineType;
             typedef typename result_of::element_range<element_type, line_tag>::type LineRange;
