@@ -20,16 +20,16 @@ using std::endl;
 #include "viennagrid/topology/vertex.hpp"
 #include "viennagrid/topology/line.hpp"
 #include "viennagrid/topology/simplex.hpp"
+#include "viennagrid/topology/quadrilateral.hpp"
 
 
 #include "viennagrid/config/element_config.hpp"
 #include "viennagrid/config/topology_config.hpp"
+#include "viennagrid/config/domain_config.hpp"
 
-#include "viennagrid/element/element_key.hpp"
-#include "viennagrid/element/element_orientation.hpp"
-#include "viennagrid/point.hpp"
-
-
+#include "viennagrid/domain/topology.hpp"
+#include "viennagrid/domain/domain.hpp"
+#include "viennagrid/domain/element_creation.hpp"
 
 
     //
@@ -87,7 +87,7 @@ using std::endl;
                 >::type,
 
                 
-                viennagrid::polygon_tag,
+                viennagrid::quadrilateral_tag,
                 viennagrid::meta::make_typemap<
                     viennagrid::config::element_id_tag,
                     viennagrid::storage::smart_id_tag<int>,
@@ -133,130 +133,33 @@ using std::endl;
 
 int main()
 {
+    typedef viennagrid::domain_t<config> DomainType;
     
-
+    DomainType domain;
     
+    typedef viennagrid::result_of::element<DomainType, viennagrid::vertex_tag>::type VertexType;
+    typedef viennagrid::result_of::element<DomainType, viennagrid::line_tag>::type LineType;
+    typedef viennagrid::result_of::element<DomainType, viennagrid::triangle_tag>::type TriangleType;
+    typedef viennagrid::result_of::element<DomainType, viennagrid::quadrilateral_tag>::type QuadrilateralType;
     
+    typedef viennagrid::result_of::handle<DomainType, viennagrid::vertex_tag>::type VertexHandleType;
     
-    //
-    // Generates the same config as show above in comment
-    //
+    VertexHandleType vh0 = viennagrid::make_vertex( domain );
+    VertexHandleType vh1 = viennagrid::make_vertex( domain );
+    VertexHandleType vh2 = viennagrid::make_vertex( domain );
+    VertexHandleType vh3 = viennagrid::make_vertex( domain );
+    VertexHandleType vh4 = viennagrid::make_vertex( domain );
     
-    //typedef viennagrid::result_of::default_topologic_config<viennagrid::tetrahedron_tag, handle_tag>::type config;
-       
+    viennagrid::make_quadrilateral( domain, vh0, vh1, vh2, vh3 );
+    viennagrid::make_triangle( domain, vh2, vh3, vh4 );
     
-        
-    //
-    // typedefs for the element types
-    //
-    typedef viennagrid::element_t<viennagrid::vertex_tag, config> vertex_type;
-    typedef viennagrid::element_t<viennagrid::line_tag, config> line_type;
-//     typedef viennagrid::result_of::element<config, viennagrid::triangle_tag>::type triangle_type;
+    std::cout << "Triangle of Domain:" << std::endl;
+    std::copy( viennagrid::elements<viennagrid::triangle_tag>(domain).begin(), viennagrid::elements<viennagrid::triangle_tag>(domain).end(), std::ostream_iterator<TriangleType>(std::cout, "\n") );
+    std::cout << std::endl;
     
-    
-    
-    
-    //typedef viennagrid::storage::result_of::continuous_id_generator< id_generator_config >::type id_generator_type;
-    
-    
-    
-    
-//     cout << "The Vertex Type:" << endl;
-//     vertex_type::print_class();
-//     cout << endl;
-//     
-//     cout << "The Line Type:" << endl;
-//     line_type::print_class();
-//     cout << endl;
-//     
-// //     cout << "The Triangle Type:" << endl;
-// //     triangle_type::print_class();
-// //     cout << endl;
-//     
-//     
-//     cout << endl;
-//     cout << endl;
-//         
-// 
-//     //
-//     // setting up the domain
-//     //
-//     
-//     typedef viennagrid::result_of::element_container_typemap<config>::type element_container_typemap;
-//     
-//     //cout << typeid(element_container_typelist).name() << endl;
-//     
-//     typedef viennagrid::storage::result_of::collection< element_container_typemap >::type domain_container_collection_type;
-//     domain_container_collection_type domain_container_collection;
-//     
-// 
-// //     typedef viennagrid::storage::result_of::continuous_id_generator_config<
-// //         viennagrid::storage::container_collection::result_of::value_typelist<domain_container_collection_type>::type,
-// //         viennagrid::storage::smart_id_tag<int>
-// //     >::type id_generator_config;
-//     
-//     typedef viennagrid::result_of::continuous_id_generator_config< config >::type id_generator_config;
-//     
-//     typedef viennagrid::storage::result_of::continuous_id_generator< id_generator_config >::type id_generator_type;
-//     id_generator_type id_generator;
-//     
-//     typedef viennagrid::storage::result_of::physical_inserter<domain_container_collection_type, id_generator_type&>::type inserter_type;
-//     inserter_type inserter(domain_container_collection, id_generator);
-//     
-// 
-//     
-//     // Adding a tetrahedron
-//     //
-// 
-//     vertex_type v0;
-//     vertex_type v1;
-//     vertex_type v2;
-//     vertex_type v3;
-//     
-//     inserter(v0);
-//     inserter(v1);
-//     inserter(v2);
-//     inserter(v3);
-    
-    
-//     tetrahedron_type tet(domain_container_collection);
-//     
-//     tet.container( viennagrid::dimension_tag<0>() ).set_handle( viennagrid::storage::collection::get<vertex_type>(domain_container_collection).handle_at(0), 0);
-//     tet.container( viennagrid::dimension_tag<0>() ).set_handle( viennagrid::storage::collection::get<vertex_type>(domain_container_collection).handle_at(1), 1);
-//     tet.container( viennagrid::dimension_tag<0>() ).set_handle( viennagrid::storage::collection::get<vertex_type>(domain_container_collection).handle_at(2), 2);
-//     tet.container( viennagrid::dimension_tag<0>() ).set_handle( viennagrid::storage::collection::get<vertex_type>(domain_container_collection).handle_at(3), 3);
-//     
-//     inserter(tet);
-//     
-    
-    
-    
-    
-
-    
-    
-    
-    
-    //
-    // display the domain content
-    //
-    
-//     cout << "All vertices of the domain" << endl;
-//     std::copy( viennagrid::storage::collection::get<vertex_type>(domain_container_collection).begin(), viennagrid::storage::collection::get<vertex_type>(domain_container_collection).end(), std::ostream_iterator<vertex_type>(cout, "\n") );
-//     cout << endl;
-//     
-//     cout << "All triangles of the domain" << endl;
-//     std::copy( viennagrid::storage::collection::get<line_type>(domain_container_collection).begin(), viennagrid::storage::collection::get<line_type>(domain_container_collection).end(), std::ostream_iterator<line_type>(cout, "\n") );
-//     cout << endl;
-//     
-//     cout << "All lines of the domain" << endl;
-//     std::copy( viennagrid::storage::collection::get<triangle_type>(domain_container_collection).begin(), viennagrid::storage::collection::get<triangle_type>(domain_container_collection).end(), std::ostream_iterator<triangle_type>(cout, "\n") );
-//     cout << endl;
-
-
-    
-    
-    
+    std::cout << "Quadrilaterals of Domain:" << std::endl;
+    std::copy( viennagrid::elements<viennagrid::quadrilateral_tag>(domain).begin(), viennagrid::elements<viennagrid::quadrilateral_tag>(domain).end(), std::ostream_iterator<QuadrilateralType>(std::cout, "\n") );
+    std::cout << std::endl;
 
     return 0;
 }

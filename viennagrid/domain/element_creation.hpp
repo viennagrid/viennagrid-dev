@@ -199,6 +199,35 @@ namespace viennagrid
         return make_element<viennagrid::tetrahedron_tag>( domain, handles.begin(), handles.end() );
     }
     
+    
+    
+    template<typename domain_type, typename vertex_handle_type>
+    typename result_of::handle<domain_type, quadrilateral_tag>::type make_quadrilateral( domain_type & domain, vertex_handle_type v0, vertex_handle_type v1, vertex_handle_type v2, vertex_handle_type v3 )
+    {
+        viennagrid::storage::static_array<vertex_handle_type, 4> handles;
+        handles[0] = v0;
+        handles[1] = v1;
+        handles[2] = v2;
+        handles[3] = v3;
+        
+        return make_element<viennagrid::quadrilateral_tag>( domain, handles.begin(), handles.end() );
+    }
+    
+    template<typename domain_type, typename vertex_handle_type>
+    typename result_of::handle<domain_type, hexahedron_tag>::type make_hexahedron( domain_type & domain, vertex_handle_type v0, vertex_handle_type v1, vertex_handle_type v2,
+                                                                                                         vertex_handle_type v3, vertex_handle_type v4, vertex_handle_type v5 )
+    {
+        viennagrid::storage::static_array<vertex_handle_type, 6> handles;
+        handles[0] = v0;
+        handles[1] = v1;
+        handles[2] = v2;
+        handles[2] = v3;
+        handles[3] = v4;
+        handles[4] = v5;
+        
+        return make_element<viennagrid::hexahedron_tag>( domain, handles.begin(), handles.end() );
+    }
+    
 }
 
 
