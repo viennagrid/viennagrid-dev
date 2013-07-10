@@ -87,12 +87,22 @@ namespace viennagrid
     };
 
 
+    namespace result_of
+    {
+
+      template<typename domain_or_element_type>
+      struct default_point_accessor
+      {
+        typedef appendix_accessor_t<
+          typename viennagrid::result_of::point<domain_or_element_type>::type,
+          typename viennagrid::result_of::vertex<domain_or_element_type>::type
+        > type;
+      };
+      
+    }
 
     template<typename domain_or_element_type>
-    appendix_accessor_t<
-      typename viennagrid::result_of::point<domain_or_element_type>::type,
-      typename viennagrid::result_of::vertex<domain_or_element_type>::type
-      > default_point_accessor( domain_or_element_type const & )
+    typename result_of::default_point_accessor<domain_or_element_type>::type default_point_accessor( domain_or_element_type const & )
     {
       return appendix_accessor_t<
         typename viennagrid::result_of::point<domain_or_element_type>::type,
