@@ -85,7 +85,7 @@ if(BUILD_MANUAL)
       COMMAND ${LATEX_COMPILER} viennagrid.tex
       COMMAND ${BIBTEX_COMPILER} viennagrid
       COMMAND ${LATEX_COMPILER} viennagrid.tex
-      COMMAND ${DVIPS_CONVERTER} -Ppdf -G0 -ta4 viennacl.dvi
+      COMMAND ${DVIPS_CONVERTER} -Ppdf -G0 -ta4 viennagrid.dvi
       COMMAND ${PS2PDF_CONVERTER} -dPDFSETTINGS=/prepress
          -dCompatibilityLevel=1.3 -dMAxSubsetPct=100 -dSubsetFonts=true
          -dEmbedAllFonts=true -sPAPERSIZE=a4 -dAutoRotatePages=/None
