@@ -37,4 +37,4 @@ endforeach()
 
 add_subdirectory(tutorial)
 add_subdirectory(meta)
-add_subdirectory(geometry)
+#add_subdirectory(geometry)

@@ -60,7 +60,7 @@
 #include "viennagrid/domain/topology.hpp"
 
 //algorithms:
-#include "viennagrid/algorithm/angle.hpp"
+//#include "viennagrid/algorithm/angle.hpp"
 #include "viennagrid/algorithm/boundary.hpp"
 #include "viennagrid/algorithm/centroid.hpp"
 #include "viennagrid/algorithm/circumcenter.hpp"
