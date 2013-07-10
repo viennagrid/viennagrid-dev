@@ -68,7 +68,7 @@ namespace viennagrid
                 const reference operator* () const { return view->dereference_handle( handle() ); }
 
                 pointer operator->() { return &(operator* ()); }
-                const pointer operator->() const { return &(operator* ()); }
+                pointer operator->() const { return &(operator* ()); }
 
             private:
                 view_t * view;
@@ -121,7 +121,7 @@ namespace viennagrid
                 const reference operator* () const { return view->dereference_handle( handle() ); }
 
                 pointer operator->() { return &(operator* ()); }
-                const pointer operator->() const { return &(operator* ()); }
+                pointer operator->() const { return &(operator* ()); }
 
             private:
                 view_t * view;

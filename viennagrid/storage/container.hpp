@@ -330,7 +330,7 @@ namespace viennagrid
 
 
                 value_type operator* () { return & base_iterator::operator*(); }
-                value_type const operator* () const { return & base_iterator::operator*(); }
+                value_type operator* () const { return & base_iterator::operator*(); }
             };
 
             template<typename base_iterator>
@@ -394,7 +394,7 @@ namespace viennagrid
 
 
                 value_type operator* () { return & base_iterator::operator*(); }
-                value_type const operator* () const { return & base_iterator::operator*(); }
+                value_type operator* () const { return & base_iterator::operator*(); }
             };
 
             template<typename base_iterator>
