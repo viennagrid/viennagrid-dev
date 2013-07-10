@@ -1,0 +1,8 @@
+This is the build directory of ViennaGrid. Build here using
+$> cmake ..
+$> make
+A wider range of options is available with 
+$> ccmake ..
+or
+#> cmake-gui ..
+
