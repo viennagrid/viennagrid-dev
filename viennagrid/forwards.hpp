@@ -281,28 +281,28 @@ namespace viennagrid
     struct topologic_cell_dimension;
 
     template<typename something>
-    struct cell_types;
+    struct cells;
 
     template<typename something>
-    struct cell_type;
+    struct cell;
 
     template<typename something>
     struct cell_tag;
 
 
     template<typename something>
-    struct point_type;
+    struct point;
 
     template<typename something>
-    struct coord_type
+    struct coord
     {
-        typedef typename coord_type< typename point_type<something>::type >::type type;
+        typedef typename coord< typename point<something>::type >::type type;
     };
 
     template<typename something>
     struct geometric_dimension
     {
-        static const int value = geometric_dimension< typename point_type<something>::type >::value;
+        static const int value = geometric_dimension< typename point<something>::type >::value;
     };
 
 
@@ -465,7 +465,7 @@ namespace viennagrid
 
 
     template<typename element_type>
-    struct facet_type;
+    struct facet;
 
     template<typename element_type>
     struct facet_handle;
@@ -647,7 +647,7 @@ namespace viennagrid
 
 
     template<typename element_type>
-    struct facet_type
+    struct facet
     {
         typedef typename element<element_type, typename facet_tag<element_type>::type >::type type;
     };

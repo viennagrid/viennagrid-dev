@@ -47,7 +47,7 @@ int main()
   typedef viennagrid::result_of::segmentation<DomainType>::type        SegmentationType;
   typedef SegmentationType::segment_type                               SegmentType;
   
-  typedef viennagrid::result_of::point_type<DomainType>::type          PointType;
+  typedef viennagrid::result_of::point<DomainType>::type          PointType;
   typedef viennagrid::result_of::element<DomainType, viennagrid::vertex_tag>::type     VertexType;
   typedef viennagrid::result_of::element<DomainType, viennagrid::line_tag>::type       EdgeType;
   typedef viennagrid::result_of::element<DomainType, CellTag::facet_tag>::type         FacetType;

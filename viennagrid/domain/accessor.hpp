@@ -90,12 +90,12 @@ namespace viennagrid
 
     template<typename domain_or_element_type>
     appendix_accessor_t<
-      typename viennagrid::result_of::point_type<domain_or_element_type>::type,
+      typename viennagrid::result_of::point<domain_or_element_type>::type,
       typename viennagrid::result_of::vertex<domain_or_element_type>::type
       > default_point_accessor( domain_or_element_type const & )
     {
       return appendix_accessor_t<
-        typename viennagrid::result_of::point_type<domain_or_element_type>::type,
+        typename viennagrid::result_of::point<domain_or_element_type>::type,
         typename viennagrid::result_of::vertex<domain_or_element_type>::type
       >();
     }
@@ -104,13 +104,13 @@ namespace viennagrid
     namespace result_of
     {
         template<typename value_type, typename WrappedConfigType>
-        struct point_type< appendix_accessor_t<value_type, element_t<vertex_tag, WrappedConfigType> > >
+        struct point< appendix_accessor_t<value_type, element_t<vertex_tag, WrappedConfigType> > >
         {
             typedef value_type type;
         };
 
         template<typename value_type, typename WrappedConfigType>
-        struct point_type< const appendix_accessor_t<value_type, element_t<vertex_tag, WrappedConfigType> > >
+        struct point< const appendix_accessor_t<value_type, element_t<vertex_tag, WrappedConfigType> > >
         {
             typedef value_type type;
         };
@@ -473,13 +473,13 @@ namespace viennagrid
     namespace result_of
     {
         template<typename ContainerType, typename AccessType, typename AccessTag>
-        struct point_type< viennadata::container_accessor<ContainerType, AccessType, AccessTag> >
+        struct point< viennadata::container_accessor<ContainerType, AccessType, AccessTag> >
         {
             typedef typename viennadata::container_accessor<ContainerType, AccessType, AccessTag>::value_type type;
         };
 
         template<typename ContainerType, typename AccessType, typename AccessTag>
-        struct point_type< const viennadata::container_accessor<ContainerType, AccessType, AccessTag> >
+        struct point< const viennadata::container_accessor<ContainerType, AccessType, AccessTag> >
         {
             typedef typename viennadata::container_accessor<ContainerType, AccessType, AccessTag>::value_type type;
         };

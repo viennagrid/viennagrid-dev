@@ -42,8 +42,8 @@ namespace viennagrid
                              VertexHandleType vh2_1, VertexHandleType vh2_2)
   {
     typedef typename viennagrid::storage::handle::result_of::value_type< VertexHandleType >::type VertexType;
-    typedef typename viennagrid::result_of::point_type< GeometricContainerType >::type PointType;
-    typedef typename viennagrid::result_of::coord_type< PointType >::type ScalarType;
+    typedef typename viennagrid::result_of::point< GeometricContainerType >::type PointType;
+    typedef typename viennagrid::result_of::coord< PointType >::type ScalarType;
 
     const VertexType & v1_1 = viennagrid::dereference_handle( domain, vh1_1 );
     const VertexType & v1_2 = viennagrid::dereference_handle( domain, vh1_2 );

@@ -114,7 +114,7 @@ namespace viennagrid
     template <typename PointType>
     struct cartesian_point
     {
-      typedef viennagrid::point_t<typename result_of::coord_type<PointType>::type,
+      typedef viennagrid::point_t<typename result_of::coord<PointType>::type,
                                   viennagrid::cartesian_cs<viennagrid::traits::static_size<PointType>::value>
                                  >                    type;
     };
@@ -282,7 +282,7 @@ namespace viennagrid
 
     /** @brief Implementation of p1 -= p2 for a cartesian coordinate system */
     template <typename PointType>
-    static PointType & inplace_stretch(PointType & p1, typename result_of::coord_type<PointType>::type factor)
+    static PointType & inplace_stretch(PointType & p1, typename result_of::coord<PointType>::type factor)
     {
       typedef typename PointType::size_type      size_type;
       for (size_type i=0; i<p1.size(); ++i)
@@ -411,7 +411,7 @@ namespace viennagrid
     enum { dim = 2 };
 
     template <typename PointType>
-    static PointType & inplace_stretch(PointType & p1, typename result_of::coord_type<PointType>::type factor)
+    static PointType & inplace_stretch(PointType & p1, typename result_of::coord<PointType>::type factor)
     {
       p1[0] *= factor;
       return p1;
@@ -424,7 +424,7 @@ namespace viennagrid
     enum { dim = 3 };
 
     template <typename PointType>
-    static PointType & inplace_stretch(PointType & p1, typename result_of::coord_type<PointType>::type factor)
+    static PointType & inplace_stretch(PointType & p1, typename result_of::coord<PointType>::type factor)
     {
       p1[0] *= factor;
       return p1;
@@ -438,7 +438,7 @@ namespace viennagrid
 
     /** @brief Implementation of p1 *= factor for a cylindrical coordinate system */
     template <typename PointType>
-    static PointType & inplace_stretch(PointType & p1, typename result_of::coord_type<PointType>::type factor)
+    static PointType & inplace_stretch(PointType & p1, typename result_of::coord<PointType>::type factor)
     {
       static const int DIM = viennagrid::traits::static_size<PointType>::value;
 
@@ -707,7 +707,7 @@ namespace viennagrid
     {
 
         template<typename CoordType, typename CoordinateSystem>
-        struct coord_type< point_t<CoordType, CoordinateSystem> >
+        struct coord< point_t<CoordType, CoordinateSystem> >
         {
             typedef CoordType type;
         };

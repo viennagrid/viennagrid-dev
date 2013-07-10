@@ -56,8 +56,8 @@ namespace viennagrid
         typedef typename SegmentationType::segment_id_type segment_id_type;
 
 
-        typedef typename viennagrid::result_of::point_type<DomainType>::type PointType;
-        typedef typename viennagrid::result_of::coord_type<PointType>::type CoordType;
+        typedef typename viennagrid::result_of::point<DomainType>::type PointType;
+        typedef typename viennagrid::result_of::coord<PointType>::type CoordType;
         enum { geometric_dim = viennagrid::traits::static_size<PointType>::value };
 
         typedef typename viennagrid::result_of::cell_tag<DomainType>::type CellTag;

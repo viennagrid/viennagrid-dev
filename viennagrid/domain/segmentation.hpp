@@ -77,9 +77,9 @@ namespace viennagrid
 
 
         template<typename segmentation_type>
-        struct point_type< segment_t<segmentation_type> >
+        struct point< segment_t<segmentation_type> >
         {
-            typedef typename point_type<typename segment_t<segmentation_type>::view_type>::type type;
+            typedef typename point<typename segment_t<segmentation_type>::view_type>::type type;
         };
 
 
@@ -247,19 +247,19 @@ namespace viennagrid
 
 
     template<typename SegmentationType>
-    typename result_of::point_type< segment_t<SegmentationType> >::type & point(segment_t<SegmentationType> & segment, typename result_of::vertex< segment_t<SegmentationType> >::type & vertex)
+    typename result_of::point< segment_t<SegmentationType> >::type & point(segment_t<SegmentationType> & segment, typename result_of::vertex< segment_t<SegmentationType> >::type & vertex)
     { return point( segment.view(), vertex ); }
 
     template<typename SegmentationType>
-    typename result_of::point_type< segment_t<SegmentationType> >::type const & point( segment_t<SegmentationType> const & segment, typename result_of::vertex< segment_t<SegmentationType> >::type const & vertex)
+    typename result_of::point< segment_t<SegmentationType> >::type const & point( segment_t<SegmentationType> const & segment, typename result_of::vertex< segment_t<SegmentationType> >::type const & vertex)
     { return point( segment.view(), vertex ); }
 
     template<typename SegmentationType>
-    typename result_of::point_type< segment_t<SegmentationType> >::type & point(segment_t<SegmentationType> & segment, typename result_of::vertex_handle< segment_t<SegmentationType> >::type vertex)
+    typename result_of::point< segment_t<SegmentationType> >::type & point(segment_t<SegmentationType> & segment, typename result_of::vertex_handle< segment_t<SegmentationType> >::type vertex)
     { return point( segment.view(), vertex ); }
 
     template<typename SegmentationType>
-    typename result_of::point_type< segment_t<SegmentationType> >::type const & point( segment_t<SegmentationType> const & segment, typename result_of::const_vertex_handle< segment_t<SegmentationType> >::type vertex)
+    typename result_of::point< segment_t<SegmentationType> >::type const & point( segment_t<SegmentationType> const & segment, typename result_of::const_vertex_handle< segment_t<SegmentationType> >::type vertex)
     { return point( segment.view(), vertex ); }
 
 

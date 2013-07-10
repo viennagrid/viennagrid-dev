@@ -95,7 +95,7 @@ namespace viennagrid
     {
       typedef typename viennagrid::result_of::element<DomainType, CellTag>::type CellType;
 
-      typedef typename viennagrid::result_of::point_type<DomainType>::type                            PointType;
+      typedef typename viennagrid::result_of::point<DomainType>::type                            PointType;
       typedef typename viennagrid::result_of::element<DomainType, vertex_tag>::type                         VertexType;
 
       typedef typename viennagrid::result_of::const_element_range<DomainType, vertex_tag>::type               VertexRange;
@@ -190,7 +190,7 @@ namespace viennagrid
     {
       typedef typename viennagrid::result_of::element<DomainType, CellTag>::type CellType;
 
-      typedef typename viennagrid::result_of::point_type<DomainType>::type                            PointType;
+      typedef typename viennagrid::result_of::point<DomainType>::type                            PointType;
       typedef typename viennagrid::result_of::element<DomainType, vertex_tag>::type                         VertexType;
       typedef typename viennagrid::result_of::element<DomainType, line_tag>::type                         EdgeType;
 
@@ -265,15 +265,14 @@ namespace viennagrid
     //template <typename PointType, typename ConfigType>
     //PointType point_to_local_coordinates(PointType const & p, viennagrid::element_t<ConfigType, viennagrid::simplex_tag<2> > const & triangle)
     template<typename GeometricDomain, typename TriangleType>
-    typename viennagrid::result_of::point_type<GeometricDomain>::type point_to_local_coordinates( const typename viennagrid::result_of::point_type<GeometricDomain>::type & p,
+    typename viennagrid::result_of::point<GeometricDomain>::type point_to_local_coordinates( const typename viennagrid::result_of::point<GeometricDomain>::type & p,
                                                                                                   const GeometricDomain & domain,
                                                                                                   const TriangleType & triangle)
     {
       typedef TriangleType CellType;
       typedef typename viennagrid::result_of::const_element_range<CellType, vertex_tag>::type               VertexRange;
-      typedef typename viennagrid::result_of::point_type<GeometricDomain>::type PointType;
-      typedef typename viennagrid::result_of::coord_type<PointType>::type                   value_type;
-
+      typedef typename viennagrid::result_of::point<GeometricDomain>::type PointType;
+      typedef typename viennagrid::result_of::coord<PointType>::type                   value_type;
       VertexRange vertices = viennagrid::elements<viennagrid::vertex_tag>(triangle);
 
       PointType const & a = viennagrid::point(domain, vertices[0]);
@@ -330,7 +329,7 @@ namespace viennagrid
     {
       typedef typename viennagrid::result_of::element<DomainType, CellTag>::type CellType;
 
-      typedef typename viennagrid::result_of::point_type<DomainType>::type                            PointType;
+      typedef typename viennagrid::result_of::point<DomainType>::type                            PointType;
       typedef typename viennagrid::result_of::element<DomainType, vertex_tag>::type                         VertexType;
       typedef typename viennagrid::result_of::element<DomainType, line_tag>::type                         EdgeType;
 
@@ -611,7 +610,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::element<DomainType, CellTag>::type CellType;
       typedef typename viennagrid::result_of::const_handle<DomainType, CellTag>::type ConstCellHandleType;
 
-      typedef typename viennagrid::result_of::point_type<DomainType>::type                            PointType;
+      typedef typename viennagrid::result_of::point<DomainType>::type                            PointType;
       typedef typename viennagrid::result_of::element<DomainType, vertex_tag>::type                         VertexType;
       typedef typename viennagrid::result_of::element<DomainType, line_tag>::type                         EdgeType;
       typedef typename viennagrid::result_of::const_handle<DomainType, line_tag>::type                         ConstEdgeHandleType;
@@ -831,7 +830,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::element<DomainType, CellTag>::type CellType;
       typedef typename viennagrid::result_of::const_handle<DomainType, CellTag>::type ConstCellHandleType;
 
-      typedef typename viennagrid::result_of::point_type<DomainType>::type                            PointType;
+      typedef typename viennagrid::result_of::point<DomainType>::type                            PointType;
       typedef typename viennagrid::result_of::element<DomainType, vertex_tag>::type                         VertexType;
       typedef typename viennagrid::result_of::element<DomainType, line_tag>::type                         EdgeType;
       typedef typename viennagrid::result_of::element<DomainType, quadrilateral_tag>::type                         FacetType;

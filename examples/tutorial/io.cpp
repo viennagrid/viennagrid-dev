@@ -88,7 +88,7 @@ void write_opendx(DomainType const &)
 template <typename DomainType, typename SegmentationType, typename UserData>
 void read_vtk(DomainType & domain, SegmentationType & segmentation, UserData & data)
 {
-  typedef typename viennagrid::result_of::cell_type< DomainType >::type     cell_type;
+  typedef typename viennagrid::result_of::cell< DomainType >::type     cell_type;
   typedef typename viennagrid::result_of::vertex< DomainType >::type        vertex_type;
 
   //
@@ -177,7 +177,7 @@ void read_vtk(DomainType & domain, SegmentationType & segmentation, UserData & d
 template <typename DomainType, typename UserData>
 void write_vtk(DomainType & domain, UserData & data)
 {
-  typedef typename viennagrid::result_of::cell_type< DomainType >::type     cell_type;
+  typedef typename viennagrid::result_of::cell< DomainType >::type     cell_type;
   typedef typename viennagrid::result_of::vertex< DomainType >::type        vertex_type;
 
   //

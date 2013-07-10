@@ -1002,7 +1002,7 @@ namespace viennagrid
 
 
         template<typename something>
-        struct cell_types
+        struct cells
         {
             typedef typename elements_of_topologic_dim<
                 something,
@@ -1012,9 +1012,9 @@ namespace viennagrid
 
 
         template<typename something>
-        struct cell_type
+        struct cell
         {
-            typedef typename cell_types<something>::type all_cell_types;
+            typedef typename cells<something>::type all_cell_types;
             typedef typename viennagrid::meta::STATIC_ASSERT< viennagrid::meta::typelist::result_of::size<all_cell_types>::value == 1 >::type static_assert_typedef;
 
             typedef typename viennagrid::meta::typelist::result_of::at<all_cell_types,0>::type type;
@@ -1023,7 +1023,7 @@ namespace viennagrid
         template<typename something>
         struct cell_tag
         {
-            typedef typename element_tag< typename cell_type<something>::type >::type type;
+            typedef typename element_tag< typename cell<something>::type >::type type;
         };
     }
 

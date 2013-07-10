@@ -30,9 +30,9 @@ int main()
   typedef viennagrid::triangular_2d_domain                        domain_type;
   typedef viennagrid::result_of::domain_view< domain_type >::type view_type;
   
-  typedef viennagrid::result_of::point_type<domain_type>::type point_type;
+  typedef viennagrid::result_of::point<domain_type>::type point_type;
   
-  typedef viennagrid::result_of::cell_type< domain_type >::type     cell_type;
+  typedef viennagrid::result_of::cell< domain_type >::type     cell_type;
   typedef viennagrid::result_of::vertex< domain_type >::type     vertex_type;
   typedef viennagrid::result_of::vertex_handle< domain_type >::type     vertex_handle_type;
   typedef viennagrid::result_of::triangle_handle< domain_type >::type   triangle_handle_type;

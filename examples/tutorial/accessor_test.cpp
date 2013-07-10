@@ -100,7 +100,7 @@ int main()
   std::vector<bool> facet_boundary_marker;
   viennadata::container_accessor<
     std::vector<bool>,
-    viennagrid::result_of::facet_type< viennagrid::result_of::cell_type<Domain>::type >::type,
+    viennagrid::result_of::facet< viennagrid::result_of::cell<Domain>::type >::type,
     viennadata::id_access_tag> acc(facet_boundary_marker);
 
   std::vector<bool> vertex_boundary_marker;

@@ -57,7 +57,6 @@ namespace viennagrid
                             DomainType2 const & seg1)
           {
               typedef typename viennagrid::result_of::cell_tag<DomainType1>::type CellTag;
-              typedef typename viennagrid::result_of::point_type<DomainType1>::type                              PointType;
               typedef typename viennagrid::result_of::element<DomainType1, typename CellTag::facet_tag>::type   FacetType;
               typedef typename viennagrid::result_of::const_handle<DomainType1, typename CellTag::facet_tag>::type   ConstFacetHandleType;
               typedef typename viennagrid::result_of::element<DomainType1, CellTag>::type     CellType;

@@ -16,7 +16,7 @@ int main()
     typedef viennagrid::tetrahedral_3d_domain   domain_type;
     domain_type domain;
         
-    typedef viennagrid::result_of::point_type<domain_type>::type point_type;
+    typedef viennagrid::result_of::point<domain_type>::type point_type;
     typedef viennagrid::result_of::vertex_handle<domain_type>::type vertex_handle_type;
     typedef viennagrid::result_of::tetrahedron<domain_type>::type tetrahedron_type;
     typedef viennagrid::result_of::tetrahedron_handle<domain_type>::type tetrahedron_handle_type;

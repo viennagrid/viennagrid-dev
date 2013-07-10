@@ -53,7 +53,7 @@ int main()
     // typedefs for the element types
     //    
     
-    typedef viennagrid::result_of::point_type<domain_type>::type point_type;
+    typedef viennagrid::result_of::point<domain_type>::type point_type;
      
     typedef viennagrid::result_of::element<domain_type, viennagrid::vertex_tag>::type vertex_type;
     typedef viennagrid::result_of::handle<domain_type, viennagrid::vertex_tag>::type vertex_handle_type;

@@ -121,7 +121,7 @@ namespace viennagrid
     template<typename ConfigType>
     typename viennagrid::result_of::vertex_handle< domain_t<ConfigType> >::type
         make_vertex( domain_t<ConfigType> & domain,
-                       typename result_of::point_type< domain_t<ConfigType> >::type const & point )
+                       typename result_of::point< domain_t<ConfigType> >::type const & point )
     {
         typename viennagrid::result_of::vertex_handle< domain_t<ConfigType> >::type vtx_handle = make_vertex(domain);
         viennagrid::point(domain, vtx_handle) = point;
@@ -132,7 +132,7 @@ namespace viennagrid
     typename viennagrid::result_of::vertex_handle< domain_t<ConfigType> >::type
         make_vertex( domain_t<ConfigType> & domain,
                        typename viennagrid::result_of::element< domain_t<ConfigType>, vertex_tag>::type::id_type id,
-                       typename result_of::point_type< domain_t<ConfigType> >::type const & point )
+                       typename result_of::point< domain_t<ConfigType> >::type const & point )
     {
         typedef typename result_of::element< domain_t<ConfigType>, vertex_tag>::type element_type;
         element_type element;
@@ -147,8 +147,8 @@ namespace viennagrid
     template<typename ConfigType>
     typename result_of::handle<domain_t<ConfigType>, vertex_tag>::type
         make_unique_vertex( domain_t<ConfigType> & domain,
-                              typename result_of::point_type< domain_t<ConfigType> >::type const & p,
-                              typename viennagrid::result_of::coord_type< domain_t<ConfigType> >::type tolerance )
+                              typename result_of::point< domain_t<ConfigType> >::type const & p,
+                              typename result_of::coord< domain_t<ConfigType> >::type tolerance )
     {
         typedef domain_t<ConfigType> domain_type;
         typedef typename result_of::element_range<domain_type, vertex_tag>::type vertex_range_type;

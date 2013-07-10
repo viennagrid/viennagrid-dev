@@ -42,9 +42,9 @@ namespace viennagrid
                      EdgeRefinementFlagAccessor const edge_refinement_flag_accessor,
                      VertexToVertexHandleAccessor vertex_to_vertex_handle_accessor, RefinementVertexAccessor edge_to_vertex_handle_accessor)
     {
-      typedef typename viennagrid::result_of::point_type<DomainTypeIn>::type PointType;
+      typedef typename viennagrid::result_of::point<DomainTypeIn>::type PointType;
 
-      typedef typename viennagrid::result_of::coord_type<PointType>::type NumericType;
+      typedef typename viennagrid::result_of::coord<PointType>::type NumericType;
 
       typedef typename viennagrid::result_of::element<DomainTypeIn, vertex_tag>::type                                      VertexType;
       typedef typename VertexType::id_type                                      VertexIDType;
@@ -299,7 +299,7 @@ namespace viennagrid
               CellRefinementFlagAccessor const cell_refinement_flag_accessor)
   {
     typedef typename viennagrid::result_of::line<DomainTypeOut>::type EdgeType;
-    typedef typename viennagrid::result_of::cell_type<DomainTypeOut>::type CellType;
+    typedef typename viennagrid::result_of::cell<DomainTypeOut>::type CellType;
 
     std::deque<bool> edge_refinement_flag;
 
@@ -363,7 +363,7 @@ namespace viennagrid
   template <typename DomainTypeIn, typename DomainTypeOut>
   void refine_uniformly(DomainTypeIn const & domain_in, DomainTypeOut & domain_out)
   {
-    typedef typename viennagrid::result_of::cell_type<DomainTypeIn>::type CellType;
+    typedef typename viennagrid::result_of::cell<DomainTypeIn>::type CellType;
     refine_uniformly<CellType>(domain_in, domain_out);
   }
 
