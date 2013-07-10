@@ -2,7 +2,6 @@
 #include <typeinfo>
 
 #include <map>
-#include <boost/concept_check.hpp>
 
 using std::cout;
 using std::endl;
