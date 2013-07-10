@@ -351,6 +351,14 @@ namespace viennagrid
 
         bool segment_present( segment_id_type const & segment_id ) const { return segment_id_map.find(segment_id) != segment_id_map.end(); }
 
+
+        segment_type const & get_segment( segment_id_type const & segment_id ) const
+        {
+            typename segment_id_map_type::const_iterator it = segment_id_map.find(segment_id);
+            assert( it != segment_id_map.end() );
+            return it->second; // segment already is present
+        }
+        
         // create a new segment
         segment_type & get_make_segment( segment_id_type const & segment_id )
         {
@@ -372,7 +380,10 @@ namespace viennagrid
         segment_type & make_segment() { return get_make_segment( ++highest_id ); }
 
         segment_type & operator()( segment_id_type const & segment_id ) { return get_make_segment(segment_id); }
-        segment_type & operator[]( segment_id_type const & segment_id ) { return (*this)(segment_id); }
+        segment_type & operator[]( segment_id_type const & segment_id ) { return get_make_segment(segment_id); }
+
+        segment_type const & operator()( segment_id_type const & segment_id ) const { return get_segment(segment_id); }
+        segment_type const & operator[]( segment_id_type const & segment_id ) const { return get_segment(segment_id); }
 
         segment_id_type max_id() const { return highest_id; }
 
