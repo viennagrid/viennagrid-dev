@@ -12,7 +12,7 @@
 
    Authors:      Karl Rupp                           rupp@iue.tuwien.ac.at
                  Josef Weinbub                    weinbub@iue.tuwien.ac.at
-               
+
    (A list of additional contributors can be found in the PDF manual)
 
    License:      MIT (X11), see file LICENSE in the base directory
@@ -37,43 +37,43 @@ namespace viennagrid
     {
       enum { value = n_over_k<n-1, k-1>::value + n_over_k<n-1, k>::value };
     };
-    
+
     template <long n>
     struct n_over_k<n, 0>
     {
       enum { value = 1 };
     };
-    
+
     template <long k>
     struct n_over_k<0, k>
     {
       enum { value = 0 };
     };
-    
+
     template <>
     struct n_over_k<0, 0>
     {
       enum { value = 1 };
     };
-    
+
   }
-  
+
 
   /** @brief Topological description of an n-simplex.*/
   template <long n>
   struct simplex_tag
   {
     typedef simplex_tag<n-1> facet_tag;
-      
+
     enum{ dim = n };
-    static std::string name() 
+    static std::string name()
     {
       std::stringstream ss;
       ss << n << "-simplex";
       return ss.str();
     }
   };
-  
+
   /** @brief Topological description of the boundary k-cells an n-simplex */
   template <long n, long k>
   struct boundary_elements<simplex_tag<n>, simplex_tag<k> >
@@ -84,12 +84,12 @@ namespace viennagrid
     enum{ num = meta::n_over_k<n+1, k+1>::value };
   };
 
-  
+
   namespace element_topology
   {
     ///////////////////////////////// Generator for boundary cell elements ///////////////////////////////////
-    
-    
+
+
     template<long n, typename BoundaryElementType>
     struct boundary_element_generator<simplex_tag<n>, simplex_tag<1>, BoundaryElementType>
     {
@@ -97,20 +97,20 @@ namespace viennagrid
         static void create_boundary_elements(element_type & element, inserter_type & inserter)
         {
             BoundaryElementType boundary_element( inserter.get_physical_container_collection() );
-            
+
             int index = 0;
             for (int i = 0; i < boundary_elements<simplex_tag<n>, vertex_tag >::num; ++i)
                 for (int j = i+1; j < boundary_elements<simplex_tag<n>, vertex_tag >::num; ++j)
                 {
                     boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(i), 0 );
                     boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(j), 1 );
-                    
+
                     element.set_boundary_element( boundary_element, inserter(boundary_element), index++ );
                 }
         }
     };
-    
-    
+
+
     template<long n, typename BoundaryElementType>
     struct boundary_element_generator<simplex_tag<n>, simplex_tag<2>, BoundaryElementType>
     {
@@ -118,7 +118,7 @@ namespace viennagrid
         static void create_boundary_elements(element_type & element, inserter_type & inserter)
         {
             BoundaryElementType boundary_element( inserter.get_physical_container_collection() );
-            
+
             int index = 0;
             for (int i = 0; i < boundary_elements<simplex_tag<n>, vertex_tag >::num; ++i)
                 for (int j = i+1; j < boundary_elements<simplex_tag<n>, vertex_tag >::num; ++j)
@@ -127,18 +127,18 @@ namespace viennagrid
                         boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(i), 0 );
                         boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(j), 1 );
                         boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(k), 2 );
-                        
+
                         element.set_boundary_element( boundary_element, inserter(boundary_element), index++ );
                     }
         }
     };
 
-    
+
     // similarly for higher topological dimensions...
-    
+
   } //topology
-  
-    
+
+
 }
 
 #endif

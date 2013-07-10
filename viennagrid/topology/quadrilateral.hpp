@@ -12,7 +12,7 @@
 
    Authors:      Karl Rupp                           rupp@iue.tuwien.ac.at
                  Josef Weinbub                    weinbub@iue.tuwien.ac.at
-               
+
    (A list of additional contributors can be found in the PDF manual)
 
    License:      MIT (X11), see file LICENSE in the base directory
@@ -33,11 +33,11 @@ namespace viennagrid
   struct hypercube_tag<2>
   {
     typedef simplex_tag<1> facet_tag;
-      
+
     enum{ dim = 2 };
     static std::string name() { return "Quadrilateral"; }
   };
-  
+
   template <>
   struct boundary_elements<hypercube_tag<2>, simplex_tag<1> >
   {
@@ -46,7 +46,7 @@ namespace viennagrid
     typedef static_layout_tag     layout_tag;
     enum{ num = 4 };
   };
-  
+
   template <>
   struct boundary_elements<hypercube_tag<2>, simplex_tag<0> >
   {
@@ -55,7 +55,7 @@ namespace viennagrid
     typedef static_layout_tag     layout_tag;
     enum{ num = 4 };
   };
-  
+
   namespace element_topology
   {
       //fill edges:
@@ -68,7 +68,7 @@ namespace viennagrid
       //    |       |
       // v0 --------- v1
       //        e0
-    
+
     template<typename BoundaryElementType>
     struct boundary_element_generator<hypercube_tag<2>, simplex_tag<1>, BoundaryElementType>
     {
@@ -77,7 +77,7 @@ namespace viennagrid
         {
             BoundaryElementType boundary_element( inserter.get_physical_container_collection() );
             int index = 0;
-            
+
             boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(0), 0 );
             boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(1), 1 );
             element.set_boundary_element( boundary_element, inserter(boundary_element), index++ );
@@ -85,19 +85,19 @@ namespace viennagrid
             boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(0), 0 );
             boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(2), 1 );
             element.set_boundary_element( boundary_element, inserter(boundary_element), index++ );
-            
+
             boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(1), 0 );
             boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(3), 1 );
             element.set_boundary_element( boundary_element, inserter(boundary_element), index++ );
-            
+
             boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(2), 0 );
             boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(3), 1 );
             element.set_boundary_element( boundary_element, inserter(boundary_element), index++ );
         }
     };
-    
+
   }
-    
+
 }
 
 #endif

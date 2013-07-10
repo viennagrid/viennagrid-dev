@@ -10,7 +10,7 @@ namespace viennagrid
     {
         template<typename typelist>
         struct for_each_impl {};
-        
+
         template<typename head, typename tail>
         struct for_each_impl< viennagrid::meta::typelist_t<head, tail> >
         {
@@ -20,7 +20,7 @@ namespace viennagrid
                 f( tag<head>() );
                 for_each_impl<tail>::exec(f);
             }
-            
+
             template<typename functor>
             static void exec( const functor & f)
             {
@@ -28,7 +28,7 @@ namespace viennagrid
                 for_each_impl<tail>::exec(f);
             }
         };
-        
+
         template<>
         struct for_each_impl< viennagrid::meta::null_type >
         {
@@ -36,28 +36,28 @@ namespace viennagrid
             template<typename functor> static void exec( const functor & ) {}
         };
 
-        
+
         template<typename typelist, typename functor>
         void for_each(functor & f)
         { for_each_impl<typelist>::exec(f); }
-        
+
         template<typename typelist, typename functor>
         void for_each(const functor & f)
         { for_each_impl<typelist>::exec(f); }
-        
-        
-        
-        
+
+
+
+
         template<template<typename> class functor, typename typelist>
         struct TRANSFORM;
-       
-        
+
+
         template<template<typename> class functor>
         struct TRANSFORM<functor, viennagrid::meta::null_type>
         {
             typedef viennagrid::meta::null_type type;
         };
-        
+
         template<template<typename> class functor, typename head, typename tail>
         struct TRANSFORM< functor, viennagrid::meta::typelist_t<head, tail> >
         {
@@ -65,7 +65,7 @@ namespace viennagrid
                 typename functor<head>::type,
                 typename TRANSFORM<functor, tail>::type
             > type;
-            
+
         };
 
     }

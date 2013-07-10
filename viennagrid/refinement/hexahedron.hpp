@@ -12,7 +12,7 @@
 
    Authors:      Karl Rupp                           rupp@iue.tuwien.ac.at
                  Josef Weinbub                    weinbub@iue.tuwien.ac.at
-               
+
    (A list of additional contributors can be found in the PDF manual)
 
    License:      MIT (X11), see file LICENSE in the base directory

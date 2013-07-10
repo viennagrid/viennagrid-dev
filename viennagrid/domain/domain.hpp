@@ -12,7 +12,7 @@
 
    Authors:      Karl Rupp                           rupp@iue.tuwien.ac.at
                  Josef Weinbub                    weinbub@iue.tuwien.ac.at
-               
+
    (A list of additional contributors can be found in the PDF manual)
 
    License:      MIT (X11), see file LICENSE in the base directory
@@ -24,7 +24,7 @@
 
 namespace viennagrid
 {
-    
+
     namespace result_of
     {
         template<typename point_container_type>
@@ -35,48 +35,48 @@ namespace viennagrid
         {
             typedef typename viennagrid::result_of::vertex< domain_t<ConfigType> >::type::appendix_type type;
         };
-        
+
         template<typename ConfigType>
         struct point_type< const domain_t<ConfigType> >
         {
             typedef typename viennagrid::result_of::vertex< domain_t<ConfigType> >::type::appendix_type type;
         };
-        
+
         template<typename ElementTag, typename WrappedConfigType>
         struct point_type< element_t<ElementTag, WrappedConfigType> >
         {
             typedef typename viennagrid::result_of::vertex< element_t<ElementTag, WrappedConfigType> >::type::appendix_type type;
         };
-        
+
         template<typename ElementTag, typename WrappedConfigType>
         struct point_type< const element_t<ElementTag, WrappedConfigType> >
         {
             typedef typename viennagrid::result_of::vertex< element_t<ElementTag, WrappedConfigType> >::type::appendix_type type;
         };
     }
-    
-    
 
-    
+
+
+
     template<typename ConfigType>
     typename result_of::point_type< domain_t<ConfigType> >::type & point(domain_t<ConfigType> &, typename result_of::vertex< domain_t<ConfigType> >::type & vertex)
     { return vertex.appendix(); }
-    
+
     template<typename ConfigType>
     typename result_of::point_type< domain_t<ConfigType> >::type const & point(domain_t<ConfigType> const &, typename result_of::vertex< domain_t<ConfigType> >::type const & vertex)
     { return vertex.appendix(); }
-    
-    
+
+
     template<typename ConfigType>
     typename result_of::point_type< domain_t<ConfigType> >::type & point(domain_t<ConfigType> & domain, typename result_of::vertex_handle< domain_t<ConfigType> >::type vertex_handle)
     { return dereference_handle(domain, vertex_handle).appendix(); }
-    
+
     template<typename ConfigType>
     typename result_of::point_type< domain_t<ConfigType> >::type const & point(domain_t<ConfigType> const & domain, typename result_of::const_vertex_handle< domain_t<ConfigType> >::type vertex_handle)
     { return dereference_handle(domain, vertex_handle).appendix(); }
 
 
-    
+
     template<typename domain_type, typename id_type>
     typename viennagrid::result_of::iterator< typename viennagrid::result_of::element_range<domain_type, typename id_type::value_type::tag>::type >::type
             find_by_id(domain_type & domain, id_type id)
@@ -85,17 +85,17 @@ namespace viennagrid
         typedef typename element_type::tag element_tag;
         typedef typename viennagrid::result_of::element_range<domain_type, element_tag>::type RangeType;
         typedef typename viennagrid::result_of::iterator<RangeType>::type RangeIterator;
-        
+
         RangeType range = viennagrid::elements<element_tag>(domain);
         for (RangeIterator it = range.begin(); it != range.end(); ++it)
         {
             if ( viennagrid::dereference_handle(domain, it.handle()).id() == id )
                 return it;
         }
-        
+
         return range.end();
     }
-    
+
     template<typename domain_type, typename id_type>
     typename viennagrid::result_of::const_iterator< typename viennagrid::result_of::const_element_range<domain_type, typename id_type::value_type::tag>::type >::type
             find_by_id(const domain_type & domain, id_type id)
@@ -104,14 +104,14 @@ namespace viennagrid
         typedef typename element_type::tag element_tag;
         typedef typename viennagrid::result_of::const_element_range<domain_type, element_tag>::type RangeType;
         typedef typename viennagrid::result_of::const_iterator<RangeType>::type RangeIterator;
-        
+
         RangeType range = viennagrid::elements<element_tag>(domain);
         for (RangeIterator it = range.begin(); it != range.end(); ++it)
         {
             if ( viennagrid::dereference_handle(domain, it.handle()).id() == id )
                 return it;
         }
-        
+
         return range.end();
     }
 
@@ -123,17 +123,17 @@ namespace viennagrid
         typedef typename element_type::tag element_tag;
         typedef typename viennagrid::result_of::element_range<domain_type, element_tag>::type RangeType;
         typedef typename viennagrid::result_of::iterator<RangeType>::type RangeIterator;
-        
+
         RangeType range = viennagrid::elements<element_tag>(domain);
         for (RangeIterator it = range.begin(); it != range.end(); ++it)
         {
             if ( it.handle() == handle )
                 return it;
         }
-        
+
         return range.end();
     }
-    
+
     template<typename domain_type, typename handle_type>
     typename viennagrid::result_of::const_iterator< typename viennagrid::result_of::const_element_range<domain_type, typename storage::handle::result_of::value_type<handle_type>::type >::type  >::type
             find_by_handle(domain_type const & domain, handle_type handle)
@@ -142,17 +142,17 @@ namespace viennagrid
         typedef typename element_type::tag element_tag;
         typedef typename viennagrid::result_of::const_element_range<domain_type, element_tag>::type RangeType;
         typedef typename viennagrid::result_of::const_iterator<RangeType>::type RangeIterator;
-        
+
         RangeType range = viennagrid::elements<element_tag>(domain);
         for (RangeIterator it = range.begin(); it != range.end(); ++it)
         {
             if ( it.handle() == handle )
                 return it;
         }
-        
+
         return range.end();
     }
-    
+
 }
 
 #endif

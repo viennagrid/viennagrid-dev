@@ -5,19 +5,19 @@ namespace viennagrid
 {
     namespace utils
     {
-        
+
         template<typename pointer_type>
         struct remove_pointer;
-        
+
         template<typename pointer_type>
         struct remove_pointer<pointer_type*>
         {
             typedef pointer_type type;
         };
-        
-        
+
+
     }
-    
+
 }
 
 #endif

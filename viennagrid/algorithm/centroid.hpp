@@ -12,7 +12,7 @@
 
    Authors:      Karl Rupp                           rupp@iue.tuwien.ac.at
                  Josef Weinbub                    weinbub@iue.tuwien.ac.at
-               
+
    (A list of additional contributors can be found in the PDF manual)
 
    License:      MIT (X11), see file LICENSE in the base directory
@@ -50,12 +50,12 @@ namespace viennagrid
       typedef typename viennagrid::result_of::point_type<PointAccessorType>::type PointType;
 //       typedef typename viennagrid::result_of::element<DomainType, vertex_tag>::type                         VertexType;
 //       typedef typename viennagrid::result_of::element<DomainType, line_tag>::type                         EdgeType;
-      
+
       typedef typename viennagrid::result_of::const_element_range<ElementType, vertex_tag>::type         VertexOnCellRange;
       typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type            VertexOnCellIterator;
-      
+
       PointType p0(0.0, 0.0);
-      
+
       VertexOnCellRange vertices = viennagrid::elements<vertex_tag>(cell);
       for (VertexOnCellIterator vocit = vertices.begin();
            vocit != vertices.end();
@@ -64,9 +64,9 @@ namespace viennagrid
         //p0 += vocit->point();
         p0 += accessor(*vocit);
       }
-      
+
       p0 /= vertices.size();
-      
+
       return p0;
     }
 
@@ -140,18 +140,18 @@ namespace viennagrid
       //typedef typename DomainSegmentType::config_type                                      ConfigType;
       //typedef typename ElementType::tag                                                CellTag;
       typedef typename viennagrid::result_of::element_tag<ElementTypeOrTag>::type ElementTag;
-      
+
       typedef typename viennagrid::result_of::point_type<DomainType>::type                      PointType;
       typedef typename viennagrid::result_of::element<DomainType, vertex_tag>::type                         VertexType;
       typedef typename viennagrid::result_of::element<DomainType, line_tag>::type                         EdgeType;
-      
+
       typedef typename viennagrid::result_of::const_element_range<DomainType,
                                                                 ElementTag>::type  CellRange;
       typedef typename viennagrid::result_of::iterator<CellRange>::type                         CellIterator;
-      
+
       PointType result = 0;
       double volume = 0;
-      
+
       CellRange cells = viennagrid::elements<ElementTag>(domain);
       for (CellIterator cit = cells.begin(); cit != cells.end(); ++cit)
       {
@@ -159,15 +159,15 @@ namespace viennagrid
         result += vol_cell * centroid( default_point_accessor(domain), *cit);
         volume += vol_cell;
       }
-      
+
       return result / volume;
     }
-    
+
   } //namespace detail
 
 
   /** @brief The public interface function for the computation of a centroid
-   * 
+   *
    * @param cell    The n-cell for which the centroid should be computed
    */
     template <typename PointAccessorType, typename ElementType>
@@ -176,14 +176,14 @@ namespace viennagrid
   {
     return detail::centroid( accessor, cell, typename ElementType::tag());
   }
-  
+
     template <typename ElementTag, typename WrappedConfigType>
     typename viennagrid::result_of::point_type< element_t<ElementTag,WrappedConfigType> >::type
   centroid(element_t<ElementTag,WrappedConfigType> const & cell)
   {
     return detail::centroid( default_point_accessor(cell), cell, ElementTag());
   }
-  
+
   template<typename ElementTypeOrTag, typename WrappedConfigType>
   typename viennagrid::result_of::coord_type<
         domain_t<WrappedConfigType>

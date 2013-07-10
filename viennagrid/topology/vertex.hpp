@@ -12,7 +12,7 @@
 
    Authors:      Karl Rupp                           rupp@iue.tuwien.ac.at
                  Josef Weinbub                    weinbub@iue.tuwien.ac.at
-               
+
    (A list of additional contributors can be found in the PDF manual)
 
    License:      MIT (X11), see file LICENSE in the base directory
@@ -32,13 +32,13 @@ namespace viennagrid
   struct simplex_tag<0>
   {
     typedef viennagrid::meta::null_type facet_tag;
-      
+
     enum { dim = 0 };
     static std::string name() { return "Vertex"; }
   };
 
   //no need to have a separate subelements specialization here -> covered by default case
-  
+
 }
 
 #endif

@@ -12,7 +12,7 @@
 
    Authors:      Karl Rupp                           rupp@iue.tuwien.ac.at
                  Josef Weinbub                    weinbub@iue.tuwien.ac.at
-               
+
    (A list of additional contributors can be found in the PDF manual)
 
    License:      MIT (X11), see file LICENSE in the base directory
@@ -34,9 +34,9 @@ namespace viennagrid
   namespace io
   {
     /** @brief Translates element tags to VTK type identifiers
-     * 
+     *
      * see http://www.vtk.org/VTK/img/file-formats.pdf, Figure 2, for an overview
-     * 
+     *
      * @tparam ElementTag    The tag identifying the n-cell type
      */
     template <typename ElementTag>
@@ -58,7 +58,7 @@ namespace viennagrid
     {
       enum{ value = 10 };
     };
-    
+
     /** @brief Specialization for a quadrilateral */
     template <>
     struct ELEMENT_TAG_TO_VTK_TYPE<quadrilateral_tag>
@@ -79,16 +79,16 @@ namespace viennagrid
     {
       enum{ value = 3 };
     };
-    
+
     /** @brief Specialization for a line (one-dimensional simplex) */
     template <>
     struct ELEMENT_TAG_TO_VTK_TYPE<simplex_tag<1> >
     {
       enum{ value = 3 };
     };
-    
+
     /** @brief Tranformations of reference orientations from VTK to ViennaGrid
-     * 
+     *
      * While nothing needs to be done for simplices, hypercubes are oriented differently.
      */
     template <typename CellTag>
@@ -98,7 +98,7 @@ namespace viennagrid
     };
 
     /** @brief Tranformations of reference orientations from ViennaGrid to VTK
-     * 
+     *
      * While nothing needs to be done for simplices, hypercubes are oriented differently.
      */
     template <typename CellTag>
@@ -122,7 +122,7 @@ namespace viennagrid
         return j;
       }
     };
-    
+
     /** @brief Specialization for quadrilaterals: Switch vertices 2 and 3 */
     template <>
     struct viennagrid_to_vtk_orientations<quadrilateral_tag>
@@ -161,7 +161,7 @@ namespace viennagrid
         return vtk_to_viennagrid_orientations<hexahedron_tag>()(j);
       }
     };
-    
+
   } //namespace io
 } //namespace viennagrid
 

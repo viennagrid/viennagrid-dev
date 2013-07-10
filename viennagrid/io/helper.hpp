@@ -12,7 +12,7 @@
 
    Authors:      Karl Rupp                           rupp@iue.tuwien.ac.at
                  Josef Weinbub                    weinbub@iue.tuwien.ac.at
-               
+
    (A list of additional contributors can be found in the PDF manual)
 
    License:      MIT (X11), see file LICENSE in the base directory
@@ -48,15 +48,15 @@ namespace viennagrid
       static void write(std::ofstream & writer, PointType const& point)
       {
         writer << point[0];
-      }    
-    
+      }
+
       template <typename PointType>
       static void write(std::ofstream & writer, PointType & point)
       {
         writer << point[0];
       }
     };
-    
+
     template <>
     struct PointWriter<2>
     {
@@ -64,15 +64,15 @@ namespace viennagrid
       static void write(std::ofstream & writer, PointType const& point)
       {
         writer << point[0] << " " << point[1];
-      }    
-    
+      }
+
       template <typename PointType>
       static void write(std::ofstream & writer, PointType & point)
       {
         writer << point[0] << " " << point[1];
       }
     };
-    
+
     template <>
     struct PointWriter<3>
     {
@@ -88,7 +88,7 @@ namespace viennagrid
         writer << point[0] << " " << point[1] << " " << point[2];
       }
     };
-    
+
     /** @brief Checks for a string being a number */
     struct strChecker
     {
@@ -99,25 +99,25 @@ namespace viennagrid
         bool numberFlag = true;
         long strLen = str.size();
         long idx = 0;
-        
+
         while(numberFlag == true && idx < strLen)
         {
           if(!isdigit(str[idx]))
           {
             numberFlag = false;
           }
-          
+
           idx++;
         }
-        
+
         return numberFlag;
       }
     };
-    
-    
-    
-    
-    
+
+
+
+
+
     /** @brief Provides an exception for the case a file cannot be opened */
     class cannot_open_file_exception : public std::exception
     {
@@ -128,15 +128,15 @@ namespace viennagrid
           ss << "* ViennaGrid: Cannot open file " << filename_ << "!";
           return ss.str().c_str();
         }
-        
+
         cannot_open_file_exception(std::string file) : filename_(file) {};
-        
+
         virtual ~cannot_open_file_exception() throw() {};
-      
+
       private:
         std::string filename_;
     };
-    
+
     /** @brief Provides an exception for the case a parser problem occurs */
     class bad_file_format_exception : public std::exception
     {
@@ -150,20 +150,20 @@ namespace viennagrid
             ss << "* ViennaGrid: Bad file format: " << message_;
           return ss.str().c_str();
         }
-        
+
         /** @brief Constructor taking the file name and a custom parser-specific message to be issued */
         bad_file_format_exception(std::string file, std::string message) : filename_(file), message_(message) {};
         /** @brief Constructor taking a custom parser-specific message to be issued */
         bad_file_format_exception(std::string message) : filename_(), message_(message) {};
-        
+
         virtual ~bad_file_format_exception() throw() {};
-      
+
       private:
         std::string filename_;
         std::string message_;
     };
-    
-    
+
+
   } //namespace io
 } //namespace  viennagrid
 

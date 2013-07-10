@@ -12,7 +12,7 @@
 
    Authors:      Karl Rupp                           rupp@iue.tuwien.ac.at
                  Josef Weinbub                    weinbub@iue.tuwien.ac.at
-               
+
    (A list of additional contributors can be found in the PDF manual)
 
    License:      MIT (X11), see file LICENSE in the base directory
@@ -36,8 +36,8 @@ namespace viennagrid
 {
   namespace io
   {
-    
-    /** @brief Functor for conversion to lowercase (avoids ::tolower()) 
+
+    /** @brief Functor for conversion to lowercase (avoids ::tolower())
      *
      * @tparam dummy    A dummy template argument to disable external linkage of the function (for 'header-only' reasons)
      */
@@ -49,11 +49,11 @@ namespace viennagrid
         if(c <= 'Z' && c >= 'A')
           return c - ('Z'-'z');
         return c;
-      } 
+      }
     };
-    
+
     /** @brief Helper function for converting a string to lowercase.
-     * 
+     *
      * @tparam String    More a dummy template argument to disable external linkage of the function (for 'header-only' reasons)
      */
     template <typename StringType>                    //Note: Using artifically a template argument t
@@ -61,52 +61,52 @@ namespace viennagrid
     {
       std::string ret = s;
       std::transform(ret.begin(), ret.end(), ret.begin(), char_to_lower<0>());
-      
+
       return ret;
     }
-  
+
     /** @brief Helper class that parses a XML tag
-     * 
-     * @tparam dummy   A dummy parameter to control the linkage of the class     
+     *
+     * @tparam dummy   A dummy parameter to control the linkage of the class
      */
-    template <typename dummy = bool> 
+    template <typename dummy = bool>
     class xml_tag
     {
         typedef std::pair<std::string, std::string>  AttributeType;
         typedef std::list<AttributeType>             AttributeContainer;
-      
+
       public:
-        
+
         /** @brief Triggers the parsing of a XML tag */
         template <typename InputStream>
         void parse(InputStream & reader)
         {
           reader.unsetf(std::ios_base::skipws);
           clear();
-          
+
           char c = ' ';
-          
+
           //go to start of tag:
           while (c != '<' && reader.good())
             reader >> c;
-          
+
           //read tag name:
           while ( (c != ' ' && c != '>') && reader.good() )
           {
             reader >> c;
             name_.append(1,  make_lower(c));
           }
-          
+
           //strip whitespace or closing tag at the end
           name_.resize(name_.size()-1);
-          
+
           #ifdef VIENNAGRID_DEBUG_IO
           std::cout << name_ << std::endl;
           #endif
-          
+
           if (c == '>') //we are all done
             return;
-          
+
           //get attributes:
           bool end_of_attribute = false;
           bool inside_string = false;
@@ -128,8 +128,8 @@ namespace viennagrid
               token.append(1, c); //do not transform values to lower-case (e.g. filenames may get invalid)
             else if (c != ' ')
               token.append(1, make_lower(c));
-            
-            
+
+
             if (end_of_attribute)
             {
               std::size_t pos = token.find_first_of('=');
@@ -141,27 +141,27 @@ namespace viennagrid
               {
                 throw bad_file_format_exception("filename", "Parse error: XML attribute name missing.");
               }
-              
-              
+
+
               std::string name = token.substr(0, pos);
               std::string value = token.substr(pos+2, token.size());
-              
+
               pos = value.rfind('"');
               if (pos == std::string::npos || pos == 0)
                 throw bad_file_format_exception("filename", "Internal XML parse error: XML attribute string not terminated.");
-              
+
               #ifdef VIENNAGRID_DEBUG_IO
               std::cout << name << ":" << value.substr(0, pos) << std::endl;
               #endif
               attributes_.push_back(std::make_pair(name, value.substr(0, pos)));
-              
+
               token.clear();
-              
+
               end_of_attribute = false;
               inside_string = false;
             }
           }
-          
+
           reader.setf(std::ios_base::skipws);
         }
 
@@ -186,10 +186,10 @@ namespace viennagrid
           parse(reader);
           check_name(expected_name, filename);
         }
-        
+
         /** @brief Returns the XML tag name */
         std::string name() const { return name_; }
-        
+
         /** @brief Returns true if the XML tag has a certain attribute */
         bool has_attribute(std::string const & attrib_name) const
         {
@@ -213,8 +213,8 @@ namespace viennagrid
             ss << "XML Parse error: Attribute " << attrib_name << " missing!" << std::endl;
             throw bad_file_format_exception(filename,  ss.str());
           }
-        }        
-        
+        }
+
         /** @brief Returns the value of a certain attribute */
         std::string get_value(std::string const & attrib_name) const
         {
@@ -227,7 +227,7 @@ namespace viennagrid
           }
           return "";
         }
-        
+
         /** @brief Clears all internal data */
         void clear()
         {
@@ -235,19 +235,19 @@ namespace viennagrid
           attributes_.clear();
         }
       private:
-        
+
         /** @brief transforms a character to lower-case */
         char make_lower(char c) const
         {
           if(c <= 'Z' && c >= 'A')
             return c - ('Z'-'z');
           return c;
-        } 
+        }
 
         std::string name_;
         AttributeContainer attributes_;
     };
-    
+
 
   } //namespace io
 } //namespace viennagrid

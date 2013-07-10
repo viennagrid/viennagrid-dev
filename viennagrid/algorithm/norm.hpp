@@ -12,7 +12,7 @@
 
    Authors:      Karl Rupp                           rupp@iue.tuwien.ac.at
                  Josef Weinbub                    weinbub@iue.tuwien.ac.at
-               
+
    (A list of additional contributors can be found in the PDF manual)
 
    License:      MIT (X11), see file LICENSE in the base directory
@@ -27,9 +27,9 @@
     @brief Computes the computation of norms for vectors
 */
 
-namespace viennagrid 
+namespace viennagrid
 {
-  
+
   namespace detail
   {
 
@@ -37,8 +37,8 @@ namespace viennagrid
     //
     // norm algorithm specialization hierarchy
     //
-    template<typename Tag> 
-    struct norm_impl 
+    template<typename Tag>
+    struct norm_impl
     {
       template<typename PointType>
       typename result_of::coord_type<PointType>::type operator()(PointType const&)
@@ -72,7 +72,7 @@ namespace viennagrid
           typename result_of::coord_type<PointType>::type result(0);
           for(std::size_t i = 0; i < traits::dynamic_size(p); i++)
             result += p[i]*p[i];
-          return std::sqrt(result);   
+          return std::sqrt(result);
       }
     };
 
@@ -92,7 +92,7 @@ namespace viennagrid
           return result;
       }
     };
-    
+
   } //namespace detail
 
   /** @brief Dispatch for a point that needs coordinate conversion */
@@ -102,7 +102,7 @@ namespace viennagrid
   {
     typedef typename result_of::coord_type<PointType>::type    value_type;
     typedef typename result_of::cartesian_point<PointType>::type   CartesianPoint1;
-    
+
     return detail::norm_impl<NormTag>()(to_cartesian(p));
   }
 
@@ -120,7 +120,7 @@ namespace viennagrid
   // norm algorithm generic interface functions
   //
   /** @brief Returns the norm of a point. The type of the norm is specified by a tag. Supported tags are one_tag, two_tag and inf_tag.
-   * 
+   *
    * @param p    The vector (point) for which the norm should be computed.
    */
   template<typename PointType, typename Tag>
@@ -164,7 +164,7 @@ namespace viennagrid
     return norm_impl<viennagrid::inf_tag>(p, typename traits::coordinate_system<PointType>::type());
   }
 
-} 
+}
 
 #endif
 

@@ -12,7 +12,7 @@
 
    Authors:      Karl Rupp                           rupp@iue.tuwien.ac.at
                  Josef Weinbub                    weinbub@iue.tuwien.ac.at
-               
+
    (A list of additional contributors can be found in the PDF manual)
 
    License:      MIT (X11), see file LICENSE in the base directory
@@ -36,7 +36,7 @@
 
 namespace viennagrid
 {
-  
+
   /** @brief A key type that uniquely identifies an element by its vertices */
   template <typename element_type>
   class element_key
@@ -44,14 +44,14 @@ namespace viennagrid
       typedef typename element_type::tag            ElementTag;
       typedef typename viennagrid::result_of::element< element_type, vertex_tag >::type vertex_type;
       typedef typename vertex_type::id_type id_type;
-      
+
     public:
-        
+
       element_key( const element_type & el2) : vertex_ids( viennagrid::elements<vertex_tag>(el2).size() )
       {
         typedef typename viennagrid::result_of::const_element_range< element_type, vertex_tag >::type vertex_range;
         typedef typename viennagrid::result_of::const_iterator< vertex_range >::type const_iterator;
-          
+
         long i = 0;
         vertex_range vertices_el2 = elements<vertex_tag>(el2);
         for (const_iterator vit = vertices_el2.begin();
@@ -71,7 +71,7 @@ namespace viennagrid
       {
         if ( vertex_ids.size() != epc2.vertex_ids.size() )
             return vertex_ids.size() < epc2.vertex_ids.size();
-          
+
         for (std::size_t i=0; i < vertex_ids.size(); ++i)
         {
           if ( vertex_ids[i] > epc2.vertex_ids[i] )
@@ -83,7 +83,7 @@ namespace viennagrid
       }
 
       void print() const
-      { 
+      {
         for (typename std::vector<id_type>::const_iterator vit = vertex_ids.begin();
               vit != vertex_ids.end();
               ++vit)
@@ -102,11 +102,11 @@ namespace viennagrid
 namespace viennagrid
 {
     namespace storage
-    {       
+    {
         struct element_key_tag {};
-        
+
         namespace result_of
-        {            
+        {
             template<typename element_type>
             struct hidden_key_map_key_type_from_tag<element_type, element_key_tag>
             {
@@ -115,7 +115,7 @@ namespace viennagrid
 
         }
     }
-    
+
 }
 
 

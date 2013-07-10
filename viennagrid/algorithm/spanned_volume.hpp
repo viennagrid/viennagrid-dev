@@ -12,7 +12,7 @@
 
    Authors:      Karl Rupp                           rupp@iue.tuwien.ac.at
                  Josef Weinbub                    weinbub@iue.tuwien.ac.at
-               
+
    (A list of additional contributors can be found in the PDF manual)
 
    License:      MIT (X11), see file LICENSE in the base directory
@@ -39,8 +39,8 @@ namespace viennagrid
   {
     template <typename PointType, long dim = traits::dimension<PointType>::value>
     struct signed_spanned_volume_impl;
-    
-    
+
+
     /** @brief Implementation of the volume spanned by two points in one dimension */
     template <typename PointType>
     struct signed_spanned_volume_impl<PointType, 1>
@@ -60,7 +60,7 @@ namespace viennagrid
     struct signed_spanned_volume_impl<PointType, 2>
     {
       typedef typename result_of::coord_type<PointType>::type    value_type;
-      
+
       static value_type apply(PointType const & p1,
                               PointType const & p2)
       {
@@ -68,7 +68,7 @@ namespace viennagrid
         return sqrt(   (p2[0] - p1[0]) * (p2[0] - p1[0])
                      + (p2[1] - p1[1]) * (p2[1] - p1[1])  );
       }
-      
+
       static value_type apply(PointType const & A,
                               PointType const & B,
                               PointType const & C)
@@ -78,16 +78,16 @@ namespace viennagrid
                     + B[0] * (C[1] - A[1])
                     + C[0] * (A[1] - B[1]) ) / 2.0;
       }
-      
+
     };
-    
+
 
     /** @brief Implementation of the volume of simplices spanned by points in three geometrical dimension */
     template <typename PointType>
     struct signed_spanned_volume_impl<PointType, 3>
     {
       typedef typename result_of::coord_type<PointType>::type    value_type;
-      
+
       static value_type apply(PointType const & p1,
                               PointType const & p2)
       {
@@ -96,7 +96,7 @@ namespace viennagrid
                      + (p2[1] - p1[1]) * (p2[1] - p1[1])
                      + (p2[2] - p1[2]) * (p2[2] - p1[2]) );
       }
-      
+
       static value_type apply(PointType const & p1,
                               PointType const & p2,
                               PointType const & p3)
@@ -105,7 +105,7 @@ namespace viennagrid
         PointType v2 = p3 - p1;
 
         PointType v3 = cross_prod(v1, v2);
-        
+
         return norm(v3) / 2.0;
       }
 
@@ -117,18 +117,18 @@ namespace viennagrid
         PointType v1 = p2 - p1;
         PointType v2 = p3 - p1;
         PointType v3 = p4 - p1;
-        
-        return (inner_prod(v1, cross_prod(v2, v3)) ) / 6.0; 
+
+        return (inner_prod(v1, cross_prod(v2, v3)) ) / 6.0;
       }
 
     };
-  } //namespace detail  
-    
-    
-    
-    
-    
-    
+  } //namespace detail
+
+
+
+
+
+
   //
   // Mixed coordinate systems:
   //
@@ -142,7 +142,7 @@ namespace viennagrid
   {
     typedef typename result_of::coord_type<PointType1>::type    value_type;
     typedef typename result_of::cartesian_point<PointType1>::type   CartesianPoint1;
-    
+
     return detail::signed_spanned_volume_impl<CartesianPoint1>::apply(to_cartesian(p1), to_cartesian(p2));
   }
 
@@ -159,7 +159,7 @@ namespace viennagrid
   {
     typedef typename result_of::coord_type<PointType1>::type    value_type;
     typedef typename result_of::cartesian_point<PointType1>::type   CartesianPoint1;
-    
+
     return detail::signed_spanned_volume_impl<CartesianPoint1>::apply(to_cartesian(p1), to_cartesian(p2), to_cartesian(p3));
   }
 
@@ -178,7 +178,7 @@ namespace viennagrid
   {
     typedef typename result_of::coord_type<PointType1>::type    value_type;
     typedef typename result_of::cartesian_point<PointType1>::type   CartesianPoint1;
-    
+
     return detail::signed_spanned_volume_impl<CartesianPoint1>::apply(to_cartesian(p1), to_cartesian(p2), to_cartesian(p3), to_cartesian(p4));
   }
 
@@ -224,26 +224,26 @@ namespace viennagrid
     return detail::signed_spanned_volume_impl<PointType1>::apply(p1, p2, p3, p4);
   }
 
-    
+
 
   //
   // public interface
   //
   /** @brief Returns the volume of the 1-simplex (line) spanned by the two points */
   template <typename PointType1, typename PointType2>
-  typename result_of::coord_type<PointType1>::type 
+  typename result_of::coord_type<PointType1>::type
   signed_spanned_volume(PointType1 const & p1, PointType2 const & p2)
   {
     return signed_spanned_volume_impl(p1,
                                p2,
                                typename traits::coordinate_system<PointType1>::type(),
-                               typename traits::coordinate_system<PointType2>::type());                            
+                               typename traits::coordinate_system<PointType2>::type());
   }
-  
-  
+
+
   /** @brief Returns the two-dimensional volume of the 2-simplex (triangle) spanned by the three points */
   template <typename PointType1, typename PointType2, typename PointType3>
-  typename result_of::coord_type<PointType1>::type 
+  typename result_of::coord_type<PointType1>::type
   signed_spanned_volume(PointType1 const & p1, PointType2 const & p2, PointType3 const & p3)
   {
     return signed_spanned_volume_impl(p1,
@@ -253,13 +253,13 @@ namespace viennagrid
                                typename traits::coordinate_system<PointType2>::type(),
                                typename traits::coordinate_system<PointType3>::type()
                               );
-                            
+
   }
-  
-  
+
+
   /** @brief Returns the three-dimensional volume of the 3-simplex (tetrahedron) spanned by the four points */
   template <typename PointType1, typename PointType2, typename PointType3, typename PointType4>
-  typename result_of::coord_type<PointType1>::type 
+  typename result_of::coord_type<PointType1>::type
   signed_spanned_volume(PointType1 const & p1,
                   PointType2 const & p2,
                   PointType3 const & p3,
@@ -275,29 +275,29 @@ namespace viennagrid
                                typename traits::coordinate_system<PointType4>::type()
                               );
   }
-  
-  
+
+
   /** @brief Returns the volume of the 1-simplex (line) spanned by the two points */
   template <typename PointType1, typename PointType2>
-  typename result_of::coord_type<PointType1>::type 
+  typename result_of::coord_type<PointType1>::type
   spanned_volume(PointType1 const & p1, PointType2 const & p2)
   {
     return std::abs(signed_spanned_volume(p1, p2));
   }
-  
-  
+
+
   /** @brief Returns the two-dimensional volume of the 2-simplex (triangle) spanned by the three points */
   template <typename PointType1, typename PointType2, typename PointType3>
-  typename result_of::coord_type<PointType1>::type 
+  typename result_of::coord_type<PointType1>::type
   spanned_volume(PointType1 const & p1, PointType2 const & p2, PointType3 const & p3)
   {
     return std::abs(signed_spanned_volume(p1, p2, p3));
   }
-  
-  
+
+
   /** @brief Returns the three-dimensional volume of the 3-simplex (tetrahedron) spanned by the four points */
   template <typename PointType1, typename PointType2, typename PointType3, typename PointType4>
-  typename result_of::coord_type<PointType1>::type 
+  typename result_of::coord_type<PointType1>::type
   spanned_volume(PointType1 const & p1,
                   PointType2 const & p2,
                   PointType3 const & p3,

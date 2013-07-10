@@ -11,40 +11,40 @@ namespace viennagrid
   {
     namespace typemap
     {
-        
+
         namespace result_of
         {
-                       
+
             // size
             template<typename typemap>
             struct size
             {
                 enum { value = typelist::result_of::size<typemap>::value };
             };
-            
+
             // at
             template<typename typemap, unsigned int index>
             struct at
             {
                 typedef typename typelist::result_of::at<typemap, index>::type type;
             };
-            
-            
+
+
             // returns the index of the first key in the typelist
             template <typename typemap, typename to_find> struct index_of;
-            
+
             template <typename to_find>
             struct index_of<null_type, to_find>
             {
                 enum { value = -1 };
             };
-            
+
             template <typename to_find, typename value_type, typename tail>
             struct index_of<typelist_t< static_pair<to_find, value_type>, tail>, to_find>
             {
                 enum { value = 0 };
             };
-            
+
             template <typename key_type, typename value_type, typename tail, typename to_find>
             struct index_of<typelist_t< static_pair<key_type, value_type>, tail>, to_find>
             {
@@ -53,47 +53,47 @@ namespace viennagrid
             public:
                 enum { value = (temp == -1 ? -1 : 1 + temp) };
             };
-            
-            
+
+
             // find a key
             template<typename typemap, typename to_find>
             struct find
             {};
-            
+
             template<typename to_find>
             struct find< null_type, to_find >
             {
-                typedef not_found type;                
+                typedef not_found type;
             };
-            
+
             template<typename value, typename tail, typename to_find>
             struct find< typelist_t<static_pair<to_find, value>, tail>, to_find>
             {
                 typedef static_pair<to_find, value> type;
             };
-            
+
             template<typename key, typename value, typename tail, typename to_find>
             struct find< typelist_t<static_pair<key, value>, tail>, to_find>
             {
                 typedef typename find<tail, to_find>::type type;
             };
-            
-            
+
+
             // insert
             template <typename typemap, typename to_insert> struct insert;
-            
+
             template <>
             struct insert<null_type, null_type>
             {
                 typedef null_type type;
             };
-            
+
             template <typename map_key, typename map_value, typename tail>
             struct insert<typelist_t<static_pair<map_key, map_value>, tail>, null_type>
             {
                 typedef typelist_t<static_pair<map_key, map_value>, tail> type;
             };
-            
+
             template<typename key, typename value>
             struct insert< null_type, static_pair<key, value> >
             {
@@ -104,78 +104,78 @@ namespace viennagrid
             struct insert<typelist_t<static_pair<map_key, map_value>, tail>, static_pair<to_insert_key, to_insert_value> >
             {
                 typedef typelist_t<static_pair<map_key, map_value>, tail> typemap;
-                
+
                 // !!!!! INFO !!!!!
                 // if a compiler error points to the next lines, you might want to insert a key which is already present
                 typedef typename STATIC_ASSERT<EQUAL<
                         not_found,
                         typename find<typemap,to_insert_key>::type
                     >::value >::type static_assert_typedef;
-                
+
                 typedef typename typelist::result_of::push_back<typemap, static_pair<to_insert_key, to_insert_value> >::type type;
             };
-            
-            
-            
+
+
+
             // modifies an element
             template<typename typemap, typename to_modify>
             struct modify
             {};
-            
+
             template <typename map_key, typename map_value, typename tail>
             struct modify<typelist_t<static_pair<map_key, map_value>, tail>, null_type>
             {
                 typedef typelist_t<static_pair<map_key, map_value>, tail> type;
             };
-            
+
             template<typename key_to_find, typename modified_value>
             struct modify< null_type, static_pair<key_to_find, modified_value> >
             {
                 // !!!!! INFO !!!!!
                 // if a compiler error points here, your might want to insert an element in an empty map
-            };            
-            
+            };
+
             template<typename map_key, typename map_value, typename tail, typename key_to_find, typename modified_value>
             struct modify< typelist_t<static_pair<map_key, map_value>, tail>, static_pair<key_to_find, modified_value> >
             {
                 typedef typelist_t<static_pair<map_key, map_value>, tail> typemap;
                 enum { index = index_of<typemap, key_to_find>::value };
-                
+
                 // !!!!! INFO !!!!!
                 // if a compiler error points to the next lines, you might want to modify an element which is not present
                 typedef typename STATIC_ASSERT<index != -1>::type static_assert_typedef;
-                
+
                 typedef typename typelist::result_of::replace_at<
                         typemap,
                         index,
                         static_pair<key_to_find, modified_value>
                     >::type type;
             };
-            
-            
+
+
             // modifies or inserts an element
             template<typename typemap, typename to_modify>
             struct insert_or_modify
             {};
-            
+
             template <typename map_key, typename map_value, typename tail>
             struct insert_or_modify<typelist_t<static_pair<map_key, map_value>, tail>, null_type>
             {
                 typedef typelist_t<static_pair<map_key, map_value>, tail> type;
             };
-            
+
             template<typename key_to_find, typename modified_value>
             struct insert_or_modify< null_type, static_pair<key_to_find, modified_value> >
             {
                 typedef typelist_t<static_pair<key_to_find, modified_value>, null_type> type;
             };
-            
+
             template<typename map_key, typename map_value, typename tail, typename key_to_find, typename modified_value>
             struct insert_or_modify< typelist_t<static_pair<map_key, map_value>, tail>, static_pair<key_to_find, modified_value> >
             {
                 typedef typelist_t<static_pair<map_key, map_value>, tail> typemap;
                 enum { index = index_of<typemap, key_to_find>::value };
-                
+
                 // !!!!! INFO !!!!!
                 // if a compiler error points to the next lines, you might want to modify an element which is not present
                 typedef typename IF<
@@ -184,70 +184,70 @@ namespace viennagrid
                     typename typelist::result_of::replace_at<typemap, index, static_pair<key_to_find, modified_value> >::type
                 >::type type;
             };
-            
-            
-            
+
+
+
             // erases the element with key
             template<typename typemap, typename to_erase>
             struct erase
             {
                 enum { index = index_of<typemap, to_erase>::value };
-                
+
                 // !!!!! INFO !!!!!
                 // if a compiler error points to the next lines, you might want to erase a key which does not exist
                 typedef typename STATIC_ASSERT<index != -1>::type static_assert_typedef;
-                
+
                 typedef typename typelist::result_of::erase_at<
                         typemap,
                         index
-                    >::type type;                
+                    >::type type;
             };
-            
-            
+
+
             // merge two lists
             template<typename to_insert, typename search_result>
             struct merge_helper_error
             {};
-            
+
             template<typename to_insert>
             struct merge_helper_error<to_insert, not_found>
             {
                 typedef to_insert type;
             };
-            
+
             template<typename to_insert, typename search_result>
             struct merge_helper_ignore
             {
                 typedef search_result type;
             };
-            
+
             template<typename to_insert>
             struct merge_helper_ignore<to_insert, not_found>
             {
                 typedef to_insert type;
             };
-            
+
             template<typename to_insert, typename search_result>
             struct merge_helper_overwrite
             {
                 typedef to_insert type;
             };
-            
-            
+
+
             template <typename typemap, typename typemap_to_merge, template<typename,typename> class merge_helper> struct merge_impl;
-            
+
             template <template<typename,typename> class merge_helper>
             struct merge_impl<null_type, null_type, merge_helper>
             {
                 typedef null_type type;
             };
-            
+
             template <typename key1, typename value1, typename tail1, template<typename,typename> class merge_helper>
             struct merge_impl<typelist_t<static_pair<key1, value1>, tail1>, null_type, merge_helper>
             {
                 typedef typelist_t<static_pair<key1, value1>, tail1> type;
             };
-            
+
             template <typename key2, typename value2, typename tail2, template<typename,typename> class merge_helper>
             struct merge_impl<null_type, typelist_t<static_pair<key2, value2>, tail2>, merge_helper>
             {
@@ -259,9 +259,9 @@ namespace viennagrid
             {
                 typedef typelist_t<static_pair<key1, value1>, tail1> typemap1;
                 typedef typelist_t<static_pair<key2, value2>, tail1> typemap2;
-                
+
                 typedef typename find<typemap1, key2>::type search_result;
-                
+
                 // !!!!! INFO !!!!!
                 // if a compiler error points to the next lines, you might want to merge a two lists with both contain the same key
                 typedef typename merge_impl<
@@ -276,39 +276,39 @@ namespace viennagrid
                     merge_helper
                 >::type type;
             };
-            
-            
-            
+
+
+
             template <typename typemap, typename typemap_to_merge>
             struct merge
             {
                 typedef typename merge_impl<typemap, typemap_to_merge, merge_helper_error>::type type;
             };
-            
+
             template <typename typemap, typename typemap_to_merge>
             struct merge_ignore
             {
                 typedef typename merge_impl<typemap, typemap_to_merge, merge_helper_ignore>::type type;
             };
-            
+
             template <typename typemap, typename typemap_to_merge>
             struct merge_overwrite
             {
                 typedef typename merge_impl<typemap, typemap_to_merge, merge_helper_overwrite>::type type;
             };
-            
-            
-            // check consistency           
+
+
+            // check consistency
             template<typename typemap>
             struct consistency {};
 
             template<>
             struct consistency<null_type>
             {
-                typedef null_type type;                
+                typedef null_type type;
             };
 
-            
+
             template<typename key, typename value, typename tail>
             struct consistency< typelist_t<static_pair<key, value>, tail> >
             {
@@ -319,71 +319,71 @@ namespace viennagrid
                             not_found,
                             typename find<tail, key>::type
                         >::value >::type static_assert_typedef;
-                
+
                 typedef typelist_t<
                     static_pair<key,value>,
                     typename consistency<tail>::type
                 > type;
             };
-            
-            
-            
-            
+
+
+
+
             template<typename typemap_>
             struct key_typelist;
-            
+
             template<>
             struct key_typelist<viennagrid::meta::null_type>
             {
                 typedef viennagrid::meta::null_type type;
             };
-            
+
             template<typename key_, typename value_, typename tail>
             struct key_typelist< viennagrid::meta::typelist_t< viennagrid::meta::static_pair<key_, value_> , tail> >
             {
                 typedef viennagrid::meta::typelist_t< key_, typename key_typelist<tail>::type > type;
             };
-            
-            
-            
-            
+
+
+
+
             template<typename typemap_>
             struct value_typelist;
-            
+
             template<>
             struct value_typelist<viennagrid::meta::null_type>
             {
                 typedef viennagrid::meta::null_type type;
             };
-            
+
             template<typename key_, typename value_, typename tail>
             struct value_typelist< viennagrid::meta::typelist_t< viennagrid::meta::static_pair<key_, value_> , tail> >
             {
                 typedef viennagrid::meta::typelist_t< value_, typename key_typelist<tail>::type > type;
             };
-            
-            
-        }
-        
-    }
-    
 
-    
-    
-    
-    
-    
-//     C++11 version     
+
+        }
+
+    }
+
+
+
+
+
+
+
+//     C++11 version
 
 //     template<typename ... types>
 //     struct make_typemap_unsafe;
-//     
+//
 //     template<>
 //     struct make_typemap_unsafe<>
 //     {
 //         typedef viennagrid::meta::null_type type;
 //     };
-//     
+//
 //     template<typename key, typename value, typename ... tail>
 //     struct make_typemap_unsafe<key, value, tail...>
 //     {
@@ -392,17 +392,17 @@ namespace viennagrid
 //             typename make_typemap_unsafe<tail...>::type
 //         > type;
 //     };
-//     
-//     
+//
+//
 //     template<typename ... types>
 //     struct make_typemap
 //     {
 //         typedef typename viennagrid::meta::typemap::result_of::consistency< typename make_typemap_unsafe<types...>::type>::type type;
 //     };
-    
-    
-    
-    
+
+
+
+
     template<   typename K01 = viennagrid::meta::null_type, typename V01 = viennagrid::meta::null_type, typename K02 = viennagrid::meta::null_type, typename V02 = viennagrid::meta::null_type,
                 typename K03 = viennagrid::meta::null_type, typename V03 = viennagrid::meta::null_type, typename K04 = viennagrid::meta::null_type, typename V04 = viennagrid::meta::null_type,
                 typename K05 = viennagrid::meta::null_type, typename V05 = viennagrid::meta::null_type, typename K06 = viennagrid::meta::null_type, typename V06 = viennagrid::meta::null_type,
@@ -422,7 +422,7 @@ namespace viennagrid
                                                 K11, V11, K12, V12, K13, V13, K14, V14, K15, V15, K16, V16, K17, V17, K18, V18, K19, V19, K20, V20>::type
             > type;
     };
-    
+
     template<>
     struct make_typemap_unsafe<
         viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type,
@@ -438,8 +438,8 @@ namespace viennagrid
     {
         typedef viennagrid::meta::null_type type;
     };
-    
-    
+
+
     template<   typename K01 = viennagrid::meta::null_type, typename V01 = viennagrid::meta::null_type, typename K02 = viennagrid::meta::null_type, typename V02 = viennagrid::meta::null_type,
                 typename K03 = viennagrid::meta::null_type, typename V03 = viennagrid::meta::null_type, typename K04 = viennagrid::meta::null_type, typename V04 = viennagrid::meta::null_type,
                 typename K05 = viennagrid::meta::null_type, typename V05 = viennagrid::meta::null_type, typename K06 = viennagrid::meta::null_type, typename V06 = viennagrid::meta::null_type,
@@ -459,7 +459,7 @@ namespace viennagrid
             >::type
         >::type type;
     };
-    
+
   } // namespace meta
 } // namespace viennagrid
 

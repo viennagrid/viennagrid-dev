@@ -12,7 +12,7 @@
 
    Authors:      Karl Rupp                           rupp@iue.tuwien.ac.at
                  Josef Weinbub                    weinbub@iue.tuwien.ac.at
-               
+
    (A list of additional contributors can be found in the PDF manual)
 
    License:      MIT (X11), see file LICENSE in the base directory
@@ -26,7 +26,7 @@
     @brief Computes the inner product of vectors
 */
 
-namespace viennagrid 
+namespace viennagrid
 {
 
   namespace detail
@@ -37,7 +37,7 @@ namespace viennagrid
 
     //
     // 1d
-    // 
+    //
     /** @brief Implementation of the inner product in one dimension */
     template <typename PointType>
     struct inner_prod_impl<PointType, 1>
@@ -51,10 +51,10 @@ namespace viennagrid
         return p1[0] * p2[0];
       }
     };
-    
+
     //
     // 2d
-    // 
+    //
     /** @brief Implementation of the inner product in two dimensions */
     template <typename PointType>
     struct inner_prod_impl<PointType, 2>
@@ -68,10 +68,10 @@ namespace viennagrid
         return p1[0] * p2[0] + p1[1] * p2[1];
       }
     };
-    
+
     //
     // 3d
-    // 
+    //
     /** @brief Implementation of the inner product in three dimensions */
     template <typename PointType>
     struct inner_prod_impl<PointType, 3>
@@ -94,7 +94,7 @@ namespace viennagrid
   {
     typedef typename result_of::coord_type<PointType1>::type    value_type;
     typedef typename result_of::cartesian_point<PointType1>::type   CartesianPoint1;
-    
+
     return detail::inner_prod_impl<CartesianPoint1>::apply(to_cartesian(p1), to_cartesian(p2));
   }
 
@@ -106,8 +106,8 @@ namespace viennagrid
     return detail::inner_prod_impl<PointType1>::apply(p1, p2);
   }
 
-  /** @brief Returns the inner product of two vectors, which can be given in different coordinate systems 
-   * 
+  /** @brief Returns the inner product of two vectors, which can be given in different coordinate systems
+   *
    * @param p1   First vector
    * @param p2   Second vector
    */
@@ -116,11 +116,11 @@ namespace viennagrid
   inner_prod(PointType1 const & p1, PointType2 const & p2)
   {
     return inner_prod_impl(p1,
-                           p2, 
+                           p2,
                            typename traits::coordinate_system<PointType1>::type(),
                            typename traits::coordinate_system<PointType2>::type());
   }
 
-} 
+}
 
 #endif

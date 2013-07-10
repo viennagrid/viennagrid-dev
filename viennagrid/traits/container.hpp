@@ -12,7 +12,7 @@
 
    Authors:      Karl Rupp                           rupp@iue.tuwien.ac.at
                  Josef Weinbub                    weinbub@iue.tuwien.ac.at
-               
+
    (A list of additional contributors can be found in the PDF manual)
 
    License:      MIT (X11), see file LICENSE in the base directory
@@ -27,20 +27,20 @@
     @brief Provides a generic layer for container operations.
 */
 
-namespace viennagrid 
+namespace viennagrid
 {
-  
+
   /** @brief A generic layer for accessing containers such as std::vector, std::deque, std::map, etc. */
   namespace traits
   {
-    
+
     /** @brief  Reserve memory in a container. Default case: Do nothing, because the container might not have a reserve() function  */
     template <typename T>
     void reserve(T & t, std::size_t new_size)
     {
       //by default, no need to do anything.
     }
-    
+
     /** @brief  Reserve memory in a vector. */
     template <typename T, typename A>
     void reserve(std::vector<T, A> & vec, std::size_t new_size)
@@ -55,7 +55,7 @@ namespace viennagrid
     {
       //by default, no need to do anything.
     }
-    
+
     /** @brief  Resize a vector. */
     template <typename T, typename A>
     void resize(std::vector<T, A> & vec, std::size_t new_size)
@@ -71,14 +71,14 @@ namespace viennagrid
       //by default, a member function .size() is expected:
       return t.size();
     }
-    
+
     /** @brief Capacity of a container. Default case: 'infinite'*/
     template <typename T>
     std::size_t capacity(T & t)
     {
       return std::numeric_limits<std::size_t>::max();
     }
-    
+
     /** @brief Capacity of a container. Overload for a std::vector */
     template <typename T, typename A>
     std::size_t capacity(std::vector<T, A> & vec, std::size_t new_size)
@@ -88,6 +88,6 @@ namespace viennagrid
 
 
   }
-} 
+}
 
 #endif

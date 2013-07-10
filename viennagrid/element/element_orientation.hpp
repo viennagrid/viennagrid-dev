@@ -12,7 +12,7 @@
 
    Authors:      Karl Rupp                           rupp@iue.tuwien.ac.at
                  Josef Weinbub                    weinbub@iue.tuwien.ac.at
-               
+
    (A list of additional contributors can be found in the PDF manual)
 
    License:      MIT (X11), see file LICENSE in the base directory
@@ -30,36 +30,36 @@
 
 namespace viennagrid
 {
-  
-    
+
+
     namespace result_of
     {
-    
+
         template<long num_elements>
         struct permutator_type
         {
                 typedef typename permutator_type<num_elements+1>::type type;
         };
-        
+
         template<>
         struct permutator_type<256>
         {
                 typedef unsigned char type;
         };
-        
+
         template<>
         struct permutator_type<65536>
         {
                 typedef unsigned short type;
         };
     }
-    
-    
-  
+
+
+
   /************** Level 1: Elements contained by a higher-level element *******/
 
-  /** @brief A permutator for mapping local orientations to global vertices of a boundary k-cell 
-   * 
+  /** @brief A permutator for mapping local orientations to global vertices of a boundary k-cell
+   *
    * Local vertex numbering is in general different from global vertex numbering for lower-level topological elements
    * this permutator maps local numbers to global numbers
    * alternative implementation: vertexnum as template parameter
@@ -69,7 +69,7 @@ namespace viennagrid
     {
         typedef typename container_type::value_type permutator_type;
         typedef typename container_type::size_type size_type;
-        
+
         public:
         void setDefaultOrientation()
         {

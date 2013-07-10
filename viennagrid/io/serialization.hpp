@@ -12,14 +12,14 @@
 
    Authors:      Karl Rupp                           rupp@iue.tuwien.ac.at
                  Josef Weinbub                    weinbub@iue.tuwien.ac.at
-               
+
    (A list of additional contributors can be found in the PDF manual)
 
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
 /** @file serialization.hpp
- *  @brief    A domain wrapper class which models the Boost Serialization concept: http://www.boost.org/libs/serialization/ 
+ *  @brief    A domain wrapper class which models the Boost Serialization concept: http://www.boost.org/libs/serialization/
  */
 
 #include <boost/archive/text_iarchive.hpp>
@@ -34,24 +34,24 @@ namespace viennagrid
 {
   namespace io
   {
-    /** @brief Domain wrapper which models the Boost serialization concept 
+    /** @brief Domain wrapper which models the Boost serialization concept
      *
-     */  
+     */
     template<typename DomainT>
     struct domain_serializer
     {
       typedef boost::shared_ptr<DomainT>                                                     DomainSPT;
-    private: 
+    private:
       typedef typename DomainT::config_type                                                  ConfigType;
-      typedef typename DomainT::segment_type                                                 SegmentType;   
-      typedef typename ConfigType::cell_tag                                                  CellTag;   
+      typedef typename DomainT::segment_type                                                 SegmentType;
+      typedef typename ConfigType::cell_tag                                                  CellTag;
       typedef typename viennagrid::result_of::const_ncell_range<DomainT, 0>::type            VertexRange;
       typedef typename viennagrid::result_of::iterator<VertexRange>::type                    VertexIterator;
-      typedef typename viennagrid::result_of::point<ConfigType>::type                        PointType;   
-      typedef typename viennagrid::result_of::ncell<ConfigType, 0>::type                     VertexType;  
-      typedef typename viennagrid::result_of::ncell<ConfigType, CellTag::dim>::type          CellType;    
+      typedef typename viennagrid::result_of::point<ConfigType>::type                        PointType;
+      typedef typename viennagrid::result_of::ncell<ConfigType, 0>::type                     VertexType;
+      typedef typename viennagrid::result_of::ncell<ConfigType, CellTag::dim>::type          CellType;
       typedef typename viennagrid::result_of::ncell_range<SegmentType, CellTag::dim>::type   CellRange;
-      typedef typename viennagrid::result_of::iterator<CellRange>::type                      CellIterator;   
+      typedef typename viennagrid::result_of::iterator<CellRange>::type                      CellIterator;
       typedef typename viennagrid::result_of::ncell_range<CellType, 0>::type                 VertexOnCellRange;
       typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type              VertexOnCellIterator;
 
@@ -64,7 +64,7 @@ namespace viennagrid
       void save(Archive & ar, const unsigned int version) const
       {
         // -----------------------------------------------
-        // the geometry is read and transmitted 
+        // the geometry is read and transmitted
         //
         std::size_t point_size = viennagrid::ncells<0>(*domainsp).size();
         ar & point_size;
@@ -77,21 +77,21 @@ namespace viennagrid
         // -----------------------------------------------
 
         // -----------------------------------------------
-        // the segment size is read and transmitted 
+        // the segment size is read and transmitted
         //
         std::size_t segment_size = (*domainsp).segments().size();
         ar & segment_size;
         // -----------------------------------------------
 
         // -----------------------------------------------
-        // the segment specific cells are read and transmitted 
+        // the segment specific cells are read and transmitted
         //
         for (std::size_t si = 0; si < segment_size; si++)
         {
           SegmentType & seg = (*domainsp).segments()[si];
           CellRange cells = viennagrid::ncells<CellTag::dim>(seg);
 
-          std::size_t cell_size = viennagrid::ncells<CellTag::dim>(seg).size();         
+          std::size_t cell_size = viennagrid::ncells<CellTag::dim>(seg).size();
           ar & cell_size;
 
           for (CellIterator cit = cells.begin();
@@ -105,19 +105,19 @@ namespace viennagrid
             {
               std::size_t id = vocit->id();
               ar & id;
-            }         
-          }         
+            }
+          }
         }
         // -----------------------------------------------
       }
-       
-      /** @brief Load function is used to 'write' the data to the domain */       
+
+      /** @brief Load function is used to 'write' the data to the domain */
       template<class Archive>
       void load(Archive & ar, const unsigned int version)
       {
         // -----------------------------------------------
         // the geometry is received and stored
-        //      
+        //
         std::size_t point_size;
         ar & point_size;
 
@@ -132,20 +132,20 @@ namespace viennagrid
 
         // -----------------------------------------------
         // the segments are received and created
-        //      
+        //
         std::size_t segment_size;
         ar & segment_size;
         (*domainsp).segments().resize(segment_size);
-        // -----------------------------------------------        
-        
+        // -----------------------------------------------
+
         // -----------------------------------------------
         // the segment specific cells are received and stored
-        //      
+        //
         for (std::size_t si = 0; si < segment_size; si++)
         {
           SegmentType & seg = (*domainsp).segments()[si];
           std::size_t cell_size;
-          ar & cell_size;         
+          ar & cell_size;
           for(std::size_t ci = 0; ci < cell_size; ci++)
           {
             VertexType *vertices[viennagrid::topology::bndcells<CellTag, 0>::num];
@@ -154,41 +154,41 @@ namespace viennagrid
             {
               std::size_t id;
               ar & id;
-              vertices[j] = &(viennagrid::ncells<0>(*domainsp)[id]);  
+              vertices[j] = &(viennagrid::ncells<0>(*domainsp)[id]);
             }
             CellType cell;
             cell.vertices(vertices);
             seg.push_back(cell);
           }
         }
-        // -----------------------------------------------        
+        // -----------------------------------------------
       }
 
       // -----------------------------------------------
-      // notify Boost Serialization that the save and load 
+      // notify Boost Serialization that the save and load
       // procedures differ
-      //      
+      //
       BOOST_SERIALIZATION_SPLIT_MEMBER()
-      // -----------------------------------------------      
+      // -----------------------------------------------
     public:
-      /** @brief The default constructor*/           
+      /** @brief The default constructor*/
       domain_serializer() : domainsp(new DomainT) {}
 
-      /** @brief The constructor expects a shared pointer on a domain object and sets the state */           
+      /** @brief The constructor expects a shared pointer on a domain object and sets the state */
       domain_serializer(DomainSPT& domainsp) : domainsp(domainsp) {}
-       
-      /** @brief The load function enables to associate a domain with the serialzer after 
+
+      /** @brief The load function enables to associate a domain with the serialzer after
       a serializer object has been constructed. */
       inline void load(DomainSPT other) { domainsp = other;  }
-      
+
       /** @brief The get function enables to retrieve the domain pointer
       */
       inline DomainSPT get() { return domainsp; }
-      
-      /** @brief The functor returns a reference to the domain state*/              
+
+      /** @brief The functor returns a reference to the domain state*/
       DomainT& operator()() { return *domainsp; }
-      
-      /** @brief The state holds a shared pointer to the domain */       
+
+      /** @brief The state holds a shared pointer to the domain */
       DomainSPT  domainsp;
       //DomainT& domain;
     };

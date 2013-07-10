@@ -7,13 +7,13 @@
 namespace viennagrid
 {
     namespace config
-    {    
+    {
         namespace result_of
         {
 
         }
     }
-    
+
 }
 
 #endif

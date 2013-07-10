@@ -5,46 +5,46 @@
 
 namespace viennagrid
 {
-    
+
     namespace storage
     {
         // smart id
         template<typename id_type>
         struct id_tag;
-        
+
         template<typename base_id_type>
         struct smart_id_tag;
-      
+
         template<typename value_type_, typename base_id_type_>
         class smart_id_t;
-      
+
 
         // handles
         struct no_handle_tag {};
         struct iterator_handle_tag {};
         struct pointer_handle_tag {};
         struct id_handle_tag {};
-        
+
         // container
         struct default_tag;
-        
+
         struct std_vector_tag;
         struct std_deque_tag;
         struct std_list_tag;
         struct std_set_tag;
-        
-        
+
+
         typedef viennagrid::meta::make_typemap<
             default_tag,
             std_deque_tag
         >::type default_container_config;
-        
+
         typedef viennagrid::meta::make_typemap<
             default_tag,
             std_deque_tag
         >::type default_view_container_config;
-        
-        
+
+
         template<typename container_tag_, typename handle_tag_>
         struct handled_container_tag
         {
@@ -209,9 +209,9 @@ namespace viennagrid
 
 
         }
-        
+
     }
-    
+
 }
 
 #endif

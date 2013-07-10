@@ -12,7 +12,7 @@
 
    Authors:      Karl Rupp                           rupp@iue.tuwien.ac.at
                  Josef Weinbub                    weinbub@iue.tuwien.ac.at
-               
+
    (A list of additional contributors can be found in the PDF manual)
 
    License:      MIT (X11), see file LICENSE in the base directory
@@ -37,31 +37,31 @@ namespace viennagrid
 {
   namespace io
   {
-    
+
     template<typename ElementType>
     struct ValueTypeInformation;
-    
+
     template<>
     struct ValueTypeInformation<double>
     {
       typedef double value_type;
-      
+
       static std::string type_name() { return "Float32"; }
       static int num_components() { return 1; }
       static void write( std::ostream & os, value_type value ) { os << value; }
     };
-    
+
     template<>
     struct ValueTypeInformation< std::vector<double> >
     {
       typedef std::vector<double> value_type;
-      
+
       static std::string type_name() { return "Float32"; }
       static int num_components() { return 3; }
       static void write( std::ostream & os, value_type const & value ) { os << value[0] << " " << value[1] << " " << value[2]; }
     };
 
-    
+
     /////////////////// VTK export ////////////////////////////
 
     //helper: translate element tags to VTK-element types
@@ -69,81 +69,81 @@ namespace viennagrid
 
     /** @brief Main VTK writer class. Writes a domain or a segment to a file
      *
-     * @tparam DomainType    Type of the ViennaGrid domain. Must not be a segment! 
+     * @tparam DomainType    Type of the ViennaGrid domain. Must not be a segment!
      */
     template < typename DomainType, typename SegmentationType = typename viennagrid::result_of::segmentation<DomainType>::type >
     class vtk_writer
     {
       public:
-      
+
       protected:
-        
+
         typedef typename SegmentationType::segment_id_type segment_id_type;
-        
+
         typedef typename result_of::point_type<DomainType>::type PointType;
         typedef typename result_of::coord_type<PointType>::type CoordType;
         enum { dim = traits::static_size<PointType>::value };
-        
+
         typedef typename result_of::cell_tag<DomainType>::type CellTag;
         typedef typename result_of::element<DomainType, CellTag>::type CellType;
 
         typedef typename result_of::element<DomainType, vertex_tag>::type                           VertexType;
         typedef typename result_of::handle<DomainType, vertex_tag>::type          VertexHandleType;
         typedef typename result_of::const_handle<DomainType, vertex_tag>::type          ConstVertexHandleType;
-        
+
         typedef typename SegmentationType::segment_type SegmentType;
-        
-        
+
+
         typedef std::vector<double> vector_data_type;
-        
+
         typedef std::map< std::string, base_dynamic_accessor_t<double, VertexType> * > VertexScalarOutputAccessorContainer;
         typedef std::map< std::string, base_dynamic_accessor_t<vector_data_type, VertexType> * > VertexVectorOutputAccessorContainer;
 
         typedef std::map< std::string, base_dynamic_accessor_t<double, CellType> * > CellScalarOutputAccessorContainer;
-        typedef std::map< std::string, base_dynamic_accessor_t<vector_data_type, CellType> * > CellVectorOutputAccessorContainer;        
+        typedef std::map< std::string, base_dynamic_accessor_t<vector_data_type, CellType> * > CellVectorOutputAccessorContainer;
 
       protected:
-        
-        
+
+
         template<typename map_type>
         void clear_map( map_type & map )
         {
           for (typename map_type::iterator it = map.begin(); it != map.end(); ++it)
             delete it->second;
-          
+
           map.clear();
         }
-        
+
         void clear()
         {
           clear_map(vertex_scalar_data);
           clear_map(vertex_vector_data);
-          
+
           clear_map(cell_scalar_data);
           clear_map(cell_vector_data);
-          
-          
+
+
           for (typename std::map< segment_id_type, VertexScalarOutputAccessorContainer>::iterator it = segment_vertex_scalar_data.begin(); it != segment_vertex_scalar_data.end(); ++it)
             clear_map(it->second);
-          
+
           for (typename std::map< segment_id_type, VertexVectorOutputAccessorContainer>::iterator it = segment_vertex_vector_data.begin(); it != segment_vertex_vector_data.end(); ++it)
             clear_map(it->second);
 
-            
+
           for (typename std::map< segment_id_type, CellScalarOutputAccessorContainer>::iterator it = segment_cell_scalar_data.begin(); it != segment_cell_scalar_data.end(); ++it)
             clear_map(it->second);
-          
+
           for (typename std::map< segment_id_type, CellVectorOutputAccessorContainer>::iterator it = segment_cell_vector_data.begin(); it != segment_cell_vector_data.end(); ++it)
             clear_map(it->second);
-          
-          
+
+
           segment_vertex_scalar_data.clear();
           segment_vertex_vector_data.clear();
-          
+
           segment_cell_scalar_data.clear();
           segment_cell_vector_data.clear();
 
-          
+
           used_vertices.clear();
           vertex_to_index_map.clear();
         }
@@ -155,8 +155,8 @@ namespace viennagrid
           writer << "<VTKFile type=\"UnstructuredGrid\" version=\"0.1\" byte_order=\"LittleEndian\">" << std::endl;
           writer << " <UnstructuredGrid>" << std::endl;
         }
-        
-        
+
+
         template<typename SegmentType>
         unsigned int preparePoints(SegmentType const & segment, segment_id_type seg_id)
         {
@@ -165,10 +165,10 @@ namespace viennagrid
 
           typedef typename viennagrid::result_of::const_element_range<CellType, vertex_tag>::type      VertexOnCellRange;
           typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type         VertexOnCellIterator;
-          
+
           std::deque< ConstVertexHandleType > & current_used_vertices = used_vertices[seg_id];
           std::map< ConstVertexHandleType, std::size_t > & current_vertex_to_index_map = vertex_to_index_map[seg_id];
-          
+
           std::size_t index = 0;
           CellRange cells = viennagrid::elements(segment);
 
@@ -185,7 +185,7 @@ namespace viennagrid
                   }
               }
           }
-          
+
           return current_vertex_to_index_map.size();
         }
 
@@ -194,13 +194,13 @@ namespace viennagrid
         void writePoints(SegmentType const & segment, std::ofstream & writer, segment_id_type seg_id)
         {
           std::deque< ConstVertexHandleType > & current_used_vertices = used_vertices[seg_id];
-          
+
           writer << "   <Points>" << std::endl;
           writer << "    <DataArray type=\"Float32\" NumberOfComponents=\"3\" format=\"ascii\">" << std::endl;
 
           typedef typename viennagrid::result_of::const_vertex_range<SegmentType>::type VertexRange;
           typedef typename viennagrid::result_of::iterator<VertexRange>::type VertexIterator;
-          
+
           for (typename std::deque< ConstVertexHandleType >::iterator it = current_used_vertices.begin(); it != current_used_vertices.end(); ++it)
           {
             PointWriter<dim>::write(writer, viennagrid::point(segment, *it) );
@@ -228,9 +228,9 @@ namespace viennagrid
           typedef typename viennagrid::result_of::const_element_range<CellType, vertex_tag>::type      VertexOnCellRange;
           typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type         VertexOnCellIterator;
           typedef typename viennagrid::result_of::handle_iterator<VertexOnCellRange>::type         VertexHandleOnCellIterator;
-          
+
           std::map< ConstVertexHandleType, std::size_t > & current_vertex_to_index_map = vertex_to_index_map[seg_id];
-          
+
           writer << "   <Cells> " << std::endl;
           writer << "    <DataArray type=\"Int32\" Name=\"connectivity\" format=\"ascii\">" << std::endl;
           CellRange cells = viennagrid::elements<CellTag>(domseg);
@@ -248,12 +248,12 @@ namespace viennagrid
               {
                 viennagrid_vertices[j] = current_vertex_to_index_map[*vocit];
               }
-              
+
               //Step 2: Write the transformed connectivities:
               viennagrid_to_vtk_orientations<CellTag> reorderer;
               for (std::size_t i=0; i<viennagrid_vertices.size(); ++i)
-                writer <<   viennagrid_vertices[reorderer(static_cast<long>(i))] << " ";                
-              
+                writer <<   viennagrid_vertices[reorderer(static_cast<long>(i))] << " ";
+
               writer << std::endl;
             }
             writer << std::endl;
@@ -281,22 +281,22 @@ namespace viennagrid
             writer << "   </Cells>" << std::endl;
         }
 
-        
-        
-        
-        
-        
-        
-        
+
+
+
+
+
+
+
         /** @brief Writes vector-valued data defined on vertices (points) to file */
         template <typename SegmentType, typename IOAccessorType>
         void writePointData(SegmentType const & segment, std::ofstream & writer, std::string const & name, IOAccessorType const & accessor, long seg_id)
         {
           typedef typename IOAccessorType::value_type ValueType;
-          
+
           writer << "    <DataArray type=\"" << ValueTypeInformation<ValueType>::type_name() << "\" Name=\"" << name <<
             "\" NumberOfComponents=\"" << ValueTypeInformation<ValueType>::num_components() << "\" format=\"ascii\">" << std::endl;
-          
+
           std::deque< ConstVertexHandleType > & current_used_vertices = used_vertices[ seg_id ];
           for (typename std::deque< ConstVertexHandleType >::iterator it = current_used_vertices.begin(); it != current_used_vertices.end(); ++it)
           {
@@ -304,23 +304,23 @@ namespace viennagrid
             writer << " ";
           }
           writer << std::endl;
-          
+
           writer << "    </DataArray>" << std::endl;
         } //writePointDataScalar
-        
-        
+
+
         /** @brief Writes vector-valued data defined on vertices (points) to file */
         template <typename SegmentType, typename IOAccessorType>
         void writeCellData(SegmentType const & segment, std::ofstream & writer, std::string const & name, IOAccessorType const & accessor)
         {
           typedef typename viennagrid::result_of::const_element_range<SegmentType, CellTag>::type   CellRange;
           typedef typename viennagrid::result_of::iterator<CellRange>::type                         CellIterator;
-          
+
           typedef typename IOAccessorType::value_type ValueType;
-          
+
           writer << "    <DataArray type=\"" << ValueTypeInformation<ValueType>::type_name() << "\" Name=\"" << name <<
             "\" NumberOfComponents=\"" << ValueTypeInformation<ValueType>::num_components() << "\" format=\"ascii\">" << std::endl;
-          
+
           CellRange cells = viennagrid::elements(segment);
           for (CellIterator it = cells.begin(); it != cells.end(); ++it)
           {
@@ -328,10 +328,10 @@ namespace viennagrid
             writer << " ";
           }
           writer << std::endl;
-          
+
           writer << "    </DataArray>" << std::endl;
         } //writePointDataScalar
-        
+
 
 
         /** @brief Writes the XML footer */
@@ -339,34 +339,34 @@ namespace viennagrid
         {
           writer << " </UnstructuredGrid>" << std::endl;
           writer << "</VTKFile>" << std::endl;
-        } 
+        }
 
       public:
 
-        
+
         ~vtk_writer() { clear(); }
-        
+
         /** @brief Triggers the write process to a XML file. Make sure that all data to be written to the file is already passed to the writer
-         * 
+         *
          * @param domain     The ViennaGrid domain. Must not be a segment!
-         * @param filename   The file to write to         
+         * @param filename   The file to write to
          */
         int operator()(DomainType const & domain, std::string const & filename)
         {
             std::ofstream writer(filename.c_str());
-            
+
             if (!writer){
               throw cannot_open_file_exception(filename);
               clear();
               return EXIT_FAILURE;
             }
-            
+
             writeHeader(writer);
-            
+
             segment_id_type tmp_id = segment_id_type();
-            
+
             unsigned int num_points = preparePoints(domain, tmp_id);
-            
+
             writer << "  <Piece NumberOfPoints=\""
                    << num_points
                    << "\" NumberOfCells=\""
@@ -374,7 +374,7 @@ namespace viennagrid
                    << "\">" << std::endl;
 
             writePoints(domain, writer, tmp_id);
-            
+
             if (vertex_scalar_data.size() > 0 || vertex_vector_data.size() > 0)
             {
               writer << "   <PointData>" << std::endl;
@@ -391,27 +391,27 @@ namespace viennagrid
             if (cell_scalar_data.size() > 0 || cell_vector_data.size() > 0)
             {
               writer << "   <CellData>" << std::endl;
-              
+
                 for (typename CellScalarOutputAccessorContainer::const_iterator it = cell_scalar_data.begin(); it != cell_scalar_data.end(); ++it)
                   writeCellData( domain, writer, it->first, *(it->second) );
                 for (typename CellVectorOutputAccessorContainer::const_iterator it = cell_vector_data.begin(); it != cell_vector_data.end(); ++it)
                   writeCellData( domain, writer, it->first, *(it->second) );
-                
+
               writer << "   </CellData>" << std::endl;
             }
 
             writer << "  </Piece>" << std::endl;
             writeFooter(writer);
-          
+
           clear();
           return EXIT_SUCCESS;
         }
-        
-        
+
+
         int operator()(DomainType const & domain, SegmentationType const & segmentation, std::string const & filename)
         {
             if (segmentation.empty()) return (*this)(domain, filename);
-            
+
             //
             // Step 1: Write meta information
             //
@@ -419,7 +419,7 @@ namespace viennagrid
               std::stringstream ss;
               ss << filename << "_main.pvd";
               std::ofstream writer(ss.str().c_str());
-              
+
               std::string short_filename = filename;
               std::string::size_type pos = filename.rfind("/");
               if (pos == std::string::npos)
@@ -433,30 +433,30 @@ namespace viennagrid
                 clear();
                 return EXIT_FAILURE;
               }
-              
+
               writer << "<?xml version=\"1.0\"?>" << std::endl;
               writer << "<VTKFile type=\"Collection\" version=\"0.1\" byte_order=\"LittleEndian\" compressor=\"vtkZLibDataCompressor\">" << std::endl;
               writer << "<Collection>" << std::endl;
-              
+
               for (typename SegmentationType::const_iterator it = segmentation.begin(); it != segmentation.end(); ++it)
               {
                 SegmentType const & seg = *it;
                 writer << "    <DataSet part=\"" << seg.id() << "\" file=\"" << short_filename << "_" << seg.id() << ".vtu\" name=\"Segment_" << seg.id() << "\"/>" << std::endl;
               }
-                
+
               writer << "  </Collection>" << std::endl;
               writer << "</VTKFile>" << std::endl;
               writer.close();
             }
-            
+
             //
             // Step 2: Write segments to individual files
             //
-            
+
             for (typename SegmentationType::const_iterator it = segmentation.begin(); it != segmentation.end(); ++it)
             {
               SegmentType const & seg = *it;
-              
+
               std::stringstream ss;
               ss << filename << "_" << seg.id() << ".vtu";
               std::ofstream writer(ss.str().c_str());
@@ -468,10 +468,10 @@ namespace viennagrid
                 throw cannot_open_file_exception(ss.str());
                 return EXIT_FAILURE;
               }
-              
+
               typedef typename viennagrid::result_of::const_element_range<SegmentType, vertex_tag>::type   VertexRange;
               typedef typename viennagrid::result_of::iterator<VertexRange>::type               VertexIterator;
-              
+
               unsigned int num_points = preparePoints(seg, seg.id());
 
               writer << "  <Piece NumberOfPoints=\""
@@ -479,13 +479,13 @@ namespace viennagrid
                     << "\" NumberOfCells=\""
                     << viennagrid::elements<CellTag>(seg).size()
                     << "\">" << std::endl;
-                    
+
               writePoints(seg, writer, seg.id());
-              
-              
+
+
               VertexScalarOutputAccessorContainer const & current_segment_vertex_scalar_data = segment_vertex_scalar_data[ seg.id() ];
               VertexVectorOutputAccessorContainer const & current_segment_vertex_vector_data = segment_vertex_vector_data[ seg.id() ];
-              
+
               if (vertex_scalar_data.size() > 0 || vertex_vector_data.size() > 0 || current_segment_vertex_scalar_data.size() > 0 || current_segment_vertex_vector_data.size() > 0)
               {
                 writer << "   <PointData>" << std::endl;
@@ -495,35 +495,35 @@ namespace viennagrid
                 for (typename VertexVectorOutputAccessorContainer::const_iterator it = vertex_vector_data.begin(); it != vertex_vector_data.end(); ++it)
                   writePointData( seg, writer, it->first, *(it->second), seg.id() );
 
-                
+
                 for (typename VertexScalarOutputAccessorContainer::const_iterator it = current_segment_vertex_scalar_data.begin(); it != current_segment_vertex_scalar_data.end(); ++it)
                   writePointData( seg, writer, it->first, *(it->second), seg.id() );
-                
+
                 for (typename VertexVectorOutputAccessorContainer::const_iterator it = current_segment_vertex_vector_data.begin(); it != current_segment_vertex_vector_data.end(); ++it)
                   writePointData( seg, writer, it->first, *(it->second), seg.id() );
-                
+
                 writer << "   </PointData>" << std::endl;
               }
 
               writeCells(seg, writer, seg.id());
-              
+
               CellScalarOutputAccessorContainer const & current_segment_cell_scalar_data = segment_cell_scalar_data[ seg.id() ];
               CellVectorOutputAccessorContainer const & current_segment_cell_vector_data = segment_cell_vector_data[ seg.id() ];
               if (cell_scalar_data.size() > 0 || cell_vector_data.size() > 0 || current_segment_cell_scalar_data.size() > 0 || current_segment_cell_vector_data.size() > 0)
               {
                 writer << "   <CellData>" << std::endl;
-                
+
                 for (typename CellScalarOutputAccessorContainer::const_iterator it = cell_scalar_data.begin(); it != cell_scalar_data.end(); ++it)
                   writeCellData( seg, writer, it->first, *(it->second) );
                 for (typename CellVectorOutputAccessorContainer::const_iterator it = cell_vector_data.begin(); it != cell_vector_data.end(); ++it)
                   writeCellData( seg, writer, it->first, *(it->second) );
 
-                
+
                 for (typename CellScalarOutputAccessorContainer::const_iterator it = current_segment_cell_scalar_data.begin(); it != current_segment_cell_scalar_data.end(); ++it)
                   writeCellData( seg, writer, it->first, *(it->second) );
                 for (typename CellVectorOutputAccessorContainer::const_iterator it = current_segment_cell_vector_data.begin(); it != current_segment_cell_vector_data.end(); ++it)
                   writeCellData( seg, writer, it->first, *(it->second) );
-                
+
                 writer << "   </CellData>" << std::endl;
               }
 
@@ -535,12 +535,12 @@ namespace viennagrid
           clear();
           return EXIT_SUCCESS;
         }
-        
-        
-        
+
+
+
     private:
-      
-      
+
+
       template<typename MapType, typename AccessorType>
       void add_to_container(MapType & map, AccessorType const accessor, std::string const & name)
       {
@@ -553,12 +553,12 @@ namespace viennagrid
           else
             map[name] = new dynamic_accessor_t<AccessorType>( accessor );
       }
-      
-      
+
+
     public:
-        
-        
-        /** @brief Specify scalar-valued data for vertices to the writer. Prefer the free function add_scalar_data_on_vertices() 
+
+
+        /** @brief Specify scalar-valued data for vertices to the writer. Prefer the free function add_scalar_data_on_vertices()
          *
          * @tparam T       Anything that can be wrapped by a data_accessor_wrapper
          * @param  accessor The quantity accessor
@@ -567,31 +567,31 @@ namespace viennagrid
         template <typename AccessorType>
         void add_scalar_data_on_vertices(AccessorType const accessor, std::string const & name)
         { add_to_container(vertex_scalar_data, accessor, name); }
-        
+
         template <typename AccessorType>
         void add_scalar_data_on_vertices(segment_id_type seg_id, AccessorType const accessor, std::string const &  name)
         { add_to_container(segment_vertex_scalar_data[seg_id], accessor, name); }
-        
+
         template <typename AccessorType>
         void add_scalar_data_on_vertices(SegmentType const & segment, AccessorType const accessor, std::string const &  name)
         { add_scalar_data_on_vertices(segment.id(), accessor, name); }
 
-        
+
         template <typename AccessorType>
         void add_vector_data_on_vertices(AccessorType const accessor, std::string const & name)
         { add_to_container(vertex_vector_data, accessor, name); }
-        
+
         template <typename AccessorType>
         void add_vector_data_on_vertices(segment_id_type seg_id, AccessorType const accessor, std::string const &  name)
         { add_to_container(segment_vertex_vector_data[seg_id], accessor, name); }
-        
+
         template <typename AccessorType>
         void add_vector_data_on_vertices(SegmentType const & segment, AccessorType const accessor, std::string const &  name)
         { add_vector_data_on_vertices(segment.id(), accessor, name); }
 
 
 
-        /** @brief Specify scalar-valued data for cells to the writer. Prefer the free function add_scalar_data_on_cells() 
+        /** @brief Specify scalar-valued data for cells to the writer. Prefer the free function add_scalar_data_on_cells()
          *
          * @tparam T       Anything that can be wrapped by a data_accessor_wrapper
          * @param  accessor The quantity accessor
@@ -600,57 +600,57 @@ namespace viennagrid
         template <typename AccessorType>
         void add_scalar_data_on_cells(AccessorType const accessor, std::string name)
         { add_to_container(cell_scalar_data, accessor, name); }
-        
+
         template <typename AccessorType>
         void add_scalar_data_on_cells(segment_id_type seg_id, AccessorType const accessor, std::string const &  name)
         { add_to_container(segment_cell_scalar_data[seg_id], accessor, name); }
-        
+
         template <typename AccessorType>
         void add_scalar_data_on_cells(SegmentType const & segment, AccessorType const accessor, std::string const &  name)
         { add_scalar_data_on_cells(segment.id(), accessor, name); }
-        
-        
+
+
         template <typename AccessorType>
         void add_vector_data_on_cells(AccessorType const accessor, std::string name)
         { add_to_container(cell_vector_data, accessor, name); }
-        
+
         template <typename AccessorType>
         void add_vector_data_on_cells(segment_id_type seg_id, AccessorType const accessor, std::string const &  name)
         { add_to_container(segment_cell_vector_data[seg_id], accessor, name); }
-        
+
         template <typename AccessorType>
         void add_vector_data_on_cells(SegmentType const & segment, AccessorType const accessor, std::string const &  name)
         { add_vector_data_on_cells(segment.id(), accessor, name); }
 
 
       private:
-          
+
         std::map< segment_id_type, std::map< ConstVertexHandleType, std::size_t > >            vertex_to_index_map;
         std::map< segment_id_type, std::deque< ConstVertexHandleType> >                        used_vertices;
-        
-        
+
+
         VertexScalarOutputAccessorContainer          vertex_scalar_data;
         VertexVectorOutputAccessorContainer          vertex_vector_data;
-        
+
         CellScalarOutputAccessorContainer          cell_scalar_data;
         CellVectorOutputAccessorContainer          cell_vector_data;
-        
+
         std::map< segment_id_type, VertexScalarOutputAccessorContainer > segment_vertex_scalar_data;
         std::map< segment_id_type, VertexVectorOutputAccessorContainer > segment_vertex_vector_data;
-        
+
         std::map< segment_id_type, CellScalarOutputAccessorContainer >   segment_cell_scalar_data;
         std::map< segment_id_type, CellVectorOutputAccessorContainer >   segment_cell_vector_data;
     };
 
     /** @brief Convenience function that exports a domain to file directly. Does not export quantities */
-    template < typename DomainType, typename SegmentationType > 
+    template < typename DomainType, typename SegmentationType >
     int export_vtk(DomainType const & domain, SegmentationType const & segmentation, std::string const & filename)
     {
       vtk_writer<DomainType> vtk_writer;
       return vtk_writer(domain, segmentation, filename);
     }
 
-    template < typename DomainType > 
+    template < typename DomainType >
     int export_vtk(DomainType const & domain, std::string const & filename)
     {
       vtk_writer<DomainType> vtk_writer;
