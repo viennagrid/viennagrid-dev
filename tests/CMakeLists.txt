@@ -11,7 +11,8 @@
 #   add_test(${PROG} ${PROG}-test)
 #endforeach(PROG)
 
-ADD_EXECUTABLE(external_linkage-test  src/external_1.cpp src/external_2.cpp)
-ADD_test(external_linkage external_linkage-test)
-
+if (ENABLE_VIENNADATA)
+  ADD_EXECUTABLE(external_linkage-test  src/external_1.cpp src/external_2.cpp)
+  ADD_test(external_linkage external_linkage-test)
+endif()
 

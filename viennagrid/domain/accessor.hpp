@@ -24,8 +24,8 @@
 #include "viennagrid/storage/id.hpp"
 #include "viennagrid/storage/container_collection.hpp"
 
+#ifdef VIENNAGRID_WITH_VIENNADATA
 #include "viennadata/api.hpp"
-
 
 
 namespace viennadata
@@ -42,6 +42,7 @@ namespace viennadata
         };
     }
 }
+#endif
 
 
 namespace viennagrid
@@ -116,6 +117,7 @@ namespace viennagrid
     }
 
 
+#ifdef VIENNAGRID_WITH_VIENNADATA
     namespace result_of
     {
         template<typename ContainerType, typename AccessType>
@@ -125,7 +127,7 @@ namespace viennagrid
         };
 
     }
-
+#endif
 
 
     template<typename AccessType, typename ContainerType>
@@ -167,6 +169,7 @@ namespace viennagrid
 
 
 
+#ifdef VIENNAGRID_WITH_VIENNADATA
     namespace result_of
     {
         template<typename ContainerType, typename AccessType, typename AccessTag>
@@ -181,7 +184,7 @@ namespace viennagrid
             typedef typename viennadata::container_accessor<ContainerType, AccessType, AccessTag>::value_type type;
         };
     }
-
+#endif
 
 
 

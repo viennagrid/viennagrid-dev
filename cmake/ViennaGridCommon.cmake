@@ -33,6 +33,8 @@ option(BUILD_EXAMPLES "Build example programs" ON)
 
 option(ENABLE_PEDANTIC_FLAGS "Enable pedantic compiler flags" OFF)
 
+option(ENABLE_VIENNADATA "Enable ViennaData for advanced accessors" OFF)
+
 mark_as_advanced(ENABLE_PEDANTIC_FLAGS)
 
 include_directories(${PROJECT_SOURCE_DIR})
@@ -41,6 +43,10 @@ INCLUDE_DIRECTORIES("${PROJECT_SOURCE_DIR}/external/")
 # Set high warning level on GCC
 if(ENABLE_PEDANTIC_FLAGS)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic")
+endif()
+
+if(ENABLE_VIENNADATA)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DVIENNAGRID_WITH_VIENNADATA")
 endif()
 
 
