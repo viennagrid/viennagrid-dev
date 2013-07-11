@@ -451,6 +451,88 @@ namespace viennagrid
 
 
 
+    namespace result_of
+    {
+        template<typename WrappedConfigType, typename element_type_or_tag>
+        struct is_element_present< segmentation_t<WrappedConfigType>, element_type_or_tag >
+        {
+          static const bool value = is_element_present< typename segmentation_t<WrappedConfigType>::domain_type, element_type_or_tag>::value;
+        };
+
+        template<typename WrappedConfigType, typename element_type_or_tag>
+        struct is_element_present< const segmentation_t<WrappedConfigType>, element_type_or_tag >
+        {
+          static const bool value = is_element_present<segmentation_t<WrappedConfigType>, element_type_or_tag>::value;
+        };
+
+
+
+        template<typename segmentation_type>
+        struct element_collection< segmentation_t<segmentation_type> >
+        {
+            typedef typename element_collection<typename segmentation_t<segmentation_type>::domain_type>::type type;
+        };
+
+        template<typename segmentation_type>
+        struct element_collection< const segmentation_t<segmentation_type> >
+        {
+            typedef typename element_collection<const typename segmentation_t<segmentation_type>::domain_type>::type type;
+        };
+
+
+
+        template<typename segmentation_type>
+        struct point< segmentation_t<segmentation_type> >
+        {
+            typedef typename point<typename segmentation_t<segmentation_type>::domain_type>::type type;
+        };
+
+
+
+        template<typename segmentation_type, typename element_type_or_tag>
+        struct element< segmentation_t<segmentation_type>, element_type_or_tag >
+        {
+            typedef typename element<typename segmentation_t<segmentation_type>::domain_type, element_type_or_tag>::type type;
+        };
+
+
+        template<typename segmentation_type, typename element_type_or_tag>
+        struct handle< segmentation_t<segmentation_type>, element_type_or_tag >
+        {
+            typedef typename handle<typename segmentation_t<segmentation_type>::domain_type, element_type_or_tag>::type type;
+        };
+
+        template<typename segmentation_type, typename element_type_or_tag>
+        struct const_handle< segmentation_t<segmentation_type>, element_type_or_tag >
+        {
+            typedef typename const_handle<typename segmentation_t<segmentation_type>::domain_type, element_type_or_tag>::type type;
+        };
+
+
+
+        template<typename segmentation_type, typename element_type_or_tag>
+        struct element_range< segmentation_t<segmentation_type>, element_type_or_tag >
+        {
+            typedef typename element_range<typename segmentation_t<segmentation_type>::domain_type, element_type_or_tag>::type type;
+        };
+
+        template<typename segmentation_type, typename element_type_or_tag>
+        struct const_element_range< segmentation_t<segmentation_type>, element_type_or_tag >
+        {
+            typedef typename const_element_range<typename segmentation_t<segmentation_type>::domain_type, element_type_or_tag>::type type;
+        };
+
+
+
+        template<typename segmentation_type>
+        struct cell_tag< segmentation_t<segmentation_type> >
+        {
+          typedef typename cell_tag< typename segmentation_t<segmentation_type>::domain_type >::type type;
+        };
+    }
+
+
+
 
 
     template<typename segment_id_type_, typename element_segment_info_type_ = viennagrid::meta::null_type>

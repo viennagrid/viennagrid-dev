@@ -287,6 +287,16 @@ namespace viennagrid
     };
 
 
+    namespace result_of
+    {
+        template<typename WrappedConfigType>
+        struct domain
+        {
+          typedef domain_t<WrappedConfigType> type;
+        };
+    }
+
+
 
     template<typename WrappedConfigType>
     bool is_obsolete( domain_t<WrappedConfigType> const & domain, typename domain_t<WrappedConfigType>::change_counter_type change_counter_to_check )
@@ -763,15 +773,6 @@ namespace viennagrid
         typedef typename storage::handle::result_of::value_type<handle_type>::type value_type;
         return storage::collection::get<value_type>(element_collection(domain)).dereference_handle( handle );
     }
-
-    template<typename domain_type, typename ElementTag, typename WrappedConfigType>
-    element_t<ElementTag, WrappedConfigType> & dereference_handle( domain_type &, element_t<ElementTag, WrappedConfigType> & handle)
-    { return handle; }
-
-    template<typename domain_type, typename ElementTag, typename WrappedConfigType>
-    element_t<ElementTag, WrappedConfigType> const & dereference_handle( domain_type const &, element_t<ElementTag, WrappedConfigType> const & handle)
-    { return handle; }
-
 
 
 

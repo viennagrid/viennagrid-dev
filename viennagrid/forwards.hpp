@@ -828,6 +828,18 @@ namespace viennagrid
           typename viennagrid::result_of::element<DomainType, ElementTypeOrTag>::type::id_type id );
 
 
+
+    template<typename WrappedDomainConfigType, typename ElementTag, typename WrappedConfigType>
+    element_t<ElementTag, WrappedConfigType> & dereference_handle( domain_t<WrappedDomainConfigType> &, element_t<ElementTag, WrappedConfigType> & handle)
+    { return handle; }
+
+    template<typename WrappedDomainConfigType, typename ElementTag, typename WrappedConfigType>
+    element_t<ElementTag, WrappedConfigType> const & dereference_handle( domain_t<WrappedDomainConfigType> const &, element_t<ElementTag, WrappedConfigType> const & handle)
+    { return handle; }
+
+    
+
+
    // norm tags for: algorithm/norm.hpp
   /** @brief Tag for denoting the 1-norm */
   struct one_tag {};
