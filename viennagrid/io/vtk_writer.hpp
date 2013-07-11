@@ -353,7 +353,9 @@ namespace viennagrid
          */
         int operator()(DomainType const & domain, std::string const & filename)
         {
-            std::ofstream writer(filename.c_str());
+            std::stringstream ss;
+            ss << filename << ".vtu";
+            std::ofstream writer(ss.str().c_str());
 
             if (!writer){
               throw cannot_open_file_exception(filename);
