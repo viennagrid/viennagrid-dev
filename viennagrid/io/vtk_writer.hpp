@@ -96,11 +96,11 @@ namespace viennagrid
 
         typedef std::vector<double> vector_data_type;
 
-        typedef std::map< std::string, base_dynamic_accessor_t<double, VertexType> * > VertexScalarOutputAccessorContainer;
-        typedef std::map< std::string, base_dynamic_accessor_t<vector_data_type, VertexType> * > VertexVectorOutputAccessorContainer;
+        typedef std::map< std::string, base_dynamic_accessor_t<const double, VertexType> * > VertexScalarOutputAccessorContainer;
+        typedef std::map< std::string, base_dynamic_accessor_t<const vector_data_type, VertexType> * > VertexVectorOutputAccessorContainer;
 
-        typedef std::map< std::string, base_dynamic_accessor_t<double, CellType> * > CellScalarOutputAccessorContainer;
-        typedef std::map< std::string, base_dynamic_accessor_t<vector_data_type, CellType> * > CellVectorOutputAccessorContainer;
+        typedef std::map< std::string, base_dynamic_accessor_t<const double, CellType> * > CellScalarOutputAccessorContainer;
+        typedef std::map< std::string, base_dynamic_accessor_t<const vector_data_type, CellType> * > CellVectorOutputAccessorContainer;
 
       protected:
 
@@ -548,10 +548,10 @@ namespace viennagrid
           if (it != map.end())
           {
             delete it->second;
-            it->second = new dynamic_accessor_t<AccessorType>( accessor );
+            it->second = new dynamic_accessor_t<const AccessorType>( accessor );
           }
           else
-            map[name] = new dynamic_accessor_t<AccessorType>( accessor );
+            map[name] = new dynamic_accessor_t<const AccessorType>( accessor );
       }
 
 

@@ -533,6 +533,28 @@ namespace viennagrid
         virtual void resize( std::size_t ) {}
     };
 
+    template<typename ValueType, typename AccessType>
+    class base_dynamic_accessor_t<const ValueType, AccessType>
+    {
+    public:
+        typedef ValueType value_type;
+        typedef AccessType access_type;
+
+        typedef value_type const & reference;
+        typedef value_type const & const_reference;
+
+        typedef value_type const * pointer;
+        typedef value_type const * const_pointer;
+
+        virtual ~base_dynamic_accessor_t() {}
+
+        virtual const_pointer find( access_type const & ) const { return 0; }
+        virtual const_reference access_unchecked( access_type const & element ) const = 0;
+        virtual const_reference access( access_type const & element ) const = 0;
+        
+        const_reference operator()( access_type const & element ) const { return access(element); }
+    };
+
 
 
 
@@ -543,11 +565,11 @@ namespace viennagrid
         typedef typename AccessorType::value_type value_type;
         typedef typename AccessorType::access_type access_type;
 
-        typedef value_type & reference;
-        typedef value_type const & const_reference;
+        typedef typename AccessorType::reference reference;
+        typedef typename AccessorType::const_reference const_reference;
 
-        typedef value_type * pointer;
-        typedef value_type const * const_pointer;
+        typedef typename AccessorType::pointer pointer;
+        typedef typename AccessorType::const_pointer const_pointer;
 
 
         dynamic_accessor_t(AccessorType accessor_) : accessor(accessor_) {}
@@ -573,6 +595,33 @@ namespace viennagrid
       AccessorType accessor;
     };
 
+
+    template<typename AccessorType>
+    class dynamic_accessor_t<const AccessorType> : public base_dynamic_accessor_t< const typename AccessorType::value_type, typename AccessorType::access_type >
+    {
+    public:
+        typedef typename AccessorType::value_type value_type;
+        typedef typename AccessorType::access_type access_type;
+
+        typedef typename AccessorType::const_reference reference;
+        typedef typename AccessorType::const_reference const_reference;
+
+        typedef typename AccessorType::const_pointer pointer;
+        typedef typename AccessorType::const_pointer const_pointer;
+
+
+        dynamic_accessor_t(AccessorType accessor_) : accessor(accessor_) {}
+
+        virtual const_pointer find( access_type const & element ) const { return accessor.find(element); }
+        virtual const_reference access_unchecked( access_type const & element ) const { return accessor.access_unchecked(element); }
+        virtual const_reference access( access_type const & element ) const { return accessor.access(element); }
+
+        const_reference operator()( access_type const & element ) const { return access(element); }
+
+    private:
+      AccessorType accessor;
+    };
+    
 }
 
 

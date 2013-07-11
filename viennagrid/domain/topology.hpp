@@ -230,7 +230,7 @@ namespace viennagrid
         typedef typename result_of::domain_inserter_type<WrappedConfigType>::type               inserter_type;
 
 
-        domain_t() : inserter( element_container_collection ), change_counter_(0) {}
+        domain_t() : inserter( element_container_collection, change_counter_ ), change_counter_(0) {}
 
         template<typename OtherWrappedConfig>
         domain_t( domain_proxy<domain_t<OtherWrappedConfig> > proxy ) : change_counter_(0)

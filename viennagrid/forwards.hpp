@@ -318,6 +318,18 @@ namespace viennagrid
     template<typename config_domain_segment_element_or_something_like_that, typename element_tag>
     struct element;
 
+    template<typename element_tag, typename WrappedConfigType>
+    struct element< element_t<element_tag, WrappedConfigType>, element_t<element_tag, WrappedConfigType> >
+    {
+        typedef element_t<element_tag, WrappedConfigType> type;
+    };
+
+    template<typename element_tag, typename WrappedConfigType>
+    struct element< element_t<element_tag, WrappedConfigType>, element_tag >
+    {
+        typedef element_t<element_tag, WrappedConfigType> type;
+    };
+
     template<typename config_domain_segment_element_or_something_like_that>
     struct element<config_domain_segment_element_or_something_like_that, viennagrid::meta::null_type>
     {
