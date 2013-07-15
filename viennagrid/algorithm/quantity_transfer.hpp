@@ -166,12 +166,15 @@ namespace viennagrid
    * @param filter_src         A functor which returns true for all source elements considered for the transfer, false otherwise
    * @param filter_dest        A functor which returns true for all destination elements considered for the transfer, false otherwise
    */
-  template <typename SourceTag, typename DestinationTag,
+  template <typename SourceTypeOrTag, typename DestinationTypeOrTag,
             typename DomSeg, typename AccessorSrc, typename SetterDest,
             typename Averager, typename FilterSrc, typename FilterDest>
   void quantity_transfer(DomSeg const & domseg, AccessorSrc const & accessor_src, SetterDest & setter_dest,
                          Averager const & averager, FilterSrc const & filter_src, FilterDest const & filter_dest)
   {
+    typedef typename viennagrid::result_of::element_tag<SourceTypeOrTag>::type SourceTag;
+    typedef typename viennagrid::result_of::element_tag<DestinationTypeOrTag>::type DestinationTag;
+    
     detail::quantity_transfer<SourceTag, DestinationTag>(domseg, accessor_src, setter_dest,
                                                  averager, filter_src, filter_dest,
                                                  typename detail::quantity_transfer_dispatcher<SourceTag, DestinationTag>::type());
