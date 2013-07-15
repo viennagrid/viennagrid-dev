@@ -19,10 +19,8 @@
 ======================================================================= */
 
 #include <vector>
-#include "viennagrid/forwards.h"
-#include "viennagrid/domain.hpp"
-#include "viennagrid/detail/element_iterators.hpp"
-#include "viennagrid/detail/domain_iterators.hpp"
+#include "viennagrid/forwards.hpp"
+#include "viennagrid/domain/domain.hpp"
 
 /** @file quantity_transfer.hpp
     @brief Provides routines for transferring quantities defined for elements of one topological dimensions to elements of other topological dimension.
@@ -38,45 +36,46 @@ namespace viennagrid
     /** @brief Indicates a transfer from lower to higher topological dimension (coboundary operation) */
     struct coboundary_quantity_transfer_tag {};
 
-    template <long dim_src, long dim_dest, bool less_than = (dim_src < dim_dest), bool larger_than = (dim_src > dim_dest)>
+    template <typename SourceTag, typename DestinationTag,
+              bool less_than = (SourceTag::dim < DestinationTag::dim),
+              bool larger_than = (SourceTag::dim > DestinationTag::dim)>
     struct quantity_transfer_dispatcher {};
 
-    template <long dim_src, long dim_dest>
-    struct quantity_transfer_dispatcher<dim_src, dim_dest, false, true>
+    template <typename SourceTag, typename DestinationTag>
+    struct quantity_transfer_dispatcher<SourceTag, DestinationTag, false, true>
     {
       typedef boundary_quantity_transfer_tag  type;
     };
 
-    template <long dim_src, long dim_dest>
-    struct quantity_transfer_dispatcher<dim_src, dim_dest, true, false>
+    template <typename SourceTag, typename DestinationTag>
+    struct quantity_transfer_dispatcher<SourceTag, DestinationTag, true, false>
     {
       typedef coboundary_quantity_transfer_tag  type;
     };
 
 
     // Implementation for boundary transfer
-    template <long dim_src, long dim_dest,
+    template <typename SourceTag, typename DestinationTag,
               typename DomSeg, typename AccessorSrc, typename SetterDest,
               typename Averager, typename FilterSrc, typename FilterDest>
     void quantity_transfer(DomSeg const & domseg, AccessorSrc const & accessor_src, SetterDest & setter_dest,
                            Averager const & averager, FilterSrc const & filter_src, FilterDest const & filter_dest,
                            boundary_quantity_transfer_tag)
     {
-        typedef typename DomSeg::config_type           Config;
-        typedef typename viennagrid::result_of::ncell<Config, dim_src>::type              SourceNCellType;
-        typedef typename viennagrid::result_of::ncell<Config, dim_dest>::type             DestNCellType;
+        typedef typename viennagrid::result_of::element<DomSeg, SourceTag>::type              SourceElementType;
+        typedef typename viennagrid::result_of::element<DomSeg, DestinationTag>::type             DestElementType;
 
-        typedef typename viennagrid::result_of::const_ncell_range<DomSeg, dim_src>::type  SourceContainer;
+        typedef typename viennagrid::result_of::const_element_range<DomSeg, SourceTag>::type  SourceContainer;
         typedef typename viennagrid::result_of::iterator<SourceContainer>::type           SourceIterator;
 
-        typedef typename viennagrid::result_of::const_ncell_range<SourceNCellType, dim_dest>::type  DestOnSrcContainer;
+        typedef typename viennagrid::result_of::const_element_range<SourceElementType, DestinationTag>::type  DestOnSrcContainer;
         typedef typename viennagrid::result_of::iterator<DestOnSrcContainer>::type                  DestOnSrcIterator;
 
         typedef typename AccessorSrc::value_type              value_type;
 
-        typedef std::map<DestNCellType const *, std::vector<value_type> >                     DestinationValueMap;  //Think about adding customization options for std::vector<double>
+        typedef std::map<DestElementType const *, std::vector<value_type> >                     DestinationValueMap;  //Think about adding customization options for std::vector<double>
 
-        SourceContainer source_cells = viennagrid::ncells<dim_src>(domseg);
+        SourceContainer source_cells = viennagrid::elements(domseg);
 
         DestinationValueMap  values_for_destination_cells;
 
@@ -87,7 +86,7 @@ namespace viennagrid
         {
           if ( filter_src(*sit) )
           {
-            DestOnSrcContainer dest_on_src = viennagrid::ncells<dim_dest>(*sit);
+            DestOnSrcContainer dest_on_src = viennagrid::elements(*sit);
             for (DestOnSrcIterator dosit  = dest_on_src.begin();
                                     dosit != dest_on_src.end();
                                   ++dosit)
@@ -109,34 +108,35 @@ namespace viennagrid
     }
 
     // Implementation for coboundary transfer
-    template <long dim_src, long dim_dest,
+    template <typename SourceTag, typename DestinationTag,
               typename DomSeg, typename AccessorSrc, typename SetterDest,
               typename Averager, typename FilterSrc, typename FilterDest>
     void quantity_transfer(DomSeg const & domseg, AccessorSrc const & accessor_src, SetterDest & setter_dest,
                            Averager const & averager, FilterSrc const & filter_src, FilterDest const & filter_dest,
                            coboundary_quantity_transfer_tag)
     {
-        typedef typename DomSeg::config_type           Config;
-        typedef typename viennagrid::result_of::ncell<Config, dim_src>::type              SourceNCellType;
-        typedef typename viennagrid::result_of::ncell<Config, dim_dest>::type             DestNCellType;
+        typedef typename viennagrid::result_of::element<DomSeg, SourceTag>::type              SourceElementType;
+        typedef typename viennagrid::result_of::element<DomSeg, DestinationTag>::type             DestElementType;
 
-        typedef typename viennagrid::result_of::const_ncell_range<DomSeg, dim_dest>::type DestContainer;
+        typedef typename viennagrid::result_of::const_element_range<DomSeg, DestinationTag>::type DestContainer;
         typedef typename viennagrid::result_of::iterator<DestContainer>::type             DestIterator;
 
-        typedef typename viennagrid::result_of::const_ncell_range<DestNCellType, dim_src>::type  SrcOnDestContainer;
+        typedef typename viennagrid::result_of::const_element_range<DestElementType, SourceTag>::type  SrcOnDestContainer;
         typedef typename viennagrid::result_of::iterator<SrcOnDestContainer>::type               SrcOnDestIterator;
 
-        DestContainer dest_cells = viennagrid::ncells<dim_dest>(domseg);
+        typedef typename AccessorSrc::value_type              value_type;
+
+        DestContainer dest_cells = viennagrid::elements(domseg);
 
         // Iterate over all dest n-cells, push values from source cell to container, then compute final value
         for (DestIterator dit = dest_cells.begin(); dit != dest_cells.end(); ++dit)
         {
           if ( filter_dest(*dit) )   //assumption: lattice temperature outside semiconductor is not relevant for simulation
           {
-            std::vector<double> destination_value_container;
+            std::vector<value_type> destination_value_container;
 
             // Push all values from adjacent source cells to the container
-            SrcOnDestContainer src_on_dest = viennagrid::ncells<dim_src>(*dit);
+            SrcOnDestContainer src_on_dest = viennagrid::elements(*dit);
             for (SrcOnDestIterator sodit  = src_on_dest.begin();
                                     sodit != src_on_dest.end();
                                   ++sodit)
@@ -166,15 +166,15 @@ namespace viennagrid
    * @param filter_src         A functor which returns true for all source elements considered for the transfer, false otherwise
    * @param filter_dest        A functor which returns true for all destination elements considered for the transfer, false otherwise
    */
-  template <long dim_src, long dim_dest,
+  template <typename SourceTag, typename DestinationTag,
             typename DomSeg, typename AccessorSrc, typename SetterDest,
             typename Averager, typename FilterSrc, typename FilterDest>
   void quantity_transfer(DomSeg const & domseg, AccessorSrc const & accessor_src, SetterDest & setter_dest,
                          Averager const & averager, FilterSrc const & filter_src, FilterDest const & filter_dest)
   {
-    detail::quantity_transfer<dim_src, dim_dest>(domseg, accessor_src, setter_dest,
+    detail::quantity_transfer<SourceTag, DestinationTag>(domseg, accessor_src, setter_dest,
                                                  averager, filter_src, filter_dest,
-                                                 typename detail::quantity_transfer_dispatcher<dim_src, dim_dest>::type());
+                                                 typename detail::quantity_transfer_dispatcher<SourceTag, DestinationTag>::type());
   }
 
 }
