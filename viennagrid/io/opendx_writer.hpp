@@ -21,8 +21,9 @@
 #include <fstream>
 #include <iostream>
 #include "viennagrid/forwards.hpp"
+#include "viennagrid/domain/domain.hpp"
 #include "viennagrid/io/helper.hpp"
-#include "viennagrid/io/data_accessor.hpp"
+#include "viennagrid/domain/accessor.hpp"
 
 /** @file opendx_writer.hpp
     @brief Provides a writer for OpenDX files
@@ -80,15 +81,15 @@ namespace viennagrid
      *
      * @tparam DomainType   The ViennaGrid domain.
      */
-    template <typename CellTypeOrTag, typename DomainType>
+    template <typename DomainType>
     class opendx_writer
     {
 
-        typedef typename viennagrid::result_of::point_type<DomainType>::type PointType;
-        typedef typename viennagrid::result_of::coord_type<PointType>::type CoordType;
+        typedef typename viennagrid::result_of::point<DomainType>::type PointType;
+        typedef typename viennagrid::result_of::coord<PointType>::type CoordType;
         enum { geometric_dim = viennagrid::traits::static_size<PointType>::value };
 
-        typedef typename viennagrid::result_of::element_tag<CellTypeOrTag>::type CellTag;
+        typedef typename viennagrid::result_of::cell_tag<DomainType>::type CellTag;
 
         typedef typename result_of::element<DomainType, viennagrid::vertex_tag>::type                           VertexType;
         typedef typename result_of::element<DomainType, CellTag>::type     CellType;
@@ -101,6 +102,9 @@ namespace viennagrid
 
         typedef typename viennagrid::result_of::const_element_range<CellType, viennagrid::vertex_tag>::type      VertexOnCellRange;
         typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type         VertexOnCellIterator;
+
+        typedef std::map< std::string, base_dynamic_accessor_t<const double, VertexType> * > VertexScalarOutputAccessorContainer;
+        typedef std::map< std::string, base_dynamic_accessor_t<const double, CellType> * > CellScalarOutputAccessorContainer;
 
 
       public:
@@ -165,7 +169,7 @@ namespace viennagrid
           writer.precision(5);
 
           //write quantity:
-          if (vertex_data_scalar.size() > 0)
+          if (vertex_scalar_data.size() > 0)
           {
             writer << "object \"VisData\" class array items " << pointnum << " data follows" << std::endl;
             //some quantity here
@@ -174,14 +178,13 @@ namespace viennagrid
                 vit != vertices.end();
                 ++vit)
             {
-              std::string value = vertex_data_scalar[0](*vit);
-              writer << DXfixer(atof(value.c_str()));
+              writer << DXfixer( vertex_scalar_data.begin()->second->access(*vit) );
               writer << std::endl;
             }
 
             writer << "attribute \"dep\" string \"positions\"" << std::endl;
           }
-          else if (cell_data_scalar.size() > 0)
+          else if (cell_scalar_data.size() > 0)
           {
             writer << "object \"VisData\" class array items " << cellnum << " data follows" << std::endl;
 
@@ -190,8 +193,7 @@ namespace viennagrid
                 cit != cells.end();
                 ++cit)
             {
-              std::string value = cell_data_scalar[0](*cit);
-              writer << DXfixer(atof(value.c_str()));
+              writer << DXfixer( cell_scalar_data.begin()->second->access(*cit) );
               writer << std::endl;
             }
             writer << "attribute \"dep\" string \"connections\"" << std::endl;
@@ -207,38 +209,60 @@ namespace viennagrid
 
         } // operator()
 
+
+    private:
+
+
+      template<typename MapType, typename AccessorType>
+      void add_to_container(MapType & map, AccessorType const accessor, std::string const & name)
+      {
+          typename MapType::iterator it = map.find(name);
+          if (it != map.end())
+          {
+            delete it->second;
+            it->second = new dynamic_accessor_t<const AccessorType>( accessor );
+          }
+          else
+            map[name] = new dynamic_accessor_t<const AccessorType>( accessor );
+      }
+
+
+    public:
+
+        
         /** @brief Adds scalar data on vertices for writing to the OpenDX file. Only one quantity at a time is supported! */
         template <typename T>
-        void add_scalar_data_on_vertices(T const & accessor, std::string name)
+        void add_scalar_data_on_vertices(T const accessor, std::string name)
         {
-          data_accessor_wrapper<VertexType> wrapper(accessor.clone());
-          if (vertex_data_scalar.size() > 0)
+          if (vertex_scalar_data.size() > 0)
             std::cout << "* ViennaGrid: Warning: OpenDX vertex data " << name
                       << " will be ignored, because other data is already available!" << std::endl;
-          vertex_data_scalar.push_back(wrapper);
+
+          add_to_container( vertex_scalar_data, accessor, name );
         }
 
         /** @brief Adds scalar data on cells for writing to the OpenDX file. Note that vertex data has precedence. Only one quantity at a time is supported! */
         template <typename T>
-        void add_scalar_data_on_cells(T const & accessor, std::string name)
+        void add_scalar_data_on_cells(T const accessor, std::string name)
         {
-          data_accessor_wrapper<CellType> wrapper(accessor.clone());
-
-          if (cell_data_scalar.size() > 0)
+          if (cell_scalar_data.size() > 0)
             std::cout << "* ViennaGrid: Warning: OpenDX cell data " << name
                       << " will be ignored, because other cell data is already available!" << std::endl;
 
-          if (vertex_data_scalar.size() > 0)
+          if (vertex_scalar_data.size() > 0)
             std::cout << "* ViennaGrid: Warning: OpenDX cell data " << name
                       << " will be ignored, because other vertex data is already available!" << std::endl;
 
-          cell_data_scalar.push_back(wrapper);
+          add_to_container( cell_scalar_data, accessor, name );
         }
 
 
       private:
-        std::vector< data_accessor_wrapper<VertexType> >    vertex_data_scalar;
-        std::vector< data_accessor_wrapper<CellType> >      cell_data_scalar;
+//         std::vector< data_accessor_wrapper<VertexType> >    vertex_data_scalar;
+//         std::vector< data_accessor_wrapper<CellType> >      cell_data_scalar;
+
+        VertexScalarOutputAccessorContainer          vertex_scalar_data;
+        CellScalarOutputAccessorContainer            cell_scalar_data;
 
     }; // opendx_writer
 
@@ -252,41 +276,41 @@ namespace viennagrid
       * @param  key         The key object for ViennaData
       * @param  quantity_name        Ignored. Only used for a homogeneous interface with VTK reader/writer.
       */
-    template <typename KeyType, typename DataType, typename CellTypeOrTag, typename DomainType>
-    opendx_writer<CellTypeOrTag, DomainType> & add_scalar_data_on_vertices(opendx_writer<CellTypeOrTag, DomainType> & writer,
-                                                            KeyType const & key,
-                                                            std::string quantity_name)
-    {
-      //typedef typename DomainType::config_type                             DomainConfiguration;
-      typedef typename result_of::element<DomainType, viennagrid::vertex_tag>::type      VertexType;
-
-      data_accessor_wrapper<VertexType> wrapper(new global_scalar_data_accessor<VertexType, KeyType, DataType>(key));
-      writer.add_scalar_data_on_vertices(wrapper, quantity_name);
-      return writer;
-    }
-
-    /** @brief Registers scalar-valued data on cells at the OpenDX writer. Note that vertex data has precedence. At most one data set is allowed.
-      *
-      * @tparam KeyType     Type of the key used with ViennaData
-      * @tparam DataType    Type of the data as used with ViennaData
-      * @tparam DomainType  The ViennaGrid domain type
-      * @param  writer      The OpenDX writer object for which the data should be registered
-      * @param  key         The key object for ViennaData
-      * @param  quantity_name        Ignored. Only used for a homogeneous interface with VTK reader/writer.
-      */
-    template <typename KeyType, typename DataType, typename CellTypeOrTag, typename DomainType>
-    opendx_writer<CellTypeOrTag, DomainType> & add_scalar_data_on_cells(opendx_writer<CellTypeOrTag, DomainType> & writer,
-                                                         KeyType const & key,
-                                                         std::string quantity_name)
-    {
-      typedef typename DomainType::config_type                         DomainConfiguration;
-      typedef typename result_of::element_tag<CellTypeOrTag>::type                   CellTag;
-      typedef typename result_of::element<DomainConfiguration, CellTag>::type     CellType;
-
-      data_accessor_wrapper<CellType> wrapper(new global_scalar_data_accessor<CellType, KeyType, DataType>(key));
-      writer.add_scalar_data_on_cells(wrapper, quantity_name);
-      return writer;
-    }
+//     template <typename KeyType, typename DataType, typename CellTypeOrTag, typename DomainType>
+//     opendx_writer<CellTypeOrTag, DomainType> & add_scalar_data_on_vertices(opendx_writer<CellTypeOrTag, DomainType> & writer,
+//                                                             KeyType const & key,
+//                                                             std::string quantity_name)
+//     {
+//       //typedef typename DomainType::config_type                             DomainConfiguration;
+//       typedef typename result_of::element<DomainType, viennagrid::vertex_tag>::type      VertexType;
+// 
+//       data_accessor_wrapper<VertexType> wrapper(new global_scalar_data_accessor<VertexType, KeyType, DataType>(key));
+//       writer.add_scalar_data_on_vertices(wrapper, quantity_name);
+//       return writer;
+//     }
+// 
+//     /** @brief Registers scalar-valued data on cells at the OpenDX writer. Note that vertex data has precedence. At most one data set is allowed.
+//       *
+//       * @tparam KeyType     Type of the key used with ViennaData
+//       * @tparam DataType    Type of the data as used with ViennaData
+//       * @tparam DomainType  The ViennaGrid domain type
+//       * @param  writer      The OpenDX writer object for which the data should be registered
+//       * @param  key         The key object for ViennaData
+//       * @param  quantity_name        Ignored. Only used for a homogeneous interface with VTK reader/writer.
+//       */
+//     template <typename KeyType, typename DataType, typename CellTypeOrTag, typename DomainType>
+//     opendx_writer<CellTypeOrTag, DomainType> & add_scalar_data_on_cells(opendx_writer<CellTypeOrTag, DomainType> & writer,
+//                                                          KeyType const & key,
+//                                                          std::string quantity_name)
+//     {
+//       typedef typename DomainType::config_type                         DomainConfiguration;
+//       typedef typename result_of::element_tag<CellTypeOrTag>::type                   CellTag;
+//       typedef typename result_of::element<DomainConfiguration, CellTag>::type     CellType;
+// 
+//       data_accessor_wrapper<CellType> wrapper(new global_scalar_data_accessor<CellType, KeyType, DataType>(key));
+//       writer.add_scalar_data_on_cells(wrapper, quantity_name);
+//       return writer;
+//     }
 
 
   } //namespace io

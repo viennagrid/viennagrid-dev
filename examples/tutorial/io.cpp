@@ -30,7 +30,7 @@
 #include "viennagrid/algorithm/circumcenter.hpp"
 #include "viennagrid/io/vtk_reader.hpp"
 #include "viennagrid/io/vtk_writer.hpp"
-//#include "viennagrid/io/opendx_writer.hpp"
+#include "viennagrid/io/opendx_writer.hpp"
 #include "viennagrid/io/netgen_reader.hpp"
 
 struct UserData
@@ -51,7 +51,7 @@ void read_netgen(DomainType & domain, SegmentationType & segmentation)
 {
   
   viennagrid::io::netgen_reader my_netgen_reader;
-  my_netgen_reader(domain, segmentation, "../examples/data/cube48.mesh");
+  my_netgen_reader(domain, segmentation, "../data/cube48.mesh");
   
   //
   // Note that the Netgen format supports multiple segments, which will be automatically created by the reader
@@ -65,20 +65,25 @@ void read_netgen(DomainType & domain, SegmentationType & segmentation)
 //
 // Write to IBM Vizualization DataExplorer (OpenDX, http://www.opendx.org/) file
 //
-template <typename DomainType>
-void write_opendx(DomainType const &)
+template <typename DomainType, typename UserData>
+void write_opendx(DomainType const & domain, UserData & data)
 {
-//   // Instantiate writer object:
-//   viennagrid::io::opendx_writer<CellTypeOrTag, DomainType> my_dx_writer;
-//   
-//   // Add scalar vertex data: Note that only the first data is used.
+  typedef typename viennagrid::result_of::vertex< DomainType >::type        vertex_type;
+  typedef typename viennagrid::result_of::cell< DomainType >::type          cell_type;
+  
+  // Instantiate writer object:
+  viennagrid::io::opendx_writer<DomainType> my_dx_writer;
+
+  // Add scalar vertex data: Note that only the first data is used.
 //   viennagrid::io::add_scalar_data_on_vertices<std::string, double>(my_dx_writer, "vtk_data", "data_double");
-//   
-//   // Add scalar cell data: Note that only the first data is used and that no other vertex data must be present!
-//   //viennagrid::io::add_scalar_data_on_cells<std::string, double>(my_dx_writer, "vtk_data", "cell_data_double");
-//   
-//   
-//   my_dx_writer(domain, "tutorial_io.out");
+
+  my_dx_writer.add_scalar_data_on_vertices( viennagrid::make_accessor<vertex_type>(data.vertex_scalar_array), "data_double" );
+
+  // Add scalar cell data: Note that only the first data is used and that no other vertex data must be present!
+  //viennagrid::io::add_scalar_data_on_cells<std::string, double>(my_dx_writer, "vtk_data", "cell_data_double");
+
+
+  my_dx_writer(domain, "tutorial_io.out");
 }
 
 
@@ -107,7 +112,7 @@ void read_vtk(DomainType & domain, SegmentationType & segmentation, UserData & d
   reader.register_vertex_scalar_accessor( viennagrid::make_accessor<vertex_type>(data.vertex_scalar_array), "data_double" );
   
   // Write vector-valued vertex data that matches the name 'data_point' to ViennaData as data of type std::vector<double>, using a key of type std::string and value "vtk_data":
-  //reader.register_vertex_vector_accessor( viennagrid::make_accessor<vertex_type>(data.vertex_vector_array), "data_point" );
+//   reader.register_vertex_vector_accessor( viennagrid::make_accessor<vertex_type>(data.vertex_vector_array), "data_point" );
   
   // Write normal (vector-valued) vertex data that matches the name 'data_normal' to ViennaData as data of type std::vector<double>, using a key of type std::string and value "vtk_data_2":
   //viennagrid::io::add_normal_data_on_vertices<std::string, std::vector<double> >(reader, "vtk_data_2", "data_normal");
@@ -123,7 +128,7 @@ void read_vtk(DomainType & domain, SegmentationType & segmentation, UserData & d
   reader.register_cell_scalar_accessor( viennagrid::make_accessor<cell_type>(data.cell_scalar_array), "data_double" );
   
   // Write vector-valued cell data that matches the name 'data_point' to ViennaData as data of type std::vector<double>, using a key of type std::string and value "vtk_data":
-  //reader.register_cell_vector_accessor( viennagrid::make_accessor<cell_type>(data.cell_vector_array), "data_point" );
+//   reader.register_cell_vector_accessor( viennagrid::make_accessor<cell_type>(data.cell_vector_array), "data_point" );
   
   // Write normal (vector-valued) cell data that matches the name 'data_normal' to ViennaData as data of type std::vector<double>, using a key of type std::string and value "vtk_data_2":
   //viennagrid::io::add_normal_data_on_cells<std::string, std::vector<double> >(reader, "vtk_data_2", "data_normal");
@@ -134,7 +139,7 @@ void read_vtk(DomainType & domain, SegmentationType & segmentation, UserData & d
   //
   // Step 4: Trigger filereader:
   //
-  reader(domain, segmentation, "../examples/data/tets_with_data_main.pvd");
+  reader(domain, segmentation, "../data/tets_with_data_main.pvd");
   
   
   //
@@ -201,7 +206,7 @@ void write_vtk(DomainType & domain, UserData & data)
   
   // Vector-valued data of type std::vector<double> is written to the VTK file and named "data_vector". Data is accessed with ViennaData using a std::string "vtk_data" as key.
   //viennagrid::io::add_vector_data_on_vertices<std::string, std::vector<double> >(my_vtk_writer, "vtk_data", "data_point");
-  writer.add_vector_data_on_vertices( viennagrid::make_accessor<vertex_type>(data.vertex_vector_array), "data_point" );
+//   writer.add_vector_data_on_vertices( viennagrid::make_accessor<vertex_type>(data.vertex_vector_array), "data_point" );
 
   // Same as vector-data, but with the constraint that each vector has length 1
   //viennagrid::io::add_normal_data_on_vertices<std::string, std::vector<double> >(my_vtk_writer, "vtk_data", "data_normal");
@@ -218,7 +223,7 @@ void write_vtk(DomainType & domain, UserData & data)
   
   // Vector valued data on cells. Similar to vertex case
   //viennagrid::io::add_vector_data_on_cells<std::string, std::vector<double> >(my_vtk_writer, "vtk_data", "data_vector");
-  writer.add_vector_data_on_cells( viennagrid::make_accessor<cell_type>(data.cell_vector_array), "data_vector" );
+//   writer.add_vector_data_on_cells( viennagrid::make_accessor<cell_type>(data.cell_vector_array), "data_vector" );
 
   // Vector valued data on cells. Just like vector data, but with a normalization requirement to length 1.
   //viennagrid::io::add_normal_data_on_cells<std::string, std::vector<double> >(my_vtk_writer, "vtk_data", "data_normal");
@@ -294,19 +299,20 @@ int main()
   //write a bit of data to domain:
   //write_data<viennagrid::tetrahedron_tag>(domain);
   
-  //
-  // Use-case 2: Write to OpenDX
-  //
-  write_opendx(domain);
-  
   
   //
-  // Use-case 3: Read VTK file(s)
+  // Use-case 2: Read VTK file(s)
   //
   Domain vtk_domain;
   Segmentation vtk_segments(vtk_domain);
   UserData data;
   read_vtk(vtk_domain, vtk_segments, data);
+
+
+  //
+  // Use-case 3: Write to OpenDX
+  //
+  write_opendx(vtk_domain, data);
   
   
   //
