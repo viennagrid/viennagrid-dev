@@ -177,14 +177,14 @@ namespace viennagrid
 
     //
     /** @brief Dispatched function for computing the volume of a domain or segment.*/
-    template <typename ElementTypeOrTag, typename DomainType>
-    typename viennagrid::result_of::coord< DomainType >::type
-    volume_domain(DomainType const & domain)
+    template <typename ElementTypeOrTag, typename DomainSegmentType>
+    typename viennagrid::result_of::coord< DomainSegmentType >::type
+    volume_domain(DomainSegmentType const & domain)
     {
-      typedef typename viennagrid::result_of::const_element_range<DomainType, ElementTypeOrTag>::type  CellContainer;
+      typedef typename viennagrid::result_of::const_element_range<DomainSegmentType, ElementTypeOrTag>::type  CellContainer;
       typedef typename viennagrid::result_of::iterator<CellContainer>::type         CellIterator;
 
-      typename viennagrid::result_of::coord< DomainType >::type new_volume = 0;
+      typename viennagrid::result_of::coord< DomainSegmentType >::type new_volume = 0;
       CellContainer new_cells = viennagrid::elements<ElementTypeOrTag>(domain);
       for (CellIterator new_cit = new_cells.begin();
                         new_cit != new_cells.end();
@@ -224,18 +224,11 @@ namespace viennagrid
   }
 
   // default Element Tag = Cell Tag
-  template<typename WrappedConfigType>
-  typename viennagrid::result_of::coord< domain_t<WrappedConfigType> >::type
-  volume(domain_t<WrappedConfigType> const & domain)
+  template<typename DomainSegmentType>
+  typename viennagrid::result_of::coord< DomainSegmentType >::type
+  volume(DomainSegmentType const & domain)
   {
-      return detail::volume_domain< typename viennagrid::result_of::cell_tag< domain_t<WrappedConfigType> >::type >(domain);
-  }
-
-  template<typename SegmentationType>
-  typename viennagrid::result_of::coord< typename SegmentationType::domain_type >::type
-  volume(segment_t<SegmentationType> const & segment)
-  {
-      return detail::volume_domain< typename viennagrid::result_of::cell_tag< typename SegmentationType::domain_type >::type >(segment);
+      return detail::volume_domain< typename viennagrid::result_of::cell_tag< DomainSegmentType >::type >(domain);
   }
 
 

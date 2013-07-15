@@ -133,19 +133,19 @@ namespace viennagrid
 
 
 
-    template <typename ElementTypeOrTag, typename DomainType>
-    typename viennagrid::result_of::point<DomainType>::type
-    centroid_domain(DomainType const & domain)
+    template <typename ElementTypeOrTag, typename DomainSegmentType>
+    typename viennagrid::result_of::point<DomainSegmentType>::type
+    centroid_domain(DomainSegmentType const & domain)
     {
       //typedef typename DomainSegmentType::config_type                                      ConfigType;
       //typedef typename ElementType::tag                                                CellTag;
       typedef typename viennagrid::result_of::element_tag<ElementTypeOrTag>::type ElementTag;
 
-      typedef typename viennagrid::result_of::point<DomainType>::type                      PointType;
-      typedef typename viennagrid::result_of::element<DomainType, vertex_tag>::type                         VertexType;
-      typedef typename viennagrid::result_of::element<DomainType, line_tag>::type                         EdgeType;
+      typedef typename viennagrid::result_of::point<DomainSegmentType>::type                      PointType;
+      typedef typename viennagrid::result_of::element<DomainSegmentType, vertex_tag>::type                         VertexType;
+      typedef typename viennagrid::result_of::element<DomainSegmentType, line_tag>::type                         EdgeType;
 
-      typedef typename viennagrid::result_of::const_element_range<DomainType,
+      typedef typename viennagrid::result_of::const_element_range<DomainSegmentType,
                                                                 ElementTag>::type  CellRange;
       typedef typename viennagrid::result_of::iterator<CellRange>::type                         CellIterator;
 
