@@ -33,6 +33,10 @@
 #include <cstddef>     //for std::size_t
 #include <cstdlib>     //for EXIT_SUCCESS and EXIT_FAILURE
 
+// Switch off enum-comparison warnings
+#pragma GCC diagnostic ignored "-Wenum-compare"
+
+
 #include "viennagrid/storage/static_array.hpp"
 #include "viennagrid/utils/remove_pointer.hpp"
 
