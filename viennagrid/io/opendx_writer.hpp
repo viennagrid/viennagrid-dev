@@ -258,8 +258,6 @@ namespace viennagrid
 
 
       private:
-//         std::vector< data_accessor_wrapper<VertexType> >    vertex_data_scalar;
-//         std::vector< data_accessor_wrapper<CellType> >      cell_data_scalar;
 
         VertexScalarOutputAccessorContainer          vertex_scalar_data;
         CellScalarOutputAccessorContainer            cell_scalar_data;
@@ -276,41 +274,27 @@ namespace viennagrid
       * @param  key         The key object for ViennaData
       * @param  quantity_name        Ignored. Only used for a homogeneous interface with VTK reader/writer.
       */
-//     template <typename KeyType, typename DataType, typename CellTypeOrTag, typename DomainType>
-//     opendx_writer<CellTypeOrTag, DomainType> & add_scalar_data_on_vertices(opendx_writer<CellTypeOrTag, DomainType> & writer,
-//                                                             KeyType const & key,
-//                                                             std::string quantity_name)
-//     {
-//       //typedef typename DomainType::config_type                             DomainConfiguration;
-//       typedef typename result_of::element<DomainType, viennagrid::vertex_tag>::type      VertexType;
-// 
-//       data_accessor_wrapper<VertexType> wrapper(new global_scalar_data_accessor<VertexType, KeyType, DataType>(key));
-//       writer.add_scalar_data_on_vertices(wrapper, quantity_name);
-//       return writer;
-//     }
-// 
-//     /** @brief Registers scalar-valued data on cells at the OpenDX writer. Note that vertex data has precedence. At most one data set is allowed.
-//       *
-//       * @tparam KeyType     Type of the key used with ViennaData
-//       * @tparam DataType    Type of the data as used with ViennaData
-//       * @tparam DomainType  The ViennaGrid domain type
-//       * @param  writer      The OpenDX writer object for which the data should be registered
-//       * @param  key         The key object for ViennaData
-//       * @param  quantity_name        Ignored. Only used for a homogeneous interface with VTK reader/writer.
-//       */
-//     template <typename KeyType, typename DataType, typename CellTypeOrTag, typename DomainType>
-//     opendx_writer<CellTypeOrTag, DomainType> & add_scalar_data_on_cells(opendx_writer<CellTypeOrTag, DomainType> & writer,
-//                                                          KeyType const & key,
-//                                                          std::string quantity_name)
-//     {
-//       typedef typename DomainType::config_type                         DomainConfiguration;
-//       typedef typename result_of::element_tag<CellTypeOrTag>::type                   CellTag;
-//       typedef typename result_of::element<DomainConfiguration, CellTag>::type     CellType;
-// 
-//       data_accessor_wrapper<CellType> wrapper(new global_scalar_data_accessor<CellType, KeyType, DataType>(key));
-//       writer.add_scalar_data_on_cells(wrapper, quantity_name);
-//       return writer;
-//     }
+    template <typename DomainT, typename AccessorT>
+    opendx_writer<DomainT> & add_scalar_data_on_vertices(opendx_writer<DomainT> & writer,
+                                                         AccessorT const accessor,
+                                                         std::string const & quantity_name)
+    {
+      writer.add_scalar_data_on_vertices(accessor, quantity_name);
+      return writer;
+    }
+
+
+
+
+    template <typename DomainT, typename AccessorT>
+    opendx_writer<DomainT> & add_scalar_data_on_cells(opendx_writer<DomainT> & writer,
+                                                      AccessorT const accessor,
+                                                      std::string const & quantity_name)
+    {
+      writer.add_scalar_data_on_cells(accessor, quantity_name);
+      return writer;
+    }
+
 
 
   } //namespace io

@@ -22,6 +22,7 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <boost/concept_check.hpp>
 
 #include "viennagrid/domain/domain.hpp"
 
@@ -659,6 +660,91 @@ namespace viennagrid
       return vtk_writer(domain, filename);
     }
 
+
+    
+    template <typename DomainT, typename SegmentationT, typename AccessorT>
+    vtk_writer<DomainT, SegmentationT> & add_scalar_data_on_vertices(vtk_writer<DomainT, SegmentationT> & writer,
+                                                                    AccessorT const accessor,
+                                                                    std::string const & quantity_name)
+    {
+      writer.add_scalar_data_on_vertices(accessor, quantity_name);
+      return writer;
+    }
+
+    template <typename DomainT, typename SegmentationT, typename AccessorT>
+    vtk_writer<DomainT, SegmentationT> & add_vector_data_on_vertices(vtk_writer<DomainT, SegmentationT> & writer,
+                                                                    AccessorT const accessor,
+                                                                    std::string const & quantity_name)
+    {
+      writer.add_vector_data_on_vertices(accessor, quantity_name);
+      return writer;
+    }
+
+
+    template <typename DomainT, typename SegmentationT, typename AccessorT>
+    vtk_writer<DomainT, SegmentationT> & add_scalar_data_on_vertices(vtk_writer<DomainT, SegmentationT> & writer,
+                                                                    segment_t<SegmentationT> const & segment,
+                                                                    AccessorT const accessor,
+                                                                    std::string const & quantity_name)
+    {
+      writer.add_scalar_data_on_vertices(segment, accessor, quantity_name);
+      return writer;
+    }
+
+    template <typename DomainT, typename SegmentationT, typename AccessorT>
+    vtk_writer<DomainT, SegmentationT> & add_vector_data_on_vertices(vtk_writer<DomainT, SegmentationT> & writer,
+                                                                    segment_t<SegmentationT> const & segment,
+                                                                    AccessorT const accessor,
+                                                                    std::string const & quantity_name)
+    {
+      writer.add_vector_data_on_vertices(segment, accessor, quantity_name);
+      return writer;
+    }
+
+
+
+
+
+
+    template <typename DomainT, typename SegmentationT, typename AccessorT>
+    vtk_writer<DomainT, SegmentationT> & add_scalar_data_on_cells(vtk_writer<DomainT, SegmentationT> & writer,
+                                                                    AccessorT const accessor,
+                                                                    std::string const & quantity_name)
+    {
+      writer.add_scalar_data_on_cells(accessor, quantity_name);
+      return writer;
+    }
+
+    template <typename DomainT, typename SegmentationT, typename AccessorT>
+    vtk_writer<DomainT, SegmentationT> & add_vector_data_on_cells(vtk_writer<DomainT, SegmentationT> & writer,
+                                                                    AccessorT const accessor,
+                                                                    std::string const & quantity_name)
+    {
+      writer.add_vector_data_on_cells(accessor, quantity_name);
+      return writer;
+    }
+
+    template <typename DomainT, typename SegmentationT, typename AccessorT>
+    vtk_writer<DomainT, SegmentationT> & add_scalar_data_on_cells(vtk_writer<DomainT, SegmentationT> & writer,
+                                                                  segment_t<SegmentationT> const & segment,
+                                                                  AccessorT const accessor,
+                                                                  std::string const & quantity_name)
+    {
+      writer.add_scalar_data_on_cells(segment, accessor, quantity_name);
+      return writer;
+    }
+
+    template <typename DomainT, typename SegmentationT, typename AccessorT>
+    vtk_writer<DomainT, SegmentationT> & add_vector_data_on_cells(vtk_writer<DomainT, SegmentationT> & writer,
+                                                                  segment_t<SegmentationT> const & segment,
+                                                                  AccessorT const accessor,
+                                                                  std::string const & quantity_name)
+    {
+      writer.add_vector_data_on_cells(segment, accessor, quantity_name);
+      return writer;
+    }
+
+    
   } //namespace io
 } //namespace viennagrid
 
