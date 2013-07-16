@@ -3,6 +3,7 @@
 add_executable(collection_test collection_test.cpp)
 add_executable(container_collection_test_2 container_collection_test_2.cpp)
 add_executable(container_test container_test.cpp)
+add_executable(copy_domain_test copy_domain_test.cpp)
 add_executable(element_test_3 element_test_3.cpp)
 add_executable(element_test_4 element_test_4.cpp)
 add_executable(element_erase_test element_erase_test.cpp)

@@ -18,7 +18,6 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
-#include "viennagrid/domain/topology.hpp"
 #include "viennagrid/domain/domain.hpp"
 #include "viennagrid/domain/segmentation.hpp"
 #include "viennagrid/topology/plc.hpp"
@@ -26,51 +25,6 @@
 
 namespace viennagrid
 {
-    template<bool generate_id, bool call_callback, typename domain_type, typename ElementTag, typename WrappedConfigType>
-    std::pair<
-                typename viennagrid::storage::result_of::container_of<
-                    typename result_of::element_collection<domain_type>::type,
-                    viennagrid::element_t<ElementTag, WrappedConfigType>
-                >::type::handle_type,
-                bool
-            >
-        push_element( domain_type & domain, viennagrid::element_t<ElementTag, WrappedConfigType> const & element)
-    {
-//         increment_change_counter(domain);
-        return inserter(domain).template insert<generate_id, call_callback>(element);
-    }
-
-
-
-    template<bool generate_id, bool call_callback, typename SegmentationType, typename ElementTag, typename WrappedConfigType>
-    std::pair<
-                typename viennagrid::storage::result_of::container_of<
-                    typename result_of::element_collection< segment_t<SegmentationType> >::type,
-                    viennagrid::element_t<ElementTag, WrappedConfigType>
-                >::type::handle_type,
-                bool
-            >
-        push_element( segment_t<SegmentationType> & segment, viennagrid::element_t<ElementTag, WrappedConfigType> const & element)
-    {
-        std::pair<
-                typename viennagrid::storage::result_of::container_of<
-                    typename result_of::element_collection< segment_t<SegmentationType> >::type,
-                    viennagrid::element_t<ElementTag, WrappedConfigType>
-                >::type::handle_type,
-                bool
-            > result = push_element<generate_id, call_callback>( segment.view(), element );
-
-        add( segment, viennagrid::dereference_handle(segment, result.first) );
-        return result;
-    }
-
-
-
-
-
-
-
-
     template<typename ElementTypeOrTag, typename DomainType, typename HandleIteratorType>
     typename result_of::handle<DomainType, ElementTypeOrTag>::type make_element(
           DomainType & domain,

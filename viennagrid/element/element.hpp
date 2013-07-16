@@ -362,7 +362,7 @@ namespace viennagrid
         template<typename element_tag, typename WrappedConfigType>
         struct boundary_element_typelist< element_t<element_tag, WrappedConfigType> >
         {
-            typedef typename element_t<element_tag, WrappedConfigType>::bnd_cell_container_typelist type;
+            typedef typename boundary_element_typelist<typename element_t<element_tag, WrappedConfigType>::bnd_cell_container_typelist>::type type;
         };
 
 
@@ -826,13 +826,13 @@ namespace viennagrid
 
 
     template<typename element_tag, typename WrappedConfigType, typename handle_type>
-    typename storage::handle::result_of::value_type<handle_type>::type & dereference_handle( element_t<element_tag, WrappedConfigType> & element, handle_type handle)
+    typename storage::handle::result_of::value_type<handle_type>::type & dereference_handle( element_t<element_tag, WrappedConfigType> & element, handle_type const & handle)
     {
         return element.dereference_handle(handle);
     }
 
     template<typename element_tag, typename WrappedConfigType, typename handle_type>
-    const typename storage::handle::result_of::value_type<handle_type>::type & dereference_handle( element_t<element_tag, WrappedConfigType> const & element, handle_type handle)
+    const typename storage::handle::result_of::value_type<handle_type>::type & dereference_handle( element_t<element_tag, WrappedConfigType> const & element, handle_type const & handle)
     {
         return element.dereference_handle(handle);
     }

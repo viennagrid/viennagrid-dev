@@ -845,6 +845,13 @@ namespace viennagrid
 
 
 
+//     template<typename segmentation_type, typename handle_type>
+//     typename storage::handle::result_of::value_type<handle_type>::type & dereference_handle( segment_t<segmentation_type> & segment, handle_type const & handle);
+//     
+//     template<typename segmentation_type, typename handle_type>
+//     typename storage::handle::result_of::value_type<handle_type>::type const & dereference_handle( segment_t<segmentation_type> const & segment, handle_type const & handle);
+    
+    
     template<typename WrappedDomainConfigType, typename ElementTag, typename WrappedConfigType>
     element_t<ElementTag, WrappedConfigType> & dereference_handle( domain_t<WrappedDomainConfigType> &, element_t<ElementTag, WrappedConfigType> & handle)
     { return handle; }
@@ -853,7 +860,10 @@ namespace viennagrid
     element_t<ElementTag, WrappedConfigType> const & dereference_handle( domain_t<WrappedDomainConfigType> const &, element_t<ElementTag, WrappedConfigType> const & handle)
     { return handle; }
 
+
     
+    template<typename SourceWrappedConfigT, typename DestinationWrappedConfigT>
+    void copy_domain( domain_t<SourceWrappedConfigT> const & source_domain, domain_t<DestinationWrappedConfigT> & destination_domain );
 
 
    // norm tags for: algorithm/norm.hpp

@@ -5,7 +5,7 @@
 #include "viennagrid/domain/accessor.hpp"
 
 #include "viennagrid/forwards.hpp"
-#include "viennagrid/domain/topology.hpp"
+#include "viennagrid/domain/domain.hpp"
 
 
 namespace viennagrid
@@ -227,11 +227,11 @@ namespace viennagrid
 
 
     template<typename segmentation_type, typename handle_type>
-    typename storage::handle::result_of::value_type<handle_type>::type & dereference_handle( segment_t<segmentation_type> & segment, const handle_type & handle)
+    typename storage::handle::result_of::value_type<handle_type>::type & dereference_handle( segment_t<segmentation_type> & segment, handle_type const & handle)
     { return dereference_handle( segment.view(), handle ); }
 
     template<typename segmentation_type, typename handle_type>
-    typename storage::handle::result_of::value_type<handle_type>::type const & dereference_handle( segment_t<segmentation_type> const & segment, const handle_type & handle)
+    typename storage::handle::result_of::value_type<handle_type>::type const & dereference_handle( segment_t<segmentation_type> const & segment, handle_type const & handle)
     { return dereference_handle( segment.view(), handle ); }
 
 
@@ -1044,6 +1044,88 @@ namespace viennagrid
         return erase( segment, viennagrid::make_accessor<element_type>( element_segment_mapping_collection(segment) ), element );
     }
 
+
+
+
+
+    template<bool generate_id, bool call_callback, typename SegmentationType, typename ElementTag, typename WrappedConfigType>
+    std::pair<
+                typename viennagrid::storage::result_of::container_of<
+                    typename result_of::element_collection< segment_t<SegmentationType> >::type,
+                    viennagrid::element_t<ElementTag, WrappedConfigType>
+                >::type::handle_type,
+                bool
+            >
+        push_element( segment_t<SegmentationType> & segment, viennagrid::element_t<ElementTag, WrappedConfigType> const & element)
+    {
+        std::pair<
+                typename viennagrid::storage::result_of::container_of<
+                    typename result_of::element_collection< segment_t<SegmentationType> >::type,
+                    viennagrid::element_t<ElementTag, WrappedConfigType>
+                >::type::handle_type,
+                bool
+            > result = push_element<generate_id, call_callback>( segment.view(), element );
+
+        add( segment, viennagrid::dereference_handle(segment, result.first) );
+        return result;
+    }
+
+
+
+
+    template<typename SegmentationT, typename id_type>
+    typename viennagrid::result_of::iterator< typename viennagrid::result_of::element_range<segment_t<SegmentationT>, typename id_type::value_type::tag>::type >::type
+            find_by_id(segment_t<SegmentationT> & domain, id_type id)
+    {
+        typedef typename id_type::value_type element_type;
+        typedef typename element_type::tag element_tag;
+        typedef typename viennagrid::result_of::element_range<segment_t<SegmentationT>, element_tag>::type RangeType;
+        typedef typename viennagrid::result_of::iterator<RangeType>::type RangeIterator;
+
+        RangeType range = viennagrid::elements<element_tag>(domain);
+        for (RangeIterator it = range.begin(); it != range.end(); ++it)
+        {
+            if ( viennagrid::dereference_handle(domain, it.handle()).id() == id )
+                return it;
+        }
+
+        return range.end();
+    }
+
+    template<typename SegmentationT, typename id_type>
+    typename viennagrid::result_of::const_iterator< typename viennagrid::result_of::const_element_range<segment_t<SegmentationT>, typename id_type::value_type::tag>::type >::type
+            find_by_id(segment_t<SegmentationT> const & domain, id_type id)
+    {
+        typedef typename id_type::value_type element_type;
+        typedef typename element_type::tag element_tag;
+        typedef typename viennagrid::result_of::const_element_range<segment_t<SegmentationT>, element_tag>::type RangeType;
+        typedef typename viennagrid::result_of::const_iterator<RangeType>::type RangeIterator;
+
+        RangeType range = viennagrid::elements<element_tag>(domain);
+        for (RangeIterator it = range.begin(); it != range.end(); ++it)
+        {
+            if ( viennagrid::dereference_handle(domain, it.handle()).id() == id )
+                return it;
+        }
+
+        return range.end();
+    }
+
+
+    
+    template<typename view_type, typename domain_type, typename handle_type>
+    void add_handle( view_type & view, domain_type & domain, handle_type handle )
+    {
+        typedef typename storage::handle::result_of::value_type<handle_type>::type value_type;
+        value_type & element = dereference_handle(domain, handle);
+
+        typedef typename viennagrid::result_of::element_range< view_type, value_type >::type range_type;
+        typedef typename viennagrid::result_of::iterator<range_type>::type iterator_type;
+
+        iterator_type it = find_by_id( view, element.id() );
+        if ( it == elements<value_type>(view).end() )
+            viennagrid::storage::collection::get<value_type>( element_collection(view) ).insert_handle( handle );
+    }
 }
 
 
