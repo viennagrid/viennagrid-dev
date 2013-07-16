@@ -5,6 +5,7 @@
 #include "viennagrid/storage/container_collection.hpp"
 #include "viennagrid/domain/domain.hpp"
 #include "viennagrid/domain/coboundary_iteration.hpp"
+#include <iterator>
 
 
 namespace viennagrid
@@ -34,7 +35,6 @@ namespace viennagrid
                 {
                     if (jt.handle() == from)
                     {
-//                         std::cout << "Parent item " << *it << " switching " << viennagrid::dereference_handle(*it, from) << " with " << viennagrid::dereference_handle(*it, to) << std::endl;
                         jt.handle() = to;
                     }
                 }
@@ -80,8 +80,7 @@ namespace viennagrid
             element_range_type view_elements = viennagrid::elements( domain_view );
             if ( viennagrid::find_by_handle(domain_view, to_erase) == view_elements.end() )
             {
-//                 std::cout << "Marking " << viennagrid::dereference_handle(domain, to_erase) << std::endl;
-                view_elements.get_base_container()->insert_handle( to_erase );
+                view_elements.insert_unique_handle( to_erase );
             }
 
             typedef typename viennagrid::result_of::handle<domain_type, coboundary_element_type>::type coboundary_element_handle;
@@ -91,7 +90,6 @@ namespace viennagrid
             coboundary_element_range_type coboundary_elements = viennagrid::coboundary_elements<element_type, coboundary_element_type>(domain, to_erase);
             for (coboundary_element_range_iterator it = coboundary_elements.begin(); it != coboundary_elements.end(); ++it)
             {
-
                 mark_erase_elements_impl<domain_type, domain_view_type, coboundary_element_handle, tail>::mark(domain, domain_view, it.handle());
             }
         }
@@ -110,8 +108,7 @@ namespace viennagrid
             element_range_type view_elements = viennagrid::elements( domain_view );
             if ( viennagrid::find_by_handle(domain_view, to_erase) == view_elements.end() )
             {
-//                 std::cout << "Marking " << viennagrid::dereference_handle(domain, to_erase) << std::endl;
-                view_elements.get_base_container()->insert_handle( to_erase );
+                view_elements.insert_unique_handle( to_erase );
             }
         }
     };
@@ -145,6 +142,8 @@ namespace viennagrid
         std::swap( *to_erase_it, *(--elements.end()) );
         elements.erase( --elements.end() );
 
+        std::cout << "Switching " << viennagrid::dereference_handle(domain, from) << " with " << viennagrid::dereference_handle(domain, to) << std::endl;
+        
         switch_handle( domain, from, to );
     }
 
@@ -163,36 +162,38 @@ namespace viennagrid
             typedef typename viennagrid::result_of::element_range<domain_type, element_type>::type element_range_type;
             typedef typename viennagrid::result_of::iterator<element_range_type>::type element_range_iterator;
 
-            std::vector< std::pair<element_range_iterator, element_range_iterator> > swtiching_map;
+            typedef typename viennagrid::result_of::id_type<element_type>::type id_type;
+
+//             std::vector< std::pair<element_range_iterator, element_range_iterator> > swtiching_map;
+
+            std::deque<id_type> ids_to_erase;
+
+            to_erase_element_range_type elements_to_erase = viennagrid::elements<element_type>(view_to_erase);
+            for (to_erase_element_range_iterator it = elements_to_erase.begin(); it != elements_to_erase.end(); ++it)
+              ids_to_erase.push_back( it->id() );
 
             element_range_type elements = viennagrid::elements(domain);
             element_range_iterator back_it = --elements.end();
 
-            to_erase_element_range_type elements_to_erase = viennagrid::elements<element_type>(view_to_erase);
-            for (to_erase_element_range_iterator it = elements_to_erase.begin(); it != elements_to_erase.end(); ++it)
+            
+            for (typename std::deque<id_type>::iterator it = ids_to_erase.begin(); it != ids_to_erase.end(); ++it)
             {
-                element_handle element_to_erase = it.handle();
+                element_range_iterator to_erase_it = find_by_id( domain, *it );
 
-                element_range_iterator to_erase_it = find_by_handle( domain, element_to_erase );
+                if (back_it != to_erase_it)
+                {
+                  element_handle old_handle = back_it.handle();
+                  std::swap( *back_it, *to_erase_it );
+                  element_handle new_handle = to_erase_it.handle();
+                  
+                  switch_handle( domain, old_handle, new_handle );
+                }
 
-                swtiching_map.push_back( std::make_pair(back_it,to_erase_it) );
+                
+                elements.erase( back_it );
+
                 back_it--;
             }
-
-            for (typename std::vector< std::pair<element_range_iterator, element_range_iterator> >::iterator it = swtiching_map.begin(); it != swtiching_map.end(); ++it)
-            {
-                std::swap( *(it->first), *(it->second) );
-
-//                 std::cout << "Erasing " << *(--elements.end()) << std::endl;
-
-                elements.erase( --elements.end() );
-
-
-
-                switch_handle( domain, it->first.handle(), it->second.handle() );
-            }
-
-
         }
 
         domain_type & domain;
@@ -205,6 +206,7 @@ namespace viennagrid
         typedef typename viennagrid::meta::typelist::result_of::reverse<
           typename viennagrid::result_of::element_typelist<domain_view_type>::type
         >::type element_typelist;
+        
         erase_functor<domain_type, domain_view_type> functor( domain, elements_to_erase );
         viennagrid::meta::typelist::for_each<element_typelist>(functor);
     }
@@ -213,7 +215,7 @@ namespace viennagrid
     void erase_element(domain_type & domain, handle_type & element_to_erase)
     {
         typedef typename viennagrid::result_of::domain_view<domain_type>::type domain_view_type;
-        domain_view_type elements_to_erase = viennagrid::create_view(domain);
+        domain_view_type elements_to_erase = viennagrid::make_view(domain);
         viennagrid::mark_erase_elements( domain, elements_to_erase, element_to_erase );
         viennagrid::erase_elements(domain, elements_to_erase);
     }
