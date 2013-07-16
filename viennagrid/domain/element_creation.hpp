@@ -66,10 +66,10 @@ namespace viennagrid
 
 
 
-    template<typename domain_type>
-    typename result_of::handle<domain_type, vertex_tag>::type make_vertex( domain_type & domain )
+    template<typename DomainType>
+    typename result_of::handle<DomainType, vertex_tag>::type make_vertex( DomainType & domain )
     {
-        typedef typename result_of::element<domain_type, vertex_tag>::type element_type;
+        typedef typename result_of::element<DomainType, vertex_tag>::type element_type;
         return push_element<true, true>(domain, element_type() ).first;
     }
 
@@ -105,8 +105,8 @@ namespace viennagrid
                               typename result_of::point< domain_t<ConfigType> >::type const & p,
                               typename result_of::coord< domain_t<ConfigType> >::type tolerance )
     {
-        typedef domain_t<ConfigType> domain_type;
-        typedef typename result_of::element_range<domain_type, vertex_tag>::type vertex_range_type;
+        typedef domain_t<ConfigType> DomainType;
+        typedef typename result_of::element_range<DomainType, vertex_tag>::type vertex_range_type;
         typedef typename result_of::handle_iterator<vertex_range_type>::type vertex_range_handle_iterator;
 
         vertex_range_type vertices = viennagrid::elements<vertex_tag>(domain);
@@ -121,8 +121,8 @@ namespace viennagrid
 
 
 
-    template<typename domain_type, typename vertex_handle_type>
-    typename result_of::handle<domain_type, line_tag>::type make_line( domain_type & domain, vertex_handle_type v0, vertex_handle_type v1 )
+    template<typename DomainType, typename vertex_handle_type>
+    typename result_of::handle<DomainType, line_tag>::type make_line( DomainType & domain, vertex_handle_type v0, vertex_handle_type v1 )
     {
         viennagrid::storage::static_array<vertex_handle_type, 2> handles;
         handles[0] = v0;
@@ -131,8 +131,8 @@ namespace viennagrid
         return make_element<viennagrid::line_tag>( domain, handles.begin(), handles.end() );
     }
 
-    template<typename domain_type, typename vertex_handle_type>
-    typename result_of::handle<domain_type, triangle_tag>::type make_triangle( domain_type & domain, vertex_handle_type v0, vertex_handle_type v1, vertex_handle_type v2 )
+    template<typename DomainType, typename vertex_handle_type>
+    typename result_of::handle<DomainType, triangle_tag>::type make_triangle( DomainType & domain, vertex_handle_type v0, vertex_handle_type v1, vertex_handle_type v2 )
     {
         viennagrid::storage::static_array<vertex_handle_type, 3> handles;
         handles[0] = v0;
@@ -142,8 +142,39 @@ namespace viennagrid
         return make_element<viennagrid::triangle_tag>( domain, handles.begin(), handles.end() );
     }
 
-    template<typename domain_type, typename vertex_handle_type>
-    typename result_of::handle<domain_type, tetrahedron_tag>::type make_tetrahedron( domain_type & domain, vertex_handle_type v0, vertex_handle_type v1, vertex_handle_type v2, vertex_handle_type v3 )
+
+    template<typename DomainType, typename LineHandleIteratorType, typename VertexHandleIteratorType, typename PointIteraorType>
+    typename result_of::handle<DomainType, plc_tag>::type make_plc(DomainType & domain,
+                                                                        LineHandleIteratorType line_begin, LineHandleIteratorType line_end,
+                                                                        VertexHandleIteratorType vertex_begin, VertexHandleIteratorType vertex_end,
+                                                                        PointIteraorType point_begin, PointIteraorType point_end)
+    {
+        typedef typename viennagrid::result_of::element<DomainType, plc_tag>::type PLCType;;
+        typedef typename result_of::handle<DomainType, plc_tag>::type PLCHandleType;
+        PLCType plc( inserter(domain).get_physical_container_collection() );
+
+        for ( ; line_begin != line_end; ++line_begin)
+          plc.container( viennagrid::line_tag() ).insert_unique_handle( *line_begin );
+
+        for ( ; vertex_begin != vertex_end; ++vertex_begin)
+          plc.container( viennagrid::vertex_tag() ).insert_unique_handle( *vertex_begin );
+
+        PLCHandleType handle = viennagrid::push_element<true, true>(domain, plc ).first;
+
+        PLCType & inserted_plc = viennagrid::dereference_handle(domain, handle);
+
+        std::copy(point_begin, point_end, std::back_inserter( inserted_plc.appendix() ) );
+        return handle;
+    }
+
+
+
+
+
+
+    
+    template<typename DomainType, typename vertex_handle_type>
+    typename result_of::handle<DomainType, tetrahedron_tag>::type make_tetrahedron( DomainType & domain, vertex_handle_type v0, vertex_handle_type v1, vertex_handle_type v2, vertex_handle_type v3 )
     {
         viennagrid::storage::static_array<vertex_handle_type, 4> handles;
         handles[0] = v0;
@@ -156,8 +187,8 @@ namespace viennagrid
 
 
 
-    template<typename domain_type, typename vertex_handle_type>
-    typename result_of::handle<domain_type, quadrilateral_tag>::type make_quadrilateral( domain_type & domain, vertex_handle_type v0, vertex_handle_type v1, vertex_handle_type v2, vertex_handle_type v3 )
+    template<typename DomainType, typename vertex_handle_type>
+    typename result_of::handle<DomainType, quadrilateral_tag>::type make_quadrilateral( DomainType & domain, vertex_handle_type v0, vertex_handle_type v1, vertex_handle_type v2, vertex_handle_type v3 )
     {
         viennagrid::storage::static_array<vertex_handle_type, 4> handles;
         handles[0] = v0;
@@ -168,8 +199,8 @@ namespace viennagrid
         return make_element<viennagrid::quadrilateral_tag>( domain, handles.begin(), handles.end() );
     }
 
-    template<typename domain_type, typename vertex_handle_type>
-    typename result_of::handle<domain_type, hexahedron_tag>::type make_hexahedron( domain_type & domain, vertex_handle_type v0, vertex_handle_type v1, vertex_handle_type v2,
+    template<typename DomainType, typename vertex_handle_type>
+    typename result_of::handle<DomainType, hexahedron_tag>::type make_hexahedron( DomainType & domain, vertex_handle_type v0, vertex_handle_type v1, vertex_handle_type v2,
                                                                                                          vertex_handle_type v3, vertex_handle_type v4, vertex_handle_type v5 )
     {
         viennagrid::storage::static_array<vertex_handle_type, 6> handles;

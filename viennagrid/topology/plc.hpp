@@ -43,14 +43,14 @@ namespace viennagrid
   template <>
   struct boundary_elements<plc_tag, vertex_tag>
   {
-    typedef dynamic_unique_layout_tag     layout_tag;
+    typedef dynamic_layout_tag     layout_tag;
     enum{ num = -1 };
   };
 
   template <>
   struct boundary_elements<plc_tag, line_tag>
   {
-    typedef dynamic_unique_layout_tag     layout_tag;
+    typedef dynamic_layout_tag     layout_tag;
     enum{ num = -1 };
   };
 
@@ -84,14 +84,14 @@ namespace viennagrid
             typedef typename result_of::iterator<LineRange>::type LineIterator;
 
             LineRange lines = elements<line_tag>(plc);
-            for (LineIterator lit = lines.handle_begin(); lit != lines.handle_end(); ++lit)
+            for (LineIterator lit = lines.begin(); lit != lines.end(); ++lit)
             {
                 typedef typename result_of::element_range<LineType, vertex_tag>::type VertexOnLineRange;
                 typedef typename result_of::handle_iterator<VertexOnLineRange>::type VertexOnLineHandleIterator;
 
                 VertexOnLineRange vertices = elements<vertex_tag>(*lit);
                 for (VertexOnLineHandleIterator vlhit = vertices.begin(); vlhit != vertices.end(); ++vlhit)
-                    plc.container( vertex_tag() ).insert_handle( *vlhit );
+                    plc.container( vertex_tag() ).insert_unique_handle( *vlhit );
             }
 
         }

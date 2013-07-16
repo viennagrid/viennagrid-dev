@@ -82,8 +82,8 @@ namespace viennagrid
       int operator()(GeometricDomainType & domain, std::string const & filename) const
       {
 
-        typedef typename viennagrid::result_of::point_type<GeometricDomainType>::type    PointType;
-        typedef typename viennagrid::result_of::coord_type< PointType >::type         CoordType;
+        typedef typename viennagrid::result_of::point<GeometricDomainType>::type    PointType;
+        typedef typename viennagrid::result_of::coord< PointType >::type         CoordType;
 
         enum { point_dim = viennagrid::traits::static_size<PointType>::value };
 
@@ -159,11 +159,13 @@ namespace viennagrid
             current_line.str(tmp); current_line.clear();
             current_line >> id;
 
-            VertexHandleType vertex = viennagrid::create_element<VertexType>( domain, VertexIDType(id) );
-            PointType & p = viennagrid::point( domain, vertex );
+            
+            PointType p;
 
             for (int j=0; j<point_dim; j++)
                 current_line >> p[j];
+
+            VertexHandleType vertex = viennagrid::make_vertex( domain, VertexIDType(id), p );
 
             if (attribute_num > 0)
             {
@@ -253,15 +255,15 @@ namespace viennagrid
                 }
                 else if (vertex_num == 2)
                 {
-                    lines.push_back( viennagrid::create_line(domain, vertex_handles[0], vertex_handles[1]) );
+                    lines.push_back( viennagrid::make_line(domain, vertex_handles[0], vertex_handles[1]) );
                 }
                 else
                 {
                     typename std::vector<VertexHandleType>::iterator it1 = vertex_handles.begin();
                     typename std::vector<VertexHandleType>::iterator it2 = it1; ++it2;
                     for (; it2 != vertex_handles.end(); ++it1, ++it2)
-                        lines.push_back( viennagrid::create_line(domain, *it1, *it2) );
-                    lines.push_back( viennagrid::create_line(domain, vertex_handles.back(), vertex_handles.front()) );
+                        lines.push_back( viennagrid::make_line(domain, *it1, *it2) );
+                    lines.push_back( viennagrid::make_line(domain, vertex_handles.back(), vertex_handles.front()) );
                 }
             }
 
@@ -287,7 +289,7 @@ namespace viennagrid
 
 
 
-            viennagrid::create_plc(
+            viennagrid::make_plc(
                 domain,
                 lines.begin(), lines.end(),
                 vertices.begin(), vertices.end(),

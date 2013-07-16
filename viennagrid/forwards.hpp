@@ -844,14 +844,6 @@ namespace viennagrid
           typename viennagrid::result_of::element<DomainType, ElementTypeOrTag>::type::id_type id );
 
 
-
-//     template<typename segmentation_type, typename handle_type>
-//     typename storage::handle::result_of::value_type<handle_type>::type & dereference_handle( segment_t<segmentation_type> & segment, handle_type const & handle);
-//     
-//     template<typename segmentation_type, typename handle_type>
-//     typename storage::handle::result_of::value_type<handle_type>::type const & dereference_handle( segment_t<segmentation_type> const & segment, handle_type const & handle);
-    
-    
     template<typename WrappedDomainConfigType, typename ElementTag, typename WrappedConfigType>
     element_t<ElementTag, WrappedConfigType> & dereference_handle( domain_t<WrappedDomainConfigType> &, element_t<ElementTag, WrappedConfigType> & handle)
     { return handle; }

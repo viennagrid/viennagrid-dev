@@ -116,6 +116,14 @@ namespace viennagrid
             };
 
 
+            template<typename WrappedConfigType>
+            struct query_appendix_type<WrappedConfigType, plc_tag>
+            {
+              typedef typename query_appendix_type<WrappedConfigType, vertex_tag>::type PointType;
+              typedef std::vector<PointType> type;
+            };
+
+
 
 
 
