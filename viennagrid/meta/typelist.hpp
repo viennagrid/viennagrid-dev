@@ -282,9 +282,11 @@ namespace viennagrid
                       typelist,
                       size<typelist>::value-1
                     >::type,
-                    typename erase_at<
-                      typelist,
-                      size<typelist>::value-1
+                    typename reverse<
+                      typename erase_at<
+                        typelist,
+                        size<typelist>::value-1
+                      >::type
                     >::type
                 > type;
             };
