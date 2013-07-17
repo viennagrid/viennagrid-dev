@@ -56,14 +56,8 @@ namespace viennagrid
 
 
 
-
-
   namespace element_topology
   {
-
-
-
-
     template<typename BoundaryElementType>
     struct boundary_element_generator<plc_tag, line_tag, BoundaryElementType>
     {
@@ -96,11 +90,21 @@ namespace viennagrid
 
         }
     };
-
-
-
-
   } //topology
+
+
+  template<typename PLCT>
+  typename PLCT::appendix_type & hole_points( PLCT & plc )
+  {
+    return plc.appendix();
+  }
+  
+  template<typename PLCT>
+  typename PLCT::appendix_type const & hole_points( PLCT const & plc )
+  {
+    return plc.appendix();
+  }
+  
 }
 
 #endif
