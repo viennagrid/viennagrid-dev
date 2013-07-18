@@ -403,6 +403,9 @@ namespace viennagrid
 
             reference       operator* ()       { return base::operator*().second; }
             const_reference operator* () const { return base::operator*().second; }
+
+            pointer operator->()       { return &(operator* ()); }
+            pointer operator->() const { return &(operator* ()); }
         };
 
         class const_iterator : public segment_id_map_type::const_iterator
@@ -418,6 +421,8 @@ namespace viennagrid
             typedef segment_type const * pointer;
 
             reference operator* () const { return base::operator*().second; }
+
+            pointer operator->() const { return &(operator* ()); }
         };
 
         iterator begin() { return iterator(segment_id_map.begin()); }
