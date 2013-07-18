@@ -34,9 +34,10 @@ namespace viennagrid
             public:
 
                 typedef std::size_t difference_type;
-                typedef static_array::value_type value_type;
-                typedef static_array::pointer pointer;
-                typedef static_array::reference reference;
+                typedef typename static_array::value_type value_type;
+                typedef typename static_array::pointer pointer;
+                typedef typename static_array::reference reference;
+                typedef typename static_array::const_reference const_reference;
                 typedef std::random_access_iterator_tag iterator_category;
 
                 // default-constructable
@@ -90,7 +91,7 @@ namespace viennagrid
 
                 // offset dereferenceable
                 reference operator[](std::size_t offset) { return *(ptr_+offset); }
-                const reference operator[](std::size_t offset) const { return *(ptr_+offset); }
+                const_reference operator[](std::size_t offset) const { return *(ptr_+offset); }
 
             private:
                 pointer ptr_;
@@ -102,9 +103,9 @@ namespace viennagrid
             public:
 
                 typedef std::size_t difference_type;
-                typedef static_array::value_type value_type;
-                typedef static_array::const_pointer pointer;
-                typedef static_array::const_reference reference;
+                typedef typename static_array::value_type value_type;
+                typedef typename static_array::const_pointer pointer;
+                typedef typename static_array::const_reference reference;
                 typedef std::random_access_iterator_tag iterator_category;
 
 
