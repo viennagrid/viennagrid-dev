@@ -231,8 +231,8 @@ namespace viennagrid
             void insert_handle(handle_type handle) { viennagrid::storage::container::insert(handle_container, handle); }
             void set_handle( handle_type element, size_type pos )
             {
-                resize(pos+1);
-                handle_container[pos] = element;
+              if (size() <= pos+1) resize(pos+1);
+              handle_container[pos] = element;
             }
             void erase_handle(handle_type handle)
             {
@@ -256,6 +256,257 @@ namespace viennagrid
         };
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+        template<typename base_container_type_>
+        class view_t<base_container_type_, std_set_tag>
+        {
+        public:
+
+            template<typename A, typename B>
+            friend class view_t;
+
+            typedef base_container_type_ base_container_type;
+
+            typedef std_set_tag container_tag;
+
+            typedef typename base_container_type::handle_tag handle_tag;
+            typedef typename handle::result_of::handle_type<base_container_type, handle_tag>::type handle_type;
+            typedef typename handle::result_of::const_handle_type<base_container_type, handle_tag>::type const_handle_type;
+
+
+        private:
+            typedef typename viennagrid::storage::result_of::container<handle_type, container_tag>::type handle_container_type;
+
+
+        public:
+            typedef typename handle_container_type::size_type size_type;
+            typedef typename base_container_type::value_type value_type;
+            typedef value_type & reference;
+            typedef const value_type & const_reference;
+            typedef value_type * pointer;
+            typedef const value_type * const_pointer;
+
+
+
+            class iterator : public handle_container_type::iterator
+            {
+                typedef typename handle_container_type::iterator base;
+            public:
+                iterator(view_t & view_, const base & foo) : base(foo), view(&view_) {}
+                iterator(const iterator & it) : base(it), view(it.view) {}
+
+                typedef typename std::iterator_traits<base>::difference_type   difference_type;
+                typedef typename view_t::value_type                            value_type;
+                typedef typename view_t::reference                             reference;
+                typedef typename view_t::const_reference                       const_reference;
+                typedef typename view_t::pointer                               pointer;
+                typedef typename std::iterator_traits<base>::iterator_category iterator_category;
+
+                handle_type       handle()       { return base::operator*(); }
+                const_handle_type handle() const { return base::operator*(); }
+
+                reference       operator* ()       { return view->dereference_handle( handle() ); }
+                const_reference operator* () const { return view->dereference_handle( handle() ); }
+
+                pointer operator->()       { return &(operator* ()); }
+                pointer operator->() const { return &(operator* ()); }
+
+            private:
+                view_t * view;
+            };
+
+
+            class const_iterator : public handle_container_type::const_iterator
+            {
+                typedef typename handle_container_type::const_iterator base;
+            public:
+                const_iterator(view_t const & view_, const base & foo) : base(foo), view(&view_) {}
+                const_iterator(const const_iterator & it) : base(it), view(it.view) {}
+                const_iterator(const iterator & it) : base(it), view(it.view) {}
+
+                typedef typename std::iterator_traits<base>::difference_type difference_type;
+                typedef typename view_t::value_type value_type;
+                typedef typename view_t::const_reference reference;
+                typedef typename view_t::const_reference const_reference;
+                typedef typename view_t::const_pointer pointer;
+                typedef typename std::iterator_traits<base>::iterator_category iterator_category;
+
+                const_handle_type handle() { return base::operator*(); }
+                const_handle_type handle() const { return base::operator*(); }
+
+                reference operator* () { return view->dereference_handle( handle() ); }
+                const_reference operator* () const { return view->dereference_handle( handle() ); }
+
+                pointer operator->() const { return &(operator* ()); }
+
+            private:
+                view_t const * view;
+            };
+
+            class reverse_iterator : public handle_container_type::reverse_iterator
+            {
+                typedef typename handle_container_type::reverse_iterator base;
+            public:
+                reverse_iterator(view_t & view_, const base & foo) : base(foo), view(&view_) {}
+                reverse_iterator(const reverse_iterator & it) : base(it), view(it.view) {}
+
+                typedef typename std::iterator_traits<base>::difference_type difference_type;
+                typedef typename view_t::value_type value_type;
+                typedef typename view_t::reference reference;
+                typedef typename view_t::const_reference const_reference;
+                typedef typename view_t::pointer pointer;
+                typedef typename std::iterator_traits<base>::iterator_category iterator_category;
+
+                handle_type & handle() { return base::operator*(); }
+                const_handle_type handle() const { return base::operator*(); }
+
+                reference operator* () { return view->dereference_handle( handle() ); }
+                const_reference operator* () const { return view->dereference_handle( handle() ); }
+
+                pointer operator->() { return &(operator* ()); }
+                pointer operator->() const { return &(operator* ()); }
+
+            private:
+                view_t * view;
+            };
+
+
+            class const_reverse_iterator : public handle_container_type::const_reverse_iterator
+            {
+                typedef typename handle_container_type::const_reverse_iterator base;
+            public:
+                const_reverse_iterator(view_t const & view_, const base & foo) : base(foo), view(&view_) {}
+                const_reverse_iterator(const const_reverse_iterator & it) : base(it), view(it.view) {}
+                const_reverse_iterator(const iterator & it) : base(it), view(it.view) {}
+
+                typedef typename std::iterator_traits<base>::difference_type difference_type;
+                typedef typename view_t::value_type value_type;
+                typedef typename view_t::const_reference reference;
+                typedef typename view_t::const_reference const_reference;
+                typedef typename view_t::const_pointer pointer;
+                typedef typename std::iterator_traits<base>::iterator_category iterator_category;
+
+                const_handle_type handle() { return base::operator*(); }
+                const_handle_type handle() const { return base::operator*(); }
+
+                reference operator* () { return view->dereference_handle( handle() ); }
+                const_reference operator* () const { return view->dereference_handle( handle() ); }
+
+                pointer operator->() const { return &(operator* ()); }
+
+            private:
+                view_t const * view;
+            };
+
+
+
+            typedef typename handle_container_type::iterator handle_iterator;
+            typedef typename handle_container_type::const_iterator const_handle_iterator;
+
+
+
+            view_t() {}
+
+            void set_base_container( base_container_type & base_container_ )
+            { base_container = &base_container_; }
+
+            template<typename other_container_tag>
+            void set_base_container( view_t<base_container_type, other_container_tag> & base_view )
+            { base_container = base_view.base_container; }
+
+            template<typename other_container_tag>
+            void set_base_container( view_t<base_container_type, other_container_tag> const & base_view )
+            { base_container = base_view.base_container; }
+
+
+            iterator begin() { return iterator(*this, handle_container.begin()); }
+            iterator end() { return iterator(*this, handle_container.end()); }
+
+            const_iterator cbegin() { return const_iterator(*this, handle_container.begin()); }
+            const_iterator cend() { return const_iterator(*this, handle_container.end()); }
+
+            const_iterator begin() const { return const_iterator(*this, handle_container.begin()); }
+            const_iterator end() const { return const_iterator(*this, handle_container.end()); }
+
+
+            handle_iterator handle_begin() { return handle_container.begin(); }
+            handle_iterator handle_end() { return handle_container.end(); }
+
+            const_handle_iterator handle_begin() const { return handle_container.begin(); }
+            const_handle_iterator handle_end() const { return handle_container.end(); }
+
+            reference dereference_handle( handle_type handle ) { return viennagrid::storage::handle::dereference_handle( *base_container, handle, handle_tag() ); }
+            const_reference dereference_handle( const_handle_type handle ) const { return viennagrid::storage::handle::dereference_handle( *base_container, handle, handle_tag() ); }
+
+            handle_type handle( reference element ) { return &element; }
+            const_handle_type handle( const_reference element ) const { return &element; }
+
+
+            reference front() { return dereference_handle(handle_container.front()); }
+            const_reference front() const { return dereference_handle(handle_container.front()); }
+
+            reference back() { return dereference_handle(handle_container.back()); }
+            const_reference back() const { return dereference_handle(handle_container.back()); }
+
+            reference operator[]( size_type index ) { iterator it = begin(); std::advance(it, index); return *it; }
+            const_reference operator[]( size_type index ) const { const_iterator it = begin(); std::advance(it, index); return *it; }
+
+
+            size_type size() const { return handle_container.size(); }
+            void resize(size_type size_) { handle_container.resize(size_); }
+            void increment_size() { resize( size()+1 ); }
+
+            bool empty() const { return handle_container.empty(); }
+            void clear() { handle_container.clear(); }
+
+
+            void insert_unique_handle(handle_type handle)
+            {
+              insert_handle(handle);
+            }
+
+            void insert_handle(handle_type handle)
+            {
+              viennagrid::storage::container::insert(handle_container, handle);
+            }
+            void set_handle( handle_type element, size_type pos ); // not supported
+            void erase_handle(handle_type handle)
+            {
+              for (iterator it = begin(); it != end(); ++it)
+                if (it.handle() == handle)
+                {
+                  handle_container.erase( it );
+                  return;
+                }
+            }
+
+            handle_type handle_at(std::size_t pos) { return *viennagrid::advance(handle_begin(), pos); }
+            const_handle_type handle_at(std::size_t pos) const { return *viennagrid::advance(handle_begin(), pos); }
+
+
+
+        private:
+
+            handle_container_type handle_container;
+            base_container_type * base_container;
+        };
+
+
+
+
+        
 
 
         namespace result_of
