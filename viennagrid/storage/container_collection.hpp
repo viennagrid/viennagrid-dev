@@ -172,12 +172,12 @@ namespace viennagrid
 
                 static void handle_or_ignore( container_collection_type & collection, const handle_type & handle )
                 {
-                    collection.get( viennagrid::meta::tag<value_type>() ).insert_handle(handle);
+                    collection.get( viennagrid::meta::tag<value_type>() ).insert_unique_handle(handle);
                 }
 
                 static void handle_or_ignore( container_collection_type & collection, handle_type & handle )
                 {
-                    collection.get( viennagrid::meta::tag<value_type>() ).insert_handle(handle);
+                    collection.get( viennagrid::meta::tag<value_type>() ).insert_unique_handle(handle);
                 }
             };
 
