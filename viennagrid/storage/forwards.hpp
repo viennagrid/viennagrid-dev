@@ -41,7 +41,7 @@ namespace viennagrid
 
         typedef viennagrid::meta::make_typemap<
             default_tag,
-            std_deque_tag
+            std_set_tag
         >::type default_view_container_config;
 
 
