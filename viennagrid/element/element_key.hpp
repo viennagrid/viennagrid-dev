@@ -47,7 +47,7 @@ namespace viennagrid
 
     public:
 
-      element_key( const element_type & el2) : vertex_ids( viennagrid::elements<vertex_tag>(el2).size() )
+      explicit element_key( const element_type & el2) : vertex_ids( viennagrid::elements<vertex_tag>(el2).size() )
       {
         typedef typename viennagrid::result_of::const_element_range< element_type, vertex_tag >::type vertex_range;
         typedef typename viennagrid::result_of::const_iterator< vertex_range >::type const_iterator;

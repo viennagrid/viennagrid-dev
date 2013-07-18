@@ -22,7 +22,6 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
-#include <boost/concept_check.hpp>
 
 #include "viennagrid/domain/domain.hpp"
 
@@ -661,7 +660,7 @@ namespace viennagrid
     }
 
 
-    
+
     template <typename DomainT, typename SegmentationT, typename AccessorT>
     vtk_writer<DomainT, SegmentationT> & add_scalar_data_on_vertices(vtk_writer<DomainT, SegmentationT> & writer,
                                                                     AccessorT const accessor,
@@ -744,7 +743,7 @@ namespace viennagrid
       return writer;
     }
 
-    
+
   } //namespace io
 } //namespace viennagrid
 

@@ -55,19 +55,20 @@ namespace viennagrid
                 iterator(view_t & view_, const base & foo) : base(foo), view(&view_) {}
                 iterator(const iterator & it) : base(it), view(it.view) {}
 
-                typedef typename std::iterator_traits<base>::difference_type difference_type;
-                typedef view_t::value_type value_type;
-                typedef view_t::reference reference;
-                typedef view_t::pointer pointer;
+                typedef typename std::iterator_traits<base>::difference_type   difference_type;
+                typedef typename view_t::value_type                            value_type;
+                typedef typename view_t::reference                             reference;
+                typedef typename view_t::const_reference                       const_reference;
+                typedef typename view_t::pointer                               pointer;
                 typedef typename std::iterator_traits<base>::iterator_category iterator_category;
 
-                handle_type & handle() { return base::operator*(); }
+                handle_type &     handle()       { return base::operator*(); }
                 const_handle_type handle() const { return base::operator*(); }
 
-                reference operator* () { return view->dereference_handle( handle() ); }
-                const reference operator* () const { return view->dereference_handle( handle() ); }
+                reference       operator* ()       { return view->dereference_handle( handle() ); }
+                const_reference operator* () const { return view->dereference_handle( handle() ); }
 
-                pointer operator->() { return &(operator* ()); }
+                pointer operator->()       { return &(operator* ()); }
                 pointer operator->() const { return &(operator* ()); }
 
             private:
@@ -84,16 +85,17 @@ namespace viennagrid
                 const_iterator(const iterator & it) : base(it), view(it.view) {}
 
                 typedef typename std::iterator_traits<base>::difference_type difference_type;
-                typedef view_t::value_type value_type;
-                typedef view_t::const_reference reference;
-                typedef view_t::const_pointer pointer;
+                typedef typename view_t::value_type value_type;
+                typedef typename view_t::const_reference reference;
+                typedef typename view_t::const_reference const_reference;
+                typedef typename view_t::const_pointer pointer;
                 typedef typename std::iterator_traits<base>::iterator_category iterator_category;
 
                 const_handle_type handle() { return base::operator*(); }
                 const_handle_type handle() const { return base::operator*(); }
 
                 reference operator* () { return view->dereference_handle( handle() ); }
-                const reference operator* () const { return view->dereference_handle( handle() ); }
+                const_reference operator* () const { return view->dereference_handle( handle() ); }
 
                 pointer operator->() const { return &(operator* ()); }
 
@@ -109,16 +111,17 @@ namespace viennagrid
                 reverse_iterator(const reverse_iterator & it) : base(it), view(it.view) {}
 
                 typedef typename std::iterator_traits<base>::difference_type difference_type;
-                typedef view_t::value_type value_type;
-                typedef view_t::reference reference;
-                typedef view_t::pointer pointer;
+                typedef typename view_t::value_type value_type;
+                typedef typename view_t::reference reference;
+                typedef typename view_t::const_reference const_reference;
+                typedef typename view_t::pointer pointer;
                 typedef typename std::iterator_traits<base>::iterator_category iterator_category;
 
                 handle_type & handle() { return base::operator*(); }
                 const_handle_type handle() const { return base::operator*(); }
 
                 reference operator* () { return view->dereference_handle( handle() ); }
-                const reference operator* () const { return view->dereference_handle( handle() ); }
+                const_reference operator* () const { return view->dereference_handle( handle() ); }
 
                 pointer operator->() { return &(operator* ()); }
                 pointer operator->() const { return &(operator* ()); }
@@ -137,16 +140,17 @@ namespace viennagrid
                 const_reverse_iterator(const iterator & it) : base(it), view(it.view) {}
 
                 typedef typename std::iterator_traits<base>::difference_type difference_type;
-                typedef view_t::value_type value_type;
-                typedef view_t::const_reference reference;
-                typedef view_t::const_pointer pointer;
+                typedef typename view_t::value_type value_type;
+                typedef typename view_t::const_reference reference;
+                typedef typename view_t::const_reference const_reference;
+                typedef typename view_t::const_pointer pointer;
                 typedef typename std::iterator_traits<base>::iterator_category iterator_category;
 
                 const_handle_type handle() { return base::operator*(); }
                 const_handle_type handle() const { return base::operator*(); }
 
                 reference operator* () { return view->dereference_handle( handle() ); }
-                const reference operator* () const { return view->dereference_handle( handle() ); }
+                const_reference operator* () const { return view->dereference_handle( handle() ); }
 
                 pointer operator->() const { return &(operator* ()); }
 

@@ -358,7 +358,7 @@ namespace viennagrid
             assert( it != segment_id_map.end() );
             return it->second; // segment already is present
         }
-        
+
         // create a new segment
         segment_type & get_make_segment( segment_id_type const & segment_id )
         {
@@ -396,12 +396,13 @@ namespace viennagrid
             iterator() {}
             iterator(base const & foo) : base(foo) {}
 
-            typedef segment_type value_type;
-            typedef segment_type & reference;
-            typedef segment_type * pointer;
+            typedef segment_type           value_type;
+            typedef segment_type &         reference;
+            typedef segment_type const &   const_reference;
+            typedef segment_type *         pointer;
 
-            reference operator* () { return base::operator*().second; }
-            const reference operator* () const { return base::operator*().second; }
+            reference       operator* ()       { return base::operator*().second; }
+            const_reference operator* () const { return base::operator*().second; }
         };
 
         class const_iterator : public segment_id_map_type::const_iterator
@@ -1112,7 +1113,7 @@ namespace viennagrid
     }
 
 
-    
+
     template<typename view_type, typename domain_type, typename handle_type>
     void add_handle( view_type & view, domain_type & domain, handle_type handle )
     {
