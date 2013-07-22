@@ -912,7 +912,7 @@ namespace viennagrid
     {
         typedef typename segment_info_t<element_segment_mapping_type, container_tag>::element_segment_mapping_container_type element_segment_mapping_container_type;
 
-        for (typename element_segment_mapping_container_type::iterator it = segment_info.element_segment_mapping_container.begin();
+        for (typename element_segment_mapping_container_type::const_iterator it = segment_info.element_segment_mapping_container.begin();
              it != segment_info.element_segment_mapping_container.end();
              ++it)
         {
@@ -924,7 +924,13 @@ namespace viennagrid
     }
 
     template< typename segment_type, typename accessor_type, typename element_type >
-    typename accessor_type::value_type::element_segment_info_type * element_segment_info( segment_type const & segment, accessor_type accessor, element_type const & element )
+    typename accessor_type::value_type::element_segment_info_type * element_segment_info( segment_type & segment, accessor_type accessor, element_type const & element )
+    {
+        return element_segment_info( segment, accessor(element) );
+    }
+
+    template< typename segment_type, typename accessor_type, typename element_type >
+    typename accessor_type::value_type::element_segment_info_type const * element_segment_info( segment_type const & segment, const accessor_type accessor, element_type const & element )
     {
         return element_segment_info( segment, accessor(element) );
     }
