@@ -251,7 +251,6 @@ namespace viennagrid
 
 
 
-        // buggy !!
         domain_t(const domain_t & other) : appendix_(other.appendix_), inserter(other.inserter), change_counter_(other.change_counter_)
         {
           inserter.set_domain_info( element_container_collection, change_counter_ );
@@ -260,7 +259,6 @@ namespace viennagrid
           copy_domain(other, *this);
         }
 
-        // buggy !!
         domain_t & operator=( domain_t const & other)
         {
 //           element_container_collection = other.element_container_collection;
