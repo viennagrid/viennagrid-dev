@@ -81,9 +81,9 @@ int main()
   viennagrid::add( seg2, tri2 );
   
   // setting and querying additional segment information for tri0
-  std::cout << "Triangle 0 in Segment 0: " <<  *viennagrid::element_segment_info( seg0, tri0 ) << std::endl;
-  *viennagrid::element_segment_info( seg0, tri0 ) = true;
-  std::cout << "Triangle 0 in Segment 0: " <<  *viennagrid::element_segment_info( seg0, tri0 ) << std::endl;
+  std::cout << "Triangle 0 in Segment 0: " <<  *viennagrid::segment_element_info( seg0, tri0 ) << std::endl;
+  *viennagrid::segment_element_info( seg0, tri0 ) = true;
+  std::cout << "Triangle 0 in Segment 0: " <<  *viennagrid::segment_element_info( seg0, tri0 ) << std::endl;
   std::cout << std::endl;
   
   // printing all triangles from all segments
