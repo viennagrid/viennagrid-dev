@@ -119,6 +119,14 @@ namespace viennagrid
         return make_vertex(domain, p);
     }
 
+    template<typename ConfigType>
+    typename result_of::handle<domain_t<ConfigType>, vertex_tag>::type
+        make_unique_vertex( domain_t<ConfigType> & domain,
+                              typename result_of::point< domain_t<ConfigType> >::type const & p)
+    {
+        return make_unique_vertex( domain, p, viennagrid::norm_2(p) / 1e6 );
+    }
+
 
 
     template<typename DomainType, typename vertex_handle_type>
