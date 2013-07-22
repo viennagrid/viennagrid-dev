@@ -42,49 +42,49 @@ namespace viennagrid
     template <typename ElementTag>
     struct ELEMENT_TAG_TO_VTK_TYPE
     {
-      enum{ ReturnValue = ElementTag::ERROR_ELEMENT_TYPE_NOT_SUPPORTED };
+      static const int value = ElementTag::ERROR_ELEMENT_TYPE_NOT_SUPPORTED;
     };
 
     /** @brief Specialization for a hexahedron */
     template <>
     struct ELEMENT_TAG_TO_VTK_TYPE<hexahedron_tag>
     {
-      enum{ value = 12 };
+      static const int value = 12;
     };
 
     /** @brief Specialization for a tetrahedron */
     template <>
     struct ELEMENT_TAG_TO_VTK_TYPE<tetrahedron_tag>
     {
-      enum{ value = 10 };
+      static const int value = 10;
     };
 
     /** @brief Specialization for a quadrilateral */
     template <>
     struct ELEMENT_TAG_TO_VTK_TYPE<quadrilateral_tag>
     {
-      enum{ value = 9 };
+      static const int value = 9;
     };
 
     /** @brief Specialization for a triangle */
     template <>
     struct ELEMENT_TAG_TO_VTK_TYPE<triangle_tag>
     {
-      enum{ value = 5 };
+      static const int value = 5;
     };
 
     /** @brief Specialization for a line (one-dimensional hypercube) */
     template <>
     struct ELEMENT_TAG_TO_VTK_TYPE<hypercube_tag<1> >
     {
-      enum{ value = 3 };
+      static const int value = 3;
     };
 
     /** @brief Specialization for a line (one-dimensional simplex) */
     template <>
     struct ELEMENT_TAG_TO_VTK_TYPE<simplex_tag<1> >
     {
-      enum{ value = 3 };
+      static const int value = 3;
     };
 
     /** @brief Tranformations of reference orientations from VTK to ViennaGrid

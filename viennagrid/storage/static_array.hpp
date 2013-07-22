@@ -8,7 +8,7 @@ namespace viennagrid
 {
     namespace storage
     {
-        template<typename T, std::size_t N>
+        template<typename T, int N>
         class static_array {
         public:
             T elems[N];    // fixed-size array of elements of type T
@@ -241,7 +241,7 @@ namespace viennagrid
 
             static bool empty() { return false; }
             static size_type max_size() { return N; }
-            enum { static_size = N };
+            static const int static_size = N;
 
             // swap (note: linear complexity)
             void swap (static_array<T,N>& y) {
@@ -329,16 +329,16 @@ namespace viennagrid
 
 
 
-        template<long size_>
+        template<int size_>
         struct static_array_tag
         {
-            enum { size = size_ };
+          static const int size = size_;
         };
 
 
         namespace result_of
         {
-            template<typename element_type, long size>
+            template<typename element_type, int size>
             struct container<element_type, static_array_tag<size> >
             {
                 typedef static_array<element_type, size> type;

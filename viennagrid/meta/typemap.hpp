@@ -19,7 +19,7 @@ namespace viennagrid
             template<typename typemap>
             struct size
             {
-                enum { value = typelist::result_of::size<typemap>::value };
+              static const int value = typelist::result_of::size<typemap>::value;
             };
 
             // at
@@ -36,22 +36,22 @@ namespace viennagrid
             template <typename to_find>
             struct index_of<null_type, to_find>
             {
-                enum { value = -1 };
+              static const int value = -1;
             };
 
             template <typename to_find, typename value_type, typename tail>
             struct index_of<typelist_t< static_pair<to_find, value_type>, tail>, to_find>
             {
-                enum { value = 0 };
+              static const int value = 0;
             };
 
             template <typename key_type, typename value_type, typename tail, typename to_find>
             struct index_of<typelist_t< static_pair<key_type, value_type>, tail>, to_find>
             {
             private:
-                enum { temp = index_of<tail, to_find>::value };
+              static const int temp = index_of<tail, to_find>::value;
             public:
-                enum { value = (temp == -1 ? -1 : 1 + temp) };
+              static const int value = (temp == -1 ? -1 : 1 + temp);
             };
 
 
@@ -139,7 +139,7 @@ namespace viennagrid
             struct modify< typelist_t<static_pair<map_key, map_value>, tail>, static_pair<key_to_find, modified_value> >
             {
                 typedef typelist_t<static_pair<map_key, map_value>, tail> typemap;
-                enum { index = index_of<typemap, key_to_find>::value };
+                static const int index = index_of<typemap, key_to_find>::value;
 
                 // !!!!! INFO !!!!!
                 // if a compiler error points to the next lines, you might want to modify an element which is not present
@@ -174,7 +174,7 @@ namespace viennagrid
             struct insert_or_modify< typelist_t<static_pair<map_key, map_value>, tail>, static_pair<key_to_find, modified_value> >
             {
                 typedef typelist_t<static_pair<map_key, map_value>, tail> typemap;
-                enum { index = index_of<typemap, key_to_find>::value };
+                static const int index = index_of<typemap, key_to_find>::value;
 
                 // !!!!! INFO !!!!!
                 // if a compiler error points to the next lines, you might want to modify an element which is not present
@@ -191,7 +191,7 @@ namespace viennagrid
             template<typename typemap, typename to_erase>
             struct erase
             {
-                enum { index = index_of<typemap, to_erase>::value };
+              static const int index = index_of<typemap, to_erase>::value;
 
                 // !!!!! INFO !!!!!
                 // if a compiler error points to the next lines, you might want to erase a key which does not exist

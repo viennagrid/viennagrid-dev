@@ -55,7 +55,7 @@ namespace viennagrid
         typedef typename bnd_cell_container_type::const_handle_type bnd_cell_const_handle_type;
 
         typedef typename bnd_cell_type::tag bnd_cell_tag;
-        enum { dim = bnd_cell_tag::dim };
+        static const int dim = bnd_cell_tag::dim;
 
         typedef orientation_container_type_ orientation_container_type;
         typedef typename orientation_container_type::value_type orientation_type;
@@ -208,7 +208,7 @@ namespace viennagrid
         typedef typename bnd_cell_container_type::const_handle_type bnd_cell_const_handle_type;
 
         typedef typename bnd_cell_type::tag bnd_cell_tag;
-        enum { dim = bnd_cell_tag::dim };
+        static const int dim = bnd_cell_tag::dim;
 
 
 
@@ -422,16 +422,16 @@ namespace viennagrid
 
 
 
-        template<typename typelist, long dim>
+        template<typename typelist, int dim>
         struct container_of_dimension_for_element;
 
-        template<long dim>
+        template<int dim>
         struct container_of_dimension_for_element< viennagrid::meta::null_type, dim >
         {
             typedef viennagrid::meta::null_type type;
         };
 
-        template<typename container_pair, typename tail, long dim>
+        template<typename container_pair, typename tail, int dim>
         struct container_of_dimension_for_element< viennagrid::meta::typelist_t<container_pair, tail>, dim >
         {
             typedef typename container_pair::first container_type;
@@ -467,16 +467,16 @@ namespace viennagrid
 
 
 
-        template<typename container_collection_typemap, long dim>
+        template<typename container_collection_typemap, int dim>
         struct container_of_dimension_for_collection;
 
-        template<long dim>
+        template<int dim>
         struct container_of_dimension_for_collection<viennagrid::meta::null_type, dim>
         {
             typedef viennagrid::meta::null_type type;
         };
 
-        template<typename element_type, typename container_type, typename tail, long dim>
+        template<typename element_type, typename container_type, typename tail, int dim>
         struct container_of_dimension_for_collection<viennagrid::meta::typelist_t< viennagrid::meta::static_pair<element_type, container_type>, tail >, dim>
         {
             typedef typename viennagrid::meta::IF<

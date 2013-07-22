@@ -41,7 +41,7 @@ namespace viennagrid
      *
      * @tparam dummy    A dummy template argument to disable external linkage of the function (for 'header-only' reasons)
      */
-    template <long dummy = 0>
+    template <int dummy = 0>
     struct char_to_lower
     {
       char operator()(char c) const

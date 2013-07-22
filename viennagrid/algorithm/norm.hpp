@@ -107,7 +107,7 @@ namespace viennagrid
   }
 
   /** @brief Dispatch for a point that does not need coordinate conversion */
-  template<typename NormTag, typename PointType1, long d>
+  template<typename NormTag, typename PointType1, int d>
   typename result_of::coord<PointType1>::type
   norm_impl(PointType1 const & p, cartesian_cs<d>)
   {

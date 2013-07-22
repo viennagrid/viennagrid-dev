@@ -83,13 +83,13 @@ namespace viennagrid
 
             template <> struct size<null_type>
             {
-                enum { value = 0 };
+              static const int value = 0;
             };
 
             template <typename head, typename tail>
             struct size< typelist_t<head, tail> >
             {
-                enum { value = 1 + size<tail>::value };
+              static const int value = 1 + size<tail>::value;
             };
 
 
@@ -99,7 +99,7 @@ namespace viennagrid
                 typedef out_of_range type;
             };
 
-            template <typename head, typename tail>
+            template <typename head, typename tail> 
             struct at<typelist_t<head, tail>, 0>
             {
                 typedef head type;
@@ -119,22 +119,22 @@ namespace viennagrid
             template <typename to_find>
             struct index_of<null_type, to_find>
             {
-                enum { value = -1 };
+              static const int value = -1;
             };
 
             template <typename to_find, typename tail>
             struct index_of<typelist_t<to_find, tail>, to_find>
             {
-                enum { value = 0 };
+              static const int value = 0;
             };
 
             template <typename head, typename tail, typename to_find>
             struct index_of<typelist_t<head, tail>, to_find>
             {
             private:
-                enum { temp = index_of<tail, to_find>::value };
+              static const int temp = index_of<tail, to_find>::value;
             public:
-                enum { value = (temp == -1 ? -1 : 1 + temp) };
+              static const int value = (temp == -1 ? -1 : 1 + temp);
             };
 
 
@@ -407,8 +407,7 @@ namespace viennagrid
                 typedef typelist_t<head1, tail1> typelist1;
                 typedef typelist_t<head2, tail2> typelist2;
 
-                enum { search_result = index_of< typelist2, head1 >::value };
-
+              static const int search_result = index_of< typelist2, head1 >::value;
                 typedef typename IF<
                     (search_result >= 0),
                     typename erase_at<typelist2, search_result>::type,

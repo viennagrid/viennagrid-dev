@@ -87,7 +87,7 @@ namespace viennagrid
   }
 
   /** @brief Dispatched cross product function having information about the coordinate systems. Points are already in Cartesian coordinates, thus forwarding to the worker function directly. */
-  template<typename PointType1, typename PointType2, long d>
+  template<typename PointType1, typename PointType2, int d>
   PointType1
   cross_prod_impl(PointType1 const & p1, PointType2 const & p2, cartesian_cs<d>, cartesian_cs<d>)
   {

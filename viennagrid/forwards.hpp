@@ -33,9 +33,6 @@
 #include <cstddef>     //for std::size_t
 #include <cstdlib>     //for EXIT_SUCCESS and EXIT_FAILURE
 
-// Switch off enum-comparison warnings
-#pragma GCC diagnostic ignored "-Wenum-compare"
-
 
 #include "viennagrid/storage/static_array.hpp"
 #include "viennagrid/utils/remove_pointer.hpp"
@@ -82,7 +79,7 @@ namespace viennagrid
   /********* Tags ***********************/
 
   /** @brief Forward declaration of a d-dimensional Cartesian coordinate system */
-  template <long d>
+  template <int d>
   struct cartesian_cs;    //Cartesian coordinate system
 
   /** @brief Forward declaration of a polar coordinate system */
@@ -94,10 +91,10 @@ namespace viennagrid
 
   //Dimension Tag: (for tag dispatching)
   /** @brief A helper tag for dispatches based on the geometrical or topological dimension */
-  template <long d>
+  template <int d>
   struct dimension_tag
   {
-      enum{ value = d };
+      static const int value = d;
   };
 
   //Tags for the handling of elements at different topological levels (see topology::subcell_desc)
@@ -121,7 +118,7 @@ namespace viennagrid
 
   // Simplex family:
   /** @brief A tag for the simplex family (triangle, tetrahedron, etc.) */
-  template <long dim>
+  template <int dim>
   struct simplex_tag;
 
   /** @brief Convenience type definition for a vertex */
@@ -136,7 +133,7 @@ namespace viennagrid
 
   // Hypercube family:
   /** @brief A tag for the family of hypercubes (line, quadrilateral, hexahedron, etc.) */
-  template <long dim>
+  template <int dim>
   struct hypercube_tag;
 
   //typedef hypercube_tag<1>    line_tag;
@@ -230,7 +227,7 @@ namespace viennagrid
     //cell-handling within the cell
 
     /** @brief Number of boundary cells at this level */
-    enum{ num = 1 };     //1 cell
+    static const int num = 1;     //1 cell
 
     /** @brief k-cell tag for identification of the type */
     typedef ElementTag            tag;

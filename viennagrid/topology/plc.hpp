@@ -34,7 +34,7 @@ namespace viennagrid
   {
     typedef line_tag facet_tag;
 
-    enum{ dim = 2 };
+    static const int dim = 2;
     static std::string name() { return "PLC"; }
   };
 
@@ -44,14 +44,14 @@ namespace viennagrid
   struct boundary_elements<plc_tag, vertex_tag>
   {
     typedef dynamic_layout_tag     layout_tag;
-    enum{ num = -1 };
+    static const int num = -1;
   };
 
   template <>
   struct boundary_elements<plc_tag, line_tag>
   {
     typedef dynamic_layout_tag     layout_tag;
-    enum{ num = -1 };
+    static const int num = -1;
   };
 
 

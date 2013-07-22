@@ -87,7 +87,7 @@ namespace viennagrid
 
         typedef typename viennagrid::result_of::point<DomainType>::type PointType;
         typedef typename viennagrid::result_of::coord<PointType>::type CoordType;
-        enum { geometric_dim = viennagrid::traits::static_size<PointType>::value };
+        static const int geometric_dim = viennagrid::traits::static_size<PointType>::value;
 
         typedef typename viennagrid::result_of::cell_tag<DomainType>::type CellTag;
 

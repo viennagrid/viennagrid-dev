@@ -37,7 +37,7 @@ namespace viennagrid
     template <typename CoordType, typename CoordinateSystem>
     struct dimension< point_t<CoordType, CoordinateSystem> >
     {
-      enum { value = CoordinateSystem::dim };
+      static const int value = CoordinateSystem::dim;
     };
 
 
@@ -65,7 +65,7 @@ namespace viennagrid
     template <typename CoordType, typename CoordinateSystem>
     struct static_size< point_t<CoordType, CoordinateSystem> >
     {
-      enum { value = CoordinateSystem::dim };
+      static const int value = CoordinateSystem::dim;
     };
 
     /** @brief Returns the dynamic (run time) size of a point. Assumes a .size() member. Other cases must be provided with overloads */

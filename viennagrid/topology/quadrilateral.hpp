@@ -34,26 +34,22 @@ namespace viennagrid
   {
     typedef simplex_tag<1> facet_tag;
 
-    enum{ dim = 2 };
+    static const int dim = 2;
     static std::string name() { return "Quadrilateral"; }
   };
 
   template <>
   struct boundary_elements<hypercube_tag<2>, simplex_tag<1> >
   {
-    //typedef simplex_tag<k>             tag;
-
     typedef static_layout_tag     layout_tag;
-    enum{ num = 4 };
+    static const int num = 4;
   };
 
   template <>
   struct boundary_elements<hypercube_tag<2>, simplex_tag<0> >
   {
-    //typedef simplex_tag<k>             tag;
-
     typedef static_layout_tag     layout_tag;
-    enum{ num = 4 };
+    static const int num = 4;
   };
 
   namespace element_topology

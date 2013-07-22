@@ -37,7 +37,7 @@ namespace viennagrid
 
   namespace detail
   {
-    template <typename PointType, long dim = traits::dimension<PointType>::value>
+    template <typename PointType, int dim = traits::dimension<PointType>::value>
     struct signed_spanned_volume_impl;
 
 
@@ -186,7 +186,7 @@ namespace viennagrid
   // All Cartesian:
   //
   /** @brief Dispatch facility for two points in Cartesian coordinates */
-  template<typename PointType1, typename PointType2, long d>
+  template<typename PointType1, typename PointType2, int d>
   typename result_of::coord<PointType1>::type
   signed_spanned_volume_impl(PointType1 const & p1,
                       PointType2 const & p2,
@@ -197,7 +197,7 @@ namespace viennagrid
   }
 
   /** @brief Dispatch facility for three points in Cartesian coordinates */
-  template <typename PointType1, typename PointType2, typename PointType3, long d>
+  template <typename PointType1, typename PointType2, typename PointType3, int d>
   typename result_of::coord<PointType1>::type
   signed_spanned_volume_impl(PointType1 const & p1,
                       PointType2 const & p2,
@@ -210,7 +210,7 @@ namespace viennagrid
   }
 
   /** @brief Dispatch facility for four points in Cartesian coordinates */
-  template <typename PointType1, typename PointType2, typename PointType3, typename PointType4, long d>
+  template <typename PointType1, typename PointType2, typename PointType3, typename PointType4, int d>
   typename result_of::coord<PointType1>::type
   signed_spanned_volume_impl(PointType1 const & p1,
                       PointType2 const & p2,

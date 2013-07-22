@@ -933,26 +933,26 @@ namespace viennagrid
     template <typename CoordType, typename CoordinateSystem>
     struct topological_id< point_t<CoordType, CoordinateSystem> >
     {
-      enum { value = 1 };
+      static const int value = 1;
     };
 
 
-    template <long dim, typename WrappedConfigType>
+    template <int dim, typename WrappedConfigType>
     struct topological_id< element_t<simplex_tag<dim>, WrappedConfigType> >
     {
-      enum { value = 10000 + dim }; //10.000 dimensions are certainly far from being ever instantiated
+      static const int value = 10000 + dim; //10.000 dimensions are certainly far from being ever instantiated
     };
 
-    template <long dim, typename WrappedConfigType>
+    template <int dim, typename WrappedConfigType>
     struct topological_id< element_t<hypercube_tag<dim>, WrappedConfigType> >
     {
-      enum { value = 20000 + dim };
+      static const int value = 20000 + dim;
     };
 
     template <typename WrappedConfigType>
     struct topological_id< domain_t<WrappedConfigType> >
     {
-      enum { value = 100000 };
+      static const int value = 100000;
     };
 
 
@@ -960,7 +960,7 @@ namespace viennagrid
     template <typename T, typename U>
     struct topologically_sorted
     {
-      enum { value = (topological_id<T>::value <= topological_id<U>::value) ? true : false };
+      static const bool value = (topological_id<T>::value <= topological_id<U>::value) ? true : false;;
     };
 
 

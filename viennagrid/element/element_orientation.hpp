@@ -35,7 +35,7 @@ namespace viennagrid
     namespace result_of
     {
 
-        template<long num_elements>
+        template<int num_elements>
         struct permutator_type
         {
                 typedef typename permutator_type<num_elements+1>::type type;

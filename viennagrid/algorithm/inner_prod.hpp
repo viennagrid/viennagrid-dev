@@ -99,7 +99,7 @@ namespace viennagrid
   }
 
   /** @brief Dispatched inner product function having full information about the coordinate systems. Vectors/Points are in a Cartesian coordinate system already, thus no transformation required. */
-  template<typename PointType1, typename PointType2, long d>
+  template<typename PointType1, typename PointType2, int d>
   typename result_of::coord<PointType1>::type
   inner_prod_impl(PointType1 const & p1, PointType2 const & p2, cartesian_cs<d>, cartesian_cs<d>)
   {

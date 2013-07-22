@@ -33,7 +33,7 @@ namespace viennagrid
   {
     typedef viennagrid::meta::null_type facet_tag;
 
-    enum { dim = 0 };
+    static const int dim = 0;
     static std::string name() { return "Vertex"; }
   };
 

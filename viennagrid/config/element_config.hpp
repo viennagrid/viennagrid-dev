@@ -36,23 +36,23 @@ namespace viennagrid
     {
         namespace result_of
         {
-            template<typename storage_layout_tag, long num>
+            template<typename storage_layout_tag, int num>
             struct boundary_cell_container_tag
             {};
 
-            template<long num>
+            template<int num>
             struct boundary_cell_container_tag<viennagrid::static_layout_tag, num>
             {
                 typedef viennagrid::storage::static_array_tag<num> type;
             };
 
-            template<long num>
+            template<int num>
             struct boundary_cell_container_tag<viennagrid::dynamic_layout_tag, num>
             {
                 typedef viennagrid::storage::std_vector_tag type;
             };
 
-            template<long num>
+            template<int num>
             struct boundary_cell_container_tag<viennagrid::dynamic_unique_layout_tag, num>
             {
                 typedef viennagrid::storage::std_set_tag type;

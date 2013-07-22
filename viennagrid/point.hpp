@@ -37,7 +37,7 @@
 namespace viennagrid
 {
 
-  template <long d>
+  template <int d>
   struct dim_dispatcher;
 
   /** @brief A conversion facility for transformations between coordinate systems
@@ -227,10 +227,10 @@ namespace viennagrid
   /********************* CoordinateSystem *****************/
 
   /** @brief Provides the basic operations in a cartesian coordinate system */
-  template <long d>
+  template <int d>
   struct cartesian_cs
   {
-    enum { dim = d };
+    static const int dim = d;
 
     /** @brief Returns the point p1 + p2 for a cartesian coordinate system */
     template <typename PointType>
@@ -408,7 +408,7 @@ namespace viennagrid
   /** @brief Provides the basic operations in a polar coordinate system (r, phi) */
   struct polar_cs : public cs_base<polar_cs>
   {
-    enum { dim = 2 };
+    static const int dim = 2;
 
     template <typename PointType>
     static PointType & inplace_stretch(PointType & p1, typename result_of::coord<PointType>::type factor)
@@ -421,7 +421,7 @@ namespace viennagrid
   /** @brief Provides the basic operations in a spherical coordinate system (r, theta, phi) with theta denoting the elevation angle. */
   struct spherical_cs : public cs_base<spherical_cs>
   {
-    enum { dim = 3 };
+    static const int dim = 3;
 
     template <typename PointType>
     static PointType & inplace_stretch(PointType & p1, typename result_of::coord<PointType>::type factor)
@@ -434,7 +434,7 @@ namespace viennagrid
   /** @brief Provides the basic operations in a cylindrical coordinate system (rho, theta, z) */
   struct cylindrical_cs : public cs_base<cylindrical_cs>
   {
-    enum { dim = 3 };
+    static const int dim = 3;
 
     /** @brief Implementation of p1 *= factor for a cylindrical coordinate system */
     template <typename PointType>
@@ -546,7 +546,7 @@ namespace viennagrid
 
 
       /** @brief Publish the geometric dimension of the point */
-      enum { dim = CoordinateSystem::dim };
+      static const int dim = CoordinateSystem::dim;
 
       /** @brief Default constructor. Sets all entries to zero */
       point_t()

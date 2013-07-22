@@ -32,40 +32,40 @@ namespace viennagrid
 {
   namespace meta
   {
-    template <long n, long k>
+    template <int n, int k>
     struct n_over_k
     {
-      enum { value = n_over_k<n-1, k-1>::value + n_over_k<n-1, k>::value };
+      static const int value = n_over_k<n-1, k-1>::value + n_over_k<n-1, k>::value;
     };
 
-    template <long n>
+    template <int n>
     struct n_over_k<n, 0>
     {
-      enum { value = 1 };
+      static const int value = 1;
     };
 
-    template <long k>
+    template <int k>
     struct n_over_k<0, k>
     {
-      enum { value = 0 };
+      static const int value = 0;
     };
 
     template <>
     struct n_over_k<0, 0>
     {
-      enum { value = 1 };
+      static const int value = 1;
     };
 
   }
 
 
   /** @brief Topological description of an n-simplex.*/
-  template <long n>
+  template <int n>
   struct simplex_tag
   {
     typedef simplex_tag<n-1> facet_tag;
 
-    enum{ dim = n };
+    static const int dim = n;
     static std::string name()
     {
       std::stringstream ss;
@@ -75,13 +75,13 @@ namespace viennagrid
   };
 
   /** @brief Topological description of the boundary k-cells an n-simplex */
-  template <long n, long k>
+  template <int n, int k>
   struct boundary_elements<simplex_tag<n>, simplex_tag<k> >
   {
     //typedef simplex_tag<k>             tag;
 
     typedef static_layout_tag     layout_tag;
-    enum{ num = meta::n_over_k<n+1, k+1>::value };
+    static const int num = meta::n_over_k<n+1, k+1>::value;
   };
 
 
@@ -90,7 +90,7 @@ namespace viennagrid
     ///////////////////////////////// Generator for boundary cell elements ///////////////////////////////////
 
 
-    template<long n, typename BoundaryElementType>
+    template<int n, typename BoundaryElementType>
     struct boundary_element_generator<simplex_tag<n>, simplex_tag<1>, BoundaryElementType>
     {
         template<typename element_type, typename inserter_type>
@@ -111,7 +111,7 @@ namespace viennagrid
     };
 
 
-    template<long n, typename BoundaryElementType>
+    template<int n, typename BoundaryElementType>
     struct boundary_element_generator<simplex_tag<n>, simplex_tag<2>, BoundaryElementType>
     {
         template<typename element_type, typename inserter_type>

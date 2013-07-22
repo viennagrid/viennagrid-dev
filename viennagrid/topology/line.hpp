@@ -33,7 +33,7 @@ namespace viennagrid
   template <>
   struct hypercube_tag<1>
   {
-    enum { dim = 1 };
+    static const int dim = 1;
     static std::string name() { return "Line"; }
   };
 

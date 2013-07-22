@@ -35,35 +35,29 @@ namespace viennagrid
   {
     typedef hypercube_tag<2> facet_tag;
 
-    enum{ dim = 3 };
+    static const int dim = 3;
     static std::string name() { return "Hexahedron"; }
   };
 
   template <>
   struct boundary_elements<hypercube_tag<3>, hypercube_tag<2> >
   {
-    //typedef simplex_tag<k>             tag;
-
     typedef static_layout_tag     layout_tag;
-    enum{ num = 6 };
+    static const int num = 6;
   };
 
   template <>
   struct boundary_elements<hypercube_tag<3>, simplex_tag<1> >
   {
-    //typedef simplex_tag<k>             tag;
-
     typedef static_layout_tag     layout_tag;
-    enum{ num = 12 };
+    static const int num = 12;
   };
 
   template <>
   struct boundary_elements<hypercube_tag<3>, simplex_tag<0> >
   {
-    //typedef simplex_tag<k>             tag;
-
     typedef static_layout_tag     layout_tag;
-    enum{ num = 8 };
+    static const int num = 8;
   };
 
 
