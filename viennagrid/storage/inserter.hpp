@@ -158,7 +158,7 @@ namespace viennagrid
             >
                 physical_insert( const value_type & element, inserter_type & inserter )
             {
-                return dependend_inserter->physical_insert<generate_id, call_callback>( element, inserter );
+                return dependend_inserter->template physical_insert<generate_id, call_callback>( element, inserter );
             }
 
 
