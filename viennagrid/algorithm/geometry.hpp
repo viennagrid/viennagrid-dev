@@ -39,13 +39,12 @@ namespace viennagrid
         return viennagrid::cross_prod( p1-p0, p2-p0 );
     }
 
-  
-    template<typename DomainT, typename ElementT>
-    typename viennagrid::result_of::point<DomainT>::type normal_vector( DomainT const & domain, ElementT const & element )
-    {
-      return normal_vector( default_point_accessor(domain), element );
-    }
 
+    template<typename ElementT>
+    typename viennagrid::result_of::point<ElementT>::type normal_vector( ElementT const & element )
+    {
+      return normal_vector( default_point_accessor(element), element );
+    }
 
 
     namespace geometry
