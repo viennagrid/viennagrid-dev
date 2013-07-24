@@ -261,6 +261,7 @@ namespace viennagrid
 
         domain_t & operator=( domain_t const & other)
         {
+          element_container_collection = element_collection_type();
 //           element_container_collection = other.element_container_collection;
           appendix_ = other.appendix_;
           inserter = other.inserter;
