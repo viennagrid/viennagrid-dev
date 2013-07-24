@@ -266,6 +266,37 @@ namespace viennagrid
   }
 
 
+
+
+
+
+
+    template <typename DomainConfigType, typename ElementTypeList, typename ContainerConfig>
+    class decorated_domain_view_config;
+
+    template <typename WrappedConfigType>
+    class domain_t;
+
+    template<typename WrappedConfigType>
+    class segmentation_t;
+
+    template<typename segmentation_type_>
+    class segment_t;
+
+    template<typename container_type_, typename change_counter_type>
+    struct coboundary_container_wrapper;
+
+    template<typename container_type_, typename change_counter_type>
+    struct neighbour_container_wrapper;
+
+    template<typename container_type_, typename change_counter_type>
+    struct boundary_information_wrapper;
+
+
+  
+  
+
+
   /** @brief The metafunction layer. Provides type generators that derive the respective type from the domain configuration */
   namespace result_of
   {
@@ -612,6 +643,12 @@ namespace viennagrid
     };
 
     template <typename container>
+    struct iterator<const container>
+    {
+        typedef typename container::const_iterator type;
+    };
+
+    template <typename container>
     struct const_iterator
     {
         typedef typename container::const_iterator type;
@@ -788,6 +825,26 @@ namespace viennagrid
 
 
 
+
+
+
+
+
+
+    template<typename ElementTagT, typename SegmentationT>
+    typename result_of::element_range< segment_t<SegmentationT>, ElementTagT>::type elements( segment_t<SegmentationT> & something);
+    
+    template<typename ElementTagT, typename SegmentationT>
+    typename result_of::const_element_range< segment_t<SegmentationT>, ElementTagT>::type elements( segment_t<SegmentationT> const & something);
+
+
+
+
+
+
+
+
+    
     template<typename element_type>
     typename result_of::facet_range<element_type>::type facets(element_type & element)
     {
@@ -801,40 +858,19 @@ namespace viennagrid
     }
 
 
-    template <typename DomainConfigType, typename ElementTypeList, typename ContainerConfig>
-    class decorated_domain_view_config;
-
-    template <typename WrappedConfigType>
-    class domain_t;
-
-    template<typename WrappedConfigType>
-    class segmentation_t;
-
-    template<typename segmentation_type_>
-    class segment_t;
-
-    template<typename container_type_, typename change_counter_type>
-    struct coboundary_container_wrapper;
-
-    template<typename container_type_, typename change_counter_type>
-    struct neighbour_container_wrapper;
-
-    template<typename container_type_, typename change_counter_type>
-    struct boundary_information_wrapper;
-
 
     template<typename container_type, typename vertex_type>
     typename container_type::value_type & point( container_type & geometric_container, vertex_type const & vertex );
 
 
     template<typename ElementTypeOrTag, typename DomainType, typename HandleIteratorType>
-    typename result_of::handle<DomainType, ElementTypeOrTag>::type create_element(
+    typename result_of::handle<DomainType, ElementTypeOrTag>::type make_element(
           DomainType & domain,
           HandleIteratorType array_start,
           HandleIteratorType const & array_end );
 
     template<typename ElementTypeOrTag, typename DomainType, typename HandleIteratorType>
-    typename result_of::handle<DomainType, ElementTypeOrTag>::type create_element_with_id(
+    typename result_of::handle<DomainType, ElementTypeOrTag>::type make_element_with_id(
           DomainType & domain,
           HandleIteratorType array_start,
           HandleIteratorType const & array_end,
