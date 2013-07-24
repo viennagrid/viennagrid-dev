@@ -40,6 +40,13 @@ namespace viennagrid
             template<typename element_domain_segment_config_or_something_like_that>
             container_range_wrapper( viennagrid::element_range_proxy<element_domain_segment_config_or_something_like_that> range_proxy )
             { *this = elements< value_type >( range_proxy() ); }
+            
+            template<typename element_domain_segment_config_or_something_like_that>
+            container_range_wrapper operator=( viennagrid::element_range_proxy<element_domain_segment_config_or_something_like_that> range_proxy )
+            { 
+              *this = elements< value_type >( range_proxy() );
+              return *this;
+            }
 
 
 
@@ -149,6 +156,21 @@ namespace viennagrid
             template<typename element_domain_segment_config_or_something_like_that>
             container_range_wrapper( const viennagrid::element_range_proxy<const element_domain_segment_config_or_something_like_that> range_proxy )
             { *this = elements< value_type >( range_proxy() ); }
+
+            
+            template<typename element_domain_segment_config_or_something_like_that>
+            container_range_wrapper operator=( viennagrid::element_range_proxy<element_domain_segment_config_or_something_like_that> range_proxy )
+            { 
+              *this = elements< value_type >( range_proxy() );
+              return *this;
+            }
+            
+            template<typename element_domain_segment_config_or_something_like_that>
+            container_range_wrapper operator=( viennagrid::element_range_proxy<const element_domain_segment_config_or_something_like_that> range_proxy )
+            { 
+              *this = elements< value_type >( range_proxy() );
+              return *this;
+            }
 
 
 
