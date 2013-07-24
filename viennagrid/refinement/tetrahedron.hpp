@@ -296,12 +296,13 @@ namespace viennagrid
 
       if (stable_line_is_longer(segment_out, vertices, 0, 1, 2, 1))
       {
-            make_refinement_element<ElementType>( segment_out, vertices, 4, 5, 2, 3);
+        make_refinement_element<ElementType>( segment_out, vertices, 0, 4, 2, 3);
+        make_refinement_element<ElementType>( segment_out, vertices, 4, 5, 2, 3);
       }
       else //split edge 12, introduce line 05
       {
-            make_refinement_element<ElementType>( segment_out, vertices, 0, 4, 5, 3);
-            make_refinement_element<ElementType>( segment_out, vertices, 0, 5, 2, 3);
+        make_refinement_element<ElementType>( segment_out, vertices, 0, 4, 5, 3);
+        make_refinement_element<ElementType>( segment_out, vertices, 0, 5, 2, 3);
       }
 
     }
