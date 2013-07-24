@@ -272,6 +272,12 @@ namespace viennagrid
           copy_domain(other, *this);
           return *this;
         }
+
+        void clear()
+        {
+          *this = domain_t();
+        }
+        
     public:
 
         // TODO no direct access to collection!
@@ -753,11 +759,12 @@ namespace viennagrid
 
 
 
-    template<typename something>
-    void clear_domain( something & s )
-    {
-        viennagrid::storage::container_collection::clear_all( viennagrid::element_collection(s) );
-    }
+//     template<typename WrappedDomainConfigT>
+//     void clear( domain_t<WrappedDomainConfigT> & domain )
+//     {
+//       domain = domain_t<WrappedDomainConfigT>();
+// //         viennagrid::storage::container_collection::clear_all( viennagrid::element_collection(s) );
+//     }
 
 
     template<typename WrappedConfigType, typename handle_type>
