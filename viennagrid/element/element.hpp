@@ -796,7 +796,7 @@ namespace viennagrid
         struct const_element_range<storage::collection_t<container_collection_typemap>, element_type_or_tag>
         {
             typedef typename element_tag<element_type_or_tag>::type element_tag_;
-            typedef const viennagrid::storage::container_range_wrapper< const typename container_of_tag_for_collection<container_collection_typemap, element_tag_>::type > type;
+            typedef viennagrid::storage::container_range_wrapper< const typename container_of_tag_for_collection<container_collection_typemap, element_tag_>::type > type;
         };
 
         template<typename container_collection_typemap, typename element_type_or_tag>
