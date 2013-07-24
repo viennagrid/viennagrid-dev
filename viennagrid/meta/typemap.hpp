@@ -23,7 +23,7 @@ namespace viennagrid
             };
 
             // at
-            template<typename typemap, unsigned int index>
+            template<typename typemap, int index>
             struct at
             {
                 typedef typename typelist::result_of::at<typemap, index>::type type;

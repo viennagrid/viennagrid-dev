@@ -314,9 +314,21 @@ namespace viennagrid
 
 
             // replace the type at index by another type
-            template <typename typelist, unsigned int index_to_replace, typename replaced> struct replace_at;
+            template <typename typelist, int index_to_replace, typename replaced> struct replace_at;
+            
+            template <typename replaced>
+            struct replace_at<null_type, -1, replaced>
+            {
+                typedef null_type type;
+            };
+            
+            template <typename head, typename tail, typename replaced>
+            struct replace_at<typelist_t<head, tail>, -1, replaced>
+            {
+                typedef null_type type;
+            };
 
-            template <unsigned int index_to_replace, typename replaced>
+            template <int index_to_replace, typename replaced>
             struct replace_at<null_type, index_to_replace, replaced>
             {
                 typedef null_type type;
@@ -328,7 +340,7 @@ namespace viennagrid
                 typedef typelist_t<replaced, tail> type;
             };
 
-            template <typename head, typename tail, unsigned int index_to_replace, typename replaced>
+            template <typename head, typename tail, int index_to_replace, typename replaced>
             struct replace_at<typelist_t<head, tail>, index_to_replace, replaced>
             {
                 typedef typelist_t<head, typename replace_at<tail, index_to_replace-1, replaced>::type> type;
