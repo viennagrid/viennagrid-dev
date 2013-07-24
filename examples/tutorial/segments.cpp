@@ -12,7 +12,6 @@
 int main()
 {
   typedef viennagrid::triangular_3d_domain                        domain_type;
-  typedef viennagrid::result_of::domain_view< domain_type >::type view_type;
   
   typedef viennagrid::result_of::vertex_handle< domain_type >::type     vertex_handle_type;
   typedef viennagrid::result_of::triangle_handle< domain_type >::type   triangle_handle_type;
@@ -53,6 +52,11 @@ int main()
   
   // create a segment, segment id will be 5 because highest segment id was 4
   segment_type seg2 = segmentation.make_segment();
+
+  // create some other segments (ID would be 6, 7, 8)
+  segment_type seg3 = segmentation.make_segment();
+  segment_type seg4 = segmentation.make_segment();
+  segment_type seg5 = segmentation.make_segment();
   
   // print the segments
   std::cout << "Segments in Segmentation" << std::endl;
@@ -79,6 +83,18 @@ int main()
   viennagrid::add( seg0, tri0 );
   viennagrid::add( seg1, tri1 );
   viennagrid::add( seg2, tri2 );
+
+  
+  viennagrid::add( seg3, tri0 );
+  viennagrid::add( seg4, tri0 );
+  viennagrid::add( seg5, tri0 );
+
+  typedef viennagrid::result_of::segment_id_range<segmentation_type, triangle_type>::type SegmentIDRange;
+  SegmentIDRange segment_ids = viennagrid::segment_ids( segmentation, tri0 );
+  std::cout << "Segments for tr0:" << std::endl;
+  for (SegmentIDRange::iterator it = segment_ids.begin(); it != segment_ids.end(); ++it)
+    std::cout << *it << std::endl;
+  
   
   // setting and querying additional segment information for tri0
   std::cout << "Triangle 0 in Segment 0: " <<  *viennagrid::segment_element_info( seg0, tri0 ) << std::endl;
