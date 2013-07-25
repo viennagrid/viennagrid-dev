@@ -251,18 +251,19 @@ namespace viennagrid
 
 
 
-        domain_t(const domain_t & other) : appendix_(other.appendix_), inserter(other.inserter), change_counter_(other.change_counter_)
+        domain_t(const domain_t & other) : element_container_collection(other.element_container_collection), appendix_(other.appendix_), inserter(other.inserter), change_counter_(other.change_counter_)
         {
           inserter.set_domain_info( element_container_collection, change_counter_ );
           increment_change_counter();
 
-          copy_domain(other, *this);
+          fix_handles(other, *this);
         }
 
         domain_t & operator=( domain_t const & other)
         {
-          element_container_collection = element_collection_type();
-//           element_container_collection = other.element_container_collection;
+//           element_container_collection = element_collection_type();
+          element_container_collection = other.element_container_collection;
+          
           appendix_ = other.appendix_;
           inserter = other.inserter;
           change_counter_ = other.change_counter_;
@@ -270,7 +271,7 @@ namespace viennagrid
           inserter.set_domain_info( element_container_collection, change_counter_ );
           increment_change_counter();
           
-          copy_domain(other, *this);
+          fix_handles(other, *this);
           return *this;
         }
 
@@ -1357,22 +1358,22 @@ namespace viennagrid
 
 
     template<typename ElementTypelistT>
-    struct copy_domain_helper;
+    struct fix_handle_helper;
 
     template<>
-    struct copy_domain_helper< meta::null_type >
+    struct fix_handle_helper< meta::null_type >
     {
       template<typename SourceWrappedConfigT, typename DestinationWrappedConfigT>
-      static void copy_elements( domain_t<SourceWrappedConfigT> const & source_domain, domain_t<DestinationWrappedConfigT> & destination_domain )
+      static void fix_handles( domain_t<SourceWrappedConfigT> const & source_domain, domain_t<DestinationWrappedConfigT> & destination_domain )
       {}
     };
 
 
     template<typename SourceElementT, typename TailT>
-    struct copy_domain_helper< meta::typelist_t<SourceElementT, TailT> >
+    struct fix_handle_helper< meta::typelist_t<SourceElementT, TailT> >
     {
       template<typename SourceWrappedConfigT, typename DestinationWrappedConfigT>
-      static void copy_elements( domain_t<SourceWrappedConfigT> const & source_domain, domain_t<DestinationWrappedConfigT> & destination_domain )
+      static void fix_handles( domain_t<SourceWrappedConfigT> const & source_domain, domain_t<DestinationWrappedConfigT> & destination_domain )
       {
         typedef typename viennagrid::result_of::element_tag<SourceElementT>::type ElementTag;
 
@@ -1382,14 +1383,29 @@ namespace viennagrid
         typedef typename viennagrid::result_of::const_element_range<SourceDomainType, SourceElementT>::type     SourceElementRangeType;
         typedef typename viennagrid::result_of::iterator<SourceElementRangeType>::type                          SourceElementRangeIterator;
 
+        typedef typename viennagrid::result_of::element_range<DestinationDomainType, SourceElementT>::type      DestinationElementRangeType;
+        typedef typename viennagrid::result_of::iterator<DestinationElementRangeType>::type                     DestinationElementRangeIterator;
+
+        
+        typedef typename viennagrid::result_of::element<SourceDomainType, ElementTag>::type SourceElementType;
         typedef typename viennagrid::result_of::element<DestinationDomainType, ElementTag>::type DestinationElementType;
         typedef typename viennagrid::result_of::handle<DestinationDomainType, ElementTag>::type DestinationElementHandleType;
 
         SourceElementRangeType source_elements = viennagrid::elements( source_domain );
-        for (SourceElementRangeIterator it = source_elements.begin(); it != source_elements.end(); ++it)
+        DestinationElementRangeType destination_elements = viennagrid::elements( destination_domain );
+        
+        DestinationElementRangeIterator dit = destination_elements.begin();
+        for (SourceElementRangeIterator sit = source_elements.begin(); sit != source_elements.end(); ++sit, ++dit)
         {
-          DestinationElementType destination_element = *it;
-          DestinationElementHandleType handle = viennagrid::push_element<false, false>(destination_domain, destination_element).first;
+          SourceElementType const & source_element = *sit;
+          DestinationElementType & destination_element = *dit;
+          
+          if (source_element.id() != destination_element.id())
+          {
+            std::cout << "ERROR in fix_handles: destination element id != source element id" << std::endl;
+            continue;
+          }
+//           DestinationElementHandleType handle = viennagrid::push_element<false, false>(destination_domain, destination_element).first;
 
           typedef typename viennagrid::result_of::boundary_element_typelist<SourceElementT>::type BoundaryElementTypelist;
           typedef typename viennagrid::result_of::element_typelist<DestinationDomainType>::type DestinationElementTypelist;
@@ -1399,16 +1415,16 @@ namespace viennagrid
                     DestinationElementTypelist
                 >::type ElementTypelist;
 
-          copy_element_setters<DestinationDomainType, SourceElementT, DestinationElementType> setter( destination_domain, *it, viennagrid::dereference_handle(destination_domain, handle) );
+          copy_element_setters<DestinationDomainType, SourceElementT, DestinationElementType> setter( destination_domain, source_element, destination_element );
           viennagrid::meta::typelist::for_each<ElementTypelist>(setter);
         }
 
-        copy_domain_helper<TailT>::copy_elements( source_domain, destination_domain );
+        fix_handle_helper<TailT>::fix_handles( source_domain, destination_domain );
       }
     };
 
     template<typename SourceWrappedConfigT, typename DestinationWrappedConfigT>
-    void copy_domain( domain_t<SourceWrappedConfigT> const & source_domain, domain_t<DestinationWrappedConfigT> & destination_domain )
+    void fix_handles( domain_t<SourceWrappedConfigT> const & source_domain, domain_t<DestinationWrappedConfigT> & destination_domain )
     {
       typedef domain_t<SourceWrappedConfigT>          SourceDomainType;
       typedef domain_t<DestinationWrappedConfigT>     DestinationDomainType;
@@ -1421,7 +1437,7 @@ namespace viennagrid
                     DestinationTypelist
                 >::type ElementTypelist;
 
-      copy_domain_helper<SourceTypelist>::copy_elements( source_domain, destination_domain );
+      fix_handle_helper<SourceTypelist>::fix_handles( source_domain, destination_domain );
     }
 
 }
