@@ -31,12 +31,14 @@ namespace viennagrid
             void set( base_id_type internal_id_ ) { internal_id =internal_id_; }
 
             bool operator== ( self_type rhs ) const { return internal_id == rhs.get(); }
+            bool operator!= ( self_type rhs ) const { return !(*this == rhs); }
             bool operator< ( self_type rhs ) const { return internal_id < rhs.get(); }
             bool operator<= ( self_type rhs ) const { return internal_id <= rhs.get(); }
             bool operator> ( self_type rhs ) const { return internal_id > rhs.get(); }
             bool operator>= (self_type rhs ) const { return internal_id >= rhs.get(); }
 
             bool operator== ( self_const_type rhs ) const { return internal_id == rhs.get(); }
+            bool operator!= ( self_const_type rhs ) const { return !(*this == rhs); }
             bool operator< ( self_const_type rhs ) const { return internal_id < rhs.get(); }
             bool operator<= ( self_const_type rhs ) const { return internal_id <= rhs.get(); }
             bool operator> ( self_const_type rhs ) const { return internal_id > rhs.get(); }
@@ -69,12 +71,14 @@ namespace viennagrid
             void set( base_id_type internal_id_ ) { internal_id =internal_id_; }
 
             bool operator== ( self_type rhs ) const { return internal_id == rhs.get(); }
+            bool operator!= ( self_type rhs ) const { return !(*this == rhs); }
             bool operator< ( self_type rhs ) const { return internal_id < rhs.get(); }
             bool operator<= ( self_type rhs ) const { return internal_id <= rhs.get(); }
             bool operator> ( self_type rhs ) const { return internal_id > rhs.get(); }
             bool operator>= (self_type rhs ) const { return internal_id >= rhs.get(); }
 
             bool operator== ( self_non_const_type rhs ) const { return internal_id == rhs.get(); }
+            bool operator!= ( self_non_const_type rhs ) const { return !(*this == rhs); }
             bool operator< ( self_non_const_type rhs ) const { return internal_id < rhs.get(); }
             bool operator<= ( self_non_const_type rhs ) const { return internal_id <= rhs.get(); }
             bool operator> ( self_non_const_type rhs ) const { return internal_id > rhs.get(); }
