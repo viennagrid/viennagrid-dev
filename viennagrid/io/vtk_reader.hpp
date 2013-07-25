@@ -1181,6 +1181,52 @@ namespace viennagrid
 
 
 
+    
+    
+    
+    template <typename DomainT, typename SegmentationT, typename AccessorT>
+    vtk_reader<DomainT, SegmentationT> & add_scalar_data_on_vertices(vtk_reader<DomainT, SegmentationT> & writer,
+                                                                    AccessorT const accessor,
+                                                                    std::string const & quantity_name)
+    {
+      writer.register_vertex_scalar_accessor(accessor, quantity_name);
+      return writer;
+    }
+
+    template <typename DomainT, typename SegmentationT, typename AccessorT>
+    vtk_reader<DomainT, SegmentationT> & add_vector_data_on_vertices(vtk_reader<DomainT, SegmentationT> & writer,
+                                                                    AccessorT const accessor,
+                                                                    std::string const & quantity_name)
+    {
+      writer.register_vertex_vector_accessor(accessor, quantity_name);
+      return writer;
+    }
+
+
+
+
+
+
+    template <typename DomainT, typename SegmentationT, typename AccessorT>
+    vtk_reader<DomainT, SegmentationT> & add_scalar_data_on_cells(vtk_reader<DomainT, SegmentationT> & writer,
+                                                                    AccessorT const accessor,
+                                                                    std::string const & quantity_name)
+    {
+      writer.register_cell_scalar_accessor(accessor, quantity_name);
+      return writer;
+    }
+
+    template <typename DomainT, typename SegmentationT, typename AccessorT>
+    vtk_reader<DomainT, SegmentationT> & add_vector_data_on_cells(vtk_reader<DomainT, SegmentationT> & writer,
+                                                                    AccessorT const accessor,
+                                                                    std::string const & quantity_name)
+    {
+      writer.register_cell_vector_accessor(accessor, quantity_name);
+      return writer;
+    }
+
+
+    
 
 
 
