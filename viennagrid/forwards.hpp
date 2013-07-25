@@ -888,7 +888,7 @@ namespace viennagrid
 
     
     template<typename SourceWrappedConfigT, typename DestinationWrappedConfigT>
-    void copy_domain( domain_t<SourceWrappedConfigT> const & source_domain, domain_t<DestinationWrappedConfigT> & destination_domain );
+    void fix_handles( domain_t<SourceWrappedConfigT> const & source_domain, domain_t<DestinationWrappedConfigT> & destination_domain );
 
 
    // norm tags for: algorithm/norm.hpp
