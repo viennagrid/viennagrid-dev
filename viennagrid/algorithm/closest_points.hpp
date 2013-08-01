@@ -735,8 +735,8 @@ namespace viennagrid
     template <typename PointAccessorType, typename PointType, typename WrappedConfigType>
     std::pair<typename viennagrid::result_of::point<element_t< vertex_tag,WrappedConfigType> >::type, PointType>
     closest_points_on_boundary_impl(PointAccessorType const accessor,
-                                    element_t<vertex_tag,WrappedConfigType> const & v1,
-                                    PointType const & p2)
+                                    PointType const & p2,
+                                    element_t<vertex_tag,WrappedConfigType> const & v1)
     {
       return std::make_pair(accessor(v1), p2);
     }
@@ -774,7 +774,7 @@ namespace viennagrid
                          fit != facets.end();
                        ++fit)
       {
-        if (!is_boundary<FacetTag>(cont, *fit))
+        if (!is_boundary(cont, *fit))
           continue;
 
         PairType pair = closest_points_impl(accessor, p, *fit);
@@ -800,13 +800,24 @@ namespace viennagrid
       return closest_points_on_boundary_point_to_any<typename ElementTag::facet_tag>(domain, v, el);
     }
 
-    template <typename WrappedConfigType, typename PointType>
+    template <typename PointAccessorT, typename WrappedConfigType, typename PointType>
     std::pair<PointType, typename viennagrid::result_of::point< domain_t<WrappedConfigType> >::type>
-    closest_points_on_boundary_impl(domain_t<WrappedConfigType> const & domain,
-                                    PointType const & p)
+    closest_points_on_boundary_impl(PointAccessorT const point_accessor,
+                                    PointType const & p,
+                                    domain_t<WrappedConfigType> const & domain)
     {
         typedef typename result_of::cell_tag< domain_t<WrappedConfigType> >::type CellTag;
-      return closest_points_on_boundary_point_to_any<typename CellTag::facet_tag>( default_point_accessor(domain), p, domain );
+      return closest_points_on_boundary_point_to_any<typename CellTag::facet_tag>( point_accessor, p, domain );
+    }
+    
+    template <typename PointAccessorT, typename SegmentationT, typename PointType>
+    std::pair<PointType, typename viennagrid::result_of::point< segment_t<SegmentationT> >::type>
+    closest_points_on_boundary_impl(PointAccessorT const point_accessor,
+                                    PointType const & p,
+                                    segment_t<SegmentationT> const & segment)
+    {
+        typedef typename result_of::cell_tag< segment_t<SegmentationT> >::type CellTag;
+      return closest_points_on_boundary_point_to_any<typename CellTag::facet_tag>( point_accessor, p, segment );
     }
 
 
@@ -822,8 +833,8 @@ namespace viennagrid
 
     template <typename WrappedDomainConfigType, typename WrappedConfigType>
     std::pair< typename viennagrid::result_of::point< domain_t<WrappedDomainConfigType> >::type, typename viennagrid::result_of::point< domain_t<WrappedDomainConfigType> >::type >
-    closest_points_on_boundary_impl(domain_t<WrappedDomainConfigType> const & domain,
-                                    element_t<vertex_tag,WrappedConfigType> const & v)
+    closest_points_on_boundary_impl(element_t<vertex_tag,WrappedConfigType> const & v,
+                                    domain_t<WrappedDomainConfigType> const & domain)
     {
       return closest_points_on_boundary_impl( default_point_accessor(domain)(v), domain);
     }
@@ -902,22 +913,33 @@ namespace viennagrid
               typename ElementTag, typename WrappedConfigType>
     std::pair< typename viennagrid::result_of::point<PointAccessorType>::type, typename viennagrid::result_of::point<PointAccessorType>::type >
     closest_points_on_boundary_impl(PointAccessorType const accessor,
-                                    domain_t<WrappedDomainConfigType> const & domain,
-                                    element_t<ElementTag,WrappedConfigType> const & el1)
+                                    element_t<ElementTag,WrappedConfigType> const & el1,
+                                    domain_t<WrappedDomainConfigType> const & domain)
     {
       return closest_points_on_boundary_generic(accessor, domain, el1);
+    }
+    
+    template <typename PointAccessorType,
+              typename SegmentationT,
+              typename ElementTag, typename WrappedConfigType>
+    std::pair< typename viennagrid::result_of::point<PointAccessorType>::type, typename viennagrid::result_of::point<PointAccessorType>::type >
+    closest_points_on_boundary_impl(PointAccessorType const accessor,
+                                    element_t<ElementTag,WrappedConfigType> const & el1,
+                                    segment_t<SegmentationT> const & segment)
+    {
+      return closest_points_on_boundary_generic(accessor, segment, el1);
     }
 
 
     template <typename PointAccessorType,
-              typename WrappedDomainConfigType1,
-              typename WrappedDomainConfigType2>
+              typename Segmentation1T,
+              typename Segmentation2T>
     std::pair< typename viennagrid::result_of::point<PointAccessorType>::type, typename viennagrid::result_of::point<PointAccessorType>::type >
     closest_points_on_boundary_impl(PointAccessorType const accessor,
-                                    domain_t<WrappedDomainConfigType1> const & domain1,
-                                    domain_t<WrappedDomainConfigType2> const & domain2)
+                                    segment_t<Segmentation1T> const & segment1,
+                                    segment_t<Segmentation2T> const & segment2)
     {
-      return closest_points_on_boundary_generic(accessor, domain1, domain2);
+      return closest_points_on_boundary_generic(accessor, segment1, segment2);
     }
 
 
@@ -953,6 +975,12 @@ namespace viennagrid
     struct topological_id< domain_t<WrappedConfigType> >
     {
       static const int value = 100000;
+    };
+    
+    template <typename SegmentationT>
+    struct topological_id< segment_t<SegmentationT> >
+    {
+      static const int value = 100000 + 1;
     };
 
 
@@ -1027,7 +1055,7 @@ namespace viennagrid
   closest_points_on_boundary(Something1 const & el1,
                              Something2 const & el2)
   {
-    return closest_points_on_boundary_impl(default_point_accessor(el1),
+    return detail::closest_points_on_boundary_impl(default_point_accessor(el1),
                                        detail::ascending_topological_order<Something1, Something2>::first(el1, el2),
                                        detail::ascending_topological_order<Something1, Something2>::second(el1, el2));
   }
