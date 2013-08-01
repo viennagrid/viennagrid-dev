@@ -705,6 +705,11 @@ namespace viennagrid
 
     namespace result_of
     {
+        template<typename CoordType, typename CoordinateSystem>
+        struct point< point_t<CoordType, CoordinateSystem> >
+        {
+            typedef point_t<CoordType, CoordinateSystem> type;
+        };
 
         template<typename CoordType, typename CoordinateSystem>
         struct coord< point_t<CoordType, CoordinateSystem> >
