@@ -23,7 +23,7 @@
 #include "viennagrid/forwards.hpp"
 //#include "viennagrid/element.hpp"
 #include "viennagrid/point.hpp"
-#include "viennagrid/domain/config.hpp"
+#include "viennagrid/config/default_configs.hpp"
 #include "viennagrid/io/netgen_reader.hpp"
 #include "viennagrid/io/vtk_reader.hpp"
 #include "viennagrid/algorithm/boundary.hpp"
@@ -33,7 +33,8 @@ template <typename CellTypeOrTag, typename Domain, typename ReaderType>
 void test(ReaderType & my_reader, std::string const & infile, double reference_surface)
 {
   //typedef typename viennagrid::result_of::domain< DomainConfig >::type Domain;  
-  typedef typename viennagrid::result_of::geometric_view<Domain>::type Segment;
+  typedef typename viennagrid::result_of::segmentation<Domain>::type Segmentation;
+//   typedef typename viennagrid::result_of::segment<Domain>::type Segment;
   
   typedef typename viennagrid::result_of::element_tag<CellTypeOrTag>::type CellTag;
   //typedef viennagrid::result_of::element<Domain, CellTag>::type CellType;
@@ -43,7 +44,7 @@ void test(ReaderType & my_reader, std::string const & infile, double reference_s
   //typedef typename ConfigType::cell_tag                                   CellTag;
   //typedef typename viennagrid::result_of::segment<ConfigType>::type       SegmentType;
   
-  typedef typename viennagrid::result_of::point_type<Domain>::type          PointType;
+  typedef typename viennagrid::result_of::point<Domain>::type          PointType;
   typedef typename viennagrid::result_of::element<Domain, viennagrid::vertex_tag>::type       VertexType;
   typedef typename viennagrid::result_of::element<Domain, viennagrid::line_tag>::type       EdgeType;
   typedef typename viennagrid::result_of::element<Domain,
@@ -67,12 +68,12 @@ void test(ReaderType & my_reader, std::string const & infile, double reference_s
   typedef typename viennagrid::result_of::iterator<VertexOnEdgeContainer>::type    VertexOnEdgeIterator;
   
   Domain domain;
-  std::vector<Segment> segments;
+  Segmentation segmentation(domain);
 
   //read from file:
   try
   {
-    my_reader(domain, segments, infile);
+    my_reader(domain, segmentation, infile);
   }
   catch (std::exception const & ex)
   {
@@ -94,10 +95,10 @@ void test(ReaderType & my_reader, std::string const & infile, double reference_s
        fit != facets.end();
        ++fit)
   {
-    if (viennagrid::is_boundary<CellTag>(*fit, domain))
+    if (viennagrid::is_boundary(domain, *fit))
     {
       std::cout << *fit << std::endl;
-      surface += viennagrid::volume(*fit, domain);
+      surface += viennagrid::volume(*fit);
     }
   }
 
@@ -115,12 +116,12 @@ void test(ReaderType & my_reader, std::string const & infile, double reference_s
   std::cout << "*" << std::endl;
   std::cout << "* Test 2: Iteration over all vertices on the boundary" << std::endl;
   std::cout << "*" << std::endl;
-  VertexContainer vertices = viennagrid::elements<viennagrid::vertex_tag>(domain);
+  VertexContainer vertices = viennagrid::elements(domain);
   for (VertexIterator vit = vertices.begin();
        vit != vertices.end();
        ++vit)
   {
-    if (viennagrid::is_boundary<CellTag>(*vit, domain))
+    if (viennagrid::is_boundary(domain, *vit))
       std::cout << *vit << std::endl;
   }
   
@@ -137,27 +138,27 @@ int main()
   //viennagrid::io::netgen_reader my_netgen_reader;
 
   std::cout << "*********** line, 1d ***********" << std::endl;
-  typedef viennagrid::result_of::domain< viennagrid::config::line_1d >::type Line1DDomain;
-  viennagrid::io::netgen_reader<viennagrid::line_tag> line_1d_reader;
-  test<viennagrid::line_tag, viennagrid::config::line_1d_domain>(line_1d_reader, path + "line8.mesh", 2);
+  typedef viennagrid::line_1d_domain Line1DDomain;
+  viennagrid::io::netgen_reader line_1d_reader;
+  test<viennagrid::line_tag, viennagrid::line_1d_domain>(line_1d_reader, path + "line8.mesh", 2);
   
   
   std::cout << "*********** triangular, 2d ***********" << std::endl;
-  viennagrid::io::netgen_reader<viennagrid::triangle_tag> triangle_2d_reader;
-  test<viennagrid::triangle_tag, viennagrid::config::triangular_2d_domain>(triangle_2d_reader, path + "square8.mesh", 4);
+  viennagrid::io::netgen_reader triangle_2d_reader;
+  test<viennagrid::triangle_tag, viennagrid::triangular_2d_domain>(triangle_2d_reader, path + "square8.mesh", 4);
   
   std::cout << "*********** tetrahedral, 3d ***********" << std::endl;
-  viennagrid::io::netgen_reader<viennagrid::tetrahedron_tag> tetrahedra_3d_reader;
-  test<viennagrid::tetrahedron_tag, viennagrid::config::tetrahedral_3d_domain>(tetrahedra_3d_reader, path + "cube48.mesh", 6);
+  viennagrid::io::netgen_reader tetrahedra_3d_reader;
+  test<viennagrid::tetrahedron_tag, viennagrid::tetrahedral_3d_domain>(tetrahedra_3d_reader, path + "cube48.mesh", 6);
 
   
   std::cout << "*********** quadrilateral, 2d ***********" << std::endl;
-  viennagrid::io::vtk_reader<viennagrid::quadrilateral_tag, viennagrid::config::quadrilateral_2d_domain>  quadrilateral_2d_reader;
-  test<viennagrid::quadrilateral_tag, viennagrid::config::quadrilateral_2d_domain>(quadrilateral_2d_reader, path + "quadrilateral2.vtu", 6);
+  viennagrid::io::vtk_reader<viennagrid::quadrilateral_2d_domain>  quadrilateral_2d_reader;
+  test<viennagrid::quadrilateral_tag, viennagrid::quadrilateral_2d_domain>(quadrilateral_2d_reader, path + "quadrilateral2.vtu", 6);
   
   std::cout << "*********** hexahedral, 3d ***********" << std::endl;
-  viennagrid::io::vtk_reader<viennagrid::hexahedron_tag, viennagrid::config::hexahedral_3d_domain>  hexahedron_3d_reader;
-  test<viennagrid::hexahedron_tag, viennagrid::config::hexahedral_3d_domain>(hexahedron_3d_reader, path + "hexahedron2.vtu", 10);
+  viennagrid::io::vtk_reader<viennagrid::hexahedral_3d_domain>  hexahedron_3d_reader;
+  test<viennagrid::hexahedron_tag, viennagrid::hexahedral_3d_domain>(hexahedron_3d_reader, path + "hexahedron2.vtu", 10);
   
   std::cout << "*******************************" << std::endl;
   std::cout << "* Test finished successfully! *" << std::endl;
