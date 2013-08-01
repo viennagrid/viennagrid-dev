@@ -201,7 +201,7 @@ int main()
   //          
   // Refine domain uniformly:
   Domain uniformly_refined_domain;  
-  viennagrid::refine_uniformly(domain, uniformly_refined_domain);
+  viennagrid::cell_refine_uniformly(domain, uniformly_refined_domain);
   
   {
     viennagrid::io::vtk_writer<Domain> writer;
@@ -220,7 +220,7 @@ int main()
   cell_refinement_accessor( viennagrid::elements<CellTag>(domain)[8] ) = true;
   cell_refinement_accessor.resize( viennagrid::elements<CellTag>(domain).size() );
   
-  viennagrid::refine_element<viennagrid::tetrahedron_tag>(domain, adaptively_refined_domain, cell_refinement_accessor);
+  viennagrid::element_refine<viennagrid::tetrahedron_tag>(domain, adaptively_refined_domain, cell_refinement_accessor);
   
   {
     viennagrid::io::vtk_writer<Domain> writer;

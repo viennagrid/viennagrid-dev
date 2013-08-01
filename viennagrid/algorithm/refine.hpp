@@ -48,30 +48,30 @@ namespace viennagrid
                      VertexToVertexHandleAccessorT vertex_to_vertex_handle_accessor,
                      RefinementVertexAccessorT edge_to_vertex_handle_accessor)
     {
-      typedef domain_t<WrappedDomainConfigInT>       DomainInType;
-      typedef domain_t<WrappedDomainConfigOutT>      DomainOutType;
+      typedef domain_t<WrappedDomainConfigInT>       WrappedDomainConfigInType;
+      typedef domain_t<WrappedDomainConfigOutT>      WrappedDomainConfigOutType;
       
-      typedef typename viennagrid::result_of::point<DomainInType>::type     PointType;
+      typedef typename viennagrid::result_of::point<WrappedDomainConfigInType>::type     PointType;
       typedef typename viennagrid::result_of::coord<PointType>::type        NumericType;
 
-      typedef typename viennagrid::result_of::element<DomainInType, vertex_tag>::type       VertexType;
+      typedef typename viennagrid::result_of::element<WrappedDomainConfigInType, vertex_tag>::type       VertexType;
       typedef typename VertexType::id_type                                                  VertexIDType;
-      typedef typename viennagrid::result_of::handle<DomainInType, vertex_tag>::type        VertexHandleType;
-      typedef typename viennagrid::result_of::element<DomainInType, line_tag>::type         EdgeType;
-      typedef typename viennagrid::result_of::element<DomainInType, CellTagInT>::type       CellType;
+      typedef typename viennagrid::result_of::handle<WrappedDomainConfigInType, vertex_tag>::type        VertexHandleType;
+      typedef typename viennagrid::result_of::element<WrappedDomainConfigInType, line_tag>::type         EdgeType;
+      typedef typename viennagrid::result_of::element<WrappedDomainConfigInType, CellTagInT>::type       CellType;
 
-      typedef typename viennagrid::result_of::const_element_range<DomainInType, vertex_tag>::type       VertexRange;
+      typedef typename viennagrid::result_of::const_element_range<WrappedDomainConfigInType, vertex_tag>::type       VertexRange;
       typedef typename viennagrid::result_of::iterator<VertexRange>::type                               VertexIterator;
-      typedef typename viennagrid::result_of::const_element_range<DomainInType, line_tag>::type         EdgeRange;
+      typedef typename viennagrid::result_of::const_element_range<WrappedDomainConfigInType, line_tag>::type         EdgeRange;
       typedef typename viennagrid::result_of::iterator<EdgeRange>::type                                 EdgeIterator;
-      typedef typename viennagrid::result_of::const_element_range<DomainInType, CellTagInT>::type       CellRange;
+      typedef typename viennagrid::result_of::const_element_range<WrappedDomainConfigInType, CellTagInT>::type       CellRange;
       typedef typename viennagrid::result_of::iterator<CellRange>::type                                 CellIterator;
       typedef typename viennagrid::result_of::const_element_range<CellType, vertex_tag>::type           VertexOnCellRange;
       typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type                         VertexOnCellIterator;
       typedef typename viennagrid::result_of::const_element_range<EdgeType, vertex_tag>::type           VertexOnEdgeRange;
       typedef typename viennagrid::result_of::iterator<VertexOnEdgeRange>::type                         VertexOnEdgeIterator;
 
-      typedef typename viennagrid::result_of::element<DomainOutType, vertex_tag>::type      VertexTypeOut;
+      typedef typename viennagrid::result_of::element<WrappedDomainConfigOutType, vertex_tag>::type      VertexTypeOut;
       typedef typename VertexTypeOut::id_type                                               VertexIDTypeOut;
 
       //
@@ -127,28 +127,28 @@ namespace viennagrid
                      VertexToVertexHandleAccessorT vertex_to_vertex_handle_accessor,
                      RefinementVertexAccessorT edge_to_vertex_handle_accessor)
     {
-      typedef domain_t<WrappedDomainConfigInT>    DomainInType;
-      typedef domain_t<WrappedDomainConfigOutT>   DomainOutType;
+      typedef domain_t<WrappedDomainConfigInT>    WrappedDomainConfigInType;
+      typedef domain_t<WrappedDomainConfigOutT>   WrappedDomainConfigOutType;
 
-      typedef segmentation_t<WrappedSegmentationConfigInT>      SegmentationInType;
-      typedef segmentation_t<WrappedSegmentationConfigOutT>     SegmentationOutType;
+      typedef segmentation_t<WrappedSegmentationConfigInT>      WrappedSegmentationConfigInType;
+      typedef segmentation_t<WrappedSegmentationConfigOutT>     WrappedSegmentationConfigOutType;
 
-      typedef typename viennagrid::result_of::segment<SegmentationInType>::type     SegmentInType;
-      typedef typename viennagrid::result_of::segment<SegmentationOutType>::type    SegmentOutType;
+      typedef typename viennagrid::result_of::segment<WrappedSegmentationConfigInType>::type     SegmentInType;
+      typedef typename viennagrid::result_of::segment<WrappedSegmentationConfigOutType>::type    SegmentOutType;
 
       
-      typedef typename viennagrid::result_of::point<DomainInType>::type       PointType;
+      typedef typename viennagrid::result_of::point<WrappedDomainConfigInType>::type       PointType;
       typedef typename viennagrid::result_of::coord<PointType>::type          NumericType;
 
-      typedef typename viennagrid::result_of::element<DomainInType, vertex_tag>::type         VertexType;
+      typedef typename viennagrid::result_of::element<WrappedDomainConfigInType, vertex_tag>::type         VertexType;
       typedef typename VertexType::id_type                                                    VertexIDType;
-      typedef typename viennagrid::result_of::handle<DomainInType, vertex_tag>::type          VertexHandleType;
-      typedef typename viennagrid::result_of::element<DomainInType, line_tag>::type           EdgeType;
-      typedef typename viennagrid::result_of::element<DomainInType, CellTagInT>::type         CellType;
+      typedef typename viennagrid::result_of::handle<WrappedDomainConfigInType, vertex_tag>::type          VertexHandleType;
+      typedef typename viennagrid::result_of::element<WrappedDomainConfigInType, line_tag>::type           EdgeType;
+      typedef typename viennagrid::result_of::element<WrappedDomainConfigInType, CellTagInT>::type         CellType;
 
-      typedef typename viennagrid::result_of::const_element_range<DomainInType, vertex_tag>::type     VertexRange;
+      typedef typename viennagrid::result_of::const_element_range<WrappedDomainConfigInType, vertex_tag>::type     VertexRange;
       typedef typename viennagrid::result_of::iterator<VertexRange>::type                             VertexIterator;
-      typedef typename viennagrid::result_of::const_element_range<DomainInType, line_tag>::type       EdgeRange;
+      typedef typename viennagrid::result_of::const_element_range<WrappedDomainConfigInType, line_tag>::type       EdgeRange;
       typedef typename viennagrid::result_of::iterator<EdgeRange>::type                               EdgeIterator;
       typedef typename viennagrid::result_of::const_element_range<SegmentInType, CellTagInT>::type    CellRange;
       typedef typename viennagrid::result_of::iterator<CellRange>::type                               CellIterator;
@@ -157,7 +157,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::const_element_range<EdgeType, vertex_tag>::type         VertexOnEdgeRange;
       typedef typename viennagrid::result_of::iterator<VertexOnEdgeRange>::type                       VertexOnEdgeIterator;
 
-      typedef typename viennagrid::result_of::element<DomainOutType, vertex_tag>::type    VertexTypeOut;
+      typedef typename viennagrid::result_of::element<WrappedDomainConfigOutType, vertex_tag>::type    VertexTypeOut;
       typedef typename VertexTypeOut::id_type                                             VertexIDTypeOut;
 
       //
@@ -190,7 +190,7 @@ namespace viennagrid
       //
 
       // TODO: fix overlapping segments (with this implementation overlapping segments would result in multiple elements)
-      for (typename SegmentationInType::const_iterator sit = segmentation_in.begin(); sit != segmentation_in.end(); ++sit)
+      for (typename WrappedSegmentationConfigInType::const_iterator sit = segmentation_in.begin(); sit != segmentation_in.end(); ++sit)
       {
         SegmentInType  const & segment_in  = *sit;
         SegmentOutType       & segment_out = segmentation_out( sit->id() );
@@ -211,20 +211,21 @@ namespace viennagrid
 
 
     /** @brief Ensures refinement fo the longest edge. If any edge is refined in a cell, then the longest edge is refined as well. */
-    template <typename CellTagIn, typename DomainTypeIn, typename EdgeRefinementFlagAccessor>
-    void ensure_longest_edge_refinement(DomainTypeIn const & domain_in, EdgeRefinementFlagAccessor edge_refinement_flag_accessor)
+    template <typename CellTagIn, typename WrappedDomainConfigInT, typename EdgeRefinementFlagAccessor>
+    void ensure_longest_edge_refinement(domain_t<WrappedDomainConfigInT> const & domain_in, EdgeRefinementFlagAccessor edge_refinement_flag_accessor)
     {
+      typedef domain_t<WrappedDomainConfigInT>                                            DomainInType;
+      
+      typedef typename viennagrid::result_of::element<DomainInType, vertex_tag>::type     VertexType;
+      typedef typename viennagrid::result_of::element<DomainInType, line_tag>::type       EdgeType;
+      typedef typename viennagrid::result_of::element<DomainInType, CellTagIn>::type      CellType;
 
-      typedef typename viennagrid::result_of::element<DomainTypeIn, vertex_tag>::type                                      VertexType;
-      typedef typename viennagrid::result_of::element<DomainTypeIn, line_tag>::type                                      EdgeType;
-      typedef typename viennagrid::result_of::element<DomainTypeIn, CellTagIn>::type              CellType;
-
-      typedef typename viennagrid::result_of::const_element_range<DomainTypeIn, CellTagIn>::type   CellRange;
-      typedef typename viennagrid::result_of::iterator<CellRange>::type                                          CellIterator;
-      typedef typename viennagrid::result_of::const_element_range<CellType, line_tag>::type                               EdgeOnCellRange;
-      typedef typename viennagrid::result_of::iterator<EdgeOnCellRange>::type                                    EdgeOnCellIterator;
-      typedef typename viennagrid::result_of::const_element_range<EdgeType, vertex_tag>::type                               VertexOnEdgeRange;
-      typedef typename viennagrid::result_of::iterator<VertexOnEdgeRange>::type                                  VertexOnEdgeIterator;
+      typedef typename viennagrid::result_of::const_element_range<DomainInType, CellTagIn>::type    CellRange;
+      typedef typename viennagrid::result_of::iterator<CellRange>::type                             CellIterator;
+      typedef typename viennagrid::result_of::const_element_range<CellType, line_tag>::type         EdgeOnCellRange;
+      typedef typename viennagrid::result_of::iterator<EdgeOnCellRange>::type                       EdgeOnCellIterator;
+      typedef typename viennagrid::result_of::const_element_range<EdgeType, vertex_tag>::type       VertexOnEdgeRange;
+      typedef typename viennagrid::result_of::iterator<VertexOnEdgeRange>::type                     VertexOnEdgeIterator;
 
 
       bool something_changed = true;
@@ -295,16 +296,18 @@ namespace viennagrid
     } //ensure_longest_edge_refinement
 
     /** @brief Transfers tags for refinement from the cell to edges */
-    template <typename CellTagIn, typename DomainTypeIn, typename CellRefinementFlagAccessor, typename EdgeRefinementFlagAccessor>
-    void cell_refinement_to_edge_refinement(DomainTypeIn const & domain_in,
+    template <typename CellTagIn, typename WrappedDomainConfigInT, typename CellRefinementFlagAccessor, typename EdgeRefinementFlagAccessor>
+    void cell_refinement_to_edge_refinement(domain_t<WrappedDomainConfigInT> const & domain_in,
                                             CellRefinementFlagAccessor cell_refinement_flag, EdgeRefinementFlagAccessor edge_refinement_flag_accessor)
     {
-      typedef typename viennagrid::result_of::element<DomainTypeIn, CellTagIn>::type              CellType;
+      typedef domain_t<WrappedDomainConfigInT>                                                        DomainInType;
+      
+      typedef typename viennagrid::result_of::element<DomainInType, CellTagIn>::type                  CellType;
 
-      typedef typename viennagrid::result_of::const_element_range<DomainTypeIn, CellTagIn>::type   CellRange;
-      typedef typename viennagrid::result_of::iterator<CellRange>::type                                          CellIterator;
-      typedef typename viennagrid::result_of::const_element_range<CellType, line_tag>::type                               EdgeOnCellRange;
-      typedef typename viennagrid::result_of::iterator<EdgeOnCellRange>::type                                    EdgeOnCellIterator;
+      typedef typename viennagrid::result_of::const_element_range<DomainInType, CellTagIn>::type      CellRange;
+      typedef typename viennagrid::result_of::iterator<CellRange>::type                               CellIterator;
+      typedef typename viennagrid::result_of::const_element_range<CellType, line_tag>::type           EdgeOnCellRange;
+      typedef typename viennagrid::result_of::iterator<EdgeOnCellRange>::type                         EdgeOnCellIterator;
 
       std::size_t cells_for_refinement = 0;
       CellRange cells = viennagrid::elements(domain_in);
@@ -329,11 +332,13 @@ namespace viennagrid
     }
 
 
-    template<typename DomainTypeIn, typename EdgeRefinementFlagAccessor>
-    void mark_all_edge_refinement(DomainTypeIn const & domain_in, EdgeRefinementFlagAccessor edge_refinement_flag_accessor)
+    template<typename WrappedDomainConfigInT, typename EdgeRefinementFlagAccessor>
+    void mark_all_edge_refinement(domain_t<WrappedDomainConfigInT> const & domain_in, EdgeRefinementFlagAccessor edge_refinement_flag_accessor)
     {
-      typedef typename viennagrid::result_of::const_element_range<DomainTypeIn, viennagrid::line_tag>::type LineRange;
-      typedef typename viennagrid::result_of::iterator<LineRange>::type LineIterator;
+      typedef domain_t<WrappedDomainConfigInT>                                                                DomainInType;
+      
+      typedef typename viennagrid::result_of::const_element_range<DomainInType, viennagrid::line_tag>::type   LineRange;
+      typedef typename viennagrid::result_of::iterator<LineRange>::type                                       LineIterator;
 
       LineRange lines = viennagrid::elements(domain_in);
       edge_refinement_flag_accessor.resize(lines.size());
@@ -351,9 +356,10 @@ namespace viennagrid
     
 
   /** @brief Public interface for refinement of a domain. If local refinement is desired, cells or edges needs to be tagged using ViennaData with refinement_key.*/
-  template <typename CellTypeOrTag, typename DomainTypeIn, typename DomainTypeOut, typename PointAccessorType,
-            typename EdgeRefinementFlagAccessor,  typename VertexToVertexHandleAccessor, typename RefinementVertexAccessor>
-  void refine(DomainTypeIn const & domain_in, DomainTypeOut & domain_out, PointAccessorType point_accessor_in,
+  template <typename CellTypeOrTag, typename WrappedDomainConfigInT, typename WrappedDomainConfigOutT, typename PointAccessorType,
+            typename EdgeRefinementFlagAccessor, typename VertexToVertexHandleAccessor, typename RefinementVertexAccessor>
+  void refine(domain_t<WrappedDomainConfigInT> const & domain_in,
+              domain_t<WrappedDomainConfigOutT> & domain_out, PointAccessorType point_accessor_in,
               EdgeRefinementFlagAccessor const edge_refinement_flag_accessor,
               VertexToVertexHandleAccessor vertex_to_vertex_handle_accessor, RefinementVertexAccessor edge_to_vertex_handle_accessor)
   {
@@ -365,14 +371,18 @@ namespace viennagrid
 
 
   /** @brief Public interface for refinement of a domain. If local refinement is desired, cells or edges needs to be tagged using ViennaData with refinement_key.*/
-  template <typename CellTypeOrTag, typename DomainTypeIn, typename DomainTypeOut, typename PointAccessorType, typename EdgeRefinementFlagAccessor>
-  void refine(DomainTypeIn const & domain_in, DomainTypeOut & domain_out, PointAccessorType point_accessor_in,
-              EdgeRefinementFlagAccessor const edge_refinement_flag_accessor)
+  template <typename CellTypeOrTag, typename WrappedDomainConfigInT, typename WrappedDomainConfigOutT, typename PointAccessorType, typename EdgeRefinementFlagAccessor>
+  void refine(domain_t<WrappedDomainConfigInT> const & domain_in,
+              domain_t<WrappedDomainConfigOutT> & domain_out,
+              PointAccessorType point_accessor_in, EdgeRefinementFlagAccessor const edge_refinement_flag_accessor)
   {
-    typedef typename viennagrid::result_of::vertex<DomainTypeOut>::type VertexType;
-    typedef typename viennagrid::result_of::line<DomainTypeOut>::type EdgeType;
+    typedef domain_t<WrappedDomainConfigInT>                                              DomainInType;
+    typedef domain_t<WrappedDomainConfigOutT>                                             DomainOutType;
+    
+    typedef typename viennagrid::result_of::vertex<DomainOutType>::type                   VertexType;
+    typedef typename viennagrid::result_of::line<DomainOutType>::type                     EdgeType;
 
-    typedef typename viennagrid::result_of::vertex_handle<DomainTypeOut>::type VertexHandleType;
+    typedef typename viennagrid::result_of::vertex_handle<DomainOutType>::type            VertexHandleType;
 
     std::deque<VertexHandleType> vertex_refinement_vertex_handle;
     std::deque<VertexHandleType> edge_refinement_vertex_handle;
@@ -384,13 +394,18 @@ namespace viennagrid
   }
 
   /** @brief Public interface for refinement of a domain. If local refinement is desired, cells or edges needs to be tagged using ViennaData with refinement_key.*/
-  template <typename CellTypeOrTag, typename DomainTypeIn, typename DomainTypeOut, typename EdgeRefinementFlagAccessor>
-  void refine(DomainTypeIn const & domain_in, DomainTypeOut & domain_out, EdgeRefinementFlagAccessor const edge_refinement_flag_accessor)
+  template <typename CellTypeOrTag, typename WrappedDomainConfigInT, typename WrappedDomainConfigOutT, typename EdgeRefinementFlagAccessor>
+  void refine(domain_t<WrappedDomainConfigInT> const & domain_in,
+              domain_t<WrappedDomainConfigOutT> & domain_out,
+              EdgeRefinementFlagAccessor const edge_refinement_flag_accessor)
   {
-    typedef typename viennagrid::result_of::vertex<DomainTypeOut>::type VertexType;
-    typedef typename viennagrid::result_of::line<DomainTypeOut>::type EdgeType;
+    typedef domain_t<WrappedDomainConfigInT>                                              DomainInType;
+    typedef domain_t<WrappedDomainConfigOutT>                                             DomainOutType;
+    
+    typedef typename viennagrid::result_of::vertex<DomainOutType>::type                   VertexType;
+    typedef typename viennagrid::result_of::line<DomainOutType>::type                     EdgeType;
 
-    typedef typename viennagrid::result_of::vertex_handle<DomainTypeOut>::type VertexHandleType;
+    typedef typename viennagrid::result_of::vertex_handle<DomainOutType>::type            VertexHandleType;
 
     std::deque<VertexHandleType> vertex_refinement_vertex_handle;
     std::deque<VertexHandleType> edge_refinement_vertex_handle;
@@ -401,12 +416,16 @@ namespace viennagrid
 
 
   /** @brief Public interface for refinement of a domain. If local refinement is desired, cells or edges needs to be tagged using ViennaData with refinement_key.*/
-  template <typename CellTypeOrTag, typename DomainTypeIn, typename DomainTypeOut, typename PointAccessorType, typename CellRefinementFlagAccessor>
-  void refine_element(DomainTypeIn const & domain_in, DomainTypeOut & domain_out, PointAccessorType point_accessor_in,
-              CellRefinementFlagAccessor const cell_refinement_flag_accessor)
+  template <typename CellTypeOrTag, typename WrappedDomainConfigInT, typename WrappedDomainConfigOutT, typename PointAccessorType, typename CellRefinementFlagAccessor>
+  void element_refine(domain_t<WrappedDomainConfigInT> const & domain_in,
+                      domain_t<WrappedDomainConfigOutT> & domain_out,
+                      PointAccessorType point_accessor_in, CellRefinementFlagAccessor const cell_refinement_flag_accessor)
   {
-    typedef typename viennagrid::result_of::line<DomainTypeOut>::type EdgeType;
-    typedef typename viennagrid::result_of::cell<DomainTypeOut>::type CellType;
+    typedef domain_t<WrappedDomainConfigInT>                                              DomainInType;
+    typedef domain_t<WrappedDomainConfigOutT>                                             DomainOutType;
+    
+    typedef typename viennagrid::result_of::cell<DomainOutType>::type                     CellType;
+    typedef typename viennagrid::result_of::line<DomainOutType>::type                     EdgeType;
 
     std::deque<bool> edge_refinement_flag;
 
@@ -421,27 +440,35 @@ namespace viennagrid
   }
 
   /** @brief Public interface for refinement of a domain. If local refinement is desired, cells or edges needs to be tagged using ViennaData with refinement_key.*/
-  template <typename CellTypeOrTag, typename DomainTypeIn, typename DomainTypeOut, typename CellRefinementFlagAccessor>
-  void refine_element(DomainTypeIn const & domain_in, DomainTypeOut & domain_out, CellRefinementFlagAccessor const cell_refinement_flag_accessor)
+  template <typename CellTypeOrTag, typename WrappedDomainConfigInT, typename WrappedDomainConfigOutT, typename CellRefinementFlagAccessor>
+  void element_refine(domain_t<WrappedDomainConfigInT> const & domain_in,
+                      domain_t<WrappedDomainConfigOutT> & domain_out,
+                      CellRefinementFlagAccessor const cell_refinement_flag_accessor)
   {
-    refine_element<CellTypeOrTag>(domain_in, domain_out, default_point_accessor(domain_in), cell_refinement_flag_accessor);
+    element_refine<CellTypeOrTag>(domain_in, domain_out, default_point_accessor(domain_in), cell_refinement_flag_accessor);
   }
 
   /** @brief Public interface for refinement of a domain. If local refinement is desired, cells or edges needs to be tagged using ViennaData with refinement_key.*/
-  template <typename DomainTypeIn, typename DomainTypeOut, typename CellRefinementFlagAccessor>
-  void refine_element(DomainTypeIn const & domain_in, DomainTypeOut & domain_out, CellRefinementFlagAccessor const cell_refinement_flag_accessor)
+  template <typename WrappedDomainConfigInT, typename WrappedDomainConfigOutT, typename CellRefinementFlagAccessor>
+  void cell_refine(domain_t<WrappedDomainConfigInT> const & domain_in,
+                   domain_t<WrappedDomainConfigOutT> & domain_out,
+                   CellRefinementFlagAccessor const cell_refinement_flag_accessor)
   {
-    typedef typename viennagrid::result_of::cell<DomainTypeIn>::type CellType;
-    refine_element<CellType>(domain_in, domain_out, default_point_accessor(domain_in), cell_refinement_flag_accessor);
+    typedef domain_t<WrappedDomainConfigInT>                            DomainInType;
+    typedef typename viennagrid::result_of::cell<DomainInType>::type    CellType;
+    
+    element_refine<CellType>(domain_in, domain_out, default_point_accessor(domain_in), cell_refinement_flag_accessor);
   }
 
 
 
 
   /** @brief Convenience overload for uniform refinement of a domain.  */
-  template <typename CellTypeOrTag, typename DomainTypeIn, typename DomainTypeOut, typename PointAccessorType,
+  template <typename CellTypeOrTag, typename WrappedDomainConfigInT, typename WrappedDomainConfigOutT, typename PointAccessorType,
             typename EdgeRefinementFlagAccessor,  typename VertexToVertexHandleAccessor, typename RefinementVertexAccessor>
-  void refine_uniformly(DomainTypeIn const & domain_in, DomainTypeOut & domain_out, PointAccessorType point_accessor_in,
+  void refine_uniformly(domain_t<WrappedDomainConfigInT> const & domain_in,
+                        domain_t<WrappedDomainConfigOutT> & domain_out,
+                        PointAccessorType point_accessor_in,
                         EdgeRefinementFlagAccessor const edge_refinement_flag_accessor,
                         VertexToVertexHandleAccessor vertex_to_vertex_handle_accessor, RefinementVertexAccessor edge_to_vertex_handle_accessor)
   {
@@ -450,33 +477,42 @@ namespace viennagrid
                           edge_refinement_flag_accessor, vertex_to_vertex_handle_accessor, edge_to_vertex_handle_accessor);
   }
 
-  template <typename CellTypeOrTag, typename DomainTypeIn, typename DomainTypeOut, typename PointAccessorType, typename EdgeRefinementFlagAccessor>
-  void refine_uniformly(DomainTypeIn const & domain_in, DomainTypeOut & domain_out, PointAccessorType point_accessor_in,
+  template <typename CellTypeOrTag, typename WrappedDomainConfigInT, typename WrappedDomainConfigOutT, typename PointAccessorType, typename EdgeRefinementFlagAccessor>
+  void refine_uniformly(domain_t<WrappedDomainConfigInT> const & domain_in,
+                        domain_t<WrappedDomainConfigOutT> & domain_out,
+                        PointAccessorType point_accessor_in,
                         EdgeRefinementFlagAccessor const edge_refinement_flag_accessor)
   {
     mark_all_edge_refinement( domain_in, edge_refinement_flag_accessor );
     refine<CellTypeOrTag>(domain_in, domain_out, point_accessor_in, edge_refinement_flag_accessor);
   }
 
-  template <typename CellTypeOrTag, typename DomainTypeIn, typename DomainTypeOut, typename EdgeRefinementFlagAccessor>
-  void refine_uniformly(DomainTypeIn const & domain_in, DomainTypeOut & domain_out, EdgeRefinementFlagAccessor const edge_refinement_flag_accessor)
+  template <typename CellTypeOrTag, typename WrappedDomainConfigInT, typename WrappedDomainConfigOutT, typename EdgeRefinementFlagAccessor>
+  void refine_uniformly(domain_t<WrappedDomainConfigInT> const & domain_in,
+                        domain_t<WrappedDomainConfigOutT> & domain_out,
+                        EdgeRefinementFlagAccessor const edge_refinement_flag_accessor)
   {
     refine_uniformly<CellTypeOrTag>(domain_in, domain_out, default_point_accessor(domain_in), edge_refinement_flag_accessor);
   }
 
-  template <typename CellTypeOrTag, typename DomainTypeIn, typename DomainTypeOut>
-  void refine_uniformly(DomainTypeIn const & domain_in, DomainTypeOut & domain_out)
+  template <typename CellTypeOrTag, typename WrappedDomainConfigInT, typename WrappedDomainConfigOutT>
+  void refine_uniformly(domain_t<WrappedDomainConfigInT> const & domain_in,
+                        domain_t<WrappedDomainConfigOutT> & domain_out)
   {
-    typedef typename viennagrid::result_of::line<DomainTypeOut>::type EdgeType;
+    typedef domain_t<WrappedDomainConfigOutT>                             DomainOutType;
+    typedef typename viennagrid::result_of::line<DomainOutType>::type     EdgeType;
     std::deque<bool> edge_refinement_flag;
 
     refine_uniformly<CellTypeOrTag>(domain_in, domain_out, viennagrid::make_accessor<EdgeType>(edge_refinement_flag));
   }
 
-  template <typename DomainTypeIn, typename DomainTypeOut>
-  void refine_uniformly(DomainTypeIn const & domain_in, DomainTypeOut & domain_out)
+  template <typename WrappedDomainConfigInT, typename WrappedDomainConfigOutT>
+  void cell_refine_uniformly(domain_t<WrappedDomainConfigInT> const & domain_in,
+                             domain_t<WrappedDomainConfigOutT> & domain_out)
   {
-    typedef typename viennagrid::result_of::cell<DomainTypeIn>::type CellType;
+    typedef domain_t<WrappedDomainConfigInT>                            DomainInType;
+    typedef typename viennagrid::result_of::cell<DomainInType>::type    CellType;
+    
     refine_uniformly<CellType>(domain_in, domain_out);
   }
 
@@ -497,12 +533,12 @@ namespace viennagrid
 
   /** @brief Public interface for refinement of a domain. If local refinement is desired, cells or edges needs to be tagged using ViennaData with refinement_key.*/
   template <typename CellTypeOrTagT,
-            typename DomainInT, typename SegmentationInT,
-            typename DomainOutT, typename SegmentationOutT,
+            typename WrappedDomainConfigInT, typename WrappedSegmentationConfigInT,
+            typename WrappedDomainConfigOutT, typename WrappedSegmentationConfigOutT,
             typename PointAccessorT,
             typename EdgeRefinementFlagAccessorT, typename VertexToVertexHandleAccessorT, typename RefinementVertexAccessorT>
-  void refine(DomainInT const & domain_in,  SegmentationInT const & segmentation_in,
-              DomainOutT & domain_out,      SegmentationOutT& segmentation_out,
+  void refine(domain_t<WrappedDomainConfigInT> const & domain_in,  segmentation_t<WrappedSegmentationConfigInT> const & segmentation_in,
+              domain_t<WrappedDomainConfigOutT> & domain_out,      segmentation_t<WrappedSegmentationConfigOutT> & segmentation_out,
               PointAccessorT point_accessor_in,
               EdgeRefinementFlagAccessorT const edge_refinement_flag_accessor, VertexToVertexHandleAccessorT vertex_to_vertex_handle_accessor, RefinementVertexAccessorT edge_to_vertex_handle_accessor)
   {
@@ -517,19 +553,19 @@ namespace viennagrid
 
   /** @brief Public interface for refinement of a domain. If local refinement is desired, cells or edges needs to be tagged using ViennaData with refinement_key.*/
   template <typename CellTypeOrTagT,
-            typename DomainInT,  typename SegmentationInT,
-            typename DomainOutT, typename SegmentationOutT,
+            typename WrappedDomainConfigInT,  typename WrappedSegmentationConfigInT,
+            typename WrappedDomainConfigOutT, typename WrappedSegmentationConfigOutT,
             typename PointAccessorT,
             typename EdgeRefinementFlagAccessorT>
-  void refine(DomainInT const & domain_in,  SegmentationInT const & segmentation_in,
-              DomainOutT & domain_out,      SegmentationOutT & segmentation_out,
+  void refine(domain_t<WrappedDomainConfigInT> const & domain_in,  segmentation_t<WrappedSegmentationConfigInT> const & segmentation_in,
+              domain_t<WrappedDomainConfigOutT> & domain_out,      segmentation_t<WrappedSegmentationConfigOutT> & segmentation_out,
               PointAccessorT point_accessor_in,
               EdgeRefinementFlagAccessorT const edge_refinement_flag_accessor)
   {
-    typedef typename viennagrid::result_of::vertex<DomainOutT>::type VertexType;
-    typedef typename viennagrid::result_of::line<DomainOutT>::type EdgeType;
+    typedef typename viennagrid::result_of::vertex<WrappedDomainConfigOutT>::type VertexType;
+    typedef typename viennagrid::result_of::line<WrappedDomainConfigOutT>::type EdgeType;
 
-    typedef typename viennagrid::result_of::vertex_handle<DomainOutT>::type VertexHandleType;
+    typedef typename viennagrid::result_of::vertex_handle<WrappedDomainConfigOutT>::type VertexHandleType;
 
     std::deque<VertexHandleType> vertex_refinement_vertex_handle;
     std::deque<VertexHandleType> edge_refinement_vertex_handle;
@@ -544,17 +580,17 @@ namespace viennagrid
 
   /** @brief Public interface for refinement of a domain. If local refinement is desired, cells or edges needs to be tagged using ViennaData with refinement_key.*/
   template <typename CellTypeOrTagT,
-            typename DomainInT,  typename SegmentationInT,
-            typename DomainOutT, typename SegmentationOutT,
+            typename WrappedDomainConfigInT,  typename WrappedSegmentationConfigInT,
+            typename WrappedDomainConfigOutT, typename WrappedSegmentationConfigOutT,
             typename EdgeRefinementFlagAccessor>
-  void refine(DomainInT const & domain_in,  SegmentationInT const & segmentation_in,
-              DomainOutT & domain_out,      SegmentationOutT & segmentation_out,
+  void refine(domain_t<WrappedDomainConfigInT> const & domain_in,  segmentation_t<WrappedSegmentationConfigInT> const & segmentation_in,
+              domain_t<WrappedDomainConfigOutT> & domain_out,      segmentation_t<WrappedSegmentationConfigOutT> & segmentation_out,
               EdgeRefinementFlagAccessor const edge_refinement_flag_accessor)
   {
-    typedef typename viennagrid::result_of::vertex<DomainOutT>::type VertexType;
-    typedef typename viennagrid::result_of::line<DomainOutT>::type EdgeType;
+    typedef typename viennagrid::result_of::vertex<WrappedDomainConfigOutT>::type VertexType;
+    typedef typename viennagrid::result_of::line<WrappedDomainConfigOutT>::type EdgeType;
 
-    typedef typename viennagrid::result_of::vertex_handle<DomainOutT>::type VertexHandleType;
+    typedef typename viennagrid::result_of::vertex_handle<WrappedDomainConfigOutT>::type VertexHandleType;
 
     std::deque<VertexHandleType> vertex_refinement_vertex_handle;
     std::deque<VertexHandleType> edge_refinement_vertex_handle;
@@ -569,17 +605,17 @@ namespace viennagrid
 
   /** @brief Public interface for refinement of a domain. If local refinement is desired, cells or edges needs to be tagged using ViennaData with refinement_key.*/
   template <typename CellTypeOrTagT,
-            typename DomainInT,   typename SegmentationInT,
-            typename DomainOutT,  typename SegmentationOutT,
+            typename WrappedDomainConfigInT,   typename WrappedSegmentationConfigInT,
+            typename WrappedDomainConfigOutT,  typename WrappedSegmentationConfigOutT,
             typename PointAccessorT,
             typename CellRefinementFlagAccessorT>
-  void refine_element(DomainInT const & domain_in,  SegmentationInT const & segmentation_in,
-                      DomainOutT & domain_out,      SegmentationOutT & segmentation_out,
+  void element_refine(domain_t<WrappedDomainConfigInT> const & domain_in,  segmentation_t<WrappedSegmentationConfigInT> const & segmentation_in,
+                      domain_t<WrappedDomainConfigOutT> & domain_out,      segmentation_t<WrappedSegmentationConfigOutT> & segmentation_out,
                       PointAccessorT point_accessor_in,
                       CellRefinementFlagAccessorT const cell_refinement_flag_accessor)
   {
-    typedef typename viennagrid::result_of::line<DomainOutT>::type EdgeType;
-    typedef typename viennagrid::result_of::cell<DomainOutT>::type CellType;
+    typedef typename viennagrid::result_of::line<WrappedDomainConfigOutT>::type EdgeType;
+    typedef typename viennagrid::result_of::cell<WrappedDomainConfigOutT>::type CellType;
 
     std::deque<bool> edge_refinement_flag;
 
@@ -598,28 +634,29 @@ namespace viennagrid
 
   /** @brief Public interface for refinement of a domain. If local refinement is desired, cells or edges needs to be tagged using ViennaData with refinement_key.*/
   template <typename CellTypeOrTagT,
-            typename DomainInT,   typename SegmentationInT,
-            typename DomainOutT,  typename SegmentationOutT,
+            typename WrappedDomainConfigInT,   typename WrappedSegmentationConfigInT,
+            typename WrappedDomainConfigOutT,  typename WrappedSegmentationConfigOutT,
             typename CellRefinementFlagAccessorT>
-  void refine_element(DomainInT const & domain_in,  SegmentationInT const & segmentation_in,
-                      DomainOutT & domain_out,      SegmentationOutT & segmentation_out,
+  void element_refine(domain_t<WrappedDomainConfigInT> const & domain_in,  segmentation_t<WrappedSegmentationConfigInT> const & segmentation_in,
+                      domain_t<WrappedDomainConfigOutT> & domain_out,      segmentation_t<WrappedSegmentationConfigOutT> & segmentation_out,
                       CellRefinementFlagAccessorT const cell_refinement_flag_accessor)
   {
-    refine_element<CellTypeOrTagT>(domain_in, segmentation_in,
+    element_refine<CellTypeOrTagT>(domain_in, segmentation_in,
                                    domain_out, segmentation_out,
                                    default_point_accessor(domain_in),
                                    cell_refinement_flag_accessor);
   }
 
-  template <typename DomainInT,   typename SegmentationInT,
-            typename DomainOutT,  typename SegmentationOutT,
+  template <typename WrappedDomainConfigInT,   typename WrappedSegmentationConfigInT,
+            typename WrappedDomainConfigOutT,  typename WrappedSegmentationConfigOutT,
             typename CellRefinementFlagAccessorT>
-  void refine_element(DomainInT const & domain_in,  SegmentationInT const & segmentation_in,
-                      DomainOutT & domain_out,      SegmentationOutT & segmentation_out,
-                      CellRefinementFlagAccessorT const cell_refinement_flag_accessor)
+  void cell_refine(domain_t<WrappedDomainConfigInT> const & domain_in,  segmentation_t<WrappedSegmentationConfigInT> const & segmentation_in,
+                   domain_t<WrappedDomainConfigOutT> & domain_out,      segmentation_t<WrappedSegmentationConfigOutT> & segmentation_out,
+                   CellRefinementFlagAccessorT const cell_refinement_flag_accessor)
   {
-    typedef typename viennagrid::result_of::cell_tag<DomainInT>::type CellTag;
-    refine_element<CellTag>(domain_in, segmentation_in,
+    typedef domain_t<WrappedDomainConfigInT>                              DomainInType;
+    typedef typename viennagrid::result_of::cell_tag<DomainInType>::type  CellTag;
+    element_refine<CellTag>(domain_in, segmentation_in,
                             domain_out, segmentation_out,
                             default_point_accessor(domain_in),
                             cell_refinement_flag_accessor);
@@ -632,12 +669,12 @@ namespace viennagrid
 
   /** @brief Convenience overload for uniform refinement of a domain.  */
   template <typename CellTypeOrTagT,
-            typename DomainInT,   typename SegmentationInT,
-            typename DomainOutT,  typename SegmentationOutT,
+            typename WrappedDomainConfigInT,   typename WrappedSegmentationConfigInT,
+            typename WrappedDomainConfigOutT,  typename WrappedSegmentationConfigOutT,
             typename PointAccessorT,
             typename EdgeRefinementFlagAccessorT, typename VertexToVertexHandleAccessorT, typename RefinementVertexAccessorT>
-  void refine_uniformly(DomainInT const & domain_in,  SegmentationInT const & segmentation_in,
-                        DomainOutT & domain_out,      SegmentationOutT & segmentation_out,
+  void refine_uniformly(domain_t<WrappedDomainConfigInT> const & domain_in,  segmentation_t<WrappedSegmentationConfigInT> const & segmentation_in,
+                        domain_t<WrappedDomainConfigOutT> & domain_out,      segmentation_t<WrappedSegmentationConfigOutT> & segmentation_out,
                         PointAccessorT point_accessor_in,
                         EdgeRefinementFlagAccessorT const edge_refinement_flag_accessor,
                         VertexToVertexHandleAccessorT vertex_to_vertex_handle_accessor,
@@ -651,12 +688,12 @@ namespace viennagrid
   }
 
   template <typename CellTypeOrTagT,
-            typename DomainInT,   typename SegmentationInT,
-            typename DomainOutT,  typename SegmentationOutT,
+            typename WrappedDomainConfigInT,   typename WrappedSegmentationConfigInT,
+            typename WrappedDomainConfigOutT,  typename WrappedSegmentationConfigOutT,
             typename PointAccessorT,
             typename EdgeRefinementFlagAccessorT>
-  void refine_uniformly(DomainInT const & domain_in,  SegmentationInT const & segmentation_in,
-                        DomainOutT & domain_out,      SegmentationOutT & segmentation_out,
+  void refine_uniformly(domain_t<WrappedDomainConfigInT> const & domain_in,  segmentation_t<WrappedSegmentationConfigInT> const & segmentation_in,
+                        domain_t<WrappedDomainConfigOutT> & domain_out,      segmentation_t<WrappedSegmentationConfigOutT> & segmentation_out,
                         PointAccessorT point_accessor_in,
                         EdgeRefinementFlagAccessorT const edge_refinement_flag_accessor)
   {
@@ -668,34 +705,36 @@ namespace viennagrid
   }
 
   template <typename CellTypeOrTagT,
-            typename DomainInT,   typename SegmentationInT,
-            typename DomainOutT,  typename SegmentationOutT,
+            typename WrappedDomainConfigInT,   typename WrappedSegmentationConfigInT,
+            typename WrappedDomainConfigOutT,  typename WrappedSegmentationConfigOutT,
             typename EdgeRefinementFlagAccessor>
-  void refine_uniformly(DomainInT const & domain_in,  SegmentationInT const & segmentation_in,
-                        DomainOutT & domain_out,      SegmentationOutT & segmentation_out,
+  void refine_uniformly(domain_t<WrappedDomainConfigInT> const & domain_in,  segmentation_t<WrappedSegmentationConfigInT> const & segmentation_in,
+                        domain_t<WrappedDomainConfigOutT> & domain_out,      segmentation_t<WrappedSegmentationConfigOutT> & segmentation_out,
                         EdgeRefinementFlagAccessor const edge_refinement_flag_accessor)
   {
     refine_uniformly<CellTypeOrTagT>(domain_in, domain_out, default_point_accessor(domain_in), edge_refinement_flag_accessor);
   }
 
   template <typename CellTypeOrTagT,
-            typename DomainInT,   typename SegmentationInT,
-            typename DomainOutT,  typename SegmentationOutT>
-  void refine_uniformly(DomainInT const & domain_in,  SegmentationInT const & segmentation_in,
-                        DomainOutT & domain_out,      SegmentationOutT & segmentation_out)
+            typename WrappedDomainConfigInT,   typename WrappedSegmentationConfigInT,
+            typename WrappedDomainConfigOutT,  typename WrappedSegmentationConfigOutT>
+  void refine_uniformly(domain_t<WrappedDomainConfigInT> const & domain_in,  segmentation_t<WrappedSegmentationConfigInT> const & segmentation_in,
+                        domain_t<WrappedDomainConfigOutT> & domain_out,      segmentation_t<WrappedSegmentationConfigOutT> & segmentation_out)
   {
-    typedef typename viennagrid::result_of::line<DomainOutT>::type EdgeType;
+    typedef domain_t<WrappedDomainConfigOutT>                           DomainOutType;
+    typedef typename viennagrid::result_of::line<DomainOutType>::type   EdgeType;
     std::deque<bool> edge_refinement_flag;
 
     refine_uniformly<CellTypeOrTagT>(domain_in, domain_out, viennagrid::make_accessor<EdgeType>(edge_refinement_flag));
   }
 
-  template <typename DomainInT,   typename SegmentationInT,
-            typename DomainOutT,  typename SegmentationOutT>
-  void refine_uniformly(DomainInT const & domain_in,  SegmentationInT const & segmentation_in,
-                        DomainOutT & domain_out,      SegmentationOutT & segmentation_out)
+  template <typename WrappedDomainConfigInT,   typename WrappedSegmentationConfigInT,
+            typename WrappedDomainConfigOutT,  typename WrappedSegmentationConfigOutT>
+  void cell_refine_uniformly(domain_t<WrappedDomainConfigInT> const & domain_in,  segmentation_t<WrappedSegmentationConfigInT> const & segmentation_in,
+                             domain_t<WrappedDomainConfigOutT> & domain_out,      segmentation_t<WrappedSegmentationConfigOutT> & segmentation_out)
   {
-    typedef typename viennagrid::result_of::cell<DomainInT>::type CellType;
+    typedef domain_t<WrappedDomainConfigInT>                            DomainInType;
+    typedef typename viennagrid::result_of::cell<DomainInType>::type    CellType;
     refine_uniformly<CellType>(domain_in, domain_out);
   }
 
