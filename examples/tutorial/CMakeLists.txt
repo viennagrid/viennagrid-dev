@@ -30,7 +30,7 @@ add_executable(coboundary_iteration_with_segments coboundary_iteration_with_segm
 ADD_EXECUTABLE(algorithms           algorithms.cpp)
 add_executable(coboundary_iteration coboundary_iteration.cpp)
 ADD_EXECUTABLE(domain_setup         domain_setup.cpp)
-# ADD_EXECUTABLE(finite_volumes      finite_volumes.cpp)
+ADD_EXECUTABLE(finite_volumes      finite_volumes.cpp)
 ADD_EXECUTABLE(io                   io.cpp)
 ADD_EXECUTABLE(iterators            iterators.cpp)
 ADD_EXECUTABLE(multi_segment        multi_segment.cpp)
