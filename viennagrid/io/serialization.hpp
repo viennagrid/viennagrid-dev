@@ -37,25 +37,26 @@ namespace viennagrid
     /** @brief Domain wrapper which models the Boost serialization concept
      *
      */
-    template<typename DomainT>
+    template<typename DomainT, typename SegmentationT>
     struct domain_serializer
     {
       typedef boost::shared_ptr<DomainT>                                                     DomainSPT;
+      typedef boost::shared_ptr<SegmentationT>                                               SegmentationSPT;
+      
     private:
-      typedef typename DomainT::config_type                                                  ConfigType;
-      typedef typename DomainT::segment_type                                                 SegmentType;
-      typedef typename ConfigType::cell_tag                                                  CellTag;
-      typedef typename viennagrid::result_of::const_ncell_range<DomainT, 0>::type            VertexRange;
+      typedef typename viennagrid::result_of::segment<SegmentationT>::type                   SegmentType;
+      typedef typename viennagrid::result_of::cell_tag<DomainT>::type                        CellTag;
+      typedef typename viennagrid::result_of::vertex_range<DomainT>::type                    VertexRange;
       typedef typename viennagrid::result_of::iterator<VertexRange>::type                    VertexIterator;
-      typedef typename viennagrid::result_of::point<ConfigType>::type                        PointType;
-      typedef typename viennagrid::result_of::ncell<ConfigType, 0>::type                     VertexType;
-      typedef typename viennagrid::result_of::ncell<ConfigType, CellTag::dim>::type          CellType;
-      typedef typename viennagrid::result_of::ncell_range<SegmentType, CellTag::dim>::type   CellRange;
+      typedef typename viennagrid::result_of::point<DomainT>::type                           PointType;
+      typedef typename viennagrid::result_of::vertex<DomainT>::type                          VertexType;
+      typedef typename viennagrid::result_of::cell<DomainT>::type                            CellType;
+      typedef typename viennagrid::result_of::cell_range<SegmentType>::type                  CellRange;
       typedef typename viennagrid::result_of::iterator<CellRange>::type                      CellIterator;
-      typedef typename viennagrid::result_of::ncell_range<CellType, 0>::type                 VertexOnCellRange;
+      typedef typename viennagrid::result_of::vertex_range<CellType>::type                   VertexOnCellRange;
       typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type              VertexOnCellIterator;
 
-      static const int DIMG = ConfigType::coordinate_system_tag::dim;
+      static const int DIMG = PointType::dim;
 
       friend class boost::serialization::access;
 
@@ -66,13 +67,14 @@ namespace viennagrid
         // -----------------------------------------------
         // the geometry is read and transmitted
         //
-        std::size_t point_size = viennagrid::ncells<0>(*domainsp).size();
+        std::size_t point_size = viennagrid::vertices(*domainsp).size();
         ar & point_size;
-        VertexRange vertices = viennagrid::ncells<0>(*domainsp);
+        VertexRange vertices = viennagrid::elements(*domainsp);
         for (VertexIterator vit = vertices.begin();
              vit != vertices.end(); ++vit)
         {
-           for(int d = 0; d < DIMG; d++) ar & vit->point()[d];
+           for(int d = 0; d < DIMG; d++)
+             ar & viennagrid::point(*vit)[d];
         }
         // -----------------------------------------------
 
@@ -89,21 +91,21 @@ namespace viennagrid
         for (std::size_t si = 0; si < segment_size; si++)
         {
           SegmentType & seg = (*domainsp).segments()[si];
-          CellRange cells = viennagrid::ncells<CellTag::dim>(seg);
+          CellRange cells = viennagrid::elements(seg);
 
-          std::size_t cell_size = viennagrid::ncells<CellTag::dim>(seg).size();
+          std::size_t cell_size = viennagrid::cells(seg).size();
           ar & cell_size;
 
           for (CellIterator cit = cells.begin();
           cit != cells.end(); ++cit)
           {
-            VertexOnCellRange vertices_on_cell = viennagrid::ncells<0>(*cit);
+            VertexOnCellRange vertices_on_cell = viennagrid::elements(*cit);
 
             for (VertexOnCellIterator vocit = vertices_on_cell.begin();
             vocit != vertices_on_cell.end();
             ++vocit)
             {
-              std::size_t id = vocit->id();
+              std::size_t id = vocit->id().get();
               ar & id;
             }
           }
@@ -123,10 +125,11 @@ namespace viennagrid
 
         for(std::size_t i = 0; i < point_size; i++)
         {
-          VertexType vertex;
+          PointType p;
           for(int d = 0; d < DIMG; d++)
-            ar & vertex.point()[d];
-          (*domainsp).push_back(vertex);
+            ar & p[d];
+          
+          viennagrid::make_vertex( *domainsp, p );
         }
         // -----------------------------------------------
 
