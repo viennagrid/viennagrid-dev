@@ -218,7 +218,6 @@ int main()
   cell_refinement_accessor( viennagrid::elements<CellTag>(domain)[0] ) = true;
   cell_refinement_accessor( viennagrid::elements<CellTag>(domain)[3] ) = true;
   cell_refinement_accessor( viennagrid::elements<CellTag>(domain)[8] ) = true;
-  cell_refinement_accessor.resize( viennagrid::elements<CellTag>(domain).size() );
   
   viennagrid::element_refine<viennagrid::tetrahedron_tag>(domain, adaptively_refined_domain, cell_refinement_accessor);
   
