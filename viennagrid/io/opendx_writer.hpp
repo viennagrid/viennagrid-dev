@@ -103,8 +103,11 @@ namespace viennagrid
         typedef typename viennagrid::result_of::const_element_range<CellType, viennagrid::vertex_tag>::type      VertexOnCellRange;
         typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type         VertexOnCellIterator;
 
-        typedef std::map< std::string, base_dynamic_accessor_t<const double, VertexType> * > VertexScalarOutputAccessorContainer;
-        typedef std::map< std::string, base_dynamic_accessor_t<const double, CellType> * > CellScalarOutputAccessorContainer;
+        typedef base_dynamic_field_t<const double, VertexType> VertexScalarBaseAccessor;
+        typedef std::map< std::string, VertexScalarBaseAccessor * > VertexScalarOutputAccessorContainer;
+        
+        typedef base_dynamic_field_t<const double, CellType> CellScalarBaseAccessor;
+        typedef std::map< std::string, CellScalarBaseAccessor * > CellScalarOutputAccessorContainer;
 
 
       public:
@@ -178,7 +181,7 @@ namespace viennagrid
                 vit != vertices.end();
                 ++vit)
             {
-              writer << DXfixer( vertex_scalar_data.begin()->second->access(*vit) );
+              writer << DXfixer( vertex_scalar_data.begin()->second->at(*vit) );
               writer << std::endl;
             }
 
@@ -193,7 +196,7 @@ namespace viennagrid
                 cit != cells.end();
                 ++cit)
             {
-              writer << DXfixer( cell_scalar_data.begin()->second->access(*cit) );
+              writer << DXfixer( cell_scalar_data.begin()->second->at(*cit) );
               writer << std::endl;
             }
             writer << "attribute \"dep\" string \"connections\"" << std::endl;
@@ -213,17 +216,17 @@ namespace viennagrid
     private:
 
 
-      template<typename MapType, typename AccessorType>
-      void add_to_container(MapType & map, AccessorType const accessor, std::string const & name)
+      template<typename MapType, typename AccessorOrFieldType>
+      void add_to_container(MapType & map, AccessorOrFieldType const accessor_or_field, std::string const & name)
       {
           typename MapType::iterator it = map.find(name);
           if (it != map.end())
           {
             delete it->second;
-            it->second = new dynamic_accessor_t<const AccessorType>( accessor );
+            it->second = new dynamic_field_t<const AccessorOrFieldType>( accessor_or_field );
           }
           else
-            map[name] = new dynamic_accessor_t<const AccessorType>( accessor );
+            map[name] = new dynamic_field_t<const AccessorOrFieldType>( accessor_or_field );
       }
 
 
