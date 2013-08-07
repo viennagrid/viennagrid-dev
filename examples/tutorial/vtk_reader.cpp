@@ -53,8 +53,8 @@ int main()
   
   std::deque<double> potential_point;
   std::deque<double> potential_cell;
-  reader.register_vertex_scalar_accessor( viennagrid::make_accessor<vertex_type>(potential_point), "potential_point" );
-  reader.register_cell_scalar_accessor( viennagrid::make_accessor<cell_type>(potential_cell), "potential_cell" );
+  reader.register_vertex_scalar( viennagrid::make_accessor<vertex_type>(potential_point), "potential_point" );
+  reader.register_cell_scalar( viennagrid::make_accessor<cell_type>(potential_cell), "potential_cell" );
   
   reader(domain, segmentation, "test_main.pvd");
   
@@ -65,10 +65,10 @@ int main()
   viennagrid::io::vtk_writer<domain_type, segmentation_type> writer;
   
   writer.add_scalar_data_on_vertices( viennagrid::make_accessor<vertex_type>(potential_point), "potential_point" );
-  writer.add_scalar_data_on_vertices( seg0, reader.vertex_scalar_accessor("potential_point_segment", seg0), "potential_point_segment" );
+  writer.add_scalar_data_on_vertices( seg0, reader.vertex_scalar_field("potential_point_segment", seg0), "potential_point_segment" );
 
   writer.add_scalar_data_on_cells( viennagrid::make_accessor<cell_type>(potential_point), "potential_cell" );
-  writer.add_scalar_data_on_cells( seg1, reader.cell_scalar_accessor("potential_cell_segment", seg1), "potential_cell_segment" );
+  writer.add_scalar_data_on_cells( seg1, reader.cell_scalar_field("potential_cell_segment", seg1), "potential_cell_segment" );
   
   writer( domain, segmentation, "vtk_reader_test" );
   
