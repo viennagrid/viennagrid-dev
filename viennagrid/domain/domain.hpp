@@ -1226,6 +1226,7 @@ namespace viennagrid
 
 
 
+    
     template<typename ConfigType>
     typename result_of::point< domain_t<ConfigType> >::type & point(domain_t<ConfigType> &, typename result_of::vertex< domain_t<ConfigType> >::type & vertex)
     { return vertex.appendix(); }
@@ -1242,7 +1243,15 @@ namespace viennagrid
     template<typename ConfigType>
     typename result_of::point< domain_t<ConfigType> >::type const & point(domain_t<ConfigType> const & domain, typename result_of::const_vertex_handle< domain_t<ConfigType> >::type vertex_handle)
     { return dereference_handle(domain, vertex_handle).appendix(); }
+    
+    
+    template<typename VertexT>
+    typename result_of::point< VertexT >::type & point(VertexT & vertex)
+    { return default_point_accessor(vertex)(vertex); }
 
+    template<typename VertexT>
+    typename result_of::point< VertexT >::type const & point(VertexT const & vertex)
+    { return default_point_accessor(vertex)(vertex); }
 
 
     template<typename domain_type, typename id_type>
