@@ -8,6 +8,7 @@ foreach(PROG boundary coboundary
             voronoi_hex voronoi_rect voronoi_tet voronoi_triangle voronoi_line
             vtk_writer
 #             serialization
+            typelist typemap
             )
   add_executable(${PROG}-test src/${PROG}.cpp)
   add_test(${PROG} ${PROG}-test)

@@ -1,5 +1,5 @@
-#ifndef VIENNAGRID_EXAMPLES_META_HPP
-#define VIENNAGRID_EXAMPLES_META_HPP
+#ifndef VIENNAGRID_TEST_META_COMMON_HPP
+#define VIENNAGRID_TEST_META_COMMON_HPP
 
 #include <iostream>
 #include <cstdlib>
@@ -19,7 +19,7 @@ void test_type()
         std::cout << typeid(type1).name() << std::endl;
         std::cout << "type2:" << std::endl;
         std::cout << typeid(type2).name() << std::endl;
-        exit(-1);
+        exit(EXIT_FAILURE);
     }
     
 }
@@ -37,7 +37,7 @@ void test_value()
     {
         std::cout << "value1 = " << value1 << std::endl;
         std::cout << "value2 = " << value2 << std::endl;
-        exit(-1);
+        exit(EXIT_FAILURE);
     }
     
 }
