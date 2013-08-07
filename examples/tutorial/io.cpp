@@ -109,7 +109,7 @@ void read_vtk(DomainType & domain, SegmentationType & segmentation, UserData & d
   //
   
   // Write scalar vertex data that matches the name 'data_double' to ViennaData as data of type double, using a key of type std::string and value "vtk_data":
-  reader.register_vertex_scalar_accessor( viennagrid::make_accessor<vertex_type>(data.vertex_scalar_array), "data_double" );
+  reader.register_vertex_scalar( viennagrid::make_accessor<vertex_type>(data.vertex_scalar_array), "data_double" );
   
   // Write vector-valued vertex data that matches the name 'data_point' to ViennaData as data of type std::vector<double>, using a key of type std::string and value "vtk_data":
 //   reader.register_vertex_vector_accessor( viennagrid::make_accessor<vertex_type>(data.vertex_vector_array), "data_point" );
@@ -125,7 +125,7 @@ void read_vtk(DomainType & domain, SegmentationType & segmentation, UserData & d
   //
 
   // Write scalar cell data that matches the name 'data_double' to ViennaData as data of type double, using a key of type std::string and value "vtk_data":
-  reader.register_cell_scalar_accessor( viennagrid::make_accessor<cell_type>(data.cell_scalar_array), "data_double" );
+  reader.register_cell_scalar( viennagrid::make_accessor<cell_type>(data.cell_scalar_array), "data_double" );
   
   // Write vector-valued cell data that matches the name 'data_point' to ViennaData as data of type std::vector<double>, using a key of type std::string and value "vtk_data":
 //   reader.register_cell_vector_accessor( viennagrid::make_accessor<cell_type>(data.cell_vector_array), "data_point" );
