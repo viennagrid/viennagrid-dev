@@ -58,7 +58,15 @@ namespace viennagrid
 
       static std::string type_name() { return "Float32"; }
       static int num_components() { return 3; }
-      static void write( std::ostream & os, value_type const & value ) { os << value[0] << " " << value[1] << " " << value[2]; }
+      static void write( std::ostream & os, value_type const & value )
+      {
+        os << value[0] << " " << value[1] << " " << value[2];
+//         for (int i = 0; i < std::min(value.size(), std::size_t(3)); ++i)
+//           os << value[i] << " ";
+//         
+//         for (int i = std::min(value.size(), std::size_t(3)); i < 3; ++i)
+//           os << "0 ";
+      }
     };
 
 
@@ -82,25 +90,34 @@ namespace viennagrid
 
         typedef typename result_of::point<DomainType>::type PointType;
         typedef typename result_of::coord<PointType>::type CoordType;
-        static const int dim = traits::static_size<PointType>::value;
+//         static const int dim = traits::static_size<PointType>::value;
 
         typedef typename result_of::cell_tag<DomainType>::type CellTag;
         typedef typename result_of::element<DomainType, CellTag>::type CellType;
+        typedef typename result_of::const_handle<DomainType, CellTag>::type          ConstCellHandleType;
+        typedef typename result_of::id_type<CellType>::type                           CellIDType;
 
         typedef typename result_of::element<DomainType, vertex_tag>::type                           VertexType;
         typedef typename result_of::handle<DomainType, vertex_tag>::type          VertexHandleType;
         typedef typename result_of::const_handle<DomainType, vertex_tag>::type          ConstVertexHandleType;
+        typedef typename result_of::id_type<VertexType>::type                           VertexIDType;
 
         typedef typename SegmentationType::segment_type SegmentType;
 
 
         typedef std::vector<double> vector_data_type;
 
-        typedef std::map< std::string, base_dynamic_accessor_t<const double, VertexType> * > VertexScalarOutputAccessorContainer;
-        typedef std::map< std::string, base_dynamic_accessor_t<const vector_data_type, VertexType> * > VertexVectorOutputAccessorContainer;
+        typedef base_dynamic_field_t<const double, VertexType> VertexScalarBaseAccesor;
+        typedef std::map< std::string, VertexScalarBaseAccesor * > VertexScalarOutputAccessorContainer;
+        
+        typedef base_dynamic_field_t<const vector_data_type, VertexType> VertexVectorBaseAccesor;
+        typedef std::map< std::string, VertexVectorBaseAccesor * > VertexVectorOutputAccessorContainer;
 
-        typedef std::map< std::string, base_dynamic_accessor_t<const double, CellType> * > CellScalarOutputAccessorContainer;
-        typedef std::map< std::string, base_dynamic_accessor_t<const vector_data_type, CellType> * > CellVectorOutputAccessorContainer;
+        typedef base_dynamic_field_t<const double, CellType> CellScalarBaseAccesor;
+        typedef std::map< std::string, CellScalarBaseAccesor * > CellScalarOutputAccessorContainer;
+        
+        typedef base_dynamic_field_t<const vector_data_type, CellType> CellVectorBaseAccesor;
+        typedef std::map< std::string, CellVectorBaseAccesor * > CellVectorOutputAccessorContainer;
 
       protected:
 
@@ -144,8 +161,9 @@ namespace viennagrid
           segment_cell_vector_data.clear();
 
 
-          used_vertices.clear();
+          used_vertex_map.clear();
           vertex_to_index_map.clear();
+          used_cell_map.clear();
         }
 
         /** @brief Writes the XML file header */
@@ -166,10 +184,10 @@ namespace viennagrid
           typedef typename viennagrid::result_of::const_element_range<CellType, vertex_tag>::type      VertexOnCellRange;
           typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type         VertexOnCellIterator;
 
-          std::deque< ConstVertexHandleType > & current_used_vertices = used_vertices[seg_id];
-          std::map< ConstVertexHandleType, std::size_t > & current_vertex_to_index_map = vertex_to_index_map[seg_id];
+          std::map< VertexIDType, ConstVertexHandleType > & current_used_vertex_map = used_vertex_map[seg_id];
+          std::map< ConstVertexHandleType, VertexIDType > & current_vertex_to_index_map = vertex_to_index_map[seg_id];
 
-          std::size_t index = 0;
+          
           CellRange cells = viennagrid::elements(segment);
 
           for (CellIterator it = cells.begin(); it != cells.end(); ++it)
@@ -177,34 +195,71 @@ namespace viennagrid
               VertexOnCellRange vertices_on_cell = viennagrid::elements(*it);
               for (VertexOnCellIterator jt = vertices_on_cell.begin(); jt != vertices_on_cell.end(); ++jt)
               {
-                  typename std::map< ConstVertexHandleType, std::size_t >::iterator kt = current_vertex_to_index_map.find( jt.handle() );
-                  if (kt == current_vertex_to_index_map.end())
-                  {
-                      current_vertex_to_index_map.insert( std::make_pair( jt.handle(), index++ ) );
-                      current_used_vertices.push_back( jt.handle() );
-                  }
+                  typename std::map< VertexIDType, ConstVertexHandleType >::iterator kt = current_used_vertex_map.find( jt->id() );
+                  if (kt == current_used_vertex_map.end())
+                    current_used_vertex_map.insert( std::make_pair(jt->id(), jt.handle()) );
+                
+                
+//                   typename std::map< ConstVertexHandleType, VertexIDType >::iterator kt = current_vertex_to_index_map.find( jt.handle() );
+//                   if (kt == current_vertex_to_index_map.end())
+//                   {
+// //                       current_vertex_to_index_map.insert( std::make_pair( jt.handle(), jt->id() ) );
+//                       current_vertex_to_index_map.insert( std::make_pair( jt.handle(), index ) );
+// //                       current_used_vertex_map[ index ] = jt.handle();
+//                       current_used_vertex_map[ jt->id() ] = jt.handle();
+//                       index++;
+//                   }
               }
           }
+          
+          
+          std::size_t index = 0;
+          for (typename std::map< VertexIDType, ConstVertexHandleType >::iterator it = current_used_vertex_map.begin(); it != current_used_vertex_map.end(); ++it)
+            current_vertex_to_index_map.insert( std::make_pair( it->second, index++ ) );
+            
+          
+          
 
           return current_vertex_to_index_map.size();
         }
+        
+        template<typename DomainSegmentType>
+        unsigned int prepareCells(DomainSegmentType const & domseg, segment_id_type seg_id)
+        {
+          typedef typename viennagrid::result_of::const_element_range<DomainSegmentType, CellTag>::type     CellRange;
+          typedef typename viennagrid::result_of::iterator<CellRange>::type                                         CellIterator;
+          
+          std::map< CellIDType, ConstCellHandleType > & current_used_cells_map = used_cell_map[seg_id];
+          
+          int index = 0;
+          CellRange cells = viennagrid::elements(domseg);
+          for (CellIterator cit = cells.begin();
+              cit != cells.end();
+              ++cit, ++index)
+              {
+                current_used_cells_map[ cit->id() ] = cit.handle();
+              }
+              
+          return current_used_cells_map.size();
+        }
 
         /** @brief Writes the vertices in the domain */
-        template <typename SegmentType>
-        void writePoints(SegmentType const & segment, std::ofstream & writer, segment_id_type seg_id)
+        template <typename DomainSegmentType>
+        void writePoints(DomainSegmentType const & domseg, std::ofstream & writer, segment_id_type seg_id)
         {
-          std::deque< ConstVertexHandleType > & current_used_vertices = used_vertices[seg_id];
+          std::map< VertexIDType, ConstVertexHandleType > & current_used_vertex_map = used_vertex_map[seg_id];
 
           writer << "   <Points>" << std::endl;
           writer << "    <DataArray type=\"Float32\" NumberOfComponents=\"3\" format=\"ascii\">" << std::endl;
 
-          typedef typename viennagrid::result_of::const_vertex_range<SegmentType>::type VertexRange;
+          typedef typename viennagrid::result_of::const_vertex_range<DomainSegmentType>::type VertexRange;
           typedef typename viennagrid::result_of::iterator<VertexRange>::type VertexIterator;
 
-          for (typename std::deque< ConstVertexHandleType >::iterator it = current_used_vertices.begin(); it != current_used_vertices.end(); ++it)
+          for (typename std::map< VertexIDType, ConstVertexHandleType >::iterator it = current_used_vertex_map.begin(); it != current_used_vertex_map.end(); ++it)
           {
-            PointWriter<dim>::write(writer, viennagrid::point(segment, *it) );
-
+            const int dim = traits::static_size<PointType>::value;
+            PointWriter<dim>::write(writer, viennagrid::point(domseg, it->second) );
+            
             // add 0's for less than three dimensions
               if (dim == 2)
                 writer << " " << 0;
@@ -229,56 +284,64 @@ namespace viennagrid
           typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type         VertexOnCellIterator;
           typedef typename viennagrid::result_of::handle_iterator<VertexOnCellRange>::type         VertexHandleOnCellIterator;
 
-          std::map< ConstVertexHandleType, std::size_t > & current_vertex_to_index_map = vertex_to_index_map[seg_id];
+          std::map< ConstVertexHandleType, VertexIDType > & current_vertex_to_index_map = vertex_to_index_map[seg_id];
 
           writer << "   <Cells> " << std::endl;
           writer << "    <DataArray type=\"Int32\" Name=\"connectivity\" format=\"ascii\">" << std::endl;
-          CellRange cells = viennagrid::elements<CellTag>(domseg);
-          for (CellIterator cit = cells.begin();
-              cit != cells.end();
-              ++cit)
+
+          std::map< CellIDType, ConstCellHandleType > & current_used_cells_map = used_cell_map[seg_id];
+          for (typename std::map< CellIDType, ConstCellHandleType >::iterator it = current_used_cells_map.begin(); it != current_used_cells_map.end(); ++it)
+          
+//           CellRange cells = viennagrid::elements(domseg);
+//           for (CellIterator cit = cells.begin(); cit != cells.end(); ++cit)
           {
-              //step 1: Write vertex indices in ViennaGrid orientation to array:
-              std::vector<std::size_t> viennagrid_vertices(viennagrid::boundary_elements<CellTag, vertex_tag>::num);
-              VertexOnCellRange vertices_on_cell = viennagrid::elements<vertex_tag>(*cit);
-              std::size_t j = 0;
-              for (VertexHandleOnCellIterator vocit = vertices_on_cell.handle_begin();
-                  vocit != vertices_on_cell.handle_end();
-                  ++vocit, ++j)
-              {
-                viennagrid_vertices[j] = current_vertex_to_index_map[*vocit];
-              }
-
-              //Step 2: Write the transformed connectivities:
-              viennagrid_to_vtk_orientations<CellTag> reorderer;
-              for (std::size_t i=0; i<viennagrid_vertices.size(); ++i)
-                writer <<   viennagrid_vertices[reorderer(static_cast<long>(i))] << " ";
-
-              writer << std::endl;
-            }
-            writer << std::endl;
-            writer << "    </DataArray>" << std::endl;
-
-            writer << "    <DataArray type=\"Int32\" Name=\"offsets\" format=\"ascii\">" << std::endl;
-            for (std::size_t offsets = 1;
-                 offsets <= viennagrid::elements<CellTag>(domseg).size();
-                 ++offsets)
+            //step 1: Write vertex indices in ViennaGrid orientation to array:
+            CellType const & cell = viennagrid::dereference_handle(domseg, it->second);
+//             CellType const & cell = *cit;
+            
+            std::vector<VertexIDType> viennagrid_vertices(viennagrid::boundary_elements<CellTag, vertex_tag>::num);
+            VertexOnCellRange vertices_on_cell = viennagrid::elements<vertex_tag>(cell);
+            std::size_t j = 0;
+            for (VertexHandleOnCellIterator vocit = vertices_on_cell.handle_begin();
+                vocit != vertices_on_cell.handle_end();
+                ++vocit, ++j)
             {
-              writer << ( offsets * viennagrid::boundary_elements<CellTag, vertex_tag>::num) << " ";
+              viennagrid_vertices[j] = current_vertex_to_index_map[*vocit];
             }
-            writer << std::endl;
-            writer << "    </DataArray>" << std::endl;
 
-            writer << "    <DataArray type=\"UInt8\" Name=\"types\" format=\"ascii\">" << std::endl;
-            for (std::size_t offsets = 1;
-                  offsets <= viennagrid::elements<CellTag>(domseg).size();
-                  ++offsets)
-            {
-              writer << ELEMENT_TAG_TO_VTK_TYPE<CellTag>::value << " ";
-            }
+            //Step 2: Write the transformed connectivities:
+            viennagrid_to_vtk_orientations<CellTag> reorderer;
+            for (std::size_t i=0; i<viennagrid_vertices.size(); ++i)
+              writer << viennagrid_vertices[reorderer(static_cast<long>(i))] << " ";
+
             writer << std::endl;
-            writer << "    </DataArray>" << std::endl;
-            writer << "   </Cells>" << std::endl;
+          }
+          
+          writer << std::endl;
+          writer << "    </DataArray>" << std::endl;
+
+          writer << "    <DataArray type=\"Int32\" Name=\"offsets\" format=\"ascii\">" << std::endl;
+          for (std::size_t offsets = 1;
+                //offsets <= current_used_cells_map.size();
+                offsets <= viennagrid::elements<CellTag>(domseg).size();
+                ++offsets)
+          {
+            writer << ( offsets * viennagrid::boundary_elements<CellTag, vertex_tag>::num) << " ";
+          }
+          writer << std::endl;
+          writer << "    </DataArray>" << std::endl;
+
+          writer << "    <DataArray type=\"UInt8\" Name=\"types\" format=\"ascii\">" << std::endl;
+          for (std::size_t offsets = 1;
+                //offsets <= current_used_cells_map.size();
+               offsets <= viennagrid::elements<CellTag>(domseg).size();
+                ++offsets)
+          {
+            writer << ELEMENT_TAG_TO_VTK_TYPE<CellTag>::value << " ";
+          }
+          writer << std::endl;
+          writer << "    </DataArray>" << std::endl;
+          writer << "   </Cells>" << std::endl;
         }
 
 
@@ -297,10 +360,10 @@ namespace viennagrid
           writer << "    <DataArray type=\"" << ValueTypeInformation<ValueType>::type_name() << "\" Name=\"" << name <<
             "\" NumberOfComponents=\"" << ValueTypeInformation<ValueType>::num_components() << "\" format=\"ascii\">" << std::endl;
 
-          std::deque< ConstVertexHandleType > & current_used_vertices = used_vertices[ seg_id ];
-          for (typename std::deque< ConstVertexHandleType >::iterator it = current_used_vertices.begin(); it != current_used_vertices.end(); ++it)
+          std::map< VertexIDType, ConstVertexHandleType > & current_used_vertex_map = used_vertex_map[seg_id];
+          for (typename std::map< VertexIDType, ConstVertexHandleType >::iterator it = current_used_vertex_map.begin(); it != current_used_vertex_map.end(); ++it)
           {
-            ValueTypeInformation<ValueType>::write(writer, accessor( viennagrid::dereference_handle(segment, *it) ));
+            ValueTypeInformation<ValueType>::write(writer, accessor( viennagrid::dereference_handle(segment, it->second) ));
             writer << " ";
           }
           writer << std::endl;
@@ -311,7 +374,7 @@ namespace viennagrid
 
         /** @brief Writes vector-valued data defined on vertices (points) to file */
         template <typename SegmentType, typename IOAccessorType>
-        void writeCellData(SegmentType const & segment, std::ofstream & writer, std::string const & name, IOAccessorType const & accessor)
+        void writeCellData(SegmentType const & segment, std::ofstream & writer, std::string const & name, IOAccessorType const & accessor, long seg_id)
         {
           typedef typename viennagrid::result_of::const_element_range<SegmentType, CellTag>::type   CellRange;
           typedef typename viennagrid::result_of::iterator<CellRange>::type                         CellIterator;
@@ -321,10 +384,18 @@ namespace viennagrid
           writer << "    <DataArray type=\"" << ValueTypeInformation<ValueType>::type_name() << "\" Name=\"" << name <<
             "\" NumberOfComponents=\"" << ValueTypeInformation<ValueType>::num_components() << "\" format=\"ascii\">" << std::endl;
 
-          CellRange cells = viennagrid::elements(segment);
-          for (CellIterator it = cells.begin(); it != cells.end(); ++it)
+            
+          std::map< CellIDType, ConstCellHandleType > & current_used_cells_map = used_cell_map[seg_id];
+          for (typename std::map< CellIDType, ConstCellHandleType >::iterator it = current_used_cells_map.begin(); it != current_used_cells_map.end(); ++it)
+            
+//           CellRange cells = viennagrid::elements(segment);
+//           for (CellIterator cit = cells.begin(); cit != cells.end(); ++cit)
           {
-            ValueTypeInformation<ValueType>::write(writer, accessor( *it));
+            //step 1: Write vertex indices in ViennaGrid orientation to array:
+            CellType const & cell = viennagrid::dereference_handle(segment, it->second);
+//             CellType const & cell = *cit;
+            
+            ValueTypeInformation<ValueType>::write(writer, accessor(cell));
             writer << " ";
           }
           writer << std::endl;
@@ -368,6 +439,7 @@ namespace viennagrid
             segment_id_type tmp_id = segment_id_type();
 
             unsigned int num_points = preparePoints(domain, tmp_id);
+            prepareCells(domain, tmp_id);
 
             writer << "  <Piece NumberOfPoints=\""
                    << num_points
@@ -395,9 +467,9 @@ namespace viennagrid
               writer << "   <CellData>" << std::endl;
 
                 for (typename CellScalarOutputAccessorContainer::const_iterator it = cell_scalar_data.begin(); it != cell_scalar_data.end(); ++it)
-                  writeCellData( domain, writer, it->first, *(it->second) );
+                  writeCellData( domain, writer, it->first, *(it->second), tmp_id );
                 for (typename CellVectorOutputAccessorContainer::const_iterator it = cell_vector_data.begin(); it != cell_vector_data.end(); ++it)
-                  writeCellData( domain, writer, it->first, *(it->second) );
+                  writeCellData( domain, writer, it->first, *(it->second), tmp_id );
 
               writer << "   </CellData>" << std::endl;
             }
@@ -475,6 +547,7 @@ namespace viennagrid
               typedef typename viennagrid::result_of::iterator<VertexRange>::type               VertexIterator;
 
               unsigned int num_points = preparePoints(seg, seg.id());
+              prepareCells(seg, seg.id());
 
               writer << "  <Piece NumberOfPoints=\""
                     << num_points
@@ -516,15 +589,15 @@ namespace viennagrid
                 writer << "   <CellData>" << std::endl;
 
                 for (typename CellScalarOutputAccessorContainer::const_iterator it = cell_scalar_data.begin(); it != cell_scalar_data.end(); ++it)
-                  writeCellData( seg, writer, it->first, *(it->second) );
+                  writeCellData( seg, writer, it->first, *(it->second), seg.id() );
                 for (typename CellVectorOutputAccessorContainer::const_iterator it = cell_vector_data.begin(); it != cell_vector_data.end(); ++it)
-                  writeCellData( seg, writer, it->first, *(it->second) );
+                  writeCellData( seg, writer, it->first, *(it->second), seg.id() );
 
 
                 for (typename CellScalarOutputAccessorContainer::const_iterator it = current_segment_cell_scalar_data.begin(); it != current_segment_cell_scalar_data.end(); ++it)
-                  writeCellData( seg, writer, it->first, *(it->second) );
+                  writeCellData( seg, writer, it->first, *(it->second), seg.id() );
                 for (typename CellVectorOutputAccessorContainer::const_iterator it = current_segment_cell_vector_data.begin(); it != current_segment_cell_vector_data.end(); ++it)
-                  writeCellData( seg, writer, it->first, *(it->second) );
+                  writeCellData( seg, writer, it->first, *(it->second), seg.id() );
 
                 writer << "   </CellData>" << std::endl;
               }
@@ -543,17 +616,17 @@ namespace viennagrid
     private:
 
 
-      template<typename MapType, typename AccessorType>
-      void add_to_container(MapType & map, AccessorType const accessor, std::string const & name)
+      template<typename MapType, typename AccessorOrFieldType>
+      void add_to_container(MapType & map, AccessorOrFieldType const accessor_or_field, std::string const & name)
       {
           typename MapType::iterator it = map.find(name);
           if (it != map.end())
           {
             delete it->second;
-            it->second = new dynamic_accessor_t<const AccessorType>( accessor );
+            it->second = new dynamic_field_t<const AccessorOrFieldType>( accessor_or_field );
           }
           else
-            map[name] = new dynamic_accessor_t<const AccessorType>( accessor );
+            map[name] = new dynamic_field_t<const AccessorOrFieldType>( accessor_or_field );
       }
 
 
@@ -566,69 +639,70 @@ namespace viennagrid
          * @param  accessor The quantity accessor
          * @param  name    The quantity name that should appear in the VTK file
          */
-        template <typename AccessorType>
-        void add_scalar_data_on_vertices(AccessorType const accessor, std::string const & name)
-        { add_to_container(vertex_scalar_data, accessor, name); }
+        template <typename AccessorOrFieldType>
+        void add_scalar_data_on_vertices(AccessorOrFieldType const accessor_or_field, std::string const & name)
+        { add_to_container(vertex_scalar_data, accessor_or_field, name); }
 
-        template <typename AccessorType>
-        void add_scalar_data_on_vertices(segment_id_type seg_id, AccessorType const accessor, std::string const &  name)
-        { add_to_container(segment_vertex_scalar_data[seg_id], accessor, name); }
+        template <typename AccessorOrFieldType>
+        void add_scalar_data_on_vertices(segment_id_type seg_id, AccessorOrFieldType const accessor_or_field, std::string const &  name)
+        { add_to_container(segment_vertex_scalar_data[seg_id], accessor_or_field, name); }
 
-        template <typename AccessorType>
-        void add_scalar_data_on_vertices(SegmentType const & segment, AccessorType const accessor, std::string const &  name)
-        { add_scalar_data_on_vertices(segment.id(), accessor, name); }
+        template <typename AccessorOrFieldType>
+        void add_scalar_data_on_vertices(SegmentType const & segment, AccessorOrFieldType const accessor_or_field, std::string const &  name)
+        { add_scalar_data_on_vertices(segment.id(), accessor_or_field, name); }
 
 
-        template <typename AccessorType>
-        void add_vector_data_on_vertices(AccessorType const accessor, std::string const & name)
-        { add_to_container(vertex_vector_data, accessor, name); }
+        template <typename AccessorOrFieldType>
+        void add_vector_data_on_vertices(AccessorOrFieldType const accessor_or_field, std::string const & name)
+        { add_to_container(vertex_vector_data, accessor_or_field, name); }
 
-        template <typename AccessorType>
-        void add_vector_data_on_vertices(segment_id_type seg_id, AccessorType const accessor, std::string const &  name)
-        { add_to_container(segment_vertex_vector_data[seg_id], accessor, name); }
+        template <typename AccessorOrFieldType>
+        void add_vector_data_on_vertices(segment_id_type seg_id, AccessorOrFieldType const accessor_or_field, std::string const &  name)
+        { add_to_container(segment_vertex_vector_data[seg_id], accessor_or_field, name); }
 
-        template <typename AccessorType>
-        void add_vector_data_on_vertices(SegmentType const & segment, AccessorType const accessor, std::string const &  name)
-        { add_vector_data_on_vertices(segment.id(), accessor, name); }
+        template <typename AccessorOrFieldType>
+        void add_vector_data_on_vertices(SegmentType const & segment, AccessorOrFieldType const accessor_or_field, std::string const &  name)
+        { add_vector_data_on_vertices(segment.id(), accessor_or_field, name); }
 
 
 
         /** @brief Specify scalar-valued data for cells to the writer. Prefer the free function add_scalar_data_on_cells()
          *
-         * @tparam T       Anything that can be wrapped by a data_accessor_wrapper
-         * @param  accessor The quantity accessor
+         * @tparam T       Anything that can be wrapped by a data_accessor_or_field_wrapper
+         * @param  accessor_or_field The quantity accessor_or_field
          * @param  name    The quantity name that should appear in the VTK file
          */
-        template <typename AccessorType>
-        void add_scalar_data_on_cells(AccessorType const accessor, std::string name)
-        { add_to_container(cell_scalar_data, accessor, name); }
+        template <typename AccessorOrFieldType>
+        void add_scalar_data_on_cells(AccessorOrFieldType const accessor_or_field, std::string name)
+        { add_to_container(cell_scalar_data, accessor_or_field, name); }
 
-        template <typename AccessorType>
-        void add_scalar_data_on_cells(segment_id_type seg_id, AccessorType const accessor, std::string const &  name)
-        { add_to_container(segment_cell_scalar_data[seg_id], accessor, name); }
+        template <typename AccessorOrFieldType>
+        void add_scalar_data_on_cells(segment_id_type seg_id, AccessorOrFieldType const accessor_or_field, std::string const &  name)
+        { add_to_container(segment_cell_scalar_data[seg_id], accessor_or_field, name); }
 
-        template <typename AccessorType>
-        void add_scalar_data_on_cells(SegmentType const & segment, AccessorType const accessor, std::string const &  name)
-        { add_scalar_data_on_cells(segment.id(), accessor, name); }
+        template <typename AccessorOrFieldType>
+        void add_scalar_data_on_cells(SegmentType const & segment, AccessorOrFieldType const accessor_or_field, std::string const &  name)
+        { add_scalar_data_on_cells(segment.id(), accessor_or_field, name); }
 
 
-        template <typename AccessorType>
-        void add_vector_data_on_cells(AccessorType const accessor, std::string name)
-        { add_to_container(cell_vector_data, accessor, name); }
+        template <typename AccessorOrFieldType>
+        void add_vector_data_on_cells(AccessorOrFieldType const accessor_or_field, std::string name)
+        { add_to_container(cell_vector_data, accessor_or_field, name); }
 
-        template <typename AccessorType>
-        void add_vector_data_on_cells(segment_id_type seg_id, AccessorType const accessor, std::string const &  name)
-        { add_to_container(segment_cell_vector_data[seg_id], accessor, name); }
+        template <typename AccessorOrFieldType>
+        void add_vector_data_on_cells(segment_id_type seg_id, AccessorOrFieldType const accessor_or_field, std::string const &  name)
+        { add_to_container(segment_cell_vector_data[seg_id], accessor_or_field, name); }
 
-        template <typename AccessorType>
-        void add_vector_data_on_cells(SegmentType const & segment, AccessorType const accessor, std::string const &  name)
-        { add_vector_data_on_cells(segment.id(), accessor, name); }
+        template <typename AccessorOrFieldType>
+        void add_vector_data_on_cells(SegmentType const & segment, AccessorOrFieldType const accessor_or_field, std::string const &  name)
+        { add_vector_data_on_cells(segment.id(), accessor_or_field, name); }
 
 
       private:
 
-        std::map< segment_id_type, std::map< ConstVertexHandleType, std::size_t > >            vertex_to_index_map;
-        std::map< segment_id_type, std::deque< ConstVertexHandleType> >                        used_vertices;
+        std::map< segment_id_type, std::map< ConstVertexHandleType, VertexIDType> >             vertex_to_index_map;
+        std::map< segment_id_type, std::map< VertexIDType, ConstVertexHandleType> >             used_vertex_map;
+        std::map< segment_id_type, std::map< CellIDType, ConstCellHandleType> >                 used_cell_map;
 
 
         VertexScalarOutputAccessorContainer          vertex_scalar_data;
