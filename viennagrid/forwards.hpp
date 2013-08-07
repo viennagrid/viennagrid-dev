@@ -415,6 +415,12 @@ namespace viennagrid
     template<typename config_domain_segment_element_or_something_like_that, typename element_tag>
     struct handle;
 
+    template<typename config_domain_segment_element_or_something_like_that>
+    struct cell_handle
+    {
+        typedef typename cell_tag<config_domain_segment_element_or_something_like_that>::type cell_tag;
+        typedef typename handle<config_domain_segment_element_or_something_like_that, cell_tag>::type type;
+    };
 
     template<typename config_domain_segment_element_or_something_like_that>
     struct vertex_handle
@@ -462,6 +468,14 @@ namespace viennagrid
 
     template<typename config_domain_segment_element_or_something_like_that, typename element_tag>
     struct const_handle;
+    
+    
+    template<typename config_domain_segment_element_or_something_like_that>
+    struct const_cell_handle
+    {
+        typedef typename cell_tag<config_domain_segment_element_or_something_like_that>::type cell_tag;
+        typedef typename const_handle<config_domain_segment_element_or_something_like_that, cell_tag>::type type;
+    };
 
 
     template<typename config_domain_segment_element_or_something_like_that>
@@ -508,14 +522,14 @@ namespace viennagrid
 
 
 
-    template<typename element_type>
-    struct facet;
-
-    template<typename element_type>
-    struct facet_handle;
-
-    template<typename element_type>
-    struct const_facet_handle;
+//     template<typename element_type>
+//     struct facet;
+// 
+//     template<typename element_type>
+//     struct facet_handle;
+// 
+//     template<typename element_type>
+//     struct const_facet_handle;
 
 
 
@@ -694,6 +708,23 @@ namespace viennagrid
         typedef typename element_tag<element_type_or_tag>::type::facet_tag type;
     };
 
+    template<typename WrappedDomainConfigT>
+    struct facet_tag< domain_t<WrappedDomainConfigT> >
+    {
+        typedef typename facet_tag< typename cell_tag< domain_t<WrappedDomainConfigT> >::type >::type type;
+    };
+    
+    template<typename WrappedSegmentationConfigT>
+    struct facet_tag< segmentation_t<WrappedSegmentationConfigT> >
+    {
+        typedef typename facet_tag< typename cell_tag< segmentation_t<WrappedSegmentationConfigT> >::type >::type type;
+    };
+    
+    template<typename SegmentationT>
+    struct facet_tag< segment_t<SegmentationT> >
+    {
+        typedef typename facet_tag< typename cell_tag< segment_t<SegmentationT> >::type >::type type;
+    };
 
 
     template<typename element_type>
@@ -701,30 +732,51 @@ namespace viennagrid
     {
         typedef typename element<element_type, typename facet_tag<element_type>::type >::type type;
     };
-
-    template<typename element_tag, typename WrappedConfigType>
-    struct facet_handle< element_t<element_tag, WrappedConfigType> >
+    
+    template<typename WrappedDomainConfigT>
+    struct facet< domain_t<WrappedDomainConfigT> >
     {
-        typedef typename handle< element_t<element_tag, WrappedConfigType>, typename facet_tag<element_tag>::type >::type type;
+        typedef typename facet< typename cell< domain_t<WrappedDomainConfigT> >::type >::type type;
+    };
+    
+    template<typename WrappedSegmentationConfigT>
+    struct facet< segmentation_t<WrappedSegmentationConfigT> >
+    {
+        typedef typename facet< typename cell< segmentation_t<WrappedSegmentationConfigT> >::type >::type type;
+    };
+    
+    template<typename SegmentationT>
+    struct facet< segment_t<SegmentationT> >
+    {
+        typedef typename facet< typename cell< segment_t<SegmentationT> >::type >::type type;
+    };
+    
+    
+    
+
+    template<typename SomethingT>
+    struct facet_handle
+    {
+        typedef typename handle< SomethingT, typename facet_tag<SomethingT>::type >::type type;
     };
 
-    template<typename element_tag, typename WrappedConfigType>
-    struct const_facet_handle< element_t<element_tag, WrappedConfigType> >
+    template<typename SomethingT>
+    struct const_facet_handle
     {
-        typedef typename const_handle< element_t<element_tag, WrappedConfigType>, typename facet_tag<element_tag>::type >::type type;
+        typedef typename const_handle< SomethingT, typename facet_tag<SomethingT>::type >::type type;
     };
 
 
-    template<typename element_type>
+    template<typename SomethingT>
     struct facet_range
     {
-        typedef typename element_range<element_type, typename facet_tag<element_type>::type >::type type;
+        typedef typename element_range<SomethingT, typename facet_tag<SomethingT>::type >::type type;
     };
 
-    template<typename element_type>
+    template<typename SomethingT>
     struct const_facet_range
     {
-        typedef typename const_element_range<element_type, typename facet_tag<element_type>::type >::type type;
+        typedef typename const_element_range<SomethingT, typename facet_tag<SomethingT>::type >::type type;
     };
   }
 
