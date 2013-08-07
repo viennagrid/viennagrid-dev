@@ -131,17 +131,6 @@ namespace viennagrid
     return coordinate_converter<PointType, CartesianPointType>()(p);
   }
 
-  //public interface
-  /** @brief Convenience function for converting a point to Cartesian coordinates.
-   *
-   * @tparam PointType   A point type for which the traits::coordinate_system<> metafunction can deduce the coordinate system */
-  template <typename PointType>
-  typename result_of::cartesian_point<PointType>::type
-  to_cartesian(PointType const & p)
-  {
-    return to_cartesian_impl(p, typename traits::coordinate_system<PointType>::type());
-  }
-
 
   /** @brief A functor for the transformation from polar coordinates to two-dimensional Cartesian coordinates. */
   template <typename FromPointType,
@@ -293,7 +282,7 @@ namespace viennagrid
   };
 
   /** @brief Helper function for the transformation of any point to Cartesian coordinates. Should not be called directly - use to_cartesian() instead. */
-  template <typename PointType, long d>
+  template <typename PointType, int d>
   PointType const &
   to_cartesian_impl(PointType const & p, cartesian_cs<d>)
   {
@@ -301,13 +290,25 @@ namespace viennagrid
   }
 
   /** @brief Helper function for the transformation of any point to Cartesian coordinates. Should not be called directly - use to_cartesian() instead. */
-  template <typename PointType, long d>
+  template <typename PointType, int d>
   PointType &
   to_cartesian_impl(PointType & p, cartesian_cs<d>)
   {
     return p;
   }
 
+  
+  //public interface
+  /** @brief Convenience function for converting a point to Cartesian coordinates.
+   *
+   * @tparam PointType   A point type for which the traits::coordinate_system<> metafunction can deduce the coordinate system */
+  template <typename PointType>
+  typename result_of::cartesian_point<PointType>::type
+  to_cartesian(PointType const & p)
+  {
+    return to_cartesian_impl(p, typename traits::coordinate_system<PointType>::type());
+  }
+  
 
 
   /** @brief Common base for all non-cartesian coordinate systems */
@@ -480,7 +481,7 @@ namespace viennagrid
 
 
   /** @brief A helper class for filling point coordinates with values. */
-  template <typename CoordType, long d>
+  template <typename CoordType, int d>
   struct point_filler
   {
     static void apply(CoordType * coords, CoordType x, CoordType y, CoordType z)
@@ -488,7 +489,7 @@ namespace viennagrid
       coords[0] = x;
       coords[1] = y;
       coords[2] = z;
-      for (long i=3; i<d; ++i)
+      for (int i=3; i<d; ++i)
         coords[i] = 0;
     }
   };
