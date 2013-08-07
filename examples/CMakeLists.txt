@@ -36,5 +36,3 @@ foreach(f IN LISTS EXAMPLES_TESTDATA)
 endforeach()
 
 add_subdirectory(tutorial)
-add_subdirectory(meta)
-#add_subdirectory(geometry)
