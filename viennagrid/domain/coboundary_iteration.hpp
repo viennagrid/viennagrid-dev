@@ -70,13 +70,11 @@ namespace viennagrid
 
         element_range_type elements = viennagrid::elements(domain);
 
-        accessor.resize( elements.size() );
-
 
         for ( element_range_iterator it = elements.begin(); it != elements.end(); ++it )
         {
-            accessor.access( *it ).clear();
-            accessor.access( *it ).set_base_container( viennagrid::storage::collection::get< coboundary_type >( element_collection(domain) ) );
+            accessor( *it ).clear();
+            accessor( *it ).set_base_container( viennagrid::storage::collection::get< coboundary_type >( element_collection(domain) ) );
         }
 
 
@@ -91,7 +89,7 @@ namespace viennagrid
 
             element_on_coboundary_element_range_type elements_on_coboundary_element = viennagrid::elements( *it );
             for (element_on_coboundary_element_range_iterator jt = elements_on_coboundary_element.begin(); jt != elements_on_coboundary_element.end(); ++jt)
-                accessor.access( *jt ).insert_handle( it.handle() );
+                accessor.at( *jt ).insert_handle( it.handle() );
         }
     }
 

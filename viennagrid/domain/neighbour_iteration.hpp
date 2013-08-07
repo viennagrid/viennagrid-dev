@@ -71,8 +71,6 @@ namespace viennagrid
         typedef typename viennagrid::result_of::iterator< element_range_type >::type element_range_iterator;
 
         element_range_type elements = viennagrid::elements(domain);
-        accessor.resize( elements.size() );
-
 
         for ( element_range_iterator it = elements.begin(); it != elements.end(); ++it )
         {
