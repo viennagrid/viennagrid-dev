@@ -51,11 +51,7 @@ namespace viennagrid
     typedef typename viennagrid::result_of::iterator<FacetOnCellRange>::type                           FacetOnCellIterator;
 
 
-
-
     FacetRange facets = viennagrid::elements(domain);
-
-    boundary_info_accessor.resize( facets.size() );
 
     for (FacetIterator fit = facets.begin();
           fit != facets.end();
@@ -91,8 +87,6 @@ namespace viennagrid
       typedef typename viennagrid::result_of::iterator< dst_range_type >::type dst_range_iterator;
 
       dst_range_type dst_elements = viennagrid::elements( domain );
-
-      destination_boundary_info_accessor.resize( max_id<dst_element_type>(domain).get() );
 
       for (dst_range_iterator it = dst_elements.begin(); it != dst_elements.end(); ++it)
           destination_boundary_info_accessor(*it) = false;

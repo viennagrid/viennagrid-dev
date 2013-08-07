@@ -67,13 +67,6 @@ namespace viennagrid
 
               std::set<ConstFacetHandleType>  facets_ptrs_seg0;
 
-              accessor.resize(
-                std::max(
-                  viennagrid::max_id<FacetType>(seg0).get(),
-                  viennagrid::max_id<FacetType>(seg1).get()
-                )
-              );
-
               //
               // Step 1: Write facets of segment 1 to a map:
               //
@@ -153,15 +146,8 @@ namespace viennagrid
             dst_interface_information_container_wrapper_type & dst_interface_information_container_wrapper = interface_information_collection<element_tag>( seg0, seg1 );
             typename viennagrid::result_of::accessor< typename dst_interface_information_container_wrapper_type::container_type, element_type >::type dst_accessor( dst_interface_information_container_wrapper.container );
 
-            dst_accessor.resize(
-              std::max(
-               max_id<element_tag>(seg0).get(),
-               max_id<element_tag>(seg1).get()
-              )
-            );
-
-            transfer_boundary_information(seg0, viennagrid::make_accessor<facet_type>(src_interface_information_container_wrapper.container), dst_accessor);
-            transfer_boundary_information(seg1, viennagrid::make_accessor<facet_type>(src_interface_information_container_wrapper.container), dst_accessor);
+            transfer_boundary_information(seg0, viennagrid::make_field<facet_type>(src_interface_information_container_wrapper.container), dst_accessor);
+            transfer_boundary_information(seg1, viennagrid::make_field<facet_type>(src_interface_information_container_wrapper.container), dst_accessor);
 
              update_change_counter( seg0, dst_interface_information_container_wrapper.seg0_change_counter );
              update_change_counter( seg1, dst_interface_information_container_wrapper.seg1_change_counter );
@@ -243,7 +229,7 @@ namespace viennagrid
         interface_information_container_wrapper_type & interface_information_container_wrapper = interface_information_collection<FacetTag>( seg0, seg1 );
 
 
-        detect_interface( seg0, seg1, viennagrid::make_accessor<FacetType>(interface_information_container_wrapper.container) );
+        detect_interface( seg0, seg1, viennagrid::make_field<FacetType>(interface_information_container_wrapper.container) );
 
         transfer_interface_information( seg0, seg1 );
         update_change_counter( seg0, interface_information_container_wrapper.seg0_change_counter );
@@ -293,7 +279,7 @@ namespace viennagrid
              (is_obsolete(seg1, interface_information_container_wrapper.seg1_change_counter) ))
             detect_interface( const_cast<SegmentType&>(seg0), const_cast<SegmentType&>(seg1) );
 
-        return is_interface( viennagrid::make_accessor<ElementType>(interface_information_container_wrapper.container), element );
+        return is_interface( viennagrid::make_field<ElementType>(interface_information_container_wrapper.container), element );
   }
 
 }
