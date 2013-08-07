@@ -52,7 +52,7 @@ bool fuzzy_equal(double a, double b)
   return false;
 }
 
-template <typename CoordType, long d>
+template <typename CoordType, int d>
 bool fuzzy_equal(viennagrid::point_t<CoordType, viennagrid::cartesian_cs<d> > const & a,
                  viennagrid::point_t<CoordType, viennagrid::cartesian_cs<d> > const & b)
 {

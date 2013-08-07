@@ -28,31 +28,26 @@
 template <typename DomainType>
 int test(DomainType & domain_in)
 {
-  typedef typename DomainType::config_type      ConfigType;
-  typedef typename ConfigType::cell_tag                  CellTag;
-  typedef typename viennagrid::segment_t<ConfigType>     SegmentType;
-  
-  typedef typename viennagrid::result_of::point<ConfigType>::type          PointType;
-  typedef typename viennagrid::result_of::ncell<ConfigType, 0>::type       VertexType;
-  typedef typename viennagrid::result_of::ncell<ConfigType, 1>::type       EdgeType;
-  typedef typename viennagrid::result_of::ncell<ConfigType,
-                                            CellTag::dim>::type      CellType;
+  typedef typename viennagrid::result_of::point<DomainType>::type          PointType;
+  typedef typename viennagrid::result_of::vertex<DomainType>::type       VertexType;
+  typedef typename viennagrid::result_of::line<DomainType>::type       EdgeType;
+  typedef typename viennagrid::result_of::cell<DomainType>::type      CellType;
 
-  typedef typename viennagrid::result_of::ncell_range<DomainType, 0>::type  VertexContainer;
+  typedef typename viennagrid::result_of::vertex_range<DomainType>::type  VertexContainer;
   typedef typename viennagrid::result_of::iterator<VertexContainer>::type       VertexIterator;
     
-  typedef typename viennagrid::result_of::ncell_range<CellType, 1>::type    EdgeOnCellContainer;
+  typedef typename viennagrid::result_of::line_range<CellType>::type    EdgeOnCellContainer;
   typedef typename viennagrid::result_of::iterator<EdgeOnCellContainer>::type     EdgeOnCellIterator;
 
-  typedef typename viennagrid::result_of::ncell_range<DomainType, CellTag::dim>::type  CellContainer;
+  typedef typename viennagrid::result_of::cell_range<DomainType>::type  CellContainer;
   typedef typename viennagrid::result_of::iterator<CellContainer>::type         CellIterator;
   
-  CellContainer cells = viennagrid::ncells<CellTag::dim>(domain_in);
+  CellContainer cells = viennagrid::elements(domain_in);
   CellIterator cit = cells.begin();
   CellType & cell = *cit; ++cit;
   CellType & cell2 = *cit;
   
-  EdgeOnCellContainer edges = viennagrid::ncells<1>(cell);
+  EdgeOnCellContainer edges = viennagrid::elements(cell);
   
   std::cout << "Volume of reference tetrahedron: " << volume(cell) << std::endl;
   
@@ -69,16 +64,16 @@ int test(DomainType & domain_in)
                           eocit1 != edges.end();
                         ++eocit1)
   {
-    clear_refinement_tag(cell);
-    clear_refinement_tag(cell2);
-    viennadata::access<viennagrid::refinement_key, bool>(viennagrid::refinement_key())(*eocit1) = true;
-    
+    std::vector<bool> edge_refinement_tag_container(edges.size());
+    typename viennagrid::result_of::field<std::vector<bool>, EdgeType>::type edge_refinement_tag_field(edge_refinement_tag_container);
+    edge_refinement_tag_field(*eocit1) = true;
+
     DomainType domain_refined;
-    domain_refined = viennagrid::refine(domain_in, viennagrid::local_refinement_tag());
+    viennagrid::refine<CellType>( domain_in, domain_refined, edge_refinement_tag_field );
     
     if (sanity_check(domain_in, domain_refined) == EXIT_FAILURE)
     {
-      print_refinement_edges(cell);
+      print_refinement_edges(cell, edge_refinement_tag_field);
       return EXIT_FAILURE;
     }
   }
@@ -95,17 +90,17 @@ int test(DomainType & domain_in)
                             eocit2 != edges.end();
                           ++eocit2)
     {
-      clear_refinement_tag(cell);
-      clear_refinement_tag(cell2);
-      viennadata::access<viennagrid::refinement_key, bool>(viennagrid::refinement_key())(*eocit1) = true;
-      viennadata::access<viennagrid::refinement_key, bool>(viennagrid::refinement_key())(*eocit2) = true;
-      
+      std::vector<bool> edge_refinement_tag_container(edges.size());
+      typename viennagrid::result_of::field<std::vector<bool>, EdgeType>::type edge_refinement_tag_field(edge_refinement_tag_container);
+      edge_refinement_tag_field(*eocit1) = true;
+      edge_refinement_tag_field(*eocit2) = true;
+
       DomainType domain_refined;
-      domain_refined = viennagrid::refine(domain_in, viennagrid::local_refinement_tag());
+      viennagrid::refine<CellType>( domain_in, domain_refined, edge_refinement_tag_field );
 
       if (sanity_check(domain_in, domain_refined) == EXIT_FAILURE)
       {
-        print_refinement_edges(cell);
+        print_refinement_edges(cell, edge_refinement_tag_field);
         return EXIT_FAILURE;
       }
     }
@@ -126,18 +121,18 @@ int test(DomainType & domain_in)
                               eocit3 != edges.end();
                             ++eocit3)
       {
-        clear_refinement_tag(cell);
-        clear_refinement_tag(cell2);
-        viennadata::access<viennagrid::refinement_key, bool>(viennagrid::refinement_key())(*eocit1) = true;
-        viennadata::access<viennagrid::refinement_key, bool>(viennagrid::refinement_key())(*eocit2) = true;
-        viennadata::access<viennagrid::refinement_key, bool>(viennagrid::refinement_key())(*eocit3) = true;
-        
+        std::vector<bool> edge_refinement_tag_container(edges.size());
+        typename viennagrid::result_of::field<std::vector<bool>, EdgeType>::type edge_refinement_tag_field(edge_refinement_tag_container);
+        edge_refinement_tag_field(*eocit1) = true;
+        edge_refinement_tag_field(*eocit2) = true;
+        edge_refinement_tag_field(*eocit3) = true;
+
         DomainType domain_refined;
-        domain_refined = viennagrid::refine(domain_in, viennagrid::local_refinement_tag());
+        viennagrid::refine<CellType>( domain_in, domain_refined, edge_refinement_tag_field );
         
         if (sanity_check(domain_in, domain_refined) == EXIT_FAILURE)
         {
-          print_refinement_edges(cell);
+          print_refinement_edges(cell, edge_refinement_tag_field);
           return EXIT_FAILURE;
         }
       }
@@ -163,19 +158,19 @@ int test(DomainType & domain_in)
                                 eocit4 != edges.end();
                               ++eocit4)
         {
-          clear_refinement_tag(cell);
-          clear_refinement_tag(cell2);
-          viennadata::access<viennagrid::refinement_key, bool>(viennagrid::refinement_key())(*eocit1) = true;
-          viennadata::access<viennagrid::refinement_key, bool>(viennagrid::refinement_key())(*eocit2) = true;
-          viennadata::access<viennagrid::refinement_key, bool>(viennagrid::refinement_key())(*eocit3) = true;
-          viennadata::access<viennagrid::refinement_key, bool>(viennagrid::refinement_key())(*eocit4) = true;
-          
+          std::vector<bool> edge_refinement_tag_container(edges.size());
+          typename viennagrid::result_of::field<std::vector<bool>, EdgeType>::type edge_refinement_tag_field(edge_refinement_tag_container);
+          edge_refinement_tag_field(*eocit1) = true;
+          edge_refinement_tag_field(*eocit2) = true;
+          edge_refinement_tag_field(*eocit3) = true;
+          edge_refinement_tag_field(*eocit4) = true;
+
           DomainType domain_refined;
-          domain_refined = viennagrid::refine(domain_in, viennagrid::local_refinement_tag());
+          viennagrid::refine<CellType>( domain_in, domain_refined, edge_refinement_tag_field );
           
           if (sanity_check(domain_in, domain_refined) == EXIT_FAILURE)
           {
-            print_refinement_edges(cell);
+            print_refinement_edges(cell, edge_refinement_tag_field);
             return EXIT_FAILURE;
           }
         }
@@ -206,20 +201,20 @@ int test(DomainType & domain_in)
                                   eocit5 != edges.end();
                                 ++eocit5)
           {
-            clear_refinement_tag(cell);
-            clear_refinement_tag(cell2);
-            viennadata::access<viennagrid::refinement_key, bool>(viennagrid::refinement_key())(*eocit1) = true;
-            viennadata::access<viennagrid::refinement_key, bool>(viennagrid::refinement_key())(*eocit2) = true;
-            viennadata::access<viennagrid::refinement_key, bool>(viennagrid::refinement_key())(*eocit3) = true;
-            viennadata::access<viennagrid::refinement_key, bool>(viennagrid::refinement_key())(*eocit4) = true;
-            viennadata::access<viennagrid::refinement_key, bool>(viennagrid::refinement_key())(*eocit5) = true;
-            
+            std::vector<bool> edge_refinement_tag_container(edges.size());
+            typename viennagrid::result_of::field<std::vector<bool>, EdgeType>::type edge_refinement_tag_field(edge_refinement_tag_container);
+            edge_refinement_tag_field(*eocit1) = true;
+            edge_refinement_tag_field(*eocit2) = true;
+            edge_refinement_tag_field(*eocit3) = true;
+            edge_refinement_tag_field(*eocit4) = true;
+            edge_refinement_tag_field(*eocit5) = true;
+
             DomainType domain_refined;
-            domain_refined = viennagrid::refine(domain_in, viennagrid::local_refinement_tag());
+            viennagrid::refine<CellType>( domain_in, domain_refined, edge_refinement_tag_field );
             
             if (sanity_check(domain_in, domain_refined) == EXIT_FAILURE)
             {
-              print_refinement_edges(cell);
+              print_refinement_edges(cell, edge_refinement_tag_field);
               return EXIT_FAILURE;
             }
           }
@@ -230,21 +225,24 @@ int test(DomainType & domain_in)
   std::cout << "[PASSED]" << std::endl;
   
   //6 edges:
+  std::vector<bool> edge_refinement_tag_container(edges.size());
+  typename viennagrid::result_of::field<std::vector<bool>, EdgeType>::type edge_refinement_tag_field(edge_refinement_tag_container);
+  
   std::cout << "Testing refinement with six tagged edges: ";
   for (EdgeOnCellIterator eocit1 = edges.begin();
                           eocit1 != edges.end();
                         ++eocit1)
   {
-    viennadata::access<viennagrid::refinement_key, bool>(viennagrid::refinement_key())(*eocit1) = true;
+    edge_refinement_tag_field(*eocit1) = true;
   }
   
   {
     DomainType domain_refined;
-    domain_refined = viennagrid::refine(domain_in, viennagrid::local_refinement_tag());
+    viennagrid::refine<CellType>( domain_in, domain_refined, edge_refinement_tag_field );
     
     if (sanity_check(domain_in, domain_refined) == EXIT_FAILURE)
     {
-      print_refinement_edges(cell);
+      print_refinement_edges(cell, edge_refinement_tag_field);
       return EXIT_FAILURE;
     }
   }  
@@ -256,83 +254,65 @@ int test(DomainType & domain_in)
 
 
 template <unsigned int A>
-struct cell_filler
+struct cell_vertex_permutator
 {
   template <typename PointType>
   static void apply(std::vector<PointType> & points); //no default implementation
 };
 
 template <>
-struct cell_filler<1>
+struct cell_vertex_permutator<1>
 {
-  template <typename CellType, typename VertexType>
-  static void apply(CellType & cell, VertexType ** vertices)
+  template <typename VertexHandleInContainerT, typename VertexHandleOutContainerT>
+  static void apply(VertexHandleInContainerT const & vertices_in, VertexHandleOutContainerT & vertices_out)
   {
-    CellType simplex;
-    VertexType * reordered_vertices[4];
-    
-    reordered_vertices[0] = vertices[0];
-    reordered_vertices[1] = vertices[1];
-    reordered_vertices[2] = vertices[2];
-    reordered_vertices[3] = vertices[3];
-    
-    cell.vertices(reordered_vertices);
+    vertices_out[0] = vertices_in[0];
+    vertices_out[1] = vertices_in[1];
+    vertices_out[2] = vertices_in[2];
+    vertices_out[3] = vertices_in[3];
   }
 };
 
 template <>
-struct cell_filler<2>
+struct cell_vertex_permutator<2>
 {
-  template <typename CellType, typename VertexType>
-  static void apply(CellType & cell, VertexType ** vertices)
+  template <typename VertexHandleInContainerT, typename VertexHandleOutContainerT>
+  static void apply(VertexHandleInContainerT const & vertices_in, VertexHandleOutContainerT & vertices_out)
   {
-    CellType simplex;
-    VertexType * reordered_vertices[4];
-    
-    reordered_vertices[0] = vertices[1];
-    reordered_vertices[1] = vertices[2];
-    reordered_vertices[2] = vertices[0];
-    reordered_vertices[3] = vertices[3];
-    
-    cell.vertices(reordered_vertices);
+    vertices_out[0] = vertices_in[1];
+    vertices_out[1] = vertices_in[2];
+    vertices_out[2] = vertices_in[0];
+    vertices_out[3] = vertices_in[3];
   }
 };
 
 template <>
-struct cell_filler<3>
+struct cell_vertex_permutator<3>
 {
-  template <typename CellType, typename VertexType>
-  static void apply(CellType & cell, VertexType ** vertices)
+  template <typename VertexHandleInContainerT, typename VertexHandleOutContainerT>
+  static void apply(VertexHandleInContainerT const & vertices_in, VertexHandleOutContainerT & vertices_out)
   {
-    CellType simplex;
-    VertexType * reordered_vertices[4];
-    
-    reordered_vertices[0] = vertices[2];
-    reordered_vertices[1] = vertices[0];
-    reordered_vertices[2] = vertices[1];
-    reordered_vertices[3] = vertices[3];
-    
-    cell.vertices(reordered_vertices);
+    vertices_out[0] = vertices_in[2];
+    vertices_out[1] = vertices_in[0];
+    vertices_out[2] = vertices_in[1];
+    vertices_out[3] = vertices_in[3];
   }
 };
 
 
-template <typename DomainType, typename CellFillerA, typename CellFillerB>
+template <typename DomainType, typename CellPermutatorA, typename CellPermutatorB>
 void fill_domain(DomainType & domain,
-                 CellFillerA const & fillerA,
-                 CellFillerB const & fillerB)
+                 CellPermutatorA const & permutatorA,
+                 CellPermutatorB const & permutatorB)
 {
-  typedef typename DomainType::config_type      ConfigType;
-  typedef viennagrid::segment_t<ConfigType>     SegmentType;
-  typedef typename ConfigType::cell_tag         CellTag;
+//   typedef typename DomainType::config_type      ConfigType;
+//   typedef viennagrid::segment_t<ConfigType>     SegmentType;
+//   typedef typename ConfigType::cell_tag         CellTag;
 
-  typedef typename viennagrid::result_of::point<ConfigType>::type          PointType;
-  typedef typename viennagrid::result_of::ncell<ConfigType, 0>::type       VertexType;
-  typedef typename viennagrid::result_of::ncell<ConfigType,
-                                                     CellTag::dim>::type   CellType;
-  
-  domain.segments().resize(1);
-  SegmentType & seg = domain.segments()[0];
+  typedef typename viennagrid::result_of::point<DomainType>::type          PointType;
+  typedef typename viennagrid::result_of::vertex<DomainType>::type       VertexType;
+  typedef typename viennagrid::result_of::vertex_handle<DomainType>::type       VertexHandleType;
+  typedef typename viennagrid::result_of::cell<DomainType>::type   CellType;
   
   std::vector<PointType> points(5);
   PointType & p0 = points[0];
@@ -348,42 +328,37 @@ void fill_domain(DomainType & domain,
   p4[0] = 1.0; p4[1] = 1.0; p4[2] = 1.0;
   
   //upgrade to vertex:
-  VertexType v0(p0, 0);
-  VertexType v1(p1, 1);
-  VertexType v2(p2, 2);
-  VertexType v3(p3, 3);
-  VertexType v4(p4, 4);
+  VertexHandleType vh[5];
+  
+  for (int i = 0; i < 5; ++i)
+    vh[i] = viennagrid::make_vertex( domain, points[i] );
 
-  VertexType * vertices[5];
-  
-  //std::cout << "Adding vertices to domain..." << std::endl;
-  vertices[0] = domain.push_back(v0);
-  vertices[1] = domain.push_back(v1);
-  vertices[2] = domain.push_back(v2);
-  vertices[3] = domain.push_back(v3);
-  vertices[4] = domain.push_back(v4);
 
-  //std::cout << "Adding cells to domain..." << std::endl;
-  CellType simplex;
-  VertexType * cell_vertices[4];
+  {
+    VertexHandleType cur_vh[4];
+    cur_vh[0] = vh[0];
+    cur_vh[1] = vh[1];
+    cur_vh[2] = vh[2];
+    cur_vh[3] = vh[3];
+    
+    VertexHandleType permutated_vh[4];
+    CellPermutatorA::apply(cur_vh, permutated_vh);
+    
+    viennagrid::make_cell( domain, permutated_vh, permutated_vh+4 );
+  }
   
-  //first cell:
-  cell_vertices[0] = vertices[0];
-  cell_vertices[1] = vertices[1];
-  cell_vertices[2] = vertices[2];
-  cell_vertices[3] = vertices[3];
-  CellFillerA::apply(simplex, &(cell_vertices[0]));
-  simplex.vertices(cell_vertices);
-  seg.push_back(simplex);
-  
-  //second cell:
-  cell_vertices[0] = vertices[1];
-  cell_vertices[1] = vertices[2];
-  cell_vertices[2] = vertices[3];
-  cell_vertices[3] = vertices[4];
-  CellFillerB::apply(simplex, &(cell_vertices[0]));
-  simplex.vertices(cell_vertices);
-  seg.push_back(simplex);
+  {
+    VertexHandleType cur_vh[4];
+    cur_vh[0] = vh[1];
+    cur_vh[1] = vh[2];
+    cur_vh[2] = vh[3];
+    cur_vh[3] = vh[4];
+    
+    VertexHandleType permutated_vh[4];
+    CellPermutatorB::apply(cur_vh, permutated_vh);
+    
+    viennagrid::make_cell( domain, permutated_vh, permutated_vh+4 );
+  }
 }
 
 
@@ -392,15 +367,14 @@ struct domain_tester
 {
   static int apply()
   {
-    typedef viennagrid::config::tetrahedral_3d    ConfigType;
-    typedef typename viennagrid::result_of::domain<ConfigType>::type        Domain;
+    typedef viennagrid::tetrahedral_3d_domain    DomainType;
    
     std::cout << std::endl;
     std::cout << "Testing domain " << A << "..." << std::endl;
     
     {
-      Domain domain;
-      fill_domain(domain, cell_filler<A>(), cell_filler<1>());
+      DomainType domain;
+      fill_domain(domain, cell_vertex_permutator<A>(), cell_vertex_permutator<1>());
       if (test(domain) == EXIT_FAILURE)
       {
         std::cerr << "FAILED!" << std::endl;
@@ -408,8 +382,8 @@ struct domain_tester
       }
     }
     {
-      Domain domain;
-      fill_domain(domain, cell_filler<A>(), cell_filler<2>());
+      DomainType domain;
+      fill_domain(domain, cell_vertex_permutator<A>(), cell_vertex_permutator<2>());
       if (test(domain) == EXIT_FAILURE)
       {
         std::cerr << "FAILED!" << std::endl;
@@ -417,8 +391,8 @@ struct domain_tester
       }
     }
     {
-      Domain domain;
-      fill_domain(domain, cell_filler<A>(), cell_filler<3>());
+      DomainType domain;
+      fill_domain(domain, cell_vertex_permutator<A>(), cell_vertex_permutator<3>());
       if (test(domain) == EXIT_FAILURE)
       {
         std::cerr << "FAILED!" << std::endl;

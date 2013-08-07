@@ -23,60 +23,36 @@
 #include <iostream>
 #include <vector>
 
-#include "viennagrid/config/others.hpp"
+#include "viennagrid/config/default_configs.hpp"
 #include "voronoi_common.hpp"
 #include "refinement-common.hpp"
 
 //
 // Generate four rectangles
 //
-template <typename DeviceType>
-void setup_device(DeviceType & device)
+template <typename DomainType>
+void setup_domain(DomainType & domain)
 {
-  typedef typename DeviceType::config_type           Config;
-  typedef typename Config::cell_tag                  CellTag;
-  
-  typedef typename viennagrid::result_of::point<Config>::type                            PointType;
-  typedef typename viennagrid::result_of::ncell<Config, 0>::type                         VertexType;
-  typedef typename viennagrid::result_of::ncell<Config, CellTag::dim>::type   CellType;
-  
+  typedef typename viennagrid::result_of::point<DomainType>::type                            PointType;
+  typedef typename viennagrid::result_of::vertex<DomainType>::type                         VertexType;
+  typedef typename viennagrid::result_of::vertex_handle<DomainType>::type                         VertexHandleType;
   
   //
   // Step 1: Set up vertices:
   //
-  device.push_back(PointType(0));       // #0
-  device.push_back(PointType(0.25));    // #1
-  device.push_back(PointType(0.5));     // #2
-  device.push_back(PointType(0.75));    // #3
-  device.push_back(PointType(1.0));     // #4
-  
+  VertexHandleType vh0 = viennagrid::make_vertex( domain, PointType(0) );
+  VertexHandleType vh1 = viennagrid::make_vertex( domain, PointType(0.25) );
+  VertexHandleType vh2 = viennagrid::make_vertex( domain, PointType(0.5) );
+  VertexHandleType vh3 = viennagrid::make_vertex( domain, PointType(0.75) );
+  VertexHandleType vh4 = viennagrid::make_vertex( domain, PointType(1.0) );
   //
   // Step 2: Set up cells:
   //
   
-  CellType cell;
-  VertexType *vertices[2];
-  
-  vertices[0] = &(viennagrid::ncells<0>(device)[0]);
-  vertices[1] = &(viennagrid::ncells<0>(device)[1]);
-  cell.vertices(vertices);
-  device.push_back(cell);
-
-  vertices[0] = &(viennagrid::ncells<0>(device)[1]);
-  vertices[1] = &(viennagrid::ncells<0>(device)[2]);
-  cell.vertices(vertices);
-  device.push_back(cell);
-
-  vertices[0] = &(viennagrid::ncells<0>(device)[2]);
-  vertices[1] = &(viennagrid::ncells<0>(device)[3]);
-  cell.vertices(vertices);
-  device.push_back(cell);
-
-  vertices[0] = &(viennagrid::ncells<0>(device)[3]);
-  vertices[1] = &(viennagrid::ncells<0>(device)[4]);
-  cell.vertices(vertices);
-  device.push_back(cell);
-  
+  viennagrid::make_line( domain, vh0, vh1 );
+  viennagrid::make_line( domain, vh1, vh2 );
+  viennagrid::make_line( domain, vh2, vh3 );
+  viennagrid::make_line( domain, vh3, vh4 );
 }
 
 
@@ -84,43 +60,70 @@ void setup_device(DeviceType & device)
 
 int main(int argc, char *argv[])
 {
-  typedef viennagrid::config::line_1d                   Config;
-  typedef viennagrid::result_of::domain<Config>::type   DeviceType;
+  typedef viennagrid::line_1d_domain                   DomainType;
   
-  std::cout << "* main(): Creating device..." << std::endl;
-  DeviceType device;
+  std::cout << "* main(): Creating domain..." << std::endl;
+  DomainType domain;
   
-  //create device:
-  setup_device(device);
+  //create domain:
+  setup_domain(domain);
   
-  viennagrid::voronoi_interface_area_key interface_key;
-  viennagrid::voronoi_box_volume_key box_volume_key;
+  
+  typedef viennagrid::result_of::vertex<DomainType>::type    VertexType;
+  typedef viennagrid::result_of::line<DomainType>::type    EdgeType;
+  typedef viennagrid::result_of::cell<DomainType>::type    CellType;
+  typedef viennagrid::result_of::const_cell_handle<DomainType>::type    ConstCellHandleType;
+  
+  std::deque<double> interface_areas;
+  std::deque< viennagrid::result_of::voronoi_cell_contribution<ConstCellHandleType>::type > interface_contributions;
+  
+  std::deque<double> vertex_box_volumes;
+  std::deque< viennagrid::result_of::voronoi_cell_contribution<ConstCellHandleType>::type > vertex_box_volume_contributions;
+  
+  std::deque<double> edge_box_volumes;
+  std::deque< viennagrid::result_of::voronoi_cell_contribution<ConstCellHandleType>::type > edge_box_volume_contributions;
+  
   
   //set up dual grid info:
-  viennagrid::apply_voronoi(device, interface_key, box_volume_key);
-                                      
+  viennagrid::apply_voronoi<CellType>(
+          domain,
+          viennagrid::make_accessor<EdgeType>(interface_areas),
+          viennagrid::make_accessor<EdgeType>(interface_contributions),
+          viennagrid::make_accessor<VertexType>(vertex_box_volumes),
+          viennagrid::make_accessor<VertexType>(vertex_box_volume_contributions),
+          viennagrid::make_accessor<EdgeType>(edge_box_volumes),
+          viennagrid::make_accessor<EdgeType>(edge_box_volume_contributions)
+  );
+                   
+  
   //output results:
-  output_voronoi_info(device);
+  output_voronoi_info(domain,
+                      viennagrid::make_accessor<VertexType>(vertex_box_volumes), viennagrid::make_accessor<VertexType>(vertex_box_volume_contributions),
+                      viennagrid::make_accessor<EdgeType>(interface_areas), viennagrid::make_accessor<EdgeType>(interface_contributions));
   
   std::cout << std::endl;
-  std::cout << viennagrid::ncells<1>(device)[0] << std::endl;
+  std::cout << viennagrid::cells(domain)[0] << std::endl;
   std::cout << std::endl;
-  std::cout << "Circumcenter of cell #0: " << viennagrid::circumcenter(viennagrid::ncells<1>(device)[0]) << std::endl;
-  std::cout << "Circumcenter of cell #1: " << viennagrid::circumcenter(viennagrid::ncells<1>(device)[1]) << std::endl;
-  std::cout << "Circumcenter of cell #2: " << viennagrid::circumcenter(viennagrid::ncells<1>(device)[2]) << std::endl;
-  std::cout << "Circumcenter of cell #3: " << viennagrid::circumcenter(viennagrid::ncells<1>(device)[3]) << std::endl;
+  std::cout << "Circumcenter of cell #0: " << viennagrid::circumcenter(viennagrid::cells(domain)[0]) << std::endl;
+  std::cout << "Circumcenter of cell #1: " << viennagrid::circumcenter(viennagrid::cells(domain)[1]) << std::endl;
+  std::cout << "Circumcenter of cell #2: " << viennagrid::circumcenter(viennagrid::cells(domain)[2]) << std::endl;
+  std::cout << "Circumcenter of cell #3: " << viennagrid::circumcenter(viennagrid::cells(domain)[3]) << std::endl;
   std::cout << "-----------------------" << std::endl;
-  std::cout << "Centroid of cell #0: " << viennagrid::centroid(viennagrid::ncells<1>(device)[0]) << std::endl;
-  std::cout << "Centroid of cell #1: " << viennagrid::centroid(viennagrid::ncells<1>(device)[1]) << std::endl;
-  std::cout << "Centroid of cell #2: " << viennagrid::centroid(viennagrid::ncells<1>(device)[2]) << std::endl;
-  std::cout << "Centroid of cell #3: " << viennagrid::centroid(viennagrid::ncells<1>(device)[3]) << std::endl;
+  std::cout << "Centroid of cell #0: " << viennagrid::centroid(viennagrid::cells(domain)[0]) << std::endl;
+  std::cout << "Centroid of cell #1: " << viennagrid::centroid(viennagrid::cells(domain)[1]) << std::endl;
+  std::cout << "Centroid of cell #2: " << viennagrid::centroid(viennagrid::cells(domain)[2]) << std::endl;
+  std::cout << "Centroid of cell #3: " << viennagrid::centroid(viennagrid::cells(domain)[3]) << std::endl;
   
   // Check Voronoi volumes:
-  voronoi_volume_check(device);
+  voronoi_volume_check(domain,
+          viennagrid::make_accessor<VertexType>(vertex_box_volumes),
+          viennagrid::make_accessor<VertexType>(vertex_box_volume_contributions),
+          viennagrid::make_accessor<EdgeType>(edge_box_volume_contributions)
+  );
   
   //write to vtk:
-  viennagrid::io::vtk_writer<DeviceType> my_vtk_writer;
-  my_vtk_writer(device, "voronoi_line");
+  viennagrid::io::vtk_writer<DomainType> my_vtk_writer;
+  my_vtk_writer(domain, "voronoi_line");
   
   std::cout << "*******************************" << std::endl;
   std::cout << "* Test finished successfully! *" << std::endl;

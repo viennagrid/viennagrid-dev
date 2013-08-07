@@ -15,9 +15,7 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
-#include "viennagrid/domain.hpp"
-#include "viennagrid/config/others.hpp"
-#include "viennagrid/config/simplex.hpp"
+#include "viennagrid/config/default_configs.hpp"
 #include "viennagrid/io/netgen_reader.hpp"
 #include "viennagrid/io/vtk_writer.hpp"
 #include "viennagrid/io/serialization.hpp"
@@ -30,14 +28,13 @@ int main()
   
   // setup a domain
   // 
-  typedef viennagrid::config::triangular_2d                          Config;  
-  typedef viennagrid::result_of::domain<Config>::type                Domain;  
-  typedef viennagrid::io::domain_serializer<Domain>                  DomainSerializer;
-  typedef boost::shared_ptr<Domain>                                  DomainSP;
+  typedef viennagrid::triangular_2d_domain                           DomainType;
+  typedef viennagrid::io::domain_serializer<DomainType>              DomainSerializer;
+  typedef boost::shared_ptr<DomainType>                              DomainSP;
 
   // setup a shared pointer on a domain
   //
-  DomainSP          domainsp(new Domain);
+  DomainSP          domainsp(new DomainType);
   
   // create a serializer object and load it with the domain pointer
   //

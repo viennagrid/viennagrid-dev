@@ -25,37 +25,37 @@
 #include "viennagrid/io/netgen_reader.hpp"
 #include "viennagrid/io/vtk_writer.hpp"
 
-template <typename ConfigType>
+template <typename DomainT>
 void test(std::string & infile, std::string & outfile)
 {
-  typedef typename viennagrid::result_of::domain<ConfigType>::type        Domain;
-  typedef typename ConfigType::cell_tag           CellTag;
-  typedef viennagrid::segment_t<ConfigType>       SegmentType;
+  typedef typename viennagrid::result_of::cell_tag<DomainT>::type           CellTag;
+  typedef typename viennagrid::result_of::segmentation<DomainT>::type           SegmentationType;
+  typedef typename viennagrid::result_of::segment<SegmentationType>::type           SegmentType;
   
-  typedef typename viennagrid::result_of::point<ConfigType>::type          PointType;
-  typedef typename viennagrid::result_of::ncell<ConfigType, 0>::type       VertexType;
-  typedef typename viennagrid::result_of::ncell<ConfigType, 1>::type       EdgeType;
-  typedef typename viennagrid::result_of::ncell<ConfigType,
-                                                CellTag::dim>::type   CellType;
+  typedef typename viennagrid::result_of::point<DomainT>::type          PointType;
+  typedef typename viennagrid::result_of::vertex<DomainT>::type       VertexType;
+  typedef typename viennagrid::result_of::line<DomainT>::type       EdgeType;
+  typedef typename viennagrid::result_of::cell<DomainT>::type   CellType;
 
 
-  typedef typename viennagrid::result_of::ncell_range<Domain, 0>::type           VertexContainer;
+  typedef typename viennagrid::result_of::vertex_range<DomainT>::type           VertexContainer;
   typedef typename viennagrid::result_of::iterator<VertexContainer>::type        VertexIterator;
       
-  typedef typename viennagrid::result_of::ncell_range<Domain, 1>::type           EdgeContainer;
+  typedef typename viennagrid::result_of::line_range<DomainT>::type           EdgeContainer;
   typedef typename viennagrid::result_of::iterator<EdgeContainer>::type          EdgeIterator;
 
-  typedef typename viennagrid::result_of::ncell_range<Domain, CellTag::dim-1>::type   FacetContainer;
+  typedef typename viennagrid::result_of::facet_range<DomainT>::type   FacetContainer;
   typedef typename viennagrid::result_of::iterator<FacetContainer>::type                         FacetIterator;
 
-  typedef typename viennagrid::result_of::ncell_range<Domain, CellTag::dim>::type     CellContainer;
+  typedef typename viennagrid::result_of::cell_range<DomainT>::type     CellContainer;
   typedef typename viennagrid::result_of::iterator<CellContainer>::type                          CellIterator;
 
-  Domain domain;
+  DomainT domain;
+  SegmentationType segmentation(domain);
   
   try{
     viennagrid::io::netgen_reader my_netgen_reader;
-    my_netgen_reader(domain, infile);
+    my_netgen_reader(domain, segmentation, infile);
   } catch (...){
      std::cerr << "File-Reader failed. Aborting program..." << std::endl;
      exit(EXIT_FAILURE);
@@ -67,9 +67,12 @@ void test(std::string & infile, std::string & outfile)
   
   std::cout << "Volume of input domain: " << input_domain_volume << std::endl;
   std::cout << "Surface of input domain: " << input_domain_surface << std::endl;
+  
+  std::vector<bool> cell_refinement_tag_container1;
+  typename viennagrid::result_of::field<std::vector<bool>, CellType>::type cell_refinement_tag_field1(cell_refinement_tag_container1);
 
   //Testing: Tag some cells with centroid at x \in [2,3]:
-  CellContainer cells = viennagrid::ncells<CellTag::dim>(domain);
+  CellContainer cells = viennagrid::elements(domain);
   for (CellIterator cit  = cells.begin();
                     cit != cells.end();
                   ++cit)
@@ -81,12 +84,18 @@ void test(std::string & infile, std::string & outfile)
         && (centroid[1] >= 0.0) 
         && (centroid[1] <= 1.0))
     {
-      viennadata::access<viennagrid::refinement_key, bool>(viennagrid::refinement_key())(*cit) = true;
+      cell_refinement_tag_field1(*cit) = true;
+//       viennadata::access<viennagrid::refinement_key, bool>(viennagrid::refinement_key())(*cit) = true;
     }
   }
 
-  Domain refined_domain;
-  refined_domain = viennagrid::refine(domain, viennagrid::local_refinement_tag());
+  DomainT refined_domain;
+  SegmentationType refined_segmentation(refined_domain);
+  viennagrid::cell_refine( domain, segmentation, refined_domain, refined_segmentation, cell_refinement_tag_field1 );
+  
+  
+//   Domain refined_domain;
+//   refined_domain = viennagrid::refine(domain, viennagrid::local_refinement_tag());
 
   std::cout << "Volume of refined domain: " << viennagrid::volume(refined_domain) << std::endl;
   std::cout << "Surface of refined domain: " << domain_surface(refined_domain) << std::endl;
@@ -106,7 +115,10 @@ void test(std::string & infile, std::string & outfile)
   //
   // Second pass:
   //
-  CellContainer cells_refined = viennagrid::ncells<CellTag::dim>(refined_domain);
+  std::vector<bool> cell_refinement_tag_container2;
+  typename viennagrid::result_of::field<std::vector<bool>, CellType>::type cell_refinement_tag_field2(cell_refinement_tag_container2);
+  
+  CellContainer cells_refined = viennagrid::elements(refined_domain);
   for (CellIterator cit  = cells_refined.begin();
                     cit != cells_refined.end();
                   ++cit)
@@ -118,12 +130,14 @@ void test(std::string & infile, std::string & outfile)
         && (centroid[1] >= 0.0) 
         && (centroid[1] <= 1.0))
     {
-      viennadata::access<viennagrid::refinement_key, bool>(viennagrid::refinement_key())(*cit) = true;
+      cell_refinement_tag_field2(*cit) = true;
+//       viennadata::access<viennagrid::refinement_key, bool>(viennagrid::refinement_key())(*cit) = true;
     }
   }
 
-  Domain double_refined_domain;
-  double_refined_domain = viennagrid::refine(refined_domain, viennagrid::local_refinement_tag());
+  DomainT double_refined_domain;
+  SegmentationType double_refined_segmentation(double_refined_domain);
+  viennagrid::cell_refine( refined_domain, refined_segmentation, double_refined_domain, double_refined_segmentation, cell_refinement_tag_field2 );
 
   std::cout << "Volume of double refined domain: " << viennagrid::volume(double_refined_domain) << std::endl;
   std::cout << "Surface of double refined domain: " << domain_surface(double_refined_domain) << std::endl;
@@ -142,10 +156,10 @@ void test(std::string & infile, std::string & outfile)
 
   //test writers:
   std::cout << "Writing domains..." << std::endl;
-  viennagrid::io::vtk_writer<Domain> my_vtk_writer;
-  my_vtk_writer(domain, outfile + ".vtu");
-  my_vtk_writer(refined_domain, outfile + "_refined.vtu");
-  my_vtk_writer(double_refined_domain, outfile + "_double_refined.vtu");
+  viennagrid::io::vtk_writer<DomainT> my_vtk_writer;
+  my_vtk_writer(domain, segmentation, outfile + ".vtu");
+  my_vtk_writer(refined_domain, refined_segmentation, outfile + "_refined.vtu");
+  my_vtk_writer(double_refined_domain, double_refined_segmentation, outfile + "_double_refined.vtu");
 
   return;
   
@@ -163,7 +177,7 @@ int main()
   std::string infile = path + "sshape2d.mesh";
   std::string outfile = "out_sshape2d"; // without ending
   
-  test<viennagrid::config::triangular_2d>(infile, outfile);
+  test<viennagrid::triangular_2d_domain>(infile, outfile);
   
   std::cout << "*******************************" << std::endl;
   std::cout << "* Test finished successfully! *" << std::endl;

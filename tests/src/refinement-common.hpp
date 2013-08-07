@@ -19,51 +19,49 @@
 // Define the input-file format
 //***********************************************
 
-#include "viennagrid/forwards.h"
-#include "viennagrid/element.hpp"
-#include "viennagrid/point.hpp"
-#include "viennagrid/domain.hpp"
-#include "viennagrid/config/simplex.hpp"
+#include "viennagrid/forwards.hpp"
+#include "viennagrid/config/default_configs.hpp"
 #include "viennagrid/algorithm/refine.hpp"
 #include "viennagrid/algorithm/spanned_volume.hpp"
 #include "viennagrid/algorithm/volume.hpp"
 
 
 // Helper: Remove all refinement tags on a cell
-template <typename CellType>
-void clear_refinement_tag(CellType & cell)
-{
-  typedef typename CellType::config_type      ConfigType;
-  typedef typename viennagrid::result_of::ncell<ConfigType, 0>::type       VertexType;
-  typedef typename viennagrid::result_of::ncell_range<CellType, 1>::type       EdgeOnCellContainer;
-  typedef typename viennagrid::result_of::iterator<EdgeOnCellContainer>::type    EdgeOnCellIterator;
-  
-  EdgeOnCellContainer edges = viennagrid::ncells<1>(cell);
-  for(EdgeOnCellIterator eocit  = edges.begin();
-                         eocit != edges.end();
-                       ++eocit)
-  {
-    viennadata::access<viennagrid::refinement_key, bool>(viennagrid::refinement_key())(*eocit) = false;
-  }
-  
-  viennadata::access<viennagrid::refinement_key, bool>(viennagrid::refinement_key())(cell) = false;
-}
+// template <typename CellType>
+// void clear_refinement_tag(CellType & cell)
+// {
+//   typedef typename CellType::config_type      ConfigType;
+//   typedef typename viennagrid::result_of::vertex<ConfigType>::type       VertexType;
+//   typedef typename viennagrid::result_of::line_range<CellType>::type       EdgeOnCellContainer;
+//   typedef typename viennagrid::result_of::iterator<EdgeOnCellContainer>::type    EdgeOnCellIterator;
+//   
+//   EdgeOnCellContainer edges = viennagrid::elements(cell);
+//   for(EdgeOnCellIterator eocit  = edges.begin();
+//                          eocit != edges.end();
+//                        ++eocit)
+//   {
+//     viennadata::access<viennagrid::refinement_key, bool>(viennagrid::refinement_key())(*eocit) = false;
+//   }
+//   
+//   viennadata::access<viennagrid::refinement_key, bool>(viennagrid::refinement_key())(cell) = false;
+// }
 
 // Helper: Remove all refinement tags on a cell
-template <typename CellType>
-void print_refinement_edges(CellType & cell)
+template <typename CellType, typename EdgeRefinementTagAccessorT>
+void print_refinement_edges(CellType & cell, EdgeRefinementTagAccessorT const edge_refinement_tag_accessor)
 {
-  typedef typename CellType::config_type      ConfigType;
-  typedef typename viennagrid::result_of::ncell<ConfigType, 0>::type       VertexType;
-  typedef typename viennagrid::result_of::ncell_range<CellType, 1>::type       EdgeOnCellContainer;
+//   typedef typename CellType::config_type      ConfigType;
+  typedef typename viennagrid::result_of::vertex<CellType>::type       VertexType;
+  typedef typename viennagrid::result_of::line_range<CellType>::type       EdgeOnCellContainer;
   typedef typename viennagrid::result_of::iterator<EdgeOnCellContainer>::type    EdgeOnCellIterator;
   
-  EdgeOnCellContainer edges = viennagrid::ncells<1>(cell);
+  EdgeOnCellContainer edges = viennagrid::elements(cell);
   for(EdgeOnCellIterator eocit  = edges.begin();
                          eocit != edges.end();
                        ++eocit)
   {
-    if (viennadata::access<viennagrid::refinement_key, bool>(viennagrid::refinement_key())(*eocit) == true)
+//     if (viennadata::access<viennagrid::refinement_key, bool>(viennagrid::refinement_key())(*eocit) == true)
+    if (edge_refinement_tag_accessor(*eocit))
       std::cout << *eocit << std::endl;
       //eocit->print_short();
   }
@@ -73,29 +71,26 @@ void print_refinement_edges(CellType & cell)
 template <typename DomainType>
 double domain_surface(DomainType & domain)
 {
-  typedef typename DomainType::config_type      ConfigType;
-  typedef typename ConfigType::cell_tag                  CellTag;
-  typedef typename viennagrid::result_of::ncell<ConfigType,
-                                            CellTag::dim-1>::type      FacetType;
-  typedef typename viennagrid::result_of::ncell<ConfigType,
-                                            CellTag::dim>::type        CellType;
+  typedef typename viennagrid::result_of::cell_tag<DomainType>::type         CellTag;
+  typedef typename viennagrid::result_of::facet<DomainType>::type      FacetType;
+  typedef typename viennagrid::result_of::cell<DomainType>::type        CellType;
 
-  typedef typename viennagrid::result_of::ncell_range<DomainType, CellTag::dim>::type  CellContainer;
+  typedef typename viennagrid::result_of::cell_range<DomainType>::type  CellContainer;
   typedef typename viennagrid::result_of::iterator<CellContainer>::type         CellIterator;
                                             
-  typedef typename viennagrid::result_of::ncell_range<CellType, CellTag::dim-1>::type  FacetOnCellContainer;
+  typedef typename viennagrid::result_of::facet_range<CellType>::type  FacetOnCellContainer;
   typedef typename viennagrid::result_of::iterator<FacetOnCellContainer>::type                        FacetOnCellIterator;
   
   typedef std::map<FacetType *, std::size_t>  CellFacetMap;
   
   CellFacetMap cell_on_facet_cnt;
   
-  CellContainer cells = viennagrid::ncells<CellTag::dim>(domain);
+  CellContainer cells = viennagrid::elements(domain);
   for (CellIterator cit = cells.begin();
                     cit != cells.end();
                   ++cit)
   {
-    FacetOnCellContainer facets = viennagrid::ncells<CellTag::dim-1>(*cit);
+    FacetOnCellContainer facets = viennagrid::elements(*cit);
     for (FacetOnCellIterator focit = facets.begin(); 
                       focit != facets.end();
                     ++focit)
@@ -122,32 +117,29 @@ double domain_surface(DomainType & domain)
 template <typename DomainType>
 int facet_check(DomainType & domain)
 {
-  typedef typename DomainType::config_type      ConfigType;
-  typedef typename ConfigType::cell_tag                  CellTag;
-  typedef typename viennagrid::result_of::ncell<ConfigType,
-                                            CellTag::dim-1>::type      FacetType;
-  typedef typename viennagrid::result_of::ncell<ConfigType,
-                                            CellTag::dim>::type        CellType;
+  typedef typename viennagrid::result_of::cell_tag<DomainType>::type         CellTag;
+  typedef typename viennagrid::result_of::facet<DomainType>::type      FacetType;
+  typedef typename viennagrid::result_of::cell<DomainType>::type        CellType;
 
-  typedef typename viennagrid::result_of::ncell_range<DomainType, CellTag::dim-1>::type  FacetContainer;
+  typedef typename viennagrid::result_of::facet_range<DomainType>::type  FacetContainer;
   typedef typename viennagrid::result_of::iterator<FacetContainer>::type         FacetIterator;
                                             
-  typedef typename viennagrid::result_of::ncell_range<DomainType, CellTag::dim>::type  CellContainer;
+  typedef typename viennagrid::result_of::cell_range<DomainType>::type  CellContainer;
   typedef typename viennagrid::result_of::iterator<CellContainer>::type         CellIterator;
                                             
-  typedef typename viennagrid::result_of::ncell_range<CellType, CellTag::dim-1>::type  FacetOnCellContainer;
+  typedef typename viennagrid::result_of::facet_range<CellType>::type  FacetOnCellContainer;
   typedef typename viennagrid::result_of::iterator<FacetOnCellContainer>::type                        FacetOnCellIterator;
   
   typedef std::map<FacetType *, std::size_t>  CellFacetMap;
   
   CellFacetMap cell_on_facet_cnt;
   
-  CellContainer cells = viennagrid::ncells<CellTag::dim>(domain);
+  CellContainer cells = viennagrid::elements(domain);
   for (CellIterator cit = cells.begin();
                     cit != cells.end();
                   ++cit)
   {
-    FacetOnCellContainer facets = viennagrid::ncells<CellTag::dim-1>(*cit);
+    FacetOnCellContainer facets = viennagrid::elements(*cit);
     for (FacetOnCellIterator focit = facets.begin(); 
                       focit != facets.end();
                     ++focit)
@@ -165,7 +157,7 @@ int facet_check(DomainType & domain)
       std::cerr << "Topology problem for facet: " << std::endl;
       std::cout << *(cfmit->first) << std::endl;
       
-      CellContainer cells = viennagrid::ncells<CellTag::dim>(domain);
+      CellContainer cells = viennagrid::elements(domain);
       for (CellIterator cit = cells.begin();
                         cit != cells.end();
                       ++cit)
@@ -174,7 +166,7 @@ int facet_check(DomainType & domain)
         std::cout << *cit << std::endl;
       }
       
-      FacetContainer facets = viennagrid::ncells<CellTag::dim-1>(domain);
+      FacetContainer facets = viennagrid::elements(domain);
       for (FacetIterator fit = facets.begin();
                         fit != facets.end();
                       ++fit)
@@ -194,17 +186,14 @@ int facet_check(DomainType & domain)
 template <typename DomainType>
 int surface_check(DomainType & domain_old, DomainType & domain_new)
 {
-  typedef typename DomainType::config_type      ConfigType;
-  typedef typename ConfigType::cell_tag                  CellTag;
-  typedef typename viennagrid::result_of::ncell<ConfigType,
-                                            CellTag::dim-1>::type      FacetType;
-  typedef typename viennagrid::result_of::ncell<ConfigType,
-                                            CellTag::dim>::type        CellType;
+  typedef typename viennagrid::result_of::cell_tag<DomainType>::type         CellTag;
+  typedef typename viennagrid::result_of::facet<DomainType>::type      FacetType;
+  typedef typename viennagrid::result_of::cell<DomainType>::type        CellType;
 
-  typedef typename viennagrid::result_of::ncell_range<DomainType, CellTag::dim-1>::type  FacetContainer;
+  typedef typename viennagrid::result_of::facet_range<DomainType>::type  FacetContainer;
   typedef typename viennagrid::result_of::iterator<FacetContainer>::type         FacetIterator;
                                             
-  typedef typename viennagrid::result_of::ncell_range<DomainType, CellTag::dim>::type  CellContainer;
+  typedef typename viennagrid::result_of::cell_range<DomainType>::type  CellContainer;
   typedef typename viennagrid::result_of::iterator<CellContainer>::type         CellIterator;
                                             
   
@@ -214,7 +203,7 @@ int surface_check(DomainType & domain_old, DomainType & domain_new)
   if ( (new_surface < 0.9999 * old_surface)
       || (new_surface > 1.0001 * old_surface) )
   {
-    CellContainer cells = viennagrid::ncells<CellTag::dim>(domain_new);
+    CellContainer cells = viennagrid::elements(domain_new);
     for (CellIterator cit = cells.begin();
                       cit != cells.end();
                     ++cit)
@@ -223,7 +212,7 @@ int surface_check(DomainType & domain_old, DomainType & domain_new)
       std::cout << *cit << std::endl;
     }
     
-    FacetContainer facets = viennagrid::ncells<CellTag::dim-1>(domain_new);
+    FacetContainer facets = viennagrid::elements(domain_new);
     for (FacetIterator fit = facets.begin();
                        fit != facets.end();
                      ++fit)
