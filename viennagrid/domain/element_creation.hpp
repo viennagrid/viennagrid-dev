@@ -60,6 +60,31 @@ namespace viennagrid
 
         return push_element<false, true>(domain, element ).first;
     }
+    
+    
+    
+    template<typename DomainType, typename HandleIteratorType>
+    typename result_of::cell_handle<DomainType>::type make_cell(
+          DomainType & domain,
+          HandleIteratorType array_start,
+          HandleIteratorType const & array_end )
+    {
+      typedef typename viennagrid::result_of::cell_tag<DomainType>::type CellTagType;
+      return make_element<CellTagType>( domain, array_start, array_end );
+    }
+    
+    
+    template<typename DomainType, typename HandleIteratorType>
+    typename result_of::cell_handle<DomainType>::type make_cell_with_id(
+          DomainType & domain,
+          HandleIteratorType array_start,
+          HandleIteratorType const & array_end,
+          typename viennagrid::result_of::cell<DomainType>::type::id_type id )
+    {
+      typedef typename viennagrid::result_of::cell_tag<DomainType>::type CellTagType;
+      return make_element_with_id<CellTagType>( domain, array_start, array_end, id );
+    }
+
 
 
 
@@ -208,16 +233,18 @@ namespace viennagrid
     }
 
     template<typename DomainType, typename vertex_handle_type>
-    typename result_of::handle<DomainType, hexahedron_tag>::type make_hexahedron( DomainType & domain, vertex_handle_type v0, vertex_handle_type v1, vertex_handle_type v2,
-                                                                                                         vertex_handle_type v3, vertex_handle_type v4, vertex_handle_type v5 )
+    typename result_of::handle<DomainType, hexahedron_tag>::type make_hexahedron( DomainType & domain, vertex_handle_type v0, vertex_handle_type v1, vertex_handle_type v2, vertex_handle_type v3,
+                                                                                                       vertex_handle_type v4, vertex_handle_type v5, vertex_handle_type v6, vertex_handle_type v7 )
     {
-        viennagrid::storage::static_array<vertex_handle_type, 6> handles;
+        viennagrid::storage::static_array<vertex_handle_type, 8> handles;
         handles[0] = v0;
         handles[1] = v1;
         handles[2] = v2;
         handles[3] = v3;
         handles[4] = v4;
         handles[5] = v5;
+        handles[6] = v6;
+        handles[7] = v7;
 
         return make_element<viennagrid::hexahedron_tag>( domain, handles.begin(), handles.end() );
     }
