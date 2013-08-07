@@ -6,7 +6,7 @@
     <DataArray type="Float32" NumberOfComponents="3" format="ascii">
 0.5 0 0
 1 0 0
-0 1 0
+1 1 0
 0.5 1 0
 
     </DataArray>
