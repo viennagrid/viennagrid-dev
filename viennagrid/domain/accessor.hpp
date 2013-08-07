@@ -18,6 +18,7 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
+#include <stdexcept>
 #include <assert.h>
 
 #include "viennagrid/forwards.hpp"
@@ -167,51 +168,35 @@ namespace viennagrid
         return (static_cast<offset_type>((*container).size()) > element.id().get()) ? (&(*container)[offset]) : NULL;
       }
 
-      reference access_unchecked(AccessType const & element)
+      reference operator()(AccessType const & element)
       {
         offset_type offset = element.id().get();
-        return (*container)[offset];
-      }
-
-      const_reference access_unchecked(AccessType const & element) const
-      {
-        offset_type offset = element.id().get();
-
-        assert( static_cast<offset_type>((*container).size()) > offset );
-        return (*container)[offset];
-      }
-
-      reference access(AccessType const & element)
-      {
-        offset_type offset = element.id().get();
-
         if ( static_cast<offset_type>((*container).size()) <= offset) (*container).resize(offset+1);
         return (*container)[offset];
       }
 
-      const_reference access(AccessType const & element) const
-      { return access_unchecked(element); }
-
-      reference       operator()(AccessType const & element)       { return access(element); }
-      const_reference operator()(AccessType const & element) const { return access(element); }
-
-
-      void erase(AccessType const & element)
+      const_reference operator()(AccessType const & element) const
       {
         offset_type offset = element.id().get();
-
-        if (offset+1 == static_cast<offset_type>((*container).size()))
-            (*container).resize((*container).size()-1);
+        assert( static_cast<offset_type>((*container).size()) > offset );
+        return (*container)[offset];
       }
 
-      void clear()
-      { (*container).clear(); }
+      reference at(AccessType const & element)
+      {
+        offset_type offset = element.id().get();
+        if ( static_cast<offset_type>((*container).size()) <= offset) throw std::out_of_range("dense_container_accessor_t::at() failed");
+        return (*container)[offset];
+      }
 
-      void resize( std::size_t size )
-      { (*container).resize( size ); }
+      const_reference at(AccessType const & element) const
+      {
+        offset_type offset = element.id().get();
+        if ( static_cast<offset_type>((*container).size()) <= offset) throw std::out_of_range("dense_container_accessor_t::at() const failed");
+        return (*container)[offset];
+      }
       
-      
-    private:
+    protected:
       ContainerType * container;
     };
 
@@ -244,25 +229,26 @@ namespace viennagrid
         return (static_cast<offset_type>((*container).size()) > element.id().get()) ? (&(*container)[offset]) : NULL;
       }
 
-      const_reference access_unchecked(AccessType const & element) const
+      const_reference operator()(AccessType const & element) const
       {
         offset_type offset = element.id().get();
-
         assert( static_cast<offset_type>((*container).size()) > offset );
         return (*container)[offset];
       }
-
-      const_reference access(AccessType const & element) const
-      { return access_unchecked(element); }
-
-      const_reference operator()(AccessType const & element) const { return access(element); }
+      
+      const_reference at(AccessType const & element) const
+      {
+        offset_type offset = element.id().get();
+        if ( static_cast<offset_type>((*container).size()) <= offset) throw std::out_of_range("dense_container_accessor_t::at() const failed");
+        return (*container)[offset];
+      }
 
       void erase(AccessType const & element);
       void clear();
       void resize( std::size_t size );
 
 
-    private:
+    protected:
       container_type * container;
     };
 
@@ -302,40 +288,31 @@ namespace viennagrid
         return (it != (*container).end()) ? &it->second : NULL; // return NULL if not found
       }
 
-      reference access_unchecked(AccessType const & element)
+      reference operator()(AccessType const & element)
       {
         return (*container)[ element.id() ];
       }
 
-      const_reference access_unchecked(AccessType const & element) const
+      const_reference operator()(AccessType const & element) const
       {
         typename container_type::const_iterator it = (*container).find( element.id() );
         assert(it != (*container).end()); // no release-runtime check for accessing elements outside (*container)
         return it->second;
       }
 
-      reference access(AccessType const & element)
-      { return access_unchecked(element); }
-
-      const_reference access(AccessType const & element) const
-      { return access_unchecked(element); }
-
-      reference       operator()(AccessType const & element)       { return access(element); }
-      const_reference operator()(AccessType const & element) const { return access(element); }
-
-
-      void erase(AccessType const & element)
+      reference at(AccessType const & element)
       {
-        typename container_type::iterator it = (*container).find( element.id() );
-        if (it != (*container).end())
-          (*container).erase(it);
+        return (*this)(element);
       }
-      void clear()
-      { (*container).clear(); }
-      void resize( std::size_t size ) {}
 
+      const_reference at(AccessType const & element) const
+      {
+        typename container_type::const_iterator it = (*container).find( element.id() );
+        if (it == (*container).end()) throw std::out_of_range("std_map_accessor_t::at() const failed");
+        return it->second;
+      }
 
-    private:
+    protected:
       ContainerType * container;
     };
 
@@ -367,35 +344,26 @@ namespace viennagrid
         return (it != (*container).end()) ? &it->second : NULL; // return NULL if not found
       }
 
-      const_reference access_unchecked(AccessType const & element) const
+      const_reference operator()(AccessType const & element) const
       {
         typename container_type::const_iterator it = (*container).find( element.id() );
         assert(it != (*container).end()); // no release-runtime check for accessing elements outside (*container)
         return it->second;
       }
 
-      const_reference access(AccessType const & element) const
-      { return access_unchecked(element); }
+      const_reference at(AccessType const & element) const
+      {
+        typename container_type::const_iterator it = (*container).find( element.id() );
+        if (it == (*container).end()) throw std::out_of_range("std_map_accessor_t::at() const failed");
+        return it->second;
+      }
 
-      const_reference operator()(AccessType const & element) const { return access(element); }
-
-
-      void erase(AccessType const & element);
-      void clear();
-      void resize( std::size_t size );
-
-
-    private:
+    protected:
       container_type * container;
     };
 
 
 
-
-
-
-
-    
     namespace result_of
     {
         template<typename ContainerType, typename AccessType>
@@ -476,6 +444,578 @@ namespace viennagrid
         return make_accessor<element_type>( storage::collection::get<element_type>(collection) );
     }
 
+    
+    
+    
+    template<typename ValueType, typename AccessType>
+    class base_dynamic_accessor_t
+    {
+    public:
+        typedef ValueType value_type;
+        typedef AccessType access_type;
+
+        typedef value_type & reference;
+        typedef value_type const & const_reference;
+
+        typedef value_type * pointer;
+        typedef value_type const * const_pointer;
+
+        virtual ~base_dynamic_accessor_t() {}
+
+        virtual pointer find( access_type const & ) { return 0; }
+        virtual const_pointer find( access_type const & ) const { return 0; }
+
+        virtual reference operator()( access_type const & element ) = 0;
+        virtual const_reference operator()( access_type const & element ) const = 0;
+
+        virtual reference access( access_type const & element ) = 0;
+        virtual const_reference access( access_type const & element ) const = 0;
+    };
+
+    template<typename ValueType, typename AccessType>
+    class base_dynamic_accessor_t<const ValueType, AccessType>
+    {
+    public:
+        typedef ValueType value_type;
+        typedef AccessType access_type;
+
+        typedef value_type const & reference;
+        typedef value_type const & const_reference;
+
+        typedef value_type const * pointer;
+        typedef value_type const * const_pointer;
+
+        virtual ~base_dynamic_accessor_t() {}
+
+        virtual const_pointer find( access_type const & ) const { return 0; }
+        virtual const_reference operator()( access_type const & element ) const = 0;
+        virtual const_reference access( access_type const & element ) const = 0;
+    };
+
+
+
+
+    template<typename AccessorType>
+    class dynamic_accessor_t : public base_dynamic_accessor_t< typename AccessorType::value_type, typename AccessorType::access_type >
+    {
+    public:
+        typedef base_dynamic_accessor_t< typename AccessorType::value_type, typename AccessorType::access_type > BaseAccessorType;
+      
+        typedef typename BaseAccessorType::value_type value_type;
+        typedef typename BaseAccessorType::access_type access_type;
+
+        typedef typename BaseAccessorType::reference reference;
+        typedef typename BaseAccessorType::const_reference const_reference;
+
+        typedef typename BaseAccessorType::pointer pointer;
+        typedef typename BaseAccessorType::const_pointer const_pointer;
+
+
+        dynamic_accessor_t(AccessorType accessor_) : accessor(accessor_) {}
+
+        virtual pointer find( access_type const & element ) { return accessor.find(element); }
+        virtual const_pointer find( access_type const & element ) const { return accessor.find(element); }
+
+        virtual reference operator()( access_type const & element )       { return access(element); }
+        virtual const_reference operator()( access_type const & element ) const { return access(element); }
+
+        virtual reference access( access_type const & element ) { return accessor.access(element); }
+        virtual const_reference access( access_type const & element ) const { return accessor.access(element); }
+
+    private:
+      AccessorType accessor;
+    };
+
+
+    template<typename AccessorType>
+    class dynamic_accessor_t<const AccessorType> : public base_dynamic_accessor_t< const typename AccessorType::value_type, typename AccessorType::access_type >
+    {
+    public:
+        typedef base_dynamic_accessor_t< const typename AccessorType::value_type, typename AccessorType::access_type > BaseAccessorType;
+      
+        typedef typename BaseAccessorType::value_type value_type;
+        typedef typename BaseAccessorType::access_type access_type;
+
+        typedef typename BaseAccessorType::const_reference reference;
+        typedef typename BaseAccessorType::const_reference const_reference;
+
+        typedef typename BaseAccessorType::const_pointer pointer;
+        typedef typename BaseAccessorType::const_pointer const_pointer;
+
+
+        dynamic_accessor_t(AccessorType accessor_) : accessor(accessor_) {}
+
+        virtual const_pointer find( access_type const & element ) const { return accessor.find(element); }
+        virtual const_reference operator()( access_type const & element ) const { return access(element); }
+        virtual const_reference access( access_type const & element ) const { return accessor.access(element); }
+
+    private:
+      AccessorType accessor;
+    };
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    template<typename ContainerType, typename AccessType>
+    class dense_container_field_t
+    {
+    public:
+
+      typedef ContainerType                                           container_type;
+      typedef typename ContainerType::value_type                      value_type;
+      typedef AccessType                                              access_type;
+
+      typedef typename ContainerType::reference       reference;
+      typedef typename ContainerType::const_reference const_reference;
+
+      typedef typename ContainerType::pointer         pointer;
+      typedef typename ContainerType::const_pointer   const_pointer;
+
+      typedef typename access_type::id_type::base_id_type offset_type;
+      
+      dense_container_field_t() : default_value() {}
+      dense_container_field_t( ContainerType & container_ ) : container(&container_), default_value() {}
+      dense_container_field_t( ContainerType & container_, value_type const & value_type_ ) : container(&container_), default_value(value_type_) {}
+
+      bool is_valid() const { return container != NULL; }
+
+      pointer find(AccessType const & element)
+      {
+        offset_type offset = element.id().get();
+        return (static_cast<offset_type>((*container).size()) > element.id().get()) ? (&(*container)[offset]) : NULL;
+      }
+
+      const_pointer find(AccessType const & element) const
+      {
+        offset_type offset = element.id().get();
+        return (static_cast<offset_type>((*container).size()) > element.id().get()) ? (&(*container)[offset]) : NULL;
+      }
+
+      reference operator()(AccessType const & element)
+      {
+        offset_type offset = element.id().get();
+        if ( static_cast<offset_type>((*container).size()) <= offset) (*container).resize(offset+1);
+        return (*container)[offset];
+      }
+
+      value_type operator()(AccessType const & element) const
+      {
+        offset_type offset = element.id().get();
+        
+        if ( static_cast<offset_type>((*(this->container)).size()) <= offset)
+          return default_value;
+        
+        return (*(this->container))[offset];
+      }
+
+      reference at(AccessType const & element)
+      {
+        offset_type offset = element.id().get();
+        if ( static_cast<offset_type>((*container).size()) <= offset) throw std::out_of_range("dense_container_accessor_t::at() failed");
+        return (*container)[offset];
+      }
+      
+      const_reference at(AccessType const & element) const
+      {
+        offset_type offset = element.id().get();
+        if ( static_cast<offset_type>((*container).size()) <= offset) throw std::out_of_range("dense_container_accessor_t::at() failed");
+        return (*container)[offset];
+      }
+
+
+      
+    protected:
+      ContainerType * container;
+      value_type default_value;
+    };
+
+
+    template<typename ContainerType, typename AccessType>
+    class dense_container_field_t<const ContainerType, AccessType>
+    {
+    public:
+
+      typedef const ContainerType                                     container_type;
+      typedef typename ContainerType::value_type                      value_type;
+      typedef AccessType                                              access_type;
+
+      typedef typename ContainerType::const_reference       reference;
+      typedef typename ContainerType::const_reference const_reference;
+
+      typedef typename ContainerType::const_pointer         pointer;
+      typedef typename ContainerType::const_pointer   const_pointer;
+
+      typedef typename access_type::id_type::base_id_type offset_type;
+
+      dense_container_field_t() : default_value() {}
+      dense_container_field_t( ContainerType const & container_ ) : container(&container_), default_value() {}
+      dense_container_field_t( ContainerType const & container_, value_type const & value_type_ ) : container(&container_), default_value(value_type_) {}
+
+      bool is_valid() const { return container != NULL; }
+
+      const_pointer find(AccessType const & element) const
+      {
+        offset_type offset = element.id().get();
+        return (static_cast<offset_type>((*container).size()) > element.id().get()) ? (&(*container)[offset]) : NULL;
+      }
+
+      value_type operator()(AccessType const & element) const
+      {
+        offset_type offset = element.id().get();
+        
+        if ( static_cast<offset_type>((*(this->container)).size()) <= offset)
+          return default_value;
+        
+        return (*(this->container))[offset];
+      }
+      
+      const_reference at(AccessType const & element) const
+      {
+        offset_type offset = element.id().get();
+        if ( static_cast<offset_type>((*container).size()) <= offset) throw std::out_of_range("dense_container_accessor_t::at() failed");
+        return (*container)[offset];
+      }
+
+      void erase(AccessType const & element);
+      void clear();
+      void resize( std::size_t size );
+
+
+    protected:
+      container_type * container;
+      value_type default_value;
+    };
+
+
+
+
+    template<typename ContainerType, typename AccessType>
+    class std_map_field_t
+    {
+    public:
+
+      typedef ContainerType                                           container_type;
+      typedef typename ContainerType::value_type::second_type         value_type;
+      typedef typename ContainerType::value_type::first_type          key_type;
+      typedef AccessType                                              access_type;
+
+      typedef value_type &       reference;
+      typedef value_type const & const_reference;
+
+      typedef value_type *         pointer;
+      typedef value_type const *   const_pointer;
+
+      std_map_field_t() : default_value() {}
+      std_map_field_t( ContainerType & container_ ) : container(&container_), default_value() {}
+      std_map_field_t( ContainerType & container_, value_type const & value_type_ ) : container(&container_), default_value(value_type_) {}
+
+      bool is_valid() const { return container != NULL; }
+
+      pointer find(AccessType const & element)
+      {
+        typename container_type::iterator it = (*container).find( element.id() );
+        return (it != (*container).end()) ? &it->second : NULL; // return NULL if not found
+      }
+
+      const_pointer find(AccessType const & element) const
+      {
+        typename container_type::const_iterator it = (*container).find( element.id() );
+        return (it != (*container).end()) ? &it->second : NULL; // return NULL if not found
+      }
+
+      reference operator()(AccessType const & element)
+      {
+        return (*container)[ element.id() ];
+      }
+
+      value_type operator()(AccessType const & element) const
+      {
+        typename container_type::const_iterator it = (*(this->container)).find( element.id() );
+        
+        if (it == (*(this->container)).end())
+          return default_value;
+        
+        return it->second;
+      }
+
+      reference at(AccessType const & element)
+      {
+        return (*this)(element);
+      }
+
+      const_reference at(AccessType const & element) const
+      {
+        typename container_type::const_iterator it = (*container).find( element.id() );
+        if (it == (*container).end()) throw std::out_of_range("std_map_accessor_t::at() const failed");
+        return it->second;
+      }
+
+    protected:
+      ContainerType * container;
+      value_type default_value;
+    };
+
+
+    template<typename ContainerType, typename AccessType>
+    class std_map_field_t<const ContainerType, AccessType>
+    {
+    public:
+
+      typedef const ContainerType                                     container_type;
+      typedef typename ContainerType::value_type::second_type         value_type;
+      typedef typename ContainerType::value_type::first_type          key_type;
+      typedef AccessType                                              access_type;
+
+      typedef value_type const &       reference;
+      typedef value_type const & const_reference;
+
+      typedef value_type const *         pointer;
+      typedef value_type const *   const_pointer;
+
+      std_map_field_t() : default_value() {}
+      std_map_field_t( ContainerType const & container_ ) : container(&container_), default_value() {}
+      std_map_field_t( ContainerType const & container_, value_type const & value_type_ ) : container(&container_), default_value(value_type_) {}
+
+      bool is_valid() const { return container != NULL; }
+
+      const_pointer find(AccessType const & element) const
+      {
+        typename container_type::const_iterator it = (*container).find( element.id() );
+        return (it != (*container).end()) ? &it->second : NULL; // return NULL if not found
+      }
+
+      value_type operator()(AccessType const & element) const
+      {
+        typename container_type::const_iterator it = (*(this->container)).find( element.id() );
+        
+        if (it == (*(this->container)).end())
+          return default_value;
+        
+        return it->second;
+      }
+
+      const_reference at(AccessType const & element) const
+      {
+        typename container_type::const_iterator it = (*container).find( element.id() );
+        if (it == (*container).end()) throw std::out_of_range("std_map_accessor_t::at() const failed");
+        return it->second;
+      }
+
+    protected:
+      container_type * container;
+      value_type default_value;
+    };
+
+
+
+    
+    
+    namespace result_of
+    {
+        template<typename ContainerType, typename AccessType>
+        struct field;
+
+        template<typename T, typename Alloc, typename AccessType>
+        struct field< std::vector<T, Alloc>, AccessType >
+        {
+            typedef dense_container_field_t<std::vector<T, Alloc>, AccessType> type;
+        };
+
+        template<typename T, typename Alloc, typename AccessType>
+        struct field< const std::vector<T, Alloc>, AccessType >
+        {
+            typedef dense_container_field_t<const std::vector<T, Alloc>, AccessType> type;
+        };
+
+        template<typename T, typename Alloc, typename AccessType>
+        struct field< std::deque<T, Alloc>, AccessType >
+        {
+            typedef dense_container_field_t<std::deque<T, Alloc>, AccessType> type;
+        };
+
+        template<typename T, typename Alloc, typename AccessType>
+        struct field< const std::deque<T, Alloc>, AccessType >
+        {
+            typedef dense_container_field_t<const std::deque<T, Alloc>, AccessType> type;
+        };
+
+        template<typename Key, typename T, typename Compare, typename Alloc, typename AccessType>
+        struct field< std::map<Key, T, Compare, Alloc>, AccessType >
+        {
+            typedef std_map_field_t<std::map<Key, T, Compare, Alloc>, AccessType> type;
+        };
+
+        template<typename Key, typename T, typename Compare, typename Alloc, typename AccessType>
+        struct field< const std::map<Key, T, Compare, Alloc>, AccessType >
+        {
+            typedef std_map_field_t<const std::map<Key, T, Compare, Alloc>, AccessType> type;
+        };
+    }
+    
+    
+    
+    template<typename AccessType, typename ContainerType>
+    typename result_of::field<ContainerType, AccessType>::type make_field( ContainerType & container )
+    {
+        return typename result_of::field<ContainerType, AccessType>::type(container);
+    }
+
+    template<typename AccessType, typename ContainerType>
+    typename result_of::field<const ContainerType, AccessType>::type make_field( ContainerType const & container )
+    {
+        return typename result_of::field<const ContainerType, AccessType>::type(container);
+    }
+
+
+
+    template<typename element_type, typename container_collection_typemap>
+    typename result_of::field<
+        typename storage::result_of::container_of<
+            container_collection_typemap,
+            element_type
+        >::type,
+        element_type>::type make_field( storage::collection_t<container_collection_typemap> & collection )
+    {
+        return make_field<element_type>( storage::collection::get<element_type>(collection) );
+    }
+
+    template<typename element_type, typename container_collection_typemap>
+    typename result_of::field<
+        const typename storage::result_of::container_of<
+            container_collection_typemap,
+            element_type
+        >::type,
+        element_type>::type make_field( storage::collection_t<container_collection_typemap> const & collection )
+    {
+        return make_field<element_type>( storage::collection::get<element_type>(collection) );
+    }
+    
+    
+    
+    
+    
+    
+    
+    template<typename ValueType, typename AccessType>
+    class base_dynamic_field_t
+    {
+    public:
+        typedef ValueType value_type;
+        typedef AccessType access_type;
+
+        typedef value_type & reference;
+        typedef value_type const & const_reference;
+
+        typedef value_type * pointer;
+        typedef value_type const * const_pointer;
+
+        virtual ~base_dynamic_field_t() {}
+
+        virtual pointer find( access_type const & ) { return 0; }
+        virtual const_pointer find( access_type const & ) const { return 0; }
+
+        virtual reference operator()( access_type const & element ) = 0;
+        virtual value_type operator()( access_type const & element ) const = 0;
+        
+        virtual reference at( access_type const & element ) = 0;
+        virtual const_reference at( access_type const & element ) const = 0;
+    };
+
+    template<typename ValueType, typename AccessType>
+    class base_dynamic_field_t<const ValueType, AccessType>
+    {
+    public:
+        typedef ValueType value_type;
+        typedef AccessType access_type;
+
+        typedef value_type const & reference;
+        typedef value_type const & const_reference;
+
+        typedef value_type const * pointer;
+        typedef value_type const * const_pointer;
+
+        virtual ~base_dynamic_field_t() {}
+
+        virtual const_pointer find( access_type const & ) const { return 0; }
+        virtual value_type operator()( access_type const & element ) const = 0;
+        virtual const_reference at( access_type const & element ) const = 0;
+    };
+
+
+
+
+    template<typename FieldType>
+    class dynamic_field_t : public base_dynamic_field_t< typename FieldType::value_type, typename FieldType::access_type >
+    {
+    public:
+        typedef base_dynamic_field_t< typename FieldType::value_type, typename FieldType::access_type > BaseFieldType;
+      
+        typedef typename BaseFieldType::value_type value_type;
+        typedef typename BaseFieldType::access_type access_type;
+
+        typedef typename BaseFieldType::reference reference;
+        typedef typename BaseFieldType::const_reference const_reference;
+
+        typedef typename BaseFieldType::pointer pointer;
+        typedef typename BaseFieldType::const_pointer const_pointer;
+
+
+        dynamic_field_t(FieldType field_) : field(field_) {}
+
+        virtual pointer find( access_type const & element ) { return field.find(element); }
+        virtual const_pointer find( access_type const & element ) const { return field.find(element); }
+
+        virtual reference operator()( access_type const & element )       { return field(element); }
+        virtual value_type operator()( access_type const & element ) const { return field(element); }
+
+        virtual reference at( access_type const & element ) { return field.at(element); }
+        virtual const_reference at( access_type const & element ) const { return field.at(element); }
+
+    private:
+      FieldType field;
+    };
+
+
+    template<typename FieldType>
+    class dynamic_field_t<const FieldType> : public base_dynamic_field_t< const typename FieldType::value_type, typename FieldType::access_type >
+    {
+    public:
+        typedef base_dynamic_field_t< const typename FieldType::value_type, typename FieldType::access_type > BaseFieldType;
+      
+        typedef typename BaseFieldType::value_type value_type;
+        typedef typename BaseFieldType::access_type access_type;
+
+        typedef typename BaseFieldType::const_reference reference;
+        typedef typename BaseFieldType::const_reference const_reference;
+
+        typedef typename BaseFieldType::const_pointer pointer;
+        typedef typename BaseFieldType::const_pointer const_pointer;
+
+
+        dynamic_field_t(FieldType field_) : field(field_) {}
+
+        virtual const_pointer find( access_type const & element ) const { return field.find(element); }
+        virtual value_type operator()( access_type const & element ) const { return field(element); }
+        virtual const_reference at( access_type const & element ) const { return field.at(element); }
+
+    private:
+      FieldType field;
+    };
+
+    
+    
+    
+    
 
 
 
@@ -500,127 +1040,7 @@ namespace viennagrid
 
 
 
-    template<typename ValueType, typename AccessType>
-    class base_dynamic_accessor_t
-    {
-    public:
-        typedef ValueType value_type;
-        typedef AccessType access_type;
 
-        typedef value_type & reference;
-        typedef value_type const & const_reference;
-
-        typedef value_type * pointer;
-        typedef value_type const * const_pointer;
-
-        virtual ~base_dynamic_accessor_t() {}
-
-        virtual pointer find( access_type const & ) { return 0; }
-        virtual const_pointer find( access_type const & ) const { return 0; }
-
-        virtual reference access_unchecked( access_type const & element ) = 0;
-        virtual const_reference access_unchecked( access_type const & element ) const = 0;
-
-        virtual reference access( access_type const & element ) = 0;
-        virtual const_reference access( access_type const & element ) const = 0;
-
-        reference operator()( access_type const & element )       { return access(element); }
-        const_reference operator()( access_type const & element ) const { return access(element); }
-
-        virtual void erase( access_type const & ) {}
-
-        virtual void clear() {}
-        virtual void resize( std::size_t ) {}
-    };
-
-    template<typename ValueType, typename AccessType>
-    class base_dynamic_accessor_t<const ValueType, AccessType>
-    {
-    public:
-        typedef ValueType value_type;
-        typedef AccessType access_type;
-
-        typedef value_type const & reference;
-        typedef value_type const & const_reference;
-
-        typedef value_type const * pointer;
-        typedef value_type const * const_pointer;
-
-        virtual ~base_dynamic_accessor_t() {}
-
-        virtual const_pointer find( access_type const & ) const { return 0; }
-        virtual const_reference access_unchecked( access_type const & element ) const = 0;
-        virtual const_reference access( access_type const & element ) const = 0;
-        
-        const_reference operator()( access_type const & element ) const { return access(element); }
-    };
-
-
-
-
-    template<typename AccessorType>
-    class dynamic_accessor_t : public base_dynamic_accessor_t< typename AccessorType::value_type, typename AccessorType::access_type >
-    {
-    public:
-        typedef typename AccessorType::value_type value_type;
-        typedef typename AccessorType::access_type access_type;
-
-        typedef typename AccessorType::reference reference;
-        typedef typename AccessorType::const_reference const_reference;
-
-        typedef typename AccessorType::pointer pointer;
-        typedef typename AccessorType::const_pointer const_pointer;
-
-
-        dynamic_accessor_t(AccessorType accessor_) : accessor(accessor_) {}
-
-        virtual pointer find( access_type const & element ) { return accessor.find(element); }
-        virtual const_pointer find( access_type const & element ) const { return accessor.find(element); }
-
-        virtual reference access_unchecked( access_type const & element ) { return accessor.access_unchecked(element); }
-        virtual const_reference access_unchecked( access_type const & element ) const { return accessor.access_unchecked(element); }
-
-        virtual reference access( access_type const & element ) { return accessor.access(element); }
-        virtual const_reference access( access_type const & element ) const { return accessor.access(element); }
-
-        reference operator()( access_type const & element )       { return access(element); }
-        const_reference operator()( access_type const & element ) const { return access(element); }
-
-        virtual void erase( access_type const & element ) { accessor.erase(element); }
-
-        virtual void clear() { accessor.clear(); }
-        virtual void resize( std::size_t size ) { accessor.resize(size); }
-
-    private:
-      AccessorType accessor;
-    };
-
-
-    template<typename AccessorType>
-    class dynamic_accessor_t<const AccessorType> : public base_dynamic_accessor_t< const typename AccessorType::value_type, typename AccessorType::access_type >
-    {
-    public:
-        typedef typename AccessorType::value_type value_type;
-        typedef typename AccessorType::access_type access_type;
-
-        typedef typename AccessorType::const_reference reference;
-        typedef typename AccessorType::const_reference const_reference;
-
-        typedef typename AccessorType::const_pointer pointer;
-        typedef typename AccessorType::const_pointer const_pointer;
-
-
-        dynamic_accessor_t(AccessorType accessor_) : accessor(accessor_) {}
-
-        virtual const_pointer find( access_type const & element ) const { return accessor.find(element); }
-        virtual const_reference access_unchecked( access_type const & element ) const { return accessor.access_unchecked(element); }
-        virtual const_reference access( access_type const & element ) const { return accessor.access(element); }
-
-        const_reference operator()( access_type const & element ) const { return access(element); }
-
-    private:
-      AccessorType accessor;
-    };
     
 }
 
