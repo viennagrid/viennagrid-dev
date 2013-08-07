@@ -341,7 +341,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::iterator<LineRange>::type                                       LineIterator;
 
       LineRange lines = viennagrid::elements(domain_in);
-      edge_refinement_flag_accessor.resize(lines.size());
+//       edge_refinement_flag_accessor.resize(lines.size());
       for (LineIterator it = lines.begin(); it != lines.end(); ++it)
         edge_refinement_flag_accessor(*it) = true;
     }
@@ -562,10 +562,13 @@ namespace viennagrid
               PointAccessorT point_accessor_in,
               EdgeRefinementFlagAccessorT const edge_refinement_flag_accessor)
   {
-    typedef typename viennagrid::result_of::vertex<WrappedDomainConfigOutT>::type VertexType;
-    typedef typename viennagrid::result_of::line<WrappedDomainConfigOutT>::type EdgeType;
+    typedef domain_t<WrappedDomainConfigInT> DomainInT;
+    typedef domain_t<WrappedDomainConfigOutT> DomainOutT;
+    
+    typedef typename viennagrid::result_of::vertex<DomainOutT>::type VertexType;
+    typedef typename viennagrid::result_of::line<DomainOutT>::type EdgeType;
 
-    typedef typename viennagrid::result_of::vertex_handle<WrappedDomainConfigOutT>::type VertexHandleType;
+    typedef typename viennagrid::result_of::vertex_handle<DomainOutT>::type VertexHandleType;
 
     std::deque<VertexHandleType> vertex_refinement_vertex_handle;
     std::deque<VertexHandleType> edge_refinement_vertex_handle;
@@ -614,8 +617,11 @@ namespace viennagrid
                       PointAccessorT point_accessor_in,
                       CellRefinementFlagAccessorT const cell_refinement_flag_accessor)
   {
-    typedef typename viennagrid::result_of::line<WrappedDomainConfigOutT>::type EdgeType;
-    typedef typename viennagrid::result_of::cell<WrappedDomainConfigOutT>::type CellType;
+    typedef domain_t<WrappedDomainConfigInT> DomainInT;
+    typedef domain_t<WrappedDomainConfigOutT> DomainOutT;
+    
+    typedef typename viennagrid::result_of::line<DomainOutT>::type EdgeType;
+    typedef typename viennagrid::result_of::cell<DomainOutT>::type CellType;
 
     std::deque<bool> edge_refinement_flag;
 
