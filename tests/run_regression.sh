@@ -1,7 +1,7 @@
 #!/bin/bash
 
 INPUT=$1
-BUILDFOLDER=build
+BUILDFOLDER=../build
 
 # get the operating system string
 OS=`uname`
