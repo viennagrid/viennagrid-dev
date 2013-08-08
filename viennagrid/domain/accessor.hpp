@@ -129,6 +129,32 @@ namespace viennagrid
 
 
 
+    
+    
+    
+    namespace result_of
+    {
+      template<typename ElementT, typename ValueT, typename ContainerTagT = storage::std_deque_tag>
+      struct accessor_container;
+
+      template<typename ElementT, typename ValueT>
+      struct accessor_container<ElementT, ValueT, storage::std_deque_tag>
+      {
+        typedef std::deque<ValueT> type;
+      };
+      
+      template<typename ElementT, typename ValueT>
+      struct accessor_container<ElementT, ValueT, storage::std_vector_tag>
+      {
+        typedef std::vector<ValueT> type;
+      };
+      
+      template<typename ElementT, typename ValueT>
+      struct accessor_container<ElementT, ValueT, storage::std_map_tag>
+      {
+        typedef std::map< typename result_of::id<ElementT>::type, ValueT > type;
+      };
+    }
 
 
 
