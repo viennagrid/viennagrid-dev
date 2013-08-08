@@ -590,10 +590,13 @@ namespace viennagrid
               domain_t<WrappedDomainConfigOutT> & domain_out,      segmentation_t<WrappedSegmentationConfigOutT> & segmentation_out,
               EdgeRefinementFlagAccessor const edge_refinement_flag_accessor)
   {
-    typedef typename viennagrid::result_of::vertex<WrappedDomainConfigOutT>::type VertexType;
-    typedef typename viennagrid::result_of::line<WrappedDomainConfigOutT>::type EdgeType;
+    typedef domain_t<WrappedDomainConfigInT> DomainInT;
+    typedef domain_t<WrappedDomainConfigOutT> DomainOutT;
+    
+    typedef typename viennagrid::result_of::vertex<DomainOutT>::type VertexType;
+    typedef typename viennagrid::result_of::line<DomainOutT>::type EdgeType;
 
-    typedef typename viennagrid::result_of::vertex_handle<WrappedDomainConfigOutT>::type VertexHandleType;
+    typedef typename viennagrid::result_of::vertex_handle<DomainOutT>::type VertexHandleType;
 
     std::deque<VertexHandleType> vertex_refinement_vertex_handle;
     std::deque<VertexHandleType> edge_refinement_vertex_handle;
