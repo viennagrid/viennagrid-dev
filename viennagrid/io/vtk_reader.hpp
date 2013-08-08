@@ -882,10 +882,10 @@ namespace viennagrid
 
 
 
-      void operator()(DomainType & domain, std::string const & filename)
+      int operator()(DomainType & domain, std::string const & filename)
       {
         SegmentationType tmp(domain);
-        (*this)(domain, tmp, filename);
+        return (*this)(domain, tmp, filename);
       }
 
 
