@@ -133,9 +133,9 @@ namespace viennagrid
 
 
 
-    template <typename ElementTypeOrTag, typename DomainSegmentType>
+    template <typename ElementTypeOrTag, typename DomainSegmentType, typename PointAccessorType>
     typename viennagrid::result_of::point<DomainSegmentType>::type
-    centroid_domain(DomainSegmentType const & domain)
+    centroid_domain(DomainSegmentType const & domain, PointAccessorType const point_accessor)
     {
       //typedef typename DomainSegmentType::config_type                                      ConfigType;
       //typedef typename ElementType::tag                                                CellTag;
@@ -155,8 +155,8 @@ namespace viennagrid
       CellRange cells = viennagrid::elements<ElementTag>(domain);
       for (CellIterator cit = cells.begin(); cit != cells.end(); ++cit)
       {
-        double vol_cell = viennagrid::volume(domain, *cit);
-        result += vol_cell * centroid( default_point_accessor(domain), *cit);
+        double vol_cell = viennagrid::volume( point_accessor, *cit );
+        result += vol_cell * centroid( point_accessor, *cit);
         volume += vol_cell;
       }
 
@@ -170,26 +170,54 @@ namespace viennagrid
    *
    * @param cell    The n-cell for which the centroid should be computed
    */
-    template <typename PointAccessorType, typename ElementType>
-    typename viennagrid::result_of::point<PointAccessorType>::type
+  template <typename PointAccessorType, typename ElementType>
+  typename viennagrid::result_of::point<PointAccessorType>::type
   centroid(PointAccessorType const accessor, ElementType const & cell)
   {
     return detail::centroid( accessor, cell, typename ElementType::tag());
   }
 
-    template <typename ElementTag, typename WrappedConfigType>
-    typename viennagrid::result_of::point< element_t<ElementTag,WrappedConfigType> >::type
+  template <typename ElementTag, typename WrappedConfigType>
+  typename viennagrid::result_of::point< element_t<ElementTag,WrappedConfigType> >::type
   centroid(element_t<ElementTag,WrappedConfigType> const & cell)
   {
     return detail::centroid( default_point_accessor(cell), cell, ElementTag());
+  }
+  
+  
+  
+  
+  template<typename ElementTypeOrTag, typename WrappedConfigType, typename PointAccessorType>
+  typename viennagrid::result_of::point< domain_t<WrappedConfigType> >::type
+  centroid(domain_t<WrappedConfigType> const & domain, PointAccessorType const point_accessor)
+  {
+    return detail::centroid_domain<ElementTypeOrTag>(domain, point_accessor);
+  }
+  
+  template<typename WrappedConfigType, typename PointAccessorType>
+  typename viennagrid::result_of::point< domain_t<WrappedConfigType> >::type
+  centroid(domain_t<WrappedConfigType> const & domain, PointAccessorType const point_accessor)
+  {
+    typedef typename viennagrid::result_of::cell_tag< domain_t<WrappedConfigType> >::type CellTag;
+    return detail::centroid_domain<CellTag>(domain, point_accessor);
   }
 
   template<typename ElementTypeOrTag, typename WrappedConfigType>
   typename viennagrid::result_of::point< domain_t<WrappedConfigType> >::type
   centroid(domain_t<WrappedConfigType> const & domain)
   {
-      return detail::centroid_domain<ElementTypeOrTag>(domain);
+    return centroid<ElementTypeOrTag>(domain, default_point_accessor(domain));
   }
+  
+  template<typename WrappedConfigType>
+  typename viennagrid::result_of::point< domain_t<WrappedConfigType> >::type
+  centroid(domain_t<WrappedConfigType> const & domain)
+  {
+    typedef typename viennagrid::result_of::cell_tag< domain_t<WrappedConfigType> >::type CellTag;
+    return centroid<CellTag>(domain);
+  }
+  
+
 
 
 } //namespace viennagrid
