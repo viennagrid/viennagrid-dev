@@ -158,6 +158,15 @@ namespace viennagrid
 
         return EXIT_SUCCESS;
       } //operator()
+      
+      
+      template <typename DomainType>
+      int operator()(DomainType & domain, std::string const & filename)
+      {
+        typedef typename viennagrid::result_of::segmentation<DomainType>::type SegmentationType;
+        SegmentationType tmp(domain);
+        return (*this)(domain, tmp, filename);
+      }
 
     }; //class netgen_reader
 
