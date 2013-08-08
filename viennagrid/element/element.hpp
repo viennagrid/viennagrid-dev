@@ -124,27 +124,27 @@ namespace viennagrid
             else
             {
                 typedef typename result_of::const_element_range<bnd_cell_type, vertex_tag>::type           VertexOnElementConstRange;
-                typedef typename result_of::const_handle_iterator<VertexOnElementConstRange>::type     VertexOnElementConstIterator;
+                typedef typename result_of::const_iterator<VertexOnElementConstRange>::type     VertexOnElementConstIterator;
 
                 typedef typename result_of::element_range<bnd_cell_type, vertex_tag>::type      VertexOnElementRange;
-                typedef typename result_of::handle_iterator<VertexOnElementRange>::type     VertexOnElementIterator;
+                typedef typename result_of::iterator<VertexOnElementRange>::type     VertexOnElementIterator;
 
 
                 long i=0; dim_type j=0;
 
                 //set orientation:
                 VertexOnElementRange vertices_on_element = elements<vertex_tag>( elements_[pos] );
-                for (VertexOnElementIterator voeit = vertices_on_element.handle_begin();
-                        voeit != vertices_on_element.handle_end();
+                for (VertexOnElementIterator voeit = vertices_on_element.begin();
+                        voeit != vertices_on_element.end();
                         ++voeit, ++i)
                 {
 
                     VertexOnElementConstRange vertices_on_element_2 = elements<vertex_tag>( to_insert );
-                    for (VertexOnElementConstIterator voeit2 = vertices_on_element_2.handle_begin();
-                            voeit2 != vertices_on_element_2.handle_end();
+                    for (VertexOnElementConstIterator voeit2 = vertices_on_element_2.begin();
+                            voeit2 != vertices_on_element_2.end();
                             ++voeit2, ++j)
                     {
-                        if (*voeit == *voeit2)
+                        if (voeit.handle() == voeit2.handle())
                         {
                             orientations_[pos].setPermutation(j,i);
                             break;
@@ -537,7 +537,7 @@ namespace viennagrid
     template<typename ElementTag, typename WrappedConfigType>
     class element_t :
         public viennagrid::storage::id_handler<
-                    typename viennagrid::storage::result_of::id<
+                    typename viennagrid::storage::result_of::make_id<
                       element_t<
                         ElementTag,
                         WrappedConfigType
@@ -559,7 +559,7 @@ namespace viennagrid
 
         typedef typename result_of::boundary_element_typelist<bnd_cell_container_typelist>::type boundary_cell_typelist;
 
-        typedef typename viennagrid::storage::result_of::id< element_t<ElementTag, WrappedConfigType>, id_tag>::type id_type;
+        typedef typename viennagrid::storage::result_of::make_id< element_t<ElementTag, WrappedConfigType>, id_tag>::type id_type;
         typedef typename viennagrid::storage::result_of::const_id<id_type>::type const_id_type;
 
         template<typename container_typelist>
@@ -611,7 +611,7 @@ namespace viennagrid
     template<typename WrappedConfigType>
     class element_t<vertex_tag, WrappedConfigType> :
         public viennagrid::storage::id_handler<
-                    typename viennagrid::storage::result_of::id<
+                    typename viennagrid::storage::result_of::make_id<
                       element_t<
                         vertex_tag,
                         WrappedConfigType
@@ -636,7 +636,7 @@ namespace viennagrid
         element_t( viennagrid::storage::collection_t<container_typelist> & ) {}
 
         typedef typename result_of::boundary_element_typelist<bnd_cell_container_typelist>::type boundary_cell_typelist;
-        typedef typename viennagrid::storage::result_of::id< element_t<vertex_tag, WrappedConfigType>, id_tag>::type id_type;
+        typedef typename viennagrid::storage::result_of::make_id< element_t<vertex_tag, WrappedConfigType>, id_tag>::type id_type;
         typedef typename viennagrid::storage::result_of::const_id<id_type>::type const_id_type;
 
         template<typename inserter_type>
@@ -664,18 +664,6 @@ namespace viennagrid
 
     namespace result_of
     {
-
-
-        template<typename element_type>
-        struct id_type
-        {
-            typedef typename element_type::id_type type;
-        };
-
-
-
-
-
         template<typename element_type_or_tag>
         struct topologic_dimension
         {

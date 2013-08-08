@@ -753,7 +753,7 @@ namespace viennagrid
 
 
     template<typename ElementTypeOrTag, typename ConfigType>
-    typename viennagrid::result_of::id_type<
+    typename viennagrid::result_of::id<
       typename viennagrid::result_of::element< domain_t<ConfigType>, ElementTypeOrTag>::type
     >::type max_id( domain_t<ConfigType> const & domain )
     { return id_generator(domain).max_id( viennagrid::meta::tag< typename viennagrid::result_of::element< domain_t<ConfigType>, ElementTypeOrTag>::type >() ); }
@@ -782,7 +782,6 @@ namespace viennagrid
         typedef typename storage::handle::result_of::value_type<handle_type>::type value_type;
         return storage::collection::get<value_type>(element_collection(domain)).dereference_handle( handle );
     }
-
 
 
     template<typename domain_type, typename ElementTag, typename WrappedConfigType>
@@ -1108,7 +1107,7 @@ namespace viennagrid
 
 
     template<typename element_type_or_tag, typename domain_type>
-    typename viennagrid::result_of::id_type< typename viennagrid::result_of::element<domain_type, element_type_or_tag>::type >::type id_upper_bound( domain_type const & domain )
+    typename viennagrid::result_of::id< typename viennagrid::result_of::element<domain_type, element_type_or_tag>::type >::type id_upper_bound( domain_type const & domain )
     {
         typedef typename viennagrid::result_of::element<domain_type, element_type_or_tag>::type element_type;
         return id_generator(domain).max_id( viennagrid::meta::tag<element_type>() );

@@ -81,11 +81,11 @@ namespace viennagrid
             for (LineIterator lit = lines.begin(); lit != lines.end(); ++lit)
             {
                 typedef typename result_of::element_range<LineType, vertex_tag>::type VertexOnLineRange;
-                typedef typename result_of::handle_iterator<VertexOnLineRange>::type VertexOnLineHandleIterator;
+                typedef typename result_of::iterator<VertexOnLineRange>::type VertexOnLineHandleIterator;
 
                 VertexOnLineRange vertices = elements<vertex_tag>(*lit);
                 for (VertexOnLineHandleIterator vlhit = vertices.begin(); vlhit != vertices.end(); ++vlhit)
-                    plc.container( vertex_tag() ).insert_unique_handle( *vlhit );
+                    plc.container( vertex_tag() ).insert_unique_handle( vlhit.handle() );
             }
 
         }

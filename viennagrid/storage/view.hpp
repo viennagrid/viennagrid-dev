@@ -159,12 +159,6 @@ namespace viennagrid
             };
 
 
-
-            typedef typename handle_container_type::iterator handle_iterator;
-            typedef typename handle_container_type::const_iterator const_handle_iterator;
-
-
-
             view_t() {}
 
             void set_base_container( base_container_type & base_container_ )
@@ -187,13 +181,6 @@ namespace viennagrid
 
             const_iterator begin() const { return const_iterator(*this, handle_container.begin()); }
             const_iterator end() const { return const_iterator(*this, handle_container.end()); }
-
-
-            handle_iterator handle_begin() { return handle_container.begin(); }
-            handle_iterator handle_end() { return handle_container.end(); }
-
-            const_handle_iterator handle_begin() const { return handle_container.begin(); }
-            const_handle_iterator handle_end() const { return handle_container.end(); }
 
             reference dereference_handle( handle_type handle ) { return viennagrid::storage::handle::dereference_handle( *base_container, handle, handle_tag() ); }
             const_reference dereference_handle( const_handle_type handle ) const { return viennagrid::storage::handle::dereference_handle( *base_container, handle, handle_tag() ); }
@@ -244,8 +231,8 @@ namespace viennagrid
                 }
             }
 
-            handle_type handle_at(std::size_t pos) { return *viennagrid::advance(handle_begin(), pos); }
-            const_handle_type handle_at(std::size_t pos) const { return *viennagrid::advance(handle_begin(), pos); }
+            handle_type handle_at(std::size_t pos) { return viennagrid::advance(begin(), pos).handle(); }
+            const_handle_type handle_at(std::size_t pos) const { return viennagrid::advance(begin(), pos).handle(); }
 
 
 
@@ -412,11 +399,6 @@ namespace viennagrid
 
 
 
-            typedef typename handle_container_type::iterator handle_iterator;
-            typedef typename handle_container_type::const_iterator const_handle_iterator;
-
-
-
             view_t() {}
 
             void set_base_container( base_container_type & base_container_ )
@@ -440,12 +422,6 @@ namespace viennagrid
             const_iterator begin() const { return const_iterator(*this, handle_container.begin()); }
             const_iterator end() const { return const_iterator(*this, handle_container.end()); }
 
-
-            handle_iterator handle_begin() { return handle_container.begin(); }
-            handle_iterator handle_end() { return handle_container.end(); }
-
-            const_handle_iterator handle_begin() const { return handle_container.begin(); }
-            const_handle_iterator handle_end() const { return handle_container.end(); }
 
             reference dereference_handle( handle_type handle ) { return viennagrid::storage::handle::dereference_handle( *base_container, handle, handle_tag() ); }
             const_reference dereference_handle( const_handle_type handle ) const { return viennagrid::storage::handle::dereference_handle( *base_container, handle, handle_tag() ); }
@@ -492,8 +468,8 @@ namespace viennagrid
                 }
             }
 
-            handle_type handle_at(std::size_t pos) { return *viennagrid::advance(handle_begin(), pos); }
-            const_handle_type handle_at(std::size_t pos) const { return *viennagrid::advance(handle_begin(), pos); }
+            handle_type handle_at(std::size_t pos) { return viennagrid::advance(begin(), pos).handle(); }
+            const_handle_type handle_at(std::size_t pos) const { return viennagrid::advance(begin(), pos).handle(); }
 
 
 
@@ -567,9 +543,9 @@ namespace viennagrid
             template<typename base_container_type, typename view_base_container_type, typename handle_container_tag, typename predicate>
             void handle_if(base_container_type & src_container, view_t<view_base_container_type, handle_container_tag> & dst_view, predicate pred)
             {
-                for (typename base_container_type::handle_iterator it = src_container.handle_begin(); it != src_container.handle_end(); ++it)
+                for (typename base_container_type::iterator it = src_container.begin(); it != src_container.end(); ++it)
                     if (pred(*it))
-                        dst_view.insert_handle( *it );
+                        dst_view.insert_handle( it.handle() );
             }
 
             template<typename base_container_type, typename view_base_container_type, typename view_container_tag>

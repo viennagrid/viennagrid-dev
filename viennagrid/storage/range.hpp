@@ -84,27 +84,20 @@ namespace viennagrid
 
 
             typedef typename container_type::handle_type handle_type;
-            typedef typename container_type::handle_iterator handle_iterator;
-            handle_iterator handle_begin() { return container->handle_begin(); }
-            handle_iterator handle_end() { return container->handle_end(); }
-
             typedef typename container_type::const_handle_type const_handle_type;
-            typedef typename container_type::const_handle_iterator const_handle_iterator;
-            const_handle_iterator handle_begin() const { return container->handle_begin(); }
-            const_handle_iterator handle_end() const { return container->handle_end(); }
+
 
 
 
             iterator erase( iterator pos ) { return container->erase( pos ); }
-            handle_iterator erase( handle_iterator pos ) { return handle_iterator(container->erase( pos )); }
 
 
 
 
             handle_type handle_at(std::size_t pos)
-            { return *viennagrid::advance(handle_begin(), pos); }
+            { return viennagrid::advance(begin(), pos).handle(); }
             const_handle_type handle_at(std::size_t pos) const
-            { return *viennagrid::advance(handle_begin(), pos); }
+            { return viennagrid::advance(begin(), pos).handle(); }
 
 
             void erase_handle(handle_type handle)
@@ -204,19 +197,12 @@ namespace viennagrid
 
 
             typedef typename container_type::const_handle_type handle_type;
-            typedef typename container_type::const_handle_iterator handle_iterator;
-            handle_iterator handle_begin() { return container->handle_begin(); }
-            handle_iterator handle_end() { return container->handle_end(); }
-
             typedef typename container_type::const_handle_type const_handle_type;
-            typedef typename container_type::const_handle_iterator const_handle_iterator;
-            const_handle_iterator handle_begin() const { return container->handle_begin(); }
-            const_handle_iterator handle_end() const { return container->handle_end(); }
 
             handle_type handle_at(std::size_t pos)
-            { return *viennagrid::advance(handle_begin(), pos); }
+            { return viennagrid::advance(begin(), pos).handle(); }
             const_handle_type handle_at(std::size_t pos) const
-            { return *viennagrid::advance(handle_begin(), pos); }
+            { return viennagrid::advance(begin(), pos).handle(); }
 
             const container_type * get_base_container() const { return container; }
 

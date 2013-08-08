@@ -32,6 +32,7 @@ namespace viennagrid
         struct std_deque_tag;
         struct std_list_tag;
         struct std_set_tag;
+        struct std_map_tag;
 
 
         typedef viennagrid::meta::make_typemap<

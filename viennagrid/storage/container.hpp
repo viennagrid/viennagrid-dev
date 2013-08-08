@@ -305,138 +305,6 @@ namespace viennagrid
                 value_type const & operator* () { return value(); }
                 value_type const & operator* () const { return value(); }
             };
-
-
-
-
-
-
-            template<typename base_iterator, typename handle_tag>
-            class handle_iterator_impl {};
-
-            template<typename base_iterator>
-            class handle_iterator_impl<base_iterator, pointer_handle_tag> : public base_iterator
-            {
-            public:
-
-                typedef typename std::iterator_traits<base_iterator>::difference_type difference_type;
-                typedef typename std::iterator_traits<base_iterator>::value_type * value_type;
-                typedef value_type * pointer;
-                typedef value_type & reference;
-                typedef typename std::iterator_traits<base_iterator>::iterator_category iterator_category;
-
-
-                handle_iterator_impl(base_iterator it) : base_iterator(it) {}
-
-
-                value_type operator* () { return & base_iterator::operator*(); }
-                value_type operator* () const { return & base_iterator::operator*(); }
-            };
-
-            template<typename base_iterator>
-            class handle_iterator_impl<base_iterator, iterator_handle_tag> : public base_iterator
-            {
-            public:
-
-                typedef typename std::iterator_traits<base_iterator>::difference_type difference_type;
-                typedef base_iterator value_type;
-                typedef value_type * pointer;
-                typedef value_type & reference;
-                typedef typename std::iterator_traits<base_iterator>::iterator_category iterator_category;
-
-
-                handle_iterator_impl(base_iterator it) : base_iterator(it) {}
-
-
-                value_type operator* () { return static_cast<base_iterator>(*this); }
-                value_type const operator* () const { return static_cast<base_iterator>(*this); }
-            };
-
-            template<typename base_iterator>
-            class handle_iterator_impl<base_iterator, id_handle_tag> : public base_iterator
-            {
-            public:
-
-                typedef typename std::iterator_traits<base_iterator>::value_type::id_type id_type;
-
-                typedef typename std::iterator_traits<base_iterator>::difference_type difference_type;
-                typedef id_type value_type;
-                typedef id_type * pointer;
-                typedef id_type & reference;
-                typedef typename std::iterator_traits<base_iterator>::iterator_category iterator_category;
-
-
-                handle_iterator_impl(base_iterator it) : base_iterator(it) {}
-
-
-                value_type operator* () { return base_iterator::operator*().id(); }
-                value_type const operator* () const { return base_iterator::operator*().id(); }
-            };
-
-
-
-            template<typename base_iterator, typename handle_tag>
-            class const_handle_iterator_impl {};
-
-            template<typename base_iterator>
-            class const_handle_iterator_impl<base_iterator, pointer_handle_tag> : public base_iterator
-            {
-            public:
-
-                typedef typename std::iterator_traits<base_iterator>::difference_type difference_type;
-                typedef const typename std::iterator_traits<base_iterator>::value_type * value_type;
-                typedef value_type * pointer;
-                typedef value_type & reference;
-                typedef typename std::iterator_traits<base_iterator>::iterator_category iterator_category;
-
-
-                const_handle_iterator_impl(base_iterator it) : base_iterator(it) {}
-
-
-                value_type operator* () { return & base_iterator::operator*(); }
-                value_type operator* () const { return & base_iterator::operator*(); }
-            };
-
-            template<typename base_iterator>
-            class const_handle_iterator_impl<base_iterator, iterator_handle_tag> : public base_iterator
-            {
-            public:
-
-                typedef typename std::iterator_traits<base_iterator>::difference_type difference_type;
-                typedef base_iterator value_type;
-                typedef value_type * pointer;
-                typedef value_type & reference;
-                typedef typename std::iterator_traits<base_iterator>::iterator_category iterator_category;
-
-
-                const_handle_iterator_impl(base_iterator it) : base_iterator(it) {}
-
-
-                value_type operator* () { return static_cast<base_iterator>(*this); }
-                value_type const operator* () const { return static_cast<base_iterator>(*this); }
-            };
-
-            template<typename base_iterator>
-            class const_handle_iterator_impl<base_iterator, id_handle_tag> : public base_iterator
-            {
-            public:
-
-                typedef typename std::iterator_traits<base_iterator>::value_type::id_type id_type;
-
-                typedef typename std::iterator_traits<base_iterator>::difference_type difference_type;
-                typedef id_type value_type;
-                typedef id_type * pointer;
-                typedef id_type & reference;
-                typedef typename std::iterator_traits<base_iterator>::iterator_category iterator_category;
-
-
-                const_handle_iterator_impl(base_iterator it) : base_iterator(it) {}
-
-
-                value_type operator* () { return base_iterator::operator*().id(); }
-                value_type const operator* () const { return base_iterator::operator*().id(); }
-            };
-
         }
 
 
@@ -597,26 +465,17 @@ namespace viennagrid
             const_iterator end() const { return cend(); }
 
 
-
-            typedef container::handle_iterator_impl<typename base_container::iterator, handle_tag> handle_iterator;
-            handle_iterator handle_begin() { return handle_iterator(base_container::begin()); }
-            handle_iterator handle_end() { return handle_iterator(base_container::end()); }
-
-            typedef container::const_handle_iterator_impl<typename base_container::const_iterator, handle_tag> const_handle_iterator;
-            const_handle_iterator handle_begin() const { return const_handle_iterator(base_container::begin()); }
-            const_handle_iterator handle_end() const { return const_handle_iterator(base_container::end()); }
-
             handle_type handle_at(std::size_t pos)
             {
-                handle_iterator it = handle_begin();
+                iterator it = begin();
                 std::advance( it, pos );
-                return *it;
+                return it.handle();
             }
             const_handle_type handle_at(std::size_t pos) const
             {
-                const_handle_iterator it = handle_begin();
+                const_iterator it = begin();
                 std::advance( it, pos );
-                return *it;
+                return it.handle();
             }
 
 

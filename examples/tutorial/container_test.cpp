@@ -95,8 +95,8 @@ void test()
     std::copy( my_container.begin(), my_container.end(), std::ostream_iterator<id_int>(cout, " ") );
     cout << endl;
     cout << "my_container handle iteration ";
-    for (typename my_container_type::handle_iterator it = my_container.handle_begin(); it != my_container.handle_end(); ++it)
-        cout << *it << " ";
+    for (typename my_container_type::iterator it = my_container.begin(); it != my_container.end(); ++it)
+        cout << it.handle() << " ";
     cout << endl;
     cout << "my_container front/back " << my_container.front() << " " << my_container.back() << endl;
     cout << "my_container random access " << my_container[0] << " " << my_container[1] << endl;
@@ -109,8 +109,8 @@ void test()
     cout << endl;
 
     cout << "my_view handle iteration ";
-    for (typename my_view_type::handle_iterator it = my_view.handle_begin(); it != my_view.handle_end(); ++it)
-        cout << *it << " ";
+    for (typename my_view_type::iterator it = my_view.begin(); it != my_view.end(); ++it)
+        cout << it.handle() << " ";
     cout << endl;
     cout << "my_view front/back " << my_view.front() << " " << my_view.back() << endl;
     cout << "my_view random access " << my_view[0] << endl;
@@ -123,8 +123,8 @@ void test()
     cout << endl;
 
     cout << "my_view2 handle iteration ";
-    for (typename my_view_type::handle_iterator it = my_view2.handle_begin(); it != my_view2.handle_end(); ++it)
-        cout << *it << " ";
+    for (typename my_view_type::iterator it = my_view2.begin(); it != my_view2.end(); ++it)
+        cout << it.handle() << " ";
     cout << endl;
     cout << "my_view2 front/back " << my_view2.front() << " " << my_view2.back() << endl;
     cout << "my_view2 random access " << my_view2[0] << endl;
@@ -141,8 +141,8 @@ void test()
     std::copy( my_view3.begin(), my_view3.end(), std::ostream_iterator<id_int>(cout, " ") );
     cout << endl;
     cout << "my_view3 handle iteration ";
-    for (typename my_view_type::handle_iterator it = my_view3.handle_begin(); it != my_view3.handle_end(); ++it)
-        cout << *it << " ";
+    for (typename my_view_type::iterator it = my_view3.begin(); it != my_view3.end(); ++it)
+        cout << it.handle() << " ";
     cout << endl;
     cout << "my_view3 front/back " << my_view3.front() << " " << my_view3.back() << endl;
     cout << "my_view3 random access " << my_view3[0] << endl;
@@ -161,8 +161,8 @@ void test()
     cout << "my_view3 iteration ";
     std::copy( my_view3.begin(), my_view3.end(), std::ostream_iterator<id_int>(cout, " ") );
     cout << endl;
-    cout << "my_view3 handle iteration ";
-    std::copy( my_view3.handle_begin(), my_view3.handle_end(), std::ostream_iterator<handle_type>(cout, " ") );
+//     cout << "my_view3 handle iteration ";
+//     std::copy( my_view3.handle_begin(), my_view3.handle_end(), std::ostream_iterator<handle_type>(cout, " ") );
     //for (typename my_view_type::handle_iterator it = my_view3.handle_begin(); it != my_view3.handle_end(); ++it)
     //    cout << *it << " ";
     cout << endl;

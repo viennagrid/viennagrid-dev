@@ -73,7 +73,6 @@ void assemble(DomainType & domain,
   
   typedef typename viennagrid::result_of::vertex_range<DomainType>::type     VertexContainer;
   typedef typename viennagrid::result_of::iterator<VertexContainer>::type          VertexIterator;
-  typedef typename viennagrid::result_of::handle_iterator<VertexContainer>::type          VertexHandleIterator;
 
   typedef typename viennagrid::result_of::coboundary_range<DomainType, viennagrid::vertex_tag, viennagrid::line_tag>::type EdgeOnVertexContainer;
   typedef typename viennagrid::result_of::iterator<EdgeOnVertexContainer>::type    EdgeOnVertexIterator;
@@ -142,11 +141,11 @@ void assemble(DomainType & domain,
   //        
   // Poisson equation assembly:  div( grad(psi) ) = 1
   //
-  for (VertexHandleIterator vhit = vertices.handle_begin();
-        vhit != vertices.handle_end();
+  for (VertexIterator vhit = vertices.begin();
+        vhit != vertices.end();
         ++vhit)
   {
-    VertexType & vertex = viennagrid::dereference_handle(domain, *vhit);
+    VertexType & vertex = *vhit;
     long row_index = dof_accessor(vertex);
     
     //std::cout << vertex << " " << row_index << std::endl;
@@ -155,7 +154,7 @@ void assemble(DomainType & domain,
       continue;
     
     //EdgeOnVertexContainer edges = viennagrid::ncells<1>(*vit, domain);
-      EdgeOnVertexContainer edges = viennagrid::coboundary_elements<viennagrid::vertex_tag, viennagrid::line_tag>(domain, *vhit);
+      EdgeOnVertexContainer edges = viennagrid::coboundary_elements<viennagrid::vertex_tag, viennagrid::line_tag>(domain, vhit.handle());
     for (EdgeOnVertexIterator eovit = edges.begin();
           eovit != edges.end();
           ++eovit)

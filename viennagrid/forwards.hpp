@@ -340,6 +340,14 @@ namespace viennagrid
 
 
 
+    
+    
+    template<typename element_type>
+    struct id
+    {
+        typedef typename element_type::id_type type;
+    };
+    
     /** @brief Metafunction for the type retrieval of n-cells
      *
      * @tparam Config       The configuration class
@@ -378,6 +386,12 @@ namespace viennagrid
     struct line
     {
         typedef typename element<config_domain_segment_element_or_something_like_that, line_tag>::type type;
+    };
+    
+    template<typename config_domain_segment_element_or_something_like_that>
+    struct edge
+    {
+        typedef typename element<config_domain_segment_element_or_something_like_that, edge_tag>::type type;
     };
 
     template<typename config_domain_segment_element_or_something_like_that>
@@ -432,6 +446,12 @@ namespace viennagrid
     struct line_handle
     {
         typedef typename handle<config_domain_segment_element_or_something_like_that, line_tag>::type type;
+    };
+    
+    template<typename config_domain_segment_element_or_something_like_that>
+    struct edge_handle
+    {
+        typedef typename handle<config_domain_segment_element_or_something_like_that, edge_tag>::type type;
     };
 
     template<typename config_domain_segment_element_or_something_like_that>
@@ -488,6 +508,12 @@ namespace viennagrid
     struct const_line_handle
     {
         typedef typename const_handle<config_domain_segment_element_or_something_like_that, line_tag>::type type;
+    };
+    
+    template<typename config_domain_segment_element_or_something_like_that>
+    struct const_edge_handle
+    {
+        typedef typename const_handle<config_domain_segment_element_or_something_like_that, edge_tag>::type type;
     };
 
     template<typename config_domain_segment_element_or_something_like_that>
@@ -556,6 +582,12 @@ namespace viennagrid
     {
         typedef typename element_range<config_domain_segment_element_or_something_like_that, line_tag>::type type;
     };
+    
+    template<typename config_domain_segment_element_or_something_like_that>
+    struct edge_range
+    {
+        typedef typename element_range<config_domain_segment_element_or_something_like_that, edge_tag>::type type;
+    };
 
     template<typename config_domain_segment_element_or_something_like_that>
     struct triangle_range
@@ -616,6 +648,12 @@ namespace viennagrid
     {
         typedef typename const_element_range<config_domain_segment_element_or_something_like_that, line_tag>::type type;
     };
+    
+    template<typename config_domain_segment_element_or_something_like_that>
+    struct const_edge_range
+    {
+        typedef typename const_element_range<config_domain_segment_element_or_something_like_that, edge_tag>::type type;
+    };
 
     template<typename config_domain_segment_element_or_something_like_that>
     struct const_triangle_range
@@ -667,19 +705,6 @@ namespace viennagrid
     {
         typedef typename container::const_iterator type;
     };
-
-    template <typename container>
-    struct handle_iterator
-    {
-        typedef typename container::handle_iterator type;
-    };
-
-    template <typename container>
-    struct const_handle_iterator
-    {
-        typedef typename container::const_handle_iterator type;
-    };
-
 
 
     template<typename element_tag_>
@@ -815,6 +840,10 @@ namespace viennagrid
     { return elements<line_tag>(something); }
 
     template<typename element_domain_segment_config_or_something_like_that>
+    typename result_of::element_range<element_domain_segment_config_or_something_like_that, edge_tag>::type edges( element_domain_segment_config_or_something_like_that & something)
+    { return elements<edge_tag>(something); }
+    
+    template<typename element_domain_segment_config_or_something_like_that>
     typename result_of::element_range<element_domain_segment_config_or_something_like_that, triangle_tag>::type triangles( element_domain_segment_config_or_something_like_that & something)
     { return elements<triangle_tag>(something); }
 
@@ -854,6 +883,10 @@ namespace viennagrid
     template<typename element_domain_segment_config_or_something_like_that>
     typename result_of::const_element_range<element_domain_segment_config_or_something_like_that, line_tag>::type lines( const element_domain_segment_config_or_something_like_that & something)
     { return elements<line_tag>(something); }
+    
+    template<typename element_domain_segment_config_or_something_like_that>
+    typename result_of::const_element_range<element_domain_segment_config_or_something_like_that, edge_tag>::type edges( const element_domain_segment_config_or_something_like_that & something)
+    { return elements<edge_tag>(something); }
 
     template<typename element_domain_segment_config_or_something_like_that>
     typename result_of::const_element_range<element_domain_segment_config_or_something_like_that, triangle_tag>::type triangles( const element_domain_segment_config_or_something_like_that & something)

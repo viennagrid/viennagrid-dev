@@ -30,16 +30,16 @@ int main()
   // 
   typedef viennagrid::triangular_2d_domain                           DomainType;
   typedef viennagrid::io::domain_serializer<DomainType>              DomainSerializer;
-  typedef boost::shared_ptr<DomainType>                              DomainSP;
+//   typedef boost::shared_ptr<DomainType>                              DomainSP;
 
   // setup a shared pointer on a domain
   //
-  DomainSP          domainsp(new DomainType);
+  DomainType          domain;
   
   // create a serializer object and load it with the domain pointer
   //
   DomainSerializer  domain_serial;
-  domain_serial.load( domainsp );
+  domain_serial.load( domain );
 
   // access the domain object by calling the functor
   //
@@ -71,7 +71,7 @@ int main()
   */
   
   // the actual viennagrid domain object can be accessed via the functor interface
-  viennagrid::io::vtk_writer<Domain>  vtk;         
+  viennagrid::io::vtk_writer<DomainType>  vtk;         
   vtk(domain_serial(), //extract the domain from the serializer
       "serialized_domain");
   

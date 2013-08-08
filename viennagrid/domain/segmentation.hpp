@@ -219,7 +219,7 @@ namespace viennagrid
 
 
     template<typename ElementTypeOrTag, typename SegmentationType>
-    typename viennagrid::result_of::id_type<
+    typename viennagrid::result_of::id<
       typename viennagrid::result_of::element< segment_t<SegmentationType>, ElementTypeOrTag>::type
     >::type max_id( segment_t<SegmentationType> const & segment )
     { return max_id<ElementTypeOrTag>( segment.view() ); }

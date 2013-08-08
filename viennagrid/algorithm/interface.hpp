@@ -63,7 +63,6 @@ namespace viennagrid
 
               typedef typename viennagrid::result_of::const_element_range<DomainType1, typename CellTag::facet_tag>::type      FacetRange;
               typedef typename viennagrid::result_of::iterator<FacetRange>::type                                           FacetIterator;
-              typedef typename viennagrid::result_of::handle_iterator<FacetRange>::type                                           FacetHandleIterator;
 
               std::set<ConstFacetHandleType>  facets_ptrs_seg0;
 
@@ -71,27 +70,27 @@ namespace viennagrid
               // Step 1: Write facets of segment 1 to a map:
               //
               FacetRange facets_seg0 = viennagrid::elements(seg0);
-              for (FacetHandleIterator fit = facets_seg0.handle_begin();
-                    fit != facets_seg0.handle_end();
+              for (FacetIterator fit = facets_seg0.begin();
+                    fit != facets_seg0.end();
                     ++fit)
               {
-                  const FacetType & facet = viennagrid::dereference_handle(seg0, *fit);
+                  const FacetType & facet = *fit;
 
                 if (is_boundary(seg0, facet))
-                  facets_ptrs_seg0.insert( *fit );
+                  facets_ptrs_seg0.insert( fit.handle() );
               }
 
               //
               // Step 2: Compare facet in segment 2 with those stored in the map
               //
               FacetRange facets_seg1 = viennagrid::elements(seg1);
-              for (FacetHandleIterator fit = facets_seg1.handle_begin();
-                    fit != facets_seg1.handle_end();
+              for (FacetIterator fit = facets_seg1.begin();
+                    fit != facets_seg1.end();
                     ++fit)
               {
-                const FacetType & facet = viennagrid::dereference_handle(seg1, *fit);
+                const FacetType & facet = *fit;
 
-                if (facets_ptrs_seg0.find( *fit ) != facets_ptrs_seg0.end()) accessor(facet) = true;
+                if (facets_ptrs_seg0.find( fit.handle() ) != facets_ptrs_seg0.end()) accessor(facet) = true;
               }
 
           }

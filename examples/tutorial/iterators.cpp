@@ -176,7 +176,7 @@ int main()
   typedef viennagrid::result_of::iterator<EdgeOnFacetRange>::type               EdgeOnFacetIterator;
   
   typedef viennagrid::result_of::element_range<CellType, CellTag::facet_tag>::type    FacetOnCellRange;
-  typedef viennagrid::result_of::handle_iterator<FacetOnCellRange>::type               FacetOnCellHandleIterator;
+//   typedef viennagrid::result_of::handle_iterator<FacetOnCellRange>::type               FacetOnCellHandleIterator;
   typedef viennagrid::result_of::iterator<FacetOnCellRange>::type               FacetOnCellIterator;
 
   for (CellIterator cit = cells.begin(); cit != cells.end(); ++cit) //iterate over all cells
@@ -187,16 +187,16 @@ int main()
     // The facets of the cell are obtained by passing the cell as parameter to the ncell() function
     //
     FacetOnCellRange facets_on_cells = viennagrid::elements<CellTag::facet_tag>(*cit);
-    for (FacetOnCellHandleIterator focit = facets_on_cells.handle_begin();
-                             focit != facets_on_cells.handle_end();
+    for (FacetOnCellIterator focit = facets_on_cells.begin();
+                             focit != facets_on_cells.end();
                            ++focit)
     {
-      FacetType & facet = viennagrid::dereference_handle(domain, *focit);
+      FacetType & facet = *focit;
         
       // Iterate over all vertices of the facet:
       std::cout << "Vertices in global orientation: " << std::endl;
-      for (VertexOnFacetIterator vofit = viennagrid::elements<viennagrid::vertex_tag>(facet).begin();
-                                 vofit != viennagrid::elements<viennagrid::vertex_tag>(facet).end();
+      for (VertexOnFacetIterator vofit = viennagrid::vertices(facet).begin();
+                                 vofit != viennagrid::vertices(facet).end();
                                ++vofit)
       {
         std::cout << *vofit << std::endl;
@@ -204,8 +204,8 @@ int main()
 
       // Same again, but using the orientation imposed by the cell
       std::cout << "Vertices in local orientation: " << std::endl;
-      for (std::size_t i=0; i<viennagrid::elements<viennagrid::vertex_tag>(facet).size(); ++i)
-        std::cout << viennagrid::local_vertex(domain, *cit, *focit, i) << std::endl;
+      for (std::size_t i=0; i<viennagrid::vertices(facet).size(); ++i)
+        std::cout << viennagrid::local_vertex(domain, *cit, focit.handle(), i) << std::endl;
     }
     
     std::cout << std::endl << "---------------" << std::endl << std::endl;

@@ -72,7 +72,7 @@ namespace viennagrid
 
         typedef typename result_of::element<something, element_tag>::type ElementType;
         typedef typename result_of::element_range<something, element_tag>::type RangeType;
-        typedef typename result_of::handle_iterator<RangeType>::type IteratorType;
+        typedef typename result_of::iterator<RangeType>::type IteratorType;
 
         RangeType range = viennagrid::elements<element_tag>(s);
 
@@ -81,9 +81,8 @@ namespace viennagrid
 
         for ( IteratorType it = range.begin(); it != range.end(); ++it )
         {
-            ElementType const & element = viennagrid::dereference_handle(s, *it);
-            if ( f(element) )
-                view.insert_handle( *it );
+            if ( f(*it) )
+                view.insert_handle( it.handle() );
         }
 
         return view;
@@ -96,7 +95,7 @@ namespace viennagrid
 
         typedef typename result_of::element<something, element_tag>::type ElementType;
         typedef typename result_of::const_element_range<something, element_tag>::type RangeType;
-        typedef typename result_of::handle_iterator<RangeType>::type IteratorType;
+        typedef typename result_of::iterator<RangeType>::type IteratorType;
 
         RangeType range = viennagrid::elements<element_tag>(s);
 
@@ -105,9 +104,8 @@ namespace viennagrid
 
         for ( IteratorType it = range.begin(); it != range.end(); ++it )
         {
-            ElementType const & element = viennagrid::dereference_handle(s, *it);
-            if ( f(element) )
-                view.insert_handle( *it );
+            if ( f(*it) )
+                view.insert_handle( it.handle() );
         }
 
         return view;

@@ -34,27 +34,47 @@ namespace viennagrid
 {
   namespace io
   {
+    
+    /** @brief Provides an exception for the bad serialization state */
+    class bad_serialization_state_exception : public std::exception
+    {
+      public:
+        virtual const char* what() const throw()
+        {
+          std::stringstream ss;
+          ss << "* ViennaGrid: Bad serialization state: " << msg_ << "!";
+          return ss.str().c_str();
+        }
+
+        bad_serialization_state_exception(std::string msg) : msg_(msg) {}
+
+        virtual ~bad_serialization_state_exception() throw() {}
+
+      private:
+        std::string msg_;
+    };
+    
+    
+    
     /** @brief Domain wrapper which models the Boost serialization concept
      *
      */
-    template<typename DomainT, typename SegmentationT>
+    template<typename DomainT>
     struct domain_serializer
-    {
-      typedef boost::shared_ptr<DomainT>                                                     DomainSPT;
-      typedef boost::shared_ptr<SegmentationT>                                               SegmentationSPT;
-      
+    {      
     private:
-      typedef typename viennagrid::result_of::segment<SegmentationT>::type                   SegmentType;
       typedef typename viennagrid::result_of::cell_tag<DomainT>::type                        CellTag;
-      typedef typename viennagrid::result_of::vertex_range<DomainT>::type                    VertexRange;
-      typedef typename viennagrid::result_of::iterator<VertexRange>::type                    VertexIterator;
+      typedef typename viennagrid::result_of::const_vertex_range<DomainT>::type              ConstVertexRange;
+      typedef typename viennagrid::result_of::iterator<ConstVertexRange>::type               ConstVertexIterator;
       typedef typename viennagrid::result_of::point<DomainT>::type                           PointType;
       typedef typename viennagrid::result_of::vertex<DomainT>::type                          VertexType;
+      typedef typename viennagrid::result_of::vertex_handle<DomainT>::type                   VertexHandleType;
+      typedef typename viennagrid::result_of::id_type<VertexType>::type                      VertexIDType;
       typedef typename viennagrid::result_of::cell<DomainT>::type                            CellType;
-      typedef typename viennagrid::result_of::cell_range<SegmentType>::type                  CellRange;
-      typedef typename viennagrid::result_of::iterator<CellRange>::type                      CellIterator;
-      typedef typename viennagrid::result_of::vertex_range<CellType>::type                   VertexOnCellRange;
-      typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type              VertexOnCellIterator;
+      typedef typename viennagrid::result_of::const_cell_range<DomainT>::type                ConstCellRange;
+      typedef typename viennagrid::result_of::iterator<ConstCellRange>::type                 ConstCellIterator;
+      typedef typename viennagrid::result_of::const_vertex_range<CellType>::type             ConstVertexOnCellRange;
+      typedef typename viennagrid::result_of::iterator<ConstVertexOnCellRange>::type         ConstVertexOnCellIterator;
 
       static const int DIMG = PointType::dim;
 
@@ -64,50 +84,44 @@ namespace viennagrid
       template<class Archive>
       void save(Archive & ar, const unsigned int version) const
       {
+        if (!domain_pointer)
+          throw bad_serialization_state_exception( "Domain not loaded into serialzer object" );
+        
+        DomainT const & domain = *domain_pointer;
+        
         // -----------------------------------------------
         // the geometry is read and transmitted
         //
-        std::size_t point_size = viennagrid::vertices(*domainsp).size();
+        std::size_t point_size = viennagrid::vertices(domain).size();
         ar & point_size;
-        VertexRange vertices = viennagrid::elements(*domainsp);
-        for (VertexIterator vit = vertices.begin();
+        ConstVertexRange vertices = viennagrid::elements(domain);
+        for (ConstVertexIterator vit = vertices.begin();
              vit != vertices.end(); ++vit)
         {
            for(int d = 0; d < DIMG; d++)
              ar & viennagrid::point(*vit)[d];
         }
-        // -----------------------------------------------
+
 
         // -----------------------------------------------
-        // the segment size is read and transmitted
+        // the specific cells are read and transmitted
         //
-        std::size_t segment_size = (*domainsp).segments().size();
-        ar & segment_size;
-        // -----------------------------------------------
+        ConstCellRange cells = viennagrid::elements(domain);
 
-        // -----------------------------------------------
-        // the segment specific cells are read and transmitted
-        //
-        for (std::size_t si = 0; si < segment_size; si++)
+        std::size_t cell_size = viennagrid::cells(domain).size();
+        ar & cell_size;
+
+        for (ConstCellIterator cit = cells.begin();
+        cit != cells.end(); ++cit)
         {
-          SegmentType & seg = (*domainsp).segments()[si];
-          CellRange cells = viennagrid::elements(seg);
+          ConstVertexOnCellRange vertices_on_cell = viennagrid::elements(*cit);
 
-          std::size_t cell_size = viennagrid::cells(seg).size();
-          ar & cell_size;
-
-          for (CellIterator cit = cells.begin();
-          cit != cells.end(); ++cit)
+          for (ConstVertexOnCellIterator vocit = vertices_on_cell.begin();
+          vocit != vertices_on_cell.end();
+          ++vocit)
           {
-            VertexOnCellRange vertices_on_cell = viennagrid::elements(*cit);
-
-            for (VertexOnCellIterator vocit = vertices_on_cell.begin();
-            vocit != vertices_on_cell.end();
-            ++vocit)
-            {
-              std::size_t id = vocit->id().get();
-              ar & id;
-            }
+            std::size_t id = vocit->id().get();
+            ar & id;
           }
         }
         // -----------------------------------------------
@@ -117,6 +131,11 @@ namespace viennagrid
       template<class Archive>
       void load(Archive & ar, const unsigned int version)
       {
+        if (!domain_pointer)
+          throw bad_serialization_state_exception( "Domain not loaded into serialzer object" );
+        
+        DomainT & domain = *domain_pointer;
+        
         // -----------------------------------------------
         // the geometry is received and stored
         //
@@ -129,40 +148,30 @@ namespace viennagrid
           for(int d = 0; d < DIMG; d++)
             ar & p[d];
           
-          viennagrid::make_vertex( *domainsp, p );
+          viennagrid::make_vertex( *domain_pointer, p );
         }
         // -----------------------------------------------
 
-        // -----------------------------------------------
-        // the segments are received and created
-        //
-        std::size_t segment_size;
-        ar & segment_size;
-        (*domainsp).segments().resize(segment_size);
-        // -----------------------------------------------
 
         // -----------------------------------------------
-        // the segment specific cells are received and stored
+        // the specific cells are received and stored
         //
-        for (std::size_t si = 0; si < segment_size; si++)
+
+        std::size_t cell_size;
+        ar & cell_size;
+        for(std::size_t ci = 0; ci < cell_size; ci++)
         {
-          SegmentType & seg = (*domainsp).segments()[si];
-          std::size_t cell_size;
-          ar & cell_size;
-          for(std::size_t ci = 0; ci < cell_size; ci++)
-          {
-            VertexType *vertices[viennagrid::topology::bndcells<CellTag, 0>::num];
+          const int num_vertices = viennagrid::boundary_elements<CellTag, vertex_tag>::num;
+          VertexHandleType vertices[num_vertices];
 
-            for (int j=0; j<viennagrid::topology::bndcells<CellTag, 0>::num; ++j)
-            {
-              std::size_t id;
-              ar & id;
-              vertices[j] = &(viennagrid::ncells<0>(*domainsp)[id]);
-            }
-            CellType cell;
-            cell.vertices(vertices);
-            seg.push_back(cell);
+          for (int j=0; j< num_vertices; ++j)
+          {
+            std::size_t id;
+            ar & id;
+            vertices[j] = viennagrid::find_by_id( domain, VertexIDType(id) ).handle();
           }
+          
+          viennagrid::make_cell( domain, vertices, vertices + num_vertices);
         }
         // -----------------------------------------------
       }
@@ -175,25 +184,28 @@ namespace viennagrid
       // -----------------------------------------------
     public:
       /** @brief The default constructor*/
-      domain_serializer() : domainsp(new DomainT) {}
+      domain_serializer() : domain_pointer(0) {}
 
       /** @brief The constructor expects a shared pointer on a domain object and sets the state */
-      domain_serializer(DomainSPT& domainsp) : domainsp(domainsp) {}
+      domain_serializer(DomainT & domain) : domain_pointer(domain) {}
 
       /** @brief The load function enables to associate a domain with the serialzer after
       a serializer object has been constructed. */
-      inline void load(DomainSPT other) { domainsp = other;  }
+      inline void load(DomainT & domain) { domain_pointer = &domain;  }
 
       /** @brief The get function enables to retrieve the domain pointer
       */
-      inline DomainSPT get() { return domainsp; }
+      inline DomainT & get() { return *domain_pointer; }
+      inline DomainT const & get() const { return *domain_pointer; }
 
       /** @brief The functor returns a reference to the domain state*/
-      DomainT& operator()() { return *domainsp; }
+      DomainT & operator()() { return *domain_pointer; }
+      DomainT const & operator()() const { return *domain_pointer; }
 
       /** @brief The state holds a shared pointer to the domain */
-      DomainSPT  domainsp;
-      //DomainT& domain;
+      
+    private:
+      DomainT * domain_pointer;
     };
 
   } //namespace io

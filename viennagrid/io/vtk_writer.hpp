@@ -90,17 +90,16 @@ namespace viennagrid
 
         typedef typename result_of::point<DomainType>::type PointType;
         typedef typename result_of::coord<PointType>::type CoordType;
-//         static const int dim = traits::static_size<PointType>::value;
 
         typedef typename result_of::cell_tag<DomainType>::type CellTag;
         typedef typename result_of::element<DomainType, CellTag>::type CellType;
         typedef typename result_of::const_handle<DomainType, CellTag>::type          ConstCellHandleType;
-        typedef typename result_of::id_type<CellType>::type                           CellIDType;
+        typedef typename result_of::id<CellType>::type                           CellIDType;
 
         typedef typename result_of::element<DomainType, vertex_tag>::type                           VertexType;
         typedef typename result_of::handle<DomainType, vertex_tag>::type          VertexHandleType;
         typedef typename result_of::const_handle<DomainType, vertex_tag>::type          ConstVertexHandleType;
-        typedef typename result_of::id_type<VertexType>::type                           VertexIDType;
+        typedef typename result_of::id<VertexType>::type                           VertexIDType;
 
         typedef typename SegmentationType::segment_type SegmentType;
 
@@ -282,7 +281,6 @@ namespace viennagrid
 
           typedef typename viennagrid::result_of::const_element_range<CellType, vertex_tag>::type      VertexOnCellRange;
           typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type         VertexOnCellIterator;
-          typedef typename viennagrid::result_of::handle_iterator<VertexOnCellRange>::type         VertexHandleOnCellIterator;
 
           std::map< ConstVertexHandleType, VertexIDType > & current_vertex_to_index_map = vertex_to_index_map[seg_id];
 
@@ -302,11 +300,11 @@ namespace viennagrid
             std::vector<VertexIDType> viennagrid_vertices(viennagrid::boundary_elements<CellTag, vertex_tag>::num);
             VertexOnCellRange vertices_on_cell = viennagrid::elements<vertex_tag>(cell);
             std::size_t j = 0;
-            for (VertexHandleOnCellIterator vocit = vertices_on_cell.handle_begin();
-                vocit != vertices_on_cell.handle_end();
+            for (VertexOnCellIterator vocit = vertices_on_cell.begin();
+                vocit != vertices_on_cell.end();
                 ++vocit, ++j)
             {
-              viennagrid_vertices[j] = current_vertex_to_index_map[*vocit];
+              viennagrid_vertices[j] = current_vertex_to_index_map[vocit.handle()];
             }
 
             //Step 2: Write the transformed connectivities:

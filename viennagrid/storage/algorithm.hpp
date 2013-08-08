@@ -146,9 +146,9 @@ namespace viennagrid
                 template<typename container_type, typename base_container_type, typename handle_container_tag>
                 void operator() (container_type & src_container, view_t<base_container_type, handle_container_tag> & dst_view)
                 {
-                    for (typename container_type::handle_iterator it = src_container.handle_begin(); it != src_container.handle_end(); ++it)
-                        if (pred( src_container.dereference_handle(*it) ))
-                            dst_view.insert_handle( *it );
+                    for (typename container_type::iterator it = src_container.begin(); it != src_container.end(); ++it)
+                        if (pred( *it ))
+                            dst_view.insert_handle( it.handle() );
                 }
 
 

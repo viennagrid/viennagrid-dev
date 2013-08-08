@@ -132,13 +132,13 @@ namespace viennagrid
     {
         typedef domain_t<ConfigType> DomainType;
         typedef typename result_of::element_range<DomainType, vertex_tag>::type vertex_range_type;
-        typedef typename result_of::handle_iterator<vertex_range_type>::type vertex_range_handle_iterator;
+        typedef typename result_of::iterator<vertex_range_type>::type vertex_range_iterator;
 
         vertex_range_type vertices = viennagrid::elements<vertex_tag>(domain);
-        for (vertex_range_handle_iterator hit = vertices.begin(); hit != vertices.end(); ++hit)
+        for (vertex_range_iterator hit = vertices.begin(); hit != vertices.end(); ++hit)
         {
             if (viennagrid::norm_2( p - point(domain, *hit) ) < tolerance )
-                return *hit;
+                return hit.handle();
         }
 
         return make_vertex(domain, p);

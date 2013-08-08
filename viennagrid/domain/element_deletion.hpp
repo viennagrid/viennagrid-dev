@@ -162,7 +162,7 @@ namespace viennagrid
             typedef typename viennagrid::result_of::element_range<domain_type, element_type>::type element_range_type;
             typedef typename viennagrid::result_of::iterator<element_range_type>::type element_range_iterator;
 
-            typedef typename viennagrid::result_of::id_type<element_type>::type id_type;
+            typedef typename viennagrid::result_of::id<element_type>::type id_type;
 
 //             std::vector< std::pair<element_range_iterator, element_range_iterator> > swtiching_map;
 

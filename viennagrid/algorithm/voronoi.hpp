@@ -624,23 +624,18 @@ namespace viennagrid
 
       typedef typename viennagrid::result_of::const_element_range<DomainType, CellTag>::type    CellRange;
       typedef typename viennagrid::result_of::iterator<CellRange>::type                                       CellIterator;
-      typedef typename viennagrid::result_of::handle_iterator<CellRange>::type                                       CellHandleIterator;
 
       typedef typename viennagrid::result_of::const_element_range<DomainType, typename CellTag::facet_tag>::type  FacetRange;
       typedef typename viennagrid::result_of::iterator<FacetRange>::type                                      FacetIterator;
-      typedef typename viennagrid::result_of::handle_iterator<FacetRange>::type                                      FacetHandleIterator;
 
       typedef typename viennagrid::result_of::const_element_range<DomainType, line_tag>::type                          EdgeRange;
       typedef typename viennagrid::result_of::iterator<EdgeRange>::type                                       EdgeIterator;
-      typedef typename viennagrid::result_of::handle_iterator<EdgeRange>::type                                       EdgeHandleIterator;
 
       typedef typename viennagrid::result_of::const_element_range<CellType, typename CellTag::facet_tag>::type    FacetOnCellRange;
       typedef typename viennagrid::result_of::iterator<FacetOnCellRange>::type                                FacetOnCellIterator;
-      typedef typename viennagrid::result_of::handle_iterator<FacetOnCellRange>::type                                FacetOnCellHandleIterator;
 
       typedef typename viennagrid::result_of::const_element_range<FacetType, line_tag>::type                           EdgeOnFacetRange;
       typedef typename viennagrid::result_of::iterator<EdgeOnFacetRange>::type                                EdgeOnFacetIterator;
-      typedef typename viennagrid::result_of::handle_iterator<EdgeOnFacetRange>::type                                EdgeOnFacetHandleIterator;
 
       typedef typename viennagrid::result_of::const_element_range<EdgeType, vertex_tag>::type                            VertexOnEdgeRange;
       typedef typename viennagrid::result_of::iterator<VertexOnEdgeRange>::type                               VertexOnEdgeIterator;
@@ -669,19 +664,19 @@ namespace viennagrid
 
 
       CellRange cells = viennagrid::elements<CellType>(domain);
-      for (CellHandleIterator cit  = cells.handle_begin();
-                        cit != cells.handle_end();
+      for (CellIterator cit  = cells.begin();
+                        cit != cells.end();
                       ++cit)
       {
-        const CellType & cell = viennagrid::dereference_handle(domain,*cit);
+        const CellType & cell = *cit;
         PointType circ_center = circumcenter(cell);
 
         FacetOnCellRange facets_on_cell = viennagrid::elements<FacetType>(cell);
-        for (FacetOnCellHandleIterator focit  = facets_on_cell.handle_begin();
-                                focit != facets_on_cell.handle_end();
-                              ++focit)
+        for (FacetOnCellIterator focit  = facets_on_cell.begin();
+                                 focit != facets_on_cell.end();
+                                 ++focit)
         {
-          circumcenters_on_facets[*focit].push_back( PointWithCellInfo(circ_center, *cit) );
+          circumcenters_on_facets[focit.handle()].push_back( PointWithCellInfo(circ_center, cit.handle()) );
         } //for edges on cells
       } //for cells
 
@@ -690,26 +685,26 @@ namespace viennagrid
       // Step two: Write lines connecting circumcenters to edges
       //
       FacetRange facets = viennagrid::elements<FacetType>(domain);
-      for (FacetHandleIterator fit  = facets.handle_begin();
-                         fit != facets.handle_end();
+      for (FacetIterator fit  = facets.begin();
+                         fit != facets.end();
                        ++fit)
       {
-        CircumcenterContainer & circ_centers = circumcenters_on_facets[*fit];
-        const FacetType & facet = viennagrid::dereference_handle(domain,*fit);
+        CircumcenterContainer & circ_centers = circumcenters_on_facets[fit.handle()];
+        const FacetType & facet = *fit;
 
         EdgeOnFacetRange edges_on_facet = viennagrid::elements<EdgeType>( facet );
-        for (EdgeOnFacetHandleIterator eofit  = edges_on_facet.handle_begin();
-                                eofit != edges_on_facet.handle_end();
+        for (EdgeOnFacetIterator eofit  = edges_on_facet.begin();
+                                 eofit != edges_on_facet.end();
                               ++eofit)
         {
-          const EdgeType & edge = viennagrid::dereference_handle(domain,*eofit);
+          const EdgeType & edge = *eofit;
 
           if (circ_centers.size() == 1)
           {
-            interface_boundaries_on_edges[*eofit].push_back(std::make_pair( std::make_pair(circ_centers[0].first, circumcenter(facet)),
+            interface_boundaries_on_edges[eofit.handle()].push_back(std::make_pair( std::make_pair(circ_centers[0].first, circumcenter(facet)),
                                                                                circ_centers[0].second)
                                                               );
-            interface_boundaries_on_edges[*eofit].push_back(std::make_pair( std::make_pair(circumcenter(edge), circumcenter(facet)),
+            interface_boundaries_on_edges[eofit.handle()].push_back(std::make_pair( std::make_pair(circumcenter(edge), circumcenter(facet)),
                                                                                circ_centers[0].second)
                                                               );
           }
@@ -718,10 +713,10 @@ namespace viennagrid
             PointType edge_mid = circ_centers[0].first + circ_centers[1].first;
             edge_mid /= 2.0;
 
-            interface_boundaries_on_edges[*eofit].push_back(std::make_pair( std::make_pair(circ_centers[0].first, edge_mid),
+            interface_boundaries_on_edges[eofit.handle()].push_back(std::make_pair( std::make_pair(circ_centers[0].first, edge_mid),
                                                                                circ_centers[0].second)
                                                               );
-            interface_boundaries_on_edges[*eofit].push_back(std::make_pair( std::make_pair(edge_mid, circ_centers[1].first),
+            interface_boundaries_on_edges[eofit.handle()].push_back(std::make_pair( std::make_pair(edge_mid, circ_centers[1].first),
                                                                                circ_centers[1].second)
                                                               );
           }
@@ -740,11 +735,11 @@ namespace viennagrid
       // Step three: Compute Voronoi information:
       //
       EdgeRange edges = viennagrid::elements<EdgeType>(domain);
-      for (EdgeHandleIterator eit  = edges.handle_begin();
-                        eit != edges.handle_end();
-                      ++eit)
+      for (EdgeIterator eit  = edges.begin();
+                        eit != edges.end();
+                        ++eit)
       {
-        const EdgeType & edge = viennagrid::dereference_handle(domain, *eit);
+        const EdgeType & edge = *eit;
 
         //get vertices of edge:
         VertexOnEdgeRange vertices_on_edge = viennagrid::elements<VertexType>(edge);
@@ -758,7 +753,7 @@ namespace viennagrid
 
         double edge_length = spanned_volume( viennagrid::point(domain, v0), viennagrid::point(domain, v1));
 
-        std::vector< EdgePointsWithCellInfo > & interface_segments = interface_boundaries_on_edges[*eit];
+        std::vector< EdgePointsWithCellInfo > & interface_segments = interface_boundaries_on_edges[eit.handle()];
 
         //
         // determine inner point of convex interface polygon:
@@ -842,7 +837,6 @@ namespace viennagrid
 
       typedef typename viennagrid::result_of::const_element_range<DomainType, CellTag>::type    CellRange;
       typedef typename viennagrid::result_of::iterator<CellRange>::type                                       CellIterator;
-      typedef typename viennagrid::result_of::handle_iterator<CellRange>::type                                       CellHandleIterator;
 
       typedef typename viennagrid::result_of::const_element_range<CellType, quadrilateral_tag>::type                            FacetOnCellRange;
       typedef typename viennagrid::result_of::iterator<FacetOnCellRange>::type                                FacetOnCellIterator;
@@ -860,11 +854,11 @@ namespace viennagrid
       //
 
       CellRange cells = viennagrid::elements<CellTag>(domain);
-      for (CellHandleIterator cit  = cells.handle_begin();
-                        cit != cells.handle_end();
-                      ++cit)
+      for (CellIterator cit  = cells.begin();
+                        cit != cells.end();
+                        ++cit)
       {
-        const CellType & cell = viennagrid::dereference_handle(domain, *cit);
+        const CellType & cell = *cit;
         PointType cell_center = circumcenter(cell);
 
         FacetOnCellRange facets_on_cell = viennagrid::elements<viennagrid::quadrilateral_tag>(cell);
@@ -884,7 +878,7 @@ namespace viennagrid
 
             // interface contribution:
             double interface_contribution = spanned_volume(cell_center, facet_center, edge_midpoint);
-            interface_area_cell_contribution_accessor(*eocit).push_back(std::make_pair((*cit), interface_contribution) );   //Note: Due to iteration over cells there is no need to use a voronoi_unique_quantity_update() here
+            interface_area_cell_contribution_accessor(*eocit).push_back(std::make_pair(cit.handle(), interface_contribution) );   //Note: Due to iteration over cells there is no need to use a voronoi_unique_quantity_update() here
             interface_area_accessor(*eocit) += interface_contribution;
 
             //box volume contribution:
@@ -896,11 +890,11 @@ namespace viennagrid
             {
               //double contribution = spanned_volume(cell_center, facet_center, edge_midpoint, voeit->point());
               double contribution = spanned_volume(cell_center, facet_center, edge_midpoint, viennagrid::point(domain, *voeit));
-              vertex_box_volume_cell_contribution_accessor(*voeit).push_back(std::make_pair( (*cit), contribution) );
+              vertex_box_volume_cell_contribution_accessor(*voeit).push_back(std::make_pair( cit.handle(), contribution) );
               vertex_box_volume_accessor(*voeit) += contribution;
               edge_contribution += contribution;
             }
-            edge_box_volume_cell_contribution_accessor(*eocit).push_back(std::make_pair( (*cit), edge_contribution) );
+            edge_box_volume_cell_contribution_accessor(*eocit).push_back(std::make_pair( cit.handle(), edge_contribution) );
             edge_box_volume_accessor(*eocit) += edge_contribution;
           } //for edges on facet
 

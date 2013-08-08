@@ -181,7 +181,7 @@ namespace viennagrid
             typename result_of::value_type<handle_type>::type & dereference_handle( container_type & container, handle_type handle, id_handle_tag )
             {
                 typedef typename result_of::value_type<handle_type>::type value_type;
-                typedef typename storage::result_of::id_type<value_type>::type id_type;
+                typedef typename storage::result_of::id<value_type>::type id_type;
 
                 return *std::find_if(
                     container.begin(),
@@ -194,7 +194,7 @@ namespace viennagrid
             typename result_of::value_type<handle_type>::type const & dereference_handle( container_type const & container, handle_type handle, id_handle_tag )
             {
                 typedef typename result_of::value_type<handle_type>::type value_type;
-                typedef typename storage::result_of::id_type<value_type>::type id_type;
+                typedef typename storage::result_of::id<value_type>::type id_type;
 
                 return *std::find_if(
                     container.begin(),

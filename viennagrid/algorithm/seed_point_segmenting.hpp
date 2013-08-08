@@ -194,7 +194,7 @@ namespace viennagrid
 
 
             typedef typename viennagrid::result_of::const_element_range<triangle_type, viennagrid::line_tag>::type lines_on_triangle_range_type;
-            typedef typename viennagrid::result_of::handle_iterator<lines_on_triangle_range_type>::type lines_on_triangle_range_iterator;
+            typedef typename viennagrid::result_of::iterator<lines_on_triangle_range_type>::type lines_on_triangle_range_iterator;
 
             // iterating over all boundary lines
             lines_on_triangle_range_type lines = viennagrid::elements<viennagrid::line_tag>( triangle );
@@ -232,7 +232,7 @@ namespace viennagrid
 
 
                 typedef typename viennagrid::result_of::const_coboundary_range<domain_type, viennagrid::line_tag, viennagrid::triangle_tag>::type neighbour_range_type;
-                typedef typename viennagrid::result_of::handle_iterator<neighbour_range_type>::type neighbour_handle_iterator;
+                typedef typename viennagrid::result_of::iterator<neighbour_range_type>::type neighbour_iterator;
 
 
                 neighbour_range_type neighbour_triangles = viennagrid::coboundary_elements<viennagrid::line_tag, viennagrid::triangle_tag>(domain, *lit);
@@ -254,7 +254,7 @@ namespace viennagrid
                 bool smallest_angle_triangle_faces_outward;
 
                 // iterating over all coboundary triangles of the current line
-                for (neighbour_handle_iterator it = neighbour_triangles.handle_begin(); it != neighbour_triangles.handle_end(); ++it)
+                for (neighbour_iterator it = neighbour_triangles.handle_begin(); it != neighbour_triangles.handle_end(); ++it)
                 {
                     triangle_handle_type handle = *it;
                     triangle_type & neighbour_triangle = viennagrid::dereference_handle(domain, handle);
@@ -393,7 +393,6 @@ namespace viennagrid
             typedef typename viennagrid::result_of::element<domain_type, viennagrid::triangle_tag>::type triangle_type;
             typedef typename viennagrid::result_of::handle<domain_type, viennagrid::triangle_tag>::type triangle_handle_type;
             typedef typename viennagrid::result_of::element_range<domain_type, viennagrid::triangle_tag>::type triangle_range_type;
-//             typedef typename viennagrid::result_of::handle_iterator<triangle_range_type>::type triangle_range_handle_iterator;
             typedef typename viennagrid::result_of::iterator<triangle_range_type>::type triangle_range_iterator;
 
 //             segmentation_.init( domain );
@@ -483,12 +482,6 @@ namespace viennagrid
     // break;
                 }
             }
-
-
-// for (triangle_range_handle_iterator it = triangles.handle_begin(); it != triangles.handle_end(); ++it)
-// {
-// viennamesh::clear_visited( viennagrid::dereference_handle( domain, *it ) );
-// }
         }
 
     }
