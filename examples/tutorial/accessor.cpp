@@ -175,8 +175,6 @@ int main()
   
   // Centroid of the domain using the defaul accessor
   std::cout << viennagrid::centroid(domain, default_point_accessor) << std::endl;
-  // The same as above
-  std::cout << viennagrid::centroid(domain) << std::endl;
   
   // Centroid of the domain using our shifted points
   std::cout << viennagrid::centroid(domain, point_accessor) << std::endl;

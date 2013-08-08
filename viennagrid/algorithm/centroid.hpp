@@ -214,7 +214,7 @@ namespace viennagrid
   centroid(domain_t<WrappedConfigType> const & domain)
   {
     typedef typename viennagrid::result_of::cell_tag< domain_t<WrappedConfigType> >::type CellTag;
-    return centroid<CellTag>(domain);
+    return centroid<CellTag>(domain, default_point_accessor(domain));
   }
   
 
