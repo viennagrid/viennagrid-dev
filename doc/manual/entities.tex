@@ -73,14 +73,16 @@ For additional algorithms acting on points, e.g.~\lstinline|norm()| for computin
 
 \TIP{ViennaGrid is not restricted to one, two or three geometric dimensions! Cartesian coordinate systems for arbitrary dimensions are available.}
 
-\section{$n$-Cells (Topological Objects)} \label{sec:ncells}
+\section{Elements (Topological Objects)} \label{sec:ncells}
 While the point type defines the underlying geometry, elements define the topological connections among distinguished points. Each of these distinguished points is called a \emph{vertex} and describes the corners or intersection of geometric shapes. Vertices are often also referred to as the \emph{nodes} of a mesh.
 
-An \emph{edge} is a line segment joining two vertices. Note that this is a topological characterization -- the underlying geometric space can have arbitrary dimension.
+An \emph{edge} or \emph{line} is a line segment joining two vertices. Note that this is a topological characterization -- the underlying geometric space can have arbitrary dimension.
 
 A \emph{cell} is an element of maximum topological dimension $N$ within the set of elements considered. The topological dimension of cells can be smaller than the underlying geometric space, which is for example the case in triangular surface meshes in three dimensions. Note that the nomenclature used among scientists is not entirely consistent: Some refer to topologically three-dimensional objects independent from the topological dimension of the full mesh as cells, which is not the case here. 
 
 The surface of a cell consists of \emph{facets}, which are objects of topological dimension $N-1$. Some authors prefer the name \emph{face}, which is by other authors used to refer to objects of topological dimension two. Again, the definition of a facet refers in {\ViennaGrid} to topological dimension $N-1$.
+
+Boundary elements are elements which represent a boundary of another element. For example a triangle is a boundary element of a tetrahedron. But not only the direct boundaries are boundary elements in {\ViennaGrid}, also a boundary element of boundary element of an element is a boundary element of that element: a vertex and a line is a boundary element of a tetrahedron as well.
 
 \begin{table}[b]
  \centering 
@@ -101,15 +103,17 @@ The surface of a cell consists of \emph{facets}, which are objects of topologica
 
 A brief overview of the corresponding meanings of vertices, edges, facets and cells is given in Tab.~\ref{tab:vertex-edge-facet-cell}. Note that edges have higher topological dimension than facets in the one-dimensional case, while they coincide in two dimensions. Refer also to Fig.~\ref{fig:entities}.
 
-For a parametric description of these objects it is more appropriate to switch \textbf{$n$-cells}, which are objects of topological dimension $n$. The terms \emph{vertex}, \emph{edge}, \emph{facet} and \emph{cell} thus refer to $0$-cell, $1$-cell, $N-1$-cell and $N$-cell respectively. The maximum topological dimension $N$ is in {\ViennaGrid} considered to be a parameter available at compile time, which allows to pick the correct $n$-cell type for the algorithms provided. Note that one can still use a run time dispatch at the cost of increased compilation times if the dimension of the domain is only available at run time. More details can be found in Chapters \ref{chap:iterators} and \ref{chap:algorithms}.
+% For a parametric description of these objects it is more appropriate to switch \textbf{$n$-cells}, which are objects of topological dimension $n$. The terms \emph{vertex}, \emph{edge}, \emph{facet} and \emph{cell} thus refer to $0$-cell, $1$-cell, $N-1$-cell and $N$-cell respectively. The maximum topological dimension $N$ is in {\ViennaGrid} considered to be a parameter available at compile time, which allows to pick the correct $n$-cell type for the algorithms provided. Note that one can still use a run time dispatch at the cost of increased compilation times if the dimension of the domain is only available at run time. More details can be found in Chapters \ref{chap:iterators} and \ref{chap:algorithms}.
 
 
 \section{Domain}
 A \emph{domain} $\Omega$ is the top level object in {\ViennaGrid} and is a container for its topological elements. There are no topological restrictions on the elements inside a domain. 
 
-A typical use-case for a domain is to store a cell complex. We characterize a cell complex as a collection of $n$-cells, $n=0, \ldots, N$, such that the intersection of a $n_1$-cell from the cell complex with a $n_2$-cell from the cell complex is a $n_3$-cell from the cell complex. A domain stores the various $n$-cells of the complex, but can be configured to store $n$-cells for selected values of $n$ only, cf.~Chapter~\ref{chap:domainconfig}.
+A typical use-case for a domain is to store a cell complex. We characterize a cell complex as a collection of topological elements, such that the intersection of two elements (maybe of different type) $e_0$ and $e_1$  is another element $e_i$ from the cell complex.
 
-It should be noted that {\ViennaGrid} allows the use of conforming and non-conforming complexes. Here, a \emph{conforming} complex is characterized by the property that the intersection $n_3$-cell from above is a boundary $n_3$-cell from both the $n_1$-cell and the $n_2$-cell. If this is not the case, the complex is denoted \emph{non-conforming}, cf.~Fig.~\ref{fig:conformity}.
+It should be noted that {\ViennaGrid} allows the use of conforming and non-conforming complexes. Here, a \emph{conforming} complex is characterized by the property that the intersection element $e_i$  from above is a boundary element from both of the element $e_0$ and the element $e_1$.
+
+If this is not the case, the complex is denoted \emph{non-conforming}, cf.~Fig.~\ref{fig:conformity}.
 
 \begin{figure}[tb]
 \centering 
@@ -136,9 +140,9 @@ The instantiation of a {\ViennaGrid} domain object requires a configuration clas
  DomainType domain; //create the domain object
 \end{lstlisting}
 
-\section{Segment}
-A \emph{segment} $\Omega_i$ refers to a subset of the $N$-cells in a domain $\Omega$. In addition, a segment may or may not have explicit knowledge of the boundary $n$-cells of its $N$-cells. Unlike a domain, a segment is not a container for its elements. Instead, only references (pointers) to the elements in the domain are stored. In common C++ language, a \emph{segment} represents a so-called \emph{view} on the domain.
+\section{Segmentation and Segment}
+A \emph{segment} $\Omega_i$ refers to a subset of the elements in a domain $\Omega$. Unlike a domain, a segment is not a container for its elements. Instead, only references (pointers) to the elements in the domain are stored. In common C++ language, a \emph{segment} represents a so-called \emph{view} on the domain.
 
-The typical use-case for a segment is the decomposition of the domain into pieces of a common property. For example, a solid consisting of different materials can be set up in {\ViennaGrid} such that each regions of the same material are represented in a common segment.
+A segmentation represents a collection of segments. The typical use-case for a segmentation is the decomposition of the domain into pieces of a common property. For example, a solid consisting of different materials can be set up in {\ViennaGrid} such that each regions of the same material are represented in a common segment.
 
-\NOTE{ In {\ViennaGridversion}, a $N$-cell is limited to be member of at most one segment. Segments need to be initialized during domain setup, cf.~Chapter~\ref{chap:domainsetup}. }
+
