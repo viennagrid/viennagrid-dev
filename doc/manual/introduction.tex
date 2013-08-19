@@ -37,7 +37,7 @@ The aim of {\ViennaGrid} is to be highly customizable such that all three algori
 
 In addition to a high flexibility with respect to the underlying data structures, {\ViennaGrid} provides STL-compatible iterators and access to sub-elements of a mesh, cf.~Chapter \ref{chap:iterators}. This allows to write generic code that is a-priori independent of the underlying spatial dimension. In particular, a single implementation for algorithms operating in multiple dimensions and using different mesh types (triangular, hexahedral, etc.) can be obtained.
 
-One of the strengths of {\ViennaGrid} is the generic facility provided for storing arbitrary quantities on a mesh, cf.~Chapter \ref{chap:data}. This is achieved by the use of the special purpose library {\ViennaData} \cite{ViennaData}, providing maximum flexibility for the user.
+One of the strengths of {\ViennaGrid} is the generic facility provided for storing arbitrary quantities on a mesh, cf.~Chapter \ref{chap:data}. This is achieved by the use of set of concepts which provide uniform access to data through so called accessors or fields.
 
 A typical requirement for a meshing library is mesh refinement. This is in particular of interest for computational science, where singularities near corners need to be resolved sufficiently well. {\ViennaGrid} provides both uniform and adaptive refinement algorithms, cf.~Chapter \ref{chap:algorithms}, where also other geometric algorithms such as Voronoi information is covered.
 
