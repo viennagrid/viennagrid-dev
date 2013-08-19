@@ -329,6 +329,7 @@ namespace viennagrid
                             viennagrid::triangle_tag)
     {
       typedef typename viennagrid::result_of::element<DomainType, CellTag>::type CellType;
+      typedef typename viennagrid::result_of::const_handle<DomainType, CellTag>::type ConstCellHandleType;
 
       typedef typename viennagrid::result_of::point<DomainType>::type                            PointType;
       typedef typename viennagrid::result_of::element<DomainType, vertex_tag>::type                         VertexType;
@@ -395,15 +396,19 @@ namespace viennagrid
           }
 
           //find 'other' triangle
-          CellType const * other_cell = NULL;
+          ConstCellHandleType other_cell;
+          
+//           CellType const * other_cell = NULL;
           CellOnEdgeRange other_cells = viennagrid::coboundary_elements<EdgeType, CellTag>(domain, viennagrid::handle(domain, *intersected_edge_ptr) );
+          storage::handle::set_handle_invalid( other_cells, other_cell );
+          
           for (CellOnEdgeIterator coeit  = other_cells.begin();
                                   coeit != other_cells.end();
                                 ++coeit)
           {
-            if ( &(*coeit) != &(*cit) )
+            if ( coeit->id() != cit->id() )
             {
-              other_cell = &(*coeit);
+              other_cell = coeit.handle();
               break;
             }
           }
@@ -441,12 +446,13 @@ namespace viennagrid
               interface_contribution = spanned_volume(edge_intersection, edge_midpoint);
 
               interface_area_accessor(*eocit) += interface_contribution;
-              voronoi_unique_quantity_update(interface_area_cell_contribution_accessor(*eocit), std::make_pair( &(*cit), interface_contribution) );
+              voronoi_unique_quantity_update(interface_area_cell_contribution_accessor(*eocit), std::make_pair( cit.handle(), interface_contribution) );
 
               // contribution from other cell containing the circumcenter:
               interface_contribution = spanned_volume(edge_intersection, circ_center);
               interface_area_accessor(*eocit) += interface_contribution;
-              if ( other_cell != NULL)
+              //if ( other_cell != NULL)
+              if (storage::handle::is_handle_invalid( other_cells, other_cell ))
                 voronoi_unique_quantity_update(interface_area_cell_contribution_accessor(*eocit), std::make_pair( other_cell, interface_contribution) );
 
 
@@ -465,11 +471,12 @@ namespace viennagrid
                 edge_contribution += contribution;
 
                 vertex_box_volume_accessor(*voeit) += contribution;
-                voronoi_unique_quantity_update(vertex_box_volume_cell_contribution_accessor(*voeit), std::make_pair( &(*cit), contribution) );
+                voronoi_unique_quantity_update(vertex_box_volume_cell_contribution_accessor(*voeit), std::make_pair( cit.handle(), contribution) );
 
                 if ( &(*voeit) != opposite_vertex_ptr )  // non-splitted contribution
                 {
-                  if (other_cell != NULL)
+//                   if (other_cell != NULL)
+                  if (storage::handle::is_handle_invalid( other_cells, other_cell ))
                   {
                     double contribution_other = spanned_volume(circ_center, edge_intersection, viennagrid::point(*voeit));
                     vertex_box_volume_accessor(*voeit) += contribution_other;
@@ -485,12 +492,13 @@ namespace viennagrid
                   double contribution_cell = spanned_volume(opposite_vertex_edge_intersection, edge_intersection, viennagrid::point(*voeit));
                   vertex_box_volume_accessor(*voeit) += contribution_cell;
                   voronoi_unique_quantity_update(vertex_box_volume_cell_contribution_accessor(*voeit),
-                                                 std::make_pair( &(*cit), contribution_cell) );
+                                                 std::make_pair( cit.handle(), contribution_cell) );
                   edge_box_volume_accessor(*eocit) += contribution_cell;
                   voronoi_unique_quantity_update(edge_box_volume_cell_contribution_accessor(*eocit),
-                                                 std::make_pair( &(*cit), contribution_cell) );
+                                                 std::make_pair( cit.handle(), contribution_cell) );
 
-                  if (other_cell != NULL)
+//                   if (other_cell != NULL)
+                  if (storage::handle::is_handle_invalid( other_cells, other_cell ))
                   {
                     double contribution_other = spanned_volume(circ_center, edge_intersection, opposite_vertex_edge_intersection);
                     vertex_box_volume_accessor(*voeit) += contribution_other;
@@ -506,10 +514,11 @@ namespace viennagrid
               }
               edge_box_volume_accessor(*eocit) += edge_contribution;
               voronoi_unique_quantity_update(edge_box_volume_cell_contribution_accessor(*eocit),
-                                             std::make_pair( &(*cit), edge_contribution) );
+                                             std::make_pair( cit.handle(), edge_contribution) );
 
             }
-            else if (other_cell != NULL)// intersected edge: Write negative contributions to other cell
+//             else if (other_cell != NULL)// intersected edge: Write negative contributions to other cell
+            else if (storage::handle::is_handle_invalid( other_cells, other_cell ))
             {
               // interface contribution:
               double interface_contribution = spanned_volume(circ_center, edge_midpoint);
