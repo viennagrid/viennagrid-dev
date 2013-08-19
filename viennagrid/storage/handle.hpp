@@ -152,9 +152,62 @@ namespace viennagrid
                 };
 
             }
+            
+            
+            
+            template<typename container_type, typename handle_type>
+            void set_handle_invalid( container_type const &, handle_type handle, pointer_handle_tag )
+            { handle = NULL; }
+            
+            template<typename container_type, typename handle_type>
+            void set_handle_invalid( container_type & container, handle_type handle, iterator_handle_tag )
+            { handle = container.end(); }
 
+            template<typename container_type, typename handle_type>
+            void set_handle_invalid( container_type const & container, handle_type handle, iterator_handle_tag )
+            { handle = container.end(); }
+            
+            template<typename container_type, typename handle_type>
+            void set_handle_invalid( container_type & container, handle_type handle, id_handle_tag )
+            { handle = handle_type(); }
 
+            template<typename container_type, typename handle_type>
+            void set_handle_invalid( container_type const & container, handle_type handle, id_handle_tag )
+            { handle = handle_type(); }
+            
+            
+            template<typename container_type, typename handle_type>
+            void set_handle_invalid( container_type const & container, handle_type handle )
+            { set_handle_invalid(container, handle, typename result_of::handle_tag<handle_type>::type()); }
+            
+            template<typename container_type, typename handle_type>
+            void set_handle_invalid( container_type & container, handle_type handle )
+            { set_handle_invalid(container, handle, typename result_of::handle_tag<handle_type>::type()); }
+            
+            
+            
+            
+            template<typename container_type, typename handle_type>
+            bool is_handle_invalid( container_type const & container, handle_type handle )
+            {
+              handle_type tmp;
+              set_handle_invalid(container, tmp);
+              return handle == tmp;
+            }
+            
+            template<typename container_type, typename handle_type>
+            bool is_handle_invalid( container_type & container, handle_type handle )
+            {
+              handle_type tmp;
+              set_handle_invalid(container, tmp);
+              return handle == tmp;
+            }
+            
+            
+            
+            
 
+            
 
             // Pointer handle
             template<typename container_type, typename handle_type>
