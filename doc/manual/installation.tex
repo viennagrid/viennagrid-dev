@@ -58,14 +58,19 @@ Tab.~\ref{tab:tutorial-dependencies}.
 \begin{tabular}{l|p{9.3cm}}
 File & Purpose\\
 \hline
-\texttt{tutorial/algorithms.cpp}      & Demonstrates the algorithms provided, cf.~Chapter \ref{chap:algorithms} \\
-\texttt{tutorial/domain\_setup.cpp}   & Fill a domain with cells, cf.~Chapter \ref{chap:domainsetup} \\
-\texttt{tutorial/finite\_volumes.cpp} & Generic implementation of the finite volume method (assembly) \\
-\texttt{tutorial/io.cpp}              & Explains input-output operations, cf.~Chapter \ref{chap:io} \\
-\texttt{tutorial/iterators.cpp}       & Shows how the domain and segments can be traversed, cf.~Chapter \ref{chap:iterators} \\
-\texttt{tutorial/multi\_segment.cpp}  & Explains multi-segment capabilities, cf.~Chapter \ref{chap:domainsetup} \\
-\texttt{tutorial/slim\_domain.cpp}    & Customizes ViennaGrid such that no edges are stored, cf.~Chapter \ref{chap:domainconfig} \\
-\texttt{tutorial/store\_access\_data.cpp}  & Shows how {\ViennaData} is used for storing quantities, cf.~Chapter \ref{chap:data} \\
+\texttt{tutorial/accessor.cpp}              & Demonstrates the use of accessors, cf.~Chapter \ref{chap:data} \\
+\texttt{tutorial/algorithms.cpp}            & Demonstrates the algorithms provided, cf.~Chapter \ref{chap:algorithms} \\
+\texttt{tutorial/cboundary\_iteration.cpp}  & Shows how to iterate over co-boundary elements, cf.~Chapter \ref{chap:iterators} \\
+\texttt{tutorial/domain\_setup.cpp}         & Fill a domain with cells, cf.~Chapter \ref{chap:domainsetup} \\
+\texttt{tutorial/element\_erase.cpp}        & Demonstrates how to erase single elements from a domain \\
+\texttt{tutorial/finite\_volumes.cpp}       & Generic implementation of the finite volume method (assembly) \\
+\texttt{tutorial/interface.cpp}             & Demonstrates how the interface algorithm works, cf.~Chapter \ref{chap:algorithms} \\
+\texttt{tutorial/io.cpp}                    & Explains input-output operations, cf.~Chapter \ref{chap:io} \\
+\texttt{tutorial/iterators.cpp}             & Shows how the domain and segments can be traversed, cf.~Chapter \ref{chap:iterators} \\
+\texttt{tutorial/multi\_segment.cpp}        & Explains multi-segment capabilities, cf.~Chapter \ref{chap:domainsetup} \\
+\texttt{tutorial/neighbour\_iteration.cpp}  & Shows how to iterate over neighbour elements, cf.~Chapter \ref{chap:iterators} \\
+\texttt{tutorial/polygon.cpp}               & ViennaGrid also supports Polygons, cf.~Chapter \ref{chap:domainsetup} \\
+\texttt{tutorial/segments.cpp}              & Shows how to use segmentations and segments, cf.~Chapter \ref{chap:domainsetup}
 \end{tabular}
 \caption{Overview of the sample applications in the \texttt{examples/} folder}
 \label{tab:tutorial-dependencies}
