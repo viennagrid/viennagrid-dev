@@ -1,0 +1,20 @@
+********************************
+**** ViennaGrid Change Logs ****
+********************************
+
+*** Version 1.1.x ***
+
+-- Version 1.1.0 --
+
+*** Version 1.0.x ***
+
+-- Version 1.0.1 --
+This is a maintenance release, mostly fixing minor compilation problems on some compilers and opererating systems. Other notable changes
+ - Added \lstinline|distance()| function for computing the distance between points, cell, etc.
+ - Voronoi quantities can now also be accessed in a more fine-grained manner: Volume and contributions for each cell attached to a vertex or edge.
+ - Added quantity transfer: Interpolates quantities on a $m$-cells can be transferred to $n$-cells. Both $m<n$ and $n>m$ are supported.
+
+
+-- Version 1.0.0 --
+First release
+
