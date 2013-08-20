@@ -1221,6 +1221,36 @@ namespace viennagrid
 
     
 
+    
+    
+    /** @brief Returns the names of all scalar-valued data read for vertices */
+    template<typename VTKReaderT>
+    std::vector<std::pair<std::size_t, std::string> > const & get_scalar_data_on_vertices(VTKReaderT const & reader)
+    {
+      return reader.get_scalar_data_on_vertices();
+    }
+
+    /** @brief Returns the names of all vector-valued data read for vertices */
+    template<typename VTKReaderT>
+    std::vector<std::pair<std::size_t, std::string> > const & get_vector_data_on_vertices(VTKReaderT const & reader)
+    {
+      return reader.get_vector_data_on_vertices();
+    }
+
+    /** @brief Returns the names of all scalar-valued data read for cells */
+    template<typename VTKReaderT>
+    std::vector<std::pair<std::size_t, std::string> > const & get_scalar_data_on_cells(VTKReaderT const & reader)
+    {
+      return reader.get_scalar_data_on_cells();
+    }
+
+    /** @brief Returns the names of all vector-valued data read for cells */
+    template<typename VTKReaderT>
+    std::vector<std::pair<std::size_t, std::string> > const & get_vector_data_on_cells(VTKReaderT const & reader)
+    {
+      return reader.get_vector_data_on_cells();
+    }
+    
 
 
   } //namespace io
