@@ -2,7 +2,7 @@
 #define VIENNAGRID_FORWARDS_H
 
 /* =======================================================================
-   Copyright (c) 2011-2012, Institute for Microelectronics,
+   Copyright (c) 2011-2013, Institute for Microelectronics,
                             Institute for Analysis and Scientific Computing,
                             TU Wien.
 
@@ -10,16 +10,11 @@
                      ViennaGrid - The Vienna Grid Library
                             -----------------
 
-   Authors:      Karl Rupp                           rupp@iue.tuwien.ac.at
-                 Josef Weinbub                    weinbub@iue.tuwien.ac.at
-
-   (A list of additional contributors can be found in the PDF manual)
-
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
 /**
- @mainpage Source Code Documentation for ViennaGrid 1.0.1
+ @mainpage Source Code Documentation for ViennaGrid 1.1.0
 
  This is the source code documentation of ViennaGrid. Detailed information about the functions in ViennaGrid can be found here.
 
