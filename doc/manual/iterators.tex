@@ -1,15 +1,12 @@
 \chapter{Iterators} \label{chap:iterators}
 
- \NOTE{This description has not been updated for ViennaGrid 1.1.0 yet!}
- 
-
-The (possibly nested) iteration over $n$-cells of a mesh is one of the main ingredients for a plethora of algorithms.
+The (possibly nested) iteration over elements of a mesh is one of the main ingredients for a plethora of algorithms.
 Consequently, {\ViennaGrid} is designed such that these iterations can be carried out in a unified and flexible, yet efficient manner.
 
 At the heart of the various possibilities is the concept of a \emph{range}. A range provides iterators for accessing a half-open interval \texttt{[first,one\_past\_last)} of elements and provides information about the number of elements in the range. However, a range does not 'own' the elements which can be accessed through it \cite{boost}. 
-Employing the range-concept, any iteration over $n$-cells in {\ViennaGrid} consists of two phases:
+Employing the range-concept, any iteration over elements in {\ViennaGrid} consists of two phases:
 \begin{itemize}
- \item Initialize the range of $n$-cells over which to iterate.
+ \item Initialize the range of elements over which to iterate.
  \item Iterate over the range using the iterators returned by the member functions \lstinline|begin()| and \lstinline|end()|.
 \end{itemize}
 
@@ -17,54 +14,54 @@ For convenience, a range may also provide access to its elements using \lstinlin
 
 \TIP{A tutorial code can be found in \texttt{examples/tutorial/iterators.cpp}.}
 
-\section{$n$-Cells in a Domain or Segment}
+\section{Elements in a Domain or Segment}
 As usual, the first step is to obtain the types for the range and the respective iterator.
-To iterate over all $n$-cells of a \lstinline|domain| of type \lstinline|DomainType|, the types can be obtained from the \lstinline|ncell_range| and \lstinline|iterator| meta-functions:
+To iterate over all elements of a \lstinline|domain| of type \lstinline|DomainType|, the types can be obtained from the \lstinline|element_range| and \lstinline|iterator| meta-functions:
 \begin{lstlisting}
  using namespace viennagrid;
 
  //non-const:
- typedef result_of::ncell_range<DomainType, n>::type    NCellRange;
- typedef result_of::iterator<NCellRange>::type          NCellIterator;
+ typedef result_of::element_range<DomainType, ElementTag>::type    ElementRange;
+ typedef result_of::iterator<ElementRange>::type          ElementIterator;
 \end{lstlisting}
 For segments, the occurances of \lstinline|DomainType| and \lstinline|domain| have to be replaced by \lstinline|SegmentType| and \lstinline|segment| here and in the following.
-If \lstinline|const|-access to the elements is sufficient, the metafunction \lstinline|const_ncell_range| should be used instead of \lstinline|ncell_range|.
+If \lstinline|const|-access to the elements is sufficient, the metafunction \lstinline|const_element_range| should be used instead of \lstinline|element_range|.
 For instance, the required types for a \lstinline|const|-iteration over vertices is given by
 \begin{lstlisting}
  //const:
- typedef result_of::const_ncell_range<DomainType, 0>::type   ConstVertexRange;
+ typedef result_of::const_element_range<DomainType, vertex_tag>::type   ConstVertexRange;
  typedef result_of::iterator<ConstVertexRange>::type         ConstVertexIterator;
 \end{lstlisting}
 
-The next step is to set up a range object using the \lstinline|ncells| function.
-The general case of $n$-cells is handled by
+The next step is to set up a range object using the \lstinline|elements| function.
+The general case of elements is handled by
 \begin{lstlisting}
- NCellRange elements = viennagrid::ncells<n>(domain);
+ NCellRange elements = viennagrid::elements<ElementTag>(domain);
 \end{lstlisting}
 For the example of const-iteration over vertices, this results in
 \begin{lstlisting}
- ConstVertexRange vertices = viennagrid::ncells<0>(domain);
+ ConstVertexRange vertices = viennagrid::elements<vertex_tag>(domain);
 \end{lstlisting}
 Since the left hand side operand already contains the topological dimension of elements over which to iterate, 
-the template argument to the \lstinline|ncells| function can also be omitted:
+the template argument to the \lstinline|elements| function can also be omitted:
 \begin{lstlisting}
- ConstVertexRange vertices = viennagrid::ncells(domain);
+ ConstVertexRange vertices = viennagrid::elements(domain);
 \end{lstlisting}
 While the advantage of this shorter variant is clearly shorter code and simpler copy\&pasting, the disadvantage is that the topological dimension is specified only once in the respective \lstinline|typedef|. The longer variant adds a second check for the use of the correct topological dimension.
 
 Once the range is set up, iteration is carried out in the usual C++ STL manner:
 \begin{lstlisting}
- for (NCellIterator it = elements.begin();
-                    it != elements.end();
-                  ++it)
+ for (ElementIterator it = elements.begin();
+                      it != elements.end();
+                    ++it)
  { /* do something */}
 \end{lstlisting}
 For reference, the complete code for printing all vertices of a domain without a \lstinline|using namespace|-directive is:
 \begin{lstlisting}
- typedef viennagrid::result_of::const_ncell_range<DomainType, 0>::type   ConstVertexRange;
+ typedef viennagrid::result_of::const_element_range<DomainType, vertex_tag>::type   ConstVertexRange;
  typedef viennagrid::result_of::iterator<ConstVertexRange>::type         ConstVertexIterator;
 
- ConstVertexRange vertices = viennagrid::ncells(domain);
+ ConstVertexRange vertices = viennagrid::elements(domain);
  for (VertexIterator vit = vertices.begin();
                      vit != vertices.end();
                    ++vit)
@@ -77,49 +74,65 @@ It should be emphasized that this code snippet is valid for arbitrary geometric 
 In some cases, e.g.~ for a parallelization using \OpenMP \cite{openmp}, it is preferred to iterate over all cells using an index-based for-loop rather than an iterator-based one.
 If the range is either a vertex range of a domain, or a cell range of a domain or segment, this can be obtained by
 \begin{lstlisting}
- NCellRange elements = viennagrid::ncells<n>(domain);
+ ElementRange elements = viennagrid::elements<ElementTag>(domain);
  for (std::size_t i=0; i<elements.size(); ++i)
  { do_something(elements[i]); }
 \end{lstlisting}
 It is also possible to use the range only implicitly:
 \begin{lstlisting}
- for (std::size_t i=0; i<viennagrid::ncells<n>(domain).size(); ++i)
- { do_something(viennagrid::ncells<n>(domain)[i]); }
+ for (std::size_t i=0; i<viennagrid::elements<ElementTag>(domain).size(); ++i)
+ { do_something(viennagrid::elements<ElementTag>(domain)[i]); }
 \end{lstlisting}
-where $n$ has to be replaced with the topological dimension of vertices and cells respectively. However, since the repeated construction of the range object can have non-negligible setup costs, the latter code is not recommended.
+However, since the repeated construction of the range object can have non-negligible setup costs, the latter code is not recommended.
 
 \NOTE{In {\ViennaGridversion}, \lstinline|operator[]| is not available for ranges obtained from a domain other than vertex or cell ranges. For segments, \lstinline|operator[]| is only available for cell ranges.}
 
+Shortcut meta-function are available for ranges too
+\begin{lstlisting}
+ typedef viennagrid::result_of::const_vertex_range<DomainType>::type   ConstVertexRange;
+ typedef viennagrid::result_of::iterator<ConstVertexRange>::type         ConstVertexIterator;
 
-\section{Boundary $k$-Cells of $n$-Cells}
-In addition to an iteration over all $n$-cells of a domain or segment, it may be required to iterate over boundary $k$-cells, $k<n$ of each $n$-cell.
-Instead of a general description using $n$-cells and $k$-cells, the more descriptive case of an iteration over all edges ($k=1$) of a \lstinline|cell| of type \lstinline|CellType| will be considered.
+ ConstVertexRange vertices = viennagrid::vertices(domain);
+ for (VertexIterator vit = vertices.begin();
+                     vit != vertices.end();
+                   ++vit)
+ {  std::cout << *vit << std::endl; }
+\end{lstlisting}
 
-\NOTE{In {\ViennaGridversion}, an iteration over all $k$-cells of an $n$-cell is not possible if the storage of boundary $k$-cells is disabled for $n$-cells, cf.~Section \ref{subsec:boundary-ncells-storage}. This restriction is expected to be relaxed in future versions of {\ViennaGrid}.}
+\begin{lstlisting}
+ for (std::size_t i=0; i<viennagrid::triangles(domain).size(); ++i)
+ { do_something(viennagrid::triangles(domain)[i]); }
+\end{lstlisting}
 
-As in the previous section, the range and iterator types are obtained from the \lstinline|ncell_range| and \lstinline|iterator| meta-functions:
+\section{Boundary Elements Iteration}
+In addition to an iteration over all elements of a domain or segment, it may be required to iterate over boundary elements.
+% Instead of a general description using $n$-cells and $k$-cells, the more descriptive case of an iteration over all edges ($k=1$) of a \lstinline|cell| of type \lstinline|CellType| will be considered.
+
+% \NOTE{In {\ViennaGridversion}, an iteration over all boundary elements of an element is not possible if the storage of boundary elements are disabled for elements, cf.~Section \ref{subsec:boundary-ncells-storage}. This restriction is expected to be relaxed in future versions of {\ViennaGrid}.}
+
+As in the previous section, the range and iterator types are obtained from the \lstinline|element_range| and \lstinline|iterator| meta-functions:
 \begin{lstlisting}
  //non-const:
  typedef viennagrid::result_of::ncell_range<CellType, 1>::type    EdgeOnCellRange;
  typedef result_of::iterator<EdgeOnCellRange>::type    EdgeOnCellIterator;
 \end{lstlisting}
-The \lstinline|const|-version is again obtained by using \lstinline|const_ncell_range| instead of \lstinline|ncell_range|.
-Mind that the first argument of \lstinline|ncell_range| denotes the enclosing entity (the cell) and the second argument denotes the topological dimension ($1$ for an edge), and thus preserves the structure already used for the type retrieval for iterations on the domain.
+The \lstinline|const|-version is again obtained by using \lstinline|const_element_range| instead of \lstinline|element_range|.
+Mind that the first argument of \lstinline|element_range| denotes the enclosing entity (the cell) and the second argument denotes the boundary element tag (\lstinline|line_tag| or \lstinline|edge_tag| for an edge), and thus preserves the structure already used for the type retrieval for iterations on the domain.
 
-Iteration is then carried out in the same manner as for a domain, with \lstinline|cell| taking the role of the \lstinline|domain| in the previous chapter.
-The following snippet print all edges of a \lstinline|cell|:
+Iteration is then carried out in the same manner as for a domain, with \lstinline|element| taking the role of the \lstinline|domain| in the previous chapter.
+The following snippet print all edges of a \lstinline|element|:
 \begin{lstlisting}
- //Note: ... = viennagrid::ncells(cell); will also work in the next line
- EdgeOnCellRange edges_on_cell = viennagrid::ncells<1>(cell);
+ //Note: ... = viennagrid::elements(element); will also work in the next line
+ EdgeOnCellRange edges_on_cell = viennagrid::elements<viennagrid::edge_tag>(element);
  for (EdgeOnCellIterator eocit = edges_on_cell.begin();
                          eocit != edges_on_cell.end();
                        ++eocit)
  {  std::cout << *eocit << std::endl; } 
 \end{lstlisting}
 
-For all topological dimensions, an index-based iteration is possible provided that the storage of the respective boundary $k$-cells has not been disabled. The previous code snippet can thus also be written as
+For all topological dimensions, an index-based iteration is possible provided that the storage of the respective boundary elements has not been disabled. The previous code snippet can thus also be written as
 \begin{lstlisting}
- EdgeOnCellRange edges_on_cell = viennagrid::ncells<1>(cell);
+ EdgeOnCellRange edges_on_cell = viennagrid::elements<viennagrid::edge_tag>(element);
  for (std::size_t i=0; i<edges_on_cell.size(); ++i)
  { 
    do_something(edges_on_cell[i]);
@@ -127,58 +140,56 @@ For all topological dimensions, an index-based iteration is possible provided th
 \end{lstlisting}
 or
 \begin{lstlisting}
- for (std::size_t i=0; i<viennagrid::ncells<1>(cell).size(); ++i)
+ for (std::size_t i=0; i<viennagrid::elements<viennagrid::edge_tag>(element).size(); ++i)
  {
-   std::cout << viennagrid::ncells<n>(domain)[i] << std::endl;
+   std::cout << viennagrid::elements<viennagrid::edge_tag>(element)[i] << std::endl;
  }
 \end{lstlisting}
 The use of the latter is again discouraged for reasons of possible non-negligible repeated setup costs of the ranges involved.
 
-\NOTE{In {\ViennaGridversion}, an iteration over all $k$-cells of an $n$-cell is not possible if the storage of boundary $k$-cells is disabled for $n$-cells, cf.~Section \ref{subsec:boundary-ncells-storage}.
- This restriction is expected to be relaxed in future versions of {\ViennaGrid}.}
+% \NOTE{In {\ViennaGridversion}, an iteration over all $k$-cells of an $n$-cell is not possible if the storage of boundary $k$-cells is disabled for $n$-cells, cf.~Section \ref{subsec:boundary-ncells-storage}. This restriction is expected to be relaxed in future versions of {\ViennaGrid}.}
 
-Finally, {\ViennaGrid} allows for iterations over the vertices of boundary $k$-cells of an $n$-cell in the reference orientation imposed by the $n$-cell, which is commonly required for ensuring continuity of a quantity along cell interfaces. Note that by default the iteration is carried out along the orientation imposed by the $k$-cell in the way it is stored globally inside the domain.
-The correct orientation of vertices with respect to the hosting $n$-cell is established by the free function \lstinline|local_vertex()|. 
-For instance, the vertices of a $k$-cell \lstinline|cell_k| at the boundary of a $n$-cell \lstinline|cell_n| are printed in local orientation using the code lines
+Finally, {\ViennaGrid} allows for iterations over the vertices of boundary elements of an element in the reference orientation imposed by the element, which is commonly required for ensuring continuity of a quantity along cell interfaces. Note that by default the iteration is carried out along the orientation imposed by the element in the way it is stored globally inside the domain.
+The correct orientation of vertices with respect to the hosting element is established by the free function \lstinline|local_vertex()|. 
+For instance, the vertices of a boundary element \lstinline|boundary_element| at the boundary of an element \lstinline|element| are printed in local orientation using the code lines
 \begin{lstlisting}
- for (std::size_t i=0; i<viennagrid::ncells<0>(cell_k).size(); ++i)
-   std::cout << viennagrid::local_vertex(cell_n, cell_k, i) << std::endl;
+ for (std::size_t i=0; i<viennagrid::vertices(boundary_element).size(); ++i)
+   std::cout << viennagrid::local_vertex(element, boundary_element, i) << std::endl;
 \end{lstlisting}
-The use of \lstinline|local_vertex| can be read as follows: For the $n$-cell \lstinline|cell_n|, return the vertex of the boundary $k$-cell \lstinline|cell_k| at local position $i$.
+The use of \lstinline|local_vertex| can be read as follows: For the element \lstinline|element|, return the vertex of the boundary element \lstinline|boundary_element| at local position $i$.
 
-\section{Coboundary $k$-Cells of $n$-Cells}
-A frequent demand of mesh-based algorithms is to iterate over so-called \emph{coboundary $k$-cells} of an $n$-cell $T_n$, where $k > n$.
-The coboundary $k$-cells of an $n$-cell $T_n$ are given by all $k$-cells of a set $\Omega$, where one of the boundary $n$-cells is $T_n$.
-For example, the coboundary edges ($1$-cells) of a vertex ($0$-cell) $T_0$ are all edges where one of the two vertices is $T_0$.
+\section{Coboundary Element Iteration}
+A frequent demand of mesh-based algorithms is to iterate over so-called \emph{coboundary elements} of an element $T$.
+The coboundary elements of an element $T$ are given by all elements of a set $\Omega$, where one of the boundary elements is $T$.
+For example, the coboundary edges of a vertex $T$ are all edges where one of the two vertices is $T$.
 
-In contrast to boundary $k$-cells , the number of coboundary $k$-cells of an $n$-cell from the family of simplices or hypercubes is not known at compile time.
-Another difference to the case of boundary $k$-cells is that the number of coboundary $k$-cells depends on the set $\Omega$ under consideration.
-Considering the interface edge/facet connecting vertices $1$ and $4$ in the sample domain from Fig.~\ref{fig:sampledomain}, the coboundary $2$-cells within the domain are given by the triangles $1$ and $2$.
-However, within segment $0$, the set of coboundary $2$-cells is given by the triangle $1$ only, while within segment $1$ the set of coboundary $2$-cells consists of triangle $2$ only.
+In contrast to boundary elements, the number of coboundary elements of an element from the family of simplices or hypercubes is not known at compile time.
+Another difference to the case of boundary elements is that the number of coboundary elements depends on the set $\Omega$ under consideration.
+Considering the interface edge/facet connecting vertices $1$ and $4$ in the sample domain from Fig.~\ref{fig:sampledomain}, the coboundary triangles within the domain are given by the triangles $1$ and $2$.
+However, within segment $0$, the set of coboundary triangles is given by the triangle $1$ only, while within segment $1$ the set of coboundary triangles consists of triangle $2$ only.
 Thus, the use of segments can substantially simplify the formulation of algorithms that act on a subregion of the domain only.
 
 The necessary range types are obtained using the same pattern as in the two previous sections.
 Assuming that a vertex type \lstinline|VertexType| is already defined, the range of coboundary edges as well as the iterator are obtained
-using the \lstinline|ncell_range| and \lstinline|iterator| metafunctions in the \lstinline|viennagrid| namespace:
+using the \lstinline|coboundary_range| and \lstinline|iterator| metafunctions in the \lstinline|viennagrid| namespace:
 \begin{lstlisting}
  //non-const:
- typedef result_of::ncell_range<VertexType, 1>::type  EdgeOnVertexRange;
+ typedef result_of::coboundary_range<DomainType, VertexType, edge_tag>::type  EdgeOnVertexRange;
  typedef result_of::iterator<EdgeOnVertexRange>::type EdgeOnVertexIterator;
 \end{lstlisting}
-Again, the first argument to \lstinline|ncell_range| is the reference element for the iteration, and the second argument is the topological dimension of the elements in the range.
-A range of \lstinline|const|-edges is obtained using the \lstinline|const_ncell_range| metafunction instead of the non-\lstinline|const| metafunction \lstinline|ncell_range|.
+The first argument to \lstinline|coboundary_range| is the context set $\Omega$, the second is the reference element for the iteration, and the third argument is the element tag of the elements in the range.
+A range of \lstinline|const|-edges is obtained using the \lstinline|const_coboundary_range| metafunction instead of the non-\lstinline|const| metafunction \lstinline|coboundary_range|.
 Moreover, it shall be noted that an additional \lstinline|typename| keyword is required inside template functions and template classes.
 
-To set up the range object, the \lstinline|ncells| function from the \lstinline|viennagrid| namespace is reused. Unlike in the previous sections, it requires two arguments
-for setting up a coboundary range: The first argument is the reference element, and the second argument refers to the enclosing container of $k$-cells and must be either a domain or a segment.
+To set up the range object, the \lstinline|coboundary_elements| function from the \lstinline|viennagrid| namespace is reused. Unlike in the previous sections, it requires two arguments
+for setting up a coboundary range: The first argument refers to the enclosing container of elements and must be either a domain or a segment and the second argument is the reference element.
 The range holding all edges in the \lstinline|domain| sharing a common vertex \lstinline|v| is thus set up as
 \begin{lstlisting}
- EdgeOnVertexRange edges_on_v = viennagrid::ncells<1>(v, domain);
+ EdgeOnVertexRange edges_on_v = viennagrid::coboundary_elements<VertexType, edge_tag>(domain, v);
 \end{lstlisting}
-where the template parameter $1$ is again optional.
 If the range should hold only the coboundary edges from a segment \lstinline|seg|, the above code line has to be modified to
 \begin{lstlisting}
- EdgeOnVertexRange edges_on_v = viennagrid::ncells<1>(v, seg);
+ EdgeOnVertexRange edges_on_v = viennagrid::coboundary_elements<VertexType, edge_tag>(seg, v);
 \end{lstlisting}
 An iteration over all edges is then possible in the usual STL-type manner. For example, all coboundary edges of $v$ in the range are printed using the code:
 \begin{lstlisting}
@@ -189,12 +200,11 @@ An iteration over all edges is then possible in the usual STL-type manner. For e
 \end{lstlisting}
 One may also use a shorter form that does not set up the range explicitly:
 \begin{lstlisting}
- for (EdgeOnVertexIterator eovit = viennagrid::ncells<1>(v,domain).begin();
-                           eovit != viennagrid::ncells<1>(v,domain).end();
+ for (EdgeOnVertexIterator eovit = viennagrid::coboundary_elements<VertexType, edge_tag>(domain, v).begin();
+                           eovit != viennagrid::coboundary_elements<VertexType, edge_tag>(domain, v).end();
                          ++eovit)
  { std::cout << *eovit << std::endl; }
 \end{lstlisting}
-Here, the template parameter $1$ for the \lstinline|ncells| function must not be omitted.
 
 Random access, i.e.~\lstinline|operator[]| is available for all topological levels. Thus, the loop above may also be written as
 \begin{lstlisting}
@@ -205,19 +215,73 @@ Random access, i.e.~\lstinline|operator[]| is available for all topological leve
 \end{lstlisting}
 or 
 \begin{lstlisting}
-  for (std::size_t i=0; i<viennagrid::ncells<1>(v, domain).size(); ++i)
+  for (std::size_t i=0; i<viennagrid::coboundary_elements<VertexType, edge_tag>(domain, v).size(); ++i)
   {
-    std::cout << viennagrid::ncells<1>(v, domain)[i] << std::endl;
+    std::cout << viennagrid::coboundary_elements<VertexType, edge_tag>(domain, v)[i] << std::endl;
   }
 \end{lstlisting}
 where the latter form is not recommended for reasons of overheads involved in setting up the tempoarary ranges.
 
 Finally, it should be noted that coboundary information is not natively available in the domain datastructure. If and only if for the first time
-the coboundary $k$-cells of an $n$-cell, $k>n$, are requested, an iteration over all $k$-cells of the domain or segment with nested $n$-cell boundary iteration is carried out to collect the topological information.
+the coboundary elements $C_n$ of an element $T$, are requested, an iteration over all elements of coboundary type of the domain or segment with nested element $T$ boundary iteration is carried out to collect the topological information.
 This results in extra memory requirements and additional computational costs, hence we suggest to use boundary iterations over coboundary iterations whenever possible.
 
-
-\TIP{Prefer the use of boundary iterations ($k < n$) over coboundary iterations ($k>n$) to minimize memory footprint.}
-
+\TIP{Prefer the use of boundary iterations over coboundary iterations to minimize memory footprint.}
 
 
+\section{Neighbour Element Iteration}
+Beside coboundary iteration {\ViennaGridversion} also supports iteration over neighbouring elements of the same type. Two elements are neighbours if they share a connector element of different type (with lower topologic dimension). For example iteration over all neighbouring triangles of a reference triangle with vertex as connector element type. As well as with coboundary iteration, a context domain or segment has to be provided.
+
+
+The necessary range types are obtained using the same pattern as with cobundary iteration:
+Assuming that a triangle type \lstinline|TriangleType| is already defined, the range of neighbour triangles as well as the iterator are obtained
+using the \lstinline|neighbour_range| and \lstinline|iterator| metafunctions in the \lstinline|viennagrid| namespace:
+\begin{lstlisting}
+ //non-const:
+ typedef result_of::neighbour_range<DomainType, TriangleType, vertex_tag>::type  NeighbourTriangleRange;
+ typedef result_of::iterator<NeighbourTriangleRange>::type NeighbourTriangleIterator;
+\end{lstlisting}
+The first argument to \lstinline|neighbour_range| is the context set $\Omega$, the second is the reference element type for the iteration, and the third argument is the connector element tag.
+A range of \lstinline|const|-edges is obtained using the \lstinline|const_neighbour_range| metafunction instead of the non-\lstinline|const| metafunction \lstinline|neighbour_range|.
+Moreover, it shall be noted that an additional \lstinline|typename| keyword is required inside template functions and template classes.
+
+To set up the range object, the \lstinline|neighbour_elements| function from the \lstinline|viennagrid| namespace is reused. Unlike in the previous sections, it requires two arguments
+for setting up a neighbour range: The first argument refers to the enclosing container of elements and must be either a domain or a segment and the second argument is the reference element.
+The range holding all triangles in the \lstinline|domain| sharing a common vertex with triangle \lstinline|t| is thus set up as
+\begin{lstlisting}
+ EdgeOnVertexRange neighbour_triangles_of_t = viennagrid::neighbour_elements<TriangleType, vertex_tag>(domain, t);
+\end{lstlisting}
+If the range should hold only the neighbour triangles from a segment \lstinline|seg|, the above code line has to be modified to
+\begin{lstlisting}
+ EdgeOnVertexRange neighbour_triangles_of_t = viennagrid::neighbour_elements<TriangleType, vertex_tag>(seg, t);
+\end{lstlisting}
+An iteration over all triangles is then possible in the usual STL-type manner. For example, all neighbour triangles of \lstinline|t| in the range are printed using the code:
+\begin{lstlisting}
+ for (NeighbourTriangleIterator ntit = neighbour_triangles_of_t.begin();
+                           ntit != neighbour_triangles_of_t.end();
+                         ++ntit)
+ { std::cout << *ntit << std::endl; }
+\end{lstlisting}
+One may also use a shorter form that does not set up the range explicitly:
+\begin{lstlisting}
+ for (NeighbourTriangleIterator ntit = viennagrid::neighbour_elements<TriangleType, vertex_tag>(domain, t).begin();
+                           ntit != viennagrid::neighbour_elements<TriangleType, vertex_tag>(domain, t).end();
+                         ++ntit)
+ { std::cout << *ntit << std::endl; }
+\end{lstlisting}
+
+Random access, i.e.~\lstinline|operator[]| is available for all topological levels. Thus, the loop above may also be written as
+\begin{lstlisting}
+  for (std::size_t i=0; i<neighbour_triangles_of_t.size(); ++i)
+  {
+    std::cout << neighbour_triangles_of_t[i] << std::endl;
+  }
+\end{lstlisting}
+or 
+\begin{lstlisting}
+  for (std::size_t i=0; i<viennagrid::neighbour_elements<TriangleType, vertex_tag>(domain, t).size(); ++i)
+  {
+    std::cout << viennagrid::neighbour_elements<TriangleType, vertex_tag>(domain, t)[i] << std::endl;
+  }
+\end{lstlisting}
+where the latter form is not recommended for reasons of overheads involved in setting up the tempoarary ranges.
