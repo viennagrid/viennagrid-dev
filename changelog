@@ -5,6 +5,14 @@
 *** Version 1.1.x ***
 
 -- Version 1.1.0 --
+The ViennaGrid internals have been completely redesigned for higher flexibility.
+Smaller adjustments to the user API were necessary:
+ - New storage layer, re-wrote most of the internals
+ - Using tags instead of topologic dimension to identify elements
+ - Added support for dynamic elements: polygon and PLCs
+ - Added support for neighbour iteration
+ - Added support for multiple segmentations
+ - New algorithms: intersection, seed point segmenting
 
 *** Version 1.0.x ***
 
