@@ -214,7 +214,7 @@ namespace viennagrid
           
           std::size_t index = 0;
           for (typename std::map< VertexIDType, ConstVertexHandleType >::iterator it = current_used_vertex_map.begin(); it != current_used_vertex_map.end(); ++it)
-            current_vertex_to_index_map.insert( std::make_pair( it->second, index++ ) );
+            current_vertex_to_index_map.insert( std::make_pair( it->second, VertexIDType(index++) ) );
             
           
           
