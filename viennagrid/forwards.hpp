@@ -293,8 +293,8 @@ namespace viennagrid
     struct boundary_information_wrapper;
 
 
-  
-  
+
+
 
 
   /** @brief The metafunction layer. Provides type generators that derive the respective type from the domain configuration */
@@ -340,14 +340,14 @@ namespace viennagrid
 
 
 
-    
-    
+
+
     template<typename element_type>
     struct id
     {
         typedef typename element_type::id_type type;
     };
-    
+
     /** @brief Metafunction for the type retrieval of n-cells
      *
      * @tparam Config       The configuration class
@@ -387,7 +387,7 @@ namespace viennagrid
     {
         typedef typename element<config_domain_segment_element_or_something_like_that, line_tag>::type type;
     };
-    
+
     template<typename config_domain_segment_element_or_something_like_that>
     struct edge
     {
@@ -447,7 +447,7 @@ namespace viennagrid
     {
         typedef typename handle<config_domain_segment_element_or_something_like_that, line_tag>::type type;
     };
-    
+
     template<typename config_domain_segment_element_or_something_like_that>
     struct edge_handle
     {
@@ -488,8 +488,8 @@ namespace viennagrid
 
     template<typename config_domain_segment_element_or_something_like_that, typename element_tag>
     struct const_handle;
-    
-    
+
+
     template<typename config_domain_segment_element_or_something_like_that>
     struct const_cell_handle
     {
@@ -509,7 +509,7 @@ namespace viennagrid
     {
         typedef typename const_handle<config_domain_segment_element_or_something_like_that, line_tag>::type type;
     };
-    
+
     template<typename config_domain_segment_element_or_something_like_that>
     struct const_edge_handle
     {
@@ -550,10 +550,10 @@ namespace viennagrid
 
 //     template<typename element_type>
 //     struct facet;
-// 
+//
 //     template<typename element_type>
 //     struct facet_handle;
-// 
+//
 //     template<typename element_type>
 //     struct const_facet_handle;
 
@@ -582,7 +582,7 @@ namespace viennagrid
     {
         typedef typename element_range<config_domain_segment_element_or_something_like_that, line_tag>::type type;
     };
-    
+
     template<typename config_domain_segment_element_or_something_like_that>
     struct edge_range
     {
@@ -648,7 +648,7 @@ namespace viennagrid
     {
         typedef typename const_element_range<config_domain_segment_element_or_something_like_that, line_tag>::type type;
     };
-    
+
     template<typename config_domain_segment_element_or_something_like_that>
     struct const_edge_range
     {
@@ -738,13 +738,13 @@ namespace viennagrid
     {
         typedef typename facet_tag< typename cell_tag< domain_t<WrappedDomainConfigT> >::type >::type type;
     };
-    
+
     template<typename WrappedSegmentationConfigT>
     struct facet_tag< segmentation_t<WrappedSegmentationConfigT> >
     {
         typedef typename facet_tag< typename cell_tag< segmentation_t<WrappedSegmentationConfigT> >::type >::type type;
     };
-    
+
     template<typename SegmentationT>
     struct facet_tag< segment_t<SegmentationT> >
     {
@@ -757,27 +757,27 @@ namespace viennagrid
     {
         typedef typename element<element_type, typename facet_tag<element_type>::type >::type type;
     };
-    
+
     template<typename WrappedDomainConfigT>
     struct facet< domain_t<WrappedDomainConfigT> >
     {
         typedef typename facet< typename cell< domain_t<WrappedDomainConfigT> >::type >::type type;
     };
-    
+
     template<typename WrappedSegmentationConfigT>
     struct facet< segmentation_t<WrappedSegmentationConfigT> >
     {
         typedef typename facet< typename cell< segmentation_t<WrappedSegmentationConfigT> >::type >::type type;
     };
-    
+
     template<typename SegmentationT>
     struct facet< segment_t<SegmentationT> >
     {
         typedef typename facet< typename cell< segment_t<SegmentationT> >::type >::type type;
     };
-    
-    
-    
+
+
+
 
     template<typename SomethingT>
     struct facet_handle
@@ -842,7 +842,7 @@ namespace viennagrid
     template<typename element_domain_segment_config_or_something_like_that>
     typename result_of::element_range<element_domain_segment_config_or_something_like_that, edge_tag>::type edges( element_domain_segment_config_or_something_like_that & something)
     { return elements<edge_tag>(something); }
-    
+
     template<typename element_domain_segment_config_or_something_like_that>
     typename result_of::element_range<element_domain_segment_config_or_something_like_that, triangle_tag>::type triangles( element_domain_segment_config_or_something_like_that & something)
     { return elements<triangle_tag>(something); }
@@ -883,7 +883,7 @@ namespace viennagrid
     template<typename element_domain_segment_config_or_something_like_that>
     typename result_of::const_element_range<element_domain_segment_config_or_something_like_that, line_tag>::type lines( const element_domain_segment_config_or_something_like_that & something)
     { return elements<line_tag>(something); }
-    
+
     template<typename element_domain_segment_config_or_something_like_that>
     typename result_of::const_element_range<element_domain_segment_config_or_something_like_that, edge_tag>::type edges( const element_domain_segment_config_or_something_like_that & something)
     { return elements<edge_tag>(something); }
@@ -918,7 +918,7 @@ namespace viennagrid
 
     template<typename ElementTagT, typename SegmentationT>
     typename result_of::element_range< segment_t<SegmentationT>, ElementTagT>::type elements( segment_t<SegmentationT> & something);
-    
+
     template<typename ElementTagT, typename SegmentationT>
     typename result_of::const_element_range< segment_t<SegmentationT>, ElementTagT>::type elements( segment_t<SegmentationT> const & something);
 
@@ -929,7 +929,7 @@ namespace viennagrid
 
 
 
-    
+
     template<typename element_type>
     typename result_of::facet_range<element_type>::type facets(element_type & element)
     {
@@ -971,7 +971,7 @@ namespace viennagrid
     { return handle; }
 
 
-    
+
     template<typename SourceWrappedConfigT, typename DestinationWrappedConfigT>
     void fix_handles( domain_t<SourceWrappedConfigT> const & source_domain, domain_t<DestinationWrappedConfigT> & destination_domain );
 
