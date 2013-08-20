@@ -9,7 +9,7 @@ A common approach is to model vertices, edges and the like as separate classes a
  \item \textbf{Efficiency}: A data member that is never used obviously wastes memory. For large numbers of object it might be even advisable to use special containers for data that is relevant for a tiny fraction of all objects only (e.g.~domain boundary flags). Apart from reduced memory footprint, the possibly tighter grouping of data allows for better CPU caching. 
 \end{enumerate}
 
-Previous version of {\ViennaGrid} relies on {\ViennaData} \cite{ViennaData} for the storage of data associated with topological objects. {\ViennaGridversion} dropped the dependencies on {\ViennaData} in favour of accessor concepts.
+Previous version of {\ViennaGrid} relies on {\ViennaData} \cite{ViennaData} for the storage of data associated with topological objects. {\ViennaGridversion} dropped the dependencies on {\ViennaData} in favor of accessor concepts.
 
 An accessor is a simple class which manages access to data stored on objects. For example one might want to store potential values with type \lstinline|double| on vertices. An accessor provides an  \lstinline|operator()| returning a reference to the data stored for that object:
 
@@ -39,8 +39,8 @@ Each class fulfilling the accessor concepts presented in table Tab.~\ref{tab:acc
    \lstinline|pointer find(AccessType const & element)| & searches for the data of element, if there is no data available NULL is returned \\
    \lstinline|const_pointer find(AccessType const & element) const| & same as above \\
    \hline
-   \lstinline|reference operator()(AccessType const & element)| & optains the data for element, if no data is available it is created \\
-   \lstinline|const_reference operator()(AccessType const & element) const| &  optains the data for element, if data is not available this method might fail\\
+   \lstinline|reference operator()(AccessType const & element)| & obtains the data for element, if no data is available it is created \\
+   \lstinline|const_reference operator()(AccessType const & element) const| &  obtains the data for element, if data is not available this method might fail\\
    \hline
    \lstinline|reference at(AccessType const & element)| &  same as \lstinline|operator()|, throws \lstinline|std::out_of_range| if data is not available\\
    \lstinline|const_reference at(AccessType const & element) const| & same as \lstinline|operator()|, throws \lstinline|std::out_of_range| if data is not available \\
@@ -51,7 +51,7 @@ Each class fulfilling the accessor concepts presented in table Tab.~\ref{tab:acc
  \label{tab:accessor-concepts}
  \end{table}
 
- Beside accessors, {\ViennaGrid} defines the field concept. A field is similar to an accessor but more suitable for sparse storage. The same concepts as for accessor apply to field concepts with the exepction of the concepts in table Tab.\ref{tab:field-concepts}.
+ Beside accessors, {\ViennaGrid} defines the field concept. A field is similar to an accessor but more suitable for sparse storage. The same concepts as for accessor apply to field concepts with the exception of the concepts in table Tab.\ref{tab:field-concepts}.
  
  \begin{table}[tb]
  \begin{center}
@@ -59,7 +59,7 @@ Each class fulfilling the accessor concepts presented in table Tab.~\ref{tab:acc
    \hline
    Member name & Description \\
    \hline
-   \lstinline|value_type operator()(AccessType const & element) const| &  optains the data for element, if data is not available a default value is returned \\
+   \lstinline|value_type operator()(AccessType const & element) const| &  obtains the data for element, if data is not available a default value is returned \\
    \hline
   \end{tabular}
  \end{center}

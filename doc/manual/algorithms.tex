@@ -165,7 +165,7 @@ Algorithms acting on a collection of cells are now considered. These collections
  
 
  \subsection{Interface}
-  Similar to the detection of boundary facets, elemets on the interface between two segments are frequently of particular interest. 
+  Similar to the detection of boundary facets, elements on the interface between two segments are frequently of particular interest. 
   An element \lstinline|element| can be checked for being on the interface of two segments \lstinline|seg0| and \lstinline|seg1| using
  \begin{lstlisting}
   std::cout << viennagrid::is_interface(seg0, seg1, element) << std::endl;
@@ -210,7 +210,7 @@ It has to be noted that the resulting refined mesh is written to a new domain, t
  DomainType refined_domain;
  viennagrid::cell_refine(domain, refined_domain, cell_refinement_accessor);
  \end{lstlisting}
- or, for segmentaions
+ or, for segmentations
  \begin{lstlisting}
  DomainType refined_domain;
  SegmentationType refined_segmentation;

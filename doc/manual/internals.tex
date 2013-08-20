@@ -18,7 +18,7 @@ In addition, the class inherits from a class with the sole purpose of providing 
     public boundary_element_layer<ElementTag, BoundaryElementContainerTypelist>,
  { ... }
 \end{lstlisting}
-The second template parameter of \lstinline|boundary_element_layer| is a typelist where all boundary element types are stored. The \lstinline|boundary_element_layer| inherits from a \lstinline|boundary_element_layer| with the last element type of that typelist.
+The second template parameter of \lstinline|boundary_element_layer| is a type list where all boundary element types are stored. The \lstinline|boundary_element_layer| inherits from a \lstinline|boundary_element_layer| with the last element type of that type list.
 \begin{lstlisting}
 template<typename element_tag, typename bnd_cell_container_type_, typename orientation_container_type_, typename tail>
 class boundary_element_layer<element_tag, meta::typelist_t< meta::static_pair<bnd_cell_container_type_, orientation_container_type_>, tail > > :
@@ -32,14 +32,14 @@ The recursion is terminated at vertex level by a partial template specialization
  \psfrag{element\_t}{\lstinline|element_t|}
  \psfrag{boundary\_element\_layer<facet tag>}{\lstinline|bnd_layer<facet>|}
  \psfrag{boundary\_element\_layer<facet of facet>}{\lstinline|bnd_layer<facet of facet>|}
- \psfrag{boundary\_element\_layer<vertex_tag>}{\lstinline|bnd_layer<vertex>|}
+ \psfrag{boundary\_element\_layer<vertex tag>}{\lstinline|bnd_layer<vertex>|}
  \psfrag{ID}{\lstinline|ID|}
  \includegraphics[width=0.95\textwidth]{figures/recursive-inheritance.eps}
  \caption{Illustration of recursive inheritance for the element class \lstinline|element_t|. The \lstinline|boundary_element_layer| class is abbreviated as \lstinline|bnd_layer|. The widths of the boxes refer to the sizes of a single class object.}
  \label{fig:recursive-inheritance}
 \end{figure}
 An illustration of the resulting class layout is given in Fig.~\ref{fig:recursive-inheritance}.
-Since each layer is configured by respective metafunctions that return the specified user settings,
+Since each layer is configured by respective meta functions that return the specified user settings,
 the class size of each layer varies depending on the storage of boundary cells and on the use of local reference orientations.
 
 A problem of recursive inheritance is name hiding. For example, a member function \lstinline|fun()| defined for one layer
