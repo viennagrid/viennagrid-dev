@@ -954,12 +954,14 @@ namespace viennagrid
           HandleIteratorType array_start,
           HandleIteratorType const & array_end );
 
+#ifndef _MSC_VER
     template<typename ElementTypeOrTag, typename DomainType, typename HandleIteratorType>
     typename result_of::handle<DomainType, ElementTypeOrTag>::type make_element_with_id(
           DomainType & domain,
           HandleIteratorType array_start,
           HandleIteratorType const & array_end,
           typename viennagrid::result_of::element<DomainType, ElementTypeOrTag>::type::id_type id );
+#endif
 
 
     template<typename WrappedDomainConfigType, typename ElementTag, typename WrappedConfigType>
