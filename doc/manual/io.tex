@@ -26,7 +26,7 @@ A different approach is to convert other file formats to one of the formats deta
  The \texttt{.mesh}-files provided with \texttt{Netgen} \cite{netgen} can be imported directly.
  These files are obtained from \texttt{Netgen} from the \texttt{File->Export Mesh...} menu item. Note that only triangular and tetrahedral meshes are supported.
 
- To read a mesh from a \texttt{.mesh} file with name \lstinline|filename| to a \lstinline|domain|, the lines
+ To read a mesh from a \texttt{.mesh} file with name \lstinline|filename| to a \lstinline|domain| with \lstinline|segmentation|, the lines
  \begin{lstlisting}
  viennagrid::io::netgen_reader my_netgen_reader;
  my_netgen_reader(domain, segmentation, filename);
@@ -49,6 +49,16 @@ A different approach is to convert other file formats to one of the formats deta
   2 2 3 5
   2 3 4 5
  \end{verbatim}
+ 
+ \subsection{Tetgen}
+ The \texttt{.poly}-files provided with \texttt{Tetgen} \cite{tetgen} can be imported directly. Note that only PLC meshes are supported.
+
+ To read a mesh from a \texttt{.poly} file with name \lstinline|filename| to a \lstinline|domain| with \lstinline|segmentation|,, the lines
+ \begin{lstlisting}
+ viennagrid::io::poly_reader my_tetgen_reader;
+ my_tetgen_reader(domain, segmentation, filename);
+ \end{lstlisting}
+ should be used. Note that the reader might throw an \lstinline|std::exception| if the file cannot be opened or if there is a parser error.
 
  \subsection{VTK}
  The VTK file format is extensively documented \cite{VTKfileformat} and allows to store mesh quantities as well.
@@ -161,8 +171,6 @@ for (size_t i=0; i<get_scalar_data_on_vertices(reader).size(); ++i)
  \label{tab:io-field-obtaining}
  \end{table}
  
- \pagebreak
- 
  After the import process a scalar/vector data field can be obtained with the member functions described in table Tab.~\ref{tab:io-field-obtaining}. In the next example a scalar field is obtained for the data values with VTK name \texttt{potential} and for the segment with ID $42$.
  
  \begin{lstlisting}
@@ -187,6 +195,9 @@ to write to one of the file formats discussed below and use one of the free visu
   viennagrid::io::opendx_writer<DomainType> my_dx_writer;
   my_dx_writer(domain, "my_mesh.out");
  \end{lstlisting}
+ 
+ \pagebreak
+ 
  To write quantities stored on the domain, the free functions from Tab.~\ref{tab:customizing-io} are used.
  For example, to visualize a scalar vertex-quantity of type \lstinline|double| stored in an accessor (cf.~Chapter \ref{chap:data}), the previous snippet is modified to
  \begin{lstlisting}
@@ -230,6 +241,8 @@ to write to one of the file formats discussed below and use one of the free visu
  In this way, the quantity is written to all segments and values at the interface coincide.
 
  If discontinuities at the interfaces should be allowed, vertex or cell data may also be written per segment.
+ 
+ \pagebreak
  
  As closing example, a quantity \lstinline|"jump"| with type \lstinline|double| is stored in an accessor.
  For a vertex \lstinline|v| at the interface of segments with indices $0$ and $1$, the values \lstinline|1.0| for the segment with index $1$ and \lstinline|2.0| for the segment with index $2$ are stored:
