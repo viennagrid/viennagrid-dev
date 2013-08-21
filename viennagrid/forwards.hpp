@@ -57,13 +57,13 @@ namespace viennagrid
 {
 
 
-    template<typename iterator_type, typename distance_type>
-    iterator_type advance(const iterator_type & in, distance_type distance)
-    {
-        iterator_type out(in);
-        std::advance(out, distance);
-        return out;
-    }
+  template<typename iterator_type, typename distance_type>
+  iterator_type advance(const iterator_type & in, distance_type distance)
+  {
+      iterator_type out(in);
+      std::advance(out, distance);
+      return out;
+  }
 
 
 
@@ -138,8 +138,6 @@ namespace viennagrid
   typedef hypercube_tag<3>  hexahedron_tag;
 
   struct polygon_tag;
-//   struct hole_polygon_tag;
-
   struct plc_tag;
 
   //forward declarations:
@@ -149,66 +147,6 @@ namespace viennagrid
 
   template<typename element_tag, typename WrappedConfigType>
   class element_t;
-
-  template <typename element_type>
-  class element_key;
-
-
-  /** @brief A key used for ViennaData to store coboundary information on n-cells */
-  template <typename T, typename element_tag> //topological dimension of the elements over which to iterate
-  class coboundary_key
-  {
-    public:
-      coboundary_key(T const & t_) : t(&t_) {}
-
-      /** @brief Comparison operator for compatibility with std::map */
-      bool operator<(coboundary_key const & other) const
-      {
-        return t < other.t;
-      }
-    private:
-      T const * t;
-  };
-
-  template <typename T, typename connector_boundary_element_tag> //topological dimension of the elements over which to iterate
-  class neighbour_key
-  {
-    public:
-      neighbour_key(T const & t_) : t(&t_) {}
-
-      /** @brief Comparison operator for compatibility with std::map */
-      bool operator<(neighbour_key const & other) const
-      {
-        return t < other.t;
-      }
-    private:
-      T const * t;
-  };
-
-  template <typename T>
-  class boundary_key;
-
-  template <typename T>
-  class interface_key;
-
-
-
-  template <typename SegmentType>
-  class segment_mapping_key
-  {
-    public:
-      segment_mapping_key(SegmentType const & seg) : pSeg(&seg) {}
-
-      //for compatibility with std::map
-      bool operator<(segment_mapping_key const & other) const
-      {
-        return pSeg < other.pSeg;
-      }
-
-    private:
-      SegmentType const * pSeg;
-  };
-
 
   struct static_layout_tag;
   struct dynamic_layout_tag;
@@ -540,18 +478,6 @@ namespace viennagrid
     {
         typedef typename const_handle<config_domain_segment_element_or_something_like_that, hexahedron_tag>::type type;
     };
-
-
-
-//     template<typename element_type>
-//     struct facet;
-//
-//     template<typename element_type>
-//     struct facet_handle;
-//
-//     template<typename element_type>
-//     struct const_facet_handle;
-
 
 
     template <typename T,
@@ -997,40 +923,6 @@ namespace viennagrid
 
   template <typename T>
   struct element_refinement;
-
-  /** @brief A key type used for tagging edges for refinement using ViennaData */
-  struct refinement_key {};
-
-  template <typename CellTag, typename DomainType, typename RefinementTag>
-  class refinement_proxy;
-
-  /** @brief A tag denoting uniform refinement */
-  struct uniform_refinement_tag {};
-
-  /** @brief A tag denoting local refinement */
-  struct local_refinement_tag {};
-
-  /** @brief The namespace holding the implementations of domains, segments and ncells as well as some algorithm implementations. Not of interest for library users */
-  namespace detail
-  {
-    template <typename CellTagIn, typename DomainTypeIn, typename DomainTypeOut>
-    void refine_impl(DomainTypeIn const & domain_in,
-                    DomainTypeOut & domain_out,
-                    uniform_refinement_tag);
-
-    template <typename CellTagIn, typename DomainTypeIn, typename DomainTypeOut>
-    void refine_impl(DomainTypeIn const & domain_in,
-                    DomainTypeOut & domain_out,
-                    local_refinement_tag);
-  }
-
-  //
-  // Voronoi information:
-  //
-  /** @brief ViennaData key for the Voronoi interface area associated with an edge */
-  struct voronoi_interface_area_key {};
-  /** @brief ViennaData key for the Voronoi box volume associated with an edge or vertex */
-  struct voronoi_box_volume_key {};
 }
 
 #endif
