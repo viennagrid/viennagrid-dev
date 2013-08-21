@@ -122,7 +122,7 @@ namespace viennagrid
                       ++cit)
       {
         interface_area_accessor(*cit) = 1;
-        interface_area_cell_contribution_accessor(*cit).push_back( std::make_pair( &(*cit), 1) );
+        interface_area_cell_contribution_accessor(*cit).push_back( std::make_pair( cit.handle(), 1) );
 
         double edge_contribution = 0;
         VertexOnCellRange vertices_on_cell = viennagrid::elements<VertexType>(*cit);
@@ -134,11 +134,11 @@ namespace viennagrid
           edge_contribution += contribution;
 
           vertex_box_volume_accessor(*vocit) += contribution;
-          vertex_box_volume_cell_contribution_accessor(*vocit).push_back( std::make_pair( &(*cit), contribution) );
+          vertex_box_volume_cell_contribution_accessor(*vocit).push_back( std::make_pair( cit.handle(), contribution) );
         }
 
         edge_box_volume_accessor(*cit) = edge_contribution;
-        edge_box_volume_cell_contribution_accessor(*cit).push_back( std::make_pair( &(*cit), edge_contribution) );
+        edge_box_volume_cell_contribution_accessor(*cit).push_back( std::make_pair( cit.handle(), edge_contribution) );
 
       }
     }
@@ -236,7 +236,7 @@ namespace viennagrid
           double interface_contribution = spanned_volume(circ_center, edge_midpoint);
 
           interface_area_accessor(*eocit) += interface_contribution;
-          interface_area_cell_contribution_accessor(*eocit).push_back( std::make_pair( &(*cit), interface_contribution) );
+          interface_area_cell_contribution_accessor(*eocit).push_back( std::make_pair( cit.handle(), interface_contribution) );
 
           //box volume contribution:
           double edge_contribution = 0;
@@ -249,11 +249,11 @@ namespace viennagrid
             edge_contribution += contribution;
 
             vertex_box_volume_accessor(*voeit) += contribution;
-            vertex_box_volume_cell_contribution_accessor(*voeit).push_back( std::make_pair( &(*cit), contribution) );
+            vertex_box_volume_cell_contribution_accessor(*voeit).push_back( std::make_pair( cit.handle(), contribution) );
           }
 
           edge_box_volume_accessor(*eocit) += edge_contribution;
-          edge_box_volume_cell_contribution_accessor(*eocit).push_back( std::make_pair( &(*cit), edge_contribution) );
+          edge_box_volume_cell_contribution_accessor(*eocit).push_back( std::make_pair( cit.handle(), edge_contribution) );
 
         } //for edges on cells
 
