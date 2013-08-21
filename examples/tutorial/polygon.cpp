@@ -33,10 +33,6 @@ using std::endl;
 #include "viennagrid/domain/domain.hpp"
 #include "viennagrid/domain/element_creation.hpp"
 
-#include <boost/numeric/ublas/vector.hpp>
-#include <boost/numeric/ublas/io.hpp>
-namespace ublas = boost::numeric::ublas;
-
 
 int main()
 {
