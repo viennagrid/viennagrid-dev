@@ -524,13 +524,7 @@ namespace viennagrid
 
 
 
-  /** @brief Represents an arbitrary point in the underlying coordinate system.
-   *
-   * @tparam CoordType    Type of each coordinate entry (usually double or float)
-   * @tparam d            Geometric dimension of the underlying coordinate system
-   * @tparam CoordinateSystem   The underlying coordinate system of the point.
-   *
-   */
+
   template <typename CoordType, typename CoordinateSystem>
   class point_t : public storage::static_array<CoordType, CoordinateSystem::dim>
   {

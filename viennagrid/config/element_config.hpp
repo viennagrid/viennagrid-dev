@@ -52,12 +52,6 @@ namespace viennagrid
                 typedef viennagrid::storage::std_vector_tag type;
             };
 
-            template<int num>
-            struct boundary_cell_container_tag<viennagrid::dynamic_unique_layout_tag, num>
-            {
-                typedef viennagrid::storage::std_set_tag type;
-            };
-
 
 
             //
