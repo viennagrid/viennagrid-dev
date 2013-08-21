@@ -1,8 +1,5 @@
 \chapter{Input/Output} \label{chap:io}
 
- \NOTE{This description has not been updated for ViennaGrid 1.1.0 yet!}
- 
-
 This chapter deals with the typical input and output operations: Reading a mesh from a file, and writing a mesh to a file.
 In order not to give birth to another mesh file format, {\ViennaGrid} does not bring its own file format. 
 Instead, the library mainly relies on the XML-based VTK \cite{VTK} file format \cite{VTKfileformat}.
@@ -88,9 +85,12 @@ Registering an accessor/field with an import is simply done by using the functio
  viennagrid::result_of::field< std::vector<double>, VertexType >::type scalar_values_field;
  
  std::vector< std::vector<double> > vector_values;
- viennagrid::result_of::field< std::vector< std::vector<double> >, CellType >::type vector_values_field;
+ viennagrid::result_of::field<
+      std::vector< std::vector<double> >, CellType
+    >::type vector_values_field;
  
  viennagrid::io::vtk_reader<DomainType>      my_vtk_reader;
+ 
  viennagrid::io::add_scalar_data_on_vertices(my_vtk_reader, scalar_values_field, "potential");
  viennagrid::io::add_vector_data_on_cells(my_vtk_reader, vector_values_field, "potential_vector_field");
  
@@ -160,6 +160,8 @@ for (size_t i=0; i<get_scalar_data_on_vertices(reader).size(); ++i)
  \caption{Free functions in namespace \lstinline|viennagrid::io| for customizing reader and writer objects. The three parameters to each of these functions is the reader object, the accessor/field and the VTK data name.}
  \label{tab:io-field-obtaining}
  \end{table}
+ 
+ \pagebreak
  
  After the import process a scalar/vector data field can be obtained with the member functions described in table Tab.~\ref{tab:io-field-obtaining}. In the next example a scalar field is obtained for the data values with VTK name \texttt{potential} and for the segment with ID $42$.
  
@@ -241,6 +243,9 @@ to write to one of the file formats discussed below and use one of the free visu
   segment_0_values_accessor(v) = 1.0;
   segment_1_values_accessor(v) = 2.0;
  \end{lstlisting}
+ 
+ \pagebreak
+ 
  The quantity is added to the VTK writer as
  \begin{lstlisting}
   add_scalar_data_on_vertices(my_vtk_writer, segment_0, segment_0_values, "segment_data");

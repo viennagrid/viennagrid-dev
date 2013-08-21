@@ -9,16 +9,21 @@ Existing file readers and writers are explained in Chapter \ref{chap:io}.
 In the following, the simple triangular mesh shown in Fig.~\ref{fig:sampledomain} will be set up.
 Thus, the domain type using the provided configuration class for two-dimensional triangular classes will be used:
 \begin{lstlisting}
- typedef viennagrid::config::triangular_2d                        ConfigType;
- typedef viennagrid::result_of::domain<ConfigType>::type          DomainType;
- typedef viennagrid::result_of::segmentation<DomainType>::type    SegmentationType;
- typedef viennagrid::result_of::segment<SegmentationType>::type   SegmentType;
+ typedef viennagrid::config::triangular_2d                      ConfigType;
+ typedef viennagrid::result_of::domain<ConfigType>::type        DomainType;
+ typedef viennagrid::result_of::segmentation<DomainType>::type  SegmentationType;
+ typedef viennagrid::result_of::segment<SegmentationType>::type  SegmentType;
 
- DomainType domain;                     // The domain to be set up in the following
- SegmentationType segmentation(domain); // The segmentation for the example mesh in Figure 4.1
+ // The domain to be set up in the following
+ DomainType domain;
  
- SegmentType segment_0 = segmentation.make_segment(); // Segment 0, the left one
- SegmentType segment_1 = segmentation.make_segment(); // Segment 1, the right one
+ // The segmentation for the example mesh in Figure 4.1
+ SegmentationType segmentation(domain);
+ 
+ // Segment 0, the left one
+ SegmentType segment_0 = segmentation.make_segment();
+ // Segment 1, the right one
+ SegmentType segment_1 = segmentation.make_segment();
 \end{lstlisting}
 If these lines are used inside a template class or template function, an additional \lstinline|typename| needs to be put after \lstinline|typedef| in the second line.
 The created domain object will be filled with vertices and cells in the following.
@@ -30,6 +35,7 @@ The created domain object will be filled with vertices and cells in the followin
  \label{fig:sampledomain}
 \end{figure}
 
+\pagebreak
 
 \section{Adding Vertices to a Domain or Segment}
 Since vertices carry geometric information by means of an associated point type, we first obtain the respective point type from the meta-function \lstinline|point<>|:
@@ -38,16 +44,22 @@ Since vertices carry geometric information by means of an associated point type,
 \end{lstlisting}
 This already allows us to add the vertices shown in Fig.~\ref{fig:sampledomain} one after another to the domain by using \lstinline|make_vertex|. This function returns a handle to the created vertex. We might need this handle so we have to define a type for our vertex handle:
 \begin{lstlisting}
- typedef viennagrid::result_of::handle<DomainType, viennagrid::vertex_tag>::type    VertexHandleType;
+ typedef viennagrid::result_of::handle<
+      DomainType,
+      viennagrid::vertex_tag
+  >::type    VertexHandleType;
 \end{lstlisting}
 Much simpler is the use of the convenience meta function \lstinline|vertex_handle|
 \begin{lstlisting}
- typedef viennagrid::result_of::vertex_handle<DomainType>::type    VertexHandleType;
+ typedef viennagrid::result_of::vertex_handle<
+      DomainType
+  >::type    VertexHandleType;
 \end{lstlisting}
 One example to add the first vertex is to push the respective point to the domain:
 \begin{lstlisting}
  PointType p(0,0);
- VertexHandleType vh0 = viennagrid::make_vertex(domain, p);  // add vertex #0
+ // add vertex #0
+ VertexHandleType vh0 = viennagrid::make_vertex(domain, p);
 \end{lstlisting}
 The member function \lstinline|make_vertex| adds the vertex to the domain and assigns an ID.
 
@@ -55,14 +67,22 @@ To push the next vertex, one can either reuse the existing vertex:
 \begin{lstlisting}
  p[0] = 1.0;
  p[1] = 0.0;
- VertexHandleType vh1 = viennagrid::make_vertex(domain, p);  // add vertex #1
+ // add vertex #1
+ VertexHandleType vh1 = viennagrid::make_vertex(domain, p);
 \end{lstlisting}
+
+\pagebreak
+
 or directly construct the respective points in-place:
 \begin{lstlisting}
- VertexHandleType vh2 = viennagrid::make_vertex(domain, PointType(2,0));  // add vertex #2
- VertexHandleType vh3 = viennagrid::make_vertex(domain, PointType(2,1));  // add vertex #3
- VertexHandleType vh4 = viennagrid::make_vertex(domain, PointType(1,1));  // add vertex #4
- VertexHandleType vh5 = viennagrid::make_vertex(domain, PointType(0,1));  // add vertex #5
+ // add vertex #2
+ VertexHandleType vh2 = viennagrid::make_vertex(domain, PointType(2,0));
+ // add vertex #3
+ VertexHandleType vh3 = viennagrid::make_vertex(domain, PointType(2,1));
+ // add vertex #4
+ VertexHandleType vh4 = viennagrid::make_vertex(domain, PointType(1,1));
+ // add vertex #5
+ VertexHandleType vh5 = viennagrid::make_vertex(domain, PointType(0,1));
 \end{lstlisting}
 
 It is also possible to explicitly specify the ID for a new vertex:
@@ -141,9 +161,12 @@ If the vertex handles are not present at this point you can search them with the
  typedef viennagrid::result_of::vertex<DomainType>::type   VertexType;
  typedef viennagrid::result_of::id<VertexType>::Type       VertexIDType;
  
- cell_vertices[0] = viennagrid::find_by_id(domain, VertexIDType(0)); // vertex #0
- cell_vertices[1] = viennagrid::find_by_id(domain, VertexIDType(1)); // vertex #1
- cell_vertices[2] = viennagrid::find_by_id(domain, VertexIDType(5)); // vertex #5
+ // vertex #0
+ cell_vertices[0] = viennagrid::find_by_id(domain, VertexIDType(0));
+  // vertex #1
+ cell_vertices[1] = viennagrid::find_by_id(domain, VertexIDType(1));
+  // vertex #5
+ cell_vertices[2] = viennagrid::find_by_id(domain, VertexIDType(5));
 \end{lstlisting}
 
 If you can ensure that the vertex with ID 0 was created first, the vertex with ID 1 was created second and so on, you can use direct random access:
@@ -159,7 +182,8 @@ If you can ensure that the vertex with ID 0 was created first, the vertex with I
 Now we are ready to create the element within the domain or segment. The generic function \lstinline|make_element| requires the element-to-create type as well as begin and end iterator of a vertex container.
 
 \begin{lstlisting}
- viennagrid::make_element<CellType>(segment_0, cell_vertices, cell_vertices+3);
+ viennagrid::make_element<CellType>(segment_0,
+                                    cell_vertices, cell_vertices+3);
 \end{lstlisting}
 
 In our case the following shortcut function can also be used, the handles are passed directly.
@@ -179,5 +203,7 @@ Creating element with explicit ID is also supported:
 \begin{lstlisting}
  typedef viennagrid::result_of::id<CellType>::Type       CellIDType;
  
- viennagrid::make_element_with_id<CellType>(segment_0, cell_vertices, cell_vertices+3, CellIDType(42));
+ viennagrid::make_element_with_id<CellType>(segment_0,
+                                            cell_vertices, cell_vertices+3,
+                                            CellIDType(42));
 \end{lstlisting}

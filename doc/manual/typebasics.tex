@@ -67,6 +67,8 @@ A domain is configured with a configuration class. This configuration class defi
   \end{center}
 \end{table}
 
+\pagebreak
+
 With a configuration, a domain can be defined using the meta-function \lstinline|domain|.
 
 \begin{lstlisting}
@@ -77,8 +79,8 @@ With a configuration, a domain can be defined using the meta-function \lstinline
  // Type retrieval, method 1: use meta-function
  typedef result_of::domain<Config>::type     DomainType;
  
- // Type retrieval, method 1: use direct typedef
- typedef trianglular_3d_domain DomainType;
+ // Type retrieval, method 1: use typedefed segmentation/segment
+ typedef trianglular_3d_domain               DomainType;
 
  DomainType domain; //create the domain object
 \end{lstlisting}
@@ -89,16 +91,20 @@ Using a domain type a segmentation and its segments can be defined.
  using namespace viennagrid;
  
  // Type retrieval, method 1: use meta-function
- typedef result_of::segmentation<DomainType>::type     SegmentationType;
- typedef result_of::segmentation<SegmentationType>::type     SegmentType;
+ typedef result_of::segmentation<DomainType>::type        SegmentationType;
+ typedef result_of::segmentation<SegmentationType>::type  SegmentType;
  
- // Type retrieval, method 1: use direct typedef
- typedef trianglular_3d_segmentation SegmentationType;
- typedef trianglular_3d_segment SegmentType;
+ // Type retrieval, method 1: use typedefed segmentaion/segment
+ typedef trianglular_3d_segmentation      SegmentationType;
+ typedef trianglular_3d_segment           SegmentType;
 
  DomainType domain; // create the domain object
- SegmentationType segmentation(domain); // segmentation needs the domain object as constructor argument
+ 
+ // segmentation needs the domain object as constructor argument
+ SegmentationType segmentation(domain);
 \end{lstlisting}
+
+\pagebreak
 
 \section{Elements and Handles} \label{sec:elements-and-handles}
 
@@ -108,21 +114,21 @@ A central topic with {\ViennaGrid} are elements. Elements types can be obtained 
  using namespace viennagrid;
  
  // obtain element type from domain type
- typedef result_of::element<DomainType, vertex_tag>::type VertexType;
+ typedef result_of::element<DomainType, vertex_tag>::type         VtxType;
  // this meta function might fail if there is no tetrahedron in the domain
- typedef result_of::element<DomainType, tetrahedron_tag>::type TetrahedronType;
+ typedef result_of::element<DomainType, tetrahedron_tag>::type    TetType;
  
  // obtain element type from another element
- typedef result_of::element<TetrahedronType, line_tag>::type LineType;
+ typedef result_of::element<TetrahedronType, line_tag>::type      LineType;
  // the same element as above
- typedef result_of::element<TetrahedronType, edge_tag>::type LineType;
+ typedef result_of::element<TetrahedronType, edge_tag>::type      LineType;
  
  // this meta function will fail because there is no tetrahedron in a line
- typedef result_of::element<LineType, tetrahedron_tag>::type TetrahedronType;
+ typedef result_of::element<LineType, tetrahedron_tag>::type      TetType;
  
  // elements can also be obtained from segmentations or segments
- typedef result_of::element<SegmentationType, triangle_tag>::type TriangleType;
- typedef result_of::element<SegmentType, vertex_tag>::type VertexType;
+ typedef result_of::element<SegmentationType, triangle_tag>::type TriType;
+ typedef result_of::element<SegmentType, vertex_tag>::type        VtxType;
 \end{lstlisting}
 
 For each supported type there are also shortcut meta-functions available.
@@ -131,20 +137,22 @@ For each supported type there are also shortcut meta-functions available.
  using namespace viennagrid;
  
  // obtain element type from domain type
- typedef result_of::vertex<DomainType>::type VertexType;
+ typedef result_of::vertex<DomainType>::type            VertexType;
  // this meta function might fail if there is no tetrahedron in the domain
- typedef result_of::tetrahedron<DomainType>::type TetrahedronType;
+ typedef result_of::tetrahedron<DomainType>::type       TetrahedronType;
  
  // obtain element type from another element
- typedef result_of::line<TetrahedronType>::type LineType;
+ typedef result_of::line<TetrahedronType>::type         LineType;
  
  // this meta function will fail because there is no tetrahedron in a line
  typedef result_of::tetrahedron<LineType>::type TetrahedronType;
  
  // elements can also be obtained from segmentations or segments
- typedef result_of::triangle<SegmentationType>::type TriangleType;
- typedef result_of::vertex<SegmentType>::type VertexType;
+ typedef result_of::triangle<SegmentationType>::type    TriangleType;
+ typedef result_of::vertex<SegmentType>::type           VertexType;
 \end{lstlisting}
+
+\pagebreak
 
 Often elements are not accessed directly but through a handle instead. For example the boundary elements are stored using their handles within an element. Handles can also be simple obtained by the meta-function \lstinline|element| or by the shortcut meta-functions.
 
@@ -152,29 +160,30 @@ Often elements are not accessed directly but through a handle instead. For examp
  using namespace viennagrid;
  
  // obtain element handle type from domain type
- typedef result_of::handle<DomainType, vertex_tag>::type VertexHandleType;
- typedef result_of::vertex_handle<DomainType>::type VertexHandleType;
+ typedef result_of::handle<DomainType, vertex_tag>::type    VtxHandleType;
+ typedef result_of::vertex_handle<DomainType>::type         VtxHandleType;
  // this meta function might fail if there is no tetrahedron in the domain
- typedef result_of::handle<DomainType, tetrahedron_tag>::type TetrahedronHandleType;
- typedef result_of::tetrahedron_handle<DomainType>::type TetrahedronHandleType;
+ typedef result_of::handle<DomainType, tetrahedron_tag>::type TetHandleType;
+ typedef result_of::tetrahedron_handle<DomainType>::type    TetHandleType;
  
- // obtain element handle type from another element (obtaining handles from another handle is not supported)
+ // obtain element handle type from another element
+ // (obtaining handles from another handle is not supported)
  typedef result_of::handle<TetrahedronType, line_tag>::type LineHandleType;
- typedef result_of::line_handle<TetrahedronType>::type LineHandleType;
+ typedef result_of::line_handle<TetrahedronType>::type      LineHandleType;
  // the same element as above
  typedef result_of::handle<TetrahedronType, edge_tag>::type LineHandleType;
- typedef result_of::edge_handle<TetrahedronType, edge_tag>::type LineHandleType;
+ typedef result_of::edge_handle<TetrahedronType>::type      LineHandleType;
  
  // this meta function will fail because there is no tetrahedron in a line
- typedef result_of::handle<LineType>::type TetrahedronHandleType;
- typedef result_of::tetrahedron_handle<LineType>::type TetrahedronHandleType;
+ typedef result_of::handle<LineType, tetrahedron_tag>::type TetHandleType;
+ typedef result_of::tetrahedron_handle<LineType>::type      TetHandleType;
  
  // elements can also be obtained from segmentations or segments
- typedef result_of::handle<SegmentationType, triangle_tag>::type TriangleHandleType;
- typedef result_of::triangle_handle<SegmentationType>::type TriangleHandleType;
+ typedef result_of::handle<SegmentationType, triangle_tag>::type TriHandleType;
+ typedef result_of::triangle_handle<SegmentationType>::type TriHandleType;
  
- typedef result_of::handle<SegmentType>::type VertexHandleType;
- typedef result_of::vertex_handle<SegmentType>::type VertexHandleType;
+ typedef result_of::handle<SegmentType>::type               VtxHandleType;
+ typedef result_of::vertex_handle<SegmentType>::type        VtxHandleType;
 \end{lstlisting}
 
 

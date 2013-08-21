@@ -150,7 +150,9 @@ If this is not the case, the complex is denoted \emph{non-conforming}, cf.~Fig.~
  \label{fig:conformity}
 \end{figure}
 
-The instantiation of a {\ViennaGrid} domain object requires a configuration class \lstinline|Config|, as will be discussed in~Chapter~\ref{chap:domainconfig}. Given such a class, the domain type is retrieved and the domain object constructed as 
+\pagebreak
+
+The instantiation of a {\ViennaGrid} domain object requires a configuration class \lstinline|Config|, as will be discussed in~Chapter~\ref{chap:typebasics}. Given such a class, the domain type is retrieved and the domain object constructed as 
 \begin{lstlisting}
  using namespace viennagrid;
 
@@ -158,7 +160,7 @@ The instantiation of a {\ViennaGrid} domain object requires a configuration clas
  typedef result_of::domain<Config>::type     DomainType;
 
  // Type retrieval, method 2: direct (discouraged, may change in future versions)
- typedef domain_t<Config>     DomainType
+ typedef domain_t<Config>                    DomainType
 
  DomainType domain; //create the domain object
 \end{lstlisting}

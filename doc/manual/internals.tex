@@ -20,9 +20,17 @@ In addition, the class inherits from a class with the sole purpose of providing 
 \end{lstlisting}
 The second template parameter of \lstinline|boundary_element_layer| is a type list where all boundary element types are stored. The \lstinline|boundary_element_layer| inherits from a \lstinline|boundary_element_layer| with the last element type of that type list.
 \begin{lstlisting}
-template<typename element_tag, typename bnd_cell_container_type_, typename orientation_container_type_, typename tail>
-class boundary_element_layer<element_tag, meta::typelist_t< meta::static_pair<bnd_cell_container_type_, orientation_container_type_>, tail > > :
-    public boundary_element_layer<element_tag, tail>
+template<typename element_tag,
+         typename bnd_cell_container_type_,
+         typename orientation_container_type_,
+         typename tail>
+class boundary_element_layer<
+    element_tag,
+    meta::typelist_t<
+        meta::static_pair<bnd_cell_container_type_, orientation_container_type_>,
+        tail
+    >
+  > : public boundary_element_layer<element_tag, tail>
 \end{lstlisting}
 where the additional technical template arguments customizing the behavior of each boundary layer are omitted.
 The recursion is terminated at vertex level by a partial template specialization of the class.

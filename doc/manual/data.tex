@@ -34,16 +34,13 @@ Each class fulfilling the accessor concepts presented in table Tab.~\ref{tab:acc
    \lstinline|pointer| & a point to \lstinline|value_type| \\
    \lstinline|const_pointer| & a const pointer to \lstinline|value_type| \\
    \hline
-   \lstinline|bool is_valid() const| & return true if the accessor is in a valid stage  \\
+   \lstinline|is_valid() const| & returns true if the accessor is in a valid stage  \\
    \hline
-   \lstinline|pointer find(AccessType const & element)| & searches for the data of element, if there is no data available NULL is returned \\
-   \lstinline|const_pointer find(AccessType const & element) const| & same as above \\
+   \lstinline|find(AccessType const&)| & \begin{tabular}{l} searches for the data of element \\ returns pointer to data \\ if there is no data available NULL is returned \end{tabular} \\
    \hline
-   \lstinline|reference operator()(AccessType const & element)| & obtains the data for element, if no data is available it is created \\
-   \lstinline|const_reference operator()(AccessType const & element) const| &  obtains the data for element, if data is not available this method might fail\\
+   \lstinline|operator()(AccessType const&)| & \begin{tabular}{l} optains data for element \\ return reference to data \\ non-const: if no data is available it is created \\ const: if data is not available this method might fail \end{tabular} \\
    \hline
-   \lstinline|reference at(AccessType const & element)| &  same as \lstinline|operator()|, throws \lstinline|std::out_of_range| if data is not available\\
-   \lstinline|const_reference at(AccessType const & element) const| & same as \lstinline|operator()|, throws \lstinline|std::out_of_range| if data is not available \\
+   \lstinline|at(AccessType const&)| & \begin{tabular}{l} same as \lstinline|operator()| \\ throws \lstinline|std::out_of_range| if data is not available \end{tabular} \\
    \hline
   \end{tabular}
  \end{center}
@@ -59,7 +56,7 @@ Each class fulfilling the accessor concepts presented in table Tab.~\ref{tab:acc
    \hline
    Member name & Description \\
    \hline
-   \lstinline|value_type operator()(AccessType const & element) const| &  obtains the data for element, if data is not available a default value is returned \\
+   \lstinline|operator()(AccessType const&)| & \begin{tabular}{l} optains data for element \\ return reference to data \\ non-const: same behavior as accessor \\ const: if data is not available, a default value is returned \end{tabular} \\
    \hline
   \end{tabular}
  \end{center}
