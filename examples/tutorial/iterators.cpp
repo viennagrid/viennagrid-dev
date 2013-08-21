@@ -25,7 +25,6 @@
 #include <fstream>
 #include <vector>
 
-#include "viennagrid/config/domain_config.hpp"
 #include "viennagrid/config/default_configs.hpp"
 #include "viennagrid/algorithm/volume.hpp"
 #include "viennagrid/algorithm/voronoi.hpp"

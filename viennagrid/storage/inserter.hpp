@@ -1,8 +1,18 @@
 #ifndef VIENNAGRID_STORAGE_INSERTER_HPP
 #define VIENNAGRID_STORAGE_INSERTER_HPP
 
+/* =======================================================================
+   Copyright (c) 2011-2013, Institute for Microelectronics,
+                            Institute for Analysis and Scientific Computing,
+                            TU Wien.
 
-//#include "viennagrid/storage/reference.hpp"
+                            -----------------
+                     ViennaGrid - The Vienna Grid Library
+                            -----------------
+
+   License:      MIT (X11), see file LICENSE in the base directory
+======================================================================= */
+
 #include "viennagrid/storage/container_collection.hpp"
 #include "viennagrid/storage/container_collection_element.hpp"
 

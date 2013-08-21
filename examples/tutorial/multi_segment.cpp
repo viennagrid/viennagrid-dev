@@ -22,7 +22,6 @@
 
 
 #include "viennagrid/forwards.hpp"
-#include "viennagrid/config/domain_config.hpp"
 #include "viennagrid/config/default_configs.hpp"
 #include "viennagrid/point.hpp"
 #include "viennagrid/io/netgen_reader.hpp"

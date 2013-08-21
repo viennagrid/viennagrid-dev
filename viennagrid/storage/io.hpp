@@ -1,11 +1,23 @@
 #ifndef VIENNAGRID_STORAGE_IO_HPP
 #define VIENNAGRID_STORAGE_IO_HPP
 
+/* =======================================================================
+   Copyright (c) 2011-2013, Institute for Microelectronics,
+                            Institute for Analysis and Scientific Computing,
+                            TU Wien.
+
+                            -----------------
+                     ViennaGrid - The Vienna Grid Library
+                            -----------------
+
+   License:      MIT (X11), see file LICENSE in the base directory
+======================================================================= */
+
 #include <ostream>
 #include <iterator>
 
-#include "container_collection.hpp"
-#include "algorithm.hpp"
+#include "viennagrid/storage/container_collection.hpp"
+#include "viennagrid/storage/algorithm.hpp"
 
 namespace viennagrid
 {

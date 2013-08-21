@@ -1,6 +1,18 @@
 #ifndef VIENNAGRID_ALGORITHM_ANGLE_HPP
 #define VIENNAGRID_ALGORITHM_ANGLE_HPP
 
+/* =======================================================================
+   Copyright (c) 2011-2013, Institute for Microelectronics,
+                            Institute for Analysis and Scientific Computing,
+                            TU Wien.
+
+                            -----------------
+                     ViennaGrid - The Vienna Grid Library
+                            -----------------
+
+   License:      MIT (X11), see file LICENSE in the base directory
+======================================================================= */
+
 #include "viennagrid/algorithm/inner_prod.hpp"
 #include "viennagrid/algorithm/norm.hpp"
 #include "viennagrid/algorithm/geometry.hpp"

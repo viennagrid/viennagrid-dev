@@ -1,8 +1,20 @@
 #ifndef VIENNAGRID_STORAGE_HIDDEN_KEY_MAP_HPP
 #define VIENNAGRID_STORAGE_HIDDEN_KEY_MAP_HPP
 
+/* =======================================================================
+   Copyright (c) 2011-2013, Institute for Microelectronics,
+                            Institute for Analysis and Scientific Computing,
+                            TU Wien.
+
+                            -----------------
+                     ViennaGrid - The Vienna Grid Library
+                            -----------------
+
+   License:      MIT (X11), see file LICENSE in the base directory
+======================================================================= */
+
 #include <map>
-#include "container.hpp"
+#include "viennagrid/storage/container.hpp"
 
 namespace viennagrid
 {

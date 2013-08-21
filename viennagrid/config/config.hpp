@@ -1,6 +1,18 @@
 #ifndef VIENNAGRID_CONFIG_HPP
 #define VIENNAGRID_CONFIG_HPP
 
+/* =======================================================================
+   Copyright (c) 2011-2013, Institute for Microelectronics,
+                            Institute for Analysis and Scientific Computing,
+                            TU Wien.
+
+                            -----------------
+                     ViennaGrid - The Vienna Grid Library
+                            -----------------
+
+   License:      MIT (X11), see file LICENSE in the base directory
+======================================================================= */
+
 #include "viennagrid/meta/typemap.hpp"
 #include "viennagrid/storage/forwards.hpp"
 

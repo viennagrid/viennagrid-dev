@@ -1,6 +1,17 @@
 #ifndef VIENNAGRID_STORAGE_CONTAINER_COLLECTION_ELEMENT_HPP
 #define VIENNAGRID_STORAGE_CONTAINER_COLLECTION_ELEMENT_HPP
 
+/* =======================================================================
+   Copyright (c) 2011-2013, Institute for Microelectronics,
+                            Institute for Analysis and Scientific Computing,
+                            TU Wien.
+
+                            -----------------
+                     ViennaGrid - The Vienna Grid Library
+                            -----------------
+
+   License:      MIT (X11), see file LICENSE in the base directory
+======================================================================= */
 
 namespace viennagrid
 {
