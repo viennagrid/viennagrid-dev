@@ -39,14 +39,14 @@ int main()
     vertex_handle_type v22 = viennagrid::make_vertex(domain, point_type(2.0, 2.0));
 
     
-    triangle_handle_type triangle_handle_0 = viennagrid::make_triangle(domain, v00, v01, v11);
-    triangle_handle_type triangle_handle_1 = viennagrid::make_triangle(domain, v00, v10, v11);
-    triangle_handle_type triangle_handle_2 = viennagrid::make_triangle(domain, v10, v11, v20);
-    triangle_handle_type triangle_handle_3 = viennagrid::make_triangle(domain, v11, v20, v21);
-    triangle_handle_type triangle_handle_4 = viennagrid::make_triangle(domain, v11, v21, v22);
-    triangle_handle_type triangle_handle_5 = viennagrid::make_triangle(domain, v12, v11, v22);
-    triangle_handle_type triangle_handle_6 = viennagrid::make_triangle(domain, v02, v11, v12);
-    triangle_handle_type triangle_handle_7 = viennagrid::make_triangle(domain, v01, v11, v02);
+    viennagrid::make_triangle(domain, v00, v01, v11);
+    viennagrid::make_triangle(domain, v00, v10, v11);
+    viennagrid::make_triangle(domain, v10, v11, v20);
+    viennagrid::make_triangle(domain, v11, v20, v21);
+    viennagrid::make_triangle(domain, v11, v21, v22);
+    viennagrid::make_triangle(domain, v12, v11, v22);
+    viennagrid::make_triangle(domain, v02, v11, v12);
+    viennagrid::make_triangle(domain, v01, v11, v02);
     
     typedef viennagrid::result_of::triangle_range<domain_type>::type triangle_range_type;
     typedef viennagrid::result_of::iterator<triangle_range_type>::type triangle_range_iterator;

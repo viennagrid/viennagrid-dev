@@ -72,7 +72,7 @@ void setup_domain(viennagrid::line_1d_domain & domain)
 
   //upgrade to vertex:
   std::cout << "Adding vertices to domain..." << std::endl;
-  for (int i = 0; i < s; ++i)
+  for (size_t i = 0; i < s; ++i)
   {
     v[i] = viennagrid::make_vertex( domain, p[i] );
   }

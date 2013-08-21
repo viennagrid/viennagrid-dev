@@ -110,7 +110,7 @@ namespace viennagrid
     template<typename domain_type, typename domain_view_type, typename handle_type>
     struct mark_erase_elements_impl<domain_type, domain_view_type, handle_type, viennagrid::meta::null_type >
     {
-        static void mark(domain_type & domain, domain_view_type & domain_view, handle_type to_erase)
+        static void mark(domain_type &, domain_view_type & domain_view, handle_type to_erase)
         {
             typedef typename viennagrid::storage::handle::result_of::value_type<handle_type>::type element_type;
 

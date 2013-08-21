@@ -99,12 +99,12 @@ int main()
     
     TriangleHandleType th0 = viennagrid::make_triangle( domain, vh0, vh1, vh3 );
     TriangleHandleType th1 = viennagrid::make_triangle( domain, vh1, vh4, vh3 );
-    TriangleHandleType th2 = viennagrid::make_triangle( domain, vh1, vh5, vh4 );
-    TriangleHandleType th3 = viennagrid::make_triangle( domain, vh1, vh2, vh5 );
-    TriangleHandleType th4 = viennagrid::make_triangle( domain, vh3, vh7, vh6 );
-    TriangleHandleType th5 = viennagrid::make_triangle( domain, vh3, vh4, vh7 );
-    TriangleHandleType th6 = viennagrid::make_triangle( domain, vh4, vh5, vh7 );
-    TriangleHandleType th7 = viennagrid::make_triangle( domain, vh5, vh8, vh7 );
+    viennagrid::make_triangle( domain, vh1, vh5, vh4 );
+    viennagrid::make_triangle( domain, vh1, vh2, vh5 );
+    viennagrid::make_triangle( domain, vh3, vh7, vh6 );
+    viennagrid::make_triangle( domain, vh3, vh4, vh7 );
+    viennagrid::make_triangle( domain, vh4, vh5, vh7 );
+    viennagrid::make_triangle( domain, vh5, vh8, vh7 );
     
     
 

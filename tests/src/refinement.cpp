@@ -551,7 +551,7 @@ struct point_filler<12, B>
 
 
 template <typename DomainType, typename PointFiller>
-void fill_domain(DomainType & domain, PointFiller const & filler)
+void fill_domain(DomainType & domain, PointFiller const &)
 {
 //   typedef typename DomainType::config_type      ConfigType;
 //   typedef viennagrid::segment_t<ConfigType>     SegmentType;

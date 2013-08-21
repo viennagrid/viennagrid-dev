@@ -115,7 +115,7 @@ void setup_domain(DomainType & domain)
 
 
 
-int main(int argc, char *argv[])
+int main()
 {
   typedef viennagrid::hexahedral_3d_domain              DomainType;
 //   typedef viennagrid::result_of::domain<Config>::type   DeviceType;

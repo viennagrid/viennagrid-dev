@@ -50,7 +50,7 @@ void output_voronoi_info(DomaintType const & d,
   typedef typename VertexBoxVolumeContributionAccessorT::value_type VertexBoxVolumeContributionType;
   typedef typename InterfaceContributionAccessorT::value_type InterfaceContributionType;
   
-  long counter = 0;
+//   long counter = 0;
   
 //   viennagrid::voronoi_interface_area_key interface_key;
 //   viennagrid::voronoi_box_volume_key box_volume_key;
@@ -76,7 +76,7 @@ void output_voronoi_info(DomaintType const & d,
   std::cout << "-" << std::endl;
   std::cout << "- Edge Information: " << std::endl;
   std::cout << "-" << std::endl;
-  counter = 0;
+//   counter = 0;
   EdgeContainer edges = viennagrid::elements(d);
   for (EdgeIterator eit  = edges.begin();
                     eit != edges.end();

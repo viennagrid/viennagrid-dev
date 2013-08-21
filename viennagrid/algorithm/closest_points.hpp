@@ -983,7 +983,7 @@ namespace viennagrid
     template <typename T, typename U>
     struct topologically_sorted
     {
-      static const bool value = (topological_id<T>::value <= topological_id<U>::value) ? true : false;;
+      static const bool value = (topological_id<T>::value <= topological_id<U>::value) ? true : false;
     };
 
 

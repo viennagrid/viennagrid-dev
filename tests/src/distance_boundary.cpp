@@ -92,7 +92,7 @@ void setup_domains(viennagrid::triangular_2d_domain & domain0,
     
     //upgrade to vertex:
     std::cout << "Adding vertices to domain..." << std::endl;
-    for (int i = 0; i < s; ++i)
+    for (size_t i = 0; i < s; ++i)
     {
         v[i] = viennagrid::make_vertex( domain0, p[i] );
 //         viennagrid::point( domain0, v[i] ) = p[i];
@@ -188,7 +188,7 @@ void setup_domains(viennagrid::triangular_2d_domain & domain0,
     
     //upgrade to vertex:
     std::cout << "Adding vertices to domain..." << std::endl;
-    for (int i = 0; i < s; ++i)
+    for (size_t i = 0; i < s; ++i)
     {
         v[i] = viennagrid::make_vertex( domain1, p[i] );
 //         viennagrid::point( domain1, v[i] ) = p[i];
@@ -250,9 +250,9 @@ void test(viennagrid::triangular_2d_domain)
   PointType A(-1.0, -1.0);
   
 
-  CellType t0_d0 = viennagrid::elements<CellTag>(domain0)[0];
-  CellType t8_d0 = viennagrid::elements<CellTag>(domain0)[8];
-  CellType t1_d1 = viennagrid::elements<CellTag>(domain1)[1];
+  /*CellType & t0_d0 =*/ viennagrid::elements<CellTag>(domain0)[0];
+  /*CellType & t8_d0 =*/ viennagrid::elements<CellTag>(domain0)[8];
+  /*CellType & t1_d1 =*/ viennagrid::elements<CellTag>(domain1)[1];
   
   //
   // Distance checks

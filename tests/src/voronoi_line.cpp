@@ -58,7 +58,7 @@ void setup_domain(DomainType & domain)
 
 
 
-int main(int argc, char *argv[])
+int main()
 {
   typedef viennagrid::line_1d_domain                   DomainType;
   

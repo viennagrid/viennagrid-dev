@@ -34,7 +34,7 @@
 #include "refinement-common.hpp"
 
 
-int main(int argc, char *argv[])
+int main()
 {
   typedef viennagrid::tetrahedral_3d_domain          DomainType;
   typedef viennagrid::tetrahedral_3d_segmentation    SegmentationType;

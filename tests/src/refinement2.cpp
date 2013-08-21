@@ -45,7 +45,7 @@ int test(DomainType & domain_in)
   CellContainer cells = viennagrid::elements(domain_in);
   CellIterator cit = cells.begin();
   CellType & cell = *cit; ++cit;
-  CellType & cell2 = *cit;
+//   CellType & cell2 = *cit;
   
   EdgeOnCellContainer edges = viennagrid::elements(cell);
   
@@ -302,8 +302,8 @@ struct cell_vertex_permutator<3>
 
 template <typename DomainType, typename CellPermutatorA, typename CellPermutatorB>
 void fill_domain(DomainType & domain,
-                 CellPermutatorA const & permutatorA,
-                 CellPermutatorB const & permutatorB)
+                 CellPermutatorA const &,
+                 CellPermutatorB const &)
 {
 //   typedef typename DomainType::config_type      ConfigType;
 //   typedef viennagrid::segment_t<ConfigType>     SegmentType;

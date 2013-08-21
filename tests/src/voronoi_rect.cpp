@@ -65,7 +65,7 @@ void setup_domain(DomainType & domain)
 
 
 
-int main(int argc, char *argv[])
+int main()
 {
   typedef viennagrid::quadrilateral_2d_domain           DomainType;
   

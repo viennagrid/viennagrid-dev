@@ -106,6 +106,7 @@ int main()
   some_cell_data_accessor( viennagrid::cells(domain)[0] ) = 42.0;
   some_cell_data_accessor( viennagrid::cells(domain)[1] ) = 3.14;
   double some_value = some_cell_data_accessor( viennagrid::cells(domain)[1] );
+  std::cout << "Value for first cell (should be 3.14) = " << some_value << std::endl;
   
   // A helper function for creating an accessor is also provided
   viennagrid::make_accessor<CellType>(some_cell_data_container)( viennagrid::cells(domain)[3] ) = 5.0;

@@ -68,7 +68,7 @@ void setup_domain(DomainType & domain)
   viennagrid::make_triangle( domain, vh[2], vh[1], vh[9] );
 }
 
-int main(int argc, char *argv[])
+int main()
 {
   typedef viennagrid::triangular_2d_domain           DomainType;
   

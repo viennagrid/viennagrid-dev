@@ -1367,7 +1367,7 @@ namespace viennagrid
     struct fix_handle_helper< meta::null_type >
     {
       template<typename SourceWrappedConfigT, typename DestinationWrappedConfigT>
-      static void fix_handles( domain_t<SourceWrappedConfigT> const & source_domain, domain_t<DestinationWrappedConfigT> & destination_domain )
+      static void fix_handles( domain_t<SourceWrappedConfigT> const &, domain_t<DestinationWrappedConfigT> & )
       {}
     };
 

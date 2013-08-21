@@ -130,7 +130,7 @@ void setup_domain(viennagrid::line_3d_domain & domain)
   
   //upgrade to vertex:
   std::cout << "Adding vertices to domain..." << std::endl;
-  for (int i = 0; i < s; ++i)
+  for (size_t i = 0; i < s; ++i)
   {
     v[i] = viennagrid::make_vertex( domain, p[i] );
 //     viennagrid::point( domain, v[i] ) = p[i];
@@ -395,7 +395,7 @@ void setup_domain(viennagrid::triangular_3d_domain & domain)
 
   //upgrade to vertex:
   std::cout << "Adding vertices to domain..." << std::endl;
-  for (int i = 0; i < s; ++i)
+  for (size_t i = 0; i < s; ++i)
   {
     v[i] = viennagrid::make_vertex( domain, p[i] );
 //     viennagrid::point( domain, v[i] ) = p[i];
@@ -630,7 +630,7 @@ void setup_domain(viennagrid::quadrilateral_3d_domain & domain)
 
   //upgrade to vertex:
   std::cout << "Adding vertices to domain..." << std::endl;
-  for (int i = 0; i < s; ++i)
+  for (size_t i = 0; i < s; ++i)
   {
     v[i] = viennagrid::make_vertex( domain,p[i] );
 //     viennagrid::point( domain, v[i] ) = p[i];
@@ -792,7 +792,7 @@ void setup_domain(viennagrid::tetrahedral_3d_domain & domain)
 
   //upgrade to vertex:
   std::cout << "Adding vertices to domain..." << std::endl;
-  for (int i = 0; i < s; ++i)
+  for (size_t i = 0; i < s; ++i)
   {
     v[i] = viennagrid::make_vertex( domain, p[i] );
 //     viennagrid::point( domain, v[i] ) = p[i];
@@ -958,7 +958,7 @@ void setup_domain(viennagrid::hexahedral_3d_domain & domain)
   
   //upgrade to vertex:
   std::cout << "Adding vertices to domain..." << std::endl;
-  for (int i = 0; i < s; ++i)
+  for (size_t i = 0; i < s; ++i)
   {
     v[i] = viennagrid::make_vertex( domain, p[i] );
 //     viennagrid::point( domain, v[i] ) = p[i];
