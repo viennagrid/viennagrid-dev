@@ -82,6 +82,12 @@ namespace viennagrid
             {
                 typedef viennagrid::storage::std_deque_tag type;
             };
+            
+            template<>
+            struct default_container_tag<viennagrid::vertex_tag, viennagrid::vertex_tag>
+            {
+                typedef viennagrid::storage::std_deque_tag type;
+            };
 
 
             template<typename element_tag, typename boundary_cell_tag, typename handle_tag>
