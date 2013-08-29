@@ -14,7 +14,6 @@
 ======================================================================= */
 
 #include <cassert>
-#include "viennagrid/storage/container.hpp"
 
 namespace viennagrid
 {
@@ -338,26 +337,6 @@ namespace viennagrid
         typename static_array<T,N>::const_iterator operator-(const typename static_array<T,N>::const_iterator & it, long diff) { typename static_array<T,N>::const_iterator tmp(it); tmp -= diff; return tmp; }
         template<typename T, std::size_t N>
         typename static_array<T,N>::const_iterator operator-(long diff, const typename static_array<T,N>::const_iterator & it) { typename static_array<T,N>::const_iterator tmp(it); tmp -= diff; return tmp; }
-
-
-
-        template<int size_>
-        struct static_array_tag
-        {
-          static const int size = size_;
-        };
-
-
-        namespace result_of
-        {
-            template<typename element_type, int size>
-            struct container<element_type, static_array_tag<size> >
-            {
-                typedef static_array<element_type, size> type;
-            };
-        }
-
-
     }
 
 }
