@@ -20,29 +20,29 @@
 
 namespace viennagrid
 {
-    template<typename ElementTypeOrTag, typename DomainType, typename HandleIteratorType>
+    template<typename ElementTypeOrTag, typename DomainType, typename VertexHandleIteratorT>
     typename result_of::handle<DomainType, ElementTypeOrTag>::type make_element(
           DomainType & domain,
-          HandleIteratorType array_start,
-          HandleIteratorType const & array_end )
+          VertexHandleIteratorT vertices_begin,
+          VertexHandleIteratorT const & vertices_end )
     {
         typedef typename viennagrid::result_of::element<DomainType, ElementTypeOrTag>::type ElementType;
         ElementType element = ElementType( inserter(domain).get_physical_container_collection() );
 
         size_t element_index = 0;
-        for ( ; array_start != array_end; ++array_start, ++element_index )
-            viennagrid::set_vertex( element, *array_start, element_index );
+        for ( ; vertices_begin != vertices_end; ++vertices_begin, ++element_index )
+            viennagrid::set_vertex( element, *vertices_begin, element_index );
 
         return push_element<true, true>(domain, element).first;
     }
 
 
-    template<typename ElementTypeOrTag, typename DomainType, typename HandleIteratorType>
+    template<typename ElementTypeOrTag, typename DomainType, typename VertexHandleIteratorT>
     typename result_of::handle<DomainType, ElementTypeOrTag>::type make_element_with_id(
           DomainType & domain,
-          HandleIteratorType array_start,
-          HandleIteratorType const & array_end,
-          typename viennagrid::result_of::element<DomainType, ElementTypeOrTag>::type::id_type id )
+          VertexHandleIteratorT vertices_begin,
+          VertexHandleIteratorT const & vertices_end,
+          typename result_of::id< typename result_of::element<DomainType, ElementTypeOrTag>::type >::type id )
     {
         typedef typename viennagrid::result_of::element<DomainType, ElementTypeOrTag>::type ElementType;
         ElementType element = ElementType( inserter(domain).get_physical_container_collection() );
@@ -50,34 +50,34 @@ namespace viennagrid
         element.id( id );
 
         size_t element_index = 0;
-        for ( ; array_start != array_end; ++array_start, ++element_index )
-            viennagrid::set_vertex( element, *array_start, element_index );
+        for ( ; vertices_begin != vertices_end; ++vertices_begin, ++element_index )
+            viennagrid::set_vertex( element, *vertices_begin, element_index );
 
         return push_element<false, true>(domain, element ).first;
     }
     
     
     
-    template<typename DomainType, typename HandleIteratorType>
+    template<typename DomainType, typename VertexHandleIteratorT>
     typename result_of::cell_handle<DomainType>::type make_cell(
           DomainType & domain,
-          HandleIteratorType array_start,
-          HandleIteratorType const & array_end )
+          VertexHandleIteratorT vertices_begin,
+          VertexHandleIteratorT const & vertices_end )
     {
       typedef typename viennagrid::result_of::cell_tag<DomainType>::type CellTagType;
-      return make_element<CellTagType>( domain, array_start, array_end );
+      return make_element<CellTagType>( domain, vertices_begin, vertices_end );
     }
     
     
-    template<typename DomainType, typename HandleIteratorType>
+    template<typename DomainType, typename VertexHandleIteratorT>
     typename result_of::cell_handle<DomainType>::type make_cell_with_id(
           DomainType & domain,
-          HandleIteratorType array_start,
-          HandleIteratorType const & array_end,
+          VertexHandleIteratorT vertices_begin,
+          VertexHandleIteratorT const & vertices_end,
           typename viennagrid::result_of::cell<DomainType>::type::id_type id )
     {
       typedef typename viennagrid::result_of::cell_tag<DomainType>::type CellTagType;
-      return make_element_with_id<CellTagType>( domain, array_start, array_end, id );
+      return make_element_with_id<CellTagType>( domain, vertices_begin, vertices_end, id );
     }
 
 
@@ -171,27 +171,27 @@ namespace viennagrid
     }
 
 
-    template<typename DomainType, typename LineHandleIteratorType, typename VertexHandleIteratorType, typename PointIteraorType>
+    template<typename DomainType, typename LineHandleIteratorT, typename VertexHandleIteratorT, typename PointIteraorType>
     typename result_of::handle<DomainType, plc_tag>::type make_plc(DomainType & domain,
-                                                                        LineHandleIteratorType line_begin, LineHandleIteratorType line_end,
-                                                                        VertexHandleIteratorType vertex_begin, VertexHandleIteratorType vertex_end,
-                                                                        PointIteraorType point_begin, PointIteraorType point_end)
+                                                                   LineHandleIteratorT    lines_begin,        LineHandleIteratorT     lines_end,
+                                                                   VertexHandleIteratorT  vertices_begin,     VertexHandleIteratorT   vertices_end,
+                                                                   PointIteraorType       hole_points_begin,  PointIteraorType        hole_points_end)
     {
         typedef typename viennagrid::result_of::element<DomainType, plc_tag>::type PLCType;;
         typedef typename result_of::handle<DomainType, plc_tag>::type PLCHandleType;
         PLCType plc( inserter(domain).get_physical_container_collection() );
 
-        for ( ; line_begin != line_end; ++line_begin)
-          plc.container( viennagrid::line_tag() ).insert_unique_handle( *line_begin );
+        for ( ; lines_begin != lines_end; ++lines_begin)
+          plc.container( viennagrid::line_tag() ).insert_unique_handle( *lines_begin );
 
-        for ( ; vertex_begin != vertex_end; ++vertex_begin)
-          plc.container( viennagrid::vertex_tag() ).insert_unique_handle( *vertex_begin );
+        for ( ; vertices_begin != vertices_end; ++vertices_begin)
+          plc.container( viennagrid::vertex_tag() ).insert_unique_handle( *vertices_begin );
 
         PLCHandleType handle = viennagrid::push_element<true, true>(domain, plc ).first;
 
         PLCType & inserted_plc = viennagrid::dereference_handle(domain, handle);
 
-        std::copy(point_begin, point_end, std::back_inserter( inserted_plc.appendix() ) );
+        std::copy(hole_points_begin, hole_points_end, std::back_inserter( inserted_plc.appendix() ) );
         return handle;
     }
 
