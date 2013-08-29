@@ -20,7 +20,7 @@ namespace viennagrid
 
   namespace storage
   {
-    /** @brief A Tag defining a smart ID for a base type
+    /** @brief A tag defining a smart ID for a base type
      *
      * @tparam BaseT       The base type to which the smart ID references to
     */
@@ -38,30 +38,41 @@ namespace viennagrid
 
     // handles
     
-    /** @brief A Tag defining that no handles are used */
+    /** @brief A tag defining that no handles are used */
     struct no_handle_tag {};
-    /** @brief A Tag defining that pointer handles are used */
+    /** @brief A tag defining that pointer handles are used */
     struct pointer_handle_tag {};
-    /** @brief A Tag defining that ID handles are used */
+    /** @brief A tag defining that ID handles are used */
     struct id_handle_tag {};
-    /** @brief A Tag defining that iterator handles are used */
+    /** @brief A tag defining that iterator handles are used */
     struct iterator_handle_tag {};
 
     
     // container
-    /** @brief A Tag indicating default behaviour */
+    /** @brief A tag indicating default behaviour */
     struct default_tag;
 
-    /** @brief A Tag indicating that std::vector is used as a container */
+    /** @brief A tag indicating that std::vector is used as a container */
     struct std_vector_tag;
-    /** @brief A Tag indicating that std::deque is used as a container */
+    /** @brief A tag indicating that std::deque is used as a container */
     struct std_deque_tag;
-    /** @brief A Tag indicating that std::list is used as a container */
+    /** @brief A tag indicating that std::list is used as a container */
     struct std_list_tag;
-    /** @brief A Tag indicating that std::set is used as a container */
+    /** @brief A tag indicating that std::set is used as a container */
     struct std_set_tag;
-    /** @brief A Tag indicating that std::map is used as a container */
+    /** @brief A tag indicating that std::map is used as a container */
     struct std_map_tag;
+    
+    /** @brief A tag indicating that storage::static_array should be used
+     *
+     * @tparam SizeV       The static size of the array
+    */
+    template<int SizeV>
+    struct static_array_tag
+    {
+      static const int size = SizeV;
+    };
+
 
 
     /** @brief A typemap defining default container configuration for a container collection */
@@ -77,7 +88,7 @@ namespace viennagrid
     >::type default_view_container_config;
 
 
-    /** @brief A Tag indicating that a handled container is used
+    /** @brief A tag indicating that a handled container is used
      * 
      * @tparam ContainerTagT   A tag defining the underlying container, e.g. std_vector_tag
      * @tparam HandleTagT      A tag defining which handle type is used, e.g. pointer_handle_tag
