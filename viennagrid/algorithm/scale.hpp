@@ -1,5 +1,5 @@
-#ifndef VIENNAGRID_ALGORITHM_ANGLE_HPP
-#define VIENNAGRID_ALGORITHM_ANGLE_HPP
+#ifndef VIENNAGRID_ALGORITHM_SCALE_HPP
+#define VIENNAGRID_ALGORITHM_SCALE_HPP
 
 /* =======================================================================
    Copyright (c) 2011-2013, Institute for Microelectronics,
