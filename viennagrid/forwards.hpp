@@ -30,8 +30,6 @@
 
 
 #include "viennagrid/storage/static_array.hpp"
-#include "viennagrid/utils/remove_pointer.hpp"
-
 #include "viennagrid/storage/forwards.hpp"
 
 //Debug levels:
