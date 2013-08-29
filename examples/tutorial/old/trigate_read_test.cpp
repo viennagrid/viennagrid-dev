@@ -20,7 +20,6 @@
   #pragma warning( disable : 4503 )     //truncated name decoration
 #endif
 
-#include "viennagrid/config/domain_config.hpp"
 #include "viennagrid/config/default_configs.hpp"
 
 #include "viennagrid/domain/accessor.hpp"
