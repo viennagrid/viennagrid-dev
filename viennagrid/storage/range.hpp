@@ -49,12 +49,12 @@ namespace viennagrid
 
             container_range_wrapper(container_type & container_) : container(&container_) {}
 
-            template<typename element_domain_segment_config_or_something_like_that>
-            container_range_wrapper( viennagrid::element_range_proxy<element_domain_segment_config_or_something_like_that> range_proxy )
+            template<typename SomethingT>
+            container_range_wrapper( viennagrid::element_range_proxy<SomethingT> range_proxy )
             { *this = elements< value_type >( range_proxy() ); }
             
-            template<typename element_domain_segment_config_or_something_like_that>
-            container_range_wrapper operator=( viennagrid::element_range_proxy<element_domain_segment_config_or_something_like_that> range_proxy )
+            template<typename SomethingT>
+            container_range_wrapper operator=( viennagrid::element_range_proxy<SomethingT> range_proxy )
             { 
               *this = elements< value_type >( range_proxy() );
               return *this;
@@ -155,23 +155,23 @@ namespace viennagrid
             container_range_wrapper(const container_type & _container) : container(&_container) {}
             container_range_wrapper(const container_range_wrapper<container_type> & rhs) : container(rhs.container) {}
 
-            template<typename element_domain_segment_config_or_something_like_that>
-            container_range_wrapper( const viennagrid::element_range_proxy<element_domain_segment_config_or_something_like_that> range_proxy )
+            template<typename SomethingT>
+            container_range_wrapper( viennagrid::element_range_proxy<SomethingT> range_proxy )
             { *this = elements< value_type >( range_proxy() ); }
-            template<typename element_domain_segment_config_or_something_like_that>
-            container_range_wrapper( const viennagrid::element_range_proxy<const element_domain_segment_config_or_something_like_that> range_proxy )
+            template<typename SomethingT>
+            container_range_wrapper( viennagrid::element_range_proxy<const SomethingT> range_proxy )
             { *this = elements< value_type >( range_proxy() ); }
 
             
-            template<typename element_domain_segment_config_or_something_like_that>
-            container_range_wrapper operator=( viennagrid::element_range_proxy<element_domain_segment_config_or_something_like_that> range_proxy )
+            template<typename SomethingT>
+            container_range_wrapper operator=( viennagrid::element_range_proxy<SomethingT> range_proxy )
             { 
               *this = elements< value_type >( range_proxy() );
               return *this;
             }
             
-            template<typename element_domain_segment_config_or_something_like_that>
-            container_range_wrapper operator=( viennagrid::element_range_proxy<const element_domain_segment_config_or_something_like_that> range_proxy )
+            template<typename SomethingT>
+            container_range_wrapper operator=( viennagrid::element_range_proxy<const SomethingT> range_proxy )
             { 
               *this = elements< value_type >( range_proxy() );
               return *this;
