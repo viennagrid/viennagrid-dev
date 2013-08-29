@@ -22,6 +22,7 @@
 #include "viennagrid/meta/utils.hpp"
 #include "viennagrid/storage/forwards.hpp"
 #include "viennagrid/storage/handle.hpp"
+#include "viennagrid/storage/static_array.hpp"
 
 
 namespace viennagrid
@@ -606,6 +607,14 @@ namespace viennagrid
             struct container<value_type, std_set_with_id_handle_tag >
             {
                 typedef container_t< typename container<value_type, std_set_tag>::type, id_handle_tag > type;
+            };
+            
+            
+            
+            template<typename element_type, int size>
+            struct container<element_type, static_array_tag<size> >
+            {
+                typedef static_array<element_type, size> type;
             };
         }
 
