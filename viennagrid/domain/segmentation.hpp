@@ -220,16 +220,6 @@ namespace viennagrid
 
 
 
-    template<typename segmentation_type>
-    element_range_proxy< typename segment_t<segmentation_type>::view_type > elements( segment_t<segmentation_type> & segment)
-    { return elements(segment.view()); }
-
-    template<typename segmentation_type>
-    element_range_proxy< const typename segment_t<segmentation_type>::view_type > elements( segment_t<segmentation_type> const & segment)
-    { return elements(segment.view()); }
-
-
-
     template<typename ElementTypeOrTag, typename SegmentationType>
     typename viennagrid::result_of::id<
       typename viennagrid::result_of::element< segment_t<SegmentationType>, ElementTypeOrTag>::type
