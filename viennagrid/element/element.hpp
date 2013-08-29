@@ -742,7 +742,13 @@ namespace viennagrid
             typedef typename const_element_range< element_t<element_tag_, WrappedConfigType>, sub_element_type_or_tag >::type type;
         };
 
-
+        template<typename element_tag_, typename WrappedConfigType, typename sub_element_type_or_tag>
+        struct const_element_range< const element_t<element_tag_, WrappedConfigType>, sub_element_type_or_tag >
+        {
+            typedef typename const_element_range< element_t<element_tag_, WrappedConfigType>, sub_element_type_or_tag >::type type;
+        };
+        
+        
 
         template<typename container_collection_typemap, typename element_type_or_tag>
         struct element<storage::collection_t<container_collection_typemap>, element_type_or_tag>
@@ -788,6 +794,11 @@ namespace viennagrid
             typedef typename const_element_range<storage::collection_t<container_collection_typemap>, element_type_or_tag>::type type;
         };
 
+        template<typename container_collection_typemap, typename element_type_or_tag>
+        struct const_element_range< const storage::collection_t<container_collection_typemap>, element_type_or_tag>
+        {
+            typedef typename const_element_range<storage::collection_t<container_collection_typemap>, element_type_or_tag>::type type;
+        };
     }
 
 
