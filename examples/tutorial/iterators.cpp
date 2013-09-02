@@ -201,7 +201,7 @@ int main()
       // Same again, but using the orientation imposed by the cell
       std::cout << "Vertices in local orientation: " << std::endl;
       for (std::size_t i=0; i<viennagrid::vertices(facet).size(); ++i)
-        std::cout << viennagrid::local_vertex(domain, *cit, focit.handle(), i) << std::endl;
+        std::cout << viennagrid::local_vertex(*cit, focit.handle(), i) << std::endl;
     }
     
     std::cout << std::endl << "---------------" << std::endl << std::endl;
