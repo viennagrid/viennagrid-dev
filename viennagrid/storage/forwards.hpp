@@ -15,9 +15,13 @@
 
 #include "viennagrid/meta/typemap.hpp"
 
+/** @file forwards.hpp
+    @brief Contains forward declarations and definition for storage layer classes, tags, ...
+*/
+
 namespace viennagrid
 {
-
+  /** @brief The ViennaGrid namespace for the storage layer */
   namespace storage
   {
     /** @brief A tag defining a smart ID for a base type
