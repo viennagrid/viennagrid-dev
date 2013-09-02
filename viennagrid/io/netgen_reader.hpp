@@ -145,7 +145,7 @@ namespace viennagrid
               throw bad_file_format_exception(filename, "EOF encountered while reading cells (cell ID expected).");
 
             reader >> vertex_num;
-            cell_vertex_handles[j] = viennagrid::get_vertex_handle(domain, vertex_num - 1);
+            cell_vertex_handles[j] = viennagrid::vertices(domain).handle_at(vertex_num-1);
           }
 
           viennagrid::make_element_with_id<CellType>(segmentation[segment_index], cell_vertex_handles.begin(), cell_vertex_handles.end(), typename CellType::id_type(i));
