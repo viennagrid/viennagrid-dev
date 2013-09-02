@@ -23,7 +23,7 @@
 #include "viennagrid/topology/plc.hpp"
 
 /** @file config/default_configs.hpp
-    @brief Provides default configuration classes for simplex domains
+    @brief Provides default configuration classes for domains
 */
 
 namespace viennagrid
