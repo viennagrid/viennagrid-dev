@@ -112,7 +112,7 @@ namespace viennagrid
           for (int j=0; j<point_dim; j++)
             reader >> p[j];
 
-          viennagrid::make_vertex( domain, typename VertexType::id_type(i), p );
+          viennagrid::make_vertex_with_id( domain, typename VertexType::id_type(i), p );
         }
 
         if (!reader.good())

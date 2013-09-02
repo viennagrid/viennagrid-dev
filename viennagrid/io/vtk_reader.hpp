@@ -360,7 +360,7 @@ namespace viennagrid
       void setupVertices(DomainType & domain)
       {
         for (std::size_t i=0; i<global_points_2.size(); ++i)
-          viennagrid::make_vertex( domain, typename VertexType::id_type(i), global_points_2[i] );
+          viennagrid::make_vertex_with_id( domain, typename VertexType::id_type(i), global_points_2[i] );
       }
 
       /** @brief Pushes the cells read to the domain. Preserves segment information. */

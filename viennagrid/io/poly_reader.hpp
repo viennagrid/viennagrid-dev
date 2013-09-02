@@ -160,7 +160,7 @@ namespace viennagrid
             for (int j=0; j<point_dim; j++)
                 current_line >> p[j];
 
-            VertexHandleType vertex = viennagrid::make_vertex( domain, VertexIDType(id), p );
+            VertexHandleType vertex = viennagrid::make_vertex_with_id( domain, VertexIDType(id), p );
 
             if (attribute_num > 0)
             {
