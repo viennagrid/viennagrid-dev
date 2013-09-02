@@ -241,7 +241,7 @@ namespace viennagrid
                 {
                     long id;
                     current_line >> id;
-                    vertex_handles[k] = viennagrid::find_by_id( domain, VertexIDType(id) ).handle();
+                    vertex_handles[k] = viennagrid::find( domain, VertexIDType(id) ).handle();
                 }
 
                 if (vertex_num == 1)
