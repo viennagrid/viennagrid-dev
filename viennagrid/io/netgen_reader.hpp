@@ -39,8 +39,9 @@ namespace viennagrid
     {
       /** @brief The functor interface triggering the read operation.
        *
-       * @param domain    A ViennaGrid domain
-       * @param filename  Name of the file
+       * @param domain        The domain where the file content is written to
+       * @param segmentation  The segmentation where the file content is written to
+       * @param filename      Name of the file
        */
       template <typename DomainType, typename SegmentationType>
       int operator()(DomainType & domain, SegmentationType & segmentation, std::string const & filename) const
@@ -153,8 +154,13 @@ namespace viennagrid
 
         return EXIT_SUCCESS;
       } //operator()
-      
-      
+
+
+      /** @brief The functor interface triggering the read operation.
+       *
+       * @param domain        The domain where the file content is written to
+       * @param filename      Name of the file
+       */
       template <typename DomainType>
       int operator()(DomainType & domain, std::string const & filename)
       {

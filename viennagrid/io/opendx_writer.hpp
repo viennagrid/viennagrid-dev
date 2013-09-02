@@ -100,7 +100,7 @@ namespace viennagrid
 
         typedef base_dynamic_field_t<const double, VertexType> VertexScalarBaseAccessor;
         typedef std::map< std::string, VertexScalarBaseAccessor * > VertexScalarOutputAccessorContainer;
-        
+
         typedef base_dynamic_field_t<const double, CellType> CellScalarBaseAccessor;
         typedef std::map< std::string, CellScalarBaseAccessor * > CellScalarOutputAccessorContainer;
 
@@ -227,7 +227,7 @@ namespace viennagrid
 
     public:
 
-        
+
         /** @brief Adds scalar data on vertices for writing to the OpenDX file. Only one quantity at a time is supported! */
         template <typename T>
         void add_scalar_data_on_vertices(T const accessor, std::string name)
@@ -265,12 +265,11 @@ namespace viennagrid
 
     /** @brief Registers scalar-valued data on vertices at the OpenDX writer. At most one data set is allowed.
       *
-      * @tparam KeyType     Type of the key used with ViennaData
-      * @tparam DataType    Type of the data as used with ViennaData
-      * @tparam DomainType  The ViennaGrid domain type
-      * @param  writer      The OpenDX writer object for which the data should be registered
-      * @param  key         The key object for ViennaData
-      * @param  quantity_name        Ignored. Only used for a homogeneous interface with VTK reader/writer.
+      * @tparam DomainT         The domain type to be written
+      * @tparam AccessorT       An accessor type holding scalar data
+      * @param  writer          The OpenDX writer object for which the data should be registered
+      * @param  accessor        The accessor object holding scalar data on vertices
+      * @param  quantity_name   Ignored. Only used for a homogeneous interface with VTK reader/writer.
       */
     template <typename DomainT, typename AccessorT>
     opendx_writer<DomainT> & add_scalar_data_on_vertices(opendx_writer<DomainT> & writer,
@@ -283,7 +282,14 @@ namespace viennagrid
 
 
 
-
+    /** @brief Registers scalar-valued data on cells at the OpenDX writer. At most one data set is allowed.
+      *
+      * @tparam DomainT         The domain type to be written
+      * @tparam AccessorT       An accessor type holding scalar data
+      * @param  writer          The OpenDX writer object for which the data should be registered
+      * @param  accessor        The accessor object holding scalar data on cells
+      * @param  quantity_name   Ignored. Only used for a homogeneous interface with VTK reader/writer.
+      */
     template <typename DomainT, typename AccessorT>
     opendx_writer<DomainT> & add_scalar_data_on_cells(opendx_writer<DomainT> & writer,
                                                       AccessorT const accessor,

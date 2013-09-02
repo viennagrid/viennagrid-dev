@@ -68,30 +68,30 @@ namespace viennagrid
 
     struct poly_reader
     {
-      /** @brief The functor interface triggering the read operation.
+      /** @brief The functor interface triggering the read operation. Segmentations are not supported in this version.
        *
-       * @param domain    A ViennaGrid domain
-       * @param filename  Name of the file
+       * @param domain        The domain where the file content is written to
+       * @param filename      Name of the file
        */
-      template <typename GeometricDomainType>
-      int operator()(GeometricDomainType & domain, std::string const & filename) const
+      template <typename DomainT>
+      int operator()(DomainT & domain, std::string const & filename) const
       {
 
-        typedef typename viennagrid::result_of::point<GeometricDomainType>::type    PointType;
+        typedef typename viennagrid::result_of::point<DomainT>::type    PointType;
         typedef typename viennagrid::result_of::coord< PointType >::type         CoordType;
 
         static const int point_dim = viennagrid::traits::static_size<PointType>::value;
 
         typedef plc_tag CellTag;
-        typedef typename result_of::element<GeometricDomainType, CellTag>::type CellType;
-        typedef typename result_of::handle<GeometricDomainType, CellTag>::type                           CellHandleType;
+        typedef typename result_of::element<DomainT, CellTag>::type CellType;
+        typedef typename result_of::handle<DomainT, CellTag>::type                           CellHandleType;
 
-        typedef typename result_of::element<GeometricDomainType, vertex_tag>::type                           VertexType;
-        typedef typename result_of::handle<GeometricDomainType, vertex_tag>::type                           VertexHandleType;
+        typedef typename result_of::element<DomainT, vertex_tag>::type                           VertexType;
+        typedef typename result_of::handle<DomainT, vertex_tag>::type                           VertexHandleType;
         typedef typename VertexType::id_type VertexIDType;
 
-        typedef typename result_of::element<GeometricDomainType, line_tag>::type                           LineType;
-        typedef typename result_of::handle<GeometricDomainType, line_tag>::type                           LineHandleType;
+        typedef typename result_of::element<DomainT, line_tag>::type                           LineType;
+        typedef typename result_of::handle<DomainT, line_tag>::type                           LineHandleType;
 
         std::ifstream reader(filename.c_str());
 
@@ -154,7 +154,7 @@ namespace viennagrid
             current_line.str(tmp); current_line.clear();
             current_line >> id;
 
-            
+
             PointType p;
 
             for (int j=0; j<point_dim; j++)
@@ -219,7 +219,7 @@ namespace viennagrid
             std::list<VertexHandleType> vertices;
 
 
-            typedef typename viennagrid::result_of::element_view<GeometricDomainType, VertexType>::type VertexViewType;
+            typedef typename viennagrid::result_of::element_view<DomainT, VertexType>::type VertexViewType;
 
             for (int j = 0; j<polygon_num; ++j)
             {

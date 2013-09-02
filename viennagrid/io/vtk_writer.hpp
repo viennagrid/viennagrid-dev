@@ -58,7 +58,7 @@ namespace viennagrid
         os << value[0] << " " << value[1] << " " << value[2];
 //         for (int i = 0; i < std::min(value.size(), std::size_t(3)); ++i)
 //           os << value[i] << " ";
-//         
+//
 //         for (int i = std::min(value.size(), std::size_t(3)); i < 3; ++i)
 //           os << "0 ";
       }
@@ -72,7 +72,8 @@ namespace viennagrid
 
     /** @brief Main VTK writer class. Writes a domain or a segment to a file
      *
-     * @tparam DomainType    Type of the ViennaGrid domain. Must not be a segment!
+     * @tparam DomainType         Type of the ViennaGrid domain. Must not be a segment!
+     * @tparam SegmentationType   Type of the ViennaGrid segmentation. Default is the default segmentation of DomainType
      */
     template < typename DomainType, typename SegmentationType = typename viennagrid::result_of::segmentation<DomainType>::type >
     class vtk_writer
@@ -103,13 +104,13 @@ namespace viennagrid
 
         typedef base_dynamic_field_t<const double, VertexType> VertexScalarBaseAccesor;
         typedef std::map< std::string, VertexScalarBaseAccesor * > VertexScalarOutputAccessorContainer;
-        
+
         typedef base_dynamic_field_t<const vector_data_type, VertexType> VertexVectorBaseAccesor;
         typedef std::map< std::string, VertexVectorBaseAccesor * > VertexVectorOutputAccessorContainer;
 
         typedef base_dynamic_field_t<const double, CellType> CellScalarBaseAccesor;
         typedef std::map< std::string, CellScalarBaseAccesor * > CellScalarOutputAccessorContainer;
-        
+
         typedef base_dynamic_field_t<const vector_data_type, CellType> CellVectorBaseAccesor;
         typedef std::map< std::string, CellVectorBaseAccesor * > CellVectorOutputAccessorContainer;
 
@@ -181,7 +182,7 @@ namespace viennagrid
           std::map< VertexIDType, ConstVertexHandleType > & current_used_vertex_map = used_vertex_map[seg_id];
           std::map< ConstVertexHandleType, VertexIDType > & current_vertex_to_index_map = vertex_to_index_map[seg_id];
 
-          
+
           CellRange cells = viennagrid::elements(segment);
 
           for (CellIterator it = cells.begin(); it != cells.end(); ++it)
@@ -192,8 +193,8 @@ namespace viennagrid
                   typename std::map< VertexIDType, ConstVertexHandleType >::iterator kt = current_used_vertex_map.find( jt->id() );
                   if (kt == current_used_vertex_map.end())
                     current_used_vertex_map.insert( std::make_pair(jt->id(), jt.handle()) );
-                
-                
+
+
 //                   typename std::map< ConstVertexHandleType, VertexIDType >::iterator kt = current_vertex_to_index_map.find( jt.handle() );
 //                   if (kt == current_vertex_to_index_map.end())
 //                   {
@@ -205,26 +206,26 @@ namespace viennagrid
 //                   }
               }
           }
-          
-          
+
+
           std::size_t index = 0;
           for (typename std::map< VertexIDType, ConstVertexHandleType >::iterator it = current_used_vertex_map.begin(); it != current_used_vertex_map.end(); ++it)
             current_vertex_to_index_map.insert( std::make_pair( it->second, VertexIDType(index++) ) );
-            
-          
-          
+
+
+
 
           return current_vertex_to_index_map.size();
         }
-        
+
         template<typename DomainSegmentType>
         unsigned int prepareCells(DomainSegmentType const & domseg, segment_id_type seg_id)
         {
           typedef typename viennagrid::result_of::const_element_range<DomainSegmentType, CellTag>::type     CellRange;
           typedef typename viennagrid::result_of::iterator<CellRange>::type                                         CellIterator;
-          
+
           std::map< CellIDType, ConstCellHandleType > & current_used_cells_map = used_cell_map[seg_id];
-          
+
           int index = 0;
           CellRange cells = viennagrid::elements(domseg);
           for (CellIterator cit = cells.begin();
@@ -233,7 +234,7 @@ namespace viennagrid
               {
                 current_used_cells_map[ cit->id() ] = cit.handle();
               }
-              
+
           return current_used_cells_map.size();
         }
 
@@ -253,7 +254,7 @@ namespace viennagrid
           {
             const int dim = traits::static_size<PointType>::value;
             PointWriter<dim>::write(writer, viennagrid::point(domseg, it->second) );
-            
+
             // add 0's for less than three dimensions
               if (dim == 2)
                 writer << " " << 0;
@@ -284,14 +285,14 @@ namespace viennagrid
 
           std::map< CellIDType, ConstCellHandleType > & current_used_cells_map = used_cell_map[seg_id];
           for (typename std::map< CellIDType, ConstCellHandleType >::iterator it = current_used_cells_map.begin(); it != current_used_cells_map.end(); ++it)
-          
+
 //           CellRange cells = viennagrid::elements(domseg);
 //           for (CellIterator cit = cells.begin(); cit != cells.end(); ++cit)
           {
             //step 1: Write vertex indices in ViennaGrid orientation to array:
             CellType const & cell = viennagrid::dereference_handle(domseg, it->second);
 //             CellType const & cell = *cit;
-            
+
             std::vector<VertexIDType> viennagrid_vertices(viennagrid::boundary_elements<CellTag, vertex_tag>::num);
             VertexOnCellRange vertices_on_cell = viennagrid::elements<vertex_tag>(cell);
             std::size_t j = 0;
@@ -309,7 +310,7 @@ namespace viennagrid
 
             writer << std::endl;
           }
-          
+
           writer << std::endl;
           writer << "    </DataArray>" << std::endl;
 
@@ -346,7 +347,7 @@ namespace viennagrid
 
         /** @brief Writes vector-valued data defined on vertices (points) to file */
         template <typename SegmentType, typename IOAccessorType>
-        void writePointData(SegmentType const & segment, std::ofstream & writer, std::string const & name, IOAccessorType const & accessor, long seg_id)
+        void writePointData(SegmentType const & segment, std::ofstream & writer, std::string const & quantity_name, IOAccessorType const & accessor, long seg_id)
         {
           typedef typename IOAccessorType::value_type ValueType;
 
@@ -367,7 +368,7 @@ namespace viennagrid
 
         /** @brief Writes vector-valued data defined on vertices (points) to file */
         template <typename SegmentType, typename IOAccessorType>
-        void writeCellData(SegmentType const & segment, std::ofstream & writer, std::string const & name, IOAccessorType const & accessor, long seg_id)
+        void writeCellData(SegmentType const & segment, std::ofstream & writer, std::string const & quantity_name, IOAccessorType const & accessor, long seg_id)
         {
           typedef typename viennagrid::result_of::const_element_range<SegmentType, CellTag>::type   CellRange;
           typedef typename viennagrid::result_of::iterator<CellRange>::type                         CellIterator;
@@ -377,17 +378,17 @@ namespace viennagrid
           writer << "    <DataArray type=\"" << ValueTypeInformation<ValueType>::type_name() << "\" Name=\"" << name <<
             "\" NumberOfComponents=\"" << ValueTypeInformation<ValueType>::num_components() << "\" format=\"ascii\">" << std::endl;
 
-            
+
           std::map< CellIDType, ConstCellHandleType > & current_used_cells_map = used_cell_map[seg_id];
           for (typename std::map< CellIDType, ConstCellHandleType >::iterator it = current_used_cells_map.begin(); it != current_used_cells_map.end(); ++it)
-            
+
 //           CellRange cells = viennagrid::elements(segment);
 //           for (CellIterator cit = cells.begin(); cit != cells.end(); ++cit)
           {
             //step 1: Write vertex indices in ViennaGrid orientation to array:
             CellType const & cell = viennagrid::dereference_handle(segment, it->second);
 //             CellType const & cell = *cit;
-            
+
             ValueTypeInformation<ValueType>::write(writer, accessor(cell));
             writer << " ";
           }
@@ -412,7 +413,7 @@ namespace viennagrid
 
         /** @brief Triggers the write process to a XML file. Make sure that all data to be written to the file is already passed to the writer
          *
-         * @param domain     The ViennaGrid domain. Must not be a segment!
+         * @param domain     The ViennaGrid domain.
          * @param filename   The file to write to
          */
         int operator()(DomainType const & domain, std::string const & filename)
@@ -474,7 +475,12 @@ namespace viennagrid
           return EXIT_SUCCESS;
         }
 
-
+        /** @brief Triggers the write process to a XML file. Make sure that all data to be written to the file is already passed to the writer
+         *
+         * @param domain        The ViennaGrid domain.
+         * @param segmentation  The ViennaGrid segmentation.
+         * @param filename      The file to write to
+         */
         int operator()(DomainType const & domain, SegmentationType const & segmentation, std::string const & filename)
         {
             if (segmentation.empty()) return (*this)(domain, filename);
@@ -610,85 +616,85 @@ namespace viennagrid
 
 
       template<typename MapType, typename AccessorOrFieldType>
-      void add_to_container(MapType & map, AccessorOrFieldType const accessor_or_field, std::string const & name)
+      void add_to_container(MapType & map, AccessorOrFieldType const accessor_or_field, std::string const & quantity_name)
       {
-          typename MapType::iterator it = map.find(name);
+          typename MapType::iterator it = map.find(quantity_name);
           if (it != map.end())
           {
             delete it->second;
             it->second = new dynamic_field_t<const AccessorOrFieldType>( accessor_or_field );
           }
           else
-            map[name] = new dynamic_field_t<const AccessorOrFieldType>( accessor_or_field );
+            map[quantity_name] = new dynamic_field_t<const AccessorOrFieldType>( accessor_or_field );
       }
 
 
     public:
 
 
-        /** @brief Specify scalar-valued data for vertices to the writer. Prefer the free function add_scalar_data_on_vertices()
-         *
-         * @tparam T       Anything that can be wrapped by a data_accessor_wrapper
-         * @param  accessor The quantity accessor
-         * @param  name    The quantity name that should appear in the VTK file
-         */
+        /** @brief Register an accessor/field for scalar data on vertices with a given quantity name */
         template <typename AccessorOrFieldType>
-        void add_scalar_data_on_vertices(AccessorOrFieldType const accessor_or_field, std::string const & name)
-        { add_to_container(vertex_scalar_data, accessor_or_field, name); }
+        void add_scalar_data_on_vertices(AccessorOrFieldType const accessor_or_field, std::string const & quantity_name)
+        { add_to_container(vertex_scalar_data, accessor_or_field, quantity_name); }
 
+        /** @brief Register an accessor/field for scalar data on vertices for a given segment ID with a given quantity name */
         template <typename AccessorOrFieldType>
         void add_scalar_data_on_vertices(segment_id_type seg_id, AccessorOrFieldType const accessor_or_field, std::string const &  name)
-        { add_to_container(segment_vertex_scalar_data[seg_id], accessor_or_field, name); }
+        { add_to_container(segment_vertex_scalar_data[seg_id], accessor_or_field, quantity_name); }
 
+        /** @brief Register an accessor/field for scalar data on vertices for a given segment with a given quantity name */
         template <typename AccessorOrFieldType>
         void add_scalar_data_on_vertices(SegmentType const & segment, AccessorOrFieldType const accessor_or_field, std::string const &  name)
-        { add_scalar_data_on_vertices(segment.id(), accessor_or_field, name); }
+        { add_scalar_data_on_vertices(segment.id(), accessor_or_field, quantity_name); }
 
 
+        /** @brief Register an accessor/field for vector data on vertices with a given quantity name */
         template <typename AccessorOrFieldType>
-        void add_vector_data_on_vertices(AccessorOrFieldType const accessor_or_field, std::string const & name)
-        { add_to_container(vertex_vector_data, accessor_or_field, name); }
+        void add_vector_data_on_vertices(AccessorOrFieldType const accessor_or_field, std::string const & quantity_name)
+        { add_to_container(vertex_vector_data, accessor_or_field, quantity_name); }
 
+        /** @brief Register an accessor/field for vector data on vertices for a given segment ID with a given quantity name */
         template <typename AccessorOrFieldType>
         void add_vector_data_on_vertices(segment_id_type seg_id, AccessorOrFieldType const accessor_or_field, std::string const &  name)
-        { add_to_container(segment_vertex_vector_data[seg_id], accessor_or_field, name); }
+        { add_to_container(segment_vertex_vector_data[seg_id], accessor_or_field, quantity_name); }
 
+        /** @brief Register an accessor/field for vector data on vertices for a given segment with a given quantity name */
         template <typename AccessorOrFieldType>
         void add_vector_data_on_vertices(SegmentType const & segment, AccessorOrFieldType const accessor_or_field, std::string const &  name)
-        { add_vector_data_on_vertices(segment.id(), accessor_or_field, name); }
+        { add_vector_data_on_vertices(segment.id(), accessor_or_field, quantity_name); }
 
 
 
-        /** @brief Specify scalar-valued data for cells to the writer. Prefer the free function add_scalar_data_on_cells()
-         *
-         * @tparam T       Anything that can be wrapped by a data_accessor_or_field_wrapper
-         * @param  accessor_or_field The quantity accessor_or_field
-         * @param  name    The quantity name that should appear in the VTK file
-         */
+        /** @brief Register an accessor/field for scalar data on cells with a given quantity name */
         template <typename AccessorOrFieldType>
-        void add_scalar_data_on_cells(AccessorOrFieldType const accessor_or_field, std::string name)
-        { add_to_container(cell_scalar_data, accessor_or_field, name); }
+        void add_scalar_data_on_cells(AccessorOrFieldType const accessor_or_field, std::string const & quantity_name)
+        { add_to_container(cell_scalar_data, accessor_or_field, quantity_name); }
 
+        /** @brief Register an accessor/field for scalar data on cells for a given segment ID with a given quantity name */
         template <typename AccessorOrFieldType>
-        void add_scalar_data_on_cells(segment_id_type seg_id, AccessorOrFieldType const accessor_or_field, std::string const &  name)
-        { add_to_container(segment_cell_scalar_data[seg_id], accessor_or_field, name); }
+        void add_scalar_data_on_cells(segment_id_type seg_id, AccessorOrFieldType const accessor_or_field, std::string const & quantity_name)
+        { add_to_container(segment_cell_scalar_data[seg_id], accessor_or_field, quantity_name); }
 
+        /** @brief Register an accessor/field for scalar data on cells for a given segment with a given quantity name */
         template <typename AccessorOrFieldType>
-        void add_scalar_data_on_cells(SegmentType const & segment, AccessorOrFieldType const accessor_or_field, std::string const &  name)
-        { add_scalar_data_on_cells(segment.id(), accessor_or_field, name); }
+        void add_scalar_data_on_cells(SegmentType const & segment, AccessorOrFieldType const accessor_or_field, std::string const & quantity_name)
+        { add_scalar_data_on_cells(segment.id(), accessor_or_field, quantity_name); }
 
 
+        /** @brief Register an accessor/field for vector data on cells with a given quantity name */
         template <typename AccessorOrFieldType>
-        void add_vector_data_on_cells(AccessorOrFieldType const accessor_or_field, std::string name)
-        { add_to_container(cell_vector_data, accessor_or_field, name); }
+        void add_vector_data_on_cells(AccessorOrFieldType const accessor_or_field, std::string const & quantity_name)
+        { add_to_container(cell_vector_data, accessor_or_field, quantity_name); }
 
+        /** @brief Register an accessor/field for vector data on cells for a given segment ID with a given quantity name */
         template <typename AccessorOrFieldType>
-        void add_vector_data_on_cells(segment_id_type seg_id, AccessorOrFieldType const accessor_or_field, std::string const &  name)
-        { add_to_container(segment_cell_vector_data[seg_id], accessor_or_field, name); }
+        void add_vector_data_on_cells(segment_id_type seg_id, AccessorOrFieldType const accessor_or_field, std::string const & quantity_name)
+        { add_to_container(segment_cell_vector_data[seg_id], accessor_or_field, quantity_name); }
 
+        /** @brief Register an accessor/field for vector data on cells for a given segment with a given quantity name */
         template <typename AccessorOrFieldType>
-        void add_vector_data_on_cells(SegmentType const & segment, AccessorOrFieldType const accessor_or_field, std::string const &  name)
-        { add_vector_data_on_cells(segment.id(), accessor_or_field, name); }
+        void add_vector_data_on_cells(SegmentType const & segment, AccessorOrFieldType const accessor_or_field, std::string const & quantity_name)
+        { add_vector_data_on_cells(segment.id(), accessor_or_field, quantity_name); }
 
 
       private:
@@ -719,6 +725,7 @@ namespace viennagrid
       return vtk_writer(domain, segmentation, filename);
     }
 
+    /** @brief Convenience function that exports a domain to file directly. Does not export quantities */
     template < typename DomainType >
     int export_vtk(DomainType const & domain, std::string const & filename)
     {
@@ -727,43 +734,79 @@ namespace viennagrid
     }
 
 
-
-    template <typename DomainT, typename SegmentationT, typename AccessorT>
+    /** @brief Registers scalar-valued data on vertices at the VTK writer. At most one data set is allowed.
+      *
+      * @tparam DomainT             The domain type to be written
+      * @tparam SegmentationT       The segmentation type to be written
+      * @tparam AccessorOrFieldT    An accessor/field type holding scalar data
+      * @param  writer              The VTK writer object for which the data should be registered
+      * @param  accessor_or_field   The accessor/field object holding scalar data on vertices
+      * @param  quantity_name       The quantity name within the VTK file
+      */
+    template <typename DomainT, typename SegmentationT, typename AccessorOrFieldT>
     vtk_writer<DomainT, SegmentationT> & add_scalar_data_on_vertices(vtk_writer<DomainT, SegmentationT> & writer,
-                                                                    AccessorT const accessor,
+                                                                    AccessorOrFieldT const accessor_or_field,
                                                                     std::string const & quantity_name)
     {
-      writer.add_scalar_data_on_vertices(accessor, quantity_name);
+      writer.add_scalar_data_on_vertices(accessor_or_field, quantity_name);
       return writer;
     }
 
-    template <typename DomainT, typename SegmentationT, typename AccessorT>
+    /** @brief Registers vector-valued data on vertices at the VTK writer. At most one data set is allowed.
+      *
+      * @tparam DomainT             The domain type to be written
+      * @tparam SegmentationT       The segmentation type to be written
+      * @tparam AccessorOrFieldT    An accessor/field type holding vector data
+      * @param  writer              The VTK writer object for which the data should be registered
+      * @param  accessor_or_field   The accessor/field object holding vector data on vertices
+      * @param  quantity_name       The quantity name within the VTK file
+      */
+    template <typename DomainT, typename SegmentationT, typename AccessorOrFieldT>
     vtk_writer<DomainT, SegmentationT> & add_vector_data_on_vertices(vtk_writer<DomainT, SegmentationT> & writer,
-                                                                    AccessorT const accessor,
+                                                                    AccessorOrFieldT const accessor_or_field,
                                                                     std::string const & quantity_name)
     {
-      writer.add_vector_data_on_vertices(accessor, quantity_name);
+      writer.add_vector_data_on_vertices(accessor_or_field, quantity_name);
       return writer;
     }
 
-
-    template <typename DomainT, typename SegmentationT, typename AccessorT>
+    /** @brief Registers scalar-valued data on vertices for a given segment at the VTK writer. At most one data set is allowed.
+      *
+      * @tparam DomainT             The domain type to be written
+      * @tparam SegmentationT       The segmentation type to be written
+      * @tparam AccessorOrFieldT    An accessor/field type holding scalar data
+      * @param  writer              The VTK writer object for which the data should be registered
+      * @param  segment             The segment for which the data is defined
+      * @param  accessor_or_field   The accessor/field object holding scalar data on vertices
+      * @param  quantity_name       The quantity name within the VTK file
+      */
+    template <typename DomainT, typename SegmentationT, typename AccessorOrFieldT>
     vtk_writer<DomainT, SegmentationT> & add_scalar_data_on_vertices(vtk_writer<DomainT, SegmentationT> & writer,
                                                                     segment_t<SegmentationT> const & segment,
-                                                                    AccessorT const accessor,
+                                                                    AccessorOrFieldT const accessor_or_field,
                                                                     std::string const & quantity_name)
     {
-      writer.add_scalar_data_on_vertices(segment, accessor, quantity_name);
+      writer.add_scalar_data_on_vertices(segment, accessor_or_field, quantity_name);
       return writer;
     }
 
-    template <typename DomainT, typename SegmentationT, typename AccessorT>
+    /** @brief Registers vector-valued data on vertices for a given segment at the VTK writer. At most one data set is allowed.
+      *
+      * @tparam DomainT             The domain type to be written
+      * @tparam SegmentationT       The segmentation type to be written
+      * @tparam AccessorOrFieldT    An accessor/field type holding vector data
+      * @param  writer              The VTK writer object for which the data should be registered
+      * @param  segment             The segment for which the data is defined
+      * @param  accessor_or_field   The accessor/field object holding vector data on vertices
+      * @param  quantity_name       The quantity name within the VTK file
+      */
+    template <typename DomainT, typename SegmentationT, typename AccessorOrFieldT>
     vtk_writer<DomainT, SegmentationT> & add_vector_data_on_vertices(vtk_writer<DomainT, SegmentationT> & writer,
                                                                     segment_t<SegmentationT> const & segment,
-                                                                    AccessorT const accessor,
+                                                                    AccessorOrFieldT const accessor_or_field,
                                                                     std::string const & quantity_name)
     {
-      writer.add_vector_data_on_vertices(segment, accessor, quantity_name);
+      writer.add_vector_data_on_vertices(segment, accessor_or_field, quantity_name);
       return writer;
     }
 
@@ -771,42 +814,79 @@ namespace viennagrid
 
 
 
-
-    template <typename DomainT, typename SegmentationT, typename AccessorT>
+    /** @brief Registers scalar-valued data on cells at the VTK writer. At most one data set is allowed.
+      *
+      * @tparam DomainT             The domain type to be written
+      * @tparam SegmentationT       The segmentation type to be written
+      * @tparam AccessorOrFieldT    An accessor/field type holding scalar data
+      * @param  writer              The VTK writer object for which the data should be registered
+      * @param  accessor_or_field   The accessor/field object holding scalar data on cells
+      * @param  quantity_name       The quantity name within the VTK file
+      */
+    template <typename DomainT, typename SegmentationT, typename AccessorOrFieldT>
     vtk_writer<DomainT, SegmentationT> & add_scalar_data_on_cells(vtk_writer<DomainT, SegmentationT> & writer,
-                                                                    AccessorT const accessor,
+                                                                    AccessorOrFieldT const accessor_or_field,
                                                                     std::string const & quantity_name)
     {
-      writer.add_scalar_data_on_cells(accessor, quantity_name);
+      writer.add_scalar_data_on_cells(accessor_or_field, quantity_name);
       return writer;
     }
 
-    template <typename DomainT, typename SegmentationT, typename AccessorT>
+    /** @brief Registers vector-valued data on cells at the VTK writer. At most one data set is allowed.
+      *
+      * @tparam DomainT             The domain type to be written
+      * @tparam SegmentationT       The segmentation type to be written
+      * @tparam AccessorOrFieldT    An accessor/field type holding vector data
+      * @param  writer              The VTK writer object for which the data should be registered
+      * @param  accessor_or_field   The accessor/field object holding vector data on cells
+      * @param  quantity_name       The quantity name within the VTK file
+      */
+    template <typename DomainT, typename SegmentationT, typename AccessorOrFieldT>
     vtk_writer<DomainT, SegmentationT> & add_vector_data_on_cells(vtk_writer<DomainT, SegmentationT> & writer,
-                                                                    AccessorT const accessor,
+                                                                    AccessorOrFieldT const accessor_or_field,
                                                                     std::string const & quantity_name)
     {
-      writer.add_vector_data_on_cells(accessor, quantity_name);
+      writer.add_vector_data_on_cells(accessor_or_field, quantity_name);
       return writer;
     }
 
-    template <typename DomainT, typename SegmentationT, typename AccessorT>
+    /** @brief Registers scalar-valued data on cells for a given segment at the VTK writer. At most one data set is allowed.
+      *
+      * @tparam DomainT             The domain type to be written
+      * @tparam SegmentationT       The segmentation type to be written
+      * @tparam AccessorOrFieldT    An accessor/field type holding scalar data
+      * @param  writer              The VTK writer object for which the data should be registered
+      * @param  segment             The segment for which the data is defined
+      * @param  accessor_or_field   The accessor/field object holding scalar data on cells
+      * @param  quantity_name       The quantity name within the VTK file
+      */
+    template <typename DomainT, typename SegmentationT, typename AccessorOrFieldT>
     vtk_writer<DomainT, SegmentationT> & add_scalar_data_on_cells(vtk_writer<DomainT, SegmentationT> & writer,
                                                                   segment_t<SegmentationT> const & segment,
-                                                                  AccessorT const accessor,
+                                                                  AccessorOrFieldT const accessor_or_field,
                                                                   std::string const & quantity_name)
     {
-      writer.add_scalar_data_on_cells(segment, accessor, quantity_name);
+      writer.add_scalar_data_on_cells(segment, accessor_or_field, quantity_name);
       return writer;
     }
 
-    template <typename DomainT, typename SegmentationT, typename AccessorT>
+    /** @brief Registers vector-valued data on cells for a given segment at the VTK writer. At most one data set is allowed.
+      *
+      * @tparam DomainT             The domain type to be written
+      * @tparam SegmentationT       The segmentation type to be written
+      * @tparam AccessorOrFieldT    An accessor/field type holding vector data
+      * @param  writer              The VTK writer object for which the data should be registered
+      * @param  segment             The segment for which the data is defined
+      * @param  accessor_or_field   The accessor/field object holding vector data on cells
+      * @param  quantity_name       The quantity name within the VTK file
+      */
+    template <typename DomainT, typename SegmentationT, typename AccessorOrFieldT>
     vtk_writer<DomainT, SegmentationT> & add_vector_data_on_cells(vtk_writer<DomainT, SegmentationT> & writer,
                                                                   segment_t<SegmentationT> const & segment,
-                                                                  AccessorT const accessor,
+                                                                  AccessorOrFieldT const accessor_or_field,
                                                                   std::string const & quantity_name)
     {
-      writer.add_vector_data_on_cells(segment, accessor, quantity_name);
+      writer.add_vector_data_on_cells(segment, accessor_or_field, quantity_name);
       return writer;
     }
 
