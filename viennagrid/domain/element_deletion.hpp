@@ -142,7 +142,7 @@ namespace viennagrid
   template<typename DomainT, typename DomainViewT, typename HandleT>
   void mark_erase_elements( DomainT & domain, DomainViewT & elements_to_erase, HandleT to_erase )
   {
-      mark_erase_elements_impl<DomainT, DomainViewT, HandleT>::mark(domain, elements_to_erase_view, to_erase);
+      mark_erase_elements_impl<DomainT, DomainViewT, HandleT>::mark(domain, elements_to_erase, to_erase);
   }
 
   /** @brief For internal use only */
