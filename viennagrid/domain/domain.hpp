@@ -101,6 +101,7 @@ namespace viennagrid
 
   namespace result_of
   {
+    /** @brief For internal use only */
     template<typename ElementTypelistT, typename ContainerTypemapT>
     struct filter_element_container;
 
@@ -128,7 +129,7 @@ namespace viennagrid
     };
 
 
-    // domain_element_collection_type
+    /** @brief For internal use only */
     template <typename WrappedConfigT>
     struct domain_element_collection_type
     {
@@ -146,7 +147,7 @@ namespace viennagrid
       typedef typename viennagrid::storage::result_of::view_collection<view_container_collection_typemap, ContainerConfig>::type   type;
     };
 
-    // domain_appendix_type
+    /** @brief For internal use only */
     template <typename WrappedConfigT>
     struct domain_appendix_type
     {
@@ -179,7 +180,7 @@ namespace viennagrid
     };
 
 
-    // domain_change_counter_type
+    /** @brief For internal use only */
     template <typename WrappedConfigT>
     struct domain_change_counter_type
     {
@@ -193,7 +194,7 @@ namespace viennagrid
     };
 
 
-    // domain_inserter_type
+    /** @brief For internal use only */
     template <typename WrappedConfigType>
     struct domain_inserter_type
     {
@@ -277,30 +278,30 @@ namespace viennagrid
     {
 //           element_container_collection = element_collection_type();
       element_container_collection = other.element_container_collection;
-      
+
       appendix_ = other.appendix_;
       inserter = other.inserter;
       change_counter_ = other.change_counter_;
-      
+
       inserter.set_domain_info( element_container_collection, change_counter_ );
       increment_change_counter();
-      
+
       fix_handles(other, *this);
       return *this;
     }
 
-    /** @brief Completely clear a domain
+    /** @brief Completely clears a domain
       *
       */
     void clear()
     {
       *this = domain_t();
     }
-    
+
   public:
 
     // TODO no direct access to collection!
-    
+
     /** @brief For internal use only */
     element_collection_type & element_collection() { return element_container_collection; }
     element_collection_type const & element_collection() const { return element_container_collection; }
@@ -330,7 +331,7 @@ namespace viennagrid
 
   namespace result_of
   {
-    // doxygen doku in forwards.hpp
+    // doxygen docu in forwards.hpp
     template<typename WrappedConfigType>
     struct domain
     {
@@ -439,7 +440,7 @@ namespace viennagrid
 
   namespace result_of
   {
-    // doxygen doku in forwards.hpp
+    // doxygen docu in forwards.hpp
     template<typename SomethingT>
     struct container_collection_typemap;
 
@@ -462,7 +463,7 @@ namespace viennagrid
     };
 
 
-    // doxygen doku in forwards.hpp
+    // doxygen docu in forwards.hpp
     template<typename TypemapT>
     struct element_collection< storage::collection_t<TypemapT> >
     {
@@ -481,7 +482,7 @@ namespace viennagrid
         typedef typename domain_t<WrappedConfigT>::element_collection_type type;
     };
 
-    
+
     /** @brief Metafunction for obtaining the element typelist of something
      *
      * @tparam SomethingT     The host type, can be a collection, an element, a domain, a segmentation or a segment
@@ -492,7 +493,7 @@ namespace viennagrid
         typedef typename element_collection<SomethingT>::type container_collection;
         typedef typename viennagrid::meta::typemap::result_of::key_typelist<typename container_collection::typemap >::type type;
     };
-    
+
     template<typename HostElementT>
     struct element_typelist_for_element;
 
@@ -507,13 +508,13 @@ namespace viennagrid
     {
       typedef typename HeadT::first BoundaryContainerType;
       typedef typename BoundaryContainerType::value_type CurrentElementType;
-      
+
       typedef viennagrid::meta::typelist_t<
             CurrentElementType,
             typename element_typelist_for_element<TailT>::type
           > type;
     };
-    
+
     template<typename ElementTagT, typename WrappedConfigT>
     struct element_typelist< element_t<ElementTagT, WrappedConfigT> >
     {
@@ -534,7 +535,7 @@ namespace viennagrid
         >::type type;
     };
 
-    
+
     /** @brief Metafunction for query if an element type/tag is boundary element of another host element
      *
      * @tparam HostElementT                 The host element type
@@ -551,7 +552,7 @@ namespace viennagrid
         >::value != -1;
     };
 
-    
+
     /** @brief For internal use only */
     template<typename element_typelist, typename element_type>
     struct referencing_element_typelist_impl;
@@ -697,7 +698,7 @@ namespace viennagrid
     };
   }
 
-  
+
   /** @brief Creates a view out of a domain using the domain_proxy object
     *
     * @tparam DomainOrSegmentT    The domain or segment type from which the domain view is created
@@ -732,7 +733,7 @@ namespace viennagrid
       container_collection_type & collection;
   };
 
-  
+
   /** @brief Function for inserting handles to all element from a domain in a domain view
     *
     * @tparam DomainT     The domain or segment type
@@ -786,19 +787,13 @@ namespace viennagrid
 
 
 
-  /** @brief Function for obtaining the maximum ID for a specifig element type/tag in a domain/segment
+  /** @brief Function for obtaining the heighest ID for a specifig element type/tag in a domain/segment
     *
-    * @tparam ElementTypeOrTag     The element type/tag from which the maximum ID is queried
+    * @tparam ElementTypeOrTag     The element type/tag from which the heighest ID is queried
     * @tparam DomainOrSegmentT     The domain/segment type
     * @param  domain_or_segment    The domain/segment object
-    * @return                      The maximum ID for specified element type/tag
+    * @return                      The heighest ID for specified element type/tag
     */
-//   template<typename ElementTypeOrTag, typename DomainOrSegmentT>
-//   typename viennagrid::result_of::id<
-//     typename viennagrid::result_of::element<DomainOrSegmentT, ElementTypeOrTag>::type
-//   >::type max_id(DomainOrSegmentT const & domain_or_segment)
-//   { return id_generator(domain_or_segment).max_id( viennagrid::meta::tag< typename viennagrid::result_of::element<DomainOrSegmentT, ElementTypeOrTag>::type >() ); }
-  
   template<typename element_type_or_tag, typename domain_type>
   typename viennagrid::result_of::id< typename viennagrid::result_of::element<domain_type, element_type_or_tag>::type >::type id_upper_bound( domain_type const & domain )
   {
@@ -808,31 +803,31 @@ namespace viennagrid
 
 
 
-  /** @brief Function for dereferencing a handle using a domain object
+  /** @brief Function for dereferencing a handle using a domain/segment object
     *
-    * @tparam WrappedConfigT     The wrapped config of the domain type
+    * @tparam WrappedConfigT     The wrapped config of the domain/segment type
     * @tparam HandleT            A handle type
-    * @param  domain             The host domain object
+    * @param  domain             The host domain/segment object
     * @param  handle             The handle to be dereferenced
     * @return                    A C++ reference to an element which is referenced by handle
     */
-  template<typename WrappedConfigT, typename HandleT>
-  typename storage::handle::result_of::value_type<HandleT>::type & dereference_handle(domain_t<WrappedConfigT> & domain, HandleT const & handle)
+  template<typename DomainOrSegmentT, typename HandleT>
+  typename storage::handle::result_of::value_type<HandleT>::type & dereference_handle(DomainOrSegmentT & domain, HandleT const & handle)
   {
       typedef typename storage::handle::result_of::value_type<HandleT>::type value_type;
       return storage::collection::get<value_type>(element_collection(domain)).dereference_handle( handle );
   }
 
-  /** @brief Function for dereferencing a handle using a domain object, const version
+  /** @brief Function for dereferencing a handle using a domain/segment object, const version
     *
-    * @tparam WrappedConfigT     The wrapped config of the domain type
+    * @tparam WrappedConfigT     The wrapped config of the domain/segment type
     * @tparam HandleT            A handle type
-    * @param  domain             The host domain object
+    * @param  domain             The host domain/segment object
     * @param  handle             The handle to be dereferenced
     * @return                    A C++ const reference to an element which is referenced by handle
     */
-  template<typename WrappedConfigT, typename HandleT>
-  typename storage::handle::result_of::value_type<HandleT>::type const & dereference_handle(domain_t<WrappedConfigT> const & domain, HandleT const & handle)
+  template<typename DomainOrSegmentT, typename HandleT>
+  typename storage::handle::result_of::value_type<HandleT>::type const & dereference_handle(DomainOrSegmentT const & domain, HandleT const & handle)
   {
       typedef typename storage::handle::result_of::value_type<HandleT>::type value_type;
       return storage::collection::get<value_type>(element_collection(domain)).dereference_handle( handle );
@@ -890,7 +885,7 @@ namespace viennagrid
     element_type_2 & bnd_kcell = viennagrid::dereference_handle(host_element, boundary_element_handle);
     return viennagrid::vertices(bnd_kcell).handle_at(host_element.global_to_local_orientation(boundary_element_handle, index));
   }
-  
+
   /** @brief Function for querying a local vertex on a boundary element within a host element, const version
     *
     * @tparam ElementTagT               The element tag of the host element type
@@ -1003,7 +998,7 @@ namespace viennagrid
 
 
 
-    // doxygen doku in forwards.hpp
+    // doxygen docu in forwards.hpp
     template<typename DomainSegmentType, typename element_type_or_tag>
     struct element
     {
@@ -1011,7 +1006,7 @@ namespace viennagrid
         typedef typename element< typename element_collection< DomainSegmentType >::type, element_type_or_tag >::type type;
     };
 
-    // doxygen doku in forwards.hpp
+    // doxygen docu in forwards.hpp
     template<typename DomainSegmentType, typename element_type_or_tag>
     struct handle
     {
@@ -1019,7 +1014,7 @@ namespace viennagrid
         typedef typename handle< typename element_collection< DomainSegmentType >::type, element_type_or_tag >::type type;
     };
 
-    // doxygen doku in forwards.hpp
+    // doxygen docu in forwards.hpp
     template<typename DomainSegmentType, typename element_type_or_tag>
     struct const_handle
     {
@@ -1027,7 +1022,7 @@ namespace viennagrid
         typedef typename const_handle< typename element_collection< DomainSegmentType >::type, element_type_or_tag >::type type;
     };
 
-    // doxygen doku in forwards.hpp
+    // doxygen docu in forwards.hpp
     template<typename DomainSegmentType, typename element_type_or_tag>
     struct element_range
     {
@@ -1035,7 +1030,7 @@ namespace viennagrid
         typedef typename element_range< typename element_collection< DomainSegmentType >::type, element_type_or_tag >::type type;
     };
 
-    // doxygen doku in forwards.hpp
+    // doxygen docu in forwards.hpp
     template<typename DomainSegmentType, typename element_type_or_tag>
     struct const_element_range
     {
@@ -1063,7 +1058,7 @@ namespace viennagrid
         static const int value = (tail_cell_dimension > current_element_dimension) ? tail_cell_dimension : current_element_dimension;
     };
 
-    // doxygen doku in forwards.hpp
+    // doxygen docu in forwards.hpp
     template<typename something>
     struct topologic_cell_dimension
     {
@@ -1100,7 +1095,7 @@ namespace viennagrid
         >::type type;
     };
 
-    // doxygen doku in forwards.hpp
+    // doxygen docu in forwards.hpp
     template<typename something, int topologic_dimension>
     struct elements_of_topologic_dim
     {
@@ -1113,7 +1108,7 @@ namespace viennagrid
 
 
 
-    // doxygen doku in forwards.hpp
+    // doxygen docu in forwards.hpp
     template<typename something>
     struct cells
     {
@@ -1124,7 +1119,7 @@ namespace viennagrid
     };
 
 
-    // doxygen doku in forwards.hpp
+    // doxygen docu in forwards.hpp
     template<typename something>
     struct cell
     {
@@ -1134,7 +1129,7 @@ namespace viennagrid
         typedef typename viennagrid::meta::typelist::result_of::at<all_cell_types,0>::type type;
     };
 
-    // doxygen doku in forwards.hpp
+    // doxygen docu in forwards.hpp
     template<typename something>
     struct cell_tag
     {
@@ -1214,12 +1209,12 @@ namespace viennagrid
 
 
 
-  // doxygen doku in forwards.hpp
+  // doxygen docu in forwards.hpp
   template<typename element_type_or_tag, typename WrappedConfigType>
   typename result_of::element_range<domain_t<WrappedConfigType>, element_type_or_tag>::type elements(domain_t<WrappedConfigType> & domain)
   { return elements<element_type_or_tag>( element_collection(domain) ); }
 
-  // doxygen doku in forwards.hpp
+  // doxygen docu in forwards.hpp
   template<typename element_type_or_tag, typename WrappedConfigType>
   typename result_of::const_element_range<domain_t<WrappedConfigType>, element_type_or_tag>::type elements(domain_t<WrappedConfigType> const & domain)
   { return elements<element_type_or_tag>( element_collection(domain) ); }
@@ -1273,7 +1268,7 @@ namespace viennagrid
                   viennagrid::storage::id_compare<IDT>(id)
           );
   }
-  
+
   /** @brief Function which finds an element based on a handle. The runtime of this function is linear in the number of elements of the requested type in the domain.
     *
     * @tparam DomainSegmentT          Host domain/segment type
@@ -1334,7 +1329,7 @@ namespace viennagrid
     *
     * @tparam ElementTag          Element tag of the host element type
     * @tparam WrappedConfigType   Wrapped config of the host element type
-    * @tparam VertexHandleType    Vertex handle type          
+    * @tparam VertexHandleType    Vertex handle type
     * @param  element             The host element object where the vertex is to be set
     * @param  vertex_handle       A vertex handle which is to be used in the host element
     * @param  pos                 The position of the vertex to be set within the host element
@@ -1367,7 +1362,7 @@ namespace viennagrid
 
   namespace result_of
   {
-    // doxygen doku in forwards.hpp
+    // doxygen docu in forwards.hpp
     template<typename point_container_type>
     struct point {};
 
@@ -1441,7 +1436,7 @@ namespace viennagrid
   template<typename WrappedConfigT>
   typename result_of::point< domain_t<WrappedConfigT> >::type const & point(domain_t<WrappedConfigT> const & domain, typename result_of::const_vertex_handle< domain_t<WrappedConfigT> >::type vertex_handle)
   { return dereference_handle(domain, vertex_handle).appendix(); }
-  
+
 
   /** @brief Function for obtaining the point from a vertex, no domain needed
     *
@@ -1530,20 +1525,20 @@ namespace viennagrid
       typedef typename viennagrid::result_of::element_range<DestinationDomainType, SourceElementT>::type      DestinationElementRangeType;
       typedef typename viennagrid::result_of::iterator<DestinationElementRangeType>::type                     DestinationElementRangeIterator;
 
-      
+
       typedef typename viennagrid::result_of::element<SourceDomainType, ElementTag>::type SourceElementType;
       typedef typename viennagrid::result_of::element<DestinationDomainType, ElementTag>::type DestinationElementType;
       typedef typename viennagrid::result_of::handle<DestinationDomainType, ElementTag>::type DestinationElementHandleType;
 
       SourceElementRangeType source_elements = viennagrid::elements( source_domain );
       DestinationElementRangeType destination_elements = viennagrid::elements( destination_domain );
-      
+
       DestinationElementRangeIterator dit = destination_elements.begin();
       for (SourceElementRangeIterator sit = source_elements.begin(); sit != source_elements.end(); ++sit, ++dit)
       {
         SourceElementType const & source_element = *sit;
         DestinationElementType & destination_element = *dit;
-        
+
         if (source_element.id() != destination_element.id())
         {
           std::cout << "ERROR in fix_handles: destination element id != source element id" << std::endl;
