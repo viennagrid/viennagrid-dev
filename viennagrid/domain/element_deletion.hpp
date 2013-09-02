@@ -190,7 +190,7 @@ namespace viennagrid
             
             for (typename std::deque<id_type>::iterator it = ids_to_erase.begin(); it != ids_to_erase.end(); ++it)
             {
-                element_range_iterator to_erase_it = find_by_id( domain, *it );
+                element_range_iterator to_erase_it = find( domain, *it );
 
                 if (back_it != to_erase_it)
                 {
@@ -212,22 +212,22 @@ namespace viennagrid
         domain_view_type & view_to_erase;
     };
 
-    template<typename domain_type, typename domain_view_type>
-    void erase_elements(domain_type & domain, domain_view_type & elements_to_erase)
+    template<typename DomainT, typename DomainViewT>
+    void erase_elements(DomainT & domain, DomainViewT & elements_to_erase)
     {
         typedef typename viennagrid::meta::typelist::result_of::reverse<
-          typename viennagrid::result_of::element_typelist<domain_view_type>::type
+          typename viennagrid::result_of::element_typelist<DomainViewT>::type
         >::type element_typelist;
         
-        erase_functor<domain_type, domain_view_type> functor( domain, elements_to_erase );
+        erase_functor<DomainT, DomainViewT> functor( domain, elements_to_erase );
         viennagrid::meta::typelist::for_each<element_typelist>(functor);
     }
 
-    template<typename domain_type, typename handle_type>
-    void erase_element(domain_type & domain, handle_type & element_to_erase)
+    template<typename DomainT, typename handle_type>
+    void erase_element(DomainT & domain, handle_type & element_to_erase)
     {
-        typedef typename viennagrid::result_of::domain_view<domain_type>::type domain_view_type;
-        domain_view_type elements_to_erase = viennagrid::make_view(domain);
+        typedef typename viennagrid::result_of::domain_view<DomainT>::type DomainViewType;
+        DomainViewType elements_to_erase = viennagrid::make_view(domain);
         viennagrid::mark_erase_elements( domain, elements_to_erase, element_to_erase );
         viennagrid::erase_elements(domain, elements_to_erase);
     }
