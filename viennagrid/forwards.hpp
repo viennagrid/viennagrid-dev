@@ -1115,7 +1115,7 @@ namespace viennagrid
   /** @brief Function for retrieving an element range or a boundary element range from a host object
     *
     * @tparam SomethingT         The host type, can be an element, a collection, a domain, a segment or a segmentation
-    * @tparam ElementTypeOrTagT  The element type or tag for the requested element range
+    * @tparam ElementTypeOrTagT  The element type/tag for the requested element range
     * @param  something          The host object of type SomethingT
     * @return                    An element range
     */
@@ -1253,7 +1253,7 @@ namespace viennagrid
   /** @brief Function for retrieving a const element range or a boundary element range from a host object
     *
     * @tparam SomethingT         The host type, can be an element, a collection, a domain, a segment or a segmentation
-    * @tparam ElementTypeOrTagT  The element type or tag for the requested element range
+    * @tparam ElementTypeOrTagT  The element type/tag for the requested element range
     * @param  something          The host object of type SomethingT
     * @return                    A const element range
     */
@@ -1391,7 +1391,7 @@ namespace viennagrid
   
   /** @brief Function for creating an element within a domain or a segment
     *
-    * @tparam ElementTypeOrTagT       The element type or tag to be created
+    * @tparam ElementTypeOrTagT       The element type/tag to be created
     * @tparam DomainOrSegmentT        The domain or segment type where the element is created
     * @tparam VertexHandleIteratorT   A vertex handle iterator type
     * @param  domain_segment          The domain or segment object where the element should be created
@@ -1408,7 +1408,7 @@ namespace viennagrid
   
   /** @brief Function for creating an element within a domain or segment with a specific ID
     *
-    * @tparam ElementTypeOrTagT       The element type or tag to be created
+    * @tparam ElementTypeOrTagT       The element type/tag to be created
     * @tparam DomainOrSegmentT        The domain or segment type where the element is created
     * @tparam VertexHandleIteratorT   A vertex handle iterator type
     * @param  domain_segment          The domain or segment object where the element should be created
@@ -1433,10 +1433,14 @@ namespace viennagrid
     * @tparam ElementTagT             Element tag of the element to dereference
     * @tparam WrappedConfigT          Wrapped config of the element to dereference
     * @param  element                 The element to be derferenced, this object is returned
-    * @return                         element
+    * @return                         element (identity)
     */
   template<typename WrappedDomainConfigT, typename ElementTagT, typename WrappedConfigT>
   element_t<ElementTagT, WrappedConfigT> & dereference_handle( domain_t<WrappedDomainConfigT> &, element_t<ElementTagT, WrappedConfigT> & element)
+  { return element; }
+  
+  template<typename HostElementTagT, typename WrappedHostElementConfigT, typename ElementTagT, typename WrappedConfigT>
+  element_t<ElementTagT, WrappedConfigT> & dereference_handle( element_t<HostElementTagT, WrappedHostElementConfigT> &, element_t<ElementTagT, WrappedConfigT> & element)
   { return element; }
 
   /** @brief Function for dereferencing a const element -> identity
@@ -1445,12 +1449,37 @@ namespace viennagrid
     * @tparam ElementTagT             Element tag of the element to dereference
     * @tparam WrappedConfigT          Wrapped config of the element to dereference
     * @param  element                 The element to be derferenced, this object is returned
-    * @return                         element
+    * @return                         element (identity)
     */
   template<typename WrappedDomainConfigT, typename ElementTagT, typename WrappedConfigT>
   element_t<ElementTagT, WrappedConfigT> const & dereference_handle( domain_t<WrappedDomainConfigT> const &, element_t<ElementTagT, WrappedConfigT> const & element)
   { return element; }
 
+  template<typename HostElementTagT, typename WrappedHostElementConfigT, typename ElementTagT, typename WrappedConfigT>
+  element_t<ElementTagT, WrappedConfigT> const & dereference_handle( element_t<HostElementTagT, WrappedHostElementConfigT> const &, element_t<ElementTagT, WrappedConfigT> const & element)
+  { return element; }
+
+  
+  /** @brief Function for creating a handle, default implementation -> identity
+    *
+    * @tparam DomainOrSegmentT    Wrapped config of the domain type
+    * @tparam HandleT             Type of the handle
+    * @param  handle              The handle object
+    * @return                     handle (identity)
+    */
+  template<typename DomainOrSegmentT, typename HandleT>
+  HandleT handle( DomainOrSegmentT &, HandleT handle) { return handle; }
+
+  /** @brief Function for creating a const handle, default implementation -> identity
+    *
+    * @tparam DomainOrSegmentT    Wrapped config of the domain type
+    * @tparam HandleT             Type of the handle
+    * @param  handle              The handle object
+    * @return                     handle (identity)
+    */
+  template<typename DomainOrSegmentT, typename HandleT>
+  const HandleT handle( DomainOrSegmentT const &, HandleT handle) { return handle; }
+  
 
   // norm tags for: algorithm/norm.hpp
   /** @brief Tag for denoting the 1-norm */
