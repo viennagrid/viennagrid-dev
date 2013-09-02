@@ -44,18 +44,19 @@
   #define VIENNAGRID_DEBUG_STATUS
 #endif
 
-/** @file forwards.h
+/** @file forwards.hpp
     @brief Contains forward declarations and definition of small classes that must be defined at an early stage
 */
 
 /** @brief The main ViennaGrid namespace. Most functionality resides in this namespace */
 namespace viennagrid
 {
-    /** @brief Advances an iterator and returns it
-     *
-     * @param in          the input iterator
-     * @param distance    the distance to advance
-     */
+  /** @brief Advances an iterator and returns it
+    *
+    * @param in          the input iterator
+    * @param distance    the distance to advance
+    * @return            the iterator, advanced by distance
+    */
   template<typename iterator_type, typename distance_type>
   iterator_type advance(iterator_type const & in, distance_type distance)
   {
@@ -161,7 +162,6 @@ namespace viennagrid
    *
    * @tparam CoordType          Type of each coordinate entry (usually double or float)
    * @tparam CoordinateSystem   The underlying coordinate system of the point.
-   *
    */
   template <typename CoordType, typename CoordinateSystem>
   class point_t;
@@ -170,7 +170,6 @@ namespace viennagrid
    *
    * @tparam ElementTag         Tag representing the element (e.g. vertex_tag)
    * @tparam WrappedConfigType  The configuration of the complex where the element lives
-   *
    */
   template<typename ElementTag, typename WrappedConfigType>
   class element_t;
@@ -181,7 +180,6 @@ namespace viennagrid
    *
    * @tparam ElementTag         Tag for the identification of the hosting element
    * @tparam BoundaryElementTag A tag representing the boundary element of the element with ElementTag
-   *
    */
   template <typename ElementTag, typename BoundaryElementTag = ElementTag>
   struct boundary_elements
@@ -1102,6 +1100,8 @@ namespace viennagrid
     element_range_proxy(SomethingT & something_) : something(something_) {}
 
     /** @brief Returns the reference to the host object
+     * 
+     * @return a reference to the host object
     */
     SomethingT & operator() () { return something; }
 
@@ -1117,6 +1117,7 @@ namespace viennagrid
     * @tparam SomethingT         The host type, can be an element, a collection, a domain, a segment or a segmentation
     * @tparam ElementTypeOrTagT  The element type or tag for the requested element range
     * @param  something          The host object of type SomethingT
+    * @return                    An element range
     */
   template<typename ElementTypeOrTagT, typename SomethingT>
   typename result_of::element_range<SomethingT, ElementTypeOrTagT>::type elements(SomethingT & something);
@@ -1124,10 +1125,11 @@ namespace viennagrid
   template<typename ElementTypeOrTagT, typename SegmentationT>
   typename result_of::element_range< segment_t<SegmentationT>, ElementTypeOrTagT>::type elements( segment_t<SegmentationT> & something);
 
-  /** @brief Function for retrieving an element range proxy object, return value can be assigned to a range object
+  /** @brief Function for retrieving an element range proxy object
     *
     * @tparam SomethingT         The host type, can be an element, a collection, a domain, a segment or a segmentation
     * @param  something          The host object of type SomethingT
+    * @return                    An element range proxy, can be assigned to a range object
     */
   template<typename SomethingT>
   element_range_proxy<SomethingT> elements(SomethingT & something)
@@ -1140,6 +1142,7 @@ namespace viennagrid
     *
     * @tparam SomethingT         The host type, can be an element, a collection, a domain, a segment or a segmentation
     * @param  something          The host object of type SomethingT
+    * @return                    A cell range
     */
   template<typename SomethingT>
   typename result_of::cell_range<SomethingT>::type cells(SomethingT & something)
@@ -1149,6 +1152,7 @@ namespace viennagrid
     *
     * @tparam SomethingT         The host type, can be an element, a collection, a domain, a segment or a segmentation
     * @param  something          The host object of type SomethingT
+    * @return                    A facet range
     */
   template<typename element_type>
   typename result_of::facet_range<element_type>::type facets(element_type & element)
@@ -1158,6 +1162,7 @@ namespace viennagrid
     *
     * @tparam SomethingT         The host type, can be an element, a collection, a domain, a segment or a segmentation
     * @param  something          The host object of type SomethingT
+    * @return                    A vertex range
     */
   template<typename SomethingT>
   typename result_of::element_range<SomethingT, vertex_tag>::type vertices(SomethingT & something)
@@ -1167,6 +1172,7 @@ namespace viennagrid
     *
     * @tparam SomethingT         The host type, can be an element, a collection, a domain, a segment or a segmentation
     * @param  something          The host object of type SomethingT
+    * @return                    A line range
     */
   template<typename SomethingT>
   typename result_of::element_range<SomethingT, line_tag>::type lines(SomethingT & something)
@@ -1176,6 +1182,7 @@ namespace viennagrid
     *
     * @tparam SomethingT         The host type, can be an element, a collection, a domain, a segment or a segmentation
     * @param  something          The host object of type SomethingT
+    * @return                    An edge range
     */
   template<typename SomethingT>
   typename result_of::element_range<SomethingT, edge_tag>::type edges(SomethingT & something)
@@ -1185,6 +1192,7 @@ namespace viennagrid
     *
     * @tparam SomethingT         The host type, can be an element, a collection, a domain, a segment or a segmentation
     * @param  something          The host object of type SomethingT
+    * @return                    A triangle range
     */
   template<typename SomethingT>
   typename result_of::element_range<SomethingT, triangle_tag>::type triangles(SomethingT & something)
@@ -1194,6 +1202,7 @@ namespace viennagrid
     *
     * @tparam SomethingT         The host type, can be an element, a collection, a domain, a segment or a segmentation
     * @param  something          The host object of type SomethingT
+    * @return                    A quadrilateral range
     */
   template<typename SomethingT>
   typename result_of::element_range<SomethingT, quadrilateral_tag>::type quadrilaterals(SomethingT & something)
@@ -1203,6 +1212,7 @@ namespace viennagrid
     *
     * @tparam SomethingT         The host type, can be an element, a collection, a domain, a segment or a segmentation
     * @param  something          The host object of type SomethingT
+    * @return                    A polygon range
     */
   template<typename SomethingT>
   typename result_of::element_range<SomethingT, polygon_tag>::type polygons(SomethingT & something)
@@ -1212,6 +1222,7 @@ namespace viennagrid
     *
     * @tparam SomethingT         The host type, can be an element, a collection, a domain, a segment or a segmentation
     * @param  something          The host object of type SomethingT
+    * @return                    A PLC range
     */
   template<typename SomethingT>
   typename result_of::element_range<SomethingT, plc_tag>::type plcs(SomethingT & something)
@@ -1221,6 +1232,7 @@ namespace viennagrid
     *
     * @tparam SomethingT         The host type, can be an element, a collection, a domain, a segment or a segmentation
     * @param  something          The host object of type SomethingT
+    * @return                    A tetrahedron range
     */
   template<typename SomethingT>
   typename result_of::element_range<SomethingT, tetrahedron_tag>::type tetraheda(SomethingT & something)
@@ -1230,6 +1242,7 @@ namespace viennagrid
     *
     * @tparam SomethingT         The host type, can be an element, a collection, a domain, a segment or a segmentation
     * @param  something          The host object of type SomethingT
+    * @return                    A hexahedron range
     */
   template<typename SomethingT>
   typename result_of::element_range<SomethingT, hexahedron_tag>::type hexahedra(SomethingT & something)
@@ -1242,6 +1255,7 @@ namespace viennagrid
     * @tparam SomethingT         The host type, can be an element, a collection, a domain, a segment or a segmentation
     * @tparam ElementTypeOrTagT  The element type or tag for the requested element range
     * @param  something          The host object of type SomethingT
+    * @return                    A const element range
     */
   template<typename ElementTypeOrTagT, typename SomethingT>
   typename result_of::const_element_range<SomethingT, ElementTypeOrTagT>::type elements(SomethingT const & something);
@@ -1251,10 +1265,11 @@ namespace viennagrid
 
 
   
-  /** @brief Function for retrieving an element range proxy object, return value can be assigned to a const range object
+  /** @brief Function for retrieving an element range proxy object
     *
     * @tparam SomethingT         The host type, can be an element, a collection, a domain, a segment or a segmentation
     * @param  something          The host object of type SomethingT
+    * @return                    An element range proxy, can be assigned to a const range object
     */
   template<typename SomethingT>
   element_range_proxy<const SomethingT> elements(SomethingT const & something)
@@ -1265,6 +1280,7 @@ namespace viennagrid
     *
     * @tparam SomethingT         The host type, can be an element, a collection, a domain, a segment or a segmentation
     * @param  something          The host object of type SomethingT
+    * @return                    A const cell range
     */
   template<typename SomethingT>
   typename result_of::const_cell_range<SomethingT>::type cells( SomethingT const & something)
@@ -1274,6 +1290,7 @@ namespace viennagrid
     *
     * @tparam SomethingT         The host type, can be an element, a collection, a domain, a segment or a segmentation
     * @param  something          The host object of type SomethingT
+    * @return                    A const facet range
     */
   template<typename element_type>
   typename result_of::const_facet_range<element_type>::type facets(const element_type & element)
@@ -1283,6 +1300,7 @@ namespace viennagrid
     *
     * @tparam SomethingT         The host type, can be an element, a collection, a domain, a segment or a segmentation
     * @param  something          The host object of type SomethingT
+    * @return                    A const vertex range
     */
   template<typename SomethingT>
   typename result_of::const_element_range<SomethingT, vertex_tag>::type vertices(SomethingT const & something)
@@ -1292,6 +1310,7 @@ namespace viennagrid
     *
     * @tparam SomethingT         The host type, can be an element, a collection, a domain, a segment or a segmentation
     * @param  something          The host object of type SomethingT
+    * @return                    A const line range
     */
   template<typename SomethingT>
   typename result_of::const_element_range<SomethingT, line_tag>::type lines(SomethingT const & something)
@@ -1301,6 +1320,7 @@ namespace viennagrid
     *
     * @tparam SomethingT         The host type, can be an element, a collection, a domain, a segment or a segmentation
     * @param  something          The host object of type SomethingT
+    * @return                    A const edge range
     */
   template<typename SomethingT>
   typename result_of::const_element_range<SomethingT, edge_tag>::type edges(SomethingT const & something)
@@ -1310,6 +1330,7 @@ namespace viennagrid
     *
     * @tparam SomethingT         The host type, can be an element, a collection, a domain, a segment or a segmentation
     * @param  something          The host object of type SomethingT
+    * @return                    A const triangle range
     */
   template<typename SomethingT>
   typename result_of::const_element_range<SomethingT, triangle_tag>::type triangles(SomethingT const & something)
@@ -1319,6 +1340,7 @@ namespace viennagrid
     *
     * @tparam SomethingT         The host type, can be an element, a collection, a domain, a segment or a segmentation
     * @param  something          The host object of type SomethingT
+    * @return                    A const quadrilateral range
     */
   template<typename SomethingT>
   typename result_of::const_element_range<SomethingT, quadrilateral_tag>::type quadrilaterals(SomethingT const & something)
@@ -1328,6 +1350,7 @@ namespace viennagrid
     *
     * @tparam SomethingT         The host type, can be an element, a collection, a domain, a segment or a segmentation
     * @param  something          The host object of type SomethingT
+    * @return                    A const polygon range
     */
   template<typename SomethingT>
   typename result_of::const_element_range<SomethingT, polygon_tag>::type polygons(SomethingT const & something)
@@ -1337,6 +1360,7 @@ namespace viennagrid
     *
     * @tparam SomethingT         The host type, can be an element, a collection, a domain, a segment or a segmentation
     * @param  something          The host object of type SomethingT
+    * @return                    A const PLC range
     */
   template<typename SomethingT>
   typename result_of::const_element_range<SomethingT, plc_tag>::type plcs(SomethingT const & something)
@@ -1346,6 +1370,7 @@ namespace viennagrid
     *
     * @tparam SomethingT         The host type, can be an element, a collection, a domain, a segment or a segmentation
     * @param  something          The host object of type SomethingT
+    * @return                    A const tetrahedron range
     */
   template<typename SomethingT>
   typename result_of::const_element_range<SomethingT, tetrahedron_tag>::type tetraheda(SomethingT const & something)
@@ -1355,6 +1380,7 @@ namespace viennagrid
     *
     * @tparam SomethingT         The host type, can be an element, a collection, a domain, a segment or a segmentation
     * @param  something          The host object of type SomethingT
+    * @return                    A const hexahedron range
     */
   template<typename SomethingT>
   typename result_of::const_element_range<SomethingT, hexahedron_tag>::type hexahedra(SomethingT const & something)
@@ -1363,14 +1389,15 @@ namespace viennagrid
 
   
   
-  /** @brief Function for creating an element
+  /** @brief Function for creating an element within a domain or a segment
     *
     * @tparam ElementTypeOrTagT       The element type or tag to be created
     * @tparam DomainOrSegmentT        The domain or segment type where the element is created
     * @tparam VertexHandleIteratorT   A vertex handle iterator type
-    * @param  domain_segment          The domain or segment object where the object should be created
+    * @param  domain_segment          The domain or segment object where the element should be created
     * @param  vertices_begin          An iterator pointing to the first vertex handle of the element
     * @param  vertices_end            An iterator defining the end of the vertices
+    * @return                         A handle to the created element
     */
   template<typename ElementTypeOrTagT, typename DomainOrSegmentT, typename VertexHandleIteratorT>
   typename result_of::handle<DomainOrSegmentT, ElementTypeOrTagT>::type make_element(
@@ -1379,15 +1406,16 @@ namespace viennagrid
         VertexHandleIteratorT const & array_end );
 
   
-  /** @brief Function for creating an element with a specific ID
+  /** @brief Function for creating an element within a domain or segment with a specific ID
     *
     * @tparam ElementTypeOrTagT       The element type or tag to be created
     * @tparam DomainOrSegmentT        The domain or segment type where the element is created
     * @tparam VertexHandleIteratorT   A vertex handle iterator type
-    * @param  domain_segment          The domain or segment object where the object should be created
+    * @param  domain_segment          The domain or segment object where the element should be created
     * @param  vertices_begin          An iterator pointing to the first vertex handle of the element
     * @param  vertices_end            An iterator defining the end of the vertices
     * @param  id                      The id of the new element
+    * @return                         A handle to the created element
     */
 #ifndef _MSC_VER
   template<typename ElementTypeOrTagT, typename DomainOrSegmentT, typename VertexHandleIteratorT>
@@ -1405,6 +1433,7 @@ namespace viennagrid
     * @tparam ElementTagT             Element tag of the element to dereference
     * @tparam WrappedConfigT          Wrapped config of the element to dereference
     * @param  element                 The element to be derferenced, this object is returned
+    * @return                         element
     */
   template<typename WrappedDomainConfigT, typename ElementTagT, typename WrappedConfigT>
   element_t<ElementTagT, WrappedConfigT> & dereference_handle( domain_t<WrappedDomainConfigT> &, element_t<ElementTagT, WrappedConfigT> & element)
@@ -1416,6 +1445,7 @@ namespace viennagrid
     * @tparam ElementTagT             Element tag of the element to dereference
     * @tparam WrappedConfigT          Wrapped config of the element to dereference
     * @param  element                 The element to be derferenced, this object is returned
+    * @return                         element
     */
   template<typename WrappedDomainConfigT, typename ElementTagT, typename WrappedConfigT>
   element_t<ElementTagT, WrappedConfigT> const & dereference_handle( domain_t<WrappedDomainConfigT> const &, element_t<ElementTagT, WrappedConfigT> const & element)
