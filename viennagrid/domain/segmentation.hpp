@@ -96,49 +96,6 @@ namespace viennagrid
 
 
 
-        template<typename segmentation_type, typename element_type_or_tag>
-        struct element< segment_t<segmentation_type>, element_type_or_tag >
-        {
-            typedef typename element<typename segment_t<segmentation_type>::view_type, element_type_or_tag>::type type;
-        };
-
-
-        template<typename segmentation_type, typename element_type_or_tag>
-        struct handle< segment_t<segmentation_type>, element_type_or_tag >
-        {
-            typedef typename handle<typename segment_t<segmentation_type>::view_type, element_type_or_tag>::type type;
-        };
-
-        template<typename segmentation_type, typename element_type_or_tag>
-        struct const_handle< segment_t<segmentation_type>, element_type_or_tag >
-        {
-            typedef typename const_handle<typename segment_t<segmentation_type>::view_type, element_type_or_tag>::type type;
-        };
-
-
-
-        template<typename segmentation_type, typename element_type_or_tag>
-        struct element_range< segment_t<segmentation_type>, element_type_or_tag >
-        {
-            typedef typename element_range<typename segment_t<segmentation_type>::view_type, element_type_or_tag>::type type;
-        };
-
-        template<typename segmentation_type, typename element_type_or_tag>
-        struct const_element_range< segment_t<segmentation_type>, element_type_or_tag >
-        {
-            typedef typename const_element_range<typename segment_t<segmentation_type>::view_type, element_type_or_tag>::type type;
-        };
-
-
-
-        template<typename segmentation_type>
-        struct cell_tag< segment_t<segmentation_type> >
-        {
-          typedef typename cell_tag< typename segment_t<segmentation_type>::view_type >::type type;
-        };
-
-
-
         template<typename SegmentationType>
         struct segment;
 
