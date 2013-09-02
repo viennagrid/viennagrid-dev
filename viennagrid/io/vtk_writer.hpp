@@ -347,7 +347,7 @@ namespace viennagrid
 
         /** @brief Writes vector-valued data defined on vertices (points) to file */
         template <typename SegmentType, typename IOAccessorType>
-        void writePointData(SegmentType const & segment, std::ofstream & writer, std::string const & quantity_name, IOAccessorType const & accessor, long seg_id)
+        void writePointData(SegmentType const & segment, std::ofstream & writer, std::string const & name, IOAccessorType const & accessor, long seg_id)
         {
           typedef typename IOAccessorType::value_type ValueType;
 
@@ -368,7 +368,7 @@ namespace viennagrid
 
         /** @brief Writes vector-valued data defined on vertices (points) to file */
         template <typename SegmentType, typename IOAccessorType>
-        void writeCellData(SegmentType const & segment, std::ofstream & writer, std::string const & quantity_name, IOAccessorType const & accessor, long seg_id)
+        void writeCellData(SegmentType const & segment, std::ofstream & writer, std::string const & name, IOAccessorType const & accessor, long seg_id)
         {
           typedef typename viennagrid::result_of::const_element_range<SegmentType, CellTag>::type   CellRange;
           typedef typename viennagrid::result_of::iterator<CellRange>::type                         CellIterator;
@@ -639,12 +639,12 @@ namespace viennagrid
 
         /** @brief Register an accessor/field for scalar data on vertices for a given segment ID with a given quantity name */
         template <typename AccessorOrFieldType>
-        void add_scalar_data_on_vertices(segment_id_type seg_id, AccessorOrFieldType const accessor_or_field, std::string const &  name)
+        void add_scalar_data_on_vertices(segment_id_type seg_id, AccessorOrFieldType const accessor_or_field, std::string const & quantity_name)
         { add_to_container(segment_vertex_scalar_data[seg_id], accessor_or_field, quantity_name); }
 
         /** @brief Register an accessor/field for scalar data on vertices for a given segment with a given quantity name */
         template <typename AccessorOrFieldType>
-        void add_scalar_data_on_vertices(SegmentType const & segment, AccessorOrFieldType const accessor_or_field, std::string const &  name)
+        void add_scalar_data_on_vertices(SegmentType const & segment, AccessorOrFieldType const accessor_or_field, std::string const & quantity_name)
         { add_scalar_data_on_vertices(segment.id(), accessor_or_field, quantity_name); }
 
 
@@ -655,12 +655,12 @@ namespace viennagrid
 
         /** @brief Register an accessor/field for vector data on vertices for a given segment ID with a given quantity name */
         template <typename AccessorOrFieldType>
-        void add_vector_data_on_vertices(segment_id_type seg_id, AccessorOrFieldType const accessor_or_field, std::string const &  name)
+        void add_vector_data_on_vertices(segment_id_type seg_id, AccessorOrFieldType const accessor_or_field, std::string const & quantity_name)
         { add_to_container(segment_vertex_vector_data[seg_id], accessor_or_field, quantity_name); }
 
         /** @brief Register an accessor/field for vector data on vertices for a given segment with a given quantity name */
         template <typename AccessorOrFieldType>
-        void add_vector_data_on_vertices(SegmentType const & segment, AccessorOrFieldType const accessor_or_field, std::string const &  name)
+        void add_vector_data_on_vertices(SegmentType const & segment, AccessorOrFieldType const accessor_or_field, std::string const & quantity_name)
         { add_vector_data_on_vertices(segment.id(), accessor_or_field, quantity_name); }
 
 
