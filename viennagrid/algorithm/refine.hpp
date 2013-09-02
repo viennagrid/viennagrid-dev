@@ -424,7 +424,7 @@ namespace viennagrid
 
     std::deque<bool> edge_refinement_flag;
 
-    edge_refinement_flag.resize( viennagrid::max_id<EdgeType>(domain_in).get() );
+    edge_refinement_flag.resize( viennagrid::id_upper_bound<EdgeType>(domain_in).get() );
 
     cell_refinement_to_edge_refinement<CellTypeOrTag>( domain_in,
                                         cell_refinement_flag_accessor,
@@ -623,7 +623,7 @@ namespace viennagrid
 
     std::deque<bool> edge_refinement_flag;
 
-    edge_refinement_flag.resize( viennagrid::max_id<EdgeType>(domain_in).get() );
+    edge_refinement_flag.resize( viennagrid::id_upper_bound<EdgeType>(domain_in).get() );
 
     cell_refinement_to_edge_refinement<CellTypeOrTagT>(
                                         domain_in,
