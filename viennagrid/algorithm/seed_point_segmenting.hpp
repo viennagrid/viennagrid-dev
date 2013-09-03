@@ -188,22 +188,25 @@ namespace viennagrid
 
 
 
-            typedef typename viennagrid::result_of::const_element_range<triangle_type, viennagrid::line_tag>::type lines_on_triangle_range_type;
+            typedef typename viennagrid::result_of::element_range<triangle_type, viennagrid::line_tag>::type lines_on_triangle_range_type;
             typedef typename viennagrid::result_of::iterator<lines_on_triangle_range_type>::type lines_on_triangle_range_iterator;
 
             // iterating over all boundary lines
             lines_on_triangle_range_type lines = viennagrid::elements<viennagrid::line_tag>( triangle );
             for ( lines_on_triangle_range_iterator lit = lines.begin(); lit != lines.end(); ++lit )
             {
-                line_type & line = viennagrid::dereference_handle( domain, *lit );
+                line_type & line = *lit;
 
-                viennagrid::storage::static_array<vertex_handle_type, 2> lvtx;
-                lvtx[0] = viennagrid::elements<viennagrid::vertex_tag>(line).handle_at(0);
-                lvtx[1] = viennagrid::elements<viennagrid::vertex_tag>(line).handle_at(1);
-
+//                 viennagrid::storage::static_array<vertex_handle_type, 2> lvtx;
+//                 lvtx[0] = viennagrid::elements<viennagrid::vertex_tag>(line).handle_at(0);
+//                 lvtx[1] = viennagrid::elements<viennagrid::vertex_tag>(line).handle_at(1);
+// 
                 viennagrid::storage::static_array<point_type, 2> lp;
-                lp[0] = viennagrid::point( domain, lvtx[0] );
-                lp[1] = viennagrid::point( domain, lvtx[1] );
+//                 lp[0] = viennagrid::point( domain, lvtx[0] );
+//                 lp[1] = viennagrid::point( domain, lvtx[1] );
+                
+                lp[0] = viennagrid::point( domain, viennagrid::vertices(line)[0] );
+                lp[1] = viennagrid::point( domain, viennagrid::vertices(line)[1] );
 
 
                 // calculating the line vector
@@ -226,11 +229,10 @@ namespace viennagrid
 // std::cout << " line: " << lp[0] << " - " << lp[1] << std::endl;
 
 
-                typedef typename viennagrid::result_of::const_coboundary_range<domain_type, viennagrid::line_tag, viennagrid::triangle_tag>::type neighbour_range_type;
-                typedef typename viennagrid::result_of::iterator<neighbour_range_type>::type neighbour_iterator;
+                typedef typename viennagrid::result_of::coboundary_range<domain_type, viennagrid::line_tag, viennagrid::triangle_tag>::type coboundary_range_type;
+                typedef typename viennagrid::result_of::iterator<coboundary_range_type>::type coboudnary_iterator;
 
-
-                neighbour_range_type neighbour_triangles = viennagrid::coboundary_elements<viennagrid::line_tag, viennagrid::triangle_tag>(domain, *lit);
+                coboundary_range_type coboundary_triangles = viennagrid::coboundary_elements<viennagrid::line_tag, viennagrid::triangle_tag>(domain, lit.handle());
 
 // if ( neighbour_triangles.size() != 2 )
 // {
@@ -249,10 +251,10 @@ namespace viennagrid
                 bool smallest_angle_triangle_faces_outward;
 
                 // iterating over all coboundary triangles of the current line
-                for (neighbour_iterator it = neighbour_triangles.handle_begin(); it != neighbour_triangles.handle_end(); ++it)
+                for (coboudnary_iterator it = coboundary_triangles.begin(); it != coboundary_triangles.end(); ++it)
                 {
-                    triangle_handle_type handle = *it;
-                    triangle_type & neighbour_triangle = viennagrid::dereference_handle(domain, handle);
+                    triangle_handle_type handle = it.handle();
+                    triangle_type & neighbour_triangle = *it;
 
         // std::cout << " neighbour " << neighbour_triangle << std::endl;
 
