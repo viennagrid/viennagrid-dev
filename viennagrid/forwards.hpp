@@ -1439,6 +1439,10 @@ namespace viennagrid
   element_t<ElementTagT, WrappedConfigT> & dereference_handle( domain_t<WrappedDomainConfigT> &, element_t<ElementTagT, WrappedConfigT> & element)
   { return element; }
   
+  template<typename WrappedDomainConfigT, typename ElementTagT, typename WrappedConfigT>
+  element_t<ElementTagT, WrappedConfigT> & dereference_handle( segment_t<WrappedDomainConfigT> &, element_t<ElementTagT, WrappedConfigT> & element)
+  { return element; }
+    
   template<typename HostElementTagT, typename WrappedHostElementConfigT, typename ElementTagT, typename WrappedConfigT>
   element_t<ElementTagT, WrappedConfigT> & dereference_handle( element_t<HostElementTagT, WrappedHostElementConfigT> &, element_t<ElementTagT, WrappedConfigT> & element)
   { return element; }
@@ -1454,11 +1458,40 @@ namespace viennagrid
   template<typename WrappedDomainConfigT, typename ElementTagT, typename WrappedConfigT>
   element_t<ElementTagT, WrappedConfigT> const & dereference_handle( domain_t<WrappedDomainConfigT> const &, element_t<ElementTagT, WrappedConfigT> const & element)
   { return element; }
+  
+  template<typename WrappedDomainConfigT, typename ElementTagT, typename WrappedConfigT>
+  element_t<ElementTagT, WrappedConfigT> const & dereference_handle( domain_t<WrappedDomainConfigT> &, element_t<ElementTagT, WrappedConfigT> const & element)
+  { return element; }
+
+  template<typename WrappedDomainConfigT, typename ElementTagT, typename WrappedConfigT>
+  element_t<ElementTagT, WrappedConfigT> const & dereference_handle( domain_t<WrappedDomainConfigT> const &, element_t<ElementTagT, WrappedConfigT> & element)
+  { return element; }
+
+
+  template<typename SegmentationT, typename ElementTagT, typename WrappedConfigT>
+  element_t<ElementTagT, WrappedConfigT> const & dereference_handle( segment_t<SegmentationT> const &, element_t<ElementTagT, WrappedConfigT> const & element)
+  { return element; }
+  
+  template<typename SegmentationT, typename ElementTagT, typename WrappedConfigT>
+  element_t<ElementTagT, WrappedConfigT> const & dereference_handle( segment_t<SegmentationT> &, element_t<ElementTagT, WrappedConfigT> const & element)
+  { return element; }
+  
+  template<typename SegmentationT, typename ElementTagT, typename WrappedConfigT>
+  element_t<ElementTagT, WrappedConfigT> const & dereference_handle( segment_t<SegmentationT> const &, element_t<ElementTagT, WrappedConfigT> & element)
+  { return element; }
+  
 
   template<typename HostElementTagT, typename WrappedHostElementConfigT, typename ElementTagT, typename WrappedConfigT>
   element_t<ElementTagT, WrappedConfigT> const & dereference_handle( element_t<HostElementTagT, WrappedHostElementConfigT> const &, element_t<ElementTagT, WrappedConfigT> const & element)
   { return element; }
+  
+  template<typename HostElementTagT, typename WrappedHostElementConfigT, typename ElementTagT, typename WrappedConfigT>
+  element_t<ElementTagT, WrappedConfigT> const & dereference_handle( element_t<HostElementTagT, WrappedHostElementConfigT> &, element_t<ElementTagT, WrappedConfigT> const & element)
+  { return element; }
 
+  template<typename HostElementTagT, typename WrappedHostElementConfigT, typename ElementTagT, typename WrappedConfigT>
+  element_t<ElementTagT, WrappedConfigT> const & dereference_handle( element_t<HostElementTagT, WrappedHostElementConfigT> const &, element_t<ElementTagT, WrappedConfigT> & element)
+  { return element; }
   
   /** @brief Function for creating a handle, default implementation -> identity
     *
