@@ -20,7 +20,7 @@
 #include "viennagrid/domain/domain.hpp"
 
 
-/** @file domain.hpp
+/** @file segmentation.hpp
     @brief Contains definition and implementation of segmentations and segments
 */
 
