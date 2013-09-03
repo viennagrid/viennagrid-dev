@@ -18,6 +18,10 @@
 #include "viennagrid/domain/domain.hpp"
 #include "viennagrid/domain/accessor.hpp"
 
+/** @file coboundary_iteration.hpp
+    @brief Contains definition and implementation of coboundary iteration
+*/
+
 namespace viennagrid
 {
 

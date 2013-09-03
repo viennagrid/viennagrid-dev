@@ -15,6 +15,9 @@
 
 #include "viennagrid/domain/coboundary_iteration.hpp"
 
+/** @file neighbour_iteration.hpp
+    @brief Contains definition and implementation of neighbour iteration
+*/
 
 namespace viennagrid
 {

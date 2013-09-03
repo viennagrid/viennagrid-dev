@@ -20,6 +20,11 @@
 #include <iterator>
 
 
+/** @file element_deletion.hpp
+    @brief Contains functions for deleting elements from a domin
+*/
+
+
 namespace viennagrid
 {
   /** @brief For internal use only */
@@ -224,7 +229,7 @@ namespace viennagrid
       domain_view_type & view_to_erase;
   };
 
-  /** @brief Erases all elements marked for deletion from a domain
+  /** @brief Erases all elements marked for deletion and all elements which references these elements from a domain
     *
     * @tparam DomainT                   The domain type in which the elements to erase live
     * @tparam DomainViewT               The domain view type which stores all elements to erase
@@ -242,7 +247,7 @@ namespace viennagrid
       viennagrid::meta::typelist::for_each<element_typelist>(functor);
   }
 
-  /** @brief Erases a single elements from a domain. If more than one element is erase use erase_elements instead for better performance.
+  /** @brief Erases a single elements all elements which references this element from a domain. If more than one element is erase use erase_elements instead for better performance.
     *
     * @tparam DomainT                   The domain type in which the elements to erase live
     * @tparam HandleT                   The handle type of the element to delete
