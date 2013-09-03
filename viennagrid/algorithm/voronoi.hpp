@@ -914,13 +914,18 @@ namespace viennagrid
   // The public interface
   //
 
-  /** @brief Writes Voronoi information to the domain or segment using the provided keys
+  /** @brief Writes Voronoi information to the domain or segment using the provided accessors
    *
-   * @param domain              A ViennaGrid domain or segment
-   * @param interface_area_key  The ViennaData key used for storing the interface area on edges
-   * @param box_volume_key      The ViennaData key used for storing the box volumes on edges and vertices
+   * @tparam ElementTypeOrTagT                              The element/cell type/tag for which the voronoi information is calculated
+   * @param  domain                                         The domain
+   * @param  interface_area_accessor                        An accessor where the interface areas are stored
+   * @param  interface_area_cell_contribution_accessor      An accessor where the interface area element contributions are stored
+   * @param  vertex_box_volume_accessor                     An accessor where the vertex box volumes are stored
+   * @param  vertex_box_volume_cell_contribution_accessor   An accessor where the vertex box volume element contributions are stored
+   * @param  edge_box_volume_accessor                       An accessor where the edge box volumes are stored
+   * @param  edge_box_volume_cell_contribution_accessor     An accessor where the edge box volume element contributions are stored
    */
-  template <typename CellTypeOrTag,
+  template <typename ElementTypeOrTagT,
             typename DomainType,
             typename InterfaceAreaAccessor,
             typename InterfaceAreaCellContributionAccessor,
@@ -929,23 +934,23 @@ namespace viennagrid
             typename EdgeBoxVolumeAccessor,
             typename EdgeBoxVolumeCellContributionAccessor>
   void apply_voronoi(DomainType const & domain,
-                      InterfaceAreaAccessor interface_area_accessor,
-                      InterfaceAreaCellContributionAccessor interface_area_cell_contribution_accessor,
-                      VertexBoxVolumeAccessor vertex_box_volume_accessor,
-                      VertexBoxVolumeCellContributionAccessor vertex_box_volume_cell_contribution_accessor,
-                      EdgeBoxVolumeAccessor edge_box_volume_accessor,
-                      EdgeBoxVolumeCellContributionAccessor edge_box_volume_cell_contribution_accessor)
+                     InterfaceAreaAccessor interface_area_accessor,
+                     InterfaceAreaCellContributionAccessor interface_area_cell_contribution_accessor,
+                     VertexBoxVolumeAccessor vertex_box_volume_accessor,
+                     VertexBoxVolumeCellContributionAccessor vertex_box_volume_cell_contribution_accessor,
+                     EdgeBoxVolumeAccessor edge_box_volume_accessor,
+                     EdgeBoxVolumeCellContributionAccessor edge_box_volume_cell_contribution_accessor)
   {
-      typedef typename viennagrid::result_of::element_tag<CellTypeOrTag>::type CellTag;
+    typedef typename viennagrid::result_of::element_tag<ElementTypeOrTagT>::type ElementTag;
 
-    detail::write_voronoi_info<CellTag>(domain,
+    detail::write_voronoi_info<ElementTag>(domain,
                                interface_area_accessor,
                                interface_area_cell_contribution_accessor,
                                vertex_box_volume_accessor,
                                vertex_box_volume_cell_contribution_accessor,
                                edge_box_volume_accessor,
                                edge_box_volume_cell_contribution_accessor,
-                               CellTag());
+                               ElementTag());
   }
 
 } //namespace viennagrid

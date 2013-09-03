@@ -13,10 +13,16 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
+/** @file scale.hpp
+    @brief Scale the geometric points of a domain/segment
+*/
+
+
 namespace viennagrid
 {
   namespace detail
   {
+    /** @brief For internal use only. */
     template<typename DomainType, typename ScalarType, typename PointAccessorType>
     void scale_impl(DomainType& domain, ScalarType factor, PointAccessorType accessor)
     {
@@ -34,10 +40,16 @@ namespace viennagrid
     }
   } // detail
 
-  template<typename DomainType, typename ScalarType>
-  void scale(DomainType& domain, ScalarType factor)
+  
+  /** @brief Scales the geometric points of a domain/segment
+   *
+   * @param  domain_or_segment          The domain/segment which points are scaled
+   * @param  factor                     The scale factor
+   */
+  template<typename DomainOrSegmentT, typename ScalarType>
+  void scale(DomainOrSegmentT & domain_or_segment, ScalarType factor)
   {
-    viennagrid::detail::scale_impl(domain, factor, viennagrid::default_point_accessor(domain));
+    viennagrid::detail::scale_impl(domain_or_segment, factor, viennagrid::default_point_accessor(domain_or_segment));
   }
 
 } // viennagrid

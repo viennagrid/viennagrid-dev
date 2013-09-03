@@ -102,7 +102,7 @@ namespace viennagrid
         }
     }
 
-    // Implementation for coboundary transfer
+    // Implementation for quantity transfer
     template <typename SourceTag, typename DestinationTag,
               typename DomSeg, typename AccessorSrc, typename SetterDest,
               typename Averager, typename FilterSrc, typename FilterDest>

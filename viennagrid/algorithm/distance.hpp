@@ -192,7 +192,7 @@ namespace viennagrid
   //
   // The public interface functions
   //
-  /** @brief Returns the distance between n-cells, segments and/or domains */
+  /** @brief Returns the distance between elements, segments and/or domains */
   template <typename PointAccessorType, typename Something1, typename Something2>
   typename result_of::coord<Something1>::type
   distance(PointAccessorType const accessor,
@@ -238,7 +238,7 @@ namespace viennagrid
 
 
 
-  /** @brief Returns the distance between n-cells, segments and/or domains */
+  /** @brief Returns the distance between elements, segments and/or domains */
   template <typename PointAccessorType, typename Something1, typename Something2>
   typename result_of::coord<Something1>::type
   boundary_distance(PointAccessorType const accessor,
@@ -248,7 +248,7 @@ namespace viennagrid
     return detail::boundary_distance_impl(accessor, el1, el2);
   }
 
-  /** @brief Returns the distance between n-cells, segments and/or domains */
+  /** @brief Returns the distance between elements, segments and/or domains */
   template <typename Something1, typename Something2>
   typename result_of::coord<Something1>::type
   boundary_distance(Something1 const & el1,

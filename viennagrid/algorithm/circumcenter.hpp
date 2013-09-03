@@ -265,28 +265,33 @@ namespace viennagrid
 
   } //namespace detail
 
-  /** @brief The public interface function for the calculation of the circumcenter.
+  /** @brief The public interface function for the calculation of the circumcenter with explicit point accessor.
    *
-   * @param cell   The n-cell for which the circumcenter should be computed
+   * @param element       The element for which the circumcenter should be computed
+   * @param accessor      The point accessor providing point information for geometric calculation
    */
   template <typename PointAccessorType, typename ElementType>
   typename viennagrid::result_of::point<PointAccessorType>::type
-  circumcenter(PointAccessorType const accessor, ElementType const & cell)
+  circumcenter(PointAccessorType const accessor, ElementType const & element)
   {
     typedef typename viennagrid::result_of::point<PointAccessorType>::type PointType;
 
     return detail::circumcenter(accessor,
-                        cell,
+                        element,
                         typename ElementType::tag(),
                         viennagrid::dimension_tag< traits::static_size<PointType>::value >());
   }
 
 
+  /** @brief The public interface function for the calculation of the circumcenter.
+   *
+   * @param element       The element for which the circumcenter should be computed
+   */
   template<typename ElementType>
   typename viennagrid::result_of::point< ElementType >::type
-  circumcenter(ElementType const & cell)
+  circumcenter(ElementType const & element)
   {
-   return circumcenter( default_point_accessor(cell), cell );
+   return circumcenter( default_point_accessor(element), element );
   }
 
 
