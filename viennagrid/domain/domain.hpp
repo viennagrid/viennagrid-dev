@@ -23,7 +23,7 @@
 #include "viennagrid/storage/algorithm.hpp"
 
 #include "viennagrid/config/element_config.hpp"
-#include "viennagrid/config/topology_config.hpp"
+#include "viennagrid/config/domain_config.hpp"
 
 #include "viennagrid/element/element_view.hpp"
 
