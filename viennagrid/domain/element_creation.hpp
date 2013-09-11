@@ -385,7 +385,7 @@ namespace viennagrid
     */
   template<typename DomainOrSegmentTypeT, typename VertexHandleT>
   typename result_of::hexahedron_handle<DomainOrSegmentTypeT>::type make_hexahedron(
-        DomainOrSegmentTypeT & domain,
+        DomainOrSegmentTypeT & domain_segment,
         VertexHandleT v0, VertexHandleT v1, VertexHandleT v2, VertexHandleT v3,
         VertexHandleT v4, VertexHandleT v5, VertexHandleT v6, VertexHandleT v7)
   {
@@ -399,7 +399,37 @@ namespace viennagrid
       handles[6] = v6;
       handles[7] = v7;
 
-      return make_element<viennagrid::hexahedron_tag>( domain, handles.begin(), handles.end() );
+      return make_element<viennagrid::hexahedron_tag>( domain_segment, handles.begin(), handles.end() );
+  }
+  
+  
+  
+  /** @brief Function for copying an element to a domain or segment
+    *
+    * @tparam ElementT                The element type which is copied
+    * @tparam DomainOrSegmentT        The domain or segment type where the hexahedron is created
+    * @param  element                 The element which is copied
+    * @param  domain_segment          The domain or segment object where the element is copied to
+    * @return                         A handle to the created hexahedron
+    */
+  template<typename ElementT, typename DomainOrSegmentT>
+  typename viennagrid::result_of::handle<
+      DomainOrSegmentT,
+      typename viennagrid::result_of::element_tag<ElementT>::type
+    >::type copy_element( ElementT const & element, DomainOrSegmentT & domain_segment )
+  {
+    typedef typename viennagrid::result_of::element_tag<ElementT>::type             ElementTag;
+    typedef typename viennagrid::result_of::vertex_handle<DomainOrSegmentT>::type   VertexHandleType;
+    std::vector<VertexHandleType> vertex_handles;
+    
+    typedef typename viennagrid::result_of::const_vertex_range<ElementT>::type      VertexRangeType;
+    typedef typename viennagrid::result_of::iterator<VertexRangeType>::type         VertexRangeIterator;
+    
+    VertexRangeType vertices = viennagrid::elements(element);
+    for (VertexRangeIterator vit = vertices.begin(); vit != vertices.end(); ++vit)
+      vertex_handles.push_back( make_unique_vertex(domain_segment, viennagrid::point(*vit)) );
+    
+    return make_element<ElementTag>( domain_segment, vertex_handles.begin(), vertex_handles.end() );
   }
 
 }
