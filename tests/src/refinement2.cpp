@@ -306,7 +306,7 @@ void fill_mesh(MeshType & mesh,
                  CellPermutatorB const &)
 {
 //   typedef typename MeshType::config_type      ConfigType;
-//   typedef viennagrid::segment_t<ConfigType>     SegmentType;
+//   typedef viennagrid::segment_handle_t<ConfigType>     SegmentType;
 //   typedef typename ConfigType::cell_tag         CellTag;
 
   typedef typename viennagrid::result_of::point<MeshType>::type          PointType;

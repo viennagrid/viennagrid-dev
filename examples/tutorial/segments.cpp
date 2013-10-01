@@ -22,7 +22,7 @@ int main()
   typedef viennagrid::result_of::oriented_3d_hull_segmentation<mesh_type>::type segmentation_type;
   
   // defining the segment type and segment id type
-  typedef viennagrid::result_of::segment<segmentation_type>::type segment_type;
+  typedef viennagrid::result_of::segment<segmentation_type>::type segment_handle_type;
   typedef viennagrid::result_of::segment_id<segmentation_type>::type segment_id_type;
 
   
@@ -45,18 +45,18 @@ int main()
   
 
   // create a segment, segment id will be 0 because of first segment
-  segment_type seg0 = segmentation.make_segment();
+  segment_handle_type seg0 = segmentation.make_segment();
   
   // create a segment, segment id will be 4 because explicit segment_id
-  segment_type seg1 = segmentation[ segment_id_type(4) ];
+  segment_handle_type seg1 = segmentation[ segment_id_type(4) ];
   
   // create a segment, segment id will be 5 because highest segment id was 4
-  segment_type seg2 = segmentation.make_segment();
+  segment_handle_type seg2 = segmentation.make_segment();
 
   // create some other segments (ID would be 6, 7, 8)
-  segment_type seg3 = segmentation.make_segment();
-  segment_type seg4 = segmentation.make_segment();
-  segment_type seg5 = segmentation.make_segment();
+  segment_handle_type seg3 = segmentation.make_segment();
+  segment_handle_type seg4 = segmentation.make_segment();
+  segment_handle_type seg5 = segmentation.make_segment();
   
   // print the segments
   std::cout << "Segments in Segmentation" << std::endl;
@@ -103,7 +103,7 @@ int main()
   std::cout << std::endl;
   
   // printing all triangles from all segments
-  typedef viennagrid::result_of::element_range< segment_type, viennagrid::triangle_tag >::type range_type;
+  typedef viennagrid::result_of::element_range< segment_handle_type, viennagrid::triangle_tag >::type range_type;
   
   std::cout << "Triangles of Segment 0" << std::endl;
   range_type range = viennagrid::elements( seg0 );
@@ -133,7 +133,7 @@ int main()
   std::cout << std::endl;
   
   // Printing vertices from seg2, each vertex should only be printed once
-  typedef viennagrid::result_of::vertex_range<segment_type>::type vertex_range;
+  typedef viennagrid::result_of::vertex_range<segment_handle_type>::type vertex_range;
   std::cout << "Vertices of Segment 2" << std::endl;
   vertex_range vertices = viennagrid::elements( seg2 );
   for (vertex_range::iterator it = vertices.begin(); it != vertices.end(); ++it)

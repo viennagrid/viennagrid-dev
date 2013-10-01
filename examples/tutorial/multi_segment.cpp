@@ -41,7 +41,7 @@ int main()
   typedef viennagrid::mesh_t< viennagrid::config::hexahedral_3d >     MeshType;
   typedef viennagrid::result_of::mesh_view<MeshType>::type          MeshViewType;
   typedef viennagrid::result_of::segmentation<MeshType>::type         SegmentationType;
-  typedef SegmentationType::segment_type                                SegmentType;
+  typedef SegmentationType::segment_handle_type                                SegmentType;
   
   typedef viennagrid::result_of::cell_tag<MeshType>::type             CellTag;
   typedef viennagrid::result_of::facet_tag<MeshType>::type            FacetTag;

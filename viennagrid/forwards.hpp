@@ -244,7 +244,7 @@ namespace viennagrid
     * @tparam SegmentationT     The segmentation type where the segment lives
     */
   template<typename SegmentationT>
-  class segment_t;
+  class segment_handle_t;
 
   template<typename container_type_, typename change_counter_type>
   struct coboundary_container_wrapper;
@@ -1003,9 +1003,9 @@ namespace viennagrid
     };
 
     template<typename SegmentationT>
-    struct facet_tag< segment_t<SegmentationT> >
+    struct facet_tag< segment_handle_t<SegmentationT> >
     {
-        typedef typename facet_tag< typename cell_tag< segment_t<SegmentationT> >::type >::type type;
+        typedef typename facet_tag< typename cell_tag< segment_handle_t<SegmentationT> >::type >::type type;
     };
     
     
@@ -1034,9 +1034,9 @@ namespace viennagrid
     };
 
     template<typename SegmentationT>
-    struct facet< segment_t<SegmentationT> >
+    struct facet< segment_handle_t<SegmentationT> >
     {
-        typedef typename facet< typename cell< segment_t<SegmentationT> >::type >::type type;
+        typedef typename facet< typename cell< segment_handle_t<SegmentationT> >::type >::type type;
     };
 
 
@@ -1123,7 +1123,7 @@ namespace viennagrid
   typename result_of::element_range<SomethingT, ElementTypeOrTagT>::type elements(SomethingT & something);
   
   template<typename ElementTypeOrTagT, typename SegmentationT>
-  typename result_of::element_range< segment_t<SegmentationT>, ElementTypeOrTagT>::type elements( segment_t<SegmentationT> & something);
+  typename result_of::element_range< segment_handle_t<SegmentationT>, ElementTypeOrTagT>::type elements( segment_handle_t<SegmentationT> & something);
 
   /** @brief Function for retrieving an element range proxy object
     *
@@ -1261,7 +1261,7 @@ namespace viennagrid
   typename result_of::const_element_range<SomethingT, ElementTypeOrTagT>::type elements(SomethingT const & something);
   
   template<typename ElementTypeOrTagT, typename SegmentationT>
-  typename result_of::const_element_range< segment_t<SegmentationT>, ElementTypeOrTagT>::type elements( segment_t<SegmentationT> const & something);
+  typename result_of::const_element_range< segment_handle_t<SegmentationT>, ElementTypeOrTagT>::type elements( segment_handle_t<SegmentationT> const & something);
 
 
   
@@ -1440,7 +1440,7 @@ namespace viennagrid
   { return element; }
   
   template<typename WrappedMeshConfigT, typename ElementTagT, typename WrappedConfigT>
-  element_t<ElementTagT, WrappedConfigT> & dereference_handle( segment_t<WrappedMeshConfigT> &, element_t<ElementTagT, WrappedConfigT> & element)
+  element_t<ElementTagT, WrappedConfigT> & dereference_handle( segment_handle_t<WrappedMeshConfigT> &, element_t<ElementTagT, WrappedConfigT> & element)
   { return element; }
     
   template<typename HostElementTagT, typename WrappedHostElementConfigT, typename ElementTagT, typename WrappedConfigT>
@@ -1469,15 +1469,15 @@ namespace viennagrid
 
 
   template<typename SegmentationT, typename ElementTagT, typename WrappedConfigT>
-  element_t<ElementTagT, WrappedConfigT> const & dereference_handle( segment_t<SegmentationT> const &, element_t<ElementTagT, WrappedConfigT> const & element)
+  element_t<ElementTagT, WrappedConfigT> const & dereference_handle( segment_handle_t<SegmentationT> const &, element_t<ElementTagT, WrappedConfigT> const & element)
   { return element; }
   
   template<typename SegmentationT, typename ElementTagT, typename WrappedConfigT>
-  element_t<ElementTagT, WrappedConfigT> const & dereference_handle( segment_t<SegmentationT> &, element_t<ElementTagT, WrappedConfigT> const & element)
+  element_t<ElementTagT, WrappedConfigT> const & dereference_handle( segment_handle_t<SegmentationT> &, element_t<ElementTagT, WrappedConfigT> const & element)
   { return element; }
   
   template<typename SegmentationT, typename ElementTagT, typename WrappedConfigT>
-  element_t<ElementTagT, WrappedConfigT> const & dereference_handle( segment_t<SegmentationT> const &, element_t<ElementTagT, WrappedConfigT> & element)
+  element_t<ElementTagT, WrappedConfigT> const & dereference_handle( segment_handle_t<SegmentationT> const &, element_t<ElementTagT, WrappedConfigT> & element)
   { return element; }
   
 

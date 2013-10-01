@@ -49,11 +49,11 @@ int main()
     mesh_type mesh;
     
     typedef viennagrid::result_of::segmentation<mesh_type>::type segmentation_type;
-    typedef viennagrid::result_of::segment<segmentation_type>::type segment_type;
+    typedef viennagrid::result_of::segment<segmentation_type>::type segment_handle_type;
     
     segmentation_type segmentation(mesh);
     
-    segment_type seg0 = segmentation.make_segment();
+    segment_handle_type seg0 = segmentation.make_segment();
     
     
     //
@@ -86,7 +86,7 @@ int main()
     
 
     
-    typedef viennagrid::result_of::coboundary_range<segment_type, viennagrid::vertex_tag, viennagrid::triangle_tag>::type coboundary_range_type;
+    typedef viennagrid::result_of::coboundary_range<segment_handle_type, viennagrid::vertex_tag, viennagrid::triangle_tag>::type coboundary_range_type;
     coboundary_range_type coboundary_range = viennagrid::coboundary_elements<viennagrid::vertex_tag, viennagrid::triangle_tag>(seg0, vh2);
     cout << "All triangles connected to vh4" << endl;
     std::copy( coboundary_range.begin(), coboundary_range.end(), std::ostream_iterator<triangle_type>(cout, "\n") );

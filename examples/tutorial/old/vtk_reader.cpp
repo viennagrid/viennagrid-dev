@@ -42,7 +42,7 @@ int main()
   typedef viennagrid::result_of::oriented_3d_hull_segmentation<mesh_type>::type segmentation_type;
 //   typedef viennagrid::result_of::segmentation<mesh_type>::type segmentation_type;
   
-  typedef segmentation_type::segment_type segment_type;
+  typedef segmentation_type::segment_handle_type segment_handle_type;
   typedef segmentation_type::segment_id_type segment_id_type;
   
   mesh_type mesh;
@@ -58,8 +58,8 @@ int main()
   
   reader(mesh, segmentation, "test_main.pvd");
   
-  segment_type seg0 = segmentation[0];
-  segment_type seg1 = segmentation[1];  
+  segment_handle_type seg0 = segmentation[0];
+  segment_handle_type seg1 = segmentation[1];  
   
   
   viennagrid::io::vtk_writer<mesh_type, segmentation_type> writer;

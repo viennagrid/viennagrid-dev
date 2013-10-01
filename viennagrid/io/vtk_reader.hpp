@@ -48,7 +48,7 @@ namespace viennagrid
     {
     protected:
 
-        typedef typename SegmentationType::segment_type SegmentType;
+        typedef typename SegmentationType::segment_handle_type SegmentType;
         typedef typename SegmentationType::segment_id_type segment_id_type;
 
 

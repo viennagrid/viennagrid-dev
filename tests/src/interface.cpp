@@ -148,11 +148,11 @@ int main()
   
   std::cout << "*********** triangular, 2d ***********" << std::endl;
   viennagrid::io::vtk_reader<MeshTri>  vtk_reader_tri;
-  test<MeshTri>(vtk_reader_tri, path + "multi_segment_tri_main.pvd");
+  test<MeshTri>(vtk_reader_tri, path + "multi_segment_handle_tri_main.pvd");
   
   std::cout << "*********** tetrahedral, 3d ***********" << std::endl;
   viennagrid::io::vtk_reader<MeshTet>  vtk_reader_tet;
-  test<MeshTet>(vtk_reader_tet, path + "multi_segment_tet_main.pvd");
+  test<MeshTet>(vtk_reader_tet, path + "multi_segment_handle_tet_main.pvd");
 
   
   std::cout << "*********** quadrilateral, 2d ***********" << std::endl;

@@ -28,7 +28,7 @@ int main()
   typedef viennagrid::result_of::oriented_3d_hull_segmentation<mesh_type>::type segmentation_type;
 //   typedef viennagrid::result_of::segmentation<mesh_type>::type segmentation_type;
   
-  typedef segmentation_type::segment_type segment_type;
+  typedef segmentation_type::segment_handle_type segment_handle_type;
   typedef segmentation_type::segment_id_type segment_id_type;
   
   mesh_type mesh;
@@ -48,8 +48,8 @@ int main()
   
   
 
-  segment_type seg0 = segmentation.make_segment();
-  segment_type seg1 = segmentation.make_segment();
+  segment_handle_type seg0 = segmentation.make_segment();
+  segment_handle_type seg1 = segmentation.make_segment();
   
    
   triangle_type & tri0 = viennagrid::dereference_handle(mesh, th0);

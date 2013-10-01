@@ -23,8 +23,8 @@ namespace viennagrid
   void copy_cells(SrcMeshT const & src_mesh,  SrcSegmentationT const & src_segmentation,
                   DstMeshT & dst_mesh,        DstSegmentationT & dst_segmentation )
   {
-  //     typedef typename src_segment_container_type::value_type src_segment_type;
-  //     typedef typename dst_segment_container_type::value_type dst_segment_type;
+  //     typedef typename src_segment_container_type::value_type src_segment_handle_type;
+  //     typedef typename dst_segment_container_type::value_type dst_segment_handle_type;
       typedef typename viennagrid::result_of::segment<SrcSegmentationT>::type SrcSegmentType;
       typedef typename viennagrid::result_of::segment<DstSegmentationT>::type DstSegmentType;
       
@@ -57,7 +57,7 @@ namespace viennagrid
       
       for (typename SrcSegmentationT::const_iterator seg_it = src_segmentation.begin(); seg_it != src_segmentation.end(); ++seg_it)
       {
-  //         dst_segments.push_back( viennagrid::make_view<dst_segment_type>(dst_mesh) );
+  //         dst_segments.push_back( viennagrid::make_view<dst_segment_handle_type>(dst_mesh) );
           DstSegmentType & dst_segment = dst_segmentation.get_make_segment( seg_it->id() );
           
           SrcCellRangeType cells = viennagrid::elements( *seg_it );

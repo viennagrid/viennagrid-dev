@@ -554,7 +554,7 @@ template <typename MeshType, typename PointFiller>
 void fill_mesh(MeshType & mesh, PointFiller const &)
 {
 //   typedef typename MeshType::config_type      ConfigType;
-//   typedef viennagrid::segment_t<ConfigType>     SegmentType;
+//   typedef viennagrid::segment_handle_t<ConfigType>     SegmentType;
   typedef typename viennagrid::result_of::cell_tag<MeshType>::type         CellTag;
 
   typedef typename viennagrid::result_of::point<MeshType>::type          PointType;

@@ -100,7 +100,7 @@ namespace viennagrid
   class interface_setter_functor
   {
   public:
-      typedef segment_t<SegmentationType> SegmentType;
+      typedef segment_handle_t<SegmentationType> SegmentType;
 
       interface_setter_functor(SegmentType & seg0_, SegmentType & seg1_) : seg0(seg0_), seg1(seg1_) {}
 
@@ -157,12 +157,12 @@ namespace viennagrid
 
   /** @brief For internal use only. */
   template<typename SegmentationType>
-  void transfer_interface_information( segment_t<SegmentationType> & seg0, segment_t<SegmentationType> & seg1 )
+  void transfer_interface_information( segment_handle_t<SegmentationType> & seg0, segment_handle_t<SegmentationType> & seg1 )
   {
     assert( &seg0.segmentation() == &seg1.segmentation() );
 
-      typedef segment_t<SegmentationType> segment_type;
-      typedef typename viennagrid::result_of::cell_tag< segment_type >::type cell_tag;
+      typedef segment_handle_t<SegmentationType> segment_handle_type;
+      typedef typename viennagrid::result_of::cell_tag< segment_handle_type >::type cell_tag;
       typedef typename viennagrid::result_of::facet_tag< cell_tag >::type facet_tag;
 
       typedef typename viennagrid::meta::typelist::result_of::erase<
@@ -187,14 +187,14 @@ namespace viennagrid
 
   /** @brief For internal use only. */
   template <typename SegmentationType, typename AccessorType>
-  void detect_interface(segment_t<SegmentationType> & seg0,
-                        segment_t<SegmentationType> & seg1,
+  void detect_interface(segment_handle_t<SegmentationType> & seg0,
+                        segment_handle_t<SegmentationType> & seg1,
                         AccessorType accessor)
   {
     assert( &seg0.segmentation() == &seg1.segmentation() );
 
-      typedef typename result_of::cell_tag< segment_t<SegmentationType> >::type CellTag;
-      typedef typename result_of::element< segment_t<SegmentationType>, CellTag>::type CellType;
+      typedef typename result_of::cell_tag< segment_handle_t<SegmentationType> >::type CellTag;
+      typedef typename result_of::element< segment_handle_t<SegmentationType>, CellTag>::type CellType;
 
       detail::detect_interface_impl< result_of::has_boundary<CellType, typename CellTag::facet_tag>::value >::detect(accessor, seg0, seg1);
   }
@@ -205,14 +205,14 @@ namespace viennagrid
    * @param seg2  The second segment
    */
   template <typename SegmentationType>
-  void detect_interface(segment_t<SegmentationType> & seg0,
-                        segment_t<SegmentationType> & seg1)
+  void detect_interface(segment_handle_t<SegmentationType> & seg0,
+                        segment_handle_t<SegmentationType> & seg1)
   {
     assert( &seg0.segmentation() == &seg1.segmentation() );
 
-    typedef typename result_of::cell_tag< segment_t<SegmentationType> >::type CellTag;
+    typedef typename result_of::cell_tag< segment_handle_t<SegmentationType> >::type CellTag;
     typedef typename result_of::facet_tag<CellTag>::type FacetTag;
-    typedef typename result_of::element< segment_t<SegmentationType>, FacetTag >::type FacetType;
+    typedef typename result_of::element< segment_handle_t<SegmentationType>, FacetTag >::type FacetType;
 
 
         typedef typename viennagrid::storage::result_of::value_type<
@@ -247,16 +247,16 @@ namespace viennagrid
    * @param element   The element under test
    */
   template <typename SegmentationType, typename ElementType>
-  bool is_interface(segment_t<SegmentationType> const & seg0,
-                    segment_t<SegmentationType> const & seg1,
+  bool is_interface(segment_handle_t<SegmentationType> const & seg0,
+                    segment_handle_t<SegmentationType> const & seg1,
                     ElementType const & element)
   {
     assert( &seg0.segmentation() == &seg1.segmentation() );
 
-    typedef segment_t<SegmentationType> SegmentType;
-    typedef typename result_of::cell_tag< segment_t<SegmentationType> >::type CellTag;
+    typedef segment_handle_t<SegmentationType> SegmentType;
+    typedef typename result_of::cell_tag< segment_handle_t<SegmentationType> >::type CellTag;
     typedef typename result_of::facet_tag<CellTag>::type FacetTag;
-    typedef typename result_of::element< segment_t<SegmentationType>, FacetTag >::type FacetType;
+    typedef typename result_of::element< segment_handle_t<SegmentationType>, FacetTag >::type FacetType;
 
 
     typedef typename viennagrid::result_of::element_tag<ElementType>::type element_tag;

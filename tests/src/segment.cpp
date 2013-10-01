@@ -139,7 +139,7 @@ void test(viennagrid::tetrahedral_3d_mesh)
   std::cout << viennagrid::cells(seg0)[0] << std::endl;
   
   viennagrid::io::vtk_writer<MeshType> my_vtk_writer;
-  my_vtk_writer(mesh, segmentation, "multi_segment_tet");
+  my_vtk_writer(mesh, segmentation, "multi_segment_handle_tet");
 }
 
 //test for 3d hexahedral case:
@@ -295,7 +295,7 @@ void test(viennagrid::triangular_2d_mesh)
   std::cout << viennagrid::cells(seg0)[0] << std::endl;
   
   viennagrid::io::vtk_writer<MeshType> my_vtk_writer;
-  my_vtk_writer(mesh, segmentation, "multi_segment_tri");
+  my_vtk_writer(mesh, segmentation, "multi_segment_handle_tri");
 }
 
 //test for 2d quadrilateral case:

@@ -97,7 +97,7 @@ namespace viennagrid
         typedef typename result_of::const_handle<MeshType, vertex_tag>::type          ConstVertexHandleType;
         typedef typename result_of::id<VertexType>::type                           VertexIDType;
 
-        typedef typename SegmentationType::segment_type SegmentType;
+        typedef typename SegmentationType::segment_handle_type SegmentType;
 
 
         typedef std::vector<double> vector_data_type;
@@ -782,7 +782,7 @@ namespace viennagrid
       */
     template <typename MeshT, typename SegmentationT, typename AccessorOrFieldT>
     vtk_writer<MeshT, SegmentationT> & add_scalar_data_on_vertices(vtk_writer<MeshT, SegmentationT> & writer,
-                                                                    segment_t<SegmentationT> const & segment,
+                                                                    segment_handle_t<SegmentationT> const & segment,
                                                                     AccessorOrFieldT const accessor_or_field,
                                                                     std::string const & quantity_name)
     {
@@ -802,7 +802,7 @@ namespace viennagrid
       */
     template <typename MeshT, typename SegmentationT, typename AccessorOrFieldT>
     vtk_writer<MeshT, SegmentationT> & add_vector_data_on_vertices(vtk_writer<MeshT, SegmentationT> & writer,
-                                                                    segment_t<SegmentationT> const & segment,
+                                                                    segment_handle_t<SegmentationT> const & segment,
                                                                     AccessorOrFieldT const accessor_or_field,
                                                                     std::string const & quantity_name)
     {
@@ -862,7 +862,7 @@ namespace viennagrid
       */
     template <typename MeshT, typename SegmentationT, typename AccessorOrFieldT>
     vtk_writer<MeshT, SegmentationT> & add_scalar_data_on_cells(vtk_writer<MeshT, SegmentationT> & writer,
-                                                                  segment_t<SegmentationT> const & segment,
+                                                                  segment_handle_t<SegmentationT> const & segment,
                                                                   AccessorOrFieldT const accessor_or_field,
                                                                   std::string const & quantity_name)
     {
@@ -882,7 +882,7 @@ namespace viennagrid
       */
     template <typename MeshT, typename SegmentationT, typename AccessorOrFieldT>
     vtk_writer<MeshT, SegmentationT> & add_vector_data_on_cells(vtk_writer<MeshT, SegmentationT> & writer,
-                                                                  segment_t<SegmentationT> const & segment,
+                                                                  segment_handle_t<SegmentationT> const & segment,
                                                                   AccessorOrFieldT const accessor_or_field,
                                                                   std::string const & quantity_name)
     {

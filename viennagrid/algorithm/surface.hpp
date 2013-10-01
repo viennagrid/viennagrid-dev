@@ -111,7 +111,7 @@ namespace viennagrid
   /** @brief Returns the surface of a segment*/
   template<typename SegmentationType>
   typename viennagrid::result_of::coord< typename SegmentationType::mesh_type >::type
-  surface(segment_t<SegmentationType> const & segment)
+  surface(segment_handle_t<SegmentationType> const & segment)
   {
     typedef typename viennagrid::result_of::cell_tag< typename SegmentationType::mesh_type >::type CellTag;
     return detail::surface_meshsegment< typename viennagrid::result_of::facet_tag<CellTag>::type >(segment);
