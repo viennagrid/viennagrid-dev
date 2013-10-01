@@ -21,7 +21,7 @@
   #pragma warning( disable : 4503 )     //truncated name decoration
 #endif
 
-#include "viennagrid/domain.hpp"
+#include "viennagrid/mesh.hpp"
 #include "viennagrid/segment.hpp"
 #include "viennagrid/algorithm/centroid.hpp"
 #include "viennagrid/algorithm/circumcenter.hpp"
@@ -59,34 +59,34 @@ VIENNADATA_ENABLE_TYPE_BASED_KEY_DISPATCH(my_key)
 
 
 
-template <typename DomainType>
-void exec_for_domain(DomainType & domain,
+template <typename MeshType>
+void exec_for_mesh(MeshType & mesh,
                      std::string const & infile,
                      std::string const & outfile)
 {
   //
   // Get all the types needed later on:
   //
-  typedef typename DomainType::config_type               ConfigType;
+  typedef typename MeshType::config_type               ConfigType;
   typedef typename ConfigType::cell_tag                  CellTag;
   
   typedef typename viennagrid::result_of::point<ConfigType>::type                 PointType;
   typedef typename viennagrid::result_of::ncell<ConfigType, 0>::type              VertexType;
   typedef typename viennagrid::result_of::ncell<ConfigType, CellTag::dim>::type   CellType;
 
-  typedef typename viennagrid::result_of::const_ncell_range<DomainType, 0>::type         VertexContainer;
+  typedef typename viennagrid::result_of::const_ncell_range<MeshType, 0>::type         VertexContainer;
   typedef typename viennagrid::result_of::iterator<VertexContainer>::type          VertexIterator;
       
-  typedef typename viennagrid::result_of::const_ncell_range<DomainType, CellTag::dim>::type    CellRange;
+  typedef typename viennagrid::result_of::const_ncell_range<MeshType, CellTag::dim>::type    CellRange;
   typedef typename viennagrid::result_of::iterator<CellRange>::type                      CellIterator;
 
   //
-  // First, read the domain from a Netgen file
+  // First, read the mesh from a Netgen file
   //
   try
   {
     viennagrid::io::netgen_reader my_netgen_reader;
-    my_netgen_reader(domain, infile);
+    my_netgen_reader(mesh, infile);
   }
   catch (std::exception const & ex)
   {
@@ -98,7 +98,7 @@ void exec_for_domain(DomainType & domain,
   //
   // First example: Iterate over vertices and store data on them: 
   //
-  VertexContainer vertices = viennagrid::ncells<0>(domain);
+  VertexContainer vertices = viennagrid::ncells<0>(mesh);
   for (VertexIterator vit = vertices.begin();
       vit != vertices.end();
       ++vit)
@@ -125,7 +125,7 @@ void exec_for_domain(DomainType & domain,
   //
   // Second example: Iterate over cells and store some data:
   //
-  CellRange cells = viennagrid::ncells(domain);
+  CellRange cells = viennagrid::ncells(mesh);
   for (CellIterator cit = cells.begin();
                     cit != cells.end();
                    ++cit)
@@ -157,7 +157,7 @@ void exec_for_domain(DomainType & domain,
   // Write the data to VTK file (can be visualized with e.g. Paraview)
   // More information on the VTK writer can be found in examples/tutorial/io.cpp
   //
-  viennagrid::io::vtk_writer<DomainType> my_vtk_writer;
+  viennagrid::io::vtk_writer<MeshType> my_vtk_writer;
   
   // Vertex data
   viennagrid::io::add_scalar_data_on_vertices<std::string, double>(my_vtk_writer, "my_data", "my_data");
@@ -170,15 +170,15 @@ void exec_for_domain(DomainType & domain,
   viennagrid::io::add_vector_data_on_cells<std::string, PointType>(my_vtk_writer, "my_data", "my_vector_data");
   viennagrid::io::add_vector_data_on_cells<my_key,      PointType>(my_vtk_writer, my_key(), "my_key");
   
-  my_vtk_writer(domain, outfile);
+  my_vtk_writer(mesh, outfile);
    
 }
 
 
 int main()
 {
-  typedef viennagrid::result_of::domain<viennagrid::config::triangular_2d>::type        Domain2d;
-  typedef viennagrid::result_of::domain<viennagrid::config::tetrahedral_3d>::type       Domain3d;
+  typedef viennagrid::result_of::mesh<viennagrid::config::triangular_2d>::type        Mesh2d;
+  typedef viennagrid::result_of::mesh<viennagrid::config::tetrahedral_3d>::type       Mesh3d;
   
   std::cout << "----------------------------------------------------------------" << std::endl;
   std::cout << "-- ViennaGrid tutorial: Storing and accessing data on n-cells --" << std::endl;
@@ -190,27 +190,27 @@ int main()
   // ---------------------------------------------------------------
   
   //
-  // Run tutorial for a 2D domain:
+  // Run tutorial for a 2D mesh:
   //  
-  Domain2d domain_2d;
+  Mesh2d mesh_2d;
   
-  // store some data on the domain and write the result to VTK files:
-  exec_for_domain(domain_2d, path + "square32.mesh", "stored_data_2d");
+  // store some data on the mesh and write the result to VTK files:
+  exec_for_mesh(mesh_2d, path + "square32.mesh", "stored_data_2d");
   
-  std::cout << "Two-dimensional domain attached with data and written to stored_data_2d_main.pvd" << std::endl;
+  std::cout << "Two-dimensional mesh attached with data and written to stored_data_2d_main.pvd" << std::endl;
   std::cout << std::endl;
   
   // ---------------------------------------------------------------
   
   //
-  // Run tutorial for a 3D domain. Note the use of the same code as for the 2d case!
+  // Run tutorial for a 3D mesh. Note the use of the same code as for the 2d case!
   //  
-  Domain3d domain_3d;
+  Mesh3d mesh_3d;
   
-  // store some data on the domain and write the result to VTK files:
-  exec_for_domain(domain_3d, path + "cube48.mesh", "stored_data_3d");
+  // store some data on the mesh and write the result to VTK files:
+  exec_for_mesh(mesh_3d, path + "cube48.mesh", "stored_data_3d");
   
-  std::cout << "Three-dimensional domain attached with data and written to stored_data_3d_main.pvd" << std::endl;
+  std::cout << "Three-dimensional mesh attached with data and written to stored_data_3d_main.pvd" << std::endl;
   std::cout << std::endl;
 
   // ---------------------------------------------------------------

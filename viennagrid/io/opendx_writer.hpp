@@ -16,9 +16,9 @@
 #include <fstream>
 #include <iostream>
 #include "viennagrid/forwards.hpp"
-#include "viennagrid/domain/domain.hpp"
+#include "viennagrid/mesh/mesh.hpp"
 #include "viennagrid/io/helper.hpp"
-#include "viennagrid/domain/accessor.hpp"
+#include "viennagrid/mesh/accessor.hpp"
 
 /** @file opendx_writer.hpp
     @brief Provides a writer for OpenDX files
@@ -72,27 +72,27 @@ namespace viennagrid
       { return "attribute \"element type\" string \"tetrahedra\" "; }
     };
 
-    /** @brief The OpenDX writer object. Does not support segments - always the full domain is written.
+    /** @brief The OpenDX writer object. Does not support segments - always the full mesh is written.
      *
-     * @tparam DomainType   The ViennaGrid domain.
+     * @tparam MeshType   The ViennaGrid mesh.
      */
-    template <typename DomainType>
+    template <typename MeshType>
     class opendx_writer
     {
 
-        typedef typename viennagrid::result_of::point<DomainType>::type PointType;
+        typedef typename viennagrid::result_of::point<MeshType>::type PointType;
         typedef typename viennagrid::result_of::coord<PointType>::type CoordType;
         static const int geometric_dim = viennagrid::traits::static_size<PointType>::value;
 
-        typedef typename viennagrid::result_of::cell_tag<DomainType>::type CellTag;
+        typedef typename viennagrid::result_of::cell_tag<MeshType>::type CellTag;
 
-        typedef typename result_of::element<DomainType, viennagrid::vertex_tag>::type                           VertexType;
-        typedef typename result_of::element<DomainType, CellTag>::type     CellType;
+        typedef typename result_of::element<MeshType, viennagrid::vertex_tag>::type                           VertexType;
+        typedef typename result_of::element<MeshType, CellTag>::type     CellType;
 
-        typedef typename viennagrid::result_of::const_element_range<DomainType, viennagrid::vertex_tag>::type   VertexRange;
+        typedef typename viennagrid::result_of::const_element_range<MeshType, viennagrid::vertex_tag>::type   VertexRange;
         typedef typename viennagrid::result_of::iterator<VertexRange>::type              VertexIterator;
 
-        typedef typename viennagrid::result_of::const_element_range<DomainType, CellTag>::type     CellRange;
+        typedef typename viennagrid::result_of::const_element_range<MeshType, CellTag>::type     CellRange;
         typedef typename viennagrid::result_of::iterator<CellRange>::type                                        CellIterator;
 
         typedef typename viennagrid::result_of::const_element_range<CellType, viennagrid::vertex_tag>::type      VertexOnCellRange;
@@ -106,12 +106,12 @@ namespace viennagrid
 
 
       public:
-        /** @brief Triggers the writing of the domain to a file
+        /** @brief Triggers the writing of the mesh to a file
          *
-         * @param domain    A ViennaGrid domain
+         * @param mesh    A ViennaGrid mesh
          * @param filename  Name of the file
          */
-        int operator()(DomainType const & domain, std::string const & filename)
+        int operator()(MeshType const & mesh, std::string const & filename)
         {
           typedef DXHelper<geometric_dim>  DXHelper;
 
@@ -122,27 +122,27 @@ namespace viennagrid
             return EXIT_FAILURE;
           }
 
-          std::size_t pointnum = viennagrid::elements<vertex_tag>(domain).size();
+          std::size_t pointnum = viennagrid::elements<vertex_tag>(mesh).size();
 
           writer << "object \"points\" class array type float rank 1 shape " << geometric_dim << " items ";
           writer << pointnum << " data follows" << std::endl;
 
           //Nodes:
-          VertexRange vertices = viennagrid::elements<vertex_tag>(domain);
+          VertexRange vertices = viennagrid::elements<vertex_tag>(mesh);
           for (VertexIterator vit = vertices.begin();
               vit != vertices.end();
               ++vit)
           {
-            PointWriter<geometric_dim>::write(writer, viennagrid::point( domain, *vit ) );
+            PointWriter<geometric_dim>::write(writer, viennagrid::point( mesh, *vit ) );
             writer << std::endl;
           }
           writer << std::endl;
 
           //Cells:
-          std::size_t cellnum = viennagrid::elements<CellTag>(domain).size();
+          std::size_t cellnum = viennagrid::elements<CellTag>(mesh).size();
           writer << "object \"grid_Line_One\" class array type int rank 1 shape " << (geometric_dim + 1) << " items " << cellnum << " data follows" << std::endl;
 
-          CellRange cells = viennagrid::elements<CellTag>(domain);
+          CellRange cells = viennagrid::elements<CellTag>(mesh);
           for (CellIterator cit = cells.begin();
               cit != cells.end();
               ++cit)
@@ -265,14 +265,14 @@ namespace viennagrid
 
     /** @brief Registers scalar-valued data on vertices at the OpenDX writer. At most one data set is allowed.
       *
-      * @tparam DomainT         The domain type to be written
+      * @tparam MeshT         The mesh type to be written
       * @tparam AccessorT       An accessor type holding scalar data
       * @param  writer          The OpenDX writer object for which the data should be registered
       * @param  accessor        The accessor object holding scalar data on vertices
       * @param  quantity_name   Ignored. Only used for a homogeneous interface with VTK reader/writer.
       */
-    template <typename DomainT, typename AccessorT>
-    opendx_writer<DomainT> & add_scalar_data_on_vertices(opendx_writer<DomainT> & writer,
+    template <typename MeshT, typename AccessorT>
+    opendx_writer<MeshT> & add_scalar_data_on_vertices(opendx_writer<MeshT> & writer,
                                                          AccessorT const accessor,
                                                          std::string const & quantity_name)
     {
@@ -284,14 +284,14 @@ namespace viennagrid
 
     /** @brief Registers scalar-valued data on cells at the OpenDX writer. At most one data set is allowed.
       *
-      * @tparam DomainT         The domain type to be written
+      * @tparam MeshT         The mesh type to be written
       * @tparam AccessorT       An accessor type holding scalar data
       * @param  writer          The OpenDX writer object for which the data should be registered
       * @param  accessor        The accessor object holding scalar data on cells
       * @param  quantity_name   Ignored. Only used for a homogeneous interface with VTK reader/writer.
       */
-    template <typename DomainT, typename AccessorT>
-    opendx_writer<DomainT> & add_scalar_data_on_cells(opendx_writer<DomainT> & writer,
+    template <typename MeshT, typename AccessorT>
+    opendx_writer<MeshT> & add_scalar_data_on_cells(opendx_writer<MeshT> & writer,
                                                       AccessorT const accessor,
                                                       std::string const & quantity_name)
     {

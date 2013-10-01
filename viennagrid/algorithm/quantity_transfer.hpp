@@ -15,7 +15,7 @@
 
 #include <vector>
 #include "viennagrid/forwards.hpp"
-#include "viennagrid/domain/domain.hpp"
+#include "viennagrid/mesh/mesh.hpp"
 
 /** @file quantity_transfer.hpp
     @brief Provides routines for transferring quantities defined for elements of one topological dimensions to elements of other topological dimension.
@@ -154,7 +154,7 @@ namespace viennagrid
    *
    * @tparam dim_src           Topological dimension of the source elements
    * @tparam dim_dest          Topological dimension of the destination elements
-   * @param domseg             A domain or segment, in which the source and destination elements reside
+   * @param domseg             A mesh or segment, in which the source and destination elements reside
    * @param accessor_src       An accessor functor for retrieving the data defined on each source element
    * @param setter_dest        A setter for storing the data on each destination element (first argument is the destination n-cell, second argument is the value)
    * @param averager           A functor which computes the value of the destination element from an STL-compatible container holding the values of all adjacent source elements

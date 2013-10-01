@@ -1,6 +1,6 @@
 
 #include "viennagrid/algorithm/geometry.hpp"
-#include "viennagrid/domain/config.hpp"
+#include "viennagrid/mesh/config.hpp"
 
 
 

@@ -14,7 +14,7 @@
 ======================================================================= */
 
 /** @file serialization.hpp
- *  @brief    A domain wrapper class which models the Boost Serialization concept: http://www.boost.org/libs/serialization/
+ *  @brief    A mesh wrapper class which models the Boost Serialization concept: http://www.boost.org/libs/serialization/
  */
 
 #include <boost/archive/text_iarchive.hpp>
@@ -51,22 +51,22 @@ namespace viennagrid
     
     
     
-    /** @brief Domain wrapper which models the Boost serialization concept
+    /** @brief Mesh wrapper which models the Boost serialization concept
      *
      */
-    template<typename DomainT>
-    struct domain_serializer
+    template<typename MeshT>
+    struct mesh_serializer
     {      
     private:
-      typedef typename viennagrid::result_of::cell_tag<DomainT>::type                        CellTag;
-      typedef typename viennagrid::result_of::const_vertex_range<DomainT>::type              ConstVertexRange;
+      typedef typename viennagrid::result_of::cell_tag<MeshT>::type                        CellTag;
+      typedef typename viennagrid::result_of::const_vertex_range<MeshT>::type              ConstVertexRange;
       typedef typename viennagrid::result_of::iterator<ConstVertexRange>::type               ConstVertexIterator;
-      typedef typename viennagrid::result_of::point<DomainT>::type                           PointType;
-      typedef typename viennagrid::result_of::vertex<DomainT>::type                          VertexType;
-      typedef typename viennagrid::result_of::vertex_handle<DomainT>::type                   VertexHandleType;
+      typedef typename viennagrid::result_of::point<MeshT>::type                           PointType;
+      typedef typename viennagrid::result_of::vertex<MeshT>::type                          VertexType;
+      typedef typename viennagrid::result_of::vertex_handle<MeshT>::type                   VertexHandleType;
       typedef typename viennagrid::result_of::id_type<VertexType>::type                      VertexIDType;
-      typedef typename viennagrid::result_of::cell<DomainT>::type                            CellType;
-      typedef typename viennagrid::result_of::const_cell_range<DomainT>::type                ConstCellRange;
+      typedef typename viennagrid::result_of::cell<MeshT>::type                            CellType;
+      typedef typename viennagrid::result_of::const_cell_range<MeshT>::type                ConstCellRange;
       typedef typename viennagrid::result_of::iterator<ConstCellRange>::type                 ConstCellIterator;
       typedef typename viennagrid::result_of::const_vertex_range<CellType>::type             ConstVertexOnCellRange;
       typedef typename viennagrid::result_of::iterator<ConstVertexOnCellRange>::type         ConstVertexOnCellIterator;
@@ -75,21 +75,21 @@ namespace viennagrid
 
       friend class boost::serialization::access;
 
-      /** @brief Save function is used to 'read' the data from the domain */
+      /** @brief Save function is used to 'read' the data from the mesh */
       template<class Archive>
       void save(Archive & ar, const unsigned int version) const
       {
-        if (!domain_pointer)
-          throw bad_serialization_state_exception( "Domain not loaded into serialzer object" );
+        if (!mesh_pointer)
+          throw bad_serialization_state_exception( "Mesh not loaded into serialzer object" );
         
-        DomainT const & domain = *domain_pointer;
+        MeshT const & mesh = *mesh_pointer;
         
         // -----------------------------------------------
         // the geometry is read and transmitted
         //
-        std::size_t point_size = viennagrid::vertices(domain).size();
+        std::size_t point_size = viennagrid::vertices(mesh).size();
         ar & point_size;
-        ConstVertexRange vertices = viennagrid::elements(domain);
+        ConstVertexRange vertices = viennagrid::elements(mesh);
         for (ConstVertexIterator vit = vertices.begin();
              vit != vertices.end(); ++vit)
         {
@@ -101,9 +101,9 @@ namespace viennagrid
         // -----------------------------------------------
         // the specific cells are read and transmitted
         //
-        ConstCellRange cells = viennagrid::elements(domain);
+        ConstCellRange cells = viennagrid::elements(mesh);
 
-        std::size_t cell_size = viennagrid::cells(domain).size();
+        std::size_t cell_size = viennagrid::cells(mesh).size();
         ar & cell_size;
 
         for (ConstCellIterator cit = cells.begin();
@@ -122,14 +122,14 @@ namespace viennagrid
         // -----------------------------------------------
       }
 
-      /** @brief Load function is used to 'write' the data to the domain */
+      /** @brief Load function is used to 'write' the data to the mesh */
       template<class Archive>
       void load(Archive & ar, const unsigned int version)
       {
-        if (!domain_pointer)
-          throw bad_serialization_state_exception( "Domain not loaded into serialzer object" );
+        if (!mesh_pointer)
+          throw bad_serialization_state_exception( "Mesh not loaded into serialzer object" );
         
-        DomainT & domain = *domain_pointer;
+        MeshT & mesh = *mesh_pointer;
         
         // -----------------------------------------------
         // the geometry is received and stored
@@ -143,7 +143,7 @@ namespace viennagrid
           for(int d = 0; d < DIMG; d++)
             ar & p[d];
           
-          viennagrid::make_vertex( *domain_pointer, p );
+          viennagrid::make_vertex( *mesh_pointer, p );
         }
         // -----------------------------------------------
 
@@ -163,10 +163,10 @@ namespace viennagrid
           {
             std::size_t id;
             ar & id;
-            vertices[j] = viennagrid::find_by_id( domain, VertexIDType(id) ).handle();
+            vertices[j] = viennagrid::find_by_id( mesh, VertexIDType(id) ).handle();
           }
           
-          viennagrid::make_cell( domain, vertices, vertices + num_vertices);
+          viennagrid::make_cell( mesh, vertices, vertices + num_vertices);
         }
         // -----------------------------------------------
       }
@@ -179,28 +179,28 @@ namespace viennagrid
       // -----------------------------------------------
     public:
       /** @brief The default constructor*/
-      domain_serializer() : domain_pointer(0) {}
+      mesh_serializer() : mesh_pointer(0) {}
 
-      /** @brief The constructor expects a shared pointer on a domain object and sets the state */
-      domain_serializer(DomainT & domain) : domain_pointer(domain) {}
+      /** @brief The constructor expects a shared pointer on a mesh object and sets the state */
+      mesh_serializer(MeshT & mesh) : mesh_pointer(mesh) {}
 
-      /** @brief The load function enables to associate a domain with the serialzer after
+      /** @brief The load function enables to associate a mesh with the serialzer after
       a serializer object has been constructed. */
-      inline void load(DomainT & domain) { domain_pointer = &domain;  }
+      inline void load(MeshT & mesh) { mesh_pointer = &mesh;  }
 
-      /** @brief The get function enables to retrieve the domain pointer
+      /** @brief The get function enables to retrieve the mesh pointer
       */
-      inline DomainT & get() { return *domain_pointer; }
-      inline DomainT const & get() const { return *domain_pointer; }
+      inline MeshT & get() { return *mesh_pointer; }
+      inline MeshT const & get() const { return *mesh_pointer; }
 
-      /** @brief The functor returns a reference to the domain state*/
-      DomainT & operator()() { return *domain_pointer; }
-      DomainT const & operator()() const { return *domain_pointer; }
+      /** @brief The functor returns a reference to the mesh state*/
+      MeshT & operator()() { return *mesh_pointer; }
+      MeshT const & operator()() const { return *mesh_pointer; }
 
-      /** @brief The state holds a shared pointer to the domain */
+      /** @brief The state holds a shared pointer to the mesh */
       
     private:
-      DomainT * domain_pointer;
+      MeshT * mesh_pointer;
     };
 
   } //namespace io

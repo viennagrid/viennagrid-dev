@@ -3,9 +3,9 @@
 
 #include "viennagrid/config/default_configs.hpp"
 
-#include "viennagrid/domain/accessor.hpp"
-#include "viennagrid/domain/segmentation.hpp"
-#include "viennagrid/domain/element_creation.hpp"
+#include "viennagrid/mesh/accessor.hpp"
+#include "viennagrid/mesh/segmentation.hpp"
+#include "viennagrid/mesh/element_creation.hpp"
 
 
 
@@ -13,56 +13,56 @@
 #include "viennagrid/io/vtk_writer.hpp"
 
 
-class my_domain_config
+class my_mesh_config
 {
   private:
     typedef viennagrid::point_t<double, viennagrid::cartesian_cs<2> > point_type;
     
   public:
     
-    typedef viennagrid::config::result_of::full_domain_config< viennagrid::triangle_tag, point_type, viennagrid::storage::pointer_handle_tag >::type    type;
+    typedef viennagrid::config::result_of::full_mesh_config< viennagrid::triangle_tag, point_type, viennagrid::storage::pointer_handle_tag >::type    type;
 };
 
 
 int main()
 {
-  //typedef viennagrid::domain_t<my_domain_config>                  domain_type;
-  typedef viennagrid::triangular_2d_domain                        domain_type;
-  typedef viennagrid::result_of::domain_view< domain_type >::type view_type;
+  //typedef viennagrid::mesh_t<my_mesh_config>                  mesh_type;
+  typedef viennagrid::triangular_2d_mesh                        mesh_type;
+  typedef viennagrid::result_of::mesh_view< mesh_type >::type view_type;
   
-  typedef viennagrid::result_of::point<domain_type>::type point_type;
+  typedef viennagrid::result_of::point<mesh_type>::type point_type;
   
-  typedef viennagrid::result_of::cell< domain_type >::type     cell_type;
-  typedef viennagrid::result_of::vertex< domain_type >::type     vertex_type;
-  typedef viennagrid::result_of::vertex_handle< domain_type >::type     vertex_handle_type;
-  typedef viennagrid::result_of::triangle_handle< domain_type >::type   triangle_handle_type;
-  typedef viennagrid::result_of::triangle< domain_type >::type          triangle_type;
+  typedef viennagrid::result_of::cell< mesh_type >::type     cell_type;
+  typedef viennagrid::result_of::vertex< mesh_type >::type     vertex_type;
+  typedef viennagrid::result_of::vertex_handle< mesh_type >::type     vertex_handle_type;
+  typedef viennagrid::result_of::triangle_handle< mesh_type >::type   triangle_handle_type;
+  typedef viennagrid::result_of::triangle< mesh_type >::type          triangle_type;
   
     
-  typedef viennagrid::result_of::oriented_3d_hull_segmentation<domain_type>::type segmentation_type;
-//   typedef viennagrid::result_of::segmentation<domain_type>::type segmentation_type;
+  typedef viennagrid::result_of::oriented_3d_hull_segmentation<mesh_type>::type segmentation_type;
+//   typedef viennagrid::result_of::segmentation<mesh_type>::type segmentation_type;
   
   typedef segmentation_type::segment_type segment_type;
   typedef segmentation_type::segment_id_type segment_id_type;
   
-  domain_type domain;
-  segmentation_type segmentation(domain);
+  mesh_type mesh;
+  segmentation_type segmentation(mesh);
   
   
-  viennagrid::io::vtk_reader<domain_type, segmentation_type> reader;
+  viennagrid::io::vtk_reader<mesh_type, segmentation_type> reader;
   
   std::deque<double> potential_point;
   std::deque<double> potential_cell;
   reader.register_vertex_scalar( viennagrid::make_accessor<vertex_type>(potential_point), "potential_point" );
   reader.register_cell_scalar( viennagrid::make_accessor<cell_type>(potential_cell), "potential_cell" );
   
-  reader(domain, segmentation, "test_main.pvd");
+  reader(mesh, segmentation, "test_main.pvd");
   
   segment_type seg0 = segmentation[0];
   segment_type seg1 = segmentation[1];  
   
   
-  viennagrid::io::vtk_writer<domain_type, segmentation_type> writer;
+  viennagrid::io::vtk_writer<mesh_type, segmentation_type> writer;
   
   writer.add_scalar_data_on_vertices( viennagrid::make_accessor<vertex_type>(potential_point), "potential_point" );
   writer.add_scalar_data_on_vertices( seg0, reader.vertex_scalar_field("potential_point_segment", seg0), "potential_point_segment" );
@@ -70,7 +70,7 @@ int main()
   writer.add_scalar_data_on_cells( viennagrid::make_accessor<cell_type>(potential_point), "potential_cell" );
   writer.add_scalar_data_on_cells( seg1, reader.cell_scalar_field("potential_cell_segment", seg1), "potential_cell_segment" );
   
-  writer( domain, segmentation, "vtk_reader_test" );
+  writer( mesh, segmentation, "vtk_reader_test" );
   
 
     

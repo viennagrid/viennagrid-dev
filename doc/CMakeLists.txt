@@ -26,8 +26,8 @@ if(BUILD_MANUAL)
       manual/cover.tex
       manual/data.tex
       manual/design-decisions.tex
-      manual/domainconfig.tex
-      manual/domainsetup.tex
+      manual/meshconfig.tex
+      manual/meshsetup.tex
       manual/entities.tex
       manual/figures/conforming.eps
       manual/figures/entities.eps
@@ -39,7 +39,7 @@ if(BUILD_MANUAL)
       manual/figures/orientation-hypercube.eps
       manual/figures/orientation-simplex.eps
       manual/figures/recursive-inheritance.eps
-      manual/figures/sampledomain.eps
+      manual/figures/samplemesh.eps
       manual/figures/storage-vglob-cglob.eps
       manual/figures/storage-vglob-eglob-cglob.eps
       manual/figures/tip.eps

@@ -28,7 +28,7 @@ A tutorial covering the algorithms explained in this chapter can be found in \ls
    \hline
    Boundary detection & \texttt{boundary.hpp} & \lstinline|is_boundary(domseg, element)|\\
    Interface detection & \texttt{interface.hpp} & \lstinline|is_interface(seg1, seg2, element)|\\
-   Simplex refinement & \texttt{refine.hpp} & \lstinline|refine(tag, domain)| \\
+   Simplex refinement & \texttt{refine.hpp} & \lstinline|refine(tag, mesh)| \\
    Surface computation & \texttt{surface.hpp} & \lstinline|surface(domseg)| \\
    Volume computation & \texttt{volume.hpp} & \lstinline|volume(domseg)| \\
    Voronoi grid & \texttt{voronoi.hpp} & \lstinline|apply_voronoi(domseg, ...)| \\
@@ -36,7 +36,7 @@ A tutorial covering the algorithms explained in this chapter can be found in \ls
  \end{tabular}
  \caption{List of algorithms available in \texttt{viennagrid/algorithm/} grouped by the objects they are acting on. 
     \lstinline|a| and \lstinline|b| denote vectors, \lstinline|element| refers to an element,
-    \lstinline|domain| to a domain, \lstinline|seg1| and \lstinline|seg2| to segments, and \lstinline|domseg| to either a domain or a segment.}
+    \lstinline|mesh| to a mesh, \lstinline|seg1| and \lstinline|seg2| to segments, and \lstinline|domseg| to either a mesh or a segment.}
  \label{tab:algorithms}
 \end{table}
 
@@ -144,16 +144,16 @@ In this section, algorithms defined for geometric objects with additional struct
   and currently restricted to elements with topologic dimension $n \leq 3$. No restrictions with respect to the storage of boundary elements apply.
 
 
-\section{Domain/Segment-Based}
-Algorithms acting on a collection of cells are now considered. These collections are given in {\ViennaGrid} either as the whole domain, or as segments.
+\section{Mesh/Segment-Based}
+Algorithms acting on a collection of cells are now considered. These collections are given in {\ViennaGrid} either as the whole mesh, or as segments.
 
  \subsection{Boundary}
  Whether or not an element object \lstinline|element| is located on the boundary depends on the collection of elements considered.
- For example, consider the edge/facet $[1,4]$ in the triangular sample mesh in Fig.~\ref{fig:sampledomain}, which we will refer to as \lstinline|f|.
- It is in the interior of the whole \lstinline|domain|, while it is also at the boundary of the two segments \lstinline|seg0| and \lstinline|seg1|.
+ For example, consider the edge/facet $[1,4]$ in the triangular sample mesh in Fig.~\ref{fig:samplemesh}, which we will refer to as \lstinline|f|.
+ It is in the interior of the whole \lstinline|mesh|, while it is also at the boundary of the two segments \lstinline|seg0| and \lstinline|seg1|.
  A sample code snippet reflecting this is given by
  \begin{lstlisting}
-  std::cout << viennagrid::is_boundary(domain, f) << std::endl; //false;
+  std::cout << viennagrid::is_boundary(mesh, f) << std::endl; //false;
   std::cout << viennagrid::is_boundary(seg0, f)   << std::endl; //true;
   std::cout << viennagrid::is_boundary(seg1, f)   << std::endl; //true;
  \end{lstlisting}
@@ -174,25 +174,25 @@ Algorithms acting on a collection of cells are now considered. These collections
 
 
  \subsection{Refinement}
- {\ViennaGridversion} allows a uniform and a local refinement of simplicial domains. The refinement of hypercuboidal domains is scheduled for future releases.
-It has to be noted that the resulting refined mesh is written to a new domain, thus there are no multigrid/multilevel capabilities provided yet.
+ {\ViennaGridversion} allows a uniform and a local refinement of simplicial meshs. The refinement of hypercuboidal meshs is scheduled for future releases.
+It has to be noted that the resulting refined mesh is written to a new mesh, thus there are no multigrid/multilevel capabilities provided yet.
 
- To refine a \lstinline|domain| uniformly, the line
+ To refine a \lstinline|mesh| uniformly, the line
  \begin{lstlisting}
- DomainType refined_domain;
- viennagrid::refine_uniformly(domain, refined_domain);
+ MeshType refined_mesh;
+ viennagrid::refine_uniformly(mesh, refined_mesh);
  \end{lstlisting}
  is sufficient.
  
- Refinement is also supported for domains with segmentations. Segment information is preserved upon refinement.
+ Refinement is also supported for meshs with segmentations. Segment information is preserved upon refinement.
  \begin{lstlisting}
- DomainType refined_domain;
+ MeshType refined_mesh;
  SegmentationType refined_segmentation;
- viennagrid::refine_uniformly(domain,         segmentation,
-                              refined_domain, refined_segmentation);
+ viennagrid::refine_uniformly(mesh,         segmentation,
+                              refined_mesh, refined_segmentation);
  \end{lstlisting}
 
- The local refinement of a mesh requires that the respective cells or edges for refinement are tagged. This refinement information is applied to the domain using accessors or fields, cf.~Chapter \ref{chap:data}.
+ The local refinement of a mesh requires that the respective cells or edges for refinement are tagged. This refinement information is applied to the mesh using accessors or fields, cf.~Chapter \ref{chap:data}.
  First of all a tag container and an accessor has to be created:
  \begin{lstlisting}
  std::vector<bool> cell_refinement_container;
@@ -204,37 +204,37 @@ It has to be noted that the resulting refined mesh is written to a new domain, t
  \begin{lstlisting}
  cell_refinement_accessor(c) = true;
  \end{lstlisting}
- is sufficient. In a similar way one proceeds for other cells or edges in the domain. The refinement process is then triggered by
+ is sufficient. In a similar way one proceeds for other cells or edges in the mesh. The refinement process is then triggered by
  \begin{lstlisting}
- DomainType refined_domain;
- viennagrid::cell_refine(domain, refined_domain, cell_refinement_accessor);
+ MeshType refined_mesh;
+ viennagrid::cell_refine(mesh, refined_mesh, cell_refinement_accessor);
  \end{lstlisting}
  
  \pagebreak
  
  or, for segmentations
  \begin{lstlisting}
- DomainType refined_domain;
+ MeshType refined_mesh;
  SegmentationType refined_segmentation;
- viennagrid::cell_refine(domain,         segmentation,
-                         refined_domain, refined_segmentation,
+ viennagrid::cell_refine(mesh,         segmentation,
+                         refined_mesh, refined_segmentation,
                          cell_refinement_accessor);
  \end{lstlisting}
-%  Again, no expensive temporary domain is created for the refinement process thanks to the use of a proxy object.
+%  Again, no expensive temporary mesh is created for the refinement process thanks to the use of a proxy object.
 
-%  \NOTE{\lstinline|refine()| requires edges to be stored in the domain. Make sure not to disable the handling of edges, cf.~Section \ref{subsec:boundary-ncells-storage}. }
+%  \NOTE{\lstinline|refine()| requires edges to be stored in the mesh. Make sure not to disable the handling of edges, cf.~Section \ref{subsec:boundary-ncells-storage}. }
 
  \subsection{Surface}
- The surface of a domain or segment \lstinline|domseg| is given by the sum of the volumes of the boundary facets and returned by the convenience overload
+ The surface of a mesh or segment \lstinline|domseg| is given by the sum of the volumes of the boundary facets and returned by the convenience overload
   \begin{lstlisting}
    NumericType surf = viennagrid::surface(domseg);
   \end{lstlisting}
   Note that facets interfacing cells outside the segment are also considered as boundary facets of the segment.
 
-%   \NOTE{In order to use \lstinline|surface()| for a domain or a segment, make sure that boundary $n-1$-cells are not disabled, cf.~Section \ref{subsec:boundary-ncells-storage}.}
+%   \NOTE{In order to use \lstinline|surface()| for a mesh or a segment, make sure that boundary $n-1$-cells are not disabled, cf.~Section \ref{subsec:boundary-ncells-storage}.}
 
   \subsection{Volume}
-  The volume of a domain or segment \lstinline|domseg| is returned by
+  The volume of a mesh or segment \lstinline|domseg| is returned by
   \begin{lstlisting}
    NumericType vol = viennagrid::volume(domseg);
   \end{lstlisting}
@@ -256,11 +256,11 @@ It has to be noted that the resulting refined mesh is written to a new domain, t
 \end{figure}
 
  \subsection{Voronoi Information}
- A Voronoi diagram of a Delaunay tessellation (or triangulation) is a decomposition of the domain into certain boxes containing one vertex each.
- The boxes have the property that all points inside the box are closer to the vertex within the box than to any other vertex in the domain. 
+ A Voronoi diagram of a Delaunay tessellation (or triangulation) is a decomposition of the mesh into certain boxes containing one vertex each.
+ The boxes have the property that all points inside the box are closer to the vertex within the box than to any other vertex in the mesh. 
  By simple geometric arguments one finds that the corners of Voronoi boxes are given by the circumcenters of the triangles.
 
- The function \lstinline|apply_voronoi()| computes the volumes and interfaces associated with a Voronoi diagram. The following values are stored on the domain (cf.~Fig.~\ref{fig:voronoi})
+ The function \lstinline|apply_voronoi()| computes the volumes and interfaces associated with a Voronoi diagram. The following values are stored on the mesh (cf.~Fig.~\ref{fig:voronoi})
  \begin{itemize}
   \item The volume $V_{[i,j]}$ of the polyhedron centered around the edge $[i,j]$ with edges given by the connections of the vertices $i$ and $j$ with the circumcenters of the coboundary cells of the edge is stored on the edge $[i,j]$.
   \item The interface area $A_{[i,j]}$ of the boxes for the vertices $i$ and $j$ on the edge $[i,j]$.
@@ -290,7 +290,7 @@ It has to be noted that the resulting refined mesh is written to a new domain, t
   result_of::accessor< std::vector<ContributionType>, EdgeType >::type edge_box_volume_contributions_accessor(edge_box_volume_contributions);
   
   apply_voronoi<CellType>(
-        domain,
+        mesh,
         interface_areas_accessor, interfaces_contribution_accessor,
         vertex_box_volumes_accessor, vertex_box_volume_contributions_accessor,
         edge_box_volumes_accessor, edge_box_volume_contributions_accessor)

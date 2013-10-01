@@ -21,7 +21,7 @@
 #include "viennagrid/forwards.hpp"
 #include "viennagrid/io/helper.hpp"
 
-#include "viennagrid/domain/domain.hpp"
+#include "viennagrid/mesh/mesh.hpp"
 
 #include "viennagrid/algorithm/geometry.hpp"
 
@@ -70,28 +70,28 @@ namespace viennagrid
     {
       /** @brief The functor interface triggering the read operation. Segmentations are not supported in this version.
        *
-       * @param domain        The domain where the file content is written to
+       * @param mesh        The mesh where the file content is written to
        * @param filename      Name of the file
        */
-      template <typename DomainT>
-      int operator()(DomainT & domain, std::string const & filename) const
+      template <typename MeshT>
+      int operator()(MeshT & mesh, std::string const & filename) const
       {
 
-        typedef typename viennagrid::result_of::point<DomainT>::type    PointType;
+        typedef typename viennagrid::result_of::point<MeshT>::type    PointType;
         typedef typename viennagrid::result_of::coord< PointType >::type         CoordType;
 
         static const int point_dim = viennagrid::traits::static_size<PointType>::value;
 
         typedef plc_tag CellTag;
-        typedef typename result_of::element<DomainT, CellTag>::type CellType;
-        typedef typename result_of::handle<DomainT, CellTag>::type                           CellHandleType;
+        typedef typename result_of::element<MeshT, CellTag>::type CellType;
+        typedef typename result_of::handle<MeshT, CellTag>::type                           CellHandleType;
 
-        typedef typename result_of::element<DomainT, vertex_tag>::type                           VertexType;
-        typedef typename result_of::handle<DomainT, vertex_tag>::type                           VertexHandleType;
+        typedef typename result_of::element<MeshT, vertex_tag>::type                           VertexType;
+        typedef typename result_of::handle<MeshT, vertex_tag>::type                           VertexHandleType;
         typedef typename VertexType::id_type VertexIDType;
 
-        typedef typename result_of::element<DomainT, line_tag>::type                           LineType;
-        typedef typename result_of::handle<DomainT, line_tag>::type                           LineHandleType;
+        typedef typename result_of::element<MeshT, line_tag>::type                           LineType;
+        typedef typename result_of::handle<MeshT, line_tag>::type                           LineHandleType;
 
         std::ifstream reader(filename.c_str());
 
@@ -160,7 +160,7 @@ namespace viennagrid
             for (int j=0; j<point_dim; j++)
                 current_line >> p[j];
 
-            VertexHandleType vertex = viennagrid::make_vertex_with_id( domain, VertexIDType(id), p );
+            VertexHandleType vertex = viennagrid::make_vertex_with_id( mesh, VertexIDType(id), p );
 
             if (attribute_num > 0)
             {
@@ -169,7 +169,7 @@ namespace viennagrid
                     current_line >> attributes[j];
 
                 // TODO fix using accesor or appendix!
-//                 viennadata::access<poly_attribute_tag, std::vector<CoordType> >()(viennagrid::dereference_handle(domain, vertex)) = attributes;
+//                 viennadata::access<poly_attribute_tag, std::vector<CoordType> >()(viennagrid::dereference_handle(mesh, vertex)) = attributes;
             }
         }
 
@@ -219,7 +219,7 @@ namespace viennagrid
             std::list<VertexHandleType> vertices;
 
 
-            typedef typename viennagrid::result_of::element_view<DomainT, VertexType>::type VertexViewType;
+            typedef typename viennagrid::result_of::element_view<MeshT, VertexType>::type VertexViewType;
 
             for (int j = 0; j<polygon_num; ++j)
             {
@@ -241,7 +241,7 @@ namespace viennagrid
                 {
                     long id;
                     current_line >> id;
-                    vertex_handles[k] = viennagrid::find( domain, VertexIDType(id) ).handle();
+                    vertex_handles[k] = viennagrid::find( mesh, VertexIDType(id) ).handle();
                 }
 
                 if (vertex_num == 1)
@@ -250,15 +250,15 @@ namespace viennagrid
                 }
                 else if (vertex_num == 2)
                 {
-                    lines.push_back( viennagrid::make_line(domain, vertex_handles[0], vertex_handles[1]) );
+                    lines.push_back( viennagrid::make_line(mesh, vertex_handles[0], vertex_handles[1]) );
                 }
                 else
                 {
                     typename std::vector<VertexHandleType>::iterator it1 = vertex_handles.begin();
                     typename std::vector<VertexHandleType>::iterator it2 = it1; ++it2;
                     for (; it2 != vertex_handles.end(); ++it1, ++it2)
-                        lines.push_back( viennagrid::make_line(domain, *it1, *it2) );
-                    lines.push_back( viennagrid::make_line(domain, vertex_handles.back(), vertex_handles.front()) );
+                        lines.push_back( viennagrid::make_line(mesh, *it1, *it2) );
+                    lines.push_back( viennagrid::make_line(mesh, vertex_handles.back(), vertex_handles.front()) );
                 }
             }
 
@@ -285,7 +285,7 @@ namespace viennagrid
 
 
             viennagrid::make_plc(
-                domain,
+                mesh,
                 lines.begin(), lines.end(),
                 vertices.begin(), vertices.end(),
                 hole_points.begin(), hole_points.end()

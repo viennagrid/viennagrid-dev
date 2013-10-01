@@ -1,13 +1,13 @@
-\chapter{Domain and Element Configuration} \label{chap:domainconfig}
+\chapter{Mesh and Element Configuration} \label{chap:meshconfig}
 
  \NOTE{This description has not been updated for ViennaGrid 1.1.0 yet!}
  
 
-A domain and all its topological elements as well as the underlying geometric space are specified in a common configuration class.
+A mesh and all its topological elements as well as the underlying geometric space are specified in a common configuration class.
 The setup of such a configuration class is explained in detail in Section \ref{sec:config-class}.
 
-Even though mathematically all $n$-cells of a domain are well defined and available on paper, it may not make sense to store explicit representations of these elements in memory.
-As discussed in the Introduction, a particular algorithm may not require the storage of edges and/or facets of a domain, thus keeping these elements in memory can be a considerable waste of resources.
+Even though mathematically all $n$-cells of a mesh are well defined and available on paper, it may not make sense to store explicit representations of these elements in memory.
+As discussed in the Introduction, a particular algorithm may not require the storage of edges and/or facets of a mesh, thus keeping these elements in memory can be a considerable waste of resources.
 Section \ref{sec:customizing-storage} explains how the underlying storage scheme of {\ViennaGrid} can be adjusted to the library user's requirements and to be as memory-efficient as possible.
 
 
@@ -20,7 +20,7 @@ A valid configuration class for {\ViennaGrid} is any class that provides the fol
 \hline
  \lstinline|coordinate_system_tag| & A tag specifying the underlying coordinate system.\\
 \hline
- \lstinline|cell_tag|       & A tag that identifies the cell type inside the domain.\\
+ \lstinline|cell_tag|       & A tag that identifies the cell type inside the mesh.\\
 \hline
 \end{tabular}
 \end{center}
@@ -44,7 +44,7 @@ More details on the types are given in the following:
    \end{tabular}
    \end{center}
 
- \item \lstinline|cell_tag|: A tag that specifies the type of the elements with maximum topological dimension in the domain. The following two families of topological elements are provided with {\ViennaGrid} in namespace \lstinline|viennagrid|:
+ \item \lstinline|cell_tag|: A tag that specifies the type of the elements with maximum topological dimension in the mesh. The following two families of topological elements are provided with {\ViennaGrid} in namespace \lstinline|viennagrid|:
    \begin{center}
    \begin{tabular}{|l|l|}
     \hline
@@ -76,22 +76,22 @@ More details on the types are given in the following:
  The reference orientations of these cells can be found in Appendix \ref{chap:orientations}.
 \end{itemize}
 
-All geometric and topological types inside the domain are then derived from the configuration class. To this end, {\ViennaGrid} provides
+All geometric and topological types inside the mesh are then derived from the configuration class. To this end, {\ViennaGrid} provides
 a number of metafunctions that reside in namespace \lstinline|viennagrid::result_of|. The naming follows the conventions in the Boost libraries \cite{boost}.
 For a configuration class \lstinline|Config|, the respective types are obtained as follows:
 \begin{lstlisting}
  using namespace viennagrid;
 
- typedef result_of::domain<Config>::type     DomainType;
+ typedef result_of::mesh<Config>::type     MeshType;
  typedef result_of::segment<Config>::type    SegmentType;
  typedef result_of::ncell<Config, 0>::type   VertexType;
  typedef result_of::ncell<Config, 1>::type   EdgeType;
 \end{lstlisting}
-In particular, the type of any $n$-cell in the domain is obtained as
+In particular, the type of any $n$-cell in the mesh is obtained as
 \begin{lstlisting}
  typedef result_of::ncell<Config, n>::type   ElementType;
 \end{lstlisting}
-where $n$ has to be replaced with the respective value. This allows to formulate algorithms such as a domain boundary detection in a very general manner and can be used for recursively iterating through the $n$-cells of different dimension. In order to obtain the types of cells and facets, one should use the topological dimension from the cell tag:
+where $n$ has to be replaced with the respective value. This allows to formulate algorithms such as a mesh boundary detection in a very general manner and can be used for recursively iterating through the $n$-cells of different dimension. In order to obtain the types of cells and facets, one should use the topological dimension from the cell tag:
 \begin{lstlisting}
  typedef Config::cell_tag                                CellTag;
  typedef result_of::ncell<Config, CellTag::dim-1>::type  FacetType;
@@ -122,9 +122,9 @@ The classes reside in namespace \lstinline|viennagrid::config| and in the files 
 Each of these configurations uses a numeric type \lstinline|double| and a Cartesian coordinate system.
 
 \section{Customizing Storage of $n$-Cells} \label{sec:customizing-storage}
-One of the outstanding features of {\ViennaGrid} over other libraries related to grid handling is the possibility to customize the internal storage of elements. By default, all $n$-cells of a domain are stored explicitly inside the domain. In addition, each $n$-cell stores links to its boundary $k$-cells, with $k<n$. While this overhead is not a concern for topologically one-dimensional meshes and moderate for topologically two-dimensional meshes, it can be a considerable issue for dimensions three and above. 
+One of the outstanding features of {\ViennaGrid} over other libraries related to grid handling is the possibility to customize the internal storage of elements. By default, all $n$-cells of a mesh are stored explicitly inside the mesh. In addition, each $n$-cell stores links to its boundary $k$-cells, with $k<n$. While this overhead is not a concern for topologically one-dimensional meshes and moderate for topologically two-dimensional meshes, it can be a considerable issue for dimensions three and above. 
 
-As an example, linear finite elements need information about the cells and the vertices inside the domain, while edges and facets may not be needed depending on the boundary conditions imposed.
+As an example, linear finite elements need information about the cells and the vertices inside the mesh, while edges and facets may not be needed depending on the boundary conditions imposed.
 
 \begin{table}[tb]
  \centering
@@ -144,7 +144,7 @@ As an example, linear finite elements need information about the cells and the v
   \hline
  \end{tabular}
  \caption{Minimum memory consumption for a tetrahedral mesh of the unit cube where all $n$-cells are stored explicitly and boundary information on each $n$-cell is stored. Vertices use \lstinline|double|-precision coordinates and elements are linked with pointers sized eight bytes each.}
- \label{tab:full-domain-memory}
+ \label{tab:full-mesh-memory}
 \end{table}
 
 \begin{table}[tb]
@@ -165,20 +165,20 @@ As an example, linear finite elements need information about the cells and the v
   \hline
  \end{tabular}
  \caption{Minimum memory consumption for a tetrahedral mesh of the unit cube where only $0$-cells and $3$-cells are stored explicitly. $3$-cells have knowledge of their $0$-cells only. Vertices use \lstinline|double|-precision coordinates and elements are linked with pointers sized eight bytes each.}
- \label{tab:slim-domain-memory}
+ \label{tab:slim-mesh-memory}
 \end{table}
 
-As shown in Tab.~\ref{tab:full-domain-memory} and Tab.~\ref{tab:slim-domain-memory}, storing facets and edges explicitly increases the total memory consumption by a factor of more than six. In cases where additional maps for the mapping from local to global $n$-cell orientations are stored together with the topological boundary information, the difference in memory consumption is even higher.
+As shown in Tab.~\ref{tab:full-mesh-memory} and Tab.~\ref{tab:slim-mesh-memory}, storing facets and edges explicitly increases the total memory consumption by a factor of more than six. In cases where additional maps for the mapping from local to global $n$-cell orientations are stored together with the topological boundary information, the difference in memory consumption is even higher.
 
 {\ViennaGrid} can be customized to switch seamlessly between the different storage models, as will be shown in the following subsections.
 
-\NOTE{Note that in {\ViennaGrid} a cell always stores pointers to its vertices. Similarly, the domain always stores the cells and vertices.}
+\NOTE{Note that in {\ViennaGrid} a cell always stores pointers to its vertices. Similarly, the mesh always stores the cells and vertices.}
 
 \subsection{Boundary $n$-Cells} \label{subsec:boundary-ncells-storage}
 
 Disabling the storage of boundary $n$-cells can be achieved in two ways, which are equivalent on a source-code level, but differ with respect to convenience:
 \begin{itemize}
- \item \textbf{Method 1}: Use the provided macros. The storage of elements can be customized either for a particular configuration class, or globally for all domain configuration classes. To disable the storage of edges (i.e.~$1$-cells) inside a tetrahedron for a domain with configuration class \lstinline|MyConfig|, the line
+ \item \textbf{Method 1}: Use the provided macros. The storage of elements can be customized either for a particular configuration class, or globally for all mesh configuration classes. To disable the storage of edges (i.e.~$1$-cells) inside a tetrahedron for a mesh with configuration class \lstinline|MyConfig|, the line
   \begin{lstlisting}
 VIENNAGRID_DISABLE_BOUNDARY_NCELL(MyConfig,
                                   viennagrid::tetrahedron_tag, 1)
@@ -219,13 +219,13 @@ Finally, we wish to point at a potential pitfall when disabling $n$-cells that a
 VIENNAGRID_DISABLE_BOUNDARY_NCELL(MyConfig,
                                   viennagrid::tetrahedron_tag, 1)
   \end{lstlisting}
-only disables the edges for the tetrahedron, but still edges are pushed and stored inside the domain, because the triangular facets of the tetrahedron store pointers to their edges. Thus, to completely disable the storage of any edges, one also has to disable the storage of edges for triangles. As a check, one should verify that the number of edges stored inside a domain \lstinline|my_domain| and obtained by 
+only disables the edges for the tetrahedron, but still edges are pushed and stored inside the mesh, because the triangular facets of the tetrahedron store pointers to their edges. Thus, to completely disable the storage of any edges, one also has to disable the storage of edges for triangles. As a check, one should verify that the number of edges stored inside a mesh \lstinline|my_mesh| and obtained by 
  \begin{lstlisting}
-  viennagrid::ncells<1>(my_domain).size()
+  viennagrid::ncells<1>(my_mesh).size()
  \end{lstlisting}
 is zero.
 
-\TIP{Have a look at \texttt{examples/tutorial/slim\_domain.cpp} and selectively enable or disable the storage of elements to see the impact on total memory consumption. Note that the bytes per object may differ from Tab.~\ref{tab:full-domain-memory} and Tab.~\ref{tab:slim-domain-memory} depending on the use of local-to-global-orienters and the eventual use of integral IDs.}
+\TIP{Have a look at \texttt{examples/tutorial/slim\_mesh.cpp} and selectively enable or disable the storage of elements to see the impact on total memory consumption. Note that the bytes per object may differ from Tab.~\ref{tab:full-mesh-memory} and Tab.~\ref{tab:slim-mesh-memory} depending on the use of local-to-global-orienters and the eventual use of integral IDs.}
 
 \subsection{Local Orientations} \label{subsec:customize-local-orientations}
 \begin{figure}[tb]
@@ -235,12 +235,12 @@ is zero.
  \label{fig:orientation-boundary-ncells}
 \end{figure}
 
-In cases where $n$-cells store boundary $k$-cells, $k<n$, it may be required to know the orientation of the globally (i.e.~in the domain) stored $k$-cell with respect to the local reference orientation of the $n$-cell. The common facet of the two tetrahedra in Fig.~\ref{fig:orientation-boundary-ncells} may be stored globally using the sequence of vertex indices $[1, 2, 3]$. Inside the tetrahedron $[0, 1, 2, 3]$ the facet again possesses the orientation $[1, 2, 3]$, thus matching the global orientation. However, within the tetrahedron $[4, 2, 1, 3]$ the facet has the local orientation $[2, 1, 3]$ (refer to the Appendix for an overview of reference orientations). For applications such as high-order finite elements, such a local orientation with respect to the cell is required.
+In cases where $n$-cells store boundary $k$-cells, $k<n$, it may be required to know the orientation of the globally (i.e.~in the mesh) stored $k$-cell with respect to the local reference orientation of the $n$-cell. The common facet of the two tetrahedra in Fig.~\ref{fig:orientation-boundary-ncells} may be stored globally using the sequence of vertex indices $[1, 2, 3]$. Inside the tetrahedron $[0, 1, 2, 3]$ the facet again possesses the orientation $[1, 2, 3]$, thus matching the global orientation. However, within the tetrahedron $[4, 2, 1, 3]$ the facet has the local orientation $[2, 1, 3]$ (refer to the Appendix for an overview of reference orientations). For applications such as high-order finite elements, such a local orientation with respect to the cell is required.
 
 
 By default, {\ViennaGrid} stores the local orientation of each boundary $k$-cell inside the hosting $n$-cell, where one byte per vertex of each $k$-cell is consumed. In order to disable the storage of these local orientations for scenarios where the local orientation is not needed, there are again two methods provided:
 \begin{itemize}
- \item \textbf{Method 1}: Using the macros provided. To disable the storage of local orientations of edges (i.e.~$1$-cells) inside a tetrahedron for a domain with configuration class \lstinline|MyConfig|, the line
+ \item \textbf{Method 1}: Using the macros provided. To disable the storage of local orientations of edges (i.e.~$1$-cells) inside a tetrahedron for a mesh with configuration class \lstinline|MyConfig|, the line
 \begin{lstlisting}
 VIENNAGRID_DISABLE_BOUNDARY_NCELL_ORIENTATION(MyConfig,
                               viennagrid::tetrahedron_tag, 1) 
@@ -270,11 +270,11 @@ Using the type \lstinline|full_handling_tag| instead of \lstinline|no_handling_t
 \TIP{If the storage of boundary $k$-cells is disabled (cf.~Sec.~\ref{subsec:boundary-ncells-storage}), there are automatically no local orientations for boundary $k$-cells stored. The local orientations do not need to be disabled explicitly in this case.}
 
 \subsection{$n$-Cell IDs} \label{subsec:ncell-ids}
-It is often convenient to have enumerated $n$-cells within a domain such that every $n$-cell is aware of its index inside the random access container it resides in. This allows for some algorithms to use fast random-accesses with $\LandauO(1)$ costs rather than searching trees with $\LandauO(\log N)$ costs or linked lists with $\LandauO(N)$ costs, where $N$ here denotes the number of $n$-cells inside the domain. Conversely, if $\LandauO(\log N)$ access times are acceptable, then the memory for storing the container index (which we refer to in the following as \emph{$n$-cell ID}) is wasted. To accomodate for these two scenarios, {\ViennaGrid} allows to selectively enable or disable the storage of $n$-cell IDs. By default, $n$-cell IDs are stored, since they have negligible impact on the total memory consumption as soon as other boundary $k$-cells are stored for an $n$-cell.
+It is often convenient to have enumerated $n$-cells within a mesh such that every $n$-cell is aware of its index inside the random access container it resides in. This allows for some algorithms to use fast random-accesses with $\LandauO(1)$ costs rather than searching trees with $\LandauO(\log N)$ costs or linked lists with $\LandauO(N)$ costs, where $N$ here denotes the number of $n$-cells inside the mesh. Conversely, if $\LandauO(\log N)$ access times are acceptable, then the memory for storing the container index (which we refer to in the following as \emph{$n$-cell ID}) is wasted. To accomodate for these two scenarios, {\ViennaGrid} allows to selectively enable or disable the storage of $n$-cell IDs. By default, $n$-cell IDs are stored, since they have negligible impact on the total memory consumption as soon as other boundary $k$-cells are stored for an $n$-cell.
 
 As for the storage of boundary $k$-cells and local orientations, there are two possibilities for customizing the storage of IDs:
 \begin{itemize}
- \item \textbf{Method 1}: Using the provided macros. To disable the storage of IDs for tetrahedrons inside a domain with configuration \lstinline|MyConfig|, the line
+ \item \textbf{Method 1}: Using the provided macros. To disable the storage of IDs for tetrahedrons inside a mesh with configuration \lstinline|MyConfig|, the line
  \begin{lstlisting}
 VIENNAGRID_DISABLE_NCELL_ID(viennagrid::config::tetrahedral_3d,
                             viennagrid::tetrahedron_tag)
@@ -311,7 +311,7 @@ for globally disabling the storage of IDs. To selectively enable IDs, \lstinline
 
 
 
-\TIP{Have a look at \texttt{examples/tutorial/slim\_domain.cpp} and selectively enable or disable the storage of elements, local orientations and IDs to see the impact on total memory consumption. Note that the bytes per object may differ from Tab.~\ref{tab:full-domain-memory} and Tab.~\ref{tab:slim-domain-memory} depending on the use of local orientations and integral IDs.}
+\TIP{Have a look at \texttt{examples/tutorial/slim\_mesh.cpp} and selectively enable or disable the storage of elements, local orientations and IDs to see the impact on total memory consumption. Note that the bytes per object may differ from Tab.~\ref{tab:full-mesh-memory} and Tab.~\ref{tab:slim-mesh-memory} depending on the use of local orientations and integral IDs.}
 
 \NOTE{Disabling $n$-cell IDs eliminates the possibility to store and access data for the respective $n$-cells with $\LandauO(1)$ costs, see Chapter \ref{chap:data}.}
 

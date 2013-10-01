@@ -57,30 +57,30 @@ will be repeated in every layer and thus become inaccessible from the outside. T
 \end{lstlisting}
 for boundary element with tag \lstinline|boundary_element_tag| is used. In this way, every layer is accessible from the outside, which is used for the free functions such as \lstinline|elements<>()|.
 
-Domains and segments are set up in essentially the same way with a few internal storage facilities adjusted.
-Instead of an ID handler, the segment inherits from a class providing a reference to the underlying domain.
+Meshs and segments are set up in essentially the same way with a few internal storage facilities adjusted.
+Instead of an ID handler, the segment inherits from a class providing a reference to the underlying mesh.
 
-\section{Element Storage in Domain and Segment}
-For storing the elements inside a domain, the natural approach is to use a \lstinline|std::vector<>| for that purpose.
+\section{Element Storage in Mesh and Segment}
+For storing the elements inside a mesh, the natural approach is to use a \lstinline|std::vector<>| for that purpose.
 However, a drawback of this datastructure is that the number of elements should be known in advance in order to avoid
 costly reallocations. This is especially a problem for mesh file formats which do not contain the total number of elements in an explicit way.
 {\ViennaGrid} uses a \lstinline|std::deque<>| (double ended queue) as container for vertices and cells, because it does not suffer form costly reallocations
 if the number of elements is a-priori unknown.
 
-For non-vertices and non-cells, unique representations of the respective elements are required. For example, the edge connecting vertices $1$ and $2$ must not lead to an edge $[1,2]$ and an edge $[2,1]$ in the domain.
+For non-vertices and non-cells, unique representations of the respective elements are required. For example, the edge connecting vertices $1$ and $2$ must not lead to an edge $[1,2]$ and an edge $[2,1]$ in the mesh.
 While such a distinction is simple for vertices, this is harder to achieve for e.g.~quadrilateral facets.
 In {\ViennaGrid}, the global vertex IDs of each element are used as a tuple for the identification of the respective element.
-Thus, the internal storage inside the domain for each non-vertices and non-cells is given by
+Thus, the internal storage inside the mesh for each non-vertices and non-cells is given by
 \begin{lstlisting}
  std::map<TupleType, ElementType>
 \end{lstlisting}
 where \lstinline|TupleType| refers to the tuple of sorted global vertex IDs, and \lstinline|ElementType| is the type of the element.
 
-For segments, only handles to the global element objects in the domain are stored.
+For segments, only handles to the global element objects in the mesh are stored.
 Since uniqueness of elements is required in segments as well, an internal storage scheme of type \lstinline|std::set<ElementHandleType>| is chosen
 for non-cells, where \lstinline|ElementType| denotes the type of the elements.
 
-Finally, it should be noted that future versions of {\ViennaGrid} may provide additional flexibility in customizing the internal storage scheme for domain and segments.
+Finally, it should be noted that future versions of {\ViennaGrid} may provide additional flexibility in customizing the internal storage scheme for mesh and segments.
 In particular, users may be interested in replacing the \lstinline|std::map<TupleType, ElementType>| used for non-vertices and non-cells with a \lstinline|std::vector<>| after the setup phase for reasons of memory consumption, faster (random) access and/or better caching possibilities.
 
 

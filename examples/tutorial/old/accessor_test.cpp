@@ -25,7 +25,7 @@
 #include "viennagrid/config/default_configs.hpp"
 #include "viennagrid/io/netgen_reader.hpp"
 
-//Domain-based algorithms:
+//Mesh-based algorithms:
 #include "viennagrid/algorithm/boundary.hpp"
 
 // #include "viennadata/api.hpp"
@@ -35,20 +35,20 @@ int main()
 {
     
   
-  typedef viennagrid::tetrahedral_3d_domain             Domain;  
-  typedef viennagrid::result_of::segmentation<Domain>::type Segmentation;
-//   typedef viennagrid::result_of::domain_view<Domain>::type   Segment;
+  typedef viennagrid::tetrahedral_3d_mesh             Mesh;  
+  typedef viennagrid::result_of::segmentation<Mesh>::type Segmentation;
+//   typedef viennagrid::result_of::mesh_view<Mesh>::type   Segment;
   
   typedef viennagrid::tetrahedron_tag CellTag;
   
-  typedef viennagrid::result_of::element<Domain, viennagrid::tetrahedron_tag>::type    CellType;
-  typedef viennagrid::result_of::element<Domain, viennagrid::triangle_tag>::type       TriangleType;
-  typedef viennagrid::result_of::element<Domain, viennagrid::line_tag>::type           EdgeType;
-  typedef viennagrid::result_of::element<Domain, viennagrid::vertex_tag>::type         VertexType;
-  typedef viennagrid::result_of::handle<Domain, viennagrid::vertex_tag>::type    VertexHandleType;
+  typedef viennagrid::result_of::element<Mesh, viennagrid::tetrahedron_tag>::type    CellType;
+  typedef viennagrid::result_of::element<Mesh, viennagrid::triangle_tag>::type       TriangleType;
+  typedef viennagrid::result_of::element<Mesh, viennagrid::line_tag>::type           EdgeType;
+  typedef viennagrid::result_of::element<Mesh, viennagrid::vertex_tag>::type         VertexType;
+  typedef viennagrid::result_of::handle<Mesh, viennagrid::vertex_tag>::type    VertexHandleType;
     
-  typedef viennagrid::result_of::element_range<Domain, viennagrid::vertex_tag>::type       VertexRange;
-  typedef viennagrid::result_of::element_range<Domain, viennagrid::tetrahedron_tag>::type       CellRange;
+  typedef viennagrid::result_of::element_range<Mesh, viennagrid::vertex_tag>::type       VertexRange;
+  typedef viennagrid::result_of::element_range<Mesh, viennagrid::tetrahedron_tag>::type       CellRange;
 
                       
   std::cout << "------------------------------------------------------------ " << std::endl;
@@ -56,17 +56,17 @@ int main()
   std::cout << "------------------------------------------------------------ " << std::endl;
   std::cout << std::endl;
   
-  Domain domain;
-  Segmentation segmentation(domain);
+  Mesh mesh;
+  Segmentation segmentation(mesh);
 //   std::vector<Segment> segments;
   
   //
-  // Read domain from Netgen file
+  // Read mesh from Netgen file
   //
   try
   {
     viennagrid::io::netgen_reader reader;
-    reader(domain, segmentation, "../../examples/data/cube48.mesh");
+    reader(mesh, segmentation, "../../examples/data/cube48.mesh");
   }
   catch (std::exception & e)
   {
@@ -79,19 +79,19 @@ int main()
   // Part 1: Point-based algorithms:
   //
 
-  // Extract the first four points of the domain:
-  VertexRange vertices = viennagrid::elements(domain);
+  // Extract the first four points of the mesh:
+  VertexRange vertices = viennagrid::elements(mesh);
 
 
   
   //
-  // Get boundary information of first vertex with respect to the full domain:
+  // Get boundary information of first vertex with respect to the full mesh:
             
-//   viennagrid::detect_boundary<viennagrid::tetrahedron_tag>(domain);
+//   viennagrid::detect_boundary<viennagrid::tetrahedron_tag>(mesh);
   
   for (VertexRange::iterator it = vertices.begin(); it != vertices.end(); ++it)
-    std::cout << *it << " " << viennagrid::point(domain, *it) << " "
-            << viennagrid::is_boundary(domain, *it)    //second argument is the enclosing complex (either a domain or a segment)
+    std::cout << *it << " " << viennagrid::point(mesh, *it) << " "
+            << viennagrid::is_boundary(mesh, *it)    //second argument is the enclosing complex (either a mesh or a segment)
             << std::endl << std::endl;
             
             
@@ -100,33 +100,33 @@ int main()
   std::vector<bool> facet_boundary_marker;
   viennadata::container_accessor<
     std::vector<bool>,
-    viennagrid::result_of::facet< viennagrid::result_of::cell<Domain>::type >::type,
+    viennagrid::result_of::facet< viennagrid::result_of::cell<Mesh>::type >::type,
     viennadata::id_access_tag> acc(facet_boundary_marker);
 
   std::vector<bool> vertex_boundary_marker;
   viennadata::container_accessor<
     std::vector<bool>,
-    viennagrid::result_of::vertex<Domain>::type,
+    viennagrid::result_of::vertex<Mesh>::type,
     viennadata::id_access_tag> acc_vertex(vertex_boundary_marker);
   
   
   
             
 //   typedef viennameta::make_typemap< viennagrid::vertex_tag, bool, viennagrid::line_tag, bool, viennagrid::triangle_tag, bool >::type metainfo_collection_element_list;
-//   typedef viennagrid::result_of::metainfo_container_typemap<metainfo_collection_element_list, viennagrid::storage::default_container_config, Domain>::type metainfo_typemap;
+//   typedef viennagrid::result_of::metainfo_container_typemap<metainfo_collection_element_list, viennagrid::storage::default_container_config, Mesh>::type metainfo_typemap;
 //   typedef viennagrid::storage::collection_t<metainfo_typemap> metainfo_collection_type;
 //   
 //   metainfo_collection_type metainfo_collection;
   
 //   viennagrid::metainfo_collection_accessor<metainfo_collection_type> accessor(metainfo_collection);
-  viennagrid::detect_boundary(domain, acc);
+  viennagrid::detect_boundary(mesh, acc);
 
   
-  viennagrid::transfer_boundary_information( domain, acc, acc_vertex );
+  viennagrid::transfer_boundary_information( mesh, acc, acc_vertex );
   
   for (VertexRange::iterator it = vertices.begin(); it != vertices.end(); ++it)
-    std::cout << *it << " " << viennagrid::point(domain, *it) << " "
-            << viennagrid::is_boundary(acc_vertex, *it)    //second argument is the enclosing complex (either a domain or a segment)
+    std::cout << *it << " " << viennagrid::point(mesh, *it) << " "
+            << viennagrid::is_boundary(acc_vertex, *it)    //second argument is the enclosing complex (either a mesh or a segment)
             << std::endl << std::endl;
   
   

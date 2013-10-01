@@ -1,6 +1,6 @@
 
 #include "viennagrid/algorithm/intersect.hpp"
-#include "viennagrid/domain/config.hpp"
+#include "viennagrid/mesh/config.hpp"
 
 
 template<typename numeric_type>

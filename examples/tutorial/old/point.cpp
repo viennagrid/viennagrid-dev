@@ -27,10 +27,10 @@ using std::endl;
 
 
 #include "viennagrid/config/element_config.hpp"
-#include "viennagrid/config/domain_config.hpp"
+#include "viennagrid/config/mesh_config.hpp"
 
-#include "viennagrid/domain/domain.hpp"
-#include "viennagrid/domain/element_creation.hpp"
+#include "viennagrid/mesh/mesh.hpp"
+#include "viennagrid/mesh/element_creation.hpp"
 
 
 #include <boost/numeric/ublas/vector.hpp>
@@ -44,7 +44,7 @@ namespace ublas = boost::numeric::ublas;
 
 typedef ublas::vector<double> vector_type;
 
-class my_domain_config
+class my_mesh_config
 {
   private:
     //typedef viennagrid::storage::pointer_handle_tag handle_tag;
@@ -53,47 +53,47 @@ class my_domain_config
     
   public:
     
-    typedef viennagrid::config::result_of::full_domain_config< viennagrid::tetrahedron_tag, vector_type, handle_tag >::type     type;
+    typedef viennagrid::config::result_of::full_mesh_config< viennagrid::tetrahedron_tag, vector_type, handle_tag >::type     type;
 };
 
 
 int main()
 {
     //
-    // typedefing and setting up the geometric domain
+    // typedefing and setting up the geometric mesh
     //
     
-    typedef viennagrid::domain_t<my_domain_config> domain_type;
-    domain_type domain;
+    typedef viennagrid::mesh_t<my_mesh_config> mesh_type;
+    mesh_type mesh;
         
     //
     // typedefs for the element types
     //
     
-    typedef viennagrid::result_of::element<domain_type, viennagrid::vertex_tag>::type vertex_type;
-    typedef viennagrid::result_of::handle<domain_type, viennagrid::vertex_tag>::type vertex_handle_type;
+    typedef viennagrid::result_of::element<mesh_type, viennagrid::vertex_tag>::type vertex_type;
+    typedef viennagrid::result_of::handle<mesh_type, viennagrid::vertex_tag>::type vertex_handle_type;
     
-    typedef viennagrid::result_of::element<domain_type, viennagrid::line_tag>::type line_type;
-    typedef viennagrid::result_of::element<domain_type, viennagrid::triangle_tag>::type triangle_type;
+    typedef viennagrid::result_of::element<mesh_type, viennagrid::line_tag>::type line_type;
+    typedef viennagrid::result_of::element<mesh_type, viennagrid::triangle_tag>::type triangle_type;
     
-    typedef viennagrid::result_of::element<domain_type, viennagrid::tetrahedron_tag>::type tetrahedron_type;
-    typedef viennagrid::result_of::handle<domain_type, viennagrid::tetrahedron_tag>::type tetrahedron_handle_type;
+    typedef viennagrid::result_of::element<mesh_type, viennagrid::tetrahedron_tag>::type tetrahedron_type;
+    typedef viennagrid::result_of::handle<mesh_type, viennagrid::tetrahedron_tag>::type tetrahedron_handle_type;
     
 
     //
     // Adding a tetrahedron
     //
     
-    // creates four vertices within the domain, vh is short vor vertex handle
+    // creates four vertices within the mesh, vh is short vor vertex handle
     // make_element is responsible for resizing all meta-info container which are associated with vertex_type
-    vertex_handle_type vh0 = viennagrid::make_vertex( domain );
-    vertex_handle_type vh1 = viennagrid::make_vertex( domain );
-    vertex_handle_type vh2 = viennagrid::make_vertex( domain );
-    vertex_handle_type vh3 = viennagrid::make_vertex( domain );
+    vertex_handle_type vh0 = viennagrid::make_vertex( mesh );
+    vertex_handle_type vh1 = viennagrid::make_vertex( mesh );
+    vertex_handle_type vh2 = viennagrid::make_vertex( mesh );
+    vertex_handle_type vh3 = viennagrid::make_vertex( mesh );
     
     
-//     viennagrid::tagging::tag<test_tag>( viennagrid::dereference_handle(domain, vh1) );
-//     viennagrid::tagging::tag<test_tag>( viennagrid::dereference_handle(domain, vh2) );
+//     viennagrid::tagging::tag<test_tag>( viennagrid::dereference_handle(mesh, vh1) );
+//     viennagrid::tagging::tag<test_tag>( viennagrid::dereference_handle(mesh, vh2) );
     
     
     // create geometric information for the vertices
@@ -108,65 +108,65 @@ int main()
     
     
     // set the geometric information for the vertices
-    // is equivalent to viennagrid::look_up<vector_type>(domain, vhX)
-    viennagrid::point(domain, vh0) = p0;
-    viennagrid::point(domain, vh1) = p1;
-    viennagrid::point(domain, vh2) = p2;
-    viennagrid::point(domain, vh3) = p3;
+    // is equivalent to viennagrid::look_up<vector_type>(mesh, vhX)
+    viennagrid::point(mesh, vh0) = p0;
+    viennagrid::point(mesh, vh1) = p1;
+    viennagrid::point(mesh, vh2) = p2;
+    viennagrid::point(mesh, vh3) = p3;
     
     
     // creates a handle buffer for the vertex handles of the tetdrahedron
     std::vector<vertex_handle_type> handles(4);
     handles[0] = vh0; handles[1] = vh1; handles[2] = vh2; handles[3] = vh3;
     
-    // creates the tetrahedron within the domain, all boundary cell generation is done here implicit
-    tetrahedron_handle_type tet = viennagrid::make_element<tetrahedron_type>( domain, handles.begin(), handles.end() );
+    // creates the tetrahedron within the mesh, all boundary cell generation is done here implicit
+    tetrahedron_handle_type tet = viennagrid::make_element<tetrahedron_type>( mesh, handles.begin(), handles.end() );
     std::cout << tet << std::endl;
     
     // set a double value to a tetdrahedron
     
     
     
-    const domain_type & test = domain;
+    const mesh_type & test = mesh;
 
-    typedef viennagrid::result_of::const_element_range<domain_type, viennagrid::vertex_tag>::type const_vertex_range;
+    typedef viennagrid::result_of::const_element_range<mesh_type, viennagrid::vertex_tag>::type const_vertex_range;
     typedef viennagrid::result_of::iterator<const_vertex_range>::type const_vertex_iterator;
     
-    cout << "All vertices of the domain using point_range" << endl;
+    cout << "All vertices of the mesh using point_range" << endl;
     const_vertex_range r = viennagrid::elements<viennagrid::vertex_tag>(test);
     for (const_vertex_iterator i = r.begin(); i != r.end(); ++i)
         cout << *i << " " << viennagrid::point(test, *i) << endl;
     cout << endl;
     
     
-//     cout << "All points of the domain using point_range" << endl;
-//     viennagrid::result_of::metainfo_range<domain_type, vertex_type, vector_type>::type point_range = viennagrid::metainfo_range<vertex_type, vector_type>(domain);
-//     for (viennagrid::result_of::metainfo_range<domain_type, vertex_type, vector_type>::type::iterator it = point_range.begin(); it != point_range.end(); ++it)
+//     cout << "All points of the mesh using point_range" << endl;
+//     viennagrid::result_of::metainfo_range<mesh_type, vertex_type, vector_type>::type point_range = viennagrid::metainfo_range<vertex_type, vector_type>(mesh);
+//     for (viennagrid::result_of::metainfo_range<mesh_type, vertex_type, vector_type>::type::iterator it = point_range.begin(); it != point_range.end(); ++it)
 //         cout << (*it) << endl;
 //     cout << endl;
 // 
 //     
 //     
-//     cout << "All points of the domain using point_range and std::copy" << endl;
+//     cout << "All points of the mesh using point_range and std::copy" << endl;
 //     std::copy( point_range.begin(), point_range.end(), std::ostream_iterator<vector_type>(std::cout, "\n") );
 //     cout << endl;
     
     
-//     cout << "All points of the domain using point_range using const domain" << endl;
-//     viennagrid::result_of::const_metainfo_range<domain_type, vertex_type, vector_type>::type const_point_range =
+//     cout << "All points of the mesh using point_range using const mesh" << endl;
+//     viennagrid::result_of::const_metainfo_range<mesh_type, vertex_type, vector_type>::type const_point_range =
 //             viennagrid::metainfo_range<vertex_type, vector_type>( test );
 //     
-//     for (viennagrid::result_of::const_metainfo_range<domain_type, vertex_type, vector_type>::type::iterator it = const_point_range.begin(); it != const_point_range.end(); ++it)
+//     for (viennagrid::result_of::const_metainfo_range<mesh_type, vertex_type, vector_type>::type::iterator it = const_point_range.begin(); it != const_point_range.end(); ++it)
 //         cout << it.element() << " " << it.metainfo() << endl;
 //     cout << endl;
 
 
     
-//     cout << "All tagged points of the domain using point_range and std::copy" << endl;
-//     typedef viennagrid::result_of::element_view<domain_type, vertex_type>::type VertexView;
-//     VertexView view = viennagrid::tagged_elements<vertex_type>(domain, test_tag());
-//     viennagrid::result_of::metainfo_view<VertexView, viennagrid::result_of::metainfo_container<domain_type, vertex_type, vector_type>::type>::type
-//         point_range2 = viennagrid::metainfo_view<vector_type>( view, domain );    
+//     cout << "All tagged points of the mesh using point_range and std::copy" << endl;
+//     typedef viennagrid::result_of::element_view<mesh_type, vertex_type>::type VertexView;
+//     VertexView view = viennagrid::tagged_elements<vertex_type>(mesh, test_tag());
+//     viennagrid::result_of::metainfo_view<VertexView, viennagrid::result_of::metainfo_container<mesh_type, vertex_type, vector_type>::type>::type
+//         point_range2 = viennagrid::metainfo_view<vector_type>( view, mesh );    
 //     std::copy( point_range2.begin(), point_range2.end(), std::ostream_iterator< vector_type >(std::cout, "\n") );
     
 

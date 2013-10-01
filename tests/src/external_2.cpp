@@ -48,11 +48,11 @@
 
 #include "viennagrid/config/element_config.hpp"
 #include "viennagrid/config/topology_config.hpp"
-#include "viennagrid/config/domain_config.hpp"
+#include "viennagrid/config/mesh_config.hpp"
 #include "viennagrid/config/default_configs.hpp"
 
-#include "viennagrid/domain/domain.hpp"
-#include "viennagrid/domain/topology.hpp"
+#include "viennagrid/mesh/mesh.hpp"
+#include "viennagrid/mesh/topology.hpp"
 
 //algorithms:
 //#include "viennagrid/algorithm/angle.hpp"
@@ -79,11 +79,11 @@
 
 void other_func()
 {
-  viennagrid::tetrahedral_3d_domain  domain;
+  viennagrid::tetrahedral_3d_mesh  mesh;
   
-  std::cout << "--- Tetrahedral domain, 3d ---" << std::endl;
-  std::cout << "Size<0>: " << viennagrid::elements<viennagrid::vertex_tag>(domain).size() << std::endl;
-  std::cout << "Size<1>: " << viennagrid::elements<viennagrid::vertex_tag>(domain).size() << std::endl;
-  std::cout << "Size<2>: " << viennagrid::elements<viennagrid::vertex_tag>(domain).size() << std::endl;
-  std::cout << "Size<3>: " << viennagrid::elements<viennagrid::vertex_tag>(domain).size() << std::endl;
+  std::cout << "--- Tetrahedral mesh, 3d ---" << std::endl;
+  std::cout << "Size<0>: " << viennagrid::elements<viennagrid::vertex_tag>(mesh).size() << std::endl;
+  std::cout << "Size<1>: " << viennagrid::elements<viennagrid::vertex_tag>(mesh).size() << std::endl;
+  std::cout << "Size<2>: " << viennagrid::elements<viennagrid::vertex_tag>(mesh).size() << std::endl;
+  std::cout << "Size<3>: " << viennagrid::elements<viennagrid::vertex_tag>(mesh).size() << std::endl;
 }

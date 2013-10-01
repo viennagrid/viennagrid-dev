@@ -19,13 +19,13 @@ namespace viennagrid
 {
     namespace result_of
     {
-        template<typename domain_config, typename id_generator_tag>
+        template<typename mesh_config, typename id_generator_tag>
         struct id_generator_impl;
 
-        template<typename domain_config>
-        struct id_generator_impl<domain_config, config::continuous_id_generator_tag>
+        template<typename mesh_config>
+        struct id_generator_impl<mesh_config, config::continuous_id_generator_tag>
         {
-            typedef typename viennagrid::storage::result_of::continuous_id_generator_config_from_domain_config<domain_config>::type typemap;
+            typedef typename viennagrid::storage::result_of::continuous_id_generator_config_from_mesh_config<mesh_config>::type typemap;
             typedef storage::continuous_id_generator<typemap> type;
         };
 

@@ -23,7 +23,7 @@
 #include "viennagrid/config/element_config.hpp"
 
 /** @file config/simplex.hpp
-    @brief Provides default configuration classes for simplex domains
+    @brief Provides default configuration classes for simplex meshs
 */
 
 namespace viennagrid
@@ -172,15 +172,15 @@ namespace viennagrid
 
 
             template<typename cell_tag, typename vector_type, typename handle_tag = viennagrid::storage::pointer_handle_tag>
-            struct full_domain_config
+            struct full_mesh_config
             {
-                typedef typename full_topology_config<cell_tag, handle_tag>::type DomainConfig;
-                typedef typename query_config<DomainConfig, topology_config_tag>::type TopologyConfig;
+                typedef typename full_topology_config<cell_tag, handle_tag>::type MeshConfig;
+                typedef typename query_config<MeshConfig, topology_config_tag>::type TopologyConfig;
                 typedef typename query_config<TopologyConfig, vertex_tag>::type VertexConfig;
 
                 typedef typename viennagrid::meta::typemap::result_of::insert_or_modify<
 
-                  DomainConfig,
+                  MeshConfig,
                   viennagrid::meta::static_pair<
                       topology_config_tag,
                       typename viennagrid::meta::typemap::result_of::insert_or_modify<
@@ -206,7 +206,7 @@ namespace viennagrid
             };
 
             template<typename cell_tag, typename handle_tag>
-            struct full_domain_config<cell_tag, void, handle_tag>
+            struct full_mesh_config<cell_tag, void, handle_tag>
             {
                 typedef typename viennagrid::config::result_of::full_topology_config<cell_tag, handle_tag>::type type;
             };
@@ -217,7 +217,7 @@ namespace viennagrid
 
 
             //
-            // generates a container for a specified element_tag for the domain container collection
+            // generates a container for a specified element_tag for the mesh container collection
             //
             template<typename WrappedConfigType, typename element_tag>
             struct element_container
@@ -237,25 +237,25 @@ namespace viennagrid
 
 
             //
-            // generates the container typelist for the domain container collection
+            // generates the container typelist for the mesh container collection
             //
             template<typename WrappedConfigType, typename cur_config = typename config::result_of::query_config<typename WrappedConfigType::type, topology_config_tag>::type >
             struct element_container_typemap;
 
-            template<typename domain_config, typename element_tag, typename value_config, typename tail>
-            struct element_container_typemap< domain_config, viennagrid::meta::typelist_t< viennagrid::meta::static_pair<element_tag, value_config>, tail > >
+            template<typename mesh_config, typename element_tag, typename value_config, typename tail>
+            struct element_container_typemap< mesh_config, viennagrid::meta::typelist_t< viennagrid::meta::static_pair<element_tag, value_config>, tail > >
             {
                 typedef viennagrid::meta::typelist_t<
                     viennagrid::meta::static_pair<
-                        element_t<element_tag, domain_config>,
-                        typename element_container<domain_config, element_tag>::type
+                        element_t<element_tag, mesh_config>,
+                        typename element_container<mesh_config, element_tag>::type
                     >,
-                    typename element_container_typemap<domain_config, tail>::type
+                    typename element_container_typemap<mesh_config, tail>::type
                 > type;
             };
 
-            template<typename domain_config>
-            struct element_container_typemap<domain_config, viennagrid::meta::null_type>
+            template<typename mesh_config>
+            struct element_container_typemap<mesh_config, viennagrid::meta::null_type>
             {
                 typedef viennagrid::meta::null_type type;
             };
@@ -280,7 +280,7 @@ namespace viennagrid
         template<typename WrappedConfigType, typename element_tag, typename boundary_element_tag, typename tail>
         struct coboundary_container_collection_per_element_typemap<WrappedConfigType, element_tag, viennagrid::meta::typelist_t<boundary_element_tag, tail> >
         {
-            typedef typename config::result_of::query_config<typename WrappedConfigType::type, config::domain_change_counter_tag>::type domain_change_counter_type;
+            typedef typename config::result_of::query_config<typename WrappedConfigType::type, config::mesh_change_counter_tag>::type mesh_change_counter_type;
 
             // TODO correctly extract from config
             typedef typename config::result_of::query_config<typename WrappedConfigType::type, config::coboundary_container_tag>::type coboundary_container_tag;
@@ -297,7 +297,7 @@ namespace viennagrid
                         boundary_element_tag,
                         element_tag
                     >,
-                    coboundary_container_wrapper<base_coboundary_container, domain_change_counter_type>
+                    coboundary_container_wrapper<base_coboundary_container, mesh_change_counter_type>
                 >,
                 typename coboundary_container_collection_per_element_typemap<WrappedConfigType, element_tag, tail>::type
             > type;
@@ -343,7 +343,7 @@ namespace viennagrid
         template<typename WrappedConfigType, typename element_tag, typename connector_element_tag, typename tail>
         struct neighbour_container_collection_per_element_typemap<WrappedConfigType, element_tag, viennagrid::meta::typelist_t<connector_element_tag, tail> >
         {
-            typedef typename config::result_of::query_config<typename WrappedConfigType::type, config::domain_change_counter_tag>::type domain_change_counter_type;
+            typedef typename config::result_of::query_config<typename WrappedConfigType::type, config::mesh_change_counter_tag>::type mesh_change_counter_type;
 
             // TODO correctly extract from config
             typedef typename config::result_of::query_config<typename WrappedConfigType::type, config::coboundary_container_tag>::type coboundary_container_tag;
@@ -360,7 +360,7 @@ namespace viennagrid
                         element_tag,
                         connector_element_tag
                     >,
-                    neighbour_container_wrapper<base_container, domain_change_counter_type>
+                    neighbour_container_wrapper<base_container, mesh_change_counter_type>
                 >,
                 typename neighbour_container_collection_per_element_typemap<WrappedConfigType, element_tag, tail>::type
             > type;
@@ -459,7 +459,7 @@ namespace viennagrid
         template<typename WrappedConfigType, typename element_tag, typename tail>
         struct boundary_information_collection_typemap_impl<WrappedConfigType, viennagrid::meta::typelist_t<element_tag, tail> >
         {
-            typedef typename config::result_of::query_config<typename WrappedConfigType::type, config::domain_change_counter_tag>::type domain_change_counter_type;
+            typedef typename config::result_of::query_config<typename WrappedConfigType::type, config::mesh_change_counter_tag>::type mesh_change_counter_type;
 
           // TODO correctly extract from config
             typedef typename config::result_of::query_config<typename WrappedConfigType::type, config::boundary_information_container_tag>::type boundary_container_tag;
@@ -469,7 +469,7 @@ namespace viennagrid
             typedef viennagrid::meta::typelist_t<
                 viennagrid::meta::static_pair<
                     element_tag,
-                    boundary_information_wrapper<base_container, domain_change_counter_type>
+                    boundary_information_wrapper<base_container, mesh_change_counter_type>
                 >,
                 typename boundary_information_collection_typemap_impl<WrappedConfigType, tail>::type
             > type;

@@ -6,7 +6,7 @@ A common approach is to model vertices, edges and the like as separate classes a
 \begin{enumerate}
  \item \textbf{Reusability}: As soon as a data member is added to any of these classes, the class is refined towards a particular use case. For example, adding a color data member to a triangle class reduces reusability for e.g.~Finite Element methods considerably.
  \item \textbf{Flexibility}: Whenever a data member needs to be added for a particular functionality, one has to carefully extend the existing class layout. Moreover, it is somewhere between hard to impossible to 'just add a data member for the moment' in a productive environment. Moreover, the class needs to be adjusted if the data type changes.
- \item \textbf{Efficiency}: A data member that is never used obviously wastes memory. For large numbers of object it might be even advisable to use special containers for data that is relevant for a tiny fraction of all objects only (e.g.~domain boundary flags). Apart from reduced memory footprint, the possibly tighter grouping of data allows for better CPU caching. 
+ \item \textbf{Efficiency}: A data member that is never used obviously wastes memory. For large numbers of object it might be even advisable to use special containers for data that is relevant for a tiny fraction of all objects only (e.g.~mesh boundary flags). Apart from reduced memory footprint, the possibly tighter grouping of data allows for better CPU caching. 
 \end{enumerate}
 
 Previous version of {\ViennaGrid} relies on {\ViennaData} \cite{ViennaData} for the storage of data associated with topological objects. {\ViennaGridversion} dropped the dependencies on {\ViennaData} in favor of accessor concepts.

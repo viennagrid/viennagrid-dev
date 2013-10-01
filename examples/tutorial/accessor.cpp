@@ -25,7 +25,7 @@
 #include "viennagrid/config/default_configs.hpp"
 #include "viennagrid/io/netgen_reader.hpp"
 #include "viennagrid/io/vtk_writer.hpp"
-#include "viennagrid/domain/accessor.hpp"
+#include "viennagrid/mesh/accessor.hpp"
 
 // //Point-based algorithms:
 // #include "viennagrid/algorithm/cross_prod.hpp"
@@ -41,7 +41,7 @@
 // #include "viennagrid/algorithm/closest_points.hpp"
 // #include "viennagrid/algorithm/distance.hpp"
 // 
-// //Domain-based algorithms:
+// //Mesh-based algorithms:
 // #include "viennagrid/algorithm/boundary.hpp"
 // #include "viennagrid/algorithm/refine.hpp"
 // #include "viennagrid/algorithm/voronoi.hpp"
@@ -51,20 +51,20 @@
 
 int main()
 {
-  typedef viennagrid::tetrahedral_3d_domain                         DomainType;
-  typedef viennagrid::result_of::segmentation<DomainType>::type     SegmentationType;
+  typedef viennagrid::tetrahedral_3d_mesh                         MeshType;
+  typedef viennagrid::result_of::segmentation<MeshType>::type     SegmentationType;
   typedef viennagrid::result_of::segment<SegmentationType>::type    SegmentType;
   
-  typedef viennagrid::result_of::point<DomainType>::type            PointType;
+  typedef viennagrid::result_of::point<MeshType>::type            PointType;
   
-  typedef viennagrid::result_of::cell<DomainType>::type             CellType;
-  typedef viennagrid::result_of::triangle<DomainType>::type         TriangleType;
-  typedef viennagrid::result_of::edge<DomainType>::type             EdgeType;
-  typedef viennagrid::result_of::vertex<DomainType>::type           VertexType;
-  typedef viennagrid::result_of::vertex_handle<DomainType>::type    VertexHandleType;
+  typedef viennagrid::result_of::cell<MeshType>::type             CellType;
+  typedef viennagrid::result_of::triangle<MeshType>::type         TriangleType;
+  typedef viennagrid::result_of::edge<MeshType>::type             EdgeType;
+  typedef viennagrid::result_of::vertex<MeshType>::type           VertexType;
+  typedef viennagrid::result_of::vertex_handle<MeshType>::type    VertexHandleType;
     
-  typedef viennagrid::result_of::vertex_range<DomainType>::type     VertexRange;
-  typedef viennagrid::result_of::cell_range<DomainType>::type       CellRange;
+  typedef viennagrid::result_of::vertex_range<MeshType>::type     VertexRange;
+  typedef viennagrid::result_of::cell_range<MeshType>::type       CellRange;
 
                       
   std::cout << "------------------------------------------------------------ " << std::endl;
@@ -72,16 +72,16 @@ int main()
   std::cout << "------------------------------------------------------------ " << std::endl;
   std::cout << std::endl;
   
-  DomainType domain;
-  SegmentationType segmentation(domain);
+  MeshType mesh;
+  SegmentationType segmentation(mesh);
   
   //
-  // Read domain from Netgen file
+  // Read mesh from Netgen file
   //
   try
   {
     viennagrid::io::netgen_reader reader;
-    reader(domain, segmentation, "../../examples/data/cube48.mesh");
+    reader(mesh, segmentation, "../../examples/data/cube48.mesh");
   }
   catch (std::exception & e)
   {
@@ -103,13 +103,13 @@ int main()
   viennagrid::result_of::accessor< std::vector<double>, CellType >::type some_cell_data_accessor(some_cell_data_container);
   
   // simply using the accessor with operator()
-  some_cell_data_accessor( viennagrid::cells(domain)[0] ) = 42.0;
-  some_cell_data_accessor( viennagrid::cells(domain)[1] ) = 3.14;
-  double some_value = some_cell_data_accessor( viennagrid::cells(domain)[1] );
+  some_cell_data_accessor( viennagrid::cells(mesh)[0] ) = 42.0;
+  some_cell_data_accessor( viennagrid::cells(mesh)[1] ) = 3.14;
+  double some_value = some_cell_data_accessor( viennagrid::cells(mesh)[1] );
   std::cout << "Value for first cell (should be 3.14) = " << some_value << std::endl;
   
   // A helper function for creating an accessor is also provided
-  viennagrid::make_accessor<CellType>(some_cell_data_container)( viennagrid::cells(domain)[3] ) = 5.0;
+  viennagrid::make_accessor<CellType>(some_cell_data_container)( viennagrid::cells(mesh)[3] ) = 5.0;
   
   
   
@@ -119,11 +119,11 @@ int main()
   // default value will is -1
   viennagrid::result_of::field< std::vector<double>, CellType >::type some_cell_data_field(another_cell_data_container, -1.0);
   
-  some_cell_data_field( viennagrid::cells(domain)[0] ) = 12.0;
-  some_cell_data_field( viennagrid::cells(domain)[1] ) = 13.0;
+  some_cell_data_field( viennagrid::cells(mesh)[0] ) = 12.0;
+  some_cell_data_field( viennagrid::cells(mesh)[1] ) = 13.0;
   
   // A helper function for creating a field
-  viennagrid::make_field<CellType>(some_cell_data_container)( viennagrid::cells(domain)[3] ) = 5.0;
+  viennagrid::make_field<CellType>(some_cell_data_container)( viennagrid::cells(mesh)[3] ) = 5.0;
   
   
   // Similar to above, a container can be defined using the accessor_container meta function
@@ -132,8 +132,8 @@ int main()
   CellDataContainerType one_more_cell_data_container;
   viennagrid::result_of::field< CellDataContainerType, CellType >::type one_more_cell_data_accessor(one_more_cell_data_container);
   
-  one_more_cell_data_accessor( viennagrid::cells(domain)[0] ) = 1.0;
-  one_more_cell_data_accessor( viennagrid::cells(domain)[1] ) = -1.0;
+  one_more_cell_data_accessor( viennagrid::cells(mesh)[0] ) = 1.0;
+  one_more_cell_data_accessor( viennagrid::cells(mesh)[1] ) = -1.0;
   
   
   // Using an std::map as the underlying container type
@@ -141,22 +141,22 @@ int main()
   CellDataMapContainerType cell_data_map;
   viennagrid::result_of::field< CellDataMapContainerType, CellType >::type cell_data_map_accessor(cell_data_map);
   
-  cell_data_map_accessor( viennagrid::cells(domain)[0] ) = 2.5;
-  cell_data_map_accessor( viennagrid::cells(domain)[1] ) = -2.5;
+  cell_data_map_accessor( viennagrid::cells(mesh)[0] ) = 2.5;
+  cell_data_map_accessor( viennagrid::cells(mesh)[1] ) = -2.5;
   
   
   //
   // Accessing points are also possible using accessor
   //
-  viennagrid::result_of::default_point_accessor<DomainType>::type default_point_accessor;
-  std::cout << default_point_accessor( viennagrid::vertices(domain)[0] ) << std::endl;
+  viennagrid::result_of::default_point_accessor<MeshType>::type default_point_accessor;
+  std::cout << default_point_accessor( viennagrid::vertices(mesh)[0] ) << std::endl;
   
   
   
   
   // Many algorithms require accessor for retrieving or storing data
   // e.g. the point accessor can be specified explicitly
-  // Otherwise a default point accessor is created for the domain
+  // Otherwise a default point accessor is created for the mesh
   
   // A short example where we shift all points
   
@@ -166,19 +166,19 @@ int main()
   // Creating an accessor for the points
   viennagrid::result_of::accessor< std::vector<PointType>, VertexType >::type point_accessor(points);
   
-  typedef viennagrid::result_of::vertex_range<DomainType>::type VertexRangeType;
+  typedef viennagrid::result_of::vertex_range<MeshType>::type VertexRangeType;
   typedef viennagrid::result_of::iterator<VertexRangeType>::type VertexRangeIterator;
   
   // Iterating over all vertices
-  VertexRangeType vertices = viennagrid::elements(domain);
+  VertexRangeType vertices = viennagrid::elements(mesh);
   for (VertexRangeIterator vit = vertices.begin(); vit != vertices.end(); ++vit)
     point_accessor(*vit) = default_point_accessor(*vit) + PointType(10, 10, 10); // shit point
   
-  // Centroid of the domain using the defaul accessor
-  std::cout << viennagrid::centroid(domain, default_point_accessor) << std::endl;
+  // Centroid of the mesh using the defaul accessor
+  std::cout << viennagrid::centroid(mesh, default_point_accessor) << std::endl;
   
-  // Centroid of the domain using our shifted points
-  std::cout << viennagrid::centroid(domain, point_accessor) << std::endl;
+  // Centroid of the mesh using our shifted points
+  std::cout << viennagrid::centroid(mesh, point_accessor) << std::endl;
 
   
   

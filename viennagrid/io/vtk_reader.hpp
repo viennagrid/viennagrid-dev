@@ -31,7 +31,7 @@
 #include "viennagrid/io/vtk_common.hpp"
 #include "viennagrid/io/helper.hpp"
 #include "viennagrid/io/xml_tag.hpp"
-#include "viennagrid/domain/element_creation.hpp"
+#include "viennagrid/mesh/element_creation.hpp"
 
 namespace viennagrid
 {
@@ -40,10 +40,10 @@ namespace viennagrid
 
     /** @brief A VTK reader class that allows to read meshes from XML-based VTK files as defined in http://www.vtk.org/pdf/file-formats.pdf
      *
-     * @tparam DomainType         The type of the domain to be read. Must not be a segment type!
-     * @tparam SegmentationType   The type of the segmentation to be read, default is the default segmentation of DomainType
+     * @tparam MeshType         The type of the mesh to be read. Must not be a segment type!
+     * @tparam SegmentationType   The type of the segmentation to be read, default is the default segmentation of MeshType
      */
-    template <typename DomainType, typename SegmentationType = typename viennagrid::result_of::segmentation<DomainType>::type >
+    template <typename MeshType, typename SegmentationType = typename viennagrid::result_of::segmentation<MeshType>::type >
     class vtk_reader
     {
     protected:
@@ -52,28 +52,28 @@ namespace viennagrid
         typedef typename SegmentationType::segment_id_type segment_id_type;
 
 
-        typedef typename viennagrid::result_of::point<DomainType>::type PointType;
+        typedef typename viennagrid::result_of::point<MeshType>::type PointType;
         typedef typename viennagrid::result_of::coord<PointType>::type CoordType;
         static const int geometric_dim = viennagrid::traits::static_size<PointType>::value;
 
-        typedef typename viennagrid::result_of::cell_tag<DomainType>::type CellTag;
+        typedef typename viennagrid::result_of::cell_tag<MeshType>::type CellTag;
 
 
-      typedef typename result_of::element<DomainType, viennagrid::vertex_tag>::type                           VertexType;
-      typedef typename result_of::handle<DomainType, viennagrid::vertex_tag>::type                           VertexHandleType;
-      typedef typename result_of::element<DomainType, CellTag>::type     CellType;
-      typedef typename result_of::handle<DomainType, CellTag>::type     CellHandleType;
+      typedef typename result_of::element<MeshType, viennagrid::vertex_tag>::type                           VertexType;
+      typedef typename result_of::handle<MeshType, viennagrid::vertex_tag>::type                           VertexHandleType;
+      typedef typename result_of::element<MeshType, CellTag>::type     CellType;
+      typedef typename result_of::handle<MeshType, CellTag>::type     CellHandleType;
 
-      typedef typename viennagrid::result_of::element_range<DomainType, viennagrid::vertex_tag>::type   VertexRange;
+      typedef typename viennagrid::result_of::element_range<MeshType, viennagrid::vertex_tag>::type   VertexRange;
       typedef typename viennagrid::result_of::iterator<VertexRange>::type        VertexIterator;
 
-      typedef typename viennagrid::result_of::element_range<DomainType, viennagrid::line_tag>::type   EdgeRange;
+      typedef typename viennagrid::result_of::element_range<MeshType, viennagrid::line_tag>::type   EdgeRange;
       typedef typename viennagrid::result_of::iterator<EdgeRange>::type          EdgeIterator;
 
-      typedef typename viennagrid::result_of::element_range<DomainType, typename CellTag::facet_tag>::type   FacetRange;
+      typedef typename viennagrid::result_of::element_range<MeshType, typename CellTag::facet_tag>::type   FacetRange;
       typedef typename viennagrid::result_of::iterator<FacetRange>::type                                 FacetIterator;
 
-      typedef typename viennagrid::result_of::element_range<DomainType, CellTag>::type     CellRange;
+      typedef typename viennagrid::result_of::element_range<MeshType, CellTag>::type     CellRange;
       typedef typename viennagrid::result_of::iterator<CellRange>::type                                  CellIterator;
 
 
@@ -194,7 +194,7 @@ namespace viennagrid
         }
       }
 
-      /** @brief Reads the coordinates of the points/vertices in the domain */
+      /** @brief Reads the coordinates of the points/vertices in the mesh */
       void readNodeCoordinates(long nodeNum, long numberOfComponents, segment_id_type seg_id)
       {
         double nodeCoord;
@@ -226,7 +226,7 @@ namespace viennagrid
         }
       }
 
-      /** @brief Reads the vertex indices of the cells inside the domain */
+      /** @brief Reads the vertex indices of the cells inside the mesh */
       void readCellIndices(std::size_t seg_id)
       {
         long cellNode = 0;
@@ -355,17 +355,17 @@ namespace viennagrid
 
       }
 
-      /////////////////////////// Routines for pushing everything to domain ///////////////
+      /////////////////////////// Routines for pushing everything to mesh ///////////////
 
-      /** @brief Pushes the vertices read to the domain */
-      void setupVertices(DomainType & domain)
+      /** @brief Pushes the vertices read to the mesh */
+      void setupVertices(MeshType & mesh)
       {
         for (std::size_t i=0; i<global_points_2.size(); ++i)
-          viennagrid::make_vertex_with_id( domain, typename VertexType::id_type(i), global_points_2[i] );
+          viennagrid::make_vertex_with_id( mesh, typename VertexType::id_type(i), global_points_2[i] );
       }
 
-      /** @brief Pushes the cells read to the domain. Preserves segment information. */
-      void setupCells(DomainType & domain, SegmentationType & segmentation, segment_id_type seg_id)
+      /** @brief Pushes the cells read to the mesh. Preserves segment information. */
+      void setupCells(MeshType & mesh, SegmentationType & segmentation, segment_id_type seg_id)
       {
           //***************************************************
           // building up the cells in ViennaGrid
@@ -414,9 +414,9 @@ namespace viennagrid
               std::size_t local_index = local_cell_vertices[seg_id][reordered_j + offsetIdx];
               std::size_t global_vertex_index = local_to_global_map[seg_id][local_index];
 
-              cell_vertex_handles[j] = viennagrid::elements<viennagrid::vertex_tag>(domain).handle_at(global_vertex_index);
+              cell_vertex_handles[j] = viennagrid::elements<viennagrid::vertex_tag>(mesh).handle_at(global_vertex_index);
 
-              viennagrid::add_handle( segmentation[seg_id], domain, cell_vertex_handles[j] );
+              viennagrid::add_handle( segmentation[seg_id], mesh, cell_vertex_handles[j] );
 
             }
 
@@ -426,9 +426,9 @@ namespace viennagrid
           }
       }
 
-      /** @brief Writes data for vertices to the ViennaGrid domain using ViennaData */
+      /** @brief Writes data for vertices to the ViennaGrid mesh using ViennaData */
       template <typename ContainerType>
-      void setupDataVertex(DomainType & domain, SegmentType & segment, segment_id_type seg_id, ContainerType const & container, std::size_t num_components)
+      void setupDataVertex(MeshType & mesh, SegmentType & segment, segment_id_type seg_id, ContainerType const & container, std::size_t num_components)
       {
         std::string const & name = container.first;
 
@@ -440,7 +440,7 @@ namespace viennagrid
             for (std::size_t i=0; i<container.second.size(); ++i)
             {
               std::size_t global_vertex_id = local_to_global_map[seg_id][i];
-              VertexType const & vertex = viennagrid::elements<viennagrid::vertex_tag>(domain)[global_vertex_id];
+              VertexType const & vertex = viennagrid::elements<viennagrid::vertex_tag>(mesh)[global_vertex_id];
 
               (*registered_vertex_scalar_data[name])(vertex) = (container.second)[i];
             }
@@ -450,7 +450,7 @@ namespace viennagrid
             for (std::size_t i=0; i<container.second.size(); ++i)
             {
               std::size_t global_vertex_id = local_to_global_map[seg_id][i];
-              VertexType const & vertex = viennagrid::elements<viennagrid::vertex_tag>(domain)[global_vertex_id];
+              VertexType const & vertex = viennagrid::elements<viennagrid::vertex_tag>(mesh)[global_vertex_id];
 
               (*current_registered_segment_vertex_scalar_data[name])(vertex) = (container.second)[i];
             }
@@ -464,7 +464,7 @@ namespace viennagrid
             for (std::size_t i=0; i<container.second.size(); ++i)
             {
               std::size_t global_vertex_id = local_to_global_map[seg_id][i];
-              VertexType const & vertex = viennagrid::elements<viennagrid::vertex_tag>(domain)[global_vertex_id];
+              VertexType const & vertex = viennagrid::elements<viennagrid::vertex_tag>(mesh)[global_vertex_id];
 
               if ( static_cast<typename VertexType::id_type::base_id_type>(vertex_scalar_data[container.first][seg_id].size()) <= vertex.id().get()) vertex_scalar_data[container.first][seg_id].resize(vertex.id().get()+1);
               vertex_scalar_data[container.first][seg_id][vertex.id().get()] = (container.second)[i];
@@ -479,7 +479,7 @@ namespace viennagrid
             for (std::size_t i=0; i<container.second.size()/3; ++i)
             {
               std::size_t global_vertex_id = local_to_global_map[seg_id][i];
-              VertexType const & vertex = viennagrid::elements<viennagrid::vertex_tag>(domain)[global_vertex_id];
+              VertexType const & vertex = viennagrid::elements<viennagrid::vertex_tag>(mesh)[global_vertex_id];
 
               (*registered_vertex_vector_data[name])(vertex).resize(3);
               (*registered_vertex_vector_data[name])(vertex)[0] = (container.second)[3*i+0];
@@ -492,7 +492,7 @@ namespace viennagrid
             for (std::size_t i=0; i<container.second.size(); ++i)
             {
               std::size_t global_vertex_id = local_to_global_map[seg_id][i];
-              VertexType const & vertex = viennagrid::elements<viennagrid::vertex_tag>(domain)[global_vertex_id];
+              VertexType const & vertex = viennagrid::elements<viennagrid::vertex_tag>(mesh)[global_vertex_id];
 
               (*current_registered_segment_vertex_vector_data[name])(vertex).resize(3);
               (*current_registered_segment_vertex_vector_data[name])(vertex)[0] = (container.second)[3*i+0];
@@ -510,7 +510,7 @@ namespace viennagrid
             for (std::size_t i=0; i<container.second.size() / 3; ++i)
             {
               std::size_t global_vertex_id = local_to_global_map[seg_id][i];
-              VertexType const & vertex = viennagrid::elements<viennagrid::vertex_tag>(domain)[global_vertex_id];
+              VertexType const & vertex = viennagrid::elements<viennagrid::vertex_tag>(mesh)[global_vertex_id];
 
               if ( static_cast<typename VertexType::id_type::base_id_type>(vertex_vector_data[container.first][seg_id].size()) <= vertex.id().get()) vertex_vector_data[container.first][seg_id].resize(vertex.id().get()+1);
               vertex_vector_data[container.first][seg_id][vertex.id().get()].resize(3);
@@ -522,9 +522,9 @@ namespace viennagrid
         }
       }
 
-      /** @brief Writes data for cells to the ViennaGrid domain using ViennaData */
+      /** @brief Writes data for cells to the ViennaGrid mesh using ViennaData */
       template <typename ContainerType>
-      void setupDataCell(DomainType &, SegmentType & segment, segment_id_type seg_id, ContainerType const & container, std::size_t num_components)
+      void setupDataCell(MeshType &, SegmentType & segment, segment_id_type seg_id, ContainerType const & container, std::size_t num_components)
       {
         std::string const & name = container.first;
 
@@ -612,33 +612,33 @@ namespace viennagrid
         }
       }
 
-      /** @brief Writes all data read from files to the domain */
-      void setupData(DomainType & domain, SegmentationType & segmentation, segment_id_type seg_id)
+      /** @brief Writes all data read from files to the mesh */
+      void setupData(MeshType & mesh, SegmentationType & segmentation, segment_id_type seg_id)
       {
         for (size_t i=0; i<local_scalar_vertex_data[seg_id].size(); ++i)
         {
-          setupDataVertex(domain, segmentation[seg_id], seg_id, local_scalar_vertex_data[seg_id][i], 1);
+          setupDataVertex(mesh, segmentation[seg_id], seg_id, local_scalar_vertex_data[seg_id][i], 1);
         }
 
         for (size_t i=0; i<local_vector_vertex_data[seg_id].size(); ++i)
         {
-          setupDataVertex(domain, segmentation[seg_id], seg_id, local_vector_vertex_data[seg_id][i], 3);
+          setupDataVertex(mesh, segmentation[seg_id], seg_id, local_vector_vertex_data[seg_id][i], 3);
         }
 
 
         for (size_t i=0; i<local_scalar_cell_data[seg_id].size(); ++i)
         {
-          setupDataCell(domain, segmentation[seg_id], seg_id, local_scalar_cell_data[seg_id][i], 1);
+          setupDataCell(mesh, segmentation[seg_id], seg_id, local_scalar_cell_data[seg_id][i], 1);
         }
 
         for (size_t i=0; i<local_vector_cell_data[seg_id].size(); ++i)
         {
-          setupDataCell(domain, segmentation[seg_id], seg_id, local_vector_cell_data[seg_id][i], 3);
+          setupDataCell(mesh, segmentation[seg_id], seg_id, local_vector_cell_data[seg_id][i], 3);
         }
 
       }
 
-      /** @brief Parses a .vtu file referring to a segment of the domain */
+      /** @brief Parses a .vtu file referring to a segment of the mesh */
       void parse_vtu_segment(std::string filename, segment_id_type seg_id)
       {
 
@@ -737,7 +737,7 @@ namespace viennagrid
 
       }
 
-      /** @brief Processes a .vtu file that represents a full domain */
+      /** @brief Processes a .vtu file that represents a full mesh */
       void process_vtu(std::string const & filename)
       {
         parse_vtu_segment(filename, 0);
@@ -829,11 +829,11 @@ namespace viennagrid
 
       /** @brief Triggers the read process.
        *
-       * @param domain        The domain to which the file content is read
+       * @param mesh        The mesh to which the file content is read
        * @param segmentation  The segmentation to which the file content is read
        * @param filename      Name of the file containing the mesh. Either .pvd (multi-segment) or .vtu (single segment)
        */
-      int operator()(DomainType & domain, SegmentationType & segmentation, std::string const & filename)
+      int operator()(MeshType & mesh, SegmentationType & segmentation, std::string const & filename)
       {
         std::string::size_type pos  = filename.rfind(".")+1;
         std::string extension = filename.substr(pos, filename.size());
@@ -850,15 +850,15 @@ namespace viennagrid
         {
           std::cerr << "Error: vtk-reader does not support file extension: " << extension << std::endl;
           std::cerr << "       the vtk-reader supports: " << std::endl;
-          std::cerr << "       *.vtu -- single-segment domains" << std::endl;
-          std::cerr << "       *.pvd -- multi-segment domains" << std::endl;
+          std::cerr << "       *.vtu -- single-segment meshs" << std::endl;
+          std::cerr << "       *.pvd -- multi-segment meshs" << std::endl;
           return EXIT_FAILURE;
         }
 
         //
-        // push everything to the ViennaGrid domain:
+        // push everything to the ViennaGrid mesh:
         //
-        setupVertices(domain);
+        setupVertices(mesh);
 //         for (size_t seg_id = 0; seg_id < local_cell_num.size(); ++seg_id)
         for (std::map<int, std::size_t>::iterator it = local_cell_num.begin(); it != local_cell_num.end(); ++it)
         {
@@ -868,8 +868,8 @@ namespace viennagrid
 //         for (size_t seg_id = 0; seg_id < local_cell_num.size(); ++seg_id)
         for (std::map<int, std::size_t>::iterator it = local_cell_num.begin(); it != local_cell_num.end(); ++it)
         {
-          setupCells(domain, segmentation, it->first);
-          setupData(domain, segmentation, it->first);
+          setupCells(mesh, segmentation, it->first);
+          setupData(mesh, segmentation, it->first);
         }
 
         clear();
@@ -880,13 +880,13 @@ namespace viennagrid
 
       /** @brief Triggers the read process.
        *
-       * @param domain        The domain to which the file content is read
+       * @param mesh        The mesh to which the file content is read
        * @param filename      Name of the file containing the mesh. Either .pvd (multi-segment) or .vtu (single segment)
        */
-      int operator()(DomainType & domain, std::string const & filename)
+      int operator()(MeshType & mesh, std::string const & filename)
       {
-        SegmentationType tmp(domain);
-        return (*this)(domain, tmp, filename);
+        SegmentationType tmp(mesh);
+        return (*this)(mesh, tmp, filename);
       }
 
 
@@ -1178,19 +1178,19 @@ namespace viennagrid
 
 
     /** @brief Convenience function for importing a mesh using a single line of code. */
-    template <typename DomainType, typename SegmentationType >
-    int import_vtk(DomainType & domain, SegmentationType & segmentation, std::string const & filename)
+    template <typename MeshType, typename SegmentationType >
+    int import_vtk(MeshType & mesh, SegmentationType & segmentation, std::string const & filename)
     {
-      vtk_reader<DomainType, SegmentationType> vtk_reader;
-      return vtk_reader(domain, segmentation, filename);
+      vtk_reader<MeshType, SegmentationType> vtk_reader;
+      return vtk_reader(mesh, segmentation, filename);
     }
 
     /** @brief Convenience function for importing a mesh using a single line of code. */
-    template <typename DomainType>
-    int import_vtk(DomainType & domain, std::string const & filename)
+    template <typename MeshType>
+    int import_vtk(MeshType & mesh, std::string const & filename)
     {
-      vtk_reader<DomainType> vtk_reader;
-      return vtk_reader(domain, filename);
+      vtk_reader<MeshType> vtk_reader;
+      return vtk_reader(mesh, filename);
     }
 
 
@@ -1199,15 +1199,15 @@ namespace viennagrid
 
     /** @brief Registers scalar-valued data on vertices at the VTK reader
       *
-      * @tparam DomainT             The domain type to be read to
+      * @tparam MeshT             The mesh type to be read to
       * @tparam SegmentationT       The segmentation type to be read to
       * @tparam AccessorOrFieldT    An accessor/field holding scalar data
       * @param  reader              The VTK reader object for which the data should be registered
       * @param  accessor_or_field   The accessor object holding scalar data on vertices
       * @param  quantity_name       The quantity name within the VTK file
       */
-    template <typename DomainT, typename SegmentationT, typename AccessorOrFieldT>
-    vtk_reader<DomainT, SegmentationT> & add_scalar_data_on_vertices(vtk_reader<DomainT, SegmentationT> & reader,
+    template <typename MeshT, typename SegmentationT, typename AccessorOrFieldT>
+    vtk_reader<MeshT, SegmentationT> & add_scalar_data_on_vertices(vtk_reader<MeshT, SegmentationT> & reader,
                                                                     AccessorOrFieldT const accessor_or_field,
                                                                     std::string const & quantity_name)
     {
@@ -1217,15 +1217,15 @@ namespace viennagrid
 
     /** @brief Registers vector-valued data on vertices at the VTK reader
       *
-      * @tparam DomainT             The domain type to be read to
+      * @tparam MeshT             The mesh type to be read to
       * @tparam SegmentationT       The segmentation type to be read to
       * @tparam AccessorOrFieldT    An accessor/field holding vector data
       * @param  reader              The VTK reader object for which the data should be registered
       * @param  accessor_or_field   The accessor object holding vector data on vertices
       * @param  quantity_name       The quantity name within the VTK file
       */
-    template <typename DomainT, typename SegmentationT, typename AccessorOrFieldT>
-    vtk_reader<DomainT, SegmentationT> & add_vector_data_on_vertices(vtk_reader<DomainT, SegmentationT> & reader,
+    template <typename MeshT, typename SegmentationT, typename AccessorOrFieldT>
+    vtk_reader<MeshT, SegmentationT> & add_vector_data_on_vertices(vtk_reader<MeshT, SegmentationT> & reader,
                                                                     AccessorOrFieldT const accessor_or_field,
                                                                     std::string const & quantity_name)
     {
@@ -1239,15 +1239,15 @@ namespace viennagrid
 
     /** @brief Registers scalar-valued data on cells at the VTK reader
       *
-      * @tparam DomainT             The domain type to be read to
+      * @tparam MeshT             The mesh type to be read to
       * @tparam SegmentationT       The segmentation type to be read to
       * @tparam AccessorOrFieldT    An accessor/field holding scalar data
       * @param  reader              The VTK reader object for which the data should be registered
       * @param  accessor_or_field   The accessor object holding scalar data on cells
       * @param  quantity_name       The quantity name within the VTK file
       */
-    template <typename DomainT, typename SegmentationT, typename AccessorOrFieldT>
-    vtk_reader<DomainT, SegmentationT> & add_scalar_data_on_cells(vtk_reader<DomainT, SegmentationT> & reader,
+    template <typename MeshT, typename SegmentationT, typename AccessorOrFieldT>
+    vtk_reader<MeshT, SegmentationT> & add_scalar_data_on_cells(vtk_reader<MeshT, SegmentationT> & reader,
                                                                     AccessorOrFieldT const accessor_or_field,
                                                                     std::string const & quantity_name)
     {
@@ -1257,15 +1257,15 @@ namespace viennagrid
 
     /** @brief Registers vector-valued data on cells at the VTK reader
       *
-      * @tparam DomainT             The domain type to be read to
+      * @tparam MeshT             The mesh type to be read to
       * @tparam SegmentationT       The segmentation type to be read to
       * @tparam AccessorOrFieldT    An accessor/field holding vector data
       * @param  reader              The VTK reader object for which the data should be registered
       * @param  accessor_or_field   The accessor object holding vector data on cells
       * @param  quantity_name       The quantity name within the VTK file
       */
-    template <typename DomainT, typename SegmentationT, typename AccessorOrFieldT>
-    vtk_reader<DomainT, SegmentationT> & add_vector_data_on_cells(vtk_reader<DomainT, SegmentationT> & reader,
+    template <typename MeshT, typename SegmentationT, typename AccessorOrFieldT>
+    vtk_reader<MeshT, SegmentationT> & add_vector_data_on_cells(vtk_reader<MeshT, SegmentationT> & reader,
                                                                     AccessorOrFieldT const accessor_or_field,
                                                                     std::string const & quantity_name)
     {

@@ -23,26 +23,26 @@
 #include "refinement-common.hpp"
 
 
-template <typename DomainT>
-int test(DomainT & domain_in)
+template <typename MeshT>
+int test(MeshT & mesh_in)
 {
-  typedef typename viennagrid::result_of::cell_tag<DomainT>::type                  CellTag;
+  typedef typename viennagrid::result_of::cell_tag<MeshT>::type                  CellTag;
   
-  typedef typename viennagrid::result_of::point<DomainT>::type          PointType;
-  typedef typename viennagrid::result_of::vertex<DomainT>::type       VertexType;
-  typedef typename viennagrid::result_of::line<DomainT>::type       EdgeType;
-  typedef typename viennagrid::result_of::cell<DomainT>::type      CellType;
+  typedef typename viennagrid::result_of::point<MeshT>::type          PointType;
+  typedef typename viennagrid::result_of::vertex<MeshT>::type       VertexType;
+  typedef typename viennagrid::result_of::line<MeshT>::type       EdgeType;
+  typedef typename viennagrid::result_of::cell<MeshT>::type      CellType;
 
-  typedef typename viennagrid::result_of::vertex_range<DomainT>::type  VertexContainer;
+  typedef typename viennagrid::result_of::vertex_range<MeshT>::type  VertexContainer;
   typedef typename viennagrid::result_of::iterator<VertexContainer>::type       VertexIterator;
     
   typedef typename viennagrid::result_of::line_range<CellType>::type    EdgeOnCellContainer;
   typedef typename viennagrid::result_of::iterator<EdgeOnCellContainer>::type     EdgeOnCellIterator;
 
-  typedef typename viennagrid::result_of::cell_range<DomainT>::type  CellContainer;
+  typedef typename viennagrid::result_of::cell_range<MeshT>::type  CellContainer;
   typedef typename viennagrid::result_of::iterator<CellContainer>::type         CellIterator;
   
-  CellContainer cells = viennagrid::elements(domain_in);
+  CellContainer cells = viennagrid::elements(mesh_in);
   CellIterator cit = cells.begin();
   
   CellType & cell = *cit;
@@ -69,12 +69,12 @@ int test(DomainT & domain_in)
     edge_refinement_tag_field(*eocit1) = true;
 
     
-    DomainT domain_refined;
-    viennagrid::refine<CellType>( domain_in, domain_refined, edge_refinement_tag_field );
+    MeshT mesh_refined;
+    viennagrid::refine<CellType>( mesh_in, mesh_refined, edge_refinement_tag_field );
     
-//     domain_refined = viennagrid::refine(domain_in, viennagrid::local_refinement_tag());
+//     mesh_refined = viennagrid::refine(mesh_in, viennagrid::local_refinement_tag());
     
-    if (sanity_check(domain_in, domain_refined) == EXIT_FAILURE)
+    if (sanity_check(mesh_in, mesh_refined) == EXIT_FAILURE)
     {
       print_refinement_edges(cell, edge_refinement_tag_field);
       return EXIT_FAILURE;
@@ -98,10 +98,10 @@ int test(DomainT & domain_in)
       edge_refinement_tag_field(*eocit1) = true;
       edge_refinement_tag_field(*eocit2) = true;
       
-      DomainT domain_refined;
-      viennagrid::refine<CellType>( domain_in, domain_refined, edge_refinement_tag_field );
+      MeshT mesh_refined;
+      viennagrid::refine<CellType>( mesh_in, mesh_refined, edge_refinement_tag_field );
 
-      if (sanity_check(domain_in, domain_refined) == EXIT_FAILURE)
+      if (sanity_check(mesh_in, mesh_refined) == EXIT_FAILURE)
       {
         print_refinement_edges(cell, edge_refinement_tag_field);
         return EXIT_FAILURE;
@@ -130,10 +130,10 @@ int test(DomainT & domain_in)
         edge_refinement_tag_field(*eocit2) = true;
         edge_refinement_tag_field(*eocit3) = true;
         
-        DomainT domain_refined;
-        viennagrid::refine<CellType>( domain_in, domain_refined, edge_refinement_tag_field );
+        MeshT mesh_refined;
+        viennagrid::refine<CellType>( mesh_in, mesh_refined, edge_refinement_tag_field );
         
-        if (sanity_check(domain_in, domain_refined) == EXIT_FAILURE)
+        if (sanity_check(mesh_in, mesh_refined) == EXIT_FAILURE)
         {
           print_refinement_edges(cell, edge_refinement_tag_field);
           return EXIT_FAILURE;
@@ -168,10 +168,10 @@ int test(DomainT & domain_in)
           edge_refinement_tag_field(*eocit3) = true;
           edge_refinement_tag_field(*eocit4) = true;
           
-          DomainT domain_refined;
-          viennagrid::refine<CellType>( domain_in, domain_refined, edge_refinement_tag_field );
+          MeshT mesh_refined;
+          viennagrid::refine<CellType>( mesh_in, mesh_refined, edge_refinement_tag_field );
           
-          if (sanity_check(domain_in, domain_refined) == EXIT_FAILURE)
+          if (sanity_check(mesh_in, mesh_refined) == EXIT_FAILURE)
           {
             print_refinement_edges(cell, edge_refinement_tag_field);
             return EXIT_FAILURE;
@@ -212,10 +212,10 @@ int test(DomainT & domain_in)
             edge_refinement_tag_field(*eocit4) = true;
             edge_refinement_tag_field(*eocit5) = true;
             
-            DomainT domain_refined;
-            viennagrid::refine<CellType>( domain_in, domain_refined, edge_refinement_tag_field );
+            MeshT mesh_refined;
+            viennagrid::refine<CellType>( mesh_in, mesh_refined, edge_refinement_tag_field );
 
-            if (sanity_check(domain_in, domain_refined) == EXIT_FAILURE)
+            if (sanity_check(mesh_in, mesh_refined) == EXIT_FAILURE)
             {
               print_refinement_edges(cell, edge_refinement_tag_field);
               return EXIT_FAILURE;
@@ -241,10 +241,10 @@ int test(DomainT & domain_in)
   }
   
   {
-    DomainT domain_refined;
-    viennagrid::refine<CellType>( domain_in, domain_refined, edge_refinement_tag_field );
+    MeshT mesh_refined;
+    viennagrid::refine<CellType>( mesh_in, mesh_refined, edge_refinement_tag_field );
     
-    if (sanity_check(domain_in, domain_refined) == EXIT_FAILURE)
+    if (sanity_check(mesh_in, mesh_refined) == EXIT_FAILURE)
     {
       print_refinement_edges(cell, edge_refinement_tag_field);
       return EXIT_FAILURE;
@@ -550,61 +550,61 @@ struct point_filler<12, B>
 };
 
 
-template <typename DomainType, typename PointFiller>
-void fill_domain(DomainType & domain, PointFiller const &)
+template <typename MeshType, typename PointFiller>
+void fill_mesh(MeshType & mesh, PointFiller const &)
 {
-//   typedef typename DomainType::config_type      ConfigType;
+//   typedef typename MeshType::config_type      ConfigType;
 //   typedef viennagrid::segment_t<ConfigType>     SegmentType;
-  typedef typename viennagrid::result_of::cell_tag<DomainType>::type         CellTag;
+  typedef typename viennagrid::result_of::cell_tag<MeshType>::type         CellTag;
 
-  typedef typename viennagrid::result_of::point<DomainType>::type          PointType;
-  typedef typename viennagrid::result_of::vertex<DomainType>::type       VertexType;
-  typedef typename viennagrid::result_of::vertex_handle<DomainType>::type       VertexHandleType;
-  typedef typename viennagrid::result_of::cell<DomainType>::type   CellType;
+  typedef typename viennagrid::result_of::point<MeshType>::type          PointType;
+  typedef typename viennagrid::result_of::vertex<MeshType>::type       VertexType;
+  typedef typename viennagrid::result_of::vertex_handle<MeshType>::type       VertexHandleType;
+  typedef typename viennagrid::result_of::cell<MeshType>::type   CellType;
   
-//   domain.segments().resize(1);
-//   SegmentType & seg = domain.segments()[0];
+//   mesh.segments().resize(1);
+//   SegmentType & seg = mesh.segments()[0];
   
   std::vector<PointType> points(4);
   PointFiller::apply(points);
 
   //upgrade to vertex:  
-  //std::cout << "Adding vertices to domain..." << std::endl;
+  //std::cout << "Adding vertices to mesh..." << std::endl;
   VertexHandleType vh[4];
   
   for (int i = 0; i < 4; ++i)
-    vh[i] = viennagrid::make_vertex( domain, points[i] );
+    vh[i] = viennagrid::make_vertex( mesh, points[i] );
 
-  //std::cout << "Adding cells to domain..." << std::endl;
-  viennagrid::make_cell( domain, vh, vh+4 );
+  //std::cout << "Adding cells to mesh..." << std::endl;
+  viennagrid::make_cell( mesh, vh, vh+4 );
 }
 
 
 template <unsigned int A, unsigned int B>
-struct domain_tester
+struct mesh_tester
 {
   static int apply()
   {
     typedef viennagrid::config::tetrahedral_3d    ConfigType;
-    typedef typename viennagrid::result_of::domain<ConfigType>::type        Domain;
+    typedef typename viennagrid::result_of::mesh<ConfigType>::type        Mesh;
    
     std::cout << std::endl;
-    std::cout << "Testing domain " << A << "..." << std::endl;
-    Domain domain;
-    fill_domain(domain, point_filler<A, B>());
-    if (test(domain) == EXIT_FAILURE)
+    std::cout << "Testing mesh " << A << "..." << std::endl;
+    Mesh mesh;
+    fill_mesh(mesh, point_filler<A, B>());
+    if (test(mesh) == EXIT_FAILURE)
     {
       std::cerr << "FAILED!" << std::endl;
       return EXIT_FAILURE;
     }
     
-    return domain_tester<A-1, B>::apply();
+    return mesh_tester<A-1, B>::apply();
   }
 };
 
 //terminate recursion:
 template <unsigned int B>
-struct domain_tester<0, B>
+struct mesh_tester<0, B>
 {
   static int apply() { return EXIT_SUCCESS; } 
 };
@@ -621,49 +621,49 @@ int main()
   std::cout << "*****************" << std::endl;
   
   
-  if (domain_tester<12, 1>::apply() == EXIT_SUCCESS)
+  if (mesh_tester<12, 1>::apply() == EXIT_SUCCESS)
   {
     std::cout << "SUCCESS!" << std::endl;
   }
   else
     return EXIT_FAILURE;
 
-  if (domain_tester<12, 2>::apply() == EXIT_SUCCESS)
+  if (mesh_tester<12, 2>::apply() == EXIT_SUCCESS)
   {
     std::cout << "SUCCESS!" << std::endl;
   }
   else
     return EXIT_FAILURE;
 
-  if (domain_tester<12, 3>::apply() == EXIT_SUCCESS)
+  if (mesh_tester<12, 3>::apply() == EXIT_SUCCESS)
   {
     std::cout << "SUCCESS!" << std::endl;
   }
   else
     return EXIT_FAILURE;
 
-  if (domain_tester<12, 4>::apply() == EXIT_SUCCESS)
+  if (mesh_tester<12, 4>::apply() == EXIT_SUCCESS)
   {
     std::cout << "SUCCESS!" << std::endl;
   }
   else
     return EXIT_FAILURE;
 
-  if (domain_tester<12, 5>::apply() == EXIT_SUCCESS)
+  if (mesh_tester<12, 5>::apply() == EXIT_SUCCESS)
   {
     std::cout << "SUCCESS!" << std::endl;
   }
   else
     return EXIT_FAILURE;
 
-  if (domain_tester<12, 6>::apply() == EXIT_SUCCESS)
+  if (mesh_tester<12, 6>::apply() == EXIT_SUCCESS)
   {
     std::cout << "SUCCESS!" << std::endl;
   }
   else
     return EXIT_FAILURE;
 
-  if (domain_tester<12, 7>::apply() == EXIT_SUCCESS)
+  if (mesh_tester<12, 7>::apply() == EXIT_SUCCESS)
   {
     std::cout << "SUCCESS!" << std::endl;
   }

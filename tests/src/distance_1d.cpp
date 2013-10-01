@@ -24,7 +24,7 @@
 
 #include "viennagrid/forwards.hpp"
 #include "viennagrid/config/default_configs.hpp"
-#include "viennagrid/domain/element_creation.hpp"
+#include "viennagrid/mesh/element_creation.hpp"
 #include "viennagrid/point.hpp"
 #include "viennagrid/algorithm/distance.hpp"
 
@@ -49,15 +49,15 @@ void fuzzy_check(double a, double b)
 // Line 2d
 //
 
-void setup_domain(viennagrid::line_1d_domain & domain)
+void setup_mesh(viennagrid::line_1d_mesh & mesh)
 {
-  typedef viennagrid::line_1d_domain                      DomainType;
+  typedef viennagrid::line_1d_mesh                      MeshType;
   typedef viennagrid::line_tag                                    CellTag;
   
-  typedef viennagrid::result_of::point<DomainType>::type          PointType;
-  typedef viennagrid::result_of::element<DomainType, viennagrid::vertex_tag>::type       VertexType;
-  typedef viennagrid::result_of::handle<DomainType, viennagrid::vertex_tag>::type       VertexHandleType;  
-  typedef viennagrid::result_of::element<DomainType, CellTag>::type        CellType;
+  typedef viennagrid::result_of::point<MeshType>::type          PointType;
+  typedef viennagrid::result_of::element<MeshType, viennagrid::vertex_tag>::type       VertexType;
+  typedef viennagrid::result_of::handle<MeshType, viennagrid::vertex_tag>::type       VertexHandleType;  
+  typedef viennagrid::result_of::element<MeshType, CellTag>::type        CellType;
   
   const size_t s = 6;
   PointType p[s];
@@ -71,31 +71,31 @@ void setup_domain(viennagrid::line_1d_domain & domain)
   p[5] = PointType(5.5);
 
   //upgrade to vertex:
-  std::cout << "Adding vertices to domain..." << std::endl;
+  std::cout << "Adding vertices to mesh..." << std::endl;
   for (size_t i = 0; i < s; ++i)
   {
-    v[i] = viennagrid::make_vertex( domain, p[i] );
+    v[i] = viennagrid::make_vertex( mesh, p[i] );
   }
 
-  std::cout << "Adding cells to domain..." << std::endl;
-  viennagrid::make_element<CellType>( domain, v, v+2 );
-  viennagrid::make_element<CellType>( domain, v+2, v+4 );
-  viennagrid::make_element<CellType>( domain, v+4, v+6 );
+  std::cout << "Adding cells to mesh..." << std::endl;
+  viennagrid::make_element<CellType>( mesh, v, v+2 );
+  viennagrid::make_element<CellType>( mesh, v+2, v+4 );
+  viennagrid::make_element<CellType>( mesh, v+4, v+6 );
 }
 
-void test(viennagrid::line_1d_domain)
+void test(viennagrid::line_1d_mesh)
 {
-  typedef viennagrid::line_1d_domain                            Domain;
+  typedef viennagrid::line_1d_mesh                            Mesh;
   typedef viennagrid::line_tag                                          CellTag;
   
-  typedef viennagrid::result_of::point<Domain>::type                PointType;
-  typedef viennagrid::result_of::element<Domain, viennagrid::vertex_tag>::type             VertexType;
-  typedef viennagrid::result_of::element<Domain, viennagrid::line_tag>::type             EdgeType;
-  typedef viennagrid::result_of::element<Domain, CellTag>::type  CellType;
+  typedef viennagrid::result_of::point<Mesh>::type                PointType;
+  typedef viennagrid::result_of::element<Mesh, viennagrid::vertex_tag>::type             VertexType;
+  typedef viennagrid::result_of::element<Mesh, viennagrid::line_tag>::type             EdgeType;
+  typedef viennagrid::result_of::element<Mesh, CellTag>::type  CellType;
 
-  Domain domain;
+  Mesh mesh;
   
-  setup_domain(domain);
+  setup_mesh(mesh);
   
   PointType A(0);
   PointType B(1.0);
@@ -106,9 +106,9 @@ void test(viennagrid::line_1d_domain)
   PointType G(3.5);
   PointType H(4.0);
   
-  CellType line0 = viennagrid::elements<CellTag>(domain)[0];
-  CellType line1 = viennagrid::elements<CellTag>(domain)[1];
-  CellType line2 = viennagrid::elements<CellTag>(domain)[2];
+  CellType line0 = viennagrid::elements<CellTag>(mesh)[0];
+  CellType line1 = viennagrid::elements<CellTag>(mesh)[1];
+  CellType line2 = viennagrid::elements<CellTag>(mesh)[2];
   
   //
   // Distance checks for t0
@@ -188,7 +188,7 @@ int main()
   std::cout << "*****************" << std::endl;
 
   std::cout << "==== Testing line mesh in 1D ====" << std::endl;
-  test(viennagrid::line_1d_domain());
+  test(viennagrid::line_1d_mesh());
   
   std::cout << "*******************************" << std::endl;
   std::cout << "* Test finished successfully! *" << std::endl;

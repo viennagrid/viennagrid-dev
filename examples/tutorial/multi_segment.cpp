@@ -31,32 +31,32 @@
 #include "viennagrid/algorithm/surface.hpp"
 #include "viennagrid/algorithm/voronoi.hpp"
 #include "viennagrid/io/vtk_writer.hpp"
-#include "viennagrid/domain/coboundary_iteration.hpp"
-#include "viennagrid/domain/neighbour_iteration.hpp"
+#include "viennagrid/mesh/coboundary_iteration.hpp"
+#include "viennagrid/mesh/neighbour_iteration.hpp"
 
 #include <typeinfo>
 
 int main()
 {
-  typedef viennagrid::domain_t< viennagrid::config::hexahedral_3d >     DomainType;
-  typedef viennagrid::result_of::domain_view<DomainType>::type          DomainViewType;
-  typedef viennagrid::result_of::segmentation<DomainType>::type         SegmentationType;
+  typedef viennagrid::mesh_t< viennagrid::config::hexahedral_3d >     MeshType;
+  typedef viennagrid::result_of::mesh_view<MeshType>::type          MeshViewType;
+  typedef viennagrid::result_of::segmentation<MeshType>::type         SegmentationType;
   typedef SegmentationType::segment_type                                SegmentType;
   
-  typedef viennagrid::result_of::cell_tag<DomainType>::type             CellTag;
-  typedef viennagrid::result_of::facet_tag<DomainType>::type            FacetTag;
+  typedef viennagrid::result_of::cell_tag<MeshType>::type             CellTag;
+  typedef viennagrid::result_of::facet_tag<MeshType>::type            FacetTag;
   
-  typedef viennagrid::result_of::point<DomainType>::type                PointType;
-  typedef viennagrid::result_of::vertex<DomainType>::type               VertexType;
-  typedef viennagrid::result_of::edge<DomainType>::type                 EdgeType;
-  typedef viennagrid::result_of::facet<DomainType>::type                FacetType;
-  typedef viennagrid::result_of::facet_handle<DomainType>::type         FacetHandleType;
-  typedef viennagrid::result_of::cell<DomainType>::type                 CellType;
+  typedef viennagrid::result_of::point<MeshType>::type                PointType;
+  typedef viennagrid::result_of::vertex<MeshType>::type               VertexType;
+  typedef viennagrid::result_of::edge<MeshType>::type                 EdgeType;
+  typedef viennagrid::result_of::facet<MeshType>::type                FacetType;
+  typedef viennagrid::result_of::facet_handle<MeshType>::type         FacetHandleType;
+  typedef viennagrid::result_of::cell<MeshType>::type                 CellType;
                                             
-  typedef viennagrid::result_of::vertex_range<DomainType>::type         VertexRange;
+  typedef viennagrid::result_of::vertex_range<MeshType>::type         VertexRange;
   typedef viennagrid::result_of::iterator<VertexRange>::type            VertexIterator;
                                             
-  typedef viennagrid::result_of::facet_range<DomainType>::type          FacetRange;
+  typedef viennagrid::result_of::facet_range<MeshType>::type          FacetRange;
   typedef viennagrid::result_of::iterator<FacetRange>::type             FacetIterator;
   
   typedef viennagrid::result_of::coboundary_range<SegmentType, FacetTag, CellTag>::type                 CellOnFacetRange;
@@ -69,37 +69,37 @@ int main()
   typedef viennagrid::result_of::iterator<VertexOnSegmentRange>::type   VertexOnSegmentIterator;
   
   std::cout << "------------------------------------------------" << std::endl;
-  std::cout << "-- ViennaGrid tutorial: Multi-segment domains --" << std::endl;
+  std::cout << "-- ViennaGrid tutorial: Multi-segment meshs --" << std::endl;
   std::cout << "------------------------------------------------" << std::endl;
   std::cout << std::endl;
   
-  DomainType domain;
-  SegmentationType segments(domain);
+  MeshType mesh;
+  SegmentationType segments(mesh);
 
   //read a multi-segment mesh using the VTK reader:
-  viennagrid::io::vtk_reader<DomainType, SegmentationType>  reader;
-  reader(domain, segments, "../data/multi_segment_hex_main.pvd");
+  viennagrid::io::vtk_reader<MeshType, SegmentationType>  reader;
+  reader(mesh, segments, "../data/multi_segment_hex_main.pvd");
 
   // Obtain references to the two segments.
   SegmentType & seg1 = segments[0];
   SegmentType & seg2 = segments[1];
   
   //
-  // Iterate over all facets of the domain and find the interface facet:
+  // Iterate over all facets of the mesh and find the interface facet:
   // In the same way, one may also traverse interface vertices, etc.
-  std::cout << "Facets of the full domain:" << std::endl;
+  std::cout << "Facets of the full mesh:" << std::endl;
   FacetHandleType interface_facet_handle;
-  FacetRange facets = viennagrid::elements<FacetType>(domain);  
+  FacetRange facets = viennagrid::elements<FacetType>(mesh);  
   for (FacetIterator fit = facets.begin(); fit != facets.end(); ++fit)
   {
-    FacetType & facet = viennagrid::dereference_handle(domain, fit.handle());
+    FacetType & facet = viennagrid::dereference_handle(mesh, fit.handle());
     if (viennagrid::is_interface(seg1, seg2, facet))  //three arguments: The element and the two interfacing segments
       interface_facet_handle = fit.handle();
     
     std::cout << facet << std::endl;
   }
   
-  FacetType & interface_facet = viennagrid::dereference_handle(domain, interface_facet_handle);
+  FacetType & interface_facet = viennagrid::dereference_handle(mesh, interface_facet_handle);
   std::cout << "Interface facet: " << std::endl;
   std::cout << interface_facet << std::endl;
   
@@ -155,7 +155,7 @@ int main()
   
   // Compute Voronoi information for each of the two segments:
 
-  typedef viennagrid::result_of::const_cell_handle<DomainType>::type    ConstCellHandleType;
+  typedef viennagrid::result_of::const_cell_handle<MeshType>::type    ConstCellHandleType;
   
   std::deque<double> interface_areas_seg1;
   std::deque<double> interface_areas_seg2;
@@ -195,7 +195,7 @@ int main()
 
   
   //
-  // Finally, iterate over the vertices of the domain and write segment-based vertex data:
+  // Finally, iterate over the vertices of the mesh and write segment-based vertex data:
   // As data container std::map<std::size_t, double> is used, where the key is used for the segment index 
   std::deque< double > first_segment_data;
   std::deque< double > second_segment_data;
@@ -219,10 +219,10 @@ int main()
     second_segment_field(*vosit) = 2.0;
   }
   
-  viennagrid::io::vtk_writer<DomainType, SegmentationType> my_vtk_writer;  
+  viennagrid::io::vtk_writer<MeshType, SegmentationType> my_vtk_writer;  
   my_vtk_writer.add_scalar_data_on_vertices(seg1, first_segment_field, "segment_data" );
   my_vtk_writer.add_scalar_data_on_vertices(seg2, second_segment_field, "segment_data" );
-  my_vtk_writer(domain, segments, "multi_segment");
+  my_vtk_writer(mesh, segments, "multi_segment");
   
   
   std::cout << "-----------------------------------------------" << std::endl;

@@ -26,24 +26,24 @@
 #include "viennagrid/algorithm/volume.hpp"
 
 
-template <typename DomaintType,
+template <typename MeshtType,
           typename VertexBoxVolumeAccessorT, typename VertexBoxVolumeContributionAccessorT,
           typename InterfaceAreaAccessorT, typename InterfaceContributionAccessorT>
-void output_voronoi_info(DomaintType const & d,
+void output_voronoi_info(MeshtType const & d,
                          VertexBoxVolumeAccessorT const vertex_box_volume_accessor, VertexBoxVolumeContributionAccessorT const vertex_box_volume_contribution_accessor,
                          InterfaceAreaAccessorT const interface_area_accessor, InterfaceContributionAccessorT const interface_contribution_accessor)
 {
 //   typedef typename DeviceType::config_type           Config;
 //   typedef typename Config::cell_tag                  CellTag;
-  typedef typename viennagrid::result_of::point<DomaintType>::type                            PointType;
-  typedef typename viennagrid::result_of::vertex<DomaintType>::type                         VertexType;
-  typedef typename viennagrid::result_of::line<DomaintType>::type                         EdgeType;
-  typedef typename viennagrid::result_of::cell<DomaintType>::type   CellType;
+  typedef typename viennagrid::result_of::point<MeshtType>::type                            PointType;
+  typedef typename viennagrid::result_of::vertex<MeshtType>::type                         VertexType;
+  typedef typename viennagrid::result_of::line<MeshtType>::type                         EdgeType;
+  typedef typename viennagrid::result_of::cell<MeshtType>::type   CellType;
   
-  typedef typename viennagrid::result_of::const_vertex_range<DomaintType>::type    VertexContainer;
+  typedef typename viennagrid::result_of::const_vertex_range<MeshtType>::type    VertexContainer;
   typedef typename viennagrid::result_of::iterator<VertexContainer>::type         VertexIterator;
   
-  typedef typename viennagrid::result_of::const_line_range<DomaintType>::type    EdgeContainer;
+  typedef typename viennagrid::result_of::const_line_range<MeshtType>::type    EdgeContainer;
   typedef typename viennagrid::result_of::iterator<EdgeContainer>::type           EdgeIterator;
   
 //   typedef std::vector< std::pair<CellType const *, double> >      CellContributionType;
@@ -100,11 +100,11 @@ void output_voronoi_info(DomaintType const & d,
 //
 // Test for Voronoi correctness: Volume of cells must equal volume of boxes
 //
-template <typename DomainType, typename VertexBoxVolumeAccessorT>
-double voronoi_volume(DomainType const & d,
+template <typename MeshType, typename VertexBoxVolumeAccessorT>
+double voronoi_volume(MeshType const & d,
                       VertexBoxVolumeAccessorT const vertex_box_volume_accessor)
 {
-  typedef typename viennagrid::result_of::const_vertex_range<DomainType>::type                          VertexContainer;
+  typedef typename viennagrid::result_of::const_vertex_range<MeshType>::type                          VertexContainer;
   typedef typename viennagrid::result_of::iterator<VertexContainer>::type                                     VertexIterator;
   
 //   viennagrid::voronoi_box_volume_key box_volume_key;
@@ -127,11 +127,11 @@ double voronoi_volume(DomainType const & d,
 //
 // Test for Voronoi correctness: Volume of cells must equal volume of boxes
 //
-template <typename DomainType, typename VertexBoxVolumeContributionAccessorT>
-double voronoi_volume_vertex_detailed(DomainType const & d,
+template <typename MeshType, typename VertexBoxVolumeContributionAccessorT>
+double voronoi_volume_vertex_detailed(MeshType const & d,
                                       VertexBoxVolumeContributionAccessorT const vertex_box_volume_contribution_accessor)
 {  
-  typedef typename viennagrid::result_of::const_vertex_range<DomainType>::type                          VertexContainer;
+  typedef typename viennagrid::result_of::const_vertex_range<MeshType>::type                          VertexContainer;
   typedef typename viennagrid::result_of::iterator<VertexContainer>::type                                     VertexIterator;
   
 //   typedef typename viennagrid::result_of::voronoi_cell_contribution<CellType>::type      CellContributionType;
@@ -157,11 +157,11 @@ double voronoi_volume_vertex_detailed(DomainType const & d,
 }
 
 
-template <typename DomainType, typename EdgeBoxVolumeContributionAccessorT>
-double voronoi_volume_edge_detailed(DomainType const & d,
+template <typename MeshType, typename EdgeBoxVolumeContributionAccessorT>
+double voronoi_volume_edge_detailed(MeshType const & d,
                                     EdgeBoxVolumeContributionAccessorT const edge_box_volume_contribution_accessor)
 {
-  typedef typename viennagrid::result_of::const_line_range<DomainType>::type               EdgeContainer;
+  typedef typename viennagrid::result_of::const_line_range<MeshType>::type               EdgeContainer;
   typedef typename viennagrid::result_of::iterator<EdgeContainer>::type                        EdgeIterator;
   
 //   typedef typename viennagrid::result_of::voronoi_cell_contribution<CellType>::type      CellContributionType;
@@ -186,43 +186,43 @@ double voronoi_volume_edge_detailed(DomainType const & d,
   return boxed_volume;
 }
 
-template <typename DomainType,
+template <typename MeshType,
           typename VertexBoxVolumeAccessorT,
           typename VertexBoxVolumeContributionAccessorT,
           typename EdgeBoxVolumeContributionAccessorT>
-void voronoi_volume_check(DomainType const & domain,
+void voronoi_volume_check(MeshType const & mesh,
                           VertexBoxVolumeAccessorT const vertex_box_volume_accessor,
                           VertexBoxVolumeContributionAccessorT const vertex_box_volume_contribution_accessor,
                           EdgeBoxVolumeContributionAccessorT const edge_box_volume_contribution_accessor)
 {
-  double voronoi_vol = voronoi_volume(domain, vertex_box_volume_accessor);  
-  double voronoi_vol_vertices = voronoi_volume_vertex_detailed(domain, vertex_box_volume_contribution_accessor);  
-  double voronoi_vol_edges = voronoi_volume_edge_detailed(domain, edge_box_volume_contribution_accessor);  
-  double domain_vol = viennagrid::volume(domain);  
+  double voronoi_vol = voronoi_volume(mesh, vertex_box_volume_accessor);  
+  double voronoi_vol_vertices = voronoi_volume_vertex_detailed(mesh, vertex_box_volume_contribution_accessor);  
+  double voronoi_vol_edges = voronoi_volume_edge_detailed(mesh, edge_box_volume_contribution_accessor);  
+  double mesh_vol = viennagrid::volume(mesh);  
   
-  if ( fabs(voronoi_vol - domain_vol) / domain_vol > 1e-10 )
+  if ( fabs(voronoi_vol - mesh_vol) / mesh_vol > 1e-10 )
   {
-    std::cerr << "Mismatch of volumes: " << voronoi_vol << " vs " << domain_vol << std::endl;
+    std::cerr << "Mismatch of volumes: " << voronoi_vol << " vs " << mesh_vol << std::endl;
     exit(EXIT_FAILURE);
   }
   else
-    std::cout << "Volume check passed: " << voronoi_vol << " vs " << domain_vol << std::endl;
+    std::cout << "Volume check passed: " << voronoi_vol << " vs " << mesh_vol << std::endl;
 
-  if ( fabs(voronoi_vol_vertices - domain_vol) / domain_vol > 1e-10 )
+  if ( fabs(voronoi_vol_vertices - mesh_vol) / mesh_vol > 1e-10 )
   {
-    std::cerr << "Mismatch of volumes (detailed, vertex): " << voronoi_vol_vertices << " vs " << domain_vol << std::endl;
+    std::cerr << "Mismatch of volumes (detailed, vertex): " << voronoi_vol_vertices << " vs " << mesh_vol << std::endl;
     exit(EXIT_FAILURE);
   }
   else
-    std::cout << "Detailed vertices volume check passed: " << voronoi_vol_vertices << " vs " << domain_vol << std::endl;
+    std::cout << "Detailed vertices volume check passed: " << voronoi_vol_vertices << " vs " << mesh_vol << std::endl;
 
-  if ( fabs(voronoi_vol_edges - domain_vol) / domain_vol > 1e-10 )
+  if ( fabs(voronoi_vol_edges - mesh_vol) / mesh_vol > 1e-10 )
   {
-    std::cerr << "Mismatch of volumes (detailed, edge): " << voronoi_vol_edges << " vs " << domain_vol << std::endl;
+    std::cerr << "Mismatch of volumes (detailed, edge): " << voronoi_vol_edges << " vs " << mesh_vol << std::endl;
     exit(EXIT_FAILURE);
   }
   else
-    std::cout << "Detailed edge volume check passed: " << voronoi_vol_vertices << " vs " << domain_vol << std::endl;
+    std::cout << "Detailed edge volume check passed: " << voronoi_vol_vertices << " vs " << mesh_vol << std::endl;
 
 }
 

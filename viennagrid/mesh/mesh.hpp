@@ -1,5 +1,5 @@
-#ifndef VIENNAGRID_DOMAIN_HPP
-#define VIENNAGRID_DOMAIN_HPP
+#ifndef VIENNAGRID_MESH_HPP
+#define VIENNAGRID_MESH_HPP
 
 /* =======================================================================
    Copyright (c) 2011-2013, Institute for Microelectronics,
@@ -23,12 +23,12 @@
 #include "viennagrid/storage/algorithm.hpp"
 
 #include "viennagrid/config/element_config.hpp"
-#include "viennagrid/config/domain_config.hpp"
+#include "viennagrid/config/mesh_config.hpp"
 
 #include "viennagrid/element/element_view.hpp"
 
-/** @file domain.hpp
-    @brief Contains definition and implementation of domain and domain views
+/** @file mesh.hpp
+    @brief Contains definition and implementation of mesh and mesh views
 */
 
 
@@ -36,33 +36,33 @@ namespace viennagrid
 {
   /** @brief For internal use only */
   template<typename container_collection_type>
-  class view_domain_setter
+  class view_mesh_setter
   {
   public:
 
-    view_domain_setter(container_collection_type & domain_) : domain(domain_) {}
+    view_mesh_setter(container_collection_type & mesh_) : mesh(mesh_) {}
 
     template<typename container_type>
     void operator()( container_type & container )
     {
         typedef typename container_type::value_type value_type;
-        container.set_base_container( viennagrid::storage::collection::get<value_type>(domain) );
+        container.set_base_container( viennagrid::storage::collection::get<value_type>(mesh) );
     }
 
   private:
-    container_collection_type & domain;
+    container_collection_type & mesh;
   };
 
 
-  /** @brief Proxy object for a domain. This is used for wrapping a domain/domain view when creating a view
+  /** @brief Proxy object for a mesh. This is used for wrapping a mesh/mesh view when creating a view
     *
-    * @tparam DomainT    The domain/domain view type
+    * @tparam MeshT    The mesh/mesh view type
     */
-  template<typename DomainT>
-  struct domain_proxy
+  template<typename MeshT>
+  struct mesh_proxy
   {
-    domain_proxy( DomainT & domain_ ) : domain(&domain_){}
-    DomainT * domain;
+    mesh_proxy( MeshT & mesh_ ) : mesh(&mesh_){}
+    MeshT * mesh;
   };
 
 
@@ -131,25 +131,25 @@ namespace viennagrid
 
     /** @brief For internal use only */
     template <typename WrappedConfigT>
-    struct domain_element_collection_type
+    struct mesh_element_collection_type
     {
       typedef typename config::result_of::element_collection< WrappedConfigT >::type   type;
     };
 
-    template <typename WrappedDomainConfigType, typename ElementTypeList, typename ContainerConfig>
-    struct domain_element_collection_type< decorated_domain_view_config<WrappedDomainConfigType, ElementTypeList, ContainerConfig> >
+    template <typename WrappedMeshConfigType, typename ElementTypeList, typename ContainerConfig>
+    struct mesh_element_collection_type< decorated_mesh_view_config<WrappedMeshConfigType, ElementTypeList, ContainerConfig> >
     {
-      typedef typename WrappedDomainConfigType::type   DomainConfigType;
+      typedef typename WrappedMeshConfigType::type   MeshConfigType;
 
-      typedef typename domain_element_collection_type<WrappedDomainConfigType>::type   full_domain_element_collection_type;
+      typedef typename mesh_element_collection_type<WrappedMeshConfigType>::type   full_mesh_element_collection_type;
 
-      typedef typename filter_element_container<ElementTypeList, typename full_domain_element_collection_type::typemap>::type      view_container_collection_typemap;
+      typedef typename filter_element_container<ElementTypeList, typename full_mesh_element_collection_type::typemap>::type      view_container_collection_typemap;
       typedef typename viennagrid::storage::result_of::view_collection<view_container_collection_typemap, ContainerConfig>::type   type;
     };
 
     /** @brief For internal use only */
     template <typename WrappedConfigT>
-    struct domain_appendix_type
+    struct mesh_appendix_type
     {
       typedef typename WrappedConfigT::type   ConfigType;
 
@@ -173,108 +173,108 @@ namespace viennagrid
       > type;
     };
 
-    template <typename WrappedDomainConfigT, typename ElementTypeListT, typename ContainerConfigT>
-    struct domain_appendix_type< decorated_domain_view_config<WrappedDomainConfigT, ElementTypeListT, ContainerConfigT> >
+    template <typename WrappedMeshConfigT, typename ElementTypeListT, typename ContainerConfigT>
+    struct mesh_appendix_type< decorated_mesh_view_config<WrappedMeshConfigT, ElementTypeListT, ContainerConfigT> >
     {
-      typedef typename domain_appendix_type<WrappedDomainConfigT>::type    type;
+      typedef typename mesh_appendix_type<WrappedMeshConfigT>::type    type;
     };
 
 
     /** @brief For internal use only */
     template <typename WrappedConfigT>
-    struct domain_change_counter_type
+    struct mesh_change_counter_type
     {
-      typedef typename config::result_of::query_config<typename WrappedConfigT::type, config::domain_change_counter_tag>::type  type;
+      typedef typename config::result_of::query_config<typename WrappedConfigT::type, config::mesh_change_counter_tag>::type  type;
     };
 
-    template <typename WrappedDomainConfigT, typename ElementTypeList, typename ContainerConfig>
-    struct domain_change_counter_type< decorated_domain_view_config<WrappedDomainConfigT, ElementTypeList, ContainerConfig> >
+    template <typename WrappedMeshConfigT, typename ElementTypeList, typename ContainerConfig>
+    struct mesh_change_counter_type< decorated_mesh_view_config<WrappedMeshConfigT, ElementTypeList, ContainerConfig> >
     {
-      typedef typename config::result_of::query_config<typename WrappedDomainConfigT::type, config::domain_change_counter_tag>::type  type;
+      typedef typename config::result_of::query_config<typename WrappedMeshConfigT::type, config::mesh_change_counter_tag>::type  type;
     };
 
 
     /** @brief For internal use only */
     template <typename WrappedConfigType>
-    struct domain_inserter_type
+    struct mesh_inserter_type
     {
       typedef typename config::result_of::element_collection<WrappedConfigType>::type                                                       element_collection_type;
       typedef typename viennagrid::result_of::id_generator<WrappedConfigType>::type                                                 id_generator_type;
-      typedef typename domain_change_counter_type<WrappedConfigType>::type change_counter_type;
+      typedef typename mesh_change_counter_type<WrappedConfigType>::type change_counter_type;
 
       typedef typename viennagrid::storage::result_of::physical_inserter<element_collection_type, change_counter_type, id_generator_type>::type   type;
     };
 
-    template <typename WrappedDomainConfigT, typename ElementTypeList, typename ContainerConfig>
-    struct domain_inserter_type< decorated_domain_view_config<WrappedDomainConfigT, ElementTypeList, ContainerConfig> >
+    template <typename WrappedMeshConfigT, typename ElementTypeList, typename ContainerConfig>
+    struct mesh_inserter_type< decorated_mesh_view_config<WrappedMeshConfigT, ElementTypeList, ContainerConfig> >
     {
-      typedef decorated_domain_view_config<WrappedDomainConfigT, ElementTypeList, ContainerConfig>  argument_type;
-      typedef WrappedDomainConfigT ConfigType;
+      typedef decorated_mesh_view_config<WrappedMeshConfigT, ElementTypeList, ContainerConfig>  argument_type;
+      typedef WrappedMeshConfigT ConfigType;
 
-      typedef typename domain_element_collection_type<argument_type>::type                             view_container_collection_type;
-      typedef typename domain_inserter_type<WrappedDomainConfigT>::type                             full_domain_inserter_type;
-      typedef typename domain_change_counter_type<WrappedDomainConfigT>::type change_counter_type;
+      typedef typename mesh_element_collection_type<argument_type>::type                             view_container_collection_type;
+      typedef typename mesh_inserter_type<WrappedMeshConfigT>::type                             full_mesh_inserter_type;
+      typedef typename mesh_change_counter_type<WrappedMeshConfigT>::type change_counter_type;
 
-      typedef typename viennagrid::storage::result_of::recursive_inserter<view_container_collection_type, change_counter_type, full_domain_inserter_type>::type      type;
+      typedef typename viennagrid::storage::result_of::recursive_inserter<view_container_collection_type, change_counter_type, full_mesh_inserter_type>::type      type;
     };
   }
 
   template <typename WrappedConfigType>
-  class domain_t
+  class mesh_t
   {
-    typedef domain_t<WrappedConfigType> self_type;
+    typedef mesh_t<WrappedConfigType> self_type;
 
   public:
     typedef WrappedConfigType                    wrapped_config_type;
     typedef typename WrappedConfigType::type     config_type;
 
 
-    typedef typename result_of::domain_element_collection_type<WrappedConfigType>::type     element_collection_type;
-    typedef typename result_of::domain_appendix_type<WrappedConfigType>::type               appendix_type;
-    typedef typename result_of::domain_change_counter_type<WrappedConfigType>::type         change_counter_type;
-    typedef typename result_of::domain_inserter_type<WrappedConfigType>::type               inserter_type;
+    typedef typename result_of::mesh_element_collection_type<WrappedConfigType>::type     element_collection_type;
+    typedef typename result_of::mesh_appendix_type<WrappedConfigType>::type               appendix_type;
+    typedef typename result_of::mesh_change_counter_type<WrappedConfigType>::type         change_counter_type;
+    typedef typename result_of::mesh_inserter_type<WrappedConfigType>::type               inserter_type;
 
 
     /** @brief Default constructor */
-    domain_t() : inserter( element_container_collection, change_counter_ ), change_counter_(0) {}
+    mesh_t() : inserter( element_container_collection, change_counter_ ), change_counter_(0) {}
 
-    /** @brief Constructor for creating a view from another domain/domain view
+    /** @brief Constructor for creating a view from another mesh/mesh view
       *
-      * @tparam OtherWrappedConfigT     Wrapped config type of the domain type from which the view is created
-      * @tparam proxy                   Proxy object wrapping the domain object from which the view is created
+      * @tparam OtherWrappedConfigT     Wrapped config type of the mesh type from which the view is created
+      * @tparam proxy                   Proxy object wrapping the mesh object from which the view is created
       */
     template<typename OtherWrappedConfigT>
-    domain_t( domain_proxy<domain_t<OtherWrappedConfigT> > proxy ) : change_counter_(0)
+    mesh_t( mesh_proxy<mesh_t<OtherWrappedConfigT> > proxy ) : change_counter_(0)
     {
-        typedef typename domain_t<OtherWrappedConfigT>::element_collection_type   other_element_collection_type;
+        typedef typename mesh_t<OtherWrappedConfigT>::element_collection_type   other_element_collection_type;
 
-        view_domain_setter< other_element_collection_type > functor(proxy.domain->element_collection());
+        view_mesh_setter< other_element_collection_type > functor(proxy.mesh->element_collection());
         viennagrid::storage::collection::for_each(element_container_collection, functor);
 
-        inserter = inserter_type( element_container_collection, change_counter_,proxy.domain->get_inserter() );
+        inserter = inserter_type( element_container_collection, change_counter_,proxy.mesh->get_inserter() );
     }
 
-    ~domain_t() {}
+    ~mesh_t() {}
 
 
-    /** @brief Copy constructor, remember that copying a domain might have performance impact due to handle fixing: handles for boundary element will point to other locations.
+    /** @brief Copy constructor, remember that copying a mesh might have performance impact due to handle fixing: handles for boundary element will point to other locations.
       *
-      * @param  other                   The domain which is copied to *this
+      * @param  other                   The mesh which is copied to *this
       */
-    domain_t(const domain_t & other) : element_container_collection(other.element_container_collection), appendix_(other.appendix_), inserter(other.inserter), change_counter_(other.change_counter_)
+    mesh_t(const mesh_t & other) : element_container_collection(other.element_container_collection), appendix_(other.appendix_), inserter(other.inserter), change_counter_(other.change_counter_)
     {
-      inserter.set_domain_info( element_container_collection, change_counter_ );
+      inserter.set_mesh_info( element_container_collection, change_counter_ );
       increment_change_counter();
 
       fix_handles(other, *this);
     }
 
-    /** @brief Assignement operator, remember that assigning a domain to another might have performance impact due to handle fixing: handles for boundary element will point to other locations.
+    /** @brief Assignement operator, remember that assigning a mesh to another might have performance impact due to handle fixing: handles for boundary element will point to other locations.
       *
-      * @param  other                   The domain which is assigned to *this
+      * @param  other                   The mesh which is assigned to *this
       * @return                         reference to *this
       */
-    domain_t & operator=( domain_t const & other)
+    mesh_t & operator=( mesh_t const & other)
     {
 //           element_container_collection = element_collection_type();
       element_container_collection = other.element_container_collection;
@@ -283,19 +283,19 @@ namespace viennagrid
       inserter = other.inserter;
       change_counter_ = other.change_counter_;
 
-      inserter.set_domain_info( element_container_collection, change_counter_ );
+      inserter.set_mesh_info( element_container_collection, change_counter_ );
       increment_change_counter();
 
       fix_handles(other, *this);
       return *this;
     }
 
-    /** @brief Completely clears a domain
+    /** @brief Completely clears a mesh
       *
       */
     void clear()
     {
-      *this = domain_t();
+      *this = mesh_t();
     }
 
   public:
@@ -333,9 +333,9 @@ namespace viennagrid
   {
     // doxygen docu in forwards.hpp
     template<typename WrappedConfigType>
-    struct domain
+    struct mesh
     {
-      typedef domain_t<WrappedConfigType> type;
+      typedef mesh_t<WrappedConfigType> type;
     };
   }
 
@@ -343,18 +343,18 @@ namespace viennagrid
 
   /** @brief For internal use only */
   template<typename WrappedConfigType>
-  bool is_obsolete( domain_t<WrappedConfigType> const & domain, typename domain_t<WrappedConfigType>::change_counter_type change_counter_to_check )
-  { return domain.is_obsolete( change_counter_to_check ); }
+  bool is_obsolete( mesh_t<WrappedConfigType> const & mesh, typename mesh_t<WrappedConfigType>::change_counter_type change_counter_to_check )
+  { return mesh.is_obsolete( change_counter_to_check ); }
 
   /** @brief For internal use only */
   template<typename WrappedConfigType>
-  void update_change_counter( domain_t<WrappedConfigType> & domain, typename domain_t<WrappedConfigType>::change_counter_type & change_counter_to_update )
-  { domain.update_change_counter( change_counter_to_update ); }
+  void update_change_counter( mesh_t<WrappedConfigType> & mesh, typename mesh_t<WrappedConfigType>::change_counter_type & change_counter_to_update )
+  { mesh.update_change_counter( change_counter_to_update ); }
 
   /** @brief For internal use only */
   template<typename WrappedConfigType>
-  void increment_change_counter( domain_t<WrappedConfigType> & domain )
-  { domain.increment_change_counter(); }
+  void increment_change_counter( mesh_t<WrappedConfigType> & mesh )
+  { mesh.increment_change_counter(); }
 
 
 
@@ -365,72 +365,72 @@ namespace viennagrid
 
 
   /** @brief For internal use only */
-  template<typename element_tag, typename coboundary_tag, typename domain_type>
+  template<typename element_tag, typename coboundary_tag, typename mesh_type>
   typename viennagrid::storage::result_of::value_type<
               typename viennagrid::storage::result_of::value_type<
-                  typename domain_type::appendix_type,
+                  typename mesh_type::appendix_type,
                   coboundary_collection_tag
               >::type,
               viennagrid::meta::static_pair<element_tag, coboundary_tag>
-              >::type & coboundary_collection( domain_type & domain )
-  { return viennagrid::storage::collection::get< viennagrid::meta::static_pair<element_tag, coboundary_tag> >( viennagrid::storage::collection::get<coboundary_collection_tag>( domain.appendix() ) );}
+              >::type & coboundary_collection( mesh_type & mesh )
+  { return viennagrid::storage::collection::get< viennagrid::meta::static_pair<element_tag, coboundary_tag> >( viennagrid::storage::collection::get<coboundary_collection_tag>( mesh.appendix() ) );}
 
   /** @brief For internal use only */
-  template<typename element_tag, typename coboundary_tag, typename domain_type>
+  template<typename element_tag, typename coboundary_tag, typename mesh_type>
   typename viennagrid::storage::result_of::value_type<
               typename viennagrid::storage::result_of::value_type<
-                  typename domain_type::appendix_type,
+                  typename mesh_type::appendix_type,
                   coboundary_collection_tag
               >::type,
               viennagrid::meta::static_pair<element_tag, coboundary_tag>
-              >::type const & coboundary_collection( domain_type const & domain )
-  { return viennagrid::storage::collection::get< viennagrid::meta::static_pair<element_tag, coboundary_tag> >( viennagrid::storage::collection::get<coboundary_collection_tag>( domain.appendix() ) );}
+              >::type const & coboundary_collection( mesh_type const & mesh )
+  { return viennagrid::storage::collection::get< viennagrid::meta::static_pair<element_tag, coboundary_tag> >( viennagrid::storage::collection::get<coboundary_collection_tag>( mesh.appendix() ) );}
 
 
   /** @brief For internal use only */
-  template<typename element_tag, typename connector_element_tag, typename domain_type>
+  template<typename element_tag, typename connector_element_tag, typename mesh_type>
   typename viennagrid::storage::result_of::value_type<
               typename viennagrid::storage::result_of::value_type<
-                  typename domain_type::appendix_type,
+                  typename mesh_type::appendix_type,
                   neighbour_collection_tag
               >::type,
               viennagrid::meta::static_pair<element_tag, connector_element_tag>
-              >::type & neighbour_collection( domain_type & domain )
-  { return viennagrid::storage::collection::get< viennagrid::meta::static_pair<element_tag, connector_element_tag> >( viennagrid::storage::collection::get<neighbour_collection_tag>( domain.appendix() ) ); }
+              >::type & neighbour_collection( mesh_type & mesh )
+  { return viennagrid::storage::collection::get< viennagrid::meta::static_pair<element_tag, connector_element_tag> >( viennagrid::storage::collection::get<neighbour_collection_tag>( mesh.appendix() ) ); }
 
   /** @brief For internal use only */
-  template<typename element_tag, typename connector_element_tag, typename domain_type>
+  template<typename element_tag, typename connector_element_tag, typename mesh_type>
   typename viennagrid::storage::result_of::value_type<
               typename viennagrid::storage::result_of::value_type<
-                  typename domain_type::appendix_type,
+                  typename mesh_type::appendix_type,
                   neighbour_collection_tag
               >::type,
               viennagrid::meta::static_pair<element_tag, connector_element_tag>
-              >::type const & neighbour_collection( domain_type const & domain )
-  { return viennagrid::storage::collection::get< viennagrid::meta::static_pair<element_tag, connector_element_tag> >( viennagrid::storage::collection::get<neighbour_collection_tag>( domain.appendix() ) ); }
+              >::type const & neighbour_collection( mesh_type const & mesh )
+  { return viennagrid::storage::collection::get< viennagrid::meta::static_pair<element_tag, connector_element_tag> >( viennagrid::storage::collection::get<neighbour_collection_tag>( mesh.appendix() ) ); }
 
 
   /** @brief For internal use only */
-  template<typename element_tag, typename domain_type>
+  template<typename element_tag, typename mesh_type>
   typename viennagrid::storage::result_of::value_type<
       typename viennagrid::storage::result_of::value_type<
-          typename domain_type::appendix_type,
+          typename mesh_type::appendix_type,
           boundary_information_collection_tag
       >::type,
       element_tag
-  >::type & boundary_information_collection( domain_type & domain )
-  { return viennagrid::storage::collection::get<element_tag>( viennagrid::storage::collection::get<boundary_information_collection_tag>( domain.appendix() ) ); }
+  >::type & boundary_information_collection( mesh_type & mesh )
+  { return viennagrid::storage::collection::get<element_tag>( viennagrid::storage::collection::get<boundary_information_collection_tag>( mesh.appendix() ) ); }
 
   /** @brief For internal use only */
-  template<typename element_tag, typename domain_type>
+  template<typename element_tag, typename mesh_type>
   typename viennagrid::storage::result_of::value_type<
       typename viennagrid::storage::result_of::value_type<
-          typename domain_type::appendix_type,
+          typename mesh_type::appendix_type,
           boundary_information_collection_tag
       >::type,
       element_tag
-  >::type const & boundary_information_collection( domain_type const & domain )
-  { return viennagrid::storage::collection::get<element_tag>( viennagrid::storage::collection::get<boundary_information_collection_tag>( domain.appendix() ) ); }
+  >::type const & boundary_information_collection( mesh_type const & mesh )
+  { return viennagrid::storage::collection::get<element_tag>( viennagrid::storage::collection::get<boundary_information_collection_tag>( mesh.appendix() ) ); }
 
 }
 
@@ -471,21 +471,21 @@ namespace viennagrid
     };
 
     template<typename WrappedConfigT>
-    struct element_collection< domain_t<WrappedConfigT> >
+    struct element_collection< mesh_t<WrappedConfigT> >
     {
-        typedef typename domain_t<WrappedConfigT>::element_collection_type type;
+        typedef typename mesh_t<WrappedConfigT>::element_collection_type type;
     };
 
     template<typename WrappedConfigT>
-    struct element_collection< const domain_t<WrappedConfigT> >
+    struct element_collection< const mesh_t<WrappedConfigT> >
     {
-        typedef typename domain_t<WrappedConfigT>::element_collection_type type;
+        typedef typename mesh_t<WrappedConfigT>::element_collection_type type;
     };
 
 
     /** @brief Metafunction for obtaining the element typelist of something
      *
-     * @tparam SomethingT     The host type, can be a collection, an element, a domain, a segmentation or a segment
+     * @tparam SomethingT     The host type, can be a collection, an element, a mesh, a segmentation or a segment
      */
     template<typename SomethingT>
     struct element_typelist
@@ -524,7 +524,7 @@ namespace viennagrid
 
     /** @brief Metafunction for obtaining the element typelist of something
      *
-     * @tparam SomethingT     The host type, can be a collection, an element, a domain, a segmentation or a segment
+     * @tparam SomethingT     The host type, can be a collection, an element, a mesh, a segmentation or a segment
      */
     template<typename SomethingT>
     struct element_taglist
@@ -575,9 +575,9 @@ namespace viennagrid
         >::type type;
     };
 
-    /** @brief Metafunction for obtaining the an element typelist including all element which references a given element. e.g. in a default triangle domain the referencing element typelist based on the domain for a vertex contains a line type and a triangle type. The host type can also be an element in which case all boundary elements referening the given element are returned (in a default tetrahedron domain the referencing elements for a vertex based on a triangle contains only a line type)
+    /** @brief Metafunction for obtaining the an element typelist including all element which references a given element. e.g. in a default triangle mesh the referencing element typelist based on the mesh for a vertex contains a line type and a triangle type. The host type can also be an element in which case all boundary elements referening the given element are returned (in a default tetrahedron mesh the referencing elements for a vertex based on a triangle contains only a line type)
      *
-     * @tparam SomethingT         The host type, can be a collection, an element, a domain, a segmentation or a segment
+     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
      * @tparam ElementTypeOrTagT  The element type/tag which the resulting elements references
      */
     template<typename SomethingT, typename ElementTypeOrTagT>
@@ -591,7 +591,7 @@ namespace viennagrid
 
   /** @brief For internal use only */
   template <typename WrappedConfigType, typename ElementTypeList, typename ContainerConfig>
-  class decorated_domain_view_config
+  class decorated_mesh_view_config
   {
     private:
       typedef typename config::result_of::element_collection< WrappedConfigType >::type                                                   element_collection_type;
@@ -604,12 +604,12 @@ namespace viennagrid
     public:
       typedef view_container_collection_typemap    type;
 
-      typedef WrappedConfigType                     domain_config_type;
+      typedef WrappedConfigType                     mesh_config_type;
   };
 
   /** @brief For internal use only */
   template <typename WrappedConfigType, typename E, typename C, typename ElementTypeList, typename ContainerConfig>
-  class decorated_domain_view_config< decorated_domain_view_config<WrappedConfigType, E, C>, ElementTypeList, ContainerConfig>
+  class decorated_mesh_view_config< decorated_mesh_view_config<WrappedConfigType, E, C>, ElementTypeList, ContainerConfig>
   {
     private:
       typedef typename config::result_of::element_collection< WrappedConfigType >::type                                                   element_collection_type;
@@ -622,104 +622,104 @@ namespace viennagrid
     public:
       typedef view_container_collection_typemap    type;
 
-      typedef typename decorated_domain_view_config<WrappedConfigType, E, C>::domain_config_type      domain_config_type;
+      typedef typename decorated_mesh_view_config<WrappedConfigType, E, C>::mesh_config_type      mesh_config_type;
   };
 
 
   namespace result_of
   {
-    /** @brief Metafunction for obtaining a domain view from a domain using an element type list and a container configuration
+    /** @brief Metafunction for obtaining a mesh view from a mesh using an element type list and a container configuration
      *
-     * @tparam DomainT            The host domain type
-     * @tparam ElementTypelistT   A typelist of all element types which will be referenced by the domain view. All element from the domain are used as default.
-     * @tparam ContainerConfigT   A configuration typemap which container should be used for storing the handles within the domain view. The default view container config is used as default (std::set is used).
+     * @tparam MeshT            The host mesh type
+     * @tparam ElementTypelistT   A typelist of all element types which will be referenced by the mesh view. All element from the mesh are used as default.
+     * @tparam ContainerConfigT   A configuration typemap which container should be used for storing the handles within the mesh view. The default view container config is used as default (std::set is used).
      */
     template<
-        typename DomainT,
+        typename MeshT,
         typename ElementTypelistT =
             typename viennagrid::meta::typemap::result_of::key_typelist<
-                typename element_collection<DomainT>::type::typemap
+                typename element_collection<MeshT>::type::typemap
             >::type,
         typename ContainerConfigT =
             storage::default_view_container_config
         >
-    struct domain_view_from_typelist
+    struct mesh_view_from_typelist
     {
-        typedef domain_t< decorated_domain_view_config<typename DomainT::wrapped_config_type, ElementTypelistT, ContainerConfigT> >  type;
+        typedef mesh_t< decorated_mesh_view_config<typename MeshT::wrapped_config_type, ElementTypelistT, ContainerConfigT> >  type;
     };
 
 
-    /** @brief Metafunction for obtaining a domain view from a domain. Elements can be directly given. If viennagrid::meta::null_type is specified somewhere all following types will be ignored. The default type for all element types is viennagrid::meta::null_type.
+    /** @brief Metafunction for obtaining a mesh view from a mesh. Elements can be directly given. If viennagrid::meta::null_type is specified somewhere all following types will be ignored. The default type for all element types is viennagrid::meta::null_type.
      *
-     * @tparam DomainT              The host domain type
-     * @tparam Element0TypeOrTagT   The first element type which is present in the domain view
-     * @tparam Element1TypeOrTagT   The second element type which is present in the domain view
-     * @tparam Element2TypeOrTagT   The third element type which is present in the domain view
-     * @tparam Element3TypeOrTagT   The forth element type which is present in the domain view
-     * @tparam Element4TypeOrTagT   The fifth element type which is present in the domain view
-     * @tparam Element5TypeOrTagT   The sixth element type which is present in the domain view
-     * @tparam Element6TypeOrTagT   The seventh element type which is present in the domain view
-     * @tparam Element7TypeOrTagT   The eighth element type which is present in the domain view
-     * @tparam Element8TypeOrTagT   The nineth element type which is present in the domain view
-     * @tparam Element9TypeOrTagT   The tenth element type which is present in the domain view
+     * @tparam MeshT              The host mesh type
+     * @tparam Element0TypeOrTagT   The first element type which is present in the mesh view
+     * @tparam Element1TypeOrTagT   The second element type which is present in the mesh view
+     * @tparam Element2TypeOrTagT   The third element type which is present in the mesh view
+     * @tparam Element3TypeOrTagT   The forth element type which is present in the mesh view
+     * @tparam Element4TypeOrTagT   The fifth element type which is present in the mesh view
+     * @tparam Element5TypeOrTagT   The sixth element type which is present in the mesh view
+     * @tparam Element6TypeOrTagT   The seventh element type which is present in the mesh view
+     * @tparam Element7TypeOrTagT   The eighth element type which is present in the mesh view
+     * @tparam Element8TypeOrTagT   The nineth element type which is present in the mesh view
+     * @tparam Element9TypeOrTagT   The tenth element type which is present in the mesh view
      */
-    template<typename DomainT,
+    template<typename MeshT,
              typename Element0TypeOrTagT = viennagrid::meta::null_type, typename Element1TypeOrTagT = viennagrid::meta::null_type,
              typename Element2TypeOrTagT = viennagrid::meta::null_type, typename Element3TypeOrTagT = viennagrid::meta::null_type,
              typename Element4TypeOrTagT = viennagrid::meta::null_type, typename Element5TypeOrTagT = viennagrid::meta::null_type,
              typename Element6TypeOrTagT = viennagrid::meta::null_type, typename Element7TypeOrTagT = viennagrid::meta::null_type,
              typename Element8TypeOrTagT = viennagrid::meta::null_type, typename Element9TypeOrTagT = viennagrid::meta::null_type>
-    struct domain_view
+    struct mesh_view
     {
-        typedef typename domain_view_from_typelist<
-            DomainT,
+        typedef typename mesh_view_from_typelist<
+            MeshT,
             typename viennagrid::meta::make_typelist<
-              typename element<DomainT, Element0TypeOrTagT>::type,
-              typename element<DomainT, Element1TypeOrTagT>::type,
-              typename element<DomainT, Element2TypeOrTagT>::type,
-              typename element<DomainT, Element3TypeOrTagT>::type,
-              typename element<DomainT, Element4TypeOrTagT>::type,
-              typename element<DomainT, Element5TypeOrTagT>::type,
-              typename element<DomainT, Element6TypeOrTagT>::type,
-              typename element<DomainT, Element7TypeOrTagT>::type,
-              typename element<DomainT, Element8TypeOrTagT>::type,
-              typename element<DomainT, Element9TypeOrTagT>::type
+              typename element<MeshT, Element0TypeOrTagT>::type,
+              typename element<MeshT, Element1TypeOrTagT>::type,
+              typename element<MeshT, Element2TypeOrTagT>::type,
+              typename element<MeshT, Element3TypeOrTagT>::type,
+              typename element<MeshT, Element4TypeOrTagT>::type,
+              typename element<MeshT, Element5TypeOrTagT>::type,
+              typename element<MeshT, Element6TypeOrTagT>::type,
+              typename element<MeshT, Element7TypeOrTagT>::type,
+              typename element<MeshT, Element8TypeOrTagT>::type,
+              typename element<MeshT, Element9TypeOrTagT>::type
             >::type
         >::type type;
     };
 
 
-    template<typename DomainT>
-    struct domain_view<DomainT,
+    template<typename MeshT>
+    struct mesh_view<MeshT,
                        viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type,
                        viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type>
     {
-        typedef typename domain_view_from_typelist<DomainT>::type type;
+        typedef typename mesh_view_from_typelist<MeshT>::type type;
     };
   }
 
 
-  /** @brief Creates a view out of a domain using the domain_proxy object
+  /** @brief Creates a view out of a mesh using the mesh_proxy object
     *
-    * @tparam DomainOrSegmentT    The domain or segment type from which the domain view is created
-    * @param  domain              The domain or segment object from which the domain view is created
-    * @return                     a domain_proxy object holding the host domain/segment object, can be assigned to a domain_t object
+    * @tparam MeshOrSegmentT    The mesh or segment type from which the mesh view is created
+    * @param  mesh              The mesh or segment object from which the mesh view is created
+    * @return                     a mesh_proxy object holding the host mesh/segment object, can be assigned to a mesh_t object
     */
-  template<typename DomainOrSegmentT>
-  domain_proxy<DomainOrSegmentT> make_view(DomainOrSegmentT & domain)
+  template<typename MeshOrSegmentT>
+  mesh_proxy<MeshOrSegmentT> make_view(MeshOrSegmentT & mesh)
   {
-      return domain_proxy<DomainOrSegmentT>( domain );
+      return mesh_proxy<MeshOrSegmentT>( mesh );
   }
 
 
 
   /** @brief For internal use only */
   template<typename container_collection_type>
-  class handle_domain_functor
+  class handle_mesh_functor
   {
   public:
 
-      handle_domain_functor(container_collection_type & collection_) : collection(collection_) {}
+      handle_mesh_functor(container_collection_type & collection_) : collection(collection_) {}
 
       template<typename container_type>
       void operator()( container_type & container )
@@ -734,17 +734,17 @@ namespace viennagrid
   };
 
 
-  /** @brief Function for inserting handles to all element from a domain in a domain view
+  /** @brief Function for inserting handles to all element from a mesh in a mesh view
     *
-    * @tparam DomainT     The domain or segment type
-    * @tparam ViewT       The domain view type
-    * @param  domain      The input domain/segment object
+    * @tparam MeshT     The mesh or segment type
+    * @tparam ViewT       The mesh view type
+    * @param  mesh      The input mesh/segment object
     * @param  view        The output view object
     */
-  template<typename DomainT, typename ViewT>
-  void handle_domain(DomainT & domain, ViewT & view)
+  template<typename MeshT, typename ViewT>
+  void handle_mesh(MeshT & mesh, ViewT & view)
   {
-      handle_domain_functor< typename result_of::element_collection<DomainT>::type > functor( element_collection(domain) );
+      handle_mesh_functor< typename result_of::element_collection<MeshT>::type > functor( element_collection(mesh) );
       viennagrid::storage::collection::for_each( element_collection(view), functor);
   }
 
@@ -753,112 +753,112 @@ namespace viennagrid
 
   /** @brief For internal use only */
   template<typename ConfigType>
-  typename domain_t<ConfigType>::element_collection_type & element_collection( domain_t<ConfigType> & domain)
-  { return domain.element_collection(); }
+  typename mesh_t<ConfigType>::element_collection_type & element_collection( mesh_t<ConfigType> & mesh)
+  { return mesh.element_collection(); }
 
   /** @brief For internal use only */
   template<typename ConfigType>
-  typename domain_t<ConfigType>::element_collection_type const & element_collection( domain_t<ConfigType> const & domain)
-  { return domain.element_collection(); }
-
-
-  /** @brief For internal use only */
-  template<typename ConfigType>
-  typename domain_t<ConfigType>::inserter_type & inserter(domain_t<ConfigType> & domain)
-  { return domain.get_inserter(); }
-
-  /** @brief For internal use only */
-  template<typename ConfigType>
-  typename domain_t<ConfigType>::inserter_type const & inserter(domain_t<ConfigType> const & domain)
-  { return domain.get_inserter(); }
+  typename mesh_t<ConfigType>::element_collection_type const & element_collection( mesh_t<ConfigType> const & mesh)
+  { return mesh.element_collection(); }
 
 
   /** @brief For internal use only */
   template<typename ConfigType>
-  typename domain_t<ConfigType>::inserter_type::id_generator_type & id_generator(domain_t<ConfigType> & domain)
-  { return inserter(domain).get_id_generator(); }
+  typename mesh_t<ConfigType>::inserter_type & inserter(mesh_t<ConfigType> & mesh)
+  { return mesh.get_inserter(); }
 
   /** @brief For internal use only */
   template<typename ConfigType>
-  typename domain_t<ConfigType>::inserter_type::id_generator_type const & id_generator(domain_t<ConfigType> const & domain)
-  { return inserter(domain).get_id_generator(); }
+  typename mesh_t<ConfigType>::inserter_type const & inserter(mesh_t<ConfigType> const & mesh)
+  { return mesh.get_inserter(); }
+
+
+  /** @brief For internal use only */
+  template<typename ConfigType>
+  typename mesh_t<ConfigType>::inserter_type::id_generator_type & id_generator(mesh_t<ConfigType> & mesh)
+  { return inserter(mesh).get_id_generator(); }
+
+  /** @brief For internal use only */
+  template<typename ConfigType>
+  typename mesh_t<ConfigType>::inserter_type::id_generator_type const & id_generator(mesh_t<ConfigType> const & mesh)
+  { return inserter(mesh).get_id_generator(); }
 
 
 
 
 
-  /** @brief Function for obtaining the heighest ID for a specifig element type/tag in a domain/segment
+  /** @brief Function for obtaining the heighest ID for a specifig element type/tag in a mesh/segment
     *
     * @tparam ElementTypeOrTag     The element type/tag from which the heighest ID is queried
-    * @tparam DomainOrSegmentT     The domain/segment type
-    * @param  domain_or_segment    The domain/segment object
+    * @tparam MeshOrSegmentT     The mesh/segment type
+    * @param  mesh_or_segment    The mesh/segment object
     * @return                      The heighest ID for specified element type/tag
     */
-  template<typename element_type_or_tag, typename domain_type>
-  typename viennagrid::result_of::id< typename viennagrid::result_of::element<domain_type, element_type_or_tag>::type >::type id_upper_bound( domain_type const & domain )
+  template<typename element_type_or_tag, typename mesh_type>
+  typename viennagrid::result_of::id< typename viennagrid::result_of::element<mesh_type, element_type_or_tag>::type >::type id_upper_bound( mesh_type const & mesh )
   {
-      typedef typename viennagrid::result_of::element<domain_type, element_type_or_tag>::type element_type;
-      return id_generator(domain).max_id( viennagrid::meta::tag<element_type>() );
+      typedef typename viennagrid::result_of::element<mesh_type, element_type_or_tag>::type element_type;
+      return id_generator(mesh).max_id( viennagrid::meta::tag<element_type>() );
   }
 
 
 
-  /** @brief Function for dereferencing a handle using a domain/segment object
+  /** @brief Function for dereferencing a handle using a mesh/segment object
     *
-    * @tparam WrappedConfigT     The wrapped config of the domain/segment type
+    * @tparam WrappedConfigT     The wrapped config of the mesh/segment type
     * @tparam HandleT            A handle type
-    * @param  domain             The host domain/segment object
+    * @param  mesh             The host mesh/segment object
     * @param  handle             The handle to be dereferenced
     * @return                    A C++ reference to an element which is referenced by handle
     */
-  template<typename DomainOrSegmentT, typename HandleT>
-  typename storage::handle::result_of::value_type<HandleT>::type & dereference_handle(DomainOrSegmentT & domain, HandleT const & handle)
+  template<typename MeshOrSegmentT, typename HandleT>
+  typename storage::handle::result_of::value_type<HandleT>::type & dereference_handle(MeshOrSegmentT & mesh, HandleT const & handle)
   {
       typedef typename storage::handle::result_of::value_type<HandleT>::type value_type;
-      return storage::collection::get<value_type>(element_collection(domain)).dereference_handle( handle );
+      return storage::collection::get<value_type>(element_collection(mesh)).dereference_handle( handle );
   }
 
-  /** @brief Function for dereferencing a handle using a domain/segment object, const version
+  /** @brief Function for dereferencing a handle using a mesh/segment object, const version
     *
-    * @tparam WrappedConfigT     The wrapped config of the domain/segment type
+    * @tparam WrappedConfigT     The wrapped config of the mesh/segment type
     * @tparam HandleT            A handle type
-    * @param  domain             The host domain/segment object
+    * @param  mesh             The host mesh/segment object
     * @param  handle             The handle to be dereferenced
     * @return                    A C++ const reference to an element which is referenced by handle
     */
-  template<typename DomainOrSegmentT, typename HandleT>
-  typename storage::handle::result_of::value_type<HandleT>::type const & dereference_handle(DomainOrSegmentT const & domain, HandleT const & handle)
+  template<typename MeshOrSegmentT, typename HandleT>
+  typename storage::handle::result_of::value_type<HandleT>::type const & dereference_handle(MeshOrSegmentT const & mesh, HandleT const & handle)
   {
       typedef typename storage::handle::result_of::value_type<HandleT>::type value_type;
-      return storage::collection::get<value_type>(element_collection(domain)).dereference_handle( handle );
+      return storage::collection::get<value_type>(element_collection(mesh)).dereference_handle( handle );
   }
 
 
-  /** @brief Function for creating a handle for a given element using a domain/segment object
+  /** @brief Function for creating a handle for a given element using a mesh/segment object
     *
-    * @tparam DomainOrSegmentT      The host domain/segment type
+    * @tparam MeshOrSegmentT      The host mesh/segment type
     * @tparam ElementTagT           The tag of the element of which a handle is created
     * @tparam WrappedConfigT        The wrapped config of the element of which a handle is created
-    * @param  domain_or_segment     The host domain/segment object
+    * @param  mesh_or_segment     The host mesh/segment object
     * @param  element               The element of which a handle is created
     * @return                       A handle referencing the given element
     */
-  template<typename DomainOrSegmentT, typename ElementTagT, typename WrappedConfigT>
-  typename result_of::handle<DomainOrSegmentT, element_t<ElementTagT, WrappedConfigT> >::type handle(DomainOrSegmentT & domain_or_segment, element_t<ElementTagT, WrappedConfigT> & element)
-  { return storage::collection::get< element_t<ElementTagT, WrappedConfigT> >(element_collection(domain_or_segment)).handle( element ); }
+  template<typename MeshOrSegmentT, typename ElementTagT, typename WrappedConfigT>
+  typename result_of::handle<MeshOrSegmentT, element_t<ElementTagT, WrappedConfigT> >::type handle(MeshOrSegmentT & mesh_or_segment, element_t<ElementTagT, WrappedConfigT> & element)
+  { return storage::collection::get< element_t<ElementTagT, WrappedConfigT> >(element_collection(mesh_or_segment)).handle( element ); }
 
-  /** @brief Function for creating a handle for a given element using a domain/segment object, const version
+  /** @brief Function for creating a handle for a given element using a mesh/segment object, const version
     *
-    * @tparam DomainOrSegmentT      The host domain/segment type
+    * @tparam MeshOrSegmentT      The host mesh/segment type
     * @tparam ElementTagT           The tag of the element of which a handle is created
     * @tparam WrappedConfigT        The wrapped config of the element of which a handle is created
-    * @param  domain_or_segment     The host domain/segment object
+    * @param  mesh_or_segment     The host mesh/segment object
     * @param  element               The element of which a handle is created
     * @return                       A const handle referencing the given element
     */
-  template<typename DomainOrSegmentT, typename ElementTagT, typename WrappedConfigT>
-  typename result_of::const_handle<DomainOrSegmentT, element_t<ElementTagT, WrappedConfigT> >::type handle(DomainOrSegmentT const & domain_or_segment, element_t<ElementTagT, WrappedConfigT> const & element)
-  { return storage::collection::get< element_t<ElementTagT, WrappedConfigT> >(element_collection(domain_or_segment)).handle( element ); }
+  template<typename MeshOrSegmentT, typename ElementTagT, typename WrappedConfigT>
+  typename result_of::const_handle<MeshOrSegmentT, element_t<ElementTagT, WrappedConfigT> >::type handle(MeshOrSegmentT const & mesh_or_segment, element_t<ElementTagT, WrappedConfigT> const & element)
+  { return storage::collection::get< element_t<ElementTagT, WrappedConfigT> >(element_collection(mesh_or_segment)).handle( element ); }
 
 
 
@@ -936,25 +936,25 @@ namespace viennagrid
 
   namespace result_of
   {
-    /** @brief Metafunction for querying if an element is present within a domain, domain view or segment
+    /** @brief Metafunction for querying if an element is present within a mesh, mesh view or segment
      *
-     * @tparam DomainViewOrSegmentT       The host domain/domain view/segment type
+     * @tparam MeshViewOrSegmentT       The host mesh/mesh view/segment type
      * @tparam ElementTypeOrTagT          The requested element type/tag
      */
-    template<typename DomainViewOrSegmentT, typename ElementTypeOrTagT>
+    template<typename MeshViewOrSegmentT, typename ElementTypeOrTagT>
     struct is_element_present;
 
     template<typename WrappedConfigType, typename element_type_or_tag>
-    struct is_element_present< domain_t<WrappedConfigType>, element_type_or_tag >
+    struct is_element_present< mesh_t<WrappedConfigType>, element_type_or_tag >
     {
       typedef typename viennagrid::result_of::element_tag<element_type_or_tag>::type tag;
       static const bool value = config::result_of::is_element_present<WrappedConfigType, tag>::value;
     };
 
     template<typename WrappedConfigType, typename element_type_or_tag>
-    struct is_element_present< const domain_t<WrappedConfigType>, element_type_or_tag >
+    struct is_element_present< const mesh_t<WrappedConfigType>, element_type_or_tag >
     {
-      static const bool value = is_element_present<domain_t<WrappedConfigType>, element_type_or_tag>::value;
+      static const bool value = is_element_present<mesh_t<WrappedConfigType>, element_type_or_tag>::value;
     };
 
 
@@ -982,60 +982,60 @@ namespace viennagrid
     };
 
 
-    template <typename WrappedDomainConfigType, typename ElementTypeList, typename ContainerConfig, typename element_type_or_tag>
-    struct is_element_present< domain_t< decorated_domain_view_config<WrappedDomainConfigType, ElementTypeList, ContainerConfig> >, element_type_or_tag >
+    template <typename WrappedMeshConfigType, typename ElementTypeList, typename ContainerConfig, typename element_type_or_tag>
+    struct is_element_present< mesh_t< decorated_mesh_view_config<WrappedMeshConfigType, ElementTypeList, ContainerConfig> >, element_type_or_tag >
     {
       typedef typename viennagrid::result_of::element_tag<element_type_or_tag>::type tag;
       static const bool value = is_element_present_helper<ElementTypeList, tag>::value;
     };
 
-    template <typename WrappedDomainConfigType, typename ElementTypeList, typename ContainerConfig, typename element_type_or_tag>
-    struct is_element_present< const domain_t< decorated_domain_view_config<WrappedDomainConfigType, ElementTypeList, ContainerConfig> >, element_type_or_tag >
+    template <typename WrappedMeshConfigType, typename ElementTypeList, typename ContainerConfig, typename element_type_or_tag>
+    struct is_element_present< const mesh_t< decorated_mesh_view_config<WrappedMeshConfigType, ElementTypeList, ContainerConfig> >, element_type_or_tag >
     {
-      static const bool value = is_element_present<domain_t< decorated_domain_view_config<WrappedDomainConfigType, ElementTypeList, ContainerConfig> >, element_type_or_tag>::value;
+      static const bool value = is_element_present<mesh_t< decorated_mesh_view_config<WrappedMeshConfigType, ElementTypeList, ContainerConfig> >, element_type_or_tag>::value;
     };
 
 
 
 
     // doxygen docu in forwards.hpp
-    template<typename DomainSegmentType, typename element_type_or_tag>
+    template<typename MeshSegmentType, typename element_type_or_tag>
     struct element
     {
-        typedef typename meta::STATIC_ASSERT< is_element_present<DomainSegmentType, element_type_or_tag>::value >::type ERROR_ELEMENT_IS_NOT_PRESENT_IN_DOMAIN;
-        typedef typename element< typename element_collection< DomainSegmentType >::type, element_type_or_tag >::type type;
+        typedef typename meta::STATIC_ASSERT< is_element_present<MeshSegmentType, element_type_or_tag>::value >::type ERROR_ELEMENT_IS_NOT_PRESENT_IN_MESH;
+        typedef typename element< typename element_collection< MeshSegmentType >::type, element_type_or_tag >::type type;
     };
 
     // doxygen docu in forwards.hpp
-    template<typename DomainSegmentType, typename element_type_or_tag>
+    template<typename MeshSegmentType, typename element_type_or_tag>
     struct handle
     {
-        typedef typename meta::STATIC_ASSERT< is_element_present<DomainSegmentType, element_type_or_tag>::value >::type ERROR_ELEMENT_IS_NOT_PRESENT_IN_DOMAIN;
-        typedef typename handle< typename element_collection< DomainSegmentType >::type, element_type_or_tag >::type type;
+        typedef typename meta::STATIC_ASSERT< is_element_present<MeshSegmentType, element_type_or_tag>::value >::type ERROR_ELEMENT_IS_NOT_PRESENT_IN_MESH;
+        typedef typename handle< typename element_collection< MeshSegmentType >::type, element_type_or_tag >::type type;
     };
 
     // doxygen docu in forwards.hpp
-    template<typename DomainSegmentType, typename element_type_or_tag>
+    template<typename MeshSegmentType, typename element_type_or_tag>
     struct const_handle
     {
-        typedef typename meta::STATIC_ASSERT< is_element_present<DomainSegmentType, element_type_or_tag>::value >::type ERROR_ELEMENT_IS_NOT_PRESENT_IN_DOMAIN;
-        typedef typename const_handle< typename element_collection< DomainSegmentType >::type, element_type_or_tag >::type type;
+        typedef typename meta::STATIC_ASSERT< is_element_present<MeshSegmentType, element_type_or_tag>::value >::type ERROR_ELEMENT_IS_NOT_PRESENT_IN_MESH;
+        typedef typename const_handle< typename element_collection< MeshSegmentType >::type, element_type_or_tag >::type type;
     };
 
     // doxygen docu in forwards.hpp
-    template<typename DomainSegmentType, typename element_type_or_tag>
+    template<typename MeshSegmentType, typename element_type_or_tag>
     struct element_range
     {
-        typedef typename meta::STATIC_ASSERT< is_element_present<DomainSegmentType, element_type_or_tag>::value >::type ERROR_ELEMENT_IS_NOT_PRESENT_IN_DOMAIN;
-        typedef typename element_range< typename element_collection< DomainSegmentType >::type, element_type_or_tag >::type type;
+        typedef typename meta::STATIC_ASSERT< is_element_present<MeshSegmentType, element_type_or_tag>::value >::type ERROR_ELEMENT_IS_NOT_PRESENT_IN_MESH;
+        typedef typename element_range< typename element_collection< MeshSegmentType >::type, element_type_or_tag >::type type;
     };
 
     // doxygen docu in forwards.hpp
-    template<typename DomainSegmentType, typename element_type_or_tag>
+    template<typename MeshSegmentType, typename element_type_or_tag>
     struct const_element_range
     {
-        typedef typename meta::STATIC_ASSERT< is_element_present<DomainSegmentType, element_type_or_tag>::value >::type ERROR_ELEMENT_IS_NOT_PRESENT_IN_DOMAIN;
-        typedef typename const_element_range< typename element_collection< DomainSegmentType >::type, element_type_or_tag >::type type;
+        typedef typename meta::STATIC_ASSERT< is_element_present<MeshSegmentType, element_type_or_tag>::value >::type ERROR_ELEMENT_IS_NOT_PRESENT_IN_MESH;
+        typedef typename const_element_range< typename element_collection< MeshSegmentType >::type, element_type_or_tag >::type type;
     };
 
 
@@ -1140,18 +1140,18 @@ namespace viennagrid
 
 
   /** @brief For internal use only */
-  template<typename DomainSegmentT, typename FunctorT>
+  template<typename MeshSegmentT, typename FunctorT>
   struct for_each_element_functor
   {
-    for_each_element_functor( DomainSegmentT & d, FunctorT f ) : f_(f), domain_(d) {}
+    for_each_element_functor( MeshSegmentT & d, FunctorT f ) : f_(f), mesh_(d) {}
 
     template<typename element_type>
     void operator() ( viennagrid::meta::tag<element_type> )
     {
-      typedef typename viennagrid::result_of::element_range<DomainSegmentT, element_type>::type element_range_type;
+      typedef typename viennagrid::result_of::element_range<MeshSegmentT, element_type>::type element_range_type;
       typedef typename viennagrid::result_of::iterator<element_range_type>::type element_range_iterator;
 
-      element_range_type range = viennagrid::elements(domain_);
+      element_range_type range = viennagrid::elements(mesh_);
       for (element_range_iterator it = range.begin(); it != range.end(); ++it)
         f_(*it);
     }
@@ -1159,32 +1159,32 @@ namespace viennagrid
     template<typename element_type>
     void operator() ( viennagrid::meta::tag<element_type> ) const
     {
-      typedef typename viennagrid::result_of::const_element_range<DomainSegmentT, element_type>::type element_range_type;
+      typedef typename viennagrid::result_of::const_element_range<MeshSegmentT, element_type>::type element_range_type;
       typedef typename viennagrid::result_of::iterator<element_range_type>::type element_range_iterator;
 
-      element_range_type range = viennagrid::elements(domain_);
+      element_range_type range = viennagrid::elements(mesh_);
       for (element_range_iterator it = range.begin(); it != range.end(); ++it)
         f_(*it);
     }
 
     FunctorT f_;
-    DomainSegmentT & domain_;
+    MeshSegmentT & mesh_;
   };
 
 
   /** @brief Function which executes functor an each element with specific topologic dimension
     *
     * @tparam TopologicDimensionV     Topologic dimension of the elements on which the functor is executed
-    * @tparam DomainSegmentT          Host domain/segment type
+    * @tparam MeshSegmentT          Host mesh/segment type
     * @tparam FunctorT                Functor type, needs to provide void operator(ElementType &/const &) for each element type with topologic dimension equal to TopologicDimensionV
-    * @param  domain_or_segment       Host domain/segment object
+    * @param  mesh_or_segment       Host mesh/segment object
     * @param  f                       Functor object
     */
-  template<int TopologicDimensionV, typename DomainSegmentT, typename FunctorT>
-  void for_each( DomainSegmentT & domain_or_segment, FunctorT f )
+  template<int TopologicDimensionV, typename MeshSegmentT, typename FunctorT>
+  void for_each( MeshSegmentT & mesh_or_segment, FunctorT f )
   {
-    for_each_element_functor<DomainSegmentT, FunctorT> for_each_functor(domain_or_segment, f);
-    typedef typename viennagrid::result_of::elements_of_topologic_dim<DomainSegmentT, TopologicDimensionV>::type element_typelist;
+    for_each_element_functor<MeshSegmentT, FunctorT> for_each_functor(mesh_or_segment, f);
+    typedef typename viennagrid::result_of::elements_of_topologic_dim<MeshSegmentT, TopologicDimensionV>::type element_typelist;
 
     viennagrid::meta::typelist::for_each<element_typelist>( for_each_functor );
   }
@@ -1192,16 +1192,16 @@ namespace viennagrid
   /** @brief Function which executes functor an each element with specific topologic dimension, const version
     *
     * @tparam TopologicDimensionV     Topologic dimension of the elements on which the functor is executed
-    * @tparam DomainSegmentT          Host domain/segment type
+    * @tparam MeshSegmentT          Host mesh/segment type
     * @tparam FunctorT                Functor type, needs to provide void operator(ElementType &/const &) for each element type with topologic dimension equal to TopologicDimensionV
-    * @param  domain_or_segment       Host domain/segment object
+    * @param  mesh_or_segment       Host mesh/segment object
     * @param  f                       Functor object
     */
-  template<int TopologicDimensionV, typename DomainSegmentT, typename FunctorT>
-  void for_each( DomainSegmentT const & domain_or_segment, FunctorT f )
+  template<int TopologicDimensionV, typename MeshSegmentT, typename FunctorT>
+  void for_each( MeshSegmentT const & mesh_or_segment, FunctorT f )
   {
-    for_each_element_functor<const DomainSegmentT, FunctorT> for_each_functor(domain_or_segment, f);
-    typedef typename viennagrid::result_of::elements_of_topologic_dim<DomainSegmentT, TopologicDimensionV>::type element_typelist;
+    for_each_element_functor<const MeshSegmentT, FunctorT> for_each_functor(mesh_or_segment, f);
+    typedef typename viennagrid::result_of::elements_of_topologic_dim<MeshSegmentT, TopologicDimensionV>::type element_typelist;
 
     viennagrid::meta::typelist::for_each<element_typelist>( for_each_functor );
   }
@@ -1211,34 +1211,34 @@ namespace viennagrid
 
   // doxygen docu in forwards.hpp
   template<typename element_type_or_tag, typename WrappedConfigType>
-  typename result_of::element_range<domain_t<WrappedConfigType>, element_type_or_tag>::type elements(domain_t<WrappedConfigType> & domain)
-  { return elements<element_type_or_tag>( element_collection(domain) ); }
+  typename result_of::element_range<mesh_t<WrappedConfigType>, element_type_or_tag>::type elements(mesh_t<WrappedConfigType> & mesh)
+  { return elements<element_type_or_tag>( element_collection(mesh) ); }
 
   // doxygen docu in forwards.hpp
   template<typename element_type_or_tag, typename WrappedConfigType>
-  typename result_of::const_element_range<domain_t<WrappedConfigType>, element_type_or_tag>::type elements(domain_t<WrappedConfigType> const & domain)
-  { return elements<element_type_or_tag>( element_collection(domain) ); }
+  typename result_of::const_element_range<mesh_t<WrappedConfigType>, element_type_or_tag>::type elements(mesh_t<WrappedConfigType> const & mesh)
+  { return elements<element_type_or_tag>( element_collection(mesh) ); }
 
 
 
 
 
-  /** @brief Function which finds an element based on an ID. The runtime of this function is linear in the number of elements of the requested type in the domain.
+  /** @brief Function which finds an element based on an ID. The runtime of this function is linear in the number of elements of the requested type in the mesh.
     *
-    * @tparam DomainSegmentT          Host domain/segment type
+    * @tparam MeshSegmentT          Host mesh/segment type
     * @tparam IDT                     ID type of the object to be found
-    * @param  domain_or_segment       Host domain/segment object
+    * @param  mesh_or_segment       Host mesh/segment object
     * @param  id                      id of the object to be found
-    * @return                         An iterator pointing to the found element. If no element was found it points to viennagrid::elements<ElementType>(domain_or_segment).end()
+    * @return                         An iterator pointing to the found element. If no element was found it points to viennagrid::elements<ElementType>(mesh_or_segment).end()
     */
-  template<typename DomainSegmentT, typename IDT>
-  typename viennagrid::result_of::iterator< typename viennagrid::result_of::element_range<DomainSegmentT, typename IDT::value_type::tag>::type >::type
-          find(DomainSegmentT & domain_or_segment, IDT id )
+  template<typename MeshSegmentT, typename IDT>
+  typename viennagrid::result_of::iterator< typename viennagrid::result_of::element_range<MeshSegmentT, typename IDT::value_type::tag>::type >::type
+          find(MeshSegmentT & mesh_or_segment, IDT id )
   {
       typedef typename IDT::value_type element_type;
       typedef typename element_type::tag element_tag;
-      typedef typename viennagrid::result_of::element_range<DomainSegmentT, element_tag>::type RangeType;
-      RangeType range = viennagrid::elements<element_tag>(domain_or_segment);
+      typedef typename viennagrid::result_of::element_range<MeshSegmentT, element_tag>::type RangeType;
+      RangeType range = viennagrid::elements<element_tag>(mesh_or_segment);
       return std::find_if(
                   range.begin(),
                   range.end(),
@@ -1246,22 +1246,22 @@ namespace viennagrid
           );
   }
 
-  /** @brief Function which finds an element based on an ID, const version. The runtime of this function is linear in the number of elements of the requested type in the domain.
+  /** @brief Function which finds an element based on an ID, const version. The runtime of this function is linear in the number of elements of the requested type in the mesh.
     *
-    * @tparam DomainSegmentT          Host domain/segment type
+    * @tparam MeshSegmentT          Host mesh/segment type
     * @tparam IDT                     ID type of the object to be found
-    * @param  domain_or_segment       Host domain/segment object
+    * @param  mesh_or_segment       Host mesh/segment object
     * @param  id                      id of the object to be found
-    * @return                         A const iterator pointing to the found element. If no element was found it points to viennagrid::elements<ElementType>(domain_or_segment).end()
+    * @return                         A const iterator pointing to the found element. If no element was found it points to viennagrid::elements<ElementType>(mesh_or_segment).end()
     */
-  template<typename DomainSegmentT, typename IDT>
-  typename viennagrid::result_of::const_iterator< typename viennagrid::result_of::element_range<DomainSegmentT, typename IDT::value_type::tag>::type >::type
-          find(DomainSegmentT const & domain_or_segment, IDT id )
+  template<typename MeshSegmentT, typename IDT>
+  typename viennagrid::result_of::const_iterator< typename viennagrid::result_of::element_range<MeshSegmentT, typename IDT::value_type::tag>::type >::type
+          find(MeshSegmentT const & mesh_or_segment, IDT id )
   {
       typedef typename IDT::value_type element_type;
       typedef typename element_type::tag element_tag;
-      typedef typename viennagrid::result_of::const_element_range<DomainSegmentT, element_tag>::type RangeType;
-      RangeType range = viennagrid::elements<element_tag>(domain_or_segment);
+      typedef typename viennagrid::result_of::const_element_range<MeshSegmentT, element_tag>::type RangeType;
+      RangeType range = viennagrid::elements<element_tag>(mesh_or_segment);
       return std::find_if(
                   range.begin(),
                   range.end(),
@@ -1269,24 +1269,24 @@ namespace viennagrid
           );
   }
 
-  /** @brief Function which finds an element based on a handle. The runtime of this function is linear in the number of elements of the requested type in the domain.
+  /** @brief Function which finds an element based on a handle. The runtime of this function is linear in the number of elements of the requested type in the mesh.
     *
-    * @tparam DomainSegmentT          Host domain/segment type
+    * @tparam MeshSegmentT          Host mesh/segment type
     * @tparam HandleT                 The handle type of the object to be found
-    * @param  domain_or_segment       Host domain/segment object
+    * @param  mesh_or_segment       Host mesh/segment object
     * @param  id                      id of the object to be found
-    * @return                         An iterator pointing to the found element. If no element was found it points to viennagrid::elements<ElementType>(domain_or_segment).end()
+    * @return                         An iterator pointing to the found element. If no element was found it points to viennagrid::elements<ElementType>(mesh_or_segment).end()
     */
-  template<typename DomainSegmentT, typename HandleT>
-  typename viennagrid::result_of::iterator< typename viennagrid::result_of::element_range<DomainSegmentT, typename storage::handle::result_of::value_type<HandleT>::type >::type >::type
-          find_by_handle(DomainSegmentT & domain_or_segment, HandleT handle)
+  template<typename MeshSegmentT, typename HandleT>
+  typename viennagrid::result_of::iterator< typename viennagrid::result_of::element_range<MeshSegmentT, typename storage::handle::result_of::value_type<HandleT>::type >::type >::type
+          find_by_handle(MeshSegmentT & mesh_or_segment, HandleT handle)
   {
       typedef typename storage::handle::result_of::value_type<HandleT>::type element_type;
       typedef typename element_type::tag element_tag;
-      typedef typename viennagrid::result_of::element_range<DomainSegmentT, element_tag>::type RangeType;
+      typedef typename viennagrid::result_of::element_range<MeshSegmentT, element_tag>::type RangeType;
       typedef typename viennagrid::result_of::iterator<RangeType>::type RangeIterator;
 
-      RangeType range = viennagrid::elements<element_tag>(domain_or_segment);
+      RangeType range = viennagrid::elements<element_tag>(mesh_or_segment);
       for (RangeIterator it = range.begin(); it != range.end(); ++it)
       {
           if ( it.handle() == handle )
@@ -1296,24 +1296,24 @@ namespace viennagrid
       return range.end();
   }
 
-  /** @brief Function which finds an element based on a handle, const version. The runtime of this function is linear in the number of elements of the requested type in the domain.
+  /** @brief Function which finds an element based on a handle, const version. The runtime of this function is linear in the number of elements of the requested type in the mesh.
     *
-    * @tparam DomainSegmentT          Host domain/segment type
+    * @tparam MeshSegmentT          Host mesh/segment type
     * @tparam HandleT                 The handle type of the object to be found
-    * @param  domain_or_segment       Host domain/segment object
+    * @param  mesh_or_segment       Host mesh/segment object
     * @param  id                      id of the object to be found
-    * @return                         A const iterator pointing to the found element. If no element was found it points to viennagrid::elements<ElementType>(domain_or_segment).end()
+    * @return                         A const iterator pointing to the found element. If no element was found it points to viennagrid::elements<ElementType>(mesh_or_segment).end()
     */
-  template<typename DomainSegmentT, typename HandleT>
-  typename viennagrid::result_of::const_iterator< typename viennagrid::result_of::const_element_range<DomainSegmentT, typename storage::handle::result_of::value_type<HandleT>::type >::type  >::type
-          find_by_handle(DomainSegmentT const & domain_or_segment, HandleT handle)
+  template<typename MeshSegmentT, typename HandleT>
+  typename viennagrid::result_of::const_iterator< typename viennagrid::result_of::const_element_range<MeshSegmentT, typename storage::handle::result_of::value_type<HandleT>::type >::type  >::type
+          find_by_handle(MeshSegmentT const & mesh_or_segment, HandleT handle)
   {
       typedef typename storage::handle::result_of::value_type<HandleT>::type element_type;
       typedef typename element_type::tag element_tag;
-      typedef typename viennagrid::result_of::const_element_range<DomainSegmentT, element_tag>::type RangeType;
+      typedef typename viennagrid::result_of::const_element_range<MeshSegmentT, element_tag>::type RangeType;
       typedef typename viennagrid::result_of::const_iterator<RangeType>::type RangeIterator;
 
-      RangeType range = viennagrid::elements<element_tag>(domain_or_segment);
+      RangeType range = viennagrid::elements<element_tag>(mesh_or_segment);
       for (RangeIterator it = range.begin(); it != range.end(); ++it)
       {
           if ( it.handle() == handle )
@@ -1346,17 +1346,17 @@ namespace viennagrid
 
 
   /** @brief For internal use only */
-  template<bool generate_id, bool call_callback, typename domain_type, typename ElementTag, typename WrappedConfigType>
+  template<bool generate_id, bool call_callback, typename mesh_type, typename ElementTag, typename WrappedConfigType>
   std::pair<
               typename viennagrid::storage::result_of::container_of<
-                  typename result_of::element_collection<domain_type>::type,
+                  typename result_of::element_collection<mesh_type>::type,
                   viennagrid::element_t<ElementTag, WrappedConfigType>
               >::type::handle_type,
               bool
           >
-      push_element( domain_type & domain, viennagrid::element_t<ElementTag, WrappedConfigType> const & element)
+      push_element( mesh_type & mesh, viennagrid::element_t<ElementTag, WrappedConfigType> const & element)
   {
-      return inserter(domain).template insert<generate_id, call_callback>(element);
+      return inserter(mesh).template insert<generate_id, call_callback>(element);
   }
 
 
@@ -1367,15 +1367,15 @@ namespace viennagrid
     struct point {};
 
     template<typename ConfigType>
-    struct point< domain_t<ConfigType> >
+    struct point< mesh_t<ConfigType> >
     {
-        typedef typename viennagrid::result_of::vertex< domain_t<ConfigType> >::type::appendix_type type;
+        typedef typename viennagrid::result_of::vertex< mesh_t<ConfigType> >::type::appendix_type type;
     };
 
     template<typename ConfigType>
-    struct point< const domain_t<ConfigType> >
+    struct point< const mesh_t<ConfigType> >
     {
-        typedef typename viennagrid::result_of::vertex< domain_t<ConfigType> >::type::appendix_type type;
+        typedef typename viennagrid::result_of::vertex< mesh_t<ConfigType> >::type::appendix_type type;
     };
 
     template<typename ElementTag, typename WrappedConfigType>
@@ -1394,51 +1394,51 @@ namespace viennagrid
 
   /** @brief Function for obtaining the point from a vertex
     *
-    * @tparam WrappedConfigT      Wrapped config of the host domain type
-    * @param  domain              The host domain object
+    * @tparam WrappedConfigT      Wrapped config of the host mesh type
+    * @param  mesh              The host mesh object
     * @param  vertex              The vertex of which the point is obtained
     * @return                     A reference to the point
     */
   template<typename WrappedConfigT>
-  typename result_of::point< domain_t<WrappedConfigT> >::type & point(domain_t<WrappedConfigT> & /*domain*/, typename result_of::vertex< domain_t<WrappedConfigT> >::type & vertex)
+  typename result_of::point< mesh_t<WrappedConfigT> >::type & point(mesh_t<WrappedConfigT> & /*mesh*/, typename result_of::vertex< mesh_t<WrappedConfigT> >::type & vertex)
   { return vertex.appendix(); }
 
   /** @brief Function for obtaining the point from a vertex, const version
     *
-    * @tparam WrappedConfigT      Wrapped config of the host domain type
-    * @param  domain              The host domain object
+    * @tparam WrappedConfigT      Wrapped config of the host mesh type
+    * @param  mesh              The host mesh object
     * @param  vertex              The vertex of which the point is obtained
     * @return                     A const reference to the point
     */
   template<typename WrappedConfigT>
-  typename result_of::point< domain_t<WrappedConfigT> >::type const & point(domain_t<WrappedConfigT> const & /*domain*/, typename result_of::vertex< domain_t<WrappedConfigT> >::type const & vertex)
+  typename result_of::point< mesh_t<WrappedConfigT> >::type const & point(mesh_t<WrappedConfigT> const & /*mesh*/, typename result_of::vertex< mesh_t<WrappedConfigT> >::type const & vertex)
   { return vertex.appendix(); }
 
 
   /** @brief Function for obtaining the point from a vertex
     *
-    * @tparam WrappedConfigT      Wrapped config of the host domain type
-    * @param  domain              The host domain object
+    * @tparam WrappedConfigT      Wrapped config of the host mesh type
+    * @param  mesh              The host mesh object
     * @param  vertex_handle       A handle to the vertex of which the point is obtained
     * @return                     A reference to the point
     */
   template<typename WrappedConfigT>
-  typename result_of::point< domain_t<WrappedConfigT> >::type & point(domain_t<WrappedConfigT> & domain, typename result_of::vertex_handle< domain_t<WrappedConfigT> >::type vertex_handle)
-  { return dereference_handle(domain, vertex_handle).appendix(); }
+  typename result_of::point< mesh_t<WrappedConfigT> >::type & point(mesh_t<WrappedConfigT> & mesh, typename result_of::vertex_handle< mesh_t<WrappedConfigT> >::type vertex_handle)
+  { return dereference_handle(mesh, vertex_handle).appendix(); }
 
   /** @brief Function for obtaining the point from a vertex, const version
     *
-    * @tparam WrappedConfigT      Wrapped config of the host domain type
-    * @param  domain              The host domain object
+    * @tparam WrappedConfigT      Wrapped config of the host mesh type
+    * @param  mesh              The host mesh object
     * @param  vertex_handle       A handle to the vertex of which the point is obtained
     * @return                     A const reference to the point
     */
   template<typename WrappedConfigT>
-  typename result_of::point< domain_t<WrappedConfigT> >::type const & point(domain_t<WrappedConfigT> const & domain, typename result_of::const_vertex_handle< domain_t<WrappedConfigT> >::type vertex_handle)
-  { return dereference_handle(domain, vertex_handle).appendix(); }
+  typename result_of::point< mesh_t<WrappedConfigT> >::type const & point(mesh_t<WrappedConfigT> const & mesh, typename result_of::const_vertex_handle< mesh_t<WrappedConfigT> >::type vertex_handle)
+  { return dereference_handle(mesh, vertex_handle).appendix(); }
 
 
-  /** @brief Function for obtaining the point from a vertex, no domain needed
+  /** @brief Function for obtaining the point from a vertex, no mesh needed
     *
     * @tparam VertexT             The vertex type
     * @param  vertex              The vertex of which the point is obtained
@@ -1448,7 +1448,7 @@ namespace viennagrid
   typename result_of::point< VertexT >::type & point(VertexT & vertex)
   { return default_point_accessor(vertex)(vertex); }
 
-  /** @brief Function for obtaining the point from a vertex, no domain needed, const version
+  /** @brief Function for obtaining the point from a vertex, no mesh needed, const version
     *
     * @tparam VertexT             The vertex type
     * @param  vertex              The vertex of which the point is obtained
@@ -1462,11 +1462,11 @@ namespace viennagrid
 
 
   /** @brief For internal use only */
-  template<typename DomainT, typename SourceElementT, typename DestinationElementT>
+  template<typename MeshT, typename SourceElementT, typename DestinationElementT>
   struct copy_element_setters
   {
-    copy_element_setters(DomainT & domain_, SourceElementT const & source_element_, DestinationElementT & destination_element_) :
-      domain(domain_), source_element(source_element_), destination_element(destination_element_) {}
+    copy_element_setters(MeshT & mesh_, SourceElementT const & source_element_, DestinationElementT & destination_element_) :
+      mesh(mesh_), source_element(source_element_), destination_element(destination_element_) {}
 
     template<typename BoundaryElementT>
     void operator() ( viennagrid::meta::tag<BoundaryElementT> )
@@ -1485,11 +1485,11 @@ namespace viennagrid
 
       for (; sit != source_boundary_elements.end(); ++sit, ++dit)
       {
-        dit.handle() = viennagrid::find( domain, sit->id() ).handle();
+        dit.handle() = viennagrid::find( mesh, sit->id() ).handle();
       }
     }
 
-    DomainT & domain;
+    MeshT & mesh;
     SourceElementT const & source_element;
     DestinationElementT & destination_element;
   };
@@ -1503,7 +1503,7 @@ namespace viennagrid
   struct fix_handle_helper< meta::null_type >
   {
     template<typename SourceWrappedConfigT, typename DestinationWrappedConfigT>
-    static void fix_handles( domain_t<SourceWrappedConfigT> const &, domain_t<DestinationWrappedConfigT> & )
+    static void fix_handles( mesh_t<SourceWrappedConfigT> const &, mesh_t<DestinationWrappedConfigT> & )
     {}
   };
 
@@ -1512,26 +1512,26 @@ namespace viennagrid
   struct fix_handle_helper< meta::typelist_t<SourceElementT, TailT> >
   {
     template<typename SourceWrappedConfigT, typename DestinationWrappedConfigT>
-    static void fix_handles( domain_t<SourceWrappedConfigT> const & source_domain, domain_t<DestinationWrappedConfigT> & destination_domain )
+    static void fix_handles( mesh_t<SourceWrappedConfigT> const & source_mesh, mesh_t<DestinationWrappedConfigT> & destination_mesh )
     {
       typedef typename viennagrid::result_of::element_tag<SourceElementT>::type ElementTag;
 
-      typedef domain_t<SourceWrappedConfigT>          SourceDomainType;
-      typedef domain_t<DestinationWrappedConfigT>     DestinationDomainType;
+      typedef mesh_t<SourceWrappedConfigT>          SourceMeshType;
+      typedef mesh_t<DestinationWrappedConfigT>     DestinationMeshType;
 
-      typedef typename viennagrid::result_of::const_element_range<SourceDomainType, SourceElementT>::type     SourceElementRangeType;
+      typedef typename viennagrid::result_of::const_element_range<SourceMeshType, SourceElementT>::type     SourceElementRangeType;
       typedef typename viennagrid::result_of::iterator<SourceElementRangeType>::type                          SourceElementRangeIterator;
 
-      typedef typename viennagrid::result_of::element_range<DestinationDomainType, SourceElementT>::type      DestinationElementRangeType;
+      typedef typename viennagrid::result_of::element_range<DestinationMeshType, SourceElementT>::type      DestinationElementRangeType;
       typedef typename viennagrid::result_of::iterator<DestinationElementRangeType>::type                     DestinationElementRangeIterator;
 
 
-      typedef typename viennagrid::result_of::element<SourceDomainType, ElementTag>::type SourceElementType;
-      typedef typename viennagrid::result_of::element<DestinationDomainType, ElementTag>::type DestinationElementType;
-      typedef typename viennagrid::result_of::handle<DestinationDomainType, ElementTag>::type DestinationElementHandleType;
+      typedef typename viennagrid::result_of::element<SourceMeshType, ElementTag>::type SourceElementType;
+      typedef typename viennagrid::result_of::element<DestinationMeshType, ElementTag>::type DestinationElementType;
+      typedef typename viennagrid::result_of::handle<DestinationMeshType, ElementTag>::type DestinationElementHandleType;
 
-      SourceElementRangeType source_elements = viennagrid::elements( source_domain );
-      DestinationElementRangeType destination_elements = viennagrid::elements( destination_domain );
+      SourceElementRangeType source_elements = viennagrid::elements( source_mesh );
+      DestinationElementRangeType destination_elements = viennagrid::elements( destination_mesh );
 
       DestinationElementRangeIterator dit = destination_elements.begin();
       for (SourceElementRangeIterator sit = source_elements.begin(); sit != source_elements.end(); ++sit, ++dit)
@@ -1544,40 +1544,40 @@ namespace viennagrid
           std::cout << "ERROR in fix_handles: destination element id != source element id" << std::endl;
           continue;
         }
-//           DestinationElementHandleType handle = viennagrid::push_element<false, false>(destination_domain, destination_element).first;
+//           DestinationElementHandleType handle = viennagrid::push_element<false, false>(destination_mesh, destination_element).first;
 
         typedef typename viennagrid::result_of::boundary_element_typelist<SourceElementT>::type BoundaryElementTypelist;
-        typedef typename viennagrid::result_of::element_typelist<DestinationDomainType>::type DestinationElementTypelist;
+        typedef typename viennagrid::result_of::element_typelist<DestinationMeshType>::type DestinationElementTypelist;
 
         typedef typename viennagrid::meta::typelist::result_of::intersection<
                   BoundaryElementTypelist,
                   DestinationElementTypelist
               >::type ElementTypelist;
 
-        copy_element_setters<DestinationDomainType, SourceElementT, DestinationElementType> setter( destination_domain, source_element, destination_element );
+        copy_element_setters<DestinationMeshType, SourceElementT, DestinationElementType> setter( destination_mesh, source_element, destination_element );
         viennagrid::meta::typelist::for_each<ElementTypelist>(setter);
       }
 
-      fix_handle_helper<TailT>::fix_handles( source_domain, destination_domain );
+      fix_handle_helper<TailT>::fix_handles( source_mesh, destination_mesh );
     }
   };
 
   /** @brief For internal use only */
   template<typename SourceWrappedConfigT, typename DestinationWrappedConfigT>
-  void fix_handles( domain_t<SourceWrappedConfigT> const & source_domain, domain_t<DestinationWrappedConfigT> & destination_domain )
+  void fix_handles( mesh_t<SourceWrappedConfigT> const & source_mesh, mesh_t<DestinationWrappedConfigT> & destination_mesh )
   {
-    typedef domain_t<SourceWrappedConfigT>          SourceDomainType;
-    typedef domain_t<DestinationWrappedConfigT>     DestinationDomainType;
+    typedef mesh_t<SourceWrappedConfigT>          SourceMeshType;
+    typedef mesh_t<DestinationWrappedConfigT>     DestinationMeshType;
 
-    typedef typename viennagrid::result_of::element_typelist<SourceDomainType>::type      SourceTypelist;
-    typedef typename viennagrid::result_of::element_typelist<DestinationDomainType>::type DestinationTypelist;
+    typedef typename viennagrid::result_of::element_typelist<SourceMeshType>::type      SourceTypelist;
+    typedef typename viennagrid::result_of::element_typelist<DestinationMeshType>::type DestinationTypelist;
 
         typedef typename viennagrid::meta::typelist::result_of::intersection<
                   SourceTypelist,
                   DestinationTypelist
               >::type ElementTypelist;
 
-    fix_handle_helper<SourceTypelist>::fix_handles( source_domain, destination_domain );
+    fix_handle_helper<SourceTypelist>::fix_handles( source_mesh, destination_mesh );
   }
 
 }

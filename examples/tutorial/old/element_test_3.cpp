@@ -22,7 +22,7 @@ using std::endl;
 
 
 #include "viennagrid/config/element_config.hpp"
-#include "viennagrid/config/domain_config.hpp"
+#include "viennagrid/config/mesh_config.hpp"
 
 #include "viennagrid/element/element_key.hpp"
 #include "viennagrid/element/element_orientation.hpp"
@@ -182,27 +182,27 @@ int main()
         
 
     //
-    // setting up the domain
+    // setting up the mesh
     //
     
     typedef viennagrid::config::result_of::element_container_typemap<config>::type element_container_typemap;
     
     //cout << typeid(element_container_typelist).name() << endl;
     
-    typedef viennagrid::storage::result_of::collection< element_container_typemap >::type domain_container_collection_type;
-    domain_container_collection_type domain_container_collection;
+    typedef viennagrid::storage::result_of::collection< element_container_typemap >::type mesh_container_collection_type;
+    mesh_container_collection_type mesh_container_collection;
     
 
     typedef viennagrid::storage::result_of::continuous_id_generator_config<
-        viennagrid::meta::typemap::result_of::key_typelist<domain_container_collection_type::typemap>::type,
+        viennagrid::meta::typemap::result_of::key_typelist<mesh_container_collection_type::typemap>::type,
         viennagrid::storage::smart_id_tag<int>
     >::type id_generator_config;
     
     typedef viennagrid::storage::result_of::continuous_id_generator< id_generator_config >::type id_generator_type;
     id_generator_type id_generator;
     
-    typedef viennagrid::storage::result_of::physical_inserter<domain_container_collection_type, long, id_generator_type&>::type inserter_type;
-    inserter_type inserter(domain_container_collection, id_generator);
+    typedef viennagrid::storage::result_of::physical_inserter<mesh_container_collection_type, long, id_generator_type&>::type inserter_type;
+    inserter_type inserter(mesh_container_collection, id_generator);
     
 
     
@@ -220,12 +220,12 @@ int main()
     inserter(v3);
     
     
-    tetrahedron_type tet(domain_container_collection);
+    tetrahedron_type tet(mesh_container_collection);
     
-    tet.container( viennagrid::dimension_tag<0>() ).set_handle( viennagrid::storage::collection::get<vertex_type>(domain_container_collection).handle_at(0), 0);
-    tet.container( viennagrid::dimension_tag<0>() ).set_handle( viennagrid::storage::collection::get<vertex_type>(domain_container_collection).handle_at(1), 1);
-    tet.container( viennagrid::dimension_tag<0>() ).set_handle( viennagrid::storage::collection::get<vertex_type>(domain_container_collection).handle_at(2), 2);
-    tet.container( viennagrid::dimension_tag<0>() ).set_handle( viennagrid::storage::collection::get<vertex_type>(domain_container_collection).handle_at(3), 3);
+    tet.container( viennagrid::dimension_tag<0>() ).set_handle( viennagrid::storage::collection::get<vertex_type>(mesh_container_collection).handle_at(0), 0);
+    tet.container( viennagrid::dimension_tag<0>() ).set_handle( viennagrid::storage::collection::get<vertex_type>(mesh_container_collection).handle_at(1), 1);
+    tet.container( viennagrid::dimension_tag<0>() ).set_handle( viennagrid::storage::collection::get<vertex_type>(mesh_container_collection).handle_at(2), 2);
+    tet.container( viennagrid::dimension_tag<0>() ).set_handle( viennagrid::storage::collection::get<vertex_type>(mesh_container_collection).handle_at(3), 3);
     
     inserter(tet);
     
@@ -239,34 +239,34 @@ int main()
     
     
     //
-    // display the domain content
+    // display the mesh content
     //
     
-    cout << "All vertices of the domain" << endl;
-    std::copy( viennagrid::storage::collection::get<vertex_type>(domain_container_collection).begin(), viennagrid::storage::collection::get<vertex_type>(domain_container_collection).end(), std::ostream_iterator<vertex_type>(cout, "\n") );
+    cout << "All vertices of the mesh" << endl;
+    std::copy( viennagrid::storage::collection::get<vertex_type>(mesh_container_collection).begin(), viennagrid::storage::collection::get<vertex_type>(mesh_container_collection).end(), std::ostream_iterator<vertex_type>(cout, "\n") );
     cout << endl;
     
-    cout << "All triangles of the domain" << endl;
-    std::copy( viennagrid::storage::collection::get<line_type>(domain_container_collection).begin(), viennagrid::storage::collection::get<line_type>(domain_container_collection).end(), std::ostream_iterator<line_type>(cout, "\n") );
+    cout << "All triangles of the mesh" << endl;
+    std::copy( viennagrid::storage::collection::get<line_type>(mesh_container_collection).begin(), viennagrid::storage::collection::get<line_type>(mesh_container_collection).end(), std::ostream_iterator<line_type>(cout, "\n") );
     cout << endl;
     
-    cout << "All lines of the domain" << endl;
-    std::copy( viennagrid::storage::collection::get<triangle_type>(domain_container_collection).begin(), viennagrid::storage::collection::get<triangle_type>(domain_container_collection).end(), std::ostream_iterator<triangle_type>(cout, "\n") );
+    cout << "All lines of the mesh" << endl;
+    std::copy( viennagrid::storage::collection::get<triangle_type>(mesh_container_collection).begin(), viennagrid::storage::collection::get<triangle_type>(mesh_container_collection).end(), std::ostream_iterator<triangle_type>(cout, "\n") );
     cout << endl;
     
-    cout << "All tetraherons of the domain" << endl;
-    std::copy( viennagrid::storage::collection::get<tetrahedron_type>(domain_container_collection).begin(), viennagrid::storage::collection::get<tetrahedron_type>(domain_container_collection).end(), std::ostream_iterator<tetrahedron_type>(cout, "\n") );
+    cout << "All tetraherons of the mesh" << endl;
+    std::copy( viennagrid::storage::collection::get<tetrahedron_type>(mesh_container_collection).begin(), viennagrid::storage::collection::get<tetrahedron_type>(mesh_container_collection).end(), std::ostream_iterator<tetrahedron_type>(cout, "\n") );
     cout << endl;
     
     
     
-    const tetrahedron_type & test_tet = *viennagrid::storage::collection::get<tetrahedron_type>(domain_container_collection).begin();
+    const tetrahedron_type & test_tet = *viennagrid::storage::collection::get<tetrahedron_type>(mesh_container_collection).begin();
     
     typedef viennagrid::result_of::const_element_range<tetrahedron_type, viennagrid::triangle_tag>::type tetrahedron_triangle_range;
     typedef viennagrid::result_of::const_iterator<tetrahedron_triangle_range>::type tetrahedron_triangle_iterator;
     //typedef tetrahedron_triangle_range::const_iterator tetrahedron_triangle_iterator;
     
-    cout << "All triangles of the first tetdrahedron in the domain" << endl;
+    cout << "All triangles of the first tetdrahedron in the mesh" << endl;
     tetrahedron_triangle_range tri_range = viennagrid::elements<viennagrid::triangle_tag>(test_tet);
     for (tetrahedron_triangle_iterator it = tri_range.begin(); it != tri_range.end(); ++it)
         cout << *it << endl;
@@ -277,12 +277,12 @@ int main()
     cout << endl;
     
     
-    const triangle_type & test_tri = *viennagrid::storage::collection::get<triangle_type>(domain_container_collection).begin();
+    const triangle_type & test_tri = *viennagrid::storage::collection::get<triangle_type>(mesh_container_collection).begin();
     
     typedef viennagrid::result_of::const_element_range<triangle_type, viennagrid::line_tag>::type triangle_line_range;
     typedef viennagrid::result_of::const_iterator<triangle_line_range>::type triangle_line_iterator;
 
-    cout << "All lines of the first triangle in the domain" << endl;
+    cout << "All lines of the first triangle in the mesh" << endl;
     triangle_line_range lin_range = viennagrid::elements<viennagrid::line_tag>(test_tri);
     for (triangle_line_iterator it = lin_range.begin(); it != lin_range.end(); ++it)
         cout << *it << endl;

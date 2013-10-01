@@ -40,7 +40,7 @@
 #include "viennagrid/algorithm/closest_points.hpp"
 #include "viennagrid/algorithm/distance.hpp"
 
-//Domain-based algorithms:
+//Mesh-based algorithms:
 #include "viennagrid/algorithm/boundary.hpp"
 #include "viennagrid/algorithm/refine.hpp"
 #include "viennagrid/algorithm/voronoi.hpp"
@@ -49,20 +49,20 @@
 
 int main()
 {
-  typedef viennagrid::tetrahedral_3d_domain                         DomainType;
-  typedef viennagrid::result_of::segmentation<DomainType>::type     SegmentationType;
+  typedef viennagrid::tetrahedral_3d_mesh                         MeshType;
+  typedef viennagrid::result_of::segmentation<MeshType>::type     SegmentationType;
   typedef viennagrid::result_of::segment<SegmentationType>::type    SegmentType;
   
-  typedef viennagrid::result_of::point<DomainType>::type            PointType;
+  typedef viennagrid::result_of::point<MeshType>::type            PointType;
   
-  typedef viennagrid::result_of::cell<DomainType>::type             CellType;
-  typedef viennagrid::result_of::triangle<DomainType>::type         TriangleType;
-  typedef viennagrid::result_of::edge<DomainType>::type             EdgeType;
-  typedef viennagrid::result_of::vertex<DomainType>::type           VertexType;
-  typedef viennagrid::result_of::vertex_handle<DomainType>::type    VertexHandleType;
+  typedef viennagrid::result_of::cell<MeshType>::type             CellType;
+  typedef viennagrid::result_of::triangle<MeshType>::type         TriangleType;
+  typedef viennagrid::result_of::edge<MeshType>::type             EdgeType;
+  typedef viennagrid::result_of::vertex<MeshType>::type           VertexType;
+  typedef viennagrid::result_of::vertex_handle<MeshType>::type    VertexHandleType;
     
-  typedef viennagrid::result_of::vertex_range<DomainType>::type     VertexRange;
-  typedef viennagrid::result_of::cell_range<DomainType>::type       CellRange;
+  typedef viennagrid::result_of::vertex_range<MeshType>::type     VertexRange;
+  typedef viennagrid::result_of::cell_range<MeshType>::type       CellRange;
 
                       
   std::cout << "------------------------------------------------------------ " << std::endl;
@@ -70,16 +70,16 @@ int main()
   std::cout << "------------------------------------------------------------ " << std::endl;
   std::cout << std::endl;
   
-  DomainType domain;
-  SegmentationType segmentation(domain);
+  MeshType mesh;
+  SegmentationType segmentation(mesh);
   
   //
-  // Read domain from Netgen file
+  // Read mesh from Netgen file
   //
   try
   {
     viennagrid::io::netgen_reader reader;
-    reader(domain, segmentation, "../../examples/data/cube48.mesh");
+    reader(mesh, segmentation, "../../examples/data/cube48.mesh");
   }
   catch (std::exception & e)
   {
@@ -92,13 +92,13 @@ int main()
   // Part 1: Point-based algorithms:
   //
 
-  // Extract the first four points of the domain:
-  VertexRange vertices = viennagrid::elements(domain);
+  // Extract the first four points of the mesh:
+  VertexRange vertices = viennagrid::elements(mesh);
   
-  PointType const & p0 = viennagrid::point(domain, vertices[0]);
-  PointType const & p1 = viennagrid::point(domain, vertices[1]);
-  PointType const & p2 = viennagrid::point(domain, vertices[2]);
-  PointType const & p3 = viennagrid::point(domain, vertices[3]);
+  PointType const & p0 = viennagrid::point(mesh, vertices[0]);
+  PointType const & p1 = viennagrid::point(mesh, vertices[1]);
+  PointType const & p2 = viennagrid::point(mesh, vertices[2]);
+  PointType const & p3 = viennagrid::point(mesh, vertices[3]);
   
   std::cout << "Point p0: " << p0 << std::endl;
   std::cout << "Point p1: " << p1 << std::endl;
@@ -122,8 +122,8 @@ int main()
   // Part 2: Cell-based algorithms:
   //
   
-  // Extract first cell from domain:
-  CellType const & cell = viennagrid::cells(domain)[0];
+  // Extract first cell from mesh:
+  CellType const & cell = viennagrid::cells(mesh)[0];
   
   std::cout << "Cell: " << std::endl;
   std::cout << cell << std::endl;
@@ -135,17 +135,17 @@ int main()
   std::cout << "Volume of cell: "       << viennagrid::volume(cell) << std::endl;
   std::cout << std::endl;
   
-  std::cout << "Volume of domain: "       << viennagrid::volume(domain) << std::endl;
-  std::cout << "Surface of domain: "       << viennagrid::surface(domain) << std::endl;
+  std::cout << "Volume of mesh: "       << viennagrid::volume(mesh) << std::endl;
+  std::cout << "Surface of mesh: "       << viennagrid::surface(mesh) << std::endl;
   
   
   //
-  // Part 3: Domain-based algorithms (except interfaces. Refer to the multi-segment tutorial multi_segment.cpp)
+  // Part 3: Mesh-based algorithms (except interfaces. Refer to the multi-segment tutorial multi_segment.cpp)
   //
   
   
   // Write Voronoi info to default ViennaData keys:
-  typedef viennagrid::result_of::const_cell_handle<DomainType>::type    ConstCellHandleType;
+  typedef viennagrid::result_of::const_cell_handle<MeshType>::type    ConstCellHandleType;
   
   // Defining container for storing voronoi information
   std::deque<double> interface_areas;
@@ -158,7 +158,7 @@ int main()
   std::deque< viennagrid::result_of::voronoi_cell_contribution<ConstCellHandleType>::type > edge_box_volume_contributions;
   
   viennagrid::apply_voronoi<CellType>(
-          domain,
+          mesh,
           viennagrid::make_field<EdgeType>(interface_areas),
           viennagrid::make_field<EdgeType>(interface_contributions),
           viennagrid::make_field<VertexType>(vertex_box_volumes),
@@ -177,20 +177,20 @@ int main()
 
   
   //          
-  // Refine domain uniformly:
-  DomainType uniformly_refined_domain;  
-  viennagrid::cell_refine_uniformly(domain, uniformly_refined_domain);
+  // Refine mesh uniformly:
+  MeshType uniformly_refined_mesh;  
+  viennagrid::cell_refine_uniformly(mesh, uniformly_refined_mesh);
   
   {
-    viennagrid::io::vtk_writer<DomainType> writer;
-    writer(uniformly_refined_domain, "uniform_refinement");
+    viennagrid::io::vtk_writer<MeshType> writer;
+    writer(uniformly_refined_mesh, "uniform_refinement");
   }
   
   
   
   //          
   // Refine only specific cells:
-  DomainType adaptively_refined_domain;
+  MeshType adaptively_refined_mesh;
   
   // Define a container which stores the flags, in this case we want an std::map as underlying container
   typedef viennagrid::result_of::accessor_container< CellType, bool, viennagrid::storage::std_map_tag >::type CellRefinementContainerType;
@@ -199,26 +199,26 @@ int main()
   // define an field on this container for easy access with elements
   viennagrid::result_of::field< CellRefinementContainerType, CellType >::type cell_refinement_field(cell_refinement_flag);
   
-  cell_refinement_field( viennagrid::cells(domain)[0] ) = true;
-  cell_refinement_field( viennagrid::cells(domain)[3] ) = true;
-  cell_refinement_field( viennagrid::cells(domain)[8] ) = true;
+  cell_refinement_field( viennagrid::cells(mesh)[0] ) = true;
+  cell_refinement_field( viennagrid::cells(mesh)[3] ) = true;
+  cell_refinement_field( viennagrid::cells(mesh)[8] ) = true;
   
-  // refining the domain using the field representing the marked cells
-  viennagrid::cell_refine(domain, adaptively_refined_domain, cell_refinement_field);
+  // refining the mesh using the field representing the marked cells
+  viennagrid::cell_refine(mesh, adaptively_refined_mesh, cell_refinement_field);
   
   {
-    viennagrid::io::vtk_writer<DomainType> writer;
-    writer(adaptively_refined_domain, "adaptively_refinement");
+    viennagrid::io::vtk_writer<MeshType> writer;
+    writer(adaptively_refined_mesh, "adaptively_refinement");
   }
 
   
   
   //
-  // Get boundary information of first vertex with respect to the full domain:
+  // Get boundary information of first vertex with respect to the full mesh:
             
   for (VertexRange::iterator it = vertices.begin(); it != vertices.end(); ++it)
-      std::cout << *it << " " << viennagrid::point(domain, *it) << " "
-          << viennagrid::is_boundary(domain, *it)    //second argument is the enclosing complex (either a domain or a segment)
+      std::cout << *it << " " << viennagrid::point(mesh, *it) << " "
+          << viennagrid::is_boundary(mesh, *it)    //second argument is the enclosing complex (either a mesh or a segment)
           << std::endl << std::endl;
   
   

@@ -14,10 +14,10 @@
 ======================================================================= */
 
 #include <limits>
-#include "viennagrid/domain/accessor.hpp"
+#include "viennagrid/mesh/accessor.hpp"
 
 #include "viennagrid/forwards.hpp"
-#include "viennagrid/domain/domain.hpp"
+#include "viennagrid/mesh/mesh.hpp"
 
 
 /** @file segmentation.hpp
@@ -37,7 +37,7 @@ namespace viennagrid
 
     typedef segmentation_t<WrappedConfigType> segmentation_type;
     typedef typename segmentation_type::segment_id_type segment_id_type;
-    typedef typename segmentation_type::domain_type domain_type;
+    typedef typename segmentation_type::mesh_type mesh_type;
     typedef typename segmentation_type::view_type view_type;
 
   private:
@@ -95,7 +95,7 @@ namespace viennagrid
 
   namespace result_of
   {
-    // doxygen docu in domain.hpp
+    // doxygen docu in mesh.hpp
     template<typename SegmentationType, typename element_type_or_tag>
     struct is_element_present< segment_t<SegmentationType>, element_type_or_tag >
     {
@@ -123,7 +123,7 @@ namespace viennagrid
     };
 
 
-    // doxygen docu in domain.hpp
+    // doxygen docu in mesh.hpp
     template<typename segmentation_type>
     struct point< segment_t<segmentation_type> >
     {
@@ -228,7 +228,7 @@ namespace viennagrid
   { return elements<element_type_or_tag>( segment.view() ); }
 
 
-  // doxygen docu in domain.hpp
+  // doxygen docu in mesh.hpp
   template<typename ElementTypeOrTag, typename SegmentationType>
   typename viennagrid::result_of::id<
     typename viennagrid::result_of::element< segment_t<SegmentationType>, ElementTypeOrTag>::type
@@ -293,9 +293,9 @@ namespace viennagrid
   {
     /** @brief For internal use only */
     template<typename WrappedConfigType>
-    struct segmentation_domain_type
+    struct segmentation_mesh_type
     {
-      typedef typename WrappedConfigType::domain_type type;
+      typedef typename WrappedConfigType::mesh_type type;
     };
 
     /** @brief For internal use only */
@@ -333,10 +333,10 @@ namespace viennagrid
   namespace config
   {
     /** @brief For internal use only */
-    template<typename domain_type_, typename view_type_, typename segment_id_type_, typename appendix_type_, typename view_container_tag_>
+    template<typename mesh_type_, typename view_type_, typename segment_id_type_, typename appendix_type_, typename view_container_tag_>
     struct segmentation_config_wrapper_t
     {
-      typedef domain_type_ domain_type;
+      typedef mesh_type_ mesh_type;
       typedef view_type_ view_type;
       typedef segment_id_type_ segment_id_type;
       typedef appendix_type_ appendix_type;
@@ -350,8 +350,8 @@ namespace viennagrid
   {
   public:
 
-    /** @brief The domain type to which the segmentation references */
-    typedef typename result_of::segmentation_domain_type<WrappedConfigType>::type domain_type;
+    /** @brief The mesh type to which the segmentation references */
+    typedef typename result_of::segmentation_mesh_type<WrappedConfigType>::type mesh_type;
     /** @brief The view type in a segment */
     typedef typename result_of::segmentation_view_type<WrappedConfigType>::type view_type;
     /** @brief The segment ID type */
@@ -375,21 +375,21 @@ namespace viennagrid
 
     /** @brief Constructor
       *
-      * @param domain_x   The domain object to which the segment references
+      * @param mesh_x   The mesh object to which the segment references
       */
-    segmentation_t( domain_type & domain_x ) : highest_id(-1), domain_(&domain_x) {}
+    segmentation_t( mesh_type & mesh_x ) : highest_id(-1), mesh_(&mesh_x) {}
 
 
-    /** @brief Returns the domain to which the segmentation is associated
+    /** @brief Returns the mesh to which the segmentation is associated
       *
-      * @return   A reference to the domain
+      * @return   A reference to the mesh
       */
-    domain_type & domain() { return *domain_; }
-    /** @brief Returns the domain to which the segmentation is associated, const version
+    mesh_type & mesh() { return *mesh_; }
+    /** @brief Returns the mesh to which the segmentation is associated, const version
       *
-      * @return   A const reference to the domain
+      * @return   A const reference to the mesh
       */
-    domain_type const & domain() const { return *domain_; }
+    mesh_type const & mesh() const { return *mesh_; }
 
     /** @brief Returns the appenix of the segmentation, for internal use only
       *
@@ -435,7 +435,7 @@ namespace viennagrid
         if (it != segment_id_map.end())
             return it->second; // segment already is present
 
-        view_segments.push_back( viennagrid::make_view( domain() ) );
+        view_segments.push_back( viennagrid::make_view( mesh() ) );
 
         segment_type segment( *this, view_segments.back(), segment_id );
 
@@ -600,7 +600,7 @@ namespace viennagrid
 
       appendix_type appendix_;
 
-      domain_type * domain_;
+      mesh_type * mesh_;
   };
 
 
@@ -609,11 +609,11 @@ namespace viennagrid
 
   namespace result_of
   {
-    // doxygen docu in domain.hpp
+    // doxygen docu in mesh.hpp
     template<typename WrappedConfigType, typename element_type_or_tag>
     struct is_element_present< segmentation_t<WrappedConfigType>, element_type_or_tag >
     {
-      static const bool value = is_element_present< typename segmentation_t<WrappedConfigType>::domain_type, element_type_or_tag>::value;
+      static const bool value = is_element_present< typename segmentation_t<WrappedConfigType>::mesh_type, element_type_or_tag>::value;
     };
 
     template<typename WrappedConfigType, typename element_type_or_tag>
@@ -627,21 +627,21 @@ namespace viennagrid
     template<typename segmentation_type>
     struct element_collection< segmentation_t<segmentation_type> >
     {
-        typedef typename element_collection<typename segmentation_t<segmentation_type>::domain_type>::type type;
+        typedef typename element_collection<typename segmentation_t<segmentation_type>::mesh_type>::type type;
     };
 
     template<typename segmentation_type>
     struct element_collection< const segmentation_t<segmentation_type> >
     {
-        typedef typename element_collection<const typename segmentation_t<segmentation_type>::domain_type>::type type;
+        typedef typename element_collection<const typename segmentation_t<segmentation_type>::mesh_type>::type type;
     };
 
 
-    // doxygen docu in domain.hpp
+    // doxygen docu in mesh.hpp
     template<typename segmentation_type>
     struct point< segmentation_t<segmentation_type> >
     {
-        typedef typename point<typename segmentation_t<segmentation_type>::domain_type>::type type;
+        typedef typename point<typename segmentation_t<segmentation_type>::mesh_type>::type type;
     };
 
 
@@ -650,21 +650,21 @@ namespace viennagrid
     template<typename segmentation_type, typename element_type_or_tag>
     struct element< segmentation_t<segmentation_type>, element_type_or_tag >
     {
-        typedef typename element<typename segmentation_t<segmentation_type>::domain_type, element_type_or_tag>::type type;
+        typedef typename element<typename segmentation_t<segmentation_type>::mesh_type, element_type_or_tag>::type type;
     };
 
     // doxygen docu in forwards.hpp
     template<typename segmentation_type, typename element_type_or_tag>
     struct handle< segmentation_t<segmentation_type>, element_type_or_tag >
     {
-        typedef typename handle<typename segmentation_t<segmentation_type>::domain_type, element_type_or_tag>::type type;
+        typedef typename handle<typename segmentation_t<segmentation_type>::mesh_type, element_type_or_tag>::type type;
     };
 
     // doxygen docu in forwards.hpp
     template<typename segmentation_type, typename element_type_or_tag>
     struct const_handle< segmentation_t<segmentation_type>, element_type_or_tag >
     {
-        typedef typename const_handle<typename segmentation_t<segmentation_type>::domain_type, element_type_or_tag>::type type;
+        typedef typename const_handle<typename segmentation_t<segmentation_type>::mesh_type, element_type_or_tag>::type type;
     };
 
 
@@ -672,21 +672,21 @@ namespace viennagrid
     template<typename segmentation_type, typename element_type_or_tag>
     struct element_range< segmentation_t<segmentation_type>, element_type_or_tag >
     {
-        typedef typename element_range<typename segmentation_t<segmentation_type>::domain_type, element_type_or_tag>::type type;
+        typedef typename element_range<typename segmentation_t<segmentation_type>::mesh_type, element_type_or_tag>::type type;
     };
 
     // doxygen docu in forwards.hpp
     template<typename segmentation_type, typename element_type_or_tag>
     struct const_element_range< segmentation_t<segmentation_type>, element_type_or_tag >
     {
-        typedef typename const_element_range<typename segmentation_t<segmentation_type>::domain_type, element_type_or_tag>::type type;
+        typedef typename const_element_range<typename segmentation_t<segmentation_type>::mesh_type, element_type_or_tag>::type type;
     };
 
     // doxygen docu in forwards.hpp
     template<typename segmentation_type>
     struct cell_tag< segmentation_t<segmentation_type> >
     {
-      typedef typename cell_tag< typename segmentation_t<segmentation_type>::domain_type >::type type;
+      typedef typename cell_tag< typename segmentation_t<segmentation_type>::mesh_type >::type type;
     };
   }
 
@@ -959,15 +959,15 @@ namespace viennagrid
 
 
 
-    /** @brief Metafunction for obtaining a segmentation type for a domain type and with settings. Segment element information is not present (see segment_element_info for more information)
+    /** @brief Metafunction for obtaining a segmentation type for a mesh type and with settings. Segment element information is not present (see segment_element_info for more information)
      *
-     * @tparam DomainT          The base domain type to which the segmentation is associated
-     * @tparam ViewT            The domain view type representing the referenced elements, default ist default domain view from DomainT
+     * @tparam MeshT          The base mesh type to which the segmentation is associated
+     * @tparam ViewT            The mesh view type representing the referenced elements, default ist default mesh view from MeshT
      * @tparam SegmentIDType    The ID type for segments, default is int
      * @tparam AppendixType     The appendix type, for internal use only, don't change default type unless you know what you are doing :)
      */
-    template<typename DomainT,
-             typename ViewT = typename viennagrid::result_of::domain_view<DomainT>::type,
+    template<typename MeshT,
+             typename ViewT = typename viennagrid::result_of::mesh_view<MeshT>::type,
              typename SegmentIDType = int,
              typename AppendixType =
                 viennagrid::storage::collection_t<
@@ -975,7 +975,7 @@ namespace viennagrid
                         element_segment_mapping_tag,
                         viennagrid::storage::collection_t<
                             typename trivial_segmentation_appendix<
-                                typename viennagrid::result_of::element_typelist<DomainT>::type,
+                                typename viennagrid::result_of::element_typelist<MeshT>::type,
                                 SegmentIDType
                             >::type
                         >,
@@ -984,10 +984,10 @@ namespace viennagrid
                         interface_information_collection_tag,
                         viennagrid::storage::collection_t<
                           typename viennagrid::result_of::interface_information_collection_typemap<
-                            typename viennagrid::result_of::element_taglist<DomainT>::type,
+                            typename viennagrid::result_of::element_taglist<MeshT>::type,
                             SegmentIDType,
                             viennagrid::storage::std_vector_tag,
-                            typename DomainT::change_counter_type
+                            typename MeshT::change_counter_type
                           >::type
                         >
 
@@ -996,22 +996,22 @@ namespace viennagrid
             typename view_container_tag = viennagrid::storage::std_deque_tag >
     struct segmentation
     {
-      typedef config::segmentation_config_wrapper_t<DomainT, ViewT, SegmentIDType, AppendixType, view_container_tag> WrappedConfigType;
+      typedef config::segmentation_config_wrapper_t<MeshT, ViewT, SegmentIDType, AppendixType, view_container_tag> WrappedConfigType;
 
       typedef segmentation_t<WrappedConfigType> type;
     };
 
 
 
-    /** @brief Metafunction for obtaining a segmentation type for a 3D hull domain type and with settings. Segment element information is a bool (see segment_element_info for more information)
+    /** @brief Metafunction for obtaining a segmentation type for a 3D hull mesh type and with settings. Segment element information is a bool (see segment_element_info for more information)
      *
-     * @tparam DomainT          The base domain type to which the segmentation is associated
-     * @tparam ViewT            The domain view type representing the referenced elements, default ist default domain view from DomainT
+     * @tparam MeshT          The base mesh type to which the segmentation is associated
+     * @tparam ViewT            The mesh view type representing the referenced elements, default ist default mesh view from MeshT
      * @tparam SegmentIDType    The ID type for segments, default is int
      * @tparam AppendixType     The appendix type, for internal use only, don't change default type unless you know what you are doing :)
      */
-    template<typename DomainT,
-             typename ViewT = typename viennagrid::result_of::domain_view<DomainT>::type,
+    template<typename MeshT,
+             typename ViewT = typename viennagrid::result_of::mesh_view<MeshT>::type,
              typename SegmentIDType = int,
              typename AppendixType =
               viennagrid::storage::collection_t<
@@ -1020,11 +1020,11 @@ namespace viennagrid
                     viennagrid::storage::collection_t<
                         typename viennagrid::meta::typemap::result_of::modify<
                             typename trivial_segmentation_appendix<
-                                typename viennagrid::result_of::element_typelist<DomainT>::type,
+                                typename viennagrid::result_of::element_typelist<MeshT>::type,
                                 SegmentIDType
                             >::type,
                             viennagrid::meta::static_pair<
-                                typename viennagrid::result_of::element< DomainT, viennagrid::triangle_tag >::type,
+                                typename viennagrid::result_of::element< MeshT, viennagrid::triangle_tag >::type,
                                 typename viennagrid::storage::result_of::container<
                                     segment_info_t< element_segment_mapping<SegmentIDType, bool> >,
                                     viennagrid::storage::std_deque_tag
@@ -1036,10 +1036,10 @@ namespace viennagrid
                     interface_information_collection_tag,
                     viennagrid::storage::collection_t<
                       typename viennagrid::result_of::interface_information_collection_typemap<
-                        typename viennagrid::result_of::element_taglist<DomainT>::type,
+                        typename viennagrid::result_of::element_taglist<MeshT>::type,
                         SegmentIDType,
                         viennagrid::storage::std_vector_tag,
-                        typename DomainT::change_counter_type
+                        typename MeshT::change_counter_type
                       >::type
                     >
 
@@ -1048,7 +1048,7 @@ namespace viennagrid
             typename view_container_tag = viennagrid::storage::std_deque_tag >
     struct oriented_3d_hull_segmentation
     {
-      typedef config::segmentation_config_wrapper_t<DomainT, ViewT, SegmentIDType, AppendixType, view_container_tag> WrappedConfigType;
+      typedef config::segmentation_config_wrapper_t<MeshT, ViewT, SegmentIDType, AppendixType, view_container_tag> WrappedConfigType;
 
       typedef segmentation_t<WrappedConfigType> type;
     };
@@ -1336,7 +1336,7 @@ namespace viennagrid
   void add( SegmentT & segment, element_t<vertex_tag, WrappedConfigT> & vertex )
   {
     typedef element_t<vertex_tag, WrappedConfigT> element_type;
-      viennagrid::elements<element_type>( segment.view() ).insert_unique_handle( viennagrid::handle( segment.segmentation().domain(), vertex ) );
+      viennagrid::elements<element_type>( segment.view() ).insert_unique_handle( viennagrid::handle( segment.segmentation().mesh(), vertex ) );
       add( segment, viennagrid::make_accessor<element_type>( element_segment_mapping_collection(segment) ), vertex );
   }
 
@@ -1352,7 +1352,7 @@ namespace viennagrid
   void add( SegmentT & segment, element_t<ElementTagT, WrappedConfigT> & element )
   {
       typedef element_t<ElementTagT, WrappedConfigT> element_type;
-      viennagrid::elements<element_type>( segment.view() ).insert_unique_handle( viennagrid::handle( segment.segmentation().domain(), element ) );
+      viennagrid::elements<element_type>( segment.view() ).insert_unique_handle( viennagrid::handle( segment.segmentation().mesh(), element ) );
       add( segment, viennagrid::make_accessor<element_type>( element_segment_mapping_collection(segment) ), element );
 
       // recursively adding facet elements; view containers has to be std::set
@@ -1408,7 +1408,7 @@ namespace viennagrid
   bool erase( SegmentT & segment, element_t<ElementTagT, WrappedConfigT> & element )
   {
       typedef element_t<ElementTagT, WrappedConfigT> element_type;
-      viennagrid::elements<element_type>( segment.view() ).erase_handle( viennagrid::handle( segment.segmentation().domain(), element ) );
+      viennagrid::elements<element_type>( segment.view() ).erase_handle( viennagrid::handle( segment.segmentation().mesh(), element ) );
       return erase( segment, viennagrid::make_accessor<element_type>( element_segment_mapping_collection(segment) ), element );
   }
 
@@ -1444,16 +1444,16 @@ namespace viennagrid
   /** @brief Adds an element handle to a view/segment if it isn't already present in that view/segment. The runtime of this function is linear in the number of elements present in the view/segment/.
     *
     * @tparam ViewOrSegmentT    The view/segment type
-    * @tparam DomainT           The domain type where the element of the handle lives
+    * @tparam MeshT           The mesh type where the element of the handle lives
     * @tparam HandleT           The handle to be added
     * @param  view_or_segment   The view/segment object
     * @param  handle            The handle object to be inserted
     */
-  template<typename ViewOrSegmentT, typename DomainT, typename HandleT>
-  void add_handle( ViewOrSegmentT & view_or_segment, DomainT & domain, HandleT handle )
+  template<typename ViewOrSegmentT, typename MeshT, typename HandleT>
+  void add_handle( ViewOrSegmentT & view_or_segment, MeshT & mesh, HandleT handle )
   {
       typedef typename storage::handle::result_of::value_type<HandleT>::type value_type;
-      value_type & element = dereference_handle(domain, handle);
+      value_type & element = dereference_handle(mesh, handle);
 
       typedef typename viennagrid::result_of::element_range< ViewOrSegmentT, value_type >::type range_type;
       typedef typename viennagrid::result_of::iterator<range_type>::type iterator_type;
