@@ -27,44 +27,44 @@
 #include "viennagrid/algorithm/interface.hpp"
 #include "viennagrid/algorithm/volume.hpp"
 
-template <typename DomainType, typename ReaderType>
+template <typename MeshType, typename ReaderType>
 void test(ReaderType & my_reader, std::string const & infile)
 {
 
-  typedef typename viennagrid::result_of::cell_tag<DomainType>::type          CellTag;
-  typedef typename viennagrid::result_of::segmentation<DomainType>::type      SegmentationType;
+  typedef typename viennagrid::result_of::cell_tag<MeshType>::type          CellTag;
+  typedef typename viennagrid::result_of::segmentation<MeshType>::type      SegmentationType;
   typedef typename viennagrid::result_of::segment<SegmentationType>::type     SegmentType;
   
   
-  typedef typename viennagrid::result_of::point<DomainType>::type             PointType;
-  typedef typename viennagrid::result_of::vertex<DomainType>::type            VertexType;
-  typedef typename viennagrid::result_of::line<DomainType>::type              EdgeType;
-  typedef typename viennagrid::result_of::facet<DomainType>::type             FacetType;
-  typedef typename viennagrid::result_of::cell<DomainType>::type              CellType;
+  typedef typename viennagrid::result_of::point<MeshType>::type             PointType;
+  typedef typename viennagrid::result_of::vertex<MeshType>::type            VertexType;
+  typedef typename viennagrid::result_of::line<MeshType>::type              EdgeType;
+  typedef typename viennagrid::result_of::facet<MeshType>::type             FacetType;
+  typedef typename viennagrid::result_of::cell<MeshType>::type              CellType;
                                             
-  typedef typename viennagrid::result_of::vertex_range<DomainType>::type        VertexContainer;
+  typedef typename viennagrid::result_of::vertex_range<MeshType>::type        VertexContainer;
   typedef typename viennagrid::result_of::iterator<VertexContainer>::type       VertexIterator;
                                             
-  typedef typename viennagrid::result_of::line_range<DomainType>::type          EdgeContainer;
+  typedef typename viennagrid::result_of::line_range<MeshType>::type          EdgeContainer;
   typedef typename viennagrid::result_of::iterator<EdgeContainer>::type         EdgeIterator;
 
-  typedef typename viennagrid::result_of::facet_range<DomainType>::type         FacetContainer;
+  typedef typename viennagrid::result_of::facet_range<MeshType>::type         FacetContainer;
   typedef typename viennagrid::result_of::iterator<FacetContainer>::type        FacetIterator;
 
-  typedef typename viennagrid::result_of::cell_range<DomainType>::type          CellContainer;
+  typedef typename viennagrid::result_of::cell_range<MeshType>::type          CellContainer;
   typedef typename viennagrid::result_of::iterator<CellContainer>::type         CellIterator;
   
   typedef typename viennagrid::result_of::vertex_range<EdgeType>::type          VertexOnEdgeContainer;
   typedef typename viennagrid::result_of::iterator<VertexOnEdgeContainer>::type VertexOnEdgeIterator;
   
   
-  DomainType domain;
-  SegmentationType segmentation(domain);
+  MeshType mesh;
+  SegmentationType segmentation(mesh);
 
   //read from file:
   try
   {
-    my_reader(domain, segmentation, infile);
+    my_reader(mesh, segmentation, infile);
   }
   catch (std::exception const & ex)
   {
@@ -86,7 +86,7 @@ void test(ReaderType & my_reader, std::string const & infile)
   std::cout << "* Test 1: Iteration over all facets on the boundary:" << std::endl;
   std::cout << "*" << std::endl;
   double surface = 0;
-  FacetContainer facets = viennagrid::elements(domain);
+  FacetContainer facets = viennagrid::elements(mesh);
   for (FacetIterator fit = facets.begin();
        fit != facets.end();
        ++fit)
@@ -113,14 +113,14 @@ void test(ReaderType & my_reader, std::string const & infile)
   std::cout << "* Test 2: Iteration over all vertices on the interface" << std::endl;
   std::cout << "*" << std::endl;
   bool vertices_found = false;
-  VertexContainer vertices = viennagrid::elements(domain);
+  VertexContainer vertices = viennagrid::elements(mesh);
   for (VertexIterator vit = vertices.begin();
        vit != vertices.end();
        ++vit)
   {
     if (viennagrid::is_interface(seg1, seg2, *vit))
     {
-      assert( viennagrid::point(domain ,*vit)[0] == 0.5 && "Invalid point detected on interface!");
+      assert( viennagrid::point(mesh ,*vit)[0] == 0.5 && "Invalid point detected on interface!");
       std::cout << *vit << std::endl;
       vertices_found = true;
     }
@@ -135,10 +135,10 @@ void test(ReaderType & my_reader, std::string const & infile)
 
 int main()
 {
-  typedef viennagrid::triangular_2d_domain        DomainTri;
-  typedef viennagrid::tetrahedral_3d_domain       DomainTet;
-  typedef viennagrid::quadrilateral_2d_domain     DomainQuad;
-  typedef viennagrid::hexahedral_3d_domain        DomainHex;
+  typedef viennagrid::triangular_2d_mesh        MeshTri;
+  typedef viennagrid::tetrahedral_3d_mesh       MeshTet;
+  typedef viennagrid::quadrilateral_2d_mesh     MeshQuad;
+  typedef viennagrid::hexahedral_3d_mesh        MeshHex;
   
   std::cout << "*****************" << std::endl;
   std::cout << "* Test started! *" << std::endl;
@@ -147,21 +147,21 @@ int main()
   std::string path = "../../examples/data/";
   
   std::cout << "*********** triangular, 2d ***********" << std::endl;
-  viennagrid::io::vtk_reader<DomainTri>  vtk_reader_tri;
-  test<DomainTri>(vtk_reader_tri, path + "multi_segment_tri_main.pvd");
+  viennagrid::io::vtk_reader<MeshTri>  vtk_reader_tri;
+  test<MeshTri>(vtk_reader_tri, path + "multi_segment_tri_main.pvd");
   
   std::cout << "*********** tetrahedral, 3d ***********" << std::endl;
-  viennagrid::io::vtk_reader<DomainTet>  vtk_reader_tet;
-  test<DomainTet>(vtk_reader_tet, path + "multi_segment_tet_main.pvd");
+  viennagrid::io::vtk_reader<MeshTet>  vtk_reader_tet;
+  test<MeshTet>(vtk_reader_tet, path + "multi_segment_tet_main.pvd");
 
   
   std::cout << "*********** quadrilateral, 2d ***********" << std::endl;
-  viennagrid::io::vtk_reader<DomainQuad>  vtk_reader_quad;
-  test<DomainQuad>(vtk_reader_quad, path + "multi_segment_quad_main.pvd");
+  viennagrid::io::vtk_reader<MeshQuad>  vtk_reader_quad;
+  test<MeshQuad>(vtk_reader_quad, path + "multi_segment_quad_main.pvd");
   
   std::cout << "*********** hexahedral, 3d ***********" << std::endl;
-  viennagrid::io::vtk_reader<DomainHex>  vtk_reader_hex;
-  test<DomainHex>(vtk_reader_hex, path + "multi_segment_hex_main.pvd");
+  viennagrid::io::vtk_reader<MeshHex>  vtk_reader_hex;
+  test<MeshHex>(vtk_reader_hex, path + "multi_segment_hex_main.pvd");
   
   std::cout << "*******************************" << std::endl;
   std::cout << "* Test finished successfully! *" << std::endl;

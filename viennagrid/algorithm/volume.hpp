@@ -23,11 +23,11 @@
 #include "viennagrid/algorithm/norm.hpp"
 #include "viennagrid/algorithm/spanned_volume.hpp"
 
-#include "viennagrid/domain/domain.hpp"
-#include "viennagrid/domain/accessor.hpp"
+#include "viennagrid/mesh/mesh.hpp"
+#include "viennagrid/mesh/accessor.hpp"
 
 /** @file volume.hpp
-    @brief Computes the volume of different cell types as well as domains and segments
+    @brief Computes the volume of different cell types as well as meshs and segments
 */
 
 
@@ -171,21 +171,21 @@ namespace viennagrid
 
 
     //
-    /** @brief Dispatched function for computing the volume of a domain or segment.*/
-    template <typename ElementTypeOrTag, typename DomainSegmentType>
-    typename viennagrid::result_of::coord< DomainSegmentType >::type
-    volume_domain(DomainSegmentType const & domain)
+    /** @brief Dispatched function for computing the volume of a mesh or segment.*/
+    template <typename ElementTypeOrTag, typename MeshSegmentType>
+    typename viennagrid::result_of::coord< MeshSegmentType >::type
+    volume_mesh(MeshSegmentType const & mesh)
     {
-      typedef typename viennagrid::result_of::const_element_range<DomainSegmentType, ElementTypeOrTag>::type  CellContainer;
+      typedef typename viennagrid::result_of::const_element_range<MeshSegmentType, ElementTypeOrTag>::type  CellContainer;
       typedef typename viennagrid::result_of::iterator<CellContainer>::type         CellIterator;
 
-      typename viennagrid::result_of::coord< DomainSegmentType >::type new_volume = 0;
-      CellContainer new_cells = viennagrid::elements<ElementTypeOrTag>(domain);
+      typename viennagrid::result_of::coord< MeshSegmentType >::type new_volume = 0;
+      CellContainer new_cells = viennagrid::elements<ElementTypeOrTag>(mesh);
       for (CellIterator new_cit = new_cells.begin();
                         new_cit != new_cells.end();
                       ++new_cit)
       {
-        new_volume += volume( default_point_accessor(domain), *new_cit);
+        new_volume += volume( default_point_accessor(mesh), *new_cit);
       }
       return new_volume;
     }
@@ -212,18 +212,18 @@ namespace viennagrid
 
 
   template<typename ElementTypeOrTag, typename WrappedConfigType>
-  typename viennagrid::result_of::coord< domain_t<WrappedConfigType> >::type
-  volume(domain_t<WrappedConfigType> const & domain)
+  typename viennagrid::result_of::coord< mesh_t<WrappedConfigType> >::type
+  volume(mesh_t<WrappedConfigType> const & mesh)
   {
-      return detail::volume_domain<ElementTypeOrTag>(domain);
+      return detail::volume_mesh<ElementTypeOrTag>(mesh);
   }
 
   // default Element Tag = Cell Tag
-  template<typename DomainSegmentType>
-  typename viennagrid::result_of::coord< DomainSegmentType >::type
-  volume(DomainSegmentType const & domain)
+  template<typename MeshSegmentType>
+  typename viennagrid::result_of::coord< MeshSegmentType >::type
+  volume(MeshSegmentType const & mesh)
   {
-      return detail::volume_domain< typename viennagrid::result_of::cell_tag< DomainSegmentType >::type >(domain);
+      return detail::volume_mesh< typename viennagrid::result_of::cell_tag< MeshSegmentType >::type >(mesh);
   }
 
 

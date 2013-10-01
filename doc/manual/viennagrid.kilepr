@@ -68,7 +68,7 @@ Indentation Mode=
 Mode=LaTeX
 ReadWrite=true
 
-[document-settings,item:domainconfig.tex]
+[document-settings,item:meshconfig.tex]
 Bookmarks=
 Encoding=UTF-8
 Highlighting=LaTeX
@@ -76,7 +76,7 @@ Indentation Mode=
 Mode=LaTeX
 ReadWrite=true
 
-[document-settings,item:domainsetup.tex]
+[document-settings,item:meshsetup.tex]
 Bookmarks=
 Encoding=UTF-8
 Highlighting=LaTeX
@@ -252,7 +252,7 @@ mode=LaTeX
 open=false
 order=3
 
-[item:domainconfig.tex]
+[item:meshconfig.tex]
 archive=true
 column=27
 encoding=UTF-8
@@ -262,7 +262,7 @@ mode=LaTeX
 open=false
 order=3
 
-[item:domainsetup.tex]
+[item:meshsetup.tex]
 archive=true
 column=68
 encoding=UTF-8
@@ -450,11 +450,11 @@ CursorLine=68
 CursorColumn=123
 CursorLine=81
 
-[view-settings,view=0,item:domainconfig.tex]
+[view-settings,view=0,item:meshconfig.tex]
 CursorColumn=27
 CursorLine=229
 
-[view-settings,view=0,item:domainsetup.tex]
+[view-settings,view=0,item:meshsetup.tex]
 CursorColumn=68
 CursorLine=143
 

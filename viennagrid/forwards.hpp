@@ -221,25 +221,25 @@ namespace viennagrid
 
 
 
-  /** @brief Config class for domain view */
-  template <typename DomainConfigT, typename ElementTypeListT, typename ContainerConfigT>
-  class decorated_domain_view_config;
+  /** @brief Config class for mesh view */
+  template <typename MeshConfigT, typename ElementTypeListT, typename ContainerConfigT>
+  class decorated_mesh_view_config;
 
-  /** @brief A domain represents a mesh and contains all elements
+  /** @brief A mesh represents a mesh and contains all elements
     *
-    * @tparam WrappedConfigT    The configuration of the domain
+    * @tparam WrappedConfigT    The configuration of the mesh
     */
   template <typename WrappedConfigT>
-  class domain_t;
+  class mesh_t;
 
-  /** @brief A segmentation defines a set of submeshes of a domain
+  /** @brief A segmentation defines a set of submeshes of a mesh
     *
     * @tparam WrappedConfigT    The configuration of the segmentation
     */
   template<typename WrappedConfigT>
   class segmentation_t;
 
-  /** @brief A segment defines a submesh within a segmentation. Each segmentation contains a view of elements of the domain
+  /** @brief A segment defines a submesh within a segmentation. Each segmentation contains a view of elements of the mesh
     *
     * @tparam SegmentationT     The segmentation type where the segment lives
     */
@@ -260,19 +260,19 @@ namespace viennagrid
 
 
 
-  /** @brief The metafunction layer. Provides type generators that derive the respective type from the domain configuration */
+  /** @brief The metafunction layer. Provides type generators that derive the respective type from the mesh configuration */
   namespace result_of
   {
-    /** @brief Metafunction for obtaining a domain from a config
+    /** @brief Metafunction for obtaining a mesh from a config
      *
-     * @tparam WrappedConfigT     The configuration of the domain
+     * @tparam WrappedConfigT     The configuration of the mesh
      */
     template<typename WrappedConfigT>
-    struct domain;
+    struct mesh;
 
     /** @brief Metafunction for obtaining the element collection of something
      *
-     * @tparam SomethingT     The host type, can be a collection, a domain, a segmentation or a segment
+     * @tparam SomethingT     The host type, can be a collection, a mesh, a segmentation or a segment
      */
     template<typename SomethingT>
     struct element_collection;
@@ -286,14 +286,14 @@ namespace viennagrid
 
     /** @brief Metafunction for obtaining the topologic dimension of the cell elements of something
      *
-     * @tparam SomethingT           The host type, can be a typelist, a collection, a domain, a segmentation or a segment
+     * @tparam SomethingT           The host type, can be a typelist, a collection, a mesh, a segmentation or a segment
      */
     template<typename SomethingT>
     struct topologic_cell_dimension;
     
     /** @brief Metafunction for obtaining an element typelist of all element with a specific topologic dimension of something
      *
-     * @tparam SomethingT           The host type, can be a collection, a domain, a segmentation or a segment
+     * @tparam SomethingT           The host type, can be a collection, a mesh, a segmentation or a segment
      * @tparam TopologicDimensionV  The topologic dimension
      */
     template<typename SomethingT, int TopologicDimensionV>
@@ -301,21 +301,21 @@ namespace viennagrid
 
     /** @brief Metafunction for obtaining an element typelist of all cell types of something
      *
-     * @tparam SomethingT           The host type, can be a collection, a domain, a segmentation or a segment
+     * @tparam SomethingT           The host type, can be a collection, a mesh, a segmentation or a segment
      */
     template<typename SomethingT>
     struct cells;
 
     /** @brief Metafunction for obtaining the cell type of something. Will fail if there is more than one cell type
      *
-     * @tparam SomethingT           The host type, can be a collection, a domain, a segmentation or a segment
+     * @tparam SomethingT           The host type, can be a collection, a mesh, a segmentation or a segment
      */
     template<typename SomethingT>
     struct cell;
 
     /** @brief Metafunction for obtaining the cell tag of something. Will fail if there is more than one cell type
      *
-     * @tparam SomethingT           The host type, can be a collection, a domain, a segmentation or a segment
+     * @tparam SomethingT           The host type, can be a collection, a mesh, a segmentation or a segment
      */
     template<typename SomethingT>
     struct cell_tag;
@@ -323,14 +323,14 @@ namespace viennagrid
 
     /** @brief Metafunction for obtaining the geometric point type of something
      *
-     * @tparam SomethingT           The host type, can be an element, a domain, a segmentation, a segment, an accessor or a field
+     * @tparam SomethingT           The host type, can be an element, a mesh, a segmentation, a segment, an accessor or a field
      */
     template<typename SomethingT>
     struct point;
 
     /** @brief Metafunction for obtaining the coordinate type of the geometric point type of something
      *
-     * @tparam SomethingT           The host type, can be a point, an element, a domain, a segmentation, a segment, an accessor or a field
+     * @tparam SomethingT           The host type, can be a point, an element, a mesh, a segmentation, a segment, an accessor or a field
      */
     template<typename SomethingT>
     struct coord
@@ -340,7 +340,7 @@ namespace viennagrid
 
     /** @brief Metafunction for obtaining the geometric dimension of something
      *
-     * @tparam SomethingT           The host type, can be an element, a domain, a segmentation, a segment, an accessor or a field
+     * @tparam SomethingT           The host type, can be an element, a mesh, a segmentation, a segment, an accessor or a field
      */
     template<typename SomethingT>
     struct geometric_dimension
@@ -362,7 +362,7 @@ namespace viennagrid
 
     /** @brief Metafunction for the type retrieval of an element
      *
-     * @tparam SomethingT         The host type, can be a collection, an element, a domain, a segmentation or a segment
+     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
      * @tparam ElementTypeOrTagT  The requested element tag, element type is also supported, in this case the requested element type is returned
      */
     template<typename SomethingT, typename ElementTypeOrTagT>
@@ -388,7 +388,7 @@ namespace viennagrid
 
     /** @brief Convenience metafunction for the type retrieval of a vertex
      *
-     * @tparam SomethingT         The host type, can be a collection, an element, a domain, a segmentation or a segment
+     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
      */
     template<typename SomethingT>
     struct vertex
@@ -398,7 +398,7 @@ namespace viennagrid
 
     /** @brief Convenience metafunction for the type retrieval of a line (same as edge)
      *
-     * @tparam SomethingT         The host type, can be a collection, an element, a domain, a segmentation or a segment
+     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
      */
     template<typename SomethingT>
     struct line
@@ -408,7 +408,7 @@ namespace viennagrid
 
     /** @brief Convenience metafunction for the type retrieval of a edge (same as line)
      *
-     * @tparam SomethingT         The host type, can be a collection, an element, a domain, a segmentation or a segment
+     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
      */
     template<typename SomethingT>
     struct edge
@@ -418,7 +418,7 @@ namespace viennagrid
 
     /** @brief Convenience metafunction for the type retrieval of a triangle
      *
-     * @tparam SomethingT         The host type, can be a collection, an element, a domain, a segmentation or a segment
+     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
      */
     template<typename SomethingT>
     struct triangle
@@ -428,7 +428,7 @@ namespace viennagrid
 
     /** @brief Convenience metafunction for the type retrieval of a quadrilateral
      *
-     * @tparam SomethingT         The host type, can be a collection, an element, a domain, a segmentation or a segment
+     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
      */
     template<typename SomethingT>
     struct quadrilateral
@@ -438,7 +438,7 @@ namespace viennagrid
 
     /** @brief Convenience metafunction for the type retrieval of a polygon
      *
-     * @tparam SomethingT         The host type, can be a collection, an element, a domain, a segmentation or a segment
+     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
      */
     template<typename SomethingT>
     struct polygon
@@ -448,7 +448,7 @@ namespace viennagrid
     
     /** @brief Convenience metafunction for the type retrieval of a plc
      *
-     * @tparam SomethingT         The host type, can be a collection, an element, a domain, a segmentation or a segment
+     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
      */
     template<typename SomethingT>
     struct plc
@@ -458,7 +458,7 @@ namespace viennagrid
 
     /** @brief Convenience metafunction for the type retrieval of a tetrahedron
      *
-     * @tparam SomethingT         The host type, can be a collection, an element, a domain, a segmentation or a segment
+     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
      */
     template<typename SomethingT>
     struct tetrahedron
@@ -468,7 +468,7 @@ namespace viennagrid
 
     /** @brief Convenience metafunction for the type retrieval of a hexahedron
      *
-     * @tparam SomethingT         The host type, can be a collection, an element, a domain, a segmentation or a segment
+     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
      */
     template<typename SomethingT>
     struct hexahedron
@@ -479,7 +479,7 @@ namespace viennagrid
 
     /** @brief Metafunction for the type retrieval of an element handle
      *
-     * @tparam SomethingT         The host type, can be a collection, an element, a domain, a segmentation or a segment
+     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
      * @tparam ElementTypeOrTagT  The requested element tag, element type is also supported, in this case the requested element type is returned
      */
     template<typename SomethingT, typename ElementTypeOrTagT>
@@ -487,7 +487,7 @@ namespace viennagrid
 
     /** @brief Convenience metafunction for the type retrieval of a cell handle. Will fail if there is more than one cell type
      *
-     * @tparam SomethingT         The host type, can be a collection, an element, a domain, a segmentation or a segment
+     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
      */
     template<typename SomethingT>
     struct cell_handle
@@ -498,7 +498,7 @@ namespace viennagrid
 
     /** @brief Convenience metafunction for the type retrieval of a vertex handle
      *
-     * @tparam SomethingT         The host type, can be a collection, an element, a domain, a segmentation or a segment
+     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
      */
     template<typename SomethingT>
     struct vertex_handle
@@ -508,7 +508,7 @@ namespace viennagrid
 
     /** @brief Convenience metafunction for the type retrieval of a line handle (same as edge_handle)
      *
-     * @tparam SomethingT         The host type, can be a collection, an element, a domain, a segmentation or a segment
+     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
      */
     template<typename SomethingT>
     struct line_handle
@@ -518,7 +518,7 @@ namespace viennagrid
 
     /** @brief Convenience metafunction for the type retrieval of a line handle (same as line_handle)
      *
-     * @tparam SomethingT         The host type, can be a collection, an element, a domain, a segmentation or a segment
+     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
      */
     template<typename SomethingT>
     struct edge_handle
@@ -528,7 +528,7 @@ namespace viennagrid
 
     /** @brief Convenience metafunction for the type retrieval of a triangle handle
      *
-     * @tparam SomethingT         The host type, can be a collection, an element, a domain, a segmentation or a segment
+     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
      */
     template<typename SomethingT>
     struct triangle_handle
@@ -538,7 +538,7 @@ namespace viennagrid
 
     /** @brief Convenience metafunction for the type retrieval of a quadrilateral handle
      *
-     * @tparam SomethingT         The host type, can be a collection, an element, a domain, a segmentation or a segment
+     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
      */
     template<typename SomethingT>
     struct quadrilateral_handle
@@ -548,7 +548,7 @@ namespace viennagrid
 
     /** @brief Convenience metafunction for the type retrieval of a polygon handle
      *
-     * @tparam SomethingT         The host type, can be a collection, an element, a domain, a segmentation or a segment
+     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
      */
     template<typename SomethingT>
     struct polygon_handle
@@ -558,7 +558,7 @@ namespace viennagrid
     
     /** @brief Convenience metafunction for the type retrieval of a plc handle
      *
-     * @tparam SomethingT         The host type, can be a collection, an element, a domain, a segmentation or a segment
+     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
      */
     template<typename SomethingT>
     struct plc_handle
@@ -568,7 +568,7 @@ namespace viennagrid
 
     /** @brief Convenience metafunction for the type retrieval of a tetrahedron handle
      *
-     * @tparam SomethingT         The host type, can be a collection, an element, a domain, a segmentation or a segment
+     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
      */
     template<typename SomethingT>
     struct tetrahedron_handle
@@ -578,7 +578,7 @@ namespace viennagrid
 
     /** @brief Convenience metafunction for the type retrieval of a hexahedron handle
      *
-     * @tparam SomethingT         The host type, can be a collection, an element, a domain, a segmentation or a segment
+     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
      */
     template<typename SomethingT>
     struct hexahedron_handle
@@ -590,7 +590,7 @@ namespace viennagrid
 
     /** @brief Metafunction for the type retrieval of a const element handle
      *
-     * @tparam SomethingT         The host type, can be a collection, an element, a domain, a segmentation or a segment
+     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
      * @tparam ElementTypeOrTagT  The requested element tag, element type is also supported, in this case the requested element type is returned
      */
     template<typename SomethingT, typename ElementTypeOrTagT>
@@ -598,7 +598,7 @@ namespace viennagrid
 
     /** @brief Convenience metafunction for the type retrieval of a const cell handle. Will fail if there is more than one cell type
      *
-     * @tparam SomethingT         The host type, can be a collection, an element, a domain, a segmentation or a segment
+     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
      */
     template<typename SomethingT>
     struct const_cell_handle
@@ -609,7 +609,7 @@ namespace viennagrid
 
     /** @brief Convenience metafunction for the type retrieval of a const vertex handle
      *
-     * @tparam SomethingT         The host type, can be a collection, an element, a domain, a segmentation or a segment
+     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
      */
     template<typename SomethingT>
     struct const_vertex_handle
@@ -619,7 +619,7 @@ namespace viennagrid
 
     /** @brief Convenience metafunction for the type retrieval of a const line handle (same as const_edge_handle)
      *
-     * @tparam SomethingT         The host type, can be a collection, an element, a domain, a segmentation or a segment
+     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
      */
     template<typename SomethingT>
     struct const_line_handle
@@ -629,7 +629,7 @@ namespace viennagrid
 
     /** @brief Convenience metafunction for the type retrieval of a const line handle (same as const_line_handle)
      *
-     * @tparam SomethingT         The host type, can be a collection, an element, a domain, a segmentation or a segment
+     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
      */
     template<typename SomethingT>
     struct const_edge_handle
@@ -639,7 +639,7 @@ namespace viennagrid
 
     /** @brief Convenience metafunction for the type retrieval of a const triangle handle
      *
-     * @tparam SomethingT         The host type, can be a collection, an element, a domain, a segmentation or a segment
+     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
      */
     template<typename SomethingT>
     struct const_triangle_handle
@@ -649,7 +649,7 @@ namespace viennagrid
 
     /** @brief Convenience metafunction for the type retrieval of a const quadrilateral handle
      *
-     * @tparam SomethingT         The host type, can be a collection, an element, a domain, a segmentation or a segment
+     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
      */
     template<typename SomethingT>
     struct const_quadrilateral_handle
@@ -659,7 +659,7 @@ namespace viennagrid
     
     /** @brief Convenience metafunction for the type retrieval of a const polygon handle
      *
-     * @tparam SomethingT         The host type, can be a collection, an element, a domain, a segmentation or a segment
+     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
      */
     template<typename SomethingT>
     struct const_polygon_handle
@@ -669,7 +669,7 @@ namespace viennagrid
 
     /** @brief Convenience metafunction for the type retrieval of a const plc handle
      *
-     * @tparam SomethingT         The host type, can be a collection, an element, a domain, a segmentation or a segment
+     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
      */
     template<typename SomethingT>
     struct const_plc_handle
@@ -679,7 +679,7 @@ namespace viennagrid
 
     /** @brief Convenience metafunction for the type retrieval of a const tetrahedron handle
      *
-     * @tparam SomethingT         The host type, can be a collection, an element, a domain, a segmentation or a segment
+     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
      */
     template<typename SomethingT>
     struct const_tetrahedron_handle
@@ -689,7 +689,7 @@ namespace viennagrid
 
     /** @brief Convenience metafunction for the type retrieval of a const hexahedron handle
      *
-     * @tparam SomethingT         The host type, can be a collection, an element, a domain, a segmentation or a segment
+     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
      */
     template<typename SomethingT>
     struct const_hexahedron_handle
@@ -701,7 +701,7 @@ namespace viennagrid
     
     /** @brief Metafunction for the type retrieval of an element range
      *
-     * @tparam SomethingT         The host type, can be a typelist, a collection, an element, a domain, a segmentation or a segment
+     * @tparam SomethingT         The host type, can be a typelist, a collection, an element, a mesh, a segmentation or a segment
      * @tparam ElementTypeOrTagT  The requested element tag or element type
      */
     template <typename SomethingT,
@@ -711,7 +711,7 @@ namespace viennagrid
 
     /** @brief Convenience metafunction for the type retrieval of a cell range. Will fail if there is more than one cell type
      *
-     * @tparam SomethingT         The host type, can be a typelist, a collection, a domain, a segmentation or a segment
+     * @tparam SomethingT         The host type, can be a typelist, a collection, a mesh, a segmentation or a segment
      */
     template<typename SomethingT>
     struct cell_range
@@ -722,7 +722,7 @@ namespace viennagrid
 
     /** @brief Convenience metafunction for the type retrieval of a vertex range
      *
-     * @tparam SomethingT         The host type, can be a typelist, a collection, a domain, a segmentation or a segment
+     * @tparam SomethingT         The host type, can be a typelist, a collection, a mesh, a segmentation or a segment
      */
     template<typename SomethingT>
     struct vertex_range
@@ -732,7 +732,7 @@ namespace viennagrid
 
     /** @brief Convenience metafunction for the type retrieval of a line range (same as edge_range)
      *
-     * @tparam SomethingT         The host type, can be a typelist, a collection, a domain, a segmentation or a segment
+     * @tparam SomethingT         The host type, can be a typelist, a collection, a mesh, a segmentation or a segment
      */
     template<typename SomethingT>
     struct line_range
@@ -742,7 +742,7 @@ namespace viennagrid
 
     /** @brief Convenience metafunction for the type retrieval of a edge range (same as line_range)
      *
-     * @tparam SomethingT         The host type, can be a typelist, a collection, a domain, a segmentation or a segment
+     * @tparam SomethingT         The host type, can be a typelist, a collection, a mesh, a segmentation or a segment
      */
     template<typename SomethingT>
     struct edge_range
@@ -752,7 +752,7 @@ namespace viennagrid
 
     /** @brief Convenience metafunction for the type retrieval of a triangle range
      *
-     * @tparam SomethingT         The host type, can be a typelist, a collection, a domain, a segmentation or a segment
+     * @tparam SomethingT         The host type, can be a typelist, a collection, a mesh, a segmentation or a segment
      */
     template<typename SomethingT>
     struct triangle_range
@@ -762,7 +762,7 @@ namespace viennagrid
 
     /** @brief Convenience metafunction for the type retrieval of a quadrilateral range
      *
-     * @tparam SomethingT         The host type, can be a typelist, a collection, a domain, a segmentation or a segment
+     * @tparam SomethingT         The host type, can be a typelist, a collection, a mesh, a segmentation or a segment
      */
     template<typename SomethingT>
     struct quadrilateral_range
@@ -772,7 +772,7 @@ namespace viennagrid
     
     /** @brief Convenience metafunction for the type retrieval of a polygon range
      *
-     * @tparam SomethingT         The host type, can be a typelist, a collection, a domain, a segmentation or a segment
+     * @tparam SomethingT         The host type, can be a typelist, a collection, a mesh, a segmentation or a segment
      */
     template<typename SomethingT>
     struct polygon_range
@@ -782,7 +782,7 @@ namespace viennagrid
     
     /** @brief Convenience metafunction for the type retrieval of a PLC range
      *
-     * @tparam SomethingT         The host type, can be a typelist, a collection, a domain, a segmentation or a segment
+     * @tparam SomethingT         The host type, can be a typelist, a collection, a mesh, a segmentation or a segment
      */
     template<typename SomethingT>
     struct plc_range
@@ -792,7 +792,7 @@ namespace viennagrid
 
     /** @brief Convenience metafunction for the type retrieval of a tetrahedron range
      *
-     * @tparam SomethingT         The host type, can be a typelist, a collection, a domain, a segmentation or a segment
+     * @tparam SomethingT         The host type, can be a typelist, a collection, a mesh, a segmentation or a segment
      */
     template<typename SomethingT>
     struct tetrahedron_range
@@ -802,7 +802,7 @@ namespace viennagrid
 
     /** @brief Convenience metafunction for the type retrieval of a hexahedron range
      *
-     * @tparam SomethingT         The host type, can be a typelist, a collection, a domain, a segmentation or a segment
+     * @tparam SomethingT         The host type, can be a typelist, a collection, a mesh, a segmentation or a segment
      */
     template<typename SomethingT>
     struct hexahedron_range
@@ -817,7 +817,7 @@ namespace viennagrid
 
     /** @brief Metafunction for the type retrieval of a const element range
      *
-     * @tparam SomethingT         The host type, can be a typelist, a collection, an element, a domain, a segmentation or a segment
+     * @tparam SomethingT         The host type, can be a typelist, a collection, an element, a mesh, a segmentation or a segment
      * @tparam ElementTypeOrTagT  The requested element tag or element type
      */
     template <typename SomethingT,
@@ -827,7 +827,7 @@ namespace viennagrid
 
     /** @brief Convenience metafunction for the type retrieval of a const cell range. Will fail if there is more than one cell type
      *
-     * @tparam SomethingT         The host type, can be a typelist, a collection, a domain, a segmentation or a segment
+     * @tparam SomethingT         The host type, can be a typelist, a collection, a mesh, a segmentation or a segment
      */
     template<typename SomethingT>
     struct const_cell_range
@@ -838,7 +838,7 @@ namespace viennagrid
 
     /** @brief Convenience metafunction for the type retrieval of a const vertex range
      *
-     * @tparam SomethingT         The host type, can be a typelist, a collection, a domain, a segmentation or a segment
+     * @tparam SomethingT         The host type, can be a typelist, a collection, a mesh, a segmentation or a segment
      */
     template<typename SomethingT>
     struct const_vertex_range
@@ -848,7 +848,7 @@ namespace viennagrid
 
     /** @brief Convenience metafunction for the type retrieval of a const line range (same as const_edge_range)
      *
-     * @tparam SomethingT         The host type, can be a typelist, a collection, a domain, a segmentation or a segment
+     * @tparam SomethingT         The host type, can be a typelist, a collection, a mesh, a segmentation or a segment
      */
     template<typename SomethingT>
     struct const_line_range
@@ -858,7 +858,7 @@ namespace viennagrid
 
     /** @brief Convenience metafunction for the type retrieval of a const edge range (same as const_line_range)
      *
-     * @tparam SomethingT         The host type, can be a typelist, a collection, a domain, a segmentation or a segment
+     * @tparam SomethingT         The host type, can be a typelist, a collection, a mesh, a segmentation or a segment
      */
     template<typename SomethingT>
     struct const_edge_range
@@ -868,7 +868,7 @@ namespace viennagrid
 
     /** @brief Convenience metafunction for the type retrieval of a const triangle range
      *
-     * @tparam SomethingT         The host type, can be a typelist, a collection, a domain, a segmentation or a segment
+     * @tparam SomethingT         The host type, can be a typelist, a collection, a mesh, a segmentation or a segment
      */
     template<typename SomethingT>
     struct const_triangle_range
@@ -878,7 +878,7 @@ namespace viennagrid
 
     /** @brief Convenience metafunction for the type retrieval of a const quadrilateral range
      *
-     * @tparam SomethingT         The host type, can be a typelist, a collection, a domain, a segmentation or a segment
+     * @tparam SomethingT         The host type, can be a typelist, a collection, a mesh, a segmentation or a segment
      */
     template<typename SomethingT>
     struct const_quadrilateral_range
@@ -888,7 +888,7 @@ namespace viennagrid
 
     /** @brief Convenience metafunction for the type retrieval of a const polygon range
      *
-     * @tparam SomethingT         The host type, can be a typelist, a collection, a domain, a segmentation or a segment
+     * @tparam SomethingT         The host type, can be a typelist, a collection, a mesh, a segmentation or a segment
      */
     template<typename SomethingT>
     struct const_polygon_range
@@ -898,7 +898,7 @@ namespace viennagrid
     
     /** @brief Convenience metafunction for the type retrieval of a const PLC range
      *
-     * @tparam SomethingT         The host type, can be a typelist, a collection, a domain, a segmentation or a segment
+     * @tparam SomethingT         The host type, can be a typelist, a collection, a mesh, a segmentation or a segment
      */
     template<typename SomethingT>
     struct const_plc_range
@@ -908,7 +908,7 @@ namespace viennagrid
 
     /** @brief Convenience metafunction for the type retrieval of a const tetrahedron range
      *
-     * @tparam SomethingT         The host type, can be a typelist, a collection, a domain, a segmentation or a segment
+     * @tparam SomethingT         The host type, can be a typelist, a collection, a mesh, a segmentation or a segment
      */
     template<typename SomethingT>
     struct const_tetrahedron_range
@@ -918,7 +918,7 @@ namespace viennagrid
 
     /** @brief Convenience metafunction for the type retrieval of a const hexahedron range
      *
-     * @tparam SomethingT         The host type, can be a typelist, a collection, a domain, a segmentation or a segment
+     * @tparam SomethingT         The host type, can be a typelist, a collection, a mesh, a segmentation or a segment
      */
     template<typename SomethingT>
     struct const_hexahedron_range
@@ -980,9 +980,9 @@ namespace viennagrid
     };
 
 
-    /** @brief Metafunction for retrieving the facet tag of an element, a domain, a segmentation or a segment
+    /** @brief Metafunction for retrieving the facet tag of an element, a mesh, a segmentation or a segment
      *
-     * @tparam SomethingT    The element type of which the facet tag is requested. Can also be a domain, a segmentation or a segment. In this case the facet tag of the cell type is returned.
+     * @tparam SomethingT    The element type of which the facet tag is requested. Can also be a mesh, a segmentation or a segment. In this case the facet tag of the cell type is returned.
      */
     template<typename SomethingT>
     struct facet_tag
@@ -990,10 +990,10 @@ namespace viennagrid
         typedef typename element_tag<SomethingT>::type::facet_tag type;
     };
 
-    template<typename WrappedDomainConfigT>
-    struct facet_tag< domain_t<WrappedDomainConfigT> >
+    template<typename WrappedMeshConfigT>
+    struct facet_tag< mesh_t<WrappedMeshConfigT> >
     {
-        typedef typename facet_tag< typename cell_tag< domain_t<WrappedDomainConfigT> >::type >::type type;
+        typedef typename facet_tag< typename cell_tag< mesh_t<WrappedMeshConfigT> >::type >::type type;
     };
 
     template<typename WrappedSegmentationConfigT>
@@ -1011,9 +1011,9 @@ namespace viennagrid
     
     
 
-    /** @brief Metafunction for retrieving the facet element type an element, a domain, a segmentation or a segment
+    /** @brief Metafunction for retrieving the facet element type an element, a mesh, a segmentation or a segment
      *
-     * @tparam SomethingT    The element type of which the facet type is requested. Can also be a domain, a segmentation or a segment. In this case the facet type of the cell type is returned.
+     * @tparam SomethingT    The element type of which the facet type is requested. Can also be a mesh, a segmentation or a segment. In this case the facet type of the cell type is returned.
      */
     template<typename SomethingT>
     struct facet
@@ -1021,10 +1021,10 @@ namespace viennagrid
         typedef typename element<SomethingT, typename facet_tag<SomethingT>::type >::type type;
     };
 
-    template<typename WrappedDomainConfigT>
-    struct facet< domain_t<WrappedDomainConfigT> >
+    template<typename WrappedMeshConfigT>
+    struct facet< mesh_t<WrappedMeshConfigT> >
     {
-        typedef typename facet< typename cell< domain_t<WrappedDomainConfigT> >::type >::type type;
+        typedef typename facet< typename cell< mesh_t<WrappedMeshConfigT> >::type >::type type;
     };
 
     template<typename WrappedSegmentationConfigT>
@@ -1041,9 +1041,9 @@ namespace viennagrid
 
 
 
-    /** @brief Metafunction for retrieving the facet handle type an element, a domain, a segmentation or a segment
+    /** @brief Metafunction for retrieving the facet handle type an element, a mesh, a segmentation or a segment
      *
-     * @tparam SomethingT    The element type of which the facet handle type is requested. Can also be a domain, a segmentation or a segment. In this case the facet handle type of the cell type is returned.
+     * @tparam SomethingT    The element type of which the facet handle type is requested. Can also be a mesh, a segmentation or a segment. In this case the facet handle type of the cell type is returned.
      */
     template<typename SomethingT>
     struct facet_handle
@@ -1051,9 +1051,9 @@ namespace viennagrid
         typedef typename handle< SomethingT, typename facet_tag<SomethingT>::type >::type type;
     };
 
-    /** @brief Metafunction for retrieving the const facet handle type an element, a domain, a segmentation or a segment
+    /** @brief Metafunction for retrieving the const facet handle type an element, a mesh, a segmentation or a segment
      *
-     * @tparam SomethingT    The element type of which the const facet handle type is requested. Can also be a domain, a segmentation or a segment. In this case the const facet handle type of the cell type is returned.
+     * @tparam SomethingT    The element type of which the const facet handle type is requested. Can also be a mesh, a segmentation or a segment. In this case the const facet handle type of the cell type is returned.
      */
     template<typename SomethingT>
     struct const_facet_handle
@@ -1062,9 +1062,9 @@ namespace viennagrid
     };
 
 
-    /** @brief Metafunction for retrieving the facet range type an element, a domain, a segmentation or a segment
+    /** @brief Metafunction for retrieving the facet range type an element, a mesh, a segmentation or a segment
      *
-     * @tparam SomethingT    The element type of which the facet range type is requested. Can also be a domain, a segmentation or a segment. In this case the facet range type of the cell type is returned.
+     * @tparam SomethingT    The element type of which the facet range type is requested. Can also be a mesh, a segmentation or a segment. In this case the facet range type of the cell type is returned.
      */
     template<typename SomethingT>
     struct facet_range
@@ -1072,9 +1072,9 @@ namespace viennagrid
         typedef typename element_range<SomethingT, typename facet_tag<SomethingT>::type >::type type;
     };
 
-    /** @brief Metafunction for retrieving the const facet range type an element, a domain, a segmentation or a segment
+    /** @brief Metafunction for retrieving the const facet range type an element, a mesh, a segmentation or a segment
      *
-     * @tparam SomethingT    The element type of which the const facet range type is requested. Can also be a domain, a segmentation or a segment. In this case the const facet range type of the cell type is returned.
+     * @tparam SomethingT    The element type of which the const facet range type is requested. Can also be a mesh, a segmentation or a segment. In this case the const facet range type of the cell type is returned.
      */
     template<typename SomethingT>
     struct const_facet_range
@@ -1087,7 +1087,7 @@ namespace viennagrid
 
   /** @brief Proxy object for element or boundary element range. This object holds a reference to the host type. A range has a constructor taking an object of type element_range_proxy and elements<tag> will be called in te constructor using the reference to the host type.
     *
-    * @tparam SomethingT    The host type, can be an element, a collection, a domain, a segment or a segmentation
+    * @tparam SomethingT    The host type, can be an element, a collection, a mesh, a segment or a segmentation
     */
   template<typename SomethingT>
   struct element_range_proxy
@@ -1114,7 +1114,7 @@ namespace viennagrid
   
   /** @brief Function for retrieving an element range or a boundary element range from a host object
     *
-    * @tparam SomethingT         The host type, can be an element, a collection, a domain, a segment or a segmentation
+    * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
     * @tparam ElementTypeOrTagT  The element type/tag for the requested element range
     * @param  something          The host object of type SomethingT
     * @return                    An element range
@@ -1127,7 +1127,7 @@ namespace viennagrid
 
   /** @brief Function for retrieving an element range proxy object
     *
-    * @tparam SomethingT         The host type, can be an element, a collection, a domain, a segment or a segmentation
+    * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
     * @param  something          The host object of type SomethingT
     * @return                    An element range proxy, can be assigned to a range object
     */
@@ -1140,7 +1140,7 @@ namespace viennagrid
 
   /** @brief Function for retrieving a cell range object from a host object
     *
-    * @tparam SomethingT         The host type, can be an element, a collection, a domain, a segment or a segmentation
+    * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
     * @param  something          The host object of type SomethingT
     * @return                    A cell range
     */
@@ -1150,7 +1150,7 @@ namespace viennagrid
   
   /** @brief Function for retrieving a facet range object from a host object
     *
-    * @tparam SomethingT         The host type, can be an element, a collection, a domain, a segment or a segmentation
+    * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
     * @param  something          The host object of type SomethingT
     * @return                    A facet range
     */
@@ -1160,7 +1160,7 @@ namespace viennagrid
 
   /** @brief Function for retrieving a vertex range object from a host object
     *
-    * @tparam SomethingT         The host type, can be an element, a collection, a domain, a segment or a segmentation
+    * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
     * @param  something          The host object of type SomethingT
     * @return                    A vertex range
     */
@@ -1170,7 +1170,7 @@ namespace viennagrid
 
   /** @brief Function for retrieving a line range object from a host object (same as edges)
     *
-    * @tparam SomethingT         The host type, can be an element, a collection, a domain, a segment or a segmentation
+    * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
     * @param  something          The host object of type SomethingT
     * @return                    A line range
     */
@@ -1180,7 +1180,7 @@ namespace viennagrid
 
   /** @brief Function for retrieving a edge range object from a host object (same as lines)
     *
-    * @tparam SomethingT         The host type, can be an element, a collection, a domain, a segment or a segmentation
+    * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
     * @param  something          The host object of type SomethingT
     * @return                    An edge range
     */
@@ -1190,7 +1190,7 @@ namespace viennagrid
 
   /** @brief Function for retrieving a triangle range object from a host object
     *
-    * @tparam SomethingT         The host type, can be an element, a collection, a domain, a segment or a segmentation
+    * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
     * @param  something          The host object of type SomethingT
     * @return                    A triangle range
     */
@@ -1200,7 +1200,7 @@ namespace viennagrid
 
   /** @brief Function for retrieving a quadrilaterals range object from a host object
     *
-    * @tparam SomethingT         The host type, can be an element, a collection, a domain, a segment or a segmentation
+    * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
     * @param  something          The host object of type SomethingT
     * @return                    A quadrilateral range
     */
@@ -1210,7 +1210,7 @@ namespace viennagrid
 
   /** @brief Function for retrieving a polygon range object from a host object
     *
-    * @tparam SomethingT         The host type, can be an element, a collection, a domain, a segment or a segmentation
+    * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
     * @param  something          The host object of type SomethingT
     * @return                    A polygon range
     */
@@ -1220,7 +1220,7 @@ namespace viennagrid
   
   /** @brief Function for retrieving a PLC range object from a host object
     *
-    * @tparam SomethingT         The host type, can be an element, a collection, a domain, a segment or a segmentation
+    * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
     * @param  something          The host object of type SomethingT
     * @return                    A PLC range
     */
@@ -1230,7 +1230,7 @@ namespace viennagrid
 
   /** @brief Function for retrieving a tetrahedron range object from a host object
     *
-    * @tparam SomethingT         The host type, can be an element, a collection, a domain, a segment or a segmentation
+    * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
     * @param  something          The host object of type SomethingT
     * @return                    A tetrahedron range
     */
@@ -1240,7 +1240,7 @@ namespace viennagrid
 
   /** @brief Function for retrieving a hexahedron range object from a host object
     *
-    * @tparam SomethingT         The host type, can be an element, a collection, a domain, a segment or a segmentation
+    * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
     * @param  something          The host object of type SomethingT
     * @return                    A hexahedron range
     */
@@ -1252,7 +1252,7 @@ namespace viennagrid
 
   /** @brief Function for retrieving a const element range or a boundary element range from a host object
     *
-    * @tparam SomethingT         The host type, can be an element, a collection, a domain, a segment or a segmentation
+    * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
     * @tparam ElementTypeOrTagT  The element type/tag for the requested element range
     * @param  something          The host object of type SomethingT
     * @return                    A const element range
@@ -1267,7 +1267,7 @@ namespace viennagrid
   
   /** @brief Function for retrieving an element range proxy object
     *
-    * @tparam SomethingT         The host type, can be an element, a collection, a domain, a segment or a segmentation
+    * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
     * @param  something          The host object of type SomethingT
     * @return                    An element range proxy, can be assigned to a const range object
     */
@@ -1278,7 +1278,7 @@ namespace viennagrid
 
   /** @brief Function for retrieving a const cell range object from a host object
     *
-    * @tparam SomethingT         The host type, can be an element, a collection, a domain, a segment or a segmentation
+    * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
     * @param  something          The host object of type SomethingT
     * @return                    A const cell range
     */
@@ -1288,7 +1288,7 @@ namespace viennagrid
   
   /** @brief Function for retrieving a const facet range object from a host object
     *
-    * @tparam SomethingT         The host type, can be an element, a collection, a domain, a segment or a segmentation
+    * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
     * @param  something          The host object of type SomethingT
     * @return                    A const facet range
     */
@@ -1298,7 +1298,7 @@ namespace viennagrid
 
   /** @brief Function for retrieving a const vertex range object from a host object
     *
-    * @tparam SomethingT         The host type, can be an element, a collection, a domain, a segment or a segmentation
+    * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
     * @param  something          The host object of type SomethingT
     * @return                    A const vertex range
     */
@@ -1308,7 +1308,7 @@ namespace viennagrid
 
   /** @brief Function for retrieving a const line range object from a host object (same as edges)
     *
-    * @tparam SomethingT         The host type, can be an element, a collection, a domain, a segment or a segmentation
+    * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
     * @param  something          The host object of type SomethingT
     * @return                    A const line range
     */
@@ -1318,7 +1318,7 @@ namespace viennagrid
 
   /** @brief Function for retrieving a const edge range object from a host object (same as lines)
     *
-    * @tparam SomethingT         The host type, can be an element, a collection, a domain, a segment or a segmentation
+    * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
     * @param  something          The host object of type SomethingT
     * @return                    A const edge range
     */
@@ -1328,7 +1328,7 @@ namespace viennagrid
 
   /** @brief Function for retrieving a const triangles range object from a host object
     *
-    * @tparam SomethingT         The host type, can be an element, a collection, a domain, a segment or a segmentation
+    * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
     * @param  something          The host object of type SomethingT
     * @return                    A const triangle range
     */
@@ -1338,7 +1338,7 @@ namespace viennagrid
 
   /** @brief Function for retrieving a const quadrilateral range object from a host object
     *
-    * @tparam SomethingT         The host type, can be an element, a collection, a domain, a segment or a segmentation
+    * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
     * @param  something          The host object of type SomethingT
     * @return                    A const quadrilateral range
     */
@@ -1348,7 +1348,7 @@ namespace viennagrid
 
   /** @brief Function for retrieving a const polygon range object from a host object
     *
-    * @tparam SomethingT         The host type, can be an element, a collection, a domain, a segment or a segmentation
+    * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
     * @param  something          The host object of type SomethingT
     * @return                    A const polygon range
     */
@@ -1358,7 +1358,7 @@ namespace viennagrid
   
   /** @brief Function for retrieving a const PLC range object from a host object
     *
-    * @tparam SomethingT         The host type, can be an element, a collection, a domain, a segment or a segmentation
+    * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
     * @param  something          The host object of type SomethingT
     * @return                    A const PLC range
     */
@@ -1368,7 +1368,7 @@ namespace viennagrid
 
   /** @brief Function for retrieving a const tetrahedron range object from a host object
     *
-    * @tparam SomethingT         The host type, can be an element, a collection, a domain, a segment or a segmentation
+    * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
     * @param  something          The host object of type SomethingT
     * @return                    A const tetrahedron range
     */
@@ -1378,7 +1378,7 @@ namespace viennagrid
 
   /** @brief Function for retrieving a const hexahedron range object from a host object
     *
-    * @tparam SomethingT         The host type, can be an element, a collection, a domain, a segment or a segmentation
+    * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
     * @param  something          The host object of type SomethingT
     * @return                    A const hexahedron range
     */
@@ -1389,58 +1389,58 @@ namespace viennagrid
 
   
   
-  /** @brief Function for creating an element within a domain or a segment
+  /** @brief Function for creating an element within a mesh or a segment
     *
     * @tparam ElementTypeOrTagT       The element type/tag to be created
-    * @tparam DomainOrSegmentT        The domain or segment type where the element is created
+    * @tparam MeshOrSegmentT        The mesh or segment type where the element is created
     * @tparam VertexHandleIteratorT   A vertex handle iterator type
-    * @param  domain_segment          The domain or segment object where the element should be created
+    * @param  mesh_segment          The mesh or segment object where the element should be created
     * @param  vertices_begin          An iterator pointing to the first vertex handle of the element
     * @param  vertices_end            An iterator defining the end of the vertices
     * @return                         A handle to the created element
     */
-  template<typename ElementTypeOrTagT, typename DomainOrSegmentT, typename VertexHandleIteratorT>
-  typename result_of::handle<DomainOrSegmentT, ElementTypeOrTagT>::type make_element(
-        DomainOrSegmentT & domain_segment,
+  template<typename ElementTypeOrTagT, typename MeshOrSegmentT, typename VertexHandleIteratorT>
+  typename result_of::handle<MeshOrSegmentT, ElementTypeOrTagT>::type make_element(
+        MeshOrSegmentT & mesh_segment,
         VertexHandleIteratorT array_start,
         VertexHandleIteratorT const & array_end );
 
   
-  /** @brief Function for creating an element within a domain or segment with a specific ID
+  /** @brief Function for creating an element within a mesh or segment with a specific ID
     *
     * @tparam ElementTypeOrTagT       The element type/tag to be created
-    * @tparam DomainOrSegmentT        The domain or segment type where the element is created
+    * @tparam MeshOrSegmentT        The mesh or segment type where the element is created
     * @tparam VertexHandleIteratorT   A vertex handle iterator type
-    * @param  domain_segment          The domain or segment object where the element should be created
+    * @param  mesh_segment          The mesh or segment object where the element should be created
     * @param  vertices_begin          An iterator pointing to the first vertex handle of the element
     * @param  vertices_end            An iterator defining the end of the vertices
     * @param  id                      The id of the new element
     * @return                         A handle to the created element
     */
 #ifndef _MSC_VER
-  template<typename ElementTypeOrTagT, typename DomainOrSegmentT, typename VertexHandleIteratorT>
-  typename result_of::handle<DomainOrSegmentT, ElementTypeOrTagT>::type make_element_with_id(
-        DomainOrSegmentT & domain_segment,
+  template<typename ElementTypeOrTagT, typename MeshOrSegmentT, typename VertexHandleIteratorT>
+  typename result_of::handle<MeshOrSegmentT, ElementTypeOrTagT>::type make_element_with_id(
+        MeshOrSegmentT & mesh_segment,
         VertexHandleIteratorT array_start,
         VertexHandleIteratorT const & array_end,
-        typename result_of::id< typename result_of::element<DomainOrSegmentT, ElementTypeOrTagT>::type >::type id );
+        typename result_of::id< typename result_of::element<MeshOrSegmentT, ElementTypeOrTagT>::type >::type id );
 #endif
 
 
   /** @brief Function for dereferencing an element -> identity
     *
-    * @tparam WrappedDomainConfigT    Wrapped config of the domain type
+    * @tparam WrappedMeshConfigT    Wrapped config of the mesh type
     * @tparam ElementTagT             Element tag of the element to dereference
     * @tparam WrappedConfigT          Wrapped config of the element to dereference
     * @param  element                 The element to be derferenced, this object is returned
     * @return                         element (identity)
     */
-  template<typename WrappedDomainConfigT, typename ElementTagT, typename WrappedConfigT>
-  element_t<ElementTagT, WrappedConfigT> & dereference_handle( domain_t<WrappedDomainConfigT> &, element_t<ElementTagT, WrappedConfigT> & element)
+  template<typename WrappedMeshConfigT, typename ElementTagT, typename WrappedConfigT>
+  element_t<ElementTagT, WrappedConfigT> & dereference_handle( mesh_t<WrappedMeshConfigT> &, element_t<ElementTagT, WrappedConfigT> & element)
   { return element; }
   
-  template<typename WrappedDomainConfigT, typename ElementTagT, typename WrappedConfigT>
-  element_t<ElementTagT, WrappedConfigT> & dereference_handle( segment_t<WrappedDomainConfigT> &, element_t<ElementTagT, WrappedConfigT> & element)
+  template<typename WrappedMeshConfigT, typename ElementTagT, typename WrappedConfigT>
+  element_t<ElementTagT, WrappedConfigT> & dereference_handle( segment_t<WrappedMeshConfigT> &, element_t<ElementTagT, WrappedConfigT> & element)
   { return element; }
     
   template<typename HostElementTagT, typename WrappedHostElementConfigT, typename ElementTagT, typename WrappedConfigT>
@@ -1449,22 +1449,22 @@ namespace viennagrid
 
   /** @brief Function for dereferencing a const element -> identity
     *
-    * @tparam WrappedDomainConfigT    Wrapped config of the domain type
+    * @tparam WrappedMeshConfigT    Wrapped config of the mesh type
     * @tparam ElementTagT             Element tag of the element to dereference
     * @tparam WrappedConfigT          Wrapped config of the element to dereference
     * @param  element                 The element to be derferenced, this object is returned
     * @return                         element (identity)
     */
-  template<typename WrappedDomainConfigT, typename ElementTagT, typename WrappedConfigT>
-  element_t<ElementTagT, WrappedConfigT> const & dereference_handle( domain_t<WrappedDomainConfigT> const &, element_t<ElementTagT, WrappedConfigT> const & element)
+  template<typename WrappedMeshConfigT, typename ElementTagT, typename WrappedConfigT>
+  element_t<ElementTagT, WrappedConfigT> const & dereference_handle( mesh_t<WrappedMeshConfigT> const &, element_t<ElementTagT, WrappedConfigT> const & element)
   { return element; }
   
-  template<typename WrappedDomainConfigT, typename ElementTagT, typename WrappedConfigT>
-  element_t<ElementTagT, WrappedConfigT> const & dereference_handle( domain_t<WrappedDomainConfigT> &, element_t<ElementTagT, WrappedConfigT> const & element)
+  template<typename WrappedMeshConfigT, typename ElementTagT, typename WrappedConfigT>
+  element_t<ElementTagT, WrappedConfigT> const & dereference_handle( mesh_t<WrappedMeshConfigT> &, element_t<ElementTagT, WrappedConfigT> const & element)
   { return element; }
 
-  template<typename WrappedDomainConfigT, typename ElementTagT, typename WrappedConfigT>
-  element_t<ElementTagT, WrappedConfigT> const & dereference_handle( domain_t<WrappedDomainConfigT> const &, element_t<ElementTagT, WrappedConfigT> & element)
+  template<typename WrappedMeshConfigT, typename ElementTagT, typename WrappedConfigT>
+  element_t<ElementTagT, WrappedConfigT> const & dereference_handle( mesh_t<WrappedMeshConfigT> const &, element_t<ElementTagT, WrappedConfigT> & element)
   { return element; }
 
 
@@ -1495,23 +1495,23 @@ namespace viennagrid
   
   /** @brief Function for creating a handle, default implementation -> identity
     *
-    * @tparam DomainOrSegmentT    Wrapped config of the domain type
+    * @tparam MeshOrSegmentT    Wrapped config of the mesh type
     * @tparam HandleT             Type of the handle
     * @param  handle              The handle object
     * @return                     handle (identity)
     */
-  template<typename DomainOrSegmentT, typename HandleT>
-  HandleT handle( DomainOrSegmentT &, HandleT handle) { return handle; }
+  template<typename MeshOrSegmentT, typename HandleT>
+  HandleT handle( MeshOrSegmentT &, HandleT handle) { return handle; }
 
   /** @brief Function for creating a const handle, default implementation -> identity
     *
-    * @tparam DomainOrSegmentT    Wrapped config of the domain type
+    * @tparam MeshOrSegmentT    Wrapped config of the mesh type
     * @tparam HandleT             Type of the handle
     * @param  handle              The handle object
     * @return                     handle (identity)
     */
-  template<typename DomainOrSegmentT, typename HandleT>
-  const HandleT handle( DomainOrSegmentT const &, HandleT handle) { return handle; }
+  template<typename MeshOrSegmentT, typename HandleT>
+  const HandleT handle( MeshOrSegmentT const &, HandleT handle) { return handle; }
   
 
   // norm tags for: algorithm/norm.hpp

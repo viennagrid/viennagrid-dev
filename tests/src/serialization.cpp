@@ -26,54 +26,54 @@ int main()
   std::cout << "* Test started! *" << std::endl;
   std::cout << "*****************" << std::endl;
   
-  // setup a domain
+  // setup a mesh
   // 
-  typedef viennagrid::triangular_2d_domain                           DomainType;
-  typedef viennagrid::io::domain_serializer<DomainType>              DomainSerializer;
-//   typedef boost::shared_ptr<DomainType>                              DomainSP;
+  typedef viennagrid::triangular_2d_mesh                           MeshType;
+  typedef viennagrid::io::mesh_serializer<MeshType>              MeshSerializer;
+//   typedef boost::shared_ptr<MeshType>                              MeshSP;
 
-  // setup a shared pointer on a domain
+  // setup a shared pointer on a mesh
   //
-  DomainType          domain;
+  MeshType          mesh;
   
-  // create a serializer object and load it with the domain pointer
+  // create a serializer object and load it with the mesh pointer
   //
-  DomainSerializer  domain_serial;
-  domain_serial.load( domain );
+  MeshSerializer  mesh_serial;
+  mesh_serial.load( mesh );
 
-  // access the domain object by calling the functor
+  // access the mesh object by calling the functor
   //
   viennagrid::io::netgen_reader my_reader;
-  my_reader(domain_serial(), "../../examples/data/square32.mesh");
+  my_reader(mesh_serial(), "../../examples/data/square32.mesh");
   
-  // the domainserial object is now a Boost Serialization conform serializable
+  // the meshserial object is now a Boost Serialization conform serializable
   // object, for example, one can ..
   
   // .. use boost archive to dump it to a text file
   {
-  std::ofstream ofs("domainfile.txt");
+  std::ofstream ofs("meshfile.txt");
   boost::archive::text_oarchive oa(ofs);
-  oa << domain_serial;
+  oa << mesh_serial;
   }
 
   // .. use boost archive to dump it to std::cout
   {
   boost::archive::text_oarchive oa(std::cout);
-  oa << domain_serial;
+  oa << mesh_serial;
   }
 
   // .. transmit it via boost::mpi's send
   // note: this example is not active, as it would require linking 
   // against the (boost)mpi libraries and the execution via mpirun ...
   /*
-  if (world.rank() == 0) world.send(1, DOMAIN_TAG, domain_serial);
-  else                   world.recv(0, DOMAIN_TAG, domain_serial);     
+  if (world.rank() == 0) world.send(1, MESH_TAG, mesh_serial);
+  else                   world.recv(0, MESH_TAG, mesh_serial);     
   */
   
-  // the actual viennagrid domain object can be accessed via the functor interface
-  viennagrid::io::vtk_writer<DomainType>  vtk;         
-  vtk(domain_serial(), //extract the domain from the serializer
-      "serialized_domain");
+  // the actual viennagrid mesh object can be accessed via the functor interface
+  viennagrid::io::vtk_writer<MeshType>  vtk;         
+  vtk(mesh_serial(), //extract the mesh from the serializer
+      "serialized_mesh");
   
   std::cout << "*******************************" << std::endl;
   std::cout << "* Test finished successfully! *" << std::endl;

@@ -14,7 +14,7 @@ In the following, the main entities of ViennaGrid are explained. The nomenclatur
 The underlying space in {\ViennaGrid} is the $m$-dimensional Euclidian space $\mathbb{E}^m$, which is identified with the real coordinate space $\mathbb{R}^m$ in the following.
 A \emph{point} refers to an element $\vector x$ in $\mathbb{R}^m$ and does not carry any topological information. On the other hand, a point equivalently refers to the vector from the origin pointing to $\vector x$.
 
-Given a configuration class \lstinline|Config| for {\ViennaGrid} (cf.~Chap.~\ref{chap:domainconfig}), a point is defined and manipulated as follows:
+Given a configuration class \lstinline|Config| for {\ViennaGrid} (cf.~Chap.~\ref{chap:meshconfig}), a point is defined and manipulated as follows:
 \begin{lstlisting}
  using namespace viennagrid;
 
@@ -36,7 +36,7 @@ Given a configuration class \lstinline|Config| for {\ViennaGrid} (cf.~Chap.~\ref
 The operators \lstinline|+, -, *, /, +=, -=, *=| and \lstinline|/=| can be used in the usual mnemonic manner. \lstinline|operator[]| grants access to the individual coordinate entries and allows for a direct manipulation.
 
 Aside from the standard Cartesian coordinates, {\ViennaGrid} can also handle polar, spherical and cylindrical coordinate systems.
-This is typically defined globally within the configuration class \lstinline|Config| for the whole domain, and the meta-function in the previous snippet creates the correct point type. However, if no global configuration class is available, the point types can be obtained as
+This is typically defined globally within the configuration class \lstinline|Config| for the whole mesh, and the meta-function in the previous snippet creates the correct point type. However, if no global configuration class is available, the point types can be obtained as
 \begin{lstlisting}
  typedef point<double, 1>                   CartesianPoint1d;
  typedef point<double, 2>                   CartesianPoint2d;
@@ -126,13 +126,13 @@ A brief overview of the corresponding meanings of vertices, edges, facets and ce
 \end{table}
 
 
-% For a parametric description of these objects it is more appropriate to switch \textbf{$n$-cells}, which are objects of topological dimension $n$. The terms \emph{vertex}, \emph{edge}, \emph{facet} and \emph{cell} thus refer to $0$-cell, $1$-cell, $N-1$-cell and $N$-cell respectively. The maximum topological dimension $N$ is in {\ViennaGrid} considered to be a parameter available at compile time, which allows to pick the correct $n$-cell type for the algorithms provided. Note that one can still use a run time dispatch at the cost of increased compilation times if the dimension of the domain is only available at run time. More details can be found in Chapters \ref{chap:iterators} and \ref{chap:algorithms}.
+% For a parametric description of these objects it is more appropriate to switch \textbf{$n$-cells}, which are objects of topological dimension $n$. The terms \emph{vertex}, \emph{edge}, \emph{facet} and \emph{cell} thus refer to $0$-cell, $1$-cell, $N-1$-cell and $N$-cell respectively. The maximum topological dimension $N$ is in {\ViennaGrid} considered to be a parameter available at compile time, which allows to pick the correct $n$-cell type for the algorithms provided. Note that one can still use a run time dispatch at the cost of increased compilation times if the dimension of the mesh is only available at run time. More details can be found in Chapters \ref{chap:iterators} and \ref{chap:algorithms}.
 
 
-\section{Domain}
-A \emph{domain} $\Omega$ is the top level object in {\ViennaGrid} and is a container for its topological elements. There are no topological restrictions on the elements inside a domain. 
+\section{Mesh}
+A \emph{mesh} $\Omega$ is the top level object in {\ViennaGrid} and is a container for its topological elements. There are no topological restrictions on the elements inside a mesh. 
 
-A typical use-case for a domain is to store a cell complex. We characterize a cell complex as a collection of topological elements, such that the intersection of two elements (maybe of different type) $e_0$ and $e_1$  is another element $e_i$ from the cell complex.
+A typical use-case for a mesh is to store a cell complex. We characterize a cell complex as a collection of topological elements, such that the intersection of two elements (maybe of different type) $e_0$ and $e_1$  is another element $e_i$ from the cell complex.
 
 It should be noted that {\ViennaGrid} allows the use of conforming and non-conforming complexes. Here, a \emph{conforming} complex is characterized by the property that the intersection element $e_i$  from above is a boundary element from both of the element $e_0$ and the element $e_1$.
 
@@ -152,20 +152,20 @@ If this is not the case, the complex is denoted \emph{non-conforming}, cf.~Fig.~
 
 \pagebreak
 
-The instantiation of a {\ViennaGrid} domain object requires a configuration class \lstinline|Config|, as will be discussed in~Chapter~\ref{chap:typebasics}. Given such a class, the domain type is retrieved and the domain object constructed as 
+The instantiation of a {\ViennaGrid} mesh object requires a configuration class \lstinline|Config|, as will be discussed in~Chapter~\ref{chap:typebasics}. Given such a class, the mesh type is retrieved and the mesh object constructed as 
 \begin{lstlisting}
  using namespace viennagrid;
 
  // Type retrieval, method 1: use meta-function (recommended)
- typedef result_of::domain<Config>::type     DomainType;
+ typedef result_of::mesh<Config>::type     MeshType;
 
  // Type retrieval, method 2: direct (discouraged, may change in future versions)
- typedef domain_t<Config>                    DomainType
+ typedef mesh_t<Config>                    MeshType
 
- DomainType domain; //create the domain object
+ MeshType mesh; //create the mesh object
 \end{lstlisting}
 
 \section{Segmentation and Segment}
-A \emph{segment} $\Omega_i$ refers to a subset of the elements in a domain $\Omega$. Unlike a domain, a segment is not a container for its elements. Instead, only references (pointers) to the elements in the domain are stored. In common C++ language, a \emph{segment} represents a so-called \emph{view} on the domain.
+A \emph{segment} $\Omega_i$ refers to a subset of the elements in a mesh $\Omega$. Unlike a mesh, a segment is not a container for its elements. Instead, only references (pointers) to the elements in the mesh are stored. In common C++ language, a \emph{segment} represents a so-called \emph{view} on the mesh.
 
-A segmentation represents a collection of segments. The typical use-case for a segmentation is the decomposition of the domain into pieces of a common property. For example, a solid consisting of different materials can be set up in {\ViennaGrid} such that each regions of the same material are represented in a common segment.
+A segmentation represents a collection of segments. The typical use-case for a segmentation is the decomposition of the mesh into pieces of a common property. For example, a solid consisting of different materials can be set up in {\ViennaGrid} such that each regions of the same material are represented in a common segment.

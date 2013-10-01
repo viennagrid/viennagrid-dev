@@ -3,9 +3,9 @@
 
 #include "viennagrid/config/default_configs.hpp"
 
-#include "viennagrid/domain/accessor.hpp"
-#include "viennagrid/domain/segmentation.hpp"
-#include "viennagrid/domain/element_creation.hpp"
+#include "viennagrid/mesh/accessor.hpp"
+#include "viennagrid/mesh/segmentation.hpp"
+#include "viennagrid/mesh/element_creation.hpp"
 
 #include "viennagrid/io/vtk_writer.hpp"
 
@@ -13,38 +13,38 @@
 
 int main()
 {
-  typedef viennagrid::triangular_2d_domain                        domain_type;
-  typedef viennagrid::result_of::domain_view< domain_type >::type view_type;
+  typedef viennagrid::triangular_2d_mesh                        mesh_type;
+  typedef viennagrid::result_of::mesh_view< mesh_type >::type view_type;
   
-  typedef viennagrid::result_of::point<domain_type>::type point_type;
+  typedef viennagrid::result_of::point<mesh_type>::type point_type;
   
-  typedef viennagrid::result_of::cell< domain_type >::type     cell_type;
-  typedef viennagrid::result_of::vertex< domain_type >::type     vertex_type;
-  typedef viennagrid::result_of::vertex_handle< domain_type >::type     vertex_handle_type;
-  typedef viennagrid::result_of::triangle_handle< domain_type >::type   triangle_handle_type;
-  typedef viennagrid::result_of::triangle< domain_type >::type          triangle_type;
+  typedef viennagrid::result_of::cell< mesh_type >::type     cell_type;
+  typedef viennagrid::result_of::vertex< mesh_type >::type     vertex_type;
+  typedef viennagrid::result_of::vertex_handle< mesh_type >::type     vertex_handle_type;
+  typedef viennagrid::result_of::triangle_handle< mesh_type >::type   triangle_handle_type;
+  typedef viennagrid::result_of::triangle< mesh_type >::type          triangle_type;
   
     
-  typedef viennagrid::result_of::oriented_3d_hull_segmentation<domain_type>::type segmentation_type;
-//   typedef viennagrid::result_of::segmentation<domain_type>::type segmentation_type;
+  typedef viennagrid::result_of::oriented_3d_hull_segmentation<mesh_type>::type segmentation_type;
+//   typedef viennagrid::result_of::segmentation<mesh_type>::type segmentation_type;
   
   typedef segmentation_type::segment_type segment_type;
   typedef segmentation_type::segment_id_type segment_id_type;
   
-  domain_type domain;
-  segmentation_type segmentation(domain);
+  mesh_type mesh;
+  segmentation_type segmentation(mesh);
   
   
-  vertex_handle_type vh0 = viennagrid::make_vertex( domain, point_type( 0,  0) );
-  vertex_handle_type vh1 = viennagrid::make_vertex( domain, point_type(-1, -1) );
-  vertex_handle_type vh2 = viennagrid::make_vertex( domain, point_type(-1,  1) );
-  vertex_handle_type vh3 = viennagrid::make_vertex( domain, point_type( 1,  1) );
-  vertex_handle_type vh4 = viennagrid::make_vertex( domain, point_type( 1, -1) );
+  vertex_handle_type vh0 = viennagrid::make_vertex( mesh, point_type( 0,  0) );
+  vertex_handle_type vh1 = viennagrid::make_vertex( mesh, point_type(-1, -1) );
+  vertex_handle_type vh2 = viennagrid::make_vertex( mesh, point_type(-1,  1) );
+  vertex_handle_type vh3 = viennagrid::make_vertex( mesh, point_type( 1,  1) );
+  vertex_handle_type vh4 = viennagrid::make_vertex( mesh, point_type( 1, -1) );
   
-  triangle_handle_type th0 = viennagrid::make_triangle( domain, vh0, vh1, vh2 );
-  triangle_handle_type th1 = viennagrid::make_triangle( domain, vh0, vh2, vh3 );
-  triangle_handle_type th2 = viennagrid::make_triangle( domain, vh0, vh3, vh4 );
-  triangle_handle_type th3 = viennagrid::make_triangle( domain, vh0, vh4, vh1 );
+  triangle_handle_type th0 = viennagrid::make_triangle( mesh, vh0, vh1, vh2 );
+  triangle_handle_type th1 = viennagrid::make_triangle( mesh, vh0, vh2, vh3 );
+  triangle_handle_type th2 = viennagrid::make_triangle( mesh, vh0, vh3, vh4 );
+  triangle_handle_type th3 = viennagrid::make_triangle( mesh, vh0, vh4, vh1 );
   
   
 
@@ -52,10 +52,10 @@ int main()
   segment_type seg1 = segmentation.make_segment();
   
    
-  triangle_type & tri0 = viennagrid::dereference_handle(domain, th0);
-  triangle_type & tri1 = viennagrid::dereference_handle(domain, th1);
-  triangle_type & tri2 = viennagrid::dereference_handle(domain, th2);
-  triangle_type & tri3 = viennagrid::dereference_handle(domain, th3);
+  triangle_type & tri0 = viennagrid::dereference_handle(mesh, th0);
+  triangle_type & tri1 = viennagrid::dereference_handle(mesh, th1);
+  triangle_type & tri2 = viennagrid::dereference_handle(mesh, th2);
+  triangle_type & tri3 = viennagrid::dereference_handle(mesh, th3);
   
   
   viennagrid::add( seg0, tri0 );
@@ -95,7 +95,7 @@ int main()
   
   
   
-  viennagrid::io::vtk_writer<domain_type, segmentation_type> writer;
+  viennagrid::io::vtk_writer<mesh_type, segmentation_type> writer;
   
   writer.add_scalar_data_on_vertices( viennagrid::make_accessor<vertex_type>(potential_point), "potential_point" );
   writer.add_scalar_data_on_vertices( seg0, viennagrid::make_accessor<vertex_type>(potential_point_segment), "potential_point_segment" );
@@ -103,7 +103,7 @@ int main()
   writer.add_scalar_data_on_cells( viennagrid::make_accessor<cell_type>(potential_cell), "potential_cell" );
   writer.add_scalar_data_on_cells( seg1, viennagrid::make_accessor<cell_type>(potential_cell_segment), "potential_cell_segment" );
   
-  writer( domain, segmentation, "test" );
+  writer( mesh, segmentation, "test" );
   
 
     

@@ -26,7 +26,7 @@
 
 #include "viennagrid/forwards.hpp"
 #include "viennagrid/config/default_configs.hpp"
-#include "viennagrid/domain/element_creation.hpp"
+#include "viennagrid/mesh/element_creation.hpp"
 #include "viennagrid/point.hpp"
 #include "viennagrid/algorithm/distance.hpp"
 #include "viennagrid/algorithm/volume.hpp"
@@ -75,18 +75,18 @@ double height_for_tetrahedron(PointType const & A,
   return 3.0 * V / base_area;
 }
 
-template <typename DomainType, typename LineType>
-double line_distance_via_cross_prod(DomainType const & domain, LineType const & line0, LineType const & line1)
+template <typename MeshType, typename LineType>
+double line_distance_via_cross_prod(MeshType const & mesh, LineType const & line0, LineType const & line1)
 {
   //typedef typename LineType::config_type     ConfigType;
   //typedef typename viennagrid::result_of::point<ConfigType>::type    PointType;
-  typedef typename viennagrid::result_of::point<DomainType>::type PointType;
+  typedef typename viennagrid::result_of::point<MeshType>::type PointType;
   
-  PointType const & A = viennagrid::point(domain, viennagrid::elements<viennagrid::vertex_tag>(line0)[0]);
-  PointType const & B = viennagrid::point(domain, viennagrid::elements<viennagrid::vertex_tag>(line0)[1]);
+  PointType const & A = viennagrid::point(mesh, viennagrid::elements<viennagrid::vertex_tag>(line0)[0]);
+  PointType const & B = viennagrid::point(mesh, viennagrid::elements<viennagrid::vertex_tag>(line0)[1]);
   
-  PointType const & C = viennagrid::point(domain, viennagrid::elements<viennagrid::vertex_tag>(line1)[0]);
-  PointType const & D = viennagrid::point(domain, viennagrid::elements<viennagrid::vertex_tag>(line1)[1]);
+  PointType const & C = viennagrid::point(mesh, viennagrid::elements<viennagrid::vertex_tag>(line1)[0]);
+  PointType const & D = viennagrid::point(mesh, viennagrid::elements<viennagrid::vertex_tag>(line1)[1]);
   
   PointType dir_0 = B - A;
   PointType dir_1 = D - C;
@@ -102,16 +102,16 @@ double line_distance_via_cross_prod(DomainType const & domain, LineType const & 
 // Line 3d
 //
 
-void setup_domain(viennagrid::line_3d_domain & domain)
+void setup_mesh(viennagrid::line_3d_mesh & mesh)
 {
-  typedef viennagrid::line_3d_domain                      DomainType;
+  typedef viennagrid::line_3d_mesh                      MeshType;
 //   typedef viennagrid::config::line_2d                             ConfigType;
   typedef viennagrid::line_tag                                    CellTag;
   
-  typedef viennagrid::result_of::point<DomainType>::type          PointType;
-  typedef viennagrid::result_of::element<DomainType, viennagrid::vertex_tag>::type       VertexType;
-  typedef viennagrid::result_of::handle<DomainType, viennagrid::vertex_tag>::type       VertexHandleType;
-  typedef viennagrid::result_of::element<DomainType, CellTag>::type        CellType;
+  typedef viennagrid::result_of::point<MeshType>::type          PointType;
+  typedef viennagrid::result_of::element<MeshType, viennagrid::vertex_tag>::type       VertexType;
+  typedef viennagrid::result_of::handle<MeshType, viennagrid::vertex_tag>::type       VertexHandleType;
+  typedef viennagrid::result_of::element<MeshType, CellTag>::type        CellType;
   
   const size_t s = 9;
   PointType p[s];
@@ -129,56 +129,56 @@ void setup_domain(viennagrid::line_3d_domain & domain)
   p[8] = PointType(3.0, 2.0, 3.0);
   
   //upgrade to vertex:
-  std::cout << "Adding vertices to domain..." << std::endl;
+  std::cout << "Adding vertices to mesh..." << std::endl;
   for (size_t i = 0; i < s; ++i)
   {
-    v[i] = viennagrid::make_vertex( domain, p[i] );
-//     viennagrid::point( domain, v[i] ) = p[i];
+    v[i] = viennagrid::make_vertex( mesh, p[i] );
+//     viennagrid::point( mesh, v[i] ) = p[i];
   }
 
-  std::cout << "Adding cells to domain..." << std::endl;
+  std::cout << "Adding cells to mesh..." << std::endl;
   VertexHandleType vertices[2];
   
   vertices[0] = v[0];
   vertices[1] = v[6];
-  viennagrid::make_element<CellType>( domain, vertices, vertices+2 );
+  viennagrid::make_element<CellType>( mesh, vertices, vertices+2 );
   
   vertices[0] = v[1];
   vertices[1] = v[4];
-  viennagrid::make_element<CellType>( domain, vertices, vertices+2 );
+  viennagrid::make_element<CellType>( mesh, vertices, vertices+2 );
   
   vertices[0] = v[1];
   vertices[1] = v[5];
-  viennagrid::make_element<CellType>( domain, vertices, vertices+2 );
+  viennagrid::make_element<CellType>( mesh, vertices, vertices+2 );
   
   vertices[0] = v[2];
   vertices[1] = v[3];
-  viennagrid::make_element<CellType>( domain, vertices, vertices+2 );
+  viennagrid::make_element<CellType>( mesh, vertices, vertices+2 );
   
   vertices[0] = v[7];
   vertices[1] = v[8];
-  viennagrid::make_element<CellType>( domain, vertices, vertices+2 );
+  viennagrid::make_element<CellType>( mesh, vertices, vertices+2 );
 }
 
-void test(viennagrid::line_3d_domain)
+void test(viennagrid::line_3d_mesh)
 {
-  typedef viennagrid::line_3d_domain                            Domain;
+  typedef viennagrid::line_3d_mesh                            Mesh;
   typedef viennagrid::line_tag                                          CellTag;
   
-  typedef viennagrid::result_of::point<Domain>::type                PointType;
-  typedef viennagrid::result_of::element<Domain, viennagrid::vertex_tag>::type             VertexType;
-  typedef viennagrid::result_of::element<Domain, viennagrid::line_tag>::type             EdgeType;
-  typedef viennagrid::result_of::element<Domain, CellTag>::type  CellType;
+  typedef viennagrid::result_of::point<Mesh>::type                PointType;
+  typedef viennagrid::result_of::element<Mesh, viennagrid::vertex_tag>::type             VertexType;
+  typedef viennagrid::result_of::element<Mesh, viennagrid::line_tag>::type             EdgeType;
+  typedef viennagrid::result_of::element<Mesh, CellTag>::type  CellType;
 
-  Domain domain;
+  Mesh mesh;
 
-  setup_domain(domain);
+  setup_mesh(mesh);
   
-  CellType line0 = viennagrid::elements<CellTag>(domain)[0];
-  CellType line1 = viennagrid::elements<CellTag>(domain)[1];
-  CellType line2 = viennagrid::elements<CellTag>(domain)[2];
-  CellType line3 = viennagrid::elements<CellTag>(domain)[3];
-  CellType line  = viennagrid::elements<CellTag>(domain)[4];
+  CellType line0 = viennagrid::elements<CellTag>(mesh)[0];
+  CellType line1 = viennagrid::elements<CellTag>(mesh)[1];
+  CellType line2 = viennagrid::elements<CellTag>(mesh)[2];
+  CellType line3 = viennagrid::elements<CellTag>(mesh)[3];
+  CellType line  = viennagrid::elements<CellTag>(mesh)[4];
   CellType & line4 = line;
   
   double line_length = viennagrid::volume(line);
@@ -286,7 +286,7 @@ void test(viennagrid::line_3d_domain)
                height_from_edge_lengths(std::sqrt(5.0), std::sqrt(9.0), viennagrid::volume(line0)) );               
   
   std::cout << "Distance of line0 to line4... ";
-  double dist_04 = line_distance_via_cross_prod(domain, line0, line4);
+  double dist_04 = line_distance_via_cross_prod(mesh, line0, line4);
   fuzzy_check( viennagrid::distance(line0, line4), dist_04);
   
 
@@ -321,10 +321,10 @@ void test(viennagrid::line_3d_domain)
                height_from_edge_lengths(std::sqrt(6.0), std::sqrt(2.0), viennagrid::volume(line2)) );               
   
   std::cout << "Distance of line2 to line4... ";
-  PointType p_24_2 = (1.0 - 3.0/8.0) * viennagrid::point(domain, viennagrid::elements<viennagrid::vertex_tag>(line2)[0]) 
-                          + 3.0/8.0  * viennagrid::point(domain, viennagrid::elements<viennagrid::vertex_tag>(line2)[1]);
-  PointType p_24_4 = (1.0 - 1.0/4.0) * viennagrid::point(domain, viennagrid::elements<viennagrid::vertex_tag>(line4)[0]) 
-                          + 1.0/4.0  * viennagrid::point(domain, viennagrid::elements<viennagrid::vertex_tag>(line4)[1]);
+  PointType p_24_2 = (1.0 - 3.0/8.0) * viennagrid::point(mesh, viennagrid::elements<viennagrid::vertex_tag>(line2)[0]) 
+                          + 3.0/8.0  * viennagrid::point(mesh, viennagrid::elements<viennagrid::vertex_tag>(line2)[1]);
+  PointType p_24_4 = (1.0 - 1.0/4.0) * viennagrid::point(mesh, viennagrid::elements<viennagrid::vertex_tag>(line4)[0]) 
+                          + 1.0/4.0  * viennagrid::point(mesh, viennagrid::elements<viennagrid::vertex_tag>(line4)[1]);
   double dist_24 = viennagrid::distance(p_24_2, p_24_4);
   fuzzy_check( viennagrid::distance(line2, line4), dist_24 );
   
@@ -344,7 +344,7 @@ void test(viennagrid::line_3d_domain)
   fuzzy_check( viennagrid::distance(line3, line3), 0.0 );
   
   std::cout << "Distance of line3 to line4... ";
-  double dist_34 = line_distance_via_cross_prod(domain, line3, line4);
+  double dist_34 = line_distance_via_cross_prod(mesh, line3, line4);
   fuzzy_check( viennagrid::distance(line3, line4), dist_34 );
   
 
@@ -372,17 +372,17 @@ void test(viennagrid::line_3d_domain)
 // Triangular
 //
 
-void setup_domain(viennagrid::triangular_3d_domain & domain)
+void setup_mesh(viennagrid::triangular_3d_mesh & mesh)
 {
-  typedef viennagrid::triangular_3d_domain                      DomainType;
+  typedef viennagrid::triangular_3d_mesh                      MeshType;
   typedef viennagrid::triangle_tag                                      CellTag;
   
-  typedef viennagrid::result_of::point<DomainType>::type          PointType;
-  typedef viennagrid::result_of::element<DomainType, viennagrid::vertex_tag>::type       VertexType;
+  typedef viennagrid::result_of::point<MeshType>::type          PointType;
+  typedef viennagrid::result_of::element<MeshType, viennagrid::vertex_tag>::type       VertexType;
   
-  typedef viennagrid::result_of::handle<DomainType, viennagrid::vertex_tag>::type       VertexHandleType;
+  typedef viennagrid::result_of::handle<MeshType, viennagrid::vertex_tag>::type       VertexHandleType;
   
-  typedef viennagrid::result_of::element<DomainType, CellTag>::type        CellType;
+  typedef viennagrid::result_of::element<MeshType, CellTag>::type        CellType;
   
   const size_t s = 4;
   PointType p[s];
@@ -394,43 +394,43 @@ void setup_domain(viennagrid::triangular_3d_domain & domain)
   p[3] = PointType(1.0, 2.0, 1.0);
 
   //upgrade to vertex:
-  std::cout << "Adding vertices to domain..." << std::endl;
+  std::cout << "Adding vertices to mesh..." << std::endl;
   for (size_t i = 0; i < s; ++i)
   {
-    v[i] = viennagrid::make_vertex( domain, p[i] );
-//     viennagrid::point( domain, v[i] ) = p[i];
+    v[i] = viennagrid::make_vertex( mesh, p[i] );
+//     viennagrid::point( mesh, v[i] ) = p[i];
   }
 
-  std::cout << "Adding cells to domain..." << std::endl;
+  std::cout << "Adding cells to mesh..." << std::endl;
   VertexHandleType vertices[3];
   
   vertices[0] = v[0];
   vertices[1] = v[2];
   vertices[2] = v[3];
-  viennagrid::make_element<CellType>( domain, vertices, vertices+3 );
+  viennagrid::make_element<CellType>( mesh, vertices, vertices+3 );
   
   vertices[0] = v[0];
   vertices[1] = v[1];
   vertices[2] = v[2];
-  viennagrid::make_element<CellType>( domain, vertices, vertices+3 );
+  viennagrid::make_element<CellType>( mesh, vertices, vertices+3 );
 }
 
 
 
 
-void test(viennagrid::triangular_3d_domain)
+void test(viennagrid::triangular_3d_mesh)
 {
-  typedef viennagrid::triangular_3d_domain                      Domain;
+  typedef viennagrid::triangular_3d_mesh                      Mesh;
   typedef viennagrid::triangle_tag                                      CellTag;
   
-  typedef viennagrid::result_of::point<Domain>::type                PointType;
-  typedef viennagrid::result_of::element<Domain, viennagrid::vertex_tag>::type             VertexType;
-  typedef viennagrid::result_of::element<Domain, viennagrid::line_tag>::type             EdgeType;
-  typedef viennagrid::result_of::element<Domain, CellTag>::type  CellType;
+  typedef viennagrid::result_of::point<Mesh>::type                PointType;
+  typedef viennagrid::result_of::element<Mesh, viennagrid::vertex_tag>::type             VertexType;
+  typedef viennagrid::result_of::element<Mesh, viennagrid::line_tag>::type             EdgeType;
+  typedef viennagrid::result_of::element<Mesh, CellTag>::type  CellType;
 
-  Domain domain;
+  Mesh mesh;
   
-  setup_domain(domain);
+  setup_mesh(mesh);
   
   PointType A(0, 0, 0);
   PointType B(1, 0, 2);
@@ -457,8 +457,8 @@ void test(viennagrid::triangular_3d_domain)
   PointType Q(2, 5, 2);
   PointType R(3, 5, 1);
 
-  CellType t0 = viennagrid::elements<CellTag>(domain)[0];
-  CellType t1 = viennagrid::elements<CellTag>(domain)[1];
+  CellType t0 = viennagrid::elements<CellTag>(mesh)[0];
+  CellType t1 = viennagrid::elements<CellTag>(mesh)[1];
   
   //
   // Distance checks for t0
@@ -499,13 +499,13 @@ void test(viennagrid::triangular_3d_domain)
   fuzzy_check( viennagrid::distance(I, t0), viennagrid::distance(I, e0_0) );
   
   std::cout << "Distance of point J to triangle t0... ";
-  fuzzy_check( viennagrid::distance(J, t0), height_for_tetrahedron(viennagrid::point(domain, v0_0), viennagrid::point(domain, v0_1), viennagrid::point(domain, v0_2), J) );
+  fuzzy_check( viennagrid::distance(J, t0), height_for_tetrahedron(viennagrid::point(mesh, v0_0), viennagrid::point(mesh, v0_1), viennagrid::point(mesh, v0_2), J) );
   
   std::cout << "Distance of point K to triangle t0... ";
   fuzzy_check( viennagrid::distance(K, t0), 0.0 );
 
   std::cout << "Distance of point K2 to triangle t0... ";
-  fuzzy_check( viennagrid::distance(K2, t0), height_for_tetrahedron(viennagrid::point(domain, v0_0), viennagrid::point(domain, v0_1), viennagrid::point(domain, v0_2), K2) );
+  fuzzy_check( viennagrid::distance(K2, t0), height_for_tetrahedron(viennagrid::point(mesh, v0_0), viennagrid::point(mesh, v0_1), viennagrid::point(mesh, v0_2), K2) );
   
   std::cout << "Distance of point L to triangle t0... ";
   fuzzy_check( viennagrid::distance(L, t0), viennagrid::distance(L, e0_0) );
@@ -573,7 +573,7 @@ void test(viennagrid::triangular_3d_domain)
   fuzzy_check( viennagrid::distance(J, t1), viennagrid::distance(J, e1_1) );
   
   std::cout << "Distance of point K to triangle t1... ";
-  fuzzy_check( viennagrid::distance(K, t1), height_for_tetrahedron(viennagrid::point(domain, v1_0), viennagrid::point(domain, v1_1), viennagrid::point(domain, v1_2), K) );
+  fuzzy_check( viennagrid::distance(K, t1), height_for_tetrahedron(viennagrid::point(mesh, v1_0), viennagrid::point(mesh, v1_1), viennagrid::point(mesh, v1_2), K) );
   
   std::cout << "Distance of point K2 to triangle t1... ";
   fuzzy_check( viennagrid::distance(K2, t1), viennagrid::distance(K2, e1_1) );
@@ -585,10 +585,10 @@ void test(viennagrid::triangular_3d_domain)
   fuzzy_check( viennagrid::distance(M, t1), viennagrid::distance(M, e1_2) );
   
   std::cout << "Distance of point N to triangle t1... ";
-  fuzzy_check( viennagrid::distance(N, t1), height_for_tetrahedron(viennagrid::point(domain, v1_0), viennagrid::point(domain, v1_1), viennagrid::point(domain, v1_2), N) ); 
+  fuzzy_check( viennagrid::distance(N, t1), height_for_tetrahedron(viennagrid::point(mesh, v1_0), viennagrid::point(mesh, v1_1), viennagrid::point(mesh, v1_2), N) ); 
   
   std::cout << "Distance of point O to triangle t1... ";
-  fuzzy_check( viennagrid::distance(O, t1), height_for_tetrahedron(viennagrid::point(domain, v1_0), viennagrid::point(domain, v1_1), viennagrid::point(domain, v1_2), O) );
+  fuzzy_check( viennagrid::distance(O, t1), height_for_tetrahedron(viennagrid::point(mesh, v1_0), viennagrid::point(mesh, v1_1), viennagrid::point(mesh, v1_2), O) );
   
   std::cout << "Distance of point P to triangle t1... ";
   fuzzy_check( viennagrid::distance(P, t1), viennagrid::distance(P, v1_2) );
@@ -609,15 +609,15 @@ void test(viennagrid::triangular_3d_domain)
 // Quadrilateral
 //
 
-void setup_domain(viennagrid::quadrilateral_3d_domain & domain)
+void setup_mesh(viennagrid::quadrilateral_3d_mesh & mesh)
 {
-  typedef viennagrid::quadrilateral_3d_domain                  DomainType;
+  typedef viennagrid::quadrilateral_3d_mesh                  MeshType;
   typedef viennagrid::quadrilateral_tag                                CellTag;
   
-  typedef viennagrid::result_of::point<DomainType>::type          PointType;
-  typedef viennagrid::result_of::element<DomainType, viennagrid::vertex_tag>::type       VertexType;
-  typedef viennagrid::result_of::handle<DomainType, viennagrid::vertex_tag>::type       VertexHandleType;  
-  typedef viennagrid::result_of::element<DomainType, CellTag>::type        CellType;
+  typedef viennagrid::result_of::point<MeshType>::type          PointType;
+  typedef viennagrid::result_of::element<MeshType, viennagrid::vertex_tag>::type       VertexType;
+  typedef viennagrid::result_of::handle<MeshType, viennagrid::vertex_tag>::type       VertexHandleType;  
+  typedef viennagrid::result_of::element<MeshType, CellTag>::type        CellType;
   
   const size_t s = 4;
   PointType p[s];
@@ -629,31 +629,31 @@ void setup_domain(viennagrid::quadrilateral_3d_domain & domain)
   p[3] = PointType(3.0, 3.0, 3.0);
 
   //upgrade to vertex:
-  std::cout << "Adding vertices to domain..." << std::endl;
+  std::cout << "Adding vertices to mesh..." << std::endl;
   for (size_t i = 0; i < s; ++i)
   {
-    v[i] = viennagrid::make_vertex( domain,p[i] );
-//     viennagrid::point( domain, v[i] ) = p[i];
+    v[i] = viennagrid::make_vertex( mesh,p[i] );
+//     viennagrid::point( mesh, v[i] ) = p[i];
   }
 
-  std::cout << "Adding cells to domain..." << std::endl;
-  viennagrid::make_element<CellType>( domain, v, v+4 );
+  std::cout << "Adding cells to mesh..." << std::endl;
+  viennagrid::make_element<CellType>( mesh, v, v+4 );
 }
 
-void test(viennagrid::quadrilateral_3d_domain)
+void test(viennagrid::quadrilateral_3d_mesh)
 {
-  typedef viennagrid::quadrilateral_3d_domain                            Domain;
+  typedef viennagrid::quadrilateral_3d_mesh                            Mesh;
   typedef viennagrid::quadrilateral_tag                                          CellTag;
 
   
-  typedef viennagrid::result_of::point<Domain>::type                PointType;
-  typedef viennagrid::result_of::element<Domain, viennagrid::vertex_tag>::type             VertexType;
-  typedef viennagrid::result_of::element<Domain, viennagrid::line_tag>::type             EdgeType;
-  typedef viennagrid::result_of::element<Domain, CellTag>::type  CellType;
+  typedef viennagrid::result_of::point<Mesh>::type                PointType;
+  typedef viennagrid::result_of::element<Mesh, viennagrid::vertex_tag>::type             VertexType;
+  typedef viennagrid::result_of::element<Mesh, viennagrid::line_tag>::type             EdgeType;
+  typedef viennagrid::result_of::element<Mesh, CellTag>::type  CellType;
 
-  Domain domain;
+  Mesh mesh;
   
-  setup_domain(domain);
+  setup_mesh(mesh);
   
   PointType A(0, 0, 0);
   PointType B(1, 0, 2);
@@ -680,7 +680,7 @@ void test(viennagrid::quadrilateral_3d_domain)
   PointType Q(2, 5, 2);
   PointType R(3, 5, 1);
 
-  CellType & quad = viennagrid::elements<CellTag>(domain)[0];
+  CellType & quad = viennagrid::elements<CellTag>(mesh)[0];
   
   //
   // Distance checks for quadrilateral
@@ -739,7 +739,7 @@ void test(viennagrid::quadrilateral_3d_domain)
   fuzzy_check( viennagrid::distance(K, quad), 0.0 );
 
   std::cout << "Distance of point K2 to quadrilateral... ";
-  fuzzy_check( viennagrid::distance(quad, K2), height_for_tetrahedron(viennagrid::point(domain, v1), viennagrid::point(domain, v3), viennagrid::point(domain, v2), K2) );
+  fuzzy_check( viennagrid::distance(quad, K2), height_for_tetrahedron(viennagrid::point(mesh, v1), viennagrid::point(mesh, v3), viennagrid::point(mesh, v2), K2) );
   
   std::cout << "Distance of point L to quadrilateral... ";
   fuzzy_check( viennagrid::distance(L, quad), viennagrid::distance(L, e2) );
@@ -760,7 +760,7 @@ void test(viennagrid::quadrilateral_3d_domain)
   fuzzy_check( viennagrid::distance(Q, quad), viennagrid::distance(Q, e3) );
   
   std::cout << "Distance of point R to quadrilateral... ";
-  fuzzy_check( viennagrid::distance(R, quad), height_for_tetrahedron(viennagrid::point(domain, v1), viennagrid::point(domain, v3), viennagrid::point(domain, v2), R) );
+  fuzzy_check( viennagrid::distance(R, quad), height_for_tetrahedron(viennagrid::point(mesh, v1), viennagrid::point(mesh, v3), viennagrid::point(mesh, v2), R) );
 }
 
 
@@ -770,16 +770,16 @@ void test(viennagrid::quadrilateral_3d_domain)
 //
 
 
-void setup_domain(viennagrid::tetrahedral_3d_domain & domain)
+void setup_mesh(viennagrid::tetrahedral_3d_mesh & mesh)
 {
-  typedef viennagrid::tetrahedral_3d_domain                      DomainType;
+  typedef viennagrid::tetrahedral_3d_mesh                      MeshType;
   typedef viennagrid::tetrahedron_tag                                    CellTag;
   
-  typedef viennagrid::result_of::point<DomainType>::type          PointType;
-  typedef viennagrid::result_of::element<DomainType, viennagrid::vertex_tag>::type       VertexType;
-  typedef viennagrid::result_of::handle<DomainType, viennagrid::vertex_tag>::type       VertexHandleType;
+  typedef viennagrid::result_of::point<MeshType>::type          PointType;
+  typedef viennagrid::result_of::element<MeshType, viennagrid::vertex_tag>::type       VertexType;
+  typedef viennagrid::result_of::handle<MeshType, viennagrid::vertex_tag>::type       VertexHandleType;
   
-  typedef viennagrid::result_of::element<DomainType, CellTag>::type        CellType;
+  typedef viennagrid::result_of::element<MeshType, CellTag>::type        CellType;
   
   const size_t s = 4;
   PointType p[s];
@@ -791,33 +791,33 @@ void setup_domain(viennagrid::tetrahedral_3d_domain & domain)
   p[3] = PointType(2.0, 2.0, 4.0);
 
   //upgrade to vertex:
-  std::cout << "Adding vertices to domain..." << std::endl;
+  std::cout << "Adding vertices to mesh..." << std::endl;
   for (size_t i = 0; i < s; ++i)
   {
-    v[i] = viennagrid::make_vertex( domain, p[i] );
-//     viennagrid::point( domain, v[i] ) = p[i];
+    v[i] = viennagrid::make_vertex( mesh, p[i] );
+//     viennagrid::point( mesh, v[i] ) = p[i];
   }
 
-  std::cout << "Adding cells to domain..." << std::endl;
-  viennagrid::make_element<CellType>( domain, v, v+4 );
+  std::cout << "Adding cells to mesh..." << std::endl;
+  viennagrid::make_element<CellType>( mesh, v, v+4 );
 }
 
-void test(viennagrid::tetrahedral_3d_domain)
+void test(viennagrid::tetrahedral_3d_mesh)
 {
-  typedef viennagrid::tetrahedral_3d_domain                            Domain;
+  typedef viennagrid::tetrahedral_3d_mesh                            Mesh;
   typedef viennagrid::tetrahedron_tag                                          CellTag;
 
   
-  typedef viennagrid::result_of::point<Domain>::type                PointType;
-  typedef viennagrid::result_of::element<Domain, viennagrid::vertex_tag>::type             VertexType;
-  typedef viennagrid::result_of::element<Domain, viennagrid::line_tag>::type             EdgeType;
-  typedef viennagrid::result_of::element<Domain, CellTag>::type  CellType;
+  typedef viennagrid::result_of::point<Mesh>::type                PointType;
+  typedef viennagrid::result_of::element<Mesh, viennagrid::vertex_tag>::type             VertexType;
+  typedef viennagrid::result_of::element<Mesh, viennagrid::line_tag>::type             EdgeType;
+  typedef viennagrid::result_of::element<Mesh, CellTag>::type  CellType;
   typedef viennagrid::result_of::facet_tag<CellType>::type FacetTag;
   typedef viennagrid::result_of::facet<CellType>::type    FacetType;
 
-  Domain domain;
+  Mesh mesh;
   
-  setup_domain(domain);
+  setup_mesh(mesh);
   
   PointType A(2.0, 0.0, 1.0);  // v0 is closest
   PointType B(6.0, 4.0, 2.0);  // v1 is closest
@@ -840,7 +840,7 @@ void test(viennagrid::tetrahedral_3d_domain)
   PointType P(2.2, 2.5, 2.9);   // inside tet
 
 
-  CellType & tet = viennagrid::elements<CellTag>(domain)[0];
+  CellType & tet = viennagrid::elements<CellTag>(mesh)[0];
   
   //
   // Distance checks for quadrilateral
@@ -931,16 +931,16 @@ void test(viennagrid::tetrahedral_3d_domain)
 // Quadrilateral
 //
 
-void setup_domain(viennagrid::hexahedral_3d_domain & domain)
+void setup_mesh(viennagrid::hexahedral_3d_mesh & mesh)
 {
-  typedef viennagrid::hexahedral_3d_domain                      DomainType;
+  typedef viennagrid::hexahedral_3d_mesh                      MeshType;
   typedef viennagrid::hexahedron_tag                                    CellTag;
   
-  typedef viennagrid::result_of::point<DomainType>::type          PointType;
-  typedef viennagrid::result_of::element<DomainType, viennagrid::vertex_tag>::type       VertexType;
-  typedef viennagrid::result_of::handle<DomainType, viennagrid::vertex_tag>::type       VertexHandleType;
+  typedef viennagrid::result_of::point<MeshType>::type          PointType;
+  typedef viennagrid::result_of::element<MeshType, viennagrid::vertex_tag>::type       VertexType;
+  typedef viennagrid::result_of::handle<MeshType, viennagrid::vertex_tag>::type       VertexHandleType;
   
-  typedef viennagrid::result_of::element<DomainType, CellTag>::type        CellType;
+  typedef viennagrid::result_of::element<MeshType, CellTag>::type        CellType;
   
   const size_t s = 8;
   PointType p[s];
@@ -957,32 +957,32 @@ void setup_domain(viennagrid::hexahedral_3d_domain & domain)
   p[7] = PointType(2.0, 2.1, 2.0);
   
   //upgrade to vertex:
-  std::cout << "Adding vertices to domain..." << std::endl;
+  std::cout << "Adding vertices to mesh..." << std::endl;
   for (size_t i = 0; i < s; ++i)
   {
-    v[i] = viennagrid::make_vertex( domain, p[i] );
-//     viennagrid::point( domain, v[i] ) = p[i];
+    v[i] = viennagrid::make_vertex( mesh, p[i] );
+//     viennagrid::point( mesh, v[i] ) = p[i];
   }
     
-  std::cout << "Adding cells to domain..." << std::endl;
-  viennagrid::make_element<CellType>( domain, v, v+8 );
+  std::cout << "Adding cells to mesh..." << std::endl;
+  viennagrid::make_element<CellType>( mesh, v, v+8 );
 }
 
-void test(viennagrid::hexahedral_3d_domain)
+void test(viennagrid::hexahedral_3d_mesh)
 {
-  typedef viennagrid::hexahedral_3d_domain                            Domain;
+  typedef viennagrid::hexahedral_3d_mesh                            Mesh;
   typedef viennagrid::hexahedron_tag                                          CellTag;
 
   
-  typedef viennagrid::result_of::point<Domain>::type                PointType;
-  typedef viennagrid::result_of::element<Domain, viennagrid::vertex_tag>::type             VertexType;
-  typedef viennagrid::result_of::element<Domain, viennagrid::line_tag>::type             EdgeType;
-  typedef viennagrid::result_of::element<Domain, CellTag>::type  CellType;
+  typedef viennagrid::result_of::point<Mesh>::type                PointType;
+  typedef viennagrid::result_of::element<Mesh, viennagrid::vertex_tag>::type             VertexType;
+  typedef viennagrid::result_of::element<Mesh, viennagrid::line_tag>::type             EdgeType;
+  typedef viennagrid::result_of::element<Mesh, CellTag>::type  CellType;
   typedef viennagrid::result_of::facet<CellType>::type    FacetType;
 
-  Domain domain;
+  Mesh mesh;
   
-  setup_domain(domain);
+  setup_mesh(mesh);
   
 /*  PointType A(0, 0, 0);
   PointType B(1, 0, 2);
@@ -1009,7 +1009,7 @@ void test(viennagrid::hexahedral_3d_domain)
   PointType Q(2, 5, 2);
   PointType R(3, 5, 1); */
 
-  CellType & hex = viennagrid::elements<CellTag>(domain)[0];
+  CellType & hex = viennagrid::elements<CellTag>(mesh)[0];
 
   std::cout << "Checking a bunch of points in interior for distance 0... ";
   for (std::size_t i=0; i<=10; ++i)
@@ -1124,19 +1124,19 @@ int main()
   std::cout << "*****************" << std::endl;
 
   std::cout << "==== Testing line mesh in 3D ====" << std::endl;
-  test(viennagrid::line_3d_domain());
+  test(viennagrid::line_3d_mesh());
 
   std::cout << "==== Testing triangular mesh in 3D ====" << std::endl;
-  test(viennagrid::triangular_3d_domain());
+  test(viennagrid::triangular_3d_mesh());
 
   std::cout << "==== Testing quadrilateral mesh in 3D ====" << std::endl;
-  test(viennagrid::quadrilateral_3d_domain());
+  test(viennagrid::quadrilateral_3d_mesh());
   
   std::cout << "==== Testing tetrahedral mesh in 3D ====" << std::endl;
-  test(viennagrid::tetrahedral_3d_domain());
+  test(viennagrid::tetrahedral_3d_mesh());
   
   std::cout << "==== Testing hexahedral mesh in 3D ====" << std::endl;
-  test(viennagrid::hexahedral_3d_domain());
+  test(viennagrid::hexahedral_3d_mesh());
   
   std::cout << "*******************************" << std::endl;
   std::cout << "* Test finished successfully! *" << std::endl;

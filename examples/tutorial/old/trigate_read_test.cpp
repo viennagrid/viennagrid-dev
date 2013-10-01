@@ -22,7 +22,7 @@
 
 #include "viennagrid/config/default_configs.hpp"
 
-#include "viennagrid/domain/accessor.hpp"
+#include "viennagrid/mesh/accessor.hpp"
 
 #include "viennagrid/algorithm/boundary.hpp"
 #include "viennagrid/algorithm/centroid.hpp"
@@ -34,16 +34,16 @@
 
 int main()
 {
-  //typedef viennagrid::domain_t< my_domain_config >          Domain;
-  typedef viennagrid::domain_t< viennagrid::config::tetrahedral_3d >     Domain;
-  typedef viennagrid::result_of::domain_view<Domain>::type               Segment;
-  typedef viennagrid::result_of::segmentation<Domain>::type              Segmentation;
+  //typedef viennagrid::mesh_t< my_mesh_config >          Mesh;
+  typedef viennagrid::mesh_t< viennagrid::config::tetrahedral_3d >     Mesh;
+  typedef viennagrid::result_of::mesh_view<Mesh>::type               Segment;
+  typedef viennagrid::result_of::segmentation<Mesh>::type              Segmentation;
 
-  Domain domain;
-  Segmentation segmentation(domain);
+  Mesh mesh;
+  Segmentation segmentation(mesh);
         
   viennagrid::io::netgen_reader my_netgen_reader;
-  my_netgen_reader(domain, segmentation, "/export/florian/work/meshes/IUE/half-trigate.mesh");
+  my_netgen_reader(mesh, segmentation, "/export/florian/work/meshes/IUE/half-trigate.mesh");
 
 
 
@@ -53,8 +53,8 @@ int main()
   std::cout << viennagrid::triangles( segmentation[1] ).size() << std::endl;
   
 
-  viennagrid::io::vtk_writer<Domain> writer;
-  writer(domain, segmentation, "trigate");
+  viennagrid::io::vtk_writer<Mesh> writer;
+  writer(mesh, segmentation, "trigate");
 
   
   return EXIT_SUCCESS;

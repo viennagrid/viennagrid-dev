@@ -1,32 +1,32 @@
 \chapter{Type Basics} \label{chap:typebasics}
 
-A domain and all its topological elements as well as the underlying geometric space are specified in a common configuration class.
-The setup of such a configuration class is explained in detail in Section \ref{sec:domain-configuration}.
+A mesh and all its topological elements as well as the underlying geometric space are specified in a common configuration class.
+The setup of such a configuration class is explained in detail in Section \ref{sec:mesh-configuration}.
 
-\section{Domain Configuration} \label{sec:domain-configuration}
+\section{Mesh Configuration} \label{sec:mesh-configuration}
 
-A domain is configured with a configuration class. This configuration class defines the topology as well as the geometry of a domain. {\ViennaGrid} supports a bunch of different configurations listed in the tables \ref{tab:configs-simplex}, \ref{tab:configs-hypercube} and \ref{tab:configs-special}.
+A mesh is configured with a configuration class. This configuration class defines the topology as well as the geometry of a mesh. {\ViennaGrid} supports a bunch of different configurations listed in the tables \ref{tab:configs-simplex}, \ref{tab:configs-hypercube} and \ref{tab:configs-special}.
 
-\NOTE{Although {\ViennaGridversion} supports flexible configuration of the domain class, a convenient public interface is not provided so far. A next version will access this issue.}
+\NOTE{Although {\ViennaGridversion} supports flexible configuration of the mesh class, a convenient public interface is not provided so far. A next version will access this issue.}
 
 \begin{table}[tb]
   \begin{center}
     \begin{tabular}{|l|l|}
       \hline
-      \lstinline|line_1d|   &  Domain with lines and vertices in 1d  \\
+      \lstinline|line_1d|   &  Mesh with lines and vertices in 1d  \\
       \hline
-      \lstinline|line_2d|   &  Domain with lines and vertices in 2d  \\
+      \lstinline|line_2d|   &  Mesh with lines and vertices in 2d  \\
       \hline
-      \lstinline|line_3d|   &  Domain with lines and vertices in 3d  \\
+      \lstinline|line_3d|   &  Mesh with lines and vertices in 3d  \\
       \hline 
-      \lstinline|triangular_2d| &   Domain with triangles, lines and vertices in 2d  \\
+      \lstinline|triangular_2d| &   Mesh with triangles, lines and vertices in 2d  \\
       \hline
-      \lstinline|triangular_3d| &   Domain with triangles, lines and vertices in 3d  \\
+      \lstinline|triangular_3d| &   Mesh with triangles, lines and vertices in 3d  \\
       \hline
-      \lstinline|tetrahedral_3d| &   Domain with tetrahedrons, triangles, lines and vertices in 3d  \\
+      \lstinline|tetrahedral_3d| &   Mesh with tetrahedrons, triangles, lines and vertices in 3d  \\
       \hline
     \end{tabular}
-    \caption{Configurations of simplex domains}
+    \caption{Configurations of simplex meshs}
     \label{tab:configs-simplex}
   \end{center}
 \end{table}
@@ -36,14 +36,14 @@ A domain is configured with a configuration class. This configuration class defi
   \begin{center}
     \begin{tabular}{|l|l|}
       \hline
-      \lstinline|quadrilateral_2d|   &  Domain with quadrilaterals, lines and vertices in 2d  \\
+      \lstinline|quadrilateral_2d|   &  Mesh with quadrilaterals, lines and vertices in 2d  \\
       \hline
-      \lstinline|quadrilateral_3d|   &  Domain with quadrilaterals, lines and vertices in 3d  \\
+      \lstinline|quadrilateral_3d|   &  Mesh with quadrilaterals, lines and vertices in 3d  \\
       \hline
-      \lstinline|hexahedral_3d|   &  Domain with hexahedrons, quadrilaterals, lines and vertices in 3d  \\
+      \lstinline|hexahedral_3d|   &  Mesh with hexahedrons, quadrilaterals, lines and vertices in 3d  \\
       \hline 
     \end{tabular}
-    \caption{Configurations of hypercube domains}
+    \caption{Configurations of hypercube meshs}
     \label{tab:configs-hypercube}
   \end{center}
 \end{table}
@@ -53,23 +53,23 @@ A domain is configured with a configuration class. This configuration class defi
   \begin{center}
     \begin{tabular}{|l|l|}
       \hline
-      \lstinline|polygonal_2d|   &  Domain with polygons, lines and vertices in 2d  \\
+      \lstinline|polygonal_2d|   &  Mesh with polygons, lines and vertices in 2d  \\
       \hline
-      \lstinline|polygonal_3d|   &  Domain with polygons, lines and vertices in 3d  \\
+      \lstinline|polygonal_3d|   &  Mesh with polygons, lines and vertices in 3d  \\
       \hline
-      \lstinline|plc_2d|   &  Domain with PLCs, lines and vertices in 2d  \\
+      \lstinline|plc_2d|   &  Mesh with PLCs, lines and vertices in 2d  \\
       \hline 
-      \lstinline|plc_3d|   &  Domain with PLCs, lines and vertices in 3d  \\
+      \lstinline|plc_3d|   &  Mesh with PLCs, lines and vertices in 3d  \\
       \hline 
     \end{tabular}
-    \caption{Configurations of special domains}
+    \caption{Configurations of special meshs}
     \label{tab:configs-special}
   \end{center}
 \end{table}
 
 \pagebreak
 
-With a configuration, a domain can be defined using the meta-function \lstinline|domain|.
+With a configuration, a mesh can be defined using the meta-function \lstinline|mesh|.
 
 \begin{lstlisting}
  using namespace viennagrid;
@@ -77,31 +77,31 @@ With a configuration, a domain can be defined using the meta-function \lstinline
  typedef config::trianglular_3d Config;
  
  // Type retrieval, method 1: use meta-function
- typedef result_of::domain<Config>::type     DomainType;
+ typedef result_of::mesh<Config>::type     MeshType;
  
  // Type retrieval, method 1: use typedefed segmentation/segment
- typedef trianglular_3d_domain               DomainType;
+ typedef trianglular_3d_mesh               MeshType;
 
- DomainType domain; //create the domain object
+ MeshType mesh; //create the mesh object
 \end{lstlisting}
 
-Using a domain type a segmentation and its segments can be defined.
+Using a mesh type a segmentation and its segments can be defined.
 
 \begin{lstlisting}
  using namespace viennagrid;
  
  // Type retrieval, method 1: use meta-function
- typedef result_of::segmentation<DomainType>::type        SegmentationType;
+ typedef result_of::segmentation<MeshType>::type        SegmentationType;
  typedef result_of::segmentation<SegmentationType>::type  SegmentType;
  
  // Type retrieval, method 1: use typedefed segmentaion/segment
  typedef trianglular_3d_segmentation      SegmentationType;
  typedef trianglular_3d_segment           SegmentType;
 
- DomainType domain; // create the domain object
+ MeshType mesh; // create the mesh object
  
- // segmentation needs the domain object as constructor argument
- SegmentationType segmentation(domain);
+ // segmentation needs the mesh object as constructor argument
+ SegmentationType segmentation(mesh);
 \end{lstlisting}
 
 \pagebreak
@@ -113,10 +113,10 @@ A central topic with {\ViennaGrid} are elements. Elements types can be obtained 
 \begin{lstlisting}
  using namespace viennagrid;
  
- // obtain element type from domain type
- typedef result_of::element<DomainType, vertex_tag>::type         VtxType;
- // this meta function might fail if there is no tetrahedron in the domain
- typedef result_of::element<DomainType, tetrahedron_tag>::type    TetType;
+ // obtain element type from mesh type
+ typedef result_of::element<MeshType, vertex_tag>::type         VtxType;
+ // this meta function might fail if there is no tetrahedron in the mesh
+ typedef result_of::element<MeshType, tetrahedron_tag>::type    TetType;
  
  // obtain element type from another element
  typedef result_of::element<TetrahedronType, line_tag>::type      LineType;
@@ -136,10 +136,10 @@ For each supported type there are also shortcut meta-functions available.
 \begin{lstlisting}
  using namespace viennagrid;
  
- // obtain element type from domain type
- typedef result_of::vertex<DomainType>::type            VertexType;
- // this meta function might fail if there is no tetrahedron in the domain
- typedef result_of::tetrahedron<DomainType>::type       TetrahedronType;
+ // obtain element type from mesh type
+ typedef result_of::vertex<MeshType>::type            VertexType;
+ // this meta function might fail if there is no tetrahedron in the mesh
+ typedef result_of::tetrahedron<MeshType>::type       TetrahedronType;
  
  // obtain element type from another element
  typedef result_of::line<TetrahedronType>::type         LineType;
@@ -159,12 +159,12 @@ Often elements are not accessed directly but through a handle instead. For examp
 \begin{lstlisting}
  using namespace viennagrid;
  
- // obtain element handle type from domain type
- typedef result_of::handle<DomainType, vertex_tag>::type    VtxHandleType;
- typedef result_of::vertex_handle<DomainType>::type         VtxHandleType;
- // this meta function might fail if there is no tetrahedron in the domain
- typedef result_of::handle<DomainType, tetrahedron_tag>::type TetHandleType;
- typedef result_of::tetrahedron_handle<DomainType>::type    TetHandleType;
+ // obtain element handle type from mesh type
+ typedef result_of::handle<MeshType, vertex_tag>::type    VtxHandleType;
+ typedef result_of::vertex_handle<MeshType>::type         VtxHandleType;
+ // this meta function might fail if there is no tetrahedron in the mesh
+ typedef result_of::handle<MeshType, tetrahedron_tag>::type TetHandleType;
+ typedef result_of::tetrahedron_handle<MeshType>::type    TetHandleType;
  
  // obtain element handle type from another element
  // (obtaining handles from another handle is not supported)

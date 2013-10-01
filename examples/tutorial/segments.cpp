@@ -3,44 +3,44 @@
 
 #include "viennagrid/config/default_configs.hpp"
 
-#include "viennagrid/domain/accessor.hpp"
-#include "viennagrid/domain/segmentation.hpp"
-#include "viennagrid/domain/element_creation.hpp"
+#include "viennagrid/mesh/accessor.hpp"
+#include "viennagrid/mesh/segmentation.hpp"
+#include "viennagrid/mesh/element_creation.hpp"
 
 
 
 int main()
 {
-  typedef viennagrid::triangular_3d_domain                        domain_type;
+  typedef viennagrid::triangular_3d_mesh                        mesh_type;
   
-  typedef viennagrid::result_of::vertex_handle< domain_type >::type     vertex_handle_type;
-  typedef viennagrid::result_of::triangle_handle< domain_type >::type   triangle_handle_type;
-  typedef viennagrid::result_of::triangle< domain_type >::type          triangle_type;
+  typedef viennagrid::result_of::vertex_handle< mesh_type >::type     vertex_handle_type;
+  typedef viennagrid::result_of::triangle_handle< mesh_type >::type   triangle_handle_type;
+  typedef viennagrid::result_of::triangle< mesh_type >::type          triangle_type;
   
 
   // triangular hull segmentation, each triangular face has a segment for its positive orientation and its negative orientation
-  typedef viennagrid::result_of::oriented_3d_hull_segmentation<domain_type>::type segmentation_type;
+  typedef viennagrid::result_of::oriented_3d_hull_segmentation<mesh_type>::type segmentation_type;
   
   // defining the segment type and segment id type
   typedef viennagrid::result_of::segment<segmentation_type>::type segment_type;
   typedef viennagrid::result_of::segment_id<segmentation_type>::type segment_id_type;
 
   
-  domain_type domain;
-  segmentation_type segmentation(domain);
+  mesh_type mesh;
+  segmentation_type segmentation(mesh);
   
   // create some vertices
-  vertex_handle_type vh0 = viennagrid::make_vertex( domain );
-  vertex_handle_type vh1 = viennagrid::make_vertex( domain );
-  vertex_handle_type vh2 = viennagrid::make_vertex( domain );
-  vertex_handle_type vh3 = viennagrid::make_vertex( domain );
-  vertex_handle_type vh4 = viennagrid::make_vertex( domain );
-  vertex_handle_type vh5 = viennagrid::make_vertex( domain );
+  vertex_handle_type vh0 = viennagrid::make_vertex( mesh );
+  vertex_handle_type vh1 = viennagrid::make_vertex( mesh );
+  vertex_handle_type vh2 = viennagrid::make_vertex( mesh );
+  vertex_handle_type vh3 = viennagrid::make_vertex( mesh );
+  vertex_handle_type vh4 = viennagrid::make_vertex( mesh );
+  vertex_handle_type vh5 = viennagrid::make_vertex( mesh );
   
   // create some triangles
-  triangle_handle_type th0 = viennagrid::make_triangle( domain, vh0, vh1, vh2 );
-  triangle_handle_type th1 = viennagrid::make_triangle( domain, vh1, vh2, vh3 );
-  triangle_handle_type th2 = viennagrid::make_triangle( domain, vh3, vh4, vh5 );
+  triangle_handle_type th0 = viennagrid::make_triangle( mesh, vh0, vh1, vh2 );
+  triangle_handle_type th1 = viennagrid::make_triangle( mesh, vh1, vh2, vh3 );
+  triangle_handle_type th2 = viennagrid::make_triangle( mesh, vh3, vh4, vh5 );
   
   
 
@@ -66,9 +66,9 @@ int main()
   std::cout << std::endl;
   
   
-  triangle_type & tri0 = viennagrid::dereference_handle(domain, th0);
-  triangle_type & tri1 = viennagrid::dereference_handle(domain, th1);
-  triangle_type & tri2 = viennagrid::dereference_handle(domain, th2);
+  triangle_type & tri0 = viennagrid::dereference_handle(mesh, th0);
+  triangle_type & tri1 = viennagrid::dereference_handle(mesh, th1);
+  triangle_type & tri2 = viennagrid::dereference_handle(mesh, th2);
   
   // add triangle tr0 to seg0
   viennagrid::add( seg0, tri0 );

@@ -20,18 +20,18 @@
   #pragma warning( disable : 4503 )     //truncated name decoration
 #endif
 
-#include "viennagrid/domain/element_creation.hpp"
+#include "viennagrid/mesh/element_creation.hpp"
 #include "viennagrid/config/default_configs.hpp"
 #include "viennagrid/io/vtk_writer.hpp"
 
-template <typename DomainType>
-void setup(DomainType & domain, viennagrid::hexahedron_tag)
+template <typename MeshType>
+void setup(MeshType & mesh, viennagrid::hexahedron_tag)
 {
-  typedef typename viennagrid::result_of::cell_tag<DomainType>::type            CellTag;
-  typedef typename viennagrid::result_of::point<DomainType>::type               PointType;
-  typedef typename viennagrid::result_of::vertex<DomainType>::type              VertexType;
-  typedef typename viennagrid::result_of::vertex_handle<DomainType>::type       VertexHandleType;
-  typedef typename viennagrid::result_of::cell<DomainType>::type                CellType;
+  typedef typename viennagrid::result_of::cell_tag<MeshType>::type            CellTag;
+  typedef typename viennagrid::result_of::point<MeshType>::type               PointType;
+  typedef typename viennagrid::result_of::vertex<MeshType>::type              VertexType;
+  typedef typename viennagrid::result_of::vertex_handle<MeshType>::type       VertexHandleType;
+  typedef typename viennagrid::result_of::cell<MeshType>::type                CellType;
   
   PointType p0(0.0, 0.0, 0.0);
   PointType p1(1.0, 0.0, 0.0);
@@ -49,32 +49,32 @@ void setup(DomainType & domain, viennagrid::hexahedron_tag)
   std::cout << "Adding vertices to segment:" << std::endl;
 
   
-  VertexHandleType vh0 = viennagrid::make_vertex( domain, p0 );
-  VertexHandleType vh1 = viennagrid::make_vertex( domain, p1 );
-  VertexHandleType vh2 = viennagrid::make_vertex( domain, p2 );
-  VertexHandleType vh3 = viennagrid::make_vertex( domain, p3 );
-  VertexHandleType vh4 = viennagrid::make_vertex( domain, p4 );
-  VertexHandleType vh5 = viennagrid::make_vertex( domain, p5 );
-  VertexHandleType vh6 = viennagrid::make_vertex( domain, p6 );
-  VertexHandleType vh7 = viennagrid::make_vertex( domain, p7 );
-  VertexHandleType vh8 = viennagrid::make_vertex( domain, p8 );
-  VertexHandleType vh9 = viennagrid::make_vertex( domain, p9 );
-  VertexHandleType vh10 = viennagrid::make_vertex( domain, p10 );
-  VertexHandleType vh11 = viennagrid::make_vertex( domain, p11 );
+  VertexHandleType vh0 = viennagrid::make_vertex( mesh, p0 );
+  VertexHandleType vh1 = viennagrid::make_vertex( mesh, p1 );
+  VertexHandleType vh2 = viennagrid::make_vertex( mesh, p2 );
+  VertexHandleType vh3 = viennagrid::make_vertex( mesh, p3 );
+  VertexHandleType vh4 = viennagrid::make_vertex( mesh, p4 );
+  VertexHandleType vh5 = viennagrid::make_vertex( mesh, p5 );
+  VertexHandleType vh6 = viennagrid::make_vertex( mesh, p6 );
+  VertexHandleType vh7 = viennagrid::make_vertex( mesh, p7 );
+  VertexHandleType vh8 = viennagrid::make_vertex( mesh, p8 );
+  VertexHandleType vh9 = viennagrid::make_vertex( mesh, p9 );
+  VertexHandleType vh10 = viennagrid::make_vertex( mesh, p10 );
+  VertexHandleType vh11 = viennagrid::make_vertex( mesh, p11 );
   
   
-  viennagrid::make_hexahedron( domain, vh0, vh1, vh3, vh2, vh4, vh5, vh7, vh6 );
-  viennagrid::make_hexahedron( domain, vh1, vh8, vh2, vh9, vh5, vh10, vh6, vh11 ); 
+  viennagrid::make_hexahedron( mesh, vh0, vh1, vh3, vh2, vh4, vh5, vh7, vh6 );
+  viennagrid::make_hexahedron( mesh, vh1, vh8, vh2, vh9, vh5, vh10, vh6, vh11 ); 
 }
 
-template <typename DomainType>
-void setup(DomainType & domain, viennagrid::quadrilateral_tag)
+template <typename MeshType>
+void setup(MeshType & mesh, viennagrid::quadrilateral_tag)
 {
-  typedef typename viennagrid::result_of::cell_tag<DomainType>::type            CellTag;
-  typedef typename viennagrid::result_of::point<DomainType>::type               PointType;
-  typedef typename viennagrid::result_of::vertex<DomainType>::type              VertexType;
-  typedef typename viennagrid::result_of::vertex_handle<DomainType>::type       VertexHandleType;
-  typedef typename viennagrid::result_of::cell<DomainType>::type                CellType;
+  typedef typename viennagrid::result_of::cell_tag<MeshType>::type            CellTag;
+  typedef typename viennagrid::result_of::point<MeshType>::type               PointType;
+  typedef typename viennagrid::result_of::vertex<MeshType>::type              VertexType;
+  typedef typename viennagrid::result_of::vertex_handle<MeshType>::type       VertexHandleType;
+  typedef typename viennagrid::result_of::cell<MeshType>::type                CellType;
   
   PointType p0(0.0, 0.0);
   PointType p1(1.0, 0.0);
@@ -84,74 +84,74 @@ void setup(DomainType & domain, viennagrid::quadrilateral_tag)
   PointType p5(0.0, 1.0);
   
   std::cout << "Adding vertices to segment:" << std::endl;
-  VertexHandleType vh0 = viennagrid::make_vertex( domain, p0 );
-  VertexHandleType vh1 = viennagrid::make_vertex( domain, p1 );
-  VertexHandleType vh2 = viennagrid::make_vertex( domain, p2 );
-  VertexHandleType vh3 = viennagrid::make_vertex( domain, p3 );
-  VertexHandleType vh4 = viennagrid::make_vertex( domain, p4 );
-  VertexHandleType vh5 = viennagrid::make_vertex( domain, p5 );
+  VertexHandleType vh0 = viennagrid::make_vertex( mesh, p0 );
+  VertexHandleType vh1 = viennagrid::make_vertex( mesh, p1 );
+  VertexHandleType vh2 = viennagrid::make_vertex( mesh, p2 );
+  VertexHandleType vh3 = viennagrid::make_vertex( mesh, p3 );
+  VertexHandleType vh4 = viennagrid::make_vertex( mesh, p4 );
+  VertexHandleType vh5 = viennagrid::make_vertex( mesh, p5 );
   
-  viennagrid::make_quadrilateral( domain, vh0, vh1, vh5, vh4 );
-  viennagrid::make_quadrilateral( domain, vh1, vh2, vh4, vh3 ); 
+  viennagrid::make_quadrilateral( mesh, vh0, vh1, vh5, vh4 );
+  viennagrid::make_quadrilateral( mesh, vh1, vh2, vh4, vh3 ); 
   
 }
 
 
-template <typename DomainType>
+template <typename MeshType>
 void test(std::string outfile)
 {
-  typedef typename viennagrid::result_of::cell_tag<DomainType>::type            CellTag;
-  typedef typename viennagrid::result_of::point<DomainType>::type               PointType;
-  typedef typename viennagrid::result_of::vertex<DomainType>::type              VertexType;
-  typedef typename viennagrid::result_of::vertex_handle<DomainType>::type       VertexHandleType;
-  typedef typename viennagrid::result_of::cell<DomainType>::type                CellType;
+  typedef typename viennagrid::result_of::cell_tag<MeshType>::type            CellTag;
+  typedef typename viennagrid::result_of::point<MeshType>::type               PointType;
+  typedef typename viennagrid::result_of::vertex<MeshType>::type              VertexType;
+  typedef typename viennagrid::result_of::vertex_handle<MeshType>::type       VertexHandleType;
+  typedef typename viennagrid::result_of::cell<MeshType>::type                CellType;
 
-  typedef typename viennagrid::result_of::vertex_range<DomainType>::type       VertexContainer;
+  typedef typename viennagrid::result_of::vertex_range<MeshType>::type       VertexContainer;
   typedef typename viennagrid::result_of::iterator<VertexContainer>::type    VertexIterator;
   
-  typedef typename viennagrid::result_of::line_range<DomainType>::type       EdgeContainer;
+  typedef typename viennagrid::result_of::line_range<MeshType>::type       EdgeContainer;
   typedef typename viennagrid::result_of::iterator<EdgeContainer>::type      EdgeIterator;
   
-  typedef typename viennagrid::result_of::facet_range<DomainType>::type   FacetContainer;
+  typedef typename viennagrid::result_of::facet_range<MeshType>::type   FacetContainer;
   typedef typename viennagrid::result_of::iterator<FacetContainer>::type                         FacetIterator;
   
-  typedef typename viennagrid::result_of::cell_range<DomainType>::type   CellContainer;
+  typedef typename viennagrid::result_of::cell_range<MeshType>::type   CellContainer;
   typedef typename viennagrid::result_of::iterator<CellContainer>::type                        CellIterator;
   
-  DomainType domain;
+  MeshType mesh;
 
-  setup(domain, CellTag());  
+  setup(mesh, CellTag());  
   
   std::cout << "Vertices: " << std::endl;
-  VertexContainer vertices = viennagrid::elements(domain);
+  VertexContainer vertices = viennagrid::elements(mesh);
   for (VertexIterator vit = vertices.begin();
         vit != vertices.end();
         ++vit)
       std::cout << *vit << std::endl;
   
   std::cout << "Edges: " << std::endl;
-  EdgeContainer edges = viennagrid::elements(domain);
+  EdgeContainer edges = viennagrid::elements(mesh);
   for (EdgeIterator eit = edges.begin();
         eit != edges.end();
         ++eit)
       std::cout << *eit << std::endl;
 
   std::cout << "Facets: " << std::endl;
-  FacetContainer facets = viennagrid::elements(domain);
+  FacetContainer facets = viennagrid::elements(mesh);
   for (FacetIterator fit = facets.begin();
         fit != facets.end();
         ++fit)
       std::cout << *fit << std::endl;
 
   std::cout << "Cells: " << std::endl;
-  CellContainer cells = viennagrid::elements(domain);
+  CellContainer cells = viennagrid::elements(mesh);
   for (CellIterator cit = cells.begin();
         cit != cells.end();
         ++cit)
       std::cout << *cit << std::endl;
 
-  viennagrid::io::vtk_writer<DomainType> my_vtk_writer;
-  my_vtk_writer(domain, outfile);
+  viennagrid::io::vtk_writer<MeshType> my_vtk_writer;
+  my_vtk_writer(mesh, outfile);
   
 }
 
@@ -162,8 +162,8 @@ int main()
   std::cout << "* Test started! *" << std::endl;
   std::cout << "*****************" << std::endl;
   
-  test<viennagrid::quadrilateral_2d_domain>("hypercube_2d");
-  test<viennagrid::hexahedral_3d_domain>("hypercube_3d");
+  test<viennagrid::quadrilateral_2d_mesh>("hypercube_2d");
+  test<viennagrid::hexahedral_3d_mesh>("hypercube_3d");
   
   std::cout << "*******************************" << std::endl;
   std::cout << "* Test finished successfully! *" << std::endl;

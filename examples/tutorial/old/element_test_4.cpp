@@ -23,10 +23,10 @@ using std::endl;
 
 
 #include "viennagrid/config/element_config.hpp"
-#include "viennagrid/config/domain_config.hpp"
+#include "viennagrid/config/mesh_config.hpp"
 
-#include "viennagrid/domain/domain.hpp"
-#include "viennagrid/domain/element_creation.hpp"
+#include "viennagrid/mesh/mesh.hpp"
+#include "viennagrid/mesh/element_creation.hpp"
 
 
     //
@@ -40,7 +40,7 @@ using std::endl;
     
     
     //
-    // A full config for a hybrid topologically 2d domain
+    // A full config for a hybrid topologically 2d mesh
     //
     
     typedef viennagrid::meta::make_typemap<
@@ -130,32 +130,32 @@ using std::endl;
 
 int main()
 {
-    typedef viennagrid::domain_t<config> DomainType;
+    typedef viennagrid::mesh_t<config> MeshType;
     
-    DomainType domain;
+    MeshType mesh;
     
-    typedef viennagrid::result_of::element<DomainType, viennagrid::vertex_tag>::type VertexType;
-    typedef viennagrid::result_of::element<DomainType, viennagrid::line_tag>::type LineType;
-    typedef viennagrid::result_of::element<DomainType, viennagrid::triangle_tag>::type TriangleType;
-    typedef viennagrid::result_of::element<DomainType, viennagrid::quadrilateral_tag>::type QuadrilateralType;
+    typedef viennagrid::result_of::element<MeshType, viennagrid::vertex_tag>::type VertexType;
+    typedef viennagrid::result_of::element<MeshType, viennagrid::line_tag>::type LineType;
+    typedef viennagrid::result_of::element<MeshType, viennagrid::triangle_tag>::type TriangleType;
+    typedef viennagrid::result_of::element<MeshType, viennagrid::quadrilateral_tag>::type QuadrilateralType;
     
-    typedef viennagrid::result_of::handle<DomainType, viennagrid::vertex_tag>::type VertexHandleType;
+    typedef viennagrid::result_of::handle<MeshType, viennagrid::vertex_tag>::type VertexHandleType;
     
-    VertexHandleType vh0 = viennagrid::make_vertex( domain );
-    VertexHandleType vh1 = viennagrid::make_vertex( domain );
-    VertexHandleType vh2 = viennagrid::make_vertex( domain );
-    VertexHandleType vh3 = viennagrid::make_vertex( domain );
-    VertexHandleType vh4 = viennagrid::make_vertex( domain );
+    VertexHandleType vh0 = viennagrid::make_vertex( mesh );
+    VertexHandleType vh1 = viennagrid::make_vertex( mesh );
+    VertexHandleType vh2 = viennagrid::make_vertex( mesh );
+    VertexHandleType vh3 = viennagrid::make_vertex( mesh );
+    VertexHandleType vh4 = viennagrid::make_vertex( mesh );
     
-    viennagrid::make_quadrilateral( domain, vh0, vh1, vh2, vh3 );
-    viennagrid::make_triangle( domain, vh2, vh3, vh4 );
+    viennagrid::make_quadrilateral( mesh, vh0, vh1, vh2, vh3 );
+    viennagrid::make_triangle( mesh, vh2, vh3, vh4 );
     
-    std::cout << "Triangle of Domain:" << std::endl;
-    std::copy( viennagrid::elements<viennagrid::triangle_tag>(domain).begin(), viennagrid::elements<viennagrid::triangle_tag>(domain).end(), std::ostream_iterator<TriangleType>(std::cout, "\n") );
+    std::cout << "Triangle of Mesh:" << std::endl;
+    std::copy( viennagrid::elements<viennagrid::triangle_tag>(mesh).begin(), viennagrid::elements<viennagrid::triangle_tag>(mesh).end(), std::ostream_iterator<TriangleType>(std::cout, "\n") );
     std::cout << std::endl;
     
-    std::cout << "Quadrilaterals of Domain:" << std::endl;
-    std::copy( viennagrid::elements<viennagrid::quadrilateral_tag>(domain).begin(), viennagrid::elements<viennagrid::quadrilateral_tag>(domain).end(), std::ostream_iterator<QuadrilateralType>(std::cout, "\n") );
+    std::cout << "Quadrilaterals of Mesh:" << std::endl;
+    std::copy( viennagrid::elements<viennagrid::quadrilateral_tag>(mesh).begin(), viennagrid::elements<viennagrid::quadrilateral_tag>(mesh).end(), std::ostream_iterator<QuadrilateralType>(std::cout, "\n") );
     std::cout << std::endl;
 
     return 0;

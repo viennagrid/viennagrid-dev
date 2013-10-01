@@ -6,17 +6,17 @@ rather than discussing programming details invisible to the library user. Since 
 the history of {\ViennaGrid} and the individual preferences of the authors to a certain degree, a more vital language is chosen in the following.
 
  \section{Iterators}
- Consider the iteration over all vertices of a \lstinline|domain|. Clearly, the choice
+ Consider the iteration over all vertices of a \lstinline|mesh|. Clearly, the choice
  \begin{lstlisting}
- for (VertexIterator vit = domain.begin(); vit != domain.end(); ++vit) {}
+ for (VertexIterator vit = mesh.begin(); vit != mesh.end(); ++vit) {}
  \end{lstlisting}
  is not sufficiently flexible in order to allow for an iteration over edges.
  Nevertheless, the STL-like setup and retrieval of iterators is appealing.
 
  A run-time dispatched iterator retrieval in the spirit of 
  \begin{lstlisting}
- for (VertexIterator vit  = domain.begin(ElementTag());
-                     vit != domain.end(ElementTag());
+ for (VertexIterator vit  = mesh.begin(ElementTag());
+                     vit != mesh.end(ElementTag());
                    ++vit) {}
  \end{lstlisting}
  will sacrifice efficiency especially for loops with a small number of iterations, which is not an option for high-performance environments. 
@@ -25,16 +25,16 @@ the history of {\ViennaGrid} and the individual preferences of the authors to a 
  Since hard-coding function names is not an option for an parametrized traversal,
  the next choice is to add a template parameter to the \lstinline|begin| and \lstinline|end| member functions:
  \begin{lstlisting}
- for (VertexIterator vit  = domain.begin<ElementTag>();
-                     vit != domain.end<ElementTag>();
+ for (VertexIterator vit  = mesh.begin<ElementTag>();
+                     vit != mesh.end<ElementTag>();
                    ++vit) {}
  \end{lstlisting}
  This concept would be sufficiently flexible to allow for an iteration over edges, facets, etc.~in a unified way.
  In fact, this approach is also chosen by DUNE \cite{DUNE} and was also used in an early prototype of {\ViennaGrid}.
  However, there is one pecularity with this approach when it comes to template member functions: According to the C++ standard, the syntax needs to be supplemented with an additional \lstinline|template| keyword, resulting in
  \begin{lstlisting}
- for (VertexIterator vit  = domain.template begin<ElementTag>();
-                     vit != domain.template end<ElementTag>();
+ for (VertexIterator vit  = mesh.template begin<ElementTag>();
+                     vit != mesh.template end<ElementTag>();
                    ++vit) {}
  \end{lstlisting}
  Apart from the fact that the \lstinline|template| keyword for member functions is probably unknown to a wide audience, 
@@ -55,11 +55,11 @@ the history of {\ViennaGrid} and the individual preferences of the authors to a 
                      vit != something.end();
                    ++vit) {}
  \end{lstlisting}
- where \lstinline|something| is some proxy-object for the vertices in the domain, one finally ends up with the current \lstinline|viennagrid::ncells<>| approach.
+ where \lstinline|something| is some proxy-object for the vertices in the mesh, one finally ends up with the current \lstinline|viennagrid::ncells<>| approach.
  Writing the loop in the form
  \begin{lstlisting}
- for (VertexIterator vit  = elements<ElementTag>(domain).begin();
-                     vit != elements<ElementTag>(domain).end();
+ for (VertexIterator vit  = elements<ElementTag>(mesh).begin();
+                     vit != elements<ElementTag>(mesh).end();
                    ++vit) {}
  \end{lstlisting}
  readily expresses the intention of iterating over $0$-cells and does not suffer from the problems related to the \lstinline|template| keyword.
@@ -79,6 +79,6 @@ the history of {\ViennaGrid} and the individual preferences of the authors to a 
 
 
  \section{Segments}
- Operating on a subset $\Omega_i$ of a domain $\Omega$ is a common demand. This could be well achieved by what is known as a \emph{view}, i.e.~a selection of elements from a domain. However, a view typically possesses a considerably shorter lifetime compared to the domain, thus it is hard to store any data for the view itself.
- For this reason, segments in {\ViennaGrid} are part of the domain, thus having a comparable lifetime in typical situations.
- In particular, meta information can be stored on a segment during the domain setup stage already.
+ Operating on a subset $\Omega_i$ of a mesh $\Omega$ is a common demand. This could be well achieved by what is known as a \emph{view}, i.e.~a selection of elements from a mesh. However, a view typically possesses a considerably shorter lifetime compared to the mesh, thus it is hard to store any data for the view itself.
+ For this reason, segments in {\ViennaGrid} are part of the mesh, thus having a comparable lifetime in typical situations.
+ In particular, meta information can be stored on a segment during the mesh setup stage already.

@@ -14,7 +14,7 @@
 ======================================================================= */
 
 /** @file scale.hpp
-    @brief Scale the geometric points of a domain/segment
+    @brief Scale the geometric points of a mesh/segment
 */
 
 
@@ -23,14 +23,14 @@ namespace viennagrid
   namespace detail
   {
     /** @brief For internal use only. */
-    template<typename DomainType, typename ScalarType, typename PointAccessorType>
-    void scale_impl(DomainType& domain, ScalarType factor, PointAccessorType accessor)
+    template<typename MeshType, typename ScalarType, typename PointAccessorType>
+    void scale_impl(MeshType& mesh, ScalarType factor, PointAccessorType accessor)
     {
-      typedef typename viennagrid::result_of::element<DomainType, viennagrid::vertex_tag>::type         VertexType;
-      typedef typename viennagrid::result_of::element_range<DomainType, viennagrid::vertex_tag>::type   VertexContainer;
+      typedef typename viennagrid::result_of::element<MeshType, viennagrid::vertex_tag>::type         VertexType;
+      typedef typename viennagrid::result_of::element_range<MeshType, viennagrid::vertex_tag>::type   VertexContainer;
       typedef typename viennagrid::result_of::iterator<VertexContainer>::type                           VertexIterator;
 
-      VertexContainer vertices = viennagrid::elements<VertexType>(domain);
+      VertexContainer vertices = viennagrid::elements<VertexType>(mesh);
       for ( VertexIterator vit = vertices.begin();
             vit != vertices.end();
             ++vit )
@@ -41,15 +41,15 @@ namespace viennagrid
   } // detail
 
   
-  /** @brief Scales the geometric points of a domain/segment
+  /** @brief Scales the geometric points of a mesh/segment
    *
-   * @param  domain_or_segment          The domain/segment which points are scaled
+   * @param  mesh_or_segment          The mesh/segment which points are scaled
    * @param  factor                     The scale factor
    */
-  template<typename DomainOrSegmentT, typename ScalarType>
-  void scale(DomainOrSegmentT & domain_or_segment, ScalarType factor)
+  template<typename MeshOrSegmentT, typename ScalarType>
+  void scale(MeshOrSegmentT & mesh_or_segment, ScalarType factor)
   {
-    viennagrid::detail::scale_impl(domain_or_segment, factor, viennagrid::default_point_accessor(domain_or_segment));
+    viennagrid::detail::scale_impl(mesh_or_segment, factor, viennagrid::default_point_accessor(mesh_or_segment));
   }
 
 } // viennagrid

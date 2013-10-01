@@ -86,23 +86,23 @@ namespace viennagrid
     namespace result_of
     {
 
-      template<typename domain_or_element_type>
+      template<typename mesh_or_element_type>
       struct default_point_accessor
       {
         typedef appendix_accessor_t<
-          typename viennagrid::result_of::point<domain_or_element_type>::type,
-          typename viennagrid::result_of::vertex<domain_or_element_type>::type
+          typename viennagrid::result_of::point<mesh_or_element_type>::type,
+          typename viennagrid::result_of::vertex<mesh_or_element_type>::type
         > type;
       };
       
     }
 
-    template<typename domain_or_element_type>
-    typename result_of::default_point_accessor<domain_or_element_type>::type default_point_accessor( domain_or_element_type const & )
+    template<typename mesh_or_element_type>
+    typename result_of::default_point_accessor<mesh_or_element_type>::type default_point_accessor( mesh_or_element_type const & )
     {
       return appendix_accessor_t<
-        typename viennagrid::result_of::point<domain_or_element_type>::type,
-        typename viennagrid::result_of::vertex<domain_or_element_type>::type
+        typename viennagrid::result_of::point<mesh_or_element_type>::type,
+        typename viennagrid::result_of::vertex<mesh_or_element_type>::type
       >();
     }
 

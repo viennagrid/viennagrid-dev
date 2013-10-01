@@ -15,7 +15,7 @@
 
 
 #include "viennagrid/element/element.hpp"
-#include "viennagrid/domain/domain.hpp"
+#include "viennagrid/mesh/mesh.hpp"
 
 /** @file element.hpp
     @brief Provides the main n-cell type

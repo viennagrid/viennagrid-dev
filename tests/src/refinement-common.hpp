@@ -68,14 +68,14 @@ void print_refinement_edges(CellType & cell, EdgeRefinementTagAccessorT const ed
 }
 
 
-template <typename DomainType>
-double domain_surface(DomainType & domain)
+template <typename MeshType>
+double mesh_surface(MeshType & mesh)
 {
-  typedef typename viennagrid::result_of::cell_tag<DomainType>::type         CellTag;
-  typedef typename viennagrid::result_of::facet<DomainType>::type      FacetType;
-  typedef typename viennagrid::result_of::cell<DomainType>::type        CellType;
+  typedef typename viennagrid::result_of::cell_tag<MeshType>::type         CellTag;
+  typedef typename viennagrid::result_of::facet<MeshType>::type      FacetType;
+  typedef typename viennagrid::result_of::cell<MeshType>::type        CellType;
 
-  typedef typename viennagrid::result_of::cell_range<DomainType>::type  CellContainer;
+  typedef typename viennagrid::result_of::cell_range<MeshType>::type  CellContainer;
   typedef typename viennagrid::result_of::iterator<CellContainer>::type         CellIterator;
                                             
   typedef typename viennagrid::result_of::facet_range<CellType>::type  FacetOnCellContainer;
@@ -85,7 +85,7 @@ double domain_surface(DomainType & domain)
   
   CellFacetMap cell_on_facet_cnt;
   
-  CellContainer cells = viennagrid::elements(domain);
+  CellContainer cells = viennagrid::elements(mesh);
   for (CellIterator cit = cells.begin();
                     cit != cells.end();
                   ++cit)
@@ -99,32 +99,32 @@ double domain_surface(DomainType & domain)
     }
   }
   
-  double domain_surface = 0;
+  double mesh_surface = 0;
   for (typename CellFacetMap::iterator cfmit = cell_on_facet_cnt.begin();
                                        cfmit != cell_on_facet_cnt.end();
                                      ++cfmit)
   {
     if (cfmit->second == 1)
     {
-      domain_surface += viennagrid::volume(*(cfmit->first));
+      mesh_surface += viennagrid::volume(*(cfmit->first));
     }
   }
   
-  return domain_surface;
+  return mesh_surface;
 }
 
 
-template <typename DomainType>
-int facet_check(DomainType & domain)
+template <typename MeshType>
+int facet_check(MeshType & mesh)
 {
-  typedef typename viennagrid::result_of::cell_tag<DomainType>::type         CellTag;
-  typedef typename viennagrid::result_of::facet<DomainType>::type      FacetType;
-  typedef typename viennagrid::result_of::cell<DomainType>::type        CellType;
+  typedef typename viennagrid::result_of::cell_tag<MeshType>::type         CellTag;
+  typedef typename viennagrid::result_of::facet<MeshType>::type      FacetType;
+  typedef typename viennagrid::result_of::cell<MeshType>::type        CellType;
 
-  typedef typename viennagrid::result_of::facet_range<DomainType>::type  FacetContainer;
+  typedef typename viennagrid::result_of::facet_range<MeshType>::type  FacetContainer;
   typedef typename viennagrid::result_of::iterator<FacetContainer>::type         FacetIterator;
                                             
-  typedef typename viennagrid::result_of::cell_range<DomainType>::type  CellContainer;
+  typedef typename viennagrid::result_of::cell_range<MeshType>::type  CellContainer;
   typedef typename viennagrid::result_of::iterator<CellContainer>::type         CellIterator;
                                             
   typedef typename viennagrid::result_of::facet_range<CellType>::type  FacetOnCellContainer;
@@ -134,7 +134,7 @@ int facet_check(DomainType & domain)
   
   CellFacetMap cell_on_facet_cnt;
   
-  CellContainer cells = viennagrid::elements(domain);
+  CellContainer cells = viennagrid::elements(mesh);
   for (CellIterator cit = cells.begin();
                     cit != cells.end();
                   ++cit)
@@ -157,7 +157,7 @@ int facet_check(DomainType & domain)
       std::cerr << "Topology problem for facet: " << std::endl;
       std::cout << *(cfmit->first) << std::endl;
       
-      CellContainer cells = viennagrid::elements(domain);
+      CellContainer cells = viennagrid::elements(mesh);
       for (CellIterator cit = cells.begin();
                         cit != cells.end();
                       ++cit)
@@ -166,7 +166,7 @@ int facet_check(DomainType & domain)
         std::cout << *cit << std::endl;
       }
       
-      FacetContainer facets = viennagrid::elements(domain);
+      FacetContainer facets = viennagrid::elements(mesh);
       for (FacetIterator fit = facets.begin();
                         fit != facets.end();
                       ++fit)
@@ -183,27 +183,27 @@ int facet_check(DomainType & domain)
 }
 
 
-template <typename DomainType>
-int surface_check(DomainType & domain_old, DomainType & domain_new)
+template <typename MeshType>
+int surface_check(MeshType & mesh_old, MeshType & mesh_new)
 {
-  typedef typename viennagrid::result_of::cell_tag<DomainType>::type         CellTag;
-  typedef typename viennagrid::result_of::facet<DomainType>::type      FacetType;
-  typedef typename viennagrid::result_of::cell<DomainType>::type        CellType;
+  typedef typename viennagrid::result_of::cell_tag<MeshType>::type         CellTag;
+  typedef typename viennagrid::result_of::facet<MeshType>::type      FacetType;
+  typedef typename viennagrid::result_of::cell<MeshType>::type        CellType;
 
-  typedef typename viennagrid::result_of::facet_range<DomainType>::type  FacetContainer;
+  typedef typename viennagrid::result_of::facet_range<MeshType>::type  FacetContainer;
   typedef typename viennagrid::result_of::iterator<FacetContainer>::type         FacetIterator;
                                             
-  typedef typename viennagrid::result_of::cell_range<DomainType>::type  CellContainer;
+  typedef typename viennagrid::result_of::cell_range<MeshType>::type  CellContainer;
   typedef typename viennagrid::result_of::iterator<CellContainer>::type         CellIterator;
                                             
   
-  double old_surface = domain_surface(domain_old);
-  double new_surface = domain_surface(domain_new);
+  double old_surface = mesh_surface(mesh_old);
+  double new_surface = mesh_surface(mesh_new);
   
   if ( (new_surface < 0.9999 * old_surface)
       || (new_surface > 1.0001 * old_surface) )
   {
-    CellContainer cells = viennagrid::elements(domain_new);
+    CellContainer cells = viennagrid::elements(mesh_new);
     for (CellIterator cit = cells.begin();
                       cit != cells.end();
                     ++cit)
@@ -212,7 +212,7 @@ int surface_check(DomainType & domain_old, DomainType & domain_new)
       std::cout << *cit << std::endl;
     }
     
-    FacetContainer facets = viennagrid::elements(domain_new);
+    FacetContainer facets = viennagrid::elements(mesh_new);
     for (FacetIterator fit = facets.begin();
                        fit != facets.end();
                      ++fit)
@@ -222,19 +222,19 @@ int surface_check(DomainType & domain_old, DomainType & domain_new)
     }
     
     std::cerr << "Surface check failed!" << std::endl;
-    std::cerr << "Domain surface before refinement: " << old_surface << std::endl;
-    std::cerr << "Domain surface after refinement: " << new_surface << std::endl;
+    std::cerr << "Mesh surface before refinement: " << old_surface << std::endl;
+    std::cerr << "Mesh surface after refinement: " << new_surface << std::endl;
     return EXIT_FAILURE;
   }
     
   return EXIT_SUCCESS;
 }
 
-template <typename DomainType>
-int volume_check(DomainType & domain_old, DomainType & domain_new)
+template <typename MeshType>
+int volume_check(MeshType & mesh_old, MeshType & mesh_new)
 {
-  double old_volume = viennagrid::volume(domain_old);
-  double new_volume = viennagrid::volume(domain_new);
+  double old_volume = viennagrid::volume(mesh_old);
+  double new_volume = viennagrid::volume(mesh_new);
   
   if ( (new_volume < 0.9999 * old_volume)
       || (new_volume > 1.0001 * old_volume) )
@@ -246,16 +246,16 @@ int volume_check(DomainType & domain_old, DomainType & domain_new)
   return EXIT_SUCCESS;
 }
 
-template <typename DomainType>
-int sanity_check(DomainType & domain_old, DomainType & domain_new)
+template <typename MeshType>
+int sanity_check(MeshType & mesh_old, MeshType & mesh_new)
 {
-  if (facet_check(domain_new) != EXIT_SUCCESS)
-    return EXIT_FAILURE;  //check for sane topology in new domain
+  if (facet_check(mesh_new) != EXIT_SUCCESS)
+    return EXIT_FAILURE;  //check for sane topology in new mesh
     
-  if (surface_check(domain_old, domain_new) != EXIT_SUCCESS)
+  if (surface_check(mesh_old, mesh_new) != EXIT_SUCCESS)
     return EXIT_FAILURE; //check for same surface
   
-  if (volume_check(domain_old, domain_new) != EXIT_SUCCESS)
+  if (volume_check(mesh_old, mesh_new) != EXIT_SUCCESS)
     return EXIT_FAILURE;
   
   return EXIT_SUCCESS;

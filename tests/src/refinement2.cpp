@@ -25,24 +25,24 @@
 
 
 
-template <typename DomainType>
-int test(DomainType & domain_in)
+template <typename MeshType>
+int test(MeshType & mesh_in)
 {
-  typedef typename viennagrid::result_of::point<DomainType>::type          PointType;
-  typedef typename viennagrid::result_of::vertex<DomainType>::type       VertexType;
-  typedef typename viennagrid::result_of::line<DomainType>::type       EdgeType;
-  typedef typename viennagrid::result_of::cell<DomainType>::type      CellType;
+  typedef typename viennagrid::result_of::point<MeshType>::type          PointType;
+  typedef typename viennagrid::result_of::vertex<MeshType>::type       VertexType;
+  typedef typename viennagrid::result_of::line<MeshType>::type       EdgeType;
+  typedef typename viennagrid::result_of::cell<MeshType>::type      CellType;
 
-  typedef typename viennagrid::result_of::vertex_range<DomainType>::type  VertexContainer;
+  typedef typename viennagrid::result_of::vertex_range<MeshType>::type  VertexContainer;
   typedef typename viennagrid::result_of::iterator<VertexContainer>::type       VertexIterator;
     
   typedef typename viennagrid::result_of::line_range<CellType>::type    EdgeOnCellContainer;
   typedef typename viennagrid::result_of::iterator<EdgeOnCellContainer>::type     EdgeOnCellIterator;
 
-  typedef typename viennagrid::result_of::cell_range<DomainType>::type  CellContainer;
+  typedef typename viennagrid::result_of::cell_range<MeshType>::type  CellContainer;
   typedef typename viennagrid::result_of::iterator<CellContainer>::type         CellIterator;
   
-  CellContainer cells = viennagrid::elements(domain_in);
+  CellContainer cells = viennagrid::elements(mesh_in);
   CellIterator cit = cells.begin();
   CellType & cell = *cit; ++cit;
 //   CellType & cell2 = *cit;
@@ -68,10 +68,10 @@ int test(DomainType & domain_in)
     typename viennagrid::result_of::field<std::vector<bool>, EdgeType>::type edge_refinement_tag_field(edge_refinement_tag_container);
     edge_refinement_tag_field(*eocit1) = true;
 
-    DomainType domain_refined;
-    viennagrid::refine<CellType>( domain_in, domain_refined, edge_refinement_tag_field );
+    MeshType mesh_refined;
+    viennagrid::refine<CellType>( mesh_in, mesh_refined, edge_refinement_tag_field );
     
-    if (sanity_check(domain_in, domain_refined) == EXIT_FAILURE)
+    if (sanity_check(mesh_in, mesh_refined) == EXIT_FAILURE)
     {
       print_refinement_edges(cell, edge_refinement_tag_field);
       return EXIT_FAILURE;
@@ -95,10 +95,10 @@ int test(DomainType & domain_in)
       edge_refinement_tag_field(*eocit1) = true;
       edge_refinement_tag_field(*eocit2) = true;
 
-      DomainType domain_refined;
-      viennagrid::refine<CellType>( domain_in, domain_refined, edge_refinement_tag_field );
+      MeshType mesh_refined;
+      viennagrid::refine<CellType>( mesh_in, mesh_refined, edge_refinement_tag_field );
 
-      if (sanity_check(domain_in, domain_refined) == EXIT_FAILURE)
+      if (sanity_check(mesh_in, mesh_refined) == EXIT_FAILURE)
       {
         print_refinement_edges(cell, edge_refinement_tag_field);
         return EXIT_FAILURE;
@@ -127,10 +127,10 @@ int test(DomainType & domain_in)
         edge_refinement_tag_field(*eocit2) = true;
         edge_refinement_tag_field(*eocit3) = true;
 
-        DomainType domain_refined;
-        viennagrid::refine<CellType>( domain_in, domain_refined, edge_refinement_tag_field );
+        MeshType mesh_refined;
+        viennagrid::refine<CellType>( mesh_in, mesh_refined, edge_refinement_tag_field );
         
-        if (sanity_check(domain_in, domain_refined) == EXIT_FAILURE)
+        if (sanity_check(mesh_in, mesh_refined) == EXIT_FAILURE)
         {
           print_refinement_edges(cell, edge_refinement_tag_field);
           return EXIT_FAILURE;
@@ -165,10 +165,10 @@ int test(DomainType & domain_in)
           edge_refinement_tag_field(*eocit3) = true;
           edge_refinement_tag_field(*eocit4) = true;
 
-          DomainType domain_refined;
-          viennagrid::refine<CellType>( domain_in, domain_refined, edge_refinement_tag_field );
+          MeshType mesh_refined;
+          viennagrid::refine<CellType>( mesh_in, mesh_refined, edge_refinement_tag_field );
           
-          if (sanity_check(domain_in, domain_refined) == EXIT_FAILURE)
+          if (sanity_check(mesh_in, mesh_refined) == EXIT_FAILURE)
           {
             print_refinement_edges(cell, edge_refinement_tag_field);
             return EXIT_FAILURE;
@@ -209,10 +209,10 @@ int test(DomainType & domain_in)
             edge_refinement_tag_field(*eocit4) = true;
             edge_refinement_tag_field(*eocit5) = true;
 
-            DomainType domain_refined;
-            viennagrid::refine<CellType>( domain_in, domain_refined, edge_refinement_tag_field );
+            MeshType mesh_refined;
+            viennagrid::refine<CellType>( mesh_in, mesh_refined, edge_refinement_tag_field );
             
-            if (sanity_check(domain_in, domain_refined) == EXIT_FAILURE)
+            if (sanity_check(mesh_in, mesh_refined) == EXIT_FAILURE)
             {
               print_refinement_edges(cell, edge_refinement_tag_field);
               return EXIT_FAILURE;
@@ -237,10 +237,10 @@ int test(DomainType & domain_in)
   }
   
   {
-    DomainType domain_refined;
-    viennagrid::refine<CellType>( domain_in, domain_refined, edge_refinement_tag_field );
+    MeshType mesh_refined;
+    viennagrid::refine<CellType>( mesh_in, mesh_refined, edge_refinement_tag_field );
     
-    if (sanity_check(domain_in, domain_refined) == EXIT_FAILURE)
+    if (sanity_check(mesh_in, mesh_refined) == EXIT_FAILURE)
     {
       print_refinement_edges(cell, edge_refinement_tag_field);
       return EXIT_FAILURE;
@@ -300,19 +300,19 @@ struct cell_vertex_permutator<3>
 };
 
 
-template <typename DomainType, typename CellPermutatorA, typename CellPermutatorB>
-void fill_domain(DomainType & domain,
+template <typename MeshType, typename CellPermutatorA, typename CellPermutatorB>
+void fill_mesh(MeshType & mesh,
                  CellPermutatorA const &,
                  CellPermutatorB const &)
 {
-//   typedef typename DomainType::config_type      ConfigType;
+//   typedef typename MeshType::config_type      ConfigType;
 //   typedef viennagrid::segment_t<ConfigType>     SegmentType;
 //   typedef typename ConfigType::cell_tag         CellTag;
 
-  typedef typename viennagrid::result_of::point<DomainType>::type          PointType;
-  typedef typename viennagrid::result_of::vertex<DomainType>::type       VertexType;
-  typedef typename viennagrid::result_of::vertex_handle<DomainType>::type       VertexHandleType;
-  typedef typename viennagrid::result_of::cell<DomainType>::type   CellType;
+  typedef typename viennagrid::result_of::point<MeshType>::type          PointType;
+  typedef typename viennagrid::result_of::vertex<MeshType>::type       VertexType;
+  typedef typename viennagrid::result_of::vertex_handle<MeshType>::type       VertexHandleType;
+  typedef typename viennagrid::result_of::cell<MeshType>::type   CellType;
   
   std::vector<PointType> points(5);
   PointType & p0 = points[0];
@@ -331,7 +331,7 @@ void fill_domain(DomainType & domain,
   VertexHandleType vh[5];
   
   for (int i = 0; i < 5; ++i)
-    vh[i] = viennagrid::make_vertex( domain, points[i] );
+    vh[i] = viennagrid::make_vertex( mesh, points[i] );
 
 
   {
@@ -344,7 +344,7 @@ void fill_domain(DomainType & domain,
     VertexHandleType permutated_vh[4];
     CellPermutatorA::apply(cur_vh, permutated_vh);
     
-    viennagrid::make_cell( domain, permutated_vh, permutated_vh+4 );
+    viennagrid::make_cell( mesh, permutated_vh, permutated_vh+4 );
   }
   
   {
@@ -357,56 +357,56 @@ void fill_domain(DomainType & domain,
     VertexHandleType permutated_vh[4];
     CellPermutatorB::apply(cur_vh, permutated_vh);
     
-    viennagrid::make_cell( domain, permutated_vh, permutated_vh+4 );
+    viennagrid::make_cell( mesh, permutated_vh, permutated_vh+4 );
   }
 }
 
 
 template <unsigned int A>
-struct domain_tester
+struct mesh_tester
 {
   static int apply()
   {
-    typedef viennagrid::tetrahedral_3d_domain    DomainType;
+    typedef viennagrid::tetrahedral_3d_mesh    MeshType;
    
     std::cout << std::endl;
-    std::cout << "Testing domain " << A << "..." << std::endl;
+    std::cout << "Testing mesh " << A << "..." << std::endl;
     
     {
-      DomainType domain;
-      fill_domain(domain, cell_vertex_permutator<A>(), cell_vertex_permutator<1>());
-      if (test(domain) == EXIT_FAILURE)
+      MeshType mesh;
+      fill_mesh(mesh, cell_vertex_permutator<A>(), cell_vertex_permutator<1>());
+      if (test(mesh) == EXIT_FAILURE)
       {
         std::cerr << "FAILED!" << std::endl;
         return EXIT_FAILURE;
       }
     }
     {
-      DomainType domain;
-      fill_domain(domain, cell_vertex_permutator<A>(), cell_vertex_permutator<2>());
-      if (test(domain) == EXIT_FAILURE)
+      MeshType mesh;
+      fill_mesh(mesh, cell_vertex_permutator<A>(), cell_vertex_permutator<2>());
+      if (test(mesh) == EXIT_FAILURE)
       {
         std::cerr << "FAILED!" << std::endl;
         return EXIT_FAILURE;
       }
     }
     {
-      DomainType domain;
-      fill_domain(domain, cell_vertex_permutator<A>(), cell_vertex_permutator<3>());
-      if (test(domain) == EXIT_FAILURE)
+      MeshType mesh;
+      fill_mesh(mesh, cell_vertex_permutator<A>(), cell_vertex_permutator<3>());
+      if (test(mesh) == EXIT_FAILURE)
       {
         std::cerr << "FAILED!" << std::endl;
         return EXIT_FAILURE;
       }
     }
     
-    return domain_tester<A-1>::apply();
+    return mesh_tester<A-1>::apply();
   }
 };
 
 //terminate recursion:
 template <>
-struct domain_tester<0>
+struct mesh_tester<0>
 {
   static int apply() { return EXIT_SUCCESS; } 
 };
@@ -419,7 +419,7 @@ int main()
   std::cout << "*****************" << std::endl;
   
   
-  if (domain_tester<3>::apply() == EXIT_SUCCESS)
+  if (mesh_tester<3>::apply() == EXIT_SUCCESS)
   {
     std::cout << "SUCCESS!" << std::endl;
   }

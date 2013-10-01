@@ -2,7 +2,7 @@
 # tests with CPU backend
 foreach(PROG boundary coboundary 
             distance_1d distance_2d distance_3d distance_boundary
-            domain hypercube interface io point
+            hypercube interface io mesh point
             refinement refinement2 refinement3 refinement-triangles
             segment simplex surface
             voronoi_hex voronoi_rect voronoi_tet voronoi_triangle voronoi_line

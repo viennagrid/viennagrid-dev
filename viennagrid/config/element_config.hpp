@@ -121,60 +121,60 @@ namespace viennagrid
 
 
 
-            template<typename domain_config_, typename element_tag_, typename boundary_cell_tag_, bool is_present = is_element_present<domain_config_, boundary_cell_tag_>::value >
+            template<typename mesh_config_, typename element_tag_, typename boundary_cell_tag_, bool is_present = is_element_present<mesh_config_, boundary_cell_tag_>::value >
             struct has_boundary_cells_helper
             {
                 static const bool value =
                     !viennagrid::meta::EQUAL<
-                        typename query_boundary_storage_layout<domain_config_, element_tag_, boundary_cell_tag_>::type,
+                        typename query_boundary_storage_layout<mesh_config_, element_tag_, boundary_cell_tag_>::type,
                         viennagrid::no_handling_tag
                     >::value;
             };
 
-            template<typename domain_config_, typename element_tag_, typename boundary_cell_tag_>
-            struct has_boundary_cells_helper<domain_config_, element_tag_, boundary_cell_tag_, false>
+            template<typename mesh_config_, typename element_tag_, typename boundary_cell_tag_>
+            struct has_boundary_cells_helper<mesh_config_, element_tag_, boundary_cell_tag_, false>
             {
                 static const bool value = false;
             };
 
 
-            template<typename domain_config_, typename element_tag_, typename boundary_cell_tag_>
+            template<typename mesh_config_, typename element_tag_, typename boundary_cell_tag_>
             struct has_boundary_cells
             {
-                static const bool is_present = is_element_present<domain_config_, boundary_cell_tag_>::value;
+                static const bool is_present = is_element_present<mesh_config_, boundary_cell_tag_>::value;
 
-                static const bool value = has_boundary_cells_helper<domain_config_, element_tag_, boundary_cell_tag_, is_present>::value;
+                static const bool value = has_boundary_cells_helper<mesh_config_, element_tag_, boundary_cell_tag_, is_present>::value;
             };
 
 
-            template<typename domain_config_, typename element_tag_, typename boundary_cell_tag_, bool is_present = is_element_present<domain_config_, boundary_cell_tag_>::value >
+            template<typename mesh_config_, typename element_tag_, typename boundary_cell_tag_, bool is_present = is_element_present<mesh_config_, boundary_cell_tag_>::value >
             struct has_orientation_helper
             {
                 static const bool value =
                     viennagrid::meta::EQUAL<
-                        typename query_boundary_storage_layout<domain_config_, element_tag_, boundary_cell_tag_>::type,
+                        typename query_boundary_storage_layout<mesh_config_, element_tag_, boundary_cell_tag_>::type,
                         viennagrid::full_handling_tag
                     >::value
                         ||
                     viennagrid::meta::EQUAL<
-                        typename query_boundary_storage_layout<domain_config_, element_tag_, boundary_cell_tag_>::type,
+                        typename query_boundary_storage_layout<mesh_config_, element_tag_, boundary_cell_tag_>::type,
                         viennagrid::full_lazy_handling_tag
                     >::value;
             };
 
-            template<typename domain_config_, typename element_tag_, typename boundary_cell_tag_>
-            struct has_orientation_helper<domain_config_, element_tag_, boundary_cell_tag_, false>
+            template<typename mesh_config_, typename element_tag_, typename boundary_cell_tag_>
+            struct has_orientation_helper<mesh_config_, element_tag_, boundary_cell_tag_, false>
             {
                 static const bool value = false;
             };
 
 
-            template<typename domain_config_, typename element_tag_, typename boundary_cell_tag_>
+            template<typename mesh_config_, typename element_tag_, typename boundary_cell_tag_>
             struct has_orientation
             {
-                static const bool is_present = is_element_present<domain_config_, boundary_cell_tag_>::value;
+                static const bool is_present = is_element_present<mesh_config_, boundary_cell_tag_>::value;
 
-                static const bool value = has_orientation_helper<domain_config_, element_tag_, boundary_cell_tag_, is_present>::value;
+                static const bool value = has_orientation_helper<mesh_config_, element_tag_, boundary_cell_tag_, is_present>::value;
             };
 
 
@@ -182,18 +182,18 @@ namespace viennagrid
 
 
             // TODO: handle possible other tags (lazy_handling_tag, ...)
-            template<typename domain_config, typename element_tag, typename boundary_cell_tag, bool is_present>
+            template<typename mesh_config, typename element_tag, typename boundary_cell_tag, bool is_present>
             struct element_boundary_cell_container_helper
             {
 
                 //
                 // boundary cell view
                 //
-                typedef element_t<boundary_cell_tag, domain_config> boundary_cell_type;
+                typedef element_t<boundary_cell_tag, mesh_config> boundary_cell_type;
 
                 typedef typename viennagrid::storage::result_of::container<
                     boundary_cell_type,                                         // the 'value_type', i.e. vertices
-                    typename query_element_container_tag<domain_config, boundary_cell_tag>::type
+                    typename query_element_container_tag<mesh_config, boundary_cell_tag>::type
                 >::type boundary_cell_container;
 
 
@@ -233,7 +233,7 @@ namespace viennagrid
 
                 typedef typename
                     viennagrid::meta::IF<
-                        has_orientation< domain_config, element_tag, boundary_cell_tag>::value,
+                        has_orientation< mesh_config, element_tag, boundary_cell_tag>::value,
                         typename viennagrid::storage::result_of::container< facet_orientation_type, container_tag >::type,
                         viennagrid::meta::null_type
                     >::type facet_orientation_container_type;
@@ -249,8 +249,8 @@ namespace viennagrid
                             > type;
             };
 
-            template<typename domain_config, typename element_tag, bool is_present>
-            struct element_boundary_cell_container_helper<domain_config, element_tag, vertex_tag, is_present>
+            template<typename mesh_config, typename element_tag, bool is_present>
+            struct element_boundary_cell_container_helper<mesh_config, element_tag, vertex_tag, is_present>
             {
 
                 typedef vertex_tag boundary_cell_tag;
@@ -259,11 +259,11 @@ namespace viennagrid
                 // boundary cell view
                 //
 
-                typedef element_t<boundary_cell_tag, domain_config> boundary_cell_type;
+                typedef element_t<boundary_cell_tag, mesh_config> boundary_cell_type;
 
                 typedef typename viennagrid::storage::result_of::container<
                     boundary_cell_type,                                         // the 'value_type', i.e. vertices
-                    typename query_element_container_tag<domain_config, boundary_cell_tag>::type
+                    typename query_element_container_tag<mesh_config, boundary_cell_tag>::type
                 >::type boundary_cell_container;
 
 

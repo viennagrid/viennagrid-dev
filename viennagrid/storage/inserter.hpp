@@ -37,7 +37,7 @@ namespace viennagrid
             physical_inserter_t(container_collection_type & _collection, change_counter_type & change_counter_, id_generator_type id_generator_) :
                 collection(&_collection), change_counter(&change_counter_), id_generator(id_generator_) {}
 
-            void set_domain_info(container_collection_type & _collection, change_counter_type & change_counter_)
+            void set_mesh_info(container_collection_type & _collection, change_counter_type & change_counter_)
             {
                 collection = &_collection;
                 change_counter = &change_counter_;
@@ -142,7 +142,7 @@ namespace viennagrid
 //                view_collection(&collection_), dependend_inserter(&dependend_inserter_) {}
 
 
-            void set_domain_info(view_collection_type & _collection, change_counter_type & change_counter_)
+            void set_mesh_info(view_collection_type & _collection, change_counter_type & change_counter_)
             {
                 view_collection = &_collection;
                 change_counter = &change_counter_;

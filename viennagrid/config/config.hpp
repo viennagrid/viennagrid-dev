@@ -40,7 +40,7 @@ namespace viennagrid
 
         struct vector_type_tag;
 
-        struct domain_change_counter_tag;
+        struct mesh_change_counter_tag;
 
 
         namespace result_of
@@ -101,7 +101,7 @@ namespace viennagrid
             };
 
             template<>
-            struct default_config<domain_change_counter_tag>
+            struct default_config<mesh_change_counter_tag>
             {
                 typedef long type;
             };

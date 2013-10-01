@@ -118,15 +118,15 @@ namespace viennagrid
         // calculate the oriented angle between the positive x-axis (=vector to the current triangle) and the projected vector to the neighbour triangle
         // the neighbour triangle with the smallest angle is selected
 
-        template<typename domain_type, typename VisibleStateAccessorT, typename SegmentT, typename triangle_handle_type>
-        void mark_facing_shortes_angle( domain_type & domain, VisibleStateAccessorT visited_state_accessor, SegmentT & segment, triangle_handle_type triangle_handle, bool triangle_faces_outward )
+        template<typename mesh_type, typename VisibleStateAccessorT, typename SegmentT, typename triangle_handle_type>
+        void mark_facing_shortes_angle( mesh_type & mesh, VisibleStateAccessorT visited_state_accessor, SegmentT & segment, triangle_handle_type triangle_handle, bool triangle_faces_outward )
         {
-            typedef typename viennagrid::result_of::point<domain_type>::type point_type;
+            typedef typename viennagrid::result_of::point<mesh_type>::type point_type;
             typedef typename viennagrid::result_of::coord<point_type>::type coord_type;
 
-            typedef typename viennagrid::result_of::element<domain_type, viennagrid::line_tag>::type line_type;
-            typedef typename viennagrid::result_of::element<domain_type, viennagrid::triangle_tag>::type triangle_type;
-            typedef typename viennagrid::result_of::handle<domain_type, viennagrid::vertex_tag>::type vertex_handle_type;
+            typedef typename viennagrid::result_of::element<mesh_type, viennagrid::line_tag>::type line_type;
+            typedef typename viennagrid::result_of::element<mesh_type, viennagrid::triangle_tag>::type triangle_type;
+            typedef typename viennagrid::result_of::handle<mesh_type, viennagrid::vertex_tag>::type vertex_handle_type;
 
             typedef viennagrid::storage::static_array<vertex_handle_type, 3> handle_array;
 
@@ -138,7 +138,7 @@ namespace viennagrid
                 return;
 
             // add this triangle to the segment
-// viennamesh::add_face_to_segment( domain, triangle, segment_id, triangle_faces_outward );
+// viennamesh::add_face_to_segment( mesh, triangle, segment_id, triangle_faces_outward );
             {
                 viennagrid::add( segment, triangle );
                 *viennagrid::segment_element_info( segment, triangle ) = triangle_faces_outward;
@@ -164,9 +164,9 @@ namespace viennagrid
 
 
             viennagrid::storage::static_array<point_type,3> p;
-            p[0] = viennagrid::point( domain, vtx[0] );
-            p[1] = viennagrid::point( domain, vtx[1] );
-            p[2] = viennagrid::point( domain, vtx[2] );
+            p[0] = viennagrid::point( mesh, vtx[0] );
+            p[1] = viennagrid::point( mesh, vtx[1] );
+            p[2] = viennagrid::point( mesh, vtx[2] );
 
             // calculate the center of the triangle
             point_type center = (p[0]+p[1]+p[2])/3.0;
@@ -202,11 +202,11 @@ namespace viennagrid
 //                 lvtx[1] = viennagrid::elements<viennagrid::vertex_tag>(line).handle_at(1);
 // 
                 viennagrid::storage::static_array<point_type, 2> lp;
-//                 lp[0] = viennagrid::point( domain, lvtx[0] );
-//                 lp[1] = viennagrid::point( domain, lvtx[1] );
+//                 lp[0] = viennagrid::point( mesh, lvtx[0] );
+//                 lp[1] = viennagrid::point( mesh, lvtx[1] );
                 
-                lp[0] = viennagrid::point( domain, viennagrid::vertices(line)[0] );
-                lp[1] = viennagrid::point( domain, viennagrid::vertices(line)[1] );
+                lp[0] = viennagrid::point( mesh, viennagrid::vertices(line)[0] );
+                lp[1] = viennagrid::point( mesh, viennagrid::vertices(line)[1] );
 
 
                 // calculating the line vector
@@ -229,18 +229,18 @@ namespace viennagrid
 // std::cout << " line: " << lp[0] << " - " << lp[1] << std::endl;
 
 
-                typedef typename viennagrid::result_of::coboundary_range<domain_type, viennagrid::line_tag, viennagrid::triangle_tag>::type coboundary_range_type;
+                typedef typename viennagrid::result_of::coboundary_range<mesh_type, viennagrid::line_tag, viennagrid::triangle_tag>::type coboundary_range_type;
                 typedef typename viennagrid::result_of::iterator<coboundary_range_type>::type coboudnary_iterator;
 
-                coboundary_range_type coboundary_triangles = viennagrid::coboundary_elements<viennagrid::line_tag, viennagrid::triangle_tag>(domain, lit.handle());
+                coboundary_range_type coboundary_triangles = viennagrid::coboundary_elements<viennagrid::line_tag, viennagrid::triangle_tag>(mesh, lit.handle());
 
 // if ( neighbour_triangles.size() != 2 )
 // {
         // std::cout << " INFO - more than two triangle share the line" << std::endl;
         // std::cout << "ERROR there is something wrong... A line has not 2 coboundary triangles: " << neighbour_triangles.size() << std::endl;
-        // std::cout << viennagrid::point(domain, viennagrid::elements<viennagrid::vertex_tag>(triangle)[0]) << " / " <<
-        // viennagrid::point(domain, viennagrid::elements<viennagrid::vertex_tag>(triangle)[1]) << " / " <<
-        // viennagrid::point(domain, viennagrid::elements<viennagrid::vertex_tag>(triangle)[2]) << std::endl;
+        // std::cout << viennagrid::point(mesh, viennagrid::elements<viennagrid::vertex_tag>(triangle)[0]) << " / " <<
+        // viennagrid::point(mesh, viennagrid::elements<viennagrid::vertex_tag>(triangle)[1]) << " / " <<
+        // viennagrid::point(mesh, viennagrid::elements<viennagrid::vertex_tag>(triangle)[2]) << std::endl;
         // return ;
 // }
 
@@ -271,9 +271,9 @@ namespace viennagrid
                     nvtx[2] = viennagrid::elements<viennagrid::vertex_tag>(neighbour_triangle).handle_at(2);
 
                     viennagrid::storage::static_array<point_type,3> np;
-                    np[0] = viennagrid::point( domain, nvtx[0] );
-                    np[1] = viennagrid::point( domain, nvtx[1] );
-                    np[2] = viennagrid::point( domain, nvtx[2] );
+                    np[0] = viennagrid::point( mesh, nvtx[0] );
+                    np[1] = viennagrid::point( mesh, nvtx[1] );
+                    np[2] = viennagrid::point( mesh, nvtx[2] );
 
                     // calculating the center of the neighbour triangle
                     point_type neighbour_center = (np[0]+np[1]+np[2])/3.0;
@@ -350,7 +350,7 @@ namespace viennagrid
                 // is a triangle found -> call mark_facing_shortes_angle recursively
                 if (smallest_angle != std::numeric_limits<coord_type>::max())
                 {
-// triangle_type & best = viennagrid::dereference_handle(domain, smallest_angle_triangle);
+// triangle_type & best = viennagrid::dereference_handle(mesh, smallest_angle_triangle);
 //
 // handle_array nvtx;
 // nvtx[0] = viennagrid::elements<viennagrid::vertex_tag>(best).handle_at(0);
@@ -358,9 +358,9 @@ namespace viennagrid
 // nvtx[2] = viennagrid::elements<viennagrid::vertex_tag>(best).handle_at(2);
 //
 // viennagrid::storage::static_array<point_type,3> np;
-// np[0] = viennagrid::point( domain, nvtx[0] );
-// np[1] = viennagrid::point( domain, nvtx[1] );
-// np[2] = viennagrid::point( domain, nvtx[2] );
+// np[0] = viennagrid::point( mesh, nvtx[0] );
+// np[1] = viennagrid::point( mesh, nvtx[1] );
+// np[2] = viennagrid::point( mesh, nvtx[2] );
 
         // std::cout << " Best neighbour triangle" << std::endl;
         // std::cout << " " << np[0] << std::endl;
@@ -368,7 +368,7 @@ namespace viennagrid
         // std::cout << " " << np[2] << std::endl;
         // std::cout << " faces outward = " << smallest_angle_triangle_faces_outward << std::endl;
 
-                    mark_facing_shortes_angle( domain, visited_state_accessor, segment, smallest_angle_triangle, smallest_angle_triangle_faces_outward );
+                    mark_facing_shortes_angle( mesh, visited_state_accessor, segment, smallest_angle_triangle, smallest_angle_triangle_faces_outward );
                 }
 
             }
@@ -381,35 +381,35 @@ namespace viennagrid
         // these triangles is for sure in the this segment
         // mark_facing_shortes_angle is called on those triangles to complete the segments
 
-        template< typename domain_type, typename SegmentT, typename vector_type >
-        void detect_and_mark_face_segment( domain_type & domain, SegmentT & segment_, vector_type seed_point )
+        template< typename mesh_type, typename SegmentT, typename vector_type >
+        void detect_and_mark_face_segment( mesh_type & mesh, SegmentT & segment_, vector_type seed_point )
         {
-            typedef typename viennagrid::result_of::point<domain_type>::type point_type;
+            typedef typename viennagrid::result_of::point<mesh_type>::type point_type;
             typedef typename viennagrid::result_of::coord<point_type>::type coord_type;
 
-            typedef typename viennagrid::result_of::element<domain_type, viennagrid::triangle_tag>::type triangle_type;
-            typedef typename viennagrid::result_of::handle<domain_type, viennagrid::triangle_tag>::type triangle_handle_type;
-            typedef typename viennagrid::result_of::element_range<domain_type, viennagrid::triangle_tag>::type triangle_range_type;
+            typedef typename viennagrid::result_of::element<mesh_type, viennagrid::triangle_tag>::type triangle_type;
+            typedef typename viennagrid::result_of::handle<mesh_type, viennagrid::triangle_tag>::type triangle_handle_type;
+            typedef typename viennagrid::result_of::element_range<mesh_type, viennagrid::triangle_tag>::type triangle_range_type;
             typedef typename viennagrid::result_of::iterator<triangle_range_type>::type triangle_range_iterator;
 
-//             segmentation_.init( domain );
-            std::vector<bool> visited_state( viennagrid::id_upper_bound<triangle_type>(domain).get(), false );
+//             segmentation_.init( mesh );
+            std::vector<bool> visited_state( viennagrid::id_upper_bound<triangle_type>(mesh).get(), false );
             typename viennagrid::result_of::accessor< std::vector<bool>, triangle_type >::type visible_state_accessor = viennagrid::make_accessor<triangle_type>(visited_state);
 
             // iteratin over all triangles
-            triangle_range_type triangles = viennagrid::elements( domain );
+            triangle_range_type triangles = viennagrid::elements( mesh );
             for (triangle_range_iterator it = triangles.begin(); it != triangles.end(); ++it)
             {
-                triangle_type const & triangle = *it; //viennagrid::dereference_handle( domain, *it );
+                triangle_type const & triangle = *it; //viennagrid::dereference_handle( mesh, *it );
 
                 // has this triangle already been visited? -> skipping
                 if (visible_state_accessor(triangle))
 // if (viennamesh::was_visited(triangle))
                     continue;
 
-                point_type const & p0 = viennagrid::point( domain, viennagrid::elements<viennagrid::vertex_tag>(triangle)[0] );
-                point_type const & p1 = viennagrid::point( domain, viennagrid::elements<viennagrid::vertex_tag>(triangle)[1] );
-                point_type const & p2 = viennagrid::point( domain, viennagrid::elements<viennagrid::vertex_tag>(triangle)[2] );
+                point_type const & p0 = viennagrid::point( mesh, viennagrid::elements<viennagrid::vertex_tag>(triangle)[0] );
+                point_type const & p1 = viennagrid::point( mesh, viennagrid::elements<viennagrid::vertex_tag>(triangle)[1] );
+                point_type const & p2 = viennagrid::point( mesh, viennagrid::elements<viennagrid::vertex_tag>(triangle)[2] );
 
 // std::cout << std::endl << std::endl << std::endl;
 // std::cout << "Triangle: " << p0 << " / " << p1 << " / " << p2 << std::endl;
@@ -451,9 +451,9 @@ namespace viennagrid
 
                     triangle_type const & to_test = *jt;
 
-                    point_type const & A = viennagrid::point( domain, viennagrid::elements<viennagrid::vertex_tag>(to_test)[0] );
-                    point_type const & B = viennagrid::point( domain, viennagrid::elements<viennagrid::vertex_tag>(to_test)[1] );
-                    point_type const & C = viennagrid::point( domain, viennagrid::elements<viennagrid::vertex_tag>(to_test)[2] );
+                    point_type const & A = viennagrid::point( mesh, viennagrid::elements<viennagrid::vertex_tag>(to_test)[0] );
+                    point_type const & B = viennagrid::point( mesh, viennagrid::elements<viennagrid::vertex_tag>(to_test)[1] );
+                    point_type const & C = viennagrid::point( mesh, viennagrid::elements<viennagrid::vertex_tag>(to_test)[2] );
 
 // std::cout << " Triangle intersection test: " << A << " / " << B << " / " << C << std::endl;
 
@@ -475,7 +475,7 @@ namespace viennagrid
 // std::cout << " YAY! triangle has visible line to seed point " << seed_point << " " << n << std::endl;
 
     // viennamesh::add_face_to_segment(triangle, segment_index, faces_outward);
-                    segmentation::mark_facing_shortes_angle( domain, visible_state_accessor, segment_, it.handle(), faces_outward );
+                    segmentation::mark_facing_shortes_angle( mesh, visible_state_accessor, segment_, it.handle(), faces_outward );
     // break;
                 }
             }
@@ -485,11 +485,11 @@ namespace viennagrid
 
 
 
-    template< typename domain_type, typename segmentation_type, typename seed_point_iterator_type >
-    void mark_face_segments( domain_type & domain, segmentation_type & segmentation_, seed_point_iterator_type seed_points_it, seed_point_iterator_type const & seed_points_end )
+    template< typename mesh_type, typename segmentation_type, typename seed_point_iterator_type >
+    void mark_face_segments( mesh_type & mesh, segmentation_type & segmentation_, seed_point_iterator_type seed_points_it, seed_point_iterator_type const & seed_points_end )
     {
         for ( ; seed_points_it != seed_points_end; ++seed_points_it)
-            segmentation::detect_and_mark_face_segment(domain, segmentation_(seed_points_it->first), seed_points_it->second);
+            segmentation::detect_and_mark_face_segment(mesh, segmentation_(seed_points_it->first), seed_points_it->second);
     }
 
 }
