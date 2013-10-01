@@ -260,4 +260,3 @@ int sanity_check(MeshType & mesh_old, MeshType & mesh_new)
   
   return EXIT_SUCCESS;
 }
-  
