@@ -172,14 +172,14 @@ namespace viennagrid
 
     //
     /** @brief Dispatched function for computing the volume of a mesh or segment.*/
-    template <typename ElementTypeOrTag, typename MeshSegmentType>
-    typename viennagrid::result_of::coord< MeshSegmentType >::type
-    volume_mesh(MeshSegmentType const & mesh)
+    template <typename ElementTypeOrTag, typename MeshSegmentHandleType>
+    typename viennagrid::result_of::coord< MeshSegmentHandleType >::type
+    volume_mesh(MeshSegmentHandleType const & mesh)
     {
-      typedef typename viennagrid::result_of::const_element_range<MeshSegmentType, ElementTypeOrTag>::type  CellContainer;
+      typedef typename viennagrid::result_of::const_element_range<MeshSegmentHandleType, ElementTypeOrTag>::type  CellContainer;
       typedef typename viennagrid::result_of::iterator<CellContainer>::type         CellIterator;
 
-      typename viennagrid::result_of::coord< MeshSegmentType >::type new_volume = 0;
+      typename viennagrid::result_of::coord< MeshSegmentHandleType >::type new_volume = 0;
       CellContainer new_cells = viennagrid::elements<ElementTypeOrTag>(mesh);
       for (CellIterator new_cit = new_cells.begin();
                         new_cit != new_cells.end();
@@ -219,11 +219,11 @@ namespace viennagrid
   }
 
   // default Element Tag = Cell Tag
-  template<typename MeshSegmentType>
-  typename viennagrid::result_of::coord< MeshSegmentType >::type
-  volume(MeshSegmentType const & mesh)
+  template<typename MeshSegmentHandleType>
+  typename viennagrid::result_of::coord< MeshSegmentHandleType >::type
+  volume(MeshSegmentHandleType const & mesh)
   {
-      return detail::volume_mesh< typename viennagrid::result_of::cell_tag< MeshSegmentType >::type >(mesh);
+      return detail::volume_mesh< typename viennagrid::result_of::cell_tag< MeshSegmentHandleType >::type >(mesh);
   }
 
 

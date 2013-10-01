@@ -48,32 +48,32 @@ namespace viennagrid
 
     /** @brief Metafunction for obtaining a neighbour range of an element type with a connector element type within a mesh/segment
      *
-     * @tparam MeshOrSegmentT             The host mesh/segment type
+     * @tparam MeshOrSegmentHandleT             The host mesh/segment type
      * @tparam ElementTypeOrTagT            The element type/tag of which the co-boundary range is created
      * @tparam ConnectorElementTypeOrTagT   The connector element type/tag
      */
-    template<typename MeshOrSegmentT, typename ElementTypeOrTagT, typename ConnectorElementTypeOrTagT>
+    template<typename MeshOrSegmentHandleT, typename ElementTypeOrTagT, typename ConnectorElementTypeOrTagT>
     struct neighbour_range
     {
-        typedef viennagrid::storage::container_range_wrapper< typename neighbour_view<MeshOrSegmentT, ElementTypeOrTagT, ConnectorElementTypeOrTagT>::type > type;
+        typedef viennagrid::storage::container_range_wrapper< typename neighbour_view<MeshOrSegmentHandleT, ElementTypeOrTagT, ConnectorElementTypeOrTagT>::type > type;
     };
 
     /** @brief Metafunction for obtaining a const neighbour range of an element type with a connector element type within a mesh/segment
      *
-     * @tparam MeshOrSegmentT             The host mesh/segment type
+     * @tparam MeshOrSegmentHandleT             The host mesh/segment type
      * @tparam ElementTypeOrTagT            The element type/tag of which the co-boundary range is created
      * @tparam ConnectorElementTypeOrTagT   The connector element type/tag
      */
-    template<typename MeshOrSegmentT, typename ElementTypeOrTagT, typename ConnectorElementTypeOrTagT>
+    template<typename MeshOrSegmentHandleT, typename ElementTypeOrTagT, typename ConnectorElementTypeOrTagT>
     struct const_neighbour_range
     {
-        typedef viennagrid::storage::container_range_wrapper< const typename neighbour_view<MeshOrSegmentT, ElementTypeOrTagT, ConnectorElementTypeOrTagT>::type > type;
+        typedef viennagrid::storage::container_range_wrapper< const typename neighbour_view<MeshOrSegmentHandleT, ElementTypeOrTagT, ConnectorElementTypeOrTagT>::type > type;
     };
 
-    template<typename MeshOrSegmentT, typename ElementTypeOrTagT, typename ConnectorElementTypeOrTagT>
-    struct neighbour_range<const MeshOrSegmentT, ElementTypeOrTagT, ConnectorElementTypeOrTagT>
+    template<typename MeshOrSegmentHandleT, typename ElementTypeOrTagT, typename ConnectorElementTypeOrTagT>
+    struct neighbour_range<const MeshOrSegmentHandleT, ElementTypeOrTagT, ConnectorElementTypeOrTagT>
     {
-        typedef typename const_neighbour_range<MeshOrSegmentT, ElementTypeOrTagT, ConnectorElementTypeOrTagT>::type type;
+        typedef typename const_neighbour_range<MeshOrSegmentHandleT, ElementTypeOrTagT, ConnectorElementTypeOrTagT>::type type;
     };
 
   }

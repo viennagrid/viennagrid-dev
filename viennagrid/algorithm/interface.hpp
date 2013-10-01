@@ -100,19 +100,19 @@ namespace viennagrid
   class interface_setter_functor
   {
   public:
-      typedef segment_handle_t<SegmentationType> SegmentType;
+      typedef segment_handle_t<SegmentationType> SegmentHandleType;
 
-      interface_setter_functor(SegmentType & seg0_, SegmentType & seg1_) : seg0(seg0_), seg1(seg1_) {}
+      interface_setter_functor(SegmentHandleType & seg0_, SegmentHandleType & seg1_) : seg0(seg0_), seg1(seg1_) {}
 
       template<typename something>
       void operator()( viennagrid::meta::tag<something> )
       {
           typedef typename viennagrid::result_of::element_tag< something >::type element_tag;
-          typedef typename viennagrid::result_of::element< SegmentType, element_tag >::type element_type;
+          typedef typename viennagrid::result_of::element< SegmentHandleType, element_tag >::type element_type;
 
-          typedef typename viennagrid::result_of::cell_tag< SegmentType >::type cell_tag;
+          typedef typename viennagrid::result_of::cell_tag< SegmentHandleType >::type cell_tag;
           typedef typename viennagrid::result_of::facet_tag< cell_tag >::type facet_tag;
-          typedef typename viennagrid::result_of::element< SegmentType, facet_tag >::type facet_type;
+          typedef typename viennagrid::result_of::element< SegmentHandleType, facet_tag >::type facet_type;
 
 
 
@@ -149,8 +149,8 @@ namespace viennagrid
       }
   private:
 
-      SegmentType & seg0;
-      SegmentType & seg1;
+      SegmentHandleType & seg0;
+      SegmentHandleType & seg1;
   };
 
 
@@ -253,7 +253,7 @@ namespace viennagrid
   {
     assert( &seg0.segmentation() == &seg1.segmentation() );
 
-    typedef segment_handle_t<SegmentationType> SegmentType;
+    typedef segment_handle_t<SegmentationType> SegmentHandleType;
     typedef typename result_of::cell_tag< segment_handle_t<SegmentationType> >::type CellTag;
     typedef typename result_of::facet_tag<CellTag>::type FacetTag;
     typedef typename result_of::element< segment_handle_t<SegmentationType>, FacetTag >::type FacetType;
@@ -273,7 +273,7 @@ namespace viennagrid
 
         if ( (is_obsolete(seg0, interface_information_container_wrapper.seg0_change_counter)) ||
              (is_obsolete(seg1, interface_information_container_wrapper.seg1_change_counter) ))
-            detect_interface( const_cast<SegmentType&>(seg0), const_cast<SegmentType&>(seg1) );
+            detect_interface( const_cast<SegmentHandleType&>(seg0), const_cast<SegmentHandleType&>(seg1) );
 
         return is_interface( viennagrid::make_field<ElementType>(interface_information_container_wrapper.container), element );
   }

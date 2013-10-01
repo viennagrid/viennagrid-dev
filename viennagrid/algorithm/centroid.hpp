@@ -128,19 +128,19 @@ namespace viennagrid
 
 
     /** @brief Implementation of the calculation of a centroid for a mesh/segment */
-    template <typename ElementTypeOrTag, typename MeshSegmentType, typename PointAccessorType>
-    typename viennagrid::result_of::point<MeshSegmentType>::type
-    centroid_mesh(MeshSegmentType const & mesh, PointAccessorType const point_accessor)
+    template <typename ElementTypeOrTag, typename MeshSegmentHandleType, typename PointAccessorType>
+    typename viennagrid::result_of::point<MeshSegmentHandleType>::type
+    centroid_mesh(MeshSegmentHandleType const & mesh, PointAccessorType const point_accessor)
     {
-      //typedef typename MeshSegmentType::config_type                                      ConfigType;
+      //typedef typename MeshSegmentHandleType::config_type                                      ConfigType;
       //typedef typename ElementType::tag                                                CellTag;
       typedef typename viennagrid::result_of::element_tag<ElementTypeOrTag>::type ElementTag;
 
-      typedef typename viennagrid::result_of::point<MeshSegmentType>::type                      PointType;
-      typedef typename viennagrid::result_of::element<MeshSegmentType, vertex_tag>::type                         VertexType;
-      typedef typename viennagrid::result_of::element<MeshSegmentType, line_tag>::type                         EdgeType;
+      typedef typename viennagrid::result_of::point<MeshSegmentHandleType>::type                      PointType;
+      typedef typename viennagrid::result_of::element<MeshSegmentHandleType, vertex_tag>::type                         VertexType;
+      typedef typename viennagrid::result_of::element<MeshSegmentHandleType, line_tag>::type                         EdgeType;
 
-      typedef typename viennagrid::result_of::const_element_range<MeshSegmentType,
+      typedef typename viennagrid::result_of::const_element_range<MeshSegmentHandleType,
                                                                 ElementTag>::type  CellRange;
       typedef typename viennagrid::result_of::iterator<CellRange>::type                         CellIterator;
 

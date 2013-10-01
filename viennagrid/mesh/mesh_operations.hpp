@@ -25,8 +25,8 @@ namespace viennagrid
   {
   //     typedef typename src_segment_container_type::value_type src_segment_handle_type;
   //     typedef typename dst_segment_container_type::value_type dst_segment_handle_type;
-      typedef typename viennagrid::result_of::segment<SrcSegmentationT>::type SrcSegmentType;
-      typedef typename viennagrid::result_of::segment<DstSegmentationT>::type DstSegmentType;
+      typedef typename viennagrid::result_of::segment<SrcSegmentationT>::type SrcSegmentHandleType;
+      typedef typename viennagrid::result_of::segment<DstSegmentationT>::type DstSegmentHandleType;
       
       typedef typename viennagrid::result_of::cell_tag<SrcMeshT>::type  SrcCellTag;
       typedef typename viennagrid::result_of::cell<SrcMeshT>::type      SrcCellType;
@@ -34,7 +34,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::const_vertex_range<SrcMeshT>::type    SrcVertexRangeType;
       typedef typename viennagrid::result_of::iterator<SrcVertexRangeType>::type      SrcVertexRangeIterator;
       
-      typedef typename viennagrid::result_of::const_cell_range<SrcSegmentType>::type  SrcCellRangeType;
+      typedef typename viennagrid::result_of::const_cell_range<SrcSegmentHandleType>::type  SrcCellRangeType;
       typedef typename viennagrid::result_of::iterator<SrcCellRangeType>::type        SrcCellRangeIterator;
       
       typedef typename viennagrid::result_of::const_vertex_handle<SrcMeshT>::type   SrcConstVertexHandle;
@@ -58,7 +58,7 @@ namespace viennagrid
       for (typename SrcSegmentationT::const_iterator seg_it = src_segmentation.begin(); seg_it != src_segmentation.end(); ++seg_it)
       {
   //         dst_segments.push_back( viennagrid::make_view<dst_segment_handle_type>(dst_mesh) );
-          DstSegmentType & dst_segment = dst_segmentation.get_make_segment( seg_it->id() );
+          DstSegmentHandleType & dst_segment = dst_segmentation.get_make_segment( seg_it->id() );
           
           SrcCellRangeType cells = viennagrid::elements( *seg_it );
   //         std::cout << "Copy: cell count = " << cells.size() << std::endl;

@@ -118,8 +118,8 @@ namespace viennagrid
         // calculate the oriented angle between the positive x-axis (=vector to the current triangle) and the projected vector to the neighbour triangle
         // the neighbour triangle with the smallest angle is selected
 
-        template<typename mesh_type, typename VisibleStateAccessorT, typename SegmentT, typename triangle_handle_type>
-        void mark_facing_shortes_angle( mesh_type & mesh, VisibleStateAccessorT visited_state_accessor, SegmentT & segment, triangle_handle_type triangle_handle, bool triangle_faces_outward )
+        template<typename mesh_type, typename VisibleStateAccessorT, typename SegmentHandleT, typename triangle_handle_type>
+        void mark_facing_shortes_angle( mesh_type & mesh, VisibleStateAccessorT visited_state_accessor, SegmentHandleT & segment, triangle_handle_type triangle_handle, bool triangle_faces_outward )
         {
             typedef typename viennagrid::result_of::point<mesh_type>::type point_type;
             typedef typename viennagrid::result_of::coord<point_type>::type coord_type;
@@ -381,8 +381,8 @@ namespace viennagrid
         // these triangles is for sure in the this segment
         // mark_facing_shortes_angle is called on those triangles to complete the segments
 
-        template< typename mesh_type, typename SegmentT, typename vector_type >
-        void detect_and_mark_face_segment( mesh_type & mesh, SegmentT & segment_, vector_type seed_point )
+        template< typename mesh_type, typename SegmentHandleT, typename vector_type >
+        void detect_and_mark_face_segment( mesh_type & mesh, SegmentHandleT & segment_, vector_type seed_point )
         {
             typedef typename viennagrid::result_of::point<mesh_type>::type point_type;
             typedef typename viennagrid::result_of::coord<point_type>::type coord_type;

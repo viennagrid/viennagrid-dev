@@ -1392,16 +1392,16 @@ namespace viennagrid
   /** @brief Function for creating an element within a mesh or a segment
     *
     * @tparam ElementTypeOrTagT       The element type/tag to be created
-    * @tparam MeshOrSegmentT        The mesh or segment type where the element is created
+    * @tparam MeshOrSegmentHandleT        The mesh or segment type where the element is created
     * @tparam VertexHandleIteratorT   A vertex handle iterator type
     * @param  mesh_segment          The mesh or segment object where the element should be created
     * @param  vertices_begin          An iterator pointing to the first vertex handle of the element
     * @param  vertices_end            An iterator defining the end of the vertices
     * @return                         A handle to the created element
     */
-  template<typename ElementTypeOrTagT, typename MeshOrSegmentT, typename VertexHandleIteratorT>
-  typename result_of::handle<MeshOrSegmentT, ElementTypeOrTagT>::type make_element(
-        MeshOrSegmentT & mesh_segment,
+  template<typename ElementTypeOrTagT, typename MeshOrSegmentHandleT, typename VertexHandleIteratorT>
+  typename result_of::handle<MeshOrSegmentHandleT, ElementTypeOrTagT>::type make_element(
+        MeshOrSegmentHandleT & mesh_segment,
         VertexHandleIteratorT array_start,
         VertexHandleIteratorT const & array_end );
 
@@ -1409,7 +1409,7 @@ namespace viennagrid
   /** @brief Function for creating an element within a mesh or segment with a specific ID
     *
     * @tparam ElementTypeOrTagT       The element type/tag to be created
-    * @tparam MeshOrSegmentT        The mesh or segment type where the element is created
+    * @tparam MeshOrSegmentHandleT        The mesh or segment type where the element is created
     * @tparam VertexHandleIteratorT   A vertex handle iterator type
     * @param  mesh_segment          The mesh or segment object where the element should be created
     * @param  vertices_begin          An iterator pointing to the first vertex handle of the element
@@ -1418,12 +1418,12 @@ namespace viennagrid
     * @return                         A handle to the created element
     */
 #ifndef _MSC_VER
-  template<typename ElementTypeOrTagT, typename MeshOrSegmentT, typename VertexHandleIteratorT>
-  typename result_of::handle<MeshOrSegmentT, ElementTypeOrTagT>::type make_element_with_id(
-        MeshOrSegmentT & mesh_segment,
+  template<typename ElementTypeOrTagT, typename MeshOrSegmentHandleT, typename VertexHandleIteratorT>
+  typename result_of::handle<MeshOrSegmentHandleT, ElementTypeOrTagT>::type make_element_with_id(
+        MeshOrSegmentHandleT & mesh_segment,
         VertexHandleIteratorT array_start,
         VertexHandleIteratorT const & array_end,
-        typename result_of::id< typename result_of::element<MeshOrSegmentT, ElementTypeOrTagT>::type >::type id );
+        typename result_of::id< typename result_of::element<MeshOrSegmentHandleT, ElementTypeOrTagT>::type >::type id );
 #endif
 
 
@@ -1495,23 +1495,23 @@ namespace viennagrid
   
   /** @brief Function for creating a handle, default implementation -> identity
     *
-    * @tparam MeshOrSegmentT    Wrapped config of the mesh type
+    * @tparam MeshOrSegmentHandleT    Wrapped config of the mesh type
     * @tparam HandleT             Type of the handle
     * @param  handle              The handle object
     * @return                     handle (identity)
     */
-  template<typename MeshOrSegmentT, typename HandleT>
-  HandleT handle( MeshOrSegmentT &, HandleT handle) { return handle; }
+  template<typename MeshOrSegmentHandleT, typename HandleT>
+  HandleT handle( MeshOrSegmentHandleT &, HandleT handle) { return handle; }
 
   /** @brief Function for creating a const handle, default implementation -> identity
     *
-    * @tparam MeshOrSegmentT    Wrapped config of the mesh type
+    * @tparam MeshOrSegmentHandleT    Wrapped config of the mesh type
     * @tparam HandleT             Type of the handle
     * @param  handle              The handle object
     * @return                     handle (identity)
     */
-  template<typename MeshOrSegmentT, typename HandleT>
-  const HandleT handle( MeshOrSegmentT const &, HandleT handle) { return handle; }
+  template<typename MeshOrSegmentHandleT, typename HandleT>
+  const HandleT handle( MeshOrSegmentHandleT const &, HandleT handle) { return handle; }
   
 
   // norm tags for: algorithm/norm.hpp

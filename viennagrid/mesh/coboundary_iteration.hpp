@@ -52,32 +52,32 @@ namespace viennagrid
 
     /** @brief Metafunction for obtaining a coboundary range of an element type within a mesh/segment
      *
-     * @tparam MeshOrSegmentT       The host mesh/segment type
+     * @tparam MeshOrSegmentHandleT       The host mesh/segment type
      * @tparam ElementTypeOrTagT      The element type/tag of which the co-boundary range is created
      * @tparam CoboundaryTypeOrTagT   The co-boundary element type/tag
      */
-    template<typename MeshOrSegmentT, typename ElementTypeOrTagT, typename CoboundaryTypeOrTagT>
+    template<typename MeshOrSegmentHandleT, typename ElementTypeOrTagT, typename CoboundaryTypeOrTagT>
     struct coboundary_range
     {
-      typedef viennagrid::storage::container_range_wrapper< typename coboundary_view<MeshOrSegmentT, ElementTypeOrTagT, CoboundaryTypeOrTagT>::type > type;
+      typedef viennagrid::storage::container_range_wrapper< typename coboundary_view<MeshOrSegmentHandleT, ElementTypeOrTagT, CoboundaryTypeOrTagT>::type > type;
     };
 
     /** @brief Metafunction for obtaining a const coboundary range of an element type within a mesh/segment
      *
-     * @tparam MeshOrSegmentT       The host mesh/segment type
+     * @tparam MeshOrSegmentHandleT       The host mesh/segment type
      * @tparam ElementTypeOrTagT      The element type/tag of which the co-boundary range is created
      * @tparam CoboundaryTypeOrTagT   The co-boundary element type/tag
      */
-    template<typename MeshOrSegmentT, typename ElementTypeOrTagT, typename CoboundaryTypeOrTagT>
+    template<typename MeshOrSegmentHandleT, typename ElementTypeOrTagT, typename CoboundaryTypeOrTagT>
     struct const_coboundary_range
     {
-      typedef viennagrid::storage::container_range_wrapper< const typename coboundary_view<MeshOrSegmentT, ElementTypeOrTagT, CoboundaryTypeOrTagT>::type > type;
+      typedef viennagrid::storage::container_range_wrapper< const typename coboundary_view<MeshOrSegmentHandleT, ElementTypeOrTagT, CoboundaryTypeOrTagT>::type > type;
     };
 
-    template<typename MeshOrSegmentT, typename ElementTypeOrTagT, typename CoboundaryTypeOrTagT>
-    struct coboundary_range<const MeshOrSegmentT, ElementTypeOrTagT, CoboundaryTypeOrTagT>
+    template<typename MeshOrSegmentHandleT, typename ElementTypeOrTagT, typename CoboundaryTypeOrTagT>
+    struct coboundary_range<const MeshOrSegmentHandleT, ElementTypeOrTagT, CoboundaryTypeOrTagT>
     {
-      typedef typename const_coboundary_range<MeshOrSegmentT, ElementTypeOrTagT, CoboundaryTypeOrTagT>::type type;
+      typedef typename const_coboundary_range<MeshOrSegmentHandleT, ElementTypeOrTagT, CoboundaryTypeOrTagT>::type type;
     };
   }
 

@@ -46,7 +46,7 @@ namespace viennagrid
       template <typename MeshType, typename SegmentationType>
       int operator()(MeshType & mesh, SegmentationType & segmentation, std::string const & filename) const
       {
-        typedef typename SegmentationType::segment_handle_type SegmentType;
+        typedef typename SegmentationType::segment_handle_type SegmentHandleType;
 
         typedef typename viennagrid::result_of::point<MeshType>::type    PointType;
         typedef typename viennagrid::result_of::coord< PointType >::type         CoordType;

@@ -147,9 +147,9 @@ namespace viennagrid
 
     /** @brief Metafunction for obtaining the segment ID type from a segment or segmentation type
      *
-     * @tparam SegmentationOrSegmentT      The segmentation or segment type
+     * @tparam SegmentationOrSegmentHandleT      The segmentation or segment type
      */
-    template<typename SegmentationOrSegmentT>
+    template<typename SegmentationOrSegmentHandleT>
     struct segment_id;
 
     template<typename SegmentationType>
@@ -1083,15 +1083,15 @@ namespace viennagrid
 
   /** @brief Queries if element is within a given segment
     *
-    * @tparam SegmentT        The segment type which might include the element
+    * @tparam SegmentHandleT        The segment type which might include the element
     * @tparam ElementTagT     The element tag of the element which might be included in the segment
     * @tparam WrappedConfigT  The wrapped config of the element which might be included in the segment
     * @param  segment         The segment object which might include the element
     * @param  element         The element object which might be included in the segment
     * @return                 True if the element is in the segment, false otherwise
     */
-  template<typename SegmentT, typename ElementTagT, typename WrappedConfigT>
-  bool is_in_segment( SegmentT const & segment, element_t<ElementTagT, WrappedConfigT> const & element )
+  template<typename SegmentHandleT, typename ElementTagT, typename WrappedConfigT>
+  bool is_in_segment( SegmentHandleT const & segment, element_t<ElementTagT, WrappedConfigT> const & element )
   {
       typedef element_t<ElementTagT, WrappedConfigT> element_type;
       return is_in_segment( segment, viennagrid::make_accessor<element_type>( element_segment_mapping_collection(segment) ), element );
@@ -1254,22 +1254,22 @@ namespace viennagrid
 
   /** @brief Returns a pointer to additional segment element information. Segment element information is meta information for a combination of a segment and an element, e.g. the orientation of a triangle in a segment in a 3D hull mesh
     *
-    * @tparam SegmentT        The segment type
+    * @tparam SegmentHandleT        The segment type
     * @tparam ElementTagT     The element tag of the element
     * @tparam WrappedConfigT  The wrapped config of the element
     * @param  segment         The segment object
     * @param  element         The element object
     * @return                 A pointer to the segment element information type
     */
-  template<typename SegmentT, typename ElementTagT, typename WrappedConfigT>
+  template<typename SegmentHandleT, typename ElementTagT, typename WrappedConfigT>
   typename viennagrid::storage::result_of::container_of<
       typename viennagrid::storage::result_of::value_type<
-          typename SegmentT::segmentation_type::appendix_type,
+          typename SegmentHandleT::segmentation_type::appendix_type,
           element_segment_mapping_tag
       >::type,
       element_t<ElementTagT, WrappedConfigT>
   >::type::value_type::segment_element_info_type const *
-      segment_element_info( SegmentT const & segment, element_t<ElementTagT, WrappedConfigT> const & element )
+      segment_element_info( SegmentHandleT const & segment, element_t<ElementTagT, WrappedConfigT> const & element )
   {
       typedef element_t<ElementTagT, WrappedConfigT> element_type;
       return segment_element_info( segment, viennagrid::make_accessor<element_type>( element_segment_mapping_collection(segment) ), element );
@@ -1277,22 +1277,22 @@ namespace viennagrid
 
   /** @brief Returns a pointer to additional segment element information. Segment element information is meta information for a combination of a segment and an element, e.g. the orientation of a triangle in a segment in a 3D hull mesh. Const version
     *
-    * @tparam SegmentT        The segment type
+    * @tparam SegmentHandleT        The segment type
     * @tparam ElementTagT     The element tag of the element
     * @tparam WrappedConfigT  The wrapped config of the element
     * @param  segment         The segment object
     * @param  element         The element object
     * @return                 A const pointer to the segment element information type
     */
-  template<typename SegmentT, typename ElementTagT, typename WrappedConfigT>
+  template<typename SegmentHandleT, typename ElementTagT, typename WrappedConfigT>
   typename viennagrid::storage::result_of::container_of<
       typename viennagrid::storage::result_of::value_type<
-          typename SegmentT::segmentation_type::appendix_type,
+          typename SegmentHandleT::segmentation_type::appendix_type,
           element_segment_mapping_tag
       >::type,
       element_t<ElementTagT, WrappedConfigT>
   >::type::value_type::segment_element_info_type *
-      segment_element_info( SegmentT & segment, element_t<ElementTagT, WrappedConfigT> const & element )
+      segment_element_info( SegmentHandleT & segment, element_t<ElementTagT, WrappedConfigT> const & element )
   {
       typedef element_t<ElementTagT, WrappedConfigT> element_type;
       return segment_element_info( segment, viennagrid::make_accessor<element_type>( element_segment_mapping_collection(segment) ), element );
@@ -1327,13 +1327,13 @@ namespace viennagrid
 
   /** @brief Adds a vertex to a segment
     *
-    * @tparam SegmentT        The segment type
+    * @tparam SegmentHandleT        The segment type
     * @tparam WrappedConfigT  The wrapped config of the vertex
     * @param  segment         The segment object
     * @param  vertex          The vertex object
     */
-  template<typename SegmentT, typename WrappedConfigT>
-  void add( SegmentT & segment, element_t<vertex_tag, WrappedConfigT> & vertex )
+  template<typename SegmentHandleT, typename WrappedConfigT>
+  void add( SegmentHandleT & segment, element_t<vertex_tag, WrappedConfigT> & vertex )
   {
     typedef element_t<vertex_tag, WrappedConfigT> element_type;
       viennagrid::elements<element_type>( segment.view() ).insert_unique_handle( viennagrid::handle( segment.segmentation().mesh(), vertex ) );
@@ -1342,14 +1342,14 @@ namespace viennagrid
 
   /** @brief Adds an element to a segment, all boundary elements are added recursively
     *
-    * @tparam SegmentT        The segment type
+    * @tparam SegmentHandleT        The segment type
     * @tparam ElementTagT     The element tag of the element
     * @tparam WrappedConfigT  The wrapped config of the element
     * @param  segment         The segment object to which the elemen is added
     * @param  element         The element object to be added
     */
-  template<typename SegmentT, typename ElementTagT, typename WrappedConfigT>
-  void add( SegmentT & segment, element_t<ElementTagT, WrappedConfigT> & element )
+  template<typename SegmentHandleT, typename ElementTagT, typename WrappedConfigT>
+  void add( SegmentHandleT & segment, element_t<ElementTagT, WrappedConfigT> & element )
   {
       typedef element_t<ElementTagT, WrappedConfigT> element_type;
       viennagrid::elements<element_type>( segment.view() ).insert_unique_handle( viennagrid::handle( segment.segmentation().mesh(), element ) );
@@ -1397,15 +1397,15 @@ namespace viennagrid
 
   /** @brief Deletes an element from a segment. The runtime of this function is linear in the number of elements of the element type to delete
     *
-    * @tparam SegmentT        The segment type
+    * @tparam SegmentHandleT        The segment type
     * @tparam ElementTagT     The element tag of the element type to be deleted
     * @tparam WrappedConfigT  The wrapped config of the element type to be deleted
     * @param  segment         The segment object from which the element is to be deleted
     * @param  element         The element object to be deleted from the segment
     * @return                 True if the element is deleted from the segment, false otherwise
     */
-  template<typename SegmentT, typename ElementTagT, typename WrappedConfigT>
-  bool erase( SegmentT & segment, element_t<ElementTagT, WrappedConfigT> & element )
+  template<typename SegmentHandleT, typename ElementTagT, typename WrappedConfigT>
+  bool erase( SegmentHandleT & segment, element_t<ElementTagT, WrappedConfigT> & element )
   {
       typedef element_t<ElementTagT, WrappedConfigT> element_type;
       viennagrid::elements<element_type>( segment.view() ).erase_handle( viennagrid::handle( segment.segmentation().mesh(), element ) );
@@ -1443,19 +1443,19 @@ namespace viennagrid
 
   /** @brief Adds an element handle to a view/segment if it isn't already present in that view/segment. The runtime of this function is linear in the number of elements present in the view/segment/.
     *
-    * @tparam ViewOrSegmentT    The view/segment type
+    * @tparam ViewOrSegmentHandleT    The view/segment type
     * @tparam MeshT           The mesh type where the element of the handle lives
     * @tparam HandleT           The handle to be added
     * @param  view_or_segment   The view/segment object
     * @param  handle            The handle object to be inserted
     */
-  template<typename ViewOrSegmentT, typename MeshT, typename HandleT>
-  void add_handle( ViewOrSegmentT & view_or_segment, MeshT & mesh, HandleT handle )
+  template<typename ViewOrSegmentHandleT, typename MeshT, typename HandleT>
+  void add_handle( ViewOrSegmentHandleT & view_or_segment, MeshT & mesh, HandleT handle )
   {
       typedef typename storage::handle::result_of::value_type<HandleT>::type value_type;
       value_type & element = dereference_handle(mesh, handle);
 
-      typedef typename viennagrid::result_of::element_range< ViewOrSegmentT, value_type >::type range_type;
+      typedef typename viennagrid::result_of::element_range< ViewOrSegmentHandleT, value_type >::type range_type;
       typedef typename viennagrid::result_of::iterator<range_type>::type iterator_type;
 
       iterator_type it = find( view_or_segment, element.id() );

@@ -701,14 +701,14 @@ namespace viennagrid
 
   /** @brief Creates a view out of a mesh using the mesh_proxy object
     *
-    * @tparam MeshOrSegmentT    The mesh or segment type from which the mesh view is created
+    * @tparam MeshOrSegmentHandleT    The mesh or segment type from which the mesh view is created
     * @param  mesh              The mesh or segment object from which the mesh view is created
     * @return                     a mesh_proxy object holding the host mesh/segment object, can be assigned to a mesh_t object
     */
-  template<typename MeshOrSegmentT>
-  mesh_proxy<MeshOrSegmentT> make_view(MeshOrSegmentT & mesh)
+  template<typename MeshOrSegmentHandleT>
+  mesh_proxy<MeshOrSegmentHandleT> make_view(MeshOrSegmentHandleT & mesh)
   {
-      return mesh_proxy<MeshOrSegmentT>( mesh );
+      return mesh_proxy<MeshOrSegmentHandleT>( mesh );
   }
 
 
@@ -790,7 +790,7 @@ namespace viennagrid
   /** @brief Function for obtaining the heighest ID for a specifig element type/tag in a mesh/segment
     *
     * @tparam ElementTypeOrTag     The element type/tag from which the heighest ID is queried
-    * @tparam MeshOrSegmentT     The mesh/segment type
+    * @tparam MeshOrSegmentHandleT     The mesh/segment type
     * @param  mesh_or_segment    The mesh/segment object
     * @return                      The heighest ID for specified element type/tag
     */
@@ -811,8 +811,8 @@ namespace viennagrid
     * @param  handle             The handle to be dereferenced
     * @return                    A C++ reference to an element which is referenced by handle
     */
-  template<typename MeshOrSegmentT, typename HandleT>
-  typename storage::handle::result_of::value_type<HandleT>::type & dereference_handle(MeshOrSegmentT & mesh, HandleT const & handle)
+  template<typename MeshOrSegmentHandleT, typename HandleT>
+  typename storage::handle::result_of::value_type<HandleT>::type & dereference_handle(MeshOrSegmentHandleT & mesh, HandleT const & handle)
   {
       typedef typename storage::handle::result_of::value_type<HandleT>::type value_type;
       return storage::collection::get<value_type>(element_collection(mesh)).dereference_handle( handle );
@@ -826,8 +826,8 @@ namespace viennagrid
     * @param  handle             The handle to be dereferenced
     * @return                    A C++ const reference to an element which is referenced by handle
     */
-  template<typename MeshOrSegmentT, typename HandleT>
-  typename storage::handle::result_of::value_type<HandleT>::type const & dereference_handle(MeshOrSegmentT const & mesh, HandleT const & handle)
+  template<typename MeshOrSegmentHandleT, typename HandleT>
+  typename storage::handle::result_of::value_type<HandleT>::type const & dereference_handle(MeshOrSegmentHandleT const & mesh, HandleT const & handle)
   {
       typedef typename storage::handle::result_of::value_type<HandleT>::type value_type;
       return storage::collection::get<value_type>(element_collection(mesh)).dereference_handle( handle );
@@ -836,28 +836,28 @@ namespace viennagrid
 
   /** @brief Function for creating a handle for a given element using a mesh/segment object
     *
-    * @tparam MeshOrSegmentT      The host mesh/segment type
+    * @tparam MeshOrSegmentHandleT      The host mesh/segment type
     * @tparam ElementTagT           The tag of the element of which a handle is created
     * @tparam WrappedConfigT        The wrapped config of the element of which a handle is created
     * @param  mesh_or_segment     The host mesh/segment object
     * @param  element               The element of which a handle is created
     * @return                       A handle referencing the given element
     */
-  template<typename MeshOrSegmentT, typename ElementTagT, typename WrappedConfigT>
-  typename result_of::handle<MeshOrSegmentT, element_t<ElementTagT, WrappedConfigT> >::type handle(MeshOrSegmentT & mesh_or_segment, element_t<ElementTagT, WrappedConfigT> & element)
+  template<typename MeshOrSegmentHandleT, typename ElementTagT, typename WrappedConfigT>
+  typename result_of::handle<MeshOrSegmentHandleT, element_t<ElementTagT, WrappedConfigT> >::type handle(MeshOrSegmentHandleT & mesh_or_segment, element_t<ElementTagT, WrappedConfigT> & element)
   { return storage::collection::get< element_t<ElementTagT, WrappedConfigT> >(element_collection(mesh_or_segment)).handle( element ); }
 
   /** @brief Function for creating a handle for a given element using a mesh/segment object, const version
     *
-    * @tparam MeshOrSegmentT      The host mesh/segment type
+    * @tparam MeshOrSegmentHandleT      The host mesh/segment type
     * @tparam ElementTagT           The tag of the element of which a handle is created
     * @tparam WrappedConfigT        The wrapped config of the element of which a handle is created
     * @param  mesh_or_segment     The host mesh/segment object
     * @param  element               The element of which a handle is created
     * @return                       A const handle referencing the given element
     */
-  template<typename MeshOrSegmentT, typename ElementTagT, typename WrappedConfigT>
-  typename result_of::const_handle<MeshOrSegmentT, element_t<ElementTagT, WrappedConfigT> >::type handle(MeshOrSegmentT const & mesh_or_segment, element_t<ElementTagT, WrappedConfigT> const & element)
+  template<typename MeshOrSegmentHandleT, typename ElementTagT, typename WrappedConfigT>
+  typename result_of::const_handle<MeshOrSegmentHandleT, element_t<ElementTagT, WrappedConfigT> >::type handle(MeshOrSegmentHandleT const & mesh_or_segment, element_t<ElementTagT, WrappedConfigT> const & element)
   { return storage::collection::get< element_t<ElementTagT, WrappedConfigT> >(element_collection(mesh_or_segment)).handle( element ); }
 
 
@@ -938,10 +938,10 @@ namespace viennagrid
   {
     /** @brief Metafunction for querying if an element is present within a mesh, mesh view or segment
      *
-     * @tparam MeshViewOrSegmentT       The host mesh/mesh view/segment type
+     * @tparam MeshViewOrSegmentHandleT       The host mesh/mesh view/segment type
      * @tparam ElementTypeOrTagT          The requested element type/tag
      */
-    template<typename MeshViewOrSegmentT, typename ElementTypeOrTagT>
+    template<typename MeshViewOrSegmentHandleT, typename ElementTypeOrTagT>
     struct is_element_present;
 
     template<typename WrappedConfigType, typename element_type_or_tag>
@@ -999,43 +999,43 @@ namespace viennagrid
 
 
     // doxygen docu in forwards.hpp
-    template<typename MeshSegmentType, typename element_type_or_tag>
+    template<typename MeshSegmentHandleType, typename element_type_or_tag>
     struct element
     {
-        typedef typename meta::STATIC_ASSERT< is_element_present<MeshSegmentType, element_type_or_tag>::value >::type ERROR_ELEMENT_IS_NOT_PRESENT_IN_MESH;
-        typedef typename element< typename element_collection< MeshSegmentType >::type, element_type_or_tag >::type type;
+        typedef typename meta::STATIC_ASSERT< is_element_present<MeshSegmentHandleType, element_type_or_tag>::value >::type ERROR_ELEMENT_IS_NOT_PRESENT_IN_MESH;
+        typedef typename element< typename element_collection< MeshSegmentHandleType >::type, element_type_or_tag >::type type;
     };
 
     // doxygen docu in forwards.hpp
-    template<typename MeshSegmentType, typename element_type_or_tag>
+    template<typename MeshSegmentHandleType, typename element_type_or_tag>
     struct handle
     {
-        typedef typename meta::STATIC_ASSERT< is_element_present<MeshSegmentType, element_type_or_tag>::value >::type ERROR_ELEMENT_IS_NOT_PRESENT_IN_MESH;
-        typedef typename handle< typename element_collection< MeshSegmentType >::type, element_type_or_tag >::type type;
+        typedef typename meta::STATIC_ASSERT< is_element_present<MeshSegmentHandleType, element_type_or_tag>::value >::type ERROR_ELEMENT_IS_NOT_PRESENT_IN_MESH;
+        typedef typename handle< typename element_collection< MeshSegmentHandleType >::type, element_type_or_tag >::type type;
     };
 
     // doxygen docu in forwards.hpp
-    template<typename MeshSegmentType, typename element_type_or_tag>
+    template<typename MeshSegmentHandleType, typename element_type_or_tag>
     struct const_handle
     {
-        typedef typename meta::STATIC_ASSERT< is_element_present<MeshSegmentType, element_type_or_tag>::value >::type ERROR_ELEMENT_IS_NOT_PRESENT_IN_MESH;
-        typedef typename const_handle< typename element_collection< MeshSegmentType >::type, element_type_or_tag >::type type;
+        typedef typename meta::STATIC_ASSERT< is_element_present<MeshSegmentHandleType, element_type_or_tag>::value >::type ERROR_ELEMENT_IS_NOT_PRESENT_IN_MESH;
+        typedef typename const_handle< typename element_collection< MeshSegmentHandleType >::type, element_type_or_tag >::type type;
     };
 
     // doxygen docu in forwards.hpp
-    template<typename MeshSegmentType, typename element_type_or_tag>
+    template<typename MeshSegmentHandleType, typename element_type_or_tag>
     struct element_range
     {
-        typedef typename meta::STATIC_ASSERT< is_element_present<MeshSegmentType, element_type_or_tag>::value >::type ERROR_ELEMENT_IS_NOT_PRESENT_IN_MESH;
-        typedef typename element_range< typename element_collection< MeshSegmentType >::type, element_type_or_tag >::type type;
+        typedef typename meta::STATIC_ASSERT< is_element_present<MeshSegmentHandleType, element_type_or_tag>::value >::type ERROR_ELEMENT_IS_NOT_PRESENT_IN_MESH;
+        typedef typename element_range< typename element_collection< MeshSegmentHandleType >::type, element_type_or_tag >::type type;
     };
 
     // doxygen docu in forwards.hpp
-    template<typename MeshSegmentType, typename element_type_or_tag>
+    template<typename MeshSegmentHandleType, typename element_type_or_tag>
     struct const_element_range
     {
-        typedef typename meta::STATIC_ASSERT< is_element_present<MeshSegmentType, element_type_or_tag>::value >::type ERROR_ELEMENT_IS_NOT_PRESENT_IN_MESH;
-        typedef typename const_element_range< typename element_collection< MeshSegmentType >::type, element_type_or_tag >::type type;
+        typedef typename meta::STATIC_ASSERT< is_element_present<MeshSegmentHandleType, element_type_or_tag>::value >::type ERROR_ELEMENT_IS_NOT_PRESENT_IN_MESH;
+        typedef typename const_element_range< typename element_collection< MeshSegmentHandleType >::type, element_type_or_tag >::type type;
     };
 
 
@@ -1140,15 +1140,15 @@ namespace viennagrid
 
 
   /** @brief For internal use only */
-  template<typename MeshSegmentT, typename FunctorT>
+  template<typename MeshSegmentHandleT, typename FunctorT>
   struct for_each_element_functor
   {
-    for_each_element_functor( MeshSegmentT & d, FunctorT f ) : f_(f), mesh_(d) {}
+    for_each_element_functor( MeshSegmentHandleT & d, FunctorT f ) : f_(f), mesh_(d) {}
 
     template<typename element_type>
     void operator() ( viennagrid::meta::tag<element_type> )
     {
-      typedef typename viennagrid::result_of::element_range<MeshSegmentT, element_type>::type element_range_type;
+      typedef typename viennagrid::result_of::element_range<MeshSegmentHandleT, element_type>::type element_range_type;
       typedef typename viennagrid::result_of::iterator<element_range_type>::type element_range_iterator;
 
       element_range_type range = viennagrid::elements(mesh_);
@@ -1159,7 +1159,7 @@ namespace viennagrid
     template<typename element_type>
     void operator() ( viennagrid::meta::tag<element_type> ) const
     {
-      typedef typename viennagrid::result_of::const_element_range<MeshSegmentT, element_type>::type element_range_type;
+      typedef typename viennagrid::result_of::const_element_range<MeshSegmentHandleT, element_type>::type element_range_type;
       typedef typename viennagrid::result_of::iterator<element_range_type>::type element_range_iterator;
 
       element_range_type range = viennagrid::elements(mesh_);
@@ -1168,23 +1168,23 @@ namespace viennagrid
     }
 
     FunctorT f_;
-    MeshSegmentT & mesh_;
+    MeshSegmentHandleT & mesh_;
   };
 
 
   /** @brief Function which executes functor an each element with specific topologic dimension
     *
     * @tparam TopologicDimensionV     Topologic dimension of the elements on which the functor is executed
-    * @tparam MeshSegmentT          Host mesh/segment type
+    * @tparam MeshSegmentHandleT          Host mesh/segment type
     * @tparam FunctorT                Functor type, needs to provide void operator(ElementType &/const &) for each element type with topologic dimension equal to TopologicDimensionV
     * @param  mesh_or_segment       Host mesh/segment object
     * @param  f                       Functor object
     */
-  template<int TopologicDimensionV, typename MeshSegmentT, typename FunctorT>
-  void for_each( MeshSegmentT & mesh_or_segment, FunctorT f )
+  template<int TopologicDimensionV, typename MeshSegmentHandleT, typename FunctorT>
+  void for_each( MeshSegmentHandleT & mesh_or_segment, FunctorT f )
   {
-    for_each_element_functor<MeshSegmentT, FunctorT> for_each_functor(mesh_or_segment, f);
-    typedef typename viennagrid::result_of::elements_of_topologic_dim<MeshSegmentT, TopologicDimensionV>::type element_typelist;
+    for_each_element_functor<MeshSegmentHandleT, FunctorT> for_each_functor(mesh_or_segment, f);
+    typedef typename viennagrid::result_of::elements_of_topologic_dim<MeshSegmentHandleT, TopologicDimensionV>::type element_typelist;
 
     viennagrid::meta::typelist::for_each<element_typelist>( for_each_functor );
   }
@@ -1192,16 +1192,16 @@ namespace viennagrid
   /** @brief Function which executes functor an each element with specific topologic dimension, const version
     *
     * @tparam TopologicDimensionV     Topologic dimension of the elements on which the functor is executed
-    * @tparam MeshSegmentT          Host mesh/segment type
+    * @tparam MeshSegmentHandleT          Host mesh/segment type
     * @tparam FunctorT                Functor type, needs to provide void operator(ElementType &/const &) for each element type with topologic dimension equal to TopologicDimensionV
     * @param  mesh_or_segment       Host mesh/segment object
     * @param  f                       Functor object
     */
-  template<int TopologicDimensionV, typename MeshSegmentT, typename FunctorT>
-  void for_each( MeshSegmentT const & mesh_or_segment, FunctorT f )
+  template<int TopologicDimensionV, typename MeshSegmentHandleT, typename FunctorT>
+  void for_each( MeshSegmentHandleT const & mesh_or_segment, FunctorT f )
   {
-    for_each_element_functor<const MeshSegmentT, FunctorT> for_each_functor(mesh_or_segment, f);
-    typedef typename viennagrid::result_of::elements_of_topologic_dim<MeshSegmentT, TopologicDimensionV>::type element_typelist;
+    for_each_element_functor<const MeshSegmentHandleT, FunctorT> for_each_functor(mesh_or_segment, f);
+    typedef typename viennagrid::result_of::elements_of_topologic_dim<MeshSegmentHandleT, TopologicDimensionV>::type element_typelist;
 
     viennagrid::meta::typelist::for_each<element_typelist>( for_each_functor );
   }
@@ -1225,19 +1225,19 @@ namespace viennagrid
 
   /** @brief Function which finds an element based on an ID. The runtime of this function is linear in the number of elements of the requested type in the mesh.
     *
-    * @tparam MeshSegmentT          Host mesh/segment type
+    * @tparam MeshSegmentHandleT          Host mesh/segment type
     * @tparam IDT                     ID type of the object to be found
     * @param  mesh_or_segment       Host mesh/segment object
     * @param  id                      id of the object to be found
     * @return                         An iterator pointing to the found element. If no element was found it points to viennagrid::elements<ElementType>(mesh_or_segment).end()
     */
-  template<typename MeshSegmentT, typename IDT>
-  typename viennagrid::result_of::iterator< typename viennagrid::result_of::element_range<MeshSegmentT, typename IDT::value_type::tag>::type >::type
-          find(MeshSegmentT & mesh_or_segment, IDT id )
+  template<typename MeshSegmentHandleT, typename IDT>
+  typename viennagrid::result_of::iterator< typename viennagrid::result_of::element_range<MeshSegmentHandleT, typename IDT::value_type::tag>::type >::type
+          find(MeshSegmentHandleT & mesh_or_segment, IDT id )
   {
       typedef typename IDT::value_type element_type;
       typedef typename element_type::tag element_tag;
-      typedef typename viennagrid::result_of::element_range<MeshSegmentT, element_tag>::type RangeType;
+      typedef typename viennagrid::result_of::element_range<MeshSegmentHandleT, element_tag>::type RangeType;
       RangeType range = viennagrid::elements<element_tag>(mesh_or_segment);
       return std::find_if(
                   range.begin(),
@@ -1248,19 +1248,19 @@ namespace viennagrid
 
   /** @brief Function which finds an element based on an ID, const version. The runtime of this function is linear in the number of elements of the requested type in the mesh.
     *
-    * @tparam MeshSegmentT          Host mesh/segment type
+    * @tparam MeshSegmentHandleT          Host mesh/segment type
     * @tparam IDT                     ID type of the object to be found
     * @param  mesh_or_segment       Host mesh/segment object
     * @param  id                      id of the object to be found
     * @return                         A const iterator pointing to the found element. If no element was found it points to viennagrid::elements<ElementType>(mesh_or_segment).end()
     */
-  template<typename MeshSegmentT, typename IDT>
-  typename viennagrid::result_of::const_iterator< typename viennagrid::result_of::element_range<MeshSegmentT, typename IDT::value_type::tag>::type >::type
-          find(MeshSegmentT const & mesh_or_segment, IDT id )
+  template<typename MeshSegmentHandleT, typename IDT>
+  typename viennagrid::result_of::const_iterator< typename viennagrid::result_of::element_range<MeshSegmentHandleT, typename IDT::value_type::tag>::type >::type
+          find(MeshSegmentHandleT const & mesh_or_segment, IDT id )
   {
       typedef typename IDT::value_type element_type;
       typedef typename element_type::tag element_tag;
-      typedef typename viennagrid::result_of::const_element_range<MeshSegmentT, element_tag>::type RangeType;
+      typedef typename viennagrid::result_of::const_element_range<MeshSegmentHandleT, element_tag>::type RangeType;
       RangeType range = viennagrid::elements<element_tag>(mesh_or_segment);
       return std::find_if(
                   range.begin(),
@@ -1271,19 +1271,19 @@ namespace viennagrid
 
   /** @brief Function which finds an element based on a handle. The runtime of this function is linear in the number of elements of the requested type in the mesh.
     *
-    * @tparam MeshSegmentT          Host mesh/segment type
+    * @tparam MeshSegmentHandleT          Host mesh/segment type
     * @tparam HandleT                 The handle type of the object to be found
     * @param  mesh_or_segment       Host mesh/segment object
     * @param  id                      id of the object to be found
     * @return                         An iterator pointing to the found element. If no element was found it points to viennagrid::elements<ElementType>(mesh_or_segment).end()
     */
-  template<typename MeshSegmentT, typename HandleT>
-  typename viennagrid::result_of::iterator< typename viennagrid::result_of::element_range<MeshSegmentT, typename storage::handle::result_of::value_type<HandleT>::type >::type >::type
-          find_by_handle(MeshSegmentT & mesh_or_segment, HandleT handle)
+  template<typename MeshSegmentHandleT, typename HandleT>
+  typename viennagrid::result_of::iterator< typename viennagrid::result_of::element_range<MeshSegmentHandleT, typename storage::handle::result_of::value_type<HandleT>::type >::type >::type
+          find_by_handle(MeshSegmentHandleT & mesh_or_segment, HandleT handle)
   {
       typedef typename storage::handle::result_of::value_type<HandleT>::type element_type;
       typedef typename element_type::tag element_tag;
-      typedef typename viennagrid::result_of::element_range<MeshSegmentT, element_tag>::type RangeType;
+      typedef typename viennagrid::result_of::element_range<MeshSegmentHandleT, element_tag>::type RangeType;
       typedef typename viennagrid::result_of::iterator<RangeType>::type RangeIterator;
 
       RangeType range = viennagrid::elements<element_tag>(mesh_or_segment);
@@ -1298,19 +1298,19 @@ namespace viennagrid
 
   /** @brief Function which finds an element based on a handle, const version. The runtime of this function is linear in the number of elements of the requested type in the mesh.
     *
-    * @tparam MeshSegmentT          Host mesh/segment type
+    * @tparam MeshSegmentHandleT          Host mesh/segment type
     * @tparam HandleT                 The handle type of the object to be found
     * @param  mesh_or_segment       Host mesh/segment object
     * @param  id                      id of the object to be found
     * @return                         A const iterator pointing to the found element. If no element was found it points to viennagrid::elements<ElementType>(mesh_or_segment).end()
     */
-  template<typename MeshSegmentT, typename HandleT>
-  typename viennagrid::result_of::const_iterator< typename viennagrid::result_of::const_element_range<MeshSegmentT, typename storage::handle::result_of::value_type<HandleT>::type >::type  >::type
-          find_by_handle(MeshSegmentT const & mesh_or_segment, HandleT handle)
+  template<typename MeshSegmentHandleT, typename HandleT>
+  typename viennagrid::result_of::const_iterator< typename viennagrid::result_of::const_element_range<MeshSegmentHandleT, typename storage::handle::result_of::value_type<HandleT>::type >::type  >::type
+          find_by_handle(MeshSegmentHandleT const & mesh_or_segment, HandleT handle)
   {
       typedef typename storage::handle::result_of::value_type<HandleT>::type element_type;
       typedef typename element_type::tag element_tag;
-      typedef typename viennagrid::result_of::const_element_range<MeshSegmentT, element_tag>::type RangeType;
+      typedef typename viennagrid::result_of::const_element_range<MeshSegmentHandleT, element_tag>::type RangeType;
       typedef typename viennagrid::result_of::const_iterator<RangeType>::type RangeIterator;
 
       RangeType range = viennagrid::elements<element_tag>(mesh_or_segment);

@@ -46,8 +46,8 @@ namespace viennagrid
    * @param  mesh_or_segment          The mesh/segment which points are scaled
    * @param  factor                     The scale factor
    */
-  template<typename MeshOrSegmentT, typename ScalarType>
-  void scale(MeshOrSegmentT & mesh_or_segment, ScalarType factor)
+  template<typename MeshOrSegmentHandleT, typename ScalarType>
+  void scale(MeshOrSegmentHandleT & mesh_or_segment, ScalarType factor)
   {
     viennagrid::detail::scale_impl(mesh_or_segment, factor, viennagrid::default_point_accessor(mesh_or_segment));
   }
