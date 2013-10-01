@@ -527,20 +527,31 @@ namespace viennagrid
           typedef appendix_type_ appendix_type;
         };
     }
+    
+    
+    
+    
+    template<typename ElementTagT>
+    class element_extension_t
+    {
+    public:
+    private:
+    };
 
 
     template<typename ElementTag, typename WrappedConfigType>
     class element_t :
+        public element_extension_t<ElementTag>,
         public viennagrid::storage::id_handler<
                     typename viennagrid::storage::result_of::make_id<
                       element_t<
                         ElementTag,
                         WrappedConfigType
                       >,
-                      typename config::result_of::query_element_id_tag<WrappedConfigType, vertex_tag>::type
+                      typename config::result_of::query_element_id_tag<WrappedConfigType, ElementTag>::type
                     >::type
                 >,
-          public boundary_element_layer<ElementTag, typename config::result_of::element_boundary_cell_container_typelist<WrappedConfigType, ElementTag, ElementTag>::type>
+        public boundary_element_layer<ElementTag, typename config::result_of::element_boundary_cell_container_typelist<WrappedConfigType, ElementTag, ElementTag>::type>
     {
     public:
 
@@ -605,6 +616,7 @@ namespace viennagrid
     // separate specialization for vertices at the moment
     template<typename WrappedConfigType>
     class element_t<vertex_tag, WrappedConfigType> :
+        public element_extension_t<vertex_tag>,
         public viennagrid::storage::id_handler<
                     typename viennagrid::storage::result_of::make_id<
                       element_t<
