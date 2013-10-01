@@ -864,7 +864,7 @@ namespace viennagrid
                         mesh_t<WrappedMeshConfigOutT> & mesh_out,      segmentation_t<WrappedSegmentationConfigOutT> & segmentation_out,
                         EdgeRefinementFlagAccessor const edge_refinement_flag_accessor)
   {
-    refine_uniformly<ElementTypeOrTagT>(mesh_in, mesh_out, default_point_accessor(mesh_in), edge_refinement_flag_accessor);
+    refine_uniformly<ElementTypeOrTagT>(mesh_in, segmentation_in, mesh_out, segmentation_out, default_point_accessor(mesh_in), edge_refinement_flag_accessor);
   }
 
   /** @brief Public interface for uniform refinement of a mesh with segmentation.
@@ -885,7 +885,7 @@ namespace viennagrid
     typedef typename viennagrid::result_of::line<MeshOutType>::type   EdgeType;
     std::deque<bool> edge_refinement_flag;
 
-    refine_uniformly<ElementTypeOrTagT>(mesh_in, mesh_out, viennagrid::make_accessor<EdgeType>(edge_refinement_flag));
+    refine_uniformly<ElementTypeOrTagT>(mesh_in, segmentation_in, mesh_out, segmentation_out, viennagrid::make_accessor<EdgeType>(edge_refinement_flag));
   }
 
   /** @brief Public interface for uniform refinement of cells of a mesh with segmentation. Will fail if there is more than one cell type.
@@ -902,7 +902,7 @@ namespace viennagrid
   {
     typedef mesh_t<WrappedMeshConfigInT>                            MeshInType;
     typedef typename viennagrid::result_of::cell<MeshInType>::type    CellType;
-    refine_uniformly<CellType>(mesh_in, mesh_out);
+    refine_uniformly<CellType>(mesh_in, segmentation_in, mesh_out, segmentation_out);
   }
 
   
