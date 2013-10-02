@@ -1513,6 +1513,35 @@ namespace viennagrid
   template<typename MeshOrSegmentHandleT, typename HandleT>
   const HandleT handle( MeshOrSegmentHandleT const &, HandleT handle) { return handle; }
   
+  
+  
+  
+  /** @brief Proxy object for a mesh. This is used for wrapping a mesh/mesh view when creating a view
+    *
+    * @tparam MeshT    The mesh/mesh view type
+    */
+  template<typename MeshT>
+  struct mesh_proxy
+  {
+    mesh_proxy( MeshT & mesh_ ) : mesh(&mesh_){}
+    MeshT * mesh;
+  };
+  
+  /** @brief Creates a view out of a mesh using the mesh_proxy object
+    *
+    * @tparam MeshOrSegmentHandleT    The mesh or segment type from which the mesh view is created
+    * @param  mesh              The mesh or segment object from which the mesh view is created
+    * @return                     a mesh_proxy object holding the host mesh/segment object, can be assigned to a mesh_t object
+    */
+  template<typename WrappedConfigT>
+  mesh_proxy< mesh_t<WrappedConfigT> > make_view(mesh_t<WrappedConfigT> & mesh)
+  {
+    return mesh_proxy< mesh_t<WrappedConfigT> >( mesh );
+  }
+  
+  template<typename SegmentationT>
+  mesh_proxy< typename SegmentationT::view_type > make_view(segment_handle_t<SegmentationT> & segment);
+  
 
   // norm tags for: algorithm/norm.hpp
   /** @brief Tag for denoting the 1-norm */
