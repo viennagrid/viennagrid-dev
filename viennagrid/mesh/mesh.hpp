@@ -54,18 +54,6 @@ namespace viennagrid
   };
 
 
-  /** @brief Proxy object for a mesh. This is used for wrapping a mesh/mesh view when creating a view
-    *
-    * @tparam MeshT    The mesh/mesh view type
-    */
-  template<typename MeshT>
-  struct mesh_proxy
-  {
-    mesh_proxy( MeshT & mesh_ ) : mesh(&mesh_){}
-    MeshT * mesh;
-  };
-
-
   /** @brief For internal use only */
   template<typename container_type_, typename change_counter_type>
   struct coboundary_container_wrapper
@@ -437,7 +425,6 @@ namespace viennagrid
 
 namespace viennagrid
 {
-
   namespace result_of
   {
     // doxygen docu in forwards.hpp
@@ -587,6 +574,17 @@ namespace viennagrid
         typedef typename element_typelist<SomethingT>::type elements;
         typedef typename referencing_element_typelist_impl<elements, element_type>::type type;
     };
+    
+    
+    
+    template<typename SomethingT>
+    struct change_counter_type;
+    
+    template<typename WrappedConfigT>
+    struct change_counter_type< mesh_t<WrappedConfigT> >
+    {
+      typedef typename mesh_t<WrappedConfigT>::change_counter_type type;
+    };
   }
 
   /** @brief For internal use only */
@@ -689,28 +687,14 @@ namespace viennagrid
     };
 
 
-    template<typename MeshT>
-    struct mesh_view<MeshT,
+    template<typename WrappedConfigT>
+    struct mesh_view<mesh_t<WrappedConfigT>,
                        viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type,
                        viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type>
     {
-        typedef typename mesh_view_from_typelist<MeshT>::type type;
+        typedef typename mesh_view_from_typelist< mesh_t<WrappedConfigT> >::type type;
     };
   }
-
-
-  /** @brief Creates a view out of a mesh using the mesh_proxy object
-    *
-    * @tparam MeshOrSegmentHandleT    The mesh or segment type from which the mesh view is created
-    * @param  mesh              The mesh or segment object from which the mesh view is created
-    * @return                     a mesh_proxy object holding the host mesh/segment object, can be assigned to a mesh_t object
-    */
-  template<typename MeshOrSegmentHandleT>
-  mesh_proxy<MeshOrSegmentHandleT> make_view(MeshOrSegmentHandleT & mesh)
-  {
-      return mesh_proxy<MeshOrSegmentHandleT>( mesh );
-  }
-
 
 
   /** @brief For internal use only */
