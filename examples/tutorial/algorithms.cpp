@@ -51,7 +51,7 @@ int main()
 {
   typedef viennagrid::tetrahedral_3d_mesh                         MeshType;
   typedef viennagrid::result_of::segmentation<MeshType>::type     SegmentationType;
-  typedef viennagrid::result_of::segment<SegmentationType>::type    SegmentType;
+  typedef viennagrid::result_of::segment_handle<SegmentationType>::type    SegmentHandleType;
   
   typedef viennagrid::result_of::point<MeshType>::type            PointType;
   

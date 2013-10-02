@@ -33,7 +33,7 @@ void test(ReaderType & my_reader, std::string const & infile)
 
   typedef typename viennagrid::result_of::cell_tag<MeshType>::type          CellTag;
   typedef typename viennagrid::result_of::segmentation<MeshType>::type      SegmentationType;
-  typedef typename viennagrid::result_of::segment<SegmentationType>::type     SegmentType;
+  typedef typename viennagrid::result_of::segment_handle<SegmentationType>::type     SegmentHandleType;
   
   
   typedef typename viennagrid::result_of::point<MeshType>::type             PointType;
@@ -76,8 +76,8 @@ void test(ReaderType & my_reader, std::string const & infile)
   assert(segmentation.size() > 1 && "Not enough segments!");
   
   typename SegmentationType::iterator it = segmentation.begin();
-  SegmentType const & seg1 = *it; ++it;
-  SegmentType const & seg2 = *it;
+  SegmentHandleType const & seg1 = *it; ++it;
+  SegmentHandleType const & seg2 = *it;
 
   //
   // Test 1: Iterate over all interface facets:

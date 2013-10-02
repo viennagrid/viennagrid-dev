@@ -14,29 +14,32 @@
 
 int main()
 {
-    typedef viennagrid::triangular_2d_mesh mesh_type;
+    typedef viennagrid::triangular_2d_mesh MeshType;
+    typedef viennagrid::triangular_2d_segmentation SegmentationType;
+    typedef viennagrid::triangular_2d_segment_handle SegmentHandleType;
     
-    typedef viennagrid::result_of::point<mesh_type>::type point_type;
+    typedef viennagrid::result_of::point<MeshType>::type point_type;
     
-    typedef viennagrid::result_of::vertex_handle<mesh_type>::type vertex_handle_type;
-    typedef viennagrid::result_of::vertex<mesh_type>::type vertex_type;
+    typedef viennagrid::result_of::vertex_handle<MeshType>::type VertexHandleType;
+//     typedef viennagrid::result_of::vertex<MeshType>::type vertex_type;
     
-    typedef viennagrid::result_of::line<mesh_type>::type line_type;
+//     typedef viennagrid::result_of::line<MeshType>::type line_type;
     
-    typedef viennagrid::result_of::triangle_handle<mesh_type>::type triangle_handle_type;
-    typedef viennagrid::result_of::triangle<mesh_type>::type triangle_type;
+//     typedef viennagrid::result_of::triangle_handle<MeshType>::type TriangleHandleType;
+//     typedef viennagrid::result_of::triangle<MeshType>::type triangle_type;
 
-    mesh_type mesh;
+    MeshType mesh;
+    SegmentationType segmentation(mesh);
     
-    vertex_handle_type v00 = viennagrid::make_vertex(mesh, point_type(0.0, 0.0));
-    vertex_handle_type v10 = viennagrid::make_vertex(mesh, point_type(1.0, 0.0));
-    vertex_handle_type v20 = viennagrid::make_vertex(mesh, point_type(2.0, 0.0));
-    vertex_handle_type v01 = viennagrid::make_vertex(mesh, point_type(0.0, 1.0));
-    vertex_handle_type v11 = viennagrid::make_vertex(mesh, point_type(1.0, 1.0));
-    vertex_handle_type v21 = viennagrid::make_vertex(mesh, point_type(2.0, 1.0));
-    vertex_handle_type v02 = viennagrid::make_vertex(mesh, point_type(0.0, 2.0));
-    vertex_handle_type v12 = viennagrid::make_vertex(mesh, point_type(1.0, 2.0));
-    vertex_handle_type v22 = viennagrid::make_vertex(mesh, point_type(2.0, 2.0));
+    VertexHandleType v00 = viennagrid::make_vertex(mesh, point_type(0.0, 0.0));
+    VertexHandleType v10 = viennagrid::make_vertex(mesh, point_type(1.0, 0.0));
+    VertexHandleType v20 = viennagrid::make_vertex(mesh, point_type(2.0, 0.0));
+    VertexHandleType v01 = viennagrid::make_vertex(mesh, point_type(0.0, 1.0));
+    VertexHandleType v11 = viennagrid::make_vertex(mesh, point_type(1.0, 1.0));
+    VertexHandleType v21 = viennagrid::make_vertex(mesh, point_type(2.0, 1.0));
+    VertexHandleType v02 = viennagrid::make_vertex(mesh, point_type(0.0, 2.0));
+    VertexHandleType v12 = viennagrid::make_vertex(mesh, point_type(1.0, 2.0));
+    VertexHandleType v22 = viennagrid::make_vertex(mesh, point_type(2.0, 2.0));
 
     
     viennagrid::make_triangle(mesh, v00, v01, v11);
@@ -48,13 +51,13 @@ int main()
     viennagrid::make_triangle(mesh, v02, v11, v12);
     viennagrid::make_triangle(mesh, v01, v11, v02);
     
-    typedef viennagrid::result_of::triangle_range<mesh_type>::type triangle_range_type;
+    typedef viennagrid::result_of::triangle_range<MeshType>::type triangle_range_type;
     typedef viennagrid::result_of::iterator<triangle_range_type>::type triangle_range_iterator;
     
     std::cout << viennagrid::triangles(mesh).size() << std::endl;
     
     
-    typedef viennagrid::result_of::mesh_view<mesh_type>::type mesh_view_type;
+    typedef viennagrid::result_of::mesh_view<MeshType>::type mesh_view_type;
     mesh_view_type elements_to_erase = viennagrid::make_view(mesh);
     viennagrid::mark_erase_elements( mesh, elements_to_erase, v22 );
     viennagrid::mark_erase_elements( mesh, elements_to_erase, v21 );

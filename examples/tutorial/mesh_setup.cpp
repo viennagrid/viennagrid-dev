@@ -48,14 +48,14 @@ int main()
   
   typedef viennagrid::triangular_2d_mesh                  MeshType;
   typedef viennagrid::triangular_2d_segmentation            SegmentationType;
-  typedef viennagrid::triangular_2d_segment                 SegmentType;
+  typedef viennagrid::triangular_2d_segment_handle                 SegmentHandleType;
   
   typedef viennagrid::result_of::point<MeshType>::type            PointType;
   typedef viennagrid::result_of::vertex<MeshType>::type           VertexType;
   typedef viennagrid::result_of::vertex_handle<MeshType>::type    VertexHandleType;
   
   typedef viennagrid::result_of::cell<MeshType>::type             CellType;
-  typedef viennagrid::result_of::cell_range<SegmentType>::type      CellRange;
+  typedef viennagrid::result_of::cell_range<SegmentHandleType>::type      CellRange;
   typedef viennagrid::result_of::iterator<CellRange>::type          CellIterator;
 
   std::cout << "-------------------------------------------------------------- " << std::endl;
@@ -69,8 +69,8 @@ int main()
   MeshType mesh;
   SegmentationType segmentation(mesh);
 
-  SegmentType seg0 = segmentation.make_segment();
-  SegmentType seg1 = segmentation.make_segment();
+  SegmentHandleType seg0 = segmentation.make_segment();
+  SegmentHandleType seg1 = segmentation.make_segment();
   
   //
   // Step 2: Add vertices to the mesh. 

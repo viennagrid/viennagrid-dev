@@ -136,10 +136,10 @@ namespace viennagrid
      * @tparam SegmentationT      The segmentation type
      */
     template<typename SegmentationT>
-    struct segment;
+    struct segment_handle;
 
     template<typename WrappedConfigT>
-    struct segment< segmentation_t<WrappedConfigT> >
+    struct segment_handle< segmentation_t<WrappedConfigT> >
     {
       typedef segment_handle_t< segmentation_t<WrappedConfigT> > type;
     };

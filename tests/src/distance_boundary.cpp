@@ -55,7 +55,7 @@ void setup_meshs(viennagrid::triangular_2d_mesh & mesh0,
                    viennagrid::triangular_2d_segmentation & segmentation1)
 {
   typedef viennagrid::triangular_2d_mesh                      MeshType;
-  typedef viennagrid::triangular_2d_segment                     SegmentType;
+  typedef viennagrid::triangular_2d_segment_handle                     SegmentHandleType;
   typedef viennagrid::triangle_tag                                      CellTag;
   
   typedef viennagrid::result_of::point<MeshType>::type          PointType;
@@ -103,8 +103,8 @@ void setup_meshs(viennagrid::triangular_2d_mesh & mesh0,
     VertexHandleType vertices[3];
 
     
-    SegmentType seg0 = segmentation0.make_segment();
-    SegmentType seg1 = segmentation0.make_segment();
+    SegmentHandleType seg0 = segmentation0.make_segment();
+    SegmentHandleType seg1 = segmentation0.make_segment();
     
     //segment 0:
     vertices[0] = v[0];
@@ -198,7 +198,7 @@ void setup_meshs(viennagrid::triangular_2d_mesh & mesh0,
     std::cout << "Adding cells to mesh..." << std::endl;
     VertexHandleType vertices[3];
     
-    SegmentType seg0 = segmentation1.make_segment();
+    SegmentHandleType seg0 = segmentation1.make_segment();
     
     //segment 0:
     
@@ -232,7 +232,7 @@ void test(viennagrid::triangular_2d_mesh)
 {
   typedef viennagrid::triangular_2d_mesh                      Mesh;
   typedef viennagrid::triangular_2d_segmentation                Segmentation;
-  typedef viennagrid::triangular_2d_segment                     Segment;
+  typedef viennagrid::triangular_2d_segment_handle                     Segment;
   typedef viennagrid::triangle_tag                                      CellTag;
   
   typedef viennagrid::result_of::point<Mesh>::type                PointType;

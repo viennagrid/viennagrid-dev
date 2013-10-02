@@ -128,8 +128,8 @@ namespace viennagrid
       typedef segmentation_t<WrappedSegmentationConfigInT>      WrappedSegmentationConfigInType;
       typedef segmentation_t<WrappedSegmentationConfigOutT>     WrappedSegmentationConfigOutType;
 
-      typedef typename viennagrid::result_of::segment<WrappedSegmentationConfigInType>::type     SegmentInType;
-      typedef typename viennagrid::result_of::segment<WrappedSegmentationConfigOutType>::type    SegmentOutType;
+      typedef typename viennagrid::result_of::segment_handle<WrappedSegmentationConfigInType>::type     SegmentHandleInType;
+      typedef typename viennagrid::result_of::segment_handle<WrappedSegmentationConfigOutType>::type    SegmentHandleOutType;
 
       
       typedef typename viennagrid::result_of::point<WrappedMeshConfigInType>::type       PointType;
@@ -145,7 +145,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::iterator<VertexRange>::type                             VertexIterator;
       typedef typename viennagrid::result_of::const_element_range<WrappedMeshConfigInType, line_tag>::type       EdgeRange;
       typedef typename viennagrid::result_of::iterator<EdgeRange>::type                               EdgeIterator;
-      typedef typename viennagrid::result_of::const_element_range<SegmentInType, CellTagInT>::type    CellRange;
+      typedef typename viennagrid::result_of::const_element_range<SegmentHandleInType, CellTagInT>::type    CellRange;
       typedef typename viennagrid::result_of::iterator<CellRange>::type                               CellIterator;
       typedef typename viennagrid::result_of::const_element_range<CellType, vertex_tag>::type         VertexOnCellRange;
       typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type                       VertexOnCellIterator;
@@ -187,8 +187,8 @@ namespace viennagrid
       // TODO: fix overlapping segments (with this implementation overlapping segments would result in multiple elements)
       for (typename WrappedSegmentationConfigInType::const_iterator sit = segmentation_in.begin(); sit != segmentation_in.end(); ++sit)
       {
-        SegmentInType  const & segment_in  = *sit;
-        SegmentOutType       & segment_out = segmentation_out( sit->id() );
+        SegmentHandleInType  const & segment_in  = *sit;
+        SegmentHandleOutType       & segment_out = segmentation_out( sit->id() );
         
         CellRange cells = viennagrid::elements(segment_in);
         for (CellIterator cit  = cells.begin();

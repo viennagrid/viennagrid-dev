@@ -38,8 +38,8 @@ void test(std::string & infile, std::string & outfile)
 {
 
   typedef typename viennagrid::result_of::segmentation<MeshType>::type           SegmentationType;
-  typedef typename viennagrid::result_of::segment<SegmentationType>::type           SegmentType;
-  typedef typename SegmentType::segment_id_type SegmentIDType;
+  typedef typename viennagrid::result_of::segment_handle<SegmentationType>::type           SegmentHandleType;
+  typedef typename SegmentHandleType::segment_id_type SegmentIDType;
   
   typedef typename viennagrid::result_of::point<MeshType>::type          PointType;
   typedef typename viennagrid::result_of::vertex<MeshType>::type       VertexType;
@@ -51,10 +51,10 @@ void test(std::string & infile, std::string & outfile)
   typedef typename viennagrid::result_of::cell_range<MeshType>::type     CellContainer;
   typedef typename viennagrid::result_of::iterator<CellContainer>::type                          CellIterator;
 
-  typedef typename viennagrid::result_of::vertex_range<SegmentType>::type                 SegmentVertexContainer;
+  typedef typename viennagrid::result_of::vertex_range<SegmentHandleType>::type                 SegmentVertexContainer;
   typedef typename viennagrid::result_of::iterator<SegmentVertexContainer>::type        SegmentVertexIterator;
 
-  typedef typename viennagrid::result_of::cell_range<SegmentType>::type     SegmentCellContainer;
+  typedef typename viennagrid::result_of::cell_range<SegmentHandleType>::type     SegmentCellContainer;
   typedef typename viennagrid::result_of::iterator<SegmentCellContainer>::type                    SegmentCellIterator;
 
   

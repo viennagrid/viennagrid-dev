@@ -40,7 +40,7 @@ void test(ReaderType & my_reader, std::string const & infile, std::string const 
 {
 
   typedef typename viennagrid::result_of::segmentation<MeshType>::type          SegmentationType;
-  typedef typename viennagrid::result_of::segment<SegmentationType>::type         SegmentType;
+  typedef typename viennagrid::result_of::segment_handle<SegmentationType>::type         SegmentHandleType;
   
   typedef typename viennagrid::result_of::point<MeshType>::type                 PointType;
   typedef typename viennagrid::result_of::vertex<MeshType>::type                VertexType;
@@ -48,7 +48,7 @@ void test(ReaderType & my_reader, std::string const & infile, std::string const 
 
   typedef typename viennagrid::result_of::vertex_range<MeshType>::type          VertexContainer;
   typedef typename viennagrid::result_of::iterator<VertexContainer>::type         VertexIterator;
-  typedef typename viennagrid::result_of::vertex_range<SegmentType>::type         SegmentVertexContainer;
+  typedef typename viennagrid::result_of::vertex_range<SegmentHandleType>::type         SegmentVertexContainer;
   typedef typename viennagrid::result_of::iterator<SegmentVertexContainer>::type  SegmentVertexIterator;
       
   typedef typename viennagrid::result_of::line_range<MeshType>::type            EdgeContainer;
@@ -147,7 +147,7 @@ void test_vtk(ReaderType & my_reader, std::string const & infile, std::string co
 {
 
   typedef typename viennagrid::result_of::segmentation<MeshType>::type          SegmentationType;
-  typedef typename viennagrid::result_of::segment<SegmentationType>::type         SegmentType;
+  typedef typename viennagrid::result_of::segment_handle<SegmentationType>::type         SegmentHandleType;
   
   typedef typename viennagrid::result_of::point<MeshType>::type                 PointType;
   typedef typename viennagrid::result_of::vertex<MeshType>::type                VertexType;
@@ -155,7 +155,7 @@ void test_vtk(ReaderType & my_reader, std::string const & infile, std::string co
 
   typedef typename viennagrid::result_of::vertex_range<MeshType>::type          VertexContainer;
   typedef typename viennagrid::result_of::iterator<VertexContainer>::type         VertexIterator;
-  typedef typename viennagrid::result_of::vertex_range<SegmentType>::type         SegmentVertexContainer;
+  typedef typename viennagrid::result_of::vertex_range<SegmentHandleType>::type         SegmentVertexContainer;
   typedef typename viennagrid::result_of::iterator<SegmentVertexContainer>::type  SegmentVertexIterator;
       
   typedef typename viennagrid::result_of::line_range<MeshType>::type            EdgeContainer;

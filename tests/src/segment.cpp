@@ -70,7 +70,7 @@ void test(viennagrid::tetrahedral_3d_mesh)
   typedef viennagrid::tetrahedral_3d_mesh                         MeshType;
   typedef viennagrid::result_of::cell_tag<MeshType>::type         CellTag;
   typedef viennagrid::result_of::segmentation<MeshType>::type     SegmentationType;
-  typedef viennagrid::result_of::segment<SegmentationType>::type    SegmentType;
+  typedef viennagrid::result_of::segment_handle<SegmentationType>::type    SegmentHandleType;
   
   typedef viennagrid::result_of::point<MeshType>::type            PointType;
   typedef viennagrid::result_of::vertex<MeshType>::type           VertexType;
@@ -100,8 +100,8 @@ void test(viennagrid::tetrahedral_3d_mesh)
 
   
   std::cout << "Creating segments..." << std::endl;
-  SegmentType seg0 = segmentation.make_segment();
-  SegmentType seg1 = segmentation.make_segment();
+  SegmentHandleType seg0 = segmentation.make_segment();
+  SegmentHandleType seg1 = segmentation.make_segment();
 
   std::cout << "Adding cells to segments..." << std::endl;
   
@@ -148,7 +148,7 @@ void test(viennagrid::hexahedral_3d_mesh)
   typedef viennagrid::hexahedral_3d_mesh                         MeshType;
   typedef viennagrid::result_of::cell_tag<MeshType>::type         CellTag;
   typedef viennagrid::result_of::segmentation<MeshType>::type     SegmentationType;
-  typedef viennagrid::result_of::segment<SegmentationType>::type    SegmentType;
+  typedef viennagrid::result_of::segment_handle<SegmentationType>::type    SegmentHandleType;
   
   typedef viennagrid::result_of::point<MeshType>::type            PointType;
   typedef viennagrid::result_of::vertex<MeshType>::type           VertexType;
@@ -182,8 +182,8 @@ void test(viennagrid::hexahedral_3d_mesh)
     vh[i] = viennagrid::make_vertex( mesh, p[i] );
 
   std::cout << "Creating segments..." << std::endl;
-  SegmentType seg0 = segmentation.make_segment();
-  SegmentType seg1 = segmentation.make_segment();
+  SegmentHandleType seg0 = segmentation.make_segment();
+  SegmentHandleType seg1 = segmentation.make_segment();
 
   std::cout << "Adding cells to segments..." << std::endl;
 
@@ -228,7 +228,7 @@ void test(viennagrid::triangular_2d_mesh)
   typedef viennagrid::triangular_2d_mesh                         MeshType;
   typedef viennagrid::result_of::cell_tag<MeshType>::type         CellTag;
   typedef viennagrid::result_of::segmentation<MeshType>::type     SegmentationType;
-  typedef viennagrid::result_of::segment<SegmentationType>::type    SegmentType;
+  typedef viennagrid::result_of::segment_handle<SegmentationType>::type    SegmentHandleType;
   
   typedef viennagrid::result_of::point<MeshType>::type            PointType;
   typedef viennagrid::result_of::vertex<MeshType>::type           VertexType;
@@ -256,8 +256,8 @@ void test(viennagrid::triangular_2d_mesh)
     vh[i] = viennagrid::make_vertex( mesh, p[i] );
   
   std::cout << "Creating segments..." << std::endl;
-  SegmentType seg0 = segmentation.make_segment();
-  SegmentType seg1 = segmentation.make_segment();
+  SegmentHandleType seg0 = segmentation.make_segment();
+  SegmentHandleType seg1 = segmentation.make_segment();
 
   std::cout << "Adding cells to segments..." << std::endl;
   
@@ -304,7 +304,7 @@ void test(viennagrid::quadrilateral_2d_mesh)
   typedef viennagrid::quadrilateral_2d_mesh                         MeshType;
   typedef viennagrid::result_of::cell_tag<MeshType>::type         CellTag;
   typedef viennagrid::result_of::segmentation<MeshType>::type     SegmentationType;
-  typedef viennagrid::result_of::segment<SegmentationType>::type    SegmentType;
+  typedef viennagrid::result_of::segment_handle<SegmentationType>::type    SegmentHandleType;
   
   typedef viennagrid::result_of::point<MeshType>::type            PointType;
   typedef viennagrid::result_of::vertex<MeshType>::type           VertexType;
@@ -332,8 +332,8 @@ void test(viennagrid::quadrilateral_2d_mesh)
     vh[i] = viennagrid::make_vertex( mesh, p[i] );
   
   std::cout << "Creating segments..." << std::endl;
-  SegmentType seg0 = segmentation.make_segment();
-  SegmentType seg1 = segmentation.make_segment();
+  SegmentHandleType seg0 = segmentation.make_segment();
+  SegmentHandleType seg1 = segmentation.make_segment();
 
   std::cout << "Adding cells to segments..." << std::endl;
 

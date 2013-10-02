@@ -29,7 +29,7 @@ void test(std::string & infile, std::string & outfile)
 {
   typedef typename viennagrid::result_of::cell_tag<MeshT>::type               CellTag;
   typedef typename viennagrid::result_of::segmentation<MeshT>::type           SegmentationType;
-  typedef typename viennagrid::result_of::segment<SegmentationType>::type       SegmentType;
+  typedef typename viennagrid::result_of::segment_handle<SegmentationType>::type       SegmentHandleType;
   
   typedef typename viennagrid::result_of::point<MeshT>::type          PointType;
   typedef typename viennagrid::result_of::vertex<MeshT>::type       VertexType;
