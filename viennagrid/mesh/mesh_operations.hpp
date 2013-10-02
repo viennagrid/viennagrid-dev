@@ -25,8 +25,8 @@ namespace viennagrid
   {
   //     typedef typename src_segment_container_type::value_type src_segment_handle_type;
   //     typedef typename dst_segment_container_type::value_type dst_segment_handle_type;
-      typedef typename viennagrid::result_of::segment<SrcSegmentationT>::type SrcSegmentHandleType;
-      typedef typename viennagrid::result_of::segment<DstSegmentationT>::type DstSegmentHandleType;
+      typedef typename viennagrid::result_of::segment_handle<SrcSegmentationT>::type SrcSegmentHandleType;
+      typedef typename viennagrid::result_of::segment_handle<DstSegmentationT>::type DstSegmentHandleType;
       
       typedef typename viennagrid::result_of::cell_tag<SrcMeshT>::type  SrcCellTag;
       typedef typename viennagrid::result_of::cell<SrcMeshT>::type      SrcCellType;
