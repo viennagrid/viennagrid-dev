@@ -18,6 +18,7 @@
 
 #include "viennagrid/forwards.hpp"
 #include "viennagrid/mesh/mesh.hpp"
+#include "viennagrid/mesh/element_deletion.hpp"
 
 
 /** @file segmentation.hpp
@@ -95,6 +96,12 @@ namespace viennagrid
 
   namespace result_of
   {
+    template<typename SegmentationT>
+    struct change_counter_type< segment_handle_t<SegmentationT> >
+    {
+      typedef typename change_counter_type< typename segment_handle_t<SegmentationT>::view_type >::type type;
+    };
+    
     // doxygen docu in mesh.hpp
     template<typename SegmentationType, typename element_type_or_tag>
     struct is_element_present< segment_handle_t<SegmentationType>, element_type_or_tag >
@@ -162,6 +169,40 @@ namespace viennagrid
     struct segment_id< segmentation_t<WrappedConfigType> >
     {
       typedef typename segmentation_t<WrappedConfigType>::segment_id_type type;
+    };
+    
+    
+    /** @brief Metafunction for obtaining a mesh view from a mesh. Elements can be directly given. If viennagrid::meta::null_type is specified somewhere all following types will be ignored. The default type for all element types is viennagrid::meta::null_type.
+     *
+     * @tparam MeshT              The host mesh type
+     * @tparam Element0TypeOrTagT   The first element type which is present in the mesh view
+     * @tparam Element1TypeOrTagT   The second element type which is present in the mesh view
+     * @tparam Element2TypeOrTagT   The third element type which is present in the mesh view
+     * @tparam Element3TypeOrTagT   The forth element type which is present in the mesh view
+     * @tparam Element4TypeOrTagT   The fifth element type which is present in the mesh view
+     * @tparam Element5TypeOrTagT   The sixth element type which is present in the mesh view
+     * @tparam Element6TypeOrTagT   The seventh element type which is present in the mesh view
+     * @tparam Element7TypeOrTagT   The eighth element type which is present in the mesh view
+     * @tparam Element8TypeOrTagT   The nineth element type which is present in the mesh view
+     * @tparam Element9TypeOrTagT   The tenth element type which is present in the mesh view
+     */
+    template<typename SegmentationT,
+             typename Element0TypeOrTagT, typename Element1TypeOrTagT,
+             typename Element2TypeOrTagT, typename Element3TypeOrTagT,
+             typename Element4TypeOrTagT, typename Element5TypeOrTagT,
+             typename Element6TypeOrTagT, typename Element7TypeOrTagT,
+             typename Element8TypeOrTagT, typename Element9TypeOrTagT>
+    struct mesh_view< segment_handle_t<SegmentationT>,
+                      Element0TypeOrTagT, Element1TypeOrTagT, Element2TypeOrTagT, Element3TypeOrTagT, Element4TypeOrTagT,
+                      Element5TypeOrTagT, Element6TypeOrTagT, Element7TypeOrTagT, Element8TypeOrTagT, Element9TypeOrTagT>
+    {
+      typedef typename segment_handle_t<SegmentationT>::view_type ViewType;
+      
+        typedef typename mesh_view<
+            ViewType,
+            Element0TypeOrTagT, Element1TypeOrTagT, Element2TypeOrTagT, Element3TypeOrTagT, Element4TypeOrTagT,
+            Element5TypeOrTagT, Element6TypeOrTagT, Element7TypeOrTagT, Element8TypeOrTagT, Element9TypeOrTagT
+        >::type type;
     };
   }
 
@@ -236,6 +277,19 @@ namespace viennagrid
   { return id_upper_bound<ElementTypeOrTag>( segment.view() ); }
 
 
+  
+  /** @brief Creates a view out of a mesh using the mesh_proxy object
+    *
+    * @tparam MeshOrSegmentHandleT    The mesh or segment type from which the mesh view is created
+    * @param  mesh              The mesh or segment object from which the mesh view is created
+    * @return                     a mesh_proxy object holding the host mesh/segment object, can be assigned to a mesh_t object
+    */
+  template<typename SegmentationT>
+  mesh_proxy< typename SegmentationT::view_type > make_view(segment_handle_t<SegmentationT> & segment)
+  {
+      return mesh_proxy<typename SegmentationT::view_type>( segment.view() );
+  }
+  
 
 
   /** @brief Function for obtaining the point from a vertex
@@ -987,7 +1041,7 @@ namespace viennagrid
                             typename viennagrid::result_of::element_taglist<MeshT>::type,
                             SegmentIDType,
                             viennagrid::storage::std_vector_tag,
-                            typename MeshT::change_counter_type
+                            typename viennagrid::result_of::change_counter_type<MeshT>::type
                           >::type
                         >
 
@@ -1039,7 +1093,7 @@ namespace viennagrid
                         typename viennagrid::result_of::element_taglist<MeshT>::type,
                         SegmentIDType,
                         viennagrid::storage::std_vector_tag,
-                        typename MeshT::change_counter_type
+                        typename viennagrid::result_of::change_counter_type<MeshT>::type
                       >::type
                     >
 
@@ -1368,10 +1422,10 @@ namespace viennagrid
 
 
   /** @brief For internal use only */
-  template<typename segment_handle_type, typename element_segment_mapping_type, typename container_tag>
-  bool erase( segment_handle_type & segment, segment_info_t<element_segment_mapping_type, container_tag> & segment_info )
+  template<typename SegmentHandleT, typename ElementSegmentMappingT, typename ContainerTagT>
+  bool erase( SegmentHandleT & segment, segment_info_t<ElementSegmentMappingT, ContainerTagT> & segment_info )
   {
-    typedef typename segment_info_t<element_segment_mapping_type, container_tag>::element_segment_mapping_container_type element_segment_mapping_container_type;
+    typedef typename segment_info_t<ElementSegmentMappingT, ContainerTagT>::element_segment_mapping_container_type element_segment_mapping_container_type;
 
     for (typename element_segment_mapping_container_type::iterator it = segment_info.element_segment_mapping_container.begin();
                                                                    it != segment_info.element_segment_mapping_container.end();
@@ -1389,8 +1443,8 @@ namespace viennagrid
   }
 
   /** @brief For internal use only */
-  template< typename segment_handle_type, typename accessor_type, typename element_type >
-  bool erase( segment_handle_type & segment, accessor_type accessor, element_type const & element )
+  template< typename SegmentHandleT, typename AccessorT, typename ElementT >
+  bool erase( SegmentHandleT & segment, AccessorT accessor, ElementT const & element )
   {
       return erase( segment, accessor(element) );
   }
@@ -1408,7 +1462,12 @@ namespace viennagrid
   bool erase( SegmentHandleT & segment, element_t<ElementTagT, WrappedConfigT> & element )
   {
       typedef element_t<ElementTagT, WrappedConfigT> element_type;
-      viennagrid::elements<element_type>( segment.view() ).erase_handle( viennagrid::handle( segment.segmentation().mesh(), element ) );
+      
+      
+      viennagrid::erase_element( segment, viennagrid::handle(segment, element) );
+//       viennagrid::elements<element_type>( segment.view() ).erase_handle( viennagrid::handle( segment.segmentation().mesh(), element ) );
+      
+      
       return erase( segment, viennagrid::make_accessor<element_type>( element_segment_mapping_collection(segment) ), element );
   }
 
