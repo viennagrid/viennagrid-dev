@@ -16,10 +16,10 @@ Thus, the mesh type using the provided configuration class for two-dimensional t
 
  // The mesh to be set up in the following
  MeshType mesh;
- 
+
  // The segmentation for the example mesh in Figure 4.1
  SegmentationType segmentation(mesh);
- 
+
  // Segment 0, the left one
  SegmentType segment_0 = segmentation.make_segment();
  // Segment 1, the right one
@@ -89,7 +89,7 @@ It is also possible to explicitly specify the ID for a new vertex:
 \begin{lstlisting}
  typedef viennagrid::result_of::vertex<MeshType>::type   VertexType;
  typedef viennagrid::result_of::id<VertexType>::Type       VertexIDType;
- 
+
  VertexHandleType some_vh = viennagrid::make_vertex(mesh, VertexIDType(42), PointType(0,0));  // add some vertex with ID 42
 \end{lstlisting}
 
@@ -140,7 +140,7 @@ Thus, the array of handles to vertices is created as usual:
 \begin{lstlisting}
  VertexHandleType cell_vertices[3];
 \end{lstlisting}
-Instead of hard-coding the number of vertices for a triangle, one can instead use 
+Instead of hard-coding the number of vertices for a triangle, one can instead use
 \begin{lstlisting}
 VertexHandleType cell_vertices[viennagrid::boundary_elements<CellTag,viennagrid::vertex_tag>::num];
 \end{lstlisting}
@@ -160,7 +160,7 @@ If the vertex handles are not present at this point you can search them with the
 \begin{lstlisting}
  typedef viennagrid::result_of::vertex<MeshType>::type   VertexType;
  typedef viennagrid::result_of::id<VertexType>::Type       VertexIDType;
- 
+
  // vertex #0
  cell_vertices[0] = viennagrid::find_by_id(mesh, VertexIDType(0));
   // vertex #1
@@ -173,7 +173,7 @@ If you can ensure that the vertex with ID 0 was created first, the vertex with I
 \begin{lstlisting}
  typedef viennagrid::result_of::vertex<MeshType>::type   VertexType;
  typedef viennagrid::result_of::id<VertexType>::Type       VertexIDType;
- 
+
  cell_vertices[0] = viennagrid::vertices(mesh)[0]; // vertex #0
  cell_vertices[1] = viennagrid::vertices(mesh)[1]; // vertex #1
  cell_vertices[2] = viennagrid::vertices(mesh)[5]; // vertex #5
@@ -202,7 +202,7 @@ Creating element with explicit ID is also supported:
 
 \begin{lstlisting}
  typedef viennagrid::result_of::id<CellType>::Type       CellIDType;
- 
+
  viennagrid::make_element_with_id<CellType>(segment_0,
                                             cell_vertices, cell_vertices+3,
                                             CellIDType(42));

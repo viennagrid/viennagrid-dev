@@ -9,7 +9,7 @@
 
    Authors:      Karl Rupp                           rupp@iue.tuwien.ac.at
                  Josef Weinbub                    weinbub@iue.tuwien.ac.at
-               
+
    (A list of additional contributors can be found in the PDF manual)
 
    License:      MIT (X11), see file LICENSE in the base directory
@@ -41,7 +41,7 @@ int main()
 
   Mesh mesh;
   Segmentation segmentation(mesh);
-        
+
   viennagrid::io::netgen_reader my_netgen_reader;
   my_netgen_reader(mesh, segmentation, "/export/florian/work/meshes/IUE/half-trigate.mesh");
 
@@ -51,11 +51,11 @@ int main()
   std::cout << viennagrid::vertices( segmentation[1] ).size() << std::endl;
   std::cout << viennagrid::lines( segmentation[1] ).size() << std::endl;
   std::cout << viennagrid::triangles( segmentation[1] ).size() << std::endl;
-  
+
 
   viennagrid::io::vtk_writer<Mesh> writer;
   writer(mesh, segmentation, "trigate");
 
-  
+
   return EXIT_SUCCESS;
 }

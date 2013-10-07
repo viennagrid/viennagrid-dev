@@ -6,7 +6,7 @@ platforms, but we could not check every possible combination of hardware,
 operating system, and compiler. If you experience any trouble, please write to
 the mailing list at \\
 \begin{center}
-\texttt{viennagrid-support$@$lists.sourceforge.net} 
+\texttt{viennagrid-support$@$lists.sourceforge.net}
 \end{center}
 
 
@@ -27,9 +27,9 @@ for building the examples)
 
 
 \section{Generic Installation of ViennaGrid} \label{sec:viennagrid-installation}
-Since {\ViennaGrid} is a header-only library, it is sufficient to copy the 
+Since {\ViennaGrid} is a header-only library, it is sufficient to copy the
 \lstinline|viennagrid/| source folder either into your project folder or to your global system
-include path. If you do not have {\ViennaData} installed, proceed in the same way for the respective source folder \lstinline|viennadata/|. 
+include path. If you do not have {\ViennaData} installed, proceed in the same way for the respective source folder \lstinline|viennadata/|.
 
 On Unix-like operating systems, the global system include path is usually \lstinline|/usr/include/| or \lstinline|/usr/local/include/|.
 On Windows, the situation strongly depends on your development environment. We
@@ -38,7 +38,7 @@ path correctly. With Visual Studio 9.0 this is usually something like
 \texttt{C:$\setminus$Program Files$\setminus$Microsoft Visual Studio
 9.0$\setminus$VC$\setminus$include}
 and can be set in \texttt{Tools -> Options -> Projects and Solutions ->
-VC++-\-Directories}. 
+VC++-\-Directories}.
 
 
 % -----------------------------------------------------------------------------
@@ -86,7 +86,7 @@ Execute
 \end{lstlisting}
 to obtain a Makefile and type
 \begin{lstlisting}
- $> make 
+ $> make
 \end{lstlisting}
 to build the examples. If desired, one can build each example separately instead:
 \begin{lstlisting}
@@ -97,12 +97,12 @@ to build the examples. If desired, one can build each example separately instead
 
 \subsection{Mac OS X}
 \label{apple}
-The tools mentioned in Section \ref{dependencies} are available on 
-Macintosh platforms too. 
+The tools mentioned in Section \ref{dependencies} are available on
+Macintosh platforms too.
 For the {\GCC} compiler the Xcode~\cite{xcode} package has to be installed.
 To install {\CMake}, external portation tools such as
-Fink~\cite{fink}, DarwinPorts~\cite{darwinports}, 
-or MacPorts~\cite{macports} have to be used. 
+Fink~\cite{fink}, DarwinPorts~\cite{darwinports},
+or MacPorts~\cite{macports} have to be used.
 
 The build process of {\ViennaGrid} is similar to Linux.
 

@@ -9,7 +9,7 @@
 
    Authors:      Karl Rupp                           rupp@iue.tuwien.ac.at
                  Josef Weinbub                    weinbub@iue.tuwien.ac.at
-               
+
    (A list of additional contributors can be found in the PDF manual)
 
    License:      MIT (X11), see file LICENSE in the base directory
@@ -28,9 +28,9 @@ int main()
   std::cout << "*****************" << std::endl;
   std::cout << "* Test started! *" << std::endl;
   std::cout << "*****************" << std::endl;
-  
+
   std::cout << " ------ Part 1: Simplex meshs ------- " << std::endl;
-  
+
   std::cout << "* instantiating simplex 10u mesh.. " << std::endl;
   viennagrid::result_of::mesh<viennagrid::config::vertex_1d>::type      mesh_simplex_10u;
   std::cout << "* instantiating simplex 20u mesh.. " << std::endl;
@@ -50,7 +50,7 @@ int main()
   std::cout << "* instantiating simplex 33u mesh.. " << std::endl;
   viennagrid::result_of::mesh<viennagrid::config::tetrahedral_3d>::type mesh_simplex_33u;
 
-  
+
   std::cout << " ------ Part 2: Non-simplex meshs ------- " << std::endl;
 
   std::cout << "* instantiating quadrilateral 22u mesh.. " << std::endl;
@@ -59,10 +59,10 @@ int main()
   viennagrid::result_of::mesh<viennagrid::config::quadrilateral_3d>::type mesh_32u;
   std::cout << "* instantiating hexagonal 33u mesh.. " << std::endl;
   viennagrid::result_of::mesh<viennagrid::config::hexahedral_3d>::type mesh_33u;
-  
+
   std::cout << "*******************************" << std::endl;
   std::cout << "* Test finished successfully! *" << std::endl;
   std::cout << "*******************************" << std::endl;
-  
+
   return EXIT_SUCCESS;
 }

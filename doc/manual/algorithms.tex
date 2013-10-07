@@ -34,7 +34,7 @@ A tutorial covering the algorithms explained in this chapter can be found in \ls
    Voronoi grid & \texttt{voronoi.hpp} & \lstinline|apply_voronoi(domseg, ...)| \\
    \hline
  \end{tabular}
- \caption{List of algorithms available in \texttt{viennagrid/algorithm/} grouped by the objects they are acting on. 
+ \caption{List of algorithms available in \texttt{viennagrid/algorithm/} grouped by the objects they are acting on.
     \lstinline|a| and \lstinline|b| denote vectors, \lstinline|element| refers to an element,
     \lstinline|mesh| to a mesh, \lstinline|seg1| and \lstinline|seg2| to segments, and \lstinline|domseg| to either a mesh or a segment.}
  \label{tab:algorithms}
@@ -57,7 +57,7 @@ The point type in {\ViennaGrid} should be seen in this context mostly as a vecto
   std::cout << viennagrid::cross_prod(p1, p2) << std::endl; //0 0 1
  \end{lstlisting}
  If the two vectors are given in different coordinate systems, the result vector will have the same coordinate system as the first argument.
-  
+
 
   \subsection{Inner Products}
  Unlike cross products, inner products (aka.~dot products) are well defined for arbitrary dimensions. In {\ViennaGridversion} an inner product of the form
@@ -71,7 +71,7 @@ is available with the function \lstinline|inner_prod()|. The following code calc
   std::cout << viennagrid::inner_prod(p1, p2) << std::endl;  //0
  \end{lstlisting}
  If the two vectors are given in different coordinate systems, the result vector will have the same coordinate system as the first argument.
- 
+
   \subsection{Vector Norms}
  Currently, $p$-norms of the form
   \begin{align}
@@ -91,7 +91,7 @@ which are equivalent to
   std::cout << viennagrid::norm(p, viennagrid::two_tag()) << std::endl;
   std::cout << viennagrid::norm(p, viennagrid::inf_tag()) << std::endl;
  \end{lstlisting}
- 
+
 
   \subsection{Volume of a Spanned Simplex}
   It is often handy to compute the $n$-dimensional volume of a $n$-simplex embedded in a possibly higher-dimensional geometric space by providing the locations of the vertices only.
@@ -108,7 +108,7 @@ which are equivalent to
 
 \section{Element-Based}
 In this section, algorithms defined for geometric objects with additional structure are discussed. Additional algorithms are likely to be introduced in future releases.
- 
+
   \subsection{Centroid}
   The centroid of an element object \lstinline|element| in Cartesian coordinates is obtained as
   \begin{lstlisting}
@@ -160,10 +160,10 @@ Algorithms acting on a collection of cells are now considered. These collections
  Note that \lstinline|is_boundary()| induces some additional setup costs at the first time the function is called. However, subsequent calls are accelerated and will usually compensate for the setup costs.
 
 %  \NOTE{\lstinline|is_boundary| requires that facets are stored within cells. Therefore, make sure not to disable the handling of facets, cf.~Section \ref{subsec:boundary-ncells-storage}. }
- 
+
 
  \subsection{Interface}
-  Similar to the detection of boundary facets, elements on the interface between two segments are frequently of particular interest. 
+  Similar to the detection of boundary facets, elements on the interface between two segments are frequently of particular interest.
   An element \lstinline|element| can be checked for being on the interface of two segments \lstinline|seg0| and \lstinline|seg1| using
  \begin{lstlisting}
   std::cout << viennagrid::is_interface(seg0, seg1, element) << std::endl;
@@ -183,7 +183,7 @@ It has to be noted that the resulting refined mesh is written to a new mesh, thu
  viennagrid::refine_uniformly(mesh, refined_mesh);
  \end{lstlisting}
  is sufficient.
- 
+
  Refinement is also supported for meshs with segmentations. Segment information is preserved upon refinement.
  \begin{lstlisting}
  MeshType refined_mesh;
@@ -198,8 +198,8 @@ It has to be noted that the resulting refined mesh is written to a new mesh, thu
  std::vector<bool> cell_refinement_container;
  viennagrid::result_of::accessor<std::vector<bool>, CellType>::type cell_refinement_accessor(cell_refinement_container);
  \end{lstlisting}
- 
- 
+
+
  To tag a cell \lstinline|c| for refinement, the line
  \begin{lstlisting}
  cell_refinement_accessor(c) = true;
@@ -209,9 +209,9 @@ It has to be noted that the resulting refined mesh is written to a new mesh, thu
  MeshType refined_mesh;
  viennagrid::cell_refine(mesh, refined_mesh, cell_refinement_accessor);
  \end{lstlisting}
- 
+
  \pagebreak
- 
+
  or, for segmentations
  \begin{lstlisting}
  MeshType refined_mesh;
@@ -257,7 +257,7 @@ It has to be noted that the resulting refined mesh is written to a new mesh, thu
 
  \subsection{Voronoi Information}
  A Voronoi diagram of a Delaunay tessellation (or triangulation) is a decomposition of the mesh into certain boxes containing one vertex each.
- The boxes have the property that all points inside the box are closer to the vertex within the box than to any other vertex in the mesh. 
+ The boxes have the property that all points inside the box are closer to the vertex within the box than to any other vertex in the mesh.
  By simple geometric arguments one finds that the corners of Voronoi boxes are given by the circumcenters of the triangles.
 
  The function \lstinline|apply_voronoi()| computes the volumes and interfaces associated with a Voronoi diagram. The following values are stored on the mesh (cf.~Fig.~\ref{fig:voronoi})
@@ -270,25 +270,25 @@ It has to be noted that the resulting refined mesh is written to a new mesh, thu
  \begin{lstlisting}
   using namespace viennagrid;
   typedef result_of::voronoi_cell_contribution<ConstCellHandleType>::type ContributionType;
- 
+
   std::vector<double> interface_areas;
   std::vector<ContributionType> interface_contributions;
-  
+
   result_of::accessor< std::vector<double>, EdgeType >::type interface_areas_accessor(interface_areas);
   result_of::accessor< std::vector<ContributionType>, EdgeType >::type interfaces_contribution_accessor(interface_contributions);
-  
+
   std::vector<double> vertex_box_volumes;
   std::vector<ContributionType> vertex_box_volume_contributions;
-  
+
   result_of::accessor< std::vector<double>, VertexType >::type vertex_box_volumes_accessor(vertex_box_volumes);
   result_of::accessor< std::vector<ContributionType>, VertexType >::type vertex_box_volume_contributions_accessor(vertex_box_volume_contributions);
-  
+
   std::vector<double> edge_box_volumes;
   std::vector<ContributionType> edge_box_volume_contributions;
-  
+
   result_of::accessor< std::vector<double>, EdgeType >::type edge_box_volumes_accessor(edge_box_volumes);
   result_of::accessor< std::vector<ContributionType>, EdgeType >::type edge_box_volume_contributions_accessor(edge_box_volume_contributions);
-  
+
   apply_voronoi<CellType>(
         mesh,
         interface_areas_accessor, interfaces_contribution_accessor,
@@ -296,5 +296,5 @@ It has to be noted that the resulting refined mesh is written to a new mesh, thu
         edge_box_volumes_accessor, edge_box_volume_contributions_accessor)
   );
  \end{lstlisting}
- 
+
  The voronoi values are stored in the corresponding accessors/containers.

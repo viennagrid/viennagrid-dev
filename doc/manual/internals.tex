@@ -1,14 +1,14 @@
 \chapter{Library Internals} \label{chap:internals}
 
-Details about the internals of {\ViennaGrid} will be given in the following. 
+Details about the internals of {\ViennaGrid} will be given in the following.
 They should aid developers to extend the library with additional features
-and to understand the internal data structures used. 
+and to understand the internal data structures used.
 Nevertheless, the information provided might be of interest for new users of {\ViennaGrid} as well.
 
 \section{Recursive Inheritance}
 {\ViennaGrid} extensively relies on recursive inheritance to build the individual element types.
 The element are of type \lstinline|element_t<ElementTag, ConfigType>|, where \lstinline|ElementTag| is a tag identifying the topological shape of the element and \lstinline|ConfigType| is the configuration class. The class \lstinline|element_t| itself is almost empty, but
-inherits the information about its boundary elements from a \lstinline|boundary_element_layer|. 
+inherits the information about its boundary elements from a \lstinline|boundary_element_layer|.
 In addition, the class inherits from a class with the sole purpose of providing an ID mechanism
 \begin{lstlisting}
  template <typename ElementTag,

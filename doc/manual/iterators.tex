@@ -3,7 +3,7 @@
 The (possibly nested) iteration over elements of a mesh is one of the main ingredients for a plethora of algorithms.
 Consequently, {\ViennaGrid} is designed such that these iterations can be carried out in a unified and flexible, yet efficient manner.
 
-At the heart of the various possibilities is the concept of a \emph{range}. A range provides iterators for accessing a half-open interval \texttt{[first,one\_past\_last)} of elements and provides information about the number of elements in the range. However, a range does not 'own' the elements which can be accessed through it \cite{boost}. 
+At the heart of the various possibilities is the concept of a \emph{range}. A range provides iterators for accessing a half-open interval \texttt{[first,one\_past\_last)} of elements and provides information about the number of elements in the range. However, a range does not 'own' the elements which can be accessed through it \cite{boost}.
 Employing the range-concept, any iteration over elements in {\ViennaGrid} consists of two phases:
 \begin{itemize}
  \item Initialize the range of elements over which to iterate.
@@ -42,7 +42,7 @@ For the example of const-iteration over vertices, this results in
 \begin{lstlisting}
  ConstVertexRange vertices = viennagrid::elements<vertex_tag>(mesh);
 \end{lstlisting}
-Since the left hand side operand already contains the topological dimension of elements over which to iterate, 
+Since the left hand side operand already contains the topological dimension of elements over which to iterate,
 the template argument to the \lstinline|elements| function can also be omitted:
 \begin{lstlisting}
  ConstVertexRange vertices = viennagrid::elements(mesh);
@@ -133,7 +133,7 @@ The following snippet print all edges of a \lstinline|element|:
  for (EdgeOnCellIterator eocit = edges_on_cell.begin();
                          eocit != edges_on_cell.end();
                        ++eocit)
- {  std::cout << *eocit << std::endl; } 
+ {  std::cout << *eocit << std::endl; }
 \end{lstlisting}
 
 For all topological dimensions, an index-based iteration is possible provided that the storage of the respective boundary elements has not been disabled. The previous code snippet can thus also be written as
@@ -141,7 +141,7 @@ For all topological dimensions, an index-based iteration is possible provided th
  EdgeOnCellRange edges_on_cell =
         viennagrid::elements<viennagrid::edge_tag>(element);
  for (std::size_t i=0; i<edges_on_cell.size(); ++i)
- { 
+ {
    do_something(edges_on_cell[i]);
  }
 \end{lstlisting}
@@ -159,7 +159,7 @@ The use of the latter is again discouraged for reasons of possible non-negligibl
 % \NOTE{In {\ViennaGridversion}, an iteration over all $k$-cells of an $n$-cell is not possible if the storage of boundary $k$-cells is disabled for $n$-cells, cf.~Section \ref{subsec:boundary-ncells-storage}. This restriction is expected to be relaxed in future versions of {\ViennaGrid}.}
 
 Finally, {\ViennaGrid} allows for iterations over the vertices of boundary elements of an element in the reference orientation imposed by the element, which is commonly required for ensuring continuity of a quantity along cell interfaces. Note that by default the iteration is carried out along the orientation imposed by the element in the way it is stored globally inside the mesh.
-The correct orientation of vertices with respect to the hosting element is established by the free function \lstinline|local_vertex()|. 
+The correct orientation of vertices with respect to the hosting element is established by the free function \lstinline|local_vertex()|.
 For instance, the vertices of a boundary element \lstinline|boundary_element| at the boundary of an element \lstinline|element| are printed in local orientation using the code lines
 \begin{lstlisting}
  for (std::size_t i=0;
@@ -237,7 +237,7 @@ Random access, i.e.~\lstinline|operator[]| is available for all topological leve
     std::cout << edges_on_v[i] << std::endl;
   }
 \end{lstlisting}
-or 
+or
 \begin{lstlisting}
   for (std::size_t i=0;
                    i < viennagrid::coboundary_elements<
@@ -317,7 +317,7 @@ Random access, i.e.~\lstinline|operator[]| is available for all topological leve
     std::cout << neighbour_triangles_of_t[i] << std::endl;
   }
 \end{lstlisting}
-or 
+or
 \begin{lstlisting}
   for (std::size_t i=0;
                    i < viennagrid::neighbour_elements<

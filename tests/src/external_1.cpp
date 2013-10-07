@@ -9,7 +9,7 @@
 
    Authors:      Karl Rupp                           rupp@iue.tuwien.ac.at
                  Josef Weinbub                    weinbub@iue.tuwien.ac.at
-               
+
    (A list of additional contributors can be found in the PDF manual)
 
    License:      MIT (X11), see file LICENSE in the base directory
@@ -93,24 +93,24 @@ int main()
   std::cout << "*****************" << std::endl;
   std::cout << "* Test started! *" << std::endl;
   std::cout << "*****************" << std::endl;
-  
-  
+
+
   //doing nothing but instantiating a few types
   viennagrid::triangular_2d_mesh  mesh;
-  
+
   std::cout << "--- Triangular mesh, 2d ---" << std::endl;
   std::cout << "Size<0>: " << viennagrid::elements<viennagrid::vertex_tag>(mesh).size() << std::endl;
   std::cout << "Size<1>: " << viennagrid::elements<viennagrid::vertex_tag>(mesh).size() << std::endl;
   std::cout << "Size<2>: " << viennagrid::elements<viennagrid::vertex_tag>(mesh).size() << std::endl;
-  
+
   //this is the external linkage check:
   other_func();
-  
-  
-  
+
+
+
   std::cout << "*******************************" << std::endl;
   std::cout << "* Test finished successfully! *" << std::endl;
   std::cout << "*******************************" << std::endl;
-  
+
   return EXIT_SUCCESS;
 }

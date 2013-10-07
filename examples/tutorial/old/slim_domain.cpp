@@ -9,7 +9,7 @@
 
    Authors:      Karl Rupp                           rupp@iue.tuwien.ac.at
                  Josef Weinbub                    weinbub@iue.tuwien.ac.at
-               
+
    (A list of additional contributors can be found in the PDF manual)
 
    License:      MIT (X11), see file LICENSE in the base directory
@@ -80,9 +80,9 @@ namespace viennagrid
     {
       typedef no_handling_tag    type;
     };
-    
+
     //-----------------------
-    
+
     template <typename ConfigType>
     struct bndcell_handling<ConfigType,  viennagrid::triangle_tag, 1>
     {
@@ -94,23 +94,23 @@ namespace viennagrid
     {
       typedef no_handling_tag    type;
     };
-    
+
     //-----------------------
-    
+
     template <typename ConfigType>
     struct bndcell_handling<ConfigType,  viennagrid::tetrahedron_tag, 2>
     {
       typedef no_handling_tag    type;
     };
-    
+
     template <typename ConfigType>
     struct bndcell_orientation<ConfigType,  viennagrid::tetrahedron_tag, 2>
     {
       typedef no_handling_tag    type;
     };
-    
+
     //-----------------------
-    
+
     template <>
     struct element_id_handler<viennagrid::config::tetrahedral_3d,  viennagrid::triangle_tag>
     {
@@ -122,7 +122,7 @@ namespace viennagrid
     {
       typedef pointer_id    type;
     };
-    
+
     template <typename ConfigType>
     struct bndcell_orientation<ConfigType,  viennagrid::line_tag>
     {
@@ -134,8 +134,8 @@ namespace viennagrid
     {
       typedef pointer_id    type;
     };
-    
-  }  
+
+  }
 }
 */
 
@@ -148,10 +148,10 @@ int main()
   typedef viennagrid::config::tetrahedral_3d                       ConfigType;
   typedef viennagrid::result_of::mesh<ConfigType>::type         Mesh;
   typedef ConfigType::cell_tag                                    CellTag;
-  
+
   typedef viennagrid::result_of::point<ConfigType>::type          PointType;
   typedef viennagrid::result_of::ncell<ConfigType, 0>::type       VertexType;
-  
+
   typedef viennagrid::result_of::ncell<ConfigType,
                                        CellTag::dim>::type   CellType;
 
@@ -165,9 +165,9 @@ int main()
   std::cout << "-- ViennaGrid tutorial: Mesh without storage of edges --" << std::endl;
   std::cout << "----------------------------------------------------------" << std::endl;
   std::cout << std::endl;
-  
+
   Mesh mesh;
-  
+
   //
   // Read mesh from Netgen file
   //
@@ -182,19 +182,19 @@ int main()
   //
   // Print a summary of memory consumption:
   //
-  std::cout << "Memory for vertices: " 
+  std::cout << "Memory for vertices: "
             << (viennagrid::ncells<0>(mesh).size() * sizeof(VertexType)) / 1024.0 << " KB"
             << " for " << viennagrid::ncells<0>(mesh).size() << " elements ("
             << sizeof(VertexType) << " Bytes each)" << std::endl;
-  std::cout << "Memory for edges: " 
+  std::cout << "Memory for edges: "
             << (viennagrid::ncells<1>(mesh).size() * sizeof(EdgeType)) / 1024.0 << " KB"
             << " for " << viennagrid::ncells<1>(mesh).size() << " elements ("
             << sizeof(EdgeType) << " Bytes each)" << std::endl;
-  std::cout << "Memory for facets: " 
+  std::cout << "Memory for facets: "
             << (viennagrid::ncells<2>(mesh).size() * sizeof(FacetType)) / 1024.0 << " KB"
             << " for " << viennagrid::ncells<2>(mesh).size() << " elements ("
             << sizeof(FacetType) << " Bytes each)" << std::endl;
-  std::cout << "Memory for cells: " 
+  std::cout << "Memory for cells: "
             << (viennagrid::ncells<3>(mesh).size() * sizeof(CellType)) / 1024.0 << " KB"
             << " for " << viennagrid::ncells<3>(mesh).size() << " elements ("
             << sizeof(CellType) << " Bytes each)" << std::endl;
@@ -205,7 +205,7 @@ int main()
              + (viennagrid::ncells<1>(mesh).size() * sizeof(EdgeType)) / 1024.0
              + (viennagrid::ncells<2>(mesh).size() * sizeof(FacetType)) / 1024.0
              + (viennagrid::ncells<3>(mesh).size() * sizeof(CellType)) / 1024.0 << " KB" << std::endl;
-  
+
   std::cout << "-----------------------------------------------" << std::endl;
   std::cout << " \\o/    Tutorial finished successfully!    \\o/ " << std::endl;
   std::cout << "-----------------------------------------------" << std::endl;

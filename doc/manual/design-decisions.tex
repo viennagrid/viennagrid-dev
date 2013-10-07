@@ -13,13 +13,13 @@ the history of {\ViennaGrid} and the individual preferences of the authors to a 
  is not sufficiently flexible in order to allow for an iteration over edges.
  Nevertheless, the STL-like setup and retrieval of iterators is appealing.
 
- A run-time dispatched iterator retrieval in the spirit of 
+ A run-time dispatched iterator retrieval in the spirit of
  \begin{lstlisting}
  for (VertexIterator vit  = mesh.begin(ElementTag());
                      vit != mesh.end(ElementTag());
                    ++vit) {}
  \end{lstlisting}
- will sacrifice efficiency especially for loops with a small number of iterations, which is not an option for high-performance environments. 
+ will sacrifice efficiency especially for loops with a small number of iterations, which is not an option for high-performance environments.
  Therefore, iterators should be accessed using a compile time dispatch.
 
  Since hard-coding function names is not an option for an parametrized traversal,
@@ -37,11 +37,11 @@ the history of {\ViennaGrid} and the individual preferences of the authors to a 
                      vit != mesh.template end<ElementTag>();
                    ++vit) {}
  \end{lstlisting}
- Apart from the fact that the \lstinline|template| keyword for member functions is probably unknown to a wide audience, 
+ Apart from the fact that the \lstinline|template| keyword for member functions is probably unknown to a wide audience,
  weird compiler messages are issued if the keyword is forgotten. Since a high usability is one of the design goals of {\ViennaGrid},
  we kept searching for better ways with respect to our measures.
 
- Having high-performance environments in mind, one must not forget about the advantage of index-based for loops such as 
+ Having high-performance environments in mind, one must not forget about the advantage of index-based for loops such as
  \begin{lstlisting}
  for (std::size_t i=0; i<3; ++i) { ... }
  \end{lstlisting}
@@ -65,15 +65,15 @@ the history of {\ViennaGrid} and the individual preferences of the authors to a 
  readily expresses the intention of iterating over $0$-cells and does not suffer from the problems related to the \lstinline|template| keyword.
  Thanks to the rich overloading rule-set for free functions, an extension to \lstinline|elements<ElementTag>(segment)| or \lstinline|elements<ElementTag>(cell)| is immediate.
  As presented in Chapter \ref{chap:iterators}, the \lstinline|elements<>()| approach also allows for an index-based iteration in most cases.
- 
+
  In retrospective, the ranges returned by \lstinline|elements<>()| would have come up with coboundary iterators (which were added later), since one then has to pass the enclosing cell complex anyway.
 
  \section{Default Behavior}
- A delicate question for a highly configurable library such as {\ViennaGrid} is the question of the default behavior. 
+ A delicate question for a highly configurable library such as {\ViennaGrid} is the question of the default behavior.
  We decided to provide the full functionality by default, even if the price to pay is a possibly slow execution at first instance.
 
- Our decision is based on mostly psychological reasoning as follows: If {\ViennaGrid} were tuned for low memory consumption and high speed by default, then a substantial set of functionality would be unavailable by default and causing compilation errors for users that just want to try a particular feature of {\ViennaGrid}. 
- It is unlikely that these users will continue to use {\ViennaGrid} if they are not able to compile a simple application without digging through the manual and searching for the correct configuration. On the contrary, if the desired feature works essentially out of the box and is fast enough, users will not even have to care about the further configuration of {\ViennaGrid}. However, if additional speed is required, there are plenty of configuration options available, each potentially leading to higher speed or lower memory footprint and thus resulting in a feeling of success. 
+ Our decision is based on mostly psychological reasoning as follows: If {\ViennaGrid} were tuned for low memory consumption and high speed by default, then a substantial set of functionality would be unavailable by default and causing compilation errors for users that just want to try a particular feature of {\ViennaGrid}.
+ It is unlikely that these users will continue to use {\ViennaGrid} if they are not able to compile a simple application without digging through the manual and searching for the correct configuration. On the contrary, if the desired feature works essentially out of the box and is fast enough, users will not even have to care about the further configuration of {\ViennaGrid}. However, if additional speed is required, there are plenty of configuration options available, each potentially leading to higher speed or lower memory footprint and thus resulting in a feeling of success.
 
  The bottomline of all this is that we consider it more enjoyable to tune a slower default configuration for maximum speed than to fight with compiler error messages and being forced to work through the manual. We hope that our decision indeed reflects the preferences of our users.
 

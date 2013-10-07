@@ -9,7 +9,7 @@
 
    Authors:      Karl Rupp                           rupp@iue.tuwien.ac.at
                  Josef Weinbub                    weinbub@iue.tuwien.ac.at
-               
+
    (A list of additional contributors can be found in the PDF manual)
 
    License:      MIT (X11), see file LICENSE in the base directory
@@ -80,7 +80,7 @@
 void other_func()
 {
   viennagrid::tetrahedral_3d_mesh  mesh;
-  
+
   std::cout << "--- Tetrahedral mesh, 3d ---" << std::endl;
   std::cout << "Size<0>: " << viennagrid::elements<viennagrid::vertex_tag>(mesh).size() << std::endl;
   std::cout << "Size<1>: " << viennagrid::elements<viennagrid::vertex_tag>(mesh).size() << std::endl;

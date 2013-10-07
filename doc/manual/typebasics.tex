@@ -18,7 +18,7 @@ A mesh is configured with a configuration class. This configuration class define
       \lstinline|line_2d|   &  Mesh with lines and vertices in 2d  \\
       \hline
       \lstinline|line_3d|   &  Mesh with lines and vertices in 3d  \\
-      \hline 
+      \hline
       \lstinline|triangular_2d| &   Mesh with triangles, lines and vertices in 2d  \\
       \hline
       \lstinline|triangular_3d| &   Mesh with triangles, lines and vertices in 3d  \\
@@ -41,7 +41,7 @@ A mesh is configured with a configuration class. This configuration class define
       \lstinline|quadrilateral_3d|   &  Mesh with quadrilaterals, lines and vertices in 3d  \\
       \hline
       \lstinline|hexahedral_3d|   &  Mesh with hexahedrons, quadrilaterals, lines and vertices in 3d  \\
-      \hline 
+      \hline
     \end{tabular}
     \caption{Configurations of hypercube meshs}
     \label{tab:configs-hypercube}
@@ -58,9 +58,9 @@ A mesh is configured with a configuration class. This configuration class define
       \lstinline|polygonal_3d|   &  Mesh with polygons, lines and vertices in 3d  \\
       \hline
       \lstinline|plc_2d|   &  Mesh with PLCs, lines and vertices in 2d  \\
-      \hline 
+      \hline
       \lstinline|plc_3d|   &  Mesh with PLCs, lines and vertices in 3d  \\
-      \hline 
+      \hline
     \end{tabular}
     \caption{Configurations of special meshs}
     \label{tab:configs-special}
@@ -75,10 +75,10 @@ With a configuration, a mesh can be defined using the meta-function \lstinline|m
  using namespace viennagrid;
 
  typedef config::trianglular_3d Config;
- 
+
  // Type retrieval, method 1: use meta-function
  typedef result_of::mesh<Config>::type     MeshType;
- 
+
  // Type retrieval, method 1: use typedefed segmentation/segment
  typedef trianglular_3d_mesh               MeshType;
 
@@ -89,17 +89,17 @@ Using a mesh type a segmentation and its segments can be defined.
 
 \begin{lstlisting}
  using namespace viennagrid;
- 
+
  // Type retrieval, method 1: use meta-function
  typedef result_of::segmentation<MeshType>::type        SegmentationType;
  typedef result_of::segmentation<SegmentationType>::type  SegmentType;
- 
+
  // Type retrieval, method 1: use typedefed segmentaion/segment
  typedef trianglular_3d_segmentation      SegmentationType;
  typedef trianglular_3d_segment           SegmentType;
 
  MeshType mesh; // create the mesh object
- 
+
  // segmentation needs the mesh object as constructor argument
  SegmentationType segmentation(mesh);
 \end{lstlisting}
@@ -112,20 +112,20 @@ A central topic with {\ViennaGrid} are elements. Elements types can be obtained 
 
 \begin{lstlisting}
  using namespace viennagrid;
- 
+
  // obtain element type from mesh type
  typedef result_of::element<MeshType, vertex_tag>::type         VtxType;
  // this meta function might fail if there is no tetrahedron in the mesh
  typedef result_of::element<MeshType, tetrahedron_tag>::type    TetType;
- 
+
  // obtain element type from another element
  typedef result_of::element<TetrahedronType, line_tag>::type      LineType;
  // the same element as above
  typedef result_of::element<TetrahedronType, edge_tag>::type      LineType;
- 
+
  // this meta function will fail because there is no tetrahedron in a line
  typedef result_of::element<LineType, tetrahedron_tag>::type      TetType;
- 
+
  // elements can also be obtained from segmentations or segments
  typedef result_of::element<SegmentationType, triangle_tag>::type TriType;
  typedef result_of::element<SegmentType, vertex_tag>::type        VtxType;
@@ -135,18 +135,18 @@ For each supported type there are also shortcut meta-functions available.
 
 \begin{lstlisting}
  using namespace viennagrid;
- 
+
  // obtain element type from mesh type
  typedef result_of::vertex<MeshType>::type            VertexType;
  // this meta function might fail if there is no tetrahedron in the mesh
  typedef result_of::tetrahedron<MeshType>::type       TetrahedronType;
- 
+
  // obtain element type from another element
  typedef result_of::line<TetrahedronType>::type         LineType;
- 
+
  // this meta function will fail because there is no tetrahedron in a line
  typedef result_of::tetrahedron<LineType>::type TetrahedronType;
- 
+
  // elements can also be obtained from segmentations or segments
  typedef result_of::triangle<SegmentationType>::type    TriangleType;
  typedef result_of::vertex<SegmentType>::type           VertexType;
@@ -158,14 +158,14 @@ Often elements are not accessed directly but through a handle instead. For examp
 
 \begin{lstlisting}
  using namespace viennagrid;
- 
+
  // obtain element handle type from mesh type
  typedef result_of::handle<MeshType, vertex_tag>::type    VtxHandleType;
  typedef result_of::vertex_handle<MeshType>::type         VtxHandleType;
  // this meta function might fail if there is no tetrahedron in the mesh
  typedef result_of::handle<MeshType, tetrahedron_tag>::type TetHandleType;
  typedef result_of::tetrahedron_handle<MeshType>::type    TetHandleType;
- 
+
  // obtain element handle type from another element
  // (obtaining handles from another handle is not supported)
  typedef result_of::handle<TetrahedronType, line_tag>::type LineHandleType;
@@ -173,15 +173,15 @@ Often elements are not accessed directly but through a handle instead. For examp
  // the same element as above
  typedef result_of::handle<TetrahedronType, edge_tag>::type LineHandleType;
  typedef result_of::edge_handle<TetrahedronType>::type      LineHandleType;
- 
+
  // this meta function will fail because there is no tetrahedron in a line
  typedef result_of::handle<LineType, tetrahedron_tag>::type TetHandleType;
  typedef result_of::tetrahedron_handle<LineType>::type      TetHandleType;
- 
+
  // elements can also be obtained from segmentations or segments
  typedef result_of::handle<SegmentationType, triangle_tag>::type TriHandleType;
  typedef result_of::triangle_handle<SegmentationType>::type TriHandleType;
- 
+
  typedef result_of::handle<SegmentType>::type               VtxHandleType;
  typedef result_of::vertex_handle<SegmentType>::type        VtxHandleType;
 \end{lstlisting}

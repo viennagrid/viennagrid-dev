@@ -6,7 +6,7 @@ A common approach is to model vertices, edges and the like as separate classes a
 \begin{enumerate}
  \item \textbf{Reusability}: As soon as a data member is added to any of these classes, the class is refined towards a particular use case. For example, adding a color data member to a triangle class reduces reusability for e.g.~Finite Element methods considerably.
  \item \textbf{Flexibility}: Whenever a data member needs to be added for a particular functionality, one has to carefully extend the existing class layout. Moreover, it is somewhere between hard to impossible to 'just add a data member for the moment' in a productive environment. Moreover, the class needs to be adjusted if the data type changes.
- \item \textbf{Efficiency}: A data member that is never used obviously wastes memory. For large numbers of object it might be even advisable to use special containers for data that is relevant for a tiny fraction of all objects only (e.g.~mesh boundary flags). Apart from reduced memory footprint, the possibly tighter grouping of data allows for better CPU caching. 
+ \item \textbf{Efficiency}: A data member that is never used obviously wastes memory. For large numbers of object it might be even advisable to use special containers for data that is relevant for a tiny fraction of all objects only (e.g.~mesh boundary flags). Apart from reduced memory footprint, the possibly tighter grouping of data allows for better CPU caching.
 \end{enumerate}
 
 Previous version of {\ViennaGrid} relies on {\ViennaData} \cite{ViennaData} for the storage of data associated with topological objects. {\ViennaGridversion} dropped the dependencies on {\ViennaData} in favor of accessor concepts.
@@ -49,7 +49,7 @@ Each class fulfilling the accessor concepts presented in table Tab.~\ref{tab:acc
  \end{table}
 
  Beside accessors, {\ViennaGrid} defines the field concept. A field is similar to an accessor but more suitable for sparse storage. The same concepts as for accessor apply to field concepts with the exception of the concepts in table Tab.\ref{tab:field-concepts}.
- 
+
  \begin{table}[tb]
  \begin{center}
   \begin{tabular}{|l|l|}
@@ -63,19 +63,19 @@ Each class fulfilling the accessor concepts presented in table Tab.~\ref{tab:acc
  \caption{Field concepts}
  \label{tab:field-concepts}
  \end{table}
- 
+
  Normally an accessor or field does not store the data on its own. Instead they reference a container where the data is stored. {\ViennaGrid} provides meta-functions and function to define and create accessor or fields from base containers. The example below demonstrates the use of {\ViennaGrid} accessors. Fields can be used in a similar way.
- 
+
  \begin{lstlisting}
  std::vector<int> some_int_vector; // instancing a simple int vector
  // instancing an accessor which uses the int vector
  viennagrid::result_of::accessor<std::vector<int>, VertexType>::type some_int_accessor(some_int_vector);
- 
+
  some_int_accessor(my_vertex) = -3;
- 
+
  // obtaining a container for storing double values on vertices, std::map should be used
  typedef viennagrid::result_of::accessor_container<VertexType, double, viennagrid::storage::std_map_tag>::type ContainerType;
- 
+
  // instancing a container and an accessor for the container
  ContainerType container;
  viennagrid::result_of::accessor<ContainerType, VertexType>::type container_accessor(container);

@@ -15,11 +15,11 @@ struct config
   typedef viennagrid::storage::pointer_handle_tag handle_tag;
   //typedef viennagrid::storage::iterator_handle_tag handle_tag;
 //   typedef viennagrid::storage::id_handle_tag          handle_tag;
-  
+
   typedef viennagrid::config::result_of::full_mesh_config< viennagrid::triangle_tag, viennagrid::config::point_type_2d, handle_tag >::type     type;
 };
 
-typedef viennagrid::mesh_t<config> MeshType; 
+typedef viennagrid::mesh_t<config> MeshType;
 
 
 
@@ -73,13 +73,13 @@ int main()
     for (VertexRangeType::iterator it = vertices.begin(); it != vertices.end(); ++it)
       std::cout << *it << std::endl;
     std::cout << std::endl;
-    
+
     typedef viennagrid::result_of::line_range<MeshType>::type LineRangeType;
     LineRangeType lines = viennagrid::elements( mesh );
     for (LineRangeType::iterator it = lines.begin(); it != lines.end(); ++it)
       std::cout << *it << std::endl;
     std::cout << std::endl;
-    
+
 
     typedef viennagrid::result_of::triangle_range<MeshType>::type TriangleRangeType;
     TriangleRangeType triangles = viennagrid::elements( mesh );
@@ -88,11 +88,11 @@ int main()
     std::cout << std::endl;
 
 
-    
+
     {
         viennagrid::io::vtk_writer<MeshType> vtk_writer;
         vtk_writer(mesh, "copied_mesh");
     }
-    
+
     return 0;
 }
