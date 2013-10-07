@@ -29,7 +29,7 @@ namespace viennagrid
 {
   namespace io
   {
-    
+
     /** @brief Provides an exception for the bad serialization state */
     class bad_serialization_state_exception : public std::exception
     {
@@ -48,15 +48,15 @@ namespace viennagrid
       private:
         std::string msg_;
     };
-    
-    
-    
+
+
+
     /** @brief Mesh wrapper which models the Boost serialization concept
      *
      */
     template<typename MeshT>
     struct mesh_serializer
-    {      
+    {
     private:
       typedef typename viennagrid::result_of::cell_tag<MeshT>::type                        CellTag;
       typedef typename viennagrid::result_of::const_vertex_range<MeshT>::type              ConstVertexRange;
@@ -81,9 +81,9 @@ namespace viennagrid
       {
         if (!mesh_pointer)
           throw bad_serialization_state_exception( "Mesh not loaded into serialzer object" );
-        
+
         MeshT const & mesh = *mesh_pointer;
-        
+
         // -----------------------------------------------
         // the geometry is read and transmitted
         //
@@ -128,9 +128,9 @@ namespace viennagrid
       {
         if (!mesh_pointer)
           throw bad_serialization_state_exception( "Mesh not loaded into serialzer object" );
-        
+
         MeshT & mesh = *mesh_pointer;
-        
+
         // -----------------------------------------------
         // the geometry is received and stored
         //
@@ -142,7 +142,7 @@ namespace viennagrid
           PointType p;
           for(int d = 0; d < DIMG; d++)
             ar & p[d];
-          
+
           viennagrid::make_vertex( *mesh_pointer, p );
         }
         // -----------------------------------------------
@@ -165,7 +165,7 @@ namespace viennagrid
             ar & id;
             vertices[j] = viennagrid::find_by_id( mesh, VertexIDType(id) ).handle();
           }
-          
+
           viennagrid::make_cell( mesh, vertices, vertices + num_vertices);
         }
         // -----------------------------------------------
@@ -198,7 +198,7 @@ namespace viennagrid
       MeshT const & operator()() const { return *mesh_pointer; }
 
       /** @brief The state holds a shared pointer to the mesh */
-      
+
     private:
       MeshT * mesh_pointer;
     };

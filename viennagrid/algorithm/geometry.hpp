@@ -107,25 +107,25 @@ namespace viennagrid
 //         {
 //             typedef typename std::iterator_traits<point_iterator_type>::value_type PolygonPointType;
 //             std::pair<PolygonPointType, PolygonPointType> poly_bounding_box = bounding_box(it_start, it_end);
-// 
+//
 //             PolygonPointType outer_point;
 //             outer_point[0] = point_to_test[0];
 //             outer_point[1] = poly_bounding_box.first[1] - 1;
 //             bool is_inside = false;
-// 
+//
 //             point_iterator_type it_prev = it_end; --it_prev;
 //             point_iterator_type it_cur = it_start;
-// 
+//
 //             for ( ;it_cur != it_end ; ++it_cur, it_prev = circular_next(it_prev, it_start, it_end) )
 //             {
 //                 PolygonPointType const & q0 = *it_prev;
 //                 PolygonPointType const & q1 = *it_cur;
-// 
+//
 //                 // is inner point on polygon line?
 //                 if ( point_line_intersect( point_to_test, q0, q1, interval::closed_open_tag(), nc ) )
 //                     return !is_open(polygon_tag);
-// 
-// 
+//
+//
 //                 // is current line on test line?
 //                 if ( !numeric::is_equal(nc, q0[0], point_to_test[0]) || !numeric::is_equal(nc, q1[0], point_to_test[0]) )
 //                 {
@@ -135,8 +135,8 @@ namespace viennagrid
 //                     }
 //                 }
 //             }
-// 
-// 
+//
+//
 //             // find point which is not on the testing line
 //             point_iterator_type it = it_start;
 //             while ( point_line_intersect( *it, point_to_test, outer_point, interval::open_open_tag(), nc ) )
@@ -145,16 +145,16 @@ namespace viennagrid
 //                 if (it == it_start)
 //                     break;
 //             }
-// 
+//
 //             // no point found -> no intersection
 //             if ( point_line_intersect( *it, point_to_test, outer_point, interval::open_open_tag(), nc ) )
 //                 return false;
-// 
-// 
+//
+//
 //             point_iterator_type circular_start_it = it;
 //             it_prev = it;
 //             it = circular_next(it, it_start, it_end);
-// 
+//
 //             // iterating over all points
 //             while (it != circular_start_it)
 //             {
@@ -165,13 +165,13 @@ namespace viennagrid
 //                     point_iterator_type it_next = circular_next(it, it_start, it_end);
 //                     while ( point_line_intersect( *it_next, point_to_test, outer_point, interval::open_open_tag(), nc ) )
 //                         it_next = circular_next(it_next, it_start, it_end);
-// 
+//
 //                     // check if the the lines/points are an ear
 //                     if ( ((*it_prev)[0] - (*it)[0]) * ((*it_next)[0] - (*it)[0]) < 0 )
 //                     {
 //                         is_inside = !is_inside;
 //                     }
-// 
+//
 //                     it_prev = it;
 //                     it = it_next;
 //                 }
@@ -181,7 +181,7 @@ namespace viennagrid
 //                     it = circular_next(it, it_start, it_end);
 //                 }
 //             }
-// 
+//
 //             return is_inside;
 //         }
 

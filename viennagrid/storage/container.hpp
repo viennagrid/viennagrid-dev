@@ -608,9 +608,9 @@ namespace viennagrid
             {
                 typedef container_t< typename container<value_type, std_set_tag>::type, id_handle_tag > type;
             };
-            
-            
-            
+
+
+
             template<typename element_type, int size>
             struct container<element_type, static_array_tag<size> >
             {

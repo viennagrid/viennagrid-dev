@@ -100,12 +100,12 @@ namespace viennagrid
 
   /** @brief A tag denoting that the boundary elements should stored without orientation */
   struct no_orientation_handling_tag {};
-  
+
 //   Lazy storage reserved for future use
   struct no_orientation_lazy_handling_tag {};
   struct full_lazy_handling_tag {};
 
-  
+
   struct coboundary_collection_tag;
   struct neighbour_collection_tag;
   struct boundary_information_collection_tag;
@@ -144,20 +144,20 @@ namespace viennagrid
 
   /** @brief A tag representing polygons */
   struct polygon_tag;
-  
+
   /** @brief A tag representing plcs */
   struct plc_tag;
-  
-  
+
+
   /** @brief Tag that indicates that a static container can be used for storing the boundary element handles (e.g. used in simplices and hypercubes) */
   struct static_layout_tag;
   /** @brief Tag that indicates that a dynamic container has to be used for storing the boundary element handles (e.g. polygon and plc) */
   struct dynamic_layout_tag;
-  
-  
+
+
 
   //forward declarations:
-  
+
   /** @brief Represents an arbitrary point in the underlying coordinate system.
    *
    * @tparam CoordType          Type of each coordinate entry (usually double or float)
@@ -290,7 +290,7 @@ namespace viennagrid
      */
     template<typename SomethingT>
     struct topologic_cell_dimension;
-    
+
     /** @brief Metafunction for obtaining an element typelist of all element with a specific topologic dimension of something
      *
      * @tparam SomethingT           The host type, can be a collection, a mesh, a segmentation or a segment
@@ -358,7 +358,7 @@ namespace viennagrid
     {
         typedef typename ElementT::id_type type;
     };
-    
+
 
     /** @brief Metafunction for the type retrieval of an element
      *
@@ -445,7 +445,7 @@ namespace viennagrid
     {
         typedef typename element<SomethingT, polygon_tag>::type type;
     };
-    
+
     /** @brief Convenience metafunction for the type retrieval of a plc
      *
      * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
@@ -555,7 +555,7 @@ namespace viennagrid
     {
         typedef typename handle<SomethingT, polygon_tag>::type type;
     };
-    
+
     /** @brief Convenience metafunction for the type retrieval of a plc handle
      *
      * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
@@ -656,7 +656,7 @@ namespace viennagrid
     {
         typedef typename const_handle<SomethingT, quadrilateral_tag>::type type;
     };
-    
+
     /** @brief Convenience metafunction for the type retrieval of a const polygon handle
      *
      * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
@@ -698,7 +698,7 @@ namespace viennagrid
     };
 
 
-    
+
     /** @brief Metafunction for the type retrieval of an element range
      *
      * @tparam SomethingT         The host type, can be a typelist, a collection, an element, a mesh, a segmentation or a segment
@@ -769,7 +769,7 @@ namespace viennagrid
     {
         typedef typename element_range<SomethingT, quadrilateral_tag>::type type;
     };
-    
+
     /** @brief Convenience metafunction for the type retrieval of a polygon range
      *
      * @tparam SomethingT         The host type, can be a typelist, a collection, a mesh, a segmentation or a segment
@@ -779,7 +779,7 @@ namespace viennagrid
     {
         typedef typename element_range<SomethingT, polygon_tag>::type type;
     };
-    
+
     /** @brief Convenience metafunction for the type retrieval of a PLC range
      *
      * @tparam SomethingT         The host type, can be a typelist, a collection, a mesh, a segmentation or a segment
@@ -895,7 +895,7 @@ namespace viennagrid
     {
         typedef typename const_element_range<SomethingT, polygon_tag>::type type;
     };
-    
+
     /** @brief Convenience metafunction for the type retrieval of a const PLC range
      *
      * @tparam SomethingT         The host type, can be a typelist, a collection, a mesh, a segmentation or a segment
@@ -948,15 +948,15 @@ namespace viennagrid
     {
         typedef typename ContainerT::const_iterator type;
     };
-    
+
     template <typename ContainerT>
     struct iterator<const ContainerT>
     {
         typedef typename const_iterator<ContainerT>::type type;
     };
 
-    
-    
+
+
     /** @brief Metafunction for retrieving the tag of an element
      *
      * @tparam ElementTypeOrTagT    The element type of which the tag is requested, can also be a tag. In this case the tag is returned.
@@ -1007,9 +1007,9 @@ namespace viennagrid
     {
         typedef typename facet_tag< typename cell_tag< segment_handle_t<SegmentationT> >::type >::type type;
     };
-    
-    
-    
+
+
+
 
     /** @brief Metafunction for retrieving the facet element type an element, a mesh, a segmentation or a segment
      *
@@ -1100,7 +1100,7 @@ namespace viennagrid
     element_range_proxy(SomethingT & something_) : something(something_) {}
 
     /** @brief Returns the reference to the host object
-     * 
+     *
      * @return a reference to the host object
     */
     SomethingT & operator() () { return something; }
@@ -1108,10 +1108,10 @@ namespace viennagrid
   private:
     SomethingT & something;
   };
-  
-  
-  
-  
+
+
+
+
   /** @brief Function for retrieving an element range or a boundary element range from a host object
     *
     * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
@@ -1121,7 +1121,7 @@ namespace viennagrid
     */
   template<typename ElementTypeOrTagT, typename SomethingT>
   typename result_of::element_range<SomethingT, ElementTypeOrTagT>::type elements(SomethingT & something);
-  
+
   template<typename ElementTypeOrTagT, typename SegmentationT>
   typename result_of::element_range< segment_handle_t<SegmentationT>, ElementTypeOrTagT>::type elements( segment_handle_t<SegmentationT> & something);
 
@@ -1134,7 +1134,7 @@ namespace viennagrid
   template<typename SomethingT>
   element_range_proxy<SomethingT> elements(SomethingT & something)
   { return element_range_proxy<SomethingT>(something); }
-  
+
 
 
 
@@ -1147,7 +1147,7 @@ namespace viennagrid
   template<typename SomethingT>
   typename result_of::cell_range<SomethingT>::type cells(SomethingT & something)
   { return elements<typename result_of::cell_tag<SomethingT>::type>(something); }
-  
+
   /** @brief Function for retrieving a facet range object from a host object
     *
     * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
@@ -1217,7 +1217,7 @@ namespace viennagrid
   template<typename SomethingT>
   typename result_of::element_range<SomethingT, polygon_tag>::type polygons(SomethingT & something)
   { return elements<polygon_tag>(something); }
-  
+
   /** @brief Function for retrieving a PLC range object from a host object
     *
     * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
@@ -1259,12 +1259,12 @@ namespace viennagrid
     */
   template<typename ElementTypeOrTagT, typename SomethingT>
   typename result_of::const_element_range<SomethingT, ElementTypeOrTagT>::type elements(SomethingT const & something);
-  
+
   template<typename ElementTypeOrTagT, typename SegmentationT>
   typename result_of::const_element_range< segment_handle_t<SegmentationT>, ElementTypeOrTagT>::type elements( segment_handle_t<SegmentationT> const & something);
 
 
-  
+
   /** @brief Function for retrieving an element range proxy object
     *
     * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
@@ -1285,7 +1285,7 @@ namespace viennagrid
   template<typename SomethingT>
   typename result_of::const_cell_range<SomethingT>::type cells( SomethingT const & something)
   { return elements<typename result_of::cell_tag<SomethingT>::type>(something); }
-  
+
   /** @brief Function for retrieving a const facet range object from a host object
     *
     * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
@@ -1355,7 +1355,7 @@ namespace viennagrid
   template<typename SomethingT>
   typename result_of::const_element_range<SomethingT, polygon_tag>::type polygons(SomethingT const & something)
   { return elements<polygon_tag>(something); }
-  
+
   /** @brief Function for retrieving a const PLC range object from a host object
     *
     * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
@@ -1387,8 +1387,8 @@ namespace viennagrid
   { return elements<hexahedron_tag>(something); }
 
 
-  
-  
+
+
   /** @brief Function for creating an element within a mesh or a segment
     *
     * @tparam ElementTypeOrTagT       The element type/tag to be created
@@ -1405,7 +1405,7 @@ namespace viennagrid
         VertexHandleIteratorT array_start,
         VertexHandleIteratorT const & array_end );
 
-  
+
   /** @brief Function for creating an element within a mesh or segment with a specific ID
     *
     * @tparam ElementTypeOrTagT       The element type/tag to be created
@@ -1438,11 +1438,11 @@ namespace viennagrid
   template<typename WrappedMeshConfigT, typename ElementTagT, typename WrappedConfigT>
   element_t<ElementTagT, WrappedConfigT> & dereference_handle( mesh_t<WrappedMeshConfigT> &, element_t<ElementTagT, WrappedConfigT> & element)
   { return element; }
-  
+
   template<typename WrappedMeshConfigT, typename ElementTagT, typename WrappedConfigT>
   element_t<ElementTagT, WrappedConfigT> & dereference_handle( segment_handle_t<WrappedMeshConfigT> &, element_t<ElementTagT, WrappedConfigT> & element)
   { return element; }
-    
+
   template<typename HostElementTagT, typename WrappedHostElementConfigT, typename ElementTagT, typename WrappedConfigT>
   element_t<ElementTagT, WrappedConfigT> & dereference_handle( element_t<HostElementTagT, WrappedHostElementConfigT> &, element_t<ElementTagT, WrappedConfigT> & element)
   { return element; }
@@ -1458,7 +1458,7 @@ namespace viennagrid
   template<typename WrappedMeshConfigT, typename ElementTagT, typename WrappedConfigT>
   element_t<ElementTagT, WrappedConfigT> const & dereference_handle( mesh_t<WrappedMeshConfigT> const &, element_t<ElementTagT, WrappedConfigT> const & element)
   { return element; }
-  
+
   template<typename WrappedMeshConfigT, typename ElementTagT, typename WrappedConfigT>
   element_t<ElementTagT, WrappedConfigT> const & dereference_handle( mesh_t<WrappedMeshConfigT> &, element_t<ElementTagT, WrappedConfigT> const & element)
   { return element; }
@@ -1471,20 +1471,20 @@ namespace viennagrid
   template<typename SegmentationT, typename ElementTagT, typename WrappedConfigT>
   element_t<ElementTagT, WrappedConfigT> const & dereference_handle( segment_handle_t<SegmentationT> const &, element_t<ElementTagT, WrappedConfigT> const & element)
   { return element; }
-  
+
   template<typename SegmentationT, typename ElementTagT, typename WrappedConfigT>
   element_t<ElementTagT, WrappedConfigT> const & dereference_handle( segment_handle_t<SegmentationT> &, element_t<ElementTagT, WrappedConfigT> const & element)
   { return element; }
-  
+
   template<typename SegmentationT, typename ElementTagT, typename WrappedConfigT>
   element_t<ElementTagT, WrappedConfigT> const & dereference_handle( segment_handle_t<SegmentationT> const &, element_t<ElementTagT, WrappedConfigT> & element)
   { return element; }
-  
+
 
   template<typename HostElementTagT, typename WrappedHostElementConfigT, typename ElementTagT, typename WrappedConfigT>
   element_t<ElementTagT, WrappedConfigT> const & dereference_handle( element_t<HostElementTagT, WrappedHostElementConfigT> const &, element_t<ElementTagT, WrappedConfigT> const & element)
   { return element; }
-  
+
   template<typename HostElementTagT, typename WrappedHostElementConfigT, typename ElementTagT, typename WrappedConfigT>
   element_t<ElementTagT, WrappedConfigT> const & dereference_handle( element_t<HostElementTagT, WrappedHostElementConfigT> &, element_t<ElementTagT, WrappedConfigT> const & element)
   { return element; }
@@ -1492,7 +1492,7 @@ namespace viennagrid
   template<typename HostElementTagT, typename WrappedHostElementConfigT, typename ElementTagT, typename WrappedConfigT>
   element_t<ElementTagT, WrappedConfigT> const & dereference_handle( element_t<HostElementTagT, WrappedHostElementConfigT> const &, element_t<ElementTagT, WrappedConfigT> & element)
   { return element; }
-  
+
   /** @brief Function for creating a handle, default implementation -> identity
     *
     * @tparam MeshOrSegmentHandleT    Wrapped config of the mesh type
@@ -1512,10 +1512,10 @@ namespace viennagrid
     */
   template<typename MeshOrSegmentHandleT, typename HandleT>
   const HandleT handle( MeshOrSegmentHandleT const &, HandleT handle) { return handle; }
-  
-  
-  
-  
+
+
+
+
   /** @brief Proxy object for a mesh. This is used for wrapping a mesh/mesh view when creating a view
     *
     * @tparam MeshT    The mesh/mesh view type
@@ -1526,7 +1526,7 @@ namespace viennagrid
     mesh_proxy( MeshT & mesh_ ) : mesh(&mesh_){}
     MeshT * mesh;
   };
-  
+
   /** @brief Creates a view out of a mesh using the mesh_proxy object
     *
     * @tparam MeshOrSegmentHandleT    The mesh or segment type from which the mesh view is created
@@ -1538,10 +1538,10 @@ namespace viennagrid
   {
     return mesh_proxy< mesh_t<WrappedConfigT> >( mesh );
   }
-  
+
   template<typename SegmentationT>
   mesh_proxy< typename SegmentationT::view_type > make_view(segment_handle_t<SegmentationT> & segment);
-  
+
 
   // norm tags for: algorithm/norm.hpp
   /** @brief Tag for denoting the 1-norm */

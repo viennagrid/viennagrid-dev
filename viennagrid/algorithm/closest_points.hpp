@@ -804,7 +804,7 @@ namespace viennagrid
         typedef typename result_of::cell_tag< mesh_t<WrappedConfigType> >::type CellTag;
       return closest_points_on_boundary_point_to_any<typename CellTag::facet_tag>( point_accessor, p, mesh );
     }
-    
+
     template <typename PointAccessorT, typename SegmentationT, typename PointType>
     std::pair<PointType, typename viennagrid::result_of::point< segment_handle_t<SegmentationT> >::type>
     closest_points_on_boundary_impl(PointAccessorT const point_accessor,
@@ -913,7 +913,7 @@ namespace viennagrid
     {
       return closest_points_on_boundary_generic(accessor, mesh, el1);
     }
-    
+
     template <typename PointAccessorType,
               typename SegmentationT,
               typename ElementTag, typename WrappedConfigType>
@@ -971,7 +971,7 @@ namespace viennagrid
     {
       static const int value = 100000;
     };
-    
+
     template <typename SegmentationT>
     struct topological_id< segment_handle_t<SegmentationT> >
     {

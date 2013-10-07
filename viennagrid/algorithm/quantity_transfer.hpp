@@ -169,7 +169,7 @@ namespace viennagrid
   {
     typedef typename viennagrid::result_of::element_tag<SourceTypeOrTag>::type SourceTag;
     typedef typename viennagrid::result_of::element_tag<DestinationTypeOrTag>::type DestinationTag;
-    
+
     detail::quantity_transfer<SourceTag, DestinationTag>(domseg, accessor_src, setter_dest,
                                                  averager, filter_src, filter_dest,
                                                  typename detail::quantity_transfer_dispatcher<SourceTag, DestinationTag>::type());

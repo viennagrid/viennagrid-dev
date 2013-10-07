@@ -574,12 +574,12 @@ namespace viennagrid
         typedef typename element_typelist<SomethingT>::type elements;
         typedef typename referencing_element_typelist_impl<elements, element_type>::type type;
     };
-    
-    
-    
+
+
+
     template<typename SomethingT>
     struct change_counter_type;
-    
+
     template<typename WrappedConfigT>
     struct change_counter_type< mesh_t<WrappedConfigT> >
     {

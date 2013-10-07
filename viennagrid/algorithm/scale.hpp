@@ -40,7 +40,7 @@ namespace viennagrid
     }
   } // detail
 
-  
+
   /** @brief Scales the geometric points of a mesh/segment
    *
    * @param  mesh_or_segment          The mesh/segment which points are scaled

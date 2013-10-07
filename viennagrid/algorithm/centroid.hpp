@@ -184,9 +184,9 @@ namespace viennagrid
   {
     return detail::centroid( default_point_accessor(element), element, ElementTag());
   }
-  
-  
-  
+
+
+
   /** @brief The public interface function for the computation of a centroid of a mesh with explicit point accessor.
    *
    * @tparam ElementTypeOrTagT    The element type/tag of the elements for which the centroid is calculcated
@@ -199,7 +199,7 @@ namespace viennagrid
   {
     return detail::centroid_mesh<ElementTypeOrTagT>(mesh, point_accessor);
   }
-  
+
   /** @brief The public interface function for the computation of a centroid of a mesh with explicit point accessor. Cells are used for centroid calculation, will fail if there is more than one cell type.
    *
    * @param  mesh               The mesh which centroid is to be calculated
@@ -213,7 +213,7 @@ namespace viennagrid
     return detail::centroid_mesh<CellTag>(mesh, point_accessor);
   }
 
-  
+
   /** @brief The public interface function for the computation of a centroid of a mesh.
    *
    * @tparam ElementTypeOrTagT    The element type/tag of the elements for which the centroid is calculcated
@@ -225,7 +225,7 @@ namespace viennagrid
   {
     return centroid<ElementTypeOrTagT>(mesh, default_point_accessor(mesh));
   }
-  
+
   /** @brief The public interface function for the computation of a centroid of a mesh. Cells are used for centroid calculation, will fail if there is more than one cell type.
    *
    * @param  mesh               The mesh which centroid is to be calculated
@@ -237,11 +237,11 @@ namespace viennagrid
     typedef typename viennagrid::result_of::cell_tag< mesh_t<WrappedConfigType> >::type CellTag;
     return centroid<CellTag>(mesh, default_point_accessor(mesh));
   }
-  
 
-  
-  
-  
+
+
+
+
   /** @brief The public interface function for the computation of a centroid of a segment with explicit point accessor.
    *
    * @tparam ElementTypeOrTagT    The element type/tag of the elements for which the centroid is calculcated
@@ -254,7 +254,7 @@ namespace viennagrid
   {
     return detail::centroid_mesh<ElementTypeOrTagT>(segment, point_accessor);
   }
-  
+
   /** @brief The public interface function for the computation of a centroid of a segment with explicit point accessor. Cells are used for centroid calculation, will fail if there is more than one cell type.
    *
    * @param  segment              The segment which centroid is to be calculated
@@ -268,7 +268,7 @@ namespace viennagrid
     return detail::centroid_mesh<CellTag>(segment, point_accessor);
   }
 
-  
+
   /** @brief The public interface function for the computation of a centroid of a segment.
    *
    * @tparam ElementTypeOrTagT    The element type/tag of the elements for which the centroid is calculcated
@@ -280,7 +280,7 @@ namespace viennagrid
   {
     return centroid<ElementTypeOrTagT>(segment, default_point_accessor(segment));
   }
-  
+
   /** @brief The public interface function for the computation of a centroid of a segment. Cells are used for centroid calculation, will fail if there is more than one cell type.
    *
    * @param  segment               The segment which centroid is to be calculated

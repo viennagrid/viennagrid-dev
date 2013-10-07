@@ -527,10 +527,10 @@ namespace viennagrid
           typedef appendix_type_ appendix_type;
         };
     }
-    
-    
-    
-    
+
+
+
+
     template<typename ElementTagT>
     class element_extension_t
     {
@@ -759,8 +759,8 @@ namespace viennagrid
         {
             typedef typename const_element_range< element_t<element_tag_, WrappedConfigType>, sub_element_type_or_tag >::type type;
         };
-        
-        
+
+
 
         template<typename container_collection_typemap, typename element_type_or_tag>
         struct element<storage::collection_t<container_collection_typemap>, element_type_or_tag>

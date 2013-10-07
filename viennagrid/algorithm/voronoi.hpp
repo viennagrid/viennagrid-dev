@@ -340,7 +340,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type                               VertexOnCellIterator;
 
       typedef typename viennagrid::result_of::const_coboundary_range<MeshType, EdgeType, CellTag>::type CellOnEdgeRange;;
-      
+
 //       typedef typename viennagrid::result_of::const_element_range<EdgeType, CellTag>::type                 CellOnEdgeRange;
       typedef typename viennagrid::result_of::iterator<CellOnEdgeRange>::type                                 CellOnEdgeIterator;
 
@@ -392,11 +392,11 @@ namespace viennagrid
 
           //find 'other' triangle
           ConstCellHandleType other_cell;
-          
+
 //           CellType const * other_cell = NULL;
           CellOnEdgeRange other_cells = viennagrid::coboundary_elements<EdgeType, CellTag>(mesh, viennagrid::handle(mesh, *intersected_edge_ptr) );
           storage::handle::set_handle_invalid( other_cells, other_cell );
-          
+
           for (CellOnEdgeIterator coeit  = other_cells.begin();
                                   coeit != other_cells.end();
                                 ++coeit)

@@ -110,7 +110,7 @@ namespace viennagrid
                 typedef out_of_range type;
             };
 
-            template <typename head, typename tail> 
+            template <typename head, typename tail>
             struct at<typelist_t<head, tail>, 0>
             {
                 typedef head type;
@@ -326,13 +326,13 @@ namespace viennagrid
 
             // replace the type at index by another type
             template <typename typelist, int index_to_replace, typename replaced> struct replace_at;
-            
+
             template <typename replaced>
             struct replace_at<null_type, -1, replaced>
             {
                 typedef null_type type;
             };
-            
+
             template <typename head, typename tail, typename replaced>
             struct replace_at<typelist_t<head, tail>, -1, replaced>
             {

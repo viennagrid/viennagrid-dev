@@ -292,7 +292,7 @@ namespace viennagrid
     return p;
   }
 
-  
+
   //public interface
   /** @brief Convenience function for converting a point to Cartesian coordinates.
    *
@@ -303,7 +303,7 @@ namespace viennagrid
   {
     return to_cartesian_impl(p, typename traits::coordinate_system<PointType>::type());
   }
-  
+
 
 
   /** @brief Common base for all non-cartesian coordinate systems */

@@ -93,13 +93,13 @@ namespace viennagrid
   {
     return plc.appendix();
   }
-  
+
   template<typename PLCT>
   typename PLCT::appendix_type const & hole_points( PLCT const & plc )
   {
     return plc.appendix();
   }
-  
+
 }
 
 #endif

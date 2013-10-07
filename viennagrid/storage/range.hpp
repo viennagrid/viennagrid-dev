@@ -52,10 +52,10 @@ namespace viennagrid
             template<typename SomethingT>
             container_range_wrapper( viennagrid::element_range_proxy<SomethingT> range_proxy )
             { *this = elements< value_type >( range_proxy() ); }
-            
+
             template<typename SomethingT>
             container_range_wrapper operator=( viennagrid::element_range_proxy<SomethingT> range_proxy )
-            { 
+            {
               *this = elements< value_type >( range_proxy() );
               return *this;
             }
@@ -162,17 +162,17 @@ namespace viennagrid
             container_range_wrapper( viennagrid::element_range_proxy<const SomethingT> range_proxy )
             { *this = elements< value_type >( range_proxy() ); }
 
-            
+
             template<typename SomethingT>
             container_range_wrapper operator=( viennagrid::element_range_proxy<SomethingT> range_proxy )
-            { 
+            {
               *this = elements< value_type >( range_proxy() );
               return *this;
             }
-            
+
             template<typename SomethingT>
             container_range_wrapper operator=( viennagrid::element_range_proxy<const SomethingT> range_proxy )
-            { 
+            {
               *this = elements< value_type >( range_proxy() );
               return *this;
             }

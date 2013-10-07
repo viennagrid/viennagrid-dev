@@ -143,7 +143,7 @@ namespace viennagrid
                 viennagrid::add( segment, triangle );
                 *viennagrid::segment_element_info( segment, triangle ) = triangle_faces_outward;
 
-              
+
 //                 typedef typename segmentation_type::element_segment_info_type element_segment_info_type;
 //                 element_segment_info_type current = segmentation.segment_info( triangle );
 //                 if (triangle_faces_outward)
@@ -200,11 +200,11 @@ namespace viennagrid
 //                 viennagrid::storage::static_array<vertex_handle_type, 2> lvtx;
 //                 lvtx[0] = viennagrid::elements<viennagrid::vertex_tag>(line).handle_at(0);
 //                 lvtx[1] = viennagrid::elements<viennagrid::vertex_tag>(line).handle_at(1);
-// 
+//
                 viennagrid::storage::static_array<point_type, 2> lp;
 //                 lp[0] = viennagrid::point( mesh, lvtx[0] );
 //                 lp[1] = viennagrid::point( mesh, lvtx[1] );
-                
+
                 lp[0] = viennagrid::point( mesh, viennagrid::vertices(line)[0] );
                 lp[1] = viennagrid::point( mesh, viennagrid::vertices(line)[1] );
 

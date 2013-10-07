@@ -494,7 +494,7 @@ namespace viennagrid
 
 
 
-        
+
 
 
         namespace result_of

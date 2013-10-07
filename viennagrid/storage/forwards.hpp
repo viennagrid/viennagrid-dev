@@ -41,7 +41,7 @@ namespace viennagrid
 
 
     // handles
-    
+
     /** @brief A tag defining that no handles are used */
     struct no_handle_tag {};
     /** @brief A tag defining that pointer handles are used */
@@ -51,7 +51,7 @@ namespace viennagrid
     /** @brief A tag defining that iterator handles are used */
     struct iterator_handle_tag {};
 
-    
+
     // container
     /** @brief A tag indicating default behaviour */
     struct default_tag;
@@ -66,7 +66,7 @@ namespace viennagrid
     struct std_set_tag;
     /** @brief A tag indicating that std::map is used as a container */
     struct std_map_tag;
-    
+
     /** @brief A tag indicating that storage::static_array should be used
      *
      * @tparam SizeV       The static size of the array
@@ -93,7 +93,7 @@ namespace viennagrid
 
 
     /** @brief A tag indicating that a handled container is used
-     * 
+     *
      * @tparam ContainerTagT   A tag defining the underlying container, e.g. std_vector_tag
      * @tparam HandleTagT      A tag defining which handle type is used, e.g. pointer_handle_tag
     */

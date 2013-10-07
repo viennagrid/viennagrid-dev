@@ -60,9 +60,9 @@ namespace viennagrid
 
       return push_element<false, true>(mesh, element ).first;
   }
-  
-  
-  
+
+
+
   /** @brief Function for creating a cell within a mesh or a segment. Function might fail if there is more than 1 cell type in the mesh/segment
     *
     * @tparam MeshOrSegmentHandleT        The mesh or segment type where the element is created
@@ -81,8 +81,8 @@ namespace viennagrid
     typedef typename viennagrid::result_of::cell_tag<MeshOrSegmentHandleTypeT>::type CellTagType;
     return make_element<CellTagType>( mesh_segment, vertices_begin, vertices_end );
   }
-  
-  
+
+
   /** @brief Function for creating a cell within a mesh or a segment with a specific ID. Function might fail if there is more than 1 cell type in the mesh/segment
     *
     * @tparam MeshOrSegmentHandleT        The mesh or segment type where the element is created
@@ -226,7 +226,7 @@ namespace viennagrid
 
       return make_element<viennagrid::line_tag>( mesh, handles.begin(), handles.end() );
   }
-  
+
   /** @brief Function for creating an edge within a mesh or a segment (same as make_edge)
     *
     * @tparam MeshOrSegmentHandleT        The mesh or segment type where the edge is created
@@ -270,7 +270,7 @@ namespace viennagrid
 
       return make_element<viennagrid::triangle_tag>( mesh, handles.begin(), handles.end() );
   }
-  
+
   /** @brief Function for creating a quadrilateral within a mesh or a segment
     *
     * @tparam MeshOrSegmentHandleT        The mesh or segment type where the quadrilateral is created
@@ -402,7 +402,7 @@ namespace viennagrid
       return make_element<viennagrid::hexahedron_tag>( mesh, handles.begin(), handles.end() );
   }
 
-  
+
   /** @brief Function for copying an element to a domain or segment
     *
     * @tparam ElementT                The element type which is copied
@@ -420,17 +420,17 @@ namespace viennagrid
     typedef typename viennagrid::result_of::element_tag<ElementT>::type             ElementTag;
     typedef typename viennagrid::result_of::vertex_handle<DomainOrSegmentHandleT>::type   VertexHandleType;
     std::vector<VertexHandleType> vertex_handles;
-    
+
     typedef typename viennagrid::result_of::const_vertex_range<ElementT>::type      VertexRangeType;
     typedef typename viennagrid::result_of::iterator<VertexRangeType>::type         VertexRangeIterator;
-    
+
     VertexRangeType vertices = viennagrid::elements(element);
     for (VertexRangeIterator vit = vertices.begin(); vit != vertices.end(); ++vit)
       vertex_handles.push_back( make_unique_vertex(domain_segment, viennagrid::point(*vit)) );
-    
+
     return make_element<ElementTag>( domain_segment, vertex_handles.begin(), vertex_handles.end() );
   }
-  
+
 }
 
 

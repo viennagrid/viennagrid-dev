@@ -45,7 +45,7 @@ namespace viennagrid
     {
       typedef mesh_t<WrappedMeshConfigInT>       WrappedMeshConfigInType;
       typedef mesh_t<WrappedMeshConfigOutT>      WrappedMeshConfigOutType;
-      
+
       typedef typename viennagrid::result_of::point<WrappedMeshConfigInType>::type     PointType;
       typedef typename viennagrid::result_of::coord<PointType>::type        NumericType;
 
@@ -131,7 +131,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::segment_handle<WrappedSegmentationConfigInType>::type     SegmentHandleInType;
       typedef typename viennagrid::result_of::segment_handle<WrappedSegmentationConfigOutType>::type    SegmentHandleOutType;
 
-      
+
       typedef typename viennagrid::result_of::point<WrappedMeshConfigInType>::type       PointType;
       typedef typename viennagrid::result_of::coord<PointType>::type          NumericType;
 
@@ -189,7 +189,7 @@ namespace viennagrid
       {
         SegmentHandleInType  const & segment_in  = *sit;
         SegmentHandleOutType       & segment_out = segmentation_out( sit->id() );
-        
+
         CellRange cells = viennagrid::elements(segment_in);
         for (CellIterator cit  = cells.begin();
                           cit != cells.end();
@@ -210,7 +210,7 @@ namespace viennagrid
     void ensure_longest_edge_refinement(mesh_t<WrappedMeshConfigInT> const & mesh_in, EdgeRefinementFlagAccessor edge_refinement_flag_accessor)
     {
       typedef mesh_t<WrappedMeshConfigInT>                                            MeshInType;
-      
+
       typedef typename viennagrid::result_of::element<MeshInType, vertex_tag>::type     VertexType;
       typedef typename viennagrid::result_of::element<MeshInType, line_tag>::type       EdgeType;
       typedef typename viennagrid::result_of::element<MeshInType, CellTagIn>::type      CellType;
@@ -296,7 +296,7 @@ namespace viennagrid
                                             CellRefinementFlagAccessor cell_refinement_flag, EdgeRefinementFlagAccessor edge_refinement_flag_accessor)
     {
       typedef mesh_t<WrappedMeshConfigInT>                                                        MeshInType;
-      
+
       typedef typename viennagrid::result_of::element<MeshInType, CellTagIn>::type                  CellType;
 
       typedef typename viennagrid::result_of::const_element_range<MeshInType, CellTagIn>::type      CellRange;
@@ -332,7 +332,7 @@ namespace viennagrid
     void mark_all_edge_refinement(mesh_t<WrappedMeshConfigInT> const & mesh_in, EdgeRefinementFlagAccessor edge_refinement_flag_accessor)
     {
       typedef mesh_t<WrappedMeshConfigInT>                                                                MeshInType;
-      
+
       typedef typename viennagrid::result_of::const_element_range<MeshInType, viennagrid::line_tag>::type   LineRange;
       typedef typename viennagrid::result_of::iterator<LineRange>::type                                       LineIterator;
 
@@ -348,10 +348,10 @@ namespace viennagrid
 
 
 
-    
+
 
   /** @brief Public interface for refinement of a mesh with explicit point accessor, edge refinement accessor and temporary accessors
-   * 
+   *
    * @param ElementTypeOrTagT                 The element type/tag which elements are refined
    * @param mesh_in                         Input mesh
    * @param mesh_out                        Output refined mesh
@@ -375,7 +375,7 @@ namespace viennagrid
 
 
   /** @brief Public interface for refinement of a mesh with explicit point accessor and edge refinement accessor.
-   * 
+   *
    * @param ElementTypeOrTagT                 The element type/tag which elements are refined
    * @param mesh_in                         Input mesh
    * @param mesh_out                        Output refined mesh
@@ -389,7 +389,7 @@ namespace viennagrid
   {
     typedef mesh_t<WrappedMeshConfigInT>                                              MeshInType;
     typedef mesh_t<WrappedMeshConfigOutT>                                             MeshOutType;
-    
+
     typedef typename viennagrid::result_of::vertex<MeshOutType>::type                   VertexType;
     typedef typename viennagrid::result_of::line<MeshOutType>::type                     EdgeType;
 
@@ -405,7 +405,7 @@ namespace viennagrid
   }
 
   /** @brief Public interface for refinement of a mesh with edge refinement accessor.
-   * 
+   *
    * @param ElementTypeOrTagT                 The element type/tag which elements are refined
    * @param mesh_in                         Input mesh
    * @param mesh_out                        Output refined mesh
@@ -418,7 +418,7 @@ namespace viennagrid
   {
     typedef mesh_t<WrappedMeshConfigInT>                                              MeshInType;
     typedef mesh_t<WrappedMeshConfigOutT>                                             MeshOutType;
-    
+
     typedef typename viennagrid::result_of::vertex<MeshOutType>::type                   VertexType;
     typedef typename viennagrid::result_of::line<MeshOutType>::type                     EdgeType;
 
@@ -433,7 +433,7 @@ namespace viennagrid
 
 
   /** @brief Public interface for refinement of a mesh with explicit point accessor and cell refinement accessor.
-   * 
+   *
    * @param ElementTypeOrTagT                 The element type/tag which elements are refined
    * @param mesh_in                         Input mesh
    * @param mesh_out                        Output refined mesh
@@ -447,7 +447,7 @@ namespace viennagrid
   {
     typedef mesh_t<WrappedMeshConfigInT>                                              MeshInType;
     typedef mesh_t<WrappedMeshConfigOutT>                                             MeshOutType;
-    
+
     typedef typename viennagrid::result_of::cell<MeshOutType>::type                     CellType;
     typedef typename viennagrid::result_of::line<MeshOutType>::type                     EdgeType;
 
@@ -464,7 +464,7 @@ namespace viennagrid
   }
 
   /** @brief Public interface for refinement of a mesh with cell refinement accessor.
-   * 
+   *
    * @param ElementTypeOrTagT                 The element type/tag which elements are refined
    * @param mesh_in                         Input mesh
    * @param mesh_out                        Output refined mesh
@@ -479,7 +479,7 @@ namespace viennagrid
   }
 
   /** @brief Public interface for refinement of cells of a mesh with cell refinement accessor. If there is more than one cell type this funcion will fail.
-   * 
+   *
    * @param mesh_in                         Input mesh
    * @param mesh_out                        Output refined mesh
    * @param edge_refinement_flag_accessor     Accessor storing flags if an edge is marked for refinement
@@ -491,7 +491,7 @@ namespace viennagrid
   {
     typedef mesh_t<WrappedMeshConfigInT>                            MeshInType;
     typedef typename viennagrid::result_of::cell<MeshInType>::type    CellType;
-    
+
     element_refine<CellType>(mesh_in, mesh_out, default_point_accessor(mesh_in), cell_refinement_flag_accessor);
   }
 
@@ -499,7 +499,7 @@ namespace viennagrid
 
 
   /** @brief Public interface for uniform refinement of a mesh with explicit point accessor, edge refinement accessor and temporary accessors.
-   * 
+   *
    * @param ElementTypeOrTagT                 The element type/tag which elements are refined
    * @param mesh_in                         Input mesh
    * @param mesh_out                        Output refined mesh
@@ -522,7 +522,7 @@ namespace viennagrid
   }
 
   /** @brief Public interface for uniform refinement of a mesh with explicit point accessor and edge refinement accessor.
-   * 
+   *
    * @param ElementTypeOrTagT                 The element type/tag which elements are refined
    * @param mesh_in                         Input mesh
    * @param mesh_out                        Output refined mesh
@@ -540,7 +540,7 @@ namespace viennagrid
   }
 
   /** @brief Public interface for uniform refinement of a mesh with edge refinement accessor.
-   * 
+   *
    * @param ElementTypeOrTagT                 The element type/tag which elements are refined
    * @param mesh_in                         Input mesh
    * @param mesh_out                        Output refined mesh
@@ -555,7 +555,7 @@ namespace viennagrid
   }
 
   /** @brief Public interface for uniform refinement of a mesh.
-   * 
+   *
    * @param ElementTypeOrTagT                 The element type/tag which elements are refined
    * @param mesh_in                         Input mesh
    * @param mesh_out                        Output refined mesh
@@ -572,7 +572,7 @@ namespace viennagrid
   }
 
   /** @brief Public interface for uniform refinement of cells of a mesh. Will fail if there is more than one cell type.
-   * 
+   *
    * @param mesh_in                         Input mesh
    * @param mesh_out                        Output refined mesh
    */
@@ -582,7 +582,7 @@ namespace viennagrid
   {
     typedef mesh_t<WrappedMeshConfigInT>                            MeshInType;
     typedef typename viennagrid::result_of::cell<MeshInType>::type    CellType;
-    
+
     refine_uniformly<CellType>(mesh_in, mesh_out);
   }
 
@@ -592,7 +592,7 @@ namespace viennagrid
 
 
   /** @brief Public interface for refinement of a mesh with segmentation providing explicit point accessor, edge refinement accessor and temporary accessors
-   * 
+   *
    * @param ElementTypeOrTagT                 The element type/tag which elements are refined
    * @param mesh_in                         Input mesh
    * @param segmentation_in                   Input segmentation
@@ -623,7 +623,7 @@ namespace viennagrid
 
 
   /** @brief Public interface for refinement of a mesh with segmentation providing explicit point accessor and edge refinement accessor.
-   * 
+   *
    * @param ElementTypeOrTagT                 The element type/tag which elements are refined
    * @param mesh_in                         Input mesh
    * @param segmentation_in                   Input segmentation
@@ -644,7 +644,7 @@ namespace viennagrid
   {
     typedef mesh_t<WrappedMeshConfigInT> MeshInT;
     typedef mesh_t<WrappedMeshConfigOutT> MeshOutT;
-    
+
     typedef typename viennagrid::result_of::vertex<MeshOutT>::type VertexType;
     typedef typename viennagrid::result_of::line<MeshOutT>::type EdgeType;
 
@@ -662,7 +662,7 @@ namespace viennagrid
   }
 
   /** @brief Public interface for refinement of a mesh with segmentation providing edge refinement accessor.
-   * 
+   *
    * @param ElementTypeOrTagT                 The element type/tag which elements are refined
    * @param mesh_in                         Input mesh
    * @param segmentation_in                   Input segmentation
@@ -680,7 +680,7 @@ namespace viennagrid
   {
     typedef mesh_t<WrappedMeshConfigInT> MeshInT;
     typedef mesh_t<WrappedMeshConfigOutT> MeshOutT;
-    
+
     typedef typename viennagrid::result_of::vertex<MeshOutT>::type VertexType;
     typedef typename viennagrid::result_of::line<MeshOutT>::type EdgeType;
 
@@ -698,7 +698,7 @@ namespace viennagrid
 
 
   /** @brief Public interface for refinement of a mesh with segmentation providing explicit point accessor and cell refinement accessor.
-   * 
+   *
    * @param ElementTypeOrTagT                 The element type/tag which elements are refined
    * @param mesh_in                         Input mesh
    * @param segmentation_in                   Input segmentation
@@ -719,7 +719,7 @@ namespace viennagrid
   {
     typedef mesh_t<WrappedMeshConfigInT> MeshInT;
     typedef mesh_t<WrappedMeshConfigOutT> MeshOutT;
-    
+
     typedef typename viennagrid::result_of::line<MeshOutT>::type EdgeType;
     typedef typename viennagrid::result_of::cell<MeshOutT>::type CellType;
 
@@ -739,7 +739,7 @@ namespace viennagrid
   }
 
   /** @brief Public interface for refinement of a mesh with segmentation providing cell refinement accessor.
-   * 
+   *
    * @param ElementTypeOrTagT                 The element type/tag which elements are refined
    * @param mesh_in                         Input mesh
    * @param segmentation_in                   Input segmentation
@@ -762,7 +762,7 @@ namespace viennagrid
   }
 
   /** @brief Public interface for refinement of cells of a mesh with segmentation providing cell refinement accessor. Will fail if there is more than one cell type.
-   * 
+   *
    * @param mesh_in                         Input mesh
    * @param segmentation_in                   Input segmentation
    * @param mesh_out                        Output refined mesh
@@ -790,7 +790,7 @@ namespace viennagrid
 
 
   /** @brief Public interface for uniform refinement of a mesh with segmentation providing explicit point accessor, edge refinement accessor and temporary accessors.
-   * 
+   *
    * @param ElementTypeOrTagT                 The element type/tag which elements are refined
    * @param mesh_in                         Input mesh
    * @param segmentation_in                   Input segmentation
@@ -821,7 +821,7 @@ namespace viennagrid
   }
 
   /** @brief Public interface for uniform refinement of a mesh with segmentation providing explicit point accessor and edge refinement accessor.
-   * 
+   *
    * @param ElementTypeOrTagT                 The element type/tag which elements are refined
    * @param mesh_in                         Input mesh
    * @param segmentation_in                   Input segmentation
@@ -848,7 +848,7 @@ namespace viennagrid
   }
 
   /** @brief Public interface for uniform refinement of a mesh with segmentation providing edge refinement accessor.
-   * 
+   *
    * @param ElementTypeOrTagT                 The element type/tag which elements are refined
    * @param mesh_in                         Input mesh
    * @param segmentation_in                   Input segmentation
@@ -868,7 +868,7 @@ namespace viennagrid
   }
 
   /** @brief Public interface for uniform refinement of a mesh with segmentation.
-   * 
+   *
    * @param ElementTypeOrTagT                 The element type/tag which elements are refined
    * @param mesh_in                         Input mesh
    * @param segmentation_in                   Input segmentation
@@ -889,7 +889,7 @@ namespace viennagrid
   }
 
   /** @brief Public interface for uniform refinement of cells of a mesh with segmentation. Will fail if there is more than one cell type.
-   * 
+   *
    * @param mesh_in                         Input mesh
    * @param segmentation_in                   Input segmentation
    * @param mesh_out                        Output refined mesh
@@ -905,7 +905,7 @@ namespace viennagrid
     refine_uniformly<CellType>(mesh_in, segmentation_in, mesh_out, segmentation_out);
   }
 
-  
+
 }
 
 #endif

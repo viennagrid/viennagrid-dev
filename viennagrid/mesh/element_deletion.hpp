@@ -236,7 +236,7 @@ namespace viennagrid
   void erase_elements(mesh_t<WrappedConfigT> & mesh, ToEraseViewT & elements_to_erase)
   {
     typedef mesh_t<WrappedConfigT> MeshType;
-    
+
     typedef typename viennagrid::meta::typelist::result_of::reverse<
       typename viennagrid::result_of::element_typelist<ToEraseViewT>::type
     >::type SegmentHandleType;
@@ -244,9 +244,9 @@ namespace viennagrid
     erase_functor<MeshType, ToEraseViewT> functor( mesh, elements_to_erase );
     viennagrid::meta::typelist::for_each<SegmentHandleType>(functor);
   }
-  
-  
-  
+
+
+
   template<typename MeshViewT, typename ToEraseViewT>
   struct view_erase_functor
   {
@@ -267,8 +267,8 @@ namespace viennagrid
     MeshViewT & view;
     ToEraseViewT & view_to_erase;
   };
-  
-  
+
+
   /** @brief Erases all elements marked for deletion and all elements which references these elements from a mesh
     *
     * @tparam WrappedConfigT          The wrapped config of the mesh type in which the elements to erase live
@@ -280,7 +280,7 @@ namespace viennagrid
   void erase_elements(segment_handle_t<WrappedConfigT> & mesh, ToEraseViewT & elements_to_erase)
   {
     typedef segment_handle_t<WrappedConfigT> SegmentHandleType;
-    
+
     typedef typename viennagrid::meta::typelist::result_of::reverse<
       typename viennagrid::result_of::element_typelist<ToEraseViewT>::type
     >::type ElementTypelist;
@@ -288,8 +288,8 @@ namespace viennagrid
     view_erase_functor<SegmentHandleType, ToEraseViewT> functor( mesh, elements_to_erase );
     viennagrid::meta::typelist::for_each<ElementTypelist>(functor);
   }
-  
-  
+
+
 
   /** @brief Erases a single elements all elements which references this element from a mesh. If more than one element is erase use erase_elements instead for better performance.
     *
@@ -306,16 +306,16 @@ namespace viennagrid
     viennagrid::mark_erase_elements( mesh, elements_to_erase, element_to_erase );
     viennagrid::erase_elements(mesh, elements_to_erase);
   }
-  
-  
-  
 
-  
-  
-  
-  
-  
-  
+
+
+
+
+
+
+
+
+
 }
 
 
