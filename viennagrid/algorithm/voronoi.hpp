@@ -91,11 +91,7 @@ namespace viennagrid
     {
       typedef typename viennagrid::result_of::element<MeshType, CellTag>::type CellType;
 
-      typedef typename viennagrid::result_of::point<MeshType>::type                            PointType;
       typedef typename viennagrid::result_of::element<MeshType, vertex_tag>::type                         VertexType;
-
-      typedef typename viennagrid::result_of::const_element_range<MeshType, vertex_tag>::type               VertexRange;
-      typedef typename viennagrid::result_of::iterator<VertexRange>::type                          VertexIterator;
 
       typedef typename viennagrid::result_of::const_element_range<MeshType, CellTag>::type    CellRange;
       typedef typename viennagrid::result_of::iterator<CellRange>::type                            CellIterator;
@@ -103,9 +99,6 @@ namespace viennagrid
 
       typedef typename viennagrid::result_of::const_element_range<CellType, vertex_tag>::type           VertexOnCellRange;
       typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type              VertexOnCellIterator;
-
-
-      typedef typename viennagrid::result_of::voronoi_cell_contribution<CellType>::type      CellContributionType;
 
       //
       // Write Voronoi information
@@ -190,12 +183,6 @@ namespace viennagrid
       typedef typename viennagrid::result_of::element<MeshType, vertex_tag>::type                         VertexType;
       typedef typename viennagrid::result_of::element<MeshType, line_tag>::type                         EdgeType;
 
-      typedef typename viennagrid::result_of::const_element_range<MeshType, vertex_tag>::type               VertexRange;
-      typedef typename viennagrid::result_of::iterator<VertexRange>::type                          VertexIterator;
-
-      typedef typename viennagrid::result_of::const_element_range<MeshType, line_tag>::type               EdgeRange;
-      typedef typename viennagrid::result_of::iterator<EdgeRange>::type                            EdgeIterator;
-
       typedef typename viennagrid::result_of::const_element_range<MeshType, CellTag>::type    CellRange;
       typedef typename viennagrid::result_of::iterator<CellRange>::type                            CellIterator;
 
@@ -204,8 +191,6 @@ namespace viennagrid
 
       typedef typename viennagrid::result_of::const_element_range<EdgeType, vertex_tag>::type                 VertexOnEdgeRange;
       typedef typename viennagrid::result_of::iterator<VertexOnEdgeRange>::type                    VertexOnEdgeIterator;
-
-      typedef typename viennagrid::result_of::voronoi_cell_contribution<CellType>::type      CellContributionType;
 
 
       //
@@ -268,7 +253,6 @@ namespace viennagrid
       typedef TriangleType CellType;
       typedef typename viennagrid::result_of::const_element_range<CellType, vertex_tag>::type               VertexRange;
       typedef typename viennagrid::result_of::point<TriangleType>::type PointType;
-      typedef typename viennagrid::result_of::coord<PointType>::type                   value_type;
       VertexRange vertices = viennagrid::elements<viennagrid::vertex_tag>(triangle);
 
       PointType const & a = viennagrid::point(vertices[0]);
@@ -333,13 +317,9 @@ namespace viennagrid
       typedef typename viennagrid::result_of::const_element_range<MeshType, CellTag>::type               CellRange;
       typedef typename viennagrid::result_of::iterator<CellRange>::type                                       CellIterator;
 
-      typedef typename viennagrid::result_of::const_element_range<MeshType, line_tag>::type                          EdgeRange;
-      typedef typename viennagrid::result_of::iterator<EdgeRange>::type                                       EdgeIterator;
-
       typedef typename viennagrid::result_of::const_element_range<CellType, vertex_tag>::type                            VertexOnCellRange;
-      typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type                               VertexOnCellIterator;
 
-      typedef typename viennagrid::result_of::const_coboundary_range<MeshType, EdgeType, CellTag>::type CellOnEdgeRange;;
+      typedef typename viennagrid::result_of::const_coboundary_range<MeshType, EdgeType, CellTag>::type CellOnEdgeRange;
 
 //       typedef typename viennagrid::result_of::const_element_range<EdgeType, CellTag>::type                 CellOnEdgeRange;
       typedef typename viennagrid::result_of::iterator<CellOnEdgeRange>::type                                 CellOnEdgeIterator;
@@ -349,8 +329,6 @@ namespace viennagrid
 
       typedef typename viennagrid::result_of::const_element_range<EdgeType, vertex_tag>::type                            VertexOnEdgeRange;
       typedef typename viennagrid::result_of::iterator<VertexOnEdgeRange>::type                               VertexOnEdgeIterator;
-
-      typedef typename viennagrid::result_of::voronoi_cell_contribution<CellType>::type      CellContributionType;
 
       CellRange cells = viennagrid::elements<CellTag>(mesh);
       for (CellIterator cit  = cells.begin();
@@ -644,8 +622,6 @@ namespace viennagrid
       typedef typename viennagrid::result_of::const_element_range<EdgeType, vertex_tag>::type                            VertexOnEdgeRange;
       typedef typename viennagrid::result_of::iterator<VertexOnEdgeRange>::type                               VertexOnEdgeIterator;
 
-      typedef typename viennagrid::result_of::voronoi_cell_contribution<ConstCellHandleType>::type      CellContributionType;
-
       typedef std::pair<PointType, ConstCellHandleType>             PointWithCellInfo;
       typedef std::pair<std::pair<PointType, PointType>,
                         ConstCellHandleType>                        EdgePointsWithCellInfo;
@@ -832,7 +808,6 @@ namespace viennagrid
       //std::cout << "Warning: Voronoi info for hexahedron is only correct when having regular cuboids only." << std::endl;
 
       typedef typename viennagrid::result_of::element<MeshType, CellTag>::type CellType;
-      typedef typename viennagrid::result_of::const_handle<MeshType, CellTag>::type ConstCellHandleType;
 
       typedef typename viennagrid::result_of::point<MeshType>::type                            PointType;
       typedef typename viennagrid::result_of::element<MeshType, vertex_tag>::type                         VertexType;
@@ -850,8 +825,6 @@ namespace viennagrid
 
       typedef typename viennagrid::result_of::const_element_range<EdgeType, vertex_tag>::type                            VertexOnEdgeRange;
       typedef typename viennagrid::result_of::iterator<VertexOnEdgeRange>::type                               VertexOnEdgeIterator;
-
-      typedef typename viennagrid::result_of::voronoi_cell_contribution<ConstCellHandleType>::type      CellContributionType;
 
       //
       // Algorithm: Iterate over all cells, compute circumcenter and add interface area to edge, box volume to vertex.

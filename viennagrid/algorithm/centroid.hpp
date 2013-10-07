@@ -137,8 +137,6 @@ namespace viennagrid
       typedef typename viennagrid::result_of::element_tag<ElementTypeOrTag>::type ElementTag;
 
       typedef typename viennagrid::result_of::point<MeshSegmentHandleType>::type                      PointType;
-      typedef typename viennagrid::result_of::element<MeshSegmentHandleType, vertex_tag>::type                         VertexType;
-      typedef typename viennagrid::result_of::element<MeshSegmentHandleType, line_tag>::type                         EdgeType;
 
       typedef typename viennagrid::result_of::const_element_range<MeshSegmentHandleType,
                                                                 ElementTag>::type  CellRange;

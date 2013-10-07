@@ -9,7 +9,7 @@
 
    Authors:      Karl Rupp                           rupp@iue.tuwien.ac.at
                  Josef Weinbub                    weinbub@iue.tuwien.ac.at
-               
+
    (A list of additional contributors can be found in the PDF manual)
 
    License:      MIT (X11), see file LICENSE in the base directory
@@ -26,38 +26,31 @@
 template <typename MeshT>
 int test(MeshT & mesh_in)
 {
-  typedef typename viennagrid::result_of::cell_tag<MeshT>::type                  CellTag;
-  
-  typedef typename viennagrid::result_of::point<MeshT>::type          PointType;
-  typedef typename viennagrid::result_of::vertex<MeshT>::type       VertexType;
   typedef typename viennagrid::result_of::line<MeshT>::type       EdgeType;
   typedef typename viennagrid::result_of::cell<MeshT>::type      CellType;
 
-  typedef typename viennagrid::result_of::vertex_range<MeshT>::type  VertexContainer;
-  typedef typename viennagrid::result_of::iterator<VertexContainer>::type       VertexIterator;
-    
   typedef typename viennagrid::result_of::line_range<CellType>::type    EdgeOnCellContainer;
   typedef typename viennagrid::result_of::iterator<EdgeOnCellContainer>::type     EdgeOnCellIterator;
 
   typedef typename viennagrid::result_of::cell_range<MeshT>::type  CellContainer;
   typedef typename viennagrid::result_of::iterator<CellContainer>::type         CellIterator;
-  
+
   CellContainer cells = viennagrid::elements(mesh_in);
   CellIterator cit = cells.begin();
-  
+
   CellType & cell = *cit;
-  
+
   EdgeOnCellContainer edges = viennagrid::elements(cell);
-  
+
   std::cout << "Volume of reference tetrahedron: " << volume(cell) << std::endl;
-  
+
   //
   // Tag edges systematically for refinement:
   //
-  
+
   std::cout << "Cell under test: " << std::endl;
   std::cout << cell << std::endl;
-  
+
   //1 edge:
   std::cout << "Testing refinement with one tagged edge: ";
   for (EdgeOnCellIterator eocit1 = edges.begin();
@@ -68,12 +61,12 @@ int test(MeshT & mesh_in)
     typename viennagrid::result_of::field<std::vector<bool>, EdgeType>::type edge_refinement_tag_field(edge_refinement_tag_container);
     edge_refinement_tag_field(*eocit1) = true;
 
-    
+
     MeshT mesh_refined;
     viennagrid::refine<CellType>( mesh_in, mesh_refined, edge_refinement_tag_field );
-    
+
 //     mesh_refined = viennagrid::refine(mesh_in, viennagrid::local_refinement_tag());
-    
+
     if (sanity_check(mesh_in, mesh_refined) == EXIT_FAILURE)
     {
       print_refinement_edges(cell, edge_refinement_tag_field);
@@ -81,7 +74,7 @@ int test(MeshT & mesh_in)
     }
   }
   std::cout << "[PASSED]" << std::endl;
-  
+
 
   //2 edges:
   std::cout << "Testing refinement with two tagged edges: ";
@@ -97,7 +90,7 @@ int test(MeshT & mesh_in)
       typename viennagrid::result_of::field<std::vector<bool>, EdgeType>::type edge_refinement_tag_field(edge_refinement_tag_container);
       edge_refinement_tag_field(*eocit1) = true;
       edge_refinement_tag_field(*eocit2) = true;
-      
+
       MeshT mesh_refined;
       viennagrid::refine<CellType>( mesh_in, mesh_refined, edge_refinement_tag_field );
 
@@ -109,7 +102,7 @@ int test(MeshT & mesh_in)
     }
   }
   std::cout << "[PASSED]" << std::endl;
-  
+
   //3 edges:
   std::cout << "Testing refinement with three tagged edges: ";
   for (EdgeOnCellIterator eocit1 = edges.begin();
@@ -129,10 +122,10 @@ int test(MeshT & mesh_in)
         edge_refinement_tag_field(*eocit1) = true;
         edge_refinement_tag_field(*eocit2) = true;
         edge_refinement_tag_field(*eocit3) = true;
-        
+
         MeshT mesh_refined;
         viennagrid::refine<CellType>( mesh_in, mesh_refined, edge_refinement_tag_field );
-        
+
         if (sanity_check(mesh_in, mesh_refined) == EXIT_FAILURE)
         {
           print_refinement_edges(cell, edge_refinement_tag_field);
@@ -167,10 +160,10 @@ int test(MeshT & mesh_in)
           edge_refinement_tag_field(*eocit2) = true;
           edge_refinement_tag_field(*eocit3) = true;
           edge_refinement_tag_field(*eocit4) = true;
-          
+
           MeshT mesh_refined;
           viennagrid::refine<CellType>( mesh_in, mesh_refined, edge_refinement_tag_field );
-          
+
           if (sanity_check(mesh_in, mesh_refined) == EXIT_FAILURE)
           {
             print_refinement_edges(cell, edge_refinement_tag_field);
@@ -181,7 +174,7 @@ int test(MeshT & mesh_in)
     }
   }
   std::cout << "[PASSED]" << std::endl;
-  
+
   //5 edges:
   std::cout << "Testing refinement with five tagged edges: ";
   for (EdgeOnCellIterator eocit1 = edges.begin();
@@ -211,7 +204,7 @@ int test(MeshT & mesh_in)
             edge_refinement_tag_field(*eocit3) = true;
             edge_refinement_tag_field(*eocit4) = true;
             edge_refinement_tag_field(*eocit5) = true;
-            
+
             MeshT mesh_refined;
             viennagrid::refine<CellType>( mesh_in, mesh_refined, edge_refinement_tag_field );
 
@@ -226,33 +219,33 @@ int test(MeshT & mesh_in)
     }
   }
   std::cout << "[PASSED]" << std::endl;
-  
+
   //6 edges:
   std::cout << "Testing refinement with six tagged edges: ";
-  
+
   std::vector<bool> edge_refinement_tag_container(edges.size());
   typename viennagrid::result_of::field<std::vector<bool>, EdgeType>::type edge_refinement_tag_field(edge_refinement_tag_container);
-            
+
   for (EdgeOnCellIterator eocit1 = edges.begin();
                           eocit1 != edges.end();
                         ++eocit1)
   {
     edge_refinement_tag_field(*eocit1) = true;
   }
-  
+
   {
     MeshT mesh_refined;
     viennagrid::refine<CellType>( mesh_in, mesh_refined, edge_refinement_tag_field );
-    
+
     if (sanity_check(mesh_in, mesh_refined) == EXIT_FAILURE)
     {
       print_refinement_edges(cell, edge_refinement_tag_field);
       return EXIT_FAILURE;
     }
-  }  
-  
+  }
+
   std::cout << "[PASSED]" << std::endl;
-  
+
   return EXIT_SUCCESS;
 }
 
@@ -390,7 +383,7 @@ struct point_filler<2, B>
     PointType & p1 = points[2];
     PointType & p2 = points[0];
     PointType & p3 = points[3];
-    
+
     coord_filler<B>::apply(p0, p1, p2, p3);
   }
 };
@@ -405,7 +398,7 @@ struct point_filler<3, B>
     PointType & p1 = points[0];
     PointType & p2 = points[1];
     PointType & p3 = points[3];
-    
+
     coord_filler<B>::apply(p0, p1, p2, p3);
   }
 };
@@ -421,7 +414,7 @@ struct point_filler<4, B>
     PointType & p1 = points[1];
     PointType & p2 = points[0];
     PointType & p3 = points[2];
-    
+
     coord_filler<B>::apply(p0, p1, p2, p3);
   }
 };
@@ -436,7 +429,7 @@ struct point_filler<5, B>
     PointType & p1 = points[0];
     PointType & p2 = points[3];
     PointType & p3 = points[2];
-    
+
     coord_filler<B>::apply(p0, p1, p2, p3);
   }
 };
@@ -451,7 +444,7 @@ struct point_filler<6, B>
     PointType & p1 = points[3];
     PointType & p2 = points[1];
     PointType & p3 = points[2];
-    
+
     coord_filler<B>::apply(p0, p1, p2, p3);
   }
 };
@@ -468,7 +461,7 @@ struct point_filler<7, B>
     PointType & p1 = points[2];
     PointType & p2 = points[3];
     PointType & p3 = points[1];
-    
+
     coord_filler<B>::apply(p0, p1, p2, p3);
   }
 };
@@ -483,7 +476,7 @@ struct point_filler<8, B>
     PointType & p1 = points[3];
     PointType & p2 = points[0];
     PointType & p3 = points[1];
-    
+
     coord_filler<B>::apply(p0, p1, p2, p3);
   }
 };
@@ -498,7 +491,7 @@ struct point_filler<9, B>
     PointType & p1 = points[0];
     PointType & p2 = points[2];
     PointType & p3 = points[1];
-    
+
     coord_filler<B>::apply(p0, p1, p2, p3);
   }
 };
@@ -514,7 +507,7 @@ struct point_filler<10, B>
     PointType & p1 = points[3];
     PointType & p2 = points[2];
     PointType & p3 = points[0];
-    
+
     coord_filler<B>::apply(p0, p1, p2, p3);
   }
 };
@@ -529,7 +522,7 @@ struct point_filler<11, B>
     PointType & p1 = points[2];
     PointType & p2 = points[1];
     PointType & p3 = points[0];
-    
+
     coord_filler<B>::apply(p0, p1, p2, p3);
   }
 };
@@ -544,7 +537,7 @@ struct point_filler<12, B>
     PointType & p1 = points[1];
     PointType & p2 = points[3];
     PointType & p3 = points[0];
-    
+
     coord_filler<B>::apply(p0, p1, p2, p3);
   }
 };
@@ -553,25 +546,19 @@ struct point_filler<12, B>
 template <typename MeshType, typename PointFiller>
 void fill_mesh(MeshType & mesh, PointFiller const &)
 {
-//   typedef typename MeshType::config_type      ConfigType;
-//   typedef viennagrid::segment_handle_t<ConfigType>     SegmentType;
-  typedef typename viennagrid::result_of::cell_tag<MeshType>::type         CellTag;
-
   typedef typename viennagrid::result_of::point<MeshType>::type          PointType;
-  typedef typename viennagrid::result_of::vertex<MeshType>::type       VertexType;
   typedef typename viennagrid::result_of::vertex_handle<MeshType>::type       VertexHandleType;
-  typedef typename viennagrid::result_of::cell<MeshType>::type   CellType;
-  
+
 //   mesh.segments().resize(1);
 //   SegmentType & seg = mesh.segments()[0];
-  
+
   std::vector<PointType> points(4);
   PointFiller::apply(points);
 
-  //upgrade to vertex:  
+  //upgrade to vertex:
   //std::cout << "Adding vertices to mesh..." << std::endl;
   VertexHandleType vh[4];
-  
+
   for (int i = 0; i < 4; ++i)
     vh[i] = viennagrid::make_vertex( mesh, points[i] );
 
@@ -587,7 +574,7 @@ struct mesh_tester
   {
     typedef viennagrid::config::tetrahedral_3d    ConfigType;
     typedef typename viennagrid::result_of::mesh<ConfigType>::type        Mesh;
-   
+
     std::cout << std::endl;
     std::cout << "Testing mesh " << A << "..." << std::endl;
     Mesh mesh;
@@ -597,7 +584,7 @@ struct mesh_tester
       std::cerr << "FAILED!" << std::endl;
       return EXIT_FAILURE;
     }
-    
+
     return mesh_tester<A-1, B>::apply();
   }
 };
@@ -606,7 +593,7 @@ struct mesh_tester
 template <unsigned int B>
 struct mesh_tester<0, B>
 {
-  static int apply() { return EXIT_SUCCESS; } 
+  static int apply() { return EXIT_SUCCESS; }
 };
 
 int main()
@@ -619,8 +606,8 @@ int main()
   std::cout << "*****************" << std::endl;
   std::cout << "* Test started! *" << std::endl;
   std::cout << "*****************" << std::endl;
-  
-  
+
+
   if (mesh_tester<12, 1>::apply() == EXIT_SUCCESS)
   {
     std::cout << "SUCCESS!" << std::endl;
@@ -669,6 +656,6 @@ int main()
   }
   else
     return EXIT_FAILURE;
-  
+
   return EXIT_SUCCESS;
 }

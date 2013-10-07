@@ -50,9 +50,7 @@ namespace viennagrid
             >
                     physical_insert( value_type element, inserter_type & inserter )
             {
-                typedef typename viennagrid::storage::result_of::container_of<container_collection_type, value_type>::type::iterator iterator;
                 typedef typename viennagrid::storage::result_of::container_of<container_collection_type, value_type>::type container_type;
-                typedef typename viennagrid::storage::result_of::container_of<container_collection_type, value_type>::type::handle_tag handle_tag;
                 typedef typename viennagrid::storage::result_of::container_of<container_collection_type, value_type>::type::handle_type handle_type;
 
 

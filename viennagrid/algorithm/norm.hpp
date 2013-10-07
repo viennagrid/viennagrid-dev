@@ -95,9 +95,6 @@ namespace viennagrid
   typename result_of::coord<PointType>::type
   norm_impl(PointType const & p, CSystem const &)
   {
-    typedef typename result_of::coord<PointType>::type    value_type;
-    typedef typename result_of::cartesian_point<PointType>::type   CartesianPoint1;
-
     return detail::norm_impl<NormTag>()(to_cartesian(p));
   }
 

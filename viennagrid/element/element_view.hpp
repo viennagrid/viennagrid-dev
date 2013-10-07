@@ -65,7 +65,6 @@ namespace viennagrid
     {
         typedef typename result_of::element_tag<element_type_or_tag>::type element_tag;
 
-        typedef typename result_of::element<something, element_tag>::type ElementType;
         typedef typename result_of::element_range<something, element_tag>::type RangeType;
         typedef typename result_of::iterator<RangeType>::type IteratorType;
 
@@ -88,7 +87,6 @@ namespace viennagrid
     {
         typedef typename result_of::element_tag<element_type_or_tag>::type element_tag;
 
-        typedef typename result_of::element<something, element_tag>::type ElementType;
         typedef typename result_of::const_element_range<something, element_tag>::type RangeType;
         typedef typename result_of::iterator<RangeType>::type IteratorType;
 

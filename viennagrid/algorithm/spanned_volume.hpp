@@ -135,7 +135,6 @@ namespace viennagrid
                       CSystem1 const &,
                       CSystem2 const &)
   {
-    typedef typename result_of::coord<PointType1>::type    value_type;
     typedef typename result_of::cartesian_point<PointType1>::type   CartesianPoint1;
 
     return detail::signed_spanned_volume_impl<CartesianPoint1>::apply(to_cartesian(p1), to_cartesian(p2));
@@ -152,7 +151,6 @@ namespace viennagrid
                       CSystem2 const &,
                       CSystem3 const &)
   {
-    typedef typename result_of::coord<PointType1>::type    value_type;
     typedef typename result_of::cartesian_point<PointType1>::type   CartesianPoint1;
 
     return detail::signed_spanned_volume_impl<CartesianPoint1>::apply(to_cartesian(p1), to_cartesian(p2), to_cartesian(p3));
@@ -171,7 +169,6 @@ namespace viennagrid
                       CSystem3 const &,
                       CSystem4 const &)
   {
-    typedef typename result_of::coord<PointType1>::type    value_type;
     typedef typename result_of::cartesian_point<PointType1>::type   CartesianPoint1;
 
     return detail::signed_spanned_volume_impl<CartesianPoint1>::apply(to_cartesian(p1), to_cartesian(p2), to_cartesian(p3), to_cartesian(p4));

@@ -53,16 +53,10 @@ namespace viennagrid
     {
       typedef typename viennagrid::result_of::const_element_range<ElementType, viennagrid::vertex_tag>::type            VertexOnCellRange;
       typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type         VertexOnCellIterator;
-      typedef typename viennagrid::result_of::const_element_range<ElementType, viennagrid::line_tag>::type            EdgeOnCellRange;
-      typedef typename viennagrid::result_of::iterator<EdgeOnCellRange>::type           EdgeOnCellIterator;
 
       typedef typename viennagrid::result_of::handle<MeshTypeOut, viennagrid::vertex_tag>::type             VertexHandleType;
 
-      typedef typename viennagrid::result_of::element<MeshTypeOut, vertex_tag>::type                                      VertexTypeOut;
-      typedef typename VertexTypeOut::id_type VertexIDTypeOut;
-
-      const unsigned int num_vertices = boundary_elements<triangle_tag, vertex_tag>::num;
-      storage::static_array<VertexHandleType, num_vertices> vertex_handles;
+      storage::static_array<VertexHandleType, boundary_elements<triangle_tag, vertex_tag>::num> vertex_handles;
 
       //
       // Step 1: Get vertices on the new mesh
@@ -101,13 +95,8 @@ namespace viennagrid
       typedef typename viennagrid::result_of::const_element_range<ElementType, viennagrid::line_tag>::type            EdgeOnCellRange;
       typedef typename viennagrid::result_of::iterator<EdgeOnCellRange>::type           EdgeOnCellIterator;
 
-      typedef typename viennagrid::result_of::element<MeshTypeOut, viennagrid::vertex_tag>::type             VertexType;
       typedef typename viennagrid::result_of::handle<MeshTypeOut, viennagrid::vertex_tag>::type             VertexHandleType;
       typedef typename viennagrid::result_of::element<MeshTypeOut, viennagrid::line_tag>::type             EdgeType;
-
-      typedef typename viennagrid::result_of::element<MeshTypeOut, vertex_tag>::type                                      VertexTypeOut;
-      typedef typename VertexTypeOut::id_type VertexIDTypeOut;
-
 
       const unsigned int num_vertices = boundary_elements<triangle_tag, vertex_tag>::num;
       storage::static_array<VertexHandleType, num_vertices+1> vertex_handles;
@@ -182,13 +171,8 @@ namespace viennagrid
       typedef typename viennagrid::result_of::const_element_range<ElementType, viennagrid::line_tag>::type            EdgeOnCellRange;
       typedef typename viennagrid::result_of::iterator<EdgeOnCellRange>::type           EdgeOnCellIterator;
 
-      typedef typename viennagrid::result_of::element<MeshTypeOut, viennagrid::vertex_tag>::type             VertexType;
       typedef typename viennagrid::result_of::handle<MeshTypeOut, viennagrid::vertex_tag>::type             VertexHandleType;
       typedef typename viennagrid::result_of::element<MeshTypeOut, viennagrid::line_tag>::type             EdgeType;
-
-      typedef typename viennagrid::result_of::element<MeshTypeOut, vertex_tag>::type                                      VertexTypeOut;
-      typedef typename VertexTypeOut::id_type VertexIDTypeOut;
-
 
       const unsigned int num_vertices = boundary_elements<triangle_tag, vertex_tag>::num;
       storage::static_array<VertexHandleType, num_vertices+2> vertex_handles;
@@ -284,11 +268,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::const_element_range<ElementType, viennagrid::line_tag>::type            EdgeOnCellRange;
       typedef typename viennagrid::result_of::iterator<EdgeOnCellRange>::type           EdgeOnCellIterator;
 
-      typedef typename viennagrid::result_of::element<MeshTypeOut, viennagrid::vertex_tag>::type             VertexType;
       typedef typename viennagrid::result_of::handle<MeshTypeOut, viennagrid::vertex_tag>::type             VertexHandleType;
-
-      typedef typename viennagrid::result_of::element<MeshTypeOut, vertex_tag>::type                                      VertexTypeOut;
-      typedef typename VertexTypeOut::id_type VertexIDTypeOut;
 
       const unsigned int num_vertices = boundary_elements<triangle_tag, vertex_tag>::num;
       const unsigned int num_lines = boundary_elements<triangle_tag, line_tag>::num;

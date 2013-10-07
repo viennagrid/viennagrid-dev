@@ -37,7 +37,6 @@ namespace viennagrid
     typedef typename viennagrid::result_of::cell_tag<MeshType>::type CellTag;
     typedef typename viennagrid::result_of::facet_tag<CellTag>::type FacetTag;
 
-    typedef typename viennagrid::result_of::element<MeshType, FacetTag >::type   FacetType;
     typedef typename viennagrid::result_of::element<MeshType, CellTag>::type     CellType;
 
     typedef typename viennagrid::result_of::element_range<MeshType, FacetTag>::type      FacetRange;
@@ -250,9 +249,6 @@ namespace viennagrid
   bool is_boundary(mesh_t<WrappedConfigType> const & mesh, ElementType const & element)
   {
         typedef mesh_t<WrappedConfigType> mesh_type;
-        typedef typename viennagrid::result_of::cell_tag< mesh_type >::type cell_tag;
-        typedef typename viennagrid::result_of::facet_tag< cell_tag >::type facet_tag;
-
         typedef typename viennagrid::result_of::element_tag<ElementType>::type element_tag;
 
 

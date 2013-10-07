@@ -88,7 +88,6 @@ namespace viennagrid
   void create_coboundary_information(mesh_type & mesh, coboundary_accessor_type accessor)
   {
       typedef typename viennagrid::result_of::element_tag< element_type_or_tag >::type element_tag;
-      typedef typename viennagrid::result_of::element_tag< coboundary_type_or_tag >::type coboundary_tag;
 
       typedef typename viennagrid::result_of::element< mesh_type, coboundary_type_or_tag >::type coboundary_type;
 

@@ -9,7 +9,7 @@
 
    Authors:      Karl Rupp                           rupp@iue.tuwien.ac.at
                  Josef Weinbub                    weinbub@iue.tuwien.ac.at
-               
+
    (A list of additional contributors can be found in the PDF manual)
 
    License:      MIT (X11), see file LICENSE in the base directory
@@ -48,15 +48,15 @@ struct UserData
 template <typename MeshType, typename SegmentationType>
 void read_netgen(MeshType & mesh, SegmentationType & segmentation)
 {
-  
+
   viennagrid::io::netgen_reader my_netgen_reader;
   my_netgen_reader(mesh, segmentation, "../data/cube48.mesh");
-  
+
   //
   // Note that the Netgen format supports multiple segments, which will be automatically created by the reader
   //
   std::cout << "Number of segments in Netgen file: " << segmentation.size() << std::endl;
-  
+
   // do more stuff with the mesh here.
 }
 
@@ -68,8 +68,7 @@ template <typename MeshType, typename UserData>
 void write_opendx(MeshType const & mesh, UserData & data)
 {
   typedef typename viennagrid::result_of::vertex< MeshType >::type        vertex_type;
-  typedef typename viennagrid::result_of::cell< MeshType >::type          cell_type;
-  
+
   // Instantiate writer object:
   viennagrid::io::opendx_writer<MeshType> my_dx_writer;
 
@@ -99,57 +98,57 @@ void read_vtk(MeshType & mesh, SegmentationType & segmentation, UserData & data)
   // Step 1: Instantiate reader object
   //
   viennagrid::io::vtk_reader<MeshType, SegmentationType> reader;
-  
+
   //-----------------------------------------------------
-  
+
   //
-  // Step 2: Specify where to write the vertex data. 
+  // Step 2: Specify where to write the vertex data.
   //         By default, data is written as type double or std::vector<double> to ViennaData using a std::string that matches the name in the VTK file.
   //
-  
+
   // Write scalar vertex data that matches the name 'data_double' to ViennaData as data of type double, using a key of type std::string and value "vtk_data":
   reader.register_vertex_scalar( viennagrid::make_accessor<vertex_type>(data.vertex_scalar_array), "data_double" );
-  
+
   // Write vector-valued vertex data that matches the name 'data_point' to ViennaData as data of type std::vector<double>, using a key of type std::string and value "vtk_data":
 //   reader.register_vertex_vector_accessor( viennagrid::make_accessor<vertex_type>(data.vertex_vector_array), "data_point" );
-  
+
   // Write normal (vector-valued) vertex data that matches the name 'data_normal' to ViennaData as data of type std::vector<double>, using a key of type std::string and value "vtk_data_2":
   //viennagrid::io::add_normal_data_on_vertices<std::string, std::vector<double> >(reader, "vtk_data_2", "data_normal");
 
   //-----------------------------------------------------
-  
+
   //
-  // Step 3: Specify where to write the cell data. 
+  // Step 3: Specify where to write the cell data.
   //         By default, data is written as type double or std::vector<double> to ViennaData using a std::string that matches the name in the VTK file.
   //
 
   // Write scalar cell data that matches the name 'data_double' to ViennaData as data of type double, using a key of type std::string and value "vtk_data":
   reader.register_cell_scalar( viennagrid::make_accessor<cell_type>(data.cell_scalar_array), "data_double" );
-  
+
   // Write vector-valued cell data that matches the name 'data_point' to ViennaData as data of type std::vector<double>, using a key of type std::string and value "vtk_data":
 //   reader.register_cell_vector_accessor( viennagrid::make_accessor<cell_type>(data.cell_vector_array), "data_point" );
-  
+
   // Write normal (vector-valued) cell data that matches the name 'data_normal' to ViennaData as data of type std::vector<double>, using a key of type std::string and value "vtk_data_2":
   //viennagrid::io::add_normal_data_on_cells<std::string, std::vector<double> >(reader, "vtk_data_2", "data_normal");
 
-  
+
   //-----------------------------------------------------
-  
+
   //
   // Step 4: Trigger filereader:
   //
   reader(mesh, segmentation, "../data/tets_with_data_main.pvd");
-  
-  
+
+
   //
   // Step 5: Get and print all names read from vtk file(s):
   //
-  
+
   std::cout << "--- Data read from VTK file: ---" << std::endl;
   std::cout << "* Scalar data on vertices: " << std::endl;
   for (size_t i=0; i<data.vertex_scalar_array.size(); ++i)
     std::cout << (data.vertex_scalar_array)[i] << std::endl;
-              
+
   std::cout << "* Vector data on vertices: " << std::endl;
   for (size_t i=0; i<data.vertex_vector_array.size(); ++i)
   {
@@ -157,11 +156,11 @@ void read_vtk(MeshType & mesh, SegmentationType & segmentation, UserData & data)
       std::cout << (data.vertex_vector_array)[i][j] << " ";
     std::cout << std::endl;
   }
-              
+
   std::cout << "* Scalar data on cells: " << std::endl;
   for (size_t i=0; i<data.cell_scalar_array.size(); ++i)
     std::cout << (data.cell_scalar_array)[i] << std::endl;
-              
+
   std::cout << "* Vector data on cells: " << std::endl;
   for (size_t i=0; i<data.cell_vector_array.size(); ++i)
   {
@@ -188,52 +187,52 @@ void write_vtk(MeshType & mesh, UserData & data)
   // Step 1: Instantiate a writer object:
   //
   viennagrid::io::vtk_writer<MeshType> writer;
-  
+
   //-----------------------------------------------------
-  
+
   //
   // Step 2: Add vertex data to the writer. In the following, keys of type std::string and value "vtk_data" are used as the ViennaData accessor.
   //         The third function argument is the name of the quantity as it will appear in the VTK file.
   //
-  
+
   // Write data of type data that is stored with ViennaData for keys of type std::string with value "vtk_data" and call it "data_double" in the VTK file:
   //viennagrid::io::add_scalar_data_on_vertices<std::string, double>(my_vtk_writer, "vtk_data", "data_double");
   writer.add_scalar_data_on_vertices( viennagrid::make_accessor<vertex_type>(data.vertex_scalar_array), "data_double" );
 
   // Same as above, but with data of type long, which is then called "data_long" in the VTK file:
   //viennagrid::io::add_scalar_data_on_vertices<std::string, long>(my_vtk_writer, "vtk_data", "data_long");
-  
+
   // Vector-valued data of type std::vector<double> is written to the VTK file and named "data_vector". Data is accessed with ViennaData using a std::string "vtk_data" as key.
   //viennagrid::io::add_vector_data_on_vertices<std::string, std::vector<double> >(my_vtk_writer, "vtk_data", "data_point");
 //   writer.add_vector_data_on_vertices( viennagrid::make_accessor<vertex_type>(data.vertex_vector_array), "data_point" );
 
   // Same as vector-data, but with the constraint that each vector has length 1
   //viennagrid::io::add_normal_data_on_vertices<std::string, std::vector<double> >(my_vtk_writer, "vtk_data", "data_normal");
-  
+
   //-----------------------------------------------------
-  
+
   //
   // Step 3: Add cell data to the writer. Works in the same way as vertex data
   //
-  
+
   // Write data of type double, using the std::string key "vtk_data". Name in VTK file is "data_double" (there is no name collision with vertex data here).
   //viennagrid::io::add_scalar_data_on_cells<std::string, double>(my_vtk_writer, "vtk_data", "data_double");
   writer.add_scalar_data_on_cells( viennagrid::make_accessor<cell_type>(data.cell_scalar_array), "data_double" );
-  
+
   // Vector valued data on cells. Similar to vertex case
   //viennagrid::io::add_vector_data_on_cells<std::string, std::vector<double> >(my_vtk_writer, "vtk_data", "data_vector");
 //   writer.add_vector_data_on_cells( viennagrid::make_accessor<cell_type>(data.cell_vector_array), "data_vector" );
 
   // Vector valued data on cells. Just like vector data, but with a normalization requirement to length 1.
   //viennagrid::io::add_normal_data_on_cells<std::string, std::vector<double> >(my_vtk_writer, "vtk_data", "data_normal");
-  
+
   //-----------------------------------------------------
-  
+
   //
   // Final Step: Trigger the write process:
   //
   writer(mesh, "tutorial_io.vtu");
-   
+
 }
 
 /*
@@ -241,13 +240,13 @@ template <typename CellTypeOrTag, typename MeshType>
 void write_data(MeshType & mesh)
 {
   typedef typename viennagrid::result_of::element_tag<CellTypeOrTag>::type CellTag;
-  
+
   typedef typename viennagrid::result_of::element_range<MeshType, viennagrid::vertex_tag>::type           VertexContainer;
   typedef typename viennagrid::result_of::iterator<VertexContainer>::type        VertexIterator;
 
   typedef typename viennagrid::result_of::element_range<MeshType, CellTag>::type     CellContainer;
   typedef typename viennagrid::result_of::iterator<CellContainer>::type                          CellIterator;
-  
+
 
   //write x-component to each vertex
   VertexContainer vertices = viennagrid::elements<viennagrid::vertex_tag>(mesh);
@@ -257,7 +256,7 @@ void write_data(MeshType & mesh)
   {
     viennadata::access<std::string, double>("vtk_data")(*vit) = viennagrid::point(mesh, *vit)[0];
   }
-  
+
   //write x-component of circumcenter to each cell
   CellContainer cells = viennagrid::elements<CellTag>(mesh);
   for (CellIterator cit = cells.begin();
@@ -279,14 +278,13 @@ int main()
 {
   //typedef viennagrid::mesh_t< my_mesh_config >          Mesh;
   typedef viennagrid::mesh_t< viennagrid::config::tetrahedral_3d >     Mesh;
-  typedef viennagrid::result_of::mesh_view<Mesh>::type               Segment;
   typedef viennagrid::result_of::segmentation<Mesh>::type              Segmentation;
-        
+
   std::cout << "----------------------------------------" << std::endl;
   std::cout << "-- ViennaGrid tutorial: IO operations --" << std::endl;
   std::cout << "----------------------------------------" << std::endl;
   std::cout << std::endl;
-  
+
   Mesh mesh;
   Segmentation segments(mesh);
 
@@ -294,11 +292,11 @@ int main()
   // Use-case 1: Read from Netgen mesh files
   //
   read_netgen(mesh, segments);
-  
+
   //write a bit of data to mesh:
   //write_data<viennagrid::tetrahedron_tag>(mesh);
-  
-  
+
+
   //
   // Use-case 2: Read VTK file(s)
   //
@@ -312,8 +310,8 @@ int main()
   // Use-case 3: Write to OpenDX
   //
   write_opendx(vtk_mesh, data);
-  
-  
+
+
   //
   // Use-case 4: Write VTK file(s)
   //

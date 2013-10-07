@@ -9,7 +9,7 @@
 
    Authors:      Karl Rupp                           rupp@iue.tuwien.ac.at
                  Josef Weinbub                    weinbub@iue.tuwien.ac.at
-               
+
    (A list of additional contributors can be found in the PDF manual)
 
    License:      MIT (X11), see file LICENSE in the base directory
@@ -35,7 +35,6 @@
 template <typename MeshType, typename ReaderType>
 void test(ReaderType & my_reader, std::string const & infile)
 {
-  typedef typename viennagrid::result_of::cell_tag<MeshType>::type              CellTag;
   typedef typename viennagrid::result_of::segmentation<MeshType>::type          SegmentationType;
 
   typedef typename viennagrid::result_of::cell_range<MeshType>::type            CellRange;
@@ -43,7 +42,7 @@ void test(ReaderType & my_reader, std::string const & infile)
 
   MeshType mesh;
   SegmentationType segmentation(mesh);
-  
+
   try
   {
     my_reader(mesh, segmentation, infile);
@@ -57,7 +56,7 @@ void test(ReaderType & my_reader, std::string const & infile)
 
   std::cout << "Volume of mesh: " << viennagrid::volume(mesh) << std::endl;
   std::cout << "Surface of mesh: " << viennagrid::surface(mesh) << std::endl;
-  
+
   CellRange cells = viennagrid::elements(mesh);
   for (CellIterator cit = cells.begin();
                     cit != cells.end();
@@ -73,35 +72,35 @@ int main()
 {
 //   typedef viennagrid::result_of::mesh<viennagrid::config::quadrilateral_2d>::type        Mesh2d;
 //   typedef viennagrid::result_of::mesh<viennagrid::config::hexahedral_3d>::type       Mesh3d;
-  
+
   std::cout << "*****************" << std::endl;
   std::cout << "* Test started! *" << std::endl;
   std::cout << "*****************" << std::endl;
-  
+
   std::string path = "../../examples/data/";
-  
+
   viennagrid::io::netgen_reader my_netgen_reader;
-  
+
   std::cout << "*********** triangular, 2d ***********" << std::endl;
   test<viennagrid::triangular_2d_mesh>(my_netgen_reader, path + "square32.mesh");
-  
+
   std::cout << "*********** tetrahedral, 3d ***********" << std::endl;
   test<viennagrid::tetrahedral_3d_mesh>(my_netgen_reader, path + "cube48.mesh");
 
-  
+
   std::cout << "*********** quadrilateral, 2d ***********" << std::endl;
   viennagrid::io::vtk_reader<viennagrid::quadrilateral_2d_mesh>  vtk_reader_2d;
   test<viennagrid::quadrilateral_2d_mesh>(vtk_reader_2d, path + "quadrilateral2.vtu");
-  
+
   std::cout << "*********** hexahedral, 3d ***********" << std::endl;
   viennagrid::io::vtk_reader<viennagrid::hexahedral_3d_mesh>  vtk_reader_3d;
-  test<viennagrid::hexahedral_3d_mesh 
+  test<viennagrid::hexahedral_3d_mesh
   >(vtk_reader_3d, path + "hexahedron2.vtu");
 
-  
+
   std::cout << "*******************************" << std::endl;
   std::cout << "* Test finished successfully! *" << std::endl;
   std::cout << "*******************************" << std::endl;
-  
+
   return EXIT_SUCCESS;
 }

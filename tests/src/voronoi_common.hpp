@@ -9,7 +9,7 @@
 
    Authors:      Karl Rupp                           rupp@iue.tuwien.ac.at
                  Josef Weinbub                    weinbub@iue.tuwien.ac.at
-               
+
    (A list of additional contributors can be found in the PDF manual)
 
    License:      MIT (X11), see file LICENSE in the base directory
@@ -33,28 +33,21 @@ void output_voronoi_info(MeshtType const & d,
                          VertexBoxVolumeAccessorT const vertex_box_volume_accessor, VertexBoxVolumeContributionAccessorT const vertex_box_volume_contribution_accessor,
                          InterfaceAreaAccessorT const interface_area_accessor, InterfaceContributionAccessorT const interface_contribution_accessor)
 {
-//   typedef typename DeviceType::config_type           Config;
-//   typedef typename Config::cell_tag                  CellTag;
-  typedef typename viennagrid::result_of::point<MeshtType>::type                            PointType;
-  typedef typename viennagrid::result_of::vertex<MeshtType>::type                         VertexType;
-  typedef typename viennagrid::result_of::line<MeshtType>::type                         EdgeType;
-  typedef typename viennagrid::result_of::cell<MeshtType>::type   CellType;
-  
   typedef typename viennagrid::result_of::const_vertex_range<MeshtType>::type    VertexContainer;
   typedef typename viennagrid::result_of::iterator<VertexContainer>::type         VertexIterator;
-  
+
   typedef typename viennagrid::result_of::const_line_range<MeshtType>::type    EdgeContainer;
   typedef typename viennagrid::result_of::iterator<EdgeContainer>::type           EdgeIterator;
-  
+
 //   typedef std::vector< std::pair<CellType const *, double> >      CellContributionType;
   typedef typename VertexBoxVolumeContributionAccessorT::value_type VertexBoxVolumeContributionType;
   typedef typename InterfaceContributionAccessorT::value_type InterfaceContributionType;
-  
+
 //   long counter = 0;
-  
+
 //   viennagrid::voronoi_interface_area_key interface_key;
 //   viennagrid::voronoi_box_volume_key box_volume_key;
-  
+
   std::cout << "-" << std::endl;
   std::cout << "- Vertex box volume information: " << std::endl;
   std::cout << "-" << std::endl;
@@ -68,11 +61,11 @@ void output_voronoi_info(MeshtType const & d,
 
 //     CellContributionType const & contrib = viennadata::access<viennagrid::voronoi_box_volume_key, CellContributionType>(box_volume_key)(*vit);
     VertexBoxVolumeContributionType const & contrib = vertex_box_volume_contribution_accessor(*vit);
-    
+
     for (std::size_t i=0; i<contrib.size(); ++i)
       std::cout << "From cell " << contrib[i].first << ": " << contrib[i].second << std::endl;
   }
-  
+
   std::cout << "-" << std::endl;
   std::cout << "- Edge Information: " << std::endl;
   std::cout << "-" << std::endl;
@@ -86,17 +79,17 @@ void output_voronoi_info(MeshtType const & d,
     std::cout << "Length: "    << viennagrid::volume(*eit)            << std::endl;
 //     std::cout << "Interface: " << viennadata::access<viennagrid::voronoi_interface_area_key, double>(interface_key)(*eit) << std::endl;
     std::cout << "Interface: " << interface_area_accessor(*eit) << std::endl;
-    
+
 //     CellContributionType const & contrib = viennadata::access<viennagrid::voronoi_interface_area_key, CellContributionType>(interface_key)(*eit);
     InterfaceContributionType const & contrib = interface_contribution_accessor(*eit);
-    
+
     for (std::size_t i=0; i<contrib.size(); ++i)
       std::cout << "From cell " << contrib[i].first << ": " << contrib[i].second << std::endl;
   }
-  
+
 }
 
-    
+
 //
 // Test for Voronoi correctness: Volume of cells must equal volume of boxes
 //
@@ -106,9 +99,9 @@ double voronoi_volume(MeshType const & d,
 {
   typedef typename viennagrid::result_of::const_vertex_range<MeshType>::type                          VertexContainer;
   typedef typename viennagrid::result_of::iterator<VertexContainer>::type                                     VertexIterator;
-  
+
 //   viennagrid::voronoi_box_volume_key box_volume_key;
-  
+
   double boxed_volume = 0;
   VertexContainer vertices = viennagrid::elements(d);
   for (VertexIterator vit  = vertices.begin();
@@ -130,15 +123,15 @@ double voronoi_volume(MeshType const & d,
 template <typename MeshType, typename VertexBoxVolumeContributionAccessorT>
 double voronoi_volume_vertex_detailed(MeshType const & d,
                                       VertexBoxVolumeContributionAccessorT const vertex_box_volume_contribution_accessor)
-{  
+{
   typedef typename viennagrid::result_of::const_vertex_range<MeshType>::type                          VertexContainer;
   typedef typename viennagrid::result_of::iterator<VertexContainer>::type                                     VertexIterator;
-  
+
 //   typedef typename viennagrid::result_of::voronoi_cell_contribution<CellType>::type      CellContributionType;
-  
+
 //   viennagrid::voronoi_box_volume_key box_volume_key;
   typedef typename VertexBoxVolumeContributionAccessorT::value_type VertexBoxVolumeContributionType;
-  
+
   double boxed_volume = 0;
   VertexContainer vertices = viennagrid::elements(d);
   for (VertexIterator vit  = vertices.begin();
@@ -163,12 +156,12 @@ double voronoi_volume_edge_detailed(MeshType const & d,
 {
   typedef typename viennagrid::result_of::const_line_range<MeshType>::type               EdgeContainer;
   typedef typename viennagrid::result_of::iterator<EdgeContainer>::type                        EdgeIterator;
-  
+
 //   typedef typename viennagrid::result_of::voronoi_cell_contribution<CellType>::type      CellContributionType;
-  
+
 //   viennagrid::voronoi_box_volume_key box_volume_key;
   typedef typename EdgeBoxVolumeContributionAccessorT::value_type EdgeBoxVolumeContributionType;
-  
+
   double boxed_volume = 0;
   EdgeContainer edges = viennagrid::elements(d);
   for (EdgeIterator eit  = edges.begin();
@@ -195,11 +188,11 @@ void voronoi_volume_check(MeshType const & mesh,
                           VertexBoxVolumeContributionAccessorT const vertex_box_volume_contribution_accessor,
                           EdgeBoxVolumeContributionAccessorT const edge_box_volume_contribution_accessor)
 {
-  double voronoi_vol = voronoi_volume(mesh, vertex_box_volume_accessor);  
-  double voronoi_vol_vertices = voronoi_volume_vertex_detailed(mesh, vertex_box_volume_contribution_accessor);  
-  double voronoi_vol_edges = voronoi_volume_edge_detailed(mesh, edge_box_volume_contribution_accessor);  
-  double mesh_vol = viennagrid::volume(mesh);  
-  
+  double voronoi_vol = voronoi_volume(mesh, vertex_box_volume_accessor);
+  double voronoi_vol_vertices = voronoi_volume_vertex_detailed(mesh, vertex_box_volume_contribution_accessor);
+  double voronoi_vol_edges = voronoi_volume_edge_detailed(mesh, edge_box_volume_contribution_accessor);
+  double mesh_vol = viennagrid::volume(mesh);
+
   if ( fabs(voronoi_vol - mesh_vol) / mesh_vol > 1e-10 )
   {
     std::cerr << "Mismatch of volumes: " << voronoi_vol << " vs " << mesh_vol << std::endl;

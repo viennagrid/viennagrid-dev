@@ -35,13 +35,14 @@ namespace viennagrid
     template<>
     struct detect_interface_impl<false>
     {
-          template <typename AccessorType, typename MeshType1, typename MeshType2>
-          static void detect(AccessorType,
-                            MeshType1 const &,
-                            MeshType2 const &)
-          {
-              typedef typename MeshType1::ERROR_CANNOT_DETECT_INTERFACE_BECAUSE_FACETS_ARE_DISABLED        error_type;
-          }
+      template <typename AccessorType, typename MeshType1, typename MeshType2>
+      static void detect(AccessorType,
+                        MeshType1 const &,
+                        MeshType2 const &)
+      {
+        typename MeshType1::ERROR_CANNOT_DETECT_INTERFACE_BECAUSE_FACETS_ARE_DISABLED error_obj;
+        (void)error_obj;
+      }
     };
 
     template<>
@@ -55,7 +56,6 @@ namespace viennagrid
         typedef typename viennagrid::result_of::cell_tag<MeshType1>::type CellTag;
         typedef typename viennagrid::result_of::element<MeshType1, typename CellTag::facet_tag>::type   FacetType;
         typedef typename viennagrid::result_of::const_handle<MeshType1, typename CellTag::facet_tag>::type   ConstFacetHandleType;
-        typedef typename viennagrid::result_of::element<MeshType1, CellTag>::type     CellType;
 
         typedef typename viennagrid::result_of::const_element_range<MeshType1, typename CellTag::facet_tag>::type      FacetRange;
         typedef typename viennagrid::result_of::iterator<FacetRange>::type                                           FacetIterator;
@@ -254,10 +254,6 @@ namespace viennagrid
     assert( &seg0.segmentation() == &seg1.segmentation() );
 
     typedef segment_handle_t<SegmentationType> SegmentHandleType;
-    typedef typename result_of::cell_tag< segment_handle_t<SegmentationType> >::type CellTag;
-    typedef typename result_of::facet_tag<CellTag>::type FacetTag;
-    typedef typename result_of::element< segment_handle_t<SegmentationType>, FacetTag >::type FacetType;
-
 
     typedef typename viennagrid::result_of::element_tag<ElementType>::type element_tag;
 

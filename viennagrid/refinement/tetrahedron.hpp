@@ -121,14 +121,8 @@ namespace viennagrid
     {
       typedef typename viennagrid::result_of::const_element_range<ElementType, vertex_tag>::type            VertexOnCellRange;
       typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type         VertexOnCellIterator;
-      typedef typename viennagrid::result_of::const_element_range<ElementType, line_tag>::type            EdgeOnCellRange;
-      typedef typename viennagrid::result_of::iterator<EdgeOnCellRange>::type           EdgeOnCellIterator;
 
-      typedef typename viennagrid::result_of::element<MeshTypeOut, vertex_tag>::type             VertexType;
       typedef typename viennagrid::result_of::handle<MeshTypeOut, vertex_tag>::type             VertexHandleType;
-
-      typedef typename viennagrid::result_of::element<MeshTypeOut, vertex_tag>::type                                      VertexTypeOut;
-      typedef typename VertexTypeOut::id_type VertexIDTypeOut;
 
       storage::static_array< VertexHandleType, boundary_elements<tetrahedron_tag, vertex_tag>::num > vertex_handles;
 
@@ -160,12 +154,7 @@ namespace viennagrid
 
       typedef typename viennagrid::result_of::element<ElementType, line_tag>::type             EdgeType;
 
-      typedef typename viennagrid::result_of::element<MeshTypeOut, vertex_tag>::type             VertexType;
       typedef typename viennagrid::result_of::handle<MeshTypeOut, vertex_tag>::type             VertexHandleType;
-
-      typedef typename viennagrid::result_of::element<MeshTypeOut, vertex_tag>::type                                      VertexTypeOut;
-      typedef typename VertexTypeOut::id_type VertexIDTypeOut;
-
 
       storage::static_array< VertexHandleType, boundary_elements<tetrahedron_tag, vertex_tag>::num > vertices;
 
@@ -338,14 +327,8 @@ namespace viennagrid
       typedef typename viennagrid::result_of::const_element_range<ElementType, line_tag>::type            EdgeOnCellRange;
       typedef typename viennagrid::result_of::iterator<EdgeOnCellRange>::type           EdgeOnCellIterator;
 
-      typedef typename viennagrid::result_of::element<ElementType, vertex_tag>::type             VertexType;
       typedef typename viennagrid::result_of::handle<ElementType, vertex_tag>::type             VertexHandleType;
       typedef typename viennagrid::result_of::element<ElementType, line_tag>::type             EdgeType;
-
-      typedef typename viennagrid::result_of::element<MeshTypeOut, vertex_tag>::type                                      VertexTypeOut;
-      typedef typename VertexTypeOut::id_type VertexIDTypeOut;
-
-
 
       storage::static_array< VertexHandleType, boundary_elements<tetrahedron_tag, vertex_tag>::num > vertices;
 
@@ -837,13 +820,8 @@ namespace viennagrid
       typedef typename viennagrid::result_of::const_element_range<ElementType, line_tag>::type            EdgeOnCellRange;
       typedef typename viennagrid::result_of::iterator<EdgeOnCellRange>::type           EdgeOnCellIterator;
 
-      typedef typename viennagrid::result_of::element<ElementType, vertex_tag>::type             VertexType;
       typedef typename viennagrid::result_of::handle<ElementType, vertex_tag>::type             VertexHandleType;
       typedef typename viennagrid::result_of::element<ElementType, line_tag>::type             EdgeType;
-
-      typedef typename viennagrid::result_of::element<MeshTypeOut, vertex_tag>::type                                      VertexTypeOut;
-      typedef typename VertexTypeOut::id_type VertexIDTypeOut;
-
 
       storage::static_array< VertexHandleType, boundary_elements<tetrahedron_tag, vertex_tag>::num > vertices;
 
@@ -1471,12 +1449,8 @@ namespace viennagrid
       typedef typename viennagrid::result_of::const_element_range<ElementType, line_tag>::type            EdgeOnCellRange;
       typedef typename viennagrid::result_of::iterator<EdgeOnCellRange>::type           EdgeOnCellIterator;
 
-      typedef typename viennagrid::result_of::element<ElementType, vertex_tag>::type             VertexType;
       typedef typename viennagrid::result_of::handle<ElementType, vertex_tag>::type             VertexHandleType;
       typedef typename viennagrid::result_of::element<ElementType, line_tag>::type             EdgeType;
-
-      typedef typename viennagrid::result_of::element<MeshTypeOut, vertex_tag>::type                                      VertexTypeOut;
-      typedef typename VertexTypeOut::id_type VertexIDTypeOut;
 
       storage::static_array< VertexHandleType, boundary_elements<tetrahedron_tag, vertex_tag>::num > vertices;
 
@@ -1819,13 +1793,8 @@ namespace viennagrid
       typedef typename viennagrid::result_of::const_element_range<ElementType, line_tag>::type            EdgeOnCellRange;
       typedef typename viennagrid::result_of::iterator<EdgeOnCellRange>::type           EdgeOnCellIterator;
 
-      typedef typename viennagrid::result_of::element<ElementType, vertex_tag>::type             VertexType;
       typedef typename viennagrid::result_of::handle<ElementType, vertex_tag>::type             VertexHandleType;
       typedef typename viennagrid::result_of::element<ElementType, line_tag>::type             EdgeType;
-
-      typedef typename viennagrid::result_of::element<MeshTypeOut, vertex_tag>::type                                      VertexTypeOut;
-      typedef typename VertexTypeOut::id_type VertexIDTypeOut;
-
 
       storage::static_array< VertexHandleType, boundary_elements<tetrahedron_tag, vertex_tag>::num > vertices;
 
@@ -1960,12 +1929,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::const_element_range<ElementType, line_tag>::type            EdgeOnCellRange;
       typedef typename viennagrid::result_of::iterator<EdgeOnCellRange>::type           EdgeOnCellIterator;
 
-      typedef typename viennagrid::result_of::element<ElementType, vertex_tag>::type             VertexType;
       typedef typename viennagrid::result_of::handle<ElementType, vertex_tag>::type             VertexHandleType;
-      typedef typename viennagrid::result_of::element<ElementType, line_tag>::type             EdgeType;
-
-      typedef typename viennagrid::result_of::element<MeshTypeOut, vertex_tag>::type                                      VertexTypeOut;
-      typedef typename VertexTypeOut::id_type VertexIDTypeOut;
 
       storage::static_array< VertexHandleType, boundary_elements<tetrahedron_tag, vertex_tag>::num +
                                              boundary_elements<tetrahedron_tag, line_tag>::num> vertices;

@@ -9,7 +9,7 @@
 
    Authors:      Karl Rupp                           rupp@iue.tuwien.ac.at
                  Josef Weinbub                    weinbub@iue.tuwien.ac.at
-               
+
    (A list of additional contributors can be found in the PDF manual)
 
    License:      MIT (X11), see file LICENSE in the base directory
@@ -32,7 +32,7 @@
 // #include "viennagrid/algorithm/inner_prod.hpp"
 // #include "viennagrid/algorithm/norm.hpp"
 // #include "viennagrid/algorithm/spanned_volume.hpp"
-// 
+//
 // //Cell-based algorithms:
 #include "viennagrid/algorithm/centroid.hpp"
 // #include "viennagrid/algorithm/circumcenter.hpp"
@@ -40,7 +40,7 @@
 // #include "viennagrid/algorithm/volume.hpp"
 // #include "viennagrid/algorithm/closest_points.hpp"
 // #include "viennagrid/algorithm/distance.hpp"
-// 
+//
 // //Mesh-based algorithms:
 // #include "viennagrid/algorithm/boundary.hpp"
 // #include "viennagrid/algorithm/refine.hpp"
@@ -53,28 +53,20 @@ int main()
 {
   typedef viennagrid::tetrahedral_3d_mesh                         MeshType;
   typedef viennagrid::result_of::segmentation<MeshType>::type     SegmentationType;
-  typedef viennagrid::result_of::segment_handle<SegmentationType>::type    SegmentHandleType;
-  
-  typedef viennagrid::result_of::point<MeshType>::type            PointType;
-  
-  typedef viennagrid::result_of::cell<MeshType>::type             CellType;
-  typedef viennagrid::result_of::triangle<MeshType>::type         TriangleType;
-  typedef viennagrid::result_of::edge<MeshType>::type             EdgeType;
-  typedef viennagrid::result_of::vertex<MeshType>::type           VertexType;
-  typedef viennagrid::result_of::vertex_handle<MeshType>::type    VertexHandleType;
-    
-  typedef viennagrid::result_of::vertex_range<MeshType>::type     VertexRange;
-  typedef viennagrid::result_of::cell_range<MeshType>::type       CellRange;
 
-                      
+  typedef viennagrid::result_of::point<MeshType>::type            PointType;
+
+  typedef viennagrid::result_of::cell<MeshType>::type             CellType;
+  typedef viennagrid::result_of::vertex<MeshType>::type           VertexType;
+
   std::cout << "------------------------------------------------------------ " << std::endl;
   std::cout << "-- ViennaGrid tutorial: Algorithms on points and elements -- " << std::endl;
   std::cout << "------------------------------------------------------------ " << std::endl;
   std::cout << std::endl;
-  
+
   MeshType mesh;
   SegmentationType segmentation(mesh);
-  
+
   //
   // Read mesh from Netgen file
   //
@@ -89,11 +81,11 @@ int main()
     std::cout << e.what() << std::endl;
     return EXIT_FAILURE;
   }
-  
-  
+
+
   // Often additional data has to be stored on elements: physical data, refinement flags, ...
   // Accessors and fields wrap dada access on container were this data is stored
-  
+
   // Create a container for double values
   std::vector<double> some_cell_data_container;
   // Create an accessor which wrapps access for cells
@@ -101,87 +93,87 @@ int main()
   // - the second argument in the meta function is the type on which the data is stored
   // The constructor of the accessor takes the container
   viennagrid::result_of::accessor< std::vector<double>, CellType >::type some_cell_data_accessor(some_cell_data_container);
-  
+
   // simply using the accessor with operator()
   some_cell_data_accessor( viennagrid::cells(mesh)[0] ) = 42.0;
   some_cell_data_accessor( viennagrid::cells(mesh)[1] ) = 3.14;
   double some_value = some_cell_data_accessor( viennagrid::cells(mesh)[1] );
   std::cout << "Value for first cell (should be 3.14) = " << some_value << std::endl;
-  
+
   // A helper function for creating an accessor is also provided
   viennagrid::make_accessor<CellType>(some_cell_data_container)( viennagrid::cells(mesh)[3] ) = 5.0;
-  
-  
-  
+
+
+
   // Accessor and field differ in their behaviour at access
   // While accessor will fail when accessing the data of an element using a const accessor, a field will return a default value
   std::vector<double> another_cell_data_container;
   // default value will is -1
   viennagrid::result_of::field< std::vector<double>, CellType >::type some_cell_data_field(another_cell_data_container, -1.0);
-  
+
   some_cell_data_field( viennagrid::cells(mesh)[0] ) = 12.0;
   some_cell_data_field( viennagrid::cells(mesh)[1] ) = 13.0;
-  
+
   // A helper function for creating a field
   viennagrid::make_field<CellType>(some_cell_data_container)( viennagrid::cells(mesh)[3] ) = 5.0;
-  
-  
+
+
   // Similar to above, a container can be defined using the accessor_container meta function
   // the default container type is std::vector
   typedef viennagrid::result_of::accessor_container<CellType, double>::type CellDataContainerType;
   CellDataContainerType one_more_cell_data_container;
   viennagrid::result_of::field< CellDataContainerType, CellType >::type one_more_cell_data_accessor(one_more_cell_data_container);
-  
+
   one_more_cell_data_accessor( viennagrid::cells(mesh)[0] ) = 1.0;
   one_more_cell_data_accessor( viennagrid::cells(mesh)[1] ) = -1.0;
-  
-  
+
+
   // Using an std::map as the underlying container type
   typedef viennagrid::result_of::accessor_container<CellType, double, viennagrid::storage::std_map_tag>::type CellDataMapContainerType;
   CellDataMapContainerType cell_data_map;
   viennagrid::result_of::field< CellDataMapContainerType, CellType >::type cell_data_map_accessor(cell_data_map);
-  
+
   cell_data_map_accessor( viennagrid::cells(mesh)[0] ) = 2.5;
   cell_data_map_accessor( viennagrid::cells(mesh)[1] ) = -2.5;
-  
-  
+
+
   //
   // Accessing points are also possible using accessor
   //
   viennagrid::result_of::default_point_accessor<MeshType>::type default_point_accessor;
   std::cout << default_point_accessor( viennagrid::vertices(mesh)[0] ) << std::endl;
-  
-  
-  
-  
+
+
+
+
   // Many algorithms require accessor for retrieving or storing data
   // e.g. the point accessor can be specified explicitly
   // Otherwise a default point accessor is created for the mesh
-  
+
   // A short example where we shift all points
-  
+
   // Defining the container where the new points are stored
   std::vector<PointType> points;
-  
+
   // Creating an accessor for the points
   viennagrid::result_of::accessor< std::vector<PointType>, VertexType >::type point_accessor(points);
-  
+
   typedef viennagrid::result_of::vertex_range<MeshType>::type VertexRangeType;
   typedef viennagrid::result_of::iterator<VertexRangeType>::type VertexRangeIterator;
-  
+
   // Iterating over all vertices
   VertexRangeType vertices = viennagrid::elements(mesh);
   for (VertexRangeIterator vit = vertices.begin(); vit != vertices.end(); ++vit)
     point_accessor(*vit) = default_point_accessor(*vit) + PointType(10, 10, 10); // shit point
-  
+
   // Centroid of the mesh using the defaul accessor
   std::cout << viennagrid::centroid(mesh, default_point_accessor) << std::endl;
-  
+
   // Centroid of the mesh using our shifted points
   std::cout << viennagrid::centroid(mesh, point_accessor) << std::endl;
 
-  
-  
+
+
   std::cout << "-----------------------------------------------" << std::endl;
   std::cout << " \\o/    Tutorial finished successfully!    \\o/ " << std::endl;
   std::cout << "-----------------------------------------------" << std::endl;

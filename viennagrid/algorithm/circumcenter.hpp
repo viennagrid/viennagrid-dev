@@ -36,7 +36,8 @@ namespace viennagrid
     typename viennagrid::result_of::point<GeometricContainerType>::type
     circumcenter(ElementType const &, GeometricContainerType const &, ElementTag const &, DimensionTag const &)
     {
-      typedef typename ElementType::ERROR_COMPUTATION_OF_CIRCUMCENTER_NOT_IMPLEMENTED   error_type;
+      typename ElementType::ERROR_COMPUTATION_OF_CIRCUMCENTER_NOT_IMPLEMENTED   error_object;
+      (void)error_object;
       return typename viennagrid::result_of::point<GeometricContainerType>::type();
     }
 

@@ -1512,7 +1512,6 @@ namespace viennagrid
 
       typedef typename viennagrid::result_of::element<SourceMeshType, ElementTag>::type SourceElementType;
       typedef typename viennagrid::result_of::element<DestinationMeshType, ElementTag>::type DestinationElementType;
-      typedef typename viennagrid::result_of::handle<DestinationMeshType, ElementTag>::type DestinationElementHandleType;
 
       SourceElementRangeType source_elements = viennagrid::elements( source_mesh );
       DestinationElementRangeType destination_elements = viennagrid::elements( destination_mesh );
@@ -1551,15 +1550,8 @@ namespace viennagrid
   void fix_handles( mesh_t<SourceWrappedConfigT> const & source_mesh, mesh_t<DestinationWrappedConfigT> & destination_mesh )
   {
     typedef mesh_t<SourceWrappedConfigT>          SourceMeshType;
-    typedef mesh_t<DestinationWrappedConfigT>     DestinationMeshType;
 
     typedef typename viennagrid::result_of::element_typelist<SourceMeshType>::type      SourceTypelist;
-    typedef typename viennagrid::result_of::element_typelist<DestinationMeshType>::type DestinationTypelist;
-
-        typedef typename viennagrid::meta::typelist::result_of::intersection<
-                  SourceTypelist,
-                  DestinationTypelist
-              >::type ElementTypelist;
 
     fix_handle_helper<SourceTypelist>::fix_handles( source_mesh, destination_mesh );
   }

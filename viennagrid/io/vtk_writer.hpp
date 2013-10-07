@@ -247,9 +247,6 @@ namespace viennagrid
           writer << "   <Points>" << std::endl;
           writer << "    <DataArray type=\"Float32\" NumberOfComponents=\"3\" format=\"ascii\">" << std::endl;
 
-          typedef typename viennagrid::result_of::const_vertex_range<MeshSegmentHandleType>::type VertexRange;
-          typedef typename viennagrid::result_of::iterator<VertexRange>::type VertexIterator;
-
           for (typename std::map< VertexIDType, ConstVertexHandleType >::iterator it = current_used_vertex_map.begin(); it != current_used_vertex_map.end(); ++it)
           {
             const int dim = traits::static_size<PointType>::value;
@@ -272,9 +269,6 @@ namespace viennagrid
         template <typename MeshSegmentHandleType>
         void writeCells(MeshSegmentHandleType const & domseg, std::ofstream & writer, segment_id_type seg_id)
         {
-          typedef typename viennagrid::result_of::const_element_range<MeshSegmentHandleType, CellTag>::type     CellRange;
-          typedef typename viennagrid::result_of::iterator<CellRange>::type                                         CellIterator;
-
           typedef typename viennagrid::result_of::const_element_range<CellType, vertex_tag>::type      VertexOnCellRange;
           typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type         VertexOnCellIterator;
 
@@ -370,9 +364,6 @@ namespace viennagrid
         template <typename SegmentHandleType, typename IOAccessorType>
         void writeCellData(SegmentHandleType const & segment, std::ofstream & writer, std::string const & name, IOAccessorType const & accessor, long seg_id)
         {
-          typedef typename viennagrid::result_of::const_element_range<SegmentHandleType, CellTag>::type   CellRange;
-          typedef typename viennagrid::result_of::iterator<CellRange>::type                         CellIterator;
-
           typedef typename IOAccessorType::value_type ValueType;
 
           writer << "    <DataArray type=\"" << ValueTypeInformation<ValueType>::type_name() << "\" Name=\"" << name <<
@@ -541,9 +532,6 @@ namespace viennagrid
                 throw cannot_open_file_exception(ss.str());
                 return EXIT_FAILURE;
               }
-
-              typedef typename viennagrid::result_of::const_element_range<SegmentHandleType, vertex_tag>::type   VertexRange;
-              typedef typename viennagrid::result_of::iterator<VertexRange>::type               VertexIterator;
 
               unsigned int num_points = preparePoints(seg, seg.id());
               prepareCells(seg, seg.id());

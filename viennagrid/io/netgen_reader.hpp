@@ -46,31 +46,15 @@ namespace viennagrid
       template <typename MeshType, typename SegmentationType>
       int operator()(MeshType & mesh, SegmentationType & segmentation, std::string const & filename) const
       {
-        typedef typename SegmentationType::segment_handle_type SegmentHandleType;
-
         typedef typename viennagrid::result_of::point<MeshType>::type    PointType;
-        typedef typename viennagrid::result_of::coord< PointType >::type         CoordType;
 
         const int point_dim = viennagrid::traits::static_size<PointType>::value;
 
         typedef typename result_of::cell_tag<MeshType>::type CellTag;
         typedef typename result_of::element<MeshType, CellTag>::type CellType;
-        typedef typename result_of::handle<MeshType, CellTag>::type                           CellHandleType;
 
         typedef typename result_of::element<MeshType, vertex_tag>::type                           VertexType;
         typedef typename result_of::handle<MeshType, vertex_tag>::type                           VertexHandleType;
-
-        typedef typename viennagrid::result_of::element_range<MeshType, vertex_tag>::type   VertexRange;
-        typedef typename viennagrid::result_of::iterator<VertexRange>::type        VertexIterator;
-
-        typedef typename viennagrid::result_of::element_range<MeshType, line_tag>::type   EdgeRange;
-        typedef typename viennagrid::result_of::iterator<EdgeRange>::type          EdgeIterator;
-
-        typedef typename viennagrid::result_of::element_range<MeshType, typename CellType::tag::facet_tag >::type   FacetRange;
-        typedef typename viennagrid::result_of::iterator<FacetRange>::type                                 FacetIterator;
-
-        typedef typename viennagrid::result_of::element_range<MeshType, CellTag>::type     CellRange;
-        typedef typename viennagrid::result_of::iterator<CellRange>::type                                  CellIterator;
 
         std::ifstream reader(filename.c_str());
 

@@ -9,7 +9,7 @@
 
    Authors:      Karl Rupp                           rupp@iue.tuwien.ac.at
                  Josef Weinbub                    weinbub@iue.tuwien.ac.at
-               
+
    (A list of additional contributors can be found in the PDF manual)
 
    License:      MIT (X11), see file LICENSE in the base directory
@@ -40,29 +40,19 @@ void test(ReaderType & my_reader, std::string const & infile, std::string const 
 {
 
   typedef typename viennagrid::result_of::segmentation<MeshType>::type          SegmentationType;
-  typedef typename viennagrid::result_of::segment_handle<SegmentationType>::type         SegmentHandleType;
-  
-  typedef typename viennagrid::result_of::point<MeshType>::type                 PointType;
+
   typedef typename viennagrid::result_of::vertex<MeshType>::type                VertexType;
   typedef typename viennagrid::result_of::cell<MeshType>::type                  CellType;
 
   typedef typename viennagrid::result_of::vertex_range<MeshType>::type          VertexContainer;
   typedef typename viennagrid::result_of::iterator<VertexContainer>::type         VertexIterator;
-  typedef typename viennagrid::result_of::vertex_range<SegmentHandleType>::type         SegmentVertexContainer;
-  typedef typename viennagrid::result_of::iterator<SegmentVertexContainer>::type  SegmentVertexIterator;
-      
-  typedef typename viennagrid::result_of::line_range<MeshType>::type            EdgeContainer;
-  typedef typename viennagrid::result_of::iterator<EdgeContainer>::type           EdgeIterator;
-
-  typedef typename viennagrid::result_of::facet_range<MeshType>::type           FacetContainer;
-  typedef typename viennagrid::result_of::iterator<FacetContainer>::type          FacetIterator;
 
   typedef typename viennagrid::result_of::cell_range<MeshType>::type            CellRange;
   typedef typename viennagrid::result_of::iterator<CellRange>::type               CellIterator;
 
   MeshType mesh;
   SegmentationType segmentation(mesh);
-  
+
   try
   {
     my_reader(mesh, segmentation, infile);
@@ -73,17 +63,17 @@ void test(ReaderType & my_reader, std::string const & infile, std::string const 
      std::cerr << "File-Reader failed. Aborting program..." << std::endl;
      exit(EXIT_FAILURE);
   }
-  
-  
+
+
   std::vector<double> vtk_vertex_double_data;
   std::vector<double> vtk_vertex_long_data;
   std::vector< std::vector<double> > vtk_vertex_vector_data;
-  
+
   typename viennagrid::result_of::accessor< std::vector<double>, VertexType >::type vtk_vertex_double_accessor( vtk_vertex_double_data );
   typename viennagrid::result_of::accessor< std::vector<double>, VertexType >::type vtk_vertex_long_accessor( vtk_vertex_long_data );
   typename viennagrid::result_of::accessor< std::vector< std::vector<double> >, VertexType >::type vtk_vertex_vector_accessor( vtk_vertex_vector_data );
 
-  
+
   //write some dummy data:
   VertexContainer vertices = viennagrid::elements(mesh);
   for (VertexIterator vit = vertices.begin();
@@ -92,18 +82,18 @@ void test(ReaderType & my_reader, std::string const & infile, std::string const 
   {
     vtk_vertex_double_accessor(*vit) = viennagrid::point(*vit)[0];
     vtk_vertex_long_accessor(*vit) = vit->id().get();
-    
+
     vtk_vertex_vector_accessor(*vit).resize(3);
     vtk_vertex_vector_accessor(*vit)[0] = viennagrid::point(*vit)[0];
     vtk_vertex_vector_accessor(*vit)[1] = viennagrid::point(*vit)[1];
   }
-  
-  
-  
+
+
+
   std::vector<double> vtk_cell_double_data;
   std::vector<double> vtk_cell_long_data;
   std::vector< std::vector<double> > vtk_cell_vector_data;
-  
+
   typename viennagrid::result_of::accessor< std::vector<double>, CellType >::type vtk_cell_double_accessor( vtk_cell_double_data );
   typename viennagrid::result_of::accessor< std::vector<double>, CellType >::type vtk_cell_long_accessor( vtk_cell_long_data );
   typename viennagrid::result_of::accessor< std::vector< std::vector<double> >, CellType >::type vtk_cell_vector_accessor( vtk_cell_vector_data );
@@ -117,7 +107,7 @@ void test(ReaderType & my_reader, std::string const & infile, std::string const 
   {
     vtk_cell_double_accessor(*cit) = viennagrid::centroid(*cit)[0];
     vtk_cell_long_accessor(*cit) = cit->id().get();
-    
+
     vtk_cell_vector_accessor(*cit).resize(3);
     vtk_cell_vector_accessor(*cit)[0] = viennagrid::centroid(*cit)[0];
     vtk_cell_vector_accessor(*cit)[1] = viennagrid::centroid(*cit)[1];
@@ -128,13 +118,13 @@ void test(ReaderType & my_reader, std::string const & infile, std::string const 
   viennagrid::io::add_scalar_data_on_vertices(my_vtk_writer, vtk_vertex_double_accessor, "data_double");
   viennagrid::io::add_scalar_data_on_vertices(my_vtk_writer, vtk_vertex_long_accessor, "data_long");
   viennagrid::io::add_vector_data_on_vertices(my_vtk_writer, vtk_vertex_vector_accessor, "data_point");
-  
+
   viennagrid::io::add_scalar_data_on_cells(my_vtk_writer, vtk_cell_double_accessor, "data_double");
   viennagrid::io::add_scalar_data_on_cells(my_vtk_writer, vtk_cell_long_accessor, "data_long");
   viennagrid::io::add_vector_data_on_cells(my_vtk_writer, vtk_cell_vector_accessor, "data_point");
-  
+
   my_vtk_writer(mesh, segmentation, outfile);
-   
+
   viennagrid::io::opendx_writer<MeshType> my_dx_writer;
   my_dx_writer(mesh, outfile + ".odx");
 }
@@ -147,58 +137,48 @@ void test_vtk(ReaderType & my_reader, std::string const & infile, std::string co
 {
 
   typedef typename viennagrid::result_of::segmentation<MeshType>::type          SegmentationType;
-  typedef typename viennagrid::result_of::segment_handle<SegmentationType>::type         SegmentHandleType;
-  
-  typedef typename viennagrid::result_of::point<MeshType>::type                 PointType;
+
   typedef typename viennagrid::result_of::vertex<MeshType>::type                VertexType;
   typedef typename viennagrid::result_of::cell<MeshType>::type                  CellType;
 
   typedef typename viennagrid::result_of::vertex_range<MeshType>::type          VertexContainer;
   typedef typename viennagrid::result_of::iterator<VertexContainer>::type         VertexIterator;
-  typedef typename viennagrid::result_of::vertex_range<SegmentHandleType>::type         SegmentVertexContainer;
-  typedef typename viennagrid::result_of::iterator<SegmentVertexContainer>::type  SegmentVertexIterator;
-      
-  typedef typename viennagrid::result_of::line_range<MeshType>::type            EdgeContainer;
-  typedef typename viennagrid::result_of::iterator<EdgeContainer>::type           EdgeIterator;
-
-  typedef typename viennagrid::result_of::facet_range<MeshType>::type           FacetContainer;
-  typedef typename viennagrid::result_of::iterator<FacetContainer>::type          FacetIterator;
 
   typedef typename viennagrid::result_of::cell_range<MeshType>::type            CellRange;
   typedef typename viennagrid::result_of::iterator<CellRange>::type               CellIterator;
 
   MeshType mesh;
   SegmentationType segmentation(mesh);
-  
 
-  
+
+
   std::vector<double> vtk_vertex_double_data;
   std::vector<double> vtk_vertex_long_data;
   std::vector< std::vector<double> > vtk_vertex_vector_data;
-  
+
   typename viennagrid::result_of::accessor< std::vector<double>, VertexType >::type vtk_vertex_double_accessor( vtk_vertex_double_data );
   typename viennagrid::result_of::accessor< std::vector<double>, VertexType >::type vtk_vertex_long_accessor( vtk_vertex_long_data );
   typename viennagrid::result_of::accessor< std::vector< std::vector<double> >, VertexType >::type vtk_vertex_vector_accessor( vtk_vertex_vector_data );
-  
+
   std::vector<double> vtk_cell_double_data;
   std::vector<double> vtk_cell_long_data;
   std::vector< std::vector<double> > vtk_cell_vector_data;
-  
+
   typename viennagrid::result_of::accessor< std::vector<double>, CellType >::type vtk_cell_double_accessor( vtk_cell_double_data );
   typename viennagrid::result_of::accessor< std::vector<double>, CellType >::type vtk_cell_long_accessor( vtk_cell_long_data );
   typename viennagrid::result_of::accessor< std::vector< std::vector<double> >, CellType >::type vtk_cell_vector_accessor( vtk_cell_vector_data );
-  
-  
-  
+
+
+
   viennagrid::io::add_scalar_data_on_vertices(my_reader, vtk_vertex_double_accessor, "data_double" );
   viennagrid::io::add_scalar_data_on_vertices(my_reader, vtk_vertex_long_accessor, "data_long" );
   viennagrid::io::add_vector_data_on_vertices(my_reader, vtk_vertex_vector_accessor, "data_point" );
-  
+
   viennagrid::io::add_scalar_data_on_cells(my_reader, vtk_cell_double_accessor, "data_double");
   viennagrid::io::add_scalar_data_on_cells(my_reader, vtk_cell_long_accessor, "data_long");
   viennagrid::io::add_vector_data_on_cells(my_reader, vtk_cell_vector_accessor, "data_point");
-  
-  
+
+
   try
   {
     my_reader(mesh, segmentation, infile);
@@ -210,7 +190,7 @@ void test_vtk(ReaderType & my_reader, std::string const & infile, std::string co
      exit(EXIT_FAILURE);
   }
 
-  
+
   //write some dummy data:
   VertexContainer vertices = viennagrid::elements(mesh);
   for (VertexIterator vit = vertices.begin();
@@ -220,10 +200,10 @@ void test_vtk(ReaderType & my_reader, std::string const & infile, std::string co
     double data_double = vtk_vertex_double_accessor(*vit);
     long data_long = vtk_vertex_long_accessor(*vit);
     std::vector<double> data_point = vtk_vertex_vector_accessor(*vit);
-    
+
     assert( fabs(data_double - viennagrid::point(*vit)[0]) < 1e-4 && "Vertex check failed: data_double!");
     assert( (data_long == vit->id().get()) && "Vertex check failed: data_long!");
-    assert( fabs(data_point[0] - viennagrid::point(*vit)[0]) < 1e-4 
+    assert( fabs(data_point[0] - viennagrid::point(*vit)[0]) < 1e-4
             && fabs(data_point[1] - viennagrid::point(*vit)[1]) < 1e-4
             && "Vertex check failed: data_point!");
   }
@@ -239,7 +219,7 @@ void test_vtk(ReaderType & my_reader, std::string const & infile, std::string co
 
     assert( fabs(data_double - viennagrid::centroid(*cit)[0]) < 1e-4 && "Cell check failed: data_double!");
     assert( (data_long == cit->id().get()) && "Cell check failed: data_long!");
-    assert( fabs(data_point[0] - viennagrid::centroid(*cit)[0]) < 1e-4 
+    assert( fabs(data_point[0] - viennagrid::centroid(*cit)[0]) < 1e-4
             && fabs(data_point[1] - viennagrid::centroid(*cit)[1]) < 1e-4
             && "Cell check failed: data_point!");
   }
@@ -249,13 +229,13 @@ void test_vtk(ReaderType & my_reader, std::string const & infile, std::string co
   viennagrid::io::add_scalar_data_on_vertices(my_vtk_writer, vtk_vertex_double_accessor, "data_double");
   viennagrid::io::add_scalar_data_on_vertices(my_vtk_writer, vtk_vertex_long_accessor, "data_long");
   viennagrid::io::add_vector_data_on_vertices(my_vtk_writer, vtk_vertex_vector_accessor, "data_point");
-  
+
   viennagrid::io::add_scalar_data_on_cells(my_vtk_writer, vtk_cell_double_accessor, "data_double");
   viennagrid::io::add_scalar_data_on_cells(my_vtk_writer, vtk_cell_long_accessor, "data_long");
   viennagrid::io::add_vector_data_on_cells(my_vtk_writer, vtk_cell_vector_accessor, "data_point");
-  
+
   my_vtk_writer(mesh, segmentation, outfile);
-   
+
   viennagrid::io::opendx_writer<MeshType> my_dx_writer;
   my_dx_writer(mesh, outfile + ".odx");
 }
@@ -270,16 +250,16 @@ int main()
   std::cout << "*****************" << std::endl;
   std::cout << "* Test started! *" << std::endl;
   std::cout << "*****************" << std::endl;
-  
+
   std::string path = "../../examples/data/";
-  
+
   //Stage 1: Read from Netgen files, write to VTK
   viennagrid::io::netgen_reader my_netgen_reader;
-  
+
   //test<viennagrid::config::line_1d>(my_netgen_reader, path + "line8.mesh", "io_1d");
   std::cout << "*********** Reading from Netgen, 2d ***********" << std::endl;
   test<viennagrid::triangular_2d_mesh>(my_netgen_reader, path + "square32.mesh", "io_2d");
-  
+
   std::cout << "*********** Reading from Netgen, 3d ***********" << std::endl;
   test<viennagrid::tetrahedral_3d_mesh>(my_netgen_reader, path + "cube48.mesh", "io_3d");
 
@@ -287,13 +267,13 @@ int main()
 
   //Stage 2: Read VTK files, write to VTK
   //test<viennagrid::config::line_1d>("io_1d", "io_1d_2");
-  
+
   viennagrid::io::vtk_reader<viennagrid::triangular_2d_mesh>  vtk_reader_2d;
 
-  
+
   std::cout << "*********** Reading from VTK, 2d ***********" << std::endl;
   test_vtk<viennagrid::triangular_2d_mesh>(vtk_reader_2d, "io_2d_main.pvd", "io_2d_2");
-  
+
   std::cout << "-- Scalar vertex quantities: --" << std::endl;
   print(vtk_reader_2d.scalar_vertex_data_names(1));
   std::cout << "-- Vector vertex quantities: --" << std::endl;
@@ -302,19 +282,19 @@ int main()
   print(vtk_reader_2d.scalar_cell_data_names(1));
   std::cout << "-- Vector cell quantities: --" << std::endl;
   print(vtk_reader_2d.vector_cell_data_names(1));
-  
+
   assert( (vtk_reader_2d.scalar_vertex_data_names(1).size() == 2) && "Not all data parsed!");
   assert( (vtk_reader_2d.vector_vertex_data_names(1).size() == 1) && "Not all data parsed!");
   assert( (vtk_reader_2d.scalar_cell_data_names(1).size() == 2) && "Not all data parsed!");
   assert( (vtk_reader_2d.vector_cell_data_names(1).size() == 1) && "Not all data parsed!");
 
-  
+
   viennagrid::io::vtk_reader<viennagrid::tetrahedral_3d_mesh>  vtk_reader_3d;
 
-  
+
   std::cout << "*********** Reading from VTK, 3d ***********" << std::endl;
   test_vtk<viennagrid::tetrahedral_3d_mesh>(vtk_reader_3d, "io_3d_main.pvd", "io_3d_2");
-  
+
   std::cout << "-- Scalar vertex quantities: --" << std::endl;
   print(vtk_reader_3d.scalar_vertex_data_names(1));
   std::cout << "-- Vector vertex quantities: --" << std::endl;
@@ -323,17 +303,17 @@ int main()
   print(vtk_reader_3d.scalar_cell_data_names(1));
   std::cout << "-- Vector cell quantities: --" << std::endl;
   print(vtk_reader_3d.vector_cell_data_names(1));
-  
+
   assert( (vtk_reader_3d.scalar_vertex_data_names(1).size() == 2) && "Not all data parsed!");
   assert( (vtk_reader_3d.vector_vertex_data_names(1).size() == 1) && "Not all data parsed!");
   assert( (vtk_reader_3d.scalar_cell_data_names(1).size() == 2) && "Not all data parsed!");
   assert( (vtk_reader_3d.vector_cell_data_names(1).size() == 1) && "Not all data parsed!");
-  
+
 //   test<viennagrid::config::tetrahedral_3d>(vtk_reader_3d, "multi-segment_main.pvd", "io_3d_2");
-  
+
   std::cout << "*******************************" << std::endl;
   std::cout << "* Test finished successfully! *" << std::endl;
   std::cout << "*******************************" << std::endl;
-  
+
   return EXIT_SUCCESS;
 }
