@@ -209,20 +209,6 @@ namespace viennagrid
         };
 
 
-
-        namespace inserter
-        {
-            template<typename dependend_inserter_type, typename container_collection_type, typename change_counter_type>
-            recursive_inserter_t<container_collection_type, dependend_inserter_type, change_counter_type> get_recursive(
-                  dependend_inserter_type const & inserter,
-                  container_collection_type & collection,
-                  change_counter_type & change_counter)
-            {
-                return recursive_inserter_t<container_collection_type, dependend_inserter_type, change_counter_type>(inserter, change_counter, collection);
-            }
-        }
-
-
         namespace result_of
         {
             template<typename container_collection_type, typename change_counter_type, typename dependend_inserter_type>
