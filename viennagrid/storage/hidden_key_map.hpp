@@ -21,10 +21,89 @@ namespace viennagrid
     namespace storage
     {
 
+
+
+      template<typename HiddenKeyMapT>
+      class hidden_key_map_iterator : public HiddenKeyMapT::container_type::iterator
+      {
+          typedef typename HiddenKeyMapT::container_type::iterator base;
+      public:
+          hidden_key_map_iterator() {}
+          hidden_key_map_iterator(const base & foo) : base(foo) {}
+
+          typedef typename HiddenKeyMapT::value_type value_type;
+          typedef typename HiddenKeyMapT::reference reference;
+          typedef typename HiddenKeyMapT::const_reference const_reference;
+          typedef typename HiddenKeyMapT::pointer pointer;
+
+          reference operator* () { return base::operator*().second; }
+          const_reference operator* () const { return base::operator*().second; }
+      };
+
+      template<typename HiddenKeyMapT>
+      class hidden_key_map_const_iterator : public HiddenKeyMapT::container_type::const_iterator
+      {
+          typedef typename HiddenKeyMapT::container_type::const_iterator base;
+      public:
+          hidden_key_map_const_iterator() {}
+          hidden_key_map_const_iterator(base const & foo) : base(foo) {}
+          hidden_key_map_const_iterator(hidden_key_map_iterator<HiddenKeyMapT> const & it) : base(it) {}
+
+          typedef typename HiddenKeyMapT::value_type value_type;
+          typedef typename HiddenKeyMapT::const_reference reference;
+          typedef typename HiddenKeyMapT::const_reference const_reference;
+          typedef typename HiddenKeyMapT::const_pointer pointer;
+
+          const_reference operator* () const { return base::operator*().second; }
+      };
+
+      template<typename HiddenKeyMapT>
+      class hidden_key_map_reverse_iterator : public HiddenKeyMapT::container_type::reverse_iterator
+      {
+          typedef typename HiddenKeyMapT::container_type::reverse_iterator base;
+      public:
+          hidden_key_map_reverse_iterator() {}
+          hidden_key_map_reverse_iterator(base const & foo) : base(foo) {}
+
+          typedef typename HiddenKeyMapT::value_type value_type;
+          typedef typename HiddenKeyMapT::reference reference;
+          typedef typename HiddenKeyMapT::const_reference const_reference;
+          typedef typename HiddenKeyMapT::pointer pointer;
+
+          reference operator* () { return base::operator*().second; }
+          const_reference operator* () const { return base::operator*().second; }
+      };
+
+      template<typename HiddenKeyMapT>
+      class hidden_key_map_const_reverse_iterator : public HiddenKeyMapT::container_type::const_reverse_iterator
+      {
+          typedef typename HiddenKeyMapT::container_type::const_reverse_iterator base;
+      public:
+          hidden_key_map_const_reverse_iterator() {}
+          hidden_key_map_const_reverse_iterator(base const & foo) : base(foo) {}
+          hidden_key_map_const_reverse_iterator(hidden_key_map_reverse_iterator<HiddenKeyMapT> const & it) : base(it) {}
+
+          typedef typename HiddenKeyMapT::value_type value_type;
+          typedef typename HiddenKeyMapT::const_reference reference;
+          typedef typename HiddenKeyMapT::const_reference const_reference;
+          typedef typename HiddenKeyMapT::const_pointer pointer;
+
+          const_reference operator* () const { return base::operator*().second; }
+      };
+
+
+
+
         template<typename KeyT, typename ValueT>
         class hidden_key_map
         {
+            typedef hidden_key_map<KeyT, ValueT> SelfType;
             typedef std::map< KeyT, ValueT > container_type;
+
+            friend class hidden_key_map_iterator<SelfType>;
+            friend class hidden_key_map_const_iterator<SelfType>;
+            friend class hidden_key_map_reverse_iterator<SelfType>;
+            friend class hidden_key_map_const_reverse_iterator<SelfType>;
 
         public:
 
@@ -37,69 +116,12 @@ namespace viennagrid
             typedef const value_type *                 const_pointer;
 
 
-            class iterator : public container_type::iterator
-            {
-                typedef typename container_type::iterator base;
-            public:
-                iterator() {}
-                iterator(const base & foo) : base(foo) {}
 
-                typedef typename hidden_key_map::value_type value_type;
-                typedef typename hidden_key_map::reference reference;
-                typedef typename hidden_key_map::const_reference const_reference;
-                typedef typename hidden_key_map::pointer pointer;
+            typedef hidden_key_map_iterator<SelfType> iterator;
+            typedef hidden_key_map_const_iterator<SelfType> const_iterator;
 
-                reference operator* () { return base::operator*().second; }
-                const_reference operator* () const { return base::operator*().second; }
-            };
-
-            class const_iterator : public container_type::const_iterator
-            {
-                typedef typename container_type::const_iterator base;
-            public:
-                const_iterator() {}
-                const_iterator(const base & foo) : base(foo) {}
-                const_iterator(const iterator & it) : base(it) {}
-
-                typedef typename hidden_key_map::value_type value_type;
-                typedef typename hidden_key_map::const_reference reference;
-                typedef typename hidden_key_map::const_reference const_reference;
-                typedef typename hidden_key_map::const_pointer pointer;
-
-                const_reference operator* () const { return base::operator*().second; }
-            };
-
-            class reverse_iterator : public container_type::reverse_iterator
-            {
-                typedef typename container_type::reverse_iterator base;
-            public:
-                reverse_iterator() {}
-                reverse_iterator(const base & foo) : base(foo) {}
-
-                typedef typename hidden_key_map::value_type value_type;
-                typedef typename hidden_key_map::reference reference;
-                typedef typename hidden_key_map::const_reference const_reference;
-                typedef typename hidden_key_map::pointer pointer;
-
-                reference operator* () { return base::operator*().second; }
-                const_reference operator* () const { return base::operator*().second; }
-            };
-
-            class const_reverse_iterator : public container_type::const_reverse_iterator
-            {
-                typedef typename container_type::const_reverse_iterator base;
-            public:
-                const_reverse_iterator() {}
-                const_reverse_iterator(const base & foo) : base(foo) {}
-                const_reverse_iterator(const reverse_iterator & it) : base(it) {}
-
-                typedef typename hidden_key_map::value_type value_type;
-                typedef typename hidden_key_map::const_reference reference;
-                typedef typename hidden_key_map::const_reference const_reference;
-                typedef typename hidden_key_map::const_pointer pointer;
-
-                const_reference operator* () const { return base::operator*().second; }
-            };
+            typedef hidden_key_map_reverse_iterator<SelfType> reverse_iterator;
+            typedef hidden_key_map_const_reverse_iterator<SelfType> const_reverse_iterator;
 
 
             iterator begin() { return iterator(container.begin()); }
@@ -213,8 +235,31 @@ namespace viennagrid
             {
                 return container.insert( element );
             }
-
         }
+
+        template<typename HiddenKeyMapT, typename HandleTagT>
+        struct IDCompare<
+              viennagrid::storage::container::iterator<
+                viennagrid::storage::hidden_key_map_iterator<HiddenKeyMapT>,
+                viennagrid::storage::hidden_key_map_const_iterator<HiddenKeyMapT>,
+                HandleTagT
+              >
+            >
+        {
+          bool operator() (               viennagrid::storage::container::iterator<
+                viennagrid::storage::hidden_key_map_iterator<HiddenKeyMapT>,
+                viennagrid::storage::hidden_key_map_const_iterator<HiddenKeyMapT>,
+                HandleTagT
+              > const & lhs,
+                                          viennagrid::storage::container::iterator<
+                viennagrid::storage::hidden_key_map_iterator<HiddenKeyMapT>,
+                viennagrid::storage::hidden_key_map_const_iterator<HiddenKeyMapT>,
+                HandleTagT
+              > const & rhs )
+          {
+            return lhs->second.id() < rhs->second.id();
+          }
+        };
     }
 }
 
