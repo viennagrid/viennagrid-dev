@@ -415,9 +415,7 @@ namespace viennagrid
               std::size_t global_vertex_index = local_to_global_map[seg_id][local_index];
 
               cell_vertex_handles[j] = viennagrid::elements<viennagrid::vertex_tag>(mesh).handle_at(global_vertex_index);
-
-              viennagrid::add_handle( segmentation[seg_id], mesh, cell_vertex_handles[j] );
-
+              viennagrid::add( segmentation[seg_id], viennagrid::dereference_handle(segmentation, cell_vertex_handles[j]) );
             }
 
             local_cell_handle[seg_id].push_back(
