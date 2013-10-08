@@ -14,7 +14,9 @@
 ======================================================================= */
 
 #include "viennagrid/mesh/mesh.hpp"
+#include "viennagrid/mesh/segmentation.hpp"
 #include "viennagrid/mesh/element_creation.hpp"
+#include "viennagrid/mesh/coboundary_iteration.hpp"
 
 namespace viennagrid
 {
@@ -79,6 +81,114 @@ namespace viennagrid
               viennagrid::make_element<DstCellType>( dst_segment, vertex_handles.begin(), vertex_handles.end() );
           }
       }
+  }
+
+
+
+
+
+  /** @brief For internal use only */
+  template<typename MeshT, typename ToEraseViewT, typename HandleT, typename ReferencingElementTypelist =
+      typename viennagrid::result_of::referencing_element_typelist<MeshT, typename viennagrid::storage::handle::result_of::value_type<HandleT>::type >::type >
+  struct mark_referencing_elements_impl;
+
+  template<typename MeshT, typename ToEraseViewT, typename HandleT, typename CoboundaryElementT, typename TailT>
+  struct mark_referencing_elements_impl<MeshT, ToEraseViewT, HandleT, viennagrid::meta::typelist_t<CoboundaryElementT, TailT> >
+  {
+    static void mark(MeshT & mesh, ToEraseViewT & mesh_view, HandleT host_element)
+    {
+      typedef viennagrid::meta::typelist_t<CoboundaryElementT, TailT> ReferencingElementTypelist;
+      typedef typename viennagrid::storage::handle::result_of::value_type<HandleT>::type HostElementType;
+
+      typedef typename viennagrid::result_of::handle<MeshT, CoboundaryElementT>::type CoboundaryElementHandle;
+      typedef typename viennagrid::result_of::coboundary_range<MeshT, HostElementType, CoboundaryElementT>::type CoboundaryElementRangeType;
+      typedef typename viennagrid::result_of::iterator<CoboundaryElementRangeType>::type CoboundaryElementRangeIterator;
+
+      typedef typename viennagrid::result_of::element_range<ToEraseViewT, CoboundaryElementT>::type CoboundaryElementViewRangeType;
+
+      CoboundaryElementRangeType coboundary_elements = viennagrid::coboundary_elements<HostElementType, CoboundaryElementT>(mesh, host_element);
+      for (CoboundaryElementRangeIterator it = coboundary_elements.begin(); it != coboundary_elements.end(); ++it)
+      {
+        CoboundaryElementViewRangeType view_elements = viennagrid::elements( mesh_view );
+        if ( viennagrid::find_by_handle(mesh_view, it.handle()) == view_elements.end() )
+        {
+//           std::cout << "Adding element " << *it << std::endl;
+          view_elements.insert_unique_handle( it.handle() );
+        }
+
+//         mark_referencing_elements_impl<MeshT, ToEraseViewT, CoboundaryElementHandle, TailT>::mark(mesh, mesh_view, it.handle());
+
+      }
+
+
+      mark_referencing_elements_impl<MeshT, ToEraseViewT, HandleT, TailT>::mark(mesh, mesh_view, host_element);
+
+
+
+
+
+
+
+
+//       std::cout << typeid(typename CoboundaryElementT::tag).name() << std::endl;
+//       std::cout << typeid(ReferencingElementTypelist).name() << std::endl;
+//
+//       ElementRangeType view_elements = viennagrid::elements( mesh_view );
+//       if ( viennagrid::find_by_handle(mesh_view, host_element) == view_elements.end() )
+//       {
+//         std::cout << "Adding element " << viennagrid::dereference_handle(mesh, host_element) << std::endl;
+//         view_elements.insert_unique_handle( host_element );
+//       }
+//
+//       typedef typename viennagrid::result_of::handle<MeshT, CoboundaryElementT>::type CoboundaryElementHandle;
+//       typedef typename viennagrid::result_of::coboundary_range<MeshT, ElementType, CoboundaryElementT>::type CoboundaryElementRangeType;
+//       typedef typename viennagrid::result_of::iterator<CoboundaryElementRangeType>::type CoboundaryElementRangeIterator;
+//
+//       CoboundaryElementRangeType coboundary_elements = viennagrid::coboundary_elements<ElementType, CoboundaryElementT>(mesh, host_element);
+//       for (CoboundaryElementRangeIterator it = coboundary_elements.begin(); it != coboundary_elements.end(); ++it)
+//       {
+// //         mark_referencing_elements_impl<MeshT, ToEraseViewT, CoboundaryElementHandle, TailT>::mark(mesh, mesh_view, it.handle());
+//         mark_referencing_elements_impl<MeshT, ToEraseViewT, HandleT, TailT>::mark(mesh, mesh_view, host_element);
+//       }
+//
+//       typedef typename viennagrid::result_of::referencing_element_typelist<MeshT, ElementType>::type CurrentReferencingElementTypelist;
+// //       typedef typename viennagrid::result_of::boundary_element_typelist<ElementType>::type BoundaryEl  ementTypelist;
+// //       mark_referencing_elements_impl<MeshT, ToEraseViewT, HandleT, CurrentReferencingElementTypelist>::mark(mesh, mesh_view, host_element);
+    }
+  };
+
+  /** @brief For internal use only */
+  template<typename MeshT, typename ToEraseViewT, typename HandleT>
+  struct mark_referencing_elements_impl<MeshT, ToEraseViewT, HandleT, viennagrid::meta::null_type >
+  {
+    static void mark(MeshT &, ToEraseViewT &, HandleT)
+    {
+//       typedef typename viennagrid::storage::handle::result_of::value_type<HandleT>::type ElementType;
+//       typedef typename viennagrid::result_of::element_range<ToEraseViewT, ElementType>::type ElementRangeType;
+//
+// //       std::cout << typeid(typename ElementType::tag).name() << std::endl;
+//
+//       ElementRangeType view_elements = viennagrid::elements( mesh_view );
+//       if ( viennagrid::find_by_handle(mesh_view, host_element) == view_elements.end() )
+//       {
+//         view_elements.insert_unique_handle( host_element );
+//       }
+    }
+  };
+
+  /** @brief Marks elements which reference a given host element
+    *
+    * @tparam MeshT                   The mesh type in which the element to erase lives
+    * @tparam MeshViewT               The mesh view type for all elements to erase
+    * @tparam HandleT                   The handle type of the element to delete
+    * @param  mesh                    The host mesh object
+    * @param  elements_to_erase         A mesh view which stores all elements marked for deletion
+    * @param  host_element                  A handle object of the host element
+    */
+  template<typename MeshT, typename MeshViewT, typename HandleT>
+  void mark_referencing_elements( MeshT & mesh, MeshViewT & element_view, HandleT host_element )
+  {
+    mark_referencing_elements_impl<MeshT, MeshViewT, HandleT>::mark(mesh, element_view, host_element);
   }
 
 }
