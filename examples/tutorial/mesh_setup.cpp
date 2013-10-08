@@ -40,6 +40,8 @@
 //
 //    Segment 1 | Segment 2
 //
+
+
 int main()
 {
   //
@@ -47,8 +49,8 @@ int main()
   //
 
   typedef viennagrid::triangular_2d_mesh                  MeshType;
-  typedef viennagrid::triangular_2d_segmentation            SegmentationType;
-  typedef viennagrid::triangular_2d_segment_handle                 SegmentHandleType;
+  typedef viennagrid::result_of::segmentation<MeshType>::type SegmentationType;
+  typedef viennagrid::result_of::segment_handle<SegmentationType>::type SegmentHandleType;
 
   typedef viennagrid::result_of::point<MeshType>::type            PointType;
   typedef viennagrid::result_of::vertex_handle<MeshType>::type    VertexHandleType;
