@@ -32,7 +32,7 @@ namespace viennagrid
         template<typename WrappedConfig>
         struct id_generator
         {
-            typedef typename config::result_of::query_config<typename WrappedConfig::type, config::id_generator_tag>::type id_generator_tag;
+            typedef typename config::result_of::query<typename WrappedConfig::type, config::continuous_id_generator_tag, config::id_generator_tag>::type id_generator_tag;
             typedef typename id_generator_impl<WrappedConfig, id_generator_tag>::type type;
         };
     }

@@ -172,13 +172,13 @@ namespace viennagrid
     template <typename WrappedConfigT>
     struct mesh_change_counter_type
     {
-      typedef typename config::result_of::query_config<typename WrappedConfigT::type, config::mesh_change_counter_tag>::type  type;
+      typedef typename config::result_of::query<typename WrappedConfigT::type, long, config::mesh_change_counter_tag>::type  type;
     };
 
     template <typename WrappedMeshConfigT, typename ElementTypeList, typename ContainerConfig>
     struct mesh_change_counter_type< decorated_mesh_view_config<WrappedMeshConfigT, ElementTypeList, ContainerConfig> >
     {
-      typedef typename config::result_of::query_config<typename WrappedMeshConfigT::type, config::mesh_change_counter_tag>::type  type;
+      typedef typename config::result_of::query<typename WrappedMeshConfigT::type, long, config::mesh_change_counter_tag>::type  type;
     };
 
 

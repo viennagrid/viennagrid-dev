@@ -15,6 +15,7 @@
 
 #include "viennagrid/meta/typemap.hpp"
 #include "viennagrid/storage/forwards.hpp"
+#include "../meta/utils.hpp"
 
 namespace viennagrid
 {
@@ -34,6 +35,10 @@ namespace viennagrid
         struct coboundary_container_tag;
         struct coboundary_view_container_tag;
 
+        struct neighbour_container_tag;
+        struct neighbour_view_container_tag;
+
+
         struct boundary_information_container_tag;
 
         struct interface_information_container_tag;
@@ -45,90 +50,75 @@ namespace viennagrid
 
         namespace result_of
         {
-            template<typename config_tag>
-            struct default_config
+            template<typename ConfigEntryT>
+            struct unpack
             {
-              typedef viennagrid::meta::null_type type;
-            };
-
-
-            template<>
-            struct default_config<element_id_tag>
-            {
-                typedef viennagrid::storage::smart_id_tag<int> type;
+                typedef typename ConfigEntryT::second type;
             };
 
             template<>
-            struct default_config<element_container_tag>
+            struct unpack<viennagrid::meta::not_found>
             {
-                typedef viennagrid::storage::handled_container_tag<viennagrid::storage::std_deque_tag, viennagrid::storage::pointer_handle_tag> type;
-            };
-
-            template<>
-            struct default_config<id_generator_tag>
-            {
-                typedef continuous_id_generator_tag type;
-            };
-
-            template<>
-            struct default_config<element_appendix_type_tag>
-            {
-                typedef viennagrid::meta::null_type type;
-            };
-
-            template<>
-            struct default_config<coboundary_container_tag>
-            {
-                typedef storage::std_vector_tag type;
-            };
-
-            template<>
-            struct default_config<coboundary_view_container_tag>
-            {
-                typedef storage::std_vector_tag type;
-            };
-
-            template<>
-            struct default_config<boundary_information_container_tag>
-            {
-                typedef storage::std_vector_tag type;
-            };
-
-            template<>
-            struct default_config<interface_information_container_tag>
-            {
-                typedef storage::std_vector_tag type;
-            };
-
-            template<>
-            struct default_config<mesh_change_counter_tag>
-            {
-                typedef long type;
-            };
-
-        }
-
-        namespace result_of
-        {
-            template<typename config_entry, typename config_tag>
-            struct query_config_impl
-            {
-                typedef typename config_entry::second type;
-            };
-
-            template<typename config_tag>
-            struct query_config_impl< viennagrid::meta::not_found, config_tag >
-            {
-                typedef typename default_config<config_tag>::type type;
+                typedef viennagrid::meta::not_found type;
             };
 
 
-            template<typename ConfigType, typename ConfigTag>
-            struct query_config
+
+            template<typename ConfigT, typename DefaultT,
+                     typename SearchTag0T = viennagrid::meta::null_type, typename SearchTag1T = viennagrid::meta::null_type, typename SearchTag2T = viennagrid::meta::null_type,
+                     typename SearchTag3T = viennagrid::meta::null_type, typename SearchTag4T = viennagrid::meta::null_type, typename SearchTag5T = viennagrid::meta::null_type,
+                     typename SearchTag6T = viennagrid::meta::null_type, typename SearchTag7T = viennagrid::meta::null_type, typename SearchTag8T = viennagrid::meta::null_type,
+                     typename SearchTag9T = viennagrid::meta::null_type>
+            struct query;
+
+            template<typename DefaultT, typename SearchTag0T, typename SearchTag1T, typename SearchTag2T, typename SearchTag3T, typename SearchTag4T,
+                                    typename SearchTag5T, typename SearchTag6T, typename SearchTag7T, typename SearchTag8T, typename SearchTag9T>
+            struct query<viennagrid::meta::not_found, DefaultT, SearchTag0T, SearchTag1T, SearchTag2T, SearchTag3T, SearchTag4T,
+                                                                                    SearchTag5T, SearchTag6T, SearchTag7T, SearchTag8T, SearchTag9T>
             {
-                typedef typename viennagrid::meta::typemap::result_of::find<ConfigType, ConfigTag>::type found;
-                typedef typename query_config_impl<found, ConfigTag>::type type;
+              typedef DefaultT type;
             };
+
+
+
+            template<typename HeadT, typename TailT, typename DefaultT, typename SearchTag0T, typename SearchTag2T, typename SearchTag3T, typename SearchTag4T,
+                                    typename SearchTag5T, typename SearchTag6T, typename SearchTag7T, typename SearchTag8T, typename SearchTag9T>
+            struct query<viennagrid::meta::typelist_t<HeadT, TailT>, DefaultT, SearchTag0T, viennagrid::meta::null_type, SearchTag2T, SearchTag3T, SearchTag4T,
+                                                               SearchTag5T, SearchTag6T, SearchTag7T, SearchTag8T, SearchTag9T>
+            {
+              typedef viennagrid::meta::typelist_t<HeadT, TailT> ConfigType;
+              typedef typename unpack<typename viennagrid::meta::typemap::result_of::find<ConfigType, SearchTag0T>::type >::type EntryType;
+              typedef typename viennagrid::meta::IF<
+                  viennagrid::meta::EQUAL<EntryType, viennagrid::meta::not_found>::value,
+                  DefaultT,
+                  EntryType>::type type;
+            };
+
+
+            template<typename ConfigT, typename DefaultT, typename SearchTag1T, typename SearchTag2T, typename SearchTag3T, typename SearchTag4T,
+                                    typename SearchTag5T, typename SearchTag6T, typename SearchTag7T, typename SearchTag8T, typename SearchTag9T>
+            struct query<ConfigT, DefaultT, viennagrid::meta::null_type, SearchTag1T, SearchTag2T, SearchTag3T, SearchTag4T,
+                                                                               SearchTag5T, SearchTag6T, SearchTag7T, SearchTag8T, SearchTag9T>
+            {
+              typedef DefaultT type;
+            };
+
+
+
+            template<typename ConfigT, typename DefaultT,
+                     typename SearchTag0T, typename SearchTag1T, typename SearchTag2T,
+                     typename SearchTag3T, typename SearchTag4T, typename SearchTag5T,
+                     typename SearchTag6T, typename SearchTag7T, typename SearchTag8T,
+                     typename SearchTag9T>
+            struct query
+            {
+              typedef typename unpack<typename viennagrid::meta::typemap::result_of::find<ConfigT, SearchTag0T>::type >::type EntryType;
+              typedef typename query<
+                    EntryType, DefaultT,
+                    SearchTag1T, SearchTag2T, SearchTag3T, SearchTag4T, SearchTag5T, SearchTag6T, SearchTag7T, SearchTag8T, SearchTag9T
+                  >::type type;
+            };
+
         }
     }
 

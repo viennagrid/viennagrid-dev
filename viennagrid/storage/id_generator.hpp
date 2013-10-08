@@ -59,7 +59,7 @@ namespace viennagrid
                     viennagrid::meta::static_pair<
                         element_t<element_tag, WrappedConfigType>,
 //                         typename viennagrid::result_of::element<mesh_config, element_tag>::type,
-                        typename config::result_of::query_config<element_config, config::element_id_tag>::type
+                        typename config::result_of::query<element_config, viennagrid::storage::smart_id_tag<int>, config::element_id_tag>::type
 //                         typename element_config::element_config::id_tag
                     >
                 >::type type;
@@ -83,7 +83,7 @@ namespace viennagrid
             template<typename WrappedConfigType>
             struct continuous_id_generator_config_from_mesh_config
             {
-                typedef typename config::result_of::query_config<typename WrappedConfigType::type, config::topology_config_tag>::type topology_config;
+                typedef typename config::result_of::query<typename WrappedConfigType::type, meta::null_type, config::topology_config_tag>::type topology_config;
                 typedef typename continuous_id_generator_config_from_mesh_config_helper<WrappedConfigType, topology_config>::type type;
             };
         }

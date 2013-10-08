@@ -61,7 +61,7 @@ namespace viennagrid
             template<typename WrappedConfigType, typename element_tag>
             struct is_element_present
             {
-                typedef typename query_config<typename WrappedConfigType::type, topology_config_tag>::type  TopologyConfig;
+                typedef typename query<typename WrappedConfigType::type, meta::null_type, topology_config_tag>::type  TopologyConfig;
 
                 static const bool value =
                     !viennagrid::meta::EQUAL<
@@ -77,36 +77,19 @@ namespace viennagrid
             template<typename WrappedConfigType, typename element_tag>
             struct query_element_id_tag
             {
-                typedef typename query_config<typename WrappedConfigType::type, topology_config_tag>::type  TopologyConfig;
-                typedef typename query_config<TopologyConfig, element_tag>::type  ElementConfig;
-                typedef typename query_config<ElementConfig, element_id_tag>::type  type;
+                typedef typename query<typename WrappedConfigType::type, viennagrid::storage::smart_id_tag<int>, topology_config_tag, element_tag, element_id_tag>::type  type;
             };
 
             template<typename WrappedConfigType, typename element_tag>
             struct query_element_container_tag
             {
-                typedef typename query_config<typename WrappedConfigType::type, topology_config_tag>::type  TopologyConfig;
-                typedef typename query_config<TopologyConfig, element_tag>::type  ElementConfig;
-                typedef typename query_config<ElementConfig, element_container_tag>::type  type;
+                typedef typename query<typename WrappedConfigType::type,  viennagrid::storage::handled_container_tag<viennagrid::storage::std_deque_tag, viennagrid::storage::pointer_handle_tag>, topology_config_tag, element_tag, element_container_tag>::type  type;
             };
-
-
-            template<typename WrappedConfigType, typename element_tag, typename boundary_cell_tag>
-            struct query_boundary_storage_layout
-            {
-                typedef typename query_config<typename WrappedConfigType::type, topology_config_tag>::type  TopologyConfig;
-                typedef typename query_config<TopologyConfig, element_tag>::type  ElementConfig;
-                typedef typename query_config<ElementConfig, element_boundary_storage_layout_tag>::type  BoundaryStorageLayoutConfig;
-                typedef typename query_config<BoundaryStorageLayoutConfig, boundary_cell_tag>::type  type;
-            };
-
 
             template<typename WrappedConfigType, typename element_tag>
             struct query_appendix_type
             {
-                typedef typename query_config<typename WrappedConfigType::type, topology_config_tag>::type  TopologyConfig;
-                typedef typename query_config<TopologyConfig, element_tag>::type  ElementConfig;
-                typedef typename query_config<ElementConfig, element_appendix_type_tag>::type  type;
+              typedef typename query<typename WrappedConfigType::type, meta::null_type, topology_config_tag, element_tag, element_appendix_type_tag>::type  type;
             };
 
 
@@ -126,7 +109,7 @@ namespace viennagrid
             {
                 static const bool value =
                     !viennagrid::meta::EQUAL<
-                        typename query_boundary_storage_layout<mesh_config_, element_tag_, boundary_cell_tag_>::type,
+                        typename query<typename mesh_config_::type, viennagrid::no_handling_tag, topology_config_tag, element_tag_, element_boundary_storage_layout_tag, boundary_cell_tag_>::type,
                         viennagrid::no_handling_tag
                     >::value;
             };
@@ -152,12 +135,12 @@ namespace viennagrid
             {
                 static const bool value =
                     viennagrid::meta::EQUAL<
-                        typename query_boundary_storage_layout<mesh_config_, element_tag_, boundary_cell_tag_>::type,
+                        typename query<typename mesh_config_::type, viennagrid::no_handling_tag, topology_config_tag, element_tag_, element_boundary_storage_layout_tag, boundary_cell_tag_>::type,
                         viennagrid::full_handling_tag
                     >::value
                         ||
                     viennagrid::meta::EQUAL<
-                        typename query_boundary_storage_layout<mesh_config_, element_tag_, boundary_cell_tag_>::type,
+                        typename query<typename mesh_config_::type, viennagrid::no_handling_tag, topology_config_tag, element_tag_, element_boundary_storage_layout_tag, boundary_cell_tag_>::type,
                         viennagrid::full_lazy_handling_tag
                     >::value;
             };
