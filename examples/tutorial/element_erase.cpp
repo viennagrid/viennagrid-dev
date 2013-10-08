@@ -30,7 +30,6 @@ int main()
     VertexHandleType v12 = viennagrid::make_vertex(mesh, point_type(1.0, 2.0));
     VertexHandleType v22 = viennagrid::make_vertex(mesh, point_type(2.0, 2.0));
 
-
     viennagrid::make_triangle(mesh, v00, v01, v11);
     viennagrid::make_triangle(mesh, v00, v10, v11);
     viennagrid::make_triangle(mesh, v10, v11, v20);
@@ -40,6 +39,15 @@ int main()
     viennagrid::make_triangle(mesh, v02, v11, v12);
     viennagrid::make_triangle(mesh, v01, v11, v02);
 
+
+
+    std::cout << "--------------------------------------------------" << std::endl;
+    std::cout << "----------- Erasing from Mesh           ----------" << std::endl;
+    std::cout << "--------------------------------------------------" << std::endl;
+
+
+    typedef viennagrid::result_of::triangle_range<MeshType>::type triangle_range_type;
+    typedef viennagrid::result_of::iterator<triangle_range_type>::type triangle_range_iterator;
 
     std::cout << viennagrid::triangles(mesh).size() << std::endl;
 
@@ -57,6 +65,37 @@ int main()
         viennagrid::io::vtk_writer<viennagrid::triangular_2d_mesh> vtk_writer;
         vtk_writer(mesh, "triangle_mesh");
     }
+
+
+
+    std::cout << "--------------------------------------------------" << std::endl;
+    std::cout << "----------- Erasing from View           ----------" << std::endl;
+    std::cout << "--------------------------------------------------" << std::endl;
+
+
+    typedef viennagrid::result_of::mesh_view<MeshType>::type MeshViewType;
+    MeshViewType view = viennagrid::make_view(mesh);
+
+    VertexHandleType new_vh = viennagrid::vertices(mesh).handle_at(0);
+
+    viennagrid::add_single_handle( view, new_vh );
+
+    typedef viennagrid::result_of::cell_range<MeshType>::type CellRangeType;
+    typedef viennagrid::result_of::iterator<CellRangeType>::type CellRangeIterator;
+
+    CellRangeType cells = viennagrid::elements(mesh);
+    for (CellRangeIterator cit = cells.begin(); cit != cells.end(); ++cit)
+        viennagrid::add_single_handle( view, cit.handle() );
+
+    std::cout << viennagrid::cells(view).size() << std::endl;
+    viennagrid::erase_element(view, new_vh);
+    std::cout << viennagrid::cells(view).size() << std::endl;
+
+    {
+        viennagrid::io::vtk_writer<MeshViewType> vtk_writer;
+        vtk_writer(view, "triangle_view");
+    }
+
 
     return 0;
 }
