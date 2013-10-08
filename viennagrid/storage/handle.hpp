@@ -220,53 +220,66 @@ namespace viennagrid
 
 
 
+            template<typename HandleTagT>
+            struct dereference_handle_helper;
 
-            // Pointer handle
-            template<typename container_type, typename handle_type>
-            typename result_of::value_type<handle_type>::type & dereference_handle( container_type &, handle_type handle, pointer_handle_tag )
-            { return *handle; }
-
-            template<typename container_type, typename handle_type>
-            typename result_of::value_type<handle_type>::type const & dereference_handle( container_type const &, handle_type handle, pointer_handle_tag )
-            { return *handle; }
-
-
-            // Iterator handle
-            template<typename container_type, typename handle_type>
-            typename result_of::value_type<handle_type>::type & dereference_handle( container_type &, handle_type handle, iterator_handle_tag )
-            { return *handle; }
-
-            template<typename container_type, typename handle_type>
-            typename result_of::value_type<handle_type>::type const & dereference_handle( container_type const &, handle_type handle, iterator_handle_tag )
-            { return *handle; }
-
-
-            // ID handle
-            template<typename container_type, typename handle_type>
-            typename result_of::value_type<handle_type>::type & dereference_handle( container_type & container, handle_type handle, id_handle_tag )
+            template<typename HandleTagT>
+            struct dereference_handle_helper
             {
-                typedef typename result_of::value_type<handle_type>::type value_type;
-                typedef typename storage::result_of::id<value_type>::type id_type;
+              template<typename ContainerT, typename HandleT>
+              static typename result_of::value_type<HandleT>::type & dereference_handle( ContainerT &, HandleT handle )
+              { return *handle; }
 
-                return *std::find_if(
-                    container.begin(),
-                    container.end(),
-                    id_compare<id_type>(handle)
-                );
-            }
+              template<typename ContainerT, typename HandleT>
+              static typename result_of::value_type<HandleT>::type const & dereference_handle( ContainerT const &, HandleT handle )
+              { return *handle; }
+            };
 
-            template<typename container_type, typename handle_type>
-            typename result_of::value_type<handle_type>::type const & dereference_handle( container_type const & container, handle_type handle, id_handle_tag )
+
+            template<>
+            struct dereference_handle_helper<id_handle_tag>
             {
-                typedef typename result_of::value_type<handle_type>::type value_type;
-                typedef typename storage::result_of::id<value_type>::type id_type;
+              template<typename ContainerT, typename HandleT>
+              static typename result_of::value_type<HandleT>::type & dereference_handle( ContainerT & container, HandleT handle )
+              {
+                  typedef typename result_of::value_type<HandleT>::type ElementType;
+                  typedef typename storage::result_of::id<ElementType>::type IDType;
 
-                return *std::find_if(
-                    container.begin(),
-                    container.end(),
-                    id_compare<id_type>(handle)
-                );
-            }
+                  return *std::find_if(
+                      container.begin(),
+                      container.end(),
+                      id_compare<IDType>(handle)
+                  );
+              }
+
+              template<typename ContainerT, typename HandleT>
+              static typename result_of::value_type<HandleT>::type const & dereference_handle( ContainerT const & container, HandleT handle )
+              {
+                  typedef typename result_of::value_type<HandleT>::type ElementType;
+                  typedef typename storage::result_of::id<ElementType>::type IDType;
+
+                  return *std::find_if(
+                      container.begin(),
+                      container.end(),
+                      id_compare<IDType>(handle)
+                  );
+              }
+            };
+
+
+            template<typename ContainerT, typename HandleT>
+            typename result_of::value_type<HandleT>::type & dereference_handle( ContainerT & container, HandleT handle )
+            { return dereference_handle_helper< typename result_of::handle_tag<HandleT>::type >::dereference_handle(container, handle); }
+
+            template<typename ContainerT, typename HandleT>
+            typename result_of::value_type<HandleT>::type const & dereference_handle( ContainerT const & container, HandleT handle )
+            { return dereference_handle_helper< typename result_of::handle_tag<HandleT>::type >::dereference_handle(container, handle); }
+
+            template<typename ContainerT, typename HandleT>
+            typename result_of::value_type<HandleT>::type const & dereference_handle_const( ContainerT const & container, HandleT handle )
+            { return dereference_handle_helper< typename result_of::handle_tag<HandleT>::type >::dereference_handle(container, handle); }
+
+
 
 
             template<typename container_type, typename value_type, typename handle_tag>
