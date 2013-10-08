@@ -541,23 +541,23 @@ namespace viennagrid
 
 
     /** @brief For internal use only */
-    template<typename element_typelist, typename element_type>
+    template<typename AllElementsTypelistT, typename ElementT>
     struct referencing_element_typelist_impl;
 
-    template<typename element_type>
-    struct referencing_element_typelist_impl<viennagrid::meta::null_type, element_type>
+    template<typename ElementT>
+    struct referencing_element_typelist_impl<viennagrid::meta::null_type, ElementT>
     {
         typedef viennagrid::meta::null_type type;
     };
 
-    template<typename head, typename tail, typename element_type>
-    struct referencing_element_typelist_impl< viennagrid::meta::typelist_t<head, tail>, element_type >
+    template<typename HeadT, typename TailT, typename ElementT>
+    struct referencing_element_typelist_impl< viennagrid::meta::typelist_t<HeadT, TailT>, ElementT >
     {
-        typedef typename referencing_element_typelist_impl<tail, element_type>::type tail_typelist;
+        typedef typename referencing_element_typelist_impl<TailT, ElementT>::type tail_typelist;
 
         typedef typename viennagrid::meta::IF<
-            is_boundary<head, element_type>::value,
-            viennagrid::meta::typelist_t< head, tail_typelist>,
+            is_boundary<HeadT, ElementT>::value,
+            viennagrid::meta::typelist_t<HeadT, tail_typelist>,
             tail_typelist
         >::type type;
     };
@@ -570,9 +570,9 @@ namespace viennagrid
     template<typename SomethingT, typename ElementTypeOrTagT>
     struct referencing_element_typelist
     {
-        typedef typename element<SomethingT, ElementTypeOrTagT>::type element_type;
-        typedef typename element_typelist<SomethingT>::type elements;
-        typedef typename referencing_element_typelist_impl<elements, element_type>::type type;
+        typedef typename element<SomethingT, ElementTypeOrTagT>::type ElementType;
+        typedef typename element_typelist<SomethingT>::type AllElementsTypelist;
+        typedef typename referencing_element_typelist_impl<AllElementsTypelist, ElementType>::type type;
     };
 
 
@@ -1168,9 +1168,9 @@ namespace viennagrid
   void for_each( MeshSegmentHandleT & mesh_or_segment, FunctorT f )
   {
     for_each_element_functor<MeshSegmentHandleT, FunctorT> for_each_functor(mesh_or_segment, f);
-    typedef typename viennagrid::result_of::elements_of_topologic_dim<MeshSegmentHandleT, TopologicDimensionV>::type element_typelist;
+    typedef typename viennagrid::result_of::elements_of_topologic_dim<MeshSegmentHandleT, TopologicDimensionV>::type ElementTypelist;
 
-    viennagrid::meta::typelist::for_each<element_typelist>( for_each_functor );
+    viennagrid::meta::typelist::for_each<ElementTypelist>( for_each_functor );
   }
 
   /** @brief Function which executes functor an each element with specific topologic dimension, const version
@@ -1185,10 +1185,32 @@ namespace viennagrid
   void for_each( MeshSegmentHandleT const & mesh_or_segment, FunctorT f )
   {
     for_each_element_functor<const MeshSegmentHandleT, FunctorT> for_each_functor(mesh_or_segment, f);
-    typedef typename viennagrid::result_of::elements_of_topologic_dim<MeshSegmentHandleT, TopologicDimensionV>::type element_typelist;
+    typedef typename viennagrid::result_of::elements_of_topologic_dim<MeshSegmentHandleT, TopologicDimensionV>::type ElementTypelist;
 
-    viennagrid::meta::typelist::for_each<element_typelist>( for_each_functor );
+    viennagrid::meta::typelist::for_each<ElementTypelist>( for_each_functor );
   }
+
+
+  template<typename MeshSegmentHandleT, typename FunctorT>
+  void for_each( MeshSegmentHandleT & mesh_or_segment, FunctorT f )
+  {
+    for_each_element_functor<MeshSegmentHandleT, FunctorT> for_each_functor(mesh_or_segment, f);
+    typedef typename viennagrid::result_of::element_typelist<MeshSegmentHandleT>::type ElementTypelist;
+
+    viennagrid::meta::typelist::for_each<ElementTypelist>( for_each_functor );
+  }
+
+  template<typename MeshSegmentHandleT, typename FunctorT>
+  void for_each( MeshSegmentHandleT const & mesh_or_segment, FunctorT f )
+  {
+    for_each_element_functor<const MeshSegmentHandleT, FunctorT> for_each_functor(mesh_or_segment, f);
+    typedef typename viennagrid::result_of::element_typelist<MeshSegmentHandleT>::type ElementTypelist;
+
+    viennagrid::meta::typelist::for_each<ElementTypelist>( for_each_functor );
+  }
+
+
+
 
 
 
@@ -1306,6 +1328,7 @@ namespace viennagrid
 
       return range.end();
   }
+
 
 
 
@@ -1512,6 +1535,7 @@ namespace viennagrid
 
       typedef typename viennagrid::result_of::element<SourceMeshType, ElementTag>::type SourceElementType;
       typedef typename viennagrid::result_of::element<DestinationMeshType, ElementTag>::type DestinationElementType;
+      typedef typename viennagrid::result_of::handle<DestinationMeshType, ElementTag>::type DestinationElementHandleType;
 
       SourceElementRangeType source_elements = viennagrid::elements( source_mesh );
       DestinationElementRangeType destination_elements = viennagrid::elements( destination_mesh );
@@ -1550,10 +1574,17 @@ namespace viennagrid
   void fix_handles( mesh_t<SourceWrappedConfigT> const & source_mesh, mesh_t<DestinationWrappedConfigT> & destination_mesh )
   {
     typedef mesh_t<SourceWrappedConfigT>          SourceMeshType;
+    typedef mesh_t<DestinationWrappedConfigT>     DestinationMeshType;
 
     typedef typename viennagrid::result_of::element_typelist<SourceMeshType>::type      SourceTypelist;
+    typedef typename viennagrid::result_of::element_typelist<DestinationMeshType>::type DestinationTypelist;
 
-    fix_handle_helper<SourceTypelist>::fix_handles( source_mesh, destination_mesh );
+    typedef typename viennagrid::meta::typelist::result_of::intersection<
+              SourceTypelist,
+              DestinationTypelist
+          >::type ElementTypelist;
+
+    fix_handle_helper<ElementTypelist>::fix_handles( source_mesh, destination_mesh );
   }
 
 }
