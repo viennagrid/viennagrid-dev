@@ -201,6 +201,7 @@ namespace viennagrid
 
                 const_iterator() {}
                 const_iterator(base_const_iterator const & it) : base_const_iterator(it) {}
+                const_iterator(base_iterator const & it) : base_const_iterator(it) {}
 
                 const_iterator & operator++() { base_const_iterator::operator++(); return *this; }
                 const_iterator operator++(int) { base_const_iterator::operator++(int()); return *this; }
@@ -231,6 +232,7 @@ namespace viennagrid
 
                 const_iterator() {}
                 const_iterator(base_const_iterator const & it) : base_const_iterator(it) {}
+                const_iterator(base_iterator const & it) : base_const_iterator(it) {}
 
                 const_iterator & operator++() { base_const_iterator::operator++(); return *this; }
                 const_iterator operator++(int) { base_const_iterator::operator++(int()); return *this; }
@@ -264,7 +266,8 @@ namespace viennagrid
                 typedef base_const_iterator const_handle_type;
 
                 const_iterator() {}
-                const_iterator(base_const_iterator const & it) : base_iterator(it) {}
+                const_iterator(base_const_iterator const & it) : base_const_iterator(it) {}
+                const_iterator(base_iterator const & it) : base_const_iterator(it) {}
 
                 const_iterator & operator++() { base_const_iterator::operator++(); return *this; }
                 const_iterator operator++(int) { base_const_iterator::operator++(int()); return *this; }
@@ -301,6 +304,7 @@ namespace viennagrid
 
                 const_iterator() {}
                 const_iterator(base_const_iterator const & it) : base_const_iterator(it) {}
+                const_iterator(base_iterator const & it) : base_const_iterator(it) {}
 
                 const_iterator & operator++() { base_const_iterator::operator++(); return *this; }
                 const_iterator operator++(int) { base_const_iterator::operator++(int()); return *this; }
@@ -352,12 +356,12 @@ namespace viennagrid
 
             value_type & dereference_handle( handle_type handle )
             {
-                return handle::dereference_handle( *this, handle, handle_tag() );
+                return handle::dereference_handle( *this, handle );
             }
 
             value_type const & dereference_handle( const_handle_type handle ) const
             {
-                return handle::dereference_handle( *this, handle, handle_tag() );
+                return handle::dereference_handle( *this, handle );
             }
 
         };
@@ -497,6 +501,27 @@ namespace viennagrid
         };
 
 
+
+
+        template<typename ValueT>
+        struct IDCompare
+        {
+          bool operator() (ValueT const & lhs, ValueT const & rhs)
+          {
+            return lhs->id() < rhs->id();
+          }
+        };
+
+        template<typename ValueT, typename BaseIDType>
+        struct IDCompare< smart_id_t<ValueT, BaseIDType> >
+        {
+          bool operator() ( smart_id_t<ValueT, BaseIDType> const & lhs, smart_id_t<ValueT, BaseIDType> const & rhs)
+          {
+            return lhs->id() < rhs->id();
+          }
+        };
+
+
         namespace result_of
         {
             template<typename value_type, typename container_tag>
@@ -520,11 +545,20 @@ namespace viennagrid
                 typedef std::list<value_type> type;
             };
 
-            template<typename value_type>
-            struct container<value_type, std_set_tag>
+
+
+            template<typename ValueT>
+            struct container<ValueT, std_set_tag<default_tag> >
             {
-                typedef std::set<value_type> type;
+                typedef std::set<ValueT> type;
             };
+
+            template<typename ValueT>
+            struct container<ValueT, std_set_tag<id_compare_tag> >
+            {
+                typedef std::set<ValueT, IDCompare<ValueT> > type;
+            };
+
 
 
             template<typename value_type, typename container_tag, typename handle_tag>
@@ -532,83 +566,6 @@ namespace viennagrid
             {
                 typedef container_t< typename container<value_type, container_tag>::type, handle_tag > type;
             };
-
-            // vector
-            template<typename value_type>
-            struct container<value_type, std_vector_with_iterator_handle_tag >
-            {
-                typedef container_t< typename container<value_type, std_vector_tag>::type, iterator_handle_tag > type;
-            };
-
-            template<typename value_type>
-            struct container<value_type, std_vector_with_pointer_handle_tag >
-            {
-                typedef container_t< typename container<value_type, std_vector_tag>::type, pointer_handle_tag > type;
-            };
-
-            template<typename value_type>
-            struct container<value_type, std_vector_with_id_handle_tag >
-            {
-                typedef container_t< typename container<value_type, std_vector_tag>::type, id_handle_tag > type;
-            };
-
-            // deque
-            template<typename value_type>
-            struct container<value_type, std_deque_with_iterator_handle_tag >
-            {
-                typedef container_t< typename container<value_type, std_deque_tag>::type, iterator_handle_tag > type;
-            };
-
-            template<typename value_type>
-            struct container<value_type, std_deque_with_pointer_handle_tag >
-            {
-                typedef container_t< typename container<value_type, std_deque_tag>::type, pointer_handle_tag > type;
-            };
-
-            template<typename value_type>
-            struct container<value_type, std_deque_with_id_handle_tag >
-            {
-                typedef container_t< typename container<value_type, std_deque_tag>::type, id_handle_tag > type;
-            };
-
-            // list
-            template<typename value_type>
-            struct container<value_type, std_list_with_iterator_handle_tag >
-            {
-                typedef container_t< typename container<value_type, std_list_tag>::type, iterator_handle_tag > type;
-            };
-
-            template<typename value_type>
-            struct container<value_type, std_list_with_pointer_handle_tag >
-            {
-                typedef container_t< typename container<value_type, std_list_tag>::type, pointer_handle_tag > type;
-            };
-
-            template<typename value_type>
-            struct container<value_type, std_list_with_id_handle_tag >
-            {
-                typedef container_t< typename container<value_type, std_list_tag>::type, id_handle_tag > type;
-            };
-
-            // set
-            template<typename value_type>
-            struct container<value_type, std_set_with_iterator_handle_tag >
-            {
-                typedef container_t< typename container<value_type, std_set_tag>::type, iterator_handle_tag > type;
-            };
-
-            template<typename value_type>
-            struct container<value_type, std_set_with_pointer_handle_tag >
-            {
-                typedef container_t< typename container<value_type, std_set_tag>::type, pointer_handle_tag > type;
-            };
-
-            template<typename value_type>
-            struct container<value_type, std_set_with_id_handle_tag >
-            {
-                typedef container_t< typename container<value_type, std_set_tag>::type, id_handle_tag > type;
-            };
-
 
 
             template<typename element_type, int size>

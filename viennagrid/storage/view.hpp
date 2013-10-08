@@ -194,8 +194,8 @@ namespace viennagrid
             const_iterator begin() const { return const_iterator(*this, handle_container.begin()); }
             const_iterator end() const { return const_iterator(*this, handle_container.end()); }
 
-            reference dereference_handle( handle_type handle ) { return viennagrid::storage::handle::dereference_handle( *base_container, handle, handle_tag() ); }
-            const_reference dereference_handle( const_handle_type handle ) const { return viennagrid::storage::handle::dereference_handle( *base_container, handle, handle_tag() ); }
+            reference dereference_handle( handle_type handle ) { return viennagrid::storage::handle::dereference_handle( *base_container, handle ); }
+            const_reference dereference_handle( const_handle_type handle ) const { return viennagrid::storage::handle::dereference_handle_const( *base_container, handle ); }
 
             handle_type handle( reference element ) { return &element; }
             const_handle_type handle( const_reference element ) const { return &element; }
@@ -268,8 +268,8 @@ namespace viennagrid
 
 
 
-        template<typename base_container_type_>
-        class view_t<base_container_type_, std_set_tag>
+        template<typename base_container_type_, typename CompareTagT>
+        class view_t<base_container_type_, std_set_tag<CompareTagT> >
         {
         public:
 
@@ -278,7 +278,7 @@ namespace viennagrid
 
             typedef base_container_type_ base_container_type;
 
-            typedef std_set_tag container_tag;
+            typedef std_set_tag<CompareTagT> container_tag;
 
             typedef typename base_container_type::handle_tag handle_tag;
             typedef typename handle::result_of::handle_type<base_container_type, handle_tag>::type handle_type;
@@ -435,8 +435,8 @@ namespace viennagrid
             const_iterator end() const { return const_iterator(*this, handle_container.end()); }
 
 
-            reference dereference_handle( handle_type handle ) { return viennagrid::storage::handle::dereference_handle( *base_container, handle, handle_tag() ); }
-            const_reference dereference_handle( const_handle_type handle ) const { return viennagrid::storage::handle::dereference_handle( *base_container, handle, handle_tag() ); }
+            reference dereference_handle( handle_type handle ) { return viennagrid::storage::handle::dereference_handle( *base_container, handle ); }
+            const_reference dereference_handle( const_handle_type handle ) const { return viennagrid::storage::handle::dereference_handle_const( *base_container, handle ); }
 
             handle_type handle( reference element ) { return &element; }
             const_handle_type handle( const_reference element ) const { return &element; }

@@ -62,8 +62,14 @@ namespace viennagrid
     struct std_deque_tag;
     /** @brief A tag indicating that std::list is used as a container */
     struct std_list_tag;
+
+    struct id_compare_tag;
+
     /** @brief A tag indicating that std::set is used as a container */
+    template<typename compare_tag = default_tag>
     struct std_set_tag;
+//     /** @brief A tag indicating that std::set with ID compare is used as a container */
+//     struct std_id_set_tag;
     /** @brief A tag indicating that std::map is used as a container */
     struct std_map_tag;
 
@@ -88,7 +94,7 @@ namespace viennagrid
     /** @brief A typemap defining default container configuration for a view container collection */
     typedef viennagrid::meta::make_typemap<
         default_tag,
-        std_set_tag
+        std_set_tag<id_compare_tag>
     >::type default_view_container_config;
 
 
@@ -104,74 +110,6 @@ namespace viennagrid
         typedef HandleTagT      handle_tag;
     };
 
-    // vector
-    struct std_vector_with_iterator_handle_tag
-    {
-        typedef std_vector_tag         container_tag;
-        typedef iterator_handle_tag    handle_tag;
-    };
-    struct std_vector_with_pointer_handle_tag
-    {
-        typedef std_vector_tag         container_tag;
-        typedef pointer_handle_tag     handle_tag;
-    };
-    struct std_vector_with_id_handle_tag
-    {
-        typedef std_vector_tag         container_tag;
-        typedef id_handle_tag          handle_tag;
-    };
-
-    // deque
-    struct std_deque_with_iterator_handle_tag
-    {
-        typedef std_deque_tag          container_tag;
-        typedef iterator_handle_tag    handle_tag;
-    };
-    struct std_deque_with_pointer_handle_tag
-    {
-        typedef std_deque_tag          container_tag;
-        typedef pointer_handle_tag     handle_tag;
-    };
-    struct std_deque_with_id_handle_tag
-    {
-        typedef std_deque_tag          container_tag;
-        typedef id_handle_tag          handle_tag;
-    };
-
-    // list
-    struct std_list_with_iterator_handle_tag
-    {
-        typedef std_list_tag           container_tag;
-        typedef iterator_handle_tag    handle_tag;
-    };
-    struct std_list_with_pointer_handle_tag
-    {
-        typedef std_list_tag           container_tag;
-        typedef pointer_handle_tag     handle_tag;
-    };
-    struct std_list_with_id_handle_tag
-    {
-        typedef std_list_tag           container_tag;
-        typedef id_handle_tag          handle_tag;
-    };
-
-    // set
-    struct std_set_with_iterator_handle_tag
-    {
-        typedef std_set_tag            container_tag;
-        typedef iterator_handle_tag    handle_tag;
-    };
-    struct std_set_with_pointer_handle_tag
-    {
-        typedef std_set_tag            container_tag;
-        typedef pointer_handle_tag     handle_tag;
-    };
-    struct std_set_with_id_handle_tag
-    {
-        typedef std_set_tag            container_tag;
-        typedef id_handle_tag          handle_tag;
-    };
-
     namespace result_of
     {
       template <typename ContainerTag, typename HandleTag>
@@ -179,87 +117,6 @@ namespace viennagrid
       {
           typedef handled_container_tag<ContainerTag, HandleTag>   tag;
       };
-
-      // vector
-      template <>
-      struct handled_container<std_vector_tag, iterator_handle_tag>
-      {
-          typedef std_vector_with_iterator_handle_tag   tag;
-      };
-
-      template <>
-      struct handled_container<std_vector_tag, pointer_handle_tag>
-      {
-          typedef std_vector_with_pointer_handle_tag   tag;
-      };
-
-      template <>
-      struct handled_container<std_vector_tag, id_handle_tag>
-      {
-          typedef std_vector_with_id_handle_tag   tag;
-      };
-
-
-      // deque
-      template <>
-      struct handled_container<std_deque_tag, iterator_handle_tag>
-      {
-          typedef std_deque_with_iterator_handle_tag   tag;
-      };
-
-      template <>
-      struct handled_container<std_deque_tag, pointer_handle_tag>
-      {
-          typedef std_deque_with_pointer_handle_tag   tag;
-      };
-
-      template <>
-      struct handled_container<std_deque_tag, id_handle_tag>
-      {
-          typedef std_deque_with_id_handle_tag   tag;
-      };
-
-
-      // list
-      template <>
-      struct handled_container<std_list_tag, iterator_handle_tag>
-      {
-          typedef std_list_with_iterator_handle_tag   tag;
-      };
-
-      template <>
-      struct handled_container<std_list_tag, pointer_handle_tag>
-      {
-          typedef std_list_with_pointer_handle_tag   tag;
-      };
-
-      template <>
-      struct handled_container<std_list_tag, id_handle_tag>
-      {
-          typedef std_list_with_id_handle_tag   tag;
-      };
-
-
-      // set
-      template <>
-      struct handled_container<std_set_tag, iterator_handle_tag>
-      {
-          typedef std_set_with_iterator_handle_tag   tag;
-      };
-
-      template <>
-      struct handled_container<std_set_tag, pointer_handle_tag>
-      {
-          typedef std_set_with_pointer_handle_tag   tag;
-      };
-
-      template <>
-      struct handled_container<std_set_tag, id_handle_tag>
-      {
-          typedef std_set_with_id_handle_tag   tag;
-      };
-
-
     }
 
   }
