@@ -17,25 +17,25 @@
 
 namespace viennagrid
 {
-    namespace result_of
+  namespace result_of
+  {
+    template<typename mesh_config, typename id_generator_tag>
+    struct id_generator_impl;
+
+    template<typename mesh_config>
+    struct id_generator_impl<mesh_config, config::continuous_id_generator_tag>
     {
-        template<typename mesh_config, typename id_generator_tag>
-        struct id_generator_impl;
+      typedef typename viennagrid::storage::result_of::continuous_id_generator_config_from_mesh_config<mesh_config>::type typemap;
+      typedef storage::continuous_id_generator<typemap> type;
+    };
 
-        template<typename mesh_config>
-        struct id_generator_impl<mesh_config, config::continuous_id_generator_tag>
-        {
-            typedef typename viennagrid::storage::result_of::continuous_id_generator_config_from_mesh_config<mesh_config>::type typemap;
-            typedef storage::continuous_id_generator<typemap> type;
-        };
-
-        template<typename WrappedConfig>
-        struct id_generator
-        {
-            typedef typename config::result_of::query<typename WrappedConfig::type, config::continuous_id_generator_tag, config::id_generator_tag>::type id_generator_tag;
-            typedef typename id_generator_impl<WrappedConfig, id_generator_tag>::type type;
-        };
-    }
+    template<typename WrappedConfig>
+    struct id_generator
+    {
+      typedef typename config::result_of::query<typename WrappedConfig::type, config::continuous_id_generator_tag, config::id_generator_tag>::type id_generator_tag;
+      typedef typename id_generator_impl<WrappedConfig, id_generator_tag>::type type;
+    };
+  }
 }
 
 #endif

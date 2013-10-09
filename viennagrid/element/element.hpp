@@ -311,29 +311,6 @@ namespace viennagrid
 
 
 
-
-//     namespace result_of
-//     {
-//       template<typename WrappedConfigType>
-//       struct element_boundary_cell_container_typelist
-//       {
-//         typedef typename WrappedConfigType::bnd_cell_container_typelist type;
-//       };
-//
-//       template<typename WrappedConfigType>
-//       struct element_id_tag
-//       {
-//         typedef typename WrappedConfigType::id_tag type;
-//       };
-//
-//       template<typename WrappedConfigType>
-//       struct element_appendix_type
-//       {
-//         typedef typename WrappedConfigType::appendix_type type;
-//       };
-//     }
-
-
     namespace result_of
     {
         template<typename bnd_cell_typelist>
@@ -551,13 +528,13 @@ namespace viennagrid
                       typename config::result_of::query_element_id_tag<WrappedConfigType, ElementTag>::type
                     >::type
                 >,
-        public boundary_element_layer<ElementTag, typename config::result_of::element_boundary_cell_container_typelist<WrappedConfigType, ElementTag, ElementTag>::type>
+        public boundary_element_layer<ElementTag, typename config::result_of::element_boundary_element_container_typelist<WrappedConfigType, ElementTag>::type>
     {
     public:
 
         typedef ElementTag tag;
 
-        typedef typename config::result_of::element_boundary_cell_container_typelist<WrappedConfigType, ElementTag, ElementTag>::type bnd_cell_container_typelist;
+        typedef typename config::result_of::element_boundary_element_container_typelist<WrappedConfigType, ElementTag>::type bnd_cell_container_typelist;
         typedef typename config::result_of::query_element_id_tag<WrappedConfigType, ElementTag>::type id_tag;
         typedef typename config::result_of::query_appendix_type<WrappedConfigType, ElementTag>::type appendix_type;
 
@@ -631,7 +608,7 @@ namespace viennagrid
 
         typedef vertex_tag tag;
 
-        typedef typename config::result_of::element_boundary_cell_container_typelist<WrappedConfigType, vertex_tag, vertex_tag>::type bnd_cell_container_typelist;
+        typedef typename config::result_of::element_boundary_element_container_typelist<WrappedConfigType, vertex_tag>::type bnd_cell_container_typelist;
         typedef typename config::result_of::query_element_id_tag<WrappedConfigType, vertex_tag>::type id_tag;
         typedef typename config::result_of::query_appendix_type<WrappedConfigType, vertex_tag>::type appendix_type;
 
