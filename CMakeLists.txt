@@ -114,7 +114,7 @@ if(ENABLE_DIST)
 
       COMMAND "${CMAKE_COMMAND}" -E make_directory "${DISTDIR}/build"
       COMMAND "${CMAKE_COMMAND}" -E copy_if_different
-         "${PROJECT_SOURCE_DIR}/build/README" "${DISTDIR}/build/README"
+         "${PROJECT_SOURCE_DIR}/cmake/README" "${DISTDIR}/build/README"
 
       COMMAND "${CMAKE_COMMAND}" -E make_directory "${DISTDIR}/cmake"
       COMMAND "${CMAKE_COMMAND}" -E copy_if_different
@@ -128,12 +128,10 @@ if(ENABLE_DIST)
 
       COMMAND "${CMAKE_COMMAND}" -E make_directory "${DISTDIR}/doc"
       COMMAND "${CMAKE_COMMAND}" -E copy_if_different
-         "${PROJECT_SOURCE_DIR}/doc/viennagrid.pdf" "${DISTDIR}/doc/viennagrid.pdf"
+         "${CMAKE_CURRENT_BINARY_DIR}/doc/viennagrid.pdf" "${DISTDIR}/doc/viennagrid.pdf"
       COMMAND "${CMAKE_COMMAND}" -E copy_directory
          "${CMAKE_CURRENT_BINARY_DIR}/doc/doxygen"
          "${DISTDIR}/doc/doxygen"
-      COMMAND "${CMAKE_COMMAND}" -E copy_if_different
-         "${PROJECT_SOURCE_DIR}/doc/viennagrid.pdf" "${DISTDIR}/doc/viennagrid.pdf"
 
       COMMAND "${CMAKE_COMMAND}" -E copy_if_different
          "${PROJECT_SOURCE_DIR}/doc/Doxyfile.in" "${DISTDIR}/doc/Doxyfile.in"
