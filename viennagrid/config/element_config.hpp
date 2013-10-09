@@ -25,7 +25,7 @@
 #include "viennagrid/topology/polygon.hpp"
 
 
-/** @file element_config.hpp
+/** @file config/element_config.hpp
     @brief Provides meta functions for creating element configuration
 */
 
@@ -61,31 +61,31 @@ namespace viennagrid
       template<typename WrappedConfigType, typename element_tag>
       struct is_element_present
       {
-        typedef typename query<typename WrappedConfigType::type, meta::null_type, topology_config_tag, element_tag>::type  ElementConfigType;
+        typedef typename query<typename WrappedConfigType::type, meta::null_type, element_tag>::type  ElementConfigType;
 
         static const bool value = !viennagrid::meta::EQUAL<ElementConfigType, viennagrid::meta::not_found>::value;
       };
 
 
-      /** @brief Queries the element id tag for a given element tag from a wrapped config */
+      /** @brief Queries the element id tag for a given element tag from a wrapped config, default is smart_id_tag<int>. */
       template<typename WrappedConfigType, typename element_tag>
       struct query_element_id_tag
       {
-        typedef typename query<typename WrappedConfigType::type, viennagrid::storage::smart_id_tag<int>, topology_config_tag, element_tag, element_id_tag>::type  type;
+        typedef typename query<typename WrappedConfigType::type, viennagrid::storage::smart_id_tag<int>, element_tag, element_id_tag>::type  type;
       };
 
-      /** @brief Queries the container tag for a given element tag from a wrapped config */
+      /** @brief Queries the container tag for a given element tag from a wrapped config, default is std::deque with pointer handle. */
       template<typename WrappedConfigType, typename element_tag>
       struct query_element_container_tag
       {
-        typedef typename query<typename WrappedConfigType::type,  viennagrid::storage::handled_container_tag<viennagrid::storage::std_deque_tag, viennagrid::storage::pointer_handle_tag>, topology_config_tag, element_tag, element_container_tag>::type  type;
+        typedef typename query<typename WrappedConfigType::type, viennagrid::storage::handled_container_tag<viennagrid::storage::std_deque_tag, viennagrid::storage::pointer_handle_tag>, element_tag, element_container_tag>::type  type;
       };
 
-      /** @brief Queries the appendix type for a given element tag from a wrapped config. PLC appendix type is std::vector<PointType> for holes. */
+      /** @brief Queries the appendix type for a given element tag from a wrapped config. PLC appendix type is std::vector<PointType> for holes. Default is null_type. */
       template<typename WrappedConfigType, typename element_tag>
       struct query_appendix_type
       {
-        typedef typename query<typename WrappedConfigType::type, meta::null_type, topology_config_tag, element_tag, element_appendix_type_tag>::type  type;
+        typedef typename query<typename WrappedConfigType::type, meta::null_type, element_tag, element_appendix_type_tag>::type  type;
       };
 
       template<typename WrappedConfigType>
@@ -102,7 +102,7 @@ namespace viennagrid
       {
         static const bool value =
             !viennagrid::meta::EQUAL<
-                typename query<typename WrappedConfigT::type, viennagrid::no_handling_tag, topology_config_tag, HostElementTagT, element_boundary_storage_layout_tag, BoundaryElementTagT>::type,
+                typename query<typename WrappedConfigT::type, viennagrid::no_handling_tag, HostElementTagT, element_boundary_storage_layout_tag, BoundaryElementTagT>::type,
                 viennagrid::no_handling_tag
             >::value;
       };
@@ -129,12 +129,12 @@ namespace viennagrid
       {
         static const bool value =
             viennagrid::meta::EQUAL<
-                typename query<typename WrappedConfigT::type, viennagrid::no_handling_tag, topology_config_tag, HostElementTagT, element_boundary_storage_layout_tag, BoundaryElementTagT>::type,
+                typename query<typename WrappedConfigT::type, viennagrid::no_handling_tag, HostElementTagT, element_boundary_storage_layout_tag, BoundaryElementTagT>::type,
                 viennagrid::full_handling_tag
             >::value
                 ||
             viennagrid::meta::EQUAL<
-                typename query<typename WrappedConfigT::type, viennagrid::no_handling_tag, topology_config_tag, HostElementTagT, element_boundary_storage_layout_tag, BoundaryElementTagT>::type,
+                typename query<typename WrappedConfigT::type, viennagrid::no_handling_tag, HostElementTagT, element_boundary_storage_layout_tag, BoundaryElementTagT>::type,
                 viennagrid::full_lazy_handling_tag
             >::value;
       };
