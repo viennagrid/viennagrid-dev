@@ -85,51 +85,51 @@ namespace viennagrid
 
             boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(0), 0 );
             boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(1), 1 );
-            element.set_boundary_element( boundary_element, inserter(boundary_element), index++ );
+            element.set_boundary_element( boundary_element, inserter.template insert<true, true>(boundary_element), index++ );
 
             boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(0), 0 );
             boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(2), 1 );
-            element.set_boundary_element( boundary_element, inserter(boundary_element), index++ );
+            element.set_boundary_element( boundary_element, inserter.template insert<true, true>(boundary_element), index++ );
 
             boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(0), 0 );
             boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(4), 1 );
-            element.set_boundary_element( boundary_element, inserter(boundary_element), index++ );
+            element.set_boundary_element( boundary_element, inserter.template insert<true, true>(boundary_element), index++ );
 
             boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(1), 0 );
             boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(3), 1 );
-            element.set_boundary_element( boundary_element, inserter(boundary_element), index++ );
+            element.set_boundary_element( boundary_element, inserter.template insert<true, true>(boundary_element), index++ );
 
             boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(1), 0 );
             boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(5), 1 );
-            element.set_boundary_element( boundary_element, inserter(boundary_element), index++ );
+            element.set_boundary_element( boundary_element, inserter.template insert<true, true>(boundary_element), index++ );
 
             boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(2), 0 );
             boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(3), 1 );
-            element.set_boundary_element( boundary_element, inserter(boundary_element), index++ );
+            element.set_boundary_element( boundary_element, inserter.template insert<true, true>(boundary_element), index++ );
 
             boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(2), 0 );
             boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(5), 1 );
-            element.set_boundary_element( boundary_element, inserter(boundary_element), index++ );
+            element.set_boundary_element( boundary_element, inserter.template insert<true, true>(boundary_element), index++ );
 
             boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(3), 0 );
             boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(7), 1 );
-            element.set_boundary_element( boundary_element, inserter(boundary_element), index++ );
+            element.set_boundary_element( boundary_element, inserter.template insert<true, true>(boundary_element), index++ );
 
             boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(4), 0 );
             boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(5), 1 );
-            element.set_boundary_element( boundary_element, inserter(boundary_element), index++ );
+            element.set_boundary_element( boundary_element, inserter.template insert<true, true>(boundary_element), index++ );
 
             boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(4), 0 );
             boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(6), 1 );
-            element.set_boundary_element( boundary_element, inserter(boundary_element), index++ );
+            element.set_boundary_element( boundary_element, inserter.template insert<true, true>(boundary_element), index++ );
 
             boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(5), 0 );
             boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(7), 1 );
-            element.set_boundary_element( boundary_element, inserter(boundary_element), index++ );
+            element.set_boundary_element( boundary_element, inserter.template insert<true, true>(boundary_element), index++ );
 
             boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(6), 0 );
             boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(7), 1 );
-            element.set_boundary_element( boundary_element, inserter(boundary_element), index++ );
+            element.set_boundary_element( boundary_element, inserter.template insert<true, true>(boundary_element), index++ );
         }
     };
 
@@ -165,37 +165,37 @@ namespace viennagrid
             boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(1), 1 );
             boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(2), 2 );
             boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(3), 3 );
-            element.set_boundary_element( boundary_element, inserter(boundary_element), index++ );
+            element.set_boundary_element( boundary_element, inserter.template insert<true, true>(boundary_element), index++ );
 
             boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(0), 0 );
             boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(1), 1 );
             boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(4), 2 );
             boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(5), 3 );
-            element.set_boundary_element( boundary_element, inserter(boundary_element), index++ );
+            element.set_boundary_element( boundary_element, inserter.template insert<true, true>(boundary_element), index++ );
 
             boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(0), 0 );
             boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(2), 1 );
             boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(4), 2 );
             boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(6), 3 );
-            element.set_boundary_element( boundary_element, inserter(boundary_element), index++ );
+            element.set_boundary_element( boundary_element, inserter.template insert<true, true>(boundary_element), index++ );
 
             boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(1), 0 );
             boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(3), 1 );
             boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(5), 2 );
             boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(7), 3 );
-            element.set_boundary_element( boundary_element, inserter(boundary_element), index++ );
+            element.set_boundary_element( boundary_element, inserter.template insert<true, true>(boundary_element), index++ );
 
             boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(2), 0 );
             boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(3), 1 );
             boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(6), 2 );
             boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(7), 3 );
-            element.set_boundary_element( boundary_element, inserter(boundary_element), index++ );
+            element.set_boundary_element( boundary_element, inserter.template insert<true, true>(boundary_element), index++ );
 
             boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(4), 0 );
             boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(5), 1 );
             boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(6), 2 );
             boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(7), 3 );
-            element.set_boundary_element( boundary_element, inserter(boundary_element), index++ );
+            element.set_boundary_element( boundary_element, inserter.template insert<true, true>(boundary_element), index++ );
         }
     };
 

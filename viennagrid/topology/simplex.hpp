@@ -100,7 +100,7 @@ namespace viennagrid
                     boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(i), 0 );
                     boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(j), 1 );
 
-                    element.set_boundary_element( boundary_element, inserter(boundary_element), index++ );
+                    element.set_boundary_element( boundary_element, inserter.template insert<true, true>(boundary_element), index++ );
                 }
         }
     };
@@ -123,7 +123,7 @@ namespace viennagrid
                         boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(j), 1 );
                         boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(k), 2 );
 
-                        element.set_boundary_element( boundary_element, inserter(boundary_element), index++ );
+                        element.set_boundary_element( boundary_element, inserter.template insert<true, true>(boundary_element), index++ );
                     }
         }
     };
