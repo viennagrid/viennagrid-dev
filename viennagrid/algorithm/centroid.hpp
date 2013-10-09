@@ -37,12 +37,12 @@ namespace viennagrid
     //
     /** @brief Implementation of the calculation of a centroid for a triangle */
     template <typename PointAccessorType, typename ElementType>
-    typename viennagrid::result_of::point<PointAccessorType>::type
+    typename PointAccessorType::value_type
     centroid(PointAccessorType const accessor, ElementType const & cell, viennagrid::triangle_tag)
     {
       //typedef typename ElementType::config_type             Config;
 //       typedef typename ElementType::tag             ElementTag;
-      typedef typename viennagrid::result_of::point<PointAccessorType>::type PointType;
+      typedef typename PointAccessorType::value_type PointType;
 //       typedef typename viennagrid::result_of::element<MeshType, vertex_tag>::type                         VertexType;
 //       typedef typename viennagrid::result_of::element<MeshType, line_tag>::type                         EdgeType;
 
@@ -68,7 +68,7 @@ namespace viennagrid
     //tetrahedron can reuse the algorithm defined for a triangle
     /** @brief Implementation of the calculation of a centroid for a tetrahedron */
     template <typename PointAccessorType, typename ElementType>
-    typename viennagrid::result_of::point<PointAccessorType>::type
+    typename PointAccessorType::value_type
     centroid(PointAccessorType const accessor, ElementType const & cell, viennagrid::tetrahedron_tag)
     {
       return centroid(accessor, cell, viennagrid::triangle_tag());
@@ -79,7 +79,7 @@ namespace viennagrid
     //
     /** @brief Implementation of the calculation of a centroid for a quadrilateral */
     template <typename PointAccessorType, typename ElementType>
-    typename viennagrid::result_of::point<PointAccessorType>::type
+    typename PointAccessorType::value_type
     centroid(PointAccessorType const accessor, ElementType const & cell, viennagrid::quadrilateral_tag)
     {
       return centroid(accessor, cell, viennagrid::triangle_tag());
@@ -90,7 +90,7 @@ namespace viennagrid
     //
     /** @brief Implementation of the calculation of a centroid for a hexahedron */
     template <typename PointAccessorType, typename ElementType>
-    typename viennagrid::result_of::point<PointAccessorType>::type
+    typename PointAccessorType::value_type
     centroid(PointAccessorType const accessor, ElementType const & cell, viennagrid::hexahedron_tag)
     {
       return centroid(accessor, cell, viennagrid::triangle_tag());
@@ -100,7 +100,7 @@ namespace viennagrid
     //a line can reuse the algorithm defined for a triangle
     /** @brief Implementation of the calculation of a centroid for a line (1-simplex) */
     template <typename PointAccessorType, typename ElementType>
-    typename viennagrid::result_of::point<PointAccessorType>::type
+    typename PointAccessorType::value_type
     centroid(PointAccessorType const accessor, ElementType const & cell, viennagrid::simplex_tag<1>)
     {
       return centroid(accessor, cell, viennagrid::triangle_tag());
@@ -109,7 +109,7 @@ namespace viennagrid
 
     /** @brief Implementation of the calculation of a centroid for a line (1-hypercube) */
     template <typename PointAccessorType, typename ElementType>
-    typename viennagrid::result_of::point<PointAccessorType>::type
+    typename PointAccessorType::value_type
     centroid(PointAccessorType const accessor, ElementType const & cell, viennagrid::hypercube_tag<1>)
     {
       return centroid(accessor, cell, viennagrid::triangle_tag());
@@ -119,7 +119,7 @@ namespace viennagrid
     //a point is degenerate and returns its location
     /** @brief Implementation of the calculation of a centroid for a point */
     template <typename PointAccessorType, typename ElementType>
-    typename viennagrid::result_of::point<PointAccessorType>::type
+    typename PointAccessorType::value_type
     centroid(PointAccessorType const accessor, ElementType const & cell, viennagrid::vertex_tag)
     {
       return accessor(cell);
@@ -166,7 +166,7 @@ namespace viennagrid
    * @param accessor   The point accessor providing point information for geometric calculation
    */
   template <typename PointAccessorType, typename ElementType>
-  typename viennagrid::result_of::point<PointAccessorType>::type
+  typename PointAccessorType::value_type
   centroid(PointAccessorType const accessor, ElementType const & element)
   {
     return detail::centroid( accessor, element, typename ElementType::tag());

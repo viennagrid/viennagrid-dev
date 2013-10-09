@@ -60,13 +60,13 @@ namespace viennagrid
   //
   /** @brief Returns the surface of a n-cell */
   template <typename PointAccessorType, typename ElementTag, typename WrappedConfigType>
-  typename viennagrid::result_of::coord< PointAccessorType >::type
+  typename viennagrid::result_of::coord< typename PointAccessorType::value_type >::type
   surface(PointAccessorType const accessor, element_t<ElementTag, WrappedConfigType> const & element)
   {
     typedef typename viennagrid::result_of::const_facet_range< element_t<ElementTag, WrappedConfigType> >::type   ElementBoundaryRange;
     typedef typename viennagrid::result_of::iterator<ElementBoundaryRange>::type       ElementBoundaryIterator;
 
-    typedef typename viennagrid::result_of::coord< PointAccessorType >::type value_type;
+    typedef typename viennagrid::result_of::coord< typename PointAccessorType::value_type >::type value_type;
 
     value_type result = 0;
 

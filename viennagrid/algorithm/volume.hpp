@@ -38,18 +38,18 @@ namespace viennagrid
 
     /** @brief Computes the volume of topologically zero-dimensional elements (vertices). Degenerate case, returns 1 */
     template <typename PointAccessorType, typename ElementType>
-    typename viennagrid::result_of::coord<PointAccessorType>::type
+    typename viennagrid::result_of::coord< typename PointAccessorType::value_type >::type
     volume_impl(PointAccessorType const, ElementType const &, viennagrid::vertex_tag)
     {
-      return typename viennagrid::result_of::coord<PointAccessorType>::type(1);
+      return typename viennagrid::result_of::coord< typename PointAccessorType::value_type >::type(1);
     }
 
     /** @brief Computes the volume of topologically one-dimensional elements (lines, 1-simplex).*/
     template <typename PointAccessorType, typename ElementType>
-    typename viennagrid::result_of::coord<PointAccessorType>::type
+    typename viennagrid::result_of::coord< typename PointAccessorType::value_type >::type
     volume_impl(PointAccessorType const accessor, ElementType const & cell, viennagrid::simplex_tag<1>)
     {
-      typedef typename viennagrid::result_of::point<PointAccessorType>::type PointType;
+      typedef typename PointAccessorType::value_type PointType;
 
       PointType const & p0 = accessor( vertices(cell)[0] );
       PointType const & p1 = accessor( vertices(cell)[1] );
@@ -59,7 +59,7 @@ namespace viennagrid
 
     /** @brief Computes the volume of topologically one-dimensional elements (lines, 1-hypercube).*/
     template <typename PointAccessorType, typename ElementType>
-    typename viennagrid::result_of::coord<PointAccessorType>::type
+    typename viennagrid::result_of::coord< typename PointAccessorType::value_type >::type
     volume_impl(PointAccessorType const accessor, ElementType const & cell, viennagrid::hypercube_tag<1>)
     {
       return volume_impl(accessor, cell, viennagrid::simplex_tag<1>());
@@ -68,10 +68,10 @@ namespace viennagrid
     //topologically two-dimensional elements
     /** @brief Computes the two-dimensional volume of a triangle.*/
     template <typename PointAccessorType, typename ElementType>
-    typename viennagrid::result_of::coord<PointAccessorType>::type
+    typename viennagrid::result_of::coord< typename PointAccessorType::value_type >::type
     volume_impl(PointAccessorType const accessor, ElementType const & cell, viennagrid::triangle_tag)
     {
-      typedef typename viennagrid::result_of::point<PointAccessorType>::type PointType;
+      typedef typename PointAccessorType::value_type PointType;
 
       PointType const & p0 = accessor( vertices(cell)[0] );
       PointType const & p1 = accessor( vertices(cell)[1] );
@@ -82,10 +82,10 @@ namespace viennagrid
 
     /** @brief Computes the two-dimensional volume of a quadrilateral.*/
     template <typename PointAccessorType, typename ElementType>
-    typename viennagrid::result_of::coord<PointAccessorType>::type
+    typename viennagrid::result_of::coord< typename PointAccessorType::value_type >::type
     volume_impl(PointAccessorType const accessor, ElementType const & cell, viennagrid::quadrilateral_tag)
     {
-      typedef typename viennagrid::result_of::point<PointAccessorType>::type PointType;
+      typedef typename PointAccessorType::value_type PointType;
 
       PointType const & p0 = accessor( vertices(cell)[0] );
       PointType const & p1 = accessor( vertices(cell)[1] );
@@ -98,10 +98,10 @@ namespace viennagrid
 
     /** @brief Computes the two-dimensional volume of a polygon.*/
     template <typename PointAccessorType, typename ElementType>
-    typename viennagrid::result_of::coord<PointAccessorType>::type
+    typename viennagrid::result_of::coord< typename PointAccessorType::value_type >::type
     volume_impl(PointAccessorType const accessor, ElementType const & cell, viennagrid::polygon_tag)
     {
-      typedef typename viennagrid::result_of::point<PointAccessorType>::type PointType;
+      typedef typename PointAccessorType::value_type PointType;
       typedef typename viennagrid::result_of::coord< PointType >::type NumericType;
       typedef typename viennagrid::result_of::const_element_range<ElementType, vertex_tag>::type       VertexOnCellContainer;
       typedef typename viennagrid::result_of::iterator<VertexOnCellContainer>::type       VertexOnCellIterator;
@@ -130,10 +130,10 @@ namespace viennagrid
     //topologically three-dimensional elements
     /** @brief Computes the three-dimensional volume of a tetrahedron.*/
     template <typename PointAccessorType, typename ElementType>
-    typename viennagrid::result_of::coord<PointAccessorType>::type
+    typename viennagrid::result_of::coord< typename PointAccessorType::value_type >::type
     volume_impl(PointAccessorType const accessor, ElementType const & cell, viennagrid::tetrahedron_tag)
     {
-      typedef typename viennagrid::result_of::point<PointAccessorType>::type PointType;
+      typedef typename PointAccessorType::value_type PointType;
 
       PointType const & p0 = accessor( vertices(cell)[0] );
       PointType const & p1 = accessor( vertices(cell)[1] );
@@ -146,10 +146,10 @@ namespace viennagrid
 
     /** @brief Computes the three-dimensional volume of a hexahedron.*/
     template <typename PointAccessorType, typename ElementType>
-    typename viennagrid::result_of::coord<PointAccessorType>::type
+    typename viennagrid::result_of::coord< typename PointAccessorType::value_type >::type
     volume_impl(PointAccessorType const accessor, ElementType const & cell, viennagrid::hexahedron_tag)
     {
-      typedef typename viennagrid::result_of::point<PointAccessorType>::type PointType;
+      typedef typename PointAccessorType::value_type PointType;
 
       PointType const & p0 = accessor( vertices(cell)[0] );
       PointType const & p1 = accessor( vertices(cell)[1] );
@@ -196,7 +196,7 @@ namespace viennagrid
   //
   /** @brief Returns the n-dimensional volume of a n-cell */
   template <typename PointAccessorType, typename ElementType>
-  typename viennagrid::result_of::coord<PointAccessorType>::type
+  typename viennagrid::result_of::coord< typename PointAccessorType::value_type >::type
   volume(PointAccessorType const accessor, ElementType const & cell)
   {
     return detail::volume_impl( accessor, cell, typename ElementType::tag() );

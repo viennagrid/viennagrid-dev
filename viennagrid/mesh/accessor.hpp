@@ -109,26 +109,6 @@ namespace viennagrid
 
     namespace result_of
     {
-        template<typename value_type, typename WrappedConfigType>
-        struct point< appendix_accessor_t<value_type, element_t<vertex_tag, WrappedConfigType> > >
-        {
-            typedef value_type type;
-        };
-
-        template<typename value_type, typename WrappedConfigType>
-        struct point< const appendix_accessor_t<value_type, element_t<vertex_tag, WrappedConfigType> > >
-        {
-            typedef value_type type;
-        };
-    }
-
-
-
-
-
-
-    namespace result_of
-    {
       template<typename ElementT, typename ValueT, typename ContainerTagT = storage::std_vector_tag>
       struct accessor_container;
 
@@ -424,35 +404,6 @@ namespace viennagrid
         struct accessor< const std::map<Key, T, Compare, Alloc>, AccessType >
         {
             typedef std_map_accessor_t<const std::map<Key, T, Compare, Alloc>, AccessType> type;
-        };
-    }
-
-
-    namespace result_of
-    {
-        template<typename ContainerType, typename AccessType>
-        struct point< dense_container_accessor_t<ContainerType, AccessType> >
-        {
-            typedef typename dense_container_accessor_t<ContainerType, AccessType>::value_type type;
-        };
-
-        template<typename ContainerType, typename AccessType>
-        struct point< const dense_container_accessor_t<ContainerType, AccessType> >
-        {
-            typedef typename dense_container_accessor_t<ContainerType, AccessType>::value_type type;
-        };
-
-
-        template<typename ContainerType, typename AccessType>
-        struct point< std_map_accessor_t<ContainerType, AccessType> >
-        {
-            typedef typename std_map_accessor_t<ContainerType, AccessType>::value_type type;
-        };
-
-        template<typename ContainerType, typename AccessType>
-        struct point< const std_map_accessor_t<ContainerType, AccessType> >
-        {
-            typedef typename std_map_accessor_t<ContainerType, AccessType>::value_type type;
         };
     }
 
@@ -1061,40 +1012,6 @@ namespace viennagrid
     private:
       FieldType field;
     };
-
-
-
-    namespace result_of
-    {
-        template<typename ContainerType, typename AccessType>
-        struct point< dense_container_field_t<ContainerType, AccessType> >
-        {
-            typedef typename dense_container_field_t<ContainerType, AccessType>::value_type type;
-        };
-
-        template<typename ContainerType, typename AccessType>
-        struct point< const dense_container_field_t<ContainerType, AccessType> >
-        {
-            typedef typename dense_container_field_t<ContainerType, AccessType>::value_type type;
-        };
-
-
-        template<typename ContainerType, typename AccessType>
-        struct point< std_map_field_t<ContainerType, AccessType> >
-        {
-            typedef typename std_map_field_t<ContainerType, AccessType>::value_type type;
-        };
-
-        template<typename ContainerType, typename AccessType>
-        struct point< const std_map_field_t<ContainerType, AccessType> >
-        {
-            typedef typename std_map_field_t<ContainerType, AccessType>::value_type type;
-        };
-    }
-
-
-
-
 
 
 
