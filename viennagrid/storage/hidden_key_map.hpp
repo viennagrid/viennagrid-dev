@@ -98,7 +98,6 @@ namespace viennagrid
         class hidden_key_map
         {
             typedef hidden_key_map<KeyT, ValueT> SelfType;
-            typedef std::map< KeyT, ValueT > container_type;
 
             friend class hidden_key_map_iterator<SelfType>;
             friend class hidden_key_map_const_iterator<SelfType>;
@@ -107,6 +106,7 @@ namespace viennagrid
 
         public:
 
+            typedef std::map< KeyT, ValueT >           container_type;
             typedef KeyT                               key_type;
             typedef ValueT                             value_type;
             typedef typename container_type::size_type size_type;
