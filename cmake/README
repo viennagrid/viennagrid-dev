@@ -1,0 +1,3 @@
+Linux-based OS: Build here using
+$> cmake ..
+$> make
