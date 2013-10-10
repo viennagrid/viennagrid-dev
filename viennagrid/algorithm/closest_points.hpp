@@ -215,7 +215,7 @@ namespace viennagrid
 
     //convenience overload: point and simplex line
     template <typename PointAccessorType, typename PointType, typename WrappedConfigType>
-    std::pair< PointType, typename viennagrid::result_of::point<PointAccessorType>::type >
+    std::pair< PointType, typename PointAccessorType::value_type >
             closest_points_impl(PointAccessorType const accessor,
                                 PointType const & p,
                                 element_t<simplex_tag<1>,WrappedConfigType> const & el)
@@ -227,7 +227,7 @@ namespace viennagrid
 
     //convenience overload: point and hypercube line
     template <typename PointAccessorType, typename PointType, typename WrappedConfigType>
-    std::pair< PointType, typename viennagrid::result_of::point<PointAccessorType>::type >
+    std::pair< PointType, typename PointAccessorType::value_type >
             closest_points_impl(PointAccessorType const accessor,
                                 PointType const & p,
                                 element_t<hypercube_tag<1>,WrappedConfigType> const & el)
@@ -239,7 +239,7 @@ namespace viennagrid
 
     //convenience overload: vertex and simplex line
     template <typename PointAccessorType, typename WrappedConfigType1, typename WrappedConfigType2>
-    std::pair< typename viennagrid::result_of::point<PointAccessorType>::type, typename viennagrid::result_of::point<PointAccessorType>::type >
+    std::pair< typename PointAccessorType::value_type, typename PointAccessorType::value_type >
             closest_points_impl(PointAccessorType const accessor,
                                 element_t<vertex_tag,WrappedConfigType1> const & v,
                                 element_t<simplex_tag<1>,WrappedConfigType2> const & el)
@@ -251,7 +251,7 @@ namespace viennagrid
 
     //convenience overload: vertex and hypercube line
     template <typename PointAccessorType, typename PointType, typename WrappedConfigType1, typename WrappedConfigType2>
-    std::pair< typename viennagrid::result_of::point<PointAccessorType>::type, typename viennagrid::result_of::point<PointAccessorType>::type >
+    std::pair< typename PointAccessorType::value_type, typename PointAccessorType::value_type >
             closest_points_impl(PointAccessorType const accessor,
                                 element_t<vertex_tag,WrappedConfigType1> const & v,
                                 element_t<simplex_tag<1>,WrappedConfigType2> const & el)
@@ -328,7 +328,7 @@ namespace viennagrid
 
     //convenience overload: simplex line and simplex line
     template <typename PointAccessorType, typename WrappedConfigType1, typename WrappedConfigType2>
-    std::pair<typename viennagrid::result_of::point<PointAccessorType>::type, typename viennagrid::result_of::point<PointAccessorType>::type>
+    std::pair<typename PointAccessorType::value_type, typename PointAccessorType::value_type>
             closest_points_impl(PointAccessorType const accessor,
                                 element_t<simplex_tag<1>,WrappedConfigType1> const & line0,
                                 element_t<simplex_tag<1>,WrappedConfigType2> const & line1)
@@ -341,7 +341,7 @@ namespace viennagrid
 
     //convenience overload: hypercube line and simplex line
     template <typename PointAccessorType, typename WrappedConfigType1, typename WrappedConfigType2>
-    std::pair<typename viennagrid::result_of::point<PointAccessorType>::type, typename viennagrid::result_of::point<PointAccessorType>::type>
+    std::pair<typename PointAccessorType::value_type, typename PointAccessorType::value_type>
             closest_points_impl(PointAccessorType const accessor,
                                 element_t<hypercube_tag<1>,WrappedConfigType1> const & line0,
                                 element_t<simplex_tag<1>,WrappedConfigType2> const & line1)
@@ -354,7 +354,7 @@ namespace viennagrid
 
     //convenience overload: simplex line and hypercube line
     template <typename PointAccessorType, typename WrappedConfigType1, typename WrappedConfigType2>
-    std::pair<typename viennagrid::result_of::point<PointAccessorType>::type, typename viennagrid::result_of::point<PointAccessorType>::type>
+    std::pair<typename PointAccessorType::value_type, typename PointAccessorType::value_type>
             closest_points_impl(PointAccessorType const accessor,
                                 element_t<simplex_tag<1>,WrappedConfigType1> const & line0,
                                 element_t<hypercube_tag<1>,WrappedConfigType2> const & line1)
@@ -367,7 +367,7 @@ namespace viennagrid
 
     //convenience overload: hypercube line and hypercube line
     template <typename PointAccessorType, typename WrappedConfigType1, typename WrappedConfigType2>
-    std::pair<typename viennagrid::result_of::point<PointAccessorType>::type, typename viennagrid::result_of::point<PointAccessorType>::type>
+    std::pair<typename PointAccessorType::value_type, typename PointAccessorType::value_type>
             closest_points_impl(PointAccessorType const accessor,
                                 element_t<hypercube_tag<1>,WrappedConfigType1> const & line0,
                                 element_t<hypercube_tag<1>,WrappedConfigType2> const & line1)
@@ -453,7 +453,7 @@ namespace viennagrid
 
     //convenience overload: point
     template <typename PointAccessorType, typename CoordType, typename CoordinateSystem, typename WrappedConfigType>
-    std::pair<point_t<CoordType, CoordinateSystem>, typename viennagrid::result_of::point<PointAccessorType>::type>
+    std::pair<point_t<CoordType, CoordinateSystem>, typename PointAccessorType::value_type>
             closest_points_impl(PointAccessorType const accessor,
                                 point_t<CoordType, CoordinateSystem> const & p,
                                 element_t<simplex_tag<2>,WrappedConfigType> const & el)
@@ -466,7 +466,7 @@ namespace viennagrid
 
     //convenience overload: vertex
     template <typename PointAccessorType, typename WrappedConfigType1, typename WrappedConfigType2>
-    std::pair<typename viennagrid::result_of::point<PointAccessorType>::type,typename viennagrid::result_of::point<PointAccessorType>::type>
+    std::pair<typename PointAccessorType::value_type,typename PointAccessorType::value_type>
     closest_points_impl(PointAccessorType const accessor,
                         element_t<vertex_tag,WrappedConfigType1> const & v,
                         element_t<simplex_tag<2>,WrappedConfigType2> const & el)
@@ -494,7 +494,7 @@ namespace viennagrid
     //   v[0]        v[1]
     //
     template <typename PointAccessorType, typename CoordType, typename CoordinateSystem, typename WrappedConfigType>
-    std::pair<point_t<CoordType, CoordinateSystem>, typename viennagrid::result_of::point<PointAccessorType>::type>
+    std::pair<point_t<CoordType, CoordinateSystem>, typename PointAccessorType::value_type>
             closest_points_impl(PointAccessorType const accessor,
                                 point_t<CoordType, CoordinateSystem> const & p,
                                 element_t<hypercube_tag<2>,WrappedConfigType> const & el)
@@ -512,7 +512,7 @@ namespace viennagrid
 
     //convenience overload: vertex
     template <typename PointAccessorType, typename WrappedConfigType1, typename WrappedConfigType2>
-    std::pair<typename viennagrid::result_of::point<PointAccessorType>::type,typename viennagrid::result_of::point<PointAccessorType>::type>
+    std::pair<typename PointAccessorType::value_type,typename PointAccessorType::value_type>
             closest_points_impl(PointAccessorType const accessor,
                                 element_t<vertex_tag,WrappedConfigType1> const & v,
                                 element_t<hypercube_tag<2>,WrappedConfigType2> const & el)
@@ -614,7 +614,7 @@ namespace viennagrid
 
     //convenience overload: point
     template <typename PointAccessorType, typename CoordType, typename CoordinateSystem, typename WrappedConfigType>
-    std::pair<point_t<CoordType, CoordinateSystem>,typename viennagrid::result_of::point<PointAccessorType>::type>
+    std::pair<point_t<CoordType, CoordinateSystem>,typename PointAccessorType::value_type>
             closest_points_impl(PointAccessorType const accessor,
                                 point_t<CoordType, CoordinateSystem> const & p,
                                 element_t<simplex_tag<3>,WrappedConfigType> const & el)
@@ -628,7 +628,7 @@ namespace viennagrid
 
     //convenience overload: vertex
     template <typename PointAccessorType, typename WrappedConfigType1, typename WrappedConfigType2>
-    std::pair<typename viennagrid::result_of::point<PointAccessorType>::type,typename viennagrid::result_of::point<PointAccessorType>::type>
+    std::pair<typename PointAccessorType::value_type,typename PointAccessorType::value_type>
             closest_points_impl(PointAccessorType const accessor,
                                 element_t<vertex_tag,WrappedConfigType1> const & v,
                                 element_t<simplex_tag<3>,WrappedConfigType2> const & el)
@@ -644,7 +644,7 @@ namespace viennagrid
 
     //convenience overload: point
     template <typename PointAccessorType, typename PointType, typename WrappedConfigType>
-    std::pair<PointType,typename viennagrid::result_of::point<PointAccessorType>::type>
+    std::pair<PointType,typename PointAccessorType::value_type>
             closest_points_impl(PointAccessorType const accessor,
                                 PointType const & p,
                                 element_t<hypercube_tag<3>,WrappedConfigType> const & el)
@@ -684,7 +684,7 @@ namespace viennagrid
 
     //convenience overload: vertex
     template <typename PointAccessorType, typename WrappedConfigType1, typename WrappedConfigType2>
-    std::pair<typename viennagrid::result_of::point<PointAccessorType>::type,typename viennagrid::result_of::point<PointAccessorType>::type>
+    std::pair<typename PointAccessorType::value_type,typename PointAccessorType::value_type>
     closest_points_impl(PointAccessorType const accessor,
                         element_t<vertex_tag,WrappedConfigType1> const & v,
                         element_t<hypercube_tag<3>,WrappedConfigType2> const & el)
@@ -750,7 +750,7 @@ namespace viennagrid
 
     /** @tparam ContainerType   Any topological object (ncell, segment, mesh) */
     template <typename FacetTypeOrTag, typename PointAccessorType, typename PointType, typename Something>
-    std::pair<PointType, typename viennagrid::result_of::point<PointAccessorType>::type>
+    std::pair<PointType, typename PointAccessorType::value_type>
     closest_points_on_boundary_point_to_any(PointAccessorType const accessor,
                                             PointType const & p,
                                             Something const & cont)
@@ -787,7 +787,7 @@ namespace viennagrid
 
 
     template <typename PointAccessorType, typename PointType, typename ElementTag, typename WrappedConfigType>
-    std::pair<PointType, typename viennagrid::result_of::point<PointAccessorType>::type>
+    std::pair<PointType, typename PointAccessorType::value_type>
     closest_points_on_boundary_impl(PointAccessorType const & mesh,
                                     PointType const & v,
                                     element_t<ElementTag,WrappedConfigType> const & el)
@@ -818,7 +818,7 @@ namespace viennagrid
 
 
     template <typename PointAccessorType,  typename WrappedConfigType1, typename EA2, typename WrappedConfigType2>
-    std::pair<typename viennagrid::result_of::point<PointAccessorType>::type, typename viennagrid::result_of::point<PointAccessorType>::type>
+    std::pair<typename PointAccessorType::value_type, typename PointAccessorType::value_type>
     closest_points_on_boundary_impl(PointAccessorType const accessor,
                                     element_t<vertex_tag,WrappedConfigType1> const & v,
                                     element_t<EA2,WrappedConfigType2> const & el)
@@ -838,7 +838,7 @@ namespace viennagrid
     ////////// Distance from Container to Container /////////////////////
 
     template <typename PointAccessorType, typename Something1, typename Something2>
-    std::pair< typename viennagrid::result_of::point<PointAccessorType>::type, typename viennagrid::result_of::point<PointAccessorType>::type >
+    std::pair< typename PointAccessorType::value_type, typename PointAccessorType::value_type >
     closest_points_on_boundary_generic(PointAccessorType const accessor,
                                        Something1 const & el1,
                                        Something2 const & el2)
@@ -849,7 +849,7 @@ namespace viennagrid
       typedef typename result_of::facet_tag<Something2>::type FacetTag2;
 
 
-      typedef std::pair< typename viennagrid::result_of::point<PointAccessorType>::type, typename viennagrid::result_of::point<PointAccessorType>::type > PairType;
+      typedef std::pair< typename PointAccessorType::value_type, typename PointAccessorType::value_type > PairType;
 
       typedef typename viennagrid::result_of::const_element_range<Something1, FacetTag1>::type           FacetRange1;
       typedef typename viennagrid::result_of::iterator<FacetRange1>::type                   FacetIterator1;
@@ -895,7 +895,7 @@ namespace viennagrid
     template <typename PointAccessorType,
               typename ElementTag1, typename WrappedConfigType1,
               typename ElementTag2, typename WrappedConfigType2>
-    std::pair< typename viennagrid::result_of::point<PointAccessorType>::type, typename viennagrid::result_of::point<PointAccessorType>::type >
+    std::pair< typename PointAccessorType::value_type, typename PointAccessorType::value_type >
     closest_points_on_boundary_impl(PointAccessorType const accessor,
                                     element_t<ElementTag1,WrappedConfigType1> const & el1,
                                     element_t<ElementTag2,WrappedConfigType2> const & el2)
@@ -906,7 +906,7 @@ namespace viennagrid
     template <typename PointAccessorType,
               typename WrappedMeshConfigType,
               typename ElementTag, typename WrappedConfigType>
-    std::pair< typename viennagrid::result_of::point<PointAccessorType>::type, typename viennagrid::result_of::point<PointAccessorType>::type >
+    std::pair< typename PointAccessorType::value_type, typename PointAccessorType::value_type >
     closest_points_on_boundary_impl(PointAccessorType const accessor,
                                     element_t<ElementTag,WrappedConfigType> const & el1,
                                     mesh_t<WrappedMeshConfigType> const & mesh)
@@ -917,7 +917,7 @@ namespace viennagrid
     template <typename PointAccessorType,
               typename SegmentationT,
               typename ElementTag, typename WrappedConfigType>
-    std::pair< typename viennagrid::result_of::point<PointAccessorType>::type, typename viennagrid::result_of::point<PointAccessorType>::type >
+    std::pair< typename PointAccessorType::value_type, typename PointAccessorType::value_type >
     closest_points_on_boundary_impl(PointAccessorType const accessor,
                                     element_t<ElementTag,WrappedConfigType> const & el1,
                                     segment_handle_t<SegmentationT> const & segment)
@@ -929,7 +929,7 @@ namespace viennagrid
     template <typename PointAccessorType,
               typename Segmentation1T,
               typename Segmentation2T>
-    std::pair< typename viennagrid::result_of::point<PointAccessorType>::type, typename viennagrid::result_of::point<PointAccessorType>::type >
+    std::pair< typename PointAccessorType::value_type, typename PointAccessorType::value_type >
     closest_points_on_boundary_impl(PointAccessorType const accessor,
                                     segment_handle_t<Segmentation1T> const & segment1,
                                     segment_handle_t<Segmentation2T> const & segment2)
@@ -1011,7 +1011,7 @@ namespace viennagrid
   //
   /** @brief Returns the distance between n-cells */
   template <typename PointAccessorType, typename Something1, typename Something2>
-  std::pair< typename viennagrid::result_of::point<PointAccessorType>::type, typename viennagrid::result_of::point<PointAccessorType>::type >
+  std::pair< typename PointAccessorType::value_type, typename PointAccessorType::value_type >
   closest_points(PointAccessorType const accessor,
                  Something1 const & el1,
                  Something2 const & el2)
@@ -1034,7 +1034,7 @@ namespace viennagrid
 
 
   template <typename PointAccessorType, typename Something1, typename Something2>
-  std::pair< typename viennagrid::result_of::point<PointAccessorType>::type, typename viennagrid::result_of::point<PointAccessorType>::type >
+  std::pair< typename PointAccessorType::value_type, typename PointAccessorType::value_type >
   closest_points_on_boundary(PointAccessorType const accessor,
                  Something1 const & el1,
                  Something2 const & el2)
