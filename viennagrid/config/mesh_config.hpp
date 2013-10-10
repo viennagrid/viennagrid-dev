@@ -22,8 +22,8 @@
 #include "viennagrid/element/element_key.hpp"
 #include "viennagrid/config/element_config.hpp"
 
-/** @file config/simplex.hpp
-    @brief Provides default configuration classes for simplex meshs
+/** @file config/mesh_config.hpp
+    @brief Provides meta functions for mesh configuration
 */
 
 namespace viennagrid
@@ -36,6 +36,7 @@ namespace viennagrid
       // Meta Functions for creating a default config
       //
 
+      /** @brief Defines the default storage layout for elements: full handling tag is default except for vertex, which don't have orientation. */
       template<typename ElementTagT, typename boundary_cell_tag>
       struct storage_layout_config
       {
@@ -64,6 +65,7 @@ namespace viennagrid
       };
 
 
+      /** @brief Defines the default container tag for all elements in a domain. For vertices and cells specific given containers are used, for all others, hidden key maps are used to ensure the uniqueness of elements (taking orientation into account) */
       template<typename ElementTagT, typename boundary_cell_tag, typename VertexContainerT, typename CellContainerT>
       struct default_container_tag
       {
@@ -89,14 +91,15 @@ namespace viennagrid
       };
 
 
-      template<typename ElementTagT, typename boundary_cell_tag, typename handle_tag, typename VertexContainerT, typename CellContainerT>
+      /** @brief Creates the complete configuration for one element. ID tag is smart_id_tag<int>, element_container_tag is defined based default_container_tag meta function, boundary_storage_layout is defined based on storage_layout_config, no appendix type. For vertex no boundary storage layout is defined. */
+      template<typename CellTagT, typename ElementTagT, typename HandleTagT, typename VertexContainerT, typename CellContainerT>
       struct full_element_config
       {
-        typedef typename viennagrid::storage::result_of::handled_container<typename default_container_tag<ElementTagT, boundary_cell_tag, VertexContainerT, CellContainerT>::type,
-                                                                            handle_tag>::tag                     container_tag;
+        typedef typename viennagrid::storage::result_of::handled_container<typename default_container_tag<CellTagT, ElementTagT, VertexContainerT, CellContainerT>::type,
+                                                                            HandleTagT>::tag                     container_tag;
 
-        typedef typename storage_layout_config<ElementTagT,
-                                                typename boundary_cell_tag::facet_tag>::type   boundary_storage_layout;
+        typedef typename storage_layout_config<CellTagT,
+                                                typename ElementTagT::facet_tag>::type   boundary_storage_layout;
 
         typedef typename viennagrid::meta::make_typemap<
             viennagrid::config::element_id_tag,
@@ -113,11 +116,11 @@ namespace viennagrid
         >::type type;
       };
 
-      template<typename ElementTagT, typename handle_tag, typename VertexContainerT, typename CellContainerT>
-      struct full_element_config<ElementTagT, viennagrid::vertex_tag, handle_tag, VertexContainerT, CellContainerT>
+      template<typename CellTagT, typename HandleTagT, typename VertexContainerT, typename CellContainerT>
+      struct full_element_config<CellTagT, viennagrid::vertex_tag, HandleTagT, VertexContainerT, CellContainerT>
       {
-        typedef typename viennagrid::storage::result_of::handled_container<typename default_container_tag<ElementTagT, viennagrid::vertex_tag, VertexContainerT, CellContainerT>::type,
-                                                                            handle_tag>::tag                     container_tag;
+        typedef typename viennagrid::storage::result_of::handled_container<typename default_container_tag<CellTagT, viennagrid::vertex_tag, VertexContainerT, CellContainerT>::type,
+                                                                            HandleTagT>::tag                     container_tag;
 
         typedef typename viennagrid::meta::make_typemap<
             viennagrid::config::element_id_tag,
@@ -135,51 +138,60 @@ namespace viennagrid
       };
 
 
-
-
-      template<typename ElementTagT, typename boundary_cell_tag, typename handle_tag, typename VertexContainerT, typename CellContainerT>
+      /** @brief Helper meta function for creating topologic configuration using full_element_config for each element. Terminates at vertex level. */
+      template<typename CellTagT, typename ElementTagT, typename HandleTagT, typename VertexContainerTagT, typename CellContainerTagT>
       struct full_topology_config_helper
       {
         typedef typename viennagrid::meta::typemap::result_of::insert<
-            typename full_topology_config_helper<ElementTagT, typename boundary_cell_tag::facet_tag, handle_tag, VertexContainerT, CellContainerT>::type,
+            typename full_topology_config_helper<CellTagT, typename ElementTagT::facet_tag, HandleTagT, VertexContainerTagT, CellContainerTagT>::type,
             viennagrid::meta::static_pair<
-                boundary_cell_tag,
-                typename full_element_config<ElementTagT, boundary_cell_tag, handle_tag, VertexContainerT, CellContainerT>::type
+                ElementTagT,
+                typename full_element_config<CellTagT, ElementTagT, HandleTagT, VertexContainerTagT, CellContainerTagT>::type
             >
         >::type type;
       };
 
-      template<typename ElementTagT, typename handle_tag, typename VertexContainerT, typename CellContainerT>
-      struct full_topology_config_helper<ElementTagT, viennagrid::vertex_tag, handle_tag, VertexContainerT, CellContainerT>
+      template<typename CellTagT, typename HandleTagT, typename VertexContainerTagT, typename CellContainerTagT>
+      struct full_topology_config_helper<CellTagT, viennagrid::vertex_tag, HandleTagT, VertexContainerTagT, CellContainerTagT>
       {
         typedef typename viennagrid::meta::make_typemap<
             viennagrid::vertex_tag,
-            typename full_element_config<ElementTagT, viennagrid::vertex_tag, handle_tag, VertexContainerT, CellContainerT>::type
+            typename full_element_config<CellTagT, viennagrid::vertex_tag, HandleTagT, VertexContainerTagT, CellContainerTagT>::type
         >::type type;
       };
 
 
-      template<typename ElementTagT, typename handle_tag, typename VertexContainerT, typename CellContainerT>
+      /** @brief Meta function for creating a topologic configuration.
+       *  @tparam CellTagT              The cell tag of the mesh
+       *  @tparam HandleTagT            Defines, which handle type should be used for all elements. Default is pointer handle
+       *  @tparam VertexContainerTagT   Defines, which container type should be used for vertices. Default is std::deque
+       *  @tparam CellContainerTagT     Defines, which container type should be used for cells. Default is std::deque
+       */
+      template<typename CellTagT,
+               typename HandleTagT  = viennagrid::storage::pointer_handle_tag,
+               typename VertexContainerTagT = viennagrid::storage::std_deque_tag,
+               typename CellContainerTagT = viennagrid::storage::std_deque_tag>
       struct full_topology_config
       {
-//         typedef typename viennagrid::meta::make_typemap<
-//           topology_config_tag,
-//           typename full_topology_config_helper<ElementTagT, ElementTagT, handle_tag, VertexContainerT, CellContainerT>::type
-//         >::type type;
-
-        typedef typename full_topology_config_helper<ElementTagT, ElementTagT, handle_tag, VertexContainerT, CellContainerT>::type type;
+        typedef typename full_topology_config_helper<CellTagT, CellTagT, HandleTagT, VertexContainerTagT, CellContainerTagT>::type type;
       };
 
 
-
-      template<typename cell_tag,
-                typename vector_type,
-                typename handle_tag = viennagrid::storage::pointer_handle_tag,
-                typename VertexContainerT = viennagrid::storage::std_deque_tag,
-                typename CellContainerT = viennagrid::storage::std_deque_tag>
+      /** @brief Meta function for creating a geometric configuration. A topologic configuration is created with the exception that the vertex appendix type is a given point type.
+       *  @tparam CellTagT              The cell tag of the mesh
+       *  @tparam PointType             The point type of the mesh
+       *  @tparam HandleTagT            Defines, which handle type should be used for all elements. Default is pointer handle
+       *  @tparam VertexContainerTagT   Defines, which container type should be used for vertices. Default is std::deque
+       *  @tparam CellContainerTagT     Defines, which container type should be used for cells. Default is std::deque
+       */
+      template<typename CellTagT,
+                typename PointType,
+                typename HandleTagT = viennagrid::storage::pointer_handle_tag,
+                typename VertexContainerTagT = viennagrid::storage::std_deque_tag,
+                typename CellContainerTagT = viennagrid::storage::std_deque_tag>
       struct full_mesh_config
       {
-        typedef typename full_topology_config<cell_tag, handle_tag, VertexContainerT, CellContainerT>::type MeshConfig;
+        typedef typename full_topology_config<CellTagT, HandleTagT, VertexContainerTagT, CellContainerTagT>::type MeshConfig;
         typedef typename query<MeshConfig, meta::null_type, vertex_tag>::type VertexConfig;
 
         typedef typename viennagrid::meta::typemap::result_of::insert_or_modify<
@@ -191,7 +203,7 @@ namespace viennagrid
                     VertexConfig,
                     viennagrid::meta::static_pair<
                         element_appendix_type_tag,
-                        vector_type
+                        PointType
                     >
 
                 >::type
@@ -199,20 +211,16 @@ namespace viennagrid
         >::type type;
       };
 
-      template<typename cell_tag, typename handle_tag, typename VertexContainerT, typename CellContainerT>
-      struct full_mesh_config<cell_tag, void, handle_tag, VertexContainerT, CellContainerT>
+      template<typename CellTagT, typename HandleTagT, typename VertexContainerTagT, typename CellContainerTagT>
+      struct full_mesh_config<CellTagT, void, HandleTagT, VertexContainerTagT, CellContainerTagT>
       {
-        typedef typename viennagrid::config::result_of::full_topology_config<cell_tag, handle_tag, VertexContainerT, CellContainerT>::type type;
+        typedef typename viennagrid::config::result_of::full_topology_config<CellTagT, HandleTagT, VertexContainerTagT, CellContainerTagT>::type type;
       };
 
 
 
 
-
-
-      //
-      // generates a container for a specified ElementTagT for the mesh container collection
-      //
+      /** @brief Creates a container for a specified ElementTagT for the mesh container collection based on a wrapped config. If a container collection is used as first argument, the container for the element with tag ElementTagT within the container collection is returned. */
       template<typename WrappedConfigType, typename ElementTagT>
       struct element_container
       {
@@ -228,9 +236,7 @@ namespace viennagrid
       };
 
 
-      //
-      // generates the container typelist for the mesh container collection
-      //
+      /** @brief Creates the typemap of all elements with their containers used by the container collection of a mesh based on a wrapped config. */
       template<typename WrappedConfigT, typename CurrentConfigT = typename WrappedConfigT::type>
       struct element_container_typemap;
 
@@ -255,20 +261,22 @@ namespace viennagrid
 
 
 
-    template<typename cell_tag,
-              typename vector_type,
-              typename handle_tag,
-              typename VertexContainerT,
-              typename CellContainerT>
+    /** @brief A generic config wrapper for mesh configs. */
+    template<typename CellTagT,
+              typename PointTypeT,
+              typename HandleTagT = viennagrid::storage::pointer_handle_tag,
+              typename VertexContainerTagT = viennagrid::storage::std_deque_tag,
+              typename CellContainerTagT = viennagrid::storage::std_deque_tag>
     struct wrapped_mesh_config_t
     {
-      typedef typename result_of::full_mesh_config<cell_tag, vector_type, handle_tag, VertexContainerT, CellContainerT>::type type;
+      typedef typename result_of::full_mesh_config<CellTagT, PointTypeT, HandleTagT, VertexContainerTagT, CellContainerTagT>::type type;
     };
   }
 
   namespace result_of
   {
-    template<typename WrappedConfigType, typename ElementTagT, typename boundary_ElementTagTlist =
+    /** @brief Creates the typemap for the coboundary container collection based on an element and its boundary element typelist. */
+    template<typename WrappedConfigType, typename ElementTagT, typename BoundaryElementTaglistT =
       typename boundary_element_taglist< element_t<ElementTagT, WrappedConfigType> >::type >
     struct coboundary_container_collection_per_element_typemap;
 
@@ -278,13 +286,13 @@ namespace viennagrid
         typedef viennagrid::meta::null_type type;
     };
 
-    template<typename WrappedConfigType, typename ElementTagT, typename boundary_ElementTagT, typename tail>
-    struct coboundary_container_collection_per_element_typemap<WrappedConfigType, ElementTagT, viennagrid::meta::typelist_t<boundary_ElementTagT, tail> >
+    template<typename WrappedConfigType, typename ElementTagT, typename BoundaryElementTagT, typename tail>
+    struct coboundary_container_collection_per_element_typemap<WrappedConfigType, ElementTagT, viennagrid::meta::typelist_t<BoundaryElementTagT, tail> >
     {
-      typedef typename config::result_of::query<WrappedConfigType, long, config::mesh_change_counter_tag>::type mesh_change_counter_type;
+      typedef typename config::result_of::query<WrappedConfigType, long, config::mesh_change_counter_tag>::type MeshChangeCounterType;
 
-      typedef typename config::result_of::query<WrappedConfigType, storage::std_vector_tag, ElementTagT, config::coboundary_container_tag, boundary_ElementTagT>::type coboundary_container_tag;
-      typedef typename config::result_of::query<WrappedConfigType, storage::std_vector_tag, ElementTagT, config::coboundary_view_container_tag, boundary_ElementTagT>::type coboundary_view_container_tag;
+      typedef typename config::result_of::query<WrappedConfigType, storage::std_vector_tag, ElementTagT, config::coboundary_container_tag, BoundaryElementTagT>::type coboundary_container_tag;
+      typedef typename config::result_of::query<WrappedConfigType, storage::std_vector_tag, ElementTagT, config::coboundary_view_container_tag, BoundaryElementTagT>::type coboundary_view_container_tag;
 
 
       typedef typename config::result_of::element_container< WrappedConfigType, ElementTagT>::type base_element_container;
@@ -294,16 +302,17 @@ namespace viennagrid
       typedef viennagrid::meta::typelist_t<
           viennagrid::meta::static_pair<
               viennagrid::meta::static_pair<
-                  boundary_ElementTagT,
+                  BoundaryElementTagT,
                   ElementTagT
               >,
-              coboundary_container_wrapper<base_coboundary_container, mesh_change_counter_type>
+              coboundary_container_wrapper<base_coboundary_container, MeshChangeCounterType>
           >,
           typename coboundary_container_collection_per_element_typemap<WrappedConfigType, ElementTagT, tail>::type
       > type;
     };
 
 
+    /** @brief Creates the typemap for the coboundary container collection for all elements by merging all typemaps created by coboundary_container_collection_per_element_typemap. */
     template<typename WrappedConfigType, typename ElementTaglistT = typename viennagrid::meta::typemap::result_of::key_typelist<typename WrappedConfigType::type>::type>
     struct coboundary_container_collection_typemap;
 
@@ -328,6 +337,7 @@ namespace viennagrid
 
   namespace result_of
   {
+    /** @brief Creates the typemap for the neighbour container collection based on an element and its boundary element typelist. The boundary elements are used as connector elements. */
     template<typename WrappedConfigType, typename ElementTagT, typename BoundaryElementTaglistT =
       typename boundary_element_taglist< element_t<ElementTagT, WrappedConfigType> >::type >
     struct neighbour_container_collection_per_element_typemap;
@@ -341,7 +351,7 @@ namespace viennagrid
     template<typename WrappedConfigType, typename ElementTagT, typename ConnectorElementTagT, typename tail>
     struct neighbour_container_collection_per_element_typemap<WrappedConfigType, ElementTagT, viennagrid::meta::typelist_t<ConnectorElementTagT, tail> >
     {
-      typedef typename config::result_of::query<WrappedConfigType, long, config::mesh_change_counter_tag>::type mesh_change_counter_type;
+      typedef typename config::result_of::query<WrappedConfigType, long, config::mesh_change_counter_tag>::type MeshChangeCounterType;
 
       typedef typename config::result_of::query<WrappedConfigType, storage::std_vector_tag, ElementTagT, config::neighbour_container_tag, ConnectorElementTagT>::type neighbour_container_tag;
       typedef typename config::result_of::query<WrappedConfigType, storage::std_vector_tag, ElementTagT, config::neighbour_view_container_tag, ConnectorElementTagT>::type neighbour_view_container_tag;
@@ -356,13 +366,14 @@ namespace viennagrid
                   ElementTagT,
                   ConnectorElementTagT
               >,
-              neighbour_container_wrapper<base_container, mesh_change_counter_type>
+              neighbour_container_wrapper<base_container, MeshChangeCounterType>
           >,
           typename neighbour_container_collection_per_element_typemap<WrappedConfigType, ElementTagT, tail>::type
       > type;
     };
 
 
+    /** @brief Creates the typemap for the neighbour container collection for all elements by merging all typemaps created by neighbour_container_collection_per_element_typemap. */
     template<typename WrappedConfigType, typename ElementTaglistT = typename viennagrid::meta::typemap::result_of::key_typelist<typename WrappedConfigType::type>::type>
     struct neighbour_container_collection_typemap;
 
@@ -385,7 +396,8 @@ namespace viennagrid
 
   namespace result_of
   {
-    template<typename typelist>
+    /** @brief Meta function for determining the maximum topologic dimension of typelist of element types or tags. */
+    template<typename ElementTypelistT>
     struct topologic_cell_dimension;
 
     template<>
@@ -394,45 +406,48 @@ namespace viennagrid
       static const int value = -1;
     };
 
-    template<typename ElementTagT, typename tail>
-    struct topologic_cell_dimension< viennagrid::meta::typelist_t<ElementTagT, tail> >
+    template<typename ElementTypeOrTagT, typename TailT>
+    struct topologic_cell_dimension< viennagrid::meta::typelist_t<ElementTypeOrTagT, TailT> >
     {
-      static const int tail_cell_dimension = topologic_cell_dimension<tail>::value;
-      static const int current_element_dimension = ElementTagT::dim;
+      typedef typename viennagrid::result_of::element_tag<ElementTypeOrTagT>::type ElementTag;
+      static const int tail_cell_dimension = topologic_cell_dimension<TailT>::value;
+      static const int current_element_dimension = ElementTag::dim;
 
       static const int value = (tail_cell_dimension > current_element_dimension) ? tail_cell_dimension : current_element_dimension;
     };
 
 
 
-
-    template<typename typelist, int topologic_dimension>
+    /** @brief Meta function for querying all elements of a specific topologic dimension using a typelist of elements of element tags. */
+    template<typename ElementTypelistT, int TopologicDimensionV>
     struct elements_of_topologic_dim;
 
-    template<int topologic_dimension>
-    struct elements_of_topologic_dim< viennagrid::meta::null_type, topologic_dimension >
+    template<int TopologicDimensionV>
+    struct elements_of_topologic_dim< viennagrid::meta::null_type, TopologicDimensionV >
     {
       typedef viennagrid::meta::null_type type;
     };
 
-    template<typename ElementTagT, typename tail, int topologic_dimension>
-    struct elements_of_topologic_dim< viennagrid::meta::typelist_t<ElementTagT, tail>, topologic_dimension >
+    template<typename ElementTypeOrTagT, typename TailT, int TopologicDimensionV>
+    struct elements_of_topologic_dim< viennagrid::meta::typelist_t<ElementTypeOrTagT, TailT>, TopologicDimensionV >
     {
-      typedef typename elements_of_topologic_dim<tail, topologic_dimension>::type tail_typelist;
+      typedef typename viennagrid::result_of::element_tag<ElementTypeOrTagT>::type ElementTag;
+      typedef typename elements_of_topologic_dim<TailT, TopologicDimensionV>::type TailTypelist;
 
       typedef typename viennagrid::meta::IF<
-          ElementTagT::dim == topologic_dimension,
-          typename viennagrid::meta::typelist::result_of::push_back<tail_typelist, ElementTagT>::type,
-          tail_typelist
+          ElementTag::dim == TopologicDimensionV,
+          typename viennagrid::meta::typelist::result_of::push_back<TailTypelist, ElementTag>::type,
+          TailTypelist
       >::type type;
     };
 
 
-    template<typename typelist>
+    /** @brief Meta function for determining the cell tag (tag of element with maximum topologic dimension) of a typelist of elements of element tags. The first cell tag is used. */
+    template<typename ElementTypelistT>
     struct cell_tag_from_typelist
     {
-      static const int dim = topologic_cell_dimension<typelist>::value;
-      typedef typename elements_of_topologic_dim<typelist, dim>::type cell_types;
+      static const int dim = topologic_cell_dimension<ElementTypelistT>::value;
+      typedef typename elements_of_topologic_dim<ElementTypelistT, dim>::type cell_types;
       typedef typename viennagrid::meta::typelist::result_of::at<cell_types,0>::type type;
     };
 
@@ -440,8 +455,8 @@ namespace viennagrid
 
 
 
-
-    template<typename WrappedConfigType, typename ElementTagTlist>
+    /** @brief Creates the typemap for the boundary container collection for all element within a element typelist. */
+    template<typename WrappedConfigType, typename ElementTaglistT>
     struct boundary_information_collection_typemap_impl;
 
     template<typename WrappedConfigType>
@@ -450,10 +465,10 @@ namespace viennagrid
       typedef viennagrid::meta::null_type type;
     };
 
-    template<typename WrappedConfigType, typename ElementTagT, typename tail>
-    struct boundary_information_collection_typemap_impl<WrappedConfigType, viennagrid::meta::typelist_t<ElementTagT, tail> >
+    template<typename WrappedConfigType, typename ElementTagT, typename TailT>
+    struct boundary_information_collection_typemap_impl<WrappedConfigType, viennagrid::meta::typelist_t<ElementTagT, TailT> >
     {
-      typedef typename config::result_of::query<WrappedConfigType, long, config::mesh_change_counter_tag>::type mesh_change_counter_type;
+      typedef typename config::result_of::query<WrappedConfigType, long, config::mesh_change_counter_tag>::type MeshChangeCounterType;
 
       typedef typename config::result_of::query<WrappedConfigType, storage::std_vector_tag, ElementTagT, config::boundary_information_container_tag>::type boundary_container_tag;
       typedef typename storage::result_of::container<bool, boundary_container_tag >::type base_container;
@@ -461,23 +476,23 @@ namespace viennagrid
       typedef viennagrid::meta::typelist_t<
           viennagrid::meta::static_pair<
               ElementTagT,
-              boundary_information_wrapper<base_container, mesh_change_counter_type>
+              boundary_information_wrapper<base_container, MeshChangeCounterType>
           >,
-          typename boundary_information_collection_typemap_impl<WrappedConfigType, tail>::type
+          typename boundary_information_collection_typemap_impl<WrappedConfigType, TailT>::type
       > type;
     };
 
-
+    /** @brief Creates the typemap for the boundary container collection for all elements using boundary_information_collection_typemap_impl with all elements within a wrapped domain except the cell. */
     template<typename WrappedConfigType>
     struct boundary_information_collection_typemap
     {
       typedef typename viennagrid::meta::typemap::result_of::key_typelist<typename WrappedConfigType::type>::type ElementTagTlist;
 
-      typedef typename cell_tag_from_typelist<ElementTagTlist>::type cell_tag;
-      typedef typename viennagrid::meta::typelist::result_of::erase< ElementTagTlist, cell_tag>::type element_typelist_without_cell_tag;
+      typedef typename cell_tag_from_typelist<ElementTagTlist>::type CellTag;
+      typedef typename viennagrid::meta::typelist::result_of::erase< ElementTagTlist, CellTag>::type ElementTypelistWithoutCellTag;
 
 
-      typedef typename boundary_information_collection_typemap_impl<WrappedConfigType, element_typelist_without_cell_tag>::type type;
+      typedef typename boundary_information_collection_typemap_impl<WrappedConfigType, ElementTypelistWithoutCellTag>::type type;
     };
   }
 
@@ -487,6 +502,7 @@ namespace viennagrid
   {
     namespace result_of
     {
+      /** @brief Meta function for querying the element typelist for a mesh based on a wrapped config. */
       template<typename WrappedConfigType>
       struct element_collection
       {

@@ -15,10 +15,15 @@
 
 #include "viennagrid/storage/id_generator.hpp"
 
+/** @file config/id_generator_config.hpp
+    @brief Provides meta functions defining a ID generator based on a wrapped config
+*/
+
 namespace viennagrid
 {
   namespace result_of
   {
+    /** @brief Defines an ID generator based on a config an a ID generator tag */
     template<typename mesh_config, typename id_generator_tag>
     struct id_generator_impl;
 
@@ -29,6 +34,7 @@ namespace viennagrid
       typedef storage::continuous_id_generator<typemap> type;
     };
 
+    /** @brief Defines an ID generator based on a wrapped config */
     template<typename WrappedConfig>
     struct id_generator
     {
