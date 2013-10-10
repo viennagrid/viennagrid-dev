@@ -1463,11 +1463,13 @@ namespace viennagrid
     * @param  point                   The point which corresponds to the created vertex
     * @return                         A handle to the created vertex
     */
+#ifndef _MSC_VER
   template<typename MeshOrSegmentHandleTypeT>
   typename result_of::vertex_handle<MeshOrSegmentHandleTypeT>::type make_vertex_with_id(
         MeshOrSegmentHandleTypeT & mesh,
         typename viennagrid::result_of::element<MeshOrSegmentHandleTypeT, vertex_tag>::type::id_type id,
         typename result_of::point<MeshOrSegmentHandleTypeT>::type const & point);
+#endif
 
   /** @brief Function for creating a unique vertex. The uniqueness is checked by using the point of the vertex: if there is any vertex whose point is close to the point currently inserted, this handle is returned. A new vertex is created otherwise. A classical 2-norm and the tolerance is used for distance checking. The runtime of this function is linear in the vertices within the mesh.
     *

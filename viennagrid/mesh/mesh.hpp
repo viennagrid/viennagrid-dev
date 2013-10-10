@@ -1535,7 +1535,7 @@ namespace viennagrid
 
       typedef typename viennagrid::result_of::element<SourceMeshType, ElementTag>::type SourceElementType;
       typedef typename viennagrid::result_of::element<DestinationMeshType, ElementTag>::type DestinationElementType;
-      typedef typename viennagrid::result_of::handle<DestinationMeshType, ElementTag>::type DestinationElementHandleType;
+      //typedef typename viennagrid::result_of::handle<DestinationMeshType, ElementTag>::type DestinationElementHandleType;
 
       SourceElementRangeType source_elements = viennagrid::elements( source_mesh );
       DestinationElementRangeType destination_elements = viennagrid::elements( destination_mesh );

@@ -198,7 +198,7 @@ void test_vtk(ReaderType & my_reader, std::string const & infile, std::string co
       ++vit)
   {
     double data_double = vtk_vertex_double_accessor(*vit);
-    long data_long = vtk_vertex_long_accessor(*vit);
+    long data_long = static_cast<long>(vtk_vertex_long_accessor(*vit));
     std::vector<double> data_point = vtk_vertex_vector_accessor(*vit);
 
     assert( fabs(data_double - viennagrid::point(*vit)[0]) < 1e-4 && "Vertex check failed: data_double!");
@@ -214,7 +214,7 @@ void test_vtk(ReaderType & my_reader, std::string const & infile, std::string co
                    ++cit)
   {
     double data_double = vtk_cell_double_accessor(*cit);
-    long data_long = vtk_cell_long_accessor(*cit);
+    long data_long = static_cast<long>(vtk_cell_long_accessor(*cit));
     std::vector<double> data_point = vtk_cell_vector_accessor(*cit);
 
     assert( fabs(data_double - viennagrid::centroid(*cit)[0]) < 1e-4 && "Cell check failed: data_double!");

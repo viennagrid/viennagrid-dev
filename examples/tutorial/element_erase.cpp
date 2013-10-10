@@ -46,9 +46,6 @@ int main()
     std::cout << "--------------------------------------------------" << std::endl;
 
 
-    typedef viennagrid::result_of::triangle_range<MeshType>::type triangle_range_type;
-    typedef viennagrid::result_of::iterator<triangle_range_type>::type triangle_range_iterator;
-
     std::cout << viennagrid::triangles(mesh).size() << std::endl;
 
 

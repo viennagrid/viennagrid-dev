@@ -30,7 +30,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::segment_handle<SrcSegmentationT>::type SrcSegmentHandleType;
       typedef typename viennagrid::result_of::segment_handle<DstSegmentationT>::type DstSegmentHandleType;
 
-      typedef typename viennagrid::result_of::cell_tag<SrcMeshT>::type  SrcCellTag;
+      //typedef typename viennagrid::result_of::cell_tag<SrcMeshT>::type  SrcCellTag;
       typedef typename viennagrid::result_of::cell<SrcMeshT>::type      SrcCellType;
 
       typedef typename viennagrid::result_of::const_vertex_range<SrcMeshT>::type    SrcVertexRangeType;
@@ -97,10 +97,10 @@ namespace viennagrid
   {
     static void mark(MeshT & mesh, ToEraseViewT & mesh_view, HandleT host_element)
     {
-      typedef viennagrid::meta::typelist_t<CoboundaryElementT, TailT> ReferencingElementTypelist;
+      //typedef viennagrid::meta::typelist_t<CoboundaryElementT, TailT> ReferencingElementTypelist;
       typedef typename viennagrid::storage::handle::result_of::value_type<HandleT>::type HostElementType;
 
-      typedef typename viennagrid::result_of::handle<MeshT, CoboundaryElementT>::type CoboundaryElementHandle;
+      //typedef typename viennagrid::result_of::handle<MeshT, CoboundaryElementT>::type CoboundaryElementHandle;
       typedef typename viennagrid::result_of::coboundary_range<MeshT, HostElementType, CoboundaryElementT>::type CoboundaryElementRangeType;
       typedef typename viennagrid::result_of::iterator<CoboundaryElementRangeType>::type CoboundaryElementRangeIterator;
 
