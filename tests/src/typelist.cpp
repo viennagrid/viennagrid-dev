@@ -80,12 +80,12 @@ int main()
   >();
 
   test_type<
-      viennagrid::meta::typelist::result_of::push_back< viennagrid::meta::make_typelist<int>::type, viennagrid::meta::null_type >::type,
+      viennagrid::meta::typelist::result_of::push_back< viennagrid::meta::make_typelist<int>::type, viennagrid::null_type >::type,
       viennagrid::meta::make_typelist<int>::type
   >();
 
   test_type<
-      viennagrid::meta::typelist::result_of::push_back< viennagrid::meta::null_type, int >::type,
+      viennagrid::meta::typelist::result_of::push_back< viennagrid::null_type, int >::type,
       viennagrid::meta::make_typelist<int>::type
   >();
 
@@ -99,18 +99,18 @@ int main()
   >();
 
   test_type<
-      viennagrid::meta::typelist::result_of::push_back_list< viennagrid::meta::null_type, viennagrid::meta::make_typelist<char, double>::type >::type,
+      viennagrid::meta::typelist::result_of::push_back_list< viennagrid::null_type, viennagrid::meta::make_typelist<char, double>::type >::type,
       viennagrid::meta::make_typelist<char, double>::type
   >();
 
   test_type<
-      viennagrid::meta::typelist::result_of::push_back_list< viennagrid::meta::make_typelist<int, float>::type, viennagrid::meta::null_type >::type,
+      viennagrid::meta::typelist::result_of::push_back_list< viennagrid::meta::make_typelist<int, float>::type, viennagrid::null_type >::type,
       viennagrid::meta::make_typelist<int, float>::type
   >();
 
 // not valid, should give a compiler error!
 //     test<
-//         viennagrid::meta::typelist::result_of::push_back_list< int, viennagrid::meta::null_type >::type,
+//         viennagrid::meta::typelist::result_of::push_back_list< int, viennagrid::null_type >::type,
 //         viennagrid::meta::make_typelist<int>::type
 //     >();
 
@@ -261,23 +261,23 @@ int main()
           viennagrid::meta::make_typelist<int, float, int>::type,
           viennagrid::meta::make_typelist<double, char, short>::type
       >::type,
-      viennagrid::meta::null_type
+      viennagrid::null_type
   >();
 
   test_type<
       viennagrid::meta::typelist::result_of::intersection<
           viennagrid::meta::make_typelist<int, float, int>::type,
-          viennagrid::meta::null_type
+          viennagrid::null_type
       >::type,
-      viennagrid::meta::null_type
+      viennagrid::null_type
   >();
 
   test_type<
       viennagrid::meta::typelist::result_of::intersection<
-          viennagrid::meta::null_type,
+          viennagrid::null_type,
           viennagrid::meta::make_typelist<double, char, short>::type
       >::type,
-      viennagrid::meta::null_type
+      viennagrid::null_type
   >();
 
   std::cout << "*******************************" << std::endl;

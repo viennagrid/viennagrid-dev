@@ -42,9 +42,9 @@ namespace viennagrid
       };
 
       template<typename id_type>
-      struct continuous_id_generator_config_helper<viennagrid::meta::null_type, id_type>
+      struct continuous_id_generator_config_helper<viennagrid::null_type, id_type>
       {
-        typedef viennagrid::meta::null_type type;
+        typedef viennagrid::null_type type;
       };
 
 
@@ -66,9 +66,9 @@ namespace viennagrid
       };
 
       template<typename WrappedConfigType>
-      struct continuous_id_generator_config_from_mesh_config_helper<WrappedConfigType, viennagrid::meta::null_type>
+      struct continuous_id_generator_config_from_mesh_config_helper<WrappedConfigType, viennagrid::null_type>
       {
-        typedef viennagrid::meta::null_type type;
+        typedef viennagrid::null_type type;
       };
 
       template<typename typelist, typename id_type>
@@ -132,7 +132,7 @@ namespace viennagrid
     };
 
     template<>
-    class continuous_id_generator_layer_t<viennagrid::meta::null_type>
+    class continuous_id_generator_layer_t<viennagrid::null_type>
     {
     public:
       void operator()();

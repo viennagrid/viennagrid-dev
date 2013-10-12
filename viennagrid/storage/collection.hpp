@@ -52,7 +52,7 @@ namespace viennagrid
     };
 
     template<>
-    class collection_layer< viennagrid::meta::null_type >
+    class collection_layer< viennagrid::null_type >
     {
     public:
       void get();

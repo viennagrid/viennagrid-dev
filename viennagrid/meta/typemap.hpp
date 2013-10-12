@@ -342,9 +342,9 @@ namespace viennagrid
         struct key_typelist;
 
         template<>
-        struct key_typelist<viennagrid::meta::null_type>
+        struct key_typelist<viennagrid::null_type>
         {
-          typedef viennagrid::meta::null_type type;
+          typedef viennagrid::null_type type;
         };
 
         template<typename key_, typename value_, typename tail>
@@ -360,9 +360,9 @@ namespace viennagrid
         struct value_typelist;
 
         template<>
-        struct value_typelist<viennagrid::meta::null_type>
+        struct value_typelist<viennagrid::null_type>
         {
-          typedef viennagrid::meta::null_type type;
+          typedef viennagrid::null_type type;
         };
 
         template<typename key_, typename value_, typename tail>
@@ -383,7 +383,7 @@ namespace viennagrid
 //     template<>
 //     struct make_typemap_unsafe<>
 //     {
-//         typedef viennagrid::meta::null_type type;
+//         typedef viennagrid::null_type type;
 //     };
 //
 //     template<typename key, typename value, typename ... tail>
@@ -405,16 +405,16 @@ namespace viennagrid
 
 
 
-    template<   typename K01 = viennagrid::meta::null_type, typename V01 = viennagrid::meta::null_type, typename K02 = viennagrid::meta::null_type, typename V02 = viennagrid::meta::null_type,
-                typename K03 = viennagrid::meta::null_type, typename V03 = viennagrid::meta::null_type, typename K04 = viennagrid::meta::null_type, typename V04 = viennagrid::meta::null_type,
-                typename K05 = viennagrid::meta::null_type, typename V05 = viennagrid::meta::null_type, typename K06 = viennagrid::meta::null_type, typename V06 = viennagrid::meta::null_type,
-                typename K07 = viennagrid::meta::null_type, typename V07 = viennagrid::meta::null_type, typename K08 = viennagrid::meta::null_type, typename V08 = viennagrid::meta::null_type,
-                typename K09 = viennagrid::meta::null_type, typename V09 = viennagrid::meta::null_type, typename K10 = viennagrid::meta::null_type, typename V10 = viennagrid::meta::null_type,
-                typename K11 = viennagrid::meta::null_type, typename V11 = viennagrid::meta::null_type, typename K12 = viennagrid::meta::null_type, typename V12 = viennagrid::meta::null_type,
-                typename K13 = viennagrid::meta::null_type, typename V13 = viennagrid::meta::null_type, typename K14 = viennagrid::meta::null_type, typename V14 = viennagrid::meta::null_type,
-                typename K15 = viennagrid::meta::null_type, typename V15 = viennagrid::meta::null_type, typename K16 = viennagrid::meta::null_type, typename V16 = viennagrid::meta::null_type,
-                typename K17 = viennagrid::meta::null_type, typename V17 = viennagrid::meta::null_type, typename K18 = viennagrid::meta::null_type, typename V18 = viennagrid::meta::null_type,
-                typename K19 = viennagrid::meta::null_type, typename V19 = viennagrid::meta::null_type, typename K20 = viennagrid::meta::null_type, typename V20 = viennagrid::meta::null_type  >
+    template<   typename K01 = viennagrid::null_type, typename V01 = viennagrid::null_type, typename K02 = viennagrid::null_type, typename V02 = viennagrid::null_type,
+                typename K03 = viennagrid::null_type, typename V03 = viennagrid::null_type, typename K04 = viennagrid::null_type, typename V04 = viennagrid::null_type,
+                typename K05 = viennagrid::null_type, typename V05 = viennagrid::null_type, typename K06 = viennagrid::null_type, typename V06 = viennagrid::null_type,
+                typename K07 = viennagrid::null_type, typename V07 = viennagrid::null_type, typename K08 = viennagrid::null_type, typename V08 = viennagrid::null_type,
+                typename K09 = viennagrid::null_type, typename V09 = viennagrid::null_type, typename K10 = viennagrid::null_type, typename V10 = viennagrid::null_type,
+                typename K11 = viennagrid::null_type, typename V11 = viennagrid::null_type, typename K12 = viennagrid::null_type, typename V12 = viennagrid::null_type,
+                typename K13 = viennagrid::null_type, typename V13 = viennagrid::null_type, typename K14 = viennagrid::null_type, typename V14 = viennagrid::null_type,
+                typename K15 = viennagrid::null_type, typename V15 = viennagrid::null_type, typename K16 = viennagrid::null_type, typename V16 = viennagrid::null_type,
+                typename K17 = viennagrid::null_type, typename V17 = viennagrid::null_type, typename K18 = viennagrid::null_type, typename V18 = viennagrid::null_type,
+                typename K19 = viennagrid::null_type, typename V19 = viennagrid::null_type, typename K20 = viennagrid::null_type, typename V20 = viennagrid::null_type  >
     struct make_typemap_unsafe
     {
       typedef
@@ -427,31 +427,31 @@ namespace viennagrid
 
     template<>
     struct make_typemap_unsafe<
-        viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type,
-        viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type,
-        viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type,
-        viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type,
-        viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type,
-        viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type,
-        viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type,
-        viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type,
-        viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type,
-        viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type >
+        viennagrid::null_type, viennagrid::null_type, viennagrid::null_type, viennagrid::null_type,
+        viennagrid::null_type, viennagrid::null_type, viennagrid::null_type, viennagrid::null_type,
+        viennagrid::null_type, viennagrid::null_type, viennagrid::null_type, viennagrid::null_type,
+        viennagrid::null_type, viennagrid::null_type, viennagrid::null_type, viennagrid::null_type,
+        viennagrid::null_type, viennagrid::null_type, viennagrid::null_type, viennagrid::null_type,
+        viennagrid::null_type, viennagrid::null_type, viennagrid::null_type, viennagrid::null_type,
+        viennagrid::null_type, viennagrid::null_type, viennagrid::null_type, viennagrid::null_type,
+        viennagrid::null_type, viennagrid::null_type, viennagrid::null_type, viennagrid::null_type,
+        viennagrid::null_type, viennagrid::null_type, viennagrid::null_type, viennagrid::null_type,
+        viennagrid::null_type, viennagrid::null_type, viennagrid::null_type, viennagrid::null_type >
     {
-      typedef viennagrid::meta::null_type type;
+      typedef viennagrid::null_type type;
     };
 
 
-    template<   typename K01 = viennagrid::meta::null_type, typename V01 = viennagrid::meta::null_type, typename K02 = viennagrid::meta::null_type, typename V02 = viennagrid::meta::null_type,
-                typename K03 = viennagrid::meta::null_type, typename V03 = viennagrid::meta::null_type, typename K04 = viennagrid::meta::null_type, typename V04 = viennagrid::meta::null_type,
-                typename K05 = viennagrid::meta::null_type, typename V05 = viennagrid::meta::null_type, typename K06 = viennagrid::meta::null_type, typename V06 = viennagrid::meta::null_type,
-                typename K07 = viennagrid::meta::null_type, typename V07 = viennagrid::meta::null_type, typename K08 = viennagrid::meta::null_type, typename V08 = viennagrid::meta::null_type,
-                typename K09 = viennagrid::meta::null_type, typename V09 = viennagrid::meta::null_type, typename K10 = viennagrid::meta::null_type, typename V10 = viennagrid::meta::null_type,
-                typename K11 = viennagrid::meta::null_type, typename V11 = viennagrid::meta::null_type, typename K12 = viennagrid::meta::null_type, typename V12 = viennagrid::meta::null_type,
-                typename K13 = viennagrid::meta::null_type, typename V13 = viennagrid::meta::null_type, typename K14 = viennagrid::meta::null_type, typename V14 = viennagrid::meta::null_type,
-                typename K15 = viennagrid::meta::null_type, typename V15 = viennagrid::meta::null_type, typename K16 = viennagrid::meta::null_type, typename V16 = viennagrid::meta::null_type,
-                typename K17 = viennagrid::meta::null_type, typename V17 = viennagrid::meta::null_type, typename K18 = viennagrid::meta::null_type, typename V18 = viennagrid::meta::null_type,
-                typename K19 = viennagrid::meta::null_type, typename V19 = viennagrid::meta::null_type, typename K20 = viennagrid::meta::null_type, typename V20 = viennagrid::meta::null_type  >
+    template<   typename K01 = viennagrid::null_type, typename V01 = viennagrid::null_type, typename K02 = viennagrid::null_type, typename V02 = viennagrid::null_type,
+                typename K03 = viennagrid::null_type, typename V03 = viennagrid::null_type, typename K04 = viennagrid::null_type, typename V04 = viennagrid::null_type,
+                typename K05 = viennagrid::null_type, typename V05 = viennagrid::null_type, typename K06 = viennagrid::null_type, typename V06 = viennagrid::null_type,
+                typename K07 = viennagrid::null_type, typename V07 = viennagrid::null_type, typename K08 = viennagrid::null_type, typename V08 = viennagrid::null_type,
+                typename K09 = viennagrid::null_type, typename V09 = viennagrid::null_type, typename K10 = viennagrid::null_type, typename V10 = viennagrid::null_type,
+                typename K11 = viennagrid::null_type, typename V11 = viennagrid::null_type, typename K12 = viennagrid::null_type, typename V12 = viennagrid::null_type,
+                typename K13 = viennagrid::null_type, typename V13 = viennagrid::null_type, typename K14 = viennagrid::null_type, typename V14 = viennagrid::null_type,
+                typename K15 = viennagrid::null_type, typename V15 = viennagrid::null_type, typename K16 = viennagrid::null_type, typename V16 = viennagrid::null_type,
+                typename K17 = viennagrid::null_type, typename V17 = viennagrid::null_type, typename K18 = viennagrid::null_type, typename V18 = viennagrid::null_type,
+                typename K19 = viennagrid::null_type, typename V19 = viennagrid::null_type, typename K20 = viennagrid::null_type, typename V20 = viennagrid::null_type  >
     struct make_typemap
     {
       typedef typename viennagrid::meta::typemap::result_of::consistency<

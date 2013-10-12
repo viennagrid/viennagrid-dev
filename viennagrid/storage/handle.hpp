@@ -40,7 +40,7 @@ namespace viennagrid
         template<typename base_container_type>
         struct handle_type<base_container_type, no_handle_tag>
         {
-          typedef viennagrid::meta::null_type type;
+          typedef viennagrid::null_type type;
         };
 
         template<typename base_container_type>
@@ -71,7 +71,7 @@ namespace viennagrid
         template<typename base_container_type>
         struct const_handle_type<base_container_type, no_handle_tag>
         {
-          typedef viennagrid::meta::null_type type;
+          typedef viennagrid::null_type type;
         };
 
         template<typename base_container_type>
@@ -144,7 +144,7 @@ namespace viennagrid
 
         // no handle
         template<>
-        struct handle_tag<viennagrid::meta::null_type>
+        struct handle_tag<viennagrid::null_type>
         {
           typedef no_handle_tag type;
         };

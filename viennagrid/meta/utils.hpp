@@ -18,6 +18,10 @@
 
 namespace viennagrid
 {
+
+  /** @brief An empty type, used within typelists and typemaps */
+  class null_type {};
+
   namespace meta
   {
     // basic operations
@@ -69,10 +73,6 @@ namespace viennagrid
     struct STATIC_ASSERT<false>
     {};
 
-
-
-    // an empty type
-    class null_type {};
 
     // some special types
     class out_of_range {};

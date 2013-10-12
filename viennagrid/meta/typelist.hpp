@@ -38,7 +38,7 @@ namespace viennagrid
 //     template<>
 //     struct make_typelist<>
 //     {
-//         typedef viennagrid::meta::null_type type;
+//         typedef viennagrid::null_type type;
 //     };
 //
 //     template<typename head, typename ... tail>
@@ -51,11 +51,11 @@ namespace viennagrid
 
 
 
-    template<   typename T01 = viennagrid::meta::null_type, typename T02 = viennagrid::meta::null_type, typename T03 = viennagrid::meta::null_type, typename T04 = viennagrid::meta::null_type,
-                typename T05 = viennagrid::meta::null_type, typename T06 = viennagrid::meta::null_type, typename T07 = viennagrid::meta::null_type, typename T08 = viennagrid::meta::null_type,
-                typename T09 = viennagrid::meta::null_type, typename T10 = viennagrid::meta::null_type, typename T11 = viennagrid::meta::null_type, typename T12 = viennagrid::meta::null_type,
-                typename T13 = viennagrid::meta::null_type, typename T14 = viennagrid::meta::null_type, typename T15 = viennagrid::meta::null_type, typename T16 = viennagrid::meta::null_type,
-                typename T17 = viennagrid::meta::null_type, typename T18 = viennagrid::meta::null_type, typename T19 = viennagrid::meta::null_type, typename T20 = viennagrid::meta::null_type >
+    template<   typename T01 = viennagrid::null_type, typename T02 = viennagrid::null_type, typename T03 = viennagrid::null_type, typename T04 = viennagrid::null_type,
+                typename T05 = viennagrid::null_type, typename T06 = viennagrid::null_type, typename T07 = viennagrid::null_type, typename T08 = viennagrid::null_type,
+                typename T09 = viennagrid::null_type, typename T10 = viennagrid::null_type, typename T11 = viennagrid::null_type, typename T12 = viennagrid::null_type,
+                typename T13 = viennagrid::null_type, typename T14 = viennagrid::null_type, typename T15 = viennagrid::null_type, typename T16 = viennagrid::null_type,
+                typename T17 = viennagrid::null_type, typename T18 = viennagrid::null_type, typename T19 = viennagrid::null_type, typename T20 = viennagrid::null_type >
     struct make_typelist
     {
       typedef
@@ -67,13 +67,13 @@ namespace viennagrid
 
     template<>
     struct make_typelist<
-        viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type,
-        viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type,
-        viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type,
-        viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type,
-        viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type>
+        viennagrid::null_type, viennagrid::null_type, viennagrid::null_type, viennagrid::null_type,
+        viennagrid::null_type, viennagrid::null_type, viennagrid::null_type, viennagrid::null_type,
+        viennagrid::null_type, viennagrid::null_type, viennagrid::null_type, viennagrid::null_type,
+        viennagrid::null_type, viennagrid::null_type, viennagrid::null_type, viennagrid::null_type,
+        viennagrid::null_type, viennagrid::null_type, viennagrid::null_type, viennagrid::null_type>
     {
-      typedef viennagrid::meta::null_type type;
+      typedef viennagrid::null_type type;
     };
 
 

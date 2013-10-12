@@ -166,7 +166,7 @@ namespace viennagrid
     };
 
 
-    /** @brief Metafunction for obtaining a mesh view from a mesh. Elements can be directly given. If viennagrid::meta::null_type is specified somewhere all following types will be ignored. The default type for all element types is viennagrid::meta::null_type.
+    /** @brief Metafunction for obtaining a mesh view from a mesh. Elements can be directly given. If viennagrid::null_type is specified somewhere all following types will be ignored. The default type for all element types is viennagrid::null_type.
      *
      * @tparam MeshT              The host mesh type
      * @tparam Element0TypeOrTagT   The first element type which is present in the mesh view
@@ -774,7 +774,7 @@ namespace viennagrid
 
 
   /** @brief For internal use only */
-  template<typename segment_id_type_, typename segment_element_info_type_ = viennagrid::meta::null_type>
+  template<typename segment_id_type_, typename segment_element_info_type_ = viennagrid::null_type>
   struct element_segment_mapping
   {
     typedef segment_id_type_ segment_id_type;
@@ -953,9 +953,9 @@ namespace viennagrid
     struct interface_information_collection_typemap_impl;
 
     template<typename segment_id_type, typename interface_information_container_tag, typename ChangeCounterType>
-    struct interface_information_collection_typemap_impl<segment_id_type, interface_information_container_tag, ChangeCounterType, viennagrid::meta::null_type>
+    struct interface_information_collection_typemap_impl<segment_id_type, interface_information_container_tag, ChangeCounterType, viennagrid::null_type>
     {
-      typedef viennagrid::meta::null_type type;
+      typedef viennagrid::null_type type;
     };
 
     template<typename segment_id_type, typename interface_information_container_tag, typename ChangeCounterType, typename element_tag, typename tail>
@@ -992,9 +992,9 @@ namespace viennagrid
     struct segmentation_info_container_typemap;
 
     template<typename segment_id_type, typename container_tag, typename segment_info_container_tag>
-    struct segmentation_info_container_typemap< viennagrid::meta::null_type, segment_id_type, container_tag, segment_info_container_tag >
+    struct segmentation_info_container_typemap< viennagrid::null_type, segment_id_type, container_tag, segment_info_container_tag >
     {
-      typedef viennagrid::meta::null_type type;
+      typedef viennagrid::null_type type;
     };
 
     template<typename element_tag, typename segment_info_type, typename tail, typename segment_id_type, typename container_tag, typename segment_info_container_tag>
@@ -1019,9 +1019,9 @@ namespace viennagrid
     struct trivial_segmentation_appendix;
 
     template<typename segment_id_type,typename container_tag>
-    struct trivial_segmentation_appendix< viennagrid::meta::null_type, segment_id_type, container_tag >
+    struct trivial_segmentation_appendix< viennagrid::null_type, segment_id_type, container_tag >
     {
-      typedef viennagrid::meta::null_type type;
+      typedef viennagrid::null_type type;
     };
 
     template<typename element_type, typename tail, typename segment_id_type, typename container_tag>

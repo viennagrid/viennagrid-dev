@@ -98,12 +98,12 @@ int main()
   >();
 
   test_type<
-      viennagrid::meta::typemap::result_of::insert< viennagrid::meta::null_type, viennagrid::meta::static_pair<float, double> >::type,
+      viennagrid::meta::typemap::result_of::insert< viennagrid::null_type, viennagrid::meta::static_pair<float, double> >::type,
       viennagrid::meta::make_typemap<float, double>::type
   >();
 
   test_type<
-      viennagrid::meta::typemap::result_of::insert< viennagrid::meta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type, viennagrid::meta::null_type >::type,
+      viennagrid::meta::typemap::result_of::insert< viennagrid::meta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type, viennagrid::null_type >::type,
       viennagrid::meta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type
   >();
 
@@ -123,8 +123,8 @@ int main()
 
   // this should not work and generate a compiler error
 //     test_type<
-//         viennagrid::meta::typemap::result_of::modify< viennagrid::meta::null_type, viennagrid::meta::static_pair<int, float> >::type,
-//         viennagrid::meta::null_type
+//         viennagrid::meta::typemap::result_of::modify< viennagrid::null_type, viennagrid::meta::static_pair<int, float> >::type,
+//         viennagrid::null_type
 //     >();
 
   // this should not work and generate a compiler error
@@ -142,17 +142,17 @@ int main()
   >();
 
   test_type<
-      viennagrid::meta::typemap::result_of::insert_or_modify< viennagrid::meta::null_type, viennagrid::meta::static_pair<float, double> >::type,
+      viennagrid::meta::typemap::result_of::insert_or_modify< viennagrid::null_type, viennagrid::meta::static_pair<float, double> >::type,
       viennagrid::meta::make_typemap<float, double>::type
   >();
 
   test_type<
-      viennagrid::meta::typemap::result_of::insert_or_modify< viennagrid::meta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type, viennagrid::meta::null_type >::type,
+      viennagrid::meta::typemap::result_of::insert_or_modify< viennagrid::meta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type, viennagrid::null_type >::type,
       viennagrid::meta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type
   >();
 
   test_type<
-      viennagrid::meta::typemap::result_of::insert_or_modify< viennagrid::meta::null_type, viennagrid::meta::static_pair<int, double> >::type,
+      viennagrid::meta::typemap::result_of::insert_or_modify< viennagrid::null_type, viennagrid::meta::static_pair<int, double> >::type,
       viennagrid::meta::make_typemap<int, double>::type
   >();
 
@@ -173,7 +173,7 @@ int main()
   // this should not work and generate a compiler error
 //     test_type<
 //         viennagrid::meta::typemap::result_of::erase< viennagrid::meta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type, float >::type,
-//         viennagrid::meta::null_type
+//         viennagrid::null_type
 //     >();
 
 
@@ -181,7 +181,7 @@ int main()
   std::cout << "merge" << std::endl;
   test_type<
       viennagrid::meta::typemap::result_of::merge<
-          viennagrid::meta::null_type,
+          viennagrid::null_type,
           viennagrid::meta::make_typemap<float, float, double, double>::type
       >::type,
      viennagrid::meta::make_typemap<float, float, double, double>::type
@@ -190,7 +190,7 @@ int main()
   test_type<
       viennagrid::meta::typemap::result_of::merge<
           viennagrid::meta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type,
-          viennagrid::meta::null_type
+          viennagrid::null_type
       >::type,
       viennagrid::meta::make_typemap<int, unsigned int, char, unsigned char, short, unsigned short>::type
   >();

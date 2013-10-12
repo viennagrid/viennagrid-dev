@@ -41,7 +41,7 @@ namespace viennagrid
       };
 
       template<>
-      struct for_each_impl< viennagrid::meta::null_type >
+      struct for_each_impl< viennagrid::null_type >
       {
         template<typename functor> static void exec( functor & ) {}
         template<typename functor> static void exec( const functor & ) {}
@@ -64,9 +64,9 @@ namespace viennagrid
 
 
       template<template<typename> class functor>
-      struct TRANSFORM<functor, viennagrid::meta::null_type>
+      struct TRANSFORM<functor, viennagrid::null_type>
       {
-        typedef viennagrid::meta::null_type type;
+        typedef viennagrid::null_type type;
       };
 
       template<template<typename> class functor, typename head, typename tail>

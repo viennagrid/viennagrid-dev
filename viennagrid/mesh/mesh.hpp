@@ -94,9 +94,9 @@ namespace viennagrid
     struct filter_element_container;
 
     template<typename ContainerTypemapT>
-    struct filter_element_container<viennagrid::meta::null_type, ContainerTypemapT>
+    struct filter_element_container<viennagrid::null_type, ContainerTypemapT>
     {
-        typedef viennagrid::meta::null_type type;
+        typedef viennagrid::null_type type;
     };
 
     template<typename ElementT, typename TailT, typename ContainerTypemapT>
@@ -491,9 +491,9 @@ namespace viennagrid
     struct element_typelist_for_element;
 
     template<>
-    struct element_typelist_for_element<viennagrid::meta::null_type>
+    struct element_typelist_for_element<viennagrid::null_type>
     {
-      typedef viennagrid::meta::null_type type;
+      typedef viennagrid::null_type type;
     };
 
     template<typename HeadT, typename TailT>
@@ -551,9 +551,9 @@ namespace viennagrid
     struct referencing_element_typelist_impl;
 
     template<typename ElementT>
-    struct referencing_element_typelist_impl<viennagrid::meta::null_type, ElementT>
+    struct referencing_element_typelist_impl<viennagrid::null_type, ElementT>
     {
-      typedef viennagrid::meta::null_type type;
+      typedef viennagrid::null_type type;
     };
 
     template<typename HeadT, typename TailT, typename ElementT>
@@ -653,7 +653,7 @@ namespace viennagrid
     };
 
 
-    /** @brief Metafunction for obtaining a mesh view from a mesh. Elements can be directly given. If viennagrid::meta::null_type is specified somewhere all following types will be ignored. The default type for all element types is viennagrid::meta::null_type.
+    /** @brief Metafunction for obtaining a mesh view from a mesh. Elements can be directly given. If viennagrid::null_type is specified somewhere all following types will be ignored. The default type for all element types is viennagrid::null_type.
      *
      * @tparam MeshT              The host mesh type
      * @tparam Element0TypeOrTagT   The first element type which is present in the mesh view
@@ -668,11 +668,11 @@ namespace viennagrid
      * @tparam Element9TypeOrTagT   The tenth element type which is present in the mesh view
      */
     template<typename MeshT,
-             typename Element0TypeOrTagT = viennagrid::meta::null_type, typename Element1TypeOrTagT = viennagrid::meta::null_type,
-             typename Element2TypeOrTagT = viennagrid::meta::null_type, typename Element3TypeOrTagT = viennagrid::meta::null_type,
-             typename Element4TypeOrTagT = viennagrid::meta::null_type, typename Element5TypeOrTagT = viennagrid::meta::null_type,
-             typename Element6TypeOrTagT = viennagrid::meta::null_type, typename Element7TypeOrTagT = viennagrid::meta::null_type,
-             typename Element8TypeOrTagT = viennagrid::meta::null_type, typename Element9TypeOrTagT = viennagrid::meta::null_type>
+             typename Element0TypeOrTagT = viennagrid::null_type, typename Element1TypeOrTagT = viennagrid::null_type,
+             typename Element2TypeOrTagT = viennagrid::null_type, typename Element3TypeOrTagT = viennagrid::null_type,
+             typename Element4TypeOrTagT = viennagrid::null_type, typename Element5TypeOrTagT = viennagrid::null_type,
+             typename Element6TypeOrTagT = viennagrid::null_type, typename Element7TypeOrTagT = viennagrid::null_type,
+             typename Element8TypeOrTagT = viennagrid::null_type, typename Element9TypeOrTagT = viennagrid::null_type>
     struct mesh_view
     {
       typedef typename mesh_view_from_typelist<
@@ -695,8 +695,8 @@ namespace viennagrid
 
     template<typename WrappedConfigT>
     struct mesh_view<mesh_t<WrappedConfigT>,
-                       viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type,
-                       viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type, viennagrid::meta::null_type>
+                       viennagrid::null_type, viennagrid::null_type, viennagrid::null_type, viennagrid::null_type, viennagrid::null_type,
+                       viennagrid::null_type, viennagrid::null_type, viennagrid::null_type, viennagrid::null_type, viennagrid::null_type>
     {
       typedef typename mesh_view_from_typelist< mesh_t<WrappedConfigT> >::type type;
     };
@@ -968,7 +968,7 @@ namespace viennagrid
     struct is_element_present_helper;
 
     template<typename element_tag>
-    struct is_element_present_helper<meta::null_type, element_tag>
+    struct is_element_present_helper<null_type, element_tag>
     {
       static const bool value = false;
     };
@@ -1047,7 +1047,7 @@ namespace viennagrid
     struct topologic_cell_dimension_impl;
 
     template<>
-    struct topologic_cell_dimension_impl<viennagrid::meta::null_type>
+    struct topologic_cell_dimension_impl<viennagrid::null_type>
     {
       static const int value = -1;
     };
@@ -1081,9 +1081,9 @@ namespace viennagrid
     struct elements_of_topologic_dim_impl;
 
     template<int topologic_dimension>
-    struct elements_of_topologic_dim_impl< viennagrid::meta::null_type, topologic_dimension >
+    struct elements_of_topologic_dim_impl< viennagrid::null_type, topologic_dimension >
     {
-      typedef viennagrid::meta::null_type type;
+      typedef viennagrid::null_type type;
     };
 
     template<typename element_type, typename element_container_type, typename tail, int topologic_dimension>
@@ -1536,7 +1536,7 @@ namespace viennagrid
   struct fix_handle_helper;
 
   template<>
-  struct fix_handle_helper< meta::null_type >
+  struct fix_handle_helper< null_type >
   {
     template<typename SourceWrappedConfigT, typename DestinationWrappedConfigT>
     static void fix_handles( mesh_t<SourceWrappedConfigT> const &, mesh_t<DestinationWrappedConfigT> & )

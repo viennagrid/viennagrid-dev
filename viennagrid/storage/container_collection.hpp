@@ -57,9 +57,9 @@ namespace viennagrid
         struct container_list_from_value_typelist_using_container_config;
 
         template<typename container_config>
-        struct container_list_from_value_typelist_using_container_config<viennagrid::meta::null_type, container_config>
+        struct container_list_from_value_typelist_using_container_config<viennagrid::null_type, container_config>
         {
-          typedef viennagrid::meta::null_type type;
+          typedef viennagrid::null_type type;
         };
 
         template<typename value_type, typename tail, typename container_config>

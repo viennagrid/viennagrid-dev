@@ -56,7 +56,7 @@ namespace viennagrid
       template<typename WrappedConfigType, typename element_tag>
       struct is_element_present
       {
-        typedef typename query<WrappedConfigType, meta::null_type, element_tag>::type  ElementConfigType;
+        typedef typename query<WrappedConfigType, null_type, element_tag>::type  ElementConfigType;
 
         static const bool value = !viennagrid::meta::EQUAL<ElementConfigType, viennagrid::meta::not_found>::value;
       };
@@ -80,7 +80,7 @@ namespace viennagrid
       template<typename WrappedConfigType, typename element_tag>
       struct query_appendix_type
       {
-        typedef typename query<WrappedConfigType, meta::null_type, element_tag, element_appendix_type_tag>::type  type;
+        typedef typename query<WrappedConfigType, null_type, element_tag, element_appendix_type_tag>::type  type;
       };
 
       template<typename WrappedConfigType>
@@ -207,7 +207,7 @@ namespace viennagrid
             viennagrid::meta::IF<
                 has_orientation< WrappedConfigT, HostElementTagT, BoundaryElementTagT>::value,
                 typename viennagrid::storage::result_of::container< facet_orientation_type, container_tag >::type,
-                viennagrid::meta::null_type
+                viennagrid::null_type
             >::type facet_orientation_container_type;
 
 
@@ -256,7 +256,7 @@ namespace viennagrid
         // Orientation
         //
 
-        typedef viennagrid::meta::null_type facet_orientation_container_type;
+        typedef viennagrid::null_type facet_orientation_container_type;
 
 
         //
@@ -272,7 +272,7 @@ namespace viennagrid
       template<typename WrappedConfigT, typename HostElementTagT, typename BoundaryElementTagT>
       struct element_boundary_element_container_helper<WrappedConfigT, HostElementTagT, BoundaryElementTagT, false>
       {
-        typedef viennagrid::meta::null_type type;
+        typedef viennagrid::null_type type;
       };
 
 
@@ -302,7 +302,7 @@ namespace viennagrid
       template<typename WrappedConfigT, typename HostElementTagT>
       struct element_boundary_element_container_typelist<WrappedConfigT, HostElementTagT, viennagrid::vertex_tag>
       {
-        typedef viennagrid::meta::null_type type;
+        typedef viennagrid::null_type type;
       };
     }
   }

@@ -381,9 +381,9 @@ namespace viennagrid
     };
 
     template<typename SomethingT>
-    struct element<SomethingT, viennagrid::meta::null_type>
+    struct element<SomethingT, viennagrid::null_type>
     {
-      typedef viennagrid::meta::null_type type;
+      typedef viennagrid::null_type type;
     };
 
     /** @brief Convenience metafunction for the type retrieval of a vertex

@@ -59,9 +59,9 @@ namespace viennagrid
       };
 
       template<typename ElementTagT>
-      struct storage_layout_config<ElementTagT, viennagrid::meta::null_type>
+      struct storage_layout_config<ElementTagT, viennagrid::null_type>
       {
-        typedef viennagrid::meta::null_type type;
+        typedef viennagrid::null_type type;
       };
 
 
@@ -112,7 +112,7 @@ namespace viennagrid
             boundary_storage_layout,
 
             viennagrid::config::element_appendix_type_tag,
-            viennagrid::meta::null_type
+            viennagrid::null_type
         >::type type;
       };
 
@@ -130,10 +130,10 @@ namespace viennagrid
             container_tag,
 
             viennagrid::config::element_boundary_storage_layout_tag,
-            viennagrid::meta::null_type,
+            viennagrid::null_type,
 
             viennagrid::config::element_appendix_type_tag,
-            viennagrid::meta::null_type
+            viennagrid::null_type
         >::type type;
       };
 
@@ -192,7 +192,7 @@ namespace viennagrid
       struct full_mesh_config
       {
         typedef typename full_topology_config<CellTagT, HandleTagT, VertexContainerTagT, CellContainerTagT>::type MeshConfig;
-        typedef typename query<MeshConfig, meta::null_type, vertex_tag>::type VertexConfig;
+        typedef typename query<MeshConfig, null_type, vertex_tag>::type VertexConfig;
 
         typedef typename viennagrid::meta::typemap::result_of::insert_or_modify<
             MeshConfig,
@@ -253,9 +253,9 @@ namespace viennagrid
       };
 
       template<typename WrappedConfigT>
-      struct element_container_typemap<WrappedConfigT, viennagrid::meta::null_type>
+      struct element_container_typemap<WrappedConfigT, viennagrid::null_type>
       {
-          typedef viennagrid::meta::null_type type;
+          typedef viennagrid::null_type type;
       };
     }
 
@@ -281,9 +281,9 @@ namespace viennagrid
     struct coboundary_container_collection_per_element_typemap;
 
     template<typename WrappedConfigType, typename ElementTagT>
-    struct coboundary_container_collection_per_element_typemap<WrappedConfigType, ElementTagT, viennagrid::meta::null_type>
+    struct coboundary_container_collection_per_element_typemap<WrappedConfigType, ElementTagT, viennagrid::null_type>
     {
-        typedef viennagrid::meta::null_type type;
+        typedef viennagrid::null_type type;
     };
 
     template<typename WrappedConfigType, typename ElementTagT, typename BoundaryElementTagT, typename tail>
@@ -317,9 +317,9 @@ namespace viennagrid
     struct coboundary_container_collection_typemap;
 
     template<typename WrappedConfigType>
-    struct coboundary_container_collection_typemap<WrappedConfigType, viennagrid::meta::null_type>
+    struct coboundary_container_collection_typemap<WrappedConfigType, viennagrid::null_type>
     {
-      typedef viennagrid::meta::null_type type;
+      typedef viennagrid::null_type type;
     };
 
     template<typename WrappedConfigType, typename ElementTagT, typename tail>
@@ -343,9 +343,9 @@ namespace viennagrid
     struct neighbour_container_collection_per_element_typemap;
 
     template<typename WrappedConfigType, typename ElementTagT>
-    struct neighbour_container_collection_per_element_typemap<WrappedConfigType, ElementTagT, viennagrid::meta::null_type>
+    struct neighbour_container_collection_per_element_typemap<WrappedConfigType, ElementTagT, viennagrid::null_type>
     {
-      typedef viennagrid::meta::null_type type;
+      typedef viennagrid::null_type type;
     };
 
     template<typename WrappedConfigType, typename ElementTagT, typename ConnectorElementTagT, typename tail>
@@ -378,9 +378,9 @@ namespace viennagrid
     struct neighbour_container_collection_typemap;
 
     template<typename WrappedConfigType>
-    struct neighbour_container_collection_typemap<WrappedConfigType, viennagrid::meta::null_type>
+    struct neighbour_container_collection_typemap<WrappedConfigType, viennagrid::null_type>
     {
-      typedef viennagrid::meta::null_type type;
+      typedef viennagrid::null_type type;
     };
 
     template<typename WrappedConfigType, typename ElementTagT, typename tail>
@@ -401,7 +401,7 @@ namespace viennagrid
     struct topologic_cell_dimension;
 
     template<>
-    struct topologic_cell_dimension<viennagrid::meta::null_type>
+    struct topologic_cell_dimension<viennagrid::null_type>
     {
       static const int value = -1;
     };
@@ -423,9 +423,9 @@ namespace viennagrid
     struct elements_of_topologic_dim;
 
     template<int TopologicDimensionV>
-    struct elements_of_topologic_dim< viennagrid::meta::null_type, TopologicDimensionV >
+    struct elements_of_topologic_dim< viennagrid::null_type, TopologicDimensionV >
     {
-      typedef viennagrid::meta::null_type type;
+      typedef viennagrid::null_type type;
     };
 
     template<typename ElementTypeOrTagT, typename TailT, int TopologicDimensionV>
@@ -460,9 +460,9 @@ namespace viennagrid
     struct boundary_information_collection_typemap_impl;
 
     template<typename WrappedConfigType>
-    struct boundary_information_collection_typemap_impl<WrappedConfigType, viennagrid::meta::null_type>
+    struct boundary_information_collection_typemap_impl<WrappedConfigType, viennagrid::null_type>
     {
-      typedef viennagrid::meta::null_type type;
+      typedef viennagrid::null_type type;
     };
 
     template<typename WrappedConfigType, typename ElementTagT, typename TailT>

@@ -186,7 +186,7 @@ namespace viennagrid
 
 
   template<typename element_tag, typename bnd_cell_container_type_, typename tail>
-  class boundary_element_layer<element_tag, viennagrid::meta::typelist_t< viennagrid::meta::static_pair<bnd_cell_container_type_, viennagrid::meta::null_type>, tail > > :
+  class boundary_element_layer<element_tag, viennagrid::meta::typelist_t< viennagrid::meta::static_pair<bnd_cell_container_type_, viennagrid::null_type>, tail > > :
       public boundary_element_layer<element_tag, tail>
   {
   public:
@@ -274,7 +274,7 @@ namespace viennagrid
   };
 
   template<typename element_tag>
-  class boundary_element_layer<element_tag, viennagrid::meta::null_type >
+  class boundary_element_layer<element_tag, viennagrid::null_type >
   {
   public:
 
@@ -305,9 +305,9 @@ namespace viennagrid
     struct boundary_element_typelist;
 
     template<>
-    struct boundary_element_typelist<viennagrid::meta::null_type>
+    struct boundary_element_typelist<viennagrid::null_type>
     {
-      typedef viennagrid::meta::null_type type;
+      typedef viennagrid::null_type type;
     };
 
     template<typename boundary_cell_container_type, typename orientation_container_type, typename tail>
@@ -331,9 +331,9 @@ namespace viennagrid
     struct boundary_element_taglist;
 
     template<>
-    struct boundary_element_taglist<viennagrid::meta::null_type>
+    struct boundary_element_taglist<viennagrid::null_type>
     {
-      typedef viennagrid::meta::null_type type;
+      typedef viennagrid::null_type type;
     };
 
     template<typename boundary_cell_container_type, typename orientation_container_type, typename tail>
@@ -360,9 +360,9 @@ namespace viennagrid
     struct container_of_tag_for_element;
 
     template<typename tag>
-    struct container_of_tag_for_element< viennagrid::meta::null_type, tag >
+    struct container_of_tag_for_element< viennagrid::null_type, tag >
     {
-      typedef viennagrid::meta::null_type type;
+      typedef viennagrid::null_type type;
     };
 
     template<typename container_pair, typename tail, typename tag>
@@ -386,9 +386,9 @@ namespace viennagrid
     struct container_of_dimension_for_element;
 
     template<int dim>
-    struct container_of_dimension_for_element< viennagrid::meta::null_type, dim >
+    struct container_of_dimension_for_element< viennagrid::null_type, dim >
     {
-      typedef viennagrid::meta::null_type type;
+      typedef viennagrid::null_type type;
     };
 
     template<typename container_pair, typename tail, int dim>
@@ -410,9 +410,9 @@ namespace viennagrid
     struct container_of_tag_for_collection;
 
     template<typename element_tag>
-    struct container_of_tag_for_collection<viennagrid::meta::null_type, element_tag>
+    struct container_of_tag_for_collection<viennagrid::null_type, element_tag>
     {
-      typedef viennagrid::meta::null_type type;
+      typedef viennagrid::null_type type;
     };
 
     template<typename element_type, typename container_type, typename tail, typename element_tag>
@@ -431,9 +431,9 @@ namespace viennagrid
     struct container_of_dimension_for_collection;
 
     template<int dim>
-    struct container_of_dimension_for_collection<viennagrid::meta::null_type, dim>
+    struct container_of_dimension_for_collection<viennagrid::null_type, dim>
     {
-      typedef viennagrid::meta::null_type type;
+      typedef viennagrid::null_type type;
     };
 
     template<typename element_type, typename container_type, typename tail, int dim>
@@ -646,7 +646,7 @@ namespace viennagrid
           const static bool value =
           !viennagrid::meta::EQUAL<
               typename container_of_tag< element_t<element_tag_, WrappedConfigType>, boundary_cell_tag >::type,
-              viennagrid::meta::null_type>::value;
+              viennagrid::null_type>::value;
       };
 
 
@@ -868,7 +868,7 @@ namespace viennagrid
 
 
 
-  inline std::ostream & operator<<(std::ostream & os, viennagrid::meta::null_type) { return os; }
+  inline std::ostream & operator<<(std::ostream & os, viennagrid::null_type) { return os; }
 
 
   /** @brief Overload for the output streaming operator for the vertex type */

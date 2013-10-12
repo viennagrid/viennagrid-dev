@@ -585,9 +585,9 @@ namespace viennagrid
       struct view_container_typemap;
 
       template<typename view_container_config>
-      struct view_container_typemap<viennagrid::meta::null_type, view_container_config>
+      struct view_container_typemap<viennagrid::null_type, view_container_config>
       {
-        typedef viennagrid::meta::null_type type;
+        typedef viennagrid::null_type type;
       };
 
       template<typename value_type, typename container_type, typename tail, typename view_container_config>
@@ -642,7 +642,7 @@ namespace viennagrid
     struct set_base_container_helper;
 
     template<>
-    struct set_base_container_helper<viennagrid::meta::null_type>
+    struct set_base_container_helper<viennagrid::null_type>
     {
       template<typename base_container_collection_type, typename view_container_collection_type>
       static void exec( base_container_collection_type &, view_container_collection_type & ) {}

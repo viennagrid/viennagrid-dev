@@ -149,7 +149,7 @@ namespace viennagrid
 
   /** @brief For internal use only */
   template<typename MeshT, typename ToEraseViewT, typename HandleT>
-  struct mark_referencing_elements_impl<MeshT, ToEraseViewT, HandleT, viennagrid::meta::null_type >
+  struct mark_referencing_elements_impl<MeshT, ToEraseViewT, HandleT, viennagrid::null_type >
   {
     static void mark(MeshT &, ToEraseViewT &, HandleT)
     {

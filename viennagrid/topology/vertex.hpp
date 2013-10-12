@@ -26,7 +26,7 @@ namespace viennagrid
   template <>
   struct simplex_tag<0>
   {
-    typedef viennagrid::meta::null_type facet_tag;
+    typedef viennagrid::null_type facet_tag;
 
     static const int dim = 0;
     static std::string name() { return "Vertex"; }
