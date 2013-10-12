@@ -180,9 +180,11 @@ int main()
     }
 
 
+    std::cout << "-----------------------------------------------" << std::endl;
+    std::cout << " \\o/    Tutorial finished successfully!    \\o/ " << std::endl;
+    std::cout << "-----------------------------------------------" << std::endl;
 
-
-    return 0;
+    return EXIT_SUCCESS;
 }
 
 

@@ -150,7 +150,12 @@ int main()
     std::copy( const_coboundary_range.begin(), const_coboundary_range.end(), std::ostream_iterator<TriangleType>(cout, "\n") );
     cout << endl;
 
-    return 0;
+
+    std::cout << "-----------------------------------------------" << std::endl;
+    std::cout << " \\o/    Tutorial finished successfully!    \\o/ " << std::endl;
+    std::cout << "-----------------------------------------------" << std::endl;
+
+    return EXIT_SUCCESS;
 }
 
 

@@ -280,5 +280,8 @@ int main()
         viennagrid::meta::null_type
     >();
 
+    std::cout << "*******************************" << std::endl;
+    std::cout << "* Test finished successfully! *" << std::endl;
+    std::cout << "*******************************" << std::endl;
     return EXIT_SUCCESS;
 }

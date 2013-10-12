@@ -651,5 +651,8 @@ int main()
   else
     return EXIT_FAILURE;
 
+  std::cout << "*******************************" << std::endl;
+  std::cout << "* Test finished successfully! *" << std::endl;
+  std::cout << "*******************************" << std::endl;
   return EXIT_SUCCESS;
 }

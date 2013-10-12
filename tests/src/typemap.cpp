@@ -238,5 +238,8 @@ int main()
     // this should not work and generate a compiler error
     // viennagrid::meta::make_typemap<int, unsigned int, char, unsigned char, int, unsigned short>::type tmp;
 
+    std::cout << "*******************************" << std::endl;
+    std::cout << "* Test finished successfully! *" << std::endl;
+    std::cout << "*******************************" << std::endl;
     return EXIT_SUCCESS;
 }

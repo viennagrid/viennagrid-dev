@@ -82,8 +82,11 @@ int main()
 
     std::cout << viennagrid::elements<viennagrid::polygon_tag>(mesh)[0] << std::endl;
 
+    std::cout << "-----------------------------------------------" << std::endl;
+    std::cout << " \\o/    Tutorial finished successfully!    \\o/ " << std::endl;
+    std::cout << "-----------------------------------------------" << std::endl;
 
-    return 0;
+    return EXIT_SUCCESS;
 }
 
 

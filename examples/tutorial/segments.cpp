@@ -202,5 +202,9 @@ int main()
   for (vertex_range::iterator it = vertices.begin(); it != vertices.end(); ++it)
     std::cout << *it << std::endl;
 
-    return 0;
+  std::cout << "-----------------------------------------------" << std::endl;
+  std::cout << " \\o/    Tutorial finished successfully!    \\o/ " << std::endl;
+  std::cout << "-----------------------------------------------" << std::endl;
+
+  return EXIT_SUCCESS;
 }
