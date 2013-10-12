@@ -317,9 +317,9 @@ namespace viennagrid
 
   /** @brief Public interface for refinement of a mesh with explicit point accessor, edge refinement accessor and temporary accessors
    *
-   * @param ElementTypeOrTagT                 The element type/tag which elements are refined
-   * @param mesh_in                         Input mesh
-   * @param mesh_out                        Output refined mesh
+   * @tparam ElementTypeOrTagT                The element type/tag which elements are refined
+   * @param mesh_in                           Input mesh
+   * @param mesh_out                          Output refined mesh
    * @param point_accessor_in                 Point accessor for input points
    * @param edge_refinement_flag_accessor     Accessor storing flags if an edge is marked for refinement
    * @param vertex_to_vertex_handle_accessor  Temporary accessor for vertex to vertex mapping
@@ -341,9 +341,9 @@ namespace viennagrid
 
   /** @brief Public interface for refinement of a mesh with explicit point accessor and edge refinement accessor.
    *
-   * @param ElementTypeOrTagT                 The element type/tag which elements are refined
-   * @param mesh_in                         Input mesh
-   * @param mesh_out                        Output refined mesh
+   * @tparam ElementTypeOrTagT                The element type/tag which elements are refined
+   * @param mesh_in                           Input mesh
+   * @param mesh_out                          Output refined mesh
    * @param point_accessor_in                 Point accessor for input points
    * @param edge_refinement_flag_accessor     Accessor storing flags if an edge is marked for refinement
    */
@@ -370,9 +370,9 @@ namespace viennagrid
 
   /** @brief Public interface for refinement of a mesh with edge refinement accessor.
    *
-   * @param ElementTypeOrTagT                 The element type/tag which elements are refined
-   * @param mesh_in                         Input mesh
-   * @param mesh_out                        Output refined mesh
+   * @tparam ElementTypeOrTagT                The element type/tag which elements are refined
+   * @param mesh_in                           Input mesh
+   * @param mesh_out                          Output refined mesh
    * @param edge_refinement_flag_accessor     Accessor storing flags if an edge is marked for refinement
    */
   template <typename ElementTypeOrTagT, typename WrappedMeshConfigInT, typename WrappedMeshConfigOutT, typename EdgeRefinementFlagAccessor>
@@ -394,11 +394,11 @@ namespace viennagrid
 
   /** @brief Public interface for refinement of a mesh with explicit point accessor and cell refinement accessor.
    *
-   * @param ElementTypeOrTagT                 The element type/tag which elements are refined
-   * @param mesh_in                         Input mesh
-   * @param mesh_out                        Output refined mesh
+   * @tparam ElementTypeOrTagT                The element type/tag which elements are refined
+   * @param mesh_in                           Input mesh
+   * @param mesh_out                          Output refined mesh
    * @param point_accessor_in                 Point accessor for input points
-   * @param edge_refinement_flag_accessor     Accessor storing flags if an edge is marked for refinement
+   * @param cell_refinement_flag_accessor     Accessor storing flags if a cell is marked for refinement
    */
   template <typename ElementTypeOrTagT, typename WrappedMeshConfigInT, typename WrappedMeshConfigOutT, typename PointAccessorType, typename CellRefinementFlagAccessor>
   void element_refine(mesh_t<WrappedMeshConfigInT> const & mesh_in,
@@ -423,10 +423,10 @@ namespace viennagrid
 
   /** @brief Public interface for refinement of a mesh with cell refinement accessor.
    *
-   * @param ElementTypeOrTagT                 The element type/tag which elements are refined
-   * @param mesh_in                         Input mesh
-   * @param mesh_out                        Output refined mesh
-   * @param edge_refinement_flag_accessor     Accessor storing flags if an edge is marked for refinement
+   * @tparam ElementTypeOrTagT                The element type/tag which elements are refined
+   * @param mesh_in                           Input mesh
+   * @param mesh_out                          Output refined mesh
+   * @param cell_refinement_flag_accessor     Accessor storing flags if a cell is marked for refinement
    */
   template <typename ElementTypeOrTagT, typename WrappedMeshConfigInT, typename WrappedMeshConfigOutT, typename CellRefinementFlagAccessor>
   void element_refine(mesh_t<WrappedMeshConfigInT> const & mesh_in,
@@ -440,7 +440,7 @@ namespace viennagrid
    *
    * @param mesh_in                         Input mesh
    * @param mesh_out                        Output refined mesh
-   * @param edge_refinement_flag_accessor     Accessor storing flags if an edge is marked for refinement
+   * @param cell_refinement_flag_accessor     Accessor storing flags if a cell is marked for refinement
    */
   template <typename WrappedMeshConfigInT, typename WrappedMeshConfigOutT, typename CellRefinementFlagAccessor>
   void cell_refine(mesh_t<WrappedMeshConfigInT> const & mesh_in,
@@ -458,9 +458,9 @@ namespace viennagrid
 
   /** @brief Public interface for uniform refinement of a mesh with explicit point accessor, edge refinement accessor and temporary accessors.
    *
-   * @param ElementTypeOrTagT                 The element type/tag which elements are refined
-   * @param mesh_in                         Input mesh
-   * @param mesh_out                        Output refined mesh
+   * @tparam ElementTypeOrTagT                The element type/tag which elements are refined
+   * @param mesh_in                           Input mesh
+   * @param mesh_out                          Output refined mesh
    * @param point_accessor_in                 Point accessor for input points
    * @param edge_refinement_flag_accessor     Accessor storing flags if an edge is marked for refinement
    * @param vertex_to_vertex_handle_accessor  Temporary accessor for vertex to vertex mapping
@@ -481,9 +481,9 @@ namespace viennagrid
 
   /** @brief Public interface for uniform refinement of a mesh with explicit point accessor and edge refinement accessor.
    *
-   * @param ElementTypeOrTagT                 The element type/tag which elements are refined
-   * @param mesh_in                         Input mesh
-   * @param mesh_out                        Output refined mesh
+   * @tparam ElementTypeOrTagT                The element type/tag which elements are refined
+   * @param mesh_in                           Input mesh
+   * @param mesh_out                          Output refined mesh
    * @param point_accessor_in                 Point accessor for input points
    * @param edge_refinement_flag_accessor     Accessor storing flags if an edge is marked for refinement
    */
@@ -499,9 +499,9 @@ namespace viennagrid
 
   /** @brief Public interface for uniform refinement of a mesh with edge refinement accessor.
    *
-   * @param ElementTypeOrTagT                 The element type/tag which elements are refined
-   * @param mesh_in                         Input mesh
-   * @param mesh_out                        Output refined mesh
+   * @tparam ElementTypeOrTagT                The element type/tag which elements are refined
+   * @param mesh_in                           Input mesh
+   * @param mesh_out                          Output refined mesh
    * @param edge_refinement_flag_accessor     Accessor storing flags if an edge is marked for refinement
    */
   template <typename ElementTypeOrTagT, typename WrappedMeshConfigInT, typename WrappedMeshConfigOutT, typename EdgeRefinementFlagAccessor>
@@ -514,7 +514,7 @@ namespace viennagrid
 
   /** @brief Public interface for uniform refinement of a mesh.
    *
-   * @param ElementTypeOrTagT                 The element type/tag which elements are refined
+   * @tparam ElementTypeOrTagT              The element type/tag which elements are refined
    * @param mesh_in                         Input mesh
    * @param mesh_out                        Output refined mesh
    */
@@ -551,10 +551,10 @@ namespace viennagrid
 
   /** @brief Public interface for refinement of a mesh with segmentation providing explicit point accessor, edge refinement accessor and temporary accessors
    *
-   * @param ElementTypeOrTagT                 The element type/tag which elements are refined
-   * @param mesh_in                         Input mesh
+   * @tparam ElementTypeOrTagT                The element type/tag which elements are refined
+   * @param mesh_in                           Input mesh
    * @param segmentation_in                   Input segmentation
-   * @param mesh_out                        Output refined mesh
+   * @param mesh_out                          Output refined mesh
    * @param segmentation_out                  Output refined segmentation
    * @param point_accessor_in                 Point accessor for input points
    * @param edge_refinement_flag_accessor     Accessor storing flags if an edge is marked for refinement
@@ -582,10 +582,10 @@ namespace viennagrid
 
   /** @brief Public interface for refinement of a mesh with segmentation providing explicit point accessor and edge refinement accessor.
    *
-   * @param ElementTypeOrTagT                 The element type/tag which elements are refined
-   * @param mesh_in                         Input mesh
+   * @tparam ElementTypeOrTagT                The element type/tag which elements are refined
+   * @param mesh_in                           Input mesh
    * @param segmentation_in                   Input segmentation
-   * @param mesh_out                        Output refined mesh
+   * @param mesh_out                          Output refined mesh
    * @param segmentation_out                  Output refined segmentation
    * @param point_accessor_in                 Point accessor for input points
    * @param edge_refinement_flag_accessor     Accessor storing flags if an edge is marked for refinement
@@ -620,10 +620,10 @@ namespace viennagrid
 
   /** @brief Public interface for refinement of a mesh with segmentation providing edge refinement accessor.
    *
-   * @param ElementTypeOrTagT                 The element type/tag which elements are refined
-   * @param mesh_in                         Input mesh
+   * @tparam ElementTypeOrTagT                The element type/tag which elements are refined
+   * @param mesh_in                           Input mesh
    * @param segmentation_in                   Input segmentation
-   * @param mesh_out                        Output refined mesh
+   * @param mesh_out                          Output refined mesh
    * @param segmentation_out                  Output refined segmentation
    * @param edge_refinement_flag_accessor     Accessor storing flags if an edge is marked for refinement
    */
@@ -652,13 +652,13 @@ namespace viennagrid
 
   /** @brief Public interface for refinement of a mesh with segmentation providing explicit point accessor and cell refinement accessor.
    *
-   * @param ElementTypeOrTagT                 The element type/tag which elements are refined
-   * @param mesh_in                         Input mesh
+   * @tparam ElementTypeOrTagT                The element type/tag which elements are refined
+   * @param mesh_in                           Input mesh
    * @param segmentation_in                   Input segmentation
-   * @param mesh_out                        Output refined mesh
+   * @param mesh_out                          Output refined mesh
    * @param segmentation_out                  Output refined segmentation
    * @param point_accessor_in                 Point accessor for input points
-   * @param edge_refinement_flag_accessor     Accessor storing flags if an edge is marked for refinement
+   * @param cell_refinement_flag_accessor     Accessor storing flags if a cell is marked for refinement
    */
   template <typename ElementTypeOrTagT,
             typename WrappedMeshConfigInT,   typename WrappedSegmentationConfigInT,
@@ -691,12 +691,12 @@ namespace viennagrid
 
   /** @brief Public interface for refinement of a mesh with segmentation providing cell refinement accessor.
    *
-   * @param ElementTypeOrTagT                 The element type/tag which elements are refined
-   * @param mesh_in                         Input mesh
+   * @tparam ElementTypeOrTagT                The element type/tag which elements are refined
+   * @param mesh_in                           Input mesh
    * @param segmentation_in                   Input segmentation
-   * @param mesh_out                        Output refined mesh
+   * @param mesh_out                          Output refined mesh
    * @param segmentation_out                  Output refined segmentation
-   * @param edge_refinement_flag_accessor     Accessor storing flags if an edge is marked for refinement
+   * @param cell_refinement_flag_accessor     Accessor storing flags if a cell is marked for refinement
    */
   template <typename ElementTypeOrTagT,
             typename WrappedMeshConfigInT,   typename WrappedSegmentationConfigInT,
@@ -714,11 +714,11 @@ namespace viennagrid
 
   /** @brief Public interface for refinement of cells of a mesh with segmentation providing cell refinement accessor. Will fail if there is more than one cell type.
    *
-   * @param mesh_in                         Input mesh
+   * @param mesh_in                           Input mesh
    * @param segmentation_in                   Input segmentation
-   * @param mesh_out                        Output refined mesh
+   * @param mesh_out                          Output refined mesh
    * @param segmentation_out                  Output refined segmentation
-   * @param edge_refinement_flag_accessor     Accessor storing flags if an edge is marked for refinement
+   * @param cell_refinement_flag_accessor     Accessor storing flags if a cell is marked for refinement
    */
   template <typename WrappedMeshConfigInT,   typename WrappedSegmentationConfigInT,
             typename WrappedMeshConfigOutT,  typename WrappedSegmentationConfigOutT,
@@ -742,10 +742,10 @@ namespace viennagrid
 
   /** @brief Public interface for uniform refinement of a mesh with segmentation providing explicit point accessor, edge refinement accessor and temporary accessors.
    *
-   * @param ElementTypeOrTagT                 The element type/tag which elements are refined
-   * @param mesh_in                         Input mesh
+   * @tparam ElementTypeOrTagT                The element type/tag which elements are refined
+   * @param mesh_in                           Input mesh
    * @param segmentation_in                   Input segmentation
-   * @param mesh_out                        Output refined mesh
+   * @param mesh_out                          Output refined mesh
    * @param segmentation_out                  Output refined segmentation
    * @param point_accessor_in                 Point accessor for input points
    * @param edge_refinement_flag_accessor     Accessor storing flags if an edge is marked for refinement
@@ -773,10 +773,10 @@ namespace viennagrid
 
   /** @brief Public interface for uniform refinement of a mesh with segmentation providing explicit point accessor and edge refinement accessor.
    *
-   * @param ElementTypeOrTagT                 The element type/tag which elements are refined
-   * @param mesh_in                         Input mesh
+   * @tparam ElementTypeOrTagT                The element type/tag which elements are refined
+   * @param mesh_in                           Input mesh
    * @param segmentation_in                   Input segmentation
-   * @param mesh_out                        Output refined mesh
+   * @param mesh_out                          Output refined mesh
    * @param segmentation_out                  Output refined segmentation
    * @param point_accessor_in                 Point accessor for input points
    * @param edge_refinement_flag_accessor     Accessor storing flags if an edge is marked for refinement
@@ -800,10 +800,10 @@ namespace viennagrid
 
   /** @brief Public interface for uniform refinement of a mesh with segmentation providing edge refinement accessor.
    *
-   * @param ElementTypeOrTagT                 The element type/tag which elements are refined
-   * @param mesh_in                         Input mesh
+   * @tparam ElementTypeOrTagT                The element type/tag which elements are refined
+   * @param mesh_in                           Input mesh
    * @param segmentation_in                   Input segmentation
-   * @param mesh_out                        Output refined mesh
+   * @param mesh_out                          Output refined mesh
    * @param segmentation_out                  Output refined segmentation
    * @param edge_refinement_flag_accessor     Accessor storing flags if an edge is marked for refinement
    */
@@ -820,10 +820,10 @@ namespace viennagrid
 
   /** @brief Public interface for uniform refinement of a mesh with segmentation.
    *
-   * @param ElementTypeOrTagT                 The element type/tag which elements are refined
-   * @param mesh_in                         Input mesh
+   * @tparam ElementTypeOrTagT                The element type/tag which elements are refined
+   * @param mesh_in                           Input mesh
    * @param segmentation_in                   Input segmentation
-   * @param mesh_out                        Output refined mesh
+   * @param mesh_out                          Output refined mesh
    * @param segmentation_out                  Output refined segmentation
    */
   template <typename ElementTypeOrTagT,
@@ -841,9 +841,9 @@ namespace viennagrid
 
   /** @brief Public interface for uniform refinement of cells of a mesh with segmentation. Will fail if there is more than one cell type.
    *
-   * @param mesh_in                         Input mesh
+   * @param mesh_in                           Input mesh
    * @param segmentation_in                   Input segmentation
-   * @param mesh_out                        Output refined mesh
+   * @param mesh_out                          Output refined mesh
    * @param segmentation_out                  Output refined segmentation
    */
   template <typename WrappedMeshConfigInT,   typename WrappedSegmentationConfigInT,

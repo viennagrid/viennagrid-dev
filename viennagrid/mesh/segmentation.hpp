@@ -274,9 +274,9 @@ namespace viennagrid
 
   /** @brief Creates a view out of a mesh using the mesh_proxy object
     *
-    * @tparam MeshOrSegmentHandleT    The mesh or segment type from which the mesh view is created
-    * @param  mesh              The mesh or segment object from which the mesh view is created
-    * @return                     a mesh_proxy object holding the host mesh/segment object, can be assigned to a mesh_t object
+    * @tparam SegmentationT          The segmentation type from which the mesh view is created
+    * @param  segment                The segment object from which the mesh view is created
+    * @return                        a mesh_proxy object holding the host mesh/segment object, can be assigned to a mesh_t object
     */
   template<typename SegmentationT>
   mesh_proxy< typename SegmentationT::view_type > make_view(segment_handle_t<SegmentationT> & segment)
@@ -294,7 +294,9 @@ namespace viennagrid
     * @return                     A reference to the point
     */
   template<typename SegmentationType>
-  typename result_of::point< segment_handle_t<SegmentationType> >::type & point(segment_handle_t<SegmentationType> & segment, typename result_of::vertex< segment_handle_t<SegmentationType> >::type & vertex)
+  typename result_of::point< segment_handle_t<SegmentationType> >::type &
+  point(segment_handle_t<SegmentationType> & segment,
+        typename result_of::vertex< segment_handle_t<SegmentationType> >::type & vertex)
   { return point( segment.view(), vertex ); }
 
   /** @brief Function for obtaining the point from a vertex, const version
@@ -305,7 +307,9 @@ namespace viennagrid
     * @return                     A const reference to the point
     */
   template<typename SegmentationType>
-  typename result_of::point< segment_handle_t<SegmentationType> >::type const & point( segment_handle_t<SegmentationType> const & segment, typename result_of::vertex< segment_handle_t<SegmentationType> >::type const & vertex)
+  typename result_of::point< segment_handle_t<SegmentationType> >::type const &
+  point( segment_handle_t<SegmentationType> const & segment,
+         typename result_of::vertex< segment_handle_t<SegmentationType> >::type const & vertex)
   { return point( segment.view(), vertex ); }
 
   /** @brief Function for obtaining the point from a vertex
@@ -316,8 +320,10 @@ namespace viennagrid
     * @return                     A reference to the point
     */
   template<typename SegmentationType>
-  typename result_of::point< segment_handle_t<SegmentationType> >::type & point(segment_handle_t<SegmentationType> & segment, typename result_of::vertex_handle< segment_handle_t<SegmentationType> >::type vertex)
-  { return point( segment.view(), vertex ); }
+  typename result_of::point< segment_handle_t<SegmentationType> >::type &
+  point(segment_handle_t<SegmentationType> & segment,
+        typename result_of::vertex_handle< segment_handle_t<SegmentationType> >::type vertex_handle)
+  { return point( segment.view(), vertex_handle ); }
 
   /** @brief Function for obtaining the point from a vertex, const version
     *
@@ -327,8 +333,10 @@ namespace viennagrid
     * @return                     A const reference to the point
     */
   template<typename SegmentationType>
-  typename result_of::point< segment_handle_t<SegmentationType> >::type const & point( segment_handle_t<SegmentationType> const & segment, typename result_of::const_vertex_handle< segment_handle_t<SegmentationType> >::type vertex)
-  { return point( segment.view(), vertex ); }
+  typename result_of::point< segment_handle_t<SegmentationType> >::type const &
+  point( segment_handle_t<SegmentationType> const & segment,
+         typename result_of::const_vertex_handle< segment_handle_t<SegmentationType> >::type vertex_handle)
+  { return point( segment.view(), vertex_handle ); }
 
 
 

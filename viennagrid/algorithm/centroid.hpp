@@ -188,8 +188,8 @@ namespace viennagrid
   /** @brief The public interface function for the computation of a centroid of a mesh with explicit point accessor.
    *
    * @tparam ElementTypeOrTagT    The element type/tag of the elements for which the centroid is calculcated
-   * @param  mesh               The mesh which centroid is to be calculated
-   * @param  accessor             The point accessor providing point information for geometric calculation
+   * @param  mesh                 The mesh which centroid is to be calculated
+   * @param  point_accessor       The point accessor providing point information for geometric calculation
    */
   template<typename ElementTypeOrTagT, typename WrappedConfigType, typename PointAccessorType>
   typename viennagrid::result_of::point< mesh_t<WrappedConfigType> >::type
@@ -201,7 +201,7 @@ namespace viennagrid
   /** @brief The public interface function for the computation of a centroid of a mesh with explicit point accessor. Cells are used for centroid calculation, will fail if there is more than one cell type.
    *
    * @param  mesh               The mesh which centroid is to be calculated
-   * @param  accessor             The point accessor providing point information for geometric calculation
+   * @param  point_accessor     The point accessor providing point information for geometric calculation
    */
   template<typename WrappedConfigType, typename PointAccessorType>
   typename viennagrid::result_of::point< mesh_t<WrappedConfigType> >::type
@@ -244,7 +244,7 @@ namespace viennagrid
    *
    * @tparam ElementTypeOrTagT    The element type/tag of the elements for which the centroid is calculcated
    * @param  segment              The segment which centroid is to be calculated
-   * @param  accessor             The point accessor providing point information for geometric calculation
+   * @param  point_accessor       The point accessor providing point information for geometric calculation
    */
   template<typename ElementTypeOrTagT, typename SegmentationT, typename PointAccessorType>
   typename viennagrid::result_of::point< segment_handle_t<SegmentationT> >::type
@@ -256,7 +256,7 @@ namespace viennagrid
   /** @brief The public interface function for the computation of a centroid of a segment with explicit point accessor. Cells are used for centroid calculation, will fail if there is more than one cell type.
    *
    * @param  segment              The segment which centroid is to be calculated
-   * @param  accessor             The point accessor providing point information for geometric calculation
+   * @param  point_accessor       The point accessor providing point information for geometric calculation
    */
   template<typename SegmentationT, typename PointAccessorType>
   typename viennagrid::result_of::point< segment_handle_t<SegmentationT> >::type

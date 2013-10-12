@@ -174,10 +174,10 @@ namespace viennagrid
     *
     * @tparam MeshT                   The mesh type in which the element to erase lives
     * @tparam MeshViewT               The mesh view type for all elements to erase
-    * @tparam HandleT                   The handle type of the element to delete
+    * @tparam HandleT                 The handle type of the element to delete
     * @param  mesh                    The host mesh object
-    * @param  elements_to_erase         A mesh view which stores all elements marked for deletion
-    * @param  host_element                  A handle object of the host element
+    * @param  element_view            A mesh view which stores all elements to be marked
+    * @param  host_element            A handle object of the host element
     */
   template<typename MeshT, typename MeshViewT, typename HandleT>
   void mark_referencing_elements( MeshT & mesh, MeshViewT & element_view, HandleT host_element )

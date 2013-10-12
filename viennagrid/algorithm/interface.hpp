@@ -199,8 +199,8 @@ namespace viennagrid
 
   /** @brief Public interface function for the detection of interface n-cells between two segments. No need to call this function explicitly, since it is called by is_interface()
    *
-   * @param seg1  The first segment
-   * @param seg2  The second segment
+   * @param seg0  The first segment
+   * @param seg1  The second segment
    */
   template <typename SegmentationType>
   void detect_interface(segment_handle_t<SegmentationType> & seg0,
@@ -239,8 +239,8 @@ namespace viennagrid
 
   /** @brief Returns true if the n-cell is located at the interface between two segments
    *
-   * @param seg1      The first segment
-   * @param seg2      The sevond segment
+   * @param seg0      The first segment
+   * @param seg1      The sevond segment
    * @param element   The element under test
    */
   template <typename SegmentationType, typename ElementType>
