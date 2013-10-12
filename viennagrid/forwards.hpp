@@ -210,8 +210,8 @@ namespace viennagrid
     template<typename ElementTag, typename BoundaryElementType>
     struct boundary_element_generator<ElementTag, vertex_tag, BoundaryElementType>
     {
-        template<typename element_type, typename inserter_type>
-        static void create_boundary_elements(element_type &, inserter_type &) {}
+      template<typename element_type, typename inserter_type>
+      static void create_boundary_elements(element_type &, inserter_type &) {}
     };
 
   }
@@ -335,7 +335,7 @@ namespace viennagrid
     template<typename SomethingT>
     struct coord
     {
-        typedef typename coord< typename point<SomethingT>::type >::type type;
+      typedef typename coord< typename point<SomethingT>::type >::type type;
     };
 
     /** @brief Metafunction for obtaining the geometric dimension of something
@@ -345,7 +345,7 @@ namespace viennagrid
     template<typename SomethingT>
     struct geometric_dimension
     {
-        static const int value = geometric_dimension< typename point<SomethingT>::type >::value;
+      static const int value = geometric_dimension< typename point<SomethingT>::type >::value;
     };
 
 
@@ -356,7 +356,7 @@ namespace viennagrid
     template<typename ElementT>
     struct id
     {
-        typedef typename ElementT::id_type type;
+      typedef typename ElementT::id_type type;
     };
 
 
@@ -371,19 +371,19 @@ namespace viennagrid
     template<typename element_tag, typename WrappedConfigType>
     struct element< element_t<element_tag, WrappedConfigType>, element_t<element_tag, WrappedConfigType> >
     {
-        typedef element_t<element_tag, WrappedConfigType> type;
+      typedef element_t<element_tag, WrappedConfigType> type;
     };
 
     template<typename element_tag, typename WrappedConfigType>
     struct element< element_t<element_tag, WrappedConfigType>, element_tag >
     {
-        typedef element_t<element_tag, WrappedConfigType> type;
+      typedef element_t<element_tag, WrappedConfigType> type;
     };
 
     template<typename SomethingT>
     struct element<SomethingT, viennagrid::meta::null_type>
     {
-        typedef viennagrid::meta::null_type type;
+      typedef viennagrid::meta::null_type type;
     };
 
     /** @brief Convenience metafunction for the type retrieval of a vertex
@@ -393,7 +393,7 @@ namespace viennagrid
     template<typename SomethingT>
     struct vertex
     {
-        typedef typename element<SomethingT, vertex_tag>::type type;
+      typedef typename element<SomethingT, vertex_tag>::type type;
     };
 
     /** @brief Convenience metafunction for the type retrieval of a line (same as edge)
@@ -403,7 +403,7 @@ namespace viennagrid
     template<typename SomethingT>
     struct line
     {
-        typedef typename element<SomethingT, line_tag>::type type;
+      typedef typename element<SomethingT, line_tag>::type type;
     };
 
     /** @brief Convenience metafunction for the type retrieval of a edge (same as line)
@@ -413,7 +413,7 @@ namespace viennagrid
     template<typename SomethingT>
     struct edge
     {
-        typedef typename element<SomethingT, edge_tag>::type type;
+      typedef typename element<SomethingT, edge_tag>::type type;
     };
 
     /** @brief Convenience metafunction for the type retrieval of a triangle
@@ -423,7 +423,7 @@ namespace viennagrid
     template<typename SomethingT>
     struct triangle
     {
-        typedef typename element<SomethingT, triangle_tag>::type type;
+      typedef typename element<SomethingT, triangle_tag>::type type;
     };
 
     /** @brief Convenience metafunction for the type retrieval of a quadrilateral
@@ -433,7 +433,7 @@ namespace viennagrid
     template<typename SomethingT>
     struct quadrilateral
     {
-        typedef typename element<SomethingT, quadrilateral_tag>::type type;
+      typedef typename element<SomethingT, quadrilateral_tag>::type type;
     };
 
     /** @brief Convenience metafunction for the type retrieval of a polygon
@@ -443,7 +443,7 @@ namespace viennagrid
     template<typename SomethingT>
     struct polygon
     {
-        typedef typename element<SomethingT, polygon_tag>::type type;
+      typedef typename element<SomethingT, polygon_tag>::type type;
     };
 
     /** @brief Convenience metafunction for the type retrieval of a plc
@@ -453,7 +453,7 @@ namespace viennagrid
     template<typename SomethingT>
     struct plc
     {
-        typedef typename element<SomethingT, plc_tag>::type type;
+      typedef typename element<SomethingT, plc_tag>::type type;
     };
 
     /** @brief Convenience metafunction for the type retrieval of a tetrahedron
@@ -463,7 +463,7 @@ namespace viennagrid
     template<typename SomethingT>
     struct tetrahedron
     {
-        typedef typename element<SomethingT, tetrahedron_tag>::type type;
+      typedef typename element<SomethingT, tetrahedron_tag>::type type;
     };
 
     /** @brief Convenience metafunction for the type retrieval of a hexahedron
@@ -473,7 +473,7 @@ namespace viennagrid
     template<typename SomethingT>
     struct hexahedron
     {
-        typedef typename element<SomethingT, hexahedron_tag>::type type;
+      typedef typename element<SomethingT, hexahedron_tag>::type type;
     };
 
 
@@ -492,8 +492,8 @@ namespace viennagrid
     template<typename SomethingT>
     struct cell_handle
     {
-        typedef typename cell_tag<SomethingT>::type cell_tag;
-        typedef typename handle<SomethingT, cell_tag>::type type;
+      typedef typename cell_tag<SomethingT>::type cell_tag;
+      typedef typename handle<SomethingT, cell_tag>::type type;
     };
 
     /** @brief Convenience metafunction for the type retrieval of a vertex handle
@@ -503,7 +503,7 @@ namespace viennagrid
     template<typename SomethingT>
     struct vertex_handle
     {
-        typedef typename handle<SomethingT, vertex_tag>::type type;
+      typedef typename handle<SomethingT, vertex_tag>::type type;
     };
 
     /** @brief Convenience metafunction for the type retrieval of a line handle (same as edge_handle)
@@ -513,7 +513,7 @@ namespace viennagrid
     template<typename SomethingT>
     struct line_handle
     {
-        typedef typename handle<SomethingT, line_tag>::type type;
+      typedef typename handle<SomethingT, line_tag>::type type;
     };
 
     /** @brief Convenience metafunction for the type retrieval of a line handle (same as line_handle)
@@ -523,7 +523,7 @@ namespace viennagrid
     template<typename SomethingT>
     struct edge_handle
     {
-        typedef typename handle<SomethingT, edge_tag>::type type;
+      typedef typename handle<SomethingT, edge_tag>::type type;
     };
 
     /** @brief Convenience metafunction for the type retrieval of a triangle handle
@@ -533,7 +533,7 @@ namespace viennagrid
     template<typename SomethingT>
     struct triangle_handle
     {
-        typedef typename handle<SomethingT, triangle_tag>::type type;
+      typedef typename handle<SomethingT, triangle_tag>::type type;
     };
 
     /** @brief Convenience metafunction for the type retrieval of a quadrilateral handle
@@ -543,7 +543,7 @@ namespace viennagrid
     template<typename SomethingT>
     struct quadrilateral_handle
     {
-        typedef typename handle<SomethingT, quadrilateral_tag>::type type;
+      typedef typename handle<SomethingT, quadrilateral_tag>::type type;
     };
 
     /** @brief Convenience metafunction for the type retrieval of a polygon handle
@@ -553,7 +553,7 @@ namespace viennagrid
     template<typename SomethingT>
     struct polygon_handle
     {
-        typedef typename handle<SomethingT, polygon_tag>::type type;
+      typedef typename handle<SomethingT, polygon_tag>::type type;
     };
 
     /** @brief Convenience metafunction for the type retrieval of a plc handle
@@ -563,7 +563,7 @@ namespace viennagrid
     template<typename SomethingT>
     struct plc_handle
     {
-        typedef typename handle<SomethingT, plc_tag>::type type;
+      typedef typename handle<SomethingT, plc_tag>::type type;
     };
 
     /** @brief Convenience metafunction for the type retrieval of a tetrahedron handle
@@ -573,7 +573,7 @@ namespace viennagrid
     template<typename SomethingT>
     struct tetrahedron_handle
     {
-        typedef typename handle<SomethingT, tetrahedron_tag>::type type;
+      typedef typename handle<SomethingT, tetrahedron_tag>::type type;
     };
 
     /** @brief Convenience metafunction for the type retrieval of a hexahedron handle
@@ -583,7 +583,7 @@ namespace viennagrid
     template<typename SomethingT>
     struct hexahedron_handle
     {
-        typedef typename handle<SomethingT, hexahedron_tag>::type type;
+      typedef typename handle<SomethingT, hexahedron_tag>::type type;
     };
 
 
@@ -603,8 +603,8 @@ namespace viennagrid
     template<typename SomethingT>
     struct const_cell_handle
     {
-        typedef typename cell_tag<SomethingT>::type cell_tag;
-        typedef typename const_handle<SomethingT, cell_tag>::type type;
+      typedef typename cell_tag<SomethingT>::type cell_tag;
+      typedef typename const_handle<SomethingT, cell_tag>::type type;
     };
 
     /** @brief Convenience metafunction for the type retrieval of a const vertex handle
@@ -614,7 +614,7 @@ namespace viennagrid
     template<typename SomethingT>
     struct const_vertex_handle
     {
-        typedef typename const_handle<SomethingT, vertex_tag>::type type;
+      typedef typename const_handle<SomethingT, vertex_tag>::type type;
     };
 
     /** @brief Convenience metafunction for the type retrieval of a const line handle (same as const_edge_handle)
@@ -624,7 +624,7 @@ namespace viennagrid
     template<typename SomethingT>
     struct const_line_handle
     {
-        typedef typename const_handle<SomethingT, line_tag>::type type;
+      typedef typename const_handle<SomethingT, line_tag>::type type;
     };
 
     /** @brief Convenience metafunction for the type retrieval of a const line handle (same as const_line_handle)
@@ -634,7 +634,7 @@ namespace viennagrid
     template<typename SomethingT>
     struct const_edge_handle
     {
-        typedef typename const_handle<SomethingT, edge_tag>::type type;
+      typedef typename const_handle<SomethingT, edge_tag>::type type;
     };
 
     /** @brief Convenience metafunction for the type retrieval of a const triangle handle
@@ -644,7 +644,7 @@ namespace viennagrid
     template<typename SomethingT>
     struct const_triangle_handle
     {
-        typedef typename const_handle<SomethingT, triangle_tag>::type type;
+      typedef typename const_handle<SomethingT, triangle_tag>::type type;
     };
 
     /** @brief Convenience metafunction for the type retrieval of a const quadrilateral handle
@@ -654,7 +654,7 @@ namespace viennagrid
     template<typename SomethingT>
     struct const_quadrilateral_handle
     {
-        typedef typename const_handle<SomethingT, quadrilateral_tag>::type type;
+      typedef typename const_handle<SomethingT, quadrilateral_tag>::type type;
     };
 
     /** @brief Convenience metafunction for the type retrieval of a const polygon handle
@@ -664,7 +664,7 @@ namespace viennagrid
     template<typename SomethingT>
     struct const_polygon_handle
     {
-        typedef typename const_handle<SomethingT, polygon_tag>::type type;
+      typedef typename const_handle<SomethingT, polygon_tag>::type type;
     };
 
     /** @brief Convenience metafunction for the type retrieval of a const plc handle
@@ -674,7 +674,7 @@ namespace viennagrid
     template<typename SomethingT>
     struct const_plc_handle
     {
-        typedef typename const_handle<SomethingT, plc_tag>::type type;
+      typedef typename const_handle<SomethingT, plc_tag>::type type;
     };
 
     /** @brief Convenience metafunction for the type retrieval of a const tetrahedron handle
@@ -684,7 +684,7 @@ namespace viennagrid
     template<typename SomethingT>
     struct const_tetrahedron_handle
     {
-        typedef typename const_handle<SomethingT, tetrahedron_tag>::type type;
+      typedef typename const_handle<SomethingT, tetrahedron_tag>::type type;
     };
 
     /** @brief Convenience metafunction for the type retrieval of a const hexahedron handle
@@ -694,7 +694,7 @@ namespace viennagrid
     template<typename SomethingT>
     struct const_hexahedron_handle
     {
-        typedef typename const_handle<SomethingT, hexahedron_tag>::type type;
+      typedef typename const_handle<SomethingT, hexahedron_tag>::type type;
     };
 
 
@@ -716,8 +716,8 @@ namespace viennagrid
     template<typename SomethingT>
     struct cell_range
     {
-        typedef typename cell_tag<SomethingT>::type cell_tag;
-        typedef typename element_range<SomethingT, cell_tag>::type type;
+      typedef typename cell_tag<SomethingT>::type cell_tag;
+      typedef typename element_range<SomethingT, cell_tag>::type type;
     };
 
     /** @brief Convenience metafunction for the type retrieval of a vertex range
@@ -727,7 +727,7 @@ namespace viennagrid
     template<typename SomethingT>
     struct vertex_range
     {
-        typedef typename element_range<SomethingT, vertex_tag>::type type;
+      typedef typename element_range<SomethingT, vertex_tag>::type type;
     };
 
     /** @brief Convenience metafunction for the type retrieval of a line range (same as edge_range)
@@ -737,7 +737,7 @@ namespace viennagrid
     template<typename SomethingT>
     struct line_range
     {
-        typedef typename element_range<SomethingT, line_tag>::type type;
+      typedef typename element_range<SomethingT, line_tag>::type type;
     };
 
     /** @brief Convenience metafunction for the type retrieval of a edge range (same as line_range)
@@ -747,7 +747,7 @@ namespace viennagrid
     template<typename SomethingT>
     struct edge_range
     {
-        typedef typename element_range<SomethingT, edge_tag>::type type;
+      typedef typename element_range<SomethingT, edge_tag>::type type;
     };
 
     /** @brief Convenience metafunction for the type retrieval of a triangle range
@@ -757,7 +757,7 @@ namespace viennagrid
     template<typename SomethingT>
     struct triangle_range
     {
-        typedef typename element_range<SomethingT, triangle_tag>::type type;
+      typedef typename element_range<SomethingT, triangle_tag>::type type;
     };
 
     /** @brief Convenience metafunction for the type retrieval of a quadrilateral range
@@ -767,7 +767,7 @@ namespace viennagrid
     template<typename SomethingT>
     struct quadrilateral_range
     {
-        typedef typename element_range<SomethingT, quadrilateral_tag>::type type;
+      typedef typename element_range<SomethingT, quadrilateral_tag>::type type;
     };
 
     /** @brief Convenience metafunction for the type retrieval of a polygon range
@@ -777,7 +777,7 @@ namespace viennagrid
     template<typename SomethingT>
     struct polygon_range
     {
-        typedef typename element_range<SomethingT, polygon_tag>::type type;
+      typedef typename element_range<SomethingT, polygon_tag>::type type;
     };
 
     /** @brief Convenience metafunction for the type retrieval of a PLC range
@@ -787,7 +787,7 @@ namespace viennagrid
     template<typename SomethingT>
     struct plc_range
     {
-        typedef typename element_range<SomethingT, plc_tag>::type type;
+      typedef typename element_range<SomethingT, plc_tag>::type type;
     };
 
     /** @brief Convenience metafunction for the type retrieval of a tetrahedron range
@@ -797,7 +797,7 @@ namespace viennagrid
     template<typename SomethingT>
     struct tetrahedron_range
     {
-        typedef typename element_range<SomethingT, tetrahedron_tag>::type type;
+      typedef typename element_range<SomethingT, tetrahedron_tag>::type type;
     };
 
     /** @brief Convenience metafunction for the type retrieval of a hexahedron range
@@ -807,7 +807,7 @@ namespace viennagrid
     template<typename SomethingT>
     struct hexahedron_range
     {
-        typedef typename element_range<SomethingT, hexahedron_tag>::type type;
+      typedef typename element_range<SomethingT, hexahedron_tag>::type type;
     };
 
 
@@ -832,8 +832,8 @@ namespace viennagrid
     template<typename SomethingT>
     struct const_cell_range
     {
-        typedef typename cell_tag<SomethingT>::type cell_tag;
-        typedef typename const_element_range<SomethingT, cell_tag>::type type;
+      typedef typename cell_tag<SomethingT>::type cell_tag;
+      typedef typename const_element_range<SomethingT, cell_tag>::type type;
     };
 
     /** @brief Convenience metafunction for the type retrieval of a const vertex range
@@ -843,7 +843,7 @@ namespace viennagrid
     template<typename SomethingT>
     struct const_vertex_range
     {
-        typedef typename const_element_range<SomethingT, vertex_tag>::type type;
+      typedef typename const_element_range<SomethingT, vertex_tag>::type type;
     };
 
     /** @brief Convenience metafunction for the type retrieval of a const line range (same as const_edge_range)
@@ -853,7 +853,7 @@ namespace viennagrid
     template<typename SomethingT>
     struct const_line_range
     {
-        typedef typename const_element_range<SomethingT, line_tag>::type type;
+      typedef typename const_element_range<SomethingT, line_tag>::type type;
     };
 
     /** @brief Convenience metafunction for the type retrieval of a const edge range (same as const_line_range)
@@ -863,7 +863,7 @@ namespace viennagrid
     template<typename SomethingT>
     struct const_edge_range
     {
-        typedef typename const_element_range<SomethingT, edge_tag>::type type;
+      typedef typename const_element_range<SomethingT, edge_tag>::type type;
     };
 
     /** @brief Convenience metafunction for the type retrieval of a const triangle range
@@ -873,7 +873,7 @@ namespace viennagrid
     template<typename SomethingT>
     struct const_triangle_range
     {
-        typedef typename const_element_range<SomethingT, triangle_tag>::type type;
+      typedef typename const_element_range<SomethingT, triangle_tag>::type type;
     };
 
     /** @brief Convenience metafunction for the type retrieval of a const quadrilateral range
@@ -883,7 +883,7 @@ namespace viennagrid
     template<typename SomethingT>
     struct const_quadrilateral_range
     {
-        typedef typename const_element_range<SomethingT, quadrilateral_tag>::type type;
+      typedef typename const_element_range<SomethingT, quadrilateral_tag>::type type;
     };
 
     /** @brief Convenience metafunction for the type retrieval of a const polygon range
@@ -893,7 +893,7 @@ namespace viennagrid
     template<typename SomethingT>
     struct const_polygon_range
     {
-        typedef typename const_element_range<SomethingT, polygon_tag>::type type;
+      typedef typename const_element_range<SomethingT, polygon_tag>::type type;
     };
 
     /** @brief Convenience metafunction for the type retrieval of a const PLC range
@@ -903,7 +903,7 @@ namespace viennagrid
     template<typename SomethingT>
     struct const_plc_range
     {
-        typedef typename const_element_range<SomethingT, plc_tag>::type type;
+      typedef typename const_element_range<SomethingT, plc_tag>::type type;
     };
 
     /** @brief Convenience metafunction for the type retrieval of a const tetrahedron range
@@ -913,7 +913,7 @@ namespace viennagrid
     template<typename SomethingT>
     struct const_tetrahedron_range
     {
-        typedef typename const_element_range<SomethingT, tetrahedron_tag>::type type;
+      typedef typename const_element_range<SomethingT, tetrahedron_tag>::type type;
     };
 
     /** @brief Convenience metafunction for the type retrieval of a const hexahedron range
@@ -923,7 +923,7 @@ namespace viennagrid
     template<typename SomethingT>
     struct const_hexahedron_range
     {
-        typedef typename const_element_range<SomethingT, hexahedron_tag>::type type;
+      typedef typename const_element_range<SomethingT, hexahedron_tag>::type type;
     };
 
 
@@ -936,7 +936,7 @@ namespace viennagrid
     template <typename ContainerT>
     struct iterator
     {
-        typedef typename ContainerT::iterator type;
+      typedef typename ContainerT::iterator type;
     };
 
     /** @brief Metafunction for the type retrieval of a const iterator from a container or range
@@ -946,13 +946,13 @@ namespace viennagrid
     template <typename ContainerT>
     struct const_iterator
     {
-        typedef typename ContainerT::const_iterator type;
+      typedef typename ContainerT::const_iterator type;
     };
 
     template <typename ContainerT>
     struct iterator<const ContainerT>
     {
-        typedef typename const_iterator<ContainerT>::type type;
+      typedef typename const_iterator<ContainerT>::type type;
     };
 
 
@@ -964,19 +964,19 @@ namespace viennagrid
     template<typename ElementTypeOrTagT>
     struct element_tag
     {
-        typedef ElementTypeOrTagT type;
+      typedef ElementTypeOrTagT type;
     };
 
     template<typename ElementTagT, typename WrappedConfigT>
     struct element_tag< element_t<ElementTagT, WrappedConfigT> >
     {
-        typedef ElementTagT type;
+      typedef ElementTagT type;
     };
 
     template<typename ElementTagT, typename WrappedConfigT>
     struct element_tag< const element_t<ElementTagT, WrappedConfigT> >
     {
-        typedef ElementTagT type;
+      typedef ElementTagT type;
     };
 
 
@@ -987,25 +987,25 @@ namespace viennagrid
     template<typename SomethingT>
     struct facet_tag
     {
-        typedef typename element_tag<SomethingT>::type::facet_tag type;
+      typedef typename element_tag<SomethingT>::type::facet_tag type;
     };
 
     template<typename WrappedMeshConfigT>
     struct facet_tag< mesh_t<WrappedMeshConfigT> >
     {
-        typedef typename facet_tag< typename cell_tag< mesh_t<WrappedMeshConfigT> >::type >::type type;
+      typedef typename facet_tag< typename cell_tag< mesh_t<WrappedMeshConfigT> >::type >::type type;
     };
 
     template<typename WrappedSegmentationConfigT>
     struct facet_tag< segmentation_t<WrappedSegmentationConfigT> >
     {
-        typedef typename facet_tag< typename cell_tag< segmentation_t<WrappedSegmentationConfigT> >::type >::type type;
+      typedef typename facet_tag< typename cell_tag< segmentation_t<WrappedSegmentationConfigT> >::type >::type type;
     };
 
     template<typename SegmentationT>
     struct facet_tag< segment_handle_t<SegmentationT> >
     {
-        typedef typename facet_tag< typename cell_tag< segment_handle_t<SegmentationT> >::type >::type type;
+      typedef typename facet_tag< typename cell_tag< segment_handle_t<SegmentationT> >::type >::type type;
     };
 
 
@@ -1018,25 +1018,25 @@ namespace viennagrid
     template<typename SomethingT>
     struct facet
     {
-        typedef typename element<SomethingT, typename facet_tag<SomethingT>::type >::type type;
+      typedef typename element<SomethingT, typename facet_tag<SomethingT>::type >::type type;
     };
 
     template<typename WrappedMeshConfigT>
     struct facet< mesh_t<WrappedMeshConfigT> >
     {
-        typedef typename facet< typename cell< mesh_t<WrappedMeshConfigT> >::type >::type type;
+      typedef typename facet< typename cell< mesh_t<WrappedMeshConfigT> >::type >::type type;
     };
 
     template<typename WrappedSegmentationConfigT>
     struct facet< segmentation_t<WrappedSegmentationConfigT> >
     {
-        typedef typename facet< typename cell< segmentation_t<WrappedSegmentationConfigT> >::type >::type type;
+      typedef typename facet< typename cell< segmentation_t<WrappedSegmentationConfigT> >::type >::type type;
     };
 
     template<typename SegmentationT>
     struct facet< segment_handle_t<SegmentationT> >
     {
-        typedef typename facet< typename cell< segment_handle_t<SegmentationT> >::type >::type type;
+      typedef typename facet< typename cell< segment_handle_t<SegmentationT> >::type >::type type;
     };
 
 
@@ -1048,7 +1048,7 @@ namespace viennagrid
     template<typename SomethingT>
     struct facet_handle
     {
-        typedef typename handle< SomethingT, typename facet_tag<SomethingT>::type >::type type;
+      typedef typename handle< SomethingT, typename facet_tag<SomethingT>::type >::type type;
     };
 
     /** @brief Metafunction for retrieving the const facet handle type an element, a mesh, a segmentation or a segment
@@ -1058,7 +1058,7 @@ namespace viennagrid
     template<typename SomethingT>
     struct const_facet_handle
     {
-        typedef typename const_handle< SomethingT, typename facet_tag<SomethingT>::type >::type type;
+      typedef typename const_handle< SomethingT, typename facet_tag<SomethingT>::type >::type type;
     };
 
 
@@ -1069,7 +1069,7 @@ namespace viennagrid
     template<typename SomethingT>
     struct facet_range
     {
-        typedef typename element_range<SomethingT, typename facet_tag<SomethingT>::type >::type type;
+      typedef typename element_range<SomethingT, typename facet_tag<SomethingT>::type >::type type;
     };
 
     /** @brief Metafunction for retrieving the const facet range type an element, a mesh, a segmentation or a segment
@@ -1079,7 +1079,7 @@ namespace viennagrid
     template<typename SomethingT>
     struct const_facet_range
     {
-        typedef typename const_element_range<SomethingT, typename facet_tag<SomethingT>::type >::type type;
+      typedef typename const_element_range<SomethingT, typename facet_tag<SomethingT>::type >::type type;
     };
 
 

@@ -18,65 +18,65 @@
 
 namespace viennagrid
 {
-    namespace numeric
+  namespace numeric
+  {
+    namespace result_of
     {
-        namespace result_of
-        {
-            template<typename numeric_config, typename outer_numeric_type>
-            struct numeric_type
-            {
-                typedef typename numeric_config::numeric_type type;
-            };
+      template<typename numeric_config, typename outer_numeric_type>
+      struct numeric_type
+      {
+        typedef typename numeric_config::numeric_type type;
+      };
 
-            template<typename outer_numeric_type>
-            struct numeric_type<double, outer_numeric_type>
-            {
-                typedef double type;
-            };
-        }
-
-        template<typename outer_numeric_type, typename numeric_config>
-        typename result_of::numeric_type<numeric_config, outer_numeric_type>::type absolute_tolerance( numeric_config config )
-        {
-            typedef typename result_of::numeric_type<numeric_config, outer_numeric_type>::type numeric_type;
-            return static_cast<numeric_type>(config.eps);
-        }
-
-        template<typename outer_numeric_type, typename numeric_config>
-        typename result_of::numeric_type<numeric_config, outer_numeric_type>::type relative_tolerance( numeric_config config, outer_numeric_type base )
-        {
-            typedef typename result_of::numeric_type<numeric_config, outer_numeric_type>::type numeric_type;
-            return std::max( static_cast<numeric_type>(config.eps) * static_cast<numeric_type>(base), absolute_tolerance<outer_numeric_type>(config) );
-        }
-
-        template<typename outer_numeric_type>
-        typename result_of::numeric_type<double, outer_numeric_type>::type absolute_tolerance( double eps )
-        {
-            typedef typename result_of::numeric_type<double, outer_numeric_type>::type numeric_type;
-            return static_cast<numeric_type>(eps);
-        }
-
-        template<typename outer_numeric_type>
-        typename result_of::numeric_type<double, outer_numeric_type>::type relative_tolerance( double eps, outer_numeric_type base )
-        {
-            typedef typename result_of::numeric_type<double, outer_numeric_type>::type numeric_type;
-            return std::max( static_cast<numeric_type>(eps) * base, absolute_tolerance<outer_numeric_type>(eps) );
-        }
-
-
-        template<typename numeric_config, typename numeric_type>
-        bool is_equal( numeric_config nc, numeric_type first, numeric_type second )
-        {
-            return (std::abs(first-second) < relative_tolerance(nc, first));
-        }
-
-        template<typename numeric_config, typename numeric_type>
-        bool is_not_equal( numeric_config nc, numeric_type first, numeric_type second )
-        {
-            return !is_equal(nc, first, second);
-        }
-
+      template<typename outer_numeric_type>
+      struct numeric_type<double, outer_numeric_type>
+      {
+        typedef double type;
+      };
     }
+
+    template<typename outer_numeric_type, typename numeric_config>
+    typename result_of::numeric_type<numeric_config, outer_numeric_type>::type absolute_tolerance( numeric_config config )
+    {
+      typedef typename result_of::numeric_type<numeric_config, outer_numeric_type>::type numeric_type;
+      return static_cast<numeric_type>(config.eps);
+    }
+
+    template<typename outer_numeric_type, typename numeric_config>
+    typename result_of::numeric_type<numeric_config, outer_numeric_type>::type relative_tolerance( numeric_config config, outer_numeric_type base )
+    {
+      typedef typename result_of::numeric_type<numeric_config, outer_numeric_type>::type numeric_type;
+      return std::max( static_cast<numeric_type>(config.eps) * static_cast<numeric_type>(base), absolute_tolerance<outer_numeric_type>(config) );
+    }
+
+    template<typename outer_numeric_type>
+    typename result_of::numeric_type<double, outer_numeric_type>::type absolute_tolerance( double eps )
+    {
+      typedef typename result_of::numeric_type<double, outer_numeric_type>::type numeric_type;
+      return static_cast<numeric_type>(eps);
+    }
+
+    template<typename outer_numeric_type>
+    typename result_of::numeric_type<double, outer_numeric_type>::type relative_tolerance( double eps, outer_numeric_type base )
+    {
+      typedef typename result_of::numeric_type<double, outer_numeric_type>::type numeric_type;
+      return std::max( static_cast<numeric_type>(eps) * base, absolute_tolerance<outer_numeric_type>(eps) );
+    }
+
+
+    template<typename numeric_config, typename numeric_type>
+    bool is_equal( numeric_config nc, numeric_type first, numeric_type second )
+    {
+      return (std::abs(first-second) < relative_tolerance(nc, first));
+    }
+
+    template<typename numeric_config, typename numeric_type>
+    bool is_not_equal( numeric_config nc, numeric_type first, numeric_type second )
+    {
+      return !is_equal(nc, first, second);
+    }
+
+  }
 
 }
 

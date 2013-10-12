@@ -81,7 +81,7 @@ namespace viennagrid
   template<typename GeometricContainerType, typename VertexHandleContainer>
   bool stable_line_is_longer(GeometricContainerType const & mesh, VertexHandleContainer vertices, unsigned int i0, unsigned int i1, unsigned int i2, unsigned int i3)
   {
-      return stable_line_is_longer(mesh,
+    return stable_line_is_longer(mesh,
                                 *viennagrid::advance(vertices.begin(), i0), *viennagrid::advance(vertices.begin(), i1),
                                 *viennagrid::advance(vertices.begin(), i2), *viennagrid::advance(vertices.begin(), i3));
   }
@@ -90,16 +90,16 @@ namespace viennagrid
   template<typename ElementType, typename GeometricMeshType, typename VertexHandleContainer>
   void make_refinement_element(GeometricMeshType & mesh, VertexHandleContainer vertex_handle_container, unsigned int i0, unsigned int i1, unsigned int i2, unsigned int i3)
   {
-      typedef typename VertexHandleContainer::iterator VertexHandleIteratorType;
-      typedef typename std::iterator_traits<VertexHandleIteratorType>::value_type VertexHandleType;
-      storage::static_array< VertexHandleType, boundary_elements<tetrahedron_tag, vertex_tag>::num > cellvertices;
+    typedef typename VertexHandleContainer::iterator VertexHandleIteratorType;
+    typedef typename std::iterator_traits<VertexHandleIteratorType>::value_type VertexHandleType;
+    storage::static_array< VertexHandleType, boundary_elements<tetrahedron_tag, vertex_tag>::num > cellvertices;
 
-      cellvertices[0] = *viennagrid::advance(vertex_handle_container.begin(), i0);
-      cellvertices[1] = *viennagrid::advance(vertex_handle_container.begin(), i1);
-      cellvertices[2] = *viennagrid::advance(vertex_handle_container.begin(), i2);
-      cellvertices[3] = *viennagrid::advance(vertex_handle_container.begin(), i3);
+    cellvertices[0] = *viennagrid::advance(vertex_handle_container.begin(), i0);
+    cellvertices[1] = *viennagrid::advance(vertex_handle_container.begin(), i1);
+    cellvertices[2] = *viennagrid::advance(vertex_handle_container.begin(), i2);
+    cellvertices[3] = *viennagrid::advance(vertex_handle_container.begin(), i3);
 
-      viennagrid::make_element<ElementType>( mesh, cellvertices.begin(), cellvertices.end() );
+    viennagrid::make_element<ElementType>( mesh, cellvertices.begin(), cellvertices.end() );
   }
 
 

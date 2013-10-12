@@ -21,45 +21,44 @@
 
 namespace viennagrid
 {
+  namespace storage
+  {
 
-    namespace storage
+    class container_output_functor
     {
+    public:
+      container_output_functor(std::ostream & _stream,
+                               const std::string & _container_delimiter = "\n",
+                               const std::string & _element_delimiter = " ") :
+                          container_delimiter(_container_delimiter), element_delimiter(_element_delimiter), stream(_stream) {}
 
-        class container_output_functor
-        {
-        public:
-            container_output_functor(std::ostream & _stream,
-                                     const std::string & _container_delimiter = "\n",
-                                     const std::string & _element_delimiter = " ") :
-                                container_delimiter(_container_delimiter), element_delimiter(_element_delimiter), stream(_stream) {}
+      template<typename container_type>
+      void operator() (const container_type & container)
+      {
+          stream << typeid(container).name() << " [size=" << container.size() << "] ";
+          std::copy( container.begin(), container.end(), std::ostream_iterator<typename container_type::value_type>(stream, element_delimiter.c_str())  );
+          stream << container_delimiter;
+      }
 
-            template<typename container_type>
-            void operator() (const container_type & container)
-            {
-                stream << typeid(container).name() << " [size=" << container.size() << "] ";
-                std::copy( container.begin(), container.end(), std::ostream_iterator<typename container_type::value_type>(stream, element_delimiter.c_str())  );
-                stream << container_delimiter;
-            }
-
-        private:
-            std::string container_delimiter;
-            std::string element_delimiter;
-            std::ostream & stream;
-        };
+    private:
+      std::string container_delimiter;
+      std::string element_delimiter;
+      std::ostream & stream;
+    };
 
 
-        template <typename container_typemap>
-        std::ostream & operator<<(std::ostream & os, const collection_t<container_typemap> & container_collection)
-        {
-            container_output_functor f(os);
+    template <typename container_typemap>
+    std::ostream & operator<<(std::ostream & os, const collection_t<container_typemap> & container_collection)
+    {
+      container_output_functor f(os);
 
-            viennagrid::storage::collection::for_each( container_collection, f );
+      viennagrid::storage::collection::for_each( container_collection, f );
 
-            return os;
-        }
-
-
+      return os;
     }
+
+
+  }
 
 }
 

@@ -35,7 +35,7 @@ namespace viennagrid
             vit != vertices.end();
             ++vit )
       {
-          accessor(*vit) *= factor;
+        accessor(*vit) *= factor;
       }
     }
   } // detail

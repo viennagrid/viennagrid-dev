@@ -24,37 +24,37 @@ namespace viennagrid
     template<typename type1, typename type2>
     struct EQUAL
     {
-        static const bool value = false;
+      static const bool value = false;
     };
 
     template<typename type>
     struct EQUAL<type,type>
     {
-        static const bool value = true;
+      static const bool value = true;
     };
 
     template<typename type1, typename type2>
     struct NOT_EQUAL
     {
-        static const bool value = !EQUAL<type1, type2>::value;
+      static const bool value = !EQUAL<type1, type2>::value;
     };
 
     template<bool condition, typename type1, typename type2>
     struct IF
     {
-        typedef type1 type;
+      typedef type1 type;
     };
 
     template<typename type1, typename type2>
     struct IF<false, type1, type2>
     {
-        typedef type2 type;
+      typedef type2 type;
     };
 
     template<typename _type>
     struct IDENTITY
     {
-        typedef _type type;
+      typedef _type type;
     };
 
 
@@ -83,35 +83,35 @@ namespace viennagrid
     template<typename first_, typename second_>
     struct static_pair
     {
-        typedef first_ first;
-        typedef second_ second;
+      typedef first_ first;
+      typedef second_ second;
     };
 
     namespace result_of
     {
-        template<typename pair>
-        struct first
-        {
-            typedef not_found type;
-        };
+      template<typename pair>
+      struct first
+      {
+          typedef not_found type;
+      };
 
-        template<typename first_, typename second_>
-        struct first< static_pair<first_, second_> >
-        {
-            typedef first_ type;
-        };
+      template<typename first_, typename second_>
+      struct first< static_pair<first_, second_> >
+      {
+          typedef first_ type;
+      };
 
-        template<typename pair>
-        struct second
-        {
-            typedef not_found type;
-        };
+      template<typename pair>
+      struct second
+      {
+          typedef not_found type;
+      };
 
-        template<typename first_, typename second_>
-        struct second< static_pair<first_, second_> >
-        {
-            typedef second_ type;
-        };
+      template<typename first_, typename second_>
+      struct second< static_pair<first_, second_> >
+      {
+          typedef second_ type;
+      };
     }
 
 
@@ -123,11 +123,11 @@ namespace viennagrid
     // a true functor
     struct true_predicate
     {
-        template<typename type>
-        bool operator()(const type &)
-        {
-            return true;
-        }
+      template<typename type>
+      bool operator()(const type &)
+      {
+          return true;
+      }
     };
 
 
@@ -138,13 +138,13 @@ namespace viennagrid
     template<typename some_type>
     struct remove_const
     {
-        typedef some_type type;
+      typedef some_type type;
     };
 
     template<typename some_type>
     struct remove_const<const some_type>
     {
-        typedef some_type type;
+      typedef some_type type;
     };
 
 
@@ -159,8 +159,8 @@ namespace viennagrid
     template <typename TIterator>
     struct is_const_iterator
     {
-        typedef typename std::iterator_traits<TIterator>::pointer pointer;
-        static const bool value = is_const_pointer<pointer>::value;
+      typedef typename std::iterator_traits<TIterator>::pointer pointer;
+      static const bool value = is_const_pointer<pointer>::value;
     };
 
   } // namespace meta

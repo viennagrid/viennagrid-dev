@@ -48,55 +48,55 @@ namespace viennagrid
     {
     protected:
 
-        typedef typename SegmentationType::segment_handle_type SegmentHandleType;
-        typedef typename SegmentationType::segment_id_type segment_id_type;
+      typedef typename SegmentationType::segment_handle_type SegmentHandleType;
+      typedef typename SegmentationType::segment_id_type segment_id_type;
 
 
-        typedef typename viennagrid::result_of::point<MeshType>::type PointType;
-        typedef typename viennagrid::result_of::coord<PointType>::type CoordType;
-        static const int geometric_dim = viennagrid::traits::static_size<PointType>::value;
+      typedef typename viennagrid::result_of::point<MeshType>::type PointType;
+      typedef typename viennagrid::result_of::coord<PointType>::type CoordType;
+      static const int geometric_dim = viennagrid::traits::static_size<PointType>::value;
 
-        typedef typename viennagrid::result_of::cell_tag<MeshType>::type CellTag;
+      typedef typename viennagrid::result_of::cell_tag<MeshType>::type CellTag;
 
 
-      typedef typename result_of::element<MeshType, viennagrid::vertex_tag>::type                           VertexType;
+      typedef typename result_of::element<MeshType, viennagrid::vertex_tag>::type                          VertexType;
       typedef typename result_of::handle<MeshType, viennagrid::vertex_tag>::type                           VertexHandleType;
       typedef typename result_of::element<MeshType, CellTag>::type     CellType;
       typedef typename result_of::handle<MeshType, CellTag>::type     CellHandleType;
 
       typedef typename viennagrid::result_of::element_range<MeshType, viennagrid::vertex_tag>::type   VertexRange;
-      typedef typename viennagrid::result_of::iterator<VertexRange>::type        VertexIterator;
+      typedef typename viennagrid::result_of::iterator<VertexRange>::type                             VertexIterator;
 
-      typedef typename viennagrid::result_of::element_range<MeshType, viennagrid::line_tag>::type   EdgeRange;
-      typedef typename viennagrid::result_of::iterator<EdgeRange>::type          EdgeIterator;
+      typedef typename viennagrid::result_of::element_range<MeshType, viennagrid::line_tag>::type     EdgeRange;
+      typedef typename viennagrid::result_of::iterator<EdgeRange>::type                               EdgeIterator;
 
       typedef typename viennagrid::result_of::element_range<MeshType, typename CellTag::facet_tag>::type   FacetRange;
-      typedef typename viennagrid::result_of::iterator<FacetRange>::type                                 FacetIterator;
+      typedef typename viennagrid::result_of::iterator<FacetRange>::type                                   FacetIterator;
 
       typedef typename viennagrid::result_of::element_range<MeshType, CellTag>::type     CellRange;
-      typedef typename viennagrid::result_of::iterator<CellRange>::type                                  CellIterator;
+      typedef typename viennagrid::result_of::iterator<CellRange>::type                  CellIterator;
 
 
       typedef std::vector<double> vector_data_type;
 
-      typedef std::map< std::string, base_dynamic_field_t<double, VertexType> * > VertexScalarOutputFieldContainer;
-      typedef std::map< std::string, base_dynamic_field_t<vector_data_type, VertexType> * > VertexVectorOutputFieldContainer;
+      typedef std::map< std::string, base_dynamic_field_t<double, VertexType> * >             VertexScalarOutputFieldContainer;
+      typedef std::map< std::string, base_dynamic_field_t<vector_data_type, VertexType> * >   VertexVectorOutputFieldContainer;
 
-      typedef std::map< std::string, base_dynamic_field_t<double, CellType> * > CellScalarOutputFieldContainer;
-      typedef std::map< std::string, base_dynamic_field_t<vector_data_type, CellType> * > CellVectorOutputFieldContainer;
-
-
+      typedef std::map< std::string, base_dynamic_field_t<double, CellType> * >               CellScalarOutputFieldContainer;
+      typedef std::map< std::string, base_dynamic_field_t<vector_data_type, CellType> * >     CellVectorOutputFieldContainer;
 
 
 
-      std::ifstream                                 reader;
+
+
+      std::ifstream                                        reader;
       std::map<PointType, std::size_t, point_less>         global_points;
       std::map<std::size_t, PointType>                     global_points_2;
-      std::map<int, std::deque<std::size_t> >                 local_to_global_map;
-      std::map<int, std::deque<std::size_t> >                 local_cell_vertices;
-      std::map<int, std::deque<std::size_t> >                 local_cell_offsets;
-      std::map<int, std::size_t>                              local_cell_num;
-      std::map<int, std::deque<CellHandleType> >              local_cell_handle;
+      std::map<int, std::deque<std::size_t> >              local_to_global_map;
+      std::map<int, std::deque<std::size_t> >              local_cell_vertices;
+      std::map<int, std::deque<std::size_t> >              local_cell_offsets;
+      std::map<int, std::size_t>                           local_cell_num;
+      std::map<int, std::deque<CellHandleType> >           local_cell_handle;
 
       //data containers:
       std::map<int, std::deque<std::pair<std::string, std::deque<double> > > >  local_scalar_vertex_data;
@@ -105,47 +105,44 @@ namespace viennagrid
       std::map<int, std::deque<std::pair<std::string, std::deque<double> > > >  local_vector_cell_data;
 
 
+      template<typename map_type>
+      void clear_map( map_type & map )
+      {
+        for (typename map_type::iterator it = map.begin(); it != map.end(); ++it)
+          delete it->second;
+
+        map.clear();
+      }
+
+      void clear()
+      {
+        clear_map(registered_vertex_scalar_data);
+        clear_map(registered_vertex_vector_data);
+
+        clear_map(registered_cell_scalar_data);
+        clear_map(registered_cell_vector_data);
 
 
+        for (typename std::map< segment_id_type, VertexScalarOutputFieldContainer>::iterator it = registered_segment_vertex_scalar_data.begin(); it != registered_segment_vertex_scalar_data.end(); ++it)
+          clear_map(it->second);
 
-        template<typename map_type>
-        void clear_map( map_type & map )
-        {
-          for (typename map_type::iterator it = map.begin(); it != map.end(); ++it)
-            delete it->second;
-
-          map.clear();
-        }
-
-        void clear()
-        {
-          clear_map(registered_vertex_scalar_data);
-          clear_map(registered_vertex_vector_data);
-
-          clear_map(registered_cell_scalar_data);
-          clear_map(registered_cell_vector_data);
+        for (typename std::map< segment_id_type, VertexVectorOutputFieldContainer>::iterator it = registered_segment_vertex_vector_data.begin(); it != registered_segment_vertex_vector_data.end(); ++it)
+          clear_map(it->second);
 
 
-          for (typename std::map< segment_id_type, VertexScalarOutputFieldContainer>::iterator it = registered_segment_vertex_scalar_data.begin(); it != registered_segment_vertex_scalar_data.end(); ++it)
-            clear_map(it->second);
+        for (typename std::map< segment_id_type, CellScalarOutputFieldContainer>::iterator it = registered_segment_cell_scalar_data.begin(); it != registered_segment_cell_scalar_data.end(); ++it)
+          clear_map(it->second);
 
-          for (typename std::map< segment_id_type, VertexVectorOutputFieldContainer>::iterator it = registered_segment_vertex_vector_data.begin(); it != registered_segment_vertex_vector_data.end(); ++it)
-            clear_map(it->second);
-
-
-          for (typename std::map< segment_id_type, CellScalarOutputFieldContainer>::iterator it = registered_segment_cell_scalar_data.begin(); it != registered_segment_cell_scalar_data.end(); ++it)
-            clear_map(it->second);
-
-          for (typename std::map< segment_id_type, CellVectorOutputFieldContainer>::iterator it = registered_segment_cell_vector_data.begin(); it != registered_segment_cell_vector_data.end(); ++it)
-            clear_map(it->second);
+        for (typename std::map< segment_id_type, CellVectorOutputFieldContainer>::iterator it = registered_segment_cell_vector_data.begin(); it != registered_segment_cell_vector_data.end(); ++it)
+          clear_map(it->second);
 
 
-          registered_segment_vertex_scalar_data.clear();
-          registered_segment_vertex_vector_data.clear();
+        registered_segment_vertex_scalar_data.clear();
+        registered_segment_vertex_vector_data.clear();
 
-          registered_segment_cell_scalar_data.clear();
-          registered_segment_cell_vector_data.clear();
-        }
+        registered_segment_cell_scalar_data.clear();
+        registered_segment_cell_vector_data.clear();
+      }
 
 
 
@@ -367,61 +364,61 @@ namespace viennagrid
       /** @brief Pushes the cells read to the mesh. Preserves segment information. */
       void setupCells(MeshType & mesh, SegmentationType & segmentation, segment_id_type seg_id)
       {
-          //***************************************************
-          // building up the cells in ViennaGrid
-          // -------------------------------------------------
-          // "cells"   ... contain the indices of the nodes
-          // "offsets" ... contain the information about
-          //               the affiliation of the nodes
-          //               to the cells
-          //***************************************************
-          //CellType cell;
-          long numVertices = 0;
-          long offsetIdx = 0;
+        //***************************************************
+        // building up the cells in ViennaGrid
+        // -------------------------------------------------
+        // "cells"   ... contain the indices of the nodes
+        // "offsets" ... contain the information about
+        //               the affiliation of the nodes
+        //               to the cells
+        //***************************************************
+        //CellType cell;
+        long numVertices = 0;
+        long offsetIdx = 0;
 
-          std::deque<std::size_t> const & offsets = local_cell_offsets[seg_id];
+        std::deque<std::size_t> const & offsets = local_cell_offsets[seg_id];
 
-          for (std::size_t i = 0; i < local_cell_num[seg_id]; i++)
+        for (std::size_t i = 0; i < local_cell_num[seg_id]; i++)
+        {
+          //*************************************************
+          // choose the offset index for the i-th cell
+          // in the "cells"-vector and calculate the
+          // number of vertices belonging to the i-th cell
+          //*************************************************
+          if(i == 0)
           {
-            //*************************************************
-            // choose the offset index for the i-th cell
-            // in the "cells"-vector and calculate the
-            // number of vertices belonging to the i-th cell
-            //*************************************************
-            if(i == 0)
-            {
-              offsetIdx = 0;
-              numVertices = offsets[i];
-            }
-            else
-            {
-              offsetIdx = offsets[i-1];
-              numVertices = offsets[i]-offsets[i-1];
-            }
-
-
-            //****************************************************
-            // read out the node indices form the "cells"-vector
-            // and add the cells to the "vertices"-array
-            //****************************************************
-
-            viennagrid::storage::static_array<VertexHandleType, boundary_elements<CellTag, vertex_tag>::num> cell_vertex_handles;
-
-            vtk_to_viennagrid_orientations<CellTag> reorderer;
-            for (long j = 0; j < numVertices; j++)
-            {
-              long reordered_j = reorderer(j);
-              std::size_t local_index = local_cell_vertices[seg_id][reordered_j + offsetIdx];
-              std::size_t global_vertex_index = local_to_global_map[seg_id][local_index];
-
-              cell_vertex_handles[j] = viennagrid::elements<viennagrid::vertex_tag>(mesh).handle_at(global_vertex_index);
-              viennagrid::add( segmentation[seg_id], viennagrid::dereference_handle(segmentation, cell_vertex_handles[j]) );
-            }
-
-            local_cell_handle[seg_id].push_back(
-              viennagrid::make_element<CellType>(segmentation[seg_id], cell_vertex_handles.begin(), cell_vertex_handles.end())//, typename CellType::id_type(i));//, );
-                                      );
+            offsetIdx = 0;
+            numVertices = offsets[i];
           }
+          else
+          {
+            offsetIdx = offsets[i-1];
+            numVertices = offsets[i]-offsets[i-1];
+          }
+
+
+          //****************************************************
+          // read out the node indices form the "cells"-vector
+          // and add the cells to the "vertices"-array
+          //****************************************************
+
+          viennagrid::storage::static_array<VertexHandleType, boundary_elements<CellTag, vertex_tag>::num> cell_vertex_handles;
+
+          vtk_to_viennagrid_orientations<CellTag> reorderer;
+          for (long j = 0; j < numVertices; j++)
+          {
+            long reordered_j = reorderer(j);
+            std::size_t local_index = local_cell_vertices[seg_id][reordered_j + offsetIdx];
+            std::size_t global_vertex_index = local_to_global_map[seg_id][local_index];
+
+            cell_vertex_handles[j] = viennagrid::elements<viennagrid::vertex_tag>(mesh).handle_at(global_vertex_index);
+            viennagrid::add( segmentation[seg_id], viennagrid::dereference_handle(segmentation, cell_vertex_handles[j]) );
+          }
+
+          local_cell_handle[seg_id].push_back(
+            viennagrid::make_element<CellType>(segmentation[seg_id], cell_vertex_handles.begin(), cell_vertex_handles.end())//, typename CellType::id_type(i));//, );
+                                    );
+        }
       }
 
       /** @brief Writes data for vertices to the ViennaGrid mesh using ViennaData */
@@ -996,181 +993,173 @@ namespace viennagrid
 
     public:
 
-        /** @brief Registers a vertex scalar accessor/field with a given quantity name */
-        template<typename AccessorOrFieldType>
-        void register_vertex_scalar(AccessorOrFieldType accessor_or_field, std::string const & quantity_name)
-        { register_to_map(registered_vertex_scalar_data, accessor_or_field, quantity_name); }
+      /** @brief Registers a vertex scalar accessor/field with a given quantity name */
+      template<typename AccessorOrFieldType>
+      void register_vertex_scalar(AccessorOrFieldType accessor_or_field, std::string const & quantity_name)
+      { register_to_map(registered_vertex_scalar_data, accessor_or_field, quantity_name); }
 
-        /** @brief Registers a vertex scalar accessor/field with a given quantity name for a given segment ID */
-        template<typename AccessorOrFieldType>
-        void register_vertex_scalar(segment_id_type seg_id, AccessorOrFieldType accessor_or_field, std::string const & quantity_name)
-        { register_to_map(registered_segment_vertex_scalar_data[seg_id], accessor_or_field, quantity_name); }
+      /** @brief Registers a vertex scalar accessor/field with a given quantity name for a given segment ID */
+      template<typename AccessorOrFieldType>
+      void register_vertex_scalar(segment_id_type seg_id, AccessorOrFieldType accessor_or_field, std::string const & quantity_name)
+      { register_to_map(registered_segment_vertex_scalar_data[seg_id], accessor_or_field, quantity_name); }
 
-        /** @brief Registers a vertex scalar accessor/field with a given quantity name for a given segment */
-        template<typename AccessorOrFieldType>
-        void register_vertex_scalar(SegmentHandleType const & segment, AccessorOrFieldType accessor_or_field, std::string const & quantity_name)
-        { register_vertex_scalar(segment.id(), accessor_or_field, quantity_name); }
-
-
-        /** @brief Registers a vertex vector accessor/field with a given quantity name */
-        template<typename AccessorOrFieldType>
-        void register_vertex_vector(AccessorOrFieldType accessor_or_field, std::string const & quantity_name)
-        { register_to_map(registered_vertex_vector_data, accessor_or_field, quantity_name); }
-
-        /** @brief Registers a vertex vector accessor/field with a given quantity name for a given segment ID */
-        template<typename AccessorOrFieldType>
-        void register_vertex_vector(segment_id_type seg_id, AccessorOrFieldType accessor_or_field, std::string const & quantity_name)
-        { register_to_map(registered_segment_vertex_vector_data[seg_id], accessor_or_field, quantity_name); }
-
-        /** @brief Registers a vertex vector accessor/field with a given quantity name for a given segment */
-        template<typename AccessorOrFieldType>
-        void register_vertex_vector(SegmentHandleType const & segment, AccessorOrFieldType accessor_or_field, std::string const & quantity_name)
-        { register_vertex_vector(segment.id(), accessor_or_field, quantity_name); }
+      /** @brief Registers a vertex scalar accessor/field with a given quantity name for a given segment */
+      template<typename AccessorOrFieldType>
+      void register_vertex_scalar(SegmentHandleType const & segment, AccessorOrFieldType accessor_or_field, std::string const & quantity_name)
+      { register_vertex_scalar(segment.id(), accessor_or_field, quantity_name); }
 
 
+      /** @brief Registers a vertex vector accessor/field with a given quantity name */
+      template<typename AccessorOrFieldType>
+      void register_vertex_vector(AccessorOrFieldType accessor_or_field, std::string const & quantity_name)
+      { register_to_map(registered_vertex_vector_data, accessor_or_field, quantity_name); }
 
+      /** @brief Registers a vertex vector accessor/field with a given quantity name for a given segment ID */
+      template<typename AccessorOrFieldType>
+      void register_vertex_vector(segment_id_type seg_id, AccessorOrFieldType accessor_or_field, std::string const & quantity_name)
+      { register_to_map(registered_segment_vertex_vector_data[seg_id], accessor_or_field, quantity_name); }
 
-        /** @brief Registers a cell scalar accessor/field with a given quantity name */
-        template<typename AccessorOrFieldType>
-        void register_cell_scalar(AccessorOrFieldType accessor_or_field, std::string const & quantity_name)
-        { register_to_map(registered_cell_scalar_data, accessor_or_field, quantity_name); }
-
-        /** @brief Registers a cell scalar accessor/field with a given quantity name for a given segment ID */
-        template<typename AccessorOrFieldType>
-        void register_cell_scalar(segment_id_type seg_id, AccessorOrFieldType accessor_or_field, std::string const & quantity_name)
-        { register_to_map(registered_segment_cell_scalar_data[seg_id], accessor_or_field, quantity_name); }
-
-        /** @brief Registers a cell scalar accessor/field with a given quantity name for a given segment */
-        template<typename AccessorOrFieldType>
-        void register_cell_scalar(SegmentHandleType const & segment, AccessorOrFieldType accessor_or_field, std::string const & quantity_name)
-        { register_cell_scalar(segment.id(), accessor_or_field, quantity_name); }
-
-
-        /** @brief Registers a cell vector accessor/field with a given quantity name */
-        template<typename AccessorOrFieldType>
-        void register_cell_vector(AccessorOrFieldType accessor_or_field, std::string const & quantity_name)
-        { register_to_map(registered_cell_vector_data, accessor_or_field, quantity_name); }
-
-        /** @brief Registers a cell vector accessor/field with a given quantity name for a given segment ID */
-        template<typename AccessorOrFieldType>
-        void register_cell_vector(segment_id_type seg_id, AccessorOrFieldType accessor_or_field, std::string const & quantity_name)
-        { register_to_map(registered_segment_cell_vector_data[seg_id], accessor_or_field, quantity_name); }
-
-        /** @brief Registers a cell vector accessor/field with a given quantity name for a given segment */
-        template<typename AccessorOrFieldType>
-        void register_cell_vector(SegmentHandleType const & segment, AccessorOrFieldType accessor_or_field, std::string const & quantity_name)
-        { register_cell_vector(segment.id(), accessor_or_field, quantity_name); }
+      /** @brief Registers a vertex vector accessor/field with a given quantity name for a given segment */
+      template<typename AccessorOrFieldType>
+      void register_vertex_vector(SegmentHandleType const & segment, AccessorOrFieldType accessor_or_field, std::string const & quantity_name)
+      { register_vertex_vector(segment.id(), accessor_or_field, quantity_name); }
 
 
 
 
+      /** @brief Registers a cell scalar accessor/field with a given quantity name */
+      template<typename AccessorOrFieldType>
+      void register_cell_scalar(AccessorOrFieldType accessor_or_field, std::string const & quantity_name)
+      { register_to_map(registered_cell_scalar_data, accessor_or_field, quantity_name); }
+
+      /** @brief Registers a cell scalar accessor/field with a given quantity name for a given segment ID */
+      template<typename AccessorOrFieldType>
+      void register_cell_scalar(segment_id_type seg_id, AccessorOrFieldType accessor_or_field, std::string const & quantity_name)
+      { register_to_map(registered_segment_cell_scalar_data[seg_id], accessor_or_field, quantity_name); }
+
+      /** @brief Registers a cell scalar accessor/field with a given quantity name for a given segment */
+      template<typename AccessorOrFieldType>
+      void register_cell_scalar(SegmentHandleType const & segment, AccessorOrFieldType accessor_or_field, std::string const & quantity_name)
+      { register_cell_scalar(segment.id(), accessor_or_field, quantity_name); }
 
 
-        /** @brief Returns the vertex scalar field for a given quantity name and a given segment ID. If the quantity name was registered before an invalid field is returned. */
-        typename viennagrid::result_of::field<std::deque<double>, VertexType >::type vertex_scalar_field( std::string const & quantity_name, segment_id_type seg_id )
-        {
-          typename std::map< std::string, std::map<segment_id_type, std::deque<double> > >::iterator it = vertex_scalar_data.find(quantity_name);
-          if (it == vertex_scalar_data.end()) return typename viennagrid::result_of::field<std::deque<double>, VertexType >::type();
+      /** @brief Registers a cell vector accessor/field with a given quantity name */
+      template<typename AccessorOrFieldType>
+      void register_cell_vector(AccessorOrFieldType accessor_or_field, std::string const & quantity_name)
+      { register_to_map(registered_cell_vector_data, accessor_or_field, quantity_name); }
 
-          typename std::map<segment_id_type, std::deque<double> >::iterator jt = it->second.find( seg_id );
-          if (jt == it->second.end()) return typename viennagrid::result_of::field<std::deque<double>, VertexType >::type();
+      /** @brief Registers a cell vector accessor/field with a given quantity name for a given segment ID */
+      template<typename AccessorOrFieldType>
+      void register_cell_vector(segment_id_type seg_id, AccessorOrFieldType accessor_or_field, std::string const & quantity_name)
+      { register_to_map(registered_segment_cell_vector_data[seg_id], accessor_or_field, quantity_name); }
 
-          return viennagrid::make_field<VertexType>( jt->second );
-        }
-
-        /** @brief Returns the vertex scalar field for a given quantity name and a given segment. If the quantity name was registered before an invalid field is returned. */
-        typename viennagrid::result_of::field<std::deque<double>, VertexType >::type vertex_scalar_field( std::string const & quantity_name, SegmentHandleType const & segment )
-        { return vertex_scalar_field(quantity_name, segment.id()); }
-
-
-        /** @brief Returns the vertex vector field for a given quantity name and a given segment ID. If the quantity name was registered before an invalid field is returned. */
-        typename viennagrid::result_of::field<std::deque<vector_data_type>, VertexType >::type vertex_vector_field( std::string const & quantity_name, segment_id_type seg_id )
-        {
-          typename std::map< std::string, std::map<segment_id_type, std::deque<vector_data_type> > >::iterator it = vertex_vector_data.find(quantity_name);
-          if (it == vertex_vector_data.end()) return typename viennagrid::result_of::field<std::deque<vector_data_type>, VertexType >::type();
-
-          typename std::map<segment_id_type, std::deque<vector_data_type> >::iterator jt = it->second.find( seg_id );
-          if (jt == it->second.end()) return typename viennagrid::result_of::field<std::deque<vector_data_type>, VertexType >::type();
-
-          return viennagrid::make_field<VertexType>( jt->second );
-        }
-
-        /** @brief Returns the vertex vector field for a given quantity name and a given segment. If the quantity name was registered before an invalid field is returned. */
-        typename viennagrid::result_of::field<std::deque<vector_data_type>, VertexType >::type vertex_vector_field( std::string const & quantity_name, SegmentHandleType const & segment )
-        { return vertex_vector_field(quantity_name, segment.id()); }
-
-
-
-        /** @brief Returns the cell scalar field for a given quantity name and a given segment ID. If the quantity name was registered before an invalid field is returned. */
-        typename viennagrid::result_of::field<std::deque<double>, CellType >::type cell_scalar_field( std::string const & quantity_name, segment_id_type seg_id )
-        {
-          typename std::map< std::string, std::map<segment_id_type, std::deque<double> > >::iterator it = cell_scalar_data.find(quantity_name);
-          if (it == cell_scalar_data.end()) return typename viennagrid::result_of::field<std::deque<double>, CellType >::type();
-
-          typename std::map<segment_id_type, std::deque<double> >::iterator jt = it->second.find( seg_id );
-          if (jt == it->second.end()) return typename viennagrid::result_of::field<std::deque<double>, CellType >::type();
-
-          return viennagrid::make_field<CellType>( jt->second );
-        }
-
-        /** @brief Returns the cell scalar field for a given quantity name and a given segment. If the quantity name was registered before an invalid field is returned. */
-        typename viennagrid::result_of::field<std::deque<double>, CellType >::type cell_scalar_field( std::string const & quantity_name, SegmentHandleType const & segment )
-        { return cell_scalar_field(quantity_name, segment.id()); }
-
-
-        /** @brief Returns the cell vector field for a given quantity name and a given segment ID. If the quantity name was registered before an invalid field is returned. */
-        typename viennagrid::result_of::field<std::deque<vector_data_type>, CellType >::type cell_vector_field( std::string const & quantity_name, segment_id_type seg_id )
-        {
-          typename std::map< std::string, std::map<segment_id_type, std::deque<vector_data_type> > >::iterator it = cell_vector_data.find(quantity_name);
-          if (it == cell_vector_data.end()) return typename viennagrid::result_of::field<std::deque<vector_data_type>, CellType >::type();
-
-          typename std::map<segment_id_type, std::deque<vector_data_type> >::iterator jt = it->second.find( seg_id );
-          if (jt == it->second.end()) return typename viennagrid::result_of::field<std::deque<vector_data_type>, CellType >::type();
-
-          return viennagrid::make_field<CellType>( jt->second );
-        }
-
-        /** @brief Returns the cell vector field for a given quantity name and a given segment. If the quantity name was registered before an invalid field is returned. */
-        typename viennagrid::result_of::field<std::deque<vector_data_type>, CellType >::type cell_vector_field( std::string const & quantity_name, SegmentHandleType const & segment )
-        { return cell_vector_field(quantity_name, segment.id()); }
-
-
-      private:
-
-        // Quantities read:
-        std::vector<std::pair<std::size_t, std::string> >         vertex_data_scalar_read;
-        std::vector<std::pair<std::size_t, std::string> >         vertex_data_vector_read;
-
-        std::vector<std::pair<std::size_t, std::string> >         cell_data_scalar_read;
-        std::vector<std::pair<std::size_t, std::string> >         cell_data_vector_read;
+      /** @brief Registers a cell vector accessor/field with a given quantity name for a given segment */
+      template<typename AccessorOrFieldType>
+      void register_cell_vector(SegmentHandleType const & segment, AccessorOrFieldType accessor_or_field, std::string const & quantity_name)
+      { register_cell_vector(segment.id(), accessor_or_field, quantity_name); }
 
 
 
 
 
-        std::map< std::string, std::map<segment_id_type, std::deque<double> > > vertex_scalar_data;
-        std::map< std::string, std::map<segment_id_type, std::deque<vector_data_type> > > vertex_vector_data;
 
-        std::map< std::string, std::map<segment_id_type, std::deque<double> > > cell_scalar_data;
-        std::map< std::string, std::map<segment_id_type, std::deque<vector_data_type> > > cell_vector_data;
+      /** @brief Returns the vertex scalar field for a given quantity name and a given segment ID. If the quantity name was registered before an invalid field is returned. */
+      typename viennagrid::result_of::field<std::deque<double>, VertexType >::type vertex_scalar_field( std::string const & quantity_name, segment_id_type seg_id )
+      {
+        typename std::map< std::string, std::map<segment_id_type, std::deque<double> > >::iterator it = vertex_scalar_data.find(quantity_name);
+        if (it == vertex_scalar_data.end()) return typename viennagrid::result_of::field<std::deque<double>, VertexType >::type();
 
+        typename std::map<segment_id_type, std::deque<double> >::iterator jt = it->second.find( seg_id );
+        if (jt == it->second.end()) return typename viennagrid::result_of::field<std::deque<double>, VertexType >::type();
 
+        return viennagrid::make_field<VertexType>( jt->second );
+      }
 
-
-
-        VertexScalarOutputFieldContainer          registered_vertex_scalar_data;
-        VertexVectorOutputFieldContainer          registered_vertex_vector_data;
-
-        CellScalarOutputFieldContainer          registered_cell_scalar_data;
-        CellVectorOutputFieldContainer          registered_cell_vector_data;
-
-        std::map< segment_id_type, VertexScalarOutputFieldContainer > registered_segment_vertex_scalar_data;
-        std::map< segment_id_type, VertexVectorOutputFieldContainer > registered_segment_vertex_vector_data;
-
-        std::map< segment_id_type, CellScalarOutputFieldContainer >   registered_segment_cell_scalar_data;
-        std::map< segment_id_type, CellVectorOutputFieldContainer >   registered_segment_cell_vector_data;
+      /** @brief Returns the vertex scalar field for a given quantity name and a given segment. If the quantity name was registered before an invalid field is returned. */
+      typename viennagrid::result_of::field<std::deque<double>, VertexType >::type vertex_scalar_field( std::string const & quantity_name, SegmentHandleType const & segment )
+      { return vertex_scalar_field(quantity_name, segment.id()); }
 
 
+      /** @brief Returns the vertex vector field for a given quantity name and a given segment ID. If the quantity name was registered before an invalid field is returned. */
+      typename viennagrid::result_of::field<std::deque<vector_data_type>, VertexType >::type vertex_vector_field( std::string const & quantity_name, segment_id_type seg_id )
+      {
+        typename std::map< std::string, std::map<segment_id_type, std::deque<vector_data_type> > >::iterator it = vertex_vector_data.find(quantity_name);
+        if (it == vertex_vector_data.end()) return typename viennagrid::result_of::field<std::deque<vector_data_type>, VertexType >::type();
+
+        typename std::map<segment_id_type, std::deque<vector_data_type> >::iterator jt = it->second.find( seg_id );
+        if (jt == it->second.end()) return typename viennagrid::result_of::field<std::deque<vector_data_type>, VertexType >::type();
+
+        return viennagrid::make_field<VertexType>( jt->second );
+      }
+
+      /** @brief Returns the vertex vector field for a given quantity name and a given segment. If the quantity name was registered before an invalid field is returned. */
+      typename viennagrid::result_of::field<std::deque<vector_data_type>, VertexType >::type vertex_vector_field( std::string const & quantity_name, SegmentHandleType const & segment )
+      { return vertex_vector_field(quantity_name, segment.id()); }
+
+
+
+      /** @brief Returns the cell scalar field for a given quantity name and a given segment ID. If the quantity name was registered before an invalid field is returned. */
+      typename viennagrid::result_of::field<std::deque<double>, CellType >::type cell_scalar_field( std::string const & quantity_name, segment_id_type seg_id )
+      {
+        typename std::map< std::string, std::map<segment_id_type, std::deque<double> > >::iterator it = cell_scalar_data.find(quantity_name);
+        if (it == cell_scalar_data.end()) return typename viennagrid::result_of::field<std::deque<double>, CellType >::type();
+
+        typename std::map<segment_id_type, std::deque<double> >::iterator jt = it->second.find( seg_id );
+        if (jt == it->second.end()) return typename viennagrid::result_of::field<std::deque<double>, CellType >::type();
+
+        return viennagrid::make_field<CellType>( jt->second );
+      }
+
+      /** @brief Returns the cell scalar field for a given quantity name and a given segment. If the quantity name was registered before an invalid field is returned. */
+      typename viennagrid::result_of::field<std::deque<double>, CellType >::type cell_scalar_field( std::string const & quantity_name, SegmentHandleType const & segment )
+      { return cell_scalar_field(quantity_name, segment.id()); }
+
+
+      /** @brief Returns the cell vector field for a given quantity name and a given segment ID. If the quantity name was registered before an invalid field is returned. */
+      typename viennagrid::result_of::field<std::deque<vector_data_type>, CellType >::type cell_vector_field( std::string const & quantity_name, segment_id_type seg_id )
+      {
+        typename std::map< std::string, std::map<segment_id_type, std::deque<vector_data_type> > >::iterator it = cell_vector_data.find(quantity_name);
+        if (it == cell_vector_data.end()) return typename viennagrid::result_of::field<std::deque<vector_data_type>, CellType >::type();
+
+        typename std::map<segment_id_type, std::deque<vector_data_type> >::iterator jt = it->second.find( seg_id );
+        if (jt == it->second.end()) return typename viennagrid::result_of::field<std::deque<vector_data_type>, CellType >::type();
+
+        return viennagrid::make_field<CellType>( jt->second );
+      }
+
+      /** @brief Returns the cell vector field for a given quantity name and a given segment. If the quantity name was registered before an invalid field is returned. */
+      typename viennagrid::result_of::field<std::deque<vector_data_type>, CellType >::type cell_vector_field( std::string const & quantity_name, SegmentHandleType const & segment )
+      { return cell_vector_field(quantity_name, segment.id()); }
+
+
+    private:
+
+      // Quantities read:
+      std::vector<std::pair<std::size_t, std::string> >         vertex_data_scalar_read;
+      std::vector<std::pair<std::size_t, std::string> >         vertex_data_vector_read;
+
+      std::vector<std::pair<std::size_t, std::string> >         cell_data_scalar_read;
+      std::vector<std::pair<std::size_t, std::string> >         cell_data_vector_read;
+
+
+      std::map< std::string, std::map<segment_id_type, std::deque<double> > >           vertex_scalar_data;
+      std::map< std::string, std::map<segment_id_type, std::deque<vector_data_type> > > vertex_vector_data;
+
+      std::map< std::string, std::map<segment_id_type, std::deque<double> > >           cell_scalar_data;
+      std::map< std::string, std::map<segment_id_type, std::deque<vector_data_type> > > cell_vector_data;
+
+
+      VertexScalarOutputFieldContainer          registered_vertex_scalar_data;
+      VertexVectorOutputFieldContainer          registered_vertex_vector_data;
+
+      CellScalarOutputFieldContainer          registered_cell_scalar_data;
+      CellVectorOutputFieldContainer          registered_cell_vector_data;
+
+      std::map< segment_id_type, VertexScalarOutputFieldContainer > registered_segment_vertex_scalar_data;
+      std::map< segment_id_type, VertexVectorOutputFieldContainer > registered_segment_vertex_vector_data;
+
+      std::map< segment_id_type, CellScalarOutputFieldContainer >   registered_segment_cell_scalar_data;
+      std::map< segment_id_type, CellVectorOutputFieldContainer >   registered_segment_cell_vector_data;
 
     }; //class vtk_reader
 

@@ -88,44 +88,44 @@ namespace viennagrid
     template<int n, typename BoundaryElementType>
     struct boundary_element_generator<simplex_tag<n>, simplex_tag<1>, BoundaryElementType>
     {
-        template<typename element_type, typename inserter_type>
-        static void create_boundary_elements(element_type & element, inserter_type & inserter)
-        {
-            BoundaryElementType boundary_element( inserter.get_physical_container_collection() );
+      template<typename element_type, typename inserter_type>
+      static void create_boundary_elements(element_type & element, inserter_type & inserter)
+      {
+        BoundaryElementType boundary_element( inserter.get_physical_container_collection() );
 
-            int index = 0;
-            for (int i = 0; i < boundary_elements<simplex_tag<n>, vertex_tag >::num; ++i)
-                for (int j = i+1; j < boundary_elements<simplex_tag<n>, vertex_tag >::num; ++j)
-                {
-                    boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(i), 0 );
-                    boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(j), 1 );
+        int index = 0;
+        for (int i = 0; i < boundary_elements<simplex_tag<n>, vertex_tag >::num; ++i)
+            for (int j = i+1; j < boundary_elements<simplex_tag<n>, vertex_tag >::num; ++j)
+            {
+                boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(i), 0 );
+                boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(j), 1 );
 
-                    element.set_boundary_element( boundary_element, inserter.template insert<true, true>(boundary_element), index++ );
-                }
-        }
+                element.set_boundary_element( boundary_element, inserter.template insert<true, true>(boundary_element), index++ );
+            }
+      }
     };
 
 
     template<int n, typename BoundaryElementType>
     struct boundary_element_generator<simplex_tag<n>, simplex_tag<2>, BoundaryElementType>
     {
-        template<typename element_type, typename inserter_type>
-        static void create_boundary_elements(element_type & element, inserter_type & inserter)
-        {
-            BoundaryElementType boundary_element( inserter.get_physical_container_collection() );
+      template<typename element_type, typename inserter_type>
+      static void create_boundary_elements(element_type & element, inserter_type & inserter)
+      {
+        BoundaryElementType boundary_element( inserter.get_physical_container_collection() );
 
-            int index = 0;
-            for (int i = 0; i < boundary_elements<simplex_tag<n>, vertex_tag >::num; ++i)
-                for (int j = i+1; j < boundary_elements<simplex_tag<n>, vertex_tag >::num; ++j)
-                    for (int k = j+1; k < boundary_elements<simplex_tag<n>, vertex_tag >::num; ++k)
-                    {
-                        boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(i), 0 );
-                        boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(j), 1 );
-                        boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(k), 2 );
+        int index = 0;
+        for (int i = 0; i < boundary_elements<simplex_tag<n>, vertex_tag >::num; ++i)
+            for (int j = i+1; j < boundary_elements<simplex_tag<n>, vertex_tag >::num; ++j)
+                for (int k = j+1; k < boundary_elements<simplex_tag<n>, vertex_tag >::num; ++k)
+                {
+                    boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(i), 0 );
+                    boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(j), 1 );
+                    boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(k), 2 );
 
-                        element.set_boundary_element( boundary_element, inserter.template insert<true, true>(boundary_element), index++ );
-                    }
-        }
+                    element.set_boundary_element( boundary_element, inserter.template insert<true, true>(boundary_element), index++ );
+                }
+      }
     };
 
 

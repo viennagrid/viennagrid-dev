@@ -211,8 +211,6 @@ namespace viennagrid
   {
     typedef mesh_t< decorated_mesh_view_config<WrappedConfigType, ElementTypeList, ContainerConfig> > ViewType;
 
-//     std::cout << "bla" << std::endl;
-
     erase_from_view_functor<ViewType> functor( view );
     viennagrid::for_each(elements_to_erase, functor);
 

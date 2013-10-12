@@ -47,13 +47,13 @@ namespace viennagrid
            >
   class coordinate_converter
   {
-    public:
-      /** @brief By default, conversion is unknown, thus an error is forced when calling the functor */
-      ToPointType operator()(FromPointType const &)
-      {
-        typename FromPointType::ERROR_COORDINATE_SYSTEM_UNKNOWN   error_object;
-        (void)error_object;
-      }
+  public:
+    /** @brief By default, conversion is unknown, thus an error is forced when calling the functor */
+    ToPointType operator()(FromPointType const &)
+    {
+      typename FromPointType::ERROR_COORDINATE_SYSTEM_UNKNOWN   error_object;
+      (void)error_object;
+    }
   };
 
 
@@ -62,14 +62,14 @@ namespace viennagrid
             typename ToPointType>
   class coordinate_converter<FromPointType, ToPointType, cartesian_cs<2>, polar_cs>
   {
-    public:
-      ToPointType operator()(FromPointType const & p_in)
-      {
-        ToPointType ret;
-        ret[0] = sqrt(p_in[0] * p_in[0] + p_in[1] * p_in[1]);
-        ret[1] = atan2(p_in[1], p_in[0]);
-        return ret;
-      }
+  public:
+    ToPointType operator()(FromPointType const & p_in)
+    {
+      ToPointType ret;
+      ret[0] = sqrt(p_in[0] * p_in[0] + p_in[1] * p_in[1]);
+      ret[1] = atan2(p_in[1], p_in[0]);
+      return ret;
+    }
   };
 
   /** @brief A functor for the transformation from three-dimensional Cartesian coordinates to spherical coodinates */
@@ -77,15 +77,15 @@ namespace viennagrid
             typename ToPointType>
   class coordinate_converter<FromPointType, ToPointType, cartesian_cs<3>, spherical_cs>
   {
-    public:
-      ToPointType operator()(FromPointType const & p_in)
-      {
-        ToPointType ret;
-        ret[0] = sqrt(p_in[0] * p_in[0] + p_in[1] * p_in[1] + p_in[2] * p_in[2]);
-        ret[1] = (ret[0] != 0) ? acos(p_in[2] / ret[0]) : 0;
-        ret[2] = atan2(p_in[1], p_in[0]);
-        return ret;
-      }
+  public:
+    ToPointType operator()(FromPointType const & p_in)
+    {
+      ToPointType ret;
+      ret[0] = sqrt(p_in[0] * p_in[0] + p_in[1] * p_in[1] + p_in[2] * p_in[2]);
+      ret[1] = (ret[0] != 0) ? acos(p_in[2] / ret[0]) : 0;
+      ret[2] = atan2(p_in[1], p_in[0]);
+      return ret;
+    }
   };
 
   /** @brief A functor for the transformation from three-dimensional Cartesian coordinates to cylindrical coodinates */
@@ -93,15 +93,15 @@ namespace viennagrid
             typename ToPointType>
   class coordinate_converter<FromPointType, ToPointType, cartesian_cs<3>, cylindrical_cs>
   {
-    public:
-      ToPointType operator()(FromPointType const & p_in)
-      {
-        ToPointType ret;
-        ret[0] = sqrt(p_in[0] * p_in[0] + p_in[1] * p_in[1]);
-        ret[1] = atan2(p_in[1], p_in[0]);
-        ret[2] = p_in[2];
-        return ret;
-      }
+  public:
+    ToPointType operator()(FromPointType const & p_in)
+    {
+      ToPointType ret;
+      ret[0] = sqrt(p_in[0] * p_in[0] + p_in[1] * p_in[1]);
+      ret[1] = atan2(p_in[1], p_in[0]);
+      ret[2] = p_in[2];
+      return ret;
+    }
   };
 
   namespace result_of
@@ -133,14 +133,14 @@ namespace viennagrid
             typename ToPointType>
   class coordinate_converter<FromPointType, ToPointType, polar_cs, cartesian_cs<2> >
   {
-    public:
-      ToPointType operator()(FromPointType const & p_in)
-      {
-        ToPointType ret;
-        ret[0] = p_in[0] * cos(p_in[1]);
-        ret[1] = p_in[0] * sin(p_in[1]);
-        return ret;
-      }
+  public:
+    ToPointType operator()(FromPointType const & p_in)
+    {
+      ToPointType ret;
+      ret[0] = p_in[0] * cos(p_in[1]);
+      ret[1] = p_in[0] * sin(p_in[1]);
+      return ret;
+    }
   };
 
 
@@ -149,15 +149,15 @@ namespace viennagrid
             typename ToPointType>
   class coordinate_converter<FromPointType, ToPointType, spherical_cs, cartesian_cs<3> >
   {
-    public:
-      ToPointType operator()(FromPointType const & p_in)
-      {
-        ToPointType ret;
-        ret[0] = p_in[0] * sin(p_in[1]) * cos(p_in[2]);
-        ret[1] = p_in[0] * sin(p_in[1]) * sin(p_in[2]);
-        ret[2] = p_in[0] * cos(p_in[1]);
-        return ret;
-      }
+  public:
+    ToPointType operator()(FromPointType const & p_in)
+    {
+      ToPointType ret;
+      ret[0] = p_in[0] * sin(p_in[1]) * cos(p_in[2]);
+      ret[1] = p_in[0] * sin(p_in[1]) * sin(p_in[2]);
+      ret[2] = p_in[0] * cos(p_in[1]);
+      return ret;
+    }
   };
 
   /** @brief A functor for the transformation from spherical coodinates to cylindrical coordinates. */
@@ -165,15 +165,15 @@ namespace viennagrid
             typename ToPointType>
   class coordinate_converter<FromPointType, ToPointType, spherical_cs, cylindrical_cs>
   {
-    public:
-      ToPointType operator()(FromPointType const & p_in)
-      {
-        ToPointType ret;
-        ret[0] = p_in[0] * sin(p_in[1]);                 //rho
-        ret[1] = p_in[2];                                //phi
-        ret[2] = p_in[0] * cos(p_in[1]);                 //z
-        return ret;
-      }
+  public:
+    ToPointType operator()(FromPointType const & p_in)
+    {
+      ToPointType ret;
+      ret[0] = p_in[0] * sin(p_in[1]);                 //rho
+      ret[1] = p_in[2];                                //phi
+      ret[2] = p_in[0] * cos(p_in[1]);                 //z
+      return ret;
+    }
   };
 
 
@@ -182,15 +182,15 @@ namespace viennagrid
             typename ToPointType>
   class coordinate_converter<FromPointType, ToPointType, cylindrical_cs, cartesian_cs<3> >
   {
-    public:
-      ToPointType operator()(FromPointType const & p_in)
-      {
-        ToPointType ret;
-        ret[0] = p_in[0] * cos(p_in[1]);
-        ret[1] = p_in[0] * sin(p_in[1]);
-        ret[2] = p_in[2];
-        return ret;
-      }
+  public:
+    ToPointType operator()(FromPointType const & p_in)
+    {
+      ToPointType ret;
+      ret[0] = p_in[0] * cos(p_in[1]);
+      ret[1] = p_in[0] * sin(p_in[1]);
+      ret[2] = p_in[2];
+      return ret;
+    }
   };
 
   /** @brief A functor for the transformation from cylindrical coordinates to spherical coodinates. */
@@ -198,15 +198,15 @@ namespace viennagrid
             typename ToPointType>
   class coordinate_converter<FromPointType, ToPointType, cylindrical_cs, spherical_cs>
   {
-    public:
-      ToPointType operator()(FromPointType const & p_in)
-      {
-        ToPointType ret;
-        ret[0] = sqrt(p_in[0] * p_in[0] + p_in[2] * p_in[2]);
-        ret[1] = (ret[0] != 0) ? acos(p_in[2] / ret[0]) : 0;
-        ret[2] = p_in[1];
-        return ret;
-      }
+  public:
+    ToPointType operator()(FromPointType const & p_in)
+    {
+      ToPointType ret;
+      ret[0] = sqrt(p_in[0] * p_in[0] + p_in[2] * p_in[2]);
+      ret[1] = (ret[0] != 0) ? acos(p_in[2] / ret[0]) : 0;
+      ret[2] = p_in[1];
+      return ret;
+    }
   };
 
   /********************* CoordinateSystem *****************/
@@ -461,18 +461,18 @@ namespace viennagrid
   /** @brief An exception class for invalid point indices */
   class point_index_out_of_bounds_exception : public std::exception
   {
-    public:
-      point_index_out_of_bounds_exception(std::size_t i) : i_(i) {};
+  public:
+    point_index_out_of_bounds_exception(std::size_t i) : i_(i) {}
 
-      virtual const char* what() const throw()
-      {
-        std::stringstream ss;
-        ss << "Point index " << i_ << " out of bounds!";
-        return ss.str().c_str();
-      }
+    virtual const char* what() const throw()
+    {
+      std::stringstream ss;
+      ss << "Point index " << i_ << " out of bounds!";
+      return ss.str().c_str();
+    }
 
-    private:
-      std::size_t i_;
+  private:
+    std::size_t i_;
   };
 
 
@@ -529,110 +529,110 @@ namespace viennagrid
   template <typename CoordType, typename CoordinateSystem>
   class point_t : public storage::static_array<CoordType, CoordinateSystem::dim>
   {
-    public:
-      /** @brief Publish the underlying numberic type of coordinates */
-      typedef CoordType       value_type;
-      /** @brief STL-compatible typedef for the value returned by size() */
-      typedef dim_type        size_type;
+  public:
+    /** @brief Publish the underlying numberic type of coordinates */
+    typedef CoordType       value_type;
+    /** @brief STL-compatible typedef for the value returned by size() */
+    typedef dim_type        size_type;
 
 
-      /** @brief Publish the geometric dimension of the point */
-      static const int dim = CoordinateSystem::dim;
+    /** @brief Publish the geometric dimension of the point */
+    static const int dim = CoordinateSystem::dim;
 
-      /** @brief Default constructor. Sets all entries to zero */
-      point_t()
-      {
-        point_filler<CoordType, dim>::apply( &(*this)[0], 0, 0, 0);  //make sure that there is no bogus in the coords-array
-      }
+    /** @brief Default constructor. Sets all entries to zero */
+    point_t()
+    {
+      point_filler<CoordType, dim>::apply( &(*this)[0], 0, 0, 0);  //make sure that there is no bogus in the coords-array
+    }
 
-      /** @brief Convenience constructor, initializing the point components with values */
-      point_t(CoordType x, CoordType y = 0, CoordType z = 0)
-      {
-        point_filler<CoordType, dim>::apply( &(*this)[0], x, y, z);
-      }
+    /** @brief Convenience constructor, initializing the point components with values */
+    point_t(CoordType x, CoordType y = 0, CoordType z = 0)
+    {
+      point_filler<CoordType, dim>::apply( &(*this)[0], x, y, z);
+    }
 
-      /** @brief Constructor taking a point given in a different coordinate system */
-      template <typename CoordType2, typename CoordinateSystem2>
-      point_t(point_t<CoordType2, CoordinateSystem2> const & p2)
-      {
-        *this = coordinate_converter<point_t<CoordType2, CoordinateSystem2>, point_t>()(p2);
-      }
-
-
-      /** @brief Assignment operator for a point given in a different coordinate system */
-      template <typename CoordType2, typename CoordinateSystem2>
-      point_t & operator=(point_t<CoordType2, CoordinateSystem2> const & p2)
-      {
-        *this = coordinate_converter<point_t<CoordType2, CoordinateSystem2>, point_t>()(p2);
-        return *this;
-      }
-
-      //
-      // operators:
-      //
-
-      /** @brief Convenience overload for the subtraction of points. */
-      point_t operator-() const
-      {
-        return point_t() - *this;
-      }
-
-      //with point:
-      /** @brief Convenience overload for the addition of points. */
-      point_t operator+(point_t const & other) const
-      {
-        return CoordinateSystem::add(*this, other);
-      }
-
-      /** @brief Convenience overload for the inplace addition of points. */
-      point_t & operator+=(point_t const & other)
-      {
-        CoordinateSystem::inplace_add(*this, other);
-        return *this;
-      }
-
-      /** @brief Convenience overload for the subtraction of points. */
-      point_t operator-(point_t const & other) const
-      {
-        return CoordinateSystem::subtract(*this, other);
-      }
-
-      /** @brief Convenience overload for the inplace subtraction of points. */
-      point_t & operator-=(point_t const & other)
-      {
-        CoordinateSystem::inplace_subtract(*this, other);
-        return *this;
-      }
+    /** @brief Constructor taking a point given in a different coordinate system */
+    template <typename CoordType2, typename CoordinateSystem2>
+    point_t(point_t<CoordType2, CoordinateSystem2> const & p2)
+    {
+      *this = coordinate_converter<point_t<CoordType2, CoordinateSystem2>, point_t>()(p2);
+    }
 
 
-      //with CoordType
-      /** @brief Convenience overload for stretching the vector given by the point. The vector is stretched in the Euclidian space - thus coordinates are transformed appropriately if required */
-      point_t & operator*=(CoordType factor)
-      {
-        CoordinateSystem::inplace_stretch(*this, factor);
-        return *this;
-      }
+    /** @brief Assignment operator for a point given in a different coordinate system */
+    template <typename CoordType2, typename CoordinateSystem2>
+    point_t & operator=(point_t<CoordType2, CoordinateSystem2> const & p2)
+    {
+      *this = coordinate_converter<point_t<CoordType2, CoordinateSystem2>, point_t>()(p2);
+      return *this;
+    }
 
-      /** @brief Convenience overload for stretching the vector given by the point. The vector is stretched in the Euclidian space - thus coordinates are transformed appropriately if required */
-      point_t & operator/=(CoordType factor)
-      {
-        CoordinateSystem::inplace_stretch(*this, 1.0 / factor);
-        return *this;
-      }
+    //
+    // operators:
+    //
 
-      /** @brief Convenience overload for stretching the vector given by the point. The vector is stretched in the Euclidian space - thus coordinates are transformed appropriately if required */
-      point_t operator*(CoordType factor) const
-      {
-        point_t ret(*this);
-        return CoordinateSystem::inplace_stretch(ret, factor);
-      }
+    /** @brief Convenience overload for the subtraction of points. */
+    point_t operator-() const
+    {
+      return point_t() - *this;
+    }
 
-      /** @brief Convenience overload for stretching the vector given by the point. The vector is stretched in the Euclidian space - thus coordinates are transformed appropriately if required */
-      point_t operator/(CoordType factor) const
-      {
-        point_t ret(*this);
-        return CoordinateSystem::inplace_stretch(ret, 1.0 / factor);
-      }
+    //with point:
+    /** @brief Convenience overload for the addition of points. */
+    point_t operator+(point_t const & other) const
+    {
+      return CoordinateSystem::add(*this, other);
+    }
+
+    /** @brief Convenience overload for the inplace addition of points. */
+    point_t & operator+=(point_t const & other)
+    {
+      CoordinateSystem::inplace_add(*this, other);
+      return *this;
+    }
+
+    /** @brief Convenience overload for the subtraction of points. */
+    point_t operator-(point_t const & other) const
+    {
+      return CoordinateSystem::subtract(*this, other);
+    }
+
+    /** @brief Convenience overload for the inplace subtraction of points. */
+    point_t & operator-=(point_t const & other)
+    {
+      CoordinateSystem::inplace_subtract(*this, other);
+      return *this;
+    }
+
+
+    //with CoordType
+    /** @brief Convenience overload for stretching the vector given by the point. The vector is stretched in the Euclidian space - thus coordinates are transformed appropriately if required */
+    point_t & operator*=(CoordType factor)
+    {
+      CoordinateSystem::inplace_stretch(*this, factor);
+      return *this;
+    }
+
+    /** @brief Convenience overload for stretching the vector given by the point. The vector is stretched in the Euclidian space - thus coordinates are transformed appropriately if required */
+    point_t & operator/=(CoordType factor)
+    {
+      CoordinateSystem::inplace_stretch(*this, 1.0 / factor);
+      return *this;
+    }
+
+    /** @brief Convenience overload for stretching the vector given by the point. The vector is stretched in the Euclidian space - thus coordinates are transformed appropriately if required */
+    point_t operator*(CoordType factor) const
+    {
+      point_t ret(*this);
+      return CoordinateSystem::inplace_stretch(ret, factor);
+    }
+
+    /** @brief Convenience overload for stretching the vector given by the point. The vector is stretched in the Euclidian space - thus coordinates are transformed appropriately if required */
+    point_t operator/(CoordType factor) const
+    {
+      point_t ret(*this);
+      return CoordinateSystem::inplace_stretch(ret, 1.0 / factor);
+    }
 
   };
 
@@ -640,19 +640,19 @@ namespace viennagrid
   template<typename CoordType, typename CoordinateSystem>
   point_t<CoordType, CoordinateSystem> min(const point_t<CoordType, CoordinateSystem> & p1, const point_t<CoordType, CoordinateSystem> & p2)
   {
-      point_t<CoordType, CoordinateSystem> tmp;
-      for (std::size_t i = 0; i < point_t<CoordType, CoordinateSystem>::dim; ++i)
-          tmp[i] = std::min(p1[i], p2[i]);
-      return tmp;
+    point_t<CoordType, CoordinateSystem> tmp;
+    for (std::size_t i = 0; i < point_t<CoordType, CoordinateSystem>::dim; ++i)
+      tmp[i] = std::min(p1[i], p2[i]);
+    return tmp;
   }
 
   template<typename CoordType, typename CoordinateSystem>
   point_t<CoordType, CoordinateSystem> max(const point_t<CoordType, CoordinateSystem> & p1, const point_t<CoordType, CoordinateSystem> & p2)
   {
-      point_t<CoordType, CoordinateSystem> tmp;
-      for (std::size_t i = 0; i < point_t<CoordType, CoordinateSystem>::dim; ++i)
-          tmp[i] = std::max(p1[i], p2[i]);
-      return tmp;
+    point_t<CoordType, CoordinateSystem> tmp;
+    for (std::size_t i = 0; i < point_t<CoordType, CoordinateSystem>::dim; ++i)
+      tmp[i] = std::max(p1[i], p2[i]);
+    return tmp;
   }
 
 
@@ -696,23 +696,23 @@ namespace viennagrid
 
     namespace result_of
     {
-        template<typename CoordType, typename CoordinateSystem>
-        struct point< point_t<CoordType, CoordinateSystem> >
-        {
-            typedef point_t<CoordType, CoordinateSystem> type;
-        };
+      template<typename CoordType, typename CoordinateSystem>
+      struct point< point_t<CoordType, CoordinateSystem> >
+      {
+        typedef point_t<CoordType, CoordinateSystem> type;
+      };
 
-        template<typename CoordType, typename CoordinateSystem>
-        struct coord< point_t<CoordType, CoordinateSystem> >
-        {
-            typedef CoordType type;
-        };
+      template<typename CoordType, typename CoordinateSystem>
+      struct coord< point_t<CoordType, CoordinateSystem> >
+      {
+        typedef CoordType type;
+      };
 
-        template<typename CoordType, typename CoordinateSystem>
-        struct geometric_dimension< point_t<CoordType, CoordinateSystem> >
-        {
-            static const int value = point_t<CoordType, CoordinateSystem>::dim;
-        };
+      template<typename CoordType, typename CoordinateSystem>
+      struct geometric_dimension< point_t<CoordType, CoordinateSystem> >
+      {
+        static const int value = point_t<CoordType, CoordinateSystem>::dim;
+      };
     }
 
 }

@@ -124,9 +124,9 @@ namespace viennagrid
           return ss.str().c_str();
         }
 
-        cannot_open_file_exception(std::string file) : filename_(file) {};
+        cannot_open_file_exception(std::string file) : filename_(file) {}
 
-        virtual ~cannot_open_file_exception() throw() {};
+        virtual ~cannot_open_file_exception() throw() {}
 
       private:
         std::string filename_;
@@ -147,11 +147,11 @@ namespace viennagrid
         }
 
         /** @brief Constructor taking the file name and a custom parser-specific message to be issued */
-        bad_file_format_exception(std::string file, std::string message) : filename_(file), message_(message) {};
+        bad_file_format_exception(std::string file, std::string message) : filename_(file), message_(message) {}
         /** @brief Constructor taking a custom parser-specific message to be issued */
-        bad_file_format_exception(std::string message) : filename_(), message_(message) {};
+        bad_file_format_exception(std::string message) : filename_(), message_(message) {}
 
-        virtual ~bad_file_format_exception() throw() {};
+        virtual ~bad_file_format_exception() throw() {}
 
       private:
         std::string filename_;

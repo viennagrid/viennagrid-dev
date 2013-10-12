@@ -571,12 +571,12 @@ namespace viennagrid
               PointAccessorT point_accessor_in,
               EdgeRefinementFlagAccessorT const edge_refinement_flag_accessor, VertexToVertexHandleAccessorT vertex_to_vertex_handle_accessor, RefinementVertexAccessorT edge_to_vertex_handle_accessor)
   {
-      typedef typename viennagrid::result_of::element_tag<ElementTypeOrTagT>::type CellTag;
+    typedef typename viennagrid::result_of::element_tag<ElementTypeOrTagT>::type CellTag;
 
-      detail::refine_impl<CellTag>(mesh_in, segmentation_in,
-                                   mesh_out, segmentation_out,
-                                   point_accessor_in,
-                                   edge_refinement_flag_accessor, vertex_to_vertex_handle_accessor, edge_to_vertex_handle_accessor);
+    detail::refine_impl<CellTag>(mesh_in, segmentation_in,
+                                 mesh_out, segmentation_out,
+                                 point_accessor_in,
+                                 edge_refinement_flag_accessor, vertex_to_vertex_handle_accessor, edge_to_vertex_handle_accessor);
   }
 
 

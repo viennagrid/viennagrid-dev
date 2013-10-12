@@ -206,9 +206,9 @@ int main()
   // Get boundary information of first vertex with respect to the full mesh:
 
   for (VertexRange::iterator it = vertices.begin(); it != vertices.end(); ++it)
-      std::cout << *it << " " << viennagrid::point(mesh, *it) << " "
-          << viennagrid::is_boundary(mesh, *it)    //second argument is the enclosing complex (either a mesh or a segment)
-          << std::endl << std::endl;
+    std::cout << *it << " " << viennagrid::point(mesh, *it) << " "
+        << viennagrid::is_boundary(mesh, *it)    //second argument is the enclosing complex (either a mesh or a segment)
+        << std::endl << std::endl;
 
 
 

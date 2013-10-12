@@ -38,8 +38,8 @@ namespace viennagrid
       template<typename PointType>
       typename result_of::coord<PointType>::type operator()(PointType const&)
       {
-          std::cerr << "ViennaGrid - Norm Error - this error type is not implemented" << std::endl;
-          return 0.0;
+        std::cerr << "ViennaGrid - Norm Error - this error type is not implemented" << std::endl;
+        return 0.0;
       }
     };
 
@@ -50,10 +50,10 @@ namespace viennagrid
       template<typename PointType>
       typename result_of::coord<PointType>::type operator()(PointType const& p)
       {
-          typename result_of::coord<PointType>::type result(0);
-          for(std::size_t i = 0; i < traits::dynamic_size(p); i++)
-            result += std::abs(p[i]);
-          return result;
+        typename result_of::coord<PointType>::type result(0);
+        for(std::size_t i = 0; i < traits::dynamic_size(p); i++)
+          result += std::abs(p[i]);
+        return result;
       }
     };
 
@@ -64,10 +64,10 @@ namespace viennagrid
       template<typename PointType>
       typename result_of::coord<PointType>::type operator()(PointType const& p)
       {
-          typename result_of::coord<PointType>::type result(0);
-          for(std::size_t i = 0; i < traits::dynamic_size(p); i++)
-            result += p[i]*p[i];
-          return std::sqrt(result);
+        typename result_of::coord<PointType>::type result(0);
+        for(std::size_t i = 0; i < traits::dynamic_size(p); i++)
+          result += p[i]*p[i];
+        return std::sqrt(result);
       }
     };
 
@@ -78,13 +78,13 @@ namespace viennagrid
       template<typename PointType>
       typename result_of::coord<PointType>::type operator()(PointType const& p)
       {
-          typename result_of::coord<PointType>::type result(0);
-          for(std::size_t i = 0; i < traits::dynamic_size(p); i++)
-          {
-            if(std::abs(p[i]) > result)
-                result = std::abs(p[i]);
-          }
-          return result;
+        typename result_of::coord<PointType>::type result(0);
+        for(std::size_t i = 0; i < traits::dynamic_size(p); i++)
+        {
+          if(std::abs(p[i]) > result)
+              result = std::abs(p[i]);
+        }
+        return result;
       }
     };
 

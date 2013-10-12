@@ -32,23 +32,23 @@
 template <typename T>
 class sparse_matrix
 {
-  public:
-    sparse_matrix(std::size_t rows = 1, std::size_t cols = 1) : rows_(rows), cols_(cols) {}
+public:
+  sparse_matrix(std::size_t rows = 1, std::size_t cols = 1) : rows_(rows), cols_(cols) {}
 
-    T & operator()(std::size_t i, std::size_t j) { return entries_[i][j]; }
-    T const & operator()(std::size_t i, std::size_t j) const { return entries_[i][j]; }
+  T & operator()(std::size_t i, std::size_t j) { return entries_[i][j]; }
+  T const & operator()(std::size_t i, std::size_t j) const { return entries_[i][j]; }
 
-    void resize(std::size_t rows, std::size_t cols)
-    {
-      rows_ = rows;
-      cols_ = cols;
-      entries_.resize(rows);
-    }
+  void resize(std::size_t rows, std::size_t cols)
+  {
+    rows_ = rows;
+    cols_ = cols;
+    entries_.resize(rows);
+  }
 
-  private:
-    std::size_t rows_;
-    std::size_t cols_;
-    std::vector<std::map<std::size_t, T> >  entries_;
+private:
+  std::size_t rows_;
+  std::size_t cols_;
+  std::vector<std::map<std::size_t, T> >  entries_;
 };
 
 //

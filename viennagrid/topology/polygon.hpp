@@ -54,24 +54,24 @@ namespace viennagrid
     template<typename BoundaryElementType>
     struct boundary_element_generator<polygon_tag, simplex_tag<1>, BoundaryElementType>
     {
-        template<typename element_type, typename inserter_type>
-        static void create_boundary_elements(element_type & element, inserter_type & inserter)
+      template<typename element_type, typename inserter_type>
+      static void create_boundary_elements(element_type & element, inserter_type & inserter)
+      {
+        BoundaryElementType boundary_element( inserter.get_physical_container_collection() );
+
+        int index = 0;
+        for (std::size_t i = 0; i < element.container( dimension_tag<0>() ).size()-1; ++i)
         {
-            BoundaryElementType boundary_element( inserter.get_physical_container_collection() );
-
-            int index = 0;
-            for (std::size_t i = 0; i < element.container( dimension_tag<0>() ).size()-1; ++i)
-            {
-                boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(i), 0 );
-                boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(i+1), 1 );
-                element.set_boundary_element( boundary_element, inserter(boundary_element), index++ );
-            }
-
-
-            boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at( element.container( dimension_tag<0>() ).size()-1 ), 0 );
-            boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(0), 1 );
-            element.set_boundary_element( boundary_element, inserter(boundary_element), index++ );
+          boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(i), 0 );
+          boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(i+1), 1 );
+          element.set_boundary_element( boundary_element, inserter(boundary_element), index++ );
         }
+
+
+        boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at( element.container( dimension_tag<0>() ).size()-1 ), 0 );
+        boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(0), 1 );
+        element.set_boundary_element( boundary_element, inserter(boundary_element), index++ );
+      }
     };
 
 

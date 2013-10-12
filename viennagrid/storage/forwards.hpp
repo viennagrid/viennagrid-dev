@@ -106,8 +106,8 @@ namespace viennagrid
     template<typename ContainerTagT, typename HandleTagT>
     struct handled_container_tag
     {
-        typedef ContainerTagT   container_tag;
-        typedef HandleTagT      handle_tag;
+      typedef ContainerTagT   container_tag;
+      typedef HandleTagT      handle_tag;
     };
 
     namespace result_of

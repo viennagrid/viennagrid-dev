@@ -17,6 +17,10 @@
  *  @brief    A mesh wrapper class which models the Boost Serialization concept: http://www.boost.org/libs/serialization/
  */
 
+#include "viennagrid/forwards.hpp"
+#include "viennagrid/mesh/mesh.hpp"
+
+
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/serialization/base_object.hpp>
@@ -60,16 +64,16 @@ namespace viennagrid
     private:
       typedef typename viennagrid::result_of::cell_tag<MeshT>::type                        CellTag;
       typedef typename viennagrid::result_of::const_vertex_range<MeshT>::type              ConstVertexRange;
-      typedef typename viennagrid::result_of::iterator<ConstVertexRange>::type               ConstVertexIterator;
+      typedef typename viennagrid::result_of::iterator<ConstVertexRange>::type             ConstVertexIterator;
       typedef typename viennagrid::result_of::point<MeshT>::type                           PointType;
       typedef typename viennagrid::result_of::vertex<MeshT>::type                          VertexType;
       typedef typename viennagrid::result_of::vertex_handle<MeshT>::type                   VertexHandleType;
-      typedef typename viennagrid::result_of::id_type<VertexType>::type                      VertexIDType;
+      typedef typename viennagrid::result_of::id<VertexType>::type                         VertexIDType;
       typedef typename viennagrid::result_of::cell<MeshT>::type                            CellType;
       typedef typename viennagrid::result_of::const_cell_range<MeshT>::type                ConstCellRange;
-      typedef typename viennagrid::result_of::iterator<ConstCellRange>::type                 ConstCellIterator;
-      typedef typename viennagrid::result_of::const_vertex_range<CellType>::type             ConstVertexOnCellRange;
-      typedef typename viennagrid::result_of::iterator<ConstVertexOnCellRange>::type         ConstVertexOnCellIterator;
+      typedef typename viennagrid::result_of::iterator<ConstCellRange>::type               ConstCellIterator;
+      typedef typename viennagrid::result_of::const_vertex_range<CellType>::type           ConstVertexOnCellRange;
+      typedef typename viennagrid::result_of::iterator<ConstVertexOnCellRange>::type       ConstVertexOnCellIterator;
 
       static const int DIMG = PointType::dim;
 
@@ -93,8 +97,8 @@ namespace viennagrid
         for (ConstVertexIterator vit = vertices.begin();
              vit != vertices.end(); ++vit)
         {
-           for(int d = 0; d < DIMG; d++)
-             ar & viennagrid::point(*vit)[d];
+          for(int d = 0; d < DIMG; d++)
+            ar & viennagrid::point(*vit)[d];
         }
 
 

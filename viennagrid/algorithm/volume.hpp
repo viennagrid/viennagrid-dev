@@ -104,7 +104,7 @@ namespace viennagrid
       typedef typename PointAccessorType::value_type PointType;
       typedef typename viennagrid::result_of::coord< PointType >::type NumericType;
       typedef typename viennagrid::result_of::const_element_range<ElementType, vertex_tag>::type       VertexOnCellContainer;
-      typedef typename viennagrid::result_of::iterator<VertexOnCellContainer>::type       VertexOnCellIterator;
+      typedef typename viennagrid::result_of::iterator<VertexOnCellContainer>::type                    VertexOnCellIterator;
 
 
       VertexOnCellContainer range = viennagrid::elements( cell );
@@ -177,7 +177,7 @@ namespace viennagrid
     volume_mesh(MeshSegmentHandleType const & mesh)
     {
       typedef typename viennagrid::result_of::const_element_range<MeshSegmentHandleType, ElementTypeOrTag>::type  CellContainer;
-      typedef typename viennagrid::result_of::iterator<CellContainer>::type         CellIterator;
+      typedef typename viennagrid::result_of::iterator<CellContainer>::type                                       CellIterator;
 
       typename viennagrid::result_of::coord< MeshSegmentHandleType >::type new_volume = 0;
       CellContainer new_cells = viennagrid::elements<ElementTypeOrTag>(mesh);
