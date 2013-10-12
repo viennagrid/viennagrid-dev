@@ -30,7 +30,7 @@ namespace viennagrid
       struct continuous_id_generator_config_helper;
 
       template<typename head, typename tail, typename id_type>
-      struct continuous_id_generator_config_helper< viennagrid::meta::typelist_t<head, tail>, id_type >
+      struct continuous_id_generator_config_helper< viennagrid::typelist<head, tail>, id_type >
       {
         typedef typename viennagrid::meta::result_of::insert<
             typename continuous_id_generator_config_helper<tail, id_type>::type,
@@ -52,7 +52,7 @@ namespace viennagrid
       struct continuous_id_generator_config_from_mesh_config_helper;
 
       template<typename WrappedConfigType, typename element_tag, typename element_config, typename tail>
-      struct continuous_id_generator_config_from_mesh_config_helper< WrappedConfigType, viennagrid::meta::typelist_t<viennagrid::meta::static_pair<element_tag, element_config>, tail> >
+      struct continuous_id_generator_config_from_mesh_config_helper< WrappedConfigType, viennagrid::typelist<viennagrid::meta::static_pair<element_tag, element_config>, tail> >
       {
         typedef typename viennagrid::meta::result_of::insert<
             typename continuous_id_generator_config_from_mesh_config_helper<WrappedConfigType, tail>::type,
@@ -94,12 +94,12 @@ namespace viennagrid
     class continuous_id_generator_layer_t;
 
     template<typename value_type, typename id_tag, typename tail>
-    class continuous_id_generator_layer_t<viennagrid::meta::typelist_t< viennagrid::meta::static_pair<value_type, id_tag>, tail> > : public continuous_id_generator_layer_t<tail>
+    class continuous_id_generator_layer_t<viennagrid::typelist< viennagrid::meta::static_pair<value_type, id_tag>, tail> > : public continuous_id_generator_layer_t<tail>
     {
       typedef continuous_id_generator_layer_t<tail> base;
     public:
 
-      typedef viennagrid::meta::typelist_t< viennagrid::meta::static_pair<value_type, id_tag>, tail> config_type;
+      typedef viennagrid::typelist< viennagrid::meta::static_pair<value_type, id_tag>, tail> config_type;
 
       typedef typename result_of::make_id<value_type, id_tag>::type id_type;
 

@@ -63,9 +63,9 @@ namespace viennagrid
         };
 
         template<typename value_type, typename tail, typename container_config>
-        struct container_list_from_value_typelist_using_container_config<viennagrid::meta::typelist_t<value_type, tail>, container_config>
+        struct container_list_from_value_typelist_using_container_config<viennagrid::typelist<value_type, tail>, container_config>
         {
-          typedef viennagrid::meta::typelist_t<
+          typedef viennagrid::typelist<
               typename viennagrid::meta::static_pair<
                       value_type,
                       typename container_from_value_using_container_config<value_type, container_config>::type

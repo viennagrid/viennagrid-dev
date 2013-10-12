@@ -25,13 +25,13 @@ namespace viennagrid
 
 
       template <typename to_find, typename value_type, typename tail>
-      struct index_of<typelist_t< static_pair<to_find, value_type>, tail>, to_find>
+      struct index_of<typelist< static_pair<to_find, value_type>, tail>, to_find>
       {
         static const int value = 0;
       };
 
       template <typename key_type, typename value_type, typename tail, typename to_find>
-      struct index_of<typelist_t< static_pair<key_type, value_type>, tail>, to_find>
+      struct index_of<typelist< static_pair<key_type, value_type>, tail>, to_find>
       {
       private:
         static const int temp = index_of<tail, to_find>::value;
@@ -52,13 +52,13 @@ namespace viennagrid
       };
 
       template<typename value, typename tail, typename to_find>
-      struct find< typelist_t<static_pair<to_find, value>, tail>, to_find>
+      struct find< typelist<static_pair<to_find, value>, tail>, to_find>
       {
         typedef static_pair<to_find, value> type;
       };
 
       template<typename key, typename value, typename tail, typename to_find>
-      struct find< typelist_t<static_pair<key, value>, tail>, to_find>
+      struct find< typelist<static_pair<key, value>, tail>, to_find>
       {
         typedef typename find<tail, to_find>::type type;
       };
@@ -74,21 +74,21 @@ namespace viennagrid
       };
 
       template <typename map_key, typename map_value, typename tail>
-      struct insert<typelist_t<static_pair<map_key, map_value>, tail>, null_type>
+      struct insert<typelist<static_pair<map_key, map_value>, tail>, null_type>
       {
-        typedef typelist_t<static_pair<map_key, map_value>, tail> type;
+        typedef typelist<static_pair<map_key, map_value>, tail> type;
       };
 
       template<typename key, typename value>
       struct insert< null_type, static_pair<key, value> >
       {
-        typedef typelist_t<static_pair<key, value>, null_type> type;
+        typedef typelist<static_pair<key, value>, null_type> type;
       };
 
       template <typename map_key, typename map_value, typename tail, typename to_insert_key, typename to_insert_value>
-      struct insert<typelist_t<static_pair<map_key, map_value>, tail>, static_pair<to_insert_key, to_insert_value> >
+      struct insert<typelist<static_pair<map_key, map_value>, tail>, static_pair<to_insert_key, to_insert_value> >
       {
-        typedef typelist_t<static_pair<map_key, map_value>, tail> typemap;
+        typedef typelist<static_pair<map_key, map_value>, tail> typemap;
 
         // !!!!! INFO !!!!!
         // if a compiler error points to the next lines, you might want to insert a key which is already present
@@ -108,9 +108,9 @@ namespace viennagrid
       {};
 
       template <typename map_key, typename map_value, typename tail>
-      struct modify<typelist_t<static_pair<map_key, map_value>, tail>, null_type>
+      struct modify<typelist<static_pair<map_key, map_value>, tail>, null_type>
       {
-        typedef typelist_t<static_pair<map_key, map_value>, tail> type;
+        typedef typelist<static_pair<map_key, map_value>, tail> type;
       };
 
       template<typename key_to_find, typename modified_value>
@@ -121,9 +121,9 @@ namespace viennagrid
       };
 
       template<typename map_key, typename map_value, typename tail, typename key_to_find, typename modified_value>
-      struct modify< typelist_t<static_pair<map_key, map_value>, tail>, static_pair<key_to_find, modified_value> >
+      struct modify< typelist<static_pair<map_key, map_value>, tail>, static_pair<key_to_find, modified_value> >
       {
-        typedef typelist_t<static_pair<map_key, map_value>, tail> typemap;
+        typedef typelist<static_pair<map_key, map_value>, tail> typemap;
         static const int index = index_of<typemap, key_to_find>::value;
 
         // !!!!! INFO !!!!!
@@ -144,21 +144,21 @@ namespace viennagrid
       {};
 
       template <typename map_key, typename map_value, typename tail>
-      struct insert_or_modify<typelist_t<static_pair<map_key, map_value>, tail>, null_type>
+      struct insert_or_modify<typelist<static_pair<map_key, map_value>, tail>, null_type>
       {
-        typedef typelist_t<static_pair<map_key, map_value>, tail> type;
+        typedef typelist<static_pair<map_key, map_value>, tail> type;
       };
 
       template<typename key_to_find, typename modified_value>
       struct insert_or_modify< null_type, static_pair<key_to_find, modified_value> >
       {
-        typedef typelist_t<static_pair<key_to_find, modified_value>, null_type> type;
+        typedef typelist<static_pair<key_to_find, modified_value>, null_type> type;
       };
 
       template<typename map_key, typename map_value, typename tail, typename key_to_find, typename modified_value>
-      struct insert_or_modify< typelist_t<static_pair<map_key, map_value>, tail>, static_pair<key_to_find, modified_value> >
+      struct insert_or_modify< typelist<static_pair<map_key, map_value>, tail>, static_pair<key_to_find, modified_value> >
       {
-        typedef typelist_t<static_pair<map_key, map_value>, tail> typemap;
+        typedef typelist<static_pair<map_key, map_value>, tail> typemap;
         static const int index = index_of<typemap, key_to_find>::value;
 
         // !!!!! INFO !!!!!
@@ -228,22 +228,22 @@ namespace viennagrid
       };
 
       template <typename key1, typename value1, typename tail1, template<typename,typename> class merge_helper>
-      struct merge_impl<typelist_t<static_pair<key1, value1>, tail1>, null_type, merge_helper>
+      struct merge_impl<typelist<static_pair<key1, value1>, tail1>, null_type, merge_helper>
       {
-        typedef typelist_t<static_pair<key1, value1>, tail1> type;
+        typedef typelist<static_pair<key1, value1>, tail1> type;
       };
 
       template <typename key2, typename value2, typename tail2, template<typename,typename> class merge_helper>
-      struct merge_impl<null_type, typelist_t<static_pair<key2, value2>, tail2>, merge_helper>
+      struct merge_impl<null_type, typelist<static_pair<key2, value2>, tail2>, merge_helper>
       {
-        typedef typelist_t<static_pair<key2, value2>, tail2> type;
+        typedef typelist<static_pair<key2, value2>, tail2> type;
       };
 
       template <typename key1, typename value1, typename tail1, typename key2, typename value2, typename tail2, template<typename,typename> class merge_helper>
-      struct merge_impl<typelist_t<static_pair<key1, value1>, tail1>, typelist_t<static_pair<key2, value2>, tail2>, merge_helper>
+      struct merge_impl<typelist<static_pair<key1, value1>, tail1>, typelist<static_pair<key2, value2>, tail2>, merge_helper>
       {
-        typedef typelist_t<static_pair<key1, value1>, tail1> typemap1;
-        typedef typelist_t<static_pair<key2, value2>, tail1> typemap2;
+        typedef typelist<static_pair<key1, value1>, tail1> typemap1;
+        typedef typelist<static_pair<key2, value2>, tail1> typemap2;
 
         typedef typename find<typemap1, key2>::type search_result;
 
@@ -295,7 +295,7 @@ namespace viennagrid
 
 
       template<typename key, typename value, typename tail>
-      struct consistency< typelist_t<static_pair<key, value>, tail> >
+      struct consistency< typelist<static_pair<key, value>, tail> >
       {
         // !!!!! INFO !!!!!
         // if a compiler error points to the next lines, your viennamta::map is corrupted (e.g. duplicate keys, ...)
@@ -305,7 +305,7 @@ namespace viennagrid
                     typename find<tail, key>::type
                 >::value >::type static_assert_typedef;
 
-        typedef typelist_t<
+        typedef typelist<
             static_pair<key,value>,
             typename consistency<tail>::type
         > type;
@@ -323,9 +323,9 @@ namespace viennagrid
       };
 
       template<typename key_, typename value_, typename tail>
-      struct key_typelist< viennagrid::meta::typelist_t< viennagrid::meta::static_pair<key_, value_> , tail> >
+      struct key_typelist< viennagrid::typelist< viennagrid::meta::static_pair<key_, value_> , tail> >
       {
-        typedef viennagrid::meta::typelist_t< key_, typename key_typelist<tail>::type > type;
+        typedef viennagrid::typelist< key_, typename key_typelist<tail>::type > type;
       };
 
 
@@ -341,9 +341,9 @@ namespace viennagrid
       };
 
       template<typename key_, typename value_, typename tail>
-      struct value_typelist< viennagrid::meta::typelist_t< viennagrid::meta::static_pair<key_, value_> , tail> >
+      struct value_typelist< viennagrid::typelist< viennagrid::meta::static_pair<key_, value_> , tail> >
       {
-        typedef viennagrid::meta::typelist_t< value_, typename key_typelist<tail>::type > type;
+        typedef viennagrid::typelist< value_, typename key_typelist<tail>::type > type;
       };
 
     }
@@ -363,7 +363,7 @@ namespace viennagrid
 //     template<typename key, typename value, typename ... tail>
 //     struct make_typemap_unsafe<key, value, tail...>
 //     {
-//         typedef viennagrid::meta::typelist_t<
+//         typedef viennagrid::typelist<
 //             viennagrid::meta::static_pair<key,value>,
 //             typename make_typemap_unsafe<tail...>::type
 //         > type;
@@ -392,7 +392,7 @@ namespace viennagrid
     struct make_typemap_unsafe
     {
       typedef
-          typelist_t<
+          typelist<
               viennagrid::meta::static_pair<K01,V01>,
               typename make_typemap_unsafe<             K02, V02, K03, V03, K04, V04, K05, V05, K06, V06, K07, V07, K08, V08, K09, V09, K10, V10,
                                               K11, V11, K12, V12, K13, V13, K14, V14, K15, V15, K16, V16, K17, V17, K18, V18, K19, V19, K20, V20>::type

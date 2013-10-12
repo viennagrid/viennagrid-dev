@@ -241,9 +241,9 @@ namespace viennagrid
       struct element_container_typemap;
 
       template<typename WrappedConfigT, typename ElementTagT, typename ValueConfigT, typename TailT>
-      struct element_container_typemap< WrappedConfigT, viennagrid::meta::typelist_t< viennagrid::meta::static_pair<ElementTagT, ValueConfigT>, TailT > >
+      struct element_container_typemap< WrappedConfigT, viennagrid::typelist< viennagrid::meta::static_pair<ElementTagT, ValueConfigT>, TailT > >
       {
-        typedef viennagrid::meta::typelist_t<
+        typedef viennagrid::typelist<
             viennagrid::meta::static_pair<
                 element_t<ElementTagT, WrappedConfigT>,
                 typename element_container<WrappedConfigT, ElementTagT>::type
@@ -287,7 +287,7 @@ namespace viennagrid
     };
 
     template<typename WrappedConfigType, typename ElementTagT, typename BoundaryElementTagT, typename tail>
-    struct coboundary_container_collection_per_element_typemap<WrappedConfigType, ElementTagT, viennagrid::meta::typelist_t<BoundaryElementTagT, tail> >
+    struct coboundary_container_collection_per_element_typemap<WrappedConfigType, ElementTagT, viennagrid::typelist<BoundaryElementTagT, tail> >
     {
       typedef typename config::result_of::query<WrappedConfigType, long, config::mesh_change_counter_tag>::type MeshChangeCounterType;
 
@@ -299,7 +299,7 @@ namespace viennagrid
       typedef typename viennagrid::storage::result_of::view<base_element_container, coboundary_view_container_tag>::type element_view_type;
       typedef typename storage::result_of::container<element_view_type, coboundary_container_tag >::type base_coboundary_container;
 
-      typedef viennagrid::meta::typelist_t<
+      typedef viennagrid::typelist<
           viennagrid::meta::static_pair<
               viennagrid::meta::static_pair<
                   BoundaryElementTagT,
@@ -323,7 +323,7 @@ namespace viennagrid
     };
 
     template<typename WrappedConfigType, typename ElementTagT, typename tail>
-    struct coboundary_container_collection_typemap<WrappedConfigType, viennagrid::meta::typelist_t<ElementTagT, tail> >
+    struct coboundary_container_collection_typemap<WrappedConfigType, viennagrid::typelist<ElementTagT, tail> >
     {
       typedef typename viennagrid::meta::result_of::merge<
         typename coboundary_container_collection_per_element_typemap<WrappedConfigType, ElementTagT>::type,
@@ -349,7 +349,7 @@ namespace viennagrid
     };
 
     template<typename WrappedConfigType, typename ElementTagT, typename ConnectorElementTagT, typename tail>
-    struct neighbour_container_collection_per_element_typemap<WrappedConfigType, ElementTagT, viennagrid::meta::typelist_t<ConnectorElementTagT, tail> >
+    struct neighbour_container_collection_per_element_typemap<WrappedConfigType, ElementTagT, viennagrid::typelist<ConnectorElementTagT, tail> >
     {
       typedef typename config::result_of::query<WrappedConfigType, long, config::mesh_change_counter_tag>::type MeshChangeCounterType;
 
@@ -360,7 +360,7 @@ namespace viennagrid
       typedef typename viennagrid::storage::result_of::view<base_element_container, neighbour_view_container_tag>::type element_view_type;
       typedef typename storage::result_of::container<element_view_type, neighbour_container_tag >::type base_container;
 
-      typedef viennagrid::meta::typelist_t<
+      typedef viennagrid::typelist<
           viennagrid::meta::static_pair<
               viennagrid::meta::static_pair<
                   ElementTagT,
@@ -384,7 +384,7 @@ namespace viennagrid
     };
 
     template<typename WrappedConfigType, typename ElementTagT, typename tail>
-    struct neighbour_container_collection_typemap<WrappedConfigType, viennagrid::meta::typelist_t<ElementTagT, tail> >
+    struct neighbour_container_collection_typemap<WrappedConfigType, viennagrid::typelist<ElementTagT, tail> >
     {
       typedef typename viennagrid::meta::result_of::merge<
         typename neighbour_container_collection_per_element_typemap<WrappedConfigType, ElementTagT>::type,
@@ -407,7 +407,7 @@ namespace viennagrid
     };
 
     template<typename ElementTypeOrTagT, typename TailT>
-    struct topologic_cell_dimension< viennagrid::meta::typelist_t<ElementTypeOrTagT, TailT> >
+    struct topologic_cell_dimension< viennagrid::typelist<ElementTypeOrTagT, TailT> >
     {
       typedef typename viennagrid::result_of::element_tag<ElementTypeOrTagT>::type ElementTag;
       static const int tail_cell_dimension = topologic_cell_dimension<TailT>::value;
@@ -429,7 +429,7 @@ namespace viennagrid
     };
 
     template<typename ElementTypeOrTagT, typename TailT, int TopologicDimensionV>
-    struct elements_of_topologic_dim< viennagrid::meta::typelist_t<ElementTypeOrTagT, TailT>, TopologicDimensionV >
+    struct elements_of_topologic_dim< viennagrid::typelist<ElementTypeOrTagT, TailT>, TopologicDimensionV >
     {
       typedef typename viennagrid::result_of::element_tag<ElementTypeOrTagT>::type ElementTag;
       typedef typename elements_of_topologic_dim<TailT, TopologicDimensionV>::type TailTypelist;
@@ -466,14 +466,14 @@ namespace viennagrid
     };
 
     template<typename WrappedConfigType, typename ElementTagT, typename TailT>
-    struct boundary_information_collection_typemap_impl<WrappedConfigType, viennagrid::meta::typelist_t<ElementTagT, TailT> >
+    struct boundary_information_collection_typemap_impl<WrappedConfigType, viennagrid::typelist<ElementTagT, TailT> >
     {
       typedef typename config::result_of::query<WrappedConfigType, long, config::mesh_change_counter_tag>::type MeshChangeCounterType;
 
       typedef typename config::result_of::query<WrappedConfigType, storage::std_vector_tag, ElementTagT, config::boundary_information_container_tag>::type boundary_container_tag;
       typedef typename storage::result_of::container<bool, boundary_container_tag >::type base_container;
 
-      typedef viennagrid::meta::typelist_t<
+      typedef viennagrid::typelist<
           viennagrid::meta::static_pair<
               ElementTagT,
               boundary_information_wrapper<base_container, MeshChangeCounterType>

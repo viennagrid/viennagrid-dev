@@ -591,9 +591,9 @@ namespace viennagrid
       };
 
       template<typename value_type, typename container_type, typename tail, typename view_container_config>
-      struct view_container_typemap<viennagrid::meta::typelist_t< viennagrid::meta::static_pair<value_type, container_type>, tail>, view_container_config>
+      struct view_container_typemap<viennagrid::typelist< viennagrid::meta::static_pair<value_type, container_type>, tail>, view_container_config>
       {
-        typedef viennagrid::meta::typelist_t<
+        typedef viennagrid::typelist<
             viennagrid::meta::static_pair<
                 value_type,
                 typename viennagrid::storage::result_of::view<
@@ -649,7 +649,7 @@ namespace viennagrid
     };
 
     template<typename value_type, typename container_type, typename tail>
-    struct set_base_container_helper< viennagrid::meta::typelist_t< viennagrid::meta::static_pair<value_type, container_type>, tail > >
+    struct set_base_container_helper< viennagrid::typelist< viennagrid::meta::static_pair<value_type, container_type>, tail > >
     {
       template<typename base_container_collection_type, typename view_container_collection_type>
       static void exec( base_container_collection_type & base_container_collection, view_container_collection_type & view_container_collection )

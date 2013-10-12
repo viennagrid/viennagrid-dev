@@ -959,11 +959,11 @@ namespace viennagrid
     };
 
     template<typename segment_id_type, typename interface_information_container_tag, typename ChangeCounterType, typename element_tag, typename tail>
-    struct interface_information_collection_typemap_impl<segment_id_type, interface_information_container_tag, ChangeCounterType, viennagrid::meta::typelist_t<element_tag, tail> >
+    struct interface_information_collection_typemap_impl<segment_id_type, interface_information_container_tag, ChangeCounterType, viennagrid::typelist<element_tag, tail> >
     {
       typedef typename storage::result_of::container<bool, interface_information_container_tag >::type base_container;
 
-      typedef viennagrid::meta::typelist_t<
+      typedef viennagrid::typelist<
           viennagrid::meta::static_pair<
               element_tag,
               interface_information_wrapper<segment_id_type, base_container, ChangeCounterType>
@@ -998,13 +998,13 @@ namespace viennagrid
     };
 
     template<typename element_tag, typename segment_info_type, typename tail, typename segment_id_type, typename container_tag, typename segment_info_container_tag>
-    struct segmentation_info_container_typemap< viennagrid::meta::typelist_t<viennagrid::meta::static_pair<element_tag, segment_info_type>, tail>, segment_id_type, container_tag, segment_info_container_tag >
+    struct segmentation_info_container_typemap< viennagrid::typelist<viennagrid::meta::static_pair<element_tag, segment_info_type>, tail>, segment_id_type, container_tag, segment_info_container_tag >
     {
       typedef viennagrid::meta::static_pair< element_tag, segment_info_type > key_type;
       typedef typename viennagrid::storage::result_of::container< std::pair<segment_id_type, segment_info_type>, segment_info_container_tag>::type segment_info_container;
       typedef typename viennagrid::storage::result_of::container<segment_info_container, container_tag>::type container_type;
 
-      typedef viennagrid::meta::typelist_t<
+      typedef viennagrid::typelist<
           viennagrid::meta::static_pair<
               element_tag,
               container_type
@@ -1025,9 +1025,9 @@ namespace viennagrid
     };
 
     template<typename element_type, typename tail, typename segment_id_type, typename container_tag>
-    struct trivial_segmentation_appendix< viennagrid::meta::typelist_t<element_type, tail>, segment_id_type, container_tag >
+    struct trivial_segmentation_appendix< viennagrid::typelist<element_type, tail>, segment_id_type, container_tag >
     {
-      typedef viennagrid::meta::typelist_t<
+      typedef viennagrid::typelist<
           viennagrid::meta::static_pair<
               element_type,
               typename viennagrid::storage::result_of::container<

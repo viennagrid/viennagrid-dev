@@ -100,7 +100,7 @@ namespace viennagrid
     };
 
     template<typename ElementT, typename TailT, typename ContainerTypemapT>
-    struct filter_element_container<viennagrid::meta::typelist_t< ElementT, TailT> , ContainerTypemapT>
+    struct filter_element_container<viennagrid::typelist< ElementT, TailT> , ContainerTypemapT>
     {
         typedef typename viennagrid::meta::result_of::find<ContainerTypemapT, ElementT>::type result_type;
 
@@ -109,7 +109,7 @@ namespace viennagrid
         typedef typename viennagrid::meta::IF<
             viennagrid::meta::EQUAL< result_type, viennagrid::meta::not_found >::value,
             new_tail,
-            viennagrid::meta::typelist_t<
+            viennagrid::typelist<
                 result_type,
                 new_tail
             >
@@ -450,9 +450,9 @@ namespace viennagrid
     };
 
     template<typename KeyT, typename ValueT, typename TailT>
-    struct container_collection_typemap< viennagrid::meta::typelist_t< viennagrid::meta::static_pair<KeyT, ValueT>, TailT > >
+    struct container_collection_typemap< viennagrid::typelist< viennagrid::meta::static_pair<KeyT, ValueT>, TailT > >
     {
-      typedef viennagrid::meta::typelist_t< viennagrid::meta::static_pair<KeyT, ValueT>, TailT > type;
+      typedef viennagrid::typelist< viennagrid::meta::static_pair<KeyT, ValueT>, TailT > type;
     };
 
 
@@ -497,12 +497,12 @@ namespace viennagrid
     };
 
     template<typename HeadT, typename TailT>
-    struct element_typelist_for_element< viennagrid::meta::typelist_t<HeadT, TailT> >
+    struct element_typelist_for_element< viennagrid::typelist<HeadT, TailT> >
     {
       typedef typename HeadT::first BoundaryContainerType;
       typedef typename BoundaryContainerType::value_type CurrentElementType;
 
-      typedef viennagrid::meta::typelist_t<
+      typedef viennagrid::typelist<
             CurrentElementType,
             typename element_typelist_for_element<TailT>::type
           > type;
@@ -557,13 +557,13 @@ namespace viennagrid
     };
 
     template<typename HeadT, typename TailT, typename ElementT>
-    struct referencing_element_typelist_impl< viennagrid::meta::typelist_t<HeadT, TailT>, ElementT >
+    struct referencing_element_typelist_impl< viennagrid::typelist<HeadT, TailT>, ElementT >
     {
       typedef typename referencing_element_typelist_impl<TailT, ElementT>::type tail_typelist;
 
       typedef typename viennagrid::meta::IF<
           is_boundary<HeadT, ElementT>::value,
-          viennagrid::meta::typelist_t<HeadT, tail_typelist>,
+          viennagrid::typelist<HeadT, tail_typelist>,
           tail_typelist
       >::type type;
     };
@@ -974,7 +974,7 @@ namespace viennagrid
     };
 
     template<typename element_type, typename tail, typename element_tag>
-    struct is_element_present_helper< meta::typelist_t<element_type, tail>, element_tag>
+    struct is_element_present_helper< typelist<element_type, tail>, element_tag>
     {
       static const bool value =
         viennagrid::meta::EQUAL<
@@ -1053,7 +1053,7 @@ namespace viennagrid
     };
 
     template<typename element_type, typename element_container_type, typename tail>
-    struct topologic_cell_dimension_impl< viennagrid::meta::typelist_t< viennagrid::meta::static_pair<element_type, element_container_type>, tail > >
+    struct topologic_cell_dimension_impl< viennagrid::typelist< viennagrid::meta::static_pair<element_type, element_container_type>, tail > >
     {
       static const int tail_cell_dimension = topologic_cell_dimension_impl<tail>::value;
       static const int current_element_dimension = topologic_dimension<element_type>::value;
@@ -1087,7 +1087,7 @@ namespace viennagrid
     };
 
     template<typename element_type, typename element_container_type, typename tail, int topologic_dimension>
-    struct elements_of_topologic_dim_impl< viennagrid::meta::typelist_t< viennagrid::meta::static_pair<element_type, element_container_type>, tail >, topologic_dimension >
+    struct elements_of_topologic_dim_impl< viennagrid::typelist< viennagrid::meta::static_pair<element_type, element_container_type>, tail >, topologic_dimension >
     {
       typedef typename elements_of_topologic_dim_impl<tail, topologic_dimension>::type tail_typelist;
 
@@ -1545,7 +1545,7 @@ namespace viennagrid
 
 
   template<typename SourceElementT, typename TailT>
-  struct fix_handle_helper< meta::typelist_t<SourceElementT, TailT> >
+  struct fix_handle_helper< typelist<SourceElementT, TailT> >
   {
     template<typename SourceWrappedConfigT, typename DestinationWrappedConfigT>
     static void fix_handles( mesh_t<SourceWrappedConfigT> const & source_mesh, mesh_t<DestinationWrappedConfigT> & destination_mesh )

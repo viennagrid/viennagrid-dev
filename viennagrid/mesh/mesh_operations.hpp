@@ -91,11 +91,11 @@ namespace viennagrid
   struct mark_referencing_elements_impl;
 
   template<typename MeshT, typename ToEraseViewT, typename HandleT, typename CoboundaryElementT, typename TailT>
-  struct mark_referencing_elements_impl<MeshT, ToEraseViewT, HandleT, viennagrid::meta::typelist_t<CoboundaryElementT, TailT> >
+  struct mark_referencing_elements_impl<MeshT, ToEraseViewT, HandleT, viennagrid::typelist<CoboundaryElementT, TailT> >
   {
     static void mark(MeshT & mesh, ToEraseViewT & mesh_view, HandleT host_element)
     {
-      //typedef viennagrid::meta::typelist_t<CoboundaryElementT, TailT> ReferencingElementTypelist;
+      //typedef viennagrid::typelist<CoboundaryElementT, TailT> ReferencingElementTypelist;
       typedef typename viennagrid::storage::handle::result_of::value_type<HandleT>::type HostElementType;
 
       //typedef typename viennagrid::result_of::handle<MeshT, CoboundaryElementT>::type CoboundaryElementHandle;

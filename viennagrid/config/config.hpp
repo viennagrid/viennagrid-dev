@@ -107,10 +107,10 @@ namespace viennagrid
 
       template<typename HeadT, typename TailT, typename DefaultT, typename SearchTag0T, typename SearchTag2T, typename SearchTag3T, typename SearchTag4T,
                               typename SearchTag5T, typename SearchTag6T, typename SearchTag7T, typename SearchTag8T, typename SearchTag9T>
-      struct query<viennagrid::meta::typelist_t<HeadT, TailT>, DefaultT, SearchTag0T, viennagrid::null_type, SearchTag2T, SearchTag3T, SearchTag4T,
+      struct query<viennagrid::typelist<HeadT, TailT>, DefaultT, SearchTag0T, viennagrid::null_type, SearchTag2T, SearchTag3T, SearchTag4T,
                                                           SearchTag5T, SearchTag6T, SearchTag7T, SearchTag8T, SearchTag9T>
       {
-        typedef viennagrid::meta::typelist_t<HeadT, TailT> ConfigType;
+        typedef viennagrid::typelist<HeadT, TailT> ConfigType;
         typedef typename unpack<typename viennagrid::meta::result_of::find<ConfigType, SearchTag0T>::type >::type EntryType;
         typedef typename viennagrid::meta::IF<
             viennagrid::meta::EQUAL<EntryType, viennagrid::meta::not_found>::value,
@@ -120,7 +120,7 @@ namespace viennagrid
 
 
       template<typename HeadT, typename TailT, typename DefaultT>
-      struct query<viennagrid::meta::typelist_t<HeadT, TailT>, DefaultT,
+      struct query<viennagrid::typelist<HeadT, TailT>, DefaultT,
           viennagrid::null_type, viennagrid::null_type, viennagrid::null_type, viennagrid::null_type, viennagrid::null_type,
           viennagrid::null_type, viennagrid::null_type, viennagrid::null_type, viennagrid::null_type, viennagrid::null_type>
       {
@@ -133,10 +133,10 @@ namespace viennagrid
                 typename SearchTag3T, typename SearchTag4T, typename SearchTag5T,
                 typename SearchTag6T, typename SearchTag7T, typename SearchTag8T,
                 typename SearchTag9T>
-      struct query<viennagrid::meta::typelist_t<HeadT, TailT>, DefaultT,
+      struct query<viennagrid::typelist<HeadT, TailT>, DefaultT,
                    SearchTag0T, SearchTag1T, SearchTag2T, SearchTag3T, SearchTag4T, SearchTag5T, SearchTag6T, SearchTag7T, SearchTag8T, SearchTag9T>
       {
-        typedef viennagrid::meta::typelist_t<HeadT, TailT> ConfigT;
+        typedef viennagrid::typelist<HeadT, TailT> ConfigT;
         typedef typename unpack<typename viennagrid::meta::result_of::find<ConfigT, SearchTag0T>::type >::type EntryType;
         typedef typename query<
               EntryType, DefaultT,

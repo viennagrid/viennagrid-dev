@@ -21,7 +21,7 @@ namespace viennagrid
     struct for_each_impl {};
 
     template<typename head, typename tail>
-    struct for_each_impl< viennagrid::meta::typelist_t<head, tail> >
+    struct for_each_impl< viennagrid::typelist<head, tail> >
     {
       template<typename functor>
       static void exec( functor & f)
@@ -68,9 +68,9 @@ namespace viennagrid
     };
 
     template<template<typename> class functor, typename head, typename tail>
-    struct TRANSFORM< functor, viennagrid::meta::typelist_t<head, tail> >
+    struct TRANSFORM< functor, viennagrid::typelist<head, tail> >
     {
-      typedef viennagrid::meta::typelist_t<
+      typedef viennagrid::typelist<
           typename functor<head>::type,
           typename TRANSFORM<functor, tail>::type
       > type;

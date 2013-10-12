@@ -18,16 +18,16 @@
 
 namespace viennagrid
 {
+  template <class HeadT, class TailT>
+  struct typelist
+  {
+    typedef HeadT head;
+    typedef TailT tail;
+  };
+
+
   namespace meta
   {
-
-    template <class head_, class tail_>
-    struct typelist_t
-    {
-      typedef head_ head;
-      typedef tail_ tail;
-    };
-
 
 
 //     C++11 version
@@ -44,7 +44,7 @@ namespace viennagrid
 //     template<typename head, typename ... tail>
 //     struct make_typelist<head, tail...>
 //     {
-//         typedef viennagrid::meta::typelist_t<head, typename make_typelist<tail...>::type> type;
+//         typedef viennagrid::typelist<head, typename make_typelist<tail...>::type> type;
 //     };
 
 
@@ -59,7 +59,7 @@ namespace viennagrid
     struct make_typelist
     {
       typedef
-          typelist_t<
+          typelist<
               T01,
               typename make_typelist<T02, T03, T04, T05, T06, T07, T08, T09, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20>::type
           > type;
@@ -89,7 +89,7 @@ namespace viennagrid
       };
 
       template <typename head, typename tail>
-      struct size< typelist_t<head, tail> >
+      struct size< typelist<head, tail> >
       {
         static const int value = 1 + size<tail>::value;
       };
@@ -102,13 +102,13 @@ namespace viennagrid
       };
 
       template <typename head, typename tail>
-      struct at<typelist_t<head, tail>, 0>
+      struct at<typelist<head, tail>, 0>
       {
           typedef head type;
       };
 
       template <typename head, typename tail, unsigned int i>
-      struct at<typelist_t<head, tail>, i>
+      struct at<typelist<head, tail>, i>
       {
           typedef typename at<tail, i - 1>::type type;
       };
@@ -125,13 +125,13 @@ namespace viennagrid
       };
 
       template <typename to_find, typename tail>
-      struct index_of<typelist_t<to_find, tail>, to_find>
+      struct index_of<typelist<to_find, tail>, to_find>
       {
         static const int value = 0;
       };
 
       template <typename head, typename tail, typename to_find>
-      struct index_of<typelist_t<head, tail>, to_find>
+      struct index_of<typelist<head, tail>, to_find>
       {
       private:
         static const int temp = index_of<tail, to_find>::value;
@@ -153,19 +153,19 @@ namespace viennagrid
       template <typename to_add>
       struct push_back<null_type, to_add>
       {
-        typedef typelist_t<to_add, null_type> type;
+        typedef typelist<to_add, null_type> type;
       };
 
       template <typename head, typename tail, typename to_add>
-      struct push_back<typelist_t<head, tail>, to_add>
+      struct push_back<typelist<head, tail>, to_add>
       {
-        typedef typelist_t<head, typename push_back<tail, to_add>::type> type;
+        typedef typelist<head, typename push_back<tail, to_add>::type> type;
       };
 
 
 
       // push back list
-      template <typename typelist, typename typelist_to_add> struct push_back_list;
+      template <typename typelist, typename typelisto_add> struct push_back_list;
 
       template <>
       struct push_back_list<null_type, null_type>
@@ -174,21 +174,21 @@ namespace viennagrid
       };
 
       template <typename head, typename tail>
-      struct push_back_list<null_type, typelist_t<head, tail> >
+      struct push_back_list<null_type, typelist<head, tail> >
       {
-        typedef typelist_t<head, tail> type;
+        typedef typelist<head, tail> type;
       };
 
       template <typename head, typename tail>
-      struct push_back_list<typelist_t<head, tail>, null_type >
+      struct push_back_list<typelist<head, tail>, null_type >
       {
-        typedef typelist_t<head, tail> type;
+        typedef typelist<head, tail> type;
       };
 
       template <typename head1, typename tail1, typename head2, typename tail2>
-      struct push_back_list<typelist_t<head1, tail1>, typelist_t<head2, tail2> >
+      struct push_back_list<typelist<head1, tail1>, typelist<head2, tail2> >
       {
-        typedef typename push_back_list< typename push_back< typelist_t<head1, tail1>, head2>::type, tail2 >::type type;
+        typedef typename push_back_list< typename push_back< typelist<head1, tail1>, head2>::type, tail2 >::type type;
       };
 
 
@@ -203,15 +203,15 @@ namespace viennagrid
       };
 
       template <typename head, typename tail>
-      struct erase_at< typelist_t<head, tail>, 0>
+      struct erase_at< typelist<head, tail>, 0>
       {
         typedef tail type;
       };
 
       template <typename head, typename tail, unsigned int index_to_erase>
-      struct erase_at< typelist_t<head, tail>, index_to_erase>
+      struct erase_at< typelist<head, tail>, index_to_erase>
       {
-        typedef typelist_t<head, typename erase_at<tail, index_to_erase-1>::type> type;
+        typedef typelist<head, typename erase_at<tail, index_to_erase-1>::type> type;
       };
 
 
@@ -226,15 +226,15 @@ namespace viennagrid
       };
 
       template <typename to_erase, typename tail>
-      struct erase< typelist_t<to_erase, tail>, to_erase>
+      struct erase< typelist<to_erase, tail>, to_erase>
       {
         typedef tail type;
       };
 
       template <typename head, typename tail, typename to_erase>
-      struct erase< typelist_t<head, tail>, to_erase>
+      struct erase< typelist<head, tail>, to_erase>
       {
-        typedef typelist_t<head, typename erase<tail, to_erase>::type> type;
+        typedef typelist<head, typename erase<tail, to_erase>::type> type;
       };
 
 
@@ -249,17 +249,17 @@ namespace viennagrid
       };
 
       template <typename to_erase, typename tail>
-      struct erase_all< typelist_t<to_erase, tail>, to_erase>
+      struct erase_all< typelist<to_erase, tail>, to_erase>
       {
         // Go all the way down the list removing the type
         typedef typename erase_all<tail, to_erase>::type type;
       };
       template <typename head, typename tail, typename to_erase>
 
-      struct erase_all< typelist_t<head, tail>, to_erase>
+      struct erase_all< typelist<head, tail>, to_erase>
       {
         // Go all the way down the list removing the type
-        typedef typelist_t<head, typename erase_all<tail, to_erase>::type> type;
+        typedef typelist<head, typename erase_all<tail, to_erase>::type> type;
       };
 
 
@@ -274,20 +274,20 @@ namespace viennagrid
       };
 
       template <typename head, typename tail>
-      struct reverse< typelist_t<head, tail> >
+      struct reverse< typelist<head, tail> >
       {
+        typedef typelist<head, tail> t_list;
       public:
-        typedef typelist_t<head, tail> typelist;
 
-        typedef typelist_t<
+        typedef typelist<
             typename at<
-              typelist,
-              size<typelist>::value-1
+              t_list,
+              size<t_list>::value-1
             >::type,
             typename reverse<
               typename erase_at<
-                typelist,
-                size<typelist>::value-1
+                t_list,
+                size<t_list>::value-1
               >::type
             >::type
         > type;
@@ -305,13 +305,13 @@ namespace viennagrid
       };
 
       template <typename head, typename tail>
-      struct no_duplicates< typelist_t<head, tail> >
+      struct no_duplicates< typelist<head, tail> >
       {
       private:
         typedef typename no_duplicates<tail>::type L1;
         typedef typename erase<L1, head>::type L2;
       public:
-        typedef typelist_t<head, L2> type;
+        typedef typelist<head, L2> type;
       };
 
 
@@ -325,7 +325,7 @@ namespace viennagrid
       };
 
       template <typename head, typename tail, typename replaced>
-      struct replace_at<typelist_t<head, tail>, -1, replaced>
+      struct replace_at<typelist<head, tail>, -1, replaced>
       {
         typedef null_type type;
       };
@@ -337,15 +337,15 @@ namespace viennagrid
       };
 
       template <typename head, typename tail, typename replaced>
-      struct replace_at<typelist_t<head, tail>, 0, replaced>
+      struct replace_at<typelist<head, tail>, 0, replaced>
       {
-        typedef typelist_t<replaced, tail> type;
+        typedef typelist<replaced, tail> type;
       };
 
       template <typename head, typename tail, int index_to_replace, typename replaced>
-      struct replace_at<typelist_t<head, tail>, index_to_replace, replaced>
+      struct replace_at<typelist<head, tail>, index_to_replace, replaced>
       {
-        typedef typelist_t<head, typename replace_at<tail, index_to_replace-1, replaced>::type> type;
+        typedef typelist<head, typename replace_at<tail, index_to_replace-1, replaced>::type> type;
       };
 
       // replace the first type by another type
@@ -358,15 +358,15 @@ namespace viennagrid
       };
 
       template <typename to_replace, typename tail, typename replaced>
-      struct replace<typelist_t<to_replace, tail>, to_replace, replaced>
+      struct replace<typelist<to_replace, tail>, to_replace, replaced>
       {
-        typedef typelist_t<replaced, tail> type;
+        typedef typelist<replaced, tail> type;
       };
 
       template <typename head, typename tail, typename to_replace, typename replaced>
-      struct replace<typelist_t<head, tail>, to_replace, replaced>
+      struct replace<typelist<head, tail>, to_replace, replaced>
       {
-        typedef typelist_t<head, typename replace<tail, to_replace, replaced>::type> type;
+        typedef typelist<head, typename replace<tail, to_replace, replaced>::type> type;
       };
 
 
@@ -380,15 +380,15 @@ namespace viennagrid
       };
 
       template <typename to_replace, typename tail, typename replaced>
-      struct replace_all<typelist_t<to_replace, tail>, to_replace, replaced>
+      struct replace_all<typelist<to_replace, tail>, to_replace, replaced>
       {
-        typedef typelist_t<replaced, typename replace_all<tail, to_replace, replaced>::type> type;
+        typedef typelist<replaced, typename replace_all<tail, to_replace, replaced>::type> type;
       };
 
       template <typename head, typename tail, typename to_replace, typename replaced>
-      struct replace_all<typelist_t<head, tail>, to_replace, replaced>
+      struct replace_all<typelist<head, tail>, to_replace, replaced>
       {
-        typedef typelist_t<head, typename replace_all<tail, to_replace, replaced>::type> type;
+        typedef typelist<head, typename replace_all<tail, to_replace, replaced>::type> type;
       };
 
 
@@ -404,22 +404,22 @@ namespace viennagrid
       };
 
       template<typename head1, typename tail1>
-      struct intersection<typelist_t<head1, tail1>, null_type>
+      struct intersection<typelist<head1, tail1>, null_type>
       {
         typedef null_type type;
       };
 
       template<typename head2, typename tail2>
-      struct intersection<null_type, typelist_t<head2, tail2> >
+      struct intersection<null_type, typelist<head2, tail2> >
       {
         typedef null_type type;
       };
 
       template<typename head1, typename tail1, typename head2, typename tail2>
-      struct intersection< typelist_t<head1, tail1>, typelist_t<head2, tail2> >
+      struct intersection< typelist<head1, tail1>, typelist<head2, tail2> >
       {
-        typedef typelist_t<head1, tail1> typelist1;
-        typedef typelist_t<head2, tail2> typelist2;
+        typedef typelist<head1, tail1> typelist1;
+        typedef typelist<head2, tail2> typelist2;
 
         static const int search_result = index_of< typelist2, head1 >::value;
         typedef typename IF<
@@ -430,7 +430,7 @@ namespace viennagrid
 
         typedef typename IF<
             (search_result >= 0),
-            typelist_t<head1, typename intersection<tail1, new_typelist2>::type >,
+            typelist<head1, typename intersection<tail1, new_typelist2>::type >,
             typename intersection<tail1, new_typelist2>::type
         >::type type;
       };
