@@ -6,20 +6,8 @@ if(COMMAND cmake_policy)
   cmake_policy(SET CMP0003 NEW)
 endif(COMMAND cmake_policy)
 
+
 project(ViennaGrid)
-
-
-#
-# User customizations if CMake does not find Boost or OpenCL
-#
-
-# Set boost path here if not found automatically by CMake
-#SET(BOOST_ROOT "C:/Program\ Files\ (x86)/boost/boost_1_42")     # adjust this on Windows
-#SET(BOOST_ROOT "/opt/local/include")                            # adjust this on MacOS or Linux
-
-
-# Common options - There is usually no need to change anything below this line
-################
 
 set(VERSION_MAJOR @VERSION_MAJOR@)
 set(VERSION_MINOR @VERSION_MINOR@)
@@ -27,6 +15,9 @@ set(VERSION_PATCH @VERSION_PATCH@)
 set(VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
 
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
+
+# Common options
+################
 
 include(ViennaGridCommon)
 
@@ -37,6 +28,32 @@ ELSE()
  SET (CMAKE_BUILD_TYPE Release)
 ENDIF()
 
+# User options
+##############
+
+option(BUILD_TESTING "Build the tests" OFF)
+
+option(ENABLE_PEDANTIC_FLAGS "Enable pedantic compiler flags" OFF)
+
+mark_as_advanced(BUILD_DOXYGEN_DOCS BUILD_MANUAL)
+
+# Find prerequisites
+####################
+
+if(BUILD_DOXYGEN_DOCS)
+   find_package(Doxygen REQUIRED)
+endif()
+
+if(BUILD_MANUAL)
+   find_package(LATEX REQUIRED)
+endif()
+
+# Compile options
+#################
+
+include_directories(BEFORE ${PROJECT_SOURCE_DIR})
+
+
 # Subdirectories
 ################
 
@@ -45,8 +62,11 @@ if(BUILD_EXAMPLES)
 endif()
 
 if(BUILD_TESTING)
+   include(CTest)
    add_subdirectory(tests)
 endif()
+
+add_subdirectory(doc)
 
 # Install
 #########
@@ -54,3 +74,5 @@ endif()
 install(DIRECTORY viennagrid ${CMAKE_CURRENT_BINARY_DIR}/viennagrid
    DESTINATION ${INSTALL_INCLUDE_DIR} COMPONENT dev
    FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
+
+

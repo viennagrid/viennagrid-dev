@@ -1,5 +1,4 @@
 
-include(CTest)
 include(CMakeDependentOption)
 
 # Installation directories
@@ -29,9 +28,11 @@ file(RELATIVE_PATH CONF_REL_INCLUDE_DIR "${INSTALL_CMAKE_DIR}"
 # User options
 ##############
 
-option(BUILD_EXAMPLES "Build example programs" ON)
+option(BUILD_DOXYGEN_DOCS "Build the Doxygen-generated API docs" OFF)
 
-option(ENABLE_PEDANTIC_FLAGS "Enable pedantic compiler flags" ON)
+option(BUILD_MANUAL "Build the PDF manual" OFF)
+
+option(BUILD_EXAMPLES "Build example programs" ON)
 
 option(ENABLE_VIENNADATA "Enable ViennaData for advanced accessors" OFF)
 

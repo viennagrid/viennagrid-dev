@@ -14,8 +14,6 @@ set(VERSION_MINOR 1)
 set(VERSION_PATCH 0)
 set(VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
 
-#SET(CMAKE_VERBOSE_MAKEFILE ON)   #uncomment this line to increase CMake verbosity
-
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
 # Common options
@@ -33,9 +31,9 @@ ENDIF()
 # User options
 ##############
 
-option(BUILD_DOXYGEN_DOCS "Build the Doxygen-generated API docs" OFF)
+option(BUILD_TESTING "Build the tests" ON)
 
-option(BUILD_MANUAL "Build the PDF manual" OFF)
+option(ENABLE_PEDANTIC_FLAGS "Enable pedantic compiler flags" ON)
 
 cmake_dependent_option(ENABLE_DIST "Enable the the distribution tarball target" ON "BUILD_DOXYGEN_DOCS;BUILD_MANUAL" OFF)
 
@@ -66,7 +64,7 @@ if(BUILD_EXAMPLES)
 endif()
 
 if(BUILD_TESTING)
-   INCLUDE(CTest)
+   include(CTest)
    add_subdirectory(tests)
 endif()
 
@@ -132,6 +130,9 @@ if(ENABLE_DIST)
       COMMAND "${CMAKE_COMMAND}" -E copy_directory
          "${CMAKE_CURRENT_BINARY_DIR}/doc/doxygen"
          "${DISTDIR}/doc/doxygen"
+
+      COMMAND "${CMAKE_COMMAND}" -E copy_if_different
+         "${PROJECT_SOURCE_DIR}/doc/CMakeLists.txt" "${DISTDIR}/doc/CMakeLists.txt"
 
       COMMAND "${CMAKE_COMMAND}" -E copy_if_different
          "${PROJECT_SOURCE_DIR}/doc/Doxyfile.in" "${DISTDIR}/doc/Doxyfile.in"
