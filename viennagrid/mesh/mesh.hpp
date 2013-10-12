@@ -146,7 +146,7 @@ namespace viennagrid
       typedef typename viennagrid::storage::result_of::collection< typename viennagrid::result_of::boundary_information_collection_typemap<WrappedConfigT>::type >::type   boundary_information_type;
 
       typedef typename viennagrid::storage::collection_t<
-            typename viennagrid::meta::make_typemap<
+            typename viennagrid::make_typemap<
 
                 coboundary_collection_tag,
                 coboundary_collection_type,
@@ -677,7 +677,7 @@ namespace viennagrid
     {
       typedef typename mesh_view_from_typelist<
           MeshT,
-          typename viennagrid::meta::make_typelist<
+          typename viennagrid::make_typelist<
             typename element<MeshT, Element0TypeOrTagT>::type,
             typename element<MeshT, Element1TypeOrTagT>::type,
             typename element<MeshT, Element2TypeOrTagT>::type,

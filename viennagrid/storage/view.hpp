@@ -536,7 +536,7 @@ namespace viennagrid
 
     namespace view
     {
-      typedef viennagrid::meta::make_typemap<
+      typedef viennagrid::make_typemap<
                   viennagrid::storage::default_tag,
                   viennagrid::storage::handled_container_tag<viennagrid::storage::std_deque_tag, viennagrid::storage::no_handle_tag>
                                             >::type      default_view_container_config;

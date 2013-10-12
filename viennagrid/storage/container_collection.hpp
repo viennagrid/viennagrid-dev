@@ -123,7 +123,7 @@ namespace viennagrid
 
     namespace container_collection
     {
-      typedef viennagrid::meta::make_typemap<
+      typedef viennagrid::make_typemap<
                   viennagrid::storage::default_tag,   viennagrid::storage::handled_container_tag<viennagrid::storage::std_deque_tag, viennagrid::storage::pointer_handle_tag>
               >::type default_container_config;
 

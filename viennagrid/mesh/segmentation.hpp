@@ -1053,7 +1053,7 @@ namespace viennagrid
              typename SegmentIDType = int,
              typename AppendixType =
                 viennagrid::storage::collection_t<
-                    typename viennagrid::meta::make_typemap<
+                    typename viennagrid::make_typemap<
                         element_segment_mapping_tag,
                         viennagrid::storage::collection_t<
                             typename trivial_segmentation_appendix<
@@ -1097,7 +1097,7 @@ namespace viennagrid
              typename SegmentIDType = int,
              typename AppendixType =
               viennagrid::storage::collection_t<
-                typename viennagrid::meta::make_typemap<
+                typename viennagrid::make_typemap<
                     element_segment_mapping_tag,
                     viennagrid::storage::collection_t<
                         typename viennagrid::meta::result_of::modify<

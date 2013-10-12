@@ -52,7 +52,7 @@ namespace viennagrid
       template<typename ElementTagT>
       struct storage_layout_config<ElementTagT, viennagrid::vertex_tag>
       {
-        typedef typename viennagrid::meta::make_typemap<
+        typedef typename viennagrid::make_typemap<
             viennagrid::vertex_tag,
             viennagrid::no_orientation_handling_tag
         >::type type;
@@ -101,7 +101,7 @@ namespace viennagrid
         typedef typename storage_layout_config<CellTagT,
                                                 typename ElementTagT::facet_tag>::type   boundary_storage_layout;
 
-        typedef typename viennagrid::meta::make_typemap<
+        typedef typename viennagrid::make_typemap<
             viennagrid::config::element_id_tag,
             viennagrid::storage::smart_id_tag<int>,
 
@@ -122,7 +122,7 @@ namespace viennagrid
         typedef typename viennagrid::storage::result_of::handled_container<typename default_container_tag<CellTagT, viennagrid::vertex_tag, VertexContainerT, CellContainerT>::type,
                                                                             HandleTagT>::tag                     container_tag;
 
-        typedef typename viennagrid::meta::make_typemap<
+        typedef typename viennagrid::make_typemap<
             viennagrid::config::element_id_tag,
             viennagrid::storage::smart_id_tag<int>,
 
@@ -154,7 +154,7 @@ namespace viennagrid
       template<typename CellTagT, typename HandleTagT, typename VertexContainerTagT, typename CellContainerTagT>
       struct full_topology_config_helper<CellTagT, viennagrid::vertex_tag, HandleTagT, VertexContainerTagT, CellContainerTagT>
       {
-        typedef typename viennagrid::meta::make_typemap<
+        typedef typename viennagrid::make_typemap<
             viennagrid::vertex_tag,
             typename full_element_config<CellTagT, viennagrid::vertex_tag, HandleTagT, VertexContainerTagT, CellContainerTagT>::type
         >::type type;

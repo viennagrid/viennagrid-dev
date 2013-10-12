@@ -86,13 +86,13 @@ namespace viennagrid
 
 
     /** @brief A typemap defining default container configuration for a container collection */
-    typedef viennagrid::meta::make_typemap<
+    typedef viennagrid::make_typemap<
         default_tag,
         std_deque_tag
     >::type default_container_config;
 
     /** @brief A typemap defining default container configuration for a view container collection */
-    typedef viennagrid::meta::make_typemap<
+    typedef viennagrid::make_typemap<
         default_tag,
         std_set_tag<id_compare_tag>
     >::type default_view_container_config;
