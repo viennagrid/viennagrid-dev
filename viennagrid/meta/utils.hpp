@@ -51,18 +51,18 @@ namespace viennagrid
       typedef type2 type;
     };
 
-    template<typename _type>
+    template<typename T>
     struct IDENTITY
     {
-      typedef _type type;
+      typedef T type;
     };
 
 
     // error generator
-    template<bool error>
+    template<bool ErrorT>
     struct STATIC_ASSERT
     {
-        typedef void type;
+      typedef void type;
     };
 
     template<>

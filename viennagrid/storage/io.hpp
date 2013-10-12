@@ -27,23 +27,23 @@ namespace viennagrid
     class container_output_functor
     {
     public:
-      container_output_functor(std::ostream & _stream,
-                               const std::string & _container_delimiter = "\n",
-                               const std::string & _element_delimiter = " ") :
-                          container_delimiter(_container_delimiter), element_delimiter(_element_delimiter), stream(_stream) {}
+      container_output_functor(std::ostream & stream,
+                               const std::string & container_delimiter = "\n",
+                               const std::string & element_delimiter = " ") :
+                          container_delimiter_(container_delimiter), element_delimiter_(element_delimiter), stream_(stream) {}
 
       template<typename container_type>
       void operator() (const container_type & container)
       {
-          stream << typeid(container).name() << " [size=" << container.size() << "] ";
-          std::copy( container.begin(), container.end(), std::ostream_iterator<typename container_type::value_type>(stream, element_delimiter.c_str())  );
-          stream << container_delimiter;
+          stream_ << typeid(container).name() << " [size=" << container.size() << "] ";
+          std::copy( container.begin(), container.end(), std::ostream_iterator<typename container_type::value_type>(stream, element_delimiter_.c_str())  );
+          stream_ << container_delimiter_;
       }
 
     private:
-      std::string container_delimiter;
-      std::string element_delimiter;
-      std::ostream & stream;
+      std::string    container_delimiter_;
+      std::string    element_delimiter_;
+      std::ostream & stream_;
     };
 
 

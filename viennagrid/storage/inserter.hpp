@@ -29,17 +29,17 @@ namespace viennagrid
       typedef id_generator_type_ id_generator_type;
 
       physical_inserter_t() : collection(0), change_counter(0) {}
-      physical_inserter_t(container_collection_type & _collection) : collection(&_collection), change_counter(0) {}
-      physical_inserter_t(container_collection_type & _collection, id_generator_type id_generator_) : collection(&_collection), change_counter(0), id_generator(id_generator_) {}
+      physical_inserter_t(container_collection_type & collection_obj) : collection(&collection_obj), change_counter(0) {}
+      physical_inserter_t(container_collection_type & collection_obj, id_generator_type id_generator_) : collection(&collection_obj), change_counter(0), id_generator(id_generator_) {}
 
-      physical_inserter_t(container_collection_type & _collection, change_counter_type & change_counter_) :
-          collection(&_collection), change_counter(&change_counter_) {}
-      physical_inserter_t(container_collection_type & _collection, change_counter_type & change_counter_, id_generator_type id_generator_) :
-          collection(&_collection), change_counter(&change_counter_), id_generator(id_generator_) {}
+      physical_inserter_t(container_collection_type & collection_obj, change_counter_type & change_counter_) :
+          collection(&collection_obj), change_counter(&change_counter_) {}
+      physical_inserter_t(container_collection_type & collection_obj, change_counter_type & change_counter_, id_generator_type id_generator_) :
+          collection(&collection_obj), change_counter(&change_counter_), id_generator(id_generator_) {}
 
-      void set_mesh_info(container_collection_type & _collection, change_counter_type & change_counter_)
+      void set_mesh_info(container_collection_type & collection_obj, change_counter_type & change_counter_)
       {
-        collection     = &_collection;
+        collection     = &collection_obj;
         change_counter = &change_counter_;
       }
 
@@ -127,22 +127,22 @@ namespace viennagrid
       recursive_inserter_t() : view_collection(0), change_counter(0), dependend_inserter(0) {}
       recursive_inserter_t(view_collection_type & collection_) : view_collection(&collection_), change_counter(0), dependend_inserter(0) {}
 
-      recursive_inserter_t(view_collection_type & _collection, change_counter_type & change_counter_) :
-          view_collection(&_collection), change_counter(&change_counter_) {}
-      recursive_inserter_t(view_collection_type & _collection, dependend_inserter_type & dependend_inserter_) :
-          view_collection(&_collection), change_counter(0), dependend_inserter(&dependend_inserter_) {}
+      recursive_inserter_t(view_collection_type & collection_obj, change_counter_type & change_counter_) :
+          view_collection(&collection_obj), change_counter(&change_counter_) {}
+      recursive_inserter_t(view_collection_type & collection_obj, dependend_inserter_type & dependend_inserter_) :
+          view_collection(&collection_obj), change_counter(0), dependend_inserter(&dependend_inserter_) {}
 
-      recursive_inserter_t(view_collection_type & _collection, change_counter_type & change_counter_, dependend_inserter_type & dependend_inserter_) :
-          view_collection(&_collection), change_counter(&change_counter_), dependend_inserter(&dependend_inserter_) {}
+      recursive_inserter_t(view_collection_type & collection_obj, change_counter_type & change_counter_, dependend_inserter_type & dependend_inserter_) :
+          view_collection(&collection_obj), change_counter(&change_counter_), dependend_inserter(&dependend_inserter_) {}
 
 
 //             recursive_inserter_t(view_collection_type & collection_, dependend_inserter_type & dependend_inserter_) :
 //                view_collection(&collection_), dependend_inserter(&dependend_inserter_) {}
 
 
-      void set_mesh_info(view_collection_type & _collection, change_counter_type & change_counter_)
+      void set_mesh_info(view_collection_type & collection_obj, change_counter_type & change_counter_)
       {
-        view_collection = &_collection;
+        view_collection = &collection_obj;
         change_counter  = &change_counter_;
       }
 

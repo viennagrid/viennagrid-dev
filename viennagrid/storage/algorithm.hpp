@@ -30,14 +30,14 @@ namespace viennagrid
       template<typename collection_type, typename functor>
       struct for_each_functor
       {
-        for_each_functor(collection_type & _collection, functor _f) : collection(_collection), f(_f) {}
+        for_each_functor(collection_type & collection, functor f) : collection_(collection), f_(f) {}
 
         template<typename key_type, typename value_type>
         void operator()( viennagrid::meta::tag< viennagrid::meta::static_pair<key_type, value_type> > )
-        { f( viennagrid::storage::collection::get<key_type>(collection) ); }
+        { f_( viennagrid::storage::collection::get<key_type>(collection_) ); }
 
-        collection_type & collection;
-        functor f;
+        collection_type & collection_;
+        functor           f_;
       };
 
       template<typename collection_type, typename functor>
@@ -61,26 +61,26 @@ namespace viennagrid
       public:
 
         dual_for_each_functor(
-            collection_type_1 & _container_collection_1,
-            collection_type_2 & _container_collection_2,
-            functor _f) :
-                container_collection_1(_container_collection_1),
-                container_collection_2(_container_collection_2),
-                f(_f) {}
+            collection_type_1 & container_collection_1,
+            collection_type_2 & container_collection_2,
+            functor f) :
+                container_collection_1_(container_collection_1),
+                container_collection_2_(container_collection_2),
+                f_(f) {}
 
         template<typename type>
         void operator() ( viennagrid::meta::tag<type> )
         {
-            f(
-                viennagrid::storage::collection::get<type>(container_collection_1),
-                viennagrid::storage::collection::get<type>(container_collection_2)
+            f_(
+              viennagrid::storage::collection::get<type>(container_collection_1_),
+              viennagrid::storage::collection::get<type>(container_collection_2_)
             );
         }
 
       private:
-        collection_type_1 & container_collection_1;
-        collection_type_2 & container_collection_2;
-        functor f;
+        collection_type_1 & container_collection_1_;
+        collection_type_2 & container_collection_2_;
+        functor             f_;
       };
 
 
@@ -93,18 +93,18 @@ namespace viennagrid
     class copy_functor
     {
     public:
-      copy_functor(predicate _pred) : pred(_pred) {}
+      copy_functor(predicate pred) : pred_(pred) {}
 
       template<typename src_container_type, typename dst_container_type>
       void operator() (const src_container_type & src_container, dst_container_type & dst_container)
       {
         for (typename src_container_type::const_iterator it = src_container.begin(); it != src_container.end(); ++it)
-          if (pred(*it))
+          if (pred_(*it))
               dst_container.insert( *it );
       }
 
     private:
-      predicate pred;
+      predicate pred_;
     };
 
 
@@ -152,19 +152,19 @@ namespace viennagrid
       class handle_functor
       {
       public:
-        handle_functor(predicate _pred) : pred(_pred) {}
+        handle_functor(predicate pred) : pred_(pred) {}
 
         template<typename container_type, typename base_container_type, typename handle_container_tag>
         void operator() (container_type & src_container, view_t<base_container_type, handle_container_tag> & dst_view)
         {
             for (typename container_type::iterator it = src_container.begin(); it != src_container.end(); ++it)
-                if (pred( *it ))
+                if (pred_( *it ))
                     dst_view.insert_handle( it.handle() );
         }
 
 
       private:
-        predicate pred;
+        predicate pred_;
       };
 
 

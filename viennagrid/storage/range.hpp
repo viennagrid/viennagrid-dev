@@ -47,7 +47,7 @@ namespace viennagrid
       typedef typename container_type::const_reverse_iterator const_reverse_iterator;
 
 
-      container_range_wrapper(container_type & container_) : container(&container_) {}
+      container_range_wrapper(container_type & container) : container_(&container) {}
 
       template<typename SomethingT>
       container_range_wrapper( viennagrid::element_range_proxy<SomethingT> range_proxy )
@@ -62,22 +62,22 @@ namespace viennagrid
 
 
 
-      iterator       begin()       { return container->begin(); }
-      const_iterator begin() const { return container->begin(); }
-      iterator       end()         { return container->end(); }
-      const_iterator end()   const { return container->end(); }
+      iterator       begin()       { return container_->begin(); }
+      const_iterator begin() const { return container_->begin(); }
+      iterator       end()         { return container_->end(); }
+      const_iterator end()   const { return container_->end(); }
 
-      reverse_iterator       rbegin()       { return container->rbegin(); }
-      const_reverse_iterator rbegin() const { return container->rbegin(); }
-      reverse_iterator       rend()         { return container->rend(); }
-      const_reverse_iterator rend()   const { return container->rend(); }
+      reverse_iterator       rbegin()       { return container_->rbegin(); }
+      const_reverse_iterator rbegin() const { return container_->rbegin(); }
+      reverse_iterator       rend()         { return container_->rend(); }
+      const_reverse_iterator rend()   const { return container_->rend(); }
 
 
 
-      reference front()             { return container->front(); }
-      const_reference front() const { return container->front(); }
-      reference back()              { return container->back(); }
-      const_reference back()  const { return container->back(); }
+      reference front()             { return container_->front(); }
+      const_reference front() const { return container_->front(); }
+      reference back()              { return container_->back(); }
+      const_reference back()  const { return container_->back(); }
 
 
 
@@ -92,15 +92,15 @@ namespace viennagrid
 
 
 
-      bool empty() const { return container->empty(); }
-      size_type size() const { return container->size(); }
+      bool     empty() const { return container_->empty(); }
+      size_type size() const { return container_->size(); }
 
 
       typedef typename container_type::handle_type             handle_type;
       typedef typename container_type::const_handle_type const_handle_type;
 
 
-      iterator erase( iterator pos ) { return container->erase( pos ); }
+      iterator erase( iterator pos ) { return container_->erase( pos ); }
 
 
 
@@ -112,20 +112,20 @@ namespace viennagrid
 
 
       void erase_handle(handle_type handle)
-      { container->erase_handle(handle); }
+      { container_->erase_handle(handle); }
       void insert_unique_handle(handle_type handle)
-      { container->insert_unique_handle(handle); }
+      { container_->insert_unique_handle(handle); }
       void insert_handle(handle_type handle)
-      { container->insert_handle(handle); }
+      { container_->insert_handle(handle); }
       void set_handle_at(handle_type handle, std::size_t pos)
-      { container->set_handle(handle, pos); }
+      { container_->set_handle(handle, pos); }
 
-      container_type * get_base_container() { return container; }
-      const container_type * get_base_container() const { return container; }
+            container_type * get_base_container()       { return container_; }
+      const container_type * get_base_container() const { return container_; }
 
     private:
 
-      container_type * container;
+      container_type * container_;
     };
 
     template<typename container_type>
@@ -151,8 +151,8 @@ namespace viennagrid
       typedef typename container_type::const_reverse_iterator const_reverse_iterator;
 
 
-      container_range_wrapper(const container_type & _container) : container(&_container) {}
-      container_range_wrapper(const container_range_wrapper<container_type> & rhs) : container(rhs.container) {}
+      container_range_wrapper(const container_type & container) : container_(&container) {}
+      container_range_wrapper(const container_range_wrapper<container_type> & rhs) : container_(rhs.container_) {}
 
       template<typename SomethingT>
       container_range_wrapper( viennagrid::element_range_proxy<SomethingT> range_proxy )
@@ -178,22 +178,22 @@ namespace viennagrid
 
 
 
-      iterator begin() { return container->begin(); }
-      const_iterator begin() const { return container->begin(); }
-      iterator end() { return container->end(); }
-      const_iterator end() const { return container->end(); }
+            iterator begin()       { return container_->begin(); }
+      const_iterator begin() const { return container_->begin(); }
+            iterator end()         { return container_->end(); }
+      const_iterator end()   const { return container_->end(); }
 
-      reverse_iterator rbegin() { return container->rbegin(); }
-      const_reverse_iterator rbegin() const { return container->rbegin(); }
-      reverse_iterator rend() { return container->rend(); }
-      const_reverse_iterator rend() const { return container->rend(); }
+            reverse_iterator rbegin()       { return container_->rbegin(); }
+      const_reverse_iterator rbegin() const { return container_->rbegin(); }
+            reverse_iterator rend()         { return container_->rend(); }
+      const_reverse_iterator rend()   const { return container_->rend(); }
 
 
 
-      reference front() { return container->front(); }
-      const_reference front() const { return container->front(); }
-      reference back() { return container->back(); }
-      const_reference back() const { return container->back(); }
+            reference front()       { return container_->front(); }
+      const_reference front() const { return container_->front(); }
+            reference back()        { return container_->back(); }
+      const_reference back()  const { return container_->back(); }
 
 
 
@@ -210,8 +210,8 @@ namespace viennagrid
 
 
 
-      bool empty() const { return container->empty(); }
-      size_type size() const { return container->size(); }
+      bool empty() const { return container_->empty(); }
+      size_type size() const { return container_->size(); }
 
 
 
@@ -223,11 +223,11 @@ namespace viennagrid
       const_handle_type handle_at(std::size_t pos) const
       { return viennagrid::advance(begin(), pos).handle(); }
 
-      const container_type * get_base_container() const { return container; }
+      const container_type * get_base_container() const { return container_; }
 
     private:
 
-      const container_type * container;
+      const container_type * container_;
     };
 
 
@@ -237,37 +237,37 @@ namespace viennagrid
     {
     public:
 
-      forward_iterator_range(iterator_type _first, iterator_type _last) : first(_first), last(_last) {}
+      forward_iterator_range(iterator_type first, iterator_type last) : first_(first), last_(last) {}
 
       typedef typename iterator_type::T value_type;
 
-      typedef typename iterator_type::Reference reference;
+      typedef       typename iterator_type::Reference       reference;
       typedef const typename iterator_type::Reference const_reference;
 
-      typedef typename iterator_type::Pointer pointer;
+      typedef       typename iterator_type::Pointer       pointer;
       typedef const typename iterator_type::Pointer const_pointer;
 
-      typedef iterator_type iterator;
+      typedef       iterator_type       iterator;
       typedef const iterator_type const_iterator;
 
 
 
-      iterator begin() { return first; }
-      const_iterator begin() const { return first; }
-      iterator end() { return last; }
-      const_iterator end() const { return last; }
+            iterator begin()       { return first_; }
+      const_iterator begin() const { return first_; }
+            iterator end()         { return last_; }
+      const_iterator end()   const { return last_; }
 
 
-      reference front() { return *first; }
-      const_reference front() const { return *first; }
-      reference back() { iterator_type tmp = last; return *(--tmp); }
-      const_reference back() const { iterator_type tmp = last; return *(--tmp); }
+            reference front()       { return *first_; }
+      const_reference front() const { return *first_; }
+            reference back()        { iterator_type tmp = last_; return *(--tmp); }
+      const_reference back()  const { iterator_type tmp = last_; return *(--tmp); }
 
-      bool empty() const { return first == last; }
+      bool empty() const { return first_ == last_; }
 
     private:
-      iterator_type first;
-      iterator_type last;
+      iterator_type first_;
+      iterator_type last_;
     };
 
   }
