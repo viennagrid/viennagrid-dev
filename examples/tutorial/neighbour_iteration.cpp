@@ -10,6 +10,10 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
+#ifdef _MSC_VER
+  #pragma warning( disable : 4503 )     //truncated name decoration
+#endif
+
 #include <iostream>
 #include <typeinfo>
 
