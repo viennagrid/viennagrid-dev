@@ -22,6 +22,10 @@
 #include "viennagrid/storage/view.hpp"
 #include "viennagrid/storage/range.hpp"
 
+/** @file viennagrid/storage/container_collection.hpp
+    @brief Routines for the interaction of containers and collections
+*/
+
 namespace viennagrid
 {
   namespace storage

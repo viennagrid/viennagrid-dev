@@ -21,7 +21,7 @@
 #include <string>
 #include "viennagrid/forwards.hpp"
 
-/** @file helper.hpp
+/** @file viennagrid/io/helper.hpp
     @brief Various helpers for I/O operations
 */
 

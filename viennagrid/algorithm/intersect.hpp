@@ -20,6 +20,10 @@
 #include "viennagrid/algorithm/inner_prod.hpp"
 #include "viennagrid/algorithm/norm.hpp"
 
+/** @file viennagrid/algorithm/intersect.hpp
+    @brief Will contain algorithms dealing with intersections. Not yet implemented.
+*/
+
 namespace viennagrid
 {
 

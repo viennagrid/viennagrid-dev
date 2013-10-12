@@ -18,6 +18,10 @@
 #include "viennagrid/mesh/element_creation.hpp"
 #include "viennagrid/mesh/coboundary_iteration.hpp"
 
+/** @file viennagrid/mesh/mesh_operations.hpp
+    @brief Helper routines on a mesh
+*/
+
 namespace viennagrid
 {
 

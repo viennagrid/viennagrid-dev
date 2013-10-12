@@ -19,7 +19,7 @@
 #include "viennagrid/algorithm/centroid.hpp"
 #include "viennagrid/algorithm/boundary.hpp"
 
-/** @file interface.hpp
+/** @file viennagrid/algorithm/interface.hpp
     @brief Provides the detection and check for boundary n-cells at the interface of two segments.
 */
 

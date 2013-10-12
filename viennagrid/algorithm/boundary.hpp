@@ -20,7 +20,7 @@
 #include "viennagrid/mesh/segmentation.hpp"
 
 
-/** @file boundary.hpp
+/** @file viennagrid/algorithm/boundary.hpp
     @brief Contains functions for detecting and querying boundary information
 */
 

@@ -23,7 +23,7 @@
 #include "viennagrid/traits/point.hpp"
 
 
-/** @file spanned_volume.hpp
+/** @file viennagrid/algorithm/spanned_volume.hpp
     @brief Computes the volume of n-simplices spanned by points
 */
 

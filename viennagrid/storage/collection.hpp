@@ -16,6 +16,10 @@
 #include "viennagrid/meta/utils.hpp"
 #include "viennagrid/meta/typemap.hpp"
 
+/** @file viennagrid/storage/collection.hpp
+    @brief Generic implementation of a collection consisting of compile-time dispatched keys and values
+*/
+
 namespace viennagrid
 {
   namespace storage

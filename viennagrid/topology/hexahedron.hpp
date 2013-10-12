@@ -17,7 +17,7 @@
 #include "viennagrid/topology/line.hpp"
 #include "viennagrid/topology/quadrilateral.hpp"
 
-/** @file hexahedron.hpp
+/** @file viennagrid/topology/hexahedron.hpp
     @brief Provides the topological definition of a hexahedron
 */
 

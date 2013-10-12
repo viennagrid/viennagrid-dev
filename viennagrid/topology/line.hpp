@@ -16,7 +16,7 @@
 #include "viennagrid/forwards.hpp"
 #include "viennagrid/topology/vertex.hpp"
 
-/** @file topology/line.hpp
+/** @file viennagrid/topology/line.hpp
     @brief Provides the topological definition of a line
 */
 

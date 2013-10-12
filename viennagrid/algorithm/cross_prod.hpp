@@ -17,7 +17,7 @@
 #include "viennagrid/traits/point.hpp"
 #include "viennagrid/point.hpp"
 
-/** @file cross_prod.hpp
+/** @file viennagrid/algorithm/cross_prod.hpp
     @brief Computes the cross product of vectors
 */
 

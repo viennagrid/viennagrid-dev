@@ -17,7 +17,7 @@
 #include "viennagrid/storage/forwards.hpp"
 #include "../meta/utils.hpp"
 
-/** @file config/config.hpp
+/** @file viennagrid/config/config.hpp
     @brief Basic functionality and tags for configuration
 */
 

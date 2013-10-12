@@ -19,7 +19,7 @@
 
 #include "viennagrid/forwards.hpp"
 
-/** @file element_orientation.hpp
+/** @file viennagrid/element/element_orientation.hpp
     @brief Provides an orienter for boundary k-cells of a n-cell
 */
 

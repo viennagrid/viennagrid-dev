@@ -18,8 +18,8 @@
 #include "viennagrid/traits/point.hpp"
 #include "viennagrid/point.hpp"
 
-/** @file norm.hpp
-    @brief Computes the computation of norms for vectors
+/** @file viennagrid/algorithm/norm.hpp
+    @brief Functions for the computation of norms for vectors
 */
 
 namespace viennagrid

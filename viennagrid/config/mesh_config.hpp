@@ -22,7 +22,7 @@
 #include "viennagrid/element/element_key.hpp"
 #include "viennagrid/config/element_config.hpp"
 
-/** @file config/mesh_config.hpp
+/** @file viennagrid/config/mesh_config.hpp
     @brief Provides meta functions for mesh configuration
 */
 

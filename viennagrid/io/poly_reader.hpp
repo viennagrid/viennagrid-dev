@@ -25,7 +25,7 @@
 
 #include "viennagrid/algorithm/geometry.hpp"
 
-/** @file netgen_reader.hpp
+/** @file viennagrid/io/netgen_reader.hpp
     @brief Provides a reader for Netgen files
 */
 

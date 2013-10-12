@@ -22,7 +22,7 @@
 #include "viennagrid/algorithm/volume.hpp"
 #include "viennagrid/algorithm/boundary.hpp"
 
-/** @file surface.hpp
+/** @file viennagrid/algorithm/surface.hpp
     @brief Computes the surface of different cell types as well as meshs and segments
 */
 

@@ -20,6 +20,9 @@
 #include "viennagrid/meta/algorithm.hpp"
 
 
+/** @file viennagrid/storage/algorithm.hpp
+    @brief Provides STL-like algorithms for manipulating containers in ViennaGrid.
+*/
 
 namespace viennagrid
 {

@@ -19,6 +19,9 @@
 #include "viennagrid/storage/id.hpp"
 #include "viennagrid/config/config.hpp"
 
+/** @file viennagrid/storage/id_generator.hpp
+    @brief Generator for IDs of a certain type
+*/
 
 namespace viennagrid
 {

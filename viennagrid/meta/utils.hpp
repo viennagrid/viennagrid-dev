@@ -15,6 +15,9 @@
 
 #include <iterator>
 
+/** @file viennagrid/meta/utils.hpp
+    @brief A collection of tools for meta programming
+*/
 
 namespace viennagrid
 {

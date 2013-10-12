@@ -27,12 +27,16 @@
 
 #include "viennagrid/io/helper.hpp"
 
+/** @file viennagrid/io/xml_tag.hpp
+    @brief Helper routines for dealing with XML, used for the VTK reader
+*/
+
 namespace viennagrid
 {
   namespace io
   {
 
-    /** @brief Functor for conversion to lowercase (avoids ::tolower())
+    /** @brief Functor for conversion to lowercase (avoids the tolower() function as this can be a bit messy due to locales)
      *
      * @tparam dummy    A dummy template argument to disable external linkage of the function (for 'header-only' reasons)
      */

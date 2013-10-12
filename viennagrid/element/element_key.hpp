@@ -25,7 +25,7 @@
 #include "viennagrid/storage/container.hpp"
 #include "viennagrid/storage/hidden_key_map.hpp"
 
-/** @file element_key.hpp
+/** @file viennagrid/element/element_key.hpp
     @brief Provides a key that uniquely identifies n-cells
 */
 

@@ -17,7 +17,7 @@
 #include "viennagrid/topology/simplex.hpp"
 #include "viennagrid/topology/polygon.hpp"
 
-/** @file polygon.hpp
+/** @file viennagrid/topology/polygon.hpp
     @brief Provides the topological definition of a polygon
 */
 

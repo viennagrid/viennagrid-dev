@@ -17,7 +17,7 @@
 #include "viennagrid/topology/vertex.hpp"
 #include "viennagrid/topology/line.hpp"
 
-/** @file quadrilateral.hpp
+/** @file viennagrid/topology/quadrilateral.hpp
     @brief Provides the topological definition of a quadrilateral
 */
 

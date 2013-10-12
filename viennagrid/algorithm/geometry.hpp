@@ -18,6 +18,10 @@
 #include "viennagrid/algorithm/cross_prod.hpp"
 #include "viennagrid/algorithm/intersect.hpp"
 
+/** @file viennagrid/algorithm/geometry.hpp
+    @brief Contains various functions for computing geometric quantities
+*/
+
 namespace viennagrid
 {
 

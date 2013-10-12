@@ -17,7 +17,7 @@
 #include "viennagrid/forwards.hpp"
 #include "viennagrid/mesh/mesh.hpp"
 
-/** @file quantity_transfer.hpp
+/** @file viennagrid/algorithm/quantity_transfer.hpp
     @brief Provides routines for transferring quantities defined for elements of one topological dimensions to elements of other topological dimension.
 */
 

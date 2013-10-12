@@ -15,7 +15,7 @@
 
 #include "viennagrid/meta/typemap.hpp"
 
-/** @file forwards.hpp
+/** @file viennagrid/storage/forwards.hpp
     @brief Contains forward declarations and definition for storage layer classes, tags, ...
 */
 

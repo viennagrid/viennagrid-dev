@@ -20,7 +20,7 @@
 #include "viennagrid/topology/polygon.hpp"
 
 
-/** @file config/element_config.hpp
+/** @file viennagrid/config/element_config.hpp
     @brief Provides meta functions for creating element configuration
 */
 

@@ -27,7 +27,7 @@
 #include "viennagrid/algorithm/boundary.hpp"
 #include "viennagrid/mesh/mesh.hpp"
 
-/** @file closest_points.hpp
+/** @file viennagrid/algorithm/closest_points.hpp
     @brief Routines for computing the two points of two different objects being closest to each other.
 */
 

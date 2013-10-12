@@ -16,6 +16,10 @@
 #include <map>
 #include "viennagrid/storage/container.hpp"
 
+/** @file viennagrid/storage/hidden_key_map.hpp
+    @brief Provides the implementation of the hidden key map and its surrounding functionality
+*/
+
 namespace viennagrid
 {
   namespace storage

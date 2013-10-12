@@ -18,7 +18,7 @@
 #include "viennagrid/mesh/mesh.hpp"
 #include "viennagrid/mesh/accessor.hpp"
 
-/** @file coboundary_iteration.hpp
+/** @file viennagrid/mesh/coboundary_iteration.hpp
     @brief Contains definition and implementation of coboundary iteration
 */
 

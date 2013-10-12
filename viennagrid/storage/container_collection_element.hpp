@@ -13,6 +13,10 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
+/** @file viennagrid/storage/container_collection_element.hpp
+    @brief Defines inserter callbacks
+*/
+
 namespace viennagrid
 {
   namespace storage

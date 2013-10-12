@@ -19,7 +19,7 @@
 #include "viennagrid/topology/vertex.hpp"
 #include "viennagrid/topology/line.hpp"
 
-/** @file topology/simplex.hpp
+/** @file viennagrid/topology/simplex.hpp
     @brief Provides the topological definition of an arbitrary simplex element
 */
 

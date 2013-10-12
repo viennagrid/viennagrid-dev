@@ -23,7 +23,7 @@
 #include "viennagrid/algorithm/volume.hpp"    //for mesh/segment centroid
 #include "viennagrid/mesh/accessor.hpp"
 
-/** @file centroid.hpp
+/** @file viennagrid/algorithm/centroid.hpp
     @brief Computes the centroid (center of mass) for different cell types
 */
 

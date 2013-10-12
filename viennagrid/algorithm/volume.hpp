@@ -26,7 +26,7 @@
 #include "viennagrid/mesh/mesh.hpp"
 #include "viennagrid/mesh/accessor.hpp"
 
-/** @file volume.hpp
+/** @file viennagrid/algorithm/volume.hpp
     @brief Computes the volume of different cell types as well as meshs and segments
 */
 

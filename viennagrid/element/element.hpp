@@ -27,7 +27,7 @@
 
 #include "viennagrid/config/element_config.hpp"
 
-/** @file element.hpp
+/** @file viennagrid/element/element.hpp
     @brief Provides the main n-cell type
 */
 

@@ -23,6 +23,11 @@
 #include "viennagrid/storage/handle.hpp"
 #include "viennagrid/storage/id.hpp"
 
+
+/** @file viennagrid/storage/view.hpp
+    @brief General functionality for dealing with a subset of elements in a container
+*/
+
 namespace viennagrid
 {
   namespace storage

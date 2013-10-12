@@ -16,6 +16,10 @@
 #include "viennagrid/storage/container_collection.hpp"
 #include "viennagrid/storage/container_collection_element.hpp"
 
+/** @file viennagrid/storage/inserter.hpp
+    @brief Defines the inserter functors for adding elements to a container or collection
+*/
+
 namespace viennagrid
 {
   namespace storage

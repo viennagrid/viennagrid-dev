@@ -13,6 +13,9 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
+/** @file viennagrid/algorithm/seed_point_segmenting.hpp
+    @brief Contains functions for calculating angles between vectors given by points
+*/
 
 namespace viennagrid
 {
@@ -91,17 +94,18 @@ namespace viennagrid
 
 
 
-    // adds an element and its neighbour elements to a segment
-    // this method is called recursively on all valid neighbour elements
-    // if a line is shared by more than 2 triangles, the triangle with the smallest inward angle is selected; this ensures a valid segment complex
-    // the triangle with the smallest angle is calculated in this way:
-    // for each boundary line set up a coordinate system in 2D where
-    // the y-vector is the inverse normal of the current triangle
-    // the x-vector is the cross product of the shared line vector and the normal of the current triangle
-    // project the vector from line center to the neighbour triangle center onto this cooridanite system
-    // calculate the oriented angle between the positive x-axis (=vector to the current triangle) and the projected vector to the neighbour triangle
-    // the neighbour triangle with the smallest angle is selected
-
+    /** @brief Adds an element and its neighbour elements to a segment
+      *
+      * This method is called recursively on all valid neighbour elements
+      * if a line is shared by more than 2 triangles, the triangle with the smallest inward angle is selected; this ensures a valid segment complex
+      * the triangle with the smallest angle is calculated in this way:
+      * for each boundary line set up a coordinate system in 2D where
+      * the y-vector is the inverse normal of the current triangle
+      * the x-vector is the cross product of the shared line vector and the normal of the current triangle
+      * project the vector from line center to the neighbour triangle center onto this cooridanite system
+      * calculate the oriented angle between the positive x-axis (=vector to the current triangle) and the projected vector to the neighbour triangle
+      * the neighbour triangle with the smallest angle is selected
+      */
     template<typename mesh_type, typename VisibleStateAccessorT, typename SegmentHandleT, typename triangle_handle_type>
     void mark_facing_shortes_angle( mesh_type & mesh, VisibleStateAccessorT visited_state_accessor, SegmentHandleT & segment, triangle_handle_type triangle_handle, bool triangle_faces_outward )
     {
@@ -280,11 +284,12 @@ namespace viennagrid
 
 
 
-    // this function detects and marks a face segment based on a seed point within it
-    // is searches for all triangle which vector from its center towards the seed points does not intersect any other triangle
-    // these triangles is for sure in the this segment
-    // mark_facing_shortes_angle is called on those triangles to complete the segments
-
+    /** @brief This function detects and marks a face segment based on a seed point within it
+      *
+      * It searches for all triangles which vector from its center towards the seed points do not intersect any other triangle
+      * these triangles is for sure in the respective segment
+      * mark_facing_shortes_angle is called on those triangles to complete the segments
+    */
     template< typename mesh_type, typename SegmentHandleT, typename vector_type >
     void detect_and_mark_face_segment( mesh_type & mesh, SegmentHandleT & segment_, vector_type seed_point )
     {
@@ -365,7 +370,7 @@ namespace viennagrid
   }
 
 
-
+  /** @brief This function detects and marks a face segment based on multiple seed points */
   template< typename mesh_type, typename segmentation_type, typename seed_point_iterator_type >
   void mark_face_segments( mesh_type & mesh, segmentation_type & segmentation_, seed_point_iterator_type seed_points_it, seed_point_iterator_type const & seed_points_end )
   {

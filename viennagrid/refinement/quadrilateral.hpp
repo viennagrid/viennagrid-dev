@@ -17,7 +17,7 @@
 #include "viennagrid/topology/vertex.hpp"
 #include "viennagrid/topology/line.hpp"
 
-/** @file refinement/quadrilateral.hpp
+/** @file viennagrid/refinement/quadrilateral.hpp
     @brief Provides refinement routines for a quadrilateral
 */
 

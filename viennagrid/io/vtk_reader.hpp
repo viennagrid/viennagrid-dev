@@ -14,7 +14,7 @@
 ======================================================================= */
 
 
-/** @file vtk_reader.hpp
+/** @file viennagrid/io/vtk_reader.hpp
  *  @brief    This is a simple vtk-reader implementation. Refer to the vtk-standard (cf. http://www.vtk.org/pdf/file-formats.pdf) and make sure the same order of XML tags is preserved.
  */
 

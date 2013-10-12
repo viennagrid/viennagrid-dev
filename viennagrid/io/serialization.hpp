@@ -29,6 +29,10 @@
 #include <boost/serialization/assume_abstract.hpp>
 #include <boost/shared_ptr.hpp>
 
+/** @file viennagrid/io/serialization.hpp
+    @brief Provides a serialization mechanism for use with Boost
+*/
+
 namespace viennagrid
 {
   namespace io

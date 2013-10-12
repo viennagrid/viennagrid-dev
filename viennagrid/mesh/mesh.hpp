@@ -27,7 +27,7 @@
 
 #include "viennagrid/element/element_view.hpp"
 
-/** @file mesh.hpp
+/** @file viennagrid/mesh/mesh.hpp
     @brief Contains definition and implementation of mesh and mesh views
 */
 

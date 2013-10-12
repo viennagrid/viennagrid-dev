@@ -17,7 +17,7 @@
 #include "viennagrid/topology/line.hpp"
 #include "viennagrid/topology/quadrilateral.hpp"
 
-/** @file refinement/hexahedron.hpp
+/** @file viennagrid/refinement/hexahedron.hpp
     @brief Provides refinement routines for hexahedra
 */
 

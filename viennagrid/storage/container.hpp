@@ -24,6 +24,9 @@
 #include "viennagrid/storage/handle.hpp"
 #include "viennagrid/storage/static_array.hpp"
 
+/** @file viennagrid/storage/container.hpp
+    @brief Defines the basic building blocks of containers in ViennaGrid
+*/
 
 namespace viennagrid
 {

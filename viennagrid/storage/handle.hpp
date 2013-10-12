@@ -20,6 +20,9 @@
 #include "viennagrid/storage/id.hpp"
 #include "viennagrid/storage/forwards.hpp"
 
+/** @file viennagrid/storage/handle.hpp
+    @brief Defines the generic layer for handles (generalized references) to elements
+*/
 
 namespace viennagrid
 {

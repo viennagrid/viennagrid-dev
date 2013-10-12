@@ -19,6 +19,10 @@
 #include "viennagrid/storage/container_collection.hpp"
 #include "viennagrid/storage/algorithm.hpp"
 
+/** @file viennagrid/storage/io.hpp
+    @brief  Defines a functor for dumping the contents of a container to an output stream
+*/
+
 namespace viennagrid
 {
   namespace storage

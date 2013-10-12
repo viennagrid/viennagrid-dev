@@ -46,7 +46,7 @@
   #define VIENNAGRID_DEBUG_STATUS
 #endif
 
-/** @file forwards.hpp
+/** @file viennagrid/forwards.hpp
     @brief Contains forward declarations and definition of small classes that must be defined at an early stage
 */
 

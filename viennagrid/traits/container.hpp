@@ -18,7 +18,7 @@
 #include <limits>
 #include "viennagrid/forwards.hpp"
 
-/** @file container.hpp
+/** @file viennagrid/traits/container.hpp
     @brief Provides a generic layer for container operations.
 */
 

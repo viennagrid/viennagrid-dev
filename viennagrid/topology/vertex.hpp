@@ -15,7 +15,7 @@
 
 #include "viennagrid/forwards.hpp"
 
-/** @file viennagrid/topology/point.hpp
+/** @file viennagrid/topology/vertex.hpp
     @brief Provides the topological definition of a point (vertex)
 */
 

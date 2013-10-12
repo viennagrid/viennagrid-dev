@@ -17,8 +17,8 @@
 #include "viennagrid/element/element.hpp"
 #include "viennagrid/mesh/mesh.hpp"
 
-/** @file element.hpp
-    @brief Provides the main n-cell type
+/** @file viennagrid/element/element_view.hpp
+    @brief Provides routines for extracting the sub-elements of an element (e.g. all edges of a triangle)
 */
 
 namespace viennagrid
@@ -48,7 +48,8 @@ namespace viennagrid
 
 
   template<typename element_type_or_tag, typename something>
-  typename result_of::element_view<something, element_type_or_tag>::type element_view( something & s )
+  typename result_of::element_view<something, element_type_or_tag>::type
+  element_view( something & s )
   {
     typedef typename result_of::element_tag<element_type_or_tag>::type element_tag;
     typedef typename result_of::element<something, element_tag>::type element_type;
@@ -61,7 +62,8 @@ namespace viennagrid
 
 
   template<typename element_type_or_tag, typename something, typename functor>
-  typename result_of::element_view<something, element_type_or_tag>::type element_view( something & s, functor f )
+  typename result_of::element_view<something, element_type_or_tag>::type
+  element_view( something & s, functor f )
   {
     typedef typename result_of::element_tag<element_type_or_tag>::type element_tag;
 
@@ -83,7 +85,8 @@ namespace viennagrid
   }
 
   template<typename element_type_or_tag, typename something, typename functor>
-  typename result_of::const_element_view<something, element_type_or_tag>::type element_view( something const & s, functor f )
+  typename result_of::const_element_view<something, element_type_or_tag>::type
+  element_view( something const & s, functor f )
   {
     typedef typename result_of::element_tag<element_type_or_tag>::type element_tag;
 

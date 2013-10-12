@@ -20,7 +20,7 @@
 #include "viennagrid/topology/all.hpp"
 #include "viennagrid/forwards.hpp"
 
-/** @file vtk_common.hpp
+/** @file viennagrid/io/vtk_common.hpp
     @brief Provides common things for VTK reader and writer
 */
 

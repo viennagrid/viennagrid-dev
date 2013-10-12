@@ -13,7 +13,7 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
-/** @file all.hpp
+/** @file viennagrid/topology/all.hpp
     @brief Convenience header file for all topological objects
 */
 

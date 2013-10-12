@@ -13,8 +13,11 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
-#include "utils.hpp"
+#include "viennagrid/meta/utils.hpp"
 
+/** @file viennagrid/meta/typelist.hpp
+    @brief Defines typelists and provides algorithms for their manipulation
+*/
 
 namespace viennagrid
 {

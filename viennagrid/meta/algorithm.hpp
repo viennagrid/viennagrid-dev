@@ -13,6 +13,13 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
+#include "viennagrid/meta/typelist.hpp"
+
+/** @file viennagrid/meta/algorithm.hpp
+    @brief Provides STL-like algorithms for manipulating typelists (e.g. for_each, transform)
+*/
+
+
 namespace viennagrid
 {
   namespace meta

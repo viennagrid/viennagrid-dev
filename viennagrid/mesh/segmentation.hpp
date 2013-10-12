@@ -21,7 +21,7 @@
 #include "viennagrid/mesh/element_deletion.hpp"
 
 
-/** @file segmentation.hpp
+/** @file viennagrid/mesh/segmentation.hpp
     @brief Contains definition and implementation of segmentations and segments
 */
 

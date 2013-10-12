@@ -22,7 +22,7 @@
 #include "viennagrid/refinement/triangle.hpp"
 #include "viennagrid/refinement/tetrahedron.hpp"
 
-/** @file refine.hpp
+/** @file viennagrid/algorithm/refine.hpp
     @brief Provides the routines for a refinement of a mesh
 */
 

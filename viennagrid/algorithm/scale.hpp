@@ -13,10 +13,9 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
-/** @file scale.hpp
+/** @file viennagrid/algorithm/scale.hpp
     @brief Scale the geometric points of a mesh/segment
 */
-
 
 namespace viennagrid
 {

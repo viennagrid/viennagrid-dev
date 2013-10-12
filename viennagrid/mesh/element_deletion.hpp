@@ -22,7 +22,7 @@
 #include <iterator>
 
 
-/** @file element_deletion.hpp
+/** @file viennagrid/mesh/element_deletion.hpp
     @brief Contains functions for deleting elements from a domin
 */
 

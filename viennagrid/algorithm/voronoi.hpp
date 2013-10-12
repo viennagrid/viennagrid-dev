@@ -26,7 +26,7 @@
 #include "viennagrid/algorithm/inner_prod.hpp"
 
 
-/** @file voronoi.hpp
+/** @file viennagrid/algorithm/voronoi.hpp
     @brief Computes the Voronoi information for a Delaunay triangulation.
 */
 

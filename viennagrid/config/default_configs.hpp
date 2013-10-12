@@ -22,7 +22,7 @@
 #include "viennagrid/topology/hexahedron.hpp"
 #include "viennagrid/topology/plc.hpp"
 
-/** @file config/default_configs.hpp
+/** @file viennagrid/config/default_configs.hpp
     @brief Provides default configuration classes for meshs
 */
 

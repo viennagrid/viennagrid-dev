@@ -17,7 +17,7 @@
 #include "viennagrid/traits/point.hpp"
 #include "viennagrid/point.hpp"
 
-/** @file inner_prod.hpp
+/** @file viennagrid/algorithm/inner_prod.hpp
     @brief Computes the inner product of vectors
 */
 

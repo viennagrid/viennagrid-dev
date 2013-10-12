@@ -18,7 +18,7 @@
 #include "viennagrid/topology/plc.hpp"
 #include "viennagrid/algorithm/norm.hpp"
 
-/** @file element_creation.hpp
+/** @file viennagrid/mesh/element_creation.hpp
     @brief Contains functions for creating elements within a mesh or segment
 */
 

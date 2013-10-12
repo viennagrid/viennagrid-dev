@@ -15,7 +15,7 @@
 
 #include "viennagrid/storage/id_generator.hpp"
 
-/** @file config/id_generator_config.hpp
+/** @file viennagrid/config/id_generator_config.hpp
     @brief Provides meta functions defining a ID generator based on a wrapped config
 */
 

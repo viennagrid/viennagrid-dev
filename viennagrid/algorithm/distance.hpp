@@ -25,7 +25,7 @@
 #include "viennagrid/algorithm/inner_prod.hpp"
 #include "viennagrid/algorithm/closest_points.hpp"
 
-/** @file distance.hpp
+/** @file viennagrid/algorithm/distance.hpp
     @brief Computes the (Cartesian) distance between different elements.
 */
 

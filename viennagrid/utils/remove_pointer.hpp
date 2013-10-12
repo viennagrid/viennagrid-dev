@@ -13,6 +13,10 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
+/** @file viennagrid/utils/remove_pointer.hpp
+    @brief Implements a meta function which returns the underlying type of a pointer
+*/
+
 namespace viennagrid
 {
   namespace utils

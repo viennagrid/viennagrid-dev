@@ -17,8 +17,8 @@
 #include "viennagrid/algorithm/norm.hpp"
 #include "viennagrid/algorithm/geometry.hpp"
 
-/** @file angle.hpp
-    @brief Contains functions calculating angles
+/** @file viennagrid/algorithm/angle.hpp
+    @brief Contains functions for calculating angles between vectors given by points
 */
 
 namespace viennagrid
