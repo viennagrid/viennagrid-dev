@@ -176,8 +176,8 @@ namespace viennagrid
     typedef typename viennagrid::result_of::cell_tag< mesh_type >::type cell_tag;
     typedef typename viennagrid::result_of::facet_tag< cell_tag >::type facet_tag;
 
-    typedef typename viennagrid::meta::typelist::result_of::erase<
-        typename viennagrid::meta::typemap::result_of::key_typelist<
+    typedef typename viennagrid::meta::result_of::erase<
+        typename viennagrid::meta::result_of::key_typelist<
             typename viennagrid::storage::result_of::value_type<
                 typename mesh_type::appendix_type,
                 boundary_information_collection_tag
@@ -188,7 +188,7 @@ namespace viennagrid
 
     boundary_setter_functor<mesh_type> functor(mesh);
 
-    viennagrid::meta::typelist::for_each< typelist >( functor );
+    viennagrid::meta::for_each< typelist >( functor );
   }
 
   /** @brief For internal use only. */

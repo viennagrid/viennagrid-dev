@@ -32,7 +32,7 @@ namespace viennagrid
       template<typename head, typename tail, typename id_type>
       struct continuous_id_generator_config_helper< viennagrid::meta::typelist_t<head, tail>, id_type >
       {
-        typedef typename viennagrid::meta::typemap::result_of::insert<
+        typedef typename viennagrid::meta::result_of::insert<
             typename continuous_id_generator_config_helper<tail, id_type>::type,
             viennagrid::meta::static_pair<
                 head,
@@ -54,7 +54,7 @@ namespace viennagrid
       template<typename WrappedConfigType, typename element_tag, typename element_config, typename tail>
       struct continuous_id_generator_config_from_mesh_config_helper< WrappedConfigType, viennagrid::meta::typelist_t<viennagrid::meta::static_pair<element_tag, element_config>, tail> >
       {
-        typedef typename viennagrid::meta::typemap::result_of::insert<
+        typedef typename viennagrid::meta::result_of::insert<
             typename continuous_id_generator_config_from_mesh_config_helper<WrappedConfigType, tail>::type,
             viennagrid::meta::static_pair<
                 element_t<element_tag, WrappedConfigType>,
@@ -75,7 +75,7 @@ namespace viennagrid
       struct continuous_id_generator_config
       {
         typedef typename continuous_id_generator_config_helper<
-            typename viennagrid::meta::typelist::result_of::no_duplicates<typelist>::type,
+            typename viennagrid::meta::result_of::no_duplicates<typelist>::type,
             id_type
         >::type type;
       };

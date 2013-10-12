@@ -293,7 +293,7 @@ namespace viennagrid
         typedef typename BoundaryElementTagT::facet_tag facet_tag;
 
         typedef typename element_boundary_element_container<WrappedConfigT, HostElementTagT, facet_tag>::type boundary_cell_layer_containers;
-        typedef typename viennagrid::meta::typelist::result_of::push_back<
+        typedef typename viennagrid::meta::result_of::push_back<
             typename element_boundary_element_container_typelist< WrappedConfigT, HostElementTagT, facet_tag >::type,
             boundary_cell_layer_containers
         >::type type;

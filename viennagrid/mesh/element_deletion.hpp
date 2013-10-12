@@ -87,7 +87,7 @@ namespace viennagrid
 
     switch_handle_functor<MeshT, HandleT> functor(mesh, old_handle, new_handle);
 
-    viennagrid::meta::typelist::for_each<ParentElementTypelist>( functor );
+    viennagrid::meta::for_each<ParentElementTypelist>( functor );
   }
 
 
@@ -181,12 +181,12 @@ namespace viennagrid
   {
     typedef mesh_t<WrappedConfigT> MeshType;
 
-    typedef typename viennagrid::meta::typelist::result_of::reverse<
+    typedef typename viennagrid::meta::result_of::reverse<
       typename viennagrid::result_of::element_typelist<ToEraseViewT>::type
     >::type SegmentElementTypelist;
 
     erase_functor<MeshType, ToEraseViewT> functor( mesh, elements_to_erase );
-    viennagrid::meta::typelist::for_each<SegmentElementTypelist>(functor);
+    viennagrid::meta::for_each<SegmentElementTypelist>(functor);
 
     viennagrid::increment_change_counter(mesh);
   }

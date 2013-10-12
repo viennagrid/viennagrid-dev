@@ -862,7 +862,7 @@ namespace viennagrid
   {
       for_each_boundary_cell_functor<element_type, functor_type> for_each_functor( element, functor );
 
-      viennagrid::meta::typelist::for_each<typename element_type::boundary_cell_typelist>(for_each_functor);
+      viennagrid::meta::for_each<typename element_type::boundary_cell_typelist>(for_each_functor);
   }
 
 

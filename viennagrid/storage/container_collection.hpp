@@ -40,8 +40,8 @@ namespace viennagrid
         template<typename value_type, typename container_config>
         struct container_from_value_using_container_config
         {
-          typedef typename viennagrid::meta::typemap::result_of::find<container_config, value_type>::type search_result;
-          typedef typename viennagrid::meta::typemap::result_of::find<container_config, viennagrid::storage::default_tag>::type default_container;
+          typedef typename viennagrid::meta::result_of::find<container_config, value_type>::type search_result;
+          typedef typename viennagrid::meta::result_of::find<container_config, viennagrid::storage::default_tag>::type default_container;
 
           typedef typename viennagrid::meta::IF<
               !viennagrid::meta::EQUAL<search_result, viennagrid::meta::not_found>::value,
@@ -87,7 +87,7 @@ namespace viennagrid
       struct container_of
       {
         typedef typename viennagrid::meta::result_of::second<
-            typename viennagrid::meta::typemap::result_of::find< typemap_, element_type >::type
+            typename viennagrid::meta::result_of::find< typemap_, element_type >::type
         >::type type;
       };
 
@@ -107,10 +107,10 @@ namespace viennagrid
         typedef collection_t<container_typelist_1> from_container_collection_type;
         typedef collection_t<container_typelist_2> to_container_collection_type;
 
-        typedef typename viennagrid::meta::typemap::result_of::key_typelist<typename from_container_collection_type::typemap>::type from_container_collection_value_typelist;
-        typedef typename viennagrid::meta::typemap::result_of::key_typelist<typename to_container_collection_type::typemap>::type to_container_collection_value_typelist;
+        typedef typename viennagrid::meta::result_of::key_typelist<typename from_container_collection_type::typemap>::type from_container_collection_value_typelist;
+        typedef typename viennagrid::meta::result_of::key_typelist<typename to_container_collection_type::typemap>::type to_container_collection_value_typelist;
 
-        typedef typename viennagrid::meta::typelist::result_of::intersection<
+        typedef typename viennagrid::meta::result_of::intersection<
             from_container_collection_value_typelist,
             to_container_collection_value_typelist
         >::type type;
@@ -230,7 +230,7 @@ namespace viennagrid
       void clear_all( collection_t<container_collection_typemap> & container_collection)
       {
         clear_all_functor< collection_t<container_collection_typemap> > f( container_collection );
-        viennagrid::meta::typelist::for_each< typename viennagrid::meta::typemap::result_of::key_typelist<container_collection_typemap>::type >( f );
+        viennagrid::meta::for_each< typename viennagrid::meta::result_of::key_typelist<container_collection_typemap>::type >( f );
       }
 
 

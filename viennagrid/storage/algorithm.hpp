@@ -44,14 +44,14 @@ namespace viennagrid
       void for_each( collection_type & collection, functor f)
       {
         for_each_functor<collection_type, functor> ff(collection, f);
-        viennagrid::meta::typelist::for_each< typename collection_type::typemap >(ff);
+        viennagrid::meta::for_each< typename collection_type::typemap >(ff);
       }
 
       template<typename typelist, typename collection_type, typename functor>
       void for_each_typelist(collection_type & collection, functor & f)
       {
         for_each_functor<collection_type, functor> ff(collection, f);
-        viennagrid::meta::typelist::for_each<typelist>(ff);
+        viennagrid::meta::for_each<typelist>(ff);
       }
 
 
@@ -124,7 +124,7 @@ namespace viennagrid
             collection_t<dst_container_typelist>
         >::type typelist;
 
-        viennagrid::meta::typelist::for_each<typelist>(functor);
+        viennagrid::meta::for_each<typelist>(functor);
       }
 
       template<typename src_container_typelist, typename dst_container_typelist, typename predicate>
@@ -141,7 +141,7 @@ namespace viennagrid
             collection_t<dst_container_typelist>
         >::type typelist;
 
-        viennagrid::meta::typelist::for_each<typelist>(functor);
+        viennagrid::meta::for_each<typelist>(functor);
       }
 
 
@@ -182,7 +182,7 @@ namespace viennagrid
             collection_t<dst_container_typelist>
         >::type typelist;
 
-        viennagrid::meta::typelist::for_each<typelist>(functor);
+        viennagrid::meta::for_each<typelist>(functor);
       }
 
       template<typename src_container_typelist, typename dst_container_typelist, typename predicate>
@@ -199,7 +199,7 @@ namespace viennagrid
             collection_t<dst_container_typelist>
         >::type typelist;
 
-        viennagrid::meta::typelist::for_each<typelist>(functor);
+        viennagrid::meta::for_each<typelist>(functor);
       }
 
     }

@@ -567,8 +567,8 @@ namespace viennagrid
       struct view_container_tag
       {
         typedef typename container_type::value_type value_type;
-        typedef typename viennagrid::meta::typemap::result_of::find<view_container_config, value_type>::type search_result;
-        typedef typename viennagrid::meta::typemap::result_of::find<view_container_config, viennagrid::storage::default_tag>::type default_container;
+        typedef typename viennagrid::meta::result_of::find<view_container_config, value_type>::type search_result;
+        typedef typename viennagrid::meta::result_of::find<view_container_config, viennagrid::storage::default_tag>::type default_container;
 
         typedef typename viennagrid::meta::IF<
             !viennagrid::meta::EQUAL<search_result, viennagrid::meta::not_found>::value,

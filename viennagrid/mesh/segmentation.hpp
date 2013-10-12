@@ -977,7 +977,7 @@ namespace viennagrid
     struct interface_information_collection_typemap
     {
       typedef typename cell_tag_from_typelist<element_taglist>::type cell_tag;
-      typedef typename viennagrid::meta::typelist::result_of::erase< element_taglist, cell_tag>::type element_typelist_without_cell_tag;
+      typedef typename viennagrid::meta::result_of::erase< element_taglist, cell_tag>::type element_typelist_without_cell_tag;
 
       typedef typename interface_information_collection_typemap_impl<segment_id_type, interface_information_container_tag, ChangeCounterType, element_typelist_without_cell_tag>::type type;
     };
@@ -1100,7 +1100,7 @@ namespace viennagrid
                 typename viennagrid::meta::make_typemap<
                     element_segment_mapping_tag,
                     viennagrid::storage::collection_t<
-                        typename viennagrid::meta::typemap::result_of::modify<
+                        typename viennagrid::meta::result_of::modify<
                             typename trivial_segmentation_appendix<
                                 typename viennagrid::result_of::element_typelist<MeshT>::type,
                                 SegmentIDType

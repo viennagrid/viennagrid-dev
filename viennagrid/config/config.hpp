@@ -111,7 +111,7 @@ namespace viennagrid
                                                           SearchTag5T, SearchTag6T, SearchTag7T, SearchTag8T, SearchTag9T>
       {
         typedef viennagrid::meta::typelist_t<HeadT, TailT> ConfigType;
-        typedef typename unpack<typename viennagrid::meta::typemap::result_of::find<ConfigType, SearchTag0T>::type >::type EntryType;
+        typedef typename unpack<typename viennagrid::meta::result_of::find<ConfigType, SearchTag0T>::type >::type EntryType;
         typedef typename viennagrid::meta::IF<
             viennagrid::meta::EQUAL<EntryType, viennagrid::meta::not_found>::value,
             DefaultT,
@@ -137,7 +137,7 @@ namespace viennagrid
                    SearchTag0T, SearchTag1T, SearchTag2T, SearchTag3T, SearchTag4T, SearchTag5T, SearchTag6T, SearchTag7T, SearchTag8T, SearchTag9T>
       {
         typedef viennagrid::meta::typelist_t<HeadT, TailT> ConfigT;
-        typedef typename unpack<typename viennagrid::meta::typemap::result_of::find<ConfigT, SearchTag0T>::type >::type EntryType;
+        typedef typename unpack<typename viennagrid::meta::result_of::find<ConfigT, SearchTag0T>::type >::type EntryType;
         typedef typename query<
               EntryType, DefaultT,
               SearchTag1T, SearchTag2T, SearchTag3T, SearchTag4T, SearchTag5T, SearchTag6T, SearchTag7T, SearchTag8T, SearchTag9T

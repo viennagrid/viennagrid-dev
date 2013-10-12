@@ -64,13 +64,13 @@ namespace viennagrid
       template<typename typemap, typename key_type>
       struct value_type
       {
-        typedef typename viennagrid::meta::typemap::result_of::find<typemap, key_type>::type::second type;
+        typedef typename viennagrid::meta::result_of::find<typemap, key_type>::type::second type;
       };
 
       template<typename typemap, typename key_type>
       struct value_type< collection_t<typemap>, key_type >
       {
-        typedef typename viennagrid::meta::typemap::result_of::find<typemap, key_type>::type::second type;
+        typedef typename viennagrid::meta::result_of::find<typemap, key_type>::type::second type;
       };
     }
 

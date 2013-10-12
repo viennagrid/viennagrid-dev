@@ -17,68 +17,65 @@ namespace viennagrid
 {
   namespace meta
   {
-    namespace typelist
+    template<typename typelist>
+    struct for_each_impl {};
+
+    template<typename head, typename tail>
+    struct for_each_impl< viennagrid::meta::typelist_t<head, tail> >
     {
-      template<typename typelist>
-      struct for_each_impl {};
-
-      template<typename head, typename tail>
-      struct for_each_impl< viennagrid::meta::typelist_t<head, tail> >
+      template<typename functor>
+      static void exec( functor & f)
       {
-        template<typename functor>
-        static void exec( functor & f)
-        {
-          f( tag<head>() );
-          for_each_impl<tail>::exec(f);
-        }
+        f( tag<head>() );
+        for_each_impl<tail>::exec(f);
+      }
 
-        template<typename functor>
-        static void exec( const functor & f)
-        {
-          f( tag<head>() );
-          for_each_impl<tail>::exec(f);
-        }
-      };
-
-      template<>
-      struct for_each_impl< viennagrid::null_type >
+      template<typename functor>
+      static void exec( const functor & f)
       {
-        template<typename functor> static void exec( functor & ) {}
-        template<typename functor> static void exec( const functor & ) {}
-      };
+        f( tag<head>() );
+        for_each_impl<tail>::exec(f);
+      }
+    };
+
+    template<>
+    struct for_each_impl< viennagrid::null_type >
+    {
+      template<typename functor> static void exec( functor & ) {}
+      template<typename functor> static void exec( const functor & ) {}
+    };
 
 
-      template<typename typelist, typename functor>
-      void for_each(functor & f)
-      { for_each_impl<typelist>::exec(f); }
+    template<typename typelist, typename functor>
+    void for_each(functor & f)
+    { for_each_impl<typelist>::exec(f); }
 
-      template<typename typelist, typename functor>
-      void for_each(const functor & f)
-      { for_each_impl<typelist>::exec(f); }
-
-
+    template<typename typelist, typename functor>
+    void for_each(const functor & f)
+    { for_each_impl<typelist>::exec(f); }
 
 
-      template<template<typename> class functor, typename typelist>
-      struct TRANSFORM;
 
 
-      template<template<typename> class functor>
-      struct TRANSFORM<functor, viennagrid::null_type>
-      {
-        typedef viennagrid::null_type type;
-      };
+    template<template<typename> class functor, typename typelist>
+    struct TRANSFORM;
 
-      template<template<typename> class functor, typename head, typename tail>
-      struct TRANSFORM< functor, viennagrid::meta::typelist_t<head, tail> >
-      {
-        typedef viennagrid::meta::typelist_t<
-            typename functor<head>::type,
-            typename TRANSFORM<functor, tail>::type
-        > type;
-      };
 
-    }
+    template<template<typename> class functor>
+    struct TRANSFORM<functor, viennagrid::null_type>
+    {
+      typedef viennagrid::null_type type;
+    };
+
+    template<template<typename> class functor, typename head, typename tail>
+    struct TRANSFORM< functor, viennagrid::meta::typelist_t<head, tail> >
+    {
+      typedef viennagrid::meta::typelist_t<
+          typename functor<head>::type,
+          typename TRANSFORM<functor, tail>::type
+      > type;
+    };
+
   }
 }
 

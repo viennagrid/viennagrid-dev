@@ -102,7 +102,7 @@ namespace viennagrid
     template<typename ElementT, typename TailT, typename ContainerTypemapT>
     struct filter_element_container<viennagrid::meta::typelist_t< ElementT, TailT> , ContainerTypemapT>
     {
-        typedef typename viennagrid::meta::typemap::result_of::find<ContainerTypemapT, ElementT>::type result_type;
+        typedef typename viennagrid::meta::result_of::find<ContainerTypemapT, ElementT>::type result_type;
 
         typedef typename filter_element_container<TailT, ContainerTypemapT>::type new_tail;
 
@@ -484,7 +484,7 @@ namespace viennagrid
     struct element_typelist
     {
       typedef typename element_collection<SomethingT>::type container_collection;
-      typedef typename viennagrid::meta::typemap::result_of::key_typelist<typename container_collection::typemap >::type type;
+      typedef typename viennagrid::meta::result_of::key_typelist<typename container_collection::typemap >::type type;
     };
 
     template<typename HostElementT>
@@ -522,7 +522,7 @@ namespace viennagrid
     template<typename SomethingT>
     struct element_taglist
     {
-      typedef typename viennagrid::meta::typelist::TRANSFORM<
+      typedef typename viennagrid::meta::TRANSFORM<
           result_of::element_tag,
           typename element_typelist<SomethingT>::type
       >::type type;
@@ -539,7 +539,7 @@ namespace viennagrid
     {
       typedef typename result_of::element_tag<BoundaryElementTypeOrTagT>::type BoundaryElementTag;
       static const bool value =
-        meta::typelist::result_of::index_of<
+        meta::result_of::index_of<
           typename element_taglist<HostElementT>::type,
           BoundaryElementTag
         >::value != -1;
@@ -641,7 +641,7 @@ namespace viennagrid
     template<
         typename MeshT,
         typename ElementTypelistT =
-            typename viennagrid::meta::typemap::result_of::key_typelist<
+            typename viennagrid::meta::result_of::key_typelist<
                 typename element_collection<MeshT>::type::typemap
             >::type,
         typename ContainerConfigT =
@@ -1093,7 +1093,7 @@ namespace viennagrid
 
       typedef typename viennagrid::meta::IF<
           viennagrid::result_of::topologic_dimension<element_type>::value == topologic_dimension,
-          typename viennagrid::meta::typelist::result_of::push_back<tail_typelist, element_type>::type,
+          typename viennagrid::meta::result_of::push_back<tail_typelist, element_type>::type,
           tail_typelist
       >::type type;
     };
@@ -1127,9 +1127,9 @@ namespace viennagrid
     struct cell
     {
       typedef typename cells<something>::type all_cell_types;
-      typedef typename viennagrid::meta::STATIC_ASSERT< viennagrid::meta::typelist::result_of::size<all_cell_types>::value == 1 >::type static_assert_typedef;
+      typedef typename viennagrid::meta::STATIC_ASSERT< viennagrid::meta::result_of::size<all_cell_types>::value == 1 >::type static_assert_typedef;
 
-      typedef typename viennagrid::meta::typelist::result_of::at<all_cell_types,0>::type type;
+      typedef typename viennagrid::meta::result_of::at<all_cell_types,0>::type type;
     };
 
     // doxygen docu in forwards.hpp
@@ -1189,7 +1189,7 @@ namespace viennagrid
     for_each_element_functor<MeshSegmentHandleT, FunctorT> for_each_functor(mesh_or_segment, f);
     typedef typename viennagrid::result_of::elements_of_topologic_dim<MeshSegmentHandleT, TopologicDimensionV>::type ElementTypelist;
 
-    viennagrid::meta::typelist::for_each<ElementTypelist>( for_each_functor );
+    viennagrid::meta::for_each<ElementTypelist>( for_each_functor );
   }
 
   /** @brief Function which executes functor an each element with specific topologic dimension, const version
@@ -1206,7 +1206,7 @@ namespace viennagrid
     for_each_element_functor<const MeshSegmentHandleT, FunctorT> for_each_functor(mesh_or_segment, f);
     typedef typename viennagrid::result_of::elements_of_topologic_dim<MeshSegmentHandleT, TopologicDimensionV>::type ElementTypelist;
 
-    viennagrid::meta::typelist::for_each<ElementTypelist>( for_each_functor );
+    viennagrid::meta::for_each<ElementTypelist>( for_each_functor );
   }
 
 
@@ -1216,7 +1216,7 @@ namespace viennagrid
     for_each_element_functor<MeshSegmentHandleT, FunctorT> for_each_functor(mesh_or_segment, f);
     typedef typename viennagrid::result_of::element_typelist<MeshSegmentHandleT>::type ElementTypelist;
 
-    viennagrid::meta::typelist::for_each<ElementTypelist>( for_each_functor );
+    viennagrid::meta::for_each<ElementTypelist>( for_each_functor );
   }
 
   template<typename MeshSegmentHandleT, typename FunctorT>
@@ -1225,7 +1225,7 @@ namespace viennagrid
     for_each_element_functor<const MeshSegmentHandleT, FunctorT> for_each_functor(mesh_or_segment, f);
     typedef typename viennagrid::result_of::element_typelist<MeshSegmentHandleT>::type ElementTypelist;
 
-    viennagrid::meta::typelist::for_each<ElementTypelist>( for_each_functor );
+    viennagrid::meta::for_each<ElementTypelist>( for_each_functor );
   }
 
 
@@ -1585,13 +1585,13 @@ namespace viennagrid
         typedef typename viennagrid::result_of::boundary_element_typelist<SourceElementT>::type BoundaryElementTypelist;
         typedef typename viennagrid::result_of::element_typelist<DestinationMeshType>::type DestinationElementTypelist;
 
-        typedef typename viennagrid::meta::typelist::result_of::intersection<
+        typedef typename viennagrid::meta::result_of::intersection<
                   BoundaryElementTypelist,
                   DestinationElementTypelist
               >::type ElementTypelist;
 
         copy_element_setters<DestinationMeshType, SourceElementT, DestinationElementType> setter( destination_mesh, source_element, destination_element );
-        viennagrid::meta::typelist::for_each<ElementTypelist>(setter);
+        viennagrid::meta::for_each<ElementTypelist>(setter);
       }
 
       fix_handle_helper<TailT>::fix_handles( source_mesh, destination_mesh );
@@ -1608,7 +1608,7 @@ namespace viennagrid
     typedef typename viennagrid::result_of::element_typelist<SourceMeshType>::type      SourceTypelist;
     typedef typename viennagrid::result_of::element_typelist<DestinationMeshType>::type DestinationTypelist;
 
-    typedef typename viennagrid::meta::typelist::result_of::intersection<
+    typedef typename viennagrid::meta::result_of::intersection<
               SourceTypelist,
               DestinationTypelist
           >::type ElementTypelist;
