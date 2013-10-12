@@ -426,14 +426,16 @@ namespace viennagrid
         typedef typelist<head2, tail2> typelist2;
 
         static const int search_result = index_of< typelist2, head1 >::value;
+        static const bool found = (search_result >= 0); //otherwise there are parsing problems with Doxygen 1.7.6.1
+
         typedef typename IF<
-            (search_result >= 0),
+            found,
             typename erase_at<typelist2, search_result>::type,
             typelist2
         >::type new_typelist2;
 
         typedef typename IF<
-            (search_result >= 0),
+            found,
             typelist<head1, typename intersection<tail1, new_typelist2>::type >,
             typename intersection<tail1, new_typelist2>::type
         >::type type;
