@@ -323,7 +323,7 @@ namespace viennagrid
       };
 
       template<typename key_, typename value_, typename tail>
-      struct key_typelist< viennagrid::typelist< viennagrid::meta::static_pair<key_, value_> , tail> >
+      struct key_typelist< viennagrid::typelist< viennagrid::static_pair<key_, value_> , tail> >
       {
         typedef viennagrid::typelist< key_, typename key_typelist<tail>::type > type;
       };
@@ -341,7 +341,7 @@ namespace viennagrid
       };
 
       template<typename key_, typename value_, typename tail>
-      struct value_typelist< viennagrid::typelist< viennagrid::meta::static_pair<key_, value_> , tail> >
+      struct value_typelist< viennagrid::typelist< viennagrid::static_pair<key_, value_> , tail> >
       {
         typedef viennagrid::typelist< value_, typename key_typelist<tail>::type > type;
       };
@@ -364,7 +364,7 @@ namespace viennagrid
 //     struct make_typemap_unsafe<key, value, tail...>
 //     {
 //         typedef viennagrid::typelist<
-//             viennagrid::meta::static_pair<key,value>,
+//             viennagrid::static_pair<key,value>,
 //             typename make_typemap_unsafe<tail...>::type
 //         > type;
 //     };
@@ -393,7 +393,7 @@ namespace viennagrid
     {
       typedef
           typelist<
-              viennagrid::meta::static_pair<K01,V01>,
+              viennagrid::static_pair<K01,V01>,
               typename make_typemap_unsafe<             K02, V02, K03, V03, K04, V04, K05, V05, K06, V06, K07, V07, K08, V08, K09, V09, K10, V10,
                                               K11, V11, K12, V12, K13, V13, K14, V14, K15, V15, K16, V16, K17, V17, K18, V18, K19, V19, K20, V20>::type
           > type;

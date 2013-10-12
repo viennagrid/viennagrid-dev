@@ -42,12 +42,12 @@ int main()
 
   test_type<
       viennagrid::meta::result_of::at< viennagrid::meta::make_typelist<int, char, float, double, unsigned short>::type, 8 >::type,
-      viennagrid::meta::out_of_range
+      viennagrid::out_of_range
   >();
 
   test_type<
       viennagrid::meta::result_of::at< viennagrid::meta::make_typelist<int, char, float, double, unsigned short>::type, -1000 >::type,
-      viennagrid::meta::out_of_range
+      viennagrid::out_of_range
   >();
 
 

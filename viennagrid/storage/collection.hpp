@@ -36,7 +36,7 @@ namespace viennagrid
     };
 
     template<typename key_, typename value_, typename tail>
-    class collection_layer< viennagrid::typelist< viennagrid::meta::static_pair<key_, value_> , tail> > : public collection_layer<tail>
+    class collection_layer< viennagrid::typelist< viennagrid::static_pair<key_, value_> , tail> > : public collection_layer<tail>
     {
     public:
       typedef collection_layer< tail > base;

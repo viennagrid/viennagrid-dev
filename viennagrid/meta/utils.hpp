@@ -22,6 +22,21 @@ namespace viennagrid
   /** @brief An empty type, used within typelists and typemaps */
   class null_type {};
 
+  // some special types
+  /** @brief Empty type used to indicate that an element in a typelist/typemap is out of range */
+  class out_of_range {};
+  /** @brief Empty type indicating that an element in a typelist/typemap wasn't found */
+  class not_found {};
+
+
+  // a static type pair
+  template<typename FirstT, typename SecondT>
+  struct static_pair
+  {
+    typedef FirstT   first;
+    typedef SecondT  second;
+  };
+
   namespace meta
   {
     // basic operations
@@ -74,18 +89,6 @@ namespace viennagrid
     {};
 
 
-    // some special types
-    class out_of_range {};
-    class not_found {};
-
-
-    // a static type pair
-    template<typename first_, typename second_>
-    struct static_pair
-    {
-      typedef first_ first;
-      typedef second_ second;
-    };
 
     namespace result_of
     {

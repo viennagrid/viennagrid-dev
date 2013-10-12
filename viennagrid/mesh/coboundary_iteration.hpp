@@ -39,7 +39,7 @@ namespace viennagrid
               typename mesh_type::appendix_type,
               coboundary_collection_tag
             >::type,
-          viennagrid::meta::static_pair<element_tag, coboundary_tag>
+          viennagrid::static_pair<element_tag, coboundary_tag>
         >::type::container_type::value_type type;
     };
 
@@ -175,10 +175,10 @@ namespace viennagrid
                   typename mesh_type::appendix_type,
                   coboundary_collection_tag
               >::type,
-              viennagrid::meta::static_pair<element_tag, coboundary_tag>
+              viennagrid::static_pair<element_tag, coboundary_tag>
               >::type coboundary_container_wrapper_type;
 
-      coboundary_container_wrapper_type & coboundary_container_wrapper = coboundary_collection<element_tag, coboundary_tag>( mesh );//viennagrid::storage::collection::get< viennagrid::meta::static_pair<element_tag, coboundary_tag> > ( mesh.coboundary_collection() );
+      coboundary_container_wrapper_type & coboundary_container_wrapper = coboundary_collection<element_tag, coboundary_tag>( mesh );//viennagrid::storage::collection::get< viennagrid::static_pair<element_tag, coboundary_tag> > ( mesh.coboundary_collection() );
 
       create_coboundary_information<element_type_or_tag, coboundary_type_or_tag>( mesh, viennagrid::make_accessor<element_type>(coboundary_container_wrapper.container) );
       update_change_counter( mesh, coboundary_container_wrapper.change_counter );
@@ -248,7 +248,7 @@ namespace viennagrid
                 typename mesh_type::appendix_type,
                 coboundary_collection_tag
             >::type,
-            viennagrid::meta::static_pair<element_tag, coboundary_tag>
+            viennagrid::static_pair<element_tag, coboundary_tag>
             >::type coboundary_container_wrapper_type;
     coboundary_container_wrapper_type & coboundary_container_wrapper = coboundary_collection<element_tag, coboundary_tag>( mesh );
 
@@ -282,7 +282,7 @@ namespace viennagrid
                 typename mesh_type::appendix_type,
                 coboundary_collection_tag
             >::type,
-            viennagrid::meta::static_pair<element_tag, coboundary_tag>
+            viennagrid::static_pair<element_tag, coboundary_tag>
             >::type coboundary_container_wrapper_type;
     coboundary_container_wrapper_type const & coboundary_container_wrapper = coboundary_collection<element_tag, coboundary_tag>( mesh );
 

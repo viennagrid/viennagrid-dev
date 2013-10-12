@@ -107,7 +107,7 @@ namespace viennagrid
         typedef typename filter_element_container<TailT, ContainerTypemapT>::type new_tail;
 
         typedef typename viennagrid::meta::IF<
-            viennagrid::meta::EQUAL< result_type, viennagrid::meta::not_found >::value,
+            viennagrid::meta::EQUAL< result_type, viennagrid::not_found >::value,
             new_tail,
             viennagrid::typelist<
                 result_type,
@@ -359,10 +359,10 @@ namespace viennagrid
                   typename mesh_type::appendix_type,
                   coboundary_collection_tag
               >::type,
-              viennagrid::meta::static_pair<element_tag, coboundary_tag>
+              viennagrid::static_pair<element_tag, coboundary_tag>
               >::type &
   coboundary_collection( mesh_type & mesh )
-  { return viennagrid::storage::collection::get< viennagrid::meta::static_pair<element_tag, coboundary_tag> >( viennagrid::storage::collection::get<coboundary_collection_tag>( mesh.appendix() ) );}
+  { return viennagrid::storage::collection::get< viennagrid::static_pair<element_tag, coboundary_tag> >( viennagrid::storage::collection::get<coboundary_collection_tag>( mesh.appendix() ) );}
 
   /** @brief For internal use only */
   template<typename element_tag, typename coboundary_tag, typename mesh_type>
@@ -371,10 +371,10 @@ namespace viennagrid
                   typename mesh_type::appendix_type,
                   coboundary_collection_tag
               >::type,
-              viennagrid::meta::static_pair<element_tag, coboundary_tag>
+              viennagrid::static_pair<element_tag, coboundary_tag>
               >::type const &
   coboundary_collection( mesh_type const & mesh )
-  { return viennagrid::storage::collection::get< viennagrid::meta::static_pair<element_tag, coboundary_tag> >( viennagrid::storage::collection::get<coboundary_collection_tag>( mesh.appendix() ) );}
+  { return viennagrid::storage::collection::get< viennagrid::static_pair<element_tag, coboundary_tag> >( viennagrid::storage::collection::get<coboundary_collection_tag>( mesh.appendix() ) );}
 
 
   /** @brief For internal use only */
@@ -384,10 +384,10 @@ namespace viennagrid
                   typename mesh_type::appendix_type,
                   neighbour_collection_tag
               >::type,
-              viennagrid::meta::static_pair<element_tag, connector_element_tag>
+              viennagrid::static_pair<element_tag, connector_element_tag>
               >::type &
   neighbour_collection( mesh_type & mesh )
-  { return viennagrid::storage::collection::get< viennagrid::meta::static_pair<element_tag, connector_element_tag> >( viennagrid::storage::collection::get<neighbour_collection_tag>( mesh.appendix() ) ); }
+  { return viennagrid::storage::collection::get< viennagrid::static_pair<element_tag, connector_element_tag> >( viennagrid::storage::collection::get<neighbour_collection_tag>( mesh.appendix() ) ); }
 
   /** @brief For internal use only */
   template<typename element_tag, typename connector_element_tag, typename mesh_type>
@@ -396,10 +396,10 @@ namespace viennagrid
                   typename mesh_type::appendix_type,
                   neighbour_collection_tag
               >::type,
-              viennagrid::meta::static_pair<element_tag, connector_element_tag>
+              viennagrid::static_pair<element_tag, connector_element_tag>
               >::type const &
   neighbour_collection( mesh_type const & mesh )
-  { return viennagrid::storage::collection::get< viennagrid::meta::static_pair<element_tag, connector_element_tag> >( viennagrid::storage::collection::get<neighbour_collection_tag>( mesh.appendix() ) ); }
+  { return viennagrid::storage::collection::get< viennagrid::static_pair<element_tag, connector_element_tag> >( viennagrid::storage::collection::get<neighbour_collection_tag>( mesh.appendix() ) ); }
 
 
   /** @brief For internal use only */
@@ -450,9 +450,9 @@ namespace viennagrid
     };
 
     template<typename KeyT, typename ValueT, typename TailT>
-    struct container_collection_typemap< viennagrid::typelist< viennagrid::meta::static_pair<KeyT, ValueT>, TailT > >
+    struct container_collection_typemap< viennagrid::typelist< viennagrid::static_pair<KeyT, ValueT>, TailT > >
     {
-      typedef viennagrid::typelist< viennagrid::meta::static_pair<KeyT, ValueT>, TailT > type;
+      typedef viennagrid::typelist< viennagrid::static_pair<KeyT, ValueT>, TailT > type;
     };
 
 
@@ -1053,7 +1053,7 @@ namespace viennagrid
     };
 
     template<typename element_type, typename element_container_type, typename tail>
-    struct topologic_cell_dimension_impl< viennagrid::typelist< viennagrid::meta::static_pair<element_type, element_container_type>, tail > >
+    struct topologic_cell_dimension_impl< viennagrid::typelist< viennagrid::static_pair<element_type, element_container_type>, tail > >
     {
       static const int tail_cell_dimension = topologic_cell_dimension_impl<tail>::value;
       static const int current_element_dimension = topologic_dimension<element_type>::value;
@@ -1087,7 +1087,7 @@ namespace viennagrid
     };
 
     template<typename element_type, typename element_container_type, typename tail, int topologic_dimension>
-    struct elements_of_topologic_dim_impl< viennagrid::typelist< viennagrid::meta::static_pair<element_type, element_container_type>, tail >, topologic_dimension >
+    struct elements_of_topologic_dim_impl< viennagrid::typelist< viennagrid::static_pair<element_type, element_container_type>, tail >, topologic_dimension >
     {
       typedef typename elements_of_topologic_dim_impl<tail, topologic_dimension>::type tail_typelist;
 

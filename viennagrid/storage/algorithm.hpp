@@ -33,7 +33,7 @@ namespace viennagrid
         for_each_functor(collection_type & collection, functor f) : collection_(collection), f_(f) {}
 
         template<typename key_type, typename value_type>
-        void operator()( viennagrid::meta::tag< viennagrid::meta::static_pair<key_type, value_type> > )
+        void operator()( viennagrid::meta::tag< viennagrid::static_pair<key_type, value_type> > )
         { f_( viennagrid::storage::collection::get<key_type>(collection_) ); }
 
         collection_type & collection_;

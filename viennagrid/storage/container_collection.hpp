@@ -44,7 +44,7 @@ namespace viennagrid
           typedef typename viennagrid::meta::result_of::find<container_config, viennagrid::storage::default_tag>::type default_container;
 
           typedef typename viennagrid::meta::IF<
-              !viennagrid::meta::EQUAL<search_result, viennagrid::meta::not_found>::value,
+              !viennagrid::meta::EQUAL<search_result, viennagrid::not_found>::value,
               search_result,
               default_container
           >::type container_tag_pair;
@@ -66,7 +66,7 @@ namespace viennagrid
         struct container_list_from_value_typelist_using_container_config<viennagrid::typelist<value_type, tail>, container_config>
         {
           typedef viennagrid::typelist<
-              typename viennagrid::meta::static_pair<
+              typename viennagrid::static_pair<
                       value_type,
                       typename container_from_value_using_container_config<value_type, container_config>::type
                   >,
@@ -143,7 +143,7 @@ namespace viennagrid
       };
 
       template<typename container_collection_type, typename element_type>
-      struct insert_or_ignore_helper<container_collection_type, element_type, viennagrid::meta::not_found>
+      struct insert_or_ignore_helper<container_collection_type, element_type, viennagrid::not_found>
       {
         static void insert_or_ignore( container_collection_type &, const element_type & ) {}
 
@@ -186,7 +186,7 @@ namespace viennagrid
       };
 
       template<typename container_collection_type, typename handle_type>
-      struct handle_or_ignore_helper<container_collection_type, handle_type, viennagrid::meta::not_found>
+      struct handle_or_ignore_helper<container_collection_type, handle_type, viennagrid::not_found>
       {
         static void handle_or_ignore( container_collection_type &, const handle_type & ) {}
 

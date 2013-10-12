@@ -42,7 +42,7 @@ namespace viennagrid
       {
         typedef typename viennagrid::meta::result_of::insert<
             typename storage_layout_config<ElementTagT, typename boundary_cell_tag::facet_tag>::type,
-            viennagrid::meta::static_pair<
+            viennagrid::static_pair<
                 boundary_cell_tag,
                 viennagrid::full_handling_tag
             >
@@ -144,7 +144,7 @@ namespace viennagrid
       {
         typedef typename viennagrid::meta::result_of::insert<
             typename full_topology_config_helper<CellTagT, typename ElementTagT::facet_tag, HandleTagT, VertexContainerTagT, CellContainerTagT>::type,
-            viennagrid::meta::static_pair<
+            viennagrid::static_pair<
                 ElementTagT,
                 typename full_element_config<CellTagT, ElementTagT, HandleTagT, VertexContainerTagT, CellContainerTagT>::type
             >
@@ -196,12 +196,12 @@ namespace viennagrid
 
         typedef typename viennagrid::meta::result_of::insert_or_modify<
             MeshConfig,
-            viennagrid::meta::static_pair<
+            viennagrid::static_pair<
                 vertex_tag,
                 typename viennagrid::meta::result_of::insert_or_modify<
 
                     VertexConfig,
-                    viennagrid::meta::static_pair<
+                    viennagrid::static_pair<
                         element_appendix_type_tag,
                         PointType
                     >
@@ -241,10 +241,10 @@ namespace viennagrid
       struct element_container_typemap;
 
       template<typename WrappedConfigT, typename ElementTagT, typename ValueConfigT, typename TailT>
-      struct element_container_typemap< WrappedConfigT, viennagrid::typelist< viennagrid::meta::static_pair<ElementTagT, ValueConfigT>, TailT > >
+      struct element_container_typemap< WrappedConfigT, viennagrid::typelist< viennagrid::static_pair<ElementTagT, ValueConfigT>, TailT > >
       {
         typedef viennagrid::typelist<
-            viennagrid::meta::static_pair<
+            viennagrid::static_pair<
                 element_t<ElementTagT, WrappedConfigT>,
                 typename element_container<WrappedConfigT, ElementTagT>::type
             >,
@@ -300,8 +300,8 @@ namespace viennagrid
       typedef typename storage::result_of::container<element_view_type, coboundary_container_tag >::type base_coboundary_container;
 
       typedef viennagrid::typelist<
-          viennagrid::meta::static_pair<
-              viennagrid::meta::static_pair<
+          viennagrid::static_pair<
+              viennagrid::static_pair<
                   BoundaryElementTagT,
                   ElementTagT
               >,
@@ -361,8 +361,8 @@ namespace viennagrid
       typedef typename storage::result_of::container<element_view_type, neighbour_container_tag >::type base_container;
 
       typedef viennagrid::typelist<
-          viennagrid::meta::static_pair<
-              viennagrid::meta::static_pair<
+          viennagrid::static_pair<
+              viennagrid::static_pair<
                   ElementTagT,
                   ConnectorElementTagT
               >,
@@ -474,7 +474,7 @@ namespace viennagrid
       typedef typename storage::result_of::container<bool, boundary_container_tag >::type base_container;
 
       typedef viennagrid::typelist<
-          viennagrid::meta::static_pair<
+          viennagrid::static_pair<
               ElementTagT,
               boundary_information_wrapper<base_container, MeshChangeCounterType>
           >,

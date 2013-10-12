@@ -58,7 +58,7 @@ namespace viennagrid
       {
         typedef typename query<WrappedConfigType, null_type, element_tag>::type  ElementConfigType;
 
-        static const bool value = !viennagrid::meta::EQUAL<ElementConfigType, viennagrid::meta::not_found>::value;
+        static const bool value = !viennagrid::meta::EQUAL<ElementConfigType, viennagrid::not_found>::value;
       };
 
 
@@ -215,7 +215,7 @@ namespace viennagrid
         // final container pair
         //
 
-        typedef viennagrid::meta::static_pair<
+        typedef viennagrid::static_pair<
                         boundary_cell_view,
                         facet_orientation_container_type
                     > type;
@@ -263,7 +263,7 @@ namespace viennagrid
         // final container pair
         //
 
-        typedef viennagrid::meta::static_pair<
+        typedef viennagrid::static_pair<
                         boundary_cell_view,
                         facet_orientation_container_type
                     > type;

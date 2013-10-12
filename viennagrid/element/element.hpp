@@ -38,7 +38,7 @@ namespace viennagrid
 
 
   template<typename element_tag, typename bnd_cell_container_type_, typename orientation_container_type_, typename tail>
-  class boundary_element_layer<element_tag, viennagrid::typelist< viennagrid::meta::static_pair<bnd_cell_container_type_, orientation_container_type_>, tail > > :
+  class boundary_element_layer<element_tag, viennagrid::typelist< viennagrid::static_pair<bnd_cell_container_type_, orientation_container_type_>, tail > > :
       public boundary_element_layer<element_tag, tail>
   {
   public:
@@ -186,7 +186,7 @@ namespace viennagrid
 
 
   template<typename element_tag, typename bnd_cell_container_type_, typename tail>
-  class boundary_element_layer<element_tag, viennagrid::typelist< viennagrid::meta::static_pair<bnd_cell_container_type_, viennagrid::null_type>, tail > > :
+  class boundary_element_layer<element_tag, viennagrid::typelist< viennagrid::static_pair<bnd_cell_container_type_, viennagrid::null_type>, tail > > :
       public boundary_element_layer<element_tag, tail>
   {
   public:
@@ -311,7 +311,7 @@ namespace viennagrid
     };
 
     template<typename boundary_cell_container_type, typename orientation_container_type, typename tail>
-    struct boundary_element_typelist< viennagrid::typelist<viennagrid::meta::static_pair<boundary_cell_container_type, orientation_container_type>, tail > >
+    struct boundary_element_typelist< viennagrid::typelist<viennagrid::static_pair<boundary_cell_container_type, orientation_container_type>, tail > >
     {
       typedef viennagrid::typelist<
           typename boundary_cell_container_type::value_type,
@@ -337,7 +337,7 @@ namespace viennagrid
     };
 
     template<typename boundary_cell_container_type, typename orientation_container_type, typename tail>
-    struct boundary_element_taglist< viennagrid::typelist<viennagrid::meta::static_pair<boundary_cell_container_type, orientation_container_type>, tail > >
+    struct boundary_element_taglist< viennagrid::typelist<viennagrid::static_pair<boundary_cell_container_type, orientation_container_type>, tail > >
     {
       typedef viennagrid::typelist<
           typename boundary_cell_container_type::value_type::tag,
@@ -416,7 +416,7 @@ namespace viennagrid
     };
 
     template<typename element_type, typename container_type, typename tail, typename element_tag>
-    struct container_of_tag_for_collection<viennagrid::typelist< viennagrid::meta::static_pair<element_type, container_type>, tail >, element_tag>
+    struct container_of_tag_for_collection<viennagrid::typelist< viennagrid::static_pair<element_type, container_type>, tail >, element_tag>
     {
       typedef typename viennagrid::meta::IF<
           viennagrid::meta::EQUAL<typename element_type::tag, element_tag>::value,
@@ -437,7 +437,7 @@ namespace viennagrid
     };
 
     template<typename element_type, typename container_type, typename tail, int dim>
-    struct container_of_dimension_for_collection<viennagrid::typelist< viennagrid::meta::static_pair<element_type, container_type>, tail >, dim>
+    struct container_of_dimension_for_collection<viennagrid::typelist< viennagrid::static_pair<element_type, container_type>, tail >, dim>
     {
       typedef typename viennagrid::meta::IF<
           element_type::tag::dim == dim,

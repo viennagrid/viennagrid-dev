@@ -72,9 +72,9 @@ namespace viennagrid
       };
 
       template<>
-      struct unpack<viennagrid::meta::not_found>
+      struct unpack<viennagrid::not_found>
       {
-        typedef viennagrid::meta::not_found type;
+        typedef viennagrid::not_found type;
       };
 
 
@@ -97,7 +97,7 @@ namespace viennagrid
 
       template<typename DefaultT, typename SearchTag0T, typename SearchTag1T, typename SearchTag2T, typename SearchTag3T, typename SearchTag4T,
                               typename SearchTag5T, typename SearchTag6T, typename SearchTag7T, typename SearchTag8T, typename SearchTag9T>
-      struct query<viennagrid::meta::not_found, DefaultT, SearchTag0T, SearchTag1T, SearchTag2T, SearchTag3T, SearchTag4T,
+      struct query<viennagrid::not_found, DefaultT, SearchTag0T, SearchTag1T, SearchTag2T, SearchTag3T, SearchTag4T,
                                                                               SearchTag5T, SearchTag6T, SearchTag7T, SearchTag8T, SearchTag9T>
       {
         typedef DefaultT type;
@@ -113,7 +113,7 @@ namespace viennagrid
         typedef viennagrid::typelist<HeadT, TailT> ConfigType;
         typedef typename unpack<typename viennagrid::meta::result_of::find<ConfigType, SearchTag0T>::type >::type EntryType;
         typedef typename viennagrid::meta::IF<
-            viennagrid::meta::EQUAL<EntryType, viennagrid::meta::not_found>::value,
+            viennagrid::meta::EQUAL<EntryType, viennagrid::not_found>::value,
             DefaultT,
             EntryType>::type type;
       };
