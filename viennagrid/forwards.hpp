@@ -28,6 +28,10 @@
 #include <cstddef>     //for std::size_t
 #include <cstdlib>     //for EXIT_SUCCESS and EXIT_FAILURE
 
+#define VIENNAGRID_MAJOR_VERSION   1
+#define VIENNAGRID_MINOR_VERSION   1
+#define VIENNAGRID_BUGFIX_LEVEL    0
+
 
 #include "viennagrid/storage/static_array.hpp"
 #include "viennagrid/storage/forwards.hpp"
@@ -35,12 +39,10 @@
 //Debug levels:
 //VIENNAGRID_DEBUG_ALL          Output every little piece of debug information
 //VIENNAGRID_DEBUG_IO           Debug IO operations
-//VIENNAGRID_DEBUG_REFINEMENT   Debug refinement algorithms
 //VIENNAGRID_DEBUG_STATUS       Print status messages to std::cout (very little debug info)
 
 #ifdef VIENNAGRID_DEBUG_ALL
   #define VIENNAGRID_DEBUG_IO
-  #define VIENNAGRID_DEBUG_REFINEMENT
   #define VIENNAGRID_DEBUG_STATUS
 #endif
 
@@ -64,8 +66,6 @@ namespace viennagrid
       std::advance(out, distance);
       return out;
   }
-
-
 
 
   /** @brief A global size_type equivalent for use throughout ViennaData. */
