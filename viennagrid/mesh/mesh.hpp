@@ -145,7 +145,7 @@ namespace viennagrid
       typedef typename viennagrid::storage::result_of::collection< typename viennagrid::result_of::neighbour_container_collection_typemap< WrappedConfigT>::type >::type   neighbour_collection_type;
       typedef typename viennagrid::storage::result_of::collection< typename viennagrid::result_of::boundary_information_collection_typemap<WrappedConfigT>::type >::type   boundary_information_type;
 
-      typedef typename viennagrid::storage::collection_t<
+      typedef typename viennagrid::storage::collection<
             typename viennagrid::make_typemap<
 
                 coboundary_collection_tag,
@@ -438,13 +438,13 @@ namespace viennagrid
     struct container_collection_typemap;
 
     template<typename TypemapT>
-    struct container_collection_typemap< storage::collection_t<TypemapT> >
+    struct container_collection_typemap< storage::collection<TypemapT> >
     {
       typedef TypemapT type;
     };
 
     template<typename TypemapT>
-    struct container_collection_typemap< const storage::collection_t<TypemapT> >
+    struct container_collection_typemap< const storage::collection<TypemapT> >
     {
       typedef TypemapT type;
     };
@@ -458,9 +458,9 @@ namespace viennagrid
 
     // doxygen docu in forwards.hpp
     template<typename TypemapT>
-    struct element_collection< storage::collection_t<TypemapT> >
+    struct element_collection< storage::collection<TypemapT> >
     {
-      typedef storage::collection_t<TypemapT> type;
+      typedef storage::collection<TypemapT> type;
     };
 
     template<typename WrappedConfigT>

@@ -52,7 +52,7 @@ namespace viennagrid
 
 
     template <typename container_typemap>
-    std::ostream & operator<<(std::ostream & os, const collection_t<container_typemap> & container_collection)
+    std::ostream & operator<<(std::ostream & os, const viennagrid::storage::collection<container_typemap> & container_collection)
     {
       container_output_functor f(os);
 

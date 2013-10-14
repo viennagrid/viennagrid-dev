@@ -611,9 +611,9 @@ namespace viennagrid
       };
 
       template<typename container_typelist, typename view_container_config>
-      struct view_collection< collection_t<container_typelist>, view_container_config>
+      struct view_collection< viennagrid::storage::collection<container_typelist>, view_container_config>
       {
-        typedef viennagrid::storage::collection_t<container_typelist> container_collection_type;
+        typedef viennagrid::storage::collection<container_typelist> container_collection_type;
 
         typedef typename viennagrid::storage::result_of::collection<
             typename viennagrid::storage::result_of::view_container_typemap<

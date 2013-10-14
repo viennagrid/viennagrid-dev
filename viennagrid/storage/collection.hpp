@@ -29,7 +29,7 @@ namespace viennagrid
     class collection_layer;
 
     template<typename typemap_>
-    class collection_t : public collection_layer< typemap_ >
+    class collection : public collection_layer< typemap_ >
     {
     public:
       typedef typemap_ typemap;
@@ -72,7 +72,7 @@ namespace viennagrid
       };
 
       template<typename typemap, typename key_type>
-      struct value_type< viennagrid::storage::collection_t<typemap>, key_type >
+      struct value_type< viennagrid::storage::collection<typemap>, key_type >
       {
         typedef typename viennagrid::meta::result_of::find<typemap, key_type>::type::second type;
       };
@@ -82,13 +82,13 @@ namespace viennagrid
     namespace detail
     {
       template<typename type, typename typemap>
-      typename viennagrid::storage::result_of::value_type<typemap, typename viennagrid::meta::remove_const<type>::type >::type & get( collection_t<typemap> & c )
+      typename viennagrid::storage::result_of::value_type<typemap, typename viennagrid::meta::remove_const<type>::type >::type & get( collection<typemap> & c )
       {
         return c.get( viennagrid::meta::tag< typename viennagrid::meta::remove_const<type>::type >() );
       }
 
       template<typename type, typename typemap>
-      typename viennagrid::storage::result_of::value_type<typemap, typename viennagrid::meta::remove_const<type>::type >::type const & get( collection_t<typemap> const & c )
+      typename viennagrid::storage::result_of::value_type<typemap, typename viennagrid::meta::remove_const<type>::type >::type const & get( collection<typemap> const & c )
       {
         return c.get( viennagrid::meta::tag< typename viennagrid::meta::remove_const<type>::type >() );
       }
@@ -100,7 +100,7 @@ namespace viennagrid
       template<typename typemap>
       struct collection
       {
-          typedef viennagrid::storage::collection_t<typemap> type;
+          typedef viennagrid::storage::collection<typemap> type;
       };
     } // namespace result_of
 

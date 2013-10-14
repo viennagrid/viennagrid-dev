@@ -1052,10 +1052,10 @@ namespace viennagrid
              typename ViewT = typename viennagrid::result_of::mesh_view<MeshT>::type,
              typename SegmentIDType = int,
              typename AppendixType =
-                viennagrid::storage::collection_t<
+                viennagrid::storage::collection<
                     typename viennagrid::make_typemap<
                         element_segment_mapping_tag,
-                        viennagrid::storage::collection_t<
+                        viennagrid::storage::collection<
                             typename trivial_segmentation_appendix<
                                 typename viennagrid::result_of::element_typelist<MeshT>::type,
                                 SegmentIDType
@@ -1064,7 +1064,7 @@ namespace viennagrid
 
 
                         interface_information_collection_tag,
-                        viennagrid::storage::collection_t<
+                        viennagrid::storage::collection<
                           typename viennagrid::result_of::interface_information_collection_typemap<
                             typename viennagrid::result_of::element_taglist<MeshT>::type,
                             SegmentIDType,
@@ -1096,10 +1096,10 @@ namespace viennagrid
              typename ViewT = typename viennagrid::result_of::mesh_view<MeshT>::type,
              typename SegmentIDType = int,
              typename AppendixType =
-              viennagrid::storage::collection_t<
+              viennagrid::storage::collection<
                 typename viennagrid::make_typemap<
                     element_segment_mapping_tag,
-                    viennagrid::storage::collection_t<
+                    viennagrid::storage::collection<
                         typename viennagrid::meta::result_of::modify<
                             typename trivial_segmentation_appendix<
                                 typename viennagrid::result_of::element_typelist<MeshT>::type,
@@ -1116,7 +1116,7 @@ namespace viennagrid
                     >,
 
                     interface_information_collection_tag,
-                    viennagrid::storage::collection_t<
+                    viennagrid::storage::collection<
                       typename viennagrid::result_of::interface_information_collection_typemap<
                         typename viennagrid::result_of::element_taglist<MeshT>::type,
                         SegmentIDType,

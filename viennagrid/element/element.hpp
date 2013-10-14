@@ -60,7 +60,7 @@ namespace viennagrid
     boundary_element_layer( const boundary_element_layer & llh) : base(llh), elements_(llh.elements_), orientations_(llh.orientations_) {}
 
     template<typename container_typelist>
-    void set_container( viennagrid::storage::collection_t<container_typelist> & container_collection )
+    void set_container( viennagrid::storage::collection<container_typelist> & container_collection )
     {
       elements_.set_base_container( viennagrid::storage::detail::get<bnd_cell_type>(container_collection) );
       base::set_container( container_collection );
@@ -205,7 +205,7 @@ namespace viennagrid
     boundary_element_layer( const boundary_element_layer & llh) : base(llh), elements_(llh.elements_) {}
 
     template<typename container_typelist>
-    void set_container( viennagrid::storage::collection_t<container_typelist> & container_collection )
+    void set_container( viennagrid::storage::collection<container_typelist> & container_collection )
     {
       elements_.set_base_container( viennagrid::storage::detail::get<bnd_cell_type>(container_collection) );
       base::set_container( container_collection );
@@ -279,7 +279,7 @@ namespace viennagrid
   public:
 
     template<typename container_typelist>
-    void set_container( viennagrid::storage::collection_t<container_typelist> & ) {}
+    void set_container( viennagrid::storage::collection<container_typelist> & ) {}
 
     template<typename element_type, typename inserter_type>
     void create_boundary_elements(element_type &, inserter_type &) {}
@@ -453,7 +453,7 @@ namespace viennagrid
     struct container_of_tag;
 
     template<typename container_collection_typemap, typename tag>
-    struct container_of_tag< storage::collection_t<container_collection_typemap>, tag >
+    struct container_of_tag< storage::collection<container_collection_typemap>, tag >
     {
       typedef typename container_of_tag_for_collection<container_collection_typemap, tag>::type type;
     };
@@ -468,7 +468,7 @@ namespace viennagrid
     struct container_of_dimension;
 
     template<typename container_collection_typemap, long dim>
-    struct container_of_dimension< storage::collection_t<container_collection_typemap>, dim >
+    struct container_of_dimension< storage::collection<container_collection_typemap>, dim >
     {
       typedef typename container_of_dimension_for_collection<container_collection_typemap, dim>::type type;
     };
@@ -529,7 +529,7 @@ namespace viennagrid
     typedef typename viennagrid::storage::result_of::const_id<id_type>::type                                             const_id_type;
 
     template<typename container_typelist>
-    element( viennagrid::storage::collection_t<container_typelist> & container_collection )
+    element( viennagrid::storage::collection<container_typelist> & container_collection )
     {
         base::set_container(container_collection);
     }
@@ -597,7 +597,7 @@ namespace viennagrid
     element() {}
 
     template<typename container_typelist>
-    element( viennagrid::storage::collection_t<container_typelist> & ) {}
+    element( viennagrid::storage::collection<container_typelist> & ) {}
 
     typedef typename result_of::boundary_element_typelist<bnd_cell_container_typelist>::type                            boundary_cell_typelist;
     typedef typename viennagrid::storage::result_of::make_id< viennagrid::element<vertex_tag, WrappedConfigType>, id_tag>::type   id_type;
@@ -719,14 +719,14 @@ namespace viennagrid
 
 
       template<typename container_collection_typemap, typename element_type_or_tag>
-      struct element<storage::collection_t<container_collection_typemap>, element_type_or_tag>
+      struct element<storage::collection<container_collection_typemap>, element_type_or_tag>
       {
           typedef typename element_tag<element_type_or_tag>::type element_tag;
           typedef typename container_of_tag_for_collection<container_collection_typemap, element_tag>::type::value_type type;
       };
 
       template<typename container_collection_typemap, typename element_type_or_tag>
-      struct handle<storage::collection_t<container_collection_typemap>, element_type_or_tag>
+      struct handle<storage::collection<container_collection_typemap>, element_type_or_tag>
       {
           typedef typename element_tag<element_type_or_tag>::type element_tag;
 
@@ -735,7 +735,7 @@ namespace viennagrid
       };
 
       template<typename container_collection_typemap, typename element_type_or_tag>
-      struct const_handle<storage::collection_t<container_collection_typemap>, element_type_or_tag>
+      struct const_handle<storage::collection<container_collection_typemap>, element_type_or_tag>
       {
           typedef typename element_tag<element_type_or_tag>::type element_tag;
           typedef typename container_of_tag_for_collection<container_collection_typemap, element_tag>::type::const_handle_type type;
@@ -743,29 +743,29 @@ namespace viennagrid
 
 
       template<typename container_collection_typemap, typename element_type_or_tag>
-      struct element_range<storage::collection_t<container_collection_typemap>, element_type_or_tag>
+      struct element_range<storage::collection<container_collection_typemap>, element_type_or_tag>
       {
           typedef typename element_tag<element_type_or_tag>::type element_tag_;
           typedef viennagrid::storage::container_range_wrapper< typename container_of_tag_for_collection<container_collection_typemap, element_tag_>::type > type;
       };
 
       template<typename container_collection_typemap, typename element_type_or_tag>
-      struct const_element_range<storage::collection_t<container_collection_typemap>, element_type_or_tag>
+      struct const_element_range<storage::collection<container_collection_typemap>, element_type_or_tag>
       {
           typedef typename element_tag<element_type_or_tag>::type element_tag_;
           typedef viennagrid::storage::container_range_wrapper< const typename container_of_tag_for_collection<container_collection_typemap, element_tag_>::type > type;
       };
 
       template<typename container_collection_typemap, typename element_type_or_tag>
-      struct element_range< const storage::collection_t<container_collection_typemap>, element_type_or_tag>
+      struct element_range< const storage::collection<container_collection_typemap>, element_type_or_tag>
       {
-          typedef typename const_element_range<storage::collection_t<container_collection_typemap>, element_type_or_tag>::type type;
+          typedef typename const_element_range<storage::collection<container_collection_typemap>, element_type_or_tag>::type type;
       };
 
       template<typename container_collection_typemap, typename element_type_or_tag>
-      struct const_element_range< const storage::collection_t<container_collection_typemap>, element_type_or_tag>
+      struct const_element_range< const storage::collection<container_collection_typemap>, element_type_or_tag>
       {
-          typedef typename const_element_range<storage::collection_t<container_collection_typemap>, element_type_or_tag>::type type;
+          typedef typename const_element_range<storage::collection<container_collection_typemap>, element_type_or_tag>::type type;
       };
   }
 
@@ -817,17 +817,17 @@ namespace viennagrid
 
 
   template<typename element_type_or_tag, typename container_collection_typemap>
-  typename result_of::element_range<storage::collection_t<container_collection_typemap>, element_type_or_tag>::type elements( storage::collection_t<container_collection_typemap> & collection)
+  typename result_of::element_range<storage::collection<container_collection_typemap>, element_type_or_tag>::type elements( storage::collection<container_collection_typemap> & collection)
   {
-      typedef typename result_of::element<storage::collection_t<container_collection_typemap>, element_type_or_tag>::type element_type;
-      return typename result_of::element_range<storage::collection_t<container_collection_typemap>, element_type_or_tag>::type( storage::detail::get<element_type>(collection) );
+      typedef typename result_of::element<storage::collection<container_collection_typemap>, element_type_or_tag>::type element_type;
+      return typename result_of::element_range<storage::collection<container_collection_typemap>, element_type_or_tag>::type( storage::detail::get<element_type>(collection) );
   }
 
   template<typename element_type_or_tag, typename container_collection_typemap>
-  typename result_of::const_element_range<storage::collection_t<container_collection_typemap>, element_type_or_tag>::type elements( const storage::collection_t<container_collection_typemap> & collection)
+  typename result_of::const_element_range<storage::collection<container_collection_typemap>, element_type_or_tag>::type elements( const storage::collection<container_collection_typemap> & collection)
   {
-      typedef typename result_of::element<storage::collection_t<container_collection_typemap>, element_type_or_tag>::type element_type;
-      return typename result_of::const_element_range<storage::collection_t<container_collection_typemap>, element_type_or_tag>::type( storage::detail::get<element_type>(collection) );
+      typedef typename result_of::element<storage::collection<container_collection_typemap>, element_type_or_tag>::type element_type;
+      return typename result_of::const_element_range<storage::collection<container_collection_typemap>, element_type_or_tag>::type( storage::detail::get<element_type>(collection) );
   }
 
 

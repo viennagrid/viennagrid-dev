@@ -433,7 +433,7 @@ namespace viennagrid
           container_collection_typemap,
           element_type
       >::type,
-      element_type>::type make_accessor( storage::collection_t<container_collection_typemap> & collection )
+      element_type>::type make_accessor( storage::collection<container_collection_typemap> & collection )
   {
     return make_accessor<element_type>( storage::detail::get<element_type>(collection) );
   }
@@ -444,7 +444,7 @@ namespace viennagrid
           container_collection_typemap,
           element_type
       >::type,
-      element_type>::type make_accessor( storage::collection_t<container_collection_typemap> const & collection )
+      element_type>::type make_accessor( storage::collection<container_collection_typemap> const & collection )
   {
     return make_accessor<element_type>( storage::detail::get<element_type>(collection) );
   }
@@ -889,7 +889,7 @@ namespace viennagrid
           container_collection_typemap,
           element_type
       >::type,
-      element_type>::type make_field( storage::collection_t<container_collection_typemap> & collection )
+      element_type>::type make_field( storage::collection<container_collection_typemap> & collection )
   {
     return make_field<element_type>( storage::detail::get<element_type>(collection) );
   }
@@ -900,7 +900,7 @@ namespace viennagrid
           container_collection_typemap,
           element_type
       >::type,
-      element_type>::type make_field( storage::collection_t<container_collection_typemap> const & collection )
+      element_type>::type make_field( storage::collection<container_collection_typemap> const & collection )
   {
     return make_field<element_type>( storage::detail::get<element_type>(collection) );
   }

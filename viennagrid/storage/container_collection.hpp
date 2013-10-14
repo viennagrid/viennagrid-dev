@@ -96,7 +96,7 @@ namespace viennagrid
       };
 
       template<typename typemap_, typename element_type>
-      struct container_of< viennagrid::storage::collection_t< typemap_ >, element_type >
+      struct container_of< viennagrid::storage::collection< typemap_ >, element_type >
       {
         typedef typename container_of<typemap_, element_type>::type type;
       };
@@ -106,11 +106,11 @@ namespace viennagrid
       struct common_values;
 
       template<typename container_typelist_1, typename container_typelist_2>
-      struct common_values< viennagrid::storage::collection_t<container_typelist_1>,
-                            viennagrid::storage::collection_t<container_typelist_2> >
+      struct common_values< viennagrid::storage::collection<container_typelist_1>,
+                            viennagrid::storage::collection<container_typelist_2> >
       {
-        typedef viennagrid::storage::collection_t<container_typelist_1> from_container_collection_type;
-        typedef viennagrid::storage::collection_t<container_typelist_2> to_container_collection_type;
+        typedef viennagrid::storage::collection<container_typelist_1> from_container_collection_type;
+        typedef viennagrid::storage::collection<container_typelist_2> to_container_collection_type;
 
         typedef typename viennagrid::meta::result_of::key_typelist<typename from_container_collection_type::typemap>::type from_container_collection_value_typelist;
         typedef typename viennagrid::meta::result_of::key_typelist<typename to_container_collection_type::typemap>::type to_container_collection_value_typelist;
@@ -232,9 +232,9 @@ namespace viennagrid
 
 
       template<typename container_collection_typemap>
-      void clear_all( viennagrid::storage::collection_t<container_collection_typemap> & container_collection)
+      void clear_all( viennagrid::storage::collection<container_collection_typemap> & container_collection)
       {
-        clear_all_functor< viennagrid::storage::collection_t<container_collection_typemap> > f( container_collection );
+        clear_all_functor< viennagrid::storage::collection<container_collection_typemap> > f( container_collection );
         viennagrid::meta::for_each< typename viennagrid::meta::result_of::key_typelist<container_collection_typemap>::type >( f );
       }
 
@@ -250,7 +250,7 @@ namespace viennagrid
       template<typename value_typelist, typename container_config>
       struct container_collection
       {
-        typedef viennagrid::storage::collection_t<
+        typedef viennagrid::storage::collection<
             typename viennagrid::storage::detail::result_of::container_list_from_value_typelist_using_container_config<
                 value_typelist,
                 container_config

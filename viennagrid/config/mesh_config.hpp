@@ -229,9 +229,9 @@ namespace viennagrid
       };
 
       template<typename container_collection_typemap, typename ElementTagT>
-      struct element_container< storage::collection_t<container_collection_typemap>, ElementTagT >
+      struct element_container< storage::collection<container_collection_typemap>, ElementTagT >
       {
-        typedef typename viennagrid::result_of::element<storage::collection_t<container_collection_typemap>, ElementTagT>::type element_type;
+        typedef typename viennagrid::result_of::element<storage::collection<container_collection_typemap>, ElementTagT>::type element_type;
         typedef typename viennagrid::meta::result_of::find< container_collection_typemap, element_type >::type::second type;
       };
 

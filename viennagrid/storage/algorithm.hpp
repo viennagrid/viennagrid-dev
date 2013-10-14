@@ -114,34 +114,34 @@ namespace viennagrid
 
 
       template<typename src_container_typelist, typename dst_container_typelist>
-      void copy(const collection_t<src_container_typelist> & src, collection_t<dst_container_typelist> & dst)
+      void copy(const collection<src_container_typelist> & src, collection<dst_container_typelist> & dst)
       {
         detail::dual_for_each_functor<
-            const collection_t<src_container_typelist>,
-            collection_t<dst_container_typelist>,
+            const collection<src_container_typelist>,
+            collection<dst_container_typelist>,
             copy_functor<viennagrid::meta::true_predicate>
             > functor(src, dst, copy_functor<viennagrid::meta::true_predicate>(viennagrid::meta::true_predicate()));
 
         typedef typename viennagrid::storage::result_of::common_values<
-            collection_t<src_container_typelist>,
-            collection_t<dst_container_typelist>
+            collection<src_container_typelist>,
+            collection<dst_container_typelist>
         >::type typelist;
 
         viennagrid::meta::for_each<typelist>(functor);
       }
 
       template<typename src_container_typelist, typename dst_container_typelist, typename predicate>
-      void copy_if(const collection_t<src_container_typelist> & src, collection_t<dst_container_typelist> & dst, predicate pred)
+      void copy_if(const collection<src_container_typelist> & src, collection<dst_container_typelist> & dst, predicate pred)
       {
         detail::dual_for_each_functor<
-            const collection_t<src_container_typelist>,
-            collection_t<dst_container_typelist>,
+            const collection<src_container_typelist>,
+            collection<dst_container_typelist>,
             copy_functor<predicate>
             > functor(src, dst, copy_functor<predicate>(pred));
 
         typedef typename viennagrid::storage::result_of::common_values<
-            collection_t<src_container_typelist>,
-            collection_t<dst_container_typelist>
+            collection<src_container_typelist>,
+            collection<dst_container_typelist>
         >::type typelist;
 
         viennagrid::meta::for_each<typelist>(functor);
@@ -172,34 +172,34 @@ namespace viennagrid
 
 
       template<typename src_container_typelist, typename dst_container_typelist>
-      void handle(collection_t<src_container_typelist> & src, collection_t<dst_container_typelist> & dst)
+      void handle(collection<src_container_typelist> & src, collection<dst_container_typelist> & dst)
       {
         detail::dual_for_each_functor<
-            collection_t<src_container_typelist>,
-            collection_t<dst_container_typelist>,
+            collection<src_container_typelist>,
+            collection<dst_container_typelist>,
             handle_functor<viennagrid::meta::true_predicate>
             > functor(src, dst, handle_functor<viennagrid::meta::true_predicate>(viennagrid::meta::true_predicate()));
 
         typedef typename viennagrid::storage::result_of::common_values<
-            collection_t<src_container_typelist>,
-            collection_t<dst_container_typelist>
+            collection<src_container_typelist>,
+            collection<dst_container_typelist>
         >::type typelist;
 
         viennagrid::meta::for_each<typelist>(functor);
       }
 
       template<typename src_container_typelist, typename dst_container_typelist, typename predicate>
-      void handle_if(collection_t<src_container_typelist> & src, collection_t<dst_container_typelist> & dst, predicate pred)
+      void handle_if(collection<src_container_typelist> & src, collection<dst_container_typelist> & dst, predicate pred)
       {
         detail::dual_for_each_functor<
-            collection_t<src_container_typelist>,
-            collection_t<dst_container_typelist>,
+            collection<src_container_typelist>,
+            collection<dst_container_typelist>,
             handle_functor<predicate>
             > functor(src, dst, handle_functor<predicate>(pred));
 
         typedef typename viennagrid::storage::result_of::common_values<
-            collection_t<src_container_typelist>,
-            collection_t<dst_container_typelist>
+            collection<src_container_typelist>,
+            collection<dst_container_typelist>
         >::type typelist;
 
         viennagrid::meta::for_each<typelist>(functor);
