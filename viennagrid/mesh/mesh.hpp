@@ -732,10 +732,10 @@ namespace viennagrid
     * @param  view        The output view object
     */
   template<typename MeshT, typename ViewT>
-  void handle_mesh(MeshT & mesh_obj, ViewT & view)
+  void handle_mesh(MeshT & mesh_obj, ViewT & view_obj)
   {
     handle_mesh_functor< typename result_of::element_collection<MeshT>::type > functor( element_collection(mesh_obj) );
-    viennagrid::storage::collection::for_each( element_collection(view), functor);
+    viennagrid::storage::collection::for_each( element_collection(view_obj), functor);
   }
 
 

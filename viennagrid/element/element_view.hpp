@@ -54,10 +54,10 @@ namespace viennagrid
     typedef typename result_of::element_tag<element_type_or_tag>::type element_tag;
     typedef typename result_of::element<something, element_tag>::type element_type;
 
-    typename result_of::element_view<something, element_tag>::type view;
-    view.set_base_container( viennagrid::storage::collection::get<element_type>( element_collection(s) ) );
+    typename result_of::element_view<something, element_tag>::type view_obj;
+    view_obj.set_base_container( viennagrid::storage::collection::get<element_type>( element_collection(s) ) );
 
-    return view;
+    return view_obj;
   }
 
 
@@ -72,16 +72,16 @@ namespace viennagrid
 
     RangeType range = viennagrid::elements<element_tag>(s);
 
-    typename result_of::element_view<something, element_tag>::type view;
-    view.set_base_container( *range.get_base_container() );
+    typename result_of::element_view<something, element_tag>::type view_obj;
+    view_obj.set_base_container( *range.get_base_container() );
 
     for ( IteratorType it = range.begin(); it != range.end(); ++it )
     {
       if ( f(*it) )
-        view.insert_handle( it.handle() );
+        view_obj.insert_handle( it.handle() );
     }
 
-    return view;
+    return view_obj;
   }
 
   template<typename element_type_or_tag, typename something, typename functor>
@@ -95,16 +95,16 @@ namespace viennagrid
 
     RangeType range = viennagrid::elements<element_tag>(s);
 
-    typename result_of::element_view<something, element_tag>::type view;
-    view.set_base_container( *range.get_base_container() );
+    typename result_of::element_view<something, element_tag>::type view_obj;
+    view_obj.set_base_container( *range.get_base_container() );
 
     for ( IteratorType it = range.begin(); it != range.end(); ++it )
     {
       if ( f(*it) )
-        view.insert_handle( it.handle() );
+        view_obj.insert_handle( it.handle() );
     }
 
-    return view;
+    return view_obj;
   }
 
 }

@@ -119,14 +119,14 @@ namespace viennagrid
         for (element_on_connector_element_range_iterator jt0 = coboundary_range.begin(); jt0 != jt1; ++jt0)
         {
           typedef typename result_of::neighbour_view<mesh_type, ElementTypeOrTagT, ConnectorElementTypeOrTagT>::type view_type;
-          view_type & view = accessor( *jt0 );
+          view_type & view_obj = accessor( *jt0 );
 
-          typename view_type::iterator kt = view.begin();
-          for (; kt != view.end(); ++kt)
+          typename view_type::iterator kt = view_obj.begin();
+          for (; kt != view_obj.end(); ++kt)
             if ( kt->id() == jt1->id() )
               break;
 
-          if (kt == view.end())
+          if (kt == view_obj.end())
           {
             accessor( *jt0 ).insert_handle( jt1.handle() );
             accessor( *jt1 ).insert_handle( jt0.handle() );

@@ -194,27 +194,27 @@ namespace viennagrid
   template<typename MeshViewT>
   struct erase_from_view_functor
   {
-    erase_from_view_functor(MeshViewT & view_) : view(view_) {}
+    erase_from_view_functor(MeshViewT & view_obj) : view_(view_obj) {}
 
     template<typename ElementT>
     void operator() (ElementT & element)
     {
 //       std::cout << "Erasing " << element << std::endl;
-      viennagrid::elements<ElementT>(view).erase_handle( viennagrid::handle(view, element) );
+      viennagrid::elements<ElementT>(view_).erase_handle( viennagrid::handle(view_, element) );
     }
 
-    MeshViewT & view;
+    MeshViewT & view_;
   };
 
   template <typename WrappedConfigType, typename ElementTypeList, typename ContainerConfig, typename ToEraseViewT>
-  void erase_elements(viennagrid::mesh< decorated_mesh_view_config<WrappedConfigType, ElementTypeList, ContainerConfig> > & view, ToEraseViewT & elements_to_erase)
+  void erase_elements(viennagrid::mesh< decorated_mesh_view_config<WrappedConfigType, ElementTypeList, ContainerConfig> > & view_obj, ToEraseViewT & elements_to_erase)
   {
     typedef viennagrid::mesh< decorated_mesh_view_config<WrappedConfigType, ElementTypeList, ContainerConfig> > ViewType;
 
-    erase_from_view_functor<ViewType> functor( view );
+    erase_from_view_functor<ViewType> functor( view_obj );
     viennagrid::for_each(elements_to_erase, functor);
 
-    viennagrid::increment_change_counter(view);
+    viennagrid::increment_change_counter(view_obj);
   }
 
 
