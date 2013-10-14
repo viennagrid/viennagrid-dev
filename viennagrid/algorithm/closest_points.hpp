@@ -38,12 +38,12 @@ namespace viennagrid
   {
 
     template <typename CoordType, typename CoordinateSystem>
-    std::pair<point_t<CoordType, CoordinateSystem>,
-              point_t<CoordType, CoordinateSystem> > const &
-    point_pair_with_shortest_distance( std::pair<point_t<CoordType, CoordinateSystem>,
-                                                 point_t<CoordType, CoordinateSystem> > const & pair_1,
-                                       std::pair<point_t<CoordType, CoordinateSystem>,
-                                                 point_t<CoordType, CoordinateSystem> > const & pair_2)
+    std::pair<spatial_point<CoordType, CoordinateSystem>,
+              spatial_point<CoordType, CoordinateSystem> > const &
+    point_pair_with_shortest_distance( std::pair<spatial_point<CoordType, CoordinateSystem>,
+                                                 spatial_point<CoordType, CoordinateSystem> > const & pair_1,
+                                       std::pair<spatial_point<CoordType, CoordinateSystem>,
+                                                 spatial_point<CoordType, CoordinateSystem> > const & pair_2)
     {
       if ( norm_2(pair_1.first - pair_1.second) <= norm_2(pair_2.first - pair_2.second) )
         return pair_1;
@@ -52,14 +52,14 @@ namespace viennagrid
     }
 
     template <typename CoordType, typename CoordinateSystem>
-    std::pair<point_t<CoordType, CoordinateSystem>,
-              point_t<CoordType, CoordinateSystem> > const &
-    point_pair_with_shortest_distance( std::pair<point_t<CoordType, CoordinateSystem>,
-                                                 point_t<CoordType, CoordinateSystem> > const & pair_1,
-                                       std::pair<point_t<CoordType, CoordinateSystem>,
-                                                 point_t<CoordType, CoordinateSystem> > const & pair_2,
-                                       std::pair<point_t<CoordType, CoordinateSystem>,
-                                                 point_t<CoordType, CoordinateSystem> > const & pair_3)
+    std::pair<spatial_point<CoordType, CoordinateSystem>,
+              spatial_point<CoordType, CoordinateSystem> > const &
+    point_pair_with_shortest_distance( std::pair<spatial_point<CoordType, CoordinateSystem>,
+                                                 spatial_point<CoordType, CoordinateSystem> > const & pair_1,
+                                       std::pair<spatial_point<CoordType, CoordinateSystem>,
+                                                 spatial_point<CoordType, CoordinateSystem> > const & pair_2,
+                                       std::pair<spatial_point<CoordType, CoordinateSystem>,
+                                                 spatial_point<CoordType, CoordinateSystem> > const & pair_3)
     {
       CoordType dist_pair_1 = norm_2(pair_1.first - pair_1.second);
       CoordType dist_pair_2 = norm_2(pair_2.first - pair_2.second);
@@ -78,16 +78,16 @@ namespace viennagrid
 
 
     template <typename CoordType, typename CoordinateSystem>
-    std::pair<point_t<CoordType, CoordinateSystem>,
-              point_t<CoordType, CoordinateSystem> > const &
-    point_pair_with_shortest_distance( std::pair<point_t<CoordType, CoordinateSystem>,
-                                                 point_t<CoordType, CoordinateSystem> > const & pair_1,
-                                       std::pair<point_t<CoordType, CoordinateSystem>,
-                                                 point_t<CoordType, CoordinateSystem> > const & pair_2,
-                                       std::pair<point_t<CoordType, CoordinateSystem>,
-                                                 point_t<CoordType, CoordinateSystem> > const & pair_3,
-                                       std::pair<point_t<CoordType, CoordinateSystem>,
-                                                 point_t<CoordType, CoordinateSystem> > const & pair_4)
+    std::pair<spatial_point<CoordType, CoordinateSystem>,
+              spatial_point<CoordType, CoordinateSystem> > const &
+    point_pair_with_shortest_distance( std::pair<spatial_point<CoordType, CoordinateSystem>,
+                                                 spatial_point<CoordType, CoordinateSystem> > const & pair_1,
+                                       std::pair<spatial_point<CoordType, CoordinateSystem>,
+                                                 spatial_point<CoordType, CoordinateSystem> > const & pair_2,
+                                       std::pair<spatial_point<CoordType, CoordinateSystem>,
+                                                 spatial_point<CoordType, CoordinateSystem> > const & pair_3,
+                                       std::pair<spatial_point<CoordType, CoordinateSystem>,
+                                                 spatial_point<CoordType, CoordinateSystem> > const & pair_4)
     {
       // Note: Recursive use of point_pair_with_shortest_distance() has a bit of overhead. Feel free to improve this
       return point_pair_with_shortest_distance(point_pair_with_shortest_distance(pair_1, pair_2),
@@ -95,18 +95,18 @@ namespace viennagrid
     }
 
     template <typename CoordType, typename CoordinateSystem>
-    std::pair<point_t<CoordType, CoordinateSystem>,
-              point_t<CoordType, CoordinateSystem> > const &
-    point_pair_with_shortest_distance( std::pair<point_t<CoordType, CoordinateSystem>,
-                                                 point_t<CoordType, CoordinateSystem> > const & pair_1,
-                                       std::pair<point_t<CoordType, CoordinateSystem>,
-                                                 point_t<CoordType, CoordinateSystem> > const & pair_2,
-                                       std::pair<point_t<CoordType, CoordinateSystem>,
-                                                 point_t<CoordType, CoordinateSystem> > const & pair_3,
-                                       std::pair<point_t<CoordType, CoordinateSystem>,
-                                                 point_t<CoordType, CoordinateSystem> > const & pair_4,
-                                       std::pair<point_t<CoordType, CoordinateSystem>,
-                                                 point_t<CoordType, CoordinateSystem> > const & pair_5)
+    std::pair<spatial_point<CoordType, CoordinateSystem>,
+              spatial_point<CoordType, CoordinateSystem> > const &
+    point_pair_with_shortest_distance( std::pair<spatial_point<CoordType, CoordinateSystem>,
+                                                 spatial_point<CoordType, CoordinateSystem> > const & pair_1,
+                                       std::pair<spatial_point<CoordType, CoordinateSystem>,
+                                                 spatial_point<CoordType, CoordinateSystem> > const & pair_2,
+                                       std::pair<spatial_point<CoordType, CoordinateSystem>,
+                                                 spatial_point<CoordType, CoordinateSystem> > const & pair_3,
+                                       std::pair<spatial_point<CoordType, CoordinateSystem>,
+                                                 spatial_point<CoordType, CoordinateSystem> > const & pair_4,
+                                       std::pair<spatial_point<CoordType, CoordinateSystem>,
+                                                 spatial_point<CoordType, CoordinateSystem> > const & pair_5)
     {
       // Note: Recursive use of point_pair_with_shortest_distance() has a bit of overhead. Feel free to improve this
       return point_pair_with_shortest_distance(point_pair_with_shortest_distance(pair_1, pair_2, pair_3),
@@ -114,20 +114,20 @@ namespace viennagrid
     }
 
     template <typename CoordType, typename CoordinateSystem>
-    std::pair<point_t<CoordType, CoordinateSystem>,
-              point_t<CoordType, CoordinateSystem> > const &
-    point_pair_with_shortest_distance( std::pair<point_t<CoordType, CoordinateSystem>,
-                                                 point_t<CoordType, CoordinateSystem> > const & pair_1,
-                                       std::pair<point_t<CoordType, CoordinateSystem>,
-                                                 point_t<CoordType, CoordinateSystem> > const & pair_2,
-                                       std::pair<point_t<CoordType, CoordinateSystem>,
-                                                 point_t<CoordType, CoordinateSystem> > const & pair_3,
-                                       std::pair<point_t<CoordType, CoordinateSystem>,
-                                                 point_t<CoordType, CoordinateSystem> > const & pair_4,
-                                       std::pair<point_t<CoordType, CoordinateSystem>,
-                                                 point_t<CoordType, CoordinateSystem> > const & pair_5,
-                                       std::pair<point_t<CoordType, CoordinateSystem>,
-                                                 point_t<CoordType, CoordinateSystem> > const & pair_6)
+    std::pair<spatial_point<CoordType, CoordinateSystem>,
+              spatial_point<CoordType, CoordinateSystem> > const &
+    point_pair_with_shortest_distance( std::pair<spatial_point<CoordType, CoordinateSystem>,
+                                                 spatial_point<CoordType, CoordinateSystem> > const & pair_1,
+                                       std::pair<spatial_point<CoordType, CoordinateSystem>,
+                                                 spatial_point<CoordType, CoordinateSystem> > const & pair_2,
+                                       std::pair<spatial_point<CoordType, CoordinateSystem>,
+                                                 spatial_point<CoordType, CoordinateSystem> > const & pair_3,
+                                       std::pair<spatial_point<CoordType, CoordinateSystem>,
+                                                 spatial_point<CoordType, CoordinateSystem> > const & pair_4,
+                                       std::pair<spatial_point<CoordType, CoordinateSystem>,
+                                                 spatial_point<CoordType, CoordinateSystem> > const & pair_5,
+                                       std::pair<spatial_point<CoordType, CoordinateSystem>,
+                                                 spatial_point<CoordType, CoordinateSystem> > const & pair_6)
     {
       // Note: Recursive use of point_pair_with_shortest_distance() has a bit of overhead. Feel free to improve this
       return point_pair_with_shortest_distance(point_pair_with_shortest_distance(pair_1, pair_2, pair_3),
@@ -149,10 +149,10 @@ namespace viennagrid
     }
 
     template <typename PointAccessorType, typename CoordType1, typename CoordinateSystem1, typename CoordType2, typename CoordinateSystem2>
-    std::pair< point_t<CoordType1, CoordinateSystem1>, point_t<CoordType2, CoordinateSystem2> >
+    std::pair< spatial_point<CoordType1, CoordinateSystem1>, spatial_point<CoordType2, CoordinateSystem2> >
     closest_points_impl(PointAccessorType const,
-                        point_t<CoordType1, CoordinateSystem1> const & p1,
-                        point_t<CoordType2, CoordinateSystem2> const & p2)
+                        spatial_point<CoordType1, CoordinateSystem1> const & p1,
+                        spatial_point<CoordType2, CoordinateSystem2> const & p2)
     {
       return closest_points_impl(p1, p2);
     }
@@ -198,7 +198,7 @@ namespace viennagrid
                                       LinePointType const & line_p1,
                                       LinePointType const & line_p2)
     {
-      //typedef point_t<CoordType, CoordinateSystem>  PointType;
+      //typedef spatial_point<CoordType, CoordinateSystem>  PointType;
       typedef typename result_of::coord< PointType >::type CoordType;
 
       //compute t such that projection of p onto [line_p1, line_p2] is given by p' = line_p1 + t * (line_p2 - line_p1)
@@ -271,7 +271,7 @@ namespace viennagrid
             closest_points_line_line(PointType const & v0, PointType const & v1, //endpoints of first line
                                      PointType const & w0, PointType const & w1) //endpoints of second line
     {
-      //typedef point_t<CoordType, CoordinateSystem>  PointType;
+      //typedef spatial_point<CoordType, CoordinateSystem>  PointType;
       typedef typename result_of::coord< PointType >::type CoordType;
 
       // write V(s) = v0 + s * (v1 - v0), s \in [0,1]
@@ -453,9 +453,9 @@ namespace viennagrid
 
     //convenience overload: point
     template <typename PointAccessorType, typename CoordType, typename CoordinateSystem, typename WrappedConfigType>
-    std::pair<point_t<CoordType, CoordinateSystem>, typename PointAccessorType::value_type>
+    std::pair<spatial_point<CoordType, CoordinateSystem>, typename PointAccessorType::value_type>
             closest_points_impl(PointAccessorType const accessor,
-                                point_t<CoordType, CoordinateSystem> const & p,
+                                spatial_point<CoordType, CoordinateSystem> const & p,
                                 viennagrid::element<simplex_tag<2>,WrappedConfigType> const & el)
     {
       return closest_points_point_triangle(p,
@@ -494,9 +494,9 @@ namespace viennagrid
     //   v[0]        v[1]
     //
     template <typename PointAccessorType, typename CoordType, typename CoordinateSystem, typename WrappedConfigType>
-    std::pair<point_t<CoordType, CoordinateSystem>, typename PointAccessorType::value_type>
+    std::pair<spatial_point<CoordType, CoordinateSystem>, typename PointAccessorType::value_type>
             closest_points_impl(PointAccessorType const accessor,
-                                point_t<CoordType, CoordinateSystem> const & p,
+                                spatial_point<CoordType, CoordinateSystem> const & p,
                                 viennagrid::element<hypercube_tag<2>,WrappedConfigType> const & el)
     {
       return point_pair_with_shortest_distance(closest_points_point_triangle(p,
@@ -614,9 +614,9 @@ namespace viennagrid
 
     //convenience overload: point
     template <typename PointAccessorType, typename CoordType, typename CoordinateSystem, typename WrappedConfigType>
-    std::pair<point_t<CoordType, CoordinateSystem>,typename PointAccessorType::value_type>
+    std::pair<spatial_point<CoordType, CoordinateSystem>,typename PointAccessorType::value_type>
             closest_points_impl(PointAccessorType const accessor,
-                                point_t<CoordType, CoordinateSystem> const & p,
+                                spatial_point<CoordType, CoordinateSystem> const & p,
                                 viennagrid::element<simplex_tag<3>,WrappedConfigType> const & el)
     {
       return closest_points_point_tetrahedron(p,
@@ -710,10 +710,10 @@ namespace viennagrid
     }
 
     template <typename PointAccessorType, typename CoordType1, typename CoordinateSystem1, typename CoordType2, typename CoordinateSystem2>
-    std::pair< point_t<CoordType1, CoordinateSystem1>, point_t<CoordType1, CoordinateSystem1> >
+    std::pair< spatial_point<CoordType1, CoordinateSystem1>, spatial_point<CoordType1, CoordinateSystem1> >
     closest_points_on_boundary_impl(PointAccessorType const,
-                                    point_t<CoordType1, CoordinateSystem1> const & p1,
-                                    point_t<CoordType2, CoordinateSystem2> const & p2)
+                                    spatial_point<CoordType1, CoordinateSystem1> const & p1,
+                                    spatial_point<CoordType2, CoordinateSystem2> const & p2)
     {
       return closest_points_on_boundary_impl(p1, p2);
     }
@@ -948,7 +948,7 @@ namespace viennagrid
     };
 
     template <typename CoordType, typename CoordinateSystem>
-    struct topological_id< point_t<CoordType, CoordinateSystem> >
+    struct topological_id< spatial_point<CoordType, CoordinateSystem> >
     {
       static const int value = 1;
     };

@@ -47,8 +47,8 @@ bool fuzzy_equal(double a, double b)
 }
 
 template <typename CoordType, int d>
-bool fuzzy_equal(viennagrid::point_t<CoordType, viennagrid::cartesian_cs<d> > const & a,
-                 viennagrid::point_t<CoordType, viennagrid::cartesian_cs<d> > const & b)
+bool fuzzy_equal(viennagrid::spatial_point<CoordType, viennagrid::cartesian_cs<d> > const & a,
+                 viennagrid::spatial_point<CoordType, viennagrid::cartesian_cs<d> > const & b)
 {
   for (std::size_t i=0; i<a.size(); ++i)
   {
@@ -168,7 +168,7 @@ void test_operations(PointType1 const & c0, PointType1 const & c1, PointType1 co
 
 void test_1d()
 {
-  typedef viennagrid::point_t<double, viennagrid::cartesian_cs<1> >   CartesianPoint;
+  typedef viennagrid::spatial_point<double, viennagrid::cartesian_cs<1> >   CartesianPoint;
 
   CartesianPoint c0(0);
   CartesianPoint c1(0.5);
@@ -216,8 +216,8 @@ void test_1d()
 template <typename CSystem1, typename CSystem2>
 void test_2d()
 {
-  typedef viennagrid::point_t<double, CSystem1>   PointType1;
-  typedef viennagrid::point_t<double, CSystem2>   PointType2;
+  typedef viennagrid::spatial_point<double, CSystem1>   PointType1;
+  typedef viennagrid::spatial_point<double, CSystem2>   PointType2;
 
   PointType1 c0(0, 0);
   PointType1 c1(1, 0);
@@ -289,8 +289,8 @@ void test_2d()
 template <typename CSystem1, typename CSystem2>
 void test_3d()
 {
-  typedef viennagrid::point_t<double, CSystem1>    PointType1;
-  typedef viennagrid::point_t<double, CSystem2>    PointType2;
+  typedef viennagrid::spatial_point<double, CSystem1>    PointType1;
+  typedef viennagrid::spatial_point<double, CSystem2>    PointType2;
 
   PointType1 c0(0, 0, 0);
   PointType1 c1(1, 0, 1);

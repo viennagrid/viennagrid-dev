@@ -164,7 +164,7 @@ namespace viennagrid
    * @tparam CoordinateSystem   The underlying coordinate system of the point.
    */
   template <typename CoordType, typename CoordinateSystem>
-  class point_t;
+  class spatial_point;
 
   /** @brief Represents a topological element within a mesh
    *
@@ -1762,7 +1762,7 @@ namespace viennagrid
 
   /** @brief Data type for cell normals in algorithm/cell_normals.hpp (to be added in afuture release) */
   struct seg_cell_normal_data {
-    typedef viennagrid::point_t<double, cartesian_cs<3> >         point_type;
+    typedef viennagrid::spatial_point<double, cartesian_cs<3> >         point_type;
     typedef std::map<std::size_t, point_type>    type;
   };
 

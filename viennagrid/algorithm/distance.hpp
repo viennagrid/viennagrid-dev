@@ -58,8 +58,8 @@ namespace viennagrid
     template <typename PointAccessorType, typename CoordType1, typename CoordinateSystem1, typename CoordType2, typename CoordinateSystem2>
     CoordType1
     distance_impl(PointAccessorType const,
-                  point_t<CoordType1, CoordinateSystem1> const & p1,
-                  point_t<CoordType2, CoordinateSystem2> const & p2)
+                  spatial_point<CoordType1, CoordinateSystem1> const & p1,
+                  spatial_point<CoordType2, CoordinateSystem2> const & p2)
     {
       return distance_impl(p1, p2);
     }
@@ -134,8 +134,8 @@ namespace viennagrid
     template <typename PointAccessorType, typename CoordType1, typename CoordinateSystem1, typename CoordType2, typename CoordinateSystem2>
     CoordType1
     boundary_distance_impl(PointAccessorType const,
-                  point_t<CoordType1, CoordinateSystem1> const & p1,
-                  point_t<CoordType2, CoordinateSystem2> const & p2)
+                  spatial_point<CoordType1, CoordinateSystem1> const & p1,
+                  spatial_point<CoordType2, CoordinateSystem2> const & p2)
     {
       return boundary_distance_impl(p1, p2);
     }
@@ -214,23 +214,23 @@ namespace viennagrid
   template <typename Something, typename CoordType, typename CoordinateSystem>
   typename result_of::coord<Something>::type
   distance(Something const & el1,
-           point_t<CoordType, CoordinateSystem> const & el2)
+           spatial_point<CoordType, CoordinateSystem> const & el2)
   {
     return detail::distance_impl( default_point_accessor(el1), el1, el2 );
   }
 
   template <typename CoordType, typename CoordinateSystem, typename Something>
   typename result_of::coord<Something>::type
-  distance(point_t<CoordType, CoordinateSystem> const & el1,
+  distance(spatial_point<CoordType, CoordinateSystem> const & el1,
            Something const & el2)
   {
     return detail::distance_impl( default_point_accessor(el2), el1, el2 );
   }
 
   template <typename CoordType1, typename CoordinateSystem1, typename CoordType2, typename CoordinateSystem2>
-  typename result_of::coord< point_t<CoordType1, CoordinateSystem1> >::type
-  distance(point_t<CoordType1, CoordinateSystem1> const & el1,
-           point_t<CoordType2, CoordinateSystem2> const & el2)
+  typename result_of::coord< spatial_point<CoordType1, CoordinateSystem1> >::type
+  distance(spatial_point<CoordType1, CoordinateSystem1> const & el1,
+           spatial_point<CoordType2, CoordinateSystem2> const & el2)
   {
     return detail::distance_impl( el1, el2 );
   }
@@ -260,14 +260,14 @@ namespace viennagrid
   template <typename Something, typename CoordType, typename CoordinateSystem>
   typename result_of::coord<Something>::type
   boundary_distance(Something const & el1,
-                    point_t<CoordType, CoordinateSystem> const & el2)
+                    spatial_point<CoordType, CoordinateSystem> const & el2)
   {
     return detail::boundary_distance_impl( default_point_accessor(el1), el1, el2 );
   }
 
   template <typename CoordType, typename CoordinateSystem, typename Something>
   typename result_of::coord<Something>::type
-  boundary_distance(point_t<CoordType, CoordinateSystem> const & el1,
+  boundary_distance(spatial_point<CoordType, CoordinateSystem> const & el1,
                     Something const & el2)
   {
     return detail::boundary_distance_impl( default_point_accessor(el2), el1, el2 );

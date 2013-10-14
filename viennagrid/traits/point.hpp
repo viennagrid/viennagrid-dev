@@ -30,7 +30,7 @@ namespace viennagrid
 
     /** @brief  Returns the geometric dimension of a point. Specialization for a ViennaGrid point */
     template <typename CoordType, typename CoordinateSystem>
-    struct dimension< point_t<CoordType, CoordinateSystem> >
+    struct dimension< spatial_point<CoordType, CoordinateSystem> >
     {
       static const int value = CoordinateSystem::dim;
     };
@@ -46,7 +46,7 @@ namespace viennagrid
 
     /** @brief Returns the coordinate system of a point. Specialization for a ViennaGrid point. */
     template <typename CoordType, typename CoordinateSystem>
-    struct coordinate_system< point_t<CoordType, CoordinateSystem> >
+    struct coordinate_system< spatial_point<CoordType, CoordinateSystem> >
     {
       typedef CoordinateSystem    type;
     };
@@ -58,7 +58,7 @@ namespace viennagrid
 
     /** @brief Returns the static (compile time) size of a point. Specialization for a ViennaGrid point. */
     template <typename CoordType, typename CoordinateSystem>
-    struct static_size< point_t<CoordType, CoordinateSystem> >
+    struct static_size< spatial_point<CoordType, CoordinateSystem> >
     {
       static const int value = CoordinateSystem::dim;
     };

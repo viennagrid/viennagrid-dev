@@ -34,11 +34,11 @@ namespace viennagrid
   namespace config
   {
     /** @brief Point type with cartesian coordinate system in 1d */
-    typedef viennagrid::point_t<double, viennagrid::cartesian_cs<1> > point_type_1d;
+    typedef viennagrid::spatial_point<double, viennagrid::cartesian_cs<1> > point_type_1d;
     /** @brief Point type with cartesian coordinate system in 2d */
-    typedef viennagrid::point_t<double, viennagrid::cartesian_cs<2> > point_type_2d;
+    typedef viennagrid::spatial_point<double, viennagrid::cartesian_cs<2> > point_type_2d;
     /** @brief Point type with cartesian coordinate system in 3d */
-    typedef viennagrid::point_t<double, viennagrid::cartesian_cs<3> > point_type_3d;
+    typedef viennagrid::spatial_point<double, viennagrid::cartesian_cs<3> > point_type_3d;
   }
 
 
