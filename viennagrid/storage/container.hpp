@@ -372,7 +372,7 @@ namespace viennagrid
 
 
     template<typename base_container_, typename handle_tag>
-    class container_base_t : public handled_container<base_container_, handle_tag>
+    class container_base : public handled_container<base_container_, handle_tag>
     {
     public:
 
@@ -415,7 +415,7 @@ namespace viennagrid
 
 
     template<typename key, typename compare, typename allocator, typename handle_tag>
-    class container_base_t<std::set<key, compare, allocator>, handle_tag> : public handled_container<std::set<key, compare, allocator>, handle_tag>
+    class container_base<std::set<key, compare, allocator>, handle_tag> : public handled_container<std::set<key, compare, allocator>, handle_tag>
     {
     public:
 
@@ -458,7 +458,7 @@ namespace viennagrid
 
 
     template<typename base_container_, typename handle_tag_>
-    class container : public container_base_t<base_container_, handle_tag_>
+    class container : public container_base<base_container_, handle_tag_>
     {
     public:
 

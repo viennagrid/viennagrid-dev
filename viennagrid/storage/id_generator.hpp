@@ -94,19 +94,19 @@ namespace viennagrid
 
 
     template<typename id_generator_config>
-    class continuous_id_generator_layer_t;
+    class continuous_id_generator_layer;
 
     template<typename value_type, typename id_tag, typename tail>
-    class continuous_id_generator_layer_t<viennagrid::typelist< viennagrid::static_pair<value_type, id_tag>, tail> > : public continuous_id_generator_layer_t<tail>
+    class continuous_id_generator_layer<viennagrid::typelist< viennagrid::static_pair<value_type, id_tag>, tail> > : public continuous_id_generator_layer<tail>
     {
-      typedef continuous_id_generator_layer_t<tail> base;
+      typedef continuous_id_generator_layer<tail> base;
     public:
 
       typedef viennagrid::typelist< viennagrid::static_pair<value_type, id_tag>, tail> config_type;
 
       typedef typename result_of::make_id<value_type, id_tag>::type id_type;
 
-      continuous_id_generator_layer_t() : base(), last_id(0) {}
+      continuous_id_generator_layer() : base(), last_id(0) {}
 
       using base::operator();
       id_type operator()( viennagrid::meta::tag<value_type> )
@@ -135,7 +135,7 @@ namespace viennagrid
     };
 
     template<>
-    class continuous_id_generator_layer_t<viennagrid::null_type>
+    class continuous_id_generator_layer<viennagrid::null_type>
     {
     public:
       void operator()();
@@ -145,7 +145,7 @@ namespace viennagrid
 
 
     template<typename typemap>
-    class continuous_id_generator : public continuous_id_generator_layer_t< typemap >
+    class continuous_id_generator : public continuous_id_generator_layer< typemap >
     {};
 
     namespace result_of

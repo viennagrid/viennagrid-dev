@@ -48,7 +48,7 @@ namespace viennadata
 namespace viennagrid
 {
   template<typename value_type_, typename element_type>
-  class appendix_accessor_t
+  class appendix_accessor
   {
   public:
       typedef value_type_ value_type;
@@ -93,7 +93,7 @@ namespace viennagrid
     template<typename mesh_or_element_type>
     struct default_point_accessor
     {
-      typedef appendix_accessor_t<
+      typedef viennagrid::appendix_accessor<
         typename viennagrid::result_of::point<mesh_or_element_type>::type,
         typename viennagrid::result_of::vertex<mesh_or_element_type>::type
       > type;
@@ -104,7 +104,7 @@ namespace viennagrid
   template<typename mesh_or_element_type>
   typename result_of::default_point_accessor<mesh_or_element_type>::type default_point_accessor( mesh_or_element_type const & )
   {
-    return appendix_accessor_t<
+    return viennagrid::appendix_accessor<
       typename viennagrid::result_of::point<mesh_or_element_type>::type,
       typename viennagrid::result_of::vertex<mesh_or_element_type>::type
     >();
@@ -140,7 +140,7 @@ namespace viennagrid
 
 
   template<typename ContainerType, typename AccessType>
-  class dense_container_accessor_t
+  class dense_container_accessor
   {
   public:
 
@@ -156,8 +156,8 @@ namespace viennagrid
 
     typedef typename access_type::id_type::base_id_type offset_type;
 
-    dense_container_accessor_t() : container(0) {}
-    dense_container_accessor_t( ContainerType & container_ ) : container(&container_) {}
+    dense_container_accessor() : container(0) {}
+    dense_container_accessor( ContainerType & container_ ) : container(&container_) {}
 
     bool is_valid() const { return container != NULL; }
 
@@ -190,14 +190,14 @@ namespace viennagrid
     reference at(AccessType const & element)
     {
       offset_type offset = element.id().get();
-      if ( static_cast<offset_type>((*container).size()) <= offset) throw std::out_of_range("dense_container_accessor_t::at() failed");
+      if ( static_cast<offset_type>((*container).size()) <= offset) throw std::out_of_range("dense_container_accessor::at() failed");
       return (*container)[offset];
     }
 
     const_reference at(AccessType const & element) const
     {
       offset_type offset = element.id().get();
-      if ( static_cast<offset_type>((*container).size()) <= offset) throw std::out_of_range("dense_container_accessor_t::at() const failed");
+      if ( static_cast<offset_type>((*container).size()) <= offset) throw std::out_of_range("dense_container_accessor::at() const failed");
       return (*container)[offset];
     }
 
@@ -207,7 +207,7 @@ namespace viennagrid
 
 
   template<typename ContainerType, typename AccessType>
-  class dense_container_accessor_t<const ContainerType, AccessType>
+  class dense_container_accessor<const ContainerType, AccessType>
   {
   public:
 
@@ -223,8 +223,8 @@ namespace viennagrid
 
     typedef typename access_type::id_type::base_id_type offset_type;
 
-    dense_container_accessor_t() : container(0) {}
-    dense_container_accessor_t( container_type & container_ ) : container(&container_) {}
+    dense_container_accessor() : container(0) {}
+    dense_container_accessor( container_type & container_ ) : container(&container_) {}
 
     bool is_valid() const { return container != NULL; }
 
@@ -244,7 +244,7 @@ namespace viennagrid
     const_reference at(AccessType const & element) const
     {
       offset_type offset = element.id().get();
-      if ( static_cast<offset_type>((*container).size()) <= offset) throw std::out_of_range("dense_container_accessor_t::at() const failed");
+      if ( static_cast<offset_type>((*container).size()) <= offset) throw std::out_of_range("dense_container_accessor::at() const failed");
       return (*container)[offset];
     }
 
@@ -261,7 +261,7 @@ namespace viennagrid
 
 
   template<typename ContainerType, typename AccessType>
-  class std_map_accessor_t
+  class std_map_accessor
   {
   public:
 
@@ -276,8 +276,8 @@ namespace viennagrid
     typedef value_type *         pointer;
     typedef value_type const *   const_pointer;
 
-    std_map_accessor_t() : container(0) {}
-    std_map_accessor_t( ContainerType & container_ ) : container(&container_) {}
+    std_map_accessor() : container(0) {}
+    std_map_accessor( ContainerType & container_ ) : container(&container_) {}
 
     bool is_valid() const { return container != NULL; }
 
@@ -313,7 +313,7 @@ namespace viennagrid
     const_reference at(AccessType const & element) const
     {
       typename container_type::const_iterator it = (*container).find( element.id() );
-      if (it == (*container).end()) throw std::out_of_range("std_map_accessor_t::at() const failed");
+      if (it == (*container).end()) throw std::out_of_range("std_map_accessor::at() const failed");
       return it->second;
     }
 
@@ -323,7 +323,7 @@ namespace viennagrid
 
 
   template<typename ContainerType, typename AccessType>
-  class std_map_accessor_t<const ContainerType, AccessType>
+  class std_map_accessor<const ContainerType, AccessType>
   {
   public:
 
@@ -338,8 +338,8 @@ namespace viennagrid
     typedef value_type const *         pointer;
     typedef value_type const *   const_pointer;
 
-    std_map_accessor_t() : container(0) {}
-    std_map_accessor_t( container_type & container_ ) : container(&container_) {}
+    std_map_accessor() : container(0) {}
+    std_map_accessor( container_type & container_ ) : container(&container_) {}
 
     bool is_valid() const { return container != NULL; }
 
@@ -359,7 +359,7 @@ namespace viennagrid
     const_reference at(AccessType const & element) const
     {
       typename container_type::const_iterator it = (*container).find( element.id() );
-      if (it == (*container).end()) throw std::out_of_range("std_map_accessor_t::at() const failed");
+      if (it == (*container).end()) throw std::out_of_range("std_map_accessor::at() const failed");
       return it->second;
     }
 
@@ -377,37 +377,37 @@ namespace viennagrid
     template<typename T, typename Alloc, typename AccessType>
     struct accessor< std::vector<T, Alloc>, AccessType >
     {
-      typedef dense_container_accessor_t<std::vector<T, Alloc>, AccessType> type;
+      typedef viennagrid::dense_container_accessor<std::vector<T, Alloc>, AccessType> type;
     };
 
     template<typename T, typename Alloc, typename AccessType>
     struct accessor< const std::vector<T, Alloc>, AccessType >
     {
-      typedef dense_container_accessor_t<const std::vector<T, Alloc>, AccessType> type;
+      typedef viennagrid::dense_container_accessor<const std::vector<T, Alloc>, AccessType> type;
     };
 
     template<typename T, typename Alloc, typename AccessType>
     struct accessor< std::deque<T, Alloc>, AccessType >
     {
-      typedef dense_container_accessor_t<std::deque<T, Alloc>, AccessType> type;
+      typedef viennagrid::dense_container_accessor<std::deque<T, Alloc>, AccessType> type;
     };
 
     template<typename T, typename Alloc, typename AccessType>
     struct accessor< const std::deque<T, Alloc>, AccessType >
     {
-      typedef dense_container_accessor_t<const std::deque<T, Alloc>, AccessType> type;
+      typedef viennagrid::dense_container_accessor<const std::deque<T, Alloc>, AccessType> type;
     };
 
     template<typename Key, typename T, typename Compare, typename Alloc, typename AccessType>
     struct accessor< std::map<Key, T, Compare, Alloc>, AccessType >
     {
-      typedef std_map_accessor_t<std::map<Key, T, Compare, Alloc>, AccessType> type;
+      typedef viennagrid::std_map_accessor<std::map<Key, T, Compare, Alloc>, AccessType> type;
     };
 
     template<typename Key, typename T, typename Compare, typename Alloc, typename AccessType>
     struct accessor< const std::map<Key, T, Compare, Alloc>, AccessType >
     {
-      typedef std_map_accessor_t<const std::map<Key, T, Compare, Alloc>, AccessType> type;
+      typedef viennagrid::std_map_accessor<const std::map<Key, T, Compare, Alloc>, AccessType> type;
     };
   }
 
@@ -453,7 +453,7 @@ namespace viennagrid
 
 
   template<typename ValueType, typename AccessType>
-  class base_dynamic_accessor_t
+  class base_dynamic_accessor
   {
   public:
     typedef ValueType  value_type;
@@ -465,7 +465,7 @@ namespace viennagrid
     typedef value_type       *       pointer;
     typedef value_type const * const_pointer;
 
-    virtual ~base_dynamic_accessor_t() {}
+    virtual ~base_dynamic_accessor() {}
 
     virtual       pointer find( access_type const & ) { return 0; }
     virtual const_pointer find( access_type const & ) const { return 0; }
@@ -478,7 +478,7 @@ namespace viennagrid
   };
 
   template<typename ValueType, typename AccessType>
-  class base_dynamic_accessor_t<const ValueType, AccessType>
+  class base_dynamic_accessor<const ValueType, AccessType>
   {
   public:
     typedef ValueType value_type;
@@ -490,7 +490,7 @@ namespace viennagrid
     typedef value_type const * pointer;
     typedef value_type const * const_pointer;
 
-    virtual ~base_dynamic_accessor_t() {}
+    virtual ~base_dynamic_accessor() {}
 
     virtual const_pointer find( access_type const & ) const { return 0; }
     virtual const_reference operator()( access_type const & element ) const = 0;
@@ -501,10 +501,10 @@ namespace viennagrid
 
 
   template<typename AccessorType>
-  class dynamic_accessor_t : public base_dynamic_accessor_t< typename AccessorType::value_type, typename AccessorType::access_type >
+  class dynamic_accessor : public base_dynamic_accessor< typename AccessorType::value_type, typename AccessorType::access_type >
   {
   public:
-    typedef base_dynamic_accessor_t< typename AccessorType::value_type, typename AccessorType::access_type > BaseAccessorType;
+    typedef base_dynamic_accessor< typename AccessorType::value_type, typename AccessorType::access_type > BaseAccessorType;
 
     typedef typename BaseAccessorType::value_type value_type;
     typedef typename BaseAccessorType::access_type access_type;
@@ -516,7 +516,7 @@ namespace viennagrid
     typedef typename BaseAccessorType::const_pointer const_pointer;
 
 
-    dynamic_accessor_t(AccessorType accessor_) : accessor(accessor_) {}
+    dynamic_accessor(AccessorType accessor_) : accessor(accessor_) {}
 
     virtual pointer find( access_type const & element ) { return accessor.find(element); }
     virtual const_pointer find( access_type const & element ) const { return accessor.find(element); }
@@ -533,10 +533,10 @@ namespace viennagrid
 
 
   template<typename AccessorType>
-  class dynamic_accessor_t<const AccessorType> : public base_dynamic_accessor_t< const typename AccessorType::value_type, typename AccessorType::access_type >
+  class dynamic_accessor<const AccessorType> : public base_dynamic_accessor< const typename AccessorType::value_type, typename AccessorType::access_type >
   {
   public:
-    typedef base_dynamic_accessor_t< const typename AccessorType::value_type, typename AccessorType::access_type > BaseAccessorType;
+    typedef base_dynamic_accessor< const typename AccessorType::value_type, typename AccessorType::access_type > BaseAccessorType;
 
     typedef typename BaseAccessorType::value_type value_type;
     typedef typename BaseAccessorType::access_type access_type;
@@ -548,7 +548,7 @@ namespace viennagrid
     typedef typename BaseAccessorType::const_pointer const_pointer;
 
 
-    dynamic_accessor_t(AccessorType accessor_) : accessor(accessor_) {}
+    dynamic_accessor(AccessorType accessor_) : accessor(accessor_) {}
 
     virtual const_pointer find( access_type const & element ) const { return accessor.find(element); }
     virtual const_reference operator()( access_type const & element ) const { return access(element); }
@@ -572,7 +572,7 @@ namespace viennagrid
 
 
   template<typename ContainerType, typename AccessType>
-  class dense_container_field_t
+  class dense_container_field
   {
   public:
 
@@ -588,9 +588,9 @@ namespace viennagrid
 
     typedef typename access_type::id_type::base_id_type offset_type;
 
-    dense_container_field_t() : default_value() {}
-    dense_container_field_t( ContainerType & container_ ) : container(&container_), default_value() {}
-    dense_container_field_t( ContainerType & container_, value_type const & value_type_ ) : container(&container_), default_value(value_type_) {}
+    dense_container_field() : default_value() {}
+    dense_container_field( ContainerType & container_ ) : container(&container_), default_value() {}
+    dense_container_field( ContainerType & container_, value_type const & value_type_ ) : container(&container_), default_value(value_type_) {}
 
     bool is_valid() const { return container != NULL; }
 
@@ -626,14 +626,14 @@ namespace viennagrid
     reference at(AccessType const & element)
     {
       offset_type offset = element.id().get();
-      if ( static_cast<offset_type>((*container).size()) <= offset) throw std::out_of_range("dense_container_accessor_t::at() failed");
+      if ( static_cast<offset_type>((*container).size()) <= offset) throw std::out_of_range("dense_container_field::at() failed");
       return (*container)[offset];
     }
 
     const_reference at(AccessType const & element) const
     {
       offset_type offset = element.id().get();
-      if ( static_cast<offset_type>((*container).size()) <= offset) throw std::out_of_range("dense_container_accessor_t::at() failed");
+      if ( static_cast<offset_type>((*container).size()) <= offset) throw std::out_of_range("dense_container_field::at() failed");
       return (*container)[offset];
     }
 
@@ -646,7 +646,7 @@ namespace viennagrid
 
 
   template<typename ContainerType, typename AccessType>
-  class dense_container_field_t<const ContainerType, AccessType>
+  class dense_container_field<const ContainerType, AccessType>
   {
   public:
 
@@ -662,9 +662,9 @@ namespace viennagrid
 
     typedef typename access_type::id_type::base_id_type offset_type;
 
-    dense_container_field_t() : default_value() {}
-    dense_container_field_t( ContainerType const & container_ ) : container(&container_), default_value() {}
-    dense_container_field_t( ContainerType const & container_, value_type const & value_type_ ) : container(&container_), default_value(value_type_) {}
+    dense_container_field() : default_value() {}
+    dense_container_field( ContainerType const & container_ ) : container(&container_), default_value() {}
+    dense_container_field( ContainerType const & container_, value_type const & value_type_ ) : container(&container_), default_value(value_type_) {}
 
     bool is_valid() const { return container != NULL; }
 
@@ -687,7 +687,7 @@ namespace viennagrid
     const_reference at(AccessType const & element) const
     {
       offset_type offset = element.id().get();
-      if ( static_cast<offset_type>((*container).size()) <= offset) throw std::out_of_range("dense_container_accessor_t::at() failed");
+      if ( static_cast<offset_type>((*container).size()) <= offset) throw std::out_of_range("dense_container_field::at() failed");
       return (*container)[offset];
     }
 
@@ -705,7 +705,7 @@ namespace viennagrid
 
 
   template<typename ContainerType, typename AccessType>
-  class std_map_field_t
+  class std_map_field
   {
   public:
 
@@ -720,9 +720,9 @@ namespace viennagrid
     typedef value_type *         pointer;
     typedef value_type const *   const_pointer;
 
-    std_map_field_t() : default_value() {}
-    std_map_field_t( ContainerType & container_ ) : container(&container_), default_value() {}
-    std_map_field_t( ContainerType & container_, value_type const & value_type_ ) : container(&container_), default_value(value_type_) {}
+    std_map_field() : default_value() {}
+    std_map_field( ContainerType & container_ ) : container(&container_), default_value() {}
+    std_map_field( ContainerType & container_, value_type const & value_type_ ) : container(&container_), default_value(value_type_) {}
 
     bool is_valid() const { return container != NULL; }
 
@@ -761,7 +761,7 @@ namespace viennagrid
     const_reference at(AccessType const & element) const
     {
       typename container_type::const_iterator it = (*container).find( element.id() );
-      if (it == (*container).end()) throw std::out_of_range("std_map_accessor_t::at() const failed");
+      if (it == (*container).end()) throw std::out_of_range("std_map_field::at() const failed");
       return it->second;
     }
 
@@ -772,7 +772,7 @@ namespace viennagrid
 
 
   template<typename ContainerType, typename AccessType>
-  class std_map_field_t<const ContainerType, AccessType>
+  class std_map_field<const ContainerType, AccessType>
   {
   public:
 
@@ -787,9 +787,9 @@ namespace viennagrid
     typedef value_type const *         pointer;
     typedef value_type const *   const_pointer;
 
-    std_map_field_t() : default_value() {}
-    std_map_field_t( ContainerType const & container_ ) : container(&container_), default_value() {}
-    std_map_field_t( ContainerType const & container_, value_type const & value_type_ ) : container(&container_), default_value(value_type_) {}
+    std_map_field() : default_value() {}
+    std_map_field( ContainerType const & container_ ) : container(&container_), default_value() {}
+    std_map_field( ContainerType const & container_, value_type const & value_type_ ) : container(&container_), default_value(value_type_) {}
 
     bool is_valid() const { return container != NULL; }
 
@@ -812,7 +812,7 @@ namespace viennagrid
     const_reference at(AccessType const & element) const
     {
       typename container_type::const_iterator it = (*container).find( element.id() );
-      if (it == (*container).end()) throw std::out_of_range("std_map_accessor_t::at() const failed");
+      if (it == (*container).end()) throw std::out_of_range("std_map_field::at() const failed");
       return it->second;
     }
 
@@ -833,37 +833,37 @@ namespace viennagrid
     template<typename T, typename Alloc, typename AccessType>
     struct field< std::vector<T, Alloc>, AccessType >
     {
-      typedef dense_container_field_t<std::vector<T, Alloc>, AccessType> type;
+      typedef viennagrid::dense_container_field<std::vector<T, Alloc>, AccessType> type;
     };
 
     template<typename T, typename Alloc, typename AccessType>
     struct field< const std::vector<T, Alloc>, AccessType >
     {
-      typedef dense_container_field_t<const std::vector<T, Alloc>, AccessType> type;
+      typedef viennagrid::dense_container_field<const std::vector<T, Alloc>, AccessType> type;
     };
 
     template<typename T, typename Alloc, typename AccessType>
     struct field< std::deque<T, Alloc>, AccessType >
     {
-      typedef dense_container_field_t<std::deque<T, Alloc>, AccessType> type;
+      typedef viennagrid::dense_container_field<std::deque<T, Alloc>, AccessType> type;
     };
 
     template<typename T, typename Alloc, typename AccessType>
     struct field< const std::deque<T, Alloc>, AccessType >
     {
-      typedef dense_container_field_t<const std::deque<T, Alloc>, AccessType> type;
+      typedef viennagrid::dense_container_field<const std::deque<T, Alloc>, AccessType> type;
     };
 
     template<typename Key, typename T, typename Compare, typename Alloc, typename AccessType>
     struct field< std::map<Key, T, Compare, Alloc>, AccessType >
     {
-      typedef std_map_field_t<std::map<Key, T, Compare, Alloc>, AccessType> type;
+      typedef viennagrid::std_map_field<std::map<Key, T, Compare, Alloc>, AccessType> type;
     };
 
     template<typename Key, typename T, typename Compare, typename Alloc, typename AccessType>
     struct field< const std::map<Key, T, Compare, Alloc>, AccessType >
     {
-      typedef std_map_field_t<const std::map<Key, T, Compare, Alloc>, AccessType> type;
+      typedef viennagrid::std_map_field<const std::map<Key, T, Compare, Alloc>, AccessType> type;
     };
   }
 
@@ -912,7 +912,7 @@ namespace viennagrid
 
 
   template<typename ValueType, typename AccessType>
-  class base_dynamic_field_t
+  class base_dynamic_field
   {
   public:
     typedef ValueType value_type;
@@ -924,7 +924,7 @@ namespace viennagrid
     typedef value_type * pointer;
     typedef value_type const * const_pointer;
 
-    virtual ~base_dynamic_field_t() {}
+    virtual ~base_dynamic_field() {}
 
     virtual pointer find( access_type const & ) { return 0; }
     virtual const_pointer find( access_type const & ) const { return 0; }
@@ -937,7 +937,7 @@ namespace viennagrid
   };
 
   template<typename ValueType, typename AccessType>
-  class base_dynamic_field_t<const ValueType, AccessType>
+  class base_dynamic_field<const ValueType, AccessType>
   {
   public:
     typedef ValueType value_type;
@@ -949,7 +949,7 @@ namespace viennagrid
     typedef value_type const * pointer;
     typedef value_type const * const_pointer;
 
-    virtual ~base_dynamic_field_t() {}
+    virtual ~base_dynamic_field() {}
 
     virtual const_pointer find( access_type const & ) const { return 0; }
     virtual value_type operator()( access_type const & element ) const = 0;
@@ -960,10 +960,10 @@ namespace viennagrid
 
 
   template<typename FieldType>
-  class dynamic_field_t : public base_dynamic_field_t< typename FieldType::value_type, typename FieldType::access_type >
+  class dynamic_field : public base_dynamic_field< typename FieldType::value_type, typename FieldType::access_type >
   {
   public:
-    typedef base_dynamic_field_t< typename FieldType::value_type, typename FieldType::access_type > BaseFieldType;
+    typedef base_dynamic_field< typename FieldType::value_type, typename FieldType::access_type > BaseFieldType;
 
     typedef typename BaseFieldType::value_type value_type;
     typedef typename BaseFieldType::access_type access_type;
@@ -975,7 +975,7 @@ namespace viennagrid
     typedef typename BaseFieldType::const_pointer const_pointer;
 
 
-    dynamic_field_t(FieldType field_) : field(field_) {}
+    dynamic_field(FieldType field_) : field(field_) {}
 
     virtual pointer find( access_type const & element ) { return field.find(element); }
     virtual const_pointer find( access_type const & element ) const { return field.find(element); }
@@ -992,10 +992,10 @@ namespace viennagrid
 
 
   template<typename FieldType>
-  class dynamic_field_t<const FieldType> : public base_dynamic_field_t< const typename FieldType::value_type, typename FieldType::access_type >
+  class dynamic_field<const FieldType> : public base_dynamic_field< const typename FieldType::value_type, typename FieldType::access_type >
   {
   public:
-    typedef base_dynamic_field_t< const typename FieldType::value_type, typename FieldType::access_type > BaseFieldType;
+    typedef base_dynamic_field< const typename FieldType::value_type, typename FieldType::access_type > BaseFieldType;
 
     typedef typename BaseFieldType::value_type value_type;
     typedef typename BaseFieldType::access_type access_type;
@@ -1007,7 +1007,7 @@ namespace viennagrid
     typedef typename BaseFieldType::const_pointer const_pointer;
 
 
-    dynamic_field_t(FieldType field_) : field(field_) {}
+    dynamic_field(FieldType field_) : field(field_) {}
 
     virtual const_pointer find( access_type const & element ) const { return field.find(element); }
     virtual value_type operator()( access_type const & element ) const { return field(element); }

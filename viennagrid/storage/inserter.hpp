@@ -26,19 +26,19 @@ namespace viennagrid
   {
 
     template<typename container_collection_type, typename change_counter_type, typename id_generator_type_>
-    class physical_inserter_t
+    class physical_inserter
     {
     public:
       typedef container_collection_type physical_container_collection_type;
       typedef id_generator_type_ id_generator_type;
 
-      physical_inserter_t() : collection(0), change_counter(0) {}
-      physical_inserter_t(container_collection_type & collection_obj) : collection(&collection_obj), change_counter(0) {}
-      physical_inserter_t(container_collection_type & collection_obj, id_generator_type id_generator_) : collection(&collection_obj), change_counter(0), id_generator(id_generator_) {}
+      physical_inserter() : collection(0), change_counter(0) {}
+      physical_inserter(container_collection_type & collection_obj) : collection(&collection_obj), change_counter(0) {}
+      physical_inserter(container_collection_type & collection_obj, id_generator_type id_generator_) : collection(&collection_obj), change_counter(0), id_generator(id_generator_) {}
 
-      physical_inserter_t(container_collection_type & collection_obj, change_counter_type & change_counter_) :
+      physical_inserter(container_collection_type & collection_obj, change_counter_type & change_counter_) :
           collection(&collection_obj), change_counter(&change_counter_) {}
-      physical_inserter_t(container_collection_type & collection_obj, change_counter_type & change_counter_, id_generator_type id_generator_) :
+      physical_inserter(container_collection_type & collection_obj, change_counter_type & change_counter_, id_generator_type id_generator_) :
           collection(&collection_obj), change_counter(&change_counter_), id_generator(id_generator_) {}
 
       void set_mesh_info(container_collection_type & collection_obj, change_counter_type & change_counter_)
@@ -125,22 +125,22 @@ namespace viennagrid
 
 
     template<typename view_collection_type, typename change_counter_type, typename dependend_inserter_type>
-    class recursive_inserter_t
+    class recursive_inserter
     {
     public:
-      recursive_inserter_t() : view_collection(0), change_counter(0), dependend_inserter(0) {}
-      recursive_inserter_t(view_collection_type & collection_) : view_collection(&collection_), change_counter(0), dependend_inserter(0) {}
+      recursive_inserter() : view_collection(0), change_counter(0), dependend_inserter(0) {}
+      recursive_inserter(view_collection_type & collection_) : view_collection(&collection_), change_counter(0), dependend_inserter(0) {}
 
-      recursive_inserter_t(view_collection_type & collection_obj, change_counter_type & change_counter_) :
+      recursive_inserter(view_collection_type & collection_obj, change_counter_type & change_counter_) :
           view_collection(&collection_obj), change_counter(&change_counter_) {}
-      recursive_inserter_t(view_collection_type & collection_obj, dependend_inserter_type & dependend_inserter_) :
+      recursive_inserter(view_collection_type & collection_obj, dependend_inserter_type & dependend_inserter_) :
           view_collection(&collection_obj), change_counter(0), dependend_inserter(&dependend_inserter_) {}
 
-      recursive_inserter_t(view_collection_type & collection_obj, change_counter_type & change_counter_, dependend_inserter_type & dependend_inserter_) :
+      recursive_inserter(view_collection_type & collection_obj, change_counter_type & change_counter_, dependend_inserter_type & dependend_inserter_) :
           view_collection(&collection_obj), change_counter(&change_counter_), dependend_inserter(&dependend_inserter_) {}
 
 
-//             recursive_inserter_t(view_collection_type & collection_, dependend_inserter_type & dependend_inserter_) :
+//             recursive_inserter(view_collection_type & collection_, dependend_inserter_type & dependend_inserter_) :
 //                view_collection(&collection_), dependend_inserter(&dependend_inserter_) {}
 
 
@@ -216,13 +216,13 @@ namespace viennagrid
       template<typename container_collection_type, typename change_counter_type, typename dependend_inserter_type>
       struct recursive_inserter
       {
-        typedef recursive_inserter_t<container_collection_type, change_counter_type, dependend_inserter_type> type;
+        typedef viennagrid::storage::recursive_inserter<container_collection_type, change_counter_type, dependend_inserter_type> type;
       };
 
       template<typename container_collection_type, typename change_counter_type, typename id_generator_type>
       struct physical_inserter
       {
-        typedef physical_inserter_t<container_collection_type, change_counter_type, id_generator_type> type;
+        typedef viennagrid::storage::physical_inserter<container_collection_type, change_counter_type, id_generator_type> type;
       };
     }
 

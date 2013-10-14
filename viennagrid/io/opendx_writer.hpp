@@ -98,10 +98,10 @@ namespace viennagrid
         typedef typename viennagrid::result_of::const_element_range<CellType, viennagrid::vertex_tag>::type      VertexOnCellRange;
         typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type         VertexOnCellIterator;
 
-        typedef base_dynamic_field_t<const double, VertexType> VertexScalarBaseAccessor;
+        typedef base_dynamic_field<const double, VertexType> VertexScalarBaseAccessor;
         typedef std::map< std::string, VertexScalarBaseAccessor * > VertexScalarOutputAccessorContainer;
 
-        typedef base_dynamic_field_t<const double, CellType> CellScalarBaseAccessor;
+        typedef base_dynamic_field<const double, CellType> CellScalarBaseAccessor;
         typedef std::map< std::string, CellScalarBaseAccessor * > CellScalarOutputAccessorContainer;
 
 
@@ -218,10 +218,10 @@ namespace viennagrid
           if (it != map.end())
           {
             delete it->second;
-            it->second = new dynamic_field_t<const AccessorOrFieldType>( accessor_or_field );
+            it->second = new dynamic_field<const AccessorOrFieldType>( accessor_or_field );
           }
           else
-            map[name] = new dynamic_field_t<const AccessorOrFieldType>( accessor_or_field );
+            map[name] = new dynamic_field<const AccessorOrFieldType>( accessor_or_field );
       }
 
 

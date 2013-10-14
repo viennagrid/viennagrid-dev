@@ -79,11 +79,11 @@ namespace viennagrid
 
       typedef std::vector<double> vector_data_type;
 
-      typedef std::map< std::string, base_dynamic_field_t<double, VertexType> * >             VertexScalarOutputFieldContainer;
-      typedef std::map< std::string, base_dynamic_field_t<vector_data_type, VertexType> * >   VertexVectorOutputFieldContainer;
+      typedef std::map< std::string, base_dynamic_field<double, VertexType> * >             VertexScalarOutputFieldContainer;
+      typedef std::map< std::string, base_dynamic_field<vector_data_type, VertexType> * >   VertexVectorOutputFieldContainer;
 
-      typedef std::map< std::string, base_dynamic_field_t<double, CellType> * >               CellScalarOutputFieldContainer;
-      typedef std::map< std::string, base_dynamic_field_t<vector_data_type, CellType> * >     CellVectorOutputFieldContainer;
+      typedef std::map< std::string, base_dynamic_field<double, CellType> * >               CellScalarOutputFieldContainer;
+      typedef std::map< std::string, base_dynamic_field<vector_data_type, CellType> * >     CellVectorOutputFieldContainer;
 
 
 
@@ -984,10 +984,10 @@ namespace viennagrid
           if (it != map.end())
           {
             delete it->second;
-            it->second = new dynamic_field_t<AccessorOrFieldType>( accessor_or_field );
+            it->second = new dynamic_field<AccessorOrFieldType>( accessor_or_field );
           }
           else
-            map[name] = new dynamic_field_t<AccessorOrFieldType>( accessor_or_field );
+            map[name] = new dynamic_field<AccessorOrFieldType>( accessor_or_field );
       }
 
 

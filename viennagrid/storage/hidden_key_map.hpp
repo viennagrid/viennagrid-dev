@@ -170,7 +170,7 @@ namespace viennagrid
 
 
     template<typename KeyT, typename ElementT, typename handle_tag>
-    class container_base_t<hidden_key_map<KeyT, ElementT>, handle_tag> : public handled_container<hidden_key_map<KeyT, ElementT>, handle_tag>
+    class container_base<hidden_key_map<KeyT, ElementT>, handle_tag> : public handled_container<hidden_key_map<KeyT, ElementT>, handle_tag>
     {
     public:
 

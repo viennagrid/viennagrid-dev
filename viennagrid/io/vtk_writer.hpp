@@ -100,16 +100,16 @@ namespace viennagrid
 
       typedef std::vector<double> vector_data_type;
 
-      typedef base_dynamic_field_t<const double, VertexType> VertexScalarBaseAccesor;
+      typedef base_dynamic_field<const double, VertexType> VertexScalarBaseAccesor;
       typedef std::map< std::string, VertexScalarBaseAccesor * > VertexScalarOutputAccessorContainer;
 
-      typedef base_dynamic_field_t<const vector_data_type, VertexType> VertexVectorBaseAccesor;
+      typedef base_dynamic_field<const vector_data_type, VertexType> VertexVectorBaseAccesor;
       typedef std::map< std::string, VertexVectorBaseAccesor * > VertexVectorOutputAccessorContainer;
 
-      typedef base_dynamic_field_t<const double, CellType> CellScalarBaseAccesor;
+      typedef base_dynamic_field<const double, CellType> CellScalarBaseAccesor;
       typedef std::map< std::string, CellScalarBaseAccesor * > CellScalarOutputAccessorContainer;
 
-      typedef base_dynamic_field_t<const vector_data_type, CellType> CellVectorBaseAccesor;
+      typedef base_dynamic_field<const vector_data_type, CellType> CellVectorBaseAccesor;
       typedef std::map< std::string, CellVectorBaseAccesor * > CellVectorOutputAccessorContainer;
 
     protected:
@@ -604,10 +604,10 @@ namespace viennagrid
         if (it != map.end())
         {
           delete it->second;
-          it->second = new dynamic_field_t<const AccessorOrFieldType>( accessor_or_field );
+          it->second = new dynamic_field<const AccessorOrFieldType>( accessor_or_field );
         }
         else
-          map[quantity_name] = new dynamic_field_t<const AccessorOrFieldType>( accessor_or_field );
+          map[quantity_name] = new dynamic_field<const AccessorOrFieldType>( accessor_or_field );
     }
 
 
