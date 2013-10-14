@@ -52,7 +52,7 @@ int main()
     // typedefing and setting up the topological mesh
     //
 
-    //typedef viennagrid::mesh_t<my_mesh_config> mesh_type;
+    //typedef viennagrid::mesh<my_mesh_config> mesh_type;
     typedef viennagrid::tetrahedral_3d_mesh mesh_type;
     mesh_type mesh;
 

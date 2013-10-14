@@ -270,8 +270,8 @@ void write_data(MeshType & mesh)
 
 int main()
 {
-  //typedef viennagrid::mesh_t< my_mesh_config >          Mesh;
-  typedef viennagrid::mesh_t< viennagrid::config::tetrahedral_3d >     Mesh;
+  //typedef viennagrid::mesh< my_mesh_config >          Mesh;
+  typedef viennagrid::mesh< viennagrid::config::tetrahedral_3d >     Mesh;
   typedef viennagrid::result_of::segmentation<Mesh>::type              Segmentation;
 
   std::cout << "----------------------------------------" << std::endl;

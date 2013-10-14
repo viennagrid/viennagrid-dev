@@ -66,7 +66,7 @@ int main()
 //     typedef viennagrid::config::result_of::full_mesh_config<viennagrid::plc_tag, viennagrid::config::point_type_3d, viennagrid::storage::pointer_handle_tag>::type mesh_config;
 
     //typedef viennagrid::config::polygonal_2d_mesh MeshType;
-    typedef viennagrid::mesh_t< WrappedConfigType > MeshType;
+    typedef viennagrid::mesh< WrappedConfigType > MeshType;
     MeshType mesh;
 
 

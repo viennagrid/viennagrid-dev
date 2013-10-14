@@ -57,7 +57,7 @@ int main()
     // typedefing and setting up the topological mesh
     //
 
-    typedef viennagrid::mesh_t<my_mesh_config> mesh_type;
+    typedef viennagrid::mesh<my_mesh_config> mesh_type;
     mesh_type mesh;
 
     //typedef mesh_type::foo_bar_type bla;    //enjoy short compiler error message now :-)

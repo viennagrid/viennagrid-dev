@@ -130,7 +130,7 @@ using std::endl;
 
 int main()
 {
-    typedef viennagrid::mesh_t<config> MeshType;
+    typedef viennagrid::mesh<config> MeshType;
 
     MeshType mesh;
 

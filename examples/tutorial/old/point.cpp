@@ -63,7 +63,7 @@ int main()
     // typedefing and setting up the geometric mesh
     //
 
-    typedef viennagrid::mesh_t<my_mesh_config> mesh_type;
+    typedef viennagrid::mesh<my_mesh_config> mesh_type;
     mesh_type mesh;
 
     //

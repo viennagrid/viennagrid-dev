@@ -65,7 +65,7 @@ namespace viennagrid
 
 
   /** @brief A default mesh for vertices in 1d, default config is used */
-  typedef viennagrid::mesh_t< config::vertex_1d >                                       vertex_1d_mesh;
+  typedef viennagrid::mesh< config::vertex_1d >                                       vertex_1d_mesh;
   /** @brief A default segmentation for vertices in 1d, default config is used */
   typedef viennagrid::result_of::segmentation< vertex_1d_mesh >::type                   vertex_1d_segmentation;
   /** @brief A default segment for vertices in 1d, default config is used */
@@ -76,7 +76,7 @@ namespace viennagrid
   typedef viennagrid::result_of::cell<vertex_1d_mesh>::type                             vertex_1d_cell;
 
   /** @brief A default mesh for vertices in 2d, default config is used */
-  typedef viennagrid::mesh_t< config::vertex_2d >                                       vertex_2d_mesh;
+  typedef viennagrid::mesh< config::vertex_2d >                                       vertex_2d_mesh;
   /** @brief A default segmentation for vertices in 2d, default config is used */
   typedef viennagrid::result_of::segmentation< vertex_2d_mesh >::type                   vertex_2d_segmentation;
   /** @brief A default segment for vertices in 2d, default config is used */
@@ -87,7 +87,7 @@ namespace viennagrid
   typedef viennagrid::result_of::cell<vertex_2d_mesh>::type                             vertex_2d_cell;
 
   /** @brief A default mesh for vertices in 3d, default config is used */
-  typedef viennagrid::mesh_t< config::vertex_3d >                                       vertex_3d_mesh;
+  typedef viennagrid::mesh< config::vertex_3d >                                       vertex_3d_mesh;
   /** @brief A default segmentation for vertices in 3d, default config is used */
   typedef viennagrid::result_of::segmentation< vertex_3d_mesh >::type                   vertex_3d_segmentation;
   /** @brief A default segment for vertices in 3d, default config is used */
@@ -122,7 +122,7 @@ namespace viennagrid
   }
 
   /** @brief A default mesh for lines in 1d, default config is used */
-  typedef viennagrid::mesh_t< config::line_1d >                                       line_1d_mesh;
+  typedef viennagrid::mesh< config::line_1d >                                       line_1d_mesh;
   /** @brief A default segmentation for lines in 1d, default config is used */
   typedef viennagrid::result_of::segmentation< line_1d_mesh >::type                   line_1d_segmentation;
   /** @brief A default segment for lines in 1d, default config is used */
@@ -133,7 +133,7 @@ namespace viennagrid
   typedef viennagrid::result_of::cell<line_1d_mesh>::type                             line_1d_cell;
 
   /** @brief A default mesh for lines in 2d, default config is used */
-  typedef viennagrid::mesh_t< config::line_2d >                                       line_2d_mesh;
+  typedef viennagrid::mesh< config::line_2d >                                       line_2d_mesh;
   /** @brief A default segmentation for lines in 2d, default config is used */
   typedef viennagrid::result_of::segmentation< line_2d_mesh >::type                   line_2d_segmentation;
   /** @brief A default segment for lines in 2d, default config is used */
@@ -144,7 +144,7 @@ namespace viennagrid
   typedef viennagrid::result_of::cell<line_2d_mesh>::type                             line_2d_cell;
 
   /** @brief A default mesh for lines in 3d, default config is used */
-  typedef viennagrid::mesh_t< config::line_3d >                                       line_3d_mesh;
+  typedef viennagrid::mesh< config::line_3d >                                       line_3d_mesh;
   /** @brief A default segmentation for lines in 3d, default config is used */
   typedef viennagrid::result_of::segmentation< line_3d_mesh >::type                   line_3d_segmentation;
   /** @brief A default segment for lines in 3d, default config is used */
@@ -211,7 +211,7 @@ namespace viennagrid
 
 
   /** @brief A default mesh for triangles in 2d, default config is used */
-  typedef viennagrid::mesh_t< config::triangular_2d >                                       triangular_2d_mesh;
+  typedef viennagrid::mesh< config::triangular_2d >                                       triangular_2d_mesh;
   /** @brief A default segmentation for triangles in 2d, default config is used */
   typedef viennagrid::result_of::segmentation< triangular_2d_mesh >::type                   triangular_2d_segmentation;
   /** @brief A default segment for triangles in 2d, default config is used */
@@ -222,7 +222,7 @@ namespace viennagrid
   typedef viennagrid::result_of::cell<triangular_2d_mesh>::type                             triangular_2d_cell;
 
   /** @brief A default mesh for triangles in 3d, default config is used */
-  typedef viennagrid::mesh_t< config::triangular_3d >                                       triangular_3d_mesh;
+  typedef viennagrid::mesh< config::triangular_3d >                                       triangular_3d_mesh;
   /** @brief A default segmentation for triangles in 3d, default config is used */
   typedef viennagrid::result_of::segmentation< triangular_3d_mesh >::type                   triangular_3d_segmentation;
   /** @brief A default segment for triangles in 3d, default config is used */
@@ -238,7 +238,7 @@ namespace viennagrid
 
 
   /** @brief A default mesh for quadrilaterals in 2d, default config is used */
-  typedef viennagrid::mesh_t< config::quadrilateral_2d >                                       quadrilateral_2d_mesh;
+  typedef viennagrid::mesh< config::quadrilateral_2d >                                       quadrilateral_2d_mesh;
   /** @brief A default segmentation for quadrilaterals in 2d, default config is used */
   typedef viennagrid::result_of::segmentation< quadrilateral_2d_mesh >::type                   quadrilateral_2d_segmentation;
   /** @brief A default segment for quadrilaterals in 2d, default config is used */
@@ -249,7 +249,7 @@ namespace viennagrid
   typedef viennagrid::result_of::cell<quadrilateral_2d_mesh>::type                             quadrilateral_2d_cell;
 
   /** @brief A default mesh for quadrilaterals in 3d, default config is used */
-  typedef viennagrid::mesh_t< config::quadrilateral_3d >                                       quadrilateral_3d_mesh;
+  typedef viennagrid::mesh< config::quadrilateral_3d >                                       quadrilateral_3d_mesh;
   /** @brief A default segmentation for quadrilaterals in 3d, default config is used */
   typedef viennagrid::result_of::segmentation< quadrilateral_3d_mesh >::type                   quadrilateral_3d_segmentation;
   /** @brief A default segment for quadrilaterals in 3d, default config is used */
@@ -261,7 +261,7 @@ namespace viennagrid
 
 
   /** @brief A default mesh for polygons in 2d, default config is used */
-  typedef viennagrid::mesh_t< config::polygonal_2d >                                       polygonal_2d_mesh;
+  typedef viennagrid::mesh< config::polygonal_2d >                                       polygonal_2d_mesh;
   /** @brief A default segmentation for polygons in 2d, default config is used */
   typedef viennagrid::result_of::segmentation< polygonal_2d_mesh >::type                   polygonal_2d_segmentation;
   /** @brief A default segment for polygons in 2d, default config is used */
@@ -272,7 +272,7 @@ namespace viennagrid
   typedef viennagrid::result_of::cell<polygonal_2d_mesh>::type                             polygonal_2d_cell;
 
   /** @brief A default mesh for polygons in 3d, default config is used */
-  typedef viennagrid::mesh_t< config::polygonal_3d >                                       polygonal_3d_mesh;
+  typedef viennagrid::mesh< config::polygonal_3d >                                       polygonal_3d_mesh;
   /** @brief A default segmentation for polygons in 3d, default config is used */
   typedef viennagrid::result_of::segmentation< polygonal_3d_mesh >::type                   polygonal_3d_segmentation;
   /** @brief A default segment for polygons in 3d, default config is used */
@@ -283,7 +283,7 @@ namespace viennagrid
   typedef viennagrid::result_of::cell<polygonal_3d_mesh>::type                             polygonal_3d_cell;
 
   /** @brief A default mesh for PLCs in 2d, default config is used */
-  typedef viennagrid::mesh_t< config::plc_2d >                                       plc_2d_mesh;
+  typedef viennagrid::mesh< config::plc_2d >                                       plc_2d_mesh;
   /** @brief A default segmentation for PLCs in 2d, default config is used */
   typedef viennagrid::result_of::segmentation< plc_2d_mesh >::type                   plc_2d_segmentation;
   /** @brief A default segment for PLCs in 2d, default config is used */
@@ -294,7 +294,7 @@ namespace viennagrid
   typedef viennagrid::result_of::cell<plc_2d_mesh>::type                             plc_2d_cell;
 
   /** @brief A default mesh for PLCs in 3d, default config is used */
-  typedef viennagrid::mesh_t< config::plc_3d >                                       plc_3d_mesh;
+  typedef viennagrid::mesh< config::plc_3d >                                       plc_3d_mesh;
   /** @brief A default segmentation for PLCs in 3d, default config is used */
   typedef viennagrid::result_of::segmentation< plc_3d_mesh >::type                   plc_3d_segmentation;
   /** @brief A default segment for PLCs in 3d, default config is used */
@@ -324,7 +324,7 @@ namespace viennagrid
   }
 
   /** @brief A default mesh for tetrahedrons in 3d, default config is used */
-  typedef viennagrid::mesh_t< config::tetrahedral_3d >                                       tetrahedral_3d_mesh;
+  typedef viennagrid::mesh< config::tetrahedral_3d >                                       tetrahedral_3d_mesh;
   /** @brief A default segmentation for tetrahedrons in 3d, default config is used */
   typedef viennagrid::result_of::segmentation< tetrahedral_3d_mesh >::type                   tetrahedral_3d_segmentation;
   /** @brief A default segment for tetrahedrons in 3d, default config is used */
@@ -336,7 +336,7 @@ namespace viennagrid
 
 
   /** @brief A default mesh for hexahedrons in 3d, default config is used */
-  typedef viennagrid::mesh_t< config::hexahedral_3d >                                       hexahedral_3d_mesh;
+  typedef viennagrid::mesh< config::hexahedral_3d >                                       hexahedral_3d_mesh;
   /** @brief A default segmentation for hexahedrons in 3d, default config is used */
   typedef viennagrid::result_of::segmentation< hexahedral_3d_mesh >::type                   hexahedral_3d_segmentation;
   /** @brief A default segment for hexahedrons in 3d, default config is used */

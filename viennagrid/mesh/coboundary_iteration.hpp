@@ -120,9 +120,9 @@ namespace viennagrid
   }
 
   template<typename element_type_or_tag, typename coboundary_type_or_tag, typename WrappedConfigT, typename ElementTypelistT, typename ContainerConfigT, typename coboundary_accessor_type>
-  void create_coboundary_information(mesh_t< decorated_mesh_view_config<WrappedConfigT, ElementTypelistT, ContainerConfigT> > & mesh_obj, coboundary_accessor_type accessor)
+  void create_coboundary_information(viennagrid::mesh< decorated_mesh_view_config<WrappedConfigT, ElementTypelistT, ContainerConfigT> > & mesh_obj, coboundary_accessor_type accessor)
   {
-    typedef mesh_t< decorated_mesh_view_config<WrappedConfigT, ElementTypelistT, ContainerConfigT> > ViewType;
+    typedef viennagrid::mesh< decorated_mesh_view_config<WrappedConfigT, ElementTypelistT, ContainerConfigT> > ViewType;
     typedef typename viennagrid::result_of::element_tag< element_type_or_tag >::type element_tag;
 
     typedef typename viennagrid::result_of::element< ViewType, coboundary_type_or_tag >::type coboundary_type;
@@ -208,7 +208,7 @@ namespace viennagrid
   /** @brief For internal use only */
   template<typename element_type_or_tag, typename coboundary_type_or_tag, typename coboundary_accessor_type, typename WrappedConfigType, typename element_or_handle_type>
   viennagrid::storage::container_range_wrapper<typename coboundary_accessor_type::value_type>
-  coboundary_elements(mesh_t<WrappedConfigType> & mesh_obj, coboundary_accessor_type accessor, element_or_handle_type & hendl)
+  coboundary_elements(viennagrid::mesh<WrappedConfigType> & mesh_obj, coboundary_accessor_type accessor, element_or_handle_type & hendl)
   {
     return coboundary_elements<element_type_or_tag, coboundary_type_or_tag>( accessor, viennagrid::dereference_handle(mesh_obj, hendl) );
   }
@@ -216,7 +216,7 @@ namespace viennagrid
   /** @brief For internal use only */
   template<typename element_type_or_tag, typename coboundary_type_or_tag, typename coboundary_accessor_type, typename WrappedConfigType, typename element_or_handle_type>
   viennagrid::storage::container_range_wrapper<const typename coboundary_accessor_type::value_type>
-  coboundary_elements(mesh_t<WrappedConfigType> const & mesh_obj, coboundary_accessor_type const accessor, element_or_handle_type const & hendl)
+  coboundary_elements(viennagrid::mesh<WrappedConfigType> const & mesh_obj, coboundary_accessor_type const accessor, element_or_handle_type const & hendl)
   {
     return coboundary_elements<element_type_or_tag, coboundary_type_or_tag>( accessor, viennagrid::dereference_handle(mesh_obj, hendl) );
   }
@@ -235,10 +235,10 @@ namespace viennagrid
     * @return                         The coboundary range
     */
   template<typename ElementTypeOrTagT, typename CoboundaryTypeOrTagT, typename WrappedConfigT, typename ElementOrHandleT>
-  typename result_of::coboundary_range<mesh_t<WrappedConfigT>, ElementTypeOrTagT, CoboundaryTypeOrTagT>::type
-  coboundary_elements(mesh_t<WrappedConfigT> & mesh_obj, ElementOrHandleT const & element_or_handle)
+  typename result_of::coboundary_range<viennagrid::mesh<WrappedConfigT>, ElementTypeOrTagT, CoboundaryTypeOrTagT>::type
+  coboundary_elements(viennagrid::mesh<WrappedConfigT> & mesh_obj, ElementOrHandleT const & element_or_handle)
   {
-    typedef mesh_t<WrappedConfigT> mesh_type;
+    typedef viennagrid::mesh<WrappedConfigT> mesh_type;
     typedef typename viennagrid::result_of::element_tag< ElementTypeOrTagT >::type element_tag;
     typedef typename viennagrid::result_of::element_tag< CoboundaryTypeOrTagT >::type coboundary_tag;
     typedef typename viennagrid::result_of::element< mesh_type, ElementTypeOrTagT >::type element_type;
@@ -269,10 +269,10 @@ namespace viennagrid
     * @return                         The const coboundary range
     */
   template<typename ElementTypeOrTagT, typename CoboundaryTypeOrTagT, typename WrappedConfigT, typename ElementOrHandleT>
-  typename result_of::const_coboundary_range<mesh_t<WrappedConfigT>, ElementTypeOrTagT, CoboundaryTypeOrTagT>::type
-  coboundary_elements(mesh_t<WrappedConfigT> const & mesh_obj, ElementOrHandleT const & element_or_handle)
+  typename result_of::const_coboundary_range<viennagrid::mesh<WrappedConfigT>, ElementTypeOrTagT, CoboundaryTypeOrTagT>::type
+  coboundary_elements(viennagrid::mesh<WrappedConfigT> const & mesh_obj, ElementOrHandleT const & element_or_handle)
   {
-    typedef mesh_t<WrappedConfigT> mesh_type;
+    typedef viennagrid::mesh<WrappedConfigT> mesh_type;
     typedef typename viennagrid::result_of::element_tag< ElementTypeOrTagT >::type element_tag;
     typedef typename viennagrid::result_of::element_tag< CoboundaryTypeOrTagT >::type coboundary_tag;
     typedef typename viennagrid::result_of::element< mesh_type, ElementTypeOrTagT >::type element_type;

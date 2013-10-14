@@ -31,7 +31,7 @@
 
 int main()
 {
-  typedef viennagrid::mesh_t< viennagrid::config::hexahedral_3d >     MeshType;
+  typedef viennagrid::mesh< viennagrid::config::hexahedral_3d >     MeshType;
   typedef viennagrid::result_of::segmentation<MeshType>::type         SegmentationType;
   typedef SegmentationType::segment_handle_type                                SegmentType;
 

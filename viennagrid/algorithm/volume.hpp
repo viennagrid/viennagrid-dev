@@ -212,8 +212,8 @@ namespace viennagrid
 
 
   template<typename ElementTypeOrTag, typename WrappedConfigType>
-  typename viennagrid::result_of::coord< mesh_t<WrappedConfigType> >::type
-  volume(mesh_t<WrappedConfigType> const & mesh_obj)
+  typename viennagrid::result_of::coord< mesh<WrappedConfigType> >::type
+  volume(mesh<WrappedConfigType> const & mesh_obj)
   {
       return detail::volume_mesh<ElementTypeOrTag>(mesh_obj);
   }

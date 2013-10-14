@@ -276,7 +276,7 @@ namespace viennagrid
     *
     * @tparam MeshOrSegmentHandleT    The mesh or segment type from which the mesh view is created
     * @param  mesh              The mesh or segment object from which the mesh view is created
-    * @return                     a mesh_proxy object holding the host mesh/segment object, can be assigned to a mesh_t object
+    * @return                     a mesh_proxy object holding the host mesh/segment object, can be assigned to a mesh object
     */
   template<typename SegmentationT>
   mesh_proxy< typename SegmentationT::view_type > make_view(segment_handle_t<SegmentationT> & segment)

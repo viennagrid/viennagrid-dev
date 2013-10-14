@@ -230,7 +230,7 @@ namespace viennagrid
     * @tparam WrappedConfigT    The configuration of the mesh
     */
   template <typename WrappedConfigT>
-  class mesh_t;
+  class mesh;
 
   /** @brief A segmentation defines a set of submeshes of a mesh
     *
@@ -991,9 +991,9 @@ namespace viennagrid
     };
 
     template<typename WrappedMeshConfigT>
-    struct facet_tag< mesh_t<WrappedMeshConfigT> >
+    struct facet_tag< viennagrid::mesh<WrappedMeshConfigT> >
     {
-      typedef typename facet_tag< typename cell_tag< mesh_t<WrappedMeshConfigT> >::type >::type type;
+      typedef typename facet_tag< typename cell_tag< viennagrid::mesh<WrappedMeshConfigT> >::type >::type type;
     };
 
     template<typename WrappedSegmentationConfigT>
@@ -1022,9 +1022,9 @@ namespace viennagrid
     };
 
     template<typename WrappedMeshConfigT>
-    struct facet< mesh_t<WrappedMeshConfigT> >
+    struct facet< viennagrid::mesh<WrappedMeshConfigT> >
     {
-      typedef typename facet< typename cell< mesh_t<WrappedMeshConfigT> >::type >::type type;
+      typedef typename facet< typename cell< viennagrid::mesh<WrappedMeshConfigT> >::type >::type type;
     };
 
     template<typename WrappedSegmentationConfigT>
@@ -1642,7 +1642,7 @@ namespace viennagrid
     * @return                         element (identity)
     */
   template<typename WrappedMeshConfigT, typename ElementTagT, typename WrappedConfigT>
-  element_t<ElementTagT, WrappedConfigT> & dereference_handle( mesh_t<WrappedMeshConfigT> &, element_t<ElementTagT, WrappedConfigT> & element)
+  element_t<ElementTagT, WrappedConfigT> & dereference_handle( viennagrid::mesh<WrappedMeshConfigT> &, element_t<ElementTagT, WrappedConfigT> & element)
   { return element; }
 
   template<typename WrappedMeshConfigT, typename ElementTagT, typename WrappedConfigT>
@@ -1662,15 +1662,15 @@ namespace viennagrid
     * @return                         element (identity)
     */
   template<typename WrappedMeshConfigT, typename ElementTagT, typename WrappedConfigT>
-  element_t<ElementTagT, WrappedConfigT> const & dereference_handle( mesh_t<WrappedMeshConfigT> const &, element_t<ElementTagT, WrappedConfigT> const & element)
+  element_t<ElementTagT, WrappedConfigT> const & dereference_handle( viennagrid::mesh<WrappedMeshConfigT> const &, element_t<ElementTagT, WrappedConfigT> const & element)
   { return element; }
 
   template<typename WrappedMeshConfigT, typename ElementTagT, typename WrappedConfigT>
-  element_t<ElementTagT, WrappedConfigT> const & dereference_handle( mesh_t<WrappedMeshConfigT> &, element_t<ElementTagT, WrappedConfigT> const & element)
+  element_t<ElementTagT, WrappedConfigT> const & dereference_handle( viennagrid::mesh<WrappedMeshConfigT> &, element_t<ElementTagT, WrappedConfigT> const & element)
   { return element; }
 
   template<typename WrappedMeshConfigT, typename ElementTagT, typename WrappedConfigT>
-  element_t<ElementTagT, WrappedConfigT> const & dereference_handle( mesh_t<WrappedMeshConfigT> const &, element_t<ElementTagT, WrappedConfigT> & element)
+  element_t<ElementTagT, WrappedConfigT> const & dereference_handle( viennagrid::mesh<WrappedMeshConfigT> const &, element_t<ElementTagT, WrappedConfigT> & element)
   { return element; }
 
 
@@ -1737,12 +1737,12 @@ namespace viennagrid
     *
     * @tparam MeshOrSegmentHandleT    The mesh or segment type from which the mesh view is created
     * @param  mesh              The mesh or segment object from which the mesh view is created
-    * @return                     a mesh_proxy object holding the host mesh/segment object, can be assigned to a mesh_t object
+    * @return                     a mesh_proxy object holding the host mesh/segment object, can be assigned to a mesh object
     */
   template<typename WrappedConfigT>
-  mesh_proxy< mesh_t<WrappedConfigT> > make_view(mesh_t<WrappedConfigT> & mesh_obj)
+  mesh_proxy< viennagrid::mesh<WrappedConfigT> > make_view(viennagrid::mesh<WrappedConfigT> & mesh_obj)
   {
-    return mesh_proxy< mesh_t<WrappedConfigT> >( mesh_obj );
+    return mesh_proxy< viennagrid::mesh<WrappedConfigT> >( mesh_obj );
   }
 
   template<typename SegmentationT>

@@ -177,9 +177,9 @@ namespace viennagrid
     * @param  elements_to_erase         A mesh view which stores all elements marked for deletion
     */
   template<typename WrappedConfigT, typename ToEraseViewT>
-  void erase_elements(mesh_t<WrappedConfigT> & mesh_obj, ToEraseViewT & elements_to_erase)
+  void erase_elements(viennagrid::mesh<WrappedConfigT> & mesh_obj, ToEraseViewT & elements_to_erase)
   {
-    typedef mesh_t<WrappedConfigT> MeshType;
+    typedef viennagrid::mesh<WrappedConfigT> MeshType;
 
     typedef typename viennagrid::meta::result_of::reverse<
       typename viennagrid::result_of::element_typelist<ToEraseViewT>::type
@@ -207,9 +207,9 @@ namespace viennagrid
   };
 
   template <typename WrappedConfigType, typename ElementTypeList, typename ContainerConfig, typename ToEraseViewT>
-  void erase_elements(mesh_t< decorated_mesh_view_config<WrappedConfigType, ElementTypeList, ContainerConfig> > & view, ToEraseViewT & elements_to_erase)
+  void erase_elements(viennagrid::mesh< decorated_mesh_view_config<WrappedConfigType, ElementTypeList, ContainerConfig> > & view, ToEraseViewT & elements_to_erase)
   {
-    typedef mesh_t< decorated_mesh_view_config<WrappedConfigType, ElementTypeList, ContainerConfig> > ViewType;
+    typedef viennagrid::mesh< decorated_mesh_view_config<WrappedConfigType, ElementTypeList, ContainerConfig> > ViewType;
 
     erase_from_view_functor<ViewType> functor( view );
     viennagrid::for_each(elements_to_erase, functor);

@@ -19,7 +19,7 @@ struct config
   typedef viennagrid::config::result_of::full_mesh_config< viennagrid::triangle_tag, viennagrid::config::point_type_2d, handle_tag >::type     type;
 };
 
-typedef viennagrid::mesh_t<config> MeshType;
+typedef viennagrid::mesh<config> MeshType;
 
 
 

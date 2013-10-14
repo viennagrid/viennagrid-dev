@@ -26,7 +26,7 @@ class my_mesh_config
 
 int main()
 {
-  //typedef viennagrid::mesh_t<my_mesh_config>                  mesh_type;
+  //typedef viennagrid::mesh<my_mesh_config>                  mesh_type;
   typedef viennagrid::triangular_2d_mesh                        mesh_type;
   typedef viennagrid::result_of::mesh_view< mesh_type >::type view_type;
 

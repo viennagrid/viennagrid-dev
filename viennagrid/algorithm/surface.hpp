@@ -93,18 +93,18 @@ namespace viennagrid
   //special case: mesh
   /** @brief Returns the surface of a mesh with explicit element type/tag*/
   template <typename ElementTypeOrTag, typename WrappedConfigType>
-  typename viennagrid::result_of::coord< mesh_t<WrappedConfigType> >::type
-  surface(mesh_t<WrappedConfigType> const & d)
+  typename viennagrid::result_of::coord< mesh<WrappedConfigType> >::type
+  surface(mesh<WrappedConfigType> const & d)
   {
     return detail::surface_meshsegment<ElementTypeOrTag>(d);
   }
 
   /** @brief Returns the surface of a mesh*/
   template <typename WrappedConfigType>
-  typename viennagrid::result_of::coord< mesh_t<WrappedConfigType> >::type
-  surface(mesh_t<WrappedConfigType> const & d)
+  typename viennagrid::result_of::coord< mesh<WrappedConfigType> >::type
+  surface(mesh<WrappedConfigType> const & d)
   {
-    typedef typename viennagrid::result_of::cell_tag< mesh_t<WrappedConfigType> >::type CellTag;
+    typedef typename viennagrid::result_of::cell_tag< mesh<WrappedConfigType> >::type CellTag;
     return detail::surface_meshsegment< typename viennagrid::result_of::facet_tag<CellTag>::type>(d);
   }
 

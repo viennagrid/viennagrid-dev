@@ -192,8 +192,8 @@ namespace viennagrid
    * @param  accessor             The point accessor providing point information for geometric calculation
    */
   template<typename ElementTypeOrTagT, typename WrappedConfigType, typename PointAccessorType>
-  typename viennagrid::result_of::point< mesh_t<WrappedConfigType> >::type
-  centroid(mesh_t<WrappedConfigType> const & mesh_obj, PointAccessorType const point_accessor)
+  typename viennagrid::result_of::point< mesh<WrappedConfigType> >::type
+  centroid(mesh<WrappedConfigType> const & mesh_obj, PointAccessorType const point_accessor)
   {
     return detail::centroid_mesh<ElementTypeOrTagT>(mesh_obj, point_accessor);
   }
@@ -204,10 +204,10 @@ namespace viennagrid
    * @param  accessor             The point accessor providing point information for geometric calculation
    */
   template<typename WrappedConfigType, typename PointAccessorType>
-  typename viennagrid::result_of::point< mesh_t<WrappedConfigType> >::type
-  centroid(mesh_t<WrappedConfigType> const & mesh_obj, PointAccessorType const point_accessor)
+  typename viennagrid::result_of::point< mesh<WrappedConfigType> >::type
+  centroid(mesh<WrappedConfigType> const & mesh_obj, PointAccessorType const point_accessor)
   {
-    typedef typename viennagrid::result_of::cell_tag< mesh_t<WrappedConfigType> >::type CellTag;
+    typedef typename viennagrid::result_of::cell_tag< mesh<WrappedConfigType> >::type CellTag;
     return detail::centroid_mesh<CellTag>(mesh_obj, point_accessor);
   }
 
@@ -218,8 +218,8 @@ namespace viennagrid
    * @param  mesh               The mesh which centroid is to be calculated
    */
   template<typename ElementTypeOrTagT, typename WrappedConfigType>
-  typename viennagrid::result_of::point< mesh_t<WrappedConfigType> >::type
-  centroid(mesh_t<WrappedConfigType> const & mesh_obj)
+  typename viennagrid::result_of::point< mesh<WrappedConfigType> >::type
+  centroid(mesh<WrappedConfigType> const & mesh_obj)
   {
     return centroid<ElementTypeOrTagT>(mesh_obj, default_point_accessor(mesh_obj));
   }
@@ -229,10 +229,10 @@ namespace viennagrid
    * @param  mesh               The mesh which centroid is to be calculated
    */
   template<typename WrappedConfigType>
-  typename viennagrid::result_of::point< mesh_t<WrappedConfigType> >::type
-  centroid(mesh_t<WrappedConfigType> const & mesh_obj)
+  typename viennagrid::result_of::point< mesh<WrappedConfigType> >::type
+  centroid(mesh<WrappedConfigType> const & mesh_obj)
   {
-    typedef typename viennagrid::result_of::cell_tag< mesh_t<WrappedConfigType> >::type CellTag;
+    typedef typename viennagrid::result_of::cell_tag< mesh<WrappedConfigType> >::type CellTag;
     return centroid<CellTag>(mesh_obj, default_point_accessor(mesh_obj));
   }
 
