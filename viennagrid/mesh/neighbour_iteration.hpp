@@ -204,8 +204,8 @@ namespace viennagrid
     * @tparam ConnectorElementTypeOrTagT    The connector element type/tag
     * @tparam WrappedConfigT                The wrapped config of the mesh
     * @tparam ElementOrHandleT              The element or handle type for which the neighbour range is obtained
-    * @param  mesh                        The host mesh object in which the elements of the neighbour range exist
-    * @param  handle_or_element             A handle or the element for which the neighbour range is obained
+    * @param  mesh                          The host mesh object in which the elements of the neighbour range exist
+    * @param  element_or_handle             A handle or the element for which the neighbour range is obained
     * @return                               The neighbour range
     */
   template<typename ElementTypeOrTagT, typename ConnectorElementTypeOrTagT, typename WrappedConfigT, typename ElementOrHandleT>
@@ -238,8 +238,8 @@ namespace viennagrid
     * @tparam ConnectorElementTypeOrTagT    The connector element type/tag
     * @tparam WrappedConfigT                The wrapped config of the mesh
     * @tparam ElementOrHandleT              The element or handle type for which the neighbour range is obtained
-    * @param  mesh                        The host mesh object in which the elements of the neighbour range exist
-    * @param  handle_or_element             A handle or the element for which the neighbour range is obained
+    * @param  mesh                          The host mesh object in which the elements of the neighbour range exist
+    * @param  element_or_handle             A handle or the element for which the neighbour range is obained
     * @return                               The const neighbour range
     */
   template<typename ElementTypeOrTagT, typename ConnectorElementTypeOrTagT, typename WrappedConfigT, typename ElementOrHandleT>
@@ -275,7 +275,7 @@ namespace viennagrid
     * @tparam SegmentationT                 The segmentation type of the segment type
     * @tparam ElementOrHandleT              The element or handle type for which the neighbour range is obtained
     * @param  segment                       The host segment object in which the elements of the neighbour range exist
-    * @param  handle_or_element             A handle or the element for which the neighbour range is obained
+    * @param  element_or_handle             A handle or the element for which the neighbour range is obained
     * @return                               The neighbour range
     */
   template<typename ElementTypeOrTagT, typename ConnectorElementTypeOrTagT, typename SegmentationT, typename ElementOrHandleT>
@@ -292,7 +292,7 @@ namespace viennagrid
     * @tparam SegmentationT                 The segmentation type of the segment type
     * @tparam ElementOrHandleT              The element or handle type for which the neighbour range is obtained
     * @param  segment                       The host segment object in which the elements of the neighbour range exist
-    * @param  handle_or_element             A handle or the element for which the neighbour range is obained
+    * @param  element_or_handle             A handle or the element for which the neighbour range is obained
     * @return                               The const neighbour range
     */
   template<typename ElementTypeOrTagT, typename ConnectorElementTypeOrTagT, typename SegmentationT, typename ElementOrHandleT>

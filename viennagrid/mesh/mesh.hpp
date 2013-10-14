@@ -785,17 +785,17 @@ namespace viennagrid
 
   /** @brief Function for obtaining the heighest ID for a specifig element type/tag in a mesh/segment
     *
-    * @tparam ElementTypeOrTag     The element type/tag from which the heighest ID is queried
-    * @tparam MeshOrSegmentHandleT     The mesh/segment type
-    * @param  mesh_or_segment    The mesh/segment object
-    * @return                      The heighest ID for specified element type/tag
+    * @tparam ElementTypeOrTag      The element type/tag from which the heighest ID is queried
+    * @tparam MeshOrSegmentHandleT  The mesh/segment type
+    * @param  mesh_or_segment       The mesh/segment object
+    * @return                       The heighest ID for specified element type/tag
     */
-  template<typename element_type_or_tag, typename mesh_type>
-  typename viennagrid::result_of::id< typename viennagrid::result_of::element<mesh_type, element_type_or_tag>::type >::type
-  id_upper_bound( mesh_type const & mesh_obj)
+  template<typename ElementTypeOrTag, typename MeshOrSegmentHandleT>
+  typename viennagrid::result_of::id< typename viennagrid::result_of::element<MeshOrSegmentHandleT, ElementTypeOrTag>::type >::type
+  id_upper_bound( MeshOrSegmentHandleT const & mesh_or_segment )
   {
-    typedef typename viennagrid::result_of::element<mesh_type, element_type_or_tag>::type element_type;
-    return id_generator(mesh_obj).max_id( viennagrid::meta::tag<element_type>() );
+    typedef typename viennagrid::result_of::element<MeshOrSegmentHandleT, ElementTypeOrTag>::type element_type;
+    return id_generator(mesh_or_segment).max_id( viennagrid::meta::tag<ElementTypeOrTag>() );
   }
 
 
@@ -1300,11 +1300,11 @@ namespace viennagrid
 
   /** @brief Function which finds an element based on a handle. The runtime of this function is linear in the number of elements of the requested type in the mesh.
     *
-    * @tparam MeshSegmentHandleT          Host mesh/segment type
-    * @tparam HandleT                 The handle type of the object to be found
-    * @param  mesh_or_segment       Host mesh/segment object
-    * @param  id                      id of the object to be found
-    * @return                         An iterator pointing to the found element. If no element was found it points to viennagrid::elements<ElementType>(mesh_or_segment).end()
+    * @tparam MeshSegmentHandleT         Host mesh/segment type
+    * @tparam HandleT                    The handle type of the object to be found
+    * @param  mesh_or_segment            Host mesh/segment object
+    * @param  handle                     Identification handle of the object to be found
+    * @return                            An iterator pointing to the found element. If no element was found it points to viennagrid::elements<ElementType>(mesh_or_segment).end()
     */
   template<typename MeshSegmentHandleT, typename HandleT>
   typename viennagrid::result_of::iterator< typename viennagrid::result_of::element_range<MeshSegmentHandleT, typename storage::detail::result_of::value_type<HandleT>::type >::type >::type
@@ -1327,11 +1327,11 @@ namespace viennagrid
 
   /** @brief Function which finds an element based on a handle, const version. The runtime of this function is linear in the number of elements of the requested type in the mesh.
     *
-    * @tparam MeshSegmentHandleT          Host mesh/segment type
-    * @tparam HandleT                 The handle type of the object to be found
-    * @param  mesh_or_segment       Host mesh/segment object
-    * @param  id                      id of the object to be found
-    * @return                         A const iterator pointing to the found element. If no element was found it points to viennagrid::elements<ElementType>(mesh_or_segment).end()
+    * @tparam MeshSegmentHandleT         Host mesh/segment type
+    * @tparam HandleT                    The handle type of the object to be found
+    * @param  mesh_or_segment            Host mesh/segment object
+    * @param  handle                     Identification handle of the object to be found
+    * @return                            A const iterator pointing to the found element. If no element was found it points to viennagrid::elements<ElementType>(mesh_or_segment).end()
     */
   template<typename MeshSegmentHandleT, typename HandleT>
   typename viennagrid::result_of::const_iterator< typename viennagrid::result_of::const_element_range<MeshSegmentHandleT, typename storage::detail::result_of::value_type<HandleT>::type >::type  >::type
@@ -1425,7 +1425,6 @@ namespace viennagrid
   /** @brief Function for obtaining the point from a vertex
     *
     * @tparam WrappedConfigT      Wrapped config of the host mesh type
-    * @param  mesh              The host mesh object
     * @param  vertex              The vertex of which the point is obtained
     * @return                     A reference to the point
     */
@@ -1437,7 +1436,6 @@ namespace viennagrid
   /** @brief Function for obtaining the point from a vertex, const version
     *
     * @tparam WrappedConfigT      Wrapped config of the host mesh type
-    * @param  mesh              The host mesh object
     * @param  vertex              The vertex of which the point is obtained
     * @return                     A const reference to the point
     */

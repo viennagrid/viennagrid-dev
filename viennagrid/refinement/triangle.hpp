@@ -316,6 +316,9 @@ namespace viennagrid
      *
      * @param element_in       The triangle to be refined
      * @param segment_out   The mesh or segment the refined triangles are written to
+     * @param edge_refinement_flag_accessor     Accessor storing flags if an edge is marked for refinement
+     * @param vertex_to_vertex_handle_accessor  Temporary accessor for vertex to vertex mapping
+     * @param edge_to_vertex_handle_accessor    Temporary accessor for refined edge to vertex mapping
      */
     template <typename ElementType, typename MeshTypeOut, typename EdgeRefinementFlagAccessor, typename VertexToVertexHandleAccessor, typename EdgeToVertexHandleAccessor>
     static void apply(ElementType const & element_in, MeshTypeOut & segment_out,
