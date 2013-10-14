@@ -30,13 +30,13 @@ namespace viennagrid
 {
   // doxygen doku in forwards.hpp
   template<typename WrappedConfigType>
-  class segment_handle< segmentation<WrappedConfigType> >
+  class segment_handle< viennagrid::segmentation<WrappedConfigType> >
   {
-    friend class segmentation<WrappedConfigType>;
+    friend class viennagrid::segmentation<WrappedConfigType>;
 
   public:
 
-    typedef segmentation<WrappedConfigType> segmentation_type;
+    typedef viennagrid::segmentation<WrappedConfigType> segmentation_type;
     typedef typename segmentation_type::segment_id_type segment_id_type;
     typedef typename segmentation_type::mesh_type mesh_type;
     typedef typename segmentation_type::view_type view_type;
@@ -418,7 +418,7 @@ namespace viennagrid
     typedef typename result_of::segmentation_view_container_tag<WrappedConfigType>::type view_container_tag;
 
     /** @brief For internal use only */
-    typedef segmentation<WrappedConfigType> self_type;
+    typedef viennagrid::segmentation<WrappedConfigType> self_type;
 
     /** @brief The segment type of the segmentation */
     typedef segment_handle<self_type> segment_handle_type;
@@ -670,27 +670,27 @@ namespace viennagrid
 
   /** @brief For internal use only */
   template<typename WrappedConfigT>
-  typename segmentation<WrappedConfigT>::view_type::element_collection_type &
-  element_collection( segmentation<WrappedConfigT> & segmentation)
+  typename viennagrid::segmentation<WrappedConfigT>::view_type::element_collection_type &
+  element_collection( viennagrid::segmentation<WrappedConfigT> & segmentation)
   { return element_collection( segmentation.all_elements() ); }
 
   /** @brief For internal use only */
   template<typename WrappedConfigT>
-  typename segmentation<WrappedConfigT>::view_type::element_collection_type const &
-  element_collection( segmentation<WrappedConfigT> const & segmentation)
+  typename viennagrid::segmentation<WrappedConfigT>::view_type::element_collection_type const &
+  element_collection( viennagrid::segmentation<WrappedConfigT> const & segmentation)
   { return element_collection( segmentation.all_elements() ); }
 
 
   template<typename ElementTypeOrTagT, typename WrappedConfigT>
   typename result_of::element_range<segmentation<WrappedConfigT>, ElementTypeOrTagT>::type
-  elements( segmentation<WrappedConfigT> & segmentation)
-  { return elements<ElementTypeOrTagT>( segmentation.all_elements() ); }
+  elements( viennagrid::segmentation<WrappedConfigT> & segm)
+  { return elements<ElementTypeOrTagT>( segm.all_elements() ); }
 
   // doxygen docu in forwards.hpp
   template<typename ElementTypeOrTagT, typename WrappedConfigT>
-  typename result_of::const_element_range<segmentation<WrappedConfigT>, ElementTypeOrTagT>::type
-  elements(segmentation<WrappedConfigT> const & segmentation)
-  { return elements<ElementTypeOrTagT>( segmentation.all_elements() ); }
+  typename result_of::const_element_range<viennagrid::segmentation<WrappedConfigT>, ElementTypeOrTagT>::type
+  elements(viennagrid::segmentation<WrappedConfigT> const & segm)
+  { return elements<ElementTypeOrTagT>( segm.all_elements() ); }
 
 
 
@@ -699,82 +699,82 @@ namespace viennagrid
   {
     // doxygen docu in mesh.hpp
     template<typename WrappedConfigType, typename element_type_or_tag>
-    struct is_element_present< segmentation<WrappedConfigType>, element_type_or_tag >
+    struct is_element_present< viennagrid::segmentation<WrappedConfigType>, element_type_or_tag >
     {
-      static const bool value = is_element_present< typename segmentation<WrappedConfigType>::mesh_type, element_type_or_tag>::value;
+      static const bool value = is_element_present< typename viennagrid::segmentation<WrappedConfigType>::mesh_type, element_type_or_tag>::value;
     };
 
     template<typename WrappedConfigType, typename element_type_or_tag>
-    struct is_element_present< const segmentation<WrappedConfigType>, element_type_or_tag >
+    struct is_element_present< const viennagrid::segmentation<WrappedConfigType>, element_type_or_tag >
     {
-      static const bool value = is_element_present<segmentation<WrappedConfigType>, element_type_or_tag>::value;
+      static const bool value = is_element_present<viennagrid::segmentation<WrappedConfigType>, element_type_or_tag>::value;
     };
 
 
     // doxygen docu in forwards.hpp
     template<typename segmentation_type>
-    struct element_collection< segmentation<segmentation_type> >
+    struct element_collection< viennagrid::segmentation<segmentation_type> >
     {
-      typedef typename element_collection<typename segmentation<segmentation_type>::view_type>::type type;
+      typedef typename element_collection<typename viennagrid::segmentation<segmentation_type>::view_type>::type type;
     };
 
     template<typename segmentation_type>
-    struct element_collection< const segmentation<segmentation_type> >
+    struct element_collection< const viennagrid::segmentation<segmentation_type> >
     {
-      typedef typename element_collection<const typename segmentation<segmentation_type>::view_type>::type type;
+      typedef typename element_collection<const typename viennagrid::segmentation<segmentation_type>::view_type>::type type;
     };
 
 
     // doxygen docu in mesh.hpp
     template<typename segmentation_type>
-    struct point< segmentation<segmentation_type> >
+    struct point< viennagrid::segmentation<segmentation_type> >
     {
-      typedef typename point<typename segmentation<segmentation_type>::mesh_type>::type type;
+      typedef typename point<typename viennagrid::segmentation<segmentation_type>::mesh_type>::type type;
     };
 
 
 
     // doxygen docu in forwards.hpp
     template<typename segmentation_type, typename element_type_or_tag>
-    struct element< segmentation<segmentation_type>, element_type_or_tag >
+    struct element< viennagrid::segmentation<segmentation_type>, element_type_or_tag >
     {
-      typedef typename element<typename segmentation<segmentation_type>::view_type, element_type_or_tag>::type type;
+      typedef typename element<typename viennagrid::segmentation<segmentation_type>::view_type, element_type_or_tag>::type type;
     };
 
     // doxygen docu in forwards.hpp
     template<typename segmentation_type, typename element_type_or_tag>
-    struct handle< segmentation<segmentation_type>, element_type_or_tag >
+    struct handle< viennagrid::segmentation<segmentation_type>, element_type_or_tag >
     {
-      typedef typename handle<typename segmentation<segmentation_type>::view_type, element_type_or_tag>::type type;
+      typedef typename handle<typename viennagrid::segmentation<segmentation_type>::view_type, element_type_or_tag>::type type;
     };
 
     // doxygen docu in forwards.hpp
     template<typename segmentation_type, typename element_type_or_tag>
-    struct const_handle< segmentation<segmentation_type>, element_type_or_tag >
+    struct const_handle< viennagrid::segmentation<segmentation_type>, element_type_or_tag >
     {
-      typedef typename const_handle<typename segmentation<segmentation_type>::view_type, element_type_or_tag>::type type;
+      typedef typename const_handle<typename viennagrid::segmentation<segmentation_type>::view_type, element_type_or_tag>::type type;
     };
 
 
     // doxygen docu in forwards.hpp
     template<typename segmentation_type, typename element_type_or_tag>
-    struct element_range< segmentation<segmentation_type>, element_type_or_tag >
+    struct element_range< viennagrid::segmentation<segmentation_type>, element_type_or_tag >
     {
-      typedef typename element_range<typename segmentation<segmentation_type>::view_type, element_type_or_tag>::type type;
+      typedef typename element_range<typename viennagrid::segmentation<segmentation_type>::view_type, element_type_or_tag>::type type;
     };
 
     // doxygen docu in forwards.hpp
     template<typename segmentation_type, typename element_type_or_tag>
-    struct const_element_range< segmentation<segmentation_type>, element_type_or_tag >
+    struct const_element_range< viennagrid::segmentation<segmentation_type>, element_type_or_tag >
     {
-      typedef typename const_element_range<typename segmentation<segmentation_type>::view_type, element_type_or_tag>::type type;
+      typedef typename const_element_range<typename viennagrid::segmentation<segmentation_type>::view_type, element_type_or_tag>::type type;
     };
 
     // doxygen docu in forwards.hpp
     template<typename segmentation_type>
-    struct cell_tag< segmentation<segmentation_type> >
+    struct cell_tag< viennagrid::segmentation<segmentation_type> >
     {
-      typedef typename cell_tag< typename segmentation<segmentation_type>::view_type >::type type;
+      typedef typename cell_tag< typename viennagrid::segmentation<segmentation_type>::view_type >::type type;
     };
   }
 

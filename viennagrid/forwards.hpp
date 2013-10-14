@@ -997,9 +997,9 @@ namespace viennagrid
     };
 
     template<typename WrappedSegmentationConfigT>
-    struct facet_tag< segmentation<WrappedSegmentationConfigT> >
+    struct facet_tag< viennagrid::segmentation<WrappedSegmentationConfigT> >
     {
-      typedef typename facet_tag< typename cell_tag< segmentation<WrappedSegmentationConfigT> >::type >::type type;
+      typedef typename facet_tag< typename cell_tag< viennagrid::segmentation<WrappedSegmentationConfigT> >::type >::type type;
     };
 
     template<typename SegmentationT>
@@ -1028,9 +1028,9 @@ namespace viennagrid
     };
 
     template<typename WrappedSegmentationConfigT>
-    struct facet< segmentation<WrappedSegmentationConfigT> >
+    struct facet< viennagrid::segmentation<WrappedSegmentationConfigT> >
     {
-      typedef typename facet< typename cell< segmentation<WrappedSegmentationConfigT> >::type >::type type;
+      typedef typename facet< typename cell< viennagrid::segmentation<WrappedSegmentationConfigT> >::type >::type type;
     };
 
     template<typename SegmentationT>
