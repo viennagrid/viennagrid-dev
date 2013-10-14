@@ -715,7 +715,7 @@ namespace viennagrid
     void operator()( container_type & container )
     {
         typedef typename container_type::value_type value_type;
-        storage::view::handle( viennagrid::storage::collection::get<value_type>(collection), container);
+        storage::detail::handle( viennagrid::storage::collection::get<value_type>(collection), container);
     }
 
 

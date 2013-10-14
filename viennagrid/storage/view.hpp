@@ -33,15 +33,15 @@ namespace viennagrid
   namespace storage
   {
     template<typename base_container_type_, typename container_tag>
-    class view_t;
+    class view;
 
     template<typename base_container_type_, typename container_tag>
-    class view_t
+    class view
     {
     public:
 
       template<typename A, typename B>
-      friend class view_t;
+      friend class view;
 
       typedef base_container_type_ base_container_type;
 
@@ -68,14 +68,14 @@ namespace viennagrid
       {
         typedef typename handle_container_type::iterator base;
       public:
-        iterator(view_t & view_obj, const base & foo) : base(foo), view_(&view_obj) {}
+        iterator(view & view_obj, const base & foo) : base(foo), view_(&view_obj) {}
         iterator(const iterator & it) : base(it), view_(it.view_) {}
 
         typedef typename std::iterator_traits<base>::difference_type   difference_type;
-        typedef typename view_t::value_type                            value_type;
-        typedef typename view_t::reference                             reference;
-        typedef typename view_t::const_reference                       const_reference;
-        typedef typename view_t::pointer                               pointer;
+        typedef typename view::value_type                            value_type;
+        typedef typename view::reference                             reference;
+        typedef typename view::const_reference                       const_reference;
+        typedef typename view::pointer                               pointer;
         typedef typename std::iterator_traits<base>::iterator_category iterator_category;
 
         handle_type &     handle()       { return base::operator*(); }
@@ -88,7 +88,7 @@ namespace viennagrid
         pointer operator->() const { return &(operator* ()); }
 
       private:
-        view_t * view_;
+        view * view_;
       };
 
 
@@ -96,15 +96,15 @@ namespace viennagrid
       {
         typedef typename handle_container_type::const_iterator base;
       public:
-        const_iterator(view_t const & view_obj, const base & foo) : base(foo), view_(&view_obj) {}
+        const_iterator(view const & view_obj, const base & foo) : base(foo), view_(&view_obj) {}
         const_iterator(const const_iterator & it) : base(it), view_(it.view_) {}
         const_iterator(const iterator & it) : base(it), view_(it.view_) {}
 
         typedef typename std::iterator_traits<base>::difference_type difference_type;
-        typedef typename view_t::value_type value_type;
-        typedef typename view_t::const_reference reference;
-        typedef typename view_t::const_reference const_reference;
-        typedef typename view_t::const_pointer pointer;
+        typedef typename view::value_type value_type;
+        typedef typename view::const_reference reference;
+        typedef typename view::const_reference const_reference;
+        typedef typename view::const_pointer pointer;
         typedef typename std::iterator_traits<base>::iterator_category iterator_category;
 
         const_handle_type handle() { return base::operator*(); }
@@ -116,21 +116,21 @@ namespace viennagrid
         pointer operator->() const { return &(operator* ()); }
 
       private:
-        view_t const * view_;
+        view const * view_;
       };
 
       class reverse_iterator : public handle_container_type::reverse_iterator
       {
         typedef typename handle_container_type::reverse_iterator base;
       public:
-        reverse_iterator(view_t & view_obj, const base & foo) : base(foo), view_(&view_obj) {}
+        reverse_iterator(view & view_obj, const base & foo) : base(foo), view_(&view_obj) {}
         reverse_iterator(const reverse_iterator & it) : base(it), view_(it.view_) {}
 
         typedef typename std::iterator_traits<base>::difference_type difference_type;
-        typedef typename view_t::value_type value_type;
-        typedef typename view_t::reference reference;
-        typedef typename view_t::const_reference const_reference;
-        typedef typename view_t::pointer pointer;
+        typedef typename view::value_type value_type;
+        typedef typename view::reference reference;
+        typedef typename view::const_reference const_reference;
+        typedef typename view::pointer pointer;
         typedef typename std::iterator_traits<base>::iterator_category iterator_category;
 
         handle_type & handle() { return base::operator*(); }
@@ -143,7 +143,7 @@ namespace viennagrid
         pointer operator->() const { return &(operator* ()); }
 
       private:
-        view_t * view_;
+        view * view_;
       };
 
 
@@ -151,15 +151,15 @@ namespace viennagrid
       {
         typedef typename handle_container_type::const_reverse_iterator base;
       public:
-        const_reverse_iterator(view_t const & view_obj, const base & foo) : base(foo), view_(&view_obj) {}
+        const_reverse_iterator(view const & view_obj, const base & foo) : base(foo), view_(&view_obj) {}
         const_reverse_iterator(const const_reverse_iterator & it) : base(it), view_(it.view_) {}
         const_reverse_iterator(const iterator & it) : base(it), view_(it.view_) {}
 
         typedef typename std::iterator_traits<base>::difference_type difference_type;
-        typedef typename view_t::value_type value_type;
-        typedef typename view_t::const_reference reference;
-        typedef typename view_t::const_reference const_reference;
-        typedef typename view_t::const_pointer pointer;
+        typedef typename view::value_type value_type;
+        typedef typename view::const_reference reference;
+        typedef typename view::const_reference const_reference;
+        typedef typename view::const_pointer pointer;
         typedef typename std::iterator_traits<base>::iterator_category iterator_category;
 
         const_handle_type handle() { return base::operator*(); }
@@ -171,21 +171,21 @@ namespace viennagrid
         pointer operator->() const { return &(operator* ()); }
 
       private:
-        view_t const * view_;
+        view const * view_;
       };
 
 
-      view_t() {}
+      view() {}
 
       void set_base_container( base_container_type & base_container_ )
       { base_container = &base_container_; }
 
       template<typename other_container_tag>
-      void set_base_container( view_t<base_container_type, other_container_tag> & base_view )
+      void set_base_container( view<base_container_type, other_container_tag> & base_view )
       { base_container = base_view.base_container; }
 
       template<typename other_container_tag>
-      void set_base_container( view_t<base_container_type, other_container_tag> const & base_view )
+      void set_base_container( view<base_container_type, other_container_tag> const & base_view )
       { base_container = base_view.base_container; }
 
 
@@ -268,12 +268,12 @@ namespace viennagrid
 
 
     template<typename base_container_type_, typename CompareTagT>
-    class view_t<base_container_type_, std_set_tag<CompareTagT> >
+    class view<base_container_type_, std_set_tag<CompareTagT> >
     {
     public:
 
       template<typename A, typename B>
-      friend class view_t;
+      friend class view;
 
       typedef base_container_type_ base_container_type;
 
@@ -302,14 +302,14 @@ namespace viennagrid
       {
         typedef typename handle_container_type::iterator base;
       public:
-        iterator(view_t & view_obj, const base & foo) : base(foo), view_(&view_obj) {}
+        iterator(view & view_obj, const base & foo) : base(foo), view_(&view_obj) {}
         iterator(const iterator & it) : base(it), view_(it.view_) {}
 
         typedef typename std::iterator_traits<base>::difference_type   difference_type;
-        typedef typename view_t::value_type                            value_type;
-        typedef typename view_t::reference                             reference;
-        typedef typename view_t::const_reference                       const_reference;
-        typedef typename view_t::pointer                               pointer;
+        typedef typename view::value_type                            value_type;
+        typedef typename view::reference                             reference;
+        typedef typename view::const_reference                       const_reference;
+        typedef typename view::pointer                               pointer;
         typedef typename std::iterator_traits<base>::iterator_category iterator_category;
 
         handle_type       handle()       { return base::operator*(); }
@@ -322,7 +322,7 @@ namespace viennagrid
         pointer operator->() const { return &(operator* ()); }
 
       private:
-        view_t * view_;
+        view * view_;
       };
 
 
@@ -330,15 +330,15 @@ namespace viennagrid
       {
         typedef typename handle_container_type::const_iterator base;
       public:
-        const_iterator(view_t const & view_obj, const base & foo) : base(foo), view_(&view_obj) {}
+        const_iterator(view const & view_obj, const base & foo) : base(foo), view_(&view_obj) {}
         const_iterator(const const_iterator & it) : base(it), view_(it.view_) {}
         const_iterator(const iterator & it) : base(it), view_(it.view_) {}
 
         typedef typename std::iterator_traits<base>::difference_type difference_type;
-        typedef typename view_t::value_type value_type;
-        typedef typename view_t::const_reference reference;
-        typedef typename view_t::const_reference const_reference;
-        typedef typename view_t::const_pointer pointer;
+        typedef typename view::value_type value_type;
+        typedef typename view::const_reference reference;
+        typedef typename view::const_reference const_reference;
+        typedef typename view::const_pointer pointer;
         typedef typename std::iterator_traits<base>::iterator_category iterator_category;
 
         const_handle_type handle() { return base::operator*(); }
@@ -350,21 +350,21 @@ namespace viennagrid
         pointer operator->() const { return &(operator* ()); }
 
       private:
-        view_t const * view_;
+        view const * view_;
       };
 
       class reverse_iterator : public handle_container_type::reverse_iterator
       {
         typedef typename handle_container_type::reverse_iterator base;
       public:
-        reverse_iterator(view_t & view_obj, const base & foo) : base(foo), view_(&view_obj) {}
+        reverse_iterator(view & view_obj, const base & foo) : base(foo), view_(&view_obj) {}
         reverse_iterator(const reverse_iterator & it) : base(it), view_(it.view_) {}
 
         typedef typename std::iterator_traits<base>::difference_type difference_type;
-        typedef typename view_t::value_type value_type;
-        typedef typename view_t::reference reference;
-        typedef typename view_t::const_reference const_reference;
-        typedef typename view_t::pointer pointer;
+        typedef typename view::value_type value_type;
+        typedef typename view::reference reference;
+        typedef typename view::const_reference const_reference;
+        typedef typename view::pointer pointer;
         typedef typename std::iterator_traits<base>::iterator_category iterator_category;
 
         handle_type & handle() { return base::operator*(); }
@@ -377,7 +377,7 @@ namespace viennagrid
         pointer operator->() const { return &(operator* ()); }
 
       private:
-        view_t * view_;
+        view * view_;
       };
 
 
@@ -385,15 +385,15 @@ namespace viennagrid
       {
         typedef typename handle_container_type::const_reverse_iterator base;
       public:
-        const_reverse_iterator(view_t const & view_obj, const base & foo) : base(foo), view_(&view_obj) {}
+        const_reverse_iterator(view const & view_obj, const base & foo) : base(foo), view_(&view_obj) {}
         const_reverse_iterator(const const_reverse_iterator & it) : base(it), view_(it.view_) {}
         const_reverse_iterator(const iterator & it) : base(it), view_(it.view) {}
 
         typedef typename std::iterator_traits<base>::difference_type difference_type;
-        typedef typename view_t::value_type value_type;
-        typedef typename view_t::const_reference reference;
-        typedef typename view_t::const_reference const_reference;
-        typedef typename view_t::const_pointer pointer;
+        typedef typename view::value_type value_type;
+        typedef typename view::const_reference reference;
+        typedef typename view::const_reference const_reference;
+        typedef typename view::const_pointer pointer;
         typedef typename std::iterator_traits<base>::iterator_category iterator_category;
 
         const_handle_type handle() { return base::operator*(); }
@@ -405,22 +405,22 @@ namespace viennagrid
         pointer operator->() const { return &(operator* ()); }
 
       private:
-        view_t const * view_;
+        view const * view_;
       };
 
 
 
-      view_t() {}
+      view() {}
 
       void set_base_container( base_container_type & base_container_ )
       { base_container = &base_container_; }
 
       template<typename other_container_tag>
-      void set_base_container( view_t<base_container_type, other_container_tag> & base_view )
+      void set_base_container( view<base_container_type, other_container_tag> & base_view )
       { base_container = base_view.base_container; }
 
       template<typename other_container_tag>
-      void set_base_container( view_t<base_container_type, other_container_tag> const & base_view )
+      void set_base_container( view<base_container_type, other_container_tag> const & base_view )
       { base_container = base_view.base_container; }
 
 
@@ -498,31 +498,31 @@ namespace viennagrid
       template<typename base_container_type, typename view_container_tag>
       struct view
       {
-        typedef view_t<base_container_type, view_container_tag> type;
+        typedef viennagrid::storage::view<base_container_type, view_container_tag> type;
       };
 
       template<typename base_container_type, typename base_view_container_tag, typename view_container_tag>
-      struct view< view_t<base_container_type, base_view_container_tag>, view_container_tag>
+      struct view< viennagrid::storage::view<base_container_type, base_view_container_tag>, view_container_tag>
       {
-        typedef view_t<base_container_type, view_container_tag> type;
+        typedef viennagrid::storage::view<base_container_type, view_container_tag> type;
       };
 
       template<typename base_container_type, typename base_view_container_tag, typename view_container_tag>
-      struct view< const view_t<base_container_type, base_view_container_tag>, view_container_tag>
+      struct view< const viennagrid::storage::view<base_container_type, base_view_container_tag>, view_container_tag>
       {
-        typedef view_t<const base_container_type, view_container_tag> type;
+        typedef viennagrid::storage::view<const base_container_type, view_container_tag> type;
       };
 
       template<typename base_container_type, typename base_view_container_tag, typename view_container_tag>
-      struct view< const view_t<const base_container_type, base_view_container_tag>, view_container_tag>
+      struct view< const viennagrid::storage::view<const base_container_type, base_view_container_tag>, view_container_tag>
       {
-        typedef view_t<const base_container_type, view_container_tag> type;
+        typedef viennagrid::storage::view<const base_container_type, view_container_tag> type;
       };
 
       template<typename base_container_type, typename base_view_container_tag, typename view_container_tag>
-      struct view< view_t<const base_container_type, base_view_container_tag>, view_container_tag>
+      struct view< viennagrid::storage::view<const base_container_type, base_view_container_tag>, view_container_tag>
       {
-        typedef view_t<const base_container_type, view_container_tag> type;
+        typedef viennagrid::storage::view<const base_container_type, view_container_tag> type;
       };
 
       template<typename base_container_type, typename view_container_config>
@@ -536,20 +536,11 @@ namespace viennagrid
 
 
 
-
-
-
-    namespace view
+    namespace detail
     {
-      typedef viennagrid::make_typemap<
-                  viennagrid::storage::default_tag,
-                  viennagrid::storage::handled_container_tag<viennagrid::storage::std_deque_tag, viennagrid::storage::no_handle_tag>
-                                            >::type      default_view_container_config;
-
-
 
       template<typename base_container_type, typename view_base_container_type, typename handle_container_tag, typename predicate>
-      void handle_if(base_container_type & src_container, view_t<view_base_container_type, handle_container_tag> & dst_view, predicate pred)
+      void handle_if(base_container_type & src_container, viennagrid::storage::view<view_base_container_type, handle_container_tag> & dst_view, predicate pred)
       {
         for (typename base_container_type::iterator it = src_container.begin(); it != src_container.end(); ++it)
           if (pred(*it))
@@ -557,15 +548,16 @@ namespace viennagrid
       }
 
       template<typename base_container_type, typename view_base_container_type, typename view_container_tag>
-      void handle(base_container_type & src_container, view_t<view_base_container_type, view_container_tag> & dst_view)
+      void handle(base_container_type & src_container, viennagrid::storage::view<view_base_container_type, view_container_tag> & dst_view)
       {
         handle_if(src_container, dst_view, viennagrid::meta::true_predicate());
       }
 
+    }
 
 
-
-
+    namespace result_of
+    {
 
 
       template<typename container_type, typename view_container_config>
@@ -581,9 +573,6 @@ namespace viennagrid
             default_container
         >::type::second type;
       };
-
-
-
 
 
       template<typename container_typemap, typename view_container_config>
@@ -609,17 +598,12 @@ namespace viennagrid
             typename view_container_typemap<tail, view_container_config>::type
         > type;
       };
-    }
-
-
-    namespace result_of
-    {
 
       template<typename container_typemap, typename view_container_config>
       struct view_collection
       {
         typedef typename viennagrid::storage::result_of::collection<
-            typename viennagrid::storage::view::view_container_typemap<
+            typename viennagrid::storage::result_of::view_container_typemap<
                 container_typemap,
                 view_container_config
             >::type
@@ -632,7 +616,7 @@ namespace viennagrid
         typedef viennagrid::storage::collection_t<container_typelist> container_collection_type;
 
         typedef typename viennagrid::storage::result_of::collection<
-            typename viennagrid::storage::view::view_container_typemap<
+            typename viennagrid::storage::result_of::view_container_typemap<
                 container_typelist,
                 view_container_config
             >::type
