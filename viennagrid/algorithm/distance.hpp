@@ -68,7 +68,7 @@ namespace viennagrid
     typename viennagrid::result_of::coord<PointType>::type
     distance_impl(PointAccessorType const accessor,
                   PointType const & p1,
-                  element_t<viennagrid::vertex_tag, WrappedConfigType> const & v2)
+                  viennagrid::element<viennagrid::vertex_tag, WrappedConfigType> const & v2)
     {
       return distance_impl(p1, accessor(v2));
     }
@@ -76,7 +76,7 @@ namespace viennagrid
     template <typename PointAccessorType, typename PointType, typename WrappedConfigType>
     typename viennagrid::result_of::coord<typename PointAccessorType::value_type>::type
     distance_impl(PointAccessorType const accessor,
-                  element_t<viennagrid::vertex_tag, WrappedConfigType> const & v1,
+                  viennagrid::element<viennagrid::vertex_tag, WrappedConfigType> const & v1,
                   PointType const & p2)
     {
       return distance_impl(accessor(v1), p2);
@@ -86,8 +86,8 @@ namespace viennagrid
     template <typename PointAccessorType, typename PointType, typename WrappedConfigType1, typename WrappedConfigType2>
     typename result_of::coord<typename PointAccessorType::value_type>::type
     distance_impl(PointAccessorType const accessor,
-                  element_t<viennagrid::vertex_tag, WrappedConfigType1> const & v1,
-                  element_t<viennagrid::vertex_tag, WrappedConfigType2> const & v2)
+                  viennagrid::element<viennagrid::vertex_tag, WrappedConfigType1> const & v1,
+                  viennagrid::element<viennagrid::vertex_tag, WrappedConfigType2> const & v2)
     {
       return distance_impl(accessor(v1), accessor(v2));
     }
@@ -144,7 +144,7 @@ namespace viennagrid
     typename viennagrid::result_of::coord<PointType>::type
     boundary_distance_impl(PointAccessorType const accessor,
                   PointType const & p1,
-                  element_t<viennagrid::vertex_tag, WrappedConfigType> const & v2)
+                  viennagrid::element<viennagrid::vertex_tag, WrappedConfigType> const & v2)
     {
       return boundary_distance_impl(p1, accessor(v2));
     }
@@ -152,7 +152,7 @@ namespace viennagrid
     template <typename PointAccessorType, typename PointType, typename WrappedConfigType>
     typename viennagrid::result_of::coord<typename PointAccessorType::value_type>::type
     boundary_distance_impl(PointAccessorType const accessor,
-                  element_t<viennagrid::vertex_tag, WrappedConfigType> const & v1,
+                  viennagrid::element<viennagrid::vertex_tag, WrappedConfigType> const & v1,
                   PointType const & p2)
     {
       return boundary_distance_impl(accessor(v1), p2);
@@ -162,8 +162,8 @@ namespace viennagrid
     template <typename PointAccessorType, typename PointType, typename WrappedConfigType1, typename WrappedConfigType2>
     typename result_of::coord<typename PointAccessorType::value_type>::type
     boundary_distance_impl(PointAccessorType const accessor,
-                  element_t<viennagrid::vertex_tag, WrappedConfigType1> const & v1,
-                  element_t<viennagrid::vertex_tag, WrappedConfigType2> const & v2)
+                  viennagrid::element<viennagrid::vertex_tag, WrappedConfigType1> const & v1,
+                  viennagrid::element<viennagrid::vertex_tag, WrappedConfigType2> const & v2)
     {
       return boundary_distance_impl(accessor(v1), accessor(v2));
     }

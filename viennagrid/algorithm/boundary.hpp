@@ -285,11 +285,11 @@ namespace viennagrid
    */
   template <typename ElementTag1, typename WrappedConfigType1,
             typename ElementTag2, typename WrappedConfigType2>
-  bool is_boundary(element_t<ElementTag1, WrappedConfigType1> const & host_element,
-                   element_t<ElementTag2, WrappedConfigType2> const & element)
+  bool is_boundary(viennagrid::element<ElementTag1, WrappedConfigType1> const & host_element,
+                   viennagrid::element<ElementTag2, WrappedConfigType2> const & element)
   {
 
-    typedef typename viennagrid::result_of::const_element_range<element_t<ElementTag2, WrappedConfigType2>, ElementTag1>::type   BoundaryRange;
+    typedef typename viennagrid::result_of::const_element_range<viennagrid::element<ElementTag2, WrappedConfigType2>, ElementTag1>::type   BoundaryRange;
     typedef typename viennagrid::result_of::iterator<BoundaryRange>::type               BoundaryIterator;
 
     BoundaryRange bnd_cells = viennagrid::elements(host_element);

@@ -161,7 +161,7 @@ namespace viennagrid
         //
         // boundary cell view
         //
-        typedef element_t<BoundaryElementTagT, WrappedConfigT> boundary_cell_type;
+        typedef viennagrid::element<BoundaryElementTagT, WrappedConfigT> boundary_cell_type;
 
         typedef typename viennagrid::storage::result_of::container<
             boundary_cell_type,                                         // the 'value_type', i.e. vertices
@@ -230,7 +230,7 @@ namespace viennagrid
         // boundary cell view
         //
 
-        typedef element_t<BoundaryElementTag, WrappedConfigT> boundary_cell_type;
+        typedef viennagrid::element<BoundaryElementTag, WrappedConfigT> boundary_cell_type;
 
         typedef typename viennagrid::storage::result_of::container<
             boundary_cell_type,                                         // the 'value_type', i.e. vertices

@@ -204,8 +204,8 @@ namespace viennagrid
 
   /** @brief Returns the n-dimensional volume of a n-cell */
   template <typename ElementTag, typename WrappedConfigType>
-  typename viennagrid::result_of::coord< element_t<ElementTag, WrappedConfigType> >::type
-  volume(element_t<ElementTag, WrappedConfigType> const & cell)
+  typename viennagrid::result_of::coord< viennagrid::element<ElementTag, WrappedConfigType> >::type
+  volume(viennagrid::element<ElementTag, WrappedConfigType> const & cell)
   {
     return volume( default_point_accessor(cell), cell );
   }

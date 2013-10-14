@@ -244,7 +244,7 @@ namespace viennagrid
 
     /** @brief Converts a point to local (barycentric) coordinates (lambda_1, lambda_2). lambda_3 = 1 - lambda_1 - lambda_2 is not stored explicitly  */
     //template <typename PointType, typename ConfigType>
-    //PointType point_to_local_coordinates(PointType const & p, viennagrid::element_t<ConfigType, viennagrid::simplex_tag<2> > const & triangle)
+    //PointType point_to_local_coordinates(PointType const & p, viennagrid::element<ConfigType, viennagrid::simplex_tag<2> > const & triangle)
     template<typename TriangleType>
     typename viennagrid::result_of::point<TriangleType>::type point_to_local_coordinates( typename viennagrid::result_of::point<TriangleType>::type const & p,
                                                                                           const TriangleType & triangle)

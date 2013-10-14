@@ -172,7 +172,7 @@ namespace viennagrid
    * @tparam WrappedConfigType  The configuration of the complex where the element lives
    */
   template<typename ElementTag, typename WrappedConfigType>
-  class element_t;
+  class element;
 
 
 
@@ -369,15 +369,15 @@ namespace viennagrid
     struct element;
 
     template<typename element_tag, typename WrappedConfigType>
-    struct element< element_t<element_tag, WrappedConfigType>, element_t<element_tag, WrappedConfigType> >
+    struct element< viennagrid::element<element_tag, WrappedConfigType>, viennagrid::element<element_tag, WrappedConfigType> >
     {
-      typedef element_t<element_tag, WrappedConfigType> type;
+      typedef viennagrid::element<element_tag, WrappedConfigType> type;
     };
 
     template<typename element_tag, typename WrappedConfigType>
-    struct element< element_t<element_tag, WrappedConfigType>, element_tag >
+    struct element< viennagrid::element<element_tag, WrappedConfigType>, element_tag >
     {
-      typedef element_t<element_tag, WrappedConfigType> type;
+      typedef viennagrid::element<element_tag, WrappedConfigType> type;
     };
 
     template<typename SomethingT>
@@ -968,13 +968,13 @@ namespace viennagrid
     };
 
     template<typename ElementTagT, typename WrappedConfigT>
-    struct element_tag< element_t<ElementTagT, WrappedConfigT> >
+    struct element_tag< viennagrid::element<ElementTagT, WrappedConfigT> >
     {
       typedef ElementTagT type;
     };
 
     template<typename ElementTagT, typename WrappedConfigT>
-    struct element_tag< const element_t<ElementTagT, WrappedConfigT> >
+    struct element_tag< const viennagrid::element<ElementTagT, WrappedConfigT> >
     {
       typedef ElementTagT type;
     };
@@ -1642,15 +1642,15 @@ namespace viennagrid
     * @return                         element (identity)
     */
   template<typename WrappedMeshConfigT, typename ElementTagT, typename WrappedConfigT>
-  element_t<ElementTagT, WrappedConfigT> & dereference_handle( viennagrid::mesh<WrappedMeshConfigT> &, element_t<ElementTagT, WrappedConfigT> & element)
+  viennagrid::element<ElementTagT, WrappedConfigT> & dereference_handle( viennagrid::mesh<WrappedMeshConfigT> &, viennagrid::element<ElementTagT, WrappedConfigT> & element)
   { return element; }
 
   template<typename WrappedMeshConfigT, typename ElementTagT, typename WrappedConfigT>
-  element_t<ElementTagT, WrappedConfigT> & dereference_handle( segment_handle_t<WrappedMeshConfigT> &, element_t<ElementTagT, WrappedConfigT> & element)
+  viennagrid::element<ElementTagT, WrappedConfigT> & dereference_handle( segment_handle_t<WrappedMeshConfigT> &, viennagrid::element<ElementTagT, WrappedConfigT> & element)
   { return element; }
 
   template<typename HostElementTagT, typename WrappedHostElementConfigT, typename ElementTagT, typename WrappedConfigT>
-  element_t<ElementTagT, WrappedConfigT> & dereference_handle( element_t<HostElementTagT, WrappedHostElementConfigT> &, element_t<ElementTagT, WrappedConfigT> & element)
+  viennagrid::element<ElementTagT, WrappedConfigT> & dereference_handle( viennagrid::element<HostElementTagT, WrappedHostElementConfigT> &, viennagrid::element<ElementTagT, WrappedConfigT> & element)
   { return element; }
 
   /** @brief Function for dereferencing a const element -> identity
@@ -1662,41 +1662,41 @@ namespace viennagrid
     * @return                         element (identity)
     */
   template<typename WrappedMeshConfigT, typename ElementTagT, typename WrappedConfigT>
-  element_t<ElementTagT, WrappedConfigT> const & dereference_handle( viennagrid::mesh<WrappedMeshConfigT> const &, element_t<ElementTagT, WrappedConfigT> const & element)
+  viennagrid::element<ElementTagT, WrappedConfigT> const & dereference_handle( viennagrid::mesh<WrappedMeshConfigT> const &, viennagrid::element<ElementTagT, WrappedConfigT> const & element)
   { return element; }
 
   template<typename WrappedMeshConfigT, typename ElementTagT, typename WrappedConfigT>
-  element_t<ElementTagT, WrappedConfigT> const & dereference_handle( viennagrid::mesh<WrappedMeshConfigT> &, element_t<ElementTagT, WrappedConfigT> const & element)
+  viennagrid::element<ElementTagT, WrappedConfigT> const & dereference_handle( viennagrid::mesh<WrappedMeshConfigT> &, viennagrid::element<ElementTagT, WrappedConfigT> const & element)
   { return element; }
 
   template<typename WrappedMeshConfigT, typename ElementTagT, typename WrappedConfigT>
-  element_t<ElementTagT, WrappedConfigT> const & dereference_handle( viennagrid::mesh<WrappedMeshConfigT> const &, element_t<ElementTagT, WrappedConfigT> & element)
+  viennagrid::element<ElementTagT, WrappedConfigT> const & dereference_handle( viennagrid::mesh<WrappedMeshConfigT> const &, viennagrid::element<ElementTagT, WrappedConfigT> & element)
   { return element; }
 
 
   template<typename SegmentationT, typename ElementTagT, typename WrappedConfigT>
-  element_t<ElementTagT, WrappedConfigT> const & dereference_handle( segment_handle_t<SegmentationT> const &, element_t<ElementTagT, WrappedConfigT> const & element)
+  viennagrid::element<ElementTagT, WrappedConfigT> const & dereference_handle( segment_handle_t<SegmentationT> const &, viennagrid::element<ElementTagT, WrappedConfigT> const & element)
   { return element; }
 
   template<typename SegmentationT, typename ElementTagT, typename WrappedConfigT>
-  element_t<ElementTagT, WrappedConfigT> const & dereference_handle( segment_handle_t<SegmentationT> &, element_t<ElementTagT, WrappedConfigT> const & element)
+  viennagrid::element<ElementTagT, WrappedConfigT> const & dereference_handle( segment_handle_t<SegmentationT> &, viennagrid::element<ElementTagT, WrappedConfigT> const & element)
   { return element; }
 
   template<typename SegmentationT, typename ElementTagT, typename WrappedConfigT>
-  element_t<ElementTagT, WrappedConfigT> const & dereference_handle( segment_handle_t<SegmentationT> const &, element_t<ElementTagT, WrappedConfigT> & element)
+  viennagrid::element<ElementTagT, WrappedConfigT> const & dereference_handle( segment_handle_t<SegmentationT> const &, viennagrid::element<ElementTagT, WrappedConfigT> & element)
   { return element; }
 
 
   template<typename HostElementTagT, typename WrappedHostElementConfigT, typename ElementTagT, typename WrappedConfigT>
-  element_t<ElementTagT, WrappedConfigT> const & dereference_handle( element_t<HostElementTagT, WrappedHostElementConfigT> const &, element_t<ElementTagT, WrappedConfigT> const & element)
+  viennagrid::element<ElementTagT, WrappedConfigT> const & dereference_handle( viennagrid::element<HostElementTagT, WrappedHostElementConfigT> const &, viennagrid::element<ElementTagT, WrappedConfigT> const & element)
   { return element; }
 
   template<typename HostElementTagT, typename WrappedHostElementConfigT, typename ElementTagT, typename WrappedConfigT>
-  element_t<ElementTagT, WrappedConfigT> const & dereference_handle( element_t<HostElementTagT, WrappedHostElementConfigT> &, element_t<ElementTagT, WrappedConfigT> const & element)
+  viennagrid::element<ElementTagT, WrappedConfigT> const & dereference_handle( viennagrid::element<HostElementTagT, WrappedHostElementConfigT> &, viennagrid::element<ElementTagT, WrappedConfigT> const & element)
   { return element; }
 
   template<typename HostElementTagT, typename WrappedHostElementConfigT, typename ElementTagT, typename WrappedConfigT>
-  element_t<ElementTagT, WrappedConfigT> const & dereference_handle( element_t<HostElementTagT, WrappedHostElementConfigT> const &, element_t<ElementTagT, WrappedConfigT> & element)
+  viennagrid::element<ElementTagT, WrappedConfigT> const & dereference_handle( viennagrid::element<HostElementTagT, WrappedHostElementConfigT> const &, viennagrid::element<ElementTagT, WrappedConfigT> & element)
   { return element; }
 
   /** @brief Function for creating a handle, default implementation -> identity

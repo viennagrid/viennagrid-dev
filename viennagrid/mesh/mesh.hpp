@@ -509,9 +509,9 @@ namespace viennagrid
     };
 
     template<typename ElementTagT, typename WrappedConfigT>
-    struct element_typelist< element_t<ElementTagT, WrappedConfigT> >
+    struct element_typelist< viennagrid::element<ElementTagT, WrappedConfigT> >
     {
-      typedef typename element_t<ElementTagT, WrappedConfigT>::bnd_cell_container_typelist bnd_cell_container_typelist;
+      typedef typename viennagrid::element<ElementTagT, WrappedConfigT>::bnd_cell_container_typelist bnd_cell_container_typelist;
       typedef typename element_typelist_for_element<bnd_cell_container_typelist>::type type;
     };
 
@@ -843,9 +843,9 @@ namespace viennagrid
     * @return                       A handle referencing the given element
     */
   template<typename MeshOrSegmentHandleT, typename ElementTagT, typename WrappedConfigT>
-  typename result_of::handle<MeshOrSegmentHandleT, element_t<ElementTagT, WrappedConfigT> >::type
-  handle(MeshOrSegmentHandleT & mesh_or_segment, element_t<ElementTagT, WrappedConfigT> & element)
-  { return storage::collection::get< element_t<ElementTagT, WrappedConfigT> >(element_collection(mesh_or_segment)).handle( element ); }
+  typename result_of::handle<MeshOrSegmentHandleT, viennagrid::element<ElementTagT, WrappedConfigT> >::type
+  handle(MeshOrSegmentHandleT & mesh_or_segment, viennagrid::element<ElementTagT, WrappedConfigT> & element)
+  { return storage::collection::get< viennagrid::element<ElementTagT, WrappedConfigT> >(element_collection(mesh_or_segment)).handle( element ); }
 
   /** @brief Function for creating a handle for a given element using a mesh/segment object, const version
     *
@@ -857,9 +857,9 @@ namespace viennagrid
     * @return                       A const handle referencing the given element
     */
   template<typename MeshOrSegmentHandleT, typename ElementTagT, typename WrappedConfigT>
-  typename result_of::const_handle<MeshOrSegmentHandleT, element_t<ElementTagT, WrappedConfigT> >::type
-  handle(MeshOrSegmentHandleT const & mesh_or_segment, element_t<ElementTagT, WrappedConfigT> const & element)
-  { return storage::collection::get< element_t<ElementTagT, WrappedConfigT> >(element_collection(mesh_or_segment)).handle( element ); }
+  typename result_of::const_handle<MeshOrSegmentHandleT, viennagrid::element<ElementTagT, WrappedConfigT> >::type
+  handle(MeshOrSegmentHandleT const & mesh_or_segment, viennagrid::element<ElementTagT, WrappedConfigT> const & element)
+  { return storage::collection::get< viennagrid::element<ElementTagT, WrappedConfigT> >(element_collection(mesh_or_segment)).handle( element ); }
 
 
 
@@ -877,9 +877,9 @@ namespace viennagrid
     * @return                           A handle referencing the given element
     */
   template<typename ElementTagT, typename WrappedConfigT, typename BoundaryHandleT>
-  typename viennagrid::result_of::vertex_handle< element_t<ElementTagT, WrappedConfigT> >::type
+  typename viennagrid::result_of::vertex_handle< viennagrid::element<ElementTagT, WrappedConfigT> >::type
   local_vertex(
-      element_t<ElementTagT, WrappedConfigT> & host_element,
+      viennagrid::element<ElementTagT, WrappedConfigT> & host_element,
       BoundaryHandleT const & boundary_element_handle,
       std::size_t index)
   {
@@ -899,9 +899,9 @@ namespace viennagrid
     * @return                           A const handle referencing the given element
     */
   template<typename ElementTagT, typename WrappedConfigT, typename BoundaryHandleT>
-  typename viennagrid::result_of::const_vertex_handle< element_t<ElementTagT, WrappedConfigT> >::type
+  typename viennagrid::result_of::const_vertex_handle< viennagrid::element<ElementTagT, WrappedConfigT> >::type
   local_vertex(
-      element_t<ElementTagT, WrappedConfigT> const & host_element,
+      viennagrid::element<ElementTagT, WrappedConfigT> const & host_element,
       BoundaryHandleT const & boundary_element_handle,
       std::size_t index)
   {
@@ -1366,7 +1366,7 @@ namespace viennagrid
     */
   template<typename ElementTag, typename WrappedConfigType, typename VertexHandleType>
   void set_vertex(
-          viennagrid::element_t<ElementTag, WrappedConfigType> & element,
+          viennagrid::element<ElementTag, WrappedConfigType> & element,
           VertexHandleType vertex_handle,
           unsigned int pos)
   {
@@ -1380,11 +1380,11 @@ namespace viennagrid
   std::pair<
               typename viennagrid::storage::result_of::container_of<
                   typename result_of::element_collection<mesh_type>::type,
-                  viennagrid::element_t<ElementTag, WrappedConfigType>
+                  viennagrid::element<ElementTag, WrappedConfigType>
               >::type::handle_type,
               bool
           >
-  push_element( mesh_type & mesh_obj, viennagrid::element_t<ElementTag, WrappedConfigType> const & element)
+  push_element( mesh_type & mesh_obj, viennagrid::element<ElementTag, WrappedConfigType> const & element)
   {
     return inserter(mesh_obj).template insert<generate_id, call_callback>(element);
   }
@@ -1409,15 +1409,15 @@ namespace viennagrid
     };
 
     template<typename ElementTag, typename WrappedConfigType>
-    struct point< element_t<ElementTag, WrappedConfigType> >
+    struct point< viennagrid::element<ElementTag, WrappedConfigType> >
     {
-      typedef typename viennagrid::result_of::vertex< element_t<ElementTag, WrappedConfigType> >::type::appendix_type type;
+      typedef typename viennagrid::result_of::vertex< viennagrid::element<ElementTag, WrappedConfigType> >::type::appendix_type type;
     };
 
     template<typename ElementTag, typename WrappedConfigType>
-    struct point< const element_t<ElementTag, WrappedConfigType> >
+    struct point< const viennagrid::element<ElementTag, WrappedConfigType> >
     {
-      typedef typename viennagrid::result_of::vertex< element_t<ElementTag, WrappedConfigType> >::type::appendix_type type;
+      typedef typename viennagrid::result_of::vertex< viennagrid::element<ElementTag, WrappedConfigType> >::type::appendix_type type;
     };
   }
 

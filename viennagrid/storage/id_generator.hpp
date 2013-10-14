@@ -60,7 +60,7 @@ namespace viennagrid
         typedef typename viennagrid::meta::result_of::insert<
             typename continuous_id_generator_config_from_mesh_config_helper<WrappedConfigType, tail>::type,
             viennagrid::static_pair<
-                element_t<element_tag, WrappedConfigType>,
+                viennagrid::element<element_tag, WrappedConfigType>,
 //                         typename viennagrid::result_of::element<mesh_config, element_tag>::type,
                 typename config::result_of::query<element_config, viennagrid::storage::smart_id_tag<int>, config::element_id_tag>::type
 //                         typename element_config::element_config::id_tag

@@ -1173,9 +1173,9 @@ namespace viennagrid
     * @return                 True if the element is in the segment, false otherwise
     */
   template<typename SegmentHandleT, typename ElementTagT, typename WrappedConfigT>
-  bool is_in_segment( SegmentHandleT const & segment, element_t<ElementTagT, WrappedConfigT> const & element )
+  bool is_in_segment( SegmentHandleT const & segment, viennagrid::element<ElementTagT, WrappedConfigT> const & element )
   {
-    typedef element_t<ElementTagT, WrappedConfigT> element_type;
+    typedef viennagrid::element<ElementTagT, WrappedConfigT> element_type;
     return is_in_segment( segment, viennagrid::make_accessor<element_type>( element_segment_mapping_collection(segment) ), element );
   }
 
@@ -1282,10 +1282,10 @@ namespace viennagrid
     * @return                 The segment ID range
     */
   template<typename SegmentationT, typename ElementTagT, typename WrappedConfigT>
-  typename result_of::segment_id_range< SegmentationT, element_t<ElementTagT, WrappedConfigT> >::type segment_ids( SegmentationT const & segmentation, element_t<ElementTagT, WrappedConfigT> const & element )
+  typename result_of::segment_id_range< SegmentationT, viennagrid::element<ElementTagT, WrappedConfigT> >::type segment_ids( SegmentationT const & segmentation, viennagrid::element<ElementTagT, WrappedConfigT> const & element )
   {
-    typedef typename result_of::segment_id_range< SegmentationT, element_t<ElementTagT, WrappedConfigT> >::type SegmentIDRangeType;
-    typedef element_t<ElementTagT, WrappedConfigT> ElementType;
+    typedef typename result_of::segment_id_range< SegmentationT, viennagrid::element<ElementTagT, WrappedConfigT> >::type SegmentIDRangeType;
+    typedef viennagrid::element<ElementTagT, WrappedConfigT> ElementType;
     return SegmentIDRangeType( viennagrid::make_accessor<ElementType>( element_segment_mapping_collection(segmentation) )(element) );
   }
 
@@ -1359,11 +1359,11 @@ namespace viennagrid
           typename SegmentHandleT::segmentation_type::appendix_type,
           element_segment_mapping_tag
       >::type,
-      element_t<ElementTagT, WrappedConfigT>
+      viennagrid::element<ElementTagT, WrappedConfigT>
   >::type::value_type::segment_element_info_type const *
-  segment_element_info( SegmentHandleT const & segment, element_t<ElementTagT, WrappedConfigT> const & element )
+  segment_element_info( SegmentHandleT const & segment, viennagrid::element<ElementTagT, WrappedConfigT> const & element )
   {
-    typedef element_t<ElementTagT, WrappedConfigT> element_type;
+    typedef viennagrid::element<ElementTagT, WrappedConfigT> element_type;
     return segment_element_info( segment, viennagrid::make_accessor<element_type>( element_segment_mapping_collection(segment) ), element );
   }
 
@@ -1382,11 +1382,11 @@ namespace viennagrid
           typename SegmentHandleT::segmentation_type::appendix_type,
           element_segment_mapping_tag
       >::type,
-      element_t<ElementTagT, WrappedConfigT>
+      viennagrid::element<ElementTagT, WrappedConfigT>
   >::type::value_type::segment_element_info_type *
-  segment_element_info( SegmentHandleT & segment, element_t<ElementTagT, WrappedConfigT> const & element )
+  segment_element_info( SegmentHandleT & segment, viennagrid::element<ElementTagT, WrappedConfigT> const & element )
   {
-    typedef element_t<ElementTagT, WrappedConfigT> element_type;
+    typedef viennagrid::element<ElementTagT, WrappedConfigT> element_type;
     return segment_element_info( segment, viennagrid::make_accessor<element_type>( element_segment_mapping_collection(segment) ), element );
   }
 
@@ -1425,9 +1425,9 @@ namespace viennagrid
     * @param  vertex          The vertex object
     */
   template<typename SegmentHandleT, typename WrappedConfigT>
-  void add( SegmentHandleT & segment, element_t<vertex_tag, WrappedConfigT> & vertex )
+  void add( SegmentHandleT & segment, viennagrid::element<vertex_tag, WrappedConfigT> & vertex )
   {
-    typedef element_t<vertex_tag, WrappedConfigT> element_type;
+    typedef viennagrid::element<vertex_tag, WrappedConfigT> element_type;
     viennagrid::elements<element_type>( segment.view() ).insert_unique_handle( viennagrid::handle( segment.segmentation().mesh(), vertex ) );
     viennagrid::elements<element_type>( segment.segmentation().all_elements() ).insert_unique_handle( viennagrid::handle( segment.segmentation().mesh(), vertex ) );
     add( segment, viennagrid::make_accessor<element_type>( element_segment_mapping_collection(segment) ), vertex );
@@ -1442,9 +1442,9 @@ namespace viennagrid
     * @param  element         The element object to be added
     */
   template<typename SegmentHandleT, typename ElementTagT, typename WrappedConfigT>
-  void add( SegmentHandleT & segment, element_t<ElementTagT, WrappedConfigT> & element )
+  void add( SegmentHandleT & segment, viennagrid::element<ElementTagT, WrappedConfigT> & element )
   {
-    typedef element_t<ElementTagT, WrappedConfigT> element_type;
+    typedef viennagrid::element<ElementTagT, WrappedConfigT> element_type;
     viennagrid::elements<element_type>( segment.view() ).insert_unique_handle( viennagrid::handle( segment.segmentation().mesh(), element ) );
     viennagrid::elements<element_type>( segment.segmentation().all_elements() ).insert_unique_handle( viennagrid::handle( segment.segmentation().mesh(), element ) );
     add( segment, viennagrid::make_accessor<element_type>( element_segment_mapping_collection(segment) ), element );
@@ -1489,9 +1489,9 @@ namespace viennagrid
 
 
 //   template<typename SegmentHandleT, typename ElementTagT, typename WrappedConfigT>
-//   bool non_recursive_erase( SegmentHandleT & segment, element_t<ElementTagT, WrappedConfigT> & element )
+//   bool non_recursive_erase( SegmentHandleT & segment, viennagrid::element<ElementTagT, WrappedConfigT> & element )
 //   {
-//     typedef element_t<ElementTagT, WrappedConfigT> element_type;
+//     typedef viennagrid::element<ElementTagT, WrappedConfigT> element_type;
 //     viennagrid::elements<element_type>( segment.view() ).erase_handle( viennagrid::handle( segment.segmentation().mesh(), element ) );
 //     return erase( segment, viennagrid::make_accessor<element_type>( element_segment_mapping_collection(segment) ), element );
 //   }
@@ -1529,7 +1529,7 @@ namespace viennagrid
     * @return                 True if the element is deleted from the segment, false otherwise
     */
   template<typename SegmentHandleT, typename ElementTagT, typename WrappedConfigT>
-  void erase( SegmentHandleT & segment, element_t<ElementTagT, WrappedConfigT> & element )
+  void erase( SegmentHandleT & segment, viennagrid::element<ElementTagT, WrappedConfigT> & element )
   {
     typedef typename viennagrid::result_of::mesh_view<SegmentHandleT>::type ToEraseViewT;
     ToEraseViewT elements_to_erase = viennagrid::make_view(segment);
@@ -1547,16 +1547,16 @@ namespace viennagrid
   std::pair<
               typename viennagrid::storage::result_of::container_of<
                   typename result_of::element_collection< segment_handle_t<SegmentationType> >::type,
-                  viennagrid::element_t<ElementTag, WrappedConfigType>
+                  viennagrid::element<ElementTag, WrappedConfigType>
               >::type::handle_type,
               bool
           >
-  push_element( segment_handle_t<SegmentationType> & segment, viennagrid::element_t<ElementTag, WrappedConfigType> const & element)
+  push_element( segment_handle_t<SegmentationType> & segment, viennagrid::element<ElementTag, WrappedConfigType> const & element)
   {
     std::pair<
             typename viennagrid::storage::result_of::container_of<
                 typename result_of::element_collection< segment_handle_t<SegmentationType> >::type,
-                viennagrid::element_t<ElementTag, WrappedConfigType>
+                viennagrid::element<ElementTag, WrappedConfigType>
             >::type::handle_type,
             bool
         > result = push_element<generate_id, call_callback>( segment.view(), element );

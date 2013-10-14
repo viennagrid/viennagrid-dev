@@ -189,7 +189,7 @@ namespace viennagrid
   /** @brief For internal use only */
   template<typename element_type_or_tag, typename coboundary_type_or_tag, typename coboundary_accessor_type, typename ElementTag, typename WrappedConfigType>
   viennagrid::storage::container_range_wrapper<typename coboundary_accessor_type::value_type>
-  coboundary_elements(coboundary_accessor_type accessor, element_t<ElementTag, WrappedConfigType> & element)
+  coboundary_elements(coboundary_accessor_type accessor, viennagrid::element<ElementTag, WrappedConfigType> & element)
   {
     typedef viennagrid::storage::container_range_wrapper<typename coboundary_accessor_type::value_type> range_type;
     return range_type( accessor( element ) );
@@ -198,7 +198,7 @@ namespace viennagrid
   /** @brief For internal use only */
   template<typename element_type_or_tag, typename coboundary_type_or_tag, typename coboundary_accessor_type, typename ElementTag, typename WrappedConfigType>
   viennagrid::storage::container_range_wrapper<const typename coboundary_accessor_type::value_type>
-  coboundary_elements(coboundary_accessor_type const accessor, element_t<ElementTag, WrappedConfigType> const & element)
+  coboundary_elements(coboundary_accessor_type const accessor, viennagrid::element<ElementTag, WrappedConfigType> const & element)
   {
     typedef viennagrid::storage::container_range_wrapper<const typename coboundary_accessor_type::value_type> range_type;
     return range_type( accessor( element ) );

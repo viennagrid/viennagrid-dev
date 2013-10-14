@@ -224,7 +224,7 @@ namespace viennagrid
       template<typename WrappedConfigType, typename ElementTagT>
       struct element_container
       {
-        typedef element_t<ElementTagT, WrappedConfigType> element_type;
+        typedef viennagrid::element<ElementTagT, WrappedConfigType> element_type;
         typedef typename viennagrid::storage::result_of::container<element_type, typename query_element_container_tag<WrappedConfigType, ElementTagT>::type >::type type;
       };
 
@@ -245,7 +245,7 @@ namespace viennagrid
       {
         typedef viennagrid::typelist<
             viennagrid::static_pair<
-                element_t<ElementTagT, WrappedConfigT>,
+                viennagrid::element<ElementTagT, WrappedConfigT>,
                 typename element_container<WrappedConfigT, ElementTagT>::type
             >,
             typename element_container_typemap<WrappedConfigT, TailT>::type
@@ -277,7 +277,7 @@ namespace viennagrid
   {
     /** @brief Creates the typemap for the coboundary container collection based on an element and its boundary element typelist. */
     template<typename WrappedConfigType, typename ElementTagT, typename BoundaryElementTaglistT =
-      typename boundary_element_taglist< element_t<ElementTagT, WrappedConfigType> >::type >
+      typename boundary_element_taglist< viennagrid::element<ElementTagT, WrappedConfigType> >::type >
     struct coboundary_container_collection_per_element_typemap;
 
     template<typename WrappedConfigType, typename ElementTagT>
@@ -339,7 +339,7 @@ namespace viennagrid
   {
     /** @brief Creates the typemap for the neighbour container collection based on an element and its boundary element typelist. The boundary elements are used as connector elements. */
     template<typename WrappedConfigType, typename ElementTagT, typename BoundaryElementTaglistT =
-      typename boundary_element_taglist< element_t<ElementTagT, WrappedConfigType> >::type >
+      typename boundary_element_taglist< viennagrid::element<ElementTagT, WrappedConfigType> >::type >
     struct neighbour_container_collection_per_element_typemap;
 
     template<typename WrappedConfigType, typename ElementTagT>

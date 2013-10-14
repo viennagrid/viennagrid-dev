@@ -177,8 +177,8 @@ namespace viennagrid
    * @param element    The element for which the centroid should be computed
    */
   template <typename ElementTag, typename WrappedConfigType>
-  typename viennagrid::result_of::point< element_t<ElementTag,WrappedConfigType> >::type
-  centroid(element_t<ElementTag,WrappedConfigType> const & element)
+  typename viennagrid::result_of::point< viennagrid::element<ElementTag,WrappedConfigType> >::type
+  centroid(viennagrid::element<ElementTag,WrappedConfigType> const & element)
   {
     return detail::centroid( default_point_accessor(element), element, ElementTag());
   }
