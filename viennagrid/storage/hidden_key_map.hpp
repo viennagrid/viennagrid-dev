@@ -170,11 +170,11 @@ namespace viennagrid
 
 
     template<typename KeyT, typename ElementT, typename handle_tag>
-    class container_base_t<hidden_key_map<KeyT, ElementT>, handle_tag> : public handled_container_t<hidden_key_map<KeyT, ElementT>, handle_tag>
+    class container_base_t<hidden_key_map<KeyT, ElementT>, handle_tag> : public handled_container<hidden_key_map<KeyT, ElementT>, handle_tag>
     {
     public:
 
-      typedef handled_container_t<hidden_key_map<KeyT, ElementT>, handle_tag> handled_container_type;
+      typedef handled_container<hidden_key_map<KeyT, ElementT>, handle_tag> handled_container_type;
       typedef typename handled_container_type::container_type container_type;
 
       typedef typename handled_container_type::value_type value_type;
@@ -228,7 +228,7 @@ namespace viennagrid
       };
     }
 
-    namespace container
+    namespace detail
     {
       template<typename KeyT, typename ValueT>
       std::pair<typename hidden_key_map<KeyT, ValueT>::iterator, bool>
@@ -240,19 +240,19 @@ namespace viennagrid
 
     template<typename HiddenKeyMapT, typename HandleTagT>
     struct IDCompare<
-          viennagrid::storage::container::iterator<
+          viennagrid::storage::detail::iterator<
             viennagrid::storage::hidden_key_map_iterator<HiddenKeyMapT>,
             viennagrid::storage::hidden_key_map_const_iterator<HiddenKeyMapT>,
             HandleTagT
           >
         >
     {
-      bool operator() (               viennagrid::storage::container::iterator<
+      bool operator() (               viennagrid::storage::detail::iterator<
             viennagrid::storage::hidden_key_map_iterator<HiddenKeyMapT>,
             viennagrid::storage::hidden_key_map_const_iterator<HiddenKeyMapT>,
             HandleTagT
           > const & lhs,
-                                      viennagrid::storage::container::iterator<
+                                      viennagrid::storage::detail::iterator<
             viennagrid::storage::hidden_key_map_iterator<HiddenKeyMapT>,
             viennagrid::storage::hidden_key_map_const_iterator<HiddenKeyMapT>,
             HandleTagT

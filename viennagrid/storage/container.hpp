@@ -32,7 +32,7 @@ namespace viennagrid
 {
   namespace storage
   {
-    namespace container
+    namespace detail
     {
 
       template<typename container_type>
@@ -330,7 +330,7 @@ namespace viennagrid
 
 
     template<typename base_container_, typename handle_tag>
-    class handled_container_t : public base_container_
+    class handled_container : public base_container_
     {
     public:
       typedef base_container_ container_type;
@@ -372,11 +372,11 @@ namespace viennagrid
 
 
     template<typename base_container_, typename handle_tag>
-    class container_base_t : public handled_container_t<base_container_, handle_tag>
+    class container_base_t : public handled_container<base_container_, handle_tag>
     {
     public:
 
-      typedef handled_container_t<base_container_, handle_tag> handled_container_type;
+      typedef handled_container<base_container_, handle_tag> handled_container_type;
       typedef typename handled_container_type::container_type container_type;
 
       typedef typename handled_container_type::value_type value_type;
@@ -415,11 +415,11 @@ namespace viennagrid
 
 
     template<typename key, typename compare, typename allocator, typename handle_tag>
-    class container_base_t<std::set<key, compare, allocator>, handle_tag> : public handled_container_t<std::set<key, compare, allocator>, handle_tag>
+    class container_base_t<std::set<key, compare, allocator>, handle_tag> : public handled_container<std::set<key, compare, allocator>, handle_tag>
     {
     public:
 
-      typedef handled_container_t<std::set<key, compare, allocator>, handle_tag> handled_container_type;
+      typedef handled_container<std::set<key, compare, allocator>, handle_tag> handled_container_type;
       typedef typename handled_container_type::container_type container_type;
 
       typedef typename handled_container_type::value_type value_type;
@@ -458,7 +458,7 @@ namespace viennagrid
 
 
     template<typename base_container_, typename handle_tag_>
-    class container_t : public container_base_t<base_container_, handle_tag_>
+    class container : public container_base_t<base_container_, handle_tag_>
     {
     public:
 
@@ -473,11 +473,11 @@ namespace viennagrid
       typedef typename base_container::value_type value_type;
 
 
-      typedef container::iterator<typename base_container::iterator, typename base_container::const_iterator, handle_tag> iterator;
+      typedef detail::iterator<typename base_container::iterator, typename base_container::const_iterator, handle_tag> iterator;
       iterator begin() { return iterator(base_container::begin()); }
       iterator end() { return iterator(base_container::end()); }
 
-      typedef container::const_iterator<typename base_container::iterator, typename base_container::const_iterator, handle_tag> const_iterator;
+      typedef detail::const_iterator<typename base_container::iterator, typename base_container::const_iterator, handle_tag> const_iterator;
       const_iterator cbegin() const { return const_iterator(base_container::begin()); }
       const_iterator cend() const { return const_iterator(base_container::end()); }
 
@@ -564,7 +564,7 @@ namespace viennagrid
       template<typename value_type, typename container_tag, typename handle_tag>
       struct container<value_type, handled_container_tag<container_tag, handle_tag> >
       {
-          typedef container_t< typename container<value_type, container_tag>::type, handle_tag > type;
+          typedef viennagrid::storage::container< typename container<value_type, container_tag>::type, handle_tag > type;
       };
 
 

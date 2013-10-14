@@ -231,7 +231,7 @@ namespace viennagrid
         insert_handle(handle);
       }
 
-      void insert_handle(handle_type handle) { viennagrid::storage::container::insert(handle_container, handle); }
+      void insert_handle(handle_type handle) { viennagrid::storage::detail::insert(handle_container, handle); }
       void set_handle( handle_type element, size_type pos )
       {
         if (size() <= pos+1) resize(pos+1);
@@ -466,7 +466,7 @@ namespace viennagrid
 
       void insert_handle(handle_type handle)
       {
-        viennagrid::storage::container::insert(handle_container, handle);
+        viennagrid::storage::detail::insert(handle_container, handle);
       }
       void set_handle( handle_type element, size_type pos ); // not supported
       void erase_handle(handle_type handle)
