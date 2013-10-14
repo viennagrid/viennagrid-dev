@@ -26,56 +26,56 @@ namespace viennagrid
   {
     namespace result_of
     {
-      template<typename numeric_config, typename outer_numeric_type>
+      template<typename NumericConfigT, typename OuterNumericT>
       struct numeric_type
       {
-        typedef typename numeric_config::numeric_type type;
+        typedef typename NumericConfigT::numeric_type type;
       };
 
-      template<typename outer_numeric_type>
-      struct numeric_type<double, outer_numeric_type>
+      template<typename OuterNumericT>
+      struct numeric_type<double, OuterNumericT>
       {
         typedef double type;
       };
     }
 
-    template<typename outer_numeric_type, typename numeric_config>
-    typename result_of::numeric_type<numeric_config, outer_numeric_type>::type absolute_tolerance( numeric_config config )
+    template<typename OuterNumericT, typename NumericConfigT>
+    typename result_of::numeric_type<NumericConfigT, OuterNumericT>::type absolute_tolerance( NumericConfigT config )
     {
-      typedef typename result_of::numeric_type<numeric_config, outer_numeric_type>::type numeric_type;
+      typedef typename result_of::numeric_type<NumericConfigT, OuterNumericT>::type numeric_type;
       return static_cast<numeric_type>(config.eps);
     }
 
-    template<typename outer_numeric_type, typename numeric_config>
-    typename result_of::numeric_type<numeric_config, outer_numeric_type>::type relative_tolerance( numeric_config config, outer_numeric_type base )
+    template<typename OuterNumericT, typename NumericConfigT>
+    typename result_of::numeric_type<NumericConfigT, OuterNumericT>::type relative_tolerance( NumericConfigT config, OuterNumericT base )
     {
-      typedef typename result_of::numeric_type<numeric_config, outer_numeric_type>::type numeric_type;
-      return std::max( static_cast<numeric_type>(config.eps) * static_cast<numeric_type>(base), absolute_tolerance<outer_numeric_type>(config) );
+      typedef typename result_of::numeric_type<NumericConfigT, OuterNumericT>::type numeric_type;
+      return std::max( static_cast<numeric_type>(config.eps) * static_cast<numeric_type>(base), absolute_tolerance<OuterNumericT>(config) );
     }
 
-    template<typename outer_numeric_type>
-    typename result_of::numeric_type<double, outer_numeric_type>::type absolute_tolerance( double eps )
+    template<typename OuterNumericT>
+    typename result_of::numeric_type<double, OuterNumericT>::type absolute_tolerance( double eps )
     {
-      typedef typename result_of::numeric_type<double, outer_numeric_type>::type numeric_type;
+      typedef typename result_of::numeric_type<double, OuterNumericT>::type numeric_type;
       return static_cast<numeric_type>(eps);
     }
 
-    template<typename outer_numeric_type>
-    typename result_of::numeric_type<double, outer_numeric_type>::type relative_tolerance( double eps, outer_numeric_type base )
+    template<typename OuterNumericT>
+    typename result_of::numeric_type<double, OuterNumericT>::type relative_tolerance( double eps, OuterNumericT base )
     {
-      typedef typename result_of::numeric_type<double, outer_numeric_type>::type numeric_type;
-      return std::max( static_cast<numeric_type>(eps) * base, absolute_tolerance<outer_numeric_type>(eps) );
+      typedef typename result_of::numeric_type<double, OuterNumericT>::type numeric_type;
+      return std::max( static_cast<numeric_type>(eps) * base, absolute_tolerance<OuterNumericT>(eps) );
     }
 
 
-    template<typename numeric_config, typename numeric_type>
-    bool is_equal( numeric_config nc, numeric_type first, numeric_type second )
+    template<typename NumericConfigT, typename NumericT>
+    bool is_equal( NumericConfigT nc, NumericT first, NumericT second )
     {
       return (std::abs(first-second) < relative_tolerance(nc, first));
     }
 
-    template<typename numeric_config, typename numeric_type>
-    bool is_not_equal( numeric_config nc, numeric_type first, numeric_type second )
+    template<typename NumericConfigT, typename NumericT>
+    bool is_not_equal( NumericConfigT nc, NumericT first, NumericT second )
     {
       return !is_equal(nc, first, second);
     }

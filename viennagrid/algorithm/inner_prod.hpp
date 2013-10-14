@@ -26,22 +26,22 @@ namespace viennagrid
 
   namespace detail
   {
-    template <typename PointType,
-              long dim = traits::dimension<PointType>::value>
+    template <typename PointT,
+              long dim = traits::dimension<PointT>::value>
     struct inner_prod_impl;
 
     //
     // 1d
     //
     /** @brief Implementation of the inner product in one dimension */
-    template <typename PointType>
-    struct inner_prod_impl<PointType, 1>
+    template <typename PointT>
+    struct inner_prod_impl<PointT, 1>
     {
-      typedef typename result_of::coord<PointType>::type    value_type;
+      typedef typename result_of::coord<PointT>::type    value_type;
 
-      template <typename PointType2>
-      static value_type apply(PointType const & p1,
-                              PointType2 const & p2)
+      template <typename PointT2>
+      static value_type apply(PointT const & p1,
+                              PointT2 const & p2)
       {
         return p1[0] * p2[0];
       }
@@ -51,14 +51,14 @@ namespace viennagrid
     // 2d
     //
     /** @brief Implementation of the inner product in two dimensions */
-    template <typename PointType>
-    struct inner_prod_impl<PointType, 2>
+    template <typename PointT>
+    struct inner_prod_impl<PointT, 2>
     {
-      typedef typename result_of::coord<PointType>::type    value_type;
+      typedef typename result_of::coord<PointT>::type    value_type;
 
-      template <typename PointType2>
-      static value_type apply(PointType const & p1,
-                              PointType2 const & p2)
+      template <typename PointT2>
+      static value_type apply(PointT const & p1,
+                              PointT2 const & p2)
       {
         return p1[0] * p2[0] + p1[1] * p2[1];
       }
@@ -68,14 +68,14 @@ namespace viennagrid
     // 3d
     //
     /** @brief Implementation of the inner product in three dimensions */
-    template <typename PointType>
-    struct inner_prod_impl<PointType, 3>
+    template <typename PointT>
+    struct inner_prod_impl<PointT, 3>
     {
-      typedef typename result_of::coord<PointType>::type    value_type;
+      typedef typename result_of::coord<PointT>::type    value_type;
 
-      template <typename PointType2>
-      static value_type apply(PointType const & p1,
-                              PointType2 const & p2)
+      template <typename PointT2>
+      static value_type apply(PointT const & p1,
+                              PointT2 const & p2)
       {
         return p1[0] * p2[0] + p1[1] * p2[1] + p1[2] * p2[2];
       }
@@ -83,21 +83,21 @@ namespace viennagrid
   }
 
   /** @brief Dispatched inner product function having full information about the coordinate systems. Transforms to Cartesian coordinates and forwards the calculation to the worker */
-  template<typename PointType1, typename PointType2, typename CSystem1, typename CSystem2>
-  typename result_of::coord<PointType1>::type
-  inner_prod_impl(PointType1 const & p1, PointType2 const & p2, CSystem1 const &, CSystem2 const &)
+  template<typename PointT1, typename PointT2, typename CoordinateSystemT1, typename CoordinateSystemT2>
+  typename result_of::coord<PointT1>::type
+  inner_prod_impl(PointT1 const & p1, PointT2 const & p2, CoordinateSystemT1 const &, CoordinateSystemT2 const &)
   {
-    typedef typename result_of::cartesian_point<PointType1>::type   CartesianPoint1;
+    typedef typename result_of::cartesian_point<PointT1>::type   CartesianPoint1;
 
     return detail::inner_prod_impl<CartesianPoint1>::apply(to_cartesian(p1), to_cartesian(p2));
   }
 
   /** @brief Dispatched inner product function having full information about the coordinate systems. Vectors/Points are in a Cartesian coordinate system already, thus no transformation required. */
-  template<typename PointType1, typename PointType2, int d>
-  typename result_of::coord<PointType1>::type
-  inner_prod_impl(PointType1 const & p1, PointType2 const & p2, cartesian_cs<d>, cartesian_cs<d>)
+  template<typename PointT1, typename PointT2, int d>
+  typename result_of::coord<PointT1>::type
+  inner_prod_impl(PointT1 const & p1, PointT2 const & p2, cartesian_cs<d>, cartesian_cs<d>)
   {
-    return detail::inner_prod_impl<PointType1>::apply(p1, p2);
+    return detail::inner_prod_impl<PointT1>::apply(p1, p2);
   }
 
   /** @brief Returns the inner product of two vectors, which can be given in different coordinate systems
@@ -105,14 +105,14 @@ namespace viennagrid
    * @param p1   First vector
    * @param p2   Second vector
    */
-  template<typename PointType1, typename PointType2>
-  typename result_of::coord<PointType1>::type
-  inner_prod(PointType1 const & p1, PointType2 const & p2)
+  template<typename PointT1, typename PointT2>
+  typename result_of::coord<PointT1>::type
+  inner_prod(PointT1 const & p1, PointT2 const & p2)
   {
     return inner_prod_impl(p1,
                            p2,
-                           typename traits::coordinate_system<PointType1>::type(),
-                           typename traits::coordinate_system<PointType2>::type());
+                           typename traits::coordinate_system<PointT1>::type(),
+                           typename traits::coordinate_system<PointT2>::type());
   }
 
 }

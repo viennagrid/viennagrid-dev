@@ -37,19 +37,19 @@ namespace viennagrid
   {
 
     /** @brief Computes the volume of topologically zero-dimensional elements (vertices). Degenerate case, returns 1 */
-    template <typename PointAccessorType, typename ElementType>
-    typename viennagrid::result_of::coord< typename PointAccessorType::value_type >::type
-    volume_impl(PointAccessorType const, ElementType const &, viennagrid::vertex_tag)
+    template <typename PointAccessorT, typename ElementT>
+    typename viennagrid::result_of::coord< typename PointAccessorT::value_type >::type
+    volume_impl(PointAccessorT const, ElementT const &, viennagrid::vertex_tag)
     {
-      return typename viennagrid::result_of::coord< typename PointAccessorType::value_type >::type(1);
+      return typename viennagrid::result_of::coord< typename PointAccessorT::value_type >::type(1);
     }
 
     /** @brief Computes the volume of topologically one-dimensional elements (lines, 1-simplex).*/
-    template <typename PointAccessorType, typename ElementType>
-    typename viennagrid::result_of::coord< typename PointAccessorType::value_type >::type
-    volume_impl(PointAccessorType const accessor, ElementType const & cell, viennagrid::simplex_tag<1>)
+    template <typename PointAccessorT, typename ElementT>
+    typename viennagrid::result_of::coord< typename PointAccessorT::value_type >::type
+    volume_impl(PointAccessorT const accessor, ElementT const & cell, viennagrid::simplex_tag<1>)
     {
-      typedef typename PointAccessorType::value_type PointType;
+      typedef typename PointAccessorT::value_type PointType;
 
       PointType const & p0 = accessor( vertices(cell)[0] );
       PointType const & p1 = accessor( vertices(cell)[1] );
@@ -58,20 +58,20 @@ namespace viennagrid
     }
 
     /** @brief Computes the volume of topologically one-dimensional elements (lines, 1-hypercube).*/
-    template <typename PointAccessorType, typename ElementType>
-    typename viennagrid::result_of::coord< typename PointAccessorType::value_type >::type
-    volume_impl(PointAccessorType const accessor, ElementType const & cell, viennagrid::hypercube_tag<1>)
+    template <typename PointAccessorT, typename ElementT>
+    typename viennagrid::result_of::coord< typename PointAccessorT::value_type >::type
+    volume_impl(PointAccessorT const accessor, ElementT const & cell, viennagrid::hypercube_tag<1>)
     {
       return volume_impl(accessor, cell, viennagrid::simplex_tag<1>());
     }
 
     //topologically two-dimensional elements
     /** @brief Computes the two-dimensional volume of a triangle.*/
-    template <typename PointAccessorType, typename ElementType>
-    typename viennagrid::result_of::coord< typename PointAccessorType::value_type >::type
-    volume_impl(PointAccessorType const accessor, ElementType const & cell, viennagrid::triangle_tag)
+    template <typename PointAccessorT, typename ElementT>
+    typename viennagrid::result_of::coord< typename PointAccessorT::value_type >::type
+    volume_impl(PointAccessorT const accessor, ElementT const & cell, viennagrid::triangle_tag)
     {
-      typedef typename PointAccessorType::value_type PointType;
+      typedef typename PointAccessorT::value_type PointType;
 
       PointType const & p0 = accessor( vertices(cell)[0] );
       PointType const & p1 = accessor( vertices(cell)[1] );
@@ -81,11 +81,11 @@ namespace viennagrid
     }
 
     /** @brief Computes the two-dimensional volume of a quadrilateral.*/
-    template <typename PointAccessorType, typename ElementType>
-    typename viennagrid::result_of::coord< typename PointAccessorType::value_type >::type
-    volume_impl(PointAccessorType const accessor, ElementType const & cell, viennagrid::quadrilateral_tag)
+    template <typename PointAccessorT, typename ElementT>
+    typename viennagrid::result_of::coord< typename PointAccessorT::value_type >::type
+    volume_impl(PointAccessorT const accessor, ElementT const & cell, viennagrid::quadrilateral_tag)
     {
-      typedef typename PointAccessorType::value_type PointType;
+      typedef typename PointAccessorT::value_type PointType;
 
       PointType const & p0 = accessor( vertices(cell)[0] );
       PointType const & p1 = accessor( vertices(cell)[1] );
@@ -97,13 +97,13 @@ namespace viennagrid
 
 
     /** @brief Computes the two-dimensional volume of a polygon.*/
-    template <typename PointAccessorType, typename ElementType>
-    typename viennagrid::result_of::coord< typename PointAccessorType::value_type >::type
-    volume_impl(PointAccessorType const accessor, ElementType const & cell, viennagrid::polygon_tag)
+    template <typename PointAccessorT, typename ElementT>
+    typename viennagrid::result_of::coord< typename PointAccessorT::value_type >::type
+    volume_impl(PointAccessorT const accessor, ElementT const & cell, viennagrid::polygon_tag)
     {
-      typedef typename PointAccessorType::value_type PointType;
+      typedef typename PointAccessorT::value_type PointType;
       typedef typename viennagrid::result_of::coord< PointType >::type NumericType;
-      typedef typename viennagrid::result_of::const_element_range<ElementType, vertex_tag>::type       VertexOnCellContainer;
+      typedef typename viennagrid::result_of::const_element_range<ElementT, vertex_tag>::type       VertexOnCellContainer;
       typedef typename viennagrid::result_of::iterator<VertexOnCellContainer>::type                    VertexOnCellIterator;
 
 
@@ -129,11 +129,11 @@ namespace viennagrid
 
     //topologically three-dimensional elements
     /** @brief Computes the three-dimensional volume of a tetrahedron.*/
-    template <typename PointAccessorType, typename ElementType>
-    typename viennagrid::result_of::coord< typename PointAccessorType::value_type >::type
-    volume_impl(PointAccessorType const accessor, ElementType const & cell, viennagrid::tetrahedron_tag)
+    template <typename PointAccessorT, typename ElementT>
+    typename viennagrid::result_of::coord< typename PointAccessorT::value_type >::type
+    volume_impl(PointAccessorT const accessor, ElementT const & cell, viennagrid::tetrahedron_tag)
     {
-      typedef typename PointAccessorType::value_type PointType;
+      typedef typename PointAccessorT::value_type PointType;
 
       PointType const & p0 = accessor( vertices(cell)[0] );
       PointType const & p1 = accessor( vertices(cell)[1] );
@@ -145,11 +145,11 @@ namespace viennagrid
 
 
     /** @brief Computes the three-dimensional volume of a hexahedron.*/
-    template <typename PointAccessorType, typename ElementType>
-    typename viennagrid::result_of::coord< typename PointAccessorType::value_type >::type
-    volume_impl(PointAccessorType const accessor, ElementType const & cell, viennagrid::hexahedron_tag)
+    template <typename PointAccessorT, typename ElementT>
+    typename viennagrid::result_of::coord< typename PointAccessorT::value_type >::type
+    volume_impl(PointAccessorT const accessor, ElementT const & cell, viennagrid::hexahedron_tag)
     {
-      typedef typename PointAccessorType::value_type PointType;
+      typedef typename PointAccessorT::value_type PointType;
 
       PointType const & p0 = accessor( vertices(cell)[0] );
       PointType const & p1 = accessor( vertices(cell)[1] );
@@ -172,15 +172,15 @@ namespace viennagrid
 
     //
     /** @brief Dispatched function for computing the volume of a mesh or segment.*/
-    template <typename ElementTypeOrTag, typename MeshSegmentHandleType>
+    template <typename ElementTOrTag, typename MeshSegmentHandleType>
     typename viennagrid::result_of::coord< MeshSegmentHandleType >::type
     volume_mesh(MeshSegmentHandleType const & mesh_obj)
     {
-      typedef typename viennagrid::result_of::const_element_range<MeshSegmentHandleType, ElementTypeOrTag>::type  CellContainer;
+      typedef typename viennagrid::result_of::const_element_range<MeshSegmentHandleType, ElementTOrTag>::type  CellContainer;
       typedef typename viennagrid::result_of::iterator<CellContainer>::type                                       CellIterator;
 
       typename viennagrid::result_of::coord< MeshSegmentHandleType >::type new_volume = 0;
-      CellContainer new_cells = viennagrid::elements<ElementTypeOrTag>(mesh_obj);
+      CellContainer new_cells = viennagrid::elements<ElementTOrTag>(mesh_obj);
       for (CellIterator new_cit = new_cells.begin();
                         new_cit != new_cells.end();
                       ++new_cit)
@@ -195,27 +195,27 @@ namespace viennagrid
   // The public interface functions
   //
   /** @brief Returns the n-dimensional volume of a n-cell */
-  template <typename PointAccessorType, typename ElementType>
-  typename viennagrid::result_of::coord< typename PointAccessorType::value_type >::type
-  volume(PointAccessorType const accessor, ElementType const & cell)
+  template <typename PointAccessorT, typename ElementT>
+  typename viennagrid::result_of::coord< typename PointAccessorT::value_type >::type
+  volume(PointAccessorT const accessor, ElementT const & cell)
   {
-    return detail::volume_impl( accessor, cell, typename ElementType::tag() );
+    return detail::volume_impl( accessor, cell, typename ElementT::tag() );
   }
 
   /** @brief Returns the n-dimensional volume of a n-cell */
-  template <typename ElementTag, typename WrappedConfigType>
-  typename viennagrid::result_of::coord< viennagrid::element<ElementTag, WrappedConfigType> >::type
-  volume(viennagrid::element<ElementTag, WrappedConfigType> const & cell)
+  template <typename ElementTag, typename WrappedConfigT>
+  typename viennagrid::result_of::coord< viennagrid::element<ElementTag, WrappedConfigT> >::type
+  volume(viennagrid::element<ElementTag, WrappedConfigT> const & cell)
   {
     return volume( default_point_accessor(cell), cell );
   }
 
 
-  template<typename ElementTypeOrTag, typename WrappedConfigType>
-  typename viennagrid::result_of::coord< mesh<WrappedConfigType> >::type
-  volume(mesh<WrappedConfigType> const & mesh_obj)
+  template<typename ElementTOrTag, typename WrappedConfigT>
+  typename viennagrid::result_of::coord< mesh<WrappedConfigT> >::type
+  volume(mesh<WrappedConfigT> const & mesh_obj)
   {
-      return detail::volume_mesh<ElementTypeOrTag>(mesh_obj);
+      return detail::volume_mesh<ElementTOrTag>(mesh_obj);
   }
 
   // default Element Tag = Cell Tag

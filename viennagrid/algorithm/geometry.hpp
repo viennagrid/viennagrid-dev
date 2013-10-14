@@ -28,11 +28,11 @@ namespace viennagrid
   template<typename ElementT, typename PointAccessorT>
   typename viennagrid::result_of::point<PointAccessorT>::type normal_vector( PointAccessorT const point_accessor, ElementT const & element )
   {
-    typedef typename viennagrid::result_of::point<PointAccessorT>::type point;
+    typedef typename viennagrid::result_of::point<PointAccessorT>::type    point_type;
 
-    point const & p0 = point_accessor( viennagrid::vertices(element)[0] );
-    point const & p1 = point_accessor( viennagrid::vertices(element)[1] );
-    point const & p2 = point_accessor( viennagrid::vertices(element)[2] );
+    point_type const & p0 = point_accessor( viennagrid::vertices(element)[0] );
+    point_type const & p1 = point_accessor( viennagrid::vertices(element)[1] );
+    point_type const & p2 = point_accessor( viennagrid::vertices(element)[2] );
 
     return viennagrid::cross_prod( p1-p0, p2-p0 );
   }
@@ -48,20 +48,20 @@ namespace viennagrid
   namespace geometry
   {
 
-    template<typename point>
-    typename viennagrid::result_of::coord<point>::type determinant( point const & p0, point const & p1, point const & p2 )
+    template<typename PointT>
+    typename viennagrid::result_of::coord<PointT>::type determinant( PointT const & p0, PointT const & p1, PointT const & p2 )
     {
       return p0[0]*p1[1]*p2[2] + p1[0]*p2[1]*p0[2] + p2[0]*p0[1]*p1[2] - p0[2]*p1[1]*p2[0] - p1[2]*p2[1]*p0[0] - p2[2]*p0[1]*p1[0];
     }
 
-    template<typename point_iterator_type>
+    template<typename PointIteratorT>
     std::pair<
-        typename std::iterator_traits<point_iterator_type>::value_type,
-        typename std::iterator_traits<point_iterator_type>::value_type
-    > bounding_box( point_iterator_type it, point_iterator_type const & it_end )
+        typename std::iterator_traits<PointIteratorT>::value_type,
+        typename std::iterator_traits<PointIteratorT>::value_type
+    > bounding_box( PointIteratorT it, PointIteratorT const & it_end )
     {
-      typedef typename std::iterator_traits<point_iterator_type>::value_type PointType;
-      typedef typename viennagrid::result_of::coord<PointType>::type NumericType;
+      typedef typename std::iterator_traits<PointIteratorT>::value_type   PointType;
+      typedef typename viennagrid::result_of::coord<PointType>::type      NumericType;
 
       PointType lower_left;
       PointType upper_right;
@@ -82,8 +82,8 @@ namespace viennagrid
 
 
 
-    template<typename iterator_type>
-    iterator_type circular_next(iterator_type it, iterator_type const & start_it, iterator_type const & end_it)
+    template<typename IteratorT>
+    IteratorT circular_next(IteratorT it, IteratorT const & start_it, IteratorT const & end_it)
     {
       if (++it == end_it)
         return start_it;
@@ -91,8 +91,8 @@ namespace viennagrid
         return it;
     }
 
-    template<typename iterator_type>
-    iterator_type circular_prev(iterator_type it, iterator_type const & start_it, iterator_type const & end_it)
+    template<typename IteratorT>
+    IteratorT circular_prev(IteratorT it, IteratorT const & start_it, IteratorT const & end_it)
     {
       if (it == start_it)
         it = end_it;
@@ -192,8 +192,8 @@ namespace viennagrid
 
 
 
-    template<typename iterator_type, typename vector_type>
-    vector_type orthogonalize_one_vector( iterator_type it, const iterator_type & end, vector_type vec )
+    template<typename IteratorT, typename VectorT>
+    vector_type orthogonalize_one_vector( IteratorT it, const IteratorT & end, VectorT vec )
     {
       for (; it != end; ++it)
         vec -= viennagrid::inner_prod( vec, *it ) / viennagrid::inner_prod( *it, *it ) * (*it);
@@ -202,13 +202,13 @@ namespace viennagrid
     }
 
 
-    template<typename iterator_type, typename numeric_config>
-    bool orthogonalize( iterator_type start, iterator_type end, numeric_config nc )
+    template<typename IteratorT, typename NumericConfigT>
+    bool orthogonalize( IteratorT start, IteratorT end, NumericConfigT nc )
     {
-      typedef typename std::iterator_traits<iterator_type>::value_type vector_type;
-      typedef typename viennagrid::result_of::coord<vector_type>::type coord_type;
+      typedef typename std::iterator_traits<IteratorT>::value_type      vector_type;
+      typedef typename viennagrid::result_of::coord<vector_type>::type  coord_type;
 
-      for (iterator_type n = start; n != end; ++n)
+      for (IteratorT n = start; n != end; ++n)
       {
         *n = orthogonalize_one_vector(start, n, *n);
 
@@ -221,15 +221,15 @@ namespace viennagrid
 
 
 
-    template<typename point_iterator_type, typename numeric_config, typename out_point_type, typename out_point_iterator_type>
-    bool projection_matrix(const point_iterator_type & start, const point_iterator_type & end, numeric_config nc,
-                           out_point_type & center, out_point_iterator_type projection_matrix_start)
+    template<typename PointIteratorT, typename NumericConfigT, typename OutPointT, typename OutPointIteratorT>
+    bool projection_matrix(const PointIteratorT & start, const PointIteratorT & end, NumericConfigT nc,
+                           OutPointT & center, OutPointIteratorT projection_matrix_start)
     {
-      typedef typename std::iterator_traits<point_iterator_type>::value_type point_type;
-      typedef typename viennagrid::result_of::coord<point_type>::type coord_type;
-      typedef typename numeric::result_of::numeric_type<numeric_config, coord_type>::type numeric_type;
+      typedef typename std::iterator_traits<PointIteratorT>::value_type                    point_type;
+      typedef typename viennagrid::result_of::coord<point_type>::type                      coord_type;
+      typedef typename numeric::result_of::numeric_type<NumericConfigT, coord_type>::type  numeric_type;
 
-      out_point_iterator_type projection_matrix_end = projection_matrix_start;
+      OutPointIteratorT projection_matrix_end = projection_matrix_start;
       ++projection_matrix_end; ++projection_matrix_end;
 
       std::fill( projection_matrix_start, projection_matrix_end, point_type() );
@@ -237,7 +237,7 @@ namespace viennagrid
       if (start == end) return false; // too few points
 
 
-      point_iterator_type pit;
+      PointIteratorT pit;
 
 
       // calculating the center
@@ -277,7 +277,7 @@ namespace viennagrid
 
         // check linear dependency with other vectors in projection matrix
         unsigned int index = 0;
-        out_point_iterator_type pmit = projection_matrix_start;
+        OutPointIteratorT pmit = projection_matrix_start;
         for (; index < projection_matrix_index; ++index, ++pmit)
         {
           numeric_type angle_cos = viennagrid::inner_prod( it->second, *pmit );
@@ -298,38 +298,38 @@ namespace viennagrid
       orthogonalize( projection_matrix_start, projection_matrix_end, nc );
 
       // normalize vectors
-      for (out_point_iterator_type it = projection_matrix_start; it != projection_matrix_end; ++it)
+      for (OutPointIteratorT it = projection_matrix_start; it != projection_matrix_end; ++it)
         *it /= viennagrid::norm_2(*it);
 
       return true;
     }
 
 
-    template<typename point_iterator_type, typename out_point_iterator_type, typename point_type, typename projection_point_iterator_type>
-    void project(point_iterator_type in, const point_iterator_type & in_end,
-                out_point_iterator_type out,
+    template<typename PointIteratorT, typename OutPointIteratorT, typename point_type, typename ProjectionPointIteratorT>
+    void project(PointIteratorT in, const PointIteratorT & in_end,
+                OutPointIteratorT out,
                 point_type center,
-                projection_point_iterator_type const & proj_start, projection_point_iterator_type const & proj_end)
+                ProjectionPointIteratorT const & proj_start, ProjectionPointIteratorT const & proj_end)
     {
       for ( ; in != in_end; ++in, ++out)
       {
         point_type tmp = *in - center;
 
         size_t index = 0;
-        for (projection_point_iterator_type it = proj_start; it != proj_end; ++it, ++index)
+        for (ProjectionPointIteratorT it = proj_start; it != proj_end; ++it, ++index)
           (*out)[index] = viennagrid::inner_prod( tmp, *it );
       }
     }
 
 
 
-    template<typename point_iterator_type, typename out_point_iterator_type, typename numeric_config>
-    bool project_onto_2dplane(point_iterator_type in, const point_iterator_type & in_end,
-                              out_point_iterator_type out,
-                              numeric_config nc)
+    template<typename PointIteratorT, typename OutPointIteratorT, typename NumericConfigT>
+    bool project_onto_2dplane(PointIteratorT in, const PointIteratorT & in_end,
+                              OutPointIteratorT out,
+                              NumericConfigT nc)
     {
-      typedef typename std::iterator_traits<point_iterator_type>::value_type InPointType;
-      typedef typename std::iterator_traits<out_point_iterator_type>::value_type OutPointType;
+      typedef typename std::iterator_traits<PointIteratorT>::value_type       InPointType;
+      typedef typename std::iterator_traits<OutPointIteratorT>::value_type   OutPointType;
 
       size_t dimension = (*in).size();
       std::vector<InPointType> projection_matrix(dimension);

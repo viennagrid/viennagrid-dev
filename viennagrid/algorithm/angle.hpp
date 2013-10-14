@@ -25,18 +25,18 @@ namespace viennagrid
 {
 
   /** @brief Implementation of the spanned angle between two vectors */
-  template<typename point_type>
-  typename viennagrid::result_of::coord<point_type>::type spanned_angle( point_type const & v0, point_type const & v1 )
+  template<typename PointT>
+  typename viennagrid::result_of::coord<PointT>::type spanned_angle( PointT const & v0, PointT const & v1 )
   {
     return std::acos( viennagrid::inner_prod(v0, v1) / (viennagrid::norm_2(v0) * viennagrid::norm_2(v1)) );
   }
 
   /** @brief Implementation of the spanned (solid) angle by three points */
   // http://en.wikipedia.org/wiki/Solid_angle#Tetrahedron
-  template<typename point_type>
-  typename viennagrid::result_of::coord<point_type>::type spanned_angle( point_type const & a, point_type const & b, point_type const & c )
+  template<typename PointT>
+  typename viennagrid::result_of::coord<PointT>::type spanned_angle( PointT const & a, PointT const & b, PointT const & c )
   {
-    typedef typename viennagrid::result_of::coord<point_type>::type coord_type;
+    typedef typename viennagrid::result_of::coord<PointT>::type coord_type;
 
     coord_type det = viennagrid::geometry::determinant(a, b, c);
 
@@ -52,12 +52,12 @@ namespace viennagrid
 
 
   /** @brief Implementation of the dihedral angle between two planes each defined by 3 points */
-  template<typename point_type>
-  typename viennagrid::result_of::coord<point_type>::type dihedral_angle( point_type const & p0, point_type const & p1, point_type const & p2,
-                                                                          point_type const & q0, point_type const & q1, point_type const & q2)
+  template<typename PointT>
+  typename viennagrid::result_of::coord<PointT>::type dihedral_angle( PointT const & p0, PointT const & p1, PointT const & p2,
+                                                                      PointT const & q0, PointT const & q1, PointT const & q2)
   {
-    point_type np = viennagrid::cross_prod( p1-p0, p2-p0 );
-    point_type nq = viennagrid::cross_prod( q1-q0, q2-q0 );
+    PointT np = viennagrid::cross_prod( p1-p0, p2-p0 );
+    PointT nq = viennagrid::cross_prod( q1-q0, q2-q0 );
 
     return spanned_angle(np, nq);
   }
@@ -65,30 +65,30 @@ namespace viennagrid
 
 
   /** @brief Implementation of the angle between two lines directing from origin to p0 and p1  */
-  template<typename point_type>
-  typename viennagrid::result_of::coord<point_type>::type angle( point_type const & origin, point_type const & p0, point_type const & p1 )
+  template<typename PointT>
+  typename viennagrid::result_of::coord<PointT>::type angle( PointT const & origin, PointT const & p0, PointT const & p1 )
   {
-    point_type v0 = p0 - origin;
-    point_type v1 = p1 - origin;
+    PointT v0 = p0 - origin;
+    PointT v1 = p1 - origin;
 
     return spanned_angle(v0, v1);
   }
 
   /** @brief Implementation of the solid angle from an origin to p0, p1 and p2 */
-  template<typename point_type>
-  typename viennagrid::result_of::coord<point_type>::type angle( point_type const & origin, point_type const & p0, point_type const & p1, point_type const & p2 )
+  template<typename PointT>
+  typename viennagrid::result_of::coord<PointT>::type angle( PointT const & origin, PointT const & p0, PointT const & p1, PointT const & p2 )
   {
-    point_type v0 = p0 - origin;
-    point_type v1 = p1 - origin;
-    point_type v2 = p2 - origin;
+    PointT v0 = p0 - origin;
+    PointT v1 = p1 - origin;
+    PointT v2 = p2 - origin;
 
     return spanned_angle(v0, v1, v2);
   }
 
   /** @brief Implementation of the solid angle from an origin to p0, p1 and p2, same as angle(origin, p0, p1, p2) */
   // same as above, http://en.wikipedia.org/wiki/Solid_angle#Tetrahedron
-  template<typename point_type>
-  typename viennagrid::result_of::coord<point_type>::type angle2( point_type const & origin, point_type const & a, point_type const & b, point_type const & c )
+  template<typename PointT>
+  typename viennagrid::result_of::coord<PointT>::type angle2( PointT const & origin, PointT const & a, PointT const & b, PointT const & c )
   {
     double da_ab = dihedral_angle( origin, a, c, origin, b, c );
     double da_ac = dihedral_angle( origin, a, b, origin, c, b );

@@ -22,11 +22,11 @@ namespace viennagrid
   namespace detail
   {
     /** @brief For internal use only. */
-    template<typename MeshType, typename ScalarType, typename PointAccessorType>
-    void scale_impl(MeshType& mesh_obj, ScalarType factor, PointAccessorType accessor)
+    template<typename MeshT, typename ScalarT, typename PointAccessorT>
+    void scale_impl(MeshT& mesh_obj, ScalarT factor, PointAccessorT accessor)
     {
-      typedef typename viennagrid::result_of::element<MeshType, viennagrid::vertex_tag>::type         VertexType;
-      typedef typename viennagrid::result_of::element_range<MeshType, viennagrid::vertex_tag>::type   VertexContainer;
+      typedef typename viennagrid::result_of::element<MeshT, viennagrid::vertex_tag>::type         VertexType;
+      typedef typename viennagrid::result_of::element_range<MeshT, viennagrid::vertex_tag>::type   VertexContainer;
       typedef typename viennagrid::result_of::iterator<VertexContainer>::type                           VertexIterator;
 
       VertexContainer vertices = viennagrid::elements<VertexType>(mesh_obj);
@@ -45,8 +45,8 @@ namespace viennagrid
    * @param  mesh_or_segment          The mesh/segment which points are scaled
    * @param  factor                     The scale factor
    */
-  template<typename MeshOrSegmentHandleT, typename ScalarType>
-  void scale(MeshOrSegmentHandleT & mesh_or_segment, ScalarType factor)
+  template<typename MeshOrSegmentHandleT, typename ScalarT>
+  void scale(MeshOrSegmentHandleT & mesh_or_segment, ScalarT factor)
   {
     viennagrid::detail::scale_impl(mesh_or_segment, factor, viennagrid::default_point_accessor(mesh_or_segment));
   }

@@ -40,54 +40,54 @@ namespace viennagrid
     //
 
     // Distance between two points:
-    template <typename PointType1, typename PointType2>
-    typename viennagrid::result_of::coord<PointType1>::type
-    distance_impl(PointType1 const & p1,
-                  PointType2 const & p2)
+    template <typename PointT1, typename PointT2>
+    typename viennagrid::result_of::coord<PointT1>::type
+    distance_impl(PointT1 const & p1,
+                  PointT2 const & p2)
     {
       return norm_2(p1 - p2);
     }
 
-    template <typename PointType1, typename PointType2>
-    typename viennagrid::result_of::coord<PointType1>::type
-    distance_impl( std::pair<PointType1,PointType2> const & pts)
+    template <typename PointT1, typename PointT2>
+    typename viennagrid::result_of::coord<PointT1>::type
+    distance_impl( std::pair<PointT1,PointT2> const & pts)
     {
       return distance_impl(pts.first, pts.second);
     }
 
-    template <typename PointAccessorType, typename CoordType1, typename CoordinateSystem1, typename CoordType2, typename CoordinateSystem2>
-    CoordType1
-    distance_impl(PointAccessorType const,
-                  spatial_point<CoordType1, CoordinateSystem1> const & p1,
-                  spatial_point<CoordType2, CoordinateSystem2> const & p2)
+    template <typename PointAccessorT, typename CoordT1, typename CoordinateSystemT1, typename CoordT2, typename CoordinateSystemT2>
+    CoordT1
+    distance_impl(PointAccessorT const,
+                  spatial_point<CoordT1, CoordinateSystemT1> const & p1,
+                  spatial_point<CoordT2, CoordinateSystemT2> const & p2)
     {
       return distance_impl(p1, p2);
     }
 
-    template <typename PointAccessorType, typename PointType, typename WrappedConfigType>
-    typename viennagrid::result_of::coord<PointType>::type
-    distance_impl(PointAccessorType const accessor,
-                  PointType const & p1,
-                  viennagrid::element<viennagrid::vertex_tag, WrappedConfigType> const & v2)
+    template <typename PointAccessorT, typename PointT, typename WrappedConfigT>
+    typename viennagrid::result_of::coord<PointT>::type
+    distance_impl(PointAccessorT const accessor,
+                  PointT const & p1,
+                  viennagrid::element<viennagrid::vertex_tag, WrappedConfigT> const & v2)
     {
       return distance_impl(p1, accessor(v2));
     }
 
-    template <typename PointAccessorType, typename PointType, typename WrappedConfigType>
-    typename viennagrid::result_of::coord<typename PointAccessorType::value_type>::type
-    distance_impl(PointAccessorType const accessor,
-                  viennagrid::element<viennagrid::vertex_tag, WrappedConfigType> const & v1,
-                  PointType const & p2)
+    template <typename PointAccessorT, typename PointT, typename WrappedConfigT>
+    typename viennagrid::result_of::coord<typename PointAccessorT::value_type>::type
+    distance_impl(PointAccessorT const accessor,
+                  viennagrid::element<viennagrid::vertex_tag, WrappedConfigT> const & v1,
+                  PointT const & p2)
     {
       return distance_impl(accessor(v1), p2);
     }
 
     // Distance between vertices: Use point distance
-    template <typename PointAccessorType, typename PointType, typename WrappedConfigType1, typename WrappedConfigType2>
-    typename result_of::coord<typename PointAccessorType::value_type>::type
-    distance_impl(PointAccessorType const accessor,
-                  viennagrid::element<viennagrid::vertex_tag, WrappedConfigType1> const & v1,
-                  viennagrid::element<viennagrid::vertex_tag, WrappedConfigType2> const & v2)
+    template <typename PointAccessorT, typename PointT, typename WrappedConfigT1, typename WrappedConfigT2>
+    typename result_of::coord<typename PointAccessorT::value_type>::type
+    distance_impl(PointAccessorT const accessor,
+                  viennagrid::element<viennagrid::vertex_tag, WrappedConfigT1> const & v1,
+                  viennagrid::element<viennagrid::vertex_tag, WrappedConfigT2> const & v2)
     {
       return distance_impl(accessor(v1), accessor(v2));
     }
@@ -97,16 +97,16 @@ namespace viennagrid
     //
     // Generic distance computation: Reuse closest_points()
     //
-    template <typename PointAccessorType, typename Something1, typename Something2>
-    typename result_of::coord<typename PointAccessorType::value_type>::type
-    distance_impl(PointAccessorType const accessor,
-                  Something1 const & el1,
-                  Something2 const & el2)
+    template <typename PointAccessorT, typename SomethingT1, typename SomethingT2>
+    typename result_of::coord<typename PointAccessorT::value_type>::type
+    distance_impl(PointAccessorT const accessor,
+                  SomethingT1 const & el1,
+                  SomethingT2 const & el2)
     {
-      //typedef typename result_of::point<ElementType1>::type   PointType;
-      typedef typename PointAccessorType::value_type PointType;
+      //typedef typename result_of::point<ElementType1>::type   PointT;
+      typedef typename PointAccessorT::value_type PointT;
 
-      std::pair<PointType, PointType> points = closest_points(accessor, el1, el2);
+      std::pair<PointT, PointT> points = closest_points(accessor, el1, el2);
 
       return distance_impl( points );
     }
@@ -116,54 +116,54 @@ namespace viennagrid
     ////////////////////////////////// boundary distance //////////////////////////////////////
 
 
-    template <typename PointType1, typename PointType2>
-    typename viennagrid::result_of::coord<PointType1>::type
-    boundary_distance_impl(PointType1 const & p1,
-                  PointType2 const & p2)
+    template <typename PointT1, typename PointT2>
+    typename viennagrid::result_of::coord<PointT1>::type
+    boundary_distance_impl(PointT1 const & p1,
+                  PointT2 const & p2)
     {
       return norm_2(p1 - p2);
     }
 
-    template <typename PointType1, typename PointType2>
-    typename viennagrid::result_of::coord<PointType1>::type
-    boundary_distance_impl( std::pair<PointType1,PointType2> const & pts)
+    template <typename PointT1, typename PointT2>
+    typename viennagrid::result_of::coord<PointT1>::type
+    boundary_distance_impl( std::pair<PointT1,PointT2> const & pts)
     {
       return boundary_distance_impl(pts.first, pts.second);
     }
 
-    template <typename PointAccessorType, typename CoordType1, typename CoordinateSystem1, typename CoordType2, typename CoordinateSystem2>
-    CoordType1
-    boundary_distance_impl(PointAccessorType const,
-                  spatial_point<CoordType1, CoordinateSystem1> const & p1,
-                  spatial_point<CoordType2, CoordinateSystem2> const & p2)
+    template <typename PointAccessorT, typename CoordT1, typename CoordinateSystemT1, typename CoordT2, typename CoordinateSystemT2>
+    CoordT1
+    boundary_distance_impl(PointAccessorT const,
+                  spatial_point<CoordT1, CoordinateSystemT1> const & p1,
+                  spatial_point<CoordT2, CoordinateSystemT2> const & p2)
     {
       return boundary_distance_impl(p1, p2);
     }
 
-    template <typename PointAccessorType, typename PointType, typename WrappedConfigType>
-    typename viennagrid::result_of::coord<PointType>::type
-    boundary_distance_impl(PointAccessorType const accessor,
-                  PointType const & p1,
-                  viennagrid::element<viennagrid::vertex_tag, WrappedConfigType> const & v2)
+    template <typename PointAccessorT, typename PointT, typename WrappedConfigT>
+    typename viennagrid::result_of::coord<PointT>::type
+    boundary_distance_impl(PointAccessorT const accessor,
+                  PointT const & p1,
+                  viennagrid::element<viennagrid::vertex_tag, WrappedConfigT> const & v2)
     {
       return boundary_distance_impl(p1, accessor(v2));
     }
 
-    template <typename PointAccessorType, typename PointType, typename WrappedConfigType>
-    typename viennagrid::result_of::coord<typename PointAccessorType::value_type>::type
-    boundary_distance_impl(PointAccessorType const accessor,
-                  viennagrid::element<viennagrid::vertex_tag, WrappedConfigType> const & v1,
-                  PointType const & p2)
+    template <typename PointAccessorT, typename PointT, typename WrappedConfigT>
+    typename viennagrid::result_of::coord<typename PointAccessorT::value_type>::type
+    boundary_distance_impl(PointAccessorT const accessor,
+                  viennagrid::element<viennagrid::vertex_tag, WrappedConfigT> const & v1,
+                  PointT const & p2)
     {
       return boundary_distance_impl(accessor(v1), p2);
     }
 
     // Distance between vertices: Use point distance
-    template <typename PointAccessorType, typename PointType, typename WrappedConfigType1, typename WrappedConfigType2>
-    typename result_of::coord<typename PointAccessorType::value_type>::type
-    boundary_distance_impl(PointAccessorType const accessor,
-                  viennagrid::element<viennagrid::vertex_tag, WrappedConfigType1> const & v1,
-                  viennagrid::element<viennagrid::vertex_tag, WrappedConfigType2> const & v2)
+    template <typename PointAccessorT, typename PointT, typename WrappedConfigT1, typename WrappedConfigT2>
+    typename result_of::coord<typename PointAccessorT::value_type>::type
+    boundary_distance_impl(PointAccessorT const accessor,
+                  viennagrid::element<viennagrid::vertex_tag, WrappedConfigT1> const & v1,
+                  viennagrid::element<viennagrid::vertex_tag, WrappedConfigT2> const & v2)
     {
       return boundary_distance_impl(accessor(v1), accessor(v2));
     }
@@ -173,16 +173,16 @@ namespace viennagrid
     //
     // Generic distance computation: Reuse closest_points()
     //
-    template <typename PointAccessorType, typename Something1, typename Something2>
-    typename result_of::coord<typename PointAccessorType::value_type>::type
-    boundary_distance_impl(PointAccessorType const accessor,
-                           Something1 const & el1,
-                           Something2 const & el2)
+    template <typename PointAccessorT, typename SomethingT1, typename SomethingT2>
+    typename result_of::coord<typename PointAccessorT::value_type>::type
+    boundary_distance_impl(PointAccessorT const accessor,
+                           SomethingT1 const & el1,
+                           SomethingT2 const & el2)
     {
-      //typedef typename result_of::point<ElementType1>::type      PointType;
-      typedef typename PointAccessorType::value_type PointType;
+      //typedef typename result_of::point<ElementType1>::type      PointT;
+      typedef typename PointAccessorT::value_type PointT;
 
-      std::pair<PointType, PointType> points = closest_points_on_boundary(accessor, el1, el2);
+      std::pair<PointT, PointT> points = closest_points_on_boundary(accessor, el1, el2);
 
       return boundary_distance_impl(points);
     }
@@ -193,44 +193,44 @@ namespace viennagrid
   // The public interface functions
   //
   /** @brief Returns the distance between elements, segments and/or meshs */
-  template <typename PointAccessorType, typename Something1, typename Something2>
-  typename result_of::coord<Something1>::type
-  distance(PointAccessorType const accessor,
-           Something1 const & el1,
-           Something2 const & el2)
+  template <typename PointAccessorT, typename SomethingT1, typename SomethingT2>
+  typename result_of::coord<SomethingT1>::type
+  distance(PointAccessorT const accessor,
+           SomethingT1 const & el1,
+           SomethingT2 const & el2)
   {
     return detail::distance_impl(accessor, el1, el2);
   }
 
 
-  template <typename Something1, typename Something2>
-  typename result_of::coord<Something1>::type
-  distance(Something1 const & el1,
-           Something2 const & el2)
+  template <typename SomethingT1, typename SomethingT2>
+  typename result_of::coord<SomethingT1>::type
+  distance(SomethingT1 const & el1,
+           SomethingT2 const & el2)
   {
     return detail::distance_impl( default_point_accessor(el1), el1, el2 );
   }
 
-  template <typename Something, typename CoordType, typename CoordinateSystem>
-  typename result_of::coord<Something>::type
-  distance(Something const & el1,
-           spatial_point<CoordType, CoordinateSystem> const & el2)
+  template <typename SomethingT, typename CoordT, typename CoordinateSystemT>
+  typename result_of::coord<SomethingT>::type
+  distance(SomethingT const & el1,
+           spatial_point<CoordT, CoordinateSystemT> const & el2)
   {
     return detail::distance_impl( default_point_accessor(el1), el1, el2 );
   }
 
-  template <typename CoordType, typename CoordinateSystem, typename Something>
-  typename result_of::coord<Something>::type
-  distance(spatial_point<CoordType, CoordinateSystem> const & el1,
-           Something const & el2)
+  template <typename CoordT, typename CoordinateSystemT, typename SomethingT>
+  typename result_of::coord<SomethingT>::type
+  distance(spatial_point<CoordT, CoordinateSystemT> const & el1,
+           SomethingT const & el2)
   {
     return detail::distance_impl( default_point_accessor(el2), el1, el2 );
   }
 
-  template <typename CoordType1, typename CoordinateSystem1, typename CoordType2, typename CoordinateSystem2>
-  typename result_of::coord< spatial_point<CoordType1, CoordinateSystem1> >::type
-  distance(spatial_point<CoordType1, CoordinateSystem1> const & el1,
-           spatial_point<CoordType2, CoordinateSystem2> const & el2)
+  template <typename CoordT1, typename CoordinateSystemT1, typename CoordT2, typename CoordinateSystemT2>
+  typename result_of::coord< spatial_point<CoordT1, CoordinateSystemT1> >::type
+  distance(spatial_point<CoordT1, CoordinateSystemT1> const & el1,
+           spatial_point<CoordT2, CoordinateSystemT2> const & el2)
   {
     return detail::distance_impl( el1, el2 );
   }
@@ -239,36 +239,36 @@ namespace viennagrid
 
 
   /** @brief Returns the distance between elements, segments and/or meshs */
-  template <typename PointAccessorType, typename Something1, typename Something2>
-  typename result_of::coord<Something1>::type
-  boundary_distance(PointAccessorType const accessor,
-                    Something1 const & el1,
-                    Something2 const & el2)
+  template <typename PointAccessorT, typename SomethingT1, typename SomethingT2>
+  typename result_of::coord<SomethingT1>::type
+  boundary_distance(PointAccessorT const accessor,
+                    SomethingT1 const & el1,
+                    SomethingT2 const & el2)
   {
     return detail::boundary_distance_impl(accessor, el1, el2);
   }
 
   /** @brief Returns the distance between elements, segments and/or meshs */
-  template <typename Something1, typename Something2>
-  typename result_of::coord<Something1>::type
-  boundary_distance(Something1 const & el1,
-                    Something2 const & el2)
+  template <typename SomethingT1, typename SomethingT2>
+  typename result_of::coord<SomethingT1>::type
+  boundary_distance(SomethingT1 const & el1,
+                    SomethingT2 const & el2)
   {
     return detail::boundary_distance_impl( default_point_accessor(el1), el1, el2 );
   }
 
-  template <typename Something, typename CoordType, typename CoordinateSystem>
-  typename result_of::coord<Something>::type
-  boundary_distance(Something const & el1,
-                    spatial_point<CoordType, CoordinateSystem> const & el2)
+  template <typename SomethingT, typename CoordT, typename CoordinateSystemT>
+  typename result_of::coord<SomethingT>::type
+  boundary_distance(SomethingT const & el1,
+                    spatial_point<CoordT, CoordinateSystemT> const & el2)
   {
     return detail::boundary_distance_impl( default_point_accessor(el1), el1, el2 );
   }
 
-  template <typename CoordType, typename CoordinateSystem, typename Something>
-  typename result_of::coord<Something>::type
-  boundary_distance(spatial_point<CoordType, CoordinateSystem> const & el1,
-                    Something const & el2)
+  template <typename CoordT, typename CoordinateSystemT, typename SomethingT>
+  typename result_of::coord<SomethingT>::type
+  boundary_distance(spatial_point<CoordT, CoordinateSystemT> const & el1,
+                    SomethingT const & el2)
   {
     return detail::boundary_distance_impl( default_point_accessor(el2), el1, el2 );
   }
