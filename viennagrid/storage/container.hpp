@@ -514,9 +514,9 @@ namespace viennagrid
     };
 
     template<typename ValueT, typename BaseIDType>
-    struct IDCompare< smart_id_t<ValueT, BaseIDType> >
+    struct IDCompare< smart_id<ValueT, BaseIDType> >
     {
-      bool operator() ( smart_id_t<ValueT, BaseIDType> const & lhs, smart_id_t<ValueT, BaseIDType> const & rhs)
+      bool operator() ( smart_id<ValueT, BaseIDType> const & lhs, smart_id<ValueT, BaseIDType> const & rhs)
       {
         return lhs->id() < rhs->id();
       }

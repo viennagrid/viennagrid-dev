@@ -124,13 +124,13 @@ namespace viennagrid
 
         // id
         template<typename value_type_, typename base_id_type_>
-        struct value_type< smart_id_t<value_type_, base_id_type_> >
+        struct value_type< smart_id<value_type_, base_id_type_> >
         {
           typedef value_type_ type;
         };
 
         template<typename value_type_, typename base_id_type_>
-        struct value_type< smart_id_t<const value_type_, base_id_type_> >
+        struct value_type< smart_id<const value_type_, base_id_type_> >
         {
           typedef const value_type_ type;
         };
@@ -161,7 +161,7 @@ namespace viennagrid
 
         // id
         template<typename value_type_, typename base_id_type_>
-        struct handle_tag< smart_id_t<value_type_, base_id_type_> >
+        struct handle_tag< smart_id<value_type_, base_id_type_> >
         {
           typedef id_handle_tag type;
         };

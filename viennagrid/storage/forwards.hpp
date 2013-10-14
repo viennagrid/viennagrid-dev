@@ -37,7 +37,7 @@ namespace viennagrid
      * @tparam BaseIDT     The base ID type which is encapsulated, e.g. int
     */
     template<typename BaseT, typename BaseIDT>
-    class smart_id_t;
+    class smart_id;
 
 
     // handles

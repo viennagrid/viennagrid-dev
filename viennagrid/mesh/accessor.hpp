@@ -33,9 +33,9 @@ namespace viennadata
   namespace result_of
   {
     template<typename value_type, typename base_id_type>
-    struct offset< viennagrid::storage::smart_id_t<value_type, base_id_type> >
+    struct offset< viennagrid::storage::smart_id<value_type, base_id_type> >
     {
-      typedef viennagrid::storage::smart_id_t<value_type, base_id_type> id_type;
+      typedef viennagrid::storage::smart_id<value_type, base_id_type> id_type;
       typedef base_id_type type;
 
       static type get(id_type const & id) { return id.get(); }

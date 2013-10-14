@@ -30,17 +30,17 @@ namespace viennagrid
 
 
       template<typename value_type_, typename base_id_type_>
-      class smart_id_t
+      class smart_id
       {
       public:
-        typedef smart_id_t self_type;
+        typedef smart_id self_type;
         typedef value_type_ value_type;
         typedef base_id_type_ base_id_type;
 
-        typedef smart_id_t<const value_type, base_id_type> self_const_type;
+        typedef smart_id<const value_type, base_id_type> self_const_type;
 
-        smart_id_t() : internal_id(-1) {}
-        explicit smart_id_t( base_id_type internal_id_ ) : internal_id(internal_id_) {}
+        smart_id() : internal_id(-1) {}
+        explicit smart_id( base_id_type internal_id_ ) : internal_id(internal_id_) {}
 
         base_id_type get() const { return internal_id; }
         void set( base_id_type internal_id_ ) { internal_id =internal_id_; }
@@ -69,18 +69,18 @@ namespace viennagrid
 
 
       template<typename value_type_, typename base_id_type_>
-      class smart_id_t<const value_type_, base_id_type_>
+      class smart_id<const value_type_, base_id_type_>
       {
       public:
-        typedef smart_id_t self_type;
+        typedef smart_id self_type;
         typedef value_type_ value_type;
         typedef base_id_type_ base_id_type;
 
-        typedef smart_id_t<value_type, base_id_type> self_non_const_type;
+        typedef smart_id<value_type, base_id_type> self_non_const_type;
 
-        smart_id_t() : internal_id(-1) {}
-        smart_id_t( smart_id_t<value_type_, base_id_type> const & id_ ) : internal_id(id_.get()) {}
-        explicit smart_id_t( base_id_type internal_id_ ) : internal_id(internal_id_) {}
+        smart_id() : internal_id(-1) {}
+        smart_id( smart_id<value_type_, base_id_type> const & id_ ) : internal_id(id_.get()) {}
+        explicit smart_id( base_id_type internal_id_ ) : internal_id(internal_id_) {}
 
         base_id_type get() const { return internal_id; }
         void set( base_id_type internal_id_ ) { internal_id =internal_id_; }
@@ -108,25 +108,25 @@ namespace viennagrid
 
 
       template<typename value_type, typename base_id_type>
-      bool operator<( smart_id_t<value_type, base_id_type> const & lhs, smart_id_t<value_type, base_id_type> const & rhs )
+      bool operator<( smart_id<value_type, base_id_type> const & lhs, smart_id<value_type, base_id_type> const & rhs )
       { return lhs.get() < rhs.get(); }
 
       template<typename value_type, typename base_id_type>
-      bool operator<( smart_id_t<const value_type, base_id_type> const & lhs, smart_id_t<value_type, base_id_type> const & rhs )
+      bool operator<( smart_id<const value_type, base_id_type> const & lhs, smart_id<value_type, base_id_type> const & rhs )
       { return lhs.get() < rhs.get(); }
 
       template<typename value_type, typename base_id_type>
-      bool operator<( smart_id_t<value_type, base_id_type> const & lhs, smart_id_t<const value_type, base_id_type> const & rhs )
+      bool operator<( smart_id<value_type, base_id_type> const & lhs, smart_id<const value_type, base_id_type> const & rhs )
       { return lhs.get() < rhs.get(); }
 
       template<typename value_type, typename base_id_type>
-      bool operator<( smart_id_t<const value_type, base_id_type> const & lhs, smart_id_t<const value_type, base_id_type> const & rhs )
+      bool operator<( smart_id<const value_type, base_id_type> const & lhs, smart_id<const value_type, base_id_type> const & rhs )
       { return lhs.get() < rhs.get(); }
 
 
 
       template<typename value_type_, typename base_id_type>
-      std::ostream & operator<< (std::ostream & os, smart_id_t<value_type_, base_id_type> id)
+      std::ostream & operator<< (std::ostream & os, smart_id<value_type_, base_id_type> id)
       {
         os << id.get();
         return os;
@@ -146,7 +146,7 @@ namespace viennagrid
         template<typename value_type, typename base_id_type>
         struct make_id<value_type, smart_id_tag<base_id_type> >
         {
-          typedef smart_id_t<value_type, base_id_type> type;
+          typedef smart_id<value_type, base_id_type> type;
         };
 
 
@@ -157,9 +157,9 @@ namespace viennagrid
         };
 
         template<typename value_type, typename id_type>
-        struct const_id< smart_id_t<value_type, id_type> >
+        struct const_id< smart_id<value_type, id_type> >
         {
-          typedef smart_id_t<const value_type, id_type> type;
+          typedef smart_id<const value_type, id_type> type;
         };
       }
 
