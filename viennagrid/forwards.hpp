@@ -237,7 +237,7 @@ namespace viennagrid
     * @tparam WrappedConfigT    The configuration of the segmentation
     */
   template<typename WrappedConfigT>
-  class segmentation_t;
+  class segmentation;
 
   /** @brief A segment defines a submesh within a segmentation. Each segmentation contains a view of elements of the mesh
     *
@@ -997,9 +997,9 @@ namespace viennagrid
     };
 
     template<typename WrappedSegmentationConfigT>
-    struct facet_tag< segmentation_t<WrappedSegmentationConfigT> >
+    struct facet_tag< segmentation<WrappedSegmentationConfigT> >
     {
-      typedef typename facet_tag< typename cell_tag< segmentation_t<WrappedSegmentationConfigT> >::type >::type type;
+      typedef typename facet_tag< typename cell_tag< segmentation<WrappedSegmentationConfigT> >::type >::type type;
     };
 
     template<typename SegmentationT>
@@ -1028,9 +1028,9 @@ namespace viennagrid
     };
 
     template<typename WrappedSegmentationConfigT>
-    struct facet< segmentation_t<WrappedSegmentationConfigT> >
+    struct facet< segmentation<WrappedSegmentationConfigT> >
     {
-      typedef typename facet< typename cell< segmentation_t<WrappedSegmentationConfigT> >::type >::type type;
+      typedef typename facet< typename cell< segmentation<WrappedSegmentationConfigT> >::type >::type type;
     };
 
     template<typename SegmentationT>
