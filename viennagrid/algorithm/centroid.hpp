@@ -247,8 +247,8 @@ namespace viennagrid
    * @param  accessor             The point accessor providing point information for geometric calculation
    */
   template<typename ElementTypeOrTagT, typename SegmentationT, typename PointAccessorType>
-  typename viennagrid::result_of::point< segment_handle_t<SegmentationT> >::type
-  centroid(segment_handle_t<SegmentationT> const & segment, PointAccessorType const point_accessor)
+  typename viennagrid::result_of::point< segment_handle<SegmentationT> >::type
+  centroid(segment_handle<SegmentationT> const & segment, PointAccessorType const point_accessor)
   {
     return detail::centroid_mesh<ElementTypeOrTagT>(segment, point_accessor);
   }
@@ -259,10 +259,10 @@ namespace viennagrid
    * @param  accessor             The point accessor providing point information for geometric calculation
    */
   template<typename SegmentationT, typename PointAccessorType>
-  typename viennagrid::result_of::point< segment_handle_t<SegmentationT> >::type
-  centroid(segment_handle_t<SegmentationT> const & segment, PointAccessorType const point_accessor)
+  typename viennagrid::result_of::point< segment_handle<SegmentationT> >::type
+  centroid(segment_handle<SegmentationT> const & segment, PointAccessorType const point_accessor)
   {
-    typedef typename viennagrid::result_of::cell_tag< segment_handle_t<SegmentationT> >::type CellTag;
+    typedef typename viennagrid::result_of::cell_tag< segment_handle<SegmentationT> >::type CellTag;
     return detail::centroid_mesh<CellTag>(segment, point_accessor);
   }
 
@@ -273,8 +273,8 @@ namespace viennagrid
    * @param  segment              The segment which centroid is to be calculated
    */
   template<typename ElementTypeOrTagT, typename SegmentationT>
-  typename viennagrid::result_of::point< segment_handle_t<SegmentationT> >::type
-  centroid(segment_handle_t<SegmentationT> const & segment)
+  typename viennagrid::result_of::point< segment_handle<SegmentationT> >::type
+  centroid(segment_handle<SegmentationT> const & segment)
   {
     return centroid<ElementTypeOrTagT>(segment, default_point_accessor(segment));
   }
@@ -284,10 +284,10 @@ namespace viennagrid
    * @param  segment               The segment which centroid is to be calculated
    */
   template<typename SegmentationT>
-  typename viennagrid::result_of::point< segment_handle_t<SegmentationT> >::type
-  centroid(segment_handle_t<SegmentationT> const & segment)
+  typename viennagrid::result_of::point< segment_handle<SegmentationT> >::type
+  centroid(segment_handle<SegmentationT> const & segment)
   {
-    typedef typename viennagrid::result_of::cell_tag< segment_handle_t<SegmentationT> >::type CellTag;
+    typedef typename viennagrid::result_of::cell_tag< segment_handle<SegmentationT> >::type CellTag;
     return centroid<CellTag>(segment, default_point_accessor(segment));
   }
 

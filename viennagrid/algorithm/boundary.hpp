@@ -193,7 +193,7 @@ namespace viennagrid
 
   /** @brief For internal use only. */
   template<typename SegmentationType>
-  void transfer_boundary_information( segment_handle_t<SegmentationType> & segment )
+  void transfer_boundary_information( segment_handle<SegmentationType> & segment )
   { transfer_boundary_information( segment.view() ); }
 
 
@@ -223,7 +223,7 @@ namespace viennagrid
 
   /** @brief For internal use only. */
   template<typename SegmentationType>
-  void detect_boundary( segment_handle_t<SegmentationType> & segment )
+  void detect_boundary( segment_handle<SegmentationType> & segment )
   { detect_boundary( segment.view() ); }
 
 
@@ -273,7 +273,7 @@ namespace viennagrid
    * @param element      The element
    */
   template <typename SegmentationType, typename ElementType>
-  bool is_boundary(segment_handle_t<SegmentationType> const & segment, ElementType const & element)
+  bool is_boundary(segment_handle<SegmentationType> const & segment, ElementType const & element)
   { return is_boundary( segment.view(), element ); }
 
 

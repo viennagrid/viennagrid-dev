@@ -40,9 +40,9 @@ namespace viennagrid
     };
 
     template<typename SegmentationT, typename ElementTypeOrTagT, typename ConnectorElementTypeOrTagT>
-    struct neighbour_view< segment_handle_t<SegmentationT>, ElementTypeOrTagT, ConnectorElementTypeOrTagT >
+    struct neighbour_view< viennagrid::segment_handle<SegmentationT>, ElementTypeOrTagT, ConnectorElementTypeOrTagT >
     {
-      typedef typename neighbour_view< typename segment_handle_t<SegmentationT>::view_type, ElementTypeOrTagT, ConnectorElementTypeOrTagT >::type type;
+      typedef typename neighbour_view< typename viennagrid::segment_handle<SegmentationT>::view_type, ElementTypeOrTagT, ConnectorElementTypeOrTagT >::type type;
     };
 
 
@@ -279,8 +279,8 @@ namespace viennagrid
     * @return                               The neighbour range
     */
   template<typename ElementTypeOrTagT, typename ConnectorElementTypeOrTagT, typename SegmentationT, typename ElementOrHandleT>
-  typename result_of::neighbour_range<segment_handle_t<SegmentationT>, ElementTypeOrTagT, ConnectorElementTypeOrTagT>::type
-  neighbour_elements(segment_handle_t<SegmentationT> & segment, ElementOrHandleT const & element_or_handle)
+  typename result_of::neighbour_range<segment_handle<SegmentationT>, ElementTypeOrTagT, ConnectorElementTypeOrTagT>::type
+  neighbour_elements(segment_handle<SegmentationT> & segment, ElementOrHandleT const & element_or_handle)
   {
     return neighbour_elements<ElementTypeOrTagT, ConnectorElementTypeOrTagT>( segment.view(), element_or_handle );
   }
@@ -296,8 +296,8 @@ namespace viennagrid
     * @return                               The const neighbour range
     */
   template<typename ElementTypeOrTagT, typename ConnectorElementTypeOrTagT, typename SegmentationT, typename ElementOrHandleT>
-  typename result_of::neighbour_range<segment_handle_t<SegmentationT>, ElementTypeOrTagT, ConnectorElementTypeOrTagT>::type
-  neighbour_elements(segment_handle_t<SegmentationT> const & segment, ElementOrHandleT const & element_or_handle)
+  typename result_of::neighbour_range<segment_handle<SegmentationT>, ElementTypeOrTagT, ConnectorElementTypeOrTagT>::type
+  neighbour_elements(segment_handle<SegmentationT> const & segment, ElementOrHandleT const & element_or_handle)
   {
     return neighbour_elements<ElementTypeOrTagT, ConnectorElementTypeOrTagT>( segment.view(), element_or_handle );
   }

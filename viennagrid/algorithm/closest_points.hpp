@@ -806,12 +806,12 @@ namespace viennagrid
     }
 
     template <typename PointAccessorT, typename SegmentationT, typename PointType>
-    std::pair<PointType, typename viennagrid::result_of::point< segment_handle_t<SegmentationT> >::type>
+    std::pair<PointType, typename viennagrid::result_of::point< segment_handle<SegmentationT> >::type>
     closest_points_on_boundary_impl(PointAccessorT const point_accessor,
                                     PointType const & p,
-                                    segment_handle_t<SegmentationT> const & segment)
+                                    segment_handle<SegmentationT> const & segment)
     {
-        typedef typename result_of::cell_tag< segment_handle_t<SegmentationT> >::type CellTag;
+        typedef typename result_of::cell_tag< segment_handle<SegmentationT> >::type CellTag;
       return closest_points_on_boundary_point_to_any<typename CellTag::facet_tag>( point_accessor, p, segment );
     }
 
@@ -920,7 +920,7 @@ namespace viennagrid
     std::pair< typename PointAccessorType::value_type, typename PointAccessorType::value_type >
     closest_points_on_boundary_impl(PointAccessorType const accessor,
                                     viennagrid::element<ElementTag,WrappedConfigType> const & el1,
-                                    segment_handle_t<SegmentationT> const & segment)
+                                    segment_handle<SegmentationT> const & segment)
     {
       return closest_points_on_boundary_generic(accessor, segment, el1);
     }
@@ -931,8 +931,8 @@ namespace viennagrid
               typename Segmentation2T>
     std::pair< typename PointAccessorType::value_type, typename PointAccessorType::value_type >
     closest_points_on_boundary_impl(PointAccessorType const accessor,
-                                    segment_handle_t<Segmentation1T> const & segment1,
-                                    segment_handle_t<Segmentation2T> const & segment2)
+                                    segment_handle<Segmentation1T> const & segment1,
+                                    segment_handle<Segmentation2T> const & segment2)
     {
       return closest_points_on_boundary_generic(accessor, segment1, segment2);
     }
@@ -973,7 +973,7 @@ namespace viennagrid
     };
 
     template <typename SegmentationT>
-    struct topological_id< segment_handle_t<SegmentationT> >
+    struct topological_id< segment_handle<SegmentationT> >
     {
       static const int value = 100000 + 1;
     };

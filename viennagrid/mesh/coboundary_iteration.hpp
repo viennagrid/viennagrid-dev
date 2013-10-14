@@ -44,9 +44,9 @@ namespace viennagrid
     };
 
     template<typename SegmentationType, typename element_type_or_tag, typename coboundary_type_or_tag>
-    struct coboundary_view< segment_handle_t<SegmentationType>, element_type_or_tag, coboundary_type_or_tag >
+    struct coboundary_view< viennagrid::segment_handle<SegmentationType>, element_type_or_tag, coboundary_type_or_tag >
     {
-      typedef typename coboundary_view< typename segment_handle_t<SegmentationType>::view_type, element_type_or_tag, coboundary_type_or_tag >::type type;
+      typedef typename coboundary_view< typename viennagrid::segment_handle<SegmentationType>::view_type, element_type_or_tag, coboundary_type_or_tag >::type type;
     };
 
 
@@ -305,8 +305,8 @@ namespace viennagrid
     * @return                         The coboundary range
     */
   template<typename ElementTypeOrTagT, typename CoboundaryTypeOrTagT, typename SegmentationT, typename element_or_handle_type>
-  typename result_of::coboundary_range<segment_handle_t<SegmentationT>, ElementTypeOrTagT, CoboundaryTypeOrTagT>::type
-  coboundary_elements(segment_handle_t<SegmentationT> & segment, element_or_handle_type const & element_or_handle)
+  typename result_of::coboundary_range<segment_handle<SegmentationT>, ElementTypeOrTagT, CoboundaryTypeOrTagT>::type
+  coboundary_elements(segment_handle<SegmentationT> & segment, element_or_handle_type const & element_or_handle)
   {
     return coboundary_elements<ElementTypeOrTagT, CoboundaryTypeOrTagT>( segment.view(), element_or_handle );
   }
@@ -322,8 +322,8 @@ namespace viennagrid
     * @return                         The const coboundary range
     */
   template<typename ElementTypeOrTagT, typename CoboundaryTypeOrTagT, typename SegmentationT, typename element_or_handle_type>
-  typename result_of::const_coboundary_range<segment_handle_t<SegmentationT>, ElementTypeOrTagT, CoboundaryTypeOrTagT>::type
-  coboundary_elements(segment_handle_t<SegmentationT> const & segment, element_or_handle_type const & element_or_handle)
+  typename result_of::const_coboundary_range<segment_handle<SegmentationT>, ElementTypeOrTagT, CoboundaryTypeOrTagT>::type
+  coboundary_elements(segment_handle<SegmentationT> const & segment, element_or_handle_type const & element_or_handle)
   {
     return coboundary_elements<ElementTypeOrTagT, CoboundaryTypeOrTagT>( segment.view(), element_or_handle );
   }
