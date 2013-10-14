@@ -40,17 +40,17 @@ namespace viennagrid
   {
   public:
 
-    view_mesh_setter(container_collection_type & mesh_) : mesh(mesh_) {}
+    view_mesh_setter(container_collection_type & mesh_obj) : mesh_obj_(mesh_obj) {}
 
     template<typename container_type>
     void operator()( container_type & container )
     {
         typedef typename container_type::value_type value_type;
-        container.set_base_container( viennagrid::storage::collection::get<value_type>(mesh) );
+        container.set_base_container( viennagrid::storage::collection::get<value_type>(mesh_obj_) );
     }
 
   private:
-    container_collection_type & mesh;
+    container_collection_type & mesh_obj_;
   };
 
 
@@ -236,10 +236,10 @@ namespace viennagrid
     {
         typedef typename mesh_t<OtherWrappedConfigT>::element_collection_type   other_element_collection_type;
 
-        view_mesh_setter< other_element_collection_type > functor(proxy.mesh->element_collection());
+        view_mesh_setter< other_element_collection_type > functor(proxy.mesh_obj_->element_collection());
         viennagrid::storage::collection::for_each(element_container_collection, functor);
 
-        inserter = inserter_type( element_container_collection, change_counter_,proxy.mesh->get_inserter() );
+        inserter = inserter_type( element_container_collection, change_counter_,proxy.mesh_obj_->get_inserter() );
     }
 
     ~mesh_t() {}
@@ -331,18 +331,18 @@ namespace viennagrid
 
   /** @brief For internal use only */
   template<typename WrappedConfigType>
-  bool is_obsolete( mesh_t<WrappedConfigType> const & mesh, typename mesh_t<WrappedConfigType>::change_counter_type change_counter_to_check )
-  { return mesh.is_obsolete( change_counter_to_check ); }
+  bool is_obsolete( mesh_t<WrappedConfigType> const & mesh_obj, typename mesh_t<WrappedConfigType>::change_counter_type change_counter_to_check )
+  { return mesh_obj.is_obsolete( change_counter_to_check ); }
 
   /** @brief For internal use only */
   template<typename WrappedConfigType>
-  void update_change_counter( mesh_t<WrappedConfigType> & mesh, typename mesh_t<WrappedConfigType>::change_counter_type & change_counter_to_update )
-  { mesh.update_change_counter( change_counter_to_update ); }
+  void update_change_counter( mesh_t<WrappedConfigType> & mesh_obj, typename mesh_t<WrappedConfigType>::change_counter_type & change_counter_to_update )
+  { mesh_obj.update_change_counter( change_counter_to_update ); }
 
   /** @brief For internal use only */
   template<typename WrappedConfigType>
-  void increment_change_counter( mesh_t<WrappedConfigType> & mesh )
-  { mesh.increment_change_counter(); }
+  void increment_change_counter( mesh_t<WrappedConfigType> & mesh_obj)
+  { mesh_obj.increment_change_counter(); }
 
 
 
@@ -361,8 +361,8 @@ namespace viennagrid
               >::type,
               viennagrid::static_pair<element_tag, coboundary_tag>
               >::type &
-  coboundary_collection( mesh_type & mesh )
-  { return viennagrid::storage::collection::get< viennagrid::static_pair<element_tag, coboundary_tag> >( viennagrid::storage::collection::get<coboundary_collection_tag>( mesh.appendix() ) );}
+  coboundary_collection( mesh_type & mesh_obj)
+  { return viennagrid::storage::collection::get< viennagrid::static_pair<element_tag, coboundary_tag> >( viennagrid::storage::collection::get<coboundary_collection_tag>( mesh_obj.appendix() ) );}
 
   /** @brief For internal use only */
   template<typename element_tag, typename coboundary_tag, typename mesh_type>
@@ -373,8 +373,8 @@ namespace viennagrid
               >::type,
               viennagrid::static_pair<element_tag, coboundary_tag>
               >::type const &
-  coboundary_collection( mesh_type const & mesh )
-  { return viennagrid::storage::collection::get< viennagrid::static_pair<element_tag, coboundary_tag> >( viennagrid::storage::collection::get<coboundary_collection_tag>( mesh.appendix() ) );}
+  coboundary_collection( mesh_type const & mesh_obj)
+  { return viennagrid::storage::collection::get< viennagrid::static_pair<element_tag, coboundary_tag> >( viennagrid::storage::collection::get<coboundary_collection_tag>( mesh_obj.appendix() ) );}
 
 
   /** @brief For internal use only */
@@ -386,8 +386,8 @@ namespace viennagrid
               >::type,
               viennagrid::static_pair<element_tag, connector_element_tag>
               >::type &
-  neighbour_collection( mesh_type & mesh )
-  { return viennagrid::storage::collection::get< viennagrid::static_pair<element_tag, connector_element_tag> >( viennagrid::storage::collection::get<neighbour_collection_tag>( mesh.appendix() ) ); }
+  neighbour_collection( mesh_type & mesh_obj)
+  { return viennagrid::storage::collection::get< viennagrid::static_pair<element_tag, connector_element_tag> >( viennagrid::storage::collection::get<neighbour_collection_tag>( mesh_obj.appendix() ) ); }
 
   /** @brief For internal use only */
   template<typename element_tag, typename connector_element_tag, typename mesh_type>
@@ -398,8 +398,8 @@ namespace viennagrid
               >::type,
               viennagrid::static_pair<element_tag, connector_element_tag>
               >::type const &
-  neighbour_collection( mesh_type const & mesh )
-  { return viennagrid::storage::collection::get< viennagrid::static_pair<element_tag, connector_element_tag> >( viennagrid::storage::collection::get<neighbour_collection_tag>( mesh.appendix() ) ); }
+  neighbour_collection( mesh_type const & mesh_obj)
+  { return viennagrid::storage::collection::get< viennagrid::static_pair<element_tag, connector_element_tag> >( viennagrid::storage::collection::get<neighbour_collection_tag>( mesh_obj.appendix() ) ); }
 
 
   /** @brief For internal use only */
@@ -411,8 +411,8 @@ namespace viennagrid
       >::type,
       element_tag
   >::type &
-  boundary_information_collection( mesh_type & mesh )
-  { return viennagrid::storage::collection::get<element_tag>( viennagrid::storage::collection::get<boundary_information_collection_tag>( mesh.appendix() ) ); }
+  boundary_information_collection( mesh_type & mesh_obj)
+  { return viennagrid::storage::collection::get<element_tag>( viennagrid::storage::collection::get<boundary_information_collection_tag>( mesh_obj.appendix() ) ); }
 
   /** @brief For internal use only */
   template<typename element_tag, typename mesh_type>
@@ -423,8 +423,8 @@ namespace viennagrid
       >::type,
       element_tag
   >::type const &
-  boundary_information_collection( mesh_type const & mesh )
-  { return viennagrid::storage::collection::get<element_tag>( viennagrid::storage::collection::get<boundary_information_collection_tag>( mesh.appendix() ) ); }
+  boundary_information_collection( mesh_type const & mesh_obj)
+  { return viennagrid::storage::collection::get<element_tag>( viennagrid::storage::collection::get<boundary_information_collection_tag>( mesh_obj.appendix() ) ); }
 
 }
 
@@ -732,9 +732,9 @@ namespace viennagrid
     * @param  view        The output view object
     */
   template<typename MeshT, typename ViewT>
-  void handle_mesh(MeshT & mesh, ViewT & view)
+  void handle_mesh(MeshT & mesh_obj, ViewT & view)
   {
-    handle_mesh_functor< typename result_of::element_collection<MeshT>::type > functor( element_collection(mesh) );
+    handle_mesh_functor< typename result_of::element_collection<MeshT>::type > functor( element_collection(mesh_obj) );
     viennagrid::storage::collection::for_each( element_collection(view), functor);
   }
 
@@ -744,40 +744,40 @@ namespace viennagrid
   /** @brief For internal use only */
   template<typename ConfigType>
   typename mesh_t<ConfigType>::element_collection_type &
-  element_collection( mesh_t<ConfigType> & mesh)
-  { return mesh.element_collection(); }
+  element_collection( mesh_t<ConfigType> & mesh_obj)
+  { return mesh_obj.element_collection(); }
 
   /** @brief For internal use only */
   template<typename ConfigType>
   typename mesh_t<ConfigType>::element_collection_type const &
-  element_collection( mesh_t<ConfigType> const & mesh)
-  { return mesh.element_collection(); }
+  element_collection( mesh_t<ConfigType> const & mesh_obj)
+  { return mesh_obj.element_collection(); }
 
 
   /** @brief For internal use only */
   template<typename ConfigType>
   typename mesh_t<ConfigType>::inserter_type &
-  inserter(mesh_t<ConfigType> & mesh)
-  { return mesh.get_inserter(); }
+  inserter(mesh_t<ConfigType> & mesh_obj)
+  { return mesh_obj.get_inserter(); }
 
   /** @brief For internal use only */
   template<typename ConfigType>
   typename mesh_t<ConfigType>::inserter_type const &
-  inserter(mesh_t<ConfigType> const & mesh)
-  { return mesh.get_inserter(); }
+  inserter(mesh_t<ConfigType> const & mesh_obj)
+  { return mesh_obj.get_inserter(); }
 
 
   /** @brief For internal use only */
   template<typename ConfigType>
   typename mesh_t<ConfigType>::inserter_type::id_generator_type &
-  id_generator(mesh_t<ConfigType> & mesh)
-  { return inserter(mesh).get_id_generator(); }
+  id_generator(mesh_t<ConfigType> & mesh_obj)
+  { return inserter(mesh_obj).get_id_generator(); }
 
   /** @brief For internal use only */
   template<typename ConfigType>
   typename mesh_t<ConfigType>::inserter_type::id_generator_type const &
-  id_generator(mesh_t<ConfigType> const & mesh)
-  { return inserter(mesh).get_id_generator(); }
+  id_generator(mesh_t<ConfigType> const & mesh_obj)
+  { return inserter(mesh_obj).get_id_generator(); }
 
 
 
@@ -792,10 +792,10 @@ namespace viennagrid
     */
   template<typename element_type_or_tag, typename mesh_type>
   typename viennagrid::result_of::id< typename viennagrid::result_of::element<mesh_type, element_type_or_tag>::type >::type
-  id_upper_bound( mesh_type const & mesh )
+  id_upper_bound( mesh_type const & mesh_obj)
   {
     typedef typename viennagrid::result_of::element<mesh_type, element_type_or_tag>::type element_type;
-    return id_generator(mesh).max_id( viennagrid::meta::tag<element_type>() );
+    return id_generator(mesh_obj).max_id( viennagrid::meta::tag<element_type>() );
   }
 
 
@@ -810,10 +810,10 @@ namespace viennagrid
     */
   template<typename MeshOrSegmentHandleT, typename HandleT>
   typename storage::handle::result_of::value_type<HandleT>::type &
-  dereference_handle(MeshOrSegmentHandleT & mesh, HandleT const & handle)
+  dereference_handle(MeshOrSegmentHandleT & mesh_obj, HandleT const & handle)
   {
     typedef typename storage::handle::result_of::value_type<HandleT>::type value_type;
-    return storage::collection::get<value_type>(element_collection(mesh)).dereference_handle( handle );
+    return storage::collection::get<value_type>(element_collection(mesh_obj)).dereference_handle( handle );
   }
 
   /** @brief Function for dereferencing a handle using a mesh/segment object, const version
@@ -826,10 +826,10 @@ namespace viennagrid
     */
   template<typename MeshOrSegmentHandleT, typename HandleT>
   typename storage::handle::result_of::value_type<HandleT>::type const &
-  dereference_handle(MeshOrSegmentHandleT const & mesh, HandleT const & handle)
+  dereference_handle(MeshOrSegmentHandleT const & mesh_obj, HandleT const & handle)
   {
     typedef typename storage::handle::result_of::value_type<HandleT>::type value_type;
-    return storage::collection::get<value_type>(element_collection(mesh)).dereference_handle( handle );
+    return storage::collection::get<value_type>(element_collection(mesh_obj)).dereference_handle( handle );
   }
 
 
@@ -1237,14 +1237,14 @@ namespace viennagrid
   // doxygen docu in forwards.hpp
   template<typename element_type_or_tag, typename WrappedConfigType>
   typename result_of::element_range<mesh_t<WrappedConfigType>, element_type_or_tag>::type
-  elements(mesh_t<WrappedConfigType> & mesh)
-  { return elements<element_type_or_tag>( element_collection(mesh) ); }
+  elements(mesh_t<WrappedConfigType> & mesh_obj)
+  { return elements<element_type_or_tag>( element_collection(mesh_obj) ); }
 
   // doxygen docu in forwards.hpp
   template<typename element_type_or_tag, typename WrappedConfigType>
   typename result_of::const_element_range<mesh_t<WrappedConfigType>, element_type_or_tag>::type
-  elements(mesh_t<WrappedConfigType> const & mesh)
-  { return elements<element_type_or_tag>( element_collection(mesh) ); }
+  elements(mesh_t<WrappedConfigType> const & mesh_obj)
+  { return elements<element_type_or_tag>( element_collection(mesh_obj) ); }
 
 
 
@@ -1384,9 +1384,9 @@ namespace viennagrid
               >::type::handle_type,
               bool
           >
-  push_element( mesh_type & mesh, viennagrid::element_t<ElementTag, WrappedConfigType> const & element)
+  push_element( mesh_type & mesh_obj, viennagrid::element_t<ElementTag, WrappedConfigType> const & element)
   {
-    return inserter(mesh).template insert<generate_id, call_callback>(element);
+    return inserter(mesh_obj).template insert<generate_id, call_callback>(element);
   }
 
 
@@ -1456,8 +1456,8 @@ namespace viennagrid
     */
   template<typename WrappedConfigT>
   typename result_of::point< mesh_t<WrappedConfigT> >::type &
-  point(mesh_t<WrappedConfigT> & mesh, typename result_of::vertex_handle< mesh_t<WrappedConfigT> >::type vertex_handle)
-  { return dereference_handle(mesh, vertex_handle).appendix(); }
+  point(mesh_t<WrappedConfigT> & mesh_obj, typename result_of::vertex_handle< mesh_t<WrappedConfigT> >::type vertex_handle)
+  { return dereference_handle(mesh_obj, vertex_handle).appendix(); }
 
   /** @brief Function for obtaining the point from a vertex, const version
     *
@@ -1468,8 +1468,8 @@ namespace viennagrid
     */
   template<typename WrappedConfigT>
   typename result_of::point< mesh_t<WrappedConfigT> >::type const &
-  point(mesh_t<WrappedConfigT> const & mesh, typename result_of::const_vertex_handle< mesh_t<WrappedConfigT> >::type vertex_handle)
-  { return dereference_handle(mesh, vertex_handle).appendix(); }
+  point(mesh_t<WrappedConfigT> const & mesh_obj, typename result_of::const_vertex_handle< mesh_t<WrappedConfigT> >::type vertex_handle)
+  { return dereference_handle(mesh_obj, vertex_handle).appendix(); }
 
 
   /** @brief Function for obtaining the point from a vertex, no mesh needed
@@ -1501,8 +1501,8 @@ namespace viennagrid
   template<typename MeshT, typename SourceElementT, typename DestinationElementT>
   struct copy_element_setters
   {
-    copy_element_setters(MeshT & mesh_, SourceElementT const & source_element_, DestinationElementT & destination_element_) :
-      mesh(mesh_), source_element(source_element_), destination_element(destination_element_) {}
+    copy_element_setters(MeshT & mesh_obj, SourceElementT const & source_element, DestinationElementT & destination_element) :
+      mesh_obj_(mesh_obj), source_element_(source_element), destination_element_(destination_element) {}
 
     template<typename BoundaryElementT>
     void operator() ( viennagrid::meta::tag<BoundaryElementT> )
@@ -1513,21 +1513,21 @@ namespace viennagrid
       typedef typename result_of::element_range<SourceElementT, BoundaryElementT>::type           DestinationBoundaryElementRangeType;
       typedef typename result_of::iterator<DestinationBoundaryElementRangeType>::type             DestinationBoundaryElementRangeIterator;
 
-      SourceBoundaryElementRangeType      source_boundary_elements      = viennagrid::elements(source_element);
-      DestinationBoundaryElementRangeType destination_boundary_elements = viennagrid::elements(destination_element);
+      SourceBoundaryElementRangeType      source_boundary_elements      = viennagrid::elements(source_element_);
+      DestinationBoundaryElementRangeType destination_boundary_elements = viennagrid::elements(destination_element_);
 
       SourceBoundaryElementRangeIterator      sit = source_boundary_elements.begin();
       DestinationBoundaryElementRangeIterator dit = destination_boundary_elements.begin();
 
       for (; sit != source_boundary_elements.end(); ++sit, ++dit)
       {
-        dit.handle() = viennagrid::find( mesh, sit->id() ).handle();
+        dit.handle() = viennagrid::find( mesh_obj_, sit->id() ).handle();
       }
     }
 
-    MeshT & mesh;
-    SourceElementT const & source_element;
-    DestinationElementT & destination_element;
+    MeshT & mesh_obj_;
+    SourceElementT const & source_element_;
+    DestinationElementT & destination_element_;
   };
 
 
@@ -1548,7 +1548,7 @@ namespace viennagrid
   struct fix_handle_helper< typelist<SourceElementT, TailT> >
   {
     template<typename SourceWrappedConfigT, typename DestinationWrappedConfigT>
-    static void fix_handles( mesh_t<SourceWrappedConfigT> const & source_mesh, mesh_t<DestinationWrappedConfigT> & destination_mesh )
+    static void fix_handles( mesh_t<SourceWrappedConfigT> const & source_mesh_obj, mesh_t<DestinationWrappedConfigT> & destination_mesh_obj )
     {
       typedef typename viennagrid::result_of::element_tag<SourceElementT>::type ElementTag;
 
@@ -1566,8 +1566,8 @@ namespace viennagrid
       typedef typename viennagrid::result_of::element<DestinationMeshType, ElementTag>::type DestinationElementType;
       //typedef typename viennagrid::result_of::handle<DestinationMeshType, ElementTag>::type DestinationElementHandleType;
 
-      SourceElementRangeType source_elements = viennagrid::elements( source_mesh );
-      DestinationElementRangeType destination_elements = viennagrid::elements( destination_mesh );
+      SourceElementRangeType           source_elements = viennagrid::elements( source_mesh_obj );
+      DestinationElementRangeType destination_elements = viennagrid::elements( destination_mesh_obj );
 
       DestinationElementRangeIterator dit = destination_elements.begin();
       for (SourceElementRangeIterator sit = source_elements.begin(); sit != source_elements.end(); ++sit, ++dit)
@@ -1580,27 +1580,27 @@ namespace viennagrid
           std::cout << "ERROR in fix_handles: destination element id != source element id" << std::endl;
           continue;
         }
-//           DestinationElementHandleType handle = viennagrid::push_element<false, false>(destination_mesh, destination_element).first;
+//           DestinationElementHandleType handle = viennagrid::push_element<false, false>(destination_mesh_obj, destination_element).first;
 
-        typedef typename viennagrid::result_of::boundary_element_typelist<SourceElementT>::type BoundaryElementTypelist;
-        typedef typename viennagrid::result_of::element_typelist<DestinationMeshType>::type DestinationElementTypelist;
+        typedef typename viennagrid::result_of::boundary_element_typelist<SourceElementT>::type         BoundaryElementTypelist;
+        typedef typename viennagrid::result_of::element_typelist<DestinationMeshType>::type          DestinationElementTypelist;
 
         typedef typename viennagrid::meta::result_of::intersection<
                   BoundaryElementTypelist,
                   DestinationElementTypelist
               >::type ElementTypelist;
 
-        copy_element_setters<DestinationMeshType, SourceElementT, DestinationElementType> setter( destination_mesh, source_element, destination_element );
+        copy_element_setters<DestinationMeshType, SourceElementT, DestinationElementType> setter( destination_mesh_obj, source_element, destination_element );
         viennagrid::meta::for_each<ElementTypelist>(setter);
       }
 
-      fix_handle_helper<TailT>::fix_handles( source_mesh, destination_mesh );
+      fix_handle_helper<TailT>::fix_handles( source_mesh_obj, destination_mesh_obj );
     }
   };
 
   /** @brief For internal use only */
   template<typename SourceWrappedConfigT, typename DestinationWrappedConfigT>
-  void fix_handles( mesh_t<SourceWrappedConfigT> const & source_mesh, mesh_t<DestinationWrappedConfigT> & destination_mesh )
+  void fix_handles( mesh_t<SourceWrappedConfigT> const & source_mesh_obj, mesh_t<DestinationWrappedConfigT> & destination_mesh )
   {
     typedef mesh_t<SourceWrappedConfigT>          SourceMeshType;
     typedef mesh_t<DestinationWrappedConfigT>     DestinationMeshType;
@@ -1613,7 +1613,7 @@ namespace viennagrid
               DestinationTypelist
           >::type ElementTypelist;
 
-    fix_handle_helper<ElementTypelist>::fix_handles( source_mesh, destination_mesh );
+    fix_handle_helper<ElementTypelist>::fix_handles( source_mesh_obj, destination_mesh );
   }
 
 }

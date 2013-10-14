@@ -130,7 +130,7 @@ namespace viennagrid
     /** @brief Implementation of the calculation of a centroid for a mesh/segment */
     template <typename ElementTypeOrTag, typename MeshSegmentHandleType, typename PointAccessorType>
     typename viennagrid::result_of::point<MeshSegmentHandleType>::type
-    centroid_mesh(MeshSegmentHandleType const & mesh, PointAccessorType const point_accessor)
+    centroid_mesh(MeshSegmentHandleType const & mesh_obj, PointAccessorType const point_accessor)
     {
       //typedef typename MeshSegmentHandleType::config_type                                      ConfigType;
       //typedef typename ElementType::tag                                                CellTag;
@@ -145,7 +145,7 @@ namespace viennagrid
       PointType result = 0;
       double volume = 0;
 
-      CellRange cells = viennagrid::elements<ElementTag>(mesh);
+      CellRange cells = viennagrid::elements<ElementTag>(mesh_obj);
       for (CellIterator cit = cells.begin(); cit != cells.end(); ++cit)
       {
         double vol_cell = viennagrid::volume( point_accessor, *cit );
@@ -193,9 +193,9 @@ namespace viennagrid
    */
   template<typename ElementTypeOrTagT, typename WrappedConfigType, typename PointAccessorType>
   typename viennagrid::result_of::point< mesh_t<WrappedConfigType> >::type
-  centroid(mesh_t<WrappedConfigType> const & mesh, PointAccessorType const point_accessor)
+  centroid(mesh_t<WrappedConfigType> const & mesh_obj, PointAccessorType const point_accessor)
   {
-    return detail::centroid_mesh<ElementTypeOrTagT>(mesh, point_accessor);
+    return detail::centroid_mesh<ElementTypeOrTagT>(mesh_obj, point_accessor);
   }
 
   /** @brief The public interface function for the computation of a centroid of a mesh with explicit point accessor. Cells are used for centroid calculation, will fail if there is more than one cell type.
@@ -205,10 +205,10 @@ namespace viennagrid
    */
   template<typename WrappedConfigType, typename PointAccessorType>
   typename viennagrid::result_of::point< mesh_t<WrappedConfigType> >::type
-  centroid(mesh_t<WrappedConfigType> const & mesh, PointAccessorType const point_accessor)
+  centroid(mesh_t<WrappedConfigType> const & mesh_obj, PointAccessorType const point_accessor)
   {
     typedef typename viennagrid::result_of::cell_tag< mesh_t<WrappedConfigType> >::type CellTag;
-    return detail::centroid_mesh<CellTag>(mesh, point_accessor);
+    return detail::centroid_mesh<CellTag>(mesh_obj, point_accessor);
   }
 
 
@@ -219,9 +219,9 @@ namespace viennagrid
    */
   template<typename ElementTypeOrTagT, typename WrappedConfigType>
   typename viennagrid::result_of::point< mesh_t<WrappedConfigType> >::type
-  centroid(mesh_t<WrappedConfigType> const & mesh)
+  centroid(mesh_t<WrappedConfigType> const & mesh_obj)
   {
-    return centroid<ElementTypeOrTagT>(mesh, default_point_accessor(mesh));
+    return centroid<ElementTypeOrTagT>(mesh_obj, default_point_accessor(mesh_obj));
   }
 
   /** @brief The public interface function for the computation of a centroid of a mesh. Cells are used for centroid calculation, will fail if there is more than one cell type.
@@ -230,10 +230,10 @@ namespace viennagrid
    */
   template<typename WrappedConfigType>
   typename viennagrid::result_of::point< mesh_t<WrappedConfigType> >::type
-  centroid(mesh_t<WrappedConfigType> const & mesh)
+  centroid(mesh_t<WrappedConfigType> const & mesh_obj)
   {
     typedef typename viennagrid::result_of::cell_tag< mesh_t<WrappedConfigType> >::type CellTag;
-    return centroid<CellTag>(mesh, default_point_accessor(mesh));
+    return centroid<CellTag>(mesh_obj, default_point_accessor(mesh_obj));
   }
 
 

@@ -401,7 +401,7 @@ namespace viennagrid
        * @param mesh     The ViennaGrid mesh.
        * @param filename   The file to write to
        */
-      int operator()(MeshType const & mesh, std::string const & filename)
+      int operator()(MeshType const & mesh_obj, std::string const & filename)
       {
           std::stringstream ss;
           ss << filename << ".vtu";
@@ -417,38 +417,38 @@ namespace viennagrid
 
           segment_id_type tmp_id = segment_id_type();
 
-          unsigned int num_points = preparePoints(mesh, tmp_id);
-          prepareCells(mesh, tmp_id);
+          unsigned int num_points = preparePoints(mesh_obj, tmp_id);
+          prepareCells(mesh_obj, tmp_id);
 
           writer << "  <Piece NumberOfPoints=\""
                  << num_points
                  << "\" NumberOfCells=\""
-                 << viennagrid::elements<CellTag>(mesh).size()
+                 << viennagrid::elements<CellTag>(mesh_obj).size()
                  << "\">" << std::endl;
 
-          writePoints(mesh, writer, tmp_id);
+          writePoints(mesh_obj, writer, tmp_id);
 
           if (vertex_scalar_data.size() > 0 || vertex_vector_data.size() > 0)
           {
             writer << "   <PointData>" << std::endl;
 
               for (typename VertexScalarOutputAccessorContainer::const_iterator it = vertex_scalar_data.begin(); it != vertex_scalar_data.end(); ++it)
-                writePointData( mesh, writer, it->first, *(it->second), tmp_id );
+                writePointData( mesh_obj, writer, it->first, *(it->second), tmp_id );
               for (typename VertexVectorOutputAccessorContainer::const_iterator it = vertex_vector_data.begin(); it != vertex_vector_data.end(); ++it)
-                writePointData( mesh, writer, it->first, *(it->second), tmp_id );
+                writePointData( mesh_obj, writer, it->first, *(it->second), tmp_id );
 
             writer << "   </PointData>" << std::endl;
           }
 
-          writeCells(mesh, writer, tmp_id);
+          writeCells(mesh_obj, writer, tmp_id);
           if (cell_scalar_data.size() > 0 || cell_vector_data.size() > 0)
           {
             writer << "   <CellData>" << std::endl;
 
               for (typename CellScalarOutputAccessorContainer::const_iterator it = cell_scalar_data.begin(); it != cell_scalar_data.end(); ++it)
-                writeCellData( mesh, writer, it->first, *(it->second), tmp_id );
+                writeCellData( mesh_obj, writer, it->first, *(it->second), tmp_id );
               for (typename CellVectorOutputAccessorContainer::const_iterator it = cell_vector_data.begin(); it != cell_vector_data.end(); ++it)
-                writeCellData( mesh, writer, it->first, *(it->second), tmp_id );
+                writeCellData( mesh_obj, writer, it->first, *(it->second), tmp_id );
 
             writer << "   </CellData>" << std::endl;
           }
@@ -466,9 +466,9 @@ namespace viennagrid
        * @param segmentation  The ViennaGrid segmentation.
        * @param filename      The file to write to
        */
-      int operator()(MeshType const & mesh, SegmentationType const & segmentation, std::string const & filename)
+      int operator()(MeshType const & mesh_obj, SegmentationType const & segmentation, std::string const & filename)
       {
-          if (segmentation.empty()) return (*this)(mesh, filename);
+          if (segmentation.empty()) return (*this)(mesh_obj, filename);
 
           //
           // Step 1: Write meta information
@@ -701,18 +701,18 @@ namespace viennagrid
 
     /** @brief Convenience function that exports a mesh to file directly. Does not export quantities */
     template < typename MeshType, typename SegmentationType >
-    int export_vtk(MeshType const & mesh, SegmentationType const & segmentation, std::string const & filename)
+    int export_vtk(MeshType const & mesh_obj, SegmentationType const & segmentation, std::string const & filename)
     {
       vtk_writer<MeshType> vtk_writer;
-      return vtk_writer(mesh, segmentation, filename);
+      return vtk_writer(mesh_obj, segmentation, filename);
     }
 
     /** @brief Convenience function that exports a mesh to file directly. Does not export quantities */
     template < typename MeshType >
-    int export_vtk(MeshType const & mesh, std::string const & filename)
+    int export_vtk(MeshType const & mesh_obj, std::string const & filename)
     {
       vtk_writer<MeshType> vtk_writer;
-      return vtk_writer(mesh, filename);
+      return vtk_writer(mesh_obj, filename);
     }
 
 

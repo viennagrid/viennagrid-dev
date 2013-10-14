@@ -174,18 +174,18 @@ namespace viennagrid
     /** @brief Dispatched function for computing the volume of a mesh or segment.*/
     template <typename ElementTypeOrTag, typename MeshSegmentHandleType>
     typename viennagrid::result_of::coord< MeshSegmentHandleType >::type
-    volume_mesh(MeshSegmentHandleType const & mesh)
+    volume_mesh(MeshSegmentHandleType const & mesh_obj)
     {
       typedef typename viennagrid::result_of::const_element_range<MeshSegmentHandleType, ElementTypeOrTag>::type  CellContainer;
       typedef typename viennagrid::result_of::iterator<CellContainer>::type                                       CellIterator;
 
       typename viennagrid::result_of::coord< MeshSegmentHandleType >::type new_volume = 0;
-      CellContainer new_cells = viennagrid::elements<ElementTypeOrTag>(mesh);
+      CellContainer new_cells = viennagrid::elements<ElementTypeOrTag>(mesh_obj);
       for (CellIterator new_cit = new_cells.begin();
                         new_cit != new_cells.end();
                       ++new_cit)
       {
-        new_volume += volume( default_point_accessor(mesh), *new_cit);
+        new_volume += volume( default_point_accessor(mesh_obj), *new_cit);
       }
       return new_volume;
     }
@@ -213,17 +213,17 @@ namespace viennagrid
 
   template<typename ElementTypeOrTag, typename WrappedConfigType>
   typename viennagrid::result_of::coord< mesh_t<WrappedConfigType> >::type
-  volume(mesh_t<WrappedConfigType> const & mesh)
+  volume(mesh_t<WrappedConfigType> const & mesh_obj)
   {
-      return detail::volume_mesh<ElementTypeOrTag>(mesh);
+      return detail::volume_mesh<ElementTypeOrTag>(mesh_obj);
   }
 
   // default Element Tag = Cell Tag
   template<typename MeshSegmentHandleType>
   typename viennagrid::result_of::coord< MeshSegmentHandleType >::type
-  volume(MeshSegmentHandleType const & mesh)
+  volume(MeshSegmentHandleType const & mesh_obj)
   {
-      return detail::volume_mesh< typename viennagrid::result_of::cell_tag< MeshSegmentHandleType >::type >(mesh);
+      return detail::volume_mesh< typename viennagrid::result_of::cell_tag< MeshSegmentHandleType >::type >(mesh_obj);
   }
 
 

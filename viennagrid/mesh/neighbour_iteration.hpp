@@ -82,7 +82,7 @@ namespace viennagrid
 
   /** @brief For internal use only */
   template<typename ElementTypeOrTagT, typename ConnectorElementTypeOrTagT, typename mesh_type, typename neigbour_accessor_type>
-  void create_neighbour_information(mesh_type & mesh, neigbour_accessor_type accessor)
+  void create_neighbour_information(mesh_type & mesh_obj, neigbour_accessor_type accessor)
   {
     typedef typename viennagrid::result_of::element_tag< ElementTypeOrTagT >::type          element_tag;
     typedef typename viennagrid::result_of::element_tag< ConnectorElementTypeOrTagT >::type connector_element_tag;
@@ -92,24 +92,24 @@ namespace viennagrid
     typedef typename viennagrid::result_of::element_range< mesh_type, ElementTypeOrTagT >::type element_range_type;
     typedef typename viennagrid::result_of::iterator< element_range_type >::type                element_range_iterator;
 
-    element_range_type elements = viennagrid::elements(mesh);
+    element_range_type elements = viennagrid::elements(mesh_obj);
 
     for ( element_range_iterator it = elements.begin(); it != elements.end(); ++it )
     {
       accessor( *it ).clear();
-      accessor( *it ).set_base_container( viennagrid::storage::collection::get< element_type >( element_collection(mesh) ) );
+      accessor( *it ).set_base_container( viennagrid::storage::collection::get< element_type >( element_collection(mesh_obj) ) );
     }
 
     typedef typename viennagrid::result_of::element_range< mesh_type, connector_element_tag >::type     connector_element_range_type;
     typedef typename viennagrid::result_of::iterator< connector_element_range_type >::type              connector_element_range_iterator;
 
-    connector_element_range_type connector_elements = viennagrid::elements(mesh);
+    connector_element_range_type connector_elements = viennagrid::elements(mesh_obj);
     for ( connector_element_range_iterator it = connector_elements.begin(); it != connector_elements.end(); ++it )
     {
       typedef typename viennagrid::result_of::coboundary_range< mesh_type, connector_element_tag, element_tag >::type   element_on_connector_element_range_type;
       typedef typename viennagrid::result_of::iterator< element_on_connector_element_range_type >::type                 element_on_connector_element_range_iterator;
 
-      element_on_connector_element_range_type coboundary_range = viennagrid::coboundary_elements<connector_element_tag, element_tag>( mesh, it.handle() );
+      element_on_connector_element_range_type coboundary_range = viennagrid::coboundary_elements<connector_element_tag, element_tag>( mesh_obj, it.handle() );
       if (coboundary_range.empty())
           continue;
 
@@ -139,7 +139,7 @@ namespace viennagrid
 
   /** @brief For internal use only */
   template<typename ElementTypeOrTagT, typename ConnectorElementTypeOrTagT, typename mesh_type>
-  void create_neighbour_information(mesh_type & mesh)
+  void create_neighbour_information(mesh_type & mesh_obj)
   {
     typedef typename viennagrid::result_of::element_tag< ElementTypeOrTagT >::type           element_tag;
     typedef typename viennagrid::result_of::element_tag< ConnectorElementTypeOrTagT >::type  connector_element_tag;
@@ -152,11 +152,11 @@ namespace viennagrid
             >::type,
             viennagrid::static_pair<element_tag, connector_element_tag>
             >::type neighbour_container_wrapper_type;
-    neighbour_container_wrapper_type & neighbour_container_wrapper = neighbour_collection<element_tag, connector_element_tag>( mesh );
+    neighbour_container_wrapper_type & neighbour_container_wrapper = neighbour_collection<element_tag, connector_element_tag>(mesh_obj);
 
-    create_neighbour_information<ElementTypeOrTagT, ConnectorElementTypeOrTagT>( mesh, viennagrid::make_accessor<element_type>(neighbour_container_wrapper.container) );
+    create_neighbour_information<ElementTypeOrTagT, ConnectorElementTypeOrTagT>( mesh_obj, viennagrid::make_accessor<element_type>(neighbour_container_wrapper.container) );
 
-    update_change_counter( mesh, neighbour_container_wrapper.change_counter );
+    update_change_counter( mesh_obj, neighbour_container_wrapper.change_counter );
   }
 
 
@@ -183,17 +183,17 @@ namespace viennagrid
   /** @brief For internal use only */
   template<typename ElementTypeOrTagT, typename ConnectorElementTypeOrTagT, typename neigbour_accessor_type, typename WrappedConfigT, typename ElementOrHandleT>
   viennagrid::storage::container_range_wrapper<typename neigbour_accessor_type::value_type>
-  neighbour_elements(mesh_t<WrappedConfigT> & mesh, neigbour_accessor_type accessor, ElementOrHandleT & element_or_handle)
+  neighbour_elements(mesh_t<WrappedConfigT> & mesh_obj, neigbour_accessor_type accessor, ElementOrHandleT & element_or_handle)
   {
-    return neighbour_elements<ElementTypeOrTagT, ConnectorElementTypeOrTagT>( accessor, viennagrid::dereference_handle(mesh, element_or_handle) );
+    return neighbour_elements<ElementTypeOrTagT, ConnectorElementTypeOrTagT>( accessor, viennagrid::dereference_handle(mesh_obj, element_or_handle) );
   }
 
   /** @brief For internal use only */
   template<typename ElementTypeOrTagT, typename ConnectorElementTypeOrTagT, typename neigbour_accessor_type, typename WrappedConfigT, typename ElementOrHandleT>
   viennagrid::storage::container_range_wrapper<const typename neigbour_accessor_type::value_type>
-  neighbour_elements(mesh_t<WrappedConfigT> const & mesh, neigbour_accessor_type const accessor, ElementOrHandleT const & element_or_handle)
+  neighbour_elements(mesh_t<WrappedConfigT> const & mesh_obj, neigbour_accessor_type const accessor, ElementOrHandleT const & element_or_handle)
   {
-    return neighbour_elements<ElementTypeOrTagT, ConnectorElementTypeOrTagT>( accessor, viennagrid::dereference_handle(mesh, element_or_handle) );
+    return neighbour_elements<ElementTypeOrTagT, ConnectorElementTypeOrTagT>( accessor, viennagrid::dereference_handle(mesh_obj, element_or_handle) );
   }
 
 
@@ -210,7 +210,7 @@ namespace viennagrid
     */
   template<typename ElementTypeOrTagT, typename ConnectorElementTypeOrTagT, typename WrappedConfigT, typename ElementOrHandleT>
   typename result_of::neighbour_range<mesh_t<WrappedConfigT>, ElementTypeOrTagT, ConnectorElementTypeOrTagT>::type
-  neighbour_elements(mesh_t<WrappedConfigT> & mesh, ElementOrHandleT const & element_or_handle)
+  neighbour_elements(mesh_t<WrappedConfigT> & mesh_obj, ElementOrHandleT const & element_or_handle)
   {
     typedef mesh_t<WrappedConfigT> mesh_type;
     typedef typename viennagrid::result_of::element_tag< ElementTypeOrTagT >::type element_tag;
@@ -224,12 +224,12 @@ namespace viennagrid
             >::type,
             viennagrid::static_pair<element_tag, connector_element_tag>
             >::type neighbour_container_wrapper_type;
-    neighbour_container_wrapper_type & neighbour_container_wrapper = neighbour_collection<element_tag, connector_element_tag>( mesh );
+    neighbour_container_wrapper_type & neighbour_container_wrapper = neighbour_collection<element_tag, connector_element_tag>(mesh_obj);
 
-    if ( is_obsolete( mesh, neighbour_container_wrapper.change_counter ) )
-      create_neighbour_information<ElementTypeOrTagT, ConnectorElementTypeOrTagT>(mesh);
+    if ( is_obsolete( mesh_obj, neighbour_container_wrapper.change_counter ) )
+      create_neighbour_information<ElementTypeOrTagT, ConnectorElementTypeOrTagT>(mesh_obj);
 
-    return neighbour_elements<ElementTypeOrTagT, ConnectorElementTypeOrTagT>( viennagrid::make_accessor<element_type>(neighbour_container_wrapper.container), viennagrid::dereference_handle(mesh, element_or_handle) );
+    return neighbour_elements<ElementTypeOrTagT, ConnectorElementTypeOrTagT>( viennagrid::make_accessor<element_type>(neighbour_container_wrapper.container), viennagrid::dereference_handle(mesh_obj, element_or_handle) );
   }
 
   /** @brief Obtaines a const neighbour range of an element within a mesh. This function caches the neighbour information and re-creates it if the cached information is out of date. The worst case runtime of a re-creation is linear in the number of elements of type ConnectorElementTypeOrTagT time the number of elements of type ElementTypeOrTagT within the mesh.
@@ -244,7 +244,7 @@ namespace viennagrid
     */
   template<typename ElementTypeOrTagT, typename ConnectorElementTypeOrTagT, typename WrappedConfigT, typename ElementOrHandleT>
   typename result_of::const_neighbour_range<mesh_t<WrappedConfigT>, ElementTypeOrTagT, ConnectorElementTypeOrTagT>::type
-  neighbour_elements(mesh_t<WrappedConfigT> const & mesh, ElementOrHandleT const & element_or_handle)
+  neighbour_elements(mesh_t<WrappedConfigT> const & mesh_obj, ElementOrHandleT const & element_or_handle)
   {
     typedef mesh_t<WrappedConfigT> mesh_type;
     typedef typename viennagrid::result_of::element_tag< ElementTypeOrTagT >::type element_tag;
@@ -258,13 +258,13 @@ namespace viennagrid
             >::type,
             viennagrid::static_pair<element_tag, connector_element_tag>
             >::type neighbour_container_wrapper_type;
-    neighbour_container_wrapper_type const & neighbour_container_wrapper = neighbour_collection<element_tag, connector_element_tag>( mesh );
+    neighbour_container_wrapper_type const & neighbour_container_wrapper = neighbour_collection<element_tag, connector_element_tag>(mesh_obj);
 
-    if ( is_obsolete( mesh, neighbour_container_wrapper.change_counter ) )
-      create_neighbour_information<ElementTypeOrTagT, ConnectorElementTypeOrTagT>( const_cast<mesh_type&>(mesh) );
+    if ( is_obsolete( mesh_obj, neighbour_container_wrapper.change_counter ) )
+      create_neighbour_information<ElementTypeOrTagT, ConnectorElementTypeOrTagT>( const_cast<mesh_type&>(mesh_obj) );
 
 
-    return neighbour_elements<ElementTypeOrTagT, ConnectorElementTypeOrTagT>( viennagrid::make_accessor<element_type>(neighbour_container_wrapper.container), viennagrid::dereference_handle(mesh, element_or_handle) );
+    return neighbour_elements<ElementTypeOrTagT, ConnectorElementTypeOrTagT>( viennagrid::make_accessor<element_type>(neighbour_container_wrapper.container), viennagrid::dereference_handle(mesh_obj, element_or_handle) );
   }
 
 

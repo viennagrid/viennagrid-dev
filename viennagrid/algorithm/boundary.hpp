@@ -30,7 +30,7 @@ namespace viennagrid
 
   /** @brief For internal use only. */
   template <typename MeshType, typename AccessorType>
-  void detect_boundary(MeshType & mesh, AccessorType boundary_info_accessor)
+  void detect_boundary(MeshType & mesh_obj, AccessorType boundary_info_accessor)
   {
 //     std::cout << "DETECT BOUNDARY" << std::endl;
 
@@ -49,7 +49,7 @@ namespace viennagrid
     typedef typename viennagrid::result_of::iterator<FacetOnCellRange>::type                           FacetOnCellIterator;
 
 
-    FacetRange facets = viennagrid::elements(mesh);
+    FacetRange facets = viennagrid::elements(mesh_obj);
 
     for (FacetIterator fit = facets.begin();
           fit != facets.end();
@@ -57,7 +57,7 @@ namespace viennagrid
         boundary_info_accessor(*fit) = false;
 
     //iterate over all cells, over facets there and tag them:
-    CellRange cells = viennagrid::elements(mesh);
+    CellRange cells = viennagrid::elements(mesh_obj);
     for (CellIterator cit = cells.begin();
           cit != cells.end();
           ++cit)
@@ -74,7 +74,7 @@ namespace viennagrid
 
   /** @brief For internal use only. */
   template <typename MeshType, typename SourceAccessorType, typename DestinationAccessorType>
-  void transfer_boundary_information(MeshType const & mesh,
+  void transfer_boundary_information(MeshType const & mesh_obj,
                        SourceAccessorType const source_boundary_info_accessor,
                        DestinationAccessorType destination_boundary_info_accessor
                       )
@@ -85,7 +85,7 @@ namespace viennagrid
     typedef typename viennagrid::result_of::const_element_range< MeshType, dst_element_type >::type dst_range_type;
     typedef typename viennagrid::result_of::iterator< dst_range_type >::type dst_range_iterator;
 
-    dst_range_type dst_elements = viennagrid::elements( mesh );
+    dst_range_type dst_elements = viennagrid::elements(mesh_obj);
 
     for (dst_range_iterator it = dst_elements.begin(); it != dst_elements.end(); ++it)
         destination_boundary_info_accessor(*it) = false;
@@ -94,7 +94,7 @@ namespace viennagrid
     typedef typename viennagrid::result_of::const_element_range< MeshType, src_element_type >::type src_range_type;
     typedef typename viennagrid::result_of::iterator< src_range_type >::type src_range_iterator;
 
-    src_range_type src_elements = viennagrid::elements( mesh );
+    src_range_type src_elements = viennagrid::elements(mesh_obj);
 
 
     for (src_range_iterator fit = src_elements.begin();
@@ -121,7 +121,7 @@ namespace viennagrid
   class boundary_setter_functor
   {
   public:
-    boundary_setter_functor(mesh_type & mesh_) : mesh(mesh_) {}
+    boundary_setter_functor(mesh_type & mesh_obj) : mesh_obj_(mesh_obj) {}
 
     template<typename something>
     void operator()( viennagrid::meta::tag<something> )
@@ -143,7 +143,7 @@ namespace viennagrid
                 facet_tag
               >::type src_boundary_information_container_wrapper_type;
 
-        src_boundary_information_container_wrapper_type & src_boundary_information_container_wrapper = boundary_information_collection<facet_tag>( mesh );
+        src_boundary_information_container_wrapper_type & src_boundary_information_container_wrapper = boundary_information_collection<facet_tag>( mesh_obj_ );
 
 
       typedef typename viennagrid::storage::result_of::value_type<
@@ -154,23 +154,23 @@ namespace viennagrid
                 element_tag
               >::type dst_boundary_information_container_wrapper_type;
 
-      dst_boundary_information_container_wrapper_type & dst_boundary_information_container_wrapper = boundary_information_collection<element_tag>( mesh );
+      dst_boundary_information_container_wrapper_type & dst_boundary_information_container_wrapper = boundary_information_collection<element_tag>( mesh_obj_ );
 
-      transfer_boundary_information(mesh,
+      transfer_boundary_information(mesh_obj_,
                                     viennagrid::make_accessor<facet_type>( src_boundary_information_container_wrapper.container ),
                                     viennagrid::make_accessor<element_type>( dst_boundary_information_container_wrapper.container ));
 
-      update_change_counter( mesh, dst_boundary_information_container_wrapper.change_counter );
+      update_change_counter( mesh_obj_, dst_boundary_information_container_wrapper.change_counter );
     }
   private:
 
-    mesh_type & mesh;
+    mesh_type & mesh_obj_;
   };
 
 
   /** @brief For internal use only. */
   template<typename WrappedConfigType>
-  void transfer_boundary_information( mesh_t<WrappedConfigType> & mesh )
+  void transfer_boundary_information( mesh_t<WrappedConfigType> & mesh_obj)
   {
     typedef mesh_t<WrappedConfigType> mesh_type;
     typedef typename viennagrid::result_of::cell_tag< mesh_type >::type cell_tag;
@@ -186,7 +186,7 @@ namespace viennagrid
         facet_tag
     >::type typelist;
 
-    boundary_setter_functor<mesh_type> functor(mesh);
+    boundary_setter_functor<mesh_type> functor(mesh_obj);
 
     viennagrid::meta::for_each< typelist >( functor );
   }
@@ -199,7 +199,7 @@ namespace viennagrid
 
   /** @brief For internal use only. */
   template<typename WrappedConfigType>
-  void detect_boundary( mesh_t<WrappedConfigType> & mesh )
+  void detect_boundary( mesh_t<WrappedConfigType> & mesh_obj)
   {
     typedef mesh_t<WrappedConfigType> mesh_type;
     typedef typename viennagrid::result_of::cell_tag< mesh_type >::type cell_tag;
@@ -214,11 +214,11 @@ namespace viennagrid
               >::type,
               facet_tag
             >::type boundary_information_container_wrapper_type;
-    boundary_information_container_wrapper_type & boundary_information_container_wrapper = boundary_information_collection<facet_tag>( mesh );
-    detect_boundary( mesh, viennagrid::make_accessor<facet_type>( boundary_information_container_wrapper.container ) );
+    boundary_information_container_wrapper_type & boundary_information_container_wrapper = boundary_information_collection<facet_tag>(mesh_obj);
+    detect_boundary( mesh_obj, viennagrid::make_accessor<facet_type>( boundary_information_container_wrapper.container ) );
 
-    transfer_boundary_information(mesh);
-    update_change_counter( mesh, boundary_information_container_wrapper.change_counter );
+    transfer_boundary_information(mesh_obj);
+    update_change_counter( mesh_obj, boundary_information_container_wrapper.change_counter );
   }
 
   /** @brief For internal use only. */
@@ -246,7 +246,7 @@ namespace viennagrid
    * @param element     The element
    */
   template <typename WrappedConfigType, typename ElementType>
-  bool is_boundary(mesh_t<WrappedConfigType> const & mesh, ElementType const & element)
+  bool is_boundary(mesh_t<WrappedConfigType> const & mesh_obj, ElementType const & element)
   {
     typedef mesh_t<WrappedConfigType> mesh_type;
     typedef typename viennagrid::result_of::element_tag<ElementType>::type element_tag;
@@ -259,10 +259,10 @@ namespace viennagrid
               >::type,
               element_tag
             >::type boundary_information_container_wrapper_type;
-    boundary_information_container_wrapper_type const & boundary_information_container_wrapper = boundary_information_collection<element_tag>( mesh );
+    boundary_information_container_wrapper_type const & boundary_information_container_wrapper = boundary_information_collection<element_tag>(mesh_obj);
 
-    if (mesh.is_obsolete(boundary_information_container_wrapper.change_counter))
-      detect_boundary( const_cast<mesh_type&>(mesh) );
+    if (mesh_obj.is_obsolete(boundary_information_container_wrapper.change_counter))
+      detect_boundary( const_cast<mesh_type&>(mesh_obj) );
 
     return is_boundary( viennagrid::make_accessor<ElementType>(boundary_information_container_wrapper.container), element );
   }

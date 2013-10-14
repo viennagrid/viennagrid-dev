@@ -111,7 +111,7 @@ namespace viennagrid
          * @param mesh    A ViennaGrid mesh
          * @param filename  Name of the file
          */
-        int operator()(MeshType const & mesh, std::string const & filename)
+        int operator()(MeshType const & mesh_obj, std::string const & filename)
         {
           typedef DXHelper<geometric_dim>  DXHelper;
 
@@ -122,27 +122,27 @@ namespace viennagrid
             return EXIT_FAILURE;
           }
 
-          std::size_t pointnum = viennagrid::elements<vertex_tag>(mesh).size();
+          std::size_t pointnum = viennagrid::elements<vertex_tag>(mesh_obj).size();
 
           writer << "object \"points\" class array type float rank 1 shape " << geometric_dim << " items ";
           writer << pointnum << " data follows" << std::endl;
 
           //Nodes:
-          VertexRange vertices = viennagrid::elements<vertex_tag>(mesh);
+          VertexRange vertices = viennagrid::elements<vertex_tag>(mesh_obj);
           for (VertexIterator vit = vertices.begin();
               vit != vertices.end();
               ++vit)
           {
-            PointWriter<geometric_dim>::write(writer, viennagrid::point( mesh, *vit ) );
+            PointWriter<geometric_dim>::write(writer, viennagrid::point( mesh_obj, *vit ) );
             writer << std::endl;
           }
           writer << std::endl;
 
           //Cells:
-          std::size_t cellnum = viennagrid::elements<CellTag>(mesh).size();
+          std::size_t cellnum = viennagrid::elements<CellTag>(mesh_obj).size();
           writer << "object \"grid_Line_One\" class array type int rank 1 shape " << (geometric_dim + 1) << " items " << cellnum << " data follows" << std::endl;
 
-          CellRange cells = viennagrid::elements<CellTag>(mesh);
+          CellRange cells = viennagrid::elements<CellTag>(mesh_obj);
           for (CellIterator cit = cells.begin();
               cit != cells.end();
               ++cit)

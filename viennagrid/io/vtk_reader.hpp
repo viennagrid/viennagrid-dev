@@ -355,14 +355,14 @@ namespace viennagrid
       /////////////////////////// Routines for pushing everything to mesh ///////////////
 
       /** @brief Pushes the vertices read to the mesh */
-      void setupVertices(MeshType & mesh)
+      void setupVertices(MeshType & mesh_obj)
       {
         for (std::size_t i=0; i<global_points_2.size(); ++i)
-          viennagrid::make_vertex_with_id( mesh, typename VertexType::id_type(i), global_points_2[i] );
+          viennagrid::make_vertex_with_id( mesh_obj, typename VertexType::id_type(i), global_points_2[i] );
       }
 
       /** @brief Pushes the cells read to the mesh. Preserves segment information. */
-      void setupCells(MeshType & mesh, SegmentationType & segmentation, segment_id_type seg_id)
+      void setupCells(MeshType & mesh_obj, SegmentationType & segmentation, segment_id_type seg_id)
       {
         //***************************************************
         // building up the cells in ViennaGrid
@@ -411,7 +411,7 @@ namespace viennagrid
             std::size_t local_index = local_cell_vertices[seg_id][reordered_j + offsetIdx];
             std::size_t global_vertex_index = local_to_global_map[seg_id][local_index];
 
-            cell_vertex_handles[j] = viennagrid::elements<viennagrid::vertex_tag>(mesh).handle_at(global_vertex_index);
+            cell_vertex_handles[j] = viennagrid::elements<viennagrid::vertex_tag>(mesh_obj).handle_at(global_vertex_index);
             viennagrid::add( segmentation[seg_id], viennagrid::dereference_handle(segmentation, cell_vertex_handles[j]) );
           }
 
@@ -423,7 +423,7 @@ namespace viennagrid
 
       /** @brief Writes data for vertices to the ViennaGrid mesh using ViennaData */
       template <typename ContainerType>
-      void setupDataVertex(MeshType & mesh, SegmentHandleType & segment, segment_id_type seg_id, ContainerType const & container, std::size_t num_components)
+      void setupDataVertex(MeshType & mesh_obj, SegmentHandleType & segment, segment_id_type seg_id, ContainerType const & container, std::size_t num_components)
       {
         std::string const & name = container.first;
 
@@ -435,7 +435,7 @@ namespace viennagrid
             for (std::size_t i=0; i<container.second.size(); ++i)
             {
               std::size_t global_vertex_id = local_to_global_map[seg_id][i];
-              VertexType const & vertex = viennagrid::elements<viennagrid::vertex_tag>(mesh)[global_vertex_id];
+              VertexType const & vertex = viennagrid::elements<viennagrid::vertex_tag>(mesh_obj)[global_vertex_id];
 
               (*registered_vertex_scalar_data[name])(vertex) = (container.second)[i];
             }
@@ -445,7 +445,7 @@ namespace viennagrid
             for (std::size_t i=0; i<container.second.size(); ++i)
             {
               std::size_t global_vertex_id = local_to_global_map[seg_id][i];
-              VertexType const & vertex = viennagrid::elements<viennagrid::vertex_tag>(mesh)[global_vertex_id];
+              VertexType const & vertex = viennagrid::elements<viennagrid::vertex_tag>(mesh_obj)[global_vertex_id];
 
               (*current_registered_segment_vertex_scalar_data[name])(vertex) = (container.second)[i];
             }
@@ -459,7 +459,7 @@ namespace viennagrid
             for (std::size_t i=0; i<container.second.size(); ++i)
             {
               std::size_t global_vertex_id = local_to_global_map[seg_id][i];
-              VertexType const & vertex = viennagrid::elements<viennagrid::vertex_tag>(mesh)[global_vertex_id];
+              VertexType const & vertex = viennagrid::elements<viennagrid::vertex_tag>(mesh_obj)[global_vertex_id];
 
               if ( static_cast<typename VertexType::id_type::base_id_type>(vertex_scalar_data[container.first][seg_id].size()) <= vertex.id().get()) vertex_scalar_data[container.first][seg_id].resize(vertex.id().get()+1);
               vertex_scalar_data[container.first][seg_id][vertex.id().get()] = (container.second)[i];
@@ -474,7 +474,7 @@ namespace viennagrid
             for (std::size_t i=0; i<container.second.size()/3; ++i)
             {
               std::size_t global_vertex_id = local_to_global_map[seg_id][i];
-              VertexType const & vertex = viennagrid::elements<viennagrid::vertex_tag>(mesh)[global_vertex_id];
+              VertexType const & vertex = viennagrid::elements<viennagrid::vertex_tag>(mesh_obj)[global_vertex_id];
 
               (*registered_vertex_vector_data[name])(vertex).resize(3);
               (*registered_vertex_vector_data[name])(vertex)[0] = (container.second)[3*i+0];
@@ -487,7 +487,7 @@ namespace viennagrid
             for (std::size_t i=0; i<container.second.size(); ++i)
             {
               std::size_t global_vertex_id = local_to_global_map[seg_id][i];
-              VertexType const & vertex = viennagrid::elements<viennagrid::vertex_tag>(mesh)[global_vertex_id];
+              VertexType const & vertex = viennagrid::elements<viennagrid::vertex_tag>(mesh_obj)[global_vertex_id];
 
               (*current_registered_segment_vertex_vector_data[name])(vertex).resize(3);
               (*current_registered_segment_vertex_vector_data[name])(vertex)[0] = (container.second)[3*i+0];
@@ -505,7 +505,7 @@ namespace viennagrid
             for (std::size_t i=0; i<container.second.size() / 3; ++i)
             {
               std::size_t global_vertex_id = local_to_global_map[seg_id][i];
-              VertexType const & vertex = viennagrid::elements<viennagrid::vertex_tag>(mesh)[global_vertex_id];
+              VertexType const & vertex = viennagrid::elements<viennagrid::vertex_tag>(mesh_obj)[global_vertex_id];
 
               if ( static_cast<typename VertexType::id_type::base_id_type>(vertex_vector_data[container.first][seg_id].size()) <= vertex.id().get()) vertex_vector_data[container.first][seg_id].resize(vertex.id().get()+1);
               vertex_vector_data[container.first][seg_id][vertex.id().get()].resize(3);
@@ -608,27 +608,27 @@ namespace viennagrid
       }
 
       /** @brief Writes all data read from files to the mesh */
-      void setupData(MeshType & mesh, SegmentationType & segmentation, segment_id_type seg_id)
+      void setupData(MeshType & mesh_obj, SegmentationType & segmentation, segment_id_type seg_id)
       {
         for (size_t i=0; i<local_scalar_vertex_data[seg_id].size(); ++i)
         {
-          setupDataVertex(mesh, segmentation[seg_id], seg_id, local_scalar_vertex_data[seg_id][i], 1);
+          setupDataVertex(mesh_obj, segmentation[seg_id], seg_id, local_scalar_vertex_data[seg_id][i], 1);
         }
 
         for (size_t i=0; i<local_vector_vertex_data[seg_id].size(); ++i)
         {
-          setupDataVertex(mesh, segmentation[seg_id], seg_id, local_vector_vertex_data[seg_id][i], 3);
+          setupDataVertex(mesh_obj, segmentation[seg_id], seg_id, local_vector_vertex_data[seg_id][i], 3);
         }
 
 
         for (size_t i=0; i<local_scalar_cell_data[seg_id].size(); ++i)
         {
-          setupDataCell(mesh, segmentation[seg_id], seg_id, local_scalar_cell_data[seg_id][i], 1);
+          setupDataCell(mesh_obj, segmentation[seg_id], seg_id, local_scalar_cell_data[seg_id][i], 1);
         }
 
         for (size_t i=0; i<local_vector_cell_data[seg_id].size(); ++i)
         {
-          setupDataCell(mesh, segmentation[seg_id], seg_id, local_vector_cell_data[seg_id][i], 3);
+          setupDataCell(mesh_obj, segmentation[seg_id], seg_id, local_vector_cell_data[seg_id][i], 3);
         }
 
       }
@@ -828,7 +828,7 @@ namespace viennagrid
        * @param segmentation  The segmentation to which the file content is read
        * @param filename      Name of the file containing the mesh. Either .pvd (multi-segment) or .vtu (single segment)
        */
-      int operator()(MeshType & mesh, SegmentationType & segmentation, std::string const & filename)
+      int operator()(MeshType & mesh_obj, SegmentationType & segmentation, std::string const & filename)
       {
         std::string::size_type pos  = filename.rfind(".")+1;
         std::string extension = filename.substr(pos, filename.size());
@@ -853,7 +853,7 @@ namespace viennagrid
         //
         // push everything to the ViennaGrid mesh:
         //
-        setupVertices(mesh);
+        setupVertices(mesh_obj);
 //         for (size_t seg_id = 0; seg_id < local_cell_num.size(); ++seg_id)
         for (std::map<int, std::size_t>::iterator it = local_cell_num.begin(); it != local_cell_num.end(); ++it)
         {
@@ -863,8 +863,8 @@ namespace viennagrid
 //         for (size_t seg_id = 0; seg_id < local_cell_num.size(); ++seg_id)
         for (std::map<int, std::size_t>::iterator it = local_cell_num.begin(); it != local_cell_num.end(); ++it)
         {
-          setupCells(mesh, segmentation, it->first);
-          setupData(mesh, segmentation, it->first);
+          setupCells(mesh_obj, segmentation, it->first);
+          setupData(mesh_obj, segmentation, it->first);
         }
 
         clear();
@@ -878,10 +878,10 @@ namespace viennagrid
        * @param mesh        The mesh to which the file content is read
        * @param filename      Name of the file containing the mesh. Either .pvd (multi-segment) or .vtu (single segment)
        */
-      int operator()(MeshType & mesh, std::string const & filename)
+      int operator()(MeshType & mesh_obj, std::string const & filename)
       {
-        SegmentationType tmp(mesh);
-        return (*this)(mesh, tmp, filename);
+        SegmentationType tmp(mesh_obj);
+        return (*this)(mesh_obj, tmp, filename);
       }
 
 
@@ -1166,18 +1166,18 @@ namespace viennagrid
 
     /** @brief Convenience function for importing a mesh using a single line of code. */
     template <typename MeshType, typename SegmentationType >
-    int import_vtk(MeshType & mesh, SegmentationType & segmentation, std::string const & filename)
+    int import_vtk(MeshType & mesh_obj, SegmentationType & segmentation, std::string const & filename)
     {
       vtk_reader<MeshType, SegmentationType> vtk_reader;
-      return vtk_reader(mesh, segmentation, filename);
+      return vtk_reader(mesh_obj, segmentation, filename);
     }
 
     /** @brief Convenience function for importing a mesh using a single line of code. */
     template <typename MeshType>
-    int import_vtk(MeshType & mesh, std::string const & filename)
+    int import_vtk(MeshType & mesh_obj, std::string const & filename)
     {
       vtk_reader<MeshType> vtk_reader;
-      return vtk_reader(mesh, filename);
+      return vtk_reader(mesh_obj, filename);
     }
 
 

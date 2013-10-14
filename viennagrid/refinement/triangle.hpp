@@ -27,7 +27,7 @@ namespace viennagrid
 
 
   template<typename ElementType, typename MeshType, typename VertexHandleContainer>
-  void make_refinement_element(MeshType & mesh, VertexHandleContainer vertex_handle_container, unsigned int i0, unsigned int i1, unsigned int i2)
+  void make_refinement_element(MeshType & mesh_obj, VertexHandleContainer vertex_handle_container, unsigned int i0, unsigned int i1, unsigned int i2)
   {
     typedef typename VertexHandleContainer::iterator VertexHandleIteratorType;
     typedef typename std::iterator_traits<VertexHandleIteratorType>::value_type VertexHandleType;
@@ -37,7 +37,7 @@ namespace viennagrid
     cellvertices[1] = *viennagrid::advance(vertex_handle_container.begin(), i1);
     cellvertices[2] = *viennagrid::advance(vertex_handle_container.begin(), i2);
 
-    viennagrid::make_element<ElementType>( mesh, cellvertices.begin(), cellvertices.end() );
+    viennagrid::make_element<ElementType>( mesh_obj, cellvertices.begin(), cellvertices.end() );
   }
 
 

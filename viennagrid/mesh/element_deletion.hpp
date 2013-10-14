@@ -35,7 +35,7 @@ namespace viennagrid
   {
     typedef typename viennagrid::storage::handle::result_of::value_type<ToSwtichElementHandleT>::type to_switch_element_type;
 
-    switch_handle_functor(MeshT & mesh_, ToSwtichElementHandleT from_, ToSwtichElementHandleT to_) : mesh(mesh_), from(from_), to(to_) {}
+    switch_handle_functor(MeshT & mesh_obj, ToSwtichElementHandleT from, ToSwtichElementHandleT to) : mesh_obj_(mesh_obj), from_(from), to_(to) {}
 
     template<typename ParentElementTypeOrTagT>
     void operator() ( viennagrid::meta::tag<ParentElementTypeOrTagT> )
@@ -44,7 +44,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::element_range<MeshT, ParentElementTypeOrTagT>::type ParentElementRangeType;
       typedef typename viennagrid::result_of::iterator<ParentElementRangeType>::type ParentElementRangeIterator;
 
-      ParentElementRangeType parent_elements = viennagrid::elements(mesh);
+      ParentElementRangeType parent_elements = viennagrid::elements(mesh_obj_);
       for (ParentElementRangeIterator it = parent_elements.begin(); it != parent_elements.end(); ++it)
       {
         typedef typename viennagrid::result_of::element_range<ParentElementType, to_switch_element_type>::type ToSwitchElementRangeType;
@@ -53,39 +53,39 @@ namespace viennagrid
         ToSwitchElementRangeType to_switch_elements = viennagrid::elements(*it);
         for (ToSwitchElementRangeIterator jt = to_switch_elements.begin(); jt != to_switch_elements.end(); ++jt)
         {
-          if (jt.handle() == from)
+          if (jt.handle() == from_)
           {
-            jt.handle() = to;
+            jt.handle() = to_;
           }
         }
       }
     }
 
-    MeshT & mesh;
-    ToSwtichElementHandleT from;
-    ToSwtichElementHandleT to;
+    MeshT & mesh_obj_;
+    ToSwtichElementHandleT from_;
+    ToSwtichElementHandleT to_;
   };
 
 
 
   template<typename MeshT, typename MeshViewT, typename HandleT>
-  void mark_erase_elements( MeshT & mesh, MeshViewT & elements_to_erase, HandleT host_element )
+  void mark_erase_elements( MeshT & mesh_obj, MeshViewT & elements_to_erase, HandleT host_element )
   {
     typedef typename viennagrid::storage::handle::result_of::value_type<HandleT>::type ElementType;
     viennagrid::elements<ElementType>(elements_to_erase).insert_unique_handle( host_element );
 
-    mark_referencing_elements(mesh, elements_to_erase, host_element);
+    mark_referencing_elements(mesh_obj, elements_to_erase, host_element);
   }
 
 
   /** @brief For internal use only */
   template<typename MeshT, typename HandleT>
-  void switch_handle( MeshT & mesh, HandleT old_handle, HandleT new_handle)
+  void switch_handle( MeshT & mesh_obj, HandleT old_handle, HandleT new_handle)
   {
     typedef typename viennagrid::storage::handle::result_of::value_type<HandleT>::type ToSwitchElementType;
     typedef typename viennagrid::result_of::referencing_element_typelist<MeshT, ToSwitchElementType>::type ParentElementTypelist;
 
-    switch_handle_functor<MeshT, HandleT> functor(mesh, old_handle, new_handle);
+    switch_handle_functor<MeshT, HandleT> functor(mesh_obj, old_handle, new_handle);
 
     viennagrid::meta::for_each<ParentElementTypelist>( functor );
   }
@@ -93,7 +93,7 @@ namespace viennagrid
 
   /** @brief For internal use only */
   template<typename MeshT, typename HandleT>
-  void simple_erase_element(MeshT & mesh, HandleT & element_to_erase)
+  void simple_erase_element(MeshT & mesh_obj, HandleT & element_to_erase)
   {
     typedef typename viennagrid::storage::handle::result_of::value_type<HandleT>::type ElementType;
     typedef typename viennagrid::result_of::handle<MeshT, ElementType>::type ElementHandle;
@@ -101,8 +101,8 @@ namespace viennagrid
     typedef typename viennagrid::result_of::element_range<MeshT, ElementType>::type ElementRangeType;
     typedef typename viennagrid::result_of::iterator<ElementRangeType>::type ElementRangeIterator;
 
-    ElementRangeType elements = viennagrid::elements( mesh );
-    ElementRangeIterator to_erase_it = find_by_handle( mesh, element_to_erase );
+    ElementRangeType elements = viennagrid::elements(mesh_obj);
+    ElementRangeIterator to_erase_it = find_by_handle( mesh_obj, element_to_erase );
 
     ElementHandle from = (--elements.end()).handle();
     ElementHandle to = to_erase_it.handle();
@@ -110,16 +110,16 @@ namespace viennagrid
     std::swap( *to_erase_it, *(--elements.end()) );
     elements.erase( --elements.end() );
 
-//     std::cout << "Switching " << viennagrid::dereference_handle(mesh, from) << " with " << viennagrid::dereference_handle(mesh, to) << std::endl;
+//     std::cout << "Switching " << viennagrid::dereference_handle(mesh_obj, from) << " with " << viennagrid::dereference_handle(mesh_obj, to) << std::endl;
 
-    switch_handle( mesh, from, to );
+    switch_handle( mesh_obj, from, to );
   }
 
   /** @brief For internal use only */
   template<typename MeshT, typename MeshViewT>
   struct erase_functor
   {
-    erase_functor(MeshT & mesh_, MeshViewT & view_to_erase_) : mesh(mesh_), view_to_erase(view_to_erase_) {}
+    erase_functor(MeshT & mesh_obj, MeshViewT & view_to_erase) : mesh_obj_(mesh_obj), view_to_erase_(view_to_erase) {}
 
     template<typename ElementT>
     void operator()( viennagrid::meta::tag<ElementT> )
@@ -137,17 +137,17 @@ namespace viennagrid
 
       std::deque<id_type> ids_to_erase;
 
-      ToEraseElementRangeType elements_to_erase = viennagrid::elements<ElementT>(view_to_erase);
+      ToEraseElementRangeType elements_to_erase = viennagrid::elements<ElementT>(view_to_erase_);
       for (ToEraseElementRangeIterator it = elements_to_erase.begin(); it != elements_to_erase.end(); ++it)
         ids_to_erase.push_back( it->id() );
 
-      ElementRangeType elements = viennagrid::elements(mesh);
+      ElementRangeType elements = viennagrid::elements(mesh_obj_);
       ElementRangeIterator back_it = --elements.end();
 
 
       for (typename std::deque<id_type>::iterator it = ids_to_erase.begin(); it != ids_to_erase.end(); ++it)
       {
-        ElementRangeIterator to_erase_it = find( mesh, *it );
+        ElementRangeIterator to_erase_it = find( mesh_obj_, *it );
 
         if (back_it != to_erase_it)
         {
@@ -155,7 +155,7 @@ namespace viennagrid
           std::swap( *back_it, *to_erase_it );
           ElementHandle new_handle = to_erase_it.handle();
 
-          switch_handle( mesh, old_handle, new_handle );
+          switch_handle( mesh_obj_, old_handle, new_handle );
         }
 
 
@@ -165,8 +165,8 @@ namespace viennagrid
       }
     }
 
-    MeshT & mesh;
-    MeshViewT & view_to_erase;
+    MeshT & mesh_obj_;
+    MeshViewT & view_to_erase_;
   };
 
   /** @brief Erases all elements marked for deletion and all elements which references these elements from a mesh
@@ -177,7 +177,7 @@ namespace viennagrid
     * @param  elements_to_erase         A mesh view which stores all elements marked for deletion
     */
   template<typename WrappedConfigT, typename ToEraseViewT>
-  void erase_elements(mesh_t<WrappedConfigT> & mesh, ToEraseViewT & elements_to_erase)
+  void erase_elements(mesh_t<WrappedConfigT> & mesh_obj, ToEraseViewT & elements_to_erase)
   {
     typedef mesh_t<WrappedConfigT> MeshType;
 
@@ -185,10 +185,10 @@ namespace viennagrid
       typename viennagrid::result_of::element_typelist<ToEraseViewT>::type
     >::type SegmentElementTypelist;
 
-    erase_functor<MeshType, ToEraseViewT> functor( mesh, elements_to_erase );
+    erase_functor<MeshType, ToEraseViewT> functor( mesh_obj, elements_to_erase );
     viennagrid::meta::for_each<SegmentElementTypelist>(functor);
 
-    viennagrid::increment_change_counter(mesh);
+    viennagrid::increment_change_counter(mesh_obj);
   }
 
   template<typename MeshViewT>
@@ -227,12 +227,12 @@ namespace viennagrid
     * @param  element_to_erase          A handle to the element to be deleted
     */
   template<typename MeshT, typename HandleT>
-  void erase_element(MeshT & mesh, HandleT element_to_erase)
+  void erase_element(MeshT & mesh_obj, HandleT element_to_erase)
   {
     typedef typename viennagrid::result_of::mesh_view<MeshT>::type ToEraseViewType;
-    ToEraseViewType elements_to_erase = viennagrid::make_view(mesh);
-    viennagrid::mark_erase_elements( mesh, elements_to_erase, element_to_erase );
-    viennagrid::erase_elements(mesh, elements_to_erase);
+    ToEraseViewType elements_to_erase = viennagrid::make_view(mesh_obj);
+    viennagrid::mark_erase_elements( mesh_obj, elements_to_erase, element_to_erase );
+    viennagrid::erase_elements(mesh_obj, elements_to_erase);
   }
 
 

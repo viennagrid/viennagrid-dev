@@ -1452,7 +1452,7 @@ namespace viennagrid
     */
   template<typename MeshOrSegmentHandleTypeT>
   typename result_of::vertex_handle<MeshOrSegmentHandleTypeT>::type make_vertex(
-        MeshOrSegmentHandleTypeT & mesh,
+        MeshOrSegmentHandleTypeT & mesh_obj,
         typename result_of::point<MeshOrSegmentHandleTypeT>::type const & point);
 
   /** @brief Function for creating a vertex within a mesh or a segment with a specific point and specific ID
@@ -1466,7 +1466,7 @@ namespace viennagrid
 #ifndef _MSC_VER
   template<typename MeshOrSegmentHandleTypeT>
   typename result_of::vertex_handle<MeshOrSegmentHandleTypeT>::type make_vertex_with_id(
-        MeshOrSegmentHandleTypeT & mesh,
+        MeshOrSegmentHandleTypeT & mesh_obj,
         typename viennagrid::result_of::element<MeshOrSegmentHandleTypeT, vertex_tag>::type::id_type id,
         typename result_of::point<MeshOrSegmentHandleTypeT>::type const & point);
 #endif
@@ -1481,7 +1481,7 @@ namespace viennagrid
     */
   template<typename MeshOrSegmentHandleTypeT>
   typename result_of::vertex_handle<MeshOrSegmentHandleTypeT>::type make_unique_vertex(
-        MeshOrSegmentHandleTypeT & mesh,
+        MeshOrSegmentHandleTypeT & mesh_obj,
         typename result_of::point<MeshOrSegmentHandleTypeT>::type const & point,
         typename result_of::coord<MeshOrSegmentHandleTypeT>::type tolerance);
 
@@ -1494,7 +1494,7 @@ namespace viennagrid
     */
   template<typename MeshOrSegmentHandleTypeT>
   typename result_of::vertex_handle<MeshOrSegmentHandleTypeT>::type make_unique_vertex(
-        MeshOrSegmentHandleTypeT & mesh,
+        MeshOrSegmentHandleTypeT & mesh_obj,
         typename result_of::point<MeshOrSegmentHandleTypeT>::type const & p);
 
   /** @brief Function for creating a line within a mesh or a segment (same as make_edge)
@@ -1508,7 +1508,7 @@ namespace viennagrid
     */
   template<typename MeshOrSegmentHandleTypeT, typename VertexHandleT>
   typename result_of::line_handle<MeshOrSegmentHandleTypeT>::type make_line(
-        MeshOrSegmentHandleTypeT & mesh,
+        MeshOrSegmentHandleTypeT & mesh_obj,
         VertexHandleT v0, VertexHandleT v1);
 
   /** @brief Function for creating an edge within a mesh or a segment (same as make_edge)
@@ -1522,7 +1522,7 @@ namespace viennagrid
     */
   template<typename MeshOrSegmentHandleTypeT, typename VertexHandleT>
   typename result_of::edge_handle<MeshOrSegmentHandleTypeT>::type make_edge(
-        MeshOrSegmentHandleTypeT & mesh,
+        MeshOrSegmentHandleTypeT & mesh_obj,
         VertexHandleT v0, VertexHandleT v1);
 
   /** @brief Function for creating a triangle within a mesh or a segment
@@ -1537,7 +1537,7 @@ namespace viennagrid
     */
   template<typename MeshOrSegmentHandleTypeT, typename VertexHandleT>
   typename result_of::triangle_handle<MeshOrSegmentHandleTypeT>::type make_triangle(
-        MeshOrSegmentHandleTypeT & mesh,
+        MeshOrSegmentHandleTypeT & mesh_obj,
         VertexHandleT v0, VertexHandleT v1, VertexHandleT v2);
 
   /** @brief Function for creating a quadrilateral within a mesh or a segment
@@ -1553,7 +1553,7 @@ namespace viennagrid
     */
   template<typename MeshOrSegmentHandleTypeT, typename VertexHandleT>
   typename result_of::quadrilateral_handle<MeshOrSegmentHandleTypeT>::type make_quadrilateral(
-        MeshOrSegmentHandleTypeT & mesh,
+        MeshOrSegmentHandleTypeT & mesh_obj,
         VertexHandleT v0, VertexHandleT v1, VertexHandleT v2, VertexHandleT v3);
 
   /** @brief Function for creating a PLC within a mesh or a segment
@@ -1573,7 +1573,7 @@ namespace viennagrid
     */
   template<typename MeshOrSegmentHandleTypeT, typename LineHandleIteratorT, typename VertexHandleIteratorT, typename PointIteratorT>
   typename result_of::plc_handle<MeshOrSegmentHandleTypeT>::type make_plc(
-        MeshOrSegmentHandleTypeT & mesh,
+        MeshOrSegmentHandleTypeT & mesh_obj,
         LineHandleIteratorT    lines_begin,           LineHandleIteratorT     lines_end,
         VertexHandleIteratorT  loose_vertices_begin,  VertexHandleIteratorT   loose_vertices_end,
         PointIteratorT         hole_points_begin,     PointIteratorT          hole_points_end);
@@ -1591,7 +1591,7 @@ namespace viennagrid
     */
   template<typename MeshOrSegmentHandleTypeT, typename VertexHandleT>
   typename result_of::tetrahedron_handle<MeshOrSegmentHandleTypeT>::type make_tetrahedron(
-        MeshOrSegmentHandleTypeT & mesh,
+        MeshOrSegmentHandleTypeT & mesh_obj,
         VertexHandleT v0, VertexHandleT v1, VertexHandleT v2, VertexHandleT v3);
 
   /** @brief Function for creating a hexahedron within a mesh or a segment
@@ -1611,7 +1611,7 @@ namespace viennagrid
     */
   template<typename MeshOrSegmentHandleTypeT, typename VertexHandleT>
   typename result_of::hexahedron_handle<MeshOrSegmentHandleTypeT>::type make_hexahedron(
-        MeshOrSegmentHandleTypeT & mesh,
+        MeshOrSegmentHandleTypeT & mesh_obj,
         VertexHandleT v0, VertexHandleT v1, VertexHandleT v2, VertexHandleT v3,
         VertexHandleT v4, VertexHandleT v5, VertexHandleT v6, VertexHandleT v7);
 
@@ -1729,8 +1729,8 @@ namespace viennagrid
   template<typename MeshT>
   struct mesh_proxy
   {
-    mesh_proxy( MeshT & mesh_ ) : mesh(&mesh_){}
-    MeshT * mesh;
+    mesh_proxy( MeshT & mesh_obj ) : mesh_obj_(&mesh_obj){}
+    MeshT * mesh_obj_;
   };
 
   /** @brief Creates a view out of a mesh using the mesh_proxy object
@@ -1740,9 +1740,9 @@ namespace viennagrid
     * @return                     a mesh_proxy object holding the host mesh/segment object, can be assigned to a mesh_t object
     */
   template<typename WrappedConfigT>
-  mesh_proxy< mesh_t<WrappedConfigT> > make_view(mesh_t<WrappedConfigT> & mesh)
+  mesh_proxy< mesh_t<WrappedConfigT> > make_view(mesh_t<WrappedConfigT> & mesh_obj)
   {
-    return mesh_proxy< mesh_t<WrappedConfigT> >( mesh );
+    return mesh_proxy< mesh_t<WrappedConfigT> >( mesh_obj );
   }
 
   template<typename SegmentationT>

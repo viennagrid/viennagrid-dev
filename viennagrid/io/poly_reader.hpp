@@ -70,7 +70,7 @@ namespace viennagrid
        * @param filename      Name of the file
        */
       template <typename MeshT>
-      int operator()(MeshT & mesh, std::string const & filename) const
+      int operator()(MeshT & mesh_obj, std::string const & filename) const
       {
 
         typedef typename viennagrid::result_of::point<MeshT>::type           PointType;
@@ -152,7 +152,7 @@ namespace viennagrid
           for (int j=0; j<point_dim; j++)
             current_line >> p[j];
 
-          //VertexHandleType vertex = viennagrid::make_vertex_with_id( mesh, VertexIDType(id), p );
+          //VertexHandleType vertex = viennagrid::make_vertex_with_id( mesh_obj, VertexIDType(id), p );
 
           if (attribute_num > 0)
           {
@@ -161,7 +161,7 @@ namespace viennagrid
               current_line >> attributes[j];
 
               // TODO fix using accesor or appendix!
-//                 viennadata::access<poly_attribute_tag, std::vector<CoordType> >()(viennagrid::dereference_handle(mesh, vertex)) = attributes;
+//                 viennadata::access<poly_attribute_tag, std::vector<CoordType> >()(viennagrid::dereference_handle(mesh_obj, vertex)) = attributes;
           }
         }
 
@@ -233,7 +233,7 @@ namespace viennagrid
             {
               long id;
               current_line >> id;
-              vertex_handles[k] = viennagrid::find( mesh, VertexIDType(id) ).handle();
+              vertex_handles[k] = viennagrid::find( mesh_obj, VertexIDType(id) ).handle();
             }
 
             if (vertex_num == 1)
@@ -242,15 +242,15 @@ namespace viennagrid
             }
             else if (vertex_num == 2)
             {
-              lines.push_back( viennagrid::make_line(mesh, vertex_handles[0], vertex_handles[1]) );
+              lines.push_back( viennagrid::make_line(mesh_obj, vertex_handles[0], vertex_handles[1]) );
             }
             else
             {
               typename std::vector<VertexHandleType>::iterator it1 = vertex_handles.begin();
               typename std::vector<VertexHandleType>::iterator it2 = it1; ++it2;
               for (; it2 != vertex_handles.end(); ++it1, ++it2)
-                  lines.push_back( viennagrid::make_line(mesh, *it1, *it2) );
-              lines.push_back( viennagrid::make_line(mesh, vertex_handles.back(), vertex_handles.front()) );
+                  lines.push_back( viennagrid::make_line(mesh_obj, *it1, *it2) );
+              lines.push_back( viennagrid::make_line(mesh_obj, vertex_handles.back(), vertex_handles.front()) );
             }
           }
 
@@ -277,7 +277,7 @@ namespace viennagrid
 
 
           viennagrid::make_plc(
-              mesh,
+              mesh_obj,
               lines.begin(), lines.end(),
               vertices.begin(), vertices.end(),
               hole_points.begin(), hole_points.end()

@@ -90,14 +90,14 @@ namespace viennagrid
         if (!mesh_pointer)
           throw bad_serialization_state_exception( "Mesh not loaded into serialzer object" );
 
-        MeshT const & mesh = *mesh_pointer;
+        MeshT const & mesh_obj = *mesh_pointer;
 
         // -----------------------------------------------
         // the geometry is read and transmitted
         //
-        std::size_t point_size = viennagrid::vertices(mesh).size();
+        std::size_t point_size = viennagrid::vertices(mesh_obj).size();
         ar & point_size;
-        ConstVertexRange vertices = viennagrid::elements(mesh);
+        ConstVertexRange vertices = viennagrid::elements(mesh_obj);
         for (ConstVertexIterator vit = vertices.begin();
              vit != vertices.end(); ++vit)
         {
@@ -109,9 +109,9 @@ namespace viennagrid
         // -----------------------------------------------
         // the specific cells are read and transmitted
         //
-        ConstCellRange cells = viennagrid::elements(mesh);
+        ConstCellRange cells = viennagrid::elements(mesh_obj);
 
-        std::size_t cell_size = viennagrid::cells(mesh).size();
+        std::size_t cell_size = viennagrid::cells(mesh_obj).size();
         ar & cell_size;
 
         for (ConstCellIterator cit = cells.begin();
@@ -137,7 +137,7 @@ namespace viennagrid
         if (!mesh_pointer)
           throw bad_serialization_state_exception( "Mesh not loaded into serialzer object" );
 
-        MeshT & mesh = *mesh_pointer;
+        MeshT & mesh_obj = *mesh_pointer;
 
         // -----------------------------------------------
         // the geometry is received and stored
@@ -171,10 +171,10 @@ namespace viennagrid
           {
             std::size_t id;
             ar & id;
-            vertices[j] = viennagrid::find_by_id( mesh, VertexIDType(id) ).handle();
+            vertices[j] = viennagrid::find_by_id( mesh_obj, VertexIDType(id) ).handle();
           }
 
-          viennagrid::make_cell( mesh, vertices, vertices + num_vertices);
+          viennagrid::make_cell( mesh_obj, vertices, vertices + num_vertices);
         }
         // -----------------------------------------------
       }
@@ -190,11 +190,11 @@ namespace viennagrid
       mesh_serializer() : mesh_pointer(0) {}
 
       /** @brief The constructor expects a shared pointer on a mesh object and sets the state */
-      mesh_serializer(MeshT & mesh) : mesh_pointer(mesh) {}
+      mesh_serializer(MeshT & mesh_obj) : mesh_pointer(mesh_obj) {}
 
       /** @brief The load function enables to associate a mesh with the serialzer after
       a serializer object has been constructed. */
-      inline void load(MeshT & mesh) { mesh_pointer = &mesh;  }
+      inline void load(MeshT & mesh_obj) { mesh_pointer = &mesh;  }
 
       /** @brief The get function enables to retrieve the mesh pointer
       */

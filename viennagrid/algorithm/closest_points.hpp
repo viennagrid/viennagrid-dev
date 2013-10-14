@@ -788,21 +788,21 @@ namespace viennagrid
 
     template <typename PointAccessorType, typename PointType, typename ElementTag, typename WrappedConfigType>
     std::pair<PointType, typename PointAccessorType::value_type>
-    closest_points_on_boundary_impl(PointAccessorType const & mesh,
+    closest_points_on_boundary_impl(PointAccessorType const & mesh_obj,
                                     PointType const & v,
                                     element_t<ElementTag,WrappedConfigType> const & el)
     {
-      return closest_points_on_boundary_point_to_any<typename ElementTag::facet_tag>(mesh, v, el);
+      return closest_points_on_boundary_point_to_any<typename ElementTag::facet_tag>(mesh_obj, v, el);
     }
 
     template <typename PointAccessorT, typename WrappedConfigType, typename PointType>
     std::pair<PointType, typename viennagrid::result_of::point< mesh_t<WrappedConfigType> >::type>
     closest_points_on_boundary_impl(PointAccessorT const point_accessor,
                                     PointType const & p,
-                                    mesh_t<WrappedConfigType> const & mesh)
+                                    mesh_t<WrappedConfigType> const & mesh_obj)
     {
         typedef typename result_of::cell_tag< mesh_t<WrappedConfigType> >::type CellTag;
-      return closest_points_on_boundary_point_to_any<typename CellTag::facet_tag>( point_accessor, p, mesh );
+      return closest_points_on_boundary_point_to_any<typename CellTag::facet_tag>( point_accessor, p, mesh_obj);
     }
 
     template <typename PointAccessorT, typename SegmentationT, typename PointType>
@@ -829,9 +829,9 @@ namespace viennagrid
     template <typename WrappedMeshConfigType, typename WrappedConfigType>
     std::pair< typename viennagrid::result_of::point< mesh_t<WrappedMeshConfigType> >::type, typename viennagrid::result_of::point< mesh_t<WrappedMeshConfigType> >::type >
     closest_points_on_boundary_impl(element_t<vertex_tag,WrappedConfigType> const & v,
-                                    mesh_t<WrappedMeshConfigType> const & mesh)
+                                    mesh_t<WrappedMeshConfigType> const & mesh_obj)
     {
-      return closest_points_on_boundary_impl( default_point_accessor(mesh)(v), mesh);
+      return closest_points_on_boundary_impl( default_point_accessor(mesh_obj)(v), mesh_obj);
     }
 
 
@@ -909,9 +909,9 @@ namespace viennagrid
     std::pair< typename PointAccessorType::value_type, typename PointAccessorType::value_type >
     closest_points_on_boundary_impl(PointAccessorType const accessor,
                                     element_t<ElementTag,WrappedConfigType> const & el1,
-                                    mesh_t<WrappedMeshConfigType> const & mesh)
+                                    mesh_t<WrappedMeshConfigType> const & mesh_obj)
     {
-      return closest_points_on_boundary_generic(accessor, mesh, el1);
+      return closest_points_on_boundary_generic(accessor, mesh_obj, el1);
     }
 
     template <typename PointAccessorType,

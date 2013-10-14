@@ -44,7 +44,7 @@ namespace viennagrid
        * @param filename      Name of the file
        */
       template <typename MeshType, typename SegmentationType>
-      int operator()(MeshType & mesh, SegmentationType & segmentation, std::string const & filename) const
+      int operator()(MeshType & mesh_obj, SegmentationType & segmentation, std::string const & filename) const
       {
         typedef typename viennagrid::result_of::point<MeshType>::type    PointType;
 
@@ -97,7 +97,7 @@ namespace viennagrid
           for (int j=0; j<point_dim; j++)
             reader >> p[j];
 
-          viennagrid::make_vertex_with_id( mesh, typename VertexType::id_type(i), p );
+          viennagrid::make_vertex_with_id( mesh_obj, typename VertexType::id_type(i), p );
         }
 
         if (!reader.good())
@@ -130,7 +130,7 @@ namespace viennagrid
               throw bad_file_format_exception(filename, "EOF encountered while reading cells (cell ID expected).");
 
             reader >> vertex_num;
-            cell_vertex_handles[j] = viennagrid::vertices(mesh).handle_at(vertex_num-1);
+            cell_vertex_handles[j] = viennagrid::vertices(mesh_obj).handle_at(vertex_num-1);
           }
 
           viennagrid::make_element_with_id<CellType>(segmentation[segment_index], cell_vertex_handles.begin(), cell_vertex_handles.end(), typename CellType::id_type(i));
@@ -146,11 +146,11 @@ namespace viennagrid
        * @param filename      Name of the file
        */
       template <typename MeshType>
-      int operator()(MeshType & mesh, std::string const & filename)
+      int operator()(MeshType & mesh_obj, std::string const & filename)
       {
         typedef typename viennagrid::result_of::segmentation<MeshType>::type SegmentationType;
-        SegmentationType tmp(mesh);
-        return (*this)(mesh, tmp, filename);
+        SegmentationType tmp(mesh_obj);
+        return (*this)(mesh_obj, tmp, filename);
       }
 
     }; //class netgen_reader

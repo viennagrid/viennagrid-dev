@@ -32,7 +32,7 @@ namespace viennagrid
    * If the two lines have equal length, the line with the larger vertex IDs involved is considered as longer.
    */
   template <typename GeometricContainerType, typename VertexHandleType>
-  bool stable_line_is_longer(GeometricContainerType const & mesh,
+  bool stable_line_is_longer(GeometricContainerType const & mesh_obj,
                              VertexHandleType vh1_1, VertexHandleType vh1_2,
                              VertexHandleType vh2_1, VertexHandleType vh2_2)
   {
@@ -40,10 +40,10 @@ namespace viennagrid
     typedef typename viennagrid::result_of::point< GeometricContainerType >::type PointType;
     typedef typename viennagrid::result_of::coord< PointType >::type ScalarType;
 
-    const VertexType & v1_1 = viennagrid::dereference_handle( mesh, vh1_1 );
-    const VertexType & v1_2 = viennagrid::dereference_handle( mesh, vh1_2 );
-    const VertexType & v2_1 = viennagrid::dereference_handle( mesh, vh2_1 );
-    const VertexType & v2_2 = viennagrid::dereference_handle( mesh, vh2_2 );
+    const VertexType & v1_1 = viennagrid::dereference_handle( mesh_obj, vh1_1 );
+    const VertexType & v1_2 = viennagrid::dereference_handle( mesh_obj, vh1_2 );
+    const VertexType & v2_1 = viennagrid::dereference_handle( mesh_obj, vh2_1 );
+    const VertexType & v2_2 = viennagrid::dereference_handle( mesh_obj, vh2_2 );
 
     const VertexType & v1_1_ptr = (v1_1.id() < v1_2.id()) ? v1_1 : v1_2; //v1_1 carries smaller ID
     const VertexType & v1_2_ptr = (v1_1.id() < v1_2.id()) ? v1_2 : v1_1; //v1_2 carries larger ID
@@ -51,8 +51,8 @@ namespace viennagrid
     const VertexType & v2_1_ptr = (v2_1.id() < v2_2.id()) ? v2_1 : v2_2; //v2_1 carries smaller ID
     const VertexType & v2_2_ptr = (v2_1.id() < v2_2.id()) ? v2_2 : v2_1; //v2_2 carries larger ID
 
-    ScalarType line1 = viennagrid::norm( viennagrid::point(mesh, v1_1) - viennagrid::point(mesh, v1_2) );
-    ScalarType line2 = viennagrid::norm( viennagrid::point(mesh, v2_1) - viennagrid::point(mesh, v2_2) );
+    ScalarType line1 = viennagrid::norm( viennagrid::point(mesh_obj, v1_1) - viennagrid::point(mesh_obj, v1_2) );
+    ScalarType line2 = viennagrid::norm( viennagrid::point(mesh_obj, v2_1) - viennagrid::point(mesh_obj, v2_2) );
 
 
     if (line1 > line2)
@@ -79,16 +79,16 @@ namespace viennagrid
   }
 
   template<typename GeometricContainerType, typename VertexHandleContainer>
-  bool stable_line_is_longer(GeometricContainerType const & mesh, VertexHandleContainer vertices, unsigned int i0, unsigned int i1, unsigned int i2, unsigned int i3)
+  bool stable_line_is_longer(GeometricContainerType const & mesh_obj, VertexHandleContainer vertices, unsigned int i0, unsigned int i1, unsigned int i2, unsigned int i3)
   {
-    return stable_line_is_longer(mesh,
+    return stable_line_is_longer(mesh_obj,
                                 *viennagrid::advance(vertices.begin(), i0), *viennagrid::advance(vertices.begin(), i1),
                                 *viennagrid::advance(vertices.begin(), i2), *viennagrid::advance(vertices.begin(), i3));
   }
 
 
   template<typename ElementType, typename GeometricMeshType, typename VertexHandleContainer>
-  void make_refinement_element(GeometricMeshType & mesh, VertexHandleContainer vertex_handle_container, unsigned int i0, unsigned int i1, unsigned int i2, unsigned int i3)
+  void make_refinement_element(GeometricMeshType & mesh_obj, VertexHandleContainer vertex_handle_container, unsigned int i0, unsigned int i1, unsigned int i2, unsigned int i3)
   {
     typedef typename VertexHandleContainer::iterator VertexHandleIteratorType;
     typedef typename std::iterator_traits<VertexHandleIteratorType>::value_type VertexHandleType;
@@ -99,7 +99,7 @@ namespace viennagrid
     cellvertices[2] = *viennagrid::advance(vertex_handle_container.begin(), i2);
     cellvertices[3] = *viennagrid::advance(vertex_handle_container.begin(), i3);
 
-    viennagrid::make_element<ElementType>( mesh, cellvertices.begin(), cellvertices.end() );
+    viennagrid::make_element<ElementType>( mesh_obj, cellvertices.begin(), cellvertices.end() );
   }
 
 

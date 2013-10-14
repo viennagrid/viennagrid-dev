@@ -23,13 +23,13 @@ namespace viennagrid
   {
     /** @brief For internal use only. */
     template<typename MeshType, typename ScalarType, typename PointAccessorType>
-    void scale_impl(MeshType& mesh, ScalarType factor, PointAccessorType accessor)
+    void scale_impl(MeshType& mesh_obj, ScalarType factor, PointAccessorType accessor)
     {
       typedef typename viennagrid::result_of::element<MeshType, viennagrid::vertex_tag>::type         VertexType;
       typedef typename viennagrid::result_of::element_range<MeshType, viennagrid::vertex_tag>::type   VertexContainer;
       typedef typename viennagrid::result_of::iterator<VertexContainer>::type                           VertexIterator;
 
-      VertexContainer vertices = viennagrid::elements<VertexType>(mesh);
+      VertexContainer vertices = viennagrid::elements<VertexType>(mesh_obj);
       for ( VertexIterator vit = vertices.begin();
             vit != vertices.end();
             ++vit )

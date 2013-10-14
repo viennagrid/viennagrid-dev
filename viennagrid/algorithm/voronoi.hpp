@@ -80,7 +80,7 @@ namespace viennagrid
               typename VertexBoxVolumeCellContributionAccessor,
               typename EdgeBoxVolumeAccessor,
               typename EdgeBoxVolumeCellContributionAccessor>
-    void write_voronoi_info(MeshType const & mesh,
+    void write_voronoi_info(MeshType const & mesh_obj,
                             InterfaceAreaAccessor interface_area_accessor,
                             InterfaceAreaCellContributionAccessor interface_area_cell_contribution_accessor,
                             VertexBoxVolumeAccessor vertex_box_volume_accessor,
@@ -104,7 +104,7 @@ namespace viennagrid
       // Write Voronoi information
       //
 
-      CellRange cells = viennagrid::elements<CellTag>(mesh);
+      CellRange cells = viennagrid::elements<CellTag>(mesh_obj);
       for (CellIterator cit  = cells.begin();
                         cit != cells.end();
                       ++cit)
@@ -140,7 +140,7 @@ namespace viennagrid
               typename VertexBoxVolumeCellContributionAccessor,
               typename EdgeBoxVolumeAccessor,
               typename EdgeBoxVolumeCellContributionAccessor>
-    void write_voronoi_info(MeshType const & mesh,
+    void write_voronoi_info(MeshType const & mesh_obj,
                             InterfaceAreaAccessor interface_area_accessor,
                             InterfaceAreaCellContributionAccessor interface_area_cell_contribution_accessor,
                             VertexBoxVolumeAccessor vertex_box_volume_accessor,
@@ -149,7 +149,7 @@ namespace viennagrid
                             EdgeBoxVolumeCellContributionAccessor edge_box_volume_cell_contribution_accessor,
                             viennagrid::hypercube_tag<1>)
     {
-        write_voronoi_info<CellTag>(mesh,
+        write_voronoi_info<CellTag>(mesh_obj,
                                     interface_area_accessor, interface_area_cell_contribution_accessor,
                                     vertex_box_volume_accessor, vertex_box_volume_cell_contribution_accessor,
                                     edge_box_volume_accessor, edge_box_volume_cell_contribution_accessor,
@@ -168,7 +168,7 @@ namespace viennagrid
               typename VertexBoxVolumeCellContributionAccessor,
               typename EdgeBoxVolumeAccessor,
               typename EdgeBoxVolumeCellContributionAccessor>
-    void write_voronoi_info(MeshType const & mesh,
+    void write_voronoi_info(MeshType const & mesh_obj,
                             InterfaceAreaAccessor interface_area_accessor,
                             InterfaceAreaCellContributionAccessor interface_area_cell_contribution_accessor,
                             VertexBoxVolumeAccessor vertex_box_volume_accessor,
@@ -197,7 +197,7 @@ namespace viennagrid
       // Algorithm: Iterate over all cells, compute circumcenter and add interface area to edge, box volume to vertex.
       //
 
-      CellRange cells = viennagrid::elements<CellTag>(mesh);
+      CellRange cells = viennagrid::elements<CellTag>(mesh_obj);
       for (CellIterator cit  = cells.begin();
                         cit != cells.end();
                       ++cit)
@@ -298,7 +298,7 @@ namespace viennagrid
               typename VertexBoxVolumeCellContributionAccessor,
               typename EdgeBoxVolumeAccessor,
               typename EdgeBoxVolumeCellContributionAccessor>
-    void write_voronoi_info(MeshType const & mesh,
+    void write_voronoi_info(MeshType const & mesh_obj,
                             InterfaceAreaAccessor                   interface_area_accessor,
                             InterfaceAreaCellContributionAccessor   interface_area_cell_contribution_accessor,
                             VertexBoxVolumeAccessor                 vertex_box_volume_accessor,
@@ -330,7 +330,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::const_element_range<EdgeType, vertex_tag>::type           VertexOnEdgeRange;
       typedef typename viennagrid::result_of::iterator<VertexOnEdgeRange>::type                         VertexOnEdgeIterator;
 
-      CellRange cells = viennagrid::elements<CellTag>(mesh);
+      CellRange cells = viennagrid::elements<CellTag>(mesh_obj);
       for (CellIterator cit  = cells.begin();
                         cit != cells.end();
                       ++cit)
@@ -372,7 +372,7 @@ namespace viennagrid
           ConstCellHandleType other_cell;
 
 //           CellType const * other_cell = NULL;
-          CellOnEdgeRange other_cells = viennagrid::coboundary_elements<EdgeType, CellTag>(mesh, viennagrid::handle(mesh, *intersected_edge_ptr) );
+          CellOnEdgeRange other_cells = viennagrid::coboundary_elements<EdgeType, CellTag>(mesh_obj, viennagrid::handle(mesh_obj, *intersected_edge_ptr) );
           storage::handle::set_handle_invalid( other_cells, other_cell );
 
           for (CellOnEdgeIterator coeit  = other_cells.begin();
@@ -585,7 +585,7 @@ namespace viennagrid
               typename VertexBoxVolumeCellContributionAccessor,
               typename EdgeBoxVolumeAccessor,
               typename EdgeBoxVolumeCellContributionAccessor>
-    void write_voronoi_info(MeshType const & mesh,
+    void write_voronoi_info(MeshType const & mesh_obj,
                             InterfaceAreaAccessor                    interface_area_accessor,
                             InterfaceAreaCellContributionAccessor    interface_area_cell_contribution_accessor,
                             VertexBoxVolumeAccessor                  vertex_box_volume_accessor,
@@ -632,7 +632,7 @@ namespace viennagrid
       // Step one: Write circumcenters to facets
       //
 
-      viennagrid::dereference_handle_comperator<MeshType> comp(mesh);
+      viennagrid::dereference_handle_comperator<MeshType> comp(mesh_obj);
 
       std::map< ConstFacetHandleType, CircumcenterContainer, viennagrid::dereference_handle_comperator<MeshType> >
                                                                circumcenters_on_facets( comp );
@@ -643,7 +643,7 @@ namespace viennagrid
               >                                                interface_boundaries_on_edges(comp);
 
 
-      CellRange cells = viennagrid::elements<CellType>(mesh);
+      CellRange cells = viennagrid::elements<CellType>(mesh_obj);
       for (CellIterator cit  = cells.begin();
                         cit != cells.end();
                       ++cit)
@@ -664,7 +664,7 @@ namespace viennagrid
       //
       // Step two: Write lines connecting circumcenters to edges
       //
-      FacetRange facets = viennagrid::elements<FacetType>(mesh);
+      FacetRange facets = viennagrid::elements<FacetType>(mesh_obj);
       for (FacetIterator fit  = facets.begin();
                          fit != facets.end();
                        ++fit)
@@ -714,7 +714,7 @@ namespace viennagrid
       //
       // Step three: Compute Voronoi information:
       //
-      EdgeRange edges = viennagrid::elements<EdgeType>(mesh);
+      EdgeRange edges = viennagrid::elements<EdgeType>(mesh_obj);
       for (EdgeIterator eit  = edges.begin();
                         eit != edges.end();
                         ++eit)
@@ -731,7 +731,7 @@ namespace viennagrid
         ++voeit;
         VertexType const & v1 = *voeit;
 
-        double edge_length = spanned_volume( viennagrid::point(mesh, v0), viennagrid::point(mesh, v1));
+        double edge_length = spanned_volume( viennagrid::point(mesh_obj, v0), viennagrid::point(mesh_obj, v1));
 
         std::vector< EdgePointsWithCellInfo > & interface_segments = interface_boundaries_on_edges[eit.handle()];
 
@@ -796,7 +796,7 @@ namespace viennagrid
               typename VertexBoxVolumeCellContributionAccessor,
               typename EdgeBoxVolumeAccessor,
               typename EdgeBoxVolumeCellContributionAccessor>
-    void write_voronoi_info(MeshType const & mesh,
+    void write_voronoi_info(MeshType const & mesh_obj,
                             InterfaceAreaAccessor interface_area_accessor,
                             InterfaceAreaCellContributionAccessor interface_area_cell_contribution_accessor,
                             VertexBoxVolumeAccessor vertex_box_volume_accessor,
@@ -830,7 +830,7 @@ namespace viennagrid
       // Algorithm: Iterate over all cells, compute circumcenter and add interface area to edge, box volume to vertex.
       //
 
-      CellRange cells = viennagrid::elements<CellTag>(mesh);
+      CellRange cells = viennagrid::elements<CellTag>(mesh_obj);
       for (CellIterator cit  = cells.begin();
                         cit != cells.end();
                         ++cit)
@@ -866,7 +866,7 @@ namespace viennagrid
                                     ++voeit)
             {
               //double contribution = spanned_volume(cell_center, facet_center, edge_midpoint, voeit->point());
-              double contribution = spanned_volume(cell_center, facet_center, edge_midpoint, viennagrid::point(mesh, *voeit));
+              double contribution = spanned_volume(cell_center, facet_center, edge_midpoint, viennagrid::point(mesh_obj, *voeit));
               vertex_box_volume_cell_contribution_accessor(*voeit).push_back(std::make_pair( cit.handle(), contribution) );
               vertex_box_volume_accessor(*voeit) += contribution;
               edge_contribution += contribution;
@@ -906,7 +906,7 @@ namespace viennagrid
             typename VertexBoxVolumeCellContributionAccessor,
             typename EdgeBoxVolumeAccessor,
             typename EdgeBoxVolumeCellContributionAccessor>
-  void apply_voronoi(MeshType const & mesh,
+  void apply_voronoi(MeshType const & mesh_obj,
                      InterfaceAreaAccessor                     interface_area_accessor,
                      InterfaceAreaCellContributionAccessor     interface_area_cell_contribution_accessor,
                      VertexBoxVolumeAccessor                   vertex_box_volume_accessor,
@@ -916,7 +916,7 @@ namespace viennagrid
   {
     typedef typename viennagrid::result_of::element_tag<ElementTypeOrTagT>::type ElementTag;
 
-    detail::write_voronoi_info<ElementTag>(mesh,
+    detail::write_voronoi_info<ElementTag>(mesh_obj,
                                interface_area_accessor,
                                interface_area_cell_contribution_accessor,
                                vertex_box_volume_accessor,
