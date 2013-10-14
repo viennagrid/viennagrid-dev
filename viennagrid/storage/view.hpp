@@ -46,8 +46,8 @@ namespace viennagrid
       typedef base_container_type_ base_container_type;
 
       typedef typename base_container_type::handle_tag handle_tag;
-      typedef typename handle::result_of::handle_type<base_container_type, handle_tag>::type handle_type;
-      typedef typename handle::result_of::const_handle_type<base_container_type, handle_tag>::type const_handle_type;
+      typedef typename detail::result_of::handle_type<base_container_type, handle_tag>::type handle_type;
+      typedef typename detail::result_of::const_handle_type<base_container_type, handle_tag>::type const_handle_type;
 
 
     private:
@@ -198,8 +198,8 @@ namespace viennagrid
       const_iterator begin() const { return const_iterator(*this, handle_container.begin()); }
       const_iterator end() const { return const_iterator(*this, handle_container.end()); }
 
-      reference dereference_handle( handle_type handle ) { return viennagrid::storage::handle::dereference_handle( *base_container, handle ); }
-      const_reference dereference_handle( const_handle_type handle ) const { return viennagrid::storage::handle::dereference_handle_const( *base_container, handle ); }
+      reference dereference_handle( handle_type handle ) { return viennagrid::storage::detail::dereference_handle( *base_container, handle ); }
+      const_reference dereference_handle( const_handle_type handle ) const { return viennagrid::storage::detail::dereference_handle_const( *base_container, handle ); }
 
       handle_type handle( reference element ) { return &element; }
       const_handle_type handle( const_reference element ) const { return &element; }
@@ -280,8 +280,8 @@ namespace viennagrid
       typedef std_set_tag<CompareTagT> container_tag;
 
       typedef typename base_container_type::handle_tag handle_tag;
-      typedef typename handle::result_of::handle_type<base_container_type, handle_tag>::type handle_type;
-      typedef typename handle::result_of::const_handle_type<base_container_type, handle_tag>::type const_handle_type;
+      typedef typename detail::result_of::handle_type<base_container_type, handle_tag>::type handle_type;
+      typedef typename detail::result_of::const_handle_type<base_container_type, handle_tag>::type const_handle_type;
 
 
     private:
@@ -434,8 +434,8 @@ namespace viennagrid
       const_iterator end() const { return const_iterator(*this, handle_container.end()); }
 
 
-      reference dereference_handle( handle_type handle ) { return viennagrid::storage::handle::dereference_handle( *base_container, handle ); }
-      const_reference dereference_handle( const_handle_type handle ) const { return viennagrid::storage::handle::dereference_handle_const( *base_container, handle ); }
+      reference dereference_handle( handle_type handle ) { return viennagrid::storage::detail::dereference_handle( *base_container, handle ); }
+      const_reference dereference_handle( const_handle_type handle ) const { return viennagrid::storage::detail::dereference_handle_const( *base_container, handle ); }
 
       handle_type handle( reference element ) { return &element; }
       const_handle_type handle( const_reference element ) const { return &element; }

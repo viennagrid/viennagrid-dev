@@ -30,7 +30,7 @@ namespace viennagrid
   {
 
 
-    namespace handle
+    namespace detail
     {
 
       namespace result_of

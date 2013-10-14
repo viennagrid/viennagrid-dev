@@ -373,7 +373,7 @@ namespace viennagrid
 
 //           CellType const * other_cell = NULL;
           CellOnEdgeRange other_cells = viennagrid::coboundary_elements<EdgeType, CellTag>(mesh_obj, viennagrid::handle(mesh_obj, *intersected_edge_ptr) );
-          storage::handle::set_handle_invalid( other_cells, other_cell );
+          storage::detail::set_handle_invalid( other_cells, other_cell );
 
           for (CellOnEdgeIterator coeit  = other_cells.begin();
                                   coeit != other_cells.end();
@@ -425,7 +425,7 @@ namespace viennagrid
               interface_contribution = spanned_volume(edge_intersection, circ_center);
               interface_area_accessor(*eocit) += interface_contribution;
               //if ( other_cell != NULL)
-              if (storage::handle::is_handle_invalid( other_cells, other_cell ))
+              if (storage::detail::is_handle_invalid( other_cells, other_cell ))
                 voronoi_unique_quantity_update(interface_area_cell_contribution_accessor(*eocit), std::make_pair( other_cell, interface_contribution) );
 
 
@@ -449,7 +449,7 @@ namespace viennagrid
                 if ( &(*voeit) != opposite_vertex_ptr )  // non-splitted contribution
                 {
 //                   if (other_cell != NULL)
-                  if (storage::handle::is_handle_invalid( other_cells, other_cell ))
+                  if (storage::detail::is_handle_invalid( other_cells, other_cell ))
                   {
                     double contribution_other = spanned_volume(circ_center, edge_intersection, viennagrid::point(*voeit));
                     vertex_box_volume_accessor(*voeit) += contribution_other;
@@ -471,7 +471,7 @@ namespace viennagrid
                                                  std::make_pair( cit.handle(), contribution_cell) );
 
 //                   if (other_cell != NULL)
-                  if (storage::handle::is_handle_invalid( other_cells, other_cell ))
+                  if (storage::detail::is_handle_invalid( other_cells, other_cell ))
                   {
                     double contribution_other = spanned_volume(circ_center, edge_intersection, opposite_vertex_edge_intersection);
                     vertex_box_volume_accessor(*voeit) += contribution_other;
@@ -491,7 +491,7 @@ namespace viennagrid
 
             }
 //             else if (other_cell != NULL)// intersected edge: Write negative contributions to other cell
-            else if (storage::handle::is_handle_invalid( other_cells, other_cell ))
+            else if (storage::detail::is_handle_invalid( other_cells, other_cell ))
             {
               // interface contribution:
               double interface_contribution = spanned_volume(circ_center, edge_midpoint);

@@ -213,7 +213,7 @@ namespace viennagrid
         const_id_type id;
       };
 
-      namespace id
+      namespace detail
       {
 
         template<typename element_type, typename id_type>

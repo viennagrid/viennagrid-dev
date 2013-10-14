@@ -809,10 +809,10 @@ namespace viennagrid
     * @return                    A C++ reference to an element which is referenced by handle
     */
   template<typename MeshOrSegmentHandleT, typename HandleT>
-  typename storage::handle::result_of::value_type<HandleT>::type &
+  typename storage::detail::result_of::value_type<HandleT>::type &
   dereference_handle(MeshOrSegmentHandleT & mesh_obj, HandleT const & handle)
   {
-    typedef typename storage::handle::result_of::value_type<HandleT>::type value_type;
+    typedef typename storage::detail::result_of::value_type<HandleT>::type value_type;
     return storage::detail::get<value_type>(element_collection(mesh_obj)).dereference_handle( handle );
   }
 
@@ -825,10 +825,10 @@ namespace viennagrid
     * @return                    A C++ const reference to an element which is referenced by handle
     */
   template<typename MeshOrSegmentHandleT, typename HandleT>
-  typename storage::handle::result_of::value_type<HandleT>::type const &
+  typename storage::detail::result_of::value_type<HandleT>::type const &
   dereference_handle(MeshOrSegmentHandleT const & mesh_obj, HandleT const & handle)
   {
-    typedef typename storage::handle::result_of::value_type<HandleT>::type value_type;
+    typedef typename storage::detail::result_of::value_type<HandleT>::type value_type;
     return storage::detail::get<value_type>(element_collection(mesh_obj)).dereference_handle( handle );
   }
 
@@ -883,7 +883,7 @@ namespace viennagrid
       BoundaryHandleT const & boundary_element_handle,
       std::size_t index)
   {
-    typedef typename viennagrid::storage::handle::result_of::value_type<BoundaryHandleT>::type element_type_2;
+    typedef typename viennagrid::storage::detail::result_of::value_type<BoundaryHandleT>::type element_type_2;
     element_type_2 & bnd_kcell = viennagrid::dereference_handle(host_element, boundary_element_handle);
     return viennagrid::vertices(bnd_kcell).handle_at(host_element.global_to_local_orientation(boundary_element_handle, index));
   }
@@ -905,7 +905,7 @@ namespace viennagrid
       BoundaryHandleT const & boundary_element_handle,
       std::size_t index)
   {
-    typedef typename viennagrid::storage::handle::result_of::value_type<BoundaryHandleT>::type element_type_2;
+    typedef typename viennagrid::storage::detail::result_of::value_type<BoundaryHandleT>::type element_type_2;
     element_type_2 const & bnd_kcell = viennagrid::dereference_handle(host_element, boundary_element_handle);
     return viennagrid::vertices(bnd_kcell).handle_at(host_element.global_to_local_orientation(boundary_element_handle, index));
   }
@@ -1307,10 +1307,10 @@ namespace viennagrid
     * @return                         An iterator pointing to the found element. If no element was found it points to viennagrid::elements<ElementType>(mesh_or_segment).end()
     */
   template<typename MeshSegmentHandleT, typename HandleT>
-  typename viennagrid::result_of::iterator< typename viennagrid::result_of::element_range<MeshSegmentHandleT, typename storage::handle::result_of::value_type<HandleT>::type >::type >::type
+  typename viennagrid::result_of::iterator< typename viennagrid::result_of::element_range<MeshSegmentHandleT, typename storage::detail::result_of::value_type<HandleT>::type >::type >::type
   find_by_handle(MeshSegmentHandleT & mesh_or_segment, HandleT handle)
   {
-    typedef typename storage::handle::result_of::value_type<HandleT>::type    element_type;
+    typedef typename storage::detail::result_of::value_type<HandleT>::type    element_type;
     typedef typename element_type::tag                                        element_tag;
     typedef typename viennagrid::result_of::element_range<MeshSegmentHandleT, element_tag>::type   RangeType;
     typedef typename viennagrid::result_of::iterator<RangeType>::type                              RangeIterator;
@@ -1334,10 +1334,10 @@ namespace viennagrid
     * @return                         A const iterator pointing to the found element. If no element was found it points to viennagrid::elements<ElementType>(mesh_or_segment).end()
     */
   template<typename MeshSegmentHandleT, typename HandleT>
-  typename viennagrid::result_of::const_iterator< typename viennagrid::result_of::const_element_range<MeshSegmentHandleT, typename storage::handle::result_of::value_type<HandleT>::type >::type  >::type
+  typename viennagrid::result_of::const_iterator< typename viennagrid::result_of::const_element_range<MeshSegmentHandleT, typename storage::detail::result_of::value_type<HandleT>::type >::type  >::type
   find_by_handle(MeshSegmentHandleT const & mesh_or_segment, HandleT handle)
   {
-    typedef typename storage::handle::result_of::value_type<HandleT>::type          element_type;
+    typedef typename storage::detail::result_of::value_type<HandleT>::type          element_type;
     typedef typename element_type::tag                                              element_tag;
     typedef typename viennagrid::result_of::const_element_range<MeshSegmentHandleT, element_tag>::type   RangeType;
     typedef typename viennagrid::result_of::const_iterator<RangeType>::type                              RangeIterator;

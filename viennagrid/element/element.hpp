@@ -788,13 +788,13 @@ namespace viennagrid
 
 
   template<typename element_tag, typename WrappedConfigType, typename handle_type>
-  typename storage::handle::result_of::value_type<handle_type>::type & dereference_handle( viennagrid::element<element_tag, WrappedConfigType> & element, handle_type const & handle)
+  typename storage::detail::result_of::value_type<handle_type>::type & dereference_handle( viennagrid::element<element_tag, WrappedConfigType> & element, handle_type const & handle)
   {
       return element.dereference_handle(handle);
   }
 
   template<typename element_tag, typename WrappedConfigType, typename handle_type>
-  const typename storage::handle::result_of::value_type<handle_type>::type & dereference_handle( viennagrid::element<element_tag, WrappedConfigType> const & element, handle_type const & handle)
+  const typename storage::detail::result_of::value_type<handle_type>::type & dereference_handle( viennagrid::element<element_tag, WrappedConfigType> const & element, handle_type const & handle)
   {
       return element.dereference_handle(handle);
   }

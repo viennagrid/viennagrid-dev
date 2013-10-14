@@ -61,7 +61,7 @@ namespace viennagrid
         container_type & container = viennagrid::storage::detail::get< value_type >( *collection );
 
         if ( generate_id && !container.is_present( element ) )
-            viennagrid::storage::id::set_id(element, id_generator( viennagrid::meta::tag<value_type>() ) );
+            viennagrid::storage::detail::set_id(element, id_generator( viennagrid::meta::tag<value_type>() ) );
 
         if (!generate_id)
           id_generator.set_max_id( element.id() );

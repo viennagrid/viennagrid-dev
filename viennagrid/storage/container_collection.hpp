@@ -177,7 +177,7 @@ namespace viennagrid
       template<typename container_collection_type, typename handle_type, typename container_type>
       struct handle_or_ignore_helper
       {
-        typedef typename viennagrid::storage::handle::result_of::value_type<handle_type>::type value_type;
+        typedef typename viennagrid::storage::detail::result_of::value_type<handle_type>::type value_type;
 
         static void handle_or_ignore( container_collection_type & collection, const handle_type & handle )
         {

@@ -163,7 +163,7 @@ namespace viennagrid
         typedef typename std::iterator_traits<base_iterator>::iterator_category iterator_category;
 
         typedef id_type handle_type;
-        typedef typename result_of::const_id<id_type>::type const_handle_type;
+        typedef typename viennagrid::storage::result_of::const_id<id_type>::type const_handle_type;
 
         iterator() {}
         iterator(base_iterator const & it) : base_iterator(it) {}
@@ -303,7 +303,7 @@ namespace viennagrid
         typedef typename std::iterator_traits<base_const_iterator>::iterator_category   iterator_category;
 
         typedef id_type handle_type;
-        typedef typename result_of::const_id<id_type>::type const_handle_type;
+        typedef typename viennagrid::storage::result_of::const_id<id_type>::type const_handle_type;
 
         const_iterator() {}
         const_iterator(base_const_iterator const & it) : base_const_iterator(it) {}
@@ -342,29 +342,29 @@ namespace viennagrid
       typedef typename container_type::reference reference;
       typedef typename container_type::const_reference const_reference;
 
-      typedef typename handle::result_of::handle_type<container_type, handle_tag>::type handle_type;
-      typedef typename handle::result_of::const_handle_type<container_type, handle_tag>::type const_handle_type;
+      typedef typename detail::result_of::handle_type<container_type, handle_tag>::type handle_type;
+      typedef typename detail::result_of::const_handle_type<container_type, handle_tag>::type const_handle_type;
 
 
 
       handle_type handle( value_type & element )
       {
-        return handle::handle( *this, element, handle_tag() );
+        return detail::handle( *this, element, handle_tag() );
       }
 
       const_handle_type handle( value_type const & element ) const
       {
-        return handle::handle( *this, element, handle_tag() );
+        return detail::handle( *this, element, handle_tag() );
       }
 
       value_type & dereference_handle( handle_type handle )
       {
-        return handle::dereference_handle( *this, handle );
+        return detail::dereference_handle( *this, handle );
       }
 
       value_type const & dereference_handle( const_handle_type handle ) const
       {
-        return handle::dereference_handle( *this, handle );
+        return detail::dereference_handle( *this, handle );
       }
 
     };
@@ -465,8 +465,8 @@ namespace viennagrid
       typedef base_container_ base_container;
 
       typedef handle_tag_ handle_tag;
-      typedef typename handle::result_of::handle_type<base_container, handle_tag>::type handle_type;
-      typedef typename handle::result_of::const_handle_type<base_container, handle_tag>::type const_handle_type;
+      typedef typename detail::result_of::handle_type<base_container, handle_tag>::type handle_type;
+      typedef typename detail::result_of::const_handle_type<base_container, handle_tag>::type const_handle_type;
       typedef std::pair<handle_type, bool> insert_return_type;
 
 

@@ -82,13 +82,13 @@ namespace viennagrid
     namespace detail
     {
       template<typename type, typename typemap>
-      typename result_of::value_type<typemap, typename viennagrid::meta::remove_const<type>::type >::type & get( collection_t<typemap> & c )
+      typename viennagrid::storage::result_of::value_type<typemap, typename viennagrid::meta::remove_const<type>::type >::type & get( collection_t<typemap> & c )
       {
         return c.get( viennagrid::meta::tag< typename viennagrid::meta::remove_const<type>::type >() );
       }
 
       template<typename type, typename typemap>
-      typename result_of::value_type<typemap, typename viennagrid::meta::remove_const<type>::type >::type const & get( collection_t<typemap> const & c )
+      typename viennagrid::storage::result_of::value_type<typemap, typename viennagrid::meta::remove_const<type>::type >::type const & get( collection_t<typemap> const & c )
       {
         return c.get( viennagrid::meta::tag< typename viennagrid::meta::remove_const<type>::type >() );
       }

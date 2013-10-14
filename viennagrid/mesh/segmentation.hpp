@@ -1578,7 +1578,7 @@ namespace viennagrid
   template<typename ViewT, typename HandleT>
   void add_single_handle( ViewT & view_or_segment, HandleT handle )
   {
-    typedef typename storage::handle::result_of::value_type<HandleT>::type value_type;
+    typedef typename storage::detail::result_of::value_type<HandleT>::type value_type;
     value_type & element = dereference_handle(view_or_segment, handle);
 
     typedef typename viennagrid::result_of::element_range< ViewT, value_type >::type range_type;
