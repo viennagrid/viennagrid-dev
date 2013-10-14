@@ -497,11 +497,11 @@ namespace viennagrid
 
 
   template<typename ElementTagT>
-  class element_extension_t {};
+  class element_extension {};
 
   template<typename ElementTag, typename WrappedConfigType>
   class element :
-      public element_extension_t<ElementTag>,
+      public element_extension<ElementTag>,
       public viennagrid::storage::id_handler<
                   typename viennagrid::storage::result_of::make_id<
                     viennagrid::element<
@@ -573,7 +573,7 @@ namespace viennagrid
   // separate specialization for vertices at the moment
   template<typename WrappedConfigType>
   class element<vertex_tag, WrappedConfigType> :
-      public element_extension_t<vertex_tag>,
+      public element_extension<vertex_tag>,
       public viennagrid::storage::id_handler<
                   typename viennagrid::storage::result_of::make_id<
                     viennagrid::element<
