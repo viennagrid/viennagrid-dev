@@ -62,7 +62,7 @@ namespace viennagrid
     template<typename container_typelist>
     void set_container( viennagrid::storage::collection_t<container_typelist> & container_collection )
     {
-      elements_.set_base_container( viennagrid::storage::collection::get<bnd_cell_type>(container_collection) );
+      elements_.set_base_container( viennagrid::storage::detail::get<bnd_cell_type>(container_collection) );
       base::set_container( container_collection );
     }
 
@@ -207,7 +207,7 @@ namespace viennagrid
     template<typename container_typelist>
     void set_container( viennagrid::storage::collection_t<container_typelist> & container_collection )
     {
-      elements_.set_base_container( viennagrid::storage::collection::get<bnd_cell_type>(container_collection) );
+      elements_.set_base_container( viennagrid::storage::detail::get<bnd_cell_type>(container_collection) );
       base::set_container( container_collection );
     }
 
@@ -820,14 +820,14 @@ namespace viennagrid
   typename result_of::element_range<storage::collection_t<container_collection_typemap>, element_type_or_tag>::type elements( storage::collection_t<container_collection_typemap> & collection)
   {
       typedef typename result_of::element<storage::collection_t<container_collection_typemap>, element_type_or_tag>::type element_type;
-      return typename result_of::element_range<storage::collection_t<container_collection_typemap>, element_type_or_tag>::type( storage::collection::get<element_type>(collection) );
+      return typename result_of::element_range<storage::collection_t<container_collection_typemap>, element_type_or_tag>::type( storage::detail::get<element_type>(collection) );
   }
 
   template<typename element_type_or_tag, typename container_collection_typemap>
   typename result_of::const_element_range<storage::collection_t<container_collection_typemap>, element_type_or_tag>::type elements( const storage::collection_t<container_collection_typemap> & collection)
   {
       typedef typename result_of::element<storage::collection_t<container_collection_typemap>, element_type_or_tag>::type element_type;
-      return typename result_of::const_element_range<storage::collection_t<container_collection_typemap>, element_type_or_tag>::type( storage::collection::get<element_type>(collection) );
+      return typename result_of::const_element_range<storage::collection_t<container_collection_typemap>, element_type_or_tag>::type( storage::detail::get<element_type>(collection) );
   }
 
 

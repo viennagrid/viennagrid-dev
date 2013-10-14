@@ -58,7 +58,7 @@ namespace viennagrid
         typedef typename viennagrid::storage::result_of::container_of<container_collection_type, value_type>::type::handle_type handle_type;
 
 
-        container_type & container = viennagrid::storage::collection::get< value_type >( *collection );
+        container_type & container = viennagrid::storage::detail::get< value_type >( *collection );
 
         if ( generate_id && !container.is_present( element ) )
             viennagrid::storage::id::set_id(element, id_generator( viennagrid::meta::tag<value_type>() ) );
@@ -70,7 +70,7 @@ namespace viennagrid
         if (change_counter) ++(*change_counter);
 
         if (call_callback)
-            viennagrid::storage::container_collection_element::insert_callback(
+            viennagrid::storage::detail::insert_callback(
                 container.dereference_handle(ret.first),
                 ret.second,
                 inserter);
@@ -154,7 +154,7 @@ namespace viennagrid
       template<typename handle_type, typename value_type>
       void handle_insert( handle_type ref, viennagrid::meta::tag<value_type> )
       {
-        viennagrid::storage::container_collection::handle_or_ignore( *view_collection, ref, viennagrid::meta::tag<value_type>() );
+        viennagrid::storage::detail::handle_or_ignore( *view_collection, ref, viennagrid::meta::tag<value_type>() );
 
         dependend_inserter->handle_insert( ref, viennagrid::meta::tag<value_type>() );
         if (change_counter) ++(*change_counter);

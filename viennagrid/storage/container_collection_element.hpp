@@ -21,7 +21,7 @@ namespace viennagrid
 {
   namespace storage
   {
-    namespace container_collection_element
+    namespace detail
     {
       template<typename container_collection_element_type, typename inserter_type>
       void insert_callback( container_collection_element_type & element, bool insert_result, inserter_type & inserter)

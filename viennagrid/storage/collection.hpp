@@ -72,14 +72,14 @@ namespace viennagrid
       };
 
       template<typename typemap, typename key_type>
-      struct value_type< collection_t<typemap>, key_type >
+      struct value_type< viennagrid::storage::collection_t<typemap>, key_type >
       {
         typedef typename viennagrid::meta::result_of::find<typemap, key_type>::type::second type;
       };
     }
 
 
-    namespace collection
+    namespace detail
     {
       template<typename type, typename typemap>
       typename result_of::value_type<typemap, typename viennagrid::meta::remove_const<type>::type >::type & get( collection_t<typemap> & c )
@@ -100,7 +100,7 @@ namespace viennagrid
       template<typename typemap>
       struct collection
       {
-          typedef collection_t<typemap> type;
+          typedef viennagrid::storage::collection_t<typemap> type;
       };
     } // namespace result_of
 

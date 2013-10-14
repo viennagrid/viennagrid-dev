@@ -56,7 +56,7 @@ namespace viennagrid
     {
       container_output_functor f(os);
 
-      viennagrid::storage::collection::for_each( container_collection, f );
+      viennagrid::storage::detail::for_each( container_collection, f );
 
       return os;
     }

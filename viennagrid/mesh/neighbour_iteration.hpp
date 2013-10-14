@@ -97,7 +97,7 @@ namespace viennagrid
     for ( element_range_iterator it = elements.begin(); it != elements.end(); ++it )
     {
       accessor( *it ).clear();
-      accessor( *it ).set_base_container( viennagrid::storage::collection::get< element_type >( element_collection(mesh_obj) ) );
+      accessor( *it ).set_base_container( viennagrid::storage::detail::get< element_type >( element_collection(mesh_obj) ) );
     }
 
     typedef typename viennagrid::result_of::element_range< mesh_type, connector_element_tag >::type     connector_element_range_type;

@@ -837,7 +837,7 @@ namespace viennagrid
           element_segment_mapping_tag
       >::type & element_segment_mapping_collection( SegmentationT & segmentation )
   {
-    return viennagrid::storage::collection::get<element_segment_mapping_tag>( segmentation.appendix() );
+    return viennagrid::storage::detail::get<element_segment_mapping_tag>( segmentation.appendix() );
   }
 
   template<typename SegmentationT>
@@ -846,7 +846,7 @@ namespace viennagrid
           element_segment_mapping_tag
       >::type const & element_segment_mapping_collection( SegmentationT const & segmentation )
   {
-    return viennagrid::storage::collection::get<element_segment_mapping_tag>( segmentation.appendix() );
+    return viennagrid::storage::detail::get<element_segment_mapping_tag>( segmentation.appendix() );
   }
 
 
@@ -930,7 +930,7 @@ namespace viennagrid
       element_tag
   >::type::segment_interface_information_wrapper_type &
   interface_information_collection( segment_handle_type & seg0, segment_handle_type & seg1 )
-  { return viennagrid::storage::collection::get<element_tag>( viennagrid::storage::collection::get<interface_information_collection_tag>( seg0.segmentation().appendix() ) ).get_interface_wrapper(seg0, seg1); }
+  { return viennagrid::storage::detail::get<element_tag>( viennagrid::storage::detail::get<interface_information_collection_tag>( seg0.segmentation().appendix() ) ).get_interface_wrapper(seg0, seg1); }
 
   template<typename element_tag, typename segment_handle_type>
   typename viennagrid::storage::result_of::value_type<
@@ -941,7 +941,7 @@ namespace viennagrid
       element_tag
   >::type::segment_interface_information_wrapper_type const &
   interface_information_collection( segment_handle_type const & seg0, segment_handle_type const & seg1 )
-  { return viennagrid::storage::collection::get<element_tag>( viennagrid::storage::collection::get<interface_information_collection_tag>( seg0.segmentation().appendix() ) ).get_interface_wrapper(seg0, seg1); }
+  { return viennagrid::storage::detail::get<element_tag>( viennagrid::storage::detail::get<interface_information_collection_tag>( seg0.segmentation().appendix() ) ).get_interface_wrapper(seg0, seg1); }
 
 
 
@@ -1586,7 +1586,7 @@ namespace viennagrid
 
     iterator_type it = find( view_or_segment, element.id() );
     if ( it == elements<value_type>(view_or_segment).end() )
-      viennagrid::storage::collection::get<value_type>( element_collection(view_or_segment) ).insert_handle( handle );
+      viennagrid::storage::detail::get<value_type>( element_collection(view_or_segment) ).insert_handle( handle );
 
     viennagrid::increment_change_counter(view_or_segment);
   }

@@ -100,7 +100,7 @@ namespace viennagrid
     for ( element_range_iterator it = elements.begin(); it != elements.end(); ++it )
     {
       accessor( *it ).clear();
-      accessor( *it ).set_base_container( viennagrid::storage::collection::get< coboundary_type >( element_collection(mesh_obj) ) );
+      accessor( *it ).set_base_container( viennagrid::storage::detail::get< coboundary_type >( element_collection(mesh_obj) ) );
     }
 
 
@@ -136,7 +136,7 @@ namespace viennagrid
     for ( element_range_iterator it = elements.begin(); it != elements.end(); ++it )
     {
       accessor( *it ).clear();
-      accessor( *it ).set_base_container( viennagrid::storage::collection::get< coboundary_type >( element_collection(mesh_obj) ) );
+      accessor( *it ).set_base_container( viennagrid::storage::detail::get< coboundary_type >( element_collection(mesh_obj) ) );
     }
 
 
@@ -178,7 +178,7 @@ namespace viennagrid
               viennagrid::static_pair<element_tag, coboundary_tag>
               >::type coboundary_container_wrapper_type;
 
-      coboundary_container_wrapper_type & coboundary_container_wrapper = coboundary_collection<element_tag, coboundary_tag>(mesh_obj);//viennagrid::storage::collection::get< viennagrid::static_pair<element_tag, coboundary_tag> > ( mesh_obj.coboundary_collection() );
+      coboundary_container_wrapper_type & coboundary_container_wrapper = coboundary_collection<element_tag, coboundary_tag>(mesh_obj);//viennagrid::storage::detail::get< viennagrid::static_pair<element_tag, coboundary_tag> > ( mesh_obj.coboundary_collection() );
 
       create_coboundary_information<element_type_or_tag, coboundary_type_or_tag>( mesh_obj, viennagrid::make_accessor<element_type>(coboundary_container_wrapper.container) );
       update_change_counter( mesh_obj, coboundary_container_wrapper.change_counter );

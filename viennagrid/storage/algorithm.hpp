@@ -28,7 +28,7 @@ namespace viennagrid
 {
   namespace storage
   {
-    namespace collection
+    namespace detail
     {
       template<typename collection_type, typename functor>
       struct for_each_functor
@@ -37,7 +37,7 @@ namespace viennagrid
 
         template<typename key_type, typename value_type>
         void operator()( viennagrid::meta::tag< viennagrid::static_pair<key_type, value_type> > )
-        { f_( viennagrid::storage::collection::get<key_type>(collection_) ); }
+        { f_( viennagrid::storage::detail::get<key_type>(collection_) ); }
 
         collection_type & collection_;
         functor           f_;
@@ -75,8 +75,8 @@ namespace viennagrid
         void operator() ( viennagrid::meta::tag<type> )
         {
             f_(
-              viennagrid::storage::collection::get<type>(container_collection_1_),
-              viennagrid::storage::collection::get<type>(container_collection_2_)
+              viennagrid::storage::detail::get<type>(container_collection_1_),
+              viennagrid::storage::detail::get<type>(container_collection_2_)
             );
         }
 
@@ -87,28 +87,28 @@ namespace viennagrid
       };
 
 
-  }
+    }
 
 
-  namespace container_collection
-  {
-    template<typename predicate>
-    class copy_functor
+    namespace detail
     {
-    public:
-      copy_functor(predicate pred) : pred_(pred) {}
-
-      template<typename src_container_type, typename dst_container_type>
-      void operator() (const src_container_type & src_container, dst_container_type & dst_container)
+      template<typename predicate>
+      class copy_functor
       {
-        for (typename src_container_type::const_iterator it = src_container.begin(); it != src_container.end(); ++it)
-          if (pred_(*it))
-              dst_container.insert( *it );
-      }
+      public:
+        copy_functor(predicate pred) : pred_(pred) {}
 
-    private:
-      predicate pred_;
-    };
+        template<typename src_container_type, typename dst_container_type>
+        void operator() (const src_container_type & src_container, dst_container_type & dst_container)
+        {
+          for (typename src_container_type::const_iterator it = src_container.begin(); it != src_container.end(); ++it)
+            if (pred_(*it))
+                dst_container.insert( *it );
+        }
+
+      private:
+        predicate pred_;
+      };
 
 
 
@@ -116,7 +116,7 @@ namespace viennagrid
       template<typename src_container_typelist, typename dst_container_typelist>
       void copy(const collection_t<src_container_typelist> & src, collection_t<dst_container_typelist> & dst)
       {
-        collection::dual_for_each_functor<
+        detail::dual_for_each_functor<
             const collection_t<src_container_typelist>,
             collection_t<dst_container_typelist>,
             copy_functor<viennagrid::meta::true_predicate>
@@ -133,7 +133,7 @@ namespace viennagrid
       template<typename src_container_typelist, typename dst_container_typelist, typename predicate>
       void copy_if(const collection_t<src_container_typelist> & src, collection_t<dst_container_typelist> & dst, predicate pred)
       {
-        collection::dual_for_each_functor<
+        detail::dual_for_each_functor<
             const collection_t<src_container_typelist>,
             collection_t<dst_container_typelist>,
             copy_functor<predicate>
@@ -174,7 +174,7 @@ namespace viennagrid
       template<typename src_container_typelist, typename dst_container_typelist>
       void handle(collection_t<src_container_typelist> & src, collection_t<dst_container_typelist> & dst)
       {
-        collection::dual_for_each_functor<
+        detail::dual_for_each_functor<
             collection_t<src_container_typelist>,
             collection_t<dst_container_typelist>,
             handle_functor<viennagrid::meta::true_predicate>
@@ -191,7 +191,7 @@ namespace viennagrid
       template<typename src_container_typelist, typename dst_container_typelist, typename predicate>
       void handle_if(collection_t<src_container_typelist> & src, collection_t<dst_container_typelist> & dst, predicate pred)
       {
-        collection::dual_for_each_functor<
+        detail::dual_for_each_functor<
             collection_t<src_container_typelist>,
             collection_t<dst_container_typelist>,
             handle_functor<predicate>

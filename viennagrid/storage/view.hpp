@@ -643,7 +643,7 @@ namespace viennagrid
       template<typename base_container_collection_type, typename view_container_collection_type>
       static void exec( base_container_collection_type & base_container_collection, view_container_collection_type & view_container_collection )
       {
-        storage::collection::get<value_type>(view_container_collection).set_base_container( storage::collection::get<value_type>(base_container_collection) );
+        storage::detail::get<value_type>(view_container_collection).set_base_container( storage::detail::get<value_type>(base_container_collection) );
 
         set_base_container_helper<tail>::exec(base_container_collection, view_container_collection);
       }

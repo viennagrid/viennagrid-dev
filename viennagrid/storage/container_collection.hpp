@@ -31,7 +31,7 @@ namespace viennagrid
   namespace storage
   {
 
-    namespace container_collection
+    namespace detail
     {
 
       namespace result_of
@@ -81,7 +81,7 @@ namespace viennagrid
 
       } // namespace result_of
 
-    } // namespace container_collection
+    } // namespace detail
 
 
     namespace result_of
@@ -96,7 +96,7 @@ namespace viennagrid
       };
 
       template<typename typemap_, typename element_type>
-      struct container_of< collection_t< typemap_ >, element_type >
+      struct container_of< viennagrid::storage::collection_t< typemap_ >, element_type >
       {
         typedef typename container_of<typemap_, element_type>::type type;
       };
@@ -106,10 +106,11 @@ namespace viennagrid
       struct common_values;
 
       template<typename container_typelist_1, typename container_typelist_2>
-      struct common_values< collection_t<container_typelist_1>, collection_t<container_typelist_2> >
+      struct common_values< viennagrid::storage::collection_t<container_typelist_1>,
+                            viennagrid::storage::collection_t<container_typelist_2> >
       {
-        typedef collection_t<container_typelist_1> from_container_collection_type;
-        typedef collection_t<container_typelist_2> to_container_collection_type;
+        typedef viennagrid::storage::collection_t<container_typelist_1> from_container_collection_type;
+        typedef viennagrid::storage::collection_t<container_typelist_2> to_container_collection_type;
 
         typedef typename viennagrid::meta::result_of::key_typelist<typename from_container_collection_type::typemap>::type from_container_collection_value_typelist;
         typedef typename viennagrid::meta::result_of::key_typelist<typename to_container_collection_type::typemap>::type to_container_collection_value_typelist;
@@ -125,7 +126,7 @@ namespace viennagrid
 
 
 
-    namespace container_collection
+    namespace detail
     {
       typedef viennagrid::make_typemap<
                   viennagrid::storage::default_tag,   viennagrid::storage::handled_container_tag<viennagrid::storage::std_deque_tag, viennagrid::storage::pointer_handle_tag>
@@ -223,7 +224,7 @@ namespace viennagrid
         template<typename type>
         void operator() ( viennagrid::meta::tag<type> )
         {
-          viennagrid::storage::collection::get<type>( container_collection ).clear();
+          viennagrid::storage::detail::get<type>( container_collection ).clear();
         }
 
         container_collection_type & container_collection;
@@ -231,15 +232,15 @@ namespace viennagrid
 
 
       template<typename container_collection_typemap>
-      void clear_all( collection_t<container_collection_typemap> & container_collection)
+      void clear_all( viennagrid::storage::collection_t<container_collection_typemap> & container_collection)
       {
-        clear_all_functor< collection_t<container_collection_typemap> > f( container_collection );
+        clear_all_functor< viennagrid::storage::collection_t<container_collection_typemap> > f( container_collection );
         viennagrid::meta::for_each< typename viennagrid::meta::result_of::key_typelist<container_collection_typemap>::type >( f );
       }
 
 
 
-    } // namespace container_collection
+    } // namespace detail
 
 
 
@@ -249,8 +250,8 @@ namespace viennagrid
       template<typename value_typelist, typename container_config>
       struct container_collection
       {
-        typedef collection_t<
-            typename viennagrid::storage::container_collection::result_of::container_list_from_value_typelist_using_container_config<
+        typedef viennagrid::storage::collection_t<
+            typename viennagrid::storage::detail::result_of::container_list_from_value_typelist_using_container_config<
                 value_typelist,
                 container_config
             >::type
