@@ -157,7 +157,7 @@ namespace viennagrid
   template<typename SegmentationType>
   void transfer_interface_information( segment_handle_t<SegmentationType> & seg0, segment_handle_t<SegmentationType> & seg1 )
   {
-    assert( &seg0.segmentation() == &seg1.segmentation() );
+    assert( &seg0.parent() == &seg1.parent() );
 
     typedef segment_handle_t<SegmentationType> segment_handle_type;
     typedef typename viennagrid::result_of::cell_tag< segment_handle_type >::type cell_tag;
@@ -189,7 +189,7 @@ namespace viennagrid
                         segment_handle_t<SegmentationType> & seg1,
                         AccessorType accessor)
   {
-    assert( &seg0.segmentation() == &seg1.segmentation() );
+    assert( &seg0.parent() == &seg1.parent() );
 
     typedef typename result_of::cell_tag< segment_handle_t<SegmentationType> >::type CellTag;
     typedef typename result_of::element< segment_handle_t<SegmentationType>, CellTag>::type CellType;
@@ -206,7 +206,7 @@ namespace viennagrid
   void detect_interface(segment_handle_t<SegmentationType> & seg0,
                         segment_handle_t<SegmentationType> & seg1)
   {
-    assert( &seg0.segmentation() == &seg1.segmentation() );
+    assert( &seg0.parent() == &seg1.parent() );
 
     typedef typename result_of::cell_tag< segment_handle_t<SegmentationType> >::type CellTag;
     typedef typename result_of::facet_tag<CellTag>::type FacetTag;
@@ -248,7 +248,7 @@ namespace viennagrid
                     segment_handle_t<SegmentationType> const & seg1,
                     ElementType const & element)
   {
-    assert( &seg0.segmentation() == &seg1.segmentation() );
+    assert( &seg0.parent() == &seg1.parent() );
 
     typedef segment_handle_t<SegmentationType> SegmentHandleType;
 

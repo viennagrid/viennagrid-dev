@@ -60,12 +60,12 @@ namespace viennagrid
       *
       * @return   A reference to the segmentation
       */
-    segmentation_type & segmentation() { return *segmentation_; }
+    segmentation_type & parent() { return *segmentation_; }
     /** @brief Returns the segmentation in which the segment lives, const version
       *
       * @return   A const reference to the segmentation
       */
-    segmentation_type const & segmentation() const { return *segmentation_; }
+    segmentation_type const & parent() const { return *segmentation_; }
 
     /** @brief Returns a view which represents the elements in the segment
       *
@@ -856,7 +856,7 @@ namespace viennagrid
           element_segment_mapping_tag
       >::type & element_segment_mapping_collection( segment_handle_type & segment )
   {
-    return element_segment_mapping_collection( segment.segmentation() );
+    return element_segment_mapping_collection( segment.parent() );
   }
 
   template<typename segment_handle_type>
@@ -865,7 +865,7 @@ namespace viennagrid
           element_segment_mapping_tag
       >::type const & element_segment_mapping_collection( segment_handle_type const & segment )
   {
-    return element_segment_mapping_collection( segment.segmentation() );
+    return element_segment_mapping_collection( segment.parent() );
   }
 
 
@@ -930,7 +930,7 @@ namespace viennagrid
       element_tag
   >::type::segment_interface_information_wrapper_type &
   interface_information_collection( segment_handle_type & seg0, segment_handle_type & seg1 )
-  { return viennagrid::storage::detail::get<element_tag>( viennagrid::storage::detail::get<interface_information_collection_tag>( seg0.segmentation().appendix() ) ).get_interface_wrapper(seg0, seg1); }
+  { return viennagrid::storage::detail::get<element_tag>( viennagrid::storage::detail::get<interface_information_collection_tag>( seg0.parent().appendix() ) ).get_interface_wrapper(seg0, seg1); }
 
   template<typename element_tag, typename segment_handle_type>
   typename viennagrid::storage::result_of::value_type<
@@ -941,7 +941,7 @@ namespace viennagrid
       element_tag
   >::type::segment_interface_information_wrapper_type const &
   interface_information_collection( segment_handle_type const & seg0, segment_handle_type const & seg1 )
-  { return viennagrid::storage::detail::get<element_tag>( viennagrid::storage::detail::get<interface_information_collection_tag>( seg0.segmentation().appendix() ) ).get_interface_wrapper(seg0, seg1); }
+  { return viennagrid::storage::detail::get<element_tag>( viennagrid::storage::detail::get<interface_information_collection_tag>( seg0.parent().appendix() ) ).get_interface_wrapper(seg0, seg1); }
 
 
 
@@ -1428,8 +1428,8 @@ namespace viennagrid
   void add( SegmentHandleT & segment, viennagrid::element<vertex_tag, WrappedConfigT> & vertex )
   {
     typedef viennagrid::element<vertex_tag, WrappedConfigT> element_type;
-    viennagrid::elements<element_type>( segment.view() ).insert_unique_handle( viennagrid::handle( segment.segmentation().mesh(), vertex ) );
-    viennagrid::elements<element_type>( segment.segmentation().all_elements() ).insert_unique_handle( viennagrid::handle( segment.segmentation().mesh(), vertex ) );
+    viennagrid::elements<element_type>( segment.view() ).insert_unique_handle( viennagrid::handle( segment.parent().mesh(), vertex ) );
+    viennagrid::elements<element_type>( segment.parent().all_elements() ).insert_unique_handle( viennagrid::handle( segment.parent().mesh(), vertex ) );
     add( segment, viennagrid::make_accessor<element_type>( element_segment_mapping_collection(segment) ), vertex );
   }
 
@@ -1445,8 +1445,8 @@ namespace viennagrid
   void add( SegmentHandleT & segment, viennagrid::element<ElementTagT, WrappedConfigT> & element )
   {
     typedef viennagrid::element<ElementTagT, WrappedConfigT> element_type;
-    viennagrid::elements<element_type>( segment.view() ).insert_unique_handle( viennagrid::handle( segment.segmentation().mesh(), element ) );
-    viennagrid::elements<element_type>( segment.segmentation().all_elements() ).insert_unique_handle( viennagrid::handle( segment.segmentation().mesh(), element ) );
+    viennagrid::elements<element_type>( segment.view() ).insert_unique_handle( viennagrid::handle( segment.parent().mesh(), element ) );
+    viennagrid::elements<element_type>( segment.parent().all_elements() ).insert_unique_handle( viennagrid::handle( segment.parent().mesh(), element ) );
     add( segment, viennagrid::make_accessor<element_type>( element_segment_mapping_collection(segment) ), element );
 
     // recursively adding facet elements; view containers has to be std::set
@@ -1492,7 +1492,7 @@ namespace viennagrid
 //   bool non_recursive_erase( SegmentHandleT & segment, viennagrid::element<ElementTagT, WrappedConfigT> & element )
 //   {
 //     typedef viennagrid::element<ElementTagT, WrappedConfigT> element_type;
-//     viennagrid::elements<element_type>( segment.view() ).erase_handle( viennagrid::handle( segment.segmentation().mesh(), element ) );
+//     viennagrid::elements<element_type>( segment.view() ).erase_handle( viennagrid::handle( segment.parent().mesh(), element ) );
 //     return erase( segment, viennagrid::make_accessor<element_type>( element_segment_mapping_collection(segment) ), element );
 //   }
 
@@ -1505,12 +1505,12 @@ namespace viennagrid
     void operator() ( ElementT & element )
     {
       // erasing element from segment view
-      viennagrid::elements<ElementT>( segment.view() ).erase_handle( viennagrid::handle( segment.segmentation().mesh(), element ) );
+      viennagrid::elements<ElementT>( segment.view() ).erase_handle( viennagrid::handle( segment.parent().mesh(), element ) );
       // erasing element from segment-element information
       erase( segment, viennagrid::make_accessor<ElementT>( element_segment_mapping_collection(segment) ), element );
 
-      if (segment_ids(segment.segmentation(), element).empty())
-        viennagrid::elements<ElementT>( segment.segmentation().all_elements() ).erase_handle( viennagrid::handle( segment.segmentation().mesh(), element ) );
+      if (segment_ids(segment.parent(), element).empty())
+        viennagrid::elements<ElementT>( segment.parent().all_elements() ).erase_handle( viennagrid::handle( segment.parent().mesh(), element ) );
     }
 
     SegmentHandleT & segment;
