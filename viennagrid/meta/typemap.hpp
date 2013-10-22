@@ -177,9 +177,10 @@ namespace viennagrid
 
 
       // erases the element with key
-      template<typename typemap, typename to_erase>
-      struct erase
+      template<typename head_key, typename head_value, typename tail, typename to_erase>
+      struct erase< typelist< static_pair<head_key, head_value>, tail>, to_erase>
       {
+        typedef typelist< static_pair<head_key, head_value>, tail>  typemap;
         static const int index = index_of<typemap, to_erase>::value;
 
         // !!!!! INFO !!!!!
