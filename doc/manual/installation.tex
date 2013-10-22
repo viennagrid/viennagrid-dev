@@ -20,7 +20,6 @@ the mailing list at \\
 \begin{itemize}
  \item A recent C++ compiler (e.g.~{\GCC} version 4.2.x or above and Visual C++
 2005 or above are known to work)
- \item {\ViennaData}~\cite{ViennaData}, version 1.0.1 or above. To make {\ViennaGrid} self-contained, a copy of the {\ViennaData} sources is available in the \lstinline|viennadata/| folder.
  \item {\CMake}~\cite{cmake} as build system (optional, but recommended
 for building the examples)
 \end{itemize}
@@ -55,21 +54,21 @@ Tab.~\ref{tab:tutorial-dependencies}.
 \begin{tabular}{l|p{9.3cm}}
 File & Purpose\\
 \hline
-\texttt{tutorial/accessor.cpp}              & Demonstrates the use of accessors, cf.~Chapter \ref{chap:data} \\
-\texttt{tutorial/algorithms.cpp}            & Demonstrates the algorithms provided, cf.~Chapter \ref{chap:algorithms} \\
-\texttt{tutorial/cboundary\_iteration.cpp}  & Shows how to iterate over co-boundary elements, cf.~Chapter \ref{chap:iterators} \\
-\texttt{tutorial/mesh\_setup.cpp}         & Fill a mesh with cells, cf.~Chapter \ref{chap:meshsetup} \\
-\texttt{tutorial/element\_erase.cpp}        & Demonstrates how to erase single elements from a mesh \\
-\texttt{tutorial/finite\_volumes.cpp}       & Generic implementation of the finite volume method (assembly) \\
-\texttt{tutorial/interface.cpp}             & Demonstrates how the interface algorithm works, cf.~Chapter \ref{chap:algorithms} \\
-\texttt{tutorial/io.cpp}                    & Explains input-output operations, cf.~Chapter \ref{chap:io} \\
-\texttt{tutorial/iterators.cpp}             & Shows how the mesh and segments can be traversed, cf.~Chapter \ref{chap:iterators} \\
-\texttt{tutorial/multi\_segment.cpp}        & Explains multi-segment capabilities, cf.~Chapter \ref{chap:meshsetup} \\
-\texttt{tutorial/neighbour\_iteration.cpp}  & Shows how to iterate over neighbour elements, cf.~Chapter \ref{chap:iterators} \\
-\texttt{tutorial/polygon.cpp}               & ViennaGrid also supports Polygons, cf.~Chapter \ref{chap:meshsetup} \\
-\texttt{tutorial/segments.cpp}              & Shows how to use segmentations and segments, cf.~Chapter \ref{chap:meshsetup}
+\texttt{accessor.cpp}              & Demonstrates the use of accessors, cf.~Chapter \ref{chap:data} \\
+\texttt{algorithms.cpp}            & Demonstrates the algorithms provided, cf.~Chapter \ref{chap:algorithms} \\
+\texttt{cboundary\_iteration.cpp}  & Shows how to iterate over co-boundary elements, cf.~Chapter \ref{chap:iterators} \\
+\texttt{element\_erase.cpp}        & Demonstrates how to erase single elements from a mesh \\
+\texttt{finite\_volumes.cpp}       & Generic implementation of the finite volume method (assembly) \\
+\texttt{interface.cpp}             & Demonstrates how the interface algorithm works, cf.~Chapter \ref{chap:algorithms} \\
+\texttt{io.cpp}                    & Explains input-output operations, cf.~Chapter \ref{chap:io} \\
+\texttt{iterators.cpp}             & Shows how the mesh and segments can be traversed, cf.~Chapter \ref{chap:iterators} \\
+\texttt{mesh\_setup.cpp}           & Fill a mesh with cells, cf.~Chapter \ref{chap:meshsetup} \\
+\texttt{multi\_segment.cpp}        & Explains multi-segment capabilities, cf.~Chapter \ref{chap:meshsetup} \\
+\texttt{neighbour\_iteration.cpp}  & Shows how to iterate over neighbour elements, cf.~Chapter \ref{chap:iterators} \\
+\texttt{polygon.cpp}               & ViennaGrid also supports Polygons, cf.~Chapter \ref{chap:meshsetup} \\
+\texttt{segments.cpp}              & Shows how to use segmentations and segments, cf.~Chapter \ref{chap:meshsetup}
 \end{tabular}
-\caption{Overview of the sample applications in the \texttt{examples/} folder}
+\caption{Overview of the sample applications in the \texttt{examples/tutorial} folder}
 \label{tab:tutorial-dependencies}
 \end{center}
 \end{table}
@@ -94,6 +93,13 @@ to build the examples. If desired, one can build each example separately instead
 \end{lstlisting}
 
 \TIP{Speed up the building process by using multiple concurrent jobs, e.g. \keyword{make -j4}.}
+
+Some of the tutorials need to access mesh data in \texttt{examples/data/}.
+To ensure that the data is accessible, please execute all tutorials directly from the \texttt{build} folder, e.g.
+
+\begin{lstlisting}
+ $ build> examples/tutorial/algorithms
+\end{lstlisting}
 
 \subsection{Mac OS X}
 \label{apple}
@@ -124,4 +130,4 @@ include and library paths are set correctly, see
 Sec.~\ref{sec:viennagrid-installation}).
 \end{itemize}
 
-Note that the examples should be executed from the \texttt{build/Debug} and \texttt{build/Release} folder respectively in order to access the correct input files.
+Note that the examples should be executed from the \texttt{build/} folder respectively in order to access the correct input files.

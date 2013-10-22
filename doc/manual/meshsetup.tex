@@ -9,10 +9,12 @@ Existing file readers and writers are explained in Chapter \ref{chap:io}.
 In the following, the simple triangular mesh shown in Fig.~\ref{fig:samplemesh} will be set up.
 Thus, the mesh type using the provided configuration class for two-dimensional triangular classes will be used:
 \begin{lstlisting}
- typedef viennagrid::config::triangular_2d                      ConfigType;
- typedef viennagrid::result_of::mesh<ConfigType>::type        MeshType;
- typedef viennagrid::result_of::segmentation<MeshType>::type  SegmentationType;
- typedef viennagrid::result_of::segment<SegmentationType>::type  SegmentType;
+ using namespace viennagrid;
+
+ typedef config::triangular_2d                      ConfigType;
+ typedef result_of::mesh<ConfigType>::type          MeshType;
+ typedef result_of::segmentation<MeshType>::type    SegmentationType;
+ typedef result_of::segment<SegmentationType>::type SegmentType;
 
  // The mesh to be set up in the following
  MeshType mesh;
@@ -25,7 +27,7 @@ Thus, the mesh type using the provided configuration class for two-dimensional t
  // Segment 1, the right one
  SegmentType segment_1 = segmentation.make_segment();
 \end{lstlisting}
-If these lines are used inside a template class or template function, an additional \lstinline|typename| needs to be put after \lstinline|typedef| in the second line.
+Bear in mind that an additional \lstinline|typename| needs to be put after \lstinline|typedef| when using the metafunctions in namespace \texttt{result\_of} if used inside a template class or template function.
 The created mesh object will be filled with vertices and cells in the following.
 
 \begin{figure}[tb]
@@ -42,26 +44,24 @@ Since vertices carry geometric information by means of an associated point type,
 \begin{lstlisting}
  typedef viennagrid::result_of::point<MeshType>::type    PointType;
 \end{lstlisting}
-This already allows us to add the vertices shown in Fig.~\ref{fig:samplemesh} one after another to the mesh by using \lstinline|make_vertex|. This function returns a handle to the created vertex. We might need this handle so we have to define a type for our vertex handle:
+This already allows us to add the vertices shown in Fig.~\ref{fig:samplemesh} one after another to the mesh by using \lstinline|make_vertex|.
+This function returns a handle to the created vertex.
+The type of the vertex handle is obtained from either the general \texttt{handle}-metafunction as
 \begin{lstlisting}
- typedef viennagrid::result_of::handle<
-      MeshType,
-      viennagrid::vertex_tag
-  >::type    VertexHandleType;
+ typedef viennagrid::result_of::handle< MeshType,
+                                        viennagrid::vertex_tag
+                                      >::type    VertexHandleType;
 \end{lstlisting}
-Much simpler is the use of the convenience meta function \lstinline|vertex_handle|
+or directly by using the convenience meta function \lstinline|vertex_handle|:
 \begin{lstlisting}
- typedef viennagrid::result_of::vertex_handle<
-      MeshType
-  >::type    VertexHandleType;
+ typedef viennagrid::result_of::vertex_handle<MeshType>::type 
+   VertexHandleType;
 \end{lstlisting}
-One example to add the first vertex is to push the respective point to the mesh:
+One example for adding the first vertex is to push the respective point to the mesh using the member function \lstinline|make_vertex|, which also assigns an ID to the vertex:
 \begin{lstlisting}
  PointType p(0,0);
- // add vertex #0
- VertexHandleType vh0 = viennagrid::make_vertex(mesh, p);
-\end{lstlisting}
-The member function \lstinline|make_vertex| adds the vertex to the mesh and assigns an ID.
+ VertexHandleType vh0 = viennagrid::make_vertex(mesh, p);  // add vertex #0
+\end{lstlisting} 
 
 To push the next vertex, one can either reuse the existing vertex:
 \begin{lstlisting}
@@ -71,53 +71,54 @@ To push the next vertex, one can either reuse the existing vertex:
  VertexHandleType vh1 = viennagrid::make_vertex(mesh, p);
 \end{lstlisting}
 
-\pagebreak
-
 or directly construct the respective points in-place:
 \begin{lstlisting}
  // add vertex #2
  VertexHandleType vh2 = viennagrid::make_vertex(mesh, PointType(2,0));
  // add vertex #3
  VertexHandleType vh3 = viennagrid::make_vertex(mesh, PointType(2,1));
- // add vertex #4
- VertexHandleType vh4 = viennagrid::make_vertex(mesh, PointType(1,1));
- // add vertex #5
- VertexHandleType vh5 = viennagrid::make_vertex(mesh, PointType(0,1));
+ // ...
 \end{lstlisting}
 
 It is also possible to explicitly specify the ID for a new vertex:
 \begin{lstlisting}
  typedef viennagrid::result_of::vertex<MeshType>::type   VertexType;
- typedef viennagrid::result_of::id<VertexType>::Type       VertexIDType;
+ typedef viennagrid::result_of::id<VertexType>::Type     VertexIDType;
 
- VertexHandleType some_vh = viennagrid::make_vertex(mesh, VertexIDType(42), PointType(0,0));  // add some vertex with ID 42
+ // add some vertex with ID 42
+ VertexHandleType vh = viennagrid::make_vertex(mesh,
+                                               VertexIDType(42),
+                                               PointType(0,0));
 \end{lstlisting}
 
-If the geometric location of a particular vertex needs to be adjusted at some later stage, the free function \lstinline|point| can be used. To e.g.~access vertex \lstinline|#4|,
+If the geometric location of a particular vertex needs to be adjusted at some later stage, the free function \lstinline|point| can be used.
+To e.g.~access the vertex with vertex handle \lstinline|vh4|,
 \begin{lstlisting}
  viennagrid::point(mesh, vh4)
 \end{lstlisting}
 returns a reference to the respective element, which can then be manipulated accordingly.
 
-Vertices can also be created in a segment.
+Vertices can also be created through a segment \lstinline|seg1| directly:
 \begin{lstlisting}
- VertexHandleType some_vh = viennagrid::make_vertex(segment_0, PointType(-1,-1));  // adding some other vertex to segment 0
+ VertexHandleType vh = viennagrid::make_vertex(seg1, PointType(1,1));
 \end{lstlisting}
-In this case the vertex is created in the mesh and a handle is stored in segment 0.
+In this case the vertex is created in the underlying mesh and a handle is stored in the segment.
 
-% \TIP{More details on the \lstinline|ncells|-function can be found in Chap.~\ref{chap:iterators} as well as in the reference documentation located in \texttt{doc/doxygen}.}
 
 \section{Adding Cells to a Mesh or Segment}
-To optain the tag of the cell element use the meta-function \lstinline|cell_tag|.
+In order to add cells to a mesh or segment, one first needs to extract its type.
+This is conveniently possible via the \lstinline|cell| metafunction:
 \begin{lstlisting}
- typedef viennagrid::result_of::cell_tag<MeshType>::type    CellTag;
+ typedef viennagrid::result_of::cell<MeshType>::type              CellType;
+\end{lstlisting}
+Note that this is only a shortcut for the more general way of obtaining any mesh element type via the respective tag.
+For cells, the above is equivalent to
+\begin{lstlisting}
+ using namespace viennagrid;
+ typedef result_of::cell_tag<MeshType>::type          CellTag;
+ typedef result_of::element<MeshType, CellTag>::type  CellType;
 \end{lstlisting}
 
-The type of a cell in a mesh is obtained by the \lstinline|element| meta-function using the cell tag or directly by using the \lstinline|cell| meta-function.
-\begin{lstlisting}
- typedef viennagrid::result_of::element<MeshType, CellTag>::type    CellType;
- typedef viennagrid::result_of::cell<MeshType>::type                CellType;
-\end{lstlisting}
 % However, it should be emphasized that this type definition does yield the cell type for e.g.~tetrahedral meshs.
 % Thus, the more generic way of defining the cell type is to use the topological dimension stored in the cell tag of the mesh configuration class:
 % \begin{lstlisting}
@@ -128,7 +129,7 @@ The type of a cell in a mesh is obtained by the \lstinline|element| meta-functio
 % These two lines reliable return the cell type for all types of meshs.
 Note that an additional \lstinline|typename| is required if these lines are put inside a template class or template function.
 
-\NOTE{If more than one element has highest topological dimension within the mesh, this meta function will fail due to ambiguity.}
+\NOTE{If more than one element type has highest topological dimension within the mesh, this meta function will fail due to ambiguity.}
 
 
 An overview of the generic procedure for adding a cell to a mesh or segment is the following:
@@ -136,7 +137,7 @@ An overview of the generic procedure for adding a cell to a mesh or segment is t
    \item Set up an array holding the handles to the vertices \emph{in the mesh}. Do not use handles to vertices defined outside the mesh.
    \item Use \lstinline|make_element| to create the element within the mesh or segment
   \end{itemize}
-Thus, the array of handles to vertices is created as usual:
+Thus, the array of handles to vertices is created for a triangle as follows:
 \begin{lstlisting}
  VertexHandleType cell_vertices[3];
 \end{lstlisting}
@@ -144,6 +145,7 @@ Instead of hard-coding the number of vertices for a triangle, one can instead us
 \begin{lstlisting}
 VertexHandleType cell_vertices[viennagrid::boundary_elements<CellTag,viennagrid::vertex_tag>::num];
 \end{lstlisting}
+resulting in code which will also work for e.g. quadrilateral meshes.
 
 \NOTE{\lstinline|boundary_elements<CellTag,viennagrid::vertex_tag>::num| will only work on elements with static vertex count, e.g. triangles, tetrahedrons, ... This method will not work with polygons or PLCs}
 
@@ -156,10 +158,11 @@ Next, the vertex addresses for the first triangle are stored:
 
 \NOTE{Make sure that the correct cell orientation is used, cf.~Appendix!}
 
-If the vertex handles are not present at this point you can search them with their ID. Keep in mind that due to the underlying data structure this search might has linear runtime complexity.
+If the vertex handles are not available at this point, but the vertex IDs are known (this frequently occurs in mesh file readers) you can search them with their ID.
+Keep in mind that depending on the underlying data structure this search might have linear runtime complexity.
 \begin{lstlisting}
  typedef viennagrid::result_of::vertex<MeshType>::type   VertexType;
- typedef viennagrid::result_of::id<VertexType>::Type       VertexIDType;
+ typedef viennagrid::result_of::id<VertexType>::Type     VertexIDType;
 
  // vertex #0
  cell_vertices[0] = viennagrid::find_by_id(mesh, VertexIDType(0));
@@ -172,7 +175,7 @@ If the vertex handles are not present at this point you can search them with the
 If you can ensure that the vertex with ID 0 was created first, the vertex with ID 1 was created second and so on, you can use direct random access:
 \begin{lstlisting}
  typedef viennagrid::result_of::vertex<MeshType>::type   VertexType;
- typedef viennagrid::result_of::id<VertexType>::Type       VertexIDType;
+ typedef viennagrid::result_of::id<VertexType>::Type     VertexIDType;
 
  cell_vertices[0] = viennagrid::vertices(mesh)[0]; // vertex #0
  cell_vertices[1] = viennagrid::vertices(mesh)[1]; // vertex #1
@@ -193,12 +196,12 @@ In our case the following shortcut function can also be used, the handles are pa
 
 As for vertices, cells have to be pushed in ascending order in order to get the correct IDs assigned. Note that the cell is always stored inside the mesh - a segment keeps a handle to the cell as well as its boundary cells only.
 
-In the same way the other triangles are pushed to the respective segment. For triangle \lstinline|#3|, the code is
+In the same way the other triangles are pushed to the respective segment. For triangle \lstinline|#3| in Fig.~\ref{fig:samplemesh}, the code is
 \begin{lstlisting}
  viennagrid::make_triangle(segment_1, vh2, vh3, vh4);
 \end{lstlisting}
 
-Creating element with explicit ID is also supported:
+As an alternative, the creation of elements by providing an explicit cell ID is also supported:
 
 \begin{lstlisting}
  typedef viennagrid::result_of::id<CellType>::Type       CellIDType;
