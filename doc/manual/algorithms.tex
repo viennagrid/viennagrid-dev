@@ -16,22 +16,29 @@ A tutorial covering the algorithms explained in this chapter can be found in \ls
   \hline
    Algorithm & Filename   & Interface Function\\
    \hline
-   Cross Product & \texttt{cross\_prod.hpp} & \lstinline|cross_prod(a, b)| \\
-   Inner Product & \texttt{inner\_prod.hpp} & \lstinline|inner_prod(a, b)|\\
-   Vector Norms & \texttt{norm.hpp} & \lstinline|norm(a, tag)| \\
+   Angles         & \texttt{angle.hpp}           & \lstinline|angle(origin, p0, p1)| \\
+   Cross Product  & \texttt{cross\_prod.hpp}     & \lstinline|cross_prod(a, b)| \\
    Induced Volume & \texttt{spanned\_volume.hpp} & \lstinline|spanned_volume(a, b, ...)| \\
+   Inner Product  & \texttt{inner\_prod.hpp}     & \lstinline|inner_prod(a, b)|\\
+   Vector Norms   & \texttt{norm.hpp}            & \lstinline|norm(a, tag)| \\
    \hline
-   Centroid computation & \texttt{centroid.hpp} & \lstinline|centroid(element)| \\
-   Circumcenter comp. & \texttt{circumcenter.hpp} & \lstinline|circumcenter(element)| \\
-   Surface computation & \texttt{surface.hpp} & \lstinline|surface(element)| \\
-   Volume computation & \texttt{volume.hpp} & \lstinline|volume(element)| \\
+   Centroid computation & \texttt{centroid.hpp}           & \lstinline|centroid(element)| \\
+   Circumcenter comp.   & \texttt{circumcenter.hpp}       & \lstinline|circumcenter(element)| \\
+   Distance             & \texttt{distance.hpp}           & \lstinline|distance(element1, element2)| \\
+   Quantity transfer    & \texttt{quantity\_transfer.hpp} & \lstinline|quantity_transfer(...)|\\
+   Surface computation  & \texttt{surface.hpp}            & \lstinline|surface(element)| \\
+   Volume computation   & \texttt{volume.hpp}             & \lstinline|volume(element)| \\
    \hline
-   Boundary detection & \texttt{boundary.hpp} & \lstinline|is_boundary(domseg, element)|\\
-   Interface detection & \texttt{interface.hpp} & \lstinline|is_interface(seg1, seg2, element)|\\
-   Simplex refinement & \texttt{refine.hpp} & \lstinline|refine(tag, mesh)| \\
-   Surface computation & \texttt{surface.hpp} & \lstinline|surface(domseg)| \\
-   Volume computation & \texttt{volume.hpp} & \lstinline|volume(domseg)| \\
-   Voronoi grid & \texttt{voronoi.hpp} & \lstinline|apply_voronoi(domseg, ...)| \\
+   Boundary detection  & \texttt{boundary.hpp}           & \lstinline|is_boundary(domseg, element)|\\
+   Closest points      & \texttt{closest\_points.hpp}    & \lstinline|closest_points(element1, element2)| \\
+   Distance            & \texttt{distance.hpp}           & \lstinline|distance(element1, element2)| \\
+   Interface detection & \texttt{interface.hpp}          & \lstinline|is_interface(seg1, seg2, element)|\\
+   Quantity transfer   & \texttt{quantity\_transfer.hpp} & \lstinline|quantity_transfer(...)|\\
+   Simplex refinement  & \texttt{refine.hpp}             & \lstinline|refine(tag, mesh)| \\
+   Scale mesh          & \texttt{scale.hpp}              & \lstinline|scale(mesh, factor| \\
+   Surface computation & \texttt{surface.hpp}            & \lstinline|surface(domseg)| \\
+   Volume computation  & \texttt{volume.hpp}             & \lstinline|volume(domseg)| \\
+   Voronoi grid        & \texttt{voronoi.hpp}            & \lstinline|apply_voronoi(domseg, ...)| \\
    \hline
  \end{tabular}
  \caption{List of algorithms available in \texttt{viennagrid/algorithm/} grouped by the objects they are acting on.
@@ -266,7 +273,7 @@ It has to be noted that the resulting refined mesh is written to a new mesh, thu
   \item The interface area $A_{[i,j]}$ of the boxes for the vertices $i$ and $j$ on the edge $[i,j]$.
   \item The box volume $V_i$ of the box containing vertex $i$ for each vertex $i$.
  \end{itemize}
- Using the lines
+ The voronoi values are stored in the corresponding accessors/containers using the lines
  \begin{lstlisting}
   using namespace viennagrid;
   typedef result_of::voronoi_cell_contribution<ConstCellHandleType>::type ContributionType;
@@ -297,4 +304,4 @@ It has to be noted that the resulting refined mesh is written to a new mesh, thu
   );
  \end{lstlisting}
 
- The voronoi values are stored in the corresponding accessors/containers.
+ 

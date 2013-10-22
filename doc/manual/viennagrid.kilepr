@@ -4,7 +4,7 @@ img_extIsRegExp=false
 img_extensions=.eps .jpg .jpeg .png .pdf .ps .fig .gif
 kileprversion=2
 kileversion=2.1.0
-lastDocument=viennagrid.bib
+lastDocument=changelogs.tex
 masterDocument=
 name=viennagrid
 pkg_extIsRegExp=false
@@ -19,6 +19,8 @@ QuickBuild=
 [document-settings,item:algorithms.tex]
 Bookmarks=
 Encoding=UTF-8
+FoldedColumns=
+FoldedLines=
 Highlighting=LaTeX
 Indentation Mode=
 Mode=LaTeX
@@ -27,6 +29,8 @@ ReadWrite=true
 [document-settings,item:changelogs.tex]
 Bookmarks=
 Encoding=UTF-8
+FoldedColumns=
+FoldedLines=
 Highlighting=LaTeX
 Indentation Mode=
 Mode=LaTeX
@@ -55,28 +59,14 @@ ReadWrite=true
 [document-settings,item:data.tex]
 Bookmarks=
 Encoding=UTF-8
+FoldedColumns=
+FoldedLines=
 Highlighting=LaTeX
 Indentation Mode=
 Mode=LaTeX
 ReadWrite=true
 
 [document-settings,item:design-decisions.tex]
-Bookmarks=
-Encoding=UTF-8
-Highlighting=LaTeX
-Indentation Mode=
-Mode=LaTeX
-ReadWrite=true
-
-[document-settings,item:meshconfig.tex]
-Bookmarks=
-Encoding=UTF-8
-Highlighting=LaTeX
-Indentation Mode=
-Mode=LaTeX
-ReadWrite=true
-
-[document-settings,item:meshsetup.tex]
 Bookmarks=
 Encoding=UTF-8
 Highlighting=LaTeX
@@ -103,6 +93,8 @@ ReadWrite=true
 [document-settings,item:internals.tex]
 Bookmarks=
 Encoding=UTF-8
+FoldedColumns=
+FoldedLines=
 Highlighting=LaTeX
 Indentation Mode=
 Mode=LaTeX
@@ -119,6 +111,8 @@ ReadWrite=true
 [document-settings,item:io.tex]
 Bookmarks=
 Encoding=UTF-8
+FoldedColumns=
+FoldedLines=
 Highlighting=LaTeX
 Indentation Mode=
 Mode=LaTeX
@@ -141,6 +135,22 @@ Mode=LaTeX
 ReadWrite=true
 
 [document-settings,item:license.tex]
+Bookmarks=
+Encoding=UTF-8
+Highlighting=LaTeX
+Indentation Mode=
+Mode=LaTeX
+ReadWrite=true
+
+[document-settings,item:meshconfig.tex]
+Bookmarks=
+Encoding=UTF-8
+Highlighting=LaTeX
+Indentation Mode=
+Mode=LaTeX
+ReadWrite=true
+
+[document-settings,item:meshsetup.tex]
 Bookmarks=
 Encoding=UTF-8
 Highlighting=LaTeX
@@ -194,23 +204,23 @@ ReadWrite=true
 
 [item:algorithms.tex]
 archive=true
-column=34
+column=0
 encoding=UTF-8
 highlight=LaTeX
-line=0
+line=305
 mode=LaTeX
-open=false
-order=2
+open=true
+order=1
 
 [item:changelogs.tex]
 archive=true
-column=21
+column=135
 encoding=UTF-8
 highlight=LaTeX
-line=1
+line=20
 mode=LaTeX
-open=false
-order=1
+open=true
+order=5
 
 [item:contributors.tex]
 archive=true
@@ -219,7 +229,7 @@ encoding=UTF-8
 highlight=LaTeX
 line=4
 mode=LaTeX
-open=true
+open=false
 order=2
 
 [item:cover.tex]
@@ -229,18 +239,18 @@ encoding=UTF-8
 highlight=LaTeX
 line=5
 mode=LaTeX
-open=true
+open=false
 order=1
 
 [item:data.tex]
 archive=true
-column=109
+column=27
 encoding=UTF-8
 highlight=LaTeX
-line=68
+line=87
 mode=LaTeX
-open=false
-order=5
+open=true
+order=0
 
 [item:design-decisions.tex]
 archive=true
@@ -251,26 +261,6 @@ line=81
 mode=LaTeX
 open=false
 order=3
-
-[item:meshconfig.tex]
-archive=true
-column=27
-encoding=UTF-8
-highlight=LaTeX
-line=229
-mode=LaTeX
-open=false
-order=3
-
-[item:meshsetup.tex]
-archive=true
-column=68
-encoding=UTF-8
-highlight=LaTeX
-line=143
-mode=LaTeX
-open=false
-order=6
 
 [item:entities.tex]
 archive=true
@@ -304,12 +294,12 @@ order=-1
 
 [item:internals.tex]
 archive=true
-column=106
+column=36
 encoding=UTF-8
 highlight=LaTeX
-line=78
+line=41
 mode=LaTeX
-open=false
+open=true
 order=4
 
 [item:introduction.tex]
@@ -324,13 +314,13 @@ order=1
 
 [item:io.tex]
 archive=true
-column=1
+column=0
 encoding=UTF-8
 highlight=LaTeX
-line=139
+line=243
 mode=LaTeX
-open=false
-order=4
+open=true
+order=3
 
 [item:iterators.tex]
 archive=true
@@ -362,6 +352,26 @@ mode=LaTeX
 open=false
 order=-1
 
+[item:meshconfig.tex]
+archive=true
+column=27
+encoding=UTF-8
+highlight=LaTeX
+line=229
+mode=LaTeX
+open=false
+order=3
+
+[item:meshsetup.tex]
+archive=true
+column=68
+encoding=UTF-8
+highlight=LaTeX
+line=143
+mode=LaTeX
+open=false
+order=6
+
 [item:orientations.tex]
 archive=true
 column=27
@@ -369,7 +379,7 @@ encoding=UTF-8
 highlight=LaTeX
 line=58
 mode=LaTeX
-open=true
+open=false
 order=0
 
 [item:setup.tex]
@@ -394,13 +404,13 @@ order=-1
 
 [item:viennagrid.bib]
 archive=true
-column=32
+column=35
 encoding=UTF-8
 highlight=BibTeX
-line=108
+line=113
 mode=BibTeX
 open=true
-order=3
+order=2
 
 [item:viennagrid.kilepr]
 archive=true
@@ -423,12 +433,16 @@ open=false
 order=0
 
 [view-settings,view=0,item:algorithms.tex]
-CursorColumn=34
-CursorLine=0
+CursorColumn=0
+CursorLine=305
+JumpList=
+ViMarks=
 
 [view-settings,view=0,item:changelogs.tex]
-CursorColumn=21
-CursorLine=1
+CursorColumn=135
+CursorLine=20
+JumpList=
+ViMarks=
 
 [view-settings,view=0,item:contributors.tex]
 CursorColumn=32
@@ -443,20 +457,14 @@ JumpList=
 ViMarks=
 
 [view-settings,view=0,item:data.tex]
-CursorColumn=109
-CursorLine=68
+CursorColumn=27
+CursorLine=87
+JumpList=
+ViMarks=
 
 [view-settings,view=0,item:design-decisions.tex]
 CursorColumn=123
 CursorLine=81
-
-[view-settings,view=0,item:meshconfig.tex]
-CursorColumn=27
-CursorLine=229
-
-[view-settings,view=0,item:meshsetup.tex]
-CursorColumn=68
-CursorLine=143
 
 [view-settings,view=0,item:entities.tex]
 CursorColumn=27
@@ -467,16 +475,20 @@ CursorColumn=0
 CursorLine=88
 
 [view-settings,view=0,item:internals.tex]
-CursorColumn=106
-CursorLine=78
+CursorColumn=36
+CursorLine=41
+JumpList=
+ViMarks=
 
 [view-settings,view=0,item:introduction.tex]
 CursorColumn=65
 CursorLine=43
 
 [view-settings,view=0,item:io.tex]
-CursorColumn=1
-CursorLine=139
+CursorColumn=0
+CursorLine=243
+JumpList=
+ViMarks=
 
 [view-settings,view=0,item:iterators.tex]
 CursorColumn=37
@@ -489,6 +501,14 @@ CursorLine=0
 [view-settings,view=0,item:license.tex]
 CursorColumn=18
 CursorLine=1
+
+[view-settings,view=0,item:meshconfig.tex]
+CursorColumn=27
+CursorLine=229
+
+[view-settings,view=0,item:meshsetup.tex]
+CursorColumn=68
+CursorLine=143
 
 [view-settings,view=0,item:orientations.tex]
 CursorColumn=27
@@ -505,8 +525,8 @@ CursorColumn=20
 CursorLine=1
 
 [view-settings,view=0,item:viennagrid.bib]
-CursorColumn=32
-CursorLine=108
+CursorColumn=35
+CursorLine=113
 JumpList=
 ViMarks=
 

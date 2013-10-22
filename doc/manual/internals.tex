@@ -7,18 +7,20 @@ Nevertheless, the information provided might be of interest for new users of {\V
 
 \section{Recursive Inheritance}
 {\ViennaGrid} extensively relies on recursive inheritance to build the individual element types.
-The element are of type \lstinline|element_t<ElementTag, ConfigType>|, where \lstinline|ElementTag| is a tag identifying the topological shape of the element and \lstinline|ConfigType| is the configuration class. The class \lstinline|element_t| itself is almost empty, but
+The element are of type \lstinline|element<ElementTag, ConfigType>|, where \lstinline|ElementTag| is a tag identifying the topological shape of the element and \lstinline|ConfigType| is the configuration class.
+The class \lstinline|element| itself is almost empty, but
 inherits the information about its boundary elements from a \lstinline|boundary_element_layer|.
 In addition, the class inherits from a class with the sole purpose of providing an ID mechanism
 \begin{lstlisting}
  template <typename ElementTag,
-           stypename ConfigType>
- class element_t :
+           typename ConfigType>
+ class element :
     public viennagrid::storage::id_handler<...>,
     public boundary_element_layer<ElementTag, BoundaryElementContainerTypelist>,
  { ... }
 \end{lstlisting}
-The second template parameter of \lstinline|boundary_element_layer| is a type list where all boundary element types are stored. The \lstinline|boundary_element_layer| inherits from a \lstinline|boundary_element_layer| with the last element type of that type list.
+The second template parameter of \lstinline|boundary_element_layer| is a type list where all boundary element types are stored.
+The \lstinline|boundary_element_layer| inherits from a \lstinline|boundary_element_layer| with the last element type of that type list.
 \begin{lstlisting}
 template<typename element_tag,
          typename bnd_cell_container_type_,
@@ -26,7 +28,7 @@ template<typename element_tag,
          typename tail>
 class boundary_element_layer<
     element_tag,
-    meta::typelist_t<
+    meta::typelist<
         meta::static_pair<bnd_cell_container_type_, orientation_container_type_>,
         tail
     >
@@ -37,7 +39,7 @@ The recursion is terminated at vertex level by a partial template specialization
 
 \begin{figure}[tb]
 \centering
- \psfrag{element\_t}{\lstinline|element_t|}
+ \psfrag{element}{\lstinline|element|}
  \psfrag{boundary\_element\_layer<facet tag>}{\lstinline|bnd_layer<facet>|}
  \psfrag{boundary\_element\_layer<facet of facet>}{\lstinline|bnd_layer<facet of facet>|}
  \psfrag{boundary\_element\_layer<vertex tag>}{\lstinline|bnd_layer<vertex>|}

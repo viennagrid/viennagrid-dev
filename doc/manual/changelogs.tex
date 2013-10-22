@@ -3,18 +3,22 @@
 
 \subsection*{Version 1.1.0}
 The ViennaGrid internals have been completely redesigned for higher flexibility.
-Smaller adjustments to the user API were necessary:
+Some rather significent adjustments to the user API were necessary.
+Still, we decided to stick with the 1.x.y version family because the conceptual use is essentially unchanged.
 \begin{itemize}
- \item New storage layer, re-wrote most of the internals
- \item Using tags instead of topologic dimension to identify elements
- \item Added support for dynamic elements: polygon and PLCs
- \item Added support for neighbour iteration
- \item Added support for multiple segmentations
- \item New algorithms: intersection, seed point segmenting
+ \item Renamed the old \lstinline|domain_t| to \lstinline|mesh| in order to avoid ambiguities with the mathematical \emph{problem domain}.
+ \item Replaced \lstinline|viennagrid::ncells<>()| with \lstinline|viennagrid::elements<>()| to obtain range objects.
+ \item As a consequence of moving away from \lstinline|ncells<>|, now element tags are used instead of the topologic dimension to select elements. 
+ \item Added support for two dynamic element types: polygon and PLCs.
+ \item Added support for neighbour iteration. This way one no longer needs to code the boundary/coboundary iterations by hand.
+ \item Added support for multiple segmentations. This is a generalization of the old segment concept, where elements could be part of at most one segment.
+ \item New algorithms: angles, intersection, scaling, seed point segmenting.
+ \item Accessors are now consistently used for accessing quantities rather than ViennaData. This makes the implementation more generic and provides better support for user storage.
+ \item New storage layer, re-wrote most of the internals.
 \end{itemize}
 
 \subsection*{Version 1.0.1}
-This is a maintenance release, mostly fixing minor compilation problems on some compilers and operating systems. Other notable changes
+This is a maintenance release, mostly fixing minor compilation problems on some compilers and operating systems. Other notable changes:
 \begin{itemize}
   \item Added \lstinline|distance()| function for computing the distance between points, cell, etc.
   \item Voronoi quantities can now also be accessed in a more fine-grained manner: Volume and contributions for each cell attached to a vertex or edge.
