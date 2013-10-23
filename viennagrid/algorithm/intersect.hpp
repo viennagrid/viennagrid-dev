@@ -16,7 +16,7 @@
 #include <assert.h>
 
 #include "viennagrid/forwards.hpp"
-#include "viennagrid/algorithm/numeric.hpp"
+#include "viennagrid/algorithm/detail/numeric.hpp"
 #include "viennagrid/algorithm/inner_prod.hpp"
 #include "viennagrid/algorithm/norm.hpp"
 

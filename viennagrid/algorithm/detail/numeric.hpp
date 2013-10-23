@@ -16,13 +16,13 @@
 #include <algorithm>
 #include <cmath>
 
-/** @file viennagrid/algorithm/numeric.hpp
+/** @file viennagrid/algorithm/detail/numeric.hpp
     @brief Helper routines controlling numeric tolerances
 */
 
 namespace viennagrid
 {
-  namespace numeric
+  namespace detail
   {
     namespace result_of
     {

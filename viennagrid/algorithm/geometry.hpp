@@ -16,6 +16,7 @@
 #include <limits>
 #include "viennagrid/mesh/mesh.hpp"
 #include "viennagrid/algorithm/cross_prod.hpp"
+#include "viennagrid/algorithm/detail/numeric.hpp"
 #include "viennagrid/algorithm/intersect.hpp"
 
 /** @file viennagrid/algorithm/geometry.hpp
@@ -45,8 +46,8 @@ namespace viennagrid
   }
 
 
-  namespace geometry
-  {
+  //namespace geometry
+  //{
 
     template<typename PointT>
     typename viennagrid::result_of::coord<PointT>::type determinant( PointT const & p0, PointT const & p1, PointT const & p2 )
@@ -130,7 +131,7 @@ namespace viennagrid
 //
 //
 //                 // is current line on test line?
-//                 if ( !numeric::is_equal(nc, q0[0], point_to_test[0]) || !numeric::is_equal(nc, q1[0], point_to_test[0]) )
+//                 if ( !detail::is_equal(nc, q0[0], point_to_test[0]) || !detail::is_equal(nc, q1[0], point_to_test[0]) )
 //                 {
 //                     if ( line_line_intersect( q0, q1, interval::open_open_tag(), point_to_test, outer_point, interval::open_open_tag(), nc ) )
 //                     {
@@ -212,7 +213,7 @@ namespace viennagrid
       {
         *n = orthogonalize_one_vector(start, n, *n);
 
-        if ( viennagrid::norm_1(*n) < numeric::absolute_tolerance<coord_type>(nc) )
+        if ( viennagrid::norm_1(*n) < detail::absolute_tolerance<coord_type>(nc) )
           return false;
       }
 
@@ -227,7 +228,7 @@ namespace viennagrid
     {
       typedef typename std::iterator_traits<PointIteratorT>::value_type                    point_type;
       typedef typename viennagrid::result_of::coord<point_type>::type                      coord_type;
-      typedef typename numeric::result_of::numeric_type<NumericConfigT, coord_type>::type  numeric_type;
+      typedef typename detail::result_of::numeric_type<NumericConfigT, coord_type>::type  numeric_type;
 
       OutPointIteratorT projection_matrix_end = projection_matrix_start;
       ++projection_matrix_end; ++projection_matrix_end;
@@ -272,7 +273,7 @@ namespace viennagrid
       typename vector_map_type::iterator it = sorted_vectors.begin();
       while (projection_matrix_index < 2)
       {
-        if ( it->first < numeric::absolute_tolerance<coord_type>(nc) )
+        if ( it->first < detail::absolute_tolerance<coord_type>(nc) )
           return false; // points are too close together
 
         // check linear dependency with other vectors in projection matrix
@@ -281,7 +282,7 @@ namespace viennagrid
         for (; index < projection_matrix_index; ++index, ++pmit)
         {
           numeric_type angle_cos = viennagrid::inner_prod( it->second, *pmit );
-          if ( std::abs(angle_cos) > 1 - numeric::absolute_tolerance<coord_type>(nc))
+          if ( std::abs(angle_cos) > 1 - detail::absolute_tolerance<coord_type>(nc))
             break;
         }
 
@@ -341,7 +342,7 @@ namespace viennagrid
       project(in, in_end, out, center, projection_matrix.begin(), projection_matrix.begin() + 2);
     }
 
-  }
+  //} // namespace geometry
 
 }
 

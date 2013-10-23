@@ -35,7 +35,7 @@ namespace viennagrid
       // (b c -d) (beta gamma lambda)^T = r-A
       // (beta gamma lambda)^T = (b c -d)^-1 (r-A)
 
-      double det = viennagrid::geometry::determinant( b, c, -d );
+      double det = viennagrid::determinant( b, c, -d );
 
       if ( std::abs(det) < 1e-6)
       {
@@ -255,14 +255,14 @@ namespace viennagrid
 
 
             // topology check
-            if ( ( *viennagrid::geometry::circular_next(vtx_it, vtx.begin(), vtx.end()) == *viennagrid::geometry::circular_next(nvtx_it, nvtx.begin(), nvtx.end()) ) ||
-                 ( *viennagrid::geometry::circular_prev(vtx_it, vtx.begin(), vtx.end()) == *viennagrid::geometry::circular_prev(nvtx_it, nvtx.begin(), nvtx.end()) ) )
+            if ( ( *viennagrid::circular_next(vtx_it, vtx.begin(), vtx.end()) == *viennagrid::circular_next(nvtx_it, nvtx.begin(), nvtx.end()) ) ||
+                 ( *viennagrid::circular_prev(vtx_it, vtx.begin(), vtx.end()) == *viennagrid::circular_prev(nvtx_it, nvtx.begin(), nvtx.end()) ) )
             {
               smallest_angle_triangle_faces_outward = !triangle_faces_outward;
 
             }
-            else if ( ( *viennagrid::geometry::circular_next(vtx_it, vtx.begin(), vtx.end()) == *viennagrid::geometry::circular_prev(nvtx_it, nvtx.begin(), nvtx.end()) ) ||
-                      ( *viennagrid::geometry::circular_prev(vtx_it, vtx.begin(), vtx.end()) == *viennagrid::geometry::circular_next(nvtx_it, nvtx.begin(), nvtx.end()) ) )
+            else if ( ( *viennagrid::circular_next(vtx_it, vtx.begin(), vtx.end()) == *viennagrid::circular_prev(nvtx_it, nvtx.begin(), nvtx.end()) ) ||
+                      ( *viennagrid::circular_prev(vtx_it, vtx.begin(), vtx.end()) == *viennagrid::circular_next(nvtx_it, nvtx.begin(), nvtx.end()) ) )
             {
               smallest_angle_triangle_faces_outward = triangle_faces_outward;
             }
