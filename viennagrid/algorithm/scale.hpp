@@ -17,13 +17,17 @@
     @brief Scale the geometric points of a mesh/segment
 */
 
+#include "viennagrid/forwards.hpp"
+#include "viennagrid/point.hpp"
+#include "viennagrid/accessor.hpp"
+
 namespace viennagrid
 {
   namespace detail
   {
     /** @brief For internal use only. */
-    template<typename MeshT, typename ScalarT, typename PointAccessorT>
-    void scale_impl(MeshT& mesh_obj, ScalarT factor, PointAccessorT accessor)
+    template<typename MeshT, typename ScalarT, typename PointType, typename PointAccessorT>
+    void scale_impl(MeshT& mesh_obj, ScalarT factor, PointType scale_center, PointAccessorT accessor)
     {
       typedef typename viennagrid::result_of::element<MeshT, viennagrid::vertex_tag>::type         VertexType;
       typedef typename viennagrid::result_of::element_range<MeshT, viennagrid::vertex_tag>::type   VertexContainer;
@@ -34,7 +38,10 @@ namespace viennagrid
             vit != vertices.end();
             ++vit )
       {
-        accessor(*vit) *= factor;
+        PointType translated_point = accessor(*vit) - scale_center;
+        translated_point *= factor;
+        translated_point += scale_center;
+        accessor(*vit) = translated_point;
       }
     }
   } // detail
@@ -45,10 +52,23 @@ namespace viennagrid
    * @param  mesh_or_segment          The mesh/segment which points are scaled
    * @param  factor                     The scale factor
    */
-  template<typename MeshOrSegmentHandleT, typename ScalarT>
-  void scale(MeshOrSegmentHandleT & mesh_or_segment, ScalarT factor)
+  template<typename MeshConfigType, typename ScalarT>
+  void scale(viennagrid::mesh<MeshConfigType> & mesh, ScalarT factor)
   {
-    viennagrid::detail::scale_impl(mesh_or_segment, factor, viennagrid::default_point_accessor(mesh_or_segment));
+    typedef viennagrid::mesh<MeshConfigType>   MeshType;
+    typedef typename viennagrid::result_of::point<MeshType>::type   PointType;
+    viennagrid::detail::scale_impl(mesh, factor, PointType(0,0), viennagrid::default_point_accessor(mesh));
+  }
+
+  /** @brief Scales the geometric points of a mesh/segment
+   *
+   * @param  mesh_or_segment          The mesh/segment which points are scaled
+   * @param  factor                     The scale factor
+   */
+  template<typename MeshConfigType, typename ScalarT, typename PointType>
+  void scale(viennagrid::mesh<MeshConfigType> & mesh, ScalarT factor, PointType const & scaling_center)
+  {
+    viennagrid::detail::scale_impl(mesh, factor, scaling_center, viennagrid::default_point_accessor(mesh));
   }
 
 } // viennagrid

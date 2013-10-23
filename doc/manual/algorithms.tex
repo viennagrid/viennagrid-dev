@@ -35,7 +35,7 @@ A tutorial covering the algorithms explained in this chapter can be found in \ls
    Interface detection & \texttt{interface.hpp}          & \lstinline|is_interface(seg1, seg2, element)|\\
    Quantity transfer   & \texttt{quantity\_transfer.hpp} & \lstinline|quantity_transfer(...)|\\
    Simplex refinement  & \texttt{refine.hpp}             & \lstinline|refine(tag, mesh)| \\
-   Scale mesh          & \texttt{scale.hpp}              & \lstinline|scale(mesh, factor| \\
+   Scale mesh          & \texttt{scale.hpp}              & \lstinline|scale(mesh, factor, center)| \\
    Surface computation & \texttt{surface.hpp}            & \lstinline|surface(domseg)| \\
    Volume computation  & \texttt{volume.hpp}             & \lstinline|volume(domseg)| \\
    Voronoi grid        & \texttt{voronoi.hpp}            & \lstinline|apply_voronoi(domseg, ...)| \\
@@ -230,6 +230,17 @@ It has to be noted that the resulting refined mesh is written to a new mesh, thu
 %  Again, no expensive temporary mesh is created for the refinement process thanks to the use of a proxy object.
 
 %  \NOTE{\lstinline|refine()| requires edges to be stored in the mesh. Make sure not to disable the handling of edges, cf.~Section \ref{subsec:boundary-ncells-storage}. }
+
+ \subsection{Scale}
+ The free function \lstinline|scale()| scales a mesh by a certain factor \lstinline|alpha|. For example, to scale all point coordinates by a factor of two, one writes
+  \begin{lstlisting}
+   viennagrid::scale(mesh, 2.0);
+  \end{lstlisting}
+  If the scaling should be with respect to a point other than the origin, one can pass the scaling center as a third argument, e.g.
+  \begin{lstlisting}
+   typedef result_of::point<MeshType>::type   PointType;
+   viennagrid::scale(mesh, 2.0, PointType(1,1));
+  \end{lstlisting}
 
  \subsection{Surface}
  The surface of a mesh or segment \lstinline|domseg| is given by the sum of the volumes of the boundary facets and returned by the convenience overload
