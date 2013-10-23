@@ -1,6 +1,6 @@
 
 # tests with CPU backend
-foreach(PROG boundary coboundary
+foreach(PROG angle boundary coboundary
             distance_1d distance_2d distance_3d distance_boundary
             hypercube interface io mesh point
             refinement refinement2 refinement3 refinement-triangles

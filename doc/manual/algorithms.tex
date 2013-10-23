@@ -52,6 +52,34 @@ A tutorial covering the algorithms explained in this chapter can be found in \ls
 This section details algorithms in {\ViennaGrid} requiring geometric information only.
 The point type in {\ViennaGrid} should be seen in this context mostly as a vector type rather than a representation of a geometric location, reflecting the duality of points and vectors in the Euclidian space.
 
+  \subsection{Angles}
+ To compute the angle between two vectors pointing from the origin to points \lstinline|p1| and \lstinline|p2|, call
+ \begin{lstlisting}
+  viennagrid::angle(p1, p2);
+ \end{lstlisting}
+ If the vectors should have another common point \lstinline|p3| which acts as a translated origin, use
+ \begin{lstlisting}
+  viennagrid::angle(p1, p2, p3);
+ \end{lstlisting}
+ which is equivalent to calling
+ \begin{lstlisting}
+  viennagrid::angle(p1-p3, p2-p3);
+ \end{lstlisting}
+
+ In a three-dimensional coordinate system one can in addition compute the solid angle defined by three points with respect to the origin via
+ \begin{lstlisting}
+  viennagrid::solid_angle(p1, p2, p3);
+ \end{lstlisting}
+ If the solid angle should be determined with respect to another point \lstinline|p4|, use
+ \begin{lstlisting}
+  viennagrid::solid_angle(p1, p2, p3, p4);
+ \end{lstlisting}
+
+ The dihedral angle of two planes given by the points (\lstinline|a1|, \lstinline|a2|, \lstinline|a3|) and (\lstinline|b1|, \lstinline|b2|, \lstinline|b3|), respectively, is computed using
+ \begin{lstlisting}
+  viennagrid::dihedral_angle(a1, a2, a3, b1, b2, b3);
+ \end{lstlisting}
+
   \subsection{Cross Products}
  The cross-product of two vectors (i.e.~{\ViennaGrid} points) $p0$ and $p1$ is defined for the three-dimensional space and computed with {\ViennaGrid} as
  \begin{lstlisting}
