@@ -9,9 +9,16 @@ A common approach is to model vertices, edges and the like as separate classes a
  \item \textbf{Efficiency}: A data member that is never used obviously wastes memory. For large numbers of objects it might be even advisable to use special containers for data that is relevant for a tiny fraction of all objects only (e.g.~mesh boundary flags). Apart from reduced memory footprint, the possibly tighter grouping of data allows for better CPU caching.
 \end{enumerate}
 
-Previous version of {\ViennaGrid} relies on {\ViennaData} \cite{ViennaData} for the storage of data associated with topological objects. {\ViennaGridversion} dropped the dependencies on {\ViennaData} in favor of accessor concepts.
+Previous version of {\ViennaGrid} relies on {\ViennaData} \cite{ViennaData} for the storage of data associated with topological objects.
+{\ViennaGridversion} dropped the dependencies on {\ViennaData} in favor of the accessor and the field concept.
+These concepts are essential for decoupling the actual algorithm implementation from the underlying storage.
+Although in many cases a user will store data in a plain array using e.g.~a numeric vertex ID as the index, a vertex may not carry a numeric ID at all for the sake of smaller memory footprint.
+In such case a user may prefer to store data in a map using the vertex address as key object.
+Using the accessor and field concepts, algorithm implementations do not need to be duplicated in order to deal with both storage types.
 
-An accessor is a simple class which manages access to data stored on objects. For example one might want to store potential values with type \lstinline|double| on vertices. An accessor provides an  \lstinline|operator()| returning a reference to the data stored for that object:
+An accessor is a simple class which manages access to data stored on objects.
+For example, one might want to store potential values with type \lstinline|double| on vertices.
+An accessor provides an  \lstinline|operator()| returning a reference to the data stored for that object:
 
 \begin{lstlisting}
  SomeAccessorType my_accessor;
@@ -19,7 +26,7 @@ An accessor is a simple class which manages access to data stored on objects. Fo
  std::cout << my_accessor(vertex) << std::endl;
 \end{lstlisting}
 
-Each class fulfilling the accessor concepts presented in table Tab.~\ref{tab:accessor-concepts} can be used in ViennaGrid.
+Each class fulfilling the accessor concepts presented in Table~\ref{tab:accessor-concepts} can be used in ViennaGrid.
 
  \begin{table}[tbp]
  \begin{center}
@@ -50,7 +57,7 @@ Each class fulfilling the accessor concepts presented in table Tab.~\ref{tab:acc
 
 Beside accessors, {\ViennaGrid} defines the field concept.
 A field is similar to an accessor but more suitable for sparse storage.
-The same concepts as for accessor apply to field concepts with the exception of the concepts in table Tab.~\ref{tab:field-concepts}.
+The same concepts as for accessor apply to field concepts with the exception of the concepts in Table~\ref{tab:field-concepts}.
 
  \begin{table}[tbp]
  \begin{center}
@@ -62,7 +69,7 @@ The same concepts as for accessor apply to field concepts with the exception of 
    \hline
   \end{tabular}
  \end{center}
- \caption{Field concepts}
+ \caption{Field concept. Same as the accessor concept except for the const-access case.}
  \label{tab:field-concepts}
  \end{table}
 
@@ -79,10 +86,23 @@ The example below demonstrates the use of {\ViennaGrid} accessors.
  int_accessor(my_vertex) = -3;
 
  // obtain a container for storing double values on vertices using std::map
- typedef viennagrid::result_of::accessor_container<VertexType, double, viennagrid::storage::std_map_tag>::type ContainerType;
+ typedef viennagrid::result_of::accessor_container<VertexType, double, viennagrid::std_map_tag>::type ContainerType;
 
  // instantiate a container and an accessor for the container
  ContainerType container;
  viennagrid::result_of::accessor<ContainerType, VertexType>::type container_accessor(container);
 \end{lstlisting}
-Fields are used accordingly.
+Fields are used accordingly. The following storage tags are directly available in {\ViennaGridminorversion} for use with standard STL containers:
+\begin{center}
+\begin{tabular}{|l|l|}
+ \hline
+ Tag              & Container \\
+ \hline
+ \lstinline|std_vector_tag|   &  \lstinline|std::vector| \\
+ \lstinline|std_deque_tag|    &  \lstinline|std::deque|  \\
+ \lstinline|std_list_tag|     &  \lstinline|std::list|   \\
+ \lstinline|std_map_tag|      &  \lstinline|std::map|    \\
+ \lstinline|std_set_tag|      &  \lstinline|std::set|    \\
+ \hline
+\end{tabular}
+\end{center}
