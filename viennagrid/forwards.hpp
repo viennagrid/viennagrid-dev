@@ -195,8 +195,7 @@ namespace viennagrid
   };
 
 
-  /** @brief Namespace for definition and handling of the individual topological elements (triangles, hexahedra, etc.) */
-  namespace element_topology
+  namespace detail
   {
     /** @brief Worker class that generates the boundary elements of a host element
      *

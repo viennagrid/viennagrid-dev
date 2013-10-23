@@ -69,7 +69,7 @@ namespace viennagrid
     template<typename element_type, typename inserter_type>
     void create_boundary_elements(element_type & element, inserter_type & inserter)
     {
-      element_topology::boundary_element_generator<element_tag, bnd_cell_tag, bnd_cell_type>::create_boundary_elements(element, inserter);
+      detail::boundary_element_generator<element_tag, bnd_cell_tag, bnd_cell_type>::create_boundary_elements(element, inserter);
       base::create_boundary_elements(element, inserter);
     }
 
@@ -214,7 +214,7 @@ namespace viennagrid
     template<typename element_type, typename inserter_type>
     void create_boundary_elements(element_type & element, inserter_type & inserter)
     {
-      element_topology::boundary_element_generator<element_tag, bnd_cell_tag, bnd_cell_type>::create_boundary_elements(element, inserter);
+      detail::boundary_element_generator<element_tag, bnd_cell_tag, bnd_cell_type>::create_boundary_elements(element, inserter);
       base::create_boundary_elements(element, inserter);
     }
 

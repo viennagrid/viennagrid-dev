@@ -47,7 +47,7 @@ namespace viennagrid
     static const int num = 4;
   };
 
-  namespace element_topology
+  namespace detail
   {
       //fill edges:
       //

@@ -51,7 +51,7 @@ namespace viennagrid
 
 
 
-  namespace element_topology
+  namespace detail
   {
     template<typename BoundaryElementType>
     struct boundary_element_generator<plc_tag, line_tag, BoundaryElementType>

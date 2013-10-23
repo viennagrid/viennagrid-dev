@@ -49,7 +49,7 @@ namespace viennagrid
   };
 
 
-  namespace element_topology
+  namespace detail
   {
     template<typename BoundaryElementType>
     struct boundary_element_generator<polygon_tag, simplex_tag<1>, BoundaryElementType>

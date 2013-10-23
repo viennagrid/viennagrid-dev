@@ -80,7 +80,7 @@ namespace viennagrid
   };
 
 
-  namespace element_topology
+  namespace detail
   {
     ///////////////////////////////// Generator for boundary cell elements ///////////////////////////////////
 

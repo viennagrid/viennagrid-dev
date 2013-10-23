@@ -57,7 +57,7 @@ namespace viennagrid
 
 
 
-  namespace element_topology
+  namespace detail
   {
 //         //fill edges according to reference orientation (use monospaced font for Full-HD ascii-art):
 //         //

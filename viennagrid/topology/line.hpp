@@ -33,7 +33,7 @@ namespace viennagrid
   };
 
 
-  namespace element_topology
+  namespace detail
   {
 
     //Line:
