@@ -16,7 +16,7 @@
 
 #include "viennagrid/config/default_configs.hpp"
 
-#include "viennagrid/mesh/accessor.hpp"
+#include "viennagrid/accessor.hpp"
 
 #include "viennagrid/algorithm/boundary.hpp"
 #include "viennagrid/algorithm/centroid.hpp"

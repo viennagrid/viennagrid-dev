@@ -20,7 +20,7 @@
 #include "viennagrid/storage/id.hpp"
 #include "viennagrid/storage/container_collection.hpp"
 
-/** @file viennagrid/mesh/accessor.hpp
+/** @file viennagrid/accessor.hpp
     @brief Defines various accessors for storing data for the different element types.
 */
 

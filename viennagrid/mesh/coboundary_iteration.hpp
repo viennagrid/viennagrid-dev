@@ -16,7 +16,7 @@
 #include "viennagrid/forwards.hpp"
 #include "viennagrid/storage/forwards.hpp"
 #include "viennagrid/mesh/mesh.hpp"
-#include "viennagrid/mesh/accessor.hpp"
+#include "viennagrid/accessor.hpp"
 
 /** @file viennagrid/mesh/coboundary_iteration.hpp
     @brief Contains definition and implementation of coboundary iteration

@@ -19,7 +19,7 @@
 
 #include "viennagrid/config/default_configs.hpp"
 
-#include "viennagrid/mesh/accessor.hpp"
+#include "viennagrid/accessor.hpp"
 #include "viennagrid/mesh/segmentation.hpp"
 #include "viennagrid/mesh/element_creation.hpp"
 

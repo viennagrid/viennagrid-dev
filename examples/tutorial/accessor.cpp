@@ -18,7 +18,7 @@
 #include "viennagrid/config/default_configs.hpp"
 #include "viennagrid/io/netgen_reader.hpp"
 #include "viennagrid/io/vtk_writer.hpp"
-#include "viennagrid/mesh/accessor.hpp"
+#include "viennagrid/accessor.hpp"
 
 // //Point-based algorithms:
 // #include "viennagrid/algorithm/cross_prod.hpp"

@@ -14,7 +14,7 @@
 ======================================================================= */
 
 #include <limits>
-#include "viennagrid/mesh/accessor.hpp"
+#include "viennagrid/accessor.hpp"
 
 #include "viennagrid/forwards.hpp"
 #include "viennagrid/mesh/mesh.hpp"

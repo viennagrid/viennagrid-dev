@@ -18,7 +18,7 @@
 #include "viennagrid/forwards.hpp"
 #include "viennagrid/mesh/mesh.hpp"
 #include "viennagrid/io/helper.hpp"
-#include "viennagrid/mesh/accessor.hpp"
+#include "viennagrid/accessor.hpp"
 
 /** @file viennagrid/io/opendx_writer.hpp
     @brief Provides a writer for OpenDX files
