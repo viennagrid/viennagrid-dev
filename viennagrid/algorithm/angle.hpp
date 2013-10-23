@@ -95,7 +95,7 @@ namespace viennagrid
     double da_bc = dihedral_angle( origin, b, a, origin, c, a );
 
     return da_ab + da_ac + da_bc - M_PI;
-}
+  }
 
 }
 
