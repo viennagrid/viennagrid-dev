@@ -1772,9 +1772,12 @@ namespace viennagrid
   };
 
 
-  /** @brief Helper struct for element refinement */
-  template <typename ElementTagT>
-  struct element_refinement;
+  namespace detail
+  {
+    /** @brief Helper struct for element refinement */
+    template <typename ElementTagT>
+    struct element_refinement;
+  }
 }
 
 #endif

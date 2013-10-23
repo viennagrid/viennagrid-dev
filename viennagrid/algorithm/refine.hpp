@@ -19,8 +19,8 @@
 
 #include "viennagrid/mesh/element_creation.hpp"
 
-#include "viennagrid/refinement/triangle.hpp"
-#include "viennagrid/refinement/tetrahedron.hpp"
+#include "viennagrid/algorithm/detail/refine_tri.hpp"
+#include "viennagrid/algorithm/detail/refine_tet.hpp"
 
 /** @file viennagrid/algorithm/refine.hpp
     @brief Provides the routines for a refinement of a mesh
@@ -85,7 +85,7 @@ namespace viennagrid
                           cit != cells.end();
                         ++cit)
         {
-          element_refinement<CellTagInT>::apply(*cit, mesh_out, edge_refinement_flag_accessor, vertex_to_vertex_handle_accessor, edge_to_vertex_handle_accessor);
+          detail::element_refinement<CellTagInT>::apply(*cit, mesh_out, edge_refinement_flag_accessor, vertex_to_vertex_handle_accessor, edge_to_vertex_handle_accessor);
         }
     }
 
@@ -160,7 +160,7 @@ namespace viennagrid
                           cit != cells.end();
                         ++cit)
         {
-          element_refinement<CellTagInT>::apply(*cit, segment_out, edge_refinement_flag_accessor, vertex_to_vertex_handle_accessor, edge_to_vertex_handle_accessor);
+          detail::element_refinement<CellTagInT>::apply(*cit, segment_out, edge_refinement_flag_accessor, vertex_to_vertex_handle_accessor, edge_to_vertex_handle_accessor);
         }
       }
     }
