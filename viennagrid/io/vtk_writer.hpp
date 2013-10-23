@@ -243,7 +243,7 @@ namespace viennagrid
 
         for (typename std::map< VertexIDType, ConstVertexHandleType >::iterator it = current_used_vertex_map.begin(); it != current_used_vertex_map.end(); ++it)
         {
-          const int dim = traits::static_size<PointType>::value;
+          const int dim = result_of::static_size<PointType>::value;
           PointWriter<dim>::write(writer, viennagrid::point(domseg, it->second) );
 
           // add 0's for less than three dimensions

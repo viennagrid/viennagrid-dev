@@ -21,7 +21,6 @@
 #include <sstream>
 
 #include "viennagrid/forwards.hpp"
-#include "viennagrid/traits/point.hpp"
 
 #include "viennagrid/storage/static_array.hpp"
 
@@ -31,6 +30,55 @@
 
 namespace viennagrid
 {
+  namespace result_of
+  {
+    /** @brief  Returns the geometric dimension of a point */
+    template <typename PointType>
+    struct dimension;
+
+    /** @brief  Returns the geometric dimension of a point. Specialization for a ViennaGrid point */
+    template <typename CoordType, typename CoordinateSystem>
+    struct dimension< spatial_point<CoordType, CoordinateSystem> >
+    {
+      static const int value = CoordinateSystem::dim;
+    };
+
+
+    /** @brief Returns the coordinate system of a point. Must be specialized for a user-provided point type */
+    template <typename PointType>
+    struct coordinate_system
+    {
+      //by default, we don't know anything about the point type, so let's complain at compile time
+      typedef typename PointType::ERROR_UNKNOWN_COORDINATE_SYSTEM_FOR_POINT_TYPE    type;
+    };
+
+    /** @brief Returns the coordinate system of a point. Specialization for a ViennaGrid point. */
+    template <typename CoordType, typename CoordinateSystem>
+    struct coordinate_system< spatial_point<CoordType, CoordinateSystem> >
+    {
+      typedef CoordinateSystem    type;
+    };
+
+
+    /** @brief Returns the static (compile time) size of a point */
+    template <typename PointType>
+    struct static_size;
+
+    /** @brief Returns the static (compile time) size of a point. Specialization for a ViennaGrid point. */
+    template <typename CoordType, typename CoordinateSystem>
+    struct static_size< spatial_point<CoordType, CoordinateSystem> >
+    {
+      static const int value = CoordinateSystem::dim;
+    };
+
+  }
+
+  /** @brief Returns the dynamic (run time) size of a point. Assumes a .size() member. Other cases must be provided with overloads */
+  template <typename PointType>
+  std::size_t dynamic_size(PointType const & p)
+  {
+    return p.size();
+  }
 
   template <int d>
   struct dim_dispatcher;
@@ -42,8 +90,8 @@ namespace viennagrid
    */
   template <typename FromPointType,
             typename ToPointType,
-            typename FromCoordinateSystem = typename traits::coordinate_system<FromPointType>::type,
-            typename ToCoordinateSystem = typename traits::coordinate_system<ToPointType>::type
+            typename FromCoordinateSystem = typename result_of::coordinate_system<FromPointType>::type,
+            typename ToCoordinateSystem = typename result_of::coordinate_system<ToPointType>::type
            >
   class coordinate_converter
   {
@@ -111,7 +159,7 @@ namespace viennagrid
     struct cartesian_point
     {
       typedef viennagrid::spatial_point<typename result_of::coord<PointType>::type,
-                                  viennagrid::cartesian_cs<viennagrid::traits::static_size<PointType>::value>
+                                  viennagrid::cartesian_cs<viennagrid::result_of::static_size<PointType>::value>
                                  >                    type;
     };
 
@@ -297,12 +345,12 @@ namespace viennagrid
   //public interface
   /** @brief Convenience function for converting a point to Cartesian coordinates.
    *
-   * @tparam PointType   A point type for which the traits::coordinate_system<> metafunction can deduce the coordinate system */
+   * @tparam PointType   A point type for which the result_of::coordinate_system<> metafunction can deduce the coordinate system */
   template <typename PointType>
   typename result_of::cartesian_point<PointType>::type
   to_cartesian(PointType const & p)
   {
-    return to_cartesian_impl(p, typename traits::coordinate_system<PointType>::type());
+    return to_cartesian_impl(p, typename result_of::coordinate_system<PointType>::type());
   }
 
 
@@ -315,7 +363,7 @@ namespace viennagrid
     template <typename PointType>
     static PointType add(PointType const & p1, PointType const & p2)
     {
-      static const int DIM = viennagrid::traits::static_size<PointType>::value;
+      static const int DIM = viennagrid::result_of::static_size<PointType>::value;
 
       typedef spatial_point<typename PointType::value_type,
                       cartesian_cs<DIM>
@@ -340,7 +388,7 @@ namespace viennagrid
     template <typename PointType>
     static void inplace_add(PointType & p1, PointType const & p2)
     {
-      static const int DIM = viennagrid::traits::static_size<PointType>::value;
+      static const int DIM = viennagrid::result_of::static_size<PointType>::value;
 
       typedef spatial_point<typename PointType::value_type,
                       cartesian_cs<DIM>
@@ -361,7 +409,7 @@ namespace viennagrid
     template <typename PointType>
     static PointType subtract(PointType const & p1, PointType const & p2)
     {
-      static const int DIM = viennagrid::traits::static_size<PointType>::value;
+      static const int DIM = viennagrid::result_of::static_size<PointType>::value;
 
       typedef spatial_point<typename PointType::value_type,
                       cartesian_cs<DIM>
@@ -384,7 +432,7 @@ namespace viennagrid
     template <typename PointType>
     static void inplace_subtract(PointType & p1, PointType const & p2)
     {
-      static const int DIM = viennagrid::traits::static_size<PointType>::value;
+      static const int DIM = viennagrid::result_of::static_size<PointType>::value;
 
       typedef spatial_point<typename PointType::value_type,
                       cartesian_cs<DIM>
@@ -437,7 +485,7 @@ namespace viennagrid
     template <typename PointType>
     static PointType & inplace_stretch(PointType & p1, typename result_of::coord<PointType>::type factor)
     {
-      static const int DIM = viennagrid::traits::static_size<PointType>::value;
+      static const int DIM = viennagrid::result_of::static_size<PointType>::value;
 
       typedef spatial_point<typename PointType::value_type,
                       cartesian_cs<DIM>

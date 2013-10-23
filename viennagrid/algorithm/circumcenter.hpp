@@ -280,7 +280,7 @@ namespace viennagrid
     return detail::circumcenter(accessor,
                         element,
                         typename ElementT::tag(),
-                        viennagrid::dimension_tag< traits::static_size<PointType>::value >());
+                        viennagrid::dimension_tag< result_of::static_size<PointType>::value >());
   }
 
 

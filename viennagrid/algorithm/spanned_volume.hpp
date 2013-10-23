@@ -20,7 +20,6 @@
 #include "viennagrid/algorithm/cross_prod.hpp"
 #include "viennagrid/algorithm/norm.hpp"
 #include "viennagrid/algorithm/inner_prod.hpp"
-#include "viennagrid/traits/point.hpp"
 
 
 /** @file viennagrid/algorithm/spanned_volume.hpp
@@ -32,7 +31,7 @@ namespace viennagrid
 
   namespace detail
   {
-    template <typename PointT, int DimV = traits::dimension<PointT>::value>
+    template <typename PointT, int DimV = result_of::dimension<PointT>::value>
     struct signed_spanned_volume_impl;
 
 
@@ -228,8 +227,8 @@ namespace viennagrid
   {
     return signed_spanned_volume_impl(p1,
                                p2,
-                               typename traits::coordinate_system<PointT1>::type(),
-                               typename traits::coordinate_system<PointT2>::type());
+                               typename result_of::coordinate_system<PointT1>::type(),
+                               typename result_of::coordinate_system<PointT2>::type());
   }
 
 
@@ -241,9 +240,9 @@ namespace viennagrid
     return signed_spanned_volume_impl(p1,
                                p2,
                                p3,
-                               typename traits::coordinate_system<PointT1>::type(),
-                               typename traits::coordinate_system<PointT2>::type(),
-                               typename traits::coordinate_system<PointT3>::type()
+                               typename result_of::coordinate_system<PointT1>::type(),
+                               typename result_of::coordinate_system<PointT2>::type(),
+                               typename result_of::coordinate_system<PointT3>::type()
                               );
 
   }
@@ -261,10 +260,10 @@ namespace viennagrid
                                p2,
                                p3,
                                p4,
-                               typename traits::coordinate_system<PointT1>::type(),
-                               typename traits::coordinate_system<PointT2>::type(),
-                               typename traits::coordinate_system<PointT3>::type(),
-                               typename traits::coordinate_system<PointT4>::type()
+                               typename result_of::coordinate_system<PointT1>::type(),
+                               typename result_of::coordinate_system<PointT2>::type(),
+                               typename result_of::coordinate_system<PointT3>::type(),
+                               typename result_of::coordinate_system<PointT4>::type()
                               );
   }
 

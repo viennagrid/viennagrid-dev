@@ -14,7 +14,6 @@
 ======================================================================= */
 
 #include "viennagrid/forwards.hpp"
-#include "viennagrid/traits/point.hpp"
 #include "viennagrid/point.hpp"
 
 /** @file viennagrid/algorithm/cross_prod.hpp
@@ -28,7 +27,7 @@ namespace viennagrid
   {
     /** @brief Implementation of the cross product calculation */
     template <typename PointT,
-              long dim = traits::dimension<PointT>::value>
+              long dim = result_of::dimension<PointT>::value>
     struct cross_prod_impl;
 
 
@@ -99,8 +98,8 @@ namespace viennagrid
   {
     return cross_prod_impl(v1,
                            v2,
-                           typename traits::coordinate_system<PointT1>::type(),
-                           typename traits::coordinate_system<PointT2>::type());
+                           typename result_of::coordinate_system<PointT1>::type(),
+                           typename result_of::coordinate_system<PointT2>::type());
   }
 
 }

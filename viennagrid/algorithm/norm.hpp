@@ -15,7 +15,6 @@
 
 #include <cmath>
 #include "viennagrid/forwards.hpp"
-#include "viennagrid/traits/point.hpp"
 #include "viennagrid/point.hpp"
 
 /** @file viennagrid/algorithm/norm.hpp
@@ -51,7 +50,7 @@ namespace viennagrid
       typename viennagrid::result_of::coord<PointT>::type operator()(PointT const& p)
       {
         typename viennagrid::result_of::coord<PointT>::type result(0);
-        for(std::size_t i = 0; i < traits::dynamic_size(p); i++)
+        for(std::size_t i = 0; i < dynamic_size(p); i++)
           result += std::abs(p[i]);
         return result;
       }
@@ -65,7 +64,7 @@ namespace viennagrid
       typename viennagrid::result_of::coord<PointT>::type operator()(PointT const& p)
       {
         typename viennagrid::result_of::coord<PointT>::type result(0);
-        for(std::size_t i = 0; i < traits::dynamic_size(p); i++)
+        for(std::size_t i = 0; i < dynamic_size(p); i++)
           result += p[i]*p[i];
         return std::sqrt(result);
       }
@@ -79,7 +78,7 @@ namespace viennagrid
       typename viennagrid::result_of::coord<PointT>::type operator()(PointT const& p)
       {
         typename viennagrid::result_of::coord<PointT>::type result(0);
-        for(std::size_t i = 0; i < traits::dynamic_size(p); i++)
+        for(std::size_t i = 0; i < dynamic_size(p); i++)
         {
           if(std::abs(p[i]) > result)
               result = std::abs(p[i]);
@@ -119,7 +118,7 @@ namespace viennagrid
   typename viennagrid::result_of::coord<PointT>::type
   norm(PointT const & p, Tag)
   {
-    return norm_impl<Tag>(p, typename traits::coordinate_system<PointT>::type());
+    return norm_impl<Tag>(p, typename result_of::coordinate_system<PointT>::type());
   }
 
   /** @brief Returns the 2-norm of a point. Result is such as if the point were transformed to Cartesian coordinates first */
@@ -127,7 +126,7 @@ namespace viennagrid
   typename viennagrid::result_of::coord<PointT>::type
   norm(PointT const & p)
   {
-    return norm_impl<viennagrid::two_tag>(p, typename traits::coordinate_system<PointT>::type());
+    return norm_impl<viennagrid::two_tag>(p, typename result_of::coordinate_system<PointT>::type());
   }
 
 
@@ -137,7 +136,7 @@ namespace viennagrid
   typename viennagrid::result_of::coord<PointT>::type
   norm_1(PointT const & p)
   {
-    return norm_impl<viennagrid::one_tag>(p, typename traits::coordinate_system<PointT>::type());
+    return norm_impl<viennagrid::one_tag>(p, typename result_of::coordinate_system<PointT>::type());
   }
 
   /** @brief Convenience shortcut for the 2-norm of a vector. */
@@ -145,7 +144,7 @@ namespace viennagrid
   typename viennagrid::result_of::coord<PointT>::type
   norm_2(PointT const & p)
   {
-    return norm_impl<viennagrid::two_tag>(p, typename traits::coordinate_system<PointT>::type());
+    return norm_impl<viennagrid::two_tag>(p, typename result_of::coordinate_system<PointT>::type());
   }
 
   /** @brief Convenience shortcut for the inf-norm of a vector. */
@@ -153,7 +152,7 @@ namespace viennagrid
   typename viennagrid::result_of::coord<PointT>::type
   norm_inf(PointT const & p)
   {
-    return norm_impl<viennagrid::inf_tag>(p, typename traits::coordinate_system<PointT>::type());
+    return norm_impl<viennagrid::inf_tag>(p, typename result_of::coordinate_system<PointT>::type());
   }
 
 }

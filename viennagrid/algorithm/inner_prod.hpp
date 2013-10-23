@@ -14,7 +14,6 @@
 ======================================================================= */
 
 #include "viennagrid/forwards.hpp"
-#include "viennagrid/traits/point.hpp"
 #include "viennagrid/point.hpp"
 
 /** @file viennagrid/algorithm/inner_prod.hpp
@@ -27,7 +26,7 @@ namespace viennagrid
   namespace detail
   {
     template <typename PointT,
-              long dim = traits::dimension<PointT>::value>
+              long dim = result_of::dimension<PointT>::value>
     struct inner_prod_impl;
 
     //
@@ -111,8 +110,8 @@ namespace viennagrid
   {
     return inner_prod_impl(p1,
                            p2,
-                           typename traits::coordinate_system<PointT1>::type(),
-                           typename traits::coordinate_system<PointT2>::type());
+                           typename result_of::coordinate_system<PointT1>::type(),
+                           typename result_of::coordinate_system<PointT2>::type());
   }
 
 }

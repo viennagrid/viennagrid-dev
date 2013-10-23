@@ -54,7 +54,7 @@ namespace viennagrid
 
       typedef typename viennagrid::result_of::point<MeshType>::type PointType;
       typedef typename viennagrid::result_of::coord<PointType>::type CoordType;
-      static const int geometric_dim = viennagrid::traits::static_size<PointType>::value;
+      static const int geometric_dim = viennagrid::result_of::static_size<PointType>::value;
 
       typedef typename viennagrid::result_of::cell_tag<MeshType>::type CellTag;
 

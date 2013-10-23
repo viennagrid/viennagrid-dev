@@ -19,7 +19,7 @@
 
 namespace viennagrid
 {
-  namespace segmentation
+  namespace detail
   {
     template<typename PointT>
     bool triangle_ray_intersect(PointT const & r, PointT d, PointT const & A, PointT const & B, PointT const & C)
@@ -352,7 +352,7 @@ namespace viennagrid
           point_type const & C = viennagrid::point( mesh_obj, viennagrid::elements<viennagrid::vertex_tag>(to_test)[2] );
 
 
-          if (segmentation::triangle_ray_intersect(r, d, A, B, C)) // TODO: scale by bounding box to ensure a ray outside the mesh
+          if (detail::triangle_ray_intersect(r, d, A, B, C)) // TODO: scale by bounding box to ensure a ray outside the mesh
             break;
         }
 
@@ -362,7 +362,7 @@ namespace viennagrid
           if (!faces_outward)
             n = -n;
 
-          segmentation::mark_facing_shortes_angle( mesh_obj, visible_state_accessor, segment_, it.handle(), faces_outward );
+          detail::mark_facing_shortes_angle( mesh_obj, visible_state_accessor, segment_, it.handle(), faces_outward );
         }
       }
     }
@@ -375,7 +375,7 @@ namespace viennagrid
   void mark_face_segments( MeshT & mesh_obj, SegmentationT & segmentation_, SeedPointIteratorT seed_points_it, SeedPointIteratorT const & seed_points_end )
   {
     for ( ; seed_points_it != seed_points_end; ++seed_points_it)
-      segmentation::detect_and_mark_face_segment(mesh_obj, segmentation_(seed_points_it->first), seed_points_it->second);
+      detail::detect_and_mark_face_segment(mesh_obj, segmentation_(seed_points_it->first), seed_points_it->second);
   }
 
 }
