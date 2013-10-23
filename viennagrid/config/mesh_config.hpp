@@ -337,28 +337,28 @@ namespace viennagrid
 
   namespace result_of
   {
-    /** @brief Creates the typemap for the neighbour container collection based on an element and its boundary element typelist. The boundary elements are used as connector elements. */
+    /** @brief Creates the typemap for the neighbor container collection based on an element and its boundary element typelist. The boundary elements are used as connector elements. */
     template<typename WrappedConfigType, typename ElementTagT, typename BoundaryElementTaglistT =
       typename boundary_element_taglist< viennagrid::element<ElementTagT, WrappedConfigType> >::type >
-    struct neighbour_container_collection_per_element_typemap;
+    struct neighbor_container_collection_per_element_typemap;
 
     template<typename WrappedConfigType, typename ElementTagT>
-    struct neighbour_container_collection_per_element_typemap<WrappedConfigType, ElementTagT, viennagrid::null_type>
+    struct neighbor_container_collection_per_element_typemap<WrappedConfigType, ElementTagT, viennagrid::null_type>
     {
       typedef viennagrid::null_type type;
     };
 
     template<typename WrappedConfigType, typename ElementTagT, typename ConnectorElementTagT, typename tail>
-    struct neighbour_container_collection_per_element_typemap<WrappedConfigType, ElementTagT, viennagrid::typelist<ConnectorElementTagT, tail> >
+    struct neighbor_container_collection_per_element_typemap<WrappedConfigType, ElementTagT, viennagrid::typelist<ConnectorElementTagT, tail> >
     {
       typedef typename config::result_of::query<WrappedConfigType, long, config::mesh_change_counter_tag>::type MeshChangeCounterType;
 
-      typedef typename config::result_of::query<WrappedConfigType, storage::std_vector_tag, ElementTagT, config::neighbour_container_tag, ConnectorElementTagT>::type neighbour_container_tag;
-      typedef typename config::result_of::query<WrappedConfigType, storage::std_vector_tag, ElementTagT, config::neighbour_view_container_tag, ConnectorElementTagT>::type neighbour_view_container_tag;
+      typedef typename config::result_of::query<WrappedConfigType, storage::std_vector_tag, ElementTagT, config::neighbor_container_tag, ConnectorElementTagT>::type neighbor_container_tag;
+      typedef typename config::result_of::query<WrappedConfigType, storage::std_vector_tag, ElementTagT, config::neighbor_view_container_tag, ConnectorElementTagT>::type neighbor_view_container_tag;
 
       typedef typename config::result_of::element_container< WrappedConfigType, ElementTagT>::type base_element_container;
-      typedef typename viennagrid::storage::result_of::view<base_element_container, neighbour_view_container_tag>::type element_view_type;
-      typedef typename storage::result_of::container<element_view_type, neighbour_container_tag >::type base_container;
+      typedef typename viennagrid::storage::result_of::view<base_element_container, neighbor_view_container_tag>::type element_view_type;
+      typedef typename storage::result_of::container<element_view_type, neighbor_container_tag >::type base_container;
 
       typedef viennagrid::typelist<
           viennagrid::static_pair<
@@ -366,29 +366,29 @@ namespace viennagrid
                   ElementTagT,
                   ConnectorElementTagT
               >,
-              neighbour_container_wrapper<base_container, MeshChangeCounterType>
+              neighbor_container_wrapper<base_container, MeshChangeCounterType>
           >,
-          typename neighbour_container_collection_per_element_typemap<WrappedConfigType, ElementTagT, tail>::type
+          typename neighbor_container_collection_per_element_typemap<WrappedConfigType, ElementTagT, tail>::type
       > type;
     };
 
 
-    /** @brief Creates the typemap for the neighbour container collection for all elements by merging all typemaps created by neighbour_container_collection_per_element_typemap. */
+    /** @brief Creates the typemap for the neighbor container collection for all elements by merging all typemaps created by neighbor_container_collection_per_element_typemap. */
     template<typename WrappedConfigType, typename ElementTaglistT = typename viennagrid::meta::result_of::key_typelist<typename WrappedConfigType::type>::type>
-    struct neighbour_container_collection_typemap;
+    struct neighbor_container_collection_typemap;
 
     template<typename WrappedConfigType>
-    struct neighbour_container_collection_typemap<WrappedConfigType, viennagrid::null_type>
+    struct neighbor_container_collection_typemap<WrappedConfigType, viennagrid::null_type>
     {
       typedef viennagrid::null_type type;
     };
 
     template<typename WrappedConfigType, typename ElementTagT, typename tail>
-    struct neighbour_container_collection_typemap<WrappedConfigType, viennagrid::typelist<ElementTagT, tail> >
+    struct neighbor_container_collection_typemap<WrappedConfigType, viennagrid::typelist<ElementTagT, tail> >
     {
       typedef typename viennagrid::meta::result_of::merge<
-        typename neighbour_container_collection_per_element_typemap<WrappedConfigType, ElementTagT>::type,
-        typename neighbour_container_collection_typemap<WrappedConfigType, tail>::type
+        typename neighbor_container_collection_per_element_typemap<WrappedConfigType, ElementTagT>::type,
+        typename neighbor_container_collection_typemap<WrappedConfigType, tail>::type
       >::type type;
     };
   }

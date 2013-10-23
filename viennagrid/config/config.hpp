@@ -44,10 +44,10 @@ namespace viennagrid
     /** @brief Defines the key within a typemap tree config for identifying the container tag for the coboundary view of a host element type and a coboundary element type. */
     struct coboundary_view_container_tag;
 
-    /** @brief Defines the key within a typemap tree config for identifying the container tag for the container of all neighbour views of a host element type and a connector element type. */
-    struct neighbour_container_tag;
-    /** @brief Defines the key within a typemap tree config for identifying the container tag for the neighbour view of a host element type and a connector element type. */
-    struct neighbour_view_container_tag;
+    /** @brief Defines the key within a typemap tree config for identifying the container tag for the container of all neighbor views of a host element type and a connector element type. */
+    struct neighbor_container_tag;
+    /** @brief Defines the key within a typemap tree config for identifying the container tag for the neighbor view of a host element type and a connector element type. */
+    struct neighbor_view_container_tag;
 
     /** @brief Defines the key within a typemap tree config for identifying the container tag for the boundary information of an element type. */
     struct boundary_information_container_tag;

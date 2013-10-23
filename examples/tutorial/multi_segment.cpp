@@ -25,7 +25,7 @@
 #include "viennagrid/algorithm/voronoi.hpp"
 #include "viennagrid/io/vtk_writer.hpp"
 #include "viennagrid/mesh/coboundary_iteration.hpp"
-#include "viennagrid/mesh/neighbour_iteration.hpp"
+#include "viennagrid/mesh/neighbor_iteration.hpp"
 
 #include <typeinfo>
 
@@ -50,8 +50,8 @@ int main()
   typedef viennagrid::result_of::coboundary_range<SegmentType, FacetTag, CellTag>::type                 CellOnFacetRange;
   typedef viennagrid::result_of::iterator<CellOnFacetRange>::type                                       CellOnFacetIterator;
 
-  typedef viennagrid::result_of::neighbour_range<SegmentType, CellTag, viennagrid::vertex_tag>::type    NeighbourCellRange;
-  typedef viennagrid::result_of::iterator<NeighbourCellRange>::type                                     NeighbourCellIterator;
+  typedef viennagrid::result_of::neighbor_range<SegmentType, CellTag, viennagrid::vertex_tag>::type    NeighborCellRange;
+  typedef viennagrid::result_of::iterator<NeighborCellRange>::type                                     NeighborCellIterator;
 
   typedef viennagrid::result_of::vertex_range<SegmentType>::type        VertexOnSegmentRange;
   typedef viennagrid::result_of::iterator<VertexOnSegmentRange>::type   VertexOnSegmentIterator;
@@ -114,20 +114,20 @@ int main()
 
 
   //
-  // Now iterate over all cells neighbouring the first cell
+  // Now iterate over all cells neighboring the first cell
 
-  NeighbourCellRange neigbouring_cells_seg1 = viennagrid::neighbour_elements<CellTag, viennagrid::vertex_tag>(seg1, viennagrid::elements<CellTag>(seg1).handle_at(0));
-  std::cout << "Neighbour Elements for first cell in seg1 (should be no element, because only one element per segment)" << std::endl;
-  for (NeighbourCellIterator cofit = neigbouring_cells_seg1.begin();
+  NeighborCellRange neigbouring_cells_seg1 = viennagrid::neighbor_elements<CellTag, viennagrid::vertex_tag>(seg1, viennagrid::elements<CellTag>(seg1).handle_at(0));
+  std::cout << "Neighbor Elements for first cell in seg1 (should be no element, because only one element per segment)" << std::endl;
+  for (NeighborCellIterator cofit = neigbouring_cells_seg1.begin();
                            cofit != neigbouring_cells_seg1.end();
                          ++cofit)
   {
     std::cout << *cofit << std::endl;
   }
 
-  NeighbourCellRange neigbouring_cells_seg2 = viennagrid::neighbour_elements<CellTag, viennagrid::vertex_tag>(seg2, viennagrid::elements<CellTag>(seg2).handle_at(0));
-  std::cout << "Neighbour Elements for first cell in seg2 (should be no element, because only one element per segment)" << std::endl;
-  for (NeighbourCellIterator cofit = neigbouring_cells_seg2.begin();
+  NeighborCellRange neigbouring_cells_seg2 = viennagrid::neighbor_elements<CellTag, viennagrid::vertex_tag>(seg2, viennagrid::elements<CellTag>(seg2).handle_at(0));
+  std::cout << "Neighbor Elements for first cell in seg2 (should be no element, because only one element per segment)" << std::endl;
+  for (NeighborCellIterator cofit = neigbouring_cells_seg2.begin();
                            cofit != neigbouring_cells_seg2.end();
                          ++cofit)
   {

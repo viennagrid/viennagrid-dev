@@ -48,7 +48,7 @@ using std::endl;
 #include "viennagrid/config/default_configs.hpp"
 
 #include "viennagrid/mesh/mesh.hpp"
-#include "viennagrid/mesh/neighbour_iteration.hpp"
+#include "viennagrid/mesh/neighbor_iteration.hpp"
 #include "viennagrid/mesh/element_creation.hpp"
 
 
@@ -128,18 +128,18 @@ int main()
 
 
   {
-    typedef viennagrid::result_of::neighbour_range<MeshType, viennagrid::triangle_tag, viennagrid::vertex_tag>::type neighbour_range_type;
+    typedef viennagrid::result_of::neighbor_range<MeshType, viennagrid::triangle_tag, viennagrid::vertex_tag>::type neighbor_range_type;
 
-    // we now want to iterate over all neighbour triangles of triangle 1 which share a common vertex. These should be the triangles 0, 2, 3, 4, 5 and 6
-    neighbour_range_type neighbour_range = viennagrid::neighbour_elements<viennagrid::triangle_tag, viennagrid::vertex_tag>(mesh, th1);
-    cout << "All triangles neighbouring th1 using vertices (should be triangle 0, 2, 3, 4, 5 and 6)" << endl;
-    std::copy( neighbour_range.begin(), neighbour_range.end(), std::ostream_iterator<TriangleType>(cout, "\n") );
+    // we now want to iterate over all neighbor triangles of triangle 1 which share a common vertex. These should be the triangles 0, 2, 3, 4, 5 and 6
+    neighbor_range_type neighbor_range = viennagrid::neighbor_elements<viennagrid::triangle_tag, viennagrid::vertex_tag>(mesh, th1);
+    cout << "All triangles neighboring th1 using vertices (should be triangle 0, 2, 3, 4, 5 and 6)" << endl;
+    std::copy( neighbor_range.begin(), neighbor_range.end(), std::ostream_iterator<TriangleType>(cout, "\n") );
     cout << endl;
 
-    // we now want to iterate over all neighbour triangles of triangle 0 which share a common vertex. These should be the triangles 1, 2, 3, 4 and 5
-    neighbour_range = viennagrid::neighbour_elements<viennagrid::triangle_tag, viennagrid::vertex_tag>(mesh, th0);
-    cout << "All triangles neighbouring th0 using vertices (should be triangle 1, 2, 3, 4 and 5)" << endl;
-    std::copy( neighbour_range.begin(), neighbour_range.end(), std::ostream_iterator<TriangleType>(cout, "\n") );
+    // we now want to iterate over all neighbor triangles of triangle 0 which share a common vertex. These should be the triangles 1, 2, 3, 4 and 5
+    neighbor_range = viennagrid::neighbor_elements<viennagrid::triangle_tag, viennagrid::vertex_tag>(mesh, th0);
+    cout << "All triangles neighboring th0 using vertices (should be triangle 1, 2, 3, 4 and 5)" << endl;
+    std::copy( neighbor_range.begin(), neighbor_range.end(), std::ostream_iterator<TriangleType>(cout, "\n") );
     cout << endl;
   }
 
@@ -148,33 +148,33 @@ int main()
     // now we do the same but with a constant mesh
 
     const MeshType & cmesh = mesh;
-    typedef viennagrid::result_of::const_neighbour_range<MeshType, viennagrid::triangle_tag, viennagrid::vertex_tag>::type const_neighbour_range_type;
+    typedef viennagrid::result_of::const_neighbor_range<MeshType, viennagrid::triangle_tag, viennagrid::vertex_tag>::type const_neighbor_range_type;
 
-    const_neighbour_range_type const_neighbour_range = viennagrid::neighbour_elements<viennagrid::triangle_tag, viennagrid::vertex_tag>(cmesh, th1);
-    cout << "All triangles neighbouring th1 using vertices and const ranges (should be triangle 0, 2, 3, 4, 5 and 6)" << endl;
-    std::copy( const_neighbour_range.begin(), const_neighbour_range.end(), std::ostream_iterator<TriangleType>(cout, "\n") );
+    const_neighbor_range_type const_neighbor_range = viennagrid::neighbor_elements<viennagrid::triangle_tag, viennagrid::vertex_tag>(cmesh, th1);
+    cout << "All triangles neighboring th1 using vertices and const ranges (should be triangle 0, 2, 3, 4, 5 and 6)" << endl;
+    std::copy( const_neighbor_range.begin(), const_neighbor_range.end(), std::ostream_iterator<TriangleType>(cout, "\n") );
     cout << endl;
 
-    const_neighbour_range = viennagrid::neighbour_elements<viennagrid::triangle_tag, viennagrid::vertex_tag>(cmesh, th0);
-    cout << "All triangles neighbouring th0 using vertices and const ranges  (should be triangle 1, 2, 3, 4 and 5)" << endl;
-    std::copy( const_neighbour_range.begin(), const_neighbour_range.end(), std::ostream_iterator<TriangleType>(cout, "\n") );
+    const_neighbor_range = viennagrid::neighbor_elements<viennagrid::triangle_tag, viennagrid::vertex_tag>(cmesh, th0);
+    cout << "All triangles neighboring th0 using vertices and const ranges  (should be triangle 1, 2, 3, 4 and 5)" << endl;
+    std::copy( const_neighbor_range.begin(), const_neighbor_range.end(), std::ostream_iterator<TriangleType>(cout, "\n") );
     cout << endl;
   }
 
 
   {
-    typedef viennagrid::result_of::neighbour_range<MeshType, viennagrid::triangle_tag, viennagrid::line_tag>::type neighbour_range_type;
+    typedef viennagrid::result_of::neighbor_range<MeshType, viennagrid::triangle_tag, viennagrid::line_tag>::type neighbor_range_type;
 
-    // we now want to iterate over all neighbour triangles of triangle 1 which share a common edge. These should be the triangles 0, 2 and 5
-    neighbour_range_type neighbour_range = viennagrid::neighbour_elements<viennagrid::triangle_tag, viennagrid::line_tag>(mesh, th1);
-    cout << "All triangles neighbouring th1 using lines (should be triangle 0, 2 and 5)" << endl;
-    std::copy( neighbour_range.begin(), neighbour_range.end(), std::ostream_iterator<TriangleType>(cout, "\n") );
+    // we now want to iterate over all neighbor triangles of triangle 1 which share a common edge. These should be the triangles 0, 2 and 5
+    neighbor_range_type neighbor_range = viennagrid::neighbor_elements<viennagrid::triangle_tag, viennagrid::line_tag>(mesh, th1);
+    cout << "All triangles neighboring th1 using lines (should be triangle 0, 2 and 5)" << endl;
+    std::copy( neighbor_range.begin(), neighbor_range.end(), std::ostream_iterator<TriangleType>(cout, "\n") );
     cout << endl;
 
-    // we now want to iterate over all neighbour triangles of triangle 0 which share a common edge. This should only be the triangle 1
-    neighbour_range = viennagrid::neighbour_elements<viennagrid::triangle_tag, viennagrid::line_tag>(mesh, th0);
-    cout << "All triangles neighbouring th0 using lines (should only be triangle 1)" << endl;
-    std::copy( neighbour_range.begin(), neighbour_range.end(), std::ostream_iterator<TriangleType>(cout, "\n") );
+    // we now want to iterate over all neighbor triangles of triangle 0 which share a common edge. This should only be the triangle 1
+    neighbor_range = viennagrid::neighbor_elements<viennagrid::triangle_tag, viennagrid::line_tag>(mesh, th0);
+    cout << "All triangles neighboring th0 using lines (should only be triangle 1)" << endl;
+    std::copy( neighbor_range.begin(), neighbor_range.end(), std::ostream_iterator<TriangleType>(cout, "\n") );
     cout << endl;
   }
 

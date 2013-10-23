@@ -107,7 +107,7 @@ namespace viennagrid
 
 
   struct coboundary_collection_tag;
-  struct neighbour_collection_tag;
+  struct neighbor_collection_tag;
   struct boundary_information_collection_tag;
 
   struct interface_information_collection_tag;
@@ -249,7 +249,7 @@ namespace viennagrid
   struct coboundary_container_wrapper;
 
   template<typename container_type_, typename change_counter_type>
-  struct neighbour_container_wrapper;
+  struct neighbor_container_wrapper;
 
   template<typename container_type_, typename change_counter_type>
   struct boundary_information_wrapper;

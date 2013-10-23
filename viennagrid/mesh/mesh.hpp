@@ -67,10 +67,10 @@ namespace viennagrid
 
   /** @brief For internal use only */
   template<typename container_type_, typename change_counter_type>
-  struct neighbour_container_wrapper
+  struct neighbor_container_wrapper
   {
       typedef container_type_ container_type;
-      neighbour_container_wrapper() : change_counter(0) {}
+      neighbor_container_wrapper() : change_counter(0) {}
 
       change_counter_type change_counter;
       container_type container;
@@ -142,7 +142,7 @@ namespace viennagrid
       typedef typename WrappedConfigT::type   ConfigType;
 
       typedef typename viennagrid::storage::result_of::collection< typename viennagrid::result_of::coboundary_container_collection_typemap<WrappedConfigT>::type >::type   coboundary_collection_type;
-      typedef typename viennagrid::storage::result_of::collection< typename viennagrid::result_of::neighbour_container_collection_typemap< WrappedConfigT>::type >::type   neighbour_collection_type;
+      typedef typename viennagrid::storage::result_of::collection< typename viennagrid::result_of::neighbor_container_collection_typemap< WrappedConfigT>::type >::type   neighbor_collection_type;
       typedef typename viennagrid::storage::result_of::collection< typename viennagrid::result_of::boundary_information_collection_typemap<WrappedConfigT>::type >::type   boundary_information_type;
 
       typedef typename viennagrid::storage::collection<
@@ -151,8 +151,8 @@ namespace viennagrid
                 coboundary_collection_tag,
                 coboundary_collection_type,
 
-                neighbour_collection_tag,
-                neighbour_collection_type,
+                neighbor_collection_tag,
+                neighbor_collection_type,
 
                 boundary_information_collection_tag,
                 boundary_information_type
@@ -382,24 +382,24 @@ namespace viennagrid
   typename viennagrid::storage::result_of::value_type<
               typename viennagrid::storage::result_of::value_type<
                   typename mesh_type::appendix_type,
-                  neighbour_collection_tag
+                  neighbor_collection_tag
               >::type,
               viennagrid::static_pair<element_tag, connector_element_tag>
               >::type &
-  neighbour_collection( mesh_type & mesh_obj)
-  { return viennagrid::storage::detail::get< viennagrid::static_pair<element_tag, connector_element_tag> >( viennagrid::storage::detail::get<neighbour_collection_tag>( mesh_obj.appendix() ) ); }
+  neighbor_collection( mesh_type & mesh_obj)
+  { return viennagrid::storage::detail::get< viennagrid::static_pair<element_tag, connector_element_tag> >( viennagrid::storage::detail::get<neighbor_collection_tag>( mesh_obj.appendix() ) ); }
 
   /** @brief For internal use only */
   template<typename element_tag, typename connector_element_tag, typename mesh_type>
   typename viennagrid::storage::result_of::value_type<
               typename viennagrid::storage::result_of::value_type<
                   typename mesh_type::appendix_type,
-                  neighbour_collection_tag
+                  neighbor_collection_tag
               >::type,
               viennagrid::static_pair<element_tag, connector_element_tag>
               >::type const &
-  neighbour_collection( mesh_type const & mesh_obj)
-  { return viennagrid::storage::detail::get< viennagrid::static_pair<element_tag, connector_element_tag> >( viennagrid::storage::detail::get<neighbour_collection_tag>( mesh_obj.appendix() ) ); }
+  neighbor_collection( mesh_type const & mesh_obj)
+  { return viennagrid::storage::detail::get< viennagrid::static_pair<element_tag, connector_element_tag> >( viennagrid::storage::detail::get<neighbor_collection_tag>( mesh_obj.appendix() ) ); }
 
 
   /** @brief For internal use only */

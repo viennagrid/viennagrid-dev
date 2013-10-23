@@ -94,17 +94,17 @@ namespace viennagrid
 
 
 
-    /** @brief Adds an element and its neighbour elements to a segment
+    /** @brief Adds an element and its neighbor elements to a segment
       *
-      * This method is called recursively on all valid neighbour elements
+      * This method is called recursively on all valid neighbor elements
       * if a line is shared by more than 2 triangles, the triangle with the smallest inward angle is selected; this ensures a valid segment complex
       * the triangle with the smallest angle is calculated in this way:
       * for each boundary line set up a coordinate system in 2D where
       * the y-vector is the inverse normal of the current triangle
       * the x-vector is the cross product of the shared line vector and the normal of the current triangle
-      * project the vector from line center to the neighbour triangle center onto this cooridanite system
-      * calculate the oriented angle between the positive x-axis (=vector to the current triangle) and the projected vector to the neighbour triangle
-      * the neighbour triangle with the smallest angle is selected
+      * project the vector from line center to the neighbor triangle center onto this cooridanite system
+      * calculate the oriented angle between the positive x-axis (=vector to the current triangle) and the projected vector to the neighbor triangle
+      * the neighbor triangle with the smallest angle is selected
       */
     template<typename MeshT, typename VisibleStateAccessorT, typename SegmentHandleT, typename TriangleHandleT>
     void mark_facing_shortes_angle( MeshT & mesh_obj, VisibleStateAccessorT visited_state_accessor, SegmentHandleT & segment, TriangleHandleT triangle_handle, bool triangle_faces_outward )
@@ -198,32 +198,32 @@ namespace viennagrid
         for (coboundary_iterator it = coboundary_triangles.begin(); it != coboundary_triangles.end(); ++it)
         {
           TriangleHandleT handle = it.handle();
-          triangle_type & neighbour_triangle = *it;
+          triangle_type & neighbor_triangle = *it;
 
           // is the coboundary triangle the current triangle -> skipping
           if (handle == triangle_handle)
               continue;
 
           handle_array nvtx;
-          nvtx[0] = viennagrid::elements<viennagrid::vertex_tag>(neighbour_triangle).handle_at(0);
-          nvtx[1] = viennagrid::elements<viennagrid::vertex_tag>(neighbour_triangle).handle_at(1);
-          nvtx[2] = viennagrid::elements<viennagrid::vertex_tag>(neighbour_triangle).handle_at(2);
+          nvtx[0] = viennagrid::elements<viennagrid::vertex_tag>(neighbor_triangle).handle_at(0);
+          nvtx[1] = viennagrid::elements<viennagrid::vertex_tag>(neighbor_triangle).handle_at(1);
+          nvtx[2] = viennagrid::elements<viennagrid::vertex_tag>(neighbor_triangle).handle_at(2);
 
           viennagrid::storage::static_array<point_type,3> np;
           np[0] = viennagrid::point( mesh_obj, nvtx[0] );
           np[1] = viennagrid::point( mesh_obj, nvtx[1] );
           np[2] = viennagrid::point( mesh_obj, nvtx[2] );
 
-          // calculating the center of the neighbour triangle
-          point_type neighbour_center = (np[0]+np[1]+np[2])/3.0;
-          // calculating the vector from the line center towards the neighbour triangle
-          point_type line_to_neighbour_triangle_vector = neighbour_center - line_center;
+          // calculating the center of the neighbor triangle
+          point_type neighbor_center = (np[0]+np[1]+np[2])/3.0;
+          // calculating the vector from the line center towards the neighbor triangle
+          point_type line_to_neighbor_triangle_vector = neighbor_center - line_center;
           // ... and normalizing it
-          line_to_neighbour_triangle_vector /= viennagrid::norm_2(line_to_neighbour_triangle_vector);
+          line_to_neighbor_triangle_vector /= viennagrid::norm_2(line_to_neighbor_triangle_vector);
 
-          // projecting the vector facing to the neighbour triangle onto the 2D coordinate system
-          coord_type x = viennagrid::inner_prod( line_to_triangle_vector, line_to_neighbour_triangle_vector );
-          coord_type y = viennagrid::inner_prod( -normal, line_to_neighbour_triangle_vector );
+          // projecting the vector facing to the neighbor triangle onto the 2D coordinate system
+          coord_type x = viennagrid::inner_prod( line_to_triangle_vector, line_to_neighbor_triangle_vector );
+          coord_type y = viennagrid::inner_prod( -normal, line_to_neighbor_triangle_vector );
 
           // normalizing the 2D vector
           coord_type tmp = std::sqrt( x*x + y*y );
@@ -356,7 +356,7 @@ namespace viennagrid
             break;
         }
 
-        // if there was no intersection -> mark this triangle and all neighbour triangles recursively
+        // if there was no intersection -> mark this triangle and all neighbor triangles recursively
         if (jt == triangles.end())
         {
           if (!faces_outward)
