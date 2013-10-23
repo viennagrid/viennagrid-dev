@@ -317,30 +317,34 @@ It has to be noted that the resulting refined mesh is written to a new mesh, thu
   using namespace viennagrid;
   typedef result_of::voronoi_cell_contribution<ConstCellHandleType>::type ContributionType;
 
-  std::vector<double> interface_areas;
-  std::vector<ContributionType> interface_contributions;
+  // define containers for interface contributions and accessors
+  std::vector<double>           interface_areas;
+  std::vector<ContributionType> interface_contrib;
 
-  result_of::accessor< std::vector<double>, EdgeType >::type interface_areas_accessor(interface_areas);
-  result_of::accessor< std::vector<ContributionType>, EdgeType >::type interfaces_contribution_accessor(interface_contributions);
+  result_of::accessor< std::vector<double>, EdgeType >::type           interface_areas_accessor(interface_areas);
+  result_of::accessor< std::vector<ContributionType>, EdgeType >::type interfaces_contrib_accessor(interface_contrib);
 
-  std::vector<double> vertex_box_volumes;
-  std::vector<ContributionType> vertex_box_volume_contributions;
+  // define containers for box volumes and accessors on vertices
+  std::vector<double>           vertex_box_volumes;
+  std::vector<ContributionType> vertex_box_volume_contrib;
 
-  result_of::accessor< std::vector<double>, VertexType >::type vertex_box_volumes_accessor(vertex_box_volumes);
-  result_of::accessor< std::vector<ContributionType>, VertexType >::type vertex_box_volume_contributions_accessor(vertex_box_volume_contributions);
+  result_of::accessor< std::vector<double>, VertexType >::type           vertex_box_volumes_accessor(vertex_box_volumes);
+  result_of::accessor< std::vector<ContributionType>, VertexType >::type vertex_box_volume_contrib_accessor(vertex_box_volume_contrib);
 
-  std::vector<double> edge_box_volumes;
-  std::vector<ContributionType> edge_box_volume_contributions;
+  // define containers for box volumes and accessors on edges
+  std::vector<double>           edge_box_volumes;
+  std::vector<ContributionType> edge_box_volume_contrib;
 
-  result_of::accessor< std::vector<double>, EdgeType >::type edge_box_volumes_accessor(edge_box_volumes);
-  result_of::accessor< std::vector<ContributionType>, EdgeType >::type edge_box_volume_contributions_accessor(edge_box_volume_contributions);
+  result_of::accessor< std::vector<double>, EdgeType >::type           edge_box_volumes_accessor(edge_box_volumes);
+  result_of::accessor< std::vector<ContributionType>, EdgeType >::type edge_box_volume_contrib_accessor(edge_box_volume_contrib);
 
   apply_voronoi<CellType>(
         mesh,
-        interface_areas_accessor, interfaces_contribution_accessor,
-        vertex_box_volumes_accessor, vertex_box_volume_contributions_accessor,
-        edge_box_volumes_accessor, edge_box_volume_contributions_accessor)
+        interface_areas_accessor,    interfaces_contrib_accessor,
+        vertex_box_volumes_accessor, vertex_box_volume_contrib_accessor,
+        edge_box_volumes_accessor,   edge_box_volume_contrib_accessor)
   );
  \end{lstlisting}
-
+ Note that the interface for \lstinline|apply_voronoi()| is purely defined via the abstract accessors defined in Chapter \ref{chap:data}.
+ Thus, the user is free to pick any container as long as a suitable wrapper fulfilling the accessor concept is provided.
  
