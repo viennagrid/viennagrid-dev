@@ -1,5 +1,5 @@
-#ifndef VIENNAGRID_REFINEMENT_QUADRILATERAL_HPP
-#define VIENNAGRID_REFINEMENT_QUADRILATERAL_HPP
+#ifndef VIENNAGRID_ALGORITHM_DETAIL_REFINE_QUAD_HPP
+#define VIENNAGRID_ALGORITHM_DETAIL_REFINE_QUAD_HPP
 
 /* =======================================================================
    Copyright (c) 2011-2013, Institute for Microelectronics,
@@ -17,7 +17,7 @@
 #include "viennagrid/topology/vertex.hpp"
 #include "viennagrid/topology/line.hpp"
 
-/** @file viennagrid/refinement/quadrilateral.hpp
+/** @file viennagrid/algorithm/detail/refine_quad.hpp
     @brief Provides refinement routines for a quadrilateral
 */
 

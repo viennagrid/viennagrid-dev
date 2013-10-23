@@ -18,7 +18,7 @@
 #include "viennagrid/topology/line.hpp"
 #include "viennagrid/topology/simplex.hpp"
 
-/** @file viennagrid/refinement/tetrahedron.hpp
+/** @file viennagrid/algorithm/detail/refine_tet.hpp
     @brief Provides refinement routines for tetrahedra
 */
 

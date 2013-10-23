@@ -1,5 +1,5 @@
-#ifndef VIENNAGRID_REFINEMENT_HEXAHEDRON_HPP
-#define VIENNAGRID_REFINEMENT_HEXAHEDRON_HPP
+#ifndef VIENNAGRID_ALGORITHM_DETAIL_REFINE_HEX_HPP
+#define VIENNAGRID_ALGORITHM_DETAIL_REFINE_HEX_HPP
 
 /* =======================================================================
    Copyright (c) 2011-2013, Institute for Microelectronics,
@@ -17,7 +17,7 @@
 #include "viennagrid/topology/line.hpp"
 #include "viennagrid/topology/quadrilateral.hpp"
 
-/** @file viennagrid/refinement/hexahedron.hpp
+/** @file viennagrid/algorithm/detail/refine_hex.hpp
     @brief Provides refinement routines for hexahedra
 */
 
