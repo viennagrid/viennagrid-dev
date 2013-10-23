@@ -71,17 +71,17 @@ namespace viennagrid
 
       void erase( access_type const & )
       {
-        assert(false && bool("WARNING! calling erase on apppendix accessor: not supported"));
+        assert(false && bool("WARNING! calling erase on appendix accessor: not supported"));
       }
 
       void clear()
       {
-        assert(false && bool("WARNING! calling clear on apppendix accessor: not supported"));
+        assert(false && bool("WARNING! calling clear on appendix accessor: not supported"));
       }
 
       void resize( std::size_t )
       {
-        assert(false && bool("WARNING! calling clear on apppendix accessor: not supported"));
+        assert(false && bool("WARNING! calling clear on appendix accessor: not supported"));
       }
 
   };
