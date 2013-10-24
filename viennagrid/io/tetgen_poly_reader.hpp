@@ -25,8 +25,8 @@
 
 #include "viennagrid/algorithm/geometry.hpp"
 
-/** @file viennagrid/io/netgen_reader.hpp
-    @brief Provides a reader for Netgen files
+/** @file viennagrid/io/tetgen_poly_reader.hpp
+    @brief Provides a reader for Tetgen .poly files. See http://wias-berlin.de/software/tetgen/fformats.poly.html
 */
 
 
@@ -61,8 +61,11 @@ namespace viennagrid
       }
     }
 
-
-    struct poly_reader
+    /** @brief Reader for Tetgen .poly files.
+      *
+      * See http://wias-berlin.de/software/tetgen/fformats.poly.html for a description of the file format
+      */
+    struct tetgen_poly_reader
     {
       /** @brief The functor interface triggering the read operation. Segmentations are not supported in this version.
        *
@@ -92,7 +95,7 @@ namespace viennagrid
         std::ifstream reader(filename.c_str());
 
         #if defined VIENNAGRID_DEBUG_STATUS || defined VIENNAGRID_DEBUG_IO
-        std::cout << "* netgen_reader::operator(): Reading file " << filename << std::endl;
+        std::cout << "* poly_reader::operator(): Reading file " << filename << std::endl;
         #endif
 
         if (!reader)
@@ -132,7 +135,7 @@ namespace viennagrid
           throw bad_file_format_exception(filename, "POLY file has not 0 or 1 boundary marker");
 
         #if defined VIENNAGRID_DEBUG_STATUS || defined VIENNAGRID_DEBUG_IO
-        std::cout << "* netgen_reader::operator(): Reading " << node_num << " vertices... " << std::endl;
+        std::cout << "* poly_reader::operator(): Reading " << node_num << " vertices... " << std::endl;
         #endif
 
         typedef typename VertexIDType::base_id_type id_type;
@@ -288,7 +291,7 @@ namespace viennagrid
         return EXIT_SUCCESS;
       } //operator()
 
-    }; //class poly_reader
+    }; //class tetgen_poly_reader
 
   } //namespace io
 } //namespace viennagrid
