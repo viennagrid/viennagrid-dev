@@ -194,7 +194,7 @@ namespace viennagrid
 
 
     template<typename IteratorT, typename VectorT>
-    vector_type orthogonalize_one_vector( IteratorT it, const IteratorT & end, VectorT vec )
+    VectorT orthogonalize_one_vector( IteratorT it, const IteratorT & end, VectorT vec )
     {
       for (; it != end; ++it)
         vec -= viennagrid::inner_prod( vec, *it ) / viennagrid::inner_prod( *it, *it ) * (*it);
