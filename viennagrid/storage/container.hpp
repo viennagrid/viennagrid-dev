@@ -468,11 +468,11 @@ namespace viennagrid
       typedef typename base_container::value_type value_type;
 
 
-      typedef iterator<typename base_container::iterator, typename base_container::const_iterator, handle_tag> iterator;
+      typedef detail::iterator<typename base_container::iterator, typename base_container::const_iterator, handle_tag> iterator;
       iterator begin() { return iterator(base_container::begin()); }
       iterator end() { return iterator(base_container::end()); }
 
-      typedef const_iterator<typename base_container::iterator, typename base_container::const_iterator, handle_tag> const_iterator;
+      typedef detail::const_iterator<typename base_container::iterator, typename base_container::const_iterator, handle_tag> const_iterator;
       const_iterator cbegin() const { return const_iterator(base_container::begin()); }
       const_iterator cend() const { return const_iterator(base_container::end()); }
 
