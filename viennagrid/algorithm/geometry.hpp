@@ -330,7 +330,6 @@ namespace viennagrid
                               NumericConfigT nc)
     {
       typedef typename std::iterator_traits<PointIteratorT>::value_type       InPointType;
-      typedef typename std::iterator_traits<OutPointIteratorT>::value_type   OutPointType;
 
       size_t dimension = (*in).size();
       std::vector<InPointType> projection_matrix(dimension);

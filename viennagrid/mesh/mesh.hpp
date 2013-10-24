@@ -794,7 +794,6 @@ namespace viennagrid
   typename viennagrid::result_of::id< typename viennagrid::result_of::element<MeshOrSegmentHandleT, ElementTypeOrTag>::type >::type
   id_upper_bound( MeshOrSegmentHandleT const & mesh_or_segment )
   {
-    typedef typename viennagrid::result_of::element<MeshOrSegmentHandleT, ElementTypeOrTag>::type element_type;
     return id_generator(mesh_or_segment).max_id( viennagrid::meta::tag<ElementTypeOrTag>() );
   }
 
