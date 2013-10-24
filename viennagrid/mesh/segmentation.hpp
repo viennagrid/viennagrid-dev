@@ -880,7 +880,7 @@ namespace viennagrid
   struct element_segment_mapping_tag;
 
   template<typename SegmentationT>
-  typename viennagrid::meta::result_of::lookup<
+  typename viennagrid::detail::result_of::lookup<
           typename SegmentationT::appendix_type,
           element_segment_mapping_tag
       >::type & element_segment_mapping_collection( SegmentationT & segmentation )
@@ -889,7 +889,7 @@ namespace viennagrid
   }
 
   template<typename SegmentationT>
-  typename viennagrid::meta::result_of::lookup<
+  typename viennagrid::detail::result_of::lookup<
           typename SegmentationT::appendix_type,
           element_segment_mapping_tag
       >::type const & element_segment_mapping_collection( SegmentationT const & segmentation )
@@ -899,7 +899,7 @@ namespace viennagrid
 
 
   template<typename segment_handle_type>
-  typename viennagrid::meta::result_of::lookup<
+  typename viennagrid::detail::result_of::lookup<
           typename segment_handle_type::segmentation_type::appendix_type,
           element_segment_mapping_tag
       >::type & element_segment_mapping_collection( segment_handle_type & segment )
@@ -908,7 +908,7 @@ namespace viennagrid
   }
 
   template<typename segment_handle_type>
-  typename viennagrid::meta::result_of::lookup<
+  typename viennagrid::detail::result_of::lookup<
           typename segment_handle_type::segmentation_type::appendix_type,
           element_segment_mapping_tag
       >::type const & element_segment_mapping_collection( segment_handle_type const & segment )
@@ -970,8 +970,8 @@ namespace viennagrid
 
 
   template<typename element_tag, typename segment_handle_type>
-  typename viennagrid::meta::result_of::lookup<
-      typename viennagrid::meta::result_of::lookup<
+  typename viennagrid::detail::result_of::lookup<
+      typename viennagrid::detail::result_of::lookup<
           typename segment_handle_type::segmentation_type::appendix_type,
           interface_information_collection_tag
       >::type,
@@ -981,8 +981,8 @@ namespace viennagrid
   { return viennagrid::get<element_tag>( viennagrid::get<interface_information_collection_tag>( seg0.parent().appendix() ) ).get_interface_wrapper(seg0, seg1); }
 
   template<typename element_tag, typename segment_handle_type>
-  typename viennagrid::meta::result_of::lookup<
-      typename viennagrid::meta::result_of::lookup<
+  typename viennagrid::detail::result_of::lookup<
+      typename viennagrid::detail::result_of::lookup<
           typename segment_handle_type::segmentation_type::appendix_type,
           interface_information_collection_tag
       >::type,
@@ -1025,7 +1025,7 @@ namespace viennagrid
     struct interface_information_collection_typemap
     {
       typedef typename cell_tag_from_typelist<element_taglist>::type cell_tag;
-      typedef typename viennagrid::meta::result_of::erase< element_taglist, cell_tag>::type element_typelist_without_cell_tag;
+      typedef typename viennagrid::detail::result_of::erase< element_taglist, cell_tag>::type element_typelist_without_cell_tag;
 
       typedef typename interface_information_collection_typemap_impl<segment_id_type, interface_information_container_tag, ChangeCounterType, element_typelist_without_cell_tag>::type type;
     };
@@ -1148,7 +1148,7 @@ namespace viennagrid
                 typename viennagrid::make_typemap<
                     element_segment_mapping_tag,
                     viennagrid::collection<
-                        typename viennagrid::meta::result_of::modify<
+                        typename viennagrid::detail::result_of::modify<
                             typename trivial_segmentation_appendix<
                                 typename viennagrid::result_of::element_typelist<MeshT>::type,
                                 SegmentIDType
@@ -1300,7 +1300,7 @@ namespace viennagrid
     template<typename SegmentationT, typename ElementT>
     struct segment_id_range
     {
-      typedef typename viennagrid::meta::result_of::lookup<
+      typedef typename viennagrid::detail::result_of::lookup<
           typename SegmentationT::appendix_type,
           element_segment_mapping_tag
       >::type ElementSegmentMappingCollectionType;
@@ -1403,7 +1403,7 @@ namespace viennagrid
     */
   template<typename SegmentHandleT, typename ElementTagT, typename WrappedConfigT>
   typename viennagrid::result_of::container_of<
-      typename viennagrid::meta::result_of::lookup<
+      typename viennagrid::detail::result_of::lookup<
           typename SegmentHandleT::segmentation_type::appendix_type,
           element_segment_mapping_tag
       >::type,
@@ -1426,7 +1426,7 @@ namespace viennagrid
     */
   template<typename SegmentHandleT, typename ElementTagT, typename WrappedConfigT>
   typename viennagrid::result_of::container_of<
-      typename viennagrid::meta::result_of::lookup<
+      typename viennagrid::detail::result_of::lookup<
           typename SegmentHandleT::segmentation_type::appendix_type,
           element_segment_mapping_tag
       >::type,

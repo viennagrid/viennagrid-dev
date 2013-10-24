@@ -28,7 +28,6 @@
 
 namespace viennagrid
 {
-  /** @brief A namespace with all the input/output functionality, in particular file readers and writers */
   namespace io
   {
     /** @brief Helper class for writing points to file. Aids as a generic layer for point types that don't have operator<< overloaded in a suitable way */

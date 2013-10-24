@@ -129,7 +129,7 @@ struct lookup;}
     boundary_setter_functor(MeshT & mesh_obj) : mesh_obj_(mesh_obj) {}
 
     template<typename something>
-    void operator()( viennagrid::meta::tag<something> )
+    void operator()( viennagrid::detail::tag<something> )
     {
       typedef typename viennagrid::result_of::element_tag< something >::type element_tag;
       typedef typename viennagrid::result_of::element< MeshT, element_tag >::type element_type;
@@ -140,8 +140,8 @@ struct lookup;}
 
 
 
-      typedef typename viennagrid::meta::result_of::lookup<
-              typename viennagrid::meta::result_of::lookup<
+      typedef typename viennagrid::detail::result_of::lookup<
+              typename viennagrid::detail::result_of::lookup<
                   typename MeshT::appendix_type,
                   boundary_information_collection_tag
                 >::type,
@@ -151,8 +151,8 @@ struct lookup;}
         src_boundary_information_container_wrapper_type & src_boundary_information_container_wrapper = boundary_information_collection<facet_tag>( mesh_obj_ );
 
 
-      typedef typename viennagrid::meta::result_of::lookup<
-              typename viennagrid::meta::result_of::lookup<
+      typedef typename viennagrid::detail::result_of::lookup<
+              typename viennagrid::detail::result_of::lookup<
                   typename MeshT::appendix_type,
                   boundary_information_collection_tag
                 >::type,
@@ -181,9 +181,9 @@ struct lookup;}
     typedef typename viennagrid::result_of::cell_tag< mesh_type >::type cell_tag;
     typedef typename viennagrid::result_of::facet_tag< cell_tag >::type facet_tag;
 
-    typedef typename viennagrid::meta::result_of::erase<
-        typename viennagrid::meta::result_of::key_typelist<
-            typename viennagrid::meta::result_of::lookup<
+    typedef typename viennagrid::detail::result_of::erase<
+        typename viennagrid::detail::result_of::key_typelist<
+            typename viennagrid::detail::result_of::lookup<
                 typename mesh_type::appendix_type,
                 boundary_information_collection_tag
             >::type::typemap
@@ -193,7 +193,7 @@ struct lookup;}
 
     boundary_setter_functor<mesh_type> functor(mesh_obj);
 
-    viennagrid::meta::for_each< typelist >( functor );
+    viennagrid::detail::for_each< typelist >( functor );
   }
 
   /** @brief For internal use only. */
@@ -212,8 +212,8 @@ struct lookup;}
 
     typedef typename viennagrid::result_of::element< mesh_type, facet_tag >::type facet_type;
 
-    typedef typename viennagrid::meta::result_of::lookup<
-            typename viennagrid::meta::result_of::lookup<
+    typedef typename viennagrid::detail::result_of::lookup<
+            typename viennagrid::detail::result_of::lookup<
                 typename mesh_type::appendix_type,
                 boundary_information_collection_tag
               >::type,
@@ -257,8 +257,8 @@ struct lookup;}
     typedef typename viennagrid::result_of::element_tag<ElementT>::type element_tag;
 
 
-    typedef typename viennagrid::meta::result_of::lookup<
-            typename viennagrid::meta::result_of::lookup<
+    typedef typename viennagrid::detail::result_of::lookup<
+            typename viennagrid::detail::result_of::lookup<
                 typename mesh_type::appendix_type,
                 boundary_information_collection_tag
               >::type,

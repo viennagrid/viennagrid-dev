@@ -35,7 +35,7 @@ namespace viennagrid
       template<typename head, typename tail, typename id_type>
       struct continuous_id_generator_config_helper< viennagrid::typelist<head, tail>, id_type >
       {
-        typedef typename viennagrid::meta::result_of::insert<
+        typedef typename viennagrid::detail::result_of::insert<
             typename continuous_id_generator_config_helper<tail, id_type>::type,
             viennagrid::static_pair<
                 head,
@@ -57,7 +57,7 @@ namespace viennagrid
       template<typename WrappedConfigType, typename element_tag, typename element_config, typename tail>
       struct continuous_id_generator_config_from_mesh_config_helper< WrappedConfigType, viennagrid::typelist<viennagrid::static_pair<element_tag, element_config>, tail> >
       {
-        typedef typename viennagrid::meta::result_of::insert<
+        typedef typename viennagrid::detail::result_of::insert<
             typename continuous_id_generator_config_from_mesh_config_helper<WrappedConfigType, tail>::type,
             viennagrid::static_pair<
                 viennagrid::element<element_tag, WrappedConfigType>,
@@ -78,7 +78,7 @@ namespace viennagrid
       struct continuous_id_generator_config
       {
         typedef typename continuous_id_generator_config_helper<
-            typename viennagrid::meta::result_of::no_duplicates<typelist>::type,
+            typename viennagrid::detail::result_of::no_duplicates<typelist>::type,
             id_type
         >::type type;
       };
@@ -109,7 +109,7 @@ namespace viennagrid
       continuous_id_generator_layer() : base(), last_id(0) {}
 
       using base::operator();
-      id_type operator()( viennagrid::meta::tag<value_type> )
+      id_type operator()( viennagrid::detail::tag<value_type> )
       {
         return last_id++;
       }
@@ -125,7 +125,7 @@ namespace viennagrid
       }
 
       using base::max_id;
-      id_type max_id( viennagrid::meta::tag<value_type> ) const
+      id_type max_id( viennagrid::detail::tag<value_type> ) const
       {
         return last_id;
       }

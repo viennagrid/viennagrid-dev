@@ -41,11 +41,11 @@ namespace viennagrid
       template<typename value_type, typename container_config>
       struct container_from_value_using_container_config
       {
-        typedef typename viennagrid::meta::result_of::find<container_config, value_type>::type search_result;
-        typedef typename viennagrid::meta::result_of::find<container_config, viennagrid::default_tag>::type default_container;
+        typedef typename viennagrid::detail::result_of::find<container_config, value_type>::type search_result;
+        typedef typename viennagrid::detail::result_of::find<container_config, viennagrid::default_tag>::type default_container;
 
-        typedef typename viennagrid::meta::IF<
-            !viennagrid::meta::EQUAL<search_result, viennagrid::not_found>::value,
+        typedef typename viennagrid::detail::IF<
+            !viennagrid::detail::EQUAL<search_result, viennagrid::not_found>::value,
             search_result,
             default_container
         >::type container_tag_pair;
@@ -87,8 +87,8 @@ namespace viennagrid
     template<typename typemap_, typename element_type>
     struct container_of
     {
-      typedef typename viennagrid::meta::result_of::second<
-          typename viennagrid::meta::result_of::find< typemap_, element_type >::type
+      typedef typename viennagrid::detail::result_of::second<
+          typename viennagrid::detail::result_of::find< typemap_, element_type >::type
       >::type type;
     };
 
@@ -109,10 +109,10 @@ namespace viennagrid
       typedef viennagrid::collection<container_typelist_1> from_container_collection_type;
       typedef viennagrid::collection<container_typelist_2> to_container_collection_type;
 
-      typedef typename viennagrid::meta::result_of::key_typelist<typename from_container_collection_type::typemap>::type from_container_collection_value_typelist;
-      typedef typename viennagrid::meta::result_of::key_typelist<typename to_container_collection_type::typemap>::type to_container_collection_value_typelist;
+      typedef typename viennagrid::detail::result_of::key_typelist<typename from_container_collection_type::typemap>::type from_container_collection_value_typelist;
+      typedef typename viennagrid::detail::result_of::key_typelist<typename to_container_collection_type::typemap>::type to_container_collection_value_typelist;
 
-      typedef typename viennagrid::meta::result_of::intersection<
+      typedef typename viennagrid::detail::result_of::intersection<
           from_container_collection_value_typelist,
           to_container_collection_value_typelist
       >::type type;
@@ -134,12 +134,12 @@ namespace viennagrid
     {
       static void insert_or_ignore( container_collection_type & collection, const element_type & element )
       {
-        collection.get( viennagrid::meta::tag<element_type>() ).insert(element);
+        collection.get( viennagrid::detail::tag<element_type>() ).insert(element);
       }
 
       static void insert_or_ignore( container_collection_type & collection, element_type & element )
       {
-        collection.get( viennagrid::meta::tag<element_type>() ).insert(element);
+        collection.get( viennagrid::detail::tag<element_type>() ).insert(element);
       }
     };
 
@@ -177,12 +177,12 @@ namespace viennagrid
 
       static void handle_or_ignore( container_collection_type & collection, const handle_type & handle )
       {
-        collection.get( viennagrid::meta::tag<value_type>() ).insert_unique_handle(handle);
+        collection.get( viennagrid::detail::tag<value_type>() ).insert_unique_handle(handle);
       }
 
       static void handle_or_ignore( container_collection_type & collection, handle_type & handle )
       {
-        collection.get( viennagrid::meta::tag<value_type>() ).insert_unique_handle(handle);
+        collection.get( viennagrid::detail::tag<value_type>() ).insert_unique_handle(handle);
       }
     };
 
@@ -196,14 +196,14 @@ namespace viennagrid
 
 
     template<typename container_collection_type, typename handle_type, typename element_type>
-    void handle_or_ignore( container_collection_type & collection, const handle_type & handle, viennagrid::meta::tag<element_type> )
+    void handle_or_ignore( container_collection_type & collection, const handle_type & handle, viennagrid::detail::tag<element_type> )
     {
       typedef typename viennagrid::result_of::container_of< container_collection_type, element_type>::type container_type;
       handle_or_ignore_helper<container_collection_type, handle_type, container_type>::handle_or_ignore(collection, handle);
     }
 
     template<typename container_collection_type, typename handle_type, typename element_type>
-    void handle_or_ignore( container_collection_type & collection, handle_type & handle, viennagrid::meta::tag<element_type> )
+    void handle_or_ignore( container_collection_type & collection, handle_type & handle, viennagrid::detail::tag<element_type> )
     {
       typedef typename viennagrid::result_of::container_of< container_collection_type, element_type>::type container_type;
       handle_or_ignore_helper<container_collection_type, handle_type, container_type>::handle_or_ignore(collection, handle);
@@ -218,7 +218,7 @@ namespace viennagrid
       clear_all_functor( container_collection_type & container_collection_ ) : container_collection(container_collection_) {}
 
       template<typename type>
-      void operator() ( viennagrid::meta::tag<type> )
+      void operator() ( viennagrid::detail::tag<type> )
       {
         viennagrid::get<type>( container_collection ).clear();
       }
@@ -231,7 +231,7 @@ namespace viennagrid
     void clear_all( viennagrid::collection<container_collection_typemap> & container_collection)
     {
       clear_all_functor< viennagrid::collection<container_collection_typemap> > f( container_collection );
-      viennagrid::meta::for_each< typename viennagrid::meta::result_of::key_typelist<container_collection_typemap>::type >( f );
+      viennagrid::detail::for_each< typename viennagrid::detail::result_of::key_typelist<container_collection_typemap>::type >( f );
     }
 
 

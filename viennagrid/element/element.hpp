@@ -371,8 +371,8 @@ namespace viennagrid
       typedef typename container_pair::first container_type;
       typedef typename container_type::value_type value_type;
 
-      typedef typename viennagrid::meta::IF<
-          viennagrid::meta::EQUAL<typename value_type::tag, tag>::value,
+      typedef typename viennagrid::detail::IF<
+          viennagrid::detail::EQUAL<typename value_type::tag, tag>::value,
           container_type,
           typename container_of_tag_for_element<tail, tag>::type
       >::type type;
@@ -397,7 +397,7 @@ namespace viennagrid
       typedef typename container_pair::first container_type;
       typedef typename container_type::value_type value_type;
 
-      typedef typename viennagrid::meta::IF<
+      typedef typename viennagrid::detail::IF<
           value_type::tag::dim == dim,
           container_type,
           typename container_of_dimension_for_element<tail, dim>::type
@@ -418,8 +418,8 @@ namespace viennagrid
     template<typename element_type, typename container_type, typename tail, typename element_tag>
     struct container_of_tag_for_collection<viennagrid::typelist< viennagrid::static_pair<element_type, container_type>, tail >, element_tag>
     {
-      typedef typename viennagrid::meta::IF<
-          viennagrid::meta::EQUAL<typename element_type::tag, element_tag>::value,
+      typedef typename viennagrid::detail::IF<
+          viennagrid::detail::EQUAL<typename element_type::tag, element_tag>::value,
           container_type,
           typename container_of_tag_for_collection<tail, element_tag>::type
       >::type type;
@@ -439,7 +439,7 @@ namespace viennagrid
     template<typename element_type, typename container_type, typename tail, int dim>
     struct container_of_dimension_for_collection<viennagrid::typelist< viennagrid::static_pair<element_type, container_type>, tail >, dim>
     {
-      typedef typename viennagrid::meta::IF<
+      typedef typename viennagrid::detail::IF<
           element_type::tag::dim == dim,
           container_type,
           typename container_of_dimension_for_collection<tail, dim>::type
@@ -644,7 +644,7 @@ namespace viennagrid
           typedef typename element_tag<boundary_cell_type_or_tag>::type boundary_cell_tag;
 
           const static bool value =
-          !viennagrid::meta::EQUAL<
+          !viennagrid::detail::EQUAL<
               typename container_of_tag< viennagrid::element<element_tag_, WrappedConfigType>, boundary_cell_tag >::type,
               viennagrid::null_type>::value;
       };
@@ -842,7 +842,7 @@ namespace viennagrid
       for_each_boundary_cell_functor( element_type & element_, functor_type functor_ ) : element(element_), functor(functor_) {}
 
       template<typename boundary_cell_type>
-      void operator()( viennagrid::meta::tag<boundary_cell_type> )
+      void operator()( viennagrid::detail::tag<boundary_cell_type> )
       {
           typedef typename result_of::element_range<element_type, boundary_cell_type>::type boundary_cell_range_type;
           typedef typename result_of::iterator<boundary_cell_range_type>::type boundary_cell_iterator_type;
@@ -862,7 +862,7 @@ namespace viennagrid
   {
       for_each_boundary_cell_functor<element_type, functor_type> for_each_functor( element, functor );
 
-      viennagrid::meta::for_each<typename element_type::boundary_cell_typelist>(for_each_functor);
+      viennagrid::detail::for_each<typename element_type::boundary_cell_typelist>(for_each_functor);
   }
 
 

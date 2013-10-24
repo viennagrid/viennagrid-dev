@@ -50,9 +50,26 @@
     @brief Contains forward declarations and definition of small classes that must be defined at an early stage
 */
 
-/** @brief The main ViennaGrid namespace. Most functionality resides in this namespace */
+/** @brief The main ViennaGrid namespace. Most user functionality resides directly in this namespace rather than in sub-namespaces. */
 namespace viennagrid
 {
+  /** @brief Namespace for implementation details. Not intended to be used directly by a library user */
+  namespace detail
+  {
+    /** @brief Namespace for metafunctions for implementation details. Not intended to be used directly by a library user */
+    namespace result_of {}
+  }
+
+  /** @brief Provides a number of predefined configuration classes, which cover the most frequent use cases. */
+  namespace config
+  {
+    /** @brief Namespace for metafunctions for obtaining the respective mesh configurations. */
+    namespace result_of {}
+  }
+
+  /** @brief A namespace with all the input/output functionality, in particular file readers and writers */
+  namespace io {}
+
   /** @brief Advances an iterator and returns it
     *
     * @param in          the input iterator

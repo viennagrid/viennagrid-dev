@@ -105,7 +105,7 @@ namespace viennagrid
     interface_setter_functor(SegmentHandleType & seg0_, SegmentHandleType & seg1_) : seg0(seg0_), seg1(seg1_) {}
 
     template<typename something>
-    void operator()( viennagrid::meta::tag<something> )
+    void operator()( viennagrid::detail::tag<something> )
     {
       typedef typename viennagrid::result_of::element_tag< something >::type element_tag;
       typedef typename viennagrid::result_of::element< SegmentHandleType, element_tag >::type element_type;
@@ -114,8 +114,8 @@ namespace viennagrid
       typedef typename viennagrid::result_of::facet_tag< cell_tag >::type facet_tag;
       typedef typename viennagrid::result_of::element< SegmentHandleType, facet_tag >::type facet_type;
 
-      typedef typename viennagrid::meta::result_of::lookup<
-              typename viennagrid::meta::result_of::lookup<
+      typedef typename viennagrid::detail::result_of::lookup<
+              typename viennagrid::detail::result_of::lookup<
                   typename SegmentationT::appendix_type,
                   interface_information_collection_tag
                 >::type,
@@ -128,8 +128,8 @@ namespace viennagrid
 
 
 
-      typedef typename viennagrid::meta::result_of::lookup<
-              typename viennagrid::meta::result_of::lookup<
+      typedef typename viennagrid::detail::result_of::lookup<
+              typename viennagrid::detail::result_of::lookup<
                   typename SegmentationT::appendix_type,
                   interface_information_collection_tag
                 >::type,
@@ -163,9 +163,9 @@ namespace viennagrid
     typedef typename viennagrid::result_of::cell_tag< segment_handle_type >::type cell_tag;
     typedef typename viennagrid::result_of::facet_tag< cell_tag >::type facet_tag;
 
-    typedef typename viennagrid::meta::result_of::erase<
-        typename viennagrid::meta::result_of::key_typelist<
-            typename viennagrid::meta::result_of::lookup<
+    typedef typename viennagrid::detail::result_of::erase<
+        typename viennagrid::detail::result_of::key_typelist<
+            typename viennagrid::detail::result_of::lookup<
                 typename SegmentationT::appendix_type,
                 interface_information_collection_tag
             >::type::typemap
@@ -175,7 +175,7 @@ namespace viennagrid
 
     interface_setter_functor<SegmentationT> functor(seg0, seg1);
 
-    viennagrid::meta::for_each< typelist >( functor );
+    viennagrid::detail::for_each< typelist >( functor );
   }
 
 
@@ -212,8 +212,8 @@ namespace viennagrid
     typedef typename result_of::facet_tag<CellTag>::type FacetTag;
     typedef typename result_of::element< segment_handle<SegmentationT>, FacetTag >::type FacetType;
 
-    typedef typename viennagrid::meta::result_of::lookup<
-            typename viennagrid::meta::result_of::lookup<
+    typedef typename viennagrid::detail::result_of::lookup<
+            typename viennagrid::detail::result_of::lookup<
                 typename SegmentationT::appendix_type,
                 interface_information_collection_tag
               >::type,
@@ -255,8 +255,8 @@ namespace viennagrid
     typedef typename viennagrid::result_of::element_tag<ElementT>::type element_tag;
 
 
-    typedef typename viennagrid::meta::result_of::lookup<
-            typename viennagrid::meta::result_of::lookup<
+    typedef typename viennagrid::detail::result_of::lookup<
+            typename viennagrid::detail::result_of::lookup<
                 typename SegmentationT::appendix_type,
                 interface_information_collection_tag
               >::type,

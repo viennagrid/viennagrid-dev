@@ -548,7 +548,7 @@ namespace viennagrid
     template<typename base_container_type, typename view_base_container_type, typename view_container_tag>
     void handle(base_container_type & src_container, viennagrid::view<view_base_container_type, view_container_tag> & dst_view)
     {
-      handle_if(src_container, dst_view, viennagrid::meta::true_predicate());
+      handle_if(src_container, dst_view, viennagrid::detail::true_predicate());
     }
 
   }
@@ -562,11 +562,11 @@ namespace viennagrid
     struct view_container_tag
     {
       typedef typename container_type::value_type value_type;
-      typedef typename viennagrid::meta::result_of::find<view_container_config, value_type>::type search_result;
-      typedef typename viennagrid::meta::result_of::find<view_container_config, viennagrid::default_tag>::type default_container;
+      typedef typename viennagrid::detail::result_of::find<view_container_config, value_type>::type search_result;
+      typedef typename viennagrid::detail::result_of::find<view_container_config, viennagrid::default_tag>::type default_container;
 
-      typedef typename viennagrid::meta::IF<
-          !viennagrid::meta::EQUAL<search_result, viennagrid::not_found>::value,
+      typedef typename viennagrid::detail::IF<
+          !viennagrid::detail::EQUAL<search_result, viennagrid::not_found>::value,
           search_result,
           default_container
       >::type::second type;

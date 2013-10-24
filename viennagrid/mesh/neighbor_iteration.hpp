@@ -31,8 +31,8 @@ namespace viennagrid
       typedef typename viennagrid::result_of::element_tag< ElementTypeOrTagT >::type element_tag;
       typedef typename viennagrid::result_of::element_tag< ConnectorElementTypeOrTagT >::type connector_element_tag;
 
-      typedef typename viennagrid::meta::result_of::lookup<
-          typename viennagrid::meta::result_of::lookup<
+      typedef typename viennagrid::detail::result_of::lookup<
+          typename viennagrid::detail::result_of::lookup<
               typename mesh_type::appendix_type,
               neighbor_collection_tag
             >::type,
@@ -146,8 +146,8 @@ namespace viennagrid
     typedef typename viennagrid::result_of::element_tag< ConnectorElementTypeOrTagT >::type  connector_element_tag;
     typedef typename viennagrid::result_of::element< mesh_type, ElementTypeOrTagT >::type    element_type;
 
-    typedef typename viennagrid::meta::result_of::lookup<
-            typename viennagrid::meta::result_of::lookup<
+    typedef typename viennagrid::detail::result_of::lookup<
+            typename viennagrid::detail::result_of::lookup<
                 typename mesh_type::appendix_type,
                 neighbor_collection_tag
             >::type,
@@ -218,8 +218,8 @@ namespace viennagrid
     typedef typename viennagrid::result_of::element_tag< ConnectorElementTypeOrTagT >::type connector_element_tag;
     typedef typename viennagrid::result_of::element< mesh_type, ElementTypeOrTagT >::type element_type;
 
-    typedef typename viennagrid::meta::result_of::lookup<
-            typename viennagrid::meta::result_of::lookup<
+    typedef typename viennagrid::detail::result_of::lookup<
+            typename viennagrid::detail::result_of::lookup<
                 typename mesh_type::appendix_type,
                 neighbor_collection_tag
             >::type,
@@ -252,8 +252,8 @@ namespace viennagrid
     typedef typename viennagrid::result_of::element_tag< ConnectorElementTypeOrTagT >::type connector_element_tag;
     typedef typename viennagrid::result_of::element< mesh_type, ElementTypeOrTagT >::type element_type;
 
-    typedef typename viennagrid::meta::result_of::lookup<
-            typename viennagrid::meta::result_of::lookup<
+    typedef typename viennagrid::detail::result_of::lookup<
+            typename viennagrid::detail::result_of::lookup<
                 typename mesh_type::appendix_type,
                 neighbor_collection_tag
             >::type,

@@ -59,7 +59,7 @@ namespace viennagrid
       container_type & container = viennagrid::get< value_type >( *collection );
 
       if ( generate_id && !container.is_present( element ) )
-          viennagrid::detail::set_id(element, id_generator( viennagrid::meta::tag<value_type>() ) );
+          viennagrid::detail::set_id(element, id_generator( viennagrid::detail::tag<value_type>() ) );
 
       if (!generate_id)
         id_generator.set_max_id( element.id() );
@@ -73,13 +73,13 @@ namespace viennagrid
               ret.second,
               inserter);
 
-      inserter.handle_insert( ret.first, viennagrid::meta::tag<value_type>() );
+      inserter.handle_insert( ret.first, viennagrid::detail::tag<value_type>() );
 
       return ret;
     }
 
     template<typename handle_type, typename value_type>
-    void handle_insert( handle_type, viennagrid::meta::tag<value_type> ) {}
+    void handle_insert( handle_type, viennagrid::detail::tag<value_type> ) {}
 
 
     template<bool generate_id, bool call_callback, typename value_type>
@@ -150,11 +150,11 @@ namespace viennagrid
 
 
     template<typename handle_type, typename value_type>
-    void handle_insert( handle_type ref, viennagrid::meta::tag<value_type> )
+    void handle_insert( handle_type ref, viennagrid::detail::tag<value_type> )
     {
-      viennagrid::detail::handle_or_ignore( *view_collection, ref, viennagrid::meta::tag<value_type>() );
+      viennagrid::detail::handle_or_ignore( *view_collection, ref, viennagrid::detail::tag<value_type>() );
 
-      dependend_inserter->handle_insert( ref, viennagrid::meta::tag<value_type>() );
+      dependend_inserter->handle_insert( ref, viennagrid::detail::tag<value_type>() );
       if (change_counter) ++(*change_counter);
     }
 

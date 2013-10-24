@@ -78,8 +78,8 @@ namespace viennagrid
   /** \endcond */
 
 
-    namespace meta
-    {
+  namespace detail
+  {
 
     namespace result_of
     {
@@ -442,7 +442,7 @@ namespace viennagrid
       };
 
     }
-  } // namespace meta
+  } // namespace detail
 } // namespace viennagrid
 
 

@@ -25,7 +25,7 @@
 
 namespace viennagrid
 {
-  namespace meta
+  namespace detail
   {
     template <int n, int k>
     struct n_over_k
@@ -76,7 +76,7 @@ namespace viennagrid
     //typedef simplex_tag<k>             tag;
 
     typedef static_layout_tag     layout_tag;
-    static const int num = meta::n_over_k<n+1, k+1>::value;
+    static const int num = detail::n_over_k<n+1, k+1>::value;
   };
 
 

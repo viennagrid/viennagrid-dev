@@ -58,7 +58,7 @@ namespace viennagrid
       {
         typedef typename query<WrappedConfigType, null_type, element_tag>::type  ElementConfigType;
 
-        static const bool value = !viennagrid::meta::EQUAL<ElementConfigType, viennagrid::not_found>::value;
+        static const bool value = !viennagrid::detail::EQUAL<ElementConfigType, viennagrid::not_found>::value;
       };
 
 
@@ -96,7 +96,7 @@ namespace viennagrid
       struct has_boundary_helper
       {
         static const bool value =
-            !viennagrid::meta::EQUAL<
+            !viennagrid::detail::EQUAL<
                 typename query<WrappedConfigT, viennagrid::no_handling_tag, HostElementTagT, element_boundary_storage_layout_tag, BoundaryElementTagT>::type,
                 viennagrid::no_handling_tag
             >::value;
@@ -123,12 +123,12 @@ namespace viennagrid
       struct has_orientation_helper
       {
         static const bool value =
-            viennagrid::meta::EQUAL<
+            viennagrid::detail::EQUAL<
                 typename query<WrappedConfigT, viennagrid::no_handling_tag, HostElementTagT, element_boundary_storage_layout_tag, BoundaryElementTagT>::type,
                 viennagrid::full_handling_tag
             >::value
                 ||
-            viennagrid::meta::EQUAL<
+            viennagrid::detail::EQUAL<
                 typename query<WrappedConfigT, viennagrid::no_handling_tag, HostElementTagT, element_boundary_storage_layout_tag, BoundaryElementTagT>::type,
                 viennagrid::full_lazy_handling_tag
             >::value;
@@ -204,7 +204,7 @@ namespace viennagrid
         typedef viennagrid::element_orientation<orientation_container_type> facet_orientation_type;
 
         typedef typename
-            viennagrid::meta::IF<
+            viennagrid::detail::IF<
                 has_orientation< WrappedConfigT, HostElementTagT, BoundaryElementTagT>::value,
                 typename viennagrid::result_of::container< facet_orientation_type, container_tag >::type,
                 viennagrid::null_type
@@ -293,7 +293,7 @@ namespace viennagrid
         typedef typename BoundaryElementTagT::facet_tag facet_tag;
 
         typedef typename element_boundary_element_container<WrappedConfigT, HostElementTagT, facet_tag>::type boundary_cell_layer_containers;
-        typedef typename viennagrid::meta::result_of::push_back<
+        typedef typename viennagrid::detail::result_of::push_back<
             typename element_boundary_element_container_typelist< WrappedConfigT, HostElementTagT, facet_tag >::type,
             boundary_cell_layer_containers
         >::type type;

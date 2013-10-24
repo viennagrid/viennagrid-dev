@@ -38,7 +38,7 @@ namespace viennagrid
     switch_handle_functor(MeshT & mesh_obj, ToSwtichElementHandleT from, ToSwtichElementHandleT to) : mesh_obj_(mesh_obj), from_(from), to_(to) {}
 
     template<typename ParentElementTypeOrTagT>
-    void operator() ( viennagrid::meta::tag<ParentElementTypeOrTagT> )
+    void operator() ( viennagrid::detail::tag<ParentElementTypeOrTagT> )
     {
       typedef typename viennagrid::result_of::element<MeshT, ParentElementTypeOrTagT>::type ParentElementType;
       typedef typename viennagrid::result_of::element_range<MeshT, ParentElementTypeOrTagT>::type ParentElementRangeType;
@@ -87,7 +87,7 @@ namespace viennagrid
 
     switch_handle_functor<MeshT, HandleT> functor(mesh_obj, old_handle, new_handle);
 
-    viennagrid::meta::for_each<ParentElementTypelist>( functor );
+    viennagrid::detail::for_each<ParentElementTypelist>( functor );
   }
 
 
@@ -122,7 +122,7 @@ namespace viennagrid
     erase_functor(MeshT & mesh_obj, MeshViewT & view_to_erase) : mesh_obj_(mesh_obj), view_to_erase_(view_to_erase) {}
 
     template<typename ElementT>
-    void operator()( viennagrid::meta::tag<ElementT> )
+    void operator()( viennagrid::detail::tag<ElementT> )
     {
       typedef typename viennagrid::result_of::element_range<MeshViewT, ElementT>::type ToEraseElementRangeType;
       typedef typename viennagrid::result_of::iterator<ToEraseElementRangeType>::type ToEraseElementRangeIterator;
@@ -181,12 +181,12 @@ namespace viennagrid
   {
     typedef viennagrid::mesh<WrappedConfigT> MeshType;
 
-    typedef typename viennagrid::meta::result_of::reverse<
+    typedef typename viennagrid::detail::result_of::reverse<
       typename viennagrid::result_of::element_typelist<ToEraseViewT>::type
     >::type SegmentElementTypelist;
 
     erase_functor<MeshType, ToEraseViewT> functor( mesh_obj, elements_to_erase );
-    viennagrid::meta::for_each<SegmentElementTypelist>(functor);
+    viennagrid::detail::for_each<SegmentElementTypelist>(functor);
 
     viennagrid::increment_change_counter(mesh_obj);
   }

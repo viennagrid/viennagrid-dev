@@ -98,8 +98,8 @@ namespace viennagrid
       template<typename handle_type>
       struct value_type
       {
-        typedef typename viennagrid::meta::IF<
-            viennagrid::meta::is_const_iterator<handle_type>::value,
+        typedef typename viennagrid::detail::IF<
+            viennagrid::detail::is_const_iterator<handle_type>::value,
             const typename handle_type::value_type,
             typename handle_type::value_type
         >::type type;

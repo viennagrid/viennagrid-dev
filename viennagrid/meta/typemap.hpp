@@ -22,7 +22,7 @@
 
 namespace viennagrid
 {
-  namespace meta
+  namespace detail
   {
     namespace result_of
     {
@@ -403,7 +403,7 @@ namespace viennagrid
 //     template<typename ... types>
 //     struct make_typemap
 //     {
-//         typedef typename viennagrid::meta::result_of::consistency< typename make_typemap_unsafe<types...>::type>::type type;
+//         typedef typename viennagrid::detail::result_of::consistency< typename make_typemap_unsafe<types...>::type>::type type;
 //     };
 
 
@@ -445,7 +445,7 @@ namespace viennagrid
       typedef viennagrid::null_type type;
     };
 
-  } // namespace meta
+  } // namespace detail
 
   /** @brief Convenience meta function for creating a typemap */
   template<   typename K01 = viennagrid::null_type, typename V01 = viennagrid::null_type, typename K02 = viennagrid::null_type, typename V02 = viennagrid::null_type,
@@ -460,8 +460,8 @@ namespace viennagrid
               typename K19 = viennagrid::null_type, typename V19 = viennagrid::null_type, typename K20 = viennagrid::null_type, typename V20 = viennagrid::null_type  >
   struct make_typemap
   {
-    typedef typename viennagrid::meta::result_of::consistency<
-        typename meta::make_typemap_unsafe<
+    typedef typename viennagrid::detail::result_of::consistency<
+        typename detail::make_typemap_unsafe<
             K01, V01, K02, V02, K03, V03, K04, V04, K05, V05, K06, V06, K07, V07, K08, V08, K09, V09, K10, V10,
             K11, V11, K12, V12, K13, V13, K14, V14, K15, V15, K16, V16, K17, V17, K18, V18, K19, V19, K20, V20
         >::type

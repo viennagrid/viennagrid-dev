@@ -40,7 +40,7 @@ namespace viennagrid
     typedef SecondT  second;
   };
 
-  namespace meta
+  namespace detail
   {
     // basic operations
     template<typename type1, typename type2>
@@ -169,7 +169,7 @@ namespace viennagrid
       static const bool value = is_const_pointer<pointer>::value;
     };
 
-  } // namespace meta
+  } // namespace detail
 } // namespace viennagrid
 
 

@@ -39,8 +39,8 @@ namespace viennagrid
       typedef value_ value_type;
 
       using base::get;
-      value_type & get( viennagrid::meta::tag<key_type> ) { return element; }
-      const value_type & get( viennagrid::meta::tag<key_type> ) const { return element; }
+      value_type & get( viennagrid::detail::tag<key_type> ) { return element; }
+      const value_type & get( viennagrid::detail::tag<key_type> ) const { return element; }
 
     private:
       value_type element;
@@ -77,29 +77,29 @@ namespace viennagrid
 //   } // namespace result_of
 
 
-  namespace meta
+  namespace detail
   {
     namespace result_of
     {
       template<typename typemap, typename key_type>
       struct lookup< viennagrid::collection<typemap>, key_type >
       {
-        typedef typename viennagrid::meta::result_of::lookup<typemap, key_type>::type type;
+        typedef typename viennagrid::detail::result_of::lookup<typemap, key_type>::type type;
       };
     }
   }
 
 
   template<typename type, typename typemap>
-  typename viennagrid::meta::result_of::lookup<typemap, typename viennagrid::meta::remove_const<type>::type >::type & get( collection<typemap> & c )
+  typename viennagrid::detail::result_of::lookup<typemap, typename viennagrid::detail::remove_const<type>::type >::type & get( collection<typemap> & c )
   {
-    return c.get( viennagrid::meta::tag< typename viennagrid::meta::remove_const<type>::type >() );
+    return c.get( viennagrid::detail::tag< typename viennagrid::detail::remove_const<type>::type >() );
   }
 
   template<typename type, typename typemap>
-  typename viennagrid::meta::result_of::lookup<typemap, typename viennagrid::meta::remove_const<type>::type >::type const & get( collection<typemap> const & c )
+  typename viennagrid::detail::result_of::lookup<typemap, typename viennagrid::detail::remove_const<type>::type >::type const & get( collection<typemap> const & c )
   {
-    return c.get( viennagrid::meta::tag< typename viennagrid::meta::remove_const<type>::type >() );
+    return c.get( viennagrid::detail::tag< typename viennagrid::detail::remove_const<type>::type >() );
   }
 
 

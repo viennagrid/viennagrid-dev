@@ -30,7 +30,6 @@ namespace viennagrid
 {
   ////////////////// topologically 1d meshs ///////////////////
 
-  /** @brief Provides a number of predefined configuration classes, which cover the most frequent use cases. */
   namespace config
   {
     /** @brief Point type with cartesian coordinate system in 1d */

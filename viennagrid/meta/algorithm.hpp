@@ -22,7 +22,7 @@
 
 namespace viennagrid
 {
-  namespace meta
+  namespace detail
   {
     template<typename typelist>
     struct for_each_impl {};
