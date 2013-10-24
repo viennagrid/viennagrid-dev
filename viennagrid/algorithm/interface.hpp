@@ -114,8 +114,8 @@ namespace viennagrid
       typedef typename viennagrid::result_of::facet_tag< cell_tag >::type facet_tag;
       typedef typename viennagrid::result_of::element< SegmentHandleType, facet_tag >::type facet_type;
 
-      typedef typename viennagrid::storage::result_of::value_type<
-              typename viennagrid::storage::result_of::value_type<
+      typedef typename viennagrid::meta::result_of::lookup<
+              typename viennagrid::meta::result_of::lookup<
                   typename SegmentationT::appendix_type,
                   interface_information_collection_tag
                 >::type,
@@ -128,8 +128,8 @@ namespace viennagrid
 
 
 
-      typedef typename viennagrid::storage::result_of::value_type<
-              typename viennagrid::storage::result_of::value_type<
+      typedef typename viennagrid::meta::result_of::lookup<
+              typename viennagrid::meta::result_of::lookup<
                   typename SegmentationT::appendix_type,
                   interface_information_collection_tag
                 >::type,
@@ -165,7 +165,7 @@ namespace viennagrid
 
     typedef typename viennagrid::meta::result_of::erase<
         typename viennagrid::meta::result_of::key_typelist<
-            typename viennagrid::storage::result_of::value_type<
+            typename viennagrid::meta::result_of::lookup<
                 typename SegmentationT::appendix_type,
                 interface_information_collection_tag
             >::type::typemap
@@ -212,8 +212,8 @@ namespace viennagrid
     typedef typename result_of::facet_tag<CellTag>::type FacetTag;
     typedef typename result_of::element< segment_handle<SegmentationT>, FacetTag >::type FacetType;
 
-    typedef typename viennagrid::storage::result_of::value_type<
-            typename viennagrid::storage::result_of::value_type<
+    typedef typename viennagrid::meta::result_of::lookup<
+            typename viennagrid::meta::result_of::lookup<
                 typename SegmentationT::appendix_type,
                 interface_information_collection_tag
               >::type,
@@ -255,8 +255,8 @@ namespace viennagrid
     typedef typename viennagrid::result_of::element_tag<ElementT>::type element_tag;
 
 
-    typedef typename viennagrid::storage::result_of::value_type<
-            typename viennagrid::storage::result_of::value_type<
+    typedef typename viennagrid::meta::result_of::lookup<
+            typename viennagrid::meta::result_of::lookup<
                 typename SegmentationT::appendix_type,
                 interface_information_collection_tag
               >::type,

@@ -402,7 +402,7 @@ namespace viennagrid
           // and add the cells to the "vertices"-array
           //****************************************************
 
-          viennagrid::storage::static_array<VertexHandleType, boundary_elements<CellTag, vertex_tag>::num> cell_vertex_handles;
+          viennagrid::static_array<VertexHandleType, boundary_elements<CellTag, vertex_tag>::num> cell_vertex_handles;
 
           vtk_to_viennagrid_orientations<CellTag> reorderer;
           for (long j = 0; j < numVertices; j++)

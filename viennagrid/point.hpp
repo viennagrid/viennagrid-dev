@@ -575,7 +575,7 @@ namespace viennagrid
 
 
   template <typename CoordType, typename CoordinateSystem>
-  class spatial_point : public storage::static_array<CoordType, CoordinateSystem::dim>
+  class spatial_point : public static_array<CoordType, CoordinateSystem::dim>
   {
   public:
     /** @brief Publish the underlying numberic type of coordinates */

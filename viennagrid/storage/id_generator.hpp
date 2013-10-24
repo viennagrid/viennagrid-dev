@@ -25,7 +25,7 @@
 
 namespace viennagrid
 {
-  namespace storage
+  namespace detail
   {
     namespace result_of
     {
@@ -62,7 +62,7 @@ namespace viennagrid
             viennagrid::static_pair<
                 viennagrid::element<element_tag, WrappedConfigType>,
 //                         typename viennagrid::result_of::element<mesh_config, element_tag>::type,
-                typename config::result_of::query<element_config, viennagrid::storage::smart_id_tag<int>, config::element_id_tag>::type
+                typename config::result_of::query<element_config, viennagrid::smart_id_tag<int>, config::element_id_tag>::type
 //                         typename element_config::element_config::id_tag
             >
         >::type type;
@@ -143,20 +143,19 @@ namespace viennagrid
       void max_id() const;
     };
 
+  }
 
+  template<typename typemap>
+  class continuous_id_generator : public detail::continuous_id_generator_layer< typemap >
+  {};
+
+  namespace result_of
+  {
     template<typename typemap>
-    class continuous_id_generator : public continuous_id_generator_layer< typemap >
-    {};
-
-    namespace result_of
+    struct continuous_id_generator
     {
-      template<typename typemap>
-      struct continuous_id_generator
-      {
-        typedef viennagrid::storage::continuous_id_generator< typemap > type;
-      };
-    }
-
+      typedef viennagrid::continuous_id_generator< typemap > type;
+    };
   }
 }
 

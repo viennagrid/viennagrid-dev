@@ -28,20 +28,20 @@ namespace viennagrid
 
     template <typename something,
              typename element_type_or_tag,
-             typename view_container_tag = storage::std_deque_tag>
+             typename view_container_tag = std_deque_tag>
     struct element_view
     {
       typedef typename element_range<something, element_type_or_tag>::type::base_container_type base_container_type;
-      typedef typename storage::result_of::view<base_container_type, view_container_tag>::type type;
+      typedef typename result_of::view<base_container_type, view_container_tag>::type type;
     };
 
     template <typename something,
              typename element_type_or_tag,
-             typename view_container_tag = storage::std_deque_tag>
+             typename view_container_tag = std_deque_tag>
     struct const_element_view
     {
       typedef typename const_element_range<something, element_type_or_tag>::type::base_container_type base_container_type;
-      typedef typename storage::result_of::view<const base_container_type, view_container_tag>::type type;
+      typedef typename result_of::view<const base_container_type, view_container_tag>::type type;
     };
 
   }
@@ -55,7 +55,7 @@ namespace viennagrid
     typedef typename result_of::element<something, element_tag>::type element_type;
 
     typename result_of::element_view<something, element_tag>::type view_obj;
-    view_obj.set_base_container( viennagrid::storage::detail::get<element_type>( element_collection(s) ) );
+    view_obj.set_base_container( viennagrid::get<element_type>( element_collection(s) ) );
 
     return view_obj;
   }

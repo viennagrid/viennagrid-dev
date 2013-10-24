@@ -32,7 +32,7 @@ namespace viennagrid
     {
       typedef typename VertexHandleContainer::iterator VertexHandleIteratorType;
       typedef typename std::iterator_traits<VertexHandleIteratorType>::value_type VertexHandleType;
-      storage::static_array< VertexHandleType, boundary_elements<triangle_tag, vertex_tag>::num > cellvertices;
+      static_array< VertexHandleType, boundary_elements<triangle_tag, vertex_tag>::num > cellvertices;
 
       cellvertices[0] = *viennagrid::advance(vertex_handle_container.begin(), i0);
       cellvertices[1] = *viennagrid::advance(vertex_handle_container.begin(), i1);
@@ -57,7 +57,7 @@ namespace viennagrid
 
         typedef typename viennagrid::result_of::handle<MeshTypeOut, viennagrid::vertex_tag>::type             VertexHandleType;
 
-        storage::static_array<VertexHandleType, boundary_elements<triangle_tag, vertex_tag>::num> vertex_handles;
+        static_array<VertexHandleType, boundary_elements<triangle_tag, vertex_tag>::num> vertex_handles;
 
         //
         // Step 1: Get vertices on the new mesh
@@ -100,7 +100,7 @@ namespace viennagrid
         typedef typename viennagrid::result_of::element<MeshTypeOut, viennagrid::line_tag>::type             EdgeType;
 
         const unsigned int num_vertices = boundary_elements<triangle_tag, vertex_tag>::num;
-        storage::static_array<VertexHandleType, num_vertices+1> vertex_handles;
+        static_array<VertexHandleType, num_vertices+1> vertex_handles;
 
 
         //
@@ -176,7 +176,7 @@ namespace viennagrid
         typedef typename viennagrid::result_of::element<MeshTypeOut, viennagrid::line_tag>::type             EdgeType;
 
         const unsigned int num_vertices = boundary_elements<triangle_tag, vertex_tag>::num;
-        storage::static_array<VertexHandleType, num_vertices+2> vertex_handles;
+        static_array<VertexHandleType, num_vertices+2> vertex_handles;
 
 
         //
@@ -274,7 +274,7 @@ namespace viennagrid
         const unsigned int num_vertices = boundary_elements<triangle_tag, vertex_tag>::num;
         const unsigned int num_lines = boundary_elements<triangle_tag, line_tag>::num;
 
-        storage::static_array<VertexHandleType, num_vertices+num_lines> vertex_handles;
+        static_array<VertexHandleType, num_vertices+num_lines> vertex_handles;
 
         //
         // Step 1: Get vertices on the new mesh

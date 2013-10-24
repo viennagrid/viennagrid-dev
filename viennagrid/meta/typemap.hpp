@@ -27,6 +27,21 @@ namespace viennagrid
     namespace result_of
     {
 
+      /** @brief A simple meta function for unpacking the value of a search result. */
+      template<typename ConfigEntryT>
+      struct unpack_second
+      {
+        typedef typename ConfigEntryT::second type;
+      };
+
+      template<>
+      struct unpack_second<viennagrid::not_found>
+      {
+        typedef viennagrid::not_found type;
+      };
+
+
+
 
       template <typename to_find, typename value_type, typename tail>
       struct index_of<typelist< static_pair<to_find, value_type>, tail>, to_find>
@@ -67,6 +82,16 @@ namespace viennagrid
         typedef typename find<tail, to_find>::type type;
       };
 
+
+
+      // find a key
+      template<typename typemap, typename to_find>
+      struct lookup
+      {
+        typedef typename unpack_second<
+          typename find<typemap, to_find>::type
+        >::type type;
+      };
 
       // insert
       template <typename typemap, typename to_insert> struct insert;

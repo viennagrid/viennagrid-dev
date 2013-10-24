@@ -84,7 +84,7 @@ namespace viennagrid
 
     // Distance between vertices: Use point distance
     template <typename PointAccessorT, typename PointT, typename WrappedConfigT1, typename WrappedConfigT2>
-    typename result_of::coord<typename PointAccessorT::value_type>::type
+    typename viennagrid::result_of::coord<typename PointAccessorT::value_type>::type
     distance_impl(PointAccessorT const accessor,
                   viennagrid::element<viennagrid::vertex_tag, WrappedConfigT1> const & v1,
                   viennagrid::element<viennagrid::vertex_tag, WrappedConfigT2> const & v2)
@@ -98,7 +98,7 @@ namespace viennagrid
     // Generic distance computation: Reuse closest_points()
     //
     template <typename PointAccessorT, typename SomethingT1, typename SomethingT2>
-    typename result_of::coord<typename PointAccessorT::value_type>::type
+    typename viennagrid::result_of::coord<typename PointAccessorT::value_type>::type
     distance_impl(PointAccessorT const accessor,
                   SomethingT1 const & el1,
                   SomethingT2 const & el2)
@@ -160,7 +160,7 @@ namespace viennagrid
 
     // Distance between vertices: Use point distance
     template <typename PointAccessorT, typename PointT, typename WrappedConfigT1, typename WrappedConfigT2>
-    typename result_of::coord<typename PointAccessorT::value_type>::type
+    typename viennagrid::result_of::coord<typename PointAccessorT::value_type>::type
     boundary_distance_impl(PointAccessorT const accessor,
                   viennagrid::element<viennagrid::vertex_tag, WrappedConfigT1> const & v1,
                   viennagrid::element<viennagrid::vertex_tag, WrappedConfigT2> const & v2)
@@ -174,7 +174,7 @@ namespace viennagrid
     // Generic distance computation: Reuse closest_points()
     //
     template <typename PointAccessorT, typename SomethingT1, typename SomethingT2>
-    typename result_of::coord<typename PointAccessorT::value_type>::type
+    typename viennagrid::result_of::coord<typename PointAccessorT::value_type>::type
     boundary_distance_impl(PointAccessorT const accessor,
                            SomethingT1 const & el1,
                            SomethingT2 const & el2)
@@ -194,7 +194,7 @@ namespace viennagrid
   //
   /** @brief Returns the distance between elements, segments and/or meshs */
   template <typename PointAccessorT, typename SomethingT1, typename SomethingT2>
-  typename result_of::coord<SomethingT1>::type
+  typename viennagrid::result_of::coord<SomethingT1>::type
   distance(PointAccessorT const accessor,
            SomethingT1 const & el1,
            SomethingT2 const & el2)
@@ -204,7 +204,7 @@ namespace viennagrid
 
 
   template <typename SomethingT1, typename SomethingT2>
-  typename result_of::coord<SomethingT1>::type
+  typename viennagrid::result_of::coord<SomethingT1>::type
   distance(SomethingT1 const & el1,
            SomethingT2 const & el2)
   {
@@ -212,7 +212,7 @@ namespace viennagrid
   }
 
   template <typename SomethingT, typename CoordT, typename CoordinateSystemT>
-  typename result_of::coord<SomethingT>::type
+  typename viennagrid::result_of::coord<SomethingT>::type
   distance(SomethingT const & el1,
            spatial_point<CoordT, CoordinateSystemT> const & el2)
   {
@@ -220,7 +220,7 @@ namespace viennagrid
   }
 
   template <typename CoordT, typename CoordinateSystemT, typename SomethingT>
-  typename result_of::coord<SomethingT>::type
+  typename viennagrid::result_of::coord<SomethingT>::type
   distance(spatial_point<CoordT, CoordinateSystemT> const & el1,
            SomethingT const & el2)
   {
@@ -228,7 +228,7 @@ namespace viennagrid
   }
 
   template <typename CoordT1, typename CoordinateSystemT1, typename CoordT2, typename CoordinateSystemT2>
-  typename result_of::coord< spatial_point<CoordT1, CoordinateSystemT1> >::type
+  typename viennagrid::result_of::coord< spatial_point<CoordT1, CoordinateSystemT1> >::type
   distance(spatial_point<CoordT1, CoordinateSystemT1> const & el1,
            spatial_point<CoordT2, CoordinateSystemT2> const & el2)
   {
@@ -240,7 +240,7 @@ namespace viennagrid
 
   /** @brief Returns the distance between elements, segments and/or meshs */
   template <typename PointAccessorT, typename SomethingT1, typename SomethingT2>
-  typename result_of::coord<SomethingT1>::type
+  typename viennagrid::result_of::coord<SomethingT1>::type
   boundary_distance(PointAccessorT const accessor,
                     SomethingT1 const & el1,
                     SomethingT2 const & el2)
@@ -250,7 +250,7 @@ namespace viennagrid
 
   /** @brief Returns the distance between elements, segments and/or meshs */
   template <typename SomethingT1, typename SomethingT2>
-  typename result_of::coord<SomethingT1>::type
+  typename viennagrid::result_of::coord<SomethingT1>::type
   boundary_distance(SomethingT1 const & el1,
                     SomethingT2 const & el2)
   {
@@ -258,7 +258,7 @@ namespace viennagrid
   }
 
   template <typename SomethingT, typename CoordT, typename CoordinateSystemT>
-  typename result_of::coord<SomethingT>::type
+  typename viennagrid::result_of::coord<SomethingT>::type
   boundary_distance(SomethingT const & el1,
                     spatial_point<CoordT, CoordinateSystemT> const & el2)
   {
@@ -266,7 +266,7 @@ namespace viennagrid
   }
 
   template <typename CoordT, typename CoordinateSystemT, typename SomethingT>
-  typename result_of::coord<SomethingT>::type
+  typename viennagrid::result_of::coord<SomethingT>::type
   boundary_distance(spatial_point<CoordT, CoordinateSystemT> const & el1,
                     SomethingT const & el2)
   {

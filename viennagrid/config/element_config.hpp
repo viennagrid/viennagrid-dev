@@ -37,13 +37,13 @@ namespace viennagrid
       template<int num>
       struct boundary_cell_container_tag<viennagrid::static_layout_tag, num>
       {
-        typedef viennagrid::storage::static_array_tag<num> type;
+        typedef viennagrid::static_array_tag<num> type;
       };
 
       template<int num>
       struct boundary_cell_container_tag<viennagrid::dynamic_layout_tag, num>
       {
-        typedef viennagrid::storage::std_vector_tag type;
+        typedef viennagrid::std_vector_tag type;
       };
 
 
@@ -66,14 +66,14 @@ namespace viennagrid
       template<typename WrappedConfigType, typename element_tag>
       struct query_element_id_tag
       {
-        typedef typename query<WrappedConfigType, viennagrid::storage::smart_id_tag<int>, element_tag, element_id_tag>::type  type;
+        typedef typename query<WrappedConfigType, viennagrid::smart_id_tag<int>, element_tag, element_id_tag>::type  type;
       };
 
       /** @brief Queries the container tag for a given element tag from a wrapped config, default is std::deque with pointer handle. */
       template<typename WrappedConfigType, typename element_tag>
       struct query_element_container_tag
       {
-        typedef typename query<WrappedConfigType, viennagrid::storage::handled_container_tag<viennagrid::storage::std_deque_tag, viennagrid::storage::pointer_handle_tag>, element_tag, element_container_tag>::type  type;
+        typedef typename query<WrappedConfigType, viennagrid::handled_container_tag<viennagrid::std_deque_tag, viennagrid::pointer_handle_tag>, element_tag, element_container_tag>::type  type;
       };
 
       /** @brief Queries the appendix type for a given element tag from a wrapped config. PLC appendix type is std::vector<PointType> for holes. Default is null_type. */
@@ -163,7 +163,7 @@ namespace viennagrid
         //
         typedef viennagrid::element<BoundaryElementTagT, WrappedConfigT> boundary_cell_type;
 
-        typedef typename viennagrid::storage::result_of::container<
+        typedef typename viennagrid::result_of::container<
             boundary_cell_type,                                         // the 'value_type', i.e. vertices
             typename query_element_container_tag<WrappedConfigT, BoundaryElementTagT>::type
         >::type boundary_cell_container;
@@ -175,7 +175,7 @@ namespace viennagrid
             >::type container_tag;
 
 
-        typedef typename viennagrid::storage::result_of::view<
+        typedef typename viennagrid::result_of::view<
                 boundary_cell_container,
                 container_tag
             >::type
@@ -200,13 +200,13 @@ namespace viennagrid
             >::type orientation_container_tag;
 
 
-        typedef typename viennagrid::storage::result_of::container<permutator_type, orientation_container_tag>::type orientation_container_type;
+        typedef typename viennagrid::result_of::container<permutator_type, orientation_container_tag>::type orientation_container_type;
         typedef viennagrid::element_orientation<orientation_container_type> facet_orientation_type;
 
         typedef typename
             viennagrid::meta::IF<
                 has_orientation< WrappedConfigT, HostElementTagT, BoundaryElementTagT>::value,
-                typename viennagrid::storage::result_of::container< facet_orientation_type, container_tag >::type,
+                typename viennagrid::result_of::container< facet_orientation_type, container_tag >::type,
                 viennagrid::null_type
             >::type facet_orientation_container_type;
 
@@ -232,7 +232,7 @@ namespace viennagrid
 
         typedef viennagrid::element<BoundaryElementTag, WrappedConfigT> boundary_cell_type;
 
-        typedef typename viennagrid::storage::result_of::container<
+        typedef typename viennagrid::result_of::container<
             boundary_cell_type,                                         // the 'value_type', i.e. vertices
             typename query_element_container_tag<WrappedConfigT, BoundaryElementTag>::type
         >::type boundary_cell_container;
@@ -244,7 +244,7 @@ namespace viennagrid
             >::type container_tag;
 
 
-        typedef typename viennagrid::storage::result_of::view<
+        typedef typename viennagrid::result_of::view<
                 boundary_cell_container,
                 container_tag
             >::type

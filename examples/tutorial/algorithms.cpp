@@ -182,7 +182,7 @@ int main()
   MeshType adaptively_refined_mesh;
 
   // Define a container which stores the flags, in this case we want an std::map as underlying container
-  typedef viennagrid::result_of::accessor_container< CellType, bool, viennagrid::storage::std_map_tag >::type CellRefinementContainerType;
+  typedef viennagrid::result_of::accessor_container< CellType, bool, viennagrid::std_map_tag >::type CellRefinementContainerType;
   CellRefinementContainerType cell_refinement_flag;
 
   // define an field on this container for easy access with elements

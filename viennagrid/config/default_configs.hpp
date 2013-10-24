@@ -47,19 +47,19 @@ namespace viennagrid
     /** @brief A default config for vertices in 1d, pointer handles are used */
     struct vertex_1d
     {
-      typedef result_of::full_mesh_config< viennagrid::vertex_tag, point_type_1d, viennagrid::storage::pointer_handle_tag >::type type;
+      typedef result_of::full_mesh_config< viennagrid::vertex_tag, point_type_1d, viennagrid::pointer_handle_tag >::type type;
     };
 
     /** @brief A default config for vertices in 2d, pointer handles are used */
     struct vertex_2d
     {
-      typedef result_of::full_mesh_config< viennagrid::vertex_tag, point_type_2d, viennagrid::storage::pointer_handle_tag >::type type;
+      typedef result_of::full_mesh_config< viennagrid::vertex_tag, point_type_2d, viennagrid::pointer_handle_tag >::type type;
     };
 
     /** @brief A default config for vertices in 3d, pointer handles are used */
     struct vertex_3d
     {
-      typedef result_of::full_mesh_config< viennagrid::vertex_tag, point_type_3d, viennagrid::storage::pointer_handle_tag >::type type;
+      typedef result_of::full_mesh_config< viennagrid::vertex_tag, point_type_3d, viennagrid::pointer_handle_tag >::type type;
     };
   }
 
@@ -105,19 +105,19 @@ namespace viennagrid
     /** @brief A default config for lines in 1d, pointer handles are used */
     struct line_1d
     {
-      typedef result_of::full_mesh_config< viennagrid::line_tag, point_type_1d, viennagrid::storage::pointer_handle_tag >::type type;
+      typedef result_of::full_mesh_config< viennagrid::line_tag, point_type_1d, viennagrid::pointer_handle_tag >::type type;
     };
 
     /** @brief A default config for lines in 2d, pointer handles are used */
     struct line_2d
     {
-      typedef result_of::full_mesh_config< viennagrid::line_tag, point_type_2d, viennagrid::storage::pointer_handle_tag >::type type;
+      typedef result_of::full_mesh_config< viennagrid::line_tag, point_type_2d, viennagrid::pointer_handle_tag >::type type;
     };
 
     /** @brief A default config for lines in 3d, pointer handles are used */
     struct line_3d
     {
-      typedef result_of::full_mesh_config< viennagrid::line_tag, point_type_3d, viennagrid::storage::pointer_handle_tag >::type type;
+      typedef result_of::full_mesh_config< viennagrid::line_tag, point_type_3d, viennagrid::pointer_handle_tag >::type type;
     };
   }
 
@@ -163,49 +163,49 @@ namespace viennagrid
     /** @brief A default config for triangles in 2d, pointer handles are used */
     struct triangular_2d
     {
-      typedef result_of::full_mesh_config< viennagrid::triangle_tag, point_type_2d, viennagrid::storage::pointer_handle_tag >::type     type;
+      typedef result_of::full_mesh_config< viennagrid::triangle_tag, point_type_2d, viennagrid::pointer_handle_tag >::type     type;
     };
 
     /** @brief A default config for triangles in 3d, pointer handles are used */
     struct triangular_3d
     {
-      typedef result_of::full_mesh_config< viennagrid::triangle_tag, point_type_3d, viennagrid::storage::pointer_handle_tag >::type     type;
+      typedef result_of::full_mesh_config< viennagrid::triangle_tag, point_type_3d, viennagrid::pointer_handle_tag >::type     type;
     };
 
     /** @brief A default config for quadrilaterals in 2d, pointer handles are used */
     struct quadrilateral_2d
     {
-      typedef result_of::full_mesh_config< viennagrid::quadrilateral_tag, point_type_2d, viennagrid::storage::pointer_handle_tag >::type     type;
+      typedef result_of::full_mesh_config< viennagrid::quadrilateral_tag, point_type_2d, viennagrid::pointer_handle_tag >::type     type;
     };
 
     /** @brief A default config for quadrilaterals in 3d, pointer handles are used */
     struct quadrilateral_3d
     {
-      typedef result_of::full_mesh_config< viennagrid::quadrilateral_tag, point_type_3d, viennagrid::storage::pointer_handle_tag >::type     type;
+      typedef result_of::full_mesh_config< viennagrid::quadrilateral_tag, point_type_3d, viennagrid::pointer_handle_tag >::type     type;
     };
 
     /** @brief A default config for polygons in 2d, pointer handles are used */
     struct polygonal_2d
     {
-      typedef result_of::full_mesh_config< viennagrid::polygon_tag, point_type_2d, viennagrid::storage::pointer_handle_tag >::type     type;
+      typedef result_of::full_mesh_config< viennagrid::polygon_tag, point_type_2d, viennagrid::pointer_handle_tag >::type     type;
     };
 
     /** @brief A default config for polygons in 3d, pointer handles are used */
     struct polygonal_3d
     {
-      typedef result_of::full_mesh_config< viennagrid::polygon_tag, point_type_3d, viennagrid::storage::pointer_handle_tag >::type     type;
+      typedef result_of::full_mesh_config< viennagrid::polygon_tag, point_type_3d, viennagrid::pointer_handle_tag >::type     type;
     };
 
     /** @brief A default config for PLCs in 2d, pointer handles are used */
     struct plc_2d
     {
-      typedef result_of::full_mesh_config< viennagrid::plc_tag, point_type_2d, viennagrid::storage::pointer_handle_tag >::type     type;
+      typedef result_of::full_mesh_config< viennagrid::plc_tag, point_type_2d, viennagrid::pointer_handle_tag >::type     type;
     };
 
     /** @brief A default config for PLCs in 3d, pointer handles are used */
     struct plc_3d
     {
-      typedef result_of::full_mesh_config< viennagrid::plc_tag, point_type_3d, viennagrid::storage::pointer_handle_tag >::type     type;
+      typedef result_of::full_mesh_config< viennagrid::plc_tag, point_type_3d, viennagrid::pointer_handle_tag >::type     type;
     };
   }
 
@@ -313,13 +313,13 @@ namespace viennagrid
     /** @brief A default config for tetrahedrons in 3d, pointer handles are used */
     struct tetrahedral_3d
     {
-      typedef result_of::full_mesh_config< viennagrid::tetrahedron_tag, point_type_3d, viennagrid::storage::pointer_handle_tag >::type  type;
+      typedef result_of::full_mesh_config< viennagrid::tetrahedron_tag, point_type_3d, viennagrid::pointer_handle_tag >::type  type;
     };
 
     /** @brief A default config for hexahedrons in 3d, pointer handles are used */
     struct hexahedral_3d
     {
-      typedef result_of::full_mesh_config< viennagrid::hexahedron_tag, point_type_3d, viennagrid::storage::pointer_handle_tag >::type   type;
+      typedef result_of::full_mesh_config< viennagrid::hexahedron_tag, point_type_3d, viennagrid::pointer_handle_tag >::type   type;
     };
   }
 

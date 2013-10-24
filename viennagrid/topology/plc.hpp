@@ -68,15 +68,15 @@ namespace viennagrid
       template<typename element_type, typename inserter_type>
       static void create_boundary_elements(element_type & plc, inserter_type &)
       {
-        typedef typename result_of::element<element_type, line_tag>::type LineType;
-        typedef typename result_of::element_range<element_type, line_tag>::type LineRange;
-        typedef typename result_of::iterator<LineRange>::type LineIterator;
+        typedef typename viennagrid::result_of::element<element_type, line_tag>::type LineType;
+        typedef typename viennagrid::result_of::element_range<element_type, line_tag>::type LineRange;
+        typedef typename viennagrid::result_of::iterator<LineRange>::type LineIterator;
 
         LineRange lines = elements<line_tag>(plc);
         for (LineIterator lit = lines.begin(); lit != lines.end(); ++lit)
         {
-          typedef typename result_of::element_range<LineType, vertex_tag>::type VertexOnLineRange;
-          typedef typename result_of::iterator<VertexOnLineRange>::type VertexOnLineHandleIterator;
+          typedef typename viennagrid::result_of::element_range<LineType, vertex_tag>::type VertexOnLineRange;
+          typedef typename viennagrid::result_of::iterator<VertexOnLineRange>::type VertexOnLineHandleIterator;
 
           VertexOnLineRange vertices = elements<vertex_tag>(*lit);
           for (VertexOnLineHandleIterator vlhit = vertices.begin(); vlhit != vertices.end(); ++vlhit)

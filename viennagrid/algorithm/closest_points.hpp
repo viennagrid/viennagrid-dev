@@ -199,7 +199,7 @@ namespace viennagrid
                                       LinePointT const & line_p2)
     {
       //typedef spatial_point<CoordT, CoordinateSystemT>  PointT;
-      typedef typename result_of::coord< PointT >::type coord_type;
+      typedef typename viennagrid::result_of::coord< PointT >::type coord_type;
 
       //compute t such that projection of p onto [line_p1, line_p2] is given by p' = line_p1 + t * (line_p2 - line_p1)
       coord_type t = viennagrid::inner_prod( (p - line_p1), (line_p2 - line_p1) ) / viennagrid::inner_prod(line_p2 - line_p1, line_p2 - line_p1);
@@ -272,7 +272,7 @@ namespace viennagrid
                                      PointT const & w0, PointT const & w1) //endpoints of second line
     {
       //typedef spatial_point<CoordT, CoordinateSystemT>  PointT;
-      typedef typename result_of::coord< PointT >::type coord_type;
+      typedef typename viennagrid::result_of::coord< PointT >::type coord_type;
 
       // write V(s) = v0 + s * (v1 - v0), s \in [0,1]
       //       W(t) = w0 + t * (w1 - w0), t \in [0,1]
@@ -392,7 +392,7 @@ namespace viennagrid
                                           PointT const & v1,
                                           PointT const & v2) //endpoints of second line
     {
-      typedef typename result_of::coord< PointT >::type coord_type;
+      typedef typename viennagrid::result_of::coord< PointT >::type coord_type;
 
       // write T(s) =  v0 + s * (v1 - v0) + t * (v2 - v0), {s,t} \in [0,1], s+t < 1 for the triangle T
       //            =: v0 + s * u0 + t * u1
@@ -536,7 +536,7 @@ namespace viennagrid
                                              PointT const & v2,
                                              PointT const & v3)
     {
-      typedef typename result_of::coord< PointT >::type coord_type;
+      typedef typename viennagrid::result_of::coord< PointT >::type coord_type;
 
       // write T(s) =  v0 + r * (v1 - v0) + s * (v2 - v0) + t * (v3 - v1), {r,s,t} \in [0,1], r+s+t < 1 for the tetrahedron T
       //            =: v0 + r * u0 + s * u1 + t * u2
@@ -755,7 +755,7 @@ namespace viennagrid
                                             PointT const & p,
                                             SomethingT const & cont)
     {
-      typedef typename result_of::element_tag<FacetTypeOrTag>::type FacetTag;
+      typedef typename viennagrid::result_of::element_tag<FacetTypeOrTag>::type FacetTag;
       typedef std::pair<PointT, typename viennagrid::result_of::point<SomethingT>::type>       PairType;
 
       typedef typename viennagrid::result_of::const_element_range<SomethingT, FacetTag>::type           FacetRange;
@@ -801,7 +801,7 @@ namespace viennagrid
                                     PointT const & p,
                                     mesh<WrappedConfigT> const & mesh_obj)
     {
-        typedef typename result_of::cell_tag< mesh<WrappedConfigT> >::type CellTag;
+        typedef typename viennagrid::result_of::cell_tag< mesh<WrappedConfigT> >::type CellTag;
       return closest_points_on_boundary_point_to_any<typename CellTag::facet_tag>( point_accessor, p, mesh_obj);
     }
 
@@ -811,7 +811,7 @@ namespace viennagrid
                                     PointT const & p,
                                     segment_handle<SegmentationT> const & segment)
     {
-        typedef typename result_of::cell_tag< segment_handle<SegmentationT> >::type CellTag;
+        typedef typename viennagrid::result_of::cell_tag< segment_handle<SegmentationT> >::type CellTag;
       return closest_points_on_boundary_point_to_any<typename CellTag::facet_tag>( point_accessor, p, segment );
     }
 
@@ -845,8 +845,8 @@ namespace viennagrid
     {
 
 
-      typedef typename result_of::facet_tag<SomethingT1>::type FacetTag1;
-      typedef typename result_of::facet_tag<SomethingT2>::type FacetTag2;
+      typedef typename viennagrid::result_of::facet_tag<SomethingT1>::type FacetTag1;
+      typedef typename viennagrid::result_of::facet_tag<SomethingT2>::type FacetTag2;
 
 
       typedef std::pair< typename PointAccessorT::value_type, typename PointAccessorT::value_type > PairType;

@@ -91,7 +91,7 @@ namespace viennagrid
 
   /** @brief For internal use only */
   template<typename MeshT, typename ToEraseViewT, typename HandleT, typename ReferencingElementTypelist =
-      typename viennagrid::result_of::referencing_element_typelist<MeshT, typename viennagrid::storage::detail::result_of::value_type<HandleT>::type >::type >
+      typename viennagrid::result_of::referencing_element_typelist<MeshT, typename viennagrid::detail::result_of::value_type<HandleT>::type >::type >
   struct mark_referencing_elements_impl;
 
   template<typename MeshT, typename ToEraseViewT, typename HandleT, typename CoboundaryElementT, typename TailT>
@@ -100,7 +100,7 @@ namespace viennagrid
     static void mark(MeshT & mesh_obj, ToEraseViewT & mesh_view, HandleT host_element)
     {
       //typedef viennagrid::typelist<CoboundaryElementT, TailT> ReferencingElementTypelist;
-      typedef typename viennagrid::storage::detail::result_of::value_type<HandleT>::type HostElementType;
+      typedef typename viennagrid::detail::result_of::value_type<HandleT>::type HostElementType;
 
       //typedef typename viennagrid::result_of::handle<MeshT, CoboundaryElementT>::type CoboundaryElementHandle;
       typedef typename viennagrid::result_of::coboundary_range<MeshT, HostElementType, CoboundaryElementT>::type CoboundaryElementRangeType;

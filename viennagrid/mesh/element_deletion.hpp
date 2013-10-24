@@ -33,7 +33,7 @@ namespace viennagrid
   template<typename MeshT, typename ToSwtichElementHandleT>
   struct switch_handle_functor
   {
-    typedef typename viennagrid::storage::detail::result_of::value_type<ToSwtichElementHandleT>::type to_switch_element_type;
+    typedef typename viennagrid::detail::result_of::value_type<ToSwtichElementHandleT>::type to_switch_element_type;
 
     switch_handle_functor(MeshT & mesh_obj, ToSwtichElementHandleT from, ToSwtichElementHandleT to) : mesh_obj_(mesh_obj), from_(from), to_(to) {}
 
@@ -71,7 +71,7 @@ namespace viennagrid
   template<typename MeshT, typename MeshViewT, typename HandleT>
   void mark_erase_elements( MeshT & mesh_obj, MeshViewT & elements_to_erase, HandleT host_element )
   {
-    typedef typename viennagrid::storage::detail::result_of::value_type<HandleT>::type ElementType;
+    typedef typename viennagrid::detail::result_of::value_type<HandleT>::type ElementType;
     viennagrid::elements<ElementType>(elements_to_erase).insert_unique_handle( host_element );
 
     mark_referencing_elements(mesh_obj, elements_to_erase, host_element);
@@ -82,7 +82,7 @@ namespace viennagrid
   template<typename MeshT, typename HandleT>
   void switch_handle( MeshT & mesh_obj, HandleT old_handle, HandleT new_handle)
   {
-    typedef typename viennagrid::storage::detail::result_of::value_type<HandleT>::type ToSwitchElementType;
+    typedef typename viennagrid::detail::result_of::value_type<HandleT>::type ToSwitchElementType;
     typedef typename viennagrid::result_of::referencing_element_typelist<MeshT, ToSwitchElementType>::type ParentElementTypelist;
 
     switch_handle_functor<MeshT, HandleT> functor(mesh_obj, old_handle, new_handle);
@@ -95,7 +95,7 @@ namespace viennagrid
   template<typename MeshT, typename HandleT>
   void simple_erase_element(MeshT & mesh_obj, HandleT & element_to_erase)
   {
-    typedef typename viennagrid::storage::detail::result_of::value_type<HandleT>::type ElementType;
+    typedef typename viennagrid::detail::result_of::value_type<HandleT>::type ElementType;
     typedef typename viennagrid::result_of::handle<MeshT, ElementType>::type ElementHandle;
 
     typedef typename viennagrid::result_of::element_range<MeshT, ElementType>::type ElementRangeType;

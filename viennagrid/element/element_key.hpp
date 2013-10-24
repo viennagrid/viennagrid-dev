@@ -96,18 +96,15 @@ namespace viennagrid
 
 namespace viennagrid
 {
-  namespace storage
-  {
-    struct element_key_tag {};
+  struct element_key_tag {};
 
-    namespace result_of
+  namespace result_of
+  {
+    template<typename element_type>
+    struct hidden_key_map_key_type_from_tag<element_type, element_key_tag>
     {
-      template<typename element_type>
-      struct hidden_key_map_key_type_from_tag<element_type, element_key_tag>
-      {
-        typedef element_key<element_type> type;
-      };
-    }
+      typedef element_key<element_type> type;
+    };
   }
 }
 

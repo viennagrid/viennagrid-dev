@@ -25,7 +25,7 @@
 
 namespace viennagrid
 {
-  namespace storage
+  namespace detail
   {
 
     class container_output_functor

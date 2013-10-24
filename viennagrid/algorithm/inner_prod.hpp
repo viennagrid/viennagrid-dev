@@ -26,7 +26,7 @@ namespace viennagrid
   namespace detail
   {
     template <typename PointT,
-              long dim = result_of::dimension<PointT>::value>
+              long dim = viennagrid::result_of::dimension<PointT>::value>
     struct inner_prod_impl;
 
     //

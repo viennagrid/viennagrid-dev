@@ -22,7 +22,7 @@
 namespace viennagrid
 {
 
-  namespace storage
+  namespace detail
   {
 
 

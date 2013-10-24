@@ -30,8 +30,8 @@ namespace viennagrid
     template<typename mesh_config>
     struct id_generator_impl<mesh_config, config::continuous_id_generator_tag>
     {
-      typedef typename viennagrid::storage::result_of::continuous_id_generator_config_from_mesh_config<mesh_config>::type typemap;
-      typedef storage::continuous_id_generator<typemap> type;
+      typedef typename viennagrid::detail::result_of::continuous_id_generator_config_from_mesh_config<mesh_config>::type typemap;
+      typedef viennagrid::continuous_id_generator<typemap> type;
     };
 
     /** @brief Defines an ID generator based on a wrapped config */

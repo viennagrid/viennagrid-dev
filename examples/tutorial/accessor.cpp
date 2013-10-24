@@ -122,7 +122,7 @@ int main()
 
 
   // Using an std::map as the underlying container type
-  typedef viennagrid::result_of::accessor_container<CellType, double, viennagrid::storage::std_map_tag>::type CellDataMapContainerType;
+  typedef viennagrid::result_of::accessor_container<CellType, double, viennagrid::std_map_tag>::type CellDataMapContainerType;
   CellDataMapContainerType cell_data_map;
   viennagrid::result_of::field< CellDataMapContainerType, CellType >::type cell_data_map_accessor(cell_data_map);
 

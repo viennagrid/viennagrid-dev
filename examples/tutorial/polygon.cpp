@@ -67,7 +67,7 @@ int main()
   typedef viennagrid::result_of::element<mesh_type, viennagrid::polygon_tag>::type polygon_type;
 
 
-  viennagrid::storage::static_array<vertex_handle_type, 7> handles;
+  viennagrid::static_array<vertex_handle_type, 7> handles;
 
   handles[0] = viennagrid::make_vertex( mesh, point_type(0, 0) );
   handles[1] = viennagrid::make_vertex( mesh, point_type(1, 0) );

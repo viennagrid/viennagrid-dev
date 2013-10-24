@@ -27,7 +27,7 @@ namespace viennagrid
   {
     /** @brief Implementation of the cross product calculation */
     template <typename PointT,
-              long dim = result_of::dimension<PointT>::value>
+              long dim = viennagrid::result_of::dimension<PointT>::value>
     struct cross_prod_impl;
 
 

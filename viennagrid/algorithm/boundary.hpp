@@ -27,6 +27,11 @@
 
 namespace viennagrid
 {
+namespace result_of {
+
+template<class typemap, class key_type >
+struct lookup;}
+
 
   /** @brief For internal use only. */
   template <typename MeshT, typename AccessorT>
@@ -135,8 +140,8 @@ namespace viennagrid
 
 
 
-      typedef typename viennagrid::storage::result_of::value_type<
-              typename viennagrid::storage::result_of::value_type<
+      typedef typename viennagrid::meta::result_of::lookup<
+              typename viennagrid::meta::result_of::lookup<
                   typename MeshT::appendix_type,
                   boundary_information_collection_tag
                 >::type,
@@ -146,8 +151,8 @@ namespace viennagrid
         src_boundary_information_container_wrapper_type & src_boundary_information_container_wrapper = boundary_information_collection<facet_tag>( mesh_obj_ );
 
 
-      typedef typename viennagrid::storage::result_of::value_type<
-              typename viennagrid::storage::result_of::value_type<
+      typedef typename viennagrid::meta::result_of::lookup<
+              typename viennagrid::meta::result_of::lookup<
                   typename MeshT::appendix_type,
                   boundary_information_collection_tag
                 >::type,
@@ -178,7 +183,7 @@ namespace viennagrid
 
     typedef typename viennagrid::meta::result_of::erase<
         typename viennagrid::meta::result_of::key_typelist<
-            typename viennagrid::storage::result_of::value_type<
+            typename viennagrid::meta::result_of::lookup<
                 typename mesh_type::appendix_type,
                 boundary_information_collection_tag
             >::type::typemap
@@ -207,8 +212,8 @@ namespace viennagrid
 
     typedef typename viennagrid::result_of::element< mesh_type, facet_tag >::type facet_type;
 
-    typedef typename viennagrid::storage::result_of::value_type<
-            typename viennagrid::storage::result_of::value_type<
+    typedef typename viennagrid::meta::result_of::lookup<
+            typename viennagrid::meta::result_of::lookup<
                 typename mesh_type::appendix_type,
                 boundary_information_collection_tag
               >::type,
@@ -252,8 +257,8 @@ namespace viennagrid
     typedef typename viennagrid::result_of::element_tag<ElementT>::type element_tag;
 
 
-    typedef typename viennagrid::storage::result_of::value_type<
-            typename viennagrid::storage::result_of::value_type<
+    typedef typename viennagrid::meta::result_of::lookup<
+            typename viennagrid::meta::result_of::lookup<
                 typename mesh_type::appendix_type,
                 boundary_information_collection_tag
               >::type,

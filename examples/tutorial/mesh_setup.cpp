@@ -83,7 +83,7 @@ int main()
   //
 
   // First triangle, use vertex handles
-  viennagrid::storage::static_array<VertexHandleType, 3> vertices;
+  viennagrid::static_array<VertexHandleType, 3> vertices;
   vertices[0] = vh0;
   vertices[1] = vh1;
   vertices[2] = vh5;

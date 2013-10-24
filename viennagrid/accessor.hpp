@@ -113,23 +113,23 @@ namespace viennagrid
 
   namespace result_of
   {
-    template<typename ElementT, typename ValueT, typename ContainerTagT = storage::std_vector_tag>
+    template<typename ElementT, typename ValueT, typename ContainerTagT = std_vector_tag>
     struct accessor_container;
 
     template<typename ElementT, typename ValueT>
-    struct accessor_container<ElementT, ValueT, storage::std_vector_tag>
+    struct accessor_container<ElementT, ValueT, std_vector_tag>
     {
       typedef std::vector<ValueT> type;
     };
 
     template<typename ElementT, typename ValueT>
-    struct accessor_container<ElementT, ValueT, storage::std_deque_tag>
+    struct accessor_container<ElementT, ValueT, std_deque_tag>
     {
       typedef std::deque<ValueT> type;
     };
 
     template<typename ElementT, typename ValueT>
-    struct accessor_container<ElementT, ValueT, storage::std_map_tag>
+    struct accessor_container<ElementT, ValueT, std_map_tag>
     {
       typedef std::map< typename result_of::id<ElementT>::type, ValueT > type;
     };
@@ -429,24 +429,24 @@ namespace viennagrid
 
   template<typename element_type, typename container_collection_typemap>
   typename result_of::accessor<
-      typename storage::result_of::container_of<
+      typename result_of::container_of<
           container_collection_typemap,
           element_type
       >::type,
-      element_type>::type make_accessor( storage::collection<container_collection_typemap> & collection )
+      element_type>::type make_accessor( collection<container_collection_typemap> & collection )
   {
-    return make_accessor<element_type>( storage::detail::get<element_type>(collection) );
+    return make_accessor<element_type>( get<element_type>(collection) );
   }
 
   template<typename element_type, typename container_collection_typemap>
   typename result_of::accessor<
-      const typename storage::result_of::container_of<
+      const typename result_of::container_of<
           container_collection_typemap,
           element_type
       >::type,
-      element_type>::type make_accessor( storage::collection<container_collection_typemap> const & collection )
+      element_type>::type make_accessor( collection<container_collection_typemap> const & collection )
   {
-    return make_accessor<element_type>( storage::detail::get<element_type>(collection) );
+    return make_accessor<element_type>( get<element_type>(collection) );
   }
 
 
@@ -885,24 +885,24 @@ namespace viennagrid
 
   template<typename element_type, typename container_collection_typemap>
   typename result_of::field<
-      typename storage::result_of::container_of<
+      typename result_of::container_of<
           container_collection_typemap,
           element_type
       >::type,
-      element_type>::type make_field( storage::collection<container_collection_typemap> & collection )
+      element_type>::type make_field( collection<container_collection_typemap> & collection )
   {
-    return make_field<element_type>( storage::detail::get<element_type>(collection) );
+    return make_field<element_type>( get<element_type>(collection) );
   }
 
   template<typename element_type, typename container_collection_typemap>
   typename result_of::field<
-      const typename storage::result_of::container_of<
+      const typename result_of::container_of<
           container_collection_typemap,
           element_type
       >::type,
-      element_type>::type make_field( storage::collection<container_collection_typemap> const & collection )
+      element_type>::type make_field( collection<container_collection_typemap> const & collection )
   {
-    return make_field<element_type>( storage::detail::get<element_type>(collection) );
+    return make_field<element_type>( get<element_type>(collection) );
   }
 
 

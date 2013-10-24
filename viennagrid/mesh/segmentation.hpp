@@ -272,6 +272,27 @@ namespace viennagrid
 
 
 
+
+  // doxygen docu in mesh.hpp
+  template<typename SegmentationT, typename HandleT>
+  typename detail::result_of::value_type<HandleT>::type &
+  dereference_handle(segment_handle<SegmentationT> & segment_handle, HandleT const & handle)
+  {
+    typedef typename detail::result_of::value_type<HandleT>::type value_type;
+    return get<value_type>(element_collection(segment_handle)).dereference_handle( handle );
+  }
+
+  // doxygen docu in mesh.hpp
+  template<typename SegmentationT, typename HandleT>
+  typename detail::result_of::value_type<HandleT>::type const &
+  dereference_handle(segment_handle<SegmentationT> const & segment_handle, HandleT const & handle)
+  {
+    typedef typename detail::result_of::value_type<HandleT>::type value_type;
+    return get<value_type>(element_collection(segment_handle)).dereference_handle( handle );
+  }
+
+
+
   /** @brief Creates a view out of a mesh using the mesh_proxy object
     *
     * @tparam SegmentationT          The segmentation type from which the mesh view is created
@@ -424,7 +445,7 @@ namespace viennagrid
     typedef segment_handle<self_type> segment_handle_type;
 
     /** @brief For internal use only */
-    typedef typename viennagrid::storage::result_of::container< view_type, view_container_tag >::type view_container_type;
+    typedef typename viennagrid::result_of::container< view_type, view_container_tag >::type view_container_type;
     /** @brief For internal use only */
     typedef std::map<segment_id_type, segment_handle_type> segment_id_map_type;
 
@@ -693,6 +714,25 @@ namespace viennagrid
   { return elements<ElementTypeOrTagT>( segm.all_elements() ); }
 
 
+  // doxygen docu in mesh.hpp
+  template<typename WrappedConfigT, typename HandleT>
+  typename detail::result_of::value_type<HandleT>::type &
+  dereference_handle(segmentation<WrappedConfigT> & segmentation_, HandleT const & handle)
+  {
+    typedef typename detail::result_of::value_type<HandleT>::type value_type;
+    return get<value_type>(element_collection(segmentation_)).dereference_handle( handle );
+  }
+
+  // doxygen docu in mesh.hpp
+  template<typename WrappedConfigT, typename HandleT>
+  typename detail::result_of::value_type<HandleT>::type const &
+  dereference_handle(segmentation<WrappedConfigT> const & segmentation_, HandleT const & handle)
+  {
+    typedef typename detail::result_of::value_type<HandleT>::type value_type;
+    return get<value_type>(element_collection(segmentation_)).dereference_handle( handle );
+  }
+
+
 
 
   namespace result_of
@@ -797,13 +837,13 @@ namespace viennagrid
 
 
 
-  template<typename element_segment_mapping_type, typename container_tag = viennagrid::storage::std_deque_tag>
+  template<typename element_segment_mapping_type, typename container_tag = viennagrid::std_deque_tag>
   struct segment_info_t
   {
     typedef typename element_segment_mapping_type::segment_id_type segment_id_type;
     typedef typename element_segment_mapping_type::segment_element_info_type segment_element_info_type;
 
-    typedef typename viennagrid::storage::result_of::container<element_segment_mapping_type, container_tag>::type element_segment_mapping_container_type;
+    typedef typename viennagrid::result_of::container<element_segment_mapping_type, container_tag>::type element_segment_mapping_container_type;
 
 
     class const_iterator : public element_segment_mapping_container_type::const_iterator
@@ -840,26 +880,26 @@ namespace viennagrid
   struct element_segment_mapping_tag;
 
   template<typename SegmentationT>
-  typename viennagrid::storage::result_of::value_type<
+  typename viennagrid::meta::result_of::lookup<
           typename SegmentationT::appendix_type,
           element_segment_mapping_tag
       >::type & element_segment_mapping_collection( SegmentationT & segmentation )
   {
-    return viennagrid::storage::detail::get<element_segment_mapping_tag>( segmentation.appendix() );
+    return viennagrid::get<element_segment_mapping_tag>( segmentation.appendix() );
   }
 
   template<typename SegmentationT>
-  typename viennagrid::storage::result_of::value_type<
+  typename viennagrid::meta::result_of::lookup<
           typename SegmentationT::appendix_type,
           element_segment_mapping_tag
       >::type const & element_segment_mapping_collection( SegmentationT const & segmentation )
   {
-    return viennagrid::storage::detail::get<element_segment_mapping_tag>( segmentation.appendix() );
+    return viennagrid::get<element_segment_mapping_tag>( segmentation.appendix() );
   }
 
 
   template<typename segment_handle_type>
-  typename viennagrid::storage::result_of::value_type<
+  typename viennagrid::meta::result_of::lookup<
           typename segment_handle_type::segmentation_type::appendix_type,
           element_segment_mapping_tag
       >::type & element_segment_mapping_collection( segment_handle_type & segment )
@@ -868,7 +908,7 @@ namespace viennagrid
   }
 
   template<typename segment_handle_type>
-  typename viennagrid::storage::result_of::value_type<
+  typename viennagrid::meta::result_of::lookup<
           typename segment_handle_type::segmentation_type::appendix_type,
           element_segment_mapping_tag
       >::type const & element_segment_mapping_collection( segment_handle_type const & segment )
@@ -930,26 +970,26 @@ namespace viennagrid
 
 
   template<typename element_tag, typename segment_handle_type>
-  typename viennagrid::storage::result_of::value_type<
-      typename viennagrid::storage::result_of::value_type<
+  typename viennagrid::meta::result_of::lookup<
+      typename viennagrid::meta::result_of::lookup<
           typename segment_handle_type::segmentation_type::appendix_type,
           interface_information_collection_tag
       >::type,
       element_tag
   >::type::segment_interface_information_wrapper_type &
   interface_information_collection( segment_handle_type & seg0, segment_handle_type & seg1 )
-  { return viennagrid::storage::detail::get<element_tag>( viennagrid::storage::detail::get<interface_information_collection_tag>( seg0.parent().appendix() ) ).get_interface_wrapper(seg0, seg1); }
+  { return viennagrid::get<element_tag>( viennagrid::get<interface_information_collection_tag>( seg0.parent().appendix() ) ).get_interface_wrapper(seg0, seg1); }
 
   template<typename element_tag, typename segment_handle_type>
-  typename viennagrid::storage::result_of::value_type<
-      typename viennagrid::storage::result_of::value_type<
+  typename viennagrid::meta::result_of::lookup<
+      typename viennagrid::meta::result_of::lookup<
           typename segment_handle_type::segmentation_type::appendix_type,
           interface_information_collection_tag
       >::type,
       element_tag
   >::type::segment_interface_information_wrapper_type const &
   interface_information_collection( segment_handle_type const & seg0, segment_handle_type const & seg1 )
-  { return viennagrid::storage::detail::get<element_tag>( viennagrid::storage::detail::get<interface_information_collection_tag>( seg0.parent().appendix() ) ).get_interface_wrapper(seg0, seg1); }
+  { return viennagrid::get<element_tag>( viennagrid::get<interface_information_collection_tag>( seg0.parent().appendix() ) ).get_interface_wrapper(seg0, seg1); }
 
 
 
@@ -969,7 +1009,7 @@ namespace viennagrid
     template<typename segment_id_type, typename interface_information_container_tag, typename ChangeCounterType, typename element_tag, typename tail>
     struct interface_information_collection_typemap_impl<segment_id_type, interface_information_container_tag, ChangeCounterType, viennagrid::typelist<element_tag, tail> >
     {
-      typedef typename storage::result_of::container<bool, interface_information_container_tag >::type base_container;
+      typedef typename result_of::container<bool, interface_information_container_tag >::type base_container;
 
       typedef viennagrid::typelist<
           viennagrid::static_pair<
@@ -1009,8 +1049,8 @@ namespace viennagrid
     struct segmentation_info_container_typemap< viennagrid::typelist<viennagrid::static_pair<element_tag, segment_info_type>, tail>, segment_id_type, container_tag, segment_info_container_tag >
     {
       typedef viennagrid::static_pair< element_tag, segment_info_type > key_type;
-      typedef typename viennagrid::storage::result_of::container< std::pair<segment_id_type, segment_info_type>, segment_info_container_tag>::type segment_info_container;
-      typedef typename viennagrid::storage::result_of::container<segment_info_container, container_tag>::type container_type;
+      typedef typename viennagrid::result_of::container< std::pair<segment_id_type, segment_info_type>, segment_info_container_tag>::type segment_info_container;
+      typedef typename viennagrid::result_of::container<segment_info_container, container_tag>::type container_type;
 
       typedef viennagrid::typelist<
           viennagrid::static_pair<
@@ -1023,7 +1063,7 @@ namespace viennagrid
 
 
     /** @brief For internal use only */
-    template<typename element_typelist, typename segment_id_type, typename container_tag = viennagrid::storage::std_deque_tag>
+    template<typename element_typelist, typename segment_id_type, typename container_tag = viennagrid::std_deque_tag>
     struct trivial_segmentation_appendix;
 
     template<typename segment_id_type,typename container_tag>
@@ -1038,7 +1078,7 @@ namespace viennagrid
       typedef viennagrid::typelist<
           viennagrid::static_pair<
               element_type,
-              typename viennagrid::storage::result_of::container<
+              typename viennagrid::result_of::container<
                   segment_info_t< element_segment_mapping<segment_id_type> >,
                   container_tag
               >::type
@@ -1060,10 +1100,10 @@ namespace viennagrid
              typename ViewT = typename viennagrid::result_of::mesh_view<MeshT>::type,
              typename SegmentIDType = int,
              typename AppendixType =
-                viennagrid::storage::collection<
+                viennagrid::collection<
                     typename viennagrid::make_typemap<
                         element_segment_mapping_tag,
-                        viennagrid::storage::collection<
+                        viennagrid::collection<
                             typename trivial_segmentation_appendix<
                                 typename viennagrid::result_of::element_typelist<MeshT>::type,
                                 SegmentIDType
@@ -1072,18 +1112,18 @@ namespace viennagrid
 
 
                         interface_information_collection_tag,
-                        viennagrid::storage::collection<
+                        viennagrid::collection<
                           typename viennagrid::result_of::interface_information_collection_typemap<
                             typename viennagrid::result_of::element_taglist<MeshT>::type,
                             SegmentIDType,
-                            viennagrid::storage::std_vector_tag,
+                            viennagrid::std_vector_tag,
                             typename viennagrid::result_of::change_counter_type<MeshT>::type
                           >::type
                         >
 
                     >::type
                 >,
-            typename view_container_tag = viennagrid::storage::std_deque_tag >
+            typename view_container_tag = viennagrid::std_deque_tag >
     struct segmentation
     {
       typedef config::segmentation_config_wrapper_t<MeshT, ViewT, SegmentIDType, AppendixType, view_container_tag> WrappedConfigType;
@@ -1104,10 +1144,10 @@ namespace viennagrid
              typename ViewT = typename viennagrid::result_of::mesh_view<MeshT>::type,
              typename SegmentIDType = int,
              typename AppendixType =
-              viennagrid::storage::collection<
+              viennagrid::collection<
                 typename viennagrid::make_typemap<
                     element_segment_mapping_tag,
-                    viennagrid::storage::collection<
+                    viennagrid::collection<
                         typename viennagrid::meta::result_of::modify<
                             typename trivial_segmentation_appendix<
                                 typename viennagrid::result_of::element_typelist<MeshT>::type,
@@ -1115,27 +1155,27 @@ namespace viennagrid
                             >::type,
                             viennagrid::static_pair<
                                 typename viennagrid::result_of::element< MeshT, viennagrid::triangle_tag >::type,
-                                typename viennagrid::storage::result_of::container<
+                                typename viennagrid::result_of::container<
                                     segment_info_t< element_segment_mapping<SegmentIDType, bool> >,
-                                    viennagrid::storage::std_deque_tag
+                                    viennagrid::std_deque_tag
                                 >::type
                             >
                         >::type
                     >,
 
                     interface_information_collection_tag,
-                    viennagrid::storage::collection<
+                    viennagrid::collection<
                       typename viennagrid::result_of::interface_information_collection_typemap<
                         typename viennagrid::result_of::element_taglist<MeshT>::type,
                         SegmentIDType,
-                        viennagrid::storage::std_vector_tag,
+                        viennagrid::std_vector_tag,
                         typename viennagrid::result_of::change_counter_type<MeshT>::type
                       >::type
                     >
 
                 >::type
             >,
-            typename view_container_tag = viennagrid::storage::std_deque_tag >
+            typename view_container_tag = viennagrid::std_deque_tag >
     struct oriented_3d_hull_segmentation
     {
       typedef config::segmentation_config_wrapper_t<MeshT, ViewT, SegmentIDType, AppendixType, view_container_tag> WrappedConfigType;
@@ -1260,12 +1300,12 @@ namespace viennagrid
     template<typename SegmentationT, typename ElementT>
     struct segment_id_range
     {
-      typedef typename viennagrid::storage::result_of::value_type<
+      typedef typename viennagrid::meta::result_of::lookup<
           typename SegmentationT::appendix_type,
           element_segment_mapping_tag
       >::type ElementSegmentMappingCollectionType;
 
-      typedef typename viennagrid::storage::result_of::container_of<
+      typedef typename viennagrid::result_of::container_of<
         ElementSegmentMappingCollectionType,
         ElementT
       >::type ElementSegmentMappingContainerType;
@@ -1362,8 +1402,8 @@ namespace viennagrid
     * @return                 A pointer to the segment element information type
     */
   template<typename SegmentHandleT, typename ElementTagT, typename WrappedConfigT>
-  typename viennagrid::storage::result_of::container_of<
-      typename viennagrid::storage::result_of::value_type<
+  typename viennagrid::result_of::container_of<
+      typename viennagrid::meta::result_of::lookup<
           typename SegmentHandleT::segmentation_type::appendix_type,
           element_segment_mapping_tag
       >::type,
@@ -1385,8 +1425,8 @@ namespace viennagrid
     * @return                 A const pointer to the segment element information type
     */
   template<typename SegmentHandleT, typename ElementTagT, typename WrappedConfigT>
-  typename viennagrid::storage::result_of::container_of<
-      typename viennagrid::storage::result_of::value_type<
+  typename viennagrid::result_of::container_of<
+      typename viennagrid::meta::result_of::lookup<
           typename SegmentHandleT::segmentation_type::appendix_type,
           element_segment_mapping_tag
       >::type,
@@ -1553,7 +1593,7 @@ namespace viennagrid
   /** @brief For internal use only */
   template<bool generate_id, bool call_callback, typename SegmentationType, typename ElementTag, typename WrappedConfigType>
   std::pair<
-              typename viennagrid::storage::result_of::container_of<
+              typename viennagrid::result_of::container_of<
                   typename result_of::element_collection< viennagrid::segment_handle<SegmentationType> >::type,
                   viennagrid::element<ElementTag, WrappedConfigType>
               >::type::handle_type,
@@ -1562,7 +1602,7 @@ namespace viennagrid
   push_element( viennagrid::segment_handle<SegmentationType> & segment, viennagrid::element<ElementTag, WrappedConfigType> const & element)
   {
     std::pair<
-            typename viennagrid::storage::result_of::container_of<
+            typename viennagrid::result_of::container_of<
                 typename result_of::element_collection< viennagrid::segment_handle<SegmentationType> >::type,
                 viennagrid::element<ElementTag, WrappedConfigType>
             >::type::handle_type,
@@ -1586,7 +1626,7 @@ namespace viennagrid
   template<typename ViewT, typename HandleT>
   void add_single_handle( ViewT & view_or_segment, HandleT handle )
   {
-    typedef typename storage::detail::result_of::value_type<HandleT>::type value_type;
+    typedef typename detail::result_of::value_type<HandleT>::type value_type;
     value_type & element = dereference_handle(view_or_segment, handle);
 
     typedef typename viennagrid::result_of::element_range< ViewT, value_type >::type range_type;
@@ -1594,7 +1634,7 @@ namespace viennagrid
 
     iterator_type it = find( view_or_segment, element.id() );
     if ( it == elements<value_type>(view_or_segment).end() )
-      viennagrid::storage::detail::get<value_type>( element_collection(view_or_segment) ).insert_handle( handle );
+      viennagrid::get<value_type>( element_collection(view_or_segment) ).insert_handle( handle );
 
     viennagrid::increment_change_counter(view_or_segment);
   }

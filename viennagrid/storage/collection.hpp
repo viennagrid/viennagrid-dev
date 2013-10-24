@@ -22,22 +22,13 @@
 
 namespace viennagrid
 {
-  namespace storage
+  namespace detail
   {
 
     template<typename typemap>
     class collection_layer;
 
-    template<typename typemap_>
-    class collection : public collection_layer< typemap_ >
-    {
-    public:
-      typedef typemap_ typemap;
-      typedef collection_layer< typemap > base;
 
-      using base::get;
-    private:
-    };
 
     template<typename key_, typename value_, typename tail>
     class collection_layer< viennagrid::typelist< viennagrid::static_pair<key_, value_> , tail> > : public collection_layer<tail>
@@ -62,49 +53,56 @@ namespace viennagrid
       void get();
     };
 
+  }
 
+
+  template<typename typemap_>
+  class collection : public detail::collection_layer< typemap_ >
+  {
+  public:
+    typedef typemap_ typemap;
+    typedef detail::collection_layer< typemap > base;
+
+    using base::get;
+  private:
+  };
+
+//   namespace result_of
+//   {
+//     template<typename typemap>
+//     struct collection
+//     {
+//         typedef viennagrid::collection<typemap> type;
+//     };
+//   } // namespace result_of
+
+
+  namespace meta
+  {
     namespace result_of
     {
       template<typename typemap, typename key_type>
-      struct value_type
+      struct lookup< viennagrid::collection<typemap>, key_type >
       {
-        typedef typename viennagrid::meta::result_of::find<typemap, key_type>::type::second type;
-      };
-
-      template<typename typemap, typename key_type>
-      struct value_type< viennagrid::storage::collection<typemap>, key_type >
-      {
-        typedef typename viennagrid::meta::result_of::find<typemap, key_type>::type::second type;
+        typedef typename viennagrid::meta::result_of::lookup<typemap, key_type>::type type;
       };
     }
+  }
 
 
-    namespace detail
-    {
-      template<typename type, typename typemap>
-      typename viennagrid::storage::result_of::value_type<typemap, typename viennagrid::meta::remove_const<type>::type >::type & get( collection<typemap> & c )
-      {
-        return c.get( viennagrid::meta::tag< typename viennagrid::meta::remove_const<type>::type >() );
-      }
+  template<typename type, typename typemap>
+  typename viennagrid::meta::result_of::lookup<typemap, typename viennagrid::meta::remove_const<type>::type >::type & get( collection<typemap> & c )
+  {
+    return c.get( viennagrid::meta::tag< typename viennagrid::meta::remove_const<type>::type >() );
+  }
 
-      template<typename type, typename typemap>
-      typename viennagrid::storage::result_of::value_type<typemap, typename viennagrid::meta::remove_const<type>::type >::type const & get( collection<typemap> const & c )
-      {
-        return c.get( viennagrid::meta::tag< typename viennagrid::meta::remove_const<type>::type >() );
-      }
-    } // namespace collection
+  template<typename type, typename typemap>
+  typename viennagrid::meta::result_of::lookup<typemap, typename viennagrid::meta::remove_const<type>::type >::type const & get( collection<typemap> const & c )
+  {
+    return c.get( viennagrid::meta::tag< typename viennagrid::meta::remove_const<type>::type >() );
+  }
 
 
-    namespace result_of
-    {
-      template<typename typemap>
-      struct collection
-      {
-          typedef viennagrid::storage::collection<typemap> type;
-      };
-    } // namespace result_of
-
-  } // namespace storge
 } // namespace viennagrid
 
 #endif

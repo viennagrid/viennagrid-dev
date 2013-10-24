@@ -168,7 +168,7 @@ namespace viennagrid
         MeshOrSegmentHandleTypeT & mesh_obj,
         VertexHandleT v0, VertexHandleT v1)
   {
-    viennagrid::storage::static_array<VertexHandleT, 2> handles;
+    viennagrid::static_array<VertexHandleT, 2> handles;
     handles[0] = v0;
     handles[1] = v1;
 
@@ -181,7 +181,7 @@ namespace viennagrid
         MeshOrSegmentHandleTypeT & mesh_obj,
         VertexHandleT v0, VertexHandleT v1)
   {
-    viennagrid::storage::static_array<VertexHandleT, 2> handles;
+    viennagrid::static_array<VertexHandleT, 2> handles;
     handles[0] = v0;
     handles[1] = v1;
 
@@ -194,7 +194,7 @@ namespace viennagrid
         MeshOrSegmentHandleTypeT & mesh_obj,
         VertexHandleT v0, VertexHandleT v1, VertexHandleT v2)
   {
-    viennagrid::storage::static_array<VertexHandleT, 3> handles;
+    viennagrid::static_array<VertexHandleT, 3> handles;
     handles[0] = v0;
     handles[1] = v1;
     handles[2] = v2;
@@ -208,7 +208,7 @@ namespace viennagrid
         MeshOrSegmentHandleTypeT & mesh_obj,
         VertexHandleT v0, VertexHandleT v1, VertexHandleT v2, VertexHandleT v3)
   {
-    viennagrid::storage::static_array<VertexHandleT, 4> handles;
+    viennagrid::static_array<VertexHandleT, 4> handles;
     handles[0] = v0;
     handles[1] = v1;
     handles[2] = v2;
@@ -255,7 +255,7 @@ namespace viennagrid
         MeshOrSegmentHandleTypeT & mesh_obj,
         VertexHandleT v0, VertexHandleT v1, VertexHandleT v2, VertexHandleT v3)
   {
-    viennagrid::storage::static_array<VertexHandleT, 4> handles;
+    viennagrid::static_array<VertexHandleT, 4> handles;
     handles[0] = v0;
     handles[1] = v1;
     handles[2] = v2;
@@ -272,7 +272,7 @@ namespace viennagrid
         VertexHandleT v0, VertexHandleT v1, VertexHandleT v2, VertexHandleT v3,
         VertexHandleT v4, VertexHandleT v5, VertexHandleT v6, VertexHandleT v7)
   {
-    viennagrid::storage::static_array<VertexHandleT, 8> handles;
+    viennagrid::static_array<VertexHandleT, 8> handles;
     handles[0] = v0;
     handles[1] = v1;
     handles[2] = v2;
