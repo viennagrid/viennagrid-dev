@@ -604,10 +604,10 @@ namespace viennagrid
         if (it != map.end())
         {
           delete it->second;
-          it->second = new dynamic_field<const AccessorOrFieldType>( accessor_or_field );
+          it->second = new dynamic_field_wrapper<const AccessorOrFieldType>( accessor_or_field );
         }
         else
-          map[quantity_name] = new dynamic_field<const AccessorOrFieldType>( accessor_or_field );
+          map[quantity_name] = new dynamic_field_wrapper<const AccessorOrFieldType>( accessor_or_field );
     }
 
 

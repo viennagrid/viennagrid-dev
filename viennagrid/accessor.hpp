@@ -47,6 +47,7 @@ namespace viennadata
 
 namespace viennagrid
 {
+  /** @brief Accessor class for the data members appended (injected) to an element */
   template<typename value_type_, typename element_type>
   class appendix_accessor
   {
@@ -90,6 +91,7 @@ namespace viennagrid
   namespace result_of
   {
 
+    /** @brief Metafunction returning the default point accessor type for a vertex. */
     template<typename mesh_or_element_type>
     struct default_point_accessor
     {
@@ -101,6 +103,7 @@ namespace viennagrid
 
   }
 
+  /** @brief Convenience function for returning the default point accessor (i.e. accessing the point stored in the element's appendix) for a mesh or element. */
   template<typename mesh_or_element_type>
   typename result_of::default_point_accessor<mesh_or_element_type>::type default_point_accessor( mesh_or_element_type const & )
   {
@@ -138,7 +141,11 @@ namespace viennagrid
 
 
 
-
+  /** @brief Implementation of an accessor for dense containers (most importantly std::vector, std::deque) which fulfills the accessor concept.
+    *
+    * @tparam   ContainerType    The underlying container type (e.g. std::vector<>)
+    * @tparam   AccessType       The element from which data should be accessed
+    */
   template<typename ContainerType, typename AccessType>
   class dense_container_accessor
   {
@@ -206,6 +213,7 @@ namespace viennagrid
   };
 
 
+  /** \cond */
   template<typename ContainerType, typename AccessType>
   class dense_container_accessor<const ContainerType, AccessType>
   {
@@ -256,10 +264,11 @@ namespace viennagrid
   protected:
     container_type * container;
   };
+  /** \endcond */
 
 
 
-
+  /** @brief  An accessor (fulfilling the accessor concept) for a container of interface similar to std::map<> */
   template<typename ContainerType, typename AccessType>
   class std_map_accessor
   {
@@ -322,6 +331,7 @@ namespace viennagrid
   };
 
 
+  /** \cond */
   template<typename ContainerType, typename AccessType>
   class std_map_accessor<const ContainerType, AccessType>
   {
@@ -366,6 +376,7 @@ namespace viennagrid
   protected:
     container_type * container;
   };
+  /** \endcond */
 
 
 
@@ -412,13 +423,22 @@ namespace viennagrid
   }
 
 
-
+  /** @brief Convenience function for returning an accessor for the supplied container. Non-const version.
+    *
+    * @tparam AccessType      The element type for which data should be accessed (for example a vertex type)
+    * @tparam ContainerType   The container type. Usually not supplied explicitly by the user.
+    */
   template<typename AccessType, typename ContainerType>
   typename result_of::accessor<ContainerType, AccessType>::type make_accessor( ContainerType & container )
   {
     return typename result_of::accessor<ContainerType, AccessType>::type(container);
   }
 
+  /** @brief Convenience function for returning an accessor for the supplied container. Const-version.
+    *
+    * @tparam AccessType      The element type for which data should be accessed (for example a vertex type)
+    * @tparam ContainerType   The container type. Usually not supplied explicitly by the user.
+    */
   template<typename AccessType, typename ContainerType>
   typename result_of::accessor<const ContainerType, AccessType>::type make_accessor( ContainerType const & container )
   {
@@ -427,31 +447,45 @@ namespace viennagrid
 
 
 
-  template<typename element_type, typename container_collection_typemap>
+  /** @brief Convenience function for returning an accessor for the supplied container collection. Non-const-version.
+    *
+    * @tparam AccessType                    The element type for which data should be accessed (for example a vertex type)
+    * @tparam ContainerCollectionTypemapT   Configuration typemap for the collection. To be deduced by the compiler, not passed explicitly.
+    */
+  template<typename AccessType, typename ContainerCollectionTypemapT>
   typename result_of::accessor<
       typename result_of::container_of<
-          container_collection_typemap,
-          element_type
+          ContainerCollectionTypemapT,
+          AccessType
       >::type,
-      element_type>::type make_accessor( collection<container_collection_typemap> & collection )
+      AccessType>::type make_accessor( collection<ContainerCollectionTypemapT> & collection_obj )
   {
-    return make_accessor<element_type>( get<element_type>(collection) );
+    return make_accessor<AccessType>( get<AccessType>(collection_obj) );
   }
 
-  template<typename element_type, typename container_collection_typemap>
+  /** @brief Convenience function for returning an accessor for the supplied container collection. Const-version.
+    *
+    * @tparam AccessType                    The element type for which data should be accessed (for example a vertex type)
+    * @tparam ContainerCollectionTypemapT   Configuration typemap for the collection. To be deduced by the compiler, not passed explicitly.
+    */
+  template<typename AccessType, typename ContainerCollectionTypemapT>
   typename result_of::accessor<
       const typename result_of::container_of<
-          container_collection_typemap,
-          element_type
+          ContainerCollectionTypemapT,
+          AccessType
       >::type,
-      element_type>::type make_accessor( collection<container_collection_typemap> const & collection )
+      AccessType>::type make_accessor( collection<ContainerCollectionTypemapT> const & collection_obj )
   {
-    return make_accessor<element_type>( get<element_type>(collection) );
+    return make_accessor<AccessType>( get<AccessType>(collection_obj) );
   }
 
 
 
-
+  /** @brief Base class for all dynamic accessor.
+   *
+   *  @tparam ValueType     The data type, e.g. double
+   *  @tparam AccessType    The element for which data is accessed, e.g. a vertex
+   */
   template<typename ValueType, typename AccessType>
   class base_dynamic_accessor
   {
@@ -477,6 +511,7 @@ namespace viennagrid
     virtual const_reference access( access_type const & element ) const = 0;
   };
 
+  /** \cond */
   template<typename ValueType, typename AccessType>
   class base_dynamic_accessor<const ValueType, AccessType>
   {
@@ -496,12 +531,16 @@ namespace viennagrid
     virtual const_reference operator()( access_type const & element ) const = 0;
     virtual const_reference access( access_type const & element ) const = 0;
   };
+  /** \endcond */
 
 
 
-
+  /** @brief A dynamic accessor class which wraps any user accessor type fulfilling the accessor concept.
+    *
+    * This can be used for storing different accessors to the same element type for data with the same value type in a common container.
+    */
   template<typename AccessorType>
-  class dynamic_accessor : public base_dynamic_accessor< typename AccessorType::value_type, typename AccessorType::access_type >
+  class dynamic_accessor_wrapper : public base_dynamic_accessor< typename AccessorType::value_type, typename AccessorType::access_type >
   {
   public:
     typedef base_dynamic_accessor< typename AccessorType::value_type, typename AccessorType::access_type > BaseAccessorType;
@@ -516,7 +555,7 @@ namespace viennagrid
     typedef typename BaseAccessorType::const_pointer const_pointer;
 
 
-    dynamic_accessor(AccessorType accessor_) : accessor(accessor_) {}
+    dynamic_accessor_wrapper(AccessorType accessor_) : accessor(accessor_) {}
 
     virtual pointer find( access_type const & element ) { return accessor.find(element); }
     virtual const_pointer find( access_type const & element ) const { return accessor.find(element); }
@@ -531,9 +570,9 @@ namespace viennagrid
     AccessorType accessor;
   };
 
-
+  /** \cond */
   template<typename AccessorType>
-  class dynamic_accessor<const AccessorType> : public base_dynamic_accessor< const typename AccessorType::value_type, typename AccessorType::access_type >
+  class dynamic_accessor_wrapper<const AccessorType> : public base_dynamic_accessor< const typename AccessorType::value_type, typename AccessorType::access_type >
   {
   public:
     typedef base_dynamic_accessor< const typename AccessorType::value_type, typename AccessorType::access_type > BaseAccessorType;
@@ -548,7 +587,7 @@ namespace viennagrid
     typedef typename BaseAccessorType::const_pointer const_pointer;
 
 
-    dynamic_accessor(AccessorType accessor_) : accessor(accessor_) {}
+    dynamic_accessor_wrapper(AccessorType accessor_) : accessor(accessor_) {}
 
     virtual const_pointer find( access_type const & element ) const { return accessor.find(element); }
     virtual const_reference operator()( access_type const & element ) const { return access(element); }
@@ -557,6 +596,7 @@ namespace viennagrid
   private:
     AccessorType accessor;
   };
+  /** \endcond */
 
 
 
@@ -569,8 +609,11 @@ namespace viennagrid
 
 
 
-
-
+  /** @brief Accessor class implementing the field concept for dense containers (most importantly std::vector<> and std::deque<>).
+    *
+    * @tparam ContainerType   Type of the dense container, e.g. std::vector<double>
+    * @tparam AccessType      The element type from which data is queried, e.g. a vertex
+    */
   template<typename ContainerType, typename AccessType>
   class dense_container_field
   {
@@ -644,7 +687,7 @@ namespace viennagrid
     value_type default_value;
   };
 
-
+  /** \cond */
   template<typename ContainerType, typename AccessType>
   class dense_container_field<const ContainerType, AccessType>
   {
@@ -700,10 +743,11 @@ namespace viennagrid
     container_type * container;
     value_type default_value;
   };
+  /** \endcond */
 
 
 
-
+  /** @brief  An accessor (fulfilling the field concept) for a container of interface similar to std::map<> */
   template<typename ContainerType, typename AccessType>
   class std_map_field
   {
@@ -771,6 +815,7 @@ namespace viennagrid
   };
 
 
+  /** \cond */
   template<typename ContainerType, typename AccessType>
   class std_map_field<const ContainerType, AccessType>
   {
@@ -820,6 +865,7 @@ namespace viennagrid
     container_type * container;
     value_type default_value;
   };
+  /** \endcond */
 
 
 
@@ -868,13 +914,22 @@ namespace viennagrid
   }
 
 
-
+  /** \brief Convenience function for creating a suitable field out of a container. Non-const version.
+    *
+    * @tparam AccessType      The element for which the container is accessed
+    * @tparam ContainerType   Type of the container. Possible types: std::vector, std::deque, std::map
+    */
   template<typename AccessType, typename ContainerType>
   typename result_of::field<ContainerType, AccessType>::type make_field( ContainerType & container )
   {
     return typename result_of::field<ContainerType, AccessType>::type(container);
   }
 
+  /** \brief Convenience function for creating a suitable field out of a container. Const-version.
+    *
+    * @tparam AccessType      The element for which the container is accessed
+    * @tparam ContainerType   Type of the container. Possible types: std::vector, std::deque, std::map
+    */
   template<typename AccessType, typename ContainerType>
   typename result_of::field<const ContainerType, AccessType>::type make_field( ContainerType const & container )
   {
@@ -883,26 +938,31 @@ namespace viennagrid
 
 
 
-  template<typename element_type, typename container_collection_typemap>
+  /** \brief Convenience function for creating a suitable field out of a collection of containers. Non-const-version.
+    *
+    * @tparam AccessType      The element for which the container is accessed
+    * @tparam ContainerType   Type of the container. Possible types: std::vector, std::deque, std::map
+    */
+  template<typename AccessType, typename ContainerCollectionTypemapT>
   typename result_of::field<
       typename result_of::container_of<
-          container_collection_typemap,
-          element_type
+          ContainerCollectionTypemapT,
+          AccessType
       >::type,
-      element_type>::type make_field( collection<container_collection_typemap> & collection )
+      AccessType>::type make_field( collection<ContainerCollectionTypemapT> & collection_obj )
   {
-    return make_field<element_type>( get<element_type>(collection) );
+    return make_field<AccessType>( get<AccessType>(collection_obj) );
   }
 
-  template<typename element_type, typename container_collection_typemap>
+  template<typename AccessType, typename ContainerCollectionTypemapT>
   typename result_of::field<
       const typename result_of::container_of<
-          container_collection_typemap,
-          element_type
+          ContainerCollectionTypemapT,
+          AccessType
       >::type,
-      element_type>::type make_field( collection<container_collection_typemap> const & collection )
+      AccessType>::type make_field( collection<ContainerCollectionTypemapT> const & collection_obj )
   {
-    return make_field<element_type>( get<element_type>(collection) );
+    return make_field<AccessType>( get<AccessType>(collection_obj) );
   }
 
 
@@ -910,7 +970,7 @@ namespace viennagrid
 
 
 
-
+  /** @brief Common base class for dynamic data accessors fulfilling the field concept */
   template<typename ValueType, typename AccessType>
   class base_dynamic_field
   {
@@ -936,6 +996,7 @@ namespace viennagrid
     virtual const_reference at( access_type const & element ) const = 0;
   };
 
+  /** \cond */
   template<typename ValueType, typename AccessType>
   class base_dynamic_field<const ValueType, AccessType>
   {
@@ -955,12 +1016,17 @@ namespace viennagrid
     virtual value_type operator()( access_type const & element ) const = 0;
     virtual const_reference at( access_type const & element ) const = 0;
   };
+  /** \endcond */
 
 
 
 
+  /** @brief A dynamic accessor class which wraps any user accessor type fulfilling the field concept.
+    *
+    * Used within IO reader/writers to store different accessors for data on vertices and cells inside a single container.
+    */
   template<typename FieldType>
-  class dynamic_field : public base_dynamic_field< typename FieldType::value_type, typename FieldType::access_type >
+  class dynamic_field_wrapper : public base_dynamic_field< typename FieldType::value_type, typename FieldType::access_type >
   {
   public:
     typedef base_dynamic_field< typename FieldType::value_type, typename FieldType::access_type > BaseFieldType;
@@ -975,7 +1041,7 @@ namespace viennagrid
     typedef typename BaseFieldType::const_pointer const_pointer;
 
 
-    dynamic_field(FieldType field_) : field(field_) {}
+    dynamic_field_wrapper(FieldType field_) : field(field_) {}
 
     virtual pointer find( access_type const & element ) { return field.find(element); }
     virtual const_pointer find( access_type const & element ) const { return field.find(element); }
@@ -991,8 +1057,9 @@ namespace viennagrid
   };
 
 
+  /** \cond */
   template<typename FieldType>
-  class dynamic_field<const FieldType> : public base_dynamic_field< const typename FieldType::value_type, typename FieldType::access_type >
+  class dynamic_field_wrapper<const FieldType> : public base_dynamic_field< const typename FieldType::value_type, typename FieldType::access_type >
   {
   public:
     typedef base_dynamic_field< const typename FieldType::value_type, typename FieldType::access_type > BaseFieldType;
@@ -1007,7 +1074,7 @@ namespace viennagrid
     typedef typename BaseFieldType::const_pointer const_pointer;
 
 
-    dynamic_field(FieldType field_) : field(field_) {}
+    dynamic_field_wrapper(FieldType field_) : field(field_) {}
 
     virtual const_pointer find( access_type const & element ) const { return field.find(element); }
     virtual value_type operator()( access_type const & element ) const { return field(element); }
@@ -1016,6 +1083,7 @@ namespace viennagrid
   private:
     FieldType field;
   };
+  /** \endcond */
 
 
 
