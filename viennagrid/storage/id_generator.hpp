@@ -145,6 +145,10 @@ namespace viennagrid
 
   }
 
+  /** @brief A generator which returns numerical IDs (of possibly different type) in a continuous fashion starting from zero for each requested type.
+    *
+    * The configuration is carried out via a type map. For an element <KeyType, IDTag> the KeyType is used for the operator() dispatch, while the IDTag specifies the type of the ID used.
+    */
   template<typename typemap>
   class continuous_id_generator : public detail::continuous_id_generator_layer< typemap >
   {};

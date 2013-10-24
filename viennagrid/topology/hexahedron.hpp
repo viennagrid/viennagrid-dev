@@ -34,6 +34,7 @@ namespace viennagrid
     static std::string name() { return "Hexahedron"; }
   };
 
+  /** @brief Topological description of the 2-cells (quadrilateral faces) of a hexahedron */
   template <>
   struct boundary_elements<hypercube_tag<3>, hypercube_tag<2> >
   {
@@ -41,6 +42,7 @@ namespace viennagrid
     static const int num = 6;
   };
 
+  /** @brief Topological description of the 1-cells (edges/lines) of a hexahedron */
   template <>
   struct boundary_elements<hypercube_tag<3>, simplex_tag<1> >
   {
@@ -48,6 +50,7 @@ namespace viennagrid
     static const int num = 12;
   };
 
+  /** @brief Topological description of the 0-cells (vertices) of a hexahedron */
   template <>
   struct boundary_elements<hypercube_tag<3>, simplex_tag<0> >
   {

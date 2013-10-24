@@ -55,7 +55,10 @@ namespace viennagrid
 
   }
 
-
+  /** @brief A collection is a compile-time map which returns objects of (possibly distinct) type based on the provided key type.
+    *
+    * For example, collection may return objects of type std::deque<VertexType>, std::deque<EdgeType>, or std::vector<TriangleType> based on the tag provided.
+    */
   template<typename typemap_>
   class collection : public detail::collection_layer< typemap_ >
   {

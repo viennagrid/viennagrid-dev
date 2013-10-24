@@ -41,6 +41,7 @@ namespace viennagrid
     static const int num = -1;
   };
 
+  /** @brief Topological description of the 1-cells (edges/lines) of a polygon */
   template <>
   struct boundary_elements<polygon_tag, line_tag>
   {

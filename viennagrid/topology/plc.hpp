@@ -17,14 +17,15 @@
 #include "viennagrid/topology/simplex.hpp"
 #include "viennagrid/topology/polygon.hpp"
 
-/** @file viennagrid/topology/polygon.hpp
-    @brief Provides the topological definition of a polygon
+/** @file viennagrid/topology/plc.hpp
+    @brief Provides the topological definition of a piecewise linear complex
 */
 
 
 namespace viennagrid
 {
 
+  /** @brief A tag for identifying piecewise linear complexes (PLCs) */
   struct plc_tag
   {
     typedef line_tag facet_tag;
@@ -42,6 +43,7 @@ namespace viennagrid
     static const int num = -1;
   };
 
+  /** @brief Topological description of the 1-cells (edges/lines) of a polygon */
   template <>
   struct boundary_elements<plc_tag, line_tag>
   {

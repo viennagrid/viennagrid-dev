@@ -96,6 +96,7 @@ namespace viennagrid
 
 namespace viennagrid
 {
+  /** @brief A tag for selecting element_key as a key type within metafunctions */
   struct element_key_tag {};
 
   namespace result_of

@@ -33,10 +33,14 @@
 
 namespace viennagrid
 {
+  /** @brief Implementation class which represents one topological dimension of an element. For example, this class may take care of all edges of a triangle.
+    *
+    * An element is composed in a recursive manner by multiple boundary_element_layer parents. Each layer is customized via the configuration typemap.
+    */
   template<typename element_tag, typename boundary_config_typemap>
   class boundary_element_layer;
 
-
+  /** \cond */
   template<typename element_tag, typename bnd_cell_container_type_, typename orientation_container_type_, typename tail>
   class boundary_element_layer<element_tag, viennagrid::typelist< viennagrid::static_pair<bnd_cell_container_type_, orientation_container_type_>, tail > > :
       public boundary_element_layer<element_tag, tail>
@@ -296,7 +300,7 @@ namespace viennagrid
 
   private:
   };
-
+  /** \endcond */
 
 
   namespace result_of
@@ -495,10 +499,19 @@ namespace viennagrid
 
 
 
-
+  /** @brief A class for injecting additional members into topological elements (Vertex, Edge, etc.)
+    *
+    * This way a user can add for example a member 'color' (and/or accessor functions) to a vertex by overloading this class suitably.
+    * Make sure the same overload is used/visible in all compilation units when linking object files together!
+    */
   template<typename ElementTagT>
   class element_extension {};
 
+  /** @brief The main element class in ViennaGrid, representing vertices, edges, triangles, etc.
+    *
+    * @tparam ElementTag         The element tag
+    * @tparam WrappedConfigType  The element configuration type (a typemap wrapped inside a class in order to keep type name length under control)
+    */
   template<typename ElementTag, typename WrappedConfigType>
   class element :
       public element_extension<ElementTag>,
@@ -571,6 +584,7 @@ namespace viennagrid
 
 
   // separate specialization for vertices at the moment
+  /** \cond */
   template<typename WrappedConfigType>
   class element<vertex_tag, WrappedConfigType> :
       public element_extension<vertex_tag>,
@@ -622,6 +636,7 @@ namespace viennagrid
   private:
     appendix_type appendix_;
   };
+  /** \endcond */
 
 
 

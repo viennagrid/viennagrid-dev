@@ -69,7 +69,10 @@ namespace viennagrid
     }
   };
 
-  /** @brief Topological description of the boundary k-cells an n-simplex */
+  /** @brief Topological description of the boundary k-cells an n-simplex
+    *
+    * Note that this can be described nicely: The number of k-boundary-cells of an n-simplex (0 <= k <= n) is (n+1 over k+1).
+    */
   template <int n, int k>
   struct boundary_elements<simplex_tag<n>, simplex_tag<k> >
   {

@@ -33,6 +33,7 @@ namespace viennagrid
     static std::string name() { return "Quadrilateral"; }
   };
 
+  /** @brief Topological description of the 1-cells (edges/lines) of a quadrilateral */
   template <>
   struct boundary_elements<hypercube_tag<2>, simplex_tag<1> >
   {
@@ -40,6 +41,7 @@ namespace viennagrid
     static const int num = 4;
   };
 
+  /** @brief Topological description of the 0-cells (vertices) of a quadrilateral */
   template <>
   struct boundary_elements<hypercube_tag<2>, simplex_tag<0> >
   {
