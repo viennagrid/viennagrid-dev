@@ -69,7 +69,7 @@ namespace viennagrid
     {
       /** @brief The functor interface triggering the read operation. Segmentations are not supported in this version.
        *
-       * @param mesh        The mesh where the file content is written to
+       * @param mesh_obj      The mesh where the file content is written to
        * @param filename      Name of the file
        */
       template <typename MeshT>

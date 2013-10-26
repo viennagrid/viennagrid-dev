@@ -231,7 +231,7 @@ namespace viennagrid
     * @tparam CoboundaryTypeOrTagT    The coboundary element type/tag
     * @tparam WrappedConfigT          The wrapped config of the mesh
     * @tparam ElementOrHandleT        The element or handle type for which the coboundary range is obtained
-    * @param  mesh                  The host mesh object in which the elements of the coboundary range exist
+    * @param  mesh_obj                The host mesh object in which the elements of the coboundary range exist
     * @param  element_or_handle       A handle or the element for which the coboundary range is obained
     * @return                         The coboundary range
     */
@@ -265,7 +265,7 @@ namespace viennagrid
     * @tparam CoboundaryTypeOrTagT    The coboundary element type/tag
     * @tparam WrappedConfigT          The wrapped config of the mesh
     * @tparam ElementOrHandleT        The element or handle type for which the coboundary range is obtained
-    * @param  mesh                  The host mesh object in which the elements of the coboundary range exist
+    * @param  mesh_obj                The host mesh object in which the elements of the coboundary range exist
     * @param  element_or_handle       A handle or the element for which the coboundary range is obained
     * @return                         The const coboundary range
     */

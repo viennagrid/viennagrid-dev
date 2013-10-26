@@ -47,28 +47,29 @@ namespace viennagrid
   } // detail
 
 
-  /** @brief Scales the geometric points of a mesh/segment
+  /** @brief Scales the geometric points of a mesh.
    *
-   * @param  mesh_or_segment          The mesh/segment which points are scaled
-   * @param  factor                     The scale factor
+   * @param  mesh_obj      The mesh which points are scaled
+   * @param  factor        The scale factor
    */
   template<typename MeshConfigType, typename ScalarT>
-  void scale(viennagrid::mesh<MeshConfigType> & mesh, ScalarT factor)
+  void scale(viennagrid::mesh<MeshConfigType> & mesh_obj, ScalarT factor)
   {
     typedef viennagrid::mesh<MeshConfigType>   MeshType;
     typedef typename viennagrid::result_of::point<MeshType>::type   PointType;
-    viennagrid::detail::scale_impl(mesh, factor, PointType(0,0), viennagrid::default_point_accessor(mesh));
+    viennagrid::detail::scale_impl(mesh_obj, factor, PointType(0,0), viennagrid::default_point_accessor(mesh_obj));
   }
 
   /** @brief Scales the geometric points of a mesh/segment
    *
-   * @param  mesh_or_segment          The mesh/segment which points are scaled
-   * @param  factor                     The scale factor
+   * @param  mesh_obj          The mesh/segment which points are scaled
+   * @param  factor            The scale factor
+   * @param  scaling_center    Point c which is used as the center of contraction/expansion. The vectors (p - c) for each point p in the mesh then gets scaled by the factor.
    */
   template<typename MeshConfigType, typename ScalarT, typename PointType>
-  void scale(viennagrid::mesh<MeshConfigType> & mesh, ScalarT factor, PointType const & scaling_center)
+  void scale(viennagrid::mesh<MeshConfigType> & mesh_obj, ScalarT factor, PointType const & scaling_center)
   {
-    viennagrid::detail::scale_impl(mesh, factor, scaling_center, viennagrid::default_point_accessor(mesh));
+    viennagrid::detail::scale_impl(mesh_obj, factor, scaling_center, viennagrid::default_point_accessor(mesh_obj));
   }
 
 } // viennagrid

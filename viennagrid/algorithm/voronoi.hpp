@@ -890,7 +890,7 @@ namespace viennagrid
   /** @brief Writes Voronoi information to the mesh or segment using the provided accessors
    *
    * @tparam ElementTypeOrTagT                              The element/cell type/tag for which the voronoi information is calculated
-   * @param  mesh                                         The mesh
+   * @param  mesh_obj                                       The mesh
    * @param  interface_area_accessor                        An accessor where the interface areas are stored
    * @param  interface_area_cell_contribution_accessor      An accessor where the interface area element contributions are stored
    * @param  vertex_box_volume_accessor                     An accessor where the vertex box volumes are stored

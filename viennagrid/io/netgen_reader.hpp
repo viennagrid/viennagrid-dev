@@ -39,7 +39,7 @@ namespace viennagrid
     {
       /** @brief The functor interface triggering the read operation.
        *
-       * @param mesh        The mesh where the file content is written to
+       * @param mesh_obj      The mesh where the file content is written to
        * @param segmentation  The segmentation where the file content is written to
        * @param filename      Name of the file
        */
@@ -142,7 +142,7 @@ namespace viennagrid
 
       /** @brief The functor interface triggering the read operation.
        *
-       * @param mesh        The mesh where the file content is written to
+       * @param mesh_obj      The mesh where the file content is written to
        * @param filename      Name of the file
        */
       template <typename MeshType>

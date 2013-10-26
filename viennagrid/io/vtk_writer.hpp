@@ -398,7 +398,7 @@ namespace viennagrid
 
       /** @brief Triggers the write process to a XML file. Make sure that all data to be written to the file is already passed to the writer
        *
-       * @param mesh     The ViennaGrid mesh.
+       * @param mesh_obj   The ViennaGrid mesh.
        * @param filename   The file to write to
        */
       int operator()(MeshType const & mesh_obj, std::string const & filename)
@@ -462,7 +462,7 @@ namespace viennagrid
 
       /** @brief Triggers the write process to a XML file. Make sure that all data to be written to the file is already passed to the writer
        *
-       * @param mesh        The ViennaGrid mesh.
+       * @param mesh_obj      The ViennaGrid mesh.
        * @param segmentation  The ViennaGrid segmentation.
        * @param filename      The file to write to
        */

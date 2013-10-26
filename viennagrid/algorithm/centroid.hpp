@@ -187,8 +187,8 @@ namespace viennagrid
 
   /** @brief The public interface function for the computation of a centroid of a mesh with explicit point accessor.
    *
-   * @tparam ElementTOrTagT    The element type/tag of the elements for which the centroid is calculcated
-   * @param  mesh                 The mesh which centroid is to be calculated
+   * @tparam ElementTOrTagT       The element type/tag of the elements for which the centroid is calculcated
+   * @param  mesh_obj             The mesh which centroid is to be calculated
    * @param  point_accessor       The point accessor providing point information for geometric calculation
    */
   template<typename ElementTOrTagT, typename WrappedConfigT, typename PointAccessorT>
@@ -200,7 +200,7 @@ namespace viennagrid
 
   /** @brief The public interface function for the computation of a centroid of a mesh with explicit point accessor. Cells are used for centroid calculation, will fail if there is more than one cell type.
    *
-   * @param  mesh               The mesh which centroid is to be calculated
+   * @param  mesh_obj           The mesh which centroid is to be calculated
    * @param  point_accessor     The point accessor providing point information for geometric calculation
    */
   template<typename WrappedConfigT, typename PointAccessorT>
@@ -215,7 +215,7 @@ namespace viennagrid
   /** @brief The public interface function for the computation of a centroid of a mesh.
    *
    * @tparam ElementTOrTagT    The element type/tag of the elements for which the centroid is calculcated
-   * @param  mesh               The mesh which centroid is to be calculated
+   * @param  mesh_obj          The mesh which centroid is to be calculated
    */
   template<typename ElementTOrTagT, typename WrappedConfigT>
   typename viennagrid::result_of::point< mesh<WrappedConfigT> >::type
@@ -226,7 +226,7 @@ namespace viennagrid
 
   /** @brief The public interface function for the computation of a centroid of a mesh. Cells are used for centroid calculation, will fail if there is more than one cell type.
    *
-   * @param  mesh               The mesh which centroid is to be calculated
+   * @param  mesh_obj          The mesh which centroid is to be calculated
    */
   template<typename WrappedConfigT>
   typename viennagrid::result_of::point< mesh<WrappedConfigT> >::type

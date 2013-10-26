@@ -108,7 +108,7 @@ namespace viennagrid
       public:
         /** @brief Triggers the writing of the mesh to a file
          *
-         * @param mesh    A ViennaGrid mesh
+         * @param mesh_obj  A ViennaGrid mesh
          * @param filename  Name of the file
          */
         int operator()(MeshType const & mesh_obj, std::string const & filename)

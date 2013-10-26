@@ -175,7 +175,7 @@ namespace viennagrid
     * @tparam MeshT                   The mesh type in which the element to erase lives
     * @tparam MeshViewT               The mesh view type for all elements to erase
     * @tparam HandleT                 The handle type of the element to delete
-    * @param  mesh                    The host mesh object
+    * @param  mesh_obj                The host mesh object
     * @param  element_view            A mesh view which stores all elements to be marked
     * @param  host_element            A handle object of the host element
     */

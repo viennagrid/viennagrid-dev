@@ -726,10 +726,10 @@ namespace viennagrid
 
   /** @brief Function for inserting handles to all element from a mesh in a mesh view
     *
-    * @tparam MeshT     The mesh or segment type
+    * @tparam MeshT       The mesh or segment type
     * @tparam ViewT       The mesh view type
-    * @param  mesh      The input mesh/segment object
-    * @param  view        The output view object
+    * @param  mesh_obj    The input mesh/segment object
+    * @param  view_obj    The output view object
     */
   template<typename MeshT, typename ViewT>
   void handle_mesh(MeshT & mesh_obj, ViewT & view_obj)
@@ -803,7 +803,7 @@ namespace viennagrid
     *
     * @tparam WrappedConfigT     The wrapped config of the mesh/segment type
     * @tparam HandleT            A handle type
-    * @param  mesh             The host mesh/segment object
+    * @param  mesh_obj           The host mesh/segment object
     * @param  handle             The handle to be dereferenced
     * @return                    A C++ reference to an element which is referenced by handle
     */
@@ -819,7 +819,7 @@ namespace viennagrid
     *
     * @tparam WrappedConfigT     The wrapped config of the mesh/segment type
     * @tparam HandleT            A handle type
-    * @param  mesh             The host mesh/segment object
+    * @param  mesh_obj           The host mesh/segment object
     * @param  handle             The handle to be dereferenced
     * @return                    A C++ const reference to an element which is referenced by handle
     */
@@ -1447,7 +1447,7 @@ namespace viennagrid
   /** @brief Function for obtaining the point from a vertex
     *
     * @tparam WrappedConfigT      Wrapped config of the host mesh type
-    * @param  mesh              The host mesh object
+    * @param  mesh_obj            The host mesh object
     * @param  vertex_handle       A handle to the vertex of which the point is obtained
     * @return                     A reference to the point
     */
@@ -1459,7 +1459,7 @@ namespace viennagrid
   /** @brief Function for obtaining the point from a vertex, const version
     *
     * @tparam WrappedConfigT      Wrapped config of the host mesh type
-    * @param  mesh              The host mesh object
+    * @param  mesh_obj            The host mesh object
     * @param  vertex_handle       A handle to the vertex of which the point is obtained
     * @return                     A const reference to the point
     */

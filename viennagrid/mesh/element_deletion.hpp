@@ -163,9 +163,9 @@ namespace viennagrid
 
   /** @brief Erases all elements marked for deletion and all elements which references these elements from a mesh
     *
-    * @tparam WrappedConfigT          The wrapped config of the mesh type in which the elements to erase live
-    * @tparam ToEraseViewT               The mesh view type which stores all elements to erase
-    * @param  mesh                    The host mesh object
+    * @tparam WrappedConfigT            The wrapped config of the mesh type in which the elements to erase live
+    * @tparam ToEraseViewT              The mesh view type which stores all elements to erase
+    * @param  mesh_obj                  The host mesh object
     * @param  elements_to_erase         A mesh view which stores all elements marked for deletion
     */
   template<typename WrappedConfigT, typename ToEraseViewT>
@@ -225,11 +225,11 @@ namespace viennagrid
   }
 
 
-  /** @brief Erases a single elements all elements which references this element from a mesh. If more than one element is erase use erase_elements instead for better performance.
+  /** @brief Erases a single elements and all elements which references this element from a mesh. If more than one element is erase use erase_elements instead for better performance.
     *
-    * @tparam WrappedConfigT          The wrapped config of the mesh type in which the elements to erase live
+    * @tparam MeshT                     The mesh type
     * @tparam HandleT                   The handle type of the element to delete
-    * @param  mesh                    The host mesh object
+    * @param  mesh_obj                  The host mesh object
     * @param  element_to_erase          A handle to the element to be deleted
     */
   template<typename MeshT, typename HandleT>
@@ -240,14 +240,6 @@ namespace viennagrid
     viennagrid::mark_erase_elements( mesh_obj, elements_to_erase, element_to_erase );
     viennagrid::erase_elements(mesh_obj, elements_to_erase);
   }
-
-
-
-
-
-
-
-
 
 
 }

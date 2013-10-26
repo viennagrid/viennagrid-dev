@@ -824,7 +824,7 @@ namespace viennagrid
 
       /** @brief Triggers the read process.
        *
-       * @param mesh        The mesh to which the file content is read
+       * @param mesh_obj      The mesh to which the file content is read
        * @param segmentation  The segmentation to which the file content is read
        * @param filename      Name of the file containing the mesh. Either .pvd (multi-segment) or .vtu (single segment)
        */
@@ -875,7 +875,7 @@ namespace viennagrid
 
       /** @brief Triggers the read process.
        *
-       * @param mesh        The mesh to which the file content is read
+       * @param mesh_obj      The mesh to which the file content is read
        * @param filename      Name of the file containing the mesh. Either .pvd (multi-segment) or .vtu (single segment)
        */
       int operator()(MeshType & mesh_obj, std::string const & filename)

@@ -247,7 +247,7 @@ struct lookup;}
 
   /** @brief Returns true if an element is located on the boundary of the mesh
    *
-   * @param mesh      The ViennaGrid mesh
+   * @param mesh_obj    The ViennaGrid mesh
    * @param element     The element
    */
   template <typename WrappedConfigT, typename ElementT>

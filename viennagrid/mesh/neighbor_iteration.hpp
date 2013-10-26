@@ -205,7 +205,7 @@ namespace viennagrid
     * @tparam ConnectorElementTypeOrTagT    The connector element type/tag
     * @tparam WrappedConfigT                The wrapped config of the mesh
     * @tparam ElementOrHandleT              The element or handle type for which the neighbor range is obtained
-    * @param  mesh                          The host mesh object in which the elements of the neighbor range exist
+    * @param  mesh_obj                      The host mesh object in which the elements of the neighbor range exist
     * @param  element_or_handle             A handle or the element for which the neighbor range is obained
     * @return                               The neighbor range
     */
@@ -239,7 +239,7 @@ namespace viennagrid
     * @tparam ConnectorElementTypeOrTagT    The connector element type/tag
     * @tparam WrappedConfigT                The wrapped config of the mesh
     * @tparam ElementOrHandleT              The element or handle type for which the neighbor range is obtained
-    * @param  mesh                          The host mesh object in which the elements of the neighbor range exist
+    * @param  mesh_obj                      The host mesh object in which the elements of the neighbor range exist
     * @param  element_or_handle             A handle or the element for which the neighbor range is obained
     * @return                               The const neighbor range
     */
