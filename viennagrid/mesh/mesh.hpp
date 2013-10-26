@@ -34,6 +34,13 @@
 
 namespace viennagrid
 {
+  namespace detail
+  {
+    /** @brief For internal use only */
+    template<typename SourceWrappedConfigT, typename DestinationWrappedConfigT>
+    void fix_handles( viennagrid::mesh<SourceWrappedConfigT> const & source_mesh_obj, viennagrid::mesh<DestinationWrappedConfigT> & destination_mesh );
+  }
+
   /** @brief For internal use only */
   template<typename container_collection_type>
   class view_mesh_setter
@@ -254,7 +261,7 @@ namespace viennagrid
       inserter.set_mesh_info( element_container_collection, change_counter_ );
       increment_change_counter();
 
-      fix_handles(other, *this);
+      detail::fix_handles(other, *this);
     }
 
     /** @brief Assignement operator, remember that assigning a mesh to another might have performance impact due to handle fixing: handles for boundary element will point to other locations.
@@ -274,7 +281,7 @@ namespace viennagrid
       inserter.set_mesh_info( element_container_collection, change_counter_ );
       increment_change_counter();
 
-      fix_handles(other, *this);
+      detail::fix_handles(other, *this);
       return *this;
     }
 
@@ -1528,91 +1535,94 @@ namespace viennagrid
   };
 
 
-  /** @brief For internal use only */
-  template<typename ElementTypelistT>
-  struct fix_handle_helper;
-
-  template<>
-  struct fix_handle_helper< null_type >
+  namespace detail
   {
-    template<typename SourceWrappedConfigT, typename DestinationWrappedConfigT>
-    static void fix_handles( viennagrid::mesh<SourceWrappedConfigT> const &, viennagrid::mesh<DestinationWrappedConfigT> & )
-    {}
-  };
+    /** @brief For internal use only */
+    template<typename ElementTypelistT>
+    struct fix_handle_helper;
 
-
-  template<typename SourceElementT, typename TailT>
-  struct fix_handle_helper< typelist<SourceElementT, TailT> >
-  {
-    template<typename SourceWrappedConfigT, typename DestinationWrappedConfigT>
-    static void fix_handles( viennagrid::mesh<SourceWrappedConfigT> const & source_mesh_obj, viennagrid::mesh<DestinationWrappedConfigT> & destination_mesh_obj )
+    template<>
+    struct fix_handle_helper< null_type >
     {
-      typedef typename viennagrid::result_of::element_tag<SourceElementT>::type ElementTag;
+      template<typename SourceWrappedConfigT, typename DestinationWrappedConfigT>
+      static void fix_handles( viennagrid::mesh<SourceWrappedConfigT> const &, viennagrid::mesh<DestinationWrappedConfigT> & )
+      {}
+    };
 
+
+    template<typename SourceElementT, typename TailT>
+    struct fix_handle_helper< typelist<SourceElementT, TailT> >
+    {
+      template<typename SourceWrappedConfigT, typename DestinationWrappedConfigT>
+      static void fix_handles( viennagrid::mesh<SourceWrappedConfigT> const & source_mesh_obj, viennagrid::mesh<DestinationWrappedConfigT> & destination_mesh_obj )
+      {
+        typedef typename viennagrid::result_of::element_tag<SourceElementT>::type ElementTag;
+
+        typedef viennagrid::mesh<SourceWrappedConfigT>          SourceMeshType;
+        typedef viennagrid::mesh<DestinationWrappedConfigT>     DestinationMeshType;
+
+        typedef typename viennagrid::result_of::const_element_range<SourceMeshType, SourceElementT>::type     SourceElementRangeType;
+        typedef typename viennagrid::result_of::iterator<SourceElementRangeType>::type                          SourceElementRangeIterator;
+
+        typedef typename viennagrid::result_of::element_range<DestinationMeshType, SourceElementT>::type      DestinationElementRangeType;
+        typedef typename viennagrid::result_of::iterator<DestinationElementRangeType>::type                     DestinationElementRangeIterator;
+
+
+        typedef typename viennagrid::result_of::element<SourceMeshType, ElementTag>::type SourceElementType;
+        typedef typename viennagrid::result_of::element<DestinationMeshType, ElementTag>::type DestinationElementType;
+        //typedef typename viennagrid::result_of::handle<DestinationMeshType, ElementTag>::type DestinationElementHandleType;
+
+        SourceElementRangeType           source_elements = viennagrid::elements( source_mesh_obj );
+        DestinationElementRangeType destination_elements = viennagrid::elements( destination_mesh_obj );
+
+        DestinationElementRangeIterator dit = destination_elements.begin();
+        for (SourceElementRangeIterator sit = source_elements.begin(); sit != source_elements.end(); ++sit, ++dit)
+        {
+          SourceElementType const & source_element = *sit;
+          DestinationElementType & destination_element = *dit;
+
+          if (source_element.id() != destination_element.id())
+          {
+            std::cout << "ERROR in fix_handles: destination element id != source element id" << std::endl;
+            continue;
+          }
+  //           DestinationElementHandleType handle = viennagrid::push_element<false, false>(destination_mesh_obj, destination_element).first;
+
+          typedef typename viennagrid::result_of::boundary_element_typelist<SourceElementT>::type         BoundaryElementTypelist;
+          typedef typename viennagrid::result_of::element_typelist<DestinationMeshType>::type          DestinationElementTypelist;
+
+          typedef typename viennagrid::detail::result_of::intersection<
+                    BoundaryElementTypelist,
+                    DestinationElementTypelist
+                >::type ElementTypelist;
+
+          copy_element_setters<DestinationMeshType, SourceElementT, DestinationElementType> setter( destination_mesh_obj, source_element, destination_element );
+          viennagrid::detail::for_each<ElementTypelist>(setter);
+        }
+
+        fix_handle_helper<TailT>::fix_handles( source_mesh_obj, destination_mesh_obj );
+      }
+    };
+
+    /** @brief For internal use only */
+    template<typename SourceWrappedConfigT, typename DestinationWrappedConfigT>
+    void fix_handles( viennagrid::mesh<SourceWrappedConfigT> const & source_mesh_obj, viennagrid::mesh<DestinationWrappedConfigT> & destination_mesh )
+    {
       typedef viennagrid::mesh<SourceWrappedConfigT>          SourceMeshType;
       typedef viennagrid::mesh<DestinationWrappedConfigT>     DestinationMeshType;
 
-      typedef typename viennagrid::result_of::const_element_range<SourceMeshType, SourceElementT>::type     SourceElementRangeType;
-      typedef typename viennagrid::result_of::iterator<SourceElementRangeType>::type                          SourceElementRangeIterator;
+      typedef typename viennagrid::result_of::element_typelist<SourceMeshType>::type      SourceTypelist;
+      typedef typename viennagrid::result_of::element_typelist<DestinationMeshType>::type DestinationTypelist;
 
-      typedef typename viennagrid::result_of::element_range<DestinationMeshType, SourceElementT>::type      DestinationElementRangeType;
-      typedef typename viennagrid::result_of::iterator<DestinationElementRangeType>::type                     DestinationElementRangeIterator;
+      typedef typename viennagrid::detail::result_of::intersection<
+                SourceTypelist,
+                DestinationTypelist
+            >::type ElementTypelist;
 
-
-      typedef typename viennagrid::result_of::element<SourceMeshType, ElementTag>::type SourceElementType;
-      typedef typename viennagrid::result_of::element<DestinationMeshType, ElementTag>::type DestinationElementType;
-      //typedef typename viennagrid::result_of::handle<DestinationMeshType, ElementTag>::type DestinationElementHandleType;
-
-      SourceElementRangeType           source_elements = viennagrid::elements( source_mesh_obj );
-      DestinationElementRangeType destination_elements = viennagrid::elements( destination_mesh_obj );
-
-      DestinationElementRangeIterator dit = destination_elements.begin();
-      for (SourceElementRangeIterator sit = source_elements.begin(); sit != source_elements.end(); ++sit, ++dit)
-      {
-        SourceElementType const & source_element = *sit;
-        DestinationElementType & destination_element = *dit;
-
-        if (source_element.id() != destination_element.id())
-        {
-          std::cout << "ERROR in fix_handles: destination element id != source element id" << std::endl;
-          continue;
-        }
-//           DestinationElementHandleType handle = viennagrid::push_element<false, false>(destination_mesh_obj, destination_element).first;
-
-        typedef typename viennagrid::result_of::boundary_element_typelist<SourceElementT>::type         BoundaryElementTypelist;
-        typedef typename viennagrid::result_of::element_typelist<DestinationMeshType>::type          DestinationElementTypelist;
-
-        typedef typename viennagrid::detail::result_of::intersection<
-                  BoundaryElementTypelist,
-                  DestinationElementTypelist
-              >::type ElementTypelist;
-
-        copy_element_setters<DestinationMeshType, SourceElementT, DestinationElementType> setter( destination_mesh_obj, source_element, destination_element );
-        viennagrid::detail::for_each<ElementTypelist>(setter);
-      }
-
-      fix_handle_helper<TailT>::fix_handles( source_mesh_obj, destination_mesh_obj );
+      fix_handle_helper<ElementTypelist>::fix_handles( source_mesh_obj, destination_mesh );
     }
-  };
 
-  /** @brief For internal use only */
-  template<typename SourceWrappedConfigT, typename DestinationWrappedConfigT>
-  void fix_handles( viennagrid::mesh<SourceWrappedConfigT> const & source_mesh_obj, viennagrid::mesh<DestinationWrappedConfigT> & destination_mesh )
-  {
-    typedef viennagrid::mesh<SourceWrappedConfigT>          SourceMeshType;
-    typedef viennagrid::mesh<DestinationWrappedConfigT>     DestinationMeshType;
-
-    typedef typename viennagrid::result_of::element_typelist<SourceMeshType>::type      SourceTypelist;
-    typedef typename viennagrid::result_of::element_typelist<DestinationMeshType>::type DestinationTypelist;
-
-    typedef typename viennagrid::detail::result_of::intersection<
-              SourceTypelist,
-              DestinationTypelist
-          >::type ElementTypelist;
-
-    fix_handle_helper<ElementTypelist>::fix_handles( source_mesh_obj, destination_mesh );
-  }
-
+  } //namespace detail
 }
 
 #endif

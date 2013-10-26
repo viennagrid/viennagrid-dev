@@ -848,34 +848,40 @@ namespace viennagrid
 
 
 
-
-  template<typename element_type, typename functor_type>
-  struct for_each_boundary_cell_functor
+  namespace detail
   {
-  public:
+
+    /** @brief Helper functor which iterates over the respective boundary elements and applied the user-provided functor to each boundary element */
+    template<typename element_type, typename functor_type>
+    struct for_each_boundary_cell_functor
+    {
+    public:
 
       for_each_boundary_cell_functor( element_type & element_, functor_type functor_ ) : element(element_), functor(functor_) {}
 
       template<typename boundary_cell_type>
       void operator()( viennagrid::detail::tag<boundary_cell_type> )
       {
-          typedef typename result_of::element_range<element_type, boundary_cell_type>::type boundary_cell_range_type;
-          typedef typename result_of::iterator<boundary_cell_range_type>::type boundary_cell_iterator_type;
+        typedef typename viennagrid::result_of::element_range<element_type, boundary_cell_type>::type    boundary_cell_range_type;
+        typedef typename viennagrid::result_of::iterator<boundary_cell_range_type>::type                 boundary_cell_iterator_type;
 
-          boundary_cell_range_type range = viennagrid::elements<boundary_cell_type>( element );
-          for (boundary_cell_iterator_type it = range.begin(); it != range.end(); ++it)
-              functor(*it);
+        boundary_cell_range_type range = viennagrid::elements<boundary_cell_type>( element );
+        for (boundary_cell_iterator_type it = range.begin(); it != range.end(); ++it)
+          functor(*it);
       }
 
-  private:
+    private:
       element_type & element;
       functor_type functor;
-  };
+    };
 
+  } // namespace detail
+
+  /** @brief Applies a functor to all boundary cells of an element. For example, this applies a functor to all vertices and edges of a triangle. */
   template<typename element_type, typename functor_type>
   void for_each_boundary_cell( element_type & element, functor_type functor )
   {
-      for_each_boundary_cell_functor<element_type, functor_type> for_each_functor( element, functor );
+      detail::for_each_boundary_cell_functor<element_type, functor_type> for_each_functor( element, functor );
 
       viennagrid::detail::for_each<typename element_type::boundary_cell_typelist>(for_each_functor);
   }

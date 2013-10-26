@@ -22,6 +22,7 @@
 
 namespace viennagrid
 {
+  /** @brief An iterator over all values of a hidden_key_map */
   template<typename HiddenKeyMapT>
   class hidden_key_map_iterator : public HiddenKeyMapT::container_type::iterator
   {
@@ -39,6 +40,7 @@ namespace viennagrid
     const_reference operator* () const { return base::operator*().second; }
   };
 
+  /** @brief A const-iterator over all values of a hidden_key_map */
   template<typename HiddenKeyMapT>
   class hidden_key_map_const_iterator : public HiddenKeyMapT::container_type::const_iterator
   {
@@ -56,6 +58,7 @@ namespace viennagrid
     const_reference operator* () const { return base::operator*().second; }
   };
 
+  /** @brief A iterator over all values of a hidden_key_map in reverse direction */
   template<typename HiddenKeyMapT>
   class hidden_key_map_reverse_iterator : public HiddenKeyMapT::container_type::reverse_iterator
   {
@@ -73,6 +76,7 @@ namespace viennagrid
     const_reference operator* () const { return base::operator*().second; }
   };
 
+  /** @brief A const-iterator over all values of a hidden_key_map in reverse direction */
   template<typename HiddenKeyMapT>
   class hidden_key_map_const_reverse_iterator : public HiddenKeyMapT::container_type::const_reverse_iterator
   {
@@ -91,7 +95,11 @@ namespace viennagrid
   };
 
 
-
+  /** @brief STL-like map where the key is automatically deduced from the value object (hence 'hidden').
+    *
+    * @tparam  KeyT    The key functor type which extracts the key from the value object
+    * @tparam  ValueT  The value type, i.e. the element stored inside the map.
+    */
   template<typename KeyT, typename ValueT>
   class hidden_key_map
   {
@@ -113,51 +121,49 @@ namespace viennagrid
     typedef value_type *                       pointer;
     typedef const value_type *                 const_pointer;
 
+    typedef hidden_key_map_iterator<SelfType>                             iterator;
+    typedef hidden_key_map_const_iterator<SelfType>                 const_iterator;
 
-
-    typedef hidden_key_map_iterator<SelfType> iterator;
-    typedef hidden_key_map_const_iterator<SelfType> const_iterator;
-
-    typedef hidden_key_map_reverse_iterator<SelfType> reverse_iterator;
+    typedef hidden_key_map_reverse_iterator<SelfType>             reverse_iterator;
     typedef hidden_key_map_const_reverse_iterator<SelfType> const_reverse_iterator;
 
 
     iterator begin() { return iterator(container.begin()); }
-    iterator end() { return iterator(container.end()); }
+    iterator end()   { return iterator(container.end()); }
 
     const_iterator begin() const { return const_iterator(container.begin()); }
-    const_iterator end() const { return const_iterator(container.end()); }
+    const_iterator end()   const { return const_iterator(container.end()); }
 
     iterator find( const value_type & element)
     {
-        return iterator(container.find( key_type(element) ));
+      return iterator(container.find( key_type(element) ));
     }
 
     const_iterator find( const value_type & element) const
     {
-        return const_iterator(container.find( key_type(element) ));
+      return const_iterator(container.find( key_type(element) ));
     }
 
     std::pair<iterator, bool> insert( const value_type & element )
     {
-        std::pair<typename container_type::iterator, bool> ret = container.insert( std::make_pair( key_type(element), element ) );
-        return std::make_pair( iterator(ret.first), ret.second );
+      std::pair<typename container_type::iterator, bool> ret = container.insert( std::make_pair( key_type(element), element ) );
+      return std::make_pair( iterator(ret.first), ret.second );
     }
 
     iterator erase( iterator to_erase )
     {
-        container.erase( to_erase++ );
-        return to_erase;
+      container.erase( to_erase++ );
+      return to_erase;
     }
 
     void clear()
     {
-        container.clear();
+      container.clear();
     }
 
 
     size_type size() const { return container.size(); }
-    bool empty() const { return container.empty(); }
+    bool empty()     const { return container.empty(); }
 
   private:
     container_type container;
@@ -210,7 +216,11 @@ namespace viennagrid
   }
 
 
-  template<typename key_type_tag>
+  /** @brief A tag for selecting a hidden key map as a storage type.
+    *
+    * @tparam  KeyTypeTagT      A tag identifying the key deduction mechanism to be used in the hidden key map.
+    */
+  template<typename KeyTypeTagT>
   struct hidden_key_map_tag {};
 
   namespace result_of

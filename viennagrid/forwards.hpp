@@ -119,15 +119,16 @@ namespace viennagrid
   struct no_orientation_handling_tag {};
 
 //   Lazy storage reserved for future use
+  /** @brief A tag denoting that orientation should be stored/computed only on request ('lazy'). */
   struct no_orientation_lazy_handling_tag {};
+  /** @brief A tag denoting lazy handling of boundary elements. Reserved for future use. */
   struct full_lazy_handling_tag {};
 
 
-  struct coboundary_collection_tag;
-  struct neighbor_collection_tag;
-  struct boundary_information_collection_tag;
-
-  struct interface_information_collection_tag;
+  struct coboundary_collection_tag {};
+  struct neighbor_collection_tag {};
+  struct boundary_information_collection_tag {};
+  struct interface_information_collection_tag {};
 
 
   /********* Forward definitions of main classes *******************/
@@ -167,9 +168,9 @@ namespace viennagrid
 
 
   /** @brief Tag that indicates that a static container can be used for storing the boundary element handles (e.g. used in simplices and hypercubes) */
-  struct static_layout_tag;
+  struct static_layout_tag {};
   /** @brief Tag that indicates that a dynamic container has to be used for storing the boundary element handles (e.g. polygon and plc) */
-  struct dynamic_layout_tag;
+  struct dynamic_layout_tag {};
 
 
 
@@ -1761,6 +1762,7 @@ namespace viennagrid
     return mesh_proxy< viennagrid::mesh<WrappedConfigT> >( mesh_obj );
   }
 
+  /** @brief Creates an empty view out of a segment. */
   template<typename SegmentationT>
   mesh_proxy< typename SegmentationT::view_type > make_view(segment_handle<SegmentationT> & segment);
 
@@ -1773,10 +1775,10 @@ namespace viennagrid
   /** @brief Tag for denoting the infinity-norm */
   struct inf_tag {};
 
-  /** @brief Types for cell normals in algorithm/cell_normals.hpp (to be added in afuture release) */
+  /** @brief Types for cell normals in algorithm/cell_normals.hpp (to be added in a future release) */
   struct seg_cell_normal_tag {};
 
-  /** @brief Data type for cell normals in algorithm/cell_normals.hpp (to be added in afuture release) */
+  /** @brief Data type for cell normals in algorithm/cell_normals.hpp (to be added in a future release) */
   struct seg_cell_normal_data {
     typedef viennagrid::spatial_point<double, cartesian_cs<3> >         point_type;
     typedef std::map<std::size_t, point_type>    type;
