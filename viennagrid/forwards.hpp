@@ -14,7 +14,7 @@
 ======================================================================= */
 
 /**
- @mainpage Source Code Documentation for ViennaGrid 1.1.0
+ @mainpage Source Code Documentation for ViennaGrid 2.0.0
 
  This is the source code documentation of ViennaGrid. Detailed information about the functions in ViennaGrid can be found here.
 
@@ -28,8 +28,8 @@
 #include <cstddef>     //for std::size_t
 #include <cstdlib>     //for EXIT_SUCCESS and EXIT_FAILURE
 
-#define VIENNAGRID_MAJOR_VERSION   1
-#define VIENNAGRID_MINOR_VERSION   1
+#define VIENNAGRID_MAJOR_VERSION   2
+#define VIENNAGRID_MINOR_VERSION   0
 #define VIENNAGRID_BUGFIX_LEVEL    0
 
 
