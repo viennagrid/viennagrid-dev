@@ -21,6 +21,7 @@
 
 namespace viennagrid
 {
+  /** @brief Implementation of a typelist as described by Alexandrescu in his book "Modern C++ Programming" */
   template <class HeadT, class TailT>
   struct typelist
   {

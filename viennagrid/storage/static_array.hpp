@@ -21,6 +21,7 @@
 
 namespace viennagrid
 {
+  /** @brief Reimplementation of std::array<> because we cannot reasonably expect that C++11 is available on all target machines */
   template<typename T, int N>
   class static_array
   {

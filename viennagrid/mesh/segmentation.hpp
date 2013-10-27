@@ -28,7 +28,11 @@
 
 namespace viennagrid
 {
-  // doxygen doku in forwards.hpp
+
+  /** @brief A segment defines a submesh within a segmentation. The segment_handle is used to deal with segments, since segments are not represented by a dedicated class.
+    *
+    * @tparam SegmentationT     The segmentation type where the segment lives
+    */
   template<typename WrappedConfigType>
   class segment_handle< viennagrid::segmentation<WrappedConfigType> >
   {
@@ -422,6 +426,7 @@ namespace viennagrid
   }
 
 
+  /** @brief A segmentation is a logical decomposition of the mesh (or a subset thereof) into segments. Segments may overlap. */
   template<typename WrappedConfigType>
   class segmentation
   {
@@ -452,7 +457,7 @@ namespace viennagrid
 
     /** @brief Constructor
       *
-      * @param mesh_x   The mesh object to which the segment references
+      * @param mesh_x   The mesh object to which the segmentation references
       */
     segmentation( mesh_type & mesh_x ) : highest_id(-1), mesh_(&mesh_x) { all_elements_ = viennagrid::make_view(*mesh_); }
 
@@ -819,275 +824,277 @@ namespace viennagrid
   }
 
 
-
-
-  /** @brief For internal use only */
-  template<typename segment_id_type_, typename segment_element_info_type_ = viennagrid::null_type>
-  struct element_segment_mapping
+  namespace detail
   {
-    typedef segment_id_type_ segment_id_type;
-    typedef segment_element_info_type_ segment_element_info_type;
 
-    element_segment_mapping() {}
-    element_segment_mapping( segment_id_type const & segment_id_ ) : segment_id(segment_id_) {}
-
-    segment_id_type segment_id;
-    segment_element_info_type segment_element_info;
-  };
-
-
-
-  template<typename element_segment_mapping_type, typename container_tag = viennagrid::std_deque_tag>
-  struct segment_info_t
-  {
-    typedef typename element_segment_mapping_type::segment_id_type segment_id_type;
-    typedef typename element_segment_mapping_type::segment_element_info_type segment_element_info_type;
-
-    typedef typename viennagrid::result_of::container<element_segment_mapping_type, container_tag>::type element_segment_mapping_container_type;
-
-
-    class const_iterator : public element_segment_mapping_container_type::const_iterator
+    /** @brief For internal use only */
+    template<typename segment_id_type_, typename segment_element_info_type_ = viennagrid::null_type>
+    struct element_segment_mapping
     {
-      typedef typename element_segment_mapping_container_type::const_iterator base;
-    public:
-      const_iterator() {}
-      const_iterator(base const & foo) : base(foo) {}
+      typedef segment_id_type_ segment_id_type;
+      typedef segment_element_info_type_ segment_element_info_type;
 
-      typedef segment_id_type           value_type;
-      typedef segment_id_type &         reference;
-      typedef segment_id_type const &   const_reference;
-      typedef segment_id_type *         pointer;
-      typedef segment_id_type const *   const_pointer;
+      element_segment_mapping() {}
+      element_segment_mapping( segment_id_type const & segment_id_ ) : segment_id(segment_id_) {}
 
-      const_reference operator* () const { return base::operator*().segment_id; }
-      const_pointer operator->() const { return &(operator* ()); }
+      segment_id_type segment_id;
+      segment_element_info_type segment_element_info;
     };
 
-    const_iterator cbegin() const { return const_iterator(element_segment_mapping_container.begin()); }
-    const_iterator cend()   const { return const_iterator(element_segment_mapping_container.end()); }
 
-    const_iterator begin() const { return cbegin(); }
-    const_iterator end()   const { return cend(); }
+    /** @brief Information container providing iteration over segments of a segmentation */
+    template<typename element_segment_mapping_type, typename container_tag = viennagrid::std_deque_tag>
+    struct segment_info_t
+    {
+      typedef typename element_segment_mapping_type::segment_id_type segment_id_type;
+      typedef typename element_segment_mapping_type::segment_element_info_type segment_element_info_type;
 
-    bool empty() const { return element_segment_mapping_container.empty(); }
-
-
-    element_segment_mapping_container_type element_segment_mapping_container;
-  };
+      typedef typename viennagrid::result_of::container<element_segment_mapping_type, container_tag>::type element_segment_mapping_container_type;
 
 
-  /** @brief For internal use only */
-  struct element_segment_mapping_tag;
+      class const_iterator : public element_segment_mapping_container_type::const_iterator
+      {
+        typedef typename element_segment_mapping_container_type::const_iterator base;
+      public:
+        const_iterator() {}
+        const_iterator(base const & foo) : base(foo) {}
 
-  template<typename SegmentationT>
-  typename viennagrid::detail::result_of::lookup<
-          typename SegmentationT::appendix_type,
-          element_segment_mapping_tag
-      >::type & element_segment_mapping_collection( SegmentationT & segmentation )
-  {
-    return viennagrid::get<element_segment_mapping_tag>( segmentation.appendix() );
-  }
+        typedef segment_id_type           value_type;
+        typedef segment_id_type &         reference;
+        typedef segment_id_type const &   const_reference;
+        typedef segment_id_type *         pointer;
+        typedef segment_id_type const *   const_pointer;
 
-  template<typename SegmentationT>
-  typename viennagrid::detail::result_of::lookup<
-          typename SegmentationT::appendix_type,
-          element_segment_mapping_tag
-      >::type const & element_segment_mapping_collection( SegmentationT const & segmentation )
-  {
-    return viennagrid::get<element_segment_mapping_tag>( segmentation.appendix() );
-  }
+        const_reference operator* () const { return base::operator*().segment_id; }
+        const_pointer operator->() const { return &(operator* ()); }
+      };
 
+      const_iterator cbegin() const { return const_iterator(element_segment_mapping_container.begin()); }
+      const_iterator cend()   const { return const_iterator(element_segment_mapping_container.end()); }
 
-  template<typename segment_handle_type>
-  typename viennagrid::detail::result_of::lookup<
-          typename segment_handle_type::segmentation_type::appendix_type,
-          element_segment_mapping_tag
-      >::type & element_segment_mapping_collection( segment_handle_type & segment )
-  {
-    return element_segment_mapping_collection( segment.parent() );
-  }
+      const_iterator begin() const { return cbegin(); }
+      const_iterator end()   const { return cend(); }
 
-  template<typename segment_handle_type>
-  typename viennagrid::detail::result_of::lookup<
-          typename segment_handle_type::segmentation_type::appendix_type,
-          element_segment_mapping_tag
-      >::type const & element_segment_mapping_collection( segment_handle_type const & segment )
-  {
-    return element_segment_mapping_collection( segment.parent() );
-  }
+      bool empty() const { return element_segment_mapping_container.empty(); }
 
 
+      element_segment_mapping_container_type element_segment_mapping_container;
+    };
 
 
-  /** @brief For internal use only */
-  template<typename container_type_, typename ChangeCounterType>
-  struct segment_interface_information_wrapper
-  {
-    typedef container_type_ container_type;
-    typedef ChangeCounterType change_counter_type;
+    /** @brief For internal use only */
+    struct element_segment_mapping_tag;
 
-    segment_interface_information_wrapper() : seg0_change_counter(0), seg1_change_counter(0) {}
+    template<typename SegmentationT>
+    typename viennagrid::detail::result_of::lookup<
+            typename SegmentationT::appendix_type,
+            element_segment_mapping_tag
+        >::type & element_segment_mapping_collection( SegmentationT & segmentation )
+    {
+      return viennagrid::get<element_segment_mapping_tag>( segmentation.appendix() );
+    }
 
-    change_counter_type seg0_change_counter;
-    change_counter_type seg1_change_counter;
+    template<typename SegmentationT>
+    typename viennagrid::detail::result_of::lookup<
+            typename SegmentationT::appendix_type,
+            element_segment_mapping_tag
+        >::type const & element_segment_mapping_collection( SegmentationT const & segmentation )
+    {
+      return viennagrid::get<element_segment_mapping_tag>( segmentation.appendix() );
+    }
 
-    container_type container;
-  };
-
-
-  /** @brief For internal use only */
-  template<typename segment_id_type, typename container_type_, typename ChangeCounterType>
-  struct interface_information_wrapper
-  {
-    typedef container_type_ container_type;
-    typedef segment_interface_information_wrapper<container_type, ChangeCounterType> segment_interface_information_wrapper_type;
-    typedef std::pair<segment_id_type, segment_id_type> key_type;
-    typedef std::map< key_type, segment_interface_information_wrapper_type > map_type;
-
-    interface_information_wrapper() {}
 
     template<typename segment_handle_type>
-    segment_interface_information_wrapper_type & get_interface_wrapper_impl( segment_handle_type const & seg0, segment_handle_type const & seg1 ) const
+    typename viennagrid::detail::result_of::lookup<
+            typename segment_handle_type::segmentation_type::appendix_type,
+            element_segment_mapping_tag
+        >::type & element_segment_mapping_collection( segment_handle_type & segment )
     {
-      assert( seg0.id() != seg1.id() );
-
-      key_type key( std::min(seg0.id(), seg1.id()), std::max(seg0.id(), seg1.id()) );
-
-      return interface_flags[ key ];
+      return element_segment_mapping_collection( segment.parent() );
     }
 
     template<typename segment_handle_type>
-    segment_interface_information_wrapper_type & get_interface_wrapper( segment_handle_type const & seg0, segment_handle_type const & seg1 )
-    { return get_interface_wrapper_impl(seg0, seg1); }
-
-    template<typename segment_handle_type>
-    segment_interface_information_wrapper_type const & get_interface_wrapper( segment_handle_type const & seg0, segment_handle_type const & seg1 ) const
-    { return get_interface_wrapper_impl(seg0, seg1); }
-
-    mutable map_type interface_flags;
-  };
+    typename viennagrid::detail::result_of::lookup<
+            typename segment_handle_type::segmentation_type::appendix_type,
+            element_segment_mapping_tag
+        >::type const & element_segment_mapping_collection( segment_handle_type const & segment )
+    {
+      return element_segment_mapping_collection( segment.parent() );
+    }
 
 
 
-  template<typename element_tag, typename segment_handle_type>
-  typename viennagrid::detail::result_of::lookup<
-      typename viennagrid::detail::result_of::lookup<
-          typename segment_handle_type::segmentation_type::appendix_type,
-          interface_information_collection_tag
-      >::type,
-      element_tag
-  >::type::segment_interface_information_wrapper_type &
-  interface_information_collection( segment_handle_type & seg0, segment_handle_type & seg1 )
-  { return viennagrid::get<element_tag>( viennagrid::get<interface_information_collection_tag>( seg0.parent().appendix() ) ).get_interface_wrapper(seg0, seg1); }
 
-  template<typename element_tag, typename segment_handle_type>
-  typename viennagrid::detail::result_of::lookup<
-      typename viennagrid::detail::result_of::lookup<
-          typename segment_handle_type::segmentation_type::appendix_type,
-          interface_information_collection_tag
-      >::type,
-      element_tag
-  >::type::segment_interface_information_wrapper_type const &
-  interface_information_collection( segment_handle_type const & seg0, segment_handle_type const & seg1 )
-  { return viennagrid::get<element_tag>( viennagrid::get<interface_information_collection_tag>( seg0.parent().appendix() ) ).get_interface_wrapper(seg0, seg1); }
+    /** @brief For internal use only */
+    template<typename container_type_, typename ChangeCounterType>
+    struct segment_interface_information_wrapper
+    {
+      typedef container_type_ container_type;
+      typedef ChangeCounterType change_counter_type;
+
+      segment_interface_information_wrapper() : seg0_change_counter(0), seg1_change_counter(0) {}
+
+      change_counter_type seg0_change_counter;
+      change_counter_type seg1_change_counter;
+
+      container_type container;
+    };
 
 
+    /** @brief For internal use only */
+    template<typename segment_id_type, typename container_type_, typename ChangeCounterType>
+    struct interface_information_wrapper
+    {
+      typedef container_type_ container_type;
+      typedef segment_interface_information_wrapper<container_type, ChangeCounterType> segment_interface_information_wrapper_type;
+      typedef std::pair<segment_id_type, segment_id_type> key_type;
+      typedef std::map< key_type, segment_interface_information_wrapper_type > map_type;
 
+      interface_information_wrapper() {}
+
+      template<typename segment_handle_type>
+      segment_interface_information_wrapper_type & get_interface_wrapper_impl( segment_handle_type const & seg0, segment_handle_type const & seg1 ) const
+      {
+        assert( seg0.id() != seg1.id() );
+
+        key_type key( std::min(seg0.id(), seg1.id()), std::max(seg0.id(), seg1.id()) );
+
+        return interface_flags[ key ];
+      }
+
+      template<typename segment_handle_type>
+      segment_interface_information_wrapper_type & get_interface_wrapper( segment_handle_type const & seg0, segment_handle_type const & seg1 )
+      { return get_interface_wrapper_impl(seg0, seg1); }
+
+      template<typename segment_handle_type>
+      segment_interface_information_wrapper_type const & get_interface_wrapper( segment_handle_type const & seg0, segment_handle_type const & seg1 ) const
+      { return get_interface_wrapper_impl(seg0, seg1); }
+
+      mutable map_type interface_flags;
+    };
+
+
+
+    template<typename element_tag, typename segment_handle_type>
+    typename viennagrid::detail::result_of::lookup<
+        typename viennagrid::detail::result_of::lookup<
+            typename segment_handle_type::segmentation_type::appendix_type,
+            interface_information_collection_tag
+        >::type,
+        element_tag
+    >::type::segment_interface_information_wrapper_type &
+    interface_information_collection( segment_handle_type & seg0, segment_handle_type & seg1 )
+    { return viennagrid::get<element_tag>( viennagrid::get<interface_information_collection_tag>( seg0.parent().appendix() ) ).get_interface_wrapper(seg0, seg1); }
+
+    template<typename element_tag, typename segment_handle_type>
+    typename viennagrid::detail::result_of::lookup<
+        typename viennagrid::detail::result_of::lookup<
+            typename segment_handle_type::segmentation_type::appendix_type,
+            interface_information_collection_tag
+        >::type,
+        element_tag
+    >::type::segment_interface_information_wrapper_type const &
+    interface_information_collection( segment_handle_type const & seg0, segment_handle_type const & seg1 )
+    { return viennagrid::get<element_tag>( viennagrid::get<interface_information_collection_tag>( seg0.parent().appendix() ) ).get_interface_wrapper(seg0, seg1); }
+
+
+
+
+    namespace result_of
+    {
+      /** @brief For internal use only */
+      template<typename segment_id_type, typename interface_information_container_tag, typename ChangeCounterType, typename element_taglist>
+      struct interface_information_collection_typemap_impl;
+
+      template<typename segment_id_type, typename interface_information_container_tag, typename ChangeCounterType>
+      struct interface_information_collection_typemap_impl<segment_id_type, interface_information_container_tag, ChangeCounterType, viennagrid::null_type>
+      {
+        typedef viennagrid::null_type type;
+      };
+
+      template<typename segment_id_type, typename interface_information_container_tag, typename ChangeCounterType, typename element_tag, typename tail>
+      struct interface_information_collection_typemap_impl<segment_id_type, interface_information_container_tag, ChangeCounterType, viennagrid::typelist<element_tag, tail> >
+      {
+        typedef typename viennagrid::result_of::container<bool, interface_information_container_tag >::type base_container;
+
+        typedef viennagrid::typelist<
+            viennagrid::static_pair<
+                element_tag,
+                interface_information_wrapper<segment_id_type, base_container, ChangeCounterType>
+            >,
+            typename interface_information_collection_typemap_impl<segment_id_type, interface_information_container_tag, ChangeCounterType, tail>::type
+        > type;
+      };
+
+
+      template<typename element_taglist, typename segment_id_type, typename interface_information_container_tag, typename ChangeCounterType>
+      struct interface_information_collection_typemap
+      {
+        typedef typename viennagrid::result_of::cell_tag_from_typelist<element_taglist>::type cell_tag;
+        typedef typename viennagrid::detail::result_of::erase< element_taglist, cell_tag>::type element_typelist_without_cell_tag;
+
+        typedef typename interface_information_collection_typemap_impl<segment_id_type, interface_information_container_tag, ChangeCounterType, element_typelist_without_cell_tag>::type type;
+      };
+    }
+
+    namespace result_of
+    {
+      /** @brief For internal use only */
+      template<typename segment_element_info_container_typemap, typename segment_id_type, typename container_tag, typename segment_info_container_tag>
+      struct segmentation_info_container_typemap;
+
+      template<typename segment_id_type, typename container_tag, typename segment_info_container_tag>
+      struct segmentation_info_container_typemap< viennagrid::null_type, segment_id_type, container_tag, segment_info_container_tag >
+      {
+        typedef viennagrid::null_type type;
+      };
+
+      template<typename element_tag, typename segment_info_type, typename tail, typename segment_id_type, typename container_tag, typename segment_info_container_tag>
+      struct segmentation_info_container_typemap< viennagrid::typelist<viennagrid::static_pair<element_tag, segment_info_type>, tail>, segment_id_type, container_tag, segment_info_container_tag >
+      {
+        typedef viennagrid::static_pair< element_tag, segment_info_type > key_type;
+        typedef typename viennagrid::result_of::container< std::pair<segment_id_type, segment_info_type>, segment_info_container_tag>::type segment_info_container;
+        typedef typename viennagrid::result_of::container<segment_info_container, container_tag>::type container_type;
+
+        typedef viennagrid::typelist<
+            viennagrid::static_pair<
+                element_tag,
+                container_type
+            >,
+            typename segmentation_info_container_typemap<tail, segment_id_type, container_tag, segment_info_container_tag>::type
+        > type;
+      };
+
+
+      /** @brief For internal use only */
+      template<typename element_typelist, typename segment_id_type, typename container_tag = viennagrid::std_deque_tag>
+      struct trivial_segmentation_appendix;
+
+      template<typename segment_id_type,typename container_tag>
+      struct trivial_segmentation_appendix< viennagrid::null_type, segment_id_type, container_tag >
+      {
+        typedef viennagrid::null_type type;
+      };
+
+      template<typename element_type, typename tail, typename segment_id_type, typename container_tag>
+      struct trivial_segmentation_appendix< viennagrid::typelist<element_type, tail>, segment_id_type, container_tag >
+      {
+        typedef viennagrid::typelist<
+            viennagrid::static_pair<
+                element_type,
+                typename viennagrid::result_of::container<
+                    segment_info_t< element_segment_mapping<segment_id_type> >,
+                    container_tag
+                >::type
+            >,
+            typename trivial_segmentation_appendix<tail, segment_id_type, container_tag>::type
+        > type;
+      };
+    } //namespace result_of
+  } //namespace detail
 
   namespace result_of
   {
-    /** @brief For internal use only */
-    template<typename segment_id_type, typename interface_information_container_tag, typename ChangeCounterType, typename element_taglist>
-    struct interface_information_collection_typemap_impl;
-
-    template<typename segment_id_type, typename interface_information_container_tag, typename ChangeCounterType>
-    struct interface_information_collection_typemap_impl<segment_id_type, interface_information_container_tag, ChangeCounterType, viennagrid::null_type>
-    {
-      typedef viennagrid::null_type type;
-    };
-
-    template<typename segment_id_type, typename interface_information_container_tag, typename ChangeCounterType, typename element_tag, typename tail>
-    struct interface_information_collection_typemap_impl<segment_id_type, interface_information_container_tag, ChangeCounterType, viennagrid::typelist<element_tag, tail> >
-    {
-      typedef typename result_of::container<bool, interface_information_container_tag >::type base_container;
-
-      typedef viennagrid::typelist<
-          viennagrid::static_pair<
-              element_tag,
-              interface_information_wrapper<segment_id_type, base_container, ChangeCounterType>
-          >,
-          typename interface_information_collection_typemap_impl<segment_id_type, interface_information_container_tag, ChangeCounterType, tail>::type
-      > type;
-    };
-
-
-    template<typename element_taglist, typename segment_id_type, typename interface_information_container_tag, typename ChangeCounterType>
-    struct interface_information_collection_typemap
-    {
-      typedef typename cell_tag_from_typelist<element_taglist>::type cell_tag;
-      typedef typename viennagrid::detail::result_of::erase< element_taglist, cell_tag>::type element_typelist_without_cell_tag;
-
-      typedef typename interface_information_collection_typemap_impl<segment_id_type, interface_information_container_tag, ChangeCounterType, element_typelist_without_cell_tag>::type type;
-    };
-  }
-
-
-
-  namespace result_of
-  {
-    /** @brief For internal use only */
-    template<typename segment_element_info_container_typemap, typename segment_id_type, typename container_tag, typename segment_info_container_tag>
-    struct segmentation_info_container_typemap;
-
-    template<typename segment_id_type, typename container_tag, typename segment_info_container_tag>
-    struct segmentation_info_container_typemap< viennagrid::null_type, segment_id_type, container_tag, segment_info_container_tag >
-    {
-      typedef viennagrid::null_type type;
-    };
-
-    template<typename element_tag, typename segment_info_type, typename tail, typename segment_id_type, typename container_tag, typename segment_info_container_tag>
-    struct segmentation_info_container_typemap< viennagrid::typelist<viennagrid::static_pair<element_tag, segment_info_type>, tail>, segment_id_type, container_tag, segment_info_container_tag >
-    {
-      typedef viennagrid::static_pair< element_tag, segment_info_type > key_type;
-      typedef typename viennagrid::result_of::container< std::pair<segment_id_type, segment_info_type>, segment_info_container_tag>::type segment_info_container;
-      typedef typename viennagrid::result_of::container<segment_info_container, container_tag>::type container_type;
-
-      typedef viennagrid::typelist<
-          viennagrid::static_pair<
-              element_tag,
-              container_type
-          >,
-          typename segmentation_info_container_typemap<tail, segment_id_type, container_tag, segment_info_container_tag>::type
-      > type;
-    };
-
-
-    /** @brief For internal use only */
-    template<typename element_typelist, typename segment_id_type, typename container_tag = viennagrid::std_deque_tag>
-    struct trivial_segmentation_appendix;
-
-    template<typename segment_id_type,typename container_tag>
-    struct trivial_segmentation_appendix< viennagrid::null_type, segment_id_type, container_tag >
-    {
-      typedef viennagrid::null_type type;
-    };
-
-    template<typename element_type, typename tail, typename segment_id_type, typename container_tag>
-    struct trivial_segmentation_appendix< viennagrid::typelist<element_type, tail>, segment_id_type, container_tag >
-    {
-      typedef viennagrid::typelist<
-          viennagrid::static_pair<
-              element_type,
-              typename viennagrid::result_of::container<
-                  segment_info_t< element_segment_mapping<segment_id_type> >,
-                  container_tag
-              >::type
-          >,
-          typename trivial_segmentation_appendix<tail, segment_id_type, container_tag>::type
-      > type;
-    };
-
-
 
     /** @brief Metafunction for obtaining a segmentation type for a mesh type and with settings. Segment element information is not present (see segment_element_info for more information)
      *
@@ -1102,9 +1109,9 @@ namespace viennagrid
              typename AppendixType =
                 viennagrid::collection<
                     typename viennagrid::make_typemap<
-                        element_segment_mapping_tag,
+                        viennagrid::detail::element_segment_mapping_tag,
                         viennagrid::collection<
-                            typename trivial_segmentation_appendix<
+                            typename viennagrid::detail::result_of::trivial_segmentation_appendix<
                                 typename viennagrid::result_of::element_typelist<MeshT>::type,
                                 SegmentIDType
                             >::type
@@ -1113,7 +1120,7 @@ namespace viennagrid
 
                         interface_information_collection_tag,
                         viennagrid::collection<
-                          typename viennagrid::result_of::interface_information_collection_typemap<
+                          typename viennagrid::detail::result_of::interface_information_collection_typemap<
                             typename viennagrid::result_of::element_taglist<MeshT>::type,
                             SegmentIDType,
                             viennagrid::std_vector_tag,
@@ -1146,17 +1153,17 @@ namespace viennagrid
              typename AppendixType =
               viennagrid::collection<
                 typename viennagrid::make_typemap<
-                    element_segment_mapping_tag,
+                    viennagrid::detail::element_segment_mapping_tag,
                     viennagrid::collection<
                         typename viennagrid::detail::result_of::modify<
-                            typename trivial_segmentation_appendix<
+                            typename viennagrid::detail::result_of::trivial_segmentation_appendix<
                                 typename viennagrid::result_of::element_typelist<MeshT>::type,
                                 SegmentIDType
                             >::type,
                             viennagrid::static_pair<
                                 typename viennagrid::result_of::element< MeshT, viennagrid::triangle_tag >::type,
                                 typename viennagrid::result_of::container<
-                                    segment_info_t< element_segment_mapping<SegmentIDType, bool> >,
+                                    viennagrid::detail::segment_info_t< viennagrid::detail::element_segment_mapping<SegmentIDType, bool> >,
                                     viennagrid::std_deque_tag
                                 >::type
                             >
@@ -1165,7 +1172,7 @@ namespace viennagrid
 
                     interface_information_collection_tag,
                     viennagrid::collection<
-                      typename viennagrid::result_of::interface_information_collection_typemap<
+                      typename viennagrid::detail::result_of::interface_information_collection_typemap<
                         typename viennagrid::result_of::element_taglist<MeshT>::type,
                         SegmentIDType,
                         viennagrid::std_vector_tag,
@@ -1187,28 +1194,32 @@ namespace viennagrid
 
 
 
-
-  /** @brief For internal use only */
-  template<typename segment_handle_type, typename element_segment_mapping_type, typename container_tag>
-  bool is_in_segment( segment_handle_type const & segment, segment_info_t<element_segment_mapping_type, container_tag> const & segment_info )
+  namespace detail
   {
-    typedef typename segment_info_t<element_segment_mapping_type, container_tag>::element_segment_mapping_container_type element_segment_mapping_container_type;
 
-    for (typename element_segment_mapping_container_type::const_iterator it = segment_info.element_segment_mapping_container.begin();
-          it != segment_info.element_segment_mapping_container.end();
-          ++it)
+
+    /** @brief For internal use only */
+    template<typename segment_handle_type, typename element_segment_mapping_type, typename container_tag>
+    bool is_in_segment( segment_handle_type const & segment, segment_info_t<element_segment_mapping_type, container_tag> const & segment_info )
     {
-      if (it->segment_id == segment.id()) return true;
+      typedef typename segment_info_t<element_segment_mapping_type, container_tag>::element_segment_mapping_container_type element_segment_mapping_container_type;
+
+      for (typename element_segment_mapping_container_type::const_iterator it = segment_info.element_segment_mapping_container.begin();
+            it != segment_info.element_segment_mapping_container.end();
+            ++it)
+      {
+        if (it->segment_id == segment.id()) return true;
+      }
+
+      return false;
     }
 
-    return false;
-  }
-
-  /** @brief For internal use only */
-  template< typename segment_handle_type, typename accessor_type, typename element_type >
-  bool is_in_segment( segment_handle_type const & segment, accessor_type const accessor, element_type const & element )
-  {
-    return is_in_segment( segment, accessor(element) );
+    /** @brief For internal use only */
+    template< typename segment_handle_type, typename accessor_type, typename element_type >
+    bool is_in_segment( segment_handle_type const & segment, accessor_type const accessor, element_type const & element )
+    {
+      return is_in_segment( segment, accessor(element) );
+    }
   }
 
   /** @brief Queries if element is within a given segment
@@ -1224,7 +1235,7 @@ namespace viennagrid
   bool is_in_segment( SegmentHandleT const & segment, viennagrid::element<ElementTagT, WrappedConfigT> const & element )
   {
     typedef viennagrid::element<ElementTagT, WrappedConfigT> element_type;
-    return is_in_segment( segment, viennagrid::make_accessor<element_type>( element_segment_mapping_collection(segment) ), element );
+    return detail::is_in_segment( segment, viennagrid::make_accessor<element_type>( element_segment_mapping_collection(segment) ), element );
   }
 
 
@@ -1302,7 +1313,7 @@ namespace viennagrid
     {
       typedef typename viennagrid::detail::result_of::lookup<
           typename SegmentationT::appendix_type,
-          element_segment_mapping_tag
+          viennagrid::detail::element_segment_mapping_tag
       >::type ElementSegmentMappingCollectionType;
 
       typedef typename viennagrid::result_of::container_of<
@@ -1334,62 +1345,65 @@ namespace viennagrid
   {
     typedef typename result_of::segment_id_range< SegmentationT, viennagrid::element<ElementTagT, WrappedConfigT> >::type SegmentIDRangeType;
     typedef viennagrid::element<ElementTagT, WrappedConfigT> ElementType;
-    return SegmentIDRangeType( viennagrid::make_accessor<ElementType>( element_segment_mapping_collection(segmentation) )(element) );
+    return SegmentIDRangeType( viennagrid::make_accessor<ElementType>( viennagrid::detail::element_segment_mapping_collection(segmentation) )(element) );
   }
 
 
 
-
-  /** @brief For internal use only */
-  template<typename segment_handle_type, typename element_segment_mapping_type, typename container_tag>
-  typename element_segment_mapping_type::segment_element_info_type *
-  segment_element_info( segment_handle_type const & segment, segment_info_t<element_segment_mapping_type, container_tag> & segment_info )
+  namespace detail
   {
-    typedef typename segment_info_t<element_segment_mapping_type, container_tag>::element_segment_mapping_container_type element_segment_mapping_container_type;
 
-    for (typename element_segment_mapping_container_type::iterator it = segment_info.element_segment_mapping_container.begin();
-          it != segment_info.element_segment_mapping_container.end();
-          ++it)
+    /** @brief For internal use only */
+    template<typename segment_handle_type, typename element_segment_mapping_type, typename container_tag>
+    typename element_segment_mapping_type::segment_element_info_type *
+    segment_element_info( segment_handle_type const & segment, segment_info_t<element_segment_mapping_type, container_tag> & segment_info )
     {
-      if (it->segment_id == segment.id())
-        return &(it->segment_element_info);
+      typedef typename segment_info_t<element_segment_mapping_type, container_tag>::element_segment_mapping_container_type element_segment_mapping_container_type;
+
+      for (typename element_segment_mapping_container_type::iterator it = segment_info.element_segment_mapping_container.begin();
+            it != segment_info.element_segment_mapping_container.end();
+            ++it)
+      {
+        if (it->segment_id == segment.id())
+          return &(it->segment_element_info);
+      }
+
+      return NULL;
     }
 
-    return NULL;
-  }
-
-  /** @brief For internal use only */
-  template<typename segment_handle_type, typename element_segment_mapping_type, typename container_tag>
-  typename element_segment_mapping_type::segment_element_info_type const *
-  segment_element_info( segment_handle_type const & segment, segment_info_t<element_segment_mapping_type, container_tag> const & segment_info )
-  {
-    typedef typename segment_info_t<element_segment_mapping_type, container_tag>::element_segment_mapping_container_type element_segment_mapping_container_type;
-
-    for (typename element_segment_mapping_container_type::const_iterator it = segment_info.element_segment_mapping_container.begin();
-          it != segment_info.element_segment_mapping_container.end();
-          ++it)
+    /** @brief For internal use only */
+    template<typename segment_handle_type, typename element_segment_mapping_type, typename container_tag>
+    typename element_segment_mapping_type::segment_element_info_type const *
+    segment_element_info( segment_handle_type const & segment, segment_info_t<element_segment_mapping_type, container_tag> const & segment_info )
     {
-      if (it->segment_id == segment.id())
-        return &(it->segment_element_info);
+      typedef typename segment_info_t<element_segment_mapping_type, container_tag>::element_segment_mapping_container_type element_segment_mapping_container_type;
+
+      for (typename element_segment_mapping_container_type::const_iterator it = segment_info.element_segment_mapping_container.begin();
+            it != segment_info.element_segment_mapping_container.end();
+            ++it)
+      {
+        if (it->segment_id == segment.id())
+          return &(it->segment_element_info);
+      }
+
+      return NULL;
     }
 
-    return NULL;
-  }
+    /** @brief For internal use only */
+    template< typename segment_handle_type, typename accessor_type, typename element_type >
+    typename accessor_type::value_type::segment_element_info_type *
+    segment_element_info( segment_handle_type & segment, accessor_type accessor, element_type const & element )
+    {
+      return segment_element_info( segment, accessor(element) );
+    }
 
-  /** @brief For internal use only */
-  template< typename segment_handle_type, typename accessor_type, typename element_type >
-  typename accessor_type::value_type::segment_element_info_type *
-  segment_element_info( segment_handle_type & segment, accessor_type accessor, element_type const & element )
-  {
-    return segment_element_info( segment, accessor(element) );
-  }
-
-  /** @brief For internal use only */
-  template< typename segment_handle_type, typename accessor_type, typename element_type >
-  typename accessor_type::value_type::segment_element_info_type const *
-  segment_element_info( segment_handle_type const & segment, const accessor_type accessor, element_type const & element )
-  {
-    return segment_element_info( segment, accessor(element) );
+    /** @brief For internal use only */
+    template< typename segment_handle_type, typename accessor_type, typename element_type >
+    typename accessor_type::value_type::segment_element_info_type const *
+    segment_element_info( segment_handle_type const & segment, const accessor_type accessor, element_type const & element )
+    {
+      return segment_element_info( segment, accessor(element) );
+    }
   }
 
   /** @brief Returns a pointer to additional segment element information. Segment element information is meta information for a combination of a segment and an element, e.g. the orientation of a triangle in a segment in a 3D hull mesh
@@ -1405,14 +1419,14 @@ namespace viennagrid
   typename viennagrid::result_of::container_of<
       typename viennagrid::detail::result_of::lookup<
           typename SegmentHandleT::segmentation_type::appendix_type,
-          element_segment_mapping_tag
+          viennagrid::detail::element_segment_mapping_tag
       >::type,
       viennagrid::element<ElementTagT, WrappedConfigT>
   >::type::value_type::segment_element_info_type const *
   segment_element_info( SegmentHandleT const & segment, viennagrid::element<ElementTagT, WrappedConfigT> const & element )
   {
     typedef viennagrid::element<ElementTagT, WrappedConfigT> element_type;
-    return segment_element_info( segment, viennagrid::make_accessor<element_type>( element_segment_mapping_collection(segment) ), element );
+    return detail::segment_element_info( segment, viennagrid::make_accessor<element_type>( element_segment_mapping_collection(segment) ), element );
   }
 
   /** @brief Returns a pointer to additional segment element information. Segment element information is meta information for a combination of a segment and an element, e.g. the orientation of a triangle in a segment in a 3D hull mesh. Const version
@@ -1428,40 +1442,43 @@ namespace viennagrid
   typename viennagrid::result_of::container_of<
       typename viennagrid::detail::result_of::lookup<
           typename SegmentHandleT::segmentation_type::appendix_type,
-          element_segment_mapping_tag
+          viennagrid::detail::element_segment_mapping_tag
       >::type,
       viennagrid::element<ElementTagT, WrappedConfigT>
   >::type::value_type::segment_element_info_type *
   segment_element_info( SegmentHandleT & segment, viennagrid::element<ElementTagT, WrappedConfigT> const & element )
   {
     typedef viennagrid::element<ElementTagT, WrappedConfigT> element_type;
-    return segment_element_info( segment, viennagrid::make_accessor<element_type>( element_segment_mapping_collection(segment) ), element );
+    return detail::segment_element_info( segment, viennagrid::make_accessor<element_type>( element_segment_mapping_collection(segment) ), element );
   }
 
 
-  /** @brief For internal use only */
-  template<typename segment_handle_type, typename element_segment_mapping_type, typename container_tag>
-  void add(segment_handle_type & segment,
-           segment_info_t<element_segment_mapping_type, container_tag> & segment_info)
+  namespace detail
   {
-    typedef typename segment_info_t<element_segment_mapping_type, container_tag>::element_segment_mapping_container_type element_segment_mapping_container_type;
-
-    for (typename element_segment_mapping_container_type::const_iterator it = segment_info.element_segment_mapping_container.begin();
-          it != segment_info.element_segment_mapping_container.end();
-          ++it)
+    /** @brief For internal use only */
+    template<typename segment_handle_type, typename element_segment_mapping_type, typename container_tag>
+    void add(segment_handle_type & segment,
+             segment_info_t<element_segment_mapping_type, container_tag> & segment_info)
     {
-      if (it->segment_id == segment.id()) return;
+      typedef typename segment_info_t<element_segment_mapping_type, container_tag>::element_segment_mapping_container_type element_segment_mapping_container_type;
+
+      for (typename element_segment_mapping_container_type::const_iterator it = segment_info.element_segment_mapping_container.begin();
+            it != segment_info.element_segment_mapping_container.end();
+            ++it)
+      {
+        if (it->segment_id == segment.id()) return;
+      }
+
+      segment_info.element_segment_mapping_container.push_back( element_segment_mapping_type(segment.id()) );
+      increment_change_counter( segment.view() );
     }
 
-    segment_info.element_segment_mapping_container.push_back( element_segment_mapping_type(segment.id()) );
-    increment_change_counter( segment.view() );
-  }
-
-  /** @brief For internal use only */
-  template< typename segment_handle_type, typename accessor_type, typename element_type >
-  void add( segment_handle_type & segment, accessor_type accessor, element_type & element )
-  {
-    return add( segment, accessor(element) );
+    /** @brief For internal use only */
+    template< typename segment_handle_type, typename accessor_type, typename element_type >
+    void add( segment_handle_type & segment, accessor_type accessor, element_type & element )
+    {
+      return add( segment, accessor(element) );
+    }
   }
 
 
@@ -1478,7 +1495,7 @@ namespace viennagrid
     typedef viennagrid::element<vertex_tag, WrappedConfigT> element_type;
     viennagrid::elements<element_type>( segment.view() ).insert_unique_handle( viennagrid::handle( segment.parent().mesh(), vertex ) );
     viennagrid::elements<element_type>( segment.parent().all_elements() ).insert_unique_handle( viennagrid::handle( segment.parent().mesh(), vertex ) );
-    add( segment, viennagrid::make_accessor<element_type>( element_segment_mapping_collection(segment) ), vertex );
+    detail::add( segment, viennagrid::make_accessor<element_type>( detail::element_segment_mapping_collection(segment) ), vertex );
   }
 
   /** @brief Adds an element to a segment, all boundary elements are added recursively
@@ -1495,7 +1512,7 @@ namespace viennagrid
     typedef viennagrid::element<ElementTagT, WrappedConfigT> element_type;
     viennagrid::elements<element_type>( segment.view() ).insert_unique_handle( viennagrid::handle( segment.parent().mesh(), element ) );
     viennagrid::elements<element_type>( segment.parent().all_elements() ).insert_unique_handle( viennagrid::handle( segment.parent().mesh(), element ) );
-    add( segment, viennagrid::make_accessor<element_type>( element_segment_mapping_collection(segment) ), element );
+    detail::add( segment, viennagrid::make_accessor<element_type>( detail::element_segment_mapping_collection(segment) ), element );
 
     // recursively adding facet elements; view containers has to be std::set
     typedef typename viennagrid::result_of::facet_range< element_type >::type FacetRangeType;
@@ -1507,33 +1524,35 @@ namespace viennagrid
   }
 
 
-
-
-  /** @brief For internal use only */
-  template<typename SegmentHandleT, typename ElementSegmentMappingT, typename ContainerTagT>
-  void erase( SegmentHandleT & segment, segment_info_t<ElementSegmentMappingT, ContainerTagT> & segment_info )
+  namespace detail
   {
-    typedef typename segment_info_t<ElementSegmentMappingT, ContainerTagT>::element_segment_mapping_container_type element_segment_mapping_container_type;
 
-    for (typename element_segment_mapping_container_type::iterator it = segment_info.element_segment_mapping_container.begin();
-                                                                   it != segment_info.element_segment_mapping_container.end();
-                                                                 ++it)
+
+    /** @brief For internal use only */
+    template<typename SegmentHandleT, typename ElementSegmentMappingT, typename ContainerTagT>
+    void erase( SegmentHandleT & segment, segment_info_t<ElementSegmentMappingT, ContainerTagT> & segment_info )
     {
-      if (it->segment_id == segment.id())
+      typedef typename segment_info_t<ElementSegmentMappingT, ContainerTagT>::element_segment_mapping_container_type element_segment_mapping_container_type;
+
+      for (typename element_segment_mapping_container_type::iterator it = segment_info.element_segment_mapping_container.begin();
+                                                                     it != segment_info.element_segment_mapping_container.end();
+                                                                   ++it)
       {
-        segment_info.element_segment_mapping_container.erase(it);
-        increment_change_counter( segment.view() );
-        return;
+        if (it->segment_id == segment.id())
+        {
+          segment_info.element_segment_mapping_container.erase(it);
+          increment_change_counter( segment.view() );
+          return;
+        }
       }
     }
-  }
 
-  /** @brief For internal use only */
-  template< typename SegmentHandleT, typename AccessorT, typename ElementT >
-  void erase( SegmentHandleT & segment, AccessorT accessor, ElementT const & element )
-  {
-    return erase( segment, accessor(element) );
-  }
+    /** @brief For internal use only */
+    template< typename SegmentHandleT, typename AccessorT, typename ElementT >
+    void erase( SegmentHandleT & segment, AccessorT accessor, ElementT const & element )
+    {
+      return erase( segment, accessor(element) );
+    }
 
 
 //   template<typename SegmentHandleT, typename ElementTagT, typename WrappedConfigT>
@@ -1544,25 +1563,26 @@ namespace viennagrid
 //     return erase( segment, viennagrid::make_accessor<element_type>( element_segment_mapping_collection(segment) ), element );
 //   }
 
-  template<typename SegmentHandleT>
-  struct non_recursive_erase_functor
-  {
-    non_recursive_erase_functor(SegmentHandleT & segment_) : segment(segment_) {}
-
-    template<typename ElementT>
-    void operator() ( ElementT & element )
+    template<typename SegmentHandleT>
+    struct non_recursive_erase_functor
     {
-      // erasing element from segment view
-      viennagrid::elements<ElementT>( segment.view() ).erase_handle( viennagrid::handle( segment.parent().mesh(), element ) );
-      // erasing element from segment-element information
-      erase( segment, viennagrid::make_accessor<ElementT>( element_segment_mapping_collection(segment) ), element );
+      non_recursive_erase_functor(SegmentHandleT & segment_) : segment(segment_) {}
 
-      if (segment_ids(segment.parent(), element).empty())
-        viennagrid::elements<ElementT>( segment.parent().all_elements() ).erase_handle( viennagrid::handle( segment.parent().mesh(), element ) );
-    }
+      template<typename ElementT>
+      void operator() ( ElementT & element )
+      {
+        // erasing element from segment view
+        viennagrid::elements<ElementT>( segment.view() ).erase_handle( viennagrid::handle( segment.parent().mesh(), element ) );
+        // erasing element from segment-element information
+        erase( segment, viennagrid::make_accessor<ElementT>( element_segment_mapping_collection(segment) ), element );
 
-    SegmentHandleT & segment;
-  };
+        if (segment_ids(segment.parent(), element).empty())
+          viennagrid::elements<ElementT>( segment.parent().all_elements() ).erase_handle( viennagrid::handle( segment.parent().mesh(), element ) );
+      }
+
+      SegmentHandleT & segment;
+    };
+  }
 
 
 
@@ -1583,7 +1603,7 @@ namespace viennagrid
     ToEraseViewT elements_to_erase = viennagrid::make_view(segment);
     viennagrid::mark_referencing_elements( segment, elements_to_erase, viennagrid::handle(segment, element) );
 
-    non_recursive_erase_functor<SegmentHandleT> functor( segment );
+    detail::non_recursive_erase_functor<SegmentHandleT> functor( segment );
     viennagrid::for_each(elements_to_erase, functor);
   }
 

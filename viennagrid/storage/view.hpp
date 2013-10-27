@@ -30,9 +30,11 @@
 
 namespace viennagrid
 {
-  template<typename base_container_type_, typename container_tag>
-  class view;
-
+  /** @brief A view holds references to a subset of elements in another elements, but represents itself to the outside as another container.
+    *
+    * @tparam base_container_type_    The container type on which the view acts
+    * @tparam container_tag           Categorization tag for the view in order to specialize on certain details of different container types.
+    */
   template<typename base_container_type_, typename container_tag>
   class view
   {
@@ -264,7 +266,8 @@ namespace viennagrid
 
 
 
-
+  // specialization for std::set
+  /** \cond */
   template<typename base_container_type_, typename CompareTagT>
   class view<base_container_type_, std_set_tag<CompareTagT> >
   {
@@ -484,7 +487,7 @@ namespace viennagrid
     handle_container_type handle_container;
     base_container_type * base_container;
   };
-
+  /** \endcond */
 
 
 
@@ -624,34 +627,39 @@ namespace viennagrid
   }
 
 
-
-  template<typename container_collection_typemap>
-  struct set_base_container_helper;
-
-  template<>
-  struct set_base_container_helper<viennagrid::null_type>
+  namespace detail
   {
-    template<typename base_container_collection_type, typename view_container_collection_type>
-    static void exec( base_container_collection_type &, view_container_collection_type & ) {}
-  };
+    /** @brief Helper class for set_base_container() */
+    template<typename container_collection_typemap>
+    struct set_base_container_helper;
 
-  template<typename value_type, typename container_type, typename tail>
-  struct set_base_container_helper< viennagrid::typelist< viennagrid::static_pair<value_type, container_type>, tail > >
-  {
-    template<typename base_container_collection_type, typename view_container_collection_type>
-    static void exec( base_container_collection_type & base_container_collection, view_container_collection_type & view_container_collection )
+    /** \cond */
+    template<>
+    struct set_base_container_helper<viennagrid::null_type>
     {
-      get<value_type>(view_container_collection).set_base_container( get<value_type>(base_container_collection) );
+      template<typename base_container_collection_type, typename view_container_collection_type>
+      static void exec( base_container_collection_type &, view_container_collection_type & ) {}
+    };
 
-      set_base_container_helper<tail>::exec(base_container_collection, view_container_collection);
-    }
-  };
+    template<typename value_type, typename container_type, typename tail>
+    struct set_base_container_helper< viennagrid::typelist< viennagrid::static_pair<value_type, container_type>, tail > >
+    {
+      template<typename base_container_collection_type, typename view_container_collection_type>
+      static void exec( base_container_collection_type & base_container_collection, view_container_collection_type & view_container_collection )
+      {
+        get<value_type>(view_container_collection).set_base_container( get<value_type>(base_container_collection) );
+
+        set_base_container_helper<tail>::exec(base_container_collection, view_container_collection);
+      }
+    };
+    /** \endcond */
+  }
 
 
   template<typename base_container_collection_type, typename view_container_collection_type>
   void set_base_container( base_container_collection_type & base_container_collection, view_container_collection_type & view_container_collection )
   {
-    set_base_container_helper< typename view_container_collection_type::typemap >::exec(base_container_collection, view_container_collection);
+    detail::set_base_container_helper< typename view_container_collection_type::typemap >::exec(base_container_collection, view_container_collection);
   }
 
 

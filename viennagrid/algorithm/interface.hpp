@@ -91,110 +91,110 @@ namespace viennagrid
 
       }
     };
-  }
 
 
-
-  /** @brief For internal use only. */
-  template<typename SegmentationT>
-  class interface_setter_functor
-  {
-  public:
-    typedef segment_handle<SegmentationT> SegmentHandleType;
-
-    interface_setter_functor(SegmentHandleType & seg0_, SegmentHandleType & seg1_) : seg0(seg0_), seg1(seg1_) {}
-
-    template<typename something>
-    void operator()( viennagrid::detail::tag<something> )
+    /** @brief For internal use only. */
+    template<typename SegmentationT>
+    class interface_setter_functor
     {
-      typedef typename viennagrid::result_of::element_tag< something >::type element_tag;
-      typedef typename viennagrid::result_of::element< SegmentHandleType, element_tag >::type element_type;
+    public:
+      typedef segment_handle<SegmentationT> SegmentHandleType;
 
-      typedef typename viennagrid::result_of::cell_tag< SegmentHandleType >::type cell_tag;
+      interface_setter_functor(SegmentHandleType & seg0_, SegmentHandleType & seg1_) : seg0(seg0_), seg1(seg1_) {}
+
+      template<typename something>
+      void operator()( viennagrid::detail::tag<something> )
+      {
+        typedef typename viennagrid::result_of::element_tag< something >::type element_tag;
+        typedef typename viennagrid::result_of::element< SegmentHandleType, element_tag >::type element_type;
+
+        typedef typename viennagrid::result_of::cell_tag< SegmentHandleType >::type cell_tag;
+        typedef typename viennagrid::result_of::facet_tag< cell_tag >::type facet_tag;
+        typedef typename viennagrid::result_of::element< SegmentHandleType, facet_tag >::type facet_type;
+
+        typedef typename viennagrid::detail::result_of::lookup<
+                typename viennagrid::detail::result_of::lookup<
+                    typename SegmentationT::appendix_type,
+                    interface_information_collection_tag
+                  >::type,
+                  facet_tag
+                >::type::segment_interface_information_wrapper_type src_interface_information_container_wrapper_type;
+
+          src_interface_information_container_wrapper_type & src_interface_information_container_wrapper = interface_information_collection<facet_tag>( seg0, seg1 );
+    //             viennagrid::dense_container_accessor_t< const typename src_interface_information_container_wrapper_type::container_type, facet_type > src_accessor( src_interface_information_container_wrapper.container );
+
+
+
+
+        typedef typename viennagrid::detail::result_of::lookup<
+                typename viennagrid::detail::result_of::lookup<
+                    typename SegmentationT::appendix_type,
+                    interface_information_collection_tag
+                  >::type,
+                  element_tag
+                >::type::segment_interface_information_wrapper_type dst_interface_information_container_wrapper_type;
+
+        dst_interface_information_container_wrapper_type & dst_interface_information_container_wrapper = interface_information_collection<element_tag>( seg0, seg1 );
+        typename viennagrid::result_of::accessor< typename dst_interface_information_container_wrapper_type::container_type, element_type >::type dst_accessor( dst_interface_information_container_wrapper.container );
+
+        transfer_boundary_information(seg0, viennagrid::make_field<facet_type>(src_interface_information_container_wrapper.container), dst_accessor);
+        transfer_boundary_information(seg1, viennagrid::make_field<facet_type>(src_interface_information_container_wrapper.container), dst_accessor);
+
+          update_change_counter( seg0, dst_interface_information_container_wrapper.seg0_change_counter );
+          update_change_counter( seg1, dst_interface_information_container_wrapper.seg1_change_counter );
+      }
+    private:
+
+      SegmentHandleType & seg0;
+      SegmentHandleType & seg1;
+    };
+
+
+
+    /** @brief For internal use only. */
+    template<typename SegmentationT>
+    void transfer_interface_information( segment_handle<SegmentationT> & seg0, segment_handle<SegmentationT> & seg1 )
+    {
+      assert( &seg0.parent() == &seg1.parent() );
+
+      typedef segment_handle<SegmentationT> segment_handle_type;
+      typedef typename viennagrid::result_of::cell_tag< segment_handle_type >::type cell_tag;
       typedef typename viennagrid::result_of::facet_tag< cell_tag >::type facet_tag;
-      typedef typename viennagrid::result_of::element< SegmentHandleType, facet_tag >::type facet_type;
 
-      typedef typename viennagrid::detail::result_of::lookup<
+      typedef typename viennagrid::detail::result_of::erase<
+          typename viennagrid::detail::result_of::key_typelist<
               typename viennagrid::detail::result_of::lookup<
                   typename SegmentationT::appendix_type,
                   interface_information_collection_tag
-                >::type,
-                facet_tag
-              >::type::segment_interface_information_wrapper_type src_interface_information_container_wrapper_type;
+              >::type::typemap
+          >::type,
+          facet_tag
+      >::type typelist;
 
-        src_interface_information_container_wrapper_type & src_interface_information_container_wrapper = interface_information_collection<facet_tag>( seg0, seg1 );
-  //             viennagrid::dense_container_accessor_t< const typename src_interface_information_container_wrapper_type::container_type, facet_type > src_accessor( src_interface_information_container_wrapper.container );
+      interface_setter_functor<SegmentationT> functor(seg0, seg1);
 
-
-
-
-      typedef typename viennagrid::detail::result_of::lookup<
-              typename viennagrid::detail::result_of::lookup<
-                  typename SegmentationT::appendix_type,
-                  interface_information_collection_tag
-                >::type,
-                element_tag
-              >::type::segment_interface_information_wrapper_type dst_interface_information_container_wrapper_type;
-
-      dst_interface_information_container_wrapper_type & dst_interface_information_container_wrapper = interface_information_collection<element_tag>( seg0, seg1 );
-      typename viennagrid::result_of::accessor< typename dst_interface_information_container_wrapper_type::container_type, element_type >::type dst_accessor( dst_interface_information_container_wrapper.container );
-
-      transfer_boundary_information(seg0, viennagrid::make_field<facet_type>(src_interface_information_container_wrapper.container), dst_accessor);
-      transfer_boundary_information(seg1, viennagrid::make_field<facet_type>(src_interface_information_container_wrapper.container), dst_accessor);
-
-        update_change_counter( seg0, dst_interface_information_container_wrapper.seg0_change_counter );
-        update_change_counter( seg1, dst_interface_information_container_wrapper.seg1_change_counter );
+      viennagrid::detail::for_each< typelist >( functor );
     }
-  private:
-
-    SegmentHandleType & seg0;
-    SegmentHandleType & seg1;
-  };
-
-
-
-  /** @brief For internal use only. */
-  template<typename SegmentationT>
-  void transfer_interface_information( segment_handle<SegmentationT> & seg0, segment_handle<SegmentationT> & seg1 )
-  {
-    assert( &seg0.parent() == &seg1.parent() );
-
-    typedef segment_handle<SegmentationT> segment_handle_type;
-    typedef typename viennagrid::result_of::cell_tag< segment_handle_type >::type cell_tag;
-    typedef typename viennagrid::result_of::facet_tag< cell_tag >::type facet_tag;
-
-    typedef typename viennagrid::detail::result_of::erase<
-        typename viennagrid::detail::result_of::key_typelist<
-            typename viennagrid::detail::result_of::lookup<
-                typename SegmentationT::appendix_type,
-                interface_information_collection_tag
-            >::type::typemap
-        >::type,
-        facet_tag
-    >::type typelist;
-
-    interface_setter_functor<SegmentationT> functor(seg0, seg1);
-
-    viennagrid::detail::for_each< typelist >( functor );
-  }
 
 
 
 
 
 
-  /** @brief For internal use only. */
-  template <typename SegmentationT, typename AccessorT>
-  void detect_interface(segment_handle<SegmentationT> & seg0,
-                        segment_handle<SegmentationT> & seg1,
-                        AccessorT accessor)
-  {
-    assert( &seg0.parent() == &seg1.parent() );
+    /** @brief For internal use only. */
+    template <typename SegmentationT, typename AccessorT>
+    void detect_interface(segment_handle<SegmentationT> & seg0,
+                          segment_handle<SegmentationT> & seg1,
+                          AccessorT accessor)
+    {
+      assert( &seg0.parent() == &seg1.parent() );
 
-    typedef typename result_of::cell_tag< segment_handle<SegmentationT> >::type CellTag;
-    typedef typename result_of::element< segment_handle<SegmentationT>, CellTag>::type CellType;
+      typedef typename viennagrid::result_of::cell_tag< segment_handle<SegmentationT> >::type CellTag;
+      typedef typename viennagrid::result_of::element< segment_handle<SegmentationT>, CellTag>::type CellType;
 
-    detail::detect_interface_impl< result_of::has_boundary<CellType, typename CellTag::facet_tag>::value >::detect(accessor, seg0, seg1);
+      viennagrid::detail::detect_interface_impl< viennagrid::result_of::has_boundary<CellType, typename CellTag::facet_tag>::value >::detect(accessor, seg0, seg1);
+    }
+
   }
 
   /** @brief Public interface function for the detection of interface n-cells between two segments. No need to call this function explicitly, since it is called by is_interface()
@@ -219,10 +219,10 @@ namespace viennagrid
               >::type,
               FacetTag
             >::type::segment_interface_information_wrapper_type interface_information_container_wrapper_type;
-    interface_information_container_wrapper_type & interface_information_container_wrapper = interface_information_collection<FacetTag>( seg0, seg1 );
+    interface_information_container_wrapper_type & interface_information_container_wrapper = detail::interface_information_collection<FacetTag>( seg0, seg1 );
 
 
-    detect_interface( seg0, seg1, viennagrid::make_field<FacetType>(interface_information_container_wrapper.container) );
+    detail::detect_interface( seg0, seg1, viennagrid::make_field<FacetType>(interface_information_container_wrapper.container) );
 
     transfer_interface_information( seg0, seg1 );
     update_change_counter( seg0, interface_information_container_wrapper.seg0_change_counter );
@@ -262,7 +262,7 @@ namespace viennagrid
               >::type,
               element_tag
             >::type::segment_interface_information_wrapper_type interface_information_container_wrapper_type;
-    interface_information_container_wrapper_type const & interface_information_container_wrapper = interface_information_collection<element_tag>( seg0, seg1 );
+    interface_information_container_wrapper_type const & interface_information_container_wrapper = detail::interface_information_collection<element_tag>( seg0, seg1 );
 
     if ( (is_obsolete(seg0, interface_information_container_wrapper.seg0_change_counter)) ||
          (is_obsolete(seg1, interface_information_container_wrapper.seg1_change_counter) ))

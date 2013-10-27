@@ -23,6 +23,7 @@
 namespace viennagrid
 {
 
+  /** @brief A tag representing polygons */
   struct polygon_tag
   {
     typedef simplex_tag<1> facet_tag;

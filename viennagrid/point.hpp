@@ -573,7 +573,11 @@ namespace viennagrid
 
 
 
-
+  /** @brief Main point class of ViennaGrid. Represents a geometric location inside the respective Euclidian space.
+    *
+    * @tparam CoordType         Numerical type to be used for coordinates. Typically double.
+    * @tparam CoordinateSystem  The coordinate system to be used. For a cartesian coordinate system, use cartesian_cs<d>, where d is the spatial dimension.
+    */
   template <typename CoordType, typename CoordinateSystem>
   class spatial_point : public static_array<CoordType, CoordinateSystem::dim>
   {

@@ -214,6 +214,10 @@ namespace viennagrid
     };
   }
 
+  /** @brief The main mesh class holding all the different elements. The data structure is configured using a configuration class. See viennagrid::config for predefined configurations.
+    *
+    * @tparam WrappedConfigType  A class wrapping the configuration typemap. See namespace viennagrid::config for examples.
+    */
   template <typename WrappedConfigType>
   class mesh
   {

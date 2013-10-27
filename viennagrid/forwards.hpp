@@ -125,9 +125,13 @@ namespace viennagrid
   struct full_lazy_handling_tag {};
 
 
+  /** @brief A tag for identifying the coboundary collection */
   struct coboundary_collection_tag {};
+  /** @brief A tag for identifying the neighbor element collection */
   struct neighbor_collection_tag {};
+  /** @brief A tag for identifying boundary information */
   struct boundary_information_collection_tag {};
+  /** @brief A tag identifying interface information */
   struct interface_information_collection_tag {};
 
 
@@ -160,10 +164,10 @@ namespace viennagrid
   /** @brief Convenience type definition for a hexahedron */
   typedef hypercube_tag<3>  hexahedron_tag;
 
-  /** @brief A tag representing polygons */
+  //see viennagrid/topology/polygon.hpp
   struct polygon_tag;
 
-  /** @brief A tag representing plcs */
+  //see viennagrid/topology/plc.hpp
   struct plc_tag;
 
 
@@ -242,24 +246,15 @@ namespace viennagrid
   template <typename MeshConfigT, typename ElementTypeListT, typename ContainerConfigT>
   class decorated_mesh_view_config;
 
-  /** @brief A mesh represents a mesh and contains all elements
-    *
-    * @tparam WrappedConfigT    The configuration of the mesh
-    */
+  // see mesh.hpp
   template <typename WrappedConfigT>
   class mesh;
 
-  /** @brief A segmentation defines a set of submeshes of a mesh
-    *
-    * @tparam WrappedConfigT    The configuration of the segmentation
-    */
+  // see segmentation.hpp
   template<typename WrappedConfigT>
   class segmentation;
 
-  /** @brief A segment defines a submesh within a segmentation. Each segmentation contains a view of elements of the mesh
-    *
-    * @tparam SegmentationT     The segmentation type where the segment lives
-    */
+  // see segmentation.hpp
   template<typename SegmentationT>
   class segment_handle;
 

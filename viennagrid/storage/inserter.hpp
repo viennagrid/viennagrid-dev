@@ -23,6 +23,7 @@
 namespace viennagrid
 {
 
+  /** @brief An inserter class which adds elements to a the provided container collection. For example, this inserts a triangle into a segment s, but not into the mesh or segment where s was derived from. */
   template<typename container_collection_type, typename change_counter_type, typename id_generator_type_>
   class physical_inserter
   {
@@ -44,6 +45,32 @@ namespace viennagrid
       collection     = &collection_obj;
       change_counter = &change_counter_;
     }
+
+    template<bool generate_id, bool call_callback, typename value_type>
+    std::pair<
+        typename viennagrid::result_of::container_of<container_collection_type, value_type>::type::handle_type,
+        bool
+    >
+    insert( const value_type & element )
+    {
+      return physical_insert<generate_id, call_callback>( element, *this );
+    }
+
+    template<typename value_type>
+    std::pair<
+        typename viennagrid::result_of::container_of<container_collection_type, value_type>::type::handle_type,
+        bool
+    >
+    operator()( const value_type & element )
+    {
+      return insert<true, true>( element );
+    }
+
+    container_collection_type & get_physical_container_collection() { return *collection; }
+    container_collection_type const & get_physical_container_collection() const { return *collection; }
+
+    id_generator_type & get_id_generator() { return id_generator; }
+    id_generator_type const & get_id_generator() const { return id_generator; }
 
     template<bool generate_id, bool call_callback, typename value_type, typename inserter_type>
     std::pair<
@@ -81,34 +108,8 @@ namespace viennagrid
     template<typename handle_type, typename value_type>
     void handle_insert( handle_type, viennagrid::detail::tag<value_type> ) {}
 
-
-    template<bool generate_id, bool call_callback, typename value_type>
-    std::pair<
-        typename viennagrid::result_of::container_of<container_collection_type, value_type>::type::handle_type,
-        bool
-    >
-    insert( const value_type & element )
-    {
-      return physical_insert<generate_id, call_callback>( element, *this );
-    }
-
-    template<typename value_type>
-    std::pair<
-        typename viennagrid::result_of::container_of<container_collection_type, value_type>::type::handle_type,
-        bool
-    >
-    operator()( const value_type & element )
-    {
-      return insert<true, true>( element );
-    }
-
-    container_collection_type & get_physical_container_collection() { return *collection; }
-    container_collection_type const & get_physical_container_collection() const { return *collection; }
-
-    id_generator_type & get_id_generator() { return id_generator; }
-    id_generator_type const & get_id_generator() const { return id_generator; }
-
   private:
+
     container_collection_type * collection;
     change_counter_type * change_counter;
 
@@ -121,7 +122,10 @@ namespace viennagrid
 
 
 
-
+  /** @brief Recursive inserter which inserts an element into the provided collection and all dependent collections.
+    *
+    * For example, if a segment s was derived from another segment t and a mesh m, adding an element to s will also insert the element into t and m.
+    */
   template<typename view_collection_type, typename change_counter_type, typename dependend_inserter_type>
   class recursive_inserter
   {

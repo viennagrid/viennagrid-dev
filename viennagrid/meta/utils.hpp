@@ -33,6 +33,7 @@ namespace viennagrid
 
 
   // a static type pair
+  /** @brief A static pair time. To be seen as the equivalent of std::pair<>, but for metaprogramming. */
   template<typename FirstT, typename SecondT>
   struct static_pair
   {
