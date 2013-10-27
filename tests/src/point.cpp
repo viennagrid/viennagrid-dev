@@ -126,28 +126,28 @@ void test_operations(PointType1 const & c0, PointType1 const & c1, PointType1 co
   std::cout << "[PASSED]" << std::endl;
 
   std::cout << "Testing norms: ";
-  if ( !fuzzy_equal(viennagrid::norm(c0, viennagrid::one_tag()), viennagrid::norm(p0, viennagrid::one_tag()))
-       || !fuzzy_equal(viennagrid::norm(c1, viennagrid::one_tag()), viennagrid::norm(p1, viennagrid::one_tag()))
-       || !fuzzy_equal(viennagrid::norm(c2, viennagrid::one_tag()), viennagrid::norm(p2, viennagrid::one_tag()))
-       || !fuzzy_equal(viennagrid::norm(c3, viennagrid::one_tag()), viennagrid::norm(p3, viennagrid::one_tag()))
+  if (    !fuzzy_equal(viennagrid::norm(c0, viennagrid::one_norm_tag()), viennagrid::norm(p0, viennagrid::one_norm_tag()))
+       || !fuzzy_equal(viennagrid::norm(c1, viennagrid::one_norm_tag()), viennagrid::norm(p1, viennagrid::one_norm_tag()))
+       || !fuzzy_equal(viennagrid::norm(c2, viennagrid::one_norm_tag()), viennagrid::norm(p2, viennagrid::one_norm_tag()))
+       || !fuzzy_equal(viennagrid::norm(c3, viennagrid::one_norm_tag()), viennagrid::norm(p3, viennagrid::one_norm_tag()))
      )
     exit(EXIT_FAILURE);
-  if ( !fuzzy_equal(viennagrid::norm(c0, viennagrid::two_tag()), viennagrid::norm(p0, viennagrid::two_tag()))
-       || !fuzzy_equal(viennagrid::norm(c1, viennagrid::two_tag()), viennagrid::norm(p1, viennagrid::two_tag()))
-       || !fuzzy_equal(viennagrid::norm(c2, viennagrid::two_tag()), viennagrid::norm(p2, viennagrid::two_tag()))
-       || !fuzzy_equal(viennagrid::norm(c3, viennagrid::two_tag()), viennagrid::norm(p3, viennagrid::two_tag()))
+  if (    !fuzzy_equal(viennagrid::norm(c0, viennagrid::two_norm_tag()), viennagrid::norm(p0, viennagrid::two_norm_tag()))
+       || !fuzzy_equal(viennagrid::norm(c1, viennagrid::two_norm_tag()), viennagrid::norm(p1, viennagrid::two_norm_tag()))
+       || !fuzzy_equal(viennagrid::norm(c2, viennagrid::two_norm_tag()), viennagrid::norm(p2, viennagrid::two_norm_tag()))
+       || !fuzzy_equal(viennagrid::norm(c3, viennagrid::two_norm_tag()), viennagrid::norm(p3, viennagrid::two_norm_tag()))
      )
     exit(EXIT_FAILURE);
-  if ( !fuzzy_equal(viennagrid::norm(c0, viennagrid::inf_tag()), viennagrid::norm(p0, viennagrid::inf_tag()))
-       || !fuzzy_equal(viennagrid::norm(c1, viennagrid::inf_tag()), viennagrid::norm(p1, viennagrid::inf_tag()))
-       || !fuzzy_equal(viennagrid::norm(c2, viennagrid::inf_tag()), viennagrid::norm(p2, viennagrid::inf_tag()))
-       || !fuzzy_equal(viennagrid::norm(c3, viennagrid::inf_tag()), viennagrid::norm(p3, viennagrid::inf_tag()))
+  if (    !fuzzy_equal(viennagrid::norm(c0, viennagrid::inf_norm_tag()), viennagrid::norm(p0, viennagrid::inf_norm_tag()))
+       || !fuzzy_equal(viennagrid::norm(c1, viennagrid::inf_norm_tag()), viennagrid::norm(p1, viennagrid::inf_norm_tag()))
+       || !fuzzy_equal(viennagrid::norm(c2, viennagrid::inf_norm_tag()), viennagrid::norm(p2, viennagrid::inf_norm_tag()))
+       || !fuzzy_equal(viennagrid::norm(c3, viennagrid::inf_norm_tag()), viennagrid::norm(p3, viennagrid::inf_norm_tag()))
      )
     exit(EXIT_FAILURE);
-  if ( !fuzzy_equal(viennagrid::norm(3.1415*c3, viennagrid::two_tag()), viennagrid::norm(3.1415*p3, viennagrid::two_tag()))
-       || !fuzzy_equal(viennagrid::norm(c1, viennagrid::one_tag()), viennagrid::norm(p1, viennagrid::one_tag()))
-       || !fuzzy_equal(viennagrid::norm(c2+p1, viennagrid::two_tag()), viennagrid::norm(p2+c1, viennagrid::two_tag()))
-       || !fuzzy_equal(viennagrid::norm(c3-c2, viennagrid::inf_tag()), viennagrid::norm(p3-p2, viennagrid::inf_tag()))
+  if (    !fuzzy_equal(viennagrid::norm(3.1415*c3, viennagrid::two_norm_tag()), viennagrid::norm(3.1415*p3, viennagrid::two_norm_tag()))
+       || !fuzzy_equal(viennagrid::norm(c1,        viennagrid::one_norm_tag()), viennagrid::norm(p1,        viennagrid::one_norm_tag()))
+       || !fuzzy_equal(viennagrid::norm(c2+p1,     viennagrid::two_norm_tag()), viennagrid::norm(p2+c1,     viennagrid::two_norm_tag()))
+       || !fuzzy_equal(viennagrid::norm(c3-c2,     viennagrid::inf_norm_tag()), viennagrid::norm(p3-p2,     viennagrid::inf_norm_tag()))
      )
     exit(EXIT_FAILURE);
   std::cout << "[PASSED]" << std::endl;

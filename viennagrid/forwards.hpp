@@ -1769,11 +1769,11 @@ namespace viennagrid
 
   // norm tags for: algorithm/norm.hpp
   /** @brief Tag for denoting the 1-norm */
-  struct one_tag {};
+  struct one_norm_tag {};
   /** @brief Tag for denoting the 2-norm */
-  struct two_tag {};
+  struct two_norm_tag {};
   /** @brief Tag for denoting the infinity-norm */
-  struct inf_tag {};
+  struct inf_norm_tag {};
 
   /** @brief Types for cell normals in algorithm/cell_normals.hpp (to be added in a future release) */
   struct seg_cell_normal_tag {};
