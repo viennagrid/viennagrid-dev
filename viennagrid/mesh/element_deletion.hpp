@@ -202,9 +202,9 @@ namespace viennagrid
   }
 
   template <typename WrappedConfigType, typename ElementTypeList, typename ContainerConfig, typename ToEraseViewT>
-  void erase_elements(viennagrid::mesh< decorated_mesh_view_config<WrappedConfigType, ElementTypeList, ContainerConfig> > & view_obj, ToEraseViewT & elements_to_erase)
+  void erase_elements(viennagrid::mesh< viennagrid::detail::decorated_mesh_view_config<WrappedConfigType, ElementTypeList, ContainerConfig> > & view_obj, ToEraseViewT & elements_to_erase)
   {
-    typedef viennagrid::mesh< decorated_mesh_view_config<WrappedConfigType, ElementTypeList, ContainerConfig> > ViewType;
+    typedef viennagrid::mesh< viennagrid::detail::decorated_mesh_view_config<WrappedConfigType, ElementTypeList, ContainerConfig> > ViewType;
 
     detail::erase_from_view_functor<ViewType> functor( view_obj );
     viennagrid::for_each(elements_to_erase, functor);

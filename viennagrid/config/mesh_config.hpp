@@ -305,7 +305,7 @@ namespace viennagrid
                   BoundaryElementTagT,
                   ElementTagT
               >,
-              coboundary_container_wrapper<base_coboundary_container, MeshChangeCounterType>
+              detail::coboundary_container_wrapper<base_coboundary_container, MeshChangeCounterType>
           >,
           typename coboundary_container_collection_per_element_typemap<WrappedConfigType, ElementTagT, tail>::type
       > type;
@@ -366,7 +366,7 @@ namespace viennagrid
                   ElementTagT,
                   ConnectorElementTagT
               >,
-              neighbor_container_wrapper<base_container, MeshChangeCounterType>
+              detail::neighbor_container_wrapper<base_container, MeshChangeCounterType>
           >,
           typename neighbor_container_collection_per_element_typemap<WrappedConfigType, ElementTagT, tail>::type
       > type;
@@ -476,7 +476,7 @@ namespace viennagrid
       typedef viennagrid::typelist<
           viennagrid::static_pair<
               ElementTagT,
-              boundary_information_wrapper<base_container, MeshChangeCounterType>
+              detail::boundary_information_wrapper<base_container, MeshChangeCounterType>
           >,
           typename boundary_information_collection_typemap_impl<WrappedConfigType, TailT>::type
       > type;

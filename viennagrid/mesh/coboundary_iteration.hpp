@@ -121,9 +121,9 @@ namespace viennagrid
   }
 
   template<typename element_type_or_tag, typename coboundary_type_or_tag, typename WrappedConfigT, typename ElementTypelistT, typename ContainerConfigT, typename coboundary_accessor_type>
-  void create_coboundary_information(viennagrid::mesh< decorated_mesh_view_config<WrappedConfigT, ElementTypelistT, ContainerConfigT> > & mesh_obj, coboundary_accessor_type accessor)
+  void create_coboundary_information(viennagrid::mesh< viennagrid::detail::decorated_mesh_view_config<WrappedConfigT, ElementTypelistT, ContainerConfigT> > & mesh_obj, coboundary_accessor_type accessor)
   {
-    typedef viennagrid::mesh< decorated_mesh_view_config<WrappedConfigT, ElementTypelistT, ContainerConfigT> > ViewType;
+    typedef viennagrid::mesh< viennagrid::detail::decorated_mesh_view_config<WrappedConfigT, ElementTypelistT, ContainerConfigT> > ViewType;
     typedef typename viennagrid::result_of::element_tag< element_type_or_tag >::type element_tag;
 
     typedef typename viennagrid::result_of::element< ViewType, coboundary_type_or_tag >::type coboundary_type;

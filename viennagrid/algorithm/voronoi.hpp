@@ -632,14 +632,14 @@ namespace viennagrid
       // Step one: Write circumcenters to facets
       //
 
-      viennagrid::dereference_handle_comperator<MeshT> comp(mesh_obj);
+      viennagrid::detail::dereference_handle_comparator<MeshT> comp(mesh_obj);
 
-      std::map< ConstFacetHandleType, CircumcenterContainer, viennagrid::dereference_handle_comperator<MeshT> >
+      std::map< ConstFacetHandleType, CircumcenterContainer, viennagrid::detail::dereference_handle_comparator<MeshT> >
                                                                circumcenters_on_facets( comp );
       //std::map< EdgeType const *,
       std::map< ConstEdgeHandleType,
                 std::vector< EdgePointsWithCellInfo >,
-                viennagrid::dereference_handle_comperator<MeshT>
+                viennagrid::detail::dereference_handle_comparator<MeshT>
               >                                                interface_boundaries_on_edges(comp);
 
 

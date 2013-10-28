@@ -241,10 +241,11 @@ namespace viennagrid
 
 
 
-
-  /** @brief Config class for mesh view */
-  template <typename MeshConfigT, typename ElementTypeListT, typename ContainerConfigT>
-  class decorated_mesh_view_config;
+  namespace detail
+  {
+    template <typename MeshConfigT, typename ElementTypeListT, typename ContainerConfigT>
+    class decorated_mesh_view_config;
+  }
 
   // see mesh.hpp
   template <typename WrappedConfigT>
@@ -258,15 +259,17 @@ namespace viennagrid
   template<typename SegmentationT>
   class segment_handle;
 
-  template<typename container_type_, typename change_counter_type>
-  struct coboundary_container_wrapper;
+  namespace detail
+  {
+    template<typename container_type_, typename change_counter_type>
+    struct coboundary_container_wrapper;
 
-  template<typename container_type_, typename change_counter_type>
-  struct neighbor_container_wrapper;
+    template<typename container_type_, typename change_counter_type>
+    struct neighbor_container_wrapper;
 
-  template<typename container_type_, typename change_counter_type>
-  struct boundary_information_wrapper;
-
+    template<typename container_type_, typename change_counter_type>
+    struct boundary_information_wrapper;
+  }
 
 
 
