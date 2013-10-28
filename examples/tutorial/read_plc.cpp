@@ -69,15 +69,9 @@ int main()
 
   typedef viennagrid::result_of::point<MeshType>::type point_type;
 
-  typedef viennagrid::result_of::element<MeshType, viennagrid::vertex_tag>::type vertex_type;
-  typedef viennagrid::result_of::handle<MeshType, viennagrid::vertex_tag>::type vertex_handle_type;
-
-  typedef viennagrid::result_of::element<MeshType, viennagrid::line_tag>::type line_type;
-  typedef viennagrid::result_of::handle<MeshType, viennagrid::line_tag>::type line_handle_type;
-
-
-  typedef viennagrid::result_of::element<MeshType, viennagrid::plc_tag>::type plc_type;
-  typedef viennagrid::result_of::handle<MeshType, viennagrid::plc_tag>::type plc_handle_type;
+  typedef viennagrid::result_of::element<MeshType, viennagrid::vertex_tag>::type   vertex_type;
+  typedef viennagrid::result_of::element<MeshType, viennagrid::line_tag>::type       line_type;
+  typedef viennagrid::result_of::element<MeshType, viennagrid::plc_tag>::type         plc_type;
 
   //
   // Reading the PLC mesh

@@ -77,19 +77,13 @@ namespace viennagrid
       {
 
         typedef typename viennagrid::result_of::point<MeshT>::type           PointType;
-        typedef typename viennagrid::result_of::coord< PointType >::type     CoordType;
 
         static const int point_dim = viennagrid::result_of::static_size<PointType>::value;
-
-        typedef plc_tag CellTag;
-        typedef typename result_of::element<MeshT, CellTag>::type            CellType;
-        typedef typename result_of::handle<MeshT, CellTag>::type             CellHandleType;
 
         typedef typename result_of::element<MeshT, vertex_tag>::type         VertexType;
         typedef typename result_of::handle<MeshT, vertex_tag>::type          VertexHandleType;
         typedef typename VertexType::id_type VertexIDType;
 
-        typedef typename result_of::element<MeshT, line_tag>::type           LineType;
         typedef typename result_of::handle<MeshT, line_tag>::type            LineHandleType;
 
         std::ifstream reader(filename.c_str());
@@ -137,8 +131,6 @@ namespace viennagrid
         #if defined VIENNAGRID_DEBUG_STATUS || defined VIENNAGRID_DEBUG_IO
         std::cout << "* poly_reader::operator(): Reading " << node_num << " vertices... " << std::endl;
         #endif
-
-        typedef typename VertexIDType::base_id_type id_type;
 
         for (int i=0; i<node_num; i++)
         {
@@ -212,9 +204,6 @@ namespace viennagrid
 
           std::list<LineHandleType> lines;
           std::list<VertexHandleType> vertices;
-
-
-          typedef typename viennagrid::result_of::element_view<MeshT, VertexType>::type VertexViewType;
 
           for (int j = 0; j<polygon_num; ++j)
           {
