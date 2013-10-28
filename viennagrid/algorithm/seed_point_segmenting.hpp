@@ -116,7 +116,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::element<MeshT, viennagrid::triangle_tag>::type    triangle_type;
       typedef typename viennagrid::result_of::handle<MeshT,  viennagrid::vertex_tag>::type      vertex_handle_type;
 
-      typedef viennagrid::storage::static_array<vertex_handle_type, 3> handle_array;
+      typedef viennagrid::static_array<vertex_handle_type, 3> handle_array;
 
       triangle_type & triangle = viennagrid::dereference_handle(segment, triangle_handle);
 
@@ -138,7 +138,7 @@ namespace viennagrid
       vtx[2] = viennagrid::elements<viennagrid::vertex_tag>(triangle).handle_at(2);
 
 
-      viennagrid::storage::static_array<point_type,3> p;
+      viennagrid::static_array<point_type,3> p;
       p[0] = viennagrid::point( mesh_obj, vtx[0] );
       p[1] = viennagrid::point( mesh_obj, vtx[1] );
       p[2] = viennagrid::point( mesh_obj, vtx[2] );
@@ -162,7 +162,7 @@ namespace viennagrid
       {
         line_type & line = *lit;
 
-        viennagrid::storage::static_array<point_type, 2> lp;
+        viennagrid::static_array<point_type, 2> lp;
 
         lp[0] = viennagrid::point( mesh_obj, viennagrid::vertices(line)[0] );
         lp[1] = viennagrid::point( mesh_obj, viennagrid::vertices(line)[1] );
@@ -209,7 +209,7 @@ namespace viennagrid
           nvtx[1] = viennagrid::elements<viennagrid::vertex_tag>(neighbor_triangle).handle_at(1);
           nvtx[2] = viennagrid::elements<viennagrid::vertex_tag>(neighbor_triangle).handle_at(2);
 
-          viennagrid::storage::static_array<point_type,3> np;
+          viennagrid::static_array<point_type,3> np;
           np[0] = viennagrid::point( mesh_obj, nvtx[0] );
           np[1] = viennagrid::point( mesh_obj, nvtx[1] );
           np[2] = viennagrid::point( mesh_obj, nvtx[2] );
