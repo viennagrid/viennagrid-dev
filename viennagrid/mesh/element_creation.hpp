@@ -65,7 +65,13 @@ namespace viennagrid
 
 
 
-  // doxygen doku in forwards.hpp
+  /** @brief Function for creating an cell within a mesh or a segment
+  *
+  * @param  mesh_segment            The mesh or segment object where the cell should be created
+  * @param  vertices_begin          An iterator pointing to the first vertex handle of the cell
+  * @param  vertices_end            An iterator defining the end of the vertices
+  * @return                         A handle to the created cell
+  */
   template<typename MeshOrSegmentHandleTypeT, typename VertexHandleIteratorT>
   typename result_of::cell_handle<MeshOrSegmentHandleTypeT>::type
   make_cell(
@@ -78,7 +84,14 @@ namespace viennagrid
   }
 
 
-  // doxygen doku in forwards.hpp
+  /** @brief Function for creating an cell with ID within a mesh or a segment
+  *
+  * @param  mesh_segment            The mesh or segment object where the cell should be created
+  * @param  vertices_begin          An iterator pointing to the first vertex handle of the cell
+  * @param  vertices_end            An iterator defining the end of the vertices
+  * @param  id                      The cell ID to be used for the cell within the mesh or segment
+  * @return                         A handle to the created cell
+  */
   template<typename MeshOrSegmentHandleTypeT, typename VertexHandleIteratorT>
   typename result_of::cell_handle<MeshOrSegmentHandleTypeT>::type
   make_cell_with_id(

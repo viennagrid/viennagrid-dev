@@ -1145,6 +1145,13 @@ namespace viennagrid
   template<typename ElementTypeOrTagT, typename SomethingT>
   typename result_of::element_range<SomethingT, ElementTypeOrTagT>::type elements(SomethingT & something);
 
+  /** @brief Function for retrieving an element range or a boundary element range from a segment
+    *
+    * @tparam SomethingT         The host segment
+    * @tparam ElementTypeOrTagT  The element type/tag for the requested element range
+    * @param  something          The host object of type SomethingT
+    * @return                    An element range
+    */
   template<typename ElementTypeOrTagT, typename SegmentationT>
   typename result_of::element_range< viennagrid::segment_handle<SegmentationT>, ElementTypeOrTagT>::type elements( viennagrid::segment_handle<SegmentationT> & something);
 
@@ -1283,6 +1290,13 @@ namespace viennagrid
   template<typename ElementTypeOrTagT, typename SomethingT>
   typename result_of::const_element_range<SomethingT, ElementTypeOrTagT>::type elements(SomethingT const & something);
 
+  /** @brief Function for retrieving a const element range or a boundary element range from a segment
+    *
+    * @tparam SomethingT         The host segment
+    * @tparam ElementTypeOrTagT  The element type/tag for the requested element range
+    * @param  something          The host object of type SomethingT
+    * @return                    A const element range
+    */
   template<typename ElementTypeOrTagT, typename SegmentationT>
   typename result_of::const_element_range< viennagrid::segment_handle<SegmentationT>, ElementTypeOrTagT>::type elements( viennagrid::segment_handle<SegmentationT> const & something);
 
@@ -1415,24 +1429,25 @@ namespace viennagrid
   /** @brief Function for creating an element within a mesh or a segment
     *
     * @tparam ElementTypeOrTagT       The element type/tag to be created
-    * @tparam MeshOrSegmentHandleT    The mesh or segment type where the element is created
+    * @tparam MeshOrSegmentHandleTypeT    The mesh or segment type where the element is created
     * @tparam VertexHandleIteratorT   A vertex handle iterator type
     * @param  mesh_segment            The mesh or segment object where the element should be created
     * @param  array_start             An iterator pointing to the first vertex handle of the element
     * @param  array_end               An iterator defining the end of the vertices
     * @return                         A handle to the created element
     */
-  template<typename ElementTypeOrTagT, typename MeshOrSegmentHandleT, typename VertexHandleIteratorT>
-  typename result_of::handle<MeshOrSegmentHandleT, ElementTypeOrTagT>::type make_element(
-        MeshOrSegmentHandleT & mesh_segment,
+  template<typename ElementTypeOrTagT, typename MeshOrSegmentHandleTypeT, typename VertexHandleIteratorT>
+  typename result_of::handle<MeshOrSegmentHandleTypeT, ElementTypeOrTagT>::type make_element(
+        MeshOrSegmentHandleTypeT & mesh_segment,
         VertexHandleIteratorT array_start,
         VertexHandleIteratorT const & array_end );
 
 
+#ifndef _MSC_VER
   /** @brief Function for creating an element within a mesh or segment with a specific ID
     *
     * @tparam ElementTypeOrTagT       The element type/tag to be created
-    * @tparam MeshOrSegmentHandleT    The mesh or segment type where the element is created
+    * @tparam MeshOrSegmentHandleTypeT    The mesh or segment type where the element is created
     * @tparam VertexHandleIteratorT   A vertex handle iterator type
     * @param  mesh_segment            The mesh or segment object where the element should be created
     * @param  array_start             An iterator pointing to the first vertex handle of the element
@@ -1440,13 +1455,12 @@ namespace viennagrid
     * @param  id                      The id of the new element
     * @return                         A handle to the created element
     */
-#ifndef _MSC_VER
-  template<typename ElementTypeOrTagT, typename MeshOrSegmentHandleT, typename VertexHandleIteratorT>
-  typename result_of::handle<MeshOrSegmentHandleT, ElementTypeOrTagT>::type make_element_with_id(
-        MeshOrSegmentHandleT & mesh_segment,
+  template<typename ElementTypeOrTagT, typename MeshOrSegmentHandleTypeT, typename VertexHandleIteratorT>
+  typename result_of::handle<MeshOrSegmentHandleTypeT, ElementTypeOrTagT>::type make_element_with_id(
+        MeshOrSegmentHandleTypeT & mesh_segment,
         VertexHandleIteratorT array_start,
         VertexHandleIteratorT const & array_end,
-        typename result_of::id< typename result_of::element<MeshOrSegmentHandleT, ElementTypeOrTagT>::type >::type id );
+        typename result_of::id< typename result_of::element<MeshOrSegmentHandleTypeT, ElementTypeOrTagT>::type >::type id );
 #endif
 
   /** @brief Function for creating a vertex within a mesh or a segment
@@ -1660,10 +1674,26 @@ namespace viennagrid
   viennagrid::element<ElementTagT, WrappedConfigT> & dereference_handle( viennagrid::mesh<WrappedMeshConfigT> &, viennagrid::element<ElementTagT, WrappedConfigT> & element)
   { return element; }
 
+  /** @brief Function for dereferencing an element -> identity
+    *
+    * @tparam WrappedMeshConfigT      Wrapped config of the mesh type
+    * @tparam ElementTagT             Element tag of the element to dereference
+    * @tparam WrappedConfigT          Wrapped config of the element to dereference
+    * @param  element                 The element to be derferenced, this object is returned
+    * @return                         element (identity)
+    */
   template<typename WrappedMeshConfigT, typename ElementTagT, typename WrappedConfigT>
   viennagrid::element<ElementTagT, WrappedConfigT> & dereference_handle( viennagrid::segment_handle<WrappedMeshConfigT> &, viennagrid::element<ElementTagT, WrappedConfigT> & element)
   { return element; }
 
+  /** @brief Function for dereferencing an element -> identity
+    *
+    * @tparam WrappedMeshConfigT      Wrapped config of the mesh type
+    * @tparam ElementTagT             Element tag of the element to dereference
+    * @tparam WrappedConfigT          Wrapped config of the element to dereference
+    * @param  element                 The element to be derferenced, this object is returned
+    * @return                         element (identity)
+    */
   template<typename HostElementTagT, typename WrappedHostElementConfigT, typename ElementTagT, typename WrappedConfigT>
   viennagrid::element<ElementTagT, WrappedConfigT> & dereference_handle( viennagrid::element<HostElementTagT, WrappedHostElementConfigT> &, viennagrid::element<ElementTagT, WrappedConfigT> & element)
   { return element; }
@@ -1680,36 +1710,44 @@ namespace viennagrid
   viennagrid::element<ElementTagT, WrappedConfigT> const & dereference_handle( viennagrid::mesh<WrappedMeshConfigT> const &, viennagrid::element<ElementTagT, WrappedConfigT> const & element)
   { return element; }
 
+  /** @brief Function for dereferencing a const element -> identity */
   template<typename WrappedMeshConfigT, typename ElementTagT, typename WrappedConfigT>
   viennagrid::element<ElementTagT, WrappedConfigT> const & dereference_handle( viennagrid::mesh<WrappedMeshConfigT> &, viennagrid::element<ElementTagT, WrappedConfigT> const & element)
   { return element; }
 
+  /** @brief Function for dereferencing a const element -> identity */
   template<typename WrappedMeshConfigT, typename ElementTagT, typename WrappedConfigT>
   viennagrid::element<ElementTagT, WrappedConfigT> const & dereference_handle( viennagrid::mesh<WrappedMeshConfigT> const &, viennagrid::element<ElementTagT, WrappedConfigT> & element)
   { return element; }
 
 
+  /** @brief Function for dereferencing a const element -> identity */
   template<typename SegmentationT, typename ElementTagT, typename WrappedConfigT>
   viennagrid::element<ElementTagT, WrappedConfigT> const & dereference_handle( viennagrid::segment_handle<SegmentationT> const &, viennagrid::element<ElementTagT, WrappedConfigT> const & element)
   { return element; }
 
+  /** @brief Function for dereferencing a const element -> identity */
   template<typename SegmentationT, typename ElementTagT, typename WrappedConfigT>
   viennagrid::element<ElementTagT, WrappedConfigT> const & dereference_handle( viennagrid::segment_handle<SegmentationT> &, viennagrid::element<ElementTagT, WrappedConfigT> const & element)
   { return element; }
 
+  /** @brief Function for dereferencing an element -> identity */
   template<typename SegmentationT, typename ElementTagT, typename WrappedConfigT>
   viennagrid::element<ElementTagT, WrappedConfigT> const & dereference_handle( viennagrid::segment_handle<SegmentationT> const &, viennagrid::element<ElementTagT, WrappedConfigT> & element)
   { return element; }
 
 
+  /** @brief Function for dereferencing a const element -> identity */
   template<typename HostElementTagT, typename WrappedHostElementConfigT, typename ElementTagT, typename WrappedConfigT>
   viennagrid::element<ElementTagT, WrappedConfigT> const & dereference_handle( viennagrid::element<HostElementTagT, WrappedHostElementConfigT> const &, viennagrid::element<ElementTagT, WrappedConfigT> const & element)
   { return element; }
 
+  /** @brief Function for dereferencing a const element -> identity */
   template<typename HostElementTagT, typename WrappedHostElementConfigT, typename ElementTagT, typename WrappedConfigT>
   viennagrid::element<ElementTagT, WrappedConfigT> const & dereference_handle( viennagrid::element<HostElementTagT, WrappedHostElementConfigT> &, viennagrid::element<ElementTagT, WrappedConfigT> const & element)
   { return element; }
 
+  /** @brief Function for dereferencing an element -> identity */
   template<typename HostElementTagT, typename WrappedHostElementConfigT, typename ElementTagT, typename WrappedConfigT>
   viennagrid::element<ElementTagT, WrappedConfigT> const & dereference_handle( viennagrid::element<HostElementTagT, WrappedHostElementConfigT> const &, viennagrid::element<ElementTagT, WrappedConfigT> & element)
   { return element; }

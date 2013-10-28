@@ -58,7 +58,7 @@ namespace viennagrid
   //
   // The public interface functions
   //
-  /** @brief Returns the surface of a n-cell */
+  /** @brief Returns the surface of a n-cell using the provided point accessor to obtain the spatial points from each vertex. */
   template <typename PointAccessorT, typename ElementTag, typename WrappedConfigT>
   typename viennagrid::result_of::coord< typename PointAccessorT::value_type >::type
   surface(PointAccessorT const accessor, viennagrid::element<ElementTag, WrappedConfigT> const & element)
@@ -81,6 +81,7 @@ namespace viennagrid
     return result;
   }
 
+  /** @brief Returns the surface of a n-cell using the default point accessor. */
   template < typename ElementTag, typename WrappedConfigT>
   typename viennagrid::result_of::coord< viennagrid::element<ElementTag, WrappedConfigT> >::type
   surface( viennagrid::element<ElementTag, WrappedConfigT> const & element)

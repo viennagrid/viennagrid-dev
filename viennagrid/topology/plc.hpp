@@ -90,12 +90,14 @@ namespace viennagrid
   } //topology
 
 
+  /** @brief Returns the hole points associated with a PLC */
   template<typename PLCT>
   typename PLCT::appendix_type & hole_points( PLCT & plc )
   {
     return plc.appendix();
   }
 
+  /** @brief Returns the hole points associated with a PLC */
   template<typename PLCT>
   typename PLCT::appendix_type const & hole_points( PLCT const & plc )
   {

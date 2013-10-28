@@ -211,6 +211,7 @@ namespace viennagrid
   }
 
 
+  /** @brief Returns the n-dimensional volume of a whole mesh */
   template<typename ElementTOrTag, typename WrappedConfigT>
   typename viennagrid::result_of::coord< mesh<WrappedConfigT> >::type
   volume(mesh<WrappedConfigT> const & mesh_obj)
@@ -219,6 +220,7 @@ namespace viennagrid
   }
 
   // default Element Tag = Cell Tag
+  /** @brief Returns the n-dimensional volume of a segment */
   template<typename MeshSegmentHandleType>
   typename viennagrid::result_of::coord< MeshSegmentHandleType >::type
   volume(MeshSegmentHandleType const & mesh_obj)

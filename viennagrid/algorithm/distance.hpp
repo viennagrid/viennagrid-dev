@@ -192,7 +192,7 @@ namespace viennagrid
   //
   // The public interface functions
   //
-  /** @brief Returns the distance between elements, segments and/or meshs */
+  /** @brief Returns the distance between elements, segments and/or meshs using the point accessor provided */
   template <typename PointAccessorT, typename SomethingT1, typename SomethingT2>
   typename viennagrid::result_of::coord<SomethingT1>::type
   distance(PointAccessorT const accessor,
@@ -203,6 +203,7 @@ namespace viennagrid
   }
 
 
+  /** @brief Returns the distance between elements, segments and/or meshs using the default point accessor*/
   template <typename SomethingT1, typename SomethingT2>
   typename viennagrid::result_of::coord<SomethingT1>::type
   distance(SomethingT1 const & el1,
@@ -211,6 +212,7 @@ namespace viennagrid
     return detail::distance_impl( default_point_accessor(el1), el1, el2 );
   }
 
+  /** @brief Returns the distance between a point and an element/segment/meshs using the default point accessor*/
   template <typename SomethingT, typename CoordT, typename CoordinateSystemT>
   typename viennagrid::result_of::coord<SomethingT>::type
   distance(SomethingT const & el1,
@@ -219,6 +221,7 @@ namespace viennagrid
     return detail::distance_impl( default_point_accessor(el1), el1, el2 );
   }
 
+  /** @brief Returns the distance between a point and an element/segment/meshs using the default point accessor*/
   template <typename CoordT, typename CoordinateSystemT, typename SomethingT>
   typename viennagrid::result_of::coord<SomethingT>::type
   distance(spatial_point<CoordT, CoordinateSystemT> const & el1,
@@ -227,6 +230,7 @@ namespace viennagrid
     return detail::distance_impl( default_point_accessor(el2), el1, el2 );
   }
 
+  /** @brief Returns the Euclidian distance between two points */
   template <typename CoordT1, typename CoordinateSystemT1, typename CoordT2, typename CoordinateSystemT2>
   typename viennagrid::result_of::coord< spatial_point<CoordT1, CoordinateSystemT1> >::type
   distance(spatial_point<CoordT1, CoordinateSystemT1> const & el1,

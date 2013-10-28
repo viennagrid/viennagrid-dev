@@ -655,7 +655,7 @@ namespace viennagrid
     /** \endcond */
   }
 
-
+  /** @brief Sets the reference to the parent container for a view. Also supports views of views, etc. */
   template<typename base_container_collection_type, typename view_container_collection_type>
   void set_base_container( base_container_collection_type & base_container_collection, view_container_collection_type & view_container_collection )
   {

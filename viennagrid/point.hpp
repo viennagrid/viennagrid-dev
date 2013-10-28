@@ -689,6 +689,7 @@ namespace viennagrid
   };
 
 
+  /** @brief Returns the pointwise minimum point of two points, i.e. result[i] = min(x[i], y[i]) for all i. */
   template<typename CoordType, typename CoordinateSystem>
   spatial_point<CoordType, CoordinateSystem> min(const spatial_point<CoordType, CoordinateSystem> & p1, const spatial_point<CoordType, CoordinateSystem> & p2)
   {
@@ -698,6 +699,7 @@ namespace viennagrid
     return tmp;
   }
 
+  /** @brief Returns the pointwise maximum point of two points, i.e. result[i] = max(x[i], y[i]) for all i. */
   template<typename CoordType, typename CoordinateSystem>
   spatial_point<CoordType, CoordinateSystem> max(const spatial_point<CoordType, CoordinateSystem> & p1, const spatial_point<CoordType, CoordinateSystem> & p2)
   {

@@ -788,6 +788,14 @@ namespace viennagrid
 
 
 
+  /** @brief Function for retrieving a boundary element range from a host element. Non-const version.
+    *
+    * @tparam sub_element_type_or_tag  The element type/tag for the requested boundary element range
+    * @tparam element_tag              The element tag of the host element
+    * @tparam WrappedConfigType        The host mesh/element configuration class (providing the typemap as 'type' member type)
+    * @param  element                  The host element from which the boundary element range should be obtained
+    * @return                          An element range
+    */
   template<typename sub_element_type_or_tag, typename element_tag, typename WrappedConfigType>
   typename result_of::element_range<viennagrid::element<element_tag, WrappedConfigType>, sub_element_type_or_tag>::type elements( viennagrid::element<element_tag, WrappedConfigType> & element)
   {
@@ -795,6 +803,14 @@ namespace viennagrid
       return typename result_of::element_range<viennagrid::element<element_tag, WrappedConfigType>, sub_element_type_or_tag>::type( element.container( typename sub_element_type::tag() ) );
   }
 
+  /** @brief Function for retrieving a boundary element range from a host element. Const version.
+    *
+    * @tparam sub_element_type_or_tag  The element type/tag for the requested boundary element range
+    * @tparam element_tag              The element tag of the host element
+    * @tparam WrappedConfigType        The host mesh/element configuration class (providing the typemap as 'type' member type)
+    * @param  element                  The host element from which the boundary element range should be obtained
+    * @return                          An element range
+    */
   template<typename sub_element_type_or_tag, typename element_tag, typename WrappedConfigType>
   typename result_of::const_element_range<viennagrid::element<element_tag, WrappedConfigType>, sub_element_type_or_tag>::type elements( const viennagrid::element<element_tag, WrappedConfigType> & element)
   {
@@ -804,12 +820,24 @@ namespace viennagrid
 
 
 
+  /** @brief Function for dereferencing a handle using a host element
+    *
+    * @param  element            The host element
+    * @param  handle             The handle to be dereferenced
+    * @return                    A C++ reference to an element which is referenced by handle
+    */
   template<typename element_tag, typename WrappedConfigType, typename handle_type>
   typename detail::result_of::value_type<handle_type>::type & dereference_handle( viennagrid::element<element_tag, WrappedConfigType> & element, handle_type const & handle)
   {
       return element.dereference_handle(handle);
   }
 
+  /** @brief Function for dereferencing a handle using a host element
+    *
+    * @param  element            The host element
+    * @param  handle             The handle to be dereferenced
+    * @return                    A C++ reference to an element which is referenced by handle
+    */
   template<typename element_tag, typename WrappedConfigType, typename handle_type>
   const typename detail::result_of::value_type<handle_type>::type & dereference_handle( viennagrid::element<element_tag, WrappedConfigType> const & element, handle_type const & handle)
   {
@@ -817,15 +845,18 @@ namespace viennagrid
   }
 
 
-
+  /** @brief Function for creating a handle for a given boundary element of a host element. Non-const version. */
   template<typename ElementTag1, typename WrappedConfigType1, typename ElementTag2, typename WrappedConfigType2>
-  typename result_of::handle<viennagrid::element<ElementTag1, WrappedConfigType1>, viennagrid::element<ElementTag2, WrappedConfigType2> >::type handle( viennagrid::element<ElementTag1, WrappedConfigType1> & element, viennagrid::element<ElementTag2, WrappedConfigType2> & boundary_element )
+  typename result_of::handle<viennagrid::element<ElementTag1, WrappedConfigType1>, viennagrid::element<ElementTag2, WrappedConfigType2> >::type
+  handle( viennagrid::element<ElementTag1, WrappedConfigType1> & element, viennagrid::element<ElementTag2, WrappedConfigType2> & boundary_element )
   {
       return element.handle(boundary_element);
   }
 
+  /** @brief Function for creating a handle for a given boundary element of a host element. Const-version. */
   template<typename ElementTag1, typename WrappedConfigType1, typename ElementTag2, typename WrappedConfigType2>
-  typename result_of::const_handle<viennagrid::element<ElementTag1, WrappedConfigType1>, viennagrid::element<ElementTag2, WrappedConfigType2> >::type handle( viennagrid::element<ElementTag1, WrappedConfigType1> const & element, viennagrid::element<ElementTag2, WrappedConfigType2> const & boundary_element )
+  typename result_of::const_handle<viennagrid::element<ElementTag1, WrappedConfigType1>, viennagrid::element<ElementTag2, WrappedConfigType2> >::type
+  handle( viennagrid::element<ElementTag1, WrappedConfigType1> const & element, viennagrid::element<ElementTag2, WrappedConfigType2> const & boundary_element )
   {
       return element.handle(boundary_element);
   }
@@ -833,6 +864,13 @@ namespace viennagrid
 
 
 
+  /** @brief Function for retrieving an element range or a boundary element range from a container collection. Non-const version.
+    *
+    * @tparam element_type_or_tag            The element type/tag for the requested element range
+    * @tparam container_collection_typemap   The configuration typemap for the collection
+    * @param  collection                     The container collection from which to build the range.
+    * @return                                An element range
+    */
   template<typename element_type_or_tag, typename container_collection_typemap>
   typename result_of::element_range<collection<container_collection_typemap>, element_type_or_tag>::type elements( collection<container_collection_typemap> & collection)
   {
@@ -840,6 +878,13 @@ namespace viennagrid
       return typename result_of::element_range<viennagrid::collection<container_collection_typemap>, element_type_or_tag>::type( get<element_type>(collection) );
   }
 
+  /** @brief Function for retrieving an element range or a boundary element range from a container collection. Const version.
+    *
+    * @tparam element_type_or_tag            The element type/tag for the requested element range
+    * @tparam container_collection_typemap   The configuration typemap for the collection
+    * @param  collection                     The container collection from which to build the range.
+    * @return                                An element range
+    */
   template<typename element_type_or_tag, typename container_collection_typemap>
   typename result_of::const_element_range<collection<container_collection_typemap>, element_type_or_tag>::type elements( const collection<container_collection_typemap> & collection)
   {

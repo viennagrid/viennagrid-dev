@@ -201,6 +201,11 @@ namespace viennagrid
     };
   }
 
+  /** @brief Erases all elements marked for deletion and all elements which references these elements from a view
+    *
+    * @param  view_obj                  The host mesh object
+    * @param  elements_to_erase         A mesh view which stores all elements marked for deletion
+    */
   template <typename WrappedConfigType, typename ElementTypeList, typename ContainerConfig, typename ToEraseViewT>
   void erase_elements(viennagrid::mesh< viennagrid::detail::decorated_mesh_view_config<WrappedConfigType, ElementTypeList, ContainerConfig> > & view_obj, ToEraseViewT & elements_to_erase)
   {

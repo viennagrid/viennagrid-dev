@@ -954,6 +954,11 @@ namespace viennagrid
     return make_field<AccessType>( get<AccessType>(collection_obj) );
   }
 
+  /** \brief Convenience function for creating a suitable field out of a collection of containers. Const-version.
+    *
+    * @tparam AccessType      The element for which the container is accessed
+    * @tparam ContainerType   Type of the container. Possible types: std::vector, std::deque, std::map
+    */
   template<typename AccessType, typename ContainerCollectionTypemapT>
   typename result_of::field<
       const typename result_of::container_of<

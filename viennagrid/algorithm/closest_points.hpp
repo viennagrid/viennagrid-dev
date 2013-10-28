@@ -1021,6 +1021,7 @@ namespace viennagrid
                                        detail::ascending_topological_order<SomethingT1, SomethingT2>::second(el1, el2));
   }
 
+  /** @brief Returns the closest points between two elements/segments using the default accessor for geometric points on vertices */
   template <typename SomethingT1, typename SomethingT2>
   std::pair< typename viennagrid::result_of::point<SomethingT1>::type, typename viennagrid::result_of::point<SomethingT1>::type >
   closest_points(SomethingT1 const & el1,
@@ -1032,7 +1033,7 @@ namespace viennagrid
   }
 
 
-
+  /** @brief Returns the closest points between two elements/segments using the provided accessor for geometric points on vertices */
   template <typename PointAccessorT, typename SomethingT1, typename SomethingT2>
   std::pair< typename PointAccessorT::value_type, typename PointAccessorT::value_type >
   closest_points_on_boundary(PointAccessorT const accessor,

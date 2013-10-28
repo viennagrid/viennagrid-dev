@@ -314,6 +314,7 @@ namespace viennagrid
   }
 
   // global swap()
+  /** @brief Swaps the entries of the two arrays. */
   template<class T, std::size_t N>
   inline void swap (static_array<T,N>& x, static_array<T,N>& y) {
     x.swap(y);

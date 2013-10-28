@@ -259,17 +259,31 @@ namespace viennagrid
 
 
   // doxygen docu in forwards.hpp
+  /** @brief Function for retrieving an element range a segment. Non-const version.
+    *
+    * @tparam segmentation_type    The host segmentation type
+    * @tparam element_type_or_tag  The element type/tag for the requested element range
+    * @param  segment              The segment object
+    * @return                      An element range
+    */
   template<typename element_type_or_tag, typename segmentation_type>
   typename result_of::element_range<segment_handle<segmentation_type>, element_type_or_tag>::type elements( segment_handle<segmentation_type> & segment)
   { return elements<element_type_or_tag>( segment.view() ); }
 
   // doxygen docu in forwards.hpp
+  /** @brief Function for retrieving an element range a segment. Const version.
+    *
+    * @tparam segmentation_type    The host segmentation type
+    * @tparam element_type_or_tag  The element type/tag for the requested element range
+    * @param  segment              The segment object
+    * @return                      An element range
+    */
   template<typename element_type_or_tag, typename segmentation_type>
   typename result_of::const_element_range<segment_handle<segmentation_type>, element_type_or_tag>::type elements(segment_handle<segmentation_type> const & segment)
   { return elements<element_type_or_tag>( segment.view() ); }
 
 
-  // doxygen docu in mesh.hpp
+  /** @brief Function for obtaining the heighest ID for a specific element type/tag in a segment.  */
   template<typename ElementTypeOrTag, typename SegmentationType>
   typename viennagrid::result_of::id<
     typename viennagrid::result_of::element< segment_handle<SegmentationType>, ElementTypeOrTag>::type
@@ -279,7 +293,12 @@ namespace viennagrid
 
 
 
-  // doxygen docu in mesh.hpp
+  /** @brief Function for dereferencing a handle using a segment object
+    *
+    * @param  segment_handle     The host segment object
+    * @param  handle             The handle to be dereferenced
+    * @return                    A C++ reference to an element which is referenced by handle
+    */
   template<typename SegmentationT, typename HandleT>
   typename detail::result_of::value_type<HandleT>::type &
   dereference_handle(segment_handle<SegmentationT> & segment_handle, HandleT const & handle)
@@ -288,7 +307,12 @@ namespace viennagrid
     return get<value_type>(detail::element_collection(segment_handle)).dereference_handle( handle );
   }
 
-  // doxygen docu in mesh.hpp
+  /** @brief Function for dereferencing a handle using a segment object
+    *
+    * @param  segment_handle     The host segment object
+    * @param  handle             The handle to be dereferenced
+    * @return                    A C++ reference to an element which is referenced by handle
+    */
   template<typename SegmentationT, typename HandleT>
   typename detail::result_of::value_type<HandleT>::type const &
   dereference_handle(segment_handle<SegmentationT> const & segment_handle, HandleT const & handle)
@@ -711,12 +735,26 @@ namespace viennagrid
   }
 
 
+  /** @brief Function for retrieving an element range or a boundary element range from a segmentation. Non-const version.
+    *
+    * @tparam ElementTypeOrTagT  The element type/tag for the requested element range
+    * @tparam WrappedConfigT     The host mesh configuration class (providing the typemap as 'type' member type)
+    * @param  segm               The hosting segmentation object
+    * @return                    An element range
+    */
   template<typename ElementTypeOrTagT, typename WrappedConfigT>
   typename result_of::element_range<segmentation<WrappedConfigT>, ElementTypeOrTagT>::type
   elements( viennagrid::segmentation<WrappedConfigT> & segm)
   { return elements<ElementTypeOrTagT>( segm.all_elements() ); }
 
   // doxygen docu in forwards.hpp
+  /** @brief Function for retrieving an element range or a boundary element range from a segmentation. Const version.
+    *
+    * @tparam ElementTypeOrTagT  The element type/tag for the requested element range
+    * @tparam WrappedConfigT     The host mesh configuration class (providing the typemap as 'type' member type)
+    * @param  segm               The hosting segmentation object
+    * @return                    An element range
+    */
   template<typename ElementTypeOrTagT, typename WrappedConfigT>
   typename result_of::const_element_range<viennagrid::segmentation<WrappedConfigT>, ElementTypeOrTagT>::type
   elements(viennagrid::segmentation<WrappedConfigT> const & segm)
@@ -724,6 +762,12 @@ namespace viennagrid
 
 
   // doxygen docu in mesh.hpp
+  /** @brief Function for dereferencing a handle using a segmentation
+    *
+    * @param  segmentation_      The segmentation object
+    * @param  handle             The handle to be dereferenced
+    * @return                    A C++ reference to an element which is referenced by handle
+    */
   template<typename WrappedConfigT, typename HandleT>
   typename detail::result_of::value_type<HandleT>::type &
   dereference_handle(segmentation<WrappedConfigT> & segmentation_, HandleT const & handle)
@@ -733,6 +777,12 @@ namespace viennagrid
   }
 
   // doxygen docu in mesh.hpp
+  /** @brief Function for dereferencing a handle using a segmentation
+    *
+    * @param  segmentation_      The segmentation object
+    * @param  handle             The handle to be dereferenced
+    * @return                    A C++ reference to an element which is referenced by handle
+    */
   template<typename WrappedConfigT, typename HandleT>
   typename detail::result_of::value_type<HandleT>::type const &
   dereference_handle(segmentation<WrappedConfigT> const & segmentation_, HandleT const & handle)

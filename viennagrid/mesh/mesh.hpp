@@ -803,7 +803,7 @@ namespace viennagrid
   }
 
 
-  /** @brief Function for obtaining the heighest ID for a specifig element type/tag in a mesh/segment
+  /** @brief Function for obtaining the heighest ID for a specific element type/tag in a mesh/segment
     *
     * @tparam ElementTypeOrTag      The element type/tag from which the heighest ID is queried
     * @tparam MeshOrSegmentHandleT  The mesh/segment type
@@ -1198,12 +1198,12 @@ namespace viennagrid
   }
 
 
-  /** @brief Function which executes functor an each element with specific topologic dimension
+  /** @brief Function which executes functor for each element with specific topologic dimension
     *
     * @tparam TopologicDimensionV     Topologic dimension of the elements on which the functor is executed
-    * @tparam MeshSegmentHandleT          Host mesh/segment type
+    * @tparam MeshSegmentHandleT      Host mesh/segment type
     * @tparam FunctorT                Functor type, needs to provide void operator(ElementType &/const &) for each element type with topologic dimension equal to TopologicDimensionV
-    * @param  mesh_or_segment       Host mesh/segment object
+    * @param  mesh_or_segment         Host mesh/segment object
     * @param  f                       Functor object
     */
   template<int TopologicDimensionV, typename MeshSegmentHandleT, typename FunctorT>
@@ -1215,12 +1215,12 @@ namespace viennagrid
     viennagrid::detail::for_each<ElementTypelist>( for_each_functor );
   }
 
-  /** @brief Function which executes functor an each element with specific topologic dimension, const version
+  /** @brief Function which executes functor for each element with specific topologic dimension, const version
     *
     * @tparam TopologicDimensionV     Topologic dimension of the elements on which the functor is executed
-    * @tparam MeshSegmentHandleT          Host mesh/segment type
+    * @tparam MeshSegmentHandleT      Host mesh/segment type
     * @tparam FunctorT                Functor type, needs to provide void operator(ElementType &/const &) for each element type with topologic dimension equal to TopologicDimensionV
-    * @param  mesh_or_segment       Host mesh/segment object
+    * @param  mesh_or_segment         Host mesh/segment object
     * @param  f                       Functor object
     */
   template<int TopologicDimensionV, typename MeshSegmentHandleT, typename FunctorT>
@@ -1233,6 +1233,13 @@ namespace viennagrid
   }
 
 
+  /** @brief Function which executes functor for each element (of all topological dimensions) of the mesh or segment. Non-const version.
+    *
+    * @tparam MeshSegmentHandleT      Host mesh/segment type
+    * @tparam FunctorT                Functor type, needs to provide void operator(ElementType &/const &) for each element type with topologic dimension equal to TopologicDimensionV
+    * @param  mesh_or_segment         Host mesh/segment object
+    * @param  f                       Functor object
+    */
   template<typename MeshSegmentHandleT, typename FunctorT>
   void for_each( MeshSegmentHandleT & mesh_or_segment, FunctorT f )
   {
@@ -1242,6 +1249,13 @@ namespace viennagrid
     viennagrid::detail::for_each<ElementTypelist>( for_each_functor );
   }
 
+  /** @brief Function which executes functor for each element (of all topological dimensions) of the mesh or segment. Const version.
+    *
+    * @tparam MeshSegmentHandleT      Host mesh/segment type
+    * @tparam FunctorT                Functor type, needs to provide void operator(ElementType &/const &) for each element type with topologic dimension equal to TopologicDimensionV
+    * @param  mesh_or_segment         Host mesh/segment object
+    * @param  f                       Functor object
+    */
   template<typename MeshSegmentHandleT, typename FunctorT>
   void for_each( MeshSegmentHandleT const & mesh_or_segment, FunctorT f )
   {
@@ -1258,16 +1272,30 @@ namespace viennagrid
 
 
   // doxygen docu in forwards.hpp
-  template<typename element_type_or_tag, typename WrappedConfigType>
-  typename result_of::element_range<viennagrid::mesh<WrappedConfigType>, element_type_or_tag>::type
+  /** @brief Function for retrieving an element range or a boundary element range from a mesh. Non-const version.
+    *
+    * @tparam WrappedConfigType  The host mesh configuration class (providing the typemap as 'type' member type)
+    * @tparam ElementTypeOrTagT  The element type/tag for the requested element range
+    * @param  mesh_obj           The mesh object
+    * @return                    An element range
+    */
+  template<typename ElementTypeOrTagT, typename WrappedConfigType>
+  typename result_of::element_range<viennagrid::mesh<WrappedConfigType>, ElementTypeOrTagT>::type
   elements(viennagrid::mesh<WrappedConfigType> & mesh_obj)
-  { return elements<element_type_or_tag>( detail::element_collection(mesh_obj) ); }
+  { return elements<ElementTypeOrTagT>( detail::element_collection(mesh_obj) ); }
 
   // doxygen docu in forwards.hpp
-  template<typename element_type_or_tag, typename WrappedConfigType>
-  typename result_of::const_element_range<viennagrid::mesh<WrappedConfigType>, element_type_or_tag>::type
+  /** @brief Function for retrieving an element range or a boundary element range from a mesh. Const version.
+    *
+    * @tparam WrappedConfigType  The host mesh configuration class (providing the typemap as 'type' member type)
+    * @tparam ElementTypeOrTagT  The element type/tag for the requested element range
+    * @param  mesh_obj           The mesh object
+    * @return                    An element range
+    */
+  template<typename ElementTypeOrTagT, typename WrappedConfigType>
+  typename result_of::const_element_range<viennagrid::mesh<WrappedConfigType>, ElementTypeOrTagT>::type
   elements(viennagrid::mesh<WrappedConfigType> const & mesh_obj)
-  { return elements<element_type_or_tag>( detail::element_collection(mesh_obj) ); }
+  { return elements<ElementTypeOrTagT>( detail::element_collection(mesh_obj) ); }
 
 
 

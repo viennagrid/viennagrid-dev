@@ -46,7 +46,7 @@ namespace viennagrid
 
   }
 
-
+  /** @brief Returns an empty view object derived from the respective element. */
   template<typename element_type_or_tag, typename something>
   typename result_of::element_view<something, element_type_or_tag>::type
   element_view( something & s )
@@ -61,6 +61,7 @@ namespace viennagrid
   }
 
 
+  /** @brief Returns a view object derived from the respective mesh or segment. Whenever the provided filter functor evaluates to true for an element, it is added to the view. Non-const version. */
   template<typename element_type_or_tag, typename something, typename functor>
   typename result_of::element_view<something, element_type_or_tag>::type
   element_view( something & s, functor f )
@@ -84,6 +85,7 @@ namespace viennagrid
     return view_obj;
   }
 
+  /** @brief Returns a view object derived from the respective mesh or segment. Whenever the provided filter functor evaluates to true for an element, it is added to the view. Const version. */
   template<typename element_type_or_tag, typename something, typename functor>
   typename result_of::const_element_view<something, element_type_or_tag>::type
   element_view( something const & s, functor f )

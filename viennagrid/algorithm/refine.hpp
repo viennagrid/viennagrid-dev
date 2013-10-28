@@ -170,7 +170,7 @@ namespace viennagrid
 
 
 
-    /** @brief Ensures refinement fo the longest edge. If any edge is refined in a cell, then the longest edge is refined as well. */
+    /** @brief Ensures refinement of the longest edge of each cell. If any edge is tagged for refinement in a cell, then the longest edge is refined as well. */
     template <typename CellTagIn, typename WrappedMeshConfigInT, typename EdgeRefinementFlagAccessorT>
     void ensure_longest_edge_refinement(mesh<WrappedMeshConfigInT> const & mesh_in, EdgeRefinementFlagAccessorT edge_refinement_flag_accessor)
     {

@@ -93,16 +93,26 @@ namespace viennagrid
   }
 
 
-  template<typename type, typename typemap>
-  typename viennagrid::detail::result_of::lookup<typemap, typename viennagrid::detail::remove_const<type>::type >::type & get( collection<typemap> & c )
+  /** @brief Generic accessor function for accessing the respective value type identified by the provided type from a collection. Non-const version.
+    *
+    * @tparam KeyTypeT    The key type for identifying the element inside a collection
+    * @tparam TypeMapT    The typemap used for configuring the collection
+    */
+  template<typename KeyTypeT, typename TypeMapT>
+  typename viennagrid::detail::result_of::lookup<TypeMapT, typename viennagrid::detail::remove_const<KeyTypeT>::type >::type & get( collection<TypeMapT> & c )
   {
-    return c.get( viennagrid::detail::tag< typename viennagrid::detail::remove_const<type>::type >() );
+    return c.get( viennagrid::detail::tag< typename viennagrid::detail::remove_const<KeyTypeT>::type >() );
   }
 
-  template<typename type, typename typemap>
-  typename viennagrid::detail::result_of::lookup<typemap, typename viennagrid::detail::remove_const<type>::type >::type const & get( collection<typemap> const & c )
+  /** @brief Generic accessor function for accessing the respective value type identified by the provided type from a collection. Const version.
+    *
+    * @tparam KeyTypeT    The key type for identifying the element inside a collection
+    * @tparam TypeMapT    The typemap used for configuring the collection
+    */
+  template<typename KeyTypeT, typename TypeMapT>
+  typename viennagrid::detail::result_of::lookup<TypeMapT, typename viennagrid::detail::remove_const<KeyTypeT>::type >::type const & get( collection<TypeMapT> const & c )
   {
-    return c.get( viennagrid::detail::tag< typename viennagrid::detail::remove_const<type>::type >() );
+    return c.get( viennagrid::detail::tag< typename viennagrid::detail::remove_const<KeyTypeT>::type >() );
   }
 
 
