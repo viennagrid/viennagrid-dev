@@ -62,8 +62,8 @@ int main()
   typedef viennagrid::tetrahedral_3d_mesh                Mesh3D;
   typedef viennagrid::result_of::point<Mesh3D>::type     PointType3D;
 
-  double pi        = std::acos(-1);
-  double pi_over_2 = std::acos( 0);
+  double pi        = std::acos(-1.0);
+  double pi_over_2 = std::acos( 0.0);
 
   //
   // Part 1: one-dimensional
