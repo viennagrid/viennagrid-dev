@@ -27,9 +27,9 @@ namespace viennagrid
 {
 
   template<typename ElementT, typename PointAccessorT>
-  typename viennagrid::result_of::point<PointAccessorT>::type normal_vector( PointAccessorT const point_accessor, ElementT const & element )
+  typename PointAccessorT::value_type normal_vector( PointAccessorT const point_accessor, ElementT const & element )
   {
-    typedef typename viennagrid::result_of::point<PointAccessorT>::type    point_type;
+    typedef typename PointAccessorT::value_type    point_type;
 
     point_type const & p0 = point_accessor( viennagrid::vertices(element)[0] );
     point_type const & p1 = point_accessor( viennagrid::vertices(element)[1] );
