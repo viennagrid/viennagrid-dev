@@ -488,6 +488,7 @@ namespace viennagrid
 
   namespace config
   {
+    /** \cond */
     template<typename bnd_cell_container_typelist_, typename id_tag_, typename appendix_type_>
     struct element_config_wrapper_t
     {
@@ -495,6 +496,7 @@ namespace viennagrid
       typedef id_tag_ id_tag;
       typedef appendix_type_ appendix_type;
     };
+    /** \endcond */
   }
 
 

@@ -413,7 +413,7 @@ namespace viennagrid
 
   namespace config
   {
-    /** @brief For internal use only */
+    /** \cond */
     template<typename mesh_type_, typename view_type_, typename segment_id_type_, typename appendix_type_, typename view_container_tag_>
     struct segmentation_config_wrapper_t
     {
@@ -423,6 +423,7 @@ namespace viennagrid
       typedef appendix_type_ appendix_type;
       typedef view_container_tag_ view_container_tag;
     };
+    /** \endcond */
   }
 
 
