@@ -18,6 +18,10 @@
 using std::cout;
 using std::endl;
 
+#ifdef _MSC_VER
+  #pragma warning( disable : 4503 )     //truncated name decoration
+#endif
+
 
 #include "viennagrid/forwards.hpp"
 
