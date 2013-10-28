@@ -12,6 +12,7 @@ add_executable(neighbour_iteration  neighbour_iteration.cpp)
 add_executable(polygon              polygon.cpp)
 add_executable(segments             segments.cpp)
 add_executable(interface            interface.cpp)
+add_executable(read_plc             read_plc.cpp)
 
 
 
