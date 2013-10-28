@@ -155,17 +155,17 @@ namespace viennagrid
           for (int j=0; j<point_dim; j++)
             current_line >> p[j];
 
-          //VertexHandleType vertex = viennagrid::make_vertex_with_id( mesh_obj, VertexIDType(id), p );
+          /*VertexHandleType vertex =*/ viennagrid::make_vertex_with_id( mesh_obj, VertexIDType(id), p );
 
-          if (attribute_num > 0)
-          {
-            std::vector<CoordType> attributes(attribute_num);
-            for (int j=0; j<attribute_num; j++)
-              current_line >> attributes[j];
-
-              // TODO fix using accesor or appendix!
-//                 viennadata::access<poly_attribute_tag, std::vector<CoordType> >()(viennagrid::dereference_handle(mesh_obj, vertex)) = attributes;
-          }
+//           if (attribute_num > 0)
+//           {
+//             std::vector<CoordType> attributes(attribute_num);
+//             for (int j=0; j<attribute_num; j++)
+//               current_line >> attributes[j];
+//
+//               // TODO fix using accesor or appendix!
+// //                 viennadata::access<poly_attribute_tag, std::vector<CoordType> >()(viennagrid::dereference_handle(mesh_obj, vertex)) = attributes;
+//           }
         }
 
         //std::cout << "DONE" << std::endl;
