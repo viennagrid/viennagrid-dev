@@ -204,56 +204,58 @@ namespace viennagrid
     };
   }
 
+  namespace detail
+  {
+
+    /** @brief For internal use only */
+    template<typename SegmentationType>
+    bool is_obsolete( segment_handle<SegmentationType> const & segment, typename segment_handle<SegmentationType>::view_type::change_counter_type change_counter_to_check )
+    { return is_obsolete(segment.view(), change_counter_to_check); }
+
+    /** @brief For internal use only */
+    template<typename SegmentationType>
+    void update_change_counter( segment_handle<SegmentationType> & segment, typename segment_handle<SegmentationType>::view_type::change_counter_type & change_counter_to_update )
+    { update_change_counter(segment.view(), change_counter_to_update); }
+
+    /** @brief For internal use only */
+    template<typename SegmentationType>
+    void increment_change_counter( segment_handle<SegmentationType> & segment )
+    { increment_change_counter(segment.view()); }
 
 
-  /** @brief For internal use only */
-  template<typename SegmentationType>
-  bool is_obsolete( segment_handle<SegmentationType> const & segment, typename segment_handle<SegmentationType>::view_type::change_counter_type change_counter_to_check )
-  { return is_obsolete(segment.view(), change_counter_to_check); }
 
-  /** @brief For internal use only */
-  template<typename SegmentationType>
-  void update_change_counter( segment_handle<SegmentationType> & segment, typename segment_handle<SegmentationType>::view_type::change_counter_type & change_counter_to_update )
-  { update_change_counter(segment.view(), change_counter_to_update); }
+    /** @brief For internal use only */
+    template<typename SegmentationType>
+    typename viennagrid::segment_handle<SegmentationType>::view_type::element_collection_type & element_collection( segment_handle<SegmentationType> & segment)
+    { return element_collection( segment.view() ); }
 
-  /** @brief For internal use only */
-  template<typename SegmentationType>
-  void increment_change_counter( segment_handle<SegmentationType> & segment )
-  { increment_change_counter(segment.view()); }
+    /** @brief For internal use only */
+    template<typename SegmentationType>
+    typename viennagrid::segment_handle<SegmentationType>::view_type::element_collection_type const & element_collection( segment_handle<SegmentationType> const & segment)
+    { return element_collection( segment.view() ); }
 
+    /** @brief For internal use only */
+    template<typename SegmentationType>
+    typename viennagrid::segment_handle<SegmentationType>::view_type::inserter_type & inserter(segment_handle<SegmentationType> & segment)
+    { return detail::inserter( segment.view() ); }
 
-
-  /** @brief For internal use only */
-  template<typename SegmentationType>
-  typename segment_handle<SegmentationType>::view_type::element_collection_type & element_collection( segment_handle<SegmentationType> & segment)
-  { return element_collection( segment.view() ); }
-
-  /** @brief For internal use only */
-  template<typename SegmentationType>
-  typename segment_handle<SegmentationType>::view_type::element_collection_type const & element_collection( segment_handle<SegmentationType> const & segment)
-  { return element_collection( segment.view() ); }
+    /** @brief For internal use only */
+    template<typename SegmentationType>
+    typename viennagrid::segment_handle<SegmentationType>::view_type::inserter_type const & inserter(segment_handle<SegmentationType> const & segment)
+    { return detail::inserter( segment.view() ); }
 
 
-  /** @brief For internal use only */
-  template<typename SegmentationType>
-  typename segment_handle<SegmentationType>::view_type::inserter_type & inserter(segment_handle<SegmentationType> & segment)
-  { return inserter( segment.view() ); }
+    /** @brief For internal use only */
+    template<typename SegmentationType>
+    typename viennagrid::segment_handle<SegmentationType>::view_type::inserter_type::id_generator_type & id_generator(segment_handle<SegmentationType> & segment)
+    { return id_generator( segment.view() ); }
 
-  /** @brief For internal use only */
-  template<typename SegmentationType>
-  typename segment_handle<SegmentationType>::view_type::inserter_type const & inserter(segment_handle<SegmentationType> const & segment)
-  { return inserter( segment.view() ); }
+    /** @brief For internal use only */
+    template<typename SegmentationType>
+    typename viennagrid::segment_handle<SegmentationType>::view_type::inserter_type::id_generator_type const & id_generator(segment_handle<SegmentationType> const & segment)
+    { return id_generator( segment.view() ); }
 
-
-  /** @brief For internal use only */
-  template<typename SegmentationType>
-  typename segment_handle<SegmentationType>::view_type::inserter_type::id_generator_type & id_generator(segment_handle<SegmentationType> & segment)
-  { return id_generator( segment.view() ); }
-
-  /** @brief For internal use only */
-  template<typename SegmentationType>
-  typename segment_handle<SegmentationType>::view_type::inserter_type::id_generator_type const & id_generator(segment_handle<SegmentationType> const & segment)
-  { return id_generator( segment.view() ); }
+  }
 
 
   // doxygen docu in forwards.hpp
@@ -283,7 +285,7 @@ namespace viennagrid
   dereference_handle(segment_handle<SegmentationT> & segment_handle, HandleT const & handle)
   {
     typedef typename detail::result_of::value_type<HandleT>::type value_type;
-    return get<value_type>(element_collection(segment_handle)).dereference_handle( handle );
+    return get<value_type>(detail::element_collection(segment_handle)).dereference_handle( handle );
   }
 
   // doxygen docu in mesh.hpp
@@ -292,7 +294,7 @@ namespace viennagrid
   dereference_handle(segment_handle<SegmentationT> const & segment_handle, HandleT const & handle)
   {
     typedef typename detail::result_of::value_type<HandleT>::type value_type;
-    return get<value_type>(element_collection(segment_handle)).dereference_handle( handle );
+    return get<value_type>(detail::element_collection(segment_handle)).dereference_handle( handle );
   }
 
 
@@ -693,19 +695,20 @@ namespace viennagrid
   };
 
 
+  namespace detail
+  {
+    /** @brief For internal use only */
+    template<typename WrappedConfigT>
+    typename viennagrid::segmentation<WrappedConfigT>::view_type::element_collection_type &
+    element_collection( viennagrid::segmentation<WrappedConfigT> & segmentation)
+    { return element_collection( segmentation.all_elements() ); }
 
-
-  /** @brief For internal use only */
-  template<typename WrappedConfigT>
-  typename viennagrid::segmentation<WrappedConfigT>::view_type::element_collection_type &
-  element_collection( viennagrid::segmentation<WrappedConfigT> & segmentation)
-  { return element_collection( segmentation.all_elements() ); }
-
-  /** @brief For internal use only */
-  template<typename WrappedConfigT>
-  typename viennagrid::segmentation<WrappedConfigT>::view_type::element_collection_type const &
-  element_collection( viennagrid::segmentation<WrappedConfigT> const & segmentation)
-  { return element_collection( segmentation.all_elements() ); }
+    /** @brief For internal use only */
+    template<typename WrappedConfigT>
+    typename viennagrid::segmentation<WrappedConfigT>::view_type::element_collection_type const &
+    element_collection( viennagrid::segmentation<WrappedConfigT> const & segmentation)
+    { return element_collection( segmentation.all_elements() ); }
+  }
 
 
   template<typename ElementTypeOrTagT, typename WrappedConfigT>
@@ -726,7 +729,7 @@ namespace viennagrid
   dereference_handle(segmentation<WrappedConfigT> & segmentation_, HandleT const & handle)
   {
     typedef typename detail::result_of::value_type<HandleT>::type value_type;
-    return get<value_type>(element_collection(segmentation_)).dereference_handle( handle );
+    return get<value_type>(detail::element_collection(segmentation_)).dereference_handle( handle );
   }
 
   // doxygen docu in mesh.hpp
@@ -735,7 +738,7 @@ namespace viennagrid
   dereference_handle(segmentation<WrappedConfigT> const & segmentation_, HandleT const & handle)
   {
     typedef typename detail::result_of::value_type<HandleT>::type value_type;
-    return get<value_type>(element_collection(segmentation_)).dereference_handle( handle );
+    return get<value_type>(detail::element_collection(segmentation_)).dereference_handle( handle );
   }
 
 
@@ -1587,6 +1590,34 @@ namespace viennagrid
 
 
 
+  /** @brief Function for creating a handle for a given element using a mesh/segment object
+    *
+    * @tparam MeshOrSegmentHandleT      The host mesh/segment type
+    * @tparam ElementTagT           The tag of the element of which a handle is created
+    * @tparam WrappedConfigT        The wrapped config of the element of which a handle is created
+    * @param  mesh_or_segment     The host mesh/segment object
+    * @param  element               The element of which a handle is created
+    * @return                       A handle referencing the given element
+    */
+  template<typename SegmentationType, typename ElementTagT, typename WrappedConfigT>
+  typename result_of::handle<segment_handle<SegmentationType>, viennagrid::element<ElementTagT, WrappedConfigT> >::type
+  handle(segment_handle<SegmentationType> & mesh_or_segment, viennagrid::element<ElementTagT, WrappedConfigT> & element)
+  { return get< viennagrid::element<ElementTagT, WrappedConfigT> >(detail::element_collection(mesh_or_segment)).handle( element ); }
+
+  /** @brief Function for creating a handle for a given element using a mesh/segment object, const version
+    *
+    * @tparam MeshOrSegmentHandleT      The host mesh/segment type
+    * @tparam ElementTagT           The tag of the element of which a handle is created
+    * @tparam WrappedConfigT        The wrapped config of the element of which a handle is created
+    * @param  mesh_or_segment     The host mesh/segment object
+    * @param  element               The element of which a handle is created
+    * @return                       A const handle referencing the given element
+    */
+  template<typename SegmentationType, typename ElementTagT, typename WrappedConfigT>
+  typename result_of::const_handle<segment_handle<SegmentationType>, viennagrid::element<ElementTagT, WrappedConfigT> >::type
+  handle(segment_handle<SegmentationType> const & mesh_or_segment, viennagrid::element<ElementTagT, WrappedConfigT> const & element)
+  { return get< viennagrid::element<ElementTagT, WrappedConfigT> >(detail::element_collection(mesh_or_segment)).handle( element ); }
+
 
   /** @brief Deletes an element from a segment. The runtime of this function is linear in the number of elements of the element type to delete
     *
@@ -1609,29 +1640,31 @@ namespace viennagrid
   }
 
 
+  namespace detail
+  {
 
-
-  /** @brief For internal use only */
-  template<bool generate_id, bool call_callback, typename SegmentationType, typename ElementTag, typename WrappedConfigType>
-  std::pair<
+    /** @brief For internal use only */
+    template<bool generate_id, bool call_callback, typename SegmentationType, typename ElementTag, typename WrappedConfigType>
+    std::pair<
+                typename viennagrid::result_of::container_of<
+                    typename viennagrid::result_of::element_collection< viennagrid::segment_handle<SegmentationType> >::type,
+                    viennagrid::element<ElementTag, WrappedConfigType>
+                >::type::handle_type,
+                bool
+            >
+    push_element( viennagrid::segment_handle<SegmentationType> & segment, viennagrid::element<ElementTag, WrappedConfigType> const & element)
+    {
+      std::pair<
               typename viennagrid::result_of::container_of<
-                  typename result_of::element_collection< viennagrid::segment_handle<SegmentationType> >::type,
+                  typename viennagrid::result_of::element_collection< viennagrid::segment_handle<SegmentationType> >::type,
                   viennagrid::element<ElementTag, WrappedConfigType>
               >::type::handle_type,
               bool
-          >
-  push_element( viennagrid::segment_handle<SegmentationType> & segment, viennagrid::element<ElementTag, WrappedConfigType> const & element)
-  {
-    std::pair<
-            typename viennagrid::result_of::container_of<
-                typename result_of::element_collection< viennagrid::segment_handle<SegmentationType> >::type,
-                viennagrid::element<ElementTag, WrappedConfigType>
-            >::type::handle_type,
-            bool
-        > result = push_element<generate_id, call_callback>( segment.view(), element );
+          > result = push_element<generate_id, call_callback>( segment.view(), element );
 
-    add( segment, viennagrid::dereference_handle(segment, result.first) );
-    return result;
+      add( segment, viennagrid::dereference_handle(segment, result.first) );
+      return result;
+    }
   }
 
 
@@ -1655,9 +1688,9 @@ namespace viennagrid
 
     iterator_type it = find( view_or_segment, element.id() );
     if ( it == elements<value_type>(view_or_segment).end() )
-      viennagrid::get<value_type>( element_collection(view_or_segment) ).insert_handle( handle );
+      viennagrid::get<value_type>( detail::element_collection(view_or_segment) ).insert_handle( handle );
 
-    viennagrid::increment_change_counter(view_or_segment);
+    viennagrid::detail::increment_change_counter(view_or_segment);
   }
 }
 

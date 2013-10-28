@@ -80,124 +80,126 @@ namespace viennagrid
   }
 
 
-
-  /** @brief For internal use only */
-  template<typename ElementTypeOrTagT, typename ConnectorElementTypeOrTagT, typename mesh_type, typename neigbour_accessor_type>
-  void create_neighbor_information(mesh_type & mesh_obj, neigbour_accessor_type accessor)
+  namespace detail
   {
-    typedef typename viennagrid::result_of::element_tag< ElementTypeOrTagT >::type          element_tag;
-    typedef typename viennagrid::result_of::element_tag< ConnectorElementTypeOrTagT >::type connector_element_tag;
 
-    typedef typename viennagrid::result_of::element< mesh_type, ElementTypeOrTagT >::type   element_type;
-
-    typedef typename viennagrid::result_of::element_range< mesh_type, ElementTypeOrTagT >::type element_range_type;
-    typedef typename viennagrid::result_of::iterator< element_range_type >::type                element_range_iterator;
-
-    element_range_type elements = viennagrid::elements(mesh_obj);
-
-    for ( element_range_iterator it = elements.begin(); it != elements.end(); ++it )
+    /** @brief For internal use only */
+    template<typename ElementTypeOrTagT, typename ConnectorElementTypeOrTagT, typename mesh_type, typename neigbour_accessor_type>
+    void create_neighbor_information(mesh_type & mesh_obj, neigbour_accessor_type accessor)
     {
-      accessor( *it ).clear();
-      accessor( *it ).set_base_container( viennagrid::get< element_type >( element_collection(mesh_obj) ) );
-    }
+      typedef typename viennagrid::result_of::element_tag< ElementTypeOrTagT >::type          element_tag;
+      typedef typename viennagrid::result_of::element_tag< ConnectorElementTypeOrTagT >::type connector_element_tag;
 
-    typedef typename viennagrid::result_of::element_range< mesh_type, connector_element_tag >::type     connector_element_range_type;
-    typedef typename viennagrid::result_of::iterator< connector_element_range_type >::type              connector_element_range_iterator;
+      typedef typename viennagrid::result_of::element< mesh_type, ElementTypeOrTagT >::type   element_type;
 
-    connector_element_range_type connector_elements = viennagrid::elements(mesh_obj);
-    for ( connector_element_range_iterator it = connector_elements.begin(); it != connector_elements.end(); ++it )
-    {
-      typedef typename viennagrid::result_of::coboundary_range< mesh_type, connector_element_tag, element_tag >::type   element_on_connector_element_range_type;
-      typedef typename viennagrid::result_of::iterator< element_on_connector_element_range_type >::type                 element_on_connector_element_range_iterator;
+      typedef typename viennagrid::result_of::element_range< mesh_type, ElementTypeOrTagT >::type element_range_type;
+      typedef typename viennagrid::result_of::iterator< element_range_type >::type                element_range_iterator;
 
-      element_on_connector_element_range_type coboundary_range = viennagrid::coboundary_elements<connector_element_tag, element_tag>( mesh_obj, it.handle() );
-      if (coboundary_range.empty())
-          continue;
+      element_range_type elements = viennagrid::elements(mesh_obj);
 
-      element_on_connector_element_range_iterator jt1 = coboundary_range.begin(); ++jt1;
-      for (; jt1 != coboundary_range.end(); ++jt1)
+      for ( element_range_iterator it = elements.begin(); it != elements.end(); ++it )
       {
-        for (element_on_connector_element_range_iterator jt0 = coboundary_range.begin(); jt0 != jt1; ++jt0)
+        accessor( *it ).clear();
+        accessor( *it ).set_base_container( viennagrid::get< element_type >( element_collection(mesh_obj) ) );
+      }
+
+      typedef typename viennagrid::result_of::element_range< mesh_type, connector_element_tag >::type     connector_element_range_type;
+      typedef typename viennagrid::result_of::iterator< connector_element_range_type >::type              connector_element_range_iterator;
+
+      connector_element_range_type connector_elements = viennagrid::elements(mesh_obj);
+      for ( connector_element_range_iterator it = connector_elements.begin(); it != connector_elements.end(); ++it )
+      {
+        typedef typename viennagrid::result_of::coboundary_range< mesh_type, connector_element_tag, element_tag >::type   element_on_connector_element_range_type;
+        typedef typename viennagrid::result_of::iterator< element_on_connector_element_range_type >::type                 element_on_connector_element_range_iterator;
+
+        element_on_connector_element_range_type coboundary_range = viennagrid::coboundary_elements<connector_element_tag, element_tag>( mesh_obj, it.handle() );
+        if (coboundary_range.empty())
+            continue;
+
+        element_on_connector_element_range_iterator jt1 = coboundary_range.begin(); ++jt1;
+        for (; jt1 != coboundary_range.end(); ++jt1)
         {
-          typedef typename result_of::neighbor_view<mesh_type, ElementTypeOrTagT, ConnectorElementTypeOrTagT>::type view_type;
-          view_type & view_obj = accessor( *jt0 );
-
-          typename view_type::iterator kt = view_obj.begin();
-          for (; kt != view_obj.end(); ++kt)
-            if ( kt->id() == jt1->id() )
-              break;
-
-          if (kt == view_obj.end())
+          for (element_on_connector_element_range_iterator jt0 = coboundary_range.begin(); jt0 != jt1; ++jt0)
           {
-            accessor( *jt0 ).insert_handle( jt1.handle() );
-            accessor( *jt1 ).insert_handle( jt0.handle() );
+            typedef typename viennagrid::result_of::neighbor_view<mesh_type, ElementTypeOrTagT, ConnectorElementTypeOrTagT>::type view_type;
+            view_type & view_obj = accessor( *jt0 );
+
+            typename view_type::iterator kt = view_obj.begin();
+            for (; kt != view_obj.end(); ++kt)
+              if ( kt->id() == jt1->id() )
+                break;
+
+            if (kt == view_obj.end())
+            {
+              accessor( *jt0 ).insert_handle( jt1.handle() );
+              accessor( *jt1 ).insert_handle( jt0.handle() );
+            }
           }
         }
       }
     }
+
+
+    /** @brief For internal use only */
+    template<typename ElementTypeOrTagT, typename ConnectorElementTypeOrTagT, typename mesh_type>
+    void create_neighbor_information(mesh_type & mesh_obj)
+    {
+      typedef typename viennagrid::result_of::element_tag< ElementTypeOrTagT >::type           element_tag;
+      typedef typename viennagrid::result_of::element_tag< ConnectorElementTypeOrTagT >::type  connector_element_tag;
+      typedef typename viennagrid::result_of::element< mesh_type, ElementTypeOrTagT >::type    element_type;
+
+      typedef typename viennagrid::detail::result_of::lookup<
+              typename viennagrid::detail::result_of::lookup<
+                  typename mesh_type::appendix_type,
+                  neighbor_collection_tag
+              >::type,
+              viennagrid::static_pair<element_tag, connector_element_tag>
+              >::type neighbor_container_wrapper_type;
+      neighbor_container_wrapper_type & neighbor_container_wrapper = detail::neighbor_collection<element_tag, connector_element_tag>(mesh_obj);
+
+      create_neighbor_information<ElementTypeOrTagT, ConnectorElementTypeOrTagT>( mesh_obj, viennagrid::make_accessor<element_type>(neighbor_container_wrapper.container) );
+
+      detail::update_change_counter( mesh_obj, neighbor_container_wrapper.change_counter );
+    }
+
+
+
+    /** @brief For internal use only */
+    template<typename ElementTypeOrTagT, typename ConnectorElementTypeOrTagT, typename neigbour_accessor_type, typename ElementTag, typename WrappedConfigT>
+    viennagrid::detail::container_range_wrapper<typename neigbour_accessor_type::value_type>
+    neighbor_elements(neigbour_accessor_type accessor, viennagrid::element<ElementTag, WrappedConfigT> & element)
+    {
+      typedef viennagrid::detail::container_range_wrapper<typename neigbour_accessor_type::value_type> range_type;
+      return range_type( accessor( element ) );
+    }
+
+    /** @brief For internal use only */
+    template<typename ElementTypeOrTagT, typename ConnectorElementTypeOrTagT, typename neigbour_accessor_type, typename ElementTag, typename WrappedConfigT>
+    viennagrid::detail::container_range_wrapper<const typename neigbour_accessor_type::value_type>
+    neighbor_elements(neigbour_accessor_type const accessor, viennagrid::element<ElementTag, WrappedConfigT> const & element)
+    {
+      typedef viennagrid::detail::container_range_wrapper<const typename neigbour_accessor_type::value_type> range_type;
+      return range_type( accessor( element ) );
+    }
+
+
+    /** @brief For internal use only */
+    template<typename ElementTypeOrTagT, typename ConnectorElementTypeOrTagT, typename neigbour_accessor_type, typename WrappedConfigT, typename ElementOrHandleT>
+    viennagrid::detail::container_range_wrapper<typename neigbour_accessor_type::value_type>
+    neighbor_elements(viennagrid::mesh<WrappedConfigT> & mesh_obj, neigbour_accessor_type accessor, ElementOrHandleT & element_or_handle)
+    {
+      return neighbor_elements<ElementTypeOrTagT, ConnectorElementTypeOrTagT>( accessor, viennagrid::dereference_handle(mesh_obj, element_or_handle) );
+    }
+
+    /** @brief For internal use only */
+    template<typename ElementTypeOrTagT, typename ConnectorElementTypeOrTagT, typename neigbour_accessor_type, typename WrappedConfigT, typename ElementOrHandleT>
+    viennagrid::detail::container_range_wrapper<const typename neigbour_accessor_type::value_type>
+    neighbor_elements(viennagrid::mesh<WrappedConfigT> const & mesh_obj, neigbour_accessor_type const accessor, ElementOrHandleT const & element_or_handle)
+    {
+      return neighbor_elements<ElementTypeOrTagT, ConnectorElementTypeOrTagT>( accessor, viennagrid::dereference_handle(mesh_obj, element_or_handle) );
+    }
+
   }
-
-
-  /** @brief For internal use only */
-  template<typename ElementTypeOrTagT, typename ConnectorElementTypeOrTagT, typename mesh_type>
-  void create_neighbor_information(mesh_type & mesh_obj)
-  {
-    typedef typename viennagrid::result_of::element_tag< ElementTypeOrTagT >::type           element_tag;
-    typedef typename viennagrid::result_of::element_tag< ConnectorElementTypeOrTagT >::type  connector_element_tag;
-    typedef typename viennagrid::result_of::element< mesh_type, ElementTypeOrTagT >::type    element_type;
-
-    typedef typename viennagrid::detail::result_of::lookup<
-            typename viennagrid::detail::result_of::lookup<
-                typename mesh_type::appendix_type,
-                neighbor_collection_tag
-            >::type,
-            viennagrid::static_pair<element_tag, connector_element_tag>
-            >::type neighbor_container_wrapper_type;
-    neighbor_container_wrapper_type & neighbor_container_wrapper = neighbor_collection<element_tag, connector_element_tag>(mesh_obj);
-
-    create_neighbor_information<ElementTypeOrTagT, ConnectorElementTypeOrTagT>( mesh_obj, viennagrid::make_accessor<element_type>(neighbor_container_wrapper.container) );
-
-    update_change_counter( mesh_obj, neighbor_container_wrapper.change_counter );
-  }
-
-
-
-  /** @brief For internal use only */
-  template<typename ElementTypeOrTagT, typename ConnectorElementTypeOrTagT, typename neigbour_accessor_type, typename ElementTag, typename WrappedConfigT>
-  viennagrid::detail::container_range_wrapper<typename neigbour_accessor_type::value_type>
-  neighbor_elements(neigbour_accessor_type accessor, viennagrid::element<ElementTag, WrappedConfigT> & element)
-  {
-    typedef viennagrid::detail::container_range_wrapper<typename neigbour_accessor_type::value_type> range_type;
-    return range_type( accessor( element ) );
-  }
-
-  /** @brief For internal use only */
-  template<typename ElementTypeOrTagT, typename ConnectorElementTypeOrTagT, typename neigbour_accessor_type, typename ElementTag, typename WrappedConfigT>
-  viennagrid::detail::container_range_wrapper<const typename neigbour_accessor_type::value_type>
-  neighbor_elements(neigbour_accessor_type const accessor, viennagrid::element<ElementTag, WrappedConfigT> const & element)
-  {
-    typedef viennagrid::detail::container_range_wrapper<const typename neigbour_accessor_type::value_type> range_type;
-    return range_type( accessor( element ) );
-  }
-
-
-  /** @brief For internal use only */
-  template<typename ElementTypeOrTagT, typename ConnectorElementTypeOrTagT, typename neigbour_accessor_type, typename WrappedConfigT, typename ElementOrHandleT>
-  viennagrid::detail::container_range_wrapper<typename neigbour_accessor_type::value_type>
-  neighbor_elements(viennagrid::mesh<WrappedConfigT> & mesh_obj, neigbour_accessor_type accessor, ElementOrHandleT & element_or_handle)
-  {
-    return neighbor_elements<ElementTypeOrTagT, ConnectorElementTypeOrTagT>( accessor, viennagrid::dereference_handle(mesh_obj, element_or_handle) );
-  }
-
-  /** @brief For internal use only */
-  template<typename ElementTypeOrTagT, typename ConnectorElementTypeOrTagT, typename neigbour_accessor_type, typename WrappedConfigT, typename ElementOrHandleT>
-  viennagrid::detail::container_range_wrapper<const typename neigbour_accessor_type::value_type>
-  neighbor_elements(viennagrid::mesh<WrappedConfigT> const & mesh_obj, neigbour_accessor_type const accessor, ElementOrHandleT const & element_or_handle)
-  {
-    return neighbor_elements<ElementTypeOrTagT, ConnectorElementTypeOrTagT>( accessor, viennagrid::dereference_handle(mesh_obj, element_or_handle) );
-  }
-
-
 
   /** @brief Obtaines a neighbor range of an element within a mesh. This function caches the neighbor information and re-creates it if the cached information is out of date. The worst case runtime of a re-creation is linear in the number of elements of type ConnectorElementTypeOrTagT time the number of elements of type ElementTypeOrTagT within the mesh.
     *
@@ -225,12 +227,12 @@ namespace viennagrid
             >::type,
             viennagrid::static_pair<element_tag, connector_element_tag>
             >::type neighbor_container_wrapper_type;
-    neighbor_container_wrapper_type & neighbor_container_wrapper = neighbor_collection<element_tag, connector_element_tag>(mesh_obj);
+    neighbor_container_wrapper_type & neighbor_container_wrapper = detail::neighbor_collection<element_tag, connector_element_tag>(mesh_obj);
 
-    if ( is_obsolete( mesh_obj, neighbor_container_wrapper.change_counter ) )
-      create_neighbor_information<ElementTypeOrTagT, ConnectorElementTypeOrTagT>(mesh_obj);
+    if ( detail::is_obsolete( mesh_obj, neighbor_container_wrapper.change_counter ) )
+      detail::create_neighbor_information<ElementTypeOrTagT, ConnectorElementTypeOrTagT>(mesh_obj);
 
-    return neighbor_elements<ElementTypeOrTagT, ConnectorElementTypeOrTagT>( viennagrid::make_accessor<element_type>(neighbor_container_wrapper.container), viennagrid::dereference_handle(mesh_obj, element_or_handle) );
+    return detail::neighbor_elements<ElementTypeOrTagT, ConnectorElementTypeOrTagT>( viennagrid::make_accessor<element_type>(neighbor_container_wrapper.container), viennagrid::dereference_handle(mesh_obj, element_or_handle) );
   }
 
   /** @brief Obtaines a const neighbor range of an element within a mesh. This function caches the neighbor information and re-creates it if the cached information is out of date. The worst case runtime of a re-creation is linear in the number of elements of type ConnectorElementTypeOrTagT time the number of elements of type ElementTypeOrTagT within the mesh.
@@ -259,13 +261,13 @@ namespace viennagrid
             >::type,
             viennagrid::static_pair<element_tag, connector_element_tag>
             >::type neighbor_container_wrapper_type;
-    neighbor_container_wrapper_type const & neighbor_container_wrapper = neighbor_collection<element_tag, connector_element_tag>(mesh_obj);
+    neighbor_container_wrapper_type const & neighbor_container_wrapper = detail::neighbor_collection<element_tag, connector_element_tag>(mesh_obj);
 
-    if ( is_obsolete( mesh_obj, neighbor_container_wrapper.change_counter ) )
-      create_neighbor_information<ElementTypeOrTagT, ConnectorElementTypeOrTagT>( const_cast<mesh_type&>(mesh_obj) );
+    if ( detail::is_obsolete( mesh_obj, neighbor_container_wrapper.change_counter ) )
+      detail::create_neighbor_information<ElementTypeOrTagT, ConnectorElementTypeOrTagT>( const_cast<mesh_type&>(mesh_obj) );
 
 
-    return neighbor_elements<ElementTypeOrTagT, ConnectorElementTypeOrTagT>( viennagrid::make_accessor<element_type>(neighbor_container_wrapper.container), viennagrid::dereference_handle(mesh_obj, element_or_handle) );
+    return detail::neighbor_elements<ElementTypeOrTagT, ConnectorElementTypeOrTagT>( viennagrid::make_accessor<element_type>(neighbor_container_wrapper.container), viennagrid::dereference_handle(mesh_obj, element_or_handle) );
   }
 
 

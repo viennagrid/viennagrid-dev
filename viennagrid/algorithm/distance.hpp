@@ -238,7 +238,12 @@ namespace viennagrid
 
 
 
-  /** @brief Returns the distance between elements, segments and/or meshs */
+  /** @brief Returns the distance between elements, segments and/or meshs
+    *
+    * @param accessor     Accessor functor for obtaining a point from a vertex
+    * @param el1          The first element/mesh/vertex
+    * @param el2          The second element/mesh/vertex
+    */
   template <typename PointAccessorT, typename SomethingT1, typename SomethingT2>
   typename viennagrid::result_of::coord<SomethingT1>::type
   boundary_distance(PointAccessorT const accessor,
@@ -257,6 +262,7 @@ namespace viennagrid
     return detail::boundary_distance_impl( default_point_accessor(el1), el1, el2 );
   }
 
+  /** @brief Returns the distance between a point and an element, segment and/or mesh */
   template <typename SomethingT, typename CoordT, typename CoordinateSystemT>
   typename viennagrid::result_of::coord<SomethingT>::type
   boundary_distance(SomethingT const & el1,
@@ -265,6 +271,7 @@ namespace viennagrid
     return detail::boundary_distance_impl( default_point_accessor(el1), el1, el2 );
   }
 
+  /** @brief Returns the distance between a point and an element, segment and/or mesh */
   template <typename CoordT, typename CoordinateSystemT, typename SomethingT>
   typename viennagrid::result_of::coord<SomethingT>::type
   boundary_distance(spatial_point<CoordT, CoordinateSystemT> const & el1,

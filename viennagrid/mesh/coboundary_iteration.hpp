@@ -82,146 +82,148 @@ namespace viennagrid
     };
   }
 
-
-
-  /** @brief For internal use only */
-  template<typename element_type_or_tag, typename coboundary_type_or_tag, typename MeshT, typename coboundary_accessor_type>
-  void create_coboundary_information(MeshT & mesh_obj, coboundary_accessor_type accessor)
+  namespace detail
   {
-    typedef typename viennagrid::result_of::element_tag< element_type_or_tag >::type element_tag;
 
-    typedef typename viennagrid::result_of::element< MeshT, coboundary_type_or_tag >::type coboundary_type;
-
-    typedef typename viennagrid::result_of::element_range< MeshT, element_type_or_tag >::type element_range_type;
-    typedef typename viennagrid::result_of::iterator< element_range_type >::type element_range_iterator;
-
-    element_range_type elements = viennagrid::elements(mesh_obj);
-
-
-    for ( element_range_iterator it = elements.begin(); it != elements.end(); ++it )
+    /** @brief For internal use only */
+    template<typename element_type_or_tag, typename coboundary_type_or_tag, typename MeshT, typename coboundary_accessor_type>
+    void create_coboundary_information(MeshT & mesh_obj, coboundary_accessor_type accessor)
     {
-      accessor( *it ).clear();
-      accessor( *it ).set_base_container( viennagrid::get< coboundary_type >( element_collection(mesh_obj) ) );
-    }
+      typedef typename viennagrid::result_of::element_tag< element_type_or_tag >::type element_tag;
+
+      typedef typename viennagrid::result_of::element< MeshT, coboundary_type_or_tag >::type coboundary_type;
+
+      typedef typename viennagrid::result_of::element_range< MeshT, element_type_or_tag >::type element_range_type;
+      typedef typename viennagrid::result_of::iterator< element_range_type >::type element_range_iterator;
+
+      element_range_type elements = viennagrid::elements(mesh_obj);
 
 
-    typedef typename viennagrid::result_of::element_range< MeshT, coboundary_type_or_tag >::type coboundary_element_range_type;
-    typedef typename viennagrid::result_of::iterator< coboundary_element_range_type >::type coboundary_element_range_iterator;
-
-    coboundary_element_range_type coboundary_elements = viennagrid::elements(mesh_obj);
-    for (coboundary_element_range_iterator it = coboundary_elements.begin(); it != coboundary_elements.end(); ++it)
-    {
-      typedef typename viennagrid::result_of::element_range< coboundary_type, element_tag >::type element_on_coboundary_element_range_type;
-      typedef typename viennagrid::result_of::iterator< element_on_coboundary_element_range_type >::type element_on_coboundary_element_range_iterator;
-
-      element_on_coboundary_element_range_type elements_on_coboundary_element = viennagrid::elements( *it );
-      for (element_on_coboundary_element_range_iterator jt = elements_on_coboundary_element.begin(); jt != elements_on_coboundary_element.end(); ++jt)
-        accessor.at( *jt ).insert_handle( it.handle() );
-    }
-  }
-
-  template<typename element_type_or_tag, typename coboundary_type_or_tag, typename WrappedConfigT, typename ElementTypelistT, typename ContainerConfigT, typename coboundary_accessor_type>
-  void create_coboundary_information(viennagrid::mesh< viennagrid::detail::decorated_mesh_view_config<WrappedConfigT, ElementTypelistT, ContainerConfigT> > & mesh_obj, coboundary_accessor_type accessor)
-  {
-    typedef viennagrid::mesh< viennagrid::detail::decorated_mesh_view_config<WrappedConfigT, ElementTypelistT, ContainerConfigT> > ViewType;
-    typedef typename viennagrid::result_of::element_tag< element_type_or_tag >::type element_tag;
-
-    typedef typename viennagrid::result_of::element< ViewType, coboundary_type_or_tag >::type coboundary_type;
-
-    typedef typename viennagrid::result_of::element_range< ViewType, element_type_or_tag >::type element_range_type;
-    typedef typename viennagrid::result_of::iterator< element_range_type >::type element_range_iterator;
-
-    element_range_type elements = viennagrid::elements(mesh_obj);
-
-
-    for ( element_range_iterator it = elements.begin(); it != elements.end(); ++it )
-    {
-      accessor( *it ).clear();
-      accessor( *it ).set_base_container( viennagrid::get< coboundary_type >( element_collection(mesh_obj) ) );
-    }
-
-
-    typedef typename viennagrid::result_of::element_range< ViewType, coboundary_type_or_tag >::type coboundary_element_range_type;
-    typedef typename viennagrid::result_of::iterator< coboundary_element_range_type >::type coboundary_element_range_iterator;
-
-    coboundary_element_range_type coboundary_elements = viennagrid::elements(mesh_obj);
-    for (coboundary_element_range_iterator it = coboundary_elements.begin(); it != coboundary_elements.end(); ++it)
-    {
-      typedef typename viennagrid::result_of::element_range< coboundary_type, element_tag >::type element_on_coboundary_element_range_type;
-      typedef typename viennagrid::result_of::iterator< element_on_coboundary_element_range_type >::type element_on_coboundary_element_range_iterator;
-
-      element_on_coboundary_element_range_type elements_on_coboundary_element = viennagrid::elements( *it );
-      for (element_on_coboundary_element_range_iterator jt = elements_on_coboundary_element.begin(); jt != elements_on_coboundary_element.end(); ++jt)
+      for ( element_range_iterator it = elements.begin(); it != elements.end(); ++it )
       {
-        if ( viennagrid::find_by_handle(mesh_obj, jt.handle()) !=  viennagrid::elements<element_type_or_tag>(mesh_obj).end() )
-        accessor.at( *jt ).insert_handle( it.handle() );
+        accessor( *it ).clear();
+        accessor( *it ).set_base_container( viennagrid::get< coboundary_type >( element_collection(mesh_obj) ) );
+      }
+
+
+      typedef typename viennagrid::result_of::element_range< MeshT, coboundary_type_or_tag >::type coboundary_element_range_type;
+      typedef typename viennagrid::result_of::iterator< coboundary_element_range_type >::type coboundary_element_range_iterator;
+
+      coboundary_element_range_type coboundary_elements = viennagrid::elements(mesh_obj);
+      for (coboundary_element_range_iterator it = coboundary_elements.begin(); it != coboundary_elements.end(); ++it)
+      {
+        typedef typename viennagrid::result_of::element_range< coboundary_type, element_tag >::type element_on_coboundary_element_range_type;
+        typedef typename viennagrid::result_of::iterator< element_on_coboundary_element_range_type >::type element_on_coboundary_element_range_iterator;
+
+        element_on_coboundary_element_range_type elements_on_coboundary_element = viennagrid::elements( *it );
+        for (element_on_coboundary_element_range_iterator jt = elements_on_coboundary_element.begin(); jt != elements_on_coboundary_element.end(); ++jt)
+          accessor.at( *jt ).insert_handle( it.handle() );
       }
     }
-  }
 
-
-
-
-
-  /** @brief For internal use only */
-  template<typename element_type_or_tag, typename coboundary_type_or_tag, typename mesh_type>
-  void create_coboundary_information(mesh_type & mesh_obj)
-  {
+    template<typename element_type_or_tag, typename coboundary_type_or_tag, typename WrappedConfigT, typename ElementTypelistT, typename ContainerConfigT, typename coboundary_accessor_type>
+    void create_coboundary_information(viennagrid::mesh< viennagrid::detail::decorated_mesh_view_config<WrappedConfigT, ElementTypelistT, ContainerConfigT> > & mesh_obj, coboundary_accessor_type accessor)
+    {
+      typedef viennagrid::mesh< viennagrid::detail::decorated_mesh_view_config<WrappedConfigT, ElementTypelistT, ContainerConfigT> > ViewType;
       typedef typename viennagrid::result_of::element_tag< element_type_or_tag >::type element_tag;
-      typedef typename viennagrid::result_of::element_tag< coboundary_type_or_tag >::type coboundary_tag;
-      typedef typename viennagrid::result_of::element< mesh_type, element_type_or_tag >::type element_type;
 
-      typedef typename viennagrid::detail::result_of::lookup<
-              typename viennagrid::detail::result_of::lookup<
-                  typename mesh_type::appendix_type,
-                  coboundary_collection_tag
-              >::type,
-              viennagrid::static_pair<element_tag, coboundary_tag>
-              >::type coboundary_container_wrapper_type;
+      typedef typename viennagrid::result_of::element< ViewType, coboundary_type_or_tag >::type coboundary_type;
 
-      coboundary_container_wrapper_type & coboundary_container_wrapper = coboundary_collection<element_tag, coboundary_tag>(mesh_obj);//viennagrid::storage::detail::get< viennagrid::static_pair<element_tag, coboundary_tag> > ( mesh_obj.coboundary_collection() );
+      typedef typename viennagrid::result_of::element_range< ViewType, element_type_or_tag >::type element_range_type;
+      typedef typename viennagrid::result_of::iterator< element_range_type >::type element_range_iterator;
 
-      create_coboundary_information<element_type_or_tag, coboundary_type_or_tag>( mesh_obj, viennagrid::make_accessor<element_type>(coboundary_container_wrapper.container) );
-      update_change_counter( mesh_obj, coboundary_container_wrapper.change_counter );
+      element_range_type elements = viennagrid::elements(mesh_obj);
+
+
+      for ( element_range_iterator it = elements.begin(); it != elements.end(); ++it )
+      {
+        accessor( *it ).clear();
+        accessor( *it ).set_base_container( viennagrid::get< coboundary_type >( element_collection(mesh_obj) ) );
+      }
+
+
+      typedef typename viennagrid::result_of::element_range< ViewType, coboundary_type_or_tag >::type coboundary_element_range_type;
+      typedef typename viennagrid::result_of::iterator< coboundary_element_range_type >::type coboundary_element_range_iterator;
+
+      coboundary_element_range_type coboundary_elements = viennagrid::elements(mesh_obj);
+      for (coboundary_element_range_iterator it = coboundary_elements.begin(); it != coboundary_elements.end(); ++it)
+      {
+        typedef typename viennagrid::result_of::element_range< coboundary_type, element_tag >::type element_on_coboundary_element_range_type;
+        typedef typename viennagrid::result_of::iterator< element_on_coboundary_element_range_type >::type element_on_coboundary_element_range_iterator;
+
+        element_on_coboundary_element_range_type elements_on_coboundary_element = viennagrid::elements( *it );
+        for (element_on_coboundary_element_range_iterator jt = elements_on_coboundary_element.begin(); jt != elements_on_coboundary_element.end(); ++jt)
+        {
+          if ( viennagrid::find_by_handle(mesh_obj, jt.handle()) !=  viennagrid::elements<element_type_or_tag>(mesh_obj).end() )
+          accessor.at( *jt ).insert_handle( it.handle() );
+        }
+      }
+    }
+
+
+
+
+
+    /** @brief For internal use only */
+    template<typename element_type_or_tag, typename coboundary_type_or_tag, typename mesh_type>
+    void create_coboundary_information(mesh_type & mesh_obj)
+    {
+        typedef typename viennagrid::result_of::element_tag< element_type_or_tag >::type element_tag;
+        typedef typename viennagrid::result_of::element_tag< coboundary_type_or_tag >::type coboundary_tag;
+        typedef typename viennagrid::result_of::element< mesh_type, element_type_or_tag >::type element_type;
+
+        typedef typename viennagrid::detail::result_of::lookup<
+                typename viennagrid::detail::result_of::lookup<
+                    typename mesh_type::appendix_type,
+                    coboundary_collection_tag
+                >::type,
+                viennagrid::static_pair<element_tag, coboundary_tag>
+                >::type coboundary_container_wrapper_type;
+
+        coboundary_container_wrapper_type & coboundary_container_wrapper = detail::coboundary_collection<element_tag, coboundary_tag>(mesh_obj);//viennagrid::storage::detail::get< viennagrid::static_pair<element_tag, coboundary_tag> > ( mesh_obj.coboundary_collection() );
+
+        create_coboundary_information<element_type_or_tag, coboundary_type_or_tag>( mesh_obj, viennagrid::make_accessor<element_type>(coboundary_container_wrapper.container) );
+        detail::update_change_counter( mesh_obj, coboundary_container_wrapper.change_counter );
+    }
+
+
+
+    /** @brief For internal use only */
+    template<typename element_type_or_tag, typename coboundary_type_or_tag, typename coboundary_accessor_type, typename ElementTag, typename WrappedConfigType>
+    viennagrid::detail::container_range_wrapper<typename coboundary_accessor_type::value_type>
+    coboundary_elements(coboundary_accessor_type accessor, viennagrid::element<ElementTag, WrappedConfigType> & element)
+    {
+      typedef viennagrid::detail::container_range_wrapper<typename coboundary_accessor_type::value_type> range_type;
+      return range_type( accessor( element ) );
+    }
+
+    /** @brief For internal use only */
+    template<typename element_type_or_tag, typename coboundary_type_or_tag, typename coboundary_accessor_type, typename ElementTag, typename WrappedConfigType>
+    viennagrid::detail::container_range_wrapper<const typename coboundary_accessor_type::value_type>
+    coboundary_elements(coboundary_accessor_type const accessor, viennagrid::element<ElementTag, WrappedConfigType> const & element)
+    {
+      typedef viennagrid::detail::container_range_wrapper<const typename coboundary_accessor_type::value_type> range_type;
+      return range_type( accessor( element ) );
+    }
+
+
+    /** @brief For internal use only */
+    template<typename element_type_or_tag, typename coboundary_type_or_tag, typename coboundary_accessor_type, typename WrappedConfigType, typename element_or_handle_type>
+    viennagrid::detail::container_range_wrapper<typename coboundary_accessor_type::value_type>
+    coboundary_elements(viennagrid::mesh<WrappedConfigType> & mesh_obj, coboundary_accessor_type accessor, element_or_handle_type & hendl)
+    {
+      return coboundary_elements<element_type_or_tag, coboundary_type_or_tag>( accessor, viennagrid::dereference_handle(mesh_obj, hendl) );
+    }
+
+    /** @brief For internal use only */
+    template<typename element_type_or_tag, typename coboundary_type_or_tag, typename coboundary_accessor_type, typename WrappedConfigType, typename element_or_handle_type>
+    viennagrid::detail::container_range_wrapper<const typename coboundary_accessor_type::value_type>
+    coboundary_elements(viennagrid::mesh<WrappedConfigType> const & mesh_obj, coboundary_accessor_type const accessor, element_or_handle_type const & hendl)
+    {
+      return coboundary_elements<element_type_or_tag, coboundary_type_or_tag>( accessor, viennagrid::dereference_handle(mesh_obj, hendl) );
+    }
+
   }
-
-
-
-  /** @brief For internal use only */
-  template<typename element_type_or_tag, typename coboundary_type_or_tag, typename coboundary_accessor_type, typename ElementTag, typename WrappedConfigType>
-  viennagrid::detail::container_range_wrapper<typename coboundary_accessor_type::value_type>
-  coboundary_elements(coboundary_accessor_type accessor, viennagrid::element<ElementTag, WrappedConfigType> & element)
-  {
-    typedef viennagrid::detail::container_range_wrapper<typename coboundary_accessor_type::value_type> range_type;
-    return range_type( accessor( element ) );
-  }
-
-  /** @brief For internal use only */
-  template<typename element_type_or_tag, typename coboundary_type_or_tag, typename coboundary_accessor_type, typename ElementTag, typename WrappedConfigType>
-  viennagrid::detail::container_range_wrapper<const typename coboundary_accessor_type::value_type>
-  coboundary_elements(coboundary_accessor_type const accessor, viennagrid::element<ElementTag, WrappedConfigType> const & element)
-  {
-    typedef viennagrid::detail::container_range_wrapper<const typename coboundary_accessor_type::value_type> range_type;
-    return range_type( accessor( element ) );
-  }
-
-
-  /** @brief For internal use only */
-  template<typename element_type_or_tag, typename coboundary_type_or_tag, typename coboundary_accessor_type, typename WrappedConfigType, typename element_or_handle_type>
-  viennagrid::detail::container_range_wrapper<typename coboundary_accessor_type::value_type>
-  coboundary_elements(viennagrid::mesh<WrappedConfigType> & mesh_obj, coboundary_accessor_type accessor, element_or_handle_type & hendl)
-  {
-    return coboundary_elements<element_type_or_tag, coboundary_type_or_tag>( accessor, viennagrid::dereference_handle(mesh_obj, hendl) );
-  }
-
-  /** @brief For internal use only */
-  template<typename element_type_or_tag, typename coboundary_type_or_tag, typename coboundary_accessor_type, typename WrappedConfigType, typename element_or_handle_type>
-  viennagrid::detail::container_range_wrapper<const typename coboundary_accessor_type::value_type>
-  coboundary_elements(viennagrid::mesh<WrappedConfigType> const & mesh_obj, coboundary_accessor_type const accessor, element_or_handle_type const & hendl)
-  {
-    return coboundary_elements<element_type_or_tag, coboundary_type_or_tag>( accessor, viennagrid::dereference_handle(mesh_obj, hendl) );
-  }
-
 
 
 
@@ -251,12 +253,12 @@ namespace viennagrid
             >::type,
             viennagrid::static_pair<element_tag, coboundary_tag>
             >::type coboundary_container_wrapper_type;
-    coboundary_container_wrapper_type & coboundary_container_wrapper = coboundary_collection<element_tag, coboundary_tag>(mesh_obj);
+    coboundary_container_wrapper_type & coboundary_container_wrapper = detail::coboundary_collection<element_tag, coboundary_tag>(mesh_obj);
 
-    if ( is_obsolete(mesh_obj, coboundary_container_wrapper.change_counter) )
-        create_coboundary_information<ElementTypeOrTagT, CoboundaryTypeOrTagT>(mesh_obj);
+    if ( detail::is_obsolete(mesh_obj, coboundary_container_wrapper.change_counter) )
+      detail::create_coboundary_information<ElementTypeOrTagT, CoboundaryTypeOrTagT>(mesh_obj);
 
-    return coboundary_elements<ElementTypeOrTagT, CoboundaryTypeOrTagT>( viennagrid::make_accessor<element_type>(coboundary_container_wrapper.container), viennagrid::dereference_handle(mesh_obj, element_or_handle) );
+    return detail::coboundary_elements<ElementTypeOrTagT, CoboundaryTypeOrTagT>( viennagrid::make_accessor<element_type>(coboundary_container_wrapper.container), viennagrid::dereference_handle(mesh_obj, element_or_handle) );
   }
 
   /** @brief Obtaines a const coboundary range of an element within a mesh. This function caches the coboundary information and re-creates it if the cached information is out of date. The runtime of a re-creation is linear in the number of elements of type CoboundaryTypeOrTagT within the mesh.
@@ -285,12 +287,12 @@ namespace viennagrid
             >::type,
             viennagrid::static_pair<element_tag, coboundary_tag>
             >::type coboundary_container_wrapper_type;
-    coboundary_container_wrapper_type const & coboundary_container_wrapper = coboundary_collection<element_tag, coboundary_tag>(mesh_obj);
+    coboundary_container_wrapper_type const & coboundary_container_wrapper = detail::coboundary_collection<element_tag, coboundary_tag>(mesh_obj);
 
-    if ( is_obsolete(mesh_obj, coboundary_container_wrapper.change_counter) )
-        create_coboundary_information<ElementTypeOrTagT, CoboundaryTypeOrTagT>( const_cast<mesh_type&>(mesh_obj) );
+    if ( detail::is_obsolete(mesh_obj, coboundary_container_wrapper.change_counter) )
+      detail::create_coboundary_information<ElementTypeOrTagT, CoboundaryTypeOrTagT>( const_cast<mesh_type&>(mesh_obj) );
 
-    return coboundary_elements<ElementTypeOrTagT, CoboundaryTypeOrTagT>( viennagrid::make_accessor<element_type>(coboundary_container_wrapper.container), viennagrid::dereference_handle(mesh_obj, element_or_handle) );
+    return detail::coboundary_elements<ElementTypeOrTagT, CoboundaryTypeOrTagT>( viennagrid::make_accessor<element_type>(coboundary_container_wrapper.container), viennagrid::dereference_handle(mesh_obj, element_or_handle) );
   }
 
 

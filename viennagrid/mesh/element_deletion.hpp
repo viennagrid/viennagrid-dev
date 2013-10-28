@@ -180,7 +180,7 @@ namespace viennagrid
     detail::erase_functor<MeshType, ToEraseViewT> functor( mesh_obj, elements_to_erase );
     viennagrid::detail::for_each<SegmentElementTypelist>(functor);
 
-    viennagrid::increment_change_counter(mesh_obj);
+    viennagrid::detail::increment_change_counter(mesh_obj);
   }
 
   namespace detail
@@ -209,7 +209,7 @@ namespace viennagrid
     detail::erase_from_view_functor<ViewType> functor( view_obj );
     viennagrid::for_each(elements_to_erase, functor);
 
-    viennagrid::increment_change_counter(view_obj);
+    viennagrid::detail::increment_change_counter(view_obj);
   }
 
 

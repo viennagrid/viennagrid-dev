@@ -33,13 +33,13 @@ namespace viennagrid
         VertexHandleIteratorT const & vertices_end)
   {
     typedef typename viennagrid::result_of::element<MeshOrSegmentHandleTypeT, ElementTypeOrTagT>::type ElementType;
-    ElementType element = ElementType( inserter(mesh_obj).get_physical_container_collection() );
+    ElementType element = ElementType( detail::inserter(mesh_obj).get_physical_container_collection() );
 
     size_t element_index = 0;
     for ( ; vertices_begin != vertices_end; ++vertices_begin, ++element_index )
         viennagrid::set_vertex( element, *vertices_begin, element_index );
 
-    return push_element<true, true>(mesh_obj, element).first;
+    return detail::push_element<true, true>(mesh_obj, element).first;
   }
 
   // doxygen doku in forwards.hpp
@@ -52,7 +52,7 @@ namespace viennagrid
         typename result_of::id< typename result_of::element<MeshOrSegmentHandleTypeT, ElementTypeOrTagT>::type >::type id)
   {
     typedef typename viennagrid::result_of::element<MeshOrSegmentHandleTypeT, ElementTypeOrTagT>::type ElementType;
-    ElementType element = ElementType( inserter(mesh_obj).get_physical_container_collection() );
+    ElementType element = ElementType( detail::inserter(mesh_obj).get_physical_container_collection() );
 
     element.id( id );
 
@@ -60,7 +60,7 @@ namespace viennagrid
     for ( ; vertices_begin != vertices_end; ++vertices_begin, ++element_index )
         viennagrid::set_vertex( element, *vertices_begin, element_index );
 
-    return push_element<false, true>(mesh_obj, element ).first;
+    return detail::push_element<false, true>(mesh_obj, element ).first;
   }
 
 
@@ -101,7 +101,7 @@ namespace viennagrid
   typename result_of::vertex_handle<MeshOrSegmentHandleTypeT>::type make_vertex(MeshOrSegmentHandleTypeT & mesh_segment)
   {
     typedef typename result_of::element<MeshOrSegmentHandleTypeT, vertex_tag>::type element_type;
-    return push_element<true, true>(mesh_segment, element_type() ).first;
+    return detail::push_element<true, true>(mesh_segment, element_type() ).first;
   }
 
   // doxygen doku in forwards.hpp
@@ -126,7 +126,7 @@ namespace viennagrid
     VertexType element;
     element.id( id );
 
-    typename result_of::vertex_handle<MeshOrSegmentHandleTypeT>::type ret = push_element<false, true>(mesh_obj, element ).first;
+    typename result_of::vertex_handle<MeshOrSegmentHandleTypeT>::type ret = detail::push_element<false, true>(mesh_obj, element ).first;
     viennagrid::point(mesh_obj, ret) = point;
 
     return ret;
@@ -228,7 +228,7 @@ namespace viennagrid
   {
     typedef typename viennagrid::result_of::element<MeshOrSegmentHandleTypeT, plc_tag>::type PLCType;;
     typedef typename result_of::handle<MeshOrSegmentHandleTypeT, plc_tag>::type PLCHandleType;
-    PLCType plc( inserter(mesh_obj).get_physical_container_collection() );
+    PLCType plc( detail::inserter(mesh_obj).get_physical_container_collection() );
 
     for ( ; lines_begin != lines_end; ++lines_begin)
       plc.container( viennagrid::line_tag() ).insert_unique_handle( *lines_begin );
@@ -236,7 +236,7 @@ namespace viennagrid
     for ( ; loose_vertices_begin != loose_vertices_end; ++loose_vertices_begin)
       plc.container( viennagrid::vertex_tag() ).insert_unique_handle( *loose_vertices_begin );
 
-    PLCHandleType handle = viennagrid::push_element<true, true>(mesh_obj, plc ).first;
+    PLCHandleType handle = viennagrid::detail::push_element<true, true>(mesh_obj, plc ).first;
 
     PLCType & inserted_plc = viennagrid::dereference_handle(mesh_obj, handle);
 

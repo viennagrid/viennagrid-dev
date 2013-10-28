@@ -151,7 +151,7 @@ namespace viennagrid
                   facet_tag
                 >::type src_boundary_information_container_wrapper_type;
 
-          src_boundary_information_container_wrapper_type & src_boundary_information_container_wrapper = boundary_information_collection<facet_tag>( mesh_obj_ );
+          src_boundary_information_container_wrapper_type & src_boundary_information_container_wrapper = detail::boundary_information_collection<facet_tag>( mesh_obj_ );
 
 
         typedef typename viennagrid::detail::result_of::lookup<
@@ -162,13 +162,13 @@ namespace viennagrid
                   element_tag
                 >::type dst_boundary_information_container_wrapper_type;
 
-        dst_boundary_information_container_wrapper_type & dst_boundary_information_container_wrapper = boundary_information_collection<element_tag>( mesh_obj_ );
+        dst_boundary_information_container_wrapper_type & dst_boundary_information_container_wrapper = detail::boundary_information_collection<element_tag>( mesh_obj_ );
 
         transfer_boundary_information(mesh_obj_,
                                       viennagrid::make_accessor<facet_type>( src_boundary_information_container_wrapper.container ),
                                       viennagrid::make_accessor<element_type>( dst_boundary_information_container_wrapper.container ));
 
-        update_change_counter( mesh_obj_, dst_boundary_information_container_wrapper.change_counter );
+        detail::update_change_counter( mesh_obj_, dst_boundary_information_container_wrapper.change_counter );
       }
     private:
 
@@ -222,11 +222,11 @@ namespace viennagrid
                 >::type,
                 facet_tag
               >::type boundary_information_container_wrapper_type;
-      boundary_information_container_wrapper_type & boundary_information_container_wrapper = boundary_information_collection<facet_tag>(mesh_obj);
+      boundary_information_container_wrapper_type & boundary_information_container_wrapper = detail::boundary_information_collection<facet_tag>(mesh_obj);
       detect_boundary( mesh_obj, viennagrid::make_accessor<facet_type>( boundary_information_container_wrapper.container ) );
 
       transfer_boundary_information(mesh_obj);
-      update_change_counter( mesh_obj, boundary_information_container_wrapper.change_counter );
+      detail::update_change_counter( mesh_obj, boundary_information_container_wrapper.change_counter );
     }
 
     /** @brief For internal use only. */
@@ -234,15 +234,15 @@ namespace viennagrid
     void detect_boundary( segment_handle<SegmentationT> & segment )
     { detect_boundary( segment.view() ); }
 
+    /** @brief For internal use only. */
+    template <typename ElementT, typename AccessorT>
+    bool is_boundary(AccessorT const boundary_info_accessor,
+                     ElementT const & element)
+    {
+      return boundary_info_accessor(element);
+    }
 
-  }
 
-  /** @brief For internal use only. */
-  template <typename ElementT, typename AccessorT>
-  bool is_boundary(AccessorT const boundary_info_accessor,
-                   ElementT const & element)
-  {
-    return boundary_info_accessor(element);
   }
 
 
@@ -265,12 +265,12 @@ namespace viennagrid
               >::type,
               element_tag
             >::type boundary_information_container_wrapper_type;
-    boundary_information_container_wrapper_type const & boundary_information_container_wrapper = boundary_information_collection<element_tag>(mesh_obj);
+    boundary_information_container_wrapper_type const & boundary_information_container_wrapper = detail::boundary_information_collection<element_tag>(mesh_obj);
 
     if (mesh_obj.is_obsolete(boundary_information_container_wrapper.change_counter))
       detail::detect_boundary( const_cast<mesh_type&>(mesh_obj) );
 
-    return is_boundary( viennagrid::make_accessor<ElementT>(boundary_information_container_wrapper.container), element );
+    return detail::is_boundary( viennagrid::make_accessor<ElementT>(boundary_information_container_wrapper.container), element );
   }
 
   /** @brief Returns true if an element is located on the boundary of the segment

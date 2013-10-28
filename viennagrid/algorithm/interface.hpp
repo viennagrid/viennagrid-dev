@@ -140,8 +140,8 @@ namespace viennagrid
         transfer_boundary_information(seg0, viennagrid::make_field<facet_type>(src_interface_information_container_wrapper.container), dst_accessor);
         transfer_boundary_information(seg1, viennagrid::make_field<facet_type>(src_interface_information_container_wrapper.container), dst_accessor);
 
-          update_change_counter( seg0, dst_interface_information_container_wrapper.seg0_change_counter );
-          update_change_counter( seg1, dst_interface_information_container_wrapper.seg1_change_counter );
+        detail::update_change_counter( seg0, dst_interface_information_container_wrapper.seg0_change_counter );
+        detail::update_change_counter( seg1, dst_interface_information_container_wrapper.seg1_change_counter );
       }
     private:
 
@@ -195,6 +195,13 @@ namespace viennagrid
       viennagrid::detail::detect_interface_impl< viennagrid::result_of::has_boundary<CellType, typename CellTag::facet_tag>::value >::detect(accessor, seg0, seg1);
     }
 
+    /** @brief For internal use only. */
+    template <typename ElementT, typename AccessorT>
+    bool is_interface(AccessorT const accessor,
+                      ElementT const & el)
+    { return accessor(el); }
+
+
   }
 
   /** @brief Public interface function for the detection of interface n-cells between two segments. No need to call this function explicitly, since it is called by is_interface()
@@ -225,16 +232,10 @@ namespace viennagrid
     detail::detect_interface( seg0, seg1, viennagrid::make_field<FacetType>(interface_information_container_wrapper.container) );
 
     transfer_interface_information( seg0, seg1 );
-    update_change_counter( seg0, interface_information_container_wrapper.seg0_change_counter );
-    update_change_counter( seg1, interface_information_container_wrapper.seg1_change_counter );
+    detail::update_change_counter( seg0, interface_information_container_wrapper.seg0_change_counter );
+    detail::update_change_counter( seg1, interface_information_container_wrapper.seg1_change_counter );
   }
 
-
-  /** @brief For internal use only. */
-  template <typename ElementT, typename AccessorT>
-  bool is_interface(AccessorT const accessor,
-                    ElementT const & el)
-  { return accessor(el); }
 
 
   /** @brief Returns true if the n-cell is located at the interface between two segments
@@ -264,11 +265,11 @@ namespace viennagrid
             >::type::segment_interface_information_wrapper_type interface_information_container_wrapper_type;
     interface_information_container_wrapper_type const & interface_information_container_wrapper = detail::interface_information_collection<element_tag>( seg0, seg1 );
 
-    if ( (is_obsolete(seg0, interface_information_container_wrapper.seg0_change_counter)) ||
-         (is_obsolete(seg1, interface_information_container_wrapper.seg1_change_counter) ))
+    if ( (detail::is_obsolete(seg0, interface_information_container_wrapper.seg0_change_counter)) ||
+         (detail::is_obsolete(seg1, interface_information_container_wrapper.seg1_change_counter) ))
         detect_interface( const_cast<SegmentHandleType&>(seg0), const_cast<SegmentHandleType&>(seg1) );
 
-    return is_interface( viennagrid::make_field<ElementT>(interface_information_container_wrapper.container), element );
+    return detail::is_interface( viennagrid::make_field<ElementT>(interface_information_container_wrapper.container), element );
   }
 
 }
