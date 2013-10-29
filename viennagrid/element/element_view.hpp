@@ -26,6 +26,7 @@ namespace viennagrid
   namespace result_of
   {
 
+    /** @brief Returns a (non-const) view type for the provided element type or tag and the given container type selected for the view */
     template <typename something,
              typename element_type_or_tag,
              typename view_container_tag = std_deque_tag>
@@ -35,6 +36,7 @@ namespace viennagrid
       typedef typename result_of::view<base_container_type, view_container_tag>::type type;
     };
 
+    /** @brief Returns a const view type for the provided element type or tag and the given container type selected for the view */
     template <typename something,
              typename element_type_or_tag,
              typename view_container_tag = std_deque_tag>

@@ -280,6 +280,7 @@ namespace viennagrid
       typename boundary_element_taglist< viennagrid::element<ElementTagT, WrappedConfigType> >::type >
     struct coboundary_container_collection_per_element_typemap;
 
+    /** \cond */
     template<typename WrappedConfigType, typename ElementTagT>
     struct coboundary_container_collection_per_element_typemap<WrappedConfigType, ElementTagT, viennagrid::null_type>
     {
@@ -310,12 +311,14 @@ namespace viennagrid
           typename coboundary_container_collection_per_element_typemap<WrappedConfigType, ElementTagT, tail>::type
       > type;
     };
+    /** \endcond */
 
 
     /** @brief Creates the typemap for the coboundary container collection for all elements by merging all typemaps created by coboundary_container_collection_per_element_typemap. */
     template<typename WrappedConfigType, typename ElementTaglistT = typename viennagrid::detail::result_of::key_typelist<typename WrappedConfigType::type>::type>
-    struct coboundary_container_collection_typemap;
+    struct coboundary_container_collection_typemap {};
 
+    /** \cond */
     template<typename WrappedConfigType>
     struct coboundary_container_collection_typemap<WrappedConfigType, viennagrid::null_type>
     {
@@ -330,6 +333,7 @@ namespace viennagrid
         typename coboundary_container_collection_typemap<WrappedConfigType, tail>::type
       >::type type;
     };
+    /** \endcond */
   }
 
 
@@ -340,8 +344,9 @@ namespace viennagrid
     /** @brief Creates the typemap for the neighbor container collection based on an element and its boundary element typelist. The boundary elements are used as connector elements. */
     template<typename WrappedConfigType, typename ElementTagT, typename BoundaryElementTaglistT =
       typename boundary_element_taglist< viennagrid::element<ElementTagT, WrappedConfigType> >::type >
-    struct neighbor_container_collection_per_element_typemap;
+    struct neighbor_container_collection_per_element_typemap {};
 
+    /** \cond */
     template<typename WrappedConfigType, typename ElementTagT>
     struct neighbor_container_collection_per_element_typemap<WrappedConfigType, ElementTagT, viennagrid::null_type>
     {
@@ -371,12 +376,14 @@ namespace viennagrid
           typename neighbor_container_collection_per_element_typemap<WrappedConfigType, ElementTagT, tail>::type
       > type;
     };
+    /** \endcond */
 
 
     /** @brief Creates the typemap for the neighbor container collection for all elements by merging all typemaps created by neighbor_container_collection_per_element_typemap. */
     template<typename WrappedConfigType, typename ElementTaglistT = typename viennagrid::detail::result_of::key_typelist<typename WrappedConfigType::type>::type>
-    struct neighbor_container_collection_typemap;
+    struct neighbor_container_collection_typemap {};
 
+    /** \cond */
     template<typename WrappedConfigType>
     struct neighbor_container_collection_typemap<WrappedConfigType, viennagrid::null_type>
     {
@@ -391,15 +398,20 @@ namespace viennagrid
         typename neighbor_container_collection_typemap<WrappedConfigType, tail>::type
       >::type type;
     };
+    /** \cond */
   }
 
 
   namespace result_of
   {
-    /** @brief Meta function for determining the maximum topologic dimension of typelist of element types or tags. */
+    /** @brief Metafunction for obtaining the topologic dimension of the cell elements of something
+     *
+     * @tparam SomethingT           The host type, can be a typelist, a collection, a mesh, a segmentation or a segment
+     */
     template<typename ElementTypelistT>
     struct topologic_cell_dimension;
 
+    /** \cond */
     template<>
     struct topologic_cell_dimension<viennagrid::null_type>
     {
@@ -415,6 +427,7 @@ namespace viennagrid
 
       static const int value = (tail_cell_dimension > current_element_dimension) ? tail_cell_dimension : current_element_dimension;
     };
+    /** \endcond */
 
 
 
@@ -422,6 +435,7 @@ namespace viennagrid
     template<typename ElementTypelistT, int TopologicDimensionV>
     struct elements_of_topologic_dim;
 
+    /** \cond */
     template<int TopologicDimensionV>
     struct elements_of_topologic_dim< viennagrid::null_type, TopologicDimensionV >
     {
@@ -440,6 +454,7 @@ namespace viennagrid
           TailTypelist
       >::type type;
     };
+    /** \endcond */
 
 
     /** @brief Meta function for determining the cell tag (tag of element with maximum topologic dimension) of a typelist of elements of element tags. The first cell tag is used. */
@@ -457,8 +472,9 @@ namespace viennagrid
 
     /** @brief Creates the typemap for the boundary container collection for all element within a element typelist. */
     template<typename WrappedConfigType, typename ElementTaglistT>
-    struct boundary_information_collection_typemap_impl;
+    struct boundary_information_collection_typemap_impl {};
 
+    /** \cond */
     template<typename WrappedConfigType>
     struct boundary_information_collection_typemap_impl<WrappedConfigType, viennagrid::null_type>
     {
@@ -481,6 +497,7 @@ namespace viennagrid
           typename boundary_information_collection_typemap_impl<WrappedConfigType, TailT>::type
       > type;
     };
+    /** \endcond */
 
     /** @brief Creates the typemap for the boundary container collection for all elements using boundary_information_collection_typemap_impl with all elements within a wrapped domain except the cell. */
     template<typename WrappedConfigType>

@@ -23,9 +23,9 @@ namespace viennagrid
 {
   namespace result_of
   {
-    /** @brief Defines an ID generator based on a config an a ID generator tag */
+    /** \cond */
     template<typename mesh_config, typename id_generator_tag>
-    struct id_generator_impl;
+    struct id_generator_impl {};
 
     template<typename mesh_config>
     struct id_generator_impl<mesh_config, config::continuous_id_generator_tag>
@@ -33,6 +33,7 @@ namespace viennagrid
       typedef typename viennagrid::detail::result_of::continuous_id_generator_config_from_mesh_config<mesh_config>::type typemap;
       typedef viennagrid::continuous_id_generator<typemap> type;
     };
+    /** \endcond */
 
     /** @brief Defines an ID generator based on a wrapped config */
     template<typename WrappedConfig>

@@ -27,10 +27,18 @@ namespace viennagrid
 {
   namespace result_of
   {
+    /** @brief  Returns the internal type used for element permutations from global to local ordering */
     template<int num_elements>
     struct permutator_type
     {
       typedef typename permutator_type<num_elements+1>::type type;
+    };
+
+    /** \cond */
+    template<>
+    struct permutator_type<16>  //shortcut for not instantiating too many template specializations
+    {
+      typedef unsigned char type;
     };
 
     template<>
@@ -44,6 +52,7 @@ namespace viennagrid
     {
       typedef unsigned short type;
     };
+    /** \endcond */
   }
 
 

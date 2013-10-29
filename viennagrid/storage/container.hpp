@@ -521,9 +521,15 @@ namespace viennagrid
 
   namespace result_of
   {
+    /** @brief Returns a container for objects of the specified 'value_type' subject to the provided tag.
+      *
+      * @tparam value_type     The object type stored in the container
+      * @tparam container_tag  A tag for selecting the respective container, e.g. std_vector_tag, std_deque_tag, etc.
+      */
     template<typename value_type, typename container_tag>
-    struct container;
+    struct container {};
 
+    /** \cond */
     template<typename value_type>
     struct container<value_type, std_vector_tag>
     {
@@ -569,6 +575,7 @@ namespace viennagrid
     {
         typedef static_array<element_type, size> type;
     };
+    /** \endcond */
   }
 }
 

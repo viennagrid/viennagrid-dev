@@ -83,7 +83,7 @@ namespace viennagrid
 
   namespace result_of
   {
-
+    /** @brief Returns the container type for a element from the type map configuration */
     template<typename typemap_, typename element_type>
     struct container_of
     {
@@ -92,12 +92,12 @@ namespace viennagrid
       >::type type;
     };
 
+    /** \cond */
     template<typename typemap_, typename element_type>
     struct container_of< viennagrid::collection< typemap_ >, element_type >
     {
       typedef typename container_of<typemap_, element_type>::type type;
     };
-
 
     template<typename container_collection_1, typename container_collection_2>
     struct common_values;
@@ -118,6 +118,7 @@ namespace viennagrid
       >::type type;
 
     };
+    /** \endcond */
   }
 
 
@@ -243,6 +244,11 @@ namespace viennagrid
 
   namespace result_of
   {
+    /** @brief Metafunction for obtaining the container collection for the provided value typelist and the respective container configuration.
+      *
+      * @tparam value_typelist       A typelist of value types for each container in the collection
+      * @tparam container_config     The configuration of the containers in the collection
+      */
     template<typename value_typelist, typename container_config>
     struct container_collection
     {

@@ -28,7 +28,7 @@ namespace viennagrid
 
   namespace result_of
   {
-    /** @brief For internal use only */
+    /** \cond */
     template<typename mesh_type, typename element_type_or_tag, typename coboundary_type_or_tag>
     struct coboundary_view
     {
@@ -49,6 +49,7 @@ namespace viennagrid
     {
       typedef typename coboundary_view< typename viennagrid::segment_handle<SegmentationType>::view_type, element_type_or_tag, coboundary_type_or_tag >::type type;
     };
+    /** \endcond */
 
 
     /** @brief Metafunction for obtaining a coboundary range of an element type within a mesh/segment
@@ -75,11 +76,13 @@ namespace viennagrid
       typedef viennagrid::detail::container_range_wrapper< const typename coboundary_view<MeshOrSegmentHandleT, ElementTypeOrTagT, CoboundaryTypeOrTagT>::type > type;
     };
 
+    /** \cond */
     template<typename MeshOrSegmentHandleT, typename ElementTypeOrTagT, typename CoboundaryTypeOrTagT>
     struct coboundary_range<const MeshOrSegmentHandleT, ElementTypeOrTagT, CoboundaryTypeOrTagT>
     {
       typedef typename const_coboundary_range<MeshOrSegmentHandleT, ElementTypeOrTagT, CoboundaryTypeOrTagT>::type type;
     };
+    /** \endcond */
   }
 
   namespace detail

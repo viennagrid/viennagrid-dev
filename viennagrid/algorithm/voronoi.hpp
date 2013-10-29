@@ -35,6 +35,10 @@ namespace viennagrid
 {
   namespace result_of
   {
+    /** @brief Returns the internal type used for the individual Voronoi quantity contributions.
+      *
+      * @tparam ConstCellHandleT    The handle type for cells used as key for the container
+      */
     template <typename ConstCellHandleT>
     struct voronoi_cell_contribution
     {

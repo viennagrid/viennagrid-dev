@@ -496,12 +496,18 @@ namespace viennagrid
 
   namespace result_of
   {
+    /** @brief Metafunction for returning a view on a container using the respective container for holding the references inside the view
+      *
+      * @tparam base_container_type    The container type from which the view is derived
+      * @tparam view_container_tag     The tag for selecting the container inside the view, e.g. std_vector_tag or std_map_tag
+      */
     template<typename base_container_type, typename view_container_tag>
     struct view
     {
       typedef viennagrid::view<base_container_type, view_container_tag> type;
     };
 
+    /** \cond */
     template<typename base_container_type, typename base_view_container_tag, typename view_container_tag>
     struct view< viennagrid::view<base_container_type, base_view_container_tag>, view_container_tag>
     {
@@ -533,6 +539,7 @@ namespace viennagrid
       tmp.set_base_container(base_container);
       return tmp;
     }
+    /** \endcond */
   }
 
 
@@ -560,7 +567,7 @@ namespace viennagrid
   namespace result_of
   {
 
-
+    /** \cond */
     template<typename container_type, typename view_container_config>
     struct view_container_tag
     {
@@ -623,7 +630,7 @@ namespace viennagrid
           >::type
       > type;
     };
-
+    /** \endcond */
   }
 
 
