@@ -4,7 +4,7 @@
 The tessellation of surfaces and solids into complexes of small elements such as triangles, quadrilaterals, tetrahedra or hexahedra is one of the major ingredients for many computational algorithms.
 Applications range from rendering, most notably in computer games, to computational science, in particular for the numerical solution of partial differential equations on complex meshs for the study of physical phenomena.
 These various areas lead to a broad range of different requirements on a mesh library, which certainly cannot be fulfilled by a single, predetermined datastructure.
-Unlike other mesh libraries, {\ViennaGrid} provides the abililty to easily adjust the internal representation of meshes, while providing a uniform interface for the storage and access of data on mesh elements as well as STL-compatible iteration over such elements.
+{\ViennaGrid} employs a highly configurable internal representation of meshes, while providing a uniform interface for the storage and access of data on mesh elements as well as STL-compatible iteration over such elements.
 
 As an example, consider the basic building block of triangular meshes, a triangle:
 The three vertices fully define the shape of the triangle, the edges can be derived from vertices if a common reference orientation of the triangles is provided.
@@ -41,11 +41,11 @@ The situation for tetrahedral meshes is even more complicated, because additiona
 \end{figure}
 
 The aim of {\ViennaGrid} is to be highly customizable such that all three algorithms outlined above can be supported with an optimal data layout.
-In particular, {\ViennaGrid} allows for a convenient specification of the storage of elements, in particular which boundary elements are stored inside the mesh as well as which topological information is stored on each element.
+In particular, {\ViennaGrid} allows for a user-specification of the storage of elements, in particular which boundary elements are stored inside the mesh as well as which topological information is stored on each element.
 After a brief introduction into the nomenclature used in this manual in Chapter \ref{chap:entities}, the configuration of the data storage layout is explained in Chapter \ref{chap:meshsetup}, and the basic steps required to fill a mesh with cells is explained in Chapter \ref{chap:meshsetup}.
 
 In addition to a high flexibility with respect to the underlying data structures, {\ViennaGrid} provides STL-compatible iterators and access to sub-elements of a mesh, cf.~Chapter \ref{chap:iterators}.
-This allows to write generic code that is a-priori independent of the underlying spatial dimension.
+This allows for writing generic code that is a-priori independent of the underlying spatial dimension, yet enables compiler optimizations such as loop unrolling for tight loops.
 In particular, a single implementation for algorithms operating in multiple dimensions and using different mesh types (triangular, hexahedral, etc.) can be obtained.
 
 One of the strengths of {\ViennaGrid} is the generic facility provided for storing arbitrary quantities on a mesh, cf.~Chapter \ref{chap:data}.

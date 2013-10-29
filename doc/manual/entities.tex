@@ -172,7 +172,9 @@ If this is not the case, the complex is denoted \emph{non-conforming}, cf.~Fig.~
 
 \pagebreak
 
-The instantiation of a {\ViennaGrid} mesh object requires a configuration class \lstinline|Config|, as will be discussed in~Chapter~\ref{chap:meshsetup}.
+The instantiation of a {\ViennaGrid} mesh object requires a configuration class \lstinline|Config|.
+Table \ref{tab:mesh-configs} provides an overview of built-in configurations in namespace \lstinline|viennagrid::config|,
+which can also serve as a starting point for user-defined configurations.
 Given such a class, the mesh type is retrieved and the mesh object constructed as
 \begin{lstlisting}
  using namespace viennagrid;
@@ -185,6 +187,36 @@ Given such a class, the mesh type is retrieved and the mesh object constructed a
 
  MeshType my_mesh; //create the mesh object
 \end{lstlisting}
+
+
+\begin{table}[tbp]
+ \centering
+ \renewcommand{\arraystretch}{1.3}
+\begin{tabular}{|l|c|l|l|}
+\hline
+ Configuration class  & Spatial Dim & Cell Type \\
+\hline
+ \lstinline|vertex_1d|          & $1$ & Vertex \\
+ \lstinline|vertex_2d|          & $2$ & Vertex \\
+ \lstinline|vertex_3d|          & $3$ & Vertex \\
+ \lstinline|line_1d|            & $1$ & Line \\
+ \lstinline|line_2d|            & $2$ & Line \\
+ \lstinline|line_3d|            & $3$ & Line \\
+ \lstinline|triangular_2d|      & $2$ & Triangle \\
+ \lstinline|triangular_3d|      & $3$ & Triangle \\
+ \lstinline|quadrilateral_2d|   & $2$ & Quadrilateral \\
+ \lstinline|quadrilateral_3d|   & $3$ & Quadrilateral \\
+ \lstinline|polygonal_2d|       & $2$ & Polygon \\
+ \lstinline|polygonal_3d|       & $3$ & Polygon \\
+ \lstinline|plc_2d|             & $2$ & PLC \\
+ \lstinline|plc_3d|             & $3$ & PLC \\
+ \lstinline|tetrahedral_3d|     & $3$ & Tetrahedron \\
+ \lstinline|hexahedral_3d|      & $3$ & Hexahedron \\
+\hline
+\end{tabular}
+\caption{Predefined default configurations in \lstinline|viennagrid::config|.}
+\label{tab:mesh-configs}
+\end{table}
 
 \section{Segmentation and Segment}
 A \emph{segment} $\Omega_i$ refers to a subset of the elements in a mesh $\Omega$. Unlike a mesh, a segment is not a container for its elements. Instead, only references (pointers) to the elements in the mesh are stored. In common C++ language, a \emph{segment} represents a so-called \emph{view} on the mesh.
