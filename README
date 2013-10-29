@@ -26,9 +26,9 @@ ViennaGrid requires only a not too dated C++ compiler (e.g. gcc 4.x.x), the C++ 
 The first step is to extract the file:
 
 Unix-based OS:
-$> gunzip ViennaGrid-1.x.y.tar.gz
-$> tar -xf ViennaGrid-1.x.y.tar
-$> cd ViennaGrid-1.x.y
+$> gunzip ViennaGrid-x.y.z.tar.gz
+$> tar -xf ViennaGrid-x.y.z.tar
+$> cd ViennaGrid-x.y.z
 
 Windows:
 Extract the file using your favorite compressor/decompressor, e.g. 7-zip.
@@ -64,7 +64,7 @@ Unix-based clients:
 3. Project Layout
 -----------------
 
----- ViennaGrid-1.X.X
+---- ViennaGrid-X.Y.Z
    |
    |-- build/ - Build folder for the examples
    | 
@@ -84,8 +84,9 @@ Unix-based clients:
 4. Authors and Contact
 ------------------------
 
-Karl Rupp (rupp@iue.tuwien.ac.at)
-Josef Weinbub (weinbub@iue.tuwien.ac.at)
+Florian Rudolf (rudolf@iue.tuwien.ac.at)
+Karl Rupp      (rupp@iue.tuwien.ac.at)
+Josef Weinbub  (weinbub@iue.tuwien.ac.at)
 
 ViennaGrid was developed under the aegis of the 'Institute for Microelectronics' and the 'Institute for Analysis and Scientific Computing' at the 'Vienna University of Technology'.
 
