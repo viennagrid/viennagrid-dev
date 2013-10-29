@@ -23,8 +23,6 @@
 
 #include "viennagrid/mesh/mesh.hpp"
 
-#include "viennagrid/algorithm/geometry.hpp"
-
 /** @file viennagrid/io/tetgen_poly_reader.hpp
     @brief Provides a reader for Tetgen .poly files. See http://wias-berlin.de/software/tetgen/fformats.poly.html
 */
