@@ -14,8 +14,8 @@
 ======================================================================= */
 
 #include "viennagrid/algorithm/inner_prod.hpp"
+#include "viennagrid/algorithm/cross_prod.hpp"
 #include "viennagrid/algorithm/norm.hpp"
-#include "viennagrid/algorithm/geometry.hpp"
 
 /** @file viennagrid/algorithm/angle.hpp
     @brief Contains functions for calculating angles between vectors given by points
@@ -35,7 +35,7 @@ namespace viennagrid
     if (numerator > denominator) //possible due to round-off
       return 0;
     if (numerator < -denominator)
-      return std::acos(-1);
+      return std::acos(static_cast<ValueType>(-1));
     return std::acos( numerator / denominator );
   }
 
