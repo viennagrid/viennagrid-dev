@@ -97,7 +97,7 @@ namespace viennagrid
         //
         std::size_t point_size = viennagrid::vertices(mesh_obj).size();
         ar & point_size;
-        ConstVertexRange vertices = viennagrid::elements(mesh_obj);
+        ConstVertexRange vertices(mesh_obj);
         for (ConstVertexIterator vit = vertices.begin();
              vit != vertices.end(); ++vit)
         {
@@ -109,7 +109,7 @@ namespace viennagrid
         // -----------------------------------------------
         // the specific cells are read and transmitted
         //
-        ConstCellRange cells = viennagrid::elements(mesh_obj);
+        ConstCellRange cells(mesh_obj);
 
         std::size_t cell_size = viennagrid::cells(mesh_obj).size();
         ar & cell_size;
@@ -117,7 +117,7 @@ namespace viennagrid
         for (ConstCellIterator cit = cells.begin();
         cit != cells.end(); ++cit)
         {
-          ConstVertexOnCellRange vertices_on_cell = viennagrid::elements(*cit);
+          ConstVertexOnCellRange vertices_on_cell(*cit);
 
           for (ConstVertexOnCellIterator vocit = vertices_on_cell.begin();
           vocit != vertices_on_cell.end();

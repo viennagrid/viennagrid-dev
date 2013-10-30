@@ -155,7 +155,7 @@ namespace viennagrid
     typedef typename result_of::element_range<MeshOrSegmentHandleTypeT, vertex_tag>::type vertex_range_type;
     typedef typename result_of::iterator<vertex_range_type>::type vertex_range_iterator;
 
-    vertex_range_type vertices = viennagrid::elements(mesh_obj);
+    vertex_range_type vertices(mesh_obj);
     for (vertex_range_iterator hit = vertices.begin(); hit != vertices.end(); ++hit)
     {
         if (viennagrid::norm_2( point - viennagrid::point(mesh_obj, *hit) ) < tolerance )
@@ -313,7 +313,7 @@ namespace viennagrid
     typedef typename viennagrid::result_of::const_vertex_range<ElementT>::type      VertexRangeType;
     typedef typename viennagrid::result_of::iterator<VertexRangeType>::type         VertexRangeIterator;
 
-    VertexRangeType vertices = viennagrid::elements(element);
+    VertexRangeType vertices(element);
     for (VertexRangeIterator vit = vertices.begin(); vit != vertices.end(); ++vit)
       vertex_handles.push_back( make_unique_vertex(domain_segment, viennagrid::point(*vit)) );
 

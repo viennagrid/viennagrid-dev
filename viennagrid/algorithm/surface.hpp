@@ -130,7 +130,7 @@ namespace viennagrid
     typedef typename viennagrid::result_of::element_range<ElementT, BoundaryElementTTag>::type    boundary_element_range_type;
     typedef typename viennagrid::result_of::iterator<boundary_element_range_type>::type           boundary_element_range_iterator;
 
-    boundary_element_range_type boundary_elements = viennagrid::elements( element );
+    boundary_element_range_type boundary_elements( element );
     boundary_element_range_iterator it = boundary_elements.begin();
 
     boundary_element_handle best_handle = it.handle();
@@ -159,7 +159,7 @@ namespace viennagrid
     typedef typename viennagrid::result_of::const_element_range<ElementT, BoundaryElementTTag>::type   boundary_element_range_type;
     typedef typename viennagrid::result_of::iterator<boundary_element_range_type>::type                boundary_element_range_iterator;
 
-    boundary_element_range_type boundary_elements = viennagrid::elements( element );
+    boundary_element_range_type boundary_elements( element );
     boundary_element_range_iterator it = boundary_elements.begin();
 
     boundary_element_handle best_handle = it.handle();
@@ -187,7 +187,7 @@ namespace viennagrid
     typedef typename viennagrid::result_of::element_range<ElementT, BoundaryElementTTag>::type    boundary_element_range_type;
     typedef typename viennagrid::result_of::iterator<boundary_element_range_type>::type           boundary_element_range_iterator;
 
-    boundary_element_range_type boundary_elements = viennagrid::elements( element );
+    boundary_element_range_type boundary_elements( element );
     boundary_element_range_iterator it = boundary_elements.begin();
 
     boundary_element_handle best_handle = it.handle();
@@ -215,7 +215,7 @@ namespace viennagrid
     typedef typename viennagrid::result_of::const_element_range<ElementT, BoundaryElementTTag>::type     boundary_element_range_type;
     typedef typename viennagrid::result_of::iterator<boundary_element_range_type>::type                  boundary_element_range_iterator;
 
-    boundary_element_range_type boundary_elements = viennagrid::elements( element );
+    boundary_element_range_type boundary_elements( element );
     boundary_element_range_iterator it = boundary_elements.begin();
 
     boundary_element_handle best_handle = it.handle();

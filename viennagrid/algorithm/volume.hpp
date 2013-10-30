@@ -107,7 +107,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::iterator<VertexOnCellContainer>::type                    VertexOnCellIterator;
 
 
-      VertexOnCellContainer range = viennagrid::elements( cell );
+      VertexOnCellContainer range( cell );
       if (range.size() < 3) return 0;
       VertexOnCellIterator it1 = range.begin();
       VertexOnCellIterator it2 = it1; ++it2;

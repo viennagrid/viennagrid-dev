@@ -274,8 +274,6 @@ namespace viennagrid
         std::map< CellIDType, ConstCellHandleType > & current_used_cells_map = used_cell_map[seg_id];
         for (typename std::map< CellIDType, ConstCellHandleType >::iterator it = current_used_cells_map.begin(); it != current_used_cells_map.end(); ++it)
 
-//           CellRange cells = viennagrid::elements(domseg);
-//           for (CellIterator cit = cells.begin(); cit != cells.end(); ++cit)
         {
           //step 1: Write vertex indices in ViennaGrid orientation to array:
           CellType const & cell = viennagrid::dereference_handle(domseg, it->second);
@@ -367,8 +365,6 @@ namespace viennagrid
         std::map< CellIDType, ConstCellHandleType > & current_used_cells_map = used_cell_map[seg_id];
         for (typename std::map< CellIDType, ConstCellHandleType >::iterator it = current_used_cells_map.begin(); it != current_used_cells_map.end(); ++it)
 
-//           CellRange cells = viennagrid::elements(segment);
-//           for (CellIterator cit = cells.begin(); cit != cells.end(); ++cit)
         {
           //step 1: Write vertex indices in ViennaGrid orientation to array:
           CellType const & cell = viennagrid::dereference_handle(segment, it->second);

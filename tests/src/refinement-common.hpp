@@ -22,26 +22,6 @@
 
 
 // Helper: Remove all refinement tags on a cell
-// template <typename CellType>
-// void clear_refinement_tag(CellType & cell)
-// {
-//   typedef typename CellType::config_type      ConfigType;
-//   typedef typename viennagrid::result_of::vertex<ConfigType>::type       VertexType;
-//   typedef typename viennagrid::result_of::line_range<CellType>::type       EdgeOnCellContainer;
-//   typedef typename viennagrid::result_of::iterator<EdgeOnCellContainer>::type    EdgeOnCellIterator;
-//
-//   EdgeOnCellContainer edges = viennagrid::elements(cell);
-//   for(EdgeOnCellIterator eocit  = edges.begin();
-//                          eocit != edges.end();
-//                        ++eocit)
-//   {
-//     viennadata::access<viennagrid::refinement_key, bool>(viennagrid::refinement_key())(*eocit) = false;
-//   }
-//
-//   viennadata::access<viennagrid::refinement_key, bool>(viennagrid::refinement_key())(cell) = false;
-// }
-
-// Helper: Remove all refinement tags on a cell
 template <typename CellType, typename EdgeRefinementTagAccessorT>
 void print_refinement_edges(CellType & cell, EdgeRefinementTagAccessorT const edge_refinement_tag_accessor)
 {

@@ -70,7 +70,7 @@ namespace viennagrid
 
       typedef std::map<DestElementType const *, std::vector<value_type> >                     DestinationValueMap;  //Think about adding customization options for std::vector<double>
 
-      SourceContainer source_cells = viennagrid::elements(mesh_or_segment);
+      SourceContainer source_cells(mesh_or_segment);
 
       DestinationValueMap  values_for_destination_cells;
 
@@ -81,7 +81,7 @@ namespace viennagrid
       {
         if ( filter_src(*sit) )
         {
-          DestOnSrcContainer dest_on_src = viennagrid::elements(*sit);
+          DestOnSrcContainer dest_on_src(*sit);
           for (DestOnSrcIterator dosit  = dest_on_src.begin();
                                   dosit != dest_on_src.end();
                                 ++dosit)
@@ -121,7 +121,7 @@ namespace viennagrid
 
       typedef typename SourceAccessorT::value_type              value_type;
 
-      DestContainer dest_cells = viennagrid::elements(mesh_or_segment);
+      DestContainer dest_cells(mesh_or_segment);
 
       // Iterate over all dest n-cells, push values from source cell to container, then compute final value
       for (DestIterator dit = dest_cells.begin(); dit != dest_cells.end(); ++dit)
@@ -131,7 +131,7 @@ namespace viennagrid
           std::vector<value_type> destination_value_container;
 
           // Push all values from adjacent source cells to the container
-          SrcOnDestContainer src_on_dest = viennagrid::elements(*dit);
+          SrcOnDestContainer src_on_dest(*dit);
           for (SrcOnDestIterator sodit  = src_on_dest.begin();
                                   sodit != src_on_dest.end();
                                 ++sodit)

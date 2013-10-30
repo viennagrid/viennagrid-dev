@@ -305,7 +305,7 @@ namespace viennagrid
       typename viennagrid::result_of::accessor< std::vector<bool>, triangle_type >::type visible_state_accessor = viennagrid::make_accessor<triangle_type>(visited_state);
 
       // iteratin over all triangles
-      triangle_range_type triangles = viennagrid::elements(mesh_obj);
+      triangle_range_type triangles(mesh_obj);
       for (triangle_range_iterator it = triangles.begin(); it != triangles.end(); ++it)
       {
         triangle_type const & triangle = *it; //viennagrid::dereference_handle( mesh_obj, *it );

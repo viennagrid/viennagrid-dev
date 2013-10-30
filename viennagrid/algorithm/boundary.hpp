@@ -298,7 +298,7 @@ namespace viennagrid
     typedef typename viennagrid::result_of::const_element_range<viennagrid::element<ElementTag2, WrappedConfigT2>, ElementTag1>::type   BoundaryRange;
     typedef typename viennagrid::result_of::iterator<BoundaryRange>::type               BoundaryIterator;
 
-    BoundaryRange bnd_cells = viennagrid::elements(host_element);
+    BoundaryRange bnd_cells(host_element);
     for (BoundaryIterator bit = bnd_cells.begin();
                           bit != bnd_cells.end();
                         ++bit)

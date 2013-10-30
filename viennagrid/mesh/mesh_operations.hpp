@@ -55,7 +55,7 @@ namespace viennagrid
 
     std::map<SrcConstVertexHandle, DstVertexHandleType> vertex_handle_map;
 
-    SrcVertexRangeType vertices = viennagrid::elements( src_mesh_obj );
+    SrcVertexRangeType vertices( src_mesh_obj );
     for (SrcVertexRangeIterator it = vertices.begin(); it != vertices.end(); ++it)
       vertex_handle_map[it.handle()] = viennagrid::make_vertex( dst_mesh_obj, viennagrid::point(src_mesh_obj, *it) );
 
@@ -66,7 +66,7 @@ namespace viennagrid
 //         dst_segments.push_back( viennagrid::make_view<dst_segment_handle_type>(dst_mesh) );
       DstSegmentHandleType & dst_segment = dst_segmentation.get_make_segment( seg_it->id() );
 
-      SrcCellRangeType cells = viennagrid::elements( *seg_it );
+      SrcCellRangeType cells( *seg_it );
       for (SrcCellRangeIterator it = cells.begin(); it != cells.end(); ++it)
       {
         SrcCellType const & cell = *it;
@@ -76,7 +76,7 @@ namespace viennagrid
         typedef typename viennagrid::result_of::const_vertex_range<SrcCellType>::type SrcVertexOnSrcCellRangeType;
         typedef typename viennagrid::result_of::iterator<SrcVertexOnSrcCellRangeType>::type SrcVertexOnSrcCellRangeIterator;
 
-        SrcVertexOnSrcCellRangeType cell_vertices = viennagrid::elements(cell);
+        SrcVertexOnSrcCellRangeType cell_vertices(cell);
         for (SrcVertexOnSrcCellRangeIterator jt = cell_vertices.begin(); jt != cell_vertices.end(); ++jt)
           vertex_handles.push_back( vertex_handle_map[jt.handle()] );
 
@@ -121,35 +121,6 @@ namespace viennagrid
         }
 
         mark_referencing_elements_impl<MeshT, ToEraseViewT, HandleT, TailT>::mark(mesh_obj, mesh_view, host_element);
-
-
-
-
-
-  //       std::cout << typeid(typename CoboundaryElementT::tag).name() << std::endl;
-  //       std::cout << typeid(ReferencingElementTypelist).name() << std::endl;
-  //
-  //       ElementRangeType view_elements = viennagrid::elements( mesh_view );
-  //       if ( viennagrid::find_by_handle(mesh_view, host_element) == view_elements.end() )
-  //       {
-  //         std::cout << "Adding element " << viennagrid::dereference_handle(mesh_obj, host_element) << std::endl;
-  //         view_elements.insert_unique_handle( host_element );
-  //       }
-  //
-  //       typedef typename viennagrid::result_of::handle<MeshT, CoboundaryElementT>::type CoboundaryElementHandle;
-  //       typedef typename viennagrid::result_of::coboundary_range<MeshT, ElementType, CoboundaryElementT>::type CoboundaryElementRangeType;
-  //       typedef typename viennagrid::result_of::iterator<CoboundaryElementRangeType>::type CoboundaryElementRangeIterator;
-  //
-  //       CoboundaryElementRangeType coboundary_elements = viennagrid::coboundary_elements<ElementType, CoboundaryElementT>(mesh_obj, host_element);
-  //       for (CoboundaryElementRangeIterator it = coboundary_elements.begin(); it != coboundary_elements.end(); ++it)
-  //       {
-  // //         mark_referencing_elements_impl<MeshT, ToEraseViewT, CoboundaryElementHandle, TailT>::mark(mesh_obj, mesh_view, it.handle());
-  //         mark_referencing_elements_impl<MeshT, ToEraseViewT, HandleT, TailT>::mark(mesh_obj, mesh_view, host_element);
-  //       }
-  //
-  //       typedef typename viennagrid::result_of::referencing_element_typelist<MeshT, ElementType>::type CurrentReferencingElementTypelist;
-  // //       typedef typename viennagrid::result_of::boundary_element_typelist<ElementType>::type BoundaryEl  ementTypelist;
-  // //       mark_referencing_elements_impl<MeshT, ToEraseViewT, HandleT, CurrentReferencingElementTypelist>::mark(mesh_obj, mesh_view, host_element);
       }
     };
 
@@ -157,19 +128,7 @@ namespace viennagrid
     template<typename MeshT, typename ToEraseViewT, typename HandleT>
     struct mark_referencing_elements_impl<MeshT, ToEraseViewT, HandleT, viennagrid::null_type >
     {
-      static void mark(MeshT &, ToEraseViewT &, HandleT)
-      {
-  //       typedef typename viennagrid::storage::detail::result_of::value_type<HandleT>::type ElementType;
-  //       typedef typename viennagrid::result_of::element_range<ToEraseViewT, ElementType>::type ElementRangeType;
-  //
-  // //       std::cout << typeid(typename ElementType::tag).name() << std::endl;
-  //
-  //       ElementRangeType view_elements = viennagrid::elements( mesh_view );
-  //       if ( viennagrid::find_by_handle(mesh_view, host_element) == view_elements.end() )
-  //       {
-  //         view_elements.insert_unique_handle( host_element );
-  //       }
-      }
+      static void mark(MeshT &, ToEraseViewT &, HandleT) {}
     };
 
   } //namespace detail
