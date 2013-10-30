@@ -43,13 +43,13 @@ namespace viennagrid
   }
 
   // doxygen doku in forwards.hpp
-  template<typename ElementTypeOrTagT, typename MeshOrSegmentHandleTypeT, typename VertexHandleIteratorT>
+  template<typename ElementTypeOrTagT, typename MeshOrSegmentHandleTypeT, typename VertexHandleIteratorT, typename IDT>
   typename result_of::handle<MeshOrSegmentHandleTypeT, ElementTypeOrTagT>::type
   make_element_with_id(
         MeshOrSegmentHandleTypeT & mesh_obj,
         VertexHandleIteratorT vertices_begin,
         VertexHandleIteratorT const & vertices_end,
-        typename result_of::id< typename result_of::element<MeshOrSegmentHandleTypeT, ElementTypeOrTagT>::type >::type id)
+        IDT id)
   {
     typedef typename viennagrid::result_of::element<MeshOrSegmentHandleTypeT, ElementTypeOrTagT>::type ElementType;
     ElementType element = ElementType( detail::inserter(mesh_obj).get_physical_container_collection() );

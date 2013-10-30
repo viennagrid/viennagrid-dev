@@ -1443,7 +1443,6 @@ namespace viennagrid
         VertexHandleIteratorT const & array_end );
 
 
-#ifndef _MSC_VER
   /** @brief Function for creating an element within a mesh or segment with a specific ID
     *
     * @tparam ElementTypeOrTagT       The element type/tag to be created
@@ -1455,13 +1454,12 @@ namespace viennagrid
     * @param  id                      The id of the new element
     * @return                         A handle to the created element
     */
-  template<typename ElementTypeOrTagT, typename MeshOrSegmentHandleTypeT, typename VertexHandleIteratorT>
+  template<typename ElementTypeOrTagT, typename MeshOrSegmentHandleTypeT, typename VertexHandleIteratorT, typename IDT>
   typename result_of::handle<MeshOrSegmentHandleTypeT, ElementTypeOrTagT>::type make_element_with_id(
         MeshOrSegmentHandleTypeT & mesh_segment,
         VertexHandleIteratorT array_start,
         VertexHandleIteratorT const & array_end,
-        typename result_of::id< typename result_of::element<MeshOrSegmentHandleTypeT, ElementTypeOrTagT>::type >::type id );
-#endif
+        IDT id );
 
   /** @brief Function for creating a vertex within a mesh or a segment
     *
