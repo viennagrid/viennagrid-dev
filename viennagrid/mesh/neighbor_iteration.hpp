@@ -24,7 +24,7 @@ namespace viennagrid
 {
   namespace result_of
   {
-    /** @brief For internal use only */
+    /** \cond */
     template<typename mesh_type, typename ElementTypeOrTagT, typename ConnectorElementTypeOrTagT>
     struct neighbor_view
     {
@@ -45,6 +45,7 @@ namespace viennagrid
     {
       typedef typename neighbor_view< typename viennagrid::segment_handle<SegmentationT>::view_type, ElementTypeOrTagT, ConnectorElementTypeOrTagT >::type type;
     };
+    /** \endcond */
 
 
     /** @brief Metafunction for obtaining a neighbor range of an element type with a connector element type within a mesh/segment
@@ -71,11 +72,13 @@ namespace viennagrid
       typedef viennagrid::detail::container_range_wrapper< const typename neighbor_view<MeshOrSegmentHandleT, ElementTypeOrTagT, ConnectorElementTypeOrTagT>::type > type;
     };
 
+    /** \cond */
     template<typename MeshOrSegmentHandleT, typename ElementTypeOrTagT, typename ConnectorElementTypeOrTagT>
     struct neighbor_range<const MeshOrSegmentHandleT, ElementTypeOrTagT, ConnectorElementTypeOrTagT>
     {
       typedef typename const_neighbor_range<MeshOrSegmentHandleT, ElementTypeOrTagT, ConnectorElementTypeOrTagT>::type type;
     };
+    /** \endcond */
 
   }
 

@@ -97,7 +97,7 @@ namespace viennagrid
 
   namespace result_of
   {
-    /** @brief For internal use only */
+    /** \cond */
     template<typename ElementTypelistT, typename ContainerTypemapT>
     struct filter_element_container;
 
@@ -213,6 +213,7 @@ namespace viennagrid
 
       typedef typename viennagrid::result_of::recursive_inserter<view_container_collection_type, change_counter_type, full_mesh_inserter_type>::type      type;
     };
+    /** \endcond */
   }
 
   /** @brief The main mesh class holding all the different elements. The data structure is configured using a configuration class. See viennagrid::config for predefined configurations.
@@ -331,7 +332,10 @@ namespace viennagrid
 
   namespace result_of
   {
-    // doxygen docu in forwards.hpp
+    /** @brief Metafunction for obtaining a mesh from a config
+     *
+     * @tparam WrappedConfigT     The configuration of the mesh
+     */
     template<typename WrappedConfigType>
     struct mesh
     {
@@ -447,10 +451,7 @@ namespace viennagrid
 {
   namespace result_of
   {
-    // doxygen docu in forwards.hpp
-    template<typename SomethingT>
-    struct container_collection_typemap;
-
+    /** \cond */
     template<typename TypemapT>
     struct container_collection_typemap< viennagrid::collection<TypemapT> >
     {
@@ -488,6 +489,7 @@ namespace viennagrid
     {
       typedef typename viennagrid::mesh<WrappedConfigT>::element_collection_type type;
     };
+    /** \endcond */
 
 
     /** @brief Metafunction for obtaining the element typelist of something
@@ -501,6 +503,7 @@ namespace viennagrid
       typedef typename viennagrid::detail::result_of::key_typelist<typename container_collection::typemap >::type type;
     };
 
+    /** \cond */
     template<typename HostElementT>
     struct element_typelist_for_element;
 
@@ -528,6 +531,7 @@ namespace viennagrid
       typedef typename viennagrid::element<ElementTagT, WrappedConfigT>::bnd_cell_container_typelist bnd_cell_container_typelist;
       typedef typename element_typelist_for_element<bnd_cell_container_typelist>::type type;
     };
+    /** \endcond */
 
     /** @brief Metafunction for obtaining the element typelist of something
      *
@@ -560,7 +564,7 @@ namespace viennagrid
     };
 
 
-    /** @brief For internal use only */
+    /** \cond */
     template<typename AllElementsTypelistT, typename ElementT>
     struct referencing_element_typelist_impl;
 
@@ -581,6 +585,7 @@ namespace viennagrid
           tail_typelist
       >::type type;
     };
+    /** \endcond */
 
     /** @brief Metafunction for obtaining the an element typelist including all element which references a given element. e.g. in a default triangle mesh the referencing element typelist based on the mesh for a vertex contains a line type and a triangle type. The host type can also be an element in which case all boundary elements referening the given element are returned (in a default tetrahedron mesh the referencing elements for a vertex based on a triangle contains only a line type)
      *
@@ -596,15 +601,17 @@ namespace viennagrid
     };
 
 
-
+    /** @brief Metafunction for returning the status counter type from a mesh or segmentation */
     template<typename SomethingT>
     struct change_counter_type;
 
+    /** \cond */
     template<typename WrappedConfigT>
     struct change_counter_type< viennagrid::mesh<WrappedConfigT> >
     {
       typedef typename viennagrid::mesh<WrappedConfigT>::change_counter_type type;
     };
+    /** \endcond */
   }
 
   namespace detail
@@ -709,7 +716,7 @@ namespace viennagrid
       >::type type;
     };
 
-
+    /** \cond */
     template<typename WrappedConfigT>
     struct mesh_view<viennagrid::mesh<WrappedConfigT>,
                        viennagrid::null_type, viennagrid::null_type, viennagrid::null_type, viennagrid::null_type, viennagrid::null_type,
@@ -717,6 +724,7 @@ namespace viennagrid
     {
       typedef typename mesh_view_from_typelist< viennagrid::mesh<WrappedConfigT> >::type type;
     };
+    /** \endcond */
   }
 
   namespace detail
@@ -968,6 +976,7 @@ namespace viennagrid
     template<typename MeshViewOrSegmentHandleT, typename ElementTypeOrTagT>
     struct is_element_present;
 
+    /** \cond */
     template<typename WrappedConfigType, typename element_type_or_tag>
     struct is_element_present< viennagrid::mesh<WrappedConfigType>, element_type_or_tag >
     {
@@ -1018,11 +1027,16 @@ namespace viennagrid
     {
       static const bool value = is_element_present<viennagrid::mesh< viennagrid::detail::decorated_mesh_view_config<WrappedMeshConfigType, ElementTypeList, ContainerConfig> >, element_type_or_tag>::value;
     };
+    /** \endcond */
 
 
 
 
-    // doxygen docu in forwards.hpp
+    /** @brief Metafunction for the type retrieval of an element
+     *
+     * @tparam MeshSegmentHandleType       The host type, can be a collection, an element, a mesh, a segmentation or a segment
+     * @tparam element_type_or_tag         The requested element tag, element type is also supported, in this case the requested element type is returned
+     */
     template<typename MeshSegmentHandleType, typename element_type_or_tag>
     struct element
     {
@@ -1030,7 +1044,11 @@ namespace viennagrid
       typedef typename element< typename element_collection< MeshSegmentHandleType >::type, element_type_or_tag >::type type;
     };
 
-    // doxygen docu in forwards.hpp
+    /** @brief Metafunction for the type retrieval of an element handle
+     *
+     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
+     * @tparam ElementTypeOrTagT  The requested element tag, element type is also supported, in this case the requested element type is returned
+     */
     template<typename MeshSegmentHandleType, typename element_type_or_tag>
     struct handle
     {
@@ -1038,7 +1056,11 @@ namespace viennagrid
       typedef typename handle< typename element_collection< MeshSegmentHandleType >::type, element_type_or_tag >::type type;
     };
 
-    // doxygen docu in forwards.hpp
+    /** @brief Metafunction for the type retrieval of a const element handle
+     *
+     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
+     * @tparam ElementTypeOrTagT  The requested element tag, element type is also supported, in this case the requested element type is returned
+     */
     template<typename MeshSegmentHandleType, typename element_type_or_tag>
     struct const_handle
     {
@@ -1046,7 +1068,11 @@ namespace viennagrid
       typedef typename const_handle< typename element_collection< MeshSegmentHandleType >::type, element_type_or_tag >::type type;
     };
 
-    // doxygen docu in forwards.hpp
+    /** @brief Metafunction for the type retrieval of an element range
+     *
+     * @tparam SomethingT         The host type, can be a typelist, a collection, an element, a mesh, a segmentation or a segment
+     * @tparam ElementTypeOrTagT  The requested element tag or element type
+     */
     template<typename MeshSegmentHandleType, typename element_type_or_tag>
     struct element_range
     {
@@ -1054,7 +1080,11 @@ namespace viennagrid
       typedef typename element_range< typename element_collection< MeshSegmentHandleType >::type, element_type_or_tag >::type type;
     };
 
-    // doxygen docu in forwards.hpp
+    /** @brief Metafunction for the type retrieval of a const element range
+     *
+     * @tparam SomethingT         The host type, can be a typelist, a collection, an element, a mesh, a segmentation or a segment
+     * @tparam ElementTypeOrTagT  The requested element tag or element type
+     */
     template<typename MeshSegmentHandleType, typename element_type_or_tag>
     struct const_element_range
     {
@@ -1063,7 +1093,7 @@ namespace viennagrid
     };
 
 
-    /** @brief For internal use only */
+    /** \cond */
     template<typename typemap>
     struct topologic_cell_dimension_impl;
 
@@ -1081,8 +1111,12 @@ namespace viennagrid
 
       static const int value = (tail_cell_dimension > current_element_dimension) ? tail_cell_dimension : current_element_dimension;
     };
+    /** \endcond */
 
-    // doxygen docu in forwards.hpp
+    /** @brief Metafunction for returning the topologic dimension of the cell in a mesh or segment
+      *
+      * @tparam something     A mesh or segment type
+      */
     template<typename something>
     struct topologic_cell_dimension
     {
@@ -1097,7 +1131,7 @@ namespace viennagrid
 
 
 
-    /** @brief For internal use only */
+    /** \cond */
     template<typename typemap, int topologic_dimension>
     struct elements_of_topologic_dim_impl;
 
@@ -1118,8 +1152,13 @@ namespace viennagrid
           tail_typelist
       >::type type;
     };
+    /** \endcond */
 
-    // doxygen docu in forwards.hpp
+    /** @brief Metafunction for obtaining an element typelist of all element with a specific topologic dimension of something
+     *
+     * @tparam SomethingT           The host type, can be a collection, a mesh, a segmentation or a segment
+     * @tparam TopologicDimensionV  The topologic dimension
+     */
     template<typename something, int topologic_dimension>
     struct elements_of_topologic_dim
     {
@@ -1132,7 +1171,10 @@ namespace viennagrid
 
 
 
-    // doxygen docu in forwards.hpp
+    /** @brief Metafunction for obtaining an element typelist of all cell types of something
+     *
+     * @tparam SomethingT           The host type, can be a collection, a mesh, a segmentation or a segment
+     */
     template<typename something>
     struct cells
     {
@@ -1143,7 +1185,10 @@ namespace viennagrid
     };
 
 
-    // doxygen docu in forwards.hpp
+    /** @brief Metafunction for obtaining the cell type of something. Will fail if there is more than one cell type
+     *
+     * @tparam SomethingT           The host type, can be a collection, a mesh, a segmentation or a segment
+     */
     template<typename something>
     struct cell
     {
@@ -1153,7 +1198,10 @@ namespace viennagrid
       typedef typename viennagrid::detail::result_of::at<all_cell_types,0>::type type;
     };
 
-    // doxygen docu in forwards.hpp
+    /** @brief Metafunction for obtaining the cell tag of something. Will fail if there is more than one cell type
+     *
+     * @tparam SomethingT           The host type, can be a collection, a mesh, a segmentation or a segment
+     */
     template<typename something>
     struct cell_tag
     {
@@ -1445,10 +1493,14 @@ namespace viennagrid
 
   namespace result_of
   {
-    // doxygen docu in forwards.hpp
+    /** @brief Metafunction for obtaining the geometric point type of something
+     *
+     * @tparam SomethingT           The host type, can be an element, a mesh, a segmentation, a segment, an accessor or a field
+     */
     template<typename point_container_type>
     struct point {};
 
+    /** \cond */
     template<typename ConfigType>
     struct point< viennagrid::mesh<ConfigType> >
     {
@@ -1472,6 +1524,7 @@ namespace viennagrid
     {
       typedef typename viennagrid::result_of::vertex< viennagrid::element<ElementTag, WrappedConfigType> >::type::appendix_type type;
     };
+    /** \endcond */
   }
 
 

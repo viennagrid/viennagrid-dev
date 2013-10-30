@@ -2,17 +2,21 @@
 **** ViennaGrid Change Logs ****
 ********************************
 
-*** Version 1.1.x ***
+*** Version 2.0.x ***
 
--- Version 1.1.0 --
+-- Version 2.0.0 --
 The ViennaGrid internals have been completely redesigned for higher flexibility.
-Smaller adjustments to the user API were necessary:
- - New storage layer, re-wrote most of the internals
- - Using tags instead of topologic dimension to identify elements
- - Added support for dynamic elements: polygon and PLCs
- - Added support for neighbour iteration
- - Added support for multiple segmentations
- - New algorithms: intersection, seed point segmenting
+Some rather significent adjustments to the user API were necessary.
+ - Renamed the old domain_t to mesh in order to avoid ambiguities with the mathematical problem domain.
+ - Replaced viennagrid::ncells<>() with viennagrid::elements<>() to obtain range objects.
+ - As a consequence of moving away from ncells<>, now element tags are used instead of the topologic dimension to select elements.
+ - Added support for two dynamic element types: polygon and PLCs.
+ - Added support for neighbour iteration. This way one no longer needs to code the boundary/coboundary iterations by hand.
+ - Added support for multiple segmentations. This is a generalization of the old segment concept, where elements could be part of at most one segment.
+ - New algorithms: angles, intersection, scaling, seed point segmenting.
+ - Accessors are now consistently used for accessing quantities rather than ViennaData. This makes the implementation more generic and provides better support for user storage.
+ - New storage layer, re-wrote most of the internals.
+
 
 *** Version 1.0.x ***
 

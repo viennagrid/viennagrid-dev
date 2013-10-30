@@ -101,11 +101,13 @@ namespace viennagrid
 
   namespace result_of
   {
+    /** \cond */
     template<typename element_type>
     struct hidden_key_map_key_type_from_tag<element_type, element_key_tag>
     {
       typedef element_key<element_type> type;
     };
+    /** \endcond */
   }
 }
 

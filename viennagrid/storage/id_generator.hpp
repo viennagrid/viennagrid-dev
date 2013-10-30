@@ -155,11 +155,13 @@ namespace viennagrid
 
   namespace result_of
   {
+    /** \cond */
     template<typename typemap>
     struct continuous_id_generator
     {
       typedef viennagrid::continuous_id_generator< typemap > type;
     };
+    /** \endcond */
   }
 }
 

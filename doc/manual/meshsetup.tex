@@ -28,6 +28,8 @@ Thus, the mesh type using the provided configuration class for two-dimensional t
  SegmentType segment_1 = segmentation.make_segment();
 \end{lstlisting}
 Bear in mind that an additional \lstinline|typename| needs to be put after \lstinline|typedef| when using the metafunctions in namespace \texttt{result\_of} if used inside a template class or template function.
+The mesh type is selected from the respective configuration class in namespace \texttt{config}.
+Possible mesh tyes 
 The created mesh object will be filled with vertices and cells in the following.
 
 \begin{figure}[tb]

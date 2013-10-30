@@ -111,11 +111,13 @@ namespace viennagrid
 
   namespace result_of
   {
+    /** \cond */
     template <typename ContainerTag, typename HandleTag>
     struct handled_container
     {
         typedef handled_container_tag<ContainerTag, HandleTag>   tag;
     };
+    /** \endcond */
   }
 }
 

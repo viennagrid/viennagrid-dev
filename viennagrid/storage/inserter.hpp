@@ -126,24 +126,24 @@ namespace viennagrid
     *
     * For example, if a segment s was derived from another segment t and a mesh m, adding an element to s will also insert the element into t and m.
     */
-  template<typename view_collection_type, typename change_counter_type, typename dependend_inserter_type>
+  template<typename view_collection_type, typename change_counter_type, typename dependent_inserter_type>
   class recursive_inserter
   {
   public:
-    recursive_inserter() : view_collection(0), change_counter(0), dependend_inserter(0) {}
-    recursive_inserter(view_collection_type & collection_) : view_collection(&collection_), change_counter(0), dependend_inserter(0) {}
+    recursive_inserter() : view_collection(0), change_counter(0), dependent_inserter(0) {}
+    recursive_inserter(view_collection_type & collection_) : view_collection(&collection_), change_counter(0), dependent_inserter(0) {}
 
     recursive_inserter(view_collection_type & collection_obj, change_counter_type & change_counter_) :
         view_collection(&collection_obj), change_counter(&change_counter_) {}
-    recursive_inserter(view_collection_type & collection_obj, dependend_inserter_type & dependend_inserter_) :
-        view_collection(&collection_obj), change_counter(0), dependend_inserter(&dependend_inserter_) {}
+    recursive_inserter(view_collection_type & collection_obj, dependent_inserter_type & dependent_inserter_) :
+        view_collection(&collection_obj), change_counter(0), dependent_inserter(&dependent_inserter_) {}
 
-    recursive_inserter(view_collection_type & collection_obj, change_counter_type & change_counter_, dependend_inserter_type & dependend_inserter_) :
-        view_collection(&collection_obj), change_counter(&change_counter_), dependend_inserter(&dependend_inserter_) {}
+    recursive_inserter(view_collection_type & collection_obj, change_counter_type & change_counter_, dependent_inserter_type & dependent_inserter_) :
+        view_collection(&collection_obj), change_counter(&change_counter_), dependent_inserter(&dependent_inserter_) {}
 
 
-//             recursive_inserter(view_collection_type & collection_, dependend_inserter_type & dependend_inserter_) :
-//                view_collection(&collection_), dependend_inserter(&dependend_inserter_) {}
+//             recursive_inserter(view_collection_type & collection_, dependent_inserter_type & dependent_inserter_) :
+//                view_collection(&collection_), dependent_inserter(&dependent_inserter_) {}
 
 
     void set_mesh_info(view_collection_type & collection_obj, change_counter_type & change_counter_)
@@ -158,12 +158,12 @@ namespace viennagrid
     {
       viennagrid::detail::handle_or_ignore( *view_collection, ref, viennagrid::detail::tag<value_type>() );
 
-      dependend_inserter->handle_insert( ref, viennagrid::detail::tag<value_type>() );
+      dependent_inserter->handle_insert( ref, viennagrid::detail::tag<value_type>() );
       if (change_counter) ++(*change_counter);
     }
 
 
-    typedef typename dependend_inserter_type::physical_container_collection_type physical_container_collection_type;
+    typedef typename dependent_inserter_type::physical_container_collection_type physical_container_collection_type;
 
     template<bool generate_id, bool call_callback, typename value_type, typename inserter_type>
     std::pair<
@@ -172,7 +172,7 @@ namespace viennagrid
     >
     physical_insert( const value_type & element, inserter_type & inserter )
     {
-        return dependend_inserter->template physical_insert<generate_id, call_callback>( element, inserter );
+        return dependent_inserter->template physical_insert<generate_id, call_callback>( element, inserter );
     }
 
 
@@ -197,30 +197,42 @@ namespace viennagrid
       return insert<true, true>( element );
     }
 
-    physical_container_collection_type & get_physical_container_collection() { return dependend_inserter->get_physical_container_collection(); }
-    physical_container_collection_type const & get_physical_container_collection() const { return dependend_inserter->get_physical_container_collection(); }
+    physical_container_collection_type & get_physical_container_collection() { return dependent_inserter->get_physical_container_collection(); }
+    physical_container_collection_type const & get_physical_container_collection() const { return dependent_inserter->get_physical_container_collection(); }
 
-    typedef typename dependend_inserter_type::id_generator_type id_generator_type;
-    id_generator_type & get_id_generator() { return dependend_inserter->get_id_generator(); }
-    id_generator_type const & get_id_generator() const { return dependend_inserter->get_id_generator(); }
+    typedef typename dependent_inserter_type::id_generator_type id_generator_type;
+    id_generator_type & get_id_generator() { return dependent_inserter->get_id_generator(); }
+    id_generator_type const & get_id_generator() const { return dependent_inserter->get_id_generator(); }
 
 
   private:
     view_collection_type * view_collection;
     change_counter_type * change_counter;
 
-    dependend_inserter_type * dependend_inserter;
+    dependent_inserter_type * dependent_inserter;
   };
 
 
   namespace result_of
   {
-    template<typename container_collection_type, typename change_counter_type, typename dependend_inserter_type>
+    /** @brief Helper metafunction for obtaining the recursive inserter type for a container collection.
+      *
+      * @tparam container_collection_type     The container collection in which to insert
+      * @tparam change_counter_type           Type of the status counter (incremented at each change
+      * @tparam dependent_inserter_type       Inserter type for other containers which is called after the insert
+      */
+    template<typename container_collection_type, typename change_counter_type, typename dependent_inserter_type>
     struct recursive_inserter
     {
-      typedef viennagrid::recursive_inserter<container_collection_type, change_counter_type, dependend_inserter_type> type;
+      typedef viennagrid::recursive_inserter<container_collection_type, change_counter_type, dependent_inserter_type> type;
     };
 
+    /** @brief Helper metafunction for obtaining the physical inserter for a container collection. Inserts an element, not just a reference
+      *
+      * @tparam container_collection_type     The container collection in which to insert
+      * @tparam change_counter_type           Type of the status counter (incremented at each change
+      * @tparam id_generator_type             Type of the ID generator used for assigning an ID to the newly inserted element
+      */
     template<typename container_collection_type, typename change_counter_type, typename id_generator_type>
     struct physical_inserter
     {

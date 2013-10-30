@@ -116,9 +116,16 @@ namespace viennagrid
 
   namespace result_of
   {
+    /** @brief Returns the underlying container type for storing data of type 'ValueT' on elements of type 'ElementT'.
+      *
+      * @tparam ElementT       The element type, e.g. a cell
+      * @tparam ValueT         Type of the data to be stored
+      * @tparam ContainerTagT  A tag selecting the appropriate container, e.g. std_vector_tag or std_map_tag
+      */
     template<typename ElementT, typename ValueT, typename ContainerTagT = std_vector_tag>
-    struct accessor_container;
+    struct accessor_container {};
 
+    /** \cond */
     template<typename ElementT, typename ValueT>
     struct accessor_container<ElementT, ValueT, std_vector_tag>
     {
@@ -136,6 +143,7 @@ namespace viennagrid
     {
       typedef std::map< typename result_of::id<ElementT>::type, ValueT > type;
     };
+    /** \endcond */
   }
 
 
@@ -382,9 +390,15 @@ namespace viennagrid
 
   namespace result_of
   {
+    /** @brief Metafunction for retrieving the accessor type for a certain container and a certain object type from which to access data
+      *
+      * @tparam ContainerType   The container type for which the accessor should be obtained
+      * @tparam AccessType      Type of the element which should be accessed, e.g. a vertex
+      */
     template<typename ContainerType, typename AccessType>
-    struct accessor;
+    struct accessor {};
 
+    /** \cond */
     template<typename T, typename Alloc, typename AccessType>
     struct accessor< std::vector<T, Alloc>, AccessType >
     {
@@ -420,6 +434,7 @@ namespace viennagrid
     {
       typedef viennagrid::std_map_accessor<const std::map<Key, T, Compare, Alloc>, AccessType> type;
     };
+    /** \endcond */
   }
 
 
@@ -873,9 +888,15 @@ namespace viennagrid
 
   namespace result_of
   {
+    /** @brief Metafunction for retrieving the field accessor type for a certain container and a certain object type from which to access data
+      *
+      * @tparam ContainerType   The container type for which the accessor should be obtained
+      * @tparam AccessType      Type of the element which should be accessed, e.g. a vertex
+      */
     template<typename ContainerType, typename AccessType>
     struct field;
 
+    /** \cond */
     template<typename T, typename Alloc, typename AccessType>
     struct field< std::vector<T, Alloc>, AccessType >
     {
@@ -911,6 +932,7 @@ namespace viennagrid
     {
       typedef viennagrid::std_map_field<const std::map<Key, T, Compare, Alloc>, AccessType> type;
     };
+    /** \endcond */
   }
 
 

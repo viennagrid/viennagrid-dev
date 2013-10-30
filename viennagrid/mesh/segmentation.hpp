@@ -100,6 +100,7 @@ namespace viennagrid
 
   namespace result_of
   {
+    /** \cond */
     template<typename SegmentationT>
     struct change_counter_type< viennagrid::segment_handle<SegmentationT> >
     {
@@ -148,6 +149,7 @@ namespace viennagrid
     {
       typedef viennagrid::segment_handle< viennagrid::segmentation<WrappedConfigT> > type;
     };
+    /** \endcond */
 
 
     /** @brief Metafunction for obtaining the segment ID type from a segment or segmentation type
@@ -157,6 +159,7 @@ namespace viennagrid
     template<typename SegmentationOrSegmentHandleT>
     struct segment_id;
 
+    /** \cond */
     template<typename SegmentationType>
     struct segment_id< viennagrid::segment_handle<SegmentationType> >
     {
@@ -168,22 +171,10 @@ namespace viennagrid
     {
       typedef typename viennagrid::segmentation<WrappedConfigType>::segment_id_type type;
     };
+    /** \endcond */
 
 
-    /** @brief Metafunction for obtaining a mesh view from a mesh. Elements can be directly given. If viennagrid::null_type is specified somewhere all following types will be ignored. The default type for all element types is viennagrid::null_type.
-     *
-     * @tparam MeshT              The host mesh type
-     * @tparam Element0TypeOrTagT   The first element type which is present in the mesh view
-     * @tparam Element1TypeOrTagT   The second element type which is present in the mesh view
-     * @tparam Element2TypeOrTagT   The third element type which is present in the mesh view
-     * @tparam Element3TypeOrTagT   The forth element type which is present in the mesh view
-     * @tparam Element4TypeOrTagT   The fifth element type which is present in the mesh view
-     * @tparam Element5TypeOrTagT   The sixth element type which is present in the mesh view
-     * @tparam Element6TypeOrTagT   The seventh element type which is present in the mesh view
-     * @tparam Element7TypeOrTagT   The eighth element type which is present in the mesh view
-     * @tparam Element8TypeOrTagT   The nineth element type which is present in the mesh view
-     * @tparam Element9TypeOrTagT   The tenth element type which is present in the mesh view
-     */
+    /** \cond  */
     template<typename SegmentationT,
              typename Element0TypeOrTagT, typename Element1TypeOrTagT,
              typename Element2TypeOrTagT, typename Element3TypeOrTagT,
@@ -202,6 +193,7 @@ namespace viennagrid
             Element5TypeOrTagT, Element6TypeOrTagT, Element7TypeOrTagT, Element8TypeOrTagT, Element9TypeOrTagT
         >::type type;
     };
+    /** \endcond */
   }
 
   namespace detail
@@ -398,41 +390,37 @@ namespace viennagrid
 
   namespace result_of
   {
-    /** @brief For internal use only */
+    /** \cond */
     template<typename WrappedConfigType>
     struct segmentation_mesh_type
     {
       typedef typename WrappedConfigType::mesh_type type;
     };
 
-    /** @brief For internal use only */
     template<typename WrappedConfigType>
     struct segmentation_view_type
     {
       typedef typename WrappedConfigType::view_type type;
     };
 
-    /** @brief For internal use only */
     template<typename WrappedConfigType>
     struct segmentation_segment_id_type
     {
       typedef typename WrappedConfigType::segment_id_type type;
     };
 
-    /** @brief For internal use only */
     template<typename WrappedConfigType>
     struct segmentation_appendix_type
     {
       typedef typename WrappedConfigType::appendix_type type;
     };
 
-    /** @brief For internal use only */
     template<typename WrappedConfigType>
     struct segmentation_view_container_tag
     {
       typedef typename WrappedConfigType::view_container_tag type;
     };
-
+    /** \endcond */
   }
 
 
@@ -797,6 +785,7 @@ namespace viennagrid
   namespace result_of
   {
     // doxygen docu in mesh.hpp
+    /** \cond */
     template<typename WrappedConfigType, typename element_type_or_tag>
     struct is_element_present< viennagrid::segmentation<WrappedConfigType>, element_type_or_tag >
     {
@@ -863,6 +852,7 @@ namespace viennagrid
     };
 
     // doxygen docu in forwards.hpp
+
     template<typename segmentation_type, typename element_type_or_tag>
     struct const_element_range< viennagrid::segmentation<segmentation_type>, element_type_or_tag >
     {
@@ -875,6 +865,7 @@ namespace viennagrid
     {
       typedef typename cell_tag< typename viennagrid::segmentation<segmentation_type>::view_type >::type type;
     };
+    /** \endcond */
   }
 
 
@@ -1359,9 +1350,6 @@ namespace viennagrid
       * @tparam SegmentOrSegmentationT        The host segmentation/segment type
       * @tparam ElementT                      The element type for which the segment id range is queried
       */
-    template<typename SegmentOrSegmentationT, typename ElementT>
-    struct segment_id_range;
-
     template<typename SegmentationT, typename ElementT>
     struct segment_id_range
     {
@@ -1378,11 +1366,13 @@ namespace viennagrid
       typedef segment_id_range_t<const typename ElementSegmentMappingContainerType::value_type> type;
     };
 
+    /** \cond */
     template<typename SegmentationT, typename ElementT>
     struct segment_id_range< viennagrid::segment_handle<SegmentationT>, ElementT >
     {
       typedef typename segment_id_range<SegmentationT, ElementT>::type type;
     };
+    /** \endcond */
   }
 
   /** @brief Obtains the segment ID range of an element within a segmentation. The segment ID range holds all IDs of segments in which the element is included.

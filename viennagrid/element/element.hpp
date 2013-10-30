@@ -305,9 +305,14 @@ namespace viennagrid
 
   namespace result_of
   {
+    /** @brief Metafunction for returning the list of boundary element types for a certain element
+      *
+      * @tparam @tparam bnd_cell_typelist   The typelist of boundary cells types from which the typelist is created
+      */
     template<typename bnd_cell_typelist>
     struct boundary_element_typelist;
 
+    /** \cond */
     template<>
     struct boundary_element_typelist<viennagrid::null_type>
     {
@@ -328,12 +333,17 @@ namespace viennagrid
     {
       typedef typename boundary_element_typelist<typename viennagrid::element<element_tag, WrappedConfigType>::bnd_cell_container_typelist>::type type;
     };
+    /** \endcond */
 
 
-
+    /** @brief Metafunction for returning the list of boundary element tags for a certain element
+      *
+      * @tparam bnd_cell_typelist   The typelist of boundary cells types from which the tag list is created
+      */
     template<typename bnd_cell_typelist>
-    struct boundary_element_taglist;
+    struct boundary_element_taglist {};
 
+    /** \cond */
     template<>
     struct boundary_element_taglist<viennagrid::null_type>
     {
@@ -354,7 +364,6 @@ namespace viennagrid
     {
       typedef typename boundary_element_taglist< typename viennagrid::element<element_tag, WrappedConfigType>::bnd_cell_container_typelist >::type type;
     };
-
 
 
 
@@ -482,6 +491,8 @@ namespace viennagrid
     {
       typedef typename container_of_dimension_for_element<typename viennagrid::element<element_tag, WrappedConfigType>::bnd_cell_container_typelist, dim>::type type;
     };
+    /** \endcond */
+
 }
 
 
@@ -644,6 +655,7 @@ namespace viennagrid
 
   namespace result_of
   {
+      /** @brief Returns the topologic dimension of a certain element (identified by its type or tag) */
       template<typename element_type_or_tag>
       struct topologic_dimension
       {
@@ -651,10 +663,16 @@ namespace viennagrid
       };
 
 
+      /** @brief Metafunction returning whether a certain element has a certain boundary cell type
+        *
+        * @tparam element_type                The element type under inspection
+        * @tparam boundary_cell_type_or_tag   The boundary element type or tag for which one would like to check
+        */
       template<typename element_type, typename boundary_cell_type_or_tag>
       struct has_boundary
       {};
 
+      /** \cond */
       template<typename element_tag_, typename WrappedConfigType, typename boundary_cell_type_or_tag>
       struct has_boundary< viennagrid::element<element_tag_, WrappedConfigType>, boundary_cell_type_or_tag >
       {
@@ -784,6 +802,7 @@ namespace viennagrid
       {
           typedef typename const_element_range<viennagrid::collection<container_collection_typemap>, element_type_or_tag>::type type;
       };
+      /** \endcond */
   }
 
 

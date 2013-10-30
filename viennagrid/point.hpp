@@ -748,26 +748,28 @@ namespace viennagrid
     }
   };
 
-    namespace result_of
+  namespace result_of
+  {
+    /** \cond */
+    template<typename CoordType, typename CoordinateSystem>
+    struct point< spatial_point<CoordType, CoordinateSystem> >
     {
-      template<typename CoordType, typename CoordinateSystem>
-      struct point< spatial_point<CoordType, CoordinateSystem> >
-      {
-        typedef spatial_point<CoordType, CoordinateSystem> type;
-      };
+      typedef spatial_point<CoordType, CoordinateSystem> type;
+    };
 
-      template<typename CoordType, typename CoordinateSystem>
-      struct coord< spatial_point<CoordType, CoordinateSystem> >
-      {
-        typedef CoordType type;
-      };
+    template<typename CoordType, typename CoordinateSystem>
+    struct coord< spatial_point<CoordType, CoordinateSystem> >
+    {
+      typedef CoordType type;
+    };
 
-      template<typename CoordType, typename CoordinateSystem>
-      struct geometric_dimension< spatial_point<CoordType, CoordinateSystem> >
-      {
-        static const int value = spatial_point<CoordType, CoordinateSystem>::dim;
-      };
-    }
+    template<typename CoordType, typename CoordinateSystem>
+    struct geometric_dimension< spatial_point<CoordType, CoordinateSystem> >
+    {
+      static const int value = spatial_point<CoordType, CoordinateSystem>::dim;
+    };
+    /** \endcond */
+  }
 
 }
 #endif
