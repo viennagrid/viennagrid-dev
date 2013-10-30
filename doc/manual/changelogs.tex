@@ -9,7 +9,7 @@ Some rather significent adjustments to the user API were necessary.
  \item Replaced \lstinline|viennagrid::ncells<>()| with \lstinline|viennagrid::elements<>()| to obtain range objects.
  \item As a consequence of moving away from \lstinline|ncells<>|, now element tags are used instead of the topologic dimension to select elements.
  \item Added support for two dynamic element types: polygon and PLCs.
- \item Added support for neighbour iteration. This way one no longer needs to code the boundary/coboundary iterations by hand.
+ \item Added support for neighbor iteration. This way one no longer needs to code the boundary/coboundary iterations by hand.
  \item Added support for multiple segmentations. This is a generalization of the old segment concept, where elements could be part of at most one segment.
  \item New algorithms: angles, intersection, scaling, seed point segmenting.
  \item Accessors are now consistently used for accessing quantities rather than ViennaData. This makes the implementation more generic and provides better support for user storage.

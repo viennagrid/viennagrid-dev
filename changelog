@@ -11,7 +11,7 @@ Some rather significent adjustments to the user API were necessary.
  - Replaced viennagrid::ncells<>() with viennagrid::elements<>() to obtain range objects.
  - As a consequence of moving away from ncells<>, now element tags are used instead of the topologic dimension to select elements.
  - Added support for two dynamic element types: polygon and PLCs.
- - Added support for neighbour iteration. This way one no longer needs to code the boundary/coboundary iterations by hand.
+ - Added support for neighbor iteration. This way one no longer needs to code the boundary/coboundary iterations by hand.
  - Added support for multiple segmentations. This is a generalization of the old segment concept, where elements could be part of at most one segment.
  - New algorithms: angles, intersection, scaling, seed point segmenting.
  - Accessors are now consistently used for accessing quantities rather than ViennaData. This makes the implementation more generic and provides better support for user storage.
