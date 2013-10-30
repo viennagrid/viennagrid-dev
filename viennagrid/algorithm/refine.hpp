@@ -55,7 +55,7 @@ namespace viennagrid
       //
       // Step 2: Write old vertices to new mesh
       //
-      VertexRange vertices = viennagrid::elements(mesh_in);
+      VertexRange vertices(mesh_in);
       for (VertexIterator vit  = vertices.begin();
                           vit != vertices.end();
                         ++vit)
@@ -66,7 +66,7 @@ namespace viennagrid
       //
       // Step 3: Each tagged edge in old mesh results in a new vertex (temporarily store new vertex IDs on old mesh)
       //
-      EdgeRange edges = viennagrid::elements(mesh_in);
+      EdgeRange edges(mesh_in);
       for (EdgeIterator eit = edges.begin();
                         eit != edges.end();
                       ++eit)
@@ -80,7 +80,7 @@ namespace viennagrid
       //
       // Step 4: Now write new cells to new mesh
       //
-        CellRange cells = viennagrid::elements(mesh_in);
+        CellRange cells(mesh_in);
         for (CellIterator cit  = cells.begin();
                           cit != cells.end();
                         ++cit)
@@ -123,7 +123,7 @@ namespace viennagrid
       //
       // Step 2: Write old vertices to new mesh
       //
-      VertexRange vertices = viennagrid::elements(mesh_in);
+      VertexRange vertices(mesh_in);
       for (VertexIterator vit  = vertices.begin();
                           vit != vertices.end();
                         ++vit)
@@ -134,7 +134,7 @@ namespace viennagrid
       //
       // Step 3: Each tagged edge in old mesh results in a new vertex (temporarily store new vertex IDs on old mesh)
       //
-      EdgeRange edges = viennagrid::elements(mesh_in);
+      EdgeRange edges(mesh_in);
       for (EdgeIterator eit = edges.begin();
                         eit != edges.end();
                       ++eit)
@@ -155,7 +155,7 @@ namespace viennagrid
         SegmentHandleInType  const & segment_in  = *sit;
         SegmentHandleOutType       & segment_out = segmentation_out( sit->id() );
 
-        CellRange cells = viennagrid::elements(segment_in);
+        CellRange cells(segment_in);
         for (CellIterator cit  = cells.begin();
                           cit != cells.end();
                         ++cit)
@@ -270,7 +270,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::iterator<EdgeOnCellRange>::type                         EdgeOnCellIterator;
 
       std::size_t cells_for_refinement = 0;
-      CellRange cells = viennagrid::elements(mesh_in);
+      CellRange cells(mesh_in);
       for (CellIterator cit  = cells.begin();
                         cit != cells.end();
                       ++cit)
@@ -279,7 +279,7 @@ namespace viennagrid
         {
           ++cells_for_refinement;
 
-          EdgeOnCellRange edges_on_cell = viennagrid::elements(*cit);
+          EdgeOnCellRange edges_on_cell(*cit);
           for (EdgeOnCellIterator eocit = edges_on_cell.begin();
                                   eocit != edges_on_cell.end();
                                 ++eocit)
@@ -301,7 +301,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::const_element_range<MeshInType, viennagrid::line_tag>::type   LineRange;
       typedef typename viennagrid::result_of::iterator<LineRange>::type                                       LineIterator;
 
-      LineRange lines = viennagrid::elements(mesh_in);
+      LineRange lines(mesh_in);
       for (LineIterator it = lines.begin(); it != lines.end(); ++it)
         edge_refinement_flag_accessor(*it) = true;
     }

@@ -1062,34 +1062,6 @@ namespace viennagrid
   }
 
 
-
-  /** @brief Proxy object for element or boundary element range. This object holds a reference to the host type. A range has a constructor taking an object of type element_range_proxy and elements<tag> will be called in te constructor using the reference to the host type.
-    *
-    * @tparam SomethingT    The host type, can be an element, a collection, a mesh, a segment or a segmentation
-    */
-  template<typename SomethingT>
-  struct element_range_proxy
-  {
-  public:
-    /** @brief Constructor of element_range_proxy, taking the reference to the host object
-    *
-    * @param  something_          The reference to the host object
-    */
-    element_range_proxy(SomethingT & something_) : something(something_) {}
-
-    /** @brief Returns the reference to the host object
-     *
-     * @return a reference to the host object
-    */
-    SomethingT & operator() () { return something; }
-
-  private:
-    SomethingT & something;
-  };
-
-
-
-
   /** @brief Function for retrieving an element range or a boundary element range from a host object
     *
     * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
@@ -1109,17 +1081,6 @@ namespace viennagrid
     */
   template<typename ElementTypeOrTagT, typename SegmentationT>
   typename result_of::element_range< viennagrid::segment_handle<SegmentationT>, ElementTypeOrTagT>::type elements( viennagrid::segment_handle<SegmentationT> & something);
-
-  /** @brief Function for retrieving an element range proxy object
-    *
-    * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
-    * @param  something          The host object of type SomethingT
-    * @return                    An element range proxy, can be assigned to a range object
-    */
-  template<typename SomethingT>
-  element_range_proxy<SomethingT> elements(SomethingT & something)
-  { return element_range_proxy<SomethingT>(something); }
-
 
 
 
@@ -1254,18 +1215,6 @@ namespace viennagrid
     */
   template<typename ElementTypeOrTagT, typename SegmentationT>
   typename result_of::const_element_range< viennagrid::segment_handle<SegmentationT>, ElementTypeOrTagT>::type elements( viennagrid::segment_handle<SegmentationT> const & something);
-
-
-
-  /** @brief Function for retrieving an element range proxy object
-    *
-    * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
-    * @param  something          The host object of type SomethingT
-    * @return                    An element range proxy, can be assigned to a const range object
-    */
-  template<typename SomethingT>
-  element_range_proxy<const SomethingT> elements(SomethingT const & something)
-  { return element_range_proxy<const SomethingT>(something); }
 
 
   /** @brief Function for retrieving a const cell range object from a host object

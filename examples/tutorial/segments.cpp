@@ -133,7 +133,7 @@ int main()
 
   std::cout << std::endl;
   std::cout << "All cells in the mesh:" << std::endl;
-  MeshCellRange mesh_cells = viennagrid::elements( mesh );
+  MeshCellRange mesh_cells( mesh );
   for (MeshCellIterator cit = mesh_cells.begin(); cit != mesh_cells.end(); ++cit)
     std::cout << *cit << std::endl;
   std::cout << std::endl;
@@ -144,7 +144,7 @@ int main()
 
   std::cout << std::endl;
   std::cout << "All cells in the segmentation:" << std::endl;
-  SegmentationCellRange segmentation_cells = viennagrid::elements( segmentation );
+  SegmentationCellRange segmentation_cells( segmentation );
   for (SegmentationCellIterator cit = segmentation_cells.begin(); cit != segmentation_cells.end(); ++cit)
     std::cout << *cit << std::endl;
   std::cout << std::endl;
@@ -167,21 +167,21 @@ int main()
   std::cout << std::endl;
 
   // printing all triangles from all segments
-  typedef viennagrid::result_of::element_range< SegmentHandleType, viennagrid::triangle_tag >::type range_type;
+  typedef viennagrid::result_of::element_range< SegmentHandleType, viennagrid::triangle_tag >::type RangeType;
 
   std::cout << "Triangles of Segment 0" << std::endl;
-  range_type range = viennagrid::elements( seg0 );
-  for (range_type::iterator it = range.begin(); it != range.end(); ++it)
+  RangeType range( seg0 );
+  for (RangeType::iterator it = range.begin(); it != range.end(); ++it)
     std::cout << *it << std::endl;
 
   std::cout << "Triangles of Segment 1" << std::endl;
-  range = viennagrid::elements( seg1 );
-  for (range_type::iterator it = range.begin(); it != range.end(); ++it)
+  range = RangeType( seg1 );
+  for (RangeType::iterator it = range.begin(); it != range.end(); ++it)
     std::cout << *it << std::endl;
 
   std::cout << "Triangles of Segment 2" << std::endl;
-  range = viennagrid::elements( seg2 );
-  for (range_type::iterator it = range.begin(); it != range.end(); ++it)
+  range = RangeType( seg2 );
+  for (RangeType::iterator it = range.begin(); it != range.end(); ++it)
     std::cout << *it << std::endl;
 
   std::cout << std::endl;
@@ -191,15 +191,15 @@ int main()
   viennagrid::make_triangle( seg2, vh2, vh4, vh5 );
 
   std::cout << "Triangles of Segment 2, added 2 additional" << std::endl;
-  range = viennagrid::elements( seg2 );
-  for (range_type::iterator it = range.begin(); it != range.end(); ++it)
+  range = RangeType( seg2 );
+  for (RangeType::iterator it = range.begin(); it != range.end(); ++it)
     std::cout << *it << std::endl;
   std::cout << std::endl;
 
   // Printing vertices from seg2, each vertex should only be printed once
   typedef viennagrid::result_of::vertex_range<SegmentHandleType>::type vertex_range;
   std::cout << "Vertices of Segment 2" << std::endl;
-  vertex_range vertices = viennagrid::elements( seg2 );
+  vertex_range vertices( seg2 );
   for (vertex_range::iterator it = vertices.begin(); it != vertices.end(); ++it)
     std::cout << *it << std::endl;
 

@@ -160,7 +160,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::element_range< MeshT, element_type_or_tag >::type element_range_type;
       typedef typename viennagrid::result_of::iterator< element_range_type >::type element_range_iterator;
 
-      element_range_type elements = viennagrid::elements(mesh_obj);
+      element_range_type elements(mesh_obj);
 
 
       for ( element_range_iterator it = elements.begin(); it != elements.end(); ++it )
@@ -173,13 +173,13 @@ namespace viennagrid
       typedef typename viennagrid::result_of::element_range< MeshT, coboundary_type_or_tag >::type coboundary_element_range_type;
       typedef typename viennagrid::result_of::iterator< coboundary_element_range_type >::type coboundary_element_range_iterator;
 
-      coboundary_element_range_type coboundary_elements = viennagrid::elements(mesh_obj);
+      coboundary_element_range_type coboundary_elements(mesh_obj);
       for (coboundary_element_range_iterator it = coboundary_elements.begin(); it != coboundary_elements.end(); ++it)
       {
         typedef typename viennagrid::result_of::element_range< coboundary_type, element_tag >::type element_on_coboundary_element_range_type;
         typedef typename viennagrid::result_of::iterator< element_on_coboundary_element_range_type >::type element_on_coboundary_element_range_iterator;
 
-        element_on_coboundary_element_range_type elements_on_coboundary_element = viennagrid::elements( *it );
+        element_on_coboundary_element_range_type elements_on_coboundary_element( *it );
         for (element_on_coboundary_element_range_iterator jt = elements_on_coboundary_element.begin(); jt != elements_on_coboundary_element.end(); ++jt)
           accessor.at( *jt ).insert_handle( it.handle() );
       }
@@ -196,7 +196,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::element_range< ViewType, element_type_or_tag >::type element_range_type;
       typedef typename viennagrid::result_of::iterator< element_range_type >::type element_range_iterator;
 
-      element_range_type elements = viennagrid::elements(mesh_obj);
+      element_range_type elements(mesh_obj);
 
 
       for ( element_range_iterator it = elements.begin(); it != elements.end(); ++it )
@@ -209,13 +209,13 @@ namespace viennagrid
       typedef typename viennagrid::result_of::element_range< ViewType, coboundary_type_or_tag >::type coboundary_element_range_type;
       typedef typename viennagrid::result_of::iterator< coboundary_element_range_type >::type coboundary_element_range_iterator;
 
-      coboundary_element_range_type coboundary_elements = viennagrid::elements(mesh_obj);
+      coboundary_element_range_type coboundary_elements(mesh_obj);
       for (coboundary_element_range_iterator it = coboundary_elements.begin(); it != coboundary_elements.end(); ++it)
       {
         typedef typename viennagrid::result_of::element_range< coboundary_type, element_tag >::type element_on_coboundary_element_range_type;
         typedef typename viennagrid::result_of::iterator< element_on_coboundary_element_range_type >::type element_on_coboundary_element_range_iterator;
 
-        element_on_coboundary_element_range_type elements_on_coboundary_element = viennagrid::elements( *it );
+        element_on_coboundary_element_range_type elements_on_coboundary_element( *it );
         for (element_on_coboundary_element_range_iterator jt = elements_on_coboundary_element.begin(); jt != elements_on_coboundary_element.end(); ++jt)
         {
           if ( viennagrid::find_by_handle(mesh_obj, jt.handle()) !=  viennagrid::elements<element_type_or_tag>(mesh_obj).end() )

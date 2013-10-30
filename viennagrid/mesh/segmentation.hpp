@@ -1562,7 +1562,7 @@ namespace viennagrid
     typedef typename viennagrid::result_of::facet_range< element_type >::type FacetRangeType;
     typedef typename viennagrid::result_of::iterator< FacetRangeType >::type FacetRangeIterator;
 
-    FacetRangeType facets = viennagrid::elements( element );
+    FacetRangeType facets( element );
     for (FacetRangeIterator it = facets.begin(); it != facets.end(); ++it)
       add(segment, *it);
   }

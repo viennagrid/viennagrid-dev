@@ -96,7 +96,7 @@ int main()
   typedef viennagrid::result_of::cell_range<MeshType>::type CellRangeType;
   typedef viennagrid::result_of::iterator<CellRangeType>::type CellRangeIterator;
 
-  CellRangeType cells = viennagrid::elements(mesh);
+  CellRangeType cells(mesh);
   for (CellRangeIterator cit = cells.begin(); cit != cells.end(); ++cit)
       viennagrid::add_single_handle( view, cit.handle() );
 

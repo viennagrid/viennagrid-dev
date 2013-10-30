@@ -160,7 +160,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::element_range< mesh_type, ElementTypeOrTagT >::type element_range_type;
       typedef typename viennagrid::result_of::iterator< element_range_type >::type                element_range_iterator;
 
-      element_range_type elements = viennagrid::elements(mesh_obj);
+      element_range_type elements(mesh_obj);
 
       for ( element_range_iterator it = elements.begin(); it != elements.end(); ++it )
       {
@@ -171,7 +171,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::element_range< mesh_type, connector_element_tag >::type     connector_element_range_type;
       typedef typename viennagrid::result_of::iterator< connector_element_range_type >::type              connector_element_range_iterator;
 
-      connector_element_range_type connector_elements = viennagrid::elements(mesh_obj);
+      connector_element_range_type connector_elements(mesh_obj);
       for ( connector_element_range_iterator it = connector_elements.begin(); it != connector_elements.end(); ++it )
       {
         typedef typename viennagrid::result_of::coboundary_range< mesh_type, connector_element_tag, element_tag >::type   element_on_connector_element_range_type;

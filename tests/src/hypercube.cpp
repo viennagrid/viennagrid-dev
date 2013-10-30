@@ -107,28 +107,28 @@ void test(std::string outfile)
   setup(mesh, CellTag());
 
   std::cout << "Vertices: " << std::endl;
-  VertexContainer vertices = viennagrid::elements(mesh);
+  VertexContainer vertices(mesh);
   for (VertexIterator vit = vertices.begin();
         vit != vertices.end();
         ++vit)
       std::cout << *vit << std::endl;
 
   std::cout << "Edges: " << std::endl;
-  EdgeContainer edges = viennagrid::elements(mesh);
+  EdgeContainer edges(mesh);
   for (EdgeIterator eit = edges.begin();
         eit != edges.end();
         ++eit)
       std::cout << *eit << std::endl;
 
   std::cout << "Facets: " << std::endl;
-  FacetContainer facets = viennagrid::elements(mesh);
+  FacetContainer facets(mesh);
   for (FacetIterator fit = facets.begin();
         fit != facets.end();
         ++fit)
       std::cout << *fit << std::endl;
 
   std::cout << "Cells: " << std::endl;
-  CellContainer cells = viennagrid::elements(mesh);
+  CellContainer cells(mesh);
   for (CellIterator cit = cells.begin();
         cit != cells.end();
         ++cit)

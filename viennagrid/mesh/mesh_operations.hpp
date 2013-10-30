@@ -113,7 +113,7 @@ namespace viennagrid
         CoboundaryElementRangeType coboundary_elements = viennagrid::coboundary_elements<HostElementType, CoboundaryElementT>(mesh_obj, host_element);
         for (CoboundaryElementRangeIterator it = coboundary_elements.begin(); it != coboundary_elements.end(); ++it)
         {
-          CoboundaryElementViewRangeType view_elements = viennagrid::elements( mesh_view );
+          CoboundaryElementViewRangeType view_elements( mesh_view );
           if ( viennagrid::find_by_handle(mesh_view, it.handle()) == view_elements.end() )
           {
             view_elements.insert_unique_handle( it.handle() );

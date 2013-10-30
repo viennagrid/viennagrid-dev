@@ -70,14 +70,14 @@ int main()
   viennagrid::add( seg1, tri3 );
 
   typedef viennagrid::result_of::element_range< mesh_type, viennagrid::line_tag >::type line_range;
-  line_range lines = viennagrid::elements( mesh );
+  line_range lines( mesh );
   for (line_range::iterator it = lines.begin(); it != lines.end(); ++it)
   {
     std::cout << *it << " INTERFACE? " << viennagrid::is_interface( seg0, seg1, *it ) << std::endl;
   }
 
   typedef viennagrid::result_of::element_range< mesh_type, viennagrid::vertex_tag >::type vertex_range;
-  vertex_range vertices = viennagrid::elements( mesh );
+  vertex_range vertices( mesh );
   for (vertex_range::iterator it = vertices.begin(); it != vertices.end(); ++it)
   {
     std::cout << *it << " INTERFACE? " << viennagrid::is_interface( seg0, seg1, *it ) << std::endl;

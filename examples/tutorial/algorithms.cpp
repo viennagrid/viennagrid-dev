@@ -82,7 +82,7 @@ int main()
   //
 
   // Extract the first four points of the mesh:
-  VertexRange vertices = viennagrid::elements(mesh);
+  VertexRange vertices(mesh);
 
   PointType const & p0 = viennagrid::point(mesh, vertices[0]);
   PointType const & p1 = viennagrid::point(mesh, vertices[1]);

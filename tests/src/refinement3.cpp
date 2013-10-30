@@ -51,7 +51,7 @@ void test(std::string & infile, std::string & outfile)
   typename viennagrid::result_of::field<std::vector<bool>, CellType>::type cell_refinement_tag_field1(cell_refinement_tag_container1);
 
   //Testing: Tag some cells with centroid at x \in [2,3]:
-  CellContainer cells = viennagrid::elements(mesh);
+  CellContainer cells(mesh);
   for (CellIterator cit  = cells.begin();
                     cit != cells.end();
                   ++cit)
@@ -93,7 +93,7 @@ void test(std::string & infile, std::string & outfile)
   std::vector<bool> cell_refinement_tag_container2;
   typename viennagrid::result_of::field<std::vector<bool>, CellType>::type cell_refinement_tag_field2(cell_refinement_tag_container2);
 
-  CellContainer cells_refined = viennagrid::elements(refined_mesh);
+  CellContainer cells_refined(refined_mesh);
   for (CellIterator cit  = cells_refined.begin();
                     cit != cells_refined.end();
                   ++cit)

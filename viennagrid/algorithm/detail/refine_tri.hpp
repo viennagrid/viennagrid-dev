@@ -108,14 +108,14 @@ namespace viennagrid
         //
 
         //grab existing vertices:
-        VertexOnCellRange vertices_on_cell = viennagrid::elements(element_in);
+        VertexOnCellRange vertices_on_cell(element_in);
         VertexOnCellIterator vocit = vertices_on_cell.begin();
         vertex_handles[0] = vertex_to_vertex_handle_accessor(*vocit); ++vocit;
         vertex_handles[1] = vertex_to_vertex_handle_accessor(*vocit); ++vocit;
         vertex_handles[2] = vertex_to_vertex_handle_accessor(*vocit);
 
         //add vertices from edge
-        EdgeOnCellRange edges_on_cell = viennagrid::elements(element_in);
+        EdgeOnCellRange edges_on_cell(element_in);
         std::size_t offset = 0;
         EdgeOnCellIterator eocit = edges_on_cell.begin();
         EdgeType const & e0 = *eocit; ++eocit;
@@ -331,7 +331,7 @@ namespace viennagrid
         typedef typename viennagrid::result_of::iterator<EdgeOnCellRange>::type                 EdgeOnCellIterator;
 
         std::size_t edges_to_refine = 0;
-        EdgeOnCellRange edges_on_cell = viennagrid::elements<viennagrid::line_tag>(element_in);
+        EdgeOnCellRange edges_on_cell(element_in);
         for (EdgeOnCellIterator eocit = edges_on_cell.begin();
                                 eocit != edges_on_cell.end();
                               ++eocit)

@@ -57,7 +57,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::iterator<FacetOnCellRange>::type                           FacetOnCellIterator;
 
 
-      FacetRange facets = viennagrid::elements(mesh_obj);
+      FacetRange facets(mesh_obj);
 
       for (FacetIterator fit = facets.begin();
             fit != facets.end();
@@ -65,12 +65,12 @@ namespace viennagrid
           boundary_info_accessor(*fit) = false;
 
       //iterate over all cells, over facets there and tag them:
-      CellRange cells = viennagrid::elements(mesh_obj);
+      CellRange cells(mesh_obj);
       for (CellIterator cit = cells.begin();
             cit != cells.end();
             ++cit)
       {
-        FacetOnCellRange facets_on_cell = elements(*cit);
+        FacetOnCellRange facets_on_cell(*cit);
         for (FacetOnCellIterator focit = facets_on_cell.begin();
               focit != facets_on_cell.end();
               ++focit)
@@ -93,7 +93,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::const_element_range< MeshT, dst_element_type >::type dst_range_type;
       typedef typename viennagrid::result_of::iterator< dst_range_type >::type dst_range_iterator;
 
-      dst_range_type dst_elements = viennagrid::elements(mesh_obj);
+      dst_range_type dst_elements(mesh_obj);
 
       for (dst_range_iterator it = dst_elements.begin(); it != dst_elements.end(); ++it)
           destination_boundary_info_accessor(*it) = false;
@@ -102,7 +102,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::const_element_range< MeshT, src_element_type >::type src_range_type;
       typedef typename viennagrid::result_of::iterator< src_range_type >::type src_range_iterator;
 
-      src_range_type src_elements = viennagrid::elements(mesh_obj);
+      src_range_type src_elements(mesh_obj);
 
 
       for (src_range_iterator fit = src_elements.begin();
@@ -114,7 +114,7 @@ namespace viennagrid
           typedef typename viennagrid::result_of::const_element_range< src_element_type, dst_element_type >::type dst_on_src_range_type;
           typedef typename viennagrid::result_of::iterator< dst_on_src_range_type >::type dst_on_src_range_iterator;
 
-          dst_on_src_range_type dst_on_src_range = viennagrid::elements(*fit);
+          dst_on_src_range_type dst_on_src_range(*fit);
           for (dst_on_src_range_iterator dosit = dst_on_src_range.begin(); dosit != dst_on_src_range.end(); ++dosit)
               destination_boundary_info_accessor(*dosit) = true;
         }

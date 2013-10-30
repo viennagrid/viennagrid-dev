@@ -29,12 +29,12 @@ int test(MeshT & mesh_in)
   typedef typename viennagrid::result_of::cell_range<MeshT>::type  CellContainer;
   typedef typename viennagrid::result_of::iterator<CellContainer>::type         CellIterator;
 
-  CellContainer cells = viennagrid::elements(mesh_in);
+  CellContainer cells(mesh_in);
   CellIterator cit = cells.begin();
 
   CellType & cell = *cit;
 
-  EdgeOnCellContainer edges = viennagrid::elements(cell);
+  EdgeOnCellContainer edges(cell);
 
   std::cout << "Volume of reference tetrahedron: " << volume(cell) << std::endl;
 

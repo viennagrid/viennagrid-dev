@@ -46,13 +46,13 @@ namespace viennagrid
         typedef typename viennagrid::result_of::element_range<MeshT, ParentElementTypeOrTagT>::type ParentElementRangeType;
         typedef typename viennagrid::result_of::iterator<ParentElementRangeType>::type ParentElementRangeIterator;
 
-        ParentElementRangeType parent_elements = viennagrid::elements(mesh_obj_);
+        ParentElementRangeType parent_elements(mesh_obj_);
         for (ParentElementRangeIterator it = parent_elements.begin(); it != parent_elements.end(); ++it)
         {
           typedef typename viennagrid::result_of::element_range<ParentElementType, to_switch_element_type>::type ToSwitchElementRangeType;
           typedef typename viennagrid::result_of::iterator<ToSwitchElementRangeType>::type ToSwitchElementRangeIterator;
 
-          ToSwitchElementRangeType to_switch_elements = viennagrid::elements(*it);
+          ToSwitchElementRangeType to_switch_elements(*it);
           for (ToSwitchElementRangeIterator jt = to_switch_elements.begin(); jt != to_switch_elements.end(); ++jt)
           {
             if (jt.handle() == from_)
@@ -127,11 +127,11 @@ namespace viennagrid
 
         std::deque<id_type> ids_to_erase;
 
-        ToEraseElementRangeType elements_to_erase = viennagrid::elements<ElementT>(view_to_erase_);
+        ToEraseElementRangeType elements_to_erase(view_to_erase_);
         for (ToEraseElementRangeIterator it = elements_to_erase.begin(); it != elements_to_erase.end(); ++it)
           ids_to_erase.push_back( it->id() );
 
-        ElementRangeType elements = viennagrid::elements(mesh_obj_);
+        ElementRangeType elements(mesh_obj_);
         ElementRangeIterator back_it = --elements.end();
 
 

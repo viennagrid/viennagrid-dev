@@ -29,7 +29,7 @@ void print_elements(SegmentT & seg)
   typedef typename viennagrid::result_of::element_range<SegmentT, ElementTagT>::type  ContainerT;
   typedef typename viennagrid::result_of::iterator<ContainerT>::type           ContainerTIterator;
 
-  ContainerT elements = viennagrid::elements(seg);
+  ContainerT elements(seg);
   for (ContainerTIterator it = elements.begin();
        it != elements.end();
        ++it)
@@ -42,7 +42,7 @@ void print_elements(SegmentT & seg)
   typedef typename viennagrid::result_of::const_element_range<SegmentT, ElementTagT>::type   ConstContainerT;
   typedef typename viennagrid::result_of::iterator<ConstContainerT>::type             ConstContainerTIterator;
 
-  ConstContainerT const_elements = viennagrid::elements(const_seg);
+  ConstContainerT const_elements(const_seg);
   for (ConstContainerTIterator const_it = const_elements.begin();
        const_it != const_elements.end();
        ++const_it)
@@ -164,13 +164,13 @@ void test()
   //Test for const-iterators:
   std::cout << "Test for const iterator: " << std::endl;
   typedef typename viennagrid::result_of::const_line_range<MeshType>::type  EdgeContainer;
-  EdgeContainer edges = viennagrid::elements(mesh);
+  EdgeContainer edges(mesh);
 
   //edges.begin()->print();
   std::cout << *(edges.begin()) << std::endl;
 
   typedef typename viennagrid::result_of::const_vertex_range<EdgeType>::type  VertexOnEdgeContainer;
-  VertexOnEdgeContainer vertices_on_edge = viennagrid::elements(*(edges.begin()));
+  VertexOnEdgeContainer vertices_on_edge(*(edges.begin()));
 
   for (typename viennagrid::result_of::iterator<VertexOnEdgeContainer>::type voe_it = vertices_on_edge.begin();
        voe_it != vertices_on_edge.end();

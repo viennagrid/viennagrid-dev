@@ -34,7 +34,7 @@ void print_elements(SegmentT & seg)
   typedef typename viennagrid::result_of::element_range<SegmentT, ElementTagT>::type  ContainerT;
   typedef typename viennagrid::result_of::iterator<ContainerT>::type           ContainerTIterator;
 
-  ContainerT elements = viennagrid::elements(seg);
+  ContainerT elements(seg);
   for (ContainerTIterator it = elements.begin();
        it != elements.end();
        ++it)
@@ -47,7 +47,7 @@ void print_elements(SegmentT & seg)
   typedef typename viennagrid::result_of::const_element_range<SegmentT, ElementTagT>::type   ConstContainerT;
   typedef typename viennagrid::result_of::iterator<ConstContainerT>::type             ConstContainerTIterator;
 
-  ConstContainerT const_elements = viennagrid::elements(const_seg);
+  ConstContainerT const_elements(const_seg);
   for (ConstContainerTIterator const_it = const_elements.begin();
        const_it != const_elements.end();
        ++const_it)

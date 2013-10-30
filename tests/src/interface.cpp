@@ -61,7 +61,7 @@ void test(ReaderType & my_reader, std::string const & infile)
   std::cout << "* Test 1: Iteration over all facets on the boundary:" << std::endl;
   std::cout << "*" << std::endl;
   double surface = 0;
-  FacetContainer facets = viennagrid::elements(mesh);
+  FacetContainer facets(mesh);
   for (FacetIterator fit = facets.begin();
        fit != facets.end();
        ++fit)
@@ -88,7 +88,7 @@ void test(ReaderType & my_reader, std::string const & infile)
   std::cout << "* Test 2: Iteration over all vertices on the interface" << std::endl;
   std::cout << "*" << std::endl;
   bool vertices_found = false;
-  VertexContainer vertices = viennagrid::elements(mesh);
+  VertexContainer vertices(mesh);
   for (VertexIterator vit = vertices.begin();
        vit != vertices.end();
        ++vit)

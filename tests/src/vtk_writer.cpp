@@ -83,7 +83,7 @@ void test(std::string & infile, std::string & outfile)
   typename viennagrid::result_of::field< std::deque< std::vector<double> >, CellType >::type    cell_normal_data_field( cell_normal_data );
 
   // write global data to vertices
-  VertexContainer vertices = viennagrid::elements(mesh);
+  VertexContainer vertices(mesh);
   for (VertexIterator vit = vertices.begin();
       vit != vertices.end();
       ++vit)
@@ -93,7 +93,7 @@ void test(std::string & infile, std::string & outfile)
     vertex_normal_data_field(*vit) = std::vector<double>(3);
   }
 
-  CellContainer cells = viennagrid::elements(mesh);
+  CellContainer cells(mesh);
   for (CellIterator cit = cells.begin();
                     cit != cells.end();
                   ++cit)
@@ -135,7 +135,7 @@ void test(std::string & infile, std::string & outfile)
     typename viennagrid::result_of::field< std::deque< std::vector<double> >, CellType >::type    segment_cell_normal_data_field( segment_cell_normal_data[it->id()] );
 
 
-    SegmentVertexContainer vertices = viennagrid::elements(*it);
+    SegmentVertexContainer vertices(*it);
     for (SegmentVertexIterator vit = vertices.begin();
         vit != vertices.end();
         ++vit)
@@ -145,7 +145,7 @@ void test(std::string & infile, std::string & outfile)
       segment_vertex_normal_data_field(*vit) = std::vector<double>(3, index);
     }
 
-    SegmentCellContainer cells = viennagrid::elements(*it);
+    SegmentCellContainer cells(*it);
     for (SegmentCellIterator cit = cells.begin();
                       cit != cells.end();
                     ++cit)

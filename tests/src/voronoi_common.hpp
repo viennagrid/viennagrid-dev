@@ -46,7 +46,7 @@ void output_voronoi_info(MeshtType const & d,
   std::cout << "-" << std::endl;
   std::cout << "- Vertex box volume information: " << std::endl;
   std::cout << "-" << std::endl;
-  VertexContainer vertices = viennagrid::elements(d);
+  VertexContainer vertices(d);
   for (VertexIterator vit  = vertices.begin();
                       vit != vertices.end();
                     ++vit)
@@ -65,7 +65,7 @@ void output_voronoi_info(MeshtType const & d,
   std::cout << "- Edge Information: " << std::endl;
   std::cout << "-" << std::endl;
 //   counter = 0;
-  EdgeContainer edges = viennagrid::elements(d);
+  EdgeContainer edges(d);
   for (EdgeIterator eit  = edges.begin();
                     eit != edges.end();
                   ++eit)
@@ -98,7 +98,7 @@ double voronoi_volume(MeshType const & d,
 //   viennagrid::voronoi_box_volume_key box_volume_key;
 
   double boxed_volume = 0;
-  VertexContainer vertices = viennagrid::elements(d);
+  VertexContainer vertices(d);
   for (VertexIterator vit  = vertices.begin();
                       vit != vertices.end();
                     ++vit)
@@ -128,7 +128,7 @@ double voronoi_volume_vertex_detailed(MeshType const & d,
   typedef typename VertexBoxVolumeContributionAccessorT::value_type VertexBoxVolumeContributionType;
 
   double boxed_volume = 0;
-  VertexContainer vertices = viennagrid::elements(d);
+  VertexContainer vertices(d);
   for (VertexIterator vit  = vertices.begin();
                       vit != vertices.end();
                     ++vit)
@@ -158,7 +158,7 @@ double voronoi_volume_edge_detailed(MeshType const & d,
   typedef typename EdgeBoxVolumeContributionAccessorT::value_type EdgeBoxVolumeContributionType;
 
   double boxed_volume = 0;
-  EdgeContainer edges = viennagrid::elements(d);
+  EdgeContainer edges(d);
   for (EdgeIterator eit  = edges.begin();
                     eit != edges.end();
                   ++eit)

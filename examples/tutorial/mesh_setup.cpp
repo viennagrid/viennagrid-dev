@@ -111,7 +111,7 @@ int main()
   //
 
   std::cout << "Cells in segment 0:" << std::endl;
-  CellRange cells_seg0 = viennagrid::elements(seg0);
+  CellRange cells_seg0(seg0);
   for (CellIterator cit0 = cells_seg0.begin();
                     cit0 != cells_seg0.end();
                   ++cit0)
@@ -121,7 +121,7 @@ int main()
   std::cout << std::endl;
 
   std::cout << "Cells in segment 1:" << std::endl;
-  CellRange cells_seg1 = viennagrid::elements(seg1);
+  CellRange cells_seg1(seg1);
   for (CellIterator cit1 = cells_seg1.begin();
                     cit1 != cells_seg1.end();
                   ++cit1)

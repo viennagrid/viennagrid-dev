@@ -1224,7 +1224,7 @@ namespace viennagrid
         typedef typename viennagrid::result_of::element_range<MeshSegmentHandleT, element_type>::type element_range_type;
         typedef typename viennagrid::result_of::iterator<element_range_type>::type element_range_iterator;
 
-        element_range_type range = viennagrid::elements(mesh_);
+        element_range_type range(mesh_);
         for (element_range_iterator it = range.begin(); it != range.end(); ++it)
           f_(*it);
       }
@@ -1235,7 +1235,7 @@ namespace viennagrid
         typedef typename viennagrid::result_of::const_element_range<MeshSegmentHandleT, element_type>::type element_range_type;
         typedef typename viennagrid::result_of::iterator<element_range_type>::type element_range_iterator;
 
-        element_range_type range = viennagrid::elements(mesh_);
+        element_range_type range(mesh_);
         for (element_range_iterator it = range.begin(); it != range.end(); ++it)
           f_(*it);
       }
@@ -1619,8 +1619,8 @@ namespace viennagrid
         typedef typename viennagrid::result_of::element_range<SourceElementT, BoundaryElementT>::type           DestinationBoundaryElementRangeType;
         typedef typename viennagrid::result_of::iterator<DestinationBoundaryElementRangeType>::type             DestinationBoundaryElementRangeIterator;
 
-        SourceBoundaryElementRangeType      source_boundary_elements      = viennagrid::elements(source_element_);
-        DestinationBoundaryElementRangeType destination_boundary_elements = viennagrid::elements(destination_element_);
+        SourceBoundaryElementRangeType      source_boundary_elements(source_element_);
+        DestinationBoundaryElementRangeType destination_boundary_elements(destination_element_);
 
         SourceBoundaryElementRangeIterator      sit = source_boundary_elements.begin();
         DestinationBoundaryElementRangeIterator dit = destination_boundary_elements.begin();
@@ -1672,8 +1672,8 @@ namespace viennagrid
         typedef typename viennagrid::result_of::element<DestinationMeshType, ElementTag>::type DestinationElementType;
         //typedef typename viennagrid::result_of::handle<DestinationMeshType, ElementTag>::type DestinationElementHandleType;
 
-        SourceElementRangeType           source_elements = viennagrid::elements( source_mesh_obj );
-        DestinationElementRangeType destination_elements = viennagrid::elements( destination_mesh_obj );
+        SourceElementRangeType           source_elements(source_mesh_obj);
+        DestinationElementRangeType destination_elements(destination_mesh_obj);
 
         DestinationElementRangeIterator dit = destination_elements.begin();
         for (SourceElementRangeIterator sit = source_elements.begin(); sit != source_elements.end(); ++sit, ++dit)

@@ -41,7 +41,7 @@ namespace viennagrid
 
       typename viennagrid::result_of::coord<MeshT>::type result = 0;
 
-      ElementRange facets = viennagrid::elements(mesh_obj);
+      ElementRange facets(mesh_obj);
       for (ElementIterator fit = facets.begin();
                            fit != facets.end();
                          ++fit)

@@ -49,7 +49,7 @@ void print_refinement_edges(CellType & cell, EdgeRefinementTagAccessorT const ed
   typedef typename viennagrid::result_of::line_range<CellType>::type       EdgeOnCellContainer;
   typedef typename viennagrid::result_of::iterator<EdgeOnCellContainer>::type    EdgeOnCellIterator;
 
-  EdgeOnCellContainer edges = viennagrid::elements(cell);
+  EdgeOnCellContainer edges(cell);
   for(EdgeOnCellIterator eocit  = edges.begin();
                          eocit != edges.end();
                        ++eocit)
@@ -78,12 +78,12 @@ double mesh_surface(MeshType & mesh)
 
   CellFacetMap cell_on_facet_cnt;
 
-  CellContainer cells = viennagrid::elements(mesh);
+  CellContainer cells(mesh);
   for (CellIterator cit = cells.begin();
                     cit != cells.end();
                   ++cit)
   {
-    FacetOnCellContainer facets = viennagrid::elements(*cit);
+    FacetOnCellContainer facets(*cit);
     for (FacetOnCellIterator focit = facets.begin();
                       focit != facets.end();
                     ++focit)
@@ -126,12 +126,12 @@ int facet_check(MeshType & mesh)
 
   CellFacetMap cell_on_facet_cnt;
 
-  CellContainer cells = viennagrid::elements(mesh);
+  CellContainer cells(mesh);
   for (CellIterator cit = cells.begin();
                     cit != cells.end();
                   ++cit)
   {
-    FacetOnCellContainer facets = viennagrid::elements(*cit);
+    FacetOnCellContainer facets(*cit);
     for (FacetOnCellIterator focit = facets.begin();
                       focit != facets.end();
                     ++focit)
@@ -149,7 +149,7 @@ int facet_check(MeshType & mesh)
       std::cerr << "Topology problem for facet: " << std::endl;
       std::cout << *(cfmit->first) << std::endl;
 
-      CellContainer cells = viennagrid::elements(mesh);
+      CellContainer cells(mesh);
       for (CellIterator cit = cells.begin();
                         cit != cells.end();
                       ++cit)
@@ -158,7 +158,7 @@ int facet_check(MeshType & mesh)
         std::cout << *cit << std::endl;
       }
 
-      FacetContainer facets = viennagrid::elements(mesh);
+      FacetContainer facets(mesh);
       for (FacetIterator fit = facets.begin();
                         fit != facets.end();
                       ++fit)
@@ -191,7 +191,7 @@ int surface_check(MeshType & mesh_old, MeshType & mesh_new)
   if ( (new_surface < 0.9999 * old_surface)
       || (new_surface > 1.0001 * old_surface) )
   {
-    CellContainer cells = viennagrid::elements(mesh_new);
+    CellContainer cells(mesh_new);
     for (CellIterator cit = cells.begin();
                       cit != cells.end();
                     ++cit)
@@ -200,7 +200,7 @@ int surface_check(MeshType & mesh_old, MeshType & mesh_new)
       std::cout << *cit << std::endl;
     }
 
-    FacetContainer facets = viennagrid::elements(mesh_new);
+    FacetContainer facets(mesh_new);
     for (FacetIterator fit = facets.begin();
                        fit != facets.end();
                      ++fit)

@@ -50,7 +50,7 @@ void test(ReaderType & my_reader, std::string const & infile)
   std::cout << "Volume of mesh: " << viennagrid::volume(mesh) << std::endl;
   std::cout << "Surface of mesh: " << viennagrid::surface(mesh) << std::endl;
 
-  CellRange cells = viennagrid::elements(mesh);
+  CellRange cells(mesh);
   for (CellIterator cit = cells.begin();
                     cit != cells.end();
                    ++cit)

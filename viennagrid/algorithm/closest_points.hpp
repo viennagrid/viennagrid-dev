@@ -764,7 +764,7 @@ namespace viennagrid
       PairType closest_pair;
       double shortest_distance = std::numeric_limits<double>::max();
 
-      FacetRange facets = viennagrid::elements(cont);
+      FacetRange facets(cont);
       for (FacetIterator fit = facets.begin();
                          fit != facets.end();
                        ++fit)
@@ -861,8 +861,8 @@ namespace viennagrid
       double shortest_distance = std::numeric_limits<double>::max();
 
 
-      FacetRange1 facets1 = viennagrid::elements(el1);
-      FacetRange2 facets2 = viennagrid::elements(el2);
+      FacetRange1 facets1(el1);
+      FacetRange2 facets2(el2);
 
       for (FacetIterator1 fit1 = facets1.begin();
                           fit1 != facets1.end();

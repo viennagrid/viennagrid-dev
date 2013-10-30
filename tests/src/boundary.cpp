@@ -93,7 +93,7 @@ void test(ReaderType & my_reader, std::string const & infile, double reference_s
   std::cout << "*" << std::endl;
   std::cout << "* Test 2: Iteration over all vertices on the boundary" << std::endl;
   std::cout << "*" << std::endl;
-  VertexContainer vertices = viennagrid::elements(mesh);
+  VertexContainer vertices(mesh);
   for (VertexIterator vit = vertices.begin();
        vit != vertices.end();
        ++vit)

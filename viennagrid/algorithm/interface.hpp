@@ -65,7 +65,7 @@ namespace viennagrid
         //
         // Step 1: Write facets of segment 1 to a map:
         //
-        FacetRange facets_seg0 = viennagrid::elements(seg0);
+        FacetRange facets_seg0(seg0);
         for (FacetIterator fit = facets_seg0.begin();
               fit != facets_seg0.end();
               ++fit)
@@ -79,7 +79,7 @@ namespace viennagrid
         //
         // Step 2: Compare facet in segment 2 with those stored in the map
         //
-        FacetRange facets_seg1 = viennagrid::elements(seg1);
+        FacetRange facets_seg1(seg1);
         for (FacetIterator fit = facets_seg1.begin();
               fit != facets_seg1.end();
               ++fit)

@@ -181,11 +181,11 @@ namespace viennagrid
         std::map< ConstVertexHandleType, VertexIDType > & current_vertex_to_index_map = vertex_to_index_map[seg_id];
 
 
-        CellRange cells = viennagrid::elements(segment);
+        CellRange cells(segment);
 
         for (CellIterator it = cells.begin(); it != cells.end(); ++it)
         {
-          VertexOnCellRange vertices_on_cell = viennagrid::elements(*it);
+          VertexOnCellRange vertices_on_cell(*it);
           for (VertexOnCellIterator jt = vertices_on_cell.begin(); jt != vertices_on_cell.end(); ++jt)
           {
               typename std::map< VertexIDType, ConstVertexHandleType >::iterator kt = current_used_vertex_map.find( jt->id() );
@@ -221,7 +221,7 @@ namespace viennagrid
         std::map< CellIDType, ConstCellHandleType > & current_used_cells_map = used_cell_map[seg_id];
 
         int index = 0;
-        CellRange cells = viennagrid::elements(domseg);
+        CellRange cells(domseg);
         for (CellIterator cit  = cells.begin();
                           cit != cells.end();
                         ++cit, ++index)

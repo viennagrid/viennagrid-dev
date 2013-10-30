@@ -155,7 +155,7 @@ int main()
   typedef viennagrid::result_of::iterator<VertexRangeType>::type VertexRangeIterator;
 
   // Iterating over all vertices
-  VertexRangeType vertices = viennagrid::elements(mesh);
+  VertexRangeType vertices(mesh);// = viennagrid::elements(mesh);
   for (VertexRangeIterator vit = vertices.begin(); vit != vertices.end(); ++vit)
     point_accessor(*vit) = default_point_accessor(*vit) + PointType(10, 10, 10); // shit point
 

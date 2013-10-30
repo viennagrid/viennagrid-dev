@@ -68,7 +68,7 @@ void test(ReaderType & my_reader, std::string const & infile, std::string const 
 
 
   //write some dummy data:
-  VertexContainer vertices = viennagrid::elements(mesh);
+  VertexContainer vertices(mesh);
   for (VertexIterator vit = vertices.begin();
       vit != vertices.end();
       ++vit)
@@ -93,7 +93,7 @@ void test(ReaderType & my_reader, std::string const & infile, std::string const 
 
 
   int index = 0;
-  CellRange cells = viennagrid::elements(mesh);
+  CellRange cells(mesh);
   for (CellIterator cit = cells.begin();
                     cit != cells.end();
                    ++cit, ++index)
@@ -185,7 +185,7 @@ void test_vtk(ReaderType & my_reader, std::string const & infile, std::string co
 
 
   //write some dummy data:
-  VertexContainer vertices = viennagrid::elements(mesh);
+  VertexContainer vertices(mesh);
   for (VertexIterator vit = vertices.begin();
       vit != vertices.end();
       ++vit)
@@ -201,7 +201,7 @@ void test_vtk(ReaderType & my_reader, std::string const & infile, std::string co
             && "Vertex check failed: data_point!");
   }
 
-  CellRange cells = viennagrid::elements(mesh);
+  CellRange cells(mesh);
   for (CellIterator cit = cells.begin();
                     cit != cells.end();
                    ++cit)

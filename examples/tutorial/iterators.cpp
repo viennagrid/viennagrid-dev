@@ -98,7 +98,7 @@ int main()
   // Iterate over all vertices of the mesh:
   // Note: when assigned to a range, no template argument is required for elements<>()
   //
-  VertexRange vertices = viennagrid::elements(mesh);
+  VertexRange vertices(mesh);
 
   for (VertexIterator vit = vertices.begin();  //STL-like iteration
                       vit != vertices.end();
@@ -128,7 +128,7 @@ int main()
   // However, this does not work for all mesh storage configurations. Elements in a mesh will always work, segments and view might not work
   //
   std::size_t num_cells = 0;
-  CellRange cells = viennagrid::elements(mesh);
+  CellRange cells(mesh);
   for (std::size_t i=0; i<cells.size(); ++i)
   {
     // do something with cells[i]
@@ -166,7 +166,7 @@ int main()
     // The facets of the cell are obtained by passing the cell as parameter to the elements<>() function
     // Note: again, assignment to range doesn't require to pass the element tag to elements<>()
     //
-    FacetOnCellRange facets_on_cells = viennagrid::elements(*cit);
+    FacetOnCellRange facets_on_cells(*cit);
     for (FacetOnCellIterator focit = facets_on_cells.begin();
                              focit != facets_on_cells.end();
                            ++focit)
