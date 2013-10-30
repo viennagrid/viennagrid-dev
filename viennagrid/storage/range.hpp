@@ -22,13 +22,8 @@
 namespace viennagrid
 {
 
-template<class WrappedConfigT >
-class mesh;
-
   namespace detail
   {
-
-
     template<typename container_type>
     class container_range_wrapper
     {
@@ -73,19 +68,6 @@ class mesh;
       container_range_wrapper( element<ElementTagT, WrappedConfigT> & element_obj )
       { *this = elements<value_type>(element_obj); }
 
-//       template<typename SomethingT>
-//       container_range_wrapper( viennagrid::element_range_proxy<SomethingT> range_proxy )
-//       { *this = elements< value_type >( range_proxy() ); }
-
-//       template<typename SomethingT>
-//       container_range_wrapper operator=( viennagrid::element_range_proxy<SomethingT> range_proxy )
-//       {
-//         *this = elements< value_type >( range_proxy() );
-//         return *this;
-//       }
-
-
-
       iterator       begin()       { return container_->begin(); }
       const_iterator begin() const { return container_->begin(); }
       iterator       end()         { return container_->end(); }
@@ -106,13 +88,9 @@ class mesh;
 
 
       reference operator[] (size_type index)
-      {
-        iterator it = begin(); std::advance(it, index); return *it;
-      }
+      { iterator it = begin(); std::advance(it, index); return *it; }
       const_reference operator[] (size_type index) const
-      {
-        const_iterator it = begin(); std::advance(it, index); return *it;
-      }
+      { const_iterator it = begin(); std::advance(it, index); return *it; }
 
 
 
@@ -213,30 +191,6 @@ class mesh;
       { *this = elements<value_type>(element_obj); }
 
 
-//       template<typename SomethingT>
-//       container_range_wrapper( viennagrid::element_range_proxy<SomethingT> range_proxy )
-//       { *this = elements< value_type >( range_proxy() ); }
-//       template<typename SomethingT>
-//       container_range_wrapper( viennagrid::element_range_proxy<const SomethingT> range_proxy )
-//       { *this = elements< value_type >( range_proxy() ); }
-//
-//
-//       template<typename SomethingT>
-//       container_range_wrapper operator=( viennagrid::element_range_proxy<SomethingT> range_proxy )
-//       {
-//         *this = elements< value_type >( range_proxy() );
-//         return *this;
-//       }
-//
-//       template<typename SomethingT>
-//       container_range_wrapper operator=( viennagrid::element_range_proxy<const SomethingT> range_proxy )
-//       {
-//         *this = elements< value_type >( range_proxy() );
-//         return *this;
-//       }
-
-
-
             iterator begin()       { return container_->begin(); }
       const_iterator begin() const { return container_->begin(); }
             iterator end()         { return container_->end(); }
@@ -257,15 +211,9 @@ class mesh;
 
 
       reference operator[] (size_type index)
-      {
-        iterator it = begin(); std::advance(it, index); return *it;
-//               return (*container)[index];
-      }
+      { iterator it = begin(); std::advance(it, index); return *it; }
       const_reference operator[] (size_type index) const
-      {
-        const_iterator it = begin(); std::advance(it, index); return *it;
-//               return (*container)[index];
-      }
+      { const_iterator it = begin(); std::advance(it, index); return *it; }
 
 
 
