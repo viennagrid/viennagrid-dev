@@ -25,6 +25,65 @@
 
 namespace viennagrid
 {
+  namespace result_of
+  {
+    template<typename MeshOrSegmentHandleT, typename ElementTypeOrTagT, typename CoboundaryTypeOrTagT>
+    struct coboundary_range;
+
+    template<typename MeshOrSegmentHandleT, typename ElementTypeOrTagT, typename CoboundaryTypeOrTagT>
+    struct const_coboundary_range;
+  }
+
+  template<typename ElementTypeOrTagT, typename CoboundaryTypeOrTagT, typename WrappedConfigT, typename ElementOrHandleT>
+  typename result_of::coboundary_range<viennagrid::mesh<WrappedConfigT>, ElementTypeOrTagT, CoboundaryTypeOrTagT>::type
+  coboundary_elements(viennagrid::mesh<WrappedConfigT> & mesh_obj, ElementOrHandleT const & element_or_handle);
+
+  template<typename ElementTypeOrTagT, typename CoboundaryTypeOrTagT, typename WrappedConfigT, typename ElementOrHandleT>
+  typename result_of::const_coboundary_range<viennagrid::mesh<WrappedConfigT>, ElementTypeOrTagT, CoboundaryTypeOrTagT>::type
+  coboundary_elements(viennagrid::mesh<WrappedConfigT> const & mesh_obj, ElementOrHandleT const & element_or_handle);
+
+  template<typename ElementTypeOrTagT, typename CoboundaryTypeOrTagT, typename SegmentationT, typename element_or_handle_type>
+  typename result_of::coboundary_range<segment_handle<SegmentationT>, ElementTypeOrTagT, CoboundaryTypeOrTagT>::type
+  coboundary_elements(segment_handle<SegmentationT> & segment, element_or_handle_type const & element_or_handle);
+
+  template<typename ElementTypeOrTagT, typename CoboundaryTypeOrTagT, typename SegmentationT, typename element_or_handle_type>
+  typename result_of::const_coboundary_range<segment_handle<SegmentationT>, ElementTypeOrTagT, CoboundaryTypeOrTagT>::type
+  coboundary_elements(segment_handle<SegmentationT> const & segment, element_or_handle_type const & element_or_handle);
+
+
+
+
+  namespace detail
+  {
+    template<typename ElementTypeOrTagT, typename CoboundaryTypeOrTagT, typename ContainerT>
+    class coboundary_range_wrapper : public container_range_wrapper<ContainerT>
+    {
+    public:
+      coboundary_range_wrapper(ContainerT & container) : container_range_wrapper<ContainerT>(&container) {}
+      coboundary_range_wrapper(container_range_wrapper<ContainerT> const & base) : container_range_wrapper<ContainerT>(base) {}
+
+      template<typename WrappedConfigT, typename ElementOrHandleT>
+      coboundary_range_wrapper(viennagrid::mesh<WrappedConfigT> & mesh_obj, ElementOrHandleT const & element_or_handle) : container_range_wrapper<ContainerT>(viennagrid::coboundary_elements<ElementTypeOrTagT, CoboundaryTypeOrTagT>(mesh_obj, element_or_handle)) {}
+
+      template<typename SegmentationT, typename ElementOrHandleT>
+      coboundary_range_wrapper(viennagrid::segment_handle<SegmentationT> & segment_obj, ElementOrHandleT const & element_or_handle) : container_range_wrapper<ContainerT>(viennagrid::coboundary_elements<ElementTypeOrTagT, CoboundaryTypeOrTagT>(segment_obj, element_or_handle)) {}
+    };
+
+    template<typename ElementTypeOrTagT, typename CoboundaryTypeOrTagT, typename ContainerT>
+    class coboundary_range_wrapper<ElementTypeOrTagT, CoboundaryTypeOrTagT, const ContainerT> : public container_range_wrapper<const ContainerT>
+    {
+    public:
+      coboundary_range_wrapper(ContainerT const & container) : container_range_wrapper<const ContainerT>(&container) {}
+      coboundary_range_wrapper(container_range_wrapper<const ContainerT> const & base) : container_range_wrapper<const ContainerT>(base) {}
+
+      template<typename WrappedConfigT, typename ElementOrHandleT>
+      coboundary_range_wrapper(viennagrid::mesh<WrappedConfigT> const & mesh_obj, ElementOrHandleT const & element_or_handle) : container_range_wrapper<const ContainerT>(viennagrid::coboundary_elements<ElementTypeOrTagT, CoboundaryTypeOrTagT>(mesh_obj, element_or_handle)) {}
+
+      template<typename SegmentationT, typename ElementOrHandleT>
+      coboundary_range_wrapper(viennagrid::segment_handle<SegmentationT> const & segment_obj, ElementOrHandleT const & element_or_handle) : container_range_wrapper<const ContainerT>(viennagrid::coboundary_elements<ElementTypeOrTagT, CoboundaryTypeOrTagT>(segment_obj, element_or_handle)) {}
+    };
+  }
+
 
   namespace result_of
   {
@@ -61,7 +120,8 @@ namespace viennagrid
     template<typename MeshOrSegmentHandleT, typename ElementTypeOrTagT, typename CoboundaryTypeOrTagT>
     struct coboundary_range
     {
-      typedef viennagrid::detail::container_range_wrapper< typename coboundary_view<MeshOrSegmentHandleT, ElementTypeOrTagT, CoboundaryTypeOrTagT>::type > type;
+      //typedef viennagrid::detail::container_range_wrapper< typename coboundary_view<MeshOrSegmentHandleT, ElementTypeOrTagT, CoboundaryTypeOrTagT>::type > type;
+      typedef viennagrid::detail::coboundary_range_wrapper< ElementTypeOrTagT, CoboundaryTypeOrTagT, typename coboundary_view<MeshOrSegmentHandleT, ElementTypeOrTagT, CoboundaryTypeOrTagT>::type > type;
     };
 
     /** @brief Metafunction for obtaining a const coboundary range of an element type within a mesh/segment
@@ -73,7 +133,8 @@ namespace viennagrid
     template<typename MeshOrSegmentHandleT, typename ElementTypeOrTagT, typename CoboundaryTypeOrTagT>
     struct const_coboundary_range
     {
-      typedef viennagrid::detail::container_range_wrapper< const typename coboundary_view<MeshOrSegmentHandleT, ElementTypeOrTagT, CoboundaryTypeOrTagT>::type > type;
+//       typedef viennagrid::detail::container_range_wrapper< const typename coboundary_view<MeshOrSegmentHandleT, ElementTypeOrTagT, CoboundaryTypeOrTagT>::type > type;
+      typedef viennagrid::detail::coboundary_range_wrapper< ElementTypeOrTagT, CoboundaryTypeOrTagT, const typename coboundary_view<MeshOrSegmentHandleT, ElementTypeOrTagT, CoboundaryTypeOrTagT>::type > type;
     };
 
     /** \cond */
@@ -188,6 +249,14 @@ namespace viennagrid
         create_coboundary_information<element_type_or_tag, coboundary_type_or_tag>( mesh_obj, viennagrid::make_accessor<element_type>(coboundary_container_wrapper.container) );
         detail::update_change_counter( mesh_obj, coboundary_container_wrapper.change_counter );
     }
+
+
+
+
+
+
+
+
 
 
 
