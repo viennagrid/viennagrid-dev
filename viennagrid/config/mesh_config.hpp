@@ -398,7 +398,7 @@ namespace viennagrid
         typename neighbor_container_collection_typemap<WrappedConfigType, tail>::type
       >::type type;
     };
-    /** \cond */
+    /** \endcond */
   }
 
 
