@@ -464,7 +464,7 @@ namespace viennagrid
        */
       int operator()(MeshType const & mesh_obj, SegmentationType const & segmentation, std::string const & filename)
       {
-          if (segmentation.empty()) return (*this)(mesh_obj, filename);
+          if (segmentation.size() <= 1) return (*this)(mesh_obj, filename);
 
           //
           // Step 1: Write meta information
