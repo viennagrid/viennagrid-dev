@@ -13,6 +13,7 @@ add_executable(polygon              polygon.cpp)
 add_executable(segments             segments.cpp)
 add_executable(interface            interface.cpp)
 add_executable(read_plc             read_plc.cpp)
+add_executable(dump_info            dump_info.cpp)
 
 
 
