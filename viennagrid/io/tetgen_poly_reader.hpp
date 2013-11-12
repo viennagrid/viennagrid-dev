@@ -73,7 +73,35 @@ namespace viennagrid
       template <typename MeshT>
       int operator()(MeshT & mesh_obj, std::string const & filename) const
       {
+        std::vector< typename viennagrid::result_of::point<MeshT>::type > hole_points;
+        std::vector< std::pair<typename viennagrid::result_of::point<MeshT>::type, int> > seed_points;
 
+        return (*this)(mesh_obj, filename, hole_points, seed_points);
+      }
+
+      template <typename MeshT>
+      int operator()(MeshT & mesh_obj, std::string const & filename,
+                     std::vector< typename viennagrid::result_of::point<MeshT>::type > & hole_points) const
+      {
+        std::vector< std::pair<typename viennagrid::result_of::point<MeshT>::type, int> > seed_points;
+        return (*this)(mesh_obj, filename, hole_points, seed_points);
+      }
+
+      template <typename MeshT>
+      int operator()(MeshT & mesh_obj, std::string const & filename,
+                     std::vector< std::pair<typename viennagrid::result_of::point<MeshT>::type, int> > & seed_points) const
+      {
+        std::vector< typename viennagrid::result_of::point<MeshT>::type > hole_points;
+
+        return (*this)(mesh_obj, filename, hole_points, seed_points);
+      }
+
+
+      template <typename MeshT>
+      int operator()(MeshT & mesh_obj, std::string const & filename,
+                     std::vector< typename viennagrid::result_of::point<MeshT>::type > & hole_points,
+                     std::vector< std::pair<typename viennagrid::result_of::point<MeshT>::type, int> > & seed_points) const
+      {
         typedef typename viennagrid::result_of::point<MeshT>::type           PointType;
 
         static const int point_dim = viennagrid::result_of::static_size<PointType>::value;
@@ -95,6 +123,9 @@ namespace viennagrid
           throw cannot_open_file_exception(filename);
           return EXIT_FAILURE;
         }
+
+        hole_points.clear();
+        seed_points.clear();
 
         std::string tmp;
         std::istringstream current_line;
@@ -145,20 +176,9 @@ namespace viennagrid
           for (int j=0; j<point_dim; j++)
             current_line >> p[j];
 
-          /*VertexHandleType vertex =*/ viennagrid::make_vertex_with_id( mesh_obj, VertexIDType(id), p );
-
-//           if (attribute_num > 0)
-//           {
-//             std::vector<CoordType> attributes(attribute_num);
-//             for (int j=0; j<attribute_num; j++)
-//               current_line >> attributes[j];
-//
-//               // TODO fix using accesor or appendix!
-// //                 viennadata::access<poly_attribute_tag, std::vector<CoordType> >()(viennagrid::dereference_handle(mesh_obj, vertex)) = attributes;
-//           }
+          viennagrid::make_vertex_with_id( mesh_obj, VertexIDType(id), p );
         }
 
-        //std::cout << "DONE" << std::endl;
         if (!reader.good())
           throw bad_file_format_exception(filename, "EOF encountered when reading number of cells.");
 
@@ -273,6 +293,76 @@ namespace viennagrid
               hole_points.begin(), hole_points.end()
           );
 
+        }
+
+
+
+        long hole_num;
+
+        if (!get_valid_line(reader, tmp))
+        {
+          // no holes -> Okay, SUCCESS xD
+          return EXIT_SUCCESS;
+        }
+
+        current_line.str(tmp); current_line.clear();
+        current_line >> hole_num;
+
+        if (hole_num < 0)
+          throw bad_file_format_exception(filename, "POLY file has less than 0 holes");
+
+        for (int i=0; i<hole_num; ++i)
+        {
+          if (!get_valid_line(reader, tmp))
+            throw bad_file_format_exception(filename, "EOF encountered when reading information");
+
+          long hole_number;
+          PointType hole_point;
+
+          current_line.str(tmp); current_line.clear();
+          current_line >> hole_number;
+
+          for (int j=0; j < point_dim; j++)
+            current_line >> hole_point[j];
+
+          hole_points.push_back( hole_point );
+        }
+
+
+
+
+        long segment_num;
+
+        if (!get_valid_line(reader, tmp))
+        {
+          // no region -> SUCCESS xD
+          return EXIT_SUCCESS;
+        }
+
+        current_line.str(tmp); current_line.clear();
+        current_line >> segment_num;
+
+        if (segment_num < 0)
+          throw bad_file_format_exception(filename, "POLY file has less than 0 segments");
+
+        for (int i=0; i<segment_num; ++i)
+        {
+          if (!get_valid_line(reader, tmp))
+            throw bad_file_format_exception(filename, "EOF encountered when reading information");
+
+          long segment_number;
+          PointType seed_point;
+          int segment_id;
+
+          current_line.str(tmp); current_line.clear();
+          current_line >> segment_number;
+
+          for (int j=0; j < point_dim; j++)
+            current_line >> seed_point[j];
+
+          current_line >> segment_id;
+
+          seed_points.push_back( std::make_pair(seed_point, segment_id) );
         }
 
         return EXIT_SUCCESS;
