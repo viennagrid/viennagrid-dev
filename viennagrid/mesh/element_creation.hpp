@@ -257,6 +257,27 @@ namespace viennagrid
     return handle;
   }
 
+  // doxygen doku in forwards.hpp
+  template<typename MeshOrSegmentHandleTypeT, typename LineHandleIteratorT, typename VertexHandleIteratorT>
+  typename result_of::plc_handle<MeshOrSegmentHandleTypeT>::type make_plc(
+        MeshOrSegmentHandleTypeT & mesh_obj,
+        LineHandleIteratorT    lines_begin,           LineHandleIteratorT     lines_end,
+        VertexHandleIteratorT  loose_vertices_begin,  VertexHandleIteratorT   loose_vertices_end)
+  {
+    typedef typename viennagrid::result_of::point<MeshOrSegmentHandleTypeT>::type PointType;
+    PointType tmp;
+    return make_plc(mesh_obj, lines_begin, lines_end, loose_vertices_begin, loose_vertices_end, &tmp, &tmp);
+  }
+
+  template<typename MeshOrSegmentHandleTypeT, typename LineHandleIteratorT>
+  typename result_of::plc_handle<MeshOrSegmentHandleTypeT>::type make_plc(
+        MeshOrSegmentHandleTypeT & mesh_obj,
+        LineHandleIteratorT    lines_begin,           LineHandleIteratorT     lines_end)
+  {
+    typedef typename viennagrid::result_of::vertex_handle<MeshOrSegmentHandleTypeT>::type VertexHandleType;
+    VertexHandleType tmp;
+    return make_plc(mesh_obj, lines_begin, lines_end, &tmp, &tmp);
+  }
 
 
 
