@@ -17,6 +17,8 @@
     @brief Contains functions for calculating angles between vectors given by points
 */
 
+#include "viennagrid/algorithm/geometry.hpp"
+
 namespace viennagrid
 {
   namespace detail
