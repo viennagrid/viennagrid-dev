@@ -13,8 +13,6 @@ namespace viennagrid
     typedef MeshT mesh_type;
     typedef SegmentationT segmentation_type;
 
-    segmented_mesh() : segmentation(mesh) {}
-
     mesh_type mesh;
     segmentation_type segmentation;
   };
