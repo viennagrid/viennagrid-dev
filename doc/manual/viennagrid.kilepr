@@ -377,7 +377,7 @@ encoding=UTF-8
 highlight=LaTeX
 line=31
 mode=LaTeX
-open=true
+open=false
 order=0
 
 [item:orientations.tex]

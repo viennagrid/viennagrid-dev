@@ -252,7 +252,7 @@ namespace viennagrid
 
     // size is constant
     static size_type size() { return N; }
-    static void resize(size_type s) { assert( s <= N ); }
+    static void resize(size_type s) { assert( s <= N ); (void)s; }
 
     static bool empty() { return false; }
     static size_type max_size() { return N; }
