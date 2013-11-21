@@ -672,6 +672,118 @@ namespace viennagrid
 
 
 
+
+
+
+
+    /** @brief Convenience metafunction for the type retrieval of a cell ID. Will fail if there is more than one cell type
+     *
+     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
+     */
+    template<typename SomethingT>
+    struct cell_id
+    {
+      typedef typename id< typename cell<SomethingT>::type >::type type;
+    };
+
+    /** @brief Convenience metafunction for the type retrieval of a vertex ID
+     *
+     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
+     */
+    template<typename SomethingT>
+    struct vertex_id
+    {
+      typedef typename id< typename vertex<SomethingT>::type >::type type;
+    };
+
+    /** @brief Convenience metafunction for the type retrieval of a line ID (same as edge_id)
+     *
+     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
+     */
+    template<typename SomethingT>
+    struct line_id
+    {
+      typedef typename id< typename line<SomethingT>::type >::type type;
+    };
+
+    /** @brief Convenience metafunction for the type retrieval of a line ID (same as line_id)
+     *
+     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
+     */
+    template<typename SomethingT>
+    struct edge_id
+    {
+      typedef typename id< typename edge<SomethingT>::type >::type type;
+    };
+
+    /** @brief Convenience metafunction for the type retrieval of a triangle ID
+     *
+     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
+     */
+    template<typename SomethingT>
+    struct triangle_id
+    {
+      typedef typename id< typename triangle<SomethingT>::type >::type type;
+    };
+
+    /** @brief Convenience metafunction for the type retrieval of a quadrilateral ID
+     *
+     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
+     */
+    template<typename SomethingT>
+    struct quadrilateral_id
+    {
+      typedef typename id< typename quadrilateral<SomethingT>::type >::type type;
+    };
+
+    /** @brief Convenience metafunction for the type retrieval of a polygon v
+     *
+     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
+     */
+    template<typename SomethingT>
+    struct polygon_id
+    {
+      typedef typename id< typename polygon<SomethingT>::type >::type type;
+    };
+
+    /** @brief Convenience metafunction for the type retrieval of a plc ID
+     *
+     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
+     */
+    template<typename SomethingT>
+    struct plc_id
+    {
+      typedef typename id< typename plc<SomethingT>::type >::type type;
+    };
+
+    /** @brief Convenience metafunction for the type retrieval of a tetrahedron ID
+     *
+     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
+     */
+    template<typename SomethingT>
+    struct tetrahedron_id
+    {
+      typedef typename id< typename tetrahedron<SomethingT>::type >::type type;
+    };
+
+    /** @brief Convenience metafunction for the type retrieval of a hexahedron ID
+     *
+     * @tparam SomethingT         The host type, can be a collection, an element, a mesh, a segmentation or a segment
+     */
+    template<typename SomethingT>
+    struct hexahedron_id
+    {
+      typedef typename id< typename hexahedron<SomethingT>::type >::type type;
+    };
+
+
+
+
+
+
+
+
+
     template <typename SomethingT,
               typename ElementTypeOrTagT>
     struct element_range;
@@ -1029,6 +1141,16 @@ namespace viennagrid
     struct const_facet_handle
     {
       typedef typename const_handle< SomethingT, typename facet_tag<SomethingT>::type >::type type;
+    };
+
+    /** @brief Metafunction for retrieving the facet handle type an element, a mesh, a segmentation or a segment
+     *
+     * @tparam SomethingT    The element type of which the facet handle type is requested. Can also be a mesh, a segmentation or a segment. In this case the facet handle type of the cell type is returned.
+     */
+    template<typename SomethingT>
+    struct facet_id
+    {
+      typedef typename id< typename facet<SomethingT>::type >::type type;
     };
 
 
