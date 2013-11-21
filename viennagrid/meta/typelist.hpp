@@ -101,7 +101,8 @@ namespace viennagrid
 
 
       // index access
-      template <typename typelist, unsigned int index> struct at
+      template <typename typelist, int index>
+      struct at
       {
           typedef out_of_range type;
       };
@@ -112,7 +113,7 @@ namespace viennagrid
           typedef head type;
       };
 
-      template <typename head, typename tail, unsigned int i>
+      template <typename head, typename tail, int i>
       struct at<typelist<head, tail>, i>
       {
           typedef typename at<tail, i - 1>::type type;
@@ -199,9 +200,10 @@ namespace viennagrid
 
 
       // erase_at the type at index
-      template <typename typelist, unsigned int index_to_erase> struct erase_at;
+      template <typename typelist, int index_to_erase>
+      struct erase_at;
 
-      template <unsigned int index_to_erase>
+      template <int index_to_erase>
       struct erase_at<null_type, index_to_erase>
       {
         typedef null_type type;
@@ -213,7 +215,7 @@ namespace viennagrid
         typedef tail type;
       };
 
-      template <typename head, typename tail, unsigned int index_to_erase>
+      template <typename head, typename tail, int index_to_erase>
       struct erase_at< typelist<head, tail>, index_to_erase>
       {
         typedef typelist<head, typename erase_at<tail, index_to_erase-1>::type> type;

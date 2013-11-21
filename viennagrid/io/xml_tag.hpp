@@ -46,7 +46,7 @@ namespace viennagrid
       char operator()(char c) const
       {
         if(c <= 'Z' && c >= 'A')
-          return c - ('Z'-'z');
+          return c - static_cast<char>('Z'-'z');
         return c;
       }
     };
