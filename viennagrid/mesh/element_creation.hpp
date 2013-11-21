@@ -328,7 +328,7 @@ namespace viennagrid
   typename viennagrid::result_of::handle<
       MeshOrSegmentHandleT,
       typename viennagrid::result_of::element_tag<ElementT>::type
-    >::type copy_element( ElementT const & element, MeshOrSegmentHandleT & domain_segment,
+    >::type copy_element( ElementT const & element, MeshOrSegmentHandleT & mesh_segment,
                           typename viennagrid::result_of::coord<MeshOrSegmentHandleT>::type tolerance )
   {
     typedef typename viennagrid::result_of::element_tag<ElementT>::type             ElementTag;
@@ -340,18 +340,18 @@ namespace viennagrid
 
     VertexRangeType vertices(element);
     for (VertexRangeIterator vit = vertices.begin(); vit != vertices.end(); ++vit)
-      vertex_handles.push_back( make_unique_vertex(domain_segment, viennagrid::point(*vit)), tolerance );
+      vertex_handles.push_back( make_unique_vertex(mesh_segment, viennagrid::point(*vit)), tolerance );
 
-    return make_element<ElementTag>( domain_segment, vertex_handles.begin(), vertex_handles.end() );
+    return make_element<ElementTag>( mesh_segment, vertex_handles.begin(), vertex_handles.end() );
   }
 
 
 
-
+  // doxygen doku in forwards.hpp
   template<typename ElementIteratorT, typename OutputMeshOrSegmentHandleT>
   void copy_elements(ElementIteratorT const & begin, ElementIteratorT const & end,
-                        OutputMeshOrSegmentHandleT & output_mesh,
-                        typename viennagrid::result_of::coord<OutputMeshOrSegmentHandleT>::type tolerance )
+                     OutputMeshOrSegmentHandleT & output_mesh,
+                     typename viennagrid::result_of::coord<OutputMeshOrSegmentHandleT>::type tolerance )
   {
     typedef typename std::iterator_traits<ElementIteratorT>::value_type ElementType;
     typedef typename viennagrid::result_of::element_tag<ElementType>::type ElementTagType;
@@ -371,11 +371,11 @@ namespace viennagrid
       unsigned int index = 0;
       for (ConstVertexOnElementIteratorType vit = vertices_on_element.begin(); vit != vertices_on_element.end(); ++vit, ++index)
       {
-        typename std::map<VertexIDType, VertexHandleType>::iterator it = vertex_map.begin( vit->id() );
+        typename std::map<VertexIDType, VertexHandleType>::iterator it = vertex_map.find( vit->id() );
         if (it == vertex_map.end())
         {
           vtx_handles[index] = viennagrid::make_unique_vertex( output_mesh, viennagrid::point(*vit), tolerance );
-          vertex_map[vit.handle()] = vtx_handles[index];
+          vertex_map[vit->id()] = vtx_handles[index];
         }
         else
           vtx_handles[index] = it->second;
@@ -385,11 +385,13 @@ namespace viennagrid
     }
   }
 
+
+  // doxygen doku in forwards.hpp
   template<typename InputMeshOrSegmentHandleT, typename ElementHandleIteratorT, typename OutputMeshOrSegmentHandleT>
   void copy_element_handles(InputMeshOrSegmentHandleT const & input_mesh,
-                        ElementHandleIteratorT const & begin, ElementHandleIteratorT const & end,
-                        OutputMeshOrSegmentHandleT & output_mesh,
-                        typename viennagrid::result_of::coord<OutputMeshOrSegmentHandleT>::type tolerance )
+                            ElementHandleIteratorT const & begin, ElementHandleIteratorT const & end,
+                            OutputMeshOrSegmentHandleT & output_mesh,
+                            typename viennagrid::result_of::coord<OutputMeshOrSegmentHandleT>::type tolerance )
   {
     typedef typename std::iterator_traits<ElementHandleIteratorT>::value_type ElementHandleType;
     typedef typename viennagrid::detail::result_of::value_type<ElementHandleType>::type ElementType;
@@ -410,11 +412,11 @@ namespace viennagrid
       unsigned int index = 0;
       for (ConstVertexOnElementIteratorType vit = vertices_on_element.begin(); vit != vertices_on_element.end(); ++vit, ++index)
       {
-        typename std::map<VertexIDType, VertexHandleType>::iterator it = vertex_map.begin( vit->id() );
+        typename std::map<VertexIDType, VertexHandleType>::iterator it = vertex_map.find( vit->id() );
         if (it == vertex_map.end())
         {
           vtx_handles[index] = viennagrid::make_unique_vertex( output_mesh, viennagrid::point(*vit), tolerance );
-          vertex_map[vit.handle()] = vtx_handles[index];
+          vertex_map[vit->id()] = vtx_handles[index];
         }
         else
           vtx_handles[index] = it->second;
