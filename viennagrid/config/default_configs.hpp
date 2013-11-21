@@ -281,17 +281,6 @@ namespace viennagrid
   /** @brief A default cell for polygons in 3d, default config is used */
   typedef viennagrid::result_of::cell<polygonal_3d_mesh>::type                           polygonal_3d_cell;
 
-  /** @brief A default mesh for PLCs in 2d, default config is used */
-  typedef viennagrid::mesh< config::plc_2d >                                         plc_2d_mesh;
-  /** @brief A default segmentation for PLCs in 2d, default config is used */
-  typedef viennagrid::result_of::segmentation< plc_2d_mesh >::type                   plc_2d_segmentation;
-  /** @brief A default segment for PLCs in 2d, default config is used */
-  typedef viennagrid::result_of::segment_handle< plc_2d_segmentation >::type         plc_2d_segment_handle;
-  /** @brief A default mesh view for PLCs in 2d, default config is used */
-  typedef viennagrid::result_of::mesh_view< plc_2d_mesh >::type                      plc_2d_view;
-  /** @brief A default cell for PLCs in 2d, default config is used */
-  typedef viennagrid::result_of::cell<plc_2d_mesh>::type                             plc_2d_cell;
-
   /** @brief A default mesh for PLCs in 3d, default config is used */
   typedef viennagrid::mesh< config::plc_3d >                                         plc_3d_mesh;
   /** @brief A default segmentation for PLCs in 3d, default config is used */
@@ -345,6 +334,30 @@ namespace viennagrid
   /** @brief A default cell for hexahedrons in 3d, default config is used */
   typedef viennagrid::result_of::cell<hexahedral_3d_mesh>::type                             hexahedral_3d_cell;
 
+
+
+
+
+  /** @brief A default mesh for a boundary representation in 1d: vertex 1d */
+  typedef vertex_1d_mesh                                                                    brep_1d_mesh;
+  /** @brief A default view for a boundary representation in 1d: vertex 1d */
+  typedef vertex_1d_view                                                                    brep_1d_view;
+  /** @brief A default cell for a boundary representation in 1d: vertex 1d */
+  typedef vertex_1d_cell                                                                    brep_1d_cell;
+
+  /** @brief A default mesh for a boundary representation in 2d: line 2d */
+  typedef line_2d_mesh                                                                      brep_2d_mesh;
+  /** @brief A default view for a boundary representation in 2d: line 2d */
+  typedef line_2d_view                                                                      brep_2d_view;
+  /** @brief A default cell for a boundary representation in 2d: line 2d */
+  typedef line_2d_cell                                                                      brep_2d_cell;
+
+  /** @brief A default mesh for a boundary representation in 3d: plc 3d */
+  typedef plc_3d_mesh                                                                       brep_3d_mesh;
+  /** @brief A default view for a boundary representation in 3d: plc 3d */
+  typedef plc_3d_view                                                                       brep_3d_view;
+  /** @brief A default cell for a boundary representation in 3d: plc 3d */
+  typedef plc_3d_cell                                                                       brep_3d_cell;
 }
 
 
