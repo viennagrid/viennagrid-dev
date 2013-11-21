@@ -104,6 +104,9 @@ namespace viennagrid
       iterator & operator+=(long diff) { ptr_ += diff; return *this; }
       iterator & operator-=(long diff) { ptr_ -= diff; return *this; }
 
+      iterator operator+(long diff) { iterator tmp(*this); tmp += diff; return tmp; }
+      iterator operator-(long diff) { iterator tmp(*this); tmp -= diff; return tmp; }
+
       // offset dereferenceable
       reference operator[](std::size_t offset) { return *(ptr_+offset); }
       const_reference operator[](std::size_t offset) const { return *(ptr_+offset); }
@@ -175,6 +178,9 @@ namespace viennagrid
       // compound assign add- and subtractable
       const_iterator & operator+=(long diff) { ptr_ += diff; return *this; }
       const_iterator & operator-=(long diff) { ptr_ -= diff; return *this; }
+
+      const_iterator operator+(long diff) { const_iterator tmp(*this); tmp += diff; return tmp; }
+      const_iterator operator-(long diff) { const_iterator tmp(*this); tmp -= diff; return tmp; }
 
       // offset dereferenceable
       reference operator[](std::size_t offset) { return *(ptr_+offset); }
@@ -319,29 +325,6 @@ namespace viennagrid
   inline void swap (static_array<T,N>& x, static_array<T,N>& y) {
     x.swap(y);
   }
-
-
-  // iterator operations
-  template<typename T, std::size_t N>
-  typename static_array<T,N>::iterator operator+(const typename static_array<T,N>::iterator & it, long diff) { typename static_array<T,N>::iterator tmp(it); tmp += diff; return tmp; }
-  template<typename T, std::size_t N>
-  typename static_array<T,N>::iterator operator+(long diff, const typename static_array<T,N>::iterator & it) { typename static_array<T,N>::iterator tmp(it); tmp += diff; return tmp; }
-
-  template<typename T, std::size_t N>
-  typename static_array<T,N>::iterator operator-(const typename static_array<T,N>::iterator & it, long diff) { typename static_array<T,N>::iterator tmp(it); tmp -= diff; return tmp; }
-  template<typename T, std::size_t N>
-  typename static_array<T,N>::iterator operator-(long diff, const typename static_array<T,N>::iterator & it) { typename static_array<T,N>::iterator tmp(it); tmp -= diff; return tmp; }
-
-
-  template<typename T, std::size_t N>
-  typename static_array<T,N>::const_iterator operator+(const typename static_array<T,N>::const_iterator & it, long diff) { typename static_array<T,N>::const_iterator tmp(it); tmp += diff; return tmp; }
-  template<typename T, std::size_t N>
-  typename static_array<T,N>::const_iterator operator+(long diff, const typename static_array<T,N>::const_iterator & it) { typename static_array<T,N>::const_iterator tmp(it); tmp += diff; return tmp; }
-
-  template<typename T, std::size_t N>
-  typename static_array<T,N>::const_iterator operator-(const typename static_array<T,N>::const_iterator & it, long diff) { typename static_array<T,N>::const_iterator tmp(it); tmp -= diff; return tmp; }
-  template<typename T, std::size_t N>
-  typename static_array<T,N>::const_iterator operator-(long diff, const typename static_array<T,N>::const_iterator & it) { typename static_array<T,N>::const_iterator tmp(it); tmp -= diff; return tmp; }
 
 }
 
