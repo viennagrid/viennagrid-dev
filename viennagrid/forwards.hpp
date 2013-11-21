@@ -1529,7 +1529,7 @@ namespace viennagrid
     * @tparam MeshOrSegmentHandleT    The mesh or segment type where the vertex is created
     * @param  mesh_segment            The mesh or segment object where the vertex should be created
     * @param  point                   The point which corresponds to the created vertex
-    * @param  tolerance               The tolerance of the 2-norm for checking if two points are equal
+    * @param  tolerance               The tolerance of the 2-norm for checking if two points are equal, is ignored if tolerance is less of equal to zero
     * @return                         A handle to a vertex which is close enough to point or a handle to a newly created vertex
     */
   template<typename MeshOrSegmentHandleTypeT>
@@ -1668,22 +1668,51 @@ namespace viennagrid
         VertexHandleT v0, VertexHandleT v1, VertexHandleT v2, VertexHandleT v3,
         VertexHandleT v4, VertexHandleT v5, VertexHandleT v6, VertexHandleT v7);
 
-  /** @brief Function for copying an element to a domain or segment
+  /** @brief Function for copying an element to a mesh or segment
     *
     * @tparam ElementT                The element type which is copied
-    * @tparam DomainOrSegmentHandleT  The domain or segment type where the hexahedron is created
+    * @tparam MeshOrSegmentHandleT    The mesh or segment type where the element is created
     * @param  element                 The element which is copied
-    * @param  domain_segment          The domain or segment object where the element is copied to
-    * @return                         A handle to the created hexahedron
+    * @param  mesh_segment            The mesh or segment object where the element is copied to
+    * @param  tolerance               The tolerance of the 2-norm for checking if two points are equal, is ignored if tolerance is less of equal to zero
+    * @return                         A handle to the copied element
     */
-  template<typename ElementT, typename DomainOrSegmentHandleT>
+  template<typename ElementT, typename MeshOrSegmentHandleT>
   typename viennagrid::result_of::handle<
-      DomainOrSegmentHandleT,
+      MeshOrSegmentHandleT,
       typename viennagrid::result_of::element_tag<ElementT>::type
-    >::type copy_element( ElementT const & element, DomainOrSegmentHandleT & domain_segment );
+    >::type copy_element( ElementT const & element, MeshOrSegmentHandleT & mesh_segment,
+                          typename viennagrid::result_of::coord<MeshOrSegmentHandleT>::type tolerance );
 
 
+  /** @brief Function for copying an element to a mesh or segment
+    *
+    * @tparam ElementIteratorT            The element iterator type which is copied
+    * @tparam OutputMeshOrSegmentHandleT  The mesh or segment type where the elements are created
+    * @param  begin                       The begin of the element iterator range of element to be copied
+    * @param  end                         The end of the element iterator range of element to be copied
+    * @param  mesh_segment                The mesh or segment object where the elements are copied to
+    */
+  template<typename ElementIteratorT, typename OutputMeshOrSegmentHandleT>
+  void copy_elements(ElementIteratorT const & begin, ElementIteratorT const & end,
+                     OutputMeshOrSegmentHandleT & output_mesh,
+                     typename viennagrid::result_of::coord<OutputMeshOrSegmentHandleT>::type tolerance );
 
+  /** @brief Function for copying an element to a mesh or segment
+    *
+    * @tparam InputMeshOrSegmentHandleT   The mesh or segment type where the original elements live
+    * @tparam ElementHandleIteratorT      The element handle iterator type which is copied
+    * @tparam OutputMeshOrSegmentHandleT  The mesh or segment type where the elements are created
+    * @param  input_mesh                  The mesh or segment object where the original elements live
+    * @param  begin                       The begin of element handle the iterator range of element to be copied
+    * @param  end                         The end of the element handle iterator range of element to be copied
+    * @param  mesh_segment                The mesh or segment object where the elements are copied to
+    */
+  template<typename InputMeshOrSegmentHandleT, typename ElementHandleIteratorT, typename OutputMeshOrSegmentHandleT>
+  void copy_element_handles(InputMeshOrSegmentHandleT const & input_mesh,
+                            ElementHandleIteratorT const & begin, ElementHandleIteratorT const & end,
+                            OutputMeshOrSegmentHandleT & output_mesh,
+                            typename viennagrid::result_of::coord<OutputMeshOrSegmentHandleT>::type tolerance );
 
 
   /** @brief Function for dereferencing an element -> identity
