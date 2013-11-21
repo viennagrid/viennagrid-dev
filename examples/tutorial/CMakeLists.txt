@@ -2,7 +2,7 @@
 add_executable(accessor             accessor.cpp)
 ADD_EXECUTABLE(algorithms           algorithms.cpp)
 add_executable(coboundary_iteration coboundary_iteration.cpp)
-ADD_EXECUTABLE(mesh_setup         mesh_setup.cpp)
+ADD_EXECUTABLE(mesh_setup           mesh_setup.cpp)
 add_executable(element_erase        element_erase.cpp)
 ADD_EXECUTABLE(finite_volumes       finite_volumes.cpp)
 ADD_EXECUTABLE(io                   io.cpp)
@@ -15,6 +15,7 @@ add_executable(interface            interface.cpp)
 add_executable(read_plc             read_plc.cpp)
 add_executable(dump_info            dump_info.cpp)
 add_executable(vmesh_creator        vmesh_creator.cpp)
+add_executable(copy_elements        copy_elements.cpp)
 
 
 
