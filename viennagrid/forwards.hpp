@@ -1452,7 +1452,7 @@ namespace viennagrid
 
 
 
-  /** @brief Function for creating an element within a mesh or a segment
+  /** @brief Function for creating an element within a mesh or a segment. For PLC use make_plc
     *
     * @tparam ElementTypeOrTagT       The element type/tag to be created
     * @tparam MeshOrSegmentHandleTypeT    The mesh or segment type where the element is created
@@ -1469,7 +1469,7 @@ namespace viennagrid
         VertexHandleIteratorT const & array_end );
 
 
-  /** @brief Function for creating an element within a mesh or segment with a specific ID
+  /** @brief Function for creating an element within a mesh or segment with a specific ID. For PLC use make_plc
     *
     * @tparam ElementTypeOrTagT       The element type/tag to be created
     * @tparam MeshOrSegmentHandleTypeT    The mesh or segment type where the element is created

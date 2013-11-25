@@ -21,9 +21,72 @@
 /** @file viennagrid/mesh/element_creation.hpp
     @brief Contains functions for creating elements within a mesh or segment
 */
+#include "mesh.hpp"
 
 namespace viennagrid
 {
+  // implementation for make_element and make_element_with_id
+  template<typename ElementTagT>
+  struct make_element_impl
+  {
+    template<typename MeshOrSegmentHandleTypeT, typename VertexHandleIteratorT>
+    static typename result_of::handle<MeshOrSegmentHandleTypeT, ElementTagT>::type
+    make(MeshOrSegmentHandleTypeT & mesh_obj,
+         VertexHandleIteratorT vertices_begin,
+         VertexHandleIteratorT const & vertices_end)
+    {
+      typedef typename viennagrid::result_of::element<MeshOrSegmentHandleTypeT, ElementTagT>::type ElementType;
+      ElementType element = ElementType( detail::inserter(mesh_obj).get_physical_container_collection() );
+
+      size_t element_index = 0;
+      for ( ; vertices_begin != vertices_end; ++vertices_begin, ++element_index )
+          viennagrid::set_vertex( element, *vertices_begin, element_index );
+
+      return detail::push_element<true, true>(mesh_obj, element).first;
+    }
+
+    template<typename MeshOrSegmentHandleTypeT, typename VertexHandleIteratorT, typename IDT>
+    static typename result_of::handle<MeshOrSegmentHandleTypeT, ElementTagT>::type
+    make(MeshOrSegmentHandleTypeT & mesh_obj,
+         VertexHandleIteratorT vertices_begin,
+         VertexHandleIteratorT const & vertices_end,
+         IDT id)
+    {
+      typedef typename viennagrid::result_of::element<MeshOrSegmentHandleTypeT, ElementTagT>::type ElementType;
+      ElementType element = ElementType( detail::inserter(mesh_obj).get_physical_container_collection() );
+
+      element.id( id );
+
+      size_t element_index = 0;
+      for ( ; vertices_begin != vertices_end; ++vertices_begin, ++element_index )
+          viennagrid::set_vertex( element, *vertices_begin, element_index );
+
+      return detail::push_element<false, true>(mesh_obj, element ).first;
+    }
+  };
+
+  // specialization for PLC: no implementation! Use make_plc instead
+  template<>
+  struct make_element_impl<plc_tag>
+  {
+    // no implementation! Use make_plc instead
+    template<typename MeshOrSegmentHandleTypeT, typename VertexHandleIteratorT>
+    static typename result_of::handle<MeshOrSegmentHandleTypeT, plc_tag>::type
+    make(MeshOrSegmentHandleTypeT & mesh_obj,
+         VertexHandleIteratorT vertices_begin,
+         VertexHandleIteratorT const & vertices_end);
+
+    // no implementation! Use make_plc instead
+    template<typename MeshOrSegmentHandleTypeT, typename VertexHandleIteratorT, typename IDT>
+    static typename result_of::handle<MeshOrSegmentHandleTypeT, plc_tag>::type
+    make(MeshOrSegmentHandleTypeT & mesh_obj,
+         VertexHandleIteratorT vertices_begin,
+         VertexHandleIteratorT const & vertices_end,
+         IDT id);
+  };
+
+
+
   // doxygen doku in forwards.hpp
   template<typename ElementTypeOrTagT, typename MeshOrSegmentHandleTypeT, typename VertexHandleIteratorT>
   typename result_of::handle<MeshOrSegmentHandleTypeT, ElementTypeOrTagT>::type
@@ -32,14 +95,8 @@ namespace viennagrid
         VertexHandleIteratorT vertices_begin,
         VertexHandleIteratorT const & vertices_end)
   {
-    typedef typename viennagrid::result_of::element<MeshOrSegmentHandleTypeT, ElementTypeOrTagT>::type ElementType;
-    ElementType element = ElementType( detail::inserter(mesh_obj).get_physical_container_collection() );
-
-    size_t element_index = 0;
-    for ( ; vertices_begin != vertices_end; ++vertices_begin, ++element_index )
-        viennagrid::set_vertex( element, *vertices_begin, element_index );
-
-    return detail::push_element<true, true>(mesh_obj, element).first;
+    typedef typename viennagrid::result_of::element_tag<ElementTypeOrTagT>::type ElementTagT;
+    return make_element_impl<ElementTagT>::make( mesh_obj, vertices_begin, vertices_end );
   }
 
   // doxygen doku in forwards.hpp
@@ -51,16 +108,8 @@ namespace viennagrid
         VertexHandleIteratorT const & vertices_end,
         IDT id)
   {
-    typedef typename viennagrid::result_of::element<MeshOrSegmentHandleTypeT, ElementTypeOrTagT>::type ElementType;
-    ElementType element = ElementType( detail::inserter(mesh_obj).get_physical_container_collection() );
-
-    element.id( id );
-
-    size_t element_index = 0;
-    for ( ; vertices_begin != vertices_end; ++vertices_begin, ++element_index )
-        viennagrid::set_vertex( element, *vertices_begin, element_index );
-
-    return detail::push_element<false, true>(mesh_obj, element ).first;
+    typedef typename viennagrid::result_of::element_tag<ElementTypeOrTagT>::type ElementTagT;
+    return make_element_impl<ElementTagT>::make( mesh_obj, vertices_begin, vertices_end, id );
   }
 
 
