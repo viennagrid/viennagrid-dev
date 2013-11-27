@@ -59,21 +59,22 @@ namespace viennagrid
       typedef typename viennagrid::result_of::cell_tag<MeshType>::type CellTag;
 
 
-      typedef typename result_of::element<MeshType, viennagrid::vertex_tag>::type                          VertexType;
-      typedef typename result_of::handle<MeshType, viennagrid::vertex_tag>::type                           VertexHandleType;
+      typedef typename result_of::vertex<MeshType>::type                          VertexType;
+      typedef typename result_of::vertex_handle<MeshType>::type                           VertexHandleType;
+      typedef typename result_of::vertex_id<MeshType>::type                           VertexIDType;
       typedef typename result_of::element<MeshType, CellTag>::type     CellType;
       typedef typename result_of::handle<MeshType, CellTag>::type     CellHandleType;
 
-      typedef typename viennagrid::result_of::element_range<MeshType, viennagrid::vertex_tag>::type   VertexRange;
+      typedef typename viennagrid::result_of::vertex_range<MeshType>::type   VertexRange;
       typedef typename viennagrid::result_of::iterator<VertexRange>::type                             VertexIterator;
 
-      typedef typename viennagrid::result_of::element_range<MeshType, viennagrid::line_tag>::type     EdgeRange;
+      typedef typename viennagrid::result_of::line_range<MeshType>::type     EdgeRange;
       typedef typename viennagrid::result_of::iterator<EdgeRange>::type                               EdgeIterator;
 
-      typedef typename viennagrid::result_of::element_range<MeshType, typename CellTag::facet_tag>::type   FacetRange;
+      typedef typename viennagrid::result_of::facet_range<MeshType>::type   FacetRange;
       typedef typename viennagrid::result_of::iterator<FacetRange>::type                                   FacetIterator;
 
-      typedef typename viennagrid::result_of::element_range<MeshType, CellTag>::type     CellRange;
+      typedef typename viennagrid::result_of::cell_range<MeshType>::type     CellRange;
       typedef typename viennagrid::result_of::iterator<CellRange>::type                  CellIterator;
 
 
@@ -97,6 +98,9 @@ namespace viennagrid
       std::map<int, std::deque<std::size_t> >              local_cell_offsets;
       std::map<int, std::size_t>                           local_cell_num;
       std::map<int, std::deque<CellHandleType> >           local_cell_handle;
+
+      typedef viennagrid::element_key<CellType> CellElementKeyType;
+      std::map<CellElementKeyType, CellHandleType>         global_cells;
 
       //data containers:
       std::map<int, std::deque<std::pair<std::string, std::deque<double> > > >  local_scalar_vertex_data;
@@ -403,6 +407,7 @@ namespace viennagrid
           //****************************************************
 
           viennagrid::static_array<VertexHandleType, boundary_elements<CellTag, vertex_tag>::num> cell_vertex_handles;
+          std::vector<VertexIDType> cell_vertex_ids(numVertices);
 
           vtk_to_viennagrid_orientations<CellTag> reorderer;
           for (long j = 0; j < numVertices; j++)
@@ -413,11 +418,26 @@ namespace viennagrid
 
             cell_vertex_handles[j] = viennagrid::elements<viennagrid::vertex_tag>(mesh_obj).handle_at(global_vertex_index);
             viennagrid::add( segmentation[seg_id], viennagrid::dereference_handle(segmentation, cell_vertex_handles[j]) );
+
+            cell_vertex_ids[j] = viennagrid::dereference_handle(mesh_obj, cell_vertex_handles[j]).id();
           }
 
-          local_cell_handle[seg_id].push_back(
-            viennagrid::make_element<CellType>(segmentation[seg_id], cell_vertex_handles.begin(), cell_vertex_handles.end())//, typename CellType::id_type(i));//, );
-                                    );
+
+          static int counter = 0;
+          CellElementKeyType cell_key(cell_vertex_ids);
+          typename std::map<CellElementKeyType, CellHandleType>::iterator chit = global_cells.find( cell_key );
+          if (chit != global_cells.end())
+          {
+            local_cell_handle[seg_id].push_back( chit->second );
+            viennagrid::add( segmentation[seg_id], viennagrid::dereference_handle(mesh_obj, chit->second) );
+          }
+          else
+          {
+            CellHandleType cell_handle = viennagrid::make_element<CellType>(segmentation[seg_id], cell_vertex_handles.begin(), cell_vertex_handles.end());
+            global_cells[cell_key] = cell_handle;
+
+            local_cell_handle[seg_id].push_back(cell_handle);
+          }
         }
       }
 
