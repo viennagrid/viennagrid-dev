@@ -109,12 +109,11 @@ namespace viennagrid
           ids_to_erase.push_back( it->id() );
 
         ElementRangeType elements(mesh_obj_);
-        ElementRangeIterator back_it = --elements.end();
-
 
         for (typename std::deque<id_type>::iterator it = ids_to_erase.begin(); it != ids_to_erase.end(); ++it)
         {
           ElementRangeIterator to_erase_it = find( mesh_obj_, *it );
+          ElementRangeIterator back_it = --elements.end();
 
           if (back_it != to_erase_it)
           {
@@ -125,10 +124,7 @@ namespace viennagrid
             switch_handle( mesh_obj_, old_handle, new_handle );
           }
 
-
           elements.erase( back_it );
-
-          back_it--;
         }
       }
 
