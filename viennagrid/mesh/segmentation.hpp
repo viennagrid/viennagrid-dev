@@ -97,6 +97,11 @@ namespace viennagrid
     segment_id_type segment_id;
   };
 
+  template<typename SegmentationT>
+  void clear( segment_handle<SegmentationT> & segment_ )
+  {
+    segment_.view().clear();
+  }
 
   namespace result_of
   {
@@ -705,6 +710,12 @@ namespace viennagrid
 
     mesh_type * mesh_;
   };
+
+  template<typename WrappedConfigT>
+  void clear( segmentation<WrappedConfigT> & segmentation_ )
+  {
+    segmentation_.clear();
+  }
 
 
   namespace detail

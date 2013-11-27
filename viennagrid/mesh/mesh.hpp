@@ -329,6 +329,12 @@ namespace viennagrid
     change_counter_type change_counter_;
   };
 
+  template<typename WrappedConfigT>
+  void clear( mesh<WrappedConfigT> & mesh_ )
+  {
+    mesh_.clear();
+  }
+
 
   namespace result_of
   {
