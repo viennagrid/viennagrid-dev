@@ -44,7 +44,7 @@ namespace viennagrid
   neighbor_elements(segment_handle<SegmentationT> & segment, ElementOrHandleT const & element_or_handle);
 
   template<typename ElementTypeOrTagT, typename ConnectorElementTypeOrTagT, typename SegmentationT, typename ElementOrHandleT>
-  typename result_of::neighbor_range<segment_handle<SegmentationT>, ElementTypeOrTagT, ConnectorElementTypeOrTagT>::type
+  typename result_of::const_neighbor_range<segment_handle<SegmentationT>, ElementTypeOrTagT, ConnectorElementTypeOrTagT>::type
   neighbor_elements(segment_handle<SegmentationT> const & segment, ElementOrHandleT const & element_or_handle);
 
 
@@ -364,7 +364,7 @@ namespace viennagrid
     * @return                               The const neighbor range
     */
   template<typename ElementTypeOrTagT, typename ConnectorElementTypeOrTagT, typename SegmentationT, typename ElementOrHandleT>
-  typename result_of::neighbor_range<segment_handle<SegmentationT>, ElementTypeOrTagT, ConnectorElementTypeOrTagT>::type
+  typename result_of::const_neighbor_range<segment_handle<SegmentationT>, ElementTypeOrTagT, ConnectorElementTypeOrTagT>::type
   neighbor_elements(segment_handle<SegmentationT> const & segment, ElementOrHandleT const & element_or_handle)
   {
     return neighbor_elements<ElementTypeOrTagT, ConnectorElementTypeOrTagT>( segment.view(), element_or_handle );
