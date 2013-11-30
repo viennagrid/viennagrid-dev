@@ -423,7 +423,6 @@ namespace viennagrid
           }
 
 
-          static int counter = 0;
           CellElementKeyType cell_key(cell_vertex_ids);
           typename std::map<CellElementKeyType, CellHandleType>::iterator chit = global_cells.find( cell_key );
           if (chit != global_cells.end())
