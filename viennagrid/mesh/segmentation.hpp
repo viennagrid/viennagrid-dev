@@ -1578,6 +1578,12 @@ namespace viennagrid
       add(segment, *it);
   }
 
+  template<typename SegmentHandleT, typename ElementHandleT>
+  void add( SegmentHandleT & segment, ElementHandleT element_handle )
+  {
+    add( segment, viennagrid::dereference_handle(segment, element_handle) );
+  }
+
 
   namespace detail
   {
