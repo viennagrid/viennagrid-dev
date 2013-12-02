@@ -148,13 +148,13 @@ namespace viennagrid
 
   }
 
-  /** @brief Transfers data defined on elements of topological dimension 'dim_src' to elements of topological dimension 'dim_dest'. For example, values defined on cells are tranferred to vertices.
+  /** @brief Transfers data defined on 'source' elements to 'destination' elements. For example, values defined on cells are tranferred to vertices.
    *
    * Even though this functionality is sometimes referred to as interpolation, it is not an interpolation in the strict mathematical sense.
    *
-   * @tparam dim_src           Topological dimension of the source elements
-   * @tparam dim_dest          Topological dimension of the destination elements
-   * @param mesh_or_segment             A mesh or segment, in which the source and destination elements reside
+   * @tparam SourceTypeOrTag        Topological source element or tag, e.g., cell_tag
+   * @tparam DestinationTypeOrTag   Topological destination element or tag, e.g., vertex_tag
+   * @param mesh_or_segment    A mesh or segment, in which the source and destination elements reside
    * @param accessor_src       An accessor functor for retrieving the data defined on each source element
    * @param setter_dest        A setter for storing the data on each destination element (first argument is the destination n-cell, second argument is the value)
    * @param averager           A functor which computes the value of the destination element from an STL-compatible container holding the values of all adjacent source elements
