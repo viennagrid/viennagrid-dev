@@ -340,6 +340,10 @@ namespace viennagrid
 
   /** @brief A default mesh for a boundary representation in 1d: vertex 1d */
   typedef vertex_1d_mesh                                                                    brep_1d_mesh;
+  /** @brief A segmentation for a boundary representation in 1d: vertex 1d */
+  typedef vertex_1d_segmentation                                                            brep_1d_segmentation;
+  /** @brief A segment for a boundary representation in 1d: vertex 1d */
+  typedef vertex_1d_segment_handle                                                          brep_1d_segment_handle;
   /** @brief A default view for a boundary representation in 1d: vertex 1d */
   typedef vertex_1d_view                                                                    brep_1d_view;
   /** @brief A default cell for a boundary representation in 1d: vertex 1d */
@@ -347,6 +351,10 @@ namespace viennagrid
 
   /** @brief A default mesh for a boundary representation in 2d: line 2d */
   typedef line_2d_mesh                                                                      brep_2d_mesh;
+  /** @brief A segmentation for a boundary representation in 2d: line 2d */
+  typedef line_2d_segmentation                                                              brep_2d_segmentation;
+  /** @brief A segment for a boundary representation in 2d: line 2d */
+  typedef line_2d_segment_handle                                                            brep_2d_segment_handle;
   /** @brief A default view for a boundary representation in 2d: line 2d */
   typedef line_2d_view                                                                      brep_2d_view;
   /** @brief A default cell for a boundary representation in 2d: line 2d */
@@ -354,6 +362,10 @@ namespace viennagrid
 
   /** @brief A default mesh for a boundary representation in 3d: plc 3d */
   typedef plc_3d_mesh                                                                       brep_3d_mesh;
+  /** @brief A segmentation for a boundary representation in 3d: plc 3d */
+  typedef plc_3d_segmentation                                                               brep_3d_segmentation;
+  /** @brief A segment for a boundary representation in 3d: plc 3d */
+  typedef plc_3d_segment_handle                                                             brep_3d_segment_handle;
   /** @brief A default view for a boundary representation in 3d: plc 3d */
   typedef plc_3d_view                                                                       brep_3d_view;
   /** @brief A default cell for a boundary representation in 3d: plc 3d */
