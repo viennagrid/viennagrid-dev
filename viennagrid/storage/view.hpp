@@ -87,6 +87,12 @@ namespace viennagrid
       pointer operator->()       { return &(operator* ()); }
       pointer operator->() const { return &(operator* ()); }
 
+      iterator & operator++() { base::operator++(); return *this; }
+      iterator operator++(int) { base::operator++(int()); return *this; }
+
+      iterator & operator--() { base::operator--(); return *this; }
+      iterator operator--(int) { base::operator--(int()); return *this; }
+
     private:
       view * view_;
     };
@@ -115,6 +121,12 @@ namespace viennagrid
 
       pointer operator->() const { return &(operator* ()); }
 
+      const_iterator & operator++() { base::operator++(); return *this; }
+      const_iterator operator++(int) { base::operator++(int()); return *this; }
+
+      const_iterator & operator--() { base::operator--(); return *this; }
+      const_iterator operator--(int) { base::operator--(int()); return *this; }
+
     private:
       view const * view_;
     };
@@ -141,6 +153,12 @@ namespace viennagrid
 
       pointer operator->() { return &(operator* ()); }
       pointer operator->() const { return &(operator* ()); }
+
+      reverse_iterator & operator++() { base::operator++(); return *this; }
+      reverse_iterator operator++(int) { base::operator++(int()); return *this; }
+
+      reverse_iterator & operator--() { base::operator--(); return *this; }
+      reverse_iterator operator--(int) { base::operator--(int()); return *this; }
 
     private:
       view * view_;
@@ -169,6 +187,12 @@ namespace viennagrid
       const_reference operator* () const { return view_->dereference_handle( handle() ); }
 
       pointer operator->() const { return &(operator* ()); }
+
+      const_reverse_iterator & operator++() { base::operator++(); return *this; }
+      const_reverse_iterator operator++(int) { base::operator++(int()); return *this; }
+
+      const_reverse_iterator & operator--() { base::operator--(); return *this; }
+      const_reverse_iterator operator--(int) { base::operator--(int()); return *this; }
 
     private:
       view const * view_;
@@ -322,6 +346,12 @@ namespace viennagrid
       pointer operator->()       { return &(operator* ()); }
       pointer operator->() const { return &(operator* ()); }
 
+      iterator & operator++() { base::operator++(); return *this; }
+      iterator operator++(int) { base::operator++(int()); return *this; }
+
+      iterator & operator--() { base::operator--(); return *this; }
+      iterator operator--(int) { base::operator--(int()); return *this; }
+
     private:
       view * view_;
     };
@@ -350,6 +380,12 @@ namespace viennagrid
 
       pointer operator->() const { return &(operator* ()); }
 
+      const_iterator & operator++() { base::operator++(); return *this; }
+      const_iterator operator++(int) { base::operator++(int()); return *this; }
+
+      const_iterator & operator--() { base::operator--(); return *this; }
+      const_iterator operator--(int) { base::operator--(int()); return *this; }
+
     private:
       view const * view_;
     };
@@ -376,6 +412,12 @@ namespace viennagrid
 
       pointer operator->() { return &(operator* ()); }
       pointer operator->() const { return &(operator* ()); }
+
+      reverse_iterator & operator++() { base::operator++(); return *this; }
+      reverse_iterator operator++(int) { base::operator++(int()); return *this; }
+
+      reverse_iterator & operator--() { base::operator--(); return *this; }
+      reverse_iterator operator--(int) { base::operator--(int()); return *this; }
 
     private:
       view * view_;
@@ -404,6 +446,12 @@ namespace viennagrid
       const_reference operator* () const { return view_->dereference_handle( handle() ); }
 
       pointer operator->() const { return &(operator* ()); }
+
+      const_reverse_iterator & operator++() { base::operator++(); return *this; }
+      const_reverse_iterator operator++(int) { base::operator++(int()); return *this; }
+
+      const_reverse_iterator & operator--() { base::operator--(); return *this; }
+      const_reverse_iterator operator--(int) { base::operator--(int()); return *this; }
 
     private:
       view const * view_;
