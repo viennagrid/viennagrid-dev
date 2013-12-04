@@ -153,10 +153,10 @@ namespace viennagrid
 
       // increment- and decrementable
       const_iterator & operator++() { ++ptr_; return *this; }
-      const_iterator operator++(int) { iterator tmp = *this; ++*this; return tmp; }
+      const_iterator operator++(int) { const_iterator tmp = *this; ++*this; return tmp; }
 
       const_iterator & operator--() { --ptr_; return *this; }
-      const_iterator operator--(int) { iterator tmp = *this; --*this; return tmp; }
+      const_iterator operator--(int) { const_iterator tmp = *this; --*this; return tmp; }
 
       // add and subtractable; operator+ and operator- is below
       difference_type operator-(const iterator & it) const { return ptr_ - it.ptr_; }
