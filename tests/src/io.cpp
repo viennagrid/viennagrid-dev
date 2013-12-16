@@ -265,7 +265,7 @@ int main()
 
 
   std::cout << "*********** Reading from VTK, 2d ***********" << std::endl;
-  test_vtk<viennagrid::triangular_2d_mesh>(vtk_reader_2d, "io_2d_main.pvd", "io_2d_2");
+  test_vtk<viennagrid::triangular_2d_mesh>(vtk_reader_2d, "io_2d.vtu", "io_2d_2");
 
   std::cout << "-- Scalar vertex quantities: --" << std::endl;
   print(vtk_reader_2d.scalar_vertex_data_names(1));
@@ -276,17 +276,17 @@ int main()
   std::cout << "-- Vector cell quantities: --" << std::endl;
   print(vtk_reader_2d.vector_cell_data_names(1));
 
-  assert( (vtk_reader_2d.scalar_vertex_data_names(1).size() == 2) && "Not all data parsed!");
-  assert( (vtk_reader_2d.vector_vertex_data_names(1).size() == 1) && "Not all data parsed!");
-  assert( (vtk_reader_2d.scalar_cell_data_names(1).size() == 2) && "Not all data parsed!");
-  assert( (vtk_reader_2d.vector_cell_data_names(1).size() == 1) && "Not all data parsed!");
+  assert( (vtk_reader_2d.scalar_vertex_data_names(0).size() == 2) && "Not all data parsed!");
+  assert( (vtk_reader_2d.vector_vertex_data_names(0).size() == 1) && "Not all data parsed!");
+  assert( (vtk_reader_2d.scalar_cell_data_names(0).size() == 2) && "Not all data parsed!");
+  assert( (vtk_reader_2d.vector_cell_data_names(0).size() == 1) && "Not all data parsed!");
 
 
   viennagrid::io::vtk_reader<viennagrid::tetrahedral_3d_mesh>  vtk_reader_3d;
 
 
   std::cout << "*********** Reading from VTK, 3d ***********" << std::endl;
-  test_vtk<viennagrid::tetrahedral_3d_mesh>(vtk_reader_3d, "io_3d_main.pvd", "io_3d_2");
+  test_vtk<viennagrid::tetrahedral_3d_mesh>(vtk_reader_3d, "io_3d.vtu", "io_3d_2");
 
   std::cout << "-- Scalar vertex quantities: --" << std::endl;
   print(vtk_reader_3d.scalar_vertex_data_names(1));
@@ -297,10 +297,10 @@ int main()
   std::cout << "-- Vector cell quantities: --" << std::endl;
   print(vtk_reader_3d.vector_cell_data_names(1));
 
-  assert( (vtk_reader_3d.scalar_vertex_data_names(1).size() == 2) && "Not all data parsed!");
-  assert( (vtk_reader_3d.vector_vertex_data_names(1).size() == 1) && "Not all data parsed!");
-  assert( (vtk_reader_3d.scalar_cell_data_names(1).size() == 2) && "Not all data parsed!");
-  assert( (vtk_reader_3d.vector_cell_data_names(1).size() == 1) && "Not all data parsed!");
+  assert( (vtk_reader_3d.scalar_vertex_data_names(0).size() == 2) && "Not all data parsed!");
+  assert( (vtk_reader_3d.vector_vertex_data_names(0).size() == 1) && "Not all data parsed!");
+  assert( (vtk_reader_3d.scalar_cell_data_names(0).size() == 2) && "Not all data parsed!");
+  assert( (vtk_reader_3d.vector_cell_data_names(0).size() == 1) && "Not all data parsed!");
 
 //   test<viennagrid::config::tetrahedral_3d>(vtk_reader_3d, "multi-segment_main.pvd", "io_3d_2");
 
