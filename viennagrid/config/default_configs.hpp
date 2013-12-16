@@ -131,6 +131,12 @@ namespace viennagrid
   /** @brief A default cell for lines in 1d, default config is used */
   typedef viennagrid::result_of::cell<line_1d_mesh>::type                           line_1d_cell;
 
+  /** @brief A thin segmentation for lines including only cells in 1d, thin config is used */
+  typedef viennagrid::result_of::cell_only_segmentation< line_1d_mesh >::type  cell_only_line_1d_segmentation;
+  /** @brief A thin segment for lines including only cells in 1d, thin config is used */
+  typedef viennagrid::result_of::segment_handle< cell_only_line_1d_segmentation >::type  cell_only_line_1d_segment_handle;
+
+
   /** @brief A default mesh for lines in 2d, default config is used */
   typedef viennagrid::mesh< config::line_2d >                                       line_2d_mesh;
   /** @brief A default segmentation for lines in 2d, default config is used */
@@ -142,6 +148,12 @@ namespace viennagrid
   /** @brief A default cell for lines in 2d, default config is used */
   typedef viennagrid::result_of::cell<line_2d_mesh>::type                           line_2d_cell;
 
+  /** @brief A thin segmentation for lines including only cells in 2d, thin config is used */
+  typedef viennagrid::result_of::cell_only_segmentation< line_2d_mesh >::type  cell_only_line_2d_segmentation;
+  /** @brief A thin segment for lines including only cells in 2d, thin config is used */
+  typedef viennagrid::result_of::segment_handle< cell_only_line_2d_segmentation >::type  cell_only_line_2d_segment_handle;
+
+
   /** @brief A default mesh for lines in 3d, default config is used */
   typedef viennagrid::mesh< config::line_3d >                                       line_3d_mesh;
   /** @brief A default segmentation for lines in 3d, default config is used */
@@ -152,6 +164,11 @@ namespace viennagrid
   typedef viennagrid::result_of::mesh_view< line_3d_mesh >::type                    line_3d_view;
   /** @brief A default cell for lines in 3d, default config is used */
   typedef viennagrid::result_of::cell<line_3d_mesh>::type                           line_3d_cell;
+
+  /** @brief A thin segmentation for lines including only cells in 3d, thin config is used */
+  typedef viennagrid::result_of::cell_only_segmentation< line_3d_mesh >::type  cell_only_line_3d_segmentation;
+  /** @brief A thin segment for lines including only cells in 3d, thin config is used */
+  typedef viennagrid::result_of::segment_handle< cell_only_line_3d_segmentation >::type  cell_only_line_3d_segment_handle;
 
 
   ////////////////// topologically 2d meshs ///////////////////
@@ -165,10 +182,21 @@ namespace viennagrid
       typedef result_of::full_mesh_config< viennagrid::triangle_tag, point_type_2d, viennagrid::pointer_handle_tag >::type     type;
     };
 
+    struct thin_triangular_2d
+    {
+      typedef result_of::thin_mesh_config< viennagrid::triangle_tag, point_type_2d, viennagrid::pointer_handle_tag >::type  type;
+    };
+
+
     /** @brief A default config for triangles in 3d, pointer handles are used */
     struct triangular_3d
     {
       typedef result_of::full_mesh_config< viennagrid::triangle_tag, point_type_3d, viennagrid::pointer_handle_tag >::type     type;
+    };
+
+    struct thin_triangular_3d
+    {
+      typedef result_of::thin_mesh_config< viennagrid::triangle_tag, point_type_3d, viennagrid::pointer_handle_tag >::type  type;
     };
 
     /** @brief A default config for quadrilaterals in 2d, pointer handles are used */
@@ -195,11 +223,11 @@ namespace viennagrid
       typedef result_of::full_mesh_config< viennagrid::polygon_tag, point_type_3d, viennagrid::pointer_handle_tag >::type     type;
     };
 
-    /** @brief A default config for PLCs in 2d, pointer handles are used */
-    struct plc_2d
-    {
-      typedef result_of::full_mesh_config< viennagrid::plc_tag, point_type_2d, viennagrid::pointer_handle_tag >::type     type;
-    };
+//     /** @brief A default config for PLCs in 2d, pointer handles are used */
+//     struct plc_2d
+//     {
+//       typedef result_of::full_mesh_config< viennagrid::plc_tag, point_type_2d, viennagrid::pointer_handle_tag >::type     type;
+//     };
 
     /** @brief A default config for PLCs in 3d, pointer handles are used */
     struct plc_3d
@@ -220,6 +248,26 @@ namespace viennagrid
   /** @brief A default cell for triangles in 2d, default config is used */
   typedef viennagrid::result_of::cell<triangular_2d_mesh>::type                           triangular_2d_cell;
 
+  /** @brief A thin mesh for triangles in 2d, thin config is used */
+  typedef viennagrid::mesh< config::thin_triangular_2d >                                  thin_triangular_2d_mesh;
+  /** @brief A thin segmentation for triangles in 2d, thin config is used */
+  typedef viennagrid::result_of::segmentation< thin_triangular_2d_mesh >::type            thin_triangular_2d_segmentation;
+  /** @brief A thin segment for triangles in 2d, thin config is used */
+  typedef viennagrid::result_of::segment_handle< thin_triangular_2d_segmentation >::type  thin_triangular_2d_segment_handle;
+  /** @brief A thin mesh view for triangles in 2d, thin config is used */
+  typedef viennagrid::result_of::mesh_view< thin_triangular_2d_mesh >::type               thin_triangular_2d_view;
+  /** @brief A thin cell for triangles in 2d, thin config is used */
+  typedef viennagrid::result_of::cell<thin_triangular_2d_mesh>::type                      thin_triangular_2d_cell;
+
+  /** @brief A thin segmentation for triangles including only cells in 2d, thin config is used */
+  typedef viennagrid::result_of::cell_only_segmentation< thin_triangular_2d_mesh >::type  thin_cell_only_triangular_2d_segmentation;
+  /** @brief A thin segment for triangles including only cells in 2d, thin config is used */
+  typedef viennagrid::result_of::segment_handle< thin_cell_only_triangular_2d_segmentation >::type  thin_cell_only_triangular_2d_segment_handle;
+
+
+
+
+
   /** @brief A default mesh for triangles in 3d, default config is used */
   typedef viennagrid::mesh< config::triangular_3d >                                         triangular_3d_mesh;
   /** @brief A default segmentation for triangles in 3d, default config is used */
@@ -234,6 +282,31 @@ namespace viennagrid
   typedef viennagrid::result_of::mesh_view< triangular_3d_mesh >::type                      triangular_3d_view;
   /** @brief A default cell for triangles in 3d, default config is used */
   typedef viennagrid::result_of::cell<triangular_3d_mesh>::type                             triangular_3d_cell;
+
+
+
+  /** @brief A thin mesh for triangles in 3d, thin config is used */
+  typedef viennagrid::mesh< config::thin_triangular_3d >                                  thin_triangular_3d_mesh;
+  /** @brief A thin segmentation for triangles in 3d, thin config is used */
+  typedef viennagrid::result_of::segmentation< thin_triangular_3d_mesh >::type            thin_triangular_3d_segmentation;
+  /** @brief A thin segment for triangles in 3d, thin config is used */
+  typedef viennagrid::result_of::segment_handle< thin_triangular_3d_segmentation >::type  thin_triangular_3d_segment_handle;
+  /** @brief An oriented hull segmentation for triangles in 3d, thin config is used */
+  typedef viennagrid::result_of::oriented_3d_hull_segmentation< thin_triangular_3d_mesh >::type  thin_triangular_hull_3d_segmentation;
+  /** @brief An oriented hull segmentat for triangles in 3d, thin config is used */
+  typedef viennagrid::result_of::segment_handle< thin_triangular_hull_3d_segmentation >::type    thin_triangular_hull_3d_segment_handle;
+  /** @brief A thin mesh view for triangles in 3d, thin config is used */
+  typedef viennagrid::result_of::mesh_view< thin_triangular_3d_mesh >::type               thin_triangular_3d_view;
+  /** @brief A thin cell for triangles in 3d, thin config is used */
+  typedef viennagrid::result_of::cell<thin_triangular_3d_mesh>::type                      thin_triangular_3d_cell;
+
+  /** @brief A thin segmentation for triangles including only cells in 3d, thin config is used */
+  typedef viennagrid::result_of::cell_only_segmentation< thin_triangular_3d_mesh >::type  thin_cell_only_triangular_3d_segmentation;
+  /** @brief A thin segment for triangles including only cells in 3d, thin config is used */
+  typedef viennagrid::result_of::segment_handle< thin_cell_only_triangular_3d_segmentation >::type  thin_cell_only_triangular_3d_segment_handle;
+
+
+
 
 
   /** @brief A default mesh for quadrilaterals in 2d, default config is used */
@@ -304,6 +377,11 @@ namespace viennagrid
       typedef result_of::full_mesh_config< viennagrid::tetrahedron_tag, point_type_3d, viennagrid::pointer_handle_tag >::type  type;
     };
 
+    struct thin_tetrahedral_3d
+    {
+      typedef result_of::thin_mesh_config< viennagrid::tetrahedron_tag, point_type_3d, viennagrid::pointer_handle_tag >::type  type;
+    };
+
     /** @brief A default config for hexahedrons in 3d, pointer handles are used */
     struct hexahedral_3d
     {
@@ -321,6 +399,23 @@ namespace viennagrid
   typedef viennagrid::result_of::mesh_view< tetrahedral_3d_mesh >::type                    tetrahedral_3d_view;
   /** @brief A default cell for tetrahedrons in 3d, default config is used */
   typedef viennagrid::result_of::cell<tetrahedral_3d_mesh>::type                           tetrahedral_3d_cell;
+
+
+  /** @brief A thin mesh for tetrahedrons in 3d, thin config is used */
+  typedef viennagrid::mesh< config::thin_tetrahedral_3d >                                  thin_tetrahedral_3d_mesh;
+  /** @brief A thin segmentation for tetrahedrons in 3d, thin config is used */
+  typedef viennagrid::result_of::segmentation< thin_tetrahedral_3d_mesh >::type            thin_tetrahedral_3d_segmentation;
+  /** @brief A thin segment for tetrahedrons in 3d, thin config is used */
+  typedef viennagrid::result_of::segment_handle< thin_tetrahedral_3d_segmentation >::type  thin_tetrahedral_3d_segment_handle;
+  /** @brief A thin mesh view for tetrahedrons in 3d, thin config is used */
+  typedef viennagrid::result_of::mesh_view< thin_tetrahedral_3d_mesh >::type               thin_tetrahedral_3d_view;
+  /** @brief A thin cell for tetrahedrons in 3d, thin config is used */
+  typedef viennagrid::result_of::cell<thin_tetrahedral_3d_mesh>::type                      thin_tetrahedral_3d_cell;
+
+  /** @brief A thin segmentation for tetrahedrons including only cells in 3d, thin config is used */
+  typedef viennagrid::result_of::cell_only_segmentation< thin_tetrahedral_3d_mesh >::type  thin_cell_only_tetrahedral_3d_segmentation;
+  /** @brief A thin segment for tetrahedrons including only cells in 3d, thin config is used */
+  typedef viennagrid::result_of::segment_handle< thin_cell_only_tetrahedral_3d_segmentation >::type  thin_cell_only_tetrahedral_3d_segment_handle;
 
 
   /** @brief A default mesh for hexahedrons in 3d, default config is used */
