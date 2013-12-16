@@ -144,7 +144,7 @@ namespace viennagrid
     template<typename segmentation_type>
     struct point< viennagrid::segment_handle<segmentation_type> >
     {
-        typedef typename point<typename viennagrid::segment_handle<segmentation_type>::view_type>::type type;
+        typedef typename point<typename viennagrid::segment_handle<segmentation_type>::mesh_type>::type type;
     };
 
 
@@ -300,8 +300,7 @@ namespace viennagrid
   typename detail::result_of::value_type<HandleT>::type &
   dereference_handle(segment_handle<SegmentationT> & segment_handle, HandleT const & handle)
   {
-    typedef typename detail::result_of::value_type<HandleT>::type value_type;
-    return get<value_type>(detail::element_collection(segment_handle)).dereference_handle( handle );
+    return dereference_handle( segment_handle.parent().mesh(), handle );
   }
 
   /** @brief Function for dereferencing a handle using a segment object
@@ -314,8 +313,7 @@ namespace viennagrid
   typename detail::result_of::value_type<HandleT>::type const &
   dereference_handle(segment_handle<SegmentationT> const & segment_handle, HandleT const & handle)
   {
-    typedef typename detail::result_of::value_type<HandleT>::type value_type;
-    return get<value_type>(detail::element_collection(segment_handle)).dereference_handle( handle );
+    return dereference_handle( segment_handle.parent().mesh(), handle );
   }
 
 
@@ -344,8 +342,8 @@ namespace viennagrid
   template<typename SegmentationType>
   typename result_of::point< segment_handle<SegmentationType> >::type &
   point(segment_handle<SegmentationType> & segment,
-        typename result_of::vertex< segment_handle<SegmentationType> >::type & vertex)
-  { return point( segment.view(), vertex ); }
+        typename result_of::vertex< typename SegmentationType::mesh_type >::type & vertex)
+  { return point( segment.parent().mesh(), vertex ); }
 
   /** @brief Function for obtaining the point from a vertex, const version
     *
@@ -357,8 +355,8 @@ namespace viennagrid
   template<typename SegmentationType>
   typename result_of::point< segment_handle<SegmentationType> >::type const &
   point( segment_handle<SegmentationType> const & segment,
-         typename result_of::vertex< segment_handle<SegmentationType> >::type const & vertex)
-  { return point( segment.view(), vertex ); }
+         typename result_of::vertex< typename SegmentationType::mesh_type >::type const & vertex)
+  { return point( segment.parent().mesh(), vertex ); }
 
   /** @brief Function for obtaining the point from a vertex
     *
@@ -370,8 +368,8 @@ namespace viennagrid
   template<typename SegmentationType>
   typename result_of::point< segment_handle<SegmentationType> >::type &
   point(segment_handle<SegmentationType> & segment,
-        typename result_of::vertex_handle< segment_handle<SegmentationType> >::type vertex_handle)
-  { return point( segment.view(), vertex_handle ); }
+        typename result_of::vertex_handle< typename SegmentationType::mesh_type >::type vertex_handle)
+  { return point( segment.parent().mesh(), vertex_handle ); }
 
   /** @brief Function for obtaining the point from a vertex, const version
     *
@@ -383,8 +381,8 @@ namespace viennagrid
   template<typename SegmentationType>
   typename result_of::point< segment_handle<SegmentationType> >::type const &
   point( segment_handle<SegmentationType> const & segment,
-         typename result_of::const_vertex_handle< segment_handle<SegmentationType> >::type vertex_handle)
-  { return point( segment.view(), vertex_handle ); }
+         typename result_of::const_vertex_handle< typename SegmentationType::mesh_type >::type vertex_handle)
+  { return point( segment.parent().mesh(), vertex_handle ); }
 
 
 
@@ -771,8 +769,7 @@ namespace viennagrid
   typename detail::result_of::value_type<HandleT>::type &
   dereference_handle(segmentation<WrappedConfigT> & segmentation_, HandleT const & handle)
   {
-    typedef typename detail::result_of::value_type<HandleT>::type value_type;
-    return get<value_type>(detail::element_collection(segmentation_)).dereference_handle( handle );
+    return dereference_handle( segmentation_.mesh(), handle );
   }
 
   // doxygen docu in mesh.hpp
@@ -786,8 +783,7 @@ namespace viennagrid
   typename detail::result_of::value_type<HandleT>::type const &
   dereference_handle(segmentation<WrappedConfigT> const & segmentation_, HandleT const & handle)
   {
-    typedef typename detail::result_of::value_type<HandleT>::type value_type;
-    return get<value_type>(detail::element_collection(segmentation_)).dereference_handle( handle );
+    return dereference_handle( segmentation_.mesh(), handle );
   }
 
 
@@ -1537,21 +1533,59 @@ namespace viennagrid
   }
 
 
-  /** @brief Adds a vertex to a segment
-    *
-    * @tparam SegmentHandleT        The segment type
-    * @tparam WrappedConfigT  The wrapped config of the vertex
-    * @param  segment         The segment object
-    * @param  vertex          The vertex object
-    */
-  template<typename SegmentHandleT, typename WrappedConfigT>
-  void add( SegmentHandleT & segment, viennagrid::element<vertex_tag, WrappedConfigT> & vertex )
+
+  namespace detail
   {
-    typedef viennagrid::element<vertex_tag, WrappedConfigT> element_type;
-    viennagrid::elements<element_type>( segment.view() ).insert_unique_handle( viennagrid::handle( segment.parent().mesh(), vertex ) );
-    viennagrid::elements<element_type>( segment.parent().all_elements() ).insert_unique_handle( viennagrid::handle( segment.parent().mesh(), vertex ) );
-    detail::add( segment, viennagrid::make_accessor<element_type>( detail::element_segment_mapping_collection(segment) ), vertex );
+    template<typename SegmentHandleT, typename ElementTagT, typename WrappedConfigT>
+    void simple_add( SegmentHandleT & segment, viennagrid::element<ElementTagT, WrappedConfigT> & element )
+    {
+      typedef viennagrid::element<ElementTagT, WrappedConfigT> ElementType;
+
+      viennagrid::elements<ElementType>( segment.view() ).insert_unique_handle( viennagrid::handle( segment.parent().mesh(), element ) );
+      viennagrid::elements<ElementType>( segment.parent().all_elements() ).insert_unique_handle( viennagrid::handle( segment.parent().mesh(), element ) );
+      add( segment, viennagrid::make_accessor<ElementType>( detail::element_segment_mapping_collection(segment) ), element );
+    }
+
+    template<typename SegmentHandleT, typename ElementTagT, typename WrappedConfigT>
+    void simple_unchecked_add( SegmentHandleT & segment, viennagrid::element<ElementTagT, WrappedConfigT> & element )
+    {
+      typedef viennagrid::element<ElementTagT, WrappedConfigT> ElementType;
+
+      viennagrid::elements<ElementType>( segment.view() ).insert_handle( viennagrid::handle( segment.parent().mesh(), element ) );
+      viennagrid::elements<ElementType>( segment.parent().all_elements() ).insert_handle( viennagrid::handle( segment.parent().mesh(), element ) );
+      add( segment, viennagrid::make_accessor<ElementType>( detail::element_segment_mapping_collection(segment) ), element );
+    }
   }
+
+
+  template<typename SegmentT>
+  struct add_functor
+  {
+    add_functor(SegmentT & segment_) : segment(segment_) {}
+
+    template<typename BoundaryElementT>
+    void operator()( BoundaryElementT & boundary_element )
+    {
+      detail::simple_add(segment, boundary_element);
+    }
+
+    SegmentT & segment;
+  };
+
+  template<typename SegmentT>
+  struct unchecked_add_functor
+  {
+    unchecked_add_functor(SegmentT & segment_) : segment(segment_) {}
+
+    template<typename BoundaryElementT>
+    void operator()( BoundaryElementT & boundary_element )
+    {
+      detail::simple_unchecked_add(segment, boundary_element);
+    }
+
+    SegmentT & segment;
+  };
+
 
   /** @brief Adds an element to a segment, all boundary elements are added recursively
     *
@@ -1564,24 +1598,44 @@ namespace viennagrid
   template<typename SegmentHandleT, typename ElementTagT, typename WrappedConfigT>
   void add( SegmentHandleT & segment, viennagrid::element<ElementTagT, WrappedConfigT> & element )
   {
-    typedef viennagrid::element<ElementTagT, WrappedConfigT> element_type;
-    viennagrid::elements<element_type>( segment.view() ).insert_unique_handle( viennagrid::handle( segment.parent().mesh(), element ) );
-    viennagrid::elements<element_type>( segment.parent().all_elements() ).insert_unique_handle( viennagrid::handle( segment.parent().mesh(), element ) );
-    detail::add( segment, viennagrid::make_accessor<element_type>( detail::element_segment_mapping_collection(segment) ), element );
+    typedef viennagrid::element<ElementTagT, WrappedConfigT> ElementType;
 
-    // recursively adding facet elements; view containers has to be std::set
-    typedef typename viennagrid::result_of::facet_range< element_type >::type FacetRangeType;
-    typedef typename viennagrid::result_of::iterator< FacetRangeType >::type FacetRangeIterator;
+    detail::simple_add(segment, element);
 
-    FacetRangeType facets( element );
-    for (FacetRangeIterator it = facets.begin(); it != facets.end(); ++it)
-      add(segment, *it);
+    add_functor<SegmentHandleT> af(segment);
+    for_each_boundary_element( element, af );
   }
+
+  template<typename SegmentHandleT, typename ElementTagT, typename WrappedConfigT>
+  void unchecked_add( SegmentHandleT & segment, viennagrid::element<ElementTagT, WrappedConfigT> & element )
+  {
+    typedef viennagrid::element<ElementTagT, WrappedConfigT> ElementType;
+
+    detail::simple_unchecked_add(segment, element);
+
+
+    typedef typename ElementType::boundary_cell_typelist BoundaryElementTypelist;
+//     typedef typename SegmentHandleT::view_type ViewType;
+    typedef typename viennagrid::result_of::element_typelist<SegmentHandleT>::type SegmentTypelist;
+
+    typedef typename viennagrid::detail::result_of::intersection<BoundaryElementTypelist, SegmentTypelist>::type ForEachTypelist;
+
+
+    unchecked_add_functor<SegmentHandleT> uaf(segment);
+    for_each_boundary_element<ForEachTypelist>( element, uaf );
+  }
+
 
   template<typename SegmentHandleT, typename ElementHandleT>
   void add( SegmentHandleT & segment, ElementHandleT element_handle )
   {
-    add( segment, viennagrid::dereference_handle(segment, element_handle) );
+    viennagrid::add( segment, viennagrid::dereference_handle(segment, element_handle) );
+  }
+
+  template<typename SegmentHandleT, typename ElementHandleT>
+  void unchecked_add( SegmentHandleT & segment, ElementHandleT element_handle )
+  {
+    viennagrid::unchecked_add( segment, viennagrid::dereference_handle(segment, element_handle) );
   }
 
 
@@ -1719,7 +1773,7 @@ namespace viennagrid
               bool
           > result = push_element<generate_id, call_callback>( segment.view(), element );
 
-      add( segment, viennagrid::dereference_handle(segment, result.first) );
+      viennagrid::add( segment, viennagrid::dereference_handle(segment, result.first) );
       return result;
     }
   }
