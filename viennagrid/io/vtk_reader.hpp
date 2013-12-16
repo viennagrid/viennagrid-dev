@@ -118,7 +118,7 @@ namespace viennagrid
         map.clear();
       }
 
-      void clear()
+      void post_clear()
       {
         clear_map(registered_vertex_scalar_data);
         clear_map(registered_vertex_vector_data);
@@ -146,6 +146,37 @@ namespace viennagrid
 
         registered_segment_cell_scalar_data.clear();
         registered_segment_cell_vector_data.clear();
+      }
+
+
+      void pre_clear()
+      {
+        vertex_data_scalar_read.clear();
+        vertex_data_vector_read.clear();
+
+        cell_data_scalar_read.clear();
+        cell_data_vector_read.clear();
+
+        vertex_scalar_data.clear();
+        vertex_vector_data.clear();
+
+        cell_scalar_data.clear();
+        cell_vector_data.clear();
+
+        global_points.clear();
+        global_points_2.clear();
+        local_to_global_map.clear();
+        local_cell_vertices.clear();
+        local_cell_offsets.clear();
+        local_cell_num.clear();
+        local_cell_handle.clear();
+
+        global_cells.clear();
+
+        local_scalar_vertex_data.clear();
+        local_vector_vertex_data.clear();
+        local_scalar_cell_data.clear();
+        local_vector_cell_data.clear();
       }
 
 
@@ -838,7 +869,7 @@ namespace viennagrid
     public:
 
 
-      ~vtk_reader() { clear(); }
+      ~vtk_reader() { pre_clear(); post_clear(); }
 
 
       /** @brief Triggers the read process.
@@ -849,6 +880,8 @@ namespace viennagrid
        */
       int operator()(MeshType & mesh_obj, SegmentationType & segmentation, std::string const & filename)
       {
+        pre_clear();
+
         std::string::size_type pos  = filename.rfind(".")+1;
         std::string extension = filename.substr(pos, filename.size());
 
@@ -886,7 +919,7 @@ namespace viennagrid
           setupData(mesh_obj, segmentation, it->first);
         }
 
-        clear();
+        post_clear();
 
         return EXIT_SUCCESS;
       } //operator()
