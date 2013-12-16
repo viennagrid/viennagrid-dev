@@ -1192,6 +1192,62 @@ namespace viennagrid
 
 
 
+
+    /** @brief Metafunction for obtaining a segmentation type using only cells for a mesh type and with settings. Segment element information is not present (see segment_element_info for more information)
+     *
+     * @tparam MeshT          The base mesh type to which the segmentation is associated
+     * @tparam ViewT            The mesh view type representing the referenced elements, default ist default mesh view from MeshT
+     * @tparam SegmentIDType    The ID type for segments, default is int
+     * @tparam AppendixType     The appendix type, for internal use only, don't change default type unless you know what you are doing :)
+     */
+    template<typename MeshT,
+             typename ViewT =
+              typename viennagrid::result_of::mesh_view_from_typelist<
+                MeshT,
+                typename viennagrid::make_typelist<
+                  typename viennagrid::result_of::cell_tag<MeshT>::type
+                >,
+                viennagrid::make_typemap<
+                  default_tag,
+                  std_deque_tag
+                >::type
+              >::type,
+             typename SegmentIDType = int,
+             typename AppendixType =
+                viennagrid::collection<
+                    typename viennagrid::make_typemap<
+                        viennagrid::detail::element_segment_mapping_tag,
+                        viennagrid::collection<
+                            typename viennagrid::detail::result_of::trivial_segmentation_appendix<
+                                typename viennagrid::result_of::element_typelist<MeshT>::type,
+                                SegmentIDType
+                            >::type
+                        >,
+
+
+                        interface_information_collection_tag,
+                        viennagrid::collection<
+                          typename viennagrid::detail::result_of::interface_information_collection_typemap<
+                            typename viennagrid::result_of::element_taglist<MeshT>::type,
+                            SegmentIDType,
+                            viennagrid::std_vector_tag,
+                            typename viennagrid::result_of::change_counter_type<MeshT>::type
+                          >::type
+                        >
+
+                    >::type
+                >,
+            typename view_container_tag = viennagrid::std_deque_tag >
+    struct cell_only_segmentation
+    {
+      typedef config::segmentation_config_wrapper_t<MeshT, ViewT, SegmentIDType, AppendixType, view_container_tag> WrappedConfigType;
+
+      typedef viennagrid::segmentation<WrappedConfigType> type;
+    };
+
+
+
+
     /** @brief Metafunction for obtaining a segmentation type for a 3D hull mesh type and with settings. Segment element information is a bool (see segment_element_info for more information)
      *
      * @tparam MeshT          The base mesh type to which the segmentation is associated
@@ -1536,6 +1592,7 @@ namespace viennagrid
 
   namespace detail
   {
+    /** @brief For internal use only */
     template<typename SegmentHandleT, typename ElementTagT, typename WrappedConfigT>
     void simple_add( SegmentHandleT & segment, viennagrid::element<ElementTagT, WrappedConfigT> & element )
     {
@@ -1546,6 +1603,22 @@ namespace viennagrid
       add( segment, viennagrid::make_accessor<ElementType>( detail::element_segment_mapping_collection(segment) ), element );
     }
 
+    /** @brief For internal use only */
+    template<typename SegmentT>
+    struct add_functor
+    {
+      add_functor(SegmentT & segment_) : segment(segment_) {}
+
+      template<typename BoundaryElementT>
+      void operator()( BoundaryElementT & boundary_element )
+      {
+        detail::simple_add(segment, boundary_element);
+      }
+
+      SegmentT & segment;
+    };
+
+    /** @brief For internal use only */
     template<typename SegmentHandleT, typename ElementTagT, typename WrappedConfigT>
     void simple_unchecked_add( SegmentHandleT & segment, viennagrid::element<ElementTagT, WrappedConfigT> & element )
     {
@@ -1555,36 +1628,25 @@ namespace viennagrid
       viennagrid::elements<ElementType>( segment.parent().all_elements() ).insert_handle( viennagrid::handle( segment.parent().mesh(), element ) );
       add( segment, viennagrid::make_accessor<ElementType>( detail::element_segment_mapping_collection(segment) ), element );
     }
+
+    /** @brief For internal use only */
+    template<typename SegmentT>
+    struct unchecked_add_functor
+    {
+      unchecked_add_functor(SegmentT & segment_) : segment(segment_) {}
+
+      template<typename BoundaryElementT>
+      void operator()( BoundaryElementT & boundary_element )
+      {
+        detail::simple_unchecked_add(segment, boundary_element);
+      }
+
+      SegmentT & segment;
+    };
   }
 
 
-  template<typename SegmentT>
-  struct add_functor
-  {
-    add_functor(SegmentT & segment_) : segment(segment_) {}
 
-    template<typename BoundaryElementT>
-    void operator()( BoundaryElementT & boundary_element )
-    {
-      detail::simple_add(segment, boundary_element);
-    }
-
-    SegmentT & segment;
-  };
-
-  template<typename SegmentT>
-  struct unchecked_add_functor
-  {
-    unchecked_add_functor(SegmentT & segment_) : segment(segment_) {}
-
-    template<typename BoundaryElementT>
-    void operator()( BoundaryElementT & boundary_element )
-    {
-      detail::simple_unchecked_add(segment, boundary_element);
-    }
-
-    SegmentT & segment;
-  };
 
 
   /** @brief Adds an element to a segment, all boundary elements are added recursively
@@ -1602,10 +1664,27 @@ namespace viennagrid
 
     detail::simple_add(segment, element);
 
-    add_functor<SegmentHandleT> af(segment);
-    for_each_boundary_element( element, af );
+    typedef typename ElementType::boundary_cell_typelist BoundaryElementTypelist;
+    typedef typename viennagrid::result_of::element_typelist<SegmentHandleT>::type SegmentTypelist;
+    typedef typename viennagrid::detail::result_of::intersection<BoundaryElementTypelist, SegmentTypelist>::type ForEachTypelist;
+
+    detail::add_functor<SegmentHandleT> af(segment);
+    for_each_boundary_element<ForEachTypelist>( element, af );
   }
 
+  template<typename SegmentHandleT, typename ElementHandleT>
+  void add( SegmentHandleT & segment, ElementHandleT element_handle )
+  { viennagrid::add( segment, viennagrid::dereference_handle(segment, element_handle) ); }
+
+
+  /** @brief Adds an element to a segment, all boundary elements are added recursively, does guarantee that elements are only present once within the segment
+    *
+    * @tparam SegmentHandleT        The segment type
+    * @tparam ElementTagT     The element tag of the element
+    * @tparam WrappedConfigT  The wrapped config of the element
+    * @param  segment         The segment object to which the elemen is added
+    * @param  element         The element object to be added
+    */
   template<typename SegmentHandleT, typename ElementTagT, typename WrappedConfigT>
   void unchecked_add( SegmentHandleT & segment, viennagrid::element<ElementTagT, WrappedConfigT> & element )
   {
@@ -1613,30 +1692,17 @@ namespace viennagrid
 
     detail::simple_unchecked_add(segment, element);
 
-
     typedef typename ElementType::boundary_cell_typelist BoundaryElementTypelist;
-//     typedef typename SegmentHandleT::view_type ViewType;
     typedef typename viennagrid::result_of::element_typelist<SegmentHandleT>::type SegmentTypelist;
-
     typedef typename viennagrid::detail::result_of::intersection<BoundaryElementTypelist, SegmentTypelist>::type ForEachTypelist;
 
-
-    unchecked_add_functor<SegmentHandleT> uaf(segment);
+    detail::unchecked_add_functor<SegmentHandleT> uaf(segment);
     for_each_boundary_element<ForEachTypelist>( element, uaf );
-  }
-
-
-  template<typename SegmentHandleT, typename ElementHandleT>
-  void add( SegmentHandleT & segment, ElementHandleT element_handle )
-  {
-    viennagrid::add( segment, viennagrid::dereference_handle(segment, element_handle) );
   }
 
   template<typename SegmentHandleT, typename ElementHandleT>
   void unchecked_add( SegmentHandleT & segment, ElementHandleT element_handle )
-  {
-    viennagrid::unchecked_add( segment, viennagrid::dereference_handle(segment, element_handle) );
-  }
+  { viennagrid::unchecked_add( segment, viennagrid::dereference_handle(segment, element_handle) ); }
 
 
   namespace detail
