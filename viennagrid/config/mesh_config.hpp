@@ -13,6 +13,8 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
+#include "viennagrid/accessor.hpp"
+
 #include "viennagrid/config/config.hpp"
 #include "viennagrid/config/id_generator_config.hpp"
 
@@ -177,6 +179,57 @@ namespace viennagrid
       };
 
 
+
+
+      /** @brief Meta function for creating a thin topologic configuration.
+       *  @tparam CellTagT              The cell tag of the mesh
+       *  @tparam HandleTagT            Defines, which handle type should be used for all elements. Default is pointer handle
+       *  @tparam VertexContainerTagT   Defines, which container type should be used for vertices. Default is std::deque
+       *  @tparam CellContainerTagT     Defines, which container type should be used for cells. Default is std::deque
+       */
+      template<typename CellTagT,
+               typename HandleTagT  = viennagrid::pointer_handle_tag,
+               typename VertexContainerTagT = viennagrid::std_deque_tag,
+               typename CellContainerTagT = viennagrid::std_deque_tag>
+      struct thin_topology_config
+      {
+        typedef typename viennagrid::make_typemap<
+            CellTagT,
+            typename viennagrid::make_typemap<
+                viennagrid::config::element_id_tag,
+                viennagrid::smart_id_tag<int>,
+
+                viennagrid::config::element_container_tag,
+                typename viennagrid::result_of::handled_container<CellContainerTagT, HandleTagT>::tag,
+
+                viennagrid::config::element_boundary_storage_layout_tag,
+                typename storage_layout_config<CellTagT, viennagrid::vertex_tag>::type,
+
+                viennagrid::config::element_appendix_type_tag,
+                viennagrid::null_type
+            >::type,
+
+
+            viennagrid::vertex_tag,
+            typename viennagrid::make_typemap<
+              viennagrid::config::element_id_tag,
+              viennagrid::smart_id_tag<int>,
+
+              viennagrid::config::element_container_tag,
+              typename viennagrid::result_of::handled_container<VertexContainerTagT, HandleTagT>::tag,
+
+              viennagrid::config::element_boundary_storage_layout_tag,
+              viennagrid::null_type,
+
+              viennagrid::config::element_appendix_type_tag,
+              viennagrid::null_type
+            >::type
+        >::type type;
+      };
+
+
+
+
       /** @brief Meta function for creating a geometric configuration. A topologic configuration is created with the exception that the vertex appendix type is a given point type.
        *  @tparam CellTagT              The cell tag of the mesh
        *  @tparam PointType             The point type of the mesh
@@ -215,6 +268,49 @@ namespace viennagrid
       struct full_mesh_config<CellTagT, void, HandleTagT, VertexContainerTagT, CellContainerTagT>
       {
         typedef typename viennagrid::config::result_of::full_topology_config<CellTagT, HandleTagT, VertexContainerTagT, CellContainerTagT>::type type;
+      };
+
+
+
+
+      /** @brief Meta function for creating a geometric configuration with thin topology. A thin topologic configuration is created with the exception that the vertex appendix type is a given point type.
+       *  @tparam CellTagT              The cell tag of the mesh
+       *  @tparam PointType             The point type of the mesh
+       *  @tparam HandleTagT            Defines, which handle type should be used for all elements. Default is pointer handle
+       *  @tparam VertexContainerTagT   Defines, which container type should be used for vertices. Default is std::deque
+       *  @tparam CellContainerTagT     Defines, which container type should be used for cells. Default is std::deque
+       */
+      template<typename CellTagT,
+                typename PointType,
+                typename HandleTagT = viennagrid::pointer_handle_tag,
+                typename VertexContainerTagT = viennagrid::std_deque_tag,
+                typename CellContainerTagT = viennagrid::std_deque_tag>
+      struct thin_mesh_config
+      {
+        typedef typename thin_topology_config<CellTagT, HandleTagT, VertexContainerTagT, CellContainerTagT>::type MeshConfig;
+        typedef typename query<MeshConfig, null_type, vertex_tag>::type VertexConfig;
+
+        typedef typename viennagrid::detail::result_of::insert_or_modify<
+            MeshConfig,
+            viennagrid::static_pair<
+                vertex_tag,
+                typename viennagrid::detail::result_of::insert_or_modify<
+
+                    VertexConfig,
+                    viennagrid::static_pair<
+                        element_appendix_type_tag,
+                        PointType
+                    >
+
+                >::type
+            >
+        >::type type;
+      };
+
+      template<typename CellTagT, typename HandleTagT, typename VertexContainerTagT, typename CellContainerTagT>
+      struct thin_mesh_config<CellTagT, void, HandleTagT, VertexContainerTagT, CellContainerTagT>
+      {
+        typedef typename viennagrid::config::result_of::thin_topology_config<CellTagT, HandleTagT, VertexContainerTagT, CellContainerTagT>::type type;
       };
 
 
@@ -486,8 +582,10 @@ namespace viennagrid
     {
       typedef typename config::result_of::query<WrappedConfigType, long, config::mesh_change_counter_tag>::type MeshChangeCounterType;
 
-      typedef typename config::result_of::query<WrappedConfigType, std_vector_tag, ElementTagT, config::boundary_information_container_tag>::type boundary_container_tag;
-      typedef typename result_of::container<bool, boundary_container_tag >::type base_container;
+      typedef typename config::result_of::query<WrappedConfigType, std_map_tag, ElementTagT, config::boundary_information_container_tag>::type boundary_container_tag;
+
+      typedef viennagrid::element<ElementTagT, WrappedConfigType> ElementType;
+      typedef typename result_of::accessor_container<ElementType, bool, boundary_container_tag>::type base_container;
 
       typedef viennagrid::typelist<
           viennagrid::static_pair<
