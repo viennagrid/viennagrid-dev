@@ -29,7 +29,7 @@ namespace viennagrid
     typedef simplex_tag<1> facet_tag;
 
     static const int dim = 2;
-    static std::string name() { return "Polygon"; }
+    static std::string name() { return "polygon"; }
   };
 
 

@@ -29,7 +29,7 @@ namespace viennagrid
     typedef viennagrid::null_type facet_tag;
 
     static const int dim = 0;
-    static std::string name() { return "Vertex"; }
+    static std::string name() { return "vertex"; }
   };
 
   //no need to have a separate subelements specialization here -> covered by default case

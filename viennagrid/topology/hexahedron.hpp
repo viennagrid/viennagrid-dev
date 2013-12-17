@@ -31,7 +31,7 @@ namespace viennagrid
     typedef hypercube_tag<2> facet_tag;
 
     static const int dim = 3;
-    static std::string name() { return "Hexahedron"; }
+    static std::string name() { return "hexahedron"; }
   };
 
   /** @brief Topological description of the 2-cells (quadrilateral faces) of a hexahedron */

@@ -30,7 +30,7 @@ namespace viennagrid
     typedef simplex_tag<1> facet_tag;
 
     static const int dim = 2;
-    static std::string name() { return "Quadrilateral"; }
+    static std::string name() { return "quadrilateral"; }
   };
 
   /** @brief Topological description of the 1-cells (edges/lines) of a quadrilateral */
