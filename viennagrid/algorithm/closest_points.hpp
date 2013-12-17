@@ -868,14 +868,14 @@ namespace viennagrid
                           fit1 != facets1.end();
                         ++fit1)
       {
-        if (!is_boundary(*fit1, el1))
+        if (!is_boundary(el1, *fit1))
           continue;
 
         for (FacetIterator2 fit2 = facets2.begin();
                             fit2 != facets2.end();
                           ++fit2)
         {
-          if (!is_boundary(*fit2, el2))
+          if (!is_boundary(el2, *fit2))
             continue;
 
           PairType p = closest_points_impl(accessor, *fit1, *fit2);
