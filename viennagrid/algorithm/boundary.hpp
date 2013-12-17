@@ -165,8 +165,8 @@ namespace viennagrid
         dst_boundary_information_container_wrapper_type & dst_boundary_information_container_wrapper = detail::boundary_information_collection<element_tag>( mesh_obj_ );
 
         transfer_boundary_information(mesh_obj_,
-                                      viennagrid::make_accessor<facet_type>( src_boundary_information_container_wrapper.container ),
-                                      viennagrid::make_accessor<element_type>( dst_boundary_information_container_wrapper.container ));
+                                      viennagrid::make_field<facet_type>( src_boundary_information_container_wrapper.container ),
+                                      viennagrid::make_field<element_type>( dst_boundary_information_container_wrapper.container ));
 
         detail::update_change_counter( mesh_obj_, dst_boundary_information_container_wrapper.change_counter );
       }
@@ -223,7 +223,7 @@ namespace viennagrid
                 facet_tag
               >::type boundary_information_container_wrapper_type;
       boundary_information_container_wrapper_type & boundary_information_container_wrapper = detail::boundary_information_collection<facet_tag>(mesh_obj);
-      detect_boundary( mesh_obj, viennagrid::make_accessor<facet_type>( boundary_information_container_wrapper.container ) );
+      detect_boundary( mesh_obj, viennagrid::make_field<facet_type>( boundary_information_container_wrapper.container ) );
 
       transfer_boundary_information(mesh_obj);
       detail::update_change_counter( mesh_obj, boundary_information_container_wrapper.change_counter );
@@ -270,7 +270,7 @@ namespace viennagrid
     if (mesh_obj.is_obsolete(boundary_information_container_wrapper.change_counter))
       detail::detect_boundary( const_cast<mesh_type&>(mesh_obj) );
 
-    return detail::is_boundary( viennagrid::make_accessor<ElementT>(boundary_information_container_wrapper.container), element );
+    return detail::is_boundary( viennagrid::make_field<ElementT>(boundary_information_container_wrapper.container), element );
   }
 
   /** @brief Returns true if an element is located on the boundary of the segment
