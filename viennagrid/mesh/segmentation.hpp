@@ -1204,13 +1204,8 @@ namespace viennagrid
              typename ViewT =
               typename viennagrid::result_of::mesh_view_from_typelist<
                 MeshT,
-                typename viennagrid::make_typelist<
-                  typename viennagrid::result_of::cell_tag<MeshT>::type
-                >,
-                viennagrid::make_typemap<
-                  default_tag,
-                  std_deque_tag
-                >::type
+                typename viennagrid::make_typelist<typename viennagrid::result_of::cell<MeshT>::type>::type,
+                viennagrid::make_typemap<default_tag, std_deque_tag>::type
               >::type,
              typename SegmentIDType = int,
              typename AppendixType =
