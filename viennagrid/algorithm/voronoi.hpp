@@ -19,6 +19,7 @@
 #include <stdexcept>
 
 #include "viennagrid/forwards.hpp"
+#include "viennagrid/mesh/segmentation.hpp"
 #include "viennagrid/mesh/coboundary_iteration.hpp"
 #include "viennagrid/algorithm/circumcenter.hpp"
 #include "viennagrid/algorithm/spanned_volume.hpp"

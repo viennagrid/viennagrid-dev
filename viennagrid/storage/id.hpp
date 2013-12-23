@@ -13,6 +13,8 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
+#include <iostream>
+
 /** @file   viennagrid/storage/id.hpp
     @brief  Defines the smart_id type which unifies different ways of identifying objects (numeric ID, pointer, etc.)
 */

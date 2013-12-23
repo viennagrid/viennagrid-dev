@@ -21,7 +21,6 @@
 /** @file viennagrid/mesh/coboundary_iteration.hpp
     @brief Contains definition and implementation of coboundary iteration
 */
-#include "../algorithm/closest_points.hpp"
 
 namespace viennagrid
 {

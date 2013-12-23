@@ -18,14 +18,14 @@
 #include <sstream>
 #include <iostream>
 
-#include "viennagrid/mesh/mesh.hpp"
-
 #include "viennagrid/forwards.hpp"
+#include "viennagrid/mesh/segmentation.hpp"
+#include "viennagrid/mesh/mesh.hpp"
 #include "viennagrid/io/helper.hpp"
 #include "viennagrid/io/vtk_common.hpp"
 
-/** @file viennagrid/io/vtk_writer.hpp
-    @brief Provides a writer to VTK files
+/** @file viennagrid/io/vmesh_writer.hpp
+    @brief Provides a writer to ViennaMesh files
 */
 
 namespace viennagrid
@@ -35,26 +35,26 @@ namespace viennagrid
 
     /** @brief Main VMesh writer class. Writes a mesh or a segment to a file
      *
-     * @tparam MeshType         Type of the ViennaGrid mesh. 
+     * @tparam MeshType         Type of the ViennaGrid mesh.
      * @tparam SegmentationType   Type of the ViennaGrid segmentation. Default is the default segmentation of MeshType
      */
     template < typename MeshType, typename SegmentationType = typename viennagrid::result_of::segmentation<MeshType>::type >
     class vmesh_writer
     {
     public:
-      vmesh_writer() 
-      { 
+      vmesh_writer()
+      {
         empty_  = "";
-        indent_ = "  "; 
+        indent_ = "  ";
       }
 
-      /** @brief Triggers the write process to a *.vmesh file. 
+      /** @brief Triggers the write process to a *.vmesh file.
        *
        * @param mesh_obj   The ViennaGrid mesh
        * @param segmentation  The ViennaGrid segmentation.
-       * @param inputfile  The inputfile path 
+       * @param inputfile  The inputfile path
        * @param outputfile The outputfile path
-       * 
+       *
        */
       void operator()(MeshType const & mesh, SegmentationType const & segmentation, std::string const & inputfile, std::string const & outputfile)
       {
@@ -85,7 +85,7 @@ namespace viennagrid
         writer << indent_ << "</segmentation>" << std::endl;
         writer << "</mesh>" << std::endl;
       }
-      
+
       std::string empty_;
       std::string indent_;
     };

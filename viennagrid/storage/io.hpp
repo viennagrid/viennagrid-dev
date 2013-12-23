@@ -15,7 +15,10 @@
 
 #include <ostream>
 #include <iterator>
+#include <typeinfo>
+#include <iostream>
 
+#include "viennagrid/forwards.hpp"
 #include "viennagrid/storage/container_collection.hpp"
 #include "viennagrid/storage/algorithm.hpp"
 
@@ -40,7 +43,7 @@ namespace viennagrid
       void operator() (const container_type & container)
       {
           stream_ << typeid(container).name() << " [size=" << container.size() << "] ";
-          std::copy( container.begin(), container.end(), std::ostream_iterator<typename container_type::value_type>(stream, element_delimiter_.c_str())  );
+          std::copy( container.begin(), container.end(), std::ostream_iterator<typename container_type::value_type>(stream_, element_delimiter_.c_str())  );
           stream_ << container_delimiter_;
       }
 
@@ -52,11 +55,11 @@ namespace viennagrid
 
 
     template <typename container_typemap>
-    std::ostream & operator<<(std::ostream & os, const viennagrid::storage::collection<container_typemap> & container_collection)
+    std::ostream & operator<<(std::ostream & os, const viennagrid::collection<container_typemap> & container_collection)
     {
       container_output_functor f(os);
 
-      viennagrid::storage::detail::for_each( container_collection, f );
+      viennagrid::detail::for_each( container_collection, f );
 
       return os;
     }

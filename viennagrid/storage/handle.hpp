@@ -16,6 +16,8 @@
 #include <iterator>
 #include <vector>
 #include <map>
+#include <algorithm>
+
 #include "viennagrid/meta/typemap.hpp"
 #include "viennagrid/storage/id.hpp"
 #include "viennagrid/storage/forwards.hpp"
