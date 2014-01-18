@@ -43,6 +43,7 @@ namespace viennagrid
 
     class const_iterator;
 
+    static_array() : elems() {}
 
     // random access iterator: http://www.cplusplus.com/reference/std/iterator/RandomAccessIterator/
     class iterator
