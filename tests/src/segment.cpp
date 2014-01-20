@@ -28,6 +28,12 @@ template <typename ElementTagT,
           typename SegmentT>
 void print_elements(SegmentT & seg)
 {
+  typedef typename viennagrid::result_of::segmentation<SegmentT>::type   SegmentationType;
+  typedef typename viennagrid::result_of::mesh<SegmentationType>::type   MeshType2;  //to check that one can deduce {mesh type} <-> {segmentation type}
+  typedef typename viennagrid::result_of::mesh<SegmentT>::type           MeshType3;  //to check that one can deduce {mesh type} <-> {segment handle}
+
+  MeshType2 & mesh2 = seg.mesh(); (void)mesh2;
+  MeshType3 & mesh3 = seg.mesh(); (void)mesh3;
   SegmentT const & const_seg = seg;
 
   std::cout << "-- non-const --" << std::endl;

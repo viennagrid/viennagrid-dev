@@ -801,6 +801,18 @@ namespace viennagrid
 
   namespace result_of
   {
+    template<typename WrappedConfigType>
+    struct mesh<viennagrid::segmentation<WrappedConfigType> >
+    {
+      typedef typename viennagrid::segmentation<WrappedConfigType>::mesh_type type;
+    };
+
+    template<typename SegmentationT>
+    struct mesh<viennagrid::segment_handle<SegmentationT> >
+    {
+      typedef typename viennagrid::segment_handle<SegmentationT>::mesh_type type;
+    };
+
     // doxygen docu in mesh.hpp
     /** \cond */
     template<typename WrappedConfigType, typename element_type_or_tag>
@@ -1200,7 +1212,12 @@ namespace viennagrid
       typedef viennagrid::segmentation<WrappedConfigType> type;
     };
 
-
+    /** @brief Returns the underlying segmentation type from a segment_handle (Segment) object */
+    template<typename SegmentationT>
+    struct segmentation< viennagrid::segment_handle<SegmentationT> >
+    {
+      typedef SegmentationT  type;
+    };
 
 
     /** @brief Metafunction for obtaining a segmentation type using only cells for a mesh type and with settings. Segment element information is not present (see segment_element_info for more information)
