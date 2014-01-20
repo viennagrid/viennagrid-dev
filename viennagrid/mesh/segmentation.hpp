@@ -82,6 +82,16 @@ namespace viennagrid
       */
     view_type const & view() const { return *view_; }
 
+    /** @brief Returns the full mesh from the parent segmentation.
+      *
+      * @return   A reference to the mesh
+      */
+    mesh_type & mesh() { return parent().mesh(); }
+    /** @brief Returns the full mesh from the parent segmentation, const version.
+      *
+      * @return   A const reference to the mesh
+      */
+    mesh_type const & mesh() const { return parent().mesh(); }
 
     /** @brief operator< for ordering operations (e.g. used in std::map)
       *
