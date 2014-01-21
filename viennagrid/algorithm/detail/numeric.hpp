@@ -57,13 +57,14 @@ namespace viennagrid
     typename result_of::numeric_type<double, OuterNumericT>::type absolute_tolerance( double eps )
     {
       typedef typename result_of::numeric_type<double, OuterNumericT>::type numeric_type;
-      return static_cast<numeric_type>(eps);
+      return std::abs(static_cast<numeric_type>(eps));
     }
 
     template<typename OuterNumericT>
     typename result_of::numeric_type<double, OuterNumericT>::type relative_tolerance( double eps, OuterNumericT base )
     {
       typedef typename result_of::numeric_type<double, OuterNumericT>::type numeric_type;
+//       return static_cast<numeric_type>(eps) * base;
       return std::max( static_cast<numeric_type>(eps) * base, absolute_tolerance<OuterNumericT>(eps) );
     }
 
