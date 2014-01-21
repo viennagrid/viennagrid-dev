@@ -240,6 +240,41 @@ namespace viennagrid
   }
 
 
+  /** @brief Returns the Euclidian distance between the boundary of a segment and a line */
+  template<typename WrappedMeshConfigT, typename SegmentationT>
+  typename result_of::coord< segment_handle<SegmentationT> >::type distance( element<line_tag, WrappedMeshConfigT> const & line, segment_handle<SegmentationT> const & segment_handle )
+  {
+    typedef viennagrid::segment_handle<SegmentationT> SegmentHandleType;
+    typedef typename result_of::const_line_range<SegmentHandleType>::type ConstLineRangeType;
+    typedef typename result_of::iterator<ConstLineRangeType>::type ConstLineIteratorType;
+
+    typedef typename result_of::coord<SegmentHandleType>::type CoordType;
+
+    ConstLineRangeType lines(segment_handle);
+    if (lines.empty())
+      return -1;
+
+    ConstLineIteratorType lit = lines.begin();
+    CoordType min_distance = distance(line, *(lit++));
+
+    for (; lit != lines.end(); ++lit)
+    {
+      CoordType current_distance = distance(line, *lit);
+      if (current_distance < min_distance)
+        min_distance = current_distance;
+    }
+
+    return min_distance;
+  }
+
+  template<typename SegmentationT, typename WrappedMeshConfigT>
+  typename result_of::coord< segment_handle<SegmentationT> >::type distance( segment_handle<SegmentationT> const & segment_handle, element<line_tag, WrappedMeshConfigT> const & line )
+  {
+    return distance( line, segment_handle );
+  }
+
+
+
 
 
   /** @brief Returns the distance between elements, segments and/or meshs
