@@ -18,9 +18,9 @@
 #include <sstream>
 #include <iostream>
 
-#include "viennagrid/mesh/mesh.hpp"
-
 #include "viennagrid/forwards.hpp"
+#include "viennagrid/mesh/segmentation.hpp"
+#include "viennagrid/mesh/mesh.hpp"
 #include "viennagrid/io/helper.hpp"
 #include "viennagrid/io/vtk_common.hpp"
 

@@ -14,6 +14,7 @@
 ======================================================================= */
 
 #include "viennagrid/forwards.hpp"
+#include "viennagrid/mesh/segmentation.hpp"
 #include "viennagrid/topology/vertex.hpp"
 #include "viennagrid/topology/line.hpp"
 #include "viennagrid/algorithm/norm.hpp"

@@ -14,6 +14,8 @@
 ======================================================================= */
 
 #include <cassert>
+#include <cstddef>
+#include <iterator>
 
 /** @file viennagrid/storage/static_array.hpp
     @brief Defines an array of fixed size similar similar to std::array<> (which, unfortunately, is only available in C++11)
@@ -41,6 +43,7 @@ namespace viennagrid
 
     class const_iterator;
 
+    static_array() : elems() {}
 
     // random access iterator: http://www.cplusplus.com/reference/std/iterator/RandomAccessIterator/
     class iterator

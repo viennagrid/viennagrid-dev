@@ -487,7 +487,6 @@ namespace viennagrid
                      typename viennagrid::result_of::coord<OutputMeshOrSegmentHandleT>::type tolerance )
     {
       typedef typename std::iterator_traits<ElementIteratorT>::value_type ElementType;
-      typedef typename viennagrid::result_of::element_tag<ElementType>::type ElementTagType;
 
       typedef typename viennagrid::result_of::vertex_id<ElementType>::type VertexIDType;
       typedef typename viennagrid::result_of::vertex_handle<ElementType>::type VertexHandleType;
@@ -497,12 +496,6 @@ namespace viennagrid
 
       typedef typename viennagrid::result_of::const_line_range<ElementType>::type ConstLineOnElementRangeType;
       typedef typename viennagrid::result_of::iterator<ConstLineOnElementRangeType>::type ConstLineOnElementIteratorType;
-
-      typedef typename viennagrid::result_of::line<ElementType>::type LineType;
-
-      typedef typename viennagrid::result_of::const_vertex_range<LineType>::type ConstVertexOnLineRangeType;
-      typedef typename viennagrid::result_of::iterator<ConstVertexOnLineRangeType>::type ConstVertexOnLineIteratorType;
-
 
       std::map<VertexIDType, VertexHandleType> vertex_map;
       std::map<LineIDType, LineHandleType> line_map;
@@ -551,7 +544,6 @@ namespace viennagrid
     {
       typedef typename std::iterator_traits<ElementHandleIteratorT>::value_type ElementHandleType;
       typedef typename viennagrid::detail::result_of::value_type<ElementHandleType>::type ElementType;
-      typedef typename viennagrid::result_of::element_tag<ElementType>::type ElementTagType;
 
       typedef typename viennagrid::result_of::vertex_id<ElementType>::type VertexIDType;
       typedef typename viennagrid::result_of::vertex_handle<ElementType>::type VertexHandleType;
@@ -561,12 +553,6 @@ namespace viennagrid
 
       typedef typename viennagrid::result_of::const_line_range<ElementType>::type ConstLineOnElementRangeType;
       typedef typename viennagrid::result_of::iterator<ConstLineOnElementRangeType>::type ConstLineOnElementIteratorType;
-
-      typedef typename viennagrid::result_of::line<ElementType>::type LineType;
-
-      typedef typename viennagrid::result_of::const_vertex_range<LineType>::type ConstVertexOnLineRangeType;
-      typedef typename viennagrid::result_of::iterator<ConstVertexOnLineRangeType>::type ConstVertexOnLineIteratorType;
-
 
       std::map<VertexIDType, VertexHandleType> vertex_map;
       std::map<LineIDType, LineHandleType> line_map;

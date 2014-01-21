@@ -23,6 +23,7 @@
 #include <sstream>
 #include <list>
 #include <string>
+#include <algorithm>
 
 
 #include "viennagrid/io/helper.hpp"

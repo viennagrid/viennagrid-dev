@@ -1825,6 +1825,9 @@ namespace viennagrid
   template<typename MeshOrSegmentHandleT, typename HandleT>
   const HandleT handle( MeshOrSegmentHandleT const &, HandleT handle) { return handle; }
 
+  template<typename MeshT, typename MeshViewT, typename HandleT>
+  void mark_referencing_elements( MeshT & mesh_obj, MeshViewT & element_view, HandleT host_element );
+
 
 
 

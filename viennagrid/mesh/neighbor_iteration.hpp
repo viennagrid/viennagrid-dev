@@ -13,6 +13,7 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
+#include "viennagrid/mesh/segmentation.hpp"
 #include "viennagrid/mesh/coboundary_iteration.hpp"
 
 /** @file viennagrid/mesh/neighbor_iteration.hpp
