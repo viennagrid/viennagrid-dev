@@ -895,7 +895,7 @@ namespace viennagrid
 
 
     /** @brief Information container providing iteration over segments of a segmentation */
-    template<typename element_segment_mapping_type, typename container_tag = viennagrid::std_deque_tag>
+    template<typename element_segment_mapping_type, typename container_tag = viennagrid::std_vector_tag>
     struct segment_info_t
     {
       typedef typename element_segment_mapping_type::segment_id_type segment_id_type;
