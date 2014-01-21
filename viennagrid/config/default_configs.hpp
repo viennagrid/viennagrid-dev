@@ -205,10 +205,20 @@ namespace viennagrid
       typedef result_of::full_mesh_config< viennagrid::quadrilateral_tag, point_type_2d, viennagrid::pointer_handle_tag >::type     type;
     };
 
+    struct thin_quadrilateral_2d
+    {
+      typedef result_of::thin_mesh_config< viennagrid::quadrilateral_tag, point_type_2d, viennagrid::pointer_handle_tag >::type     type;
+    };
+
     /** @brief A default config for quadrilaterals in 3d, pointer handles are used */
     struct quadrilateral_3d
     {
       typedef result_of::full_mesh_config< viennagrid::quadrilateral_tag, point_type_3d, viennagrid::pointer_handle_tag >::type     type;
+    };
+
+    struct thin_quadrilateral_3d
+    {
+      typedef result_of::thin_mesh_config< viennagrid::quadrilateral_tag, point_type_3d, viennagrid::pointer_handle_tag >::type     type;
     };
 
     /** @brief A default config for polygons in 2d, pointer handles are used */
@@ -386,6 +396,11 @@ namespace viennagrid
     struct hexahedral_3d
     {
       typedef result_of::full_mesh_config< viennagrid::hexahedron_tag, point_type_3d, viennagrid::pointer_handle_tag >::type   type;
+    };
+
+    struct thin_hexahedral_3d
+    {
+      typedef result_of::thin_mesh_config< viennagrid::hexahedron_tag, point_type_3d, viennagrid::pointer_handle_tag >::type   type;
     };
   }
 
