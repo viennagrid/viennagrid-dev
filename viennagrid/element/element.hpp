@@ -282,6 +282,8 @@ namespace viennagrid
   {
   public:
 
+    boundary_element_layer() {}
+
     template<typename container_typelist>
     void set_container( viennagrid::collection<container_typelist> & ) {}
 
@@ -527,7 +529,7 @@ namespace viennagrid
     */
   template<typename ElementTag, typename WrappedConfigType>
   class element :
-      public element_extension<ElementTag>,
+      public boundary_element_layer<ElementTag, typename config::result_of::element_boundary_element_container_typelist<WrappedConfigType, ElementTag>::type>,
       public viennagrid::detail::id_handler<
                   typename viennagrid::detail::result_of::make_id<
                     viennagrid::element<
@@ -537,9 +539,19 @@ namespace viennagrid
                     typename config::result_of::query_element_id_tag<WrappedConfigType, ElementTag>::type
                   >::type
               >,
-      public boundary_element_layer<ElementTag, typename config::result_of::element_boundary_element_container_typelist<WrappedConfigType, ElementTag>::type>
+      public element_extension<ElementTag>
   {
   public:
+
+    typedef viennagrid::detail::id_handler<
+                  typename viennagrid::detail::result_of::make_id<
+                    viennagrid::element<
+                      ElementTag,
+                      WrappedConfigType
+                    >,
+                    typename config::result_of::query_element_id_tag<WrappedConfigType, ElementTag>::type
+                  >::type
+              > id_handler_type;
 
     typedef ElementTag tag;
 
@@ -600,7 +612,6 @@ namespace viennagrid
   /** \cond */
   template<typename WrappedConfigType>
   class element<vertex_tag, WrappedConfigType> :
-      public element_extension<vertex_tag>,
       public viennagrid::detail::id_handler<
                   typename viennagrid::detail::result_of::make_id<
                     viennagrid::element<
@@ -609,9 +620,20 @@ namespace viennagrid
                     >,
                     typename config::result_of::query_element_id_tag<WrappedConfigType, vertex_tag>::type
                   >::type
-              >
+              >,
+      public element_extension<vertex_tag>
   {
   public:
+
+    typedef viennagrid::detail::id_handler<
+                  typename viennagrid::detail::result_of::make_id<
+                    viennagrid::element<
+                      vertex_tag,
+                      WrappedConfigType
+                    >,
+                    typename config::result_of::query_element_id_tag<WrappedConfigType, vertex_tag>::type
+                  >::type
+              > id_handler_type;
 
     typedef vertex_tag tag;
 
