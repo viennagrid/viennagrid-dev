@@ -110,7 +110,6 @@ namespace viennagrid
                            AveragerT      const & averager,        SourceFilterT   const & filter_src,   DestinationFilterT const & filter_dest,
                            coboundary_quantity_transfer_tag)
     {
-      typedef typename viennagrid::result_of::element<MeshOrSegmentT, SourceTag>::type              SourceElementType;
       typedef typename viennagrid::result_of::element<MeshOrSegmentT, DestinationTag>::type         DestElementType;
 
       typedef typename viennagrid::result_of::const_element_range<MeshOrSegmentT, DestinationTag>::type DestContainer;
