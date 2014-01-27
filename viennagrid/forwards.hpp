@@ -1303,7 +1303,7 @@ namespace viennagrid
     * @return                    A tetrahedron range
     */
   template<typename SomethingT>
-  typename result_of::element_range<SomethingT, tetrahedron_tag>::type tetraheda(SomethingT & something)
+  typename result_of::element_range<SomethingT, tetrahedron_tag>::type tetrahedra(SomethingT & something)
   { return elements<tetrahedron_tag>(something); }
 
   /** @brief Function for retrieving a hexahedron range object from a host object
@@ -1436,7 +1436,7 @@ namespace viennagrid
     * @return                    A const tetrahedron range
     */
   template<typename SomethingT>
-  typename result_of::const_element_range<SomethingT, tetrahedron_tag>::type tetraheda(SomethingT const & something)
+  typename result_of::const_element_range<SomethingT, tetrahedron_tag>::type tetrahedra(SomethingT const & something)
   { return elements<tetrahedron_tag>(something); }
 
   /** @brief Function for retrieving a const hexahedron range object from a host object
