@@ -31,6 +31,7 @@ set(EXAMPLES_TESTDATA
    data/tets_with_data_main.pvd
    data/twocubes.mesh
    data/test.poly
+   data/test.bnd
    )
 foreach(f IN LISTS EXAMPLES_TESTDATA)
    configure_file(${f} "${CMAKE_CURRENT_BINARY_DIR}/${f}" COPYONLY)
