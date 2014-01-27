@@ -949,7 +949,26 @@ namespace viennagrid
       const_iterator begin() const { return cbegin(); }
       const_iterator end()   const { return cend(); }
 
+      std::size_t size() const { return element_segment_mapping_container.size(); }
+
       bool empty() const { return element_segment_mapping_container.empty(); }
+
+      bool is_equal( segment_info_t const & other ) const
+      {
+        if ( size() != other.size() )
+          return false;
+
+        std::vector<segment_id_type> this_segment_ids( size() );
+        std::vector<segment_id_type> other_segment_ids( other.size() );
+
+        std::copy( begin(), end(), this_segment_ids.begin() );
+        std::copy( other.begin(), other.end(), other_segment_ids.begin() );
+
+        std::sort( this_segment_ids.begin(), this_segment_ids.end() );
+        std::sort( other_segment_ids.begin(), other_segment_ids.end() );
+
+        return this_segment_ids == other_segment_ids;
+      }
 
 
       element_segment_mapping_container_type element_segment_mapping_container;
@@ -1219,6 +1238,12 @@ namespace viennagrid
       typedef SegmentationT  type;
     };
 
+    template<typename SegmentationT>
+    struct segmentation< viennagrid::segment_handle<const SegmentationT> >
+    {
+      typedef SegmentationT  type;
+    };
+
 
     /** @brief Metafunction for obtaining a segmentation type using only cells for a mesh type and with settings. Segment element information is not present (see segment_element_info for more information)
      *
@@ -1422,7 +1447,15 @@ namespace viennagrid
       *
       * @return    A const iterator pointing to the first segment ID
       */
-    bool empty() { return segment_info_->empty(); }
+    std::size_t size() const { return segment_info_->size(); }
+
+    /** @brief Returns a const iterator pointing to the first segment ID
+      *
+      * @return    A const iterator pointing to the first segment ID
+      */
+    bool empty() const { return segment_info_->empty(); }
+
+    std::size_t is_equal( segment_id_range_t<SegmentInfoT> const & other ) const { return segment_info_->is_equal(*other.segment_info_); }
 
   private:
     SegmentInfoT * segment_info_;
