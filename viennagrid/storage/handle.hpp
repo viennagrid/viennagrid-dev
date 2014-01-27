@@ -117,7 +117,7 @@ namespace viennagrid
       template<typename value_type_>
       struct value_type< const value_type_ * >
       {
-        typedef const value_type_ type;
+        typedef value_type_ type;
       };
 
       // id
@@ -130,7 +130,7 @@ namespace viennagrid
       template<typename value_type_, typename base_id_type_>
       struct value_type< smart_id<const value_type_, base_id_type_> >
       {
-        typedef const value_type_ type;
+        typedef value_type_ type;
       };
 
 
