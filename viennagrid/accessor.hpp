@@ -175,7 +175,7 @@ namespace viennagrid
       return (*container)[offset];
     }
 
-    value_type operator()(AccessType const & element) const
+    const_reference operator()(AccessType const & element) const
     {
       offset_type offset = element.id().get();
       assert( static_cast<offset_type>((*container).size()) > offset );
@@ -189,7 +189,7 @@ namespace viennagrid
       return (*container)[offset];
     }
 
-    value_type at(AccessType const & element) const
+    const_reference at(AccessType const & element) const
     {
       offset_type offset = element.id().get();
       if ( static_cast<offset_type>((*container).size()) <= offset) throw std::out_of_range("dense_container_accessor::at() const failed");
@@ -230,14 +230,14 @@ namespace viennagrid
       return (static_cast<offset_type>((*container).size()) > element.id().get()) ? (&(*container)[offset]) : NULL;
     }
 
-    value_type operator()(AccessType const & element) const
+    const_reference operator()(AccessType const & element) const
     {
       offset_type offset = element.id().get();
       assert( static_cast<offset_type>((*container).size()) > offset );
       return (*container)[offset];
     }
 
-    value_type at(AccessType const & element) const
+    const_reference at(AccessType const & element) const
     {
       offset_type offset = element.id().get();
       if ( static_cast<offset_type>((*container).size()) <= offset) throw std::out_of_range("dense_container_accessor::at() const failed");
@@ -295,7 +295,7 @@ namespace viennagrid
       return (*container)[ element.id() ];
     }
 
-    value_type operator()(AccessType const & element) const
+    const_reference operator()(AccessType const & element) const
     {
       typename container_type::const_iterator it = (*container).find( element.id() );
       assert(it != (*container).end()); // no release-runtime check for accessing elements outside (*container)
@@ -307,7 +307,7 @@ namespace viennagrid
       return (*this)(element);
     }
 
-    value_type at(AccessType const & element) const
+    const_reference at(AccessType const & element) const
     {
       typename container_type::const_iterator it = (*container).find( element.id() );
       if (it == (*container).end()) throw std::out_of_range("std_map_accessor::at() const failed");
@@ -347,14 +347,14 @@ namespace viennagrid
       return (it != (*container).end()) ? &it->second : NULL; // return NULL if not found
     }
 
-    value_type operator()(AccessType const & element) const
+    const_reference operator()(AccessType const & element) const
     {
       typename container_type::const_iterator it = (*container).find( element.id() );
       assert(it != (*container).end()); // no release-runtime check for accessing elements outside (*container)
       return it->second;
     }
 
-    value_type at(AccessType const & element) const
+    const_reference at(AccessType const & element) const
     {
       typename container_type::const_iterator it = (*container).find( element.id() );
       if (it == (*container).end()) throw std::out_of_range("std_map_accessor::at() const failed");
@@ -500,10 +500,10 @@ namespace viennagrid
     virtual const_pointer find( access_type const & ) const { return 0; }
 
     virtual       reference operator()( access_type const & element ) = 0;
-    virtual value_type operator()( access_type const & element ) const = 0;
+    virtual const_reference operator()( access_type const & element ) const = 0;
 
     virtual       reference at( access_type const & element ) = 0;
-    virtual value_type at( access_type const & element ) const = 0;
+    virtual const_reference at( access_type const & element ) const = 0;
   };
 
   /** \cond */
@@ -523,8 +523,8 @@ namespace viennagrid
     virtual ~base_dynamic_accessor() {}
 
     virtual const_pointer find( access_type const & ) const { return 0; }
-    virtual value_type operator()( access_type const & element ) const = 0;
-    virtual value_type at( access_type const & element ) const = 0;
+    virtual const_reference operator()( access_type const & element ) const = 0;
+    virtual const_reference at( access_type const & element ) const = 0;
   };
   /** \endcond */
 
@@ -559,7 +559,7 @@ namespace viennagrid
     virtual const_reference operator()( access_type const & element ) const { return access(element); }
 
     virtual reference at( access_type const & element ) { return accessor.access(element); }
-    virtual value_type at( access_type const & element ) const { return accessor.access(element); }
+    virtual const_reference at( access_type const & element ) const { return accessor.access(element); }
 
   private:
     AccessorType accessor;
@@ -585,8 +585,8 @@ namespace viennagrid
     dynamic_accessor_wrapper(AccessorType accessor_) : accessor(accessor_) {}
 
     virtual const_pointer find( access_type const & element ) const { return accessor.find(element); }
-    virtual value_type operator()( access_type const & element ) const { return access(element); }
-    virtual value_type at( access_type const & element ) const { return accessor.access(element); }
+    virtual const_reference operator()( access_type const & element ) const { return access(element); }
+    virtual const_reference at( access_type const & element ) const { return accessor.access(element); }
 
   private:
     AccessorType accessor;
@@ -651,7 +651,7 @@ namespace viennagrid
       return (*container)[offset];
     }
 
-    value_type operator()(AccessType const & element) const
+    const_reference operator()(AccessType const & element) const
     {
       offset_type offset = element.id().get();
 
@@ -668,7 +668,7 @@ namespace viennagrid
       return (*container)[offset];
     }
 
-    value_type at(AccessType const & element) const
+    const_reference at(AccessType const & element) const
     {
       offset_type offset = element.id().get();
       if ( static_cast<offset_type>((*container).size()) <= offset) throw std::out_of_range("dense_container_field::at() failed");
@@ -712,7 +712,7 @@ namespace viennagrid
       return (static_cast<offset_type>((*container).size()) > element.id().get()) ? (&(*container)[offset]) : NULL;
     }
 
-    value_type operator()(AccessType const & element) const
+    const_reference operator()(AccessType const & element) const
     {
       offset_type offset = element.id().get();
 
@@ -722,7 +722,7 @@ namespace viennagrid
       return (*(this->container))[offset];
     }
 
-    value_type at(AccessType const & element) const
+    const_reference at(AccessType const & element) const
     {
       offset_type offset = element.id().get();
       if ( static_cast<offset_type>((*container).size()) <= offset) throw std::out_of_range("dense_container_field::at() failed");
@@ -782,7 +782,7 @@ namespace viennagrid
       return (*container)[ element.id() ];
     }
 
-    value_type operator()(AccessType const & element) const
+    const_reference operator()(AccessType const & element) const
     {
       typename container_type::const_iterator it = (*(this->container)).find( element.id() );
 
@@ -797,7 +797,7 @@ namespace viennagrid
       return (*this)(element);
     }
 
-    value_type at(AccessType const & element) const
+    const_reference at(AccessType const & element) const
     {
       typename container_type::const_iterator it = (*container).find( element.id() );
       if (it == (*container).end()) throw std::out_of_range("std_map_field::at() const failed");
@@ -839,7 +839,7 @@ namespace viennagrid
       return (it != (*container).end()) ? &it->second : NULL; // return NULL if not found
     }
 
-    value_type operator()(AccessType const & element) const
+    const_reference operator()(AccessType const & element) const
     {
       typename container_type::const_iterator it = (*(this->container)).find( element.id() );
 
@@ -849,7 +849,7 @@ namespace viennagrid
       return it->second;
     }
 
-    value_type at(AccessType const & element) const
+    const_reference at(AccessType const & element) const
     {
       typename container_type::const_iterator it = (*container).find( element.id() );
       if (it == (*container).end()) throw std::out_of_range("std_map_field::at() const failed");
@@ -997,10 +997,10 @@ namespace viennagrid
     virtual const_pointer find( access_type const & ) const { return 0; }
 
     virtual reference operator()( access_type const & element ) = 0;
-    virtual value_type operator()( access_type const & element ) const = 0;
+    virtual const_reference operator()( access_type const & element ) const = 0;
 
     virtual reference at( access_type const & element ) = 0;
-    virtual value_type at( access_type const & element ) const = 0;
+    virtual const_reference at( access_type const & element ) const = 0;
   };
 
   /** \cond */
@@ -1020,8 +1020,8 @@ namespace viennagrid
     virtual ~base_dynamic_field() {}
 
     virtual const_pointer find( access_type const & ) const { return 0; }
-    virtual value_type operator()( access_type const & element ) const = 0;
-    virtual value_type at( access_type const & element ) const = 0;
+    virtual const_reference operator()( access_type const & element ) const = 0;
+    virtual const_reference at( access_type const & element ) const = 0;
   };
   /** \endcond */
 
@@ -1054,10 +1054,10 @@ namespace viennagrid
     virtual const_pointer find( access_type const & element ) const { return field.find(element); }
 
     virtual reference  operator()( access_type const & element )       { return field(element); }
-    virtual value_type operator()( access_type const & element ) const { return field(element); }
+    virtual const_reference operator()( access_type const & element ) const { return field(element); }
 
     virtual reference  at( access_type const & element )       { return field.at(element); }
-    virtual value_type at( access_type const & element ) const { return field.at(element); }
+    virtual const_reference at( access_type const & element ) const { return field.at(element); }
 
   private:
     FieldType field;
@@ -1084,8 +1084,8 @@ namespace viennagrid
     dynamic_field_wrapper(FieldType field_) : field(field_) {}
 
     virtual const_pointer find( access_type const & element ) const       { return field.find(element); }
-    virtual value_type    operator()( access_type const & element ) const { return field(element); }
-    virtual value_type    at( access_type const & element ) const         { return field.at(element); }
+    virtual const_reference    operator()( access_type const & element ) const { return field(element); }
+    virtual const_reference    at( access_type const & element ) const         { return field.at(element); }
 
   private:
     FieldType field;
