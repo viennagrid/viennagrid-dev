@@ -1052,11 +1052,11 @@ namespace viennagrid
     *
     * Used within IO reader/writers to store different accessors for data on vertices and cells inside a single container.
     */
-  template<typename FieldType>
-  class dynamic_field_wrapper : public base_dynamic_field< typename FieldType::value_type, typename FieldType::access_type >
+  template<typename FieldType, typename AccessType = typename FieldType::access_type>
+  class dynamic_field_wrapper : public base_dynamic_field< typename FieldType::value_type, AccessType >
   {
   public:
-    typedef base_dynamic_field< typename FieldType::value_type, typename FieldType::access_type > BaseFieldType;
+    typedef base_dynamic_field< typename FieldType::value_type, AccessType > BaseFieldType;
 
     typedef typename BaseFieldType::value_type value_type;
     typedef typename BaseFieldType::access_type access_type;
@@ -1073,10 +1073,10 @@ namespace viennagrid
     virtual pointer find( access_type const & element ) { return field.find(element); }
     virtual const_pointer find( access_type const & element ) const { return field.find(element); }
 
-    virtual reference operator()( access_type const & element )       { return field(element); }
+    virtual reference  operator()( access_type const & element )       { return field(element); }
     virtual value_type operator()( access_type const & element ) const { return field(element); }
 
-    virtual reference at( access_type const & element ) { return field.at(element); }
+    virtual reference       at( access_type const & element )       { return field.at(element); }
     virtual const_reference at( access_type const & element ) const { return field.at(element); }
 
   private:
@@ -1085,11 +1085,11 @@ namespace viennagrid
 
 
   /** \cond */
-  template<typename FieldType>
-  class dynamic_field_wrapper<const FieldType> : public base_dynamic_field< const typename FieldType::value_type, typename FieldType::access_type >
+  template<typename FieldType, typename AccessType>
+  class dynamic_field_wrapper<const FieldType, AccessType> : public base_dynamic_field< const typename FieldType::value_type, AccessType >
   {
   public:
-    typedef base_dynamic_field< const typename FieldType::value_type, typename FieldType::access_type > BaseFieldType;
+    typedef base_dynamic_field< const typename FieldType::value_type, AccessType > BaseFieldType;
 
     typedef typename BaseFieldType::value_type value_type;
     typedef typename BaseFieldType::access_type access_type;
@@ -1103,9 +1103,9 @@ namespace viennagrid
 
     dynamic_field_wrapper(FieldType field_) : field(field_) {}
 
-    virtual const_pointer find( access_type const & element ) const { return field.find(element); }
-    virtual value_type operator()( access_type const & element ) const { return field(element); }
-    virtual const_reference at( access_type const & element ) const { return field.at(element); }
+    virtual const_pointer   find( access_type const & element )       const { return field.find(element); }
+    virtual value_type      operator()( access_type const & element ) const { return field(element);      }
+    virtual const_reference at( access_type const & element )         const { return field.at(element);   }
 
   private:
     FieldType field;
