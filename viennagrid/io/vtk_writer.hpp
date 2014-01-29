@@ -593,19 +593,30 @@ namespace viennagrid
   private:
 
 
-    template<typename MapType, typename AccessorOrFieldType>
+    template<typename MapType, typename AccessorOrFieldType, typename AccessType>
     void add_to_container(MapType & map, AccessorOrFieldType const accessor_or_field, std::string const & quantity_name)
     {
         typename MapType::iterator it = map.find(quantity_name);
         if (it != map.end())
         {
           delete it->second;
-          it->second = new dynamic_field_wrapper<const AccessorOrFieldType>( accessor_or_field );
+          it->second = new dynamic_field_wrapper<const AccessorOrFieldType, AccessType>( accessor_or_field );
         }
         else
-          map[quantity_name] = new dynamic_field_wrapper<const AccessorOrFieldType>( accessor_or_field );
+          map[quantity_name] = new dynamic_field_wrapper<const AccessorOrFieldType, AccessType>( accessor_or_field );
     }
 
+    template<typename MapType, typename AccessorOrFieldType>
+    void add_to_vertex_container(MapType & map, AccessorOrFieldType const accessor_or_field, std::string const & quantity_name)
+    {
+      add_to_container<MapType, AccessorOrFieldType, VertexType>(map, accessor_or_field, quantity_name);
+    }
+
+    template<typename MapType, typename AccessorOrFieldType>
+    void add_to_cell_container(MapType & map, AccessorOrFieldType const accessor_or_field, std::string const & quantity_name)
+    {
+      add_to_container<MapType, AccessorOrFieldType, CellType>(map, accessor_or_field, quantity_name);
+    }
 
   public:
 
@@ -613,12 +624,12 @@ namespace viennagrid
       /** @brief Register an accessor/field for scalar data on vertices with a given quantity name */
       template <typename AccessorOrFieldType>
       void add_scalar_data_on_vertices(AccessorOrFieldType const accessor_or_field, std::string const & quantity_name)
-      { add_to_container(vertex_scalar_data, accessor_or_field, quantity_name); }
+      { add_to_vertex_container(vertex_scalar_data, accessor_or_field, quantity_name); }
 
       /** @brief Register an accessor/field for scalar data on vertices for a given segment ID with a given quantity name */
       template <typename AccessorOrFieldType>
       void add_scalar_data_on_vertices(segment_id_type seg_id, AccessorOrFieldType const accessor_or_field, std::string const & quantity_name)
-      { add_to_container(segment_vertex_scalar_data[seg_id], accessor_or_field, quantity_name); }
+      { add_to_vertex_container(segment_vertex_scalar_data[seg_id], accessor_or_field, quantity_name); }
 
       /** @brief Register an accessor/field for scalar data on vertices for a given segment with a given quantity name */
       template <typename AccessorOrFieldType>
@@ -629,12 +640,12 @@ namespace viennagrid
       /** @brief Register an accessor/field for vector data on vertices with a given quantity name */
       template <typename AccessorOrFieldType>
       void add_vector_data_on_vertices(AccessorOrFieldType const accessor_or_field, std::string const & quantity_name)
-      { add_to_container(vertex_vector_data, accessor_or_field, quantity_name); }
+      { add_to_vertex_container(vertex_vector_data, accessor_or_field, quantity_name); }
 
       /** @brief Register an accessor/field for vector data on vertices for a given segment ID with a given quantity name */
       template <typename AccessorOrFieldType>
       void add_vector_data_on_vertices(segment_id_type seg_id, AccessorOrFieldType const accessor_or_field, std::string const & quantity_name)
-      { add_to_container(segment_vertex_vector_data[seg_id], accessor_or_field, quantity_name); }
+      { add_to_vertex_container(segment_vertex_vector_data[seg_id], accessor_or_field, quantity_name); }
 
       /** @brief Register an accessor/field for vector data on vertices for a given segment with a given quantity name */
       template <typename AccessorOrFieldType>
@@ -646,12 +657,12 @@ namespace viennagrid
       /** @brief Register an accessor/field for scalar data on cells with a given quantity name */
       template <typename AccessorOrFieldType>
       void add_scalar_data_on_cells(AccessorOrFieldType const accessor_or_field, std::string const & quantity_name)
-      { add_to_container(cell_scalar_data, accessor_or_field, quantity_name); }
+      { add_to_cell_container(cell_scalar_data, accessor_or_field, quantity_name); }
 
       /** @brief Register an accessor/field for scalar data on cells for a given segment ID with a given quantity name */
       template <typename AccessorOrFieldType>
       void add_scalar_data_on_cells(segment_id_type seg_id, AccessorOrFieldType const accessor_or_field, std::string const & quantity_name)
-      { add_to_container(segment_cell_scalar_data[seg_id], accessor_or_field, quantity_name); }
+      { add_to_cell_container(segment_cell_scalar_data[seg_id], accessor_or_field, quantity_name); }
 
       /** @brief Register an accessor/field for scalar data on cells for a given segment with a given quantity name */
       template <typename AccessorOrFieldType>
@@ -662,12 +673,12 @@ namespace viennagrid
       /** @brief Register an accessor/field for vector data on cells with a given quantity name */
       template <typename AccessorOrFieldType>
       void add_vector_data_on_cells(AccessorOrFieldType const accessor_or_field, std::string const & quantity_name)
-      { add_to_container(cell_vector_data, accessor_or_field, quantity_name); }
+      { add_to_cell_container(cell_vector_data, accessor_or_field, quantity_name); }
 
       /** @brief Register an accessor/field for vector data on cells for a given segment ID with a given quantity name */
       template <typename AccessorOrFieldType>
       void add_vector_data_on_cells(segment_id_type seg_id, AccessorOrFieldType const accessor_or_field, std::string const & quantity_name)
-      { add_to_container(segment_cell_vector_data[seg_id], accessor_or_field, quantity_name); }
+      { add_to_cell_container(segment_cell_vector_data[seg_id], accessor_or_field, quantity_name); }
 
       /** @brief Register an accessor/field for vector data on cells for a given segment with a given quantity name */
       template <typename AccessorOrFieldType>
