@@ -50,7 +50,7 @@ A tutorial covering the algorithms explained in this chapter can be found in \ls
 
 \section{Point/Vector-Based}
 This section details algorithms in {\ViennaGrid} requiring geometric information only.
-The point type in {\ViennaGrid} should be seen in this context mostly as a vector type rather than a representation of a geometric location, reflecting the duality of points and vectors in the Euclidian space.
+The point type in {\ViennaGrid} should be seen in this context mostly as a vector type rather than a representation of a geometric location, reflecting the duality of points and vectors in the Euclidean space.
 
   \subsection{Angles}
  To compute the angle between two vectors pointing from the origin to points \lstinline|p1| and \lstinline|p2|, call
@@ -112,7 +112,7 @@ is available with the function \lstinline|inner_prod()|. The following code calc
   \begin{align}
    \Vert x \Vert_p = \sqrt[p]{\sum_{i=0}^{N-1} x_i^p}
   \end{align}
- are implemented in the $N$-dimensional Euclidian space for $p=1$, $p=2$ and $p=\infty$. The three norms for the vector $(1,2,3)^\mathrm{T}$ are computed and printed using the lines
+ are implemented in the $N$-dimensional Euclidean space for $p=1$, $p=2$ and $p=\infty$. The three norms for the vector $(1,2,3)^\mathrm{T}$ are computed and printed using the lines
  \begin{lstlisting}
   PointType p(1, 2, 3);
   std::cout << viennagrid::norm_1(p)   << std::endl; //6

@@ -27,9 +27,9 @@ Thus, the mesh type using the provided configuration class for two-dimensional t
  // Segment 1, the right one
  SegmentType segment_1 = segmentation.make_segment();
 \end{lstlisting}
-Bear in mind that an additional \lstinline|typename| needs to be put after \lstinline|typedef| when using the metafunctions in namespace \texttt{result\_of} if used inside a template class or template function.
+Bear in mind that an additional \lstinline|typename| needs to be put after \lstinline|typedef| when using the meta-functions in namespace \texttt{result\_of} if used inside a template class or template function.
 The mesh type is selected from the respective configuration class in namespace \texttt{config}.
-Possible mesh tyes 
+Possible mesh types 
 The created mesh object will be filled with vertices and cells in the following.
 
 \begin{figure}[tb]
@@ -48,7 +48,7 @@ Since vertices carry geometric information by means of an associated point type,
 \end{lstlisting}
 This already allows us to add the vertices shown in Fig.~\ref{fig:samplemesh} one after another to the mesh by using \lstinline|make_vertex|.
 This function returns a handle to the created vertex.
-The type of the vertex handle is obtained from either the general \texttt{handle}-metafunction as
+The type of the vertex handle is obtained from either the general \texttt{handle}-meta-function as
 \begin{lstlisting}
  typedef viennagrid::result_of::handle< MeshType,
                                         viennagrid::vertex_tag
@@ -109,7 +109,7 @@ In this case the vertex is created in the underlying mesh and a handle is stored
 
 \section{Adding Cells to a Mesh or Segment}
 In order to add cells to a mesh or segment, one first needs to extract its type.
-This is conveniently possible via the \lstinline|cell| metafunction:
+This is conveniently possible via the \lstinline|cell| meta-function:
 \begin{lstlisting}
  typedef viennagrid::result_of::cell<MeshType>::type              CellType;
 \end{lstlisting}

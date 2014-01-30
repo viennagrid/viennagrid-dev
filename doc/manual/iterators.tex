@@ -24,8 +24,8 @@ To iterate over all elements of a \lstinline|mesh| of type \lstinline|MeshType|,
  typedef result_of::element_range<MeshType, ElementTag>::type ElementRange;
  typedef result_of::iterator<ElementRange>::type           ElementIterator;
 \end{lstlisting}
-For segments, all occurances of \lstinline|MeshType| and \lstinline|mesh| have to be replaced by \lstinline|SegmentType| and \lstinline|segment| here and in the following.
-If \lstinline|const|-access to the elements is sufficient, the metafunction \lstinline|const_element_range| should be used instead of \lstinline|element_range|.
+For segments, all occurrences of \lstinline|MeshType| and \lstinline|mesh| have to be replaced by \lstinline|SegmentType| and \lstinline|segment| here and in the following.
+If \lstinline|const|-access to the elements is sufficient, the meta-function \lstinline|const_element_range| should be used instead of \lstinline|element_range|.
 For instance, the required types for a \lstinline|const|-iteration over vertices is given by
 \begin{lstlisting}
  //const:
@@ -170,7 +170,7 @@ Thus, the use of segments can substantially simplify the formulation of algorith
 
 The necessary range types are obtained using the same pattern as in the two previous sections.
 Assuming that a vertex type \lstinline|VertexType| is already defined, the range of coboundary edges as well as the iterator are obtained
-using the \lstinline|coboundary_range| and \lstinline|iterator| metafunctions in the \lstinline|viennagrid| namespace:
+using the \lstinline|coboundary_range| and \lstinline|iterator| meta-functions in the \lstinline|viennagrid| namespace:
 \begin{lstlisting}
  //non-const:
  typedef result_of::coboundary_range< MeshType, VertexType, edge_tag
@@ -178,7 +178,7 @@ using the \lstinline|coboundary_range| and \lstinline|iterator| metafunctions in
  typedef result_of::iterator<EdgeOnVertexRange>::type    EdgeOnVertexIterator;
 \end{lstlisting}
 The first argument to \lstinline|coboundary_range| is the context mesh or segment, the second is the reference element for the iteration, and the third argument is the element tag of the elements in the range.
-A range of \lstinline|const|-edges is obtained using the \lstinline|const_coboundary_range| metafunction instead of the non-\lstinline|const| metafunction \lstinline|coboundary_range|.
+A range of \lstinline|const|-edges is obtained using the \lstinline|const_coboundary_range| meta-function instead of the non-\lstinline|const| meta-function \lstinline|coboundary_range|.
 Moreover, it shall be noted that an additional \lstinline|typename| keyword is required inside template functions and template classes.
 
 To set up the range object, the \lstinline|coboundary_elements| function from the \lstinline|viennagrid| namespace is reused. Unlike in the previous sections, it requires two arguments
@@ -228,9 +228,9 @@ or
       VertexType, edge_tag>(mesh, v)[i] << std::endl;
   }
 \end{lstlisting}
-where the latter form is not recommended for reasons of overheads involved in setting up the tempoarary ranges.
+where the latter form is not recommended for reasons of overheads involved in setting up the temporary ranges.
 
-Finally, it should be noted that coboundary information is not natively available in the mesh datastructure.
+Finally, it should be noted that coboundary information is not natively available in the mesh data structure.
 If and only if for the first time the coboundary elements $C_n$ of an element $T$, are requested, an iteration over all elements of coboundary type of the mesh or segment with nested element $T$ boundary iteration is carried out to collect the topological information.
 This results in extra memory requirements and additional computational costs, hence we suggest to use boundary iterations over coboundary iterations whenever possible.
 
@@ -244,9 +244,9 @@ For example, one may iterate over all neighboring triangles of a reference trian
 As well as with coboundary iteration, a context mesh or segment has to be provided.
 
 
-The necessary range types are obtained using the same pattern as with cobundary iteration:
+The necessary range types are obtained using the same pattern as with coboundary iteration:
 Assuming that a triangle type \lstinline|TriangleType| is already defined, the range of neighbor triangles as well as the iterator are obtained
-using the \lstinline|neighbor_range| and \lstinline|iterator| metafunctions in the \lstinline|viennagrid| namespace:
+using the \lstinline|neighbor_range| and \lstinline|iterator| meta-functions in the \lstinline|viennagrid| namespace:
 \begin{lstlisting}
  //non-const:
  typedef result_of::neighbor_range< MeshType, TriangleType, vertex_tag
@@ -254,7 +254,7 @@ using the \lstinline|neighbor_range| and \lstinline|iterator| metafunctions in t
  typedef result_of::iterator<NeighborTriangleRange>::type   NeighborTriangleIterator;
 \end{lstlisting}
 The first argument to \lstinline|neighbor_range| is the context mesh or segment, the second is the reference element type for the iteration, and the third argument is the connector element tag.
-A range of \lstinline|const|-edges is obtained using the \lstinline|const_neighbor_range| metafunction instead of the non-\lstinline|const| metafunction \lstinline|neighbor_range|.
+A range of \lstinline|const|-edges is obtained using the \lstinline|const_neighbor_range| meta-function instead of the non-\lstinline|const| meta-function \lstinline|neighbor_range|.
 Moreover, it shall be noted that an additional \lstinline|typename| keyword is required inside template functions and template classes.
 
 To set up the range object, the \lstinline|neighbor_elements| function from the \lstinline|viennagrid| namespace is reused. Unlike in the previous sections, it requires two arguments
@@ -303,4 +303,4 @@ or
      TriangleType, vertex_tag>(mesh, t)[i] << std::endl;
  }
 \end{lstlisting}
-where the latter form is not recommended for reasons of overheads involved in setting up the tempoarary ranges.
+where the latter form is not recommended for reasons of overheads involved in setting up the temporary ranges.

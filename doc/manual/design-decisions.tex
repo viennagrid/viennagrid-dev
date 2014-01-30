@@ -22,7 +22,7 @@ the history of {\ViennaGrid} and the individual preferences of the authors to a 
  will sacrifice efficiency especially for loops with a small number of iterations, which is not an option for high-performance environments.
  Therefore, iterators should be accessed using a compile time dispatch.
 
- Since hard-coding function names is not an option for an parametrized traversal,
+ Since hard-coding function names is not an option for an parameterized traversal,
  the next choice is to add a template parameter to the \lstinline|begin| and \lstinline|end| member functions:
  \begin{lstlisting}
  for (VertexIterator vit  = mesh.begin<ElementTag>();
@@ -31,7 +31,7 @@ the history of {\ViennaGrid} and the individual preferences of the authors to a 
  \end{lstlisting}
  This concept would be sufficiently flexible to allow for an iteration over edges, facets, etc.~in a unified way.
  In fact, this approach is also chosen by DUNE \cite{DUNE} and was also used in an early prototype of {\ViennaGrid}.
- However, there is one pecularity with this approach when it comes to template member functions: According to the C++ standard, the syntax needs to be supplemented with an additional \lstinline|template| keyword, resulting in
+ However, there is one peculiarity with this approach when it comes to template member functions: According to the C++ standard, the syntax needs to be supplemented with an additional \lstinline|template| keyword, resulting in
  \begin{lstlisting}
  for (VertexIterator vit  = mesh.template begin<ElementTag>();
                      vit != mesh.template end<ElementTag>();
@@ -75,7 +75,7 @@ the history of {\ViennaGrid} and the individual preferences of the authors to a 
  Our decision is based on mostly psychological reasoning as follows: If {\ViennaGrid} were tuned for low memory consumption and high speed by default, then a substantial set of functionality would be unavailable by default and causing compilation errors for users that just want to try a particular feature of {\ViennaGrid}.
  It is unlikely that these users will continue to use {\ViennaGrid} if they are not able to compile a simple application without digging through the manual and searching for the correct configuration. On the contrary, if the desired feature works essentially out of the box and is fast enough, users will not even have to care about the further configuration of {\ViennaGrid}. However, if additional speed is required, there are plenty of configuration options available, each potentially leading to higher speed or lower memory footprint and thus resulting in a feeling of success.
 
- The bottomline of all this is that we consider it more enjoyable to tune a slower default configuration for maximum speed than to fight with compiler error messages and being forced to work through the manual. We hope that our decision indeed reflects the preferences of our users.
+ The bottom line of all this is that we consider it more enjoyable to tune a slower default configuration for maximum speed than to fight with compiler error messages and being forced to work through the manual. We hope that our decision indeed reflects the preferences of our users.
 
 
  \section{Segments}
