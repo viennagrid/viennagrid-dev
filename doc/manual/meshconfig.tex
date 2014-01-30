@@ -77,7 +77,7 @@ More details on the types are given in the following:
 \end{itemize}
 
 All geometric and topological types inside the mesh are then derived from the configuration class. To this end, {\ViennaGrid} provides
-a number of metafunctions that reside in namespace \lstinline|viennagrid::result_of|. The naming follows the conventions in the Boost libraries \cite{boost}.
+a number of meta-functions that reside in namespace \lstinline|viennagrid::result_of|. The naming follows the conventions in the Boost libraries \cite{boost}.
 For a configuration class \lstinline|Config|, the respective types are obtained as follows:
 \begin{lstlisting}
  using namespace viennagrid;
@@ -270,7 +270,7 @@ Using the type \lstinline|full_handling_tag| instead of \lstinline|no_handling_t
 \TIP{If the storage of boundary $k$-cells is disabled (cf.~Sec.~\ref{subsec:boundary-ncells-storage}), there are automatically no local orientations for boundary $k$-cells stored. The local orientations do not need to be disabled explicitly in this case.}
 
 \subsection{$n$-Cell IDs} \label{subsec:ncell-ids}
-It is often convenient to have enumerated $n$-cells within a mesh such that every $n$-cell is aware of its index inside the random access container it resides in. This allows for some algorithms to use fast random-accesses with $\LandauO(1)$ costs rather than searching trees with $\LandauO(\log N)$ costs or linked lists with $\LandauO(N)$ costs, where $N$ here denotes the number of $n$-cells inside the mesh. Conversely, if $\LandauO(\log N)$ access times are acceptable, then the memory for storing the container index (which we refer to in the following as \emph{$n$-cell ID}) is wasted. To accomodate for these two scenarios, {\ViennaGrid} allows to selectively enable or disable the storage of $n$-cell IDs. By default, $n$-cell IDs are stored, since they have negligible impact on the total memory consumption as soon as other boundary $k$-cells are stored for an $n$-cell.
+It is often convenient to have enumerated $n$-cells within a mesh such that every $n$-cell is aware of its index inside the random access container it resides in. This allows for some algorithms to use fast random-accesses with $\LandauO(1)$ costs rather than searching trees with $\LandauO(\log N)$ costs or linked lists with $\LandauO(N)$ costs, where $N$ here denotes the number of $n$-cells inside the mesh. Conversely, if $\LandauO(\log N)$ access times are acceptable, then the memory for storing the container index (which we refer to in the following as \emph{$n$-cell ID}) is wasted. To accommodate for these two scenarios, {\ViennaGrid} allows to selectively enable or disable the storage of $n$-cell IDs. By default, $n$-cell IDs are stored, since they have negligible impact on the total memory consumption as soon as other boundary $k$-cells are stored for an $n$-cell.
 
 As for the storage of boundary $k$-cells and local orientations, there are two possibilities for customizing the storage of IDs:
 \begin{itemize}

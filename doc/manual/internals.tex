@@ -64,7 +64,7 @@ Instead of an ID handler, the segment inherits from a class providing a referenc
 
 \section{Element Storage in Mesh and Segment}
 For storing the elements inside a mesh, the natural approach is to use a \lstinline|std::vector<>| for that purpose.
-However, a drawback of this datastructure is that the number of elements should be known in advance in order to avoid
+However, a drawback of this data-structure is that the number of elements should be known in advance in order to avoid
 costly reallocations. This is especially a problem for mesh file formats which do not contain the total number of elements in an explicit way.
 {\ViennaGrid} uses a \lstinline|std::deque<>| (double ended queue) as container for vertices and cells, because it does not suffer form costly reallocations
 if the number of elements is a-priori unknown.

@@ -33,7 +33,7 @@ A different approach is to convert other file formats to one of the formats deta
  \end{lstlisting}
  should be used. Note that the reader might throw an \lstinline|std::exception| if the file cannot be opened or if there is a parser error.
 
- The fileformat is simplistic: The first number refers to the number of vertices in the mesh, then the coordinates of the vertices follow. After that, the number of cells in the mesh is specified. Then, each cell is specified by the index of the segment and the indices of its vertices, each using index base $1$.
+ The file-format is simplistic: The first number refers to the number of vertices in the mesh, then the coordinates of the vertices follow. After that, the number of cells in the mesh is specified. Then, each cell is specified by the index of the segment and the indices of its vertices, each using index base $1$.
  For example, the \texttt{.mesh}-file for the sample mesh in Fig.~\ref{fig:samplemesh} is:
  \begin{verbatim}
   6

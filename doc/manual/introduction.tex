@@ -3,7 +3,7 @@
 
 The tessellation of surfaces and solids into complexes of small elements such as triangles, quadrilaterals, tetrahedra or hexahedra is one of the major ingredients for many computational algorithms.
 Applications range from rendering, most notably in computer games, to computational science, in particular for the numerical solution of partial differential equations on complex meshs for the study of physical phenomena.
-These various areas lead to a broad range of different requirements on a mesh library, which certainly cannot be fulfilled by a single, predetermined datastructure.
+These various areas lead to a broad range of different requirements on a mesh library, which certainly cannot be fulfilled by a single, predetermined data structure.
 {\ViennaGrid} employs a highly configurable internal representation of meshes, while providing a uniform interface for the storage and access of data on mesh elements as well as STL-compatible iteration over such elements.
 
 As an example, consider the basic building block of triangular meshes, a triangle:
@@ -20,7 +20,7 @@ Depending on the underlying algorithm, edges of the triangle may or may not be o
 
  \item A third algorithm \texttt{algo3} may need global edge information, as well as information about the local orientation of edges with respect to each triangular cell.
       In such a case it may be preferred to additionally store mappings from global orientations to local orientations of the edges on each triangle if fast execution is desired.
-      Such an additional storage of orientations will render the datastructure well suited for \texttt{algo3}, but less suited for \texttt{algo1} and \texttt{algo2}.
+      Such an additional storage of orientations will render the data structure well suited for \texttt{algo3}, but less suited for \texttt{algo1} and \texttt{algo2}.
       An example for such a third type of algorithm are -- at least to some extent -- high-order finite element methods.
 \end{itemize}
 The situation for tetrahedral meshes is even more complicated, because additional orientation issues of shared facets come into play.
@@ -36,7 +36,7 @@ The situation for tetrahedral meshes is even more complicated, because additiona
  \includegraphics[scale=0.9]{figures/storage-vglob-eglob-cglob}
 \label{subfig:storage-vglob-eglob-cglob}
 } }
- \caption{Two storage schemes for a triangle and the underlying triangular mesh datastructure.}
+ \caption{Two storage schemes for a triangle and the underlying triangular mesh data structure.}
  \label{fig:storage-schemes-triangle}
 \end{figure}
 
@@ -83,7 +83,7 @@ We have carefully checked the documentation of each project, but clearly cannot 
         One of the strengths of \texttt{libmesh} is the support for mesh refinement and parallel computations.
         Support for user-defined data on mesh elements is also provided.
 
-  \item \textbf{OpenMesh} \cite{OpenMesh}: \texttt{OpenMesh} provides a generic datastructure for representing and manipulating polygonal meshes.
+  \item \textbf{OpenMesh} \cite{OpenMesh}: \texttt{OpenMesh} provides a generic data structure for representing and manipulating polygonal meshes.
         The main goals are flexibility, efficiency and easy-to-use.
         Similar to {\ViennaGrid}, generic programming paradigms are used.
         \texttt{OpenMesh} allows to store custom data of arbitrary type on mesh elements, but it seems to rely on potentially slow string comparisons at run-time to retrieve the data.

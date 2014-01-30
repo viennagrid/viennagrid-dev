@@ -14,7 +14,7 @@ First, geometrical objects are discussed, then topological objects and finally c
 
 
 \section{Points (Geometrical Objects)}
-The underlying space in {\ViennaGrid} is the $m$-dimensional Euclidian space $\mathbb{E}^m$, which is identified with the real coordinate space $\mathbb{R}^m$ in the following.
+The underlying space in {\ViennaGrid} is the $m$-dimensional Euclidean space $\mathbb{E}^m$, which is identified with the real coordinate space $\mathbb{R}^m$ in the following.
 A \emph{point} refers to an element $\vector x$ in $\mathbb{R}^m$ and does not carry any topological information.
 On the other hand, a point equivalently refers to the vector from the origin pointing to $\vector x$.
 
@@ -58,7 +58,7 @@ An explicit conversion to the Cartesian coordinate system is provided by the fre
 
 \TIP{For details on the coordinate systems, refer to the reference documentation in \texttt{doc/doxygen/}.}
 
-Since all coordinate systems refer to a common underlying Euclidian space, the operator overloads remain valid even if operands are given in different coordinate systems. In such a case, the coordinate system of the resulting point is given by the coordinate system of the left hand side operand:
+Since all coordinate systems refer to a common underlying Euclidean space, the operator overloads remain valid even if operands are given in different coordinate systems. In such a case, the coordinate system of the resulting point is given by the coordinate system of the left hand side operand:
 \begin{lstlisting}
  CylindricalPoint3d p1(1, 1, 5);
  CartesianPoint3d p2 = p1; //implicit conversion
