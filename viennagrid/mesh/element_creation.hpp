@@ -408,7 +408,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::element_tag<ElementType>::type ElementTagType;
 
       typedef typename viennagrid::result_of::vertex_id<ElementType>::type VertexIDType;
-      typedef typename viennagrid::result_of::vertex_handle<ElementType>::type VertexHandleType;
+      //typedef typename viennagrid::result_of::vertex_handle<ElementType>::type VertexHandleType;
       typedef typename viennagrid::result_of::vertex_handle<OutputMeshOrSegmentHandleT>::type OutputVertexHandleType;
 
       typedef typename viennagrid::result_of::const_vertex_range<ElementType>::type ConstVertexOnElementRangeType;

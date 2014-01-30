@@ -454,6 +454,25 @@ namespace viennagrid
   }
 
 
+  /** @brief Provides an exception for the case a segment cannot be found */
+  class segment_not_found_exception : public std::exception
+  {
+    public:
+      virtual const char* what() const throw()
+      {
+        std::stringstream ss;
+        ss << "* ViennaGrid: Cannot find segment  " << id_ << "!";
+        return ss.str().c_str();
+      }
+
+      segment_not_found_exception(long id) : id_(id) {}
+
+      virtual ~segment_not_found_exception() throw() {}
+
+    private:
+      long id_;
+  };
+
   /** @brief A segmentation is a logical decomposition of the mesh (or a subset thereof) into segments. Segments may overlap. */
   template<typename WrappedConfigType>
   class segmentation
@@ -586,6 +605,18 @@ namespace viennagrid
       * @return             A const reference to newly created segment
       */
     segment_handle_type const & operator[]( segment_id_type const & segment_id ) const { return get_segment(segment_id); }
+    /** @brief Returns segment with segment_id. Throws
+      *
+      * @param segment_id   The ID of the segment to search
+      * @return             A const reference to newly created segment
+      */
+    segment_handle_type const & at( segment_id_type const & segment_id ) const
+    {
+        typename segment_id_map_type::const_iterator it = segment_id_map.find(segment_id);
+        if( it == segment_id_map.end() )
+          throw viennagrid::segment_not_found_exception(segment_id);
+        return it->second;
+    }
 
     /** @brief Returns the heighest segment ID
       *
