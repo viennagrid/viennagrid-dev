@@ -110,7 +110,7 @@ int main()
   std::cout << "* Test started! *" << std::endl;
   std::cout << "*****************" << std::endl;
 
-  std::string path = "../../examples/data/";
+  std::string path = "../examples/data/";
 
   //viennagrid::io::netgen_reader my_netgen_reader;
 

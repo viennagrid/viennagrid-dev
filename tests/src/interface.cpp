@@ -119,7 +119,7 @@ int main()
   std::cout << "* Test started! *" << std::endl;
   std::cout << "*****************" << std::endl;
 
-  std::string path = "../../examples/data/";
+  std::string path = "../examples/data/";
 
   std::cout << "*********** triangular, 2d ***********" << std::endl;
   viennagrid::io::vtk_reader<MeshTri>  vtk_reader_tri;

@@ -121,7 +121,7 @@ int main()
   std::cout << "* Test started! *" << std::endl;
   std::cout << "*****************" << std::endl;
 
-  std::string path = "../../examples/data/";
+  std::string path = "../examples/data/";
 
   std::cout << "Testing 1d..." << std::endl;
   test<viennagrid::line_tag, viennagrid::line_1d_mesh>(path + "line8.mesh");

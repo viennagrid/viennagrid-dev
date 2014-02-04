@@ -146,7 +146,7 @@ int main()
   std::cout << "* Test started! *" << std::endl;
   std::cout << "*****************" << std::endl;
 
-  std::string path = "../../examples/data/";
+  std::string path = "../examples/data/";
 
   std::string infile = path + "interconnect3d.mesh";
   std::string outfile = "out"; // without ending

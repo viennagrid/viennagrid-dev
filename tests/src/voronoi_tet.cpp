@@ -37,7 +37,7 @@ int main()
   MeshType mesh;
   SegmentationType segmentation(mesh);
 
-  std::string path = "../../examples/data/";
+  std::string path = "../examples/data/";
 
   //create device:
   try

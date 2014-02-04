@@ -309,7 +309,7 @@ int main()
   std::cout << "* Test started! *" << std::endl;
   std::cout << "*****************" << std::endl;
 
-  std::string path = "../../examples/data/";
+  std::string path = "../examples/data/";
 
   std::string infile = path + "twocubes.mesh";
   std::string outfile = "vtk_writer"; // without ending
