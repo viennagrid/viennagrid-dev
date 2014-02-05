@@ -18,7 +18,6 @@
 #include "viennagrid/config/default_configs.hpp"
 #include "viennagrid/io/netgen_reader.hpp"
 #include "viennagrid/io/vtk_reader.hpp"
-#include <boost/concept_check.hpp>
 
 
 
