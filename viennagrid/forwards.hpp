@@ -1070,6 +1070,12 @@ namespace viennagrid
     };
 
     /** \cond */
+    template<typename SomethingT>
+    struct facet_tag< const SomethingT>
+    {
+      typedef typename facet_tag<SomethingT>::type  type;
+    };
+
     template<typename WrappedMeshConfigT>
     struct facet_tag< viennagrid::mesh<WrappedMeshConfigT> >
     {
@@ -1103,6 +1109,12 @@ namespace viennagrid
     };
 
     /** \cond */
+    template<typename SomethingT>
+    struct facet< const SomethingT>
+    {
+      typedef typename facet<SomethingT>::type    type;
+    };
+
     template<typename WrappedMeshConfigT>
     struct facet< viennagrid::mesh<WrappedMeshConfigT> >
     {
