@@ -35,6 +35,7 @@ namespace viennagrid
 
       typedef typename container_type::size_type  size_type;
       typedef typename container_type::value_type value_type;
+      typedef typename viennagrid::result_of::id<value_type>::type id_type;
 
       typedef typename container_type::reference             reference;
       typedef typename container_type::const_reference const_reference;
@@ -84,6 +85,20 @@ namespace viennagrid
       const_reference front() const { return container_->front(); }
       reference back()              { return container_->back(); }
       const_reference back()  const { return container_->back(); }
+
+
+
+      iterator find( id_type const & id )
+      { return viennagrid::detail::find(*container_, id); }
+      const_iterator find( id_type const & id ) const
+      { return viennagrid::detail::find(*container_, id); }
+
+      iterator find( value_type const & element )
+      { return viennagrid::detail::find(*container_, element); }
+      const_iterator find( value_type const & element ) const
+      { return viennagrid::detail::find(*container_, element); }
+
+
 
 
 
@@ -139,6 +154,7 @@ namespace viennagrid
 
       typedef typename container_type::size_type size_type;
       typedef typename container_type::value_type value_type;
+      typedef typename viennagrid::result_of::id<value_type>::type id_type;
 
       typedef typename container_type::const_reference reference;
       typedef typename container_type::const_reference const_reference;
@@ -207,6 +223,14 @@ namespace viennagrid
       const_reference front() const { return container_->front(); }
             reference back()        { return container_->back(); }
       const_reference back()  const { return container_->back(); }
+
+
+
+      const_iterator find( id_type const & id ) const
+      { return viennagrid::detail::find(*container_, id); }
+
+      const_iterator find( value_type const & element ) const
+      { return viennagrid::detail::find(*container_, element); }
 
 
 

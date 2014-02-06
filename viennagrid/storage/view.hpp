@@ -229,6 +229,11 @@ namespace viennagrid
     handle_type handle( reference element ) { return &element; }
     const_handle_type handle( const_reference element ) const { return &element; }
 
+    iterator find( const_reference element )
+    { return std::find( begin(), end(), handle(element)); }
+    const_iterator find( const_reference element ) const
+    { return std::find( begin(), end(), handle(element)); }
+
 
     reference front() { return dereference_handle(handle_container.front()); }
     const_reference front() const { return dereference_handle(handle_container.front()); }
@@ -490,6 +495,10 @@ namespace viennagrid
     handle_type handle( reference element ) { return &element; }
     const_handle_type handle( const_reference element ) const { return &element; }
 
+    iterator find( const_reference element )
+    { return iterator(*this, handle_container.find(const_cast<handle_type>(handle(element)))); }
+    const_iterator find( const_reference element ) const
+    { return const_iterator(*this, handle_container.find(const_cast<handle_type>(handle(element)))); }
 
     reference front() { return dereference_handle(handle_container.front()); }
     const_reference front() const { return dereference_handle(handle_container.front()); }
@@ -685,6 +694,36 @@ namespace viennagrid
 
   namespace detail
   {
+    template<typename BaseContainerT>
+    typename view< BaseContainerT, std_set_tag<id_compare_tag> >::iterator find(view< BaseContainerT, std_set_tag<id_compare_tag> > & container, typename view< BaseContainerT, std_set_tag<id_compare_tag> >::value_type const & element)
+    {
+      return container.find(element);
+//       typename view< BaseContainerT, std_set_tag<id_compare_tag> >::value_type tmp();
+//       return typename view< BaseContainerT, std_set_tag<id_compare_tag> >::iterator(container, container.base_container->find(element));
+
+
+//       return std::find_if(
+//                   container.begin(),
+//                   container.end(),
+//                   viennagrid::detail::id_compare<typename view< BaseContainerT, std_set_tag<id_compare_tag> >::value_type::id_type>(id)
+//           );
+    }
+
+    template<typename BaseContainerT>
+    typename view< BaseContainerT, std_set_tag<id_compare_tag> >::const_iterator find(view< BaseContainerT, std_set_tag<id_compare_tag> > const & container, typename view< BaseContainerT, std_set_tag<id_compare_tag> >::value_type const & element)
+    {
+      return container.find(element);
+//       return typename view< BaseContainerT, std_set_tag<id_compare_tag> >::const_iterator(container, container.base_container->find(element));
+//       return std::find_if(
+//                   container.begin(),
+//                   container.end(),
+//                   viennagrid::detail::id_compare<typename view< BaseContainerT, std_set_tag<id_compare_tag> >::value_type::id_type>(element)
+//           );
+    }
+
+
+
+
     /** @brief Helper class for set_base_container() */
     template<typename container_collection_typemap>
     struct set_base_container_helper;

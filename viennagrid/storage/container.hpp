@@ -47,6 +47,34 @@ namespace viennagrid
 
 
 
+    template<typename ContainerT>
+    typename ContainerT::iterator find(ContainerT & container, typename ContainerT::value_type::id_type id)
+    {
+      return std::find_if( container.begin(), container.end(),
+                  viennagrid::detail::id_compare<typename ContainerT::value_type::id_type>(id));
+    }
+
+    template<typename ContainerT>
+    typename ContainerT::const_iterator find(ContainerT const & container, typename ContainerT::value_type::id_type id)
+    {
+      return std::find_if(container.begin(),container.end(),
+                  viennagrid::detail::id_compare<typename ContainerT::value_type::id_type>(id));
+    }
+
+    template<typename ContainerT>
+    typename ContainerT::iterator find(ContainerT & container, typename ContainerT::value_type const & element)
+    {
+      return std::find(container.begin(), container.end(), element);
+    }
+
+    template<typename ContainerT>
+    typename ContainerT::const_iterator find(ContainerT const & container, typename ContainerT::value_type const & element)
+    {
+      return std::find(container.begin(), container.end(), element);
+    }
+
+
+
 
 
     template<typename base_iterator, typename base_const_iterator, typename handle_tag>

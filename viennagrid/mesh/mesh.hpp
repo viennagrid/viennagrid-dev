@@ -1355,7 +1355,49 @@ namespace viennagrid
 
 
 
-  /** @brief Function which finds an element based on an ID. The runtime of this function is linear in the number of elements of the requested type in the mesh.
+
+
+
+
+
+
+
+
+
+  /** @brief Function which finds an element based on an element. The runtime of this function depends on the container but can likely be linear in the number of elements of the requested type in the mesh.
+    *
+    * @tparam MeshSegmentHandleT          Host mesh/segment type
+    * @tparam IDT                     ID type of the object to be found
+    * @param  mesh_or_segment       Host mesh/segment object
+    * @param  id                      id of the object to be found
+    * @return                         An iterator pointing to the found element. If no element was found it points to viennagrid::elements<ElementType>(mesh_or_segment).end()
+    */
+  template<typename MeshSegmentHandleT, typename ElementTagT, typename WrappedConfigT>
+  typename viennagrid::result_of::iterator< typename viennagrid::result_of::element_range<MeshSegmentHandleT, ElementTagT>::type >::type
+  find(MeshSegmentHandleT & mesh_or_segment, element<ElementTagT, WrappedConfigT> const & element )
+  {
+    return viennagrid::elements<ElementTagT>(mesh_or_segment).find(element);
+  }
+
+  /** @brief Function which finds an element based on an element, const version. The runtime of this function depends on the container but can likely be linear in the number of elements of the requested type in the mesh.
+    *
+    * @tparam MeshSegmentHandleT          Host mesh/segment type
+    * @tparam IDT                     ID type of the object to be found
+    * @param  mesh_or_segment       Host mesh/segment object
+    * @param  id                      id of the object to be found
+    * @return                         An iterator pointing to the found element. If no element was found it points to viennagrid::elements<ElementType>(mesh_or_segment).end()
+    */
+  template<typename MeshSegmentHandleT, typename ElementTagT, typename WrappedConfigT>
+  typename viennagrid::result_of::const_iterator< typename viennagrid::result_of::element_range<MeshSegmentHandleT, ElementTagT>::type >::type
+  find(MeshSegmentHandleT const & mesh_or_segment, element<ElementTagT, WrappedConfigT> const & element )
+  {
+    return viennagrid::elements<ElementTagT>(mesh_or_segment).find(element);
+  }
+
+
+
+
+  /** @brief Function which finds an element based on an ID. The runtime of this function depends on the container but can likely be linear in the number of elements of the requested type in the mesh.
     *
     * @tparam MeshSegmentHandleT          Host mesh/segment type
     * @tparam IDT                     ID type of the object to be found
@@ -1369,17 +1411,11 @@ namespace viennagrid
   {
     typedef typename IDT::value_type     element_type;
     typedef typename element_type::tag   element_tag;
-    typedef typename viennagrid::result_of::element_range<MeshSegmentHandleT, element_tag>::type   RangeType;
 
-    RangeType range = viennagrid::elements<element_tag>(mesh_or_segment);
-    return std::find_if(
-                range.begin(),
-                range.end(),
-                viennagrid::detail::id_compare<IDT>(id)
-        );
+    return viennagrid::elements<element_tag>(mesh_or_segment).find(id);
   }
 
-  /** @brief Function which finds an element based on an ID, const version. The runtime of this function is linear in the number of elements of the requested type in the mesh.
+  /** @brief Function which finds an element based on an ID, const version. The runtime of this function depends on the container but can likely be linear in the number of elements of the requested type in the mesh.
     *
     * @tparam MeshSegmentHandleT          Host mesh/segment type
     * @tparam IDT                     ID type of the object to be found
@@ -1393,14 +1429,8 @@ namespace viennagrid
   {
     typedef typename IDT::value_type      element_type;
     typedef typename element_type::tag    element_tag;
-    typedef typename viennagrid::result_of::const_element_range<MeshSegmentHandleT, element_tag>::type    RangeType;
 
-    RangeType range = viennagrid::elements<element_tag>(mesh_or_segment);
-    return std::find_if(
-                range.begin(),
-                range.end(),
-                viennagrid::detail::id_compare<IDT>(id)
-        );
+    return viennagrid::elements<element_tag>(mesh_or_segment).find(id);
   }
 
   /** @brief Function which finds an element based on a handle. The runtime of this function is linear in the number of elements of the requested type in the mesh.
