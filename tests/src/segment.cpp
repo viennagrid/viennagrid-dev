@@ -243,7 +243,7 @@ void test(viennagrid::triangular_2d_mesh)
   VertexHandleType vh[6];
 
   std::cout << "Adding vertices to mesh..." << std::endl;
-  for (int i = 0; i < 12; ++i)
+  for (int i = 0; i < 6; ++i)
     vh[i] = viennagrid::make_vertex( mesh, p[i] );
 
   std::cout << "Creating segments..." << std::endl;
@@ -316,7 +316,7 @@ void test(viennagrid::quadrilateral_2d_mesh)
   VertexHandleType vh[6];
 
   std::cout << "Adding vertices to mesh..." << std::endl;
-  for (int i = 0; i < 12; ++i)
+  for (int i = 0; i < 6; ++i)
     vh[i] = viennagrid::make_vertex( mesh, p[i] );
 
   std::cout << "Creating segments..." << std::endl;
