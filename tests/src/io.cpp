@@ -194,11 +194,13 @@ void test_vtk(ReaderType & my_reader, std::string const & infile, std::string co
     long data_long = static_cast<long>(vtk_vertex_long_accessor(*vit));
     std::vector<double> data_point = vtk_vertex_vector_accessor(*vit);
 
-    assert( fabs(data_double - viennagrid::point(*vit)[0]) < 1e-4 && "Vertex check failed: data_double!");
-    assert( (data_long == vit->id().get()) && "Vertex check failed: data_long!");
-    assert( fabs(data_point[0] - viennagrid::point(*vit)[0]) < 1e-4
-            && fabs(data_point[1] - viennagrid::point(*vit)[1]) < 1e-4
-            && "Vertex check failed: data_point!");
+    if (fabs(data_double - viennagrid::point(*vit)[0]) > 1e-4)
+      throw std::runtime_error("Vertex check failed: data_double!");
+    if (data_long != vit->id().get())
+      throw std::runtime_error("Vertex check failed: data_long!");
+    if (fabs(data_point[0] - viennagrid::point(*vit)[0]) > 1e-4
+        || fabs(data_point[1] - viennagrid::point(*vit)[1]) > 1e-4)
+      throw std::runtime_error("Vertex check failed: data_point!");
   }
 
   CellRange cells(mesh);
@@ -210,11 +212,13 @@ void test_vtk(ReaderType & my_reader, std::string const & infile, std::string co
     long data_long = static_cast<long>(vtk_cell_long_accessor(*cit));
     std::vector<double> data_point = vtk_cell_vector_accessor(*cit);
 
-    assert( fabs(data_double - viennagrid::centroid(*cit)[0]) < 1e-4 && "Cell check failed: data_double!");
-    assert( (data_long == cit->id().get()) && "Cell check failed: data_long!");
-    assert( fabs(data_point[0] - viennagrid::centroid(*cit)[0]) < 1e-4
-            && fabs(data_point[1] - viennagrid::centroid(*cit)[1]) < 1e-4
-            && "Cell check failed: data_point!");
+    if (fabs(data_double - viennagrid::centroid(*cit)[0]) > 1e-4)
+      throw std::runtime_error("Cell check failed: data_double!");
+    if (data_long != cit->id().get())
+      throw std::runtime_error("Cell check failed: data_long!");
+    if (fabs(data_point[0] - viennagrid::centroid(*cit)[0]) > 1e-4
+        || fabs(data_point[1] - viennagrid::centroid(*cit)[1]) > 1e-4)
+      throw std::runtime_error("Vertex check failed: data_point!");
   }
 
   //test writers:
@@ -276,10 +280,14 @@ int main()
   std::cout << "-- Vector cell quantities: --" << std::endl;
   print(vtk_reader_2d.vector_cell_data_names(1));
 
-  assert( (vtk_reader_2d.scalar_vertex_data_names(0).size() == 2) && "Not all data parsed!");
-  assert( (vtk_reader_2d.vector_vertex_data_names(0).size() == 1) && "Not all data parsed!");
-  assert( (vtk_reader_2d.scalar_cell_data_names(0).size() == 2) && "Not all data parsed!");
-  assert( (vtk_reader_2d.vector_cell_data_names(0).size() == 1) && "Not all data parsed!");
+  if (vtk_reader_2d.scalar_vertex_data_names(0).size() != 2)
+    throw std::runtime_error("Not all data parsed!");
+  if (vtk_reader_2d.vector_vertex_data_names(0).size() != 1)
+    throw std::runtime_error("Not all data parsed!");
+  if (vtk_reader_2d.scalar_cell_data_names(0).size() != 2)
+    throw std::runtime_error("Not all data parsed!");
+  if (vtk_reader_2d.vector_cell_data_names(0).size() != 1)
+    throw std::runtime_error("Not all data parsed!");
 
 
   viennagrid::io::vtk_reader<viennagrid::tetrahedral_3d_mesh>  vtk_reader_3d;
@@ -297,10 +305,14 @@ int main()
   std::cout << "-- Vector cell quantities: --" << std::endl;
   print(vtk_reader_3d.vector_cell_data_names(1));
 
-  assert( (vtk_reader_3d.scalar_vertex_data_names(0).size() == 2) && "Not all data parsed!");
-  assert( (vtk_reader_3d.vector_vertex_data_names(0).size() == 1) && "Not all data parsed!");
-  assert( (vtk_reader_3d.scalar_cell_data_names(0).size() == 2) && "Not all data parsed!");
-  assert( (vtk_reader_3d.vector_cell_data_names(0).size() == 1) && "Not all data parsed!");
+  if (vtk_reader_3d.scalar_vertex_data_names(0).size() != 2)
+    throw std::runtime_error("Not all data parsed!");
+  if (vtk_reader_3d.vector_vertex_data_names(0).size() != 1)
+    throw std::runtime_error("Not all data parsed!");
+  if (vtk_reader_3d.scalar_cell_data_names(0).size() != 2)
+    throw std::runtime_error("Not all data parsed!");
+  if (vtk_reader_3d.vector_cell_data_names(0).size() != 1)
+    throw std::runtime_error("Not all data parsed!");
 
 //   test<viennagrid::config::tetrahedral_3d>(vtk_reader_3d, "multi-segment_main.pvd", "io_3d_2");
 
