@@ -217,7 +217,8 @@ namespace viennagrid
         element_on_coboundary_element_range_type elements_on_coboundary_element( *it );
         for (element_on_coboundary_element_range_iterator jt = elements_on_coboundary_element.begin(); jt != elements_on_coboundary_element.end(); ++jt)
         {
-          if ( viennagrid::find_by_handle(mesh_obj, jt.handle()) !=  viennagrid::elements<element_type_or_tag>(mesh_obj).end() )
+//           is this line needed??
+//           if ( viennagrid::find(mesh_obj, *jt) !=  viennagrid::elements<element_type_or_tag>(mesh_obj).end() )
           accessor.at( *jt ).insert_handle( it.handle() );
         }
       }
