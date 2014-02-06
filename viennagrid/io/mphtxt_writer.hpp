@@ -119,9 +119,7 @@ namespace viennagrid
         }
       }
 
-
-      std::cout << "Number of contacts: " << current_contact_index << std::endl;
-
+//       std::cout << "Number of contacts: " << current_contact_index << std::endl;
     }
 
 
@@ -193,6 +191,7 @@ namespace viennagrid
         {
           vertex_index_map[ vit->id() ] = vertex_index;
 
+          writer.precision( std::numeric_limits<typename PointType::value_type>::digits10 );
           PointType const & point = viennagrid::point(*vit);
           for (std::size_t i = 0; i < point.size(); ++i)
             writer << point[i] << " ";
@@ -240,7 +239,7 @@ namespace viennagrid
               CoboundaryTetrahedronRangeType coboundary_tetrahedrons(*sit, tit.handle());
               if (coboundary_tetrahedrons.size() != 1)
               {
-                std::cout << "FEHLER!!!" << std::endl;
+                std::cout << "FEHLER!!! there is more than one on co-boundary tetrahedron" << std::endl;
               }
 
               PointType tetrahedron_center = viennagrid::centroid( coboundary_tetrahedrons[0] );
