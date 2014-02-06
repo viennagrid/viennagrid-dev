@@ -475,6 +475,7 @@ namespace viennagrid
       template <typename ContainerType>
       void setupDataVertex(MeshType & mesh_obj, SegmentHandleType & segment, segment_id_type seg_id, ContainerType const & container, std::size_t num_components)
       {
+        (void)segment;
         std::string const & name = container.first;
 
         if (num_components == 1)
