@@ -829,31 +829,19 @@ namespace viennagrid
 
 
 
-  /** @brief Function for retrieving a boundary element range from a host element. Non-const version.
-    *
-    * @tparam sub_element_type_or_tag  The element type/tag for the requested boundary element range
-    * @tparam element_tag              The element tag of the host element
-    * @tparam WrappedConfigType        The host mesh/element configuration class (providing the typemap as 'type' member type)
-    * @param  element                  The host element from which the boundary element range should be obtained
-    * @return                          An element range
-    */
+  // doxygen docu in forwards.hpp
   template<typename sub_element_type_or_tag, typename element_tag, typename WrappedConfigType>
-  typename result_of::element_range<viennagrid::element<element_tag, WrappedConfigType>, sub_element_type_or_tag>::type elements( viennagrid::element<element_tag, WrappedConfigType> & element)
+  typename result_of::element_range<viennagrid::element<element_tag, WrappedConfigType>, sub_element_type_or_tag>::type
+  elements( viennagrid::element<element_tag, WrappedConfigType> & element)
   {
       typedef typename result_of::element<viennagrid::element<element_tag, WrappedConfigType>, sub_element_type_or_tag>::type sub_element_type;
       return typename result_of::element_range<viennagrid::element<element_tag, WrappedConfigType>, sub_element_type_or_tag>::type( element.container( typename sub_element_type::tag() ) );
   }
 
-  /** @brief Function for retrieving a boundary element range from a host element. Const version.
-    *
-    * @tparam sub_element_type_or_tag  The element type/tag for the requested boundary element range
-    * @tparam element_tag              The element tag of the host element
-    * @tparam WrappedConfigType        The host mesh/element configuration class (providing the typemap as 'type' member type)
-    * @param  element                  The host element from which the boundary element range should be obtained
-    * @return                          An element range
-    */
+  // doxygen docu in forwards.hpp
   template<typename sub_element_type_or_tag, typename element_tag, typename WrappedConfigType>
-  typename result_of::const_element_range<viennagrid::element<element_tag, WrappedConfigType>, sub_element_type_or_tag>::type elements( const viennagrid::element<element_tag, WrappedConfigType> & element)
+  typename result_of::const_element_range<viennagrid::element<element_tag, WrappedConfigType>, sub_element_type_or_tag>::type
+  elements( const viennagrid::element<element_tag, WrappedConfigType> & element)
   {
       typedef typename result_of::element<viennagrid::element<element_tag, WrappedConfigType>, sub_element_type_or_tag>::type sub_element_type;
       return typename result_of::const_element_range<viennagrid::element<element_tag, WrappedConfigType>, sub_element_type_or_tag>::type( element.container( typename sub_element_type::tag() ) );
