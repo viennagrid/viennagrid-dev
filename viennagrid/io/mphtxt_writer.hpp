@@ -63,12 +63,11 @@ namespace viennagrid
         if (!sids.is_equal(viennagrid::segment_ids(segment.parent(), *ntit)))
           continue;
 
-
         PointType neighbor_normal = viennagrid::normal_vector(*ntit);
 
         NumericType dot = viennagrid::inner_prod( normal, neighbor_normal );
 
-        if ( std::abs(dot) > 1.0-1e-6)
+        if ( std::abs(dot) > (1.0-1e-6) * viennagrid::norm_2(normal) * viennagrid::norm_2(neighbor_normal) )
         {
           contact_index_accessor(*ntit) = contact_index;
           mark_planar_neighbors( segment, contact_index_accessor, ntit.handle(), contact_index, sids );
