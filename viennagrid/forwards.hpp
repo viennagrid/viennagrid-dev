@@ -1206,16 +1206,67 @@ namespace viennagrid
   template<typename ElementTypeOrTagT, typename SomethingT>
   typename result_of::element_range<SomethingT, ElementTypeOrTagT>::type elements(SomethingT & something);
 
+
+  /** @brief Function for retrieving an element range or a boundary element range from a mesh. Non-const version.
+    *
+    * @tparam WrappedConfigType  The host mesh configuration class (providing the typemap as 'type' member type)
+    * @tparam ElementTypeOrTagT  The element type/tag for the requested element range
+    * @param  mesh_obj           The mesh object
+    * @return                    An element range
+    */
+  template<typename ElementTypeOrTagT, typename WrappedConfigType>
+  typename result_of::element_range<viennagrid::mesh<WrappedConfigType>, ElementTypeOrTagT>::type
+  elements(viennagrid::mesh<WrappedConfigType> & mesh_obj);
+
+
   /** @brief Function for retrieving an element range or a boundary element range from a segment
     *
-    * @tparam SomethingT         The host segment
+    * @tparam SegmentationT      The host segmentation
     * @tparam ElementTypeOrTagT  The element type/tag for the requested element range
-    * @param  something          The host object of type SomethingT
+    * @param  segment            The host object of type SomethingT
     * @return                    An element range
     */
   template<typename ElementTypeOrTagT, typename SegmentationT>
-  typename result_of::element_range< viennagrid::segment_handle<SegmentationT>, ElementTypeOrTagT>::type elements( viennagrid::segment_handle<SegmentationT> & something);
+  typename result_of::element_range< viennagrid::segment_handle<SegmentationT>, ElementTypeOrTagT>::type
+  elements( viennagrid::segment_handle<SegmentationT> & segment)
+  { return elements<ElementTypeOrTagT>( segment.view() ); }
 
+  /** @brief Function for retrieving an element range or a boundary element range from a segmentation. Non-const version.
+    *
+    * @tparam ElementTypeOrTagT  The element type/tag for the requested element range
+    * @tparam WrappedConfigT     The host mesh configuration class (providing the typemap as 'type' member type)
+    * @param  segm               The hosting segmentation object
+    * @return                    An element range
+    */
+  template<typename ElementTypeOrTagT, typename WrappedConfigT>
+  typename result_of::element_range<segmentation<WrappedConfigT>, ElementTypeOrTagT>::type
+  elements( viennagrid::segmentation<WrappedConfigT> & segm)
+  { return elements<ElementTypeOrTagT>( segm.all_elements() ); }
+
+
+  /** @brief Function for retrieving a boundary element range from a host element. Non-const version.
+    *
+    * @tparam sub_element_type_or_tag  The element type/tag for the requested boundary element range
+    * @tparam element_tag              The element tag of the host element
+    * @tparam WrappedConfigType        The host mesh/element configuration class (providing the typemap as 'type' member type)
+    * @param  element                  The host element from which the boundary element range should be obtained
+    * @return                          An element range
+    */
+  template<typename sub_element_type_or_tag, typename element_tag, typename WrappedConfigType>
+  typename result_of::element_range<viennagrid::element<element_tag, WrappedConfigType>, sub_element_type_or_tag>::type
+  elements( viennagrid::element<element_tag, WrappedConfigType> & element);
+
+  /** @brief Function for retrieving a boundary element range from a host element. Const version.
+    *
+    * @tparam sub_element_type_or_tag  The element type/tag for the requested boundary element range
+    * @tparam element_tag              The element tag of the host element
+    * @tparam WrappedConfigType        The host mesh/element configuration class (providing the typemap as 'type' member type)
+    * @param  element                  The host element from which the boundary element range should be obtained
+    * @return                          An element range
+    */
+  template<typename sub_element_type_or_tag, typename element_tag, typename WrappedConfigType>
+  typename result_of::const_element_range<viennagrid::element<element_tag, WrappedConfigType>, sub_element_type_or_tag>::type
+  elements( const viennagrid::element<element_tag, WrappedConfigType> & element);
 
 
   /** @brief Function for retrieving a cell range object from a host object
@@ -1340,15 +1391,42 @@ namespace viennagrid
   template<typename ElementTypeOrTagT, typename SomethingT>
   typename result_of::const_element_range<SomethingT, ElementTypeOrTagT>::type elements(SomethingT const & something);
 
-  /** @brief Function for retrieving a const element range or a boundary element range from a segment
+  /** @brief Function for retrieving an element range or a boundary element range from a mesh. Const version.
     *
-    * @tparam SomethingT         The host segment
+    * @tparam WrappedConfigType  The host mesh configuration class (providing the typemap as 'type' member type)
     * @tparam ElementTypeOrTagT  The element type/tag for the requested element range
-    * @param  something          The host object of type SomethingT
+    * @param  mesh_obj           The mesh object
+    * @return                    An element range
+    */
+  template<typename ElementTypeOrTagT, typename WrappedConfigType>
+  typename result_of::const_element_range<viennagrid::mesh<WrappedConfigType>, ElementTypeOrTagT>::type
+  elements(viennagrid::mesh<WrappedConfigType> const & mesh_obj);
+
+
+  /** @brief Function for retrieving a const element range or a boundary element range from a segment. Const-version.
+    *
+    * @tparam SegmentationT      The host segmentation
+    * @tparam ElementTypeOrTagT  The element type/tag for the requested element range
+    * @param  segment            The host object of type SomethingT
     * @return                    A const element range
     */
   template<typename ElementTypeOrTagT, typename SegmentationT>
-  typename result_of::const_element_range< viennagrid::segment_handle<SegmentationT>, ElementTypeOrTagT>::type elements( viennagrid::segment_handle<SegmentationT> const & something);
+  typename result_of::const_element_range< viennagrid::segment_handle<SegmentationT>, ElementTypeOrTagT>::type
+  elements( viennagrid::segment_handle<SegmentationT> const & segment)
+  { return elements<ElementTypeOrTagT>( segment.view() ); }
+
+
+  /** @brief Function for retrieving an element range or a boundary element range from a segmentation. Const version.
+    *
+    * @tparam ElementTypeOrTagT  The element type/tag for the requested element range
+    * @tparam WrappedConfigT     The host mesh configuration class (providing the typemap as 'type' member type)
+    * @param  segm               The hosting segmentation object
+    * @return                    An element range
+    */
+  template<typename ElementTypeOrTagT, typename WrappedConfigT>
+  typename result_of::const_element_range<viennagrid::segmentation<WrappedConfigT>, ElementTypeOrTagT>::type
+  elements(viennagrid::segmentation<WrappedConfigT> const & segm)
+  { return elements<ElementTypeOrTagT>( segm.all_elements() ); }
 
 
   /** @brief Function for retrieving a const cell range object from a host object

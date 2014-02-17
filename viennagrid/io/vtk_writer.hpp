@@ -168,10 +168,10 @@ namespace viennagrid
       }
 
 
-      template<typename SegmentHandleType>
-      unsigned int preparePoints(SegmentHandleType const & segment, segment_id_type seg_id)
+      template<typename SegmentHandleT>
+      unsigned int preparePoints(SegmentHandleT const & segment, segment_id_type seg_id)
       {
-        typedef typename viennagrid::result_of::const_element_range<SegmentHandleType, CellTag>::type     CellRange;
+        typedef typename viennagrid::result_of::const_element_range<SegmentHandleT, CellTag>::type     CellRange;
         typedef typename viennagrid::result_of::iterator<CellRange>::type                                         CellIterator;
 
         typedef typename viennagrid::result_of::const_element_range<CellType, vertex_tag>::type      VertexOnCellRange;
@@ -212,10 +212,10 @@ namespace viennagrid
         return current_vertex_to_index_map.size();
       }
 
-      template<typename MeshSegmentHandleType>
-      unsigned int prepareCells(MeshSegmentHandleType const & domseg, segment_id_type seg_id)
+      template<typename MeshSegmentHandleT>
+      unsigned int prepareCells(MeshSegmentHandleT const & domseg, segment_id_type seg_id)
       {
-        typedef typename viennagrid::result_of::const_element_range<MeshSegmentHandleType, CellTag>::type     CellRange;
+        typedef typename viennagrid::result_of::const_element_range<MeshSegmentHandleT, CellTag>::type     CellRange;
         typedef typename viennagrid::result_of::iterator<CellRange>::type                                         CellIterator;
 
         std::map< CellIDType, ConstCellHandleType > & current_used_cells_map = used_cell_map[seg_id];
@@ -233,8 +233,8 @@ namespace viennagrid
       }
 
       /** @brief Writes the vertices in the mesh */
-      template <typename MeshSegmentHandleType>
-      void writePoints(MeshSegmentHandleType const & domseg, std::ofstream & writer, segment_id_type seg_id)
+      template <typename MeshSegmentHandleT>
+      void writePoints(MeshSegmentHandleT const & domseg, std::ofstream & writer, segment_id_type seg_id)
       {
         std::map< VertexIDType, ConstVertexHandleType > & current_used_vertex_map = used_vertex_map[seg_id];
 
@@ -260,8 +260,8 @@ namespace viennagrid
       } //writePoints()
 
       /** @brief Writes the cells to the mesh */
-      template <typename MeshSegmentHandleType>
-      void writeCells(MeshSegmentHandleType const & domseg, std::ofstream & writer, segment_id_type seg_id)
+      template <typename MeshSegmentHandleT>
+      void writeCells(MeshSegmentHandleT const & domseg, std::ofstream & writer, segment_id_type seg_id)
       {
         typedef typename viennagrid::result_of::const_element_range<CellType, vertex_tag>::type      VertexOnCellRange;
         typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type         VertexOnCellIterator;
@@ -332,8 +332,8 @@ namespace viennagrid
 
 
       /** @brief Writes vector-valued data defined on vertices (points) to file */
-      template <typename SegmentHandleType, typename IOAccessorType>
-      void writePointData(SegmentHandleType const & segment, std::ofstream & writer, std::string const & name, IOAccessorType const & accessor, long seg_id)
+      template <typename SegmentHandleT, typename IOAccessorType>
+      void writePointData(SegmentHandleT const & segment, std::ofstream & writer, std::string const & name, IOAccessorType const & accessor, long seg_id)
       {
         typedef typename IOAccessorType::value_type ValueType;
 
@@ -353,8 +353,8 @@ namespace viennagrid
 
 
       /** @brief Writes vector-valued data defined on vertices (points) to file */
-      template <typename SegmentHandleType, typename IOAccessorType>
-      void writeCellData(SegmentHandleType const & segment, std::ofstream & writer, std::string const & name, IOAccessorType const & accessor, long seg_id)
+      template <typename SegmentHandleT, typename IOAccessorType>
+      void writeCellData(SegmentHandleT const & segment, std::ofstream & writer, std::string const & name, IOAccessorType const & accessor, long seg_id)
       {
         typedef typename IOAccessorType::value_type ValueType;
 

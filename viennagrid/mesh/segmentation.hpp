@@ -264,32 +264,6 @@ namespace viennagrid
 
   }
 
-
-  // doxygen docu in forwards.hpp
-  /** @brief Function for retrieving an element range a segment. Non-const version.
-    *
-    * @tparam segmentation_type    The host segmentation type
-    * @tparam element_type_or_tag  The element type/tag for the requested element range
-    * @param  segment              The segment object
-    * @return                      An element range
-    */
-  template<typename element_type_or_tag, typename segmentation_type>
-  typename result_of::element_range<segment_handle<segmentation_type>, element_type_or_tag>::type elements( segment_handle<segmentation_type> & segment)
-  { return elements<element_type_or_tag>( segment.view() ); }
-
-  // doxygen docu in forwards.hpp
-  /** @brief Function for retrieving an element range a segment. Const version.
-    *
-    * @tparam segmentation_type    The host segmentation type
-    * @tparam element_type_or_tag  The element type/tag for the requested element range
-    * @param  segment              The segment object
-    * @return                      An element range
-    */
-  template<typename element_type_or_tag, typename segmentation_type>
-  typename result_of::const_element_range<segment_handle<segmentation_type>, element_type_or_tag>::type elements(segment_handle<segmentation_type> const & segment)
-  { return elements<element_type_or_tag>( segment.view() ); }
-
-
   /** @brief Function for obtaining the heighest ID for a specific element type/tag in a segment.  */
   template<typename ElementTypeOrTag, typename SegmentationType>
   typename viennagrid::result_of::id<
@@ -771,32 +745,6 @@ namespace viennagrid
     element_collection( viennagrid::segmentation<WrappedConfigT> const & segmentation)
     { return element_collection( segmentation.all_elements() ); }
   }
-
-
-  /** @brief Function for retrieving an element range or a boundary element range from a segmentation. Non-const version.
-    *
-    * @tparam ElementTypeOrTagT  The element type/tag for the requested element range
-    * @tparam WrappedConfigT     The host mesh configuration class (providing the typemap as 'type' member type)
-    * @param  segm               The hosting segmentation object
-    * @return                    An element range
-    */
-  template<typename ElementTypeOrTagT, typename WrappedConfigT>
-  typename result_of::element_range<segmentation<WrappedConfigT>, ElementTypeOrTagT>::type
-  elements( viennagrid::segmentation<WrappedConfigT> & segm)
-  { return elements<ElementTypeOrTagT>( segm.all_elements() ); }
-
-  // doxygen docu in forwards.hpp
-  /** @brief Function for retrieving an element range or a boundary element range from a segmentation. Const version.
-    *
-    * @tparam ElementTypeOrTagT  The element type/tag for the requested element range
-    * @tparam WrappedConfigT     The host mesh configuration class (providing the typemap as 'type' member type)
-    * @param  segm               The hosting segmentation object
-    * @return                    An element range
-    */
-  template<typename ElementTypeOrTagT, typename WrappedConfigT>
-  typename result_of::const_element_range<viennagrid::segmentation<WrappedConfigT>, ElementTypeOrTagT>::type
-  elements(viennagrid::segmentation<WrappedConfigT> const & segm)
-  { return elements<ElementTypeOrTagT>( segm.all_elements() ); }
 
 
   // doxygen docu in mesh.hpp

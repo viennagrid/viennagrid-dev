@@ -1326,26 +1326,12 @@ namespace viennagrid
 
 
   // doxygen docu in forwards.hpp
-  /** @brief Function for retrieving an element range or a boundary element range from a mesh. Non-const version.
-    *
-    * @tparam WrappedConfigType  The host mesh configuration class (providing the typemap as 'type' member type)
-    * @tparam ElementTypeOrTagT  The element type/tag for the requested element range
-    * @param  mesh_obj           The mesh object
-    * @return                    An element range
-    */
   template<typename ElementTypeOrTagT, typename WrappedConfigType>
   typename result_of::element_range<viennagrid::mesh<WrappedConfigType>, ElementTypeOrTagT>::type
   elements(viennagrid::mesh<WrappedConfigType> & mesh_obj)
   { return elements<ElementTypeOrTagT>( detail::element_collection(mesh_obj) ); }
 
   // doxygen docu in forwards.hpp
-  /** @brief Function for retrieving an element range or a boundary element range from a mesh. Const version.
-    *
-    * @tparam WrappedConfigType  The host mesh configuration class (providing the typemap as 'type' member type)
-    * @tparam ElementTypeOrTagT  The element type/tag for the requested element range
-    * @param  mesh_obj           The mesh object
-    * @return                    An element range
-    */
   template<typename ElementTypeOrTagT, typename WrappedConfigType>
   typename result_of::const_element_range<viennagrid::mesh<WrappedConfigType>, ElementTypeOrTagT>::type
   elements(viennagrid::mesh<WrappedConfigType> const & mesh_obj)

@@ -19,8 +19,6 @@
 #include "viennagrid/io/netgen_reader.hpp"
 #include "viennagrid/io/vtk_reader.hpp"
 #include "viennagrid/io/vmesh_writer.hpp"
-#include <boost/concept_check.hpp>
-
 
 
 template<typename MeshT, typename ReaderT>
