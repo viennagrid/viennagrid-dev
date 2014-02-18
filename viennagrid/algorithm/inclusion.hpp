@@ -1,6 +1,7 @@
 #ifndef VIENNAGRID_ALGORITHM_INCLUSION_HPP
 #define VIENNAGRID_ALGORITHM_INCLUSION_HPP
 
+#include "viennagrid/algorithm/spanned_volume.hpp"
 #include "viennagrid/algorithm/detail/numeric.hpp"
 #include "viennagrid/algorithm/interval.hpp"
 
@@ -8,6 +9,7 @@ namespace viennagrid
 {
   namespace detail
   {
+    // http://www.blackpawn.com/texts/pointinpoly/
     template<typename PointAccessorT, typename ElementT, typename CoordType, typename CoordinateSystem, typename NumericConfigT>
     bool is_inside_impl( PointAccessorT const accessor,
                          ElementT const & element, viennagrid::triangle_tag,
@@ -37,6 +39,33 @@ namespace viennagrid
 
       NumericType abs_eps = absolute_tolerance<NumericType>(numeric_config);
       return (u >= -abs_eps) && (v >= -abs_eps) && (u+v <= static_cast<NumericType>(1) + 2*abs_eps );
+    }
+
+
+    template<typename PointAccessorT, typename ElementT, typename CoordType, typename CoordinateSystem, typename NumericConfigT>
+    bool is_inside_impl( PointAccessorT const accessor,
+                         ElementT const & element, viennagrid::tetrahedron_tag,
+                         spatial_point<CoordType, CoordinateSystem> const & p,
+                         NumericConfigT numeric_config )
+    {
+      typedef spatial_point<CoordType, CoordinateSystem> PointType;
+      typedef typename viennagrid::result_of::coord<PointType>::type NumericType;
+
+      PointType const & a = accessor( viennagrid::vertices(element)[0] );
+      PointType const & b = accessor( viennagrid::vertices(element)[1] );
+      PointType const & c = accessor( viennagrid::vertices(element)[2] );
+      PointType const & d = accessor( viennagrid::vertices(element)[3] );
+
+
+      NumericType denom = static_cast<NumericType>(1) / spanned_volume(a,b,c,d);
+
+      NumericType A = spanned_volume(p,b,c,d) * denom;
+      NumericType B = spanned_volume(a,p,c,d) * denom;
+      NumericType C = spanned_volume(a,b,p,d) * denom;
+      NumericType D = spanned_volume(a,b,c,p) * denom;
+
+      NumericType abs_eps = absolute_tolerance<NumericType>(numeric_config);
+      return (A >= -abs_eps) && (B >= -abs_eps) && (C >= -abs_eps) && (D >= -abs_eps) && (A+B+C+D <= static_cast<NumericType>(1) + 2*abs_eps);
     }
   }
 
