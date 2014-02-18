@@ -14,6 +14,7 @@
 ======================================================================= */
 
 #include "viennagrid/forwards.hpp"
+#include "viennagrid/storage/container.hpp"
 
 /** @file viennagrid/storage/range.hpp
     @brief Allows to deal with a subset of a container

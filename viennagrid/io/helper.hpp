@@ -19,6 +19,8 @@
 #include <iostream>
 #include <cctype>
 #include <string>
+#include <limits>
+
 #include "viennagrid/forwards.hpp"
 
 /** @file viennagrid/io/helper.hpp
