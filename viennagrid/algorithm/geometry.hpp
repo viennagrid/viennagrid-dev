@@ -50,6 +50,12 @@ namespace viennagrid
   //{
 
     template<typename PointT>
+    typename viennagrid::result_of::coord<PointT>::type determinant( PointT const & p0, PointT const & p1 )
+    {
+      return p0[0]*p1[1] - p0[1]*p1[0];
+    }
+
+    template<typename PointT>
     typename viennagrid::result_of::coord<PointT>::type determinant( PointT const & p0, PointT const & p1, PointT const & p2 )
     {
       return p0[0]*p1[1]*p2[2] + p1[0]*p2[1]*p0[2] + p2[0]*p0[1]*p1[2] - p0[2]*p1[1]*p2[0] - p1[2]*p2[1]*p0[0] - p2[2]*p0[1]*p1[0];
