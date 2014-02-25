@@ -27,8 +27,7 @@ namespace viennagrid
   template<typename T, int N>
   class static_array
   {
-  public:
-    T elems[N];    // fixed-size array of elements of type T
+    T elements_[N];    // fixed-size array of elements of type T
 
   public:
     // type definitions
@@ -43,7 +42,11 @@ namespace viennagrid
 
     class const_iterator;
 
-    static_array() : elems() {}
+    static_array()
+    {
+      for (std::size_t i=0; i<static_cast<size_t>(N); ++i)
+        elements_[i] = T();
+    }
 
     // random access iterator: http://www.cplusplus.com/reference/std/iterator/RandomAccessIterator/
     class iterator
@@ -193,13 +196,13 @@ namespace viennagrid
     };
 
     // iterator support
-    iterator        begin()       { return iterator(elems); }
-    const_iterator  begin() const { return const_iterator(elems); }
-    const_iterator cbegin() const { return const_iterator(elems); }
+    iterator        begin()       { return iterator(elements_); }
+    const_iterator  begin() const { return const_iterator(elements_); }
+    const_iterator cbegin() const { return const_iterator(elements_); }
 
-    iterator        end()       { return iterator(elems+N); }
-    const_iterator  end() const { return const_iterator(elems+N); }
-    const_iterator cend() const { return const_iterator(elems+N); }
+    iterator        end()       { return iterator(elements_+N); }
+    const_iterator  end() const { return const_iterator(elements_+N); }
+    const_iterator cend() const { return const_iterator(elements_+N); }
 
     // reverse iterator support
     typedef std::reverse_iterator<iterator> reverse_iterator;
@@ -225,38 +228,38 @@ namespace viennagrid
     reference operator[](size_type i)
     {
       assert( i < N && "out of range" );
-      return elems[i];
+      return elements_[i];
     }
 
     const_reference operator[](size_type i) const
     {
       assert( i < N && "out of range" );
-      return elems[i];
+      return elements_[i];
     }
 
     // at() with range check
-    reference at(size_type i) { assert( i < N && "out of range" );  return elems[i]; }
-    const_reference at(size_type i) const { assert( i < N && "out of range" );  return elems[i]; }
+    reference at(size_type i) { assert( i < N && "out of range" );  return elements_[i]; }
+    const_reference at(size_type i) const { assert( i < N && "out of range" );  return elements_[i]; }
 
     // front() and back()
     reference front()
     {
-      return elems[0];
+      return elements_[0];
     }
 
     const_reference front() const
     {
-      return elems[0];
+      return elements_[0];
     }
 
     reference back()
     {
-      return elems[N-1];
+      return elements_[N-1];
     }
 
     const_reference back() const
     {
-      return elems[N-1];
+      return elements_[N-1];
     }
 
     // size is constant
@@ -270,15 +273,15 @@ namespace viennagrid
     // swap (note: linear complexity)
     void swap (static_array<T,N>& y) {
       for (size_type i = 0; i < N; ++i)
-        std::swap(elems[i],y.elems[i]);
+        std::swap(elements_[i],y.elements_[i]);
     }
 
     // direct access to data (read-only)
-    const T* data() const { return elems; }
-    T* data() { return elems; }
+    const T* data() const { return elements_; }
+    T* data() { return elements_; }
 
     // use static_array as C array (direct read/write access to data)
-    T* c_array() { return elems; }
+    T* c_array() { return elements_; }
 
     // assignment with type conversion
     template <typename T2>

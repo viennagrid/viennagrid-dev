@@ -60,7 +60,10 @@ configure_file(cmake/ViennaGridConfig.cmake.in
 configure_file(cmake/ViennaGridConfigVersion.cmake.in
    ${PROJECT_BINARY_DIR}/ViennaGridConfigVersion.cmake @ONLY)
 
-export(PACKAGE ViennaCL)
+if (CMAKE_MINOR_VERSION GREATER 6)  # export(PACKAGE ...) introduced with CMake 2.8.0
+  export(PACKAGE ViennaGrid)
+endif()
+
 
 # Install
 #########
