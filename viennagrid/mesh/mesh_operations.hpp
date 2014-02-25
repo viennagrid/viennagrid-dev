@@ -16,7 +16,7 @@
 #include "viennagrid/forwards.hpp"
 #include "viennagrid/mesh/mesh.hpp"
 #include "viennagrid/mesh/segmentation.hpp"
-//#include "viennagrid/mesh/element_creation.hpp"
+#include "viennagrid/mesh/element_creation.hpp"
 #include "viennagrid/mesh/coboundary_iteration.hpp"
 
 
@@ -26,6 +26,40 @@
 
 namespace viennagrid
 {
+
+  template<typename SrcMeshT, typename DstMeshT>
+  class vertex_copy_map
+  {
+  public:
+    vertex_copy_map( DstMeshT & dst_mesh_ ) : dst_mesh(dst_mesh_) {}
+
+    typedef typename viennagrid::result_of::vertex<SrcMeshT>::type SrcVertexType;
+    typedef typename viennagrid::result_of::vertex_id<SrcMeshT>::type SrcVertexIDType;
+
+    typedef typename viennagrid::result_of::vertex<DstMeshT>::type DstVertexType;
+    typedef typename viennagrid::result_of::vertex_handle<DstMeshT>::type DstVertexHandleType;
+
+    DstVertexHandleType operator()( SrcVertexType const & src_vertex )
+    {
+      typename std::map<SrcVertexIDType, DstVertexHandleType>::iterator vit = vertex_map.find( src_vertex.id() );
+      if (vit != vertex_map.end())
+        return vit->second;
+      else
+      {
+        DstVertexHandleType vh = viennagrid::make_vertex( dst_mesh, viennagrid::point(src_vertex) );
+        vertex_map[src_vertex.id()] = vh;
+        return vh;
+      }
+    }
+
+  private:
+
+    DstMeshT & dst_mesh;
+    std::map<SrcVertexIDType, DstVertexHandleType> vertex_map;
+  };
+
+
+
 
   /** @brief Copies a mesh and an associated segmentation over to another mesh and an associated segmentation */
   template<typename SrcMeshT, typename SrcSegmentationT, typename DstMeshT, typename DstSegmentationT>
