@@ -483,6 +483,14 @@ namespace viennagrid
     segmentation( mesh_type & mesh_x ) : highest_id(-1), mesh_(&mesh_x) { all_elements_ = viennagrid::make_view(*mesh_); }
 
 
+    void init( mesh_type & mesh_x )
+    {
+      highest_id = -1;
+      mesh_ = &mesh_x;
+      all_elements_ = viennagrid::make_view(*mesh_);
+    }
+
+
     /** @brief Returns the mesh to which the segmentation is associated
       *
       * @return   A reference to the mesh
@@ -513,6 +521,18 @@ namespace viennagrid
       */
     bool segment_present( segment_id_type const & segment_id ) const { return segment_id_map.find(segment_id) != segment_id_map.end(); }
 
+
+    /** @brief Returns the segment with the given ID, will fail if no segment with segment_id is present
+      *
+      * @param segment_id   The ID of the segment to search
+      * @return             A const reference to the segment with the given ID
+      */
+    segment_handle_type & get_segment( segment_id_type const & segment_id )
+    {
+        typename segment_id_map_type::iterator it = segment_id_map.find(segment_id);
+        assert( it != segment_id_map.end() );
+        return it->second; // segment already is present
+    }
 
     /** @brief Returns the segment with the given ID, will fail if no segment with segment_id is present
       *
@@ -729,7 +749,6 @@ namespace viennagrid
   {
     segmentation_.clear();
   }
-
 
   namespace detail
   {
@@ -1709,6 +1728,32 @@ namespace viennagrid
   template<typename SegmentHandleT, typename ElementHandleT>
   void add( SegmentHandleT & segment, ElementHandleT element_handle )
   { viennagrid::add( segment, viennagrid::dereference_handle(segment, element_handle) ); }
+
+
+
+
+  template<typename WrappedConfigT, typename ElementTagT, typename WrappedElementConfigT>
+  void add( segmentation<WrappedConfigT> & segmentation_,
+            viennagrid::element<ElementTagT, WrappedElementConfigT> & element,
+            typename segmentation<WrappedConfigT>::segment_id_type segment_id)
+  { add( segmentation_[segment_id], element ); }
+
+  template<typename WrappedConfigT, typename ElementHandleT>
+  void add( segmentation<WrappedConfigT> & segmentation_,
+            ElementHandleT element_handle,
+            typename segmentation<WrappedConfigT>::segment_id_type segment_id)
+  { add( segmentation_[segment_id], element_handle ); }
+
+
+
+  template<typename WrappedConfigT, typename ElementHandleT, typename SegmentIDIteratorT>
+  void add( segmentation<WrappedConfigT> & segmentation_,
+            ElementHandleT element_handle,
+            SegmentIDIteratorT segment_ids_it, SegmentIDIteratorT const & segment_ids_end)
+  {
+    for (; segment_ids_it != segment_ids_end; ++segment_ids_it)
+      add( segmentation_[*segment_ids_it], element_handle );
+  }
 
 
   /** @brief Adds an element to a segment, all boundary elements are added recursively, does guarantee that elements are only present once within the segment
