@@ -18,11 +18,12 @@
 #include <iostream>
 #include <assert.h>
 #include "viennagrid/forwards.hpp"
-#include "viennagrid/io/helper.hpp"
 
 #include "viennagrid/mesh/mesh.hpp"
 #include "viennagrid/mesh/segmentation.hpp"
 #include "viennagrid/mesh/element_creation.hpp"
+
+#include "viennagrid/io/helper.hpp"
 
 /** @file viennagrid/io/netgen_reader.hpp
     @brief Provides a reader for Netgen files
@@ -34,7 +35,6 @@ namespace viennagrid
   {
 
     /** @brief Reader for Netgen files obtained from the 'Export mesh...' menu item. Tested with Netgen version 4.9.12. */
-//     template<typename CellTypeOrTag>
     struct netgen_reader
     {
       /** @brief The functor interface triggering the read operation.
