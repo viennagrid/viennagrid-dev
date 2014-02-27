@@ -20,25 +20,7 @@
 #include "viennagrid/io/vtk_writer.hpp"
 #include "viennagrid/accessor.hpp"
 
-// //Point-based algorithms:
-// #include "viennagrid/algorithm/cross_prod.hpp"
-// #include "viennagrid/algorithm/inner_prod.hpp"
-// #include "viennagrid/algorithm/norm.hpp"
-// #include "viennagrid/algorithm/spanned_volume.hpp"
-//
-// //Cell-based algorithms:
 #include "viennagrid/algorithm/centroid.hpp"
-// #include "viennagrid/algorithm/circumcenter.hpp"
-// #include "viennagrid/algorithm/surface.hpp"
-// #include "viennagrid/algorithm/volume.hpp"
-// #include "viennagrid/algorithm/closest_points.hpp"
-// #include "viennagrid/algorithm/distance.hpp"
-//
-// //Mesh-based algorithms:
-// #include "viennagrid/algorithm/boundary.hpp"
-// #include "viennagrid/algorithm/refine.hpp"
-// #include "viennagrid/algorithm/voronoi.hpp"
-#include <vector>
 
 
 
