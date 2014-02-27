@@ -14,11 +14,12 @@
 ======================================================================= */
 
 #include <limits>
-#include "viennagrid/accessor.hpp"
 
 #include "viennagrid/forwards.hpp"
 #include "viennagrid/mesh/mesh.hpp"
 #include "viennagrid/mesh/element_deletion.hpp"
+
+#include "viennagrid/accessor.hpp"
 
 
 /** @file viennagrid/mesh/segmentation.hpp
@@ -749,6 +750,7 @@ namespace viennagrid
   {
     segmentation_.clear();
   }
+
 
   namespace detail
   {
@@ -1948,6 +1950,61 @@ namespace viennagrid
 
     viennagrid::detail::increment_change_counter(view_or_segment);
   }
+
+
+
+
+
+
+
+
+  template<typename SourceMeshT, typename SourceSegmentationT,
+           typename DestinationMeshT, typename DestinationSegmentationT>
+  struct copy_segmentation_functor
+  {
+    copy_segmentation_functor(SourceMeshT const & src_mesh_, SourceSegmentationT const & src_segmentation_,
+                              DestinationMeshT & dst_mesh_, DestinationSegmentationT & dst_segmentation_) :
+                              src_mesh(src_mesh_), src_segmentation(src_segmentation_),
+                              dst_mesh(dst_mesh_), dst_segmentation(dst_segmentation_) {}
+
+    template<typename DestinationElementT>
+    void operator()( DestinationElementT & dst_element )
+    {
+      typedef typename viennagrid::result_of::element_tag<DestinationElementT>::type ElementTag;
+      typedef typename viennagrid::result_of::const_element_range<SourceMeshT, ElementTag>::type ConstSourceElementRangeType;
+      typedef typename viennagrid::result_of::iterator<ConstSourceElementRangeType>::type ConstSourceElementIteratorType;
+
+      ConstSourceElementIteratorType src_eit = viennagrid::find( src_mesh, dst_element.id() );
+
+      typedef typename viennagrid::result_of::element<SourceMeshT, ElementTag>::type SourceElementType;
+      typedef typename viennagrid::result_of::segment_id_range<SourceSegmentationT, SourceElementType>::type SegmentIDRangeType;
+      typedef typename viennagrid::result_of::iterator<SegmentIDRangeType>::type SegmentIDIteratorType;
+      SegmentIDRangeType segment_ids = viennagrid::segment_ids(src_segmentation, *src_eit);
+      for (SegmentIDIteratorType sit = segment_ids.begin(); sit != segment_ids.end(); ++sit)
+      {
+        viennagrid::add( dst_segmentation.get_make_segment(*sit), dst_element );
+      }
+    }
+
+    SourceMeshT const & src_mesh;
+    SourceSegmentationT const & src_segmentation;
+
+    DestinationMeshT & dst_mesh;
+    DestinationSegmentationT & dst_segmentation;
+  };
+
+
+
+  template<typename SourceMeshT, typename SourceSegmentationT,
+           typename DestinationMeshT, typename DestinationSegmentationT>
+  void copy_segmentation(SourceMeshT const & src_mesh_, SourceSegmentationT const & src_segmentation_,
+                         DestinationMeshT & dst_mesh_, DestinationSegmentationT & dst_segmentation_)
+  {
+    copy_segmentation_functor<SourceMeshT, SourceSegmentationT, DestinationMeshT, DestinationSegmentationT> functor( src_mesh_, src_segmentation_, dst_mesh_, dst_segmentation_ );
+    viennagrid::for_each(dst_mesh_, functor);
+  }
+
+
 }
 
 

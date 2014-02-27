@@ -19,43 +19,6 @@ namespace viennagrid
 
 
 
-  template<typename SourceMeshT, typename SourceSegmentationT,
-           typename DestinationMeshT, typename DestinationSegmentationT>
-  struct copy_segmentation_functor
-  {
-    copy_segmentation_functor(SourceMeshT const & src_mesh_, SourceSegmentationT const & src_segmentation_,
-                              DestinationMeshT & dst_mesh_, DestinationSegmentationT & dst_segmentation_) :
-                              src_mesh(src_mesh_), src_segmentation(src_segmentation_),
-                              dst_mesh(dst_mesh_), dst_segmentation(dst_segmentation_) {}
-
-    template<typename DestinationElementT>
-    void operator()( DestinationElementT & dst_element )
-    {
-      typedef typename viennagrid::result_of::element_tag<DestinationElementT>::type ElementTag;
-      typedef typename viennagrid::result_of::const_element_range<SourceMeshT, ElementTag>::type ConstSourceElementRangeType;
-      typedef typename viennagrid::result_of::iterator<ConstSourceElementRangeType>::type ConstSourceElementIteratorType;
-
-      ConstSourceElementIteratorType src_eit = viennagrid::find( src_mesh, dst_element.id() );
-
-      typedef typename viennagrid::result_of::element<SourceMeshT, ElementTag>::type SourceElementType;
-      typedef typename viennagrid::result_of::segment_id_range<SourceSegmentationT, SourceElementType>::type SegmentIDRangeType;
-      typedef typename viennagrid::result_of::iterator<SegmentIDRangeType>::type SegmentIDIteratorType;
-      SegmentIDRangeType segment_ids = viennagrid::segment_ids(src_segmentation, *src_eit);
-      for (SegmentIDIteratorType sit = segment_ids.begin(); sit != segment_ids.end(); ++sit)
-      {
-        viennagrid::add( dst_segmentation.get_make_segment(*sit), dst_element );
-      }
-    }
-
-    SourceMeshT const & src_mesh;
-    SourceSegmentationT const & src_segmentation;
-
-    DestinationMeshT & dst_mesh;
-    DestinationSegmentationT & dst_segmentation;
-  };
-
-
-
   template<typename WrappedMeshConfig, typename WrappedSegmentationConfig>
   struct segmented_mesh< viennagrid::mesh<WrappedMeshConfig>, viennagrid::segmentation<WrappedSegmentationConfig> >
   {
@@ -77,9 +40,7 @@ namespace viennagrid
       clear();
 
       mesh = other.mesh;
-
-      copy_segmentation_functor<mesh_type, segmentation_type, mesh_type, segmentation_type> functor( other.mesh, other.segmentation, mesh, segmentation );
-      viennagrid::for_each(mesh, functor);
+      copy_segmentation( other.mesh, other.segmentation, mesh, segmentation );
 
       return *this;
     }
