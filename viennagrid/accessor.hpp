@@ -129,12 +129,29 @@ namespace viennagrid
 
 
 
+  struct id_unpack
+  {
+    template<typename ElementT>
+    typename viennagrid::result_of::id<ElementT>::type operator()(ElementT const & element) const
+    { return element.id(); }
+  };
+
+  struct base_id_unpack
+  {
+    template<typename ElementT>
+    typename viennagrid::result_of::id<ElementT>::type::base_id_type operator()(ElementT const & element) const
+    { return element.id().get(); }
+  };
+
+
+
+
   /** @brief Implementation of an accessor for dense containers (most importantly std::vector, std::deque) which fulfills the accessor concept.
     *
     * @tparam   ContainerType    The underlying container type (e.g. std::vector<>)
     * @tparam   AccessType       The element from which data should be accessed
     */
-  template<typename ContainerType, typename AccessType>
+  template<typename ContainerType, typename AccessType, typename UnpackT = base_id_unpack>
   class dense_container_accessor
   {
   public:
@@ -158,52 +175,53 @@ namespace viennagrid
 
     pointer find(AccessType const & element)
     {
-      offset_type offset = element.id().get();
-      return (static_cast<offset_type>((*container).size()) > element.id().get()) ? (&(*container)[offset]) : NULL;
+      offset_type offset = unpack(element);
+      return (static_cast<offset_type>((*container).size()) > unpack(element)) ? (&(*container)[offset]) : NULL;
     }
 
     const_pointer find(AccessType const & element) const
     {
-      offset_type offset = element.id().get();
-      return (static_cast<offset_type>((*container).size()) > element.id().get()) ? (&(*container)[offset]) : NULL;
+      offset_type offset = unpack(element);
+      return (static_cast<offset_type>((*container).size()) > unpack(element)) ? (&(*container)[offset]) : NULL;
     }
 
     reference operator()(AccessType const & element)
     {
-      offset_type offset = element.id().get();
+      offset_type offset = unpack(element);
       if ( static_cast<offset_type>((*container).size()) <= offset) (*container).resize(offset+1);
       return (*container)[offset];
     }
 
     const_reference operator()(AccessType const & element) const
     {
-      offset_type offset = element.id().get();
+      offset_type offset = unpack(element);
       assert( static_cast<offset_type>((*container).size()) > offset );
       return (*container)[offset];
     }
 
     reference at(AccessType const & element)
     {
-      offset_type offset = element.id().get();
+      offset_type offset = unpack(element);
       if ( static_cast<offset_type>((*container).size()) <= offset) throw std::out_of_range("dense_container_accessor::at() failed");
       return (*container)[offset];
     }
 
     const_reference at(AccessType const & element) const
     {
-      offset_type offset = element.id().get();
+      offset_type offset = unpack(element);
       if ( static_cast<offset_type>((*container).size()) <= offset) throw std::out_of_range("dense_container_accessor::at() const failed");
       return (*container)[offset];
     }
 
   protected:
+    UnpackT unpack;
     ContainerType * container;
   };
 
 
   /** \cond */
-  template<typename ContainerType, typename AccessType>
-  class dense_container_accessor<const ContainerType, AccessType>
+  template<typename ContainerType, typename AccessType, typename UnpackT>
+  class dense_container_accessor<const ContainerType, AccessType, UnpackT>
   {
   public:
 
@@ -226,20 +244,20 @@ namespace viennagrid
 
     const_pointer find(AccessType const & element) const
     {
-      offset_type offset = element.id().get();
-      return (static_cast<offset_type>((*container).size()) > element.id().get()) ? (&(*container)[offset]) : NULL;
+      offset_type offset = unpack(element);
+      return (static_cast<offset_type>((*container).size()) > unpack(element)) ? (&(*container)[offset]) : NULL;
     }
 
     const_reference operator()(AccessType const & element) const
     {
-      offset_type offset = element.id().get();
+      offset_type offset = unpack(element);
       assert( static_cast<offset_type>((*container).size()) > offset );
       return (*container)[offset];
     }
 
     const_reference at(AccessType const & element) const
     {
-      offset_type offset = element.id().get();
+      offset_type offset = unpack(element);
       if ( static_cast<offset_type>((*container).size()) <= offset) throw std::out_of_range("dense_container_accessor::at() const failed");
       return (*container)[offset];
     }
@@ -250,14 +268,19 @@ namespace viennagrid
 
 
   protected:
+    UnpackT unpack;
     container_type * container;
   };
   /** \endcond */
 
 
 
+
+
+
+
   /** @brief  An accessor (fulfilling the accessor concept) for a container of interface similar to std::map<> */
-  template<typename ContainerType, typename AccessType>
+  template<typename ContainerType, typename AccessType, typename UnpackT = id_unpack>
   class std_map_accessor
   {
   public:
@@ -280,24 +303,24 @@ namespace viennagrid
 
     pointer find(AccessType const & element)
     {
-      typename container_type::iterator it = (*container).find( element.id() );
+      typename container_type::iterator it = (*container).find( unpack(element) );
       return (it != (*container).end()) ? &it->second : NULL; // return NULL if not found
     }
 
     const_pointer find(AccessType const & element) const
     {
-      typename container_type::const_iterator it = (*container).find( element.id() );
+      typename container_type::const_iterator it = (*container).find( unpack(element) );
       return (it != (*container).end()) ? &it->second : NULL; // return NULL if not found
     }
 
     reference operator()(AccessType const & element)
     {
-      return (*container)[ element.id() ];
+      return (*container)[ unpack(element) ];
     }
 
     const_reference operator()(AccessType const & element) const
     {
-      typename container_type::const_iterator it = (*container).find( element.id() );
+      typename container_type::const_iterator it = (*container).find( unpack(element) );
       assert(it != (*container).end()); // no release-runtime check for accessing elements outside (*container)
       return it->second;
     }
@@ -309,19 +332,20 @@ namespace viennagrid
 
     const_reference at(AccessType const & element) const
     {
-      typename container_type::const_iterator it = (*container).find( element.id() );
+      typename container_type::const_iterator it = (*container).find( unpack(element) );
       if (it == (*container).end()) throw std::out_of_range("std_map_accessor::at() const failed");
       return it->second;
     }
 
   protected:
+    UnpackT unpack;
     ContainerType * container;
   };
 
 
   /** \cond */
-  template<typename ContainerType, typename AccessType>
-  class std_map_accessor<const ContainerType, AccessType>
+  template<typename ContainerType, typename AccessType, typename UnpackT>
+  class std_map_accessor<const ContainerType, AccessType, UnpackT>
   {
   public:
 
@@ -343,25 +367,26 @@ namespace viennagrid
 
     const_pointer find(AccessType const & element) const
     {
-      typename container_type::const_iterator it = (*container).find( element.id() );
+      typename container_type::const_iterator it = (*container).find( unpack(element) );
       return (it != (*container).end()) ? &it->second : NULL; // return NULL if not found
     }
 
     const_reference operator()(AccessType const & element) const
     {
-      typename container_type::const_iterator it = (*container).find( element.id() );
+      typename container_type::const_iterator it = (*container).find( unpack(element) );
       assert(it != (*container).end()); // no release-runtime check for accessing elements outside (*container)
       return it->second;
     }
 
     const_reference at(AccessType const & element) const
     {
-      typename container_type::const_iterator it = (*container).find( element.id() );
+      typename container_type::const_iterator it = (*container).find( unpack(element) );
       if (it == (*container).end()) throw std::out_of_range("std_map_accessor::at() const failed");
       return it->second;
     }
 
   protected:
+    UnpackT unpack;
     container_type * container;
   };
   /** \endcond */
