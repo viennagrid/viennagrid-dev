@@ -269,6 +269,21 @@ namespace viennagrid
 
     template<typename container_type_, typename change_counter_type>
     struct boundary_information_wrapper;
+
+
+    template<typename ConfigType>
+    typename viennagrid::mesh<ConfigType>::inserter_type &
+    inserter(viennagrid::mesh<ConfigType> & mesh_obj);
+
+    template<typename ConfigType>
+    typename viennagrid::mesh<ConfigType>::inserter_type const &
+    inserter(viennagrid::mesh<ConfigType> const & mesh_obj);
+
+    template<typename SegmentationType>
+    typename viennagrid::segment_handle<SegmentationType>::view_type::inserter_type & inserter(segment_handle<SegmentationType> & segment);
+
+    template<typename SegmentationType>
+    typename viennagrid::segment_handle<SegmentationType>::view_type::inserter_type const & inserter(segment_handle<SegmentationType> const & segment);
   }
 
 
