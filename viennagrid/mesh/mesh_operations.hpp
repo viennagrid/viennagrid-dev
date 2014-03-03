@@ -33,13 +33,15 @@ namespace viennagrid
   public:
     vertex_copy_map( DstMeshT & dst_mesh_ ) : dst_mesh(dst_mesh_) {}
 
+    typedef typename viennagrid::result_of::coord<DstMeshT>::type DstNumericType;
+
     typedef typename viennagrid::result_of::vertex<SrcMeshT>::type SrcVertexType;
     typedef typename viennagrid::result_of::vertex_id<SrcMeshT>::type SrcVertexIDType;
 
     typedef typename viennagrid::result_of::vertex<DstMeshT>::type DstVertexType;
     typedef typename viennagrid::result_of::vertex_handle<DstMeshT>::type DstVertexHandleType;
 
-    DstVertexHandleType operator()( SrcVertexType const & src_vertex )
+    DstVertexHandleType operator()( SrcVertexType const & src_vertex, DstNumericType tolerance = 0.0 )
     {
       typename std::map<SrcVertexIDType, DstVertexHandleType>::iterator vit = vertex_map.find( src_vertex.id() );
       if (vit != vertex_map.end())
@@ -51,6 +53,25 @@ namespace viennagrid
         return vh;
       }
     }
+
+
+    template<typename ElementTagT, typename WrappedConfigT>
+    typename viennagrid::result_of::handle<DstMeshT, ElementTagT>::type copy_element( element<ElementTagT, WrappedConfigT> const & el, DstNumericType tolerance = 0.0 )
+    {
+      typedef element<ElementTagT, WrappedConfigT> ElementType;
+      typedef typename viennagrid::result_of::const_vertex_range<ElementType>::type ConstVerticesOnElementRangeType;
+      typedef typename viennagrid::result_of::iterator<ConstVerticesOnElementRangeType>::type ConstVerticesOnElementIteratorType;
+
+      std::vector<DstVertexHandleType> vertex_handles;
+
+      ConstVerticesOnElementRangeType vertices(el);
+      for (ConstVerticesOnElementIteratorType vit = vertices.begin(); vit != vertices.end(); ++vit)
+        vertex_handles.push_back( (*this)(*vit, tolerance) );
+
+      return viennagrid::make_element<ElementTagT>( dst_mesh, vertex_handles.begin(), vertex_handles.end() );
+    }
+
+
 
   private:
 
