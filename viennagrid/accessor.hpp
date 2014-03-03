@@ -143,6 +143,48 @@ namespace viennagrid
     { return element.id().get(); }
   };
 
+  namespace result_of
+  {
+    template<typename ContainerT>
+    struct unpack;
+
+    template<typename T, typename Alloc>
+    struct unpack< std::vector<T, Alloc> >
+    {
+      typedef base_id_unpack type;
+    };
+
+    template<typename T, typename Alloc>
+    struct unpack< const std::vector<T, Alloc> >
+    {
+      typedef base_id_unpack type;
+    };
+
+    template<typename T, typename Alloc>
+    struct unpack< std::deque<T, Alloc> >
+    {
+      typedef base_id_unpack type;
+    };
+
+    template<typename T, typename Alloc>
+    struct unpack< const std::deque<T, Alloc> >
+    {
+      typedef base_id_unpack type;
+    };
+
+    template<typename Key, typename T, typename Compare, typename Alloc>
+    struct unpack< std::map<Key, T, Compare, Alloc> >
+    {
+      typedef id_unpack type;
+    };
+
+    template<typename Key, typename T, typename Compare, typename Alloc>
+    struct unpack< const std::map<Key, T, Compare, Alloc> >
+    {
+      typedef id_unpack type;
+    };
+  }
+
 
 
 
@@ -400,44 +442,44 @@ namespace viennagrid
       * @tparam ContainerType   The container type for which the accessor should be obtained
       * @tparam AccessType      Type of the element which should be accessed, e.g. a vertex
       */
-    template<typename ContainerType, typename AccessType>
-    struct accessor {};
+    template<typename ContainerType, typename AccessType, typename UnpackT = typename viennagrid::result_of::unpack<ContainerType>::type>
+    struct accessor;
 
     /** \cond */
-    template<typename T, typename Alloc, typename AccessType>
-    struct accessor< std::vector<T, Alloc>, AccessType >
+    template<typename T, typename Alloc, typename AccessType, typename UnpackT>
+    struct accessor< std::vector<T, Alloc>, AccessType, UnpackT >
     {
-      typedef viennagrid::dense_container_accessor<std::vector<T, Alloc>, AccessType> type;
+      typedef viennagrid::dense_container_accessor<std::vector<T, Alloc>, AccessType, UnpackT> type;
     };
 
-    template<typename T, typename Alloc, typename AccessType>
-    struct accessor< const std::vector<T, Alloc>, AccessType >
+    template<typename T, typename Alloc, typename AccessType, typename UnpackT>
+    struct accessor< const std::vector<T, Alloc>, AccessType, UnpackT >
     {
-      typedef viennagrid::dense_container_accessor<const std::vector<T, Alloc>, AccessType> type;
+      typedef viennagrid::dense_container_accessor<const std::vector<T, Alloc>, AccessType, UnpackT> type;
     };
 
-    template<typename T, typename Alloc, typename AccessType>
-    struct accessor< std::deque<T, Alloc>, AccessType >
+    template<typename T, typename Alloc, typename AccessType, typename UnpackT>
+    struct accessor< std::deque<T, Alloc>, AccessType, UnpackT >
     {
-      typedef viennagrid::dense_container_accessor<std::deque<T, Alloc>, AccessType> type;
+      typedef viennagrid::dense_container_accessor<std::deque<T, Alloc>, AccessType, UnpackT> type;
     };
 
-    template<typename T, typename Alloc, typename AccessType>
-    struct accessor< const std::deque<T, Alloc>, AccessType >
+    template<typename T, typename Alloc, typename AccessType, typename UnpackT>
+    struct accessor< const std::deque<T, Alloc>, AccessType, UnpackT >
     {
-      typedef viennagrid::dense_container_accessor<const std::deque<T, Alloc>, AccessType> type;
+      typedef viennagrid::dense_container_accessor<const std::deque<T, Alloc>, AccessType, UnpackT> type;
     };
 
-    template<typename Key, typename T, typename Compare, typename Alloc, typename AccessType>
-    struct accessor< std::map<Key, T, Compare, Alloc>, AccessType >
+    template<typename Key, typename T, typename Compare, typename Alloc, typename AccessType, typename UnpackT>
+    struct accessor< std::map<Key, T, Compare, Alloc>, AccessType, UnpackT >
     {
-      typedef viennagrid::std_map_accessor<std::map<Key, T, Compare, Alloc>, AccessType> type;
+      typedef viennagrid::std_map_accessor<std::map<Key, T, Compare, Alloc>, AccessType, UnpackT> type;
     };
 
-    template<typename Key, typename T, typename Compare, typename Alloc, typename AccessType>
-    struct accessor< const std::map<Key, T, Compare, Alloc>, AccessType >
+    template<typename Key, typename T, typename Compare, typename Alloc, typename AccessType, typename UnpackT>
+    struct accessor< const std::map<Key, T, Compare, Alloc>, AccessType, UnpackT >
     {
-      typedef viennagrid::std_map_accessor<const std::map<Key, T, Compare, Alloc>, AccessType> type;
+      typedef viennagrid::std_map_accessor<const std::map<Key, T, Compare, Alloc>, AccessType, UnpackT> type;
     };
     /** \endcond */
   }
@@ -634,7 +676,7 @@ namespace viennagrid
     * @tparam ContainerType   Type of the dense container, e.g. std::vector<double>
     * @tparam AccessType      The element type from which data is queried, e.g. a vertex
     */
-  template<typename ContainerType, typename AccessType>
+  template<typename ContainerType, typename AccessType, typename UnpackT = base_id_unpack>
   class dense_container_field
   {
   public:
@@ -659,26 +701,26 @@ namespace viennagrid
 
     pointer find(AccessType const & element)
     {
-      offset_type offset = element.id().get();
-      return (static_cast<offset_type>((*container).size()) > element.id().get()) ? (&(*container)[offset]) : NULL;
+      offset_type offset = unpack(element);
+      return (static_cast<offset_type>((*container).size()) > offset) ? (&(*container)[offset]) : NULL;
     }
 
     const_pointer find(AccessType const & element) const
     {
-      offset_type offset = element.id().get();
-      return (static_cast<offset_type>((*container).size()) > element.id().get()) ? (&(*container)[offset]) : NULL;
+      offset_type offset = unpack(element);
+      return (static_cast<offset_type>((*container).size()) > offset) ? (&(*container)[offset]) : NULL;
     }
 
     reference operator()(AccessType const & element)
     {
-      offset_type offset = element.id().get();
+      offset_type offset = unpack(element);
       if ( static_cast<offset_type>((*container).size()) <= offset) (*container).resize(offset+1);
       return (*container)[offset];
     }
 
     const_reference operator()(AccessType const & element) const
     {
-      offset_type offset = element.id().get();
+      offset_type offset = unpack(element);
 
       if ( static_cast<offset_type>((*(this->container)).size()) <= offset)
         return default_value;
@@ -688,14 +730,14 @@ namespace viennagrid
 
     reference at(AccessType const & element)
     {
-      offset_type offset = element.id().get();
+      offset_type offset = unpack(element);
       if ( static_cast<offset_type>((*container).size()) <= offset) throw std::out_of_range("dense_container_field::at() failed");
       return (*container)[offset];
     }
 
     const_reference at(AccessType const & element) const
     {
-      offset_type offset = element.id().get();
+      offset_type offset = unpack(element);
       if ( static_cast<offset_type>((*container).size()) <= offset) throw std::out_of_range("dense_container_field::at() failed");
       return (*container)[offset];
     }
@@ -703,13 +745,14 @@ namespace viennagrid
 
 
   protected:
+    UnpackT unpack;
     ContainerType * container;
     value_type default_value;
   };
 
   /** \cond */
-  template<typename ContainerType, typename AccessType>
-  class dense_container_field<const ContainerType, AccessType>
+  template<typename ContainerType, typename AccessType, typename UnpackT>
+  class dense_container_field<const ContainerType, AccessType, UnpackT>
   {
   public:
 
@@ -733,13 +776,13 @@ namespace viennagrid
 
     const_pointer find(AccessType const & element) const
     {
-      offset_type offset = element.id().get();
-      return (static_cast<offset_type>((*container).size()) > element.id().get()) ? (&(*container)[offset]) : NULL;
+      offset_type offset = unpack(element);
+      return (static_cast<offset_type>((*container).size()) > offset) ? (&(*container)[offset]) : NULL;
     }
 
     const_reference operator()(AccessType const & element) const
     {
-      offset_type offset = element.id().get();
+      offset_type offset = unpack(element);
 
       if ( static_cast<offset_type>((*(this->container)).size()) <= offset)
         return default_value;
@@ -749,7 +792,7 @@ namespace viennagrid
 
     const_reference at(AccessType const & element) const
     {
-      offset_type offset = element.id().get();
+      offset_type offset = unpack(element);
       if ( static_cast<offset_type>((*container).size()) <= offset) throw std::out_of_range("dense_container_field::at() failed");
       return (*container)[offset];
     }
@@ -760,6 +803,7 @@ namespace viennagrid
 
 
   protected:
+    UnpackT unpack;
     container_type * container;
     value_type default_value;
   };
@@ -768,7 +812,7 @@ namespace viennagrid
 
 
   /** @brief  An accessor (fulfilling the field concept) for a container of interface similar to std::map<> */
-  template<typename ContainerType, typename AccessType>
+  template<typename ContainerType, typename AccessType, typename UnpackT = id_unpack>
   class std_map_field
   {
   public:
@@ -792,24 +836,24 @@ namespace viennagrid
 
     pointer find(AccessType const & element)
     {
-      typename container_type::iterator it = (*container).find( element.id() );
+      typename container_type::iterator it = (*container).find( unpack(element) );
       return (it != (*container).end()) ? &it->second : NULL; // return NULL if not found
     }
 
     const_pointer find(AccessType const & element) const
     {
-      typename container_type::const_iterator it = (*container).find( element.id() );
+      typename container_type::const_iterator it = (*container).find( unpack(element) );
       return (it != (*container).end()) ? &it->second : NULL; // return NULL if not found
     }
 
     reference operator()(AccessType const & element)
     {
-      return (*container)[ element.id() ];
+      return (*container)[ unpack(element) ];
     }
 
     const_reference operator()(AccessType const & element) const
     {
-      typename container_type::const_iterator it = (*(this->container)).find( element.id() );
+      typename container_type::const_iterator it = (*(this->container)).find( unpack(element) );
 
       if (it == (*(this->container)).end())
         return default_value;
@@ -824,20 +868,21 @@ namespace viennagrid
 
     const_reference at(AccessType const & element) const
     {
-      typename container_type::const_iterator it = (*container).find( element.id() );
+      typename container_type::const_iterator it = (*container).find( unpack(element) );
       if (it == (*container).end()) throw std::out_of_range("std_map_field::at() const failed");
       return it->second;
     }
 
   protected:
+    UnpackT unpack;
     ContainerType * container;
     value_type default_value;
   };
 
 
   /** \cond */
-  template<typename ContainerType, typename AccessType>
-  class std_map_field<const ContainerType, AccessType>
+  template<typename ContainerType, typename AccessType, typename UnpackT>
+  class std_map_field<const ContainerType, AccessType, UnpackT>
   {
   public:
 
@@ -860,13 +905,13 @@ namespace viennagrid
 
     const_pointer find(AccessType const & element) const
     {
-      typename container_type::const_iterator it = (*container).find( element.id() );
+      typename container_type::const_iterator it = (*container).find( unpack(element) );
       return (it != (*container).end()) ? &it->second : NULL; // return NULL if not found
     }
 
     const_reference operator()(AccessType const & element) const
     {
-      typename container_type::const_iterator it = (*(this->container)).find( element.id() );
+      typename container_type::const_iterator it = (*(this->container)).find( unpack(element) );
 
       if (it == (*(this->container)).end())
         return default_value;
@@ -876,12 +921,13 @@ namespace viennagrid
 
     const_reference at(AccessType const & element) const
     {
-      typename container_type::const_iterator it = (*container).find( element.id() );
+      typename container_type::const_iterator it = (*container).find( unpack(element) );
       if (it == (*container).end()) throw std::out_of_range("std_map_field::at() const failed");
       return it->second;
     }
 
   protected:
+    UnpackT unpack;
     container_type * container;
     value_type default_value;
   };
@@ -898,44 +944,44 @@ namespace viennagrid
       * @tparam ContainerType   The container type for which the accessor should be obtained
       * @tparam AccessType      Type of the element which should be accessed, e.g. a vertex
       */
-    template<typename ContainerType, typename AccessType>
+    template<typename ContainerType, typename AccessType, typename UnpackT = typename viennagrid::result_of::unpack<ContainerType>::type >
     struct field;
 
     /** \cond */
-    template<typename T, typename Alloc, typename AccessType>
-    struct field< std::vector<T, Alloc>, AccessType >
+    template<typename T, typename Alloc, typename AccessType, typename UnpackT>
+    struct field< std::vector<T, Alloc>, AccessType, UnpackT >
     {
-      typedef viennagrid::dense_container_field<std::vector<T, Alloc>, AccessType> type;
+      typedef viennagrid::dense_container_field<std::vector<T, Alloc>, AccessType, UnpackT> type;
     };
 
-    template<typename T, typename Alloc, typename AccessType>
-    struct field< const std::vector<T, Alloc>, AccessType >
+    template<typename T, typename Alloc, typename AccessType, typename UnpackT>
+    struct field< const std::vector<T, Alloc>, AccessType, UnpackT >
     {
-      typedef viennagrid::dense_container_field<const std::vector<T, Alloc>, AccessType> type;
+      typedef viennagrid::dense_container_field<const std::vector<T, Alloc>, AccessType, UnpackT> type;
     };
 
-    template<typename T, typename Alloc, typename AccessType>
-    struct field< std::deque<T, Alloc>, AccessType >
+    template<typename T, typename Alloc, typename AccessType, typename UnpackT>
+    struct field< std::deque<T, Alloc>, AccessType, UnpackT >
     {
-      typedef viennagrid::dense_container_field<std::deque<T, Alloc>, AccessType> type;
+      typedef viennagrid::dense_container_field<std::deque<T, Alloc>, AccessType, UnpackT> type;
     };
 
-    template<typename T, typename Alloc, typename AccessType>
-    struct field< const std::deque<T, Alloc>, AccessType >
+    template<typename T, typename Alloc, typename AccessType, typename UnpackT>
+    struct field< const std::deque<T, Alloc>, AccessType, UnpackT >
     {
-      typedef viennagrid::dense_container_field<const std::deque<T, Alloc>, AccessType> type;
+      typedef viennagrid::dense_container_field<const std::deque<T, Alloc>, AccessType, UnpackT> type;
     };
 
-    template<typename Key, typename T, typename Compare, typename Alloc, typename AccessType>
-    struct field< std::map<Key, T, Compare, Alloc>, AccessType >
+    template<typename Key, typename T, typename Compare, typename Alloc, typename AccessType, typename UnpackT>
+    struct field< std::map<Key, T, Compare, Alloc>, AccessType, UnpackT >
     {
-      typedef viennagrid::std_map_field<std::map<Key, T, Compare, Alloc>, AccessType> type;
+      typedef viennagrid::std_map_field<std::map<Key, T, Compare, Alloc>, AccessType, UnpackT> type;
     };
 
-    template<typename Key, typename T, typename Compare, typename Alloc, typename AccessType>
-    struct field< const std::map<Key, T, Compare, Alloc>, AccessType >
+    template<typename Key, typename T, typename Compare, typename Alloc, typename AccessType, typename UnpackT>
+    struct field< const std::map<Key, T, Compare, Alloc>, AccessType, UnpackT >
     {
-      typedef viennagrid::std_map_field<const std::map<Key, T, Compare, Alloc>, AccessType> type;
+      typedef viennagrid::std_map_field<const std::map<Key, T, Compare, Alloc>, AccessType, UnpackT> type;
     };
     /** \endcond */
   }
