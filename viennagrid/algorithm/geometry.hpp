@@ -87,6 +87,48 @@ namespace viennagrid
     }
 
 
+    template<typename MeshT>
+    std::pair<
+      typename viennagrid::result_of::point<MeshT>::type,
+      typename viennagrid::result_of::point<MeshT>::type
+    > bounding_box( MeshT const & mesh )
+    {
+      typedef typename viennagrid::result_of::point<MeshT>::type      PointType;
+      typedef typename viennagrid::result_of::coord<MeshT>::type      NumericType;
+
+      PointType lower_left;
+      PointType upper_right;
+
+      std::fill( lower_left.begin(), lower_left.end(), std::numeric_limits<NumericType>::max() );
+      std::fill( upper_right.begin(), upper_right.end(), - std::numeric_limits<NumericType>::max() );
+      //std::fill( upper_right.begin(), upper_right.end(), std::numeric_limits<NumericType>::lowest() );    C++11
+
+      typedef typename viennagrid::result_of::const_vertex_range<MeshT>::type ConstVertexRangeType;
+      typedef typename viennagrid::result_of::iterator<ConstVertexRangeType>::type ConstVertexIteratorType;
+
+      ConstVertexRangeType vertices(mesh);
+      for (ConstVertexIteratorType vit = vertices.begin(); vit != vertices.end(); ++vit)
+      {
+        lower_left = viennagrid::min( lower_left, viennagrid::point(*vit) );
+        upper_right = viennagrid::max( upper_right, viennagrid::point(*vit) );
+      }
+
+      return std::make_pair( lower_left, upper_right );
+    }
+
+
+    template<typename MeshT>
+    typename viennagrid::result_of::coord<MeshT>::type mesh_size( MeshT const & mesh )
+    {
+      std::pair<
+        typename viennagrid::result_of::point<MeshT>::type,
+        typename viennagrid::result_of::point<MeshT>::type
+      > bb = bounding_box(mesh);
+
+      return viennagrid::norm_2(bb.second - bb.first);
+    }
+
+
 
 
     template<typename IteratorT>
