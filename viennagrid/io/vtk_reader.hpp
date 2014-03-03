@@ -48,6 +48,9 @@ namespace viennagrid
     {
     protected:
 
+      typedef MeshType mesh_type;
+      typedef SegmentationType segmentation_type;
+
       typedef typename SegmentationType::segment_handle_type SegmentHandleType;
       typedef typename SegmentationType::segment_id_type segment_id_type;
 
@@ -1117,71 +1120,71 @@ namespace viennagrid
 
 
       /** @brief Returns the vertex scalar field for a given quantity name and a given segment ID. If the quantity name was registered before an invalid field is returned. */
-      typename viennagrid::result_of::field<std::deque<double>, VertexType >::type vertex_scalar_field( std::string const & quantity_name, segment_id_type seg_id )
+      typename viennagrid::result_of::field<const std::deque<double>, VertexType >::type vertex_scalar_field( std::string const & quantity_name, segment_id_type seg_id ) const
       {
-        typename std::map< std::string, std::map<segment_id_type, std::deque<double> > >::iterator it = vertex_scalar_data.find(quantity_name);
-        if (it == vertex_scalar_data.end()) return typename viennagrid::result_of::field<std::deque<double>, VertexType >::type();
+        typename std::map< std::string, std::map<segment_id_type, std::deque<double> > >::const_iterator it = vertex_scalar_data.find(quantity_name);
+        if (it == vertex_scalar_data.end()) return typename viennagrid::result_of::field<const std::deque<double>, VertexType >::type();
 
-        typename std::map<segment_id_type, std::deque<double> >::iterator jt = it->second.find( seg_id );
-        if (jt == it->second.end()) return typename viennagrid::result_of::field<std::deque<double>, VertexType >::type();
+        typename std::map<segment_id_type, std::deque<double> >::const_iterator jt = it->second.find( seg_id );
+        if (jt == it->second.end()) return typename viennagrid::result_of::field<const std::deque<double>, VertexType >::type();
 
         return viennagrid::make_field<VertexType>( jt->second );
       }
 
       /** @brief Returns the vertex scalar field for a given quantity name and a given segment. If the quantity name was registered before an invalid field is returned. */
-      typename viennagrid::result_of::field<std::deque<double>, VertexType >::type vertex_scalar_field( std::string const & quantity_name, SegmentHandleType const & segment )
+      typename viennagrid::result_of::field<const std::deque<double>, VertexType >::type vertex_scalar_field( std::string const & quantity_name, SegmentHandleType const & segment ) const
       { return vertex_scalar_field(quantity_name, segment.id()); }
 
 
       /** @brief Returns the vertex vector field for a given quantity name and a given segment ID. If the quantity name was registered before an invalid field is returned. */
-      typename viennagrid::result_of::field<std::deque<vector_data_type>, VertexType >::type vertex_vector_field( std::string const & quantity_name, segment_id_type seg_id )
+      typename viennagrid::result_of::field<const std::deque<vector_data_type>, VertexType >::type vertex_vector_field( std::string const & quantity_name, segment_id_type seg_id ) const
       {
-        typename std::map< std::string, std::map<segment_id_type, std::deque<vector_data_type> > >::iterator it = vertex_vector_data.find(quantity_name);
-        if (it == vertex_vector_data.end()) return typename viennagrid::result_of::field<std::deque<vector_data_type>, VertexType >::type();
+        typename std::map< std::string, std::map<segment_id_type, std::deque<vector_data_type> > >::const_iterator it = vertex_vector_data.find(quantity_name);
+        if (it == vertex_vector_data.end()) return typename viennagrid::result_of::field<const std::deque<vector_data_type>, VertexType >::type();
 
-        typename std::map<segment_id_type, std::deque<vector_data_type> >::iterator jt = it->second.find( seg_id );
-        if (jt == it->second.end()) return typename viennagrid::result_of::field<std::deque<vector_data_type>, VertexType >::type();
+        typename std::map<segment_id_type, std::deque<vector_data_type> >::const_iterator jt = it->second.find( seg_id );
+        if (jt == it->second.end()) return typename viennagrid::result_of::field<const std::deque<vector_data_type>, VertexType >::type();
 
         return viennagrid::make_field<VertexType>( jt->second );
       }
 
       /** @brief Returns the vertex vector field for a given quantity name and a given segment. If the quantity name was registered before an invalid field is returned. */
-      typename viennagrid::result_of::field<std::deque<vector_data_type>, VertexType >::type vertex_vector_field( std::string const & quantity_name, SegmentHandleType const & segment )
+      typename viennagrid::result_of::field<const std::deque<vector_data_type>, VertexType >::type vertex_vector_field( std::string const & quantity_name, SegmentHandleType const & segment )
       { return vertex_vector_field(quantity_name, segment.id()); }
 
 
 
       /** @brief Returns the cell scalar field for a given quantity name and a given segment ID. If the quantity name was registered before an invalid field is returned. */
-      typename viennagrid::result_of::field<std::deque<double>, CellType >::type cell_scalar_field( std::string const & quantity_name, segment_id_type seg_id )
+      typename viennagrid::result_of::field<const std::deque<double>, CellType >::type cell_scalar_field( std::string const & quantity_name, segment_id_type seg_id ) const
       {
-        typename std::map< std::string, std::map<segment_id_type, std::deque<double> > >::iterator it = cell_scalar_data.find(quantity_name);
-        if (it == cell_scalar_data.end()) return typename viennagrid::result_of::field<std::deque<double>, CellType >::type();
+        typename std::map< std::string, std::map<segment_id_type, std::deque<double> > >::const_iterator it = cell_scalar_data.find(quantity_name);
+        if (it == cell_scalar_data.end()) return typename viennagrid::result_of::field<const std::deque<double>, CellType >::type();
 
-        typename std::map<segment_id_type, std::deque<double> >::iterator jt = it->second.find( seg_id );
-        if (jt == it->second.end()) return typename viennagrid::result_of::field<std::deque<double>, CellType >::type();
+        typename std::map<segment_id_type, std::deque<double> >::const_iterator jt = it->second.find( seg_id );
+        if (jt == it->second.end()) return typename viennagrid::result_of::field<const std::deque<double>, CellType >::type();
 
         return viennagrid::make_field<CellType>( jt->second );
       }
 
       /** @brief Returns the cell scalar field for a given quantity name and a given segment. If the quantity name was registered before an invalid field is returned. */
-      typename viennagrid::result_of::field<std::deque<double>, CellType >::type cell_scalar_field( std::string const & quantity_name, SegmentHandleType const & segment )
+      typename viennagrid::result_of::field<const std::deque<double>, CellType >::type cell_scalar_field( std::string const & quantity_name, SegmentHandleType const & segment ) const
       { return cell_scalar_field(quantity_name, segment.id()); }
 
 
       /** @brief Returns the cell vector field for a given quantity name and a given segment ID. If the quantity name was registered before an invalid field is returned. */
-      typename viennagrid::result_of::field<std::deque<vector_data_type>, CellType >::type cell_vector_field( std::string const & quantity_name, segment_id_type seg_id )
+      typename viennagrid::result_of::field<const std::deque<vector_data_type>, CellType >::type cell_vector_field( std::string const & quantity_name, segment_id_type seg_id ) const
       {
-        typename std::map< std::string, std::map<segment_id_type, std::deque<vector_data_type> > >::iterator it = cell_vector_data.find(quantity_name);
-        if (it == cell_vector_data.end()) return typename viennagrid::result_of::field<std::deque<vector_data_type>, CellType >::type();
+        typename std::map< std::string, std::map<segment_id_type, std::deque<vector_data_type> > >::const_iterator it = cell_vector_data.find(quantity_name);
+        if (it == cell_vector_data.end()) return typename viennagrid::result_of::field<const std::deque<vector_data_type>, CellType >::type();
 
-        typename std::map<segment_id_type, std::deque<vector_data_type> >::iterator jt = it->second.find( seg_id );
-        if (jt == it->second.end()) return typename viennagrid::result_of::field<std::deque<vector_data_type>, CellType >::type();
+        typename std::map<segment_id_type, std::deque<vector_data_type> >::const_iterator jt = it->second.find( seg_id );
+        if (jt == it->second.end()) return typename viennagrid::result_of::field<const std::deque<vector_data_type>, CellType >::type();
 
         return viennagrid::make_field<CellType>( jt->second );
       }
 
       /** @brief Returns the cell vector field for a given quantity name and a given segment. If the quantity name was registered before an invalid field is returned. */
-      typename viennagrid::result_of::field<std::deque<vector_data_type>, CellType >::type cell_vector_field( std::string const & quantity_name, SegmentHandleType const & segment )
+      typename viennagrid::result_of::field<const std::deque<vector_data_type>, CellType >::type cell_vector_field( std::string const & quantity_name, SegmentHandleType const & segment ) const
       { return cell_vector_field(quantity_name, segment.id()); }
 
 
