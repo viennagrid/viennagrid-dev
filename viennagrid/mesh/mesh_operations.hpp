@@ -48,7 +48,7 @@ namespace viennagrid
         return vit->second;
       else
       {
-        DstVertexHandleType vh = viennagrid::make_vertex( dst_mesh, viennagrid::point(src_vertex) );
+        DstVertexHandleType vh = viennagrid::make_unique_vertex( dst_mesh, viennagrid::point(src_vertex), tolerance );
         vertex_map[src_vertex.id()] = vh;
         return vh;
       }
