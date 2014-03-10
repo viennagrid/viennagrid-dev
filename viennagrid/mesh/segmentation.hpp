@@ -1467,9 +1467,12 @@ namespace viennagrid
       * @tparam SegmentOrSegmentationT        The host segmentation/segment type
       * @tparam ElementT                      The element type for which the segment id range is queried
       */
-    template<typename SegmentationT, typename ElementT>
+    template<typename SegmentationT, typename ElementTypeOrTagT>
     struct segment_id_range
     {
+      typedef typename viennagrid::result_of::element_tag<ElementTypeOrTagT>::type ElementTagT;
+      typedef typename viennagrid::result_of::element<SegmentationT, ElementTagT>::type ElementType;
+
       typedef typename viennagrid::detail::result_of::lookup<
           typename SegmentationT::appendix_type,
           viennagrid::detail::element_segment_mapping_tag
@@ -1477,17 +1480,17 @@ namespace viennagrid
 
       typedef typename viennagrid::result_of::container_of<
         ElementSegmentMappingCollectionType,
-        ElementT
+        ElementType
       >::type ElementSegmentMappingContainerType;
 
       typedef segment_id_range_t<const typename ElementSegmentMappingContainerType::value_type> type;
     };
 
     /** \cond */
-    template<typename SegmentationT, typename ElementT>
-    struct segment_id_range< viennagrid::segment_handle<SegmentationT>, ElementT >
+    template<typename SegmentationT, typename ElementTypeOrTagT>
+    struct segment_id_range< viennagrid::segment_handle<SegmentationT>, ElementTypeOrTagT >
     {
-      typedef typename segment_id_range<SegmentationT, ElementT>::type type;
+      typedef typename segment_id_range<SegmentationT, ElementTypeOrTagT>::type type;
     };
     /** \endcond */
   }
