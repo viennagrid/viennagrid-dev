@@ -21,7 +21,6 @@
 /** @file viennagrid/mesh/element_creation.hpp
     @brief Contains functions for creating elements within a mesh or segment
 */
-#include "mesh.hpp"
 
 namespace viennagrid
 {
