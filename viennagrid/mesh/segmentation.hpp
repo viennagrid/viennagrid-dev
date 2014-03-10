@@ -17,7 +17,6 @@
 
 #include "viennagrid/forwards.hpp"
 #include "viennagrid/mesh/mesh.hpp"
-#include "viennagrid/mesh/element_deletion.hpp"
 
 #include "viennagrid/accessor.hpp"
 
