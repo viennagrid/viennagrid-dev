@@ -18,7 +18,7 @@
 #include "viennagrid/mesh/segmentation.hpp"
 #include "viennagrid/mesh/element_creation.hpp"
 #include "viennagrid/mesh/coboundary_iteration.hpp"
-
+#include "viennagrid/functors.hpp"
 
 /** @file viennagrid/mesh/mesh_operations.hpp
     @brief Helper routines on a mesh
@@ -82,69 +82,59 @@ namespace viennagrid
 
 
 
-  /** @brief Copies a mesh and an associated segmentation over to another mesh and an associated segmentation */
-  template<typename SrcMeshT, typename SrcSegmentationT, typename DstMeshT, typename DstSegmentationT>
-  void copy_cells(SrcMeshT const & src_mesh_obj,  SrcSegmentationT const & src_segmentation,
-                  DstMeshT & dst_mesh_obj,        DstSegmentationT & dst_segmentation )
+
+  template<typename SrcMeshT, typename DstMeshT, typename ToCopyFunctorT>
+  void copy(SrcMeshT const & src_mesh, DstMeshT & dst_mesh, ToCopyFunctorT functor)
   {
-//     typedef typename src_segment_container_type::value_type src_segment_handle_type;
-//     typedef typename dst_segment_container_type::value_type dst_segment_handle_type;
-    typedef typename viennagrid::result_of::segment_handle<SrcSegmentationT>::type SrcSegmentHandleType;
-    typedef typename viennagrid::result_of::segment_handle<DstSegmentationT>::type DstSegmentHandleType;
+    dst_mesh.clear();
 
-    //typedef typename viennagrid::result_of::cell_tag<SrcMeshT>::type  SrcCellTag;
-    typedef typename viennagrid::result_of::cell<SrcMeshT>::type      SrcCellType;
+    viennagrid::vertex_copy_map<SrcMeshT, DstMeshT> vertex_map(dst_mesh);
 
-    typedef typename viennagrid::result_of::const_vertex_range<SrcMeshT>::type    SrcVertexRangeType;
-    typedef typename viennagrid::result_of::iterator<SrcVertexRangeType>::type    SrcVertexRangeIterator;
+    typedef typename viennagrid::result_of::cell<SrcMeshT>::type CellType;
+    typedef typename viennagrid::result_of::coord<SrcMeshT>::type NumericType;
 
-    typedef typename viennagrid::result_of::const_cell_range<SrcSegmentHandleType>::type  SrcCellRangeType;
-    typedef typename viennagrid::result_of::iterator<SrcCellRangeType>::type              SrcCellRangeIterator;
+    typedef typename viennagrid::result_of::const_cell_range<SrcMeshT>::type ConstCellRangeType;
+    typedef typename viennagrid::result_of::iterator<ConstCellRangeType>::type ConstCellIteratorType;
 
-    typedef typename viennagrid::result_of::const_vertex_handle<SrcMeshT>::type   SrcConstVertexHandle;
-    typedef typename viennagrid::result_of::vertex_handle<DstMeshT>::type         DstVertexHandleType;
+    typedef typename viennagrid::result_of::cell_handle<DstMeshT>::type CellHandleType;
 
-    if (&src_mesh_obj == &dst_mesh_obj)
-        return;
-
-    dst_mesh_obj.clear();
-    dst_segmentation.clear();
-
-    std::map<SrcConstVertexHandle, DstVertexHandleType> vertex_handle_map;
-
-    SrcVertexRangeType vertices( src_mesh_obj );
-    for (SrcVertexRangeIterator it = vertices.begin(); it != vertices.end(); ++it)
-      vertex_handle_map[it.handle()] = viennagrid::make_vertex( dst_mesh_obj, viennagrid::point(src_mesh_obj, *it) );
-
-
-
-    for (typename SrcSegmentationT::const_iterator seg_it = src_segmentation.begin(); seg_it != src_segmentation.end(); ++seg_it)
+    ConstCellRangeType cells(src_mesh);
+    for (ConstCellIteratorType cit = cells.begin(); cit != cells.end(); ++cit)
     {
-//         dst_segments.push_back( viennagrid::make_view<dst_segment_handle_type>(dst_mesh) );
-      DstSegmentHandleType & dst_segment = dst_segmentation.get_make_segment( seg_it->id() );
-
-      SrcCellRangeType cells( *seg_it );
-      for (SrcCellRangeIterator it = cells.begin(); it != cells.end(); ++it)
-      {
-        SrcCellType const & cell = *it;
-
-        std::deque<DstVertexHandleType> vertex_handles;
-
-        typedef typename viennagrid::result_of::const_vertex_range<SrcCellType>::type SrcVertexOnSrcCellRangeType;
-        typedef typename viennagrid::result_of::iterator<SrcVertexOnSrcCellRangeType>::type SrcVertexOnSrcCellRangeIterator;
-
-        SrcVertexOnSrcCellRangeType cell_vertices(cell);
-        for (SrcVertexOnSrcCellRangeIterator jt = cell_vertices.begin(); jt != cell_vertices.end(); ++jt)
-          vertex_handles.push_back( vertex_handle_map[jt.handle()] );
-
-        typedef typename viennagrid::result_of::cell<DstMeshT>::type DstCellType;
-        viennagrid::make_element<DstCellType>( dst_segment, vertex_handles.begin(), vertex_handles.end() );
-      }
+      if ( functor(*cit) )
+        vertex_map.copy_element(*cit );
     }
   }
 
 
+  template<typename SrcMeshT, typename SrcSegmentationT, typename DstMeshT, typename DstSegmentationT, typename ToCopyFunctorT>
+  void copy(SrcMeshT const & src_mesh, SrcSegmentationT const & src_segmentation,
+            DstMeshT       & dst_mesh, DstSegmentationT       & dst_segmentation,
+            ToCopyFunctorT functor)
+  {
+    dst_mesh.clear();
+    dst_segmentation.clear();
 
+    viennagrid::vertex_copy_map<SrcMeshT, DstMeshT> vertex_map(dst_mesh);
+
+    typedef typename viennagrid::result_of::cell<SrcMeshT>::type CellType;
+    typedef typename viennagrid::result_of::coord<SrcMeshT>::type NumericType;
+
+    typedef typename viennagrid::result_of::const_cell_range<SrcMeshT>::type ConstCellRangeType;
+    typedef typename viennagrid::result_of::iterator<ConstCellRangeType>::type ConstCellIteratorType;
+
+    typedef typename viennagrid::result_of::cell_handle<DstMeshT>::type CellHandleType;
+
+    ConstCellRangeType cells(src_mesh);
+    for (ConstCellIteratorType cit = cells.begin(); cit != cells.end(); ++cit)
+    {
+      if ( functor(*cit) )
+      {
+        CellHandleType cell_handle = vertex_map.copy_element(*cit );
+        viennagrid::add( dst_segmentation, cell_handle, viennagrid::segment_ids( src_segmentation, *cit ).begin(), viennagrid::segment_ids( src_segmentation, *cit ).end() );
+      }
+    }
+  }
 
   namespace detail
   {
