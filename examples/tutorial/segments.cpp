@@ -23,6 +23,7 @@
 #include "viennagrid/mesh/mesh.hpp"
 #include "viennagrid/mesh/segmentation.hpp"
 #include "viennagrid/mesh/element_creation.hpp"
+#include "viennagrid/mesh/element_deletion.hpp"
 
 
 
