@@ -28,18 +28,28 @@ namespace viennagrid
   namespace detail
   {
 
-    template<typename ElementType, typename MeshType, typename VertexHandleContainer>
-    void make_refinement_element(MeshType & mesh_obj, VertexHandleContainer vertex_handle_container, unsigned int i0, unsigned int i1, unsigned int i2)
+    template<typename ElementsVerticesHandleContainerT, typename VertexHandleContainer>
+    void add_refinement_element(ElementsVerticesHandleContainerT & elements_vertices,
+                                VertexHandleContainer vertex_handle_container,
+                                unsigned int i0, unsigned int i1, unsigned int i2)
     {
-      typedef typename VertexHandleContainer::iterator VertexHandleIteratorType;
-      typedef typename std::iterator_traits<VertexHandleIteratorType>::value_type VertexHandleType;
-      static_array< VertexHandleType, boundary_elements<triangle_tag, vertex_tag>::num > cellvertices;
+      elements_vertices.resize( elements_vertices.size()+1 );
 
-      cellvertices[0] = *viennagrid::advance(vertex_handle_container.begin(), i0);
-      cellvertices[1] = *viennagrid::advance(vertex_handle_container.begin(), i1);
-      cellvertices[2] = *viennagrid::advance(vertex_handle_container.begin(), i2);
+      elements_vertices.back().resize(3);
+      elements_vertices.back()[0] = *viennagrid::advance(vertex_handle_container.begin(), i0);
+      elements_vertices.back()[1] = *viennagrid::advance(vertex_handle_container.begin(), i1);
+      elements_vertices.back()[2] = *viennagrid::advance(vertex_handle_container.begin(), i2);
 
-      viennagrid::make_element<ElementType>( mesh_obj, cellvertices.begin(), cellvertices.end() );
+
+//       typedef typename VertexHandleContainer::iterator VertexHandleIteratorType;
+//       typedef typename std::iterator_traits<VertexHandleIteratorType>::value_type VertexHandleType;
+//       static_array< VertexHandleType, boundary_elements<triangle_tag, vertex_tag>::num > cellvertices;
+//
+//       cellvertices[0] = *viennagrid::advance(vertex_handle_container.begin(), i0);
+//       cellvertices[1] = *viennagrid::advance(vertex_handle_container.begin(), i1);
+//       cellvertices[2] = *viennagrid::advance(vertex_handle_container.begin(), i2);
+//
+//       viennagrid::make_element<ElementType>( mesh_obj, cellvertices.begin(), cellvertices.end() );
     }
 
 
@@ -49,14 +59,15 @@ namespace viennagrid
     {
 
       /** @brief No refinement. Just put same cell into new mesh. */
-      template <typename ElementType, typename MeshTypeOut, typename EdgeRefinementFlagAccessor, typename VertexToVertexHandleAccessor, typename EdgeToVertexHandleAccessor>
-      static void apply0(ElementType const & element_in, MeshTypeOut & segment_out,
-                         EdgeRefinementFlagAccessor const, VertexToVertexHandleAccessor const vertex_to_vertex_handle_accessor, EdgeToVertexHandleAccessor const)
+      template <typename ElementType, typename MeshT, typename ElementsVerticesHandleContainerT, typename EdgeRefinementFlagAccessor, typename VertexCopyMapT, typename EdgeToVertexHandleAccessor>
+      static void apply0(ElementType const & element_in, MeshT const &,
+                         ElementsVerticesHandleContainerT & elements_vertices,
+                         EdgeRefinementFlagAccessor const &, VertexCopyMapT & vertex_copy_map_, EdgeToVertexHandleAccessor const &)
       {
         typedef typename viennagrid::result_of::const_element_range<ElementType, viennagrid::vertex_tag>::type            VertexOnCellRange;
         typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type         VertexOnCellIterator;
 
-        typedef typename viennagrid::result_of::handle<MeshTypeOut, viennagrid::vertex_tag>::type             VertexHandleType;
+        typedef typename viennagrid::result_of::vertex_handle<MeshT>::type             VertexHandleType;
 
         static_array<VertexHandleType, boundary_elements<triangle_tag, vertex_tag>::num> vertex_handles;
 
@@ -67,14 +78,16 @@ namespace viennagrid
         //grab existing vertices:
         VertexOnCellRange vertices_on_cell = viennagrid::elements<viennagrid::vertex_tag>(element_in);
         VertexOnCellIterator vocit = vertices_on_cell.begin();
-        vertex_handles[0] = vertex_to_vertex_handle_accessor(*vocit); ++vocit;
-        vertex_handles[1] = vertex_to_vertex_handle_accessor(*vocit); ++vocit;
-        vertex_handles[2] = vertex_to_vertex_handle_accessor(*vocit);
+        vertex_handles[0] = vertex_copy_map_(*vocit); ++vocit;
+        vertex_handles[1] = vertex_copy_map_(*vocit); ++vocit;
+        vertex_handles[2] = vertex_copy_map_(*vocit);
+
+        add_refinement_element( elements_vertices, vertex_handles, 0, 1, 2);
 
         //
         // Step 2: Add new cells to new mesh:
         //
-        viennagrid::make_element<ElementType>( segment_out, vertex_handles.begin(), vertex_handles.end() );
+//         viennagrid::make_element<ElementType>( elements_vertices, vertex_handles.begin(), vertex_handles.end() );
 
       } //apply0()
 
@@ -88,17 +101,18 @@ namespace viennagrid
        *        /     \
        *       0 - 3 - 1
        */
-      template <typename ElementType, typename MeshTypeOut, typename EdgeRefinementFlagAccessor, typename VertexToVertexHandleAccessor, typename EdgeToVertexHandleAccessor>
-      static void apply1(ElementType const & element_in, MeshTypeOut & segment_out,
-                         EdgeRefinementFlagAccessor const edge_refinement_flag_accessor, VertexToVertexHandleAccessor const vertex_to_vertex_handle_accessor, EdgeToVertexHandleAccessor const edge_to_vertex_handle_accessor)
+      template <typename ElementType, typename MeshT, typename ElementsVerticesHandleContainerT, typename EdgeRefinementFlagAccessor, typename VertexCopyMapT, typename EdgeToVertexHandleAccessor>
+      static void apply1(ElementType const & element_in, MeshT const &,
+                         ElementsVerticesHandleContainerT & elements_vertices,
+                         EdgeRefinementFlagAccessor const & edge_refinement_flag_accessor, VertexCopyMapT & vertex_copy_map_, EdgeToVertexHandleAccessor const & edge_to_vertex_handle_accessor)
       {
         typedef typename viennagrid::result_of::const_element_range<ElementType, viennagrid::vertex_tag>::type            VertexOnCellRange;
         typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type         VertexOnCellIterator;
         typedef typename viennagrid::result_of::const_element_range<ElementType, viennagrid::line_tag>::type            EdgeOnCellRange;
         typedef typename viennagrid::result_of::iterator<EdgeOnCellRange>::type           EdgeOnCellIterator;
 
-        typedef typename viennagrid::result_of::handle<MeshTypeOut, viennagrid::vertex_tag>::type             VertexHandleType;
-        typedef typename viennagrid::result_of::element<MeshTypeOut, viennagrid::line_tag>::type             EdgeType;
+        typedef typename viennagrid::result_of::handle<MeshT, viennagrid::vertex_tag>::type             VertexHandleType;
+        typedef typename viennagrid::result_of::element<MeshT, viennagrid::line_tag>::type             EdgeType;
 
         const unsigned int num_vertices = boundary_elements<triangle_tag, vertex_tag>::num;
         static_array<VertexHandleType, num_vertices+1> vertex_handles;
@@ -111,9 +125,9 @@ namespace viennagrid
         //grab existing vertices:
         VertexOnCellRange vertices_on_cell(element_in);
         VertexOnCellIterator vocit = vertices_on_cell.begin();
-        vertex_handles[0] = vertex_to_vertex_handle_accessor(*vocit); ++vocit;
-        vertex_handles[1] = vertex_to_vertex_handle_accessor(*vocit); ++vocit;
-        vertex_handles[2] = vertex_to_vertex_handle_accessor(*vocit);
+        vertex_handles[0] = vertex_copy_map_(*vocit); ++vocit;
+        vertex_handles[1] = vertex_copy_map_(*vocit); ++vocit;
+        vertex_handles[2] = vertex_copy_map_(*vocit);
 
         //add vertices from edge
         EdgeOnCellRange edges_on_cell(element_in);
@@ -147,10 +161,10 @@ namespace viennagrid
         // Step 2: Add new cells to new mesh:
         //
         //0-3-2
-        make_refinement_element<ElementType>( segment_out, vertex_handles, (offset + 0) % num_vertices, 3, (offset + 2) % num_vertices );
+        add_refinement_element( elements_vertices, vertex_handles, (offset + 0) % num_vertices, 3, (offset + 2) % num_vertices );
 
         //3-1-2:
-        make_refinement_element<ElementType>( segment_out, vertex_handles, 3, (offset + 1) % num_vertices, (offset + 2) % num_vertices );
+        add_refinement_element( elements_vertices, vertex_handles, 3, (offset + 1) % num_vertices, (offset + 2) % num_vertices );
       } //apply1()
 
 
@@ -164,17 +178,18 @@ namespace viennagrid
        *        /       \
        *       0 -- 3 -- 1
       */
-      template <typename ElementType, typename MeshTypeOut, typename EdgeRefinementFlagAccessor, typename VertexToVertexHandleAccessor, typename EdgeToVertexHandleAccessor>
-      static void apply2(ElementType const & element_in, MeshTypeOut & segment_out,
-                         EdgeRefinementFlagAccessor const edge_refinement_flag_accessor, VertexToVertexHandleAccessor const vertex_to_vertex_handle_accessor, EdgeToVertexHandleAccessor const edge_to_vertex_handle_accessor)
+      template <typename ElementType, typename MeshT, typename ElementsVerticesHandleContainerT, typename EdgeRefinementFlagAccessor, typename VertexCopyMapT, typename EdgeToVertexHandleAccessor>
+      static void apply2(ElementType const & element_in, MeshT const & mesh,
+                         ElementsVerticesHandleContainerT & elements_vertices,
+                         EdgeRefinementFlagAccessor const & edge_refinement_flag_accessor, VertexCopyMapT & vertex_copy_map_, EdgeToVertexHandleAccessor const & edge_to_vertex_handle_accessor)
       {
         typedef typename viennagrid::result_of::const_element_range<ElementType, viennagrid::vertex_tag>::type            VertexOnCellRange;
         typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type         VertexOnCellIterator;
         typedef typename viennagrid::result_of::const_element_range<ElementType, viennagrid::line_tag>::type            EdgeOnCellRange;
         typedef typename viennagrid::result_of::iterator<EdgeOnCellRange>::type           EdgeOnCellIterator;
 
-        typedef typename viennagrid::result_of::handle<MeshTypeOut, viennagrid::vertex_tag>::type             VertexHandleType;
-        typedef typename viennagrid::result_of::element<MeshTypeOut, viennagrid::line_tag>::type             EdgeType;
+        typedef typename viennagrid::result_of::handle<MeshT, viennagrid::vertex_tag>::type             VertexHandleType;
+        typedef typename viennagrid::result_of::element<MeshT, viennagrid::line_tag>::type             EdgeType;
 
         const unsigned int num_vertices = boundary_elements<triangle_tag, vertex_tag>::num;
         static_array<VertexHandleType, num_vertices+2> vertex_handles;
@@ -187,9 +202,9 @@ namespace viennagrid
         //grab existing vertices:
         VertexOnCellRange vertices_on_cell = viennagrid::elements<viennagrid::vertex_tag>(element_in);
         VertexOnCellIterator vocit = vertices_on_cell.begin();
-        vertex_handles[0] = vertex_to_vertex_handle_accessor(*vocit); ++vocit;
-        vertex_handles[1] = vertex_to_vertex_handle_accessor(*vocit); ++vocit;
-        vertex_handles[2] = vertex_to_vertex_handle_accessor(*vocit);
+        vertex_handles[0] = vertex_copy_map_(*vocit); ++vocit;
+        vertex_handles[1] = vertex_copy_map_(*vocit); ++vocit;
+        vertex_handles[2] = vertex_copy_map_(*vocit);
 
         //Find rotation offset such that first two edges are to be refined
         EdgeOnCellRange edges_on_cell = viennagrid::elements<viennagrid::line_tag>(element_in);
@@ -228,30 +243,30 @@ namespace viennagrid
         //
 
         //3-1-4:
-        make_refinement_element<ElementType>( segment_out, vertex_handles, 3, (offset + 1) % num_vertices, 4 );
+        add_refinement_element( elements_vertices, vertex_handles, 3, (offset + 1) % num_vertices, 4 );
 
         //split second-longest edge
         VertexHandleType vh0 = vertex_handles[(offset + 0) % num_vertices];
         VertexHandleType vh1 = vertex_handles[(offset + 1) % num_vertices];
         VertexHandleType vh2 = vertex_handles[(offset + 2) % num_vertices];
-        double len_edge1 = viennagrid::norm( viennagrid::point(segment_out, vh1) - viennagrid::point(segment_out, vh0) );
-        double len_edge2 = viennagrid::norm( viennagrid::point(segment_out, vh2) - viennagrid::point(segment_out, vh1) );
+        double len_edge1 = viennagrid::norm( viennagrid::point(mesh, vh1) - viennagrid::point(mesh, vh0) );
+        double len_edge2 = viennagrid::norm( viennagrid::point(mesh, vh2) - viennagrid::point(mesh, vh1) );
 
         if (len_edge1 > len_edge2) //split edge [v0, v1] again
         {
           //0-3-2:
-          make_refinement_element<ElementType>( segment_out, vertex_handles, (offset + 0) % num_vertices, 3, (offset + 2) % num_vertices );
+          add_refinement_element( elements_vertices, vertex_handles, (offset + 0) % num_vertices, 3, (offset + 2) % num_vertices );
 
           //2-3-4:
-          make_refinement_element<ElementType>( segment_out, vertex_handles, (offset + 2) % num_vertices, 3, 4 );
+          add_refinement_element( elements_vertices, vertex_handles, (offset + 2) % num_vertices, 3, 4 );
         }
         else //split edge [v1, v2]
         {
           //0-3-4:
-          make_refinement_element<ElementType>( segment_out, vertex_handles, (offset + 0) % num_vertices, 3, 4 );
+          add_refinement_element( elements_vertices, vertex_handles, (offset + 0) % num_vertices, 3, 4 );
 
           //0-4-2:
-          make_refinement_element<ElementType>( segment_out, vertex_handles, (offset + 0) % num_vertices, 4, (offset + 2) % num_vertices );
+          add_refinement_element( elements_vertices, vertex_handles, (offset + 0) % num_vertices, 4, (offset + 2) % num_vertices );
         }
 
 
@@ -261,16 +276,17 @@ namespace viennagrid
 
 
       /** @brief Refinement of a triangle with three edges to be refined (uniform refinement) */
-      template <typename ElementType, typename MeshTypeOut, typename EdgeRefinementFlagAccessor, typename VertexToVertexHandleAccessor, typename EdgeToVertexHandleAccessor>
-      static void apply3(ElementType const & element_in, MeshTypeOut & segment_out,
-                         EdgeRefinementFlagAccessor const, VertexToVertexHandleAccessor const vertex_to_vertex_handle_accessor, EdgeToVertexHandleAccessor const edge_to_vertex_handle_accessor)
+      template <typename ElementType, typename MeshT, typename ElementsVerticesHandleContainerT, typename EdgeRefinementFlagAccessor, typename VertexCopyMapT, typename EdgeToVertexHandleAccessor>
+      static void apply3(ElementType const & element_in, MeshT const &,
+                         ElementsVerticesHandleContainerT & elements_vertices,
+                         EdgeRefinementFlagAccessor const &, VertexCopyMapT & vertex_copy_map_, EdgeToVertexHandleAccessor const & edge_to_vertex_handle_accessor)
       {
         typedef typename viennagrid::result_of::const_element_range<ElementType, viennagrid::vertex_tag>::type            VertexOnCellRange;
         typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type         VertexOnCellIterator;
         typedef typename viennagrid::result_of::const_element_range<ElementType, viennagrid::line_tag>::type            EdgeOnCellRange;
         typedef typename viennagrid::result_of::iterator<EdgeOnCellRange>::type           EdgeOnCellIterator;
 
-        typedef typename viennagrid::result_of::handle<MeshTypeOut, viennagrid::vertex_tag>::type             VertexHandleType;
+        typedef typename viennagrid::result_of::handle<MeshT, viennagrid::vertex_tag>::type             VertexHandleType;
 
         const unsigned int num_vertices = boundary_elements<triangle_tag, vertex_tag>::num;
         const unsigned int num_lines = boundary_elements<triangle_tag, line_tag>::num;
@@ -284,9 +300,9 @@ namespace viennagrid
         //grab existing vertices:
         VertexOnCellRange vertices_on_cell = viennagrid::elements<viennagrid::vertex_tag>(element_in);
         VertexOnCellIterator vocit = vertices_on_cell.begin();
-        vertex_handles[0] = vertex_to_vertex_handle_accessor(*vocit); ++vocit;
-        vertex_handles[1] = vertex_to_vertex_handle_accessor(*vocit); ++vocit;
-        vertex_handles[2] = vertex_to_vertex_handle_accessor(*vocit);
+        vertex_handles[0] = vertex_copy_map_(*vocit); ++vocit;
+        vertex_handles[1] = vertex_copy_map_(*vocit); ++vocit;
+        vertex_handles[2] = vertex_copy_map_(*vocit);
 
         //add vertices from edge
         EdgeOnCellRange edges_on_cell = viennagrid::elements<viennagrid::line_tag>(element_in);
@@ -300,16 +316,16 @@ namespace viennagrid
         //
 
         //0-3-4:
-        make_refinement_element<ElementType>( segment_out, vertex_handles, 0, 3, 4 );
+        add_refinement_element( elements_vertices, vertex_handles, 0, 3, 4 );
 
         //3-1-5:
-        make_refinement_element<ElementType>( segment_out, vertex_handles, 3, 1, 5 );
+        add_refinement_element( elements_vertices, vertex_handles, 3, 1, 5 );
 
         //4-5-2:
-        make_refinement_element<ElementType>( segment_out, vertex_handles, 4, 5, 2 );
+        add_refinement_element( elements_vertices, vertex_handles, 4, 5, 2 );
 
         //4-3-5:
-        make_refinement_element<ElementType>( segment_out, vertex_handles, 4, 3, 5 );
+        add_refinement_element( elements_vertices, vertex_handles, 4, 3, 5 );
 
       } //apply3()
 
@@ -317,18 +333,19 @@ namespace viennagrid
       /** @brief Public entry function for the refinement of a triangle.
        *
        * @param element_in       The triangle to be refined
-       * @param segment_out   The mesh or segment the refined triangles are written to
+       * @param elements_vertices   The mesh or segment the refined triangles are written to
        * @param edge_refinement_flag_accessor     Accessor storing flags if an edge is marked for refinement
-       * @param vertex_to_vertex_handle_accessor  Temporary accessor for vertex to vertex mapping
+       * @param vertex_copy_map_  Temporary accessor for vertex to vertex mapping
        * @param edge_to_vertex_handle_accessor    Temporary accessor for refined edge to vertex mapping
        */
-      template <typename ElementType, typename MeshTypeOut, typename EdgeRefinementFlagAccessor, typename VertexToVertexHandleAccessor, typename EdgeToVertexHandleAccessor>
-      static void apply(ElementType const & element_in, MeshTypeOut & segment_out,
-                        EdgeRefinementFlagAccessor const edge_refinement_flag_accessor,
-                        VertexToVertexHandleAccessor const vertex_to_vertex_handle_accessor,
-                        EdgeToVertexHandleAccessor edge_to_vertex_handle_accessor)
+      template <typename ElementT, typename MeshT, typename ElementsVerticesHandleContainerT, typename EdgeRefinementFlagAccessor, typename VertexCopyMapT, typename EdgeToVertexHandleAccessor>
+      static void apply(ElementT const & element_in, MeshT const & mesh,
+                        ElementsVerticesHandleContainerT & elements_vertices,
+                        EdgeRefinementFlagAccessor const & edge_refinement_flag_accessor,
+                        VertexCopyMapT & vertex_copy_map_,
+                        EdgeToVertexHandleAccessor const & edge_to_vertex_handle_accessor)
       {
-        typedef typename viennagrid::result_of::const_element_range<ElementType, viennagrid::line_tag>::type            EdgeOnCellRange;
+        typedef typename viennagrid::result_of::const_element_range<ElementT, viennagrid::line_tag>::type            EdgeOnCellRange;
         typedef typename viennagrid::result_of::iterator<EdgeOnCellRange>::type                 EdgeOnCellIterator;
 
         std::size_t edges_to_refine = 0;
@@ -343,10 +360,10 @@ namespace viennagrid
 
         switch (edges_to_refine)
         {
-          case 0: apply0(element_in, segment_out, edge_refinement_flag_accessor, vertex_to_vertex_handle_accessor, edge_to_vertex_handle_accessor); break;
-          case 1: apply1(element_in, segment_out, edge_refinement_flag_accessor, vertex_to_vertex_handle_accessor, edge_to_vertex_handle_accessor); break;
-          case 2: apply2(element_in, segment_out, edge_refinement_flag_accessor, vertex_to_vertex_handle_accessor, edge_to_vertex_handle_accessor); break;
-          case 3: apply3(element_in, segment_out, edge_refinement_flag_accessor, vertex_to_vertex_handle_accessor, edge_to_vertex_handle_accessor); break;
+          case 0: apply0(element_in, mesh, elements_vertices, edge_refinement_flag_accessor, vertex_copy_map_, edge_to_vertex_handle_accessor); break;
+          case 1: apply1(element_in, mesh, elements_vertices, edge_refinement_flag_accessor, vertex_copy_map_, edge_to_vertex_handle_accessor); break;
+          case 2: apply2(element_in, mesh, elements_vertices, edge_refinement_flag_accessor, vertex_copy_map_, edge_to_vertex_handle_accessor); break;
+          case 3: apply3(element_in, mesh, elements_vertices, edge_refinement_flag_accessor, vertex_copy_map_, edge_to_vertex_handle_accessor); break;
           default: //nothing to do...
                   break;
         }

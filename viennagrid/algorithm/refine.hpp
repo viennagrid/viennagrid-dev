@@ -18,6 +18,7 @@
 #include "viennagrid/algorithm/norm.hpp"
 
 #include "viennagrid/mesh/element_creation.hpp"
+#include "viennagrid/mesh/mesh_operations.hpp"
 
 #include "viennagrid/algorithm/detail/refine_tri.hpp"
 #include "viennagrid/algorithm/detail/refine_tet.hpp"
@@ -28,40 +29,129 @@
 
 namespace viennagrid
 {
+
+  template <typename CellTagInT,
+            typename WrappedMeshConfigInT,
+            typename WrappedMeshConfigOutT,
+            typename EdgeRefinementFlagAccessorT, typename VertexCopyMapT, typename RefinementVertexAccessorT>
+  void simple_refine(mesh<WrappedMeshConfigInT> const & mesh_in,
+                     mesh<WrappedMeshConfigOutT> & mesh_out,
+                     EdgeRefinementFlagAccessorT const & edge_refinement_flag_accessor,
+                     VertexCopyMapT & vertex_copy_map_,
+                     RefinementVertexAccessorT const & edge_to_vertex_handle_accessor)
+  {
+    typedef mesh<WrappedMeshConfigInT>       InputMeshType;
+    typedef mesh<WrappedMeshConfigOutT>      OutputMeshType;
+
+    typedef typename viennagrid::result_of::const_element_range<InputMeshType, CellTagInT>::type      CellRange;
+    typedef typename viennagrid::result_of::iterator<CellRange>::type                                 CellIterator;
+
+    CellRange cells(mesh_in);
+    for (CellIterator cit  = cells.begin();
+                      cit != cells.end();
+                    ++cit)
+    {
+      typedef typename viennagrid::result_of::vertex_handle<OutputMeshType>::type OutputVertexHandleType;
+      typedef std::vector<OutputVertexHandleType> VertexHandlesContainerType;
+      typedef std::vector<VertexHandlesContainerType> ElementsContainerType;
+      ElementsContainerType elements_vertices;
+
+      detail::element_refinement<CellTagInT>::apply(*cit, mesh_out, elements_vertices, edge_refinement_flag_accessor, vertex_copy_map_, edge_to_vertex_handle_accessor);
+
+      for (typename ElementsContainerType::iterator it = elements_vertices.begin();
+            it != elements_vertices.end();
+            ++it)
+        viennagrid::make_element<CellTagInT>( mesh_out, it->begin(), it->end() );
+    }
+  }
+
+
+
+  template <typename CellTagT,
+            typename WrappedMeshConfigInT,  typename WrappedSegmentationConfigInT,
+            typename WrappedMeshConfigOutT, typename WrappedSegmentationConfigOutT,
+            typename EdgeRefinementFlagAccessorT, typename VertexCopyMapT, typename RefinementVertexAccessorT>
+  void simple_refine(mesh<WrappedMeshConfigInT>                 const & mesh_in,
+                     segmentation<WrappedSegmentationConfigInT> const & segmentation_in,
+                     mesh<WrappedMeshConfigOutT>                      & mesh_out,
+                     segmentation<WrappedSegmentationConfigOutT>      & segmentation_out,
+                     EdgeRefinementFlagAccessorT const & edge_refinement_flag_accessor,
+                     VertexCopyMapT & vertex_copy_map_,
+                     RefinementVertexAccessorT const & edge_to_vertex_handle_accessor)
+  {
+    typedef mesh<WrappedMeshConfigInT>    InputMeshType;
+    typedef mesh<WrappedMeshConfigOutT>   OutputMeshType;
+
+    typedef segmentation<WrappedSegmentationConfigInT>      InputSegmentationType;
+
+    typedef typename viennagrid::result_of::const_element_range<InputMeshType, CellTagT>::type      CellRange;
+    typedef typename viennagrid::result_of::iterator<CellRange>::type                               CellIterator;
+
+    CellRange cells(mesh_in);
+    for (CellIterator cit  = cells.begin();
+                      cit != cells.end();
+                    ++cit)
+    {
+      typedef typename viennagrid::result_of::segment_id_range<InputSegmentationType, CellTagT>::type SegmentIDRangeType;
+
+      SegmentIDRangeType segment_ids = viennagrid::segment_ids( segmentation_in, *cit );
+
+      typedef typename viennagrid::result_of::vertex_handle<OutputMeshType>::type OutputVertexHandleType;
+      typedef typename viennagrid::result_of::handle<OutputMeshType, CellTagT>::type OutputCellHandleType;
+      typedef std::vector<OutputVertexHandleType> VertexHandlesContainerType;
+      typedef std::vector<VertexHandlesContainerType> ElementsContainerType;
+      ElementsContainerType elements_vertices;
+
+      detail::element_refinement<CellTagT>::apply(*cit, mesh_out, elements_vertices, edge_refinement_flag_accessor, vertex_copy_map_, edge_to_vertex_handle_accessor);
+
+      for (typename ElementsContainerType::iterator it = elements_vertices.begin();
+            it != elements_vertices.end();
+            ++it)
+      {
+        OutputCellHandleType new_cell = viennagrid::make_element<CellTagT>( mesh_out, it->begin(), it->end() );
+        viennagrid::add( segmentation_out, new_cell, segment_ids.begin(), segment_ids.end() );
+      }
+    }
+  }
+
+
+
+
   namespace detail
   {
+
+
+
     /** @brief For internal use only */
-    template <typename CellTagInT,
+    template <typename CellTagT,
               typename WrappedMeshConfigInT,
               typename WrappedMeshConfigOutT,
               typename PointAccessorT,
-              typename EdgeRefinementFlagAccessorT, typename VertexToVertexHandleAccessorT, typename RefinementVertexAccessorT>
+              typename EdgeRefinementFlagAccessorT, typename VertexCopyMapT, typename RefinementVertexAccessorT>
     void refine_impl(mesh<WrappedMeshConfigInT> const & mesh_in,
                      mesh<WrappedMeshConfigOutT> & mesh_out,
                      PointAccessorT const point_accessor_in,
-                     EdgeRefinementFlagAccessorT const edge_refinement_flag_accessor,
-                     VertexToVertexHandleAccessorT vertex_to_vertex_handle_accessor,
-                     RefinementVertexAccessorT edge_to_vertex_handle_accessor)
+                     EdgeRefinementFlagAccessorT const & edge_refinement_flag_accessor,
+                     VertexCopyMapT & vertex_copy_map_,
+                     RefinementVertexAccessorT & edge_to_vertex_handle_accessor)
     {
-      typedef mesh<WrappedMeshConfigInT>       WrappedMeshConfigInType;
+      typedef mesh<WrappedMeshConfigInT>       InputMeshType;
 
-      typedef typename viennagrid::result_of::const_element_range<WrappedMeshConfigInType, vertex_tag>::type       VertexRange;
-      typedef typename viennagrid::result_of::iterator<VertexRange>::type                               VertexIterator;
-      typedef typename viennagrid::result_of::const_element_range<WrappedMeshConfigInType, line_tag>::type         EdgeRange;
-      typedef typename viennagrid::result_of::iterator<EdgeRange>::type                                 EdgeIterator;
-      typedef typename viennagrid::result_of::const_element_range<WrappedMeshConfigInType, CellTagInT>::type       CellRange;
-      typedef typename viennagrid::result_of::iterator<CellRange>::type                                 CellIterator;
+      typedef typename viennagrid::result_of::const_vertex_range<InputMeshType>::type               VertexRange;
+      typedef typename viennagrid::result_of::iterator<VertexRange>::type                           VertexIterator;
+      typedef typename viennagrid::result_of::const_line_range<InputMeshType>::type                 EdgeRange;
+      typedef typename viennagrid::result_of::iterator<EdgeRange>::type                             EdgeIterator;
 
       //
       // Step 2: Write old vertices to new mesh
       //
-      VertexRange vertices(mesh_in);
-      for (VertexIterator vit  = vertices.begin();
-                          vit != vertices.end();
-                        ++vit)
-      {
-        vertex_to_vertex_handle_accessor( *vit ) = viennagrid::make_vertex( mesh_out, point_accessor_in(*vit) );
-      }
+//       VertexRange vertices(mesh_in);
+//       for (VertexIterator vit  = vertices.begin();
+//                           vit != vertices.end();
+//                         ++vit)
+//       {
+//         vertex_copy_map_( *vit ) = viennagrid::make_vertex( mesh_out, point_accessor_in(*vit) );
+//       }
 
       //
       // Step 3: Each tagged edge in old mesh results in a new vertex (temporarily store new vertex IDs on old mesh)
@@ -80,56 +170,48 @@ namespace viennagrid
       //
       // Step 4: Now write new cells to new mesh
       //
-        CellRange cells(mesh_in);
-        for (CellIterator cit  = cells.begin();
-                          cit != cells.end();
-                        ++cit)
-        {
-          detail::element_refinement<CellTagInT>::apply(*cit, mesh_out, edge_refinement_flag_accessor, vertex_to_vertex_handle_accessor, edge_to_vertex_handle_accessor);
-        }
+      simple_refine<CellTagT>(mesh_in, mesh_out, edge_refinement_flag_accessor, vertex_copy_map_, edge_to_vertex_handle_accessor);
     }
 
 
 
-
     /** @brief For internal use only */
-    template <typename CellTagInT,
+    template <typename CellTagT,
               typename WrappedMeshConfigInT,  typename WrappedSegmentationConfigInT,
               typename WrappedMeshConfigOutT, typename WrappedSegmentationConfigOutT,
               typename PointAccessorT,
-              typename EdgeRefinementFlagAccessorT, typename VertexToVertexHandleAccessorT, typename RefinementVertexAccessorT>
-    void refine_impl(mesh<WrappedMeshConfigInT> const & mesh_in,    segmentation<WrappedSegmentationConfigInT> const & segmentation_in,
-                     mesh<WrappedMeshConfigOutT>      & mesh_out,   segmentation<WrappedSegmentationConfigOutT>      & segmentation_out,
+              typename EdgeRefinementFlagAccessorT, typename VertexCopyMapT, typename RefinementVertexAccessorT>
+    void refine_impl(mesh<WrappedMeshConfigInT>                 const & mesh_in,
+                     segmentation<WrappedSegmentationConfigInT> const & segmentation_in,
+                     mesh<WrappedMeshConfigOutT>                      & mesh_out,
+                     segmentation<WrappedSegmentationConfigOutT>      & segmentation_out,
                      PointAccessorT const point_accessor_in,
-                     EdgeRefinementFlagAccessorT const edge_refinement_flag_accessor,
-                     VertexToVertexHandleAccessorT vertex_to_vertex_handle_accessor,
-                     RefinementVertexAccessorT edge_to_vertex_handle_accessor)
+                     EdgeRefinementFlagAccessorT const & edge_refinement_flag_accessor,
+                     VertexCopyMapT & vertex_copy_map_,
+                     RefinementVertexAccessorT & edge_to_vertex_handle_accessor)
     {
-      typedef mesh<WrappedMeshConfigInT>    WrappedMeshConfigInType;
+      typedef mesh<WrappedMeshConfigInT>    InputMeshType;
+      typedef mesh<WrappedMeshConfigOutT>   OutputMeshType;
 
-      typedef segmentation<WrappedSegmentationConfigInT>      WrappedSegmentationConfigInType;
-      typedef segmentation<WrappedSegmentationConfigOutT>     WrappedSegmentationConfigOutType;
+      typedef segmentation<WrappedSegmentationConfigInT>      InputSegmentationType;
+      typedef segmentation<WrappedSegmentationConfigOutT>     OutputSegmentationType;
 
-      typedef typename viennagrid::result_of::segment_handle<WrappedSegmentationConfigInType>::type     SegmentHandleInType;
-      typedef typename viennagrid::result_of::segment_handle<WrappedSegmentationConfigOutType>::type    SegmentHandleOutType;
-
-      typedef typename viennagrid::result_of::const_element_range<WrappedMeshConfigInType, vertex_tag>::type     VertexRange;
+      typedef typename viennagrid::result_of::const_vertex_range<InputMeshType>::type     VertexRange;
       typedef typename viennagrid::result_of::iterator<VertexRange>::type                             VertexIterator;
-      typedef typename viennagrid::result_of::const_element_range<WrappedMeshConfigInType, line_tag>::type       EdgeRange;
+      typedef typename viennagrid::result_of::const_line_range<InputMeshType>::type       EdgeRange;
       typedef typename viennagrid::result_of::iterator<EdgeRange>::type                               EdgeIterator;
-      typedef typename viennagrid::result_of::const_element_range<SegmentHandleInType, CellTagInT>::type    CellRange;
-      typedef typename viennagrid::result_of::iterator<CellRange>::type                               CellIterator;
+
 
       //
       // Step 2: Write old vertices to new mesh
       //
-      VertexRange vertices(mesh_in);
-      for (VertexIterator vit  = vertices.begin();
-                          vit != vertices.end();
-                        ++vit)
-      {
-        vertex_to_vertex_handle_accessor( *vit ) = viennagrid::make_vertex( mesh_out, point_accessor_in(*vit) );
-      }
+//       VertexRange vertices(mesh_in);
+//       for (VertexIterator vit  = vertices.begin();
+//                           vit != vertices.end();
+//                         ++vit)
+//       {
+//         vertex_copy_map_( *vit ) = viennagrid::make_vertex( mesh_out, point_accessor_in(*vit) );
+//       }
 
       //
       // Step 3: Each tagged edge in old mesh results in a new vertex (temporarily store new vertex IDs on old mesh)
@@ -148,21 +230,7 @@ namespace viennagrid
       //
       // Step 4: Now write new cells to new mesh
       //
-
-      // TODO: fix overlapping segments (with this implementation overlapping segments would result in multiple elements)
-      for (typename WrappedSegmentationConfigInType::const_iterator sit = segmentation_in.begin(); sit != segmentation_in.end(); ++sit)
-      {
-        SegmentHandleInType  const & segment_in  = *sit;
-        SegmentHandleOutType       & segment_out = segmentation_out( sit->id() );
-
-        CellRange cells(segment_in);
-        for (CellIterator cit  = cells.begin();
-                          cit != cells.end();
-                        ++cit)
-        {
-          detail::element_refinement<CellTagInT>::apply(*cit, segment_out, edge_refinement_flag_accessor, vertex_to_vertex_handle_accessor, edge_to_vertex_handle_accessor);
-        }
-      }
+      simple_refine<CellTagT>( mesh_in, segmentation_in, mesh_out, segmentation_out, edge_refinement_flag_accessor, vertex_copy_map_, edge_to_vertex_handle_accessor );
     }
 
 
@@ -322,20 +390,21 @@ namespace viennagrid
    * @param mesh_out                          Output refined mesh
    * @param point_accessor_in                 Point accessor for input points
    * @param edge_refinement_flag_accessor     Accessor storing flags if an edge is marked for refinement
-   * @param vertex_to_vertex_handle_accessor  Temporary accessor for vertex to vertex mapping
+   * @param vertex_copy_map_  Temporary accessor for vertex to vertex mapping
    * @param edge_to_vertex_handle_accessor    Temporary accessor for refined edge to vertex mapping
    */
   template <typename ElementTypeOrTagT, typename WrappedMeshConfigInT, typename WrappedMeshConfigOutT, typename PointAccessorType,
             typename EdgeRefinementFlagAccessorT, typename VertexToVertexHandleAccessor, typename RefinementVertexAccessor>
   void refine(mesh<WrappedMeshConfigInT> const & mesh_in,
               mesh<WrappedMeshConfigOutT> & mesh_out, PointAccessorType point_accessor_in,
-              EdgeRefinementFlagAccessorT const edge_refinement_flag_accessor,
-              VertexToVertexHandleAccessor vertex_to_vertex_handle_accessor, RefinementVertexAccessor edge_to_vertex_handle_accessor)
+              EdgeRefinementFlagAccessorT const & edge_refinement_flag_accessor,
+              VertexToVertexHandleAccessor & vertex_copy_map_,
+              RefinementVertexAccessor & edge_to_vertex_handle_accessor)
   {
       typedef typename viennagrid::result_of::element_tag<ElementTypeOrTagT>::type CellTag;
 
       detail::refine_impl<CellTag>(mesh_in, mesh_out, point_accessor_in,
-                                  edge_refinement_flag_accessor, vertex_to_vertex_handle_accessor, edge_to_vertex_handle_accessor);
+                                  edge_refinement_flag_accessor, vertex_copy_map_, edge_to_vertex_handle_accessor);
   }
 
 
@@ -350,8 +419,10 @@ namespace viennagrid
   template <typename ElementTypeOrTagT, typename WrappedMeshConfigInT, typename WrappedMeshConfigOutT, typename PointAccessorType, typename EdgeRefinementFlagAccessorT>
   void refine(mesh<WrappedMeshConfigInT> const & mesh_in,
               mesh<WrappedMeshConfigOutT> & mesh_out,
-              PointAccessorType point_accessor_in, EdgeRefinementFlagAccessorT const edge_refinement_flag_accessor)
+              PointAccessorType point_accessor_in,
+              EdgeRefinementFlagAccessorT const & edge_refinement_flag_accessor)
   {
+    typedef mesh<WrappedMeshConfigInT>                                             MeshInType;
     typedef mesh<WrappedMeshConfigOutT>                                             MeshOutType;
 
     typedef typename viennagrid::result_of::vertex<MeshOutType>::type                   VertexType;
@@ -359,13 +430,14 @@ namespace viennagrid
 
     typedef typename viennagrid::result_of::vertex_handle<MeshOutType>::type            VertexHandleType;
 
-    std::deque<VertexHandleType> vertex_refinement_vertex_handle;
-    std::deque<VertexHandleType> edge_refinement_vertex_handle;
+    viennagrid::vertex_copy_map<MeshInType, MeshOutType> vertex_map(mesh_out);
+    std::deque<VertexHandleType> edge_refinement_vertex_handle_container;
+    typename viennagrid::result_of::accessor<std::deque<VertexHandleType>, EdgeType>::type edge_refinement_vertex_handle_accessor(edge_refinement_vertex_handle_container);
 
     refine<ElementTypeOrTagT>(mesh_in, mesh_out, point_accessor_in,
                     edge_refinement_flag_accessor,
-                    viennagrid::make_accessor<VertexType>(vertex_refinement_vertex_handle),
-                    viennagrid::make_accessor<EdgeType>(edge_refinement_vertex_handle));
+                    vertex_map,
+                    edge_refinement_vertex_handle_accessor);
   }
 
   /** @brief Public interface for refinement of a mesh with edge refinement accessor.
@@ -378,14 +450,14 @@ namespace viennagrid
   template <typename ElementTypeOrTagT, typename WrappedMeshConfigInT, typename WrappedMeshConfigOutT, typename EdgeRefinementFlagAccessorT>
   void refine(mesh<WrappedMeshConfigInT> const & mesh_in,
               mesh<WrappedMeshConfigOutT> & mesh_out,
-              EdgeRefinementFlagAccessorT const edge_refinement_flag_accessor)
+              EdgeRefinementFlagAccessorT const & edge_refinement_flag_accessor)
   {
     typedef mesh<WrappedMeshConfigOutT>                                             MeshOutType;
 
     typedef typename viennagrid::result_of::vertex_handle<MeshOutType>::type            VertexHandleType;
 
-    std::deque<VertexHandleType> vertex_refinement_vertex_handle;
-    std::deque<VertexHandleType> edge_refinement_vertex_handle;
+//     std::deque<VertexHandleType> vertex_refinement_vertex_handle;
+//     std::deque<VertexHandleType> edge_refinement_vertex_handle;
 
     refine<ElementTypeOrTagT>(mesh_in, mesh_out, default_point_accessor(mesh_in), edge_refinement_flag_accessor);
   }
@@ -463,7 +535,7 @@ namespace viennagrid
    * @param mesh_out                          Output refined mesh
    * @param point_accessor_in                 Point accessor for input points
    * @param edge_refinement_flag_accessor     Accessor storing flags if an edge is marked for refinement
-   * @param vertex_to_vertex_handle_accessor  Temporary accessor for vertex to vertex mapping
+   * @param vertex_copy_map_  Temporary accessor for vertex to vertex mapping
    * @param edge_to_vertex_handle_accessor    Temporary accessor for refined edge to vertex mapping
    */
   template <typename ElementTypeOrTagT, typename WrappedMeshConfigInT, typename WrappedMeshConfigOutT, typename PointAccessorType,
@@ -471,12 +543,12 @@ namespace viennagrid
   void refine_uniformly(mesh<WrappedMeshConfigInT> const & mesh_in,
                         mesh<WrappedMeshConfigOutT> & mesh_out,
                         PointAccessorType point_accessor_in,
-                        EdgeRefinementFlagAccessorT const edge_refinement_flag_accessor,
-                        VertexToVertexHandleAccessor vertex_to_vertex_handle_accessor, RefinementVertexAccessor edge_to_vertex_handle_accessor)
+                        EdgeRefinementFlagAccessorT const & edge_refinement_flag_accessor,
+                        VertexToVertexHandleAccessor vertex_copy_map_, RefinementVertexAccessor edge_to_vertex_handle_accessor)
   {
     mark_all_edge_refinement( mesh_in, edge_refinement_flag_accessor );
     refine<ElementTypeOrTagT>(mesh_in, mesh_out, point_accessor_in,
-                          edge_refinement_flag_accessor, vertex_to_vertex_handle_accessor, edge_to_vertex_handle_accessor);
+                          edge_refinement_flag_accessor, vertex_copy_map_, edge_to_vertex_handle_accessor);
   }
 
   /** @brief Public interface for uniform refinement of a mesh with explicit point accessor and edge refinement accessor.
@@ -491,7 +563,7 @@ namespace viennagrid
   void refine_uniformly(mesh<WrappedMeshConfigInT> const & mesh_in,
                         mesh<WrappedMeshConfigOutT> & mesh_out,
                         PointAccessorType point_accessor_in,
-                        EdgeRefinementFlagAccessorT const edge_refinement_flag_accessor)
+                        EdgeRefinementFlagAccessorT const & edge_refinement_flag_accessor)
   {
     mark_all_edge_refinement( mesh_in, edge_refinement_flag_accessor );
     refine<ElementTypeOrTagT>(mesh_in, mesh_out, point_accessor_in, edge_refinement_flag_accessor);
@@ -507,7 +579,7 @@ namespace viennagrid
   template <typename ElementTypeOrTagT, typename WrappedMeshConfigInT, typename WrappedMeshConfigOutT, typename EdgeRefinementFlagAccessorT>
   void refine_uniformly(mesh<WrappedMeshConfigInT> const & mesh_in,
                         mesh<WrappedMeshConfigOutT> & mesh_out,
-                        EdgeRefinementFlagAccessorT const edge_refinement_flag_accessor)
+                        EdgeRefinementFlagAccessorT const & edge_refinement_flag_accessor)
   {
     refine_uniformly<ElementTypeOrTagT>(mesh_in, mesh_out, default_point_accessor(mesh_in), edge_refinement_flag_accessor);
   }
@@ -558,25 +630,29 @@ namespace viennagrid
    * @param segmentation_out                  Output refined segmentation
    * @param point_accessor_in                 Point accessor for input points
    * @param edge_refinement_flag_accessor     Accessor storing flags if an edge is marked for refinement
-   * @param vertex_to_vertex_handle_accessor  Temporary accessor for vertex to vertex mapping
+   * @param vertex_copy_map_  Temporary accessor for vertex to vertex mapping
    * @param edge_to_vertex_handle_accessor    Temporary accessor for refined edge to vertex mapping
    */
   template <typename ElementTypeOrTagT,
             typename WrappedMeshConfigInT, typename WrappedSegmentationConfigInT,
             typename WrappedMeshConfigOutT, typename WrappedSegmentationConfigOutT,
             typename PointAccessorT,
-            typename EdgeRefinementFlagAccessorT, typename VertexToVertexHandleAccessorT, typename RefinementVertexAccessorT>
-  void refine(mesh<WrappedMeshConfigInT> const & mesh_in,  segmentation<WrappedSegmentationConfigInT> const & segmentation_in,
-              mesh<WrappedMeshConfigOutT> & mesh_out,      segmentation<WrappedSegmentationConfigOutT> & segmentation_out,
+            typename EdgeRefinementFlagAccessorT, typename VertexCopyMapT, typename RefinementVertexAccessorT>
+  void refine(mesh<WrappedMeshConfigInT> const & mesh_in,
+              segmentation<WrappedSegmentationConfigInT> const & segmentation_in,
+              mesh<WrappedMeshConfigOutT> & mesh_out,
+              segmentation<WrappedSegmentationConfigOutT> & segmentation_out,
               PointAccessorT point_accessor_in,
-              EdgeRefinementFlagAccessorT const edge_refinement_flag_accessor, VertexToVertexHandleAccessorT vertex_to_vertex_handle_accessor, RefinementVertexAccessorT edge_to_vertex_handle_accessor)
+              EdgeRefinementFlagAccessorT const & edge_refinement_flag_accessor,
+              VertexCopyMapT & vertex_copy_map_,
+              RefinementVertexAccessorT & edge_to_vertex_handle_accessor)
   {
     typedef typename viennagrid::result_of::element_tag<ElementTypeOrTagT>::type CellTag;
 
     detail::refine_impl<CellTag>(mesh_in, segmentation_in,
                                  mesh_out, segmentation_out,
                                  point_accessor_in,
-                                 edge_refinement_flag_accessor, vertex_to_vertex_handle_accessor, edge_to_vertex_handle_accessor);
+                                 edge_refinement_flag_accessor, vertex_copy_map_, edge_to_vertex_handle_accessor);
   }
 
 
@@ -598,8 +674,9 @@ namespace viennagrid
   void refine(mesh<WrappedMeshConfigInT> const & mesh_in,  segmentation<WrappedSegmentationConfigInT> const & segmentation_in,
               mesh<WrappedMeshConfigOutT> & mesh_out,      segmentation<WrappedSegmentationConfigOutT> & segmentation_out,
               PointAccessorT point_accessor_in,
-              EdgeRefinementFlagAccessorT const edge_refinement_flag_accessor)
+              EdgeRefinementFlagAccessorT const & edge_refinement_flag_accessor)
   {
+    typedef mesh<WrappedMeshConfigInT> MeshInT;
     typedef mesh<WrappedMeshConfigOutT> MeshOutT;
 
     typedef typename viennagrid::result_of::vertex<MeshOutT>::type VertexType;
@@ -607,15 +684,16 @@ namespace viennagrid
 
     typedef typename viennagrid::result_of::vertex_handle<MeshOutT>::type VertexHandleType;
 
-    std::deque<VertexHandleType> vertex_refinement_vertex_handle;
-    std::deque<VertexHandleType> edge_refinement_vertex_handle;
+    viennagrid::vertex_copy_map<MeshInT, MeshOutT> vertex_map(mesh_out);
+    std::deque<VertexHandleType> edge_refinement_vertex_handle_container;
+    typename viennagrid::result_of::accessor<std::deque<VertexHandleType>, EdgeType>::type edge_refinement_vertex_handle_accessor(edge_refinement_vertex_handle_container);
 
     refine<ElementTypeOrTagT>(mesh_in, segmentation_in,
                            mesh_out, segmentation_out,
                            point_accessor_in,
                            edge_refinement_flag_accessor,
-                           viennagrid::make_accessor<VertexType>(vertex_refinement_vertex_handle),
-                           viennagrid::make_accessor<EdgeType>(edge_refinement_vertex_handle));
+                           vertex_map,
+                           edge_refinement_vertex_handle_accessor);
   }
 
   /** @brief Public interface for refinement of a mesh with segmentation providing edge refinement accessor.
@@ -633,7 +711,7 @@ namespace viennagrid
             typename EdgeRefinementFlagAccessorT>
   void refine(mesh<WrappedMeshConfigInT> const & mesh_in,  segmentation<WrappedSegmentationConfigInT> const & segmentation_in,
               mesh<WrappedMeshConfigOutT> & mesh_out,      segmentation<WrappedSegmentationConfigOutT> & segmentation_out,
-              EdgeRefinementFlagAccessorT const edge_refinement_flag_accessor)
+              EdgeRefinementFlagAccessorT const & edge_refinement_flag_accessor)
   {
     typedef mesh<WrappedMeshConfigOutT> MeshOutT;
 
@@ -749,26 +827,26 @@ namespace viennagrid
    * @param segmentation_out                  Output refined segmentation
    * @param point_accessor_in                 Point accessor for input points
    * @param edge_refinement_flag_accessor     Accessor storing flags if an edge is marked for refinement
-   * @param vertex_to_vertex_handle_accessor  Temporary accessor for vertex to vertex mapping
+   * @param vertex_copy_map_  Temporary accessor for vertex to vertex mapping
    * @param edge_to_vertex_handle_accessor    Temporary accessor for refined edge to vertex mapping
    */
   template <typename ElementTypeOrTagT,
             typename WrappedMeshConfigInT,   typename WrappedSegmentationConfigInT,
             typename WrappedMeshConfigOutT,  typename WrappedSegmentationConfigOutT,
             typename PointAccessorT,
-            typename EdgeRefinementFlagAccessorT, typename VertexToVertexHandleAccessorT, typename RefinementVertexAccessorT>
+            typename EdgeRefinementFlagAccessorT, typename VertexCopyMapT, typename RefinementVertexAccessorT>
   void refine_uniformly(mesh<WrappedMeshConfigInT> const & mesh_in,  segmentation<WrappedSegmentationConfigInT> const & segmentation_in,
                         mesh<WrappedMeshConfigOutT> & mesh_out,      segmentation<WrappedSegmentationConfigOutT> & segmentation_out,
                         PointAccessorT point_accessor_in,
-                        EdgeRefinementFlagAccessorT const edge_refinement_flag_accessor,
-                        VertexToVertexHandleAccessorT vertex_to_vertex_handle_accessor,
-                        RefinementVertexAccessorT edge_to_vertex_handle_accessor)
+                        EdgeRefinementFlagAccessorT const & edge_refinement_flag_accessor,
+                        VertexCopyMapT & vertex_copy_map_,
+                        RefinementVertexAccessorT & edge_to_vertex_handle_accessor)
   {
     mark_all_edge_refinement( mesh_in, edge_refinement_flag_accessor );
     refine<ElementTypeOrTagT>(mesh_in, segmentation_in,
                            mesh_out, segmentation_out,
                            point_accessor_in,
-                           edge_refinement_flag_accessor, vertex_to_vertex_handle_accessor, edge_to_vertex_handle_accessor);
+                           edge_refinement_flag_accessor, vertex_copy_map_, edge_to_vertex_handle_accessor);
   }
 
   /** @brief Public interface for uniform refinement of a mesh with segmentation providing explicit point accessor and edge refinement accessor.
@@ -789,7 +867,7 @@ namespace viennagrid
   void refine_uniformly(mesh<WrappedMeshConfigInT> const & mesh_in,  segmentation<WrappedSegmentationConfigInT> const & segmentation_in,
                         mesh<WrappedMeshConfigOutT> & mesh_out,      segmentation<WrappedSegmentationConfigOutT> & segmentation_out,
                         PointAccessorT point_accessor_in,
-                        EdgeRefinementFlagAccessorT const edge_refinement_flag_accessor)
+                        EdgeRefinementFlagAccessorT const & edge_refinement_flag_accessor)
   {
     mark_all_edge_refinement( mesh_in, edge_refinement_flag_accessor );
     refine<ElementTypeOrTagT>(mesh_in, segmentation_in,
@@ -813,7 +891,7 @@ namespace viennagrid
             typename EdgeRefinementFlagAccessorT>
   void refine_uniformly(mesh<WrappedMeshConfigInT> const & mesh_in,  segmentation<WrappedSegmentationConfigInT> const & segmentation_in,
                         mesh<WrappedMeshConfigOutT> & mesh_out,      segmentation<WrappedSegmentationConfigOutT> & segmentation_out,
-                        EdgeRefinementFlagAccessorT const edge_refinement_flag_accessor)
+                        EdgeRefinementFlagAccessorT const & edge_refinement_flag_accessor)
   {
     refine_uniformly<ElementTypeOrTagT>(mesh_in, segmentation_in, mesh_out, segmentation_out, default_point_accessor(mesh_in), edge_refinement_flag_accessor);
   }
