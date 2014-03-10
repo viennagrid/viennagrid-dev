@@ -3,6 +3,7 @@
 
 #include "viennagrid/mesh/mesh.hpp"
 #include "viennagrid/mesh/segmentation.hpp"
+#include "viennagrid/mesh/mesh_operations.hpp"
 
 namespace viennagrid
 {
