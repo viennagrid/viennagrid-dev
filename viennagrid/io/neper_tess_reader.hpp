@@ -79,10 +79,10 @@ namespace viennagrid
         static const int point_dim = viennagrid::result_of::static_size<PointType>::value;
 
         typedef typename result_of::element<MeshT, vertex_tag>::type         VertexType;
-        typedef typename result_of::handle<MeshT, vertex_tag>::type          VertexHandleType;
+        typedef typename result_of::vertes_handle<MeshT>::type          VertexHandleType;
         typedef typename VertexType::id_type VertexIDType;
 
-        typedef typename result_of::handle<MeshT, line_tag>::type            LineHandleType;
+        typedef typename result_of::line_handle<MeshT>::type            LineHandleType;
 
         std::ifstream reader(filename.c_str());
 
@@ -107,8 +107,6 @@ namespace viennagrid
           throw bad_file_format_exception(filename, "File is empty.");
 
 
-        typedef typename viennagrid::result_of::vertex_handle<MeshT>::type VertexHandleType;
-        typedef typename viennagrid::result_of::line_handle<MeshT>::type LineHandleType;
         std::map<int, VertexHandleType> vertices;
         std::map< std::pair<int, int>, LineHandleType > lines;
 
