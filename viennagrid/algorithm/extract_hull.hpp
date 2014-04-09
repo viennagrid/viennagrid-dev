@@ -7,6 +7,12 @@
 
 namespace viennagrid
 {
+  /** @brief Extracts the hull of mesh using viennagrid::boundary, e.g. the triangular hull of a tetrahedral mesh.
+   *
+   * @tparam HullTypeOrTagT                The type or tag of the hull element
+   * @param volume_mesh                    The input mesh
+   * @param hull_mesh                      The output hull mesh
+   */
   template<typename HullTypeOrTagT, typename VolumeMeshT, typename HullMeshT>
   void extract_hull(VolumeMeshT const & volume_mesh,
                     HullMeshT & hull_mesh)
@@ -41,6 +47,11 @@ namespace viennagrid
     }
   }
 
+  /** @brief Extracts the hull of mesh using viennagrid::boundary, e.g. the triangular hull of a tetrahedral mesh. The facet type is used as the hull element type.
+   *
+   * @param volume_mesh                    The input mesh
+   * @param hull_mesh                      The output hull mesh
+   */
   template<typename VolumeMeshT, typename HullMeshT>
   void extract_hull(VolumeMeshT const & volume_mesh,
                     HullMeshT & hull_mesh )
@@ -50,6 +61,14 @@ namespace viennagrid
   }
 
 
+  /** @brief Extracts the hull of mesh and a segmentation using viennagrid::boundary, e.g. the triangular hull of a tetrahedral mesh.
+   *
+   * @tparam HullTypeOrTagT                The type or tag of the hull element
+   * @param volume_mesh                    The input mesh
+   * @param volume_segmentation            The input segmentation
+   * @param hull_mesh                      The output hull mesh
+   * @param hull_segmentation              The output hull segmentation
+   */
   template<typename HullTypeOrTagT, typename VolumeMeshT, typename VolumeSegmentationT, typename HullMeshT, typename HullSegmentationT>
   void extract_hull(VolumeMeshT const & volume_mesh,
                     VolumeSegmentationT const & volume_segmentation,
@@ -120,6 +139,14 @@ namespace viennagrid
     }
   }
 
+
+  /** @brief Extracts the hull of mesh and a segmentation using viennagrid::boundary, e.g. the triangular hull of a tetrahedral mesh. The facet type is used as the hull element type.
+   *
+   * @param volume_mesh                    The input mesh
+   * @param volume_segmentation            The input segmentation
+   * @param hull_mesh                      The output hull mesh
+   * @param hull_segmentation              The output hull segmentation
+   */
   template<typename VolumeMeshT, typename VolumeSegmentationT, typename HullMeshT, typename HullSegmentationT>
   void extract_hull(VolumeMeshT const & volume_mesh,
                     VolumeSegmentationT const & volume_segmentation,
