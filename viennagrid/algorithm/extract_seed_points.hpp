@@ -8,6 +8,7 @@ namespace viennagrid
 {
   namespace detail
   {
+    /** @brief For internal use only. */
     template<typename MeshT, typename UnvisitedCellMapT>
     void neighbor_mark( MeshT const & mesh, UnvisitedCellMapT & unvisitied_cells )
     {
@@ -44,8 +45,13 @@ namespace viennagrid
     }
   }
 
+  /** @brief Extracts seed points of a mesh. For each connected part of the mesh, a point which is inside this part is added to the seed_points container.
+   *
+   * @param mesh                    The input mesh
+   * @param seed_points             A container of seed points. The container has to support .push_back() for points of the mesh.
+   */
   template<typename MeshSegmentT, typename SeedPointContainerT>
-  void extract_seed_points( MeshSegmentT const & mesh, SeedPointContainerT & seed_points, int segment_id )
+  void extract_seed_points( MeshSegmentT const & mesh, SeedPointContainerT & seed_points )
   {
     typedef typename viennagrid::result_of::cell_id<MeshSegmentT>::type CellIDType;
     typedef typename viennagrid::result_of::const_cell_handle<MeshSegmentT>::type ConstCellHandleType;
@@ -71,7 +77,7 @@ namespace viennagrid
           if (ucit == unvisited_cells.end())
             continue;
 
-          seed_points.push_back( std::make_pair(viennagrid::centroid(*cit), segment_id) );
+          seed_points.push_back( viennagrid::centroid(*cit) );
           unvisited_cells.erase( ucit );
 
           neighbor_mark( mesh, unvisited_cells );
@@ -80,14 +86,34 @@ namespace viennagrid
     }
   }
 
-  template<typename MeshSegmentT, typename SegmentationT, typename SeedPointContainerT>
-  void extract_seed_points( MeshSegmentT const & mesh, SegmentationT const & segmentation, SeedPointContainerT & seed_points )
+  /** @brief Extracts seed points of a mesh with segmentation. For each segment, seed points are extracted.
+   *
+   * @param mesh                    The input mesh
+   * @param segmentation            The input segmentation
+   * @param seed_points             A container of seed points and segment ids. The container has to support .push_back() for std::pair<MeshPointType,int>
+   */
+  template<typename MeshT, typename SegmentationT, typename SeedPointContainerT>
+  void extract_seed_points( MeshT const & mesh, SegmentationT const & segmentation, SeedPointContainerT & seed_points )
   {
+    typedef typename viennagrid::result_of::point<MeshT>::type PointType;
+
     if (segmentation.empty())
-      extract_seed_points( mesh, seed_points, 0);
+    {
+      std::vector<PointType> points;
+      extract_seed_points(mesh, points);
+      for (unsigned int i = 0; i < points.size(); ++i)
+        seed_points.push_back( std::make_pair(points[i], 0) );
+    }
     else
+    {
       for (typename SegmentationT::const_iterator sit = segmentation.begin(); sit != segmentation.end(); ++sit)
-        extract_seed_points( *sit, seed_points, sit->id() );
+      {
+        std::vector<PointType> points;
+        extract_seed_points( *sit, points );
+        for (unsigned int i = 0; i < points.size(); ++i)
+          seed_points.push_back( std::make_pair(points[i], sit->id()) );
+      }
+    }
   }
 }
 
