@@ -27,7 +27,6 @@
     @brief Computes the centroid (center of mass) for different cell types
 */
 
-
 namespace viennagrid
 {
   namespace detail
@@ -40,11 +39,7 @@ namespace viennagrid
     typename PointAccessorT::value_type
     centroid(PointAccessorT const accessor, ElementT const & cell, viennagrid::triangle_tag)
     {
-      //typedef typename ElementT::config_type             Config;
-//       typedef typename ElementT::tag             ElementTag;
       typedef typename PointAccessorT::value_type PointType;
-//       typedef typename viennagrid::result_of::element<MeshType, vertex_tag>::type                         VertexType;
-//       typedef typename viennagrid::result_of::element<MeshType, line_tag>::type                         EdgeType;
 
       typedef typename viennagrid::result_of::const_element_range<ElementT, vertex_tag>::type         VertexOnCellRange;
       typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type            VertexOnCellIterator;
@@ -55,10 +50,7 @@ namespace viennagrid
       for (VertexOnCellIterator vocit = vertices.begin();
            vocit != vertices.end();
            ++vocit)
-      {
-        //p0 += vocit->point();
         p0 += accessor(*vocit);
-      }
 
       p0 /= vertices.size();
 
@@ -132,15 +124,11 @@ namespace viennagrid
     typename viennagrid::result_of::point<MeshSegmentHandleType>::type
     centroid_mesh(MeshSegmentHandleType const & mesh_obj, PointAccessorT const point_accessor)
     {
-      //typedef typename MeshSegmentHandleType::config_type                                      ConfigType;
-      //typedef typename ElementT::tag                                                CellTag;
-      typedef typename viennagrid::result_of::element_tag<ElementTOrTag>::type ElementTag;
-
-      typedef typename viennagrid::result_of::point<MeshSegmentHandleType>::type                      PointType;
-
+      typedef typename viennagrid::result_of::element_tag<ElementTOrTag>::type            ElementTag;
+      typedef typename viennagrid::result_of::point<MeshSegmentHandleType>::type          PointType;
       typedef typename viennagrid::result_of::const_element_range<MeshSegmentHandleType,
-                                                                ElementTag>::type  CellRange;
-      typedef typename viennagrid::result_of::iterator<CellRange>::type                         CellIterator;
+                                                                ElementTag>::type         CellRange;
+      typedef typename viennagrid::result_of::iterator<CellRange>::type                   CellIterator;
 
       PointType result = 0;
       double volume = 0;
@@ -237,9 +225,6 @@ namespace viennagrid
   }
 
 
-
-
-
   /** @brief The public interface function for the computation of a centroid of a segment with explicit point accessor.
    *
    * @tparam ElementTOrTagT    The element type/tag of the elements for which the centroid is calculcated
@@ -290,7 +275,5 @@ namespace viennagrid
     typedef typename viennagrid::result_of::cell_tag< segment_handle<SegmentationT> >::type CellTag;
     return centroid<CellTag>(segment, default_point_accessor(segment));
   }
-
-
 } //namespace viennagrid
 #endif

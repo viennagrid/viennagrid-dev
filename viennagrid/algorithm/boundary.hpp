@@ -27,12 +27,6 @@
 
 namespace viennagrid
 {
-  namespace result_of {
-
-    template<class typemap, class key_type >
-    struct lookup;
-  }
-
   namespace detail
   {
 
@@ -40,8 +34,6 @@ namespace viennagrid
     template <typename MeshT, typename AccessorT>
     void detect_boundary(MeshT & mesh_obj, AccessorT boundary_info_accessor)
     {
-  //     std::cout << "DETECT BOUNDARY" << std::endl;
-
       typedef typename viennagrid::result_of::cell_tag<MeshT>::type CellTag;
       typedef typename viennagrid::result_of::facet_tag<CellTag>::type FacetTag;
 
@@ -104,7 +96,6 @@ namespace viennagrid
 
       src_range_type src_elements(mesh_obj);
 
-
       for (src_range_iterator fit = src_elements.begin();
           fit != src_elements.end();
           ++fit)
@@ -140,8 +131,6 @@ namespace viennagrid
         typedef typename viennagrid::result_of::cell_tag< MeshT >::type cell_tag;
         typedef typename viennagrid::result_of::facet_tag< cell_tag >::type facet_tag;
         typedef typename viennagrid::result_of::element< MeshT, facet_tag >::type facet_type;
-
-
 
         typedef typename viennagrid::detail::result_of::lookup<
                 typename viennagrid::detail::result_of::lookup<
@@ -257,7 +246,6 @@ namespace viennagrid
     typedef mesh<WrappedConfigT> mesh_type;
     typedef typename viennagrid::result_of::element_tag<ElementT>::type element_tag;
 
-
     typedef typename viennagrid::detail::result_of::lookup<
             typename viennagrid::detail::result_of::lookup<
                 typename mesh_type::appendix_type,
@@ -281,7 +269,6 @@ namespace viennagrid
   template <typename SegmentationT, typename ElementT>
   bool is_boundary(segment_handle<SegmentationT> const & segment, ElementT const & element)
   { return is_boundary( segment.view(), element ); }
-
 
 
   /** @brief Returns true if the element provided as second argument is on the boundary of the element provided as first argument
