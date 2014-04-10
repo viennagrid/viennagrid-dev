@@ -72,7 +72,7 @@ namespace viennagrid
   }
 
 
-  /** @brief Determines if a given point is inside an element
+  /** @brief Determines if a given point is inside an element. Returns true if the point is inside the element, false otherwise.
    *
    * @param accessor            The point accessor providing point information for geometric calculation
    * @param element             The element to test
@@ -87,7 +87,7 @@ namespace viennagrid
     return detail::is_inside_impl( accessor, element, typename ElementT::tag(), point, numeric_config );
   }
 
-  /** @brief Determines if a given point is inside an element
+  /** @brief Determines if a given point is inside an element. Returns true if the point is inside the element, false otherwise.
    *
    * @param element             The element to test
    * @param point               The point to test
@@ -100,7 +100,7 @@ namespace viennagrid
   }
 
 
-  /** @brief Determines if a given point is inside an element
+  /** @brief Determines if a given point is inside an element. Returns true if the point is inside the element, false otherwise.
    *
    * @param element             The element to test
    * @param point               The point to test
