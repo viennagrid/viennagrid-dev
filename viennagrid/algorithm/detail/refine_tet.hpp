@@ -34,7 +34,7 @@ namespace viennagrid
      * Ensures that the result is the same no matter in which order the parameters are passed.
      * If the two lines have equal length, the line with the larger vertex IDs involved is considered as longer.
      */
-    template <typename MeshT, typename VertexHandleT>
+    template<typename MeshT, typename VertexHandleT>
     bool stable_line_is_longer(MeshT const & mesh,
                                VertexHandleT vh1_1, VertexHandleT vh1_2,
                                VertexHandleT vh2_1, VertexHandleT vh2_2)
@@ -103,17 +103,6 @@ namespace viennagrid
       elements_vertices.back()[1] = *viennagrid::advance(vertex_handle_container.begin(), i1);
       elements_vertices.back()[2] = *viennagrid::advance(vertex_handle_container.begin(), i2);
       elements_vertices.back()[3] = *viennagrid::advance(vertex_handle_container.begin(), i3);
-
-//       typedef typename VertexHandleContainer::iterator VertexHandleIteratorType;
-// //       typedef typename std::iterator_traits<VertexHandleIteratorType>::value_type VertexHandleType;
-// //       static_array< VertexHandleType, boundary_elements<tetrahedron_tag, vertex_tag>::num > cellvertices;
-//
-//       cellvertices[0] = *viennagrid::advance(vertex_handle_container.begin(), i0);
-//       cellvertices[1] = *viennagrid::advance(vertex_handle_container.begin(), i1);
-//       cellvertices[2] = *viennagrid::advance(vertex_handle_container.begin(), i2);
-//       cellvertices[3] = *viennagrid::advance(vertex_handle_container.begin(), i3);
-//
-//       viennagrid::make_element<ElementType>( mesh_obj, cellvertices.begin(), cellvertices.end() );
     }
 
 
@@ -124,15 +113,18 @@ namespace viennagrid
      *
      * Unfortunately, combinatorics (or a lack of talent?) forces us to consider that many cases of refinement.
      */
-    template <>
+    template<>
     struct element_refinement<tetrahedron_tag>
     {
 
       /** @brief Not refining a tetrahedron at all */
-      template <typename ElementT, typename MeshT, typename ElementsVerticesHandleContainerT, typename EdgeRefinementFlagAccessor, typename VertexCopyMapT, typename EdgeToVertexHandleAccessor>
+      template<typename ElementT, typename MeshT,
+               typename ElementsVerticesHandleContainerT, typename VertexCopyMapT,
+               typename EdgeRefinementFlagAccessor, typename EdgeToVertexHandleAccessor>
       static void apply0(ElementT const & element_in, MeshT const &,
                          ElementsVerticesHandleContainerT & elements_vertices,
-                         EdgeRefinementFlagAccessor const &, VertexCopyMapT & vertex_copy_map_, EdgeToVertexHandleAccessor const &)
+                         VertexCopyMapT & vertex_copy_map_,
+                         EdgeRefinementFlagAccessor const &, EdgeToVertexHandleAccessor const &)
       {
         typedef typename viennagrid::result_of::const_element_range<ElementT, vertex_tag>::type            VertexOnCellRange;
         typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type         VertexOnCellIterator;
@@ -151,16 +143,17 @@ namespace viennagrid
         vertex_handles[3] = vertex_copy_map_(*vocit);
 
 //         // Step 2: Add new cells to new mesh:
-        add_refinement_element( elements_vertices, vertex_handles, 0, 1, 2, 3);
-//         viennagrid::make_element<ElementType>( element_vertices, vertex_handles.begin(), vertex_handles.end() );
-
+        add_refinement_element(elements_vertices, vertex_handles, 0, 1, 2, 3);
       }
 
       /** @brief Refinement of a tetrahedron, bisecting one edge */
-      template <typename ElementT, typename MeshT, typename ElementsVerticesHandleContainerT, typename EdgeRefinementFlagAccessor, typename VertexCopyMapT, typename EdgeToVertexHandleAccessor>
+      template<typename ElementT, typename MeshT,
+               typename ElementsVerticesHandleContainerT, typename VertexCopyMapT,
+               typename EdgeRefinementFlagAccessor, typename EdgeToVertexHandleAccessor>
       static void apply1(ElementT const & element_in, MeshT const &,
                          ElementsVerticesHandleContainerT & elements_vertices,
-                         EdgeRefinementFlagAccessor const & edge_refinement_flag_accessor, VertexCopyMapT & vertex_copy_map_, EdgeToVertexHandleAccessor const & edge_to_vertex_handle_accessor)
+                         VertexCopyMapT & vertex_copy_map_,
+                         EdgeRefinementFlagAccessor const & edge_refinement_flag_accessor, EdgeToVertexHandleAccessor const & edge_to_vertex_handle_accessor)
       {
 
         typedef typename viennagrid::result_of::const_element_range<ElementT, vertex_tag>::type            VertexOnCellRange;
@@ -260,11 +253,9 @@ namespace viennagrid
         //
 
         //cell containing vertex 0:
-//         add_refinement_element( element_vertices, ordered_vertices, 0, 4, 2, 3);
         add_refinement_element( elements_vertices, ordered_vertices, 0, 4, 2, 3);
 
         //cell without vertex 0:
-//         add_refinement_element( element_vertices, ordered_vertices, 4, 1, 2, 3);
         add_refinement_element( elements_vertices, ordered_vertices, 4, 1, 2, 3);
       }
 
@@ -289,7 +280,7 @@ namespace viennagrid
        *
        *
        */
-      template <typename MeshT, typename ElementsVerticesHandleContainerT, typename VertexHandleIteratorType>
+      template<typename MeshT, typename ElementsVerticesHandleContainerT, typename VertexHandleIteratorType>
       static void apply2_1(MeshT const & mesh,
                            ElementsVerticesHandleContainerT & element_vertices,
                            VertexHandleIteratorType vertices)
@@ -306,20 +297,6 @@ namespace viennagrid
           add_refinement_element( element_vertices, vertices, 0, 4, 5, 3);
           add_refinement_element( element_vertices, vertices, 0, 5, 2, 3);
         }
-
-//         add_refinement_element( element_vertices, vertices, 4, 1, 5, 3);
-//
-//         if (stable_line_is_longer(element_vertices, vertices, 0, 1, 2, 1))
-//         {
-//           add_refinement_element( element_vertices, vertices, 0, 4, 2, 3);
-//           add_refinement_element( element_vertices, vertices, 4, 5, 2, 3);
-//         }
-//         else //split edge 12, introduce line 05
-//         {
-//           add_refinement_element( element_vertices, vertices, 0, 4, 5, 3);
-//           add_refinement_element( element_vertices, vertices, 0, 5, 2, 3);
-//         }
-
       }
 
       /** @brief Refinement of a tetrahedron, bisecting two edges.  Case 2: The two edges don't have any common vertex.
@@ -335,7 +312,7 @@ namespace viennagrid
        *     0 ----- 4 ------ 1
        *
        */
-      template <typename MeshT, typename ElementsVerticesHandleContainerT, typename VertexHandleIteratorType>
+      template<typename MeshT, typename ElementsVerticesHandleContainerT, typename VertexHandleIteratorType>
       static void apply2_2(MeshT const &,
                            ElementsVerticesHandleContainerT & element_vertices,
                            VertexHandleIteratorType vertices)
@@ -344,20 +321,18 @@ namespace viennagrid
         add_refinement_element( element_vertices, vertices, 4, 1, 5, 3);
         add_refinement_element( element_vertices, vertices, 0, 4, 2, 5);
         add_refinement_element( element_vertices, vertices, 0, 4, 5, 3);
-
-//           add_refinement_element( element_vertices, vertices, 4, 1, 2, 5);
-//           add_refinement_element( element_vertices, vertices, 4, 1, 5, 3);
-//           add_refinement_element( element_vertices, vertices, 0, 4, 2, 5);
-//           add_refinement_element( element_vertices, vertices, 0, 4, 5, 3);
       }
 
       /** @brief Entry function for the refinement of a tetrahedron by bisection of two edges. Reorders the tetrahedron to reduce complexity.
        *
        */
-      template <typename ElementType, typename MeshT, typename ElementsVerticesHandleContainerT, typename EdgeRefinementFlagAccessor, typename VertexCopyMapT, typename EdgeToVertexHandleAccessor>
+      template<typename ElementType, typename MeshT,
+              typename ElementsVerticesHandleContainerT, typename VertexCopyMapT,
+              typename EdgeRefinementFlagAccessor, typename EdgeToVertexHandleAccessor>
       static void apply2(ElementType const & element_in, MeshT const & mesh,
                          ElementsVerticesHandleContainerT & element_vertices,
-                         EdgeRefinementFlagAccessor const & edge_refinement_flag_accessor, VertexCopyMapT & vertex_copy_map_, EdgeToVertexHandleAccessor const & edge_to_vertex_handle_accessor)
+                         VertexCopyMapT & vertex_copy_map_,
+                         EdgeRefinementFlagAccessor const & edge_refinement_flag_accessor, EdgeToVertexHandleAccessor const & edge_to_vertex_handle_accessor)
       {
         typedef typename viennagrid::result_of::const_element_range<ElementType, vertex_tag>::type            VertexOnCellRange;
         typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type         VertexOnCellIterator;
@@ -619,7 +594,7 @@ namespace viennagrid
        *
        *
        */
-      template <typename MeshT, typename ElementsVerticesHandleContainerT, typename VertexHandleIteratorType>
+      template<typename MeshT, typename ElementsVerticesHandleContainerT, typename VertexHandleIteratorType>
       static void apply3_1(MeshT const & mesh,
                            ElementsVerticesHandleContainerT & element_vertices,
                            VertexHandleIteratorType vertices)
@@ -711,7 +686,7 @@ namespace viennagrid
        *
        *
        */
-      template <typename MeshT, typename ElementsVerticesHandleContainerT, typename VertexHandleIteratorType>
+      template<typename MeshT, typename ElementsVerticesHandleContainerT, typename VertexHandleIteratorType>
       static void apply3_2(MeshT const &,
                            ElementsVerticesHandleContainerT & element_vertices,
                            VertexHandleIteratorType vertices)
@@ -736,7 +711,7 @@ namespace viennagrid
        *
        *
        */
-      template <typename MeshT, typename ElementsVerticesHandleContainerT, typename VertexHandleIteratorType>
+      template<typename MeshT, typename ElementsVerticesHandleContainerT, typename VertexHandleIteratorType>
       static void apply3_3(MeshT const & mesh,
                            ElementsVerticesHandleContainerT & element_vertices,
                            VertexHandleIteratorType vertices)
@@ -796,7 +771,7 @@ namespace viennagrid
        *
        *
        */
-      template <typename MeshT, typename ElementsVerticesHandleContainerT, typename VertexHandleIteratorType>
+      template<typename MeshT, typename ElementsVerticesHandleContainerT, typename VertexHandleIteratorType>
       static void apply3_4(MeshT const & mesh,
                            ElementsVerticesHandleContainerT & element_vertices,
                            VertexHandleIteratorType vertices)
@@ -848,10 +823,13 @@ namespace viennagrid
 
 
       /** @brief Entry function for refinement of a tetrahedron with three edges for bisection. */
-      template <typename ElementType, typename MeshT, typename ElementsVerticesHandleContainerT, typename EdgeRefinementFlagAccessor, typename VertexCopyMapT, typename EdgeToVertexHandleAccessor>
+      template<typename ElementType, typename MeshT,
+               typename ElementsVerticesHandleContainerT, typename VertexCopyMapT,
+               typename EdgeRefinementFlagAccessor, typename EdgeToVertexHandleAccessor>
       static void apply3(ElementType const & element_in, MeshT const & mesh,
                          ElementsVerticesHandleContainerT & element_vertices,
-                         EdgeRefinementFlagAccessor const & edge_refinement_flag_accessor, VertexCopyMapT & vertex_copy_map_, EdgeToVertexHandleAccessor const & edge_to_vertex_handle_accessor)
+                         VertexCopyMapT & vertex_copy_map_,
+                         EdgeRefinementFlagAccessor const & edge_refinement_flag_accessor, EdgeToVertexHandleAccessor const & edge_to_vertex_handle_accessor)
       {
         typedef typename viennagrid::result_of::const_element_range<ElementType, vertex_tag>::type            VertexOnCellRange;
         typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type         VertexOnCellIterator;
@@ -1193,7 +1171,7 @@ namespace viennagrid
        *
        *
        */
-      template <typename MeshT, typename ElementsVerticesHandleContainerT, typename VertexHandleIteratorType>
+      template<typename MeshT, typename ElementsVerticesHandleContainerT, typename VertexHandleIteratorType>
       static void apply4_1(MeshT const & mesh,
                            ElementsVerticesHandleContainerT & element_vertices,
                            VertexHandleIteratorType vertices)
@@ -1260,7 +1238,7 @@ namespace viennagrid
        *
        *
        */
-      template <typename MeshT, typename ElementsVerticesHandleContainerT, typename VertexHandleIteratorType>
+      template<typename MeshT, typename ElementsVerticesHandleContainerT, typename VertexHandleIteratorType>
       static void apply4_2(MeshT const & mesh,
                            ElementsVerticesHandleContainerT & element_vertices,
                            VertexHandleIteratorType vertices)
@@ -1478,10 +1456,13 @@ namespace viennagrid
 
 
       /** @brief Entry function for a refinement of a tetrahedron by a bisection of four edges. Reorders vertices to reduce complexity. */
-      template <typename ElementType, typename MeshT, typename ElementsVerticesHandleContainerT, typename EdgeRefinementFlagAccessor, typename VertexCopyMapT, typename EdgeToVertexHandleAccessor>
+      template<typename ElementType, typename MeshT,
+               typename ElementsVerticesHandleContainerT, typename VertexCopyMapT,
+               typename EdgeRefinementFlagAccessor, typename EdgeToVertexHandleAccessor>
       static void apply4(ElementType const & element_in, MeshT const & mesh,
                          ElementsVerticesHandleContainerT & element_vertices,
-                         EdgeRefinementFlagAccessor const & edge_refinement_flag_accessor, VertexCopyMapT & vertex_copy_map_, EdgeToVertexHandleAccessor const & edge_to_vertex_handle_accessor)
+                         VertexCopyMapT & vertex_copy_map_,
+                         EdgeRefinementFlagAccessor const & edge_refinement_flag_accessor, EdgeToVertexHandleAccessor const & edge_to_vertex_handle_accessor)
       {
         typedef typename viennagrid::result_of::const_element_range<ElementType, vertex_tag>::type            VertexOnCellRange;
         typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type         VertexOnCellIterator;
@@ -1772,7 +1753,7 @@ namespace viennagrid
        *
        *
        */
-      template <typename MeshT, typename ElementsVerticesHandleContainerT, typename VertexHandleIteratorType>
+      template<typename MeshT, typename ElementsVerticesHandleContainerT, typename VertexHandleIteratorType>
       static void apply5_1(MeshT const & mesh,
                            ElementsVerticesHandleContainerT & element_vertices,
                            VertexHandleIteratorType vertices)
@@ -1823,10 +1804,13 @@ namespace viennagrid
       }
 
       /** @brief Entry function for the refinement of a tetrahedron bisecting five edges. Reorders vertices to reduce complexity */
-      template <typename ElementType, typename MeshT, typename ElementsVerticesHandleContainerT, typename EdgeRefinementFlagAccessor, typename VertexCopyMapT, typename EdgeToVertexHandleAccessor>
+      template<typename ElementType, typename MeshT,
+               typename ElementsVerticesHandleContainerT, typename VertexCopyMapT,
+               typename EdgeRefinementFlagAccessor, typename EdgeToVertexHandleAccessor>
       static void apply5(ElementType const & element_in, MeshT const & mesh,
                          ElementsVerticesHandleContainerT & element_vertices,
-                         EdgeRefinementFlagAccessor const & edge_refinement_flag_accessor, VertexCopyMapT & vertex_copy_map_, EdgeToVertexHandleAccessor const & edge_to_vertex_handle_accessor)
+                         VertexCopyMapT & vertex_copy_map_,
+                         EdgeRefinementFlagAccessor const & edge_refinement_flag_accessor, EdgeToVertexHandleAccessor const & edge_to_vertex_handle_accessor)
       {
         typedef typename viennagrid::result_of::const_element_range<ElementType, vertex_tag>::type            VertexOnCellRange;
         typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type         VertexOnCellIterator;
@@ -1960,10 +1944,13 @@ namespace viennagrid
 
 
       /** @brief Refinement of a tetrahedron, bisecting six edges: Split the cell into 8 tets */
-      template <typename ElementType, typename MeshT, typename ElementsVerticesHandleContainerT, typename EdgeRefinementFlagAccessor, typename VertexCopyMapT, typename EdgeToVertexHandleAccessor>
+      template<typename ElementType, typename MeshT,
+               typename ElementsVerticesHandleContainerT, typename VertexCopyMapT,
+               typename EdgeRefinementFlagAccessor, typename EdgeToVertexHandleAccessor>
       static void apply6(ElementType const & element_in, MeshT const & mesh,
                          ElementsVerticesHandleContainerT & element_vertices,
-                         EdgeRefinementFlagAccessor const &, VertexCopyMapT & vertex_copy_map_, EdgeToVertexHandleAccessor const & edge_to_vertex_handle_accessor)
+                         VertexCopyMapT & vertex_copy_map_,
+                         EdgeRefinementFlagAccessor const &, EdgeToVertexHandleAccessor const & edge_to_vertex_handle_accessor)
       {
         typedef typename viennagrid::result_of::const_element_range<ElementType, vertex_tag>::type            VertexOnCellRange;
         typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type         VertexOnCellIterator;
@@ -2075,11 +2062,14 @@ namespace viennagrid
        * @param vertex_copy_map_  Temporary accessor for vertex to vertex mapping
        * @param edge_to_vertex_handle_accessor    Temporary accessor for refined edge to vertex mapping
        */
-      template <typename ElementType, typename MeshT, typename ElementsVerticesHandleContainerT, typename EdgeRefinementFlagAccessor, typename VertexCopyMapT, typename EdgeToVertexHandleAccessor>
+      template<typename ElementType,
+               typename MeshT, typename ElementsVerticesHandleContainerT,
+               typename VertexCopyMapT,
+               typename EdgeRefinementFlagAccessor, typename EdgeToVertexHandleAccessor>
       static void apply(ElementType const & element_in, MeshT const & mesh,
                         ElementsVerticesHandleContainerT & element_vertices,
-                        EdgeRefinementFlagAccessor   const & edge_refinement_flag_accessor,
                         VertexCopyMapT & vertex_copy_map_,
+                        EdgeRefinementFlagAccessor   const & edge_refinement_flag_accessor,
                         EdgeToVertexHandleAccessor   const & edge_to_vertex_handle_accessor)
       {
         typedef typename viennagrid::result_of::const_element_range<ElementType, line_tag>::type            EdgeOnCellRange;
@@ -2097,13 +2087,13 @@ namespace viennagrid
 
         switch (edges_to_refine)
         {
-          case 0: apply0(element_in, mesh, element_vertices, edge_refinement_flag_accessor, vertex_copy_map_, edge_to_vertex_handle_accessor); break;
-          case 1: apply1(element_in, mesh, element_vertices, edge_refinement_flag_accessor, vertex_copy_map_, edge_to_vertex_handle_accessor); break;
-          case 2: apply2(element_in, mesh, element_vertices, edge_refinement_flag_accessor, vertex_copy_map_, edge_to_vertex_handle_accessor); break;
-          case 3: apply3(element_in, mesh, element_vertices, edge_refinement_flag_accessor, vertex_copy_map_, edge_to_vertex_handle_accessor); break;
-          case 4: apply4(element_in, mesh, element_vertices, edge_refinement_flag_accessor, vertex_copy_map_, edge_to_vertex_handle_accessor); break;
-          case 5: apply5(element_in, mesh, element_vertices, edge_refinement_flag_accessor, vertex_copy_map_, edge_to_vertex_handle_accessor); break;
-          case 6: apply6(element_in, mesh, element_vertices, edge_refinement_flag_accessor, vertex_copy_map_, edge_to_vertex_handle_accessor); break;
+          case 0: apply0(element_in, mesh, element_vertices, vertex_copy_map_, edge_refinement_flag_accessor, edge_to_vertex_handle_accessor); break;
+          case 1: apply1(element_in, mesh, element_vertices, vertex_copy_map_, edge_refinement_flag_accessor, edge_to_vertex_handle_accessor); break;
+          case 2: apply2(element_in, mesh, element_vertices, vertex_copy_map_, edge_refinement_flag_accessor, edge_to_vertex_handle_accessor); break;
+          case 3: apply3(element_in, mesh, element_vertices, vertex_copy_map_, edge_refinement_flag_accessor, edge_to_vertex_handle_accessor); break;
+          case 4: apply4(element_in, mesh, element_vertices, vertex_copy_map_, edge_refinement_flag_accessor, edge_to_vertex_handle_accessor); break;
+          case 5: apply5(element_in, mesh, element_vertices, vertex_copy_map_, edge_refinement_flag_accessor, edge_to_vertex_handle_accessor); break;
+          case 6: apply6(element_in, mesh, element_vertices, vertex_copy_map_, edge_refinement_flag_accessor, edge_to_vertex_handle_accessor); break;
           default: //nothing to do...
                   break;
         }
