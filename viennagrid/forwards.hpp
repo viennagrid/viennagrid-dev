@@ -1790,20 +1790,20 @@ namespace viennagrid
                           typename viennagrid::result_of::coord<MeshOrSegmentHandleT>::type tolerance );
 
 
-  /** @brief Function for copying an element to a mesh or segment
+  /** @brief Function for copying an element iterator range to a mesh or segment
     *
     * @tparam ElementIteratorT            The element iterator type which is copied
     * @tparam OutputMeshOrSegmentHandleT  The mesh or segment type where the elements are created
     * @param  begin                       The begin of the element iterator range of element to be copied
     * @param  end                         The end of the element iterator range of element to be copied
-    * @param  mesh_segment                The mesh or segment object where the elements are copied to
+    * @param  output_mesh                 The mesh or segment object where the elements are copied to
     */
   template<typename ElementIteratorT, typename OutputMeshOrSegmentHandleT>
   void copy_elements(ElementIteratorT const & begin, ElementIteratorT const & end,
                      OutputMeshOrSegmentHandleT & output_mesh,
                      typename viennagrid::result_of::coord<OutputMeshOrSegmentHandleT>::type tolerance );
 
-  /** @brief Function for copying an element to a mesh or segment
+  /** @brief Function for copying an element handle iterator range to a mesh or segment.
     *
     * @tparam InputMeshOrSegmentHandleT   The mesh or segment type where the original elements live
     * @tparam ElementHandleIteratorT      The element handle iterator type which is copied
