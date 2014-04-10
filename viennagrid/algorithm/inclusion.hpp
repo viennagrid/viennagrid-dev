@@ -111,12 +111,7 @@ namespace viennagrid
     return is_inside( element, point,  10*std::numeric_limits<CoordType>::epsilon() );
   }
 
-
-
-
 }
-
-
 
 
 #endif
