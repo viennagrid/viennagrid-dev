@@ -20,7 +20,7 @@
 #include "viennagrid/mesh/element_creation.hpp"
 #include "viennagrid/config/default_configs.hpp"
 #include "viennagrid/point.hpp"
-#include "viennagrid/algorithm/scale.hpp"
+#include "viennagrid/algorithm/geometric_transform.hpp"
 
 void fuzzy_check(double a, double b)
 {
