@@ -21,16 +21,25 @@
 #include "viennagrid/functors.hpp"
 
 /** @file viennagrid/mesh/mesh_operations.hpp
-    @brief Helper routines on a mesh
+    @brief Helper routines for meshes
 */
 
 namespace viennagrid
 {
 
+  /** @brief A helper class for element copy operation between two differen meshes.
+    *
+    * @tparam SrcMeshT      The mesh type of the source mesh
+    * @tparam DstMeshT      The mesh type of the destination mesh
+    */
   template<typename SrcMeshT, typename DstMeshT>
   class vertex_copy_map
   {
   public:
+    /** @brief The constructor, requires the destination mesh where the elements are copied to.
+      *
+      * @param  dst_mesh_                The destination mesh
+      */
     vertex_copy_map( DstMeshT & dst_mesh_ ) : dst_mesh(dst_mesh_) {}
 
     typedef typename viennagrid::result_of::coord<DstMeshT>::type DstNumericType;
@@ -41,6 +50,11 @@ namespace viennagrid
     typedef typename viennagrid::result_of::vertex<DstMeshT>::type DstVertexType;
     typedef typename viennagrid::result_of::vertex_handle<DstMeshT>::type DstVertexHandleType;
 
+    /** @brief Copies one vertex to the destination mesh. If the vertex is already present in the destination mesh, the vertex handle of this vertex is return, otherwise a new vertex is created in the destination mesh.
+      *
+      * @param  src_vertex              The vertex to be copied
+      * @param  tolerance               A geometric tolerance for vertex creation
+      */
     DstVertexHandleType operator()( SrcVertexType const & src_vertex, DstNumericType tolerance = 0.0 )
     {
       typename std::map<SrcVertexIDType, DstVertexHandleType>::iterator vit = vertex_map.find( src_vertex.id() );
@@ -54,7 +68,11 @@ namespace viennagrid
       }
     }
 
-
+    /** @brief Copies a whole element including its vertices to the destination mesh.
+      *
+      * @param  el                      The element to be copied
+      * @param  tolerance               A geometric tolerance for vertex creation
+      */
     template<typename ElementTagT, typename WrappedConfigT>
     typename viennagrid::result_of::handle<DstMeshT, ElementTagT>::type copy_element( element<ElementTagT, WrappedConfigT> const & el, DstNumericType tolerance = 0.0 )
     {
@@ -71,8 +89,6 @@ namespace viennagrid
       return viennagrid::make_element<ElementTagT>( dst_mesh, vertex_handles.begin(), vertex_handles.end() );
     }
 
-
-
   private:
 
     DstMeshT & dst_mesh;
@@ -82,7 +98,12 @@ namespace viennagrid
 
 
 
-
+  /** @brief Copies the cells of a mesh if a boolean functor is true.
+    *
+    * @param  src_mesh                The source mesh
+    * @param  dst_mesh                The destination mesh
+    * @param  functor                 Boolean functor, if functor(cell) returns true, the cell is copied.
+    */
   template<typename SrcMeshT, typename DstMeshT, typename ToCopyFunctorT>
   void copy(SrcMeshT const & src_mesh, DstMeshT & dst_mesh, ToCopyFunctorT functor)
   {
@@ -106,7 +127,14 @@ namespace viennagrid
     }
   }
 
-
+  /** @brief Copies the cells of a mesh and a segmentation if a boolean functor is true.
+    *
+    * @param  src_mesh                The source mesh
+    * @param  src_segmentation        The source segmentation
+    * @param  dst_mesh                The destination mesh
+    * @param  dst_segmentation        The destination segmentation
+    * @param  functor                 Boolean functor, if functor(cell) returns true, the cell is copied.
+    */
   template<typename SrcMeshT, typename SrcSegmentationT, typename DstMeshT, typename DstSegmentationT, typename ToCopyFunctorT>
   void copy(SrcMeshT const & src_mesh, SrcSegmentationT const & src_segmentation,
             DstMeshT       & dst_mesh, DstSegmentationT       & dst_segmentation,
