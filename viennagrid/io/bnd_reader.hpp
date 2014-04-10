@@ -5,18 +5,29 @@
 #include "viennagrid/io/bnd.hpp"
 #include "viennagrid/mesh/element_creation.hpp"
 
+/** @file viennagrid/io/tetgen_poly_reader.hpp
+    @brief Provides a reader for .bnd files.
+*/
+
 
 namespace viennagrid
 {
   namespace io
   {
 
-
+    /** @brief Reader for .bnd files.
+      *
+      */
     class bnd_reader
     {
     public:
 
-
+      /** @brief The functor interface triggering the read operation. Segmentations are not supported in this version.
+       *
+       * @param mesh              The mesh where the file content is written to
+       * @param segmentation      The mesh where the file content is written to
+       * @param filename          Name of the file
+       */
       template <typename MeshT, typename SegmentationT>
       int operator()(MeshT & mesh, SegmentationT & segmentation, std::string const & filename) const
       {
