@@ -79,7 +79,7 @@ namespace viennagrid
    * @param mesh                    The input mesh
    * @param factor                  The scaling factor
    */
-  template<typename MeshT, typename ScalarT, typename PointType>
+  template<typename MeshT, typename ScalarT>
   void scale(MeshT & mesh, ScalarT factor)
   {
     scale_functor<MeshT> func(factor);
