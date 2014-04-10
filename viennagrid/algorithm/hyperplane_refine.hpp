@@ -87,10 +87,10 @@ namespace viennagrid
 
 
     viennagrid::simple_refine<CellTag>(src_mesh, src_segmentation,
-                                        dst_mesh, dst_segmentation,
-                                        line_refinement_tag_accessor,
-                                        vertex_map,
-                                        line_refinement_vertex_handle_accessor);
+                                       dst_mesh, dst_segmentation,
+                                       vertex_map,
+                                       line_refinement_tag_accessor,
+                                       line_refinement_vertex_handle_accessor);
   }
 
 
@@ -125,9 +125,9 @@ namespace viennagrid
     detail::mark_edges_for_hyperplane_refine(src_mesh, dst_mesh, hyperplane_point, hyperplane_normal, line_refinement_tag_accessor, line_refinement_vertex_handle_accessor, numeric_config);
 
     viennagrid::simple_refine<CellTag>(src_mesh, dst_mesh,
-                                        line_refinement_tag_accessor,
-                                        vertex_map,
-                                        line_refinement_vertex_handle_accessor);
+                                       vertex_map,
+                                       line_refinement_tag_accessor,
+                                       line_refinement_vertex_handle_accessor);
   }
 }
 
