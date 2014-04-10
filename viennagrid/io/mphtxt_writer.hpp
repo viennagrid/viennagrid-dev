@@ -8,7 +8,7 @@
 #include "viennagrid/mesh/coboundary_iteration.hpp"
 #include "viennagrid/mesh/neighbor_iteration.hpp"
 
-/** @file viennagrid/io/tetgen_poly_reader.hpp
+/** @file viennagrid/io/mphtxt_writer.hpp
     @brief Provides a writer for Comsol .mphtxt files.
 */
 

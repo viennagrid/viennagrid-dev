@@ -5,7 +5,7 @@
 #include "viennagrid/io/bnd.hpp"
 #include "viennagrid/mesh/element_creation.hpp"
 
-/** @file viennagrid/io/tetgen_poly_reader.hpp
+/** @file viennagrid/io/bnd_reader.hpp
     @brief Provides a reader for .bnd files.
 */
 
