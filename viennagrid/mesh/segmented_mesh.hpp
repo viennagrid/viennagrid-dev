@@ -7,7 +7,11 @@
 
 namespace viennagrid
 {
-
+  /** @brief A segmented_mesh is a mesh together with a segmentation.
+   *
+   * @tparam MeshT            The mesh type
+   * @tparam SegmentationT    The segmentation type
+   */
   template<typename MeshT, typename SegmentationT>
   struct segmented_mesh
   {
@@ -19,6 +23,7 @@ namespace viennagrid
   };
 
 
+  /** @brief A specialization for viennagrid meshes and segmentation */
   template<typename WrappedMeshConfig, typename WrappedSegmentationConfig>
   struct segmented_mesh< viennagrid::mesh<WrappedMeshConfig>, viennagrid::segmentation<WrappedSegmentationConfig> >
   {
