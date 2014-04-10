@@ -107,6 +107,9 @@ namespace viennagrid
     segment_id_type segment_id;
   };
 
+  /** @brief Completely clears a segmentation
+    *
+    */
   template<typename SegmentationT>
   void clear( segment_handle<SegmentationT> & segment_ )
   {
@@ -482,7 +485,9 @@ namespace viennagrid
       */
     segmentation( mesh_type & mesh_x ) : highest_id(-1), mesh_(&mesh_x) { all_elements_ = viennagrid::make_view(*mesh_); }
 
-
+    /** @brief (Re-)Initializes a segmentation based on a mesh.
+      *
+      */
     void init( mesh_type & mesh_x )
     {
       highest_id = -1;
@@ -744,6 +749,10 @@ namespace viennagrid
     mesh_type * mesh_;
   };
 
+
+  /** @brief Completely clears a segmentation
+    *
+    */
   template<typename WrappedConfigT>
   void clear( segmentation<WrappedConfigT> & segmentation_ )
   {
@@ -800,12 +809,14 @@ namespace viennagrid
 
   namespace result_of
   {
+    /** @brief Meta function for querying the mesh type of a segmentation */
     template<typename WrappedConfigType>
     struct mesh<viennagrid::segmentation<WrappedConfigType> >
     {
       typedef typename viennagrid::segmentation<WrappedConfigType>::mesh_type type;
     };
 
+    /** @brief Meta function for querying the mesh type of a segment handle */
     template<typename SegmentationT>
     struct mesh<viennagrid::segment_handle<SegmentationT> >
     {
@@ -813,7 +824,6 @@ namespace viennagrid
     };
 
     // doxygen docu in mesh.hpp
-    /** \cond */
     template<typename WrappedConfigType, typename element_type_or_tag>
     struct is_element_present< viennagrid::segmentation<WrappedConfigType>, element_type_or_tag >
     {
@@ -1442,18 +1452,23 @@ namespace viennagrid
       */
     const_iterator end() const { return segment_info_->end(); }
 
-    /** @brief Returns a const iterator pointing to the first segment ID
+    /** @brief Returns the number of segment ids
       *
-      * @return    A const iterator pointing to the first segment ID
+      * @return    The number of segment ids
       */
     std::size_t size() const { return segment_info_->size(); }
 
-    /** @brief Returns a const iterator pointing to the first segment ID
+    /** @brief Returns if the segment id container is empty
       *
-      * @return    A const iterator pointing to the first segment ID
+      * @return    true if the segment id container is empty, false otherwise
       */
     bool empty() const { return segment_info_->empty(); }
 
+    /** @brief Checks, if two segment id ranges are equal
+      *
+      * @param other  The other segment id range
+      * @return       true if the segment id ranges are equal, false otherwise
+      */
     std::size_t is_equal( segment_id_range_t<SegmentInfoT> const & other ) const { return segment_info_->is_equal(*other.segment_info_); }
 
   private:
@@ -1711,7 +1726,7 @@ namespace viennagrid
     * @tparam SegmentHandleT        The segment type
     * @tparam ElementTagT     The element tag of the element
     * @tparam WrappedConfigT  The wrapped config of the element
-    * @param  segment         The segment object to which the elemen is added
+    * @param  segment         The segment object to which the element is added
     * @param  element         The element object to be added
     */
   template<typename SegmentHandleT, typename ElementTagT, typename WrappedConfigT>
@@ -1729,31 +1744,83 @@ namespace viennagrid
     for_each_boundary_element<ForEachTypelist>( element, af );
   }
 
+  /** @brief Adds an element to a segment, all boundary elements are added recursively
+    *
+    * @tparam SegmentHandleT     The segment type
+    * @tparam ElementHandleT     The element tag of the element
+    * @param  segment            The segment object to which the element is added
+    * @param  element_handle     A handle of the element object to be added
+    */
   template<typename SegmentHandleT, typename ElementHandleT>
   void add( SegmentHandleT & segment, ElementHandleT element_handle )
   { viennagrid::add( segment, viennagrid::dereference_handle(segment, element_handle) ); }
 
 
 
-
+  /** @brief Adds an element to a segment, all boundary elements are added recursively
+    *
+    * @tparam WrappedConfigT     The wrapped config of the segmentation
+    * @tparam ElementTagT     The element tag of the element
+    * @tparam WrappedConfigT  The wrapped config of the element
+    * @param  segmentation       The segmentation
+    * @param  segment_id         The id of the segment element is added
+    * @param  element            The element object to be added
+    */
   template<typename WrappedConfigT, typename ElementTagT, typename WrappedElementConfigT>
   void add( segmentation<WrappedConfigT> & segmentation_,
-            viennagrid::element<ElementTagT, WrappedElementConfigT> & element,
-            typename segmentation<WrappedConfigT>::segment_id_type segment_id)
+            typename segmentation<WrappedConfigT>::segment_id_type segment_id,
+            viennagrid::element<ElementTagT, WrappedElementConfigT> & element)
   { add( segmentation_[segment_id], element ); }
 
+  /** @brief Adds an element to a segment, all boundary elements are added recursively
+    *
+    * @tparam WrappedConfigT     The wrapped config of the segmentation
+    * @tparam ElementHandleT     The element tag of the element
+    * @param  segmentation       The segmentation
+    * @param  segment_id         The id of the segment element is added
+    * @param  element_handle     A handle of the element object to be added
+    */
   template<typename WrappedConfigT, typename ElementHandleT>
   void add( segmentation<WrappedConfigT> & segmentation_,
-            ElementHandleT element_handle,
-            typename segmentation<WrappedConfigT>::segment_id_type segment_id)
+            typename segmentation<WrappedConfigT>::segment_id_type segment_id,
+            ElementHandleT element_handle)
   { add( segmentation_[segment_id], element_handle ); }
 
 
-
-  template<typename WrappedConfigT, typename ElementHandleT, typename SegmentIDIteratorT>
+  /** @brief Adds an element to all segment provided in a segment id iterator range
+    *
+    * @tparam WrappedConfigT     The wrapped config of the segmentation
+    * @tparam SegmentIDIteratorT The segment id iterator type
+    * @tparam ElementTagT        The element tag of the element
+    * @tparam WrappedConfigT     The wrapped config of the element
+    * @param  segmentation_      The segmentation
+    * @param  segment_ids_it     The begin segment id iterator
+    * @param  segment_ids_end    The end segment id iterator
+    * @param  element_handle     A handle of the element object to be added
+    */
+  template<typename WrappedConfigT, typename SegmentIDIteratorT, typename ElementTagT, typename WrappedElementConfigT>
   void add( segmentation<WrappedConfigT> & segmentation_,
-            ElementHandleT element_handle,
-            SegmentIDIteratorT segment_ids_it, SegmentIDIteratorT const & segment_ids_end)
+            SegmentIDIteratorT segment_ids_it, SegmentIDIteratorT const & segment_ids_end,
+            viennagrid::element<ElementTagT, WrappedElementConfigT> & element)
+  {
+    for (; segment_ids_it != segment_ids_end; ++segment_ids_it)
+      add( segmentation_[*segment_ids_it], element );
+  }
+
+  /** @brief Adds an element to all segment provided in a segment id iterator range
+    *
+    * @tparam WrappedConfigT     The wrapped config of the segmentation
+    * @tparam SegmentIDIteratorT The segment id iterator type
+    * @tparam ElementHandleT     The element tag of the element
+    * @param  segmentation_      The segmentation
+    * @param  segment_ids_it     The begin segment id iterator
+    * @param  segment_ids_end    The end segment id iterator
+    * @param  element_handle     A handle of the element object to be added
+    */
+  template<typename WrappedConfigT, typename SegmentIDIteratorT, typename ElementHandleT>
+  void add( segmentation<WrappedConfigT> & segmentation_,
+            SegmentIDIteratorT segment_ids_it, SegmentIDIteratorT const & segment_ids_end,
+            ElementHandleT element_handle)
   {
     for (; segment_ids_it != segment_ids_end; ++segment_ids_it)
       add( segmentation_[*segment_ids_it], element_handle );
@@ -1783,6 +1850,13 @@ namespace viennagrid
     for_each_boundary_element<ForEachTypelist>( element, uaf );
   }
 
+  /** @brief Adds an element to a segment, all boundary elements are added recursively, does guarantee that elements are only present once within the segment
+    *
+    * @tparam SegmentHandleT      The segment type
+    * @tparam ElementHandleT      The element handle type
+    * @param  segment             The segment object to which the elemen is added
+    * @param  element_handle      A handle of the element object to be added
+    */
   template<typename SegmentHandleT, typename ElementHandleT>
   void unchecked_add( SegmentHandleT & segment, ElementHandleT element_handle )
   { viennagrid::unchecked_add( segment, viennagrid::dereference_handle(segment, element_handle) ); }
@@ -1959,50 +2033,59 @@ namespace viennagrid
 
 
 
-
-  template<typename SourceMeshT, typename SourceSegmentationT,
-           typename DestinationMeshT, typename DestinationSegmentationT>
-  struct copy_segmentation_functor
+  namespace detail
   {
-    copy_segmentation_functor(SourceMeshT const & src_mesh_, SourceSegmentationT const & src_segmentation_,
-                              DestinationMeshT & dst_mesh_, DestinationSegmentationT & dst_segmentation_) :
-                              src_mesh(src_mesh_), src_segmentation(src_segmentation_),
-                              dst_mesh(dst_mesh_), dst_segmentation(dst_segmentation_) {}
-
-    template<typename DestinationElementT>
-    void operator()( DestinationElementT & dst_element )
+    /** @brief Functor for copying a segmentation. For internal use only. */
+    template<typename SourceMeshT, typename SourceSegmentationT,
+            typename DestinationMeshT, typename DestinationSegmentationT>
+    struct copy_segmentation_functor
     {
-      typedef typename viennagrid::result_of::element_tag<DestinationElementT>::type ElementTag;
-      typedef typename viennagrid::result_of::const_element_range<SourceMeshT, ElementTag>::type ConstSourceElementRangeType;
-      typedef typename viennagrid::result_of::iterator<ConstSourceElementRangeType>::type ConstSourceElementIteratorType;
+      copy_segmentation_functor(SourceMeshT const & src_mesh_, SourceSegmentationT const & src_segmentation_,
+                                DestinationMeshT & dst_mesh_, DestinationSegmentationT & dst_segmentation_) :
+                                src_mesh(src_mesh_), src_segmentation(src_segmentation_),
+                                dst_mesh(dst_mesh_), dst_segmentation(dst_segmentation_) {}
 
-      ConstSourceElementIteratorType src_eit = viennagrid::find( src_mesh, dst_element.id() );
-
-      typedef typename viennagrid::result_of::element<SourceMeshT, ElementTag>::type SourceElementType;
-      typedef typename viennagrid::result_of::segment_id_range<SourceSegmentationT, SourceElementType>::type SegmentIDRangeType;
-      typedef typename viennagrid::result_of::iterator<SegmentIDRangeType>::type SegmentIDIteratorType;
-      SegmentIDRangeType segment_ids = viennagrid::segment_ids(src_segmentation, *src_eit);
-      for (SegmentIDIteratorType sit = segment_ids.begin(); sit != segment_ids.end(); ++sit)
+      template<typename DestinationElementT>
+      void operator()( DestinationElementT & dst_element )
       {
-        viennagrid::add( dst_segmentation.get_make_segment(*sit), dst_element );
+        typedef typename viennagrid::result_of::element_tag<DestinationElementT>::type ElementTag;
+        typedef typename viennagrid::result_of::const_element_range<SourceMeshT, ElementTag>::type ConstSourceElementRangeType;
+        typedef typename viennagrid::result_of::iterator<ConstSourceElementRangeType>::type ConstSourceElementIteratorType;
+
+        ConstSourceElementIteratorType src_eit = viennagrid::find( src_mesh, dst_element.id() );
+
+        typedef typename viennagrid::result_of::element<SourceMeshT, ElementTag>::type SourceElementType;
+        typedef typename viennagrid::result_of::segment_id_range<SourceSegmentationT, SourceElementType>::type SegmentIDRangeType;
+        typedef typename viennagrid::result_of::iterator<SegmentIDRangeType>::type SegmentIDIteratorType;
+        SegmentIDRangeType segment_ids = viennagrid::segment_ids(src_segmentation, *src_eit);
+        for (SegmentIDIteratorType sit = segment_ids.begin(); sit != segment_ids.end(); ++sit)
+        {
+          viennagrid::add( dst_segmentation.get_make_segment(*sit), dst_element );
+        }
       }
-    }
 
-    SourceMeshT const & src_mesh;
-    SourceSegmentationT const & src_segmentation;
+      SourceMeshT const & src_mesh;
+      SourceSegmentationT const & src_segmentation;
 
-    DestinationMeshT & dst_mesh;
-    DestinationSegmentationT & dst_segmentation;
-  };
+      DestinationMeshT & dst_mesh;
+      DestinationSegmentationT & dst_segmentation;
+    };
+  }
 
 
-
+  /** @brief Copies a segmentation. Warning: may be slow!
+    *
+    * @param  src_mesh_           The source mesh
+    * @param  src_segmentation_   The source segmentation
+    * @param  dst_mesh_           The destination mesh
+    * @param  dst_segmentation_   The destination segmentation
+    */
   template<typename SourceMeshT, typename SourceSegmentationT,
            typename DestinationMeshT, typename DestinationSegmentationT>
   void copy_segmentation(SourceMeshT const & src_mesh_, SourceSegmentationT const & src_segmentation_,
                          DestinationMeshT & dst_mesh_, DestinationSegmentationT & dst_segmentation_)
   {
-    copy_segmentation_functor<SourceMeshT, SourceSegmentationT, DestinationMeshT, DestinationSegmentationT> functor( src_mesh_, src_segmentation_, dst_mesh_, dst_segmentation_ );
+    detail::copy_segmentation_functor<SourceMeshT, SourceSegmentationT, DestinationMeshT, DestinationSegmentationT> functor( src_mesh_, src_segmentation_, dst_mesh_, dst_segmentation_ );
     viennagrid::for_each(dst_mesh_, functor);
   }
 
