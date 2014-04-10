@@ -10,6 +10,7 @@ namespace viennagrid
   namespace detail
   {
     // http://www.blackpawn.com/texts/pointinpoly/
+    /** @brief Is inside implementation for triangle in arbitrary dimensions. */
     template<typename PointAccessorT, typename ElementT, typename CoordType, typename CoordinateSystem, typename NumericConfigT>
     bool is_inside_impl( PointAccessorT const accessor,
                          ElementT const & element, viennagrid::triangle_tag,
@@ -42,6 +43,7 @@ namespace viennagrid
     }
 
 
+    /** @brief Is inside implementation for tetrahedron. */
     template<typename PointAccessorT, typename ElementT, typename CoordType, typename CoordinateSystem, typename NumericConfigT>
     bool is_inside_impl( PointAccessorT const accessor,
                          ElementT const & element, viennagrid::tetrahedron_tag,
@@ -70,7 +72,13 @@ namespace viennagrid
   }
 
 
-
+  /** @brief Determines if a given point is inside an element
+   *
+   * @param accessor            The point accessor providing point information for geometric calculation
+   * @param element             The element to test
+   * @param point               The point to test
+   * @param numeric_config      The numeric config
+   */
   template<typename PointAccessorT, typename ElementT, typename CoordType, typename CoordinateSystem, typename NumericConfigT>
   bool is_inside( PointAccessorT const accessor, ElementT const & element,
                   spatial_point<CoordType, CoordinateSystem> const & point,
@@ -79,7 +87,12 @@ namespace viennagrid
     return detail::is_inside_impl( accessor, element, typename ElementT::tag(), point, numeric_config );
   }
 
-
+  /** @brief Determines if a given point is inside an element
+   *
+   * @param element             The element to test
+   * @param point               The point to test
+   * @param numeric_config      The numeric config
+   */
   template<typename ElementT, typename CoordType, typename CoordinateSystem, typename NumericConfigT>
   bool is_inside( ElementT const & element, spatial_point<CoordType, CoordinateSystem> const & point, NumericConfigT numeric_config )
   {
@@ -87,7 +100,11 @@ namespace viennagrid
   }
 
 
-
+  /** @brief Determines if a given point is inside an element
+   *
+   * @param element             The element to test
+   * @param point               The point to test
+   */
   template<typename ElementT, typename CoordType, typename CoordinateSystem>
   bool is_inside( ElementT const & element, spatial_point<CoordType, CoordinateSystem> const & point )
   {
