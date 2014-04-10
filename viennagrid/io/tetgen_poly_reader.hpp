@@ -79,6 +79,12 @@ namespace viennagrid
         return (*this)(mesh_obj, filename, hole_points, seed_points);
       }
 
+      /** @brief The functor interface triggering the read operation. Segmentations are not supported in this version.
+       *
+       * @param mesh_obj      The mesh where the file content is written to
+       * @param filename      Name of the file
+       * @param hole_points   A container for hole points, output parameter
+       */
       template <typename MeshT>
       int operator()(MeshT & mesh_obj, std::string const & filename,
                      std::vector< typename viennagrid::result_of::point<MeshT>::type > & hole_points) const
@@ -87,6 +93,12 @@ namespace viennagrid
         return (*this)(mesh_obj, filename, hole_points, seed_points);
       }
 
+      /** @brief The functor interface triggering the read operation. Segmentations are not supported in this version.
+       *
+       * @param mesh_obj      The mesh where the file content is written to
+       * @param filename      Name of the file
+       * @param seed_points   A container for seed points, output parameter
+       */
       template <typename MeshT>
       int operator()(MeshT & mesh_obj, std::string const & filename,
                      std::vector< std::pair<typename viennagrid::result_of::point<MeshT>::type, int> > & seed_points) const
@@ -96,7 +108,13 @@ namespace viennagrid
         return (*this)(mesh_obj, filename, hole_points, seed_points);
       }
 
-
+      /** @brief The functor interface triggering the read operation. Segmentations are not supported in this version.
+       *
+       * @param mesh_obj      The mesh where the file content is written to
+       * @param filename      Name of the file
+       * @param hole_points   A container for hole points, output parameter
+       * @param seed_points   A container for seed points, output parameter
+       */
       template <typename MeshT>
       int operator()(MeshT & mesh_obj, std::string const & filename,
                      std::vector< typename viennagrid::result_of::point<MeshT>::type > & hole_points,
