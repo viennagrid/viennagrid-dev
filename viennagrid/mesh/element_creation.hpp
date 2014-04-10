@@ -28,6 +28,7 @@ namespace viennagrid
   template<typename ElementTagT>
   struct make_element_impl
   {
+    /** @brief Generic implementation for creating an element. For internal use only. */
     template<typename MeshOrSegmentHandleTypeT, typename VertexHandleIteratorT>
     static typename result_of::handle<MeshOrSegmentHandleTypeT, ElementTagT>::type
     make(MeshOrSegmentHandleTypeT & mesh_obj,
@@ -44,6 +45,7 @@ namespace viennagrid
       return detail::push_element<true, true>(mesh_obj, element).first;
     }
 
+    /** @brief Generic implementation for creating an element with a specific. For internal use only. */
     template<typename MeshOrSegmentHandleTypeT, typename VertexHandleIteratorT, typename IDT>
     static typename result_of::handle<MeshOrSegmentHandleTypeT, ElementTagT>::type
     make(MeshOrSegmentHandleTypeT & mesh_obj,
@@ -68,14 +70,14 @@ namespace viennagrid
   template<>
   struct make_element_impl<plc_tag>
   {
-    // no implementation! Use make_plc instead
+    /** @brief Generic implementation for creating a PLC is NOT provided, use make_plc instead. */
     template<typename MeshOrSegmentHandleTypeT, typename VertexHandleIteratorT>
     static typename result_of::handle<MeshOrSegmentHandleTypeT, plc_tag>::type
     make(MeshOrSegmentHandleTypeT & mesh_obj,
          VertexHandleIteratorT vertices_begin,
          VertexHandleIteratorT const & vertices_end);
 
-    // no implementation! Use make_plc instead
+    /** @brief Generic implementation for creating a PLC with a specific ID is NOT provided, use make_plc instead. */
     template<typename MeshOrSegmentHandleTypeT, typename VertexHandleIteratorT, typename IDT>
     static typename result_of::handle<MeshOrSegmentHandleTypeT, plc_tag>::type
     make(MeshOrSegmentHandleTypeT & mesh_obj,
@@ -397,7 +399,7 @@ namespace viennagrid
   template<typename ElementTagT>
   struct copy_elements_impl
   {
-
+    /** @brief Generic implementation for copying elements. For internal use only. */
     template<typename ElementIteratorT, typename OutputMeshOrSegmentHandleT>
     static void copy_elements(ElementIteratorT const & begin, ElementIteratorT const & end,
                      OutputMeshOrSegmentHandleT & output_mesh,
@@ -436,6 +438,7 @@ namespace viennagrid
       }
     }
 
+    /** @brief Generic implementation for copying element based on handles. For internal use only. */
     template<typename InputMeshOrSegmentHandleT, typename ElementHandleIteratorT, typename OutputMeshOrSegmentHandleT>
     static void copy_element_handles(InputMeshOrSegmentHandleT const & input_mesh,
                               ElementHandleIteratorT const & begin, ElementHandleIteratorT const & end,
@@ -480,7 +483,7 @@ namespace viennagrid
   template<>
   struct copy_elements_impl<plc_tag>
   {
-
+    /** @brief Generic implementation for copying PLCs. For internal use only. */
     template<typename ElementIteratorT, typename OutputMeshOrSegmentHandleT>
     static void copy_elements(ElementIteratorT const & begin, ElementIteratorT const & end,
                      OutputMeshOrSegmentHandleT & output_mesh,
@@ -536,6 +539,7 @@ namespace viennagrid
       }
     }
 
+    /** @brief Generic implementation for copying PLC based on handles. For internal use only. */
     template<typename InputMeshOrSegmentHandleT, typename ElementHandleIteratorT, typename OutputMeshOrSegmentHandleT>
     static void copy_element_handles(InputMeshOrSegmentHandleT const & input_mesh,
                               ElementHandleIteratorT const & begin, ElementHandleIteratorT const & end,
