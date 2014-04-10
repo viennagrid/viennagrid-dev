@@ -8,6 +8,9 @@
 #include "viennagrid/mesh/coboundary_iteration.hpp"
 #include "viennagrid/mesh/neighbor_iteration.hpp"
 
+/** @file viennagrid/io/tetgen_poly_reader.hpp
+    @brief Provides a writer for Comsol .mphtxt files.
+*/
 
 
 
@@ -123,12 +126,20 @@ namespace viennagrid
 
 
 
-
+    /** @brief Writer for Comsol .mphtxt files.
+      *
+      * See http://chemelab.ucsd.edu/CAPE/comsol/Comsol_Reference.pdf, page 396-441 for a description of the file format
+      */
     class mphtxt_writer
     {
     public:
 
-
+      /** @brief The functor interface triggering the read operation. Segmentations are not supported in this version.
+       *
+       * @param mesh            The mesh which is to be written
+       * @param segmentation    The segmentation which is to be written
+       * @param filename        Name of the file
+       */
       template <typename MeshT, typename SegmentationT>
       int operator()(MeshT const & mesh, SegmentationT const & segmentation, std::string const & filename) const
       {
