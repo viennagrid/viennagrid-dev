@@ -9,6 +9,7 @@ namespace viennagrid
 {
   namespace detail
   {
+    /** @brief For internal use only. */
     template<typename SrcMeshT, typename DstMeshT, typename PointT, typename LineRefinementTagContainerT, typename LineRefinementVertexHandleContainerT, typename NumericConfigT>
     void mark_edges_for_hyperplane_refine(SrcMeshT const & src_mesh, DstMeshT & dst_mesh,
                               PointT const & hyperplane_point, PointT const & hyperplane_normal,
@@ -27,7 +28,6 @@ namespace viennagrid
         NumericType distance1 = viennagrid::inner_prod( hyperplane_normal, viennagrid::point( viennagrid::vertices(*lit)[1] )-hyperplane_point );
 
         NumericType tolerance = viennagrid::detail::relative_tolerance(numeric_config, viennagrid::volume(*lit));
-//         1e-8 * viennagrid::volume(*lit);
 
         if (distance0 > distance1)
           std::swap(distance0, distance1);
@@ -53,7 +53,16 @@ namespace viennagrid
 
 
 
-
+  /** @brief Refines a mesh and a segmentation based on a hyperplane. All elements which intersects the hyperplane are refined in a way that they don't intersect the hyperplane afterwards.
+   *
+   * @param src_mesh            The input mesh
+   * @param src_segmentation    The input segmentation
+   * @param dst_mesh            The output mesh
+   * @param dst_segmentation    The output segmentation
+   * @param hyperplane_point    A point representing the hyperplane
+   * @param hyperplane_normal   The normale vector representing the hyperplane
+   * @param numeric_config      The numeric config
+   */
   template<typename SrcMeshT, typename SrcSegmentationT, typename DstMeshT, typename DstSegmentationT, typename PointT, typename NumericConfigT>
   void hyperplane_refine(SrcMeshT const & src_mesh, SrcSegmentationT const & src_segmentation,
                          DstMeshT & dst_mesh, DstSegmentationT & dst_segmentation,
@@ -86,6 +95,14 @@ namespace viennagrid
 
 
 
+  /** @brief Refines a mesh and a segmentation based on a hyperplane. All elements which intersects the hyperplane are refined in a way that they don't intersect the hyperplane afterwards.
+   *
+   * @param src_mesh            The input mesh
+   * @param dst_mesh            The output mesh
+   * @param hyperplane_point    A point representing the hyperplane
+   * @param hyperplane_normal   The normale vector representing the hyperplane
+   * @param numeric_config      The numeric config
+   */
   template<typename SrcMeshT, typename DstMeshT, typename PointT, typename NumericConfigT>
   void hyperplane_refine(SrcMeshT const & src_mesh, DstMeshT & dst_mesh,
                          PointT const & hyperplane_point, PointT const & hyperplane_normal,
