@@ -159,7 +159,7 @@ namespace viennagrid
       if ( functor(*cit) )
       {
         CellHandleType cell_handle = vertex_map.copy_element(*cit );
-        viennagrid::add( dst_segmentation, cell_handle, viennagrid::segment_ids( src_segmentation, *cit ).begin(), viennagrid::segment_ids( src_segmentation, *cit ).end() );
+        viennagrid::add( dst_segmentation, viennagrid::segment_ids( src_segmentation, *cit ).begin(), viennagrid::segment_ids( src_segmentation, *cit ).end(), cell_handle );
       }
     }
   }

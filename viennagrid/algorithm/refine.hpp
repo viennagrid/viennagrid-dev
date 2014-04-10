@@ -130,7 +130,7 @@ namespace viennagrid
             ++it)
       {
         OutputCellHandleType new_cell = viennagrid::make_element<ElementTypeOrTagT>( mesh_out, it->begin(), it->end() );
-        viennagrid::add( segmentation_out, new_cell, segment_ids.begin(), segment_ids.end() );
+        viennagrid::add( segmentation_out, segment_ids.begin(), segment_ids.end(), new_cell );
       }
     }
   }
