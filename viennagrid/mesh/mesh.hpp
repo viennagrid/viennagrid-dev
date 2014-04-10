@@ -329,6 +329,9 @@ namespace viennagrid
     change_counter_type change_counter_;
   };
 
+  /** @brief Completely clears a mesh.
+    *
+    */
   template<typename WrappedConfigT>
   void clear( mesh<WrappedConfigT> & mesh_ )
   {
