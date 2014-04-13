@@ -114,7 +114,7 @@ namespace viennagrid
           case 3: return 2;
           default: return j;
         }
-        return j;
+        //return j;  //unreachable code
       }
     };
 
@@ -143,7 +143,7 @@ namespace viennagrid
           case 7: return 6;
           default: return j;
         }
-        return j;
+        //return j;  //unreachable code
       }
     };
 

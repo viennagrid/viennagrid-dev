@@ -38,7 +38,7 @@ namespace viennagrid
       typedef typename viennagrid::result_of::element<MeshOrSegmentHandleTypeT, ElementTagT>::type ElementType;
       ElementType element = ElementType( detail::inserter(mesh_obj).get_physical_container_collection() );
 
-      size_t element_index = 0;
+      unsigned int element_index = 0;
       for ( ; vertices_begin != vertices_end; ++vertices_begin, ++element_index )
           viennagrid::set_vertex( element, *vertices_begin, element_index );
 
@@ -58,7 +58,7 @@ namespace viennagrid
 
       element.id( id );
 
-      size_t element_index = 0;
+      unsigned int element_index = 0;
       for ( ; vertices_begin != vertices_end; ++vertices_begin, ++element_index )
           viennagrid::set_vertex( element, *vertices_begin, element_index );
 

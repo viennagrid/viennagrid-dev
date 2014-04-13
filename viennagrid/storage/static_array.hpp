@@ -69,7 +69,7 @@ namespace viennagrid
       iterator & operator=(const iterator & it) { ptr_ = it.ptr_; return *this; }
 
       // constructor for static_array
-      iterator(pointer ptr_) : ptr_(ptr_) {}
+      iterator(pointer ptr) : ptr_(ptr) {}
 
       // equal and inequal compareable
       bool operator==(const iterator& i) const { return ptr_ == i.ptr_; }
@@ -143,7 +143,7 @@ namespace viennagrid
       const_iterator & operator=(const const_iterator & it) { ptr_ = it.ptr_; return *this; }
 
       // constructor for static_array
-      const_iterator(const_pointer ptr_) : ptr_(ptr_) {}
+      const_iterator(const_pointer ptr) : ptr_(ptr) {}
 
       // equal and inequal compareable
       bool operator==(const const_iterator& i) const { return ptr_ == i.ptr_; }

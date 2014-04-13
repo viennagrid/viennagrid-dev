@@ -542,17 +542,17 @@ namespace viennagrid
             {
               writer << "   <PointData>" << std::endl;
 
-              for (typename VertexScalarOutputAccessorContainer::const_iterator it = vertex_scalar_data.begin(); it != vertex_scalar_data.end(); ++it)
-                writePointData( seg, writer, it->first, *(it->second), seg.id() );
-              for (typename VertexVectorOutputAccessorContainer::const_iterator it = vertex_vector_data.begin(); it != vertex_vector_data.end(); ++it)
-                writePointData( seg, writer, it->first, *(it->second), seg.id() );
+              for (typename VertexScalarOutputAccessorContainer::const_iterator data_it = vertex_scalar_data.begin(); data_it != vertex_scalar_data.end(); ++data_it)
+                writePointData( seg, writer, data_it->first, *(data_it->second), seg.id() );
+              for (typename VertexVectorOutputAccessorContainer::const_iterator data_it = vertex_vector_data.begin(); data_it != vertex_vector_data.end(); ++data_it)
+                writePointData( seg, writer, data_it->first, *(data_it->second), seg.id() );
 
 
-              for (typename VertexScalarOutputAccessorContainer::const_iterator it = current_segment_vertex_scalar_data.begin(); it != current_segment_vertex_scalar_data.end(); ++it)
-                writePointData( seg, writer, it->first, *(it->second), seg.id() );
+              for (typename VertexScalarOutputAccessorContainer::const_iterator data_it = current_segment_vertex_scalar_data.begin(); data_it != current_segment_vertex_scalar_data.end(); ++data_it)
+                writePointData( seg, writer, data_it->first, *(data_it->second), seg.id() );
 
-              for (typename VertexVectorOutputAccessorContainer::const_iterator it = current_segment_vertex_vector_data.begin(); it != current_segment_vertex_vector_data.end(); ++it)
-                writePointData( seg, writer, it->first, *(it->second), seg.id() );
+              for (typename VertexVectorOutputAccessorContainer::const_iterator data_it = current_segment_vertex_vector_data.begin(); data_it != current_segment_vertex_vector_data.end(); ++data_it)
+                writePointData( seg, writer, data_it->first, *(data_it->second), seg.id() );
 
               writer << "   </PointData>" << std::endl;
             }
@@ -565,16 +565,16 @@ namespace viennagrid
             {
               writer << "   <CellData>" << std::endl;
 
-              for (typename CellScalarOutputAccessorContainer::const_iterator it = cell_scalar_data.begin(); it != cell_scalar_data.end(); ++it)
-                writeCellData( seg, writer, it->first, *(it->second), seg.id() );
-              for (typename CellVectorOutputAccessorContainer::const_iterator it = cell_vector_data.begin(); it != cell_vector_data.end(); ++it)
-                writeCellData( seg, writer, it->first, *(it->second), seg.id() );
+              for (typename CellScalarOutputAccessorContainer::const_iterator data_it = cell_scalar_data.begin(); data_it != cell_scalar_data.end(); ++data_it)
+                writeCellData( seg, writer, data_it->first, *(data_it->second), seg.id() );
+              for (typename CellVectorOutputAccessorContainer::const_iterator data_it = cell_vector_data.begin(); data_it != cell_vector_data.end(); ++data_it)
+                writeCellData( seg, writer, data_it->first, *(data_it->second), seg.id() );
 
 
-              for (typename CellScalarOutputAccessorContainer::const_iterator it = current_segment_cell_scalar_data.begin(); it != current_segment_cell_scalar_data.end(); ++it)
-                writeCellData( seg, writer, it->first, *(it->second), seg.id() );
-              for (typename CellVectorOutputAccessorContainer::const_iterator it = current_segment_cell_vector_data.begin(); it != current_segment_cell_vector_data.end(); ++it)
-                writeCellData( seg, writer, it->first, *(it->second), seg.id() );
+              for (typename CellScalarOutputAccessorContainer::const_iterator data_it = current_segment_cell_scalar_data.begin(); data_it != current_segment_cell_scalar_data.end(); ++data_it)
+                writeCellData( seg, writer, data_it->first, *(data_it->second), seg.id() );
+              for (typename CellVectorOutputAccessorContainer::const_iterator data_it = current_segment_cell_vector_data.begin(); data_it != current_segment_cell_vector_data.end(); ++data_it)
+                writeCellData( seg, writer, data_it->first, *(data_it->second), seg.id() );
 
               writer << "   </CellData>" << std::endl;
             }

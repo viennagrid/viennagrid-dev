@@ -121,7 +121,7 @@ namespace viennagrid
           if (!reader.good())
             throw bad_file_format_exception(filename, "EOF encountered while reading cells (segment index expected).");
 
-          std::size_t segment_index;
+          int segment_index;
           reader >> segment_index;
 
           for (int j=0; j<boundary_elements<CellTag, vertex_tag>::num; ++j)
