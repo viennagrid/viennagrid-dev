@@ -823,6 +823,7 @@ namespace viennagrid
       typedef typename viennagrid::segment_handle<SegmentationT>::mesh_type type;
     };
 
+    /** \cond */
     // doxygen docu in mesh.hpp
     template<typename WrappedConfigType, typename element_type_or_tag>
     struct is_element_present< viennagrid::segmentation<WrappedConfigType>, element_type_or_tag >
@@ -1760,31 +1761,31 @@ namespace viennagrid
   /** @brief Adds an element to a segment, all boundary elements are added recursively
     *
     * @tparam WrappedConfigT     The wrapped config of the segmentation
-    * @tparam ElementTagT     The element tag of the element
-    * @tparam WrappedConfigT  The wrapped config of the element
-    * @param  segmentation       The segmentation
+    * @tparam ElementTagT        The element tag of the element
+    * @tparam WrappedConfigT     The wrapped config of the element
+    * @param  segmentation_obj   The segmentation object
     * @param  segment_id         The id of the segment element is added
     * @param  element            The element object to be added
     */
   template<typename WrappedConfigT, typename ElementTagT, typename WrappedElementConfigT>
-  void add( segmentation<WrappedConfigT> & segmentation_,
+  void add( segmentation<WrappedConfigT> & segmentation_obj,
             typename segmentation<WrappedConfigT>::segment_id_type segment_id,
             viennagrid::element<ElementTagT, WrappedElementConfigT> & element)
-  { add( segmentation_[segment_id], element ); }
+  { add( segmentation_obj[segment_id], element ); }
 
   /** @brief Adds an element to a segment, all boundary elements are added recursively
     *
     * @tparam WrappedConfigT     The wrapped config of the segmentation
     * @tparam ElementHandleT     The element tag of the element
-    * @param  segmentation       The segmentation
+    * @param  segmentation_obj   The segmentation object
     * @param  segment_id         The id of the segment element is added
     * @param  element_handle     A handle of the element object to be added
     */
   template<typename WrappedConfigT, typename ElementHandleT>
-  void add( segmentation<WrappedConfigT> & segmentation_,
+  void add( segmentation<WrappedConfigT> & segmentation_obj,
             typename segmentation<WrappedConfigT>::segment_id_type segment_id,
             ElementHandleT element_handle)
-  { add( segmentation_[segment_id], element_handle ); }
+  { add( segmentation_obj[segment_id], element_handle ); }
 
 
   /** @brief Adds an element to all segment provided in a segment id iterator range
@@ -1793,18 +1794,18 @@ namespace viennagrid
     * @tparam SegmentIDIteratorT The segment id iterator type
     * @tparam ElementTagT        The element tag of the element
     * @tparam WrappedConfigT     The wrapped config of the element
-    * @param  segmentation_      The segmentation
+    * @param  segmentation_obj   The segmentation
     * @param  segment_ids_it     The begin segment id iterator
     * @param  segment_ids_end    The end segment id iterator
-    * @param  element_handle     A handle of the element object to be added
+    * @param  element            The element to be added
     */
   template<typename WrappedConfigT, typename SegmentIDIteratorT, typename ElementTagT, typename WrappedElementConfigT>
-  void add( segmentation<WrappedConfigT> & segmentation_,
+  void add( segmentation<WrappedConfigT> & segmentation_obj,
             SegmentIDIteratorT segment_ids_it, SegmentIDIteratorT const & segment_ids_end,
             viennagrid::element<ElementTagT, WrappedElementConfigT> & element)
   {
     for (; segment_ids_it != segment_ids_end; ++segment_ids_it)
-      add( segmentation_[*segment_ids_it], element );
+      add( segmentation_obj[*segment_ids_it], element );
   }
 
   /** @brief Adds an element to all segment provided in a segment id iterator range
@@ -1812,18 +1813,18 @@ namespace viennagrid
     * @tparam WrappedConfigT     The wrapped config of the segmentation
     * @tparam SegmentIDIteratorT The segment id iterator type
     * @tparam ElementHandleT     The element tag of the element
-    * @param  segmentation_      The segmentation
+    * @param  segmentation_obj   The segmentation object
     * @param  segment_ids_it     The begin segment id iterator
     * @param  segment_ids_end    The end segment id iterator
     * @param  element_handle     A handle of the element object to be added
     */
   template<typename WrappedConfigT, typename SegmentIDIteratorT, typename ElementHandleT>
-  void add( segmentation<WrappedConfigT> & segmentation_,
+  void add( segmentation<WrappedConfigT> & segmentation_obj,
             SegmentIDIteratorT segment_ids_it, SegmentIDIteratorT const & segment_ids_end,
             ElementHandleT element_handle)
   {
     for (; segment_ids_it != segment_ids_end; ++segment_ids_it)
-      add( segmentation_[*segment_ids_it], element_handle );
+      add( segmentation_obj[*segment_ids_it], element_handle );
   }
 
 

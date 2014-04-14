@@ -56,7 +56,7 @@ namespace viennagrid
        * @param outputfile The outputfile path
        *
        */
-      void operator()(MeshType const & mesh, SegmentationType const & segmentation, std::string const & inputfile, std::string const & outputfile)
+      void operator()(MeshType const & mesh_obj, SegmentationType const & segmentation, std::string const & inputfile, std::string const & outputfile)
       {
         std::stringstream ss;
         if(outputfile.substr( outputfile.rfind(".")+1 ) == "vmesh")
@@ -69,8 +69,8 @@ namespace viennagrid
         writer << indent_ << "<file>" << inputfile << "</file>" << std::endl;
         writer << indent_ << "<geomdim>" << typename viennagrid::result_of::point<MeshType>::type().size() << "</geomdim>" << std::endl;
         writer << indent_ << "<celltype>" << viennagrid::result_of::cell_tag<MeshType>::type::name() << "</celltype>" << std::endl;
-        writer << indent_ << "<vertices>" << viennagrid::vertices(mesh).size() << "</vertices>" << std::endl;
-        writer << indent_ << "<cells>" << viennagrid::cells(mesh).size() << "</cells>" << std::endl;
+        writer << indent_ << "<vertices>" << viennagrid::vertices(mesh_obj).size() << "</vertices>" << std::endl;
+        writer << indent_ << "<cells>" << viennagrid::cells(mesh_obj).size() << "</cells>" << std::endl;
         writer << indent_ << "<segments>" << segmentation.size() << "</segments>" << std::endl;
         writer << indent_ << "<segmentation>" << std::endl;
         for (typename SegmentationType::const_iterator it = segmentation.begin(); it != segmentation.end(); ++it)

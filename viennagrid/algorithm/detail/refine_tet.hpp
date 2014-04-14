@@ -2057,9 +2057,10 @@ namespace viennagrid
       /** @brief Public entry function for the refinement of a tetrahedron.
        *
        * @param element_in                        The tetrahedron to be refined
-       * @param element_vertices                       The mesh or segment the refined tetrahedra are written to
+       * @param mesh                              The mesh of which element_in is part of
+       * @param element_vertices                  The mesh or segment the refined tetrahedra are written to
        * @param edge_refinement_flag_accessor     Accessor storing flags if an edge is marked for refinement
-       * @param vertex_copy_map_  Temporary accessor for vertex to vertex mapping
+       * @param vertex_copy_map_                  Temporary accessor for vertex to vertex mapping
        * @param edge_to_vertex_handle_accessor    Temporary accessor for refined edge to vertex mapping
        */
       template<typename ElementType,

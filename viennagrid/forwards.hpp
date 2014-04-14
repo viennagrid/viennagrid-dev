@@ -1811,7 +1811,7 @@ namespace viennagrid
     * @param  input_mesh                  The mesh or segment object where the original elements live
     * @param  begin                       The begin of element handle the iterator range of element to be copied
     * @param  end                         The end of the element handle iterator range of element to be copied
-    * @param  mesh_segment                The mesh or segment object where the elements are copied to
+    * @param  output_mesh                 The mesh or segment object where the elements are copied to
     */
   template<typename InputMeshOrSegmentHandleT, typename ElementHandleIteratorT, typename OutputMeshOrSegmentHandleT>
   void copy_element_handles(InputMeshOrSegmentHandleT const & input_mesh,

@@ -1355,10 +1355,10 @@ namespace viennagrid
 
   /** @brief Function which finds an element based on an element. The runtime of this function depends on the container but can likely be linear in the number of elements of the requested type in the mesh.
     *
-    * @tparam MeshSegmentHandleT          Host mesh/segment type
+    * @tparam MeshSegmentHandleT      Host mesh/segment type
     * @tparam IDT                     ID type of the object to be found
-    * @param  mesh_or_segment       Host mesh/segment object
-    * @param  id                      id of the object to be found
+    * @param  mesh_or_segment         Host mesh/segment object
+    * @param  element                 The mesh element (cell, vertex, etc.) to be found
     * @return                         An iterator pointing to the found element. If no element was found it points to viennagrid::elements<ElementType>(mesh_or_segment).end()
     */
   template<typename MeshSegmentHandleT, typename ElementTagT, typename WrappedConfigT>
@@ -1370,10 +1370,10 @@ namespace viennagrid
 
   /** @brief Function which finds an element based on an element, const version. The runtime of this function depends on the container but can likely be linear in the number of elements of the requested type in the mesh.
     *
-    * @tparam MeshSegmentHandleT          Host mesh/segment type
+    * @tparam MeshSegmentHandleT      Host mesh/segment type
     * @tparam IDT                     ID type of the object to be found
-    * @param  mesh_or_segment       Host mesh/segment object
-    * @param  id                      id of the object to be found
+    * @param  mesh_or_segment         Host mesh/segment object
+    * @param  element                 The mesh element (cell, vertex, etc.) to be found
     * @return                         An iterator pointing to the found element. If no element was found it points to viennagrid::elements<ElementType>(mesh_or_segment).end()
     */
   template<typename MeshSegmentHandleT, typename ElementTagT, typename WrappedConfigT>

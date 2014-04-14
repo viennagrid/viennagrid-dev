@@ -57,7 +57,7 @@ namespace viennagrid
        * @param seed_points   A container for seed points, output parameter
        */
       template <typename MeshT>
-      int operator()(MeshT & mesh, std::string const & filename,
+      int operator()(MeshT & mesh_obj, std::string const & filename,
                      std::vector< std::pair<typename viennagrid::result_of::point<MeshT>::type, int> > & seed_points) const
       {
         typedef typename viennagrid::result_of::point<MeshT>::type           PointType;
@@ -121,7 +121,7 @@ namespace viennagrid
               for (int j = 0; j < std::min(point_dim,3); ++j)
                 current_line >> p[j];
 
-              vertices[vertex_id] = viennagrid::make_vertex(mesh, p);
+              vertices[vertex_id] = viennagrid::make_vertex(mesh_obj, p);
             }
           }
 
@@ -163,7 +163,7 @@ namespace viennagrid
                   plc_line_handles.push_back( lit->second );
                 else
                 {
-                  LineHandleType l = viennagrid::make_line( mesh, vertices[line.first], vertices[line.second] );
+                  LineHandleType l = viennagrid::make_line( mesh_obj, vertices[line.first], vertices[line.second] );
                   lines[line] = l;
                   plc_line_handles.push_back(l);
                 }
@@ -179,7 +179,7 @@ namespace viennagrid
                   plc_line_handles.push_back( lit->second );
                 else
                 {
-                  LineHandleType l = viennagrid::make_line( mesh, vertices[line.first], vertices[line.second] );
+                  LineHandleType l = viennagrid::make_line( mesh_obj, vertices[line.first], vertices[line.second] );
                   lines[line] = l;
                   plc_line_handles.push_back(l);
                 }
@@ -187,7 +187,7 @@ namespace viennagrid
 
 
 
-              viennagrid::make_plc( mesh, plc_line_handles.begin(), plc_line_handles.end() );
+              viennagrid::make_plc( mesh_obj, plc_line_handles.begin(), plc_line_handles.end() );
 
               std::getline(reader, tmp);
               std::getline(reader, tmp);

@@ -336,10 +336,11 @@ namespace viennagrid
 
       /** @brief Public entry function for the refinement of a triangle.
        *
-       * @param element_in       The triangle to be refined
-       * @param elements_vertices   The mesh or segment the refined triangles are written to
+       * @param element_in                        The triangle to be refined
+       * @param mesh                              The mesh of which element_in is part of
+       * @param elements_vertices                 The mesh or segment the refined triangles are written to
        * @param edge_refinement_flag_accessor     Accessor storing flags if an edge is marked for refinement
-       * @param vertex_copy_map_  Temporary accessor for vertex to vertex mapping
+       * @param vertex_copy_map_                  Temporary accessor for vertex to vertex mapping
        * @param edge_to_vertex_handle_accessor    Temporary accessor for refined edge to vertex mapping
        */
       template<typename ElementT, typename MeshT,
