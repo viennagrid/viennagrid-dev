@@ -14,6 +14,8 @@
 ======================================================================= */
 
 #include <limits>
+#include <string>
+#include <sstream>
 
 #include "viennagrid/forwards.hpp"
 #include "viennagrid/mesh/mesh.hpp"
@@ -50,7 +52,12 @@ namespace viennagrid
     segment_handle( segmentation_type & segmentation_x,
                 view_type & view_x,
                 segment_id_type const & segment_id_) :
-        segmentation_(&segmentation_x), view_(&view_x), segment_id(segment_id_) {}
+        segmentation_(&segmentation_x), view_(&view_x), segment_id(segment_id_)
+        {
+          std::stringstream ss;
+          ss << segment_id;
+          set_name(ss.str());
+        }
 
   public:
 
@@ -59,6 +66,30 @@ namespace viennagrid
       * @return   ID of the segment
       */
     segment_id_type const & id() const { return segment_id; }
+
+    /** @brief Returns the name of the segment
+      *
+      * @return   name of the segment
+      */
+    std::string const & name() const { return name_; }
+
+    /** @brief Set the name of this segment. Returns false if the name is already present, true on success
+      *
+      * @param new_name   The new name of the segment
+      * @return           Returns false if the name is already present, true on success
+      */
+    bool set_name( std::string const & new_name )
+    {
+      // name is already present
+      if (parent().segment_name_map.find(new_name) != parent().segment_name_map.end())
+        return false;
+
+      parent().segment_name_map.erase(name_);
+      parent().segment_name_map[new_name] = this;
+
+      return true;
+    }
+
 
     /** @brief Returns the segmentation in which the segment lives
       *
@@ -105,6 +136,7 @@ namespace viennagrid
     view_type * view_;
 
     segment_id_type segment_id;
+    std::string name_;
   };
 
   /** @brief Completely clears a segmentation
@@ -431,29 +463,52 @@ namespace viennagrid
   }
 
 
-  /** @brief Provides an exception for the case a segment cannot be found */
-  class segment_not_found_exception : public std::exception
+  /** @brief Provides an exception for the case a segment id cannot be found */
+  class segment_id_not_found_exception : public std::exception
   {
     public:
       virtual const char* what() const throw()
       {
         std::stringstream ss;
-        ss << "* ViennaGrid: Cannot find segment  " << id_ << "!";
+        ss << "* ViennaGrid: Cannot find segment with ID " << id_ << "!";
         return ss.str().c_str();
       }
 
-      segment_not_found_exception(long id) : id_(id) {}
+      segment_id_not_found_exception(long id) : id_(id) {}
 
-      virtual ~segment_not_found_exception() throw() {}
+      virtual ~segment_id_not_found_exception() throw() {}
 
     private:
       long id_;
   };
 
+
+  /** @brief Provides an exception for the case a segment name cannot be found */
+  class segment_name_not_found_exception : public std::exception
+  {
+    public:
+      virtual const char* what() const throw()
+      {
+        std::stringstream ss;
+        ss << "* ViennaGrid: Cannot find segment  " << name_ << "!";
+        return ss.str().c_str();
+      }
+
+      segment_name_not_found_exception(std::string const & name) : name_(name) {}
+
+      virtual ~segment_name_not_found_exception() throw() {}
+
+    private:
+      std::string name_;
+  };
+
+
   /** @brief A segmentation is a logical decomposition of the mesh (or a subset thereof) into segments. Segments may overlap. */
   template<typename WrappedConfigType>
   class segmentation
   {
+    friend class segment_handle< segmentation<WrappedConfigType> >;
+
   public:
 
     /** @brief The mesh type to which the segmentation references */
@@ -477,6 +532,8 @@ namespace viennagrid
     typedef typename viennagrid::result_of::container< view_type, view_container_tag >::type view_container_type;
     /** @brief For internal use only */
     typedef std::map<segment_id_type, segment_handle_type> segment_id_map_type;
+    /** @brief For internal use only */
+    typedef std::map<std::string, segment_handle_type *> segment_name_map_type;
 
 
     /** @brief Constructor
@@ -534,9 +591,9 @@ namespace viennagrid
       */
     segment_handle_type & get_segment( segment_id_type const & segment_id )
     {
-        typename segment_id_map_type::iterator it = segment_id_map.find(segment_id);
-        assert( it != segment_id_map.end() );
-        return it->second; // segment already is present
+      typename segment_id_map_type::iterator it = segment_id_map.find(segment_id);
+      assert( it != segment_id_map.end() );
+      return it->second; // segment already is present
     }
 
     /** @brief Returns the segment with the given ID, will fail if no segment with segment_id is present
@@ -546,10 +603,39 @@ namespace viennagrid
       */
     segment_handle_type const & get_segment( segment_id_type const & segment_id ) const
     {
-        typename segment_id_map_type::const_iterator it = segment_id_map.find(segment_id);
-        assert( it != segment_id_map.end() );
-        return it->second; // segment already is present
+      typename segment_id_map_type::const_iterator it = segment_id_map.find(segment_id);
+      assert( it != segment_id_map.end() );
+      return it->second; // segment already is present
     }
+
+    /** @brief Returns the segment with the given name, will fail if no segment with segment_id is present
+      *
+      * @param segment_id   The name of the segment to search
+      * @return             A const reference to the segment with the given name
+      */
+    segment_handle_type & get_segment( std::string const & segment_name )
+    {
+      typename segment_name_map_type::iterator it = segment_name_map.find(segment_name);
+      assert( it != segment_name_map.end() );
+      return *(it->second); // segment already is present
+    }
+
+    /** @brief Returns the segment with the given name, will fail if no segment with segment_id is present
+      *
+      * @param segment_id   The name of the segment to search
+      * @return             A const reference to the segment with the given name
+      */
+    segment_handle_type const & get_segment( std::string const & segment_name ) const
+    {
+      typename segment_name_map_type::const_iterator it = segment_name_map.find(segment_name);
+      assert( it != segment_name_map.end() );
+      return *(it->second); // segment already is present
+    }
+
+
+
+
+
 
     /** @brief Returns the segment with the given ID, will create a new segment if no segment with the given ID is present
       *
@@ -558,26 +644,47 @@ namespace viennagrid
       */
     segment_handle_type & get_make_segment( segment_id_type const & segment_id )
     {
-        typename segment_id_map_type::iterator it = segment_id_map.find(segment_id);
+      typename segment_id_map_type::iterator it = segment_id_map.find(segment_id);
 
-        if (it != segment_id_map.end())
-            return it->second; // segment already is present
+      if (it != segment_id_map.end())
+          return it->second; // segment already is present
 
-        view_segments.push_back( viennagrid::make_view( mesh() ) );
+      view_segments.push_back( viennagrid::make_view( mesh() ) );
 
-        segment_handle_type segment( *this, view_segments.back(), segment_id );
+      segment_handle_type segment( *this, view_segments.back(), segment_id );
 
-        if ( highest_id < segment_id )
-            highest_id = segment_id;
+      if ( highest_id < segment_id )
+          highest_id = segment_id;
 
-        return (segment_id_map.insert( std::make_pair(segment_id, segment) ).first)->second;
+      return (segment_id_map.insert( std::make_pair(segment_id, segment) ).first)->second;
     }
+
+    /** @brief Returns the segment with the given ID, will create a new segment if no segment with the given ID is present
+      *
+      * @param segment_id   The ID of the segment to search
+      * @return             A reference to the segment with the given ID
+      */
+    segment_handle_type & get_make_segment( std::string const & segment_name )
+    {
+      typename segment_name_map_type::iterator it = segment_name_map.find(segment_name);
+
+      if (it != segment_name_map.end())
+          return *(it->second); // segment already is present
+
+      segment_handle_type & segment = make_segment();
+      segment.set_name(segment_name);
+      return segment;
+    }
+
+
 
     /** @brief Creates a new segment with an automatic assigned ID
       *
       * @return             A reference to newly created segment
       */
     segment_handle_type & make_segment() { return get_make_segment( ++highest_id ); }
+
+
 
     /** @brief Calls get_make_segment with segment_id
       *
@@ -611,11 +718,57 @@ namespace viennagrid
       */
     segment_handle_type const & at( segment_id_type const & segment_id ) const
     {
-        typename segment_id_map_type::const_iterator it = segment_id_map.find(segment_id);
-        if( it == segment_id_map.end() )
-          throw viennagrid::segment_not_found_exception(segment_id);
-        return it->second;
+      typename segment_id_map_type::const_iterator it = segment_id_map.find(segment_id);
+      if( it == segment_id_map.end() )
+        throw viennagrid::segment_id_not_found_exception(segment_id);
+      return it->second;
     }
+
+
+
+
+    /** @brief Calls get_make_segment with segment_name
+      *
+      * @param segment_name   The name of the segment to search
+      * @return               A reference to newly created segment
+      */
+    segment_handle_type & operator()( std::string const & segment_name ) { return get_make_segment(segment_name); }
+    /** @brief Calls get_make_segment with segment_name
+      *
+      * @param segment_name   The name of the segment to search
+      * @return               A reference to newly created segment
+      */
+    segment_handle_type & operator[]( std::string const & segment_name ) { return get_make_segment(segment_name); }
+
+    /** @brief Calls get_segment with segment_name
+      *
+      * @param segment_name   The name of the segment to search
+      * @return               A const reference to newly created segment
+      */
+    segment_handle_type const & operator()( std::string const & segment_name ) const { return get_segment(segment_name); }
+    /** @brief Calls get_segment with segment_name
+      *
+      * @param segment_name   The name of the segment to search
+      * @return               A const reference to newly created segment
+      */
+    segment_handle_type const & operator[]( std::string const & segment_name ) const { return get_segment(segment_name); }
+    /** @brief Returns segment with segment_name. Throws
+      *
+      * @param segment_name   The name of the segment to search
+      * @return               A const reference to newly created segment
+      */
+    segment_handle_type const & at( std::string const & segment_name ) const
+    {
+      typename segment_name_map_type::const_iterator it = segment_name_map.find(segment_name);
+      if( it == segment_name_map.end() )
+        throw viennagrid::segment_name_not_found_exception(segment_name);
+      return it->second;
+    }
+
+
+
+
+
 
     /** @brief Returns the heighest segment ID
       *
@@ -741,6 +894,7 @@ namespace viennagrid
 
     segment_id_type highest_id;
     segment_id_map_type segment_id_map;
+    segment_name_map_type segment_name_map;
 
     view_container_type view_segments;
 
