@@ -141,7 +141,7 @@ namespace viennagrid
        * @param filename        Name of the file
        */
       template <typename MeshT, typename SegmentationT>
-      int operator()(MeshT const & mesh, SegmentationT const & segmentation, std::string const & filename) const
+      void operator()(MeshT const & mesh, SegmentationT const & segmentation, std::string const & filename) const
       {
         typedef typename viennagrid::result_of::point<MeshT>::type PointType;
         typedef typename viennagrid::result_of::vertex_id<MeshT>::type VertexIDType;
@@ -368,8 +368,6 @@ namespace viennagrid
 
         writer << "\n";
         writer << "0\n";
-
-        return EXIT_SUCCESS;
       }
 
 

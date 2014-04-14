@@ -881,7 +881,7 @@ namespace viennagrid
        * @param segmentation  The segmentation to which the file content is read
        * @param filename      Name of the file containing the mesh. Either .pvd (multi-segment) or .vtu (single segment)
        */
-      int operator()(MeshType & mesh_obj, SegmentationType & segmentation, std::string const & filename)
+      void operator()(MeshType & mesh_obj, SegmentationType & segmentation, std::string const & filename)
       {
         pre_clear();
 
@@ -898,11 +898,13 @@ namespace viennagrid
         }
         else
         {
-          std::cerr << "Error: vtk-reader does not support file extension: " << extension << std::endl;
-          std::cerr << "       the vtk-reader supports: " << std::endl;
-          std::cerr << "       *.vtu -- single-segment meshs" << std::endl;
-          std::cerr << "       *.pvd -- multi-segment meshs" << std::endl;
-          return EXIT_FAILURE;
+          std::stringstream ss;
+          ss << "Error: vtk-reader does not support file extension: " << extension << "\n";
+          ss << "       the vtk-reader supports: \n";
+          ss << "       *.vtu -- single-segment meshs\n";
+          ss << "       *.pvd -- multi-segment meshs\n";
+
+          throw bad_file_format_exception(filename, ss.str());
         }
 
         //
@@ -923,8 +925,6 @@ namespace viennagrid
         }
 
         post_clear();
-
-        return EXIT_SUCCESS;
       } //operator()
 
 
@@ -933,10 +933,10 @@ namespace viennagrid
        * @param mesh_obj      The mesh to which the file content is read
        * @param filename      Name of the file containing the mesh. Either .pvd (multi-segment) or .vtu (single segment)
        */
-      int operator()(MeshType & mesh_obj, std::string const & filename)
+      void operator()(MeshType & mesh_obj, std::string const & filename)
       {
         SegmentationType tmp(mesh_obj);
-        return (*this)(mesh_obj, tmp, filename);
+        (*this)(mesh_obj, tmp, filename);
       }
 
 

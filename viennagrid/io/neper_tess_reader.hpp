@@ -57,7 +57,7 @@ namespace viennagrid
        * @param seed_points   A container for seed points, output parameter
        */
       template <typename MeshT>
-      int operator()(MeshT & mesh_obj, std::string const & filename,
+      void operator()(MeshT & mesh_obj, std::string const & filename,
                      std::vector< std::pair<typename viennagrid::result_of::point<MeshT>::type, int> > & seed_points) const
       {
         typedef typename viennagrid::result_of::point<MeshT>::type           PointType;
@@ -79,7 +79,6 @@ namespace viennagrid
         if (!reader)
         {
           throw cannot_open_file_exception(filename);
-          return EXIT_FAILURE;
         }
 
         seed_points.clear();
@@ -222,12 +221,7 @@ namespace viennagrid
             }
           }
 
-
-
-
         }
-
-        return EXIT_SUCCESS;
       } //operator()
 
     }; //class tetgen_poly_reader

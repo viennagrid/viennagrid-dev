@@ -71,12 +71,12 @@ namespace viennagrid
        * @param filename      Name of the file
        */
       template <typename MeshT>
-      int operator()(MeshT & mesh_obj, std::string const & filename) const
+      void operator()(MeshT & mesh_obj, std::string const & filename) const
       {
         std::vector< typename viennagrid::result_of::point<MeshT>::type > hole_points;
         std::vector< std::pair<typename viennagrid::result_of::point<MeshT>::type, int> > seed_points;
 
-        return (*this)(mesh_obj, filename, hole_points, seed_points);
+        (*this)(mesh_obj, filename, hole_points, seed_points);
       }
 
       /** @brief The functor interface triggering the read operation. Segmentations are not supported in this version.
@@ -86,11 +86,11 @@ namespace viennagrid
        * @param hole_points   A container for hole points, output parameter
        */
       template <typename MeshT>
-      int operator()(MeshT & mesh_obj, std::string const & filename,
+      void operator()(MeshT & mesh_obj, std::string const & filename,
                      std::vector< typename viennagrid::result_of::point<MeshT>::type > & hole_points) const
       {
         std::vector< std::pair<typename viennagrid::result_of::point<MeshT>::type, int> > seed_points;
-        return (*this)(mesh_obj, filename, hole_points, seed_points);
+        (*this)(mesh_obj, filename, hole_points, seed_points);
       }
 
       /** @brief The functor interface triggering the read operation. Segmentations are not supported in this version.
@@ -100,12 +100,12 @@ namespace viennagrid
        * @param seed_points   A container for seed points, output parameter
        */
       template <typename MeshT>
-      int operator()(MeshT & mesh_obj, std::string const & filename,
+      void operator()(MeshT & mesh_obj, std::string const & filename,
                      std::vector< std::pair<typename viennagrid::result_of::point<MeshT>::type, int> > & seed_points) const
       {
         std::vector< typename viennagrid::result_of::point<MeshT>::type > hole_points;
 
-        return (*this)(mesh_obj, filename, hole_points, seed_points);
+        (*this)(mesh_obj, filename, hole_points, seed_points);
       }
 
       /** @brief The functor interface triggering the read operation. Segmentations are not supported in this version.
@@ -116,7 +116,7 @@ namespace viennagrid
        * @param seed_points   A container for seed points, output parameter
        */
       template <typename MeshT>
-      int operator()(MeshT & mesh_obj, std::string const & filename,
+      void operator()(MeshT & mesh_obj, std::string const & filename,
                      std::vector< typename viennagrid::result_of::point<MeshT>::type > & hole_points,
                      std::vector< std::pair<typename viennagrid::result_of::point<MeshT>::type, int> > & seed_points) const
       {
@@ -139,7 +139,6 @@ namespace viennagrid
         if (!reader)
         {
           throw cannot_open_file_exception(filename);
-          return EXIT_FAILURE;
         }
 
         hole_points.clear();
@@ -320,7 +319,7 @@ namespace viennagrid
         if (!get_valid_line(reader, tmp))
         {
           // no holes -> Okay, SUCCESS xD
-          return EXIT_SUCCESS;
+          return;
         }
 
         current_line.str(tmp); current_line.clear();
@@ -354,7 +353,7 @@ namespace viennagrid
         if (!get_valid_line(reader, tmp))
         {
           // no region -> SUCCESS xD
-          return EXIT_SUCCESS;
+          return;
         }
 
         current_line.str(tmp); current_line.clear();
@@ -382,8 +381,6 @@ namespace viennagrid
 
           seed_points.push_back( std::make_pair(seed_point, segment_id) );
         }
-
-        return EXIT_SUCCESS;
       } //operator()
 
     }; //class tetgen_poly_reader

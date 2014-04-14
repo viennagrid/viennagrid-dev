@@ -397,7 +397,7 @@ namespace viennagrid
        * @param mesh_obj   The ViennaGrid mesh.
        * @param filename   The file to write to
        */
-      int operator()(MeshType const & mesh_obj, std::string const & filename)
+      void operator()(MeshType const & mesh_obj, std::string const & filename)
       {
           std::stringstream ss;
           ss << filename << ".vtu";
@@ -406,7 +406,6 @@ namespace viennagrid
           if (!writer){
             throw cannot_open_file_exception(filename);
             clear();
-            return EXIT_FAILURE;
           }
 
           writeHeader(writer);
@@ -453,7 +452,6 @@ namespace viennagrid
           writeFooter(writer);
 
         clear();
-        return EXIT_SUCCESS;
       }
 
       /** @brief Triggers the write process to a XML file. Make sure that all data to be written to the file is already passed to the writer
@@ -462,7 +460,7 @@ namespace viennagrid
        * @param segmentation  The ViennaGrid segmentation.
        * @param filename      The file to write to
        */
-      int operator()(MeshType const & mesh_obj, SegmentationType const & segmentation, std::string const & filename)
+      void operator()(MeshType const & mesh_obj, SegmentationType const & segmentation, std::string const & filename)
       {
           if (segmentation.size() <= 1) return (*this)(mesh_obj, filename);
 
@@ -483,9 +481,8 @@ namespace viennagrid
               short_filename = filename.substr(pos+1, filename.size());
 
             if (!writer){
-              throw cannot_open_file_exception(filename);
               clear();
-              return EXIT_FAILURE;
+              throw cannot_open_file_exception(filename);
             }
 
             writer << "<?xml version=\"1.0\"?>" << std::endl;
@@ -520,7 +517,6 @@ namespace viennagrid
             {
               clear();
               throw cannot_open_file_exception(ss.str());
-              return EXIT_FAILURE;
             }
 
             unsigned int num_points = preparePoints(seg, seg.id());
@@ -585,7 +581,6 @@ namespace viennagrid
           }
 
         clear();
-        return EXIT_SUCCESS;
       }
 
 

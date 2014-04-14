@@ -44,7 +44,7 @@ namespace viennagrid
        * @param filename      Name of the file
        */
       template <typename MeshType, typename SegmentationType>
-      int operator()(MeshType & mesh_obj, SegmentationType & segmentation, std::string const & filename) const
+      void operator()(MeshType & mesh_obj, SegmentationType & segmentation, std::string const & filename) const
       {
         typedef typename viennagrid::result_of::point<MeshType>::type    PointType;
 
@@ -65,7 +65,6 @@ namespace viennagrid
         if (!reader)
         {
           throw cannot_open_file_exception(filename);
-          return EXIT_FAILURE;
         }
 
         std::string token;
@@ -135,8 +134,6 @@ namespace viennagrid
 
           viennagrid::make_element_with_id<CellType>(segmentation[segment_index], cell_vertex_handles.begin(), cell_vertex_handles.end(), typename CellType::id_type(i));
         }
-
-        return EXIT_SUCCESS;
       } //operator()
 
 
@@ -146,11 +143,11 @@ namespace viennagrid
        * @param filename      Name of the file
        */
       template <typename MeshType>
-      int operator()(MeshType & mesh_obj, std::string const & filename)
+      void operator()(MeshType & mesh_obj, std::string const & filename)
       {
         typedef typename viennagrid::result_of::segmentation<MeshType>::type SegmentationType;
         SegmentationType tmp(mesh_obj);
-        return (*this)(mesh_obj, tmp, filename);
+        (*this)(mesh_obj, tmp, filename);
       }
 
     }; //class netgen_reader

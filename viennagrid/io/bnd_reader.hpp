@@ -29,7 +29,7 @@ namespace viennagrid
        * @param filename          Name of the file
        */
       template <typename MeshT, typename SegmentationT>
-      int operator()(MeshT & mesh, SegmentationT & segmentation, std::string const & filename) const
+      void operator()(MeshT & mesh, SegmentationT & segmentation, std::string const & filename) const
       {
         typedef typename viennagrid::result_of::point<MeshT>::type PointType;
         typedef typename viennagrid::result_of::vertex_handle<MeshT>::type VertexHandleType;
@@ -48,10 +48,10 @@ namespace viennagrid
 
         BNDReaderType bnd;
         if (bnd(filename) != EXIT_SUCCESS)
-          return EXIT_FAILURE;
+          throw bad_file_format_exception(filename, "BND reading error");
 
         if ( mesh_dimension != bnd.dim_geom() )
-          return EXIT_FAILURE;
+          throw bad_file_format_exception(filename, "Geometric dimension mismatch.");
 
 
         std::map<BNDIndexType, VertexHandleType> vertices;
@@ -72,8 +72,10 @@ namespace viennagrid
 
             if ((num_vertices > 0) && (num_vertices != polygon.size()))
             {
-              std::cout << "ERROR: polygon " << poly_pos << " has " << polygon.size() << " vertices but should have " << num_vertices << std::endl;
-              return EXIT_FAILURE;
+              std::stringstream ss;
+              ss << "ERROR: polygon " << poly_pos << " has " << polygon.size() << " vertices but should have " << num_vertices << std::endl;
+
+              throw bad_file_format_exception(filename, ss.str());
             }
 
 
@@ -111,8 +113,6 @@ namespace viennagrid
             }
           }
         }
-
-        return EXIT_SUCCESS;
       }
 
 

@@ -111,7 +111,7 @@ namespace viennagrid
          * @param mesh_obj  A ViennaGrid mesh
          * @param filename  Name of the file
          */
-        int operator()(MeshType const & mesh_obj, std::string const & filename)
+        void operator()(MeshType const & mesh_obj, std::string const & filename)
         {
           typedef DXHelper<geometric_dim>  DXHelper;
 
@@ -119,7 +119,6 @@ namespace viennagrid
           if (!writer.is_open())
           {
             throw cannot_open_file_exception(filename);
-            return EXIT_FAILURE;
           }
 
           std::size_t pointnum = viennagrid::elements<vertex_tag>(mesh_obj).size();
@@ -202,9 +201,6 @@ namespace viennagrid
           writer << "component \"data\" \"VisData\" " << std::endl;
           writer << "component \"positions\" \"points\"" << std::endl;
           writer << "component \"connections\" \"grid_Line_One\"" << std::endl;
-
-          return EXIT_SUCCESS;
-
         } // operator()
 
 
