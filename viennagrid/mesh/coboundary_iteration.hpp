@@ -52,6 +52,7 @@ namespace viennagrid
 
 
 
+
   namespace detail
   {
     template<typename ElementTypeOrTagT, typename CoboundaryTypeOrTagT, typename ContainerT>
@@ -62,10 +63,21 @@ namespace viennagrid
       coboundary_range_wrapper(container_range_wrapper<ContainerT> const & base) : container_range_wrapper<ContainerT>(base) {}
 
       template<typename WrappedConfigT, typename ElementOrHandleT>
-      coboundary_range_wrapper(viennagrid::mesh<WrappedConfigT> & mesh_obj, ElementOrHandleT const & element_or_handle) : container_range_wrapper<ContainerT>(viennagrid::coboundary_elements<ElementTypeOrTagT, CoboundaryTypeOrTagT>(mesh_obj, element_or_handle)) {}
+      coboundary_range_wrapper(viennagrid::mesh<WrappedConfigT> & mesh_obj,
+                               ElementOrHandleT const & element_or_handle) : container_range_wrapper<ContainerT>(viennagrid::coboundary_elements<ElementTypeOrTagT, CoboundaryTypeOrTagT>(mesh_obj, element_or_handle)) {}
 
       template<typename SegmentationT, typename ElementOrHandleT>
-      coboundary_range_wrapper(viennagrid::segment_handle<SegmentationT> & segment_obj, ElementOrHandleT const & element_or_handle) : container_range_wrapper<ContainerT>(viennagrid::coboundary_elements<ElementTypeOrTagT, CoboundaryTypeOrTagT>(segment_obj, element_or_handle)) {}
+      coboundary_range_wrapper(viennagrid::segment_handle<SegmentationT> & segment_obj,
+                               ElementOrHandleT const & element_or_handle) : container_range_wrapper<ContainerT>(viennagrid::coboundary_elements<ElementTypeOrTagT, CoboundaryTypeOrTagT>(segment_obj, element_or_handle)) {}
+
+
+      template<typename WrappedConfigT, typename ElementTagT, typename WrappedElementConfigT>
+      coboundary_range_wrapper(viennagrid::mesh<WrappedConfigT> & mesh_obj,
+                               viennagrid::element<ElementTagT, WrappedElementConfigT> & element) : container_range_wrapper<ContainerT>(viennagrid::coboundary_elements<ElementTypeOrTagT, CoboundaryTypeOrTagT>(mesh_obj,  viennagrid::handle(mesh_obj, element))) {}
+
+      template<typename SegmentationT, typename ElementTagT, typename WrappedElementConfigT>
+      coboundary_range_wrapper(viennagrid::segment_handle<SegmentationT> & segment_obj,
+                               viennagrid::element<ElementTagT, WrappedElementConfigT> & element) : container_range_wrapper<ContainerT>(viennagrid::coboundary_elements<ElementTypeOrTagT, CoboundaryTypeOrTagT>(segment_obj, viennagrid::handle(segment_obj, element))) {}
     };
 
     template<typename ElementTypeOrTagT, typename CoboundaryTypeOrTagT, typename ContainerT>
@@ -76,10 +88,21 @@ namespace viennagrid
       coboundary_range_wrapper(container_range_wrapper<const ContainerT> const & base) : container_range_wrapper<const ContainerT>(base) {}
 
       template<typename WrappedConfigT, typename ElementOrHandleT>
-      coboundary_range_wrapper(viennagrid::mesh<WrappedConfigT> const & mesh_obj, ElementOrHandleT const & element_or_handle) : container_range_wrapper<const ContainerT>(viennagrid::coboundary_elements<ElementTypeOrTagT, CoboundaryTypeOrTagT>(mesh_obj, element_or_handle)) {}
+      coboundary_range_wrapper(viennagrid::mesh<WrappedConfigT> const & mesh_obj,
+                               ElementOrHandleT const & element_or_handle) : container_range_wrapper<const ContainerT>(viennagrid::coboundary_elements<ElementTypeOrTagT, CoboundaryTypeOrTagT>(mesh_obj, element_or_handle)) {}
 
       template<typename SegmentationT, typename ElementOrHandleT>
-      coboundary_range_wrapper(viennagrid::segment_handle<SegmentationT> const & segment_obj, ElementOrHandleT const & element_or_handle) : container_range_wrapper<const ContainerT>(viennagrid::coboundary_elements<ElementTypeOrTagT, CoboundaryTypeOrTagT>(segment_obj, element_or_handle)) {}
+      coboundary_range_wrapper(viennagrid::segment_handle<SegmentationT> const & segment_obj,
+                               ElementOrHandleT const & element_or_handle) : container_range_wrapper<const ContainerT>(viennagrid::coboundary_elements<ElementTypeOrTagT, CoboundaryTypeOrTagT>(segment_obj, element_or_handle)) {}
+
+
+      template<typename WrappedConfigT, typename ElementTagT, typename WrappedElementConfigT>
+      coboundary_range_wrapper(viennagrid::mesh<WrappedConfigT> const & mesh_obj,
+                               viennagrid::element<ElementTagT, WrappedElementConfigT> const & element) : container_range_wrapper<const ContainerT>(viennagrid::coboundary_elements<ElementTypeOrTagT, CoboundaryTypeOrTagT>(mesh_obj, viennagrid::handle(mesh_obj, element))) {}
+
+      template<typename SegmentationT, typename ElementTagT, typename WrappedElementConfigT>
+      coboundary_range_wrapper(viennagrid::segment_handle<SegmentationT> const & segment_obj,
+                               viennagrid::element<ElementTagT, WrappedElementConfigT> const & element) : container_range_wrapper<const ContainerT>(viennagrid::coboundary_elements<ElementTypeOrTagT, CoboundaryTypeOrTagT>(segment_obj, viennagrid::handle(segment_obj, element))) {}
     };
   }
 
@@ -261,7 +284,7 @@ namespace viennagrid
 
 
     /** @brief For internal use only */
-    template<typename element_type_or_tag, typename coboundary_type_or_tag, typename coboundary_accessor_type, typename ElementTag, typename WrappedConfigType>
+    template<typename ElementTypeOrTagT, typename coboundary_type_or_tag, typename coboundary_accessor_type, typename ElementTag, typename WrappedConfigType>
     viennagrid::detail::container_range_wrapper<typename coboundary_accessor_type::value_type>
     coboundary_elements(coboundary_accessor_type accessor, viennagrid::element<ElementTag, WrappedConfigType> & element)
     {
@@ -270,7 +293,7 @@ namespace viennagrid
     }
 
     /** @brief For internal use only */
-    template<typename element_type_or_tag, typename coboundary_type_or_tag, typename coboundary_accessor_type, typename ElementTag, typename WrappedConfigType>
+    template<typename ElementTypeOrTagT, typename coboundary_type_or_tag, typename coboundary_accessor_type, typename ElementTag, typename WrappedConfigType>
     viennagrid::detail::container_range_wrapper<const typename coboundary_accessor_type::value_type>
     coboundary_elements(coboundary_accessor_type const accessor, viennagrid::element<ElementTag, WrappedConfigType> const & element)
     {

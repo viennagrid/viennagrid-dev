@@ -60,10 +60,21 @@ namespace viennagrid
       neighbor_range_wrapper(container_range_wrapper<ContainerT> const & base) : container_range_wrapper<ContainerT>(base) {}
 
       template<typename WrappedConfigT, typename ElementOrHandleT>
-      neighbor_range_wrapper(viennagrid::mesh<WrappedConfigT> & mesh_obj, ElementOrHandleT const & element_or_handle) : container_range_wrapper<ContainerT>(viennagrid::neighbor_elements<ElementTypeOrTagT, ConnectorElementTypeOrTagT>(mesh_obj, element_or_handle)) {}
+      neighbor_range_wrapper(viennagrid::mesh<WrappedConfigT> & mesh_obj,
+                             ElementOrHandleT const & element_or_handle) : container_range_wrapper<ContainerT>(viennagrid::neighbor_elements<ElementTypeOrTagT, ConnectorElementTypeOrTagT>(mesh_obj, element_or_handle)) {}
 
       template<typename SegmentationT, typename ElementOrHandleT>
-      neighbor_range_wrapper(viennagrid::segment_handle<SegmentationT> & segment_obj, ElementOrHandleT const & element_or_handle) : container_range_wrapper<ContainerT>(viennagrid::neighbor_elements<ElementTypeOrTagT, ConnectorElementTypeOrTagT>(segment_obj, element_or_handle)) {}
+      neighbor_range_wrapper(viennagrid::segment_handle<SegmentationT> & segment_obj,
+                             ElementOrHandleT const & element_or_handle) : container_range_wrapper<ContainerT>(viennagrid::neighbor_elements<ElementTypeOrTagT, ConnectorElementTypeOrTagT>(segment_obj, element_or_handle)) {}
+
+
+      template<typename WrappedConfigT, typename ElementTagT, typename WrappedElementConfigT>
+      neighbor_range_wrapper(viennagrid::mesh<WrappedConfigT> & mesh_obj,
+                             viennagrid::element<ElementTagT, WrappedElementConfigT> & el) : container_range_wrapper<ContainerT>(viennagrid::neighbor_elements<ElementTypeOrTagT, ConnectorElementTypeOrTagT>(mesh_obj, viennagrid::handle(mesh_obj, el))) {}
+
+      template<typename SegmentationT, typename ElementTagT, typename WrappedElementConfigT>
+      neighbor_range_wrapper(viennagrid::segment_handle<SegmentationT> & segment_obj,
+                             viennagrid::element<ElementTagT, WrappedElementConfigT> & el) : container_range_wrapper<ContainerT>(viennagrid::neighbor_elements<ElementTypeOrTagT, ConnectorElementTypeOrTagT>(segment_obj, viennagrid::handle(segment_obj, el))) {}
     };
 
     template<typename ElementTypeOrTagT, typename ConnectorElementTypeOrTagT, typename ContainerT>
@@ -74,10 +85,21 @@ namespace viennagrid
       neighbor_range_wrapper(container_range_wrapper<const ContainerT> const & base) : container_range_wrapper<const ContainerT>(base) {}
 
       template<typename WrappedConfigT, typename ElementOrHandleT>
-      neighbor_range_wrapper(viennagrid::mesh<WrappedConfigT> const & mesh_obj, ElementOrHandleT const & element_or_handle) : container_range_wrapper<const ContainerT>(viennagrid::neighbor_elements<ElementTypeOrTagT, ConnectorElementTypeOrTagT>(mesh_obj, element_or_handle)) {}
+      neighbor_range_wrapper(viennagrid::mesh<WrappedConfigT> const & mesh_obj,
+                             ElementOrHandleT const & element_or_handle) : container_range_wrapper<const ContainerT>(viennagrid::neighbor_elements<ElementTypeOrTagT, ConnectorElementTypeOrTagT>(mesh_obj, element_or_handle)) {}
 
       template<typename SegmentationT, typename ElementOrHandleT>
-      neighbor_range_wrapper(viennagrid::segment_handle<SegmentationT> const & segment_obj, ElementOrHandleT const & element_or_handle) : container_range_wrapper<const ContainerT>(viennagrid::neighbor_elements<ElementTypeOrTagT, ConnectorElementTypeOrTagT>(segment_obj, element_or_handle)) {}
+      neighbor_range_wrapper(viennagrid::segment_handle<SegmentationT> const & segment_obj,
+                             ElementOrHandleT const & element_or_handle) : container_range_wrapper<const ContainerT>(viennagrid::neighbor_elements<ElementTypeOrTagT, ConnectorElementTypeOrTagT>(segment_obj, element_or_handle)) {}
+
+
+      template<typename WrappedConfigT, typename ElementTagT, typename WrappedElementConfigT>
+      neighbor_range_wrapper(viennagrid::mesh<WrappedConfigT> const & mesh_obj,
+                             viennagrid::element<ElementTagT, WrappedElementConfigT> const & el) : container_range_wrapper<const ContainerT>(viennagrid::neighbor_elements<ElementTypeOrTagT, ConnectorElementTypeOrTagT>(mesh_obj, viennagrid::handle(mesh_obj, el))) {}
+
+      template<typename SegmentationT, typename ElementTagT, typename WrappedElementConfigT>
+      neighbor_range_wrapper(viennagrid::segment_handle<SegmentationT> const & segment_obj,
+                             viennagrid::element<ElementTagT, WrappedElementConfigT> const & el) : container_range_wrapper<const ContainerT>(viennagrid::neighbor_elements<ElementTypeOrTagT, ConnectorElementTypeOrTagT>(segment_obj, viennagrid::handle(segment_obj, el))) {}
     };
   }
 
