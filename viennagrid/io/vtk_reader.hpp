@@ -476,7 +476,7 @@ namespace viennagrid
 
       /** @brief Writes data for vertices to the ViennaGrid mesh using ViennaData */
       template <typename ContainerType>
-      void setupDataVertex(MeshType & mesh_obj, SegmentHandleType &, segment_id_type seg_id, ContainerType const & container, std::size_t num_components)
+      void setupDataVertex(MeshType & mesh_obj, SegmentHandleType & segment, segment_id_type seg_id, ContainerType const & container, std::size_t num_components)
       {
         std::string const & name = container.first;
 
