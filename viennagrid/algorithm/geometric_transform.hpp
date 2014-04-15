@@ -1,6 +1,18 @@
 #ifndef VIENNAGRID_ALGORITHM_GEOMETRIC_TRANSFORM_HPP
 #define VIENNAGRID_ALGORITHM_GEOMETRIC_TRANSFORM_HPP
 
+/* =======================================================================
+   Copyright (c) 2011-2014, Institute for Microelectronics,
+                            Institute for Analysis and Scientific Computing,
+                            TU Wien.
+
+                            -----------------
+                     ViennaGrid - The Vienna Grid Library
+                            -----------------
+
+   License:      MIT (X11), see file LICENSE in the base directory
+======================================================================= */
+
 namespace viennagrid
 {
   /** @brief Transforms all points of a mesh based on a functor

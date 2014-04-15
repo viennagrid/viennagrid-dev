@@ -1,6 +1,18 @@
 #ifndef VIENNAGRID_ALGORITHM_INCLUSION_HPP
 #define VIENNAGRID_ALGORITHM_INCLUSION_HPP
 
+/* =======================================================================
+   Copyright (c) 2011-2014, Institute for Microelectronics,
+                            Institute for Analysis and Scientific Computing,
+                            TU Wien.
+
+                            -----------------
+                     ViennaGrid - The Vienna Grid Library
+                            -----------------
+
+   License:      MIT (X11), see file LICENSE in the base directory
+======================================================================= */
+
 #include "viennagrid/algorithm/spanned_volume.hpp"
 #include "viennagrid/algorithm/detail/numeric.hpp"
 #include "viennagrid/algorithm/interval.hpp"

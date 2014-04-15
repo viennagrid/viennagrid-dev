@@ -2,7 +2,7 @@
 #define VIENNAGRID_MESH_OPERATIONS_HPP
 
 /* =======================================================================
-   Copyright (c) 2011-2013, Institute for Microelectronics,
+   Copyright (c) 2011-2014, Institute for Microelectronics,
                             Institute for Analysis and Scientific Computing,
                             TU Wien.
 
@@ -111,13 +111,13 @@ namespace viennagrid
 
     viennagrid::vertex_copy_map<SrcMeshT, DstMeshT> vertex_map(dst_mesh);
 
-    typedef typename viennagrid::result_of::cell<SrcMeshT>::type CellType;
-    typedef typename viennagrid::result_of::coord<SrcMeshT>::type NumericType;
+    //typedef typename viennagrid::result_of::cell<SrcMeshT>::type CellType;
+    //typedef typename viennagrid::result_of::coord<SrcMeshT>::type NumericType;
 
     typedef typename viennagrid::result_of::const_cell_range<SrcMeshT>::type ConstCellRangeType;
     typedef typename viennagrid::result_of::iterator<ConstCellRangeType>::type ConstCellIteratorType;
 
-    typedef typename viennagrid::result_of::cell_handle<DstMeshT>::type CellHandleType;
+    //typedef typename viennagrid::result_of::cell_handle<DstMeshT>::type CellHandleType;
 
     ConstCellRangeType cells(src_mesh);
     for (ConstCellIteratorType cit = cells.begin(); cit != cells.end(); ++cit)
@@ -145,8 +145,8 @@ namespace viennagrid
 
     viennagrid::vertex_copy_map<SrcMeshT, DstMeshT> vertex_map(dst_mesh);
 
-    typedef typename viennagrid::result_of::cell<SrcMeshT>::type CellType;
-    typedef typename viennagrid::result_of::coord<SrcMeshT>::type NumericType;
+    //typedef typename viennagrid::result_of::cell<SrcMeshT>::type CellType;
+    //typedef typename viennagrid::result_of::coord<SrcMeshT>::type NumericType;
 
     typedef typename viennagrid::result_of::const_cell_range<SrcMeshT>::type ConstCellRangeType;
     typedef typename viennagrid::result_of::iterator<ConstCellRangeType>::type ConstCellIteratorType;

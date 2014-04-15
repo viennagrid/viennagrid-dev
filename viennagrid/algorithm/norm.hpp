@@ -1,8 +1,8 @@
-#ifndef VIENNAGRID_ALGORITHM_NORM_GUARD
-#define VIENNAGRID_ALGORITHM_NORM_GUARD
+#ifndef VIENNAGRID_ALGORITHM_NORM_HPP
+#define VIENNAGRID_ALGORITHM_NORM_HPP
 
 /* =======================================================================
-   Copyright (c) 2011-2013, Institute for Microelectronics,
+   Copyright (c) 2011-2014, Institute for Microelectronics,
                             Institute for Analysis and Scientific Computing,
                             TU Wien.
 

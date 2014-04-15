@@ -22,7 +22,7 @@ build-dvi:
 	dvips -Ppdf -G0 -ta4 $(FILE).dvi 
 	
 build-pdf:
-	ps2pdf  -dPDFSETTINGS=/prepress -dCompatibilityLevel=1.3 \
+	ps2pdf -dCompatibilityLevel=1.3  \
            -dMAxSubsetPct=100 -dSubsetFonts=true \
            -dEmbedAllFonts=true -sPAPERSIZE=a4 \
            -dAutoRotatePages=/None -dOptimize=true $(FILE).ps

@@ -1,18 +1,17 @@
+#ifndef VIENNAGRID_IO_BND_HPP
+#define VIENNAGRID_IO_BND_HPP
+
 /* =======================================================================
-   Copyright (c) 2010, Institute for Microelectronics, TU Vienna.
-   http://www.iue.tuwien.ac.at
-                             -----------------
-                ViennaUtils - The Vienna Utilities Library
-                             -----------------
+   Copyright (c) 2011-2014, Institute for Microelectronics,
+                            Institute for Analysis and Scientific Computing,
+                            TU Wien.
 
-   authors:    Josef Weinbub                    weinbub@iue.tuwien.ac.at
+                            -----------------
+                     ViennaGrid - The Vienna Grid Library
+                            -----------------
 
-   license:    MIT (X11), see file LICENSE in the ViennaGrid base directory
+   License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
-
-#ifndef VIENNAUTILS_IO_BND
-#define VIENNAUTILS_IO_BND
-
 
 #include <fstream>
 #include <iostream>

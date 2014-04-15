@@ -1,8 +1,8 @@
-#ifndef VIENNAGRID_IO_VMESH_WRITER_GUARD
-#define VIENNAGRID_IO_VMESH_WRITER_GUARD
+#ifndef VIENNAGRID_IO_VMESH_WRITER_HPP
+#define VIENNAGRID_IO_VMESH_WRITER_HPP
 
 /* =======================================================================
-   Copyright (c) 2011-2013, Institute for Microelectronics,
+   Copyright (c) 2011-2014, Institute for Microelectronics,
                             Institute for Analysis and Scientific Computing,
                             TU Wien.
 

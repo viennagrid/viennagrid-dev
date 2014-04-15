@@ -17,7 +17,7 @@ A. License
 
 1. Requirements
 -----------------
-ViennaGrid requires only a not too dated C++ compiler (e.g. gcc 4.x.x), the C++ Standard Template Library and ViennaData. For building the examples, CMake can be used.
+ViennaGrid requires only a not too dated C++ compiler (e.g. gcc 4.x.x) and the C++ Standard Template Library. For building the examples, CMake can be used.
 
 
 2. Installation
