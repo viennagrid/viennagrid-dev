@@ -1,6 +1,18 @@
 #ifndef VIENNAGRID_ALGORITHM_EXTRACT_HULL_HPP
 #define VIENNAGRID_ALGORITHM_EXTRACT_HULL_HPP
 
+/* =======================================================================
+   Copyright (c) 2011-2014, Institute for Microelectronics,
+                            Institute for Analysis and Scientific Computing,
+                            TU Wien.
+
+                            -----------------
+                     ViennaGrid - The Vienna Grid Library
+                            -----------------
+
+   License:      MIT (X11), see file LICENSE in the base directory
+======================================================================= */
+
 #include "viennagrid/mesh/element_creation.hpp"
 #include "viennagrid/mesh/mesh_operations.hpp"
 #include "viennagrid/algorithm/boundary.hpp"
