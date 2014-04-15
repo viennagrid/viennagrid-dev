@@ -1,5 +1,5 @@
-#ifndef VIENNAGRID_IO_HELPER_GUARD
-#define VIENNAGRID_IO_HELPER_GUARD
+#ifndef VIENNAGRID_IO_HELPER_HPP
+#define VIENNAGRID_IO_HELPER_HPP
 
 /* =======================================================================
    Copyright (c) 2011-2014, Institute for Microelectronics,

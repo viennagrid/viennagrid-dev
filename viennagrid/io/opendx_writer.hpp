@@ -1,5 +1,5 @@
-#ifndef VIENNAGRID_IO_OPENDX_WRITER_GUARD
-#define VIENNAGRID_IO_OPENDX_WRITER_GUARD
+#ifndef VIENNAGRID_IO_OPENDX_WRITER_HPP
+#define VIENNAGRID_IO_OPENDX_WRITER_HPP
 
 /* =======================================================================
    Copyright (c) 2011-2014, Institute for Microelectronics,

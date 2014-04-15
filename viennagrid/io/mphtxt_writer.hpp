@@ -1,5 +1,5 @@
-#ifndef VIENNAGRID_BND_WRITER_GUARD
-#define VIENNAGRID_BND_WRITER_GUARD
+#ifndef VIENNAGRID_MPHTXT_WRITER_HPP
+#define VIENNAGRID_MPHTXT_WRITER_HPP
 
 /* =======================================================================
    Copyright (c) 2011-2014, Institute for Microelectronics,

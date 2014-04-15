@@ -1,5 +1,5 @@
-#ifndef VIENNAGRID_BND_READER_GUARD
-#define VIENNAGRID_BND_READER_GUARD
+#ifndef VIENNAGRID_BND_READER_HPP
+#define VIENNAGRID_BND_READER_HPP
 
 /* =======================================================================
    Copyright (c) 2011-2014, Institute for Microelectronics,
