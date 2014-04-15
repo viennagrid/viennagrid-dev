@@ -2,6 +2,7 @@
 #define VIENNAGRID_BND_READER_GUARD
 
 
+#include "viennagrid/io/helper.hpp"
 #include "viennagrid/io/bnd.hpp"
 #include "viennagrid/mesh/element_creation.hpp"
 
