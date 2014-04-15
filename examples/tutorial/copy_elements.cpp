@@ -64,7 +64,7 @@ int main()
     MeshType another_mesh;
 
     // copy all element handles to another_mesh
-    viennagrid::copy_element_handles( mesh, th.begin(), th.end(), another_mesh, -1.0 );
+    viennagrid::copy_elements_by_handle( mesh, th.begin(), th.end(), another_mesh, -1.0 );
 
     // output all vertices
     std::cout << "Number of vertices in another_mesh: " << viennagrid::vertices(another_mesh).size() << std::endl;
@@ -86,7 +86,7 @@ int main()
     MeshType another_mesh;
 
     // copy some element handles to another_mesh
-    viennagrid::copy_element_handles( mesh, th.begin()+2, th.begin()+4, another_mesh, -1.0 );
+    viennagrid::copy_elements_by_handle( mesh, th.begin()+2, th.begin()+4, another_mesh, -1.0 );
 
     // output all vertices
     std::cout << "Number of vertices in another_mesh: " << viennagrid::vertices(another_mesh).size() << std::endl;

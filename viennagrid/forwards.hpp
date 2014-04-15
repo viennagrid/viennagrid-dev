@@ -1779,7 +1779,7 @@ namespace viennagrid
     * @tparam MeshOrSegmentHandleT    The mesh or segment type where the element is created
     * @param  element                 The element which is copied
     * @param  mesh_segment            The mesh or segment object where the element is copied to
-    * @param  tolerance               The tolerance of the 2-norm for checking if two points are equal, is ignored if tolerance is less of equal to zero
+    * @param  tolerance               An absolute tolerance of the 2-norm for checking if two points are equal. If tolerance is less of equal to zero, no quality check is performed.
     * @return                         A handle to the copied element
     */
   template<typename ElementT, typename MeshOrSegmentHandleT>
@@ -1789,6 +1789,35 @@ namespace viennagrid
     >::type copy_element( ElementT const & element, MeshOrSegmentHandleT & mesh_segment,
                           typename viennagrid::result_of::coord<MeshOrSegmentHandleT>::type tolerance );
 
+  /** @brief Function for copying an element to a mesh or segment
+    *
+    * @tparam ElementT                The element type which is copied
+    * @tparam MeshOrSegmentHandleT    The mesh or segment type where the element is created
+    * @param  element                 The element which is copied
+    * @param  mesh_segment            The mesh or segment object where the element is copied to
+    * @return                         A handle to the copied element
+    */
+  template<typename ElementT, typename MeshOrSegmentHandleT>
+  typename viennagrid::result_of::handle<
+      MeshOrSegmentHandleT,
+      typename viennagrid::result_of::element_tag<ElementT>::type
+    >::type copy_element( ElementT const & element, MeshOrSegmentHandleT & mesh_segment );
+
+
+
+  /** @brief Function for copying an element iterator range to a mesh or segment
+    *
+    * @tparam ElementIteratorT            The element iterator type which is copied
+    * @tparam OutputMeshOrSegmentHandleT  The mesh or segment type where the elements are created
+    * @param  begin                       The begin of the element iterator range of element to be copied
+    * @param  end                         The end of the element iterator range of element to be copied
+    * @param  output_mesh                 The mesh or segment object where the elements are copied to
+    * @param  tolerance                   An absolute tolerance of the 2-norm for checking if two points are equal. If tolerance is less of equal to zero, no quality check is performed.
+    */
+  template<typename ElementIteratorT, typename OutputMeshOrSegmentHandleT>
+  void copy_elements(ElementIteratorT const & begin, ElementIteratorT const & end,
+                     OutputMeshOrSegmentHandleT & output_mesh,
+                     typename viennagrid::result_of::coord<OutputMeshOrSegmentHandleT>::type tolerance );
 
   /** @brief Function for copying an element iterator range to a mesh or segment
     *
@@ -1800,8 +1829,24 @@ namespace viennagrid
     */
   template<typename ElementIteratorT, typename OutputMeshOrSegmentHandleT>
   void copy_elements(ElementIteratorT const & begin, ElementIteratorT const & end,
-                     OutputMeshOrSegmentHandleT & output_mesh,
-                     typename viennagrid::result_of::coord<OutputMeshOrSegmentHandleT>::type tolerance );
+                     OutputMeshOrSegmentHandleT & output_mesh );
+
+  /** @brief Function for copying an element handle iterator range to a mesh or segment.
+    *
+    * @tparam InputMeshOrSegmentHandleT   The mesh or segment type where the original elements live
+    * @tparam ElementHandleIteratorT      The element handle iterator type which is copied
+    * @tparam OutputMeshOrSegmentHandleT  The mesh or segment type where the elements are created
+    * @param  input_mesh                  The mesh or segment object where the original elements live
+    * @param  begin                       The begin of element handle the iterator range of element to be copied
+    * @param  end                         The end of the element handle iterator range of element to be copied
+    * @param  output_mesh                 The mesh or segment object where the elements are copied to
+    * @param  tolerance                   An absolute tolerance of the 2-norm for checking if two points are equal. If tolerance is less of equal to zero, no quality check is performed.
+    */
+  template<typename InputMeshOrSegmentHandleT, typename ElementHandleIteratorT, typename OutputMeshOrSegmentHandleT>
+  void copy_element_by_handles(InputMeshOrSegmentHandleT const & input_mesh,
+                            ElementHandleIteratorT const & begin, ElementHandleIteratorT const & end,
+                            OutputMeshOrSegmentHandleT & output_mesh,
+                            typename viennagrid::result_of::coord<OutputMeshOrSegmentHandleT>::type tolerance );
 
   /** @brief Function for copying an element handle iterator range to a mesh or segment.
     *
@@ -1814,10 +1859,9 @@ namespace viennagrid
     * @param  output_mesh                 The mesh or segment object where the elements are copied to
     */
   template<typename InputMeshOrSegmentHandleT, typename ElementHandleIteratorT, typename OutputMeshOrSegmentHandleT>
-  void copy_element_handles(InputMeshOrSegmentHandleT const & input_mesh,
+  void copy_element_by_handles(InputMeshOrSegmentHandleT const & input_mesh,
                             ElementHandleIteratorT const & begin, ElementHandleIteratorT const & end,
-                            OutputMeshOrSegmentHandleT & output_mesh,
-                            typename viennagrid::result_of::coord<OutputMeshOrSegmentHandleT>::type tolerance );
+                            OutputMeshOrSegmentHandleT & output_mesh );
 
 
   /** @brief Function for dereferencing an element -> identity
