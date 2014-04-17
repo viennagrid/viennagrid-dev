@@ -15,9 +15,10 @@
 
 #include <limits>
 #include "viennagrid/mesh/mesh.hpp"
+#include "viennagrid/algorithm/inner_prod.hpp"
+#include "viennagrid/algorithm/norm.hpp"
 #include "viennagrid/algorithm/cross_prod.hpp"
 #include "viennagrid/algorithm/detail/numeric.hpp"
-#include "viennagrid/algorithm/intersect.hpp"
 
 /** @file viennagrid/algorithm/geometry.hpp
     @brief Contains various functions for computing geometric quantities
@@ -25,31 +26,74 @@
 
 namespace viennagrid
 {
-  /** @brief Calculates the normal vector of a triangle
-   *
-   * @param point_accessor          Point accessor for input points
-   * @param triangle                The input triangle
-   */
-  template<typename WrappedConfigT, typename PointAccessorT>
-  typename PointAccessorT::value_type normal_vector( PointAccessorT const point_accessor, element<triangle_tag,WrappedConfigT> const & triangle )
+
+  namespace detail
   {
-    typedef typename PointAccessorT::value_type    point_type;
+    /** @brief Implementation for calculating a normal vector of a line in 2D */
+    template<typename PointAccessorT, typename ElementT>
+    typename PointAccessorT::value_type normal_vector_impl(
+      PointAccessorT const point_accessor,
+      ElementT const & element,
+      viennagrid::line_tag,
+      viennagrid::dimension_tag<2>)
+    {
+      typedef typename PointAccessorT::value_type    PointType;
 
-    point_type const & p0 = point_accessor( viennagrid::vertices(triangle)[0] );
-    point_type const & p1 = point_accessor( viennagrid::vertices(triangle)[1] );
-    point_type const & p2 = point_accessor( viennagrid::vertices(triangle)[2] );
+      PointType const & p0 = point_accessor( viennagrid::vertices(element)[0] );
+      PointType const & p1 = point_accessor( viennagrid::vertices(element)[1] );
 
-    return viennagrid::cross_prod( p1-p0, p2-p0 );
+      PointType line = p1-p0;
+      std::swap(line[0], line[1]);
+      line[0] = -line[0];
+
+      return line;
+    }
+
+    /** @brief Implementation for calculating a normal vector of a triangle in 3D */
+    template<typename PointAccessorT, typename ElementT>
+    typename PointAccessorT::value_type normal_vector_impl(
+      PointAccessorT const point_accessor,
+      ElementT const & element,
+      viennagrid::triangle_tag,
+      viennagrid::dimension_tag<3>)
+    {
+      typedef typename PointAccessorT::value_type    PointType;
+
+      PointType const & p0 = point_accessor( viennagrid::vertices(element)[0] );
+      PointType const & p1 = point_accessor( viennagrid::vertices(element)[1] );
+      PointType const & p2 = point_accessor( viennagrid::vertices(element)[2] );
+
+      return viennagrid::cross_prod( p1-p0, p2-p0 );
+    }
   }
 
-  /** @brief Calculates the normal vector of a triangle
+
+
+  /** @brief Calculates the normal vector of an element
    *
-   * @param triangle                The input triangle
+   * @param point_accessor          Point accessor for input points
+   * @param element                 The input element
    */
-  template<typename WrappedConfigT>
-  typename viennagrid::result_of::point< element<triangle_tag,WrappedConfigT> >::type normal_vector( element<triangle_tag,WrappedConfigT> const & triangle )
+  template<typename PointAccessorT, typename ElementT>
+  typename PointAccessorT::value_type normal_vector(
+    PointAccessorT const point_accessor,
+    ElementT const & element )
   {
-    return normal_vector( default_point_accessor(triangle), triangle );
+    typedef typename viennagrid::result_of::element_tag<ElementT>::type ElementTag;
+    typedef typename PointAccessorT::value_type PointType;
+    typedef viennagrid::dimension_tag< result_of::static_size<PointType>::value > DimensionTag;
+
+    return detail::normal_vector_impl( point_accessor, element, ElementTag(), DimensionTag() );
+  }
+
+  /** @brief Calculates the normal vector of an element
+   *
+   * @param element                The input element
+   */
+  template<typename ElementT>
+  typename viennagrid::result_of::point<ElementT>::type normal_vector( ElementT const & element )
+  {
+    return normal_vector( default_point_accessor(element), element );
   }
 
 
@@ -407,6 +451,7 @@ namespace viennagrid
     *
     * @tparam Point2DT       2D point type
     * @param pt3d            The 3D point
+    * @return                The projected point in 2D
     */
     template<typename Point2DT>
     Point2DT project(Point3DT const & pt3d) const
@@ -434,6 +479,35 @@ namespace viennagrid
 
       for ( ; start != end; ++start, ++out)
         *out = project<Point2DType>(*start);
+    }
+
+
+
+    /** @brief Performs an inverse projection of a point in 2D into the 3D plane
+    *
+    * @param pt2d            The 2D point
+    * @return                The same point in the 3D plane
+    */
+    template<typename Point2DT>
+    Point3DT unproject(Point2DT const & pt2d) const
+    {
+      return matrix[0] * pt2d[0] + matrix[1] * pt2d[1] + center;
+    }
+
+    /** @brief Performs an inverse projection on an iterator range of 2D points to the 3D plane
+    *
+    * @param start                       The begin 2D point iterator
+    * @param end                         The end 2D point iterator
+    * @param out                         The begin output 3D point iterator
+    */
+    template<typename PointIteratorT, typename OutPointIteratorT>
+    void unproject(PointIteratorT start, const PointIteratorT & end,
+                  OutPointIteratorT out)
+    {
+      typedef typename std::iterator_traits<OutPointIteratorT>::value_type Point2DType;
+
+      for ( ; start != end; ++start, ++out)
+        *out = unproject(*start);
     }
 
   private:
