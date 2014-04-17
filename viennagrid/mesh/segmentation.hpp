@@ -1679,7 +1679,7 @@ namespace viennagrid
   {
     typedef typename result_of::segment_id_range< SegmentationT, viennagrid::element<ElementTagT, WrappedConfigT> >::type SegmentIDRangeType;
     typedef viennagrid::element<ElementTagT, WrappedConfigT> ElementType;
-    return SegmentIDRangeType( viennagrid::make_accessor<ElementType>( viennagrid::detail::element_segment_mapping_collection(segmentation) )(element) );
+    return SegmentIDRangeType( viennagrid::make_field<ElementType>( viennagrid::detail::element_segment_mapping_collection(segmentation) )(element) );
   }
 
 
