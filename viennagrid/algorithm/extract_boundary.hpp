@@ -1,5 +1,5 @@
-#ifndef VIENNAGRID_ALGORITHM_EXTRACT_HULL_HPP
-#define VIENNAGRID_ALGORITHM_EXTRACT_HULL_HPP
+#ifndef VIENNAGRID_ALGORITHM_EXTRACT_BOUNDARY_HPP
+#define VIENNAGRID_ALGORITHM_EXTRACT_BOUNDARY_HPP
 
 /* =======================================================================
    Copyright (c) 2011-2014, Institute for Microelectronics,
@@ -26,8 +26,8 @@ namespace viennagrid
    * @param hull_mesh                      The output hull mesh
    */
   template<typename HullTypeOrTagT, typename VolumeMeshT, typename HullMeshT>
-  void extract_hull(VolumeMeshT const & volume_mesh,
-                    HullMeshT & hull_mesh)
+  void extract_boundary(VolumeMeshT const & volume_mesh,
+                        HullMeshT & hull_mesh)
   {
     viennagrid::clear(hull_mesh);
 
@@ -65,11 +65,11 @@ namespace viennagrid
    * @param hull_mesh                      The output hull mesh
    */
   template<typename VolumeMeshT, typename HullMeshT>
-  void extract_hull(VolumeMeshT const & volume_mesh,
-                    HullMeshT & hull_mesh )
+  void extract_boundary(VolumeMeshT const & volume_mesh,
+                        HullMeshT & hull_mesh )
   {
     typedef typename viennagrid::result_of::facet_tag<VolumeMeshT>::type FacetTag;
-    extract_hull<FacetTag>(volume_mesh, hull_mesh);
+    extract_boundary<FacetTag>(volume_mesh, hull_mesh);
   }
 
 
@@ -82,10 +82,10 @@ namespace viennagrid
    * @param hull_segmentation              The output hull segmentation
    */
   template<typename HullTypeOrTagT, typename VolumeMeshT, typename VolumeSegmentationT, typename HullMeshT, typename HullSegmentationT>
-  void extract_hull(VolumeMeshT const & volume_mesh,
-                    VolumeSegmentationT const & volume_segmentation,
-                    HullMeshT & hull_mesh,
-                    HullSegmentationT & hull_segmentation )
+  void extract_boundary(VolumeMeshT const & volume_mesh,
+                        VolumeSegmentationT const & volume_segmentation,
+                        HullMeshT & hull_mesh,
+                        HullSegmentationT & hull_segmentation )
   {
     typedef typename viennagrid::result_of::element_tag<HullTypeOrTagT>::type HullTagType;
 
@@ -93,7 +93,7 @@ namespace viennagrid
     viennagrid::clear(hull_segmentation);
 
     if (volume_segmentation.size() == 0)
-      extract_hull<HullTagType>(volume_mesh, hull_mesh);
+      extract_boundary<HullTagType>(volume_mesh, hull_mesh);
 
     typedef typename viennagrid::result_of::segment_handle<VolumeSegmentationT>::type    VolumeSegmentHandleType;
     typedef typename viennagrid::result_of::point<VolumeMeshT>::type            VolumePointType;
@@ -160,13 +160,13 @@ namespace viennagrid
    * @param hull_segmentation              The output hull segmentation
    */
   template<typename VolumeMeshT, typename VolumeSegmentationT, typename HullMeshT, typename HullSegmentationT>
-  void extract_hull(VolumeMeshT const & volume_mesh,
-                    VolumeSegmentationT const & volume_segmentation,
-                    HullMeshT & hull_mesh,
-                    HullSegmentationT & hull_segmentation )
+  void extract_boundary(VolumeMeshT const & volume_mesh,
+                        VolumeSegmentationT const & volume_segmentation,
+                        HullMeshT & hull_mesh,
+                        HullSegmentationT & hull_segmentation )
   {
     typedef typename viennagrid::result_of::facet_tag<VolumeMeshT>::type FacetTag;
-    extract_hull<FacetTag>(volume_mesh, volume_segmentation, hull_mesh, hull_segmentation);
+    extract_boundary<FacetTag>(volume_mesh, volume_segmentation, hull_mesh, hull_segmentation);
   }
 }
 
