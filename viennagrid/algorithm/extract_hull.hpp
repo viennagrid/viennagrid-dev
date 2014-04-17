@@ -92,8 +92,8 @@ namespace viennagrid
     viennagrid::clear(hull_mesh);
     viennagrid::clear(hull_segmentation);
 
-    if (volume_segmentation.size() <= 1)
-      extract_hull<HullTagType>(volume_mesh, hull_segmentation.make_segment() );
+    if (volume_segmentation.size() == 0)
+      extract_hull<HullTagType>(volume_mesh, hull_mesh);
 
     typedef typename viennagrid::result_of::segment_handle<VolumeSegmentationT>::type    VolumeSegmentHandleType;
     typedef typename viennagrid::result_of::point<VolumeMeshT>::type            VolumePointType;
