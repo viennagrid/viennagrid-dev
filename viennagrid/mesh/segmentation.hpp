@@ -30,6 +30,24 @@
 
 namespace viennagrid
 {
+  /** @brief Provides an exception for the case of a name collision of segment names */
+  class segment_name_collision_exception : public std::exception
+  {
+    public:
+      virtual const char* what() const throw()
+      {
+        std::stringstream ss;
+        ss << "* ViennaGrid: Collision with segment names: " << collision_name_ << "!";
+        return ss.str().c_str();
+      }
+
+      segment_name_collision_exception(std::string cn) : collision_name_(cn) {}
+
+      virtual ~segment_name_collision_exception() throw() {}
+
+    private:
+      std::string collision_name_;
+  };
 
   /** @brief A segment defines a submesh within a segmentation. The segment_handle is used to deal with segments, since segments are not represented by a dedicated class.
     *
@@ -52,12 +70,7 @@ namespace viennagrid
     segment_handle( segmentation_type & segmentation_x,
                 view_type & view_x,
                 segment_id_type const & segment_id_) :
-        segmentation_(&segmentation_x), view_(&view_x), segment_id(segment_id_)
-        {
-          std::stringstream ss;
-          ss << segment_id;
-          set_name(ss.str());
-        }
+        segmentation_(&segmentation_x), view_(&view_x), segment_id(segment_id_) {}
 
   public:
 
@@ -78,16 +91,15 @@ namespace viennagrid
       * @param new_name   The new name of the segment
       * @return           Returns false if the name is already present, true on success
       */
-    bool set_name( std::string const & new_name )
+    void set_name( std::string const & new_name )
     {
       // name is already present
       if (parent().segment_name_map.find(new_name) != parent().segment_name_map.end())
-        return false;
+        throw segment_name_collision_exception(new_name);
 
       parent().segment_name_map.erase(name_);
-      parent().segment_name_map[new_name] = this;
-
-      return true;
+      parent().segment_name_map[new_name] = &(parent()(id()));
+      name_ = new_name;
     }
 
 
@@ -656,7 +668,18 @@ namespace viennagrid
       if ( highest_id < segment_id )
           highest_id = segment_id;
 
-      return (segment_id_map.insert( std::make_pair(segment_id, segment) ).first)->second;
+
+      it = segment_id_map.insert( std::make_pair(segment_id, segment) ).first;
+
+
+      std::stringstream ss;
+      ss << segment_id;
+      (*it).second.name_ = ss.str();
+
+      if (!segment_name_map.insert(std::make_pair(ss.str(), &(*it).second)).second)
+        throw segment_name_collision_exception(ss.str());
+
+      return (*it).second;
     }
 
     /** @brief Returns the segment with the given ID, will create a new segment if no segment with the given ID is present
