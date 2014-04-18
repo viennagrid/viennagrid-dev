@@ -290,7 +290,7 @@ namespace viennagrid
           }
 
           //Step 2: Write the transformed connectivities:
-          viennagrid_to_vtk_orientations<CellTag> reorderer;
+          detail::viennagrid_to_vtk_orientations<CellTag> reorderer;
           for (std::size_t i=0; i<viennagrid_vertices.size(); ++i)
             writer << viennagrid_vertices[reorderer(static_cast<long>(i))] << " ";
 
@@ -317,7 +317,7 @@ namespace viennagrid
              offsets <= viennagrid::elements<CellTag>(domseg).size();
               ++offsets)
         {
-          writer << ELEMENT_TAG_TO_VTK_TYPE<CellTag>::value << " ";
+          writer << detail::ELEMENT_TAG_TO_VTK_TYPE<CellTag>::value << " ";
         }
         writer << std::endl;
         writer << "    </DataArray>" << std::endl;

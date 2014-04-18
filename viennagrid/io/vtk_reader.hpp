@@ -322,7 +322,7 @@ namespace viennagrid
             assert( strChecker::myIsNumber(token) && "Cell type is not a number!" );
 #ifndef NDEBUG
             type = atoi(token.c_str());
-            assert(type == ELEMENT_TAG_TO_VTK_TYPE<CellTag>::value && "Error in VTK reader: Type mismatch!");
+            assert(type == detail::ELEMENT_TAG_TO_VTK_TYPE<CellTag>::value && "Error in VTK reader: Type mismatch!");
 #endif
             //std::cout << "Vertex#: " << offset << std::endl;
             reader >> token;
@@ -443,7 +443,7 @@ namespace viennagrid
           viennagrid::static_array<VertexHandleType, boundary_elements<CellTag, vertex_tag>::num> cell_vertex_handles;
           std::vector<VertexIDType> cell_vertex_ids(numVertices);
 
-          vtk_to_viennagrid_orientations<CellTag> reorderer;
+          detail::vtk_to_viennagrid_orientations<CellTag> reorderer;
           for (long j = 0; j < numVertices; j++)
           {
             long reordered_j = reorderer(j);
