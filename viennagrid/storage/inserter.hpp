@@ -22,6 +22,34 @@
 
 namespace viennagrid
 {
+  namespace detail
+  {
+    /** \cond */
+
+    /** @brief Used to avoid unreachable code warnings if a runtime-check for the compile-time variable generate_id is used instead. */
+    template <bool generate_id, typename ValueT>
+    struct physical_insert_id_dispatcher
+    {
+      template <typename ContainerT, typename ElementT, typename IDGeneratorT>
+      static void apply(ContainerT & container, ElementT & elem, IDGeneratorT & id_generator)
+      {
+        if (!container.is_present( elem ) )
+          viennagrid::detail::set_id(elem, id_generator( viennagrid::detail::tag<ValueT>() ) );
+      }
+    };
+
+    template <typename ValueT>
+    struct physical_insert_id_dispatcher<false, ValueT>
+    {
+      template <typename ContainerT, typename ElementT, typename IDGeneratorT>
+      static void apply(ContainerT &, ElementT & elem, IDGeneratorT & id_generator)
+      {
+        id_generator.set_max_id( elem.id() );
+      }
+    };
+
+    /** \endcond */
+  }
 
   /** @brief An inserter class which adds elements to a the provided container collection. For example, this inserts a triangle into a segment s, but not into the mesh or segment where s was derived from. */
   template<typename container_collection_type, typename change_counter_type, typename id_generator_type_>
@@ -85,11 +113,12 @@ namespace viennagrid
 
       container_type & container = viennagrid::get< value_type >( *collection );
 
-      if ( generate_id && !container.is_present( element ) )
-          viennagrid::detail::set_id(element, id_generator( viennagrid::detail::tag<value_type>() ) );
+      detail::physical_insert_id_dispatcher<generate_id, value_type>::apply(container, element, id_generator);
+      //if ( generate_id && !container.is_present( element ) )
+      //    viennagrid::detail::set_id(element, id_generator( viennagrid::detail::tag<value_type>() ) );
 
-      if (!generate_id)
-        id_generator.set_max_id( element.id() );
+      //if (!generate_id)
+      //  id_generator.set_max_id( element.id() );
 
       std::pair<handle_type, bool> ret = container.insert( element );
       if (change_counter) ++(*change_counter);

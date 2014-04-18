@@ -247,12 +247,10 @@ namespace viennagrid
           PointWriter<dim>::write(writer, viennagrid::point(domseg, it->second) );
 
           // add 0's for less than three dimensions
-            if (dim == 2)
-              writer << " " << 0;
-            if(dim == 1)
-              writer << " " << 0 << " " << 0;
+          for (int i = dim; i < 3; ++i)
+            writer << " " << 0;
 
-            writer << std::endl;
+          writer << std::endl;
         }
         writer << std::endl;
         writer << "    </DataArray>" << std::endl;
@@ -403,10 +401,8 @@ namespace viennagrid
           ss << filename << ".vtu";
           std::ofstream writer(ss.str().c_str());
 
-          if (!writer){
+          if (!writer)
             throw cannot_open_file_exception(filename);
-            clear();
-          }
 
           writeHeader(writer);
 
