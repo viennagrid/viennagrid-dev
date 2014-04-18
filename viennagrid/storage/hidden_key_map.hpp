@@ -246,6 +246,8 @@ namespace viennagrid
       return container.insert( element );
     }
 
+    /** \cond */
+
     template<typename HiddenKeyMapT, typename HandleTagT>
     struct IDCompare<
           viennagrid::detail::iterator<
@@ -269,6 +271,8 @@ namespace viennagrid
         return lhs->second.id() < rhs->second.id();
       }
     };
+
+    /** \endcond */
   }
 }
 

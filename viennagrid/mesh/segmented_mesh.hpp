@@ -17,6 +17,10 @@
 #include "viennagrid/mesh/segmentation.hpp"
 #include "viennagrid/mesh/mesh_operations.hpp"
 
+/** @file viennagrid/mesh/segmented_mesh.hpp
+    @brief Defines a segmented mesh, is a combination of a mesh and a segmentation.
+*/
+
 namespace viennagrid
 {
   /** @brief A segmented_mesh is a mesh together with a segmentation.

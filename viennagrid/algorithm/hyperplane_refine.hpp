@@ -17,6 +17,10 @@
 #include "viennagrid/algorithm/volume.hpp"
 #include "viennagrid/algorithm/refine.hpp"
 
+/** @file viennagrid/algorithm/hyperplane_refine.hpp
+    @brief Refinement of elements intersecting a hyperplane such that new elements are not cut by the hyperplane.
+*/
+
 namespace viennagrid
 {
   namespace detail

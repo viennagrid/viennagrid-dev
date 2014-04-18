@@ -13,6 +13,11 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
+
+/** @file viennagrid/algorithm/geometric_transform.hpp
+    @brief Provides geometric transformation routines (e.g. scale()) for a mesh.
+*/
+
 namespace viennagrid
 {
   /** @brief Transforms all points of a mesh based on a functor

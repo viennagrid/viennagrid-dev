@@ -17,6 +17,10 @@
 #include "viennagrid/algorithm/detail/numeric.hpp"
 #include "viennagrid/algorithm/interval.hpp"
 
+/** @file viennagrid/algorithm/inclusion.hpp
+    @brief Tests for inclusion of a point inside an element, segment, or mesh.
+*/
+
 namespace viennagrid
 {
   namespace detail

@@ -16,6 +16,10 @@
 #include "viennagrid/algorithm/centroid.hpp"
 #include "viennagrid/mesh/neighbor_iteration.hpp"
 
+/** @file viennagrid/algorithm/extract_seed_points.hpp
+    @brief Extraction of seed points per segment of a mesh.
+*/
+
 namespace viennagrid
 {
   namespace detail

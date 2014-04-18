@@ -17,6 +17,10 @@
 #include "viennagrid/mesh/mesh_operations.hpp"
 #include "viennagrid/algorithm/boundary.hpp"
 
+/** @file viennagrid/algorithm/extract_boundary.hpp
+    @brief Extraction of a hull/boundary of a mesh.
+*/
+
 namespace viennagrid
 {
   /** @brief Extracts the hull of mesh using viennagrid::boundary, e.g. the triangular hull of a tetrahedral mesh.

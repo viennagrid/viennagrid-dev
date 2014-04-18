@@ -32,6 +32,7 @@ namespace viennagrid
       template<typename typelist, typename id_type>
       struct continuous_id_generator_config_helper;
 
+      /** \cond */
       template<typename head, typename tail, typename id_type>
       struct continuous_id_generator_config_helper< viennagrid::typelist<head, tail>, id_type >
       {
@@ -88,6 +89,8 @@ namespace viennagrid
       {
         typedef typename continuous_id_generator_config_from_mesh_config_helper<WrappedConfigType, typename WrappedConfigType::type>::type type;
       };
+
+      /** \endcond */
     }
 
 

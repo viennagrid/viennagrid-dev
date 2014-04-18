@@ -407,7 +407,7 @@ namespace viennagrid
 //     };
 
 
-
+    /** \cond */
 
     template<   typename K01 = viennagrid::null_type, typename V01 = viennagrid::null_type, typename K02 = viennagrid::null_type, typename V02 = viennagrid::null_type,
                 typename K03 = viennagrid::null_type, typename V03 = viennagrid::null_type, typename K04 = viennagrid::null_type, typename V04 = viennagrid::null_type,
@@ -445,7 +445,11 @@ namespace viennagrid
       typedef viennagrid::null_type type;
     };
 
+    /** \endcond */
+
   } // namespace detail
+
+  /** \cond */
 
   /** @brief Convenience meta function for creating a typemap */
   template<   typename K01 = viennagrid::null_type, typename V01 = viennagrid::null_type, typename K02 = viennagrid::null_type, typename V02 = viennagrid::null_type,
@@ -468,6 +472,7 @@ namespace viennagrid
     >::type type;
   };
 
+  /** \endcond */
 
 } // namespace viennagrid
 

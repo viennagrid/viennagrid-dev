@@ -68,7 +68,11 @@ namespace viennagrid
   }
 
   /** @brief A namespace with all the input/output functionality, in particular file readers and writers */
-  namespace io {}
+  namespace io
+  {
+    /** @brief Namespace for implementation details. Not intended to be used directly by a library user */
+    namespace detail {}
+  }
 
   /** @brief Advances an iterator and returns it
     *

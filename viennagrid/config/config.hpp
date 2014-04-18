@@ -64,6 +64,8 @@ namespace viennagrid
 
     namespace result_of
     {
+      /** \cond */
+
       /** @brief Query a specific config element within a typemap tree config providing a default value which is used if the query was not successful. Up to 10 search tags can be provided. The first tag is searched and then, using the value type as the child config, the query is executed recursively.
        *
        * @tparam WrappedConfigT         The configuration, wrapped and non-wrapped configs are supported
@@ -128,6 +130,8 @@ namespace viennagrid
               SearchTag1T, SearchTag2T, SearchTag3T, SearchTag4T, SearchTag5T, SearchTag6T, SearchTag7T, SearchTag8T, SearchTag9T
             >::type type;
       };
+
+      /** \endcond */
     }
   }
 
