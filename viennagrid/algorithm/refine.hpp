@@ -159,8 +159,6 @@ namespace viennagrid
     {
       typedef mesh<WrappedMeshConfigInT>       InputMeshType;
 
-      typedef typename viennagrid::result_of::const_vertex_range<InputMeshType>::type               VertexRange;
-      typedef typename viennagrid::result_of::iterator<VertexRange>::type                           VertexIterator;
       typedef typename viennagrid::result_of::const_line_range<InputMeshType>::type                 EdgeRange;
       typedef typename viennagrid::result_of::iterator<EdgeRange>::type                             EdgeIterator;
 
@@ -203,13 +201,7 @@ namespace viennagrid
                      RefinementVertexAccessorT & edge_to_vertex_handle_accessor)
     {
       typedef mesh<WrappedMeshConfigInT>    InputMeshType;
-      typedef mesh<WrappedMeshConfigOutT>   OutputMeshType;
 
-      typedef segmentation<WrappedSegmentationConfigInT>      InputSegmentationType;
-      typedef segmentation<WrappedSegmentationConfigOutT>     OutputSegmentationType;
-
-      typedef typename viennagrid::result_of::const_vertex_range<InputMeshType>::type     VertexRange;
-      typedef typename viennagrid::result_of::iterator<VertexRange>::type                             VertexIterator;
       typedef typename viennagrid::result_of::const_line_range<InputMeshType>::type       EdgeRange;
       typedef typename viennagrid::result_of::iterator<EdgeRange>::type                               EdgeIterator;
 
@@ -434,7 +426,6 @@ namespace viennagrid
     typedef mesh<WrappedMeshConfigInT>                                             MeshInType;
     typedef mesh<WrappedMeshConfigOutT>                                             MeshOutType;
 
-    typedef typename viennagrid::result_of::vertex<MeshOutType>::type                   VertexType;
     typedef typename viennagrid::result_of::line<MeshOutType>::type                     EdgeType;
 
     typedef typename viennagrid::result_of::vertex_handle<MeshOutType>::type            VertexHandleType;
@@ -463,10 +454,6 @@ namespace viennagrid
               mesh<WrappedMeshConfigOutT> & mesh_out,
               EdgeRefinementFlagAccessorT const & edge_refinement_flag_accessor)
   {
-    typedef mesh<WrappedMeshConfigOutT>                                             MeshOutType;
-
-    typedef typename viennagrid::result_of::vertex_handle<MeshOutType>::type            VertexHandleType;
-
     refine<ElementTypeOrTagT>(mesh_in, mesh_out, default_point_accessor(mesh_in), edge_refinement_flag_accessor);
   }
 
@@ -706,7 +693,6 @@ namespace viennagrid
     typedef mesh<WrappedMeshConfigInT> MeshInT;
     typedef mesh<WrappedMeshConfigOutT> MeshOutT;
 
-    typedef typename viennagrid::result_of::vertex<MeshOutT>::type VertexType;
     typedef typename viennagrid::result_of::line<MeshOutT>::type EdgeType;
 
     typedef typename viennagrid::result_of::vertex_handle<MeshOutT>::type VertexHandleType;
