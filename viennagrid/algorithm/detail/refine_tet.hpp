@@ -62,7 +62,7 @@ namespace viennagrid
       {
         return true;
       }
-      else if (line1 == line2)
+      else if (line1 >= line2) // use of == leads to floating-point comparison warning in Clang
       {
         //compare IDs:
         if (v1_1_ptr.id() > v2_1_ptr.id())

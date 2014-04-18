@@ -224,13 +224,14 @@ namespace viennagrid
                              + cross_prod(C, A) * viennagrid::inner_prod(B, B)
                              + cross_prod(B, C) * viennagrid::inner_prod(A, A)
                              ) / (viennagrid::inner_prod(A, viennagrid::cross_prod(B, C)) * 2.0);
-      if (viennagrid::inner_prod(A, viennagrid::cross_prod(B, C)) == 0)
+      PointType cprodBC = viennagrid::cross_prod(B, C);
+      if (std::fabs(viennagrid::inner_prod(A, cprodBC)) < 1e-10 * viennagrid::norm(cprodBC) )
       {
-        std::cout << "Singularity in circum center calculation!" << std::endl;
-        std::cout << "A: " << A << std::endl;
-        std::cout << "B: " << B << std::endl;
-        std::cout << "C: " << C << std::endl;
-        std::cout << "B x C: " << viennagrid::cross_prod(B, C) << std::endl;
+        std::cerr << "Near singularity in circum center calculation!" << std::endl;
+        std::cerr << "A: " << A << std::endl;
+        std::cerr << "B: " << B << std::endl;
+        std::cerr << "C: " << C << std::endl;
+        std::cerr << "B x C: " << viennagrid::cross_prod(B, C) << std::endl;
         exit(0);
       }
       return circ_cent + O;

@@ -130,7 +130,7 @@ namespace viennagrid
     {
       ToPointType ret;
       ret[0] = sqrt(p_in[0] * p_in[0] + p_in[1] * p_in[1] + p_in[2] * p_in[2]);
-      ret[1] = (ret[0] != 0) ? acos(p_in[2] / ret[0]) : 0;
+      ret[1] = (std::fabs(ret[0]) > 0) ? acos(p_in[2] / ret[0]) : 0;
       ret[2] = atan2(p_in[1], p_in[0]);
       return ret;
     }
@@ -251,7 +251,7 @@ namespace viennagrid
     {
       ToPointType ret;
       ret[0] = sqrt(p_in[0] * p_in[0] + p_in[2] * p_in[2]);
-      ret[1] = (ret[0] != 0) ? acos(p_in[2] / ret[0]) : 0;
+      ret[1] = (std::fabs(ret[0]) > 0) ? acos(p_in[2] / ret[0]) : 0;
       ret[2] = p_in[1];
       return ret;
     }

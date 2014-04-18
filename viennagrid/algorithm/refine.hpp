@@ -481,7 +481,7 @@ namespace viennagrid
 
     std::deque<bool> edge_refinement_flag;
 
-    edge_refinement_flag.resize( viennagrid::id_upper_bound<EdgeType>(mesh_in).get() );
+    edge_refinement_flag.resize( static_cast<std::size_t>(viennagrid::id_upper_bound<EdgeType>(mesh_in).get()) );
 
     cell_refinement_to_edge_refinement<ElementTypeOrTagT>( mesh_in,
                                         cell_refinement_flag_accessor,
@@ -767,7 +767,7 @@ namespace viennagrid
 
     std::deque<bool> edge_refinement_flag;
 
-    edge_refinement_flag.resize( viennagrid::id_upper_bound<EdgeType>(mesh_in).get() );
+    edge_refinement_flag.resize( static_cast<std::size_t>(viennagrid::id_upper_bound<EdgeType>(mesh_in).get()) );
 
     cell_refinement_to_edge_refinement<ElementTypeOrTagT>(
                                         mesh_in,

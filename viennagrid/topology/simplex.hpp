@@ -96,9 +96,9 @@ namespace viennagrid
       {
         BoundaryElementType boundary_element( inserter.get_physical_container_collection() );
 
-        int index = 0;
-        for (int i = 0; i < boundary_elements<simplex_tag<n>, vertex_tag >::num; ++i)
-            for (int j = i+1; j < boundary_elements<simplex_tag<n>, vertex_tag >::num; ++j)
+        std::size_t index = 0;
+        for (std::size_t i = 0; i < boundary_elements<simplex_tag<n>, vertex_tag >::num; ++i)
+            for (std::size_t j = i+1; j < boundary_elements<simplex_tag<n>, vertex_tag >::num; ++j)
             {
                 boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(i), 0 );
                 boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(j), 1 );
@@ -117,10 +117,10 @@ namespace viennagrid
       {
         BoundaryElementType boundary_element( inserter.get_physical_container_collection() );
 
-        int index = 0;
-        for (int i = 0; i < boundary_elements<simplex_tag<n>, vertex_tag >::num; ++i)
-            for (int j = i+1; j < boundary_elements<simplex_tag<n>, vertex_tag >::num; ++j)
-                for (int k = j+1; k < boundary_elements<simplex_tag<n>, vertex_tag >::num; ++k)
+        std::size_t index = 0;
+        for (std::size_t i = 0; i < boundary_elements<simplex_tag<n>, vertex_tag >::num; ++i)
+            for (std::size_t j = i+1; j < boundary_elements<simplex_tag<n>, vertex_tag >::num; ++j)
+                for (std::size_t k = j+1; k < boundary_elements<simplex_tag<n>, vertex_tag >::num; ++k)
                 {
                     boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(i), 0 );
                     boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(j), 1 );

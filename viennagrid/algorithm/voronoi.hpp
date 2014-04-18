@@ -282,8 +282,8 @@ namespace viennagrid
     {
       double det = (a[0] - b[0])*(c[1] - d[1]) - (a[1] - b[1])*(c[0] - d[0]);
 
-      if (det == 0)
-        std::cerr << "viennagrid::detail::line_intersection(): Warning: Determinant is zero!" << std::endl;
+      if (std::fabs(det) < 1e-10 * viennagrid::norm(b-a))
+        std::cerr << "viennagrid::detail::line_intersection(): Warning: Determinant is close to zero!" << std::endl;
 
       double px =   (a[0]*b[1] - a[1]*b[0]) * (c[0] - d[0])
                   - (a[0] - b[0]) * (c[0]*d[1] - c[1]*d[0]);

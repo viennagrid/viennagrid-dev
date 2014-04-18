@@ -553,7 +553,7 @@ void fill_mesh(MeshType & mesh, PointFiller const &)
   //std::cout << "Adding vertices to mesh..." << std::endl;
   VertexHandleType vh[4];
 
-  for (int i = 0; i < 4; ++i)
+  for (std::size_t i = 0; i < 4; ++i)
     vh[i] = viennagrid::make_vertex( mesh, points[i] );
 
   //std::cout << "Adding cells to mesh..." << std::endl;

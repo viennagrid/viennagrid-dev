@@ -22,9 +22,9 @@
 #include "viennagrid/point.hpp"
 #include "viennagrid/algorithm/distance.hpp"
 
-void fuzzy_check(double a, double b)
+inline void fuzzy_check(double a, double b)
 {
-  if (a != b)
+  if (a > b || a < b)
   {
     if (   (std::abs(a - b) / std::max( std::abs(a), std::abs(b) ) > 1e-10)
         && (std::abs(a - b) > 1e-10)
@@ -43,7 +43,7 @@ void fuzzy_check(double a, double b)
 // Line 2d
 //
 
-void setup_mesh(viennagrid::line_2d_mesh & mesh)
+inline void setup_mesh(viennagrid::line_2d_mesh & mesh)
 {
   typedef viennagrid::line_2d_mesh                      MeshType;
 //   typedef viennagrid::config::line_2d                             ConfigType;
@@ -98,7 +98,7 @@ void setup_mesh(viennagrid::line_2d_mesh & mesh)
   viennagrid::make_element<CellType>( mesh, vertices, vertices+2 );
 }
 
-void test(viennagrid::line_2d_mesh)
+inline void test(viennagrid::line_2d_mesh)
 {
   typedef viennagrid::line_2d_mesh                            Mesh;
   typedef viennagrid::line_tag                                          CellTag;
@@ -273,7 +273,7 @@ void test(viennagrid::line_2d_mesh)
 // Triangular
 //
 
-void setup_mesh(viennagrid::triangular_2d_mesh & mesh)
+inline void setup_mesh(viennagrid::triangular_2d_mesh & mesh)
 {
   typedef viennagrid::triangular_2d_mesh                      MeshType;
   typedef viennagrid::triangle_tag                                      CellTag;
@@ -316,7 +316,7 @@ void setup_mesh(viennagrid::triangular_2d_mesh & mesh)
 
 
 
-void test(viennagrid::triangular_2d_mesh)
+inline void test(viennagrid::triangular_2d_mesh)
 {
   typedef viennagrid::triangular_2d_mesh                      Mesh;
   typedef viennagrid::triangle_tag                                      CellTag;
@@ -482,7 +482,7 @@ void test(viennagrid::triangular_2d_mesh)
 // Quadrilateral
 //
 
-void setup_mesh(viennagrid::quadrilateral_2d_mesh & mesh)
+inline void setup_mesh(viennagrid::quadrilateral_2d_mesh & mesh)
 {
   typedef viennagrid::quadrilateral_2d_mesh                  MeshType;
   typedef viennagrid::quadrilateral_tag                                CellTag;
@@ -512,7 +512,7 @@ void setup_mesh(viennagrid::quadrilateral_2d_mesh & mesh)
   viennagrid::make_element<CellType>( mesh, v, v+4 );
 }
 
-void test(viennagrid::quadrilateral_2d_mesh)
+inline void test(viennagrid::quadrilateral_2d_mesh)
 {
   typedef viennagrid::quadrilateral_2d_mesh                            Mesh;
   typedef viennagrid::quadrilateral_tag                                          CellTag;

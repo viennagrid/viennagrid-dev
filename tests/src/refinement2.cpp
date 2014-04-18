@@ -313,7 +313,7 @@ void fill_mesh(MeshType & mesh,
   //upgrade to vertex:
   VertexHandleType vh[5];
 
-  for (int i = 0; i < 5; ++i)
+  for (std::size_t i = 0; i < 5; ++i)
     vh[i] = viennagrid::make_vertex( mesh, points[i] );
 
 

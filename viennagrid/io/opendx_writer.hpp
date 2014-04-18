@@ -41,7 +41,7 @@ namespace viennagrid
     template <typename FloatingPointType>
     FloatingPointType DXfixer(FloatingPointType value)
     {
-      if (value * 10000 == static_cast<long>(value * 10000))
+      if ( std::fabs(value * 10000 - static_cast<long>(value * 10000)) < FloatingPointType(1.0))
         return value + 0.00001;
 
       return value;

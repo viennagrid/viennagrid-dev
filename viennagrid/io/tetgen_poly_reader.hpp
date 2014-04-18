@@ -190,7 +190,7 @@ namespace viennagrid
 
           PointType p;
 
-          for (int j=0; j<point_dim; j++)
+          for (std::size_t j=0; j<point_dim; j++)
             current_line >> p[j];
 
           viennagrid::make_vertex_with_id( mesh_obj, VertexIDType(id), p );
@@ -254,11 +254,11 @@ namespace viennagrid
             if (vertex_num < 0)
               throw bad_file_format_exception(filename, "POLY polygon has less than 0 vertices");
 
-            std::vector<VertexHandleType> vertex_handles(vertex_num);
+            std::vector<VertexHandleType> vertex_handles(static_cast<std::size_t>(vertex_num));
 
-            for (int k = 0; k<vertex_num; ++k)
+            for (std::size_t k = 0; k<static_cast<std::size_t>(vertex_num); ++k)
             {
-              long id;
+              typename VertexIDType::base_id_type id;
               current_line >> id;
               vertex_handles[k] = viennagrid::find( mesh_obj, VertexIDType(id) ).handle();
             }
@@ -281,7 +281,7 @@ namespace viennagrid
             }
           }
 
-          std::list<PointType> hole_points;
+          std::list<PointType> hole_points_read;
 
           for (int j = 0; j<hole_num; ++j)
           {
@@ -295,10 +295,10 @@ namespace viennagrid
 
             PointType p;
 
-            for (int j=0; j<point_dim; j++)
-              current_line >> p[j];
+            for (std::size_t k=0; k<point_dim; k++)
+              current_line >> p[k];
 
-            hole_points.push_back(p);
+            hole_points_read.push_back(p);
           }
 
 
@@ -307,7 +307,7 @@ namespace viennagrid
               mesh_obj,
               lines.begin(), lines.end(),
               vertices.begin(), vertices.end(),
-              hole_points.begin(), hole_points.end()
+              hole_points_read.begin(), hole_points_read.end()
           );
 
         }
@@ -339,7 +339,7 @@ namespace viennagrid
           current_line.str(tmp); current_line.clear();
           current_line >> hole_number;
 
-          for (int j=0; j < point_dim; j++)
+          for (std::size_t j=0; j < point_dim; j++)
             current_line >> hole_point[j];
 
           hole_points.push_back( hole_point );
@@ -374,7 +374,7 @@ namespace viennagrid
           current_line.str(tmp); current_line.clear();
           current_line >> segment_number;
 
-          for (int j=0; j < point_dim; j++)
+          for (std::size_t j=0; j < point_dim; j++)
             current_line >> seed_point[j];
 
           current_line >> segment_id;

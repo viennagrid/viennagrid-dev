@@ -129,7 +129,6 @@ int facet_check(MeshType & mesh)
       std::cerr << "Topology problem for facet: " << std::endl;
       std::cout << *(cfmit->first) << std::endl;
 
-      CellContainer cells(mesh);
       for (CellIterator cit = cells.begin();
                         cit != cells.end();
                       ++cit)

@@ -99,8 +99,8 @@ namespace viennagrid
       //******************************************
       static bool myIsNumber(std::string& str) {
         bool numberFlag = true;
-        long strLen = str.size();
-        long idx = 0;
+        std::size_t strLen = str.size();
+        std::size_t idx = 0;
 
         while(numberFlag == true && idx < strLen)
         {

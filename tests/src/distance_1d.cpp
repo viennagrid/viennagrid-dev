@@ -22,9 +22,9 @@
 #include "viennagrid/point.hpp"
 #include "viennagrid/algorithm/distance.hpp"
 
-void fuzzy_check(double a, double b)
+inline void fuzzy_check(double a, double b)
 {
-  if (a != b)
+  if (a > b || a < b)
   {
     if (   (std::abs(a - b) / std::max( std::abs(a), std::abs(b) ) > 1e-10)
         && (std::abs(a - b) > 1e-10)
@@ -43,7 +43,7 @@ void fuzzy_check(double a, double b)
 // Line 2d
 //
 
-void setup_mesh(viennagrid::line_1d_mesh & mesh)
+inline void setup_mesh(viennagrid::line_1d_mesh & mesh)
 {
   typedef viennagrid::line_1d_mesh                      MeshType;
   typedef viennagrid::line_tag                                    CellTag;
@@ -76,7 +76,7 @@ void setup_mesh(viennagrid::line_1d_mesh & mesh)
   viennagrid::make_element<CellType>( mesh, v+4, v+6 );
 }
 
-void test(viennagrid::line_1d_mesh)
+inline void test(viennagrid::line_1d_mesh)
 {
   typedef viennagrid::line_1d_mesh                            Mesh;
   typedef viennagrid::line_tag                                          CellTag;

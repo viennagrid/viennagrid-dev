@@ -230,16 +230,16 @@ namespace viennagrid
       }
 
       /** @brief Reads the coordinates of the points/vertices in the mesh */
-      void readNodeCoordinates(long nodeNum, long numberOfComponents, segment_id_type seg_id)
+      void readNodeCoordinates(std::size_t nodeNum, std::size_t numberOfComponents, segment_id_type seg_id)
       {
         double nodeCoord;
         local_to_global_map[seg_id].resize(nodeNum);
 
-        for(long i = 0; i < nodeNum; i++)
+        for(std::size_t i = 0; i < nodeNum; i++)
         {
           PointType p;
 
-          for(long j = 0; j < numberOfComponents; j++)
+          for(std::size_t j = 0; j < numberOfComponents; j++)
           {
             reader >> nodeCoord;
             if (j < geometric_dim)
@@ -262,9 +262,9 @@ namespace viennagrid
       }
 
       /** @brief Reads the vertex indices of the cells inside the mesh */
-      void readCellIndices(std::size_t seg_id)
+      void readCellIndices(segment_id_type seg_id)
       {
-        long cellNode = 0;
+        std::size_t cellNode = 0;
         std::string token;
         reader >> token;
 
@@ -272,7 +272,7 @@ namespace viennagrid
         {
           assert( strChecker::myIsNumber(token) && "Cell vertex index is not a number!" );
 
-          cellNode = atoi(token.c_str());
+          cellNode = static_cast<std::size_t>(atoi(token.c_str()));
           local_cell_vertices[seg_id].push_back(cellNode);
 
           reader >> token;
@@ -280,7 +280,7 @@ namespace viennagrid
       }
 
       /** @brief Read the cell offsets for the vertex indices */
-      void readOffsets(std::size_t seg_id)
+      void readOffsets(segment_id_type seg_id)
       {
           //****************************************************************************
           // read in the offsets: describe the affiliation of the nodes to the cells
@@ -288,14 +288,14 @@ namespace viennagrid
           //****************************************************************************
 
           std::string token;
-          long offset = 0;
+          std::size_t offset = 0;
           reader >> token;
 
           while(token != "</DataArray>")
           {
             assert( strChecker::myIsNumber(token) && "Cell offset is not a number!" );
 
-            offset = atoi(token.c_str());
+            offset = static_cast<std::size_t>(atoi(token.c_str()));
             local_cell_offsets[seg_id].push_back(offset);
 
             //std::cout << "Vertex#: " << offset << std::endl;
@@ -363,7 +363,7 @@ namespace viennagrid
           name = tag.get_value("name");
 
           if (tag.has_attribute("numberofcomponents"))
-            components = atoi(tag.get_value("numberofcomponents").c_str());
+            components = static_cast<std::size_t>(atoi(tag.get_value("numberofcomponents").c_str()));
 
           //now read data:
           if (components == 1)
@@ -396,7 +396,7 @@ namespace viennagrid
       void setupVertices(MeshType & mesh_obj)
       {
         for (std::size_t i=0; i<global_points_2.size(); ++i)
-          viennagrid::make_vertex_with_id( mesh_obj, typename VertexType::id_type(i), global_points_2[i] );
+          viennagrid::make_vertex_with_id( mesh_obj, typename VertexType::id_type(typename VertexType::id_type::base_id_type(i)), global_points_2[i] );
       }
 
       /** @brief Pushes the cells read to the mesh. Preserves segment information. */
@@ -411,8 +411,8 @@ namespace viennagrid
         //               to the cells
         //***************************************************
         //CellType cell;
-        long numVertices = 0;
-        long offsetIdx = 0;
+        std::size_t numVertices = 0;
+        std::size_t offsetIdx = 0;
 
         std::deque<std::size_t> const & offsets = local_cell_offsets[seg_id];
 
@@ -444,9 +444,9 @@ namespace viennagrid
           std::vector<VertexIDType> cell_vertex_ids(numVertices);
 
           detail::vtk_to_viennagrid_orientations<CellTag> reorderer;
-          for (long j = 0; j < numVertices; j++)
+          for (std::size_t j = 0; j < numVertices; j++)
           {
-            long reordered_j = reorderer(j);
+            std::size_t reordered_j = reorderer(j);
             std::size_t local_index = local_cell_vertices[seg_id][reordered_j + offsetIdx];
             std::size_t global_vertex_index = local_to_global_map[seg_id][local_index];
 
@@ -518,8 +518,9 @@ namespace viennagrid
               std::size_t global_vertex_id = local_to_global_map[seg_id][i];
               VertexType const & vertex = viennagrid::elements<viennagrid::vertex_tag>(mesh_obj)[global_vertex_id];
 
-              if ( static_cast<typename VertexType::id_type::base_id_type>(vertex_scalar_data[container.first][seg_id].size()) <= vertex.id().get()) vertex_scalar_data[container.first][seg_id].resize(vertex.id().get()+1);
-              vertex_scalar_data[container.first][seg_id][vertex.id().get()] = (container.second)[i];
+              if ( static_cast<typename VertexType::id_type::base_id_type>(vertex_scalar_data[container.first][seg_id].size()) <= vertex.id().get())
+                vertex_scalar_data[container.first][seg_id].resize(static_cast<std::size_t>(vertex.id().get()+1));
+              vertex_scalar_data[container.first][seg_id][static_cast<std::size_t>(vertex.id().get())] = (container.second)[i];
             }
           }
         }
@@ -564,11 +565,12 @@ namespace viennagrid
               std::size_t global_vertex_id = local_to_global_map[seg_id][i];
               VertexType const & vertex = viennagrid::elements<viennagrid::vertex_tag>(mesh_obj)[global_vertex_id];
 
-              if ( static_cast<typename VertexType::id_type::base_id_type>(vertex_vector_data[container.first][seg_id].size()) <= vertex.id().get()) vertex_vector_data[container.first][seg_id].resize(vertex.id().get()+1);
-              vertex_vector_data[container.first][seg_id][vertex.id().get()].resize(3);
-              vertex_vector_data[container.first][seg_id][vertex.id().get()][0] = (container.second)[3*i+0];
-              vertex_vector_data[container.first][seg_id][vertex.id().get()][1] = (container.second)[3*i+1];
-              vertex_vector_data[container.first][seg_id][vertex.id().get()][2] = (container.second)[3*i+2];
+              if ( static_cast<typename VertexType::id_type::base_id_type>(vertex_vector_data[container.first][seg_id].size()) <= vertex.id().get())
+                vertex_vector_data[container.first][seg_id].resize(static_cast<std::size_t>(vertex.id().get()+1));
+              vertex_vector_data[container.first][seg_id][static_cast<std::size_t>(vertex.id().get())].resize(3);
+              vertex_vector_data[container.first][seg_id][static_cast<std::size_t>(vertex.id().get())][0] = (container.second)[3*i+0];
+              vertex_vector_data[container.first][seg_id][static_cast<std::size_t>(vertex.id().get())][1] = (container.second)[3*i+1];
+              vertex_vector_data[container.first][seg_id][static_cast<std::size_t>(vertex.id().get())][2] = (container.second)[3*i+2];
             }
           }
         }
@@ -611,8 +613,9 @@ namespace viennagrid
             {
               CellType const & cell = viennagrid::dereference_handle( segment, local_cell_handle[seg_id][i] );
 
-              if ( static_cast<typename CellType::id_type::base_id_type>(cell_scalar_data[container.first][seg_id].size()) <= cell.id().get()) cell_scalar_data[container.first][seg_id].resize(cell.id().get()+1);
-              cell_scalar_data[container.first][seg_id][cell.id().get()] = (container.second)[i];
+              if ( static_cast<typename CellType::id_type::base_id_type>(cell_scalar_data[container.first][seg_id].size()) <= cell.id().get())
+                cell_scalar_data[container.first][seg_id].resize(static_cast<std::size_t>(cell.id().get()+1));
+              cell_scalar_data[container.first][seg_id][static_cast<std::size_t>(cell.id().get())] = (container.second)[i];
             }
           }
         }
@@ -654,11 +657,12 @@ namespace viennagrid
             {
               CellType const & cell = viennagrid::dereference_handle( segment, local_cell_handle[seg_id][i] );
 
-              if ( static_cast<typename CellType::id_type::base_id_type>(cell_vector_data[container.first][seg_id].size()) <= cell.id().get()) cell_vector_data[container.first][seg_id].resize(cell.id().get()+1);
-              cell_vector_data[container.first][seg_id][cell.id().get()].resize(3);
-              cell_vector_data[container.first][seg_id][cell.id().get()][0] = (container.second)[3*i+0];
-              cell_vector_data[container.first][seg_id][cell.id().get()][1] = (container.second)[3*i+1];
-              cell_vector_data[container.first][seg_id][cell.id().get()][2] = (container.second)[3*i+2];
+              if ( static_cast<typename CellType::id_type::base_id_type>(cell_vector_data[container.first][seg_id].size()) <= cell.id().get())
+                cell_vector_data[container.first][seg_id].resize(static_cast<std::size_t>(cell.id().get()+1));
+              cell_vector_data[container.first][seg_id][static_cast<std::size_t>(cell.id().get())].resize(3);
+              cell_vector_data[container.first][seg_id][static_cast<std::size_t>(cell.id().get())][0] = (container.second)[3*i+0];
+              cell_vector_data[container.first][seg_id][static_cast<std::size_t>(cell.id().get())][1] = (container.second)[3*i+1];
+              cell_vector_data[container.first][seg_id][static_cast<std::size_t>(cell.id().get())][2] = (container.second)[3*i+2];
             }
           }
         }
@@ -698,8 +702,8 @@ namespace viennagrid
         {
           openFile(filename);
 
-          long nodeNum = 0;
-          long numberOfComponents = 0;
+          std::size_t nodeNum = 0;
+          std::size_t numberOfComponents = 0;
 
           xml_tag<> tag;
 
@@ -714,14 +718,14 @@ namespace viennagrid
 
           tag.check_attribute("numberofpoints", filename);
 
-          nodeNum = atoi(tag.get_value("numberofpoints").c_str());
+          nodeNum = static_cast<std::size_t>(atoi(tag.get_value("numberofpoints").c_str()));
           #ifdef VIENNAGRID_DEBUG_IO
           std::cout << "#Nodes: " << nodeNum << std::endl;
           #endif
 
           tag.check_attribute("numberofcells", filename);
 
-          local_cell_num[seg_id] = atoi(tag.get_value("numberofcells").c_str());
+          local_cell_num[seg_id] = static_cast<std::size_t>(atoi(tag.get_value("numberofcells").c_str()));
           #ifdef VIENNAGRID_DEBUG_IO
           std::cout << "#Cells: " << local_cell_num[seg_id] << std::endl;
           #endif
@@ -731,7 +735,7 @@ namespace viennagrid
           tag.parse_and_check_name(reader, "dataarray", filename);
           tag.check_attribute("numberofcomponents", filename);
 
-          numberOfComponents = atoi(tag.get_value("numberofcomponents").c_str());
+          numberOfComponents = static_cast<std::size_t>(atoi(tag.get_value("numberofcomponents").c_str()));
           readNodeCoordinates(nodeNum, numberOfComponents, seg_id);
 
           tag.parse_and_check_name(reader, "/dataarray", filename);

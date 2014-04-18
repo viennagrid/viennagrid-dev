@@ -61,7 +61,7 @@ namespace viennagrid
       {
         BoundaryElementType boundary_element( inserter.get_physical_container_collection() );
 
-        int index = 0;
+        std::size_t index = 0;
         for (std::size_t i = 0; i < element.container( dimension_tag<0>() ).size()-1; ++i)
         {
           boundary_element.container(dimension_tag<0>()).set_handle( element.container( dimension_tag<0>() ).handle_at(i), 0 );

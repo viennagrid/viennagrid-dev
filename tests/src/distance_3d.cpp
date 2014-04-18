@@ -27,9 +27,9 @@
 #include "viennagrid/algorithm/cross_prod.hpp"
 #include "viennagrid/algorithm/norm.hpp"
 
-void fuzzy_check(double a, double b)
+inline void fuzzy_check(double a, double b)
 {
-  if (a != b)
+  if (a > b || a < b)
   {
     if (   (std::abs(a - b) / std::max( std::abs(a), std::abs(b) ) > 1e-10)
         && (std::abs(a - b) > 1e-10)
@@ -43,7 +43,7 @@ void fuzzy_check(double a, double b)
   std::cout << "PASSED! (" << a << ", " << b << ")" << std::endl;
 }
 
-double heron_triangle_area(double a, double b, double c)
+inline double heron_triangle_area(double a, double b, double c)
 {
   double s = (a + b + c) / 2.0;
 
@@ -51,7 +51,7 @@ double heron_triangle_area(double a, double b, double c)
 }
 
 /* Computes the height on c of a triangle with edge lenghts a, b, c */
-double height_from_edge_lengths(double a, double b, double c)
+inline double height_from_edge_lengths(double a, double b, double c)
 {
   return heron_triangle_area(a, b, c) / c * 2.0;
 }
@@ -96,7 +96,7 @@ double line_distance_via_cross_prod(MeshType const & mesh, LineType const & line
 // Line 3d
 //
 
-void setup_mesh(viennagrid::line_3d_mesh & mesh)
+inline void setup_mesh(viennagrid::line_3d_mesh & mesh)
 {
   typedef viennagrid::line_3d_mesh                      MeshType;
 //   typedef viennagrid::config::line_2d                             ConfigType;
@@ -153,7 +153,7 @@ void setup_mesh(viennagrid::line_3d_mesh & mesh)
   viennagrid::make_element<CellType>( mesh, vertices, vertices+2 );
 }
 
-void test(viennagrid::line_3d_mesh)
+inline void test(viennagrid::line_3d_mesh)
 {
   typedef viennagrid::line_3d_mesh                            Mesh;
   typedef viennagrid::line_tag                                          CellTag;
@@ -363,7 +363,7 @@ void test(viennagrid::line_3d_mesh)
 // Triangular
 //
 
-void setup_mesh(viennagrid::triangular_3d_mesh & mesh)
+inline void setup_mesh(viennagrid::triangular_3d_mesh & mesh)
 {
   typedef viennagrid::triangular_3d_mesh                      MeshType;
   typedef viennagrid::triangle_tag                                      CellTag;
@@ -408,7 +408,7 @@ void setup_mesh(viennagrid::triangular_3d_mesh & mesh)
 
 
 
-void test(viennagrid::triangular_3d_mesh)
+inline void test(viennagrid::triangular_3d_mesh)
 {
   typedef viennagrid::triangular_3d_mesh                      Mesh;
   typedef viennagrid::triangle_tag                                      CellTag;
@@ -599,7 +599,7 @@ void test(viennagrid::triangular_3d_mesh)
 // Quadrilateral
 //
 
-void setup_mesh(viennagrid::quadrilateral_3d_mesh & mesh)
+inline void setup_mesh(viennagrid::quadrilateral_3d_mesh & mesh)
 {
   typedef viennagrid::quadrilateral_3d_mesh                  MeshType;
   typedef viennagrid::quadrilateral_tag                                CellTag;
@@ -629,7 +629,7 @@ void setup_mesh(viennagrid::quadrilateral_3d_mesh & mesh)
   viennagrid::make_element<CellType>( mesh, v, v+4 );
 }
 
-void test(viennagrid::quadrilateral_3d_mesh)
+inline void test(viennagrid::quadrilateral_3d_mesh)
 {
   typedef viennagrid::quadrilateral_3d_mesh                            Mesh;
   typedef viennagrid::quadrilateral_tag                                          CellTag;
@@ -759,7 +759,7 @@ void test(viennagrid::quadrilateral_3d_mesh)
 //
 
 
-void setup_mesh(viennagrid::tetrahedral_3d_mesh & mesh)
+inline void setup_mesh(viennagrid::tetrahedral_3d_mesh & mesh)
 {
   typedef viennagrid::tetrahedral_3d_mesh                      MeshType;
   typedef viennagrid::tetrahedron_tag                                    CellTag;
@@ -790,7 +790,7 @@ void setup_mesh(viennagrid::tetrahedral_3d_mesh & mesh)
   viennagrid::make_element<CellType>( mesh, v, v+4 );
 }
 
-void test(viennagrid::tetrahedral_3d_mesh)
+inline void test(viennagrid::tetrahedral_3d_mesh)
 {
   typedef viennagrid::tetrahedral_3d_mesh                            Mesh;
   typedef viennagrid::tetrahedron_tag                                          CellTag;
@@ -919,7 +919,7 @@ void test(viennagrid::tetrahedral_3d_mesh)
 // Quadrilateral
 //
 
-void setup_mesh(viennagrid::hexahedral_3d_mesh & mesh)
+inline void setup_mesh(viennagrid::hexahedral_3d_mesh & mesh)
 {
   typedef viennagrid::hexahedral_3d_mesh                      MeshType;
   typedef viennagrid::hexahedron_tag                                    CellTag;
@@ -955,7 +955,7 @@ void setup_mesh(viennagrid::hexahedral_3d_mesh & mesh)
   viennagrid::make_element<CellType>( mesh, v, v+8 );
 }
 
-void test(viennagrid::hexahedral_3d_mesh)
+inline void test(viennagrid::hexahedral_3d_mesh)
 {
   typedef viennagrid::hexahedral_3d_mesh                            Mesh;
   typedef viennagrid::hexahedron_tag                                          CellTag;

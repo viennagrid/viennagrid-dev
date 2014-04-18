@@ -65,7 +65,7 @@ void print_elements(SegmentT & seg)
 
 
 //test for 3d tetrahedral case:
-void test(viennagrid::tetrahedral_3d_mesh)
+inline void test(viennagrid::tetrahedral_3d_mesh)
 {
   typedef viennagrid::tetrahedral_3d_mesh                         MeshType;
   typedef viennagrid::result_of::cell_tag<MeshType>::type         CellTag;
@@ -140,7 +140,7 @@ void test(viennagrid::tetrahedral_3d_mesh)
 }
 
 //test for 3d hexahedral case:
-void test(viennagrid::hexahedral_3d_mesh)
+inline void test(viennagrid::hexahedral_3d_mesh)
 {
   typedef viennagrid::hexahedral_3d_mesh                         MeshType;
   typedef viennagrid::result_of::cell_tag<MeshType>::type         CellTag;
@@ -217,7 +217,7 @@ void test(viennagrid::hexahedral_3d_mesh)
 
 
 //test for 2d triangular case:
-void test(viennagrid::triangular_2d_mesh)
+inline void test(viennagrid::triangular_2d_mesh)
 {
   typedef viennagrid::triangular_2d_mesh                         MeshType;
   typedef viennagrid::result_of::cell_tag<MeshType>::type         CellTag;
@@ -290,7 +290,7 @@ void test(viennagrid::triangular_2d_mesh)
 }
 
 //test for 2d quadrilateral case:
-void test(viennagrid::quadrilateral_2d_mesh)
+inline void test(viennagrid::quadrilateral_2d_mesh)
 {
   typedef viennagrid::quadrilateral_2d_mesh                         MeshType;
   typedef viennagrid::result_of::cell_tag<MeshType>::type         CellTag;

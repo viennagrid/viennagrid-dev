@@ -169,7 +169,7 @@ namespace viennagrid
 
 
       template<typename SegmentHandleT>
-      unsigned int preparePoints(SegmentHandleT const & segment, segment_id_type seg_id)
+      std::size_t preparePoints(SegmentHandleT const & segment, segment_id_type seg_id)
       {
         typedef typename viennagrid::result_of::const_element_range<SegmentHandleT, CellTag>::type     CellRange;
         typedef typename viennagrid::result_of::iterator<CellRange>::type                                         CellIterator;
@@ -205,7 +205,7 @@ namespace viennagrid
           }
         }
 
-        std::size_t index = 0;
+        typename VertexIDType::base_id_type index = 0;
         for (typename std::map< VertexIDType, ConstVertexHandleType >::iterator it = current_used_vertex_map.begin(); it != current_used_vertex_map.end(); ++it)
           current_vertex_to_index_map.insert( std::make_pair( it->second, VertexIDType(index++) ) );
 
@@ -213,7 +213,7 @@ namespace viennagrid
       }
 
       template<typename MeshSegmentHandleT>
-      unsigned int prepareCells(MeshSegmentHandleT const & domseg, segment_id_type seg_id)
+      std::size_t prepareCells(MeshSegmentHandleT const & domseg, segment_id_type seg_id)
       {
         typedef typename viennagrid::result_of::const_element_range<MeshSegmentHandleT, CellTag>::type     CellRange;
         typedef typename viennagrid::result_of::iterator<CellRange>::type                                         CellIterator;
@@ -292,7 +292,7 @@ namespace viennagrid
           //Step 2: Write the transformed connectivities:
           detail::viennagrid_to_vtk_orientations<CellTag> reorderer;
           for (std::size_t i=0; i<viennagrid_vertices.size(); ++i)
-            writer << viennagrid_vertices[reorderer(static_cast<long>(i))] << " ";
+            writer << viennagrid_vertices[reorderer(i)] << " ";
 
           writer << std::endl;
         }
@@ -333,7 +333,7 @@ namespace viennagrid
 
       /** @brief Writes vector-valued data defined on vertices (points) to file */
       template <typename SegmentHandleT, typename IOAccessorType>
-      void writePointData(SegmentHandleT const & segment, std::ofstream & writer, std::string const & name, IOAccessorType const & accessor, long seg_id)
+      void writePointData(SegmentHandleT const & segment, std::ofstream & writer, std::string const & name, IOAccessorType const & accessor, segment_id_type seg_id)
       {
         typedef typename IOAccessorType::value_type ValueType;
 
@@ -354,7 +354,7 @@ namespace viennagrid
 
       /** @brief Writes vector-valued data defined on vertices (points) to file */
       template <typename SegmentHandleT, typename IOAccessorType>
-      void writeCellData(SegmentHandleT const & segment, std::ofstream & writer, std::string const & name, IOAccessorType const & accessor, long seg_id)
+      void writeCellData(SegmentHandleT const & segment, std::ofstream & writer, std::string const & name, IOAccessorType const & accessor, segment_id_type seg_id)
       {
         typedef typename IOAccessorType::value_type ValueType;
 
@@ -412,7 +412,7 @@ namespace viennagrid
 
           segment_id_type tmp_id = segment_id_type();
 
-          unsigned int num_points = preparePoints(mesh_obj, tmp_id);
+          std::size_t num_points = preparePoints(mesh_obj, tmp_id);
           prepareCells(mesh_obj, tmp_id);
 
           writer << "  <Piece NumberOfPoints=\""
@@ -519,7 +519,7 @@ namespace viennagrid
               throw cannot_open_file_exception(ss.str());
             }
 
-            unsigned int num_points = preparePoints(seg, seg.id());
+            std::size_t num_points = preparePoints(seg, seg.id());
             prepareCells(seg, seg.id());
 
             writer << "  <Piece NumberOfPoints=\""

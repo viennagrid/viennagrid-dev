@@ -330,8 +330,12 @@ namespace viennagrid
     struct cell_tag;
 
 
+    /** @brief Metafunction for obtaining the geometric point type of something
+     *
+     * @tparam SomethingT           The host type, can be an element, a mesh, a segmentation, a segment, an accessor or a field
+     */
     template<typename SomethingT>
-    struct point;
+    struct point {};
 
     /** @brief Metafunction for obtaining the coordinate type of the geometric point type of something
      *

@@ -135,9 +135,9 @@ void test(std::string & infile, std::string & outfile)
     typename viennagrid::result_of::field< std::deque< std::vector<double> >, CellType >::type    segment_cell_normal_data_field( segment_cell_normal_data[it->id()] );
 
 
-    SegmentVertexContainer vertices(*it);
-    for (SegmentVertexIterator vit = vertices.begin();
-        vit != vertices.end();
+    SegmentVertexContainer segment_vertices(*it);
+    for (SegmentVertexIterator vit = segment_vertices.begin();
+        vit != segment_vertices.end();
         ++vit)
     {
       segment_vertex_double_data_field(*vit) = index+1;
@@ -145,9 +145,9 @@ void test(std::string & infile, std::string & outfile)
       segment_vertex_normal_data_field(*vit) = std::vector<double>(3, index);
     }
 
-    SegmentCellContainer cells(*it);
-    for (SegmentCellIterator cit = cells.begin();
-                      cit != cells.end();
+    SegmentCellContainer segment_cells(*it);
+    for (SegmentCellIterator cit = segment_cells.begin();
+                      cit != segment_cells.end();
                     ++cit)
     {
       segment_cell_double_data_field(*cit) = viennagrid::circumcenter(*cit)[0] + index;

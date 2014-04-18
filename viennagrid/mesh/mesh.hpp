@@ -1518,12 +1518,6 @@ namespace viennagrid
 
   namespace result_of
   {
-    /** @brief Metafunction for obtaining the geometric point type of something
-     *
-     * @tparam SomethingT           The host type, can be an element, a mesh, a segmentation, a segment, an accessor or a field
-     */
-    template<typename point_container_type>
-    struct point {};
 
     /** \cond */
     template<typename ConfigType>

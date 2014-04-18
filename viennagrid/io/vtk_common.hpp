@@ -91,7 +91,7 @@ namespace viennagrid
       template <typename CellTag>
       struct vtk_to_viennagrid_orientations
       {
-        long operator()(long j) const { return j; }  //default case: do nothing
+        std::size_t operator()(std::size_t j) const { return j; }  //default case: do nothing
       };
 
       /** @brief Tranformations of reference orientations from ViennaGrid to VTK
@@ -101,14 +101,14 @@ namespace viennagrid
       template <typename CellTag>
       struct viennagrid_to_vtk_orientations
       {
-        long operator()(long j) const { return j; }  //default case: do nothing
+        std::size_t operator()(std::size_t j) const { return j; }  //default case: do nothing
       };
 
       /** @brief Specialization for quadrilaterals: Switch vertices 2 and 3 */
       template <>
       struct vtk_to_viennagrid_orientations<quadrilateral_tag>
       {
-        long operator()(long j) const
+        std::size_t operator()(std::size_t j) const
         {
           switch (j)
           {
@@ -124,7 +124,7 @@ namespace viennagrid
       template <>
       struct viennagrid_to_vtk_orientations<quadrilateral_tag>
       {
-        long operator()(long j) const
+        std::size_t operator()(std::size_t j) const
         {
           return vtk_to_viennagrid_orientations<quadrilateral_tag>()(j);
         }
@@ -135,7 +135,7 @@ namespace viennagrid
       template <>
       struct vtk_to_viennagrid_orientations<hexahedron_tag>
       {
-        long operator()(long j) const
+        std::size_t operator()(std::size_t j) const
         {
           switch (j)
           {
@@ -153,7 +153,7 @@ namespace viennagrid
       template <>
       struct viennagrid_to_vtk_orientations<hexahedron_tag>
       {
-        long operator()(long j) const
+        std::size_t operator()(std::size_t j) const
         {
           return vtk_to_viennagrid_orientations<hexahedron_tag>()(j);
         }

@@ -53,7 +53,7 @@ void print_elements(SegmentT & seg)
 }
 
 
-void setup_mesh(viennagrid::triangular_2d_mesh & mesh)
+inline void setup_mesh(viennagrid::triangular_2d_mesh & mesh)
 {
   typedef viennagrid::triangular_2d_mesh MeshType;
 
@@ -78,7 +78,7 @@ void setup_mesh(viennagrid::triangular_2d_mesh & mesh)
   viennagrid::make_triangle( mesh, vh[1], vh[3], vh[2] );
 }
 
-void setup_mesh(viennagrid::triangular_3d_mesh & mesh)
+inline void setup_mesh(viennagrid::triangular_3d_mesh & mesh)
 {
   typedef viennagrid::triangular_3d_mesh MeshType;
 
@@ -103,7 +103,7 @@ void setup_mesh(viennagrid::triangular_3d_mesh & mesh)
   viennagrid::make_triangle( mesh, vh[1], vh[3], vh[2] );
 }
 
-void setup_mesh(viennagrid::tetrahedral_3d_mesh & mesh)
+inline void setup_mesh(viennagrid::tetrahedral_3d_mesh & mesh)
 {
   typedef viennagrid::tetrahedral_3d_mesh MeshType;
 

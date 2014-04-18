@@ -218,41 +218,41 @@ namespace viennagrid
     pointer find(AccessType const & element)
     {
       offset_type offset = unpack(element);
-      return (static_cast<offset_type>((*container).size()) > unpack(element)) ? (&(*container)[offset]) : NULL;
+      return (static_cast<offset_type>((*container).size()) > unpack(element)) ? (&(*container)[static_cast<std::size_t>(offset)]) : NULL;
     }
 
     const_pointer find(AccessType const & element) const
     {
       offset_type offset = unpack(element);
-      return (static_cast<offset_type>((*container).size()) > unpack(element)) ? (&(*container)[offset]) : NULL;
+      return (static_cast<offset_type>((*container).size()) > unpack(element)) ? (&(*container)[static_cast<std::size_t>(offset)]) : NULL;
     }
 
     reference operator()(AccessType const & element)
     {
       offset_type offset = unpack(element);
-      if ( static_cast<offset_type>((*container).size()) <= offset) (*container).resize(offset+1);
-      return (*container)[offset];
+      if ( static_cast<offset_type>((*container).size()) <= offset) (*container).resize(static_cast<std::size_t>(offset+1));
+      return (*container)[static_cast<std::size_t>(offset)];
     }
 
     const_reference operator()(AccessType const & element) const
     {
       offset_type offset = unpack(element);
       assert( static_cast<offset_type>((*container).size()) > offset );
-      return (*container)[offset];
+      return (*container)[static_cast<std::size_t>(offset)];
     }
 
     reference at(AccessType const & element)
     {
       offset_type offset = unpack(element);
       if ( static_cast<offset_type>((*container).size()) <= offset) throw std::out_of_range("dense_container_accessor::at() failed");
-      return (*container)[offset];
+      return (*container)[static_cast<std::size_t>(offset)];
     }
 
     const_reference at(AccessType const & element) const
     {
       offset_type offset = unpack(element);
       if ( static_cast<offset_type>((*container).size()) <= offset) throw std::out_of_range("dense_container_accessor::at() const failed");
-      return (*container)[offset];
+      return (*container)[static_cast<std::size_t>(offset)];
     }
 
   protected:
@@ -287,21 +287,21 @@ namespace viennagrid
     const_pointer find(AccessType const & element) const
     {
       offset_type offset = unpack(element);
-      return (static_cast<offset_type>((*container).size()) > unpack(element)) ? (&(*container)[offset]) : NULL;
+      return (static_cast<offset_type>((*container).size()) > unpack(element)) ? (&(*container)[static_cast<std::size_t>(offset)]) : NULL;
     }
 
     const_reference operator()(AccessType const & element) const
     {
       offset_type offset = unpack(element);
       assert( static_cast<offset_type>((*container).size()) > offset );
-      return (*container)[offset];
+      return (*container)[static_cast<std::size_t>(offset)];
     }
 
     const_reference at(AccessType const & element) const
     {
       offset_type offset = unpack(element);
       if ( static_cast<offset_type>((*container).size()) <= offset) throw std::out_of_range("dense_container_accessor::at() const failed");
-      return (*container)[offset];
+      return (*container)[static_cast<std::size_t>(offset)];
     }
 
     void erase(AccessType const & element);
@@ -702,20 +702,20 @@ namespace viennagrid
     pointer find(AccessType const & element)
     {
       offset_type offset = unpack(element);
-      return (static_cast<offset_type>((*container).size()) > offset) ? (&(*container)[offset]) : NULL;
+      return (static_cast<offset_type>((*container).size()) > offset) ? (&(*container)[static_cast<std::size_t>(offset)]) : NULL;
     }
 
     const_pointer find(AccessType const & element) const
     {
       offset_type offset = unpack(element);
-      return (static_cast<offset_type>((*container).size()) > offset) ? (&(*container)[offset]) : NULL;
+      return (static_cast<offset_type>((*container).size()) > offset) ? (&(*container)[static_cast<std::size_t>(offset)]) : NULL;
     }
 
     reference operator()(AccessType const & element)
     {
       offset_type offset = unpack(element);
-      if ( static_cast<offset_type>((*container).size()) <= offset) (*container).resize(offset+1);
-      return (*container)[offset];
+      if ( static_cast<offset_type>((*container).size()) <= offset) (*container).resize(static_cast<std::size_t>(offset+1));
+      return (*container)[static_cast<std::size_t>(offset)];
     }
 
     const_reference operator()(AccessType const & element) const
@@ -725,21 +725,21 @@ namespace viennagrid
       if ( static_cast<offset_type>((*(this->container)).size()) <= offset)
         return default_value;
 
-      return (*(this->container))[offset];
+      return (*(this->container))[static_cast<std::size_t>(offset)];
     }
 
     reference at(AccessType const & element)
     {
       offset_type offset = unpack(element);
       if ( static_cast<offset_type>((*container).size()) <= offset) throw std::out_of_range("dense_container_field::at() failed");
-      return (*container)[offset];
+      return (*container)[static_cast<std::size_t>(offset)];
     }
 
     const_reference at(AccessType const & element) const
     {
       offset_type offset = unpack(element);
       if ( static_cast<offset_type>((*container).size()) <= offset) throw std::out_of_range("dense_container_field::at() failed");
-      return (*container)[offset];
+      return (*container)[static_cast<std::size_t>(offset)];
     }
 
 
@@ -777,7 +777,7 @@ namespace viennagrid
     const_pointer find(AccessType const & element) const
     {
       offset_type offset = unpack(element);
-      return (static_cast<offset_type>((*container).size()) > offset) ? (&(*container)[offset]) : NULL;
+      return (static_cast<offset_type>((*container).size()) > offset) ? (&(*container)[static_cast<std::size_t>(offset)]) : NULL;
     }
 
     const_reference operator()(AccessType const & element) const
@@ -787,14 +787,14 @@ namespace viennagrid
       if ( static_cast<offset_type>((*(this->container)).size()) <= offset)
         return default_value;
 
-      return (*(this->container))[offset];
+      return (*(this->container))[static_cast<std::size_t>(offset)];
     }
 
     const_reference at(AccessType const & element) const
     {
       offset_type offset = unpack(element);
       if ( static_cast<offset_type>((*container).size()) <= offset) throw std::out_of_range("dense_container_field::at() failed");
-      return (*container)[offset];
+      return (*container)[static_cast<std::size_t>(offset)];
     }
 
     void erase(AccessType const & element);

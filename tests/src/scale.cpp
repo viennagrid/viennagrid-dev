@@ -22,9 +22,9 @@
 #include "viennagrid/point.hpp"
 #include "viennagrid/algorithm/geometric_transform.hpp"
 
-void fuzzy_check(double a, double b)
+inline void fuzzy_check(double a, double b)
 {
-  if (a != b)
+  if (a < b || a > b)
   {
     if (   (std::abs(a - b) / std::max( std::abs(a), std::abs(b) ) > 1e-10)
         && (std::abs(a - b) > 1e-10)
@@ -49,7 +49,7 @@ void fuzzy_check(PointType const & a, PointType const & b)
 // Triangular
 //
 
-void setup_mesh(viennagrid::triangular_2d_mesh & mesh)
+inline void setup_mesh(viennagrid::triangular_2d_mesh & mesh)
 {
   typedef viennagrid::triangular_2d_mesh                      MeshType;
   typedef viennagrid::triangle_tag                                      CellTag;
@@ -92,7 +92,7 @@ void setup_mesh(viennagrid::triangular_2d_mesh & mesh)
 
 
 
-void test(viennagrid::triangular_2d_mesh)
+inline void test(viennagrid::triangular_2d_mesh)
 {
   typedef viennagrid::triangular_2d_mesh                 Mesh;
   typedef viennagrid::result_of::point<Mesh>::type       PointType;

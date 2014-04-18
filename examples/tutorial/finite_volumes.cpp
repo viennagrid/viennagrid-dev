@@ -35,14 +35,14 @@ class sparse_matrix
 public:
   sparse_matrix(std::size_t rows = 1, std::size_t cols = 1) : rows_(rows), cols_(cols) {}
 
-  T & operator()(std::size_t i, std::size_t j) { return entries_[i][j]; }
-  T const & operator()(std::size_t i, std::size_t j) const { return entries_[i][j]; }
+  T & operator()(long i, long j) { return entries_[static_cast<std::size_t>(i)][static_cast<std::size_t>(j)]; }
+  T const & operator()(long i, long j) const { return entries_[static_cast<std::size_t>(i)][static_cast<std::size_t>(j)]; }
 
-  void resize(std::size_t rows, std::size_t cols)
+  void resize(long rows, long cols)
   {
-    rows_ = rows;
-    cols_ = cols;
-    entries_.resize(rows);
+    rows_ = static_cast<std::size_t>(rows);
+    cols_ = static_cast<std::size_t>(cols);
+    entries_.resize(static_cast<std::size_t>(rows));
   }
 
 private:
@@ -70,7 +70,7 @@ void assemble(MeshType & mesh,
   typedef typename viennagrid::result_of::coboundary_range<MeshType, viennagrid::vertex_tag, viennagrid::line_tag>::type EdgeOnVertexContainer;
   typedef typename viennagrid::result_of::iterator<EdgeOnVertexContainer>::type    EdgeOnVertexIterator;
 
-  std::size_t current_dof = 0;
+  long current_dof = 0;
 
   //
   // Compute Voronoi info
@@ -115,7 +115,7 @@ void assemble(MeshType & mesh,
   {
     //boundary condition: Assuming homogeneous Dirichlet boundary conditions at x=0 and x=1
     //if ( (vit->point()[0] == 0) || (vit->point()[0] == 1) )
-    if ( (viennagrid::point(mesh, *vit)[0] == 0) || (viennagrid::point(mesh, *vit)[0] == 1) )
+    if ( (viennagrid::point(mesh, *vit)[0] < 0.000001) || (viennagrid::point(mesh, *vit)[0] > 0.9999999) )
       dof_accessor(*vit) = -1;
     else
     {
@@ -128,7 +128,7 @@ void assemble(MeshType & mesh,
 
   //resize global system matrix and load vector to the number of unknowns:
   system_matrix.resize(current_dof, current_dof);
-  load_vector.resize(current_dof);
+  load_vector.resize(static_cast<std::size_t>(current_dof));
 
 
   //
@@ -172,7 +172,7 @@ void assemble(MeshType & mesh,
       //std::cout << std::endl;
 
       //Note: volume stored on edges consists of volumes of both adjacent boxes.
-      load_vector[row_index] += edge_box_volume_accessor(*eovit) / 2.0;
+      load_vector[static_cast<std::size_t>(row_index)] += edge_box_volume_accessor(*eovit) / 2.0;
     } //for edges
   } //for vertices
 
@@ -213,12 +213,12 @@ int main()
   // Next step: Solve here using a linear algebra library, e.g. ViennaCL. (not included in this tutorial to avoid external dependencies)
   // Instead, we print the matrix
   std::cout << std::endl << "System matrix: " << std::endl;
-  for (std::size_t i=0; i<load_vector.size(); ++i)
+  for (long i=0; i<static_cast<long>(load_vector.size()); ++i)
   {
     std::cout << "Row " << i << ": ";
-    for (std::size_t j=0; j<load_vector.size(); ++j)
+    for (long j=0; j<static_cast<long>(load_vector.size()); ++j)
     {
-      if (system_matrix(i,j) != 0)
+      if (std::fabs(system_matrix(i,j)) > 0)
         std::cout << "(" << j << ", " << system_matrix(i,j) << "), ";
     }
     std::cout << std::endl;

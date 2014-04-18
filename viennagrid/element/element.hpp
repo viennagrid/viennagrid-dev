@@ -111,7 +111,7 @@ namespace viennagrid
 
 
     template<typename handle_type>
-    void set_boundary_element(const bnd_cell_type & to_insert, std::pair<handle_type, bool> inserted, unsigned int pos)
+    void set_boundary_element(const bnd_cell_type & to_insert, std::pair<handle_type, bool> inserted, std::size_t pos)
     {
         elements_.set_handle(inserted.first, pos);
         orientations_.resize(pos+1);
@@ -141,7 +141,7 @@ namespace viennagrid
             {
               if (voeit.handle() == voeit2.handle())
               {
-                orientations_[pos].setPermutation(j,i);
+                orientations_[pos].setPermutation(j,static_cast<dim_type>(i));
                 break;
               }
             }
@@ -156,7 +156,7 @@ namespace viennagrid
 
 
   ////////////////// orientation: ////////////////////
-  std::size_t global_to_local_orientation(bnd_cell_handle_type const & el, long index) const
+  std::size_t global_to_local_orientation(bnd_cell_handle_type const & el, std::size_t index) const
   {
     for (std::size_t i=0; i<elements_.size(); ++i)
     {
@@ -164,7 +164,7 @@ namespace viennagrid
         return orientations_[i](index);
     }
     assert(false && "Provided k-cell is not a boundary element of the hosting n-cell!");
-    return index;
+    return static_cast<std::size_t>(index);
   }
 
 

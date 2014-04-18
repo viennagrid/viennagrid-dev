@@ -27,10 +27,10 @@
 #include "viennagrid/algorithm/cross_prod.hpp"
 
 //compare a and b, taking round-off into account
-bool fuzzy_equal(double a, double b)
+inline bool fuzzy_equal(double a, double b)
 {
   //check for equality:
-  if (a == b)
+  if (a <= b && a >= b)
     return true;
 
   //relative check:
@@ -166,7 +166,7 @@ void test_operations(PointType1 const & c0, PointType1 const & c1, PointType1 co
 
 
 
-void test_1d()
+inline void test_1d()
 {
   typedef viennagrid::spatial_point<double, viennagrid::cartesian_cs<1> >   CartesianPoint;
 

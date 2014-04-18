@@ -22,7 +22,7 @@
 #include "viennagrid/io/opendx_writer.hpp"
 #include "viennagrid/io/netgen_reader.hpp"
 
-void print(std::vector<std::string> const & vec)
+inline void print(std::vector<std::string> const & vec)
 {
   for (std::size_t i=0; i<vec.size(); ++i)
     std::cout << vec[i] << std::endl;

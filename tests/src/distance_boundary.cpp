@@ -22,9 +22,9 @@
 #include "viennagrid/point.hpp"
 #include "viennagrid/algorithm/distance.hpp"
 
-void fuzzy_check(double a, double b)
+inline void fuzzy_check(double a, double b)
 {
-  if (a != b)
+  if (a > b || a < b)
   {
     if (   (std::abs(a - b) / std::max( std::abs(a), std::abs(b) ) > 1e-10)
         && (std::abs(a - b) > 1e-10)
@@ -43,10 +43,10 @@ void fuzzy_check(double a, double b)
 // Triangular
 //
 
-void setup_meshs(viennagrid::triangular_2d_mesh & mesh0,
-                   viennagrid::triangular_2d_segmentation & segmentation0,
-                   viennagrid::triangular_2d_mesh & mesh1,
-                   viennagrid::triangular_2d_segmentation & segmentation1)
+inline void setup_meshs(viennagrid::triangular_2d_mesh & mesh0,
+                        viennagrid::triangular_2d_segmentation & segmentation0,
+                        viennagrid::triangular_2d_mesh & mesh1,
+                        viennagrid::triangular_2d_segmentation & segmentation1)
 {
   typedef viennagrid::triangular_2d_mesh                      MeshType;
   typedef viennagrid::triangular_2d_segment_handle                     SegmentHandleType;
@@ -221,7 +221,7 @@ void setup_meshs(viennagrid::triangular_2d_mesh & mesh0,
 
 
 
-void test(viennagrid::triangular_2d_mesh)
+inline void test(viennagrid::triangular_2d_mesh)
 {
   typedef viennagrid::triangular_2d_mesh                      Mesh;
   typedef viennagrid::triangular_2d_segmentation                Segmentation;
