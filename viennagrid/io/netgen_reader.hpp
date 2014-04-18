@@ -93,7 +93,7 @@ namespace viennagrid
 
           PointType p;
 
-          for (std::size_t j=0; j<point_dim; j++)
+          for (std::size_t j=0; j<static_cast<std::size_t>(point_dim); j++)
             reader >> p[j];
 
           viennagrid::make_vertex_with_id( mesh_obj, typename VertexType::id_type(i), p );
@@ -123,7 +123,7 @@ namespace viennagrid
           int segment_index;
           reader >> segment_index;
 
-          for (std::size_t j=0; j<boundary_elements<CellTag, vertex_tag>::num; ++j)
+          for (std::size_t j=0; j<static_cast<std::size_t>(boundary_elements<CellTag, vertex_tag>::num); ++j)
           {
             if (!reader.good())
               throw bad_file_format_exception(filename, "EOF encountered while reading cells (cell ID expected).");

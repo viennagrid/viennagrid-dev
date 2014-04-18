@@ -242,7 +242,7 @@ namespace viennagrid
           for(std::size_t j = 0; j < numberOfComponents; j++)
           {
             reader >> nodeCoord;
-            if (j < geometric_dim)
+            if (j < static_cast<std::size_t>(geometric_dim))
               p[j] = nodeCoord;
           }
 
