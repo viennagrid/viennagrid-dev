@@ -77,6 +77,21 @@ namespace viennagrid
 
       return viennagrid::cross_prod( p1-p0, p2-p0 );
     }
+
+    /** @brief Implementation for calculating a normal vector of a quadrilateral in 3D.
+    *
+    *  Reuses the implementation for a triangle.
+    */
+    template<typename PointAccessorT, typename ElementT>
+    typename PointAccessorT::value_type normal_vector_impl(
+      PointAccessorT const point_accessor,
+      ElementT const & element,
+      viennagrid::quadrilateral_tag,
+      viennagrid::dimension_tag<3>)
+    {
+      return normal_vector_impl(point_accessor, element, viennagrid::triangle_tag(), viennagrid::dimension_tag<3>());
+    }
+
   }
 
 
