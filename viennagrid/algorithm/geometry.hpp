@@ -110,6 +110,16 @@ namespace viennagrid
 
 
 
+  /** @brief Calculates the determinant of a 1x1 matrix with the columns provided as 1D-points
+   *
+   * @param p0                The first column/point
+   */
+  template<typename PointT>
+  typename viennagrid::result_of::coord<PointT>::type determinant( PointT const & p0)
+  {
+    return p0[0];
+  }
+
   /** @brief Calculates the determinant of a 2x2 matrix with the columns provided as 2D-points
    *
    * @param p0                The first column
