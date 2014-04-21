@@ -14,7 +14,7 @@
 ======================================================================= */
 
 /** @file viennagrid/algorithm/seed_point_segmenting.hpp
-    @brief Contains functions for calculating angles between vectors given by points
+    @brief Contains functions for segmenting a mesh based on seed points
 */
 
 #include "viennagrid/algorithm/geometry.hpp"

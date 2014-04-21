@@ -27,9 +27,8 @@ Thus, the mesh type using the provided configuration class for two-dimensional t
  // Segment 1, the right one
  SegmentType segment_1 = segmentation.make_segment();
 \end{lstlisting}
-Bear in mind that an additional \lstinline|typename| needs to be put after \lstinline|typedef| when using the meta-functions in namespace \texttt{result\_of} if used inside a template class or template function.
+Bear in mind that an additional \lstinline|typename| needs to be put after \lstinline|typedef| when using the meta-functions in namespace \lstinline|result_of| if used inside a template class or template function.
 The mesh type is selected from the respective configuration class in namespace \texttt{config}.
-Possible mesh types 
 The created mesh object will be filled with vertices and cells in the following.
 
 \begin{figure}[tb]
@@ -145,7 +144,10 @@ Thus, the array of handles to vertices is created for a triangle as follows:
 \end{lstlisting}
 Instead of hard-coding the number of vertices for a triangle, one can instead use
 \begin{lstlisting}
-VertexHandleType cell_vertices[viennagrid::boundary_elements<CellTag,viennagrid::vertex_tag>::num];
+static const std::size_t dim =
+  viennagrid::boundary_elements<CellTag,
+                                viennagrid::vertex_tag>::num;
+VertexHandleType cell_vertices[dim];
 \end{lstlisting}
 resulting in code which will also work for e.g. quadrilateral meshes.
 

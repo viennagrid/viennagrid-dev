@@ -79,9 +79,7 @@ It is also possible to use the range only implicitly:
  for (std::size_t i=0;
                   i < viennagrid::elements<ElementTag>(mesh).size();
                 ++i)
- {
-   do_something(viennagrid::elements<ElementTag>(mesh)[i]);
- }
+ { do_something(viennagrid::elements<ElementTag>(mesh)[i]); }
 \end{lstlisting}
 However, since the repeated construction of the range object can have non-negligible setup costs, the latter code is not recommended.
 

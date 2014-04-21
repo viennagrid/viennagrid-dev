@@ -181,7 +181,7 @@ namespace viennagrid
 
 
 
-      /** @brief Meta function for creating a thin topologic configuration.
+      /** @brief Meta function for creating a thin topologic configuration. A thin topology only holds cells and vertices, but no facets, etc.
        *  @tparam CellTagT              The cell tag of the mesh
        *  @tparam HandleTagT            Defines, which handle type should be used for all elements. Default is pointer handle
        *  @tparam VertexContainerTagT   Defines, which container type should be used for vertices. Default is std::deque

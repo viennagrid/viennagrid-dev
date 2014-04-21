@@ -182,6 +182,7 @@ namespace viennagrid
       typedef result_of::full_mesh_config< viennagrid::triangle_tag, point_type_2d, viennagrid::pointer_handle_tag >::type     type;
     };
 
+    /** @brief A minimal configuration for triangles in 2d, no facts/edges */
     struct thin_triangular_2d
     {
       typedef result_of::thin_mesh_config< viennagrid::triangle_tag, point_type_2d, viennagrid::pointer_handle_tag >::type  type;
@@ -194,6 +195,7 @@ namespace viennagrid
       typedef result_of::full_mesh_config< viennagrid::triangle_tag, point_type_3d, viennagrid::pointer_handle_tag >::type     type;
     };
 
+    /** @brief A minimal configuration for triangles in 3d, no facts/edges */
     struct thin_triangular_3d
     {
       typedef result_of::thin_mesh_config< viennagrid::triangle_tag, point_type_3d, viennagrid::pointer_handle_tag >::type  type;
@@ -205,6 +207,7 @@ namespace viennagrid
       typedef result_of::full_mesh_config< viennagrid::quadrilateral_tag, point_type_2d, viennagrid::pointer_handle_tag >::type     type;
     };
 
+    /** @brief A minimal configuration for quadrilaterals in 2d, no facts/edges */
     struct thin_quadrilateral_2d
     {
       typedef result_of::thin_mesh_config< viennagrid::quadrilateral_tag, point_type_2d, viennagrid::pointer_handle_tag >::type     type;
@@ -216,6 +219,7 @@ namespace viennagrid
       typedef result_of::full_mesh_config< viennagrid::quadrilateral_tag, point_type_3d, viennagrid::pointer_handle_tag >::type     type;
     };
 
+    /** @brief A minimal configuration for quadrilaterals in 3d, no facts/edges */
     struct thin_quadrilateral_3d
     {
       typedef result_of::thin_mesh_config< viennagrid::quadrilateral_tag, point_type_3d, viennagrid::pointer_handle_tag >::type     type;
@@ -387,6 +391,7 @@ namespace viennagrid
       typedef result_of::full_mesh_config< viennagrid::tetrahedron_tag, point_type_3d, viennagrid::pointer_handle_tag >::type  type;
     };
 
+    /** @brief A minimal configuration for tetrahedra in 3d, no facts or edges */
     struct thin_tetrahedral_3d
     {
       typedef result_of::thin_mesh_config< viennagrid::tetrahedron_tag, point_type_3d, viennagrid::pointer_handle_tag >::type  type;
@@ -398,6 +403,7 @@ namespace viennagrid
       typedef result_of::full_mesh_config< viennagrid::hexahedron_tag, point_type_3d, viennagrid::pointer_handle_tag >::type   type;
     };
 
+    /** @brief A minimal configuration for hexahedra in 3d, no facts or edges */
     struct thin_hexahedral_3d
     {
       typedef result_of::thin_mesh_config< viennagrid::hexahedron_tag, point_type_3d, viennagrid::pointer_handle_tag >::type   type;

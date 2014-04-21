@@ -16,34 +16,43 @@ A tutorial covering the algorithms explained in this chapter can be found in \ls
   \hline
    Algorithm & Filename   & Interface Function\\
    \hline
-   Angles         & \texttt{angle.hpp}           & \lstinline|angle(origin, p0, p1)| \\
-   Cross Product  & \texttt{cross\_prod.hpp}     & \lstinline|cross_prod(a, b)| \\
-   Induced Volume & \texttt{spanned\_volume.hpp} & \lstinline|spanned_volume(a, b, ...)| \\
-   Inner Product  & \texttt{inner\_prod.hpp}     & \lstinline|inner_prod(a, b)|\\
-   Vector Norms   & \texttt{norm.hpp}            & \lstinline|norm(a, tag)| \\
+   Angles            & \texttt{angle.hpp}           & \lstinline|angle(origin, p0, p1)| \\
+   Cross Product     & \texttt{cross\_prod.hpp}     & \lstinline|cross_prod(a, b)| \\
+   Determinant       & \texttt{geometry.hpp}        & \lstinline|determinant(a, b, ...)| \\
+   Induced Volume    & \texttt{spanned\_volume.hpp} & \lstinline|spanned_volume(a, b, ...)| \\
+   Inner Product     & \texttt{inner\_prod.hpp}     & \lstinline|inner_prod(a, b)|\\
+   Orthogonalization & \texttt{geometry.hpp}        & \lstinline|orthogonalize(p_begin, p_end, a)| \\
+   Vector Norms      & \texttt{norm.hpp}            & \lstinline|norm(a, tag)| \\
    \hline
    Centroid computation & \texttt{centroid.hpp}           & \lstinline|centroid(element)| \\
    Circumcenter comp.   & \texttt{circumcenter.hpp}       & \lstinline|circumcenter(element)| \\
    Distance             & \texttt{distance.hpp}           & \lstinline|distance(element1, element2)| \\
-   Quantity transfer    & \texttt{quantity\_transfer.hpp} & \lstinline|quantity_transfer(...)|\\
+   Normal vector        & \texttt{geometry.hpp}           & \lstinline|normal_vector(element)| \\
+   %Quantity transfer    & \texttt{quantity\_transfer.hpp} & \lstinline|quantity_transfer(...)|\\
    Surface computation  & \texttt{surface.hpp}            & \lstinline|surface(element)| \\
    Volume computation   & \texttt{volume.hpp}             & \lstinline|volume(element)| \\
    \hline
-   Boundary detection  & \texttt{boundary.hpp}           & \lstinline|is_boundary(domseg, element)|\\
-   Closest points      & \texttt{closest\_points.hpp}    & \lstinline|closest_points(element1, element2)| \\
-   Distance            & \texttt{distance.hpp}           & \lstinline|distance(element1, element2)| \\
-   Interface detection & \texttt{interface.hpp}          & \lstinline|is_interface(seg1, seg2, element)|\\
-   Quantity transfer   & \texttt{quantity\_transfer.hpp} & \lstinline|quantity_transfer(...)|\\
-   Simplex refinement  & \texttt{refine.hpp}             & \lstinline|refine(tag, mesh)| \\
-   Scale mesh          & \texttt{scale.hpp}              & \lstinline|scale(mesh, factor, center)| \\
-   Surface computation & \texttt{surface.hpp}            & \lstinline|surface(domseg)| \\
-   Volume computation  & \texttt{volume.hpp}             & \lstinline|volume(domseg)| \\
-   Voronoi grid        & \texttt{voronoi.hpp}            & \lstinline|apply_voronoi(domseg, ...)| \\
+   Affine transformation & \texttt{geometric\_transform.hpp}  & \lstinline|affine_transform(mesh, matrix, p)| \\
+   Boundary detection    & \texttt{boundary.hpp}              & \lstinline|is_boundary(domseg, element)|\\
+   Bounding box          & \texttt{geometry.hpp}              & \lstinline|bounding_box(mesh)|\\
+   Closest points        & \texttt{closest\_points.hpp}       & \lstinline|closest_points(element1, element2)| \\
+   Distance              & \texttt{distance.hpp}              & \lstinline|distance(element1, element2)| \\
+   Extract boundary      & \texttt{extract\_boundary.hpp}     & \lstinline|extract_boundary(mesh_in, mesh_out)| \\
+   Extract seed points   & \texttt{extract\_seed\_points.hpp} & \lstinline|extract_seed_points(mesh, cont)| \\
+   Hyperplane refinement & \texttt{hyperplane\_refine.hpp}    & \lstinline|hyperplane_refine(...)| \\
+   Interface detection   & \texttt{interface.hpp}             & \lstinline|is_interface(seg1, seg2, element)|\\
+   Mesh size             & \texttt{geometry.hpp}              & \lstinline|mesh_size(mesh)|\\
+   Quantity transfer     & \texttt{quantity\_transfer.hpp}    & \lstinline|quantity_transfer(...)|\\
+   Simplex refinement    & \texttt{refine.hpp}                & \lstinline|refine(tag, mesh)| \\
+   Scale mesh            & \texttt{geometric\_transform.hpp}  & \lstinline|scale(mesh, factor, center)| \\
+   Surface computation   & \texttt{surface.hpp}               & \lstinline|surface(meshseg)| \\
+   Volume computation    & \texttt{volume.hpp}                & \lstinline|volume(meshseg)| \\
+   Voronoi grid          & \texttt{voronoi.hpp}               & \lstinline|apply_voronoi(meshseg, ...)| \\
    \hline
  \end{tabular}
- \caption{List of algorithms available in \texttt{viennagrid/algorithm/} grouped by the objects they are acting on.
-    \lstinline|a| and \lstinline|b| denote vectors, \lstinline|element| refers to an element,
-    \lstinline|mesh| to a mesh, \lstinline|seg1| and \lstinline|seg2| to segments, and \lstinline|domseg| to either a mesh or a segment.}
+ \caption{List of algorithms available in \texttt{viennagrid/algorithm/} grouped by the objects they are acting on. Additional overloads may be available.
+    \lstinline|a| and \lstinline|b| denote vectors, \lstinline|p_begin| and \lstinline|p_end| refer to begin- and end-iterators over vectors, \lstinline|element| to an element,
+    \lstinline|mesh| to a mesh, \lstinline|seg1| and \lstinline|seg2| to segments, and \lstinline|meshseg| to either a mesh or a segment.}
  \label{tab:algorithms}
 \end{table}
 
@@ -81,18 +90,38 @@ The point type in {\ViennaGrid} should be seen in this context mostly as a vecto
  \end{lstlisting}
 
   \subsection{Cross Products}
- The cross-product of two vectors (i.e.~{\ViennaGrid} points) $p0$ and $p1$ is defined for the three-dimensional space and computed with {\ViennaGrid} as
+ The cross-product of two vectors (i.e.~{\ViennaGrid} points) \lstinline|p0| and \lstinline|p1| is defined for the three-dimensional space and computed with {\ViennaGrid} as
  \begin{lstlisting}
-  viennagrid::cross_prod(p1, p2)
+  viennagrid::cross_prod(p0, p1)
  \end{lstlisting}
  The following code calculates and prints the cross-product of the vectors $(1,0,0)^\mathrm{T}$ and $(0,1,0)^\mathrm{T}$:
  \begin{lstlisting}
   PointType p0(1, 0, 0);
   PointType p1(0, 1, 0);
-  std::cout << viennagrid::cross_prod(p1, p2) << std::endl; //0 0 1
+  std::cout << viennagrid::cross_prod(p0, p1) << std::endl; //0 0 1
  \end{lstlisting}
  If the two vectors are given in different coordinate systems, the result vector will have the same coordinate system as the first argument.
 
+ \subsection{Determinant}
+ The determinant of the matrix obtained from writing $n$ vectors (points) of dimension $n$ into a square $n\times n$-matrix is a basic building block for several algorithms.
+ Rather than extracting the coordinates of individual points, the determinant can be directly computed by passing the respective points to \lstinline|viennagrid::determinant()|:
+ \begin{lstlisting}
+  PointType p0(1, 0, 0);
+  PointType p1(0, 1, 0);
+  PointType p2(0, 0, 1);
+  std::cout << viennagrid::determinant(p0, p1, p2) << std::endl;  //1
+ \end{lstlisting}
+ and similarly for the two-dimensional as well as the one-dimensional case.
+
+ \subsection{Induced Volume}
+ The volume of $n+1$ vectors spanning a simplex (line, triangle, tetrahedron...) in the $n$-dimensional space is computed via e.g.
+ \begin{lstlisting}
+  PointType p0(0, 0);
+  PointType p1(0, 1);
+  PointType p2(1, 0);
+  std::cout << viennagrid::spanned_volume(p0, p1, p2) << std::endl;  //0.5
+ \end{lstlisting}
+ for the two-dimensional case. If the signed volume taking the orientation of vectors into account is required, use \lstinline|signed_spanned_volume()|.
 
   \subsection{Inner Products}
  Unlike cross products, inner products (aka.~dot products) are well defined for arbitrary dimensions. In {\ViennaGridversion} an inner product of the form
@@ -106,6 +135,25 @@ is available with the function \lstinline|inner_prod()|. The following code calc
   std::cout << viennagrid::inner_prod(p1, p2) << std::endl;  //0
  \end{lstlisting}
  If the two vectors are given in different coordinate systems, the result vector will have the same coordinate system as the first argument.
+
+   \subsection{Orthogonalization}
+ There are two different variants of orthogonalization implemented: The first orthogonalizes a single vector with respect to a container of given vectors:
+ \begin{lstlisting}
+  std::vector<PointType> basis;
+  basis.push_back(PointType(1.0, 0.0, 0.0));
+  basis_push_back(PointType(0.0, 1.0, 0.0));
+  PointType p(1.0, 2.0, 3.0);
+  std::cout << viennagrid::orthogonalize_one_vector(basis.begin(), basis.end(), p) << std::endl;  //0 0 3
+ \end{lstlisting}
+ The second version takes the set of vectors provided by the iterators and orthogonalizes all vectors using the Gram-Schmidt method:
+ \begin{lstlisting}
+  std::vector<PointType> basis;
+  basis.push_back(PointType(1.0, 0.0, 0.0));
+  basis_push_back(PointType(0.0, 1.0, 0.0));
+  basis_push_back(PointType(1.0, 2.0, 3.0));
+  viennagrid::orthogonalize(basis.begin(), basis.end());
+  //vectors in basis: (1 0 0), (0 1 0), (0 0 3)
+ \end{lstlisting}
 
   \subsection{Vector Norms}
  Currently, $p$-norms of the form
@@ -161,6 +209,30 @@ In this section, algorithms defined for geometric objects with additional struct
 
  \NOTE{There is no warning or error issued if a hypercube passed to \lstinline|circumcenter()| does not have a circumcenter.}
 
+  \subsection{Distance}
+  The (shortest) distance of arbitrary meshes, segments, elements, or points \lstinline|a| and \lstinline|b| is computed via \lstinline|viennagrid::distance(a, b)|.
+  If \lstinline|a| and \lstinline|b| intersect or \lstinline|a| is included in \lstinline|b| (or vice versa), a distance of zero is returned.
+  For example, to compute the distance of a point \lstinline|p| from a triangle \lstinline|t|, call
+  \begin{lstlisting}
+   double d = viennagrid::distance(p, t);
+  \end{lstlisting}
+  The order of arguments does not matter.
+
+  If the distance to the boundary of a mesh, segment, or element is needed, use
+  \begin{lstlisting}
+   double d = viennagrid::boundary_distance(p, t);
+  \end{lstlisting}
+  Note that the value of \lstinline|d| is nonzero if \lstinline|p| is inside \lstinline|t|, e.g. the centroid of \lstinline|t|.
+  In terms of performance, \lstinline|viennagrid::boundary_distance()| is recommended over \lstinline|viennagrid::distance()| whenenver the slightly different semantics do not cause problems. 
+
+  \subsection{Normal Vector}
+  The normal vector is obtained via
+  \begin{lstlisting}
+   PointType normal = viennagrid::normal(t);
+  \end{lstlisting}
+  where \lstinline|t| is a triangle or quadrilateral in three spatial dimensions, a line in two spatial dimensions, or a vertex in one spatial dimension.
+  Note that the orientation of the returned normal is undefined and should be flipped by the user as needed.
+
   \subsection{Surface}
   The surface of an element \lstinline|element| is defined as the sum of the volumes of its facet elements. Therefore, in order to make the calling code
   \begin{lstlisting}
@@ -182,7 +254,15 @@ In this section, algorithms defined for geometric objects with additional struct
 \section{Mesh/Segment-Based}
 Algorithms acting on a collection of cells are now considered. These collections are given in {\ViennaGrid} either as the whole mesh, or as segments.
 
- \subsection{Boundary}
+ \subsection{Affine Transformation}
+ If an affine transformation of the form $u = Av + w$ with transformation matrix $\matrix A$ and displacement vector $w$ should be applied to all points $u$ of a mesh, call
+ \begin{lstlisting}
+  viennagrid::affine_transform(mesh, A, w);
+ \end{lstlisting}
+ where \lstinline|A| is a pointer to the matrix data (of the same type of the point coordinates, usually \lstinline|double|) in row-major layout and $w$ is of the same type as points in the mesh.
+ Note that in one dimension, \lstinline|A| is expected to point to one entry, in two dimensions to four entries, and in three dimensions to nine entries.
+
+ \subsection{Boundary Detection}
  Whether or not an element object \lstinline|element| is located on the boundary depends on the collection of elements considered.
  For example, consider the edge/facet $[1,4]$ in the triangular sample mesh in Fig.~\ref{fig:samplemesh}, which we will refer to as \lstinline|f|.
  It is in the interior of the whole \lstinline|mesh|, while it is also at the boundary of the two segments \lstinline|seg0| and \lstinline|seg1|.
@@ -196,8 +276,27 @@ Algorithms acting on a collection of cells are now considered. These collections
 
 %  \NOTE{\lstinline|is_boundary| requires that facets are stored within cells. Therefore, make sure not to disable the handling of facets, cf.~Section \ref{subsec:boundary-ncells-storage}. }
 
+ \subsection{Bounding Box}
+ The (minimum) bounding box with all edges parallel to one of the Cartesian coodinate axes within which all vertices of a mesh are contained (including boundaries) is returned by
+ \begin{lstlisting}
+ std::pair<PointType, PointType> extremal_points;
+ extremal_points = viennagrid::bounding_box(mesh);
+ \end{lstlisting}
+ where \lstinline|extremal_points| are two points describing the diagonal of the box.
+ Instead of supplying a mesh, one may also supply a begin- and end-iterator to a set of points.
 
- \subsection{Interface}
+ \subsection{Extract Boundary}
+ If you need to extract the boundary (hull) of a mesh to a new mesh, use
+ \begin{lstlisting}
+ viennagrid::extract_boundary(mesh_in, mesh_out);
+ \end{lstlisting}
+ to fill \lstinline|mesh_out| with the boundary mesh of \lstinline|mesh_in|, which may be a mesh or a segment.
+ Note that the mesh types need to agree: To extract the boundary/hull of a tetrahedral mesh in three dimensions, provide a triangular mesh in three spatial dimensions as \lstinline|mesh_out|. 
+
+ \subsection{Extract Seed Points}
+ To be written.
+
+ \subsection{Interface Detection}
   Similar to the detection of boundary facets, elements on the interface between two segments are frequently of particular interest.
   An element \lstinline|element| can be checked for being on the interface of two segments \lstinline|seg0| and \lstinline|seg1| using
  \begin{lstlisting}
@@ -206,6 +305,28 @@ Algorithms acting on a collection of cells are now considered. These collections
  Note that \lstinline|is_interface()| induces some setup costs the first time it is called for a pair of segments.
 
 %  \NOTE{\lstinline|is_interface()| requires that facets are stored within cells. Therefore, make sure not to disable the handling of facets, cf.~Section \ref{subsec:boundary-ncells-storage}. }
+
+  \subsection{Mesh Size}
+  If you need a rough estimate of the length scale of the entire mesh, use
+ \begin{lstlisting}
+  viennagrid::mesh_size(mesh)
+ \end{lstlisting}
+  to have a rough comparison value for absolute tolerances.
+  Currently this is implemented as the diagonal of the bounding box, but users are advised to not rely on this particular implementation detail.
+
+  \subsection{Quantity Transfer}
+  For many applications in computational science one may have data associated with vertices, but may need to interpolate them to cell centers, or vice versa.
+  Such an interpolation is provided by ViennaGrid in a generic manner, where one can transfer data from any element type to any other element type in a mesh.
+  Additional control over the elements to be considered for the averaging is provided via filters.
+  The interpolation to be used is also provided by the user:
+  \begin{lstlisting}
+   viennagrid::quantity_transfer(mesh, accessor_src, setter_dest,
+                                 averager,
+                                 filter_src, filter_dest);
+  \end{lstlisting}
+  Here, \lstinline|mesh| is a mesh or a segment, \lstinline|accessor_src| is a functor returning the data for the source elements, \lstinline|setter_dest| writes the data for the destination elements,
+  \lstinline|averager| is a functor for averaging/interpolating the source data adjacent to a destination element, and \lstinline|filter_src|, \lstinline|filter_dest| are functors returning \lstinline|true|
+  if the respective source or destination element should be considered for the transfer.
 
 
  \subsection{Refinement}

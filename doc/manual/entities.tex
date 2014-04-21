@@ -221,4 +221,4 @@ Given such a class, the mesh type is retrieved and the mesh object constructed a
 \section{Segmentation and Segment}
 A \emph{segment} $\Omega_i$ refers to a subset of the elements in a mesh $\Omega$. Unlike a mesh, a segment is not a container for its elements. Instead, only references (pointers) to the elements in the mesh are stored. In common C++ language, a \emph{segment} represents a so-called \emph{view} on the mesh.
 
-A segmentation represents a collection of segments. The typical use-case for a segmentation is the decomposition of the mesh into pieces of a common property. For example, a solid consisting of different materials can be set up in {\ViennaGrid} such that each regions of the same material are represented in a common segment.
+A \emph{segmentation} represents a collection of segments. The typical use-case for a segmentation is the decomposition of the mesh into pieces of a common property. For example, a solid consisting of different materials can be set up in {\ViennaGrid} such that each regions of the same material are represented in a common segment.

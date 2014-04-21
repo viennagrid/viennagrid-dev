@@ -18,7 +18,7 @@ the mailing list at \\
 \label{dependencies}
 
 \begin{itemize}
- \item A recent C++ compiler (e.g.~{\GCC} version 4.2.x or above and Visual C++
+ \item A recent C++ compiler (e.g.~{\GCC} version 4.1.x or above, Clang 3.0 or above, and Visual C++
 2005 or above are known to work)
  \item {\CMake}~\cite{cmake} as build system (optional, but recommended
 for building the examples)
@@ -28,7 +28,7 @@ for building the examples)
 \section{Generic Installation of ViennaGrid} \label{sec:viennagrid-installation}
 Since {\ViennaGrid} is a header-only library, it is sufficient to copy the
 \lstinline|viennagrid/| source folder either into your project folder or to your global system
-include path. If you do not have {\ViennaData} installed, proceed in the same way for the respective source folder \lstinline|viennadata/|.
+include path. %If you do not have {\ViennaData} installed, proceed in the same way for the respective source folder \lstinline|viennadata/|.
 
 On Unix-like operating systems, the global system include path is usually \lstinline|/usr/include/| or \lstinline|/usr/local/include/|.
 On Windows, the situation strongly depends on your development environment. We
@@ -49,14 +49,16 @@ For building the examples, we suppose that {\CMake} is properly set up
 on your system. The various examples and their purpose are listed in
 Tab.~\ref{tab:tutorial-dependencies}.
 
-\begin{table}[tb]
+\begin{table}[tbp]
 \begin{center}
 \begin{tabular}{l|p{9.3cm}}
 File & Purpose\\
 \hline
 \texttt{accessor.cpp}              & Demonstrates the use of accessors, cf.~Chapter \ref{chap:data} \\
 \texttt{algorithms.cpp}            & Demonstrates the algorithms provided, cf.~Chapter \ref{chap:algorithms} \\
-\texttt{cboundary\_iteration.cpp}  & Shows how to iterate over co-boundary elements, cf.~Chapter \ref{chap:iterators} \\
+\texttt{coboundary\_iteration.cpp} & Shows how to iterate over co-boundary elements, cf.~Chapter \ref{chap:iterators} \\
+\texttt{copy\_elements.cpp}        & Shows how to copy elements from one mesh to another \\
+\texttt{dump\_info.cpp}            & Reads a Netgen or VTK mesh from file and prints some statistics \\
 \texttt{element\_erase.cpp}        & Demonstrates how to erase single elements from a mesh \\
 \texttt{finite\_volumes.cpp}       & Generic implementation of the finite volume method (assembly) \\
 \texttt{interface.cpp}             & Demonstrates how the interface algorithm works, cf.~Chapter \ref{chap:algorithms} \\
@@ -64,10 +66,13 @@ File & Purpose\\
 \texttt{iterators.cpp}             & Shows how the mesh and segments can be traversed, cf.~Chapter \ref{chap:iterators} \\
 \texttt{mesh\_setup.cpp}           & Fill a mesh with cells, cf.~Chapter \ref{chap:meshsetup} \\
 \texttt{multi\_segment.cpp}        & Explains multi-segment capabilities, cf.~Chapter \ref{chap:meshsetup} \\
+\texttt{named\_segments.cpp}       & Exemplary use of named segments, cf.~Chapter \ref{chap:meshsetup} \\
 \texttt{neighbor\_iteration.cpp}   & Shows how to iterate over neighbor elements, cf.~Chapter \ref{chap:iterators} \\
 \texttt{polygon.cpp}               & ViennaGrid also supports polygons, cf.~Chapter \ref{chap:meshsetup} \\
 \texttt{read\_plc.cpp}             & Shows ho to use the PLC reader, cf.~Chapter \ref{chap:io} \\
-\texttt{segments.cpp}              & Shows how to use segmentations and segments, cf.~Chapter \ref{chap:meshsetup}
+\texttt{segments.cpp}              & Shows how to use segmentations and segments, cf.~Chapter \ref{chap:meshsetup} \\
+\texttt{thin\_mesh.cpp}            & Creates a mesh consisting of only vertices and cells, cf.~Chapter \ref{chap:meshsetup} \\
+\texttt{vmesh\_creator.cpp}        & Example for using the vmesh-writer, cf.~Chapter \ref{chap:io} \\
 \end{tabular}
 \caption{Overview of the sample applications in the \texttt{examples/tutorial} folder}
 \label{tab:tutorial-dependencies}

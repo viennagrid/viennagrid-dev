@@ -5,9 +5,11 @@ The setup of such a configuration class is explained in detail in Section \ref{s
 
 \section{Mesh Configuration} \label{sec:mesh-configuration}
 
-A mesh is configured with a configuration class. This configuration class defines the topology as well as the geometry of a mesh. {\ViennaGrid} supports a bunch of different configurations listed in the tables \ref{tab:configs-simplex}, \ref{tab:configs-hypercube} and \ref{tab:configs-special}.
+A mesh is configured with a configuration class. This configuration class defines the topology as well as the geometry of a mesh.
+{\ViennaGrid} supports a bunch of different configurations listed in the Table \ref{tab:configs-simplex}, Table \ref{tab:configs-hypercube}, and Table \ref{tab:configs-special}.
 
-\NOTE{Although {\ViennaGridversion} supports flexible configuration of the mesh class, a convenient public interface is not provided so far. A next version will access this issue.}
+\NOTE{Although {\ViennaGridversion} supports flexible configuration of the mesh class, a convenient public interface is not provided so far.
+      Until this is the case, have a look at \texttt{viennagrid/config/default\_configs.hpp} on how to derive a custom type.}
 
 \begin{table}[tb]
   \begin{center}
@@ -19,14 +21,20 @@ A mesh is configured with a configuration class. This configuration class define
       \hline
       \lstinline|line_3d|   &  Mesh with lines and vertices in 3d  \\
       \hline
-      \lstinline|triangular_2d| &   Mesh with triangles, lines and vertices in 2d  \\
+      \lstinline|triangular_2d|      &   Mesh with triangles, lines and vertices in 2d  \\
       \hline
-      \lstinline|triangular_3d| &   Mesh with triangles, lines and vertices in 3d  \\
+      \lstinline|thin_triangular_2d| &   Mesh with triangles and vertices in 2d, no lines  \\
       \hline
-      \lstinline|tetrahedral_3d| &   Mesh with tetrahedrons, triangles, lines and vertices in 3d  \\
+      \lstinline|triangular_3d|      &   Mesh with triangles, lines and vertices in 3d  \\
+      \hline
+      \lstinline|thin_triangular_3d| &   Mesh with triangles and vertices in 3d, no lines  \\
+      \hline
+      \lstinline|tetrahedral_3d|     &   Mesh with tetrahedrons, triangles, lines and vertices in 3d  \\
+      \hline
+      \lstinline|thin_tetrahedral_3d| &   Mesh with tetrahedrons and vertices in 3d, no triangles or lines  \\
       \hline
     \end{tabular}
-    \caption{Configurations of simplex meshs}
+    \caption{Configurations of simplex meshes}
     \label{tab:configs-simplex}
   \end{center}
 \end{table}
@@ -36,14 +44,20 @@ A mesh is configured with a configuration class. This configuration class define
   \begin{center}
     \begin{tabular}{|l|l|}
       \hline
-      \lstinline|quadrilateral_2d|   &  Mesh with quadrilaterals, lines and vertices in 2d  \\
+      \lstinline|quadrilateral_2d|        &  Mesh with quadrilaterals, lines and vertices in 2d  \\
       \hline
-      \lstinline|quadrilateral_3d|   &  Mesh with quadrilaterals, lines and vertices in 3d  \\
+      \lstinline|thin_quadrilateral_2d|   &  Mesh with quadrilaterals and vertices in 2d, no lines  \\
       \hline
-      \lstinline|hexahedral_3d|   &  Mesh with hexahedrons, quadrilaterals, lines and vertices in 3d  \\
+      \lstinline|quadrilateral_3d|        &  Mesh with quadrilaterals, lines and vertices in 3d  \\
+      \hline
+      \lstinline|thin_quadrilateral_3d|   &  Mesh with quadrilaterals and vertices in 3d, no lines  \\
+      \hline
+      \lstinline|hexahedral_3d|           &  Mesh with hexahedrons, quadrilaterals, lines and vertices in 3d  \\
+      \hline
+      \lstinline|thin_hexahedral_3d|      &  Mesh with hexahedrons and vertices in 3d, no quadrilaterals or lines  \\
       \hline
     \end{tabular}
-    \caption{Configurations of hypercube meshs}
+    \caption{Configurations of hypercube meshes}
     \label{tab:configs-hypercube}
   \end{center}
 \end{table}
@@ -62,7 +76,7 @@ A mesh is configured with a configuration class. This configuration class define
       \lstinline|plc_3d|   &  Mesh with PLCs, lines and vertices in 3d  \\
       \hline
     \end{tabular}
-    \caption{Configurations of special meshs}
+    \caption{Configurations of special meshes}
     \label{tab:configs-special}
   \end{center}
 \end{table}
@@ -74,13 +88,13 @@ With a configuration, a mesh can be defined using the meta-function \lstinline|m
 \begin{lstlisting}
  using namespace viennagrid;
 
- typedef config::trianglular_3d Config;
+ typedef config::triangular_3d Config;
 
- // Type retrieval, method 1: use meta-function
+ // Type retrieval, method 1: use meta-function (recommended)
  typedef result_of::mesh<Config>::type     MeshType;
 
- // Type retrieval, method 1: use typedefed segmentation/segment
- typedef trianglular_3d_mesh               MeshType;
+ // Type retrieval, method 2: use typedefed segmentation/segment
+ typedef triangular_3d_mesh               MeshType;
 
  MeshType mesh; //create the mesh object
 \end{lstlisting}
@@ -90,13 +104,13 @@ Using a mesh type a segmentation and its segments can be defined.
 \begin{lstlisting}
  using namespace viennagrid;
 
- // Type retrieval, method 1: use meta-function
+ // Type retrieval, method 1: use meta-function (recommended)
  typedef result_of::segmentation<MeshType>::type        SegmentationType;
  typedef result_of::segmentation<SegmentationType>::type  SegmentType;
 
- // Type retrieval, method 1: use typedefed segmentaion/segment
- typedef trianglular_3d_segmentation      SegmentationType;
- typedef trianglular_3d_segment           SegmentType;
+ // Type retrieval, method 2: use typedef'd segmentation/segment
+ typedef triangular_3d_segmentation      SegmentationType;
+ typedef triangular_3d_segment           SegmentType;
 
  MeshType mesh; // create the mesh object
 
@@ -108,7 +122,7 @@ Using a mesh type a segmentation and its segments can be defined.
 
 \section{Elements and Handles} \label{sec:elements-and-handles}
 
-A central topic with {\ViennaGrid} are elements. Elements types can be obtained by using the \lstinline|element| meta-function and the corresponding element tag
+The central entities in {\ViennaGrid} are elements. Element types can be obtained by using the \lstinline|element| meta-function and the corresponding element tag
 
 \begin{lstlisting}
  using namespace viennagrid;
@@ -154,17 +168,19 @@ For each supported type there are also shortcut meta-functions available.
 
 \pagebreak
 
-Often elements are not accessed directly but through a handle instead. For example the boundary elements are stored using their handles within an element. Handles can also be simple obtained by the meta-function \lstinline|element| or by the shortcut meta-functions.
+Often elements are not accessed directly, but through a handle instead.
+For example, the boundary elements are stored using their handles within an element.
+Handles can also be simple obtained by the meta-function \lstinline|element| or by the shortcut meta-functions.
 
 \begin{lstlisting}
  using namespace viennagrid;
 
  // obtain element handle type from mesh type
- typedef result_of::handle<MeshType, vertex_tag>::type    VtxHandleType;
- typedef result_of::vertex_handle<MeshType>::type         VtxHandleType;
+ typedef result_of::handle<MeshType, vertex_tag>::type      VtxHandleType;
+ typedef result_of::vertex_handle<MeshType>::type           VtxHandleType;
  // this meta function might fail if there is no tetrahedron in the mesh
  typedef result_of::handle<MeshType, tetrahedron_tag>::type TetHandleType;
- typedef result_of::tetrahedron_handle<MeshType>::type    TetHandleType;
+ typedef result_of::tetrahedron_handle<MeshType>::type      TetHandleType;
 
  // obtain element handle type from another element
  // (obtaining handles from another handle is not supported)

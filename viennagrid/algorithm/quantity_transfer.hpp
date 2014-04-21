@@ -125,7 +125,7 @@ namespace viennagrid
       // Iterate over all dest n-cells, push values from source cell to container, then compute final value
       for (DestIterator dit = dest_cells.begin(); dit != dest_cells.end(); ++dit)
       {
-        if ( filter_dest(*dit) )   //assumption: lattice temperature outside semiconductor is not relevant for simulation
+        if ( filter_dest(*dit) )   // only consider destination cells accepted by the filter
         {
           std::vector<value_type> destination_value_container;
 
