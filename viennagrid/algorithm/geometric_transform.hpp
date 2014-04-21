@@ -127,7 +127,6 @@ namespace viennagrid
       PointType tmp = translation;
       for (unsigned int row = 0; row != point_dim; ++row)
       {
-        tmp[row] = 0;
         for (unsigned int column = 0; column != point_dim; ++column)
           tmp[row] += p[column] * matrix[ row*point_dim + column ];
       }
