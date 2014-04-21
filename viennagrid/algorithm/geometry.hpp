@@ -29,6 +29,18 @@ namespace viennagrid
 
   namespace detail
   {
+    /** @brief Implementation for calculating a normal vector of a vertex in 1D */
+    template<typename PointAccessorT, typename ElementT>
+    typename PointAccessorT::value_type normal_vector_impl(
+      PointAccessorT const point_accessor,
+      ElementT const & element,
+      viennagrid::vertex_tag,
+      viennagrid::dimension_tag<1>)
+    {
+      (void)point_accessor; (void)element;
+      return PointType(1.0);
+    }
+
     /** @brief Implementation for calculating a normal vector of a line in 2D */
     template<typename PointAccessorT, typename ElementT>
     typename PointAccessorT::value_type normal_vector_impl(
