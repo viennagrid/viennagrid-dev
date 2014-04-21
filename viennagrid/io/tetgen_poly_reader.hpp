@@ -122,7 +122,7 @@ namespace viennagrid
       {
         typedef typename viennagrid::result_of::point<MeshT>::type           PointType;
 
-        static const int point_dim = viennagrid::result_of::static_size<PointType>::value;
+        static const std::size_t point_dim = viennagrid::result_of::static_size<PointType>::value;
 
         typedef typename result_of::element<MeshT, vertex_tag>::type         VertexType;
         typedef typename result_of::handle<MeshT, vertex_tag>::type          VertexHandleType;
@@ -148,7 +148,7 @@ namespace viennagrid
         std::istringstream current_line;
 
         long node_num = 0;
-        long dim = 0;
+        std::size_t dim = 0;
         long attribute_num = 0;
         long boundary_marker_num = 0;
 
