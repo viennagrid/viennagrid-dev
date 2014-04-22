@@ -27,7 +27,7 @@
 #include "viennagrid/mesh/element_creation.hpp"
 
 
-std::string random_name()
+inline std::string random_name()
 {
   std::string name;
   name.resize( rand() % 10 + 2 );
@@ -72,7 +72,7 @@ void test(int segment_count, int test_count)
 
 int main()
 {
-  srand (time(NULL));
+  srand (static_cast<unsigned int>(time(NULL)));
 
   int segment_count = 10;
   int test_count = 10;
