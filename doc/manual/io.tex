@@ -22,6 +22,18 @@ A different approach is to convert other file formats to one of the formats deta
 
 %\TIP{File reader contributions are always welcome!}
 
+ \subsection{Neper}
+ The \texttt{.tess}-files created with \texttt{Neper} \cite{neper} can be imported directly.
+ To read a mesh from a \texttt{.mesh} file with name \lstinline|filename| to a \lstinline|mesh|, the lines
+ \begin{lstlisting}
+ viennagrid::io::neper_tess_reader my_neper_reader;
+ my_neper_reader(mesh, filename);
+ \end{lstlisting}
+ should be used. A container of seed points can be specified as an optional third argument.
+ Segmentations are currently not supported.
+ Note that the reader throws an exception if the file cannot be opened or if there is a parser error.
+
+
  \subsection{Netgen}
  The \texttt{.mesh}-files provided with \texttt{Netgen} \cite{netgen} can be imported directly.
  These files are obtained from \texttt{Netgen} from the \texttt{File->Export Mesh...} menu item. Note that only triangular and tetrahedral meshes are supported.
@@ -53,12 +65,24 @@ A different approach is to convert other file formats to one of the formats deta
  \subsection{Tetgen}
  The \texttt{.poly}-files provided with \texttt{Tetgen} \cite{tetgen} can be imported directly. Note that only PLC meshes are supported.
 
- To read a mesh from a \texttt{.poly} file with name \lstinline|filename| to a \lstinline|mesh| with \lstinline|segmentation|,, the lines
+ To read a mesh from a \texttt{.poly} file with name \lstinline|filename| to a \lstinline|mesh| with \lstinline|segmentation|, the lines
  \begin{lstlisting}
  viennagrid::io::poly_reader my_tetgen_reader;
  my_tetgen_reader(mesh, segmentation, filename);
  \end{lstlisting}
  should be used. Note that the reader might throw an \lstinline|std::exception| if the file cannot be opened or if there is a parser error.
+
+ \subsection{Synopsys BND Files}
+ The \texttt{.bnd}-files are used within the commercial \texttt{Synopsys} toolchain.
+ ViennaGrid provides a reverse-engineered reader, for which additional feedback is highly welcome.
+
+ To read a mesh from a \texttt{.bnd} file with name \lstinline|filename| to a \lstinline|mesh| with \lstinline|segmentation|, the lines
+ \begin{lstlisting}
+ viennagrid::io::bnd_reader my_bnd_reader;
+ my_bnd_reader(mesh, segmentation, filename);
+ \end{lstlisting}
+ are sufficient. As usual, the reader throws an exception if the file cannot be opened or if there is a parser error.
+
 
  \subsection{VTK}
  The VTK file format is extensively documented \cite{VTKfileformat} and allows to store mesh quantities as well.
@@ -100,7 +124,6 @@ Registering an accessor/field with an import is simply done by using the functio
     >::type vector_values_field;
 
  viennagrid::io::vtk_reader<MeshType>      my_vtk_reader;
-
  viennagrid::io::add_scalar_data_on_vertices(my_vtk_reader, scalar_values_field, "potential");
  viennagrid::io::add_vector_data_on_cells(my_vtk_reader, vector_values_field, "potential_vector_field");
 
@@ -186,6 +209,15 @@ to write to one of the file formats discussed below and use one of the free visu
 
 %\TIP{File writer contributions are always welcome!}
 
+ \subsection{Comsol mphtxt}
+ The COMSOL multiphysics suite provides its own text-based file format with extension \lstinline|.mphtxt|.
+ To write a ViennaGrid mesh to this format, use
+ \begin{lstlisting}
+  viennagrid::io::mphtxt_writer my_comsol_writer;
+  my_comsol_writer(mesh, segmentation, "filename");
+ \end{lstlisting}
+ Here, \lstinline|mesh| and \lstinline|segmentation| denote the mesh and its segmentation as usual, and the third argument denotes the filename.
+
  \subsection{OpenDX}
  {\OpenDX} \cite{opendx} is an open source visualization software package based on IBM's Visualization Data Explorer.
  The writer supports either one vertex-based or one cell-based scalar quantity to be written to an {\OpenDX} file. OpenDX writer does not support segmentations.
@@ -195,8 +227,6 @@ to write to one of the file formats discussed below and use one of the free visu
   viennagrid::io::opendx_writer<MeshType> my_dx_writer;
   my_dx_writer(mesh, "my_mesh.out");
  \end{lstlisting}
-
- \pagebreak
 
  To write quantities stored on the mesh, the free functions from Tab.~\ref{tab:customizing-io} are used.
  For example, to visualize a scalar vertex-quantity of type \lstinline|double| stored in an accessor (cf.~Chapter \ref{chap:data}), the previous snippet is modified to
@@ -212,6 +242,16 @@ to write to one of the file formats discussed below and use one of the free visu
 
  \NOTE{{\ViennaGrid} can write only one scalar quantity to an \texttt{OpenDX} file!}
 
+ \subsection{VMESH writer}
+ The Vienna mesh file format is an XML-based meta-description format and does not store the mesh itself.
+ To date, the format has not been fully specified yet. A preliminary implementation is available as follows:
+ \begin{lstlisting}
+  viennagrid::io::vmesh_writer<MeshType> my_vmesh_writer;
+  my_vmesh_writer(mesh, segmentation, "my_mesh.in", "my_mesh.out");
+ \end{lstlisting}
+ Here, \lstinline|mesh| and \lstinline|segmentation| denote the mesh and its segmentation as usual.
+ \lstinline|my_mesh.in| is the physical mesh file where the mesh is stored, while \lstinline|my_mesh.out| denotes the VMESH file to which the meta-information should be written.
+
  \subsection{VTK}
  A number of free visualization tools such as Paraview \cite{paraview} are available for the visualization of VTK files.
  The simplest way of writing to a VTK file is
@@ -221,6 +261,7 @@ to write to one of the file formats discussed below and use one of the free visu
  \end{lstlisting}
  Each segment is written to a separate file, leading to \lstinline|"outfile_0.vtu"|, \lstinline|"outfile_1.vtu"|, etc. In addition,
  a Paraview data file \lstinline|"outfile_main.pvd"| is written, which links all the segments and should thus be used for visualization.
+ However, if the segmentation consists of zero or one segment, then only a single file \lstinline|output.vtu| is written.
 
  If no segmentation is given, the file \lstinline|"outfile.vtu"| is written using the following code example
  \begin{lstlisting}
@@ -241,8 +282,6 @@ to write to one of the file formats discussed below and use one of the free visu
  In this way, the quantity is written to all segments and values at the interface coincide.
 
  If discontinuities at the interfaces should be allowed, vertex or cell data may also be written per segment.
-
- \pagebreak
 
  As closing example, a quantity \lstinline|"jump"| with type \lstinline|double| is stored in an accessor.
  For a vertex \lstinline|v| at the interface of segments with indices $0$ and $1$, the values \lstinline|1.0| for the segment with index $1$ and \lstinline|2.0| for the segment with index $2$ are stored:

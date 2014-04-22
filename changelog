@@ -2,7 +2,32 @@
 **** ViennaGrid Change Logs ****
 ********************************
 
-*** Version 2.0.x ***
+*** Version 2.x.y ***
+
+-- Version 2.1.0 --
+In addition to the usual internal improvements, this minor version updates brings a couple of new features and a change of one header file location:
+ - scale(): Moved from file viennagrid/algorithm/scale.hpp to viennagrid/algorithm/geometric_transform.hpp.
+ - Refinement: Added support for specifying the location of the new vertex for each edge to be refined.
+ - Refinement: Added optional vertex copy map, which returns the new vertex in the refined mesh given a vertex from the original mesh.
+ - Refinement: Added refinement towards a hyperplane, so that no element of the refined mesh is intersected by the hyperplane.
+ - Added thin mesh configurations, where only the cells and the vertices are stored. This leads to a much lower memory footprint provided that edges, facets, etc. are not needed.
+ - Added segmented_mesh class, which encapsulates one mesh and an associated segmentation.
+ - Added support for named segments. Rather than only providing a numeric ID, segments can be identified by a string.
+ - Removed plc_2d_* typedefs since they might cause confusion. Introduced boundary representation typedefs brep_*d_* instead.
+ - IO: Added reader for .bnd files, which are created by Synopsys tools.
+ - IO: Added reader for .tess files (produced by Neper polycrystal generation and meshing library).
+ - IO: Added writer for .mphtxt files (consumed by COMSOL).
+ - IO: Added preliminary writer for .vmesh legacy files.
+ - IO: VTK writer now writes only one .vtu file if the segmentation is empty or only one segment is present.
+ - Added convenience routine for copying elements based on an element iterator range or element handle iterator range.
+ - Algorithms: Added boundary/hull extraction.
+ - Algorithms: Generalized geometric transformations (scale, affine transform).
+ - Algorithms: Added bounding box computation, normal vector computation, and determinant of points/vectors.
+ - Algorithms: Added inclusion tests for points inside triangles or tetrahedra.
+ - Algorithms: Added distance between segment boundary and line.
+ - Bugfix: Fixed logic error in computation of Voronoi quantities.
+ - Bugfix: Compilation error for closest_point() for boundary distance.
+ - Bugfix: Element handles were not resolved correctly when elements were deleted from a mesh.
 
 -- Version 2.0.0 --
 The ViennaGrid internals have been completely redesigned for higher flexibility.
@@ -22,7 +47,7 @@ Some rather significent adjustments to the user API were necessary.
 
 -- Version 1.0.1 --
 This is a maintenance release, mostly fixing minor compilation problems on some compilers and opererating systems. Other notable changes
- - Added \lstinline|distance()| function for computing the distance between points, cell, etc.
+ - Added distance() function for computing the distance between points, cell, etc.
  - Voronoi quantities can now also be accessed in a more fine-grained manner: Volume and contributions for each cell attached to a vertex or edge.
  - Added quantity transfer: Interpolates quantities on a $m$-cells can be transferred to $n$-cells. Both $m<n$ and $n>m$ are supported.
 

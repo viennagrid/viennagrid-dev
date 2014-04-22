@@ -293,9 +293,6 @@ Algorithms acting on a collection of cells are now considered. These collections
  to fill \lstinline|mesh_out| with the boundary mesh of \lstinline|mesh_in|, which may be a mesh or a segment.
  Note that the mesh types need to agree: To extract the boundary/hull of a tetrahedral mesh in three dimensions, provide a triangular mesh in three spatial dimensions as \lstinline|mesh_out|. 
 
- \subsection{Extract Seed Points}
- To be written.
-
  \subsection{Interface Detection}
   Similar to the detection of boundary facets, elements on the interface between two segments are frequently of particular interest.
   An element \lstinline|element| can be checked for being on the interface of two segments \lstinline|seg0| and \lstinline|seg1| using
@@ -365,8 +362,6 @@ It has to be noted that the resulting refined mesh is written to a new mesh, thu
  MeshType refined_mesh;
  viennagrid::cell_refine(mesh, refined_mesh, cell_refinement_accessor);
  \end{lstlisting}
-
- \pagebreak
 
  or, for segmentations
  \begin{lstlisting}
