@@ -14,7 +14,6 @@
 ======================================================================= */
 
 #include <limits>
-#include <iterator>
 #include "viennagrid/mesh/mesh.hpp"
 #include "viennagrid/topology/quadrilateral.hpp"
 #include "viennagrid/algorithm/inner_prod.hpp"
@@ -360,9 +359,8 @@ namespace viennagrid
    * @param end             The end vector iterator of the linearly independent orthogonal vector set
    * @param vec             The vector to orthogonalize
    */
-  template<typename VectorIteratorT>
-  typename std::iterator_traits<VectorIteratorT>::value_type
-  orthogonalize( VectorIteratorT it, VectorIteratorT const & end, typename std::iterator_traits<VectorIteratorT>::value_type vec )
+  template<typename VectorIteratorT, typename VectorT>
+  VectorT orthogonalize_vector( VectorIteratorT it, VectorIteratorT const & end, VectorT vec )
   {
     for (; it != end; ++it)
       vec -= viennagrid::inner_prod( vec, *it ) / viennagrid::inner_prod( *it, *it ) * (*it);
@@ -390,7 +388,7 @@ namespace viennagrid
     std::size_t count = 0;
     for (IteratorT n = start; n != end;)
     {
-      *n = orthogonalize(start, n, *n);
+      *n = orthogonalize_vector(start, n, *n);
 
       if ( viennagrid::norm_1(*n) < detail::absolute_tolerance<coord_type>(nc) )
       {
