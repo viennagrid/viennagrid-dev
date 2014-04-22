@@ -66,11 +66,11 @@ namespace viennagrid
     typedef typename segmentation_type::view_type view_type;
 
   private:
+
+    typedef typename segmentation_type::segment_type segment_type;
+
     /** @brief Constructor, used by segmentation to create a segment */
-    segment_handle( segmentation_type & segmentation_x,
-                view_type & view_x,
-                segment_id_type const & segment_id_) :
-        segmentation_(&segmentation_x), view_(&view_x), segment_id(segment_id_) {}
+    segment_handle(segment_type & segment_x) : segment_(&segment_x) {}
 
   public:
 
@@ -78,13 +78,13 @@ namespace viennagrid
       *
       * @return   ID of the segment
       */
-    segment_id_type const & id() const { return segment_id; }
+    segment_id_type const & id() const { return segment_->id; }
 
     /** @brief Returns the name of the segment
       *
       * @return   name of the segment
       */
-    std::string const & name() const { return name_; }
+    std::string const & name() const { return segment_->name; }
 
     /** @brief Set the name of this segment. Returns false if the name is already present, true on success
       *
@@ -97,9 +97,9 @@ namespace viennagrid
       if (parent().segment_name_map.find(new_name) != parent().segment_name_map.end())
         throw segment_name_collision_exception(new_name);
 
-      parent().segment_name_map.erase(name_);
+      parent().segment_name_map.erase( name() );
       parent().segment_name_map[new_name] = &(parent()(id()));
-      name_ = new_name;
+      segment_->name = new_name;
     }
 
 
@@ -107,23 +107,23 @@ namespace viennagrid
       *
       * @return   A reference to the segmentation
       */
-    segmentation_type & parent() { return *segmentation_; }
+    segmentation_type & parent() { return *(segment_->segmentation_); }
     /** @brief Returns the segmentation in which the segment lives, const version
       *
       * @return   A const reference to the segmentation
       */
-    segmentation_type const & parent() const { return *segmentation_; }
+    segmentation_type const & parent() const { return *(segment_->segmentation_); }
 
     /** @brief Returns a view which represents the elements in the segment
       *
       * @return   A reference to the view
       */
-    view_type & view() { return *view_; }
+    view_type & view() { return segment_->view; }
     /** @brief Returns a view which represents the elements in the segment, const version
       *
       * @return   A const reference to the view
       */
-    view_type const & view() const { return *view_; }
+    view_type const & view() const { return segment_->view; }
 
     /** @brief Returns the full mesh from the parent segmentation.
       *
@@ -140,15 +140,11 @@ namespace viennagrid
       *
       * @return   A const reference to the view
       */
-    bool operator<( const segment_handle & rhs ) const { return segment_id < rhs.segment_id; }
+    bool operator<( segment_handle const & rhs ) const { return id() < rhs.id(); }
 
   private:
 
-    segmentation_type * segmentation_;
-    view_type * view_;
-
-    segment_id_type segment_id;
-    std::string name_;
+    segment_type * segment_;
   };
 
   /** @brief Completely clears a segmentation
@@ -450,9 +446,9 @@ namespace viennagrid
     };
 
     template<typename WrappedConfigType>
-    struct segmentation_view_container_tag
+    struct segmentation_segment_container_tag
     {
-      typedef typename WrappedConfigType::view_container_tag type;
+      typedef typename WrappedConfigType::segment_container_tag type;
     };
     /** \endcond */
   }
@@ -462,14 +458,14 @@ namespace viennagrid
   namespace config
   {
     /** \cond */
-    template<typename mesh_type_, typename view_type_, typename segment_id_type_, typename appendix_type_, typename view_container_tag_>
+    template<typename mesh_type_, typename view_type_, typename segment_id_type_, typename appendix_type_, typename segment_container_tag_>
     struct segmentation_config_wrapper_t
     {
       typedef mesh_type_ mesh_type;
       typedef view_type_ view_type;
       typedef segment_id_type_ segment_id_type;
       typedef appendix_type_ appendix_type;
-      typedef view_container_tag_ view_container_tag;
+      typedef segment_container_tag_ segment_container_tag;
     };
     /** \endcond */
   }
@@ -532,7 +528,7 @@ namespace viennagrid
     /** @brief For internal use only */
     typedef typename result_of::segmentation_appendix_type<WrappedConfigType>::type appendix_type;
     /** @brief For internal use only */
-    typedef typename result_of::segmentation_view_container_tag<WrappedConfigType>::type view_container_tag;
+    typedef typename result_of::segmentation_segment_container_tag<WrappedConfigType>::type segment_container_tag;
 
     /** @brief For internal use only */
     typedef viennagrid::segmentation<WrappedConfigType> self_type;
@@ -540,12 +536,32 @@ namespace viennagrid
     /** @brief The segment type of the segmentation */
     typedef segment_handle<self_type> segment_handle_type;
 
+  private:
+
     /** @brief For internal use only */
-    typedef typename viennagrid::result_of::container< view_type, view_container_tag >::type view_container_type;
+    struct segment
+    {
+      segment(self_type * segmentation_x, mesh_type & mesh, segment_id_type id_) :
+        segmentation_(segmentation_x), view( viennagrid::make_view(mesh) ), id(id_) {}
+
+      self_type * segmentation_;
+
+      view_type view;
+      segment_id_type id;
+      std::string name;
+    };
+
+    /** @brief For internal use only */
+    typedef typename viennagrid::result_of::container< segment, segment_container_tag >::type segment_container_type;
     /** @brief For internal use only */
     typedef std::map<segment_id_type, segment_handle_type> segment_id_map_type;
     /** @brief For internal use only */
-    typedef std::map<std::string, segment_handle_type *> segment_name_map_type;
+    typedef std::map<std::string, segment_handle_type*> segment_name_map_type;
+
+    /** @brief For internal use only */
+    typedef segment segment_type;
+
+  public:
 
 
     /** @brief Constructor
@@ -661,25 +677,22 @@ namespace viennagrid
       if (it != segment_id_map.end())
           return it->second; // segment already is present
 
-      view_segments.push_back( viennagrid::make_view( mesh() ) );
-
-      segment_handle_type segment( *this, view_segments.back(), segment_id );
+      segments.push_back( segment(this, mesh(), segment_id) );
+      segment & new_segment = segments.back();
 
       if ( highest_id < segment_id )
           highest_id = segment_id;
 
-
-      it = segment_id_map.insert( std::make_pair(segment_id, segment) ).first;
-
+      it = segment_id_map.insert( std::make_pair(segment_id, segment_handle_type(new_segment)) ).first;
 
       std::stringstream ss;
       ss << segment_id;
-      (*it).second.name_ = ss.str();
+      segments.back().name = ss.str();
 
-      if (!segment_name_map.insert(std::make_pair(ss.str(), &(*it).second)).second)
+      if (!segment_name_map.insert(std::make_pair(ss.str(), &it->second)).second)
         throw segment_name_collision_exception(ss.str());
 
-      return (*it).second;
+      return it->second;
     }
 
     /** @brief Returns the segment with the given ID, will create a new segment if no segment with the given ID is present
@@ -903,7 +916,7 @@ namespace viennagrid
     {
       highest_id = -1;
       segment_id_map.clear();
-      view_segments.clear();
+      segments.clear();
       appendix_ = appendix_type();
     }
 
@@ -919,7 +932,7 @@ namespace viennagrid
     segment_id_map_type segment_id_map;
     segment_name_map_type segment_name_map;
 
-    view_container_type view_segments;
+    segment_container_type segments;
 
     appendix_type appendix_;
 
