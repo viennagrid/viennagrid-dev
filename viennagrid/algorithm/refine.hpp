@@ -683,7 +683,6 @@ namespace viennagrid
                          NumericConfigT numeric_config)
   {
     typedef typename viennagrid::result_of::cell_tag<SrcMeshT>::type CellTag;
-    typedef typename viennagrid::result_of::vertex<SrcMeshT>::type VertexType;
     typedef typename viennagrid::result_of::line<SrcMeshT>::type LineType;
 
     typedef typename viennagrid::result_of::vertex_handle<DstMeshT>::type DstMeshVertexHandleType;
@@ -1042,10 +1041,8 @@ namespace viennagrid
                          NumericConfigT numeric_config)
   {
     typedef typename viennagrid::result_of::cell_tag<SrcMeshT>::type CellTag;
-    typedef typename viennagrid::result_of::vertex<SrcMeshT>::type VertexType;
     typedef typename viennagrid::result_of::line<SrcMeshT>::type LineType;
     typedef typename viennagrid::result_of::vertex_handle<DstMeshT>::type DstMeshVertexHandleType;
-    typedef typename viennagrid::result_of::point<SrcMeshT>::type PointType;
 
     viennagrid::vertex_copy_map<SrcMeshT, DstMeshT> vertex_map( dst_mesh );
 
