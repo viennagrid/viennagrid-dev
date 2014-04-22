@@ -23,6 +23,8 @@
 #include "viennagrid/algorithm/detail/refine_tri.hpp"
 #include "viennagrid/algorithm/detail/refine_tet.hpp"
 
+#include "viennagrid/algorithm/detail/numeric.hpp"
+
 /** @file viennagrid/algorithm/refine.hpp
     @brief Provides the routines for a refinement of a mesh
 */
