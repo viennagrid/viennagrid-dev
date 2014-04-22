@@ -54,7 +54,7 @@ namespace viennagrid
       NumericType v = (dot00*dot12 - dot01*dot02) * denom;
 
       NumericType abs_eps = absolute_tolerance<NumericType>(numeric_config);
-      return (u >= -abs_eps) && (v >= -abs_eps) && (u+v <= static_cast<NumericType>(1) + 2*abs_eps );
+      return (u >= -abs_eps) && (v >= -abs_eps) && (u+v <= static_cast<NumericType>(1) + NumericType(2.0)*abs_eps );
     }
 
 
@@ -82,7 +82,7 @@ namespace viennagrid
       NumericType D = spanned_volume(a,b,c,p) * denom;
 
       NumericType abs_eps = absolute_tolerance<NumericType>(numeric_config);
-      return (A >= -abs_eps) && (B >= -abs_eps) && (C >= -abs_eps) && (D >= -abs_eps) && (A+B+C+D <= static_cast<NumericType>(1) + 2*abs_eps);
+      return (A >= -abs_eps) && (B >= -abs_eps) && (C >= -abs_eps) && (D >= -abs_eps) && (A+B+C+D <= static_cast<NumericType>(1) + NumericType(2.0)*abs_eps);
     }
   }
 
@@ -123,7 +123,7 @@ namespace viennagrid
   template<typename ElementT, typename CoordType, typename CoordinateSystem>
   bool is_inside( ElementT const & element, spatial_point<CoordType, CoordinateSystem> const & point )
   {
-    return is_inside( element, point,  10*std::numeric_limits<CoordType>::epsilon() );
+    return is_inside( element, point, CoordType(10.0)*std::numeric_limits<CoordType>::epsilon() );
   }
 
 }
