@@ -511,13 +511,13 @@ namespace viennagrid
       handle_type handle_at(std::size_t pos)
       {
         iterator it = begin();
-        std::advance( it, pos );
+        std::advance( it, static_cast<long>(pos) );
         return it.handle();
       }
       const_handle_type handle_at(std::size_t pos) const
       {
         const_iterator it = begin();
-        std::advance( it, pos );
+        std::advance( it, static_cast<long>(pos) );
         return it.handle();
       }
 

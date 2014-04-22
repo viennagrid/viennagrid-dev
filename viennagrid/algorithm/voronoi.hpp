@@ -609,6 +609,8 @@ namespace viennagrid
       typedef typename viennagrid::result_of::element<MeshT, triangle_tag>::type           FacetType;
       typedef typename viennagrid::result_of::const_handle<MeshT, triangle_tag>::type      ConstFacetHandleType;
 
+      typedef typename viennagrid::result_of::coord<PointType>::type    CoordType;
+
       typedef typename viennagrid::result_of::const_element_range<MeshT, CellTag>::type    CellRange;
       typedef typename viennagrid::result_of::iterator<CellRange>::type                       CellIterator;
 
@@ -748,7 +750,7 @@ namespace viennagrid
         {
           inner_point += (interface_segments[i].first.first + interface_segments[i].first.second) / 2.0;
         }
-        inner_point /= interface_segments.size();
+        inner_point /= static_cast<CoordType>(interface_segments.size());
 
         //
         // compute interface area

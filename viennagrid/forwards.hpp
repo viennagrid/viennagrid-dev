@@ -84,7 +84,7 @@ namespace viennagrid
   iterator_type advance(iterator_type const & in, distance_type distance)
   {
       iterator_type out(in);
-      std::advance(out, distance);
+      std::advance(out, static_cast<long>(distance));
       return out;
   }
 

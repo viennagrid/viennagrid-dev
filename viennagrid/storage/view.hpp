@@ -241,8 +241,8 @@ namespace viennagrid
     reference back() { return dereference_handle(handle_container.back()); }
     const_reference back() const { return dereference_handle(handle_container.back()); }
 
-    reference operator[]( size_type index ) { iterator it = begin(); std::advance(it, index); return *it; }
-    const_reference operator[]( size_type index ) const { const_iterator it = begin(); std::advance(it, index); return *it; }
+    reference operator[]( size_type index ) { iterator it = begin(); std::advance(it, static_cast<long>(index)); return *it; }
+    const_reference operator[]( size_type index ) const { const_iterator it = begin(); std::advance(it, static_cast<long>(index)); return *it; }
 
 
     size_type size() const { return handle_container.size(); }
@@ -506,8 +506,8 @@ namespace viennagrid
     reference back() { return dereference_handle(handle_container.back()); }
     const_reference back() const { return dereference_handle(handle_container.back()); }
 
-    reference operator[]( size_type index ) { iterator it = begin(); std::advance(it, index); return *it; }
-    const_reference operator[]( size_type index ) const { const_iterator it = begin(); std::advance(it, index); return *it; }
+    reference operator[]( size_type index ) { iterator it = begin(); std::advance(it, static_cast<long>(index)); return *it; }
+    const_reference operator[]( size_type index ) const { const_iterator it = begin(); std::advance(it, static_cast<long>(index)); return *it; }
 
 
     size_type size() const { return handle_container.size(); }

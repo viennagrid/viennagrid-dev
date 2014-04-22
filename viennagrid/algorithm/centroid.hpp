@@ -40,6 +40,7 @@ namespace viennagrid
     centroid(PointAccessorT const accessor, ElementT const & cell, viennagrid::triangle_tag)
     {
       typedef typename PointAccessorT::value_type PointType;
+      typedef typename viennagrid::result_of::coord<PointType>::type    CoordType;
 
       typedef typename viennagrid::result_of::const_element_range<ElementT, vertex_tag>::type         VertexOnCellRange;
       typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type            VertexOnCellIterator;
@@ -52,7 +53,7 @@ namespace viennagrid
            ++vocit)
         p0 += accessor(*vocit);
 
-      p0 /= vertices.size();
+      p0 /= static_cast<CoordType>(vertices.size());
 
       return p0;
     }

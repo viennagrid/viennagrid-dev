@@ -104,9 +104,9 @@ namespace viennagrid
 
 
       reference operator[] (size_type index)
-      { iterator it = begin(); std::advance(it, index); return *it; }
+      { iterator it = begin(); std::advance(it, static_cast<long>(index)); return *it; }
       const_reference operator[] (size_type index) const
-      { const_iterator it = begin(); std::advance(it, index); return *it; }
+      { const_iterator it = begin(); std::advance(it, static_cast<long>(index)); return *it; }
 
 
 
@@ -236,9 +236,9 @@ namespace viennagrid
 
 
       reference operator[] (size_type index)
-      { iterator it = begin(); std::advance(it, index); return *it; }
+      { iterator it = begin(); std::advance(it, static_cast<long>(index)); return *it; }
       const_reference operator[] (size_type index) const
-      { const_iterator it = begin(); std::advance(it, index); return *it; }
+      { const_iterator it = begin(); std::advance(it, static_cast<long>(index)); return *it; }
 
 
 
