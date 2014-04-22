@@ -14,7 +14,9 @@
 ======================================================================= */
 
 #include <limits>
+#include <iterator>
 #include "viennagrid/mesh/mesh.hpp"
+#include "viennagrid/topology/quadrilateral.hpp"
 #include "viennagrid/algorithm/inner_prod.hpp"
 #include "viennagrid/algorithm/norm.hpp"
 #include "viennagrid/algorithm/cross_prod.hpp"
@@ -37,6 +39,8 @@ namespace viennagrid
       viennagrid::vertex_tag,
       viennagrid::dimension_tag<1>)
     {
+      typedef typename PointAccessorT::value_type    PointType;
+
       (void)point_accessor; (void)element;
       return PointType(1.0);
     }
@@ -357,8 +361,8 @@ namespace viennagrid
    * @param vec             The vector to orthogonalize
    */
   template<typename VectorIteratorT>
-  std::iterator_traits<VectorIteratorT>::value_type
-  orthogonalize( VectorIteratorT it, VectorIteratorT const & end, std::iterator_traits<VectorIteratorT>::value_type vec )
+  typename std::iterator_traits<VectorIteratorT>::value_type
+  orthogonalize( VectorIteratorT it, VectorIteratorT const & end, typename std::iterator_traits<VectorIteratorT>::value_type vec )
   {
     for (; it != end; ++it)
       vec -= viennagrid::inner_prod( vec, *it ) / viennagrid::inner_prod( *it, *it ) * (*it);

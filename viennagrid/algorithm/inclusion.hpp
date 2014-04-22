@@ -13,6 +13,10 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
+#include <limits>
+#include "viennagrid/point.hpp"
+#include "viennagrid/mesh/mesh.hpp"
+#include "viennagrid/topology/simplex.hpp"
 #include "viennagrid/algorithm/spanned_volume.hpp"
 #include "viennagrid/algorithm/detail/numeric.hpp"
 

@@ -20,6 +20,7 @@
 
 #include "viennagrid/forwards.hpp"
 #include "viennagrid/mesh/mesh.hpp"
+#include "viennagrid/io/helper.hpp"
 
 /** @file viennagrid/io/neper_tess_reader.hpp
     @brief Provides a reader for Neper .tess files. See http://neper.sourceforge.net/docs/neper.pdf page 49-52

@@ -13,6 +13,10 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
+#include <iostream>
+#include <sstream>
+#include <fstream>
+
 #include "viennagrid/algorithm/centroid.hpp"
 #include "viennagrid/algorithm/boundary.hpp"
 #include "viennagrid/algorithm/geometry.hpp"

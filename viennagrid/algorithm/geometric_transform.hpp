@@ -13,6 +13,8 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
+#include "viennagrid/forwards.hpp"
+#include "viennagrid/mesh/mesh.hpp"
 
 /** @file viennagrid/algorithm/geometric_transform.hpp
     @brief Provides geometric transformation routines (e.g. scale()) for a mesh.
