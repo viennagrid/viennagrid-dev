@@ -350,14 +350,15 @@ namespace viennagrid
 
 
 
-  /** @brief Makes a vector orthogonal to a set of orthogonal vectors (Gram–Schmidt process step)
+  /** @brief Makes a vector orthogonal to a set of linearly independent orthogonal vectors (Gram–Schmidt process step)
    *
-   * @param it              The begin vector iterator of the orthogonal vector set
-   * @param end             The end vector iterator of the orthogonal vector set
+   * @param it              The begin vector iterator of the linearly independent orthogonal vector set
+   * @param end             The end vector iterator of the linearly independent orthogonal vector set
    * @param vec             The vector to orthogonalize
    */
-  template<typename VectorIteratorT, typename VectorT>
-  VectorT orthogonalize_one_vector( VectorIteratorT it, VectorIteratorT const & end, VectorT vec )
+  template<typename VectorIteratorT>
+  std::iterator_traits<VectorIteratorT>::value_type
+  orthogonalize( VectorIteratorT it, VectorIteratorT const & end, std::iterator_traits<VectorIteratorT>::value_type vec )
   {
     for (; it != end; ++it)
       vec -= viennagrid::inner_prod( vec, *it ) / viennagrid::inner_prod( *it, *it ) * (*it);
@@ -366,27 +367,40 @@ namespace viennagrid
   }
 
 
-  /** @brief Makes a set of vectors orthogonal (Gram–Schmidt process step)
+  /** @brief Makes a set of vectors orthogonal (Gram–Schmidt process step).
+   *
+   * If linearly dependent vectors are encountered, they are moved/swapped to the end of the sequence.
    *
    * @param start           The begin vector iterator of the vector set to orthogonalize
    * @param end             The end vector iterator of the vector set to orthogonalize
    * @param nc              Numeric config
+   *
+   * @return Number of linearly independent vectors found during the process
    */
   template<typename IteratorT, typename NumericConfigT>
-  bool orthogonalize( IteratorT start, IteratorT end, NumericConfigT nc )
+  std::size_t orthogonalize( IteratorT start, IteratorT end, NumericConfigT nc )
   {
     typedef typename std::iterator_traits<IteratorT>::value_type      vector_type;
     typedef typename viennagrid::result_of::coord<vector_type>::type  coord_type;
 
-    for (IteratorT n = start; n != end; ++n)
+    std::size_t count = 0;
+    for (IteratorT n = start; n != end;)
     {
-      *n = orthogonalize_one_vector(start, n, *n);
+      *n = orthogonalize(start, n, *n);
 
       if ( viennagrid::norm_1(*n) < detail::absolute_tolerance<coord_type>(nc) )
-        return false;
+      {
+        --end;
+        std::swap(*n, *end);
+      }
+      else
+      {
+        ++n;
+        ++count;
+      }
     }
 
-    return true;
+    return count;
   }
 
 

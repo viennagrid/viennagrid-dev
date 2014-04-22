@@ -143,7 +143,7 @@ is available with the function \lstinline|inner_prod()|. The following code calc
   basis.push_back(PointType(1.0, 0.0, 0.0));
   basis_push_back(PointType(0.0, 1.0, 0.0));
   PointType p(1.0, 2.0, 3.0);
-  std::cout << viennagrid::orthogonalize_one_vector(basis.begin(), basis.end(), p) << std::endl;  //0 0 3
+  std::cout << viennagrid::orthogonalize(basis.begin(), basis.end(), p) << std::endl;  //0 0 3
  \end{lstlisting}
  The second version takes the set of vectors provided by the iterators and orthogonalizes all vectors using the Gram-Schmidt method:
  \begin{lstlisting}
