@@ -251,7 +251,7 @@ namespace viennagrid
 
           std::string token;
 
-        #ifdef IODEBUG
+        #ifdef VIENNAGRID_DEBUG_IO
           std::cout << "reading geometry dimension .. " << std::endl;
         #endif
           int DIMG;
@@ -265,12 +265,12 @@ namespace viennagrid
                break;
             }
           }
-        #ifdef IODEBUG
+        #ifdef VIENNAGRID_DEBUG_IO
           std::cout << "geometry dimension: " << DIMG << std::endl;
         #endif
           dim_geometry = DIMG;
 
-        #ifdef IODEBUG
+        #ifdef VIENNAGRID_DEBUG_IO
           std::cout << "reading region information .. " << std::endl;
         #endif
           while(1)
@@ -283,7 +283,7 @@ namespace viennagrid
                break;
             }
           }
-        #ifdef IODEBUG
+        #ifdef VIENNAGRID_DEBUG_IO
           std::cout << "number of regions: " << number_of_regions << std::endl;
         #endif
 
@@ -291,7 +291,7 @@ namespace viennagrid
 
           std::size_t vertices = 0;
 
-        #ifdef IODEBUG
+        #ifdef VIENNAGRID_DEBUG_IO
           std::cout << "reading geometry information .. " << std::endl;
         #endif
 
@@ -309,7 +309,7 @@ namespace viennagrid
             }
           }
 
-        #ifdef IODEBUG
+        #ifdef VIENNAGRID_DEBUG_IO
           std::cout << "vertices: " << vertices << std::endl;
         #endif
 
@@ -326,16 +326,16 @@ namespace viennagrid
             geometry[vi] = coords;
           }
 
-        #ifdef IODEBUG
+        #ifdef VIENNAGRID_DEBUG_IO
           std::cout << "  finished loading point vectors .. " <<  std::endl;
         #endif
 
-        #ifdef IODEBUG
+        #ifdef VIENNAGRID_DEBUG_IO
           std::cout << "reading topology information .. " << std::endl;
         #endif
 
 
-        #ifdef IODEBUG
+        #ifdef VIENNAGRID_DEBUG_IO
           std::cout << "reading edge information .. " << std::endl;
         #endif
 
@@ -355,7 +355,7 @@ namespace viennagrid
             }
           }
 
-        #ifdef IODEBUG
+        #ifdef VIENNAGRID_DEBUG_IO
           std::cout << "edges: " << edges << std::endl;
         #endif
 
@@ -369,7 +369,7 @@ namespace viennagrid
             edge_cont[i] = edge;
           }
 
-        #ifdef IODEBUG
+        #ifdef VIENNAGRID_DEBUG_IO
           std::cout << "  finished loading edges .. " <<  std::endl;
         #endif
 
@@ -391,7 +391,7 @@ namespace viennagrid
                }
              }
 
-           #ifdef IODEBUG
+           #ifdef VIENNAGRID_DEBUG_IO
              std::cout << "faces: " << faces << std::endl;
            #endif
 
@@ -413,12 +413,12 @@ namespace viennagrid
                }
              }
 
-           #ifdef IODEBUG
+           #ifdef VIENNAGRID_DEBUG_IO
              std::cout << "  finished loading faces .. " <<  std::endl;
            #endif
         } // end DIMG == 3
 
-        #ifdef IODEBUG
+        #ifdef VIENNAGRID_DEBUG_IO
           std::cout << "reading segment information .. " << std::endl;
         #endif
 
@@ -438,7 +438,7 @@ namespace viennagrid
             }
           }
 
-        #ifdef IODEBUG
+        #ifdef VIENNAGRID_DEBUG_IO
           std::cout << "elements: " << elements << std::endl;
         #endif
 
@@ -453,7 +453,7 @@ namespace viennagrid
               std::size_t element_faces = 0;
               reader >> element_faces;
 
-            #ifdef IODEBUG
+            #ifdef VIENNAGRID_DEBUG_IO
               std::cout << "  type: segment-polyhedron" << std::endl;
               std::cout << "  element: " << i << " - faces: " << element_faces << std::endl;
             #endif
@@ -498,7 +498,7 @@ namespace viennagrid
               std::size_t element_faces = 0;
               reader >> element_faces;
 
-            #ifdef IODEBUG
+            #ifdef VIENNAGRID_DEBUG_IO
               std::cout << "  type: segment-polygon" << std::endl;
               std::cout << "  element: " << i << " - linesegments: " << element_faces << std::endl;
             #endif
@@ -523,7 +523,7 @@ namespace viennagrid
 //               reader >> token;
 //               reader >> token;
 //               domain.resize(domain.size()-1);
-            #ifdef IODEBUG
+            #ifdef VIENNAGRID_DEBUG_IO
               std::cout << "  type: contact-triangle" << std::endl;
             #endif
               contact_face_type contact_face(3);
@@ -541,7 +541,7 @@ namespace viennagrid
 //               reader >> token;
 //               reader >> token;
 //               domain.resize(domain.size()-1);
-            #ifdef IODEBUG
+            #ifdef VIENNAGRID_DEBUG_IO
               std::cout << "  type: contact-line" << std::endl;
             #endif
               contact_face_type contact_face(2);
@@ -560,11 +560,11 @@ namespace viennagrid
             }
           }
 
-        #ifdef IODEBUG
+        #ifdef VIENNAGRID_DEBUG_IO
           std::cout << "  finished loading elements .. " <<  std::endl;
         #endif
 
-        #ifdef IODEBUG
+        #ifdef VIENNAGRID_DEBUG_IO
           std::cout << "reading material and contact information .. " << std::endl;
         #endif
           // the domainsize acts as an offset for the number of elements
