@@ -192,7 +192,7 @@ namespace viennagrid
         reader.open(filename.c_str());
         if(!reader)
         {
-          throw cannot_open_file_exception(filename);
+          throw cannot_open_file_exception("* ViennaGrid: vtk_reader::openFile(): File " + filename + ": Cannot open file!");
         }
       }
 
@@ -224,8 +224,8 @@ namespace viennagrid
         {
           std::cerr << "* vtk_reader::operator(): Expected \"" << expectedToken << "\", but got \"" << token << "\"" << std::endl;
           std::stringstream ss;
-          ss << "Expected \"" << expectedToken << "\", but got \"" << token << "\"";
-          throw bad_file_format_exception("", ss.str());
+          ss << "* ViennaGrid: vtk_reader::operator(): Expected \"" << expectedToken << "\", but got \"" << token << "\"";
+          throw bad_file_format_exception(ss.str());
         }
       }
 
@@ -379,14 +379,14 @@ namespace viennagrid
             readData(vector_data[seg_id].back().second);
           }
           else
-            throw bad_file_format_exception("", "Number of components for data invalid!");
+            throw bad_file_format_exception("* ViennaGrid: vtk_reader::readPointCellData(): Number of components for data invalid!");
 
           tag.parse(reader);
         }
 
 
         if (tag.name() != "/pointdata" && tag.name() != "/celldata")
-            throw bad_file_format_exception("", "XML Parse error: Expected </PointData> or </CellData>!");
+            throw bad_file_format_exception("* ViennaGrid: vtk_reader::readPointCellData(): XML Parse error: Expected </PointData> or </CellData>!");
 
       }
 
@@ -709,7 +709,7 @@ namespace viennagrid
 
           tag.parse(reader);
           if (tag.name() != "?xml" && tag.name() != "?xml?")
-            throw bad_file_format_exception(filename, "Parse error: No opening ?xml tag!");
+            throw bad_file_format_exception("* ViennaGrid: vtk_reader::parse_vtu_segment(): Parse error: No opening ?xml tag!");
 
           tag.parse_and_check_name(reader, "vtkfile", filename);
           tag.parse_and_check_name(reader, "unstructuredgrid", filename);
@@ -750,7 +750,7 @@ namespace viennagrid
           }
 
           if (tag.name() != "cells")
-            throw bad_file_format_exception(filename, "Parse error: Expected Cells tag!");
+            throw bad_file_format_exception("* ViennaGrid: vtk_reader::parse_vtu_segment(): Parse error: Expected Cells tag!");
 
           for (std::size_t i=0; i<3; ++i)
           {
@@ -764,7 +764,7 @@ namespace viennagrid
             else if (tag.get_value("name") == "types")
               readTypes();
             else
-              throw bad_file_format_exception(filename, "Parse error: <DataArray> is not named 'connectivity', 'offsets' or 'types'!");
+              throw bad_file_format_exception("* ViennaGrid: vtk_reader::parse_vtu_segment(): Parse error: <DataArray> is not named 'connectivity', 'offsets' or 'types'!");
           }
 
           tag.parse_and_check_name(reader, "/cells", filename);
@@ -779,7 +779,7 @@ namespace viennagrid
 
 
           if (tag.name() != "/piece")
-            throw bad_file_format_exception(filename, "Parse error: Expected </Piece> tag!");
+            throw bad_file_format_exception("* ViennaGrid: vtk_reader::parse_vtu_segment(): Parse error: Expected </Piece> tag!");
 
           tag.parse_and_check_name(reader, "/unstructuredgrid", filename);
           tag.parse_and_check_name(reader, "/vtkfile", filename);
@@ -822,21 +822,21 @@ namespace viennagrid
 
         tag.parse(reader);
         if (tag.name() != "?xml" && tag.name() != "?xml?")
-          throw bad_file_format_exception(filename, "Parse error: No opening <?xml?> tag!");
+          throw bad_file_format_exception("* ViennaGrid: vtk_reader::process_pvd(): Parse error: No opening <?xml?> tag!");
 
         tag.parse(reader);
         if (tag.name() != "vtkfile")
-          throw bad_file_format_exception(filename, "Parse error: VTKFile tag expected!");
+          throw bad_file_format_exception("* ViennaGrid: vtk_reader::process_pvd(): Parse error: VTKFile tag expected!");
 
         if (!tag.has_attribute("type"))
-          throw bad_file_format_exception(filename, "Parse error: VTKFile tag has no attribute 'type'!");
+          throw bad_file_format_exception("* ViennaGrid: vtk_reader::process_pvd(): Parse error: VTKFile tag has no attribute 'type'!");
 
         if (string_to_lower(tag.get_value("type")) != "collection")
-          throw bad_file_format_exception(filename, "Parse error: Type-attribute of VTKFile tag is not 'Collection'!");
+          throw bad_file_format_exception("* ViennaGrid: vtk_reader::process_pvd(): Parse error: Type-attribute of VTKFile tag is not 'Collection'!");
 
         tag.parse(reader);
         if (tag.name() != "collection")
-          throw bad_file_format_exception(filename, "Parse error: Collection tag expected!");
+          throw bad_file_format_exception("* ViennaGrid: vtk_reader::process_pvd(): Parse error: Collection tag expected!");
 
         while (reader.good())
         {
@@ -846,10 +846,10 @@ namespace viennagrid
             break;
 
           if (tag.name() != "dataset")
-            throw bad_file_format_exception(filename, "Parse error: DataSet tag expected!");
+            throw bad_file_format_exception("* ViennaGrid: vtk_reader::process_pvd(): Parse error: DataSet tag expected!");
 
           if (!tag.has_attribute("file"))
-            throw bad_file_format_exception(filename, "Parse error: DataSet tag has no file attribute!");
+            throw bad_file_format_exception("* ViennaGrid: vtk_reader::process_pvd(): Parse error: DataSet tag has no file attribute!");
 
           filenames[ atoi(tag.get_value("part").c_str()) ] = tag.get_value("file");
 
@@ -857,7 +857,7 @@ namespace viennagrid
 
         tag.parse(reader);
         if (tag.name() != "/vtkfile")
-          throw bad_file_format_exception(filename, "Parse error: Closing VTKFile tag expected!");
+          throw bad_file_format_exception("* ViennaGrid: vtk_reader::process_pvd(): Parse error: Closing VTKFile tag expected!");
 
         closeFile();
 
@@ -907,12 +907,13 @@ namespace viennagrid
         else
         {
           std::stringstream ss;
+          ss << "* ViennaGrid: " << filename << " - ";
           ss << "Error: vtk-reader does not support file extension: " << extension << "\n";
           ss << "       the vtk-reader supports: \n";
           ss << "       *.vtu -- single-segment meshs\n";
           ss << "       *.pvd -- multi-segment meshs\n";
 
-          throw bad_file_format_exception(filename, ss.str());
+          throw bad_file_format_exception(ss.str());
         }
 
         //

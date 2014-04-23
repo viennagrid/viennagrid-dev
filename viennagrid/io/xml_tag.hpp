@@ -135,11 +135,11 @@ namespace viennagrid
             std::size_t pos = token.find_first_of('=');
             if (pos == std::string::npos)
             {
-              throw bad_file_format_exception("filename", "Parse error: XML attribute does not have '=' sign.");
+              throw bad_file_format_exception("* ViennaGrid: xml_tag::parse(): Parse error: XML attribute does not have '=' sign.");
             }
             else if (pos == 0)
             {
-              throw bad_file_format_exception("filename", "Parse error: XML attribute name missing.");
+              throw bad_file_format_exception("* ViennaGrid: xml_tag::parse(): Parse error: XML attribute name missing.");
             }
 
 
@@ -148,7 +148,7 @@ namespace viennagrid
 
             pos = value.rfind('"');
             if (pos == std::string::npos || pos == 0)
-              throw bad_file_format_exception("filename", "Internal XML parse error: XML attribute string not terminated.");
+              throw bad_file_format_exception("* ViennaGrid: xml_tag::parse(): Internal XML parse error: XML attribute string not terminated.");
 
             #ifdef VIENNAGRID_DEBUG_IO
             std::cout << name << ":" << value.substr(0, pos) << std::endl;
@@ -172,8 +172,8 @@ namespace viennagrid
         if (name_ != string_to_lower(expected_name))
         {
           std::stringstream ss;
-          ss << "XML Parse error: " << expected_name << " expected, but got " << name_ << std::endl;
-          throw bad_file_format_exception(filename,  ss.str());
+          ss << "* ViennaGrid: xml_tag::check_name(): XML Parse error in file " << filename << ": " << expected_name << " expected, but got " << name_ << std::endl;
+          throw bad_file_format_exception(ss.str());
         }
       }
 
@@ -210,8 +210,8 @@ namespace viennagrid
         if (!has_attribute(attrib_name))
         {
           std::stringstream ss;
-          ss << "XML Parse error: Attribute " << attrib_name << " missing!" << std::endl;
-          throw bad_file_format_exception(filename,  ss.str());
+          ss << "* ViennaGrid: xml_tag::check_attribute(): XML Parse error in file " << filename << ": Attribute " << attrib_name << " missing!" << std::endl;
+          throw bad_file_format_exception(ss.str());
         }
       }
 

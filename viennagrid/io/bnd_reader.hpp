@@ -837,10 +837,10 @@ namespace viennagrid
 
         BNDReaderType bnd;
         if (bnd(filename) != EXIT_SUCCESS)
-          throw bad_file_format_exception(filename, "BND reading error");
+          throw bad_file_format_exception("* ViennaGrid: bnd_reader::operator(): File " + filename + ": BND reading error");
 
         if ( mesh_dimension != bnd.dim_geom() )
-          throw bad_file_format_exception(filename, "Geometric dimension mismatch.");
+          throw bad_file_format_exception("* ViennaGrid: bnd_reader::operator(): File " + filename + ": Geometric dimension mismatch.");
 
 
         std::map<BNDIndexType, VertexHandleType> vertices;
@@ -862,9 +862,10 @@ namespace viennagrid
             if ((num_vertices > 0) && (num_vertices != polygon.size()))
             {
               std::stringstream ss;
+              ss << "* ViennaGrid: bnd_reader::operator(): File " << filename << ": ";
               ss << "ERROR: polygon " << poly_pos << " has " << polygon.size() << " vertices but should have " << num_vertices << std::endl;
 
-              throw bad_file_format_exception(filename, ss.str());
+              throw bad_file_format_exception(ss.str());
             }
 
 

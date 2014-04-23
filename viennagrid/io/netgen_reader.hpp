@@ -64,15 +64,14 @@ namespace viennagrid
 
         if (!reader)
         {
-          throw cannot_open_file_exception(filename);
+          throw cannot_open_file_exception("* ViennaGrid: netgen_reader::operator(): File " + filename + ": Cannot open file!");
         }
 
-        std::string token;
         long node_num = 0;
         long cell_num = 0;
 
         if (!reader.good())
-          throw bad_file_format_exception(filename, "File is empty.");
+          throw bad_file_format_exception("* ViennaGrid: netgen_reader::operator(): File " + filename + " is empty.");
 
         //
         // Read vertices:
@@ -89,7 +88,7 @@ namespace viennagrid
         for (int i=0; i<node_num; i++)
         {
           if (!reader.good())
-            throw bad_file_format_exception(filename, "EOF encountered while reading vertices.");
+            throw bad_file_format_exception("* ViennaGrid: netgen_reader::operator(): File " + filename + ": EOF encountered while reading vertices.");
 
           PointType p;
 
@@ -100,7 +99,7 @@ namespace viennagrid
         }
 
         if (!reader.good())
-          throw bad_file_format_exception(filename, "EOF encountered when reading number of cells.");
+          throw bad_file_format_exception("* ViennaGrid: netgen_reader::operator(): File " + filename + ": EOF encountered when reading number of cells.");
 
 
         //
@@ -118,7 +117,7 @@ namespace viennagrid
           viennagrid::static_array<VertexHandleType, boundary_elements<CellTag, vertex_tag>::num> cell_vertex_handles;
 
           if (!reader.good())
-            throw bad_file_format_exception(filename, "EOF encountered while reading cells (segment index expected).");
+            throw bad_file_format_exception("* ViennaGrid: netgen_reader::operator(): File " + filename + ": EOF encountered while reading cells (segment index expected).");
 
           int segment_index;
           reader >> segment_index;
@@ -126,7 +125,7 @@ namespace viennagrid
           for (std::size_t j=0; j<static_cast<std::size_t>(boundary_elements<CellTag, vertex_tag>::num); ++j)
           {
             if (!reader.good())
-              throw bad_file_format_exception(filename, "EOF encountered while reading cells (cell ID expected).");
+              throw bad_file_format_exception("* ViennaGrid: netgen_reader::operator(): File " + filename + ": EOF encountered while reading cells (cell ID expected).");
 
             reader >> vertex_num;
             cell_vertex_handles[j] = viennagrid::vertices(mesh_obj).handle_at(vertex_num-1);

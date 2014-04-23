@@ -118,7 +118,7 @@ namespace viennagrid
           std::ofstream writer(filename.c_str());
           if (!writer.is_open())
           {
-            throw cannot_open_file_exception(filename);
+            throw cannot_open_file_exception("* ViennaGrid: opendx_writer::operator(): File " + filename + ": Cannot open file!");
           }
 
           std::size_t pointnum = viennagrid::elements<vertex_tag>(mesh_obj).size();

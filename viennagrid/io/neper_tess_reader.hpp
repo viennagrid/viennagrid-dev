@@ -79,7 +79,7 @@ namespace viennagrid
 
         if (!reader)
         {
-          throw cannot_open_file_exception(filename);
+          throw cannot_open_file_exception("* ViennaGrid: neper_tess_reader::operator(): File " + filename + ": Cannot open file!");
         }
 
         seed_points.clear();
@@ -89,7 +89,7 @@ namespace viennagrid
 
 
         if (!reader.good())
-          throw bad_file_format_exception(filename, "File is empty.");
+          throw bad_file_format_exception("* ViennaGrid: neper_tess_reader::operator(): File " + filename + " is empty.");
 
 
         std::map<int, VertexHandleType> vertices;

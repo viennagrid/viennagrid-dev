@@ -138,7 +138,7 @@ namespace viennagrid
 
         if (!reader)
         {
-          throw cannot_open_file_exception(filename);
+          throw cannot_open_file_exception("* ViennaGrid: tetgen_poly_reader::operator(): File " + filename + ": Cannot open file!");
         }
 
         hole_points.clear();
@@ -154,25 +154,25 @@ namespace viennagrid
 
 
         if (!reader.good())
-          throw bad_file_format_exception(filename, "File is empty.");
+          throw bad_file_format_exception("* ViennaGrid: tetgen_poly_reader::operator(): File " + filename + ": File is empty.");
 
         //
         // Read vertices:
         //
         if (!get_valid_line(reader, tmp))
-          throw bad_file_format_exception(filename, "EOF encountered when reading information");
+          throw bad_file_format_exception("* ViennaGrid: tetgen_poly_reader::operator(): File " + filename + ": EOF encountered when reading information");
 
         current_line.str(tmp); current_line.clear();
         current_line >> node_num >> dim >> attribute_num >> boundary_marker_num;
 
         if (node_num < 0)
-          throw bad_file_format_exception(filename, "POLY file has less than 0 nodes");
+          throw bad_file_format_exception("* ViennaGrid: tetgen_poly_reader::operator(): File " + filename + ": POLY file has less than 0 nodes");
         if (dim != point_dim)
-          throw bad_file_format_exception(filename, "POLY point dimension missmatch");
+          throw bad_file_format_exception("* ViennaGrid: tetgen_poly_reader::operator(): File " + filename + ": POLY point dimension missmatch");
         if (attribute_num < 0)
-          throw bad_file_format_exception(filename, "POLY file has less than 0 attributes");
+          throw bad_file_format_exception("* ViennaGrid: tetgen_poly_reader::operator(): File " + filename + ": POLY file has less than 0 attributes");
         if ((boundary_marker_num < 0) || (boundary_marker_num > 1))
-          throw bad_file_format_exception(filename, "POLY file has not 0 or 1 boundary marker");
+          throw bad_file_format_exception("* ViennaGrid: tetgen_poly_reader::operator(): File " + filename + ": POLY file has not 0 or 1 boundary marker");
 
         #if defined VIENNAGRID_DEBUG_STATUS || defined VIENNAGRID_DEBUG_IO
         std::cout << "* poly_reader::operator(): Reading " << node_num << " vertices... " << std::endl;
@@ -181,7 +181,7 @@ namespace viennagrid
         for (int i=0; i<node_num; i++)
         {
           if (!get_valid_line(reader, tmp))
-              throw bad_file_format_exception(filename, "EOF encountered when reading information");
+              throw bad_file_format_exception("* ViennaGrid: tetgen_poly_reader::operator(): File " + filename + ": EOF encountered when reading information");
 
           typename VertexIDType::base_id_type id;
 
@@ -197,7 +197,7 @@ namespace viennagrid
         }
 
         if (!reader.good())
-          throw bad_file_format_exception(filename, "EOF encountered when reading number of cells.");
+          throw bad_file_format_exception("* ViennaGrid: tetgen_poly_reader::operator(): File " + filename + ": EOF encountered when reading number of cells.");
 
 
         //
@@ -205,16 +205,16 @@ namespace viennagrid
         //
         long facet_num = 0;
         if (!get_valid_line(reader, tmp))
-          throw bad_file_format_exception(filename, "EOF encountered when reading information");
+          throw bad_file_format_exception("* ViennaGrid: tetgen_poly_reader::operator(): File " + filename + ": EOF encountered when reading information");
 
 
         current_line.str(tmp); current_line.clear();
         current_line >> facet_num >> boundary_marker_num;
 
         if (facet_num < 0)
-          throw bad_file_format_exception(filename, "POLY file has less than 0 facets");
+          throw bad_file_format_exception("* ViennaGrid: tetgen_poly_reader::operator(): File " + filename + ": POLY file has less than 0 facets");
         if ((boundary_marker_num < 0) || (boundary_marker_num > 1))
-          throw bad_file_format_exception(filename, "POLY file has not 0 or 1 boundary marker");
+          throw bad_file_format_exception("* ViennaGrid: tetgen_poly_reader::operator(): File " + filename + ": POLY file has not 0 or 1 boundary marker");
 
         #if defined VIENNAGRID_DEBUG_STATUS || defined VIENNAGRID_DEBUG_IO
         std::cout << "* netgen_reader::operator(): Reading " << cell_num << " cells... " << std::endl;
@@ -226,16 +226,16 @@ namespace viennagrid
           long hole_num;
 
           if (!get_valid_line(reader, tmp))
-            throw bad_file_format_exception(filename, "EOF encountered when reading information");
+            throw bad_file_format_exception("* ViennaGrid: tetgen_poly_reader::operator(): File " + filename + ": EOF encountered when reading information");
 
 
           current_line.str(tmp); current_line.clear();
           current_line >> polygon_num >> hole_num;
 
           if (polygon_num < 0)
-            throw bad_file_format_exception(filename, "POLY facet has less than 0 polygons");
+            throw bad_file_format_exception("* ViennaGrid: tetgen_poly_reader::operator(): File " + filename + ": POLY facet has less than 0 polygons");
           if (hole_num < 0)
-            throw bad_file_format_exception(filename, "POLY facet has less than 0 holes");
+            throw bad_file_format_exception("* ViennaGrid: tetgen_poly_reader::operator(): File " + filename + ": POLY facet has less than 0 holes");
 
           std::list<LineHandleType> lines;
           std::list<VertexHandleType> vertices;
@@ -245,14 +245,14 @@ namespace viennagrid
             long vertex_num;
 
             if (!get_valid_line(reader, tmp))
-              throw bad_file_format_exception(filename, "EOF encountered when reading information");
+              throw bad_file_format_exception("* ViennaGrid: tetgen_poly_reader::operator(): File " + filename + ": EOF encountered when reading information");
 
 
             current_line.str(tmp); current_line.clear();
             current_line >> vertex_num;
 
             if (vertex_num < 0)
-              throw bad_file_format_exception(filename, "POLY polygon has less than 0 vertices");
+              throw bad_file_format_exception("* ViennaGrid: tetgen_poly_reader::operator(): File " + filename + ": POLY polygon has less than 0 vertices");
 
             std::vector<VertexHandleType> vertex_handles(static_cast<std::size_t>(vertex_num));
 
@@ -286,7 +286,7 @@ namespace viennagrid
           for (int j = 0; j<hole_num; ++j)
           {
             if (!get_valid_line(reader, tmp))
-              throw bad_file_format_exception(filename, "EOF encountered when reading information");
+              throw bad_file_format_exception("* ViennaGrid: tetgen_poly_reader::operator(): File " + filename + ": EOF encountered when reading information");
 
             long hole_id;
 
@@ -326,12 +326,12 @@ namespace viennagrid
         current_line >> hole_num;
 
         if (hole_num < 0)
-          throw bad_file_format_exception(filename, "POLY file has less than 0 holes");
+          throw bad_file_format_exception("* ViennaGrid: tetgen_poly_reader::operator(): File " + filename + ": POLY file has less than 0 holes");
 
         for (int i=0; i<hole_num; ++i)
         {
           if (!get_valid_line(reader, tmp))
-            throw bad_file_format_exception(filename, "EOF encountered when reading information");
+            throw bad_file_format_exception("* ViennaGrid: tetgen_poly_reader::operator(): File " + filename + ": EOF encountered when reading information");
 
           long hole_number;
           PointType hole_point;
@@ -360,12 +360,12 @@ namespace viennagrid
         current_line >> segment_num;
 
         if (segment_num < 0)
-          throw bad_file_format_exception(filename, "POLY file has less than 0 segments");
+          throw bad_file_format_exception("* ViennaGrid: tetgen_poly_reader::operator(): File " + filename + ": POLY file has less than 0 segments");
 
         for (int i=0; i<segment_num; ++i)
         {
           if (!get_valid_line(reader, tmp))
-            throw bad_file_format_exception(filename, "EOF encountered when reading information");
+            throw bad_file_format_exception("* ViennaGrid: tetgen_poly_reader::operator(): File " + filename + ": EOF encountered when reading information");
 
           long segment_number;
           PointType seed_point;

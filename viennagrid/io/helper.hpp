@@ -20,6 +20,7 @@
 #include <cctype>
 #include <string>
 #include <limits>
+#include <stdexcept>
 
 #include "viennagrid/forwards.hpp"
 
@@ -118,53 +119,23 @@ namespace viennagrid
 
 
 
-
-
     /** @brief Provides an exception for the case a file cannot be opened */
-    class cannot_open_file_exception : public std::exception
+    class cannot_open_file_exception : public std::runtime_error
     {
-      public:
-        virtual const char* what() const throw()
-        {
-          std::stringstream ss;
-          ss << "* ViennaGrid: Cannot open file " << filename_ << "!";
-          return ss.str().c_str();
-        }
+    public:
+      explicit cannot_open_file_exception(std::string message) : std::runtime_error(message) {}
 
-        cannot_open_file_exception(std::string file) : filename_(file) {}
-
-        virtual ~cannot_open_file_exception() throw() {}
-
-      private:
-        std::string filename_;
+      virtual ~cannot_open_file_exception() throw() {}
     };
 
     /** @brief Provides an exception for the case a parser problem occurs */
-    class bad_file_format_exception : public std::exception
+    class bad_file_format_exception : public std::runtime_error
     {
-      public:
-        virtual const char* what() const throw()
-        {
-          std::stringstream ss;
-          if (filename_.size() > 0)
-            ss << "* ViennaGrid: Bad file format in file " << filename_ << ": " << message_;
-          else
-            ss << "* ViennaGrid: Bad file format: " << message_;
-          return ss.str().c_str();
-        }
+    public:
+      explicit bad_file_format_exception(std::string message) : std::runtime_error(message) {}
 
-        /** @brief Constructor taking the file name and a custom parser-specific message to be issued */
-        bad_file_format_exception(std::string file, std::string message) : filename_(file), message_(message) {}
-        /** @brief Constructor taking a custom parser-specific message to be issued */
-        bad_file_format_exception(std::string message) : filename_(), message_(message) {}
-
-        virtual ~bad_file_format_exception() throw() {}
-
-      private:
-        std::string filename_;
-        std::string message_;
+      virtual ~bad_file_format_exception() throw() {}
     };
-
 
   } //namespace io
 } //namespace  viennagrid

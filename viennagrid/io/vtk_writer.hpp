@@ -402,7 +402,7 @@ namespace viennagrid
           std::ofstream writer(ss.str().c_str());
 
           if (!writer)
-            throw cannot_open_file_exception(filename);
+            throw cannot_open_file_exception("* ViennaGrid: vtk_writer::operator(): File " + filename + ": Cannot open file!");
 
           writeHeader(writer);
 
@@ -478,7 +478,7 @@ namespace viennagrid
 
             if (!writer){
               clear();
-              throw cannot_open_file_exception(filename);
+              throw cannot_open_file_exception("* ViennaGrid: vtk_writer::operator(): File " + filename + ": Cannot open file!");
             }
 
             writer << "<?xml version=\"1.0\"?>" << std::endl;
@@ -512,7 +512,7 @@ namespace viennagrid
             if (!writer)
             {
               clear();
-              throw cannot_open_file_exception(ss.str());
+              throw cannot_open_file_exception("* ViennaGrid: vtk_writer::operator(): File " + ss.str() + ": Cannot open file!");
             }
 
             std::size_t num_points = preparePoints(seg, seg.id());
