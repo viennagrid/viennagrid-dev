@@ -1,5 +1,5 @@
-#ifndef VIENNAMETA_STORAGE_ALGORITHM_HPP
-#define VIENNAMETA_STORAGE_ALGORITHM_HPP
+#ifndef VIENNAGRID_STORAGE_ALGORITHM_HPP
+#define VIENNAGRID_STORAGE_ALGORITHM_HPP
 
 /* =======================================================================
    Copyright (c) 2011-2014, Institute for Microelectronics,
