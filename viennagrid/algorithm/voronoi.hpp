@@ -711,7 +711,7 @@ namespace viennagrid
           {
             std::cerr << "circ_centers.size() = " << circ_centers.size() << std::endl;
             std::cerr << "*fit: " << facet << std::endl;
-            throw "More than two circumcenters for a facet in three dimensions!";
+            throw std::runtime_error("More than two circumcenters for a facet in three dimensions!");
           }
 
         } //for edges on cells

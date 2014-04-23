@@ -244,8 +244,7 @@ namespace viennagrid
 
         if (!reader){
           std::cerr << "Cannot open file " << filename << std::endl;
-          throw "Cannot open file";
-          return EXIT_FAILURE;
+          throw cannot_open_file_exception("* ViennaGrid: bnd_helper::operator(): File " + filename + ": Cannot open file!");
         }
 
         try{
@@ -557,7 +556,7 @@ namespace viennagrid
             else
             {
               std::cerr << "BND-READER-Error: Elements of type: " << token << " are not supported .." << std::endl;
-              exit(-1);
+              throw std::runtime_error("BND-READER-Error: Elements of type: " + token + " are not supported ..");
             }
           }
 

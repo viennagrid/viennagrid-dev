@@ -234,7 +234,7 @@ namespace viennagrid
         std::cerr << "B: " << B << std::endl;
         std::cerr << "C: " << C << std::endl;
         std::cerr << "B x C: " << viennagrid::cross_prod(B, C) << std::endl;
-        exit(0);
+        throw std::runtime_error("Near singularity in circum center calculation!");
       }
       return circ_cent + O;
     }
