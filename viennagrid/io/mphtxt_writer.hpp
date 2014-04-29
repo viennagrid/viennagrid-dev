@@ -64,7 +64,6 @@ namespace viennagrid
     {
       typedef typename viennagrid::result_of::point<SegmentHandleT>::type PointType;
       typedef typename viennagrid::result_of::coord<SegmentHandleT>::type NumericType;
-      typedef typename viennagrid::result_of::triangle<SegmentHandleT>::type TriangleType;
       PointType normal = viennagrid::normal_vector( viennagrid::dereference_handle(segment, triangle_handle) );
 
       typedef typename viennagrid::result_of::const_neighbor_range<SegmentHandleT, viennagrid::triangle_tag, viennagrid::vertex_tag>::type NeigborTriangleRangeType;
@@ -170,7 +169,6 @@ namespace viennagrid
         typedef typename viennagrid::result_of::iterator<ConstVertexRangeType>::type ConstVertexIteratorType;
 
         typedef typename viennagrid::result_of::const_triangle_range<MeshT>::type ConstTriangleRangeType;
-        typedef typename viennagrid::result_of::iterator<ConstTriangleRangeType>::type ConstTriangleIteratorType;
 
         typedef typename viennagrid::result_of::const_tetrahedron_range<MeshT>::type ConstTetrahedronRangeType;
         typedef typename viennagrid::result_of::iterator<ConstTetrahedronRangeType>::type ConstTetrahedronIteratorType;
@@ -260,7 +258,6 @@ namespace viennagrid
               PointType triangle_center = viennagrid::centroid(*tit);
 
               typedef typename viennagrid::result_of::const_coboundary_range<SegmentHandleType, viennagrid::triangle_tag, viennagrid::tetrahedron_tag>::type CoboundaryTetrahedronRangeType;
-              typedef typename viennagrid::result_of::iterator<CoboundaryTetrahedronRangeType>::type CoboundaryTetrahedronIteratorType;
 
               CoboundaryTetrahedronRangeType coboundary_tetrahedrons(*sit, tit.handle());
               if (coboundary_tetrahedrons.size() != 1)
@@ -373,8 +370,6 @@ namespace viennagrid
         for (ConstTetrahedronIteratorType tit = tetrahedrons.begin(); tit != tetrahedrons.end(); ++tit)
         {
           typedef typename viennagrid::result_of::tetrahedron<MeshT>::type TetrahedronType;
-          typedef typename viennagrid::result_of::const_vertex_range<TetrahedronType>::type VertexOnTetrahedronRangeType;
-          typedef typename viennagrid::result_of::iterator<VertexOnTetrahedronRangeType>::type VertexOnTetrahedronIteratorType;
 
           typedef typename viennagrid::result_of::segment_id_range<SegmentationT, TetrahedronType>::type SegmentIDRange;
 

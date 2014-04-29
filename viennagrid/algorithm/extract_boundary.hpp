@@ -35,8 +35,6 @@ namespace viennagrid
   {
     viennagrid::clear(hull_mesh);
 
-    typedef typename viennagrid::result_of::point<VolumeMeshT>::type            VolumePointType;
-
     typedef typename viennagrid::result_of::const_element_range<VolumeMeshT, HullTypeOrTagT>::type    HullRangeType;
     typedef typename viennagrid::result_of::iterator<HullRangeType>::type                                   HullRangeIterator;
 
@@ -100,8 +98,6 @@ namespace viennagrid
       extract_boundary<HullTagType>(volume_mesh, hull_mesh);
 
     typedef typename viennagrid::result_of::segment_handle<VolumeSegmentationT>::type    VolumeSegmentHandleType;
-    typedef typename viennagrid::result_of::point<VolumeMeshT>::type            VolumePointType;
-
     typedef typename viennagrid::result_of::segment_handle<HullSegmentationT>::type      HullSegmentHandleType;
 
 
@@ -111,7 +107,6 @@ namespace viennagrid
     typedef typename viennagrid::result_of::id<VolumeHullElementType>::type VolumeHullElementIDType;
     typedef typename viennagrid::result_of::handle<HullSegmentHandleType, HullTagType>::type HullCellElementHandleType;
 
-    typedef typename viennagrid::result_of::vertex_id<VolumeMeshT>::type VolumeVertexIDType;
     typedef typename viennagrid::result_of::vertex_handle<HullSegmentHandleType>::type HullVertexHandleType;
 
     viennagrid::vertex_copy_map<VolumeMeshT, HullMeshT> vertex_map(hull_mesh);

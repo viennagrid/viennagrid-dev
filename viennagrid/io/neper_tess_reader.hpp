@@ -65,10 +65,7 @@ namespace viennagrid
 
         static const int point_dim = viennagrid::result_of::static_size<PointType>::value;
 
-        typedef typename result_of::element<MeshT, vertex_tag>::type         VertexType;
         typedef typename result_of::vertex_handle<MeshT>::type          VertexHandleType;
-        typedef typename VertexType::id_type VertexIDType;
-
         typedef typename result_of::line_handle<MeshT>::type            LineHandleType;
 
         std::ifstream reader(filename.c_str());
