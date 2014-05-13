@@ -693,7 +693,7 @@ namespace viennagrid
 
     typedef typename access_type::id_type::base_id_type offset_type;
 
-    dense_container_field() : default_value() {}
+    dense_container_field() : container(0), default_value() {}
     dense_container_field( ContainerType & container_ ) : container(&container_), default_value() {}
     dense_container_field( ContainerType & container_, value_type const & value_type_ ) : container(&container_), default_value(value_type_) {}
 
@@ -828,7 +828,7 @@ namespace viennagrid
     typedef value_type *         pointer;
     typedef value_type const *   const_pointer;
 
-    std_map_field() : default_value() {}
+    std_map_field() : container(0), default_value() {}
     std_map_field( ContainerType & container_ ) : container(&container_), default_value() {}
     std_map_field( ContainerType & container_, value_type const & value_type_ ) : container(&container_), default_value(value_type_) {}
 
