@@ -13,6 +13,10 @@
    License:      MIT (X11), see file LICENSE in the base directory
 ======================================================================= */
 
+#ifdef _WIN32
+  #pragma warning( disable : 4503 )
+#endif
+
 #include "viennagrid/meta/utils.hpp"
 #include "viennagrid/meta/typelist.hpp"
 
