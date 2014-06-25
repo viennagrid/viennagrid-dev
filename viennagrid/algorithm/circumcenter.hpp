@@ -133,7 +133,7 @@ namespace viennagrid
     typename PointAccessorT::value_type
     circumcenter(PointAccessorT const accessor, ElementT const & cell, viennagrid::triangle_tag, viennagrid::dimension_tag<2>)
     {
-      return circumcenter_points(viennagrid::simplex_tag<1>(),
+      return circumcenter_points(viennagrid::triangle_tag(),
                                  viennagrid::dimension_tag<2>(),
                                  accessor( vertices(cell)[0] ),
                                  accessor( vertices(cell)[1] ),
@@ -297,6 +297,49 @@ namespace viennagrid
     }
 
   } //namespace detail
+
+
+
+  template<typename ElementTagT, typename DimensionTagT, typename PointT>
+  PointT circumcenter_points(ElementTagT, DimensionTagT, PointT const & p0)
+  {
+    return detail::circumcenter_points(ElementTagT(),
+                                       DimensionTagT(),
+                                       p0);
+  }
+
+  template<typename ElementTagT, typename DimensionTagT, typename PointT>
+  PointT circumcenter_points(ElementTagT, DimensionTagT, PointT const & p0, PointT const & p1)
+  {
+    return detail::circumcenter_points(ElementTagT(),
+                                       DimensionTagT(),
+                                       p0, p1);
+  }
+
+  template<typename ElementTagT, typename DimensionTagT, typename PointT>
+  PointT circumcenter_points(ElementTagT, DimensionTagT, PointT const & p0, PointT const & p1, PointT const & p2)
+  {
+    return detail::circumcenter_points(ElementTagT(),
+                                       DimensionTagT(),
+                                       p0, p1, p2);
+  }
+
+  template<typename ElementTagT, typename DimensionTagT, typename PointT>
+  PointT circumcenter_points(ElementTagT, DimensionTagT, PointT const & p0, PointT const & p1, PointT const & p2, PointT const & p3)
+  {
+    return detail::circumcenter_points(ElementTagT(),
+                                       DimensionTagT(),
+                                       p0, p1, p2, p3);
+  }
+
+  template<typename ElementTagT, typename DimensionTagT, typename PointT>
+  PointT circumcenter_points(ElementTagT, DimensionTagT, PointT const & p0, PointT const & p1, PointT const & p2, PointT const & p3, PointT const & p4, PointT const & p5)
+  {
+    return detail::circumcenter_points(ElementTagT(),
+                                       DimensionTagT(),
+                                       p0, p1, p2, p3, p4, p5);
+  }
+
 
   /** @brief The public interface function for the calculation of the circumcenter with explicit point accessor.
    *
