@@ -94,17 +94,17 @@ namespace viennagrid
       difference_type operator-(const const_iterator & it) const { return ptr_ - it.ptr_; }
 
       // less and greater compareable
-      bool operator<(const iterator & it) const { return ptr_ < it.ptr; }
-      bool operator<=(const iterator & it) const { return ptr_ <= it.ptr; }
+      bool operator<(const iterator & it) const { return ptr_ < it.ptr_; }
+      bool operator<=(const iterator & it) const { return ptr_ <= it.ptr_; }
 
-      bool operator>(const iterator & it) const { return ptr_ > it.ptr; }
-      bool operator>=(const iterator & it) const { return ptr_ >= it.ptr; }
+      bool operator>(const iterator & it) const { return ptr_ > it.ptr_; }
+      bool operator>=(const iterator & it) const { return ptr_ >= it.ptr_; }
 
-      bool operator<(const const_iterator & it) const { return ptr_ < it.ptr; }
-      bool operator<=(const const_iterator & it) const { return ptr_ <= it.ptr; }
+      bool operator<(const const_iterator & it) const { return ptr_ < it.ptr_; }
+      bool operator<=(const const_iterator & it) const { return ptr_ <= it.ptr_; }
 
-      bool operator>(const const_iterator & it) const { return ptr_ > it.ptr; }
-      bool operator>=(const const_iterator & it) const { return ptr_ >= it.ptr; }
+      bool operator>(const const_iterator & it) const { return ptr_ > it.ptr_; }
+      bool operator>=(const const_iterator & it) const { return ptr_ >= it.ptr_; }
 
       // compound assign add- and subtractable
       iterator & operator+=(long diff) { ptr_ += diff; return *this; }
