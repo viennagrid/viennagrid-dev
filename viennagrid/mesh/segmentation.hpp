@@ -93,6 +93,9 @@ namespace viennagrid
       */
     void set_name( std::string const & new_name )
     {
+      if (new_name == name())
+        return;
+
       // name is already present
       if (parent().segment_name_map.find(new_name) != parent().segment_name_map.end())
         throw segment_name_collision_exception(new_name);
@@ -687,6 +690,9 @@ namespace viennagrid
 
       std::stringstream ss;
       ss << segment_id;
+      while (segment_name_map.find(ss.str()) != segment_name_map.end())
+        ss << "_already_in_use";
+
       segments.back().name = ss.str();
 
       if (!segment_name_map.insert(std::make_pair(ss.str(), &it->second)).second)
