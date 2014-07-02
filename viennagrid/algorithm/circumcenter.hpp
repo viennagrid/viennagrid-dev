@@ -44,31 +44,53 @@ namespace viennagrid
 
     //a point is degenerate and returns its location
     /** @brief Implementation of the calculation of a circumcenter for a point (degenerate case) */
-    template <typename PointAccessorT, typename ElementT>
-    typename PointAccessorT::value_type
-    circumcenter(PointAccessorT const accessor, ElementT const & cell, viennagrid::vertex_tag)
+    template<typename DimensionTagT, typename PointT>
+    PointT circumcenter_points(viennagrid::vertex_tag, DimensionTagT, PointT const & p)
     {
-      return accessor(cell);
+      return p;
     }
+
+    //a point is degenerate and returns its location
+    /** @brief Implementation of the calculation of a circumcenter for a point (degenerate case) */
+    template <typename PointAccessorT, typename ElementT, typename DimensionTagT>
+    typename PointAccessorT::value_type
+    circumcenter(PointAccessorT const accessor, ElementT const & cell, viennagrid::vertex_tag, DimensionTagT)
+    {
+      return circumcenter_points(viennagrid::vertex_tag(), DimensionTagT(), accessor(cell));
+    }
+
 
     //
     // Calculation of circumcenter for a line
     //
+    /** @brief Implementation of the calculation of a circumcenter for a line */
+    template<typename DimensionTagT, typename PointT>
+    PointT circumcenter_points(viennagrid::simplex_tag<1>, DimensionTagT, PointT const & A, PointT const & B)
+    {
+      PointT ret = A + B;
+      ret /= 2.0;
+
+      return ret;
+    }
+
+    /** @brief Implementation of the calculation of a circumcenter for a line (1-hypercube) */
+    template<typename DimensionTagT, typename PointT>
+    PointT circumcenter_points(viennagrid::hypercube_tag<1>, DimensionTagT, PointT const & A, PointT const & B)
+    {
+      return circumcenter_points(viennagrid::simplex_tag<1>(), DimensionTagT(), A, B);
+    }
+
     /** @brief Implementation of the calculation of a circumcenter for a line (1-simplex) */
     template <typename PointAccessorT, typename ElementT, typename DimensionTag>
     typename PointAccessorT::value_type
     circumcenter(PointAccessorT const accessor, ElementT const & cell, viennagrid::simplex_tag<1>, DimensionTag)
     {
-      typedef typename PointAccessorT::value_type PointType;
-
-      PointType const & A = accessor( vertices(cell)[0] );
-      PointType const & B = accessor( vertices(cell)[1] );
-
-      PointType ret = A + B;
-      ret /= 2.0;
-
-      return ret;
+      return circumcenter_points(viennagrid::simplex_tag<1>(),
+                                 DimensionTag(),
+                                 accessor( vertices(cell)[0] ),
+                                 accessor( vertices(cell)[1] ));
     }
+
 
     /** @brief Implementation of the calculation of a circumcenter for a line (1-hypercube) */
     template <typename PointAccessorT, typename ElementT, typename DimensionTag>
@@ -82,17 +104,10 @@ namespace viennagrid
     // Calculation of circumcenter taken from Wikipedia (better reference required...)
     //
     /** @brief Implementation of the calculation of a circumcenter for a triangle in two dimensions */
-    template <typename PointAccessorT, typename ElementT>
-    typename PointAccessorT::value_type
-    circumcenter(PointAccessorT const accessor, ElementT const & cell, viennagrid::triangle_tag, viennagrid::dimension_tag<2>)
+    template<typename PointT>
+    PointT circumcenter_points(viennagrid::triangle_tag, viennagrid::dimension_tag<2>, PointT const & A, PointT const & B, PointT const & C)
     {
-      typedef typename PointAccessorT::value_type PointType;
-
-      PointType const & A = accessor( vertices(cell)[0] );
-      PointType const & B = accessor( vertices(cell)[1] );
-      PointType const & C = accessor( vertices(cell)[2] );
-
-      PointType circ_cent;
+      PointT circ_cent;
 
       double D = 2.0 * (   A[0] * (B[1] - C[1])
                          + B[0] * (C[1] - A[1])
@@ -113,33 +128,45 @@ namespace viennagrid
     }
 
 
+    /** @brief Implementation of the calculation of a circumcenter for a triangle in two dimensions */
+    template <typename PointAccessorT, typename ElementT>
+    typename PointAccessorT::value_type
+    circumcenter(PointAccessorT const accessor, ElementT const & cell, viennagrid::triangle_tag, viennagrid::dimension_tag<2>)
+    {
+      return circumcenter_points(viennagrid::triangle_tag(),
+                                 viennagrid::dimension_tag<2>(),
+                                 accessor( vertices(cell)[0] ),
+                                 accessor( vertices(cell)[1] ),
+                                 accessor( vertices(cell)[2] ));
+    }
+
+
     //
     // TODO: This works for rectangles only, but not for general quadrilaterals
     //
+    /** @brief Implementation of the calculation of a circumcenter for a quadrilateral in two dimensions. Mind that the user has to ensure that the quadrilateral actually has a circumcenter! */
+    template<typename DimensionTagT, typename PointT>
+    PointT circumcenter_points(viennagrid::quadrilateral_tag, DimensionTagT, PointT const & A, PointT const & B, PointT const & C, PointT const & D)
+    {
+      PointT p = A;
+      p += B;
+      p += C;
+      p += D;
+
+      return p / 4;
+    }
+
     /** @brief Implementation of the calculation of a circumcenter for a quadrilateral in two dimensions. Mind that the user has to ensure that the quadrilateral actually has a circumcenter! */
     template <typename PointAccessorT, typename ElementT>
     typename PointAccessorT::value_type
     circumcenter(PointAccessorT const accessor, ElementT const & cell, viennagrid::quadrilateral_tag, viennagrid::dimension_tag<2>)
     {
-      typedef typename PointAccessorT::value_type PointType;
-      typedef typename viennagrid::result_of::coord<PointType>::type    CoordType;
-
-      typedef typename viennagrid::result_of::const_element_range<ElementT, vertex_tag>::type         VertexOnCellRange;
-      typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type      VertexOnCellIterator;
-
-      PointType p0(0.0, 0.0);
-
-      VertexOnCellRange vertices = viennagrid::elements<vertex_tag>(cell);
-      for (VertexOnCellIterator vocit = vertices.begin();
-           vocit != vertices.end();
-           ++vocit)
-      {
-        p0 += accessor( *vocit );
-      }
-
-      p0 /= static_cast<CoordType>(vertices.size());
-
-      return p0;
+      return circumcenter_points(viennagrid::quadrilateral_tag(),
+                                 viennagrid::dimension_tag<2>(),
+                                 accessor( vertices(cell)[0] ),
+                                 accessor( vertices(cell)[1] ),
+                                 accessor( vertices(cell)[2] ),
+                                 accessor( vertices(cell)[3] ));
     }
 
 
@@ -148,26 +175,29 @@ namespace viennagrid
     // Calculation of circumcenter taken from Wikipedia (better reference required...)
     //
     /** @brief Implementation of the calculation of a circumcenter for a triangle in three dimensions */
-    template <typename PointAccessorT, typename ElementT>
-    typename PointAccessorT::value_type
-    circumcenter(PointAccessorT const accessor, ElementT const & cell, viennagrid::triangle_tag, viennagrid::dimension_tag<3>)
+    template<typename PointT>
+    PointT circumcenter_points(viennagrid::triangle_tag, viennagrid::dimension_tag<3>, PointT const & A, PointT const & B, PointT const & C)
     {
-      typedef typename PointAccessorT::value_type PointType;
-
-      PointType const & A = accessor( vertices(cell)[0] );
-      PointType const & B = accessor( vertices(cell)[1] );
-      PointType const & C = accessor( vertices(cell)[2] );
-
       double denominator = 2.0 * viennagrid::inner_prod(viennagrid::cross_prod(A-B, B-C), viennagrid::cross_prod(A-B, B-C));
 
       double alpha = viennagrid::inner_prod(B - C, B - C) * viennagrid::inner_prod(A - B, A - C);
       double beta  = viennagrid::inner_prod(A - C, A - C) * viennagrid::inner_prod(B - A, B - C);
       double gamma = viennagrid::inner_prod(A - B, A - B) * viennagrid::inner_prod(C - A, C - B);
 
-
-      PointType circ_cent = A * (alpha/denominator) + B * (beta/denominator) + C * (gamma/denominator);
-
+      PointT circ_cent = A * (alpha/denominator) + B * (beta/denominator) + C * (gamma/denominator);
       return circ_cent;
+    }
+
+    /** @brief Implementation of the calculation of a circumcenter for a triangle in three dimensions */
+    template <typename PointAccessorT, typename ElementT>
+    typename PointAccessorT::value_type
+    circumcenter(PointAccessorT const accessor, ElementT const & cell, viennagrid::triangle_tag, viennagrid::dimension_tag<3>)
+    {
+      return circumcenter_points(viennagrid::triangle_tag(),
+                                 viennagrid::dimension_tag<3>(),
+                                 accessor( vertices(cell)[0] ),
+                                 accessor( vertices(cell)[1] ),
+                                 accessor( vertices(cell)[2] ));
     }
 
 
@@ -179,25 +209,12 @@ namespace viennagrid
     typename PointAccessorT::value_type
     circumcenter(PointAccessorT const accessor, ElementT const & cell, viennagrid::quadrilateral_tag, viennagrid::dimension_tag<3>)
     {
-      typedef typename PointAccessorT::value_type PointType;
-      typedef typename viennagrid::result_of::coord<PointType>::type    CoordType;
-
-      typedef typename viennagrid::result_of::const_element_range<ElementT, vertex_tag>::type         VertexOnCellRange;
-      typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type      VertexOnCellIterator;
-
-      PointType p0(0.0, 0.0, 0.0);
-
-      VertexOnCellRange vertices = viennagrid::elements<vertex_tag>(cell);
-      for (VertexOnCellIterator vocit = vertices.begin();
-           vocit != vertices.end();
-           ++vocit)
-      {
-        p0 += accessor( *vocit );
-      }
-
-      p0 /= static_cast<CoordType>(vertices.size());
-
-      return p0;
+      return circumcenter_points(viennagrid::quadrilateral_tag(),
+                                 viennagrid::dimension_tag<2>(),
+                                 accessor( vertices(cell)[0] ),
+                                 accessor( vertices(cell)[1] ),
+                                 accessor( vertices(cell)[2] ),
+                                 accessor( vertices(cell)[3] ));
     }
 
 
@@ -205,28 +222,19 @@ namespace viennagrid
     // Calculation of circumcenter taken from Wikipedia (better reference required...)
     //
     /** @brief Implementation of the calculation of a circumcenter for a tetrahedron in three dimensions */
-    template <typename PointAccessorT, typename ElementT>
-    typename PointAccessorT::value_type
-    circumcenter(PointAccessorT const accessor, ElementT const & cell, viennagrid::tetrahedron_tag, viennagrid::dimension_tag<3>)
+    template<typename PointT>
+    PointT circumcenter_points(viennagrid::tetrahedron_tag, viennagrid::dimension_tag<3>, PointT const & p0, PointT const & p1, PointT const & p2, PointT const & p3)
     {
-      typedef typename PointAccessorT::value_type PointType;
+      PointT const & O = p0;
+      PointT const & A = p1 - O;
+      PointT const & B = p2 - O;
+      PointT const & C = p3 - O;
 
-      typedef typename viennagrid::result_of::const_element_range<ElementT, vertex_tag>::type         VertexOnCellRange;
-      typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type            VertexOnCellIterator;
-
-      VertexOnCellRange vertices = viennagrid::elements<vertex_tag>(cell);
-      VertexOnCellIterator vocit = vertices.begin();
-
-      PointType const & O = accessor(*vocit); ++vocit;
-      PointType const & A = accessor(*vocit) - O; ++vocit;
-      PointType const & B = accessor(*vocit) - O; ++vocit;
-      PointType const & C = accessor(*vocit) - O;
-
-      PointType circ_cent = (cross_prod(A, B) * viennagrid::inner_prod(C, C)
+      PointT circ_cent = (cross_prod(A, B) * viennagrid::inner_prod(C, C)
                              + cross_prod(C, A) * viennagrid::inner_prod(B, B)
                              + cross_prod(B, C) * viennagrid::inner_prod(A, A)
                              ) / (viennagrid::inner_prod(A, viennagrid::cross_prod(B, C)) * 2.0);
-      PointType cprodBC = viennagrid::cross_prod(B, C);
+      PointT cprodBC = viennagrid::cross_prod(B, C);
       if (std::fabs(viennagrid::inner_prod(A, cprodBC)) < 1e-10 * viennagrid::norm(cprodBC) )
       {
         std::cerr << "Near singularity in circum center calculation!" << std::endl;
@@ -239,36 +247,99 @@ namespace viennagrid
       return circ_cent + O;
     }
 
+
+
+
+    /** @brief Implementation of the calculation of a circumcenter for a tetrahedron in three dimensions */
+    template <typename PointAccessorT, typename ElementT>
+    typename PointAccessorT::value_type
+    circumcenter(PointAccessorT const accessor, ElementT const & cell, viennagrid::tetrahedron_tag, viennagrid::dimension_tag<3>)
+    {
+      return circumcenter_points(viennagrid::tetrahedron_tag(),
+                                 viennagrid::dimension_tag<3>(),
+                                 accessor( vertices(cell)[0] ),
+                                 accessor( vertices(cell)[1] ),
+                                 accessor( vertices(cell)[2] ),
+                                 accessor( vertices(cell)[3] ));
+    }
+
     //
     // Note: This works for rectangles only, but not for general quadrilaterals
     //
+    /** @brief Implementation of the calculation of a circumcenter for a hexahedron in three dimensions.  Mind that the user has to ensure that the quadrilateral actually has a circumcenter! */
+    template<typename PointT>
+    PointT circumcenter_points(viennagrid::hexahedron_tag, viennagrid::dimension_tag<3>, PointT const & p0, PointT const & p1, PointT const & p2, PointT const & p3, PointT const & p4, PointT const & p5)
+    {
+      PointT p = p0;
+      p += p1;
+      p += p2;
+      p += p3;
+      p += p4;
+      p += p5;
+
+      return p / 6;
+    }
+
+
     /** @brief Implementation of the calculation of a circumcenter for a hexahedron in three dimensions.  Mind that the user has to ensure that the quadrilateral actually has a circumcenter! */
     template <typename PointAccessorT, typename ElementT>
     typename PointAccessorT::value_type
     circumcenter(PointAccessorT const accessor, ElementT const & cell, viennagrid::hexahedron_tag, viennagrid::dimension_tag<3>)
     {
-      typedef typename PointAccessorT::value_type PointType;
-      typedef typename viennagrid::result_of::coord<PointType>::type    CoordType;
-
-      typedef typename viennagrid::result_of::const_element_range<ElementT, vertex_tag>::type         VertexOnCellRange;
-      typedef typename viennagrid::result_of::iterator<VertexOnCellRange>::type      VertexOnCellIterator;
-
-      PointType p0(0.0, 0.0);
-
-      VertexOnCellRange vertices = viennagrid::elements<vertex_tag>(cell);
-      for (VertexOnCellIterator vocit = vertices.begin();
-           vocit != vertices.end();
-           ++vocit)
-      {
-        p0 += accessor(*vocit);
-      }
-
-      p0 /= static_cast<CoordType>(vertices.size());
-
-      return p0;
+      return circumcenter_points(viennagrid::hexahedron_tag(),
+                                 viennagrid::dimension_tag<3>(),
+                                 accessor( vertices(cell)[0] ),
+                                 accessor( vertices(cell)[1] ),
+                                 accessor( vertices(cell)[2] ),
+                                 accessor( vertices(cell)[3] ),
+                                 accessor( vertices(cell)[4] ),
+                                 accessor( vertices(cell)[5] ));
     }
 
   } //namespace detail
+
+
+
+  template<typename ElementTagT, typename DimensionTagT, typename PointT>
+  PointT circumcenter_points(ElementTagT, DimensionTagT, PointT const & p0)
+  {
+    return detail::circumcenter_points(ElementTagT(),
+                                       DimensionTagT(),
+                                       p0);
+  }
+
+  template<typename ElementTagT, typename DimensionTagT, typename PointT>
+  PointT circumcenter_points(ElementTagT, DimensionTagT, PointT const & p0, PointT const & p1)
+  {
+    return detail::circumcenter_points(ElementTagT(),
+                                       DimensionTagT(),
+                                       p0, p1);
+  }
+
+  template<typename ElementTagT, typename DimensionTagT, typename PointT>
+  PointT circumcenter_points(ElementTagT, DimensionTagT, PointT const & p0, PointT const & p1, PointT const & p2)
+  {
+    return detail::circumcenter_points(ElementTagT(),
+                                       DimensionTagT(),
+                                       p0, p1, p2);
+  }
+
+  template<typename ElementTagT, typename DimensionTagT, typename PointT>
+  PointT circumcenter_points(ElementTagT, DimensionTagT, PointT const & p0, PointT const & p1, PointT const & p2, PointT const & p3)
+  {
+    return detail::circumcenter_points(ElementTagT(),
+                                       DimensionTagT(),
+                                       p0, p1, p2, p3);
+  }
+
+  template<typename ElementTagT, typename DimensionTagT, typename PointT>
+  PointT circumcenter_points(ElementTagT, DimensionTagT, PointT const & p0, PointT const & p1, PointT const & p2, PointT const & p3, PointT const & p4, PointT const & p5)
+  {
+    return detail::circumcenter_points(ElementTagT(),
+                                       DimensionTagT(),
+                                       p0, p1, p2, p3, p4, p5);
+  }
+
 
   /** @brief The public interface function for the calculation of the circumcenter with explicit point accessor.
    *
