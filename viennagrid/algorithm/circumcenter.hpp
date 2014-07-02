@@ -268,7 +268,7 @@ namespace viennagrid
     //
     /** @brief Implementation of the calculation of a circumcenter for a hexahedron in three dimensions.  Mind that the user has to ensure that the quadrilateral actually has a circumcenter! */
     template<typename PointT>
-    PointT circumcenter_points(viennagrid::hexahedron_tag, viennagrid::dimension_tag<3>, PointT const & p0, PointT const & p1, PointT const & p2, PointT const & p3, PointT const & p4, PointT const & p5)
+    PointT circumcenter_points(viennagrid::hexahedron_tag, viennagrid::dimension_tag<3>, PointT const & p0, PointT const & p1, PointT const & p2, PointT const & p3, PointT const & p4, PointT const & p5, PointT const & p6, PointT const & p7)
     {
       PointT p = p0;
       p += p1;
@@ -276,8 +276,10 @@ namespace viennagrid
       p += p3;
       p += p4;
       p += p5;
+      p += p6;
+      p += p7;
 
-      return p / 6;
+      return p / 8;
     }
 
 
@@ -293,7 +295,9 @@ namespace viennagrid
                                  accessor( vertices(cell)[2] ),
                                  accessor( vertices(cell)[3] ),
                                  accessor( vertices(cell)[4] ),
-                                 accessor( vertices(cell)[5] ));
+                                 accessor( vertices(cell)[5] ),
+                                 accessor( vertices(cell)[6] ),
+                                 accessor( vertices(cell)[7] ) );
     }
 
   } //namespace detail
@@ -333,11 +337,11 @@ namespace viennagrid
   }
 
   template<typename ElementTagT, typename DimensionTagT, typename PointT>
-  PointT circumcenter_points(ElementTagT, DimensionTagT, PointT const & p0, PointT const & p1, PointT const & p2, PointT const & p3, PointT const & p4, PointT const & p5)
+  PointT circumcenter_points(ElementTagT, DimensionTagT, PointT const & p0, PointT const & p1, PointT const & p2, PointT const & p3, PointT const & p4, PointT const & p5, PointT const & p6, PointT const & p7)
   {
     return detail::circumcenter_points(ElementTagT(),
                                        DimensionTagT(),
-                                       p0, p1, p2, p3, p4, p5);
+                                       p0, p1, p2, p3, p4, p5, p6, p7);
   }
 
 
