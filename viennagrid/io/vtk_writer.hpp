@@ -465,7 +465,7 @@ namespace viennagrid
           //
           {
             std::stringstream ss;
-            ss << filename << "_main.pvd";
+            ss << filename << ".pvd";
             std::ofstream writer(ss.str().c_str());
 
             std::string short_filename = filename;
@@ -488,7 +488,7 @@ namespace viennagrid
             for (typename SegmentationType::const_iterator it = segmentation.begin(); it != segmentation.end(); ++it)
             {
               SegmentHandleType const & seg = *it;
-              writer << "    <DataSet part=\"" << seg.id() << "\" file=\"" << short_filename << "_" << seg.id() << ".vtu\" name=\"Segment_" << seg.id() << "\"/>" << std::endl;
+              writer << "    <DataSet part=\"" << seg.name() << "\" file=\"" << short_filename << "_" << seg.name() << ".vtu\" name=\"" << seg.name() << "\"/>" << std::endl;
             }
 
             writer << "  </Collection>" << std::endl;
@@ -505,7 +505,7 @@ namespace viennagrid
             SegmentHandleType const & seg = *it;
 
             std::stringstream ss;
-            ss << filename << "_" << seg.id() << ".vtu";
+            ss << filename << "_" << seg.name() << ".vtu";
             std::ofstream writer(ss.str().c_str());
             writeHeader(writer);
 
