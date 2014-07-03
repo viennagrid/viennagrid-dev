@@ -217,7 +217,7 @@ void test(std::string & infile, std::string & outfile)
   viennagrid::io::add_vector_data_on_cells(vtk_reader, viennagrid::make_field<CellType>(pass1_cell_vector_data), "point_vector_global");
   viennagrid::io::add_vector_data_on_cells(vtk_reader, viennagrid::make_field<CellType>(pass1_cell_normal_data), "point_normal_global");
 
-  vtk_reader(mesh2, segmentation2, outfile + "_main.pvd");
+  vtk_reader(mesh2, segmentation2, outfile + ".pvd");
 
 
   viennagrid::io::add_scalar_data_on_vertices(vtk_writer, viennagrid::make_field<VertexType>(pass1_vertex_double_data), "point_scalar1_global");
@@ -272,7 +272,7 @@ void test(std::string & infile, std::string & outfile)
   viennagrid::io::add_vector_data_on_cells(vtk_reader, viennagrid::make_field<CellType>(pass2_cell_vector_data), "point_vector_global");
   viennagrid::io::add_vector_data_on_cells(vtk_reader, viennagrid::make_field<CellType>(pass2_cell_normal_data), "point_normal_global");
 
-  vtk_reader(mesh3, segmentation3, outfile + "2_main.pvd");
+  vtk_reader(mesh3, segmentation3, outfile + "2.pvd");
 
 
   viennagrid::io::add_scalar_data_on_vertices(vtk_writer, viennagrid::make_field<VertexType>(pass2_vertex_double_data), "point_scalar1_global");
