@@ -186,6 +186,18 @@ namespace viennagrid
     copy(vertex_map, src_mesh, dst_mesh, functor);
   }
 
+  /** @brief Copies the cells of a mesh
+    *
+    * @param  src_mesh                The source mesh
+    * @param  dst_mesh                The destination mesh
+    */
+  template<typename SrcMeshT, typename DstMeshT>
+  void copy(SrcMeshT const & src_mesh, DstMeshT & dst_mesh)
+  {
+    copy(src_mesh, dst_mesh, viennagrid::true_functor());
+  }
+
+
 
 
 
@@ -233,9 +245,6 @@ namespace viennagrid
 
 
 
-
-
-
   /** @brief Copies the cells of a mesh and a segmentation if a boolean functor is true.
     *
     * @param  src_mesh                The source mesh
@@ -251,6 +260,20 @@ namespace viennagrid
   {
     viennagrid::vertex_copy_map<SrcMeshT, DstMeshT> vertex_map(dst_mesh);
     copy(vertex_map, src_mesh, src_segmentation, dst_mesh, dst_segmentation, functor);
+  }
+
+  /** @brief Copies the cells of a mesh and a segmentation if a boolean functor is true.
+    *
+    * @param  src_mesh                The source mesh
+    * @param  src_segmentation        The source segmentation
+    * @param  dst_mesh                The destination mesh
+    * @param  dst_segmentation        The destination segmentation
+    */
+  template<typename SrcMeshT, typename SrcSegmentationT, typename DstMeshT, typename DstSegmentationT, typename ToCopyFunctorT>
+  void copy(SrcMeshT const & src_mesh, SrcSegmentationT const & src_segmentation,
+            DstMeshT       & dst_mesh, DstSegmentationT       & dst_segmentation)
+  {
+    copy(src_mesh, src_segmentation, dst_mesh, dst_segmentation, viennagrid::true_functor());
   }
 
 
