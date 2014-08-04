@@ -18,6 +18,7 @@ add_executable(dump_info            dump_info.cpp)
 add_executable(vmesh_creator        vmesh_creator.cpp)
 add_executable(copy_elements        copy_elements.cpp)
 add_executable(thin_mesh            thin_mesh.cpp)
+add_executable(llmesh               llmesh.cpp)
 
 
 
