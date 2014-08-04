@@ -8,7 +8,7 @@
     #define  VIENNAGRID_EXPORTED_FUNCTION __declspec(dllexport)
   #else
     #define  VIENNAGRID_EXPORTED_FUNCTION __declspec(dllimport)
-  #endif /* viennacl_EXPORTS */
+  #endif /* viennagrid_EXPORTS */
 #else /* defined (_MSC_VER) */
  #define VIENNAGRID_EXPORTED_FUNCTION
 #endif

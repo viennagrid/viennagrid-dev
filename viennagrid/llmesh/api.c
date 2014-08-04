@@ -143,8 +143,12 @@ VIENNAGRID_FUNCTION_IMPL_PREFIX viennagrid_error_code_t viennagrid_set_segment_c
     return VIENNAGRID_INVALID_ARGUMENTS;
 
   int i;
-  for (i = 0; i < segment_count; ++i)
-    free( mesh->segment_names[i] );
+  if (mesh->segment_names)
+  {
+    for (i = 0; i < segment_count; ++i)
+      free( mesh->segment_names[i] );
+  }
+  free( mesh->segment_names );
 
   mesh->segment_count = segment_count;
   mesh->segment_names = (char **)malloc( sizeof(const char *) * segment_count );
