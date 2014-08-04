@@ -19,6 +19,7 @@ typedef struct viennagrid_llmesh_
   viennagrid_numeric_t * vertex_buffer;
 
   viennagrid_int_t element_count;
+  viennagrid_int_t element_vertex_count;
   viennagrid_int_t * element_type_buffer;
   viennagrid_int_t * element_vertex_count_buffer;
   viennagrid_int_t * element_vertex_buffer;
@@ -36,7 +37,6 @@ typedef struct viennagrid_llmesh_
 
 VIENNAGRID_FUNCTION_IMPL_PREFIX viennagrid_error_code_t viennagrid_make_llmesh(viennagrid_int_t dimension, viennagrid_llmesh * mesh)
 {
-  int i;
   if (!mesh)
     VIENNAGRID_SUCCESS;
 
@@ -77,7 +77,7 @@ VIENNAGRID_FUNCTION_IMPL_PREFIX viennagrid_error_code_t viennagrid_make_llmesh(v
 
 VIENNAGRID_FUNCTION_IMPL_PREFIX viennagrid_error_code_t viennagrid_delete_llmesh(viennagrid_llmesh * mesh)
 {
-  int i,j;
+  int i;
 
   if (!mesh || !(*mesh))
   {
@@ -212,6 +212,8 @@ VIENNAGRID_FUNCTION_IMPL_PREFIX viennagrid_error_code_t viennagrid_create_vertex
   if (vertex_count <= 0)
     return VIENNAGRID_INVALID_ARGUMENTS;
 
+  mesh->vertex_count = vertex_count;
+
   free( mesh->vertex_buffer );
   mesh->vertex_buffer = (viennagrid_numeric_t*)malloc( sizeof(viennagrid_numeric_t) * mesh->dimension * vertex_count );
   if (!mesh->vertex_buffer)
@@ -280,6 +282,18 @@ VIENNAGRID_FUNCTION_IMPL_PREFIX viennagrid_error_code_t viennagrid_get_element_c
   return VIENNAGRID_SUCCESS;
 }
 
+VIENNAGRID_FUNCTION_IMPL_PREFIX viennagrid_error_code_t viennagrid_get_element_vertex_count(viennagrid_llmesh mesh, viennagrid_int_t * element_vertex_count)
+{
+  if (!mesh)
+    return VIENNAGRID_INVALID_ARGUMENTS;
+
+  if (!element_vertex_count)
+    return VIENNAGRID_SUCCESS;
+
+  *element_vertex_count = mesh->element_vertex_count;
+  return VIENNAGRID_SUCCESS;
+}
+
 
 VIENNAGRID_FUNCTION_IMPL_PREFIX viennagrid_error_code_t viennagrid_get_element_type_buffer(viennagrid_llmesh mesh, viennagrid_int_t ** element_type_buffer)
 {
@@ -329,13 +343,16 @@ VIENNAGRID_FUNCTION_IMPL_PREFIX viennagrid_error_code_t viennagrid_get_element_s
   return VIENNAGRID_SUCCESS;
 }
 
-VIENNAGRID_FUNCTION_IMPL_PREFIX viennagrid_error_code_t viennagrid_create_element_buffers(viennagrid_llmesh mesh, viennagrid_int_t element_count, viennagrid_int_t element_vertex_index_count)
+VIENNAGRID_FUNCTION_IMPL_PREFIX viennagrid_error_code_t viennagrid_create_element_buffers(viennagrid_llmesh mesh, viennagrid_int_t element_count, viennagrid_int_t element_vertex_count)
 {
   if (!mesh)
     return VIENNAGRID_INVALID_ARGUMENTS;
 
-  if (element_count <= 0 || element_vertex_index_count <= 0)
+  if (element_count <= 0 || element_vertex_count <= 0)
     return VIENNAGRID_INVALID_ARGUMENTS;
+
+  mesh->element_count = element_count;
+  mesh->element_vertex_count = element_vertex_count;
 
   free( mesh->element_type_buffer );
   free( mesh->element_vertex_count_buffer );
@@ -344,7 +361,7 @@ VIENNAGRID_FUNCTION_IMPL_PREFIX viennagrid_error_code_t viennagrid_create_elemen
 
   mesh->element_type_buffer = (viennagrid_int_t*)malloc( sizeof(viennagrid_int_t) * element_count );
   mesh->element_vertex_count_buffer = (viennagrid_int_t*)malloc( sizeof(viennagrid_int_t) * element_count );
-  mesh->element_vertex_buffer = (viennagrid_int_t*)malloc( sizeof(viennagrid_int_t) * element_vertex_index_count );
+  mesh->element_vertex_buffer = (viennagrid_int_t*)malloc( sizeof(viennagrid_int_t) * element_vertex_count );
   mesh->element_segment_buffer = (viennagrid_int_t*)malloc( sizeof(viennagrid_int_t) * element_count );
 
   if (!mesh->element_type_buffer || !mesh->element_vertex_count_buffer ||

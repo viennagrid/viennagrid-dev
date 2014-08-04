@@ -84,13 +84,14 @@ extern "C"
 
   VIENNAGRID_EXPORTED_FUNCTION viennagrid_error_code_t viennagrid_get_element_count(viennagrid_llmesh mesh, viennagrid_int_t * element_count);
   VIENNAGRID_EXPORTED_FUNCTION viennagrid_error_code_t viennagrid_get_element_count_by_type(viennagrid_llmesh mesh, viennagrid_int_t element_type, viennagrid_int_t * element_count);
+  VIENNAGRID_EXPORTED_FUNCTION viennagrid_error_code_t viennagrid_get_element_vertex_count(viennagrid_llmesh mesh, viennagrid_int_t * element_vertex_count);
 
   VIENNAGRID_EXPORTED_FUNCTION viennagrid_error_code_t viennagrid_get_element_type_buffer(viennagrid_llmesh mesh, viennagrid_int_t ** element_type_buffer);
   VIENNAGRID_EXPORTED_FUNCTION viennagrid_error_code_t viennagrid_get_element_vertex_count_buffer(viennagrid_llmesh mesh, viennagrid_int_t ** element_vertex_count_buffer);
   VIENNAGRID_EXPORTED_FUNCTION viennagrid_error_code_t viennagrid_get_element_vertex_buffer(viennagrid_llmesh mesh, viennagrid_int_t ** element_vertex_buffer);
   VIENNAGRID_EXPORTED_FUNCTION viennagrid_error_code_t viennagrid_get_element_segment_buffer(viennagrid_llmesh mesh, viennagrid_int_t ** element_segment_buffer);
 
-  VIENNAGRID_EXPORTED_FUNCTION viennagrid_error_code_t viennagrid_create_element_buffers(viennagrid_llmesh mesh, viennagrid_int_t element_count, viennagrid_int_t element_vertex_index_count); // creates for the element types buffer, the element vertex counts buffer and the element segment buffer with size of element_count and the element vertex buffer index with size of element_vertex_index_count. type buffer is initialized with VIENNAGRID_ELEMENT_TYPE_NOT_AN_ELEMENT, vertex count buffer is initialized with 0, vertex buffer is not initialized, segment buffer is initialized with -1
+  VIENNAGRID_EXPORTED_FUNCTION viennagrid_error_code_t viennagrid_create_element_buffers(viennagrid_llmesh mesh, viennagrid_int_t element_count, viennagrid_int_t element_vertex_count); // creates for the element types buffer, the element vertex counts buffer and the element segment buffer with size of element_count and the element vertex buffer index with size of element_vertex_count. type buffer is initialized with VIENNAGRID_ELEMENT_TYPE_NOT_AN_ELEMENT, vertex count buffer is initialized with 0, vertex buffer is not initialized, segment buffer is initialized with -1
 
   //////////////////////////////////
   // dataset functions
