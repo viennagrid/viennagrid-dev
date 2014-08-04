@@ -14,8 +14,6 @@ foreach(PROG angle boundary coboundary
   add_test(${PROG} ${PROG}-test)
 endforeach(PROG)
 
-if (ENABLE_VIENNADATA)
-  ADD_EXECUTABLE(external_linkage-test  src/external_1.cpp src/external_2.cpp)
-  ADD_test(external_linkage external_linkage-test)
-endif()
 
+ADD_EXECUTABLE(external_linkage-test  src/external_1.cpp src/external_2.cpp)
+ADD_test(external_linkage external_linkage-test)
