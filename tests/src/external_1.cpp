@@ -52,12 +52,11 @@
 #include "viennagrid/element/element_orientation.hpp"
 
 #include "viennagrid/config/element_config.hpp"
-#include "viennagrid/config/topology_config.hpp"
 #include "viennagrid/config/mesh_config.hpp"
 #include "viennagrid/config/default_configs.hpp"
 
 #include "viennagrid/mesh/mesh.hpp"
-#include "viennagrid/mesh/topology.hpp"
+// #include "viennagrid/mesh/topology.hpp"
 
 //algorithms:
 //#include "viennagrid/algorithm/angle.hpp"
@@ -80,6 +79,10 @@
 //#include "viennagrid/io/opendx_writer.hpp"
 #include "viennagrid/io/vtk_reader.hpp"
 #include "viennagrid/io/vtk_writer.hpp"
+
+
+// #define VIENNAGRID_LLMESH_HEADER_ONLY
+// #include "viennagrid/llmesh/api.hpp"
 
 
 //defined in external_2.cpp
