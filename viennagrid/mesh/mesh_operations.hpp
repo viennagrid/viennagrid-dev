@@ -143,6 +143,14 @@ namespace viennagrid
     dst_mesh.clear();
     dst_segmentation.clear();
 
+    typedef typename viennagrid::result_of::segment_handle<DstSegmentationT>::type DstSegmentHandleType;
+
+    for (typename SrcSegmentationT::const_iterator sit = src_segmentation.begin(); sit != src_segmentation.end(); ++sit)
+    {
+      DstSegmentHandleType seg = dst_segmentation( (*sit).id() );
+      seg.set_name( (*sit).name() );
+    }
+
     viennagrid::vertex_copy_map<SrcMeshT, DstMeshT> vertex_map(dst_mesh);
 
     //typedef typename viennagrid::result_of::cell<SrcMeshT>::type CellType;
