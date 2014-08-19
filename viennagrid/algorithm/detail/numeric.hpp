@@ -16,6 +16,8 @@
 #include <algorithm>
 #include <cmath>
 
+#include "viennagrid/algorithm/norm.hpp"
+
 /** @file viennagrid/algorithm/detail/numeric.hpp
     @brief Helper routines controlling numeric tolerances
 */
@@ -73,6 +75,13 @@ namespace viennagrid
     bool is_equal( NumericConfigT nc, NumericT first, NumericT second )
     {
       return (std::abs(first-second) < relative_tolerance(nc, first));
+    }
+
+    template<typename PointT, typename NumericConfigT>
+    bool is_equal_point(PointT const & p0, PointT const & p1, NumericConfigT nc)
+    {
+      return viennagrid::norm_2(p0 - p1) < viennagrid::detail::relative_tolerance(nc, viennagrid::norm_2(p0)) ||
+             viennagrid::norm_2(p0 - p1) < viennagrid::detail::relative_tolerance(nc, viennagrid::norm_2(p1));
     }
 
     template<typename NumericConfigT, typename NumericT>
