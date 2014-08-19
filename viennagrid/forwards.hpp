@@ -1645,11 +1645,11 @@ namespace viennagrid
     * @param  tolerance               The tolerance of the 2-norm for checking if two points are equal, is ignored if tolerance is less of equal to zero
     * @return                         A handle to a vertex which is close enough to point or a handle to a newly created vertex
     */
-  template<typename MeshOrSegmentHandleTypeT>
+  template<typename MeshOrSegmentHandleTypeT, typename NumericConfigT>
   typename result_of::vertex_handle<MeshOrSegmentHandleTypeT>::type make_unique_vertex(
         MeshOrSegmentHandleTypeT & mesh_segment,
         typename result_of::point<MeshOrSegmentHandleTypeT>::type const & point,
-        typename result_of::coord<MeshOrSegmentHandleTypeT>::type tolerance);
+        NumericConfigT nc);
 
   /** @brief Function for creating a unique vertex. The uniqueness is checked by using the point of the vertex: if there is any vertex whose point is close to the point currently inserted, this handle is returned. A new vertex is created otherwise. A classical 2-norm and the 2-norm of points as tolerance is used for distance checking. The runtime of this function is linear in the vertices within the mesh.
     *
