@@ -18,6 +18,8 @@
 #include "viennagrid/topology/plc.hpp"
 #include "viennagrid/algorithm/norm.hpp"
 
+#include "viennagrid/algorithm/detail/numeric.hpp"
+
 /** @file viennagrid/mesh/element_creation.hpp
     @brief Contains functions for creating elements within a mesh or segment
 */
@@ -196,22 +198,25 @@ namespace viennagrid
   }
 
   // doxygen doku in forwards.hpp
-  template<typename MeshOrSegmentHandleTypeT>
+  template<typename MeshOrSegmentHandleTypeT, typename NumericConfigT>
   typename result_of::vertex_handle<MeshOrSegmentHandleTypeT>::type make_unique_vertex(
         MeshOrSegmentHandleTypeT & mesh_obj,
         typename result_of::point<MeshOrSegmentHandleTypeT>::type const & point,
-        typename result_of::coord<MeshOrSegmentHandleTypeT>::type tolerance)
+        NumericConfigT nc)
   {
     typedef typename result_of::element_range<MeshOrSegmentHandleTypeT, vertex_tag>::type vertex_range_type;
     typedef typename result_of::iterator<vertex_range_type>::type vertex_range_iterator;
 
-    if (tolerance > 0)
+    if (nc > 0)
     {
       vertex_range_type vertices(mesh_obj);
       for (vertex_range_iterator hit = vertices.begin(); hit != vertices.end(); ++hit)
       {
-          if (viennagrid::norm_2( point - viennagrid::point(mesh_obj, *hit) ) < tolerance )
-              return hit.handle();
+        if ( detail::is_equal_point(point, viennagrid::point(mesh_obj, *hit), nc) )
+          return hit.handle();
+
+//           if (viennagrid::norm_2( point - viennagrid::point(mesh_obj, *hit) ) < tolerance )
+//               return hit.handle();
       }
     }
 
