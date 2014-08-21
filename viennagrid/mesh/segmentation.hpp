@@ -93,6 +93,9 @@ namespace viennagrid
       */
     void set_name( std::string const & new_name )
     {
+      if (new_name == name())
+        return;
+
       // name is already present
       if (parent().segment_name_map.find(new_name) != parent().segment_name_map.end())
         throw segment_name_collision_exception(new_name);
@@ -611,6 +614,13 @@ namespace viennagrid
       */
     bool segment_present( segment_id_type const & segment_id ) const { return segment_id_map.find(segment_id) != segment_id_map.end(); }
 
+    /** @brief Queries if a segment with given name is present within the segmentation
+      *
+      * @param segment_name   The name of the segment to search
+      * @return               True if the segment is present, false otherwise
+      */
+    bool segment_present( std::string const & segment_name ) const { return segment_name_map.find(segment_name) != segment_name_map.end(); }
+
 
     /** @brief Returns the segment with the given ID, will fail if no segment with segment_id is present
       *
@@ -687,6 +697,9 @@ namespace viennagrid
 
       std::stringstream ss;
       ss << segment_id;
+      while (segment_name_map.find(ss.str()) != segment_name_map.end())
+        ss << "_already_in_use";
+
       segments.back().name = ss.str();
 
       if (!segment_name_map.insert(std::make_pair(ss.str(), &it->second)).second)
