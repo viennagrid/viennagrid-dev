@@ -269,7 +269,7 @@ namespace viennagrid
     * @param  dst_mesh                The destination mesh
     * @param  dst_segmentation        The destination segmentation
     */
-  template<typename SrcMeshT, typename SrcSegmentationT, typename DstMeshT, typename DstSegmentationT, typename ToCopyFunctorT>
+  template<typename SrcMeshT, typename SrcSegmentationT, typename DstMeshT, typename DstSegmentationT>
   void copy(SrcMeshT const & src_mesh, SrcSegmentationT const & src_segmentation,
             DstMeshT       & dst_mesh, DstSegmentationT       & dst_segmentation)
   {
