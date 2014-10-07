@@ -270,6 +270,25 @@ namespace viennagrid
   bool is_boundary(segment_handle<SegmentationT> const & segment, ElementT const & element)
   { return is_boundary( segment.view(), element ); }
 
+  /** @brief Returns true if an element is located on the boundary of any segment in the segmentation
+   *
+   * @param segmentation   The ViennaGrid segmentation
+   * @param element        The element
+   */
+  template<typename WrappedConfigT, typename ElementT>
+  bool is_any_boundary(segmentation<WrappedConfigT> const & segmentation_, ElementT const & element)
+  {
+    typedef segmentation<WrappedConfigT> SegmentationType;
+    for (typename SegmentationType::const_iterator sit = segmentation_.begin(); sit != segmentation_.end(); ++sit)
+    {
+      if (is_boundary(*sit, element))
+        return true;
+    }
+
+    return false;
+  }
+
+
 
   /** @brief Returns true if the element provided as second argument is on the boundary of the element provided as first argument
    *
