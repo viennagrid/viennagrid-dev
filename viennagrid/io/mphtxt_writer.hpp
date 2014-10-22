@@ -182,14 +182,20 @@ namespace viennagrid
           ss << filename << ".mphtxt";
         std::ofstream writer(ss.str().c_str());
 
+        // writing the file header
         writer << "# Created by ViennaGrid mphtxt writer\n";
         writer << "\n";
 
+        // MPHTXT version
         writer << "# Major & minor version\n";
         writer << "0 1\n";
+
+        // one tag: viennagrid_mesh
         writer << "1 # number of tags\n";
         writer << "# Tags\n";
         writer << "15 viennagrid_mesh\n";
+
+
         writer << "1 # number of types\n";
         writer << "# Types\n";
         writer << "3 obj\n";
@@ -199,13 +205,21 @@ namespace viennagrid
         writer << "\n";
 
         writer << "0 0 1\n";
+
+        // specifying the type (4 = Mesh)
         writer << "4 Mesh # class\n";
+        // mesh version = 2
         writer << "2 # version\n";
+        // geometric dimension
         writer << viennagrid::result_of::geometric_dimension<MeshT>::value << " # sdim\n";
+        // number of vertices
         writer << viennagrid::vertices(mesh).size() << " # number of mesh points\n";
+        // lowest index = 0
         writer << "0 # lowest mesh point index\n";
         writer << "\n";
 
+
+        // writing the points and the coordinates
         writer << "# Mesh point coordinates\n";
         ConstVertexRangeType vertices(mesh);
         std::map<VertexIDType, int> vertex_index_map;
@@ -224,9 +238,11 @@ namespace viennagrid
         writer << "\n";
 
         writer << "\n";
+        // 2 element types: tetrahedra and triangles
         writer << "2 # number of element types\n";
 
 
+        // triangle section
         writer << "\n";
         writer << "3 tri\n";
         writer << "3 # nodes per element\n";
@@ -239,6 +255,9 @@ namespace viennagrid
 
         std::map<TriangleIDType, TriInfoType> used_triangles;
         typedef typename viennagrid::result_of::segment_handle<SegmentationT>::type SegmentHandleType;
+
+        // saving only boundary and interface triangles explicitly
+        // calculating the orientation for all boundary triangles according to the segments
 
         for (typename SegmentationT::const_iterator sit = segmentation.begin(); sit != segmentation.end(); ++sit)
         {
@@ -295,15 +314,17 @@ namespace viennagrid
         std::vector<int> contact_index_array;
         typename viennagrid::result_of::field< std::vector<int>, TriangleType>::type contact_index_field(contact_index_array);
 
+        // automatic calculating all contacts, a contact is a set of coplanar boundary/interface triangles
+        // a contact can be selected by COMSOL for e.g. boundary value specification
         mark_segment_hull_contacts( segmentation, contact_index_field );
 
 
-
-
+        // writing the triangles to the file
 //         writer << viennagrid::triangles(mesh).size() << " # number of triangles\n";
         writer << used_triangles.size() << " # number of triangles\n";
         writer << "\n";
 
+        // writing the vertex indices of the triangles
         for (typename std::map<TriangleIDType, TriInfoType>::const_iterator utit = used_triangles.begin(); utit != used_triangles.end(); ++utit)
         {
           typedef typename viennagrid::result_of::triangle<MeshT>::type TriangleType;
@@ -322,10 +343,13 @@ namespace viennagrid
         writer << "3\n";
         writer << "0\n";
 
+        // writing the contact ID for each triangle
         writer << used_triangles.size() << " # number of triangles\n";
         for (typename std::map<TriangleIDType, TriInfoType>::const_iterator utit = used_triangles.begin(); utit != used_triangles.end(); ++utit)
           writer << contact_index_field( viennagrid::dereference_handle(mesh, utit->second.handle) ) << "\n";
 
+        // writing the orientation for each triangle, the first value is the segment on the positive side of the triangle, the second value the segment on the negative side;
+        // segments start with 1, 0 is reserved for no segment
         writer << "\n";
         writer << used_triangles.size() << " # number of triangles\n";
         writer << "\n";
@@ -336,14 +360,16 @@ namespace viennagrid
 
 
 
-
+        // writing the tetrahedra
         writer << "\n";
         writer << "3 tet\n";
         writer << "4 # nodes per element\n";
         writer << "\n";
+        // number of tetrahedra
         writer << viennagrid::tetrahedra(mesh).size() << " # number of tetrahedron\n";
         writer << "\n";
 
+        // writing the vertex indices of the tetrahedra
         ConstTetrahedronRangeType tetrahedrons(mesh);
         for (ConstTetrahedronIteratorType tit = tetrahedrons.begin(); tit != tetrahedrons.end(); ++tit)
         {
@@ -359,6 +385,8 @@ namespace viennagrid
           writer << "\n";
         }
 
+        // writing the segment information for the tetrahedra
+        // segment IDs start with 1, 0 is reserved for no segment
         writer << "\n";
         writer << "4\n";
         writer << "0\n";
