@@ -80,8 +80,11 @@ namespace viennagrid
     template<typename PointT, typename NumericConfigT>
     bool is_equal_point(PointT const & p0, PointT const & p1, NumericConfigT nc)
     {
-      return viennagrid::norm_2(p0 - p1) < viennagrid::detail::relative_tolerance(nc, viennagrid::norm_2(p0)) ||
-             viennagrid::norm_2(p0 - p1) < viennagrid::detail::relative_tolerance(nc, viennagrid::norm_2(p1));
+      typedef typename viennagrid::result_of::coord<PointT>::type NumericType;
+      return viennagrid::norm_2(p0 - p1) < viennagrid::detail::absolute_tolerance<NumericType>(nc);
+
+//       return viennagrid::norm_2(p0 - p1) < viennagrid::detail::relative_tolerance(nc, viennagrid::norm_2(p0)) ||
+//              viennagrid::norm_2(p0 - p1) < viennagrid::detail::relative_tolerance(nc, viennagrid::norm_2(p1));
     }
 
     template<typename NumericConfigT, typename NumericT>
