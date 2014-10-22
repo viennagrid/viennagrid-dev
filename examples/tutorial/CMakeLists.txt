@@ -19,7 +19,7 @@ add_executable(vmesh_creator        vmesh_creator.cpp)
 add_executable(copy_elements        copy_elements.cpp)
 add_executable(thin_mesh            thin_mesh.cpp)
 add_executable(llmesh               llmesh.cpp)
-
+add_executable(convert_to_mphtxt    convert_to_mphtxt.cpp)
 
 
 
