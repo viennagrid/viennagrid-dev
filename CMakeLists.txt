@@ -53,6 +53,9 @@ endif()
 # Compile options
 #################
 
+include_directories(include)
+add_subdirectory(src)
+
 include_directories(BEFORE ${PROJECT_SOURCE_DIR})
 
 
