@@ -29,9 +29,9 @@ namespace viennagrid
 {
   namespace io
   {
-    int vtk_element_tag( element_tag_t element_tag )
+    int vtk_element_tag( element_tag tag )
     {
-      switch (element_tag.internal_element_tag())
+      switch (tag.internal_element_tag())
       {
         case VIENNAGRID_ELEMENT_TAG_VERTEX:
           return 1;
@@ -61,7 +61,7 @@ namespace viennagrid
        */
       struct vtk_to_viennagrid_orientations
       {
-        vtk_to_viennagrid_orientations(element_tag_t cell_tag) : cell_tag_(cell_tag) {}
+        vtk_to_viennagrid_orientations(element_tag cell_tag) : cell_tag_(cell_tag) {}
 
         std::size_t operator()(std::size_t j) const
         {
@@ -92,7 +92,7 @@ namespace viennagrid
           }
         }
 
-        element_tag_t cell_tag_;
+        element_tag cell_tag_;
       };
 
       /** @brief Tranformations of reference orientations from ViennaGrid to VTK

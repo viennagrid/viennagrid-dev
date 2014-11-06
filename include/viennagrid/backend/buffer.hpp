@@ -58,7 +58,7 @@ public:
       values.resize( values.size()+count_increase );
       for (iterator it = values_end()-1; it != begin(index)+old_count; --it)
         *it = *(it-count_increase);
-      for (size_type i = index+1; i != offsets.size(); ++i)
+      for (size_type i = index+1; i != static_cast<size_type>(offsets.size()); ++i)
         offsets[i] += count_increase;
     }
     else if (count < old_count)
@@ -67,7 +67,7 @@ public:
       for (iterator it = begin(index)+count; it != values_end()-count_decrease-1; ++it)
         *it = *(it+count_decrease);
       values.resize( values.size()-count_decrease );
-      for (size_type i = index+1; i != offsets.size(); ++i)
+      for (size_type i = index+1; i != static_cast<size_type>(offsets.size()); ++i)
         offsets[i] -= count_decrease;
     }
 

@@ -1,5 +1,5 @@
-#ifndef VIENNAGRID_H
-#define VIENNAGRID_H
+#ifndef VIENNAGRID_BACKEND_FORWARDS_H
+#define VIENNAGRID_BACKEND_FORWARDS_H
 
 #include <cstdlib>
 
@@ -28,14 +28,14 @@ typedef viennagrid_int viennagrid_index;
 typedef char viennagrid_element_tag;
 
 
-typedef struct viennagrid_mesh_hierarchy * viennagrid_mesh_hierarchy_handle;
-typedef const struct viennagrid_mesh_hierarchy * viennagrid_mesh_hierarchy_const_handle;
+typedef struct viennagrid_mesh_hierarchy_ * viennagrid_mesh_hierarchy;
+// typedef const struct viennagrid_mesh_hierarchy * viennagrid_mesh_hierarchy_const_handle;
 
-typedef struct viennagrid_mesh * viennagrid_mesh_handle;
-typedef const struct viennagrid_mesh * viennagrid_mesh_const_handle;
+typedef struct viennagrid_mesh_ * viennagrid_mesh;
+// typedef const struct viennagrid_mesh * viennagrid_mesh_const_handle;
 
-typedef struct viennagrid_region * viennagrid_region_handle;
-typedef const struct viennagrid_region * viennagrid_region_const_handle;
+typedef struct viennagrid_region_ * viennagrid_region;
+// typedef const struct viennagrid_region * viennagrid_region_const_handle;
 
 
 
@@ -184,7 +184,7 @@ inline viennagrid_int viennagrid_boundary_element_count_from_element_tag( vienna
     if (boundary == VIENNAGRID_ELEMENT_TAG_LINE)
       return 12;
     if (boundary == VIENNAGRID_ELEMENT_TAG_VERTEX)
-      return 6;
+      return 8;
     return -1;
   }
   return -1;

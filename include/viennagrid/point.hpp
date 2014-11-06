@@ -8,7 +8,7 @@ namespace viennagrid
 {
 
   template<bool is_const>
-  class base_point_proxy_t
+  class base_point_proxy
   {
   public:
 
@@ -19,7 +19,7 @@ namespace viennagrid
     typedef typename result_of::const_nonconst<value_type &, is_const>::type reference_type;
     typedef typename result_of::const_type<value_type &>::type const_reference_type;
 
-    base_point_proxy_t(size_type size_in, pointer_type data_in) : size_(size_in), data_(data_in) {}
+    base_point_proxy(size_type size_in, pointer_type data_in) : size_(size_in), data_(data_in) {}
 
     size_type size() const { return size_; }
 
@@ -37,9 +37,9 @@ namespace viennagrid
 
 
   template<bool is_const>
-  std::ostream& operator << (std::ostream & os, base_point_proxy_t<is_const> const & p)
+  std::ostream& operator << (std::ostream & os, base_point_proxy<is_const> const & p)
   {
-    typedef typename base_point_proxy_t<is_const>::size_type      size_type;
+    typedef typename base_point_proxy<is_const>::size_type      size_type;
     os << "(";
     for (size_type i=0; i< p.size(); ++i)
       os << p[i] << (i == p.size()-1 ? "" :" ");
@@ -67,15 +67,15 @@ namespace viennagrid
   namespace result_of
   {
     template<bool is_const>
-    struct point< base_point_proxy_t<is_const> >
+    struct point< base_point_proxy<is_const> >
     {
-      typedef base_point_proxy_t<is_const> type;
+      typedef base_point_proxy<is_const> type;
     };
 
     template<bool is_const>
-    struct coord< base_point_proxy_t<is_const> >
+    struct coord< base_point_proxy<is_const> >
     {
-      typedef typename base_point_proxy_t<is_const>::value_type type;
+      typedef typename base_point_proxy<is_const>::value_type type;
     };
   }
 

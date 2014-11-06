@@ -18,9 +18,7 @@
 #include <sstream>
 #include <iostream>
 
-#include "viennagrid/forwards.hpp"
-// #include "viennagrid/mesh/regionation.hpp"
-#include "viennagrid/mesh/mesh.hpp"
+#include "viennagrid/core.hpp"
 #include "viennagrid/io/helper.hpp"
 #include "viennagrid/io/vtk_common.hpp"
 
@@ -335,7 +333,7 @@ namespace viennagrid
 
       /** @brief Writes vector-valued data defined on vertices (points) to file */
       template <typename RegionT, typename IOAccessorType>
-      void writePointData(RegionT const & region, std::ofstream & writer, std::string const & name, IOAccessorType const & accessor, region_id_type seg_id)
+      void writePointData(RegionT const &, std::ofstream & writer, std::string const & name, IOAccessorType const & accessor, region_id_type seg_id)
       {
         typedef typename IOAccessorType::value_type ValueType;
 
@@ -356,7 +354,7 @@ namespace viennagrid
 
       /** @brief Writes vector-valued data defined on vertices (points) to file */
       template <typename RegionT, typename IOAccessorType>
-      void writeCellData(RegionT const & region, std::ofstream & writer, std::string const & name, IOAccessorType const & accessor, region_id_type seg_id)
+      void writeCellData(RegionT const &, std::ofstream & writer, std::string const & name, IOAccessorType const & accessor, region_id_type seg_id)
       {
         typedef typename IOAccessorType::value_type ValueType;
 
@@ -573,17 +571,16 @@ namespace viennagrid
           writer.close();
         }
 
-      clear();
-    }
+        clear();
+      }
 
 
+    private:
 
-  private:
 
-
-    template<typename MapType, typename AccessorOrFieldType, typename AccessType>
-    void add_to_container(MapType & map, AccessorOrFieldType const accessor_or_field, std::string const & quantity_name)
-    {
+      template<typename MapType, typename AccessorOrFieldType, typename AccessType>
+      void add_to_container(MapType & map, AccessorOrFieldType const accessor_or_field, std::string const & quantity_name)
+      {
         typename MapType::iterator it = map.find(quantity_name);
         if (it != map.end())
         {
@@ -592,21 +589,21 @@ namespace viennagrid
         }
         else
           map[quantity_name] = new dynamic_field_wrapper<const AccessorOrFieldType, AccessType>( accessor_or_field );
-    }
+      }
 
-    template<typename MapType, typename AccessorOrFieldType>
-    void add_to_vertex_container(MapType & map, AccessorOrFieldType const accessor_or_field, std::string const & quantity_name)
-    {
-      add_to_container<MapType, AccessorOrFieldType, VertexType>(map, accessor_or_field, quantity_name);
-    }
+      template<typename MapType, typename AccessorOrFieldType>
+      void add_to_vertex_container(MapType & map, AccessorOrFieldType const accessor_or_field, std::string const & quantity_name)
+      {
+        add_to_container<MapType, AccessorOrFieldType, ConstVertexType>(map, accessor_or_field, quantity_name);
+      }
 
-    template<typename MapType, typename AccessorOrFieldType>
-    void add_to_cell_container(MapType & map, AccessorOrFieldType const accessor_or_field, std::string const & quantity_name)
-    {
-      add_to_container<MapType, AccessorOrFieldType, CellType>(map, accessor_or_field, quantity_name);
-    }
+      template<typename MapType, typename AccessorOrFieldType>
+      void add_to_cell_container(MapType & map, AccessorOrFieldType const accessor_or_field, std::string const & quantity_name)
+      {
+        add_to_container<MapType, AccessorOrFieldType, ConstCellType>(map, accessor_or_field, quantity_name);
+      }
 
-  public:
+    public:
 
 
       /** @brief Register an accessor/field for scalar data on vertices with a given quantity name */

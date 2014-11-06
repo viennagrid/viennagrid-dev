@@ -18,13 +18,8 @@
 #include <fstream>
 #include <vector>
 
-#include "viennagrid/config/default_configs.hpp"
-#include "viennagrid/algorithm/volume.hpp"
-#include "viennagrid/algorithm/voronoi.hpp"
+#include "viennagrid/core.hpp"
 #include "viennagrid/io/netgen_reader.hpp"
-#include "viennagrid/mesh/coboundary_iteration.hpp"
-
-
 
 
 int main()
@@ -32,15 +27,13 @@ int main()
   //
   // Define the mesh and segmentation types
   //
-  typedef viennagrid::tetrahedral_3d_mesh                             MeshType;
-//   typedef viennagrid::triangular_2d_mesh                              MeshType; // use this for a 2d mesh
-  typedef viennagrid::result_of::segmentation<MeshType>::type         Segmentation;
+  typedef viennagrid::mesh                                          MeshType;
   typedef viennagrid::result_of::cell_tag<MeshType>::type             CellTag;
 
   //
   // Define the types of the elements in the mesh (derived from MeshType):
   //
-  typedef viennagrid::result_of::vertex_handle<MeshType>::type        VertexHandleType;
+  typedef viennagrid::result_of::vertex<MeshType>::type               VertexType;
   typedef viennagrid::result_of::facet<MeshType>::type                FacetType;
   typedef viennagrid::result_of::cell<MeshType>::type                 CellType;
 
@@ -49,8 +42,7 @@ int main()
   std::cout << "-------------------------------------------------- " << std::endl;
   std::cout << std::endl;
 
-  MeshType    mesh;
-  Segmentation  segmentation(mesh);
+  MeshType    mesh(3, viennagrid::tetrahedron_tag());
 
 
   //
@@ -59,7 +51,7 @@ int main()
   try
   {
     viennagrid::io::netgen_reader reader;
-    reader(mesh, segmentation, "../examples/data/cube6.mesh");    //use this for a 3d example
+    reader(mesh, "../examples/data/cube6.mesh");    //use this for a 3d example
     //reader(mesh, segmentation, "../examples/data/square8.mesh"); //use this for a 2d example (also change MeshType defined above!)
   }
   catch (std::exception & e)
@@ -171,21 +163,16 @@ int main()
                              focit != facets_on_cells.end();
                            ++focit)
     {
-      FacetType & facet = *focit;
+      FacetType facet = *focit;
 
       // Iterate over all vertices of the facet:
-      std::cout << "Vertices in global orientation: " << std::endl;
+      std::cout << "Vertices: " << std::endl;
       for (VertexOnFacetIterator vofit = viennagrid::vertices(facet).begin();
                                  vofit != viennagrid::vertices(facet).end();
                                ++vofit)
       {
         std::cout << *vofit << std::endl;
       }
-
-      // Same again, but using the orientation imposed by the cell
-      std::cout << "Vertices in local orientation: " << std::endl;
-      for (std::size_t i=0; i<viennagrid::vertices(facet).size(); ++i)
-        std::cout << viennagrid::local_vertex(*cit, focit.handle(), i) << std::endl;
     }
 
     std::cout << std::endl << "---------------" << std::endl << std::endl;
@@ -203,16 +190,16 @@ int main()
   // the second argument denotes the element tag of the element from which the coboundary elements are requested
   // the third argument denotes the element tag of the elements over which to iterate.
   //
-  typedef viennagrid::result_of::coboundary_range<MeshType, viennagrid::vertex_tag, viennagrid::line_tag>::type     EdgeOnVertexRange;
+  typedef viennagrid::result_of::coboundary_range<MeshType, viennagrid::line_tag>::type     EdgeOnVertexRange;
   typedef viennagrid::result_of::iterator<EdgeOnVertexRange>::type                                                    EdgeOnVertexIterator;
 
   // Iteration over all edges connected to the first vertex in the mesh:
-  VertexHandleType vh0 = viennagrid::elements<viennagrid::vertex_tag>(mesh).handle_at(0);
+  VertexType v0 = viennagrid::elements<viennagrid::vertex_tag>(mesh)[0];
   std::size_t num_v0edges = 0;
 
   // To set up the range, two arguments need to be passed to the ncells() function.
   // The second argument denotes the enclosing complex over which to iterate and is either a segment or the full mesh.
-  EdgeOnVertexRange edges_on_v0 = viennagrid::coboundary_elements<viennagrid::vertex_tag, viennagrid::line_tag>(mesh, vh0);
+  EdgeOnVertexRange edges_on_v0(mesh, v0);
   for (EdgeOnVertexIterator eovit = edges_on_v0.begin();
                             eovit != edges_on_v0.end();
                           ++eovit)

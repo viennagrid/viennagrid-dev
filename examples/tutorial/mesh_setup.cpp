@@ -45,13 +45,8 @@ int main()
   // Define the necessary types:
   //
 
-  typedef viennagrid::mesh_hierarchy_t MeshHierarchyType;
-  typedef viennagrid::mesh_t MeshType;
-  typedef viennagrid::mesh_region_t RegionType;
-
-//   typedef viennagrid::triangular_2d_mesh                  MeshType;
-//   typedef viennagrid::result_of::segmentation<MeshType>::type SegmentationType;
-//   typedef viennagrid::result_of::segment_handle<SegmentationType>::type SegmentHandleType;
+  typedef viennagrid::mesh MeshType;
+  typedef viennagrid::result_of::region<MeshType>::type RegionType;
 
   typedef viennagrid::result_of::point<MeshType>::type            PointType;
   typedef viennagrid::result_of::vertex<MeshType>::type           VertexType;
@@ -68,11 +63,7 @@ int main()
   //
   // Step 1: Instantiate the mesh and the segmentation and create 2 segments:
   //
-//   MeshType mesh;
-//   SegmentationType segmentation(mesh);
-
-  MeshHierarchyType mesh_hierarchy(2, viennagrid::triangle_tag());
-  MeshType mesh = mesh_hierarchy.get_root();
+  MeshType mesh(2, viennagrid::triangle_tag());
 
   RegionType region0 = mesh.make_region();
   RegionType region1 = mesh.make_region();

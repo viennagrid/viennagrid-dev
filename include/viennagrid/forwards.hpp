@@ -2,7 +2,7 @@
 #define VIENNAGRID_FORWARDS_HPP
 
 #include <string>
-#include "api.h"
+#include "viennagrid/backend/api.h"
 
 namespace viennagrid
 {
@@ -10,51 +10,51 @@ namespace viennagrid
 
 
   template<bool is_const = false>
-  class base_point_proxy_t;
+  class base_point_proxy;
 
-  typedef base_point_proxy_t<false> point_proxy_t;
-  typedef base_point_proxy_t<true> const_point_proxy_t;
-
-
-
-
-  template<bool is_const = false>
-  class base_region_t;
-
-  typedef base_region_t<false> region_t;
-  typedef base_region_t<true> const_region_t;
-
-
-  template<bool is_const = false>
-  class base_mesh_region_t;
-
-  typedef base_mesh_region_t<false> mesh_region_t;
-  typedef base_mesh_region_t<true> const_mesh_region_t;
-
+  typedef base_point_proxy<false> point_proxy;
+  typedef base_point_proxy<true> const_point_proxy;
 
 
 
 
   template<bool is_const = false>
-  class base_element_t;
+  class base_region;
 
-  typedef base_element_t<false> element_t;
-  typedef base_element_t<true> const_element_t;
+  typedef base_region<false> region;
+  typedef base_region<true> const_region;
+
+
+  template<bool is_const = false>
+  class base_mesh_region;
+
+  typedef base_mesh_region<false> mesh_region;
+  typedef base_mesh_region<true> const_mesh_region;
+
+
 
 
 
   template<bool is_const = false>
-  class base_mesh_t;
+  class base_element;
 
-  typedef base_mesh_t<false> mesh_t;
-  typedef base_mesh_t<true> const_mesh_t;
+  typedef base_element<false> element;
+  typedef base_element<true> const_element;
+
 
 
   template<bool is_const = false>
-  class base_mesh_hierarchy_t;
+  class base_mesh;
 
-  typedef base_mesh_hierarchy_t<false> mesh_hierarchy_t;
-  typedef base_mesh_hierarchy_t<true> const_mesh_hierarchy_t;
+  typedef base_mesh<false> mesh;
+  typedef base_mesh<true> const_mesh;
+
+
+  template<bool is_const = false>
+  class base_mesh_hierarchy;
+
+  typedef base_mesh_hierarchy<false> mesh_hierarchy;
+  typedef base_mesh_hierarchy<true> const_mesh_hierarchy;
 
 
 
@@ -64,24 +64,23 @@ namespace viennagrid
 
 
   template<typename ViewFunctorT = true_functor, bool is_const = false>
-  class base_element_range_t;
+  class base_element_range;
 
 
 
 
   template<bool is_const>
-  class base_region_range_t;
+  class base_region_range;
 
-  typedef base_region_range_t<false> region_range_t;
-  typedef base_region_range_t<true> const_region_range_t;
+  typedef base_region_range<false> region_range;
+  typedef base_region_range<true> const_region_range;
 
 
   template<bool is_const>
-  class base_mesh_region_range_t;
+  class base_mesh_region_range;
 
-  typedef base_mesh_region_range_t<false> mesh_region_range_t;
-  typedef base_mesh_region_range_t<true> const_mesh_region_range_t;
-
+  typedef base_mesh_region_range<false> mesh_region_range;
+  typedef base_mesh_region_range<true> const_mesh_region_range;
 
 
 
@@ -96,88 +95,104 @@ namespace viennagrid
 
 
   template<viennagrid_element_tag et>
-  class static_tag_t
-  {};
-
-  typedef static_tag_t<VIENNAGRID_ELEMENT_TAG_VERTEX> vertex_tag;
-  typedef static_tag_t<VIENNAGRID_ELEMENT_TAG_LINE> line_tag;
-  typedef static_tag_t<VIENNAGRID_ELEMENT_TAG_EDGE> edge_tag;
-  typedef static_tag_t<VIENNAGRID_ELEMENT_TAG_TRIANGLE> triangle_tag;
-  typedef static_tag_t<VIENNAGRID_ELEMENT_TAG_QUADRILATERAL> quadrilateral_tag;
-  typedef static_tag_t<VIENNAGRID_ELEMENT_TAG_POLYGON> polygon_tag;
-  typedef static_tag_t<VIENNAGRID_ELEMENT_TAG_PLC> plc_tag;
-  typedef static_tag_t<VIENNAGRID_ELEMENT_TAG_TETRAHEDRON> tetrahedron_tag;
-  typedef static_tag_t<VIENNAGRID_ELEMENT_TAG_HEXAHEDRON> hexahedron_tag;
-
-  typedef static_tag_t<VIENNAGRID_ELEMENT_TAG_CELL> cell_tag;
-  typedef static_tag_t<VIENNAGRID_ELEMENT_TAG_FACET> facet_tag;
+  class static_tag;
 
 
 
-  class element_tag_t
+  class element_tag
   {
     template<bool is_const>
-    friend class base_mesh_hierarchy_t;
+    friend class base_mesh_hierarchy;
+
+    template<viennagrid_element_tag et>
+    friend class static_tag;
 
   public:
 
-    template<viennagrid_element_tag et>
-    element_tag_t(static_tag_t<et>) : element_tag_(et) {}
 
-    element_tag_t() : element_tag_(VIENNAGRID_ELEMENT_TAG_NO_ELEMENT) {}
+    template<viennagrid_element_tag et>
+    element_tag( static_tag<et> ) : element_tag_(et) {}
+
+
+    element_tag() : element_tag_(VIENNAGRID_ELEMENT_TAG_NO_ELEMENT) {}
 
     viennagrid_element_tag internal_element_tag() const { return element_tag_; }
-    element_tag_t facet_tag() const { return element_tag_t( viennagrid_facet_tag(internal_element_tag()) ); }
+    element_tag facet_tag() const { return element_tag( viennagrid_facet_tag(internal_element_tag()) ); }
 
-    static element_tag_t vertex() { return element_tag_t(VIENNAGRID_ELEMENT_TAG_VERTEX); }
-    static element_tag_t line() { return element_tag_t(VIENNAGRID_ELEMENT_TAG_LINE); }
-    static element_tag_t edge() { return element_tag_t(VIENNAGRID_ELEMENT_TAG_EDGE); }
-    static element_tag_t triangle() { return element_tag_t(VIENNAGRID_ELEMENT_TAG_TRIANGLE); }
-    static element_tag_t quadrilateral() { return element_tag_t(VIENNAGRID_ELEMENT_TAG_QUADRILATERAL); }
-    static element_tag_t polygon() { return element_tag_t(VIENNAGRID_ELEMENT_TAG_POLYGON); }
-    static element_tag_t plc() { return element_tag_t(VIENNAGRID_ELEMENT_TAG_PLC); }
-    static element_tag_t tetrahedron() { return element_tag_t(VIENNAGRID_ELEMENT_TAG_TETRAHEDRON); }
-    static element_tag_t hexahedron() { return element_tag_t(VIENNAGRID_ELEMENT_TAG_HEXAHEDRON); }
+    static element_tag vertex() { return element_tag(VIENNAGRID_ELEMENT_TAG_VERTEX); }
+    static element_tag line() { return element_tag(VIENNAGRID_ELEMENT_TAG_LINE); }
+    static element_tag edge() { return element_tag(VIENNAGRID_ELEMENT_TAG_EDGE); }
+    static element_tag triangle() { return element_tag(VIENNAGRID_ELEMENT_TAG_TRIANGLE); }
+    static element_tag quadrilateral() { return element_tag(VIENNAGRID_ELEMENT_TAG_QUADRILATERAL); }
+    static element_tag polygon() { return element_tag(VIENNAGRID_ELEMENT_TAG_POLYGON); }
+    static element_tag plc() { return element_tag(VIENNAGRID_ELEMENT_TAG_PLC); }
+    static element_tag tetrahedron() { return element_tag(VIENNAGRID_ELEMENT_TAG_TETRAHEDRON); }
+    static element_tag hexahedron() { return element_tag(VIENNAGRID_ELEMENT_TAG_HEXAHEDRON); }
 
-    static element_tag_t cell() { return element_tag_t(VIENNAGRID_ELEMENT_TAG_CELL); }
-    static element_tag_t facet() { return element_tag_t(VIENNAGRID_ELEMENT_TAG_FACET); }
+    static element_tag cell() { return element_tag(VIENNAGRID_ELEMENT_TAG_CELL); }
+    static element_tag facet() { return element_tag(VIENNAGRID_ELEMENT_TAG_FACET); }
 
-    bool operator==(element_tag_t rhs) const { return element_tag_ == rhs.element_tag_;}
-    bool operator!=(element_tag_t rhs) const { return !(*this == rhs);}
+    bool operator==(element_tag rhs) const { return element_tag_ == rhs.element_tag_;}
+    bool operator!=(element_tag rhs) const { return !(*this == rhs);}
 
-    bool operator<(element_tag_t rhs) const { return element_tag_ < rhs.element_tag_;}
+    bool operator<(element_tag rhs) const { return element_tag_ < rhs.element_tag_;}
 
-    element_tag_t & operator++()
+    element_tag & operator++()
     {
       ++element_tag_;
       return *this;
     }
 
-    element_tag_t operator++(int)
+    element_tag operator++(int)
     {
-      element_tag_t result = *this;
+      element_tag result = *this;
       ++result;
       return result;
     }
 
 
-    bool is_boundary(element_tag_t host_tag) const
+    bool is_boundary(element_tag host_tag) const
     { return viennagrid_is_boundary_tag(host_tag.internal_element_tag(), element_tag_) == VIENNAGRID_TRUE; }
 
     bool is_native() const
     { return viennagrid_native_element_tag(element_tag_) == VIENNAGRID_TRUE; }
 
-    int boundary_element_count(element_tag_t boundary_tag) const
+    int boundary_element_count(element_tag boundary_tag) const
     { return viennagrid_boundary_element_count_from_element_tag( element_tag_, boundary_tag.internal_element_tag() ); }
     int vertex_count() const { return boundary_element_count( vertex() ); }
 
     std::string name() const { return std::string( viennagrid_element_tag_string(element_tag_) ); }
 
   private:
-    element_tag_t(viennagrid_element_tag element_tag_in) : element_tag_(element_tag_in) {}
+    element_tag(viennagrid_element_tag element_tag_in) : element_tag_(element_tag_in) {}
 
     viennagrid_element_tag element_tag_;
   };
+
+
+
+
+  template<viennagrid_element_tag et>
+  class static_tag : public element_tag
+  {
+  public:
+    static_tag() : element_tag(et) {}
+  };
+
+  typedef static_tag<VIENNAGRID_ELEMENT_TAG_VERTEX> vertex_tag;
+  typedef static_tag<VIENNAGRID_ELEMENT_TAG_LINE> line_tag;
+  typedef static_tag<VIENNAGRID_ELEMENT_TAG_EDGE> edge_tag;
+  typedef static_tag<VIENNAGRID_ELEMENT_TAG_TRIANGLE> triangle_tag;
+  typedef static_tag<VIENNAGRID_ELEMENT_TAG_QUADRILATERAL> quadrilateral_tag;
+  typedef static_tag<VIENNAGRID_ELEMENT_TAG_POLYGON> polygon_tag;
+  typedef static_tag<VIENNAGRID_ELEMENT_TAG_PLC> plc_tag;
+  typedef static_tag<VIENNAGRID_ELEMENT_TAG_TETRAHEDRON> tetrahedron_tag;
+  typedef static_tag<VIENNAGRID_ELEMENT_TAG_HEXAHEDRON> hexahedron_tag;
+
+  typedef static_tag<VIENNAGRID_ELEMENT_TAG_CELL> cell_tag;
+  typedef static_tag<VIENNAGRID_ELEMENT_TAG_FACET> facet_tag;
+
+
 
 
 
@@ -215,45 +230,45 @@ namespace viennagrid
     };
 
     template<bool is_const>
-    struct const_type< base_point_proxy_t<is_const> >
+    struct const_type< base_point_proxy<is_const> >
     {
-      typedef base_point_proxy_t<true> type;
+      typedef base_point_proxy<true> type;
     };
 
     template<bool is_const>
-    struct const_type< base_region_t<is_const> >
+    struct const_type< base_region<is_const> >
     {
-      typedef base_region_t<true> type;
+      typedef base_region<true> type;
     };
 
     template<bool is_const>
-    struct const_type< base_mesh_region_t<is_const> >
+    struct const_type< base_mesh_region<is_const> >
     {
-      typedef base_mesh_region_t<true> type;
+      typedef base_mesh_region<true> type;
     };
 
     template<bool is_const>
-    struct const_type< base_element_t<is_const> >
+    struct const_type< base_element<is_const> >
     {
-      typedef base_element_t<true> type;
+      typedef base_element<true> type;
     };
 
     template<typename ViewFunctorT, bool is_const>
-    struct const_type< base_element_range_t<ViewFunctorT, is_const> >
+    struct const_type< base_element_range<ViewFunctorT, is_const> >
     {
-      typedef base_element_range_t<ViewFunctorT, true> type;
+      typedef base_element_range<ViewFunctorT, true> type;
     };
 
     template<bool is_const>
-    struct const_type< base_mesh_t<is_const> >
+    struct const_type< base_mesh<is_const> >
     {
-      typedef base_mesh_t<true> type;
+      typedef base_mesh<true> type;
     };
 
     template<bool is_const>
-    struct const_type< base_mesh_hierarchy_t<is_const> >
+    struct const_type< base_mesh_hierarchy<is_const> >
     {
-      typedef base_mesh_hierarchy_t<true> type;
+      typedef base_mesh_hierarchy<true> type;
     };
 
 
@@ -291,45 +306,45 @@ namespace viennagrid
     };
 
     template<bool is_const>
-    struct nonconst_type< base_point_proxy_t<is_const> >
+    struct nonconst_type< base_point_proxy<is_const> >
     {
-      typedef base_point_proxy_t<false> type;
+      typedef base_point_proxy<false> type;
     };
 
     template<bool is_const>
-    struct nonconst_type< base_region_t<is_const> >
+    struct nonconst_type< base_region<is_const> >
     {
-      typedef base_region_t<false> type;
+      typedef base_region<false> type;
     };
 
     template<bool is_const>
-    struct nonconst_type< base_mesh_region_t<is_const> >
+    struct nonconst_type< base_mesh_region<is_const> >
     {
-      typedef base_mesh_region_t<false> type;
+      typedef base_mesh_region<false> type;
     };
 
     template<bool is_const>
-    struct nonconst_type< base_element_t<is_const> >
+    struct nonconst_type< base_element<is_const> >
     {
-      typedef base_element_t<false> type;
+      typedef base_element<false> type;
     };
 
     template<typename ViewFunctorT, bool is_const>
-    struct nonconst_type< base_element_range_t<ViewFunctorT, is_const> >
+    struct nonconst_type< base_element_range<ViewFunctorT, is_const> >
     {
-      typedef base_element_range_t<ViewFunctorT, false> type;
+      typedef base_element_range<ViewFunctorT, false> type;
     };
 
     template<bool is_const>
-    struct nonconst_type< base_mesh_t<is_const> >
+    struct nonconst_type< base_mesh<is_const> >
     {
-      typedef base_mesh_t<false> type;
+      typedef base_mesh<false> type;
     };
 
     template<bool is_const>
-    struct nonconst_type< base_mesh_hierarchy_t<is_const> >
+    struct nonconst_type< base_mesh_hierarchy<is_const> >
     {
-      typedef base_mesh_hierarchy_t<false> type;
+      typedef base_mesh_hierarchy<false> type;
     };
 
 
@@ -364,15 +379,15 @@ namespace viennagrid
     struct region;
 
     template<>
-    struct region<mesh_hierarchy_t>
+    struct region<mesh_hierarchy>
     {
-      typedef region_t type;
+      typedef region type;
     };
 
     template<>
-    struct region<mesh_t>
+    struct region<mesh>
     {
-      typedef mesh_region_t type;
+      typedef mesh_region type;
     };
 
 
@@ -380,15 +395,15 @@ namespace viennagrid
     struct const_region;
 
     template<bool is_const>
-    struct const_region< base_mesh_hierarchy_t<is_const> >
+    struct const_region< base_mesh_hierarchy<is_const> >
     {
-      typedef const_region_t type;
+      typedef const_region type;
     };
 
     template<bool is_const>
-    struct const_region< base_mesh_t<is_const> >
+    struct const_region< base_mesh<is_const> >
     {
-      typedef const_mesh_region_t type;
+      typedef const_mesh_region type;
     };
 
 
@@ -399,15 +414,15 @@ namespace viennagrid
     struct region_range;
 
     template<>
-    struct region_range<mesh_hierarchy_t>
+    struct region_range<mesh_hierarchy>
     {
-      typedef region_range_t type;
+      typedef viennagrid::region_range type;
     };
 
     template<>
-    struct region_range<mesh_t>
+    struct region_range<mesh>
     {
-      typedef mesh_region_range_t type;
+      typedef viennagrid::mesh_region_range type;
     };
 
 
@@ -415,15 +430,15 @@ namespace viennagrid
     struct const_region_range;
 
     template<bool is_const>
-    struct region_range< base_mesh_hierarchy_t<is_const> >
+    struct region_range< base_mesh_hierarchy<is_const> >
     {
-      typedef const_region_range_t type;
+      typedef viennagrid::const_region_range type;
     };
 
     template<bool is_const>
-    struct region_range< base_mesh_t<is_const> >
+    struct region_range< base_mesh<is_const> >
     {
-      typedef const_mesh_region_range_t type;
+      typedef viennagrid::const_mesh_region_range type;
     };
 
 
@@ -447,13 +462,13 @@ namespace viennagrid
     template<typename SomethingT, typename ElementTagT = null_type>
     struct element
     {
-      typedef element_t type;
+      typedef viennagrid::element type;
     };
 
     template<typename SomethingT, typename ElementTagT = null_type>
     struct const_element
     {
-      typedef const_element_t type;
+      typedef viennagrid::const_element type;
     };
 
 
@@ -472,13 +487,13 @@ namespace viennagrid
     template<typename SomethingT>
     struct mesh_hierarchy
     {
-      typedef mesh_hierarchy_t type;
+      typedef viennagrid::mesh_hierarchy type;
     };
 
     template<typename SomethingT>
     struct mesh
     {
-      typedef mesh_t type;
+      typedef viennagrid::mesh type;
     };
 
 
@@ -497,9 +512,9 @@ namespace viennagrid
 
 
     template<>
-    struct point<mesh_hierarchy_t>
+    struct point<viennagrid::mesh_hierarchy>
     {
-      typedef point_proxy_t type;
+      typedef viennagrid::point_proxy type;
     };
 
     template<typename SomethingT>
@@ -548,6 +563,12 @@ namespace viennagrid
     struct cell
     {
       typedef typename element<SomethingT, typename cell_tag<SomethingT>::type>::type type;
+    };
+
+    template<typename SomethingT>
+    struct facet
+    {
+      typedef typename element<SomethingT, typename facet_tag<SomethingT>::type>::type type;
     };
 
 

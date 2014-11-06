@@ -26,12 +26,10 @@
 #include <string>
 #include <algorithm>
 
-#include "viennagrid/forwards.hpp"
-#include "viennagrid/point.hpp"
+#include "viennagrid/core.hpp"
 #include "viennagrid/io/vtk_common.hpp"
 #include "viennagrid/io/helper.hpp"
 #include "viennagrid/io/xml_tag.hpp"
-#include "viennagrid/mesh/element_creation.hpp"
 #include "viennagrid/accessor.hpp"
 
 namespace viennagrid
@@ -44,8 +42,6 @@ namespace viennagrid
      * @tparam MeshType         The type of the mesh to be read. Must not be a region type!
      * @tparam SegmentationType   The type of the regionation to be read, default is the default regionation of MeshType
      */
-//     template <typename MeshType, typename SegmentationType = typename viennagrid::result_of::regionation<MeshType>::type >
-
     template<typename SomethingT>
     class vtk_reader
     {
@@ -53,7 +49,6 @@ namespace viennagrid
 
       typedef typename result_of::mesh_hierarchy<SomethingT>::type mesh_hierarchy_type;
       typedef typename result_of::mesh<mesh_hierarchy_type>::type mesh_type;
-//       typedef MeshT mesh_type;
 
       typedef typename mesh_type::region_type RegionType;
       typedef typename viennagrid::result_of::id<RegionType>::type region_id_type;
@@ -92,7 +87,7 @@ namespace viennagrid
       std::ifstream                                        reader;
 
       std::size_t                                          geometric_dim;
-      element_tag_t                                        cell_tag;
+      element_tag                                          cell_tag;
 
       typedef std::vector<CoordType>                       PointType;
       std::map<PointType, std::size_t, point_less>         global_points;
@@ -563,7 +558,7 @@ namespace viennagrid
 
       /** @brief Writes data for cells to the ViennaGrid mesh using ViennaData */
       template <typename ContainerType>
-      void setupDataCell(mesh_type & mesh, RegionType & region, region_id_type region_id, ContainerType const & container, std::size_t num_components)
+      void setupDataCell(mesh_type &, RegionType & region, region_id_type region_id, ContainerType const & container, std::size_t num_components)
       {
         std::string const & name = container.first;
 

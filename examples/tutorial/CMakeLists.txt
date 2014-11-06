@@ -1,4 +1,8 @@
 # Tutorials:
+
+ADD_EXECUTABLE(viennagrid3_playground           viennagrid3_playground.cpp)
+target_link_libraries(viennagrid3_playground    viennagrid)
+
 # add_executable(accessor             accessor.cpp)
 # ADD_EXECUTABLE(algorithms           algorithms.cpp)
 # add_executable(coboundary_iteration coboundary_iteration.cpp)
@@ -9,8 +13,13 @@ target_link_libraries(mesh_setup    viennagrid)
 # add_executable(element_erase        element_erase.cpp)
 # ADD_EXECUTABLE(finite_volumes       finite_volumes.cpp)
 # ADD_EXECUTABLE(io                   io.cpp)
-# ADD_EXECUTABLE(iterators            iterators.cpp)
-# ADD_EXECUTABLE(multi_segment        multi_segment.cpp)
+
+ADD_EXECUTABLE(iterators            iterators.cpp)
+target_link_libraries(iterators     viennagrid)
+
+ADD_EXECUTABLE(multi_segment        multi_segment.cpp)
+target_link_libraries(multi_segment viennagrid)
+
 # add_executable(neighbor_iteration   neighbor_iteration.cpp)
 # add_executable(named_segments       named_segments.cpp)
 # add_executable(polygon              polygon.cpp)

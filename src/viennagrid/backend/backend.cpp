@@ -2,7 +2,7 @@
 
 
 
-void viennagrid_mesh::make_coboundary(viennagrid_element_tag element_tag, viennagrid_element_tag coboundary_tag)
+void viennagrid_mesh_::make_coboundary(viennagrid_element_tag element_tag, viennagrid_element_tag coboundary_tag)
 {
   if (!is_coboundary_obsolete(element_tag, coboundary_tag))
     return;
@@ -14,7 +14,7 @@ void viennagrid_mesh::make_coboundary(viennagrid_element_tag element_tag, vienna
 
   viennagrid_element_buffer & hierarchy_coboundary_buffer = mesh_hierarchy()->element_buffer(coboundary_tag);
 
-  for (std::size_t i = 0; i < coboundary_count; ++i)
+  for (viennagrid_int i = 0; i < coboundary_count; ++i)
   {
     viennagrid_index coboundary_index = coboundary_ids[i];
     viennagrid_index * boundary_it = hierarchy_coboundary_buffer.boundary_indices_begin(element_tag, coboundary_index);
@@ -39,7 +39,7 @@ void viennagrid_mesh::make_coboundary(viennagrid_element_tag element_tag, vienna
 
 
 
-void viennagrid_mesh::make_boundary_flags(viennagrid_region_handle region)
+void viennagrid_mesh_::make_boundary_flags(viennagrid_region region)
 {
   const viennagrid_element_tag cell_tag = mesh_hierarchy()->cell_tag();
   const viennagrid_element_tag facet_tag = viennagrid_facet_tag(cell_tag);
@@ -85,7 +85,7 @@ void viennagrid_mesh::make_boundary_flags(viennagrid_region_handle region)
 }
 
 
-void viennagrid_mesh::make_boundary_flags()
+void viennagrid_mesh_::make_boundary_flags()
 {
   const viennagrid_element_tag cell_tag = mesh_hierarchy()->cell_tag();
   const viennagrid_element_tag facet_tag = viennagrid_facet_tag(cell_tag);
@@ -130,7 +130,7 @@ void viennagrid_mesh::make_boundary_flags()
 
 
 
-viennagrid_index viennagrid_mesh_hierarchy::get_make_element(viennagrid_element_tag element_tag,
+viennagrid_index viennagrid_mesh_hierarchy_::get_make_element(viennagrid_element_tag element_tag,
                                   viennagrid_index * vertex_indices,
                                   viennagrid_int vertex_count)
 {
@@ -163,18 +163,17 @@ viennagrid_index viennagrid_mesh_hierarchy::get_make_element(viennagrid_element_
       return id;
     }
 
-//       case VIENNAGRID_ELEMENT_TYPE_QUADRILATERAL:
-//       {
-//         id = element_buffer(element_type).make_element(vertex_indices, index_count);
-//         viennagrid_element & element = element_buffer(element_type).get_element(id);
-//
-//         element.boundary_element_buffers[VIENNAGRID_ELEMENT_TYPE_LINE].element_indices[0] = get_make_element(VIENNAGRID_ELEMENT_TYPE_LINE, vertex_indices, 0, 1);
-//         element.boundary_element_buffers[VIENNAGRID_ELEMENT_TYPE_LINE].element_indices[1] = get_make_element(VIENNAGRID_ELEMENT_TYPE_LINE, vertex_indices, 1, 2);
-//         element.boundary_element_buffers[VIENNAGRID_ELEMENT_TYPE_LINE].element_indices[2] = get_make_element(VIENNAGRID_ELEMENT_TYPE_LINE, vertex_indices, 2, 3);
-//         element.boundary_element_buffers[VIENNAGRID_ELEMENT_TYPE_LINE].element_indices[3] = get_make_element(VIENNAGRID_ELEMENT_TYPE_LINE, vertex_indices, 3, 0);
-//
-//         return id;
-//       }
+    case VIENNAGRID_ELEMENT_TAG_QUADRILATERAL:
+    {
+      index = 0;
+      ptr = make_boundary_indices(VIENNAGRID_ELEMENT_TAG_QUADRILATERAL, VIENNAGRID_ELEMENT_TAG_LINE);
+      ptr[index++] = get_make_element(VIENNAGRID_ELEMENT_TAG_LINE, vertex_indices, 0, 1);
+      ptr[index++] = get_make_element(VIENNAGRID_ELEMENT_TAG_LINE, vertex_indices, 0, 2);
+      ptr[index++] = get_make_element(VIENNAGRID_ELEMENT_TAG_LINE, vertex_indices, 1, 3);
+      ptr[index++] = get_make_element(VIENNAGRID_ELEMENT_TAG_LINE, vertex_indices, 2, 3);
+
+      return id;
+    }
 
     case VIENNAGRID_ELEMENT_TAG_TETRAHEDRON:
     {
@@ -190,6 +189,36 @@ viennagrid_index viennagrid_mesh_hierarchy::get_make_element(viennagrid_element_
         for (viennagrid_int j = i+1; j < 4; ++j)
           for (viennagrid_int k = j+1; k < 4; ++k)
             ptr[index++] = get_make_element(VIENNAGRID_ELEMENT_TAG_TRIANGLE, vertex_indices, i, j, k);
+
+      return id;
+    }
+
+    case VIENNAGRID_ELEMENT_TAG_HEXAHEDRON:
+    {
+      index = 0;
+      ptr = make_boundary_indices(VIENNAGRID_ELEMENT_TAG_HEXAHEDRON, VIENNAGRID_ELEMENT_TAG_LINE);
+      ptr[index++] = get_make_element(VIENNAGRID_ELEMENT_TAG_LINE, vertex_indices, 0, 1);
+      ptr[index++] = get_make_element(VIENNAGRID_ELEMENT_TAG_LINE, vertex_indices, 0, 2);
+      ptr[index++] = get_make_element(VIENNAGRID_ELEMENT_TAG_LINE, vertex_indices, 0, 4);
+      ptr[index++] = get_make_element(VIENNAGRID_ELEMENT_TAG_LINE, vertex_indices, 1, 3);
+      ptr[index++] = get_make_element(VIENNAGRID_ELEMENT_TAG_LINE, vertex_indices, 1, 5);
+      ptr[index++] = get_make_element(VIENNAGRID_ELEMENT_TAG_LINE, vertex_indices, 2, 3);
+      ptr[index++] = get_make_element(VIENNAGRID_ELEMENT_TAG_LINE, vertex_indices, 2, 5);
+      ptr[index++] = get_make_element(VIENNAGRID_ELEMENT_TAG_LINE, vertex_indices, 3, 7);
+      ptr[index++] = get_make_element(VIENNAGRID_ELEMENT_TAG_LINE, vertex_indices, 4, 5);
+      ptr[index++] = get_make_element(VIENNAGRID_ELEMENT_TAG_LINE, vertex_indices, 4, 6);
+      ptr[index++] = get_make_element(VIENNAGRID_ELEMENT_TAG_LINE, vertex_indices, 5, 7);
+      ptr[index++] = get_make_element(VIENNAGRID_ELEMENT_TAG_LINE, vertex_indices, 6, 7);
+
+
+      index = 0;
+      ptr = make_boundary_indices(VIENNAGRID_ELEMENT_TAG_HEXAHEDRON, VIENNAGRID_ELEMENT_TAG_QUADRILATERAL);
+      ptr[index++] = get_make_element(VIENNAGRID_ELEMENT_TAG_QUADRILATERAL, vertex_indices, 0, 1, 2, 3);
+      ptr[index++] = get_make_element(VIENNAGRID_ELEMENT_TAG_QUADRILATERAL, vertex_indices, 0, 1, 4, 5);
+      ptr[index++] = get_make_element(VIENNAGRID_ELEMENT_TAG_QUADRILATERAL, vertex_indices, 0, 2, 4, 6);
+      ptr[index++] = get_make_element(VIENNAGRID_ELEMENT_TAG_QUADRILATERAL, vertex_indices, 1, 3, 5, 7);
+      ptr[index++] = get_make_element(VIENNAGRID_ELEMENT_TAG_QUADRILATERAL, vertex_indices, 2, 3, 6, 7);
+      ptr[index++] = get_make_element(VIENNAGRID_ELEMENT_TAG_QUADRILATERAL, vertex_indices, 4, 5, 6, 7);
 
       return id;
     }
