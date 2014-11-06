@@ -147,10 +147,10 @@ viennagrid_index viennagrid_mesh_hierarchy_::get_make_element(viennagrid_element
   switch (element_tag)
   {
     case VIENNAGRID_ELEMENT_TAG_VERTEX:
-    case VIENNAGRID_ELEMENT_TAG_LINE:
-    {
       return id;
-    }
+
+    case VIENNAGRID_ELEMENT_TAG_LINE:
+      return id;
 
     case VIENNAGRID_ELEMENT_TAG_TRIANGLE:
     {

@@ -137,8 +137,8 @@ int main()
     {
       std::cout << *it << std::endl;
       std::cout << "Facet: " << (*it).id() << std::endl;
-      std::cout << "  is boundary of region 0: " << std::boolalpha << viennagrid::is_boundary(*it, r0) << std::endl;
-      std::cout << "  is boundary of region 1: " << std::boolalpha << viennagrid::is_boundary(*it, r1) << std::endl;
+      std::cout << "  is boundary of region 0: " << std::boolalpha << viennagrid::is_boundary(r0, *it) << std::endl;
+      std::cout << "  is boundary of region 1: " << std::boolalpha << viennagrid::is_boundary(r1, *it) << std::endl;
       std::cout << std::endl;
     }
   }
@@ -153,8 +153,8 @@ int main()
     {
       std::cout << *it << std::endl;
       std::cout << "Facet: " << (*it).id() << std::endl;
-      std::cout << "  is boundary of region 0: " << std::boolalpha << viennagrid::is_boundary(*it, r0) << std::endl;
-      std::cout << "  is boundary of region 1: " << std::boolalpha << viennagrid::is_boundary(*it, r1) << std::endl;
+      std::cout << "  is boundary of region 0: " << std::boolalpha << viennagrid::is_boundary(r0, *it) << std::endl;
+      std::cout << "  is boundary of region 1: " << std::boolalpha << viennagrid::is_boundary(r1, *it) << std::endl;
       std::cout << std::endl;
     }
   }
@@ -164,7 +164,7 @@ int main()
 
 
   {
-    typedef viennagrid::result_of::coboundary_range<VertexType, viennagrid::cell_tag>::type CoboundaryTriangleRangeType;
+    typedef viennagrid::result_of::coboundary_range<MeshType, viennagrid::cell_tag>::type CoboundaryTriangleRangeType;
 
     VertexRangeType vertex_range(mesh);
     for (VertexRangeType::iterator it = vertex_range.begin(); it != vertex_range.end(); ++it)
@@ -193,7 +193,7 @@ int main()
 
 
   {
-    typedef viennagrid::result_of::coboundary_range<VertexType, viennagrid::cell_tag>::type CoboundaryTriangleRangeType;
+    typedef viennagrid::result_of::coboundary_range<MeshType, viennagrid::cell_tag>::type CoboundaryTriangleRangeType;
 
     TriangleRangeType triangle_range(mesh);
     for (TriangleRangeType::iterator it = triangle_range.begin(); it != triangle_range.end(); ++it)
