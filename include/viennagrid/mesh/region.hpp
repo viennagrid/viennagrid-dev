@@ -47,22 +47,22 @@ namespace viennagrid
       viennagrid_region_set_name(internal_region(), name_.c_str());
     }
 
-    mesh_hierarchy_type mesh_hierarchy()
+    mesh_hierarchy_type get_mesh_hierarchy()
     {
       viennagrid_mesh_hierarchy tmp;
       viennagrid_region_get_mesh_hierarchy(region_, &tmp);
       return mesh_hierarchy_type(tmp);
     }
 
-    const_mesh_hierarchy_reference mesh_hierarchy() const
+    const_mesh_hierarchy_reference get_mesh_hierarchy() const
     {
       viennagrid_mesh_hierarchy tmp;
       viennagrid_region_get_mesh_hierarchy(region_, &tmp);
       return const_mesh_hierarchy_reference(tmp);
     }
 
-    std::size_t dimension() const { return mesh_hierarchy().dimension(); }
-    element_tag cell_tag() const { return mesh_hierarchy().cell_tag(); }
+    std::size_t dimension() const { return get_mesh_hierarchy().dimension(); }
+    element_tag cell_tag() const { return get_mesh_hierarchy().cell_tag(); }
 
     viennagrid_region internal_region() { return region_; }
 
@@ -137,7 +137,7 @@ namespace viennagrid
 
   inline void add( region region, element e )
   {
-    viennagrid_add_to_region(e.mesh_hierarchy().internal_mesh_hierarchy(),
+    viennagrid_add_to_region(e.get_mesh_hierarchy().internal_mesh_hierarchy(),
                              e.tag().internal_element_tag(),
                              e.id(),
                              region.internal_region() );
@@ -151,7 +151,7 @@ namespace viennagrid
     viennagrid_region const * it;
     viennagrid_region const * end;
 
-    viennagrid_get_regions(element.mesh_hierarchy().internal_mesh_hierarchy(),
+    viennagrid_get_regions(element.get_mesh_hierarchy().internal_mesh_hierarchy(),
                            element.tag().internal_element_tag(),
                            element.id(),
                            &it,
@@ -215,17 +215,17 @@ namespace viennagrid
     template<bool other_is_const>
     base_mesh_region(base_mesh_region<other_is_const> const & rhs) : mesh_(rhs.mesh_), region_(rhs.region_) {}
 
-    mesh_type mesh() { return mesh_; }
-    const_mesh_type mesh() const { return mesh_; }
+    mesh_type get_mesh() { return mesh_; }
+    const_mesh_type get_mesh() const { return mesh_; }
 
-    region_type region() { return region_; }
-    const_region_type region() const { return region_; }
+    region_type get_region() { return region_; }
+    const_region_type get_region() const { return region_; }
 
-    id_type id() const { return region().id(); }
-    std::string name() const { return region().name(); }
-    void set_name(std::string const & name_) { region().set_name(name_); }
-    std::size_t dimension() const { return region().dimension(); }
-    element_tag cell_tag() const { return region().cell_tag(); }
+    id_type id() const { return get_region().id(); }
+    std::string name() const { return get_region().name(); }
+    void set_name(std::string const & name_) { get_region().set_name(name_); }
+    std::size_t dimension() const { return get_region().dimension(); }
+    element_tag cell_tag() const { return get_region().cell_tag(); }
 
   private:
 
@@ -273,7 +273,7 @@ namespace viennagrid
 
     base_mesh_region_range(mesh_type mesh_in) : mesh_(mesh_in)
     {
-      viennagrid_regions_get(mesh_.mesh_hierarchy().internal_mesh_hierarchy(), &begin_, &end_);
+      viennagrid_regions_get(mesh_.get_mesh_hierarchy().internal_mesh_hierarchy(), &begin_, &end_);
     }
 
     typedef transform_iterator<region_pointer_type, unpack_mesh_region_functor<is_const> > iterator;
@@ -300,13 +300,13 @@ namespace viennagrid
 
   inline void add( mesh_region mr, element e )
   {
-    add( mr.region(), e );
+    add( mr.get_region(), e );
   }
 
   template<bool element_is_const, bool region_is_const>
   bool is_in_region( base_element<element_is_const> element, base_mesh_region<region_is_const> mesh_region )
   {
-    return is_in_region(element, mesh_region.region() );
+    return is_in_region(element, mesh_region.get_region() );
   }
 
 
@@ -314,7 +314,7 @@ namespace viennagrid
   bool is_boundary( base_mesh_region<region_is_const> r, base_element<element_is_const> e )
   {
     viennagrid_bool result;
-    viennagrid_is_boundary_region(r.region().internal_region(), r.mesh().internal_mesh(), e.tag().internal_element_tag(), e.id(), &result);
+    viennagrid_is_boundary_region(r.get_region().internal_region(), r.get_mesh().internal_mesh(), e.tag().internal_element_tag(), e.id(), &result);
     return result == VIENNAGRID_TRUE;
   }
 
@@ -324,13 +324,13 @@ namespace viennagrid
   template<typename ElementT>
   typename result_of::point<ElementT>::type point(mesh_region r, ElementT vertex)
   {
-    return r.mesh().point(vertex);
+    return r.get_mesh().point(vertex);
   }
 
   template<typename ElementT>
   typename result_of::const_point<ElementT>::type point(const_mesh_region r, ElementT vertex)
   {
-    return r.mesh().point(vertex);
+    return r.get_mesh().point(vertex);
   }
 
 

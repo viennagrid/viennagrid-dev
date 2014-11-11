@@ -75,21 +75,21 @@ namespace viennagrid
 
 
 
-    viennagrid_int dimension() const { return mesh_hierarchy().dimension(); }
-    element_tag_type cell_tag() const { return mesh_hierarchy().cell_tag(); }
-    element_tag_type facet_tag() const { return mesh_hierarchy().facet_tag(); }
+    viennagrid_int dimension() const { return get_mesh_hierarchy().dimension(); }
+    element_tag_type cell_tag() const { return get_mesh_hierarchy().cell_tag(); }
+    element_tag_type facet_tag() const { return get_mesh_hierarchy().facet_tag(); }
 
     point_type point(element_type vertex);
     const_point_type point(const_element_type vertex) const;
 
-    mesh_hierarchy_type mesh_hierarchy()
+    mesh_hierarchy_type get_mesh_hierarchy()
     {
       viennagrid_mesh_hierarchy tmp;
       viennagrid_mesh_get_mesh_hierarchy(internal_mesh(), &tmp);
       return mesh_hierarchy_type(tmp);
     }
 
-    const_mesh_hierarchy_type mesh_hierarchy() const
+    const_mesh_hierarchy_type get_mesh_hierarchy() const
     {
       viennagrid_mesh_hierarchy tmp;
       viennagrid_mesh_get_mesh_hierarchy(internal_mesh(), &tmp);
@@ -103,20 +103,20 @@ namespace viennagrid
     region_type make_region();
     const_region_type get_region(region_id_type region_id) const;
 
-    element_tag_type unpack_element_tag(element_tag_type et) { return mesh_hierarchy().unpack_element_tag(et); }
+    element_tag_type unpack_element_tag(element_tag_type et) { return get_mesh_hierarchy().unpack_element_tag(et); }
   private:
     base_mesh(viennagrid_mesh internal_mesh_in) : internal_mesh_(internal_mesh_in) {}
 
     void retain() const
     {
       if (internal_mesh())
-        mesh_hierarchy().retain();
+        get_mesh_hierarchy().retain();
     }
 
     void release() const
     {
       if (internal_mesh())
-        mesh_hierarchy().release();
+        get_mesh_hierarchy().release();
     }
 
     viennagrid_mesh internal_mesh_;

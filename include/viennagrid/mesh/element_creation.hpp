@@ -42,7 +42,7 @@ namespace viennagrid
   element make_vertex(mesh m,
                       viennagrid_numeric const * coords)
   {
-    element vertex = make_vertex(m.mesh_hierarchy(), coords);
+    element vertex = make_vertex(m.get_mesh_hierarchy(), coords);
     non_recursive_add_element_to_mesh(m, vertex);
     return vertex;
   }
@@ -114,7 +114,7 @@ namespace viennagrid
                        VertexHandleIteratorT vertices_begin,
                        VertexHandleIteratorT vertices_end)
   {
-    element e = make_element(m.mesh_hierarchy(), tag, vertices_begin, vertices_end);
+    element e = make_element(m.get_mesh_hierarchy(), tag, vertices_begin, vertices_end);
     add_element_to_mesh(m, e);
     return e;
   }
@@ -139,7 +139,7 @@ namespace viennagrid
                        VertexHandleIteratorT vertices_begin,
                        VertexHandleIteratorT vertices_end)
   {
-    element e = make_element(mr.mesh(), tag, vertices_begin, vertices_end);
+    element e = make_element(mr.get_mesh(), tag, vertices_begin, vertices_end);
     add(mr, e);
     return e;
   }

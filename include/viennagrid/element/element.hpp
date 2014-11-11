@@ -32,8 +32,8 @@ namespace viennagrid
     base_element(base_element<other_is_const> element) : mesh_hierarchy_(element.mesh_hierarchy_), id_(element.id_), element_tag_(element.element_tag_) {}
 
     id_type id() const { return id_; }
-    mesh_hierarchy_type mesh_hierarchy() { return mesh_hierarchy_; }
-    const_mesh_hierarchy_type mesh_hierarchy() const { return mesh_hierarchy_; }
+    mesh_hierarchy_type get_mesh_hierarchy() { return mesh_hierarchy_; }
+    const_mesh_hierarchy_type get_mesh_hierarchy() const { return mesh_hierarchy_; }
 
     tag_type tag() const { return element_tag_; }
 

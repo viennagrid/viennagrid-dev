@@ -226,7 +226,7 @@ int main()
   {
     typedef viennagrid::result_of::tetrahedron_range<RegionType>::type TetrahedronRangeType;
 
-    std::cout << "Partition " << (*pit).region().id() << std::endl;
+    std::cout << "Partition " << (*pit).get_region().id() << std::endl;
     TetrahedronRangeType tets(*pit);
     for (TetrahedronRangeType::iterator it = tets.begin(); it != tets.end(); ++it)
       std::cout << (*it).id() << std::endl;

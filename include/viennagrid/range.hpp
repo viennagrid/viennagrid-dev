@@ -134,13 +134,13 @@ namespace viennagrid
     size_type size() const { return end()-begin(); }
 
     element_type operator[](size_type pos)
-    { return element_type(tag(), mesh_hierarchy(), element_index_begin[pos]); }
+    { return element_type(tag(), get_mesh_hierarchy(), element_index_begin[pos]); }
     const_element_type operator[](size_type pos) const
-    { return const_element_type(tag(), mesh_hierarchy(), element_index_begin[pos]); }
+    { return const_element_type(tag(), get_mesh_hierarchy(), element_index_begin[pos]); }
 
 
-    mesh_hierarchy_type mesh_hierarchy() { return mesh_hierarchy_; }
-    const_mesh_hierarchy_type mesh_hierarchy() const { return mesh_hierarchy_; }
+    mesh_hierarchy_type get_mesh_hierarchy() { return mesh_hierarchy_; }
+    const_mesh_hierarchy_type get_mesh_hierarchy() const { return mesh_hierarchy_; }
 
     element_tag tag() const { return element_tag_; }
 
@@ -162,7 +162,7 @@ namespace viennagrid
   void base_element_range<ViewFunctorT, range_is_const>::from_mesh(base_mesh<mesh_is_const> mesh, element_tag element_tag_in)
   {
     element_tag_ = element_tag_in;
-    mesh_hierarchy_ = mesh.mesh_hierarchy();
+    mesh_hierarchy_ = mesh.get_mesh_hierarchy();
 
     viennagrid_elements_get(mesh.internal_mesh(),
                             tag().internal_element_tag(),
@@ -175,9 +175,9 @@ namespace viennagrid
   void base_element_range<ViewFunctorT, range_is_const>::boundary_from_element(base_element<element_is_const> element, element_tag element_tag_in)
   {
     element_tag_ = element_tag_in;
-    mesh_hierarchy_ = element.mesh_hierarchy();
+    mesh_hierarchy_ = element.get_mesh_hierarchy();
 
-    viennagrid_element_boundary_elements(mesh_hierarchy().internal_mesh_hierarchy(),
+    viennagrid_element_boundary_elements(get_mesh_hierarchy().internal_mesh_hierarchy(),
                                          element.tag().internal_element_tag(),
                                          element.id(),
                                          tag().internal_element_tag(),
@@ -190,7 +190,7 @@ namespace viennagrid
   void base_element_range<ViewFunctorT, range_is_const>::coboundary_from_element(base_mesh<mesh_is_const> mesh, base_element<element_is_const> element, element_tag coboundary_tag_in)
   {
     element_tag_ = coboundary_tag_in;
-    mesh_hierarchy_ = element.mesh_hierarchy();
+    mesh_hierarchy_ = element.get_mesh_hierarchy();
 
     viennagrid_element_coboundary_elements(mesh.internal_mesh(),
                                            element.tag().internal_element_tag(),
@@ -322,7 +322,7 @@ namespace viennagrid
     typedef typename result_of::const_nonconst<mesh_region, is_const>::type mesh_region_type;
 
     mesh_region_element_range(mesh_region_type region, element_tag element_tag_) : base_element_range<region_view_functor, is_const>( region_view_functor(region) )
-    { this->from_mesh(region.mesh(), element_tag_); }
+    { this->from_mesh(region.get_mesh(), element_tag_); }
 
   private:
   };
@@ -355,7 +355,7 @@ namespace viennagrid
     typedef typename result_of::const_nonconst<mesh_region, is_const>::type mesh_region_type;
 
     coboundary_region_element_range(mesh_region_type region, element_type element, element_tag coboundary_tag_) : base_element_range<region_view_functor, is_const>( region_view_functor(region) )
-    { this->coboundary_from_element(region.mesh(), element, coboundary_tag_); }
+    { this->coboundary_from_element(region.get_mesh(), element, coboundary_tag_); }
 
   private:
   };
