@@ -15,17 +15,17 @@ namespace viennagrid
 
   public:
 
-    typedef typename result_of::const_nonconst<mesh, is_const>::type mesh_type;
-    typedef typename result_of::const_nonconst<mesh, true>::type const_mesh_type;
+    typedef typename result_of::const_nonconst<mesh_t, is_const>::type mesh_type;
+    typedef typename result_of::const_nonconst<mesh_t, true>::type const_mesh_type;
 
-    typedef typename result_of::const_nonconst<region, is_const>::type region_type;
-    typedef typename result_of::const_nonconst<region, true>::type const_region_type;
+    typedef typename result_of::const_nonconst<region_t, is_const>::type region_type;
+    typedef typename result_of::const_nonconst<region_t, true>::type const_region_type;
 
-    typedef typename result_of::const_nonconst<element, is_const>::type element_type;
-    typedef typename result_of::const_nonconst<element, true>::type const_element_type;
+    typedef typename result_of::const_nonconst<element_t, is_const>::type element_type;
+    typedef typename result_of::const_nonconst<element_t, true>::type const_element_type;
 
     typedef viennagrid_index region_id_type;
-    typedef element_tag element_tag_type;
+    typedef element_tag_t element_tag_type;
 
 
     base_mesh_hierarchy(viennagrid_mesh_hierarchy internal_mesh_hierarchy_in) : internal_mesh_hierarchy_(internal_mesh_hierarchy_in)
@@ -35,7 +35,7 @@ namespace viennagrid
 
     base_mesh_hierarchy(viennagrid_int dimension_, element_tag_type cell_tag_) : internal_mesh_hierarchy_(0)
     {
-      viennagrid_mesh_hierarchy_create(dimension_, cell_tag_.internal_element_tag(), &internal_mesh_hierarchy_);
+      viennagrid_mesh_hierarchy_create(dimension_, cell_tag_.internal(), &internal_mesh_hierarchy_);
     }
 
     template<bool other_is_const>
@@ -61,18 +61,19 @@ namespace viennagrid
       release();
     }
 
-    mesh_type get_root();
+    mesh_type root();
+    const_mesh_type root() const;
 
     viennagrid_int dimension() const
     {
       viennagrid_int tmp;
-      viennagrid_mesh_hierarchy_get_dimension(internal_mesh_hierarchy(), &tmp);
+      viennagrid_mesh_hierarchy_get_dimension(internal(), &tmp);
       return tmp;
     }
     element_tag_type cell_tag() const
     {
       viennagrid_element_tag tmp;
-      viennagrid_mesh_hierarchy_get_cell_tag(internal_mesh_hierarchy(), &tmp);
+      viennagrid_mesh_hierarchy_get_cell_tag(internal(), &tmp);
       return element_tag_type(tmp);
     }
     element_tag_type facet_tag() const { return cell_tag().facet_tag(); }
@@ -85,13 +86,13 @@ namespace viennagrid
       return et;
     }
 
-    viennagrid_mesh_hierarchy internal_mesh_hierarchy() const { return const_cast<viennagrid_mesh_hierarchy>(internal_mesh_hierarchy_); }
+    viennagrid_mesh_hierarchy internal() const { return const_cast<viennagrid_mesh_hierarchy>(internal_mesh_hierarchy_); }
 
     std::size_t regions_count() const
     {
       viennagrid_region * begin;
       viennagrid_region * end;
-      viennagrid_regions_get(internal_mesh_hierarchy(), &begin, &end);
+      viennagrid_regions_get(internal(), &begin, &end);
       return end-begin;
     }
     region_type get_make_region(region_id_type region_id);
@@ -100,8 +101,8 @@ namespace viennagrid
 
   private:
 
-    void retain() const { viennagrid_mesh_hierarchy_retain(internal_mesh_hierarchy()); }
-    void release() const { viennagrid_mesh_hierarchy_release(internal_mesh_hierarchy()); }
+    void retain() const { viennagrid_mesh_hierarchy_retain(internal()); }
+    void release() const { viennagrid_mesh_hierarchy_release(internal()); }
 
     viennagrid_mesh_hierarchy internal_mesh_hierarchy_;
   };

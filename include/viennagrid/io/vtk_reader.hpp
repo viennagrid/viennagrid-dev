@@ -87,7 +87,7 @@ namespace viennagrid
       std::ifstream                                        reader;
 
       std::size_t                                          geometric_dim;
-      element_tag                                          cell_tag;
+      element_tag_t                                        cell_tag;
 
       typedef std::vector<CoordType>                       PointType;
       std::map<PointType, std::size_t, point_less>         global_points;

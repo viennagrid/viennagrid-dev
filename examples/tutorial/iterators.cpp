@@ -27,7 +27,7 @@ int main()
   //
   // Define the mesh and segmentation types
   //
-  typedef viennagrid::mesh                                          MeshType;
+  typedef viennagrid::mesh_t                                        MeshType;
   typedef viennagrid::result_of::cell_tag<MeshType>::type             CellTag;
 
   //

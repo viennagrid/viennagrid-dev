@@ -26,7 +26,10 @@ target_link_libraries(multi_segment viennagrid)
 # add_executable(segments             segments.cpp)
 # add_executable(interface            interface.cpp)
 # add_executable(read_plc             read_plc.cpp)
+
 # add_executable(dump_info            dump_info.cpp)
+# target_link_libraries(dump_info viennagrid)
+
 # add_executable(vmesh_creator        vmesh_creator.cpp)
 # add_executable(copy_elements        copy_elements.cpp)
 # add_executable(thin_mesh            thin_mesh.cpp)

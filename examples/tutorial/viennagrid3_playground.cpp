@@ -10,13 +10,14 @@
 
 int main()
 {
-  typedef viennagrid::mesh MeshType;
+  typedef viennagrid::mesh_t MeshType;
+  typedef viennagrid::result_of::region<MeshType>::type MeshRegionType;
+
   typedef viennagrid::result_of::point<MeshType>::type PointType;
   typedef viennagrid::result_of::element<MeshType>::type VertexType;
   typedef viennagrid::result_of::element<MeshType>::type LineType;
   typedef viennagrid::result_of::element<MeshType>::type TriangleType;
   typedef viennagrid::result_of::cell<MeshType>::type CellType;
-
 
   typedef viennagrid::result_of::vertex_range<MeshType>::type VertexRangeType;
   typedef viennagrid::result_of::triangle_range<MeshType>::type TriangleRangeType;
@@ -74,8 +75,8 @@ int main()
 
   CellType t1 = viennagrid::make_cell(mesh, tets, tets+4);
 
-  viennagrid::mesh_region r0 = mesh.make_region();
-  viennagrid::mesh_region r1 = mesh.make_region();
+  MeshRegionType r0 = mesh.make_region();
+  MeshRegionType r1 = mesh.make_region();
 
 
   viennagrid::add( r0, t0 );

@@ -14,29 +14,32 @@
   #pragma warning( disable : 4503 )     //truncated name decoration
 #endif
 
-#include "viennagrid/forwards.hpp"
-#include "viennagrid/config/default_configs.hpp"
+// #include "viennagrid/forwards.hpp"
+// #include "viennagrid/config/default_configs.hpp"
+// #include "viennagrid/io/netgen_reader.hpp"
+// #include "viennagrid/io/vtk_reader.hpp"
+
+#include "viennagrid/core.hpp"
 #include "viennagrid/io/netgen_reader.hpp"
 #include "viennagrid/io/vtk_reader.hpp"
-
 
 
 using std::string;
 
 
-template<typename MeshT, typename ReaderT>
-bool dump_information(string const & filename)
+template<typename ReaderT, typename MeshT>
+bool dump_information(MeshT & mesh, string const & filename)
 {
   // defining and creating a mesh and a segmentation
-  typedef typename viennagrid::result_of::segmentation<MeshT>::type SegmentationType;
-  MeshT mesh;
-  SegmentationType segmentation(mesh);
+//   typedef typename viennagrid::result_of::segmentation<MeshT>::type SegmentationType;
+//   MeshT mesh;
+//   SegmentationType segmentation(mesh);
 
   // trying to read the file
   try
   {
     ReaderT reader;
-    reader(mesh, segmentation, filename);
+    reader(mesh, filename);
   }
   catch (std::exception & e)
   {
@@ -55,8 +58,13 @@ bool dump_information(string const & filename)
   std::cout << std::endl;
 
   // dump segment information
-  std::cout << "Number of segments: " << segmentation.size() << std::endl;
-  for (typename SegmentationType::iterator it = segmentation.begin(); it != segmentation.end(); ++it)
+  std::cout << "Number of segments: " << mesh.regions_count() << std::endl;
+  typedef typename viennagrid::result_of::const_region_range<MeshT>::type ConstRegionRangeType;
+  typedef typename viennagrid::result_of::iterator<ConstRegionRangeType>::type ConstRegionRangeIterator;
+
+  ConstRegionRangeType regions(mesh);
+//   for (typename SegmentationType::iterator it = segmentation.begin(); it != segmentation.end(); ++it)
+  for (ConstRegionRangeIterator it = regions.begin(); it != regions.end(); ++it)
   {
     std::cout << "  Segment " << std::endl;
     std::cout << "    Segment ID        : " << it->id() << std::endl;
@@ -107,32 +115,37 @@ int main(int argc, char *argv[])
   }
 
   // call the corresponding dump_info method using the correct mesh type and reader class
+  typedef viennagrid::mesh MeshType;
+
   if (type == "tet3d")
   {
-    typedef viennagrid::tetrahedral_3d_mesh MeshType;
+//     typedef viennagrid::tetrahedral_3d_mesh MeshType;
+    MeshType mesh(3, viennagrid::tetrahedron_tag());
 
     if (extension == "mesh")
-      return dump_information<MeshType, viennagrid::io::netgen_reader>(filename);
+      return dump_information<viennagrid::io::netgen_reader>(mesh, filename);
     else if ((extension == "pvd") || (extension == "vtk"))
-      return dump_information<MeshType, viennagrid::io::vtk_reader<MeshType> >(filename);
+      return dump_information<viennagrid::io::vtk_reader<MeshType> >(mesh, filename);
   }
   else if(type == "tri2d")
   {
-    typedef viennagrid::triangular_2d_mesh MeshType;
+//     typedef viennagrid::triangular_2d_mesh MeshType;
+    MeshType mesh(2, viennagrid::triangle_tag());
 
     if (extension == "mesh")
-      return dump_information<MeshType, viennagrid::io::netgen_reader>(filename);
+      return dump_information<viennagrid::io::netgen_reader>(mesh, filename);
     else if ((extension == "pvd") || (extension == "vtk"))
-      return dump_information<MeshType, viennagrid::io::vtk_reader<MeshType> >(filename);
+      return dump_information<viennagrid::io::vtk_reader<MeshType> >(mesh, filename);
   }
   else if(type == "tri3d")
   {
-    typedef viennagrid::triangular_3d_mesh MeshType;
+//     typedef viennagrid::triangular_3d_mesh MeshType;
+    MeshType mesh(3, viennagrid::triangle_tag());
 
     if (extension == "mesh")
-      return dump_information<MeshType, viennagrid::io::netgen_reader>(filename);
+      return dump_information<viennagrid::io::netgen_reader>(mesh, filename);
     else if ((extension == "pvd") || (extension == "vtk"))
-      return dump_information<MeshType, viennagrid::io::vtk_reader<MeshType> >(filename);
+      return dump_information<viennagrid::io::vtk_reader<MeshType> >(mesh, filename);
   }
 
   return EXIT_SUCCESS;

@@ -12,15 +12,16 @@ namespace viennagrid
   template<bool is_const>
   struct unpack_element_functor
   {
-    typedef typename result_of::const_nonconst<mesh_hierarchy, is_const>::type mesh_hierarchy_type;
+    typedef element_tag_t element_tag_type;
+    typedef typename result_of::const_nonconst<mesh_hierarchy_t, is_const>::type mesh_hierarchy_type;
 
-    typedef typename result_of::const_nonconst<element, is_const>::type value_type;
-    typedef typename result_of::const_nonconst<element, true>::type const_value_type;
+    typedef typename result_of::const_nonconst<element_t, is_const>::type value_type;
+    typedef typename result_of::const_nonconst<element_t, true>::type const_value_type;
 
     typedef typename result_of::const_nonconst<value_type *, is_const>::type pointer;
     typedef value_type reference;
 
-    unpack_element_functor(element_tag element_tag_in, mesh_hierarchy_type mesh_hierarchy_in) : element_tag_(element_tag_in), mesh_hierarchy_(mesh_hierarchy_in) {}
+    unpack_element_functor(element_tag_type element_tag_in, mesh_hierarchy_type mesh_hierarchy_in) : element_tag_(element_tag_in), mesh_hierarchy_(mesh_hierarchy_in) {}
 
     template<bool other_is_const>
     unpack_element_functor(unpack_element_functor<other_is_const> const & other) : element_tag_(other.element_tag_), mesh_hierarchy_(other.mesh_hierarchy_) {}
@@ -29,7 +30,7 @@ namespace viennagrid
     value_type operator()(viennagrid_index & it) const { return value_type(element_tag_, mesh_hierarchy_, it); }
     const_value_type operator()(viennagrid_index const & it) const { return const_value_type(element_tag_, mesh_hierarchy_, it); }
 
-    element_tag element_tag_;
+    element_tag_type element_tag_;
     mesh_hierarchy_type mesh_hierarchy_;
   };
 
@@ -56,19 +57,20 @@ namespace viennagrid
   {
   public:
     typedef std::size_t size_type;
+    typedef element_tag_t element_tag_type;
 
-    typedef typename result_of::const_nonconst<mesh_hierarchy, is_const>::type mesh_hierarchy_type;
-    typedef typename result_of::const_nonconst<mesh_hierarchy, true>::type const_mesh_hierarchy_type;
+    typedef typename result_of::const_nonconst<mesh_hierarchy_t, is_const>::type mesh_hierarchy_type;
+    typedef typename result_of::const_nonconst<mesh_hierarchy_t, true>::type const_mesh_hierarchy_type;
 
-    typedef typename result_of::const_nonconst<mesh, is_const>::type mesh_type;
-    typedef typename result_of::const_nonconst<mesh, true>::type const_mesh_type;
+    typedef typename result_of::const_nonconst<mesh_t, is_const>::type mesh_type;
+    typedef typename result_of::const_nonconst<mesh_t, true>::type const_mesh_type;
 
     typedef typename result_of::const_nonconst<viennagrid_index *, is_const>::type index_pointer_type;
     typedef typename result_of::const_nonconst<viennagrid_index *, true>::type const_index_pointer_type;
 
-    typedef typename result_of::const_nonconst<element, is_const>::type element_type;
-    typedef typename result_of::const_nonconst<element, false>::type nonconst_element_type;
-    typedef typename result_of::const_nonconst<element, true>::type const_element_type;
+    typedef typename result_of::const_nonconst<element_t, is_const>::type element_type;
+    typedef typename result_of::const_nonconst<element_t, false>::type nonconst_element_type;
+    typedef typename result_of::const_nonconst<element_t, true>::type const_element_type;
 
 
     base_element_range() : mesh_hierarchy_(0), element_index_begin(0), element_index_end(0) {}
@@ -76,13 +78,13 @@ namespace viennagrid
 
 
     template<bool mesh_is_const>
-    void from_mesh(base_mesh<mesh_is_const> mesh, element_tag element_tag_in);
+    void from_mesh(base_mesh<mesh_is_const> mesh, element_tag_type element_tag_in);
 
     template<bool element_is_const>
-    void boundary_from_element(base_element<element_is_const> element, element_tag element_tag_in);
+    void boundary_from_element(base_element<element_is_const> element, element_tag_type element_tag_in);
 
     template<bool mesh_is_const, bool element_is_const>
-    void coboundary_from_element(base_mesh<mesh_is_const> mesh, base_element<element_is_const> element, element_tag coboundary_tag_in);
+    void coboundary_from_element(base_mesh<mesh_is_const> mesh, base_element<element_is_const> element, element_tag_type coboundary_tag_in);
 
 
     typedef unpack_element_functor<is_const> unpack_functor;
@@ -134,18 +136,18 @@ namespace viennagrid
     size_type size() const { return end()-begin(); }
 
     element_type operator[](size_type pos)
-    { return element_type(tag(), get_mesh_hierarchy(), element_index_begin[pos]); }
+    { return element_type(tag(), mesh_hierarchy(), element_index_begin[pos]); }
     const_element_type operator[](size_type pos) const
-    { return const_element_type(tag(), get_mesh_hierarchy(), element_index_begin[pos]); }
+    { return const_element_type(tag(), mesh_hierarchy(), element_index_begin[pos]); }
 
 
-    mesh_hierarchy_type get_mesh_hierarchy() { return mesh_hierarchy_; }
-    const_mesh_hierarchy_type get_mesh_hierarchy() const { return mesh_hierarchy_; }
+    mesh_hierarchy_type mesh_hierarchy() { return mesh_hierarchy_; }
+    const_mesh_hierarchy_type mesh_hierarchy() const { return mesh_hierarchy_; }
 
-    element_tag tag() const { return element_tag_; }
+    element_tag_type tag() const { return element_tag_; }
 
   protected:
-    element_tag element_tag_;
+    element_tag_type element_tag_;
     mesh_hierarchy_type mesh_hierarchy_;
     index_pointer_type element_index_begin;
     index_pointer_type element_index_end;
@@ -159,43 +161,43 @@ namespace viennagrid
 
   template<typename ViewFunctorT, bool range_is_const>
   template<bool mesh_is_const>
-  void base_element_range<ViewFunctorT, range_is_const>::from_mesh(base_mesh<mesh_is_const> mesh, element_tag element_tag_in)
+  void base_element_range<ViewFunctorT, range_is_const>::from_mesh(base_mesh<mesh_is_const> mesh, element_tag_type element_tag_in)
   {
     element_tag_ = element_tag_in;
-    mesh_hierarchy_ = mesh.get_mesh_hierarchy();
+    mesh_hierarchy_ = mesh.mesh_hierarchy();
 
-    viennagrid_elements_get(mesh.internal_mesh(),
-                            tag().internal_element_tag(),
+    viennagrid_elements_get(mesh.internal(),
+                            tag().internal(),
                             const_cast<viennagrid_index **>(&element_index_begin),
                             const_cast<viennagrid_index **>(&element_index_end));
   }
 
   template<typename ViewFunctorT, bool range_is_const>
   template<bool element_is_const>
-  void base_element_range<ViewFunctorT, range_is_const>::boundary_from_element(base_element<element_is_const> element, element_tag element_tag_in)
+  void base_element_range<ViewFunctorT, range_is_const>::boundary_from_element(base_element<element_is_const> element, element_tag_type element_tag_in)
   {
     element_tag_ = element_tag_in;
-    mesh_hierarchy_ = element.get_mesh_hierarchy();
+    mesh_hierarchy_ = element.mesh_hierarchy();
 
-    viennagrid_element_boundary_elements(get_mesh_hierarchy().internal_mesh_hierarchy(),
-                                         element.tag().internal_element_tag(),
+    viennagrid_element_boundary_elements(mesh_hierarchy().internal(),
+                                         element.tag().internal(),
                                          element.id(),
-                                         tag().internal_element_tag(),
+                                         tag().internal(),
                                          const_cast<viennagrid_index **>(&element_index_begin),
                                          const_cast<viennagrid_index **>(&element_index_end));
   }
 
   template<typename ViewFunctorT, bool range_is_const>
   template<bool mesh_is_const, bool element_is_const>
-  void base_element_range<ViewFunctorT, range_is_const>::coboundary_from_element(base_mesh<mesh_is_const> mesh, base_element<element_is_const> element, element_tag coboundary_tag_in)
+  void base_element_range<ViewFunctorT, range_is_const>::coboundary_from_element(base_mesh<mesh_is_const> mesh, base_element<element_is_const> element, element_tag_type coboundary_tag_in)
   {
     element_tag_ = coboundary_tag_in;
-    mesh_hierarchy_ = element.get_mesh_hierarchy();
+    mesh_hierarchy_ = element.mesh_hierarchy();
 
-    viennagrid_element_coboundary_elements(mesh.internal_mesh(),
-                                           element.tag().internal_element_tag(),
+    viennagrid_element_coboundary_elements(mesh.internal(),
+                                           element.tag().internal(),
                                            element.id(),
-                                           tag().internal_element_tag(),
+                                           tag().internal(),
                                            &element_index_begin,
                                            &element_index_end);
   }
@@ -209,11 +211,13 @@ namespace viennagrid
   class mesh_element_range : public base_element_range<true_functor, is_const>
   {
   public:
+    typedef element_tag_t element_tag_type;
+
     typedef typename base_element_range<true_functor, is_const>::mesh_hierarchy_type mesh_hierarchy_type;
     typedef typename base_element_range<true_functor, is_const>::mesh_type mesh_type;
     typedef typename base_element_range<true_functor, is_const>::element_type element_type;
 
-    mesh_element_range(mesh_type mesh, element_tag element_tag_)
+    mesh_element_range(mesh_type mesh, element_tag_type element_tag_)
     { this->from_mesh(mesh, element_tag_); }
 
   private:
@@ -239,11 +243,13 @@ namespace viennagrid
   class boundary_element_range : public base_element_range<true_functor, is_const>
   {
   public:
+    typedef element_tag_t element_tag_type;
+
     typedef typename base_element_range<true_functor, is_const>::mesh_hierarchy_type mesh_hierarchy_type;
     typedef typename base_element_range<true_functor, is_const>::mesh_type mesh_type;
     typedef typename base_element_range<true_functor, is_const>::element_type element_type;
 
-    boundary_element_range(element_type element, element_tag element_tag_)
+    boundary_element_range(element_type element, element_tag_type element_tag_)
     { this->boundary_from_element(element, element_tag_); }
 
   private:
@@ -270,11 +276,13 @@ namespace viennagrid
   class coboundary_element_range : public base_element_range<true_functor, is_const>
   {
   public:
+    typedef element_tag_t element_tag_type;
+
     typedef typename base_element_range<true_functor, is_const>::mesh_hierarchy_type mesh_hierarchy_type;
     typedef typename base_element_range<true_functor, is_const>::mesh_type mesh_type;
     typedef typename base_element_range<true_functor, is_const>::element_type element_type;
 
-    coboundary_element_range(mesh_type mesh, element_type element, element_tag coboundary_tag_)
+    coboundary_element_range(mesh_type mesh, element_type element, element_tag_type coboundary_tag_)
     { this->coboundary_from_element(mesh, element, coboundary_tag_); }
 
   private:
@@ -300,14 +308,14 @@ namespace viennagrid
 
   struct region_view_functor
   {
-    region_view_functor(const_mesh_region mesh_region_) : mesh_region(mesh_region_) {}
+    region_view_functor(const_mesh_region_t mesh_region_) : mesh_region(mesh_region_) {}
 
-    bool operator()(element e) const
+    bool operator()(element_t e) const
     { return is_in_region(e, mesh_region); }
-    bool operator()(const_element e) const
+    bool operator()(const_element_t e) const
     { return is_in_region(e, mesh_region); }
 
-    const_mesh_region mesh_region;
+    const_mesh_region_t mesh_region;
   };
 
 
@@ -315,13 +323,15 @@ namespace viennagrid
   class mesh_region_element_range : public base_element_range<region_view_functor, is_const>
   {
   public:
+    typedef element_tag_t element_tag_type;
+
     typedef typename base_element_range<region_view_functor, is_const>::mesh_hierarchy_type mesh_hierarchy_type;
     typedef typename base_element_range<region_view_functor, is_const>::mesh_type mesh_type;
     typedef typename base_element_range<region_view_functor, is_const>::element_type element_type;
 
-    typedef typename result_of::const_nonconst<mesh_region, is_const>::type mesh_region_type;
+    typedef typename result_of::const_nonconst<mesh_region_t, is_const>::type mesh_region_type;
 
-    mesh_region_element_range(mesh_region_type region, element_tag element_tag_) : base_element_range<region_view_functor, is_const>( region_view_functor(region) )
+    mesh_region_element_range(mesh_region_type region, element_tag_type element_tag_) : base_element_range<region_view_functor, is_const>( region_view_functor(region) )
     { this->from_mesh(region.get_mesh(), element_tag_); }
 
   private:
@@ -336,7 +346,7 @@ namespace viennagrid
     typedef typename mesh_region_element_range<is_const>::mesh_type mesh_type;
     typedef typename mesh_region_element_range<is_const>::element_type element_type;
 
-    typedef typename result_of::const_nonconst<mesh_region, is_const>::type mesh_region_type;
+    typedef typename result_of::const_nonconst<mesh_region_t, is_const>::type mesh_region_type;
 
     static_mesh_region_element_range(mesh_region_type region) : mesh_region_element_range<is_const>(region, ElementTagT()) {}
 
@@ -348,13 +358,15 @@ namespace viennagrid
   class coboundary_region_element_range : public base_element_range<region_view_functor, is_const>
   {
   public:
+    typedef element_tag_t element_tag_type;
+
     typedef typename base_element_range<region_view_functor, is_const>::mesh_hierarchy_type mesh_hierarchy_type;
     typedef typename base_element_range<region_view_functor, is_const>::mesh_type mesh_type;
     typedef typename base_element_range<region_view_functor, is_const>::element_type element_type;
 
-    typedef typename result_of::const_nonconst<mesh_region, is_const>::type mesh_region_type;
+    typedef typename result_of::const_nonconst<mesh_region_t, is_const>::type mesh_region_type;
 
-    coboundary_region_element_range(mesh_region_type region, element_type element, element_tag coboundary_tag_) : base_element_range<region_view_functor, is_const>( region_view_functor(region) )
+    coboundary_region_element_range(mesh_region_type region, element_type element, element_tag_type coboundary_tag_) : base_element_range<region_view_functor, is_const>( region_view_functor(region) )
     { this->coboundary_from_element(region.get_mesh(), element, coboundary_tag_); }
 
   private:
@@ -370,7 +382,7 @@ namespace viennagrid
     typedef typename coboundary_region_element_range<is_const>::mesh_type mesh_type;
     typedef typename coboundary_region_element_range<is_const>::element_type element_type;
 
-    typedef typename result_of::const_nonconst<mesh_region, is_const>::type mesh_region_type;
+    typedef typename result_of::const_nonconst<mesh_region_t, is_const>::type mesh_region_type;
 
     static_coboundary_region_element_range(mesh_region_type region, element_type element) : coboundary_region_element_range<is_const>(region, element, CoboundaryTagT()) {}
 
@@ -385,26 +397,26 @@ namespace viennagrid
   namespace result_of
   {
     template<>
-    struct element_range<viennagrid::mesh, null_type>
+    struct element_range<mesh_t, null_type>
     {
       typedef mesh_element_range<false> type;
     };
 
     template<typename ElementTagT>
-    struct element_range<viennagrid::mesh, ElementTagT>
+    struct element_range<mesh_t, ElementTagT>
     {
       typedef static_mesh_element_range<ElementTagT, false> type;
     };
 
 
     template<>
-    struct const_element_range<viennagrid::mesh, null_type>
+    struct const_element_range<mesh_t, null_type>
     {
       typedef mesh_element_range<true> type;
     };
 
     template<typename ElementTagT>
-    struct const_element_range<viennagrid::mesh, ElementTagT>
+    struct const_element_range<mesh_t, ElementTagT>
     {
       typedef static_mesh_element_range<ElementTagT, true> type;
     };
@@ -429,27 +441,27 @@ namespace viennagrid
 
 
     template<>
-    struct element_range<viennagrid::element, null_type>
+    struct element_range<element_t, null_type>
     {
       typedef boundary_element_range<false> type;
     };
 
     template<typename ElementTagT>
-    struct element_range<viennagrid::element, ElementTagT>
+    struct element_range<element_t, ElementTagT>
     {
       typedef static_boundary_element_range<ElementTagT, false> type;
     };
 
     template<>
-    struct element_range<viennagrid::const_element, null_type>
+    struct element_range<const_element_t, null_type>
     {
-      typedef typename const_element_range<viennagrid::const_element>::type type;
+      typedef typename const_element_range<const_element_t>::type type;
     };
 
     template<typename ElementTagT>
-    struct element_range<viennagrid::const_element, ElementTagT>
+    struct element_range<const_element_t, ElementTagT>
     {
-      typedef typename const_element_range<viennagrid::const_element, ElementTagT>::type type;
+      typedef typename const_element_range<const_element_t, ElementTagT>::type type;
     };
 
 
@@ -474,27 +486,27 @@ namespace viennagrid
 
 
     template<>
-    struct element_range<mesh_region, null_type>
+    struct element_range<mesh_region_t, null_type>
     {
       typedef mesh_region_element_range<false> type;
     };
 
     template<typename ElementTagT>
-    struct element_range<mesh_region, ElementTagT>
+    struct element_range<mesh_region_t, ElementTagT>
     {
       typedef static_mesh_region_element_range<ElementTagT, false> type;
     };
 
     template<>
-    struct element_range<const_mesh_region, null_type>
+    struct element_range<const_mesh_region_t, null_type>
     {
-      typedef typename const_element_range<mesh_region>::type type;
+      typedef typename const_element_range<mesh_region_t>::type type;
     };
 
     template<typename ElementTagT>
-    struct element_range<const_mesh_region, ElementTagT>
+    struct element_range<const_mesh_region_t, ElementTagT>
     {
-      typedef typename const_element_range<mesh_region, ElementTagT>::type type;
+      typedef typename const_element_range<mesh_region_t, ElementTagT>::type type;
     };
 
 
@@ -504,26 +516,26 @@ namespace viennagrid
 
 
     template<typename ElementTagT>
-    struct coboundary_range<viennagrid::mesh, ElementTagT>
+    struct coboundary_range<mesh_t, ElementTagT>
     {
       typedef static_coboundary_element_range<ElementTagT, false> type;
     };
 
     template<typename ElementTagT>
-    struct const_coboundary_range<viennagrid::mesh, ElementTagT>
+    struct const_coboundary_range<mesh_t, ElementTagT>
     {
       typedef static_coboundary_element_range<ElementTagT, true> type;
     };
 
 
     template<typename ElementTagT>
-    struct coboundary_range<viennagrid::mesh_region, ElementTagT>
+    struct coboundary_range<mesh_region_t, ElementTagT>
     {
       typedef static_coboundary_region_element_range<ElementTagT, false> type;
     };
 
     template<typename ElementTagT>
-    struct const_coboundary_range<viennagrid::mesh_region, ElementTagT>
+    struct const_coboundary_range<mesh_region_t, ElementTagT>
     {
       typedef static_coboundary_region_element_range<ElementTagT, true> type;
     };
@@ -533,7 +545,7 @@ namespace viennagrid
 
 
   template<typename SomethingT>
-  typename viennagrid::result_of::element_range<SomethingT>::type elements(SomethingT something, mesh::element_tag_type element_tag)
+  typename viennagrid::result_of::element_range<SomethingT>::type elements(SomethingT something, typename viennagrid::result_of::element_tag<SomethingT>::type element_tag)
   { return typename viennagrid::result_of::element_range<SomethingT>::type(something, element_tag); }
 
   template<typename ElementTagT, typename SomethingT>

@@ -27,7 +27,7 @@
 
 int main()
 {
-  typedef viennagrid::mesh MeshType;
+  typedef viennagrid::mesh_t MeshType;
   typedef viennagrid::result_of::region<MeshType>::type RegionType;
 
   typedef viennagrid::result_of::cell_tag<MeshType>::type             CellTag;
