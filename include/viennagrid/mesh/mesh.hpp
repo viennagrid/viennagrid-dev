@@ -139,6 +139,21 @@ namespace viennagrid
 
 
 
+  template<typename ElementT>
+  typename result_of::point<ElementT>::type point(ElementT vertex)
+  {
+    return vertex.get_mesh_hierarchy().get_root().point(vertex);
+  }
+
+  template<typename ElementT>
+  typename result_of::const_point<ElementT>::type point(ElementT vertex)
+  {
+    return vertex.get_mesh_hierarchy().get_root().point(vertex);
+  }
+
+
+
+
 
   template<bool element_is_const, bool mesh_is_const>
   bool is_boundary( base_mesh<mesh_is_const> m, base_element<element_is_const> e )
