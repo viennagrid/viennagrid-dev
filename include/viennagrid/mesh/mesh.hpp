@@ -150,7 +150,7 @@ namespace viennagrid
   bool is_boundary( base_mesh<mesh_is_const> m, base_element<element_is_const> e )
   {
     viennagrid_bool result;
-    viennagrid_is_boundary_mesh(m.internal_mesh(), e.tag().internal_element_tag(), e.id(), &result);
+    viennagrid_is_boundary_mesh(m.internal(), e.tag().internal(), e.id(), &result);
     return result == VIENNAGRID_TRUE;
   }
 

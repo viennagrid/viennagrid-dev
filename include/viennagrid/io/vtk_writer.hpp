@@ -21,6 +21,7 @@
 #include "viennagrid/core.hpp"
 #include "viennagrid/io/helper.hpp"
 #include "viennagrid/io/vtk_common.hpp"
+#include "viennagrid/accessor.hpp"
 
 /** @file viennagrid/io/vtk_writer.hpp
     @brief Provides a writer to VTK files

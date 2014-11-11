@@ -51,8 +51,8 @@ bool dump_information(MeshT & mesh, string const & filename)
   // dump mesh information
   std::cout << "Information for Mesh '" << filename << "'" << std::endl;
   std::cout << std::endl;
-  std::cout << "Cell Type           : " << viennagrid::result_of::cell_tag<MeshT>::type::name() << std::endl;
-  std::cout << "Geometric Dimension : " << typename viennagrid::result_of::point<MeshT>::type().size() << std::endl;
+  std::cout << "Cell Type           : " << mesh.cell_tag().name() << std::endl;
+  std::cout << "Geometric Dimension : " << mesh.dimension() << std::endl;
   std::cout << "Number of vertices  : " << viennagrid::vertices(mesh).size() << std::endl;
   std::cout << "Number of cells     : " << viennagrid::cells(mesh).size() << std::endl;
   std::cout << std::endl;
@@ -67,7 +67,7 @@ bool dump_information(MeshT & mesh, string const & filename)
   for (ConstRegionRangeIterator it = regions.begin(); it != regions.end(); ++it)
   {
     std::cout << "  Segment " << std::endl;
-    std::cout << "    Segment ID        : " << it->id() << std::endl;
+    std::cout << "    Segment ID        : " << (*it).id() << std::endl;
     std::cout << "    Number of vertices: " << viennagrid::vertices(*it).size() << std::endl;
     std::cout << "    Number of cells   : " << viennagrid::cells(*it).size() << std::endl;
   }
@@ -115,7 +115,7 @@ int main(int argc, char *argv[])
   }
 
   // call the corresponding dump_info method using the correct mesh type and reader class
-  typedef viennagrid::mesh MeshType;
+  typedef viennagrid::mesh_t MeshType;
 
   if (type == "tet3d")
   {

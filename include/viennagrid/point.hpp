@@ -115,6 +115,7 @@ namespace viennagrid
     {
       data_ = new value_type[size()];
       data_owned_ = true;
+      std::fill(begin(), end(), value_type(0));
     }
 
     void free()

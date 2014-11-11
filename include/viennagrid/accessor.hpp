@@ -16,6 +16,9 @@
 #include <stdexcept>
 #include <assert.h>
 
+#include <vector>
+#include <deque>
+
 #include "viennagrid/forwards.hpp"
 
 /** @file viennagrid/accessor.hpp

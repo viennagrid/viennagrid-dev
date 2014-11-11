@@ -4,7 +4,10 @@ ADD_EXECUTABLE(viennagrid3_playground           viennagrid3_playground.cpp)
 target_link_libraries(viennagrid3_playground    viennagrid)
 
 # add_executable(accessor             accessor.cpp)
-# ADD_EXECUTABLE(algorithms           algorithms.cpp)
+
+ADD_EXECUTABLE(algorithms           algorithms.cpp)
+target_link_libraries(algorithms    viennagrid)
+
 # add_executable(coboundary_iteration coboundary_iteration.cpp)
 
 ADD_EXECUTABLE(mesh_setup           mesh_setup.cpp)
@@ -27,8 +30,8 @@ target_link_libraries(multi_segment viennagrid)
 # add_executable(interface            interface.cpp)
 # add_executable(read_plc             read_plc.cpp)
 
-# add_executable(dump_info            dump_info.cpp)
-# target_link_libraries(dump_info viennagrid)
+add_executable(dump_info            dump_info.cpp)
+target_link_libraries(dump_info viennagrid)
 
 # add_executable(vmesh_creator        vmesh_creator.cpp)
 # add_executable(copy_elements        copy_elements.cpp)

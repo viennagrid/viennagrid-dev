@@ -564,7 +564,7 @@ namespace viennagrid
     * @return                    A cell range
     */
   template<typename SomethingT>
-  typename result_of::cell_range<SomethingT>::type cells(SomethingT & something)
+  typename result_of::cell_range<SomethingT>::type cells(SomethingT something)
   { return typename result_of::cell_range<SomethingT>::type(something); }
 
   /** @brief Function for retrieving a facet range object from a host object
@@ -574,7 +574,7 @@ namespace viennagrid
     * @return                    A facet range
     */
   template<typename ElementT>
-  typename result_of::facet_range<ElementT>::type facets(ElementT & element)
+  typename result_of::facet_range<ElementT>::type facets(ElementT element)
   { return typename result_of::facet_range<ElementT>::type(element); }
 
   /** @brief Function for retrieving a vertex range object from a host object
@@ -584,7 +584,7 @@ namespace viennagrid
     * @return                    A vertex range
     */
   template<typename SomethingT>
-  typename result_of::element_range<SomethingT, vertex_tag>::type vertices(SomethingT & something)
+  typename result_of::element_range<SomethingT, vertex_tag>::type vertices(SomethingT something)
   { return typename result_of::element_range<SomethingT, vertex_tag>::type(something); }
 
   /** @brief Function for retrieving a line range object from a host object (same as edges)
@@ -594,7 +594,7 @@ namespace viennagrid
     * @return                    A line range
     */
   template<typename SomethingT>
-  typename result_of::element_range<SomethingT, line_tag>::type lines(SomethingT & something)
+  typename result_of::element_range<SomethingT, line_tag>::type lines(SomethingT something)
   { return typename result_of::element_range<SomethingT, line_tag>::type(something); }
 
   /** @brief Function for retrieving a edge range object from a host object (same as lines)
@@ -604,7 +604,7 @@ namespace viennagrid
     * @return                    An edge range
     */
   template<typename SomethingT>
-  typename result_of::element_range<SomethingT, edge_tag>::type edges(SomethingT & something)
+  typename result_of::element_range<SomethingT, edge_tag>::type edges(SomethingT something)
   { return typename result_of::element_range<SomethingT, edge_tag>::type(something); }
 
   /** @brief Function for retrieving a triangle range object from a host object
@@ -614,7 +614,7 @@ namespace viennagrid
     * @return                    A triangle range
     */
   template<typename SomethingT>
-  typename result_of::element_range<SomethingT, triangle_tag>::type triangles(SomethingT & something)
+  typename result_of::element_range<SomethingT, triangle_tag>::type triangles(SomethingT something)
   { return typename result_of::element_range<SomethingT, triangle_tag>::type(something); }
 
   /** @brief Function for retrieving a quadrilaterals range object from a host object
@@ -624,7 +624,7 @@ namespace viennagrid
     * @return                    A quadrilateral range
     */
   template<typename SomethingT>
-  typename result_of::element_range<SomethingT, quadrilateral_tag>::type quadrilaterals(SomethingT & something)
+  typename result_of::element_range<SomethingT, quadrilateral_tag>::type quadrilaterals(SomethingT something)
   { return typename result_of::element_range<SomethingT, quadrilateral_tag>::type(something); }
 
   /** @brief Function for retrieving a polygon range object from a host object
@@ -634,7 +634,7 @@ namespace viennagrid
     * @return                    A polygon range
     */
   template<typename SomethingT>
-  typename result_of::element_range<SomethingT, polygon_tag>::type polygons(SomethingT & something)
+  typename result_of::element_range<SomethingT, polygon_tag>::type polygons(SomethingT something)
   { return typename result_of::element_range<SomethingT, polygon_tag>::type(something); }
 
   /** @brief Function for retrieving a PLC range object from a host object
@@ -644,7 +644,7 @@ namespace viennagrid
     * @return                    A PLC range
     */
   template<typename SomethingT>
-  typename result_of::element_range<SomethingT, plc_tag>::type plcs(SomethingT & something)
+  typename result_of::element_range<SomethingT, plc_tag>::type plcs(SomethingT something)
   { return typename result_of::element_range<SomethingT, plc_tag>::type(something); }
 
   /** @brief Function for retrieving a tetrahedron range object from a host object
@@ -654,7 +654,7 @@ namespace viennagrid
     * @return                    A tetrahedron range
     */
   template<typename SomethingT>
-  typename result_of::element_range<SomethingT, tetrahedron_tag>::type tetrahedra(SomethingT & something)
+  typename result_of::element_range<SomethingT, tetrahedron_tag>::type tetrahedra(SomethingT something)
   { return typename result_of::element_range<SomethingT, tetrahedron_tag>::type(something); }
 
   /** @brief Function for retrieving a hexahedron range object from a host object
@@ -664,7 +664,7 @@ namespace viennagrid
     * @return                    A hexahedron range
     */
   template<typename SomethingT>
-  typename result_of::element_range<SomethingT, hexahedron_tag>::type hexahedra(SomethingT & something)
+  typename result_of::element_range<SomethingT, hexahedron_tag>::type hexahedra(SomethingT something)
   { return typename result_of::element_range<SomethingT, hexahedron_tag>::type(something); }
 
 

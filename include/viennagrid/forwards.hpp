@@ -420,30 +420,34 @@ namespace viennagrid
     template<>
     struct region_range<mesh_hierarchy_t>
     {
-      typedef viennagrid::region_range_t type;
+      typedef region_range_t type;
     };
 
     template<>
     struct region_range<mesh_t>
     {
-      typedef viennagrid::mesh_region_range_t type;
+      typedef mesh_region_range_t type;
     };
+
+
 
 
     template<typename SomethingT>
     struct const_region_range;
 
     template<bool is_const>
-    struct region_range< base_mesh_hierarchy<is_const> >
+    struct const_region_range< base_mesh_hierarchy<is_const> >
     {
-      typedef viennagrid::const_region_range_t type;
+      typedef base_region_range<is_const> type;
     };
 
     template<bool is_const>
-    struct region_range< base_mesh<is_const> >
+    struct const_region_range< base_mesh<is_const> >
     {
-      typedef viennagrid::const_mesh_region_range_t type;
+      typedef base_mesh_region_range<is_const> type;
     };
+
+
 
 
 
