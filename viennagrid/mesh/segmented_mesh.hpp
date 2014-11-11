@@ -58,7 +58,7 @@ namespace viennagrid
 
     SelfType & operator=(SelfType const & other)
     {
-      copy( other.mesh, other.segmentation, mesh, segmentation, true_functor() );
+      copy( other.mesh, other.segmentation, mesh, segmentation );
       return *this;
     }
 
