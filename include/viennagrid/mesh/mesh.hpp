@@ -34,8 +34,9 @@ namespace viennagrid
     typedef typename result_of::const_nonconst<mesh_region_t, true>::type const_region_type;
     typedef typename mesh_hierarchy_type::region_id_type region_id_type;
 
-    typedef typename result_of::const_nonconst<point_t, is_const>::type point_type;
-    typedef typename result_of::const_nonconst<point_t, true>::type const_point_type;
+//     typedef typename result_of::const_nonconst<point_t, is_const>::type point_type;
+//     typedef typename result_of::const_nonconst<point_t, true>::type const_point_type;
+    typedef point_t point_type;
 
     typedef typename result_of::const_nonconst<element_t, is_const>::type element_type;
     typedef typename result_of::const_nonconst<element_t, true>::type const_element_type;
@@ -78,8 +79,9 @@ namespace viennagrid
     element_tag_type cell_tag() const { return mesh_hierarchy().cell_tag(); }
     element_tag_type facet_tag() const { return mesh_hierarchy().facet_tag(); }
 
-    point_type point(element_type vertex);
-    const_point_type point(const_element_type vertex) const;
+    template<bool element_is_const>
+    point_type get_point(base_element<element_is_const> const & vertex) const;
+    void set_point(element_type vertex, point_type const & point);
 
     mesh_hierarchy_type mesh_hierarchy()
     {
@@ -127,21 +129,28 @@ namespace viennagrid
 
 
 
-  template<typename ElementT>
-  typename result_of::point<ElementT>::type point(mesh_t & m, ElementT vertex)
-  {
-    return m.point(vertex);
-  }
+  template<bool mesh_is_const, bool element_is_const>
+  typename result_of::point< base_element<element_is_const> >::type get_point(base_mesh<mesh_is_const> m, base_element<element_is_const> vertex)
+  { return m.get_point(vertex); }
 
-  template<typename ElementT>
-  typename result_of::const_point<ElementT>::type point(mesh_t const & m, ElementT vertex)
-  {
-    return m.point(vertex);
-  }
+//   template<bool mesh_is_const, bool element_is_const>
+//   typename result_of::const_point<ElementT>::type get_point(base_mesh<mesh_is_const> const & m, base_element<element_is_const> vertex)
+//   { return m.get_point(vertex); }
 
 
-  inline result_of::point<element_t>::type point(element_t vertex);
-  inline result_of::point<const_element_t>::type point(const_element_t vertex);
+  inline void set_point(base_mesh<false> m,
+                        base_element<false> const & vertex,
+                        result_of::point< base_mesh<false> >::type const & point);
+
+//   template<bool mesh_is_const, typename ElementT>
+//   typename result_of::const_point<ElementT>::type set_point(base_mesh<mesh_is_const> const & m, ElementT vertex)
+//   { return m.get_point(vertex); }
+
+
+  template<bool element_is_const>
+  typename result_of::point< base_element<element_is_const> >::type get_point(base_element<element_is_const> const & vertex);
+  inline void set_point(element_t vertex, result_of::point<element_t>::type const & point);
+//   inline result_of::point<const_element_t>::type get_point(const_element_t vertex);
 
 
 

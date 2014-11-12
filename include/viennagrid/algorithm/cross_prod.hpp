@@ -115,8 +115,7 @@ namespace viennagrid
    * @param v2    The second vector given in another coordinate system
    */
   template<typename PointT1, typename PointT2>
-  PointT1
-  cross_prod(PointT1 const& v1, PointT2 const& v2)
+  PointT1 cross_prod(PointT1 const& v1, PointT2 const& v2)
   {
     return detail::cross_prod_impl(v1, v2);
   }

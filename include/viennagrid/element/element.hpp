@@ -36,7 +36,8 @@ namespace viennagrid
     const_mesh_hierarchy_type mesh_hierarchy() const { return mesh_hierarchy_; }
 
     tag_type tag() const { return element_tag_; }
-    tag_type unpacked_tag() const { return mesh_hierarchy().unpack_element_tag(tag()); }
+    tag_type unpack_element_tag(tag_type et) { return mesh_hierarchy().unpack_element_tag(et); }
+//     tag_type unpacked_tag() const { return mesh_hierarchy().unpack_element_tag(tag()); }
 
   private:
     mesh_hierarchy_type mesh_hierarchy_;
@@ -58,7 +59,7 @@ namespace viennagrid
 
     if (element.tag() == viennagrid::vertex_tag())
     {
-      std::cout << viennagrid::point(element);
+      std::cout << viennagrid::get_point(element);
     }
     else
     {

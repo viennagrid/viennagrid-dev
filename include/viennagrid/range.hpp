@@ -163,7 +163,7 @@ namespace viennagrid
   template<bool mesh_is_const>
   void base_element_range<ViewFunctorT, range_is_const>::from_mesh(base_mesh<mesh_is_const> mesh, element_tag_type element_tag_in)
   {
-    element_tag_ = element_tag_in;
+    element_tag_ = mesh.unpack_element_tag(element_tag_in);
     mesh_hierarchy_ = mesh.mesh_hierarchy();
 
     viennagrid_elements_get(mesh.internal(),
@@ -176,7 +176,7 @@ namespace viennagrid
   template<bool element_is_const>
   void base_element_range<ViewFunctorT, range_is_const>::boundary_from_element(base_element<element_is_const> element, element_tag_type element_tag_in)
   {
-    element_tag_ = element_tag_in;
+    element_tag_ = element.unpack_element_tag(element_tag_in);
     mesh_hierarchy_ = element.mesh_hierarchy();
 
     viennagrid_element_boundary_elements(mesh_hierarchy().internal(),
@@ -191,7 +191,7 @@ namespace viennagrid
   template<bool mesh_is_const, bool element_is_const>
   void base_element_range<ViewFunctorT, range_is_const>::coboundary_from_element(base_mesh<mesh_is_const> mesh, base_element<element_is_const> element, element_tag_type coboundary_tag_in)
   {
-    element_tag_ = coboundary_tag_in;
+    element_tag_ = mesh.unpack_element_tag(coboundary_tag_in);
     mesh_hierarchy_ = element.mesh_hierarchy();
 
     viennagrid_element_coboundary_elements(mesh.internal(),

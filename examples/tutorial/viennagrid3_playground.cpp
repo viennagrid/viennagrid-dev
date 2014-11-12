@@ -96,7 +96,7 @@ int main()
     std::cout << "Vertex count = " << vertex_range.size() << std::endl;
 
     for (VertexOnTriangleRangeType::iterator vit = vertex_range.begin(); vit != vertex_range.end(); ++vit)
-      std::cout << (*vit).id() << "  " << viennagrid::point(mesh, *vit) << std::endl;
+      std::cout << (*vit).id() << "  " << viennagrid::get_point(mesh, *vit) << std::endl;
   }
 
 
@@ -113,7 +113,7 @@ int main()
         VertexOnLineRangeType vtx_on_lines(*lit);
 
         for (VertexOnLineRangeType::iterator it = vtx_on_lines.begin(); it != vtx_on_lines.end(); ++it)
-          std::cout << "    " << (*it).id() << " " << viennagrid::point(mesh, *it) << std::endl;
+          std::cout << "    " << (*it).id() << " " << viennagrid::get_point(mesh, *it) << std::endl;
       }
     }
   }

@@ -308,7 +308,7 @@ namespace viennagrid
   typename viennagrid::result_of::coord<PointT1>::type
   signed_spanned_volume(PointT1 const & p1, PointT2 const & p2, PointT3 const & p3)
   {
-    return signed_spanned_volume_impl(p1, p2, p3);
+    return detail::signed_spanned_volume_impl(p1, p2, p3);
 
   }
 
@@ -321,7 +321,7 @@ namespace viennagrid
                   PointT3 const & p3,
                   PointT4 const & p4)
   {
-    return signed_spanned_volume_impl(p1, p2, p3, p4);
+    return detail::signed_spanned_volume_impl(p1, p2, p3, p4);
   }
 
 

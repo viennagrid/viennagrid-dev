@@ -3,7 +3,8 @@
 ADD_EXECUTABLE(viennagrid3_playground           viennagrid3_playground.cpp)
 target_link_libraries(viennagrid3_playground    viennagrid)
 
-# add_executable(accessor             accessor.cpp)
+add_executable(accessor             accessor.cpp)
+target_link_libraries(accessor      viennagrid)
 
 ADD_EXECUTABLE(algorithms           algorithms.cpp)
 target_link_libraries(algorithms    viennagrid)

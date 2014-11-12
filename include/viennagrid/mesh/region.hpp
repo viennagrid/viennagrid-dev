@@ -324,16 +324,19 @@ namespace viennagrid
 
 
 
-  template<typename ElementT>
-  typename result_of::point<ElementT>::type point(mesh_region_t r, ElementT vertex)
+  template<bool mesh_region_is_const, bool element_is_const>
+  typename result_of::point< base_mesh_region<mesh_region_is_const> >::type
+            get_point(base_mesh_region<mesh_region_is_const> const & region,
+                      base_element<element_is_const> const & vertex)
   {
-    return r.get_mesh().point(vertex);
+    return get_point(region.get_mesh(), vertex);
   }
 
-  template<typename ElementT>
-  typename result_of::const_point<ElementT>::type point(const_mesh_region_t r, ElementT vertex)
+  inline void set_point(base_mesh_region<false> region,
+                        base_element<false> vertex,
+                        result_of::point< base_mesh_region<false> >::type const & point)
   {
-    return r.get_mesh().point(vertex);
+    return set_point(region.get_mesh(), vertex, point);
   }
 
 

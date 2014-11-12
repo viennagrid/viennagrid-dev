@@ -1,6 +1,8 @@
 
 # tests with CPU backend
 foreach(PROG
+        surface
+
 #             angle boundary coboundary
 #             distance_1d distance_2d distance_3d distance_boundary
 #             hypercube interface io mesh point named_segment
@@ -12,6 +14,7 @@ foreach(PROG
 #             typelist typemap
             )
   add_executable(${PROG}-test src/${PROG}.cpp)
+  target_link_libraries(${PROG}-test    viennagrid)
   add_test(${PROG} ${PROG}-test)
 endforeach(PROG)
 

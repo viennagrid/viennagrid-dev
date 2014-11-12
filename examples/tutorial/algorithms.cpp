@@ -34,16 +34,16 @@
 #include "viennagrid/algorithm/distance.hpp"
 
 //Mesh-based algorithms:
-#include "viennagrid/algorithm/boundary.hpp"
-#include "viennagrid/algorithm/refine.hpp"
-#include "viennagrid/algorithm/voronoi.hpp"
+// #include "viennagrid/algorithm/boundary.hpp"
+// #include "viennagrid/algorithm/refine.hpp"
+// #include "viennagrid/algorithm/voronoi.hpp"
 
 
 
 int main()
 {
-  typedef viennagrid::tetrahedral_3d_mesh                         MeshType;
-  typedef viennagrid::result_of::segmentation<MeshType>::type     SegmentationType;
+  typedef viennagrid::mesh_t MeshType;
+//   typedef viennagrid::result_of::segmentation<MeshType>::type     SegmentationType;
 
   typedef viennagrid::result_of::point<MeshType>::type            PointType;
 
@@ -59,8 +59,9 @@ int main()
   std::cout << "------------------------------------------------------------ " << std::endl;
   std::cout << std::endl;
 
-  MeshType mesh;
-  SegmentationType segmentation(mesh);
+//   MeshType mesh;
+//   SegmentationType segmentation(mesh);
+  MeshType mesh(3, viennagrid::tetrahedron_tag());
 
   //
   // Read mesh from Netgen file
@@ -68,7 +69,7 @@ int main()
   try
   {
     viennagrid::io::netgen_reader reader;
-    reader(mesh, segmentation, "../../examples/data/cube48.mesh");
+    reader(mesh, "../../examples/data/cube48.mesh");
   }
   catch (std::exception & e)
   {
@@ -84,10 +85,10 @@ int main()
   // Extract the first four points of the mesh:
   VertexRange vertices(mesh);
 
-  PointType const & p0 = viennagrid::point(mesh, vertices[0]);
-  PointType const & p1 = viennagrid::point(mesh, vertices[1]);
-  PointType const & p2 = viennagrid::point(mesh, vertices[2]);
-  PointType const & p3 = viennagrid::point(mesh, vertices[3]);
+  PointType p0 = viennagrid::get_point(mesh, vertices[0]);
+  PointType p1 = viennagrid::get_point(mesh, vertices[1]);
+  PointType p2 = viennagrid::get_point(mesh, vertices[2]);
+  PointType p3 = viennagrid::get_point(mesh, vertices[3]);
 
   std::cout << "Point p0: " << p0 << std::endl;
   std::cout << "Point p1: " << p1 << std::endl;
@@ -133,72 +134,72 @@ int main()
   //
 
 
-  // Write Voronoi info to default ViennaData keys:
-  typedef viennagrid::result_of::const_cell_handle<MeshType>::type    ConstCellHandleType;
-
-  // Defining container for storing voronoi information
-  std::deque<double> interface_areas;
-  std::deque< viennagrid::result_of::voronoi_cell_contribution<ConstCellHandleType>::type > interface_contributions;
-
-  std::deque<double> vertex_box_volumes;
-  std::deque< viennagrid::result_of::voronoi_cell_contribution<ConstCellHandleType>::type > vertex_box_volume_contributions;
-
-  std::deque<double> edge_box_volumes;
-  std::deque< viennagrid::result_of::voronoi_cell_contribution<ConstCellHandleType>::type > edge_box_volume_contributions;
-
-  viennagrid::apply_voronoi<CellType>(
-          mesh,
-          viennagrid::make_field<EdgeType>(interface_areas),
-          viennagrid::make_field<EdgeType>(interface_contributions),
-          viennagrid::make_field<VertexType>(vertex_box_volumes),
-          viennagrid::make_field<VertexType>(vertex_box_volume_contributions),
-          viennagrid::make_field<EdgeType>(edge_box_volumes),
-          viennagrid::make_field<EdgeType>(edge_box_volume_contributions)
-  );
-
-  // Write Voronoi info again, this time using custom keys
-  std::cout << "Voronoi box volume at first vertex: "
-            << viennagrid::make_field<VertexType>(vertex_box_volumes)( vertices[0] )
-            << std::endl;
-
-
+//   // Write Voronoi info to default ViennaData keys:
+//   typedef viennagrid::result_of::const_cell<MeshType>::type    ConstCellType;
+//
+//   // Defining container for storing voronoi information
+//   std::deque<double> interface_areas;
+//   std::deque< viennagrid::result_of::voronoi_cell_contribution<ConstCellType>::type > interface_contributions;
+//
+//   std::deque<double> vertex_box_volumes;
+//   std::deque< viennagrid::result_of::voronoi_cell_contribution<ConstCellType>::type > vertex_box_volume_contributions;
+//
+//   std::deque<double> edge_box_volumes;
+//   std::deque< viennagrid::result_of::voronoi_cell_contribution<ConstCellType>::type > edge_box_volume_contributions;
+//
+//   viennagrid::apply_voronoi<CellType>(
+//           mesh,
+//           viennagrid::make_field<EdgeType>(interface_areas),
+//           viennagrid::make_field<EdgeType>(interface_contributions),
+//           viennagrid::make_field<VertexType>(vertex_box_volumes),
+//           viennagrid::make_field<VertexType>(vertex_box_volume_contributions),
+//           viennagrid::make_field<EdgeType>(edge_box_volumes),
+//           viennagrid::make_field<EdgeType>(edge_box_volume_contributions)
+//   );
+//
+//   // Write Voronoi info again, this time using custom keys
+//   std::cout << "Voronoi box volume at first vertex: "
+//             << viennagrid::make_field<VertexType>(vertex_box_volumes)( vertices[0] )
+//             << std::endl;
 
 
 
-  //
-  // Refine mesh uniformly:
-  MeshType uniformly_refined_mesh;
-  viennagrid::cell_refine_uniformly(mesh, uniformly_refined_mesh);
-
-  {
-    viennagrid::io::vtk_writer<MeshType> writer;
-    writer(uniformly_refined_mesh, "uniform_refinement");
-  }
 
 
+//   //
+//   // Refine mesh uniformly:
+//   MeshType uniformly_refined_mesh;
+//   viennagrid::cell_refine_uniformly(mesh, uniformly_refined_mesh);
+//
+//   {
+//     viennagrid::io::vtk_writer<MeshType> writer;
+//     writer(uniformly_refined_mesh, "uniform_refinement");
+//   }
 
-  //
-  // Refine only specific cells:
-  MeshType adaptively_refined_mesh;
 
-  // Define a container which stores the flags, in this case we want an std::map as underlying container
-  typedef viennagrid::result_of::accessor_container< CellType, bool, viennagrid::std_map_tag >::type CellRefinementContainerType;
-  CellRefinementContainerType cell_refinement_flag;
 
-  // define an field on this container for easy access with elements
-  viennagrid::result_of::field< CellRefinementContainerType, CellType >::type cell_refinement_field(cell_refinement_flag);
-
-  cell_refinement_field( viennagrid::cells(mesh)[0] ) = true;
-  cell_refinement_field( viennagrid::cells(mesh)[3] ) = true;
-  cell_refinement_field( viennagrid::cells(mesh)[8] ) = true;
-
-  // refining the mesh using the field representing the marked cells
-  viennagrid::cell_refine(mesh, adaptively_refined_mesh, cell_refinement_field);
-
-  {
-    viennagrid::io::vtk_writer<MeshType> writer;
-    writer(adaptively_refined_mesh, "adaptively_refinement");
-  }
+//   //
+//   // Refine only specific cells:
+//   MeshType adaptively_refined_mesh;
+//
+//   // Define a container which stores the flags, in this case we want an std::map as underlying container
+//   typedef viennagrid::result_of::accessor_container< CellType, bool, viennagrid::std_map_tag >::type CellRefinementContainerType;
+//   CellRefinementContainerType cell_refinement_flag;
+//
+//   // define an field on this container for easy access with elements
+//   viennagrid::result_of::field< CellRefinementContainerType, CellType >::type cell_refinement_field(cell_refinement_flag);
+//
+//   cell_refinement_field( viennagrid::cells(mesh)[0] ) = true;
+//   cell_refinement_field( viennagrid::cells(mesh)[3] ) = true;
+//   cell_refinement_field( viennagrid::cells(mesh)[8] ) = true;
+//
+//   // refining the mesh using the field representing the marked cells
+//   viennagrid::cell_refine(mesh, adaptively_refined_mesh, cell_refinement_field);
+//
+//   {
+//     viennagrid::io::vtk_writer<MeshType> writer;
+//     writer(adaptively_refined_mesh, "adaptively_refinement");
+//   }
 
 
 
@@ -206,7 +207,7 @@ int main()
   // Get boundary information of first vertex with respect to the full mesh:
 
   for (VertexRange::iterator it = vertices.begin(); it != vertices.end(); ++it)
-    std::cout << *it << " " << viennagrid::point(mesh, *it) << " "
+    std::cout << *it << " " << viennagrid::get_point(mesh, *it) << " "
         << viennagrid::is_boundary(mesh, *it)    //second argument is the enclosing complex (either a mesh or a segment)
         << std::endl << std::endl;
 

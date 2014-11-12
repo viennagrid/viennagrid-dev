@@ -14,8 +14,8 @@
   #pragma warning( disable : 4503 )     //truncated name decoration
 #endif
 
-#include "viennagrid/forwards.hpp"
-#include "viennagrid/config/default_configs.hpp"
+#include "viennagrid/core.hpp"
+// #include "viennagrid/config/default_configs.hpp"
 #include "viennagrid/io/netgen_reader.hpp"
 #include "viennagrid/io/vtk_writer.hpp"
 #include "viennagrid/accessor.hpp"
@@ -26,8 +26,8 @@
 
 int main()
 {
-  typedef viennagrid::tetrahedral_3d_mesh                         MeshType;
-  typedef viennagrid::result_of::segmentation<MeshType>::type     SegmentationType;
+  typedef viennagrid::mesh_t                                      MeshType;
+//   typedef viennagrid::result_of::segmentation<MeshType>::type     SegmentationType;
 
   typedef viennagrid::result_of::point<MeshType>::type            PointType;
 
@@ -39,8 +39,9 @@ int main()
   std::cout << "------------------------------------------------------------ " << std::endl;
   std::cout << std::endl;
 
-  MeshType mesh;
-  SegmentationType segmentation(mesh);
+//   MeshType mesh;
+//   SegmentationType segmentation(mesh);
+  MeshType mesh(3, viennagrid::tetrahedron_tag());
 
   //
   // Read mesh from Netgen file
@@ -48,7 +49,7 @@ int main()
   try
   {
     viennagrid::io::netgen_reader reader;
-    reader(mesh, segmentation, "../../examples/data/cube48.mesh");
+    reader(mesh, "../../examples/data/cube48.mesh");
   }
   catch (std::exception & e)
   {
@@ -115,8 +116,8 @@ int main()
   //
   // Accessing points are also possible using accessor
   //
-  viennagrid::result_of::default_point_accessor<MeshType>::type default_point_accessor;
-  std::cout << default_point_accessor( viennagrid::vertices(mesh)[0] ) << std::endl;
+  viennagrid::result_of::point_accessor<MeshType>::type mesh_point_accessor = viennagrid::point_accessor(mesh);
+  std::cout << mesh_point_accessor( viennagrid::vertices(mesh)[0] ) << std::endl;
 
 
 
@@ -139,13 +140,16 @@ int main()
   // Iterating over all vertices
   VertexRangeType vertices(mesh);// = viennagrid::elements(mesh);
   for (VertexRangeIterator vit = vertices.begin(); vit != vertices.end(); ++vit)
-    point_accessor(*vit) = default_point_accessor(*vit) + PointType(10, 10, 10); // shit point
+  {
+    point_accessor(*vit).resize(3);
+    point_accessor(*vit) = mesh_point_accessor(*vit) + viennagrid::make_point(10, 10, 10); // shit point
+  }
 
   // Centroid of the mesh using the defaul accessor
-  std::cout << viennagrid::centroid(mesh, default_point_accessor) << std::endl;
+  std::cout << viennagrid::centroid(mesh_point_accessor, mesh) << std::endl;
 
   // Centroid of the mesh using our shifted points
-  std::cout << viennagrid::centroid(mesh, point_accessor) << std::endl;
+  std::cout << viennagrid::centroid(point_accessor, mesh) << std::endl;
 
 
 

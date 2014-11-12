@@ -61,7 +61,7 @@ namespace viennagrid
       typename viennagrid::result_of::coord<PointT>::type operator()(PointT const& p)
       {
         typename viennagrid::result_of::coord<PointT>::type result(0);
-        for(std::size_t i = 0; i < dynamic_size(p); i++)
+        for(std::size_t i = 0; i < p.size(); i++)
           result += std::abs(p[i]);
         return result;
       }
@@ -75,7 +75,7 @@ namespace viennagrid
       typename viennagrid::result_of::coord<PointT>::type operator()(PointT const& p)
       {
         typename viennagrid::result_of::coord<PointT>::type result(0);
-        for(std::size_t i = 0; i < dynamic_size(p); i++)
+        for(std::size_t i = 0; i < p.size(); i++)
           result += p[i]*p[i];
         return std::sqrt(result);
       }
@@ -89,7 +89,7 @@ namespace viennagrid
       typename viennagrid::result_of::coord<PointT>::type operator()(PointT const& p)
       {
         typename viennagrid::result_of::coord<PointT>::type result(0);
-        for(std::size_t i = 0; i < dynamic_size(p); i++)
+        for(std::size_t i = 0; i < p.size(); i++)
         {
           if(std::abs(p[i]) > result)
               result = std::abs(p[i]);
@@ -129,7 +129,7 @@ namespace viennagrid
   typename viennagrid::result_of::coord<PointT>::type
   norm(PointT const & p, Tag)
   {
-    return detail::norm_impl<Tag>(p);
+    return detail::norm_impl<Tag>()(p);
   }
 
   /** @brief Returns the 2-norm of a point. Result is such as if the point were transformed to Cartesian coordinates first */
@@ -137,7 +137,7 @@ namespace viennagrid
   typename viennagrid::result_of::coord<PointT>::type
   norm(PointT const & p)
   {
-    return detail::norm_impl<viennagrid::two_norm_tag>(p);
+    return detail::norm_impl<viennagrid::two_norm_tag>()(p);
   }
 
 
@@ -147,7 +147,7 @@ namespace viennagrid
   typename viennagrid::result_of::coord<PointT>::type
   norm_1(PointT const & p)
   {
-    return detail::norm_impl<viennagrid::one_norm_tag>(p);
+    return detail::norm_impl<viennagrid::one_norm_tag>()(p);
   }
 
   /** @brief Convenience shortcut for the 2-norm of a vector. */
@@ -155,7 +155,7 @@ namespace viennagrid
   typename viennagrid::result_of::coord<PointT>::type
   norm_2(PointT const & p)
   {
-    return detail::norm_impl<viennagrid::two_norm_tag>(p);
+    return detail::norm_impl<viennagrid::two_norm_tag>()(p);
   }
 
   /** @brief Convenience shortcut for the inf-norm of a vector. */
@@ -163,7 +163,7 @@ namespace viennagrid
   typename viennagrid::result_of::coord<PointT>::type
   norm_inf(PointT const & p)
   {
-    return detail::norm_impl<viennagrid::inf_norm_tag>(p);
+    return detail::norm_impl<viennagrid::inf_norm_tag>()(p);
   }
 
 }

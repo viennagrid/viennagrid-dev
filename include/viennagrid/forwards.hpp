@@ -9,11 +9,21 @@ namespace viennagrid
   struct true_functor;
 
 
-  template<bool is_const = false>
-  class base_point;
 
-  typedef base_point<false> point_t;
-  typedef base_point<true> const_point_t;
+  template<int d>
+  struct dimension_tag
+  {
+    static const int value = d;
+  };
+
+
+//   template<bool is_const = false>
+//   class base_point;
+
+//   typedef base_point<false> point_t;
+//   typedef base_point<true> const_point_t;
+
+  class point_t;
 
 
   template<bool is_const = false>
@@ -127,6 +137,17 @@ namespace viennagrid
     static element_tag_t tetrahedron() { return element_tag_t(VIENNAGRID_ELEMENT_TAG_TETRAHEDRON); }
     static element_tag_t hexahedron() { return element_tag_t(VIENNAGRID_ELEMENT_TAG_HEXAHEDRON); }
 
+    bool is_vertex() const { return *this == vertex(); }
+    bool is_line() const { return *this == line(); }
+    bool is_edge() const { return *this == edge(); }
+    bool is_triangle() const { return *this == triangle(); }
+    bool is_quadrilateral() const { return *this == quadrilateral(); }
+    bool is_polygon() const { return *this == polygon(); }
+    bool is_plc() const { return *this == plc(); }
+    bool is_tetrahedron() const { return *this == tetrahedron(); }
+    bool is_hexahedron() const { return *this == hexahedron(); }
+
+
     static element_tag_t cell() { return element_tag_t(VIENNAGRID_ELEMENT_TAG_CELL); }
     static element_tag_t facet() { return element_tag_t(VIENNAGRID_ELEMENT_TAG_FACET); }
 
@@ -227,11 +248,11 @@ namespace viennagrid
       typedef SomethingT const & type;
     };
 
-    template<bool is_const>
-    struct const_type< base_point<is_const> >
-    {
-      typedef base_point<true> type;
-    };
+//     template<bool is_const>
+//     struct const_type< base_point<is_const> >
+//     {
+//       typedef base_point<true> type;
+//     };
 
     template<bool is_const>
     struct const_type< base_region<is_const> >
@@ -303,11 +324,11 @@ namespace viennagrid
       typedef SomethingT & type;
     };
 
-    template<bool is_const>
-    struct nonconst_type< base_point<is_const> >
-    {
-      typedef base_point<false> type;
-    };
+//     template<bool is_const>
+//     struct nonconst_type< base_point<is_const> >
+//     {
+//       typedef base_point<false> type;
+//     };
 
     template<bool is_const>
     struct nonconst_type< base_region<is_const> >
@@ -370,9 +391,15 @@ namespace viennagrid
 
 
     template<typename SomethingT>
-    class element_tag
+    struct element_tag
     {
       typedef element_tag_t type;
+    };
+
+    template<viennagrid_element_tag et>
+    struct element_tag< static_tag_t<et> >
+    {
+      typedef static_tag_t<et> type;
     };
 
 
@@ -560,7 +587,7 @@ namespace viennagrid
     template<bool is_const>
     struct point< base_mesh_hierarchy<is_const> >
     {
-      typedef base_point<is_const> type;
+      typedef point_t type;
     };
 
 
