@@ -9,14 +9,20 @@ target_link_libraries(accessor      viennagrid)
 ADD_EXECUTABLE(algorithms           algorithms.cpp)
 target_link_libraries(algorithms    viennagrid)
 
-# add_executable(coboundary_iteration coboundary_iteration.cpp)
+add_executable(coboundary_iteration coboundary_iteration.cpp)
+target_link_libraries(coboundary_iteration    viennagrid)
 
 ADD_EXECUTABLE(mesh_setup           mesh_setup.cpp)
 target_link_libraries(mesh_setup    viennagrid)
 
 # add_executable(element_erase        element_erase.cpp)
+# target_link_libraries(element_erase    viennagrid)
+
 # ADD_EXECUTABLE(finite_volumes       finite_volumes.cpp)
-# ADD_EXECUTABLE(io                   io.cpp)
+# target_link_libraries(finite_volumes    viennagrid)
+
+ADD_EXECUTABLE(io                   io.cpp)
+target_link_libraries(io     viennagrid)
 
 ADD_EXECUTABLE(iterators            iterators.cpp)
 target_link_libraries(iterators     viennagrid)
@@ -25,17 +31,30 @@ ADD_EXECUTABLE(multi_segment        multi_segment.cpp)
 target_link_libraries(multi_segment viennagrid)
 
 # add_executable(neighbor_iteration   neighbor_iteration.cpp)
-# add_executable(named_segments       named_segments.cpp)
-# add_executable(polygon              polygon.cpp)
-# add_executable(segments             segments.cpp)
-# add_executable(interface            interface.cpp)
-# add_executable(read_plc             read_plc.cpp)
+
+add_executable(named_segments       named_segments.cpp)
+target_link_libraries(named_segments viennagrid)
+
+add_executable(polygon              polygon.cpp)
+target_link_libraries(polygon viennagrid)
+
+add_executable(segments             segments.cpp)
+target_link_libraries(segments viennagrid)
+
+add_executable(interface            interface.cpp)
+target_link_libraries(interface viennagrid)
+
+add_executable(read_plc             read_plc.cpp)
+target_link_libraries(read_plc viennagrid)
 
 add_executable(dump_info            dump_info.cpp)
 target_link_libraries(dump_info viennagrid)
 
 # add_executable(vmesh_creator        vmesh_creator.cpp)
-# add_executable(copy_elements        copy_elements.cpp)
+
+add_executable(copy_elements        copy_elements.cpp)
+target_link_libraries(copy_elements viennagrid)
+
 # add_executable(thin_mesh            thin_mesh.cpp)
 # add_executable(convert_to_mphtxt    convert_to_mphtxt.cpp)
 
@@ -55,7 +74,7 @@ target_link_libraries(dump_info viennagrid)
 #add_executable(mesh_test_4                old/mesh_test_4.cpp)
 #add_executable(mesh_test_5                old/mesh_test_5.cpp)
 #add_executable(trigate_read_test            old/trigate_read_test.cpp)
-#add_executable(plc_test                     old/plc_test.cpp)
+
 #add_executable(plc_reader_test              old/plc_reader_test.cpp)
 #add_executable(handle_test                  old/handle_test.cpp)
 #if (ENABLE_VIENNADATA)

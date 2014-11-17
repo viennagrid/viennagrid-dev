@@ -3,8 +3,8 @@
 
 
 #include "viennagrid/forwards.hpp"
-
 #include "viennagrid/point.hpp"
+#include "viennagrid/utils.hpp"
 
 #include "viennagrid/element/element.hpp"
 #include "viennagrid/mesh/region.hpp"
@@ -17,5 +17,8 @@
 #include "viennagrid/mesh/mesh_impl.hpp"
 
 #include "viennagrid/mesh/element_creation.hpp"
+#include "viennagrid/mesh/mesh_operations.hpp"
+#include "viennagrid/element/plc.hpp"
+
 
 #endif

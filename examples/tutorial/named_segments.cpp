@@ -14,11 +14,11 @@
   #pragma warning( disable : 4503 )     //truncated name decoration
 #endif
 
-#include "viennagrid/forwards.hpp"
-#include "viennagrid/mesh/mesh.hpp"
-#include "viennagrid/mesh/element_creation.hpp"
-#include "viennagrid/config/default_configs.hpp"
-#include "viennagrid/point.hpp"
+#include "viennagrid/core.hpp"
+// #include "viennagrid/mesh/mesh.hpp"
+// #include "viennagrid/mesh/element_creation.hpp"
+// #include "viennagrid/config/default_configs.hpp"
+// #include "viennagrid/point.hpp"
 
 
 //
@@ -41,15 +41,17 @@ int main()
   // Define the necessary types:
   //
 
-  typedef viennagrid::triangular_2d_mesh                  MeshType;
-  typedef viennagrid::result_of::segmentation<MeshType>::type SegmentationType;
-  typedef viennagrid::result_of::segment_handle<SegmentationType>::type SegmentHandleType;
+//   typedef viennagrid::triangular_2d_mesh                  MeshType;
+  typedef viennagrid::mesh_t                  MeshType;
+  typedef viennagrid::result_of::region<MeshType>::type RegionType;
+//   typedef viennagrid::result_of::segmentation<MeshType>::type SegmentationType;
+//   typedef viennagrid::result_of::segment_handle<SegmentationType>::type SegmentHandleType;
 
   typedef viennagrid::result_of::point<MeshType>::type            PointType;
-  typedef viennagrid::result_of::vertex_handle<MeshType>::type    VertexHandleType;
+  typedef viennagrid::result_of::vertex<MeshType>::type    VertexType;
 
   typedef viennagrid::result_of::cell<MeshType>::type             CellType;
-  typedef viennagrid::result_of::cell_range<SegmentHandleType>::type      CellRange;
+  typedef viennagrid::result_of::cell_range<RegionType>::type      CellRange;
   typedef viennagrid::result_of::iterator<CellRange>::type          CellIterator;
 
   std::cout << "-------------------------------------------------------------- " << std::endl;
@@ -60,23 +62,26 @@ int main()
   //
   // Step 1: Instantiate the mesh and the segmentation and create 2 segments:
   //
-  MeshType mesh;
-  SegmentationType segmentation(mesh);
+  MeshType mesh(2, viennagrid::triangle_tag());
+//   SegmentationType segmentation(mesh);
 
   // using names to create names
-  SegmentHandleType seg0 = segmentation("segment0");
-  SegmentHandleType seg1 = segmentation("segment1");
+  RegionType region0 = mesh.make_region();
+  RegionType region1 = mesh.make_region();
+
+  region0.set_name("region0");
+  region1.set_name("region1");
 
   //
   // Step 2: Add vertices to the mesh.
   //         Note that vertices with IDs are enumerated in the order they are pushed to the mesh.
   //
-  VertexHandleType vh0 = viennagrid::make_vertex(mesh, PointType(0,0)); // id = 0
-  VertexHandleType vh1 = viennagrid::make_vertex(mesh, PointType(1,0)); // id = 1
-  VertexHandleType vh2 = viennagrid::make_vertex(mesh, PointType(2,0));
-  VertexHandleType vh3 = viennagrid::make_vertex(mesh, PointType(2,1));
-  VertexHandleType vh4 = viennagrid::make_vertex(mesh, PointType(1,1));
-  VertexHandleType vh5 = viennagrid::make_vertex(mesh, PointType(0,1)); // id = 5
+  VertexType v0 = viennagrid::make_vertex(mesh, 0, 0); // id = 0
+  VertexType v1 = viennagrid::make_vertex(mesh, 1, 0); // id = 1
+  VertexType v2 = viennagrid::make_vertex(mesh, 2, 0);
+  VertexType v3 = viennagrid::make_vertex(mesh, 2, 1);
+  VertexType v4 = viennagrid::make_vertex(mesh, 1, 1);
+  VertexType v5 = viennagrid::make_vertex(mesh, 0, 1); // id = 5
 
   //
   // Step 3: Fill the two segments with cells.
@@ -84,23 +89,24 @@ int main()
   //
 
   // First triangle, use vertex handles
-  viennagrid::static_array<VertexHandleType, 3> vertices;
-  vertices[0] = vh0;
-  vertices[1] = vh1;
-  vertices[2] = vh5;
+  std::vector<VertexType> vertices;
+//   viennagrid::static_array<VertexHandleType, 3> vertices;
+  vertices[0] = v0;
+  vertices[1] = v1;
+  vertices[2] = v5;
   // Note that vertices are rearranged internally if they are not supplied in mathematically positive order.
 
-  viennagrid::make_element<CellType>(seg0, vertices.begin(), vertices.end()); // creates an element with vertex handles
+  viennagrid::make_cell(region0, vertices.begin(), vertices.end()); // creates an element with vertex handles
 
 
   // Second triangle:
-  viennagrid::make_triangle(seg0, vh1, vh4, vh5);  //use the shortcut function
+  viennagrid::make_triangle(region0, v1, v4, v5);  //use the shortcut function
 
   // Third triangle:
-  viennagrid::make_triangle(seg1, vh1, vh2, vh4); // Note that we create in 'seg1' now.
+  viennagrid::make_triangle(region0, v1, v2, v4); // Note that we create in 'seg1' now.
 
   // Fourth triangle:
-  viennagrid::make_triangle(seg1, vh2, vh3, vh4 );
+  viennagrid::make_triangle(region0, v2, v3, v4 );
 
   //
   // That's it. The mesh consisting of two segments is now set up.
@@ -112,7 +118,7 @@ int main()
   //
 
   std::cout << "Cells in segment 0:" << std::endl;
-  CellRange cells_seg0( segmentation("segment0") );
+  CellRange cells_seg0( region0 );
   for (CellIterator cit0 = cells_seg0.begin();
                     cit0 != cells_seg0.end();
                   ++cit0)
@@ -122,7 +128,7 @@ int main()
   std::cout << std::endl;
 
   std::cout << "Cells in segment 1:" << std::endl;
-  CellRange cells_seg1( segmentation("segment1") );
+  CellRange cells_seg1( region1 );
   for (CellIterator cit1 = cells_seg1.begin();
                     cit1 != cells_seg1.end();
                   ++cit1)

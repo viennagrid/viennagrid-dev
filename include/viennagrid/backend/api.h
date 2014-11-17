@@ -59,11 +59,11 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_vertex_get(viennagrid_mesh
                                                                  viennagrid_numeric ** coords);
 
 
-
+// indices are vertex indices for all elements but PLCs, where they are line indices
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_create(viennagrid_mesh_hierarchy mesh_hierarchy,
                                                                     viennagrid_element_tag element_tag,
-                                                                    viennagrid_int vertex_count,
-                                                                    viennagrid_index * vertex_indices,
+                                                                    viennagrid_int index_count,
+                                                                    viennagrid_index * indices,
                                                                     viennagrid_index * element_index);
 
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_boundary_elements(viennagrid_mesh_hierarchy mesh_hierarchy,
@@ -146,13 +146,26 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_regions_get(viennagrid_mes
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_get_regions(viennagrid_mesh_hierarchy mesh_hierarchy,
                                                                   viennagrid_element_tag element_tag,
                                                                   viennagrid_index element_id,
-                                                                  viennagrid_region const ** region_begin,
-                                                                  viennagrid_region const ** region_end);
+                                                                  viennagrid_region ** region_begin,
+                                                                  viennagrid_region ** region_end);
 
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_add_to_region(viennagrid_mesh_hierarchy mesh_hierarchy,
                                                                     viennagrid_element_tag element_tag,
                                                                     viennagrid_index element_id,
                                                                     viennagrid_region region);
+
+
+
+// creates a set of vertices in a mesh_hierarchy
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_add_hole_point(viennagrid_mesh mesh,
+                                                                         viennagrid_index plc_id,
+                                                                         viennagrid_numeric const * coords);
+
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_plc_get_hole_points(viennagrid_mesh mesh,
+                                                                          viennagrid_index plc_id,
+                                                                          viennagrid_numeric const ** hole_points_begin,
+                                                                          viennagrid_numeric const ** hole_points_end);
+
 
 
 

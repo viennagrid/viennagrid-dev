@@ -32,6 +32,14 @@ set(EXAMPLES_TESTDATA
    data/twocubes.mesh
    data/test.poly
    data/test.bnd
+   data/big_and_small_cube.poly
+   data/cube.poly
+   data/cube_using_lines.poly
+   data/cube_with_cube_hole.poly
+   data/cube_with_tunnel.poly
+   data/cubeception.poly
+   data/example.poly
+   data/two_cubes.poly
    )
 foreach(f ${EXAMPLES_TESTDATA})
    configure_file(${f} "${CMAKE_CURRENT_BINARY_DIR}/${f}" COPYONLY)

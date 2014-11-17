@@ -35,7 +35,7 @@
 
 //Mesh-based algorithms:
 // #include "viennagrid/algorithm/boundary.hpp"
-// #include "viennagrid/algorithm/refine.hpp"
+#include "viennagrid/algorithm/refine.hpp"
 // #include "viennagrid/algorithm/voronoi.hpp"
 
 
@@ -166,40 +166,40 @@ int main()
 
 
 
-//   //
-//   // Refine mesh uniformly:
-//   MeshType uniformly_refined_mesh;
-//   viennagrid::cell_refine_uniformly(mesh, uniformly_refined_mesh);
-//
-//   {
-//     viennagrid::io::vtk_writer<MeshType> writer;
-//     writer(uniformly_refined_mesh, "uniform_refinement");
-//   }
+  //
+  // Refine mesh uniformly:
+  MeshType uniformly_refined_mesh(3, viennagrid::tetrahedron_tag());
+  viennagrid::cell_refine_uniformly(mesh, uniformly_refined_mesh);
+
+  {
+    viennagrid::io::vtk_writer<MeshType> writer;
+    writer(uniformly_refined_mesh, "uniform_refinement");
+  }
 
 
 
-//   //
-//   // Refine only specific cells:
-//   MeshType adaptively_refined_mesh;
-//
-//   // Define a container which stores the flags, in this case we want an std::map as underlying container
-//   typedef viennagrid::result_of::accessor_container< CellType, bool, viennagrid::std_map_tag >::type CellRefinementContainerType;
-//   CellRefinementContainerType cell_refinement_flag;
-//
-//   // define an field on this container for easy access with elements
-//   viennagrid::result_of::field< CellRefinementContainerType, CellType >::type cell_refinement_field(cell_refinement_flag);
-//
-//   cell_refinement_field( viennagrid::cells(mesh)[0] ) = true;
-//   cell_refinement_field( viennagrid::cells(mesh)[3] ) = true;
-//   cell_refinement_field( viennagrid::cells(mesh)[8] ) = true;
-//
-//   // refining the mesh using the field representing the marked cells
-//   viennagrid::cell_refine(mesh, adaptively_refined_mesh, cell_refinement_field);
-//
-//   {
-//     viennagrid::io::vtk_writer<MeshType> writer;
-//     writer(adaptively_refined_mesh, "adaptively_refinement");
-//   }
+  //
+  // Refine only specific cells:
+  MeshType adaptively_refined_mesh(3, viennagrid::tetrahedron_tag());
+
+  // Define a container which stores the flags, in this case we want an std::map as underlying container
+  typedef viennagrid::result_of::accessor_container< CellType, bool, viennagrid::std_map_tag >::type CellRefinementContainerType;
+  CellRefinementContainerType cell_refinement_flag;
+
+  // define an field on this container for easy access with elements
+  viennagrid::result_of::field< CellRefinementContainerType, CellType >::type cell_refinement_field(cell_refinement_flag);
+
+  cell_refinement_field( viennagrid::cells(mesh)[0] ) = true;
+  cell_refinement_field( viennagrid::cells(mesh)[3] ) = true;
+  cell_refinement_field( viennagrid::cells(mesh)[8] ) = true;
+
+  // refining the mesh using the field representing the marked cells
+  viennagrid::cell_refine(mesh, adaptively_refined_mesh, cell_refinement_field);
+
+  {
+    viennagrid::io::vtk_writer<MeshType> writer;
+    writer(adaptively_refined_mesh, "adaptively_refinement");
+  }
 
 
 

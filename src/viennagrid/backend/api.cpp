@@ -110,12 +110,12 @@ viennagrid_error viennagrid_vertex_get(viennagrid_mesh mesh,
 
 viennagrid_error viennagrid_element_create(viennagrid_mesh_hierarchy hierarchy,
                                            viennagrid_element_tag element_tag,
-                                           viennagrid_int vertex_count,
-                                           viennagrid_index * vertex_indices,
+                                           viennagrid_int index_count,
+                                           viennagrid_index * indices,
                                            viennagrid_index * element_index)
 {
   element_tag = hierarchy->unpack_element_tag(element_tag);
-  *element_index = hierarchy->get_make_element(element_tag, vertex_indices, vertex_count);
+  *element_index = hierarchy->get_make_element(element_tag, indices, index_count);
   return VIENNAGRID_SUCCESS;
 }
 
@@ -278,8 +278,8 @@ viennagrid_error viennagrid_regions_get(viennagrid_mesh_hierarchy hierarchy,
 viennagrid_error viennagrid_get_regions(viennagrid_mesh_hierarchy hierarchy,
                                         viennagrid_element_tag element_tag,
                                         viennagrid_index element_id,
-                                        viennagrid_region const ** region_begin,
-                                        viennagrid_region const ** region_end)
+                                        viennagrid_region ** region_begin,
+                                        viennagrid_region ** region_end)
 {
   element_tag = hierarchy->unpack_element_tag(element_tag);
 
@@ -296,6 +296,28 @@ viennagrid_error viennagrid_add_to_region(viennagrid_mesh_hierarchy hierarchy,
   element_tag = hierarchy->unpack_element_tag(element_tag);
 
   hierarchy->element_buffer(element_tag).add_to_region(element_id, region);
+  return VIENNAGRID_SUCCESS;
+}
+
+
+
+
+
+viennagrid_error viennagrid_plc_add_hole_point(viennagrid_mesh mesh,
+                                               viennagrid_index plc_id,
+                                               viennagrid_numeric const * coords)
+{
+  mesh->add_hole_point(plc_id, coords);
+  return VIENNAGRID_SUCCESS;
+}
+
+viennagrid_error viennagrid_plc_get_hole_points(viennagrid_mesh mesh,
+                                                viennagrid_index plc_id,
+                                                viennagrid_numeric const ** hole_points_begin,
+                                                viennagrid_numeric const ** hole_points_end)
+{
+  *hole_points_begin = mesh->hole_points_begin(plc_id);
+  *hole_points_end = mesh->hole_points_end(plc_id);
   return VIENNAGRID_SUCCESS;
 }
 

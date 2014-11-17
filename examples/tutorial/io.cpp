@@ -14,13 +14,13 @@
   #pragma warning( disable : 4503 )     //truncated name decoration
 #endif
 
-#include "viennagrid/config/default_configs.hpp"
+#include "viennagrid/core.hpp"
 
-#include "viennagrid/accessor.hpp"
+// #include "viennagrid/accessor.hpp"
 
-#include "viennagrid/algorithm/boundary.hpp"
-#include "viennagrid/algorithm/centroid.hpp"
-#include "viennagrid/algorithm/circumcenter.hpp"
+// #include "viennagrid/algorithm/boundary.hpp"
+// #include "viennagrid/algorithm/centroid.hpp"
+// #include "viennagrid/algorithm/circumcenter.hpp"
 #include "viennagrid/io/vtk_reader.hpp"
 #include "viennagrid/io/vtk_writer.hpp"
 #include "viennagrid/io/opendx_writer.hpp"
@@ -39,17 +39,17 @@ struct UserData
 //
 // Shows how to read a mesh from Netgen mesh files
 //
-template <typename MeshType, typename SegmentationType>
-void read_netgen(MeshType & mesh, SegmentationType & segmentation)
+template <typename MeshType>
+void read_netgen(MeshType & mesh)
 {
 
   viennagrid::io::netgen_reader my_netgen_reader;
-  my_netgen_reader(mesh, segmentation, "../data/cube48.mesh");
+  my_netgen_reader(mesh, "../data/cube48.mesh");
 
   //
   // Note that the Netgen format supports multiple segments, which will be automatically created by the reader
   //
-  std::cout << "Number of segments in Netgen file: " << segmentation.size() << std::endl;
+  std::cout << "Number of segments in Netgen file: " << mesh.regions_count() << std::endl;
 
   // do more stuff with the mesh here.
 }
@@ -82,8 +82,8 @@ void write_opendx(MeshType const & mesh, UserData & data)
 //
 // Read the mesh from the VTK File format (XML)
 //
-template <typename MeshType, typename SegmentationType, typename UserData>
-void read_vtk(MeshType & mesh, SegmentationType & segmentation, UserData & data)
+template <typename MeshType, typename UserData>
+void read_vtk(MeshType & mesh, UserData & data)
 {
   typedef typename viennagrid::result_of::cell< MeshType >::type     cell_type;
   typedef typename viennagrid::result_of::vertex< MeshType >::type        vertex_type;
@@ -91,7 +91,7 @@ void read_vtk(MeshType & mesh, SegmentationType & segmentation, UserData & data)
   //
   // Step 1: Instantiate reader object
   //
-  viennagrid::io::vtk_reader<MeshType, SegmentationType> reader;
+  viennagrid::io::vtk_reader<MeshType> reader;
 
   //-----------------------------------------------------
 
@@ -131,7 +131,7 @@ void read_vtk(MeshType & mesh, SegmentationType & segmentation, UserData & data)
   //
   // Step 4: Trigger filereader:
   //
-  reader(mesh, segmentation, "../data/tets_with_data_main.pvd");
+  reader(mesh, "../data/tets_with_data_main.pvd");
 
 
   //
@@ -271,21 +271,21 @@ void write_data(MeshType & mesh)
 int main()
 {
   //typedef viennagrid::mesh< my_mesh_config >          Mesh;
-  typedef viennagrid::mesh< viennagrid::config::tetrahedral_3d >     Mesh;
-  typedef viennagrid::result_of::segmentation<Mesh>::type              Segmentation;
+  typedef viennagrid::mesh_t     MeshType;
+//   typedef viennagrid::result_of::segmentation<Mesh>::type              Segmentation;
 
   std::cout << "----------------------------------------" << std::endl;
   std::cout << "-- ViennaGrid tutorial: IO operations --" << std::endl;
   std::cout << "----------------------------------------" << std::endl;
   std::cout << std::endl;
 
-  Mesh mesh;
-  Segmentation segments(mesh);
+  MeshType mesh(3, viennagrid::tetrahedron_tag());
+//   Segmentation segments(mesh);
 
   //
   // Use-case 1: Read from Netgen mesh files
   //
-  read_netgen(mesh, segments);
+  read_netgen(mesh);
 
   //write a bit of data to mesh:
   //write_data<viennagrid::tetrahedron_tag>(mesh);
@@ -294,10 +294,10 @@ int main()
   //
   // Use-case 2: Read VTK file(s)
   //
-  Mesh vtk_mesh;
-  Segmentation vtk_segments(vtk_mesh);
+  MeshType vtk_mesh(3, viennagrid::tetrahedron_tag());
+//   Segmentation vtk_segments(vtk_mesh);
   UserData data;
-  read_vtk(vtk_mesh, vtk_segments, data);
+  read_vtk(vtk_mesh, data);
 
 
   //

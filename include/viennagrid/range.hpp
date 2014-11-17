@@ -2,6 +2,7 @@
 #define VIENNAGRID_RANGE_HPP
 
 #include "viennagrid/forwards.hpp"
+#include "viennagrid/utils.hpp"
 #include "viennagrid/iterators.hpp"
 #include "viennagrid/element/element.hpp"
 #include "viennagrid/mesh/region.hpp"
@@ -33,21 +34,6 @@ namespace viennagrid
     element_tag_type element_tag_;
     mesh_hierarchy_type mesh_hierarchy_;
   };
-
-
-
-
-  struct true_functor
-  {
-    template<typename T>
-    bool operator()(T)
-    { return true; }
-  };
-
-
-
-
-
 
 
 
@@ -198,8 +184,8 @@ namespace viennagrid
                                            element.tag().internal(),
                                            element.id(),
                                            tag().internal(),
-                                           &element_index_begin,
-                                           &element_index_end);
+                                           const_cast<viennagrid_index **>(&element_index_begin),
+                                           const_cast<viennagrid_index **>(&element_index_end));
   }
 
 
@@ -310,10 +296,10 @@ namespace viennagrid
   {
     region_view_functor(const_mesh_region_t mesh_region_) : mesh_region(mesh_region_) {}
 
-    bool operator()(element_t e) const
-    { return is_in_region(e, mesh_region); }
-    bool operator()(const_element_t e) const
-    { return is_in_region(e, mesh_region); }
+    bool operator()(element_t element) const
+    { return is_in_region(mesh_region, element); }
+    bool operator()(const_element_t element) const
+    { return is_in_region(mesh_region, element); }
 
     const_mesh_region_t mesh_region;
   };
@@ -332,7 +318,7 @@ namespace viennagrid
     typedef typename result_of::const_nonconst<mesh_region_t, is_const>::type mesh_region_type;
 
     mesh_region_element_range(mesh_region_type region, element_tag_type element_tag_) : base_element_range<region_view_functor, is_const>( region_view_functor(region) )
-    { this->from_mesh(region.get_mesh(), element_tag_); }
+    { this->from_mesh(region.mesh(), element_tag_); }
 
   private:
   };
@@ -367,7 +353,7 @@ namespace viennagrid
     typedef typename result_of::const_nonconst<mesh_region_t, is_const>::type mesh_region_type;
 
     coboundary_region_element_range(mesh_region_type region, element_type element, element_tag_type coboundary_tag_) : base_element_range<region_view_functor, is_const>( region_view_functor(region) )
-    { this->coboundary_from_element(region.get_mesh(), element, coboundary_tag_); }
+    { this->coboundary_from_element(region.mesh(), element, coboundary_tag_); }
 
   private:
   };
@@ -666,170 +652,6 @@ namespace viennagrid
   template<typename SomethingT>
   typename result_of::element_range<SomethingT, hexahedron_tag>::type hexahedra(SomethingT something)
   { return typename result_of::element_range<SomethingT, hexahedron_tag>::type(something); }
-
-
-
-//   /** @brief Function for retrieving a const element range or a boundary element range from a host object
-//     *
-//     * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
-//     * @tparam ElementTypeOrTagT  The element type/tag for the requested element range
-//     * @param  something          The host object of type SomethingT
-//     * @return                    A const element range
-//     */
-//   template<typename ElementTypeOrTagT, typename SomethingT>
-//   typename result_of::const_element_range<SomethingT, ElementTypeOrTagT>::type elements(SomethingT const & something);
-//
-//   /** @brief Function for retrieving an element range or a boundary element range from a mesh. Const version.
-//     *
-//     * @tparam WrappedConfigType  The host mesh configuration class (providing the typemap as 'type' member type)
-//     * @tparam ElementTypeOrTagT  The element type/tag for the requested element range
-//     * @param  mesh_obj           The mesh object
-//     * @return                    An element range
-//     */
-//   template<typename ElementTypeOrTagT, typename WrappedConfigType>
-//   typename result_of::const_element_range<viennagrid::mesh<WrappedConfigType>, ElementTypeOrTagT>::type
-//   elements(viennagrid::mesh<WrappedConfigType> const & mesh_obj);
-//
-//
-//   /** @brief Function for retrieving a const element range or a boundary element range from a segment. Const-version.
-//     *
-//     * @tparam SegmentationT      The host segmentation
-//     * @tparam ElementTypeOrTagT  The element type/tag for the requested element range
-//     * @param  segment            The host object of type SomethingT
-//     * @return                    A const element range
-//     */
-//   template<typename ElementTypeOrTagT, typename SegmentationT>
-//   typename result_of::const_element_range< viennagrid::segment_handle<SegmentationT>, ElementTypeOrTagT>::type
-//   elements( viennagrid::segment_handle<SegmentationT> const & segment)
-//   { return elements<ElementTypeOrTagT>( segment.view() ); }
-//
-//
-//   /** @brief Function for retrieving an element range or a boundary element range from a segmentation. Const version.
-//     *
-//     * @tparam ElementTypeOrTagT  The element type/tag for the requested element range
-//     * @tparam WrappedConfigT     The host mesh configuration class (providing the typemap as 'type' member type)
-//     * @param  segm               The hosting segmentation object
-//     * @return                    An element range
-//     */
-//   template<typename ElementTypeOrTagT, typename WrappedConfigT>
-//   typename result_of::const_element_range<viennagrid::segmentation<WrappedConfigT>, ElementTypeOrTagT>::type
-//   elements(viennagrid::segmentation<WrappedConfigT> const & segm)
-//   { return elements<ElementTypeOrTagT>( segm.all_elements() ); }
-//
-//
-//   /** @brief Function for retrieving a const cell range object from a host object
-//     *
-//     * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
-//     * @param  something          The host object of type SomethingT
-//     * @return                    A const cell range
-//     */
-//   template<typename SomethingT>
-//   typename result_of::const_cell_range<SomethingT>::type cells( SomethingT const & something)
-//   { return elements<typename result_of::cell_tag<SomethingT>::type>(something); }
-//
-//   /** @brief Function for retrieving a const facet range object from a host object
-//     *
-//     * @tparam ElementT         The host element type
-//     * @param  element          The host object of type SomethingT
-//     * @return                  A const facet range
-//     */
-//   template<typename ElementT>
-//   typename result_of::const_facet_range<ElementT>::type facets(const ElementT & element)
-//   { return elements< typename result_of::facet_tag<ElementT>::type >(element); }
-//
-//   /** @brief Function for retrieving a const vertex range object from a host object
-//     *
-//     * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
-//     * @param  something          The host object of type SomethingT
-//     * @return                    A const vertex range
-//     */
-//   template<typename SomethingT>
-//   typename result_of::const_element_range<SomethingT, vertex_tag>::type vertices(SomethingT const & something)
-//   { return elements<vertex_tag>(something); }
-//
-//   /** @brief Function for retrieving a const line range object from a host object (same as edges)
-//     *
-//     * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
-//     * @param  something          The host object of type SomethingT
-//     * @return                    A const line range
-//     */
-//   template<typename SomethingT>
-//   typename result_of::const_element_range<SomethingT, line_tag>::type lines(SomethingT const & something)
-//   { return elements<line_tag>(something); }
-//
-//   /** @brief Function for retrieving a const edge range object from a host object (same as lines)
-//     *
-//     * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
-//     * @param  something          The host object of type SomethingT
-//     * @return                    A const edge range
-//     */
-//   template<typename SomethingT>
-//   typename result_of::const_element_range<SomethingT, edge_tag>::type edges(SomethingT const & something)
-//   { return elements<edge_tag>(something); }
-//
-//   /** @brief Function for retrieving a const triangles range object from a host object
-//     *
-//     * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
-//     * @param  something          The host object of type SomethingT
-//     * @return                    A const triangle range
-//     */
-//   template<typename SomethingT>
-//   typename result_of::const_element_range<SomethingT, triangle_tag>::type triangles(SomethingT const & something)
-//   { return elements<triangle_tag>(something); }
-//
-//   /** @brief Function for retrieving a const quadrilateral range object from a host object
-//     *
-//     * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
-//     * @param  something          The host object of type SomethingT
-//     * @return                    A const quadrilateral range
-//     */
-//   template<typename SomethingT>
-//   typename result_of::const_element_range<SomethingT, quadrilateral_tag>::type quadrilaterals(SomethingT const & something)
-//   { return elements<quadrilateral_tag>(something); }
-//
-//   /** @brief Function for retrieving a const polygon range object from a host object
-//     *
-//     * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
-//     * @param  something          The host object of type SomethingT
-//     * @return                    A const polygon range
-//     */
-//   template<typename SomethingT>
-//   typename result_of::const_element_range<SomethingT, polygon_tag>::type polygons(SomethingT const & something)
-//   { return elements<polygon_tag>(something); }
-//
-//   /** @brief Function for retrieving a const PLC range object from a host object
-//     *
-//     * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
-//     * @param  something          The host object of type SomethingT
-//     * @return                    A const PLC range
-//     */
-//   template<typename SomethingT>
-//   typename result_of::const_element_range<SomethingT, plc_tag>::type plcs(SomethingT const & something)
-//   { return elements<plc_tag>(something); }
-//
-//   /** @brief Function for retrieving a const tetrahedron range object from a host object
-//     *
-//     * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
-//     * @param  something          The host object of type SomethingT
-//     * @return                    A const tetrahedron range
-//     */
-//   template<typename SomethingT>
-//   typename result_of::const_element_range<SomethingT, tetrahedron_tag>::type tetrahedra(SomethingT const & something)
-//   { return elements<tetrahedron_tag>(something); }
-//
-//   /** @brief Function for retrieving a const hexahedron range object from a host object
-//     *
-//     * @tparam SomethingT         The host type, can be an element, a collection, a mesh, a segment or a segmentation
-//     * @param  something          The host object of type SomethingT
-//     * @return                    A const hexahedron range
-//     */
-//   template<typename SomethingT>
-//   typename result_of::const_element_range<SomethingT, hexahedron_tag>::type hexahedra(SomethingT const & something)
-//   { return elements<hexahedron_tag>(something); }
-
-
-
-
 
 }
 

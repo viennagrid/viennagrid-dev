@@ -17,40 +17,36 @@
 #include <iostream>
 #include <typeinfo>
 
-#include "viennagrid/config/default_configs.hpp"
-
-#include "viennagrid/accessor.hpp"
-#include "viennagrid/mesh/mesh.hpp"
-#include "viennagrid/mesh/segmentation.hpp"
-#include "viennagrid/mesh/element_creation.hpp"
+#include "viennagrid/core.hpp"
 
 
 
 int main()
 {
-  typedef viennagrid::triangular_3d_mesh                              MeshType;
+  typedef viennagrid::mesh_t                              MeshType;
   typedef viennagrid::result_of::point<MeshType>::type                PointType;
 
-  typedef viennagrid::result_of::vertex_handle< MeshType >::type     VertexHandleType;
-  typedef viennagrid::result_of::triangle_handle< MeshType >::type   TriangleHandleType;
+  typedef viennagrid::result_of::vertex< MeshType >::type     VertexType;
+  typedef viennagrid::result_of::triangle< MeshType >::type   TriangleType;
 
 
-  MeshType mesh;
+  MeshType mesh(3, viennagrid::triangle_tag());
 
   // create some vertices
-  VertexHandleType vh0 = viennagrid::make_vertex( mesh, PointType(0, 0, 0) );
-  VertexHandleType vh1 = viennagrid::make_vertex( mesh, PointType(1, 0, 0) );
-  VertexHandleType vh2 = viennagrid::make_vertex( mesh, PointType(0, 1, 0) );
-  VertexHandleType vh3 = viennagrid::make_vertex( mesh, PointType(0, 0, 1) );
-  VertexHandleType vh4 = viennagrid::make_vertex( mesh, PointType(1, 0, 1) );
-  VertexHandleType vh5 = viennagrid::make_vertex( mesh, PointType(0, 1, 1) );
+  VertexType v0 = viennagrid::make_vertex( mesh, 0, 0, 0 );
+  VertexType v1 = viennagrid::make_vertex( mesh, 1, 0, 0 );
+  VertexType v2 = viennagrid::make_vertex( mesh, 0, 1, 0 );
+  VertexType v3 = viennagrid::make_vertex( mesh, 0, 0, 1 );
+  VertexType v4 = viennagrid::make_vertex( mesh, 1, 0, 1 );
+  VertexType v5 = viennagrid::make_vertex( mesh, 0, 1, 1 );
 
   // create some triangles
-  viennagrid::static_array<TriangleHandleType, 4> th;
-  th[0] = viennagrid::make_triangle( mesh, vh0, vh1, vh2 );
-  th[1] = viennagrid::make_triangle( mesh, vh1, vh2, vh3 );
-  th[2] = viennagrid::make_triangle( mesh, vh3, vh4, vh5 );
-  th[3] = viennagrid::make_triangle( mesh, vh0, vh4, vh5 );
+  std::vector<TriangleType> t(4);
+
+  t[0] = viennagrid::make_triangle( mesh, v0, v1, v2 );
+  t[1] = viennagrid::make_triangle( mesh, v1, v2, v3 );
+  t[2] = viennagrid::make_triangle( mesh, v3, v4, v5 );
+  t[3] = viennagrid::make_triangle( mesh, v0, v4, v5 );
 
 
   typedef viennagrid::result_of::vertex_range<MeshType>::type VertexRangeType;
@@ -61,32 +57,10 @@ int main()
 
 
   {
-    MeshType another_mesh;
+    MeshType another_mesh(3, viennagrid::triangle_tag());
 
     // copy all element handles to another_mesh
-    viennagrid::copy_elements_by_handle( mesh, th.begin(), th.end(), another_mesh, -1.0 );
-
-    // output all vertices
-    std::cout << "Number of vertices in another_mesh: " << viennagrid::vertices(another_mesh).size() << std::endl;
-    VertexRangeType vertices(another_mesh);
-    for (VertexIteratorType vit = vertices.begin(); vit != vertices.end(); ++vit)
-      std::cout << *vit << std::endl;
-    std::cout << std::endl;
-
-    // output all cells
-    std::cout << "Number of cells in another_mesh: " << viennagrid::cells(another_mesh).size() << std::endl;
-    CellRangeType cells(another_mesh);
-    for (CellIteratorType cit = cells.begin(); cit != cells.end(); ++cit)
-      std::cout << *cit << std::endl;
-    std::cout << std::endl;
-  }
-
-
-  {
-    MeshType another_mesh;
-
-    // copy some element handles to another_mesh
-    viennagrid::copy_elements_by_handle( mesh, th.begin()+2, th.begin()+4, another_mesh, -1.0 );
+    viennagrid::copy_elements( t.begin(), t.end(), another_mesh );
 
     // output all vertices
     std::cout << "Number of vertices in another_mesh: " << viennagrid::vertices(another_mesh).size() << std::endl;
@@ -106,12 +80,16 @@ int main()
 
 
   {
-    MeshType another_mesh;
+    MeshType another_mesh(3, viennagrid::triangle_tag());
 
     // copy all element to another_mesh using a cell range
     {
       CellRangeType cells(mesh);
-      viennagrid::copy_elements( cells.begin()+1, cells.begin()+3, another_mesh, -1.0 );
+
+      CellIteratorType begin = viennagrid::advance( cells.begin(), 1 );
+      CellIteratorType end = viennagrid::advance( cells.begin(), 3 );
+
+      viennagrid::copy_elements( begin, end, another_mesh );
     }
 
     // output all vertices

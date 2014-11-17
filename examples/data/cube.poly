@@ -1,0 +1,41 @@
+#
+# example.poly - Sample file of TetGen.
+#
+# A .poly file describes a piecewise linear complex (PLC)
+# This file represents a compensated magic tee junction.
+#
+# The source file is from: Vali Catina <catina@uni-bremen.de>
+#
+
+# Part 1 - node list
+8  3  0  0
+   0    -5  -5  -5
+   1    -5   5  -5
+   2     5  -5  -5
+   3     5   5  -5
+   4    -5  -5   5
+   5    -5   5   5
+   6     5  -5   5
+   7     5   5   5
+
+# Part 2 - facet list
+6 0 0
+1 0 0
+4 0 2 3 1
+1 0 0
+4 4 6 7 5
+1 0 0
+4 0 2 6 4
+1 0 0
+4 1 5 7 3
+1 0 0
+4 0 4 5 1
+1 0 0
+4 2 3 7 6
+
+# Part 3 - hole list
+0
+
+# Part 4 - region list
+1
+0 0 0 0 0

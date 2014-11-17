@@ -6,6 +6,8 @@
 #include "viennagrid/range.hpp"
 #include "viennagrid/mesh/region.hpp"
 
+#include "viennagrid/algorithm/detail/numeric.hpp"
+
 namespace viennagrid
 {
 
@@ -39,39 +41,121 @@ namespace viennagrid
     return element_t(viennagrid::vertex_tag(), mesh_hierarchy, id);
   }
 
-  element_t make_vertex(mesh_t m,
+  element_t make_vertex(mesh_hierarchy_t mesh_hierarchy)
+  {
+    return make_vertex(mesh_hierarchy, 0);
+  }
+
+  element_t make_vertex(mesh_t mesh,
                         viennagrid_numeric const * coords)
   {
-    element_t vertex = make_vertex(m.mesh_hierarchy(), coords);
-    non_recursive_add_element_to_mesh(m, vertex);
+    element_t vertex = make_vertex(mesh.mesh_hierarchy(), coords);
+    non_recursive_add_element_to_mesh(mesh, vertex);
     return vertex;
   }
 
+  element_t make_vertex(mesh_t mesh)
+  {
+    return make_vertex(mesh, 0);
+  }
+
 
   template<typename SomethingT>
-  element_t make_vertex(SomethingT something, viennagrid_numeric x)
+  typename result_of::vertex<SomethingT>::type make_vertex(SomethingT something, point_t const & point)
   {
-    return make_vertex(something, &x);
+    assert( (viennagrid_int)point.size() == something.dimension() );
+    return make_vertex(something, &point[0]);
+  }
+
+
+  template<typename SomethingT>
+  typename result_of::vertex<SomethingT>::type make_vertex(SomethingT something, viennagrid_numeric x)
+  {
+    typename viennagrid::result_of::point<SomethingT>::type pt(1);
+    pt[0] = x;
+    return make_vertex(something, pt);
   }
 
   template<typename SomethingT>
-  element_t make_vertex(SomethingT something, viennagrid_numeric x, viennagrid_numeric y)
+  typename result_of::vertex<SomethingT>::type make_vertex(SomethingT something, viennagrid_numeric x, viennagrid_numeric y)
   {
-    viennagrid_numeric pt[2];
+    typename viennagrid::result_of::point<SomethingT>::type pt(2);
     pt[0] = x;
     pt[1] = y;
     return make_vertex(something, pt);
   }
 
   template<typename SomethingT>
-  element_t make_vertex(SomethingT something, viennagrid_numeric x, viennagrid_numeric y, viennagrid_numeric z)
+  typename result_of::vertex<SomethingT>::type make_vertex(SomethingT something, viennagrid_numeric x, viennagrid_numeric y, viennagrid_numeric z)
   {
-    viennagrid_numeric pt[3];
+    typename viennagrid::result_of::point<SomethingT>::type pt(3);
     pt[0] = x;
     pt[1] = y;
     pt[2] = z;
     return make_vertex(something, pt);
   }
+
+
+
+
+  template<typename SomethingT, typename NumericConfigT>
+  typename result_of::vertex<SomethingT>::type make_unique_vertex(
+        SomethingT & something,
+        typename result_of::point<SomethingT>::type const & point,
+        NumericConfigT nc)
+  {
+    typedef typename result_of::const_vertex_range<SomethingT>::type VertexRangeType;
+    typedef typename result_of::iterator<VertexRangeType>::type VertexRangeIterator;
+
+    if (nc > 0)
+    {
+      VertexRangeType vertices(something);
+      for (VertexRangeIterator vit = vertices.begin(); vit != vertices.end(); ++vit)
+      {
+        if ( detail::is_equal_point(point, viennagrid::get_point(something, *vit), nc) )
+          return *vit;
+      }
+    }
+
+    return make_vertex(something, point);
+  }
+
+  template<typename SomethingT, typename NumericConfigT>
+  typename result_of::vertex<SomethingT>::type make_unique_vertex(SomethingT something, viennagrid_numeric x, NumericConfigT nc)
+  {
+    typename viennagrid::result_of::point<SomethingT>::type pt(1);
+    pt[1] = x;
+    return make_unique_vertex(something, pt, nc);
+  }
+
+  template<typename SomethingT, typename NumericConfigT>
+  typename result_of::vertex<SomethingT>::type make_unique_vertex(SomethingT something, viennagrid_numeric x, viennagrid_numeric y, NumericConfigT nc)
+  {
+    typename viennagrid::result_of::point<SomethingT>::type pt(2);
+    pt[0] = x;
+    pt[1] = y;
+    return make_unique_vertex(something, pt, nc);
+  }
+
+  template<typename SomethingT, typename NumericConfigT>
+  typename result_of::vertex<SomethingT>::type make_unique_vertex(SomethingT something, viennagrid_numeric x, viennagrid_numeric y, viennagrid_numeric z, NumericConfigT nc)
+  {
+    typename viennagrid::result_of::point<SomethingT>::type pt(3);
+    pt[0] = x;
+    pt[1] = y;
+    pt[2] = z;
+    return make_unique_vertex(something, pt, nc);
+  }
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -133,15 +217,32 @@ namespace viennagrid
 
 
 
+
+
+  element_t make_vertex(mesh_region_t mr,
+                        viennagrid_numeric const * coords)
+  {
+    element_t vertex = make_vertex(mr.mesh(), coords);
+    add(mr, vertex);
+    return vertex;
+  }
+
+  element_t make_vertex(mesh_region_t mr)
+  {
+    return make_vertex(mr, 0);
+  }
+
+
+
   template<typename VertexHandleIteratorT>
   element_t make_element(mesh_region_t mr,
                          element_tag_t tag,
                          VertexHandleIteratorT vertices_begin,
                          VertexHandleIteratorT vertices_end)
   {
-    element_t e = make_element(mr.get_mesh(), tag, vertices_begin, vertices_end);
-    add(mr, e);
-    return e;
+    element_t element = make_element(mr.mesh(), tag, vertices_begin, vertices_end);
+    add(mr, element);
+    return element;
   }
 
   template<typename ElementTagT, typename VertexHandleIteratorT>
@@ -159,12 +260,29 @@ namespace viennagrid
 
 
   template<typename VertexHandleIteratorT>
+  element_t make_cell(mesh_hierarchy_t m,
+                      VertexHandleIteratorT vertices_begin,
+                      VertexHandleIteratorT vertices_end)
+  {
+    return make_element(m, m.cell_tag(), vertices_begin, vertices_end);
+  }
+
+  template<typename VertexHandleIteratorT>
   element_t make_cell(mesh_t m,
                       VertexHandleIteratorT vertices_begin,
                       VertexHandleIteratorT vertices_end)
   {
     return make_element(m, m.cell_tag(), vertices_begin, vertices_end);
   }
+
+  template<typename VertexHandleIteratorT>
+  element_t make_cell(mesh_region_t mr,
+                      VertexHandleIteratorT vertices_begin,
+                      VertexHandleIteratorT vertices_end)
+  {
+    return make_element(mr, mr.cell_tag(), vertices_begin, vertices_end);
+  }
+
 
 
   template<typename SomethingT>

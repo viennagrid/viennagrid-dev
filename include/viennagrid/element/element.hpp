@@ -57,9 +57,22 @@ namespace viennagrid
   {
     std::cout << element.tag().name() << " [id = " << element.id() << "] ";
 
-    if (element.tag() == viennagrid::vertex_tag())
+    if (element.tag().is_vertex())
     {
       std::cout << viennagrid::get_point(element);
+    }
+    else if (element.tag().is_plc())
+    {
+      typedef typename viennagrid::result_of::const_line_range< base_element<is_const> >::type ConstLineRangeType;
+      ConstLineRangeType lines(element);
+
+      std::cout <<  "{";
+      typename ConstLineRangeType::iterator lit = lines.begin();
+      std::cout << *lit++;
+
+      for (; lit != lines.end(); ++lit)
+        std::cout << ", " << *lit;
+      std::cout << " }";
     }
     else
     {
@@ -78,6 +91,10 @@ namespace viennagrid
 
     return os;
   }
+
+
+
+
 
 
 

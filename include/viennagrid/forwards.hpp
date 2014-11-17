@@ -16,13 +16,6 @@ namespace viennagrid
     static const int value = d;
   };
 
-
-//   template<bool is_const = false>
-//   class base_point;
-
-//   typedef base_point<false> point_t;
-//   typedef base_point<true> const_point_t;
-
   class point_t;
 
 
@@ -89,6 +82,11 @@ namespace viennagrid
 
   typedef base_mesh_region_range<false> mesh_region_range_t;
   typedef base_mesh_region_range<true> const_mesh_region_range_t;
+
+
+
+
+
 
 
 
@@ -213,6 +211,14 @@ namespace viennagrid
 
 
 
+
+
+
+  namespace detail
+  {
+    template<typename ElementTagT>
+    struct element_refinement;
+  }
 
 
 
@@ -441,20 +447,20 @@ namespace viennagrid
 
 
 
-    template<typename SomethingT>
+    template<typename SomethingT, typename ElementT = null_type>
     struct region_range;
 
-    template<>
-    struct region_range<mesh_hierarchy_t>
-    {
-      typedef region_range_t type;
-    };
-
-    template<>
-    struct region_range<mesh_t>
-    {
-      typedef mesh_region_range_t type;
-    };
+//     template<>
+//     struct region_range<mesh_hierarchy_t>
+//     {
+//       typedef region_range_t type;
+//     };
+//
+//     template<>
+//     struct region_range<mesh_t>
+//     {
+//       typedef mesh_region_range_t type;
+//     };
 
 
 

@@ -74,7 +74,7 @@ public:
     return begin(index);
   }
 
-  void push_back(size_type index, value_type to_add)
+  void add(size_type index, value_type to_add)
   {
     size_type old_size = size(index);
     pointer p = resize(index, old_size+1);
@@ -83,7 +83,7 @@ public:
 
   void clear()
   {
-    offsets = std::vector<size_type>(1,0);
+    offsets = std::vector< typename std::vector<value_type>::size_type >(1,0);
     values.clear();
   }
 
@@ -213,7 +213,7 @@ public:
 
       for (typename OffsetMap::iterator it = offsets.begin(); it != offsets.end(); ++it)
       {
-        if (it->second > vi)
+        if (static_cast<size_type>(it->second) > vi)
           it->second += count_increase;
       }
     }
@@ -226,7 +226,7 @@ public:
 
       for (typename OffsetMap::iterator it = offsets.begin(); it != offsets.end(); ++it)
       {
-        if (it->second > vi)
+        if (static_cast<size_type>(it->second) > vi)
           it->second -= count_decrease;
       }
     }
@@ -234,7 +234,7 @@ public:
     return begin(index);
   }
 
-  void push_back(size_type index, value_type to_add)
+  void add(size_type index, value_type to_add)
   {
     size_type old_size = size(index);
     pointer p = resize(index, old_size+1);

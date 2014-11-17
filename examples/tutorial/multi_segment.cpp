@@ -16,10 +16,6 @@
 
 #include "viennagrid/core.hpp"
 #include "viennagrid/io/netgen_reader.hpp"
-#include "viennagrid/algorithm/interface.hpp"
-// #include "viennagrid/algorithm/volume.hpp"
-// #include "viennagrid/algorithm/surface.hpp"
-// #include "viennagrid/algorithm/voronoi.hpp"
 #include "viennagrid/io/vtk_reader.hpp"
 #include "viennagrid/io/vtk_writer.hpp"
 

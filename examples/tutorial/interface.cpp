@@ -17,70 +17,51 @@
 #include <iostream>
 #include <typeinfo>
 
-#include "viennagrid/config/default_configs.hpp"
-
-#include "viennagrid/accessor.hpp"
-#include "viennagrid/mesh/segmentation.hpp"
-#include "viennagrid/mesh/element_creation.hpp"
-
-#include "viennagrid/algorithm/boundary.hpp"
-#include "viennagrid/algorithm/interface.hpp"
+#include "viennagrid/core.hpp"
 
 int main()
 {
-  typedef viennagrid::triangular_3d_mesh                        mesh_type;
+  typedef viennagrid::mesh_t                        MeshType;
+  typedef viennagrid::result_of::region<MeshType>::type RegionType;
 
-  typedef viennagrid::result_of::vertex_handle< mesh_type >::type     vertex_handle_type;
-  typedef viennagrid::result_of::triangle_handle< mesh_type >::type   triangle_handle_type;
-  typedef viennagrid::result_of::triangle< mesh_type >::type          triangle_type;
+  typedef viennagrid::result_of::vertex< MeshType >::type     VertexType;
+  typedef viennagrid::result_of::triangle< MeshType >::type          TriangleType;
 
-  typedef viennagrid::result_of::oriented_3d_hull_segmentation<mesh_type>::type segmentation_type;
-//   typedef viennagrid::result_of::segmentation<mesh_type>::type segmentation_type;
-
-  typedef segmentation_type::segment_handle_type segment_handle_type;
-
-  mesh_type mesh;
-  segmentation_type segmentation(mesh);
+  MeshType mesh(3, viennagrid::triangle_tag());
 
 
-  vertex_handle_type vh0 = viennagrid::make_vertex( mesh );
-  vertex_handle_type vh1 = viennagrid::make_vertex( mesh );
-  vertex_handle_type vh2 = viennagrid::make_vertex( mesh );
-  vertex_handle_type vh3 = viennagrid::make_vertex( mesh );
-  vertex_handle_type vh4 = viennagrid::make_vertex( mesh );
+  VertexType v0 = viennagrid::make_vertex( mesh );
+  VertexType v1 = viennagrid::make_vertex( mesh );
+  VertexType v2 = viennagrid::make_vertex( mesh );
+  VertexType v3 = viennagrid::make_vertex( mesh );
+  VertexType v4 = viennagrid::make_vertex( mesh );
 
-  triangle_handle_type th0 = viennagrid::make_triangle( mesh, vh0, vh1, vh2 );
-  triangle_handle_type th1 = viennagrid::make_triangle( mesh, vh0, vh2, vh3 );
-  triangle_handle_type th2 = viennagrid::make_triangle( mesh, vh0, vh3, vh4 );
-  triangle_handle_type th3 = viennagrid::make_triangle( mesh, vh0, vh4, vh1 );
-
-
-  segment_handle_type seg0 = segmentation.make_segment();
-  segment_handle_type seg1 = segmentation.make_segment();
+  TriangleType t0 = viennagrid::make_triangle( mesh, v0, v1, v2 );
+  TriangleType t1 = viennagrid::make_triangle( mesh, v0, v2, v3 );
+  TriangleType t2 = viennagrid::make_triangle( mesh, v0, v3, v4 );
+  TriangleType t3 = viennagrid::make_triangle( mesh, v0, v4, v1 );
 
 
-  triangle_type & tri0 = viennagrid::dereference_handle(mesh, th0);
-  triangle_type & tri1 = viennagrid::dereference_handle(mesh, th1);
-  triangle_type & tri2 = viennagrid::dereference_handle(mesh, th2);
-  triangle_type & tri3 = viennagrid::dereference_handle(mesh, th3);
+  RegionType region0 = mesh.make_region();
+  RegionType region1 = mesh.make_region();
 
-  viennagrid::add( seg0, tri0 );
-  viennagrid::add( seg0, tri1 );
-  viennagrid::add( seg1, tri2 );
-  viennagrid::add( seg1, tri3 );
+  viennagrid::add( region0, t0 );
+  viennagrid::add( region0, t1 );
+  viennagrid::add( region1, t2 );
+  viennagrid::add( region1, t3 );
 
-  typedef viennagrid::result_of::element_range< mesh_type, viennagrid::line_tag >::type line_range;
+  typedef viennagrid::result_of::line_range< MeshType >::type line_range;
   line_range lines( mesh );
   for (line_range::iterator it = lines.begin(); it != lines.end(); ++it)
   {
-    std::cout << *it << " INTERFACE? " << viennagrid::is_interface( seg0, seg1, *it ) << std::endl;
+    std::cout << *it << " INTERFACE? " << viennagrid::is_interface( region0, region1, *it ) << std::endl;
   }
 
-  typedef viennagrid::result_of::element_range< mesh_type, viennagrid::vertex_tag >::type vertex_range;
+  typedef viennagrid::result_of::vertex_range< MeshType >::type vertex_range;
   vertex_range vertices( mesh );
   for (vertex_range::iterator it = vertices.begin(); it != vertices.end(); ++it)
   {
-    std::cout << *it << " INTERFACE? " << viennagrid::is_interface( seg0, seg1, *it ) << std::endl;
+    std::cout << *it << " INTERFACE? " << viennagrid::is_interface( region0, region1, *it ) << std::endl;
   }
 
 

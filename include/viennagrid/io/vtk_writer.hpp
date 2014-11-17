@@ -453,6 +453,7 @@ namespace viennagrid
           writeFooter(writer);
 
           clear();
+          return;
         }
 
         //

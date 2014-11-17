@@ -44,6 +44,12 @@ namespace viennagrid
       return result;
     }
 
+    self_type & operator+=(difference_type diff)
+    {
+      iterator += diff;
+      return *this;
+    }
+
 
     self_type & operator--()
     {
@@ -57,6 +63,13 @@ namespace viennagrid
       --result;
       return result;
     }
+
+    self_type & operator-=(difference_type diff)
+    {
+      iterator -= diff;
+      return *this;
+    }
+
 
 
     difference_type operator-(self_type const & rhs) const
@@ -126,6 +139,18 @@ namespace viennagrid
       return result;
     }
 
+    self_type & operator+=(difference_type diff)
+    {
+      for (difference_type i = 0; i != diff; ++i)
+      {
+        ++(*this);
+        if (iterator == end_iterator)
+          break;
+      }
+
+      return *this;
+    }
+
 
 
     self_type & operator--()
@@ -141,6 +166,20 @@ namespace viennagrid
       --(*this);
       return result;
     }
+
+    self_type & operator-=(difference_type diff)
+    {
+      for (difference_type i = 0; i != diff; ++i)
+      {
+        --(*this);
+        if (iterator == end_iterator)
+          break;
+      }
+
+      return *this;
+    }
+
+
 
     difference_type operator-(self_type const & rhs) const
     {

@@ -179,9 +179,9 @@ int main()
 
         std::cout << "  coboundary " << (*jt).id() << "  region=";
 
-        if (viennagrid::is_in_region(*jt, r0))
+        if (viennagrid::is_in_region(r0, *jt))
           std::cout << "0";
-        if (viennagrid::is_in_region(*jt, r1))
+        if (viennagrid::is_in_region(r1, *jt))
           std::cout << "1";
 
         std::cout << std::endl;
@@ -208,9 +208,9 @@ int main()
 
         std::cout << "  coboundary " << (*jt).id() << "  region=";
 
-        if (viennagrid::is_in_region(*jt, r0))
+        if (viennagrid::is_in_region(r0, *jt))
           std::cout << "0";
-        if (viennagrid::is_in_region(*jt, r1))
+        if (viennagrid::is_in_region(r1, *jt))
           std::cout << "1";
 
         std::cout << std::endl;
@@ -227,7 +227,7 @@ int main()
   {
     typedef viennagrid::result_of::tetrahedron_range<RegionType>::type TetrahedronRangeType;
 
-    std::cout << "Partition " << (*pit).get_region().id() << std::endl;
+    std::cout << "Partition " << (*pit).region().id() << std::endl;
     TetrahedronRangeType tets(*pit);
     for (TetrahedronRangeType::iterator it = tets.begin(); it != tets.end(); ++it)
       std::cout << (*it).id() << std::endl;

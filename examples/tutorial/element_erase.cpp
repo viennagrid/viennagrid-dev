@@ -18,33 +18,32 @@
 #include <typeinfo>
 
 
-#include "viennagrid/config/default_configs.hpp"
-#include "viennagrid/mesh/element_creation.hpp"
-#include "viennagrid/mesh/element_deletion.hpp"
-#include "viennagrid/mesh/coboundary_iteration.hpp"
-#include "viennagrid/io/vtk_writer.hpp"
+#include "viennagrid/core.hpp"
+// #include "viennagrid/mesh/element_creation.hpp"
+// #include "viennagrid/mesh/element_deletion.hpp"
+// #include "viennagrid/mesh/coboundary_iteration.hpp"
+// #include "viennagrid/io/vtk_writer.hpp"
 
 
 
 int main()
 {
-  typedef viennagrid::triangular_2d_mesh MeshType;
+  typedef viennagrid::mesh_t MeshType;
 
   typedef viennagrid::result_of::point<MeshType>::type point_type;
+  typedef viennagrid::result_of::vertex<MeshType>::type VertexHandleType;
 
-  typedef viennagrid::result_of::vertex_handle<MeshType>::type VertexHandleType;
+  MeshType mesh(2, viennagrid::triangle_tag());
 
-  MeshType mesh;
-
-  VertexHandleType v00 = viennagrid::make_vertex(mesh, point_type(0.0, 0.0));
-  VertexHandleType v10 = viennagrid::make_vertex(mesh, point_type(1.0, 0.0));
-  VertexHandleType v20 = viennagrid::make_vertex(mesh, point_type(2.0, 0.0));
-  VertexHandleType v01 = viennagrid::make_vertex(mesh, point_type(0.0, 1.0));
-  VertexHandleType v11 = viennagrid::make_vertex(mesh, point_type(1.0, 1.0));
-  VertexHandleType v21 = viennagrid::make_vertex(mesh, point_type(2.0, 1.0));
-  VertexHandleType v02 = viennagrid::make_vertex(mesh, point_type(0.0, 2.0));
-  VertexHandleType v12 = viennagrid::make_vertex(mesh, point_type(1.0, 2.0));
-  VertexHandleType v22 = viennagrid::make_vertex(mesh, point_type(2.0, 2.0));
+  VertexHandleType v00 = viennagrid::make_vertex(mesh, 0.0, 0.0);
+  VertexHandleType v10 = viennagrid::make_vertex(mesh, 1.0, 0.0);
+  VertexHandleType v20 = viennagrid::make_vertex(mesh, 2.0, 0.0);
+  VertexHandleType v01 = viennagrid::make_vertex(mesh, 0.0, 1.0);
+  VertexHandleType v11 = viennagrid::make_vertex(mesh, 1.0, 1.0);
+  VertexHandleType v21 = viennagrid::make_vertex(mesh, 2.0, 1.0);
+  VertexHandleType v02 = viennagrid::make_vertex(mesh, 0.0, 2.0);
+  VertexHandleType v12 = viennagrid::make_vertex(mesh, 1.0, 2.0);
+  VertexHandleType v22 = viennagrid::make_vertex(mesh, 2.0, 2.0);
 
   viennagrid::make_triangle(mesh, v00, v01, v11);
   viennagrid::make_triangle(mesh, v00, v10, v11);
