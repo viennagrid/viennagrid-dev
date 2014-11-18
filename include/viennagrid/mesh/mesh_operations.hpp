@@ -64,20 +64,6 @@ namespace viennagrid
       if (src.tag().is_vertex())
         return copy_vertex(src);
       return copy_element(src);
-/*
-      typename std::map<SrcVertexIDType, DstVertexType>::iterator vit = vertex_map.find( src_vertex.id() );
-      if (vit != vertex_map.end())
-        return vit->second;
-      else
-      {
-        DstVertexType vtx = viennagrid::make_unique_vertex(dst_mesh,
-                                                           viennagrid::get_point(src_vertex),
-                                                           nc_);
-        vertex_map[src_vertex.id()] = vtx;
-        copy_region_information(src_vertex, vtx);
-
-        return vtx;
-      }*/
     }
 
 //     /** @brief Copies one vertex to the destination mesh. If the vertex is already present in the destination mesh, the vertex handle of this vertex is return, otherwise a new vertex is created in the destination mesh.

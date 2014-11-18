@@ -25,34 +25,6 @@ using std::endl;
 
 
 #include "viennagrid/core.hpp"
-
-// #include "viennagrid/storage/view.hpp"
-// #include "viennagrid/storage/container_collection.hpp"
-// #include "viennagrid/storage/inserter.hpp"
-// #include "viennagrid/storage/id_generator.hpp"
-// #include "viennagrid/storage/hidden_key_map.hpp"
-// #include "viennagrid/storage/range.hpp"
-//
-//
-// #include "viennagrid/topology/vertex.hpp"
-// #include "viennagrid/topology/line.hpp"
-// #include "viennagrid/topology/simplex.hpp"
-// #include "viennagrid/topology/plc.hpp"
-//
-//
-// #include "viennagrid/element/element_key.hpp"
-// #include "viennagrid/element/element_orientation.hpp"
-// #include "viennagrid/element/element_view.hpp"
-//
-// #include "viennagrid/point.hpp"
-//
-// #include "viennagrid/config/element_config.hpp"
-// #include "viennagrid/config/mesh_config.hpp"
-// #include "viennagrid/config/default_configs.hpp"
-//
-// #include "viennagrid/mesh/mesh.hpp"
-// #include "viennagrid/mesh/element_creation.hpp"
-
 #include "viennagrid/io/tetgen_poly_reader.hpp"
 
 

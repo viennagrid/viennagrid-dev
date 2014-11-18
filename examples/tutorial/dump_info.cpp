@@ -14,11 +14,6 @@
   #pragma warning( disable : 4503 )     //truncated name decoration
 #endif
 
-// #include "viennagrid/forwards.hpp"
-// #include "viennagrid/config/default_configs.hpp"
-// #include "viennagrid/io/netgen_reader.hpp"
-// #include "viennagrid/io/vtk_reader.hpp"
-
 #include "viennagrid/core.hpp"
 #include "viennagrid/io/netgen_reader.hpp"
 #include "viennagrid/io/vtk_reader.hpp"
@@ -30,11 +25,6 @@ using std::string;
 template<typename ReaderT, typename MeshT>
 bool dump_information(MeshT & mesh, string const & filename)
 {
-  // defining and creating a mesh and a segmentation
-//   typedef typename viennagrid::result_of::segmentation<MeshT>::type SegmentationType;
-//   MeshT mesh;
-//   SegmentationType segmentation(mesh);
-
   // trying to read the file
   try
   {
@@ -119,7 +109,6 @@ int main(int argc, char *argv[])
 
   if (type == "tet3d")
   {
-//     typedef viennagrid::tetrahedral_3d_mesh MeshType;
     MeshType mesh(3, viennagrid::tetrahedron_tag());
 
     if (extension == "mesh")
@@ -129,7 +118,6 @@ int main(int argc, char *argv[])
   }
   else if(type == "tri2d")
   {
-//     typedef viennagrid::triangular_2d_mesh MeshType;
     MeshType mesh(2, viennagrid::triangle_tag());
 
     if (extension == "mesh")
@@ -139,7 +127,6 @@ int main(int argc, char *argv[])
   }
   else if(type == "tri3d")
   {
-//     typedef viennagrid::triangular_3d_mesh MeshType;
     MeshType mesh(3, viennagrid::triangle_tag());
 
     if (extension == "mesh")

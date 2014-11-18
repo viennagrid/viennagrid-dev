@@ -14,32 +14,28 @@
   #pragma warning( disable : 4503 )     //truncated name decoration
 #endif
 
-#include "viennagrid/config/default_configs.hpp"
-
+#include "viennagrid/core.hpp"
 #include "viennagrid/io/vtk_reader.hpp"
 #include "viennagrid/io/mphtxt_writer.hpp"
 
 
 int main()
 {
-  typedef viennagrid::mesh< viennagrid::config::tetrahedral_3d >     Mesh;
-  typedef viennagrid::result_of::segmentation<Mesh>::type              Segmentation;
+  typedef viennagrid::mesh_t     Mesh;
 
   std::cout << "--------------------------------------------" << std::endl;
   std::cout << "-- ViennaGrid tutorial: Convert to MPHTXT --" << std::endl;
   std::cout << "--------------------------------------------" << std::endl;
   std::cout << std::endl;
 
-  Mesh mesh;
-  Segmentation segmentation(mesh);
+  Mesh mesh(3, viennagrid::tetrahedron_tag());
 
-
-  viennagrid::io::vtk_reader<Mesh, Segmentation> reader;
-  reader(mesh, segmentation, "../data/tets_with_data_main.pvd");
+  viennagrid::io::vtk_reader<Mesh> reader;
+  reader(mesh, "../data/tets_with_data_main.pvd");
 
 
   viennagrid::io::mphtxt_writer writer;
-  writer(mesh, segmentation, "output.mphtxt");
+  writer(mesh, "output.mphtxt");
 
 
   std::cout << std::endl;

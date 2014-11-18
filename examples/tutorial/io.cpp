@@ -16,11 +16,6 @@
 
 #include "viennagrid/core.hpp"
 
-// #include "viennagrid/accessor.hpp"
-
-// #include "viennagrid/algorithm/boundary.hpp"
-// #include "viennagrid/algorithm/centroid.hpp"
-// #include "viennagrid/algorithm/circumcenter.hpp"
 #include "viennagrid/io/vtk_reader.hpp"
 #include "viennagrid/io/vtk_writer.hpp"
 #include "viennagrid/io/opendx_writer.hpp"

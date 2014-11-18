@@ -15,11 +15,6 @@
 #endif
 
 #include "viennagrid/core.hpp"
-// #include "viennagrid/mesh/mesh.hpp"
-// #include "viennagrid/mesh/element_creation.hpp"
-// #include "viennagrid/config/default_configs.hpp"
-// #include "viennagrid/point.hpp"
-
 
 //
 //    Let us construct the following input mesh:
@@ -41,11 +36,8 @@ int main()
   // Define the necessary types:
   //
 
-//   typedef viennagrid::triangular_2d_mesh                  MeshType;
   typedef viennagrid::mesh_t                  MeshType;
   typedef viennagrid::result_of::region<MeshType>::type RegionType;
-//   typedef viennagrid::result_of::segmentation<MeshType>::type SegmentationType;
-//   typedef viennagrid::result_of::segment_handle<SegmentationType>::type SegmentHandleType;
 
   typedef viennagrid::result_of::point<MeshType>::type            PointType;
   typedef viennagrid::result_of::vertex<MeshType>::type    VertexType;

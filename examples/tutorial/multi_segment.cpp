@@ -40,8 +40,8 @@ int main()
   typedef viennagrid::result_of::coboundary_range<RegionType, CellTag>::type                 CellOnFacetRange;
   typedef viennagrid::result_of::iterator<CellOnFacetRange>::type                                       CellOnFacetIterator;
 
-//   typedef viennagrid::result_of::neighbor_range<SegmentType, CellTag, viennagrid::vertex_tag>::type    NeighborCellRange;
-//   typedef viennagrid::result_of::iterator<NeighborCellRange>::type                                     NeighborCellIterator;
+  typedef viennagrid::result_of::neighbor_range<RegionType, viennagrid::vertex_tag, CellTag>::type    NeighborCellRange;
+  typedef viennagrid::result_of::iterator<NeighborCellRange>::type                                     NeighborCellIterator;
 
   typedef viennagrid::result_of::vertex_range<RegionType>::type        VertexOnSegmentRange;
   typedef viennagrid::result_of::iterator<VertexOnSegmentRange>::type   VertexOnSegmentIterator;
@@ -104,23 +104,23 @@ int main()
   //
   // Now iterate over all cells neighboring the first cell
 
-//   NeighborCellRange neigbouring_cells_region1 = viennagrid::neighbor_elements<CellTag, viennagrid::vertex_tag>(region1, viennagrid::elements<CellTag>(region1).handle_at(0));
-//   std::cout << "Neighbor Elements for first cell in region1 (should be no element, because only one element per regionment)" << std::endl;
-//   for (NeighborCellIterator cofit = neigbouring_cells_region1.begin();
-//                            cofit != neigbouring_cells_region1.end();
-//                          ++cofit)
-//   {
-//     std::cout << *cofit << std::endl;
-//   }
-//
-//   NeighborCellRange neigbouring_cells_region2 = viennagrid::neighbor_elements<CellTag, viennagrid::vertex_tag>(region2, viennagrid::elements<CellTag>(region2).handle_at(0));
-//   std::cout << "Neighbor Elements for first cell in region2 (should be no element, because only one element per regionment)" << std::endl;
-//   for (NeighborCellIterator cofit = neigbouring_cells_region2.begin();
-//                            cofit != neigbouring_cells_region2.end();
-//                          ++cofit)
-//   {
-//     std::cout << *cofit << std::endl;
-//   }
+  NeighborCellRange neigbouring_cells_region1(region1, viennagrid::elements<CellTag>(region1)[0]);
+  std::cout << "Neighbor Elements for first cell in region1 (should be no element, because only one element per regionment)" << std::endl;
+  for (NeighborCellIterator cofit = neigbouring_cells_region1.begin();
+                           cofit != neigbouring_cells_region1.end();
+                         ++cofit)
+  {
+    std::cout << *cofit << std::endl;
+  }
+
+  NeighborCellRange neigbouring_cells_region2(region2, viennagrid::elements<CellTag>(region2)[0]);
+  std::cout << "Neighbor Elements for first cell in region2 (should be no element, because only one element per regionment)" << std::endl;
+  for (NeighborCellIterator cofit = neigbouring_cells_region2.begin();
+                           cofit != neigbouring_cells_region2.end();
+                         ++cofit)
+  {
+    std::cout << *cofit << std::endl;
+  }
 
 
 

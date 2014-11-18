@@ -14,16 +14,7 @@
   #pragma warning( disable : 4503 )     //truncated name decoration
 #endif
 
-#include "viennagrid/forwards.hpp"
-#include "viennagrid/mesh/mesh.hpp"
-#include "viennagrid/mesh/element_creation.hpp"
-// #include "viennagrid/config/default_configs.hpp"
-#include "viennagrid/point.hpp"
-
-
-#include "viennagrid/mesh/mesh_hierarchy_impl.hpp"
-#include "viennagrid/mesh/mesh_impl.hpp"
-
+#include "viennagrid/core.hpp"
 
 //
 //    Let us construct the following input mesh:

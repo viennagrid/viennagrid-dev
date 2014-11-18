@@ -57,7 +57,9 @@ add_executable(copy_elements        copy_elements.cpp)
 target_link_libraries(copy_elements viennagrid)
 
 # add_executable(thin_mesh            thin_mesh.cpp)
-# add_executable(convert_to_mphtxt    convert_to_mphtxt.cpp)
+
+add_executable(convert_to_mphtxt    convert_to_mphtxt.cpp)
+target_link_libraries(convert_to_mphtxt viennagrid)
 
 
 

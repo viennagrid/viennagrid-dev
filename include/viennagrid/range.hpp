@@ -171,9 +171,10 @@ namespace viennagrid
     size_type size() const { return end()-begin(); }
 
     element_type operator[](size_type pos)
-    { return element_type(tag(), mesh_hierarchy(), element_index_begin[pos]); }
+    { return *viennagrid::advance(begin(), pos); }
     const_element_type operator[](size_type pos) const
-    { return const_element_type(tag(), mesh_hierarchy(), element_index_begin[pos]); }
+    { return *viennagrid::advance(begin(), pos); }
+//     { return const_element_type(tag(), mesh_hierarchy(), element_index_begin[pos]); }
 
 
     mesh_hierarchy_type mesh_hierarchy() { return mesh_hierarchy_; }
@@ -188,91 +189,6 @@ namespace viennagrid
     index_pointer_type element_index_end;
     ViewFunctorT view_functor;
   };
-
-
-
-
-
-
-//   template<typename ViewFunctorT, bool range_is_const>
-//   template<bool mesh_is_const>
-//   void base_element_range<ViewFunctorT, range_is_const>::from_mesh(base_mesh<mesh_is_const> mesh, element_tag_type element_tag_in)
-//   {
-//     element_tag_ = mesh.unpack_element_tag(element_tag_in);
-//     mesh_hierarchy_ = mesh.mesh_hierarchy();
-//
-//     viennagrid_elements_get(mesh.internal(),
-//                             tag().internal(),
-//                             const_cast<viennagrid_index **>(&element_index_begin),
-//                             const_cast<viennagrid_index **>(&element_index_end));
-//   }
-//
-//   template<typename ViewFunctorT, bool range_is_const>
-//   template<bool element_is_const>
-//   void base_element_range<ViewFunctorT, range_is_const>::boundary_from_element(base_element<element_is_const> element, element_tag_type element_tag_in)
-//   {
-//     element_tag_ = element.unpack_element_tag(element_tag_in);
-//     mesh_hierarchy_ = element.mesh_hierarchy();
-//
-//     viennagrid_element_boundary_elements(mesh_hierarchy().internal(),
-//                                          element.tag().internal(),
-//                                          element.id(),
-//                                          tag().internal(),
-//                                          const_cast<viennagrid_index **>(&element_index_begin),
-//                                          const_cast<viennagrid_index **>(&element_index_end));
-//   }
-//
-//   template<typename ViewFunctorT, bool range_is_const>
-//   template<bool mesh_is_const, bool element_is_const>
-//   void base_element_range<ViewFunctorT, range_is_const>::coboundary_from_element(base_mesh<mesh_is_const> mesh, base_element<element_is_const> element, element_tag_type coboundary_tag_in)
-//   {
-//     element_tag_ = mesh.unpack_element_tag(coboundary_tag_in);
-//     mesh_hierarchy_ = element.mesh_hierarchy();
-//
-//     viennagrid_element_coboundary_elements(mesh.internal(),
-//                                            element.tag().internal(),
-//                                            element.id(),
-//                                            tag().internal(),
-//                                            const_cast<viennagrid_index **>(&element_index_begin),
-//                                            const_cast<viennagrid_index **>(&element_index_end));
-//   }
-//
-//
-//
-//
-//
-//
-//   template<typename ViewFunctorT, bool range_is_const>
-//   template<bool element_is_const>
-//   void base_element_range<ViewFunctorT, range_is_const>::boundary_from_element(base_element<element_is_const> element, element_tag_type element_tag_in)
-//   {
-//     element_tag_ = element.unpack_element_tag(element_tag_in);
-//     mesh_hierarchy_ = element.mesh_hierarchy();
-//
-//     viennagrid_element_boundary_elements(mesh_hierarchy().internal(),
-//                                          element.tag().internal(),
-//                                          element.id(),
-//                                          tag().internal(),
-//                                          const_cast<viennagrid_index **>(&element_index_begin),
-//                                          const_cast<viennagrid_index **>(&element_index_end));
-//   }
-//
-//
-//   template<typename ViewFunctorT, bool range_is_const>
-//   template<bool mesh_is_const, bool element_is_const>
-//   void base_element_range<ViewFunctorT, range_is_const>::neighbor_from_element(base_mesh<mesh_is_const> mesh, base_element<element_is_const> element, element_tag_type connector_tag_in, element_tag_type neighbor_tag_in)
-//   {
-//     element_tag_ = mesh.unpack_element_tag(neighbor_tag_in);
-//     mesh_hierarchy_ = element.mesh_hierarchy();
-//
-//     viennagrid_element_neighbor_elements(mesh.internal(),
-//                                          element.tag().internal(),
-//                                          element.id(),
-//                                          connector_tag_in.internal(),
-//                                          tag().internal(),
-//                                          const_cast<viennagrid_index **>(&element_index_begin),
-//                                          const_cast<viennagrid_index **>(&element_index_end));
-//   }
 
 
 

@@ -15,10 +15,8 @@
 #endif
 
 #include "viennagrid/core.hpp"
-// #include "viennagrid/config/default_configs.hpp"
 #include "viennagrid/io/netgen_reader.hpp"
 #include "viennagrid/io/vtk_writer.hpp"
-#include "viennagrid/accessor.hpp"
 
 #include "viennagrid/algorithm/centroid.hpp"
 

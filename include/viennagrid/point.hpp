@@ -12,46 +12,13 @@
 namespace viennagrid
 {
 
-//   template<bool is_const>
   class point_t : public std::vector<viennagrid_numeric>
   {
   public:
 
-//     typedef unsigned char size_type;
-//     typedef viennagrid_numeric value_type;
-//     typedef typename result_of::const_nonconst<value_type *, is_const>::type pointer_type;
-//     typedef typename result_of::const_type<value_type *>::type const_pointer_type;
-//     typedef typename result_of::const_nonconst<value_type &, is_const>::type reference_type;
-//     typedef typename result_of::const_type<value_type &>::type const_reference_type;
-
     point_t() {}
     point_t(size_type size_in) : std::vector<viennagrid_numeric>(size_in)
-    {
-      std::fill(begin(), end(), value_type(0));
-    }
-
-//     base_point(size_type size_in, pointer_type data_in) : data_(data_in), size_(size_in), data_owned_(false) {}
-
-
-//     reference_type operator[](size_type index) { return data_[index]; }
-//     const_reference_type operator[](size_type index) const { return data_[index]; }
-
-//     pointer_type data() { return data_; }
-//     const_pointer_type data() const { return data_; }
-
-
-//     typedef pointer_type iterator;
-//     typedef const_pointer_type const_iterator;
-//
-//     iterator begin() { return data_; }
-//     iterator end() { return data_+size(); }
-//
-//     const_iterator cbegin() const { return data_; }
-//     const_iterator cend() const { return data_+size(); }
-//
-//     const_iterator begin() const { return cbegin(); }
-//     const_iterator end() const { return cend(); }
-
+    { std::fill(begin(), end(), value_type(0)); }
 
     template<typename PointT>
     point_t & operator+=(PointT const & other)
@@ -92,23 +59,6 @@ namespace viennagrid
 
 
   private:
-
-//     void make();
-// //     {
-// //       data_ = new value_type[size()];
-// //       data_owned_ = true;
-// //       std::fill(begin(), end(), value_type(0));
-// //     }
-//
-//     void free()
-//     {
-//       if (data_owned_)
-//         delete[] data_;
-//     }
-
-//     pointer_type data_;
-//     size_type size_;
-//     bool data_owned_;
   };
 
 
@@ -138,23 +88,8 @@ namespace viennagrid
   }
 
 
-//   template<>
-//   void point_t::make()
-//   {
-//     data_ = new value_type[size()];
-//     data_owned_ = true;
-//     std::fill(begin(), end(), value_type(0));
-//   }
-//
-//   template<>
-//   void base_point<true>::make()
-//   {
-//     data_ = new value_type[size()];
-//     data_owned_ = true;
-//   }
 
 
-//   template<bool lhs_is_const, bool rhs_is_const>
   inline point_t operator+(point_t const & lhs, point_t const & rhs)
   {
     point_t result(lhs);
@@ -162,7 +97,6 @@ namespace viennagrid
     return result;
   }
 
-//   template<bool lhs_is_const, bool rhs_is_const>
   inline point_t operator-(point_t const & lhs, point_t const & rhs)
   {
     point_t result(lhs);
@@ -200,7 +134,31 @@ namespace viennagrid
 
 
 
-//   template<bool is_const>
+
+
+  /** @brief Returns the pointwise minimum point of two points, i.e. result[i] = min(x[i], y[i]) for all i. */
+  inline point_t min(point_t const & p1, point_t const & p2)
+  {
+    assert( p1.size() == p2.size() );
+    point_t tmp(p1.size());
+    for (std::size_t i = 0; i < p1.size(); ++i)
+      tmp[i] = std::min(p1[i], p2[i]);
+    return tmp;
+  }
+
+  /** @brief Returns the pointwise maximum point of two points, i.e. result[i] = max(x[i], y[i]) for all i. */
+  inline point_t max(point_t const & p1, point_t const & p2)
+  {
+    assert( p1.size() == p2.size() );
+    point_t tmp(p1.size());
+    for (std::size_t i = 0; i < p1.size(); ++i)
+      tmp[i] = std::max(p1[i], p2[i]);
+    return tmp;
+  }
+
+
+
+
   std::ostream& operator << (std::ostream & os, point_t const & p)
   {
     typedef point_t::size_type      size_type;

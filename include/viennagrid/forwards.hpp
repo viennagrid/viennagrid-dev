@@ -135,6 +135,7 @@ namespace viennagrid
     static element_tag_t tetrahedron() { return element_tag_t(VIENNAGRID_ELEMENT_TAG_TETRAHEDRON); }
     static element_tag_t hexahedron() { return element_tag_t(VIENNAGRID_ELEMENT_TAG_HEXAHEDRON); }
 
+    bool valid() const { return internal() != VIENNAGRID_ELEMENT_TAG_NO_ELEMENT; }
     bool is_vertex() const { return *this == vertex(); }
     bool is_line() const { return *this == line(); }
     bool is_edge() const { return *this == edge(); }

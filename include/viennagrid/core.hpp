@@ -15,6 +15,7 @@
 
 #include "viennagrid/mesh/mesh_hierarchy_impl.hpp"
 #include "viennagrid/mesh/mesh_impl.hpp"
+#include "viennagrid/mesh/region_impl.hpp"
 
 #include "viennagrid/mesh/element_creation.hpp"
 #include "viennagrid/mesh/mesh_operations.hpp"
