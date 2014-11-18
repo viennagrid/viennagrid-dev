@@ -80,6 +80,14 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_coboundary_element
                                                                                   viennagrid_index ** coboundary_element_index_begin,
                                                                                   viennagrid_index ** coboundary_element_index_end);
 
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_element_neighbor_elements(viennagrid_mesh mesh,
+                                                                                viennagrid_element_tag element_tag,
+                                                                                viennagrid_index element_id,
+                                                                                viennagrid_element_tag connector_element_tag,
+                                                                                viennagrid_element_tag neighbor_element_tag,
+                                                                                viennagrid_index ** neighbor_element_index_begin,
+                                                                                viennagrid_index ** neighbor_element_index_end);
+
 
 
 

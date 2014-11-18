@@ -620,13 +620,19 @@ namespace viennagrid
     };
 
 
-    template<typename SomethingT, typename ElementTagT = null_type>
+    template<typename SomethingT, typename CoboundaryTagT = null_type>
     struct coboundary_range;
 
-    template<typename SomethingT, typename ElementTagT = null_type>
+    template<typename SomethingT, typename CoboundaryTagT = null_type>
     struct const_coboundary_range;
 
 
+
+    template<typename SomethingT, typename ConnectorTagT = null_type, typename NeighborTagT = null_type>
+    struct neighbor_range;
+
+    template<typename SomethingT, typename ConnectorTagT = null_type, typename NeighborTagT = null_type>
+    struct const_neighbor_range;
 
 
 

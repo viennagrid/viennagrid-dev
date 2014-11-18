@@ -15,11 +15,13 @@
 
 #include "viennagrid/backend/forwards.h"
 #include "viennagrid/backend/buffer.hpp"
+#include "viennagrid/utils.hpp"
 
 
 
 
 typedef sparse_multibuffer<viennagrid_index, viennagrid_index> viennagrid_coboundary_buffer;
+typedef sparse_multibuffer<viennagrid_index, viennagrid_index> viennagrid_neighbor_buffer;
 typedef dense_multibuffer<viennagrid_index, viennagrid_index> viennagrid_boundary_buffer;
 typedef dense_multibuffer<viennagrid_index, viennagrid_numeric> viennagrid_hole_point_buffer;
 
@@ -59,15 +61,20 @@ public:
   }
 
   viennagrid_index * ids() { return &indices[0]; }
-
   viennagrid_int count() const { return indices.size(); }
+
   viennagrid_coboundary_buffer & coboundary_buffer(viennagrid_element_tag coboundary_tag)
-  { return coboundary_indices[ static_cast<unsigned char>(coboundary_tag) ]; }
+  { return coboundary_indices[static_cast<unsigned char>(coboundary_tag)]; }
+  viennagrid_neighbor_buffer & neighbor_buffer(viennagrid_element_tag connector_tag,
+                                               viennagrid_element_tag neighbor_tag)
+  { return neighbor_indices[static_cast<unsigned char>(connector_tag)][static_cast<unsigned char>(neighbor_tag)]; }
 
 private:
   std::vector<viennagrid_index> indices;
-  viennagrid_coboundary_buffer coboundary_indices[VIENNAGRID_ELEMENT_TAG_COUNT];
   std::map<viennagrid_index, viennagrid_index> index_map;
+
+  viennagrid_coboundary_buffer coboundary_indices[VIENNAGRID_ELEMENT_TAG_COUNT];
+  viennagrid_neighbor_buffer neighbor_indices[VIENNAGRID_ELEMENT_TAG_COUNT][VIENNAGRID_ELEMENT_TAG_COUNT];
 };
 
 
@@ -217,10 +224,53 @@ public:
   { return elements_begin(element_tag) + element_count(element_tag); }
 
 
+  viennagrid_index * boundary_begin(viennagrid_element_tag element_tag, viennagrid_index element_id, viennagrid_element_tag boundary_tag);
+  viennagrid_index * boundary_end(viennagrid_element_tag element_tag, viennagrid_index element_id, viennagrid_element_tag boundary_tag);
+
   viennagrid_index * coboundary_begin(viennagrid_element_tag element_tag, viennagrid_index element_id, viennagrid_element_tag coboundary_tag)
-  { return element_handle_buffer(element_tag).coboundary_buffer(coboundary_tag).begin(element_id); }
+  {
+    make_coboundary(element_tag, coboundary_tag);
+    return element_handle_buffer(element_tag).coboundary_buffer(coboundary_tag).begin(element_id);
+  }
   viennagrid_index * coboundary_end(viennagrid_element_tag element_tag, viennagrid_index element_id, viennagrid_element_tag coboundary_tag)
-  { return element_handle_buffer(element_tag).coboundary_buffer(coboundary_tag).end(element_id); }
+  {
+    make_coboundary(element_tag, coboundary_tag);
+    return element_handle_buffer(element_tag).coboundary_buffer(coboundary_tag).end(element_id);
+  }
+
+
+
+  viennagrid_index * neighbor_begin(viennagrid_element_tag element_tag, viennagrid_index element_id, viennagrid_element_tag connector_tag, viennagrid_element_tag neighbor_tag)
+  {
+    make_neighbor(element_tag, connector_tag, neighbor_tag);
+    return element_handle_buffer(element_tag).neighbor_buffer(connector_tag, neighbor_tag).begin(element_id);
+  }
+  viennagrid_index * neighbor_end(viennagrid_element_tag element_tag, viennagrid_index element_id, viennagrid_element_tag connector_tag, viennagrid_element_tag neighbor_tag)
+  {
+    make_neighbor(element_tag, connector_tag, neighbor_tag);
+    return element_handle_buffer(element_tag).neighbor_buffer(connector_tag, neighbor_tag).end(element_id);
+  }
+
+
+
+
+  viennagrid_index * connected_begin(viennagrid_element_tag element_tag, viennagrid_index element_id, viennagrid_element_tag connected_tag)
+  {
+    assert( element_tag != connected_tag );
+    if (element_tag > connected_tag)
+      return boundary_begin(element_tag, element_id, connected_tag);
+    else
+      return coboundary_begin(element_tag, element_id, connected_tag);
+  }
+
+  viennagrid_index * connected_end(viennagrid_element_tag element_tag, viennagrid_index element_id, viennagrid_element_tag connected_tag)
+  {
+    assert( element_tag != connected_tag );
+    if (element_tag > connected_tag)
+      return boundary_end(element_tag, element_id, connected_tag);
+    else
+      return coboundary_end(element_tag, element_id, connected_tag);
+  }
 
 
   void add_element(viennagrid_element_tag element_tag,
@@ -229,6 +279,7 @@ public:
 
 
   void make_coboundary(viennagrid_element_tag element_tag, viennagrid_element_tag coboundary_tag);
+  void make_neighbor(viennagrid_element_tag element_tag, viennagrid_element_tag connector_tag, viennagrid_element_tag neighbor_tag);
 
 
   viennagrid_element_handle_buffer & element_handle_buffer(viennagrid_element_tag element_tag)
@@ -241,6 +292,8 @@ public:
   bool is_coboundary_obsolete(viennagrid_element_tag element_tag, viennagrid_element_tag coboundary_tag);
   void set_coboundary_uptodate(viennagrid_element_tag element_tag, viennagrid_element_tag coboundary_tag);
 
+  bool is_neighbor_obsolete(viennagrid_element_tag element_tag, viennagrid_element_tag connector_tag, viennagrid_element_tag neighbor_tag);
+  void set_neighbor_uptodate(viennagrid_element_tag element_tag, viennagrid_element_tag connector_tag, viennagrid_element_tag neighbor_tag);
 
 
   bool is_boundary(viennagrid_element_tag element_tag, viennagrid_index element_id)
@@ -277,7 +330,8 @@ private:
   viennagrid_element_handle_buffer element_handle_buffers[VIENNAGRID_ELEMENT_TAG_COUNT];
 
 
-  viennagrid_int & coboundary_change_counter(viennagrid_element_tag element_tag, viennagrid_element_tag coboundary_tag)
+  viennagrid_int & coboundary_change_counter(viennagrid_element_tag element_tag,
+                                             viennagrid_element_tag coboundary_tag)
   {
     std::map< std::pair<viennagrid_element_tag, viennagrid_element_tag>, viennagrid_int >::iterator it = coboundary_change_counters.find( std::make_pair(element_tag, coboundary_tag) );
     if (it != coboundary_change_counters.end())
@@ -286,8 +340,22 @@ private:
     it = coboundary_change_counters.insert( std::make_pair(std::make_pair(element_tag, coboundary_tag), viennagrid_int(0)) ).first;
     return it->second;
   }
-
   std::map< std::pair<viennagrid_element_tag, viennagrid_element_tag>, viennagrid_int > coboundary_change_counters;
+
+
+  viennagrid_int & neighbor_change_counter(viennagrid_element_tag element_tag,
+                                           viennagrid_element_tag connector_tag,
+                                           viennagrid_element_tag neighbor_tag)
+  {
+    std::map< viennagrid::tripple<viennagrid_element_tag, viennagrid_element_tag, viennagrid_element_tag>, viennagrid_int >::iterator it = neighbor_change_counters.find( viennagrid::make_tripple(element_tag, connector_tag, neighbor_tag) );
+    if (it != neighbor_change_counters.end())
+      return it->second;
+
+    it = neighbor_change_counters.insert( std::make_pair(viennagrid::make_tripple(element_tag, connector_tag, neighbor_tag), viennagrid_int(0)) ).first;
+    return it->second;
+  }
+  std::map< viennagrid::tripple<viennagrid_element_tag, viennagrid_element_tag, viennagrid_element_tag>, viennagrid_int > neighbor_change_counters;
+
 
 
   std::set<viennagrid_index> & boundary_elements(viennagrid_element_tag element_tag) { return boundary_elements_[static_cast<unsigned char>(element_tag)]; }
@@ -674,10 +742,22 @@ inline viennagrid_int viennagrid_mesh_::dimension() { return hierarchy_->dimensi
 inline viennagrid_element_tag viennagrid_mesh_::unpack_element_tag(viennagrid_element_tag et)
 { return mesh_hierarchy()->unpack_element_tag(et); }
 
+
+inline viennagrid_index * viennagrid_mesh_::boundary_begin(viennagrid_element_tag element_tag, viennagrid_index element_id, viennagrid_element_tag boundary_tag)
+{ return mesh_hierarchy()->element_buffer(element_tag).boundary_buffer(boundary_tag).begin(element_id); }
+inline viennagrid_index * viennagrid_mesh_::boundary_end(viennagrid_element_tag element_tag, viennagrid_index element_id, viennagrid_element_tag boundary_tag)
+{ return mesh_hierarchy()->element_buffer(element_tag).boundary_buffer(boundary_tag).end(element_id); }
+
+
 inline bool viennagrid_mesh_::is_coboundary_obsolete(viennagrid_element_tag element_tag, viennagrid_element_tag coboundary_tag)
 { return mesh_hierarchy()->is_obsolete( coboundary_change_counter(element_tag, coboundary_tag) ); }
 inline void viennagrid_mesh_::set_coboundary_uptodate(viennagrid_element_tag element_tag, viennagrid_element_tag coboundary_tag)
 { mesh_hierarchy()->update_change_counter( coboundary_change_counter(element_tag, coboundary_tag) ); }
+
+inline bool viennagrid_mesh_::is_neighbor_obsolete(viennagrid_element_tag element_tag, viennagrid_element_tag connector_tag, viennagrid_element_tag neighbor_tag)
+{ return mesh_hierarchy()->is_obsolete( neighbor_change_counter(element_tag, connector_tag, neighbor_tag) ); }
+inline void viennagrid_mesh_::set_neighbor_uptodate(viennagrid_element_tag element_tag, viennagrid_element_tag connector_tag, viennagrid_element_tag neighbor_tag)
+{ mesh_hierarchy()->update_change_counter( neighbor_change_counter(element_tag, connector_tag, neighbor_tag) ); }
 
 
 inline bool viennagrid_mesh_::are_boundary_flags_obsolete()

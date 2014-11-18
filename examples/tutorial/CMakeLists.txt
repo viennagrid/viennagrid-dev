@@ -30,7 +30,8 @@ target_link_libraries(iterators     viennagrid)
 ADD_EXECUTABLE(multi_segment        multi_segment.cpp)
 target_link_libraries(multi_segment viennagrid)
 
-# add_executable(neighbor_iteration   neighbor_iteration.cpp)
+add_executable(neighbor_iteration   neighbor_iteration.cpp)
+target_link_libraries(neighbor_iteration viennagrid)
 
 add_executable(named_segments       named_segments.cpp)
 target_link_libraries(named_segments viennagrid)

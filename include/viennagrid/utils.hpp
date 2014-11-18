@@ -13,7 +13,6 @@ namespace viennagrid
   template<typename IteratorT>
   IteratorT advance(IteratorT const & in, typename std::iterator_traits<IteratorT>::difference_type distance)
   {
-//     typedef typename std::iterator_traits<IteratorT>::difference_type;
     IteratorT out(in);
     std::advance(out, distance);
     return out;
@@ -32,6 +31,57 @@ namespace viennagrid
     bool operator()(ValueT) const
     { return true; }
   };
+
+
+
+
+
+  template<typename T1, typename T2, typename T3>
+  struct tripple
+  {
+    typedef T1 first_type;
+    typedef T2 second_type;
+    typedef T3 third_type;
+
+    tripple() {}
+    tripple(first_type first_, second_type second_, third_type third_) : first(first_), second(second_), third(third_) {}
+
+    bool operator<( tripple<T1,T2,T3> const & rhs ) const
+    {
+      if (first < rhs.first)
+        return true;
+      if (rhs.first < first)
+        return false;
+
+      if (second < rhs.first)
+        return true;
+      if (rhs.second < second)
+        return false;
+
+      return third < rhs.third;
+    }
+
+    bool operator<=( tripple<T1,T2,T3> const & rhs ) const
+    { return !(rhs < *this); }
+
+    bool operator>( tripple<T1,T2,T3> const & rhs ) const
+    { return rhs < *this; }
+
+    bool operator>=( tripple<T1,T2,T3> const & rhs ) const
+    { return !(*this < rhs); }
+
+
+    first_type   first;
+    second_type  second;
+    third_type   third;
+  };
+
+  template<typename T1, typename T2, typename T3>
+  tripple<T1,T2,T3> make_tripple(T1 first_, T2 second_, T3 third_)
+  {
+    return tripple<T1,T2,T3>(first_, second_, third_);
+  }
+
 
 
 

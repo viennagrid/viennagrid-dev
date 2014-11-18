@@ -145,9 +145,28 @@ viennagrid_error viennagrid_element_coboundary_elements(viennagrid_mesh mesh,
   element_tag = mesh->unpack_element_tag(element_tag);
   coboundary_element_tag = mesh->unpack_element_tag(coboundary_element_tag);
 
-  mesh->make_coboundary(element_tag, coboundary_element_tag);
+//   mesh->make_coboundary(element_tag, coboundary_element_tag);
   *coboundary_element_index_begin = mesh->coboundary_begin(element_tag, element_id, coboundary_element_tag);
   *coboundary_element_index_end = mesh->coboundary_end(element_tag, element_id, coboundary_element_tag);
+
+  return VIENNAGRID_SUCCESS;
+}
+
+
+viennagrid_error viennagrid_element_neighbor_elements(viennagrid_mesh mesh,
+                                                      viennagrid_element_tag element_tag,
+                                                      viennagrid_index element_id,
+                                                      viennagrid_element_tag connector_element_tag,
+                                                      viennagrid_element_tag neighbor_element_tag,
+                                                      viennagrid_index ** neighbor_element_index_begin,
+                                                      viennagrid_index ** neighbor_element_index_end)
+{
+  element_tag = mesh->unpack_element_tag(element_tag);
+  connector_element_tag = mesh->unpack_element_tag(connector_element_tag);
+  neighbor_element_tag = mesh->unpack_element_tag(neighbor_element_tag);
+
+  *neighbor_element_index_begin = mesh->neighbor_begin(element_tag, element_id, connector_element_tag, neighbor_element_tag);
+  *neighbor_element_index_end = mesh->neighbor_end(element_tag, element_id, connector_element_tag, neighbor_element_tag);
 
   return VIENNAGRID_SUCCESS;
 }
