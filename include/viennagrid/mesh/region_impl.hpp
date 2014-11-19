@@ -55,6 +55,8 @@ namespace viennagrid
                              element.id(),
                              region.internal() );
 
+//     std::cout << "Adding " << element << " to region " << region.id() << std::endl;
+
     if ( element.tag().facet_tag().valid() )
     {
       typedef viennagrid::result_of::element_range<element_t>::type FacetElemenRangeType;

@@ -72,15 +72,9 @@ namespace viennagrid
       release();
     }
 
-
-
-    viennagrid_int dimension() const { return mesh_hierarchy().dimension(); }
+    viennagrid_int geometric_dimension() const { return mesh_hierarchy().geometric_dimension(); }
     element_tag_type cell_tag() const { return mesh_hierarchy().cell_tag(); }
     element_tag_type facet_tag() const { return mesh_hierarchy().facet_tag(); }
-
-    template<bool element_is_const>
-    point_type get_point(base_element<element_is_const> const & vertex) const;
-    void set_point(element_type vertex, point_type const & point);
 
     mesh_hierarchy_type mesh_hierarchy()
     {
@@ -98,10 +92,13 @@ namespace viennagrid
 
     viennagrid_mesh internal() const { return const_cast<viennagrid_mesh>(internal_mesh_); }
 
-    std::size_t regions_count() const;
+    std::size_t region_count() const;
     region_type get_make_region(region_id_type region_id);
     region_type make_region();
     const_region_type get_region(region_id_type region_id) const;
+
+    region_type get_make_region(std::string const & name);
+    const_region_type get_region(std::string const & name) const;
 
     element_tag_type unpack_element_tag(element_tag_type et) { return mesh_hierarchy().unpack_element_tag(et); }
   private:
@@ -125,8 +122,7 @@ namespace viennagrid
 
 
   template<bool mesh_is_const, bool element_is_const>
-  typename result_of::point< base_element<element_is_const> >::type get_point(base_mesh<mesh_is_const> m, base_element<element_is_const> vertex)
-  { return m.get_point(vertex); }
+  typename result_of::point< base_element<element_is_const> >::type get_point(base_mesh<mesh_is_const> m, base_element<element_is_const> vertex);
   inline void set_point(base_mesh<false> m, base_element<false> const & vertex, result_of::point< base_mesh<false> >::type const & point);
 
 

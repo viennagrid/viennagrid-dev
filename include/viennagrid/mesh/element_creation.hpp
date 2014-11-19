@@ -63,7 +63,7 @@ namespace viennagrid
   template<typename SomethingT>
   typename result_of::vertex<SomethingT>::type make_vertex(SomethingT something, point_t const & point)
   {
-    assert( (viennagrid_int)point.size() == something.dimension() );
+    assert( (viennagrid_int)point.size() == something.geometric_dimension() );
     return make_vertex(something, &point[0]);
   }
 
@@ -177,7 +177,7 @@ namespace viennagrid
                               &internal_vertices_indices[0],
                               &id);
 
-    return element_t(tag, mesh_hierarchy, id);
+    return element_t(mesh_hierarchy.unpack_element_tag(tag), mesh_hierarchy, id);
   }
 
   template<typename ElementTagT, typename VertexHandleIteratorT>
@@ -307,7 +307,7 @@ namespace viennagrid
   template<typename SomethingT>
   element_t make_quadrilateral(SomethingT something, element_t v0, element_t v1, element_t v2, element_t v3)
   {
-    element_t v[3];
+    element_t v[4];
     v[0] = v0;
     v[1] = v1;
     v[2] = v2;
@@ -326,6 +326,21 @@ namespace viennagrid
     return make_element<tetrahedron_tag>(something, v, v+4);
   }
 
+  template<typename SomethingT>
+  element_t make_hexahedron(SomethingT something, element_t v0, element_t v1, element_t v2, element_t v3,
+                                                  element_t v4, element_t v5, element_t v6, element_t v7)
+  {
+    element_t v[8];
+    v[0] = v0;
+    v[1] = v1;
+    v[2] = v2;
+    v[3] = v3;
+    v[4] = v4;
+    v[5] = v5;
+    v[6] = v6;
+    v[7] = v7;
+    return make_element<hexahedron_tag>(something, v, v+8);
+  }
 
 }
 

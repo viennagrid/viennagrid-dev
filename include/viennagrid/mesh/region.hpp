@@ -63,10 +63,10 @@ namespace viennagrid
       return const_mesh_hierarchy_reference(tmp);
     }
 
-    std::size_t dimension() const { return mesh_hierarchy().dimension(); }
+    std::size_t geometric_dimension() const { return mesh_hierarchy().geometric_dimension(); }
     element_tag_type cell_tag() const { return mesh_hierarchy().cell_tag(); }
 
-    viennagrid_region internal() { return region_; }
+    viennagrid_region internal() const { return const_cast<viennagrid_region>(region_); }
 
   private:
 
@@ -112,7 +112,9 @@ namespace viennagrid
 
     base_region_range(mesh_hierarchy_type mesh_hierarchy_in) : mesh_hierarchy_(mesh_hierarchy_in)
     {
-      viennagrid_regions_get(mesh_hierarchy_.internal_mesh_hierarchy(), &begin_, &end_);
+      viennagrid_regions_get(mesh_hierarchy_.internal(),
+                             const_cast<viennagrid_region **>(&begin_),
+                             const_cast<viennagrid_region **>(&end_));
     }
 
     base_region_range(element_type element_) : mesh_hierarchy_( element_.mesh_hierarchy() )
@@ -218,7 +220,7 @@ namespace viennagrid
     id_type id() const { return region().id(); }
     std::string name() const { return region().name(); }
     void set_name(std::string const & name_) { region().set_name(name_); }
-    std::size_t dimension() const { return region().dimension(); }
+    std::size_t geometric_dimension() const { return region().geometric_dimension(); }
     element_tag_type cell_tag() const { return region().cell_tag(); }
 
   private:

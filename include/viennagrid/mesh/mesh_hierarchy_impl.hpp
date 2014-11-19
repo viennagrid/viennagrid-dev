@@ -45,6 +45,74 @@ namespace viennagrid
     viennagrid_region_get( internal(), region_id, &region );
     return const_region_type(region);
   }
+
+
+
+
+
+  template<bool mesh_hierarchy_is_const, bool element_is_const>
+  typename viennagrid::result_of::point< base_mesh_hierarchy<mesh_hierarchy_is_const> >::type get_point(
+    base_mesh_hierarchy<mesh_hierarchy_is_const> mesh_hierarchy,
+    base_element<element_is_const> const & vertex)
+  {
+    typedef typename viennagrid::result_of::point< base_mesh_hierarchy<mesh_hierarchy_is_const> >::type PointType;
+    PointType result( mesh_hierarchy.geometric_dimension() );
+    viennagrid_numeric const * tmp;
+    viennagrid_vertex_get(mesh_hierarchy.internal(), vertex.id(), const_cast<viennagrid_numeric **>(&tmp));
+    std::copy(tmp, tmp+result.size(), result.begin());
+    return result;
+  }
+
+  inline void set_point(base_mesh_hierarchy<false> mesh_hierarchy,
+                        base_element<false> const & vertex,
+                        viennagrid::result_of::point< base_mesh_hierarchy<false> >::type const & point)
+  {
+    viennagrid_numeric * tmp;
+    viennagrid_vertex_get(mesh_hierarchy.internal(), vertex.id(), &tmp);
+    std::copy(point.begin(), point.end(), tmp);
+  }
+
+
+
+
+  template<bool is_const>
+  typename base_mesh_hierarchy<is_const>::region_type base_mesh_hierarchy<is_const>::get_make_region(std::string const & name)
+  {
+    typedef base_mesh_hierarchy<is_const> MeshHierarchyType;
+    typedef typename viennagrid::result_of::region_range<MeshHierarchyType>::type RegionRangeType;
+    typedef typename viennagrid::result_of::iterator<RegionRangeType>::type RegionRangeIterator;
+
+    RegionRangeType regions(*this);
+    for (RegionRangeIterator rit = regions.begin(); rit != regions.end(); ++rit)
+    {
+      if ( (*rit).name() == name )
+        return *rit;
+    }
+
+    region_type region = make_region();
+    region.set_name(name);
+
+    return region;
+  }
+
+  template<bool is_const>
+  typename base_mesh_hierarchy<is_const>::const_region_type base_mesh_hierarchy<is_const>::get_region(std::string const & name) const
+  {
+    typedef base_mesh_hierarchy<is_const> MeshHierarchyType;
+    typedef typename viennagrid::result_of::region_range<MeshHierarchyType>::type RegionRangeType;
+    typedef typename viennagrid::result_of::iterator<RegionRangeType>::type RegionRangeIterator;
+
+    RegionRangeType regions(*this);
+    for (RegionRangeIterator rit = regions.begin(); rit != regions.end(); ++rit)
+    {
+      if ( (*rit).name() == name )
+        return *rit;
+    }
+
+    assert(false);
+    return const_region_type();
+  }
+
 }
 
 
