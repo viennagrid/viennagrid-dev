@@ -131,23 +131,23 @@ inline void setup_line3d(viennagrid::mesh_t & mesh)
 
   vertices[0] = v[0];
   vertices[1] = v[6];
-  viennagrid::make_cell( mesh, vertices, vertices+2 );
+  viennagrid::make_element<viennagrid::line_tag>( mesh, vertices, vertices+2 );
 
   vertices[0] = v[1];
   vertices[1] = v[4];
-  viennagrid::make_cell( mesh, vertices, vertices+2 );
+  viennagrid::make_element<viennagrid::line_tag>( mesh, vertices, vertices+2 );
 
   vertices[0] = v[1];
   vertices[1] = v[5];
-  viennagrid::make_cell( mesh, vertices, vertices+2 );
+  viennagrid::make_element<viennagrid::line_tag>( mesh, vertices, vertices+2 );
 
   vertices[0] = v[2];
   vertices[1] = v[3];
-  viennagrid::make_cell( mesh, vertices, vertices+2 );
+  viennagrid::make_element<viennagrid::line_tag>( mesh, vertices, vertices+2 );
 
   vertices[0] = v[7];
   vertices[1] = v[8];
-  viennagrid::make_cell( mesh, vertices, vertices+2 );
+  viennagrid::make_element<viennagrid::line_tag>( mesh, vertices, vertices+2 );
 }
 
 inline void test_line3d()
@@ -158,7 +158,7 @@ inline void test_line3d()
   typedef viennagrid::result_of::point<Mesh>::type                PointType;
   typedef viennagrid::result_of::element<Mesh, CellTag>::type  CellType;
 
-  Mesh mesh(3, viennagrid::line_tag());
+  Mesh mesh;
 
   setup_line3d(mesh);
 
@@ -392,12 +392,12 @@ inline void setup_triangular3d(viennagrid::mesh_t & mesh)
   vertices[0] = v[0];
   vertices[1] = v[2];
   vertices[2] = v[3];
-  viennagrid::make_cell( mesh, vertices, vertices+3 );
+  viennagrid::make_element<viennagrid::triangle_tag>( mesh, vertices, vertices+3 );
 
   vertices[0] = v[0];
   vertices[1] = v[1];
   vertices[2] = v[2];
-  viennagrid::make_cell( mesh, vertices, vertices+3 );
+  viennagrid::make_element<viennagrid::triangle_tag>( mesh, vertices, vertices+3 );
 }
 
 
@@ -413,7 +413,7 @@ inline void test_triangular3d()
   typedef viennagrid::result_of::line<Mesh>::type             EdgeType;
   typedef viennagrid::result_of::element<Mesh, CellTag>::type  CellType;
 
-  Mesh mesh(3, viennagrid::triangle_tag());
+  Mesh mesh;
 
   setup_triangular3d(mesh);
 
@@ -621,7 +621,7 @@ inline void setup_quadrilateral3d(viennagrid::mesh_t & mesh)
   }
 
   std::cout << "Adding cells to mesh..." << std::endl;
-  viennagrid::make_cell( mesh, v, v+4 );
+  viennagrid::make_element<viennagrid::quadrilateral_tag>( mesh, v, v+4 );
 }
 
 inline void test_quadrilateral3d()
@@ -635,7 +635,7 @@ inline void test_quadrilateral3d()
   typedef viennagrid::result_of::element<Mesh, viennagrid::line_tag>::type             EdgeType;
   typedef viennagrid::result_of::element<Mesh, CellTag>::type  CellType;
 
-  Mesh mesh(3, viennagrid::quadrilateral_tag());
+  Mesh mesh;
 
   setup_quadrilateral3d(mesh);
 
@@ -782,7 +782,7 @@ inline void setup_tetrahedral3d(viennagrid::mesh_t & mesh)
   }
 
   std::cout << "Adding cells to mesh..." << std::endl;
-  viennagrid::make_cell( mesh, v, v+4 );
+  viennagrid::make_element<viennagrid::tetrahedron_tag>( mesh, v, v+4 );
 }
 
 inline void test_tetrahedral3d()
@@ -798,7 +798,7 @@ inline void test_tetrahedral3d()
   typedef viennagrid::result_of::facet_tag<CellType>::type FacetTag;
   typedef viennagrid::result_of::facet<CellType>::type    FacetType;
 
-  Mesh mesh(3, viennagrid::tetrahedron_tag());
+  Mesh mesh;
 
   setup_tetrahedral3d(mesh);
 
@@ -947,7 +947,7 @@ inline void setup_hexahedral3d(viennagrid::mesh_t & mesh)
   }
 
   std::cout << "Adding cells to mesh..." << std::endl;
-  viennagrid::make_cell( mesh, v, v+8 );
+  viennagrid::make_element<viennagrid::hexahedron_tag>( mesh, v, v+8 );
 }
 
 inline void test_hexahedral3d()
@@ -959,7 +959,7 @@ inline void test_hexahedral3d()
   typedef viennagrid::result_of::point<Mesh>::type                PointType;
   typedef viennagrid::result_of::element<Mesh, CellTag>::type  CellType;
 
-  Mesh mesh(3, viennagrid::hexahedron_tag());
+  Mesh mesh;
 
   setup_hexahedral3d(mesh);
 

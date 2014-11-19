@@ -27,35 +27,15 @@ int main()
 
 
 
-  MeshType mesh(3, viennagrid::tetrahedron_tag());
+  MeshType mesh;
 
   VertexType vertex_handles[5];
-  double pt[3];
 
-  pt[0] = 0.0;
-  pt[1] = 0.0;
-  pt[2] = 0.0;
-  vertex_handles[0] = viennagrid::make_vertex( mesh, pt );
-
-  pt[0] = 1.0;
-  pt[1] = 0.0;
-  pt[2] = 0.0;
-  vertex_handles[1] = viennagrid::make_vertex( mesh, pt );
-
-  pt[0] = 0.0;
-  pt[1] = 1.0;
-  pt[2] = 0.0;
-  vertex_handles[2] = viennagrid::make_vertex( mesh, pt );
-
-  pt[0] = 0.0;
-  pt[1] = 0.0;
-  pt[2] = 1.0;
-  vertex_handles[3] = viennagrid::make_vertex( mesh, pt );
-
-  pt[0] = 0.0;
-  pt[1] = 0.0;
-  pt[2] = -1.0;
-  vertex_handles[4] = viennagrid::make_vertex( mesh, pt );
+  vertex_handles[0] = viennagrid::make_vertex( mesh, viennagrid::make_point(0,0,0) );
+  vertex_handles[1] = viennagrid::make_vertex( mesh, viennagrid::make_point(1,0,0) );
+  vertex_handles[2] = viennagrid::make_vertex( mesh, viennagrid::make_point(0,1,0) );
+  vertex_handles[3] = viennagrid::make_vertex( mesh, viennagrid::make_point(0,0,1) );
+  vertex_handles[4] = viennagrid::make_vertex( mesh, viennagrid::make_point(0,0,-1) );
 
 
 
@@ -65,7 +45,7 @@ int main()
   tets[2] = vertex_handles[2];
   tets[3] = vertex_handles[3];
 
-  CellType t0 = viennagrid::make_cell(mesh, tets, tets+4);
+  CellType t0 = viennagrid::make_element<viennagrid::tetrahedron_tag>(mesh, tets, tets+4);
 
 
   tets[0] = vertex_handles[0];
@@ -73,7 +53,7 @@ int main()
   tets[2] = vertex_handles[2];
   tets[3] = vertex_handles[4];
 
-  CellType t1 = viennagrid::make_cell(mesh, tets, tets+4);
+  CellType t1 = viennagrid::make_element<viennagrid::tetrahedron_tag>(mesh, tets, tets+4);
 
   MeshRegionType r0 = mesh.make_region();
   MeshRegionType r1 = mesh.make_region();
@@ -174,9 +154,6 @@ int main()
       CoboundaryTriangleRangeType coboundary_triangles(mesh, *it);
       for (CoboundaryTriangleRangeType::iterator jt = coboundary_triangles.begin(); jt != coboundary_triangles.end(); ++jt)
       {
-//         viennagrid_index const * regions_begin;
-//         viennagrid_index const * regions_end;
-
         std::cout << "  coboundary " << (*jt).id() << "  region=";
 
         if (viennagrid::is_in_region(r0, *jt))
@@ -203,9 +180,6 @@ int main()
       CoboundaryTriangleRangeType coboundary_triangles(mesh, *it);
       for (CoboundaryTriangleRangeType::iterator jt = coboundary_triangles.begin(); jt != coboundary_triangles.end(); ++jt)
       {
-//         viennagrid_index const * regions_begin;
-//         viennagrid_index const * regions_end;
-
         std::cout << "  coboundary " << (*jt).id() << "  region=";
 
         if (viennagrid::is_in_region(r0, *jt))
@@ -238,12 +212,11 @@ int main()
 
 
   {
-//     MeshHierarchyType vtk_test(3, viennagrid::tetrahedron_tag());
-    MeshType vtk_root(3, viennagrid::tetrahedron_tag()); // = vtk_test.get_root();
+    MeshType vtk_root;
 
 
     viennagrid::io::vtk_reader<MeshType> reader;
-    reader(vtk_root, "../tets_with_data_main.pvd");
+    reader(vtk_root, "../data/tets_with_data_main.pvd");
 
     std::cout << viennagrid::vertices(vtk_root).size() << std::endl;
     std::cout << viennagrid::cells(vtk_root).size() << std::endl;

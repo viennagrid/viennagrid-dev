@@ -17,6 +17,7 @@
 #include <fstream>
 #include <iostream>
 #include <assert.h>
+#include <iterator>
 
 #include "viennagrid/core.hpp"
 #include "viennagrid/io/helper.hpp"
@@ -44,14 +45,13 @@ namespace viennagrid
         typedef typename viennagrid::result_of::point<MeshType>::type    PointType;
         typedef typename viennagrid::result_of::coord<MeshType>::type    CoordType;
 
-        const int point_dim = mesh_obj.geometric_dimension();
-
         typedef typename result_of::cell_tag<MeshType>::type CellTag;
         typedef typename result_of::element<MeshType, CellTag>::type CellType;
 
         typedef typename result_of::element<MeshType, vertex_tag>::type                           VertexType;
 
         std::ifstream reader(filename.c_str());
+        std::string tmp;
 
         #if defined VIENNAGRID_DEBUG_STATUS || defined VIENNAGRID_DEBUG_IO
         std::cout << "* netgen_reader::operator(): Reading file " << filename << std::endl;
@@ -71,23 +71,35 @@ namespace viennagrid
         //
         // Read vertices:
         //
-        reader >> node_num;
-        assert(node_num > 0);
+        {
+          getline( reader, tmp );
+          std::istringstream line(tmp);
+
+          line >> node_num;
+          assert(node_num > 0);
+        }
 
         #if defined VIENNAGRID_DEBUG_STATUS || defined VIENNAGRID_DEBUG_IO
         std::cout << "* netgen_reader::operator(): Reading " << node_num << " vertices... " << std::endl;
         #endif
 
-        std::vector<CoordType> p(point_dim);
+
         for (int i=0; i<node_num; i++)
         {
           if (!reader.good())
             throw bad_file_format_exception("* ViennaGrid: netgen_reader::operator(): File " + filename + ": EOF encountered while reading vertices.");
 
-          for (std::size_t j=0; j<static_cast<std::size_t>(point_dim); j++)
-            reader >> p[j];
+          getline( reader, tmp );
+          std::istringstream line(tmp);
 
-          viennagrid::make_vertex( mesh_obj, &p[0] );
+          viennagrid::point_t p;
+          std::copy( std::istream_iterator<CoordType>(line),
+                     std::istream_iterator<CoordType>(),
+                     std::back_inserter(p) );
+
+          std::cout << "Adding Point: " << p << std::endl;
+
+          viennagrid::make_vertex( mesh_obj, p );
         }
 
         if (!reader.good())
@@ -97,7 +109,13 @@ namespace viennagrid
         //
         // Read cells:
         //
-        reader >> cell_num;
+        {
+          getline( reader, tmp );
+          std::istringstream line(tmp);
+
+          line >> cell_num;
+          assert(cell_num > 0);
+        }
 
         #if defined VIENNAGRID_DEBUG_STATUS || defined VIENNAGRID_DEBUG_IO
         std::cout << "* netgen_reader::operator(): Reading " << cell_num << " cells... " << std::endl;
@@ -108,26 +126,42 @@ namespace viennagrid
 
         for (int i=0; i<cell_num; ++i)
         {
-          std::size_t vertex_num;
-          std::vector<VertexType> cell_vertex_handles( mesh_obj.cell_tag().vertex_count() );
+//           std::size_t vertex_num;
+
 
           if (!reader.good())
             throw bad_file_format_exception("* ViennaGrid: netgen_reader::operator(): File " + filename + ": EOF encountered while reading cells (segment index expected).");
 
+
+          getline( reader, tmp );
+          std::istringstream line(tmp);
+
           int segment_index;
-          reader >> segment_index;
+          std::vector<viennagrid_int> vertex_indices;
+          line >> segment_index;
 
-          for (std::size_t j=0; j<cell_vertex_handles.size(); ++j)
-          {
-            if (!reader.good())
-              throw bad_file_format_exception("* ViennaGrid: netgen_reader::operator(): File " + filename + ": EOF encountered while reading cells (cell ID expected).");
+          std::copy( std::istream_iterator<viennagrid_int>(line),
+                     std::istream_iterator<viennagrid_int>(),
+                     std::back_inserter(vertex_indices) );
 
-            reader >> vertex_num;
-            cell_vertex_handles[j] = vertices[vertex_num-1];
-//             viennagrid::vertices(mesh_obj).handle_at(vertex_ num-1);
-          }
 
-          viennagrid::make_element<CellTag>( mesh_obj.get_make_region(segment_index), cell_vertex_handles.begin(), cell_vertex_handles.end());
+
+          std::vector<VertexType> cell_vertex_handles( vertex_indices.size() );
+          for (std::size_t j=0; j<vertex_indices.size(); ++j)
+            cell_vertex_handles[j] = vertices[ vertex_indices[j]-1];
+
+          if (vertex_indices.size() == 2)
+            viennagrid::make_element<viennagrid::line_tag>(mesh_obj.get_make_region(segment_index),
+                                                           cell_vertex_handles.begin(),
+                                                           cell_vertex_handles.end());
+          else if (vertex_indices.size() == 3)
+            viennagrid::make_element<viennagrid::triangle_tag>(mesh_obj.get_make_region(segment_index),
+                                                               cell_vertex_handles.begin(),
+                                                               cell_vertex_handles.end());
+          else if (vertex_indices.size() == 4)
+            viennagrid::make_element<viennagrid::tetrahedron_tag>(mesh_obj.get_make_region(segment_index),
+                                                                  cell_vertex_handles.begin(),
+                                                                  cell_vertex_handles.end());
         }
       } //operator()
 

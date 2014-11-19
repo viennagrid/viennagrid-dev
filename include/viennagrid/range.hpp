@@ -578,7 +578,11 @@ namespace viennagrid
 
 
 
-
+    template<>
+    struct coboundary_range<mesh_t, null_type>
+    {
+      typedef coboundary_element_range<false> type;
+    };
 
     template<typename CoboundaryTagT>
     struct coboundary_range<mesh_t, CoboundaryTagT>

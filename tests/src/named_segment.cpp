@@ -43,7 +43,7 @@ void test(int segment_count, int test_count)
   typedef viennagrid::mesh_t MeshType;
   for (int i = 0; i < test_count; ++i)
   {
-    MeshType mesh(dimension, CellTagT());
+    MeshType mesh;
 
     std::map<std::string, int> segment_names;
     while (static_cast<int>(segment_names.size()) != segment_count)

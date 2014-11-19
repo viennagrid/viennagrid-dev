@@ -42,9 +42,9 @@ namespace viennagrid
       retain();
     }
 
-    base_mesh(viennagrid_int dimension_, element_tag_type cell_tag_) : internal_mesh_(0)
+    base_mesh() : internal_mesh_(0)
     {
-      base_mesh_hierarchy<is_const> mesh_hierarchy(dimension_, cell_tag_);
+      base_mesh_hierarchy<is_const> mesh_hierarchy;
       *this = mesh_hierarchy.root();
     }
 
@@ -117,6 +117,17 @@ namespace viennagrid
 
     viennagrid_mesh internal_mesh_;
   };
+
+
+
+
+  template<bool is_const>
+  base_mesh_hierarchy<is_const> mesh_hierarchy( base_mesh<is_const> mesh )
+  {
+    return mesh.mesh_hierarchy();
+  }
+
+
 
 
 

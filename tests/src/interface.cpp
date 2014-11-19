@@ -32,7 +32,7 @@ void test(ReaderType & my_reader, std::string const & infile)
   typedef viennagrid::result_of::facet_range<MeshType>::type         FacetContainer;
   typedef viennagrid::result_of::iterator<FacetContainer>::type        FacetIterator;
 
-  MeshType mesh(dimension, CellTagT());
+  MeshType mesh;
 
   //read from file:
   try

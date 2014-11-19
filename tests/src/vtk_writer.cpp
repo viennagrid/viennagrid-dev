@@ -49,7 +49,7 @@ void test(std::string & infile, std::string & outfile)
   typedef typename viennagrid::result_of::iterator<RegionCellContainer>::type                    RegionCellIterator;
 
 
-  MeshType mesh(dimension, CellTagT());
+  MeshType mesh;
 
   try{
     viennagrid::io::netgen_reader my_netgen_reader;
@@ -200,7 +200,7 @@ void test(std::string & infile, std::string & outfile)
   //
 
   std::cout << "Reading and writing the whole data again... (pass 1)" << std::endl;
-  MeshType mesh2(dimension, CellTagT());
+  MeshType mesh2;
 
   viennagrid::io::vtk_reader<MeshType> vtk_reader;
 
@@ -258,7 +258,7 @@ void test(std::string & infile, std::string & outfile)
 
 
   std::cout << "Reading and writing the whole data again... (pass 2)" << std::endl;
-  MeshType mesh3(dimension, CellTagT());
+  MeshType mesh3;
 
   std::deque<double>            pass2_vertex_double_data;
   std::deque< std::vector<double> >    pass2_vertex_vector_data;

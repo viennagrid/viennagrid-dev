@@ -30,7 +30,7 @@ int main()
   typedef viennagrid::result_of::triangle< MeshType >::type   TriangleType;
 
 
-  MeshType mesh(3, viennagrid::triangle_tag());
+  MeshType mesh;
 
   // create some vertices
   VertexType v0 = viennagrid::make_vertex( mesh, 0, 0, 0 );
@@ -57,7 +57,7 @@ int main()
 
 
   {
-    MeshType another_mesh(3, viennagrid::triangle_tag());
+    MeshType another_mesh;
 
     // copy all element handles to another_mesh
     viennagrid::copy_elements( t.begin(), t.end(), another_mesh );
@@ -80,7 +80,7 @@ int main()
 
 
   {
-    MeshType another_mesh(3, viennagrid::triangle_tag());
+    MeshType another_mesh;
 
     // copy all element to another_mesh using a cell range
     {

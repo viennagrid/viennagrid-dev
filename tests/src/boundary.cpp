@@ -19,20 +19,10 @@
 #include "viennagrid/io/vtk_reader.hpp"
 #include "viennagrid/algorithm/volume.hpp"
 
-template <typename CellTypeOrTag, typename ReaderType>
-void test(ReaderType & my_reader, int dimension, viennagrid::element_tag_t element_tag, std::string const & infile, double reference_surface)
+template <typename ReaderType>
+void test(ReaderType & my_reader, std::string const & infile, double reference_surface)
 {
   typedef viennagrid::mesh_t MeshType;
-//   typedef typename viennagrid::result_of::segmentation<Mesh>::type Segmentation;
-//   typedef typename viennagrid::result_of::segment<Mesh>::type Segment;
-
-  typedef typename viennagrid::result_of::element_tag<CellTypeOrTag>::type CellTag;
-  //typedef viennagrid::result_of::element<Mesh, CellTag>::type CellType;
-
-
-  //typedef typename viennagrid::result_of::mesh<ConfigType>::type        Mesh;
-  //typedef typename ConfigType::cell_tag                                   CellTag;
-  //typedef typename viennagrid::result_of::segment<ConfigType>::type       SegmentType;
 
   typedef viennagrid::result_of::vertex_range<MeshType>::type       VertexContainer;
   typedef viennagrid::result_of::iterator<VertexContainer>::type    VertexIterator;
@@ -40,8 +30,7 @@ void test(ReaderType & my_reader, int dimension, viennagrid::element_tag_t eleme
   typedef viennagrid::result_of::facet_range<MeshType>::type   FacetContainer;
   typedef viennagrid::result_of::iterator<FacetContainer>::type                         FacetIterator;
 
-  MeshType mesh(dimension, element_tag);
-//   Segmentation segmentation(mesh);
+  MeshType mesh;
 
   //read from file:
   try
@@ -112,25 +101,25 @@ int main()
 
   std::cout << "*********** line, 1d ***********" << std::endl;
   viennagrid::io::netgen_reader line_1d_reader;
-  test<viennagrid::line_tag>(line_1d_reader, 1, viennagrid::line_tag(), path + "line8.mesh", 2);
+  test(line_1d_reader, path + "line8.mesh", 2);
 
 
   std::cout << "*********** triangular, 2d ***********" << std::endl;
   viennagrid::io::netgen_reader triangle_2d_reader;
-  test<viennagrid::triangle_tag>(triangle_2d_reader, 2, viennagrid::triangle_tag(), path + "square8.mesh", 4);
+  test(triangle_2d_reader, path + "square8.mesh", 4);
 
   std::cout << "*********** tetrahedral, 3d ***********" << std::endl;
   viennagrid::io::netgen_reader tetrahedra_3d_reader;
-  test<viennagrid::tetrahedron_tag>(tetrahedra_3d_reader, 3, viennagrid::tetrahedron_tag(), path + "cube48.mesh", 6);
+  test(tetrahedra_3d_reader, path + "cube48.mesh", 6);
 
 
   std::cout << "*********** quadrilateral, 2d ***********" << std::endl;
   viennagrid::io::vtk_reader<viennagrid::mesh_t>  quadrilateral_2d_reader;
-  test<viennagrid::quadrilateral_tag>(quadrilateral_2d_reader, 2, viennagrid::quadrilateral_tag(), path + "quadrilateral2.vtu", 6);
+  test(quadrilateral_2d_reader, path + "quadrilateral2.vtu", 6);
 
   std::cout << "*********** hexahedral, 3d ***********" << std::endl;
   viennagrid::io::vtk_reader<viennagrid::mesh_t>  hexahedron_3d_reader;
-  test<viennagrid::hexahedron_tag>(hexahedron_3d_reader, 3, viennagrid::hexahedron_tag(), path + "hexahedron2.vtu", 10);
+  test(hexahedron_3d_reader, path + "hexahedron2.vtu", 10);
 
   std::cout << "*******************************" << std::endl;
   std::cout << "* Test finished successfully! *" << std::endl;

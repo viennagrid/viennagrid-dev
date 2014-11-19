@@ -51,7 +51,7 @@ int main()
   std::cout << "------------------------------------------------" << std::endl;
   std::cout << std::endl;
 
-  MeshType mesh(3, viennagrid::hexahedron_tag());
+  MeshType mesh;
 
   //read a multi-regionment mesh using the VTK reader:
   viennagrid::io::vtk_reader<MeshType>  reader;
@@ -105,7 +105,7 @@ int main()
   // Now iterate over all cells neighboring the first cell
 
   NeighborCellRange neigbouring_cells_region1(region1, viennagrid::elements<CellTag>(region1)[0]);
-  std::cout << "Neighbor Elements for first cell in region1 (should be no element, because only one element per regionment)" << std::endl;
+  std::cout << "Neighbor Elements for first cell in region1 (should be no element, because only one element per region)" << std::endl;
   for (NeighborCellIterator cofit = neigbouring_cells_region1.begin();
                            cofit != neigbouring_cells_region1.end();
                          ++cofit)
@@ -114,7 +114,7 @@ int main()
   }
 
   NeighborCellRange neigbouring_cells_region2(region2, viennagrid::elements<CellTag>(region2)[0]);
-  std::cout << "Neighbor Elements for first cell in region2 (should be no element, because only one element per regionment)" << std::endl;
+  std::cout << "Neighbor Elements for first cell in region2 (should be no element, because only one element per region)" << std::endl;
   for (NeighborCellIterator cofit = neigbouring_cells_region2.begin();
                            cofit != neigbouring_cells_region2.end();
                          ++cofit)

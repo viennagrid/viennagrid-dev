@@ -39,7 +39,7 @@ int main()
 
 //   MeshType mesh;
 //   SegmentationType segmentation(mesh);
-  MeshType mesh(3, viennagrid::tetrahedron_tag());
+  MeshType mesh;
 
   //
   // Read mesh from Netgen file

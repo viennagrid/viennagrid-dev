@@ -398,11 +398,18 @@ private:
 struct viennagrid_mesh_hierarchy_
 {
 public:
-  viennagrid_mesh_hierarchy_(viennagrid_int dimension_in, viennagrid_element_tag cell_tag) : geometric_dimension_(dimension_in), cell_tag_(cell_tag), root_( new viennagrid_mesh_(this) ), highest_region_id(0), change_counter_(0), use_count_(1)
+  viennagrid_mesh_hierarchy_() : geometric_dimension_(0), topologic_dimension_(-1), cell_tag_(VIENNAGRID_ELEMENT_TAG_NO_ELEMENT), root_( new viennagrid_mesh_(this) ), highest_region_id(0), change_counter_(0), use_count_(1)
   {
     for (viennagrid_int et = VIENNAGRID_ELEMENT_TAG_START; et < VIENNAGRID_ELEMENT_TAG_COUNT; ++et)
       element_buffer(et).set_tag(et);
   }
+
+//   viennagrid_mesh_hierarchy_(viennagrid_int dimension_in, viennagrid_element_tag cell_tag) : geometric_dimension_(dimension_in), cell_tag_(cell_tag), root_( new viennagrid_mesh_(this) ), highest_region_id(0), change_counter_(0), use_count_(1)
+//   {
+//     for (viennagrid_int et = VIENNAGRID_ELEMENT_TAG_START; et < VIENNAGRID_ELEMENT_TAG_COUNT; ++et)
+//       element_buffer(et).set_tag(et);
+//   }
+
   ~viennagrid_mesh_hierarchy_()
   {
 //     std::cout << "DELETE HIERARCHY" << std::endl;
@@ -414,7 +421,21 @@ public:
   }
 
   viennagrid_mesh root() { return root_; }
+
   viennagrid_int geometric_dimension() const { return geometric_dimension_; }
+  void set_geometric_dimension(viennagrid_int geometric_dimension_in)
+  {
+    if (geometric_dimension() == geometric_dimension_in)
+      return;
+
+    viennagrid_int vertex_count = 0;
+    if (geometric_dimension() != 0)
+      vertex_count = vertex_buffer.size() / geometric_dimension();
+
+    geometric_dimension_ = geometric_dimension_in;
+    vertex_buffer.resize( geometric_dimension() * vertex_count );
+  }
+
   viennagrid_int topologic_dimension() const { return topologic_dimension_; }
   viennagrid_element_tag cell_tag() const { return cell_tag_; }
 
@@ -446,7 +467,7 @@ public:
     if (coords)
       std::copy( coords, coords+geometric_dimension(), &vertex_buffer[0] + prev_size );
 
-    return vertex_buffer.size()/geometric_dimension()-1;
+//     return vertex_buffer.size()/geometric_dimension()-1;
 
 //     root_->make_vertex(coords);
     return id;

@@ -54,7 +54,7 @@ int main()
   //
   // Step 1: Instantiate the mesh and the segmentation and create 2 segments:
   //
-  MeshType mesh(2, viennagrid::triangle_tag());
+  MeshType mesh;
 //   SegmentationType segmentation(mesh);
 
   // using names to create names
@@ -81,14 +81,14 @@ int main()
   //
 
   // First triangle, use vertex handles
-  std::vector<VertexType> vertices;
+  std::vector<VertexType> vertices(3);
 //   viennagrid::static_array<VertexHandleType, 3> vertices;
   vertices[0] = v0;
   vertices[1] = v1;
   vertices[2] = v5;
   // Note that vertices are rearranged internally if they are not supplied in mathematically positive order.
 
-  viennagrid::make_cell(region0, vertices.begin(), vertices.end()); // creates an element with vertex handles
+  viennagrid::make_element<viennagrid::triangle_tag>(region0, vertices.begin(), vertices.end()); // creates an element with vertex handles
 
 
   // Second triangle:
@@ -98,7 +98,7 @@ int main()
   viennagrid::make_triangle(region0, v1, v2, v4); // Note that we create in 'seg1' now.
 
   // Fourth triangle:
-  viennagrid::make_triangle(region0, v2, v3, v4 );
+  viennagrid::make_triangle(region1, v2, v3, v4 );
 
   //
   // That's it. The mesh consisting of two segments is now set up.

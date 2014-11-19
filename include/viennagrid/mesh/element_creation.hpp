@@ -34,8 +34,12 @@ namespace viennagrid
 
 
   element_t make_vertex(mesh_hierarchy_t mesh_hierarchy,
-                        viennagrid_numeric const * coords)
+                        viennagrid_numeric const * coords,
+                        viennagrid_int num_coords)
   {
+    if ( viennagrid::geometric_dimension(mesh_hierarchy) <= 0 && num_coords > 0 )
+      viennagrid_mesh_hierarchy_set_geometric_dimension( mesh_hierarchy.internal(), num_coords );
+
     viennagrid_index id;
     viennagrid_vertex_create( mesh_hierarchy.internal(), coords, &id );
     return element_t(viennagrid::vertex_tag(), mesh_hierarchy, id);
@@ -43,28 +47,28 @@ namespace viennagrid
 
   element_t make_vertex(mesh_hierarchy_t mesh_hierarchy)
   {
-    return make_vertex(mesh_hierarchy, 0);
+    return make_vertex(mesh_hierarchy, 0, -1);
   }
 
   element_t make_vertex(mesh_t mesh,
-                        viennagrid_numeric const * coords)
+                        viennagrid_numeric const * coords,
+                        viennagrid_int num_coords)
   {
-    element_t vertex = make_vertex(mesh.mesh_hierarchy(), coords);
+    element_t vertex = make_vertex(mesh.mesh_hierarchy(), coords, num_coords);
     non_recursive_add_element_to_mesh(mesh, vertex);
     return vertex;
   }
 
   element_t make_vertex(mesh_t mesh)
   {
-    return make_vertex(mesh, 0);
+    return make_vertex(mesh, 0, -1);
   }
 
 
   template<typename SomethingT>
   typename result_of::vertex<SomethingT>::type make_vertex(SomethingT something, point_t const & point)
   {
-    assert( (viennagrid_int)point.size() == something.geometric_dimension() );
-    return make_vertex(something, &point[0]);
+    return make_vertex(something, &point[0], point.size());
   }
 
 
@@ -220,16 +224,17 @@ namespace viennagrid
 
 
   element_t make_vertex(mesh_region_t mr,
-                        viennagrid_numeric const * coords)
+                        viennagrid_numeric const * coords,
+                        viennagrid_int num_coords)
   {
-    element_t vertex = make_vertex(mr.mesh(), coords);
+    element_t vertex = make_vertex(mr.mesh(), coords, num_coords);
     add(mr, vertex);
     return vertex;
   }
 
   element_t make_vertex(mesh_region_t mr)
   {
-    return make_vertex(mr, 0);
+    return make_vertex(mr, 0, -1);
   }
 
 

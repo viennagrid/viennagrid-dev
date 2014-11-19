@@ -34,7 +34,7 @@ int main()
   //
 
   typedef viennagrid::mesh_t MeshType;
-  MeshType mesh(2, viennagrid::triangle_tag());
+  MeshType mesh;
 
 
   //

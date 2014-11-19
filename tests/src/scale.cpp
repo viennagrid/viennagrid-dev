@@ -77,12 +77,12 @@ inline void setup_triangular2d_mesh(viennagrid::mesh_t & mesh)
   vertices[0] = v[0];
   vertices[1] = v[2];
   vertices[2] = v[3];
-  viennagrid::make_cell( mesh, vertices, vertices+3 );
+  viennagrid::make_element<viennagrid::triangle_tag>( mesh, vertices, vertices+3 );
 
   vertices[0] = v[0];
   vertices[1] = v[1];
   vertices[2] = v[2];
-  viennagrid::make_cell( mesh, vertices, vertices+3 );
+  viennagrid::make_element<viennagrid::triangle_tag>( mesh, vertices, vertices+3 );
 }
 
 
@@ -94,7 +94,7 @@ void test()
   typedef viennagrid::result_of::point<Mesh>::type       PointType;
 
 
-  Mesh mesh(dimension, CellTagT());
+  Mesh mesh;
   viennagrid::result_of::point_accessor<Mesh>::type point_acc(mesh);
 
   setup_triangular2d_mesh(mesh);

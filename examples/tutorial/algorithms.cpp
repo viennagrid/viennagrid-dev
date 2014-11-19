@@ -58,7 +58,7 @@ int main()
 
 //   MeshType mesh;
 //   SegmentationType segmentation(mesh);
-  MeshType mesh(3, viennagrid::tetrahedron_tag());
+  MeshType mesh;
 
   //
   // Read mesh from Netgen file
@@ -165,7 +165,7 @@ int main()
 
   //
   // Refine mesh uniformly:
-  MeshType uniformly_refined_mesh(3, viennagrid::tetrahedron_tag());
+  MeshType uniformly_refined_mesh;
   viennagrid::cell_refine_uniformly(mesh, uniformly_refined_mesh);
 
   {
@@ -177,7 +177,7 @@ int main()
 
   //
   // Refine only specific cells:
-  MeshType adaptively_refined_mesh(3, viennagrid::tetrahedron_tag());
+  MeshType adaptively_refined_mesh;
 
   // Define a container which stores the flags, in this case we want an std::map as underlying container
   typedef viennagrid::result_of::accessor_container< CellType, bool, viennagrid::std_map_tag >::type CellRefinementContainerType;

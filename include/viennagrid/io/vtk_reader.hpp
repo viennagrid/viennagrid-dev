@@ -87,14 +87,15 @@ namespace viennagrid
       std::ifstream                                        reader;
 
       std::size_t                                          geometric_dim;
-      element_tag_t                                        cell_tag;
+//       element_tag_t                                        cell_tag;
 
-      typedef std::vector<CoordType>                       PointType;
+      typedef point_t                                      PointType;
       std::map<PointType, std::size_t, point_less>         global_points;
       std::map<std::size_t, PointType>                     global_points_2;
       std::map<int, std::deque<std::size_t> >              local_to_global_map;
       std::map<int, std::deque<std::size_t> >              local_cell_vertices;
       std::map<int, std::deque<std::size_t> >              local_cell_offsets;
+      std::map<int, std::deque<element_tag_t> >              local_cell_types;
       std::map<int, std::size_t>                           local_cell_num;
       std::map<int, std::deque<CellType> >                 local_cell_handle;
 
@@ -164,6 +165,7 @@ namespace viennagrid
         local_to_global_map.clear();
         local_cell_vertices.clear();
         local_cell_offsets.clear();
+        local_cell_types.clear();
         local_cell_num.clear();
         local_cell_handle.clear();
 
@@ -226,11 +228,12 @@ namespace viennagrid
         double nodeCoord;
         local_to_global_map[region_id].resize(nodeNum);
 
+        if (geometric_dim <= 0)
+          geometric_dim = numberOfComponents;
+
         for(std::size_t i = 0; i < nodeNum; i++)
         {
           PointType p(geometric_dim);
-//           PointType p;
-
           for(std::size_t j = 0; j < numberOfComponents; j++)
           {
             reader >> nodeCoord;
@@ -296,7 +299,7 @@ namespace viennagrid
       }
 
       /** @brief Read the types of each cell. */
-      void readTypes()
+      void readTypes(region_id_type region_id)
       {
           //****************************************************************************
           // read in the offsets: describe the affiliation of the nodes to the cells
@@ -304,18 +307,16 @@ namespace viennagrid
           //****************************************************************************
 
           std::string token;
-#ifndef NDEBUG
           long type = 0;
-#endif
           reader >> token;
 
           while(token != "</DataArray>")
           {
             assert( strChecker::myIsNumber(token) && "Cell type is not a number!" );
-#ifndef NDEBUG
+
             type = atoi(token.c_str());
-            assert(type == vtk_element_tag(cell_tag) && "Error in VTK reader: Type mismatch!");
-#endif
+            local_cell_types[region_id].push_back( from_vtk_element_tag(type) );
+
             //std::cout << "Vertex#: " << offset << std::endl;
             reader >> token;
           }
@@ -388,7 +389,7 @@ namespace viennagrid
       void setupVertices(mesh_type & mesh_obj)
       {
         for (std::size_t i=0; i<global_points_2.size(); ++i)
-          viennagrid::make_vertex( mesh_obj, &global_points_2[i][0] );
+          viennagrid::make_vertex( mesh_obj, global_points_2[i] );
       }
 
       /** @brief Pushes the cells read to the mesh. Preserves region information. */
@@ -433,10 +434,12 @@ namespace viennagrid
           //****************************************************
 
 //           viennagrid::static_array<VertexHandleType, boundary_elements<CellTag, vertex_tag>::num> cell_vertex_handles;
-          std::vector<VertexType> cell_vertex_handles( cell_tag.vertex_count() );
+          std::vector<VertexType> cell_vertex_handles( numVertices );
           std::vector<VertexIDType> cell_vertex_ids(numVertices);
 
           VertexRange vertices(mesh_obj);
+
+          element_tag_t cell_tag = local_cell_types[region_id][i];
 
           detail::vtk_to_viennagrid_orientations reorderer(cell_tag);
           for (std::size_t j = 0; j < numVertices; j++)
@@ -452,7 +455,15 @@ namespace viennagrid
           }
 
 
-          CellType cell = viennagrid::make_cell(mesh_obj, cell_vertex_handles.begin(), cell_vertex_handles.end());
+          std::cout << "Adding cell (type=" << local_cell_types[region_id][i].name() << ") with " << cell_vertex_handles.size() << " vertices" << std::endl;
+
+          CellType cell = viennagrid::make_element(mesh_obj,
+                                                   cell_tag,
+                                                   cell_vertex_handles.begin(),
+                                                   cell_vertex_handles.end());
+
+          std::cout << cell << std::endl;
+
           viennagrid::add( mesh_obj.get_make_region(region_id), cell );
           local_cell_handle[region_id].push_back( cell );
         }
@@ -743,7 +754,7 @@ namespace viennagrid
             else if (tag.get_value("name") == "offsets")
               readOffsets(region_id);
             else if (tag.get_value("name") == "types")
-              readTypes();
+              readTypes(region_id);
             else
               throw bad_file_format_exception("* ViennaGrid: vtk_reader::parse_vtu_region(): Parse error: <DataArray> is not named 'connectivity', 'offsets' or 'types'!");
           }
@@ -873,7 +884,7 @@ namespace viennagrid
       void operator()(mesh_type & mesh_obj, std::string const & filename)
       {
         geometric_dim = mesh_obj.geometric_dimension();
-        cell_tag = mesh_obj.cell_tag();
+//         cell_tag = mesh_obj.cell_tag();
         pre_clear();
 
         std::string::size_type pos  = filename.rfind(".")+1;

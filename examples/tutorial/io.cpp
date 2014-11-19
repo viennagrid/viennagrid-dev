@@ -274,7 +274,7 @@ int main()
   std::cout << "----------------------------------------" << std::endl;
   std::cout << std::endl;
 
-  MeshType mesh(3, viennagrid::tetrahedron_tag());
+  MeshType mesh;
 //   Segmentation segments(mesh);
 
   //
@@ -289,7 +289,7 @@ int main()
   //
   // Use-case 2: Read VTK file(s)
   //
-  MeshType vtk_mesh(3, viennagrid::tetrahedron_tag());
+  MeshType vtk_mesh;
 //   Segmentation vtk_segments(vtk_mesh);
   UserData data;
   read_vtk(vtk_mesh, data);

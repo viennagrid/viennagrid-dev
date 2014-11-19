@@ -109,7 +109,7 @@ int main(int argc, char *argv[])
 
   if (type == "tet3d")
   {
-    MeshType mesh(3, viennagrid::tetrahedron_tag());
+    MeshType mesh;
 
     if (extension == "mesh")
       return dump_information<viennagrid::io::netgen_reader>(mesh, filename);
@@ -118,7 +118,7 @@ int main(int argc, char *argv[])
   }
   else if(type == "tri2d")
   {
-    MeshType mesh(2, viennagrid::triangle_tag());
+    MeshType mesh;
 
     if (extension == "mesh")
       return dump_information<viennagrid::io::netgen_reader>(mesh, filename);
@@ -127,7 +127,7 @@ int main(int argc, char *argv[])
   }
   else if(type == "tri3d")
   {
-    MeshType mesh(3, viennagrid::triangle_tag());
+    MeshType mesh;
 
     if (extension == "mesh")
       return dump_information<viennagrid::io::netgen_reader>(mesh, filename);

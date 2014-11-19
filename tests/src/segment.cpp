@@ -72,7 +72,7 @@ inline void test_tetrahedral3d()
   typedef viennagrid::result_of::point<MeshType>::type            PointType;
   typedef viennagrid::result_of::vertex<MeshType>::type    VertexType;
 
-  MeshType mesh(3, viennagrid::tetrahedron_tag());
+  MeshType mesh;
 
   PointType p[7];
 
@@ -145,7 +145,7 @@ inline void test_hexahedral3d()
   typedef viennagrid::result_of::point<MeshType>::type            PointType;
   typedef viennagrid::result_of::vertex<MeshType>::type    VertexType;
 
-  MeshType mesh(3, viennagrid::hexahedron_tag());
+  MeshType mesh;
 
   PointType p[12];
 
@@ -220,7 +220,7 @@ inline void test_triangle2d()
   typedef viennagrid::result_of::point<MeshType>::type            PointType;
   typedef viennagrid::result_of::vertex<MeshType>::type    VertexType;
 
-  MeshType mesh(2, viennagrid::triangle_tag());
+  MeshType mesh;
 
   PointType p[6];
 
@@ -291,7 +291,7 @@ inline void test_quadrilateral2d()
   typedef viennagrid::result_of::point<MeshType>::type            PointType;
   typedef viennagrid::result_of::vertex<MeshType>::type    VertexType;
 
-  MeshType mesh(2, viennagrid::quadrilateral_tag());
+  MeshType mesh;
 
   PointType p[6];
 

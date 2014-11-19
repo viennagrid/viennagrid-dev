@@ -263,6 +263,13 @@ viennagrid_index viennagrid_mesh_hierarchy_::get_make_element(viennagrid_element
   increment_change_counter();
 
   id = element_buffer(element_tag).make_element(this, indices, count);
+  viennagrid_int element_topologic_dimension = viennagrid_topologycal_dimension(element_tag);
+  viennagrid_int cell_topologic_dimension = viennagrid_topologycal_dimension(cell_tag());
+
+  topologic_dimension_ = std::max( topologic_dimension_, element_topologic_dimension );
+  if (element_topologic_dimension > cell_topologic_dimension)
+    cell_tag_ = element_tag;
+
   viennagrid_int index = 0;
   viennagrid_index * ptr = 0;
 

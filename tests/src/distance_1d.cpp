@@ -68,9 +68,9 @@ inline void setup_mesh(viennagrid::mesh_t & mesh)
   }
 
   std::cout << "Adding cells to mesh..." << std::endl;
-  viennagrid::make_cell( mesh, v, v+2 );
-  viennagrid::make_cell( mesh, v+2, v+4 );
-  viennagrid::make_cell( mesh, v+4, v+6 );
+  viennagrid::make_element<viennagrid::line_tag>( mesh, v, v+2 );
+  viennagrid::make_element<viennagrid::line_tag>( mesh, v+2, v+4 );
+  viennagrid::make_element<viennagrid::line_tag>( mesh, v+4, v+6 );
 }
 
 inline void test()
@@ -81,7 +81,7 @@ inline void test()
   typedef viennagrid::result_of::point<Mesh>::type                PointType;
   typedef viennagrid::result_of::cell<Mesh>::type  CellType;
 
-  Mesh mesh(1, viennagrid::line_tag());
+  Mesh mesh;
 
   setup_mesh(mesh);
 

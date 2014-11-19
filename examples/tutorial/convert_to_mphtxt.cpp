@@ -28,7 +28,7 @@ int main()
   std::cout << "--------------------------------------------" << std::endl;
   std::cout << std::endl;
 
-  Mesh mesh(3, viennagrid::tetrahedron_tag());
+  Mesh mesh;
 
   viennagrid::io::vtk_reader<Mesh> reader;
   reader(mesh, "../data/tets_with_data_main.pvd");

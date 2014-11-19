@@ -6,9 +6,7 @@
 
 
 // creates a mesh_hierarchy with a mesh root
-VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_hierarchy_create(viennagrid_int dimension,
-                                                                            viennagrid_element_tag cell_tag,
-                                                                            viennagrid_mesh_hierarchy * mesh_hierarchy);
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_hierarchy_create(viennagrid_mesh_hierarchy * mesh_hierarchy);
 // deletes a mesh_hierarchy with all its meshes
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_hierarchy_retain(viennagrid_mesh_hierarchy mesh_hierarchy);
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_hierarchy_release(viennagrid_mesh_hierarchy mesh_hierarchy);
@@ -24,6 +22,10 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_hierarchy_get_topolog
 // queries the geometric dimension of a mesh_hierarchy
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_hierarchy_get_geometric_dimension(viennagrid_mesh_hierarchy mesh_hierarchy,
                                                                               viennagrid_int * geometric_dimension);
+
+VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_hierarchy_set_geometric_dimension(viennagrid_mesh_hierarchy mesh_hierarchy,
+                                                                    viennagrid_index geometric_dimension);
+
 
 // get the root mesh
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_hierarchy_get_root(viennagrid_mesh_hierarchy mesh_hierarchy,
@@ -44,6 +46,8 @@ VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_children_count(vienna
 VIENNAGRID_DYNAMIC_EXPORT viennagrid_error viennagrid_mesh_get_child(viennagrid_mesh mesh,
                                                                      viennagrid_int id,
                                                                      viennagrid_mesh * child);
+
+
 
 
 

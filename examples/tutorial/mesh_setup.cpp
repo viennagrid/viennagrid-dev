@@ -42,7 +42,6 @@ int main()
   typedef viennagrid::result_of::point<MeshType>::type            PointType;
   typedef viennagrid::result_of::vertex<MeshType>::type           VertexType;
 
-  typedef viennagrid::result_of::cell_tag<MeshType>::type             CellTag;
   typedef viennagrid::result_of::cell_range<RegionType>::type      CellRange;
   typedef viennagrid::result_of::iterator<CellRange>::type          CellIterator;
 
@@ -54,7 +53,7 @@ int main()
   //
   // Step 1: Instantiate the mesh and the segmentation and create 2 segments:
   //
-  MeshType mesh(2, viennagrid::triangle_tag());
+  MeshType mesh;
 
   RegionType region0 = mesh.make_region();
   RegionType region1 = mesh.make_region();
@@ -82,7 +81,7 @@ int main()
   vertices[2] = v5;
   // Note that vertices are rearranged internally if they are not supplied in mathematically positive order.
 
-  viennagrid::make_element<CellTag>(region0, vertices.begin(), vertices.end()); // creates an element with vertex handles
+  viennagrid::make_element<viennagrid::triangle_tag>(region0, vertices.begin(), vertices.end()); // creates an element with vertex handles
 
 
   // Second triangle:

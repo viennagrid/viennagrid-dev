@@ -27,7 +27,7 @@ int main()
   typedef viennagrid::result_of::vertex< MeshType >::type     VertexType;
   typedef viennagrid::result_of::triangle< MeshType >::type          TriangleType;
 
-  MeshType mesh(3, viennagrid::triangle_tag());
+  MeshType mesh;
 
 
   VertexType v0 = viennagrid::make_vertex( mesh );

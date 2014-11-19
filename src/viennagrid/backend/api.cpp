@@ -1,11 +1,9 @@
 #include "viennagrid/backend/api.h"
 #include "viennagrid/backend/backend.hpp"
 
-viennagrid_error viennagrid_mesh_hierarchy_create(viennagrid_int dimension,
-                                                viennagrid_element_tag cell_tag,
-                                                viennagrid_mesh_hierarchy * mesh_hierarchy)
+viennagrid_error viennagrid_mesh_hierarchy_create(viennagrid_mesh_hierarchy * mesh_hierarchy)
 {
-  *mesh_hierarchy = new viennagrid_mesh_hierarchy_(dimension, cell_tag);
+  *mesh_hierarchy = new viennagrid_mesh_hierarchy_();
   return VIENNAGRID_SUCCESS;
 }
 
@@ -43,6 +41,13 @@ viennagrid_error viennagrid_mesh_hierarchy_get_geometric_dimension(viennagrid_me
                                                                    viennagrid_int * geometric_dimension)
 {
   *geometric_dimension = mesh_hierarchy->geometric_dimension();
+  return VIENNAGRID_SUCCESS;
+}
+
+viennagrid_error viennagrid_mesh_hierarchy_set_geometric_dimension(viennagrid_mesh_hierarchy mesh_hierarchy,
+                                                                   viennagrid_index geometric_dimension)
+{
+  mesh_hierarchy->set_geometric_dimension(geometric_dimension);
   return VIENNAGRID_SUCCESS;
 }
 

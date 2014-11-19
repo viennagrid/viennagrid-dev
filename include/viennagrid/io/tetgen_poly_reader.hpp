@@ -123,7 +123,7 @@ namespace viennagrid
       {
         typedef typename viennagrid::result_of::point<MeshT>::type           PointType;
 
-        const std::size_t point_dim = mesh_obj.geometric_dimension();
+//         const std::size_t point_dim = mesh_obj.geometric_dimension();
 
         typedef typename result_of::vertex<MeshT>::type         VertexType;
         typedef typename VertexType::id_type VertexIDType;
@@ -149,7 +149,7 @@ namespace viennagrid
         std::istringstream current_line;
 
         long node_num = 0;
-        std::size_t dim = 0;
+        std::size_t point_dim = 0;
         long attribute_num = 0;
         long boundary_marker_num = 0;
 
@@ -164,12 +164,12 @@ namespace viennagrid
           throw bad_file_format_exception("* ViennaGrid: tetgen_poly_reader::operator(): File " + filename + ": EOF encountered when reading information");
 
         current_line.str(tmp); current_line.clear();
-        current_line >> node_num >> dim >> attribute_num >> boundary_marker_num;
+        current_line >> node_num >> point_dim >> attribute_num >> boundary_marker_num;
 
         if (node_num < 0)
           throw bad_file_format_exception("* ViennaGrid: tetgen_poly_reader::operator(): File " + filename + ": POLY file has less than 0 nodes");
-        if (dim != point_dim)
-          throw bad_file_format_exception("* ViennaGrid: tetgen_poly_reader::operator(): File " + filename + ": POLY point dimension missmatch");
+//         if (dim != point_dim)
+//           throw bad_file_format_exception("* ViennaGrid: tetgen_poly_reader::operator(): File " + filename + ": POLY point dimension missmatch");
         if (attribute_num < 0)
           throw bad_file_format_exception("* ViennaGrid: tetgen_poly_reader::operator(): File " + filename + ": POLY file has less than 0 attributes");
         if ((boundary_marker_num < 0) || (boundary_marker_num > 1))
@@ -375,7 +375,7 @@ namespace viennagrid
             throw bad_file_format_exception("* ViennaGrid: tetgen_poly_reader::operator(): File " + filename + ": EOF encountered when reading information");
 
           long segment_number;
-          PointType seed_point(dim);
+          PointType seed_point(point_dim);
           int segment_id;
 
           current_line.str(tmp); current_line.clear();

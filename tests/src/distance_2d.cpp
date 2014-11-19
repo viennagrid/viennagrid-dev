@@ -74,23 +74,23 @@ inline void setup_line2d_mesh(viennagrid::mesh_t & mesh)
 
   vertices[0] = v[0];
   vertices[1] = v[6];
-  viennagrid::make_cell( mesh, vertices, vertices+2 );
+  viennagrid::make_element<viennagrid::line_tag>( mesh, vertices, vertices+2 );
 
   vertices[0] = v[1];
   vertices[1] = v[4];
-  viennagrid::make_cell( mesh, vertices, vertices+2 );
+  viennagrid::make_element<viennagrid::line_tag>( mesh, vertices, vertices+2 );
 
   vertices[0] = v[1];
   vertices[1] = v[5];
-  viennagrid::make_cell( mesh, vertices, vertices+2 );
+  viennagrid::make_element<viennagrid::line_tag>( mesh, vertices, vertices+2 );
 
   vertices[0] = v[2];
   vertices[1] = v[3];
-  viennagrid::make_cell( mesh, vertices, vertices+2 );
+  viennagrid::make_element<viennagrid::line_tag>( mesh, vertices, vertices+2 );
 
   vertices[0] = v[7];
   vertices[1] = v[8];
-  viennagrid::make_cell( mesh, vertices, vertices+2 );
+  viennagrid::make_element<viennagrid::line_tag>( mesh, vertices, vertices+2 );
 }
 
 inline void test_line2d()
@@ -101,7 +101,7 @@ inline void test_line2d()
   typedef viennagrid::result_of::point<Mesh>::type                PointType;
   typedef viennagrid::result_of::element<Mesh, CellTag>::type  CellType;
 
-  Mesh mesh(2, viennagrid::line_tag());
+  Mesh mesh;
   setup_line2d_mesh(mesh);
 
   PointType A = viennagrid::make_point(0, 0);
@@ -299,12 +299,12 @@ inline void setup_triangular3d_mesh(viennagrid::mesh_t & mesh)
   vertices[0] = v[0];
   vertices[1] = v[2];
   vertices[2] = v[3];
-  viennagrid::make_cell( mesh, vertices, vertices+3 );
+  viennagrid::make_element<viennagrid::triangle_tag>( mesh, vertices, vertices+3 );
 
   vertices[0] = v[0];
   vertices[1] = v[1];
   vertices[2] = v[2];
-  viennagrid::make_cell( mesh, vertices, vertices+3 );
+  viennagrid::make_element<viennagrid::triangle_tag>( mesh, vertices, vertices+3 );
 }
 
 
@@ -318,7 +318,7 @@ inline void test_triangular2d()
   typedef viennagrid::result_of::point<Mesh>::type                PointType;
   typedef viennagrid::result_of::element<Mesh, CellTag>::type  CellType;
 
-  Mesh mesh(2, viennagrid::triangle_tag());
+  Mesh mesh;
   setup_triangular3d_mesh(mesh);
 
   PointType A = viennagrid::make_point(0, 0);
@@ -502,7 +502,7 @@ inline void setup_quadrilateral2d_mesh(viennagrid::mesh_t & mesh)
   }
 
   std::cout << "Adding cells to mesh..." << std::endl;
-  viennagrid::make_cell( mesh, v, v+4 );
+  viennagrid::make_element<viennagrid::quadrilateral_tag>( mesh, v, v+4 );
 }
 
 inline void test_quadrilateral2d()
@@ -514,7 +514,7 @@ inline void test_quadrilateral2d()
   typedef viennagrid::result_of::point<Mesh>::type                PointType;
   typedef viennagrid::result_of::element<Mesh, CellTag>::type  CellType;
 
-  Mesh mesh(2, viennagrid::quadrilateral_tag());
+  Mesh mesh;
 
   setup_quadrilateral2d_mesh(mesh);
 

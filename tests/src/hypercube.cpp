@@ -82,7 +82,7 @@ void setup(MeshType & mesh, viennagrid::element_tag_t element_tag)
 }
 
 
-void test(std::string outfile, int dimension, viennagrid::element_tag_t element_tag)
+void test(std::string outfile, viennagrid::element_tag_t element_tag)
 {
   typedef viennagrid::mesh_t MeshType;
   typedef viennagrid::result_of::cell_tag<MeshType>::type            CellTag;
@@ -99,7 +99,7 @@ void test(std::string outfile, int dimension, viennagrid::element_tag_t element_
   typedef viennagrid::result_of::cell_range<MeshType>::type   CellContainer;
   typedef viennagrid::result_of::iterator<CellContainer>::type                        CellIterator;
 
-  MeshType mesh(dimension, element_tag);
+  MeshType mesh;
 
   setup(mesh, element_tag);
 
@@ -143,8 +143,8 @@ int main()
   std::cout << "* Test started! *" << std::endl;
   std::cout << "*****************" << std::endl;
 
-  test("hypercube_2d", 2, viennagrid::quadrilateral_tag());
-  test("hypercube_3d", 3, viennagrid::hexahedron_tag());
+  test("hypercube_2d", viennagrid::quadrilateral_tag());
+  test("hypercube_3d", viennagrid::hexahedron_tag());
 
   std::cout << "*******************************" << std::endl;
   std::cout << "* Test finished successfully! *" << std::endl;

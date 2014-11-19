@@ -31,7 +31,7 @@ int main()
   typedef   viennagrid::result_of::region<MeshType>::type RegionType;
 
 
-  MeshType mesh(3, viennagrid::triangle_tag());
+  MeshType mesh;
 
   // create some vertices
   VertexType v0 = viennagrid::make_vertex( mesh );

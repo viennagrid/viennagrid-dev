@@ -327,6 +327,22 @@ namespace viennagrid
 
 
 
+  template<bool is_const>
+  base_mesh_hierarchy<is_const> mesh_hierarchy( base_region<is_const> region )
+  {
+    return region.mesh_hierarchy();
+  }
+
+
+  template<bool is_const>
+  base_mesh_hierarchy<is_const> mesh_hierarchy( base_mesh_region<is_const> region )
+  {
+    return mesh_hierarchy( region.mesh() );
+  }
+
+
+
+
   template<typename SomethingT>
   typename viennagrid::result_of::region_range<SomethingT>::type regions(SomethingT something);
   template<typename SomethingT, typename ElementT>

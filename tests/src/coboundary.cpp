@@ -19,28 +19,27 @@
 #include "viennagrid/core.hpp"
 #include "viennagrid/io/netgen_reader.hpp"
 
-template <typename CellTypeOrTag>
-void test(int dimension, viennagrid::element_tag_t element_tag, std::string infile)
+void test(std::string infile)
 {
   typedef viennagrid::mesh_t MeshType;
-  typedef typename viennagrid::result_of::element_tag<CellTypeOrTag>::type CellTag;
+//   typedef typename viennagrid::result_of::element_tag<CellTypeOrTag>::type CellTag;
 
   //typedef typename viennagrid::result_of::mesh<ConfigType>::type        Mesh;
   //typedef typename ConfigType::cell_tag                                   CellTag;
 //   typedef typename viennagrid::result_of::segmentation<MeshType>::type       SegmentationType;
 
-  typedef typename viennagrid::result_of::vertex<MeshType>::type       VertexType;
-  typedef typename viennagrid::result_of::facet<MeshType>::type FacetType;
+  typedef viennagrid::result_of::vertex<MeshType>::type       VertexType;
+  typedef viennagrid::result_of::facet<MeshType>::type FacetType;
 
-  typedef typename viennagrid::result_of::vertex_range<MeshType>::type       VertexContainer;
-  typedef typename viennagrid::result_of::iterator<VertexContainer>::type    VertexIterator;
+  typedef viennagrid::result_of::vertex_range<MeshType>::type       VertexContainer;
+  typedef viennagrid::result_of::iterator<VertexContainer>::type    VertexIterator;
 //   typedef typename viennagrid::result_of::iterator<VertexContainer>::type    VertexHandleIterator;
 
-  typedef typename viennagrid::result_of::facet_range<MeshType>::type   FacetContainer;
-  typedef typename viennagrid::result_of::iterator<FacetContainer>::type                         FacetIterator;
+  typedef viennagrid::result_of::facet_range<MeshType>::type   FacetContainer;
+  typedef viennagrid::result_of::iterator<FacetContainer>::type                         FacetIterator;
 //   typedef typename viennagrid::result_of::hook_iterator<FacetContainer>::type                         FacetHandleIterator;
 
-  MeshType mesh(dimension, element_tag);
+  MeshType mesh;
 
   //read from file:
   try
@@ -68,8 +67,8 @@ void test(int dimension, viennagrid::element_tag_t element_tag, std::string infi
   {
     const VertexType & vertex = *vit;//viennagrid::dereference_hook(mesh, *vit);
     std::cout << vertex << std::endl;
-    typedef typename viennagrid::result_of::coboundary_range<MeshType, viennagrid::line_tag>::type          EdgeOnVertexContainer;
-    typedef typename viennagrid::result_of::iterator<EdgeOnVertexContainer>::type     EdgeOnVertexIterator;
+    typedef viennagrid::result_of::coboundary_range<MeshType, viennagrid::line_tag>::type          EdgeOnVertexContainer;
+    typedef viennagrid::result_of::iterator<EdgeOnVertexContainer>::type     EdgeOnVertexIterator;
 
     EdgeOnVertexContainer edges (mesh, *vit);
     for (EdgeOnVertexIterator eovit = edges.begin();
@@ -95,10 +94,10 @@ void test(int dimension, viennagrid::element_tag_t element_tag, std::string infi
   {
     FacetType facet = *fit; //viennagrid::dereference_hook(mesh, *fit);
     std::cout << facet << std::endl;
-    typedef typename viennagrid::result_of::coboundary_range<MeshType, CellTag>::type   CellOnFacetContainer;
-    typedef typename viennagrid::result_of::iterator<CellOnFacetContainer>::type                          CellOnFacetIterator;
+    typedef viennagrid::result_of::coboundary_range<MeshType>::type   CellOnFacetContainer;
+    typedef viennagrid::result_of::iterator<CellOnFacetContainer>::type                          CellOnFacetIterator;
 
-    CellOnFacetContainer cells(mesh, *fit);
+    CellOnFacetContainer cells(mesh, *fit, mesh.cell_tag());
     for (CellOnFacetIterator eovit = cells.begin();
          eovit != cells.end();
          ++eovit)
@@ -120,11 +119,11 @@ int main()
   std::string path = "../examples/data/";
 
   std::cout << "Testing 1d..." << std::endl;
-  test<viennagrid::line_tag>(1, viennagrid::line_tag(), path + "line8.mesh");
+  test(path + "line8.mesh");
   std::cout << "Testing 2d..." << std::endl;
-  test<viennagrid::triangle_tag>(2, viennagrid::triangle_tag(), path + "square32.mesh");
+  test(path + "square32.mesh");
   std::cout << "Testing 3d..." << std::endl;
-  test<viennagrid::tetrahedron_tag>(3, viennagrid::tetrahedron_tag(), path + "cube48.mesh");
+  test(path + "cube48.mesh");
 
   std::cout << "*******************************" << std::endl;
   std::cout << "* Test finished successfully! *" << std::endl;

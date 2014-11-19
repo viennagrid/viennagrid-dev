@@ -31,7 +31,7 @@ int main()
   //
 
   typedef viennagrid::mesh_t MeshType;
-  MeshType mesh(2, viennagrid::polygon_tag());
+  MeshType mesh;
 
   //
   // typedefs for the element types

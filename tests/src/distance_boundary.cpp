@@ -98,64 +98,64 @@ inline void setup_meshs(viennagrid::mesh_t & mesh0,
     vertices[0] = v[0];
     vertices[1] = v[1];
     vertices[2] = v[3];
-    viennagrid::make_cell( region0, vertices, vertices+3 );
+    viennagrid::make_element<viennagrid::triangle_tag>( region0, vertices, vertices+3 );
 
     vertices[0] = v[1];
     vertices[1] = v[4];
     vertices[2] = v[3];
-    viennagrid::make_cell( region0, vertices, vertices+3 );
+    viennagrid::make_element<viennagrid::triangle_tag>( region0, vertices, vertices+3 );
 
     vertices[0] = v[1];
     vertices[1] = v[2];
     vertices[2] = v[4];
-    viennagrid::make_cell( region0, vertices, vertices+3 );
+    viennagrid::make_element<viennagrid::triangle_tag>( region0, vertices, vertices+3 );
 
     vertices[0] = v[2];
     vertices[1] = v[5];
     vertices[2] = v[4];
-    viennagrid::make_cell( region0, vertices, vertices+3 );
+    viennagrid::make_element<viennagrid::triangle_tag>( region0, vertices, vertices+3 );
 
     vertices[0] = v[3];
     vertices[1] = v[4];
     vertices[2] = v[6];
-    viennagrid::make_cell( region0, vertices, vertices+3 );
+    viennagrid::make_element<viennagrid::triangle_tag>( region0, vertices, vertices+3 );
 
     vertices[0] = v[4];
     vertices[1] = v[7];
     vertices[2] = v[6];
-    viennagrid::make_cell( region0, vertices, vertices+3 );
+    viennagrid::make_element<viennagrid::triangle_tag>( region0, vertices, vertices+3 );
 
     vertices[0] = v[4];
     vertices[1] = v[5];
     vertices[2] = v[7];
-    viennagrid::make_cell( region0, vertices, vertices+3 );
+    viennagrid::make_element<viennagrid::triangle_tag>( region0, vertices, vertices+3 );
 
     vertices[0] = v[5];
     vertices[1] = v[8];
     vertices[2] = v[7];
-    viennagrid::make_cell( region0, vertices, vertices+3 );
+    viennagrid::make_element<viennagrid::triangle_tag>( region0, vertices, vertices+3 );
 
     // segment 1:
 
     vertices[0] = v[9];
     vertices[1] = v[10];
     vertices[2] = v[12];
-    viennagrid::make_cell( region1, vertices, vertices+3 );
+    viennagrid::make_element<viennagrid::triangle_tag>( region1, vertices, vertices+3 );
 
     vertices[0] = v[10];
     vertices[1] = v[13];
     vertices[2] = v[12];
-    viennagrid::make_cell( region1, vertices, vertices+3 );
+    viennagrid::make_element<viennagrid::triangle_tag>( region1, vertices, vertices+3 );
 
     vertices[0] = v[10];
     vertices[1] = v[11];
     vertices[2] = v[13];
-    viennagrid::make_cell( region1, vertices, vertices+3 );
+    viennagrid::make_element<viennagrid::triangle_tag>( region1, vertices, vertices+3 );
 
     vertices[0] = v[11];
     vertices[1] = v[14];
     vertices[2] = v[13];
-    viennagrid::make_cell( region1, vertices, vertices+3 );
+    viennagrid::make_element<viennagrid::triangle_tag>( region1, vertices, vertices+3 );
   }
 
 
@@ -193,22 +193,22 @@ inline void setup_meshs(viennagrid::mesh_t & mesh0,
     vertices[0] = v[0];
     vertices[1] = v[1];
     vertices[2] = v[2];
-    viennagrid::make_cell( region0, vertices, vertices+3 );
+    viennagrid::make_element<viennagrid::triangle_tag>( region0, vertices, vertices+3 );
 
     vertices[0] = v[1];
     vertices[1] = v[3];
     vertices[2] = v[2];
-    viennagrid::make_cell( region0, vertices, vertices+3 );
+    viennagrid::make_element<viennagrid::triangle_tag>( region0, vertices, vertices+3 );
 
     vertices[0] = v[2];
     vertices[1] = v[3];
     vertices[2] = v[4];
-    viennagrid::make_cell( region0, vertices, vertices+3 );
+    viennagrid::make_element<viennagrid::triangle_tag>( region0, vertices, vertices+3 );
 
     vertices[0] = v[3];
     vertices[1] = v[5];
     vertices[2] = v[4];
-    viennagrid::make_cell( region0, vertices, vertices+3 );
+    viennagrid::make_element<viennagrid::triangle_tag>( region0, vertices, vertices+3 );
   }
 
 }
@@ -223,8 +223,8 @@ inline void test()
 
   typedef viennagrid::result_of::point<Mesh>::type                PointType;
 
-  Mesh mesh0(2, viennagrid::triangle_tag());
-  Mesh mesh1(2, viennagrid::triangle_tag());;
+  Mesh mesh0;
+  Mesh mesh1;
 
   setup_meshs(mesh0, mesh1);
 

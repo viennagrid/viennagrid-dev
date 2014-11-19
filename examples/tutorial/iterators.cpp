@@ -42,7 +42,7 @@ int main()
   std::cout << "-------------------------------------------------- " << std::endl;
   std::cout << std::endl;
 
-  MeshType    mesh(3, viennagrid::tetrahedron_tag());
+  MeshType    mesh;
 
 
   //
@@ -51,7 +51,7 @@ int main()
   try
   {
     viennagrid::io::netgen_reader reader;
-    reader(mesh, "../examples/data/cube6.mesh");    //use this for a 3d example
+    reader(mesh, "../data/cube6.mesh");    //use this for a 3d example
     //reader(mesh, segmentation, "../examples/data/square8.mesh"); //use this for a 2d example (also change MeshType defined above!)
   }
   catch (std::exception & e)
